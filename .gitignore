@@ -1,0 +1,13 @@
+/[Dd]ebug
+/[Rr]elease
+/ipch
+/.vs
+/*.aps
+/*.db
+/*.opendb
+/*.ncb
+/*.suo
+/*.user
+/*.opensdf
+/*.sdf
+/*.log

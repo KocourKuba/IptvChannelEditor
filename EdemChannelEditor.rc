@@ -1,0 +1,317 @@
+// Microsoft Visual C++ generated resource script.
+//
+#pragma code_page(65001)
+
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+#include "verrsrc.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""verrsrc.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#include ""res\\EdemChannelEditor.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""      // Standard components\r\n"
+    "#if !defined(_AFXDLL)\r\n"
+    "#include ""afxribbon.rc""   // MFC ribbon and control bar resources\r\n"
+    "#endif\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\EdemChannelEditor.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG_QR              PNG                     "res\\QR Code.png"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 199, 158
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Dune Edem TV Channel Editor"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
+    LTEXT           "Version 1.0",IDC_STATIC,42,15,85,9,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2020, Pavel Abakanov",IDC_STATIC,42,26,133,8
+    DEFPUSHBUTTON   "OK",IDOK,71,137,50,14,WS_GROUP
+    CONTROL         "Donate $5 if you like this App",IDC_MFCLINK1,"MfcLink",WS_TABSTOP,51,38,105,14
+    CONTROL         "",IDC_STATIC_QR,"Static",SS_BITMAP | SS_CENTERIMAGE,53,53,85,78
+END
+
+IDD_EDEMCHANNELEDITOR_DIALOG DIALOGEX 0, 0, 345, 280
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Channel",IDC_STATIC,7,7,192,70
+    COMBOBOX        IDC_COMBO_CHANNEL,12,18,182,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Channel Name",IDC_STATIC,12,33,69,8
+    EDITTEXT        IDC_EDIT_CHANNEL_NAME,12,44,181,12,ES_AUTOHSCROLL
+    CONTROL         "Has Archive",IDC_CHECK_ARCHIVE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,61,60,10
+    CONTROL         "Adult",IDC_CHECK_ADULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,61,65,10
+    GROUPBOX        "TV Guide (EPG)",IDC_STATIC,7,81,191,44
+    LTEXT           " ID",IDC_STATIC,11,95,19,8
+    EDITTEXT        IDC_EDIT_TVG_ID,12,107,37,12,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Past days",IDC_STATIC,58,95,32,8
+    EDITTEXT        IDC_EDIT_PREV_EPG,58,107,19,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_PREV,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS,76,106,11,14
+    LTEXT           "Future days",IDC_STATIC,96,95,44,8
+    EDITTEXT        IDC_EDIT_NEXT_EPG,96,107,19,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_NEXT,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS,114,106,11,14
+    PUSHBUTTON      "Test EPG",IDC_BUTTON_TEST_EPG,131,106,61,14
+    GROUPBOX        "Edem TV Streaming URL",IDC_STATIC,7,129,331,47
+    LTEXT           " ID",IDC_STATIC,14,144,9,8
+    EDITTEXT        IDC_EDIT_URL_ID,26,142,45,12,ES_AUTOHSCROLL
+    CONTROL         "Custom URL",IDC_CHECK_CUSTOMIZE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,82,143,66,10
+    EDITTEXT        IDC_EDIT_STREAM_URL,12,158,268,12,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "Test URL",IDC_BUTTON_TEST_URL,284,156,50,16
+    LTEXT           "Available Categories",IDC_STATIC,209,7,67,8
+    COMBOBOX        IDC_COMBO_CATEGORY,209,18,108,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "+",IDC_BUTTON_ADD,322,17,16,14
+    LTEXT           "Show in Categories",IDC_STATIC,209,34,67,8
+    LISTBOX         IDC_LIST_CATEGORIES,209,45,107,31,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "-",IDC_BUTTON_REMOVE,322,52,16,14
+    CONTROL         "",IDC_STATIC_ICON,"Static",SS_BITMAP | SS_CENTERIMAGE | SS_SUNKEN,221,82,81,43
+    PUSHBUTTON      "...",IDC_BUTTON_ICON_LOAD,322,98,16,14
+    GROUPBOX        "Settings",IDC_STATIC,7,180,331,69
+    LTEXT           "DUNE Plugin folder",IDC_STATIC,14,191,69,8
+    CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_ROOT,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x800,14,202,163,12
+    LTEXT           "Player (for example Media Player Classic)",IDC_STATIC,14,218,146,8
+    CONTROL         "",IDC_MFCEDITBROWSE_PLAYER,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x800,14,229,163,12
+    LTEXT           "Edem TV Access Key",IDC_STATIC,183,191,69,8
+    EDITTEXT        IDC_EDIT_KEY,183,202,89,12,ES_AUTOHSCROLL
+    LTEXT           "Stream Domain",IDC_STATIC,183,218,69,8
+    EDITTEXT        IDC_EDIT_DOMAIN,183,229,90,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Load from .m3u8 playlist",IDC_BUTTON_LOAD_PLAYLIST,277,202,56,40,BS_MULTILINE
+    PUSHBUTTON      "Exit",IDCANCEL,269,254,69,19
+    PUSHBUTTON      "Save Channels",IDC_BUTTON_SAVE,7,254,69,19
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "Channel Editor for Dune Edem TV plugin"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "EdemChannelEditor.exe"
+            VALUE "LegalCopyright", "All rights reserved."
+            VALUE "OriginalFilename", "EdemChannelEditor.exe"
+            VALUE "ProductName", "Dune Edem TV Channel Editor"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 192
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 151
+    END
+
+    IDD_EDEMCHANNELEDITOR_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 338
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 273
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_EDEMCHANNELEDITOR_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_EDEMCHANNELEDITOR_DIALOG DLGINIT
+BEGIN
+    IDC_MFCEDITBROWSE_PLUGIN_ROOT, 0x37c, 42, 0
+0x4d3c, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 0x4d5f, 0x646f, 
+0x3e65, 0x3c32, 0x4d2f, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 
+0x4d5f, 0x646f, 0x3e65, 
+    IDC_MFCEDITBROWSE_PLAYER, 0x37c, 42, 0
+0x4d3c, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 0x4d5f, 0x646f, 
+0x3e65, 0x3c31, 0x4d2f, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 
+0x4d5f, 0x646f, 0x3e65, 
+    0
+END
+
+IDD_ABOUTBOX DLGINIT
+BEGIN
+    IDC_MFCLINK1, 0x37c, 259, 0
+0x4d3c, 0x4346, 0x694c, 0x6b6e, 0x555f, 0x6c72, 0x683e, 0x7474, 0x7370, 
+0x2f3a, 0x772f, 0x7777, 0x702e, 0x7961, 0x6170, 0x2e6c, 0x6f63, 0x2f6d, 
+0x6763, 0x2d69, 0x6962, 0x2f6e, 0x6577, 0x7362, 0x7263, 0x633f, 0x646d, 
+0x5f3d, 0x6f64, 0x616e, 0x6974, 0x6e6f, 0x2673, 0x7562, 0x6973, 0x656e, 
+0x7373, 0x353d, 0x5944, 0x5037, 0x5345, 0x4c5a, 0x4434, 0x4c38, 0x6326, 
+0x7275, 0x6572, 0x636e, 0x5f79, 0x6f63, 0x6564, 0x553d, 0x4453, 0x6126, 
+0x6f6d, 0x6e75, 0x3d74, 0x3c35, 0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x555f, 
+0x6c72, 0x3c3e, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7255, 0x506c, 0x6572, 
+0x6966, 0x3e78, 0x2f3c, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7255, 0x506c, 
+0x6572, 0x6966, 0x3e78, 0x4d3c, 0x4346, 0x694c, 0x6b6e, 0x545f, 0x6f6f, 
+0x746c, 0x7069, 0x3c3e, 0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x545f, 0x6f6f, 
+0x746c, 0x7069, 0x3c3e, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7546, 0x6c6c, 
+0x6554, 0x7478, 0x6f54, 0x6c6f, 0x6974, 0x3e70, 0x4146, 0x534c, 0x3c45, 
+0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x465f, 0x6c75, 0x546c, 0x7865, 0x5474, 
+0x6f6f, 0x746c, 0x7069, "\076" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDR_MAINFRAME           "Dune Edem TV Channel Editor\nChannelEditor\nChannelEditor\n\n\n\n"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "&About Dune Edem TV Channel Editor..."
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#include "res\EdemChannelEditor.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"      // Standard components
+#if !defined(_AFXDLL)
+#include "afxribbon.rc"   // MFC ribbon and control bar resources
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
