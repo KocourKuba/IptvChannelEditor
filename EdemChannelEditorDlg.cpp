@@ -39,12 +39,14 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialog)
 	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_ARCHIVE, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CEdemChannelEditorDlg::OnChanges)
-	ON_BN_CLICKED(IDC_BUTTON_ICON_LOAD, &CEdemChannelEditorDlg::OnBnClickedButtonIconLoad)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_ROOT, &CEdemChannelEditorDlg::OnEnChangeMfceditbrowsePluginRoot)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLAYER, &CEdemChannelEditorDlg::OnEnChangeMfceditbrowsePlayer)
 	ON_EN_CHANGE(IDC_EDIT_KEY, &CEdemChannelEditorDlg::OnEnChangeEditKey)
 	ON_EN_CHANGE(IDC_EDIT_DOMAIN, &CEdemChannelEditorDlg::OnEnChangeEditDomain)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonAddCategory)
+	ON_STN_CLICKED(IDC_STATIC_ICON, &CEdemChannelEditorDlg::OnStnClickedStaticIcon)
+	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CEdemChannelEditorDlg::OnBnClickedButtonAbout)
 END_MESSAGE_MAP()
 
 
@@ -123,6 +125,15 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
+
+	LOGFONT lfDlg;
+	GetFont()->GetLogFont(&lfDlg);
+	CDC* dc = GetDC();
+	lfDlg.lfHeight = -MulDiv(160, GetDeviceCaps(dc->m_hDC, LOGPIXELSY), 720);
+	lfDlg.lfWeight = FW_BOLD;
+	m_largeFont.CreateFontIndirect(&lfDlg);
+
+	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
 
 	m_pluginRoot = theApp.GetProfileString(_T("Setting"), _T("PluginRoot"));
 	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
@@ -443,38 +454,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonTestUrl()
 	}
 }
 
-void CEdemChannelEditorDlg::OnBnClickedButtonIconLoad()
-{
-	const CString logo_path = m_pluginRoot + CHANNELS_LOGO_PATH;
-
-	CFileDialog dlg(TRUE);
-	CString file(logo_path);
-	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));
-	filter.Replace('#', '\0');
-
-	OPENFILENAME& oFN = dlg.GetOFN();
-	oFN.lpstrFilter = filter.GetString();
-	oFN.nMaxFile = MAX_PATH;
-	oFN.nFilterIndex = 0;
-	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
-	oFN.lpstrTitle = _T("Load channel logo");
-	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
-	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON;
-
-	INT_PTR nResult = dlg.DoModal();
-	file.ReleaseBuffer();
-
-	if (nResult == IDOK)
-	{
-		LoadImage(m_wndIcon, logo_path + oFN.lpstrFileTitle);
-		CString icon_url(CHANNELS_LOGO_PATH);
-		icon_url += oFN.lpstrFileTitle;
-		m_iconPath = icon_url;
-		set_changed(TRUE);
-		UpdateData(FALSE);
-	}
-}
-
 void CEdemChannelEditorDlg::OnEnChangeMfceditbrowsePluginRoot()
 {
 	UpdateData(TRUE);
@@ -564,4 +543,50 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSave()
 {
 	CString path = m_pluginRoot + L"edem_channel_list_new.xml";
 	set_allow_save(!m_channels.SaveToFile(path.GetString()));
+}
+
+
+void CEdemChannelEditorDlg::OnBnClickedButtonAddCategory()
+{
+	// TODO: Add your control notification handler code here
+}
+
+
+void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
+{
+	const CString logo_path = m_pluginRoot + CHANNELS_LOGO_PATH;
+
+	CFileDialog dlg(TRUE);
+	CString file(logo_path);
+	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));
+	filter.Replace('#', '\0');
+
+	OPENFILENAME& oFN = dlg.GetOFN();
+	oFN.lpstrFilter = filter.GetString();
+	oFN.nMaxFile = MAX_PATH;
+	oFN.nFilterIndex = 0;
+	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
+	oFN.lpstrTitle = _T("Load channel logo");
+	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
+	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON;
+
+	INT_PTR nResult = dlg.DoModal();
+	file.ReleaseBuffer();
+
+	if (nResult == IDOK)
+	{
+		LoadImage(m_wndIcon, logo_path + oFN.lpstrFileTitle);
+		CString icon_url(CHANNELS_LOGO_PATH);
+		icon_url += oFN.lpstrFileTitle;
+		m_iconPath = icon_url;
+		set_changed(TRUE);
+		UpdateData(FALSE);
+	}
+}
+
+
+void CEdemChannelEditorDlg::OnBnClickedButtonAbout()
+{
+	CAboutDlg dlg;
+	dlg.DoModal();
 }

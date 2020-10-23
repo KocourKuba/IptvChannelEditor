@@ -37,8 +37,9 @@ protected:
 	afx_msg void OnBnClickedButtonTestUrl();
 	afx_msg void OnBnClickedButtonAdd();
 	afx_msg void OnBnClickedButtonRemove();
-	afx_msg void OnBnClickedButtonIconLoad();
 	afx_msg void OnBnClickedButtonSave();
+	afx_msg void OnBnClickedButtonAddCategory();
+	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnCbnSelchangeComboChannel();
 	afx_msg void OnEnChangeMfceditbrowsePluginRoot();
 	afx_msg void OnEnChangeMfceditbrowsePlayer();
@@ -74,6 +75,7 @@ protected:
 	CButton m_wndCustom;
 	CButton m_wndSave;
 	CStatic m_wndIcon;
+	CFont m_largeFont;
 
 	CString m_channelName;
 	CString m_streamUrl;
@@ -98,4 +100,6 @@ private:
 	CString m_iconPath;
 
 	ChannelList m_channels;
+public:
+	afx_msg void OnBnClickedButtonAbout();
 };
