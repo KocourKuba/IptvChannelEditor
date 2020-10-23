@@ -10,6 +10,7 @@
 #include "EdemChannelEditor.h"
 #include "EdemChannelEditorDlg.h"
 #include "AboutDlg.h"
+#include "NewCategory.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,6 +48,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonAddCategory)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CEdemChannelEditorDlg::OnStnClickedStaticIcon)
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CEdemChannelEditorDlg::OnBnClickedButtonAbout)
+	ON_BN_CLICKED(IDC_BUTTON_REMOVE_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveCategory)
 END_MESSAGE_MAP()
 
 
@@ -205,7 +207,7 @@ void CEdemChannelEditorDlg::LoadImage(CStatic& wnd, const CString& fullPath)
 		CDC* screenDC = GetDC();
 
 		CRect rc;
-		m_wndIcon.GetClientRect(rc);
+		wnd.GetClientRect(rc);
 
 		CImage resized;
 		resized.Create(rc.Width(), rc.Height(), 32);
@@ -545,10 +547,45 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSave()
 	set_allow_save(!m_channels.SaveToFile(path.GetString()));
 }
 
-
 void CEdemChannelEditorDlg::OnBnClickedButtonAddCategory()
 {
-	// TODO: Add your control notification handler code here
+	NewCategory dlg;
+	dlg.m_pluginRoot = m_pluginRoot;
+
+	if (dlg.DoModal() == IDOK)
+	{
+		auto& categories = m_channels.get_categories();
+		auto last_id = m_channels.GetFreeID();
+		auto newCategory = std::make_unique<ChannelCategory>();
+		newCategory->set_id(last_id);
+		newCategory->set_caption(dlg.m_name.GetString());
+		newCategory->set_icon_url(CStringA(dlg.m_iconUrl).GetString());
+		categories.emplace(last_id, std::move(newCategory));
+
+		set_changed(TRUE);
+		set_allow_save(TRUE);
+		ReloadCategories();
+	}
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonRemoveCategory()
+{
+	int idx = m_wndCategoriesList.GetCurSel();
+	if (idx == CB_ERR)
+		return;
+	auto category = (ChannelCategory*)m_wndCategoriesList.GetItemData(idx);
+	auto id = category->get_id();
+
+	for (const auto& channel : m_channels.get_channels())
+	{
+		if (auto found = channel->get_categores().find(id); found != channel->get_categores().cend())
+		{
+			CString msg;
+			msg.Format(_T("Category is assigned to the channel '%s'. Please remove it first."), m_channels.get_categories().at(id)->get_caption().c_str());
+			AfxMessageBox(msg);
+			break;
+		}
+	}
 }
 
 
@@ -583,7 +620,6 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 		UpdateData(FALSE);
 	}
 }
-
 
 void CEdemChannelEditorDlg::OnBnClickedButtonAbout()
 {

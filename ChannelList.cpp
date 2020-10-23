@@ -3,6 +3,30 @@
 #include "ChannelList.h"
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
+#include <algorithm>
+
+int ChannelList::GetFreeID()
+{
+	std::set<int> busy;
+	for (const auto& category : categories)
+	{
+		busy.emplace(category.second->get_id());
+	}
+
+	if (busy.empty())
+		return 1;
+
+	int free_id = *busy.begin();
+	for (const auto& id : busy)
+	{
+		if (id != free_id) break;
+
+		free_id = id;
+		free_id++;
+	}
+
+	return free_id;
+}
 
 bool ChannelList::LoadFromFile(const std::wstring& path)
 {

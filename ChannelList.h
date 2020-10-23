@@ -21,6 +21,7 @@ public:
 	const std::set<int>& get_edem_channels() const { return edem_channels; }
 	std::set<int>& get_edem_channels() { return edem_channels; }
 
+	int GetFreeID();
 public:
 	ChannelList() = default;
 

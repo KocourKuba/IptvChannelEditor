@@ -31,6 +31,7 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonLoadPlaylist();
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedButtonTestEpg();
@@ -39,6 +40,7 @@ protected:
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnBnClickedButtonAddCategory();
+	afx_msg void OnBnClickedButtonRemoveCategory();
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnCbnSelchangeComboChannel();
 	afx_msg void OnEnChangeMfceditbrowsePluginRoot();
@@ -100,6 +102,4 @@ private:
 	CString m_iconPath;
 
 	ChannelList m_channels;
-public:
-	afx_msg void OnBnClickedButtonAbout();
 };

@@ -191,6 +191,7 @@
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelList.h" />
     <ClInclude Include="ChannelCategory.h" />
+    <ClInclude Include="NewCategory.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="EdemChannelEditor.h" />
     <ClInclude Include="EdemChannelEditorDlg.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelList.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
+    <ClCompile Include="NewCategory.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="EdemChannelEditor.cpp" />
     <ClCompile Include="EdemChannelEditorDlg.cpp" />
@@ -222,6 +224,7 @@
     <ResourceCompile Include="EdemChannelEditor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="res\EdemChannelEditor.rc2" />
   </ItemGroup>
   <ItemGroup>
