@@ -55,6 +55,8 @@ BOOL NewCategory::OnInitDialog()
 
 void NewCategory::OnStnClickedStaticCategoryIcon()
 {
+	UpdateData(TRUE);
+
 	CString path = theApp.GetAppPath() + (m_type ? CATEGORY_LOGO_PATH : CHANNEL_LOGO_PATH);
 	CString file = theApp.GetAppPath() + PLUGIN_ROOT + m_iconUrl;
 	file.Replace('/', '\\');

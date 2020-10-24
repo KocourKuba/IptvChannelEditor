@@ -380,6 +380,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonRemoveChannel()
 		ASSERT(found != channels.end());
 		channels.erase(found);
 		LoadChannelInfo();
+		set_allow_save();
 	}
 }
 
@@ -388,16 +389,6 @@ void CEdemChannelEditorDlg::OnBnClickedCheckCustomize()
 	BOOL checked = m_wndCustom.GetCheck();
 	m_wndStreamUrl.EnableWindow(checked);
 	m_wndStreamID.EnableWindow(!checked);
-
-// 	if(!checked)
-// 	{
-// 		auto channel = GetChannel(m_wndChannelsList.GetCurSel());
-// 		if (channel)
-// 		{
-// 			m_streamID = channel->get_edem_channel_id();
-// 			UpdateData(FALSE);
-// 		}
-// 	}
 
 	set_allow_save();
 }
@@ -452,6 +443,8 @@ void CEdemChannelEditorDlg::OnEnKillfocusEditChannelName()
 	m_wndChannelsList.DeleteString(m_current);
 	m_wndChannelsList.InsertString(m_current, m_channelName);
 	m_wndChannelsList.SetItemData(m_current, data);
+
+	set_allow_save();
 }
 
 void CEdemChannelEditorDlg::OnChanges()
@@ -723,6 +716,7 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 		m_iconUrl = CHANNELS_LOGO_URL;
 		m_iconUrl += oFN.lpstrFileTitle;
 
+		set_allow_save();
 		UpdateData(FALSE);
 	}
 }
