@@ -735,16 +735,21 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAbout()
 
 void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 {
-	CString csFileName = theApp.GetAppPath();
-	csFileName += _T("7za.dll");
+	CString dllFile = theApp.GetAppPath();
+#ifdef _DEBUG
+	dllFile += _T("..\\dll\\");
+#endif // _DEBUG
+	dllFile += _T("7za.dll");
 
-	SevenZipWrapper archiver(csFileName.GetString());
+	CString plugin_folder = theApp.GetAppPath() + PLUGIN_ROOT;
+
+	SevenZipWrapper archiver(dllFile.GetString());
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
-	bool res = archiver.GetCompressor().AddFiles(_T(".\\edem\\"), _T("*.*"), true);
+	bool res = archiver.GetCompressor().AddFiles(plugin_folder.GetString(), _T("*.*"), true);
 	if (!res)
 		return;
 
-	res = archiver.CreateArchive(_T("dune_plugin_edem_free4_mod.zip"));
+	res = archiver.CreateArchive(_T("dune_plugin_edem_mod.zip"));
 	if (res)
 	{
 		AfxMessageBox(_T("Plugin created.\nInstall it to the DUNE mediaplayer"), MB_OK);
