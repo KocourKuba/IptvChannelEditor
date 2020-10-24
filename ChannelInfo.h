@@ -49,6 +49,7 @@ public:
 	std::string CombineEdemStreamingUrl(const std::string& sub_domain, const std::string& ott_key);
 	std::string TranslateStreamingUrl(const std::string& url);
 	int GetChannelIdFromStreamingUrl();
+	std::string SetChannelIdForStreamingUrl(int id);
 	std::string GetIconRelativePath();
 	void SetIconPluginPath(const std::string& relative_path);
 

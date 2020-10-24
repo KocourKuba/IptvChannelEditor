@@ -11,7 +11,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 // CEdemChannelEditorApp
 
 BEGIN_MESSAGE_MAP(CEdemChannelEditorApp, CWinApp)
@@ -97,3 +96,47 @@ BOOL CEdemChannelEditorApp::InitInstance()
 	return FALSE;
 }
 
+CString CEdemChannelEditorApp::GetAppPath()
+{
+	CString fileName;
+
+	if (GetModuleFileName(theApp.m_hInstance, fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
+	{
+		fileName.ReleaseBuffer();
+		int pos = fileName.ReverseFind('\\');
+		if(pos != -1)
+			fileName.Truncate(pos + 1);
+	}
+
+	return fileName;
+}
+
+void CEdemChannelEditorApp::LoadImage(CStatic& wnd, const CString& fullPath)
+{
+	HBITMAP hImg = nullptr;
+	CImage image;
+	if (SUCCEEDED(image.Load(fullPath)))
+	{
+		//CDC* screenDC = GetDC();
+
+		CRect rc;
+		wnd.GetClientRect(rc);
+
+		CImage resized;
+		resized.Create(rc.Width(), rc.Height(), 32);
+		HDC dcImage = resized.GetDC();
+		SetStretchBltMode(dcImage, COLORONCOLOR);
+		image.StretchBlt(dcImage, rc, SRCCOPY);
+		// The next two lines test the image on a picture control.
+		image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
+
+		resized.ReleaseDC();
+		//ReleaseDC(screenDC);
+
+		hImg = (HBITMAP)resized.Detach();
+	}
+
+	HBITMAP hOld = wnd.SetBitmap(hImg);
+	if (hOld)
+		::DeleteObject(hOld);
+}

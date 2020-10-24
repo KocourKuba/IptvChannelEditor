@@ -7,6 +7,17 @@
 
 // NewCategory dialog
 
+static constexpr auto CATEGORY_LOGO_URL = "icons/";
+static constexpr auto ICON_TEMPLATE = L"icons/shablon.png";
+
+#ifdef _DEBUG
+static constexpr auto ICON_TEMPLATE_PATH = L"../edem_plugin/icons/shablon.png";
+static constexpr auto CATEGORY_LOGO_PATH = L"../edem_plugin/icons/";
+#else
+static constexpr auto ICON_TEMPLATE_PATH = L"./edem_plugin/icons/shablon.png";
+static constexpr auto CATEGORY_LOGO_PATH = L"./edem_plugin/icons/";
+#endif // _DEBUG
+
 IMPLEMENT_DYNAMIC(NewCategory, CDialogEx)
 
 BEGIN_MESSAGE_MAP(NewCategory, CDialogEx)
@@ -15,8 +26,8 @@ END_MESSAGE_MAP()
 
 NewCategory::NewCategory(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_NEW_CATEGORY, pParent)
+	, m_iconUrl(ICON_TEMPLATE)
 {
-
 }
 
 void NewCategory::DoDataExchange(CDataExchange* pDX)
@@ -31,48 +42,21 @@ BOOL NewCategory::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	m_iconUrl = _T("icons/shablon.png");
-	LoadImage(m_categoryIcon, m_pluginRoot + _T("icons/shablon.png"));
+	theApp.LoadImage(m_categoryIcon, ICON_TEMPLATE_PATH);
 	return TRUE;
 }
 
 // NewCategory message handlers
 
-void NewCategory::LoadImage(CStatic& wnd, const CString& fullPath)
-{
-	HBITMAP hImg = nullptr;
-	CImage image;
-	if (SUCCEEDED(image.Load(fullPath)))
-	{
-		CDC* screenDC = GetDC();
-
-		CRect rc;
-		wnd.GetClientRect(rc);
-
-		CImage resized;
-		resized.Create(rc.Width(), rc.Height(), 32);
-		image.StretchBlt(resized.GetDC(), rc, SRCCOPY);
-
-		resized.ReleaseDC();
-		ReleaseDC(screenDC);
-
-		hImg = (HBITMAP)resized.Detach();
-	}
-
-	HBITMAP hOld = wnd.SetBitmap(hImg);
-	if (hOld)
-		::DeleteObject(hOld);
-}
-
 void NewCategory::OnStnClickedStaticCategoryIcon()
 {
-	const CString logo_path = m_pluginRoot + CATEGORY_LOGO_PATH;
+	CString file = theApp.GetAppPath();
+	file += CATEGORY_LOGO_PATH;
 
-	CFileDialog dlg(TRUE);
-	CString file(logo_path);
 	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));
 	filter.Replace('#', '\0');
 
+	CFileDialog dlg(TRUE);
 	OPENFILENAME& oFN = dlg.GetOFN();
 	oFN.lpstrFilter = filter.GetString();
 	oFN.nMaxFile = MAX_PATH;
@@ -87,10 +71,13 @@ void NewCategory::OnStnClickedStaticCategoryIcon()
 
 	if (nResult == IDOK)
 	{
-		LoadImage(m_categoryIcon, logo_path + oFN.lpstrFileTitle);
-		CString icon_url(CATEGORY_LOGO_PATH);
-		icon_url += oFN.lpstrFileTitle;
-		m_iconUrl = icon_url;
+		m_iconUrl = CATEGORY_LOGO_URL;
+		m_iconUrl += oFN.lpstrFileTitle;
+
+		CString path(CATEGORY_LOGO_PATH);
+		path += oFN.lpstrFileTitle;
+		theApp.LoadImage(m_categoryIcon, path);
+
 		UpdateData(FALSE);
 	}
 }

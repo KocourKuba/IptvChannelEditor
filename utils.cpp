@@ -283,9 +283,9 @@ std::string utf16_to_utf8(const std::wstring& w)
 
 std::string int_to_char(int param)
 {
-	std::string fmt;
-	fmt.reserve(12);
-	sprintf_s(fmt.data(), fmt.capacity(), "%d", param);
+	char fmt[12];
+	sprintf_s(fmt, 12, "%d", param);
+
 	return fmt;
 }
 

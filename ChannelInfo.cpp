@@ -131,6 +131,20 @@ int ChannelInfo::GetChannelIdFromStreamingUrl()
 	return 0;
 }
 
+std::string ChannelInfo::SetChannelIdForStreamingUrl(int id)
+{
+	if (id == 0)
+		return get_streaming_url();
+
+	static constexpr auto url_template = "http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
+
+	const auto& channel = utils::int_to_char(id);
+	std::regex re_ch(R"(\{ID\})");
+	std::string url = std::regex_replace(url_template, re_ch, channel);
+
+	return url;
+}
+
 std::string ChannelInfo::GetIconRelativePath()
 {
 	std::regex re_pf(R"(plugin_file:\/\/)");

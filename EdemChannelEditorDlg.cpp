@@ -13,6 +13,7 @@
 #include "NewCategory.h"
 
 #include "SevenZip/7zip/SevenZipWrapper.h"
+#include "utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,8 +21,14 @@
 
 using namespace SevenZip;
 
-constexpr auto CHANNELS_CONFIG = L"edem_channel_list.xml";
-constexpr auto CHANNELS_LOGO_PATH = "icons\\channels\\";
+static constexpr auto CHANNELS_LOGO_URL = "icons/channels/";
+#ifdef _DEBUG
+static constexpr auto CHANNELS_CONFIG = L"../edem_plugin/edem_channel_list.xml";
+static constexpr auto CHANNELS_LOGO_PATH = L"../edem_plugin/icons/channels/";
+#else
+static constexpr auto CHANNELS_CONFIG = L"./edem_plugin/edem_channel_list.xml";
+static constexpr auto CHANNELS_LOGO_PATH = L"./edem_plugin/icons/channels/";
+#endif // _DEBUG
 
 // CEdemChannelEditorDlg dialog
 
@@ -40,14 +47,13 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG, &CEdemChannelEditorDlg::OnBnClickedButtonTestEpg)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CEdemChannelEditorDlg::OnBnClickedButtonRemove)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_URL, &CEdemChannelEditorDlg::OnBnClickedButtonTestUrl)
-	ON_EN_CHANGE(IDC_EDIT_TVG_ID, &CEdemChannelEditorDlg::OnChanges)
-	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_ARCHIVE, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CEdemChannelEditorDlg::OnChanges)
-	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_ROOT, &CEdemChannelEditorDlg::OnEnChangeMfceditbrowsePluginRoot)
+	ON_EN_CHANGE(IDC_EDIT_CHANNEL_NAME, &CEdemChannelEditorDlg::OnChanges)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLAYER, &CEdemChannelEditorDlg::OnEnChangeMfceditbrowsePlayer)
 	ON_EN_CHANGE(IDC_EDIT_KEY, &CEdemChannelEditorDlg::OnEnChangeEditKey)
 	ON_EN_CHANGE(IDC_EDIT_DOMAIN, &CEdemChannelEditorDlg::OnEnChangeEditDomain)
+	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CEdemChannelEditorDlg::OnEnChangeEditUrlId)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonAddCategory)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CEdemChannelEditorDlg::OnStnClickedStaticIcon)
@@ -75,6 +81,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_CHANNEL_NAME, m_channelName);
 	DDX_Text(pDX, IDC_EDIT_URL_ID, m_streamID);
 	DDX_Text(pDX, IDC_EDIT_TVG_ID, m_TVGID);
+	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_hasArchive);
@@ -82,7 +89,6 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PREV_EPG, m_prevDays);
 	DDX_Text(pDX, IDC_EDIT_NEXT_EPG, m_nextDays);
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndIcon);
-	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_ROOT, m_pluginRoot);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLAYER, m_player);
 	DDX_Text(pDX, IDC_EDIT_KEY, m_accessKey);
 	DDX_Text(pDX, IDC_EDIT_DOMAIN, m_domain);
@@ -143,12 +149,13 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
 
-	m_pluginRoot = theApp.GetProfileString(_T("Setting"), _T("PluginRoot"));
+	LoadSetting();
+
 	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 	m_accessKey = theApp.GetProfileString(_T("Setting"), _T("AccessKey"));
 	m_domain = theApp.GetProfileString(_T("Setting"), _T("Domain"));
 
-	LoadSetting();
+	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -162,24 +169,29 @@ void CEdemChannelEditorDlg::set_allow_save(BOOL val)
 
 BOOL CEdemChannelEditorDlg::LoadSetting()
 {
-	if (m_pluginRoot.IsEmpty())
+	std::wstring path = theApp.GetAppPath().GetString();
+	path += CHANNELS_CONFIG;
+
+	if (!m_channels.LoadFromFile(path))
 		return FALSE;
 
-	CStringW listFile = m_pluginRoot + CHANNELS_CONFIG;
-	if (!m_channels.LoadFromFile(listFile.GetString()))
-		return FALSE;
+	FillCategories();
+	LoadChannels();
 
-	ReloadCategories();
-	ReloadChannels();
-	OnCbnSelchangeComboChannel();
-	theApp.WriteProfileString(_T("Setting"), _T("PluginRoot"), m_pluginRoot);
-	set_changed(FALSE);
+	if (m_current == CB_ERR && !m_channels.get_channels().empty())
+	{
+		m_current = 0;
+		m_wndChannelList.SetCurSel(m_current);
+	}
+
+	LoadChannelInfo(m_current);
+
 	set_allow_save(FALSE);
 
 	return TRUE;
 }
 
-void CEdemChannelEditorDlg::ReloadChannels()
+void CEdemChannelEditorDlg::LoadChannels()
 {
 	m_wndChannelList.ResetContent();
 	const auto& channels = m_channels.get_channels();
@@ -188,14 +200,9 @@ void CEdemChannelEditorDlg::ReloadChannels()
 		int idx = m_wndChannelList.AddString(channel->get_name().c_str());
 		m_wndChannelList.SetItemData(idx, (DWORD_PTR)channel.get());
 	}
-
-	if (!channels.empty())
-		m_wndChannelList.SetCurSel(0);
-
-	set_changed(FALSE);
 }
 
-void CEdemChannelEditorDlg::ReloadCategories()
+void CEdemChannelEditorDlg::FillCategories()
 {
 	m_wndCategoriesList.ResetContent();
 	const auto& categories = m_channels.get_categories();
@@ -207,38 +214,14 @@ void CEdemChannelEditorDlg::ReloadCategories()
 
 	if (!categories.empty())
 		m_wndCategoriesList.SetCurSel(0);
-
-	set_changed(FALSE);
 }
 
-void CEdemChannelEditorDlg::LoadImage(CStatic& wnd, const CString& fullPath)
+ChannelInfo* CEdemChannelEditorDlg::GetChannel(int idx)
 {
-	HBITMAP hImg = nullptr;
-	CImage image;
-	if (SUCCEEDED(image.Load(fullPath)))
-	{
-		CDC* screenDC = GetDC();
+	if (idx == CB_ERR)
+		return nullptr;
 
-		CRect rc;
-		wnd.GetClientRect(rc);
-
-		CImage resized;
-		resized.Create(rc.Width(), rc.Height(), 32);
-		HDC dcImage = resized.GetDC();
-		SetStretchBltMode(dcImage, COLORONCOLOR);
-		image.StretchBlt(dcImage, rc, SRCCOPY);
-		// The next two lines test the image on a picture control.
-		image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
-
-		resized.ReleaseDC();
-		ReleaseDC(screenDC);
-
-		hImg = (HBITMAP)resized.Detach();
-	}
-
-	HBITMAP hOld = wnd.SetBitmap(hImg);
-	if (hOld)
-		::DeleteObject(hOld);
+	return (ChannelInfo*)m_wndChannelList.GetItemData(idx);
 }
 
 void CEdemChannelEditorDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -293,49 +276,39 @@ HCURSOR CEdemChannelEditorDlg::OnQueryDragIcon()
 void CEdemChannelEditorDlg::OnBnClickedCheckCustomize()
 {
 	m_wndStreamUrl.EnableWindow(m_wndCustom.GetCheck());
-	OnChanges();
+	set_allow_save();
 }
 
 void CEdemChannelEditorDlg::OnCbnSelchangeComboChannel()
 {
+	if(m_current != CB_ERR)
+	{
+		SaveChannelInfo();
+	}
+
 	int idx = m_wndChannelList.GetCurSel();
 	if (idx != CB_ERR && idx != m_current)
 	{
-		if (is_changed())
-		{
-			// Save changes
-			UpdateData(TRUE);
+		LoadChannelInfo(idx);
+	}
+}
 
-			auto channel = (ChannelInfo*)m_wndChannelList.GetItemData(m_current);
-			channel->set_name(m_channelName.GetString());
-			channel->set_tvguide_id(CStringA(m_TVGID).GetString());
-			channel->set_prev_epg_days(m_prevDays);
-			channel->set_next_epg_days(m_nextDays);
-			channel->set_has_archive(m_hasArchive);
-			channel->set_adult(m_isAdult);
-			channel->SetIconPluginPath(CStringA(m_iconPath).GetString());
-			channel->set_streaming_url(CStringA(m_streamUrl).GetString());
-
-			std::set<int> newCategories;
-			for (int i = 0; i < m_wndShowIn.GetCount(); i++)
-			{
-				auto category = (ChannelCategory*)m_wndShowIn.GetItemData(i);
-				newCategories.emplace(category->get_id());
-			}
-			channel->set_categores(newCategories);
-		}
-
-		auto channel = (ChannelInfo*)m_wndChannelList.GetItemData(idx);
+void CEdemChannelEditorDlg::LoadChannelInfo(int idx)
+{
+	auto channel = GetChannel(idx);
+	if (channel)
+	{
 		m_channelName = channel->get_name().c_str();
 		m_TVGID = channel->get_tvguide_id().c_str();
 		m_prevDays = channel->get_prev_epg_days();
 		m_nextDays = channel->get_next_epg_days();
 		m_hasArchive = channel->get_has_archive();
 		m_isAdult = channel->get_adult();
-		m_iconPath = channel->GetIconRelativePath().c_str();
+		m_iconUrl = channel->GetIconRelativePath().c_str();
 		m_streamUrl = channel->get_streaming_url().c_str();
 
-		LoadImage(m_wndIcon, m_pluginRoot + m_iconPath);
+		CString path = theApp.GetAppPath() + m_iconUrl;
+		theApp.LoadImage(m_wndIcon, path);
 
 		m_wndShowIn.ResetContent();
 		for (const auto& id : channel->get_categores())
@@ -348,12 +321,37 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboChannel()
 		m_streamID = channel->GetChannelIdFromStreamingUrl();
 
 		m_wndCustom.SetCheck(m_streamID == 0);
+		m_wndStreamID.EnableWindow(m_streamID != 0);
 		m_wndStreamUrl.EnableWindow(m_streamID == 0);
 		m_current = idx;
 
 		UpdateData(FALSE);
+	}
+}
 
-		set_changed(FALSE);
+void CEdemChannelEditorDlg::SaveChannelInfo()
+{
+	UpdateData(TRUE);
+	// Save changes
+	auto channel = GetChannel(m_current);
+	if(channel)
+	{
+		channel->set_name(m_channelName.GetString());
+		channel->set_tvguide_id(CStringA(m_TVGID).GetString());
+		channel->set_prev_epg_days(m_prevDays);
+		channel->set_next_epg_days(m_nextDays);
+		channel->set_has_archive(m_hasArchive);
+		channel->set_adult(m_isAdult);
+		channel->SetIconPluginPath(CStringA(m_iconUrl).GetString());
+		channel->set_streaming_url(CStringA(m_streamUrl).GetString());
+
+		std::set<int> newCategories;
+		for (int i = 0; i < m_wndShowIn.GetCount(); i++)
+		{
+			auto category = (ChannelCategory*)m_wndShowIn.GetItemData(i);
+			newCategories.emplace(category->get_id());
+		}
+		channel->set_categores(newCategories);
 	}
 }
 
@@ -370,7 +368,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAdd()
 		}
 		int added = m_wndShowIn.AddString(toAdd->get_caption().c_str());
 		m_wndShowIn.SetItemData(added, (DWORD_PTR)toAdd);
-		OnChanges();
+		set_allow_save();
 	}
 }
 
@@ -380,14 +378,13 @@ void CEdemChannelEditorDlg::OnBnClickedButtonRemove()
 	if (idx != CB_ERR)
 	{
 		m_wndShowIn.DeleteString(idx);
-		OnChanges();
+		set_allow_save();
 	}
 }
 
 void CEdemChannelEditorDlg::OnChanges()
 {
-	set_changed(TRUE);
-	set_allow_save(TRUE);
+	set_allow_save();
 }
 
 void CEdemChannelEditorDlg::CheckLimits()
@@ -404,9 +401,9 @@ void CEdemChannelEditorDlg::CheckLimits()
 	if (m_nextDays > 7)
 		m_nextDays = 7;
 
-	OnChanges();
-
 	UpdateData(FALSE);
+
+	set_allow_save();
 }
 
 void CEdemChannelEditorDlg::OnEnChangeEditNum()
@@ -439,13 +436,25 @@ void CEdemChannelEditorDlg::OnBnClickedButtonTestEpg()
 
 	UpdateData(TRUE);
 
-	int idx = m_wndChannelList.GetCurSel();
-	if (idx != CB_ERR)
+	auto channel = GetChannel(m_wndChannelList.GetCurSel());
+	if (channel)
 	{
-		auto channel = (ChannelInfo*)m_wndChannelList.GetItemData(idx);
 		CStringA tvg_url;
 		tvg_url.Format(url, channel->get_tvguide_id().c_str());
 		ShellExecuteA(nullptr, "open", tvg_url.GetString(), nullptr, nullptr, SW_SHOWNORMAL);
+	}
+}
+
+void CEdemChannelEditorDlg::OnEnChangeEditUrlId()
+{
+	UpdateData(TRUE);
+
+	auto channel = GetChannel(m_wndChannelList.GetCurSel());
+	if (channel)
+	{
+		m_streamUrl = channel->SetChannelIdForStreamingUrl(m_streamID).c_str();
+		UpdateData(FALSE);
+		set_allow_save();
 	}
 }
 
@@ -453,11 +462,10 @@ void CEdemChannelEditorDlg::OnBnClickedButtonTestUrl()
 {
 	UpdateData(TRUE);
 
-	int idx = m_wndChannelList.GetCurSel();
-	if (idx != CB_ERR)
+	auto channel = GetChannel(m_wndChannelList.GetCurSel());
+	if (channel)
 	{
 		CString tvg_url;
-		auto channel = (ChannelInfo*)m_wndChannelList.GetItemData(idx);
 		const auto& url = channel->get_streaming_url();
 		if (m_wndCustom.GetCheck())
 		{
@@ -470,22 +478,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonTestUrl()
 
 		TRACE(_T("URL: %s"), tvg_url.GetString());
 		ShellExecute(nullptr, _T("open"), _T("C:\\Program Files (x86)\\K-Lite Codec Pack\\MPC-HC64\\mpc-hc64.exe"), tvg_url.GetString(), nullptr, SW_SHOWNORMAL);
-	}
-}
-
-void CEdemChannelEditorDlg::OnEnChangeMfceditbrowsePluginRoot()
-{
-	UpdateData(TRUE);
-
-	if (m_pluginRoot.IsEmpty())
-		return;
-	if (m_pluginRoot.Right(1) != '\\')
-		m_pluginRoot += '\\';
-
-	CStringW listFile = m_pluginRoot + CHANNELS_CONFIG;
-	if (!LoadSetting())
-	{
-		AfxMessageBox(_T("Can't find edem_channel_list.xml in selected folder"), MB_OK | MB_ICONERROR);
 	}
 }
 
@@ -560,14 +552,23 @@ void CEdemChannelEditorDlg::OnEnChangeEditDomain()
 
 void CEdemChannelEditorDlg::OnBnClickedButtonSave()
 {
-	CString path = m_pluginRoot + L"edem_channel_list.xml";
-	set_allow_save(!m_channels.SaveToFile(path.GetString()));
+	SaveChannelInfo();
+
+	std::wstring path = theApp.GetAppPath().GetString();
+	path += CHANNELS_CONFIG;
+
+	BOOL res = m_channels.SaveToFile(path);
+	set_allow_save(!res);
+	if (res)
+	{
+		LoadSetting();
+		m_wndChannelList.SetCurSel(m_current);
+	}
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonAddCategory()
 {
 	NewCategory dlg;
-	dlg.m_pluginRoot = m_pluginRoot;
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -579,9 +580,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddCategory()
 		newCategory->set_icon_url(CStringA(dlg.m_iconUrl).GetString());
 		categories.emplace(last_id, std::move(newCategory));
 
-		set_changed(TRUE);
-		set_allow_save(TRUE);
-		ReloadCategories();
+		set_allow_save();
+		FillCategories();
 	}
 }
 
@@ -607,10 +607,9 @@ void CEdemChannelEditorDlg::OnBnClickedButtonRemoveCategory()
 
 void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 {
-	const CString logo_path = m_pluginRoot + CHANNELS_LOGO_PATH;
-
 	CFileDialog dlg(TRUE);
-	CString file(logo_path);
+	CString file = theApp.GetAppPath() + CHANNELS_LOGO_PATH;
+
 	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));
 	filter.Replace('#', '\0');
 
@@ -628,11 +627,13 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 
 	if (nResult == IDOK)
 	{
-		LoadImage(m_wndIcon, logo_path + oFN.lpstrFileTitle);
-		CString icon_url(CHANNELS_LOGO_PATH);
-		icon_url += oFN.lpstrFileTitle;
-		m_iconPath = icon_url;
-		set_changed(TRUE);
+		CString path = theApp.GetAppPath() + CHANNELS_LOGO_PATH;
+		path += oFN.lpstrFileTitle;
+		theApp.LoadImage(m_wndIcon, path);
+
+		m_iconUrl = CHANNELS_LOGO_URL;
+		m_iconUrl += oFN.lpstrFileTitle;
+
 		UpdateData(FALSE);
 	}
 }
@@ -645,15 +646,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAbout()
 
 void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 {
-	CString csFileName;
-
-	if (GetModuleFileName(theApp.m_hInstance, csFileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
-	{
-		csFileName.ReleaseBuffer();
-		int pos = csFileName.ReverseFind('\\');
-		csFileName.Truncate(pos + 1);
-		csFileName += _T("7za.dll");
-	}
+	CString csFileName = theApp.GetAppPath();
+	csFileName += _T("7za.dll");
 
 	SevenZipWrapper archiver(csFileName.GetString());
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);

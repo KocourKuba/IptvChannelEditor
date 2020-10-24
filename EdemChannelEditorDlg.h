@@ -41,13 +41,17 @@ protected:
 	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnBnClickedButtonRemoveCategory();
+	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnCbnSelchangeComboChannel();
-	afx_msg void OnEnChangeMfceditbrowsePluginRoot();
+
+	void LoadChannelInfo(int idx);
+
 	afx_msg void OnEnChangeMfceditbrowsePlayer();
 	afx_msg void OnEnChangeEditNum();
 	afx_msg void OnEnChangeEditKey();
 	afx_msg void OnEnChangeEditDomain();
+	afx_msg void OnEnChangeEditUrlId();
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnChanges();
@@ -55,27 +59,27 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	BOOL is_changed() const { return m_changed; }
-	void set_changed(BOOL val) { m_changed = val; }
-
 	BOOL is_allow_save() const { return m_allow_save; }
-	void set_allow_save(BOOL val);
+	void set_allow_save(BOOL val = TRUE);
 
 	BOOL LoadSetting();
 	void CheckLimits();
-	void ReloadChannels();
-	void ReloadCategories();
-	void LoadImage(CStatic& wnd, const CString& fullPath);
+	void LoadChannels();
+	void FillCategories();
+	void SaveChannelInfo();
+	ChannelInfo* GetChannel(int idx);
 
 protected:
 	CComboBox m_wndChannelList;
 	CComboBox m_wndCategoriesList;
 	CListBox m_wndShowIn;
+	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
 	CSpinButtonCtrl m_wndSpinPrev;
 	CSpinButtonCtrl m_wndSpinNext;
 	CButton m_wndCustom;
 	CButton m_wndSave;
+	CButton m_wndPack;
 	CStatic m_wndIcon;
 	CFont m_largeFont;
 
@@ -93,17 +97,13 @@ protected:
 	int m_nextDays = 0;
 
 private:
-	BOOL m_changed = FALSE;
 	BOOL m_allow_save = FALSE;
 	int m_current = CB_ERR;
 
-	CString m_pluginRoot;
 	CString m_player;
-	CString m_iconPath;
+	CString m_iconUrl;
 
 	ChannelList m_channels;
 public:
-	afx_msg void OnBnClickedButtonPack();
-protected:
-	CButton m_wndPack;
+	afx_msg void OnEnChangeEditChannelName();
 };

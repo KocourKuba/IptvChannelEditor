@@ -24,9 +24,12 @@ public:
 public:
 	BOOL InitInstance() override;
 
+	void LoadImage(CStatic& wnd, const CString& fullPath);
+	CString GetAppPath();
 // Implementation
 
 	DECLARE_MESSAGE_MAP()
 };
+
 
 extern CEdemChannelEditorApp theApp;

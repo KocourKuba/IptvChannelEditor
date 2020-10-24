@@ -31,7 +31,6 @@
 #define IDC_BUTTON_TEST_URL             1021
 #define IDC_BUTTON_TEST_EPG             1022
 #define IDC_MFCLINK_DONATE              1023
-#define IDC_MFCEDITBROWSE_PLUGIN_ROOT   1024
 #define IDC_MFCEDITBROWSE_PLAYER        1025
 #define IDC_EDIT_KEY                    1026
 #define IDB_PNG_QR                      1027

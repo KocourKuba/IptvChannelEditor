@@ -1,7 +1,5 @@
 #pragma once
 
-constexpr auto CATEGORY_LOGO_PATH = "icons\\";
-
 // NewCategory dialog
 
 class NewCategory : public CDialogEx
@@ -24,12 +22,8 @@ protected:
 	afx_msg void OnStnClickedStaticCategoryIcon();
 	DECLARE_MESSAGE_MAP()
 
-private:
-	void LoadImage(CStatic& wnd, const CString& fullPath);
-
 public:
 	CStatic m_categoryIcon;
 	CString m_name;
 	CString m_iconUrl;
-	CString m_pluginRoot;
 };
