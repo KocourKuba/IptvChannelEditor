@@ -21,10 +21,11 @@ public:
 	const std::set<int>& get_edem_channels() const { return edem_channels; }
 	std::set<int>& get_edem_channels() { return edem_channels; }
 
-	int GetFreeID();
+	int GetFreeCategoryID();
 public:
 	ChannelList() = default;
 
+	ChannelInfo* CreateChannel();
 	bool LoadFromFile(const std::wstring& path);
 	bool SaveToFile(const std::wstring& path);
 

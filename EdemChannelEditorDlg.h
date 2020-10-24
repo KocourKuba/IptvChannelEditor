@@ -7,7 +7,7 @@
 
 
 // CEdemChannelEditorDlg dialog
-class CEdemChannelEditorDlg : public CDialog
+class CEdemChannelEditorDlg : public CDialogEx
 {
 // Construction
 public:
@@ -36,17 +36,14 @@ protected:
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedButtonTestEpg();
 	afx_msg void OnBnClickedButtonTestUrl();
-	afx_msg void OnBnClickedButtonAdd();
-	afx_msg void OnBnClickedButtonRemove();
+	afx_msg void OnBnClickedButtonAddToShowIn();
+	afx_msg void OnBnClickedButtonRemoveFromShowIn();
 	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnBnClickedButtonRemoveCategory();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnStnClickedStaticIcon();
-	afx_msg void OnCbnSelchangeComboChannel();
-
-	void LoadChannelInfo(int idx);
-
+	afx_msg void OnLbnSelchangeListChannels();
 	afx_msg void OnEnChangeMfceditbrowsePlayer();
 	afx_msg void OnEnChangeEditNum();
 	afx_msg void OnEnChangeEditKey();
@@ -62,6 +59,7 @@ private:
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
 
+	void LoadChannelInfo(int idx);
 	BOOL LoadSetting();
 	void CheckLimits();
 	void LoadChannels();
@@ -70,7 +68,7 @@ private:
 	ChannelInfo* GetChannel(int idx);
 
 protected:
-	CComboBox m_wndChannelList;
+	CListBox m_wndChannelsList;
 	CComboBox m_wndCategoriesList;
 	CListBox m_wndShowIn;
 	CEdit m_wndStreamID;
@@ -105,5 +103,6 @@ private:
 
 	ChannelList m_channels;
 public:
-	afx_msg void OnEnChangeEditChannelName();
+	afx_msg void OnBnClickedButtonAddChannel();
+	afx_msg void OnBnClickedButtonRemoveChannel();
 };

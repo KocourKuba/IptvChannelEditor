@@ -45,14 +45,17 @@
 #define IDC_EDIT_CATEGORY               1036
 #define IDD_DIALOG_NEW_CATEGORY         1036
 #define IDC_STATIC_CATEGORY_ICON        1037
+#define IDC_LIST_CHANNELS               1038
+#define IDC_BUTTON_ADD_CHANNEL          1039
+#define IDC_BUTTON_REMOVE_CHANNEL       1040
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        1038
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1038
+#define _APS_NEXT_CONTROL_VALUE         1040
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

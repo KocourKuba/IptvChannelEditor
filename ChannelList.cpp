@@ -5,7 +5,7 @@
 #include "rapidxml_print.hpp"
 #include <algorithm>
 
-int ChannelList::GetFreeID()
+int ChannelList::GetFreeCategoryID()
 {
 	std::set<int> busy;
 	for (const auto& category : categories)
@@ -26,6 +26,15 @@ int ChannelList::GetFreeID()
 	}
 
 	return free_id;
+}
+
+ChannelInfo* ChannelList::CreateChannel()
+{
+	auto category = std::make_unique<ChannelInfo>();
+	auto retVal = category.get();
+	channels.emplace_back(std::move(category));
+
+	return retVal;
 }
 
 bool ChannelList::LoadFromFile(const std::wstring& path)

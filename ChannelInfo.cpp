@@ -3,6 +3,15 @@
 #include "ChannelInfo.h"
 #include "utils.h"
 
+static constexpr auto url_template = "http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
+static constexpr auto icon_template = "file://icons/channel_unset.png";
+
+ChannelInfo::ChannelInfo()
+	: icon_url(icon_template)
+{
+	streaming_url = url_template;
+}
+
 void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 {
 	if (!node)
@@ -34,7 +43,17 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	set_has_archive(utils::get_value_int(node->first_node(ARCHIVE)));
 	set_adult(utils::get_value_int(node->first_node(PROTECTED)));
 
-	set_edem_channel_id(GetChannelIdFromStreamingUrl());
+	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8
+
+	int id = 0;
+	std::regex re(R"(http[s]{0,1}:\/\/ts:\/\/\{SUBDOMAIN\}\/iptv\/\{UID\}\/(\d+)\/index.m3u8)");
+	std::smatch m;
+	if (std::regex_match(get_streaming_url(), m, re))
+	{
+		id = utils::char_to_int(m[1].str().c_str());
+	}
+
+	set_edem_channel_id(id);
 }
 
 rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc)
@@ -117,26 +136,10 @@ std::string ChannelInfo::TranslateStreamingUrl(const std::string& url)
 	return std::regex_replace(url, re_ts, "");
 }
 
-int ChannelInfo::GetChannelIdFromStreamingUrl()
-{
-	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8
-
-	std::regex re(R"(http[s]{0,1}:\/\/ts:\/\/\{SUBDOMAIN\}\/iptv\/\{UID\}\/(\d+)\/index.m3u8)");
-	std::smatch m;
-	if (std::regex_match(get_streaming_url(), m, re))
-	{
-		return utils::char_to_int(m[1].str().c_str());
-	}
-
-	return 0;
-}
-
 std::string ChannelInfo::SetChannelIdForStreamingUrl(int id)
 {
 	if (id == 0)
 		return get_streaming_url();
-
-	static constexpr auto url_template = "http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
 
 	const auto& channel = utils::int_to_char(id);
 	std::regex re_ch(R"(\{ID\})");

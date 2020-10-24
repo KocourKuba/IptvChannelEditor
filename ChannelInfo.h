@@ -36,7 +36,7 @@ public:
 	static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
 public:
-	ChannelInfo() = default;
+	ChannelInfo();
 
 	ChannelInfo(rapidxml::xml_node<>* node)
 	{
@@ -48,7 +48,6 @@ public:
 
 	std::string CombineEdemStreamingUrl(const std::string& sub_domain, const std::string& ott_key);
 	std::string TranslateStreamingUrl(const std::string& url);
-	int GetChannelIdFromStreamingUrl();
 	std::string SetChannelIdForStreamingUrl(int id);
 	std::string GetIconRelativePath();
 	void SetIconPluginPath(const std::string& relative_path);
@@ -88,16 +87,16 @@ public:
 	void set_has_archive(int val) { has_archive = val; }
 
 protected:
-	int edem_channel_id = 0;
 	std::wstring name;
 	std::string tvguide_id;
 	std::string epg_id; // for compatibility not used in dune edem.tv plugin
-	int adult = 0;
 	std::string icon_url;
-	int prev_epg_days = 0;
-	int next_epg_days = 0;
-	std::set<int> categories;
 	std::string streaming_url;
+	std::set<int> categories;
+	int edem_channel_id = 0;
+	int prev_epg_days = 4;
+	int next_epg_days = 2;
+	int adult = 0;
 	int has_archive = 0;
 };
 

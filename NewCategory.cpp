@@ -8,14 +8,17 @@
 // NewCategory dialog
 
 static constexpr auto CATEGORY_LOGO_URL = "icons/";
-static constexpr auto ICON_TEMPLATE = L"icons/shablon.png";
+static constexpr auto CHANNEL_LOGO_URL = "icons/channels/";
+static constexpr auto ICON_TEMPLATE = L"icons/channels/channel_unset.png";
 
 #ifdef _DEBUG
-static constexpr auto ICON_TEMPLATE_PATH = L"../edem_plugin/icons/shablon.png";
-static constexpr auto CATEGORY_LOGO_PATH = L"../edem_plugin/icons/";
+static constexpr auto ICON_TEMPLATE_PATH = L"..\\edem_plugin\\icons\\channels\\channel_unset.png";
+static constexpr auto CATEGORY_LOGO_PATH = L"..\\edem_plugin\\icons\\";
+static constexpr auto CHANNEL_LOGO_PATH  = L"..\\edem_plugin\\icons\\channels\\";
 #else
-static constexpr auto ICON_TEMPLATE_PATH = L"./edem_plugin/icons/shablon.png";
-static constexpr auto CATEGORY_LOGO_PATH = L"./edem_plugin/icons/";
+static constexpr auto ICON_TEMPLATE_PATH = L".\\edem_plugin\\icons\\channels\\channel_unset.png";
+static constexpr auto CATEGORY_LOGO_PATH = L".\\edem_plugin\\icons\\";
+static constexpr auto CHANNEL_LOGO_PATH  = L".\\edem_plugin\\icons\\channels\\";
 #endif // _DEBUG
 
 IMPLEMENT_DYNAMIC(NewCategory, CDialogEx)
@@ -35,14 +38,14 @@ void NewCategory::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_EDIT_CATEGORY, m_name);
-	DDX_Control(pDX, IDC_STATIC_CATEGORY_ICON, m_categoryIcon);
+	DDX_Control(pDX, IDC_STATIC_CATEGORY_ICON, m_wndIcon);
 }
 
 BOOL NewCategory::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	theApp.LoadImage(m_categoryIcon, ICON_TEMPLATE_PATH);
+	theApp.LoadImage(m_wndIcon, theApp.GetAppPath() + ICON_TEMPLATE_PATH);
 	return TRUE;
 }
 
@@ -51,7 +54,7 @@ BOOL NewCategory::OnInitDialog()
 void NewCategory::OnStnClickedStaticCategoryIcon()
 {
 	CString file = theApp.GetAppPath();
-	file += CATEGORY_LOGO_PATH;
+	file += m_type ? CATEGORY_LOGO_PATH : CHANNEL_LOGO_PATH;
 
 	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));
 	filter.Replace('#', '\0');
@@ -71,12 +74,12 @@ void NewCategory::OnStnClickedStaticCategoryIcon()
 
 	if (nResult == IDOK)
 	{
-		m_iconUrl = CATEGORY_LOGO_URL;
+		m_iconUrl = m_type ? CATEGORY_LOGO_URL : CHANNEL_LOGO_URL;
 		m_iconUrl += oFN.lpstrFileTitle;
 
-		CString path(CATEGORY_LOGO_PATH);
+		CString path(m_type ? CATEGORY_LOGO_PATH : CHANNEL_LOGO_PATH);
 		path += oFN.lpstrFileTitle;
-		theApp.LoadImage(m_categoryIcon, path);
+		theApp.LoadImage(m_wndIcon, path);
 
 		UpdateData(FALSE);
 	}

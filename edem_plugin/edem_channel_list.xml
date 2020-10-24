@@ -920,6 +920,20 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>Кухня ТВ HD</caption>
+			<tvg_id>585</tvg_id>
+			<epg_id>383</epg_id>
+			<icon_url>plugin_file://icons/channels/kuhnia.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>9</tv_category_id>
+				<tv_category_id>12</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2127/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Доктор</caption>
 			<tvg_id>100023</tvg_id>
 			<epg_id>263</epg_id>
