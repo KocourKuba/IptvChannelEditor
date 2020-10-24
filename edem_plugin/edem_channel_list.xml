@@ -163,19 +163,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>НТВ +2</caption>
-			<tvg_id>1165</tvg_id>
-			<epg_id>545</epg_id>
-			<icon_url>plugin_file://icons/channels/ntv.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>1</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/713/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>ТВ Центр</caption>
 			<tvg_id>3</tvg_id>
 			<epg_id>11</epg_id>
@@ -186,19 +173,6 @@
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/520/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>ТВ Центр +2</caption>
-			<tvg_id>9003</tvg_id>
-			<epg_id>552</epg_id>
-			<icon_url>plugin_file://icons/channels/tvc.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>1</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/716/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -215,19 +189,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Звезда +2</caption>
-			<tvg_id>900330</tvg_id>
-			<epg_id>566</epg_id>
-			<icon_url>plugin_file://icons/channels/zvezda.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>1</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/739/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>5 канал</caption>
 			<tvg_id>255</tvg_id>
 			<epg_id>308</epg_id>
@@ -238,19 +199,6 @@
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/112/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>5 канал +2</caption>
-			<tvg_id>900255</tvg_id>
-			<epg_id>640</epg_id>
-			<icon_url>plugin_file://icons/channels/5kanal.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>1</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/746/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -281,19 +229,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>ТНТ +2</caption>
-			<tvg_id>304</tvg_id>
-			<epg_id>556</epg_id>
-			<icon_url>plugin_file://icons/channels/tnt.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>1</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/717/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>СТС</caption>
 			<tvg_id>104</tvg_id>
 			<epg_id>17</epg_id>
@@ -317,19 +252,6 @@
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/128/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>РЕН ТВ +2</caption>
-			<tvg_id>274</tvg_id>
-			<epg_id>570</epg_id>
-			<icon_url>plugin_file://icons/channels/ren_tv.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>1</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/747/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -1180,7 +1102,6 @@
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
-				<tv_category_id>9</tv_category_id>
 				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5049/index.m3u8</streaming_url>
@@ -2965,19 +2886,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Карусель +3</caption>
-			<tvg_id>900300007</tvg_id>
-			<epg_id>730</epg_id>
-			<icon_url>plugin_file://icons/channels/karuseli.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>7</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/740/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Мульт</caption>
 			<tvg_id>1825</tvg_id>
 			<epg_id>962</epg_id>
@@ -4037,32 +3945,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Armnews</caption>
-			<tvg_id>9000014</tvg_id>
-			<epg_id>9000014</epg_id>
-			<icon_url>plugin_file://icons/channels/arm_news.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/611/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Shoghakat</caption>
-			<tvg_id>9000015</tvg_id>
-			<epg_id>9000015</epg_id>
-			<icon_url>plugin_file://icons/channels/shoghakat.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/613/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Ararat</caption>
 			<tvg_id>9000016</tvg_id>
 			<epg_id>9000016</epg_id>
@@ -4168,32 +4050,6 @@
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://streams.iptv.zone:80/s/4251/c/340/u/49658/9XX1b4qEDDFbrC0nSE863kKDE0TaBe</streaming_url>
-		</tv_channel>
-		<tv_channel>
-			<caption>Setanta Sports HD</caption>
-			<tvg_id>400015</tvg_id>
-			<epg_id>771</epg_id>
-			<icon_url>plugin_file://icons/channels/setanta.png</icon_url>
-			<num_past_epg_days>3</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>6</tv_category_id>
-				<tv_category_id>11</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://streams.iptv.zone:80/p/283107/c/88/u/49658/9XX1b4qEDDFbrC0nSE863kKDE0TaBe</streaming_url>
-		</tv_channel>
-		<tv_channel>
-			<caption>Setanta Sports + HD</caption>
-			<tvg_id>1688</tvg_id>
-			<epg_id>984</epg_id>
-			<icon_url>plugin_file://icons/channels/setanta.png</icon_url>
-			<num_past_epg_days>3</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>6</tv_category_id>
-				<tv_category_id>11</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://streams.iptv.zone:80/s/4210/c/145/u/49658/9XX1b4qEDDFbrC0nSE863kKDE0TaBe</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>ПИК ТВ</caption>
