@@ -232,7 +232,6 @@
     <ResourceCompile Include="EdemChannelEditor.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".editorconfig" />
     <None Include="res\EdemChannelEditor.rc2" />
   </ItemGroup>
   <ItemGroup>

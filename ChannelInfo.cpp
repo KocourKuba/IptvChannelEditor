@@ -42,9 +42,12 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	set_streaming_url(utils::get_value_string(node->first_node(STREAMING_URL)));
 	set_has_archive(utils::get_value_int(node->first_node(ARCHIVE)));
 	set_adult(utils::get_value_int(node->first_node(PROTECTED)));
+	set_edem_channel_id(GetEdemStreamID());
+}
 
+int ChannelInfo::GetEdemStreamID()
+{
 	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8
-
 	int id = 0;
 	std::regex re(R"(http[s]{0,1}:\/\/ts:\/\/\{SUBDOMAIN\}\/iptv\/\{UID\}\/(\d+)\/index.m3u8)");
 	std::smatch m;
@@ -53,7 +56,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		id = utils::char_to_int(m[1].str().c_str());
 	}
 
-	set_edem_channel_id(id);
+	return id;
 }
 
 rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc)
@@ -159,4 +162,10 @@ void ChannelInfo::SetIconPluginPath(const std::string& relative_path)
 	std::string normilized(PLUGIN_PATH + relative_path);
 	std::replace(normilized.begin(), normilized.end(), '\\', '/');
 	set_icon_url(normilized);
+}
+
+void ChannelInfo::set_streaming_url(const std::string& val)
+{
+	streaming_url = val;
+	set_edem_channel_id(GetEdemStreamID());
 }

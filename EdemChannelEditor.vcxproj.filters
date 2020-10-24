@@ -105,7 +105,6 @@
     <None Include="res\EdemChannelEditor.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\EdemChannelEditor.ico">

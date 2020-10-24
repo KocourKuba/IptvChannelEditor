@@ -44,6 +44,8 @@ public:
 	}
 
 	void ParseNode(rapidxml::xml_node<>* node);
+
+
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& doc);
 
 	std::string CombineEdemStreamingUrl(const std::string& sub_domain, const std::string& ott_key);
@@ -51,6 +53,7 @@ public:
 	std::string SetChannelIdForStreamingUrl(int id);
 	std::string GetIconRelativePath();
 	void SetIconPluginPath(const std::string& relative_path);
+	int GetEdemStreamID();
 
 // Getters/Setters
 	int get_edem_channel_id() const { return edem_channel_id; }
@@ -81,7 +84,7 @@ public:
 	void set_categores(const std::set<int>& val) { categories = val; }
 
 	const std::string& get_streaming_url() const { return streaming_url; }
-	void set_streaming_url(const std::string& val) { streaming_url = val; }
+	void set_streaming_url(const std::string& val);
 
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }

@@ -12,10 +12,12 @@ static constexpr auto CHANNEL_LOGO_URL = "icons/channels/";
 static constexpr auto ICON_TEMPLATE = L"icons/channels/channel_unset.png";
 
 #ifdef _DEBUG
+static constexpr auto PLUGIN_ROOT        = L"..\\edem_plugin\\";
 static constexpr auto ICON_TEMPLATE_PATH = L"..\\edem_plugin\\icons\\channels\\channel_unset.png";
 static constexpr auto CATEGORY_LOGO_PATH = L"..\\edem_plugin\\icons\\";
 static constexpr auto CHANNEL_LOGO_PATH  = L"..\\edem_plugin\\icons\\channels\\";
 #else
+static constexpr auto PLUGIN_ROOT        = L".\\edem_plugin\\";
 static constexpr auto ICON_TEMPLATE_PATH = L".\\edem_plugin\\icons\\channels\\channel_unset.png";
 static constexpr auto CATEGORY_LOGO_PATH = L".\\edem_plugin\\icons\\";
 static constexpr auto CHANNEL_LOGO_PATH  = L".\\edem_plugin\\icons\\channels\\";
@@ -45,7 +47,7 @@ BOOL NewCategory::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	theApp.LoadImage(m_wndIcon, theApp.GetAppPath() + ICON_TEMPLATE_PATH);
+	theApp.LoadImage(m_wndIcon, theApp.GetAppPath() + PLUGIN_ROOT + m_iconUrl);
 	return TRUE;
 }
 
@@ -53,8 +55,9 @@ BOOL NewCategory::OnInitDialog()
 
 void NewCategory::OnStnClickedStaticCategoryIcon()
 {
-	CString file = theApp.GetAppPath();
-	file += m_type ? CATEGORY_LOGO_PATH : CHANNEL_LOGO_PATH;
+	CString path = theApp.GetAppPath() + (m_type ? CATEGORY_LOGO_PATH : CHANNEL_LOGO_PATH);
+	CString file = theApp.GetAppPath() + PLUGIN_ROOT + m_iconUrl;
+	file.Replace('/', '\\');
 
 	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));
 	filter.Replace('#', '\0');
@@ -65,21 +68,20 @@ void NewCategory::OnStnClickedStaticCategoryIcon()
 	oFN.nMaxFile = MAX_PATH;
 	oFN.nFilterIndex = 0;
 	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
-	oFN.lpstrTitle = _T("Load channel logo");
+	oFN.lpstrTitle = _T("Load logotype image");
+	oFN.lpstrInitialDir = path.GetString();
 	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
-	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON;
+	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR;
 
 	INT_PTR nResult = dlg.DoModal();
 	file.ReleaseBuffer();
 
 	if (nResult == IDOK)
 	{
+		theApp.LoadImage(m_wndIcon, file);
+
 		m_iconUrl = m_type ? CATEGORY_LOGO_URL : CHANNEL_LOGO_URL;
 		m_iconUrl += oFN.lpstrFileTitle;
-
-		CString path(m_type ? CATEGORY_LOGO_PATH : CHANNEL_LOGO_PATH);
-		path += oFN.lpstrFileTitle;
-		theApp.LoadImage(m_wndIcon, path);
 
 		UpdateData(FALSE);
 	}

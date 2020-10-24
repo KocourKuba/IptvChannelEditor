@@ -46,9 +46,8 @@ protected:
 	afx_msg void OnLbnSelchangeListChannels();
 	afx_msg void OnEnChangeMfceditbrowsePlayer();
 	afx_msg void OnEnChangeEditNum();
-	afx_msg void OnEnChangeEditKey();
-	afx_msg void OnEnChangeEditDomain();
-	afx_msg void OnEnChangeEditUrlId();
+	afx_msg void OnEnKillfocusEditKey();
+	afx_msg void OnEnKillfocusEditDomain();
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnChanges();
@@ -59,7 +58,7 @@ private:
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
 
-	void LoadChannelInfo(int idx);
+	void LoadChannelInfo();
 	BOOL LoadSetting();
 	void CheckLimits();
 	void LoadChannels();
@@ -105,4 +104,8 @@ private:
 public:
 	afx_msg void OnBnClickedButtonAddChannel();
 	afx_msg void OnBnClickedButtonRemoveChannel();
+	afx_msg void OnEnKillfocusEditStreamUrl();
+	afx_msg void OnEnKillfocusEditUrlId();
+	afx_msg void OnBnClickedButtonEditCategory();
+	afx_msg void OnEnKillfocusEditChannelName();
 };

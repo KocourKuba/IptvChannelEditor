@@ -4,9 +4,10 @@
 
 std::string ChannelCategory::GetIconPath()
 {
+	static const auto scheme_size = strlen(PLUGIN_SCHEME);
 	std::string iconPath = get_icon_url();
-	if (iconPath == PLUGIN_SCHEME)
-		iconPath.erase(0, strlen(PLUGIN_SCHEME));
+	if (iconPath.substr(0, scheme_size) == PLUGIN_SCHEME)
+		iconPath.erase(0, scheme_size);
 
 	return iconPath;
 }

@@ -38,6 +38,7 @@
 #define IDC_BUTTON_SAVE                 1029
 #define IDC_BUTTON_ADD_CATEGORY         1030
 #define IDC_STATIC_QR                   1031
+#define IDC_BUTTON_EDIT_CATEGORY        1031
 #define IDC_STATIC_TITLE                1032
 #define IDC_BUTTON_ABOUT                1033
 #define IDC_BUTTON_REMOVE_CATEGORY      1034
@@ -50,7 +51,7 @@
 #define IDC_BUTTON_REMOVE_CHANNEL       1040
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        1038
