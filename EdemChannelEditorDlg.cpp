@@ -12,9 +12,13 @@
 #include "AboutDlg.h"
 #include "NewCategory.h"
 
+#include "SevenZip/7zip/SevenZipWrapper.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+using namespace SevenZip;
 
 constexpr auto CHANNELS_CONFIG = L"edem_channel_list.xml";
 constexpr auto CHANNELS_LOGO_PATH = "icons\\channels\\";
@@ -49,6 +53,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialog)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CEdemChannelEditorDlg::OnStnClickedStaticIcon)
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CEdemChannelEditorDlg::OnBnClickedButtonAbout)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveCategory)
+	ON_BN_CLICKED(IDC_BUTTON_PACK, &CEdemChannelEditorDlg::OnBnClickedButtonPack)
 END_MESSAGE_MAP()
 
 
@@ -82,6 +87,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_KEY, m_accessKey);
 	DDX_Text(pDX, IDC_EDIT_DOMAIN, m_domain);
 	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
+	DDX_Control(pDX, IDC_BUTTON_PACK, m_wndPack);
 }
 
 void CEdemChannelEditorDlg::OnOK()
@@ -145,6 +151,16 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	LoadSetting();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+void CEdemChannelEditorDlg::set_allow_save(BOOL val)
+{
+	m_allow_save = val;
+	if (m_wndSave.GetSafeHwnd())
+		m_wndSave.EnableWindow(val);
+
+	if (m_wndPack.GetSafeHwnd())
+		m_wndPack.EnableWindow(val);
 }
 
 BOOL CEdemChannelEditorDlg::LoadSetting()
@@ -588,7 +604,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonRemoveCategory()
 	}
 }
 
-
 void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 {
 	const CString logo_path = m_pluginRoot + CHANNELS_LOGO_PATH;
@@ -625,4 +640,19 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAbout()
 {
 	CAboutDlg dlg;
 	dlg.DoModal();
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonPack()
+{
+	SevenZipWrapper archiver(_T("7z.dll"));
+	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
+	bool res = archiver.GetCompressor().AddFiles(_T(".\\edem\\"), _T("*.*"), true);
+	if (!res)
+		return;
+
+	res = archiver.CreateArchive(_T("dune_plugin_edem_free4_mod.zip"));
+	if (!res)
+	{
+		::DeleteFile(_T("dune_plugin_edem_free4_mod.zip"));
+	}
 }

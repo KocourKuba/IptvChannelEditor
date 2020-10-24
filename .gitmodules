@@ -1,0 +1,3 @@
+[submodule "SevenZip"]
+	path = SevenZip
+	url = https://github.com/KocourKuba/7zip-cpp.git

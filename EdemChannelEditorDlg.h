@@ -59,7 +59,7 @@ private:
 	void set_changed(BOOL val) { m_changed = val; }
 
 	BOOL is_allow_save() const { return m_allow_save; }
-	void set_allow_save(BOOL val) { m_allow_save = val; if (m_wndSave.GetSafeHwnd()) m_wndSave.EnableWindow(val); }
+	void set_allow_save(BOOL val);
 
 	BOOL LoadSetting();
 	void CheckLimits();
@@ -102,4 +102,8 @@ private:
 	CString m_iconPath;
 
 	ChannelList m_channels;
+public:
+	afx_msg void OnBnClickedButtonPack();
+protected:
+	CButton m_wndPack;
 };
