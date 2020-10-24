@@ -158,9 +158,6 @@ void CEdemChannelEditorDlg::set_allow_save(BOOL val)
 	m_allow_save = val;
 	if (m_wndSave.GetSafeHwnd())
 		m_wndSave.EnableWindow(val);
-
-	if (m_wndPack.GetSafeHwnd())
-		m_wndPack.EnableWindow(val);
 }
 
 BOOL CEdemChannelEditorDlg::LoadSetting()
@@ -227,7 +224,11 @@ void CEdemChannelEditorDlg::LoadImage(CStatic& wnd, const CString& fullPath)
 
 		CImage resized;
 		resized.Create(rc.Width(), rc.Height(), 32);
-		image.StretchBlt(resized.GetDC(), rc, SRCCOPY);
+		HDC dcImage = resized.GetDC();
+		SetStretchBltMode(dcImage, COLORONCOLOR);
+		image.StretchBlt(dcImage, rc, SRCCOPY);
+		// The next two lines test the image on a picture control.
+		image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
 
 		resized.ReleaseDC();
 		ReleaseDC(screenDC);
@@ -559,7 +560,7 @@ void CEdemChannelEditorDlg::OnEnChangeEditDomain()
 
 void CEdemChannelEditorDlg::OnBnClickedButtonSave()
 {
-	CString path = m_pluginRoot + L"edem_channel_list_new.xml";
+	CString path = m_pluginRoot + L"edem_channel_list.xml";
 	set_allow_save(!m_channels.SaveToFile(path.GetString()));
 }
 
@@ -644,14 +645,28 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAbout()
 
 void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 {
-	SevenZipWrapper archiver(_T("7z.dll"));
+	CString csFileName;
+
+	if (GetModuleFileName(theApp.m_hInstance, csFileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
+	{
+		csFileName.ReleaseBuffer();
+		int pos = csFileName.ReverseFind('\\');
+		csFileName.Truncate(pos + 1);
+		csFileName += _T("7za.dll");
+	}
+
+	SevenZipWrapper archiver(csFileName.GetString());
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
 	bool res = archiver.GetCompressor().AddFiles(_T(".\\edem\\"), _T("*.*"), true);
 	if (!res)
 		return;
 
 	res = archiver.CreateArchive(_T("dune_plugin_edem_free4_mod.zip"));
-	if (!res)
+	if (res)
+	{
+		AfxMessageBox(_T("Plugin created. Install it to the DUNE mediaplayer"), MB_OK);
+	}
+	else
 	{
 		::DeleteFile(_T("dune_plugin_edem_free4_mod.zip"));
 	}
