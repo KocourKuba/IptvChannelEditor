@@ -96,16 +96,16 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Первый канал +2</caption>
-			<tvg_id>244</tvg_id>
+			<caption>Мир 24</caption>
+			<tvg_id>400009</tvg_id>
 			<epg_id>541</epg_id>
-			<icon_url>plugin_file://icons/channels/pervyi.png</icon_url>
+			<icon_url>plugin_file://icons/channels/mirtv.png</icon_url>
 			<num_past_epg_days>4</num_past_epg_days>
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>1</tv_category_id>
+				<tv_category_id>4</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/714/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/712/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -439,19 +439,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Discovery</caption>
-			<tvg_id>226</tvg_id>
-			<epg_id>38</epg_id>
-			<icon_url>plugin_file://icons/channels/discovery.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>9</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/140/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Discovery HD</caption>
 			<tvg_id>300134</tvg_id>
 			<epg_id>938</epg_id>
@@ -466,20 +453,21 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Discovery Science</caption>
+			<caption>Discovery Science HD</caption>
 			<tvg_id>224</tvg_id>
 			<epg_id>41</epg_id>
-			<icon_url>plugin_file://icons/channels/discovery_sc.png</icon_url>
+			<icon_url>plugin_file://icons/channels/discovery_sc_hd.png</icon_url>
 			<num_past_epg_days>4</num_past_epg_days>
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/136/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6001/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>DTX</caption>
+			<caption>DTX HD</caption>
 			<tvg_id>2048</tvg_id>
 			<epg_id>1061</epg_id>
 			<icon_url>plugin_file://icons/channels/dtx.png</icon_url>
@@ -487,8 +475,9 @@
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/135/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2006/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -668,7 +657,7 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Viasat History</caption>
+			<caption>Viasat History HD</caption>
 			<tvg_id>325</tvg_id>
 			<epg_id>175</epg_id>
 			<icon_url>plugin_file://icons/channels/viasat_history.png</icon_url>
@@ -676,8 +665,9 @@
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/162/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6002/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -1799,7 +1789,7 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>TV1000 Action East</caption>
+			<caption>TV1000 Action</caption>
 			<tvg_id>300047</tvg_id>
 			<epg_id>458</epg_id>
 			<icon_url>plugin_file://icons/channels/tv1000action.png</icon_url>
@@ -1867,10 +1857,10 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Кинопоказ HD1</caption>
+			<caption>Шокирующее HD</caption>
 			<tvg_id>300095</tvg_id>
 			<epg_id>620</epg_id>
-			<icon_url>plugin_file://icons/channels/kinopokaz_hd1.png</icon_url>
+			<icon_url>plugin_file://icons/channels/shocked_hd.png</icon_url>
 			<num_past_epg_days>22</num_past_epg_days>
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
@@ -1881,10 +1871,10 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Кинопоказ HD2</caption>
+			<caption>Комедийное HD</caption>
 			<tvg_id>300096</tvg_id>
 			<epg_id>621</epg_id>
-			<icon_url>plugin_file://icons/channels/kinopokaz_hd2.png</icon_url>
+			<icon_url>plugin_file://icons/channels/komedijnoje_hd.png</icon_url>
 			<num_past_epg_days>4</num_past_epg_days>
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
@@ -2016,10 +2006,10 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>AMC</caption>
+			<caption>Hollywood</caption>
 			<tvg_id>294</tvg_id>
 			<epg_id>214</epg_id>
-			<icon_url>plugin_file://icons/channels/amc.png</icon_url>
+			<icon_url>plugin_file://icons/channels/hollywood.png</icon_url>
 			<num_past_epg_days>4</num_past_epg_days>
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
@@ -2043,7 +2033,7 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>FOX</caption>
+			<caption>Fox</caption>
 			<tvg_id>300010</tvg_id>
 			<epg_id>413</epg_id>
 			<icon_url>plugin_file://icons/channels/fox.png</icon_url>
@@ -2056,7 +2046,7 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>FOX HD</caption>
+			<caption>Fox HD</caption>
 			<tvg_id>300127</tvg_id>
 			<epg_id>775</epg_id>
 			<icon_url>plugin_file://icons/channels/fox_hd.png</icon_url>
@@ -2137,7 +2127,7 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Amedia Hit</caption>
+			<caption>Amedia Hit HD</caption>
 			<tvg_id>1926</tvg_id>
 			<epg_id>1016</epg_id>
 			<icon_url>plugin_file://icons/channels/amedia_hit.png</icon_url>
@@ -2145,8 +2135,9 @@
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/556/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6010/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -2398,10 +2389,10 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Detektiv.tv</caption>
-			<tvg_id>900289</tvg_id>
+			<caption>FAN</caption>
+			<tvg_id>2445</tvg_id>
 			<epg_id>90068</epg_id>
-			<icon_url>plugin_file://icons/channels/detektiv.png</icon_url>
+			<icon_url>plugin_file://icons/channels/fan.png</icon_url>
 			<num_past_epg_days>4</num_past_epg_days>
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
@@ -2477,7 +2468,7 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>STV</caption>
+			<caption>Жара</caption>
 			<tvg_id>586</tvg_id>
 			<epg_id>384</epg_id>
 			<icon_url>plugin_file://icons/channels/stv.png</icon_url>
@@ -2647,10 +2638,10 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Rusong TV</caption>
+			<caption>BRIDGE TV Русский Хит</caption>
 			<tvg_id>1035</tvg_id>
 			<epg_id>668</epg_id>
-			<icon_url>plugin_file://icons/channels/rusong.png</icon_url>
+			<icon_url>plugin_file://icons/channels/bridge_rus_hit.png</icon_url>
 			<num_past_epg_days>4</num_past_epg_days>
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
@@ -4084,10 +4075,10 @@
 			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
-			<caption>Эгоист ТВ</caption>
+			<caption>SHOT ТВ</caption>
 			<tvg_id>100059</tvg_id>
 			<epg_id>100059</epg_id>
-			<icon_url>plugin_file://icons/channels/egoist.png</icon_url>
+			<icon_url>plugin_file://icons/channels/shot_tv.png</icon_url>
 			<num_past_epg_days>4</num_past_epg_days>
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
@@ -4201,6 +4192,146 @@
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2443/index.m3u8</streaming_url>
 			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Redlight HD</caption>
+			<tvg_id>2757</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/redlight_hd.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/242/index.m3u8</streaming_url>
+			<protected>1</protected>
+		</tv_channel>
+		<tv_channel>
+			<caption>Private HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/private_hd.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/243/index.m3u8</streaming_url>
+			<protected>1</protected>
+		</tv_channel>
+		<tv_channel>
+			<caption>Hustler HD</caption>
+			<tvg_id>1511</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/hustler_hd_europe.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/244/index.m3u8</streaming_url>
+			<protected>1</protected>
+		</tv_channel>
+		<tv_channel>
+			<caption>Dorcel TV HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/dorcel_tv_hd.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/245/index.m3u8</streaming_url>
+			<protected>1</protected>
+		</tv_channel>
+		<tv_channel>
+			<caption>Barely Legal</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/barely_legal.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/871/index.m3u8</streaming_url>
+			<protected>1</protected>
+		</tv_channel>
+		<tv_channel>
+			<caption>Epic Drama</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/epic_drama.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>2</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/1048/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>TV1000 World Kino</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/tv1000.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>2</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/1065/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Дорама HD</caption>
+			<tvg_id>2300</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/dorama.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>2</tv_category_id>
+				<tv_category_id>12</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2131/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>СТС Kids HD</caption>
+			<tvg_id>2383</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/ctc_kids.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>7</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2001/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Cartoon Network HD</caption>
+			<tvg_id/>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/cartoon.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>7</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2011/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Exxxotica HD</caption>
+			<tvg_id/>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/exxxotica.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2397/index.m3u8</streaming_url>
+			<protected>1</protected>
 		</tv_channel>
 	</tv_channels>
 </tv_info>
