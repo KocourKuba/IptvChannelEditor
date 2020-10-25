@@ -79,6 +79,7 @@ protected:
 	afx_msg void OnLbnDblclkListPlaylist();
 	afx_msg void OnLbnSelchangeListChannels();
 	afx_msg void OnLbnSelchangeListPlaylist();
+	afx_msg void OnLbnSelchangeListCategories();
 	afx_msg void OnPaint();
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -141,4 +142,5 @@ private:
 
 	ChannelList m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
+	std::map<int, std::wstring> m_allChannels;
 };

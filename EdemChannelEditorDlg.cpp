@@ -73,6 +73,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_LBN_DBLCLK(IDC_LIST_PLAYLIST, &CEdemChannelEditorDlg::OnLbnDblclkListPlaylist)
 	ON_LBN_SELCHANGE(IDC_LIST_CHANNELS, &CEdemChannelEditorDlg::OnLbnSelchangeListChannels)
 	ON_LBN_SELCHANGE(IDC_LIST_PLAYLIST, &CEdemChannelEditorDlg::OnLbnSelchangeListPlaylist)
+	ON_LBN_SELCHANGE(IDC_LIST_CATEGORIES, &CEdemChannelEditorDlg::OnLbnSelchangeListCategories)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_NEXT, &CEdemChannelEditorDlg::OnDeltaposSpinNext)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_PREV, &CEdemChannelEditorDlg::OnDeltaposSpinPrev)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CEdemChannelEditorDlg::OnStnClickedStaticIcon)
@@ -228,10 +229,27 @@ BOOL CEdemChannelEditorDlg::LoadSetting()
 
 void CEdemChannelEditorDlg::LoadChannels()
 {
+	m_allChannels.clear();
 	m_wndChannelsList.ResetContent();
 	const auto& channels = m_channels.get_channels();
 	for (const auto& channel : channels)
 	{
+		int id = channel->get_edem_channel_id();
+		if (id != 0)
+		{
+			auto res = m_allChannels.emplace(id, channel->get_name());
+			if (!res.second)
+			{
+				CString msg;
+				msg.Format(_T("Removed duplicate channel: %s (%d), %s"),
+						   channel->get_name().c_str(),
+						   channel->get_edem_channel_id(),
+						   res.first->second.c_str());
+				AfxMessageBox(msg);
+				continue;
+			}
+		}
+
 		int idx = m_wndChannelsList.AddString(channel->get_name().c_str());
 		m_wndChannelsList.SetItemData(idx, (DWORD_PTR)channel.get());
 	}
@@ -1060,4 +1078,9 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 
 	LoadChannelInfo();
 	set_allow_save();
+}
+
+void CEdemChannelEditorDlg::OnLbnSelchangeListCategories()
+{
+	UpdateControls();
 }
