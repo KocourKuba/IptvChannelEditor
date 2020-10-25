@@ -200,6 +200,7 @@
     <ClInclude Include="ChannelList.h" />
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="NewCategory.h" />
+    <ClInclude Include="NewChannel.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="EdemChannelEditor.h" />
     <ClInclude Include="EdemChannelEditorDlg.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="ChannelList.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="NewCategory.cpp" />
+    <ClCompile Include="NewChannel.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="EdemChannelEditor.cpp" />
     <ClCompile Include="EdemChannelEditorDlg.cpp" />

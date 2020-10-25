@@ -5,6 +5,24 @@
 #pragma once
 #include "ChannelList.h"
 
+class PlaylistEntry
+{
+public:
+	PlaylistEntry() = default;
+
+	int id = 0;
+	std::wstring name;
+	std::wstring category;
+	std::string url;
+
+	void Clear()
+	{
+		id = 0;
+		name.clear();
+		category.clear();
+		url.clear();
+	}
+};
 
 // CEdemChannelEditorDlg dialog
 class CEdemChannelEditorDlg : public CDialogEx
@@ -34,6 +52,7 @@ protected:
 	afx_msg void OnBnClickedButtonAddChannel();
 	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonEditCategory();
+	afx_msg void OnBnClickedButtonImport();
 	afx_msg void OnBnClickedButtonLoadPlaylist();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonRemoveCategory();
@@ -47,14 +66,18 @@ protected:
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditNum();
+	afx_msg void OnEnChangeEditPlSearch();
 	afx_msg void OnEnChangeEditSearch();
 	afx_msg void OnEnChangeMfceditbrowsePlayer();
 	afx_msg void OnEnKillfocusEditChannelName();
 	afx_msg void OnEnKillfocusEditDomain();
 	afx_msg void OnEnKillfocusEditKey();
 	afx_msg void OnEnKillfocusEditStreamUrl();
+	afx_msg void OnEnKillfocusEditTvgId();
 	afx_msg void OnEnKillfocusEditUrlId();
+	afx_msg void OnLbnDblclkListPlaylist();
 	afx_msg void OnLbnSelchangeListChannels();
+	afx_msg void OnLbnSelchangeListPlaylist();
 	afx_msg void OnPaint();
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -67,12 +90,14 @@ private:
 
 	void LoadChannelInfo();
 	BOOL LoadSetting();
+	void LoadPlaylist(const CString& file);
 	void CheckLimits();
 	void LoadChannels();
 	void FillCategories();
 	void SaveChannelInfo();
+	void UpdateControls();
 	ChannelInfo* GetChannel(int idx);
-	CString GetSearchID(const CString& search);
+	ChannelCategory* GetCategory(int idx);
 
 protected:
 	CListBox m_wndChannelsList;
@@ -87,8 +112,10 @@ protected:
 	CButton m_wndPack;
 	CStatic m_wndIcon;
 	CFont m_largeFont;
+	CListBox m_wndPlaylist;
 
 	CString m_search;
+	CString m_plSearch;
 	CString m_channelName;
 	CString m_streamUrl;
 
@@ -105,9 +132,11 @@ protected:
 private:
 	BOOL m_allow_save = FALSE;
 	int m_current = CB_ERR;
+	int m_pl_current = CB_ERR;
 
 	CString m_player;
 	CString m_iconUrl;
 
 	ChannelList m_channels;
+	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
 };

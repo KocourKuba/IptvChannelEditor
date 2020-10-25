@@ -23,7 +23,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	int m_type = 0;
 	CStatic m_wndIcon;
 	CString m_name;
 	CString m_iconUrl;

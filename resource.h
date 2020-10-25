@@ -45,13 +45,18 @@
 #define IDC_BUTTON_PACK                 1035
 #define IDC_EDIT_CATEGORY               1036
 #define IDD_DIALOG_NEW_CATEGORY         1036
-#define IDC_BUTTON_EDIT_CATEGORY2       1036
 #define IDC_BUTTON_SEARCH_NEXT          1036
 #define IDC_STATIC_CATEGORY_ICON        1037
+#define IDD_DIALOG_NEW_CHANNEL          1037
+#define IDC_BUTTON_PL_SEARCH_NEXT       1037
 #define IDC_LIST_CHANNELS               1038
 #define IDC_BUTTON_ADD_CHANNEL          1039
 #define IDC_BUTTON_REMOVE_CHANNEL       1040
 #define IDC_EDIT_SEARCH                 1041
+#define IDC_EDIT_PL_SEARCH              1042
+#define IDC_LIST_PLAYLIST               1043
+#define IDC_BUTTON_IMPORT               1044
+#define IDC_STATIC_ICON_NAME            1045
 
 // Next default values for new objects
 // 
@@ -59,7 +64,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        1038
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1042
+#define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -8,19 +8,14 @@
 // NewCategory dialog
 
 static constexpr auto CATEGORY_LOGO_URL = "icons/";
-static constexpr auto CHANNEL_LOGO_URL = "icons/channels/";
-static constexpr auto ICON_TEMPLATE = L"icons/channels/channel_unset.png";
+static constexpr auto ICON_TEMPLATE = L"icons/channel_unset.png";
 
 #ifdef _DEBUG
 static constexpr auto PLUGIN_ROOT        = L"..\\edem_plugin\\";
-static constexpr auto ICON_TEMPLATE_PATH = L"..\\edem_plugin\\icons\\channels\\channel_unset.png";
 static constexpr auto CATEGORY_LOGO_PATH = L"..\\edem_plugin\\icons\\";
-static constexpr auto CHANNEL_LOGO_PATH  = L"..\\edem_plugin\\icons\\channels\\";
 #else
 static constexpr auto PLUGIN_ROOT        = L".\\edem_plugin\\";
-static constexpr auto ICON_TEMPLATE_PATH = L".\\edem_plugin\\icons\\channels\\channel_unset.png";
 static constexpr auto CATEGORY_LOGO_PATH = L".\\edem_plugin\\icons\\";
-static constexpr auto CHANNEL_LOGO_PATH  = L".\\edem_plugin\\icons\\channels\\";
 #endif // _DEBUG
 
 IMPLEMENT_DYNAMIC(NewCategory, CDialogEx)
@@ -57,7 +52,7 @@ void NewCategory::OnStnClickedStaticCategoryIcon()
 {
 	UpdateData(TRUE);
 
-	CString path = theApp.GetAppPath() + (m_type ? CATEGORY_LOGO_PATH : CHANNEL_LOGO_PATH);
+	CString path = theApp.GetAppPath() + CATEGORY_LOGO_PATH;
 	CString file = theApp.GetAppPath() + PLUGIN_ROOT + m_iconUrl;
 	file.Replace('/', '\\');
 
@@ -82,7 +77,7 @@ void NewCategory::OnStnClickedStaticCategoryIcon()
 	{
 		theApp.LoadImage(m_wndIcon, file);
 
-		m_iconUrl = m_type ? CATEGORY_LOGO_URL : CHANNEL_LOGO_URL;
+		m_iconUrl = CATEGORY_LOGO_URL;
 		m_iconUrl += oFN.lpstrFileTitle;
 
 		UpdateData(FALSE);
