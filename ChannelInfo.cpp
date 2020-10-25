@@ -42,16 +42,16 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	set_streaming_url(utils::get_value_string(node->first_node(STREAMING_URL)));
 	set_has_archive(utils::get_value_int(node->first_node(ARCHIVE)));
 	set_adult(utils::get_value_int(node->first_node(PROTECTED)));
-	set_edem_channel_id(GetEdemStreamID());
+	set_edem_channel_id(ChannelInfo::GetEdemStreamID(get_streaming_url()));
 }
 
-int ChannelInfo::GetEdemStreamID()
+int ChannelInfo::GetEdemStreamID(const std::string& edem_url)
 {
 	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8
 	int id = 0;
 	std::regex re(R"(http[s]{0,1}:\/\/ts:\/\/\{SUBDOMAIN\}\/iptv\/\{UID\}\/(\d+)\/index.m3u8)");
 	std::smatch m;
-	if (std::regex_match(get_streaming_url(), m, re))
+	if (std::regex_match(edem_url, m, re))
 	{
 		id = utils::char_to_int(m[1].str().c_str());
 	}
@@ -139,6 +139,16 @@ std::string ChannelInfo::TranslateStreamingUrl(const std::string& url)
 	return std::regex_replace(url, re_ts, "");
 }
 
+std::string ChannelInfo::ConvertPlainUrlToStreamingUrl(const std::string& url)
+{
+	// convert http://6asfsdb6bc.akadatel.com/iptv/FERWEE2VNSK/2402/index.m3u8
+	// to http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8
+
+	std::regex re(R"((http[s]{0,1}:\/\/)([0-9a-z\.]+)(\/iptv\/)([0-9A-Z]+)(\/\d+\/index.m3u8))");
+
+	return std::regex_replace(url, re, "$1ts://{SUBDOMAIN}$3{UID}$5");
+}
+
 std::string ChannelInfo::SetChannelIdForStreamingUrl(int id)
 {
 	if (id == 0)
@@ -162,10 +172,4 @@ void ChannelInfo::SetIconPluginPath(const std::string& relative_path)
 	std::string normilized(PLUGIN_PATH + relative_path);
 	std::replace(normilized.begin(), normilized.end(), '\\', '/');
 	set_icon_url(normilized);
-}
-
-void ChannelInfo::set_streaming_url(const std::string& val)
-{
-	streaming_url = val;
-	set_edem_channel_id(GetEdemStreamID());
 }

@@ -5,6 +5,17 @@
 #include "rapidxml_print.hpp"
 #include <algorithm>
 
+int ChannelList::FindCategory(const std::wstring& name)
+{
+	for (const auto& category : categories)
+	{
+		if (!_wcsicmp(category.second->get_caption().c_str(), name.c_str()))
+			return category.second->get_id();
+	}
+
+	return -1;
+}
+
 int ChannelList::GetFreeCategoryID()
 {
 	std::set<int> busy;

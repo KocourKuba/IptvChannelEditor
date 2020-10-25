@@ -11,6 +11,7 @@ public:
 	PlaylistEntry() = default;
 
 	int id = 0;
+	int archive = 0;
 	std::wstring name;
 	std::wstring category;
 	std::string url;
@@ -98,11 +99,13 @@ private:
 	void UpdateControls();
 	ChannelInfo* GetChannel(int idx);
 	ChannelCategory* GetCategory(int idx);
+	PlaylistEntry* GetPlaylistEntry(int idx);
 
 protected:
 	CListBox m_wndChannelsList;
-	CComboBox m_wndCategoriesList;
-	CListBox m_wndShowIn;
+	CComboBox m_wndCategories;
+	CListBox m_wndCategoriesList;
+	CListBox m_wndPlaylist;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
 	CSpinButtonCtrl m_wndSpinPrev;
@@ -112,7 +115,6 @@ protected:
 	CButton m_wndPack;
 	CStatic m_wndIcon;
 	CFont m_largeFont;
-	CListBox m_wndPlaylist;
 
 	CString m_search;
 	CString m_plSearch;

@@ -114,16 +114,15 @@ CString CEdemChannelEditorApp::GetAppPath()
 void CEdemChannelEditorApp::LoadImage(CStatic& wnd, const CString& fullPath)
 {
 	// png size
-	int pixelX = 245;
-	int pixelY = 140;
-	int divider = 2;
-	static const int multiplier = 1000;
-	CRect rc(0, 0, multiplier, multiplier);
-	MapDialogRect(wnd.GetParent()->GetSafeHwnd(), rc);
-	int dlX = pixelX * multiplier / rc.Width();
-	int dlY = pixelY * multiplier / rc.Width();
-	float ratio = (float)dlX / (float)dlY;
-	int newdlY = 100.F / ratio;
+// 	int pixelX = 245;
+// 	int pixelY = 140;
+// 	static const int multiplier = 1000;
+// 	CRect rc(0, 0, multiplier, multiplier);
+// 	MapDialogRect(wnd.GetParent()->GetSafeHwnd(), rc);
+// 	int dlX = pixelX * multiplier / rc.Width();
+// 	int dlY = pixelY * multiplier / rc.Width();
+// 	float ratio = (float)dlX / (float)dlY;
+// 	int newdlY = 80.F / ratio;
 
 	HBITMAP hImg = nullptr;
 	CImage image;
