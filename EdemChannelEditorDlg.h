@@ -28,29 +28,36 @@ protected:
 	void OnOK() override;
 	void OnCancel() override;
 
-	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg void OnBnClickedButtonAbout();
-	afx_msg void OnBnClickedButtonLoadPlaylist();
-	afx_msg void OnBnClickedCheckCustomize();
-	afx_msg void OnBnClickedButtonTestEpg();
-	afx_msg void OnBnClickedButtonTestUrl();
+	afx_msg void OnBnClickedButtonAddCategory();
+	afx_msg void OnBnClickedButtonAddChannel();
 	afx_msg void OnBnClickedButtonAddToShowIn();
+	afx_msg void OnBnClickedButtonEditCategory();
+	afx_msg void OnBnClickedButtonLoadPlaylist();
+	afx_msg void OnBnClickedButtonPack();
+	afx_msg void OnBnClickedButtonRemoveCategory();
+	afx_msg void OnBnClickedButtonRemoveChannel();
 	afx_msg void OnBnClickedButtonRemoveFromShowIn();
 	afx_msg void OnBnClickedButtonSave();
-	afx_msg void OnBnClickedButtonAddCategory();
-	afx_msg void OnBnClickedButtonRemoveCategory();
-	afx_msg void OnBnClickedButtonPack();
-	afx_msg void OnStnClickedStaticIcon();
-	afx_msg void OnLbnSelchangeListChannels();
-	afx_msg void OnEnChangeMfceditbrowsePlayer();
-	afx_msg void OnEnChangeEditNum();
-	afx_msg void OnEnKillfocusEditKey();
-	afx_msg void OnEnKillfocusEditDomain();
-	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedButtonTestEpg();
+	afx_msg void OnBnClickedButtonTestUrl();
+	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnChanges();
+	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditNum();
+	afx_msg void OnEnChangeEditSearch();
+	afx_msg void OnEnChangeMfceditbrowsePlayer();
+	afx_msg void OnEnKillfocusEditChannelName();
+	afx_msg void OnEnKillfocusEditDomain();
+	afx_msg void OnEnKillfocusEditKey();
+	afx_msg void OnEnKillfocusEditStreamUrl();
+	afx_msg void OnEnKillfocusEditUrlId();
+	afx_msg void OnLbnSelchangeListChannels();
+	afx_msg void OnPaint();
+	afx_msg void OnStnClickedStaticIcon();
+	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -65,6 +72,7 @@ private:
 	void FillCategories();
 	void SaveChannelInfo();
 	ChannelInfo* GetChannel(int idx);
+	CString GetSearchID(const CString& search);
 
 protected:
 	CListBox m_wndChannelsList;
@@ -80,6 +88,7 @@ protected:
 	CStatic m_wndIcon;
 	CFont m_largeFont;
 
+	CString m_search;
 	CString m_channelName;
 	CString m_streamUrl;
 
@@ -101,11 +110,4 @@ private:
 	CString m_iconUrl;
 
 	ChannelList m_channels;
-public:
-	afx_msg void OnBnClickedButtonAddChannel();
-	afx_msg void OnBnClickedButtonRemoveChannel();
-	afx_msg void OnEnKillfocusEditStreamUrl();
-	afx_msg void OnEnKillfocusEditUrlId();
-	afx_msg void OnBnClickedButtonEditCategory();
-	afx_msg void OnEnKillfocusEditChannelName();
 };

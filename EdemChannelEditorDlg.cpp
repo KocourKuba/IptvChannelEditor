@@ -42,12 +42,12 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CEdemChannelEditorDlg::OnBnClickedButtonAddToShowIn)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonAddCategory)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonAddChannel)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonEditCategory)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonLoadPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_PACK, &CEdemChannelEditorDlg::OnBnClickedButtonPack)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveFromShowIn)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveCategory)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveChannel)
-	ON_BN_CLICKED(IDC_BUTTON_EDIT_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonEditCategory)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG, &CEdemChannelEditorDlg::OnBnClickedButtonTestEpg)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_URL, &CEdemChannelEditorDlg::OnBnClickedButtonTestUrl)
@@ -57,7 +57,9 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_CHANNEL_NAME, &CEdemChannelEditorDlg::OnChanges)
 	ON_EN_CHANGE(IDC_EDIT_NEXT_EPG, &CEdemChannelEditorDlg::OnEnChangeEditNum)
 	ON_EN_CHANGE(IDC_EDIT_PREV_EPG, &CEdemChannelEditorDlg::OnEnChangeEditNum)
+	ON_EN_CHANGE(IDC_EDIT_SEARCH, &CEdemChannelEditorDlg::OnEnChangeEditSearch)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLAYER, &CEdemChannelEditorDlg::OnEnChangeMfceditbrowsePlayer)
+	ON_EN_KILLFOCUS(IDC_EDIT_CHANNEL_NAME, &CEdemChannelEditorDlg::OnEnKillfocusEditChannelName)
 	ON_EN_KILLFOCUS(IDC_EDIT_DOMAIN, &CEdemChannelEditorDlg::OnEnKillfocusEditDomain)
 	ON_EN_KILLFOCUS(IDC_EDIT_KEY, &CEdemChannelEditorDlg::OnEnKillfocusEditKey)
 	ON_EN_KILLFOCUS(IDC_EDIT_STREAM_URL, &CEdemChannelEditorDlg::OnEnKillfocusEditStreamUrl)
@@ -66,12 +68,13 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_NEXT, &CEdemChannelEditorDlg::OnDeltaposSpinNext)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_PREV, &CEdemChannelEditorDlg::OnDeltaposSpinPrev)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CEdemChannelEditorDlg::OnStnClickedStaticIcon)
-	ON_EN_KILLFOCUS(IDC_EDIT_CHANNEL_NAME, &CEdemChannelEditorDlg::OnEnKillfocusEditChannelName)
+	ON_BN_CLICKED(IDC_BUTTON_SEARCH_NEXT, &CEdemChannelEditorDlg::OnEnChangeEditSearch)
 END_MESSAGE_MAP()
 
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
+	, m_search(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -102,6 +105,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
 	DDX_Control(pDX, IDC_BUTTON_PACK, m_wndPack);
 	DDX_Control(pDX, IDC_LIST_CHANNELS, m_wndChannelsList);
+	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -782,5 +786,42 @@ void CEdemChannelEditorDlg::OnEnKillfocusEditUrlId()
 		m_streamUrl = channel->SetChannelIdForStreamingUrl(m_streamID).c_str();
 		UpdateData(FALSE);
 		set_allow_save();
+	}
+}
+
+void CEdemChannelEditorDlg::OnEnChangeEditSearch()
+{
+	UpdateData(TRUE);
+
+	if (m_search.IsEmpty())
+		return;
+
+	if (m_search.GetAt(0) == '\\')
+	{
+		CString num = m_search.Mid(1);
+		if (!num.IsEmpty())
+		{
+			int id = _tstoi(m_search.Mid(1).GetString());
+			for (int i = 0; i < m_wndChannelsList.GetCount(); i++)
+			{
+				auto channel = GetChannel(i);
+				if (channel && channel->get_edem_channel_id() == id)
+				{
+					m_wndChannelsList.SetCurSel(i);
+					m_current = i;
+					LoadChannelInfo();
+					return;
+				}
+			}
+		}
+	}
+	else
+	{
+		int idx = m_wndChannelsList.SelectString(m_current, m_search);
+		if (idx != CB_ERR)
+		{
+			m_current = idx;
+			LoadChannelInfo();
+		}
 	}
 }
