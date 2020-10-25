@@ -4,26 +4,8 @@
 
 #pragma once
 #include "ChannelList.h"
-
-class PlaylistEntry
-{
-public:
-	PlaylistEntry() = default;
-
-	int id = 0;
-	int archive = 0;
-	std::wstring name;
-	std::wstring category;
-	std::string url;
-
-	void Clear()
-	{
-		id = 0;
-		name.clear();
-		category.clear();
-		url.clear();
-	}
-};
+#include "PlayListEntry.h"
+#include "ColorListBox.h"
 
 // CEdemChannelEditorDlg dialog
 class CEdemChannelEditorDlg : public CDialogEx
@@ -106,7 +88,7 @@ protected:
 	CListBox m_wndChannelsList;
 	CComboBox m_wndCategories;
 	CListBox m_wndCategoriesList;
-	CListBox m_wndPlaylist;
+	CColorListBox m_wndPlaylist;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
 	CSpinButtonCtrl m_wndSpinPrev;

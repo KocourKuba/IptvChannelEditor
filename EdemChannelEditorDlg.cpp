@@ -495,7 +495,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonRemoveFromShowIn()
 		m_wndCategoriesList.DeleteString(idx);
 		set_allow_save();
 	}
-	GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(m_wndCategoriesList.GetCount());
+	GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(m_wndCategoriesList.GetCount());
 }
 
 void CEdemChannelEditorDlg::OnEnKillfocusEditChannelName()
@@ -646,6 +646,9 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	if (!is.good())
 		return;
 
+	m_playlist.clear();
+	m_wndPlaylist.ResetContent();
+
 	int step = 0;
 	PlaylistEntry entry;
 
@@ -712,6 +715,7 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 			{
 				entry.id = atoi(m_url[1].str().c_str());
 				entry.url = line;
+				entry.notexist = (m_allChannels.find(entry.id) == m_allChannels.end());
 				step++;
 				continue;
 			}
@@ -760,7 +764,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSave()
 	if (res)
 	{
 		LoadSetting();
-		m_wndChannelsList.SetCurSel(m_current);
+		LoadPlaylist(theApp.GetProfileString(_T("Setting"), _T("Playlist")));
+		m_wndPlaylist.SetCurSel(m_pl_current);
 	}
 }
 
@@ -980,7 +985,8 @@ void CEdemChannelEditorDlg::OnLbnSelchangeListPlaylist()
 {
 	UpdateData(TRUE);
 
-	auto entry = GetPlaylistEntry(m_wndPlaylist.GetCurSel());
+	m_pl_current = m_wndPlaylist.GetCurSel();
+	auto entry = GetPlaylistEntry(m_pl_current);
 	if (entry)
 	{
 		m_search.Format(_T("\\%d"), entry->id);
@@ -1005,7 +1011,8 @@ void CEdemChannelEditorDlg::OnEnKillfocusEditTvgId()
 
 void CEdemChannelEditorDlg::OnLbnDblclkListPlaylist()
 {
-	auto entry = GetPlaylistEntry(m_wndPlaylist.GetCurSel());
+	m_pl_current = m_wndPlaylist.GetCurSel();
+	auto entry = GetPlaylistEntry(m_pl_current);
 	if (entry)
 	{
 		TRACE(_T("Test URL: %hs"), entry->url.c_str());

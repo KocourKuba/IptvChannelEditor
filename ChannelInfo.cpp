@@ -25,7 +25,6 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	set_next_epg_days(utils::get_value_int(node->first_node(NUM_FUTURE_EPG_DAYS)));
 
 	auto cnode = node->first_node(TV_CATEGORIES);
-	ASSERT(cnode);
 	if (cnode)
 	{
 		std::set<int> values;
@@ -85,7 +84,6 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc)
 	// <tv_categories>
 	//    <tv_category_id>1</tv_category_id>
 	// </tv_categories>
-	ASSERT(!categories.empty());
 	if (!categories.empty())
 	{
 		auto node = utils::alloc_node(alloc, TV_CATEGORIES);
