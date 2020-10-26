@@ -8,8 +8,6 @@ require_once 'starnet_setup_screen.php';
 ///////////////////////////////////////////////////////////////////////////
 
 
-
-
 class Starnet_MainScreen extends TvGroupListScreen implements UserInputHandler
 {
     const ID = 'main_screen';
@@ -31,14 +29,16 @@ class Starnet_MainScreen extends TvGroupListScreen implements UserInputHandler
     }
 
     public function get_handler_id()
-    { return self::ID; }
+    {
+        return self::ID;
+    }
+
     ///////////////////////////////////////////////////////////////////////
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         $setup_screen = $this->tv->get_setup_screen();
-        if (!$setup_screen)
-        {
+        if (!$setup_screen) {
             $add_action = UserInputHandlerRegistry::create_action($this, 'settings');
         }
 
@@ -48,7 +48,7 @@ class Starnet_MainScreen extends TvGroupListScreen implements UserInputHandler
         return array
         (
             GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
-            GUI_EVENT_KEY_PLAY  => ActionFactory::tv_play(),
+            GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
             GUI_EVENT_KEY_B_GREEN => $add_action,
         );
     }
@@ -59,10 +59,9 @@ class Starnet_MainScreen extends TvGroupListScreen implements UserInputHandler
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        switch ($user_input->control_id)
-        {
-        case 'settings':
-            return ActionFactory::open_folder(DemoSetupScreen::get_media_url_str(), "Настройки");
+        switch ($user_input->control_id) {
+            case 'settings':
+                return ActionFactory::open_folder(DemoSetupScreen::get_media_url_str(), "Настройки");
         }
 
         return null;

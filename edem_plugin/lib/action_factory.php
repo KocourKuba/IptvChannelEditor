@@ -51,7 +51,7 @@ class ActionFactory
     }
 
     public static function show_dialog($title, $defs,
-        $close_by_return = false, $preferred_width = 0)
+                                       $close_by_return = false, $preferred_width = 0)
     {
         return array
         (
@@ -117,7 +117,7 @@ class ActionFactory
     }
 
     public static function invalidate_folders($media_urls,
-        $post_action = null)
+                                              $post_action = null)
     {
         return array
         (
@@ -146,7 +146,7 @@ class ActionFactory
     }
 
     public static function update_regular_folder($range,
-        $need_refresh = false, $sel_ndx = -1)
+                                                 $need_refresh = false, $sel_ndx = -1)
     {
         return array
         (
@@ -165,28 +165,28 @@ class ActionFactory
     {
         return array
         (
-             GuiAction::handler_string_id => RESET_CONTROLS_ACTION_ID,
-             GuiAction::data =>
-             array
-             (
-                ResetControlsActionData::defs => $defs,
-                ResetControlsActionData::initial_sel_ndx => $initial_sel_ndx,
-                ResetControlsActionData::post_action => $post_action,
-             ),
+            GuiAction::handler_string_id => RESET_CONTROLS_ACTION_ID,
+            GuiAction::data =>
+                array
+                (
+                    ResetControlsActionData::defs => $defs,
+                    ResetControlsActionData::initial_sel_ndx => $initial_sel_ndx,
+                    ResetControlsActionData::post_action => $post_action,
+                ),
         );
     }
 
-    public static function clear_archive_cache($archive_id=null, $post_action=null)
+    public static function clear_archive_cache($archive_id = null, $post_action = null)
     {
         return array
         (
-             GuiAction::handler_string_id => PLUGIN_CLEAR_ARCHIVE_CACHE_ACTION_ID,
-             GuiAction::data =>
-             array
-             (
-                PluginClearArchiveCacheActionData::archive_id => $archive_id,
-                PluginClearArchiveCacheActionData::post_action => $post_action,
-             ),
+            GuiAction::handler_string_id => PLUGIN_CLEAR_ARCHIVE_CACHE_ACTION_ID,
+            GuiAction::data =>
+                array
+                (
+                    PluginClearArchiveCacheActionData::archive_id => $archive_id,
+                    PluginClearArchiveCacheActionData::post_action => $post_action,
+                ),
         );
     }
 }

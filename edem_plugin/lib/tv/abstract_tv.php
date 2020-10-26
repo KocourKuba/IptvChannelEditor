@@ -23,8 +23,8 @@ abstract class AbstractTv implements Tv
     ///////////////////////////////////////////////////////////////////////
 
     protected function __construct($mode,
-        $favorites_supported,
-        $playback_url_is_stream_url)
+                                   $favorites_supported,
+                                   $playback_url_is_stream_url)
     {
         $this->mode = $mode;
         $this->favorites_supported = $favorites_supported;
@@ -62,7 +62,9 @@ abstract class AbstractTv implements Tv
     ///////////////////////////////////////////////////////////////////////
 
     public function get_channels()
-    { return $this->channels; }
+    {
+        return $this->channels;
+    }
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -79,7 +81,9 @@ abstract class AbstractTv implements Tv
     ///////////////////////////////////////////////////////////////////////
 
     public function get_groups()
-    { return $this->groups; }
+    {
+        return $this->groups;
+    }
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -98,13 +102,12 @@ abstract class AbstractTv implements Tv
 
     public function get_tv_info(MediaURL $media_url, &$plugin_cookies)
     {
-		$epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : DemoSetupScreen::EPG_FONTSIZE_DEF_VALUE;
+        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : DemoSetupScreen::EPG_FONTSIZE_DEF_VALUE;
         $this->ensure_channels_loaded($plugin_cookies);
 
         $channels = array();
 
-        foreach ($this->get_channels() as $c)
-        {
+        foreach ($this->get_channels() as $c) {
             $group_id_arr = array();
 
             if ($this->mode == self::MODE_CHANNELS_N_TO_M)
@@ -141,14 +144,12 @@ abstract class AbstractTv implements Tv
 
         $groups = array();
 
-        foreach ($this->get_groups() as $g)
-        {
+        foreach ($this->get_groups() as $g) {
             if ($g->is_favorite_channels())
                 continue;
 
             if ($this->mode == self::MODE_CHANNELS_1_TO_N &&
-                $g->is_all_channels())
-            {
+                $g->is_all_channels()) {
                 continue;
             }
 
@@ -165,15 +166,13 @@ abstract class AbstractTv implements Tv
         $initial_group_id = strval($media_url->group_id);
         $initial_is_favorite = 0;
 
-        if ($is_favorite_group)
-        {
+        if ($is_favorite_group) {
             $initial_group_id = null;
             $initial_is_favorite = 1;
         }
 
         if ($this->mode == self::MODE_CHANNELS_1_TO_N &&
-            $initial_group_id === $this->get_all_channel_group_id())
-        {
+            $initial_group_id === $this->get_all_channel_group_id()) {
             $initial_group_id = null;
         }
 
@@ -210,8 +209,10 @@ abstract class AbstractTv implements Tv
     ///////////////////////////////////////////////////////////////////////
 
     public function get_tv_stream_url($media_url, &$plugin_cookies)
-    { throw new Exception('Error: get_tv_stream_url() is not supported.'); }
-    
+    {
+        throw new Exception('Error: get_tv_stream_url() is not supported.');
+    }
+
     ///////////////////////////////////////////////////////////////////////
 
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
@@ -231,8 +232,7 @@ abstract class AbstractTv implements Tv
     {
         $epg = array();
 
-        foreach ($this->get_day_epg_iterator($channel_id, $day_start_ts, $plugin_cookies) as $e)
-        {
+        foreach ($this->get_day_epg_iterator($channel_id, $day_start_ts, $plugin_cookies) as $e) {
             $epg[] =
                 array
                 (
@@ -265,34 +265,25 @@ abstract class AbstractTv implements Tv
     {
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
 
-        if ($fav_op_type === PLUGIN_FAVORITES_OP_ADD)
-        {
+        if ($fav_op_type === PLUGIN_FAVORITES_OP_ADD) {
             array_push($fav_channel_ids, $channel_id);
-        }
-        else if ($fav_op_type === PLUGIN_FAVORITES_OP_REMOVE)
-        {
+        } else if ($fav_op_type === PLUGIN_FAVORITES_OP_REMOVE) {
             $k = array_search($channel_id, $fav_channel_ids);
 
             if ($k !== false)
                 unset ($fav_channel_ids[$k]);
-        }
-        else if ($fav_op_type === PLUGIN_FAVORITES_OP_MOVE_UP)
-        {
+        } else if ($fav_op_type === PLUGIN_FAVORITES_OP_MOVE_UP) {
             $k = array_search($channel_id, $fav_channel_ids);
 
-            if ($k !== false && $k !== 0)
-            {
+            if ($k !== false && $k !== 0) {
                 $t = $fav_channel_ids[$k - 1];
                 $fav_channel_ids[$k - 1] = $fav_channel_ids[$k];
                 $fav_channel_ids[$k] = $t;
             }
-        }
-        else if ($fav_op_type === PLUGIN_FAVORITES_OP_MOVE_DOWN)
-        {
+        } else if ($fav_op_type === PLUGIN_FAVORITES_OP_MOVE_DOWN) {
             $k = array_search($channel_id, $fav_channel_ids);
 
-            if ($k !== false && $k !== count($fav_channel_ids) - 1)
-            {
+            if ($k !== false && $k !== count($fav_channel_ids) - 1) {
                 $t = $fav_channel_ids[$k + 1];
                 $fav_channel_ids[$k + 1] = $fav_channel_ids[$k];
                 $fav_channel_ids[$k] = $t;
@@ -328,17 +319,21 @@ abstract class AbstractTv implements Tv
     // Archive.
 
     public function get_archive(MediaURL $media_url)
-    { return null; }
+    {
+        return null;
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // Hooks.
 
     public function folder_entered(MediaURL $media_url, &$plugin_cookies)
-    { /* Nop */ }
+    { /* Nop */
+    }
 
     // Hook for adding special group items.
     public function add_special_groups(&$items)
-    { /* Nop */ }
+    { /* Nop */
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

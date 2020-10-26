@@ -26,25 +26,39 @@ class DefaultGroup implements Group
     }
 
     public function get_id()
-    { return $this->_id; }
+    {
+        return $this->_id;
+    }
 
     public function get_title()
-    { return $this->_title; }
+    {
+        return $this->_title;
+    }
 
     public function get_icon_url()
-    { return $this->_icon_url; }
+    {
+        return $this->_icon_url;
+    }
 
     public function is_favorite_channels()
-    { return false; }
+    {
+        return false;
+    }
 
     public function is_all_channels()
-    { return false; }
+    {
+        return false;
+    }
 
     public function get_channels(&$plugin_cookies)
-    { return $this->_channels; }
+    {
+        return $this->_channels;
+    }
 
     public function add_channel($c)
-    { $this->_channels->put($c); }
+    {
+        $this->_channels->put($c);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

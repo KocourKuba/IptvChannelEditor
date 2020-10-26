@@ -17,7 +17,9 @@ class FavoritesGroup extends DefaultGroup
     }
 
     public function is_favorite_channels()
-    { return true; }
+    {
+        return true;
+    }
 
     public function get_channels(&$plugin_cookies)
     {

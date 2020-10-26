@@ -56,12 +56,10 @@ class VodSearchScreen extends AbstractControlsScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->action_type === 'apply')
-        {
+        if ($user_input->action_type === 'apply') {
             $control_id = $user_input->control_id;
 
-            if ($control_id === 'pattern')
-            {
+            if ($control_id === 'pattern') {
                 $pattern = $user_input->pattern;
 
                 $plugin_cookies->vod_search_pattern = $pattern;
@@ -75,17 +73,13 @@ class VodSearchScreen extends AbstractControlsScreen
                         $this->vod->get_search_media_url_str($pattern),
                         $pattern));
             }
-        }
-        else if ($user_input->action_type === 'confirm')
-        {
+        } else if ($user_input->action_type === 'confirm') {
             $control_id = $user_input->control_id;
             $new_value = $user_input->{$control_id};
 
-            if ($control_id === 'pattern')
-            {
+            if ($control_id === 'pattern') {
                 $pattern = $user_input->pattern;
-                if (preg_match('/^\s*$/', $pattern))
-                {
+                if (preg_match('/^\s*$/', $pattern)) {
                     return ActionFactory::show_error(false,
                         'Pattern should not be empty');
                 }

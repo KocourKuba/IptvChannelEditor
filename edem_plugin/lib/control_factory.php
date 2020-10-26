@@ -34,8 +34,8 @@ class ControlFactory
     }
 
     public static function add_button(&$defs,
-        $handler, $add_params,
-        $name, $title, $caption, $width)
+                                      $handler, $add_params,
+                                      $name, $title, $caption, $width)
     {
         $push_action =
             UserInputHandlerRegistry::create_action($handler,
@@ -58,7 +58,7 @@ class ControlFactory
     }
 
     public static function add_close_dialog_button(&$defs,
-        $caption, $width)
+                                                   $caption, $width)
     {
         $defs[] = array
         (
@@ -77,8 +77,8 @@ class ControlFactory
     }
 
     public static function add_close_dialog_and_apply_button(&$defs,
-        $handler, $add_params,
-        $name, $caption, $width)
+                                                             $handler, $add_params,
+                                                             $name, $caption, $width)
     {
         $push_action = UserInputHandlerRegistry::create_action(
             $handler, $name, $add_params);
@@ -101,7 +101,7 @@ class ControlFactory
     }
 
     public static function add_custom_close_dialog_and_apply_buffon(&$defs,
-        $name, $caption, $width, $action)
+                                                                    $name, $caption, $width, $action)
     {
         $defs[] = array
         (
@@ -120,27 +120,25 @@ class ControlFactory
     }
 
     public static function add_text_field(&$defs,
-        $handler, $add_params,
-        $name, $title, $initial_value,
-        $numeric, $password, $has_osk, $always_active, $width,
-        $need_confirm = false, $need_apply = false)
+                                          $handler, $add_params,
+                                          $name, $title, $initial_value,
+                                          $numeric, $password, $has_osk, $always_active, $width,
+                                          $need_confirm = false, $need_apply = false)
     {
         $apply_action = null;
-        if ($need_apply)
-        {
+        if ($need_apply) {
             $apply_action = UserInputHandlerRegistry::create_action(
                 $handler, $name, $add_params);
             $apply_action['params']['action_type'] = 'apply';
         }
 
         $confirm_action = null;
-        if ($need_confirm)
-        {
+        if ($need_confirm) {
             $confirm_action = UserInputHandlerRegistry::create_action(
                 $handler, $name, $add_params);
             $confirm_action['params']['action_type'] = 'confirm';
         }
-        
+
         $defs[] = array
         (
             GuiControlDef::name => $name,
@@ -162,26 +160,24 @@ class ControlFactory
     }
 
     public static function add_combobox(&$defs,
-        $handler, $add_params,
-        $name, $title, $initial_value, $value_caption_pairs, $width,
-        $need_confirm = false, $need_apply = false)
+                                        $handler, $add_params,
+                                        $name, $title, $initial_value, $value_caption_pairs, $width,
+                                        $need_confirm = false, $need_apply = false)
     {
         $apply_action = null;
-        if ($need_apply)
-        {
+        if ($need_apply) {
             $apply_action = UserInputHandlerRegistry::create_action(
                 $handler, $name, $add_params);
             $apply_action['params']['action_type'] = 'apply';
         }
 
         $confirm_action = null;
-        if ($need_confirm)
-        {
+        if ($need_confirm) {
             $confirm_action = UserInputHandlerRegistry::create_action(
                 $handler, $name, $add_params);
             $confirm_action['params']['action_type'] = 'confirm';
         }
-        
+
         $defs[] = array
         (
             GuiControlDef::name => $name,

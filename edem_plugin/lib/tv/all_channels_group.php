@@ -18,7 +18,9 @@ class AllChannelsGroup extends DefaultGroup
     }
 
     public function is_all_channels()
-    { return true; }
+    {
+        return true;
+    }
 
     public function get_channels(&$plugin_cookies)
     {

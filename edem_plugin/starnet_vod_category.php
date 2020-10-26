@@ -18,19 +18,29 @@ class DemoVodCategory
     }
 
     public function get_id()
-    { return $this->id; }
+    {
+        return $this->id;
+    }
 
     public function get_caption()
-    { return $this->caption; }
+    {
+        return $this->caption;
+    }
 
     public function get_icon_path()
-    { return $this->icon_url; }
+    {
+        return $this->icon_url;
+    }
 
     public function set_sub_categories($arr)
-    { $this->sub_categories = $arr; }
+    {
+        $this->sub_categories = $arr;
+    }
 
     public function get_sub_categories()
-    { return $this->sub_categories; }
+    {
+        return $this->sub_categories;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

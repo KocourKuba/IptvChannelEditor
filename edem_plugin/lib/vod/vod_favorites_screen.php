@@ -56,7 +56,9 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen
     }
 
     public function get_handler_id()
-    { return self::ID; }
+    {
+        return self::ID;
+    }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
@@ -64,8 +66,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'remove_favorite')
-        {
+        if ($user_input->control_id == 'remove_favorite') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -94,16 +95,12 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        foreach ($movie_ids as $movie_id)
-        {
+        foreach ($movie_ids as $movie_id) {
             $short_movie = $this->vod->get_cached_short_movie($movie_id);
-            if (is_null($short_movie))
-            {
+            if (is_null($short_movie)) {
                 $caption = "#$movie_id";
                 $poster_url = "missing://";
-            }
-            else
-            {
+            } else {
                 $caption = $short_movie->name;
                 $poster_url = $short_movie->poster_url;
             }

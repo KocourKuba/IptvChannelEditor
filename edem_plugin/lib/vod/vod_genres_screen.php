@@ -39,7 +39,9 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
     }
 
     public function get_handler_id()
-    { return self::ID; }
+    {
+        return self::ID;
+    }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
@@ -47,8 +49,7 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'select_genre')
-        {
+        if ($user_input->control_id == 'select_genre') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -75,8 +76,7 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        foreach ($genre_ids as $genre_id)
-        {
+        foreach ($genre_ids as $genre_id) {
             $caption = $this->vod->get_genre_caption($genre_id);
             $media_url_str = $this->vod->get_genre_media_url_str($genre_id);
             $icon_url = $this->vod->get_genre_icon_url($genre_id);

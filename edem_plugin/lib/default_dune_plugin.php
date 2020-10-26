@@ -30,8 +30,7 @@ class DefaultDunePlugin implements DunePlugin
 
     protected function add_screen($scr)
     {
-        if (isset($this->screens[$scr->get_id()]))
-        {
+        if (isset($this->screens[$scr->get_id()])) {
             hd_print("Error: screen (id: " . $scr->get_id() . ") already registered.");
             throw new Exception('Screen already registered');
         }
@@ -54,10 +53,10 @@ class DefaultDunePlugin implements DunePlugin
 
     protected function get_screen_by_url($media_url)
     {
-        $screen_id = 
+        $screen_id =
             isset($media_url->screen_id) ?
-            $media_url->screen_id :
-            $media_url->get_raw_string();
+                $media_url->screen_id :
+                $media_url->get_raw_string();
 
         return $this->get_screen_by_id($screen_id);
     }
@@ -74,8 +73,8 @@ class DefaultDunePlugin implements DunePlugin
 
         return
             $this->
-                get_screen_by_url($media_url)->
-                    get_folder_view($media_url, $plugin_cookies);
+            get_screen_by_url($media_url)->
+            get_folder_view($media_url, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -86,19 +85,19 @@ class DefaultDunePlugin implements DunePlugin
 
         return
             $this->
-                get_screen_by_url($media_url)->
-                    get_next_folder_view($media_url, $plugin_cookies);
+            get_screen_by_url($media_url)->
+            get_next_folder_view($media_url, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
     public function get_regular_folder_items($media_url_str, $from_ndx,
-        &$plugin_cookies)
+                                             &$plugin_cookies)
     {
         $media_url = MediaURL::decode($media_url_str);
 
         return $this->get_screen_by_url($media_url)->
-            get_folder_range($media_url, $from_ndx, $plugin_cookies);
+        get_folder_range($media_url, $from_ndx, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -120,13 +119,13 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     public function get_tv_stream_url($playback_url, &$plugin_cookies)
-    { 
+    {
         if (is_null($this->tv))
             throw new Exception('TV is not supported');
 
         return $this->tv->get_tv_stream_url($playback_url, $plugin_cookies);
     }
-    
+
     ///////////////////////////////////////////////////////////////////////
 
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
@@ -134,7 +133,7 @@ class DefaultDunePlugin implements DunePlugin
         if (is_null($this->tv))
             throw new Exception('TV is not supported');
 
-        return $this-> tv->get_tv_playback_url($channel_id, $archive_ts, $protect_code, $plugin_cookies);
+        return $this->tv->get_tv_playback_url($channel_id, $archive_ts, $protect_code, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////

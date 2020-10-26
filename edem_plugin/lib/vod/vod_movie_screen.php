@@ -26,16 +26,20 @@ class VodMovieScreen implements Screen, UserInputHandler
         $this->vod = $vod;
 
         UserInputHandlerRegistry::get_instance()->
-            register_handler($this);
+        register_handler($this);
     }
 
     ///////////////////////////////////////////////////////////////////////
 
     public function get_id()
-    { return self::ID; }
+    {
+        return self::ID;
+    }
 
     public function get_handler_id()
-    { return self::ID; }
+    {
+        return self::ID;
+    }
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -44,8 +48,7 @@ class VodMovieScreen implements Screen, UserInputHandler
         $this->vod->folder_entered($media_url, $plugin_cookies);
 
         $movie = $this->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-        if ($movie === null)
-        {
+        if ($movie === null) {
             // TODO: dialog?
             return null;
         }
@@ -53,8 +56,7 @@ class VodMovieScreen implements Screen, UserInputHandler
         $has_right_button = $this->vod->is_favorites_supported();
         $right_button_caption = null;
         $right_button_action = null;
-        if ($has_right_button)
-        {
+        if ($has_right_button) {
             $this->vod->ensure_favorites_loaded($plugin_cookies);
 
             $is_favorite = $this->vod->is_favorite_movie_id($movie->id);
@@ -79,10 +81,10 @@ class VodMovieScreen implements Screen, UserInputHandler
 
         return array
         (
-            PluginFolderView::multiple_views_supported  => false,
-            PluginFolderView::archive                   => null,
-            PluginFolderView::view_kind                 => PLUGIN_FOLDER_VIEW_MOVIE,
-            PluginFolderView::data                      => $movie_folder_view,
+            PluginFolderView::multiple_views_supported => false,
+            PluginFolderView::archive => null,
+            PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_MOVIE,
+            PluginFolderView::data => $movie_folder_view,
         );
     }
 
@@ -94,8 +96,7 @@ class VodMovieScreen implements Screen, UserInputHandler
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'favorites')
-        {
+        if ($user_input->control_id == 'favorites') {
             $movie_id = $user_input->movie_id;
 
             $is_favorite = $this->vod->is_favorite_movie_id($movie_id);

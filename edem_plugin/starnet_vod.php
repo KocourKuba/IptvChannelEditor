@@ -25,21 +25,19 @@ class DemoVod extends AbstractVod
                 sprintf(
                     DemoConfig::MOVIE_INFO_URL_FORMAT,
                     $movie_id));
-     
+
         if (is_null($doc))
             throw new Exception('Can not fetch movie info');
 
         $xml = simplexml_load_string($doc);
 
-        if ($xml === false)
-        {
+        if ($xml === false) {
             hd_print("Error: can not parse XML document.");
 //            hd_print("XML-text:\n$doc\n");
             throw new Exception('Illegal XML document');
         }
 
-        if ($xml->getName() !== 'movie_info')
-        {
+        if ($xml->getName() !== 'movie_info') {
             hd_print("Error: unexpected node '" . $xml->getName() .
                 "'. Expected: 'movie_info'");
             throw new Exception('Invalid XML document');
@@ -64,8 +62,7 @@ class DemoVod extends AbstractVod
             $xml->country,
             $xml->budget);
 
-        foreach ($xml->series->item as $item)
-        {
+        foreach ($xml->series->item as $item) {
             $movie->add_series_data(
                 $item->id,
                 $item->title,
@@ -83,8 +80,7 @@ class DemoVod extends AbstractVod
     {
         $fav_movie_ids = $this->get_fav_movie_ids_from_cookies($plugin_cookies);
 
-        foreach ($fav_movie_ids as $movie_id)
-        {
+        foreach ($fav_movie_ids as $movie_id) {
             if ($this->has_cached_short_movie($movie_id))
                 continue;
 
@@ -111,8 +107,7 @@ class DemoVod extends AbstractVod
         $arr = preg_split('/,/', $plugin_cookies->{'favorite_movies'});
 
         $ids = array();
-        foreach ($arr as $id)
-        {
+        foreach ($arr as $id) {
             if (preg_match('/\S/', $id))
                 $ids[] = $id;
         }
@@ -127,38 +122,38 @@ class DemoVod extends AbstractVod
     ///////////////////////////////////////////////////////////////////////
     // Genres.
 
-/*
-    protected function load_genres(&$plugin_cookies)
-    {
-        $doc = $this->session->api_vod_genres();
+    /*
+        protected function load_genres(&$plugin_cookies)
+        {
+            $doc = $this->session->api_vod_genres();
 
-        $genres = array();
-        foreach ($doc->genres as $genre)
-            $genres[$genre->id] = $genre->name;
+            $genres = array();
+            foreach ($doc->genres as $genre)
+                $genres[$genre->id] = $genre->name;
 
-        return $genres;
-    }
+            return $genres;
+        }
 
-    public function get_genre_icon_url($genre_id)
-    {
-        return $this->session->get_icon('mov_genre_default.png');
-    }
+        public function get_genre_icon_url($genre_id)
+        {
+            return $this->session->get_icon('mov_genre_default.png');
+        }
 
-    public function get_genre_media_url_str($genre_id)
-    {
-        return DemoVodListScreen::get_media_url_str('genres', $genre_id);
-    }
-*/
+        public function get_genre_media_url_str($genre_id)
+        {
+            return DemoVodListScreen::get_media_url_str('genres', $genre_id);
+        }
+    */
 
     ///////////////////////////////////////////////////////////////////////
     // Search.
 
-/*
-    public function get_search_media_url_str($pattern)
-    {
-        return DemoVodListScreen::get_media_url_str('search', $pattern);
-    }
-*/
+    /*
+        public function get_search_media_url_str($pattern)
+        {
+            return DemoVodListScreen::get_media_url_str('search', $pattern);
+        }
+    */
 
     ///////////////////////////////////////////////////////////////////////
     // Folder views.

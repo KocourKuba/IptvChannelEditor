@@ -16,7 +16,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
             array
             (
                 'screen_id' => self::ID,
-                'group_id'  => $group_id,
+                'group_id' => $group_id,
             ));
     }
 
@@ -43,8 +43,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
         $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::tv_play();
         $actions[GUI_EVENT_KEY_PLAY] = ActionFactory::tv_play();
 
-        if ($this->tv->is_favorites_supported())
-        {
+        if ($this->tv->is_favorites_supported()) {
             $add_favorite_action =
                 UserInputHandlerRegistry::create_action(
                     $this, 'add_favorite');
@@ -54,12 +53,12 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
                 UserInputHandlerRegistry::create_action(
                     $this, 'popup_menu');
 
-           $open_settings = 
-		ActionFactory::open_folder(
-			DemoSetupScreen::get_media_url_str());
-			$open_settings['caption'] = 'Настройки';
+            $open_settings =
+                ActionFactory::open_folder(
+                    DemoSetupScreen::get_media_url_str());
+            $open_settings['caption'] = 'Настройки';
 
-	    $actions[GUI_EVENT_KEY_B_GREEN] = $open_settings;
+            $actions[GUI_EVENT_KEY_B_GREEN] = $open_settings;
             $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
             $actions[GUI_EVENT_KEY_POPUP_MENU] = $popup_menu_action;
         }
@@ -72,7 +71,9 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
     }
 
     public function get_handler_id()
-    { return self::ID; }
+    {
+        return self::ID;
+    }
 
     private function get_sel_item_update_action(&$user_input, &$plugin_cookies)
     {
@@ -95,8 +96,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'info')
-        {
+        if ($user_input->control_id == 'info') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -109,9 +109,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
             $title = $c->get_title();
 
             return ActionFactory::show_title_dialog("Channel '$title' (id=$id)");
-        }
-        else if ($user_input->control_id == 'popup_menu')
-        {
+        } else if ($user_input->control_id == 'popup_menu') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -128,9 +126,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
                 GuiMenuItemDef::action => $add_favorite_action);
 
             return ActionFactory::show_popup_menu($menu_items);
-        }
-        else if ($user_input->control_id == 'add_favorite')
-        {
+        } else if ($user_input->control_id == 'add_favorite') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -138,15 +134,12 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
             $channel_id = $media_url->channel_id;
 
             $is_favorite = $this->tv->is_favorite_channel_id($channel_id, $plugin_cookies);
-            if ($is_favorite)
-            {
+            if ($is_favorite) {
                 return ActionFactory::show_title_dialog(
                     'Канал уже в избранном',
                     $this->get_sel_item_update_action(
                         $user_input, $plugin_cookies));
-            }
-            else
-            {
+            } else {
                 $this->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD,
                     $channel_id, $plugin_cookies);
 
@@ -193,8 +186,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        foreach ($group->get_channels($plugin_cookies) as $c)
-        {
+        foreach ($group->get_channels($plugin_cookies) as $c) {
             $items[] = $this->get_regular_folder_item(
                 $group, $c, $plugin_cookies);
         }

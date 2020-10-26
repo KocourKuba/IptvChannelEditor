@@ -15,7 +15,7 @@ class UserInputHandlerRegistry
     }
 
     public static function create_action(UserInputHandler $handler,
-        $name, $add_params = null)
+                                         $name, $add_params = null)
     {
         $params = array(
             'handler_id' => $handler->get_handler_id(),

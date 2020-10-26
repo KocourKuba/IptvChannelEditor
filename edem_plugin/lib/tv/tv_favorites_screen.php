@@ -57,7 +57,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         return array
         (
             GUI_EVENT_KEY_ENTER => ActionFactory::tv_play(),
-            GUI_EVENT_KEY_PLAY  => ActionFactory::tv_play(),
+            GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
             GUI_EVENT_KEY_B_GREEN => $move_backward_favorite_action,
             GUI_EVENT_KEY_C_YELLOW => $move_forward_favorite_action,
             GUI_EVENT_KEY_D_BLUE => $remove_favorite_action,
@@ -66,14 +66,16 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
     }
 
     public function get_handler_id()
-    { return self::ID; }
+    {
+        return self::ID;
+    }
 
     private function get_update_action($sel_increment,
-        &$user_input, &$plugin_cookies)
+                                       &$user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
 
-        $num_favorites = 
+        $num_favorites =
             count($this->tv->get_fav_channel_ids($plugin_cookies));
 
         $sel_ndx = $user_input->sel_ndx + $sel_increment;
@@ -95,8 +97,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'move_backward_favorite')
-        {
+        if ($user_input->control_id == 'move_backward_favorite') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -107,9 +108,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
                 $channel_id, $plugin_cookies);
 
             return $this->get_update_action(-1, $user_input, $plugin_cookies);
-        }
-        else if ($user_input->control_id == 'move_forward_favorite')
-        {
+        } else if ($user_input->control_id == 'move_forward_favorite') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -120,9 +119,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
                 $channel_id, $plugin_cookies);
 
             return $this->get_update_action(1, $user_input, $plugin_cookies);
-        }
-        else if ($user_input->control_id == 'remove_favorite')
-        {
+        } else if ($user_input->control_id == 'remove_favorite') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -148,17 +145,13 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        foreach ($fav_channel_ids as $channel_id)
-        {
+        foreach ($fav_channel_ids as $channel_id) {
             if (preg_match('/^\s*$/', $channel_id))
                 continue;
 
-            try
-            {
+            try {
                 $c = $this->tv->get_channel($channel_id);
-            }
-            catch (Exception $e)
-            {
+            } catch (Exception $e) {
                 hd_print("Warning: channel '$channel_id' not found.");
                 continue;
             }

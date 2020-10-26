@@ -2,29 +2,29 @@
 
 class DemoConfig
 {
-    const PluginVersion             = '2.1.0';
-    const PluginDate                = '24.10.2020';
+    const PluginVersion = '2.1.0';
+    const PluginDate = '24.10.2020';
     const VOD_MOVIE_PAGE_SUPPORTED = true;
-    const VOD_FAVORITES_SUPPORTED  = true;
-    const TV_FAVORITES_SUPPORTED   = true;
+    const VOD_FAVORITES_SUPPORTED = true;
+    const TV_FAVORITES_SUPPORTED = true;
 
 //    const EPG_ID_FILE_URL       = 'http://www%smd/media%sdata/channels_id';
 
-    const CHANNEL_LIST_URL      = 'edem_channel_list.xml';
-    const CHANNEL_LIST_URL2     = 'edem_channel_list_backup.xml';
-    const EPG_URL_FORMAT        = 'http://www.teleguide.info/kanal%d_%s.html';
-    const EPG_URL_FORMAT2       = 'http://www.teleguide.info/kanal%d_%s.html';
-    const VOD_CATEGORIES_URL    = 'http://online.dune-hd.com/demo2/vod_categories.pl'; 
+    const CHANNEL_LIST_URL = 'edem_channel_list.xml';
+    const CHANNEL_LIST_URL2 = 'edem_channel_list_backup.xml';
+    const EPG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';
+    const EPG_URL_FORMAT2 = 'http://www.teleguide.info/kanal%d_%s.html';
+    const VOD_CATEGORIES_URL = 'http://online.dune-hd.com/demo2/vod_categories.pl';
     const MOVIE_LIST_URL_FORMAT = 'http://online.dune-hd.com/demo2/movie_list.pl?category_id=%s';
     const MOVIE_INFO_URL_FORMAT = 'http://online.dune-hd.com/demo2/movie_info.pl?movie_id=%s';
 
-    const ALL_CHANNEL_GROUP_CAPTION     = 'Все каналы';
-    const ALL_CHANNEL_GROUP_ICON_PATH   = 'plugin_file://icons/all.png';
+    const ALL_CHANNEL_GROUP_CAPTION = 'Все каналы';
+    const ALL_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/all.png';
 
-    const FAV_CHANNEL_GROUP_CAPTION     = 'Избранное';
-    const FAV_CHANNEL_GROUP_ICON_PATH   = 'plugin_file://icons/fav.png';
+    const FAV_CHANNEL_GROUP_CAPTION = 'Избранное';
+    const FAV_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/fav.png';
 
-    const FAV_MOVIES_CATEGORY_CAPTION   = 'Избранное';
+    const FAV_MOVIES_CATEGORY_CAPTION = 'Избранное';
     const FAV_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/fav.png';
 
     ///////////////////////////////////////////////////////////////////////
@@ -50,8 +50,8 @@ class DemoConfig
                     ViewParams::sandwich_width => 245,
                     ViewParams::sandwich_height => 140,
                     ViewParams::content_box_padding_left => 70,
-		    ViewParams::background_path=> 'plugin_file://icons/bg.jpg',
-		    ViewParams::background_order => 0,
+                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
                 ),
@@ -66,7 +66,7 @@ class DemoConfig
                     ViewItemParams::icon_sel_scale_factor => 1.2,
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
         );
     }
@@ -82,8 +82,8 @@ class DemoConfig
                 (
                     ViewParams::num_cols => 2,
                     ViewParams::num_rows => 10,
-                    ViewParams::background_path=> 'plugin_file://icons/bg.jpg',
-		    ViewParams::background_order => 0,
+                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_order => 0,
                     ViewParams::paint_details => true,
                 ),
 
@@ -101,7 +101,7 @@ class DemoConfig
                     ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png',
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
             array
@@ -112,8 +112,8 @@ class DemoConfig
                 (
                     ViewParams::num_cols => 5,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path=> 'plugin_file://icons/bg.jpg',
-		    ViewParams::background_order => 0,
+                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
                     ViewParams::sandwich_base => 'gui_skin://special_icons/sandwich_base.aai',
@@ -136,7 +136,7 @@ class DemoConfig
                     ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png'
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
             array
@@ -147,8 +147,8 @@ class DemoConfig
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path=> 'plugin_file://icons/bg.jpg',
-		    ViewParams::background_order => 0,
+                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
                     ViewParams::sandwich_base => 'gui_skin://special_icons/sandwich_base.aai',
@@ -171,7 +171,7 @@ class DemoConfig
                     ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png',
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
             array
@@ -182,8 +182,8 @@ class DemoConfig
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path=> 'plugin_file://icons/bg.jpg',
-		    ViewParams::background_order => 0,
+                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
                     ViewParams::sandwich_base => 'gui_skin://special_icons/sandwich_base.aai',
@@ -206,7 +206,7 @@ class DemoConfig
                     ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png',
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
             array
@@ -217,8 +217,8 @@ class DemoConfig
                 (
                     ViewParams::num_cols => 3,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path=> 'plugin_file://icons/bg.jpg',
-		    ViewParams::background_order => 0,
+                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
                     ViewParams::sandwich_base => 'gui_skin://special_icons/sandwich_base.aai',
@@ -241,7 +241,7 @@ class DemoConfig
                     ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png',
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             )
         );
     }
@@ -313,7 +313,7 @@ class DemoConfig
                     ViewItemParams::icon_sel_scale_factor => 1.2,
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
             array
@@ -345,7 +345,7 @@ class DemoConfig
                     ViewItemParams::icon_sel_scale_factor => 1.5,
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
         );
     }

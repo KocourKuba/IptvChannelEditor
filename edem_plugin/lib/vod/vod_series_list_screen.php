@@ -34,7 +34,7 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
         return array
         (
             GUI_EVENT_KEY_ENTER => ActionFactory::vod_play(),
-            GUI_EVENT_KEY_PLAY  => ActionFactory::vod_play(),
+            GUI_EVENT_KEY_PLAY => ActionFactory::vod_play(),
         );
     }
 
@@ -45,16 +45,14 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
         $this->vod->folder_entered($media_url, $plugin_cookies);
 
         $movie = $this->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-        if ($movie === null)
-        {
+        if ($movie === null) {
             // TODO: dialog?
             return array();
         }
 
         $items = array();
 
-        foreach ($movie->series_list as $series)
-        {
+        foreach ($movie->series_list as $series) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url =>
@@ -63,7 +61,7 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
                         (
                             'screen_id' => self::ID,
                             'movie_id' => $movie->id,
-                            'series_id'  => $series->id,
+                            'series_id' => $series->id,
                         )),
                 PluginRegularFolderItem::caption => $series->name,
                 PluginRegularFolderItem::view_item_params => array
@@ -99,7 +97,7 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
                     ViewItemParams::icon_path => 'gui_skin://small_icons/movie.aai'
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array (),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
         );
     }

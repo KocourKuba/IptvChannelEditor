@@ -19,7 +19,7 @@ abstract class VodListScreen extends AbstractRegularScreen
         $this->vod = $vod;
 
         UserInputHandlerRegistry::get_instance()->
-            register_handler($this);
+        register_handler($this);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -33,8 +33,7 @@ abstract class VodListScreen extends AbstractRegularScreen
         else
             $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::vod_play();
 
-        if ($this->vod->is_favorites_supported())
-        {
+        if ($this->vod->is_favorites_supported()) {
             $add_favorite_action =
                 UserInputHandlerRegistry::create_action(
                     $this, 'add_favorite');
@@ -52,7 +51,9 @@ abstract class VodListScreen extends AbstractRegularScreen
     }
 
     public function get_handler_id()
-    { return self::ID; }
+    {
+        return self::ID;
+    }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
@@ -60,8 +61,7 @@ abstract class VodListScreen extends AbstractRegularScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'popup_menu')
-        {
+        if ($user_input->control_id == 'popup_menu') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -78,9 +78,7 @@ abstract class VodListScreen extends AbstractRegularScreen
                 GuiMenuItemDef::action => $add_favorite_action);
 
             return ActionFactory::show_popup_menu($menu_items);
-        }
-        else if ($user_input->control_id == 'add_favorite')
-        {
+        } else if ($user_input->control_id == 'add_favorite') {
             if (!isset($user_input->selected_media_url))
                 return null;
 
@@ -88,13 +86,10 @@ abstract class VodListScreen extends AbstractRegularScreen
             $movie_id = $media_url->movie_id;
 
             $is_favorite = $this->vod->is_favorite_movie_id($movie_id);
-            if ($is_favorite)
-            {
+            if ($is_favorite) {
                 return ActionFactory::show_title_dialog(
                     'Movie already resides in My Movies');
-            }
-            else
-            {
+            } else {
                 $this->vod->add_favorite_movie($movie_id, $plugin_cookies);
 
                 return ActionFactory::show_title_dialog(
@@ -121,8 +116,7 @@ abstract class VodListScreen extends AbstractRegularScreen
             return HD::create_regular_folder_range(array());
 
         $items = array();
-        foreach ($movie_range->short_movies as $movie)
-        {
+        foreach ($movie_range->short_movies as $movie) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url =>

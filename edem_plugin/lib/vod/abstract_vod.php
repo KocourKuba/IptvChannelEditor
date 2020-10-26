@@ -62,7 +62,7 @@ abstract class AbstractVod implements Vod
     }
 
     ///////////////////////////////////////////////////////////////////////
-    
+
     public function is_favorites_supported()
     {
         return $this->favorites_supported;
@@ -118,7 +118,7 @@ abstract class AbstractVod implements Vod
     }
 
     ///////////////////////////////////////////////////////////////////////
-    
+
     public function ensure_movie_loaded($movie_id, &$plugin_cookies)
     {
         if (!isset($movie_id))
@@ -144,8 +144,7 @@ abstract class AbstractVod implements Vod
     public function get_vod_info(MediaURL $media_url, &$plugin_cookies)
     {
         $movie = $this->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-        if ($movie === null)
-        {
+        if ($movie === null) {
             // TODO: dialog?
             return null;
         }
@@ -168,7 +167,9 @@ abstract class AbstractVod implements Vod
     // This method should be overridden if and only if the
     // $playback_url_is_stream_url is false.
     public function get_vod_stream_url($playback_url, &$plugin_cookies)
-    { throw new Exception('Not implemented.'); }
+    {
+        throw new Exception('Not implemented.');
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // Favorites.
@@ -180,19 +181,24 @@ abstract class AbstractVod implements Vod
     //  short_movie_by_id map.
     //  - exception should be thrown if error occured.
     protected function load_favorites(&$plugin_cookies)
-    { throw new Exception('Not implemented'); }
+    {
+        throw new Exception('Not implemented');
+    }
 
     // This function should throw an exception if failed.
     protected function do_add_favorite_movie($movie_id, &$plugin_cookies)
-    { /* nop */ }
+    { /* nop */
+    }
 
     // This function should throw an exception if failed.
     protected function do_remove_favorite_movie($movie_id, &$plugin_cookies)
-    { /* nop */ }
+    { /* nop */
+    }
 
     // This function should not fail.
     protected function do_save_favorite_movies(&$fav_movie_ids, &$plugin_cookies)
-    { /* nop */ }
+    { /* nop */
+    }
 
     public function ensure_favorites_loaded(&$plugin_cookies)
     {
@@ -255,13 +261,19 @@ abstract class AbstractVod implements Vod
     // Genres.
 
     protected function load_genres(&$plugin_cookies)
-    { throw new Exception("Not implemented."); }
+    {
+        throw new Exception("Not implemented.");
+    }
 
     public function get_genre_icon_url($genre_id)
-    { throw new Exception('Not implemented'); }
+    {
+        throw new Exception('Not implemented');
+    }
 
     public function get_genre_media_url_str($genre_id)
-    { throw new Exception('Not implemented'); }
+    {
+        throw new Exception('Not implemented');
+    }
 
     public function ensure_genres_loaded(&$plugin_cookies)
     {
@@ -294,28 +306,37 @@ abstract class AbstractVod implements Vod
     // Search.
 
     public function get_search_media_url_str($pattern)
-    { throw new Exception('Not implemented'); }
+    {
+        throw new Exception('Not implemented');
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 
     public function get_vod_list_folder_views()
-    { throw new Exception('Not implemented'); }
+    {
+        throw new Exception('Not implemented');
+    }
 
     public function get_vod_genres_folder_views()
-    { throw new Exception('Not implemented'); }
+    {
+        throw new Exception('Not implemented');
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // Archive.
 
     public function get_archive(MediaURL $media_url)
-    { return null; }
+    {
+        return null;
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // Hook.
 
     public function folder_entered(MediaURL $media_url, &$plugin_cookies)
-    { /* Nop */ }
+    { /* Nop */
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

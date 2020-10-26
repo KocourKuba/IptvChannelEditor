@@ -16,16 +16,20 @@ abstract class AbstractControlsScreen
         $this->id = $id;
 
         UserInputHandlerRegistry::get_instance()->
-            register_handler($this);
+        register_handler($this);
     }
 
     ///////////////////////////////////////////////////////////////////////
 
     public function get_handler_id()
-    { return 'controls_' . $this->id; }
+    {
+        return 'controls_' . $this->id;
+    }
 
     public function get_id()
-    { return $this->id; }
+    {
+        return $this->id;
+    }
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -41,10 +45,10 @@ abstract class AbstractControlsScreen
 
         return array
         (
-            PluginFolderView::multiple_views_supported  => false,
-            PluginFolderView::archive                   => null,
-            PluginFolderView::view_kind                 => PLUGIN_FOLDER_VIEW_CONTROLS,
-            PluginFolderView::data                      => $folder_view,
+            PluginFolderView::multiple_views_supported => false,
+            PluginFolderView::archive => null,
+            PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_CONTROLS,
+            PluginFolderView::data => $folder_view,
         );
     }
 
@@ -61,21 +65,21 @@ abstract class AbstractControlsScreen
     }
 
     protected function add_button(&$defs,
-        $name, $title, $caption, $width)
+                                  $name, $title, $caption, $width)
     {
         ControlFactory::add_button($defs, $this, null,
             $name, $title, $caption, $width);
     }
 
     protected function add_close_dialog_button(&$defs,
-        $caption, $width)
+                                               $caption, $width)
     {
         ControlFactory::add_close_dialog_button($defs,
             $caption, $width);
     }
 
     protected function add_close_dialog_and_apply_button(&$defs,
-        $name, $caption, $width)
+                                                         $name, $caption, $width)
     {
         ControlFactory::add_close_dialog_and_apply_button($defs,
             $this, null,
@@ -83,9 +87,9 @@ abstract class AbstractControlsScreen
     }
 
     protected function add_text_field(&$defs,
-        $name, $title, $initial_value,
-        $numeric, $password, $has_osk, $always_active, $width,
-        $need_confirm = false, $need_apply = false)
+                                      $name, $title, $initial_value,
+                                      $numeric, $password, $has_osk, $always_active, $width,
+                                      $need_confirm = false, $need_apply = false)
     {
         ControlFactory::add_text_field($defs, $this, null,
             $name, $title, $initial_value,
@@ -94,8 +98,8 @@ abstract class AbstractControlsScreen
     }
 
     protected function add_combobox(&$defs,
-        $name, $title, $initial_value, $value_caption_pairs, $width,
-        $need_confirm = false, $need_apply = false)
+                                    $name, $title, $initial_value, $value_caption_pairs, $width,
+                                    $need_confirm = false, $need_apply = false)
     {
         ControlFactory::add_combobox($defs, $this, null,
             $name, $title, $initial_value, $value_caption_pairs, $width,

@@ -129,7 +129,7 @@ class Movie
     }
 
     public function add_series_data($id, $name,
-        $playback_url, $playback_url_is_stream_url)
+                                    $playback_url, $playback_url_is_stream_url)
     {
         $series = new MovieSeries($id);
 
@@ -165,15 +165,13 @@ class Movie
     public function get_vod_info($sel_id, $buffering_ms)
     {
         if (!is_array($this->series_list) ||
-            count($this->series_list) == 0)
-        {
+            count($this->series_list) == 0) {
             throw new Exception('Invalid movie: series list is empty');
         }
 
         $series_array = array();
         $initial_series_ndx = -1;
-        foreach ($this->series_list as $ndx => $series)
-        {
+        foreach ($this->series_list as $ndx => $series) {
             if (!is_null($sel_id) && $series->id === $sel_id)
                 $initial_series_ndx = $ndx;
 

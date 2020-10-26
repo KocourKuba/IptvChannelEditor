@@ -15,8 +15,8 @@ class DemoVodCategoryListScreen extends AbstractPreloadedRegularScreen
         return MediaURL::encode(
             array
             (
-                'screen_id'     => self::ID,
-                'category_id'   => $category_id,
+                'screen_id' => self::ID,
+                'category_id' => $category_id,
             ));
     }
 
@@ -51,12 +51,10 @@ class DemoVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
         $category_list = $this->category_list;
 
-        if (isset($media_url->category_id))
-        {
-            if (!isset($this->category_index[$media_url->category_id]))
-            {
+        if (isset($media_url->category_id)) {
+            if (!isset($this->category_index[$media_url->category_id])) {
                 hd_print("Error: parent category (id: " .
-                    $media_url->category_id . ") not found."); 
+                    $media_url->category_id . ") not found.");
                 throw new Exception('No parent category found');
             }
 
@@ -67,8 +65,7 @@ class DemoVodCategoryListScreen extends AbstractPreloadedRegularScreen
         $items = array();
 
         if (DemoConfig::VOD_FAVORITES_SUPPORTED &&
-            !isset($media_url->category_id))
-        {
+            !isset($media_url->category_id)) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => VodFavoritesScreen::get_media_url_str(),
@@ -81,8 +78,7 @@ class DemoVodCategoryListScreen extends AbstractPreloadedRegularScreen
             );
         }
 
-        foreach ($category_list as $c)
-        {
+        foreach ($category_list as $c) {
             $is_movie_list = is_null($c->get_sub_categories());
             $media_url_str = $is_movie_list ?
                 DemoVodListScreen::get_media_url_str($c->get_id()) :
@@ -108,25 +104,23 @@ class DemoVodCategoryListScreen extends AbstractPreloadedRegularScreen
     private function fetch_vod_categories()
     {
         $doc = HD::http_get_document(DemoConfig::VOD_CATEGORIES_URL);
-     
+
         if (is_null($doc))
             throw new Exception('Can not fetch playlist');
 
         $xml = simplexml_load_string($doc);
 
-        if ($xml === false)
-        {
+        if ($xml === false) {
             hd_print("Error: can not parse XML document.");
 //            hd_print("XML-text: $doc.");
             throw new Exception('Illegal XML document');
         }
 
-        if ($xml->getName() !== 'vod_categories')
-        {
+        if ($xml->getName() !== 'vod_categories') {
             hd_print("Error: unexpected node '" . $xml->getName() . "'. Expected: 'vod_categories'");
             throw new Exception('Invalid XML document');
         }
-        
+
         $this->category_list = array();
         $this->category_index = array();
 
@@ -137,16 +131,14 @@ class DemoVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
     private function fill_categories($xml_categories, &$obj_arr)
     {
-        foreach ($xml_categories as $c)
-        {
+        foreach ($xml_categories as $c) {
             $cat =
                 new DemoVodCategory(
                     strval($c->id),
                     strval($c->caption),
                     strval($c->icon_url));
 
-            if (isset($c->vod_categories))
-            {
+            if (isset($c->vod_categories)) {
                 $sub_categories = array();
                 $this->fill_categories($c->vod_categories->children(), $sub_categories);
                 $cat->set_sub_categories($sub_categories);

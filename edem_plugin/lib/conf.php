@@ -19,18 +19,15 @@ class Conf
         $lines = file($conf_file_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         hd_restore_warnings();
 
-        if ($lines === false)
-        {
+        if ($lines === false) {
             hd_print("Configuration file '$conf_file_path' does not exist.");
             return false;
         }
 
         hd_print("Reading configuration from '$conf_file_path'...");
 
-        for ($i = 0; $i < count($lines); ++$i)
-        {
-            if (preg_match('/^ *(\S+) *= *(\S+)$/', $lines[$i], $matches) != 1)
-            {
+        for ($i = 0; $i < count($lines); ++$i) {
+            if (preg_match('/^ *(\S+) *= *(\S+)$/', $lines[$i], $matches) != 1) {
                 hd_print(
                     "Warning: line " . ($i + 1) . ": unknown format. " .
                     "Data: '" . $lines[$i] . "'.");
@@ -44,15 +41,18 @@ class Conf
     }
 
     public function __get($key)
-    { return $this->data[$key]; }
+    {
+        return $this->data[$key];
+    }
 
     public function __isset($key)
-    { return isset($this->data[$key]); }
+    {
+        return isset($this->data[$key]);
+    }
 
     public function set_default($key, $value)
     {
-        if (!isset($this->data[$key]))
-        {
+        if (!isset($this->data[$key])) {
             hd_print("Warning: no value for key '$key'. Using default: '$value'");
             $this->data[$key] = $value;
         }

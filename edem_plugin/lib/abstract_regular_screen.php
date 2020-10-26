@@ -35,7 +35,9 @@ abstract class AbstractRegularScreen implements RegularScreen
     ///////////////////////////////////////////////////////////////////////
 
     public function get_id()
-    { return $this->id; }
+    {
+        return $this->id;
+    }
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -52,7 +54,7 @@ abstract class AbstractRegularScreen implements RegularScreen
         $folder_view[PluginRegularFolderView::actions] =
             $this->get_action_map($media_url, $plugin_cookies);
 
-        $folder_view[PluginRegularFolderView::initial_range] = 
+        $folder_view[PluginRegularFolderView::initial_range] =
             $this->get_folder_range($media_url, 0, $plugin_cookies);
 
         $archive = $this->get_archive($media_url);
@@ -61,10 +63,10 @@ abstract class AbstractRegularScreen implements RegularScreen
 
         return array
         (
-            PluginFolderView::multiple_views_supported  => (count($this->folder_views) > 1 ? 1 : 0),
-            PluginFolderView::archive                   => $archive_def,
-            PluginFolderView::view_kind                 => PLUGIN_FOLDER_VIEW_REGULAR,
-            PluginFolderView::data                      => $folder_view
+            PluginFolderView::multiple_views_supported => (count($this->folder_views) > 1 ? 1 : 0),
+            PluginFolderView::archive => $archive_def,
+            PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_REGULAR,
+            PluginFolderView::data => $folder_view
         );
     }
 
@@ -92,7 +94,7 @@ abstract class AbstractRegularScreen implements RegularScreen
             return 0;
 
         $idx = $plugin_cookies->{$this->folder_view_index_attr_name};
-        
+
         $cnt = count($this->folder_views);
 
         if ($idx < 0)
@@ -106,7 +108,9 @@ abstract class AbstractRegularScreen implements RegularScreen
     ///////////////////////////////////////////////////////////////////////
 
     public function get_archive(MediaURL $media_url)
-    { return null; }
+    {
+        return null;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

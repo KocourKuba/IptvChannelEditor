@@ -13,9 +13,10 @@ class HD
 
     public static function has_attribute($obj, $n)
     {
-        $arr = (array) $obj;
+        $arr = (array)$obj;
         return isset($arr[$n]);
     }
+
     ///////////////////////////////////////////////////////////////////////
 
     public static function get_map_element($map, $key)
@@ -59,12 +60,9 @@ class HD
         $minutes = $remainder / 60;
         $seconds = $remainder % 60;
 
-        if (intval($hours) > 0)
-        {
+        if (intval($hours) > 0) {
             return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
-        }
-        else
-        {
+        } else {
             return sprintf("%02d:%02d", $minutes, $seconds);
         }
     }
@@ -76,13 +74,10 @@ class HD
         $media_url = null;
         $user_data = null;
 
-        if (is_array($a) && is_null($b))
-        {
+        if (is_array($a) && is_null($b)) {
             $media_url = '';
             $user_data = $a;
-        }
-        else
-        {
+        } else {
             $media_url = $a;
             $user_data = $b;
         }
@@ -99,8 +94,7 @@ class HD
     {
         $idx = strpos($media_url_str, '||');
 
-        if ($idx === false)
-        {
+        if ($idx === false) {
             $media_url = $media_url_str;
             $user_data = null;
             return;
@@ -113,18 +107,15 @@ class HD
     ///////////////////////////////////////////////////////////////////////
 
     public static function create_regular_folder_range($items,
-        $from_ndx = 0, $total = -1, $more_items_available = false)
+                                                       $from_ndx = 0, $total = -1, $more_items_available = false)
     {
         if ($total === -1)
             $total = $from_ndx + count($items);
 
-        if ($from_ndx >= $total)
-        {
+        if ($from_ndx >= $total) {
             $from_ndx = $total;
             $items = array();
-        }
-        else if ($from_ndx + count($items) > $total)
-        {
+        } else if ($from_ndx + count($items) > $total) {
             array_splice($items, $total - $from_ndx);
         }
 
@@ -143,17 +134,16 @@ class HD
     public static function http_get_document($url, $opts = null)
     {
         $ch = curl_init();
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 	FALSE);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,    25);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION,    1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER,    true);
-        curl_setopt($ch, CURLOPT_TIMEOUT,           25);
-        curl_setopt($ch, CURLOPT_USERAGENT,         "Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0");
-		curl_setopt($ch, CURLOPT_ENCODING,          1);
-        curl_setopt($ch, CURLOPT_URL,               $url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 25);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 25);
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0");
+        curl_setopt($ch, CURLOPT_ENCODING, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
 
-        if (isset($opts))
-        {
+        if (isset($opts)) {
             foreach ($opts as $k => $v)
                 curl_setopt($ch, $k, $v);
         }
@@ -163,18 +153,16 @@ class HD
         $content = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        if($content === false)
-        {
+        if ($content === false) {
             $err_msg = "HTTP error: $http_code (" . curl_error($ch) . ')';
             hd_print($err_msg);
-             throw new Exception($err_msg);
+            throw new Exception($err_msg);
         }
 
-        if ($http_code != 200)
-        {
+        if ($http_code != 200) {
             $err_msg = "HTTP request failed ($http_code)";
             hd_print($err_msg);
-             throw new Exception($err_msg);
+            throw new Exception($err_msg);
         }
 
         hd_print("HTTP OK ($http_code)");
@@ -202,8 +190,7 @@ class HD
     {
         $xml = simplexml_load_string($doc);
 
-        if ($xml === false)
-        {
+        if ($xml === false) {
             hd_print("Error: can not parse XML document.");
             hd_print("XML-text: $doc.");
             throw new Exception('Illegal XML document');
@@ -235,8 +222,7 @@ class HD
     {
         static $mac_addr = null;
 
-        if (is_null($mac_addr))
-        {
+        if (is_null($mac_addr)) {
             $mac_addr = shell_exec(
                 'ifconfig  eth0 | head -1 | sed "s/^.*HWaddr //"');
 
@@ -284,14 +270,13 @@ class HD
     public static function print_backtrace()
     {
         hd_print('Back trace:');
-        foreach (debug_backtrace() as $f)
-        {
+        foreach (debug_backtrace() as $f) {
             hd_print(
-                '  - ' . $f['function'] . 
+                '  - ' . $f['function'] .
                 ' at ' . $f['file'] . ':' . $f['line']);
         }
     }
-    
+
 }
 
 ///////////////////////////////////////////////////////////////////////////

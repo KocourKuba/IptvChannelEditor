@@ -21,16 +21,24 @@ class DefaultEpgItem implements EpgItem
     }
 
     public function get_title()
-    { return $this->_title; }
+    {
+        return $this->_title;
+    }
 
     public function get_description()
-    { return $this->_description; }
+    {
+        return $this->_description;
+    }
 
     public function get_start_time()
-    { return $this->_start_time; }
+    {
+        return $this->_start_time;
+    }
 
     public function get_finish_time()
-    { return $this->_finish_time; }
+    {
+        return $this->_finish_time;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

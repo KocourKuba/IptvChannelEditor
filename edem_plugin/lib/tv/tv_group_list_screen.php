@@ -29,7 +29,7 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
         return array
         (
             GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
-            GUI_EVENT_KEY_PLAY  => ActionFactory::tv_play(),
+            GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
         );
     }
 
@@ -43,8 +43,7 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        foreach ($this->tv->get_groups() as $group)
-        {
+        foreach ($this->tv->get_groups() as $group) {
             $media_url = $group->is_favorite_channels() ?
                 TvFavoritesScreen::get_media_url_str() :
                 TvChannelListScreen::get_media_url_str($group->get_id());

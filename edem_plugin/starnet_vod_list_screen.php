@@ -22,36 +22,33 @@ class DemoVodListScreen extends VodListScreen
     ///////////////////////////////////////////////////////////////////////
 
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx,
-        &$plugin_cookies)
+                                             &$plugin_cookies)
     {
         $doc =
             HD::http_get_document(
                 sprintf(
                     DemoConfig::MOVIE_LIST_URL_FORMAT,
                     $media_url->category_id));
-     
+
         if (is_null($doc))
             throw new Exception('Can not fetch movie list');
 
         $xml = simplexml_load_string($doc);
 
-        if ($xml === false)
-        {
+        if ($xml === false) {
             hd_print("Error: can not parse XML document.");
             hd_print("XML-text: $doc.");
             throw new Exception('Illegal XML document');
         }
 
-        if ($xml->getName() !== 'movies')
-        {
+        if ($xml->getName() !== 'movies') {
             hd_print("Error: unexpected node '" . $xml->getName() . "'. Expected: 'vod_categories'");
             throw new Exception('Invalid XML document');
         }
-        
+
         $movies = array();
 
-        foreach ($xml->children() as $movie)
-        {
+        foreach ($xml->children() as $movie) {
             $movies[] = new ShortMovie(
                 strval($movie->id),
                 strval($movie->caption),

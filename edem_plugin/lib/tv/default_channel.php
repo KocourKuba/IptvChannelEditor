@@ -25,51 +25,81 @@ class DefaultChannel implements Channel
     }
 
     public function get_id()
-    { return $this->_id; }
+    {
+        return $this->_id;
+    }
 
     public function get_title()
-    { return $this->_title; }
+    {
+        return $this->_title;
+    }
 
     public function get_icon_url()
-    { return $this->_icon_url; }
+    {
+        return $this->_icon_url;
+    }
 
     public function get_groups()
-    { return $this->_groups; }
+    {
+        return $this->_groups;
+    }
 
     public function get_number()
-    { return -1; }
+    {
+        return -1;
+    }
 
     public function has_archive()
-    { return false; }
+    {
+        return false;
+    }
 
     public function is_protected()
-    { return false; }
+    {
+        return false;
+    }
 
     public function get_past_epg_days()
-    { return 14; }
+    {
+        return 14;
+    }
 
     public function get_future_epg_days()
-    { return 7; }
+    {
+        return 7;
+    }
 
     public function get_archive_past_sec()
-    { return 14 * 86400; }
+    {
+        return 14 * 86400;
+    }
 
     public function get_archive_delay_sec()
-    { return 31 * 60; }
+    {
+        return 31 * 60;
+    }
 
     public function get_buffering_ms()
-    { return 4000; }
+    {
+        return 4000;
+    }
 
     public function get_timeshift_hours()
-    { return 0; }
+    {
+        return 0;
+    }
 
     public function get_streaming_url()
-    { return $this->_streaming_url; }
+    {
+        return $this->_streaming_url;
+    }
 
     ///////////////////////////////////////////////////////////////////////
 
     public function add_group($group)
-    { $this->_groups[] = $group; }
+    {
+        $this->_groups[] = $group;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

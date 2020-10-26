@@ -24,8 +24,8 @@ class MediaURL
     public function __set($key, $value)
     {
         if (is_null($this->map))
-            $this->map = (object) array();
-        
+            $this->map = (object)array();
+
         $this->map->{$key} = $value;
     }
 
@@ -57,13 +57,17 @@ class MediaURL
     ///////////////////////////////////////////////////////////////////////
 
     public function get_raw_string()
-    { return $this->str; }
+    {
+        return $this->str;
+    }
 
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 
     public static function encode($m)
-    { return json_encode($m); }
+    {
+        return json_encode($m);
+    }
 
     ///////////////////////////////////////////////////////////////////////
 
