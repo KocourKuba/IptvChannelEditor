@@ -12,6 +12,7 @@ abstract class AbstractTv implements Tv
     const MODE_CHANNELS_N_TO_M = true;
 
     ///////////////////////////////////////////////////////////////////////
+    public $SettingsScreen;
 
     private $mode;
     private $favorites_supported;

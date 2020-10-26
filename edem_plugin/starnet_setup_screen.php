@@ -9,7 +9,6 @@ class DemoSetupScreen extends AbstractControlsScreen
 {
     const ID = 'setup';
     const EPG_FONTSIZE_DEF_VALUE = 'normal';
-    private $epg_font_size;
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -29,28 +28,16 @@ class DemoSetupScreen extends AbstractControlsScreen
 
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-        $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
-        $show_vod = isset($plugin_cookies->show_vod) ? $plugin_cookies->show_vod : 'yes';
         $epg_shift = isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : '0';
         $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0;
-        $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
-//	$country_server = isset($plugin_cookies->country_server) ? $plugin_cookies->country_server : '';
 
         $show_ops = array();
         $show_ops['yes'] = 'Да';
         $show_ops['no'] = 'Нет';
 
-//        $server_ops = array();
-//        $server_ops['iptv7.zargacum'] = 'Не выбрано';
-//        $server_ops['iptv4.zargacum'] = 'Сервер EN1';
-//        $server_ops['iptv5.zargacum'] = 'Сервер FR1';
-//        $server_ops['iptv6.zargacum'] = 'Сервер FR2';
-//        $server_ops['iptv1.zargacum'] = 'Сервер EN';
-//        $server_ops['iptv2.zargacum'] = 'Сервер NL';
-//        $server_ops['iptv3.zargacum'] = 'Сервер US';
-
         for ($i = -12; $i < 13; $i++)
             $shift_ops[$i * 3600] = $i;
+
         ControlFactory::add_vgap($defs, -10);
         $this->add_label($defs, 'ЄDЄM TV', 'Версия ' . DemoConfig::PluginVersion . '. [' . DemoConfig::PluginDate . ']');
 
@@ -59,10 +46,6 @@ class DemoSetupScreen extends AbstractControlsScreen
         $this->add_combobox($defs,
             'show_tv', 'Показывать ЄDЄM TV в главном меню:',
             $show_tv, $show_ops, 0, true);
-
-//        $this->add_combobox($defs,
-//            'country_server', 'Выбор сервера:',
-//            $country_server, $server_ops, 0, true);
 
         $this->add_combobox($defs,
             'epg_shift', 'Коррекция программы (час):',
@@ -112,6 +95,7 @@ class DemoSetupScreen extends AbstractControlsScreen
     public function do_get_key_control_defs(&$plugin_cookies)
     {
         $defs = array();
+        $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
 
         $this->add_text_field($defs,
             'ott_key', 'Введите ОТТ ключ:',
@@ -179,8 +163,6 @@ class DemoSetupScreen extends AbstractControlsScreen
                 shell_exec('killall shell');
             if ($control_id === 'show_tv')
                 $plugin_cookies->show_tv = $new_value;
-//            else if ($control_id === 'country_server')
-//                $plugin_cookies->country_server = $new_value;
             else if ($control_id === 'show_vod')
                 $plugin_cookies->show_vod = $new_value;
             else if ($control_id === 'buf_time')
@@ -191,32 +173,18 @@ class DemoSetupScreen extends AbstractControlsScreen
                 $plugin_cookies->epg_font_size = $new_value;
             else if ($control_id === 'key_dialog') {
                 $defs = $this->do_get_key_control_defs($plugin_cookies);
-
                 return ActionFactory::show_dialog("Ключ чувствителен к регистру. Переключение регистра кнопкой Select", $defs, true);
-
             } else if ($control_id === 'ott_key_apply') {
                 $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
                 $plugin_cookies->ott_key = $user_input->ott_key;
-
-//		return  ActionFactory::show_title_dialog($msg, $action);
-            } //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            else if ($control_id === 'subdomain_dialog') {
+            } else if ($control_id === 'subdomain_dialog') {
                 $defs = $this->do_get_subdomain_control_defs($plugin_cookies);
-
                 return ActionFactory::show_dialog("Введите или измените домен полностью, например, dunehd.iptvspy.net", $defs, true);
-
             } else if ($control_id === 'subdomain_apply') {
                 $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
                 $plugin_cookies->subdomain = $user_input->subdomain;
-
-//		return  ActionFactory::show_title_dialog($msg, $action);
-            } //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-            else if ($control_id === 'pass_dialog') {
+            } else if ($control_id === 'pass_dialog') {
                 $defs = $this->do_get_pass_control_defs($plugin_cookies);
-
                 return ActionFactory::show_dialog("Родительский контроль", $defs, true);
             } else if ($control_id === 'pass_apply') {
                 if ($user_input->pass1 == '' || $user_input->pass2 == '')

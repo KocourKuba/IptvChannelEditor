@@ -147,7 +147,6 @@ class DemoTv extends AbstractTv
         }
     }
 
-
     public function get_tv_stream_url($playback_url, &$plugin_cookies)
     {
         $plugin_cookies->subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : 'dunehd.iptvspy.net';
@@ -164,10 +163,8 @@ class DemoTv extends AbstractTv
 
         $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
 
-
-        $nado = $this->get_channel($channel_id)->is_protected();
-        if ($nado) {
-            if ($protect_code !== $pass_sex) $url = '';  //Children protection code = 0000
+        if ($this->get_channel($channel_id)->is_protected() && $protect_code !== $pass_sex) {
+            $url = '';  //Clear url if code not match
         }
         return $url;
     }
@@ -193,12 +190,12 @@ class DemoTv extends AbstractTv
             $epg = unserialize($doc);
         } else {
             try {
-                $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT2, $channel_id, $epg_date));
+                $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $channel_id, $epg_date));
             } catch (Exception $e) {
-                hd_print("Can't fetch EPG ID:$id DATE:$epg_date");
+                hd_print("Can't fetch EPG ID:$channel_id DATE:$epg_date");
                 return array();
             }
-            $e_time = strtotime("$epg_date, 0500 EEST");
+
             preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
             $last_time = 0;
             foreach ($keywords[1] as $key => $qid) {
@@ -206,7 +203,6 @@ class DemoTv extends AbstractTv
                 preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
                 $time = $keyw[1][0];
                 $u_time = strtotime("$epg_date $time EEST") - 3600;
-                //$last_time = ($u_time < $e_time) ? $u_time + 86400  : $u_time ;
                 $last_time = ($u_time > $last_time) ? $u_time : $u_time + 86400;
                 $epg[$last_time]["name"] = str_replace("&nbsp;", " ", $keyw[2][0]);
                 $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
