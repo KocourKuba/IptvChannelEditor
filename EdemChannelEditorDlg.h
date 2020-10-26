@@ -125,4 +125,7 @@ private:
 	ChannelList m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::map<int, std::wstring> m_allChannels;
+public:
+	CString m_plChannelID;
+	CString m_plChannelName;
 };

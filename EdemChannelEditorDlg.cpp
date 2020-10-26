@@ -70,6 +70,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_EN_KILLFOCUS(IDC_EDIT_STREAM_URL, &CEdemChannelEditorDlg::OnEnKillfocusEditStreamUrl)
 	ON_EN_KILLFOCUS(IDC_EDIT_TVG_ID, &CEdemChannelEditorDlg::OnEnKillfocusEditTvgId)
 	ON_EN_KILLFOCUS(IDC_EDIT_URL_ID, &CEdemChannelEditorDlg::OnEnKillfocusEditUrlId)
+	ON_LBN_DBLCLK(IDC_LIST_CHANNELS, &CEdemChannelEditorDlg::OnBnClickedButtonTestUrl)
 	ON_LBN_DBLCLK(IDC_LIST_PLAYLIST, &CEdemChannelEditorDlg::OnLbnDblclkListPlaylist)
 	ON_LBN_SELCHANGE(IDC_LIST_CHANNELS, &CEdemChannelEditorDlg::OnLbnSelchangeListChannels)
 	ON_LBN_SELCHANGE(IDC_LIST_PLAYLIST, &CEdemChannelEditorDlg::OnLbnSelchangeListPlaylist)
@@ -82,6 +83,8 @@ END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
+	, m_plChannelID(_T(""))
+	, m_plChannelName(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -116,6 +119,8 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_PLAYLIST, m_wndPlaylist);
 	DDX_Text(pDX, IDC_EDIT_PL_SEARCH, m_plSearch);
 	DDX_Text(pDX, IDC_STATIC_ICON_NAME, m_iconUrl);
+	DDX_Text(pDX, IDC_STATIC_PL_ID, m_plChannelID);
+	DDX_Text(pDX, IDC_STATIC_PL_ID2, m_plChannelName);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -726,11 +731,7 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	{
 		const auto& entry = pair.second;
 		CString name;
-		name.Format(_T("%s (%d) - %s%s"),
-					entry->name.c_str(),
-					entry->id,
-					entry->category.c_str(),
-					entry->archive ? _T(" (R)") : _T(""));
+		name.Format(_T("%s %s"), entry->name.c_str(), entry->archive ? _T("*") : _T(" "));
 
 		int idx = m_wndPlaylist.AddString(name);
 		m_wndPlaylist.SetItemData(idx, (DWORD_PTR)entry.get());
@@ -996,6 +997,8 @@ void CEdemChannelEditorDlg::OnLbnSelchangeListPlaylist()
 						 return entry->id == item->get_edem_channel_id();
 					 });
 		GetDlgItem(IDC_BUTTON_IMPORT)->EnableWindow(found == channels.end());
+		m_plChannelID.Format(_T("%d"), entry->id);
+		m_plChannelName = entry->category.c_str();
 
 		UpdateData(FALSE);
 		OnEnChangeEditSearch();
@@ -1042,7 +1045,7 @@ void CEdemChannelEditorDlg::OnEnChangeEditPlSearch()
 			int id = _tstoi(m_plSearch.Mid(1).GetString());
 			for (int i = 0; i < m_wndPlaylist.GetCount(); i++)
 			{
-				auto entry = (PlaylistEntry*)m_wndPlaylist.GetItemData(i);
+				auto entry = GetPlaylistEntry(i);
 				if (entry && entry->id == id)
 				{
 					m_wndPlaylist.SetCurSel(i);
