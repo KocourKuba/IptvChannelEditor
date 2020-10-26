@@ -3,6 +3,7 @@
 /[Rr]elease
 /[Rr]elease Unicode
 /ipch
+/.idea
 /.vs
 /*.aps
 /*.db
