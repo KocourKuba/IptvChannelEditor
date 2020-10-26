@@ -85,10 +85,6 @@ class DemoTv extends AbstractTv
                 DemoConfig::ALL_CHANNEL_GROUP_CAPTION,
                 DemoConfig::ALL_CHANNEL_GROUP_ICON_PATH));
 
-//	   $channels_id_parsed = array();
-//	   $doc = HD::http_get_document(sprintf(DemoConfig::EPG_ID_FILE_URL, '.bomba.', '/dune/'));
-//         $channels_id_parsed = unserialize($doc);
-
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
             if ($xml_tv_category->getName() !== 'tv_category') {
                 hd_print("Error: unexpected node '" . $xml_tv_category->getName() .
@@ -102,8 +98,8 @@ class DemoTv extends AbstractTv
                     strval($xml_tv_category->caption),
                     strval($xml_tv_category->icon_url)));
         }
-        $i = 0;
-        $gid = 0;
+
+        $id = 0;
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {
                 hd_print("Error: unexpected node '" . $xml_tv_channel->getName() .
@@ -111,12 +107,8 @@ class DemoTv extends AbstractTv
                 throw new Exception('Invalid XML document');
             }
 
-//            $id_key = md5(strtolower(str_replace(array("\r", "\n", "\"", " "), '', $xml_tv_channel->caption)));
-//            $id = array_key_exists($id_key,$channels_id_parsed) ? $channels_id_parsed[$id_key] : 1050 + $i;
-//            $id = $xml_tv_channel->epg_id;
-            $id = $xml_tv_channel->tvg_id;
-            $cid = $gid . "_" . $id;
-            $i++;
+            $cid = $id . "_" . $xml_tv_channel->tvg_id;
+            $id++;
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0; //буферизация
 
 
@@ -126,7 +118,6 @@ class DemoTv extends AbstractTv
                     strval($cid),
                     strval($xml_tv_channel->caption),
                     strval($xml_tv_channel->icon_url),
-//                    $have_archive,								//jun
                     intval($xml_tv_channel->archive),
                     strval($xml_tv_channel->streaming_url),
                     intval($xml_tv_channel->number),
@@ -161,7 +152,6 @@ class DemoTv extends AbstractTv
     {
         $plugin_cookies->subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : 'dunehd.iptvspy.net';
         return str_replace('{SUBDOMAIN}/iptv/{UID}', $plugin_cookies->subdomain . '/iptv/' . $plugin_cookies->ott_key, $playback_url);
-        //	return str_replace('{UID}', $plugin_cookies->ott_key, $playback_url);
     }
 
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
@@ -171,9 +161,6 @@ class DemoTv extends AbstractTv
 
         if (intval($archive_ts) > 0)
             $url .= "?utc=$archive_ts&lutc=$now_ts";
-
-//        $url =  str_replace('iptv1.zargacum', $plugin_cookies->country_server, $url);
-//                hd_print("cursor--->>> url: $url");
 
         $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
 
