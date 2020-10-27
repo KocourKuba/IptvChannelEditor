@@ -15,6 +15,7 @@
 #include "utils.h"
 
 #include "SevenZip/7zip/SevenZipWrapper.h"
+#include <cstddef>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -647,94 +648,78 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	// #EXTGRP:Общие <-- Category
 	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/2402/index.m3u8
 
-	std::ifstream is(CStringA(file).GetString());
-	if (!is.good())
-		return;
-
-	m_playlist.clear();
 	m_wndPlaylist.ResetContent();
+	m_playlist.clear();
+	ParseM3U8Playlist(file);
 
-	int step = 0;
-	PlaylistEntry entry;
 
-	std::string line;
-	while (std::getline(is, line))
+	if(m_accessKey.IsEmpty() && m_domain.IsEmpty() && !m_playlist.empty())
 	{
-		if (!strncmp(line.c_str(), "#EXTM3U", 7)) continue;
-
-		if (step == 3)
-		{
-			auto res = m_playlist.emplace(entry.id, std::make_unique<PlaylistEntry>(entry));
-			if (!res.second)
-			{
-				TRACE("Duplicate channel: %d\n", entry.id);
-			}
-			entry.Clear();
-			step = 0;
-		}
-
-		if (!strncmp(line.c_str(), "#EXTINF", 7))
-		{
-			// #EXTINF:0 tvg-rec="3",Первый HD
-			std::regex re_name(R"(#EXTINF:\d+\stvg-rec=\"(\d+)\",(.*))");
-			std::smatch m_name;
-			if (std::regex_match(line, m_name, re_name))
-			{
-				entry.archive = utils::char_to_int(m_name[1].str().c_str());
-				entry.name = utils::utf8_to_utf16(m_name[2].str());
-				step++;
-			}
-			continue;
-		}
-
-		if (!strncmp(line.c_str(), "#EXTGRP", 7))
-		{
-			std::regex re_name("#EXTGRP:(.*)");
-			std::smatch m_name;
-			if (std::regex_match(line, m_name, re_name))
-			{
-				entry.category = utils::utf8_to_utf16(m_name[1].str());
-				step++;
-			}
-			continue;
-		}
-
-		if (step == 2)
-		{
-			if (m_accessKey.IsEmpty() && m_domain.IsEmpty())
-			{
-				std::regex re_url(R"(http[s]{0,1}:\/\/([0-9a-z\.]+)\/iptv\/([0-9A-Za-z\.]+)\/\d+\/index.m3u8)");
-				std::smatch m_url;
-				if (std::regex_match(line, m_url, re_url))
-				{
-					m_domain = m_url[1].str().c_str();
-					m_accessKey = m_url[2].str().c_str();
-					theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), m_accessKey);
-					theApp.WriteProfileString(_T("Setting"), _T("Domain"), m_domain);
-				}
-			}
-
-			std::regex re_url(R"(http[s]{0,1}:\/\/[0-9a-z\.]+\/iptv\/[0-9A-Za-z\.]+\/(\d+)\/index.m3u8)");
-			std::smatch m_url;
-			if (std::regex_match(line, m_url, re_url))
-			{
-				entry.id = atoi(m_url[1].str().c_str());
-				entry.url = line;
-				entry.notexist = (m_allChannels.find(entry.id) == m_allChannels.end());
-				step++;
-				continue;
-			}
-		}
+		theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), CString(m_playlist[0]->access_key.c_str()));
+		theApp.WriteProfileString(_T("Setting"), _T("Domain"), CString(m_playlist[0]->domain.c_str()));
 	}
 
 	for (const auto& pair : m_playlist)
 	{
 		const auto& entry = pair.second;
 		CString name;
-		name.Format(_T("%s %s"), entry->name.c_str(), entry->archive ? _T("*") : _T(" "));
+		name.Format(_T("%s %s"), entry->channel.c_str(), entry->archive ? _T("*") : _T(" "));
 
 		int idx = m_wndPlaylist.AddString(name);
 		m_wndPlaylist.SetItemData(idx, (DWORD_PTR)entry.get());
+	}
+}
+
+void CEdemChannelEditorDlg::ParseM3U8Playlist(const CString& file)
+{
+	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
+	// Full playlist format
+	// #EXTM3U tvg-shift="1"
+	// #EXTINF:-1 channel-id="204" group-title="Общие" tvg-id="983" tvg-logo="http://epg.it999.ru/img/983.png" tvg-name="Первый HD" tvg-shift="0",Первый HD
+	// http://aaaaaa.akadatel.com/iptv/xxxxxxxxxxxxxx/204/index.m3u8
+	//
+	// Short (OTTPplay.es) format
+	// #EXTM3U
+	// #EXTINF:0 tvg-rec="3",Первый HD
+	// #EXTGRP:Общие
+	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
+
+	std::ifstream is(CStringA(file).GetString());
+	if (!is.good())
+		return;
+
+	int step = 0;
+	std::string line;
+	PlaylistEntry entry;
+	while (std::getline(is, line))
+	{
+		entry.Parse(line);
+		switch (entry.get_directive())
+		{
+			case ext_unknown:
+				break;
+			case ext_pathname:
+			{
+				entry.notexist = (m_allChannels.find(entry.channel_id) == m_allChannels.end());
+				auto res = m_playlist.emplace(entry.channel_id, std::make_unique<PlaylistEntry>(entry));
+				if (!res.second)
+				{
+					TRACE("Duplicate channel: %d\n", entry.channel_id);
+				}
+				entry.Clear();
+				break;
+			}
+			case ext_header:
+				break;
+			case ext_group:
+				break;
+			case ext_playlist:
+				break;
+			case ext_info:
+				break;
+			default:
+				break;
+		}
 	}
 }
 
@@ -747,7 +732,7 @@ void CEdemChannelEditorDlg::OnEnKillfocusEditKey()
 void CEdemChannelEditorDlg::OnEnKillfocusEditDomain()
 {
 	UpdateData(TRUE);
-	m_domain.MakeLower();
+	theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), m_accessKey);
 	theApp.WriteProfileString(_T("Setting"), _T("Domain"), m_domain);
 
 	UpdateData(FALSE);
@@ -945,7 +930,7 @@ void CEdemChannelEditorDlg::OnEnKillfocusEditUrlId()
 
 void CEdemChannelEditorDlg::OnEnChangeEditSearch()
 {
-	UpdateData(TRUE);
+	SaveChannelInfo();
 
 	if (m_search.IsEmpty())
 		return;
@@ -990,14 +975,14 @@ void CEdemChannelEditorDlg::OnLbnSelchangeListPlaylist()
 	auto entry = GetPlaylistEntry(m_pl_current);
 	if (entry)
 	{
-		m_search.Format(_T("\\%d"), entry->id);
+		m_search.Format(_T("\\%d"), entry->channel_id);
 		const auto& channels = m_channels.get_channels();
 		auto found = std::find_if(channels.begin(), channels.end(), [entry](const auto& item)
 					 {
-						 return entry->id == item->get_edem_channel_id();
+						 return entry->channel_id == item->get_edem_channel_id();
 					 });
 		GetDlgItem(IDC_BUTTON_IMPORT)->EnableWindow(found == channels.end());
-		m_plChannelID.Format(_T("%d"), entry->id);
+		m_plChannelID.Format(_T("%d"), entry->channel_id);
 		m_plChannelName = entry->category.c_str();
 
 		UpdateData(FALSE);
@@ -1032,7 +1017,7 @@ void CEdemChannelEditorDlg::OnLbnDblclkListPlaylist()
 
 void CEdemChannelEditorDlg::OnEnChangeEditPlSearch()
 {
-	UpdateData(TRUE);
+	SaveChannelInfo();
 
 	if (m_plSearch.IsEmpty())
 		return;
@@ -1046,7 +1031,7 @@ void CEdemChannelEditorDlg::OnEnChangeEditPlSearch()
 			for (int i = 0; i < m_wndPlaylist.GetCount(); i++)
 			{
 				auto entry = GetPlaylistEntry(i);
-				if (entry && entry->id == id)
+				if (entry && entry->channel_id == id)
 				{
 					m_wndPlaylist.SetCurSel(i);
 					break;
@@ -1073,7 +1058,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 		return;
 
 	auto channel = m_channels.CreateChannel();
-	channel->set_name(entry->name);
+	channel->set_name(entry->channel);
 	channel->set_has_archive(entry->archive != 0);
 	channel->set_streaming_url(ChannelInfo::ConvertPlainUrlToStreamingUrl(entry->url));
 	if (auto id = m_channels.FindCategory(entry->category); id != -1)
@@ -1081,7 +1066,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 		channel->get_categores().emplace(id);
 	}
 
-	int idx = m_wndChannelsList.AddString(entry->name.c_str());
+	int idx = m_wndChannelsList.AddString(entry->channel.c_str());
 	m_wndChannelsList.SetItemData(idx, (DWORD_PTR)channel);
 	m_wndChannelsList.SetCurSel(idx);
 	m_current = idx;

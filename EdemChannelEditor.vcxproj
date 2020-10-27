@@ -223,6 +223,7 @@
     <ClCompile Include="ColorListBox.cpp" />
     <ClCompile Include="NewCategory.cpp" />
     <ClCompile Include="NewChannel.cpp" />
+    <ClCompile Include="PlayListEntry.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="EdemChannelEditor.cpp" />
     <ClCompile Include="EdemChannelEditorDlg.cpp" />

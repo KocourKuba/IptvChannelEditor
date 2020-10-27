@@ -1,16 +1,33 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <map>
 #include "rapidxml.hpp"
 
 namespace utils
 {
 
+inline std::string& string_ltrim(std::string& str, const std::string& chars = " \t\v")
+{
+	return str.erase(0, str.find_first_not_of(chars));
+}
+
+inline std::string& string_rtrim(std::string& str, const std::string& chars = " \t\v")
+{
+	return str.erase(str.find_last_not_of(chars) + 1);
+}
+
+inline std::string& string_trim(std::string& str, const std::string& chars = " \t\v")
+{
+	return string_ltrim(string_rtrim(str, chars), chars);
+}
+
 /// <summary>
 /// Converts char string to int.
 /// </summary>
-/// <param name="str">null-terminated char string</param>
+/// <param name="str">string</param>
 /// <returns>int value if success, 0 otherwise</returns>
-int char_to_int(const char* str);
+int char_to_int(const std::string& str);;
 
 /// <summary>
 /// Converts int to char string.
@@ -62,4 +79,7 @@ std::string utf16_to_utf8(const std::wstring& w);
 /// <param name="s">A single byte character UTF-8 string.</param>
 /// <returns>A two byte character UTF-16 string.</returns>
 std::wstring utf8_to_utf16(const std::string& s);
+
+std::vector<std::string> regex_split(const std::string& str, const std::string& token = "\\s+");
+std::vector<std::string> string_split(const std::string& str, char delim = ' ');
 }

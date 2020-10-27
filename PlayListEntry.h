@@ -1,22 +1,88 @@
 #pragma once
 #include <string>
+#include <map>
 
-class PlaylistEntry
+enum directives
+{
+	ext_unknown = -1,
+	ext_pathname,
+	ext_header,
+	ext_group,
+	ext_playlist,
+	ext_info,
+};
+
+enum info_tags
+{
+	tag_unknown = -1,
+	tag_channel_id,
+	tag_group_title,
+	tag_tvg_id,
+	tag_tvg_logo,
+	tag_tvg_rec,
+	tag_tvg_name,
+	tag_tvg_shift,
+};
+
+class m3u_entry
+{
+public:
+	m3u_entry() = default;
+	virtual ~m3u_entry() = default;
+
+	virtual void Clear();
+	virtual void Parse(const std::string& str);
+
+	int get_duration() const { return duration; }
+	void set_duration(int val) { duration = val; }
+
+	directives get_directive() const { return ext_name; }
+	void set_directive(directives val) { ext_name = val; }
+
+	const std::map<info_tags, std::string>& get_tags() const { return ext_tags; }
+	void set_tags(const std::map<info_tags, std::string>& val) { ext_tags = val; }
+
+	const std::string& get_dvalue() const { return ext_value; }
+	void set_dvalue(const std::string& val) { ext_value = val; }
+
+	const std::string& get_title() const { return dir_title; }
+	void set_title(const std::string& val) { dir_title = val; }
+
+protected:
+	void ParseDirectiveTags(const std::string& str);
+
+protected:
+	int duration = 0;
+	directives ext_name = ext_unknown;
+	std::string ext_value;
+	std::string dir_title;
+	std::map<info_tags, std::string> ext_tags;
+};
+
+class PlaylistEntry : public m3u_entry
 {
 public:
 	PlaylistEntry() = default;
+	PlaylistEntry(const std::string& str) { Parse(str); }
 
-	int id = 0;
+	void Parse(const std::string& str) override;
+	int channel_id = 0;
 	int archive = 0;
-	bool notexist = false;
-	std::wstring name;
+	bool notexist = true;
+	int channel_len = -1;
+	std::wstring channel;
 	std::wstring category;
 	std::string url;
+	std::string logo_url;
+	std::string domain;
+	std::string access_key;
 
-	void Clear()
+	void Clear() override
 	{
-		id = 0;
-		name.clear();
+		m3u_entry::Clear();
+
+		channel_id = 0;
+		channel.clear();
 		category.clear();
 		url.clear();
 	}

@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 #include <stdexcept>
+#include <regex>
+#include <sstream>
 #include "utils.h"
 
 #define LOW_3BITS 0x7
@@ -176,10 +178,40 @@ std::wstring utf8_to_utf16(const std::string& s)
 	return dest;
 }
 
-int char_to_int(const char* str)
+std::vector<std::string> regex_split(const std::string& str, const std::string& token /*= "\\s+"*/)
+{
+	std::vector<std::string> elems;
+
+	std::regex rgx(token);
+	std::sregex_token_iterator iter(str.begin(), str.end(), rgx, -1);
+	std::sregex_token_iterator end;
+
+	while (iter != end)
+	{
+		elems.emplace_back(*iter);
+		++iter;
+	}
+
+	return elems;
+}
+
+std::vector<std::string> string_split(const std::string& str, char delim /*= ' '*/)
+{
+	std::vector<std::string> v;
+	std::stringstream ss(str);
+	std::string item;
+
+	while (std::getline(ss, item, delim))
+	{
+		v.emplace_back(std::move(item));
+	}
+	return v;
+}
+
+int char_to_int(const std::string& str)
 {
 	int value;
-	if (sscanf_s(str, "%d", &value) != 1) return 0;
+	if (sscanf_s(str.c_str(), "%d", &value) != 1) return 0;
 
 	return value;
 }

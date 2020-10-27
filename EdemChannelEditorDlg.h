@@ -75,6 +75,7 @@ private:
 	void LoadChannelInfo();
 	BOOL LoadSetting();
 	void LoadPlaylist(const CString& file);
+	void ParseM3U8Playlist(const CString& file);
 	void CheckLimits();
 	void LoadChannels();
 	void FillCategories();
