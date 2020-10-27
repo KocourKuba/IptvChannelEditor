@@ -1070,7 +1070,7 @@
 			<streaming_url>http://ts://rtmp.api.rt.com/hls/rtdru.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
-			<caption>Game Show</caption>
+			<caption>E</caption>
 			<tvg_id>2136</tvg_id>
 			<epg_id>1119</epg_id>
 			<icon_url>plugin_file://icons/channels/game_show.png</icon_url>
@@ -3204,20 +3204,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Возрождение</caption>
-			<tvg_id>1001924</tvg_id>
-			<epg_id>781</epg_id>
-			<icon_url>plugin_file://icons/channels/vozrojdenie.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>5</tv_category_id>
-				<tv_category_id>12</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/984/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Надежда</caption>
 			<tvg_id>22299988</tvg_id>
 			<epg_id>22299988</epg_id>
@@ -4756,6 +4742,61 @@
 				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6383/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Русский иллюзион HD</caption>
+			<tvg_id>200000</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/illusionrus.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>2</tv_category_id>
+				<tv_category_id>12</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2114/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Романтичное HD</caption>
+			<tvg_id>2427</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/romantichnoje_hd.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>2</tv_category_id>
+				<tv_category_id>12</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5053/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Мультиландия</caption>
+			<tvg_id>300012</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/multlandia.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>7</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5055/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Paramount Channel HD</caption>
+			<tvg_id>1780</tvg_id>
+			<epg_id/>
+			<icon_url>plugin_file://icons/channels/paramaunt_hd.png</icon_url>
+			<num_past_epg_days>4</num_past_epg_days>
+			<num_future_epg_days>2</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>2</tv_category_id>
+				<tv_category_id>12</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5063/index.m3u8</streaming_url>
+			<archive>1</archive>
 		</tv_channel>
 	</tv_channels>
 </tv_info>
