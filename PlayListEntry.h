@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <map>
+#include "uri.h"
+#include "ColoringProperty.h"
 
 enum directives
 {
@@ -59,31 +61,36 @@ protected:
 	std::map<info_tags, std::string> ext_tags;
 };
 
-class PlaylistEntry : public m3u_entry
+class PlaylistEntry
+	: public m3u_entry
+	, public ColoringProperty
 {
 public:
 	PlaylistEntry() = default;
 	PlaylistEntry(const std::string& str) { Parse(str); }
 
 	void Parse(const std::string& str) override;
-	int channel_id = 0;
+	void Clear() override;
+
+	int get_channel_id() const { return stream_uri.get_Id(); }
+	int get_channel_length() const { return channel_len; }
+	bool is_archive() const { return archive != 0; }
+
+	const std::wstring& get_title() const { return title; }
+	const std::wstring& get_category() const { return category; }
+	const uri_stream& get_streaming_uri() const { return stream_uri; }
+	std::string get_icon_url() const { return icon_uri.get_uri(); }
+	const uri& get_icon_uri() const { return icon_uri; }
+	const std::string& get_domain() const { return domain; }
+	const std::string& get_access_key() const { return access_key; }
+
+protected:
 	int archive = 0;
-	bool notexist = true;
-	int channel_len = -1;
-	std::wstring channel;
+	int channel_len = 0;
+	std::wstring title;
 	std::wstring category;
-	std::string url;
-	std::string logo_url;
+	uri icon_uri;
+	uri_stream stream_uri;
 	std::string domain;
 	std::string access_key;
-
-	void Clear() override
-	{
-		m3u_entry::Clear();
-
-		channel_id = 0;
-		channel.clear();
-		category.clear();
-		url.clear();
-	}
 };

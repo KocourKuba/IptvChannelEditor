@@ -1,14 +1,14 @@
 #pragma once
 
-// NewCategory dialog
+// CNewCategoryDlg dialog
 
-class NewCategory : public CDialogEx
+class CNewCategoryDlg : public CDialogEx
 {
-	DECLARE_DYNAMIC(NewCategory)
+	DECLARE_DYNAMIC(CNewCategoryDlg)
 
 public:
-	NewCategory(CWnd* pParent = nullptr);   // standard constructor
-	~NewCategory() = default;
+	CNewCategoryDlg(CWnd* pParent = nullptr);   // standard constructor
+	~CNewCategoryDlg() = default;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

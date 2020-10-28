@@ -16,6 +16,12 @@
     <Filter Include="Header Files\rapidxml">
       <UniqueIdentifier>{70607042-51a9-4203-898d-151f4cd6a164}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Containers">
+      <UniqueIdentifier>{1cb04ffa-9406-4790-bf58-05208cac9c2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Containers">
+      <UniqueIdentifier>{2079b750-4620-44d1-93dd-5c5535b56df7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EdemChannelEditor.h">
@@ -36,9 +42,6 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ChannelInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="rapidxml.hpp">
       <Filter>Header Files\rapidxml</Filter>
     </ClInclude>
@@ -51,28 +54,37 @@
     <ClInclude Include="rapidxml_utils.hpp">
       <Filter>Header Files\rapidxml</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ChannelList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ChannelCategory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AboutDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NewCategory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NewChannel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ColorListBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SettingsDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelCategory.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelInfo.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
     <ClInclude Include="PlayListEntry.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="uri.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="NewChannelDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NewCategoryDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColoringProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,31 +98,31 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ChannelInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ChannelList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ChannelCategory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AboutDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NewCategory.cpp">
+    <ClCompile Include="SettingsDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NewChannel.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ChannelCategory.cpp">
+      <Filter>Source Files\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="ColorListBox.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ChannelInfo.cpp">
+      <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="PlayListEntry.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="uri.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="NewChannelDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NewCategoryDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

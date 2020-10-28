@@ -3,12 +3,10 @@
 
 #include "StdAfx.h"
 #include "EdemChannelEditor.h"
-#include "NewCategory.h"
+#include "NewCategoryDlg.h"
+#include "utils.h"
 
-// NewCategory dialog
-
-static constexpr auto CATEGORY_LOGO_URL = "icons/";
-static constexpr auto ICON_TEMPLATE = L"icons/channel_unset.png";
+// CNewCategoryDlg dialog
 
 #ifdef _DEBUG
 static constexpr auto PLUGIN_ROOT        = L"..\\edem_plugin\\";
@@ -18,19 +16,19 @@ static constexpr auto PLUGIN_ROOT        = L".\\edem_plugin\\";
 static constexpr auto CATEGORY_LOGO_PATH = L".\\edem_plugin\\icons\\";
 #endif // _DEBUG
 
-IMPLEMENT_DYNAMIC(NewCategory, CDialogEx)
+IMPLEMENT_DYNAMIC(CNewCategoryDlg, CDialogEx)
 
-BEGIN_MESSAGE_MAP(NewCategory, CDialogEx)
-	ON_STN_CLICKED(IDC_STATIC_CATEGORY_ICON, &NewCategory::OnStnClickedStaticCategoryIcon)
+BEGIN_MESSAGE_MAP(CNewCategoryDlg, CDialogEx)
+	ON_STN_CLICKED(IDC_STATIC_CATEGORY_ICON, &CNewCategoryDlg::OnStnClickedStaticCategoryIcon)
 END_MESSAGE_MAP()
 
-NewCategory::NewCategory(CWnd* pParent /*=nullptr*/)
+CNewCategoryDlg::CNewCategoryDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_NEW_CATEGORY, pParent)
-	, m_iconUrl(ICON_TEMPLATE)
+	, m_iconUrl(utils::ICON_TEMPLATE)
 {
 }
 
-void NewCategory::DoDataExchange(CDataExchange* pDX)
+void CNewCategoryDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
@@ -38,22 +36,24 @@ void NewCategory::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_CATEGORY_ICON, m_wndIcon);
 }
 
-BOOL NewCategory::OnInitDialog()
+BOOL CNewCategoryDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	theApp.LoadImage(m_wndIcon, theApp.GetAppPath() + PLUGIN_ROOT + m_iconUrl);
+	theApp.LoadImage(m_wndIcon, theApp.GetAppPath(PLUGIN_ROOT) + m_iconUrl);
 	return TRUE;
 }
 
-// NewCategory message handlers
+// CNewCategoryDlg message handlers
 
-void NewCategory::OnStnClickedStaticCategoryIcon()
+void CNewCategoryDlg::OnStnClickedStaticCategoryIcon()
 {
+	static constexpr auto CATEGORY_LOGO_URL = "icons/";
+
 	UpdateData(TRUE);
 
-	CString path = theApp.GetAppPath() + CATEGORY_LOGO_PATH;
-	CString file = theApp.GetAppPath() + PLUGIN_ROOT + m_iconUrl;
+	CString path = theApp.GetAppPath(CATEGORY_LOGO_PATH);
+	CString file = theApp.GetAppPath(PLUGIN_ROOT) + m_iconUrl;
 	file.Replace('/', '\\');
 
 	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));

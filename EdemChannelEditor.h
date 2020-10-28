@@ -25,7 +25,7 @@ public:
 	BOOL InitInstance() override;
 
 	void LoadImage(CStatic& wnd, const CString& fullPath);
-	CString GetAppPath();
+	CString GetAppPath(LPCTSTR szSubFolder = nullptr);
 // Implementation
 
 	DECLARE_MESSAGE_MAP()

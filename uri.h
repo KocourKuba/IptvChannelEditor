@@ -1,0 +1,78 @@
+#pragma once
+#include <string>
+
+class uri
+{
+public:
+	uri() = default;
+	uri(const std::string& url) { set_uri(url); }
+
+public:
+	virtual void clear() { schema.clear(); path.clear(); }
+
+	virtual std::string get_uri() const { return schema + path; }
+	virtual void set_uri(const std::string& url);
+
+	virtual std::string get_path() const { return path; }
+	virtual void set_path(const std::string& val) { path = val; };
+
+	virtual std::string get_schema() const { return schema; }
+	virtual void set_schema(const std::string& val) { schema = val; };
+
+protected:
+	std::string schema;
+	std::string path;
+};
+
+class uri_stream : public uri
+{
+public:
+	uri_stream() = default;
+	uri_stream(const std::string& url) { set_uri(url); }
+
+public:
+	void clear() override;
+
+	/// <summary>
+	/// getter for playable url
+	/// return url without ts:// substring
+	/// and substituted channel id
+	/// </summary>
+	/// <returns></returns>
+	std::string get_ts_translated_url() const;
+
+	/// <summary>
+	/// getter for id translated uri
+	/// return url with substituted channel id
+	/// </summary>
+	/// <returns></returns>
+	std::string get_id_translated_url() const;
+
+	/// <summary>
+	/// setter not translated uri
+	/// </summary>
+	/// <param name="url"></param>
+	void set_uri(const std::string& url) override;
+
+	/// <summary>
+	/// getter channel id
+	/// </summary>
+	/// <returns></returns>
+	int get_Id() const { return id; }
+	/// <summary>
+	/// setter channel id
+	/// </summary>
+	/// <param name="val"></param>
+	void set_Id(int val) { id = val; }
+
+	/// <summary>
+	/// check if uri templated
+	/// </summary>
+	/// <returns></returns>
+	bool is_template() const { return templated; }
+
+protected:
+	int id = 0;
+	bool templated = false;
+};
+

@@ -197,12 +197,14 @@
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="ChannelInfo.h" />
-    <ClInclude Include="ChannelList.h" />
     <ClInclude Include="ChannelCategory.h" />
+    <ClInclude Include="ColoringProperty.h" />
     <ClInclude Include="ColorListBox.h" />
-    <ClInclude Include="NewCategory.h" />
-    <ClInclude Include="NewChannel.h" />
+    <ClInclude Include="NewCategoryDlg.h" />
+    <ClInclude Include="NewChannelDlg.h" />
     <ClInclude Include="PlayListEntry.h" />
+    <ClInclude Include="SettingsDlg.h" />
+    <ClInclude Include="uri.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="EdemChannelEditor.h" />
     <ClInclude Include="EdemChannelEditorDlg.h" />
@@ -218,12 +220,12 @@
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
-    <ClCompile Include="ChannelList.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
-    <ClCompile Include="ColorListBox.cpp" />
-    <ClCompile Include="NewCategory.cpp" />
-    <ClCompile Include="NewChannel.cpp" />
+    <ClCompile Include="NewCategoryDlg.cpp" />
+    <ClCompile Include="NewChannelDlg.cpp" />
     <ClCompile Include="PlayListEntry.cpp" />
+    <ClCompile Include="SettingsDlg.cpp" />
+    <ClCompile Include="uri.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="EdemChannelEditor.cpp" />
     <ClCompile Include="EdemChannelEditorDlg.cpp" />

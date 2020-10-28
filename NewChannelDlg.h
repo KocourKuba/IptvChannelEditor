@@ -1,14 +1,14 @@
 #pragma once
 
-// NewChannel dialog
+// CNewChannelDlg dialog
 
-class NewChannel : public CDialogEx
+class CNewChannelDlg : public CDialogEx
 {
-	DECLARE_DYNAMIC(NewChannel)
+	DECLARE_DYNAMIC(CNewChannelDlg)
 
 public:
-	NewChannel(CWnd* pParent = nullptr);   // standard constructor
-	~NewChannel() = default;
+	CNewChannelDlg(CWnd* pParent = nullptr);   // standard constructor
+	~CNewChannelDlg() = default;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

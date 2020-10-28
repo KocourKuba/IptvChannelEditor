@@ -25,5 +25,6 @@ protected:
 
 protected:
 	CStatic m_QR;
+	virtual void OnOK();
 };
 

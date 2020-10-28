@@ -3,7 +3,7 @@
 class DemoConfig
 {
     const PluginVersion = '2.1.0';
-    const PluginDate = '24.10.2020';
+    const PluginDate = '28.10.2020';
     const VOD_MOVIE_PAGE_SUPPORTED = true;
     const VOD_FAVORITES_SUPPORTED = true;
     const TV_FAVORITES_SUPPORTED = true;

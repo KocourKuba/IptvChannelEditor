@@ -4,12 +4,118 @@
 
 #include "StdAfx.h"
 #include "framework.h"
+#include <winhttp.h>
+#include <Shlwapi.h>
+
 #include "EdemChannelEditor.h"
 #include "EdemChannelEditorDlg.h"
+#include "utils.h"
+
+#pragma comment(lib, "Winhttp.lib")
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring())
+{
+	URL_COMPONENTS urlComp;
+	SecureZeroMemory(&urlComp, sizeof(urlComp));
+	urlComp.dwStructSize = sizeof(urlComp);
+
+	// Set required component lengths to non-zero so that they are cracked.
+	urlComp.dwHostNameLength = (DWORD)-1;
+	urlComp.dwUrlPathLength = (DWORD)-1;
+
+
+	if(::WinHttpCrackUrl(url.c_str(), (DWORD)url.size(), 0, &urlComp))
+	{
+		host.assign(urlComp.lpszHostName, urlComp.dwHostNameLength);
+		path.assign(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
+		return true;
+	}
+
+	return false;
+}
+
+bool DownloadIconLogo(const std::wstring& url, std::vector<BYTE>& image)
+{
+	std::wstring host;
+	std::wstring path;
+	if (!CrackUrl(url, host, path))
+		return false;
+
+	// Use WinHttpOpen to obtain a session handle.
+	HINTERNET hSession = WinHttpOpen(L"WinHTTP wget/1.0",
+									 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+									 WINHTTP_NO_PROXY_NAME,
+									 WINHTTP_NO_PROXY_BYPASS, 0);
+
+	::WinHttpSetTimeouts(hSession, 0, 10000, 10000, 10000);
+
+	// Specify an HTTP server.
+	HINTERNET hConnect = nullptr;
+	if (hSession)
+		hConnect = WinHttpConnect(hSession, host.c_str(), INTERNET_DEFAULT_HTTP_PORT, 0);
+
+
+	// Create an HTTP request handle.
+	HINTERNET hRequest = nullptr;
+	if (hConnect)
+		hRequest = WinHttpOpenRequest(hConnect, L"GET", path.c_str(),
+									  nullptr,
+									  WINHTTP_NO_REFERER,
+									  nullptr,
+									  NULL);
+
+	// Send a request.
+	BOOL bResults = FALSE;
+	if (hRequest)
+		bResults = WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+
+	// End the request.
+	if (bResults)
+		bResults = WinHttpReceiveResponse(hRequest, NULL);
+
+	DWORD dwSize = 0;
+	do
+	{
+		if (!bResults)
+		{
+			TRACE("Error %d has occurred.\n", GetLastError());
+			break;
+		}
+		// Check for available data.
+		if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
+		{
+			TRACE("Error %u in WinHttpQueryDataAvailable.\n", GetLastError());
+			break;
+		}
+
+		// Allocate space for the buffer.
+		if (!dwSize) break;
+		std::vector<BYTE> chunk(dwSize);
+
+		DWORD dwDownloaded = 0;
+		if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
+		{
+			chunk.resize(dwSize);
+			image.insert(image.end(), chunk.begin(), chunk.end());
+		}
+		else
+		{
+			TRACE("Error %u in WinHttpReadData.\n", GetLastError());
+		}
+	} while (dwSize);
+
+	// Close any open handles.
+	if (hRequest) WinHttpCloseHandle(hRequest);
+	if (hConnect) WinHttpCloseHandle(hConnect);
+	if (hSession) WinHttpCloseHandle(hSession);
+
+	return !image.empty();
+}
+
 
 // CEdemChannelEditorApp
 
@@ -96,7 +202,7 @@ BOOL CEdemChannelEditorApp::InitInstance()
 	return FALSE;
 }
 
-CString CEdemChannelEditorApp::GetAppPath()
+CString CEdemChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/)
 {
 	CString fileName;
 
@@ -108,25 +214,41 @@ CString CEdemChannelEditorApp::GetAppPath()
 			fileName.Truncate(pos + 1);
 	}
 
-	return fileName;
+	return fileName + szSubFolder;
 }
 
 void CEdemChannelEditorApp::LoadImage(CStatic& wnd, const CString& fullPath)
 {
 	// png size
-// 	int pixelX = 245;
-// 	int pixelY = 140;
-// 	static const int multiplier = 1000;
-// 	CRect rc(0, 0, multiplier, multiplier);
-// 	MapDialogRect(wnd.GetParent()->GetSafeHwnd(), rc);
-// 	int dlX = pixelX * multiplier / rc.Width();
-// 	int dlY = pixelY * multiplier / rc.Width();
-// 	float ratio = (float)dlX / (float)dlY;
-// 	int newdlY = 80.F / ratio;
+#if 0
+	int pixelX = 245;
+	int pixelY = 140;
+	static const int multiplier = 1000;
+	CRect rc(0, 0, multiplier, multiplier);
+	MapDialogRect(wnd.GetParent()->GetSafeHwnd(), rc);
+	int dlX = pixelX * multiplier / rc.Width();
+	int dlY = pixelY * multiplier / rc.Width();
+	float ratio = (float)dlX / (float)dlY;
+	int newdlY = 80.F / ratio;
+#endif // 0
+
+	CImage image;
+	HRESULT hr = E_FAIL;
+	if (CrackUrl(fullPath.GetString()))
+	{
+		std::vector<BYTE> data;
+		DownloadIconLogo(fullPath.GetString(), data);
+		// Still not clear if this is making a copy internally
+		CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), data.size()));
+		hr = image.Load(stream);
+	}
+	else
+	{
+		hr = image.Load(fullPath);
+	}
 
 	HBITMAP hImg = nullptr;
-	CImage image;
-	if (SUCCEEDED(image.Load(fullPath)))
+	if (SUCCEEDED(hr))
 	{
 		//CDC* screenDC = GetDC();
 

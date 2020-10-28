@@ -2,6 +2,8 @@
 #include <string>
 #include <set>
 #include "rapidxml.hpp"
+#include "uri.h"
+#include "ColoringProperty.h"
 
 // <tv_channel>
 //     <caption>Первый канал</caption>
@@ -18,51 +20,31 @@
 //     <protected>1</protected>
 // /tv_channel>
 
-class ChannelInfo
+class ChannelInfo : public ColoringProperty
 {
 public:
 	static constexpr auto TV_CHANNEL = "tv_channel";
-	static constexpr auto CAPTION = "caption";
-	static constexpr auto TVG_ID = "tvg_id";
-	static constexpr auto EPG_ID = "epg_id";
-	static constexpr auto ICON_URL = "icon_url";
-	static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
-	static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
-	static constexpr auto TV_CATEGORIES = "tv_categories";
-	static constexpr auto TV_CATEGORY_ID = "tv_category_id";
-	static constexpr auto STREAMING_URL = "streaming_url";
-	static constexpr auto ARCHIVE = "archive";
-	static constexpr auto PROTECTED = "protected";
-	static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
 public:
 	ChannelInfo();
 
-	ChannelInfo(rapidxml::xml_node<>* node)
-	{
-		ParseNode(node);
-	}
+	ChannelInfo(rapidxml::xml_node<>* node);
 
 	void ParseNode(rapidxml::xml_node<>* node);
 
-
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& doc);
 
-	std::string CombineEdemStreamingUrl(const std::string& sub_domain, const std::string& ott_key);
-	std::string SetChannelIdForStreamingUrl(int id);
-	std::string GetIconRelativePath();
-	void SetIconPluginPath(const std::string& relative_path);
+	std::wstring GetIconRelativePath(LPCTSTR szRoot = nullptr);
 
-	static int GetEdemStreamID(const std::string& edem_url);
-	static std::string TranslateStreamingUrl(const std::string& url);
-	static std::string ConvertPlainUrlToStreamingUrl(const std::string& url);
+	bool is_custom() { return streaming_uri.is_template(); }
 
 // Getters/Setters
-	int get_edem_channel_id() const { return edem_channel_id; }
-	void set_edem_channel_id(int val) { edem_channel_id = val; }
+
+	int get_channel_id() const { return streaming_uri.get_Id(); }
+	void set_channel_id(int val) { streaming_uri.set_Id(val); }
 
 	const std::wstring& get_name() const { return name; }
-	void set_name(const std::wstring& val) { name = val; }
+	void set_title(const std::wstring& val) { name = val; }
 
 	const std::string& get_tvguide_id() const { return tvguide_id; }
 	void set_tvguide_id(const std::string& val) { tvguide_id = val; }
@@ -73,8 +55,12 @@ public:
 	int get_adult() const { return adult; }
 	void set_adult(int val) { adult = val; }
 
-	const std::string& get_icon_url() const { return icon_url; }
-	void set_icon_url(const std::string& val) { icon_url = val; }
+	bool is_icon_local() const;
+	void set_icon_url(const std::string& val) { icon_uri.set_uri(val); }
+
+	const uri& get_icon_uri() const { return icon_uri; }
+	uri& get_icon_uri() { return icon_uri; }
+	void set_icon_uri(const uri& val) { icon_uri = val; }
 
 	int get_prev_epg_days() const { return prev_epg_days; }
 	void set_prev_epg_days(int val) { prev_epg_days = val; }
@@ -86,8 +72,9 @@ public:
 	std::set<int>& get_categores() { return categories; }
 	void set_categores(const std::set<int>& val) { categories = val; }
 
-	const std::string& get_streaming_url() const { return streaming_url; }
-	void set_streaming_url(const std::string& val) { streaming_url = val; set_edem_channel_id(ChannelInfo::GetEdemStreamID(val)); }
+	const uri_stream& get_streaming_uri() const { return streaming_uri; }
+	uri_stream& get_streaming_uri() { return streaming_uri; }
+	void set_stream_uri(const uri_stream& val) { streaming_uri = val; }
 
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }
@@ -96,8 +83,8 @@ protected:
 	std::wstring name;
 	std::string tvguide_id;
 	std::string epg_id; // for compatibility not used in dune edem.tv plugin
-	std::string icon_url;
-	std::string streaming_url;
+	uri icon_uri;
+	uri_stream streaming_uri;
 	std::set<int> categories;
 	int edem_channel_id = 0;
 	int prev_epg_days = 4;

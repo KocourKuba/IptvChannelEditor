@@ -51,7 +51,7 @@ CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
 
 BOOL CAboutDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	__super::OnInitDialog();
 
 	IStream* pStream = CreateStreamOnResource(IDB_PNG_QR);
 	if (pStream != nullptr)
@@ -71,7 +71,13 @@ BOOL CAboutDlg::OnInitDialog()
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STATIC_QR, m_QR);
 }
 
+
+
+void CAboutDlg::OnOK()
+{
+	__super::OnOK();
+}

@@ -127,16 +127,20 @@ void PlaylistEntry::Parse(const std::string& str)
 		// 2 - access key
 		// 3 - channel id
 
-		std::regex re_url(R"(http[s]{0,1}:\/\/([0-9a-z\.]+)\/iptv\/([0-9A-Za-z\.]+)\/(\d+)\/index.m3u8)");
+		std::regex re_url(R"([a-z]+:\/\/([0-9a-z\.]+)\/iptv\/([0-9A-Za-z\.]+)\/(\d+)\/index.m3u8)");
 		std::smatch m_url;
 		if (std::regex_match(ext_value, m_url, re_url))
 		{
 			domain = m_url[1].str();
 			access_key = m_url[2].str();
-			channel_id = utils::char_to_int(m_url[3].str());
+			int id = utils::char_to_int(m_url[3].str());
+			stream_uri.set_uri(utils::URI_TEMPLATE);
+			stream_uri.set_Id(id);
 		}
-
-		url = ext_value;
+		else
+		{
+			stream_uri.set_uri(ext_value);
+		}
 	}
 
 	if(const auto& pair = ext_tags.find(tag_group_title); pair != ext_tags.end())
@@ -146,7 +150,7 @@ void PlaylistEntry::Parse(const std::string& str)
 
 	if (const auto& pair = ext_tags.find(tag_tvg_logo); pair != ext_tags.end())
 	{
-		logo_url = pair->second;
+		icon_uri.set_uri(pair->second);
 	}
 
 	if (const auto& pair = ext_tags.find(tag_tvg_rec); pair != ext_tags.end())
@@ -155,5 +159,15 @@ void PlaylistEntry::Parse(const std::string& str)
 	}
 
 	if(!dir_title.empty())
-		channel = utils::utf8_to_utf16(dir_title);
+		title = utils::utf8_to_utf16(dir_title);
+}
+
+void PlaylistEntry::Clear()
+{
+	m3u_entry::Clear();
+
+	title.clear();
+	category.clear();
+	stream_uri.clear();
+	icon_uri.clear();
 }
