@@ -1,15 +1,21 @@
 #include "StdAfx.h"
 #include "ChannelCategory.h"
 #include "utils.h"
+#include "uri.h"
 
 std::string ChannelCategory::GetIconPath()
 {
-	static const auto scheme_size = strlen(PLUGIN_SCHEME);
+	static const auto scheme_size = strlen(uri::PLUGIN_SCHEME);
 	std::string iconPath = get_icon_url();
-	if (iconPath.substr(0, scheme_size) == PLUGIN_SCHEME)
+	if (iconPath.substr(0, scheme_size) == uri::PLUGIN_SCHEME)
 		iconPath.erase(0, scheme_size);
 
 	return iconPath;
+}
+
+ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node)
+{
+	ParseNode(node);
 }
 
 void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)

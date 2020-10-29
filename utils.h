@@ -177,4 +177,9 @@ std::wstring utf8_to_utf16(const std::string& s);
 
 std::vector<std::string> regex_split(const std::string& str, const std::string& token = "\\s+");
 std::vector<std::string> string_split(const std::string& str, char delim = ' ');
+
+bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring());
+
+bool DownloadIconLogo(const std::wstring& url, std::vector<BYTE>& image);
+
 }

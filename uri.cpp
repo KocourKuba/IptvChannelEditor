@@ -15,6 +15,20 @@ void uri::set_uri(const std::string& url)
 	}
 }
 
+std::wstring uri::get_icon_relative_path(LPCWSTR szRoot /*= nullptr*/)
+{
+	if (is_local())
+	{
+		std::wstring rpath = szRoot ? szRoot : L"";
+		rpath += utils::utf8_to_utf16(get_path());
+
+		std::wregex re_pf(LR"(\/)");
+		return std::regex_replace(rpath, re_pf, LR"(\)");
+	}
+
+	return utils::utf8_to_utf16(get_uri());
+}
+
 void uri_stream::clear()
 {
 	uri::clear();

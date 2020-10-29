@@ -4,6 +4,9 @@
 class uri
 {
 public:
+	static constexpr auto PLUGIN_SCHEME = "plugin_file://";
+
+public:
 	uri() = default;
 	uri(const std::string& url) { set_uri(url); }
 
@@ -18,6 +21,10 @@ public:
 
 	virtual std::string get_schema() const { return schema; }
 	virtual void set_schema(const std::string& val) { schema = val; };
+
+	bool is_local() const { return schema == PLUGIN_SCHEME; }
+
+	std::wstring get_icon_relative_path(LPCWSTR szRoot = nullptr);
 
 protected:
 	std::string schema;

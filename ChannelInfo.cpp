@@ -121,14 +121,5 @@ bool ChannelInfo::is_icon_local() const
 
 std::wstring ChannelInfo::GetIconRelativePath(LPCTSTR szRoot /*= nullptr*/)
 {
-	if(is_icon_local())
-	{
-		std::wstring rpath = szRoot ? szRoot : L"";
-		rpath += utils::utf8_to_utf16(icon_uri.get_path());
-
-		std::wregex re_pf(LR"(\/)");
-		return std::regex_replace(rpath, re_pf, LR"(\)");
-	}
-
-	return utils::utf8_to_utf16(icon_uri.get_uri());
+	return icon_uri.get_icon_relative_path(szRoot);
 }

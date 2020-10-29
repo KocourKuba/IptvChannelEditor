@@ -59,6 +59,7 @@ protected:
 	afx_msg void OnBnClickedButtonUpdateIcon();
 	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonCacheIcon();
+	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
 	afx_msg void OnChanges();
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);

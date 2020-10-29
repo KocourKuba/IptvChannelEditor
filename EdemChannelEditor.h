@@ -31,5 +31,4 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-
 extern CEdemChannelEditorApp theApp;

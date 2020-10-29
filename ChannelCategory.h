@@ -15,7 +15,6 @@ public:
 	static constexpr auto ID = "id";
 	static constexpr auto CAPTION = "caption";
 	static constexpr auto ICON_URL = "icon_url";
-	static constexpr auto PLUGIN_SCHEME = "plugin_file://";
 
 public:
 	ChannelCategory() = default;
@@ -26,17 +25,9 @@ public:
 			*this = src;
 		}
 	}
-	ChannelCategory(rapidxml::xml_node<>* node)
-	{
-		ParseNode(node);
-	}
+	ChannelCategory(rapidxml::xml_node<>* node);
 
 public:
-	static std::string IconPathToPluginPath(const std::string& iconPath)
-	{
-		return PLUGIN_SCHEME + iconPath;
-	}
-
 	void ParseNode(rapidxml::xml_node<>* node);
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& alloc);
 	std::string GetIconPath();

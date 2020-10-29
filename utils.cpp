@@ -2,7 +2,11 @@
 #include <stdexcept>
 #include <regex>
 #include <sstream>
+#include <winhttp.h>
+
 #include "utils.h"
+
+#pragma comment(lib, "Winhttp.lib")
 
 #define LOW_3BITS 0x7
 #define LOW_4BITS 0xF
@@ -345,6 +349,105 @@ std::wstring get_value_wstring(rapidxml::xml_node<>* node)
 	if (node && node->value())
 		return utils::utf8_to_utf16(node->value());
 	return std::wstring();
+}
+
+bool CrackUrl(const std::wstring& url, std::wstring& host /*= std::wstring()*/, std::wstring& path /*= std::wstring()*/)
+{
+	URL_COMPONENTS urlComp;
+	SecureZeroMemory(&urlComp, sizeof(urlComp));
+	urlComp.dwStructSize = sizeof(urlComp);
+
+	// Set required component lengths to non-zero so that they are cracked.
+	urlComp.dwHostNameLength = (DWORD)-1;
+	urlComp.dwUrlPathLength = (DWORD)-1;
+
+
+	if (::WinHttpCrackUrl(url.c_str(), (DWORD)url.size(), 0, &urlComp))
+	{
+		host.assign(urlComp.lpszHostName, urlComp.dwHostNameLength);
+		path.assign(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
+		return true;
+	}
+
+	return false;
+}
+
+bool DownloadIconLogo(const std::wstring& url, std::vector<BYTE>& image)
+{
+	std::wstring host;
+	std::wstring path;
+	if (!CrackUrl(url, host, path))
+		return false;
+
+	// Use WinHttpOpen to obtain a session handle.
+	HINTERNET hSession = WinHttpOpen(L"WinHTTP wget/1.0",
+									 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+									 WINHTTP_NO_PROXY_NAME,
+									 WINHTTP_NO_PROXY_BYPASS, 0);
+
+	::WinHttpSetTimeouts(hSession, 0, 10000, 10000, 10000);
+
+	// Specify an HTTP server.
+	HINTERNET hConnect = nullptr;
+	if (hSession)
+		hConnect = WinHttpConnect(hSession, host.c_str(), INTERNET_DEFAULT_HTTP_PORT, 0);
+
+
+	// Create an HTTP request handle.
+	HINTERNET hRequest = nullptr;
+	if (hConnect)
+		hRequest = WinHttpOpenRequest(hConnect, L"GET", path.c_str(),
+									  nullptr,
+									  WINHTTP_NO_REFERER,
+									  nullptr,
+									  NULL);
+
+	// Send a request.
+	BOOL bResults = FALSE;
+	if (hRequest)
+		bResults = WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+
+	// End the request.
+	if (bResults)
+		bResults = WinHttpReceiveResponse(hRequest, NULL);
+
+	DWORD dwSize = 0;
+	do
+	{
+		if (!bResults)
+		{
+			TRACE("Error %d has occurred.\n", GetLastError());
+			break;
+		}
+		// Check for available data.
+		if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
+		{
+			TRACE("Error %u in WinHttpQueryDataAvailable.\n", GetLastError());
+			break;
+		}
+
+		// Allocate space for the buffer.
+		if (!dwSize) break;
+		std::vector<BYTE> chunk(dwSize);
+
+		DWORD dwDownloaded = 0;
+		if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
+		{
+			chunk.resize(dwSize);
+			image.insert(image.end(), chunk.begin(), chunk.end());
+		}
+		else
+		{
+			TRACE("Error %u in WinHttpReadData.\n", GetLastError());
+		}
+	} while (dwSize);
+
+	// Close any open handles.
+	if (hRequest) WinHttpCloseHandle(hRequest);
+	if (hConnect) WinHttpCloseHandle(hConnect);
+	if (hSession) WinHttpCloseHandle(hSession);
+
+	return !image.empty();
 }
 
 }
