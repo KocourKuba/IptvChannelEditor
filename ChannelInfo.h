@@ -46,11 +46,11 @@ public:
 	const std::wstring& get_name() const { return name; }
 	void set_title(const std::wstring& val) { name = val; }
 
-	const std::string& get_tvguide_id() const { return tvguide_id; }
-	void set_tvguide_id(const std::string& val) { tvguide_id = val; }
+	int get_tvguide_id() const { return tvguide_id; }
+	void set_tvguide_id(int val) { tvguide_id = val; }
 
-	const std::string& get_epg_id() const { return epg_id; }
-	void set_epg_id(const std::string& val) { epg_id = val; }
+	int get_epg_id() const { return epg_id; }
+	void set_epg_id(int val) { epg_id = val; }
 
 	int get_adult() const { return adult; }
 	void set_adult(int val) { adult = val; }
@@ -81,8 +81,8 @@ public:
 
 protected:
 	std::wstring name;
-	std::string tvguide_id;
-	std::string epg_id; // for compatibility not used in dune edem.tv plugin
+	int tvguide_id;
+	int epg_id; // for compatibility not used in dune edem.tv plugin
 	uri icon_uri;
 	uri_stream streaming_uri;
 	std::set<int> categories;

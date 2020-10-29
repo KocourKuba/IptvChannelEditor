@@ -26,6 +26,9 @@ public:
 
 	std::wstring get_icon_relative_path(LPCWSTR szRoot = nullptr);
 
+	bool operator==(const uri& src) { return src.get_schema() == schema && src.get_path() == path; }
+	bool operator!=(const uri& src) { return src.get_schema() != schema && src.get_path() != path; }
+
 protected:
 	std::string schema;
 	std::string path;

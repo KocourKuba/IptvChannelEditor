@@ -136,7 +136,7 @@ protected:
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;
 	int m_streamID;
-	CString m_TVGID;
+	int m_tvgID;
 	int m_prevDays = 0;
 	int m_nextDays = 0;
 

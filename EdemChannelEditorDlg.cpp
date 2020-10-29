@@ -56,6 +56,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonAddCategory)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonEditCategory)
 	ON_BN_CLICKED(IDC_BUTTON_IMPORT, &CEdemChannelEditorDlg::OnBnClickedButtonImport)
+	ON_UPDATE_COMMAND_UI(IDC_BUTTON_IMPORT, &CEdemChannelEditorDlg::OnUpdateButtonImport)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonLoadPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_PACK, &CEdemChannelEditorDlg::OnBnClickedButtonPack)
 	ON_BN_CLICKED(IDC_BUTTON_PL_SEARCH_NEXT, &CEdemChannelEditorDlg::OnEnChangeEditPlSearch)
@@ -122,7 +123,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_CUSTOMIZE, m_wndCustom);
 	DDX_Text(pDX, IDC_EDIT_CHANNEL_NAME, m_channelName);
 	DDX_Text(pDX, IDC_EDIT_URL_ID, m_streamID);
-	DDX_Text(pDX, IDC_EDIT_TVG_ID, m_TVGID);
+	DDX_Text(pDX, IDC_EDIT_TVG_ID, m_tvgID);
 	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
@@ -411,7 +412,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 		return;
 
 	m_channelName = channel->get_name().c_str();
-	m_TVGID = channel->get_tvguide_id().c_str();
+	m_tvgID = channel->get_tvguide_id();
 	m_prevDays = channel->get_prev_epg_days();
 	m_nextDays = channel->get_next_epg_days();
 	m_hasArchive = channel->get_has_archive();
@@ -448,7 +449,7 @@ void CEdemChannelEditorDlg::SaveChannelInfo()
 		return;
 
 	channel->set_title(m_channelName.GetString());
-	channel->set_tvguide_id(CStringA(m_TVGID).GetString());
+	channel->set_tvguide_id(m_tvgID);
 	channel->set_prev_epg_days(m_prevDays);
 	channel->set_next_epg_days(m_nextDays);
 	channel->set_has_archive(m_hasArchive);
@@ -817,7 +818,7 @@ void CEdemChannelEditorDlg::OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonTestEpg()
 {
-	static LPCSTR url = "http://www.teleguide.info/kanal%s.html";
+	static LPCSTR url = "http://www.teleguide.info/kanal%d.html";
 
 	UpdateData(TRUE);
 
@@ -825,7 +826,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonTestEpg()
 	if (channel)
 	{
 		CStringA tvg_url;
-		tvg_url.Format(url, channel->get_tvguide_id().c_str());
+		tvg_url.Format(url, channel->get_tvguide_id());
 		ShellExecuteA(nullptr, "open", tvg_url.GetString(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
 }
@@ -1232,12 +1233,6 @@ void CEdemChannelEditorDlg::OnLbnSelchangeListPlaylist()
 	if (entry)
 	{
 		m_search.Format(_T("\\%d"), entry->get_channel_id());
-		auto found = std::find_if(m_channels.begin(), m_channels.end(), [entry](const auto& item)
-					 {
-						 return entry->get_channel_id() == item->get_channel_id();
-					 });
-
-		m_wndImport.EnableWindow(found == m_channels.end());
 		m_plChannelName = entry->get_category().c_str();
 		m_plIconName= entry->get_icon_url().c_str();
 		theApp.LoadImage(m_wndPlIcon, CString(entry->get_icon_url().c_str()));
@@ -1334,7 +1329,18 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 
 void CEdemChannelEditorDlg::OnUpdateButtonImport(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_wndPlaylist.GetCurSel() != LB_ERR);
+	BOOL enable = FALSE;
+	auto entry = GetPlaylistEntry(m_wndPlaylist.GetCurSel());
+	if (entry)
+	{
+		auto found = std::find_if(m_channels.begin(), m_channels.end(), [entry](const auto& item)
+								  {
+									  return entry->get_channel_id() == item->get_channel_id();
+								  });
+		enable = found == m_channels.end();
+	}
+
+	m_wndImport.EnableWindow(enable);
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonSettings()
@@ -1358,7 +1364,16 @@ void CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon()
 
 void CEdemChannelEditorDlg::OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_wndPlaylist.GetCurSel() != LB_ERR && m_wndChannelsList.GetCurSel() != LB_ERR);
+	BOOL enable = FALSE;
+	auto entry = GetPlaylistEntry(m_wndPlaylist.GetCurSel());
+	auto channel = GetChannel(m_wndChannelsList.GetCurSel());
+	if (channel && entry)
+	{
+		bool eq = channel->get_icon_uri() == entry->get_icon_uri();
+		enable = !channel->is_icon_local() && !eq;
+	}
+
+	pCmdUI->Enable(enable);
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonCacheIcon()
