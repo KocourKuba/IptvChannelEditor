@@ -158,6 +158,11 @@ void PlaylistEntry::Parse(const std::string& str)
 		archive = utils::char_to_int(pair->second);
 	}
 
+	if (const auto& pair = ext_tags.find(tag_tvg_id); pair != ext_tags.end())
+	{
+		tvg_id = utils::char_to_int(pair->second);
+	}
+
 	if(!dir_title.empty())
 		title = utils::utf8_to_utf16(dir_title);
 }

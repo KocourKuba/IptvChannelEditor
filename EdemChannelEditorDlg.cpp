@@ -107,7 +107,6 @@ END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
-	, m_plFileName(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -118,8 +117,6 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_COMBO_CATEGORY, m_wndCategories);
 	DDX_Control(pDX, IDC_LIST_CATEGORIES, m_wndCategoriesList);
-	DDX_Control(pDX, IDC_SPIN_PREV, m_wndSpinPrev);
-	DDX_Control(pDX, IDC_SPIN_NEXT, m_wndSpinNext);
 	DDX_Control(pDX, IDC_CHECK_CUSTOMIZE, m_wndCustom);
 	DDX_Text(pDX, IDC_EDIT_CHANNEL_NAME, m_channelName);
 	DDX_Text(pDX, IDC_EDIT_URL_ID, m_streamID);
@@ -132,9 +129,6 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PREV_EPG, m_prevDays);
 	DDX_Text(pDX, IDC_EDIT_NEXT_EPG, m_nextDays);
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndIcon);
-	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
-	DDX_Control(pDX, IDC_BUTTON_PACK, m_wndPack);
-	DDX_Control(pDX, IDC_BUTTON_IMPORT, m_wndImport);
 	DDX_Control(pDX, IDC_LIST_CHANNELS, m_wndChannelsList);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_LIST_PLAYLIST, m_wndPlaylist);
@@ -144,6 +138,8 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_PL_ICON, m_wndPlIcon);
 	DDX_Text(pDX, IDC_STATIC_PL_ICON_NAME, m_plIconName);
 	DDX_Text(pDX, IDC_STATIC_PLAYLIST, m_plFileName);
+	DDX_Text(pDX, IDC_STATIC_PL_TVG, m_plEPG);
+	DDX_Control(pDX, IDC_CHECK_PL_ARCHIVE, m_wndPlArchive);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -1145,6 +1141,7 @@ void CEdemChannelEditorDlg::OnEnKillfocusEditStreamUrl()
 		channel->get_streaming_uri().set_uri(CStringA(m_streamUrl).GetString());
 		m_streamID = channel->get_channel_id();
 
+		set_allow_save();
 		UpdateData(FALSE);
 
 		m_wndCustom.SetCheck(m_streamID == 0);
@@ -1234,7 +1231,9 @@ void CEdemChannelEditorDlg::OnLbnSelchangeListPlaylist()
 	{
 		m_search.Format(_T("\\%d"), entry->get_channel_id());
 		m_plChannelName = entry->get_category().c_str();
-		m_plIconName= entry->get_icon_url().c_str();
+		m_plIconName = entry->get_icon_url().c_str();
+		m_plEPG.Format(_T("EPG: %d"), entry->get_tvg_id());
+		m_wndPlArchive.SetCheck(!!entry->is_archive());
 		theApp.LoadImage(m_wndPlIcon, CString(entry->get_icon_url().c_str()));
 
 		UpdateData(FALSE);
@@ -1244,6 +1243,7 @@ void CEdemChannelEditorDlg::OnLbnSelchangeListPlaylist()
 
 void CEdemChannelEditorDlg::OnEnKillfocusEditTvgId()
 {
+	set_allow_save();
 	SaveChannelInfo();
 }
 
@@ -1340,7 +1340,7 @@ void CEdemChannelEditorDlg::OnUpdateButtonImport(CCmdUI* pCmdUI)
 		enable = found == m_channels.end();
 	}
 
-	m_wndImport.EnableWindow(enable);
+	pCmdUI->Enable(enable);
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonSettings()

@@ -114,24 +114,22 @@ protected:
 	CColorListBox<PlaylistEntry> m_wndPlaylist;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
-	CSpinButtonCtrl m_wndSpinPrev;
-	CSpinButtonCtrl m_wndSpinNext;
 	CButton m_wndCustom;
-	CButton m_wndSave;
-	CButton m_wndImport;
-	CButton m_wndPack;
+	CButton m_wndPlArchive;
 	CStatic m_wndIcon;
 	CStatic m_wndPlIcon;
 	CFont m_largeFont;
 
-	CString m_search;
-	CString m_plSearch;
 	CString m_channelName;
+	CString m_search;
 	CString m_streamUrl;
+	CString m_iconUrl;
 
+	CString m_plSearch;
 	CString m_plFileName;
 	CString m_plChannelName;
 	CString m_plIconName;
+	CString m_plEPG;
 
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;
@@ -149,10 +147,8 @@ private:
 	CString m_accessKey;
 	CString m_domain;
 	CString m_player;
-	CString m_iconUrl;
 
 	std::map<int, std::shared_ptr<ChannelCategory>> m_categories;
 	std::vector<std::shared_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
-public:
 };

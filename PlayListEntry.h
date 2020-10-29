@@ -74,6 +74,7 @@ public:
 
 	int get_channel_id() const { return stream_uri.get_Id(); }
 	int get_channel_length() const { return channel_len; }
+	int get_tvg_id() { return tvg_id; };
 	bool is_archive() const { return archive != 0; }
 
 	const std::wstring& get_title() const { return title; }
@@ -86,6 +87,7 @@ public:
 
 protected:
 	int archive = 0;
+	int tvg_id = 0;
 	int channel_len = 0;
 	std::wstring title;
 	std::wstring category;
