@@ -148,7 +148,7 @@ BEGIN
     CONTROL         "Donate if you like this App",IDC_MFCLINK_DONATE,"MfcLink",WS_TABSTOP,332,4,87,13
     PUSHBUTTON      "About",IDC_BUTTON_ABOUT,428,4,50,14
     LTEXT           "Channel Editor",IDC_STATIC_TITLE,5,7,180,14
-    LTEXT           "for DUNE Edem TV plugin",IDC_STATIC,47,25,73,8
+    RTEXT           "for DUNE HD",IDC_STATIC,54,25,54,8
     LTEXT           "Plugin channels",IDC_STATIC,5,36,84,8
     GROUPBOX        "Channel Info",IDC_STATIC,145,36,193,217
     LTEXT           "Playlist",IDC_STATIC_PLAYLIST,345,35,123,8

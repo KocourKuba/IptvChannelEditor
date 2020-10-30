@@ -150,7 +150,8 @@ void PlaylistEntry::Parse(const std::string& str)
 
 	if (const auto& pair = ext_tags.find(tag_tvg_logo); pair != ext_tags.end())
 	{
-		icon_uri.set_uri(pair->second);
+		std::regex re_url(R"(\/\/epg.it999.ru\/img\/)");
+		icon_uri.set_uri(std::regex_replace(pair->second, re_url, "//epg.it999.ru/img2/"));
 	}
 
 	if (const auto& pair = ext_tags.find(tag_tvg_rec); pair != ext_tags.end())
