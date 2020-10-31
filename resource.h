@@ -58,12 +58,13 @@
 #define IDC_STATIC_ICON_NAME            1044
 #define IDC_STATIC_PL_ICON              1045
 #define IDC_STATIC_PL_ICON_NAME         1046
-#define IDC_STATIC_PL_NAME              1047
 #define IDC_STATIC_PLAYLIST             1048
 #define IDC_STATIC_QR                   1049
 #define IDC_STATIC_TITLE                1050
 #define IDC_STATIC_PL_TVG               1051
 #define IDC_CHECK_PL_ARCHIVE            1052
+#define IDC_TREE1                       1053
+#define IDC_TREE_PAYLIST                1053
 #define ID_ACC_ADD_CHANNEL              32771
 #define ID_ACC_DELETE_CHANNEL           32772
 #define ID_ACC_SAVE                     32773
@@ -75,7 +76,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1053
+#define _APS_NEXT_CONTROL_VALUE         1054
 #define _APS_NEXT_SYMED_VALUE           1151
 #endif
 #endif

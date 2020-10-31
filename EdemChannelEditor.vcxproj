@@ -221,6 +221,7 @@
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
+    <ClCompile Include="ColorListBox.cpp" />
     <ClCompile Include="NewCategoryDlg.cpp" />
     <ClCompile Include="NewChannelDlg.cpp" />
     <ClCompile Include="PlayListEntry.cpp" />

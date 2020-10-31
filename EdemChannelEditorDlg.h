@@ -53,7 +53,9 @@ protected:
 	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnUpdateButtonSave(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonTestEpg();
+	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonTestUrl();
+	afx_msg void OnUpdateButtonTestUrl(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedButtonSettings();
 	afx_msg void OnBnClickedButtonUpdateIcon();
@@ -64,22 +66,22 @@ protected:
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditNum();
-	afx_msg void OnEnChangeEditPlSearch();
+	afx_msg void OnBnClickedButtonPlSearchNext();
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
-	afx_msg void OnEnChangeEditSearch();
+	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnEnKillfocusEditChannelName();
 	afx_msg void OnEnKillfocusEditStreamUrl();
 	afx_msg void OnEnKillfocusEditTvgId();
 	afx_msg void OnEnKillfocusEditUrlId();
-	afx_msg void OnLbnDblclkListPlaylist();
 	afx_msg void OnLbnSelchangeListChannels();
-	afx_msg void OnLbnSelchangeListPlaylist();
 	afx_msg void OnPaint();
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnKickIdle();
 	afx_msg void OnDestroy();
+	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -100,8 +102,10 @@ private:
 	void CheckForExisting();
 	ChannelInfo* GetChannel(int idx);
 	ChannelCategory* GetCategory(int idx);
-	PlaylistEntry* GetPlaylistEntry(int idx);
+	PlaylistEntry* GetPlaylistEntry(HTREEITEM item);
 
+	HTREEITEM FindItem(const CString& name, HTREEITEM hRoot);
+	HTREEITEM FindItem(int id, HTREEITEM hRoot);
 	int FindCategory(const std::wstring& name);
 	int GetFreeCategoryID();
 	ChannelInfo* CreateChannel();
@@ -111,7 +115,7 @@ protected:
 	CColorListBox<ChannelInfo> m_wndChannelsList;
 	CComboBox m_wndCategories;
 	CListBox m_wndCategoriesList;
-	CColorListBox<PlaylistEntry> m_wndPlaylist;
+	CColorTreeCtrl m_wndPlaylistTree;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
 	CButton m_wndCustom;
@@ -127,7 +131,6 @@ protected:
 
 	CString m_plSearch;
 	CString m_plFileName;
-	CString m_plChannelName;
 	CString m_plIconName;
 	CString m_plEPG;
 
@@ -142,7 +145,7 @@ private:
 	HACCEL m_hAccel = nullptr;
 	BOOL m_allow_save = FALSE;
 	int m_current = LB_ERR;
-	int m_pl_current = LB_ERR;
+	HTREEITEM m_pl_current = nullptr;
 
 	CString m_accessKey;
 	CString m_domain;
