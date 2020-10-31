@@ -103,10 +103,12 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_PAYLIST, &CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist)
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PAYLIST, &CEdemChannelEditorDlg::OnNMDblclkTreePaylist)
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
+	ON_BN_CLICKED(IDC_BUTTON_SORT, &CEdemChannelEditorDlg::OnBnClickedButtonSort)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
+	, m_sortType(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -139,6 +141,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_PLAYLIST, m_plFileName);
 	DDX_Text(pDX, IDC_STATIC_PL_TVG, m_plEPG);
 	DDX_Control(pDX, IDC_CHECK_PL_ARCHIVE, m_wndPlArchive);
+	DDX_CBIndex(pDX, IDC_COMBO_SORT, m_sortType);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -448,7 +451,7 @@ void CEdemChannelEditorDlg::SaveChannelInfo()
 	if (!channel)
 		return;
 
-	channel->set_title(m_channelName.GetString());
+	channel->set_name(m_channelName.GetString());
 	channel->set_tvguide_id(m_tvgID);
 	channel->set_prev_epg_days(m_prevDays);
 	channel->set_next_epg_days(m_nextDays);
@@ -645,7 +648,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddChannel()
 	if (dlg.DoModal() == IDOK)
 	{
 		auto channel = CreateChannel();
-		channel->set_title(dlg.m_name.GetString());
+		channel->set_name(dlg.m_name.GetString());
 
 		int idx = m_wndChannelsList.AddString(dlg.m_name);
 		m_wndChannelsList.SetItemData(idx, (DWORD_PTR)channel);
@@ -1388,7 +1391,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 		return;
 
 	auto channel = CreateChannel();
-	channel->set_title(entry->get_title());
+	channel->set_name(entry->get_title());
 	channel->set_has_archive(entry->is_archive() != 0);
 	channel->set_stream_uri(entry->get_streaming_uri());
 	channel->set_icon_uri(entry->get_icon_uri());
@@ -1532,4 +1535,50 @@ void CEdemChannelEditorDlg::OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResul
 		PlayStream(entry->get_streaming_uri().get_ts_translated_url());
 	}
 	*pResult = 0;
+}
+
+
+void CEdemChannelEditorDlg::OnBnClickedButtonSort()
+{
+	UpdateData(TRUE);
+
+	SaveChannelInfo();
+
+	switch (m_sortType)
+	{
+		case 0:
+		{
+			std::sort(m_channels.begin(), m_channels.end(), [](const auto& l, const auto& r)
+					  {
+						  auto lit = *l->get_categores().begin();
+						  auto rit = *r->get_categores().begin();
+						  if (lit != rit)
+							  return (lit < rit);
+						 return l->get_name() < r->get_name();
+					  });
+			break;
+		}
+		case 1:
+		{
+			std::sort(m_channels.begin(), m_channels.end(), [](const auto& l, const auto& r)
+					  {
+						  return l->get_name() < r->get_name();
+					  });
+			break;
+		}
+		case 2:
+		{
+			std::sort(m_channels.begin(), m_channels.end(), [](const auto& l, const auto& r)
+					  {
+						  return l->get_channel_id() < r->get_channel_id();
+					  });
+			break;
+		}
+		default:
+			break;
+	}
+
+	LoadChannels();
+	LoadChannelInfo();
+	set_allow_save();
 }

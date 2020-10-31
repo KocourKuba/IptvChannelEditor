@@ -7,6 +7,7 @@
 #include <vector>
 #include "PlayListEntry.h"
 #include "ColorListBox.h"
+#include "ColorTreeCtrl.h"
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
 
@@ -112,7 +113,7 @@ private:
 	bool LoadFromFile(const std::wstring & path);
 
 protected:
-	CColorListBox<ChannelInfo> m_wndChannelsList;
+	CColorListBox m_wndChannelsList;
 	CComboBox m_wndCategories;
 	CListBox m_wndCategoriesList;
 	CColorTreeCtrl m_wndPlaylistTree;
@@ -154,4 +155,7 @@ private:
 	std::map<int, std::shared_ptr<ChannelCategory>> m_categories;
 	std::vector<std::shared_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
+public:
+	afx_msg void OnBnClickedButtonSort();
+	int m_sortType;
 };

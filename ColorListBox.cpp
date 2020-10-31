@@ -2,85 +2,47 @@
 #include "ColorListBox.h"
 #include "PlayListEntry.h"
 
-BEGIN_MESSAGE_MAP(CColorTreeCtrl, CTreeCtrl)
-	ON_WM_PAINT()
-END_MESSAGE_MAP()
-
-void CColorTreeCtrl::SetItemBold(HTREEITEM hItem, BOOL bBold)
+void CColorListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 {
-	SetItemState(hItem, bBold ? TVIS_BOLD : 0, TVIS_BOLD);
-}
+	CDC* pDC = CDC::FromHandle(lpDIS->hDC);
 
-BOOL CColorTreeCtrl::GetItemBold(HTREEITEM hItem)
-{
-	return GetItemState(hItem, TVIS_BOLD) & TVIS_BOLD;
-}
+	CRect rcItem = lpDIS->rcItem;
 
-void CColorTreeCtrl::OnPaint()
-{
-	CPaintDC dc(this);
-
-	// Create a memory DC compatible with the paint DC
-	CDC memDC;
-	memDC.CreateCompatibleDC(&dc);
-
-	CRect rcClip, rcClient;
-	dc.GetClipBox(&rcClip);
-	GetClientRect(&rcClient);
-
-	// Select a compatible bitmap into the memory DC
-	CBitmap bitmap;
-	bitmap.CreateCompatibleBitmap(&dc, rcClient.Width(), rcClient.Height());
-	memDC.SelectObject(&bitmap);
-
-	// Set clip region to be same as that in paint DC
-	CRgn rgn;
-	rgn.CreateRectRgnIndirect(&rcClip);
-	memDC.SelectClipRgn(&rgn);
-	rgn.DeleteObject();
-
-	// First let the control do its default drawing.
-	CWnd::DefWindowProc(WM_PAINT, (WPARAM)memDC.m_hDC, 0);
-
-	HTREEITEM hItem = GetFirstVisibleItem();
-
-	int n = GetVisibleCount() + 1;
-	while (hItem && n--)
+	if ((lpDIS->itemID != (UINT)-1) && (lpDIS->itemAction & (ODA_DRAWENTIRE | ODA_SELECT)))
 	{
-		// Do not meddle with selected items or drop highlighted items
-		UINT selflag = TVIS_DROPHILITED | TVIS_SELECTED;
-		if (!(GetItemState(hItem, selflag) & selflag))
+		COLORREF clrWindow = ::GetSysColor(COLOR_WINDOW);
+		bool isColored = false;
+		if (lpDIS->itemData)
 		{
-			auto container = (PlaylistEntry*)GetItemData(hItem);
-			bool isColored = container ? container->is_colored() : false;
-			// No font specified, so use window font
-			CFont* pFont = GetFont();
-			LOGFONT logfont;
-			pFont->GetLogFont(&logfont);
-
-			if (GetItemBold(hItem))
-				logfont.lfWeight = 700;
-
-			CFont fontDC;
-			fontDC.CreateFontIndirect(&logfont);
-			CFont* pFontDC = memDC.SelectObject(&fontDC);
-
-			if (isColored)
-				memDC.SetTextColor(m_color);
-			else
-				memDC.SetTextColor(::GetSysColor(COLOR_WINDOWTEXT));
-
-			const auto& sItem = GetItemText(hItem);
-
-			CRect rect;
-			GetItemRect(hItem, &rect, TRUE);
-			memDC.SetBkColor(GetSysColor(COLOR_WINDOW));
-			memDC.TextOut(rect.left + 2, rect.top + 1, sItem);
-			memDC.SelectObject(pFontDC);
+			auto container = (PlaylistEntry*)lpDIS->itemData;
+			if (container)
+				isColored = container->is_colored();
 		}
-		hItem = GetNextVisibleItem(hItem);
+
+		COLORREF clText = isColored ? m_color : ::GetSysColor(COLOR_WINDOWTEXT);
+		COLORREF clrWindowText = IsWindowEnabled() ? clText : ::GetSysColor(COLOR_GRAYTEXT);
+		BOOL bSelected = ((lpDIS->itemState & ODS_SELECTED) != 0);
+		CRect rcText(rcItem);
+		rcText.DeflateRect(0, 0);
+
+		if (bSelected)
+		{
+			clrWindow = IsWindowEnabled() ? ::GetSysColor(COLOR_HIGHLIGHT) : ::GetSysColor(COLOR_GRAYTEXT);
+			clrWindowText = isColored ? m_color : ::GetSysColor(COLOR_HIGHLIGHTTEXT);
+		}
+
+		// set the text and text background colors, then repaint the item.
+		pDC->SetBkColor(clrWindow);
+		pDC->SetTextColor(clrWindowText);
+		if (clrWindow != COLORREF(-1))
+			pDC->FillSolidRect(&rcItem, clrWindow);
+
+		CString strText;
+		GetText(lpDIS->itemID, strText);
+
+		pDC->DrawText(strText, &rcText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_EXPANDTABS);
 	}
 
-	dc.BitBlt(rcClip.left, rcClip.top, rcClip.Width(), rcClip.Height(), &memDC,
-			  rcClip.left, rcClip.top, SRCCOPY);
+	if ((lpDIS->itemAction & ODA_FOCUS))
+		pDC->DrawFocusRect(&lpDIS->rcItem);
 }

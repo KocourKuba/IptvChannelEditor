@@ -200,6 +200,7 @@
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="ColoringProperty.h" />
     <ClInclude Include="ColorListBox.h" />
+    <ClInclude Include="ColorTreeCtrl.h" />
     <ClInclude Include="NewCategoryDlg.h" />
     <ClInclude Include="NewChannelDlg.h" />
     <ClInclude Include="PlayListEntry.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="ColorListBox.cpp" />
+    <ClCompile Include="ColorTreeCtrl.cpp" />
     <ClCompile Include="NewCategoryDlg.cpp" />
     <ClCompile Include="NewChannelDlg.cpp" />
     <ClCompile Include="PlayListEntry.cpp" />

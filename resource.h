@@ -65,6 +65,8 @@
 #define IDC_CHECK_PL_ARCHIVE            1052
 #define IDC_TREE1                       1053
 #define IDC_TREE_PAYLIST                1053
+#define IDC_COMBO_SORT                  1054
+#define IDC_BUTTON_SORT                 1055
 #define ID_ACC_ADD_CHANNEL              32771
 #define ID_ACC_DELETE_CHANNEL           32772
 #define ID_ACC_SAVE                     32773
@@ -76,7 +78,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1054
+#define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           1151
 #endif
 #endif

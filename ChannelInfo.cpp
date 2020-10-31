@@ -33,7 +33,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	if (!node)
 		return;
 
-	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
+	set_name(utils::get_value_wstring(node->first_node(CAPTION)));
 	set_tvguide_id(utils::get_value_int(node->first_node(TVG_ID)));
 	set_epg_id(utils::get_value_int(node->first_node(EPG_ID)));
 	get_icon_uri().set_uri(utils::get_value_string(node->first_node(ICON_URL)));

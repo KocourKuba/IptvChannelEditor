@@ -44,7 +44,7 @@ public:
 	void set_channel_id(int val) { streaming_uri.set_Id(val); }
 
 	const std::wstring& get_name() const { return name; }
-	void set_title(const std::wstring& val) { name = val; }
+	void set_name(const std::wstring& val) { name = val; }
 
 	int get_tvguide_id() const { return tvguide_id; }
 	void set_tvguide_id(int val) { tvguide_id = val; }
