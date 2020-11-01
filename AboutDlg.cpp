@@ -53,6 +53,8 @@ BOOL CAboutDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
+	m_version.Format(_T("Version %d.%d"), MAJOR, MINOR);
+
 	IStream* pStream = CreateStreamOnResource(IDB_PNG_QR);
 	if (pStream != nullptr)
 	{
@@ -66,6 +68,8 @@ BOOL CAboutDlg::OnInitDialog()
 			::DeleteObject(hOld);
 	}
 
+	UpdateData(FALSE);
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -73,9 +77,8 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STATIC_QR, m_QR);
+	DDX_Text(pDX, IDC_STATIC_VERSION, m_version);
 }
-
-
 
 void CAboutDlg::OnOK()
 {

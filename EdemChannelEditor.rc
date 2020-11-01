@@ -89,18 +89,18 @@ IDB_PNG_QR              PNG                     "res\\QR Code.png"
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 199, 158
+IDD_ABOUTBOX DIALOGEX 0, 0, 215, 158
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About Dune Edem TV Channel Editor"
+CAPTION "About Dune HD Edem TV Channel Editor"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,4,4,21,20
-    LTEXT           "Version 1.0",IDC_STATIC,43,4,85,9,SS_NOPREFIX
+    LTEXT           "Version 1.0",IDC_STATIC_VERSION,43,4,85,9,SS_NOPREFIX
     LTEXT           "Copyright (C) 2020, Pavel Abakanov",IDC_STATIC,43,15,133,8
-    DEFPUSHBUTTON   "OK",IDOK,71,140,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,78,140,50,14,WS_GROUP
     CONTROL         "Donate $5 if you like this App",IDC_MFCLINK_DONATE,
                     "MfcLink",WS_TABSTOP,51,38,105,14
-    CONTROL         "",IDC_STATIC_QR,"Static",SS_BITMAP | SS_CENTERIMAGE,53,53,85,78
+    CONTROL         "",IDC_STATIC_QR,"Static",SS_BITMAP | SS_CENTERIMAGE,60,53,85,78
 END
 
 IDD_EDEMCHANNELEDITOR_DIALOG DIALOGEX 0, 0, 483, 362
@@ -220,44 +220,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
- FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x40004L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "040904B0"
-        BEGIN
-            VALUE "FileDescription", "Channel Editor for Dune Edem TV plugin"
-            VALUE "FileVersion", "1.0.0.1"
-            VALUE "InternalName", "EdemChannelEditor.exe"
-            VALUE "LegalCopyright", "All rights reserved."
-            VALUE "OriginalFilename", "EdemChannelEditor.exe"
-            VALUE "ProductName", "Dune Edem TV Channel Editor"
-            VALUE "ProductVersion", "1.0.0.0"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x409, 1200
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // DESIGNINFO
 //
 
@@ -267,7 +229,7 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 4
-        RIGHTMARGIN, 195
+        RIGHTMARGIN, 211
         TOPMARGIN, 4
         BOTTOMMARGIN, 154
     END

@@ -73,6 +73,7 @@
 #define IDC_EDIT_INFO_AUDIO             1057
 #define IDC_BUTTON_GET_INFO             1058
 #define IDC_STATIC_CHANNELS             1059
+#define IDC_STATIC_VERSION              1060
 #define ID_ACC_ADD_CHANNEL              32771
 #define ID_ACC_DELETE_CHANNEL           32772
 #define ID_ACC_SAVE                     32773
@@ -84,7 +85,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1060
+#define _APS_NEXT_CONTROL_VALUE         1061
 #define _APS_NEXT_SYMED_VALUE           1151
 #endif
 #endif

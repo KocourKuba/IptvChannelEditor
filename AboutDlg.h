@@ -18,6 +18,7 @@ public:
 protected:
 	BOOL OnInitDialog() override;
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	void OnOK() override;
 
 // Implementation
 protected:
@@ -25,6 +26,6 @@ protected:
 
 protected:
 	CStatic m_QR;
-	virtual void OnOK();
+	CString m_version;
 };
 
