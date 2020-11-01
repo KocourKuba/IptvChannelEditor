@@ -28,4 +28,5 @@ protected:
 	CString m_accessKey;
 	CString m_domain;
 	CString m_player;
+	CString m_probe;
 };

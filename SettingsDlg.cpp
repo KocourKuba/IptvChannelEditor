@@ -25,18 +25,22 @@ void CSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
-	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLAYER, m_player);
 	DDX_Text(pDX, IDC_EDIT_KEY, m_accessKey);
 	DDX_Text(pDX, IDC_EDIT_DOMAIN, m_domain);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLAYER, m_player);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE_PROBE, m_probe);
 }
 
 BOOL CSettingsDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 	m_accessKey = theApp.GetProfileString(_T("Setting"), _T("AccessKey"));
 	m_domain = theApp.GetProfileString(_T("Setting"), _T("Domain"));
+	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
+	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
+
+	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
@@ -46,7 +50,10 @@ void CSettingsDlg::OnOK()
 {
 	CDialogEx::OnOK();
 
-	theApp.WriteProfileString(_T("Setting"), _T("Player"), m_player);
+	UpdateData(TRUE);
+
 	theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), m_accessKey);
 	theApp.WriteProfileString(_T("Setting"), _T("Domain"), m_domain);
+	theApp.WriteProfileString(_T("Setting"), _T("Player"), m_player);
+	theApp.WriteProfileString(_T("Setting"), _T("FFProbe"), m_probe);
 }

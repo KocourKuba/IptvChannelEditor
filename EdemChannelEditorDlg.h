@@ -84,8 +84,12 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedButtonSort();
+	afx_msg void OnBnClickedButtonGetInfo();
+	afx_msg void OnUpdateButtonGetInfo(CCmdUI* pCmdUI);
 
 	DECLARE_MESSAGE_MAP()
+
 
 private:
 	BOOL is_allow_save() const { return m_allow_save; }
@@ -93,12 +97,17 @@ private:
 
 	BOOL LoadSetting();
 	void LoadPlaylist(const CString& file);
+
 	void LoadChannels();
 	void SaveChannels();
 	void FillCategories();
 	void LoadChannelInfo();
 	void SaveChannelInfo();
-	void PlayStream(const std::string& stream_uri);
+	void PlayStream(const std::wstring& stream_url);
+	std::wstring TranslateStreamUri(const std::string& stream_uri);
+	void GetChannelStreamInfo(ChannelInfo* channel);
+	void UpdateChannelsCount();
+	void UpdatePlaylistCount();
 
 	void CheckLimits();
 	void CheckForExisting();
@@ -122,6 +131,7 @@ protected:
 	CEdit m_wndStreamUrl;
 	CButton m_wndCustom;
 	CButton m_wndPlArchive;
+	CButton m_wndGetAllInfo;
 	CStatic m_wndIcon;
 	CStatic m_wndPlIcon;
 	CFont m_largeFont;
@@ -133,8 +143,12 @@ protected:
 
 	CString m_plSearch;
 	CString m_plFileName;
+	CString m_plInfo;
 	CString m_plIconName;
 	CString m_plEPG;
+	CString m_infoVideo;
+	CString m_infoAudio;
+	CString m_channelsInfo;
 
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;
@@ -142,6 +156,7 @@ protected:
 	int m_tvgID;
 	int m_prevDays = 0;
 	int m_nextDays = 0;
+	int m_sortType = 0;
 
 private:
 	HACCEL m_hAccel = nullptr;
@@ -152,11 +167,11 @@ private:
 	CString m_accessKey;
 	CString m_domain;
 	CString m_player;
+	CString m_probe;
 
 	std::map<int, std::shared_ptr<ChannelCategory>> m_categories;
 	std::vector<std::shared_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
 public:
-	afx_msg void OnBnClickedButtonSort();
-	int m_sortType;
+	afx_msg void OnBnClickedButtonGetAllInfo();
 };

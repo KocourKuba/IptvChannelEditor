@@ -36,6 +36,7 @@
 #define IDC_CHECK_CUSTOMIZE             1022
 #define IDC_COMBO_CATEGORY              1023
 #define IDC_EDIT_CATEGORY               1024
+#define IDC_BUTTON_GET_ALL_INFO         1024
 #define IDC_EDIT_CHANNEL_NAME           1025
 #define IDC_EDIT_DOMAIN                 1026
 #define IDC_EDIT_KEY                    1027
@@ -51,6 +52,7 @@
 #define IDC_LIST_PLAYLIST               1037
 #define IDC_MFCEDITBROWSE_PLAYER        1038
 #define IDC_MFCLINK_DONATE              1039
+#define IDC_MFCEDITBROWSE_PROBE         1039
 #define IDC_SPIN_NEXT                   1040
 #define IDC_SPIN_PREV                   1041
 #define IDC_STATIC_CATEGORY_ICON        1042
@@ -67,6 +69,10 @@
 #define IDC_TREE_PAYLIST                1053
 #define IDC_COMBO_SORT                  1054
 #define IDC_BUTTON_SORT                 1055
+#define IDC_EDIT_INFO_VIDEO             1056
+#define IDC_EDIT_INFO_AUDIO             1057
+#define IDC_BUTTON_GET_INFO             1058
+#define IDC_STATIC_CHANNELS             1059
 #define ID_ACC_ADD_CHANNEL              32771
 #define ID_ACC_DELETE_CHANNEL           32772
 #define ID_ACC_SAVE                     32773
@@ -78,7 +84,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1056
+#define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           1151
 #endif
 #endif

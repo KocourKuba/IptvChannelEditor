@@ -6,6 +6,7 @@
 #include "framework.h"
 #include <afxdialogex.h>
 #include <fstream>
+#include <sstream>
 #include <regex>
 
 #include "EdemChannelEditor.h"
@@ -24,6 +25,24 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+// Возвращает разницу между заданным и текущим значением времени в тиках
+inline DWORD GetTimeDiff(DWORD dwStartTime)
+{
+	DWORD dwCurrent = ::GetTickCount();
+
+	if (dwStartTime > dwCurrent)
+		return (0xffffffff - dwCurrent - dwStartTime);
+
+	return (dwCurrent - dwStartTime);
+}
+
+// Требует начальное время и таймаут в миллисекундах
+// Возвращает TRUE, если таймаут вышел
+inline BOOL CheckForTimeOut(DWORD dwStartTime, DWORD dwTimeOut)
+{
+	return (GetTimeDiff(dwStartTime) > dwTimeOut);
+}
 
 using namespace SevenZip;
 
@@ -98,6 +117,9 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_PAYLIST, &CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist)
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PAYLIST, &CEdemChannelEditorDlg::OnNMDblclkTreePaylist)
 	ON_BN_CLICKED(IDC_BUTTON_SORT, &CEdemChannelEditorDlg::OnBnClickedButtonSort)
+	ON_BN_CLICKED(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonGetInfo)
+	ON_UPDATE_COMMAND_UI(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnUpdateButtonGetInfo)
+	ON_BN_CLICKED(IDC_BUTTON_GET_ALL_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonGetAllInfo)
 
 	ON_COMMAND(ID_ACC_UPDATE_ICON, &CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon)
 	ON_COMMAND(ID_ACC_ADD_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonAddChannel)
@@ -108,7 +130,6 @@ END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
-	, m_sortType(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -138,10 +159,14 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_ICON_NAME, m_iconUrl);
 	DDX_Control(pDX, IDC_STATIC_PL_ICON, m_wndPlIcon);
 	DDX_Text(pDX, IDC_STATIC_PL_ICON_NAME, m_plIconName);
-	DDX_Text(pDX, IDC_STATIC_PLAYLIST, m_plFileName);
+	DDX_Text(pDX, IDC_STATIC_PLAYLIST, m_plInfo);
 	DDX_Text(pDX, IDC_STATIC_PL_TVG, m_plEPG);
 	DDX_Control(pDX, IDC_CHECK_PL_ARCHIVE, m_wndPlArchive);
 	DDX_CBIndex(pDX, IDC_COMBO_SORT, m_sortType);
+	DDX_Text(pDX, IDC_EDIT_INFO_VIDEO, m_infoVideo);
+	DDX_Text(pDX, IDC_EDIT_INFO_AUDIO, m_infoAudio);
+	DDX_Text(pDX, IDC_STATIC_CHANNELS, m_channelsInfo);
+	DDX_Control(pDX, IDC_BUTTON_GET_ALL_INFO, m_wndGetAllInfo);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -188,9 +213,10 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	LoadSetting();
 
-	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 	m_accessKey = theApp.GetProfileString(_T("Setting"), _T("AccessKey"));
 	m_domain = theApp.GetProfileString(_T("Setting"), _T("Domain"));
+	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
+	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
 
 	LoadPlaylist(theApp.GetProfileString(_T("Setting"), _T("Playlist")));
 
@@ -298,6 +324,14 @@ void CEdemChannelEditorDlg::LoadChannels()
 		int idx = m_wndChannelsList.AddString(channel->get_name().c_str());
 		m_wndChannelsList.SetItemData(idx, (DWORD_PTR)channel.get());
 	}
+
+	UpdateChannelsCount();
+}
+
+void CEdemChannelEditorDlg::UpdateChannelsCount()
+{
+	m_channelsInfo.Format(_T("Plugin channels (%d)"), m_channels.size());
+	UpdateData(FALSE);
 }
 
 void CEdemChannelEditorDlg::SaveChannels()
@@ -424,6 +458,8 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 	m_iconUrl = channel->get_icon_uri().get_uri().c_str();
 	m_streamUrl = channel->get_streaming_uri().get_uri().c_str();
 	m_streamID = channel->get_channel_id();
+	m_infoAudio = channel->get_audio().c_str();
+	m_infoVideo = channel->get_video().c_str();
 
 	CheckForExisting();
 
@@ -657,6 +693,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddChannel()
 		m_current = idx;
 		LoadChannelInfo();
 		set_allow_save();
+		UpdateChannelsCount();
 	}
 }
 
@@ -707,6 +744,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonRemoveChannel()
 		m_wndChannelsList.SetCurSel(m_current);
 		LoadChannelInfo();
 		set_allow_save();
+		UpdateChannelsCount();
 	}
 }
 
@@ -868,7 +906,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonTestUrl()
 	auto channel = GetChannel(m_wndChannelsList.GetCurSel());
 	if (channel)
 	{
-		PlayStream(channel->get_streaming_uri().get_ts_translated_url());
+		PlayStream(TranslateStreamUri(channel->get_streaming_uri().get_ts_translated_url()));
 	}
 }
 
@@ -877,8 +915,7 @@ void CEdemChannelEditorDlg::OnUpdateButtonTestUrl(CCmdUI* pCmdUI)
 	pCmdUI->Enable(m_wndChannelsList.GetCurSel() != LB_ERR);
 }
 
-
-void CEdemChannelEditorDlg::PlayStream(const std::string& stream_uri)
+std::wstring CEdemChannelEditorDlg::TranslateStreamUri(const std::string& stream_uri)
 {
 	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
 
@@ -887,8 +924,11 @@ void CEdemChannelEditorDlg::PlayStream(const std::string& stream_uri)
 
 	std::wstring stream_url = utils::utf8_to_utf16(stream_uri);
 	stream_url = std::regex_replace(stream_url, re_domain, m_domain.GetString());
-	stream_url = std::regex_replace(stream_url, re_uid, m_accessKey.GetString());;
+	return std::regex_replace(stream_url, re_uid, m_accessKey.GetString());
+}
 
+void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url)
+{
 	TRACE(_T("Test URL: %s"), stream_url.c_str());
 	ShellExecute(nullptr, _T("open"), m_player, stream_url.c_str(), nullptr, SW_SHOWNORMAL);
 }
@@ -930,7 +970,7 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	auto pos = file.ReverseFind('\\');
 	if (pos != -1)
 	{
-		m_plFileName.Format(_T("Playlist: %s"), file.Mid(++pos));
+		m_plFileName = file.Mid(++pos);
 	}
 	else
 	{
@@ -1045,6 +1085,14 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 		}
 	}
 
+	UpdatePlaylistCount();
+
+	UpdateData(FALSE);
+}
+
+void CEdemChannelEditorDlg::UpdatePlaylistCount()
+{
+	m_plInfo.Format(_T("Playlist: %s (%d)"), m_plFileName.GetString(), m_playlist.size());
 	UpdateData(FALSE);
 }
 
@@ -1448,7 +1496,13 @@ void CEdemChannelEditorDlg::OnUpdateButtonImport(CCmdUI* pCmdUI)
 void CEdemChannelEditorDlg::OnBnClickedButtonSettings()
 {
 	CSettingsDlg dlg;
-	dlg.DoModal();
+	if (dlg.DoModal() == IDOK)
+	{
+		m_accessKey = theApp.GetProfileString(_T("Setting"), _T("AccessKey"));
+		m_domain = theApp.GetProfileString(_T("Setting"), _T("Domain"));
+		m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
+		m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
+	}
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon()
@@ -1522,7 +1576,6 @@ void CEdemChannelEditorDlg::OnUpdateButtonCacheIcon(CCmdUI* pCmdUI)
 	pCmdUI->Enable(enable);
 }
 
-
 void CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
@@ -1552,11 +1605,10 @@ void CEdemChannelEditorDlg::OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResul
 	auto entry = GetPlaylistEntry(m_pl_current);
 	if (entry)
 	{
-		PlayStream(entry->get_streaming_uri().get_ts_translated_url());
+		PlayStream(TranslateStreamUri(entry->get_streaming_uri().get_ts_translated_url()));
 	}
 	*pResult = 0;
 }
-
 
 void CEdemChannelEditorDlg::OnBnClickedButtonSort()
 {
@@ -1601,4 +1653,202 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSort()
 	LoadChannels();
 	LoadChannelInfo();
 	set_allow_save();
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonGetInfo()
+{
+	CWaitCursor cur;
+
+	GetChannelStreamInfo(GetChannel(m_wndChannelsList.GetCurSel()));
+	LoadChannelInfo();
+}
+
+void CEdemChannelEditorDlg::GetChannelStreamInfo(ChannelInfo* channel)
+{
+	if (!channel)
+		return;
+
+	auto url = TranslateStreamUri(channel->get_streaming_uri().get_ts_translated_url());
+
+	SECURITY_ATTRIBUTES sa;
+	sa.nLength = sizeof(sa);
+	sa.bInheritHandle = TRUE;
+	sa.lpSecurityDescriptor = nullptr;
+
+	// Create a pipe for the child process's STDOUT
+	HANDLE hStdoutRd;
+	HANDLE hChildStdoutWr = nullptr;
+	HANDLE hChildStdoutRd = nullptr;
+	CreatePipe(&hChildStdoutRd, &hChildStdoutWr, &sa, 0);
+
+	// Duplicate the read handle to the pipe so it is not inherited and close src handle
+	HANDLE hSelf = GetCurrentProcess();
+	if (!DuplicateHandle(hSelf, hChildStdoutRd, hSelf, &hStdoutRd, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE))
+	{
+		TRACE(_T("Failed! Can't create stdout pipe to child process. Code: %u"), GetLastError());
+		return;
+	}
+
+	std::string result;
+	BOOL bResult = FALSE;
+
+	STARTUPINFO si = { 0 };
+	si.cb = sizeof(STARTUPINFO);
+	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+	si.wShowWindow = SW_HIDE;
+	si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+	si.hStdInput = nullptr;
+	si.hStdOutput = hChildStdoutWr;
+
+	PROCESS_INFORMATION pi = { nullptr };
+
+	CString csCommand;
+	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %s"), m_probe.GetString(), url.c_str()); // argv[0] имя исполняемого файла
+	BOOL bRunProcess = CreateProcess(m_probe.GetString(),		// 	__in_opt     LPCTSTR lpApplicationName
+									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
+									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes
+									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes
+									 TRUE,						// 	__in         BOOL bInheritHandles
+									 CREATE_SUSPENDED,			// 	__in         DWORD dwCreationFlags
+									 nullptr,					// 	__in_opt     LPVOID lpEnvironment
+									 nullptr,					// 	__in_opt     LPCTSTR lpCurrentDirectory
+									 &si,						// 	__in         LPSTARTUPINFO lpStartupInfo
+									 &pi);						// 	__out        LPPROCESS_INFORMATION lpProcessInformation
+
+	if (!bRunProcess)
+	{
+		TRACE(_T("Failed! Can't execute command: %s\nCode: %u"), csCommand.GetString(), GetLastError());
+	}
+	else
+	{
+		ResumeThread(pi.hThread);
+
+		long nTimeout = 20;
+
+		int nErrorCount = 0;
+		DWORD dwExitCode = STILL_ACTIVE;
+		DWORD dwStart = GetTickCount();
+		BOOL bTimeout = FALSE;
+		for (;;)
+		{
+			if (dwExitCode != STILL_ACTIVE)
+			{
+				TRACE(_T("Success! Exit code: %u"), dwExitCode);
+				break;
+			}
+
+			if (nTimeout && CheckForTimeOut(dwStart, nTimeout * 1000))
+			{
+				bTimeout = TRUE;
+				::TerminateProcess(pi.hProcess, 0);
+				TRACE(_T("Failed! Execution Timeout"));
+				break;
+			}
+
+			if (::GetExitCodeProcess(pi.hProcess, &dwExitCode))
+			{
+				for (;;)
+				{
+					if (nTimeout && CheckForTimeOut(dwStart, nTimeout * 1000)) break;
+
+					// Peek data from stdout pipe
+					DWORD dwAvail = 0;
+					if (!::PeekNamedPipe(hStdoutRd, nullptr, 0, nullptr, &dwAvail, nullptr) || !dwAvail) break;
+
+					char szBuf[4096] = { 0 };
+					DWORD dwReaded = dwAvail;
+					if (!ReadFile(hStdoutRd, szBuf, min(4095, dwAvail), &dwReaded, nullptr)) break;
+
+					result.append(szBuf, dwReaded);
+				}
+			}
+			else
+			{
+				// По каким то причинам обломался
+				TRACE(_T("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d"), ::GetLastError(), nErrorCount);
+				nErrorCount++;
+				if (nErrorCount > 10) break;
+				continue;
+			}
+		}
+
+		bResult = TRUE;
+	}
+
+	::CloseHandle(hStdoutRd);
+	::CloseHandle(hChildStdoutWr);
+	::CloseHandle(pi.hProcess);
+	::CloseHandle(pi.hThread);
+
+	// Parse stdout
+	std::stringstream ss(result);
+	std::string item;
+	std::vector<std::map<std::string, std::string>> streams;
+	bool skip = false;
+	size_t idx = 0;
+	while (std::getline(ss, item))
+	{
+		utils::string_rtrim(item, "\r\n");
+		if (item == "[STREAM]")
+		{
+			skip = false;
+			streams.emplace_back(std::map<std::string, std::string>());
+			idx = streams.size() - 1;
+			continue;
+		}
+
+		if (item == "[/STREAM]")
+		{
+			skip = true;
+			continue;
+		}
+
+		if (!skip)
+		{
+			auto pair = utils::string_split(item, '=');
+			streams[idx].emplace(pair[0], pair[1]);
+		}
+	}
+
+	for (auto& stream : streams)
+	{
+		if (stream["codec_type"] == "audio")
+		{
+			std::string audio;
+			audio += stream["codec_long_name"] + " ";
+			audio += stream["sample_rate"] + " ";
+			audio += stream["channel_layout"];
+			channel->set_audio(audio);
+		}
+
+		if (stream["codec_type"] == "video")
+		{
+			std::string video;
+			video += stream["width"] + "x";
+			video += stream["height"] + " ";
+			video += stream["codec_long_name"];
+			channel->set_video(video);
+		}
+	}
+}
+
+void CEdemChannelEditorDlg::OnUpdateButtonGetInfo(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_wndChannelsList.GetCurSel() != LB_ERR && !m_probe.IsEmpty());
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonGetAllInfo()
+{
+	CWaitCursor cur;
+	m_wndGetAllInfo.EnableWindow(FALSE);
+	for(int i = 0; i < m_wndChannelsList.GetCount(); i++)
+	{
+		m_channelsInfo.Format(_T("Plugin channels (%d) %d"), m_channels.size(), i + 1);
+		UpdateData(FALSE);
+		GetChannelStreamInfo(GetChannel(i));
+	}
+
+	LoadChannelInfo();
+	m_wndGetAllInfo.EnableWindow(TRUE);
+	UpdateChannelsCount();
 }
