@@ -1466,6 +1466,10 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 	if (auto id = FindCategory(entry->get_category()); id != -1)
 	{
 		channel->get_categores().emplace(id);
+		if (entry->get_category().find(L"зрослые") != std::wstring::npos)
+		{
+			channel->set_adult(TRUE);
+		}
 	}
 
 	int idx = m_wndChannelsList.AddString(entry->get_title().c_str());
