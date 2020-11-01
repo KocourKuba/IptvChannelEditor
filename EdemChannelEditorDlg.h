@@ -48,6 +48,7 @@ protected:
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonRemoveCategory();
 	afx_msg void OnBnClickedButtonRemoveChannel();
+	afx_msg void OnAccelRemoveChannel();
 	afx_msg void OnUpdateButtonRemoveChannel(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonRemoveFromShowIn();
 	afx_msg void OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI);

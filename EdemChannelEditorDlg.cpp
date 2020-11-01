@@ -95,15 +95,15 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnUpdateButtonSave)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonAddChannel)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_ADD_CHANNEL, &CEdemChannelEditorDlg::OnUpdateButtonAddChannel)
+	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_PAYLIST, &CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist)
+	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PAYLIST, &CEdemChannelEditorDlg::OnNMDblclkTreePaylist)
+	ON_BN_CLICKED(IDC_BUTTON_SORT, &CEdemChannelEditorDlg::OnBnClickedButtonSort)
 
 	ON_COMMAND(ID_ACC_UPDATE_ICON, &CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon)
 	ON_COMMAND(ID_ACC_ADD_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonAddChannel)
 	ON_COMMAND(ID_ACC_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
-	ON_COMMAND(ID_ACC_DELETE_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveChannel)
-	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_PAYLIST, &CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist)
-	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PAYLIST, &CEdemChannelEditorDlg::OnNMDblclkTreePaylist)
+	ON_COMMAND(ID_ACC_DELETE_CHANNEL, &CEdemChannelEditorDlg::OnAccelRemoveChannel)
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
-	ON_BN_CLICKED(IDC_BUTTON_SORT, &CEdemChannelEditorDlg::OnBnClickedButtonSort)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -217,11 +217,12 @@ void CEdemChannelEditorDlg::OnOK()
 
 	UpdateData(TRUE);
 
-	if (!m_search.IsEmpty())
+	CWnd* pFocus = GetFocus();
+	if (pFocus == GetDlgItem(IDC_EDIT_SEARCH) && !m_search.IsEmpty())
 	{
 		OnBnClickedButtonSearchNext();
 	}
-	else if (!m_plSearch.IsEmpty())
+	else if (pFocus == GetDlgItem(IDC_EDIT_PL_SEARCH) && !m_plSearch.IsEmpty())
 	{
 		OnBnClickedButtonPlSearchNext();
 	}
@@ -665,6 +666,24 @@ void CEdemChannelEditorDlg::OnUpdateButtonAddChannel(CCmdUI* pCmdUI)
 	pCmdUI->Enable(entry != nullptr);
 }
 
+void CEdemChannelEditorDlg::OnAccelRemoveChannel()
+{
+	CWnd* pFocused = GetFocus();
+	if (pFocused == &m_wndChannelsList)
+	{
+		OnBnClickedButtonRemoveChannel();
+		return;
+	}
+
+	if (pFocused == &m_wndCategoriesList)
+	{
+		OnBnClickedButtonRemoveCategory();
+		return;
+	}
+
+	pFocused->SendMessage(WM_KEYDOWN, VK_DELETE);
+}
+
 void CEdemChannelEditorDlg::OnBnClickedButtonRemoveChannel()
 {
 	auto channel = GetChannel(m_current);
@@ -822,15 +841,16 @@ void CEdemChannelEditorDlg::OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonTestEpg()
 {
-	static LPCSTR url = "http://www.teleguide.info/kanal%d.html";
+	static LPCSTR url = "http://www.teleguide.info/kanal%d_%4d%02d%02d.html";
 
 	UpdateData(TRUE);
 
 	auto channel = GetChannel(m_wndChannelsList.GetCurSel());
 	if (channel)
 	{
+		COleDateTime dt = COleDateTime::GetCurrentTime();
 		CStringA tvg_url;
-		tvg_url.Format(url, channel->get_tvguide_id());
+		tvg_url.Format(url, channel->get_tvguide_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 		ShellExecuteA(nullptr, "open", tvg_url.GetString(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
 }
