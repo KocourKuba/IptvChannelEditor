@@ -27,24 +27,24 @@ public:
 
 public:
 	ChannelInfo();
-
 	ChannelInfo(rapidxml::xml_node<>* node);
 
+public:
 	void ParseNode(rapidxml::xml_node<>* node);
 
-	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& doc);
+	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& doc) const;
 
-	std::wstring GetIconRelativePath(LPCTSTR szRoot = nullptr);
+	std::wstring GetIconRelativePath(LPCTSTR szRoot = nullptr) const;
 
-	bool is_custom() { return streaming_uri.is_template(); }
+	bool is_custom() const { return stream_uri.is_template(); }
 
 // Getters/Setters
 
-	int get_channel_id() const { return streaming_uri.get_Id(); }
-	void set_channel_id(int val) { streaming_uri.set_Id(val); }
+	int get_channel_id() const { return stream_uri.get_Id(); }
+	void set_channel_id(int val) { stream_uri.set_Id(val); }
 
-	const std::wstring& get_name() const { return name; }
-	void set_name(const std::wstring& val) { name = val; }
+	const std::wstring& get_title() const { return title; }
+	void set_title(const std::wstring& val) { title = val; }
 
 	int get_tvguide_id() const { return tvguide_id; }
 	void set_tvguide_id(int val) { tvguide_id = val; }
@@ -56,11 +56,10 @@ public:
 	void set_adult(int val) { adult = val; }
 
 	bool is_icon_local() const;
-	void set_icon_url(const std::string& val) { icon_uri.set_uri(val); }
 
 	const uri& get_icon_uri() const { return icon_uri; }
-	uri& get_icon_uri() { return icon_uri; }
 	void set_icon_uri(const uri& val) { icon_uri = val; }
+	void set_icon_uri(const std::string& val) { icon_uri = val; }
 
 	int get_prev_epg_days() const { return prev_epg_days; }
 	void set_prev_epg_days(int val) { prev_epg_days = val; }
@@ -72,9 +71,9 @@ public:
 	std::set<int>& get_categores() { return categories; }
 	void set_categores(const std::set<int>& val) { categories = val; }
 
-	const uri_stream& get_streaming_uri() const { return streaming_uri; }
-	uri_stream& get_streaming_uri() { return streaming_uri; }
-	void set_stream_uri(const uri_stream& val) { streaming_uri = val; }
+	const uri_stream& get_stream_uri() const { return stream_uri; }
+	void set_stream_uri(const uri_stream& val) { stream_uri = val; }
+	void set_stream_uri(const std::string& val) { stream_uri = val; }
 
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }
@@ -86,13 +85,12 @@ public:
 	void set_video(const std::string& val) { video = val; }
 
 protected:
-	std::wstring name;
+	std::wstring title;
 	int tvguide_id;
 	int epg_id; // for compatibility not used in dune edem.tv plugin
 	uri icon_uri;
-	uri_stream streaming_uri;
+	uri_stream stream_uri;
 	std::set<int> categories;
-	int edem_channel_id = 0;
 	int prev_epg_days = 4;
 	int next_epg_days = 2;
 	int adult = 0;

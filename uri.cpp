@@ -15,7 +15,7 @@ void uri::set_uri(const std::string& url)
 	}
 }
 
-std::wstring uri::get_icon_relative_path(LPCWSTR szRoot /*= nullptr*/)
+std::wstring uri::get_icon_relative_path(LPCWSTR szRoot /*= nullptr*/) const
 {
 	if (is_local())
 	{

@@ -34,62 +34,62 @@ protected:
 	void OnCancel() override;
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 
+	afx_msg void OnKickIdle();
+	afx_msg void OnPaint();
+	afx_msg void OnDestroy();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
+
+	afx_msg void OnAccelRemoveChannel();
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnBnClickedButtonAddChannel();
-	afx_msg void OnUpdateButtonAddChannel(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonAddToShowIn();
-	afx_msg void OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnBnClickedButtonEditCategory();
+	afx_msg void OnBnClickedButtonGetAllInfo();
+	afx_msg void OnBnClickedButtonGetInfo();
 	afx_msg void OnBnClickedButtonImport();
-	afx_msg void OnUpdateButtonImport(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonLoadPlaylist();
 	afx_msg void OnBnClickedButtonPack();
+	afx_msg void OnBnClickedButtonPlSearchNext();
 	afx_msg void OnBnClickedButtonRemoveCategory();
 	afx_msg void OnBnClickedButtonRemoveChannel();
-	afx_msg void OnAccelRemoveChannel();
-	afx_msg void OnUpdateButtonRemoveChannel(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonRemoveFromShowIn();
-	afx_msg void OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonSave();
-	afx_msg void OnUpdateButtonSave(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedButtonTestEpg();
-	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedButtonTestUrl();
-	afx_msg void OnUpdateButtonTestUrl(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedCheckCustomize();
+	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
+	afx_msg void OnBnClickedButtonSort();
+	afx_msg void OnBnClickedButtonTestEpg();
+	afx_msg void OnBnClickedButtonTestUrl();
 	afx_msg void OnBnClickedButtonUpdateIcon();
-	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedButtonCacheIcon();
-	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnChanges();
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditNum();
-	afx_msg void OnBnClickedButtonPlSearchNext();
-	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedButtonSearchNext();
-	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnEnKillfocusEditChannelName();
 	afx_msg void OnEnKillfocusEditStreamUrl();
 	afx_msg void OnEnKillfocusEditTvgId();
 	afx_msg void OnEnKillfocusEditUrlId();
 	afx_msg void OnLbnSelchangeListChannels();
-	afx_msg void OnPaint();
-	afx_msg void OnStnClickedStaticIcon();
-	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnKickIdle();
-	afx_msg void OnDestroy();
-	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedButtonSort();
-	afx_msg void OnBnClickedButtonGetInfo();
+	afx_msg void OnStnClickedStaticIcon();
+	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonGetInfo(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonImport(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonRemoveChannel(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonSave(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonTestUrl(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
 
 	DECLARE_MESSAGE_MAP()
-
 
 private:
 	BOOL is_allow_save() const { return m_allow_save; }
@@ -111,12 +111,14 @@ private:
 
 	void CheckLimits();
 	void CheckForExisting();
+	void SetCurrentChannel(int idx);
 	ChannelInfo* GetChannel(int idx);
-	ChannelCategory* GetCategory(int idx);
+	ChannelInfo* GetCurrentChannel();
 	PlaylistEntry* GetPlaylistEntry(HTREEITEM item);
+	PlaylistEntry* GetCurrentPlaylistEntry();
+	ChannelCategory* GetCategory(int idx);
 
-	HTREEITEM FindItem(const CString& name, HTREEITEM hRoot);
-	HTREEITEM FindItem(int id, HTREEITEM hRoot);
+	HTREEITEM FindTreeItem(const PlaylistEntry* entry);
 	int FindCategory(const std::wstring& name);
 	int GetFreeCategoryID();
 	ChannelInfo* CreateChannel();
@@ -163,7 +165,7 @@ private:
 	BOOL m_allow_save = FALSE;
 	int m_current = LB_ERR;
 	HTREEITEM m_pl_current = nullptr;
-
+	std::map<int, std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
 	CString m_accessKey;
 	CString m_domain;
 	CString m_player;
@@ -172,6 +174,4 @@ private:
 	std::map<int, std::shared_ptr<ChannelCategory>> m_categories;
 	std::vector<std::shared_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
-public:
-	afx_msg void OnBnClickedButtonGetAllInfo();
 };

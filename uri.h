@@ -24,10 +24,10 @@ public:
 
 	bool is_local() const { return schema == PLUGIN_SCHEME; }
 
-	std::wstring get_icon_relative_path(LPCWSTR szRoot = nullptr);
+	std::wstring get_icon_relative_path(LPCWSTR szRoot = nullptr) const;
 
-	bool operator==(const uri& src) { return src.get_schema() == schema && src.get_path() == path; }
-	bool operator!=(const uri& src) { return src.get_schema() != schema && src.get_path() != path; }
+	bool operator==(const uri& src) const { return src.get_schema() == schema && src.get_path() == path; }
+	bool operator!=(const uri& src) const { return src.get_schema() != schema && src.get_path() != path; }
 
 protected:
 	std::string schema;
