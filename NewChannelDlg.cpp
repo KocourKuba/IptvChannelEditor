@@ -13,7 +13,7 @@ BEGIN_MESSAGE_MAP(CNewChannelDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 CNewChannelDlg::CNewChannelDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_DIALOG_NEW_CATEGORY, pParent)
+	: CDialogEx(IDD_DIALOG_NEW_CHANNEL, pParent)
 {
 }
 
