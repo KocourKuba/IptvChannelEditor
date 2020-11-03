@@ -34,7 +34,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		return;
 
 	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
-	set_tvguide_id(utils::get_value_int(node->first_node(TVG_ID)));
+	set_tvg_id(utils::get_value_int(node->first_node(TVG_ID)));
 	set_epg_id(utils::get_value_int(node->first_node(EPG_ID)));
 	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
 	set_prev_epg_days(utils::get_value_int(node->first_node(NUM_PAST_EPG_DAYS)));
@@ -68,7 +68,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <tvg_id>1</tvg_id>
-	channel_node->append_node(utils::alloc_node(alloc, TVG_ID, utils::int_to_char(get_tvguide_id()).c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, TVG_ID, utils::int_to_char(get_tvg_id()).c_str()));
 
 	// <epg_id>8</epg_id>
 	channel_node->append_node(utils::alloc_node(alloc, EPG_ID, utils::int_to_char(get_epg_id()).c_str()));

@@ -43,7 +43,6 @@ protected:
 	afx_msg void OnAccelRemoveChannel();
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonAddCategory();
-	afx_msg void OnBnClickedButtonAddChannel();
 	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnBnClickedButtonEditCategory();
@@ -61,6 +60,7 @@ protected:
 	afx_msg void OnBnClickedButtonSettings();
 	afx_msg void OnBnClickedButtonSort();
 	afx_msg void OnBnClickedButtonTestEpg();
+	afx_msg void OnBnClickedButtonTestTvg();
 	afx_msg void OnBnClickedButtonTestUrl();
 	afx_msg void OnBnClickedButtonUpdateIcon();
 	afx_msg void OnBnClickedCheckCustomize();
@@ -154,8 +154,9 @@ protected:
 
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;
-	int m_streamID;
-	int m_tvgID;
+	int m_streamID = 0;
+	int m_tvgID = 0;
+	int m_epgID = 0;
 	int m_prevDays = 0;
 	int m_nextDays = 0;
 	int m_sortType = 0;

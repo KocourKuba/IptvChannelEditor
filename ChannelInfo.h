@@ -46,8 +46,8 @@ public:
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
 
-	int get_tvguide_id() const { return tvguide_id; }
-	void set_tvguide_id(int val) { tvguide_id = val; }
+	int get_tvg_id() const { return tvg_id; }
+	void set_tvg_id(int val) { tvg_id = val; }
 
 	int get_epg_id() const { return epg_id; }
 	void set_epg_id(int val) { epg_id = val; }
@@ -86,8 +86,8 @@ public:
 
 protected:
 	std::wstring title;
-	int tvguide_id;
-	int epg_id; // for compatibility not used in dune edem.tv plugin
+	int tvg_id; // TVGuide id http://www.teleguide.info/kanal%d.html
+	int epg_id; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
 	uri icon_uri;
 	uri_stream stream_uri;
 	std::set<int> categories;
@@ -98,4 +98,3 @@ protected:
 	std::string audio;
 	std::string video;
 };
-

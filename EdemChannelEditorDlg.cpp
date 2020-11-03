@@ -84,7 +84,9 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveCategory)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH_NEXT, &CEdemChannelEditorDlg::OnBnClickedButtonSearchNext)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SEARCH_NEXT, &CEdemChannelEditorDlg::OnUpdateButtonSearchNext)
+	ON_BN_CLICKED(IDC_BUTTON_TEST_TVG, &CEdemChannelEditorDlg::OnBnClickedButtonTestTvg)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG, &CEdemChannelEditorDlg::OnBnClickedButtonTestEpg)
+	ON_UPDATE_COMMAND_UI(IDC_BUTTON_TEST_TVG, &CEdemChannelEditorDlg::OnUpdateButtonTestEpg)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_TEST_EPG, &CEdemChannelEditorDlg::OnUpdateButtonTestEpg)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_URL, &CEdemChannelEditorDlg::OnBnClickedButtonTestUrl)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_TEST_URL, &CEdemChannelEditorDlg::OnUpdateButtonTestUrl)
@@ -108,7 +110,6 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CACHE_ICON, &CEdemChannelEditorDlg::OnUpdateButtonCacheIcon)
 	ON_BN_CLICKED(IDC_BUTTON_UPDATE_ICON, &CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_UPDATE_ICON, &CEdemChannelEditorDlg::OnUpdateButtonUpdateIcon)
-	ON_BN_CLICKED(IDC_BUTTON_ADD_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonAddChannel)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveChannel)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_REMOVE_CHANNEL, &CEdemChannelEditorDlg::OnUpdateButtonRemoveChannel)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
@@ -121,9 +122,10 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_GET_ALL_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonGetAllInfo)
 
 	ON_COMMAND(ID_ACC_UPDATE_ICON, &CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon)
-	ON_COMMAND(ID_ACC_ADD_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonAddChannel)
 	ON_COMMAND(ID_ACC_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
 	ON_COMMAND(ID_ACC_DELETE_CHANNEL, &CEdemChannelEditorDlg::OnAccelRemoveChannel)
+	ON_COMMAND(ID_ACC_UPDATE_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonImport)
+
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 END_MESSAGE_MAP()
 
@@ -143,6 +145,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_CHANNEL_NAME, m_channelName);
 	DDX_Text(pDX, IDC_EDIT_URL_ID, m_streamID);
 	DDX_Text(pDX, IDC_EDIT_TVG_ID, m_tvgID);
+	DDX_Text(pDX, IDC_EDIT_EPG_ID, m_epgID);
 	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
@@ -450,6 +453,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 	{
 		m_channelName.Empty();
 		m_tvgID = 0;
+		m_epgID = 0;
 		m_prevDays = 0;
 		m_nextDays = 0;
 		m_hasArchive = 0;
@@ -465,7 +469,8 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 	else
 	{
 		m_channelName = channel->get_title().c_str();
-		m_tvgID = channel->get_tvguide_id();
+		m_tvgID = channel->get_tvg_id();
+		m_epgID = channel->get_epg_id();
 		m_prevDays = channel->get_prev_epg_days();
 		m_nextDays = channel->get_next_epg_days();
 		m_hasArchive = channel->get_has_archive();
@@ -504,7 +509,8 @@ void CEdemChannelEditorDlg::SaveChannelInfo()
 		return;
 
 	channel->set_title(m_channelName.GetString());
-	channel->set_tvguide_id(m_tvgID);
+	channel->set_tvg_id(m_tvgID);
+	channel->set_epg_id(m_epgID);
 	channel->set_prev_epg_days(m_prevDays);
 	channel->set_next_epg_days(m_nextDays);
 	channel->set_has_archive(m_hasArchive);
@@ -707,26 +713,6 @@ HCURSOR CEdemChannelEditorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CEdemChannelEditorDlg::OnBnClickedButtonAddChannel()
-{
-	UpdateData(TRUE);
-
-	CNewChannelDlg dlg;
-
-	if (dlg.DoModal() == IDOK)
-	{
-		auto channel = CreateChannel();
-		channel->set_title(dlg.m_name.GetString());
-
-		int idx = m_wndChannelsList.AddString(dlg.m_name);
-		m_wndChannelsList.SetItemData(idx, (DWORD_PTR)channel);
-		SetCurrentChannel(idx);
-		LoadChannelInfo();
-		set_allow_save();
-		UpdateChannelsCount();
-	}
-}
-
 void CEdemChannelEditorDlg::OnAccelRemoveChannel()
 {
 	CWnd* pFocused = GetFocus();
@@ -898,19 +884,34 @@ void CEdemChannelEditorDlg::OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CEdemChannelEditorDlg::OnBnClickedButtonTestEpg()
+void CEdemChannelEditorDlg::OnBnClickedButtonTestTvg()
 {
 	static LPCSTR url = "http://www.teleguide.info/kanal%d_%4d%02d%02d.html";
 
-	UpdateData(TRUE);
+	SaveChannelInfo();
 
 	auto channel = GetCurrentChannel();
 	if (channel)
 	{
 		COleDateTime dt = COleDateTime::GetCurrentTime();
 		CStringA tvg_url;
-		tvg_url.Format(url, channel->get_tvguide_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
+		tvg_url.Format(url, channel->get_tvg_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 		ShellExecuteA(nullptr, "open", tvg_url.GetString(), nullptr, nullptr, SW_SHOWNORMAL);
+	}
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonTestEpg()
+{
+	static LPCSTR url = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/%d.json";
+
+	SaveChannelInfo();
+
+	auto channel = GetCurrentChannel();
+	if (channel)
+	{
+		CStringA epg_url;
+		epg_url.Format(url, channel->get_epg_id());
+		ShellExecuteA(nullptr, "open", epg_url.GetString(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
 }
 
@@ -921,8 +922,6 @@ void CEdemChannelEditorDlg::OnUpdateButtonTestEpg(CCmdUI* pCmdUI)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonTestUrl()
 {
-	UpdateData(TRUE);
-
 	SaveChannelInfo();
 	auto channel = GetCurrentChannel();
 	if (channel)
@@ -1466,11 +1465,43 @@ HTREEITEM CEdemChannelEditorDlg::FindTreeItem(const PlaylistEntry* entry)
 void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 {
 	auto entry = GetCurrentPlaylistEntry();
-	if (!entry)
+	auto channel = GetCurrentChannel();
+	if (!entry || !channel)
 		return;
 
-	auto channel = CreateChannel();
+	int found = LB_ERR;
+	for (int i = 0; i < m_wndChannelsList.GetCount(); i++)
+	{
+		auto item = GetChannel(i);
+		if (item && item->get_channel_id() == entry->get_channel_id())
+		{
+			found = i;
+			break;
+		}
+	}
+
+	if (found == LB_ERR)
+	{
+		channel = CreateChannel();
+		channel->set_channel_id(entry->get_channel_id());
+		int idx = m_wndChannelsList.AddString(entry->get_title().c_str());
+		m_wndChannelsList.SetItemData(idx, (DWORD_PTR)channel);
+		SetCurrentChannel(idx);
+		LoadChannelInfo();
+	}
+
+	if (channel->get_channel_id() != entry->get_channel_id())
+	{
+		AfxMessageBox(_T("Selected channel ID not match with playlist channel ID"), MB_OK | MB_ICONEXCLAMATION);
+		return;
+	}
+
 	channel->set_title(entry->get_title());
+	m_wndChannelsList.DeleteString(m_current);
+	m_wndChannelsList.InsertString(m_current, channel->get_title().c_str());
+	m_wndChannelsList.SetItemData(m_current, (DWORD_PTR)channel);
+
+	channel->set_epg_id(entry->get_tvg_id());
 	channel->set_has_archive(entry->is_archive() != 0);
 	channel->set_stream_uri(entry->get_streaming_uri());
 	channel->set_icon_uri(entry->get_icon_uri());
@@ -1483,28 +1514,15 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 		}
 	}
 
-	int idx = m_wndChannelsList.AddString(entry->get_title().c_str());
-	m_wndChannelsList.SetItemData(idx, (DWORD_PTR)channel);
-
-	SetCurrentChannel(idx);
 	LoadChannelInfo();
 	set_allow_save();
 }
 
 void CEdemChannelEditorDlg::OnUpdateButtonImport(CCmdUI* pCmdUI)
 {
-	BOOL enable = FALSE;
 	auto entry = GetCurrentPlaylistEntry();
-	if (entry)
-	{
-		auto found = std::find_if(m_channels.begin(), m_channels.end(), [entry](const auto& item)
-								  {
-									  return entry->get_channel_id() == item->get_channel_id();
-								  });
-		enable = found == m_channels.end();
-	}
-
-	pCmdUI->Enable(enable);
+	auto channel = GetCurrentChannel();
+	pCmdUI->Enable(channel != nullptr && entry != nullptr);
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonSettings()

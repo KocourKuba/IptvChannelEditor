@@ -28,7 +28,7 @@
 #define IDC_BUTTON_SAVE                 1014
 #define IDC_BUTTON_SEARCH_NEXT          1015
 #define IDC_BUTTON_SETTINGS             1016
-#define IDC_BUTTON_TEST_EPG             1017
+#define IDC_BUTTON_TEST_TVG             1017
 #define IDC_BUTTON_TEST_URL             1018
 #define IDC_BUTTON_UPDATE_ICON          1019
 #define IDC_CHECK_ADULT                 1020
@@ -39,6 +39,7 @@
 #define IDC_BUTTON_GET_ALL_INFO         1024
 #define IDC_EDIT_CHANNEL_NAME           1025
 #define IDC_EDIT_DOMAIN                 1026
+#define IDC_BUTTON_TEST_EPG             1026
 #define IDC_EDIT_KEY                    1027
 #define IDC_EDIT_NEXT_EPG               1028
 #define IDC_EDIT_PL_SEARCH              1029
@@ -50,6 +51,8 @@
 #define IDC_LIST_CATEGORIES             1035
 #define IDC_LIST_CHANNELS               1036
 #define IDC_LIST_PLAYLIST               1037
+#define IDC_EDIT_TVG_ID2                1037
+#define IDC_EDIT_EPG_ID                 1037
 #define IDC_MFCEDITBROWSE_PLAYER        1038
 #define IDC_MFCLINK_DONATE              1039
 #define IDC_MFCEDITBROWSE_PROBE         1039
@@ -74,17 +77,17 @@
 #define IDC_BUTTON_GET_INFO             1058
 #define IDC_STATIC_CHANNELS             1059
 #define IDC_STATIC_VERSION              1060
-#define ID_ACC_ADD_CHANNEL              32771
-#define ID_ACC_DELETE_CHANNEL           32772
-#define ID_ACC_SAVE                     32773
-#define ID_ACC_UPDATE_ICON              32774
+#define ID_ACC_DELETE_CHANNEL           32771
+#define ID_ACC_SAVE                     32772
+#define ID_ACC_UPDATE_ICON              32773
+#define ID_ACC_UPDATE_CHANNEL           32775
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
-#define _APS_NEXT_COMMAND_VALUE         32775
+#define _APS_NEXT_COMMAND_VALUE         32777
 #define _APS_NEXT_CONTROL_VALUE         1061
 #define _APS_NEXT_SYMED_VALUE           1151
 #endif
