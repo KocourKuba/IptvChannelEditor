@@ -225,7 +225,7 @@ abstract class AbstractTv implements Tv
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected abstract function get_day_epg_iterator($channel_id, $day_start_ts, &$plugin_cookies);
+    protected abstract function get_day_epg_iterator($epg_id, $day_start_ts, &$plugin_cookies);
 
     ///////////////////////////////////////////////////////////////////////
 

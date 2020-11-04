@@ -72,8 +72,7 @@ class DemoSetupScreen extends AbstractControlsScreen
         $epg_font_size_ops = array();
         $epg_font_size_ops ['normal'] = 'Обычный';
         $epg_font_size_ops ['small'] = 'Мелкий';
-        $this->add_combobox($defs,
-            'epg_font_size', 'Размер шрифта EPG:',
+        $this->add_combobox($defs, 'epg_font_size', 'Размер шрифта EPG:',
             $epg_font_size, $epg_font_size_ops, 700, true);
 
         $this->add_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль', 0);
@@ -123,7 +122,6 @@ class DemoSetupScreen extends AbstractControlsScreen
         return $defs;
     }
 
-
     public function do_get_pass_control_defs(&$plugin_cookies)
     {
         $defs = array();
@@ -160,8 +158,8 @@ class DemoSetupScreen extends AbstractControlsScreen
             hd_print("Setup: changing $control_id value to $new_value");
 
             if ($control_id === 'restart')
-                shell_exec('killall shell');
-            if ($control_id === 'show_tv')
+                shell_exec('reboot now');
+            else if ($control_id === 'show_tv')
                 $plugin_cookies->show_tv = $new_value;
             else if ($control_id === 'show_vod')
                 $plugin_cookies->show_vod = $new_value;
@@ -174,16 +172,14 @@ class DemoSetupScreen extends AbstractControlsScreen
             else if ($control_id === 'key_dialog') {
                 $defs = $this->do_get_key_control_defs($plugin_cookies);
                 return ActionFactory::show_dialog("Ключ чувствителен к регистру. Переключение регистра кнопкой Select", $defs, true);
-            } else if ($control_id === 'ott_key_apply') {
-                $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
+            } else if ($control_id === 'ott_key_apply')
                 $plugin_cookies->ott_key = $user_input->ott_key;
-            } else if ($control_id === 'subdomain_dialog') {
+            else if ($control_id === 'subdomain_dialog') {
                 $defs = $this->do_get_subdomain_control_defs($plugin_cookies);
                 return ActionFactory::show_dialog("Введите или измените домен полностью, например, dunehd.iptvspy.net", $defs, true);
-            } else if ($control_id === 'subdomain_apply') {
-                $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
+            } else if ($control_id === 'subdomain_apply')
                 $plugin_cookies->subdomain = $user_input->subdomain;
-            } else if ($control_id === 'pass_dialog') {
+            else if ($control_id === 'pass_dialog') {
                 $defs = $this->do_get_pass_control_defs($plugin_cookies);
                 return ActionFactory::show_dialog("Родительский контроль", $defs, true);
             } else if ($control_id === 'pass_apply') {

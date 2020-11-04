@@ -44,7 +44,6 @@ class DemoTv extends AbstractTv
     protected function load_channels(&$plugin_cookies)
     {
         try {
-
             $doc = file_get_contents(DemoConfig::CHANNEL_LIST_URL, true);
         } catch (Exception $e) {
             hd_print("Can't fetch channel_list2, alternative copy used.");
@@ -71,46 +70,30 @@ class DemoTv extends AbstractTv
         $this->groups = new HashedArray();
 
         if ($this->is_favorites_supported()) {
-            $this->groups->put(
-                new FavoritesGroup(
-                    $this,
-                    '__favorites',
-                    DemoConfig::FAV_CHANNEL_GROUP_CAPTION,
-                    DemoConfig::FAV_CHANNEL_GROUP_ICON_PATH));
+            $this->groups->put(new FavoritesGroup($this, '__favorites', DemoConfig::FAV_CHANNEL_GROUP_CAPTION, DemoConfig::FAV_CHANNEL_GROUP_ICON_PATH));
         }
 
-        $this->groups->put(
-            new AllChannelsGroup(
-                $this,
-                DemoConfig::ALL_CHANNEL_GROUP_CAPTION,
-                DemoConfig::ALL_CHANNEL_GROUP_ICON_PATH));
+        $this->groups->put(new AllChannelsGroup($this, DemoConfig::ALL_CHANNEL_GROUP_CAPTION, DemoConfig::ALL_CHANNEL_GROUP_ICON_PATH));
 
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
             if ($xml_tv_category->getName() !== 'tv_category') {
-                hd_print("Error: unexpected node '" . $xml_tv_category->getName() .
-                    "'. Expected: 'tv_category'");
+                hd_print("Error: unexpected node '" . $xml_tv_category->getName() . "'. Expected: 'tv_category'");
                 throw new Exception('Invalid XML document');
             }
 
-            $this->groups->put(
-                new DefaultGroup(
-                    strval($xml_tv_category->id),
-                    strval($xml_tv_category->caption),
-                    strval($xml_tv_category->icon_url)));
+            $this->groups->put(new DefaultGroup(strval($xml_tv_category->id), strval($xml_tv_category->caption), strval($xml_tv_category->icon_url)));
         }
 
         $id = 0;
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {
-                hd_print("Error: unexpected node '" . $xml_tv_channel->getName() .
-                    "'. Expected: 'tv_channel'");
+                hd_print("Error: unexpected node '" . $xml_tv_channel->getName() . "'. Expected: 'tv_channel'");
                 throw new Exception('Invalid XML document');
             }
 
-            $cid = $id . "_" . $xml_tv_channel->tvg_id;
+            $cid = $id . "_" . $xml_tv_channel->epg_id . "_" . $xml_tv_channel->tvg_id;
             $id++;
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0; //буферизация
-
 
             $timeshift_hours = 0;
             $channel =
@@ -130,8 +113,7 @@ class DemoTv extends AbstractTv
 
             foreach ($xml_tv_channel->tv_categories->children() as $xml_tv_cat_id) {
                 if ($xml_tv_cat_id->getName() !== 'tv_category_id') {
-                    hd_print("Error: unexpected node '" . $xml_tv_cat_id->getName() .
-                        "'. Expected: 'tv_category_id'");
+                    hd_print("Error: unexpected node '" . $xml_tv_cat_id->getName() . "'. Expected: 'tv_category_id'");
                     throw new Exception('Invalid XML document');
                 }
 
@@ -149,83 +131,147 @@ class DemoTv extends AbstractTv
 
     public function get_tv_stream_url($playback_url, &$plugin_cookies)
     {
-        $plugin_cookies->subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : 'dunehd.iptvspy.net';
-        return str_replace('{SUBDOMAIN}/iptv/{UID}', $plugin_cookies->subdomain . '/iptv/' . $plugin_cookies->ott_key, $playback_url);
+        return $playback_url;
     }
 
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
     {
-        $url = $this->get_channel($channel_id)->get_streaming_url();
-        $now_ts = intval(time());
-
-        if (intval($archive_ts) > 0)
-            $url .= "?utc=$archive_ts&lutc=$now_ts";
-
         $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
 
-        if ($this->get_channel($channel_id)->is_protected() && $protect_code !== $pass_sex) {
-            $url = '';  //Clear url if code not match
+        try {
+            $channel = $this->get_channel($channel_id);
+            if ($channel->is_protected() && $protect_code !== $pass_sex) {
+                throw new Exception('Wrong password');
+            }
+
+            $url = $channel->get_streaming_url();
+        } catch (Exception $ex) {
+            return '';
         }
+
+        $plugin_cookies->subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : 'dunehd.iptvspy.net';
+        $url =  str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
+        $url =  str_replace('{UID}', $plugin_cookies->ott_key, $url);
+
+        if (intval($archive_ts) > 0) {
+            $now_ts = intval(time());
+            $url .= "?utc=$archive_ts&lutc=$now_ts";
+        }
+
         return $url;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
-
-
     public function get_day_epg_iterator($channel_id, $day_start_ts, &$plugin_cookies)
     {
+        $replace = array(
+            '&#196;' => 'Г„',
+            '&#228;' => 'Г¤',
+            '&#214;' => 'Г–',
+            '&#220;' => 'Гњ',
+            '&#223;' => 'Гџ',
+            '&#246;' => 'Г¶',
+            '&#252;' => 'Гј',
+            '&#39;'  => "'",
+            '&quot;' => '"',
+            '&#257;' => 'ā',
+            '&#258;' => 'Ă',
+            '&#268;' => 'Č',
+            '&#326;' => 'ņ',
+            '&#327;' => 'Ň',
+            '&#363;' => 'ū',
+            '&#362;' => 'Ū',
+            '&#352;' => 'Š',
+            '&#353;' => 'š',
+            '&#382;' => 'ž',
+            '&#275;' => 'ē',
+            '&#276;' => 'Ĕ',
+            '&#298;' => 'Ī',
+            '&#299;' => 'ī',
+            '&#291;' => 'ģ',
+            '&#311;' => 'ķ',
+            '&#316;' => 'ļ',
+        );
 
-        list($garb, $channel_id) = preg_split('/_/', $channel_id);
+        list($garb, $epg_id, $tvg_id) = preg_split('/_/', $channel_id);
 
-        if ($channel_id >= 1299 and $channel_id <= 1300)
-            return array();
+        $epg_date = gmdate("Ymd", $day_start_ts);
 
-        $epg_shift = isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : '0';
-        $epg_date = date("Ymd", $day_start_ts);
         $epg = array();
+        if (!is_dir(DemoConfig::EPG_CACHE_DIR)) {
+           mkdir(DemoConfig::EPG_CACHE_DIR);
+        }
 
-        if (file_exists("/tmp/edem_channel_" . $channel_id . "_" . $day_start_ts)) {
-            $doc = file_get_contents("/tmp/edem_channel_" . $channel_id . "_" . $day_start_ts);
+        $cache_file = DemoConfig::EPG_CACHE_DIR . DemoConfig::EPG_CACHE_FILE . $epg_id . "_" . $tvg_id . "_" . $day_start_ts;
+        if (file_exists($cache_file)) {
+            $doc = file_get_contents($cache_file);
             $epg = unserialize($doc);
         } else {
+            $type = 'json'; // ott-play.com
             try {
-                $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $channel_id, $epg_date));
-            } catch (Exception $e) {
-                hd_print("Can't fetch EPG ID:$channel_id DATE:$epg_date");
-                return array();
+                $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $epg_id));
+            }
+            catch (Exception $ex) {
+                try {
+                    hd_print("Can't fetch EPG ID: $epg_id DATE: $epg_date");
+                    $type = 'html'; // tvguide.info
+                    $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT2, $tvg_id, $epg_date));
+                }
+                catch (Exception $e) {
+                    hd_print("Can't fetch TVG ID: $tvg_id DATE: $epg_date");
+                    return array();
+                }
             }
 
-            preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
-            $last_time = 0;
-            foreach ($keywords[1] as $key => $qid) {
-                $qq = strip_tags($qid);
-                preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
-                $time = $keyw[1][0];
-                $u_time = strtotime("$epg_date $time EEST") - 3600;
-                $last_time = ($u_time > $last_time) ? $u_time : $u_time + 86400;
-                $epg[$last_time]["name"] = str_replace("&nbsp;", " ", $keyw[2][0]);
-                $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
+            if ($type === 'json') {
+                $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
+                $epg_date_new = strtotime('-1 hour', $day_start_ts);
+                $epg_date_end = strtotime('+1 day', $day_start_ts);
+                foreach ($ch_data->epg_data as $channel) {
+                    if ($channel->time >= $epg_date_new and $channel->time < $epg_date_end) {
+                        $epg[$channel->time]['title'] = $channel->name;
+                        $epg[$channel->time]['desc'] = $channel->descr;
+                    }
+                }
             }
-            file_put_contents("/tmp/edem_channel_" . $channel_id . "_" . $day_start_ts, serialize($epg));
+            else
+            {
+                $timezone_suffix = date('T');
+                $e_time = strtotime("$epg_date, 0500 $timezone_suffix");
+                preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
+                foreach ($keywords[1] as $key => $qid) {
+                    $qq = strip_tags($qid);
+                    preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
+                    $time = $keyw[1][0];
+                    $u_time = strtotime("$epg_date $time $timezone_suffix");
+                    $last_time = ($u_time < $e_time) ? $u_time + 86400  : $u_time ;
+                    $epg[$last_time]["title"] = str_replace("&nbsp;", " ", $keyw[2][0]);
+                    $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
+                }
+            }
         }
+
+        if (count($epg) > 0) {
+            ksort($epg, SORT_NUMERIC);
+            file_put_contents($cache_file, serialize($epg));
+        }
+
         $epg_result = array();
-
-        ksort($epg, SORT_NUMERIC);
+        $epg_shift = isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : '0';
+        $start = 0;
+        $end = 0;
         foreach ($epg as $time => $value) {
-            $epg_result[] =
-                new DefaultEpgItem(
-                    strval($value["name"]),
-                    strval($value["desc"]),
-                    intval($time + $epg_shift),
-                    intval(-1));
+            $tm =  $time + $epg_shift;
+            $end = $tm;
+            if ($start == 0)
+                $start = $tm;
+
+            $epg_result[] = new DefaultEpgItem(
+                    str_replace(array_keys($replace), $replace, strval($value["title"])),
+                    str_replace(array_keys($replace), $replace, strval($value["desc"])),
+                    intval($tm), intval(-1));
         }
 
-        return
-            new EpgIterator(
-                $epg_result,
-                $day_start_ts,
-                $day_start_ts + 100400);
+        return new EpgIterator($epg_result, $start, $end);
     }
 }
 

@@ -2,18 +2,18 @@
 
 class DemoConfig
 {
-    const PluginVersion = '2.2.0';
-    const PluginDate = '1.11.2020';
+    const PluginVersion = '2.0.0';
+    const PluginDate = '3.11.2020';
     const VOD_MOVIE_PAGE_SUPPORTED = true;
     const VOD_FAVORITES_SUPPORTED = true;
     const TV_FAVORITES_SUPPORTED = true;
 
-//    const EPG_ID_FILE_URL       = 'http://www%smd/media%sdata/channels_id';
-
     const CHANNEL_LIST_URL = 'edem_channel_list.xml';
     const CHANNEL_LIST_URL2 = 'edem_channel_list_backup.xml';
-    const EPG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';
+    const EPG_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%d.json';
     const EPG_URL_FORMAT2 = 'http://www.teleguide.info/kanal%d_%s.html';
+    const EPG_CACHE_DIR = '/tmp/edem_epg/';
+    const EPG_CACHE_FILE = 'epg_channel_';
     const VOD_CATEGORIES_URL = 'http://online.dune-hd.com/demo2/vod_categories.pl';
     const MOVIE_LIST_URL_FORMAT = 'http://online.dune-hd.com/demo2/movie_list.pl?category_id=%s';
     const MOVIE_INFO_URL_FORMAT = 'http://online.dune-hd.com/demo2/movie_info.pl?movie_id=%s';
