@@ -1,5 +1,5 @@
 ﻿<dune_plugin>
-  <name>edem.tv</name>
+  <name>iedem.tv</name>
   <caption>ЄDЄM TV</caption>
   <auto_resume>
     <enable>yes</enable>
@@ -38,6 +38,6 @@
   <params>
      <program>starnet.php</program>
   </params>
-  <version_index>6</version_index>
-  <version>2.2.0</version>
+  <version_index>1</version_index>
+  <version>2.0.0</version>
 </dune_plugin>
