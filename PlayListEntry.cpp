@@ -83,7 +83,7 @@ void m3u_entry::Parse(const std::string& str)
 
 				// remove #EXT_NAME:<EXT_VALUE> from string
 				// [<KEY>="<VALUE>"]*,<TITLE>
-				auto val = utils::string_ltrim(str.substr(extarr[0].size()));
+				auto val = utils::string_ltrim(str.substr(extarr[0].size()), " ");
 				auto tarray = utils::string_split(val, ',');
 				if (!tarray.empty())
 				{
@@ -176,4 +176,5 @@ void PlaylistEntry::Clear()
 	category.clear();
 	stream_uri.clear();
 	icon_uri.clear();
+	ASSERT(icon.Detach());
 }

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <typeinfo>
 
 class CColorTreeCtrl : public CTreeCtrl
 {
@@ -12,4 +13,5 @@ public:
 
 public:
 	COLORREF m_color = ::GetSysColor(COLOR_WINDOWTEXT);
+	size_t class_hash;
 };

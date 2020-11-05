@@ -24,7 +24,8 @@ public:
 public:
 	BOOL InitInstance() override;
 
-	void LoadImage(CStatic& wnd, const CString& fullPath);
+	BOOL LoadImage(const CString& fullPath, CImage& image);
+	void SetImage(const CImage& image, CStatic& wnd);
 	CString GetAppPath(LPCTSTR szSubFolder = nullptr);
 // Implementation
 

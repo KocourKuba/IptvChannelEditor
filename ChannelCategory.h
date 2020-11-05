@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "rapidxml.hpp"
+#include "uri.h"
 
 // <tv_category>
 //   <id>1</id>
@@ -17,7 +18,7 @@ public:
 	static constexpr auto ICON_URL = "icon_url";
 
 public:
-	ChannelCategory() = default;
+	ChannelCategory();
 	ChannelCategory(const ChannelCategory& src)
 	{
 		if (&src != this)
@@ -35,15 +36,15 @@ public:
 	int get_id() const { return id; }
 	void set_id(int val) { id = val; }
 
-	std::wstring get_caption() const { return caption; }
-	void set_caption(std::wstring val) { caption = val; }
+	const std::wstring& get_caption() const { return caption; }
+	void set_caption(const std::wstring& val) { caption = val; }
 
-	std::string get_icon_url() const { return icon_url; }
-	void set_icon_url(std::string val) { icon_url = val; }
+	const uri& get_icon_uri() const { return icon_uri; }
+	void set_icon_uri(const uri& val) { icon_uri = val; }
 
 protected:
 	int id = 0;
 	std::wstring caption;
-	std::string icon_url;
+	uri icon_uri;
 };
 

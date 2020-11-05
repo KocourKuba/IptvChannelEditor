@@ -213,6 +213,7 @@
     <ClInclude Include="ColoringProperty.h" />
     <ClInclude Include="ColorListBox.h" />
     <ClInclude Include="ColorTreeCtrl.h" />
+    <ClInclude Include="IconContainer.h" />
     <ClInclude Include="NewCategoryDlg.h" />
     <ClInclude Include="NewChannelDlg.h" />
     <ClInclude Include="PlayListEntry.h" />

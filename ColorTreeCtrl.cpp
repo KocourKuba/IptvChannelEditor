@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 #include "ColorTreeCtrl.h"
+#include "ColoringProperty.h"
+#include "ChannelInfo.h"
 #include "PlayListEntry.h"
 
 BEGIN_MESSAGE_MAP(CColorTreeCtrl, CTreeCtrl)
@@ -49,9 +51,15 @@ void CColorTreeCtrl::OnPaint()
 	{
 		// Do not meddle with selected items or drop highlighted items
 		UINT selflag = TVIS_DROPHILITED | TVIS_SELECTED;
-		if (!(GetItemState(hItem, selflag) & selflag))
+		UINT state = GetItemState(hItem, selflag);
+		if (!(state & selflag))
 		{
-			auto container = (PlaylistEntry*)GetItemData(hItem);
+			ColoringProperty* container = nullptr;
+			if (class_hash == typeid(ChannelInfo).hash_code())
+				container = dynamic_cast<ColoringProperty*>((ChannelInfo*)GetItemData(hItem));
+			else if (class_hash == typeid(PlaylistEntry).hash_code())
+				container = dynamic_cast<ColoringProperty*>((PlaylistEntry*)GetItemData(hItem));
+
 			bool isColored = container ? container->is_colored() : false;
 			// No font specified, so use window font
 			CFont* pFont = GetFont();
@@ -78,9 +86,9 @@ void CColorTreeCtrl::OnPaint()
 			memDC.TextOut(rect.left + 2, rect.top + 1, sItem);
 			memDC.SelectObject(pFontDC);
 		}
+
 		hItem = GetNextVisibleItem(hItem);
 	}
 
-	dc.BitBlt(rcClip.left, rcClip.top, rcClip.Width(), rcClip.Height(), &memDC,
-			  rcClip.left, rcClip.top, SRCCOPY);
+	dc.BitBlt(rcClip.left, rcClip.top, rcClip.Width(), rcClip.Height(), &memDC, rcClip.left, rcClip.top, SRCCOPY);
 }

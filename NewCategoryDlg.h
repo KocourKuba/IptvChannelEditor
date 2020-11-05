@@ -1,4 +1,5 @@
 #pragma once
+#include "uri.h"
 
 // CNewCategoryDlg dialog
 
@@ -7,7 +8,7 @@ class CNewCategoryDlg : public CDialogEx
 	DECLARE_DYNAMIC(CNewCategoryDlg)
 
 public:
-	CNewCategoryDlg(CWnd* pParent = nullptr);   // standard constructor
+	CNewCategoryDlg(BOOL bNew = TRUE, CWnd* pParent = nullptr);   // standard constructor
 	~CNewCategoryDlg() = default;
 
 // Dialog Data
@@ -23,7 +24,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	BOOL m_bNew;
 	CStatic m_wndIcon;
 	CString m_name;
-	CString m_iconUrl;
+	uri m_iconUri;
 };

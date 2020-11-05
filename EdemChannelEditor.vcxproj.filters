@@ -90,6 +90,9 @@
     <ClInclude Include="ColorTreeCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IconContainer.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EdemChannelEditor.cpp">

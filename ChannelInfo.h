@@ -4,6 +4,7 @@
 #include "rapidxml.hpp"
 #include "uri.h"
 #include "ColoringProperty.h"
+#include "IconContainer.h"
 
 // <tv_channel>
 //     <caption>Первый канал</caption>
@@ -20,7 +21,9 @@
 //     <protected>1</protected>
 // /tv_channel>
 
-class ChannelInfo : public ColoringProperty
+class ChannelInfo
+	: public IconContainer
+	, public ColoringProperty
 {
 public:
 	static constexpr auto TV_CHANNEL = "tv_channel";
@@ -56,10 +59,6 @@ public:
 	void set_adult(int val) { adult = val; }
 
 	bool is_icon_local() const;
-
-	const uri& get_icon_uri() const { return icon_uri; }
-	void set_icon_uri(const uri& val) { icon_uri = val; }
-	void set_icon_uri(const std::string& val) { icon_uri = val; }
 
 	int get_prev_epg_days() const { return prev_epg_days; }
 	void set_prev_epg_days(int val) { prev_epg_days = val; }

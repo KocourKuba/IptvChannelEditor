@@ -114,7 +114,7 @@ CString CEdemChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/)
 	return fileName + szSubFolder;
 }
 
-void CEdemChannelEditorApp::LoadImage(CStatic& wnd, const CString& fullPath)
+BOOL CEdemChannelEditorApp::LoadImage(const CString& fullPath, CImage& image)
 {
 	// png size
 #if 0
@@ -129,7 +129,6 @@ void CEdemChannelEditorApp::LoadImage(CStatic& wnd, const CString& fullPath)
 	int newdlY = 80.F / ratio;
 #endif // 0
 
-	CImage image;
 	HRESULT hr = E_FAIL;
 	if (utils::CrackUrl(fullPath.GetString()))
 	{
@@ -146,23 +145,26 @@ void CEdemChannelEditorApp::LoadImage(CStatic& wnd, const CString& fullPath)
 		hr = image.Load(fullPath);
 	}
 
+	return SUCCEEDED(hr);
+}
+
+void CEdemChannelEditorApp::SetImage(const CImage& image, CStatic& wnd)
+{
 	HBITMAP hImg = nullptr;
-	if (SUCCEEDED(hr))
-	{
-		CRect rc;
-		wnd.GetClientRect(rc);
 
-		CImage resized;
-		resized.Create(rc.Width(), rc.Height(), 32);
-		HDC dcImage = resized.GetDC();
-		SetStretchBltMode(dcImage, COLORONCOLOR);
-		image.StretchBlt(dcImage, rc, SRCCOPY);
-		// The next two lines test the image on a picture control.
-		image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
+	CRect rc;
+	wnd.GetClientRect(rc);
 
-		resized.ReleaseDC();
-		hImg = (HBITMAP)resized.Detach();
-	}
+	CImage resized;
+	resized.Create(rc.Width(), rc.Height(), 32);
+	HDC dcImage = resized.GetDC();
+	SetStretchBltMode(dcImage, COLORONCOLOR);
+	image.StretchBlt(dcImage, rc, SRCCOPY);
+	// The next two lines test the image on a picture control.
+	image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
+
+	resized.ReleaseDC();
+	hImg = (HBITMAP)resized.Detach();
 
 	HBITMAP hOld = wnd.SetBitmap(hImg);
 	if (hOld)

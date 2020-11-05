@@ -3,6 +3,7 @@
 #include <map>
 #include "uri.h"
 #include "ColoringProperty.h"
+#include "IconContainer.h"
 
 enum directives
 {
@@ -63,10 +64,12 @@ protected:
 
 class PlaylistEntry
 	: public m3u_entry
+	, public IconContainer
 	, public ColoringProperty
 {
 public:
 	PlaylistEntry() = default;
+	PlaylistEntry(const PlaylistEntry& src) = default;
 	PlaylistEntry(const std::string& str) { Parse(str); }
 
 	void Parse(const std::string& str) override;
@@ -80,8 +83,7 @@ public:
 	const std::wstring& get_title() const { return title; }
 	const std::wstring& get_category() const { return category; }
 	const uri_stream& get_streaming_uri() const { return stream_uri; }
-	std::string get_icon_url() const { return icon_uri.get_uri(); }
-	const uri& get_icon_uri() const { return icon_uri; }
+
 	const std::string& get_domain() const { return domain; }
 	const std::string& get_access_key() const { return access_key; }
 
@@ -91,7 +93,6 @@ protected:
 	int channel_len = 0;
 	std::wstring title;
 	std::wstring category;
-	uri icon_uri;
 	uri_stream stream_uri;
 	std::string domain;
 	std::string access_key;

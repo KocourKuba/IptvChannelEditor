@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <sstream>
 #include <map>
 #include "rapidxml.hpp"
 
@@ -102,17 +103,20 @@ inline void inplace_tolower(std::wstring& target) noexcept
 	}
 }
 
-inline std::string& string_ltrim(std::string& str, const std::string& chars = " \t\v")
+template<typename T>
+inline std::basic_string<T>& string_ltrim(std::basic_string<T>& str, const T* chars)
 {
 	return str.erase(0, str.find_first_not_of(chars));
 }
 
-inline std::string& string_rtrim(std::string& str, const std::string& chars = " \t\v")
+template<typename T>
+inline std::basic_string<T>& string_rtrim(std::basic_string<T>& str, const T* chars)
 {
 	return str.erase(str.find_last_not_of(chars) + 1);
 }
 
-inline std::string& string_trim(std::string& str, const std::string& chars = " \t\v")
+template<typename T>
+inline std::basic_string<T>& string_trim(std::basic_string<T>& str, const T* chars)
 {
 	return string_ltrim(string_rtrim(str, chars), chars);
 }
@@ -176,7 +180,20 @@ std::string utf16_to_utf8(const std::wstring& w);
 std::wstring utf8_to_utf16(const std::string& s);
 
 std::vector<std::string> regex_split(const std::string& str, const std::string& token = "\\s+");
-std::vector<std::string> string_split(const std::string& str, char delim = ' ');
+
+template<typename T>
+std::vector<std::basic_string<T>> string_split(const std::basic_string<T>& str, T delim = ' ')
+{
+	std::vector<std::basic_string<T>> v;
+	std::basic_stringstream<T, std::char_traits<T>, std::allocator<T>> ss(str);
+	std::basic_string<T> item;
+
+	while (std::getline(ss, item, delim))
+	{
+		v.emplace_back(std::move(item));
+	}
+	return v;
+}
 
 bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring());
 

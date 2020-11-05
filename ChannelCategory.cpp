@@ -3,14 +3,14 @@
 #include "utils.h"
 #include "uri.h"
 
+ChannelCategory::ChannelCategory()
+{
+	icon_uri.set_uri(utils::ICON_TEMPLATE);
+}
+
 std::string ChannelCategory::GetIconPath()
 {
-	static const auto scheme_size = strlen(uri::PLUGIN_SCHEME);
-	std::string iconPath = get_icon_url();
-	if (iconPath.substr(0, scheme_size) == uri::PLUGIN_SCHEME)
-		iconPath.erase(0, scheme_size);
-
-	return iconPath;
+	return icon_uri.is_local() ? icon_uri.get_path() : icon_uri.get_uri();
 }
 
 ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node)
@@ -24,11 +24,11 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 		return;
 
 	// <id>1</id>
-	set_id(utils::get_value_int(node->first_node(ID)));
+	id = utils::get_value_int(node->first_node(ID));
 	// <caption>Общие</caption>
-	set_caption(utils::get_value_wstring(node->first_node(CAPTION)));
+	caption = utils::get_value_wstring(node->first_node(CAPTION));
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	set_icon_url(utils::get_value_string(node->first_node(ICON_URL)));
+	icon_uri.set_uri(utils::get_value_string(node->first_node(ICON_URL)));
 }
 
 rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc)
@@ -43,7 +43,7 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc)
 	category_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(caption).c_str()));
 
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	category_node->append_node(utils::alloc_node(alloc, ICON_URL, icon_url.c_str()));
+	category_node->append_node(utils::alloc_node(alloc, ICON_URL, icon_uri.get_uri().c_str()));
 
 	return category_node;
 }

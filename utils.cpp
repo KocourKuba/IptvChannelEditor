@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include <stdexcept>
 #include <regex>
-#include <sstream>
 #include <winhttp.h>
 
 #include "utils.h"
@@ -197,19 +196,6 @@ std::vector<std::string> regex_split(const std::string& str, const std::string& 
 	}
 
 	return elems;
-}
-
-std::vector<std::string> string_split(const std::string& str, char delim /*= ' '*/)
-{
-	std::vector<std::string> v;
-	std::stringstream ss(str);
-	std::string item;
-
-	while (std::getline(ss, item, delim))
-	{
-		v.emplace_back(std::move(item));
-	}
-	return v;
 }
 
 int char_to_int(const std::string& str)

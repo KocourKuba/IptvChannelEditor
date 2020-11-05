@@ -22,9 +22,10 @@ BEGIN_MESSAGE_MAP(CNewCategoryDlg, CDialogEx)
 	ON_STN_CLICKED(IDC_STATIC_CATEGORY_ICON, &CNewCategoryDlg::OnStnClickedStaticCategoryIcon)
 END_MESSAGE_MAP()
 
-CNewCategoryDlg::CNewCategoryDlg(CWnd* pParent /*=nullptr*/)
+CNewCategoryDlg::CNewCategoryDlg(BOOL bNew /*= TRUE*/, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_NEW_CATEGORY, pParent)
-	, m_iconUrl(utils::ICON_TEMPLATE)
+	, m_iconUri(utils::ICON_TEMPLATE)
+	, m_bNew(bNew)
 {
 }
 
@@ -40,7 +41,20 @@ BOOL CNewCategoryDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	theApp.LoadImage(m_wndIcon, theApp.GetAppPath(PLUGIN_ROOT) + m_iconUrl);
+	if (m_bNew)
+	{
+		SetWindowText(_T("New Category"));
+	}
+	else
+	{
+		SetWindowText(_T("Edit Category"));
+	}
+
+	std::wstring fullPath = m_iconUri.get_icon_relative_path(theApp.GetAppPath(PLUGIN_ROOT));
+	CImage img;
+	theApp.LoadImage(fullPath.c_str(), img);
+	theApp.SetImage(img, m_wndIcon);
+
 	return TRUE;
 }
 
@@ -53,7 +67,7 @@ void CNewCategoryDlg::OnStnClickedStaticCategoryIcon()
 	UpdateData(TRUE);
 
 	CString path = theApp.GetAppPath(CATEGORY_LOGO_PATH);
-	CString file = theApp.GetAppPath(PLUGIN_ROOT) + m_iconUrl;
+	CString file = m_iconUri.get_icon_relative_path(theApp.GetAppPath(PLUGIN_ROOT)).c_str();
 	file.Replace('/', '\\');
 
 	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));
@@ -75,10 +89,20 @@ void CNewCategoryDlg::OnStnClickedStaticCategoryIcon()
 
 	if (nResult == IDOK)
 	{
-		theApp.LoadImage(m_wndIcon, file);
+		CString newPath = file.Left(file.GetLength() - _tcslen(oFN.lpstrFileTitle));
+		if (path.CompareNoCase(newPath) != 0)
+		{
+			path += oFN.lpstrFileTitle;
+			CopyFile(file, path, FALSE);
+			CImage img;
+			theApp.LoadImage(path, img);
+			theApp.SetImage(img, m_wndIcon);
+		}
 
-		m_iconUrl = CATEGORY_LOGO_URL;
-		m_iconUrl += oFN.lpstrFileTitle;
+		std::string icon_path = CATEGORY_LOGO_URL;
+		icon_path += CStringA(oFN.lpstrFileTitle).GetString();
+		m_iconUri.set_schema(uri::PLUGIN_SCHEME);
+		m_iconUri.set_path(icon_path);
 
 		UpdateData(FALSE);
 	}

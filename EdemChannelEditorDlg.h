@@ -39,6 +39,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
 	afx_msg void OnAccelRemoveChannel();
 	afx_msg void OnBnClickedButtonAbout();
@@ -72,10 +73,11 @@ protected:
 	afx_msg void OnEnKillfocusEditStreamUrl();
 	afx_msg void OnEnKillfocusEditTvgId();
 	afx_msg void OnEnKillfocusEditUrlId();
-	afx_msg void OnLbnSelchangeListChannels();
+	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStnClickedStaticIcon();
-	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonGetInfo(CCmdUI* pCmdUI);
@@ -95,44 +97,62 @@ private:
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
 
-	BOOL LoadSetting();
+	bool LoadChannels(const std::wstring& path);
+	void SaveChannels();
 	void LoadPlaylist(const CString& file);
 
-	void LoadChannels();
-	void SaveChannels();
 	void FillCategories();
+	void FillChannels();
+	void FillPlaylist();
+
 	void LoadChannelInfo();
 	void SaveChannelInfo();
+
 	void PlayStream(const std::wstring& stream_url);
 	std::wstring TranslateStreamUri(const std::string& stream_uri);
 	void GetChannelStreamInfo(ChannelInfo* channel);
 	void UpdateChannelsCount();
-	void UpdatePlaylistCount();
 
 	void CheckLimits();
 	void CheckForExisting();
-	void SetCurrentChannel(int idx);
-	ChannelInfo* GetChannel(int idx);
+
+	void SetCurrentChannel(HTREEITEM hCur);
+	ChannelInfo* GetChannel(HTREEITEM hItem);
 	ChannelInfo* GetCurrentChannel();
 	PlaylistEntry* GetPlaylistEntry(HTREEITEM item);
 	PlaylistEntry* GetCurrentPlaylistEntry();
-	ChannelCategory* GetCategory(int idx);
+	ChannelCategory* GetCategory(int hItem);
 
-	HTREEITEM FindTreeItem(const PlaylistEntry* entry);
+	HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
+	HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
+	HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
+
+	void ChangeControlsState(BOOL enable);
 	int FindCategory(const std::wstring& name);
-	int GetFreeCategoryID();
+	int GetNewCategoryID();
 	ChannelInfo* CreateChannel();
-	bool LoadFromFile(const std::wstring & path);
 
 protected:
-	CColorListBox m_wndChannelsList;
+	//CColorListBox m_wndChannelsList;
+	CColorTreeCtrl m_wndChannelsTree;
 	CComboBox m_wndCategories;
 	CListBox m_wndCategoriesList;
 	CColorTreeCtrl m_wndPlaylistTree;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
+	CButton m_wndArchive;
+	CButton m_wndAdult;
 	CButton m_wndCustom;
 	CButton m_wndPlArchive;
+	CButton m_wndTestTVG;
+	CButton m_wndTestEPG;
+	CButton m_wndTestUrl;
+	CButton m_wndAddToShow;
+	CButton m_wndRemoveFromShow;
+	CButton m_wndEditCategory;
+	CButton m_wndAddCategory;
+	CButton m_wndRemoveCategory;
+	CButton m_wndGetInfo;
 	CButton m_wndGetAllInfo;
 	CStatic m_wndIcon;
 	CStatic m_wndPlIcon;
@@ -162,17 +182,21 @@ protected:
 	int m_sortType = 0;
 
 private:
-	HACCEL m_hAccel = nullptr;
-	BOOL m_allow_save = FALSE;
-	int m_current = LB_ERR;
-	HTREEITEM m_pl_current = nullptr;
-	std::map<int, std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
 	CString m_accessKey;
 	CString m_domain;
 	CString m_player;
 	CString m_probe;
+	BOOL m_allow_save = FALSE;
+	HACCEL m_hAccel = nullptr;
+	HTREEITEM m_current = nullptr;
+	HTREEITEM m_pl_current = nullptr;
 
-	std::map<int, std::shared_ptr<ChannelCategory>> m_categories;
-	std::vector<std::shared_ptr<ChannelInfo>> m_channels;
+	std::map<int, std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
+	std::vector<std::unique_ptr<ChannelInfo>>::iterator m_cur_it;
+
+	std::map<int, std::unique_ptr<ChannelCategory>> m_channels_categories;
+	std::map<int, HTREEITEM> m_tree_categories;
+	std::vector<std::unique_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
+	std::vector<std::pair<std::wstring, HTREEITEM>> m_playlist_categories;
 };
