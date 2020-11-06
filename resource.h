@@ -13,7 +13,7 @@
 #define IDR_ACCELERATOR_TABLE           136
 #define IDS_ABOUTBOX                    137
 #define IDC_BUTTON_ABOUT                1001
-#define IDC_BUTTON_ADD_TO_SHOW                  1002
+#define IDC_BUTTON_ADD_TO_SHOW          1002
 #define IDC_BUTTON_ADD_CATEGORY         1003
 #define IDC_BUTTON_ADD_CHANNEL          1004
 #define IDC_BUTTON_CACHE_ICON           1005
@@ -24,7 +24,7 @@
 #define IDC_BUTTON_LOAD_PLAYLIST        1010
 #define IDC_BUTTON_PACK                 1011
 #define IDC_BUTTON_PL_SEARCH_NEXT       1012
-#define IDC_BUTTON_REMOVE_FROM_SHOW               1013
+#define IDC_BUTTON_REMOVE_FROM_SHOW     1013
 #define IDC_BUTTON_REMOVE_CATEGORY      1014
 #define IDC_BUTTON_REMOVE_CHANNEL       1015
 #define IDC_BUTTON_SAVE                 1016
@@ -74,18 +74,20 @@
 #define IDC_STATIC_VERSION              1062
 #define IDC_TREE_CHANNELS               1063
 #define IDC_TREE_PLAYLIST               1064
+#define IDC_BUTTON_CHANNEL_UP           1065
+#define IDC_BUTTON_CHANNEL_DOWN         1066
 #define ID_ACC_DELETE_CHANNEL           32771
 #define ID_ACC_SAVE                     32772
 #define ID_ACC_UPDATE_CHANNEL           32773
 #define ID_ACC_UPDATE_ICON              32774
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1065
+#define _APS_NEXT_CONTROL_VALUE         1066
 #define _APS_NEXT_SYMED_VALUE           1165
 #endif
 #endif

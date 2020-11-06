@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
+#include <utility>
 
 #include "EdemChannelEditor.h"
 #include "EdemChannelEditorDlg.h"
@@ -114,6 +115,10 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_REMOVE_CHANNEL, &CEdemChannelEditorDlg::OnUpdateButtonRemoveChannel)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnUpdateButtonSave)
+	ON_BN_CLICKED(IDC_BUTTON_CHANNEL_UP, &CEdemChannelEditorDlg::OnBnClickedButtonChannelUp)
+	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CHANNEL_UP, &CEdemChannelEditorDlg::OnUpdateButtonChannelUp)
+	ON_BN_CLICKED(IDC_BUTTON_CHANNEL_DOWN, &CEdemChannelEditorDlg::OnBnClickedButtonChannelDown)
+	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CHANNEL_DOWN, &CEdemChannelEditorDlg::OnUpdateButtonChannelDown)
 
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels)
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnNMDblclkTreeChannels)
@@ -137,6 +142,7 @@ CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_plEPG = _T("EPG:");
 }
 
 void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
@@ -926,11 +932,34 @@ void CEdemChannelEditorDlg::OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonRemoveFromShowIn()
 {
-	int idx = m_wndCategoriesList.GetCurSel();
-	if (idx != CB_ERR)
+	auto channel = GetCurrentChannel();
+	if(channel)
 	{
-		m_wndCategoriesList.DeleteString(idx);
-		set_allow_save();
+		int idx = m_wndCategoriesList.GetCurSel();
+		if (m_wndCategoriesList.GetCount() == 1)
+		{
+			AfxMessageBox(_T("Channel have only one category. Just remove channel or add additional category."), MB_ICONWARNING);
+			return;
+		}
+
+		if (idx != CB_ERR)
+		{
+			auto category = (ChannelCategory*)m_wndCategoriesList.GetItemData(idx);
+			int id = category->get_id();
+			auto hSub = FindTreeSubItem(m_wndChannelsTree, m_wndChannelsTree.GetChildItem(m_tree_categories[id]), (DWORD_PTR)channel);
+			if (hSub)
+				m_wndChannelsTree.DeleteItem(hSub);
+
+			channel->get_categores().erase(id);
+			HTREEITEM selected = m_wndChannelsTree.GetSelectedItem();
+			if (auto found = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)channel); found != nullptr)
+			{
+				selected = found;
+			}
+			m_wndCategoriesList.DeleteString(idx);
+			m_wndChannelsTree.SelectItem(selected);
+			set_allow_save();
+		}
 	}
 }
 
@@ -2088,4 +2117,71 @@ void CEdemChannelEditorDlg::OnBnClickedButtonGetAllInfo()
 	LoadChannelInfo();
 	m_wndGetAllInfo.EnableWindow(TRUE);
 	UpdateChannelsCount();
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonChannelUp()
+{
+	HTREEITEM hCur = m_wndChannelsTree.GetSelectedItem();
+	HTREEITEM hPrev = m_wndChannelsTree.GetPrevSiblingItem(hCur);
+
+	SwapChannels(hCur, hPrev);
+}
+
+void CEdemChannelEditorDlg::OnUpdateButtonChannelUp(CCmdUI* pCmdUI)
+{
+	HTREEITEM hCur = m_wndChannelsTree.GetSelectedItem();
+	BOOL enable = hCur != nullptr
+		&& m_wndChannelsTree.GetParentItem(hCur) != nullptr
+		&& m_wndChannelsTree.GetPrevSiblingItem(hCur) != nullptr;
+
+	pCmdUI->Enable(enable);
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonChannelDown()
+{
+	HTREEITEM hCur = m_wndChannelsTree.GetSelectedItem();
+	HTREEITEM hNext = m_wndChannelsTree.GetNextSiblingItem(hCur);
+
+	SwapChannels(hCur, hNext);
+}
+
+void CEdemChannelEditorDlg::OnUpdateButtonChannelDown(CCmdUI* pCmdUI)
+{
+	HTREEITEM hCur = m_wndChannelsTree.GetSelectedItem();
+	BOOL enable = hCur != nullptr
+		&& m_wndChannelsTree.GetParentItem(hCur) != nullptr
+		&& m_wndChannelsTree.GetNextSiblingItem(hCur) != nullptr;
+
+	pCmdUI->Enable(enable);
+}
+
+void CEdemChannelEditorDlg::SwapChannels(HTREEITEM hLeft, HTREEITEM hRight)
+{
+	DWORD_PTR dwCur = m_wndChannelsTree.GetItemData(hLeft);
+	CString cur = m_wndChannelsTree.GetItemText(hLeft);
+
+	DWORD_PTR dwNext = m_wndChannelsTree.GetItemData(hRight);
+	CString next = m_wndChannelsTree.GetItemText(hRight);
+
+	m_wndChannelsTree.SetItemData(hLeft, dwNext);
+	m_wndChannelsTree.SetItemText(hLeft, next);
+
+	m_wndChannelsTree.SetItemData(hRight, dwCur);
+	m_wndChannelsTree.SetItemText(hRight, cur);
+
+	auto left = std::find_if(m_channels.begin(), m_channels.end(), [dwCur](const auto& item)
+							 {
+								 return (DWORD_PTR)item.get() == dwCur;
+							 });
+
+	auto right = std::find_if(m_channels.begin(), m_channels.end(), [dwNext](const auto& item)
+							  {
+								  return (DWORD_PTR)item.get() == dwNext;
+							  });
+
+	std::iter_swap(left, right);
+	m_current = hRight;
+	m_wndChannelsTree.SelectItem(hRight);
+
+	set_allow_save();
 }

@@ -90,6 +90,13 @@ protected:
 	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonTestUrl(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedButtonChannelUp();
+	afx_msg void OnUpdateButtonChannelUp(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedButtonChannelDown();
+
+	afx_msg void SwapChannels(HTREEITEM hCur, HTREEITEM hNext);
+
+	afx_msg void OnUpdateButtonChannelDown(CCmdUI* pCmdUI);
 
 	DECLARE_MESSAGE_MAP()
 
