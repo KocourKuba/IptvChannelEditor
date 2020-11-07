@@ -136,6 +136,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_COMMAND(ID_ACC_UPDATE_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonImport)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
+	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -1091,7 +1092,7 @@ std::wstring CEdemChannelEditorDlg::TranslateStreamUri(const std::string& stream
 
 void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url)
 {
-	TRACE(_T("Test URL: %s"), stream_url.c_str());
+	TRACE(_T("Test URL: %s\n"), stream_url.c_str());
 	ShellExecute(nullptr, _T("open"), m_player, stream_url.c_str(), nullptr, SW_SHOWNORMAL);
 }
 
@@ -1164,6 +1165,7 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 		auto entry = std::make_unique<PlaylistEntry>();
 		while (std::getline(is, line))
 		{
+			utils::string_rtrim(line, "\r");
 			entry->Parse(line);
 			switch (entry->get_directive())
 			{
@@ -1222,8 +1224,6 @@ void CEdemChannelEditorDlg::FillPlaylist()
 	// fill playlist tree
 	if (!m_playlist.empty())
 	{
-		CheckForExisting();
-
 		for (auto& category : m_playlist_categories)
 		{
 			TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -1253,6 +1253,7 @@ void CEdemChannelEditorDlg::FillPlaylist()
 		}
 	}
 
+	CheckForExisting();
 	m_pl_cur_it = m_playlist.end();
 	m_plInfo.Format(_T("Playlist: %s (%d)"), m_plFileName.GetString(), m_playlist.size());
 	UpdateData(FALSE);
@@ -1602,7 +1603,6 @@ HTREEITEM CEdemChannelEditorDlg::FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry)
 	HTREEITEM root = ctl.GetRootItem();
 	while (root != nullptr)
 	{
-		//TRACE(_T("Root %s\n"), ctl.GetItemText(root));
 		// iterate subitems
 		hSub = FindTreeSubItem(ctl, ctl.GetChildItem(root), entry);
 		if (hSub) break;
@@ -1633,7 +1633,6 @@ HTREEITEM CEdemChannelEditorDlg::FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem
 {
 	while (hItem)
 	{
-		//TRACE(_T("Child %s\n"), ctl.GetItemText(hItem));
 		if (entry == ctl.GetItemData(hItem)) break;
 
 		// get the next sibling item
@@ -1810,7 +1809,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCacheIcon()
 			icon_uri.set_path(path);
 
 			std::vector<BYTE> image;
-			if (utils::DownloadIconLogo(utils::utf8_to_utf16(channel->get_icon_uri().get_uri()), image))
+			if (utils::DownloadFile(utils::utf8_to_utf16(channel->get_icon_uri().get_uri()), image))
 			{
 				std::wstring fullPath = icon_uri.get_icon_relative_path(theApp.GetAppPath(PLUGIN_ROOT));
 				std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
@@ -1945,7 +1944,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(ChannelInfo* channel)
 	HANDLE hSelf = GetCurrentProcess();
 	if (!DuplicateHandle(hSelf, hChildStdoutRd, hSelf, &hStdoutRd, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE))
 	{
-		TRACE(_T("Failed! Can't create stdout pipe to child process. Code: %u"), GetLastError());
+		TRACE(_T("Failed! Can't create stdout pipe to child process. Code: %u\n"), GetLastError());
 		return;
 	}
 
@@ -1981,7 +1980,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(ChannelInfo* channel)
 
 	if (!bRunProcess)
 	{
-		TRACE(_T("Failed! Can't execute command: %s\nCode: %u"), csCommand.GetString(), GetLastError());
+		TRACE(_T("Failed! Can't execute command: %s\nCode: %u\n"), csCommand.GetString(), GetLastError());
 	}
 	else
 	{
@@ -1997,7 +1996,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(ChannelInfo* channel)
 		{
 			if (dwExitCode != STILL_ACTIVE)
 			{
-				TRACE(_T("Success! Exit code: %u"), dwExitCode);
+				TRACE(_T("Success! Exit code: %u\n"), dwExitCode);
 				break;
 			}
 
@@ -2005,7 +2004,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(ChannelInfo* channel)
 			{
 				bTimeout = TRUE;
 				::TerminateProcess(pi.hProcess, 0);
-				TRACE(_T("Failed! Execution Timeout"));
+				TRACE(_T("Failed! Execution Timeout\n"));
 				break;
 			}
 
@@ -2029,7 +2028,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(ChannelInfo* channel)
 			else
 			{
 				// По каким то причинам обломался
-				TRACE(_T("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d"), ::GetLastError(), nErrorCount);
+				TRACE(_T("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d\n"), ::GetLastError(), nErrorCount);
 				nErrorCount++;
 				if (nErrorCount > 10) break;
 				continue;
@@ -2184,4 +2183,20 @@ void CEdemChannelEditorDlg::SwapChannels(HTREEITEM hLeft, HTREEITEM hRight)
 	m_wndChannelsTree.SelectItem(hRight);
 
 	set_allow_save();
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
+{
+	std::vector<BYTE> data;
+	if (utils::DownloadFile(L"http://epg.it999.ru/edem_epg_ico2.m3u8", data))
+	{
+		// Still not clear if this is making a copy internally
+		CString playlist(theApp.GetAppPath() + L"edem_epg_ico2.m3u8");
+		std::ofstream os(playlist);
+		os.write((char*)data.data(), data.size());
+		os.close();
+		LoadPlaylist(playlist);
+		FillPlaylist();
+		theApp.WriteProfileString(_T("Setting"), _T("Playlist"), playlist);
+	}
 }

@@ -41,6 +41,8 @@
 #define IDC_CHECK_PL_ARCHIVE            1027
 #define IDC_COMBO_CATEGORY              1028
 #define IDC_COMBO_SORT                  1029
+#define IDC_BUTTON_LOAD_PLAYLIST2       1030
+#define IDC_BUTTON_DOWNLOAD_PLAYLIST    1030
 #define IDC_EDIT_CATEGORY               1031
 #define IDC_EDIT_CHANNEL_NAME           1032
 #define IDC_EDIT_DOMAIN                 1033

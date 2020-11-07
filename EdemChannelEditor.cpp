@@ -133,7 +133,7 @@ BOOL CEdemChannelEditorApp::LoadImage(const CString& fullPath, CImage& image)
 	if (utils::CrackUrl(fullPath.GetString()))
 	{
 		std::vector<BYTE> data;
-		if (utils::DownloadIconLogo(fullPath.GetString(), data))
+		if (utils::DownloadFile(fullPath.GetString(), data))
 		{
 			// Still not clear if this is making a copy internally
 			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), data.size()));

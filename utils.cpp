@@ -50,7 +50,7 @@ inline size_t count_utf8_to_utf16(const std::string& s)
 		{
 			throw std::range_error("UTF-8 string character can never start with 10xxxxxx");
 		}
-		else if ((c & BIT6) == 0) // 2 byte character, 0x80 to 0x7FF
+		if ((c & BIT6) == 0) // 2 byte character, 0x80 to 0x7FF
 		{
 			if (index == sSize)
 			{
@@ -358,7 +358,7 @@ bool CrackUrl(const std::wstring& url, std::wstring& host /*= std::wstring()*/, 
 	return false;
 }
 
-bool DownloadIconLogo(const std::wstring& url, std::vector<BYTE>& image)
+bool DownloadFile(const std::wstring& url, std::vector<BYTE>& data)
 {
 	std::wstring host;
 	std::wstring path;
@@ -395,7 +395,7 @@ bool DownloadIconLogo(const std::wstring& url, std::vector<BYTE>& image)
 
 	// End the request.
 	if (bResults)
-		bResults = WinHttpReceiveResponse(hRequest, NULL);
+		bResults = WinHttpReceiveResponse(hRequest, nullptr);
 
 	DWORD dwSize = 0;
 	do
@@ -420,7 +420,7 @@ bool DownloadIconLogo(const std::wstring& url, std::vector<BYTE>& image)
 		if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
 		{
 			chunk.resize(dwSize);
-			image.insert(image.end(), chunk.begin(), chunk.end());
+			data.insert(data.end(), chunk.begin(), chunk.end());
 		}
 		else
 		{
@@ -433,7 +433,7 @@ bool DownloadIconLogo(const std::wstring& url, std::vector<BYTE>& image)
 	if (hConnect) WinHttpCloseHandle(hConnect);
 	if (hSession) WinHttpCloseHandle(hSession);
 
-	return !image.empty();
+	return !data.empty();
 }
 
 }

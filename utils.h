@@ -197,6 +197,6 @@ std::vector<std::basic_string<T>> string_split(const std::basic_string<T>& str, 
 
 bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring());
 
-bool DownloadIconLogo(const std::wstring& url, std::vector<BYTE>& image);
+bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image);
 
 }

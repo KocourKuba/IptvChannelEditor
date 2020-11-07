@@ -206,4 +206,6 @@ private:
 	std::vector<std::unique_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_playlist_categories;
+public:
+	afx_msg void OnBnClickedButtonDownloadPlaylist();
 };
