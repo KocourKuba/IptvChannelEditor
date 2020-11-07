@@ -136,10 +136,12 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnUpdateButtonGetInfo)
 	ON_BN_CLICKED(IDC_BUTTON_GET_ALL_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonGetAllInfo)
 
-	ON_COMMAND(ID_ACC_UPDATE_ICON, &CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon)
 	ON_COMMAND(ID_ACC_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
 	ON_COMMAND(ID_ACC_DELETE_CHANNEL, &CEdemChannelEditorDlg::OnAccelRemoveChannel)
 	ON_COMMAND(ID_ACC_UPDATE_CHANNEL, &CEdemChannelEditorDlg::OnBnClickedButtonImport)
+	ON_COMMAND(ID_ACC_UPDATE_ICON, &CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon)
+	ON_COMMAND(ID_ACC_CHANNEL_UP, &CEdemChannelEditorDlg::OnAccelChannelUp)
+	ON_COMMAND(ID_ACC_CHANNEL_DOWN, &CEdemChannelEditorDlg::OnAccelChannelDown)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
@@ -809,6 +811,22 @@ void CEdemChannelEditorDlg::OnAccelRemoveChannel()
 	}
 
 	pFocused->SendMessage(WM_KEYDOWN, VK_DELETE);
+}
+
+void CEdemChannelEditorDlg::OnAccelChannelUp()
+{
+	if (GetFocus() == &m_wndChannelsTree)
+	{
+		OnBnClickedButtonChannelUp();
+	}
+}
+
+void CEdemChannelEditorDlg::OnAccelChannelDown()
+{
+	if (GetFocus() == &m_wndChannelsTree)
+	{
+		OnBnClickedButtonChannelDown();
+	}
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonRemoveChannel()

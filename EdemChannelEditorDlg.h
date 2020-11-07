@@ -43,6 +43,8 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
 	afx_msg void OnAccelRemoveChannel();
+	afx_msg void OnAccelChannelUp();
+	afx_msg void OnAccelChannelDown();
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnBnClickedButtonAddToShowIn();
