@@ -23,6 +23,7 @@ public:
 	enum { IDD = IDD_EDEMCHANNELEDITOR_DIALOG };
 #endif
 
+	static std::wstring TranslateStreamUri(const std::string& stream_uri, const std::wstring& domain, const std::wstring& key);
 	// Implementation
 protected:
 	HICON m_hIcon;
@@ -93,9 +94,7 @@ protected:
 	afx_msg void OnBnClickedButtonChannelUp();
 	afx_msg void OnUpdateButtonChannelUp(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonChannelDown();
-
-	afx_msg void SwapChannels(HTREEITEM hCur, HTREEITEM hNext);
-
+	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnUpdateButtonChannelDown(CCmdUI* pCmdUI);
 
 	DECLARE_MESSAGE_MAP()
@@ -116,8 +115,6 @@ private:
 	void SaveChannelInfo();
 
 	void PlayStream(const std::wstring& stream_url);
-	std::wstring TranslateStreamUri(const std::string& stream_uri);
-	void GetChannelStreamInfo(ChannelInfo* channel);
 	void UpdateChannelsCount();
 
 	void CheckLimits();
@@ -138,6 +135,12 @@ private:
 	int FindCategory(const std::wstring& name);
 	int GetNewCategoryID();
 	ChannelInfo* CreateChannel();
+	void SwapChannels(HTREEITEM hCur, HTREEITEM hNext);
+
+public:
+	static CString m_domain;
+	static CString m_accessKey;
+	static CString m_probe;
 
 protected:
 	//CColorListBox m_wndChannelsList;
@@ -189,10 +192,7 @@ protected:
 	int m_sortType = 0;
 
 private:
-	CString m_accessKey;
-	CString m_domain;
 	CString m_player;
-	CString m_probe;
 	BOOL m_allow_save = FALSE;
 	HACCEL m_hAccel = nullptr;
 	HTREEITEM m_current = nullptr;
@@ -206,6 +206,6 @@ private:
 	std::vector<std::unique_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_playlist_categories;
-public:
-	afx_msg void OnBnClickedButtonDownloadPlaylist();
 };
+
+void GetChannelStreamInfo(ChannelInfo* channel);
