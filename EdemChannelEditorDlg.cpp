@@ -2208,10 +2208,10 @@ void CEdemChannelEditorDlg::SwapChannels(HTREEITEM hLeft, HTREEITEM hRight)
 void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 {
 	std::vector<BYTE> data;
-	if (utils::DownloadFile(L"http://epg.it999.ru/edem_epg_ico2.m3u8", data))
+	if (utils::DownloadFile(L"http://epg.it999.ru/edem_epg_ico.m3u8", data))
 	{
 		// Still not clear if this is making a copy internally
-		CString playlist(theApp.GetAppPath() + L"edem_epg_ico2.m3u8");
+		CString playlist(theApp.GetAppPath() + L"edem_epg_ico.m3u8");
 		std::ofstream os(playlist);
 		os.write((char*)data.data(), data.size());
 		os.close();
