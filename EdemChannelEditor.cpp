@@ -151,20 +151,22 @@ BOOL CEdemChannelEditorApp::LoadImage(const CString& fullPath, CImage& image)
 void CEdemChannelEditorApp::SetImage(const CImage& image, CStatic& wnd)
 {
 	HBITMAP hImg = nullptr;
+	if (image)
+	{
+		CRect rc;
+		wnd.GetClientRect(rc);
 
-	CRect rc;
-	wnd.GetClientRect(rc);
+		CImage resized;
+		resized.Create(rc.Width(), rc.Height(), 32);
+		HDC dcImage = resized.GetDC();
+		SetStretchBltMode(dcImage, COLORONCOLOR);
+		image.StretchBlt(dcImage, rc, SRCCOPY);
+		// The next two lines test the image on a picture control.
+		image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
 
-	CImage resized;
-	resized.Create(rc.Width(), rc.Height(), 32);
-	HDC dcImage = resized.GetDC();
-	SetStretchBltMode(dcImage, COLORONCOLOR);
-	image.StretchBlt(dcImage, rc, SRCCOPY);
-	// The next two lines test the image on a picture control.
-	image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
-
-	resized.ReleaseDC();
-	hImg = (HBITMAP)resized.Detach();
+		resized.ReleaseDC();
+		hImg = (HBITMAP)resized.Detach();
+	}
 
 	HBITMAP hOld = wnd.SetBitmap(hImg);
 	if (hOld)

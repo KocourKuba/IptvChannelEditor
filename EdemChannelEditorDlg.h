@@ -178,6 +178,7 @@ protected:
 	CString m_plFileName;
 	CString m_plInfo;
 	CString m_plIconName;
+	CString m_plID;
 	CString m_plEPG;
 	CString m_infoVideo;
 	CString m_infoAudio;
@@ -208,6 +209,8 @@ private:
 	std::vector<std::unique_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_playlist_categories;
+public:
+	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 };
 
 void GetChannelStreamInfo(ChannelInfo* channel);

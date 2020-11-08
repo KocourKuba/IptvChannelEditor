@@ -146,6 +146,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
+	ON_NOTIFY(TVN_SELCHANGING, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnSelchangingTreeChannels)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -153,6 +154,7 @@ CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	, m_isDisabled(FALSE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_plID = _T("ID:");
 	m_plEPG = _T("EPG:");
 }
 
@@ -193,6 +195,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_PL_ICON, m_wndPlIcon);
 	DDX_Text(pDX, IDC_STATIC_PL_ICON_NAME, m_plIconName);
 	DDX_Text(pDX, IDC_STATIC_PLAYLIST, m_plInfo);
+	DDX_Text(pDX, IDC_STATIC_PL_ID, m_plID);
 	DDX_Text(pDX, IDC_STATIC_PL_TVG, m_plEPG);
 	DDX_Control(pDX, IDC_CHECK_PL_ARCHIVE, m_wndPlArchive);
 	DDX_CBIndex(pDX, IDC_COMBO_SORT, m_sortType);
@@ -266,7 +269,6 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	if (m_current == nullptr && !m_channels.empty())
 	{
 		SetCurrentChannel(FindTreeItem(m_wndChannelsTree, (DWORD_PTR)m_channels[0].get()));
-		LoadChannelInfo();
 	}
 
 	UpdateData(FALSE);
@@ -494,6 +496,8 @@ void CEdemChannelEditorDlg::CheckForExisting()
 
 void CEdemChannelEditorDlg::LoadChannelInfo()
 {
+	TRACE("LoadChannelInfo\n");
+
 	m_wndCategoriesList.ResetContent();
 
 	auto channel = GetChannel(m_current);
@@ -866,7 +870,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonRemoveChannel()
 		}
 
 		SetCurrentChannel(hNext);
-		LoadChannelInfo();
 		set_allow_save();
 		UpdateChannelsCount();
 	}
@@ -886,21 +889,34 @@ void CEdemChannelEditorDlg::OnBnClickedCheckCustomize()
 	set_allow_save();
 }
 
+void CEdemChannelEditorDlg::OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	TRACE("SelChanging\n");
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+
+	if (pNMTreeView->itemOld.lParam)
+	{
+		SaveChannelInfo();
+	}
+
+	*pResult = 0;
+}
+
 void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	TRACE("SelChanged\n");
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
-	HTREEITEM hSelected = m_wndChannelsTree.GetSelectedItem();
-	if(m_current != hSelected && m_wndChannelsTree.GetParentItem(hSelected) != nullptr)
+	HTREEITEM hSelected = pNMTreeView->itemNew.hItem;
+	if(hSelected && m_wndChannelsTree.GetParentItem(hSelected) != nullptr)
 	{
 		ChangeControlsState(TRUE);
-		SaveChannelInfo();
-		SetCurrentChannel(hSelected);
+		m_current = hSelected;
 		LoadChannelInfo();
 	}
 	else if (m_wndChannelsTree.GetParentItem(hSelected) == nullptr)
 	{
+		ChangeControlsState(FALSE);
 		m_channelName.Empty();
 		m_tvgID = 0;
 		m_epgID = 0;
@@ -914,7 +930,6 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		m_infoAudio.Empty();
 		m_infoVideo.Empty();
 		m_wndIcon.SetBitmap(nullptr);
-		ChangeControlsState(FALSE);
 	}
 	else
 	{
@@ -1731,7 +1746,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 		hFoundItem = m_wndChannelsTree.InsertItem(&tvInsert);
 
-		SetCurrentChannel(hFoundItem);
+		m_wndChannelsTree.SelectItem(hFoundItem);
 		isNew = true;
 	}
 	else
@@ -1873,6 +1888,7 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 		m_pl_current = m_wndPlaylistTree.GetSelectedItem();
 		m_search.Format(_T("\\%d"), entry->get_channel_id());
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
+		m_plID.Format(_T("ID: %d"), entry->get_channel_id());
 		m_plEPG.Format(_T("EPG: %d"), entry->get_tvg_id());
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
 		if (!entry->get_icon())

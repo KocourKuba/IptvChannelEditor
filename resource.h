@@ -44,7 +44,6 @@
 #define IDC_BUTTON_LOAD_PLAYLIST2       1030
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1030
 #define IDC_EDIT_CATEGORY               1031
-#define IDC_CHECK_ARCHIVE2              1031
 #define IDC_CHECK_DISABLED              1031
 #define IDC_EDIT_CHANNEL_NAME           1032
 #define IDC_EDIT_DOMAIN                 1033
@@ -74,6 +73,8 @@
 #define IDC_STATIC_PL_TVG               1058
 #define IDC_STATIC_PLAYLIST             1059
 #define IDC_STATIC_QR                   1060
+#define IDC_STATIC_PL_TVG2              1060
+#define IDC_STATIC_PL_ID                1060
 #define IDC_STATIC_TITLE                1061
 #define IDC_STATIC_VERSION              1062
 #define IDC_TREE_CHANNELS               1063
