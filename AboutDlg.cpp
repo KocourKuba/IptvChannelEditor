@@ -53,7 +53,7 @@ BOOL CAboutDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	m_version.Format(_T("Version %d.%d"), MAJOR, MINOR);
+	m_version.Format(_T("Version %d.%d.%d"), MAJOR, MINOR, BUILD);
 
 	IStream* pStream = CreateStreamOnResource(IDB_PNG_QR);
 	if (pStream != nullptr)

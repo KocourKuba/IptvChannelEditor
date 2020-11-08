@@ -334,6 +334,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
 	ON_NOTIFY(TVN_SELCHANGING, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnSelchangingTreeChannels)
+	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST, &CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -392,6 +393,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_GET_INFO, m_wndGetInfo);
 	DDX_Control(pDX, IDC_BUTTON_GET_ALL_INFO, m_wndGetAllInfo);
 	DDX_Check(pDX, IDC_CHECK_DISABLED, m_isDisabled);
+	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylistType);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -450,6 +452,8 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 		FillChannels();
 	}
 
+	m_wndPlaylistType.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("PlaylistType"), 0));
+	OnCbnSelchangeComboPlaylist();
 	LoadPlaylist(theApp.GetProfileString(_T("Setting"), _T("Playlist")));
 	FillPlaylist();
 
@@ -2207,11 +2211,28 @@ void CEdemChannelEditorDlg::SwapChannels(HTREEITEM hLeft, HTREEITEM hRight)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 {
-	std::vector<BYTE> data;
-	if (utils::DownloadFile(L"http://epg.it999.ru/edem_epg_ico.m3u8", data))
+	int idx = m_wndPlaylistType.GetCurSel();
+	std::wstring url;
+	switch (idx)
 	{
+		case 0:
+			url = L"http://epg.it999.ru/edem_epg_ico.m3u8";
+			break;
+		case 1:
+			url = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
+			break;
+		default:
+			return;
+	}
+
+	std::vector<BYTE> data;
+	if (utils::DownloadFile(url, data))
+	{
+		std::wstring name;
+		utils::CrackUrl(url, std::wstring(), name);
+		utils::string_ltrim(name, L"/");
 		// Still not clear if this is making a copy internally
-		CString playlist(theApp.GetAppPath() + L"edem_epg_ico.m3u8");
+		CString playlist(theApp.GetAppPath() + name.c_str());
 		std::ofstream os(playlist);
 		os.write((char*)data.data(), data.size());
 		os.close();
@@ -2219,4 +2240,25 @@ void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 		FillPlaylist();
 		theApp.WriteProfileString(_T("Setting"), _T("Playlist"), playlist);
 	}
+}
+
+void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
+{
+	int idx = m_wndPlaylistType.GetCurSel();
+	switch (idx)
+	{
+		case 0:
+		case 1:
+			GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST)->EnableWindow(FALSE);
+			GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST)->EnableWindow(TRUE);
+			break;
+		case 2:
+			GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST)->EnableWindow(TRUE);
+			GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST)->EnableWindow(FALSE);
+			break;
+		default:
+			break;
+	}
+
+	theApp.WriteProfileInt(_T("Setting"), _T("PlaylistType"), idx);
 }

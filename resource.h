@@ -81,6 +81,8 @@
 #define IDC_TREE_PLAYLIST               1064
 #define IDC_BUTTON_CHANNEL_UP           1065
 #define IDC_BUTTON_CHANNEL_DOWN         1066
+#define IDC_COMBO1                      1067
+#define IDC_COMBO_PLAYLIST              1067
 #define ID_ACC_DELETE_CHANNEL           32771
 #define ID_ACC_SAVE                     32772
 #define ID_ACC_UPDATE_CHANNEL           32773
@@ -94,7 +96,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32778
-#define _APS_NEXT_CONTROL_VALUE         1066
+#define _APS_NEXT_CONTROL_VALUE         1068
 #define _APS_NEXT_SYMED_VALUE           1165
 #endif
 #endif

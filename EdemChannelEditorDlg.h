@@ -207,6 +207,8 @@ private:
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_playlist_categories;
 public:
 	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
+	CComboBox m_wndPlaylistType;
+	afx_msg void OnCbnSelchangeComboPlaylist();
 };
 
 std::wstring TranslateStreamUri(const std::string& stream_uri);
