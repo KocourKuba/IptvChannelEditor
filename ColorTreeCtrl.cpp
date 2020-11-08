@@ -61,6 +61,7 @@ void CColorTreeCtrl::OnPaint()
 				container = dynamic_cast<ColoringProperty*>((PlaylistEntry*)GetItemData(hItem));
 
 			bool isColored = container ? container->is_colored() : false;
+			bool isDisabled = container ? container->is_disabled() : false;
 			// No font specified, so use window font
 			CFont* pFont = GetFont();
 			LOGFONT logfont;
@@ -73,7 +74,9 @@ void CColorTreeCtrl::OnPaint()
 			fontDC.CreateFontIndirect(&logfont);
 			CFont* pFontDC = memDC.SelectObject(&fontDC);
 
-			if (isColored)
+			if (isDisabled)
+				memDC.SetTextColor(::GetSysColor(COLOR_GRAYTEXT));
+			else if (isColored)
 				memDC.SetTextColor(m_color);
 			else
 				memDC.SetTextColor(::GetSysColor(COLOR_WINDOWTEXT));

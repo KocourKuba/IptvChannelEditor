@@ -91,6 +91,8 @@ class DemoTv extends AbstractTv
                 throw new Exception('Invalid XML document');
             }
 
+            if (isset($xml_tv_channel->disabled)) continue;
+
             $cid = $id . "_" . $xml_tv_channel->epg_id . "_" . $xml_tv_channel->tvg_id;
             $id++;
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0; //буферизация

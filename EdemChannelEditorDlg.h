@@ -6,7 +6,6 @@
 #include <memory>
 #include <vector>
 #include "PlayListEntry.h"
-#include "ColorListBox.h"
 #include "ColorTreeCtrl.h"
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
@@ -186,6 +185,7 @@ protected:
 
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;
+	BOOL m_isDisabled = FALSE;
 	int m_streamID = 0;
 	int m_tvgID = 0;
 	int m_epgID = 0;

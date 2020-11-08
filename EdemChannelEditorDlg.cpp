@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_TEST_EPG, &CEdemChannelEditorDlg::OnUpdateButtonTestEpg)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_URL, &CEdemChannelEditorDlg::OnBnClickedButtonTestUrl)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_TEST_URL, &CEdemChannelEditorDlg::OnUpdateButtonTestUrl)
+	ON_BN_CLICKED(IDC_CHECK_DISABLED, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_ARCHIVE, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOMIZE, &CEdemChannelEditorDlg::OnBnClickedCheckCustomize)
@@ -149,6 +150,7 @@ END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
+	, m_isDisabled(FALSE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_plEPG = _T("EPG:");
@@ -199,6 +201,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_CHANNELS, m_channelsInfo);
 	DDX_Control(pDX, IDC_BUTTON_GET_INFO, m_wndGetInfo);
 	DDX_Control(pDX, IDC_BUTTON_GET_ALL_INFO, m_wndGetAllInfo);
+	DDX_Check(pDX, IDC_CHECK_DISABLED, m_isDisabled);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -503,6 +506,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 		m_nextDays = 0;
 		m_hasArchive = 0;
 		m_isAdult = 0;
+		m_isDisabled = 0;
 		m_iconUrl.Empty();
 		m_streamUrl.Empty();
 		m_streamID = 0;
@@ -520,6 +524,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 		m_nextDays = channel->get_next_epg_days();
 		m_hasArchive = channel->get_has_archive();
 		m_isAdult = channel->get_adult();
+		m_isDisabled = !!channel->is_disabled();
 		m_streamUrl = channel->get_stream_uri().get_uri().c_str();
 		m_streamID = channel->get_channel_id();
 		m_infoAudio = channel->get_audio().c_str();
@@ -568,6 +573,7 @@ void CEdemChannelEditorDlg::SaveChannelInfo()
 	channel->set_next_epg_days(m_nextDays);
 	channel->set_has_archive(m_hasArchive);
 	channel->set_adult(m_isAdult);
+	channel->set_disabled(!!m_isDisabled);
 
 	CStringA newIcon = CStringA(m_iconUrl);
 	if(newIcon != channel->get_icon_uri().get_uri().c_str())

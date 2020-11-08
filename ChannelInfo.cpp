@@ -15,6 +15,7 @@ static constexpr auto TV_CATEGORY_ID = "tv_category_id";
 static constexpr auto STREAMING_URL = "streaming_url";
 static constexpr auto ARCHIVE = "archive";
 static constexpr auto PROTECTED = "protected";
+static constexpr auto DISABLED = "disabled";
 
 
 ChannelInfo::ChannelInfo()
@@ -39,6 +40,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
 	set_prev_epg_days(utils::get_value_int(node->first_node(NUM_PAST_EPG_DAYS)));
 	set_next_epg_days(utils::get_value_int(node->first_node(NUM_FUTURE_EPG_DAYS)));
+	set_disabled(utils::get_value_string(node->first_node(DISABLED)) == "true");
 
 	auto cnode = node->first_node(TV_CATEGORIES);
 	if (cnode)
@@ -109,6 +111,11 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	if (get_adult())
 	{
 		channel_node->append_node(utils::alloc_node(alloc, PROTECTED, utils::int_to_char(get_adult()).c_str()));
+	}
+
+	if (is_disabled())
+	{
+		channel_node->append_node(utils::alloc_node(alloc, DISABLED, "true"));
 	}
 
 	return channel_node;

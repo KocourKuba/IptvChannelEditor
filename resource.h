@@ -44,6 +44,8 @@
 #define IDC_BUTTON_LOAD_PLAYLIST2       1030
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1030
 #define IDC_EDIT_CATEGORY               1031
+#define IDC_CHECK_ARCHIVE2              1031
+#define IDC_CHECK_DISABLED              1031
 #define IDC_EDIT_CHANNEL_NAME           1032
 #define IDC_EDIT_DOMAIN                 1033
 #define IDC_EDIT_EPG_ID                 1034
