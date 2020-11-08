@@ -29,6 +29,10 @@
 #define new DEBUG_NEW
 #endif
 
+CString CEdemChannelEditorDlg::m_domain;
+CString CEdemChannelEditorDlg::m_accessKey;
+CString CEdemChannelEditorDlg::m_probe;
+
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
 {
@@ -64,11 +68,195 @@ static constexpr auto CHANNELS_CONFIG    = L".\\edem_plugin\\edem_channel_list.x
 static constexpr auto CHANNELS_LOGO_PATH = L".\\edem_plugin\\icons\\channels\\";
 #endif // _DEBUG
 
-// CEdemChannelEditorDlg dialog
+std::wstring TranslateStreamUri(const std::string& stream_uri)
+{
+	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
 
-CString CEdemChannelEditorDlg::m_domain;
-CString CEdemChannelEditorDlg::m_accessKey;
-CString CEdemChannelEditorDlg::m_probe;
+	std::wregex re_domain(LR"(\{SUBDOMAIN\})");
+	std::wregex re_uid(LR"(\{UID\})");
+
+	std::wstring stream_url = utils::utf8_to_utf16(stream_uri);
+	stream_url = std::regex_replace(stream_url, re_domain, CEdemChannelEditorDlg::m_domain.GetString());
+	return std::regex_replace(stream_url, re_uid, CEdemChannelEditorDlg::m_accessKey.GetString());
+}
+
+void GetChannelStreamInfo(ChannelInfo* channel)
+{
+	if (!channel)
+		return;
+
+	SECURITY_ATTRIBUTES sa;
+	sa.nLength = sizeof(sa);
+	sa.bInheritHandle = TRUE;
+	sa.lpSecurityDescriptor = nullptr;
+
+	// Create a pipe for the child process's STDOUT
+	HANDLE hStdoutRd;
+	HANDLE hChildStdoutWr = nullptr;
+	HANDLE hChildStdoutRd = nullptr;
+	CreatePipe(&hChildStdoutRd, &hChildStdoutWr, &sa, 0);
+
+	// Duplicate the read handle to the pipe so it is not inherited and close src handle
+	HANDLE hSelf = GetCurrentProcess();
+	if (!DuplicateHandle(hSelf, hChildStdoutRd, hSelf, &hStdoutRd, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE))
+	{
+		TRACE(_T("Failed! Can't create stdout pipe to child process. Code: %u\n"), GetLastError());
+		return;
+	}
+
+	std::string result;
+	BOOL bResult = FALSE;
+
+	STARTUPINFO si = { 0 };
+	si.cb = sizeof(STARTUPINFO);
+	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+	si.wShowWindow = SW_HIDE;
+	si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+	si.hStdInput = nullptr;
+	si.hStdOutput = hChildStdoutWr;
+
+	PROCESS_INFORMATION pi = { nullptr };
+
+	// argv[0] имя исполняемого файла
+	CString csCommand;
+	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %s"),
+					 CEdemChannelEditorDlg::m_probe.GetString(),
+					 TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url()).c_str());
+
+	BOOL bRunProcess = CreateProcess(CEdemChannelEditorDlg::m_probe.GetString(),	// 	__in_opt     LPCTSTR lpApplicationName
+									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
+									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes
+									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes
+									 TRUE,						// 	__in         BOOL bInheritHandles
+									 CREATE_SUSPENDED,			// 	__in         DWORD dwCreationFlags
+									 nullptr,					// 	__in_opt     LPVOID lpEnvironment
+									 nullptr,					// 	__in_opt     LPCTSTR lpCurrentDirectory
+									 &si,						// 	__in         LPSTARTUPINFO lpStartupInfo
+									 &pi);						// 	__out        LPPROCESS_INFORMATION lpProcessInformation
+
+	if (!bRunProcess)
+	{
+		TRACE(_T("Failed! Can't execute command: %s\nCode: %u\n"), csCommand.GetString(), GetLastError());
+	}
+	else
+	{
+		ResumeThread(pi.hThread);
+
+		long nTimeout = 20;
+
+		int nErrorCount = 0;
+		DWORD dwExitCode = STILL_ACTIVE;
+		DWORD dwStart = GetTickCount();
+		BOOL bTimeout = FALSE;
+		for (;;)
+		{
+			if (dwExitCode != STILL_ACTIVE)
+			{
+				TRACE(_T("Success! Exit code: %u\n"), dwExitCode);
+				break;
+			}
+
+			if (nTimeout && CheckForTimeOut(dwStart, nTimeout * 1000))
+			{
+				bTimeout = TRUE;
+				::TerminateProcess(pi.hProcess, 0);
+				TRACE(_T("Failed! Execution Timeout\n"));
+				break;
+			}
+
+			if (::GetExitCodeProcess(pi.hProcess, &dwExitCode))
+			{
+				for (;;)
+				{
+					if (nTimeout && CheckForTimeOut(dwStart, nTimeout * 1000)) break;
+
+					// Peek data from stdout pipe
+					DWORD dwAvail = 0;
+					if (!::PeekNamedPipe(hStdoutRd, nullptr, 0, nullptr, &dwAvail, nullptr) || !dwAvail) break;
+
+					char szBuf[4096] = { 0 };
+					DWORD dwReaded = dwAvail;
+					if (!ReadFile(hStdoutRd, szBuf, min(4095, dwAvail), &dwReaded, nullptr)) break;
+
+					result.append(szBuf, dwReaded);
+				}
+			}
+			else
+			{
+				// По каким то причинам обломался
+				TRACE(_T("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d\n"), ::GetLastError(), nErrorCount);
+				nErrorCount++;
+				if (nErrorCount > 10) break;
+				continue;
+			}
+		}
+
+		bResult = TRUE;
+	}
+
+	::CloseHandle(hStdoutRd);
+	::CloseHandle(hChildStdoutWr);
+	::CloseHandle(pi.hProcess);
+	::CloseHandle(pi.hThread);
+
+	// Parse stdout
+	std::stringstream ss(result);
+	std::string item;
+	std::vector<std::map<std::string, std::string>> streams;
+	bool skip = false;
+	size_t idx = 0;
+	while (std::getline(ss, item))
+	{
+		utils::string_rtrim(item, "\r\n");
+		if (item == "[STREAM]")
+		{
+			skip = false;
+			streams.emplace_back(std::map<std::string, std::string>());
+			idx = streams.size() - 1;
+			continue;
+		}
+
+		if (item == "[/STREAM]")
+		{
+			skip = true;
+			continue;
+		}
+
+		if (!skip)
+		{
+			auto pair = utils::string_split(item, '=');
+			if (pair.size() > 1)
+				streams[idx].emplace(pair[0], pair[1]);
+		}
+	}
+
+	for (auto& stream : streams)
+	{
+		if (stream["codec_type"] == "audio")
+		{
+			std::string audio;
+			audio += stream["codec_long_name"] + " ";
+			audio += stream["sample_rate"] + " ";
+			audio += stream["channel_layout"];
+			channel->set_audio(audio);
+		}
+		else if (stream["codec_type"] == "video")
+		{
+			std::string video;
+			video += stream["width"] + "x";
+			video += stream["height"] + " ";
+			video += stream["codec_long_name"];
+			channel->set_video(video);
+		}
+		else
+		{
+			channel->set_audio("Not available");
+			channel->set_video("Not available");
+		}
+	}
+}
+
+// CEdemChannelEditorDlg dialog
 
 BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
@@ -103,13 +291,12 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_ARCHIVE, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOMIZE, &CEdemChannelEditorDlg::OnBnClickedCheckCustomize)
-	ON_EN_CHANGE(IDC_EDIT_CHANNEL_NAME, &CEdemChannelEditorDlg::OnChanges)
 	ON_EN_CHANGE(IDC_EDIT_NEXT_EPG, &CEdemChannelEditorDlg::OnEnChangeEditNum)
 	ON_EN_CHANGE(IDC_EDIT_PREV_EPG, &CEdemChannelEditorDlg::OnEnChangeEditNum)
-	ON_EN_KILLFOCUS(IDC_EDIT_CHANNEL_NAME, &CEdemChannelEditorDlg::OnEnKillfocusEditChannelName)
-	ON_EN_KILLFOCUS(IDC_EDIT_STREAM_URL, &CEdemChannelEditorDlg::OnEnKillfocusEditStreamUrl)
-	ON_EN_KILLFOCUS(IDC_EDIT_TVG_ID, &CEdemChannelEditorDlg::OnEnKillfocusEditTvgId)
-	ON_EN_KILLFOCUS(IDC_EDIT_URL_ID, &CEdemChannelEditorDlg::OnEnKillfocusEditUrlId)
+	ON_EN_CHANGE(IDC_EDIT_CHANNEL_NAME, &CEdemChannelEditorDlg::OnEnChangeEditChannelName)
+	ON_EN_CHANGE(IDC_EDIT_STREAM_URL, &CEdemChannelEditorDlg::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_TVG_ID, &CEdemChannelEditorDlg::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CEdemChannelEditorDlg::OnChanges)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_NEXT, &CEdemChannelEditorDlg::OnDeltaposSpinNext)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_PREV, &CEdemChannelEditorDlg::OnDeltaposSpinPrev)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CEdemChannelEditorDlg::OnStnClickedStaticIcon)
@@ -946,7 +1133,7 @@ void CEdemChannelEditorDlg::OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResu
 	auto channel = GetCurrentChannel();
 	if (channel)
 	{
-		PlayStream(TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url(), m_domain.GetString(), m_accessKey.GetString()));
+		PlayStream(TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url()));
 	}
 	*pResult = 0;
 }
@@ -1014,7 +1201,7 @@ void CEdemChannelEditorDlg::OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI)
 	pCmdUI->Enable(m_wndCategoriesList.GetCurSel() != LB_ERR);
 }
 
-void CEdemChannelEditorDlg::OnEnKillfocusEditChannelName()
+void CEdemChannelEditorDlg::OnEnChangeEditChannelName()
 {
 	UpdateData(TRUE);
 
@@ -1051,7 +1238,6 @@ void CEdemChannelEditorDlg::OnEnChangeEditNum()
 {
 	UpdateData(TRUE);
 	CheckLimits();
-	SaveChannelInfo();
 }
 
 void CEdemChannelEditorDlg::OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1114,25 +1300,13 @@ void CEdemChannelEditorDlg::OnBnClickedButtonTestUrl()
 	auto channel = GetCurrentChannel();
 	if (channel)
 	{
-		PlayStream(TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url(), m_domain.GetString(), m_accessKey.GetString()));
+		PlayStream(TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url()));
 	}
 }
 
 void CEdemChannelEditorDlg::OnUpdateButtonTestUrl(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(GetCurrentChannel() != nullptr);
-}
-
-std::wstring CEdemChannelEditorDlg::TranslateStreamUri(const std::string& stream_uri, const std::wstring& domain, const std::wstring& key)
-{
-	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
-
-	std::wregex re_domain(LR"(\{SUBDOMAIN\})");
-	std::wregex re_uid(LR"(\{UID\})");
-
-	std::wstring stream_url = utils::utf8_to_utf16(stream_uri);
-	stream_url = std::regex_replace(stream_url, re_domain, domain);
-	return std::regex_replace(stream_url, re_uid, key);
 }
 
 void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url)
@@ -1146,8 +1320,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonLoadPlaylist()
 	CFileDialog dlg(TRUE);
 
 	CString file;
-	CString filter(_T("Playlist m3u8(*.m3u8)#*.m3u8#All Files (*.*)#*.*#"));
-	filter.Replace('#', '\0');
+	CString filter(_T("Playlist m3u8(*.m3u8)|*.m3u8|All Files (*.*)|*.*||"));
+	filter.Replace('|', '\0');
 
 	OPENFILENAME& oFN = dlg.GetOFN();
 	oFN.lpstrFilter = filter.GetString();
@@ -1155,8 +1329,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonLoadPlaylist()
 	oFN.nFilterIndex = 0;
 	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
 	oFN.lpstrTitle = _T("Load Edem TV playlist");
-	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
-	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON;
+	oFN.Flags |= OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON;
 
 	INT_PTR nResult = dlg.DoModal();
 	file.ReleaseBuffer();
@@ -1389,8 +1562,8 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 	CString file = theApp.GetAppPath(PLUGIN_ROOT) + m_iconUrl;
 	file.Replace('/', '\\');
 
-	CString filter(_T("PNG file(*.png)#*.png#All Files (*.*)#*.*#"));
-	filter.Replace('#', '\0');
+	CString filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
+	filter.Replace('|', '\0');
 
 	OPENFILENAME& oFN = dlg.GetOFN();
 	oFN.lpstrFilter = filter.GetString();
@@ -1399,7 +1572,7 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
 	oFN.lpstrTitle = _T("Load logotype image");
 	oFN.lpstrInitialDir = path.GetString();
-	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
+	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
 	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
 
 	INT_PTR nResult = dlg.DoModal();
@@ -1462,40 +1635,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 	}
 }
 
-void CEdemChannelEditorDlg::OnEnKillfocusEditStreamUrl()
-{
-	UpdateData(TRUE);
-
-	auto channel = GetCurrentChannel();
-	if (channel)
-	{
-		channel->set_stream_uri(CStringA(m_streamUrl).GetString());
-		m_streamID = channel->get_channel_id();
-
-		set_allow_save();
-		UpdateData(FALSE);
-
-		m_wndCustom.SetCheck(m_streamID == 0);
-		OnBnClickedCheckCustomize();
-		SaveChannelInfo();
-	}
-}
-
-void CEdemChannelEditorDlg::OnEnKillfocusEditUrlId()
-{
-	UpdateData(TRUE);
-
-	auto channel = GetCurrentChannel();
-	if (channel)
-	{
-		SaveChannelInfo();
-		set_allow_save();
-
-		m_wndChannelsTree.InvalidateRect(nullptr);
-		m_wndPlaylistTree.InvalidateRect(nullptr);
-	}
-}
-
 void CEdemChannelEditorDlg::OnUpdateButtonSearchNext(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!m_search.IsEmpty());
@@ -1503,8 +1642,6 @@ void CEdemChannelEditorDlg::OnUpdateButtonSearchNext(CCmdUI* pCmdUI)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonSearchNext()
 {
-	SaveChannelInfo();
-
 	if (m_search.IsEmpty())
 		return;
 
@@ -1565,12 +1702,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSearchNext()
 	}
 }
 
-void CEdemChannelEditorDlg::OnEnKillfocusEditTvgId()
-{
-	set_allow_save();
-	SaveChannelInfo();
-}
-
 void CEdemChannelEditorDlg::OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI)
 {
 	UpdateData(TRUE);
@@ -1580,8 +1711,6 @@ void CEdemChannelEditorDlg::OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 {
-	SaveChannelInfo();
-
 	if (m_plSearch.IsEmpty())
 		return;
 
@@ -1912,7 +2041,7 @@ void CEdemChannelEditorDlg::OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResul
 	auto entry = GetCurrentPlaylistEntry();
 	if (entry)
 	{
-		PlayStream(TranslateStreamUri(entry->get_streaming_uri().get_ts_translated_url(), m_domain.GetString(), m_accessKey.GetString()));
+		PlayStream(TranslateStreamUri(entry->get_streaming_uri().get_ts_translated_url()));
 	}
 	*pResult = 0;
 }
@@ -1968,184 +2097,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonGetInfo()
 
 	GetChannelStreamInfo(GetCurrentChannel());
 	LoadChannelInfo();
-}
-
-void GetChannelStreamInfo(ChannelInfo* channel)
-{
-	if (!channel)
-		return;
-
-	SECURITY_ATTRIBUTES sa;
-	sa.nLength = sizeof(sa);
-	sa.bInheritHandle = TRUE;
-	sa.lpSecurityDescriptor = nullptr;
-
-	// Create a pipe for the child process's STDOUT
-	HANDLE hStdoutRd;
-	HANDLE hChildStdoutWr = nullptr;
-	HANDLE hChildStdoutRd = nullptr;
-	CreatePipe(&hChildStdoutRd, &hChildStdoutWr, &sa, 0);
-
-	// Duplicate the read handle to the pipe so it is not inherited and close src handle
-	HANDLE hSelf = GetCurrentProcess();
-	if (!DuplicateHandle(hSelf, hChildStdoutRd, hSelf, &hStdoutRd, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE))
-	{
-		TRACE(_T("Failed! Can't create stdout pipe to child process. Code: %u\n"), GetLastError());
-		return;
-	}
-
-	std::string result;
-	BOOL bResult = FALSE;
-
-	STARTUPINFO si = { 0 };
-	si.cb = sizeof(STARTUPINFO);
-	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
-	si.wShowWindow = SW_HIDE;
-	si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-	si.hStdInput = nullptr;
-	si.hStdOutput = hChildStdoutWr;
-
-	PROCESS_INFORMATION pi = { nullptr };
-
-	CString csCommand;
-	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %s"),
-					 CEdemChannelEditorDlg::m_probe.GetString(),
-					 CEdemChannelEditorDlg::TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url(),
-															   CEdemChannelEditorDlg::m_domain.GetString(),
-															   CEdemChannelEditorDlg::m_accessKey.GetString()).c_str()
-					 ); // argv[0] имя исполняемого файла
-
-	BOOL bRunProcess = CreateProcess(CEdemChannelEditorDlg::m_probe.GetString(),	// 	__in_opt     LPCTSTR lpApplicationName
-									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
-									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes
-									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes
-									 TRUE,						// 	__in         BOOL bInheritHandles
-									 CREATE_SUSPENDED,			// 	__in         DWORD dwCreationFlags
-									 nullptr,					// 	__in_opt     LPVOID lpEnvironment
-									 nullptr,					// 	__in_opt     LPCTSTR lpCurrentDirectory
-									 &si,						// 	__in         LPSTARTUPINFO lpStartupInfo
-									 &pi);						// 	__out        LPPROCESS_INFORMATION lpProcessInformation
-
-	if (!bRunProcess)
-	{
-		TRACE(_T("Failed! Can't execute command: %s\nCode: %u\n"), csCommand.GetString(), GetLastError());
-	}
-	else
-	{
-		ResumeThread(pi.hThread);
-
-		long nTimeout = 20;
-
-		int nErrorCount = 0;
-		DWORD dwExitCode = STILL_ACTIVE;
-		DWORD dwStart = GetTickCount();
-		BOOL bTimeout = FALSE;
-		for (;;)
-		{
-			if (dwExitCode != STILL_ACTIVE)
-			{
-				TRACE(_T("Success! Exit code: %u\n"), dwExitCode);
-				break;
-			}
-
-			if (nTimeout && CheckForTimeOut(dwStart, nTimeout * 1000))
-			{
-				bTimeout = TRUE;
-				::TerminateProcess(pi.hProcess, 0);
-				TRACE(_T("Failed! Execution Timeout\n"));
-				break;
-			}
-
-			if (::GetExitCodeProcess(pi.hProcess, &dwExitCode))
-			{
-				for (;;)
-				{
-					if (nTimeout && CheckForTimeOut(dwStart, nTimeout * 1000)) break;
-
-					// Peek data from stdout pipe
-					DWORD dwAvail = 0;
-					if (!::PeekNamedPipe(hStdoutRd, nullptr, 0, nullptr, &dwAvail, nullptr) || !dwAvail) break;
-
-					char szBuf[4096] = { 0 };
-					DWORD dwReaded = dwAvail;
-					if (!ReadFile(hStdoutRd, szBuf, min(4095, dwAvail), &dwReaded, nullptr)) break;
-
-					result.append(szBuf, dwReaded);
-				}
-			}
-			else
-			{
-				// По каким то причинам обломался
-				TRACE(_T("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d\n"), ::GetLastError(), nErrorCount);
-				nErrorCount++;
-				if (nErrorCount > 10) break;
-				continue;
-			}
-		}
-
-		bResult = TRUE;
-	}
-
-	::CloseHandle(hStdoutRd);
-	::CloseHandle(hChildStdoutWr);
-	::CloseHandle(pi.hProcess);
-	::CloseHandle(pi.hThread);
-
-	// Parse stdout
-	std::stringstream ss(result);
-	std::string item;
-	std::vector<std::map<std::string, std::string>> streams;
-	bool skip = false;
-	size_t idx = 0;
-	while (std::getline(ss, item))
-	{
-		utils::string_rtrim(item, "\r\n");
-		if (item == "[STREAM]")
-		{
-			skip = false;
-			streams.emplace_back(std::map<std::string, std::string>());
-			idx = streams.size() - 1;
-			continue;
-		}
-
-		if (item == "[/STREAM]")
-		{
-			skip = true;
-			continue;
-		}
-
-		if (!skip)
-		{
-			auto pair = utils::string_split(item, '=');
-			if(pair.size() > 1)
-				streams[idx].emplace(pair[0], pair[1]);
-		}
-	}
-
-	for (auto& stream : streams)
-	{
-		if (stream["codec_type"] == "audio")
-		{
-			std::string audio;
-			audio += stream["codec_long_name"] + " ";
-			audio += stream["sample_rate"] + " ";
-			audio += stream["channel_layout"];
-			channel->set_audio(audio);
-		}
-		else if (stream["codec_type"] == "video")
-		{
-			std::string video;
-			video += stream["width"] + "x";
-			video += stream["height"] + " ";
-			video += stream["codec_long_name"];
-			channel->set_video(video);
-		}
-		else
-		{
-			channel->set_audio("Not available");
-			channel->set_video("Not available");
-		}
-	}
 }
 
 void CEdemChannelEditorDlg::OnUpdateButtonGetInfo(CCmdUI* pCmdUI)

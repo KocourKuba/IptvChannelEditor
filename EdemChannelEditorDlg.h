@@ -22,7 +22,6 @@ public:
 	enum { IDD = IDD_EDEMCHANNELEDITOR_DIALOG };
 #endif
 
-	static std::wstring TranslateStreamUri(const std::string& stream_uri, const std::wstring& domain, const std::wstring& key);
 	// Implementation
 protected:
 	HICON m_hIcon;
@@ -71,10 +70,7 @@ protected:
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditNum();
-	afx_msg void OnEnKillfocusEditChannelName();
-	afx_msg void OnEnKillfocusEditStreamUrl();
-	afx_msg void OnEnKillfocusEditTvgId();
-	afx_msg void OnEnKillfocusEditUrlId();
+	afx_msg void OnEnChangeEditChannelName();
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
@@ -213,4 +209,5 @@ public:
 	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 };
 
+std::wstring TranslateStreamUri(const std::string& stream_uri);
 void GetChannelStreamInfo(ChannelInfo* channel);
