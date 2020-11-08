@@ -82,7 +82,7 @@ public:
 
 	const std::wstring& get_title() const { return title; }
 	const std::wstring& get_category() const { return category; }
-	const uri_stream& get_streaming_uri() const { return stream_uri; }
+	const uri_stream& get_stream_uri() const { return stream_uri; }
 
 	const std::string& get_domain() const { return domain; }
 	const std::string& get_access_key() const { return access_key; }

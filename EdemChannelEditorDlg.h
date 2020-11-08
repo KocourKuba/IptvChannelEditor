@@ -48,8 +48,8 @@ protected:
 	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnBnClickedButtonEditCategory();
-	afx_msg void OnBnClickedButtonGetAllInfo();
 	afx_msg void OnBnClickedButtonGetInfo();
+	afx_msg void OnBnClickedButtonGetInfoPl();
 	afx_msg void OnBnClickedButtonImport();
 	afx_msg void OnBnClickedButtonLoadPlaylist();
 	afx_msg void OnBnClickedButtonPack();
@@ -79,6 +79,7 @@ protected:
 	afx_msg void OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonGetInfo(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonGetInfoPl(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonImport(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonRemoveChannel(CCmdUI* pCmdUI);
@@ -93,6 +94,8 @@ protected:
 	afx_msg void OnBnClickedButtonChannelDown();
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnUpdateButtonChannelDown(CCmdUI* pCmdUI);
+	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnCbnSelchangeComboPlaylist();
 
 	DECLARE_MESSAGE_MAP()
 
@@ -140,10 +143,10 @@ public:
 	static CString m_probe;
 
 protected:
-	//CColorListBox m_wndChannelsList;
 	CColorTreeCtrl m_wndChannelsTree;
 	CComboBox m_wndCategories;
 	CListBox m_wndCategoriesList;
+	CComboBox m_wndPlaylistType;
 	CColorTreeCtrl m_wndPlaylistTree;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
@@ -160,7 +163,6 @@ protected:
 	CButton m_wndAddCategory;
 	CButton m_wndRemoveCategory;
 	CButton m_wndGetInfo;
-	CButton m_wndGetAllInfo;
 	CStatic m_wndIcon;
 	CStatic m_wndPlIcon;
 	CFont m_largeFont;
@@ -205,11 +207,7 @@ private:
 	std::vector<std::unique_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_playlist_categories;
-public:
-	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
-	CComboBox m_wndPlaylistType;
-	afx_msg void OnCbnSelchangeComboPlaylist();
 };
 
 std::wstring TranslateStreamUri(const std::string& stream_uri);
-void GetChannelStreamInfo(ChannelInfo* channel);
+void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);

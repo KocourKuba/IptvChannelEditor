@@ -18,7 +18,6 @@
 #define IDC_BUTTON_ADD_CHANNEL          1004
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_EDIT_CATEGORY        1006
-#define IDC_BUTTON_GET_ALL_INFO         1007
 #define IDC_BUTTON_GET_INFO             1008
 #define IDC_BUTTON_IMPORT               1009
 #define IDC_BUTTON_LOAD_PLAYLIST        1010
@@ -47,6 +46,8 @@
 #define IDC_CHECK_DISABLED              1031
 #define IDC_EDIT_CHANNEL_NAME           1032
 #define IDC_EDIT_DOMAIN                 1033
+#define IDC_BUTTON_GET_INFO2            1033
+#define IDC_BUTTON_GET_INFO_PL          1033
 #define IDC_EDIT_EPG_ID                 1034
 #define IDC_EDIT_INFO_AUDIO             1035
 #define IDC_EDIT_INFO_VIDEO             1036
@@ -81,7 +82,6 @@
 #define IDC_TREE_PLAYLIST               1064
 #define IDC_BUTTON_CHANNEL_UP           1065
 #define IDC_BUTTON_CHANNEL_DOWN         1066
-#define IDC_COMBO1                      1067
 #define IDC_COMBO_PLAYLIST              1067
 #define ID_ACC_DELETE_CHANNEL           32771
 #define ID_ACC_SAVE                     32772
@@ -91,7 +91,7 @@
 #define ID_ACC_CHANNEL_DOWN             32776
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        138

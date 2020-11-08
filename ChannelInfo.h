@@ -77,12 +77,6 @@ public:
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }
 
-	const std::string& get_audio() const { return audio; }
-	void set_audio(const std::string& val) { audio = val; }
-
-	const std::string& get_video() const { return video; }
-	void set_video(const std::string& val) { video = val; }
-
 protected:
 	std::wstring title;
 	int tvg_id; // TVGuide id http://www.teleguide.info/kanal%d.html
@@ -94,6 +88,4 @@ protected:
 	int next_epg_days = 2;
 	int adult = 0;
 	int has_archive = 0;
-	std::string audio;
-	std::string video;
 };

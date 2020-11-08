@@ -8,8 +8,6 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
-#include <utility>
-#include <array>
 
 #include "EdemChannelEditor.h"
 #include "EdemChannelEditorDlg.h"
@@ -23,7 +21,6 @@
 #include "rapidxml_print.hpp"
 
 #include "SevenZip/7zip/SevenZipWrapper.h"
-#include <thread>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -80,9 +77,9 @@ std::wstring TranslateStreamUri(const std::string& stream_uri)
 	return std::regex_replace(stream_url, re_uid, CEdemChannelEditorDlg::m_accessKey.GetString());
 }
 
-void GetChannelStreamInfo(ChannelInfo* channel)
+void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video)
 {
-	if (!channel)
+	if (url.empty())
 		return;
 
 	SECURITY_ATTRIBUTES sa;
@@ -119,9 +116,7 @@ void GetChannelStreamInfo(ChannelInfo* channel)
 
 	// argv[0] имя исполняемого файла
 	CString csCommand;
-	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %s"),
-					 CEdemChannelEditorDlg::m_probe.GetString(),
-					 TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url()).c_str());
+	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %s"), CEdemChannelEditorDlg::m_probe.GetString(), TranslateStreamUri(url).c_str());
 
 	BOOL bRunProcess = CreateProcess(CEdemChannelEditorDlg::m_probe.GetString(),	// 	__in_opt     LPCTSTR lpApplicationName
 									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
@@ -234,24 +229,20 @@ void GetChannelStreamInfo(ChannelInfo* channel)
 	{
 		if (stream["codec_type"] == "audio")
 		{
-			std::string audio;
-			audio += stream["codec_long_name"] + " ";
+			audio = stream["codec_long_name"] + " ";
 			audio += stream["sample_rate"] + " ";
 			audio += stream["channel_layout"];
-			channel->set_audio(audio);
 		}
 		else if (stream["codec_type"] == "video")
 		{
-			std::string video;
-			video += stream["width"] + "x";
+			video = stream["width"] + "x";
 			video += stream["height"] + " ";
 			video += stream["codec_long_name"];
-			channel->set_video(video);
 		}
 		else
 		{
-			channel->set_audio("Not available");
-			channel->set_video("Not available");
+			audio = "Not available";
+			video = "Not available";
 		}
 	}
 }
@@ -322,7 +313,6 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SORT, &CEdemChannelEditorDlg::OnBnClickedButtonSort)
 	ON_BN_CLICKED(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonGetInfo)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnUpdateButtonGetInfo)
-	ON_BN_CLICKED(IDC_BUTTON_GET_ALL_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonGetAllInfo)
 
 	ON_COMMAND(ID_ACC_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
 	ON_COMMAND(ID_ACC_DELETE_CHANNEL, &CEdemChannelEditorDlg::OnAccelRemoveChannel)
@@ -335,6 +325,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
 	ON_NOTIFY(TVN_SELCHANGING, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnSelchangingTreeChannels)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST, &CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist)
+	ON_BN_CLICKED(IDC_BUTTON_GET_INFO_PL, &CEdemChannelEditorDlg::OnBnClickedButtonGetInfoPl)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -391,7 +382,6 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_INFO_AUDIO, m_infoAudio);
 	DDX_Text(pDX, IDC_STATIC_CHANNELS, m_channelsInfo);
 	DDX_Control(pDX, IDC_BUTTON_GET_INFO, m_wndGetInfo);
-	DDX_Control(pDX, IDC_BUTTON_GET_ALL_INFO, m_wndGetAllInfo);
 	DDX_Check(pDX, IDC_CHECK_DISABLED, m_isDisabled);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylistType);
 }
@@ -691,6 +681,9 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 
 	m_wndCategoriesList.ResetContent();
 
+	m_infoAudio.Empty();
+	m_infoVideo.Empty();
+
 	auto channel = GetChannel(m_current);
 	if (!channel)
 	{
@@ -705,8 +698,6 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 		m_iconUrl.Empty();
 		m_streamUrl.Empty();
 		m_streamID = 0;
-		m_infoAudio.Empty();
-		m_infoVideo.Empty();
 		m_wndIcon.SetBitmap(nullptr);
 		m_wndCustom.SetCheck(FALSE);
 	}
@@ -722,8 +713,6 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 		m_isDisabled = !!channel->is_disabled();
 		m_streamUrl = channel->get_stream_uri().get_uri().c_str();
 		m_streamID = channel->get_channel_id();
-		m_infoAudio = channel->get_audio().c_str();
-		m_infoVideo = channel->get_video().c_str();
 
 		if(m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 		{
@@ -934,7 +923,6 @@ void CEdemChannelEditorDlg::ChangeControlsState(BOOL enable)
 	m_wndStreamUrl.EnableWindow(enable);
 	m_wndTestUrl.EnableWindow(enable);
 	m_wndGetInfo.EnableWindow(enable);
-	m_wndGetAllInfo.EnableWindow(enable);
 	GetDlgItem(IDC_EDIT_CHANNEL_NAME)->EnableWindow(enable);
 	GetDlgItem(IDC_EDIT_URL_ID)->EnableWindow(enable);
 	GetDlgItem(IDC_EDIT_TVG_ID)->EnableWindow(enable);
@@ -1903,7 +1891,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonImport()
 
 	channel->set_epg_id(entry->get_tvg_id());
 	channel->set_has_archive(entry->is_archive() != 0);
-	channel->set_stream_uri(entry->get_streaming_uri());
+	channel->set_stream_uri(entry->get_stream_uri());
 	if (entry->get_icon_uri() != channel->get_icon_uri())
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
@@ -2045,7 +2033,7 @@ void CEdemChannelEditorDlg::OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResul
 	auto entry = GetCurrentPlaylistEntry();
 	if (entry)
 	{
-		PlayStream(TranslateStreamUri(entry->get_streaming_uri().get_ts_translated_url()));
+		PlayStream(TranslateStreamUri(entry->get_stream_uri().get_ts_translated_url()));
 	}
 	*pResult = 0;
 }
@@ -2098,9 +2086,18 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSort()
 void CEdemChannelEditorDlg::OnBnClickedButtonGetInfo()
 {
 	CWaitCursor cur;
+	auto channel = GetCurrentChannel();
+	if(channel)
+	{
+		std::string audio;
+		std::string video;
+		GetChannelStreamInfo(channel->get_stream_uri().get_ts_translated_url(), audio, video);
+		LoadChannelInfo();
 
-	GetChannelStreamInfo(GetCurrentChannel());
-	LoadChannelInfo();
+		m_infoAudio = audio.c_str();
+		m_infoVideo = video.c_str();
+		UpdateData(FALSE);
+	}
 }
 
 void CEdemChannelEditorDlg::OnUpdateButtonGetInfo(CCmdUI* pCmdUI)
@@ -2108,38 +2105,24 @@ void CEdemChannelEditorDlg::OnUpdateButtonGetInfo(CCmdUI* pCmdUI)
 	pCmdUI->Enable(GetCurrentChannel() != nullptr && !m_probe.IsEmpty());
 }
 
-void CEdemChannelEditorDlg::OnBnClickedButtonGetAllInfo()
+void CEdemChannelEditorDlg::OnBnClickedButtonGetInfoPl()
 {
 	CWaitCursor cur;
-
-	m_wndGetAllInfo.EnableWindow(FALSE);
-
-	int i = 0;
-
-	auto it = m_channels.begin();
-	while(it != m_channels.end())
+	auto entry = GetCurrentPlaylistEntry();
+	if(entry)
 	{
-		std::array<std::thread, 5> workers;
-		for(int j = 0; j < 5; j++)
-		{
-			m_channelsInfo.Format(_T("Plugin channels (%d) %d"), m_channels.size(), ++i);
-			UpdateData(FALSE);
-
-			if(it == m_channels.end()) break;
-			workers[j] = std::thread(GetChannelStreamInfo, it->get());
-			++it;
-		}
-
-		for (auto& w : workers)
-		{
-			if(w.joinable())
-				w.join();
-		}
+		std::string audio;
+		std::string video;
+		GetChannelStreamInfo(entry->get_stream_uri().get_ts_translated_url(), audio, video);
+		m_infoAudio = audio.c_str();
+		m_infoVideo = video.c_str();
+		UpdateData(FALSE);
 	}
+}
 
-	LoadChannelInfo();
-	m_wndGetAllInfo.EnableWindow(TRUE);
-	UpdateChannelsCount();
+void CEdemChannelEditorDlg::OnUpdateButtonGetInfoPl(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(GetCurrentPlaylistEntry() != nullptr && !m_probe.IsEmpty());
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonChannelUp()
@@ -2211,6 +2194,8 @@ void CEdemChannelEditorDlg::SwapChannels(HTREEITEM hLeft, HTREEITEM hRight)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 {
+	CWaitCursor cur;
+
 	int idx = m_wndPlaylistType.GetCurSel();
 	std::wstring url;
 	switch (idx)
