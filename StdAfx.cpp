@@ -2,5 +2,6 @@
 
 #include "StdAfx.h"
 #include "Version.h"
+#include "SevenZip\7zip\7zpp_autolink.h"
 
 #pragma message ("Version: " STRPRODUCTVER)
