@@ -52,8 +52,8 @@ BOOL CNewCategoryDlg::OnInitDialog()
 
 	std::wstring fullPath = m_iconUri.get_icon_relative_path(theApp.GetAppPath(PLUGIN_ROOT));
 	CImage img;
-	theApp.LoadImage(fullPath.c_str(), img);
-	theApp.SetImage(img, m_wndIcon);
+	if (theApp.LoadImage(fullPath.c_str(), img))
+		theApp.SetImage(img, m_wndIcon);
 
 	return TRUE;
 }
@@ -95,8 +95,8 @@ void CNewCategoryDlg::OnStnClickedStaticCategoryIcon()
 			path += oFN.lpstrFileTitle;
 			CopyFile(file, path, FALSE);
 			CImage img;
-			theApp.LoadImage(path, img);
-			theApp.SetImage(img, m_wndIcon);
+			if (theApp.LoadImage(path, img))
+				theApp.SetImage(img, m_wndIcon);
 		}
 
 		std::string icon_path = CATEGORY_LOGO_URL;

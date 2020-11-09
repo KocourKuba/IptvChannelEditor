@@ -12,4 +12,12 @@
 
 #include "Version.h"
 
+#include <string>
+#include <vector>
+#include <map>
+#include <set>
+#include <sstream>
+#include <fstream>
+#include <regex>
+
 #endif //PCH_H

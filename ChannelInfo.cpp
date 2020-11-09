@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include <regex>
 #include "ChannelInfo.h"
 #include "utils.h"
 

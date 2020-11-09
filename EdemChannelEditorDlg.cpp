@@ -5,9 +5,6 @@
 #include "StdAfx.h"
 #include "framework.h"
 #include <afxdialogex.h>
-#include <fstream>
-#include <sstream>
-#include <regex>
 
 #include "EdemChannelEditor.h"
 #include "EdemChannelEditorDlg.h"
@@ -225,6 +222,8 @@ void GetChannelStreamInfo(const std::string& url, std::string& audio, std::strin
 		}
 	}
 
+	audio = "Not available";
+	video = "Not available";
 	for (auto& stream : streams)
 	{
 		if (stream["codec_type"] == "audio")
@@ -238,11 +237,6 @@ void GetChannelStreamInfo(const std::string& url, std::string& audio, std::strin
 			video = stream["width"] + "x";
 			video += stream["height"] + " ";
 			video += stream["codec_long_name"];
-		}
-		else
-		{
-			audio = "Not available";
-			video = "Not available";
 		}
 	}
 }
@@ -720,7 +714,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 			if(!channel->get_icon())
 			{
 				CImage img;
-				if(theApp.LoadImage(m_iconUrl, img))
+				if (theApp.LoadImage(m_iconUrl, img))
 					channel->set_icon(img);
 			}
 
@@ -1092,6 +1086,10 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		ChangeControlsState(TRUE);
 		m_current = hSelected;
 		LoadChannelInfo();
+		auto channel = GetCurrentChannel();
+		m_infoAudio = channel->get_audio().c_str();
+		m_infoVideo = channel->get_video().c_str();
+		UpdateData(FALSE);
 	}
 	else if (m_wndChannelsTree.GetParentItem(hSelected) == nullptr)
 	{
@@ -1578,8 +1576,8 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 			path += oFN.lpstrFileTitle;
 			CopyFile(file, path, FALSE);
 			CImage img;
-			theApp.LoadImage(path, img);
-			theApp.SetImage(img, m_wndIcon);
+			if (theApp.LoadImage(path, img))
+				theApp.SetImage(img, m_wndIcon);
 		}
 
 		m_iconUrl = uri::PLUGIN_SCHEME;
@@ -2015,14 +2013,16 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 		if (!entry->get_icon())
 		{
 			CImage img;
-			theApp.LoadImage(CString(entry->get_icon_uri().get_uri().c_str()), img);
-			entry->set_icon(img);
+			if(theApp.LoadImage(CString(entry->get_icon_uri().get_uri().c_str()), img))
+				entry->set_icon(img);
 		}
 
 		theApp.SetImage(entry->get_icon(), m_wndPlIcon);
 
-		UpdateData(FALSE);
 		OnBnClickedButtonSearchNext();
+		m_infoAudio = entry->get_audio().c_str();
+		m_infoVideo = entry->get_video().c_str();
+		UpdateData(FALSE);
 	}
 
 	*pResult = 0;
@@ -2094,6 +2094,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonGetInfo()
 		GetChannelStreamInfo(channel->get_stream_uri().get_ts_translated_url(), audio, video);
 		LoadChannelInfo();
 
+		channel->set_audio(audio);
+		channel->set_video(video);
 		m_infoAudio = audio.c_str();
 		m_infoVideo = video.c_str();
 		UpdateData(FALSE);
@@ -2114,6 +2116,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonGetInfoPl()
 		std::string audio;
 		std::string video;
 		GetChannelStreamInfo(entry->get_stream_uri().get_ts_translated_url(), audio, video);
+		entry->set_audio(audio);
+		entry->set_video(video);
 		m_infoAudio = audio.c_str();
 		m_infoVideo = video.c_str();
 		UpdateData(FALSE);

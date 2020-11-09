@@ -4,7 +4,6 @@
 
 #pragma once
 #include <memory>
-#include <vector>
 #include "PlayListEntry.h"
 #include "ColorTreeCtrl.h"
 #include "ChannelCategory.h"

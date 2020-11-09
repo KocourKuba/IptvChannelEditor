@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include <stdexcept>
-#include <regex>
 #include <winhttp.h>
 
 #include "utils.h"

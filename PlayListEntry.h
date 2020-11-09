@@ -1,9 +1,8 @@
 #pragma once
-#include <string>
-#include <map>
 #include "uri.h"
 #include "ColoringProperty.h"
 #include "IconContainer.h"
+#include "InfoContainer.h"
 
 enum directives
 {
@@ -65,6 +64,7 @@ protected:
 class PlaylistEntry
 	: public m3u_entry
 	, public IconContainer
+	, public InfoContainer
 	, public ColoringProperty
 {
 public:

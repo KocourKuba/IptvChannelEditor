@@ -1,8 +1,6 @@
 #include "StdAfx.h"
-#include <map>
 #include "PlayListEntry.h"
 #include "utils.h"
-#include <regex>
 
 static std::map<directives, std::string> s_ext_directives = {
 	{ ext_header,   "#EXTM3U" },

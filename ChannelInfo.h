@@ -1,10 +1,9 @@
 #pragma once
-#include <string>
-#include <set>
 #include "rapidxml.hpp"
 #include "uri.h"
 #include "ColoringProperty.h"
 #include "IconContainer.h"
+#include "InfoContainer.h"
 
 // <tv_channel>
 //     <caption>Первый канал</caption>
@@ -23,6 +22,7 @@
 
 class ChannelInfo
 	: public IconContainer
+	, public InfoContainer
 	, public ColoringProperty
 {
 public:

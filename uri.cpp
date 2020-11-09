@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include <regex>
 #include "uri.h"
 #include "utils.h"
 
