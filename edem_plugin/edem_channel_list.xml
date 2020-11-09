@@ -4481,6 +4481,7 @@
 			<num_future_epg_days>2</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6308/index.m3u8</streaming_url>
 			<disabled>true</disabled>

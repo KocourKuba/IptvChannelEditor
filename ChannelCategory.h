@@ -1,6 +1,7 @@
 #pragma once
 #include "rapidxml.hpp"
 #include "uri.h"
+#include "ColoringProperty.h"
 
 // <tv_category>
 //   <id>1</id>
@@ -8,7 +9,7 @@
 //   <icon_url>plugin_file://icons/1.png</icon_url>
 // </tv_category>
 
-class ChannelCategory
+class ChannelCategory : public ColoringProperty
 {
 public:
 	static constexpr auto TV_CATEGORY = "tv_category";

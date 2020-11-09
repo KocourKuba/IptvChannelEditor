@@ -3,6 +3,7 @@
 #include "ColoringProperty.h"
 #include "ChannelInfo.h"
 #include "PlayListEntry.h"
+#include "ChannelCategory.h"
 
 BEGIN_MESSAGE_MAP(CColorTreeCtrl, CTreeCtrl)
 	ON_WM_PAINT()
@@ -52,13 +53,21 @@ void CColorTreeCtrl::OnPaint()
 		// Do not meddle with selected items or drop highlighted items
 		UINT selflag = TVIS_DROPHILITED | TVIS_SELECTED;
 		UINT state = GetItemState(hItem, selflag);
+		BOOL root = GetParentItem(hItem) == nullptr;
 		if (!(state & selflag))
 		{
 			ColoringProperty* container = nullptr;
 			if (class_hash == typeid(ChannelInfo).hash_code())
-				container = dynamic_cast<ColoringProperty*>((ChannelInfo*)GetItemData(hItem));
+			{
+				if(root)
+					container = dynamic_cast<ColoringProperty*>((ChannelCategory*)GetItemData(hItem));
+				else
+					container = dynamic_cast<ColoringProperty*>((ChannelInfo*)GetItemData(hItem));
+			}
 			else if (class_hash == typeid(PlaylistEntry).hash_code())
+			{
 				container = dynamic_cast<ColoringProperty*>((PlaylistEntry*)GetItemData(hItem));
+			}
 
 			bool isColored = container ? container->is_colored() : false;
 			bool isDisabled = container ? container->is_disabled() : false;

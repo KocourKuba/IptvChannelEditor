@@ -527,11 +527,11 @@ void CEdemChannelEditorDlg::FillChannels()
 
 	for (auto& category : m_channels_categories)
 	{
-		const auto& ptr = category.second.get();
 		TVINSERTSTRUCTW tvInsert = { nullptr };
 		tvInsert.hParent = TVI_ROOT;
-		tvInsert.item.pszText = (LPWSTR)ptr->get_caption().c_str();
-		tvInsert.item.mask = TVIF_TEXT;
+		tvInsert.item.pszText = (LPWSTR)category.second->get_caption().c_str();
+		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
+		tvInsert.item.lParam = (DWORD_PTR)category.second.get();
 		auto item = m_wndChannelsTree.InsertItem(&tvInsert);
 		m_tree_categories.emplace(category.first, item);
 	}
@@ -1067,7 +1067,7 @@ void CEdemChannelEditorDlg::OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT*
 	TRACE("SelChanging\n");
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
-	if (pNMTreeView->itemOld.lParam)
+	if (pNMTreeView->itemOld.lParam && m_wndChannelsTree.GetParentItem(pNMTreeView->itemOld.hItem) != nullptr)
 	{
 		SaveChannelInfo();
 	}
@@ -1089,7 +1089,6 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		auto channel = GetCurrentChannel();
 		m_infoAudio = channel->get_audio().c_str();
 		m_infoVideo = channel->get_video().c_str();
-		UpdateData(FALSE);
 	}
 	else if (m_wndChannelsTree.GetParentItem(hSelected) == nullptr)
 	{
@@ -1101,17 +1100,31 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		m_nextDays = 0;
 		m_hasArchive = 0;
 		m_isAdult = 0;
-		m_iconUrl.Empty();
 		m_streamUrl.Empty();
 		m_streamID = 0;
 		m_infoAudio.Empty();
 		m_infoVideo.Empty();
-		m_wndIcon.SetBitmap(nullptr);
+
+		auto category = (ChannelCategory*)m_wndChannelsTree.GetItemData(hSelected);
+		if (category)
+		{
+			m_iconUrl = category->get_icon_uri().get_uri().c_str();
+			CImage img;
+			if (theApp.LoadImage(category->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(PLUGIN_ROOT)).c_str(), img))
+				theApp.SetImage(img, m_wndIcon);
+		}
+		else
+		{
+			m_iconUrl.Empty();
+			m_wndIcon.SetBitmap(nullptr);
+		}
 	}
 	else
 	{
 		ChangeControlsState(TRUE);
 	}
+
+	UpdateData(FALSE);
 
 	if (pResult)
 		*pResult = 0;
