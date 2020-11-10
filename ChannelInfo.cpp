@@ -2,21 +2,6 @@
 #include "ChannelInfo.h"
 #include "utils.h"
 
-static constexpr auto ICON_URL = "icon_url";
-static constexpr auto EPG_ID = "epg_id";
-static constexpr auto TVG_ID = "tvg_id";
-static constexpr auto CAPTION = "caption";
-static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
-static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
-static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
-static constexpr auto TV_CATEGORIES = "tv_categories";
-static constexpr auto TV_CATEGORY_ID = "tv_category_id";
-static constexpr auto STREAMING_URL = "streaming_url";
-static constexpr auto ARCHIVE = "archive";
-static constexpr auto PROTECTED = "protected";
-static constexpr auto DISABLED = "disabled";
-
-
 ChannelInfo::ChannelInfo()
 {
 	set_icon_uri(utils::ICON_TEMPLATE);

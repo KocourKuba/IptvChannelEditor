@@ -70,7 +70,7 @@ class PlaylistEntry
 public:
 	PlaylistEntry() = default;
 	PlaylistEntry(const PlaylistEntry& src) = default;
-	PlaylistEntry(const std::string& str) { Parse(str); }
+	//PlaylistEntry(const std::string& str) { Parse(str); }
 
 	void Parse(const std::string& str) override;
 	void Clear() override;

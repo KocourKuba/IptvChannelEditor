@@ -397,7 +397,7 @@ bool DownloadFile(const std::wstring& url, std::vector<BYTE>& data)
 		bResults = WinHttpReceiveResponse(hRequest, nullptr);
 
 	DWORD dwSize = 0;
-	do
+	for(;;)
 	{
 		if (!bResults)
 		{
@@ -424,8 +424,9 @@ bool DownloadFile(const std::wstring& url, std::vector<BYTE>& data)
 		else
 		{
 			TRACE("Error %u in WinHttpReadData.\n", GetLastError());
+			break;
 		}
-	} while (dwSize);
+	}
 
 	// Close any open handles.
 	if (hRequest) WinHttpCloseHandle(hRequest);

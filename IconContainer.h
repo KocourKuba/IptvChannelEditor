@@ -1,22 +1,52 @@
 #pragma once
 #include "uri.h"
+#include "utils.h"
 
 class IconContainer
 {
 public:
+	static constexpr auto ICON_URL = "icon_url";
+
+public:
 	IconContainer() = default;
+	IconContainer(const IconContainer& src)
+	{
+		*this = src;
+	}
+
 	IconContainer(IconContainer&& src)
+	{
+		*this = std::move(src);
+	}
+
+public:
+	IconContainer* operator=(const IconContainer& src)
+	{
+		icon_uri = src.icon_uri;
+		copy_icon(src.icon);
+		return this;
+	}
+
+	IconContainer* operator=(IconContainer&& src)
 	{
 		icon_uri = std::move(src.icon_uri);
 		icon.Attach(src.icon.Detach());
+		return this;
 	}
-public:
+
 	const uri& get_icon_uri() const { return icon_uri; }
 	void set_icon_uri(const uri& val) { icon_uri = val; }
-	void set_icon_uri(const std::string& val) { icon_uri = val; }
+	void set_icon_uri(const std::string& val) { icon_uri.set_uri(val); }
+	void set_icon_uri(const std::wstring& val) { icon_uri.set_uri(utils::utf16_to_utf8(val)); }
 
 	const CImage& get_icon() const { return icon; }
-	void set_icon(CImage& val) { icon.Destroy(); icon.Attach(val.Detach()); }
+	void set_icon(CImage& val)
+	{
+		if(icon)
+			icon.Destroy();
+		icon.Attach(val.Detach());
+	}
+
 	void copy_icon(const CImage& src)
 	{
 		if (src.IsNull())

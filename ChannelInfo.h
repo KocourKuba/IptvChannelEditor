@@ -27,6 +27,18 @@ class ChannelInfo
 {
 public:
 	static constexpr auto TV_CHANNEL = "tv_channel";
+	static constexpr auto EPG_ID = "epg_id";
+	static constexpr auto TVG_ID = "tvg_id";
+	static constexpr auto CAPTION = "caption";
+	static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
+	static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
+	static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
+	static constexpr auto TV_CATEGORIES = "tv_categories";
+	static constexpr auto TV_CATEGORY_ID = "tv_category_id";
+	static constexpr auto STREAMING_URL = "streaming_url";
+	static constexpr auto ARCHIVE = "archive";
+	static constexpr auto PROTECTED = "protected";
+	static constexpr auto DISABLED = "disabled";
 
 public:
 	ChannelInfo();
@@ -72,7 +84,7 @@ public:
 
 	const uri_stream& get_stream_uri() const { return stream_uri; }
 	void set_stream_uri(const uri_stream& val) { stream_uri = val; }
-	void set_stream_uri(const std::string& val) { stream_uri = val; }
+	void set_stream_uri(const std::string& val) { stream_uri.set_uri(val); }
 
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }

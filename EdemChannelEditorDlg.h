@@ -21,6 +21,13 @@ public:
 	enum { IDD = IDD_EDEMCHANNELEDITOR_DIALOG };
 #endif
 
+public:
+	static HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
+	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
+	static HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
+	static std::wstring TranslateStreamUri(const std::string& stream_uri);
+	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
+
 	// Implementation
 protected:
 	HICON m_hIcon;
@@ -39,22 +46,37 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
-	afx_msg void OnAccelRemoveChannel();
-	afx_msg void OnAccelChannelUp();
-	afx_msg void OnAccelChannelDown();
+	afx_msg void OnAddChannel();
+	afx_msg void OnRemoveChannel();
+	afx_msg void OnUpdateRemoveChannel(CCmdUI* pCmdUI);
+	afx_msg void OnChannelUp();
+	afx_msg void OnUpdateChannelUp(CCmdUI* pCmdUI);
+	afx_msg void OnChannelDown();
+	afx_msg void OnUpdateChannelDown(CCmdUI* pCmdUI);
+	afx_msg void OnToggleChannel();
+	afx_msg void OnUpdateToggleChannel(CCmdUI* pCmdUI);
+	afx_msg void OnTreeItemRename();
+	afx_msg void OnAddCategory();
+	afx_msg void OnUpdateAddCategory(CCmdUI* pCmdUI);
+	afx_msg void OnRemoveCategory();
+	afx_msg void OnUpdateRemoveCategory(CCmdUI* pCmdUI);
+	afx_msg void OnGetChannelStreamInfo();
+	afx_msg void OnUpdateGetChannelStreamInfo(CCmdUI* pCmdUI);
+	afx_msg void OnGetChannelStreamInfoPl();
+	afx_msg void OnUpdateGetChannelStreamInfoPl(CCmdUI* pCmdUI);
+	afx_msg void OnPlayChannelStream();
+	afx_msg void OnUpdatePlayChannelStream(CCmdUI* pCmdUI);
+	afx_msg void OnPlayChannelStreamPl();
+	afx_msg void OnUpdatePlayChannelStreamPl(CCmdUI* pCmdUI);
+
 	afx_msg void OnBnClickedButtonAbout();
-	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonCacheIcon();
-	afx_msg void OnBnClickedButtonEditCategory();
-	afx_msg void OnBnClickedButtonGetInfo();
 	afx_msg void OnBnClickedButtonGetInfoPl();
-	afx_msg void OnBnClickedButtonImport();
+	afx_msg void OnCreateUpdateChannel();
 	afx_msg void OnBnClickedButtonLoadPlaylist();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonPlSearchNext();
-	afx_msg void OnBnClickedButtonRemoveCategory();
-	afx_msg void OnBnClickedButtonRemoveChannel();
 	afx_msg void OnBnClickedButtonRemoveFromShowIn();
 	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnBnClickedButtonSearchNext();
@@ -62,38 +84,35 @@ protected:
 	afx_msg void OnBnClickedButtonSort();
 	afx_msg void OnBnClickedButtonTestEpg();
 	afx_msg void OnBnClickedButtonTestTvg();
-	afx_msg void OnBnClickedButtonTestUrl();
 	afx_msg void OnBnClickedButtonUpdateIcon();
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnChanges();
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditNum();
-	afx_msg void OnEnChangeEditChannelName();
+	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnEndlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonGetInfo(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonGetInfoPl(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonImport(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateCreateUpdateChannel(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonRemoveChannel(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonSave(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonTestUrl(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonChannelUp();
-	afx_msg void OnUpdateButtonChannelUp(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonChannelDown();
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
-	afx_msg void OnUpdateButtonChannelDown(CCmdUI* pCmdUI);
-	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeComboPlaylist();
 
 	DECLARE_MESSAGE_MAP()
@@ -112,7 +131,10 @@ private:
 
 	void LoadChannelInfo();
 	void SaveChannelInfo();
+	void SaveCategoryInfo();
 
+	void PlayChannel(HTREEITEM hItem);
+	void PlayPlaylistEntry(HTREEITEM hItem);
 	void PlayStream(const std::wstring& stream_url);
 	void UpdateChannelsCount();
 
@@ -120,20 +142,22 @@ private:
 	void CheckForExisting();
 
 	void SetCurrentChannel(HTREEITEM hCur);
+
 	ChannelInfo* GetChannel(HTREEITEM hItem);
 	ChannelInfo* GetCurrentChannel();
+
+	ChannelCategory* GetItemCategory(HTREEITEM hItem);
+	ChannelCategory* GetCategory(HTREEITEM hItem);
+
 	PlaylistEntry* GetPlaylistEntry(HTREEITEM item);
 	PlaylistEntry* GetCurrentPlaylistEntry();
-	ChannelCategory* GetCategory(int hItem);
 
-	HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
-	HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
-	HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
-
+	bool IsChannel(HTREEITEM hItem) const;
+	bool IsCategory(HTREEITEM hItem) const;
 	void ChangeControlsState(BOOL enable);
-	int FindCategory(const std::wstring& name);
+	bool IsCategoryInChannels(const ChannelCategory* category) const;
+	const ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
 	int GetNewCategoryID();
-	ChannelInfo* CreateChannel();
 	void SwapChannels(HTREEITEM hCur, HTREEITEM hNext);
 
 public:
@@ -155,18 +179,13 @@ protected:
 	CButton m_wndPlArchive;
 	CButton m_wndTestTVG;
 	CButton m_wndTestEPG;
-	CButton m_wndTestUrl;
 	CButton m_wndAddToShow;
 	CButton m_wndRemoveFromShow;
-	CButton m_wndEditCategory;
-	CButton m_wndAddCategory;
-	CButton m_wndRemoveCategory;
 	CButton m_wndGetInfo;
 	CStatic m_wndIcon;
 	CStatic m_wndPlIcon;
 	CFont m_largeFont;
 
-	CString m_channelName;
 	CString m_search;
 	CString m_streamUrl;
 	CString m_iconUrl;
@@ -183,7 +202,6 @@ protected:
 
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;
-	BOOL m_isDisabled = FALSE;
 	int m_streamID = 0;
 	int m_tvgID = 0;
 	int m_epgID = 0;
@@ -207,6 +225,3 @@ private:
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_playlist_categories;
 };
-
-std::wstring TranslateStreamUri(const std::string& stream_uri);
-void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);

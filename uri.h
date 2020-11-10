@@ -7,7 +7,6 @@ public:
 
 public:
 	uri() = default;
-	uri(const std::string& url) { set_uri(url); }
 
 public:
 	virtual void clear() { schema.clear(); path.clear(); }
@@ -37,7 +36,6 @@ class uri_stream : public uri
 {
 public:
 	uri_stream() = default;
-	uri_stream(const std::string& url) { set_uri(url); }
 
 public:
 	void clear() override;

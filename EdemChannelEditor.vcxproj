@@ -214,8 +214,6 @@
     <ClInclude Include="ColorTreeCtrl.h" />
     <ClInclude Include="IconContainer.h" />
     <ClInclude Include="InfoContainer.h" />
-    <ClInclude Include="NewCategoryDlg.h" />
-    <ClInclude Include="NewChannelDlg.h" />
     <ClInclude Include="PlayListEntry.h" />
     <ClInclude Include="SettingsDlg.h" />
     <ClInclude Include="uri.h" />
@@ -230,14 +228,13 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="ColorTreeCtrl.cpp" />
-    <ClCompile Include="NewCategoryDlg.cpp" />
-    <ClCompile Include="NewChannelDlg.cpp" />
     <ClCompile Include="PlayListEntry.cpp" />
     <ClCompile Include="SettingsDlg.cpp" />
     <ClCompile Include="uri.cpp" />

@@ -75,12 +75,6 @@
     <ClInclude Include="utils.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="NewChannelDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NewCategoryDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ColoringProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -92,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="InfoContainer.h">
       <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Version.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -124,12 +121,6 @@
     </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>Source Files\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="NewChannelDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NewCategoryDlg.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ColorTreeCtrl.cpp">
       <Filter>Source Files</Filter>

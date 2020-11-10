@@ -6,6 +6,25 @@ namespace utils
 	static constexpr auto URI_TEMPLATE = "http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
 	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/channel_unset.png";
 
+	static constexpr auto TV_INFO = "tv_info";
+	static constexpr auto TV_CATEGORIES = "tv_categories";
+	static constexpr auto TV_CHANNELS = "tv_channels";
+	static constexpr auto CHANNELS_LOGO_URL = "icons/channels/";
+	static constexpr auto CATEGORIES_LOGO_URL = "icons/";
+
+#ifdef _DEBUG
+	static constexpr auto PLUGIN_ROOT = L"..\\edem_plugin\\";
+	static constexpr auto CHANNELS_CONFIG = L"..\\edem_plugin\\edem_channel_list.xml";
+	static constexpr auto CHANNELS_LOGO_PATH = L"..\\edem_plugin\\icons\\channels\\";
+	static constexpr auto CATEGORIES_LOGO_PATH = L"..\\edem_plugin\\icons\\";
+#else
+	static constexpr auto PLUGIN_ROOT = L".\\edem_plugin\\";
+	static constexpr auto CHANNELS_CONFIG = L".\\edem_plugin\\edem_channel_list.xml";
+	static constexpr auto CHANNELS_LOGO_PATH = L".\\edem_plugin\\icons\\channels\\";
+	static constexpr auto CATEGORIES_LOGO_PATH = L".\\edem_plugin\\icons\\";
+#endif // _DEBUG
+
+
 /// <summary>
 /// Our own implementation of alpha numeric instead of std::isalnum to avoid
 /// taking global lock for performance reasons.

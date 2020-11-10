@@ -89,10 +89,7 @@ BOOL CEdemChannelEditorApp::InitInstance()
 	}
 
 	// Delete the shell manager created above.
-	if (pShellManager != nullptr)
-	{
-		delete pShellManager;
-	}
+	delete pShellManager;
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
