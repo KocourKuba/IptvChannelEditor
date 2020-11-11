@@ -1198,8 +1198,14 @@ void CEdemChannelEditorDlg::OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI)
 	pCmdUI->Enable(m_wndCategoriesList.GetCurSel() != LB_ERR);
 }
 
+void CEdemChannelEditorDlg::OnEditChangeTvIdd()
+{
+	set_allow_save();
+}
+
 void CEdemChannelEditorDlg::OnChanges()
 {
+	SaveChannelInfo();
 	set_allow_save();
 }
 
@@ -1376,8 +1382,6 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 			entry->Parse(line);
 			switch (entry->get_directive())
 			{
-				case ext_unknown:
-					break;
 				case ext_pathname:
 				{
 					const auto& category = entry->get_category();
@@ -1391,6 +1395,7 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 												  {
 													  return category == item.first;
 												  });
+
 					if (found == m_playlist_categories.end())
 					{
 						m_playlist_categories.emplace_back(category, nullptr);
@@ -1398,14 +1403,6 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 					entry = std::make_unique<PlaylistEntry>();
 					break;
 				}
-				case ext_header:
-					break;
-				case ext_group:
-					break;
-				case ext_playlist:
-					break;
-				case ext_info:
-					break;
 				default:
 					break;
 			}
@@ -1413,15 +1410,19 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	}
 
 	// if access key and domain not set, try to load it from playlist
-	if(m_accessKey.IsEmpty()
-	   && m_domain.IsEmpty()
-	   && !m_playlist.empty()
-	   && m_playlist[0]->get_access_key() != "00000000000000"
-	   && m_playlist[0]->get_domain() != "localhost"
-	   )
+	if (m_accessKey.IsEmpty() && m_domain.IsEmpty() && !m_playlist.empty())
 	{
-		theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), CString(m_playlist[0]->get_access_key().c_str()));
-		theApp.WriteProfileString(_T("Setting"), _T("Domain"), CString(m_playlist[0]->get_domain().c_str()));
+		for(const auto& pair : m_playlist)
+		{
+			const auto& access_key = pair.second->get_access_key();
+			const auto& domain = pair.second->get_domain();
+			if(!access_key.empty() && !domain.empty() && access_key != "00000000000000" && domain != "localhost")
+			{
+				theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), CString(access_key.c_str()));
+				theApp.WriteProfileString(_T("Setting"), _T("Domain"), CString(domain.c_str()));
+				break;
+			}
+		}
 	}
 }
 
@@ -1862,35 +1863,41 @@ void CEdemChannelEditorDlg::OnCreateUpdateChannel()
 	m_wndChannelsTree.SelectItem(hFoundItem);
 
 	auto channel = GetCurrentChannel();
-	channel->set_title(entry->get_title());
-	// Search if channel present in other leafs
-	while (hFoundItem != nullptr)
+	if(channel->get_title() != entry->get_title())
 	{
-		m_wndChannelsTree.SetItemText(hFoundItem, channel->get_title().c_str());
-		hFoundItem = FindTreeNextItem(m_wndChannelsTree, hFoundItem, (DWORD_PTR)channel);
+		channel->set_title(entry->get_title());
+		// Search if channel present in other leafs
+		while (hFoundItem != nullptr)
+		{
+			m_wndChannelsTree.SetItemText(hFoundItem, channel->get_title().c_str());
+			hFoundItem = FindTreeNextItem(m_wndChannelsTree, hFoundItem, (DWORD_PTR)channel);
+		}
 	}
 
-	channel->set_epg_id(entry->get_tvg_id());
+	if (auto id = entry->get_tvg_id(); id != -1)
+		channel->set_epg_id(id);
+
 	channel->set_has_archive(entry->is_archive() != 0);
 	channel->set_stream_uri(entry->get_stream_uri());
-	if (entry->get_icon_uri() != channel->get_icon_uri())
+	if (entry->get_icon_uri() != channel->get_icon_uri() && !channel->get_icon_uri().get_uri().empty())
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
 		channel->copy_icon(entry->get_icon());
 	}
 
-	const auto& name = entry->get_category();
-	for (const auto& category : m_channels_categories)
+	const auto& cat_name = entry->get_category();
+	if (cat_name.find(L"зрослые") != std::wstring::npos)
 	{
-		if (0 != _wcsicmp(category.second->get_caption().c_str(), name.c_str())) continue;
-
-		channel->get_categores().emplace(category.second->get_id());
-		if (entry->get_category().find(L"зрослые") != std::wstring::npos)
-		{
-			channel->set_adult(TRUE);
-		}
-		break;
+		channel->set_adult(TRUE);
 	}
+
+	auto it = std::find_if(m_channels_categories.begin(), m_channels_categories.end(), [cat_name](const auto& category)
+						   {
+							   return (0 == _wcsicmp(category.second->get_caption().c_str(), cat_name.c_str()));
+						   });
+
+	if (it != m_channels_categories.end())
+		channel->get_categores().emplace(it->second->get_id());
 
 	if (isNew)
 		CheckForExisting();
@@ -1902,18 +1909,51 @@ void CEdemChannelEditorDlg::OnCreateUpdateChannel()
 void CEdemChannelEditorDlg::OnUpdateCreateUpdateChannel(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
-	if (auto entry = GetCurrentPlaylistEntry(); entry != nullptr)
+	do
 	{
+		auto entry = GetCurrentPlaylistEntry();
+		if (entry == nullptr) break;
+
+		enable = TRUE;
 		auto found = FindChannelByEntry(entry);
-		if(found != nullptr)
+		if (pCmdUI->m_nID != IDC_BUTTON_IMPORT)
 		{
 			CString str;
-			str.Format(_T("Update \'%s\'\tF5"), found->get_title().c_str());
+			if (found == nullptr)
+			{
+				str.Format(_T("Add \'%s\'\tF5"), entry->get_title().c_str());
+			}
+			else
+			{
+				str.Format(_T("Update \'%s\'\tF5"), found->get_title().c_str());
+			}
 			pCmdUI->SetText(str);
 		}
 
-		enable = TRUE;
-	}
+		if (found == nullptr) break;
+
+		auto channel = GetCurrentChannel();
+
+		if (!entry->get_title().empty() && channel->get_title() != entry->get_title()) break;
+
+		if (auto id = entry->get_tvg_id(); id != -1 && channel->get_epg_id() != id) break;
+
+		if ((channel->get_has_archive() != 0) != entry->is_archive()) break;
+
+		if (!entry->get_icon_uri().get_uri().empty() && entry->get_icon_uri() != channel->get_icon_uri()) break;
+
+		const auto& cat_name = entry->get_category();
+		auto it = std::find_if(m_channels_categories.begin(), m_channels_categories.end(), [cat_name](const auto& category)
+							   {
+								   return (0 == _wcsicmp(category.second->get_caption().c_str(), cat_name.c_str()));
+							   });
+		if (it == m_channels_categories.end()) break;
+
+		bool adult = cat_name.find(L"зрослые") != std::wstring::npos;
+		if (adult && channel->get_adult() == 0) break;
+
+		enable = FALSE;
+	} while (false);
 
 	pCmdUI->Enable(enable);
 }
@@ -2007,11 +2047,15 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 	if (entry)
 	{
 		m_pl_current = m_wndPlaylistTree.GetSelectedItem();
-		m_search.Format(_T("\\%d"), entry->get_channel_id());
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
-		m_plID.Format(_T("ID: %d"), entry->get_channel_id());
-		m_plEPG.Format(_T("EPG: %d"), entry->get_tvg_id());
+		int id = entry->get_channel_id();
+		m_plID.Format(_T("ID: %d"), id);
+
+		if (entry->get_tvg_id() != -1)
+			m_plEPG.Format(_T("EPG: %d"), entry->get_tvg_id());
+
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
+		UpdateData(FALSE);
 
 		CString path(entry->get_icon_uri().get_uri().c_str());
 		CImage img;
@@ -2022,9 +2066,23 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 
 		theApp.SetImage(entry->get_icon(), m_wndPlIcon);
 
-		OnBnClickedButtonSearchNext();
+
+		auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
+								  {
+									  return channel->get_channel_id() == id;
+								  });
+
+		if (found != m_channels.end())
+		{
+			if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+			{
+				m_wndChannelsTree.SelectItem(hSelected);
+			}
+		}
+
 		m_infoAudio = entry->get_audio().c_str();
 		m_infoVideo = entry->get_video().c_str();
+
 		UpdateData(FALSE);
 	}
 
@@ -2270,16 +2328,26 @@ void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 		case 1:
 			url = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 			break;
+		case 2:
+			url = theApp.GetProfileString(_T("Setting"), _T("PlaylistURL")).GetString();
+			break;
 		default:
 			return;
+	}
+
+	std::wstring name;
+	if (size_t pos = url.rfind('/'); pos != std::wstring::npos)
+	{
+		name = url.substr(pos + 1);
+	}
+	else
+	{
+		name = L"unnamed_playlist.m3u8";
 	}
 
 	std::vector<BYTE> data;
 	if (utils::DownloadFile(url, data))
 	{
-		std::wstring name;
-		utils::CrackUrl(url, std::wstring(), name);
-		utils::string_ltrim(name, L"/");
 		CString playlist(theApp.GetAppPath() + name.c_str());
 
 		std::ofstream os(playlist);
@@ -2302,6 +2370,10 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 			GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST)->EnableWindow(TRUE);
 			break;
 		case 2:
+			GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST)->EnableWindow(FALSE);
+			GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST)->EnableWindow(!theApp.GetProfileString(_T("Setting"), _T("PlaylistURL")).IsEmpty());
+			break;
+		case 3:
 			GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST)->EnableWindow(TRUE);
 			GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST)->EnableWindow(FALSE);
 			break;

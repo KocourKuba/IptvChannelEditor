@@ -30,6 +30,7 @@ protected:
 
 	CString m_accessKey;
 	CString m_domain;
+	CString m_playlistURL;
 	CString m_player;
 	CString m_probe;
 };

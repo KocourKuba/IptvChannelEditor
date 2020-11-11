@@ -86,6 +86,7 @@ protected:
 	afx_msg void OnBnClickedButtonTestTvg();
 	afx_msg void OnBnClickedButtonUpdateIcon();
 	afx_msg void OnBnClickedCheckCustomize();
+	afx_msg void OnEditChangeTvIdd();
 	afx_msg void OnChanges();
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);

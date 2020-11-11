@@ -89,7 +89,7 @@ public:
 
 protected:
 	int archive = 0;
-	int tvg_id = 0;
+	int tvg_id = -1;
 	int channel_len = 0;
 	std::wstring title;
 	std::wstring category;
