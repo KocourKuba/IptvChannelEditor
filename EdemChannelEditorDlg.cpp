@@ -1915,7 +1915,6 @@ void CEdemChannelEditorDlg::OnUpdateCreateUpdateChannel(CCmdUI* pCmdUI)
 		auto entry = GetCurrentPlaylistEntry();
 		if (entry == nullptr) break;
 
-		enable = TRUE;
 		auto found = FindChannelByEntry(entry);
 		if (pCmdUI->m_nID != IDC_BUTTON_IMPORT)
 		{
@@ -1931,17 +1930,17 @@ void CEdemChannelEditorDlg::OnUpdateCreateUpdateChannel(CCmdUI* pCmdUI)
 			pCmdUI->SetText(str);
 		}
 
+		enable = TRUE;
+
 		if (found == nullptr) break;
 
-		auto channel = GetCurrentChannel();
+		if (!entry->get_title().empty() && found->get_title() != entry->get_title()) break;
 
-		if (!entry->get_title().empty() && channel->get_title() != entry->get_title()) break;
+		if (auto id = entry->get_tvg_id(); id != -1 && found->get_epg_id() != id) break;
 
-		if (auto id = entry->get_tvg_id(); id != -1 && channel->get_epg_id() != id) break;
+		if ((found->get_has_archive() != 0) != entry->is_archive()) break;
 
-		if ((channel->get_has_archive() != 0) != entry->is_archive()) break;
-
-		if (!entry->get_icon_uri().get_uri().empty() && entry->get_icon_uri() != channel->get_icon_uri()) break;
+		if (!entry->get_icon_uri().get_uri().empty() && entry->get_icon_uri() != found->get_icon_uri()) break;
 
 		const auto& cat_name = entry->get_category();
 		auto it = std::find_if(m_channels_categories.begin(), m_channels_categories.end(), [cat_name](const auto& category)
@@ -1951,7 +1950,7 @@ void CEdemChannelEditorDlg::OnUpdateCreateUpdateChannel(CCmdUI* pCmdUI)
 		if (it == m_channels_categories.end()) break;
 
 		bool adult = cat_name.find(L"зрослые") != std::wstring::npos;
-		if (adult && channel->get_adult() == 0) break;
+		if (adult && found->get_adult() == 0) break;
 
 		enable = FALSE;
 	} while (false);
