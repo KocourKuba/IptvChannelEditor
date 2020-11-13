@@ -132,12 +132,12 @@ void PlaylistEntry::Parse(const std::string& str)
 			domain = m_url[1].str();
 			access_key = m_url[2].str();
 			int id = utils::char_to_int(m_url[3].str());
-			stream_uri.set_uri(utils::URI_TEMPLATE);
-			stream_uri.set_Id(id);
+			get_stream_uri().set_uri(utils::URI_TEMPLATE);
+			get_stream_uri().set_Id(id);
 		}
 		else
 		{
-			stream_uri.set_uri(ext_value);
+			get_stream_uri().set_uri(ext_value);
 		}
 	}
 
@@ -172,7 +172,7 @@ void PlaylistEntry::Clear()
 
 	title.clear();
 	category.clear();
-	stream_uri.clear();
+	get_stream_uri().clear();
 	set_icon_uri("");
 	set_icon(CImage());
 }

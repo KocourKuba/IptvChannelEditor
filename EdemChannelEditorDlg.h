@@ -60,7 +60,11 @@ protected:
 	afx_msg void OnUpdateAddCategory(CCmdUI* pCmdUI);
 	afx_msg void OnRemoveCategory();
 	afx_msg void OnUpdateRemoveCategory(CCmdUI* pCmdUI);
+	afx_msg void OnGetStreamInfo();
+	afx_msg void OnGetStreamInfoAll();
+	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnGetChannelStreamInfo();
+	afx_msg void OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateGetChannelStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnGetChannelStreamInfoPl();
 	afx_msg void OnUpdateGetChannelStreamInfoPl(CCmdUI* pCmdUI);
@@ -130,6 +134,7 @@ private:
 	void FillPlaylist();
 
 	void LoadChannelInfo();
+	void LoadPlayListInfo();
 
 	void FillCategoriesList(ChannelInfo* channel);
 
@@ -205,6 +210,7 @@ protected:
 	CString m_infoVideo;
 	CString m_infoAudio;
 	CString m_channelsInfo;
+	CString m_playlistInfo;
 
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;

@@ -6,7 +6,7 @@ ChannelInfo::ChannelInfo(const std::map<int, std::unique_ptr<ChannelCategory>>& 
 	: m_all_categories(all_categories)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
-	stream_uri.set_uri(utils::URI_TEMPLATE);
+	get_stream_uri().set_uri(utils::URI_TEMPLATE);
 }
 
 ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node, const std::map<int, std::unique_ptr<ChannelCategory>>& all_categories)
@@ -43,7 +43,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		}
 	}
 
-	stream_uri.set_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
+	get_stream_uri().set_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
 	has_archive = utils::get_value_int(node->first_node(ARCHIVE));
 	adult = utils::get_value_int(node->first_node(PROTECTED));
 }
@@ -86,7 +86,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	}
 
 	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/127/index.m3u8</streaming_url>
-	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, stream_uri.get_id_translated_url().c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, get_stream_uri().get_id_translated_url().c_str()));
 
 	// <archive>1</archive>
 	if (has_archive)

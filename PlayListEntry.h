@@ -2,7 +2,7 @@
 #include "uri.h"
 #include "ColoringProperty.h"
 #include "IconContainer.h"
-#include "InfoContainer.h"
+#include "StreamContainer.h"
 
 enum directives
 {
@@ -64,7 +64,7 @@ protected:
 class PlaylistEntry
 	: public m3u_entry
 	, public IconContainer
-	, public InfoContainer
+	, public StreamContainer
 	, public ColoringProperty
 {
 public:
@@ -75,14 +75,12 @@ public:
 	void Parse(const std::string& str) override;
 	void Clear() override;
 
-	int get_channel_id() const { return stream_uri.get_Id(); }
 	int get_channel_length() const { return channel_len; }
 	int get_tvg_id() { return tvg_id; };
 	bool is_archive() const { return archive != 0; }
 
 	const std::wstring& get_title() const { return title; }
 	const std::wstring& get_category() const { return category; }
-	const uri_stream& get_stream_uri() const { return stream_uri; }
 
 	const std::string& get_domain() const { return domain; }
 	const std::string& get_access_key() const { return access_key; }
@@ -93,7 +91,6 @@ protected:
 	int channel_len = 0;
 	std::wstring title;
 	std::wstring category;
-	uri_stream stream_uri;
 	std::string domain;
 	std::string access_key;
 };

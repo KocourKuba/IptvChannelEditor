@@ -74,12 +74,13 @@
 #define IDC_STATIC_VERSION              1060
 #define IDC_TREE_CHANNELS               1061
 #define IDC_TREE_PLAYLIST               1062
+#define IDC_STATIC_APP_TITLE            1063
 #define ID_ADD_CATEGORY                 32771
 #define ID_ADD_CHANNEL                  32772
 #define ID_CHANNEL_DOWN                 32773
 #define ID_CHANNEL_UP                   32774
 #define ID_EDIT_RENAME                  32775
-#define ID_GET_STREAM_INFO              32776
+#define ID_GET_STREAM_INFO_CH           32776
 #define ID_GET_STREAM_INFO_PL           32777
 #define ID_PLAY_STREAM                  32778
 #define ID_PLAY_STREAM_PL               32779
@@ -91,15 +92,17 @@
 #define ID_UPDATE_ICON                  32785
 #define ID_CHANNELMENU_SORTBY           32786
 #define ID_SORTBY_NAME                  32787
-#define ID_SORTBY_CHANNEL_ID             32788
+#define ID_SORTBY_CHANNEL_ID            32788
+#define ID_GET_STREAM_INFO              32789
+#define ID_GET_STREAM_INFO_ALL          32790
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        140
-#define _APS_NEXT_COMMAND_VALUE         32789
-#define _APS_NEXT_CONTROL_VALUE         1063
+#define _APS_NEXT_COMMAND_VALUE         32791
+#define _APS_NEXT_CONTROL_VALUE         1064
 #define _APS_NEXT_SYMED_VALUE           1163
 #endif
 #endif

@@ -3,8 +3,8 @@
 #include "uri.h"
 #include "ColoringProperty.h"
 #include "IconContainer.h"
-#include "InfoContainer.h"
 #include "ChannelCategory.h"
+#include "StreamContainer.h"
 
 // <tv_channel>
 //     <caption>Первый канал</caption>
@@ -23,7 +23,7 @@
 
 class ChannelInfo
 	: public IconContainer
-	, public InfoContainer
+	, public StreamContainer
 	, public ColoringProperty
 {
 public:
@@ -52,12 +52,12 @@ public:
 
 	std::wstring GetIconRelativePath(LPCTSTR szRoot = nullptr) const;
 
-	bool is_custom() const { return stream_uri.is_template(); }
+	bool is_custom() const { return get_stream_uri().is_template(); }
 
 // Getters/Setters
 
-	int get_channel_id() const { return stream_uri.get_Id(); }
-	void set_channel_id(int val) { stream_uri.set_Id(val); }
+	int get_channel_id() const { return get_stream_uri().get_Id(); }
+	void set_channel_id(int val) { get_stream_uri().set_Id(val); }
 
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
@@ -88,10 +88,6 @@ public:
 	ChannelCategory* find_category(int id);
 	void rebiuld_categories();
 
-	const uri_stream& get_stream_uri() const { return stream_uri; }
-	void set_stream_uri(const uri_stream& val) { stream_uri = val; }
-	void set_stream_uri(const std::string& val) { stream_uri.set_uri(val); }
-
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }
 
@@ -99,7 +95,6 @@ private:
 	std::wstring title;
 	int tvg_id = 0; // TVGuide id http://www.teleguide.info/kanal%d.html
 	int epg_id = 0; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
-	uri_stream stream_uri;
 	std::map<int, ChannelCategory*> categories;
 	const std::map<int, std::unique_ptr<ChannelCategory>>& m_all_categories;
 	int prev_epg_days = 4;

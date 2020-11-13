@@ -150,7 +150,7 @@ BEGIN
     CONTROL         "",IDC_STATIC_PL_ICON,"Static",SS_BITMAP | SS_NOTIFY | SS_CENTERIMAGE | SS_SUNKEN,439,301,80,45
     CONTROL         "Donate if you like this App",IDC_MFCLINK_DONATE,"MfcLink",WS_TABSTOP,432,4,87,13
     LTEXT           "Channel Editor",IDC_STATIC_TITLE,4,7,180,14
-    RTEXT           "for DUNE HD",IDC_STATIC,52,25,54,8
+    RTEXT           "for DUNE HD",IDC_STATIC_APP_TITLE,52,25,54,8
     LTEXT           "Plugin channels",IDC_STATIC_CHANNELS,4,36,84,8
     GROUPBOX        "Channel Info",IDC_STATIC,165,36,193,166
     LTEXT           "Playlist channels",IDC_STATIC_PLAYLIST,365,35,123,8
@@ -437,6 +437,7 @@ BEGIN
     VK_DELETE,      ID_REMOVE_CHANNEL,      VIRTKEY, NOINVERT
     "S",            ID_SAVE,                VIRTKEY, CONTROL, NOINVERT
     VK_F2,          ID_EDIT_RENAME,         VIRTKEY, NOINVERT
+    VK_F4,          ID_GET_STREAM_INFO,     VIRTKEY, NOINVERT
     VK_F5,          ID_UPDATE_CHANNEL,      VIRTKEY, NOINVERT
     VK_F6,          ID_UPDATE_ICON,         VIRTKEY, NOINVERT
 END
@@ -459,17 +460,13 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Add Category",                ID_ADD_CATEGORY
         MENUITEM "Delete Category",             ID_REMOVE_CATEGORY
-        POPUP "Sort By"
-        BEGIN
-            MENUITEM "Name",                        ID_SORTBY_NAME
-            MENUITEM "Channel ID",                  ID_SORTBY_CHANNEL_ID
-        END
         MENUITEM SEPARATOR
         MENUITEM "Rename\tF2",                  ID_EDIT_RENAME
         MENUITEM "Move Up\tCtrl+Up",            ID_CHANNEL_UP
         MENUITEM "Move Down\tCtrl+Down",        ID_CHANNEL_DOWN
         MENUITEM SEPARATOR
-        MENUITEM "Get Stream Info",             ID_GET_STREAM_INFO
+        MENUITEM "Get Stream Info for All channels", ID_GET_STREAM_INFO_ALL
+        MENUITEM "Get Stream Info\tF4",         ID_GET_STREAM_INFO_CH
     END
 END
 
@@ -481,7 +478,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Add Channel\tF5",             ID_UPDATE_CHANNEL
         MENUITEM SEPARATOR
-        MENUITEM "Get Stream Info",             ID_GET_STREAM_INFO_PL
+        MENUITEM "Get Stream Info for All channels", ID_GET_STREAM_INFO_ALL
+        MENUITEM "Get Stream Info\tF4",         ID_GET_STREAM_INFO_PL
     END
 END
 
