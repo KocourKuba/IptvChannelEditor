@@ -57,12 +57,9 @@ void CColorTreeCtrl::OnPaint()
 		if (!(state & selflag))
 		{
 			ColoringProperty* container = nullptr;
-			if (class_hash == typeid(ChannelInfo).hash_code())
+			if (class_hash == typeid(ChannelInfo).hash_code() && !root)
 			{
-				if(root)
-					container = dynamic_cast<ColoringProperty*>((ChannelCategory*)GetItemData(hItem));
-				else
-					container = dynamic_cast<ColoringProperty*>((ChannelInfo*)GetItemData(hItem));
+				container = dynamic_cast<ColoringProperty*>((ChannelInfo*)GetItemData(hItem));
 			}
 			else if (class_hash == typeid(PlaylistEntry).hash_code())
 			{

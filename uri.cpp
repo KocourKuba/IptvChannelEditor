@@ -4,6 +4,8 @@
 
 void uri::set_uri(const std::string& url)
 {
+	uri::clear();
+
 	// https, udp, http, file, file_plugin
 	std::regex re(R"(([a-z_]+:\/\/)(.*))");
 	std::smatch m;

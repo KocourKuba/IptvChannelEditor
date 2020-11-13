@@ -17,8 +17,6 @@
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_ADD_TO_SHOW          1002
 #define IDC_BUTTON_CACHE_ICON           1003
-#define IDC_BUTTON_CHANNEL_DOWN         1004
-#define IDC_BUTTON_CHANNEL_UP           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
 #define IDC_BUTTON_GET_INFO             1007
 #define IDC_BUTTON_GET_INFO_PL          1008
@@ -91,13 +89,16 @@
 #define ID_TOGGLE_CHANNEL               32783
 #define ID_UPDATE_CHANNEL               32784
 #define ID_UPDATE_ICON                  32785
+#define ID_CHANNELMENU_SORTBY           32786
+#define ID_SORTBY_NAME                  32787
+#define ID_SORTBY_CHANNEL_ID             32788
 
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        140
-#define _APS_NEXT_COMMAND_VALUE         32786
+#define _APS_NEXT_COMMAND_VALUE         32789
 #define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           1163
 #endif

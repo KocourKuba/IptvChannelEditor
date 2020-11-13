@@ -68,6 +68,8 @@ protected:
 	afx_msg void OnUpdatePlayChannelStream(CCmdUI* pCmdUI);
 	afx_msg void OnPlayChannelStreamPl();
 	afx_msg void OnUpdatePlayChannelStreamPl(CCmdUI* pCmdUI);
+	afx_msg void OnSortByName();
+	afx_msg void OnSortByChannelID();
 
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonAddToShowIn();
@@ -81,7 +83,6 @@ protected:
 	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
-	afx_msg void OnBnClickedButtonSort();
 	afx_msg void OnBnClickedButtonTestEpg();
 	afx_msg void OnBnClickedButtonTestTvg();
 	afx_msg void OnBnClickedButtonUpdateIcon();
@@ -111,8 +112,6 @@ protected:
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedButtonChannelUp();
-	afx_msg void OnBnClickedButtonChannelDown();
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 
@@ -131,6 +130,9 @@ private:
 	void FillPlaylist();
 
 	void LoadChannelInfo();
+
+	void FillCategoriesList(ChannelInfo* channel);
+
 	void SaveChannelInfo();
 	void SaveCategoryInfo();
 
@@ -149,6 +151,8 @@ private:
 
 	ChannelCategory* GetItemCategory(HTREEITEM hItem);
 	ChannelCategory* GetCategory(HTREEITEM hItem);
+	HTREEITEM GetCategory(int id);
+	std::map<int, HTREEITEM> GetCategoriesTreeMap();
 
 	PlaylistEntry* GetPlaylistEntry(HTREEITEM item);
 	PlaylistEntry* GetCurrentPlaylistEntry();
@@ -160,6 +164,7 @@ private:
 	const ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
 	int GetNewCategoryID();
 	void SwapChannels(HTREEITEM hCur, HTREEITEM hNext);
+	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
 public:
 	static CString m_domain;
@@ -208,7 +213,6 @@ protected:
 	int m_epgID = 0;
 	int m_prevDays = 0;
 	int m_nextDays = 0;
-	int m_sortType = 0;
 
 private:
 	CString m_player;
@@ -220,9 +224,9 @@ private:
 	std::map<int, std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
 	std::vector<std::unique_ptr<ChannelInfo>>::iterator m_cur_it;
 
-	std::map<int, std::unique_ptr<ChannelCategory>> m_channels_categories;
-	std::map<int, HTREEITEM> m_tree_categories;
 	std::vector<std::unique_ptr<ChannelInfo>> m_channels;
+	std::map<int, std::unique_ptr<ChannelCategory>> m_categories;
+
 	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
-	std::vector<std::pair<std::wstring, HTREEITEM>> m_playlist_categories;
+	std::vector<std::pair<std::wstring, HTREEITEM>> m_pl_categories;
 };

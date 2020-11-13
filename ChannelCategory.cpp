@@ -5,12 +5,7 @@
 
 ChannelCategory::ChannelCategory()
 {
-	icon_uri.set_uri(utils::ICON_TEMPLATE);
-}
-
-std::string ChannelCategory::GetIconPath()
-{
-	return icon_uri.is_local() ? icon_uri.get_path() : icon_uri.get_uri();
+	set_icon_uri(utils::ICON_TEMPLATE);
 }
 
 ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node)
@@ -28,10 +23,10 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 	// <caption>Общие</caption>
 	caption = utils::get_value_wstring(node->first_node(CAPTION));
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	icon_uri.set_uri(utils::get_value_string(node->first_node(ICON_URL)));
+	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
 }
 
-rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc)
+rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) const
 {
 	// <tv_channel>
 	auto category_node = utils::alloc_node(alloc, TV_CATEGORY);
@@ -43,7 +38,7 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc)
 	category_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(caption).c_str()));
 
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	category_node->append_node(utils::alloc_node(alloc, ICON_URL, icon_uri.get_uri().c_str()));
+	category_node->append_node(utils::alloc_node(alloc, ICON_URL, get_icon_uri().get_uri().c_str()));
 
 	return category_node;
 }

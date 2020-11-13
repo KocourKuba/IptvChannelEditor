@@ -25,16 +25,17 @@ public:
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);
-	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& alloc);
-	std::string GetIconPath();
+	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& alloc) const;
 
 	int get_id() const { return id; }
 	void set_id(int val) { id = val; }
 
+	void swap_id(ChannelCategory& src) { std::swap(id, src.id); }
+
 	const std::wstring& get_caption() const { return caption; }
 	void set_caption(const std::wstring& val) { caption = val; }
 
-protected:
+private:
 	int id = 0;
 	std::wstring caption;
 };

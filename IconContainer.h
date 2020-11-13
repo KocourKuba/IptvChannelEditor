@@ -35,6 +35,7 @@ public:
 	}
 
 	const uri& get_icon_uri() const { return icon_uri; }
+
 	void set_icon_uri(const uri& val) { icon_uri = val; }
 	void set_icon_uri(const std::string& val) { icon_uri.set_uri(val); }
 	void set_icon_uri(const std::wstring& val) { icon_uri.set_uri(utils::utf16_to_utf8(val)); }
@@ -44,7 +45,9 @@ public:
 	{
 		if(icon)
 			icon.Destroy();
-		icon.Attach(val.Detach());
+
+		if(val)
+			icon.Attach(val.Detach());
 	}
 
 	void copy_icon(const CImage& src)
@@ -97,7 +100,7 @@ public:
 		}
 	}
 
-protected:
+private:
 	uri icon_uri;
 	CImage icon;
 };

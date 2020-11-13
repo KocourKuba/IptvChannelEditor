@@ -12,7 +12,7 @@ public:
 	const std::string& get_video() const { return video; }
 	void set_video(const std::string& val) { video = val; }
 
-protected:
+private:
 	std::string audio;
 	std::string video;
 };

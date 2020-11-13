@@ -4,6 +4,7 @@
 #include "ColoringProperty.h"
 #include "IconContainer.h"
 #include "InfoContainer.h"
+#include "ChannelCategory.h"
 
 // <tv_channel>
 //     <caption>Первый канал</caption>
@@ -41,8 +42,8 @@ public:
 	static constexpr auto DISABLED = "disabled";
 
 public:
-	ChannelInfo();
-	ChannelInfo(rapidxml::xml_node<>* node);
+	ChannelInfo(const std::map<int, std::unique_ptr<ChannelCategory>>& all_categories);
+	ChannelInfo(rapidxml::xml_node<>* node, const std::map<int, std::unique_ptr<ChannelCategory>>& all_categories);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);
@@ -78,9 +79,14 @@ public:
 	int get_next_epg_days() const { return next_epg_days; }
 	void set_next_epg_days(int val) { next_epg_days = val; }
 
-	const std::set<int>& get_categores() const { return categories; }
-	std::set<int>& get_categores() { return categories; }
-	void set_categores(const std::set<int>& val) { categories = val; }
+	const std::map<int, ChannelCategory*>& get_categores() const { return categories; }
+	void set_categores(const std::set<int>& val);
+	const std::set<int> get_category_ids() const;
+
+	void set_category(int val);
+	void erase_category(int id) { categories.erase(id); }
+	ChannelCategory* find_category(int id);
+	void rebiuld_categories();
 
 	const uri_stream& get_stream_uri() const { return stream_uri; }
 	void set_stream_uri(const uri_stream& val) { stream_uri = val; }
@@ -89,13 +95,13 @@ public:
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }
 
-protected:
+private:
 	std::wstring title;
-	int tvg_id; // TVGuide id http://www.teleguide.info/kanal%d.html
-	int epg_id; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
-	uri icon_uri;
+	int tvg_id = 0; // TVGuide id http://www.teleguide.info/kanal%d.html
+	int epg_id = 0; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
 	uri_stream stream_uri;
-	std::set<int> categories;
+	std::map<int, ChannelCategory*> categories;
+	const std::map<int, std::unique_ptr<ChannelCategory>>& m_all_categories;
 	int prev_epg_days = 4;
 	int next_epg_days = 2;
 	int adult = 0;
