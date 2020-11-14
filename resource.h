@@ -29,6 +29,7 @@
 #define IDC_BUTTON_SEARCH_NEXT          1015
 #define IDC_BUTTON_SETTINGS             1016
 #define IDC_BUTTON_SORT                 1017
+#define IDC_BUTTON_LOAD_CHANNELS        1017
 #define IDC_BUTTON_TEST_EPG             1018
 #define IDC_BUTTON_TEST_TVG             1019
 #define IDC_BUTTON_UPDATE_ICON          1020
@@ -39,6 +40,7 @@
 #define IDC_COMBO_CATEGORY              1025
 #define IDC_COMBO_PLAYLIST              1026
 #define IDC_COMBO_SORT                  1027
+#define IDC_COMBO_CHANNELS              1027
 #define IDC_EDIT_CATEGORY               1028
 #define IDC_EDIT_DOMAIN                 1029
 #define IDC_EDIT_DOMAIN2                1030

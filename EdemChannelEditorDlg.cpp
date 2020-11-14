@@ -64,8 +64,6 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CEdemChannelEditorDlg::OnBnClickedButtonAbout)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_TO_SHOW, &CEdemChannelEditorDlg::OnBnClickedButtonAddToShowIn)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_ADD_TO_SHOW, &CEdemChannelEditorDlg::OnUpdateButtonAddToShowIn)
-	ON_BN_CLICKED(IDC_BUTTON_IMPORT, &CEdemChannelEditorDlg::OnCreateUpdateChannel)
-	ON_UPDATE_COMMAND_UI(IDC_BUTTON_IMPORT, &CEdemChannelEditorDlg::OnUpdateCreateUpdateChannel)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonLoadPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_PL_SEARCH_NEXT, &CEdemChannelEditorDlg::OnBnClickedButtonPlSearchNext)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_PL_SEARCH_NEXT, &CEdemChannelEditorDlg::OnUpdateButtonPlSearchNext)
@@ -97,11 +95,14 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_UPDATE_ICON, &CEdemChannelEditorDlg::OnBnClickedButtonUpdateIcon)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_UPDATE_ICON, &CEdemChannelEditorDlg::OnUpdateButtonUpdateIcon)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
+	ON_CBN_SELCHANGE(IDC_COMBO_CHANNELS, &CEdemChannelEditorDlg::OnCbnSelchangeComboChannels)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST, &CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnGetChannelStreamInfo)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnUpdateGetChannelStreamInfo)
 	ON_BN_CLICKED(IDC_BUTTON_GET_INFO_PL, &CEdemChannelEditorDlg::OnBnClickedButtonGetInfoPl)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_GET_INFO_PL, &CEdemChannelEditorDlg::OnUpdateButtonGetInfoPl)
+	ON_BN_CLICKED(IDC_BUTTON_LOAD_CHANNELS, &CEdemChannelEditorDlg::OnBnClickedButtonLoadChannels)
+	ON_UPDATE_COMMAND_UI(IDC_BUTTON_LOAD_CHANNELS, &CEdemChannelEditorDlg::OnUpdateButtonLoadChannels)
 
 	ON_NOTIFY(TVN_SELCHANGING, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnSelchangingTreeChannels)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels)
@@ -191,10 +192,10 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_PL_ARCHIVE, m_wndPlArchive);
 	DDX_Text(pDX, IDC_EDIT_INFO_VIDEO, m_infoVideo);
 	DDX_Text(pDX, IDC_EDIT_INFO_AUDIO, m_infoAudio);
-	DDX_Text(pDX, IDC_STATIC_CHANNELS, m_channelsInfo);
-	DDX_Text(pDX, IDC_STATIC_PLAYLIST, m_playlistInfo);
+	DDX_Text(pDX, IDC_STATIC_CHANNELS, m_chInfo);
 	DDX_Control(pDX, IDC_BUTTON_GET_INFO, m_wndGetInfo);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylistType);
+	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -250,7 +251,20 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
 
-	if (LoadChannels(theApp.GetAppPath(utils::CHANNELS_CONFIG).GetString()))
+	int idx = theApp.GetProfileInt(_T("Setting"), _T("ChannelsType"), 0);
+	m_wndChannels.SetCurSel(idx);
+	CString channels;
+	switch (idx)
+	{
+		case 1:
+			channels = theApp.GetProfileString(_T("Setting"), _T("ChannelList"));
+			break;
+		default:
+			channels = theApp.GetAppPath(utils::CHANNELS_CONFIG);
+			break;
+	}
+
+	if (LoadChannels(channels))
 	{
 		FillCategories();
 		FillChannels();
@@ -393,7 +407,8 @@ void CEdemChannelEditorDlg::FillChannels()
 
 void CEdemChannelEditorDlg::UpdateChannelsCount()
 {
-	m_channelsInfo.Format(_T("Plugin channels (%d)"), m_channels.size());
+	m_chInfo.Format(_T("Channels: %s (%d)"), m_chFileName.GetString(), m_channels.size());
+
 	UpdateData(FALSE);
 }
 
@@ -753,14 +768,24 @@ int CEdemChannelEditorDlg::GetNewCategoryID()
 	return ++id;
 }
 
-bool CEdemChannelEditorDlg::LoadChannels(const std::wstring& path)
+bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 {
 	m_categories.clear();
 	m_channels.clear();
 
-	std::ifstream is(path, std::istream::binary);
+	std::ifstream is(path.GetString(), std::istream::binary);
 	if (!is.good())
 		return false;
+
+	auto pos = path.ReverseFind('\\');
+	if (pos != -1)
+	{
+		m_chFileName = path.Mid(++pos);
+	}
+	else
+	{
+		m_chFileName = path;
+	}
 
 	// Read the xml file into a vector
 	std::vector<char> buffer((std::istreambuf_iterator<char>(is)), std::istreambuf_iterator<char>());
@@ -797,6 +822,8 @@ bool CEdemChannelEditorDlg::LoadChannels(const std::wstring& path)
 		m_channels.emplace_back(std::move(std::make_unique<ChannelInfo>(ch_node, m_categories)));
 		ch_node = ch_node->next_sibling();
 	}
+
+	UpdateChannelsCount();
 
 	return true;
 }
@@ -1579,7 +1606,6 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	{
 		m_plFileName = file;
 	}
-	UpdateData(FALSE);
 
 	m_playlist.clear();
 	m_pl_categories.clear();
@@ -2329,6 +2355,39 @@ void CEdemChannelEditorDlg::OnSortByChannelID()
 	set_allow_save();
 }
 
+void CEdemChannelEditorDlg::OnBnClickedButtonLoadChannels()
+{
+	CFileDialog dlg(TRUE);
+
+	CString file;
+	CString filter(_T("Channels xml(*.xml)|*.xml|All Files (*.*)|*.*||"));
+	filter.Replace('|', '\0');
+
+	OPENFILENAME& oFN = dlg.GetOFN();
+	oFN.lpstrFilter = filter.GetString();
+	oFN.nMaxFile = MAX_PATH;
+	oFN.nFilterIndex = 0;
+	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
+	oFN.lpstrTitle = _T("Load Edem TV channels list");
+	oFN.Flags |= OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON;
+
+	INT_PTR nResult = dlg.DoModal();
+	file.ReleaseBuffer();
+
+	if (nResult == IDOK && LoadChannels(file))
+	{
+		FillCategories();
+		FillChannels();
+		LoadChannelInfo();
+		theApp.WriteProfileString(_T("Setting"), _T("ChannelList"), file);
+	}
+}
+
+void CEdemChannelEditorDlg::OnUpdateButtonLoadChannels(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_wndChannels.GetCurSel() == 1);
+}
+
 void CEdemChannelEditorDlg::OnGetStreamInfo()
 {
 	CWnd* pFocus = GetFocus();
@@ -2366,7 +2425,9 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			int j = 0;
 			while (pool != m_channels.end())
 			{
-				m_channelsInfo.Format(_T("Plugin channels (%d) %d"), m_channels.size(), std::distance(m_channels.begin(), pool) + 1);
+				m_chInfo.Format(_T("Plugin channels (%d) %d"), m_chFileName.GetString(),
+									  m_channels.size(),
+									  std::distance(m_channels.begin(), pool) + 1);
 				UpdateData(FALSE);
 
 				const auto& url = (*pool)->get_stream_uri().get_ts_translated_url();
@@ -2404,7 +2465,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			int j = 0;
 			while (j < 5 && pair != m_playlist.end())
 			{
-				m_playlistInfo.Format(_T("Playlist channels (%d) %d"), m_playlist.size(), std::distance(m_playlist.begin(), pair) + 1);
+				m_plInfo.Format(_T("Playlist: %s (%d) %d"), m_plFileName.GetString(), m_playlist.size(), std::distance(m_playlist.begin(), pair) + 1);
 				UpdateData(FALSE);
 
 				const auto& url = pair->second->get_stream_uri().get_ts_translated_url();
@@ -2844,4 +2905,29 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 			video += stream["codec_long_name"];
 		}
 	}
+}
+
+void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
+{
+	int idx = m_wndChannels.GetCurSel();
+	CString channels;
+	switch (idx)
+	{
+		case 0:
+			channels = theApp.GetAppPath(utils::CHANNELS_CONFIG);
+			break;
+		case 1:
+			channels = theApp.GetProfileString(_T("Setting"), _T("ChannelList"));
+			break;
+		default:
+			break;
+	}
+
+	if (LoadChannels(channels))
+	{
+		FillCategories();
+		FillChannels();
+		theApp.WriteProfileString(_T("Setting"), _T("ChannelList"), channels);
+	}
+	theApp.WriteProfileInt(_T("Setting"), _T("ChannelsType"), idx);
 }

@@ -72,6 +72,8 @@ protected:
 	afx_msg void OnUpdatePlayChannelStream(CCmdUI* pCmdUI);
 	afx_msg void OnPlayChannelStreamPl();
 	afx_msg void OnUpdatePlayChannelStreamPl(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedButtonLoadChannels();
+	afx_msg void OnUpdateButtonLoadChannels(CCmdUI* pCmdUI);
 	afx_msg void OnSortByName();
 	afx_msg void OnSortByChannelID();
 
@@ -118,6 +120,7 @@ protected:
 	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
+	afx_msg void OnCbnSelchangeComboChannels();
 
 	DECLARE_MESSAGE_MAP()
 
@@ -125,7 +128,7 @@ private:
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
 
-	bool LoadChannels(const std::wstring& path);
+	bool LoadChannels(const CString& path);
 	void SaveChannels();
 	void LoadPlaylist(const CString& file);
 
@@ -182,6 +185,7 @@ protected:
 	CListBox m_wndCategoriesList;
 	CComboBox m_wndPlaylistType;
 	CColorTreeCtrl m_wndPlaylistTree;
+	CComboBox m_wndChannels;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
 	CButton m_wndArchive;
@@ -202,15 +206,13 @@ protected:
 	CString m_iconUrl;
 
 	CString m_plSearch;
-	CString m_plFileName;
 	CString m_plInfo;
 	CString m_plIconName;
 	CString m_plID;
 	CString m_plEPG;
 	CString m_infoVideo;
 	CString m_infoAudio;
-	CString m_channelsInfo;
-	CString m_playlistInfo;
+	CString m_chInfo;
 
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;
@@ -221,6 +223,8 @@ protected:
 	int m_nextDays = 0;
 
 private:
+	CString m_chFileName;
+	CString m_plFileName;
 	CString m_player;
 	BOOL m_allow_save = FALSE;
 	HACCEL m_hAccel = nullptr;
