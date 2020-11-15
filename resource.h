@@ -93,13 +93,11 @@
 #define ID_UPDATE_CHANNEL               32784
 #define ID_UPDATE_ICON                  32785
 #define ID_CHANNELMENU_SORTBY           32786
-#define ID_SORTBY_NAME                  32787
-#define ID_SORTBY_CHANNEL_ID            32788
 #define ID_GET_STREAM_INFO              32789
 #define ID_GET_STREAM_INFO_ALL          32790
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        140

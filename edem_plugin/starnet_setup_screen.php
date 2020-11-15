@@ -11,10 +11,12 @@ class DemoSetupScreen extends AbstractControlsScreen
     const EPG_FONTSIZE_DEF_VALUE = 'normal';
 
     ///////////////////////////////////////////////////////////////////////
+    protected $tv;
 
-    public function __construct()
+    public function __construct(Tv $tv)
     {
         parent::__construct(self::ID);
+        $this->tv = $tv;
     }
 
     public static function get_media_url_str()
@@ -26,6 +28,7 @@ class DemoSetupScreen extends AbstractControlsScreen
     {
         $defs = array();
 
+        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : DemoConfig::CHANNEL_LIST_URL;
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
         $epg_shift = isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : '0';
@@ -35,25 +38,36 @@ class DemoSetupScreen extends AbstractControlsScreen
         $show_ops['yes'] = 'Да';
         $show_ops['no'] = 'Нет';
 
+        $shift_ops = array();
         for ($i = -12; $i < 13; $i++)
             $shift_ops[$i * 3600] = $i;
+
+        $channels = array();
+        $list = glob(DuneSystem::$properties['install_dir_path'] . "/*.xml");
+        foreach ($list as $filename) {
+            $filename = basename($filename);
+            if ($filename != 'dune_plugin.xml')
+                $channels[$filename] = $filename;
+        }
 
         ControlFactory::add_vgap($defs, -10);
         $this->add_label($defs, 'ЄDЄM TV', 'Версия ' . DemoConfig::PluginVersion . '. [' . DemoConfig::PluginDate . ']');
 
-        $this->add_label($defs, 'Настройки ----------------------------------', '-----------------------------');
+        //$this->add_label($defs, 'Настройки ----------------------------------', '-----------------------------');
 
         $this->add_combobox($defs,
             'show_tv', 'Показывать ЄDЄM TV в главном меню:',
             $show_tv, $show_ops, 0, true);
 
         $this->add_combobox($defs,
+            'channels_list', 'Используемый список каналов:',
+            $channels_list, $channels, 0, true);
+
+        $this->add_combobox($defs,
             'epg_shift', 'Коррекция программы (час):',
             $epg_shift, $shift_ops, 0, true);
 
-
         $show_buf_time_ops = array();
-
         $show_buf_time_ops[0] = 'По умолчанию';
         $show_buf_time_ops[500] = '0.5 с';
         $show_buf_time_ops[1000] = '1 с';
@@ -62,11 +76,7 @@ class DemoSetupScreen extends AbstractControlsScreen
         $show_buf_time_ops[5000] = '5 с';
         $show_buf_time_ops[10000] = '10 с';
 
-        $this->add_combobox
-        (
-            $defs,
-            'buf_time',
-            'Время буферизации:',
+        $this->add_combobox($defs, 'buf_time', 'Время буферизации:',
             $buf_time, $show_buf_time_ops, 0, true);
 
         $epg_font_size_ops = array();
@@ -81,7 +91,6 @@ class DemoSetupScreen extends AbstractControlsScreen
 //        $this->add_label($defs, 'Информация --------------------------------','-----------------------------');
         $this->add_button($defs, 'restart', '', 'Перезагрузить плеер', 0);
         ControlFactory::add_vgap($defs, -10);
-
 
         return $defs;
     }
@@ -152,13 +161,21 @@ class DemoSetupScreen extends AbstractControlsScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply') {
+        if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $control_id = $user_input->control_id;
             $new_value = $user_input->{$control_id};
             hd_print("Setup: changing $control_id value to $new_value");
 
             if ($control_id === 'restart')
                 shell_exec('reboot now');
+            else if ($control_id === 'channels_list')
+            {
+                $plugin_cookies->channels_list = $new_value;
+                $this->tv->unload_channels();
+                $this->tv->load_channels($plugin_cookies);
+                $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
+                return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
+            }
             else if ($control_id === 'show_tv')
                 $plugin_cookies->show_tv = $new_value;
             else if ($control_id === 'show_vod')
@@ -198,8 +215,7 @@ class DemoSetupScreen extends AbstractControlsScreen
                 return ActionFactory::show_title_dialog($msg, $action);
             }
         }
-        return ActionFactory::reset_controls(
-            $this->do_get_control_defs($plugin_cookies));
+        return ActionFactory::reset_controls($this->do_get_control_defs($plugin_cookies));
     }
 }
 

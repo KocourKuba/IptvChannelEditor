@@ -141,8 +141,6 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM, &CEdemChannelEditorDlg::OnUpdatePlayChannelStream)
 	ON_COMMAND(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnPlayChannelStreamPl)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnUpdatePlayChannelStreamPl)
-	ON_COMMAND(ID_SORTBY_NAME, &CEdemChannelEditorDlg::OnSortByName)
-	ON_COMMAND(ID_SORTBY_CHANNEL_ID, &CEdemChannelEditorDlg::OnSortByChannelID)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 END_MESSAGE_MAP()
@@ -168,11 +166,11 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_CATEGORIES, m_wndCategoriesList);
 	DDX_Control(pDX, IDC_CHECK_CUSTOMIZE, m_wndCustom);
 	DDX_Text(pDX, IDC_EDIT_URL_ID, m_streamID);
+	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
 	DDX_Text(pDX, IDC_EDIT_TVG_ID, m_tvgID);
 	DDX_Control(pDX, IDC_BUTTON_TEST_TVG, m_wndTestTVG);
 	DDX_Text(pDX, IDC_EDIT_EPG_ID, m_epgID);
 	DDX_Control(pDX, IDC_BUTTON_TEST_EPG, m_wndTestEPG);
-	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Text(pDX, IDC_EDIT_PREV_EPG, m_prevDays);
@@ -416,7 +414,7 @@ void CEdemChannelEditorDlg::SaveChannels()
 {
 	SaveChannelInfo();
 
-	std::wstring path = theApp.GetAppPath(utils::CHANNELS_CONFIG).GetString();
+	std::wstring path = theApp.GetAppPath(utils::PLUGIN_ROOT + m_chFileName).GetString();
 
 	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
@@ -428,10 +426,14 @@ void CEdemChannelEditorDlg::SaveChannels()
 		group_ids.insert(cats.begin(), cats.end());
 	}
 
+	bool need_reload = false;
 	for (auto it = m_categories.begin(); it != m_categories.end();)
 	{
 		if (group_ids.find(it->first) == group_ids.end())
+		{
 			it = m_categories.erase(it);
+			need_reload = true;
+		}
 		else
 			++it;
 	}
@@ -478,6 +480,11 @@ void CEdemChannelEditorDlg::SaveChannels()
 		os << doc;
 
 		set_allow_save(FALSE);
+		if (need_reload)
+		{
+			FillCategories();
+			FillChannels();
+		}
 	}
 	catch (const rapidxml::parse_error& ex)
 	{
@@ -848,7 +855,6 @@ void CEdemChannelEditorDlg::ChangeControlsState(BOOL enable)
 	m_wndStreamID.EnableWindow(enable);
 	m_wndStreamUrl.EnableWindow(enable);
 	m_wndGetInfo.EnableWindow(enable);
-	GetDlgItem(IDC_EDIT_URL_ID)->EnableWindow(enable);
 	GetDlgItem(IDC_EDIT_TVG_ID)->EnableWindow(enable);
 	GetDlgItem(IDC_EDIT_EPG_ID)->EnableWindow(enable);
 	GetDlgItem(IDC_EDIT_PREV_EPG)->EnableWindow(enable);
@@ -2316,45 +2322,6 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 	LoadPlayListInfo();
 }
 
-void CEdemChannelEditorDlg::OnSortByName()
-{
-	auto category = GetItemCategory(m_wndChannelsTree.GetSelectedItem());
-	if (!category)
-		return;
-
-	auto id = category->get_id();
-	std::sort(m_channels.begin(), m_channels.end(), [id](const auto& l, const auto& r)
-			  {
-				  const auto& lcat = l->get_categores();
-				  const auto& rcat = r->get_categores();
-				  bool lfound = lcat.find(id) != lcat.end();
-				  bool rfound = rcat.find(id) != rcat.end();
-
-				  if (lfound && rfound)
-				  {
-					  return l->get_title() < r->get_title();
-				  }
-
-				  return false;
-			  });
-
-	FillChannels();
-	LoadChannelInfo();
-	set_allow_save();
-}
-
-void CEdemChannelEditorDlg::OnSortByChannelID()
-{
-	std::sort(m_channels.begin(), m_channels.end(), [](const auto& l, const auto& r)
-			  {
-				  return l->get_channel_id() < r->get_channel_id();
-			  });
-
-	FillChannels();
-	LoadChannelInfo();
-	set_allow_save();
-}
-
 void CEdemChannelEditorDlg::OnBnClickedButtonLoadChannels()
 {
 	CFileDialog dlg(TRUE);
@@ -2923,11 +2890,9 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 			break;
 	}
 
-	if (LoadChannels(channels))
-	{
-		FillCategories();
-		FillChannels();
-		theApp.WriteProfileString(_T("Setting"), _T("ChannelList"), channels);
-	}
+	LoadChannels(channels);
+	FillCategories();
+	FillChannels();
+
 	theApp.WriteProfileInt(_T("Setting"), _T("ChannelsType"), idx);
 }

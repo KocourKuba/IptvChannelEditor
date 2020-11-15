@@ -52,7 +52,7 @@ abstract class AbstractTv implements Tv
         $groups = null;
     }
 
-    protected abstract function load_channels(&$plugin_cookies);
+    public abstract function load_channels(&$plugin_cookies);
 
     public function ensure_channels_loaded(&$plugin_cookies)
     {

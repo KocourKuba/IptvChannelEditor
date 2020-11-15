@@ -74,8 +74,6 @@ protected:
 	afx_msg void OnUpdatePlayChannelStreamPl(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonLoadChannels();
 	afx_msg void OnUpdateButtonLoadChannels(CCmdUI* pCmdUI);
-	afx_msg void OnSortByName();
-	afx_msg void OnSortByChannelID();
 
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonAddToShowIn();

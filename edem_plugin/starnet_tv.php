@@ -41,17 +41,22 @@ class DemoTv extends AbstractTv
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected function load_channels(&$plugin_cookies)
+    public function load_channels(&$plugin_cookies)
     {
         try {
-            $doc = file_get_contents(DemoConfig::CHANNEL_LIST_URL, true);
-        } catch (Exception $e) {
-            hd_print("Can't fetch channel_list2, alternative copy used.");
-            $doc = file_get_contents(DemoConfig::CHANNEL_LIST_URL2, true);
-        }
+            $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : DemoConfig::CHANNEL_LIST_URL;
+            hd_print("Channels list: $channels_list");
+            $doc = file_get_contents($channels_list, true);
+            if($doc == false)
+            {
+                hd_print("File not exist! $channels_list");
+                throw new Exception('File not exist');
+            }
 
-        if (is_null($doc))
-            throw new Exception('Can not fetch playlist');
+        } catch (Exception $e) {
+            hd_print("Can't fetch channel_list, alternative copy used.");
+            $doc = file_get_contents(DemoConfig::CHANNEL_LIST_URL, true);
+        }
 
         $xml = simplexml_load_string($doc);
 
