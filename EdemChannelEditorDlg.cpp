@@ -517,13 +517,13 @@ void CEdemChannelEditorDlg::CheckForExisting()
 	for (auto& item : m_channels)
 	{
 		int id = item->get_channel_id();
-		item->set_colored(m_playlist.find(id) != m_playlist.end());
+		item->set_colored(m_playlistIds.find(id) != m_playlistIds.end());
 		ids.emplace(id);
 	}
 
 	for (auto& item : m_playlist)
 	{
-		item.second->set_colored(ids.find(item.first) == ids.end());
+		item->set_colored(ids.find(item->get_channel_id()) == ids.end());
 	}
 }
 
@@ -578,7 +578,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo()
 			theApp.SetImage(channel->get_icon(), m_wndIcon);
 		}
 
-		m_wndCustom.SetCheck(m_streamID == 0 && channel->is_custom());
+		m_wndCustom.SetCheck(m_streamID == 0 && channel->get_stream_uri().is_template());
 
 		FillCategoriesList(channel);
 	}
@@ -598,7 +598,7 @@ void CEdemChannelEditorDlg::LoadPlayListInfo()
 	{
 		m_pl_current = m_wndPlaylistTree.GetSelectedItem();
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
-		int id = entry->get_stream_uri().get_Id();
+		int id = entry->get_channel_id();
 		m_plID.Format(_T("ID: %d"), id);
 
 		if (entry->get_tvg_id() != -1)
@@ -1614,6 +1614,7 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	}
 
 	m_playlist.clear();
+	m_playlistIds.clear();
 	m_pl_categories.clear();
 
 	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
@@ -1642,13 +1643,12 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 			{
 				case ext_pathname:
 				{
-					const auto& category = entry->get_category();
-					int id = entry->get_stream_uri().get_Id();
-					if (auto res = m_playlist.emplace(id, std::move(entry)); !res.second)
+					if (auto res = m_playlistIds.emplace(entry->get_channel_id()); !res.second)
 					{
-						TRACE("Duplicate channel: %d\n", id);
+						TRACE("Duplicate channel: %s (%d)\n", entry->get_title().c_str(), entry->get_channel_id());
 					}
 
+					const auto& category = entry->get_category();
 					auto found = std::find_if(m_pl_categories.begin(), m_pl_categories.end(), [category](const auto& item)
 												  {
 													  return category == item.first;
@@ -1658,6 +1658,8 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 					{
 						m_pl_categories.emplace_back(category, nullptr);
 					}
+
+					m_playlist.emplace_back(std::move(entry));
 					entry = std::make_unique<PlaylistEntry>();
 					break;
 				}
@@ -1670,10 +1672,10 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	// if access key and domain not set, try to load it from playlist
 	if (m_accessKey.IsEmpty() && m_domain.IsEmpty() && !m_playlist.empty())
 	{
-		for(const auto& pair : m_playlist)
+		for(const auto& item : m_playlist)
 		{
-			const auto& access_key = pair.second->get_access_key();
-			const auto& domain = pair.second->get_domain();
+			const auto& access_key = item->get_access_key();
+			const auto& domain = item->get_domain();
 			if(!access_key.empty() && !domain.empty() && access_key != "00000000000000" && domain != "localhost")
 			{
 				theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), CString(access_key.c_str()));
@@ -1700,20 +1702,19 @@ void CEdemChannelEditorDlg::FillPlaylist()
 			category.second = item;
 		}
 
-		for (const auto& pair : m_playlist)
+		for (const auto& item : m_playlist)
 		{
-			const auto& entry = pair.second.get();
-			auto found = std::find_if(m_pl_categories.begin(), m_pl_categories.end(), [entry](const auto& item)
+			auto found = std::find_if(m_pl_categories.begin(), m_pl_categories.end(), [&item](const auto& pair)
 									  {
-										  return item.first == entry->get_category();
+										  return pair.first == item->get_category();
 									  });
 
 			if (found == m_pl_categories.end()) continue;
 
 			TVINSERTSTRUCTW tvInsert = { nullptr };
 			tvInsert.hParent = found->second;
-			tvInsert.item.pszText = (LPWSTR)entry->get_title().c_str();
-			tvInsert.item.lParam = (LPARAM)entry;
+			tvInsert.item.pszText = (LPWSTR)item->get_title().c_str();
+			tvInsert.item.lParam = (LPARAM)item.get();
 			tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 			m_wndPlaylistTree.InsertItem(&tvInsert);
 		}
@@ -1975,8 +1976,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 		int id = _tstoi(m_plSearch.Mid(1).GetString());
 		for (it = m_playlist.begin(); it != m_playlist.end(); ++it)
 		{
-			const auto& entry = it->second;
-			if (entry && entry->get_stream_uri().get_Id() == id)
+			const auto& entry = *it;
+			if (entry && entry->get_channel_id() == id)
 			{
 				hSelected = FindTreeItem(m_wndPlaylistTree, (DWORD_PTR)entry.get());
 				if (hSelected) break;
@@ -2000,7 +2001,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 		do
 		{
 			// check whether the current item is the searched one
-			const auto& entry = it->second;
+			const auto& entry = *it;
 			if (entry && StrStrI(entry->get_title().c_str(), m_plSearch.GetString()) != nullptr)
 			{
 				hSelected = FindTreeItem(m_wndPlaylistTree, (DWORD_PTR)entry.get());
@@ -2035,7 +2036,7 @@ bool CEdemChannelEditorDlg::IsCategory(HTREEITEM hItem) const
 
 const ChannelInfo* CEdemChannelEditorDlg::FindChannelByEntry(const PlaylistEntry* entry) const
 {
-	int ch_id = entry->get_stream_uri().get_Id();
+	int ch_id = entry->get_channel_id();
 	auto found = std::find_if(m_channels.begin(), m_channels.end(), [ch_id](const auto& item)
 							  {
 								  return item->get_channel_id() == ch_id;
@@ -2083,7 +2084,7 @@ void CEdemChannelEditorDlg::OnCreateUpdateChannel()
 
 		// Create new channel
 		auto channel = std::make_unique<ChannelInfo>(m_categories);
-		channel->set_channel_id(entry->get_stream_uri().get_Id());
+		channel->set_channel_id(entry->get_channel_id());
 
 		auto tree_categories = GetCategoriesTreeMap();
 
@@ -2428,17 +2429,17 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			std::array<std::thread, 5> workers;
 			std::array<std::string, 5> audio;
 			std::array<std::string, 5> video;
-			auto pair = it;
+			auto group = it;
 			int j = 0;
-			while (j < 5 && pair != m_playlist.end())
+			while (j < 5 && group != m_playlist.end())
 			{
-				m_plInfo.Format(_T("Playlist: %s (%d) %d"), m_plFileName.GetString(), m_playlist.size(), std::distance(m_playlist.begin(), pair) + 1);
+				m_plInfo.Format(_T("Playlist: %s (%d) %d"), m_plFileName.GetString(), m_playlist.size(), std::distance(m_playlist.begin(), group) + 1);
 				UpdateData(FALSE);
 
-				const auto& url = pair->second->get_stream_uri().get_ts_translated_url();
+				const auto& url = (*group)->get_stream_uri().get_ts_translated_url();
 				workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
 				j++;
-				++pair;
+				++group;
 			}
 
 			j = 0;
@@ -2447,8 +2448,8 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 				if (w.joinable())
 				{
 					w.join();
-					it->second->set_audio(audio[j]);
-					it->second->set_video(video[j]);
+					(*it)->set_audio(audio[j]);
+					(*it)->set_video(video[j]);
 					++it;
 					j++;
 				}

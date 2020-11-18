@@ -2,11 +2,11 @@
 #include "PlayListEntry.h"
 #include "utils.h"
 
-static std::map<directives, std::string> s_ext_directives = {
-	{ ext_header,   "#EXTM3U" },
-	{ ext_info,     "#EXTINF:" },
-	{ ext_group,    "#EXTGRP:" },
-	{ ext_playlist, "#PLAYLIST:" },
+static std::map<std::string, directives> s_ext_directives = {
+	{ "#EXTM3U"   , ext_header   },
+	{ "#EXTINF"   , ext_info     },
+	{ "#EXTGRP"   , ext_group    },
+	{ "#PLAYLIST" , ext_playlist },
 };
 
 static std::map<std::string, info_tags> s_tags = {
@@ -33,6 +33,7 @@ void m3u_entry::Parse(const std::string& str)
 
 	// #EXTM3U
 	// #EXT_NAME:<EXT_VALUE>
+	// #EXTINF:<DURATION>,<TITLE>
 	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
 	// http://example.tv/live.strm
 
@@ -44,53 +45,53 @@ void m3u_entry::Parse(const std::string& str)
 		// http://example.tv/live.strm
 		ext_name = ext_pathname;
 		ext_value = str;
+		return;
 	}
-	else
+
+	// #EXTINF:<DURATION>,<TITLE>
+	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
+
+	// 0 - #EXTINF:<DURATION>
+	// 1,2,3... - [<KEY>="<VALUE>"]*,<TITLE>
+	// #EXT_NAME:<EXT_VALUE>
+	// extarr[0] = #EXT_NAME
+	// extarr[1] = <EXT_VALUE>
+	std::regex re_dir(R"((#[A-Z0-9-]+)[:\s]?(.*))");
+	std::smatch m_dir;
+	if (!std::regex_match(str, m_dir, re_dir))
+		return;
+
+	auto pair = s_ext_directives.find(m_dir[1].str());
+	if (pair == s_ext_directives.end())
+		return;
+
+	ext_name = pair->second;
+
+	switch (ext_name)
 	{
-		for (const auto& item : s_ext_directives)
+		case ext_header:
+			return;
+		case ext_info:
 		{
-			// split by space
-			// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
-			auto extarr = utils::string_split(str);
-			if(extarr.empty()) continue;
-
-			if (strncmp(extarr[0].c_str(), item.second.c_str(), item.second.size()) != 0)
-				continue;
-
-			// 0 - #EXTINF:<DURATION>
-			// 1,2,3... - [<KEY>="<VALUE>"]*,<TITLE>
-			// #EXT_NAME:<EXT_VALUE>
-			ext_name = item.first;
-			if(ext_name == ext_header)
-				break;
-
-			// extarr[0] = #EXT_NAME:<EXT_VALUE>
-			auto carray = utils::string_split(extarr[0], ':');
-
-			if (ext_name != ext_info)
+			std::regex re(R"((-?\d+)\s*(.+=\".+"\s*)*,\s*(.+))");
+			std::smatch m;
+			std::string value = m_dir[2].str();
+			if (std::regex_match(value, m, re))
 			{
-				// carray[0] = #EXTINF, carray[1] = <EXT_VALUE>
-				if(carray.size() > 1)
-					ext_value = carray[1];
-			}
-			else
-			{
-				// carray[0] = #EXTINF, carray[1] = <DURATION>
-				if (carray.size() > 1)
-					duration = utils::char_to_int(carray[1]);
-
-				// remove #EXT_NAME:<EXT_VALUE> from string
-				// [<KEY>="<VALUE>"]*,<TITLE>
-				auto val = utils::string_ltrim(str.substr(extarr[0].size()), " ");
-				auto tarray = utils::string_split(val, ',');
-				if (!tarray.empty())
+				duration = utils::char_to_int(m[1].str());
+				dir_title = m[3].str();
+				if(m[2].matched)
 				{
-					// get last token: <TITLE>
-					dir_title = tarray.back();
-					auto remain = utils::string_rtrim(val.substr(0, val.size() - dir_title.size()), " ,");
-					ParseDirectiveTags(remain);
+					ParseDirectiveTags(m[2].str());
 				}
 			}
+			break;
+		}
+		default:
+		{
+			// carray[0] = #EXTINF, carray[1] = <EXT_VALUE>
+			if (m_dir[2].matched)
+				ext_value = m_dir[2];
 			break;
 		}
 	}
@@ -113,6 +114,8 @@ void m3u_entry::ParseDirectiveTags(const std::string& str)
 void PlaylistEntry::Parse(const std::string& str)
 {
 	m3u_entry::Parse(str);
+
+	category = L"Unset";
 
 	if (ext_name == ext_group)
 	{
@@ -144,6 +147,8 @@ void PlaylistEntry::Parse(const std::string& str)
 	if(const auto& pair = ext_tags.find(tag_group_title); pair != ext_tags.end())
 	{
 		category = utils::utf8_to_utf16(pair->second);
+		if (category.empty())
+			category = L"Unset";
 	}
 
 	if (const auto& pair = ext_tags.find(tag_tvg_logo); pair != ext_tags.end())

@@ -70,11 +70,11 @@ class PlaylistEntry
 public:
 	PlaylistEntry() = default;
 	PlaylistEntry(const PlaylistEntry& src) = default;
-	//PlaylistEntry(const std::string& str) { Parse(str); }
 
 	void Parse(const std::string& str) override;
 	void Clear() override;
 
+	int get_channel_id() const { return get_stream_uri().get_Id(); }
 	int get_channel_length() const { return channel_len; }
 	int get_tvg_id() { return tvg_id; };
 	bool is_archive() const { return archive != 0; }

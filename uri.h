@@ -65,7 +65,7 @@ public:
 	/// getter channel id
 	/// </summary>
 	/// <returns></returns>
-	int get_Id() const { return id; }
+	int get_Id() const { return templated ? id : hash; }
 	/// <summary>
 	/// setter channel id
 	/// </summary>
@@ -81,5 +81,6 @@ public:
 protected:
 	int id = 0;
 	bool templated = false;
+	int hash = 0;
 };
 

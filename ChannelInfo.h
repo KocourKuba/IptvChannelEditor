@@ -52,8 +52,6 @@ public:
 
 	std::wstring GetIconRelativePath(LPCTSTR szRoot = nullptr) const;
 
-	bool is_custom() const { return get_stream_uri().is_template(); }
-
 // Getters/Setters
 
 	int get_channel_id() const { return get_stream_uri().get_Id(); }

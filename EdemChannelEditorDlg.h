@@ -229,12 +229,13 @@ private:
 	HTREEITEM m_current = nullptr;
 	HTREEITEM m_pl_current = nullptr;
 
-	std::map<int, std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
+	std::vector<std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
 	std::vector<std::unique_ptr<ChannelInfo>>::iterator m_cur_it;
 
 	std::vector<std::unique_ptr<ChannelInfo>> m_channels;
 	std::map<int, std::unique_ptr<ChannelCategory>> m_categories;
 
-	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlist;
+	std::set<int> m_playlistIds;
+	std::vector<std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_pl_categories;
 };

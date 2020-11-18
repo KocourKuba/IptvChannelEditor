@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "uri.h"
 #include "utils.h"
+#include "Crc32.h"
 
 void uri::set_uri(const std::string& url)
 {
@@ -75,4 +76,6 @@ void uri_stream::set_uri(const std::string& url)
 		templated = false;
 		uri::set_uri(url);
 	}
+
+	hash = crc32_bitwise(url.c_str(), url.size());
 }
