@@ -47,6 +47,18 @@ void CFilterDialog::OnOK()
 {
 	UpdateData(TRUE);
 
+	try
+	{
+		std::wregex re(m_filterString.GetString());
+	}
+	catch (std::regex_error& ex)
+	{
+		CString error;
+		error.Format(_T("Error in regular expression: %hs"), ex.what());
+		AfxMessageBox(error, MB_OK | MB_ICONERROR);
+		return;
+	}
+
 	theApp.WriteProfileString(_T("Setting"), _T("FilterString"), m_filterString);
 	theApp.WriteProfileInt(_T("Setting"), _T("FilterUseRegex"), m_filterRegex);
 	theApp.WriteProfileInt(_T("Setting"), _T("FilterUseCase"), m_filterCase);

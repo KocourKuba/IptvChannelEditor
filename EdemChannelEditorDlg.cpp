@@ -1694,9 +1694,6 @@ bool CEdemChannelEditorDlg::AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& ent
 			}
 			catch (std::regex_error& ex)
 			{
-				CString error;
-				error.Format(_T("Error in regular expression: %s"), ex.what());
-				AfxMessageBox(error, MB_OK | MB_ICONERROR);
 				entry->Clear();
 				return false;
 			}
