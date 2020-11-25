@@ -401,6 +401,7 @@ void CEdemChannelEditorDlg::FillChannels()
 	m_wndChannelsTree.UnlockWindowUpdate();
 
 	UpdateChannelsCount();
+	CheckForExisting();
 }
 
 void CEdemChannelEditorDlg::UpdateChannelsCount()
@@ -2649,6 +2650,7 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 	}
 
 	theApp.WriteProfileInt(_T("Setting"), _T("PlaylistType"), idx);
+	OnBnClickedButtonDownloadPlaylist();
 }
 
 HTREEITEM CEdemChannelEditorDlg::FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry)
