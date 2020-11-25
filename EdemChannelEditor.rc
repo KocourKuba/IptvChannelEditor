@@ -154,7 +154,7 @@ BEGIN
     LTEXT           "for DUNE HD",IDC_STATIC_APP_TITLE,65,25,87,8
     LTEXT           "Channels:",IDC_STATIC_CHANNELS,4,36,156,8
     GROUPBOX        "Channel Info",IDC_STATIC,165,36,193,166
-    LTEXT           "Playlist:",IDC_STATIC_PLAYLIST,365,35,123,8
+    LTEXT           "Playlist:",IDC_STATIC_PLAYLIST,365,35,154,8
     LTEXT           "TVG ID",IDC_STATIC,171,51,23,8
     LTEXT           "Prev days",IDC_STATIC,238,52,33,8
     LTEXT           "Next days",IDC_STATIC,238,70,33,8

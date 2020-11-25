@@ -2607,9 +2607,11 @@ void CEdemChannelEditorDlg::OnToggleChannel()
 void CEdemChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
-	if (auto channel = GetCurrentChannel(); channel != nullptr && channel->is_disabled())
+	if (auto channel = GetCurrentChannel(); channel != nullptr)
 	{
-		pCmdUI->SetText(_T("Enable Channel"));
+		if (channel->is_disabled())
+			pCmdUI->SetText(_T("Enable Channel"));
+
 		enable = TRUE;
 	}
 
