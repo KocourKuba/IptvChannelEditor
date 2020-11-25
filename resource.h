@@ -14,6 +14,7 @@
 #define IDR_MENU_CHANNEL                137
 #define IDR_MENU_PLAYLIST               138
 #define IDS_ABOUTBOX                    139
+#define IDD_DIALOG_FILTER               140
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_ADD_TO_SHOW          1002
 #define IDC_BUTTON_CACHE_ICON           1003
@@ -42,6 +43,7 @@
 #define IDC_COMBO_SORT                  1027
 #define IDC_COMBO_CHANNELS              1027
 #define IDC_EDIT_CATEGORY               1028
+#define IDC_BUTTON_PL_FILTER            1028
 #define IDC_EDIT_DOMAIN                 1029
 #define IDC_EDIT_DOMAIN2                1030
 #define IDC_EDIT_EPG_ID                 1031
@@ -77,6 +79,12 @@
 #define IDC_TREE_CHANNELS               1061
 #define IDC_TREE_PLAYLIST               1062
 #define IDC_STATIC_APP_TITLE            1063
+#define IDC_EDIT1                       1064
+#define IDC_EDIT_STRING                 1064
+#define IDC_CHECK1                      1065
+#define IDC_CHECK_REGEX                 1065
+#define IDC_CHECK_REGEX2                1066
+#define IDC_CHECK_CASE                  1066
 #define ID_ADD_CATEGORY                 32771
 #define ID_ADD_CHANNEL                  32772
 #define ID_CHANNEL_DOWN                 32773
@@ -97,12 +105,12 @@
 #define ID_GET_STREAM_INFO_ALL          32790
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        140
+#define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         32791
-#define _APS_NEXT_CONTROL_VALUE         1064
+#define _APS_NEXT_CONTROL_VALUE         1066
 #define _APS_NEXT_SYMED_VALUE           1163
 #endif
 #endif

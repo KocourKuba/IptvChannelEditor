@@ -12,6 +12,7 @@
 #include "EdemChannelEditorDlg.h"
 #include "AboutDlg.h"
 #include "SettingsDlg.h"
+#include "FilterDialog.h"
 #include "utils.h"
 
 #include "rapidxml.hpp"
@@ -143,6 +144,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnUpdatePlayChannelStreamPl)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
+	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CEdemChannelEditorDlg::OnBnClickedButtonPlFilter)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -270,8 +272,6 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	m_wndPlaylistType.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("PlaylistType"), 0));
 	OnCbnSelchangeComboPlaylist();
-	LoadPlaylist(theApp.GetProfileString(_T("Setting"), _T("Playlist")));
-	FillPlaylist();
 
 	if (m_current == nullptr && !m_channels.empty())
 	{
@@ -407,6 +407,13 @@ void CEdemChannelEditorDlg::FillChannels()
 void CEdemChannelEditorDlg::UpdateChannelsCount()
 {
 	m_chInfo.Format(_T("Channels: %s (%d)"), m_chFileName.GetString(), m_channels.size());
+
+	UpdateData(FALSE);
+}
+
+void CEdemChannelEditorDlg::UpdatePlaylistCount()
+{
+	m_plInfo.Format(_T("Playlist: %s (%d%s)"), m_plFileName.GetString(), m_playlist.size(), (m_filterString.IsEmpty() ? _T("") : _T("*")));
 
 	UpdateData(FALSE);
 }
@@ -830,8 +837,6 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 		m_channels.emplace_back(std::move(std::make_unique<ChannelInfo>(ch_node, m_categories)));
 		ch_node = ch_node->next_sibling();
 	}
-
-	UpdateChannelsCount();
 
 	return true;
 }
@@ -1591,10 +1596,21 @@ void CEdemChannelEditorDlg::OnBnClickedButtonLoadPlaylist()
 
 	if (nResult == IDOK)
 	{
-		LoadPlaylist(file);
-		FillPlaylist();
 		theApp.WriteProfileString(_T("Setting"), _T("Playlist"), file);
+		DoLoadPlaylist();
 	}
+}
+
+void CEdemChannelEditorDlg::DoLoadPlaylist()
+{
+	CWaitCursor cur;
+
+	m_filterString = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
+	m_filterRegex = theApp.GetProfileInt(_T("Setting"), _T("FilterUseRegex"), FALSE);
+	m_filterCase = theApp.GetProfileInt(_T("Setting"), _T("FilterUseCase"), FALSE);
+
+	LoadPlaylist(theApp.GetProfileString(_T("Setting"), _T("Playlist")));
+	FillPlaylist();
 }
 
 void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
@@ -1640,32 +1656,9 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 		{
 			utils::string_rtrim(line, "\r");
 			entry->Parse(line);
-			switch (entry->get_directive())
+			if (entry->get_directive() == ext_pathname)
 			{
-				case ext_pathname:
-				{
-					if (auto res = m_playlistIds.emplace(entry->get_channel_id()); !res.second)
-					{
-						TRACE("Duplicate channel: %s (%d)\n", entry->get_title().c_str(), entry->get_channel_id());
-					}
-
-					const auto& category = entry->get_category();
-					auto found = std::find_if(m_pl_categories.begin(), m_pl_categories.end(), [category](const auto& item)
-												  {
-													  return category == item.first;
-												  });
-
-					if (found == m_pl_categories.end())
-					{
-						m_pl_categories.emplace_back(category, nullptr);
-					}
-
-					m_playlist.emplace_back(std::move(entry));
-					entry = std::make_unique<PlaylistEntry>();
-					break;
-				}
-				default:
-					break;
+				if (!AddPlaylistEntry(entry)) break;
 			}
 		}
 	}
@@ -1685,6 +1678,67 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 			}
 		}
 	}
+}
+
+bool CEdemChannelEditorDlg::AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry)
+{
+	if (!m_filterString.IsEmpty())
+	{
+		bool found = false;
+		if (m_filterRegex)
+		{
+			try
+			{
+				std::wregex re(m_filterString.GetString());
+				found = std::regex_search(entry->get_title(), re);
+			}
+			catch (std::regex_error& ex)
+			{
+				CString error;
+				error.Format(_T("Error in regular expression: %s"), ex.what());
+				AfxMessageBox(error, MB_OK | MB_ICONERROR);
+				entry->Clear();
+				return false;
+			}
+		}
+		else
+		{
+			if (m_filterCase)
+			{
+				found = (entry->get_title().find(m_filterString.GetString()) != std::wstring::npos);
+			}
+			else
+			{
+				found = (StrStrI(entry->get_title().c_str(), m_filterString.GetString()) != nullptr);
+			}
+		}
+
+		if (found)
+		{
+			entry->Clear();
+			return true;
+		}
+	}
+
+	if (auto res = m_playlistIds.emplace(entry->get_channel_id()); !res.second)
+	{
+		TRACE("Duplicate channel: %s (%d)\n", entry->get_title().c_str(), entry->get_channel_id());
+	}
+
+	const auto& category = entry->get_category();
+	auto found = std::find_if(m_pl_categories.begin(), m_pl_categories.end(), [category](const auto& item)
+							  {
+								  return category == item.first;
+							  });
+
+	if (found == m_pl_categories.end())
+	{
+		m_pl_categories.emplace_back(category, nullptr);
+	}
+
+	m_playlist.emplace_back(std::move(entry));
+	entry = std::make_unique<PlaylistEntry>();
+	return true;
 }
 
 void CEdemChannelEditorDlg::FillPlaylist()
@@ -1721,9 +1775,11 @@ void CEdemChannelEditorDlg::FillPlaylist()
 		}
 	}
 
-	CheckForExisting();
 	m_pl_cur_it = m_playlist.end();
-	m_plInfo.Format(_T("Playlist: %s (%d)"), m_plFileName.GetString(), m_playlist.size());
+
+	UpdatePlaylistCount();
+	CheckForExisting();
+
 	UpdateData(FALSE);
 }
 
@@ -2420,6 +2476,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			it = pool;
 		}
 		LoadChannelInfo();
+		UpdateChannelsCount();
 	}
 	else if (GetFocus() == &m_wndPlaylistTree)
 	{
@@ -2457,9 +2514,8 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			}
 		}
 		LoadPlayListInfo();
+		UpdatePlaylistCount();
 	}
-
-	UpdateChannelsCount();
 }
 
 void CEdemChannelEditorDlg::OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI)
@@ -2650,7 +2706,7 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 	}
 
 	theApp.WriteProfileInt(_T("Setting"), _T("PlaylistType"), idx);
-	OnBnClickedButtonDownloadPlaylist();
+	DoLoadPlaylist();
 }
 
 HTREEITEM CEdemChannelEditorDlg::FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry)
@@ -2898,4 +2954,13 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 	FillChannels();
 
 	theApp.WriteProfileInt(_T("Setting"), _T("ChannelsType"), idx);
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonPlFilter()
+{
+	CFilterDialog dlg;
+	if (dlg.DoModal() == IDOK)
+	{
+		DoLoadPlaylist();
+	}
 }

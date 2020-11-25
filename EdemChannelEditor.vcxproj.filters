@@ -93,6 +93,9 @@
     <ClInclude Include="Crc32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FilterDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EdemChannelEditor.cpp">
@@ -129,6 +132,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Crc32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -74,6 +74,7 @@ protected:
 	afx_msg void OnUpdatePlayChannelStreamPl(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonLoadChannels();
 	afx_msg void OnUpdateButtonLoadChannels(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedButtonPlFilter();
 
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonAddToShowIn();
@@ -129,6 +130,8 @@ private:
 	bool LoadChannels(const CString& path);
 	void SaveChannels();
 	void LoadPlaylist(const CString& file);
+	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
+	void DoLoadPlaylist();
 
 	void FillCategories();
 	void FillChannels();
@@ -146,6 +149,7 @@ private:
 	void PlayPlaylistEntry(HTREEITEM hItem);
 	void PlayStream(const std::wstring& stream_url);
 	void UpdateChannelsCount();
+	void UpdatePlaylistCount();
 
 	void CheckLimits();
 	void CheckForExisting();
@@ -224,6 +228,9 @@ private:
 	CString m_chFileName;
 	CString m_plFileName;
 	CString m_player;
+	CString m_filterString;
+	BOOL m_filterRegex = FALSE;
+	BOOL m_filterCase = FALSE;
 	BOOL m_allow_save = FALSE;
 	HACCEL m_hAccel = nullptr;
 	HTREEITEM m_current = nullptr;
