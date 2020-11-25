@@ -214,21 +214,24 @@ class DemoTv extends AbstractTv
             $epg = unserialize($doc);
         } else {
             $type = 'json'; // ott-play.com
-            try {
-                $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $epg_id));
-            }
-            catch (Exception $ex) {
+            if ($tvg_id == 0) {
                 try {
+                    $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $epg_id));
+                }
+                catch (Exception $ex) {
                     hd_print("Can't fetch EPG ID: $epg_id DATE: $epg_date");
-                    $type = 'html'; // tvguide.info
+                    return array();
+                }
+            } else {
+                $type = 'html'; // teleguide.info
+                try {
                     $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT2, $tvg_id, $epg_date));
                 }
-                catch (Exception $e) {
+                catch (Exception $ex) {
                     hd_print("Can't fetch TVG ID: $tvg_id DATE: $epg_date");
                     return array();
                 }
             }
-
             if ($type === 'json') {
                 $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
                 $epg_date_new = strtotime('-1 hour', $day_start_ts);
