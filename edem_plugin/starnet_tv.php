@@ -233,6 +233,7 @@ class DemoTv extends AbstractTv
                 }
             }
             if ($type === 'json') {
+                // time in UTC
                 $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
                 $epg_date_new = strtotime('-1 hour', $day_start_ts);
                 $epg_date_end = strtotime('+1 day', $day_start_ts);
@@ -245,14 +246,15 @@ class DemoTv extends AbstractTv
             }
             else
             {
-                $timezone_suffix = date('T');
-                $e_time = strtotime("$epg_date, 0500 $timezone_suffix");
+                // tvguide.info time in GMT+3 (moscow time)
+                // $timezone_suffix = date('T');
+                $e_time = strtotime("$epg_date, 0300 GMT+3");
                 preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
                 foreach ($keywords[1] as $key => $qid) {
                     $qq = strip_tags($qid);
                     preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
                     $time = $keyw[1][0];
-                    $u_time = strtotime("$epg_date $time $timezone_suffix");
+                    $u_time = strtotime("$epg_date $time GMT+3");
                     $last_time = ($u_time < $e_time) ? $u_time + 86400  : $u_time ;
                     $epg[$last_time]["title"] = str_replace("&nbsp;", " ", $keyw[2][0]);
                     $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
