@@ -1694,6 +1694,7 @@ bool CEdemChannelEditorDlg::AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& ent
 			}
 			catch (std::regex_error& ex)
 			{
+				ex;
 				entry->Clear();
 				return false;
 			}

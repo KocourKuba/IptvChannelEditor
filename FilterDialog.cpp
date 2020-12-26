@@ -50,6 +50,7 @@ void CFilterDialog::OnOK()
 	try
 	{
 		std::wregex re(m_filterString.GetString());
+		re;
 	}
 	catch (std::regex_error& ex)
 	{
