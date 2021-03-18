@@ -838,6 +838,8 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 		ch_node = ch_node->next_sibling();
 	}
 
+	m_cur_it = m_channels.end();
+
 	return true;
 }
 
@@ -952,6 +954,7 @@ void CEdemChannelEditorDlg::OnAddChannel()
 	auto hNewItem = m_wndChannelsTree.InsertItem(&tvInsert);
 
 	m_channels.emplace_back(std::move(channel));
+	m_cur_it = m_channels.end();
 
 	m_wndChannelsTree.SelectItem(hNewItem);
 	m_wndChannelsTree.EditLabel(hNewItem);
@@ -992,6 +995,7 @@ void CEdemChannelEditorDlg::OnRemoveChannel()
 		if (found != m_channels.end())
 		{
 			m_channels.erase(found);
+			m_cur_it = m_channels.end();
 		}
 
 		SetCurrentChannel(hNext);
@@ -1988,7 +1992,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSearchNext()
 		{
 			// check whether the current item is the searched one
 			const auto& entry = *it;
-			if (entry && StrStrI(entry->get_title().c_str(), m_plSearch.GetString()) != nullptr)
+			if (entry && StrStrI(entry->get_title().c_str(), m_search.GetString()) != nullptr)
 			{
 				hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)entry.get());
 				if (hSelected) break;
@@ -2172,6 +2176,7 @@ void CEdemChannelEditorDlg::OnCreateUpdateChannel()
 
 		isNew = true;
 		m_channels.emplace_back(std::move(channel));
+		m_cur_it = m_channels.end();
 	}
 	else
 	{
