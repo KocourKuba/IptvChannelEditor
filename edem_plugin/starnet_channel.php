@@ -51,7 +51,7 @@ class DemoChannel extends DefaultChannel
 
     public function get_archive_past_sec()
     {
-        return 4 * 86400;
+        return 7 * 86400;
     }
 
     public function get_archive_delay_sec()
