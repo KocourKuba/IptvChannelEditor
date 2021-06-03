@@ -70,6 +70,8 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_PL_SEARCH_NEXT, &CEdemChannelEditorDlg::OnUpdateButtonPlSearchNext)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE_FROM_SHOW, &CEdemChannelEditorDlg::OnBnClickedButtonRemoveFromShowIn)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_REMOVE_FROM_SHOW, &CEdemChannelEditorDlg::OnUpdateButtonRemoveFromShow)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_CATEGORY, &CEdemChannelEditorDlg::OnBnClickedButtonAddCategory)
+	ON_UPDATE_COMMAND_UI(IDC_BUTTON_ADD_CATEGORY, &CEdemChannelEditorDlg::OnUpdateButtonButtonAddCategory)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH_NEXT, &CEdemChannelEditorDlg::OnBnClickedButtonSearchNext)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SEARCH_NEXT, &CEdemChannelEditorDlg::OnUpdateButtonSearchNext)
 	ON_EN_CHANGE(IDC_EDIT_TVG_ID, &CEdemChannelEditorDlg::OnChanges)
@@ -229,6 +231,12 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	m_hAccel = LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_ACCELERATOR_TABLE));
 
+	if (!m_pToolTipCtrl.Create(this, TTS_ALWAYSTIP))
+	{
+		TRACE(_T("Unable To create ToolTip\n"));
+		return FALSE;
+	}
+
 	CString ver;
 	ver.Format(_T("for DUNE HD v%d.%d.%d"), MAJOR, MINOR, BUILD);
 	GetDlgItem(IDC_STATIC_APP_TITLE)->SetWindowText(ver);
@@ -263,6 +271,32 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 			channels = theApp.GetAppPath(utils::CHANNELS_CONFIG);
 			break;
 	}
+
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose playlist to import"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_LOAD_CHANNELS), _T("Load channels from file"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_TVG), _T("Test TV Guide url"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG), _T("Test EPG url"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Use custom stream url for channel"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Channel archive supported"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Is channel contents for adults"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_TO_SHOW), _T("Assign category to channel"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_REMOVE_FROM_SHOW), _T("Unassign category to channel"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CATEGORY), _T("Available categories"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_CATEGORY), _T("Add new category"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_GET_INFO), _T("Get channel stream info"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_GET_INFO_PL), _T("Get playlist stream info"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Store icon to local folder instead of downloading it from internet"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Save channels list"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Pack plugin to install on player"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Set channel icon from original playlist"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST), _T("Load playlist from file"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST), _T("Download playlist"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_PL_SEARCH), _T("Search in playlist"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Search next"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Filter playlist"));
 
 	if (LoadChannels(channels))
 	{
@@ -321,6 +355,13 @@ BOOL CEdemChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if (m_hAccel && ::TranslateAccelerator(m_hWnd, m_hAccel, pMsg))
 		return(TRUE);
+
+	if (pMsg->message == WM_LBUTTONDOWN
+		|| pMsg->message == WM_LBUTTONUP
+		|| pMsg->message == WM_MOUSEMOVE)
+	{
+		m_pToolTipCtrl.RelayEvent(pMsg);
+	}
 
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE)
 	{
@@ -1396,8 +1437,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddToShowIn()
 	if (!channel)
 		return;
 
-	SaveChannelInfo();
-
 	int idx = m_wndCategories.GetCurSel();
 	if (idx == CB_ERR)
 		return;
@@ -1405,6 +1444,11 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddToShowIn()
 	auto toAdd = (ChannelCategory*)m_wndCategories.GetItemData(idx);
 	if (!toAdd)
 		return;
+
+	if (channel->find_category(toAdd->get_id()))
+		return;
+
+	SaveChannelInfo();
 
 	channel->set_category(toAdd->get_id());
 
@@ -1465,6 +1509,16 @@ void CEdemChannelEditorDlg::OnBnClickedButtonRemoveFromShowIn()
 void CEdemChannelEditorDlg::OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_wndCategoriesList.GetCurSel() != LB_ERR);
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonAddCategory()
+{
+	OnAddCategory();
+}
+
+void CEdemChannelEditorDlg::OnUpdateButtonButtonAddCategory(CCmdUI* pCmdUI)
+{
+	OnUpdateAddCategory(pCmdUI);
 }
 
 void CEdemChannelEditorDlg::OnEditChangeTvIdd()

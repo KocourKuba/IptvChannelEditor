@@ -18,6 +18,7 @@
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_ADD_TO_SHOW          1002
 #define IDC_BUTTON_CACHE_ICON           1003
+#define IDC_BUTTON_ADD_CATEGORY         1004
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
 #define IDC_BUTTON_GET_INFO             1007
 #define IDC_BUTTON_GET_INFO_PL          1008

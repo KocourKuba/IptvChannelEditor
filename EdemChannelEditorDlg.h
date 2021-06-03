@@ -92,6 +92,7 @@ protected:
 	afx_msg void OnBnClickedButtonTestTvg();
 	afx_msg void OnBnClickedButtonUpdateIcon();
 	afx_msg void OnBnClickedCheckCustomize();
+	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnEditChangeTvIdd();
 	afx_msg void OnChanges();
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
@@ -113,6 +114,7 @@ protected:
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonRemoveChannel(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonButtonAddCategory(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonSave(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
@@ -182,6 +184,7 @@ public:
 	static CString m_probe;
 
 protected:
+	CToolTipCtrl m_pToolTipCtrl;
 	CColorTreeCtrl m_wndChannelsTree;
 	CComboBox m_wndCategories;
 	CListBox m_wndCategoriesList;
