@@ -2496,20 +2496,29 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 	StreamContainer* container = nullptr;
 	if (GetFocus() == &m_wndChannelsTree)
 	{
-		size_t sz = m_channels.size();
-		auto it = m_channels.begin();
-		while (it != m_channels.end())
+		std::vector<ChannelInfo*> channels;
+		auto category = GetItemCategory(m_wndChannelsTree.GetSelectedItem());
+		for (const auto& channel : m_channels)
+		{
+			if (category == nullptr || channel->find_category(category->get_id()))
+			{
+				// add all
+				channels.emplace_back(channel.get());
+			}
+		}
+
+		size_t sz = channels.size();
+		auto it = channels.begin();
+		while (it != channels.end())
 		{
 			std::array<std::thread, 5> workers;
 			std::array<std::string, 5> audio;
 			std::array<std::string, 5> video;
 			auto pool = it;
 			int j = 0;
-			while (pool != m_channels.end())
+			while (pool != channels.end())
 			{
-				m_chInfo.Format(_T("Plugin channels (%d) %d"), m_chFileName.GetString(),
-									  m_channels.size(),
-									  std::distance(m_channels.begin(), pool) + 1);
+				m_chInfo.Format(_T("Channels: %s (%d) %d"), m_chFileName.GetString(), channels.size(), std::distance(channels.begin(), pool) + 1);
 				UpdateData(FALSE);
 
 				const auto& url = (*pool)->get_stream_uri().get_ts_translated_url();
@@ -2517,7 +2526,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 				j++;
 			}
 
-			auto pos = std::distance(m_channels.begin(), it);
+			auto pos = std::distance(channels.begin(), it);
 			j = 0;
 			for (auto& w : workers)
 			{
@@ -2537,18 +2546,30 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 	}
 	else if (GetFocus() == &m_wndPlaylistTree)
 	{
-		size_t sz = m_playlist.size();
-		auto it = m_playlist.begin();
-		while (it != m_playlist.end())
+		std::vector<PlaylistEntry*> playlist;
+
+		auto curEntry = GetCurrentPlaylistEntry();
+		for (const auto& entry : m_playlist)
+		{
+			if (curEntry == nullptr || curEntry->get_category() == entry->get_category())
+			{
+				// add all
+				playlist.emplace_back(entry.get());
+			}
+		}
+
+		size_t sz = playlist.size();
+		auto it = playlist.begin();
+		while (it != playlist.end())
 		{
 			std::array<std::thread, 5> workers;
 			std::array<std::string, 5> audio;
 			std::array<std::string, 5> video;
 			auto group = it;
 			int j = 0;
-			while (j < 5 && group != m_playlist.end())
+			while (j < 5 && group != playlist.end())
 			{
-				m_plInfo.Format(_T("Playlist: %s (%d) %d"), m_plFileName.GetString(), m_playlist.size(), std::distance(m_playlist.begin(), group) + 1);
+				m_plInfo.Format(_T("Playlist: %s (%d) %d"), m_plFileName.GetString(), playlist.size(), std::distance(playlist.begin(), group) + 1);
 				UpdateData(FALSE);
 
 				const auto& url = (*group)->get_stream_uri().get_ts_translated_url();
