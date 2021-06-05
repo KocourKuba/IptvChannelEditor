@@ -728,7 +728,7 @@ void CEdemChannelEditorDlg::SaveChannelInfo()
 	}
 
 	if (m_wndCustom.GetCheck())
-		channel->set_stream_uri(CStringA(m_streamUrl).GetString());
+		channel->set_stream_uri(m_streamUrl.GetString());
 
 	if(channel->get_channel_id() != m_streamID)
 	{
@@ -2318,7 +2318,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		if (auto pos = fname.rfind('/'); pos != std::string::npos)
 		{
 			fname = fname.substr(pos + 1);
-			std::string path = utils::CHANNELS_LOGO_URL;
+			std::wstring path = utils::CHANNELS_LOGO_URL;
 			path += fname;
 
 			uri icon_uri;
@@ -2326,7 +2326,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCacheIcon()
 			icon_uri.set_path(path);
 
 			std::vector<BYTE> image;
-			if (utils::DownloadFile(utils::utf8_to_utf16(channel->get_icon_uri().get_uri()), image))
+			if (utils::DownloadFile(channel->get_icon_uri().get_uri(), image))
 			{
 				std::wstring fullPath = icon_uri.get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
 				std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
@@ -2862,19 +2862,19 @@ void CEdemChannelEditorDlg::AddUpdateChannel()
 		CheckForExisting();
 }
 
-std::wstring CEdemChannelEditorDlg::TranslateStreamUri(const std::string& stream_uri)
+std::wstring CEdemChannelEditorDlg::TranslateStreamUri(const std::wstring& stream_uri)
 {
 	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
 
 	std::wregex re_domain(LR"(\{SUBDOMAIN\})");
 	std::wregex re_uid(LR"(\{UID\})");
 
-	std::wstring stream_url = utils::utf8_to_utf16(stream_uri);
+	std::wstring stream_url(stream_uri);
 	stream_url = std::regex_replace(stream_url, re_domain, CEdemChannelEditorDlg::m_domain.GetString());
 	return std::regex_replace(stream_url, re_uid, CEdemChannelEditorDlg::m_accessKey.GetString());
 }
 
-void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video)
+void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::wstring& url, std::string& audio, std::string& video)
 {
 	if (url.empty())
 		return;

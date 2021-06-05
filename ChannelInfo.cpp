@@ -25,7 +25,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	epg_id = utils::get_value_int(node->first_node(EPG_ID));
 	prev_epg_days = utils::get_value_int(node->first_node(NUM_PAST_EPG_DAYS));
 	next_epg_days = utils::get_value_int(node->first_node(NUM_FUTURE_EPG_DAYS));
-	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
+	set_icon_uri(utils::get_value_wstring(node->first_node(ICON_URL)));
 	set_disabled(utils::string_tolower(utils::get_value_string(node->first_node(DISABLED))) == "true");
 
 	auto cnode = node->first_node(TV_CATEGORIES);
@@ -43,7 +43,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		}
 	}
 
-	get_stream_uri().set_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
+	get_stream_uri().set_uri(utils::get_value_wstring(node->first_node(STREAMING_URL)));
 	has_archive = utils::get_value_int(node->first_node(ARCHIVE));
 	adult = utils::get_value_int(node->first_node(PROTECTED));
 }
@@ -64,7 +64,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// <icon_url>plugin_file://icons/channels/pervyi.png</icon_url>
 	// <icon_url>http://epg.it999.ru/img/146.png</icon_url>
-	channel_node->append_node(utils::alloc_node(alloc, ICON_URL, get_icon_uri().get_uri().c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 
 	// <num_past_epg_days>4</num_past_epg_days>
 	channel_node->append_node(utils::alloc_node(alloc, NUM_PAST_EPG_DAYS, utils::int_to_char(prev_epg_days).c_str()));
@@ -86,7 +86,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	}
 
 	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/127/index.m3u8</streaming_url>
-	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, get_stream_uri().get_id_translated_url().c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, utils::utf16_to_utf8(get_stream_uri().get_id_translated_url()).c_str()));
 
 	// <archive>1</archive>
 	if (has_archive)
@@ -110,7 +110,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 bool ChannelInfo::is_icon_local() const
 {
-	return (get_icon_uri().get_schema() == "plugin_file://");
+	return (get_icon_uri().get_schema() == L"plugin_file://");
 }
 
 void ChannelInfo::set_categores(const std::set<int>& val)

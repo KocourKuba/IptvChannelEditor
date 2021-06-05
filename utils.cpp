@@ -199,10 +199,14 @@ std::vector<std::string> regex_split(const std::string& str, const std::string& 
 
 int char_to_int(const std::string& str)
 {
-	int value;
-	if (sscanf_s(str.c_str(), "%d", &value) != 1) return 0;
+	int value = 0;
+	return (sscanf_s(str.c_str(), "%d", &value) != 1) ? 0 : value;
+}
 
-	return value;
+int wchar_to_int(const std::wstring& str)
+{
+	int value = 0;
+	return (swscanf_s(str.c_str(), L"%d", &value) != 1) ? 0 : value;
 }
 
 inline size_t count_utf16_to_utf8(const std::wstring& w)
@@ -306,6 +310,14 @@ std::string int_to_char(int param)
 {
 	char fmt[12];
 	sprintf_s(fmt, 12, "%d", param);
+
+	return fmt;
+}
+
+std::wstring int_to_wchar(int param)
+{
+	wchar_t fmt[12];
+	swprintf_s(fmt, 12, L"%d", param);
 
 	return fmt;
 }

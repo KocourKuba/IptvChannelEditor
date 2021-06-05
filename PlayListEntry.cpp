@@ -140,7 +140,7 @@ void PlaylistEntry::Parse(const std::string& str)
 		}
 		else
 		{
-			get_stream_uri().set_uri(ext_value);
+			get_stream_uri().set_uri(utils::utf8_to_utf16(ext_value));
 		}
 	}
 
@@ -153,8 +153,8 @@ void PlaylistEntry::Parse(const std::string& str)
 
 	if (const auto& pair = ext_tags.find(tag_tvg_logo); pair != ext_tags.end())
 	{
-		std::regex re_url(R"(\/\/epg.it999.ru\/img\/)");
-		set_icon_uri(std::regex_replace(pair->second, re_url, "//epg.it999.ru/img2/"));
+		std::wregex re_url(LR"(\/\/epg.it999.ru\/img\/)");
+		set_icon_uri(std::regex_replace(utils::utf8_to_utf16(pair->second), re_url, L"//epg.it999.ru/img2/"));
 	}
 
 	if (const auto& pair = ext_tags.find(tag_tvg_rec); pair != ext_tags.end())
@@ -178,6 +178,6 @@ void PlaylistEntry::Clear()
 	title.clear();
 	category.clear();
 	get_stream_uri().clear();
-	set_icon_uri("");
+	set_icon_uri(L"");
 	set_icon(CImage());
 }

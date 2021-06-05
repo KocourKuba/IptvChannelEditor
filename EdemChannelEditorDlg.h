@@ -25,8 +25,8 @@ public:
 	static HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
 	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
-	static std::wstring TranslateStreamUri(const std::string& stream_uri);
-	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
+	static std::wstring TranslateStreamUri(const std::wstring& stream_uri);
+	static void GetChannelStreamInfo(const std::wstring& url, std::string& audio, std::string& video);
 
 	// Implementation
 protected:

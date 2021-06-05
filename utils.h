@@ -3,14 +3,14 @@
 
 namespace utils
 {
-	static constexpr auto URI_TEMPLATE = "http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
-	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/channel_unset.png";
+	static constexpr auto URI_TEMPLATE = L"http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
+	static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channel_unset.png";
 
 	static constexpr auto TV_INFO = "tv_info";
 	static constexpr auto TV_CATEGORIES = "tv_categories";
 	static constexpr auto TV_CHANNELS = "tv_channels";
-	static constexpr auto CHANNELS_LOGO_URL = "icons/channels/";
-	static constexpr auto CATEGORIES_LOGO_URL = "icons/";
+	static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
+	static constexpr auto CATEGORIES_LOGO_URL = L"icons/";
 
 #ifdef _DEBUG
 	static constexpr auto PLUGIN_ROOT = L"..\\edem_plugin\\";
@@ -57,7 +57,14 @@ inline std::basic_string<T>& string_trim(std::basic_string<T>& str, const T* cha
 /// </summary>
 /// <param name="str">string</param>
 /// <returns>int value if success, 0 otherwise</returns>
-int char_to_int(const std::string& str);;
+int char_to_int(const std::string& str);
+
+/// <summary>
+/// Converts char string to int.
+/// </summary>
+/// <param name="str">string</param>
+/// <returns>int value if success, 0 otherwise</returns>
+int wchar_to_int(const std::wstring& str);
 
 /// <summary>
 /// Converts int to char string.
@@ -65,6 +72,13 @@ int char_to_int(const std::string& str);;
 /// <param name="value">int value</param>
 /// <returns>string representaion of value, empty string otherwise</returns>
 std::string int_to_char(int value);
+
+/// <summary>
+/// Converts int to char string.
+/// </summary>
+/// <param name="value">int value</param>
+/// <returns>string representaion of value, empty string otherwise</returns>
+std::wstring int_to_wchar(int value);
 
 /// <summary>
 /// Allocate node using memory_pool allocator
