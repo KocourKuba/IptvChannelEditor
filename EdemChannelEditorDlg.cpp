@@ -733,6 +733,8 @@ void CEdemChannelEditorDlg::SaveChannelInfo()
 		channel->set_channel_id(m_streamID);
 		CheckForExisting();
 	}
+
+	UpdateData(FALSE);
 }
 
 void CEdemChannelEditorDlg::SaveCategoryInfo()
