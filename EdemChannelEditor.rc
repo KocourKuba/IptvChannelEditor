@@ -493,7 +493,7 @@ BEGIN
         MENUITEM "Delete Channel\tDel",         ID_REMOVE_CHANNEL
         MENUITEM "Disable Channel",             ID_TOGGLE_CHANNEL
         MENUITEM SEPARATOR
-        MENUITEM "Add Category",                ID_ADD_CATEGORY
+        MENUITEM "New Category",                ID_NEW_CATEGORY
         MENUITEM "Delete Category",             ID_REMOVE_CATEGORY
         MENUITEM SEPARATOR
         MENUITEM "Rename\tF2",                  ID_EDIT_RENAME
@@ -511,6 +511,7 @@ BEGIN
     BEGIN
         MENUITEM "Play",                        ID_PLAY_STREAM_PL
         MENUITEM SEPARATOR
+        MENUITEM "Add Category",                ID_ADD_CATEGORY
         MENUITEM "Add Channel\tF5",             ID_UPDATE_CHANNEL
         MENUITEM SEPARATOR
         MENUITEM "Get Stream Info for All channels", ID_GET_STREAM_INFO_ALL

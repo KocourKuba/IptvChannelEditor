@@ -47,8 +47,10 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
 	afx_msg void OnAddChannel();
+	afx_msg void OnAddUpdateChannel();
 	afx_msg void OnRemoveChannel();
 	afx_msg void OnUpdateRemoveChannel(CCmdUI* pCmdUI);
+	afx_msg void OnAddCategory();
 	afx_msg void OnChannelUp();
 	afx_msg void OnUpdateChannelUp(CCmdUI* pCmdUI);
 	afx_msg void OnChannelDown();
@@ -56,8 +58,8 @@ protected:
 	afx_msg void OnToggleChannel();
 	afx_msg void OnUpdateToggleChannel(CCmdUI* pCmdUI);
 	afx_msg void OnTreeItemRename();
-	afx_msg void OnAddCategory();
-	afx_msg void OnUpdateAddCategory(CCmdUI* pCmdUI);
+	afx_msg void OnNewCategory();
+	afx_msg void OnUpdateNewCategory(CCmdUI* pCmdUI);
 	afx_msg void OnRemoveCategory();
 	afx_msg void OnUpdateRemoveCategory(CCmdUI* pCmdUI);
 	afx_msg void OnGetStreamInfo();
@@ -80,7 +82,6 @@ protected:
 	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnBnClickedButtonGetInfoPl();
-	afx_msg void OnCreateUpdateChannel();
 	afx_msg void OnBnClickedButtonLoadPlaylist();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonPlSearchNext();
@@ -132,6 +133,7 @@ private:
 	bool LoadChannels(const CString& path);
 	void SaveChannels();
 	void LoadPlaylist(const CString& file);
+	void AddUpdateChannel();
 	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
 	void DoLoadPlaylist();
 
