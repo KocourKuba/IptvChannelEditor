@@ -95,8 +95,8 @@ private:
 	int epg_id = 0; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
 	std::map<int, ChannelCategory*> categories;
 	const std::map<int, std::unique_ptr<ChannelCategory>>& m_all_categories;
-	int prev_epg_days = 4;
-	int next_epg_days = 2;
+	int prev_epg_days = 7;
+	int next_epg_days = 7;
 	int adult = 0;
 	int has_archive = 0;
 };
