@@ -71,6 +71,18 @@ class DemoTv extends AbstractTv
             throw new Exception('Invalid XML document');
         }
 
+        $plugin_cookies->ott_key_local = "";
+        $plugin_cookies->subdomain_local = "";
+        if (isset($xml->channels_setup)
+            && !empty($xml->channels_setup->access_key)
+            && !empty($xml->channels_setup->access_domain)
+           )
+        {
+            hd_print("Overriding access settings found in playlist: " . $channels_list);
+            $plugin_cookies->ott_key_local = strval($xml->channels_setup->access_key);
+            $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
+        }
+
         $this->channels = new HashedArray();
         $this->groups = new HashedArray();
 
@@ -157,8 +169,14 @@ class DemoTv extends AbstractTv
         }
 
         $plugin_cookies->subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : 'dunehd.iptvspy.net';
-        $url =  str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
-        $url =  str_replace('{UID}', $plugin_cookies->ott_key, $url);
+
+        if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
+            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
+            $url = str_replace('{UID}', $plugin_cookies->ott_key_local, $url);
+        } else {
+            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
+            $url = str_replace('{UID}', $plugin_cookies->ott_key, $url);
+        }
 
         if (intval($archive_ts) > 0) {
             $now_ts = intval(time());
