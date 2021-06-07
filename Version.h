@@ -9,7 +9,7 @@
 #include "VerGIT.h"
 
 #define MAJOR	1
-#define MINOR	4
+#define MINOR	5
 #define SPECIAL 0
 
 #define FILEVER        MAJOR,MINOR,BUILD,SPECIAL
