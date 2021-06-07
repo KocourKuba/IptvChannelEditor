@@ -297,6 +297,7 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_GET_INFO_PL), _T("Get playlist stream info"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Store icon to local folder instead of downloading it from internet"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Save channels list"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ACCESS_INFO), _T("Provider access parameters"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Pack plugin to install on player"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Set channel icon from original playlist"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST), _T("Load playlist from file"));
