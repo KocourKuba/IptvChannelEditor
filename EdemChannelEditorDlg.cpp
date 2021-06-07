@@ -717,7 +717,7 @@ void CEdemChannelEditorDlg::SaveChannelInfo()
 	channel->set_has_archive(m_hasArchive);
 	channel->set_adult(m_isAdult);
 
-	if(CStringA(m_iconUrl) != channel->get_icon_uri().get_uri().c_str())
+	if(m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 	{
 		channel->set_icon_uri(m_iconUrl.GetString());
 		const auto& path = channel->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
@@ -749,7 +749,7 @@ void CEdemChannelEditorDlg::SaveCategoryInfo()
 	if (!category)
 		return;
 
-	if (CStringA(m_iconUrl) != category->get_icon_uri().get_uri().c_str())
+	if (m_iconUrl != category->get_icon_uri().get_uri().c_str())
 	{
 		category->set_icon_uri(m_iconUrl.GetString());
 		const auto& path = category->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
@@ -1282,6 +1282,7 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	}
 	else if (IsCategory(hSelected))
 	{
+		m_current = nullptr;
 		ChangeControlsState(FALSE);
 		m_tvgID = 0;
 		m_epgID = 0;
@@ -1992,8 +1993,10 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 		m_iconUrl += channel ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
 		m_iconUrl += oFN.lpstrFileTitle;
 
-		set_allow_save();
 		UpdateData(FALSE);
+
+		channel ? SaveChannelInfo() : SaveCategoryInfo();
+		set_allow_save();
 	}
 }
 
@@ -2029,7 +2032,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 	}
 	else
 	{
-		::DeleteFile(_T("dune_plugin_edem_free4_mod.zip"));
+		::DeleteFile(_T("dune_plugin_edem_mod.zip"));
 	}
 }
 
@@ -2820,9 +2823,7 @@ void CEdemChannelEditorDlg::AddUpdateChannel()
 		hFoundItem = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found);
 	}
 
-	m_wndChannelsTree.SelectItem(hFoundItem);
-
-	auto channel = GetCurrentChannel();
+	auto channel = GetChannel(hFoundItem);
 	if (channel->get_title() != entry->get_title())
 	{
 		channel->set_title(entry->get_title());
