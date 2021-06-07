@@ -28,6 +28,20 @@ public:
 	static std::wstring TranslateStreamUri(const std::wstring& stream_uri);
 	static void GetChannelStreamInfo(const std::wstring& url, std::string& audio, std::string& video);
 
+	static CString GetAccessKey() { return m_embedded_info ? m_ch_access_key : m_gl_access_key; }
+	static CString GetAccessDomain() { return m_embedded_info ? m_ch_domain : m_gl_domain; }
+	static void SetAccessKey(const CString& access_key)
+	{
+		auto& target = m_embedded_info ? m_ch_access_key : m_gl_access_key;
+		target = access_key;
+	}
+
+	static void SetDomain(const CString& domain)
+	{
+		auto& target = m_embedded_info ? m_ch_domain : m_gl_domain;
+		target = domain;
+	}
+
 	// Implementation
 protected:
 	HICON m_hIcon;
@@ -87,6 +101,7 @@ protected:
 	afx_msg void OnBnClickedButtonPlSearchNext();
 	afx_msg void OnBnClickedButtonRemoveFromShowIn();
 	afx_msg void OnBnClickedButtonSave();
+	afx_msg void OnBnClickedButtonAccessInfo();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
 	afx_msg void OnBnClickedButtonTestEpg();
@@ -181,8 +196,6 @@ private:
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
 public:
-	static CString m_domain;
-	static CString m_accessKey;
 	static CString m_probe;
 
 protected:
@@ -230,6 +243,12 @@ protected:
 	int m_nextDays = 0;
 
 private:
+	static CString m_gl_domain;
+	static CString m_gl_access_key;
+	static CString m_ch_access_key;
+	static CString m_ch_domain;
+	static BOOL m_embedded_info;
+
 	CString m_chFileName;
 	CString m_plFileName;
 	CString m_player;

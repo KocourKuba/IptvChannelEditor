@@ -6,6 +6,10 @@ namespace utils
 	static constexpr auto URI_TEMPLATE = L"http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
 	static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channel_unset.png";
 
+	static constexpr auto CHANNELS_SETUP = "channels_setup";
+	static constexpr auto ACCESS_KEY = "access_key";
+	static constexpr auto ACCESS_DOMAIN = "access_domain";
+
 	static constexpr auto TV_INFO = "tv_info";
 	static constexpr auto TV_CATEGORIES = "tv_categories";
 	static constexpr auto TV_CHANNELS = "tv_channels";

@@ -15,6 +15,7 @@
 #define IDR_MENU_PLAYLIST               138
 #define IDS_ABOUTBOX                    139
 #define IDD_DIALOG_FILTER               140
+#define IDD_DIALOG_ACCESS_INFO          141
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_ADD_TO_SHOW          1002
 #define IDC_BUTTON_CACHE_ICON           1003
@@ -86,6 +87,8 @@
 #define IDC_CHECK_REGEX                 1065
 #define IDC_CHECK_REGEX2                1066
 #define IDC_CHECK_CASE                  1066
+#define IDC_CHECK_GLOBAL                1067
+#define IDC_BUTTON_ACCESS_INFO          1068
 #define ID_ADD_CATEGORY                 32771
 #define ID_ADD_CHANNEL                  32772
 #define ID_CHANNEL_DOWN                 32773
@@ -112,7 +115,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         32792
-#define _APS_NEXT_CONTROL_VALUE         1066
+#define _APS_NEXT_CONTROL_VALUE         1069
 #define _APS_NEXT_SYMED_VALUE           1163
 #endif
 #endif

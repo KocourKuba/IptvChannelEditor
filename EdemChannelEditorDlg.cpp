@@ -12,6 +12,7 @@
 #include "EdemChannelEditorDlg.h"
 #include "AboutDlg.h"
 #include "SettingsDlg.h"
+#include "AccessDlg.h"
 #include "FilterDialog.h"
 #include "utils.h"
 
@@ -24,8 +25,11 @@
 #define new DEBUG_NEW
 #endif
 
-CString CEdemChannelEditorDlg::m_domain;
-CString CEdemChannelEditorDlg::m_accessKey;
+BOOL CEdemChannelEditorDlg::m_embedded_info = FALSE;
+CString CEdemChannelEditorDlg::m_gl_domain;
+CString CEdemChannelEditorDlg::m_gl_access_key;
+CString CEdemChannelEditorDlg::m_ch_domain;
+CString CEdemChannelEditorDlg::m_ch_access_key;
 CString CEdemChannelEditorDlg::m_probe;
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
@@ -149,6 +153,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CEdemChannelEditorDlg::OnBnClickedButtonPlFilter)
+	ON_BN_CLICKED(IDC_BUTTON_ACCESS_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonAccessInfo)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -256,8 +261,8 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_wndPlaylistTree.m_color = RGB(200, 0, 0);
 	m_wndPlaylistTree.class_hash = typeid(PlaylistEntry).hash_code();
 
-	m_accessKey = theApp.GetProfileString(_T("Setting"), _T("AccessKey"));
-	m_domain = theApp.GetProfileString(_T("Setting"), _T("Domain"));
+	SetAccessKey(theApp.GetProfileString(_T("Setting"), _T("AccessKey")));
+	SetDomain(theApp.GetProfileString(_T("Setting"), _T("Domain")));
 	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
 
@@ -502,7 +507,15 @@ void CEdemChannelEditorDlg::SaveChannels()
 		doc.append_node(decl);
 
 		// create <tv_info> root node
-		auto root = doc.allocate_node(rapidxml::node_element, utils::TV_INFO);
+		auto tv_info = doc.allocate_node(rapidxml::node_element, utils::TV_INFO);
+
+		if (m_embedded_info)
+		{
+			auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
+			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_KEY, utils::utf16_to_utf8(GetAccessKey().GetString()).c_str()));
+			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(GetAccessDomain().GetString()).c_str()));
+			tv_info->append_node(setup_node);
+		}
 
 		// create <tv_categories> node
 		auto cat_node = doc.allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
@@ -513,7 +526,7 @@ void CEdemChannelEditorDlg::SaveChannels()
 			cat_node->append_node(category.second->GetNode(doc));
 		}
 		// append <tv_categories> to <tv_info> node
-		root->append_node(cat_node);
+		tv_info->append_node(cat_node);
 
 		// create <tv_channels> node
 		auto ch_node = doc.allocate_node(rapidxml::node_element, utils::TV_CHANNELS);
@@ -523,9 +536,9 @@ void CEdemChannelEditorDlg::SaveChannels()
 			ch_node->append_node(channel->GetNode(doc));
 		}
 		// append <tv_channel> to <tv_info> node
-		root->append_node(ch_node);
+		tv_info->append_node(ch_node);
 
-		doc.append_node(root);
+		doc.append_node(tv_info);
 
 		// write document
 		std::ofstream os(path, std::istream::binary);
@@ -865,7 +878,19 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 		return false;
 	}
 
+
 	auto i_node = doc.first_node(utils::TV_INFO);
+
+	m_embedded_info = FALSE;
+	m_ch_access_key.Empty();
+	m_ch_domain.Empty();
+	auto setup_node = i_node->first_node(utils::CHANNELS_SETUP);
+	if (setup_node)
+	{
+		m_ch_access_key = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_KEY)).c_str();
+		m_ch_domain = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN)).c_str();
+		m_embedded_info = TRUE;
+	}
 
 	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(ChannelCategory::TV_CATEGORY);
 	// Iterate <tv_category> nodes
@@ -1755,7 +1780,7 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	}
 
 	// if access key and domain not set, try to load it from playlist
-	if (m_accessKey.IsEmpty() && m_domain.IsEmpty() && !m_playlist.empty())
+	if (m_gl_access_key.IsEmpty() && m_gl_domain.IsEmpty() && !m_playlist.empty())
 	{
 		for(const auto& item : m_playlist)
 		{
@@ -1763,8 +1788,11 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 			const auto& domain = item->get_domain();
 			if(!access_key.empty() && !domain.empty() && access_key != "00000000000000" && domain != "localhost")
 			{
-				theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), CString(access_key.c_str()));
-				theApp.WriteProfileString(_T("Setting"), _T("Domain"), CString(domain.c_str()));
+				m_gl_access_key = access_key.c_str();
+				m_gl_domain = domain.c_str();
+
+				theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), m_gl_access_key);
+				theApp.WriteProfileString(_T("Setting"), _T("Domain"), m_gl_domain);
 				break;
 			}
 		}
@@ -2278,10 +2306,33 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSettings()
 	CSettingsDlg dlg;
 	if (dlg.DoModal() == IDOK)
 	{
-		m_accessKey = theApp.GetProfileString(_T("Setting"), _T("AccessKey"));
-		m_domain = theApp.GetProfileString(_T("Setting"), _T("Domain"));
 		m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 		m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
+	}
+}
+
+void CEdemChannelEditorDlg::OnBnClickedButtonAccessInfo()
+{
+	CAccessDlg dlg;
+	dlg.m_bEmbedded = m_embedded_info;
+	dlg.m_accessKey = GetAccessKey();
+	dlg.m_domain = GetAccessDomain();
+
+	if (dlg.DoModal() == IDOK)
+	{
+		m_embedded_info = dlg.m_bEmbedded;
+		SetAccessKey(dlg.m_accessKey);
+		SetDomain(dlg.m_domain);
+
+		if (m_embedded_info)
+		{
+			set_allow_save();
+		}
+		else
+		{
+			theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), dlg.m_accessKey);
+			theApp.WriteProfileString(_T("Setting"), _T("Domain"), dlg.m_domain);
+		}
 	}
 }
 
@@ -2872,8 +2923,8 @@ std::wstring CEdemChannelEditorDlg::TranslateStreamUri(const std::wstring& strea
 	std::wregex re_uid(LR"(\{UID\})");
 
 	std::wstring stream_url(stream_uri);
-	stream_url = std::regex_replace(stream_url, re_domain, CEdemChannelEditorDlg::m_domain.GetString());
-	return std::regex_replace(stream_url, re_uid, CEdemChannelEditorDlg::m_accessKey.GetString());
+	stream_url = std::regex_replace(stream_url, re_domain, CEdemChannelEditorDlg::GetAccessDomain().GetString());
+	return std::regex_replace(stream_url, re_uid, CEdemChannelEditorDlg::GetAccessKey().GetString());
 }
 
 void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::wstring& url, std::string& audio, std::string& video)

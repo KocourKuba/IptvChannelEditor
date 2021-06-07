@@ -28,8 +28,6 @@ protected:
 	CMFCEditBrowseCtrl m_wndProbe;
 	CMFCEditBrowseCtrl m_wndPlayer;
 
-	CString m_accessKey;
-	CString m_domain;
 	CString m_playlistURL;
 	CString m_player;
 	CString m_probe;
