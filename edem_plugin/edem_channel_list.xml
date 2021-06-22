@@ -6459,19 +6459,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>CineMan Сваты</caption>
-			<tvg_id>0</tvg_id>
-			<epg_id>4692</epg_id>
-			<icon_url>http://epg.it999.ru/img2/4692.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>3</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11014/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Кинозал! VHS HD</caption>
 			<tvg_id>0</tvg_id>
 			<epg_id>4776</epg_id>
@@ -7835,6 +7822,54 @@
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/12194/index.m3u8</streaming_url>
 			<protected>1</protected>
+		</tv_channel>
+		<tv_channel>
+			<caption>TOP 80 S HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5114</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5114.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13002/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>TOP BUDO HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5115</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5115.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13003/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>TOP Cinema HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5116</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5116.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13004/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>TOP HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5118</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5118.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13006/index.m3u8</streaming_url>
 		</tv_channel>
 	</tv_channels>
 </tv_info>
