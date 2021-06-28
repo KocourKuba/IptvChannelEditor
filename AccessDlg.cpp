@@ -51,6 +51,10 @@ BOOL CAccessDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
+	m_url = theApp.GetProfileString(_T("Setting"), _T("EdemUrl"));
+
+	UpdateData(FALSE);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -73,6 +77,7 @@ void CAccessDlg::OnEnChangeEditPlaylistUrl()
 	UpdateData(TRUE);
 
 	m_wndGet.EnableWindow(!m_url.IsEmpty());
+	theApp.WriteProfileString(_T("Setting"), _T("EdemUrl"), m_url);
 }
 
 
@@ -86,17 +91,27 @@ void CAccessDlg::OnBnClickedBtnGet()
 	// #EXTGRP:Общие
 	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
 
-	std::vector<BYTE> data;
-	if (!utils::DownloadFile(m_url.GetString(), data)) return;
+	std::unique_ptr<std::istream> pl_stream;
+	if (utils::CrackUrl(m_url.GetString()))
+	{
+		std::vector<BYTE> data;
+		if (utils::DownloadFile(m_url.GetString(), data))
+		{
+			vector_to_streambuf<char> buf(data);
+			pl_stream = std::make_unique<std::istream>(&buf);
+		}
+	}
+	else
+	{
+		pl_stream = std::make_unique<std::ifstream>(m_url.GetString());
+	}
 
-	vector_to_streambuf<char> buf(data);
-	std::istream is(&buf);
-	if (!is.good()) return;
+	if (!pl_stream || !pl_stream->good()) return;
 
 	int step = 0;
 	std::string line;
 	auto entry = std::make_unique<PlaylistEntry>();
-	while (std::getline(is, line))
+	while (std::getline(*pl_stream, line))
 	{
 		utils::string_rtrim(line, "\r");
 		entry->Parse(line);
