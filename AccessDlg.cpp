@@ -5,7 +5,17 @@
 #include "EdemChannelEditor.h"
 #include "AccessDlg.h"
 #include "afxdialogex.h"
+#include "PlayListEntry.h"
 
+template<typename CharT, typename TraitsT = std::char_traits<CharT> >
+class vector_to_streambuf : public std::basic_streambuf<CharT, TraitsT>
+{
+public:
+	vector_to_streambuf(std::vector<BYTE>& vec)
+	{
+		setg((CharT*)vec.data(), (CharT*)vec.data(), (CharT*)vec.data() + vec.size());
+	}
+};
 
 // CAccessDlg dialog
 
@@ -13,6 +23,8 @@ IMPLEMENT_DYNAMIC(CAccessDlg, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CAccessDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_GLOBAL, &CAccessDlg::OnBnClickedCheckGlobal)
+	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_URL, &CAccessDlg::OnEnChangeEditPlaylistUrl)
+	ON_BN_CLICKED(ID_BTN_GET, &CAccessDlg::OnBnClickedBtnGet)
 END_MESSAGE_MAP()
 
 
@@ -30,6 +42,9 @@ void CAccessDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_KEY, m_accessKey);
 	DDX_Text(pDX, IDC_EDIT_DOMAIN, m_domain);
 	DDX_Check(pDX, IDC_CHECK_GLOBAL, m_bEmbedded);
+	DDX_Text(pDX, IDC_EDIT_PLAYLIST_URL, m_url);
+	DDX_Control(pDX, IDC_EDIT_PLAYLIST_URL, m_wndUrl);
+	DDX_Control(pDX, ID_BTN_GET, m_wndGet);
 }
 
 BOOL CAccessDlg::OnInitDialog()
@@ -48,6 +63,53 @@ void CAccessDlg::OnBnClickedCheckGlobal()
 	{
 		m_accessKey = theApp.GetProfileString(_T("Setting"), _T("AccessKey"));
 		m_domain = theApp.GetProfileString(_T("Setting"), _T("Domain"));
+	}
+
+	UpdateData(FALSE);
+}
+
+void CAccessDlg::OnEnChangeEditPlaylistUrl()
+{
+	UpdateData(TRUE);
+
+	m_wndGet.EnableWindow(!m_url.IsEmpty());
+}
+
+
+void CAccessDlg::OnBnClickedBtnGet()
+{
+	UpdateData(TRUE);
+
+	// Short (OTTPplay.es) format
+	// #EXTM3U
+	// #EXTINF:0 tvg-rec="3",Первый HD
+	// #EXTGRP:Общие
+	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
+
+	std::vector<BYTE> data;
+	if (!utils::DownloadFile(m_url.GetString(), data)) return;
+
+	vector_to_streambuf<char> buf(data);
+	std::istream is(&buf);
+	if (!is.good()) return;
+
+	int step = 0;
+	std::string line;
+	auto entry = std::make_unique<PlaylistEntry>();
+	while (std::getline(is, line))
+	{
+		utils::string_rtrim(line, "\r");
+		entry->Parse(line);
+		if (entry->get_directive() != ext_pathname) continue;
+
+		const auto& access_key = entry->get_access_key();
+		const auto& domain = entry->get_domain();
+		if (!access_key.empty() && !domain.empty() && access_key != "00000000000000" && domain != "localhost")
+		{
+			m_accessKey = access_key.c_str();
+			m_domain = domain.c_str();
+			break;
+		}
 	}
 
 	UpdateData(FALSE);

@@ -23,9 +23,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnBnClickedCheckGlobal();
+	afx_msg void OnEnChangeEditPlaylistUrl();
+	afx_msg void OnBnClickedBtnGet();
+
 
 public:
+	CButton m_wndGet;
+	CMFCEditBrowseCtrl m_wndUrl;
 	CString m_accessKey;
 	CString m_domain;
 	BOOL m_bEmbedded;
+	CString m_url;
 };

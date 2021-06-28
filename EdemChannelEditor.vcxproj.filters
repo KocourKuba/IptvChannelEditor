@@ -22,6 +22,12 @@
     <Filter Include="Source Files\Containers">
       <UniqueIdentifier>{2079b750-4620-44d1-93dd-5c5535b56df7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Dialogs">
+      <UniqueIdentifier>{fc89b8cb-1269-40d7-bc43-0f89a63526d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Dialogs">
+      <UniqueIdentifier>{0232e649-a20b-4bac-9418-87d83188ba3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EdemChannelEditor.h">
@@ -53,12 +59,6 @@
     </ClInclude>
     <ClInclude Include="rapidxml_utils.hpp">
       <Filter>Header Files\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="AboutDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SettingsDlg.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ChannelCategory.h">
       <Filter>Header Files\Containers</Filter>
@@ -93,11 +93,20 @@
     <ClInclude Include="Crc32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FilterDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AccessDlg.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="AboutDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterDialog.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomPlaylistDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -108,12 +117,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AboutDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SettingsDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChannelCategory.cpp">
@@ -137,11 +140,20 @@
     <ClCompile Include="Crc32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FilterDialog.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AboutDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="AccessDlg.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterDialog.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomPlaylistDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -20,6 +20,7 @@
 #include "rapidxml_print.hpp"
 
 #include "SevenZip/7zip/SevenZipWrapper.h"
+#include "CustomPlaylistDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -205,6 +206,8 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_GET_INFO, m_wndGetInfo);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylistType);
 	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
+	DDX_Control(pDX, IDC_BUTTON_LOAD_PLAYLIST, m_wndChooseUrl);
+	DDX_Control(pDX, IDC_BUTTON_DOWNLOAD_PLAYLIST, m_wndDownloadUrl);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -309,6 +312,8 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Filter playlist"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Click to change icon"));
 
+	CWaitCursor cur;
+
 	if (LoadChannels(channels))
 	{
 		FillCategories();
@@ -322,6 +327,9 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	{
 		SetCurrentChannel(FindTreeItem(m_wndChannelsTree, (DWORD_PTR)m_channels[0].get()));
 	}
+
+	LoadPlaylist(theApp.GetProfileString(_T("Setting"), _T("Playlist")));
+	FillPlaylist();
 
 	UpdateData(FALSE);
 
@@ -1696,40 +1704,12 @@ void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonLoadPlaylist()
 {
-	CFileDialog dlg(TRUE);
-
-	CString file;
-	CString filter(_T("Playlist m3u8(*.m3u8)|*.m3u8|All Files (*.*)|*.*||"));
-	filter.Replace('|', '\0');
-
-	OPENFILENAME& oFN = dlg.GetOFN();
-	oFN.lpstrFilter = filter.GetString();
-	oFN.nMaxFile = MAX_PATH;
-	oFN.nFilterIndex = 0;
-	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
-	oFN.lpstrTitle = _T("Load Edem TV playlist");
-	oFN.Flags |= OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON;
-
-	INT_PTR nResult = dlg.DoModal();
-	file.ReleaseBuffer();
-
-	if (nResult == IDOK)
+	CCustomPlaylistDlg dlg;
+	dlg.m_isFile = (m_wndPlaylistType.GetCurSel() == 3);
+	if (dlg.DoModal() == IDOK)
 	{
-		theApp.WriteProfileString(_T("Setting"), _T("Playlist"), file);
-		DoLoadPlaylist();
+		theApp.WriteProfileString(_T("Setting"), _T("Playlist"), dlg.m_url);
 	}
-}
-
-void CEdemChannelEditorDlg::DoLoadPlaylist()
-{
-	CWaitCursor cur;
-
-	m_filterString = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
-	m_filterRegex = theApp.GetProfileInt(_T("Setting"), _T("FilterUseRegex"), FALSE);
-	m_filterCase = theApp.GetProfileInt(_T("Setting"), _T("FilterUseCase"), FALSE);
-
-	LoadPlaylist(theApp.GetProfileString(_T("Setting"), _T("Playlist")));
-	FillPlaylist();
 }
 
 void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
@@ -1738,6 +1718,10 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 	// #EXTINF:0 tvg-rec="3",Первый FHD <-- caption
 	// #EXTGRP:Общие <-- Category
 	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/2402/index.m3u8
+
+	m_filterString = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
+	m_filterRegex = theApp.GetProfileInt(_T("Setting"), _T("FilterUseRegex"), FALSE);
+	m_filterCase = theApp.GetProfileInt(_T("Setting"), _T("FilterUseCase"), FALSE);
 
 	auto pos = file.ReverseFind('\\');
 	if (pos != -1)
@@ -1778,25 +1762,6 @@ void CEdemChannelEditorDlg::LoadPlaylist(const CString& file)
 			if (entry->get_directive() == ext_pathname)
 			{
 				if (!AddPlaylistEntry(entry)) break;
-			}
-		}
-	}
-
-	// if access key and domain not set, try to load it from playlist
-	if (m_gl_access_key.IsEmpty() && m_gl_domain.IsEmpty() && !m_playlist.empty())
-	{
-		for(const auto& item : m_playlist)
-		{
-			const auto& access_key = item->get_access_key();
-			const auto& domain = item->get_domain();
-			if(!access_key.empty() && !domain.empty() && access_key != "00000000000000" && domain != "localhost")
-			{
-				m_gl_access_key = access_key.c_str();
-				m_gl_domain = domain.c_str();
-
-				theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), m_gl_access_key);
-				theApp.WriteProfileString(_T("Setting"), _T("Domain"), m_gl_domain);
-				break;
 			}
 		}
 	}
@@ -2711,7 +2676,14 @@ void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 			url = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 			break;
 		case 2:
-			url = theApp.GetProfileString(_T("Setting"), _T("PlaylistURL")).GetString();
+			{
+				CCustomPlaylistDlg dlg;
+				dlg.m_isFile = FALSE;
+				if (dlg.DoModal() == IDOK)
+				{
+					url = dlg.m_url;
+				}
+			}
 			break;
 		default:
 			return;
@@ -2737,7 +2709,6 @@ void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 		os.close();
 		LoadPlaylist(playlist);
 		FillPlaylist();
-		theApp.WriteProfileString(_T("Setting"), _T("Playlist"), playlist);
 	}
 }
 
@@ -2748,23 +2719,17 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 	{
 		case 0:
 		case 1:
-			GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST)->EnableWindow(FALSE);
-			GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST)->EnableWindow(TRUE);
+			m_wndChooseUrl.EnableWindow(FALSE);
 			break;
 		case 2:
-			GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST)->EnableWindow(FALSE);
-			GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST)->EnableWindow(!theApp.GetProfileString(_T("Setting"), _T("PlaylistURL")).IsEmpty());
-			break;
 		case 3:
-			GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST)->EnableWindow(TRUE);
-			GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST)->EnableWindow(FALSE);
+			m_wndChooseUrl.EnableWindow(TRUE);
 			break;
 		default:
 			break;
 	}
 
 	theApp.WriteProfileInt(_T("Setting"), _T("PlaylistType"), idx);
-	DoLoadPlaylist();
 }
 
 HTREEITEM CEdemChannelEditorDlg::FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry)
@@ -3125,6 +3090,9 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPlFilter()
 	CFilterDialog dlg;
 	if (dlg.DoModal() == IDOK)
 	{
-		DoLoadPlaylist();
+		CWaitCursor cur;
+
+		LoadPlaylist(theApp.GetProfileString(_T("Setting"), _T("Playlist")));
+		FillPlaylist();
 	}
 }

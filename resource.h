@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by EdemChannelEditor.rc
 //
+#define ID_BTN_GET                      3
 #define IDM_ABOUTBOX                    16
 #define IDR_MAINFRAME                   128
 #define IDB_PNG_QR                      129
@@ -16,6 +17,8 @@
 #define IDS_ABOUTBOX                    139
 #define IDD_DIALOG_FILTER               140
 #define IDD_DIALOG_ACCESS_INFO          141
+#define IDD_CUSTOM_URL                  143
+#define IDD_CUSTOM_PLAYLIST             143
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_ADD_TO_SHOW          1002
 #define IDC_BUTTON_CACHE_ICON           1003
@@ -89,6 +92,7 @@
 #define IDC_CHECK_CASE                  1066
 #define IDC_CHECK_GLOBAL                1067
 #define IDC_BUTTON_ACCESS_INFO          1068
+#define IDC_CUSTOM_PLAYLIST             1069
 #define ID_ADD_CATEGORY                 32771
 #define ID_ADD_CHANNEL                  32772
 #define ID_CHANNEL_DOWN                 32773
@@ -113,9 +117,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        142
+#define _APS_NEXT_RESOURCE_VALUE        146
 #define _APS_NEXT_COMMAND_VALUE         32792
-#define _APS_NEXT_CONTROL_VALUE         1069
+#define _APS_NEXT_CONTROL_VALUE         1070
 #define _APS_NEXT_SYMED_VALUE           1163
 #endif
 #endif

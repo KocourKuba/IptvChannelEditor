@@ -29,14 +29,12 @@ void CSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PROBE, m_probe);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PROBE, m_wndProbe);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLAYER, m_wndPlayer);
-	DDX_Text(pDX, IDC_EDIT_PLAYLIST_URL, m_playlistURL);
 }
 
 BOOL CSettingsDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_playlistURL = theApp.GetProfileString(_T("Setting"), _T("PlaylistURL"));
 	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
 
@@ -56,7 +54,6 @@ void CSettingsDlg::OnOK()
 
 	UpdateData(TRUE);
 
-	theApp.WriteProfileString(_T("Setting"), _T("PlaylistURL"), m_playlistURL);
 	theApp.WriteProfileString(_T("Setting"), _T("Player"), m_player);
 	theApp.WriteProfileString(_T("Setting"), _T("FFProbe"), m_probe);
 }

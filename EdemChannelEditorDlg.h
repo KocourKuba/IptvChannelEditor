@@ -150,7 +150,6 @@ private:
 	void LoadPlaylist(const CString& file);
 	void AddUpdateChannel();
 	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
-	void DoLoadPlaylist();
 
 	void FillCategories();
 	void FillChannels();
@@ -216,6 +215,8 @@ protected:
 	CButton m_wndTestEPG;
 	CButton m_wndAddToShow;
 	CButton m_wndRemoveFromShow;
+	CButton m_wndChooseUrl;
+	CButton m_wndDownloadUrl;
 	CButton m_wndGetInfo;
 	CStatic m_wndIcon;
 	CStatic m_wndPlIcon;

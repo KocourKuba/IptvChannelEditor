@@ -214,6 +214,7 @@
     <ClInclude Include="ColoringProperty.h" />
     <ClInclude Include="ColorTreeCtrl.h" />
     <ClInclude Include="Crc32.h" />
+    <ClInclude Include="CustomPlaylistDlg.h" />
     <ClInclude Include="FilterDialog.h" />
     <ClInclude Include="IconContainer.h" />
     <ClInclude Include="PlayListEntry.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="ColorTreeCtrl.cpp" />
     <ClCompile Include="Crc32.cpp" />
+    <ClCompile Include="CustomPlaylistDlg.cpp" />
     <ClCompile Include="FilterDialog.cpp" />
     <ClCompile Include="PlayListEntry.cpp" />
     <ClCompile Include="SettingsDlg.cpp" />
