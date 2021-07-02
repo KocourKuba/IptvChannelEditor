@@ -93,8 +93,9 @@
 #define IDC_CHECK_GLOBAL                1067
 #define IDC_BUTTON_ACCESS_INFO          1068
 #define IDC_CUSTOM_PLAYLIST             1069
-#define IDC_PROGRESS1                   1070
 #define IDC_PROGRESS_LOAD               1070
+#define IDC_SPIN_ARCHIVE_CHECK          1071
+#define IDC_EDIT_ARCHIVE_CHECK          1072
 #define ID_ADD_CATEGORY                 32771
 #define ID_ADD_CHANNEL                  32772
 #define ID_CHANNEL_DOWN                 32773
@@ -114,14 +115,21 @@
 #define ID_GET_STREAM_INFO              32789
 #define ID_GET_STREAM_INFO_ALL          32790
 #define ID_NEW_CATEGORY                 32791
+#define ID_CHANNELMENU_PLAYARCHIVE      32792
+#define ID_PLAY_ARCHIVE                 32793
+#define ID_Menu                         32794
+#define ID_PLAYARCHIVE_                 32795
+#define ID_PLAYARCHIVE_32796            32796
+#define ID_PLAYARCHIVE_32797            32797
+#define ID_PLAYARCHIVE_32798            32798
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        146
-#define _APS_NEXT_COMMAND_VALUE         32792
-#define _APS_NEXT_CONTROL_VALUE         1071
+#define _APS_NEXT_COMMAND_VALUE         32799
+#define _APS_NEXT_CONTROL_VALUE         1073
 #define _APS_NEXT_SYMED_VALUE           1163
 #endif
 #endif

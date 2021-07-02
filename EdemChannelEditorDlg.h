@@ -86,8 +86,10 @@ protected:
 	afx_msg void OnUpdateGetChannelStreamInfoPl(CCmdUI* pCmdUI);
 	afx_msg void OnPlayChannelStream();
 	afx_msg void OnUpdatePlayChannelStream(CCmdUI* pCmdUI);
-	afx_msg void OnPlayChannelStreamPl();
-	afx_msg void OnUpdatePlayChannelStreamPl(CCmdUI* pCmdUI);
+	afx_msg void OnPlayPlaylistStream();
+	afx_msg void OnUpdatePlayPlaylistStream(CCmdUI* pCmdUI);
+	afx_msg void OnPlayChannelStreamArchive();
+	afx_msg void OnUpdatePlayChannelStreamArchive(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonLoadChannels();
 	afx_msg void OnUpdateButtonLoadChannels(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonPlFilter();
@@ -113,7 +115,9 @@ protected:
 	afx_msg void OnChanges();
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaposSpinArchiveCheck(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditNum();
+	afx_msg void OnEnChangeEditArchiveCheck();
 	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
@@ -135,10 +139,11 @@ protected:
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateArchiveCheck(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
-	afx_msg LRESULT OnStartLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnStartLoadData(WPARAM wParam = 0, LPARAM lParam = 0);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -164,9 +169,9 @@ private:
 	void SaveChannelInfo();
 	void SaveCategoryInfo();
 
-	void PlayChannel(HTREEITEM hItem);
+	void PlayChannel(HTREEITEM hItem, int archive_hour = 0);
 	void PlayPlaylistEntry(HTREEITEM hItem);
-	void PlayStream(const std::wstring& stream_url);
+	void PlayStream(const std::wstring& stream_url, int archive_hour = 0);
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
 
@@ -244,6 +249,7 @@ protected:
 	int m_epgID = 0;
 	int m_prevDays = 0;
 	int m_nextDays = 0;
+	int m_archiveCheck = 0;
 
 private:
 	static CString m_gl_domain;

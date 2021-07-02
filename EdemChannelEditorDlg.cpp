@@ -92,9 +92,11 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOMIZE, &CEdemChannelEditorDlg::OnBnClickedCheckCustomize)
 	ON_EN_CHANGE(IDC_EDIT_NEXT_EPG, &CEdemChannelEditorDlg::OnEnChangeEditNum)
 	ON_EN_CHANGE(IDC_EDIT_PREV_EPG, &CEdemChannelEditorDlg::OnEnChangeEditNum)
+	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_CHECK, &CEdemChannelEditorDlg::OnEnChangeEditNum)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_URL, &CEdemChannelEditorDlg::OnChanges)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_NEXT, &CEdemChannelEditorDlg::OnDeltaposSpinNext)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_PREV, &CEdemChannelEditorDlg::OnDeltaposSpinPrev)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ARCHIVE_CHECK, &CEdemChannelEditorDlg::OnDeltaposSpinArchiveCheck)
 	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CEdemChannelEditorDlg::OnChanges)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnBnClickedButtonSave)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SAVE, &CEdemChannelEditorDlg::OnUpdateButtonSave)
@@ -114,6 +116,8 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_GET_INFO_PL, &CEdemChannelEditorDlg::OnUpdateButtonGetInfoPl)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_CHANNELS, &CEdemChannelEditorDlg::OnBnClickedButtonLoadChannels)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_LOAD_CHANNELS, &CEdemChannelEditorDlg::OnUpdateButtonLoadChannels)
+	ON_UPDATE_COMMAND_UI(IDC_EDIT_ARCHIVE_CHECK, &CEdemChannelEditorDlg::OnUpdateArchiveCheck)
+	ON_UPDATE_COMMAND_UI(IDC_SPIN_ARCHIVE_CHECK, &CEdemChannelEditorDlg::OnUpdateArchiveCheck)
 
 	ON_NOTIFY(TVN_SELCHANGING, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnSelchangingTreeChannels)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels)
@@ -151,11 +155,13 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_GET_STREAM_INFO_PL, &CEdemChannelEditorDlg::OnUpdateGetChannelStreamInfoPl)
 	ON_COMMAND(ID_PLAY_STREAM, &CEdemChannelEditorDlg::OnPlayChannelStream)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM, &CEdemChannelEditorDlg::OnUpdatePlayChannelStream)
-	ON_COMMAND(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnPlayChannelStreamPl)
-	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnUpdatePlayChannelStreamPl)
+	ON_COMMAND(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnPlayPlaylistStream)
+	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnUpdatePlayPlaylistStream)
+	ON_COMMAND(ID_PLAY_ARCHIVE, &CEdemChannelEditorDlg::OnPlayChannelStreamArchive)
+	ON_UPDATE_COMMAND_UI(ID_PLAY_ARCHIVE, &CEdemChannelEditorDlg::OnUpdatePlayChannelStreamArchive)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
-	ON_MESSAGE(WN_START_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnStartLoadPlaylist)
+	ON_MESSAGE(WN_START_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnStartLoadData)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CEdemChannelEditorDlg::OnBnClickedButtonPlFilter)
 	ON_BN_CLICKED(IDC_BUTTON_ACCESS_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonAccessInfo)
 END_MESSAGE_MAP()
@@ -190,6 +196,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Text(pDX, IDC_EDIT_PREV_EPG, m_prevDays);
 	DDX_Text(pDX, IDC_EDIT_NEXT_EPG, m_nextDays);
+	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK, m_archiveCheck);
 	DDX_Control(pDX, IDC_BUTTON_ADD_TO_SHOW, m_wndAddToShow);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE_FROM_SHOW, m_wndRemoveFromShow);
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndIcon);
@@ -272,23 +279,11 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	SetDomain(theApp.GetProfileString(_T("Setting"), _T("Domain")));
 	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
-
-	int idx = theApp.GetProfileInt(_T("Setting"), _T("ChannelsType"), 0);
-	m_wndChannels.SetCurSel(idx);
-	CString channels;
-	switch (idx)
-	{
-		case 1:
-			channels = theApp.GetProfileString(_T("Setting"), _T("ChannelList"));
-			break;
-		default:
-			channels = theApp.GetAppPath(utils::CHANNELS_CONFIG);
-			break;
-	}
+	m_archiveCheck = theApp.GetProfileInt(_T("Setting"), _T("HoursBack"), 0);
 
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose playlist to import. Standard and Thematic downloaded from it999.ru"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_LOAD_CHANNELS), _T("Load channels from file"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_LOAD_CHANNELS), _T("Choose custom playlist path"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels. Use \\ prefix to find by ID"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TVG_ID), _T("EPG ID from teleguide.info"));
@@ -315,19 +310,8 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Search next"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Filter playlist"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Click to change icon"));
-
-	CWaitCursor cur;
-
-	if (LoadChannels(channels))
-	{
-		FillCategories();
-		FillChannels();
-	}
-
-	if (m_current == nullptr && !m_channels.empty())
-	{
-		SetCurrentChannel(FindTreeItem(m_wndChannelsTree, (DWORD_PTR)m_channels[0].get()));
-	}
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK), _T("Hours in the past to test archive play"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK), _T("Hours in the past to test archive play"));
 
 	m_wndPlaylistType.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("PlaylistType"), 0));
 
@@ -340,8 +324,35 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-LRESULT CEdemChannelEditorDlg::OnStartLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CEdemChannelEditorDlg::OnStartLoadData(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
+	CWaitCursor cur;
+
+	int idx = theApp.GetProfileInt(_T("Setting"), _T("ChannelsType"), 0);
+	m_wndChannels.SetCurSel(idx);
+
+	CString channels;
+	switch (idx)
+	{
+		case 1:
+			channels = theApp.GetProfileString(_T("Setting"), _T("ChannelList"));
+			break;
+		default:
+			channels = theApp.GetAppPath(utils::CHANNELS_CONFIG);
+			break;
+	}
+
+	if (LoadChannels(channels))
+	{
+		FillCategories();
+		FillChannels();
+	}
+
+	if (m_current == nullptr && !m_channels.empty())
+	{
+		SetCurrentChannel(FindTreeItem(m_wndChannelsTree, (DWORD_PTR)m_channels[0].get()));
+	}
+
 	OnCbnSelchangeComboPlaylist();
 	return 0;
 }
@@ -609,6 +620,8 @@ void CEdemChannelEditorDlg::CheckForExisting()
 	{
 		item->set_colored(ids.find(item->get_channel_id()) == ids.end());
 	}
+
+	m_wndChannelsTree.RedrawWindow();
 }
 
 void CEdemChannelEditorDlg::LoadChannelInfo()
@@ -1624,6 +1637,9 @@ void CEdemChannelEditorDlg::CheckLimits()
 	if (m_nextDays > 7)
 		m_nextDays = 7;
 
+	if (m_archiveCheck < 0)
+		m_archiveCheck = 0;
+
 	UpdateData(FALSE);
 
 	set_allow_save();
@@ -1633,6 +1649,17 @@ void CEdemChannelEditorDlg::OnEnChangeEditNum()
 {
 	UpdateData(TRUE);
 	CheckLimits();
+}
+
+void CEdemChannelEditorDlg::OnEnChangeEditArchiveCheck()
+{
+	UpdateData(TRUE);
+	CheckLimits();
+}
+
+void CEdemChannelEditorDlg::OnUpdateArchiveCheck(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_wndArchive.GetCheck() != 0);
 }
 
 void CEdemChannelEditorDlg::OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1650,6 +1677,16 @@ void CEdemChannelEditorDlg::OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	m_nextDays -= pNMUpDown->iDelta;
 	CheckLimits();
+	*pResult = 0;
+}
+
+void CEdemChannelEditorDlg::OnDeltaposSpinArchiveCheck(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	UpdateData(TRUE);
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	m_archiveCheck -= pNMUpDown->iDelta;
+	CheckLimits();
+	theApp.WriteProfileInt(_T("Setting"), _T("HoursBack"), m_archiveCheck);
 	*pResult = 0;
 }
 
@@ -1689,11 +1726,11 @@ void CEdemChannelEditorDlg::OnUpdateButtonTestEpg(CCmdUI* pCmdUI)
 	pCmdUI->Enable(GetCurrentChannel() != nullptr);
 }
 
-void CEdemChannelEditorDlg::PlayChannel(HTREEITEM hItem)
+void CEdemChannelEditorDlg::PlayChannel(HTREEITEM hItem, int archive_hour /*= 0*/)
 {
 	if (auto channel = GetChannel(hItem); channel != nullptr)
 	{
-		PlayStream(TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url()));
+		PlayStream(TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url()), archive_hour);
 	}
 }
 
@@ -1705,10 +1742,16 @@ void CEdemChannelEditorDlg::PlayPlaylistEntry(HTREEITEM hItem)
 	}
 }
 
-void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url)
+void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url, int archive_hour /*= 0*/)
 {
 	TRACE(_T("Test URL: %s\n"), stream_url.c_str());
-	ShellExecute(nullptr, _T("open"), m_player, stream_url.c_str(), nullptr, SW_SHOWNORMAL);
+	CStringW test(stream_url.c_str());
+	if (archive_hour)
+	{
+		test.Format(L"%s?utc=%d&lutc=%d", stream_url.c_str(), _time32(nullptr) - 3600 * archive_hour, _time32(nullptr));
+	}
+
+	ShellExecuteW(nullptr, L"open", m_player, test, nullptr, SW_SHOWNORMAL);
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
@@ -2651,12 +2694,24 @@ void CEdemChannelEditorDlg::OnUpdatePlayChannelStream(CCmdUI* pCmdUI)
 	pCmdUI->Enable(GetCurrentChannel() != nullptr && !m_probe.IsEmpty());
 }
 
-void CEdemChannelEditorDlg::OnPlayChannelStreamPl()
+void CEdemChannelEditorDlg::OnPlayChannelStreamArchive()
+{
+	UpdateData(TRUE);
+
+	PlayChannel(m_wndChannelsTree.GetSelectedItem(), m_hasArchive ? m_archiveCheck : 0);
+}
+
+void CEdemChannelEditorDlg::OnUpdatePlayChannelStreamArchive(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(GetCurrentChannel() != nullptr && !m_probe.IsEmpty() && m_hasArchive);
+}
+
+void CEdemChannelEditorDlg::OnPlayPlaylistStream()
 {
 	PlayPlaylistEntry(m_wndPlaylistTree.GetSelectedItem());
 }
 
-void CEdemChannelEditorDlg::OnUpdatePlayChannelStreamPl(CCmdUI* pCmdUI)
+void CEdemChannelEditorDlg::OnUpdatePlayPlaylistStream(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(GetCurrentPlaylistEntry() != nullptr && !m_probe.IsEmpty());
 }
