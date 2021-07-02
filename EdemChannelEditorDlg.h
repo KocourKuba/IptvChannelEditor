@@ -96,7 +96,7 @@ protected:
 	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnBnClickedButtonGetInfoPl();
-	afx_msg void OnBnClickedButtonLoadPlaylist();
+	afx_msg void OnBnClickedButtonCustomPlaylist();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonPlSearchNext();
 	afx_msg void OnBnClickedButtonRemoveFromShowIn();
@@ -147,7 +147,7 @@ private:
 
 	bool LoadChannels(const CString& path);
 	void SaveChannels();
-	void LoadPlaylist(const CString& file);
+	void LoadPlaylist();
 	void AddUpdateChannel();
 	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
 

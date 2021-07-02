@@ -115,8 +115,6 @@ void PlaylistEntry::Parse(const std::string& str)
 {
 	m3u_entry::Parse(str);
 
-	category = L"Unset";
-
 	if (ext_name == ext_group)
 	{
 		category = utils::utf8_to_utf16(ext_value);

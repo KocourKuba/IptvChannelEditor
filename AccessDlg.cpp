@@ -7,16 +7,6 @@
 #include "afxdialogex.h"
 #include "PlayListEntry.h"
 
-template<typename CharT, typename TraitsT = std::char_traits<CharT> >
-class vector_to_streambuf : public std::basic_streambuf<CharT, TraitsT>
-{
-public:
-	vector_to_streambuf(std::vector<BYTE>& vec)
-	{
-		setg((CharT*)vec.data(), (CharT*)vec.data(), (CharT*)vec.data() + vec.size());
-	}
-};
-
 // CAccessDlg dialog
 
 IMPLEMENT_DYNAMIC(CAccessDlg, CDialogEx)
@@ -91,13 +81,13 @@ void CAccessDlg::OnBnClickedBtnGet()
 	// #EXTGRP:Общие
 	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
 
+	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
 	if (utils::CrackUrl(m_url.GetString()))
 	{
-		std::vector<BYTE> data;
 		if (utils::DownloadFile(m_url.GetString(), data))
 		{
-			vector_to_streambuf<char> buf(data);
+			utils::vector_to_streambuf<char> buf(data);
 			pl_stream = std::make_unique<std::istream>(&buf);
 		}
 	}

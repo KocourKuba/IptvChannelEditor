@@ -144,6 +144,16 @@ std::vector<std::basic_string<T>> string_split(const std::basic_string<T>& str, 
 	return v;
 }
 
+template<typename CharT, typename TraitsT = std::char_traits<CharT> >
+class vector_to_streambuf : public std::basic_streambuf<CharT, TraitsT>
+{
+public:
+	vector_to_streambuf(std::vector<BYTE>& vec)
+	{
+		setg((CharT*)vec.data(), (CharT*)vec.data(), (CharT*)vec.data() + vec.size());
+	}
+};
+
 bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring());
 
 bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image);
