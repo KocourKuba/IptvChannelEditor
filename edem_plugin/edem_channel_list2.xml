@@ -83,8 +83,8 @@
 			<tvg_id>1</tvg_id>
 			<epg_id>146</epg_id>
 			<icon_url>http://epg.it999.ru/img2/146.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -96,8 +96,8 @@
 			<tvg_id>300125</tvg_id>
 			<epg_id>983</epg_id>
 			<icon_url>http://epg.it999.ru/img2/983.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -110,8 +110,8 @@
 			<tvg_id>2</tvg_id>
 			<epg_id>711</epg_id>
 			<icon_url>http://epg.it999.ru/img2/711.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -123,8 +123,8 @@
 			<tvg_id>300124</tvg_id>
 			<epg_id>984</epg_id>
 			<icon_url>http://epg.it999.ru/img2/984.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -137,8 +137,8 @@
 			<tvg_id>100010</tvg_id>
 			<epg_id>726</epg_id>
 			<icon_url>http://epg.it999.ru/img2/726.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -150,8 +150,8 @@
 			<tvg_id>300133</tvg_id>
 			<epg_id>2361</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2361.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -164,8 +164,8 @@
 			<tvg_id>4</tvg_id>
 			<epg_id>162</epg_id>
 			<icon_url>http://epg.it999.ru/img2/162.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -177,8 +177,8 @@
 			<tvg_id>4</tvg_id>
 			<epg_id>2001</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2001.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -191,8 +191,8 @@
 			<tvg_id>103</tvg_id>
 			<epg_id>18</epg_id>
 			<icon_url>http://epg.it999.ru/img2/18.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -204,8 +204,8 @@
 			<tvg_id>103</tvg_id>
 			<epg_id>2487</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2487.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -218,8 +218,8 @@
 			<tvg_id>105</tvg_id>
 			<epg_id>698</epg_id>
 			<icon_url>http://epg.it999.ru/img2/698.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -231,8 +231,8 @@
 			<tvg_id>105</tvg_id>
 			<epg_id>2766</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2766.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -245,8 +245,8 @@
 			<tvg_id>101</tvg_id>
 			<epg_id>353</epg_id>
 			<icon_url>http://epg.it999.ru/img2/353.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -258,8 +258,8 @@
 			<tvg_id>2227</tvg_id>
 			<epg_id>1767</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1767.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -272,8 +272,8 @@
 			<tvg_id>100057</tvg_id>
 			<epg_id>1649</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1649.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -285,8 +285,8 @@
 			<tvg_id>1671</tvg_id>
 			<epg_id>1003</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1003.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -298,8 +298,8 @@
 			<tvg_id>1671</tvg_id>
 			<epg_id>2765</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2765.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -312,8 +312,8 @@
 			<tvg_id>104</tvg_id>
 			<epg_id>79</epg_id>
 			<icon_url>http://epg.it999.ru/img2/79.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -325,8 +325,8 @@
 			<tvg_id>104</tvg_id>
 			<epg_id>3292</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3292.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -338,8 +338,8 @@
 			<tvg_id>1800</tvg_id>
 			<epg_id>1322</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1322.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -351,8 +351,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2288</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2288.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -364,8 +364,8 @@
 			<tvg_id>3</tvg_id>
 			<epg_id>649</epg_id>
 			<icon_url>http://epg.it999.ru/img2/649.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -377,8 +377,8 @@
 			<tvg_id>102</tvg_id>
 			<epg_id>304</epg_id>
 			<icon_url>http://epg.it999.ru/img2/304.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -390,8 +390,8 @@
 			<tvg_id>100016</tvg_id>
 			<epg_id>783</epg_id>
 			<icon_url>http://epg.it999.ru/img2/783.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -403,8 +403,8 @@
 			<tvg_id>330</tvg_id>
 			<epg_id>405</epg_id>
 			<icon_url>http://epg.it999.ru/img2/405.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -416,8 +416,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4661</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4661.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -429,8 +429,8 @@
 			<tvg_id>1000</tvg_id>
 			<epg_id>1000</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1000.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -442,8 +442,8 @@
 			<tvg_id>255</tvg_id>
 			<epg_id>427</epg_id>
 			<icon_url>http://epg.it999.ru/img2/427.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -455,8 +455,8 @@
 			<tvg_id>222</tvg_id>
 			<epg_id>2141</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2141.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 				<tv_category_id>15</tv_category_id>
@@ -468,8 +468,8 @@
 			<tvg_id>1718</tvg_id>
 			<epg_id>1371</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1371.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -481,8 +481,8 @@
 			<tvg_id>1718</tvg_id>
 			<epg_id>4065</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4065.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -493,8 +493,8 @@
 			<tvg_id>1566</tvg_id>
 			<epg_id>918</epg_id>
 			<icon_url>http://epg.it999.ru/img2/918.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -506,8 +506,8 @@
 			<tvg_id>1926</tvg_id>
 			<epg_id>2007</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2007.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -519,8 +519,8 @@
 			<tvg_id>1683</tvg_id>
 			<epg_id>2246</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2246.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -532,8 +532,8 @@
 			<tvg_id>300143</tvg_id>
 			<epg_id>2492</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2492.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -545,8 +545,8 @@
 			<tvg_id>300010</tvg_id>
 			<epg_id>659</epg_id>
 			<icon_url>http://epg.it999.ru/img2/659.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -558,8 +558,8 @@
 			<tvg_id>1926</tvg_id>
 			<epg_id>3069</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3069.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -571,8 +571,8 @@
 			<tvg_id>300056</tvg_id>
 			<epg_id>615</epg_id>
 			<icon_url>http://epg.it999.ru/img2/615.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -584,8 +584,8 @@
 			<tvg_id>1683</tvg_id>
 			<epg_id>1372</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1372.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -597,8 +597,8 @@
 			<tvg_id>100013</tvg_id>
 			<epg_id>2754</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2754.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -610,8 +610,8 @@
 			<tvg_id>300127</tvg_id>
 			<epg_id>1031</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1031.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -623,8 +623,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2229</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2229.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -636,8 +636,8 @@
 			<tvg_id>276</tvg_id>
 			<epg_id>323</epg_id>
 			<icon_url>http://epg.it999.ru/img2/323.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -649,8 +649,8 @@
 			<tvg_id>2445</tvg_id>
 			<epg_id>2359</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2359.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -662,8 +662,8 @@
 			<tvg_id>1871</tvg_id>
 			<epg_id>1395</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1395.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -675,8 +675,8 @@
 			<tvg_id>2249</tvg_id>
 			<epg_id>2182</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2182.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -688,8 +688,8 @@
 			<tvg_id>1356</tvg_id>
 			<epg_id>464</epg_id>
 			<icon_url>http://epg.it999.ru/img2/464.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -701,8 +701,8 @@
 			<tvg_id>294</tvg_id>
 			<epg_id>608</epg_id>
 			<icon_url>http://epg.it999.ru/img2/608.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -714,8 +714,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4459</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4459.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -727,8 +727,8 @@
 			<tvg_id>1422</tvg_id>
 			<epg_id>934</epg_id>
 			<icon_url>http://epg.it999.ru/img2/934.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -740,8 +740,8 @@
 			<tvg_id>1780</tvg_id>
 			<epg_id>2405</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2405.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -753,8 +753,8 @@
 			<tvg_id>1780</tvg_id>
 			<epg_id>2774</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2774.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -766,8 +766,8 @@
 			<tvg_id>1755</tvg_id>
 			<epg_id>920</epg_id>
 			<icon_url>http://epg.it999.ru/img2/920.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -779,8 +779,8 @@
 			<tvg_id>689</tvg_id>
 			<epg_id>311</epg_id>
 			<icon_url>http://epg.it999.ru/img2/311.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -792,8 +792,8 @@
 			<tvg_id>300001</tvg_id>
 			<epg_id>516</epg_id>
 			<icon_url>http://epg.it999.ru/img2/516.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -805,8 +805,8 @@
 			<tvg_id>1503</tvg_id>
 			<epg_id>935</epg_id>
 			<icon_url>http://epg.it999.ru/img2/935.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -818,8 +818,8 @@
 			<tvg_id>1755</tvg_id>
 			<epg_id>3066</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3066.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -831,8 +831,8 @@
 			<tvg_id>288</tvg_id>
 			<epg_id>127</epg_id>
 			<icon_url>http://epg.it999.ru/img2/127.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -844,8 +844,8 @@
 			<tvg_id>689</tvg_id>
 			<epg_id>2406</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2406.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -857,8 +857,8 @@
 			<tvg_id>300047</tvg_id>
 			<epg_id>125</epg_id>
 			<icon_url>http://epg.it999.ru/img2/125.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -870,8 +870,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4773</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4773.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -883,8 +883,8 @@
 			<tvg_id>300000</tvg_id>
 			<epg_id>267</epg_id>
 			<icon_url>http://epg.it999.ru/img2/267.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -896,8 +896,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2274</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2274.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -909,8 +909,8 @@
 			<tvg_id>289</tvg_id>
 			<epg_id>309</epg_id>
 			<icon_url>http://epg.it999.ru/img2/309.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -922,8 +922,8 @@
 			<tvg_id>300116</tvg_id>
 			<epg_id>1011</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1011.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -936,8 +936,8 @@
 			<tvg_id>300115</tvg_id>
 			<epg_id>1012</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1012.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -950,8 +950,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2284</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2284.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -963,8 +963,8 @@
 			<tvg_id>288</tvg_id>
 			<epg_id>3302</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3302.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -976,8 +976,8 @@
 			<tvg_id>300047</tvg_id>
 			<epg_id>3301</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3301.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -989,8 +989,8 @@
 			<tvg_id>300000</tvg_id>
 			<epg_id>3303</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3303.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1002,8 +1002,8 @@
 			<tvg_id>300114</tvg_id>
 			<epg_id>1013</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1013.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -1016,8 +1016,8 @@
 			<tvg_id>2452</tvg_id>
 			<epg_id>2838</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2838.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1029,8 +1029,8 @@
 			<tvg_id>300032</tvg_id>
 			<epg_id>2233</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2233.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1042,8 +1042,8 @@
 			<tvg_id>3111</tvg_id>
 			<epg_id>2768</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2768.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1055,8 +1055,8 @@
 			<tvg_id>100002</tvg_id>
 			<epg_id>834</epg_id>
 			<icon_url>http://epg.it999.ru/img2/834.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1068,8 +1068,8 @@
 			<tvg_id>2300</tvg_id>
 			<epg_id>2174</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2174.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1081,8 +1081,8 @@
 			<tvg_id>300076</tvg_id>
 			<epg_id>352</epg_id>
 			<icon_url>http://epg.it999.ru/img2/352.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1094,8 +1094,8 @@
 			<tvg_id>3138</tvg_id>
 			<epg_id>2832</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2832.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1107,8 +1107,8 @@
 			<tvg_id>300023</tvg_id>
 			<epg_id>2403</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2403.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1120,8 +1120,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2773</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2773.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1133,8 +1133,8 @@
 			<tvg_id>1653</tvg_id>
 			<epg_id>1037</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1037.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1146,8 +1146,8 @@
 			<tvg_id>1991</tvg_id>
 			<epg_id>2020</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2020.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1159,8 +1159,8 @@
 			<tvg_id>291</tvg_id>
 			<epg_id>821</epg_id>
 			<icon_url>http://epg.it999.ru/img2/821.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1172,8 +1172,8 @@
 			<tvg_id>100053</tvg_id>
 			<epg_id>644</epg_id>
 			<icon_url>http://epg.it999.ru/img2/644.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1185,8 +1185,8 @@
 			<tvg_id>2300</tvg_id>
 			<epg_id>2518</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2518.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1198,8 +1198,8 @@
 			<tvg_id>300147</tvg_id>
 			<epg_id>2407</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2407.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1211,8 +1211,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2836</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2836.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1224,8 +1224,8 @@
 			<tvg_id>201</tvg_id>
 			<epg_id>462</epg_id>
 			<icon_url>http://epg.it999.ru/img2/462.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1237,8 +1237,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2438</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2438.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1250,8 +1250,8 @@
 			<tvg_id>100037</tvg_id>
 			<epg_id>987</epg_id>
 			<icon_url>http://epg.it999.ru/img2/987.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1263,8 +1263,8 @@
 			<tvg_id>1653</tvg_id>
 			<epg_id>2506</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2506.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1276,8 +1276,8 @@
 			<tvg_id>558</tvg_id>
 			<epg_id>799</epg_id>
 			<icon_url>http://epg.it999.ru/img2/799.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1289,8 +1289,8 @@
 			<tvg_id>298</tvg_id>
 			<epg_id>542</epg_id>
 			<icon_url>http://epg.it999.ru/img2/542.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1302,8 +1302,8 @@
 			<tvg_id>1093</tvg_id>
 			<epg_id>477</epg_id>
 			<icon_url>http://epg.it999.ru/img2/477.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1315,8 +1315,8 @@
 			<tvg_id>974</tvg_id>
 			<epg_id>2275</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2275.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1328,8 +1328,8 @@
 			<tvg_id>3161</tvg_id>
 			<epg_id>3357</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3357.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1341,8 +1341,8 @@
 			<tvg_id>2044</tvg_id>
 			<epg_id>1584</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1584.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1354,8 +1354,8 @@
 			<tvg_id>300033</tvg_id>
 			<epg_id>518</epg_id>
 			<icon_url>http://epg.it999.ru/img2/518.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1367,8 +1367,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>644</epg_id>
 			<icon_url>http://epg.it999.ru/img2/644.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1380,8 +1380,8 @@
 			<tvg_id>2875</tvg_id>
 			<epg_id>2834</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2834.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1393,8 +1393,8 @@
 			<tvg_id>203</tvg_id>
 			<epg_id>566</epg_id>
 			<icon_url>http://epg.it999.ru/img2/566.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1406,8 +1406,8 @@
 			<tvg_id>201</tvg_id>
 			<epg_id>462</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3298.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1419,8 +1419,8 @@
 			<tvg_id>100037</tvg_id>
 			<epg_id>987</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3297.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1432,8 +1432,8 @@
 			<tvg_id>2215</tvg_id>
 			<epg_id>1754</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1754.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1445,8 +1445,8 @@
 			<tvg_id>3108</tvg_id>
 			<epg_id>2493</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2493.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1458,8 +1458,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>542</epg_id>
 			<icon_url>http://epg.it999.ru/img2/542.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1471,8 +1471,8 @@
 			<tvg_id>900100010</tvg_id>
 			<epg_id>2041</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2041.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1484,8 +1484,8 @@
 			<tvg_id>300096</tvg_id>
 			<epg_id>138</epg_id>
 			<icon_url>http://epg.it999.ru/img2/138.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1497,8 +1497,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>821</epg_id>
 			<icon_url>http://epg.it999.ru/img2/821.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1510,8 +1510,8 @@
 			<tvg_id>447</tvg_id>
 			<epg_id>485</epg_id>
 			<icon_url>http://epg.it999.ru/img2/485.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1523,8 +1523,8 @@
 			<tvg_id>2487</tvg_id>
 			<epg_id>2447</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2447.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1536,8 +1536,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4466</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4466.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1549,8 +1549,8 @@
 			<tvg_id>329</tvg_id>
 			<epg_id>2402</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2402.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1562,8 +1562,8 @@
 			<tvg_id>202</tvg_id>
 			<epg_id>12</epg_id>
 			<icon_url>http://epg.it999.ru/img2/12.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1575,8 +1575,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4467</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4467.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1589,7 +1589,7 @@
 			<epg_id>1620</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1620.png</icon_url>
 			<num_past_epg_days>3</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1601,8 +1601,8 @@
 			<tvg_id>200000</tvg_id>
 			<epg_id>53</epg_id>
 			<icon_url>http://epg.it999.ru/img2/53.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1615,7 +1615,7 @@
 			<epg_id>994</epg_id>
 			<icon_url>http://epg.it999.ru/img2/994.png</icon_url>
 			<num_past_epg_days>3</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1627,8 +1627,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>3357</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3357.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1640,8 +1640,8 @@
 			<tvg_id>2044</tvg_id>
 			<epg_id>1584</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1584.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1654,7 +1654,7 @@
 			<epg_id>1570</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1570.png</icon_url>
 			<num_past_epg_days>22</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1666,8 +1666,8 @@
 			<tvg_id>3137</tvg_id>
 			<epg_id>2831</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2831.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -1680,7 +1680,7 @@
 			<epg_id>401</epg_id>
 			<icon_url>http://epg.it999.ru/img2/401.png</icon_url>
 			<num_past_epg_days>22</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1692,8 +1692,8 @@
 			<tvg_id>300025</tvg_id>
 			<epg_id>2404</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2404.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1705,8 +1705,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2952</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2952.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -1718,8 +1718,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2837</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2837.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1731,8 +1731,8 @@
 			<tvg_id>90300037</tvg_id>
 			<epg_id>2022</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2022.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -1745,8 +1745,8 @@
 			<tvg_id>900300037</tvg_id>
 			<epg_id>2024</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2024.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1758,8 +1758,8 @@
 			<tvg_id>1035</tvg_id>
 			<epg_id>591</epg_id>
 			<icon_url>http://epg.it999.ru/img2/591.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1771,8 +1771,8 @@
 			<tvg_id>300037</tvg_id>
 			<epg_id>151</epg_id>
 			<icon_url>http://epg.it999.ru/img2/151.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1784,8 +1784,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2237</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2237.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -1797,8 +1797,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2628</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2628.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1810,8 +1810,8 @@
 			<tvg_id>300121</tvg_id>
 			<epg_id>681</epg_id>
 			<icon_url>http://epg.it999.ru/img2/681.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1823,8 +1823,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2276</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2276.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1836,8 +1836,8 @@
 			<tvg_id>107</tvg_id>
 			<epg_id>1021</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1021.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1850,7 +1850,7 @@
 			<epg_id>1722</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1722.png</icon_url>
 			<num_past_epg_days>2</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1862,8 +1862,8 @@
 			<tvg_id>1178</tvg_id>
 			<epg_id>1723</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1723.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1875,8 +1875,8 @@
 			<tvg_id>1275</tvg_id>
 			<epg_id>382</epg_id>
 			<icon_url>http://epg.it999.ru/img2/382.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -1889,8 +1889,8 @@
 			<tvg_id>1179</tvg_id>
 			<epg_id>2235</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2235.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1901,8 +1901,8 @@
 			<tvg_id>229</tvg_id>
 			<epg_id>575</epg_id>
 			<icon_url>http://epg.it999.ru/img2/575.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1914,8 +1914,8 @@
 			<tvg_id>1818</tvg_id>
 			<epg_id>801</epg_id>
 			<icon_url>http://epg.it999.ru/img2/801.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -1928,8 +1928,8 @@
 			<tvg_id>100046</tvg_id>
 			<epg_id>2277</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2277.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1941,8 +1941,8 @@
 			<tvg_id>100031</tvg_id>
 			<epg_id>2409</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2409.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1954,8 +1954,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>3358</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3358.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1966,8 +1966,8 @@
 			<tvg_id>100026</tvg_id>
 			<epg_id>156</epg_id>
 			<icon_url>http://epg.it999.ru/img2/156.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -1979,8 +1979,8 @@
 			<tvg_id>676</tvg_id>
 			<epg_id>1683</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1683.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -1992,8 +1992,8 @@
 			<tvg_id>326</tvg_id>
 			<epg_id>743</epg_id>
 			<icon_url>http://epg.it999.ru/img2/743.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2005,8 +2005,8 @@
 			<tvg_id>400009</tvg_id>
 			<epg_id>2078</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2078.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2018,8 +2018,8 @@
 			<tvg_id>400009</tvg_id>
 			<epg_id>2510</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2510.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2031,8 +2031,8 @@
 			<tvg_id>208</tvg_id>
 			<epg_id>90</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2129.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2045,8 +2045,8 @@
 			<tvg_id>2290</tvg_id>
 			<epg_id>2271</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2271.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2058,8 +2058,8 @@
 			<tvg_id>106</tvg_id>
 			<epg_id>334</epg_id>
 			<icon_url>http://epg.it999.ru/img2/334.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2071,8 +2071,8 @@
 			<tvg_id>208</tvg_id>
 			<epg_id>2266</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2266.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2084,8 +2084,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2401</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2401.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2097,8 +2097,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2268</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2268.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2110,8 +2110,8 @@
 			<tvg_id>280</tvg_id>
 			<epg_id>789</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2128.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -2124,8 +2124,8 @@
 			<tvg_id>32299988</tvg_id>
 			<epg_id>2130</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2130.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>15</tv_category_id>
 			</tv_categories>
@@ -2136,8 +2136,8 @@
 			<tvg_id>206</tvg_id>
 			<epg_id>2052</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2052.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2149,8 +2149,8 @@
 			<tvg_id>5</tvg_id>
 			<epg_id>187</epg_id>
 			<icon_url>http://epg.it999.ru/img2/187.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>15</tv_category_id>
 			</tv_categories>
@@ -2162,8 +2162,8 @@
 			<tvg_id>100048</tvg_id>
 			<epg_id>560</epg_id>
 			<icon_url>http://epg.it999.ru/img2/560.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2176,8 +2176,8 @@
 			<tvg_id>100008</tvg_id>
 			<epg_id>850</epg_id>
 			<icon_url>http://epg.it999.ru/img2/850.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2190,8 +2190,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2482</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2482.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2203,8 +2203,8 @@
 			<tvg_id>259</tvg_id>
 			<epg_id>2053</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2053.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2216,8 +2216,8 @@
 			<tvg_id>300086</tvg_id>
 			<epg_id>2048</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2048.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2229,8 +2229,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2363</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2363.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2242,8 +2242,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2364</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2364.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2255,8 +2255,8 @@
 			<tvg_id>300002</tvg_id>
 			<epg_id>2055</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2055.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2268,8 +2268,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2004</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2004.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2281,8 +2281,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2243</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2243.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2294,8 +2294,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2285</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2285.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2307,8 +2307,8 @@
 			<tvg_id>672</tvg_id>
 			<epg_id>113</epg_id>
 			<icon_url>http://epg.it999.ru/img2/113.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>15</tv_category_id>
@@ -2321,8 +2321,8 @@
 			<tvg_id>2137</tvg_id>
 			<epg_id>1679</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1679.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2335,8 +2335,8 @@
 			<tvg_id>504</tvg_id>
 			<epg_id>2251</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2251.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2348,8 +2348,8 @@
 			<tvg_id>100077</tvg_id>
 			<epg_id>2250</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2250.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2362,8 +2362,8 @@
 			<tvg_id>100052</tvg_id>
 			<epg_id>2042</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2042.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2375,8 +2375,8 @@
 			<tvg_id>2060</tvg_id>
 			<epg_id>2051</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2051.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2388,8 +2388,8 @@
 			<tvg_id>2060</tvg_id>
 			<epg_id>2017</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2017.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2402,8 +2402,8 @@
 			<tvg_id>940</tvg_id>
 			<epg_id>2049</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2049.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2415,8 +2415,8 @@
 			<tvg_id>100072</tvg_id>
 			<epg_id>2003</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2003.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2429,8 +2429,8 @@
 			<tvg_id>554</tvg_id>
 			<epg_id>2054</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2054.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2442,8 +2442,8 @@
 			<tvg_id>1354</tvg_id>
 			<epg_id>2050</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2050.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2455,8 +2455,8 @@
 			<tvg_id>1354</tvg_id>
 			<epg_id>2002</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2002.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2469,8 +2469,8 @@
 			<tvg_id>1018</tvg_id>
 			<epg_id>2043</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2043.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2481,8 +2481,8 @@
 			<tvg_id>205</tvg_id>
 			<epg_id>2044</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2044.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -2494,8 +2494,8 @@
 			<tvg_id>300106</tvg_id>
 			<epg_id>1043</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1043.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2508,8 +2508,8 @@
 			<tvg_id>300020</tvg_id>
 			<epg_id>66</epg_id>
 			<icon_url>http://epg.it999.ru/img2/66.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2521,8 +2521,8 @@
 			<tvg_id>216</tvg_id>
 			<epg_id>923</epg_id>
 			<icon_url>http://epg.it999.ru/img2/923.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2534,8 +2534,8 @@
 			<tvg_id>300007</tvg_id>
 			<epg_id>740</epg_id>
 			<icon_url>http://epg.it999.ru/img2/740.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2548,7 +2548,7 @@
 			<epg_id>1716</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1716.png</icon_url>
 			<num_past_epg_days>22</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2561,8 +2561,8 @@
 			<tvg_id>300082</tvg_id>
 			<epg_id>810</epg_id>
 			<icon_url>http://epg.it999.ru/img2/810.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2574,8 +2574,8 @@
 			<tvg_id>100054</tvg_id>
 			<epg_id>555</epg_id>
 			<icon_url>http://epg.it999.ru/img2/555.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2587,8 +2587,8 @@
 			<tvg_id>1603</tvg_id>
 			<epg_id>917</epg_id>
 			<icon_url>http://epg.it999.ru/img2/917.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2600,8 +2600,8 @@
 			<tvg_id>218</tvg_id>
 			<epg_id>567</epg_id>
 			<icon_url>http://epg.it999.ru/img2/567.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2613,8 +2613,8 @@
 			<tvg_id>1391</tvg_id>
 			<epg_id>423</epg_id>
 			<icon_url>http://epg.it999.ru/img2/423.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2627,8 +2627,8 @@
 			<tvg_id>100055</tvg_id>
 			<epg_id>150</epg_id>
 			<icon_url>http://epg.it999.ru/img2/150.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2641,7 +2641,7 @@
 			<epg_id>1332</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1332.png</icon_url>
 			<num_past_epg_days>22</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2654,7 +2654,7 @@
 			<epg_id>1766</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1766.png</icon_url>
 			<num_past_epg_days>22</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2667,8 +2667,8 @@
 			<tvg_id>300012</tvg_id>
 			<epg_id>2757</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2757.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2680,8 +2680,8 @@
 			<tvg_id>2042</tvg_id>
 			<epg_id>2011</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2011.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2693,8 +2693,8 @@
 			<tvg_id>100075</tvg_id>
 			<epg_id>929</epg_id>
 			<icon_url>http://epg.it999.ru/img2/929.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2706,8 +2706,8 @@
 			<tvg_id>100049</tvg_id>
 			<epg_id>494</epg_id>
 			<icon_url>http://epg.it999.ru/img2/494.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2719,8 +2719,8 @@
 			<tvg_id>211</tvg_id>
 			<epg_id>601</epg_id>
 			<icon_url>http://epg.it999.ru/img2/601.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2732,8 +2732,8 @@
 			<tvg_id>211</tvg_id>
 			<epg_id>2486</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2486.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2745,8 +2745,8 @@
 			<tvg_id>2212</tvg_id>
 			<epg_id>2027</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2027.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2758,8 +2758,8 @@
 			<tvg_id>2011</tvg_id>
 			<epg_id>2438</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2438.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2771,8 +2771,8 @@
 			<tvg_id>2197</tvg_id>
 			<epg_id>2239</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2239.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2783,8 +2783,8 @@
 			<tvg_id>887</tvg_id>
 			<epg_id>284</epg_id>
 			<icon_url>http://epg.it999.ru/img2/284.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2797,7 +2797,7 @@
 			<epg_id>1757</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1757.png</icon_url>
 			<num_past_epg_days>22</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2809,8 +2809,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2437</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2437.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2822,8 +2822,8 @@
 			<tvg_id>2383</tvg_id>
 			<epg_id>2481</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2481.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2835,8 +2835,8 @@
 			<tvg_id>214</tvg_id>
 			<epg_id>365</epg_id>
 			<icon_url>http://epg.it999.ru/img2/365.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -2848,8 +2848,8 @@
 			<tvg_id>2416</tvg_id>
 			<epg_id>2442</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2442.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2861,8 +2861,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2758</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2758.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -2874,8 +2874,8 @@
 			<tvg_id>300107</tvg_id>
 			<epg_id>990</epg_id>
 			<icon_url>http://epg.it999.ru/img2/990.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2888,8 +2888,8 @@
 			<tvg_id>1408</tvg_id>
 			<epg_id>2490</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2490.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2902,8 +2902,8 @@
 			<tvg_id>100045</tvg_id>
 			<epg_id>2491</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2491.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2916,8 +2916,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2770</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2770.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -2930,8 +2930,8 @@
 			<tvg_id>586</tvg_id>
 			<epg_id>165</epg_id>
 			<icon_url>http://epg.it999.ru/img2/165.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 			</tv_categories>
@@ -2943,8 +2943,8 @@
 			<tvg_id>586</tvg_id>
 			<epg_id>2516</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2516.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 			</tv_categories>
@@ -2956,8 +2956,8 @@
 			<tvg_id>2153</tvg_id>
 			<epg_id>1700</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1700.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 			</tv_categories>
@@ -2969,8 +2969,8 @@
 			<tvg_id>300035</tvg_id>
 			<epg_id>663</epg_id>
 			<icon_url>http://epg.it999.ru/img2/663.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 			</tv_categories>
@@ -2982,8 +2982,8 @@
 			<tvg_id>230</tvg_id>
 			<epg_id>912</epg_id>
 			<icon_url>http://epg.it999.ru/img2/912.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -2995,8 +2995,8 @@
 			<tvg_id>2048</tvg_id>
 			<epg_id>2485</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2485.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3009,8 +3009,8 @@
 			<tvg_id>300134</tvg_id>
 			<epg_id>325</epg_id>
 			<icon_url>http://epg.it999.ru/img2/325.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3022,8 +3022,8 @@
 			<tvg_id>300134</tvg_id>
 			<epg_id>1612</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1612.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3036,8 +3036,8 @@
 			<tvg_id>224</tvg_id>
 			<epg_id>409</epg_id>
 			<icon_url>http://epg.it999.ru/img2/409.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3049,8 +3049,8 @@
 			<tvg_id>224</tvg_id>
 			<epg_id>3067</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3067.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3062,8 +3062,8 @@
 			<tvg_id>2229</tvg_id>
 			<epg_id>2186</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2186.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3075,8 +3075,8 @@
 			<tvg_id>2136</tvg_id>
 			<epg_id>1676</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1676.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 				<tv_category_id>13</tv_category_id>
@@ -3089,8 +3089,8 @@
 			<tvg_id>100084</tvg_id>
 			<epg_id>393</epg_id>
 			<icon_url>http://epg.it999.ru/img2/393.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3102,8 +3102,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2741</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2741.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3114,8 +3114,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2769</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2769.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3128,8 +3128,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2356</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2356.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3140,8 +3140,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2421</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2421.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3154,8 +3154,8 @@
 			<tvg_id>568</tvg_id>
 			<epg_id>415</epg_id>
 			<icon_url>http://epg.it999.ru/img2/415.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3168,8 +3168,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2279</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2279.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3181,8 +3181,8 @@
 			<tvg_id>100080</tvg_id>
 			<epg_id>1394</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1394.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3195,8 +3195,8 @@
 			<tvg_id>100051</tvg_id>
 			<epg_id>223</epg_id>
 			<icon_url>http://epg.it999.ru/img2/223.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3208,8 +3208,8 @@
 			<tvg_id>300104</tvg_id>
 			<epg_id>807</epg_id>
 			<icon_url>http://epg.it999.ru/img2/807.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3222,8 +3222,8 @@
 			<tvg_id>284</tvg_id>
 			<epg_id>102</epg_id>
 			<icon_url>http://epg.it999.ru/img2/102.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3235,8 +3235,8 @@
 			<tvg_id>300050</tvg_id>
 			<epg_id>389</epg_id>
 			<icon_url>http://epg.it999.ru/img2/389.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3249,8 +3249,8 @@
 			<tvg_id>636</tvg_id>
 			<epg_id>55</epg_id>
 			<icon_url>http://epg.it999.ru/img2/55.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3262,8 +3262,8 @@
 			<tvg_id>300118</tvg_id>
 			<epg_id>322</epg_id>
 			<icon_url>http://epg.it999.ru/img2/322.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3275,8 +3275,8 @@
 			<tvg_id>1884</tvg_id>
 			<epg_id>961</epg_id>
 			<icon_url>plugin_file://icons/channels/rt_doc.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3289,8 +3289,8 @@
 			<tvg_id>400019</tvg_id>
 			<epg_id>648</epg_id>
 			<icon_url>http://epg.it999.ru/img2/648.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3303,8 +3303,8 @@
 			<tvg_id>300131</tvg_id>
 			<epg_id>425</epg_id>
 			<icon_url>http://epg.it999.ru/img2/425.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3317,8 +3317,8 @@
 			<tvg_id>293</tvg_id>
 			<epg_id>613</epg_id>
 			<icon_url>http://epg.it999.ru/img2/613.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3330,8 +3330,8 @@
 			<tvg_id>100081</tvg_id>
 			<epg_id>124</epg_id>
 			<icon_url>http://epg.it999.ru/img2/124.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3344,8 +3344,8 @@
 			<tvg_id>324</tvg_id>
 			<epg_id>521</epg_id>
 			<icon_url>http://epg.it999.ru/img2/521.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3357,8 +3357,8 @@
 			<tvg_id>324</tvg_id>
 			<epg_id>3296</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3296.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3370,8 +3370,8 @@
 			<tvg_id>325</tvg_id>
 			<epg_id>277</epg_id>
 			<icon_url>http://epg.it999.ru/img2/277.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3383,8 +3383,8 @@
 			<tvg_id>325</tvg_id>
 			<epg_id>3068</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3068.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3396,8 +3396,8 @@
 			<tvg_id>1009</tvg_id>
 			<epg_id>765</epg_id>
 			<icon_url>http://epg.it999.ru/img2/765.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3409,8 +3409,8 @@
 			<tvg_id>300117</tvg_id>
 			<epg_id>2012</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2012.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3423,8 +3423,8 @@
 			<tvg_id>1786</tvg_id>
 			<epg_id>2008</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2008.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3436,8 +3436,8 @@
 			<tvg_id>553</tvg_id>
 			<epg_id>153</epg_id>
 			<icon_url>http://epg.it999.ru/img2/153.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3449,8 +3449,8 @@
 			<tvg_id>2035</tvg_id>
 			<epg_id>2026</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2026.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3462,8 +3462,8 @@
 			<tvg_id>100025</tvg_id>
 			<epg_id>669</epg_id>
 			<icon_url>http://epg.it999.ru/img2/669.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3475,8 +3475,8 @@
 			<tvg_id>100023</tvg_id>
 			<epg_id>16</epg_id>
 			<icon_url>http://epg.it999.ru/img2/16.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3488,8 +3488,8 @@
 			<tvg_id>300101</tvg_id>
 			<epg_id>520</epg_id>
 			<icon_url>http://epg.it999.ru/img2/520.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3502,7 +3502,7 @@
 			<epg_id>930</epg_id>
 			<icon_url>http://epg.it999.ru/img2/930.png</icon_url>
 			<num_past_epg_days>3</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3515,8 +3515,8 @@
 			<tvg_id>300011</tvg_id>
 			<epg_id>367</epg_id>
 			<icon_url>http://epg.it999.ru/img2/367.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3528,8 +3528,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2513</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2513.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3541,8 +3541,8 @@
 			<tvg_id>1727</tvg_id>
 			<epg_id>1036</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1036.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3554,8 +3554,8 @@
 			<tvg_id>585</tvg_id>
 			<epg_id>614</epg_id>
 			<icon_url>http://epg.it999.ru/img2/614.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3567,8 +3567,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>614</epg_id>
 			<icon_url>http://epg.it999.ru/img2/614.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3580,8 +3580,8 @@
 			<tvg_id>300015</tvg_id>
 			<epg_id>618</epg_id>
 			<icon_url>http://epg.it999.ru/img2/618.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3593,8 +3593,8 @@
 			<tvg_id>1721</tvg_id>
 			<epg_id>2028</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2028.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3606,8 +3606,8 @@
 			<tvg_id>400001</tvg_id>
 			<epg_id>675</epg_id>
 			<icon_url>http://epg.it999.ru/img2/675.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3619,8 +3619,8 @@
 			<tvg_id>2214</tvg_id>
 			<epg_id>1753</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1753.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3632,8 +3632,8 @@
 			<tvg_id>2216</tvg_id>
 			<epg_id>1755</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1755.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3645,8 +3645,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2428</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2428.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3658,8 +3658,8 @@
 			<tvg_id>300027</tvg_id>
 			<epg_id>2436</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2436.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -3671,8 +3671,8 @@
 			<tvg_id>300105</tvg_id>
 			<epg_id>723</epg_id>
 			<icon_url>http://epg.it999.ru/img2/723.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3686,7 +3686,7 @@
 			<epg_id>1681</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1681.png</icon_url>
 			<num_past_epg_days>3</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3699,8 +3699,8 @@
 			<tvg_id>300119</tvg_id>
 			<epg_id>774</epg_id>
 			<icon_url>http://epg.it999.ru/img2/774.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -3712,8 +3712,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2953</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2953.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3725,8 +3725,8 @@
 			<tvg_id>232</tvg_id>
 			<epg_id>491</epg_id>
 			<icon_url>http://epg.it999.ru/img2/491.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -3738,8 +3738,8 @@
 			<tvg_id>1900</tvg_id>
 			<epg_id>897</epg_id>
 			<icon_url>http://epg.it999.ru/img2/897.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -3751,8 +3751,8 @@
 			<tvg_id>1610</tvg_id>
 			<epg_id>921</epg_id>
 			<icon_url>http://epg.it999.ru/img2/921.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -3765,8 +3765,8 @@
 			<tvg_id>219</tvg_id>
 			<epg_id>46</epg_id>
 			<icon_url>http://epg.it999.ru/img2/828.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -3779,8 +3779,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2954</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2954.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3792,8 +3792,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2955</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2955.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3805,8 +3805,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2956</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2956.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3818,8 +3818,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2957</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2957.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3831,8 +3831,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2958</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2958.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3844,8 +3844,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2959</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2959.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3857,8 +3857,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2960</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2960.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3870,8 +3870,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2961</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2961.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3883,8 +3883,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2962</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2962.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3896,8 +3896,8 @@
 			<tvg_id>2200</tvg_id>
 			<epg_id>2019</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2019.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -3909,8 +3909,8 @@
 			<tvg_id>3156</tvg_id>
 			<epg_id>2835</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2835.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -3922,8 +3922,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2963</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2963.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -3935,8 +3935,8 @@
 			<tvg_id>1806</tvg_id>
 			<epg_id>2499</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2499.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3949,8 +3949,8 @@
 			<tvg_id>100032</tvg_id>
 			<epg_id>715</epg_id>
 			<icon_url>http://epg.it999.ru/img2/715.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -3962,8 +3962,8 @@
 			<tvg_id>100001</tvg_id>
 			<epg_id>2045</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2045.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -3975,8 +3975,8 @@
 			<tvg_id>100069</tvg_id>
 			<epg_id>1042</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1042.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -3989,8 +3989,8 @@
 			<tvg_id>300128</tvg_id>
 			<epg_id>2046</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2046.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -4002,8 +4002,8 @@
 			<tvg_id>300129</tvg_id>
 			<epg_id>2005</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2005.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -4016,8 +4016,8 @@
 			<tvg_id>1590</tvg_id>
 			<epg_id>1038</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1038.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -4030,8 +4030,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2669</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2669.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
@@ -4043,8 +4043,8 @@
 			<tvg_id>2246</tvg_id>
 			<epg_id>2350</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2350.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -4056,8 +4056,8 @@
 			<tvg_id>300097</tvg_id>
 			<epg_id>2311</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2311.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -4070,8 +4070,8 @@
 			<tvg_id>100024</tvg_id>
 			<epg_id>275</epg_id>
 			<icon_url>http://epg.it999.ru/img2/275.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -4083,8 +4083,8 @@
 			<tvg_id>1714</tvg_id>
 			<epg_id>2139</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2139.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -4096,8 +4096,8 @@
 			<tvg_id>2199</tvg_id>
 			<epg_id>2018</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2018.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4109,8 +4109,8 @@
 			<tvg_id>2209</tvg_id>
 			<epg_id>2509</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2509.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4122,8 +4122,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2767</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2767.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>12</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -4136,8 +4136,8 @@
 			<tvg_id>300108</tvg_id>
 			<epg_id>3267</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3267.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -4150,8 +4150,8 @@
 			<tvg_id>2068</tvg_id>
 			<epg_id>1598</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1598.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -4164,7 +4164,7 @@
 			<epg_id>2309</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2309.png</icon_url>
 			<num_past_epg_days>22</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -4175,8 +4175,8 @@
 			<tvg_id>1741</tvg_id>
 			<epg_id>1588</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1588.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4188,8 +4188,8 @@
 			<tvg_id>2487</tvg_id>
 			<epg_id>2771</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2771.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4201,8 +4201,8 @@
 			<tvg_id>1744</tvg_id>
 			<epg_id>2732</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2732.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4214,8 +4214,8 @@
 			<tvg_id>3140</tvg_id>
 			<epg_id>2829</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2829.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4227,8 +4227,8 @@
 			<tvg_id>2427</tvg_id>
 			<epg_id>2772</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2772.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4240,8 +4240,8 @@
 			<tvg_id>200000</tvg_id>
 			<epg_id>2511</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2511.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4253,8 +4253,8 @@
 			<tvg_id>530</tvg_id>
 			<epg_id>617</epg_id>
 			<icon_url>http://epg.it999.ru/img2/617.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -4266,8 +4266,8 @@
 			<tvg_id>541</tvg_id>
 			<epg_id>798</epg_id>
 			<icon_url>http://epg.it999.ru/img2/798.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -4279,8 +4279,8 @@
 			<tvg_id>401</tvg_id>
 			<epg_id>2496</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2496.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4292,8 +4292,8 @@
 			<tvg_id>100038</tvg_id>
 			<epg_id>2857</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2857.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4305,8 +4305,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2833</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2833.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4318,8 +4318,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2264</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2264.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>7</tv_category_id>
 			</tv_categories>
@@ -4330,8 +4330,8 @@
 			<tvg_id>503</tvg_id>
 			<epg_id>680</epg_id>
 			<icon_url>http://epg.it999.ru/img2/680.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4343,8 +4343,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>1021</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1021.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4356,8 +4356,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>2412</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2412.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4369,8 +4369,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4472</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4472.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4381,8 +4381,8 @@
 			<tvg_id>300095</tvg_id>
 			<epg_id>3291</epg_id>
 			<icon_url>http://epg.it999.ru/img2/3291.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -4394,8 +4394,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4736</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4736.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4407,8 +4407,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4737</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4737.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4420,8 +4420,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4738</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4738.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4433,8 +4433,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4739</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4739.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4446,8 +4446,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4740</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4740.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4459,8 +4459,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4741</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4741.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4472,8 +4472,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4742</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4742.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4485,8 +4485,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4743</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4743.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4498,8 +4498,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4744</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4744.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4511,8 +4511,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4745</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4745.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4524,8 +4524,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4747</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4747.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4537,8 +4537,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4748</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4748.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4550,8 +4550,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4749</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4749.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4563,8 +4563,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4750</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4750.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4576,8 +4576,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4751</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4751.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4589,8 +4589,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4752</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4752.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4602,8 +4602,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4753</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4753.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4615,8 +4615,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4754</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4754.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4628,8 +4628,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4755</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4755.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4641,8 +4641,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4758</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4758.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4654,8 +4654,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4759</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4759.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4667,8 +4667,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4760</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4760.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4680,8 +4680,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4761</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4761.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4693,8 +4693,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>774</epg_id>
 			<icon_url>http://epg.it999.ru/img2/774.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
@@ -4706,8 +4706,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4762</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4762.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4719,8 +4719,8 @@
 			<tvg_id>432</tvg_id>
 			<epg_id>434</epg_id>
 			<icon_url>http://epg.it999.ru/img2/434.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 			</tv_categories>
@@ -4733,7 +4733,7 @@
 			<epg_id>2310</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2310.png</icon_url>
 			<num_past_epg_days>3</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>13</tv_category_id>
 				<tv_category_id>14</tv_category_id>
@@ -4746,8 +4746,8 @@
 			<tvg_id>955</tvg_id>
 			<epg_id>410</epg_id>
 			<icon_url>http://epg.it999.ru/img2/410.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 				<tv_category_id>13</tv_category_id>
@@ -4760,8 +4760,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4658</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4658.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4773,8 +4773,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4653</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4653.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4786,8 +4786,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4671</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4671.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4799,8 +4799,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4655</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4655.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4812,8 +4812,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4649</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4649.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -4825,8 +4825,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4763</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4763.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4838,8 +4838,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4764</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4764.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4851,8 +4851,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4765</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4765.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4864,8 +4864,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4767</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4767.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4877,8 +4877,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4768</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4768.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4890,8 +4890,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4769</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4769.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>4</tv_category_id>
 			</tv_categories>
@@ -4903,8 +4903,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4591</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4591.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -4915,8 +4915,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4592</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4592.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -4927,8 +4927,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4791</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4791.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -4951,8 +4951,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4800</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4800.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -4963,8 +4963,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4594</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4594.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -4975,8 +4975,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4792</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4792.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -4987,8 +4987,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4595</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4595.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -4999,8 +4999,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4596</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4596.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5011,8 +5011,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4793</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4793.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5023,8 +5023,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4597</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4597.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5035,8 +5035,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4598</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4598.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5047,8 +5047,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4789</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4789.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5059,8 +5059,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4600</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4600.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5071,8 +5071,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4599</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4599.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5083,8 +5083,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4601</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4601.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5095,8 +5095,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4644</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4644.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5107,8 +5107,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4645</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4645.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5119,8 +5119,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4646</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4646.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5131,8 +5131,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4647</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4647.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5143,8 +5143,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4648</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4648.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5155,8 +5155,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4666</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4666.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5168,8 +5168,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4663</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4663.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5181,8 +5181,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4794</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4794.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5193,8 +5193,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4665</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4665.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5206,8 +5206,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4669</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4669.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5219,8 +5219,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4667</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4667.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5232,8 +5232,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4670</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4670.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5257,8 +5257,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4664</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4664.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
@@ -5270,8 +5270,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4770</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4770.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5283,8 +5283,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4662</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4662.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5296,8 +5296,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4771</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4771.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5309,8 +5309,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4772</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4772.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5322,8 +5322,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4693</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4693.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5335,8 +5335,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4778</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4778.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5348,8 +5348,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4779</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4779.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5361,8 +5361,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4780</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4780.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5374,8 +5374,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4719</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4719.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5387,8 +5387,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4720</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4720.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5400,8 +5400,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4726</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4726.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5413,8 +5413,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4721</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4721.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5426,8 +5426,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4722</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4722.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5439,8 +5439,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4782</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4782.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5452,8 +5452,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4783</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4783.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5465,8 +5465,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4785</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4785.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5478,8 +5478,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4723</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4723.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5491,8 +5491,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4724</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4724.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5504,8 +5504,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4725</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4725.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5517,8 +5517,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4727</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4727.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5530,8 +5530,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4682</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4682.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5543,8 +5543,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4684</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4684.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5556,8 +5556,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4683</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4683.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5569,8 +5569,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4685</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4685.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5582,8 +5582,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4686</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4686.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5595,8 +5595,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4687</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4687.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5608,8 +5608,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4688</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4688.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5621,8 +5621,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4689</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4689.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5634,8 +5634,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4690</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4690.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5647,8 +5647,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4691</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4691.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5660,8 +5660,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4776</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4776.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5673,8 +5673,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4695</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4695.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5686,8 +5686,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4777</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4777.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5699,8 +5699,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4698</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4698.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5712,8 +5712,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4699</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4699.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5725,8 +5725,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4700</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4700.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5738,8 +5738,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4701</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4701.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5751,8 +5751,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4702</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4702.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5764,8 +5764,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4703</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4703.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5777,8 +5777,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4704</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4704.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5790,8 +5790,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4784</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4784.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -5803,8 +5803,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4715</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4715.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -5816,8 +5816,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4708</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4708.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
@@ -5829,8 +5829,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4705</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4705.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5842,8 +5842,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4706</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4706.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5855,8 +5855,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4707</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4707.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5868,8 +5868,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4710</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4710.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5881,8 +5881,8 @@
 			<tvg_id>108</tvg_id>
 			<epg_id>898</epg_id>
 			<icon_url>http://epg.it999.ru/img2/898.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
 			</tv_categories>
@@ -5894,8 +5894,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4711</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4711.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5907,8 +5907,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4712</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4712.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5920,8 +5920,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4713</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4713.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5933,8 +5933,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4714</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4714.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5946,8 +5946,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4716</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4716.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -5959,8 +5959,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4728</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4728.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -5972,8 +5972,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4729</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4729.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -5985,8 +5985,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4730</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4730.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -5998,8 +5998,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4746</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4746.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6011,8 +6011,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4756</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4756.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6024,8 +6024,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4757</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4757.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6037,8 +6037,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4774</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4774.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6050,8 +6050,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4775</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4775.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6063,8 +6063,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4732</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4732.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6076,8 +6076,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4593</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4593.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6088,8 +6088,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4790</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4790.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6100,8 +6100,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4718</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4718.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>3</tv_category_id>
 			</tv_categories>
@@ -6257,8 +6257,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4795</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4795.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
@@ -6305,8 +6305,8 @@
 			<tvg_id>0</tvg_id>
 			<epg_id>4668</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4668.png</icon_url>
-			<num_past_epg_days>4</num_past_epg_days>
-			<num_future_epg_days>2</num_future_epg_days>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>8</tv_category_id>
 			</tv_categories>
