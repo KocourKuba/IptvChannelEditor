@@ -26,6 +26,8 @@
 #define new DEBUG_NEW
 #endif
 
+#define WN_START_LOAD_PLAYLIST (WM_USER + 301)
+
 BOOL CEdemChannelEditorDlg::m_embedded_info = FALSE;
 CString CEdemChannelEditorDlg::m_gl_domain;
 CString CEdemChannelEditorDlg::m_gl_access_key;
@@ -153,6 +155,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnUpdatePlayChannelStreamPl)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
+	ON_MESSAGE(WN_START_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnStartLoadPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CEdemChannelEditorDlg::OnBnClickedButtonPlFilter)
 	ON_BN_CLICKED(IDC_BUTTON_ACCESS_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonAccessInfo)
 END_MESSAGE_MAP()
@@ -208,6 +211,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
 	DDX_Control(pDX, IDC_BUTTON_LOAD_PLAYLIST, m_wndChooseUrl);
 	DDX_Control(pDX, IDC_BUTTON_DOWNLOAD_PLAYLIST, m_wndDownloadUrl);
+	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -326,13 +330,20 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	}
 
 	m_wndPlaylistType.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("PlaylistType"), 0));
-	OnCbnSelchangeComboPlaylist();
 
 	UpdateData(FALSE);
 
 	set_allow_save(FALSE);
 
+	PostMessage(WN_START_LOAD_PLAYLIST);
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+LRESULT CEdemChannelEditorDlg::OnStartLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+{
+	OnCbnSelchangeComboPlaylist();
+	return 0;
 }
 
 void CEdemChannelEditorDlg::OnKickIdle()
@@ -1771,10 +1782,16 @@ void CEdemChannelEditorDlg::LoadPlaylist()
 	if (!pl_stream || !pl_stream->good()) return;
 
 	int step = 0;
+	size_t lines = std::count(data.begin(), data.end(), '\n');
+	m_wndProgress.SetRange32(0, lines);
+	m_wndProgress.SetPos(0);
+	m_wndProgress.ShowWindow(SW_SHOW);
+
 	std::string line;
 	auto entry = std::make_unique<PlaylistEntry>();
 	while (std::getline(*pl_stream, line))
 	{
+		m_wndProgress.SetPos(step++);
 		utils::string_rtrim(line, "\r");
 		if (line.empty()) continue;
 
@@ -1784,6 +1801,8 @@ void CEdemChannelEditorDlg::LoadPlaylist()
 			if (!AddPlaylistEntry(entry)) break;
 		}
 	}
+
+	m_wndProgress.ShowWindow(SW_HIDE);
 	FillPlaylist();
 }
 
@@ -1862,6 +1881,7 @@ void CEdemChannelEditorDlg::FillPlaylist()
 			category.second = item;
 		}
 
+		int step = 0;
 		for (const auto& item : m_playlist)
 		{
 			auto found = std::find_if(m_pl_categories.begin(), m_pl_categories.end(), [&item](const auto& pair)

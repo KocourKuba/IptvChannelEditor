@@ -138,6 +138,7 @@ protected:
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
+	afx_msg LRESULT OnStartLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -207,6 +208,7 @@ protected:
 	CComboBox m_wndChannels;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
+	CProgressCtrl m_wndProgress;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
 	CButton m_wndCustom;

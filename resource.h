@@ -93,6 +93,8 @@
 #define IDC_CHECK_GLOBAL                1067
 #define IDC_BUTTON_ACCESS_INFO          1068
 #define IDC_CUSTOM_PLAYLIST             1069
+#define IDC_PROGRESS1                   1070
+#define IDC_PROGRESS_LOAD               1070
 #define ID_ADD_CATEGORY                 32771
 #define ID_ADD_CHANNEL                  32772
 #define ID_CHANNEL_DOWN                 32773
@@ -119,7 +121,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        146
 #define _APS_NEXT_COMMAND_VALUE         32792
-#define _APS_NEXT_CONTROL_VALUE         1070
+#define _APS_NEXT_CONTROL_VALUE         1071
 #define _APS_NEXT_SYMED_VALUE           1163
 #endif
 #endif
