@@ -1028,6 +1028,7 @@ void CEdemChannelEditorDlg::OnAddCategory()
 		hIter = m_wndPlaylistTree.GetNextSiblingItem(hIter);
 	}
 
+	UpdateChannelsCount();
 	LoadChannelInfo();
 	set_allow_save();
 }
@@ -1960,24 +1961,32 @@ void CEdemChannelEditorDlg::OnRemoveCategory()
 	if (!category)
 		return;
 
-	if (IsCategoryInChannels(category))
-	{
-		AfxMessageBox(_T("Category must be empty!"), MB_OK | MB_ICONERROR);
+	if (IsCategoryInChannels(category) && AfxMessageBox(_T("Category contains channels. Are your sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
 		return;
+
+	for (auto& channel : m_channels)
+	{
+		channel->erase_category(category->get_id());
+		if (channel->get_categores().empty())
+		{
+			channel.release();
+		}
 	}
 
+	m_channels.erase(std::remove_if(m_channels.begin(), m_channels.end(), [](const auto& elem) { return elem == nullptr; }), m_channels.end());
 	m_wndChannelsTree.SetItemData(hItem, 0);
 	m_wndChannelsTree.DeleteItem(hItem);
 
 	m_categories.erase(category->get_id());
 
 	FillCategories();
+	UpdateChannelsCount();
 }
 
 void CEdemChannelEditorDlg::OnUpdateRemoveCategory(CCmdUI* pCmdUI)
 {
 	auto category = GetItemCategory(m_wndChannelsTree.GetSelectedItem());
-	BOOL enable = category ? !IsCategoryInChannels(category) : FALSE;
+	BOOL enable = category != nullptr;
 
 	pCmdUI->Enable(enable);
 }
