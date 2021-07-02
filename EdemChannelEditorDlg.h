@@ -76,14 +76,11 @@ protected:
 	afx_msg void OnUpdateNewCategory(CCmdUI* pCmdUI);
 	afx_msg void OnRemoveCategory();
 	afx_msg void OnUpdateRemoveCategory(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedButtonGetStreamInfo();
 	afx_msg void OnGetStreamInfo();
 	afx_msg void OnGetStreamInfoAll();
-	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
-	afx_msg void OnGetChannelStreamInfo();
 	afx_msg void OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateGetChannelStreamInfo(CCmdUI* pCmdUI);
-	afx_msg void OnGetChannelStreamInfoPl();
-	afx_msg void OnUpdateGetChannelStreamInfoPl(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnPlayChannelStream();
 	afx_msg void OnUpdatePlayChannelStream(CCmdUI* pCmdUI);
 	afx_msg void OnPlayPlaylistStream();
@@ -97,7 +94,6 @@ protected:
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonCacheIcon();
-	afx_msg void OnBnClickedButtonGetInfoPl();
 	afx_msg void OnBnClickedButtonCustomPlaylist();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonPlSearchNext();
@@ -126,10 +122,10 @@ protected:
 	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMKillfocusTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonGetInfoPl(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateCreateUpdateChannel(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonRemoveChannel(CCmdUI* pCmdUI);
@@ -139,7 +135,6 @@ protected:
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateArchiveCheck(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
@@ -170,7 +165,7 @@ private:
 	void SaveCategoryInfo();
 
 	void PlayChannel(HTREEITEM hItem, int archive_hour = 0);
-	void PlayPlaylistEntry(HTREEITEM hItem);
+	void PlayPlaylistEntry(HTREEITEM hItem, int archive_hour = 0);
 	void PlayStream(const std::wstring& stream_url, int archive_hour = 0);
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
@@ -242,6 +237,7 @@ protected:
 	CString m_infoAudio;
 	CString m_chInfo;
 
+	HWND m_lastTree = nullptr;
 	BOOL m_hasArchive = FALSE;
 	BOOL m_isAdult = FALSE;
 	int m_streamID = 0;

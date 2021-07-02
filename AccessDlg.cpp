@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(CAccessDlg, CDialogEx)
 BEGIN_MESSAGE_MAP(CAccessDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_GLOBAL, &CAccessDlg::OnBnClickedCheckGlobal)
 	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_URL, &CAccessDlg::OnEnChangeEditPlaylistUrl)
-	ON_BN_CLICKED(ID_BTN_GET, &CAccessDlg::OnBnClickedBtnGet)
+	ON_BN_CLICKED(IDC_BUTTON_GET, &CAccessDlg::OnBnClickedBtnGet)
 END_MESSAGE_MAP()
 
 
@@ -34,7 +34,7 @@ void CAccessDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_GLOBAL, m_bEmbedded);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_URL, m_url);
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_URL, m_wndUrl);
-	DDX_Control(pDX, ID_BTN_GET, m_wndGet);
+	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 }
 
 BOOL CAccessDlg::OnInitDialog()
