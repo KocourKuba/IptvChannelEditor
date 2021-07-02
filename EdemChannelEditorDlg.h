@@ -274,4 +274,6 @@ private:
 	std::set<int> m_playlistIds;
 	std::vector<std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_pl_categories;
+
+	std::vector<std::pair<CString, CString>> m_all_playlists;
 };

@@ -14,13 +14,13 @@
 #include "SettingsDlg.h"
 #include "AccessDlg.h"
 #include "FilterDialog.h"
+#include "CustomPlaylistDlg.h"
 #include "utils.h"
 
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
 
 #include "SevenZip/7zip/SevenZipWrapper.h"
-#include "CustomPlaylistDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -311,6 +311,28 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	m_wndPlaylistType.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("PlaylistType"), 0));
 
+	m_all_playlists.emplace_back(_T("Standard"), theApp.GetAppPath(utils::CHANNELS_CONFIG));
+	CFileFind ffind;
+	BOOL bFound = ffind.FindFile(_T("edem_plugin\\*.xml"));
+	while (bFound)
+	{
+		bFound = ffind.FindNextFile();
+		if (!ffind.IsDirectory() && ffind.GetFileName() != "dune_plugin.xml" && ffind.GetFileName() != "edem_channel_list.xml")
+		{
+			m_all_playlists.emplace_back(ffind.GetFileName(), ffind.GetFilePath());
+		}
+	}
+
+	for(const auto& playlist : m_all_playlists)
+	{
+		int idx = m_wndChannels.AddString(playlist.first);
+		m_wndChannels.SetItemData(idx, (DWORD_PTR)playlist.second.GetString());
+	}
+
+	int idx = theApp.GetProfileInt(_T("Setting"), _T("ChannelsType"), 0);
+	if (idx < m_wndChannels.GetCount())
+		m_wndChannels.SetCurSel(idx);
+
 	UpdateData(FALSE);
 
 	set_allow_save(FALSE);
@@ -324,20 +346,7 @@ LRESULT CEdemChannelEditorDlg::OnStartLoadData(WPARAM wParam /*= 0*/, LPARAM lPa
 {
 	CWaitCursor cur;
 
-	int idx = theApp.GetProfileInt(_T("Setting"), _T("ChannelsType"), 0);
-	m_wndChannels.SetCurSel(idx);
-
-	CString channels;
-	switch (idx)
-	{
-		case 1:
-			channels = theApp.GetProfileString(_T("Setting"), _T("ChannelList"));
-			break;
-		default:
-			channels = theApp.GetAppPath(utils::CHANNELS_CONFIG);
-			break;
-	}
-
+	CString channels = theApp.GetProfileString(_T("Setting"), _T("ChannelList"));
 	if (LoadChannels(channels))
 	{
 		FillCategories();
@@ -3110,20 +3119,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::wstring& url, std::s
 void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 {
 	int idx = m_wndChannels.GetCurSel();
-	CString channels;
-	switch (idx)
-	{
-		case 0:
-			channels = theApp.GetAppPath(utils::CHANNELS_CONFIG);
-			break;
-		case 1:
-			channels = theApp.GetProfileString(_T("Setting"), _T("ChannelList"));
-			break;
-		default:
-			break;
-	}
-
-	LoadChannels(channels);
+	LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx));
 	FillCategories();
 	FillChannels();
 
