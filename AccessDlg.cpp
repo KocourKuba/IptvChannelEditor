@@ -49,6 +49,19 @@ BOOL CAccessDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+void CAccessDlg::OnOK()
+{
+	UpdateData(TRUE);
+
+	if (!m_bEmbedded)
+	{
+		theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), m_accessKey);
+		theApp.WriteProfileString(_T("Setting"), _T("Domain"), m_domain);
+	}
+
+	CDialogEx::OnOK();
+}
+
 void CAccessDlg::OnBnClickedCheckGlobal()
 {
 	UpdateData(TRUE);
@@ -67,13 +80,14 @@ void CAccessDlg::OnEnChangeEditPlaylistUrl()
 	UpdateData(TRUE);
 
 	m_wndGet.EnableWindow(!m_url.IsEmpty());
-	theApp.WriteProfileString(_T("Setting"), _T("EdemUrl"), m_url);
 }
 
 
 void CAccessDlg::OnBnClickedBtnGet()
 {
 	UpdateData(TRUE);
+
+	theApp.WriteProfileString(_T("Setting"), _T("EdemUrl"), m_url);
 
 	// Short (OTTPplay.es) format
 	// #EXTM3U

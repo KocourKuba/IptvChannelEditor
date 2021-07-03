@@ -19,6 +19,7 @@ public:
 protected:
 	BOOL OnInitDialog() override;
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	void OnOK() override;
 
 	DECLARE_MESSAGE_MAP()
 
