@@ -2052,8 +2052,6 @@
 				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/969/index.m3u8</streaming_url>
-			<archive>1</archive>
-			<disabled>true</disabled>
 		</tv_channel>
 		<tv_channel>
 			<caption>Известия</caption>
@@ -2638,6 +2636,19 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>NickToons</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>2994</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2994.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>11</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/849/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Disney</caption>
 			<tvg_id>100055</tvg_id>
 			<epg_id>150</epg_id>
@@ -2833,19 +2844,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>СТС Kids HD</caption>
-			<tvg_id>2383</tvg_id>
-			<epg_id>2481</epg_id>
-			<icon_url>http://epg.it999.ru/img2/2481.png</icon_url>
-			<num_past_epg_days>7</num_past_epg_days>
-			<num_future_epg_days>7</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>11</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2001/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Animal Planet</caption>
 			<tvg_id>214</tvg_id>
 			<epg_id>365</epg_id>
@@ -2859,6 +2857,19 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>СТС Kids HD</caption>
+			<tvg_id>2383</tvg_id>
+			<epg_id>2481</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2481.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>11</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2001/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Смайлик ТВ</caption>
 			<tvg_id>2416</tvg_id>
 			<epg_id>2442</epg_id>
@@ -2869,19 +2880,6 @@
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2157/index.m3u8</streaming_url>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Уникум</caption>
-			<tvg_id>0</tvg_id>
-			<epg_id>2758</epg_id>
-			<icon_url>http://epg.it999.ru/img2/2758.png</icon_url>
-			<num_past_epg_days>7</num_past_epg_days>
-			<num_future_epg_days>7</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>11</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5056/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -3669,16 +3667,16 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Baby TV</caption>
-			<tvg_id>300027</tvg_id>
-			<epg_id>2436</epg_id>
-			<icon_url>http://epg.it999.ru/img2/2436.png</icon_url>
+			<caption>Уникум</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>2758</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2758.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2084/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5056/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -5569,17 +5567,16 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Телеканал Да Винчи</caption>
-			<tvg_id>955</tvg_id>
-			<epg_id>410</epg_id>
-			<icon_url>http://epg.it999.ru/img2/410.png</icon_url>
+			<caption>Baby TV</caption>
+			<tvg_id>300027</tvg_id>
+			<epg_id>2436</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2436.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
-				<tv_category_id>15</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/537/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2084/index.m3u8</streaming_url>
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
@@ -5764,16 +5761,18 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11119/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
-			<caption>минимакс-Чип и Дейл HD</caption>
-			<tvg_id>0</tvg_id>
-			<epg_id>5177</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5177.png</icon_url>
+			<caption>Телеканал Да Винчи</caption>
+			<tvg_id>955</tvg_id>
+			<epg_id>410</epg_id>
+			<icon_url>http://epg.it999.ru/img2/410.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13064/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/537/index.m3u8</streaming_url>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>VF Cartoon 18+</caption>
@@ -6083,16 +6082,16 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>минимакс-утиные истории HD</caption>
+			<caption>минимакс-Чип и Дейл HD</caption>
 			<tvg_id>0</tvg_id>
-			<epg_id>5173</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5173.png</icon_url>
+			<epg_id>5177</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5177.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13060/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13064/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>VF Боевик</caption>
@@ -6797,6 +6796,18 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>минимакс-утиные истории HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5173</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5173.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>11</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13060/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
 			<caption>Cartoons_90</caption>
 			<tvg_id>0</tvg_id>
 			<epg_id>4728</epg_id>
@@ -6924,18 +6935,6 @@
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10002/index.m3u8</streaming_url>
-		</tv_channel>
-		<tv_channel>
-			<caption>VF VHS Cartoon</caption>
-			<tvg_id>0</tvg_id>
-			<epg_id>4790</epg_id>
-			<icon_url>http://epg.it999.ru/img2/4790.png</icon_url>
-			<num_past_epg_days>7</num_past_epg_days>
-			<num_future_epg_days>7</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>11</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11118/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>KBC-Шпионское</caption>
@@ -8007,16 +8006,16 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13015/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
-			<caption>VF Малыш</caption>
+			<caption>VF VHS Cartoon</caption>
 			<tvg_id>0</tvg_id>
-			<epg_id>4795</epg_id>
-			<icon_url>http://epg.it999.ru/img2/4795.png</icon_url>
+			<epg_id>4790</epg_id>
+			<icon_url>http://epg.it999.ru/img2/4790.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11123/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11118/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>минимакс-UFO HD</caption>
@@ -8055,6 +8054,18 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13019/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
+			<caption>VF Малыш</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>4795</epg_id>
+			<icon_url>http://epg.it999.ru/img2/4795.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>11</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11123/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
 			<caption>VF Мультфильмы СССР</caption>
 			<tvg_id>0</tvg_id>
 			<epg_id>4668</epg_id>
@@ -8066,18 +8077,6 @@
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10086/index.m3u8</streaming_url>
 			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>минимакс-Tom &amp; Jerry HD</caption>
-			<tvg_id>0</tvg_id>
-			<epg_id>5129</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5129.png</icon_url>
-			<num_past_epg_days>7</num_past_epg_days>
-			<num_future_epg_days>7</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>11</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13016/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>минимакс-ussr-фантастика HD</caption>
@@ -8128,17 +8127,16 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13025/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
-			<caption>минимакс-ussr-мультфильм HD</caption>
+			<caption>минимакс-Tom &amp; Jerry HD</caption>
 			<tvg_id>0</tvg_id>
-			<epg_id>5133</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5133.png</icon_url>
+			<epg_id>5129</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5129.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13020/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13016/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>минимакс-боевик classic HD</caption>
@@ -8177,16 +8175,17 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13029/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
-			<caption>минимакс-ussr-сказки HD</caption>
+			<caption>минимакс-ussr-мультфильм HD</caption>
 			<tvg_id>0</tvg_id>
-			<epg_id>5134</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5134.png</icon_url>
+			<epg_id>5133</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5133.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
+				<tv_category_id>7</tv_category_id>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13021/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13020/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>минимакс-воронины HD</caption>
@@ -8321,6 +8320,18 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13041/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
+			<caption>минимакс-ussr-сказки HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5134</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5134.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>11</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13021/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
 			<caption>минимакс-Барбоскины HD</caption>
 			<tvg_id>0</tvg_id>
 			<epg_id>5139</epg_id>
@@ -8331,18 +8342,6 @@
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13026/index.m3u8</streaming_url>
-		</tv_channel>
-		<tv_channel>
-			<caption>минимакс-Винни Пух HD</caption>
-			<tvg_id>0</tvg_id>
-			<epg_id>5143</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5143.png</icon_url>
-			<num_past_epg_days>7</num_past_epg_days>
-			<num_future_epg_days>7</num_future_epg_days>
-			<tv_categories>
-				<tv_category_id>11</tv_category_id>
-			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13030/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>минимакс-мифология HD</caption>
@@ -8501,16 +8500,16 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13056/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
-			<caption>минимакс-Маша и медведь HD</caption>
+			<caption>минимакс-Винни Пух HD</caption>
 			<tvg_id>0</tvg_id>
-			<epg_id>5155</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5155.png</icon_url>
+			<epg_id>5143</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5143.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13042/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13030/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>минимакс-триллер HD</caption>
@@ -8537,16 +8536,16 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13059/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
-			<caption>минимакс-ми-ми-мишки HD</caption>
+			<caption>минимакс-Маша и медведь HD</caption>
 			<tvg_id>0</tvg_id>
-			<epg_id>5156</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5156.png</icon_url>
+			<epg_id>5155</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5155.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13043/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13042/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>минимакс-Уэс Крэйвен HD</caption>
@@ -8585,16 +8584,16 @@
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13063/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
-			<caption>минимакс-три кота HD</caption>
+			<caption>минимакс-ми-ми-мишки HD</caption>
 			<tvg_id>0</tvg_id>
-			<epg_id>5170</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5170.png</icon_url>
+			<epg_id>5156</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5156.png</icon_url>
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>11</tv_category_id>
 			</tv_categories>
-			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13057/index.m3u8</streaming_url>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13043/index.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>UZ Фантастика HD</caption>
@@ -8955,6 +8954,18 @@
 				<tv_category_id>2</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13094/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>минимакс-три кота HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5170</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5170.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>11</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13057/index.m3u8</streaming_url>
 		</tv_channel>
 	</tv_channels>
 </tv_info>
