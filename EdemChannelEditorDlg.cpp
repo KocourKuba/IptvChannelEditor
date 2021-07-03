@@ -346,7 +346,7 @@ LRESULT CEdemChannelEditorDlg::OnStartLoadData(WPARAM wParam /*= 0*/, LPARAM lPa
 {
 	CWaitCursor cur;
 
-	CString channels = theApp.GetProfileString(_T("Setting"), _T("ChannelList"));
+	CString channels = (LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel());
 	if (LoadChannels(channels))
 	{
 		FillCategories();
