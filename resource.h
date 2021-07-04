@@ -96,6 +96,7 @@
 #define IDC_STATIC_VERSION              1076
 #define IDC_TREE_CHANNELS               1077
 #define IDC_TREE_PLAYLIST               1078
+#define IDC_MFCLINK_DONATE_ABOUT        1079
 #define ID_ADD_CATEGORY                 32771
 #define ID_ADD_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -127,7 +128,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32798
-#define _APS_NEXT_CONTROL_VALUE         1079
+#define _APS_NEXT_CONTROL_VALUE         1080
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif
 #endif

@@ -98,7 +98,7 @@ BEGIN
     LTEXT           "Version 1.0",IDC_STATIC_VERSION,43,4,85,9,SS_NOPREFIX
     LTEXT           "Copyright (C) 2020-2021, Pavel Abakanov",IDC_STATIC,43,15,133,8
     DEFPUSHBUTTON   "OK",IDOK,78,140,50,14,WS_GROUP
-    CONTROL         "Donate $5 if you like this App",IDC_MFCLINK_DONATE,
+    CONTROL         "Donate $5 if you like this App", IDC_MFCLINK_DONATE_ABOUT,
                     "MfcLink",WS_TABSTOP,51,38,105,14
     CONTROL         "",IDC_STATIC_QR,"Static",SS_BITMAP | SS_CENTERIMAGE,60,53,85,78
 END

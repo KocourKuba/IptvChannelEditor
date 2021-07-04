@@ -1458,7 +1458,6 @@ void CEdemChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResul
 
 	popup->SetDefaultItem(ID_PLAY_STREAM);
 
-	m_wndChannelsTree.SelectItem(hItem);
 
 	CCmdUI cmdUI;
 	cmdUI.m_nIndexMax = popup->GetMenuItemCount();
@@ -1513,8 +1512,6 @@ void CEdemChannelEditorDlg::OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResu
 		return;
 
 	popup->SetDefaultItem(ID_PLAY_STREAM_PL);
-
-	m_wndPlaylistTree.SelectItem(hItem);
 
 	CCmdUI cmdUI;
 	cmdUI.m_nIndexMax = popup->GetMenuItemCount();
@@ -2741,6 +2738,7 @@ void CEdemChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 
 	pCmdUI->Enable(enable);
 }
+
 void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 {
 	int idx = m_wndPlaylistType.GetCurSel();
