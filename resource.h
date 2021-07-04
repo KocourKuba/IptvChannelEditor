@@ -27,7 +27,7 @@
 #define IDC_BUTTON_GET                  1007
 #define IDC_BUTTON_GET_INFO             1008
 #define IDC_BUTTON_IMPORT               1010
-#define IDC_BUTTON_LOAD_CHANNELS        1011
+#define IDC_BUTTON_ADD_NEW_CHANNELS_LIST 1011
 #define IDC_BUTTON_LOAD_PLAYLIST        1012
 #define IDC_BUTTON_PACK                 1013
 #define IDC_BUTTON_PL_FILTER            1014
@@ -98,7 +98,7 @@
 #define IDC_TREE_PLAYLIST               1078
 #define IDC_MFCLINK_DONATE_ABOUT        1079
 #define ID_ADD_CATEGORY                 32771
-#define ID_ADD_CHANNEL                  32772
+#define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
 #define ID_CHANNEL_DOWN                 32774
 #define ID_CHANNEL_UP                   32775

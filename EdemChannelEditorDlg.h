@@ -5,7 +5,7 @@
 #pragma once
 #include <memory>
 #include "PlayListEntry.h"
-#include "ColorTreeCtrl.h"
+#include "TreeCtrlEx.h"
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
 
@@ -60,35 +60,36 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
-	afx_msg void OnAddChannel();
+	afx_msg void OnSave();
+	afx_msg void OnUpdateSave(CCmdUI* pCmdUI);
+	afx_msg void OnNewChannel();
 	afx_msg void OnAddUpdateChannel();
 	afx_msg void OnRemoveChannel();
 	afx_msg void OnUpdateRemoveChannel(CCmdUI* pCmdUI);
 	afx_msg void OnAddCategory();
+	afx_msg void OnUpdateAddCategory(CCmdUI* pCmdUI);
 	afx_msg void OnChannelUp();
 	afx_msg void OnUpdateChannelUp(CCmdUI* pCmdUI);
 	afx_msg void OnChannelDown();
 	afx_msg void OnUpdateChannelDown(CCmdUI* pCmdUI);
 	afx_msg void OnToggleChannel();
 	afx_msg void OnUpdateToggleChannel(CCmdUI* pCmdUI);
-	afx_msg void OnTreeItemRename();
+	afx_msg void OnRenameChannel();
+	afx_msg void OnUpdateRenameChannel(CCmdUI* pCmdUI);
 	afx_msg void OnNewCategory();
 	afx_msg void OnUpdateNewCategory(CCmdUI* pCmdUI);
 	afx_msg void OnRemoveCategory();
 	afx_msg void OnUpdateRemoveCategory(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedButtonGetStreamInfo();
 	afx_msg void OnGetStreamInfo();
+	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnGetStreamInfoAll();
 	afx_msg void OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnPlayChannelStream();
 	afx_msg void OnUpdatePlayChannelStream(CCmdUI* pCmdUI);
 	afx_msg void OnPlayPlaylistStream();
 	afx_msg void OnUpdatePlayPlaylistStream(CCmdUI* pCmdUI);
 	afx_msg void OnPlayChannelStreamArchive();
-	afx_msg void OnUpdatePlayChannelStreamArchive(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedButtonLoadChannels();
-	afx_msg void OnUpdateButtonLoadChannels(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedButtonAddNewChannelsList();
 	afx_msg void OnBnClickedButtonPlFilter();
 
 	afx_msg void OnBnClickedButtonAbout();
@@ -98,13 +99,13 @@ protected:
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonPlSearchNext();
 	afx_msg void OnBnClickedButtonRemoveFromShowIn();
-	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnBnClickedButtonAccessInfo();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
 	afx_msg void OnBnClickedButtonTestEpg();
 	afx_msg void OnBnClickedButtonTestTvg();
-	afx_msg void OnBnClickedButtonUpdateIcon();
+	afx_msg void OnUpdateIcon();
+	afx_msg void OnUpdateUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnEditChangeTvIdd();
@@ -112,9 +113,9 @@ protected:
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinArchiveCheck(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEnChangeEditNum();
+	afx_msg void OnEnChangeEditNumNext();
+	afx_msg void OnEnChangeEditNumPrev();
 	afx_msg void OnEnChangeEditArchiveCheck();
-	afx_msg void OnTvnSelchangingTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResult);
@@ -122,19 +123,14 @@ protected:
 	afx_msg void OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNMKillfocusTree(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMSetfocusTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateCreateUpdateChannel(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAddUpdateChannel(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonRemoveChannel(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonButtonAddCategory(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonSave(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateButtonAddCategory(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonTestEpg(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
@@ -161,7 +157,7 @@ private:
 
 	void FillCategoriesList(ChannelInfo* channel);
 
-	void SaveChannelInfo();
+	void SaveChannelInfo(BOOL bMultiple = FALSE);
 	void SaveCategoryInfo();
 
 	void PlayChannel(HTREEITEM hItem, int archive_hour = 0);
@@ -173,7 +169,7 @@ private:
 	void CheckLimits();
 	void CheckForExisting();
 
-	void SetCurrentChannel(HTREEITEM hCur);
+	BOOL IsSelectedTheSameType();
 
 	ChannelInfo* GetChannel(HTREEITEM hItem);
 	ChannelInfo* GetCurrentChannel();
@@ -188,7 +184,10 @@ private:
 
 	bool IsChannel(HTREEITEM hItem) const;
 	bool IsCategory(HTREEITEM hItem) const;
-	void ChangeControlsState(BOOL enable);
+	bool IsPlaylistEntry(HTREEITEM hItem) const;
+	bool IsPlaylistCategory(HTREEITEM hItem) const;
+	// 0 - disable, 1 - enable, 2 - multiple selected
+	void ChangeControlsState(int state);
 	bool IsCategoryInChannels(const ChannelCategory* category) const;
 	const ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
 	int GetNewCategoryID();
@@ -200,14 +199,22 @@ public:
 
 protected:
 	CToolTipCtrl m_pToolTipCtrl;
-	CColorTreeCtrl m_wndChannelsTree;
+	CTreeCtrlEx m_wndChannelsTree;
 	CComboBox m_wndCategories;
 	CListBox m_wndCategoriesList;
 	CComboBox m_wndPlaylistType;
-	CColorTreeCtrl m_wndPlaylistTree;
+	CTreeCtrlEx m_wndPlaylistTree;
 	CComboBox m_wndChannels;
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
+	CEdit m_wndTvgID;
+	CEdit m_wndEpgID;
+	CEdit m_wndPrevDays;
+	CEdit m_wndNextDays;
+	CEdit m_wndInfoVideo;
+	CEdit m_wndInfoAudio;
+	CSpinButtonCtrl m_wndSpinPrev;
+	CSpinButtonCtrl m_wndSpinNext;
 	CProgressCtrl m_wndProgress;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
@@ -220,6 +227,10 @@ protected:
 	CButton m_wndChooseUrl;
 	CButton m_wndDownloadUrl;
 	CButton m_wndGetInfo;
+	CButton m_wndCheckArchive;
+	CButton m_wndCacheIcon;
+	CButton m_wndUpdateIcon;
+	CButton m_wndSave;
 	CStatic m_wndIcon;
 	CStatic m_wndPlIcon;
 	CFont m_largeFont;
@@ -261,6 +272,7 @@ private:
 	BOOL m_filterRegex = FALSE;
 	BOOL m_filterCase = FALSE;
 	BOOL m_allow_save = FALSE;
+	bool m_menu_enable_channel = false;
 	HACCEL m_hAccel = nullptr;
 	HTREEITEM m_current = nullptr;
 	HTREEITEM m_pl_current = nullptr;
