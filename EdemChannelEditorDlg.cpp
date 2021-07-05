@@ -154,6 +154,8 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM, &CEdemChannelEditorDlg::OnUpdatePlayChannelStream)
 	ON_COMMAND(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnPlayPlaylistStream)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnUpdatePlayPlaylistStream)
+	ON_COMMAND(ID_SYNC_ENTRY, &CEdemChannelEditorDlg::OnSyncEntry)
+	ON_UPDATE_COMMAND_UI(ID_SYNC_ENTRY, &CEdemChannelEditorDlg::OnUpdateSyncEntry)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_MESSAGE(WN_START_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnStartLoadData)
@@ -285,10 +287,11 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
 	m_archiveCheck = theApp.GetProfileInt(_T("Setting"), _T("HoursBack"), 0);
+	m_bAutoSync = theApp.GetProfileInt(_T("Setting"), _T("AutoSyncChannel"), FALSE);
 
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose a playlist to import. Standard and Thematic downloaded from it999.ru"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Choose custom playlist path"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Add custom playlist"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels. Use \\ prefix to find by ID"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TVG_ID), _T("EPG ID from teleguide.info"));
@@ -715,33 +718,32 @@ void CEdemChannelEditorDlg::LoadPlayListInfo()
 			m_plEPG.Format(_T("EPG: %d"), entry->get_tvg_id());
 
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
-		UpdateData(FALSE);
+		m_infoAudio = entry->get_audio().c_str();
+		m_infoVideo = entry->get_video().c_str();
 
-		CString path(entry->get_icon_uri().get_uri().c_str());
 		CImage img;
-		if (theApp.LoadImage(path, img))
+		if (theApp.LoadImage(entry->get_icon_uri().get_uri().c_str(), img))
 		{
 			entry->set_icon(img);
 		}
 
 		theApp.SetImage(entry->get_icon(), m_wndPlIcon);
 
-
-		auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
-								  {
-									  return channel->get_channel_id() == id;
-								  });
-
-		if (found != m_channels.end())
+		if (m_bAutoSync)
 		{
-			if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+			auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
+									  {
+										  return channel->get_channel_id() == id;
+									  });
+
+			if (found != m_channels.end())
 			{
-				m_wndChannelsTree.SelectItem(hSelected);
+				if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+				{
+					m_wndChannelsTree.SelectItem(hSelected);
+				}
 			}
 		}
-
-		m_infoAudio = entry->get_audio().c_str();
-		m_infoVideo = entry->get_video().c_str();
 
 		UpdateData(FALSE);
 	}
@@ -2357,6 +2359,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSettings()
 	{
 		m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
 		m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
+		m_bAutoSync = theApp.GetProfileInt(_T("Setting"), _T("AutoSyncChannel"), FALSE);
 	}
 }
 
@@ -2720,6 +2723,35 @@ void CEdemChannelEditorDlg::OnPlayChannelStreamArchive()
 	{
 		PlayPlaylistEntry(m_wndPlaylistTree.GetSelectedItem(), m_archiveCheck);
 	}
+}
+
+void CEdemChannelEditorDlg::OnSyncEntry()
+{
+	if (GetFocus() != &m_wndPlaylistTree)
+		return;
+
+	auto entry = GetCurrentPlaylistEntry();
+	if (!entry)
+		return;
+
+	int id = entry->get_channel_id();
+	auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
+							  {
+								  return channel->get_channel_id() == id;
+							  });
+
+	if (found != m_channels.end())
+	{
+		if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+		{
+			m_wndChannelsTree.SelectItem(hSelected);
+		}
+	}
+}
+
+void CEdemChannelEditorDlg::OnUpdateSyncEntry(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!m_bAutoSync && GetCurrentPlaylistEntry() != nullptr && m_wndPlaylistTree.GetSelectedCount() == 1);
 }
 
 void CEdemChannelEditorDlg::OnToggleChannel()

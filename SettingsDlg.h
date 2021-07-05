@@ -30,4 +30,5 @@ protected:
 
 	CString m_player;
 	CString m_probe;
+	BOOL m_bAutoSync;
 };

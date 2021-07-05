@@ -97,6 +97,7 @@
 #define IDC_TREE_CHANNELS               1077
 #define IDC_TREE_PLAYLIST               1078
 #define IDC_MFCLINK_DONATE_ABOUT        1079
+#define IDC_CHECK_AUTO_SYNC_CHANNELS    1080
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -121,14 +122,15 @@
 #define ID_TOGGLE_CHANNEL               32795
 #define ID_UPDATE_CHANNEL               32796
 #define ID_UPDATE_ICON                  32797
+#define ID_SYNC_ENTRY                   32798
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
-#define _APS_NEXT_COMMAND_VALUE         32798
-#define _APS_NEXT_CONTROL_VALUE         1080
+#define _APS_NEXT_COMMAND_VALUE         32799
+#define _APS_NEXT_CONTROL_VALUE         1081
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif
 #endif
