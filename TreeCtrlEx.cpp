@@ -511,7 +511,7 @@ HTREEITEM CTreeCtrlEx::GetNextItem(HTREEITEM hItem, UINT nCode) const
 
 // Helpers to list out selected items. (Use similar to GetFirstVisibleItem(),
 // GetNextVisibleItem() and GetPrevVisibleItem()!)
-HTREEITEM CTreeCtrlEx::GetFirstSelectedItem()
+HTREEITEM CTreeCtrlEx::GetFirstSelectedItem() const
 {
 	for (HTREEITEM hItem = GetRootItem(); hItem != nullptr; hItem = GetNextVisibleItem(hItem))
 	{
@@ -522,7 +522,19 @@ HTREEITEM CTreeCtrlEx::GetFirstSelectedItem()
 	return nullptr;
 }
 
-HTREEITEM CTreeCtrlEx::GetNextSelectedItem(HTREEITEM hItem)
+HTREEITEM CTreeCtrlEx::GetLastSelectedItem() const
+{
+	HTREEITEM hLast = nullptr;
+	for (HTREEITEM hItem = GetRootItem(); hItem != nullptr; hItem = GetNextVisibleItem(hItem))
+	{
+		if (GetItemState(hItem, TVIS_SELECTED) & TVIS_SELECTED)
+			hLast = hItem;
+	}
+
+	return hLast;
+}
+
+HTREEITEM CTreeCtrlEx::GetNextSelectedItem(HTREEITEM hItem) const
 {
 	for (hItem = GetNextVisibleItem(hItem); hItem != nullptr; hItem = GetNextVisibleItem(hItem))
 	{
@@ -533,7 +545,7 @@ HTREEITEM CTreeCtrlEx::GetNextSelectedItem(HTREEITEM hItem)
 	return nullptr;
 }
 
-HTREEITEM CTreeCtrlEx::GetPrevSelectedItem(HTREEITEM hItem)
+HTREEITEM CTreeCtrlEx::GetPrevSelectedItem(HTREEITEM hItem) const
 {
 	for (hItem = GetPrevVisibleItem(hItem); hItem != nullptr; hItem = GetPrevVisibleItem(hItem))
 	{
@@ -542,6 +554,15 @@ HTREEITEM CTreeCtrlEx::GetPrevSelectedItem(HTREEITEM hItem)
 	}
 
 	return nullptr;
+}
+
+std::vector<HTREEITEM> CTreeCtrlEx::GetSelectedItems() const
+{
+	std::vector<HTREEITEM> selected;
+	for (auto hItem = GetFirstSelectedItem(); hItem != nullptr; hItem = GetNextSelectedItem(hItem))
+		selected.emplace_back(hItem);
+
+	return std::move(selected);
 }
 
 // Select/unselect item without unselecting other items

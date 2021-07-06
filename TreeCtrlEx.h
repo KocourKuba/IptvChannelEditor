@@ -19,9 +19,11 @@ public:
 public:
 	UINT GetSelectedCount() const;
 	HTREEITEM GetNextItem(HTREEITEM hItem, UINT nCode) const;
-	HTREEITEM GetFirstSelectedItem();
-	HTREEITEM GetNextSelectedItem(HTREEITEM hItem);
-	HTREEITEM GetPrevSelectedItem(HTREEITEM hItem);
+	HTREEITEM GetFirstSelectedItem() const;
+	HTREEITEM GetLastSelectedItem() const;
+	HTREEITEM GetNextSelectedItem(HTREEITEM hItem) const;
+	HTREEITEM GetPrevSelectedItem(HTREEITEM hItem) const;
+	std::vector<HTREEITEM> GetSelectedItems() const;
 
 	BOOL IsSelected(HTREEITEM hItem) const { return !!(TVIS_SELECTED & GetItemState(hItem, TVIS_SELECTED)); }
 	BOOL SelectItemEx(HTREEITEM hItem, BOOL bSelect = TRUE);

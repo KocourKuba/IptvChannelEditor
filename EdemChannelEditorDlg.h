@@ -97,6 +97,7 @@ protected:
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonCacheIcon();
+	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonCustomPlaylist();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonPlSearchNext();
@@ -111,7 +112,12 @@ protected:
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnEditChangeTvIdd();
-	afx_msg void OnChanges();
+	afx_msg void OnBnClickedCheckAdult();
+	afx_msg void OnBnClickedCheckArchive();
+	afx_msg void OnEnChangeEditTvgID();
+	afx_msg void OnEnChangeEditEpgID();
+	afx_msg void OnEnChangeEditStreamUrl();
+	afx_msg void OnEnChangeEditUrlID();
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinArchiveCheck(NMHDR* pNMHDR, LRESULT* pResult);
@@ -127,15 +133,13 @@ protected:
 	afx_msg void OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMSetfocusTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStnClickedStaticIcon();
-	afx_msg void OnUpdateButtonAddToShowIn(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddUpdateChannel(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonRemoveFromShow(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateButtonAddCategory(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
+	afx_msg void OnLbnSelchangeListCategories();
 	afx_msg LRESULT OnStartLoadData(WPARAM wParam = 0, LPARAM lParam = 0);
 
 	DECLARE_MESSAGE_MAP()
@@ -147,19 +151,19 @@ private:
 	bool LoadChannels(const CString& path);
 	void SaveChannels();
 	void LoadPlaylist();
-	void AddUpdateChannel();
+	bool AddChannel(HTREEITEM hSelectedItem);
 	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
 
 	void FillCategories();
 	void FillChannels();
 	void FillPlaylist();
 
-	void LoadChannelInfo();
-	void LoadPlayListInfo();
+	void LoadChannelInfo(HTREEITEM hItem);
+	void LoadPlayListInfo(HTREEITEM hItem);
 
 	void FillCategoriesList(ChannelInfo* channel);
 
-	void SaveChannelInfo(BOOL bMultiple = FALSE);
+	void SaveChannelInfo();
 	void SaveCategoryInfo();
 
 	void PlayChannel(HTREEITEM hItem, int archive_hour = 0);
@@ -171,29 +175,28 @@ private:
 	void CheckLimits();
 	void CheckForExisting();
 
-	BOOL IsSelectedTheSameType();
-
-	ChannelInfo* GetChannel(HTREEITEM hItem);
-	ChannelInfo* GetCurrentChannel();
-
 	ChannelCategory* GetItemCategory(HTREEITEM hItem);
 	ChannelCategory* GetCategory(HTREEITEM hItem);
-	HTREEITEM GetCategory(int id);
+	HTREEITEM GetCategoryItem(int id);
 	std::map<int, HTREEITEM> GetCategoriesTreeMap();
 
+	ChannelInfo* GetChannel(HTREEITEM hItem);
 	PlaylistEntry* GetPlaylistEntry(HTREEITEM item);
-	PlaylistEntry* GetCurrentPlaylistEntry();
 
+	bool IsSelectedTheSameType();
+	bool IsChannelSelectionConsistent();
+	bool IsSelectedTheSameCategory();
 	bool IsChannel(HTREEITEM hItem) const;
 	bool IsCategory(HTREEITEM hItem) const;
 	bool IsPlaylistEntry(HTREEITEM hItem) const;
 	bool IsPlaylistCategory(HTREEITEM hItem) const;
+	bool IsCategoryInChannels(const ChannelCategory* category) const;
+
 	// 0 - disable, 1 - enable, 2 - multiple selected
 	void ChangeControlsState(int state);
-	bool IsCategoryInChannels(const ChannelCategory* category) const;
 	const ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
 	int GetNewCategoryID();
-	void SwapChannels(HTREEITEM hCur, HTREEITEM hNext);
+	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
 public:
