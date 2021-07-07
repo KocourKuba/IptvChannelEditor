@@ -81,6 +81,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SEARCH_NEXT, &CEdemChannelEditorDlg::OnUpdateButtonSearchNext)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CEdemChannelEditorDlg::OnBnClickedButtonPlFilter)
 	ON_BN_CLICKED(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnGetStreamInfo)
+	ON_UPDATE_COMMAND_UI(IDC_BUTTON_GET_INFO, &CEdemChannelEditorDlg::OnUpdateGetStreamInfo)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CEdemChannelEditorDlg::OnBnClickedButtonAddNewChannelsList)
 	ON_BN_CLICKED(IDC_BUTTON_ACCESS_INFO, &CEdemChannelEditorDlg::OnBnClickedButtonAccessInfo)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
@@ -2686,37 +2687,104 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 
 void CEdemChannelEditorDlg::OnGetStreamInfo()
 {
+	m_wndProgress.ShowWindow(SW_SHOW);
 	CWaitCursor cur;
 
+	int i = 0;
 	std::string audio;
 	std::string video;
 	if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
 	{
-		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
+		auto selected = m_wndChannelsTree.GetSelectedItems();
+		std::vector<ChannelInfo*> channels;
+		for (const auto& hItem : selected)
 		{
-			if (auto channel = GetChannel(hItem); channel != nullptr)
+			auto channel = GetChannel(hItem);
+			if (channel)
+				channels.emplace_back(channel);
+		}
+
+		m_wndProgress.SetRange32(0, channels.size());
+		auto it = channels.begin();
+		while (it != channels.end())
+		{
+			std::array<std::thread, 5> workers;
+			std::array<std::string, 5> audio;
+			std::array<std::string, 5> video;
+			auto pool = it;
+			int j = 0;
+			while (pool != channels.end())
 			{
-				GetChannelStreamInfo(channel->get_stream_uri().get_ts_translated_url(), audio, video);
-				channel->set_audio(audio);
-				channel->set_video(video);
+				const auto& url = (*pool)->get_stream_uri().get_ts_translated_url();
+				workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
+				j++;
 			}
+
+			auto pos = std::distance(channels.begin(), it);
+			j = 0;
+			for (auto& w : workers)
+			{
+				if (w.joinable())
+				{
+					m_wndProgress.SetPos(++i);
+					w.join();
+					m_channels[pos]->set_audio(audio[j]);
+					m_channels[pos]->set_video(video[j]);
+					j++;
+				}
+			}
+
+			it = pool;
 		}
 	}
 	else if (m_lastTree == m_wndPlaylistTree.GetSafeHwnd())
 	{
-		for (const auto& hItem : m_wndPlaylistTree.GetSelectedItems())
+		auto selected = m_wndPlaylistTree.GetSelectedItems();
+		std::vector<PlaylistEntry*> playlist;
+		for (const auto& hItem : selected)
 		{
-			if (auto entry = GetPlaylistEntry(hItem); entry != nullptr)
+			auto entry = GetPlaylistEntry(hItem);
+			if (entry)
+				playlist.emplace_back(entry);
+		}
+
+		m_wndProgress.SetRange32(0, playlist.size());
+		auto it = playlist.begin();
+		while (it != playlist.end())
+		{
+			std::array<std::thread, 5> workers;
+			std::array<std::string, 5> audio;
+			std::array<std::string, 5> video;
+			auto group = it;
+			int j = 0;
+			while (j < 5 && group != playlist.end())
 			{
-				GetChannelStreamInfo(entry->get_stream_uri().get_ts_translated_url(), audio, video);
-				entry->set_audio(audio);
-				entry->set_video(video);
+				const auto& url = (*group)->get_stream_uri().get_ts_translated_url();
+				workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
+				j++;
+				++group;
+			}
+
+			j = 0;
+			for (auto& w : workers)
+			{
+				if (w.joinable())
+				{
+					m_wndProgress.SetPos(++i);
+					w.join();
+					(*it)->set_audio(audio[j]);
+					(*it)->set_video(video[j]);
+					++it;
+					j++;
+				}
 			}
 		}
 	}
 
 	m_infoAudio = audio.c_str();
 	m_infoVideo = video.c_str();
+
+	m_wndProgress.ShowWindow(SW_HIDE);
 
 	UpdateData(FALSE);
 }
@@ -2744,6 +2812,8 @@ void CEdemChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
 void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 {
 	CWaitCursor cur;
+	m_wndProgress.ShowWindow(SW_SHOW);
+	int i = 0;
 	StreamContainer* container = nullptr;
 	if (GetFocus() == &m_wndChannelsTree)
 	{
@@ -2759,6 +2829,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 		}
 
 		size_t sz = channels.size();
+		m_wndProgress.SetRange32(0, sz);
 		auto it = channels.begin();
 		while (it != channels.end())
 		{
@@ -2783,6 +2854,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			{
 				if (w.joinable())
 				{
+					m_wndProgress.SetPos(++i);
 					w.join();
 					m_channels[pos]->set_audio(audio[j]);
 					m_channels[pos]->set_video(video[j]);
@@ -2810,6 +2882,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 		}
 
 		size_t sz = playlist.size();
+		m_wndProgress.SetRange32(0, sz);
 		auto it = playlist.begin();
 		while (it != playlist.end())
 		{
@@ -2834,6 +2907,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			{
 				if (w.joinable())
 				{
+					m_wndProgress.SetPos(++i);
 					w.join();
 					(*it)->set_audio(audio[j]);
 					(*it)->set_video(video[j]);
@@ -2845,6 +2919,8 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 		LoadPlayListInfo(m_wndPlaylistTree.GetSelectedItem());
 		UpdatePlaylistCount();
 	}
+
+	m_wndProgress.ShowWindow(SW_HIDE);
 }
 
 void CEdemChannelEditorDlg::OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI)
