@@ -606,100 +606,6 @@ void CEdemChannelEditorDlg::UpdatePlaylistCount()
 	UpdateData(FALSE);
 }
 
-void CEdemChannelEditorDlg::SaveChannels()
-{
-	std::wstring path = theApp.GetAppPath(utils::PLUGIN_ROOT + m_chFileName).GetString();
-
-	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
-	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
-
-	std::set<int> group_ids;
-	for (const auto& channel : m_channels)
-	{
-		const auto& cats = channel->get_category_ids();
-		group_ids.insert(cats.begin(), cats.end());
-	}
-
-	bool need_reload = false;
-	for (auto it = m_categories.begin(); it != m_categories.end();)
-	{
-		if (group_ids.find(it->first) == group_ids.end())
-		{
-			it = m_categories.erase(it);
-			need_reload = true;
-		}
-		else
-			++it;
-	}
-
-	try
-	{
-		// create document;
-		rapidxml::xml_document<> doc;
-		auto decl = doc.allocate_node(rapidxml::node_declaration);
-
-		// adding attributes at the top of our xml
-		decl->append_attribute(doc.allocate_attribute("version", "1.0"));
-		decl->append_attribute(doc.allocate_attribute("encoding", "UTF-8"));
-		doc.append_node(decl);
-
-		// create <tv_info> root node
-		auto tv_info = doc.allocate_node(rapidxml::node_element, utils::TV_INFO);
-
-		if (m_embedded_info)
-		{
-			auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
-			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_KEY, utils::utf16_to_utf8(GetAccessKey().GetString()).c_str()));
-			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(GetAccessDomain().GetString()).c_str()));
-			tv_info->append_node(setup_node);
-		}
-
-		// create <tv_categories> node
-		auto cat_node = doc.allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
-
-		// append <tv_category> to <tv_categories> node
-		for (auto& category : m_categories)
-		{
-			cat_node->append_node(category.second->GetNode(doc));
-		}
-		// append <tv_categories> to <tv_info> node
-		tv_info->append_node(cat_node);
-
-		// create <tv_channels> node
-		auto ch_node = doc.allocate_node(rapidxml::node_element, utils::TV_CHANNELS);
-		// append <tv_channel> to <tv_channels> node
-		for (auto& channel : m_channels)
-		{
-			ch_node->append_node(channel->GetNode(doc));
-		}
-		// append <tv_channel> to <tv_info> node
-		tv_info->append_node(ch_node);
-
-		doc.append_node(tv_info);
-
-		// write document
-		std::ofstream os(path, std::istream::binary);
-		os << doc;
-
-		set_allow_save(FALSE);
-		if (need_reload)
-		{
-			FillCategories();
-			FillChannels();
-		}
-	}
-	catch (const rapidxml::parse_error& ex)
-	{
-		CString error(ex.what());
-		AfxMessageBox(error, MB_OK | MB_ICONERROR);
-	}
-	catch (const std::exception& ex)
-	{
-		CString error(ex.what());
-		AfxMessageBox(error, MB_OK | MB_ICONERROR);
-	}
-}
-
 void CEdemChannelEditorDlg::FillCategories()
 {
 	m_wndCategories.ResetContent();
@@ -748,7 +654,15 @@ void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		m_infoAudio = channel->get_audio().c_str();
 		m_infoVideo = channel->get_video().c_str();
 		m_wndCustom.SetCheck(m_streamID == 0 && channel->get_stream_uri().is_template());
-		FillCategoriesList(channel);
+		if (channel)
+		{
+			m_wndCategoriesList.ResetContent();
+			for (const auto& category : channel->get_categores())
+			{
+				int pos = m_wndCategoriesList.AddString(category.second->get_caption().c_str());
+				m_wndCategoriesList.SetItemData(pos, (DWORD_PTR)category.second);
+			}
+		}
 
 		m_prevDays = channel->get_prev_epg_days();
 		m_nextDays = channel->get_next_epg_days();
@@ -829,85 +743,6 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 		}
 
 		UpdateData(FALSE);
-	}
-}
-
-void CEdemChannelEditorDlg::FillCategoriesList(ChannelInfo* channel)
-{
-	if (!channel)
-		return;
-
-	m_wndCategoriesList.ResetContent();
-	for (const auto& category : channel->get_categores())
-	{
-		int pos = m_wndCategoriesList.AddString(category.second->get_caption().c_str());
-		m_wndCategoriesList.SetItemData(pos, (DWORD_PTR)category.second);
-	}
-}
-
-void CEdemChannelEditorDlg::SaveChannelInfo()
-{
-	UpdateData(TRUE);
-	// Save changes
-	BOOL bMultiple = m_wndChannelsTree.GetSelectedCount() > 1;
-	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
-	{
-		auto channel = GetChannel(hItem);
-		if (!channel) continue;
-
-		channel->set_prev_epg_days(m_prevDays);
-		channel->set_next_epg_days(m_nextDays);
-		channel->set_has_archive(m_hasArchive);
-		channel->set_adult(m_isAdult);
-
-		if (!bMultiple)
-		{
-			channel->set_tvg_id(m_tvgID);
-			channel->set_epg_id(m_epgID);
-
-			if (m_iconUrl != channel->get_icon_uri().get_uri().c_str())
-			{
-				channel->set_icon_uri(m_iconUrl.GetString());
-				const auto& path = channel->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
-				CImage img;
-				if (theApp.LoadImage(path.c_str(), img))
-				{
-					channel->set_icon(img);
-				}
-			}
-
-			if (m_wndCustom.GetCheck())
-				channel->set_stream_uri(m_streamUrl.GetString());
-
-			if (channel->get_channel_id() != m_streamID)
-			{
-				channel->set_channel_id(m_streamID);
-				CheckForExisting();
-			}
-		}
-	}
-
-	UpdateData(FALSE);
-}
-
-void CEdemChannelEditorDlg::SaveCategoryInfo()
-{
-	UpdateData(TRUE);
-
-	auto hSel = m_wndChannelsTree.GetSelectedItem();
-	auto category = GetCategory(hSel);
-	if (!category)
-		return;
-
-	if (m_iconUrl != category->get_icon_uri().get_uri().c_str())
-	{
-		category->set_icon_uri(m_iconUrl.GetString());
-		const auto& path = category->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
-		CImage img;
-		if (theApp.LoadImage(path.c_str(), img))
-		{
-			category->set_icon(img);
-		}
 	}
 }
 
@@ -1039,57 +874,6 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 	m_cur_it = m_channels.end();
 
 	return true;
-}
-
-void CEdemChannelEditorDlg::ChangeControlsState(int state)
-{
-	BOOL enable = (state == 1);
-	bool bSameCategory = IsSelectedTheSameCategory();
-	bool bSameType = IsSelectedTheSameType();
-
-	m_wndCategories.EnableWindow(state && bSameCategory);
-	m_wndCategoriesList.EnableWindow(state && bSameCategory);
-	m_wndAddToShow.EnableWindow(state && m_wndCategories.GetCount() > 0 && bSameCategory);
-	m_wndRemoveFromShow.EnableWindow(state && m_wndCategoriesList.GetCurSel() != -1 && bSameCategory);
-	m_wndCustom.EnableWindow(enable);
-	m_wndTvgID.EnableWindow(enable);
-	m_wndEpgID.EnableWindow(enable);
-	m_wndArchive.EnableWindow(state);
-	m_wndAdult.EnableWindow(state);
-	m_wndTestTVG.EnableWindow(enable);
-	m_wndTestEPG.EnableWindow(enable);
-	m_wndStreamID.EnableWindow(enable && m_streamID != 0);
-	m_wndStreamUrl.EnableWindow(enable && m_streamID == 0);
-	m_wndCheckArchive.EnableWindow(enable && !m_probe.IsEmpty());
-	m_wndPrevDays.EnableWindow(state);
-	m_wndSpinPrev.EnableWindow(state);
-	m_wndNextDays.EnableWindow(state);
-	m_wndSpinNext.EnableWindow(state);
-	m_wndInfoVideo.EnableWindow(enable);
-	m_wndInfoAudio.EnableWindow(enable);
-
-	if (state == 2)
-	{
-		BOOL bEnable = !m_probe.IsEmpty();
-		if (m_lastTree)
-		{
-			if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
-				bEnable &= GetChannel(m_wndChannelsTree.GetFirstSelectedItem()) != nullptr;
-			else
-				bEnable &= GetPlaylistEntry(m_wndPlaylistTree.GetFirstSelectedItem()) != nullptr;
-		}
-		else
-		{
-			bEnable = FALSE;
-		}
-
-		bEnable = bEnable && bSameType;
-		m_wndGetInfo.EnableWindow(bEnable);
-	}
-	else
-	{
-		m_wndGetInfo.EnableWindow(state);
-	}
 }
 
 void CEdemChannelEditorDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -1502,7 +1286,53 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		}
 	}
 
-	ChangeControlsState(state);
+	BOOL enable = (state == 1);
+	bool bSameCategory = IsSelectedTheSameCategory();
+	bool bSameType = IsSelectedTheSameType();
+
+	m_wndCategories.EnableWindow(state && bSameCategory);
+	m_wndCategoriesList.EnableWindow(state && bSameCategory);
+	m_wndAddToShow.EnableWindow(state && m_wndCategories.GetCount() > 0 && bSameCategory);
+	m_wndRemoveFromShow.EnableWindow(state && m_wndCategoriesList.GetCurSel() != -1 && bSameCategory);
+	m_wndCustom.EnableWindow(enable);
+	m_wndTvgID.EnableWindow(enable);
+	m_wndEpgID.EnableWindow(enable);
+	m_wndArchive.EnableWindow(state);
+	m_wndAdult.EnableWindow(state);
+	m_wndTestTVG.EnableWindow(enable);
+	m_wndTestEPG.EnableWindow(enable);
+	m_wndStreamID.EnableWindow(enable && m_streamID != 0);
+	m_wndStreamUrl.EnableWindow(enable && m_streamID == 0);
+	m_wndCheckArchive.EnableWindow(enable && !m_probe.IsEmpty());
+	m_wndPrevDays.EnableWindow(state);
+	m_wndSpinPrev.EnableWindow(state);
+	m_wndNextDays.EnableWindow(state);
+	m_wndSpinNext.EnableWindow(state);
+	m_wndInfoVideo.EnableWindow(enable);
+	m_wndInfoAudio.EnableWindow(enable);
+
+	if (state == 2)
+	{
+		BOOL bEnable = !m_probe.IsEmpty();
+		if (m_lastTree)
+		{
+			if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
+				bEnable &= GetChannel(m_wndChannelsTree.GetFirstSelectedItem()) != nullptr;
+			else
+				bEnable &= GetPlaylistEntry(m_wndPlaylistTree.GetFirstSelectedItem()) != nullptr;
+		}
+		else
+		{
+			bEnable = FALSE;
+		}
+
+		bEnable = bEnable && bSameType;
+		m_wndGetInfo.EnableWindow(bEnable);
+	}
+	else
+	{
+		m_wndGetInfo.EnableWindow(state);
+	}
 
 	UpdateData(FALSE);
 
@@ -1814,37 +1644,15 @@ void CEdemChannelEditorDlg::OnEnChangeEditUrlID()
 	}
 }
 
-void CEdemChannelEditorDlg::CheckLimits()
+void CEdemChannelEditorDlg::OnEnChangeEditNumNext()
 {
-	UpdateData(TRUE);
-
-	int prev = m_prevDays;
-	if (m_prevDays < 0)
-		m_prevDays = 0;
-
-	if (m_prevDays > 7)
-		m_prevDays = 7;
-
-	int next = m_nextDays;
 	if (m_nextDays < 0)
 		m_nextDays = 0;
 
 	if (m_nextDays > 7)
 		m_nextDays = 7;
 
-	int arch = m_archiveCheck;
-	if (m_archiveCheck < 0)
-		m_archiveCheck = 0;
-
-	if (next != m_nextDays || prev != m_prevDays || arch != m_archiveCheck)
-	{
-		UpdateData(FALSE);
-	}
-}
-
-void CEdemChannelEditorDlg::OnEnChangeEditNumNext()
-{
-	CheckLimits();
+	UpdateData(FALSE);
 
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
@@ -1860,7 +1668,13 @@ void CEdemChannelEditorDlg::OnEnChangeEditNumNext()
 
 void CEdemChannelEditorDlg::OnEnChangeEditNumPrev()
 {
-	CheckLimits();
+	if (m_prevDays < 0)
+		m_prevDays = 0;
+
+	if (m_prevDays > 7)
+		m_prevDays = 7;
+
+	UpdateData(FALSE);
 
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
@@ -1876,7 +1690,11 @@ void CEdemChannelEditorDlg::OnEnChangeEditNumPrev()
 
 void CEdemChannelEditorDlg::OnEnChangeEditArchiveCheck()
 {
-	CheckLimits();
+	if (m_archiveCheck < 0)
+		m_archiveCheck = 0;
+
+	UpdateData(FALSE);
+
 	theApp.WriteProfileInt(_T("Setting"), _T("HoursBack"), m_archiveCheck);
 }
 
@@ -2078,7 +1896,96 @@ void CEdemChannelEditorDlg::FillPlaylist()
 
 void CEdemChannelEditorDlg::OnSave()
 {
-	SaveChannels();
+	std::wstring path = theApp.GetAppPath(utils::PLUGIN_ROOT + m_chFileName).GetString();
+
+	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
+	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
+
+	std::set<int> group_ids;
+	for (const auto& channel : m_channels)
+	{
+		const auto& cats = channel->get_category_ids();
+		group_ids.insert(cats.begin(), cats.end());
+	}
+
+	bool need_reload = false;
+	for (auto it = m_categories.begin(); it != m_categories.end();)
+	{
+		if (group_ids.find(it->first) == group_ids.end())
+		{
+			it = m_categories.erase(it);
+			need_reload = true;
+		}
+		else
+			++it;
+	}
+
+	try
+	{
+		// create document;
+		rapidxml::xml_document<> doc;
+		auto decl = doc.allocate_node(rapidxml::node_declaration);
+
+		// adding attributes at the top of our xml
+		decl->append_attribute(doc.allocate_attribute("version", "1.0"));
+		decl->append_attribute(doc.allocate_attribute("encoding", "UTF-8"));
+		doc.append_node(decl);
+
+		// create <tv_info> root node
+		auto tv_info = doc.allocate_node(rapidxml::node_element, utils::TV_INFO);
+
+		if (m_embedded_info)
+		{
+			auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
+			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_KEY, utils::utf16_to_utf8(GetAccessKey().GetString()).c_str()));
+			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(GetAccessDomain().GetString()).c_str()));
+			tv_info->append_node(setup_node);
+		}
+
+		// create <tv_categories> node
+		auto cat_node = doc.allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
+
+		// append <tv_category> to <tv_categories> node
+		for (auto& category : m_categories)
+		{
+			cat_node->append_node(category.second->GetNode(doc));
+		}
+		// append <tv_categories> to <tv_info> node
+		tv_info->append_node(cat_node);
+
+		// create <tv_channels> node
+		auto ch_node = doc.allocate_node(rapidxml::node_element, utils::TV_CHANNELS);
+		// append <tv_channel> to <tv_channels> node
+		for (auto& channel : m_channels)
+		{
+			ch_node->append_node(channel->GetNode(doc));
+		}
+		// append <tv_channel> to <tv_info> node
+		tv_info->append_node(ch_node);
+
+		doc.append_node(tv_info);
+
+		// write document
+		std::ofstream os(path, std::istream::binary);
+		os << doc;
+
+		set_allow_save(FALSE);
+		if (need_reload)
+		{
+			FillCategories();
+			FillChannels();
+		}
+	}
+	catch (const rapidxml::parse_error& ex)
+	{
+		CString error(ex.what());
+		AfxMessageBox(error, MB_OK | MB_ICONERROR);
+	}
+	catch (const std::exception& ex)
+	{
+		CString error(ex.what());
+		AfxMessageBox(error, MB_OK | MB_ICONERROR);
+	}
 }
 
 void CEdemChannelEditorDlg::OnUpdateSave(CCmdUI* pCmdUI)

@@ -149,7 +149,6 @@ private:
 	void set_allow_save(BOOL val = TRUE);
 
 	bool LoadChannels(const CString& path);
-	void SaveChannels();
 	bool AddChannel(HTREEITEM hSelectedItem);
 	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
 
@@ -160,18 +159,12 @@ private:
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
 
-	void FillCategoriesList(ChannelInfo* channel);
-
-	void SaveChannelInfo();
-	void SaveCategoryInfo();
-
 	void PlayChannel(HTREEITEM hItem, int archive_hour = 0);
 	void PlayPlaylistEntry(HTREEITEM hItem, int archive_hour = 0);
 	void PlayStream(const std::wstring& stream_url, int archive_hour = 0);
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
 
-	void CheckLimits();
 	void CheckForExisting();
 
 	ChannelCategory* GetItemCategory(HTREEITEM hItem);
@@ -191,8 +184,6 @@ private:
 	bool IsPlaylistCategory(HTREEITEM hItem) const;
 	bool IsCategoryInChannels(const ChannelCategory* category) const;
 
-	// 0 - disable, 1 - enable, 2 - multiple selected
-	void ChangeControlsState(int state);
 	const ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
 	int GetNewCategoryID();
 	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
