@@ -746,12 +746,12 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	}
 }
 
-ChannelInfo* CEdemChannelEditorDlg::GetChannel(HTREEITEM hItem)
+ChannelInfo* CEdemChannelEditorDlg::GetChannel(HTREEITEM hItem) const
 {
 	return IsChannel(hItem) ? (ChannelInfo*)m_wndChannelsTree.GetItemData(hItem) : nullptr;
 }
 
-ChannelCategory* CEdemChannelEditorDlg::GetItemCategory(HTREEITEM hItem)
+ChannelCategory* CEdemChannelEditorDlg::GetItemCategory(HTREEITEM hItem) const
 {
 	if (IsChannel(hItem))
 	{
@@ -761,7 +761,7 @@ ChannelCategory* CEdemChannelEditorDlg::GetItemCategory(HTREEITEM hItem)
 	return GetCategory(hItem);
 }
 
-ChannelCategory* CEdemChannelEditorDlg::GetCategory(HTREEITEM hItem)
+ChannelCategory* CEdemChannelEditorDlg::GetCategory(HTREEITEM hItem) const
 {
 	if (!IsCategory(hItem))
 		return nullptr;
@@ -771,7 +771,7 @@ ChannelCategory* CEdemChannelEditorDlg::GetCategory(HTREEITEM hItem)
 	return found != m_categories.end() ? found->second.get() : nullptr;
 }
 
-HTREEITEM CEdemChannelEditorDlg::GetCategoryItem(int id)
+HTREEITEM CEdemChannelEditorDlg::GetCategoryItem(int id) const
 {
 	HTREEITEM hRoot = m_wndChannelsTree.GetRootItem();
 	while (hRoot != nullptr)
@@ -785,7 +785,7 @@ HTREEITEM CEdemChannelEditorDlg::GetCategoryItem(int id)
 	return nullptr;
 }
 
-PlaylistEntry* CEdemChannelEditorDlg::GetPlaylistEntry(HTREEITEM hItem)
+PlaylistEntry* CEdemChannelEditorDlg::GetPlaylistEntry(HTREEITEM hItem) const
 {
 	if (hItem == nullptr || m_wndPlaylistTree.GetParentItem(hItem) == nullptr)
 		return nullptr;
@@ -793,7 +793,7 @@ PlaylistEntry* CEdemChannelEditorDlg::GetPlaylistEntry(HTREEITEM hItem)
 	return (PlaylistEntry*)m_wndPlaylistTree.GetItemData(hItem);
 }
 
-int CEdemChannelEditorDlg::GetNewCategoryID()
+int CEdemChannelEditorDlg::GetNewCategoryID() const
 {
 	int id = 0;
 	if (!m_categories.empty())
@@ -1752,7 +1752,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonTestEpg()
 	}
 }
 
-void CEdemChannelEditorDlg::PlayChannel(HTREEITEM hItem, int archive_hour /*= 0*/)
+void CEdemChannelEditorDlg::PlayChannel(HTREEITEM hItem, int archive_hour /*= 0*/) const
 {
 	if (auto channel = GetChannel(hItem); channel != nullptr)
 	{
@@ -1760,7 +1760,7 @@ void CEdemChannelEditorDlg::PlayChannel(HTREEITEM hItem, int archive_hour /*= 0*
 	}
 }
 
-void CEdemChannelEditorDlg::PlayPlaylistEntry(HTREEITEM hItem, int archive_hour /*= 0*/)
+void CEdemChannelEditorDlg::PlayPlaylistEntry(HTREEITEM hItem, int archive_hour /*= 0*/) const
 {
 	if (auto entry = GetPlaylistEntry(hItem); entry != nullptr)
 	{
@@ -1768,7 +1768,7 @@ void CEdemChannelEditorDlg::PlayPlaylistEntry(HTREEITEM hItem, int archive_hour 
 	}
 }
 
-void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url, int archive_hour /*= 0*/)
+void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url, int archive_hour /*= 0*/) const
 {
 	TRACE(_T("Test URL: %s\n"), stream_url.c_str());
 	CStringW test(stream_url.c_str());
@@ -2379,7 +2379,7 @@ bool CEdemChannelEditorDlg::IsCategoryInChannels(const ChannelCategory* category
 	return found != m_channels.end();
 }
 
-std::map<int, HTREEITEM> CEdemChannelEditorDlg::GetCategoriesTreeMap()
+std::map<int, HTREEITEM> CEdemChannelEditorDlg::GetCategoriesTreeMap() const
 {
 	std::map<int, HTREEITEM> tree_categories;
 
@@ -3322,7 +3322,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPlFilter()
 	}
 }
 
-bool CEdemChannelEditorDlg::IsSelectedTheSameType()
+bool CEdemChannelEditorDlg::IsSelectedTheSameType() const
 {
 	if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
 	{
@@ -3356,7 +3356,7 @@ bool CEdemChannelEditorDlg::IsSelectedTheSameType()
 	return true;
 }
 
-bool CEdemChannelEditorDlg::IsSelectedTheSameCategory()
+bool CEdemChannelEditorDlg::IsSelectedTheSameCategory() const
 {
 	if (m_lastTree != m_wndChannelsTree.GetSafeHwnd() || !m_wndChannelsTree.GetSelectedCount() || !IsSelectedTheSameType())
 		return false;
@@ -3371,7 +3371,7 @@ bool CEdemChannelEditorDlg::IsSelectedTheSameCategory()
 	return true;
 }
 
-bool CEdemChannelEditorDlg::IsChannelSelectionConsistent()
+bool CEdemChannelEditorDlg::IsChannelSelectionConsistent() const
 {
 	bool continues = false;
 	auto hItem = m_wndChannelsTree.GetFirstSelectedItem();

@@ -159,25 +159,25 @@ private:
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
 
-	void PlayChannel(HTREEITEM hItem, int archive_hour = 0);
-	void PlayPlaylistEntry(HTREEITEM hItem, int archive_hour = 0);
-	void PlayStream(const std::wstring& stream_url, int archive_hour = 0);
+	void PlayChannel(HTREEITEM hItem, int archive_hour = 0) const;
+	void PlayPlaylistEntry(HTREEITEM hItem, int archive_hour = 0) const;
+	void PlayStream(const std::wstring& stream_url, int archive_hour = 0) const;
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
 
 	void CheckForExisting();
 
-	ChannelCategory* GetItemCategory(HTREEITEM hItem);
-	ChannelCategory* GetCategory(HTREEITEM hItem);
-	HTREEITEM GetCategoryItem(int id);
-	std::map<int, HTREEITEM> GetCategoriesTreeMap();
+	ChannelCategory* GetItemCategory(HTREEITEM hItem) const;
+	ChannelCategory* GetCategory(HTREEITEM hItem) const;
+	HTREEITEM GetCategoryItem(int id) const;
+	std::map<int, HTREEITEM> GetCategoriesTreeMap() const;
 
-	ChannelInfo* GetChannel(HTREEITEM hItem);
-	PlaylistEntry* GetPlaylistEntry(HTREEITEM item);
+	ChannelInfo* GetChannel(HTREEITEM hItem) const;
+	PlaylistEntry* GetPlaylistEntry(HTREEITEM item) const;
 
-	bool IsSelectedTheSameType();
-	bool IsChannelSelectionConsistent();
-	bool IsSelectedTheSameCategory();
+	bool IsSelectedTheSameType() const;
+	bool IsChannelSelectionConsistent() const;
+	bool IsSelectedTheSameCategory() const;
 	bool IsChannel(HTREEITEM hItem) const;
 	bool IsCategory(HTREEITEM hItem) const;
 	bool IsPlaylistEntry(HTREEITEM hItem) const;
@@ -185,7 +185,7 @@ private:
 	bool IsCategoryInChannels(const ChannelCategory* category) const;
 
 	const ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
-	int GetNewCategoryID();
+	int GetNewCategoryID() const;
 	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
