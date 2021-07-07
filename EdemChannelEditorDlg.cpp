@@ -358,10 +358,9 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 		FillChannels();
 	}
 
-	if (m_current == nullptr && !m_channels.empty())
+	if (!m_channels.empty())
 	{
-		m_current = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)m_channels[0].get());
-		m_wndChannelsTree.SelectItem(m_current);
+		m_wndChannelsTree.SelectItem(FindTreeItem(m_wndChannelsTree, (DWORD_PTR)m_channels[0].get()));
 	}
 
 	OnCbnSelchangeComboPlaylist();
@@ -430,10 +429,6 @@ LRESULT CEdemChannelEditorDlg::OnStartLoadPlaylist(WPARAM wParam, LPARAM lParam 
 	m_playlistIds.clear();
 	m_pl_categories.clear();
 
-	m_filterString = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
-	m_filterRegex = theApp.GetProfileInt(_T("Setting"), _T("FilterUseRegex"), FALSE);
-	m_filterCase = theApp.GetProfileInt(_T("Setting"), _T("FilterUseCase"), FALSE);
-
 	if (pl_stream && pl_stream->good())
 	{
 		int step = 0;
@@ -441,6 +436,10 @@ LRESULT CEdemChannelEditorDlg::OnStartLoadPlaylist(WPARAM wParam, LPARAM lParam 
 		m_wndProgress.SetRange32(0, lines);
 		m_wndProgress.SetPos(0);
 		m_wndProgress.ShowWindow(SW_SHOW);
+
+		m_filterString = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
+		BOOL filterRegex = theApp.GetProfileInt(_T("Setting"), _T("FilterUseRegex"), FALSE);
+		BOOL filterCase = theApp.GetProfileInt(_T("Setting"), _T("FilterUseCase"), FALSE);
 
 		std::string line;
 		auto entry = std::make_unique<PlaylistEntry>();
@@ -451,10 +450,8 @@ LRESULT CEdemChannelEditorDlg::OnStartLoadPlaylist(WPARAM wParam, LPARAM lParam 
 			if (line.empty()) continue;
 
 			entry->Parse(line);
-			if (entry->get_directive() == ext_pathname)
-			{
-				if (!AddPlaylistEntry(entry)) break;
-			}
+			if (entry->get_directive() == ext_pathname
+				&& !AddPlaylistEntry(entry, filterRegex, filterCase)) break;
 		}
 
 		m_wndProgress.ShowWindow(SW_HIDE);
@@ -706,7 +703,6 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	auto entry = GetPlaylistEntry(hItem);
 	if (entry)
 	{
-		m_pl_current = hItem;
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
 		int id = entry->get_channel_id();
 		m_plID.Format(_T("ID: %d"), id);
@@ -1207,7 +1203,6 @@ void CEdemChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 		channel->rebiuld_categories();
 	}
 
-	m_current = hLeft;
 	m_wndChannelsTree.SelectItem(hLeft);
 
 	set_allow_save();
@@ -1243,7 +1238,6 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	{
 		if (IsChannel(hSelected))
 		{
-			m_current = hSelected;
 			LoadChannelInfo(hSelected);
 			state = 2;
 			m_wndIcon.EnableWindow(FALSE);
@@ -1258,7 +1252,6 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 			}
 			else if (IsCategory(hSelected))
 			{
-				m_current = nullptr;
 				m_tvgID = 0;
 				m_epgID = 0;
 				m_prevDays = 0;
@@ -1792,12 +1785,12 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 	}
 }
 
-bool CEdemChannelEditorDlg::AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry)
+bool CEdemChannelEditorDlg::AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry, BOOL bRegex, BOOL bCase)
 {
 	if (!m_filterString.IsEmpty())
 	{
 		bool found = false;
-		if (m_filterRegex)
+		if (bRegex)
 		{
 			try
 			{
@@ -1813,7 +1806,7 @@ bool CEdemChannelEditorDlg::AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& ent
 		}
 		else
 		{
-			if (m_filterCase)
+			if (bCase)
 			{
 				found = (entry->get_title().find(m_filterString.GetString()) != std::wstring::npos);
 			}

@@ -150,7 +150,7 @@ private:
 
 	bool LoadChannels(const CString& path);
 	bool AddChannel(HTREEITEM hSelectedItem);
-	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
+	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry, BOOL bRegex, BOOL bCase);
 
 	void FillCategories();
 	void FillChannels();
@@ -252,7 +252,6 @@ protected:
 	int m_prevDays = 0;
 	int m_nextDays = 0;
 	int m_archiveCheck = 0;
-	BOOL m_bAutoSync = FALSE;
 
 private:
 	static CString m_gl_domain;
@@ -265,13 +264,12 @@ private:
 	CString m_plFileName;
 	CString m_player;
 	CString m_filterString;
+	BOOL m_bAutoSync = FALSE;
 	BOOL m_filterRegex = FALSE;
 	BOOL m_filterCase = FALSE;
 	BOOL m_allow_save = FALSE;
 	bool m_menu_enable_channel = false;
 	HACCEL m_hAccel = nullptr;
-	HTREEITEM m_current = nullptr;
-	HTREEITEM m_pl_current = nullptr;
 
 	std::vector<std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
 	std::vector<std::unique_ptr<ChannelInfo>>::iterator m_cur_it;
