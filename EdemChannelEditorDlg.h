@@ -140,7 +140,7 @@ protected:
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
 	afx_msg void OnLbnSelchangeListCategories();
-	afx_msg LRESULT OnStartLoadData(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnStartLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -150,7 +150,6 @@ private:
 
 	bool LoadChannels(const CString& path);
 	void SaveChannels();
-	void LoadPlaylist();
 	bool AddChannel(HTREEITEM hSelectedItem);
 	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
 

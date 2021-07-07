@@ -158,7 +158,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_SYNC_ENTRY, &CEdemChannelEditorDlg::OnUpdateSyncEntry)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
-	ON_MESSAGE(WN_START_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnStartLoadData)
+	ON_MESSAGE(WN_START_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnStartLoadPlaylist)
 	ON_LBN_SELCHANGE(IDC_LIST_CATEGORIES, &CEdemChannelEditorDlg::OnLbnSelchangeListCategories)
 END_MESSAGE_MAP()
 
@@ -351,15 +351,6 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	set_allow_save(FALSE);
 
-	PostMessage(WN_START_LOAD_PLAYLIST);
-
-	return TRUE;  // return TRUE  unless you set the focus to a control
-}
-
-LRESULT CEdemChannelEditorDlg::OnStartLoadData(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
-{
-	CWaitCursor cur;
-
 	CString channels = (LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel());
 	if (LoadChannels(channels))
 	{
@@ -374,6 +365,102 @@ LRESULT CEdemChannelEditorDlg::OnStartLoadData(WPARAM wParam /*= 0*/, LPARAM lPa
 	}
 
 	OnCbnSelchangeComboPlaylist();
+
+	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+LRESULT CEdemChannelEditorDlg::OnStartLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
+{
+	// #EXTM3U <--- header
+	// #EXTINF:0 tvg-rec="3",Первый FHD <-- caption
+	// #EXTGRP:Общие <-- Category
+	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/2402/index.m3u8
+
+	CWaitCursor cur;
+
+	CString slashed = theApp.GetProfileString(_T("Setting"), _T("Playlist"));
+	slashed.Replace('\\', '/');
+	auto pos = slashed.ReverseFind('/');
+	if (pos != -1)
+	{
+		m_plFileName = slashed.Mid(++pos);
+	}
+	else
+	{
+		m_plFileName = slashed;
+	}
+
+	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
+	// Full playlist format
+	// #EXTM3U tvg-shift="1"
+	// #EXTINF:-1 channel-id="204" group-title="Общие" tvg-id="983" tvg-logo="http://epg.it999.ru/img/983.png" tvg-name="Первый HD" tvg-shift="0",Первый HD
+	// http://aaaaaa.akadatel.com/iptv/xxxxxxxxxxxxxx/204/index.m3u8
+	//
+	// Short (OTTPplay.es) format
+	// #EXTM3U
+	// #EXTINF:0 tvg-rec="3",Первый HD
+	// #EXTGRP:Общие
+	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
+
+	const CString& file = theApp.GetProfileString(_T("Setting"), _T("Playlist"));
+	std::vector<BYTE> data;
+	std::unique_ptr<std::istream> pl_stream;
+	if (utils::CrackUrl(file.GetString()))
+	{
+		if (utils::DownloadFile(file.GetString(), data))
+		{
+			if (wParam)
+			{
+				std::ofstream os(m_plFileName);
+				os.write((char*)data.data(), data.size());
+				os.close();
+				return 0;
+			}
+
+			utils::vector_to_streambuf<char> buf(data);
+			pl_stream = std::make_unique<std::istream>(&buf);
+		}
+	}
+	else
+	{
+		pl_stream = std::make_unique<std::ifstream>(file.GetString());
+	}
+
+	m_playlist.clear();
+	m_playlistIds.clear();
+	m_pl_categories.clear();
+
+	m_filterString = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
+	m_filterRegex = theApp.GetProfileInt(_T("Setting"), _T("FilterUseRegex"), FALSE);
+	m_filterCase = theApp.GetProfileInt(_T("Setting"), _T("FilterUseCase"), FALSE);
+
+	if (pl_stream && pl_stream->good())
+	{
+		int step = 0;
+		size_t lines = std::count(data.begin(), data.end(), '\n');
+		m_wndProgress.SetRange32(0, lines);
+		m_wndProgress.SetPos(0);
+		m_wndProgress.ShowWindow(SW_SHOW);
+
+		std::string line;
+		auto entry = std::make_unique<PlaylistEntry>();
+		while (std::getline(*pl_stream, line))
+		{
+			m_wndProgress.SetPos(step++);
+			utils::string_rtrim(line, "\r");
+			if (line.empty()) continue;
+
+			entry->Parse(line);
+			if (entry->get_directive() == ext_pathname)
+			{
+				if (!AddPlaylistEntry(entry)) break;
+			}
+		}
+
+		m_wndProgress.ShowWindow(SW_HIDE);
+		FillPlaylist();
+	}
+
 	return 0;
 }
 
@@ -1883,92 +1970,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 	if (dlg.DoModal() == IDOK)
 	{
 		theApp.WriteProfileString(_T("Setting"), _T("CustomPlaylist"), dlg.m_url);
-		OnBnClickedButtonDownloadPlaylist();
+		PostMessage(WN_START_LOAD_PLAYLIST, FALSE);
 	}
-}
-
-void CEdemChannelEditorDlg::LoadPlaylist()
-{
-	// #EXTM3U <--- header
-	// #EXTINF:0 tvg-rec="3",Первый FHD <-- caption
-	// #EXTGRP:Общие <-- Category
-	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/2402/index.m3u8
-
-	CWaitCursor cur;
-
-	m_filterString = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
-	m_filterRegex = theApp.GetProfileInt(_T("Setting"), _T("FilterUseRegex"), FALSE);
-	m_filterCase = theApp.GetProfileInt(_T("Setting"), _T("FilterUseCase"), FALSE);
-
-	CString slashed = theApp.GetProfileString(_T("Setting"), _T("Playlist"));
-	slashed.Replace('\\', '/');
-	auto pos = slashed.ReverseFind('/');
-	if (pos != -1)
-	{
-		m_plFileName = slashed.Mid(++pos);
-	}
-	else
-	{
-		m_plFileName = slashed;
-	}
-
-	m_playlist.clear();
-	m_playlistIds.clear();
-	m_pl_categories.clear();
-
-	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
-	// Full playlist format
-	// #EXTM3U tvg-shift="1"
-	// #EXTINF:-1 channel-id="204" group-title="Общие" tvg-id="983" tvg-logo="http://epg.it999.ru/img/983.png" tvg-name="Первый HD" tvg-shift="0",Первый HD
-	// http://aaaaaa.akadatel.com/iptv/xxxxxxxxxxxxxx/204/index.m3u8
-	//
-	// Short (OTTPplay.es) format
-	// #EXTM3U
-	// #EXTINF:0 tvg-rec="3",Первый HD
-	// #EXTGRP:Общие
-	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
-
-	const CString& file = theApp.GetProfileString(_T("Setting"), _T("Playlist"));
-	std::vector<BYTE> data;
-	std::unique_ptr<std::istream> pl_stream;
-	if (utils::CrackUrl(file.GetString()))
-	{
-		if (utils::DownloadFile(file.GetString(), data))
-		{
-			utils::vector_to_streambuf<char> buf(data);
-			pl_stream = std::make_unique<std::istream>(&buf);
-		}
-	}
-	else
-	{
-		pl_stream = std::make_unique<std::ifstream>(file.GetString());
-	}
-
-	if (!pl_stream || !pl_stream->good()) return;
-
-	int step = 0;
-	size_t lines = std::count(data.begin(), data.end(), '\n');
-	m_wndProgress.SetRange32(0, lines);
-	m_wndProgress.SetPos(0);
-	m_wndProgress.ShowWindow(SW_SHOW);
-
-	std::string line;
-	auto entry = std::make_unique<PlaylistEntry>();
-	while (std::getline(*pl_stream, line))
-	{
-		m_wndProgress.SetPos(step++);
-		utils::string_rtrim(line, "\r");
-		if (line.empty()) continue;
-
-		entry->Parse(line);
-		if (entry->get_directive() == ext_pathname)
-		{
-			if (!AddPlaylistEntry(entry)) break;
-		}
-	}
-
-	m_wndProgress.ShowWindow(SW_HIDE);
-	FillPlaylist();
 }
 
 bool CEdemChannelEditorDlg::AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry)
@@ -3027,8 +3030,15 @@ void CEdemChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 
 void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 {
-	int idx = m_wndPlaylistType.GetCurSel();
+	PostMessage(WN_START_LOAD_PLAYLIST, TRUE);
+}
+
+void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
+{
 	CString url;
+	int idx = m_wndPlaylistType.GetCurSel();
+	BOOL enableDownload = TRUE;
+	BOOL enableCustom = FALSE;
 	switch (idx)
 	{
 		case 0:
@@ -3038,36 +3048,24 @@ void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 			url = _T("http://epg.it999.ru/edem_epg_ico2.m3u8");
 			break;
 		case 2:
+			url = theApp.GetProfileString(_T("Setting"), _T("CustomPlaylist"));
+			enableCustom = TRUE;
+			break;
 		case 3:
 			url = theApp.GetProfileString(_T("Setting"), _T("CustomPlaylist"));
+			enableDownload = FALSE;
+			enableCustom = TRUE;
 			break;
 		default:
-			return;
+			break;
 	}
 
+	m_wndDownloadUrl.EnableWindow(enableDownload);
+	m_wndChooseUrl.EnableWindow(enableCustom);
 	theApp.WriteProfileString(_T("Setting"), _T("Playlist"), url);
-	LoadPlaylist();
-}
-
-void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
-{
-	int idx = m_wndPlaylistType.GetCurSel();
-	switch (idx)
-	{
-		case 0:
-		case 1:
-			m_wndChooseUrl.EnableWindow(FALSE);
-			break;
-		case 2:
-		case 3:
-			m_wndChooseUrl.EnableWindow(TRUE);
-			break;
-		default:
-			break;
-	}
-
 	theApp.WriteProfileInt(_T("Setting"), _T("PlaylistType"), idx);
-	OnBnClickedButtonDownloadPlaylist();
+
+	PostMessage(WN_START_LOAD_PLAYLIST, FALSE);
 }
 
 HTREEITEM CEdemChannelEditorDlg::FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry)
@@ -3414,7 +3412,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPlFilter()
 	CFilterDialog dlg;
 	if (dlg.DoModal() == IDOK)
 	{
-		LoadPlaylist();
+		PostMessage(WN_START_LOAD_PLAYLIST, FALSE);
 	}
 }
 
