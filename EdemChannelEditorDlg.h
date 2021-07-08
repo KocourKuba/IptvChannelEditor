@@ -156,6 +156,11 @@ private:
 	void FillChannels();
 	void FillPlaylist();
 
+	template <class T>
+	void GetStreamInfo(const std::vector<T*>& channels, CStatic& staticCtrl);
+
+	void GetInfoPlaylist(const std::vector<PlaylistEntry*>& playlist);
+
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
 
@@ -228,6 +233,8 @@ protected:
 	CButton m_wndSave;
 	CStatic m_wndIcon;
 	CStatic m_wndPlIcon;
+	CStatic m_wndChInfo;
+	CStatic m_wndPlInfo;
 	CFont m_largeFont;
 
 	CString m_search;
@@ -235,13 +242,11 @@ protected:
 	CString m_iconUrl;
 
 	CString m_plSearch;
-	CString m_plInfo;
 	CString m_plIconName;
 	CString m_plID;
 	CString m_plEPG;
 	CString m_infoVideo;
 	CString m_infoAudio;
-	CString m_chInfo;
 
 	HWND m_lastTree = nullptr;
 	BOOL m_hasArchive = FALSE;
@@ -283,3 +288,41 @@ private:
 
 	std::vector<std::pair<CString, CString>> m_all_playlists;
 };
+
+template <class T>
+void CEdemChannelEditorDlg::GetStreamInfo(const std::vector<T*>& container, CStatic& staticCtrl)
+{
+	m_wndProgress.SetRange32(0, container.size());
+	auto it = container.begin();
+	while (it != container.end())
+	{
+		std::array<std::thread, 5> workers;
+		std::array<std::string, 5> audio;
+		std::array<std::string, 5> video;
+		auto pool = it;
+		int j = 0;
+		while (j < 5 && pool != container.end())
+		{
+			const auto& url = (*pool)->get_stream_uri().get_ts_translated_url();
+			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
+			j++;
+			++pool;
+		}
+
+		j = 0;
+		for (auto& w : workers)
+		{
+			w.join();
+			(*it)->set_audio(audio[j]);
+			(*it)->set_video(video[j]);
+			++it;
+			j++;
+
+			auto step = std::distance(container.begin(), it);
+			CString str;
+			str.Format(_T("Get Stream Info: %d from %d"), step, container.size());
+			staticCtrl.SetWindowText(str);
+			m_wndProgress.SetPos(step);
+		}
+	}
+}

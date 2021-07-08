@@ -58,6 +58,16 @@ int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 	return lParam1 > lParam2;
 }
 
+void AfxPump()
+{
+	MSG iMsg;
+	while (::PeekMessage(&iMsg, NULL, NULL, NULL, PM_NOREMOVE))
+	{
+		::AfxGetThread()->PumpMessage();   // pump messages until queue is
+										   // empty
+	}
+}
+
 using namespace SevenZip;
 
 // CEdemChannelEditorDlg dialog
@@ -206,7 +216,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_ICON_NAME, m_iconUrl);
 	DDX_Control(pDX, IDC_STATIC_PL_ICON, m_wndPlIcon);
 	DDX_Text(pDX, IDC_STATIC_PL_ICON_NAME, m_plIconName);
-	DDX_Text(pDX, IDC_STATIC_PLAYLIST, m_plInfo);
+	DDX_Control(pDX, IDC_STATIC_PLAYLIST, m_wndPlInfo);
 	DDX_Text(pDX, IDC_STATIC_PL_ID, m_plID);
 	DDX_Text(pDX, IDC_STATIC_PL_TVG, m_plEPG);
 	DDX_Control(pDX, IDC_CHECK_PL_ARCHIVE, m_wndPlArchive);
@@ -214,7 +224,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_INFO_VIDEO, m_wndInfoVideo);
 	DDX_Text(pDX, IDC_EDIT_INFO_AUDIO, m_infoAudio);
 	DDX_Control(pDX, IDC_EDIT_INFO_AUDIO, m_wndInfoAudio);
-	DDX_Text(pDX, IDC_STATIC_CHANNELS, m_chInfo);
+	DDX_Control(pDX, IDC_STATIC_CHANNELS, m_wndChInfo);
 	DDX_Control(pDX, IDC_BUTTON_GET_INFO, m_wndGetInfo);
 	DDX_Control(pDX, IDC_BUTTON_CHECK_ARCHIVE, m_wndCheckArchive);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylistType);
@@ -591,15 +601,18 @@ void CEdemChannelEditorDlg::FillChannels()
 
 void CEdemChannelEditorDlg::UpdateChannelsCount()
 {
-	m_chInfo.Format(_T("Channels: %s (%d)"), m_chFileName.GetString(), m_channels.size());
+	CString str;
+	str.Format(_T("Channels: %s (%d)"), m_chFileName.GetString(), m_channels.size());
+	m_wndChInfo.SetWindowText(str);
 
 	UpdateData(FALSE);
 }
 
 void CEdemChannelEditorDlg::UpdatePlaylistCount()
 {
-	m_plInfo.Format(_T("Playlist: %s (%d%s)"), m_plFileName.GetString(), m_playlist.size(), (m_filterString.IsEmpty() ? _T("") : _T("*")));
-
+	CString str;
+	str.Format(_T("Playlist: %s (%d%s)"), m_plFileName.GetString(), m_playlist.size(), (m_filterString.IsEmpty() ? _T("") : _T("*")));
+	m_wndPlInfo.SetWindowText(str);
 	UpdateData(FALSE);
 }
 
@@ -2593,7 +2606,6 @@ void CEdemChannelEditorDlg::OnGetStreamInfo()
 	m_wndProgress.ShowWindow(SW_SHOW);
 	CWaitCursor cur;
 
-	int step = 0;
 	std::string audio;
 	std::string video;
 	if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
@@ -2607,37 +2619,9 @@ void CEdemChannelEditorDlg::OnGetStreamInfo()
 				channels.emplace_back(channel);
 		}
 
-		m_wndProgress.SetRange32(0, channels.size());
-		auto it = channels.begin();
-		while (it != channels.end())
-		{
-			std::array<std::thread, 5> workers;
-			std::array<std::string, 5> audio;
-			std::array<std::string, 5> video;
-			auto pool = it;
-			int j = 0;
-			while (j < 5 && pool != channels.end())
-			{
-				const auto& url = (*pool)->get_stream_uri().get_ts_translated_url();
-				workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
-				j++;
-				++pool;
-			}
-
-			j = 0;
-			for (auto& w : workers)
-			{
-				if (w.joinable())
-				{
-					m_wndProgress.SetPos(++step);
-					w.join();
-					(*it)->set_audio(audio[j]);
-					(*it)->set_video(video[j]);
-					++it;
-					j++;
-				}
-			}
-		}
+		GetStreamInfo(channels, m_wndChInfo);
+		LoadChannelInfo(m_wndChannelsTree.GetFirstSelectedItem());
+		UpdateChannelsCount();
 	}
 	else if (m_lastTree == m_wndPlaylistTree.GetSafeHwnd())
 	{
@@ -2650,41 +2634,10 @@ void CEdemChannelEditorDlg::OnGetStreamInfo()
 				playlist.emplace_back(entry);
 		}
 
-		m_wndProgress.SetRange32(0, playlist.size());
-		auto it = playlist.begin();
-		while (it != playlist.end())
-		{
-			std::array<std::thread, 5> workers;
-			std::array<std::string, 5> audio;
-			std::array<std::string, 5> video;
-			auto group = it;
-			int j = 0;
-			while (j < 5 && group != playlist.end())
-			{
-				const auto& url = (*group)->get_stream_uri().get_ts_translated_url();
-				workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
-				j++;
-				++group;
-			}
-
-			j = 0;
-			for (auto& w : workers)
-			{
-				if (w.joinable())
-				{
-					m_wndProgress.SetPos(++step);
-					w.join();
-					(*it)->set_audio(audio[j]);
-					(*it)->set_video(video[j]);
-					++it;
-					j++;
-				}
-			}
-		}
+		GetStreamInfo(playlist, m_wndPlInfo);
+		LoadPlayListInfo(m_wndPlaylistTree.GetSelectedItem());
+		UpdatePlaylistCount();
 	}
-
-	m_infoAudio = audio.c_str();
-	m_infoVideo = video.c_str();
 
 	m_wndProgress.ShowWindow(SW_HIDE);
 
@@ -2715,7 +2668,6 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 {
 	CWaitCursor cur;
 	m_wndProgress.ShowWindow(SW_SHOW);
-	int step = 0;
 	StreamContainer* container = nullptr;
 	if (GetFocus() == &m_wndChannelsTree)
 	{
@@ -2730,42 +2682,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			}
 		}
 
-		size_t sz = channels.size();
-		m_wndProgress.SetRange32(0, sz);
-		auto it = channels.begin();
-		while (it != channels.end())
-		{
-			std::array<std::thread, 5> workers;
-			std::array<std::string, 5> audio;
-			std::array<std::string, 5> video;
-			auto pool = it;
-			int j = 0;
-			while (j < 5 && pool != channels.end())
-			{
-				m_chInfo.Format(_T("Channels: %s (%d) %d"), m_chFileName.GetString(), channels.size(), std::distance(channels.begin(), pool) + 1);
-				UpdateData(FALSE);
-
-				const auto& url = (*pool)->get_stream_uri().get_ts_translated_url();
-				workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
-				j++;
-				++pool;
-			}
-
-			j = 0;
-			for (auto& w : workers)
-			{
-				if (w.joinable())
-				{
-					m_wndProgress.SetPos(++step);
-					w.join();
-					(*it)->set_audio(audio[j]);
-					(*it)->set_video(video[j]);
-					++it;
-					j++;
-				}
-			}
-		}
-
+		GetStreamInfo(channels, m_wndChInfo);
 		LoadChannelInfo(m_wndChannelsTree.GetFirstSelectedItem());
 		UpdateChannelsCount();
 	}
@@ -2783,41 +2700,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			}
 		}
 
-		size_t sz = playlist.size();
-		m_wndProgress.SetRange32(0, sz);
-		auto it = playlist.begin();
-		while (it != playlist.end())
-		{
-			std::array<std::thread, 5> workers;
-			std::array<std::string, 5> audio;
-			std::array<std::string, 5> video;
-			auto pool = it;
-			int j = 0;
-			while (j < 5 && pool != playlist.end())
-			{
-				m_plInfo.Format(_T("Playlist: %s (%d) %d"), m_plFileName.GetString(), playlist.size(), std::distance(playlist.begin(), pool) + 1);
-				UpdateData(FALSE);
-
-				const auto& url = (*pool)->get_stream_uri().get_ts_translated_url();
-				workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
-				j++;
-				++pool;
-			}
-
-			j = 0;
-			for (auto& w : workers)
-			{
-				if (w.joinable())
-				{
-					m_wndProgress.SetPos(++step);
-					w.join();
-					(*it)->set_audio(audio[j]);
-					(*it)->set_video(video[j]);
-					++it;
-					j++;
-				}
-			}
-		}
+		GetStreamInfo(playlist, m_wndPlInfo);
 		LoadPlayListInfo(m_wndPlaylistTree.GetSelectedItem());
 		UpdatePlaylistCount();
 	}
