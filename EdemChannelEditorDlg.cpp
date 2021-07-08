@@ -3221,12 +3221,19 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::wstring& url, std::s
 
 void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 {
+	if (is_allow_save() && AfxMessageBox(_T("Changes not saved. Are you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	{
+		m_wndChannels.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("ChannelsType"), 0));
+		return;
+	}
+
 	int idx = m_wndChannels.GetCurSel();
 	LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx));
 	FillCategories();
 	FillChannels();
 	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
 	theApp.WriteProfileInt(_T("Setting"), _T("ChannelsType"), idx);
+	set_allow_save(FALSE);
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonPlFilter()
