@@ -1193,7 +1193,7 @@ void CEdemChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 	tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 	tvInsert.hInsertAfter = hAfter;
 
-	m_wndChannelsTree.InsertItem(&tvInsert);
+	m_wndChannelsTree.SetItemColor(m_wndChannelsTree.InsertItem(&tvInsert), m_wndChannelsTree.GetItemColor(hMoved));
 	m_wndChannelsTree.DeleteItem(hMoved);
 
 	set_allow_save();
