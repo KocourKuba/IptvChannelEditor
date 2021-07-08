@@ -28,6 +28,12 @@
     <Filter Include="Source Files\Dialogs">
       <UniqueIdentifier>{0232e649-a20b-4bac-9418-87d83188ba3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Controls">
+      <UniqueIdentifier>{f586d2d4-768c-4172-81d6-6dee2029d4e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Controls">
+      <UniqueIdentifier>{e2754532-c3c7-4b7d-afc9-6299de30f11a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EdemChannelEditor.h">
@@ -87,9 +93,6 @@
     <ClInclude Include="StreamContainer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="Crc32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AccessDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
@@ -106,7 +109,10 @@
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="TreeCtrlEx.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Crc32.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -134,9 +140,6 @@
     <ClCompile Include="utils.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="Crc32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AboutDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
@@ -153,7 +156,10 @@
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="TreeCtrlEx.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Crc32.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

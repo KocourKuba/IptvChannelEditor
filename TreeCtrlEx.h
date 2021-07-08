@@ -1,12 +1,24 @@
 ﻿
 #pragma once
 
-#define TVGN_EX_ALL                     0x000F
+#define TVGN_EX_ALL   0x000F
 
 // CTreeCtrlEx window
 
 class CTreeCtrlEx : public CTreeCtrl
 {
+	struct CLRFONT
+	{
+		LOGFONT logfont;	// A LOGFONT object that represents the tree item font.
+		COLORREF color;		// An RGB value that represents the text color for a tree item.
+		COLORREF colorBack; // An RGB value that represents the background color for a tree item.
+		CLRFONT() : color((COLORREF)-1), colorBack((COLORREF)-1)
+		{
+			::ZeroMemory(&logfont, sizeof(LOGFONT));
+		}
+	};
+	typedef CMap<void*, void*, CLRFONT, CLRFONT&> CColorFontMap;
+
 	DECLARE_DYNAMIC(CTreeCtrlEx)
 
 public:
@@ -18,7 +30,10 @@ public:
 
 public:
 	UINT GetSelectedCount() const;
+	HTREEITEM GetPrevItem(HTREEITEM hItem) const;
+	HTREEITEM GetNextItem(HTREEITEM hItem) const;
 	HTREEITEM GetNextItem(HTREEITEM hItem, UINT nCode) const;
+	HTREEITEM GetLastItem(HTREEITEM hItem) const;
 	HTREEITEM GetFirstSelectedItem() const;
 	HTREEITEM GetLastSelectedItem() const;
 	HTREEITEM GetNextSelectedItem(HTREEITEM hItem) const;
@@ -36,8 +51,15 @@ public:
 	void ScrollUp();
 	void DeleteDragImageEx();
 
-	void SetItemBold(HTREEITEM hItem, BOOL bBold);
-	BOOL GetItemBold(HTREEITEM hItem);
+	virtual void SetItemFont(HTREEITEM hItem, LOGFONT& logfont);
+	virtual BOOL GetItemFont(HTREEITEM hItem, LOGFONT* plogfont);
+	virtual void SetItemBold(HTREEITEM hItem, BOOL bBold);
+	virtual BOOL GetItemBold(HTREEITEM hItem);
+	virtual void SetItemColor(HTREEITEM hItem, COLORREF color);
+	virtual void SetItemBackColor(HTREEITEM hItem, COLORREF color);
+	virtual COLORREF GetItemColor(HTREEITEM hItem);
+	virtual COLORREF GetItemBackColor(HTREEITEM hItem);
+
 	void OnPaint();
 
 protected:
@@ -56,14 +78,11 @@ protected:
 	afx_msg BOOL OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg BOOL OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult);
 
-public:
-	COLORREF m_color = ::GetSysColor(COLOR_WINDOWTEXT);
-	size_t class_hash;
+protected:
 	CPoint m_ptHotSpot;
 	CImageList m_CurrentDragImage;
-
-private:
 	CPoint    m_ptClick;
 	BOOL      m_bSelectPending = FALSE;
 	HTREEITEM m_hClickedItem = nullptr;
@@ -71,5 +90,6 @@ private:
 	BOOL      m_bSelectionComplete = TRUE;
 	BOOL      m_bEditLabelPending = FALSE;
 	UINT_PTR  m_idTimer = 0;
-
+	CColorFontMap m_mapColorFont; // Maps HTREEITEM handles with CLRFONT structures that contains
+								  // the color and logfont information for the tree item.
 };

@@ -11,6 +11,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #define TCEX_EDITLABEL 1  // Edit label timer event
+#define COLORREF_NULL ((COLORREF)-1)
 
 // CTreeCtrlEx
 
@@ -27,6 +28,7 @@ BEGIN_MESSAGE_MAP(CTreeCtrlEx, CTreeCtrl)
 	ON_NOTIFY_REFLECT_EX(NM_SETFOCUS, &CTreeCtrlEx::OnSetfocus)
 	ON_NOTIFY_REFLECT_EX(NM_KILLFOCUS, &CTreeCtrlEx::OnKillfocus)
 	ON_NOTIFY_REFLECT_EX(TVN_SELCHANGED, &CTreeCtrlEx::OnSelchanged)
+	ON_NOTIFY_REFLECT_EX(TVN_DELETEITEM, &CTreeCtrlEx::OnDeleteItem)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_TIMER()
 	ON_WM_NCHITTEST()
@@ -173,7 +175,7 @@ void CTreeCtrlEx::OnMouseMove(UINT nFlags, CPoint point)
 			CWnd* pWnd = GetParent();
 			if (pWnd && !(GetStyle() & TVS_DISABLEDRAGDROP))
 			{
-				NM_TREEVIEW tv;
+				NMTREEVIEW tv = { nullptr };
 
 				tv.hdr.hwndFrom = GetSafeHwnd();
 				tv.hdr.idFrom = GetWindowLong(GetSafeHwnd(), GWL_ID);
@@ -477,36 +479,80 @@ UINT CTreeCtrlEx::GetSelectedCount() const
 	return uCount;
 }
 
-// Overloaded to catch our own special code
-HTREEITEM CTreeCtrlEx::GetNextItem(HTREEITEM hItem, UINT nCode) const
+HTREEITEM CTreeCtrlEx::GetPrevItem(HTREEITEM hItem) const
 {
-	if (nCode == TVGN_EX_ALL)
+	HTREEITEM hti = nullptr;
+
+	hti = GetPrevSiblingItem(hItem);
+	if (hti == nullptr)
 	{
-		// This special code lets us iterate through ALL tree items regardless
-		// of their parent/child relationship (very handy)
-		// If it has a child node, this will be the next item
-		HTREEITEM hNextItem = GetChildItem(hItem);
-		if (hNextItem)
-			return hNextItem;
-
-		// Otherwise, see if it has a next sibling item
-		hNextItem = GetNextSiblingItem(hItem);
-		if (hNextItem)
-			return hNextItem;
-
-		// Finally, look for next sibling to the parent item
-		HTREEITEM hParentItem = hItem;
-		while (!hNextItem && hParentItem)
-		{
-			// No more children: Get next sibling to parent
-			hParentItem = GetParentItem(hParentItem);
-			hNextItem = GetNextSiblingItem(hParentItem);
-		}
-
-		return hNextItem; // will return NULL if no more parents
+		hti = GetParentItem(hItem);
+	}
+	else
+	{
+		hti = GetLastItem(hti);
 	}
 
-	return CTreeCtrl::GetNextItem(hItem, nCode);    // standard processing
+	return hti;
+}
+
+HTREEITEM CTreeCtrlEx::GetNextItem(HTREEITEM hItem) const
+{
+	HTREEITEM hti = nullptr;
+
+	if (ItemHasChildren(hItem))
+	{
+		hti = GetChildItem(hItem);
+	}
+
+	if (hti == nullptr)
+	{
+		while ((hti = GetNextSiblingItem(hItem)) == nullptr)
+		{
+			if ((hItem = GetParentItem(hItem)) == nullptr)
+				return nullptr;
+		}
+	}
+
+	return hti;
+}
+
+HTREEITEM CTreeCtrlEx::GetNextItem(HTREEITEM hItem, UINT nCode) const
+{
+	ASSERT(::IsWindow(m_hWnd));
+	return GetNextItem(hItem, nCode);
+}
+
+HTREEITEM CTreeCtrlEx::GetLastItem(HTREEITEM hItem) const
+{
+	// Temporary used variable
+	HTREEITEM htiNext;
+
+	// Get the last item at the top level
+	if (hItem == nullptr)
+	{
+		hItem = GetRootItem();
+
+		htiNext = GetNextSiblingItem(hItem);
+		while (htiNext != nullptr)
+		{
+			hItem = htiNext;
+			htiNext = GetNextSiblingItem(htiNext);
+		}
+	}
+
+	while (ItemHasChildren(hItem) != NULL)
+	{
+		// Find the last child of hItem
+		htiNext = GetChildItem(hItem);
+		while (htiNext != nullptr)
+		{
+			hItem = htiNext;
+			htiNext = GetNextSiblingItem(htiNext);
+		}
+	}
+
+	return hItem;
 }
 
 // Helpers to list out selected items. (Use similar to GetFirstVisibleItem(),
@@ -658,7 +704,7 @@ BOOL CTreeCtrlEx::OnItemexpanding(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
-	if (pNMTreeView->action == TVE_COLLAPSE)
+	if (pNMTreeView->action == TVE_COLLAPSE || pNMTreeView->action == TVE_COLLAPSERESET)
 	{
 		HTREEITEM hItem = GetChildItem(pNMTreeView->itemNew.hItem);
 
@@ -717,14 +763,36 @@ BOOL CTreeCtrlEx::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
 // Ensure the multiple selected items are drawn correctly when loosing/getting the focus
 BOOL CTreeCtrlEx::OnSetfocus(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	Invalidate();
+	//'emulated' selected items will remain greyed
+	// if application gets covered
+	HTREEITEM hItem = GetFirstSelectedItem();
+	while (hItem)
+	{
+		RECT rect;
+		GetItemRect(hItem, &rect, TRUE);
+		InvalidateRect(&rect);
+		hItem = GetNextSelectedItem(hItem);
+	}
+
+	Default();
 	*pResult = 0;
 	return FALSE;
 }
 
 BOOL CTreeCtrlEx::OnKillfocus(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	Invalidate();
+	Default();
+	//'emulated' selected items may not get
+	// refreshed to grey
+	HTREEITEM hItem = GetFirstSelectedItem();
+	while (hItem)
+	{
+		RECT rect;
+		GetItemRect(hItem, &rect, TRUE);
+		InvalidateRect(&rect);
+		hItem = GetNextSelectedItem(hItem);
+	}
+
 	*pResult = 0;
 	return FALSE;
 }
@@ -752,6 +820,17 @@ void CTreeCtrlEx::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CTreeCtrl::OnTimer(nIDEvent);
+}
+
+BOOL CTreeCtrlEx::OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
+
+	// Remove the tree item from the map.
+	m_mapColorFont.RemoveKey(pNMTreeView->itemOld.hItem);
+	*pResult = 0;
+
+	return FALSE;
 }
 
 BOOL CTreeCtrlEx::CreateDragImageEx(CPoint ptDragPoint)
@@ -868,6 +947,36 @@ void CTreeCtrlEx::ScrollUp()
 	}
 }
 
+void CTreeCtrlEx::SetItemFont(HTREEITEM hItem, LOGFONT& logfont)
+{
+	CLRFONT cf;
+	if (!m_mapColorFont.Lookup(hItem, cf))
+	{
+		cf.color = COLORREF_NULL;
+	}
+
+	cf.logfont = logfont;
+	m_mapColorFont[hItem] = cf;
+}
+
+BOOL CTreeCtrlEx::GetItemFont(HTREEITEM hItem, LOGFONT* plogfont)
+{
+	CLRFONT cf;
+	if (!m_mapColorFont.Lookup(hItem, cf))
+	{
+		return FALSE;
+	}
+
+	if (cf.logfont.lfFaceName[0] == _T('\0'))
+	{
+		return FALSE;
+	}
+
+	*plogfont = cf.logfont;
+
+	return TRUE;
+}
+
 void CTreeCtrlEx::SetItemBold(HTREEITEM hItem, BOOL bBold)
 {
 	SetItemState(hItem, bBold ? TVIS_BOLD : 0, TVIS_BOLD);
@@ -876,6 +985,44 @@ void CTreeCtrlEx::SetItemBold(HTREEITEM hItem, BOOL bBold)
 BOOL CTreeCtrlEx::GetItemBold(HTREEITEM hItem)
 {
 	return GetItemState(hItem, TVIS_BOLD) & TVIS_BOLD;
+}
+
+void CTreeCtrlEx::SetItemColor(HTREEITEM hItem, COLORREF color)
+{
+	CLRFONT cf;
+	m_mapColorFont.Lookup(hItem, cf);
+
+	cf.color = color;
+	m_mapColorFont[hItem] = cf;
+	InvalidateRect(nullptr);
+}
+
+COLORREF CTreeCtrlEx::GetItemColor(HTREEITEM hItem)
+{
+	CLRFONT cf;
+	if (m_mapColorFont.Lookup(hItem, cf))
+		return cf.color;
+
+	return COLORREF_NULL;
+}
+
+void CTreeCtrlEx::SetItemBackColor(HTREEITEM hItem, COLORREF color)
+{
+	CLRFONT cf;
+	m_mapColorFont.Lookup(hItem, cf);
+
+	cf.colorBack = color;
+	m_mapColorFont[hItem] = cf;
+	InvalidateRect(nullptr);
+}
+
+COLORREF CTreeCtrlEx::GetItemBackColor(HTREEITEM hItem)
+{
+	CLRFONT cf;
+	if (m_mapColorFont.Lookup(hItem, cf))
+		return cf.colorBack;
+
+	return COLORREF_NULL;
 }
 
 void CTreeCtrlEx::OnPaint()
@@ -915,22 +1062,26 @@ void CTreeCtrlEx::OnPaint()
 		BOOL root = GetParentItem(hItem) == nullptr;
 		if (!(state & selflag))
 		{
-			ColoringProperty* container = nullptr;
-			if (class_hash == typeid(ChannelInfo).hash_code() && !root)
-			{
-				container = dynamic_cast<ColoringProperty*>((ChannelInfo*)GetItemData(hItem));
-			}
-			else if (class_hash == typeid(PlaylistEntry).hash_code())
-			{
-				container = dynamic_cast<ColoringProperty*>((PlaylistEntry*)GetItemData(hItem));
-			}
+			COLORREF crItemBack = GetSysColor(COLOR_WINDOW);
+			COLORREF crItemText = ::GetSysColor(COLOR_WINDOWTEXT);
 
-			bool isColored = container ? container->is_colored() : false;
-			bool isDisabled = container ? container->is_disabled() : false;
 			// No font specified, so use window font
 			CFont* pFont = GetFont();
 			LOGFONT logfont;
 			pFont->GetLogFont(&logfont);
+
+			CLRFONT cf;
+			if (m_mapColorFont.Lookup(hItem, cf))
+			{
+				if (cf.color != COLORREF_NULL)
+					crItemText = cf.color;
+
+				if (cf.colorBack != COLORREF_NULL)
+					crItemBack = cf.colorBack;
+
+				if (cf.logfont.lfFaceName[0] != _T('\0'))
+					logfont = cf.logfont;
+			}
 
 			if (GetItemBold(hItem))
 				logfont.lfWeight = 700;
@@ -939,18 +1090,12 @@ void CTreeCtrlEx::OnPaint()
 			fontDC.CreateFontIndirect(&logfont);
 			CFont* pFontDC = memDC.SelectObject(&fontDC);
 
-			if (isDisabled)
-				memDC.SetTextColor(::GetSysColor(COLOR_GRAYTEXT));
-			else if (isColored)
-				memDC.SetTextColor(m_color);
-			else
-				memDC.SetTextColor(::GetSysColor(COLOR_WINDOWTEXT));
-
 			const auto& sItem = GetItemText(hItem);
 
 			CRect rect;
 			GetItemRect(hItem, &rect, TRUE);
-			memDC.SetBkColor(GetSysColor(COLOR_WINDOW));
+			memDC.SetBkColor(crItemBack);
+			memDC.SetTextColor(crItemText);
 			memDC.TextOut(rect.left + 2, rect.top + 1, sItem);
 			memDC.SelectObject(pFontDC);
 		}

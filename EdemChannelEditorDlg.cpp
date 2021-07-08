@@ -287,11 +287,6 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_largeFont.CreateFontIndirect(&lfDlg);
 
 	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
-	m_wndChannelsTree.m_color = RGB(0, 200, 0);
-	m_wndChannelsTree.class_hash = typeid(ChannelInfo).hash_code();
-
-	m_wndPlaylistTree.m_color = RGB(200, 0, 0);
-	m_wndPlaylistTree.class_hash = typeid(PlaylistEntry).hash_code();
 
 	SetAccessKey(theApp.GetProfileString(_T("Setting"), _T("AccessKey")));
 	SetDomain(theApp.GetProfileString(_T("Setting"), _T("Domain")));
@@ -631,20 +626,64 @@ void CEdemChannelEditorDlg::FillCategories()
 
 void CEdemChannelEditorDlg::CheckForExisting()
 {
+	TRACE("Start Check for existing\n");
+	COLORREF normal = ::GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF gray = ::GetSysColor(COLOR_GRAYTEXT);
+	COLORREF red = RGB(200, 0, 0);
+	COLORREF green = RGB(0, 200, 0);
+
 	std::set<int> ids;
-	for (auto& item : m_channels)
+
+	HTREEITEM root = m_wndChannelsTree.GetRootItem();
+	while (root != nullptr && !m_playlistIds.empty())
 	{
-		int id = item->get_channel_id();
-		item->set_colored(m_playlistIds.find(id) != m_playlistIds.end());
-		ids.emplace(id);
+		// iterate subitems
+		HTREEITEM hItem = m_wndChannelsTree.GetChildItem(root);
+		while (hItem)
+		{
+			auto channel = (ChannelInfo*)m_wndChannelsTree.GetItemData(hItem);
+			if (channel)
+			{
+				bool bFound = m_playlistIds.find(channel->get_channel_id()) != m_playlistIds.end();
+				ids.emplace(channel->get_channel_id());
+				COLORREF color = channel->is_disabled() ? gray : (bFound ? green : normal);
+				m_wndChannelsTree.SetItemColor(hItem, color);
+			}
+			// get the next sibling item
+			hItem = m_wndChannelsTree.GetNextSiblingItem(hItem);
+		}
+
+		root = m_wndChannelsTree.GetNextSiblingItem(root);
 	}
 
-	for (auto& item : m_playlist)
+	TRACE("End Check channels for existing\n");
+
+	root = m_wndPlaylistTree.GetRootItem();
+	while (root != nullptr)
 	{
-		item->set_colored(ids.find(item->get_channel_id()) == ids.end());
+		// iterate subitems
+		HTREEITEM hItem = m_wndPlaylistTree.GetChildItem(root);
+		while (hItem)
+		{
+			auto item = (PlaylistEntry*)m_wndPlaylistTree.GetItemData(hItem);
+			if (item)
+			{
+				bool bNotFound = ids.find(item->get_channel_id()) == ids.end();
+				ids.emplace(item->get_channel_id());
+
+				COLORREF color = bNotFound ? red : normal;
+
+				m_wndPlaylistTree.SetItemColor(hItem, color);
+			}
+
+			// get the next sibling item
+			hItem = m_wndPlaylistTree.GetNextSiblingItem(hItem);
+		}
+
+		root = m_wndPlaylistTree.GetNextSiblingItem(root);
 	}
 
-	m_wndChannelsTree.RedrawWindow();
+	TRACE("End Check playlist for existing\n");
 }
 
 void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
@@ -2780,9 +2819,10 @@ void CEdemChannelEditorDlg::OnToggleChannel()
 		if (auto channel = GetChannel(hItem); channel != nullptr)
 		{
 			channel->set_disabled(!m_menu_enable_channel);
-			CRect rc;
-			m_wndChannelsTree.GetItemRect(hItem, rc, FALSE);
-			m_wndChannelsTree.InvalidateRect(rc, FALSE);
+			m_wndChannelsTree.SetItemColor(hItem, ::GetSysColor(COLOR_GRAYTEXT));
+// 			CRect rc;
+// 			m_wndChannelsTree.GetItemRect(hItem, rc, FALSE);
+// 			m_wndChannelsTree.InvalidateRect(rc, FALSE);
 			set_allow_save();
 		}
 	}
