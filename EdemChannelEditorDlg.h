@@ -312,6 +312,8 @@ void CEdemChannelEditorDlg::GetStreamInfo(const std::vector<T*>& container, CSta
 		j = 0;
 		for (auto& w : workers)
 		{
+			if (!w.joinable()) continue;
+
 			w.join();
 			(*it)->set_audio(audio[j]);
 			(*it)->set_video(video[j]);
