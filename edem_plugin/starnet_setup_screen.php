@@ -32,6 +32,8 @@ class DemoSetupScreen extends AbstractControlsScreen
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
         $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0;
+        $epg_prev = isset($plugin_cookies->epg_prev) ? $plugin_cookies->epg_prev : 7;
+        $epg_next = isset($plugin_cookies->epg_next) ? $plugin_cookies->epg_next : 7;
 
         $show_ops = array();
         $show_ops['yes'] = 'Да';
@@ -48,14 +50,12 @@ class DemoSetupScreen extends AbstractControlsScreen
         ControlFactory::add_vgap($defs, -10);
         $this->add_label($defs, 'iEdem/iLook TV', 'Версия ' . DemoConfig::PluginVersion . '. [' . DemoConfig::PluginDate . ']');
 
-        //$this->add_label($defs, 'Настройки ----------------------------------', '-----------------------------');
-
-        $this->add_combobox($defs,
-            'show_tv', 'Показывать ЄDЄM TV в главном меню:',
+        $this->add_combobox($defs,'show_tv', 'Показывать iEdem/iLook TV в главном меню:',
             $show_tv, $show_ops, 0, true);
 
-        $this->add_combobox($defs,
-            'channels_list', 'Используемый список каналов:',
+        $this->add_button($defs, 'key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и поддомен', 0);
+
+        $this->add_combobox($defs,'channels_list', 'Используемый список каналов:',
             $channels_list, $channels, 0, true);
 
         $show_buf_time_ops = array();
@@ -70,6 +70,22 @@ class DemoSetupScreen extends AbstractControlsScreen
         $this->add_combobox($defs, 'buf_time', 'Время буферизации:',
             $buf_time, $show_buf_time_ops, 0, true);
 
+        $epg_prefetch = array();
+        $epg_prefetch[0] = '0';
+        $epg_prefetch[1] = '1';
+        $epg_prefetch[2] = '2';
+        $epg_prefetch[3] = '3';
+        $epg_prefetch[4] = '4';
+        $epg_prefetch[5] = '5';
+        $epg_prefetch[6] = '6';
+        $epg_prefetch[7] = '7';
+
+        $this->add_combobox($defs, 'epg_prev', 'Предыдущие дни EPG:',
+            $epg_prev, $epg_prefetch, 0, true);
+
+        $this->add_combobox($defs, 'epg_next', 'Следующие дни EPG:',
+            $epg_next, $epg_prefetch, 0, true);
+
         $epg_font_size_ops = array();
         $epg_font_size_ops ['normal'] = 'Обычный';
         $epg_font_size_ops ['small'] = 'Мелкий';
@@ -77,9 +93,6 @@ class DemoSetupScreen extends AbstractControlsScreen
             $epg_font_size, $epg_font_size_ops, 700, true);
 
         $this->add_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль', 0);
-        $this->add_button($defs, 'key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ', 0);
-        $this->add_button($defs, 'subdomain_dialog', 'Свой домен:', 'Ввести домен', 0);
-//        $this->add_label($defs, 'Информация --------------------------------','-----------------------------');
         $this->add_button($defs, 'restart', '', 'Перезагрузить плеер', 0);
         ControlFactory::add_vgap($defs, -10);
 
@@ -96,29 +109,16 @@ class DemoSetupScreen extends AbstractControlsScreen
         $defs = array();
         $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
 
-        $this->add_text_field($defs,
-            'ott_key', 'Введите ОТТ ключ:',
+        $this->add_text_field($defs,'ott_key', 'Введите ОТТ ключ:',
             $ott_key, false, false, false, true, 500);
 
-        $this->add_close_dialog_and_apply_button($defs,
-            'ott_key_apply', 'ОК', 200);
-        $this->add_close_dialog_button($defs,
-            'Отмена', 200);
-        return $defs;
-    }
-
-    public function do_get_subdomain_control_defs(&$plugin_cookies)
-    {
-        $defs = array();
         $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
-        $this->add_text_field($defs,
-            'subdomain', 'Введите поддомен:',
+
+        $this->add_text_field($defs,'subdomain', 'Введите поддомен:',
             $subdomain, false, false, false, true, 500);
 
-        $this->add_close_dialog_and_apply_button($defs,
-            'subdomain_apply', 'ОК', 200);
-        $this->add_close_dialog_button($defs,
-            'Отмена', 200);
+        $this->add_close_dialog_and_apply_button($defs,'ott_key_apply', 'ОК', 200);
+        $this->add_close_dialog_button($defs,'Отмена', 200);
         return $defs;
     }
 
@@ -129,83 +129,89 @@ class DemoSetupScreen extends AbstractControlsScreen
         $pass1 = '';
         $pass2 = '';
 
-        $this->add_text_field($defs,
-            'pass1', 'Старый пароль:',
+        $this->add_text_field($defs,'pass1', 'Старый пароль:',
             $pass1, 1, 1, 0, 1, 500, 0, false);
-        $this->add_text_field($defs,
-            'pass2', 'Новый пароль:',
+        $this->add_text_field($defs,'pass2', 'Новый пароль:',
             $pass2, 1, 1, 0, 1, 500, 0, false);
 
         $this->add_label($defs, '', '');
 
-        $this->add_close_dialog_and_apply_button($defs,
-            'pass_apply', 'ОК', 250);
-        $this->add_close_dialog_button($defs,
-            'Отмена', 250);
+        $this->add_close_dialog_and_apply_button($defs,'pass_apply', 'ОК', 250);
+        $this->add_close_dialog_button($defs,'Отмена', 250);
 
         return $defs;
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Setup: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("  $key => $value");
-
         if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $control_id = $user_input->control_id;
             $new_value = $user_input->{$control_id};
             hd_print("Setup: changing $control_id value to $new_value");
 
-            if ($control_id === 'restart')
-                shell_exec('reboot now');
-            else if ($control_id === 'channels_list')
+            switch ($control_id)
             {
-                $plugin_cookies->channels_list = $new_value;
-                $this->tv->unload_channels();
-                $this->tv->load_channels($plugin_cookies);
-                $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
-                return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
-            }
-            else if ($control_id === 'show_tv')
-                $plugin_cookies->show_tv = $new_value;
-            else if ($control_id === 'show_vod')
-                $plugin_cookies->show_vod = $new_value;
-            else if ($control_id === 'buf_time')
-                $plugin_cookies->buf_time = $new_value;
-            else if ($control_id === 'epg_shift')
-                $plugin_cookies->epg_shift = $new_value;
-            else if ($control_id == 'epg_font_size')
-                $plugin_cookies->epg_font_size = $new_value;
-            else if ($control_id === 'key_dialog') {
-                $defs = $this->do_get_key_control_defs($plugin_cookies);
-                return ActionFactory::show_dialog("Ключ чувствителен к регистру. Переключение регистра кнопкой Select", $defs, true);
-            } else if ($control_id === 'ott_key_apply')
-                $plugin_cookies->ott_key = $user_input->ott_key;
-            else if ($control_id === 'subdomain_dialog') {
-                $defs = $this->do_get_subdomain_control_defs($plugin_cookies);
-                return ActionFactory::show_dialog("Введите или измените домен полностью, например, dunehd.iptvspy.net", $defs, true);
-            } else if ($control_id === 'subdomain_apply')
-                $plugin_cookies->subdomain = $user_input->subdomain;
-            else if ($control_id === 'pass_dialog') {
-                $defs = $this->do_get_pass_control_defs($plugin_cookies);
-                return ActionFactory::show_dialog("Родительский контроль", $defs, true);
-            } else if ($control_id === 'pass_apply') {
-                if ($user_input->pass1 == '' || $user_input->pass2 == '')
-                    return null;
-                $msg = '';
-                $action = null;
-                $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
-                if ($user_input->pass1 == $pass_sex) {
-                    $plugin_cookies->pass_sex = $user_input->{'pass2'};
-                    $msg = 'Пароль изменен!';
-                } else {
-                    $msg = 'Пароль не изменен!';
-                }
+                case 'restart':
+                    shell_exec('reboot now');
+                    break;
+                case 'channels_list':
+                    $old_value = $plugin_cookies->channels_list;
+                    $this->tv->unload_channels();
+                    try {
+                        $plugin_cookies->channels_list = $new_value;
+                        $this->tv->load_channels($plugin_cookies);
+                    } catch (Exception $e) {
+                        hd_print("Load channel list failed: $new_value");
+                        $plugin_cookies->channels_list = $old_value;
+                        ActionFactory::show_title_dialog('Ошибка загрузки плейлиста!');
+                    }
+                    $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
+                    return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
+                case 'show_tv':
+                    $plugin_cookies->show_tv = $new_value;
+                    break;
+                case 'buf_time':
+                    $plugin_cookies->buf_time = $new_value;
+                    break;
+                case 'epg_prev':
+                    $plugin_cookies->epg_prev = $new_value;
+                    break;
+                case 'epg_next':
+                    $plugin_cookies->epg_next = $new_value;
+                    break;
+                case 'epg_font_size':
+                    $plugin_cookies->epg_font_size = $new_value;
+                    break;
+                case 'key_dialog':
+                    $defs = $this->do_get_key_control_defs($plugin_cookies);
+                    $msg = 'Ключ чувствителен к регистру. Переключение регистра кнопкой Select';
+                    return ActionFactory::show_dialog($msg, $defs, true);
+                case 'ott_key_apply':
+                    $plugin_cookies->ott_key = $user_input->ott_key;
+                    $plugin_cookies->subdomain = $user_input->subdomain;
+                    break;
+                case 'pass_dialog':
+                    $defs = $this->do_get_pass_control_defs($plugin_cookies);
+                    $msg = 'Родительский контроль';
+                    return ActionFactory::show_dialog($msg, $defs, true);
+                case 'pass_apply':
+                    if ($user_input->pass1 == '' || $user_input->pass2 == '')
+                        return null;
 
-                return ActionFactory::show_title_dialog($msg, $action);
+                    $msg = 'Пароль не изменен!';
+                    $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
+                    if ($user_input->pass1 == $pass_sex) {
+                        $plugin_cookies->pass_sex = $user_input->{'pass2'};
+                        $msg = 'Пароль изменен!';
+                    }
+                    return ActionFactory::show_title_dialog($msg);
             }
         }
+
+        hd_print('Setup: handle_user_input:');
+        foreach ($user_input as $key => $value)
+            hd_print("$key => $value");
+
         return ActionFactory::reset_controls($this->do_get_control_defs($plugin_cookies));
     }
 }

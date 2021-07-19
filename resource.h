@@ -48,25 +48,20 @@
 #define IDC_CHECK_GLOBAL                1029
 #define IDC_CHECK_PL_ARCHIVE            1030
 #define IDC_CHECK_REGEX                 1031
-#define IDC_CHECK_REGEX2                1032
 #define IDC_COMBO_CATEGORY              1033
 #define IDC_COMBO_CHANNELS              1034
 #define IDC_COMBO_PLAYLIST              1035
 #define IDC_COMBO_SORT                  1036
 #define IDC_CUSTOM_PLAYLIST             1037
-#define IDC_EDIT1                       1038
 #define IDC_EDIT_ARCHIVE_CHECK          1039
 #define IDC_EDIT_CATEGORY               1040
 #define IDC_EDIT_DOMAIN                 1041
-#define IDC_EDIT_DOMAIN2                1042
 #define IDC_EDIT_EPG_ID                 1043
 #define IDC_EDIT_INFO_AUDIO             1044
 #define IDC_EDIT_INFO_VIDEO             1045
 #define IDC_EDIT_KEY                    1046
-#define IDC_EDIT_NEXT_EPG               1047
 #define IDC_EDIT_PL_SEARCH              1048
 #define IDC_EDIT_PLAYLIST_URL           1049
-#define IDC_EDIT_PREV_EPG               1050
 #define IDC_EDIT_SEARCH                 1051
 #define IDC_EDIT_STREAM_URL             1052
 #define IDC_EDIT_STRING                 1053
@@ -78,8 +73,6 @@
 #define IDC_MFCLINK_DONATE              1059
 #define IDC_PROGRESS_LOAD               1060
 #define IDC_SPIN_ARCHIVE_CHECK          1061
-#define IDC_SPIN_NEXT                   1062
-#define IDC_SPIN_PREV                   1063
 #define IDC_STATIC_APP_TITLE            1064
 #define IDC_STATIC_CATEGORY_ICON        1065
 #define IDC_STATIC_CHANNELS             1066
@@ -127,7 +120,7 @@
 #define ID_SYNC_ENTRY                   32798
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129

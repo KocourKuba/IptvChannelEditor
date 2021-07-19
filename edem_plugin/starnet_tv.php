@@ -83,6 +83,9 @@ class DemoTv extends AbstractTv
             $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
         }
 
+        $epg_prev = isset($plugin_cookies->epg_prev) ? $plugin_cookies->epg_prev : 7;
+        $epg_next = isset($plugin_cookies->epg_next) ? $plugin_cookies->epg_next : 7;
+
         $this->channels = new HashedArray();
         $this->groups = new HashedArray();
 
@@ -121,8 +124,8 @@ class DemoTv extends AbstractTv
                 intval($xml_tv_channel->archive),
                 strval($xml_tv_channel->streaming_url),
                 intval($xml_tv_channel->number),
-                intval($xml_tv_channel->num_past_epg_days),
-                intval($xml_tv_channel->num_future_epg_days),
+                $epg_prev,
+                $epg_next,
                 intval($xml_tv_channel->protected),
                 intval($xml_tv_channel->timeshift_hours),
                 $buf_time);
@@ -250,7 +253,7 @@ class DemoTv extends AbstractTv
             } else {
                 $type = 'html'; // teleguide.info
                 try {
-                    $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT2, $tvg_id, $epg_date));
+                    $doc = HD::http_get_document(sprintf(DemoConfig::TVG_URL_FORMAT, $tvg_id, $epg_date));
                 }
                 catch (Exception $ex) {
                     hd_print("Can't fetch TVG ID: $tvg_id DATE: $epg_date");

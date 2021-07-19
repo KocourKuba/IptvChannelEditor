@@ -118,12 +118,8 @@ protected:
 	afx_msg void OnEnChangeEditEpgID();
 	afx_msg void OnEnChangeEditStreamUrl();
 	afx_msg void OnEnChangeEditUrlID();
-	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinArchiveCheck(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEnChangeEditNumNext();
-	afx_msg void OnEnChangeEditNumPrev();
 	afx_msg void OnEnChangeEditTimeShiftHours();
 	afx_msg void OnEnChangeEditArchiveCheck();
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
@@ -211,13 +207,9 @@ protected:
 	CEdit m_wndStreamUrl;
 	CEdit m_wndTvgID;
 	CEdit m_wndEpgID;
-	CEdit m_wndPrevDays;
-	CEdit m_wndNextDays;
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
-	CSpinButtonCtrl m_wndSpinPrev;
-	CSpinButtonCtrl m_wndSpinNext;
 	CSpinButtonCtrl m_wndSpinTimeShift;
 	CProgressCtrl m_wndProgress;
 	CButton m_wndArchive;
@@ -258,8 +250,6 @@ protected:
 	int m_streamID = 0;
 	int m_tvgID = 0;
 	int m_epgID = 0;
-	int m_prevDays = 0;
-	int m_nextDays = 0;
 	int m_archiveCheck = 0;
 	int m_archiveDays = 0;
 	int m_timeShiftHours = 0;

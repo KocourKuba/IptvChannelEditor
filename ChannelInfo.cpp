@@ -23,8 +23,8 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	title = utils::get_value_wstring(node->first_node(CAPTION));
 	tvg_id = utils::get_value_int(node->first_node(TVG_ID));
 	epg_id = utils::get_value_int(node->first_node(EPG_ID));
-	prev_epg_days = utils::get_value_int(node->first_node(NUM_PAST_EPG_DAYS));
-	next_epg_days = utils::get_value_int(node->first_node(NUM_FUTURE_EPG_DAYS));
+// 	prev_epg_days = utils::get_value_int(node->first_node(NUM_PAST_EPG_DAYS));
+// 	next_epg_days = utils::get_value_int(node->first_node(NUM_FUTURE_EPG_DAYS));
 	time_shift_hours = utils::get_value_int(node->first_node(TIME_SHIFT_HOURS));
 	set_icon_uri(utils::get_value_wstring(node->first_node(ICON_URL)));
 	set_disabled(utils::string_tolower(utils::get_value_string(node->first_node(DISABLED))) == "true");
@@ -68,10 +68,10 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(utils::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 
 	// <num_past_epg_days>4</num_past_epg_days>
-	channel_node->append_node(utils::alloc_node(alloc, NUM_PAST_EPG_DAYS, utils::int_to_char(prev_epg_days).c_str()));
+	//channel_node->append_node(utils::alloc_node(alloc, NUM_PAST_EPG_DAYS, utils::int_to_char(prev_epg_days).c_str()));
 
 	// <num_future_epg_days>2</num_future_epg_days>
-	channel_node->append_node(utils::alloc_node(alloc, NUM_FUTURE_EPG_DAYS, utils::int_to_char(next_epg_days).c_str()));
+	//channel_node->append_node(utils::alloc_node(alloc, NUM_FUTURE_EPG_DAYS, utils::int_to_char(next_epg_days).c_str()));
 
 	if (time_shift_hours != 0)
 		channel_node->append_node(utils::alloc_node(alloc, TIME_SHIFT_HOURS, utils::int_to_char(time_shift_hours).c_str()));
