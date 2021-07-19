@@ -113,10 +113,12 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_EPG_ID, &CEdemChannelEditorDlg::OnEnChangeEditEpgID)
 	ON_EN_CHANGE(IDC_EDIT_NEXT_EPG, &CEdemChannelEditorDlg::OnEnChangeEditNumNext)
 	ON_EN_CHANGE(IDC_EDIT_PREV_EPG, &CEdemChannelEditorDlg::OnEnChangeEditNumPrev)
+	ON_EN_CHANGE(IDC_EDIT_TIME_SHIFT, &CEdemChannelEditorDlg::OnEnChangeEditTimeShiftHours)
 	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_CHECK, &CEdemChannelEditorDlg::OnEnChangeEditArchiveCheck)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_URL, &CEdemChannelEditorDlg::OnEnChangeEditStreamUrl)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_NEXT, &CEdemChannelEditorDlg::OnDeltaposSpinNext)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_PREV, &CEdemChannelEditorDlg::OnDeltaposSpinPrev)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TIME_SHIFT, &CEdemChannelEditorDlg::OnDeltaposSpinTimeShiftHours)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ARCHIVE_CHECK, &CEdemChannelEditorDlg::OnDeltaposSpinArchiveCheck)
 	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CEdemChannelEditorDlg::OnEnChangeEditUrlID)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CEdemChannelEditorDlg::OnStnClickedStaticIcon)
@@ -206,6 +208,8 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_PREV_EPG, m_wndPrevDays);
 	DDX_Text(pDX, IDC_EDIT_NEXT_EPG, m_nextDays);
 	DDX_Control(pDX, IDC_EDIT_NEXT_EPG, m_wndNextDays);
+	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT, m_timeShiftHours);
+	DDX_Control(pDX, IDC_EDIT_TIME_SHIFT, m_wndTimeShift);
 	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK, m_archiveCheck);
 	DDX_Control(pDX, IDC_BUTTON_ADD_TO_SHOW, m_wndAddToShow);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE_FROM_SHOW, m_wndRemoveFromShow);
@@ -238,6 +242,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
 	DDX_Control(pDX, IDC_SPIN_PREV, m_wndSpinPrev);
 	DDX_Control(pDX, IDC_SPIN_NEXT, m_wndSpinNext);
+	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -326,6 +331,8 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Click to change the icon"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK), _T("Hours in the past to test archive play"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK), _T("Hours in the past to test archive play"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TIME_SHIFT), _T("EPG Time shift for channel"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_TIME_SHIFT), _T("EPG Time shift for channel"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_VIDEO), _T("Video stream info"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
 
@@ -716,6 +723,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 
 		m_prevDays = channel->get_prev_epg_days();
 		m_nextDays = channel->get_next_epg_days();
+		m_timeShiftHours = channel->get_time_shift_hours();
 		m_hasArchive = channel->get_has_archive();
 		m_isAdult = channel->get_adult();
 
@@ -736,6 +744,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		m_wndCategoriesList.ResetContent();
 		m_tvgID = 0;
 		m_epgID = 0;
+		m_timeShiftHours = 0;
 		m_iconUrl.Empty();
 		m_streamUrl.Empty();
 		m_streamID = 0;
@@ -1355,6 +1364,8 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndSpinPrev.EnableWindow(state);
 	m_wndNextDays.EnableWindow(state);
 	m_wndSpinNext.EnableWindow(state);
+	m_wndTimeShift.EnableWindow(state);
+	m_wndSpinTimeShift.EnableWindow(state);
 	m_wndInfoVideo.EnableWindow(enable);
 	m_wndInfoAudio.EnableWindow(enable);
 
@@ -1735,6 +1746,28 @@ void CEdemChannelEditorDlg::OnEnChangeEditNumPrev()
 	set_allow_save();
 }
 
+void CEdemChannelEditorDlg::OnEnChangeEditTimeShiftHours()
+{
+	if (m_timeShiftHours < -12)
+		m_timeShiftHours = -12;
+
+	if (m_timeShiftHours > 12)
+		m_timeShiftHours = 12;
+
+	UpdateData(FALSE);
+
+	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
+	{
+		auto channel = GetChannel(hItem);
+		if (channel)
+		{
+			channel->set_time_shift_hours(m_timeShiftHours);
+		}
+	}
+
+	set_allow_save();
+}
+
 void CEdemChannelEditorDlg::OnEnChangeEditArchiveCheck()
 {
 	UpdateData(TRUE);
@@ -1762,6 +1795,15 @@ void CEdemChannelEditorDlg::OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult)
 	m_nextDays -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
 	UpdateData(FALSE);
 	OnEnChangeEditNumNext();
+	*pResult = 0;
+}
+
+void CEdemChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	UpdateData(TRUE);
+	m_timeShiftHours -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
+	UpdateData(FALSE);
+	OnEnChangeEditTimeShiftHours();
 	*pResult = 0;
 }
 

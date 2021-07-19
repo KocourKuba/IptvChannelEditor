@@ -209,7 +209,7 @@ abstract class AbstractTv implements Tv
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function get_tv_stream_url($media_url, &$plugin_cookies)
+    public function get_tv_stream_url($playback_url, &$plugin_cookies)
     {
         throw new Exception('Error: get_tv_stream_url() is not supported.');
     }
@@ -225,7 +225,7 @@ abstract class AbstractTv implements Tv
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected abstract function get_day_epg_iterator($epg_id, $day_start_ts, &$plugin_cookies);
+    protected abstract function get_day_epg_iterator($channel_id, $day_start_ts, &$plugin_cookies);
 
     ///////////////////////////////////////////////////////////////////////
 

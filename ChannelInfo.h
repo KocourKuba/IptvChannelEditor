@@ -34,6 +34,7 @@ public:
 	static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 	static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
 	static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
+	static constexpr auto TIME_SHIFT_HOURS = "timeshift_hours";
 	static constexpr auto TV_CATEGORIES = "tv_categories";
 	static constexpr auto TV_CATEGORY_ID = "tv_category_id";
 	static constexpr auto STREAMING_URL = "streaming_url";
@@ -77,6 +78,9 @@ public:
 	int get_next_epg_days() const { return next_epg_days; }
 	void set_next_epg_days(int val) { next_epg_days = val; }
 
+	int get_time_shift_hours() const { return time_shift_hours; }
+	void set_time_shift_hours(int val) { time_shift_hours = val; }
+
 	const std::map<int, ChannelCategory*>& get_categores() const { return categories; }
 	void set_categores(const std::set<int>& val);
 	const std::set<int> get_category_ids() const;
@@ -97,6 +101,7 @@ private:
 	const std::map<int, std::unique_ptr<ChannelCategory>>& m_all_categories;
 	int prev_epg_days = 7;
 	int next_epg_days = 7;
+	int time_shift_hours = 0;
 	int adult = 0;
 	int has_archive = 0;
 };

@@ -120,9 +120,11 @@ protected:
 	afx_msg void OnEnChangeEditUrlID();
 	afx_msg void OnDeltaposSpinNext(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinPrev(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinArchiveCheck(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditNumNext();
 	afx_msg void OnEnChangeEditNumPrev();
+	afx_msg void OnEnChangeEditTimeShiftHours();
 	afx_msg void OnEnChangeEditArchiveCheck();
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
@@ -213,8 +215,10 @@ protected:
 	CEdit m_wndNextDays;
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
+	CEdit m_wndTimeShift;
 	CSpinButtonCtrl m_wndSpinPrev;
 	CSpinButtonCtrl m_wndSpinNext;
+	CSpinButtonCtrl m_wndSpinTimeShift;
 	CProgressCtrl m_wndProgress;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
@@ -258,6 +262,7 @@ protected:
 	int m_nextDays = 0;
 	int m_archiveCheck = 0;
 	int m_archiveDays = 0;
+	int m_timeShiftHours = 0;
 
 private:
 	static CString m_gl_domain;

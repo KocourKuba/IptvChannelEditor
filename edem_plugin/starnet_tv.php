@@ -114,19 +114,18 @@ class DemoTv extends AbstractTv
             $id++;
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0; //буферизация
 
-            $timeshift_hours = 0;
-            $channel =
-                new DemoChannel(
-                    strval($cid),
-                    strval($xml_tv_channel->caption),
-                    strval($xml_tv_channel->icon_url),
-                    intval($xml_tv_channel->archive),
-                    strval($xml_tv_channel->streaming_url),
-                    intval($xml_tv_channel->number),
-                    intval($xml_tv_channel->num_past_epg_days),
-                    intval($xml_tv_channel->num_future_epg_days),
-                    intval($xml_tv_channel->protected),
-                    $timeshift_hours, $buf_time);
+            $channel = new DemoChannel(
+                $cid,
+                strval($xml_tv_channel->caption),
+                strval($xml_tv_channel->icon_url),
+                intval($xml_tv_channel->archive),
+                strval($xml_tv_channel->streaming_url),
+                intval($xml_tv_channel->number),
+                intval($xml_tv_channel->num_past_epg_days),
+                intval($xml_tv_channel->num_future_epg_days),
+                intval($xml_tv_channel->protected),
+                intval($xml_tv_channel->timeshift_hours),
+                $buf_time);
 
             $this->channels->put($channel);
 
@@ -219,6 +218,14 @@ class DemoTv extends AbstractTv
 
         list($garb, $epg_id, $tvg_id) = preg_split('/_/', $channel_id);
 
+        try {
+            $time_shift = $this->get_channel($channel_id)->get_timeshift_hours() * 3600;
+            hd_print("Timeshift for channel: $time_shift sec");
+        } catch (Exception $ex) {
+            hd_print("Can't get channel with ID: $channel_id");
+            return array();
+        }
+
         $epg_date = gmdate("Ymd", $day_start_ts);
 
         $epg = array();
@@ -286,11 +293,10 @@ class DemoTv extends AbstractTv
         }
 
         $epg_result = array();
-        $epg_shift = isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : '0';
         $start = 0;
         $end = 0;
         foreach ($epg as $time => $value) {
-            $tm =  $time + $epg_shift;
+            $tm =  $time + $time_shift;
             $end = $tm;
             if ($start == 0)
                 $start = $tm;

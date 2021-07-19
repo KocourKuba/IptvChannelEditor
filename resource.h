@@ -40,7 +40,6 @@
 #define IDC_BUTTON_TEST_EPG             1021
 #define IDC_BUTTON_TEST_TVG             1022
 #define IDC_BUTTON_UPDATE_ICON          1023
-#define IDC_BUTTON_TEST_EPG2            1024
 #define IDC_BUTTON_CHECK_ARCHIVE        1024
 #define IDC_CHECK_ADULT                 1025
 #define IDC_CHECK_ARCHIVE               1026
@@ -99,6 +98,8 @@
 #define IDC_MFCLINK_DONATE_ABOUT        1079
 #define IDC_CHECK_AUTO_SYNC_CHANNELS    1080
 #define IDC_EDIT_ARCHIVE_DAYS           1081
+#define IDC_EDIT_TIME_SHIFT             1082
+#define IDC_SPIN_TIME_SHIFT             1083
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -131,7 +132,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32799
-#define _APS_NEXT_CONTROL_VALUE         1082
+#define _APS_NEXT_CONTROL_VALUE         1084
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif
 #endif

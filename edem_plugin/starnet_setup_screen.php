@@ -31,16 +31,11 @@ class DemoSetupScreen extends AbstractControlsScreen
         $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : DemoConfig::CHANNEL_LIST_URL;
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-        $epg_shift = isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : '0';
         $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0;
 
         $show_ops = array();
         $show_ops['yes'] = 'Да';
         $show_ops['no'] = 'Нет';
-
-        $shift_ops = array();
-        for ($i = -12; $i < 13; $i++)
-            $shift_ops[$i * 3600] = $i;
 
         $channels = array();
         $list = glob(DuneSystem::$properties['install_dir_path'] . "/*.xml");
@@ -51,7 +46,7 @@ class DemoSetupScreen extends AbstractControlsScreen
         }
 
         ControlFactory::add_vgap($defs, -10);
-        $this->add_label($defs, 'ЄDЄM TV', 'Версия ' . DemoConfig::PluginVersion . '. [' . DemoConfig::PluginDate . ']');
+        $this->add_label($defs, 'iEdem/iLook TV', 'Версия ' . DemoConfig::PluginVersion . '. [' . DemoConfig::PluginDate . ']');
 
         //$this->add_label($defs, 'Настройки ----------------------------------', '-----------------------------');
 
@@ -62,10 +57,6 @@ class DemoSetupScreen extends AbstractControlsScreen
         $this->add_combobox($defs,
             'channels_list', 'Используемый список каналов:',
             $channels_list, $channels, 0, true);
-
-        $this->add_combobox($defs,
-            'epg_shift', 'Коррекция программы (час):',
-            $epg_shift, $shift_ops, 0, true);
 
         $show_buf_time_ops = array();
         $show_buf_time_ops[0] = 'По умолчанию';
