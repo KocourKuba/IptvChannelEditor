@@ -223,6 +223,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_INFO_VIDEO, m_infoVideo);
 	DDX_Control(pDX, IDC_EDIT_INFO_VIDEO, m_wndInfoVideo);
 	DDX_Text(pDX, IDC_EDIT_INFO_AUDIO, m_infoAudio);
+	DDX_Text(pDX, IDC_EDIT_ARCHIVE_DAYS, m_archiveDays);
 	DDX_Control(pDX, IDC_EDIT_INFO_AUDIO, m_wndInfoAudio);
 	DDX_Control(pDX, IDC_STATIC_CHANNELS, m_wndChInfo);
 	DDX_Control(pDX, IDC_BUTTON_GET_INFO, m_wndGetInfo);
@@ -763,6 +764,7 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 			m_plEPG.Format(_T("EPG: %d"), entry->get_tvg_id());
 
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
+		m_archiveDays = entry->get_archive();
 		m_infoAudio = entry->get_audio().c_str();
 		m_infoVideo = entry->get_video().c_str();
 
@@ -1735,6 +1737,8 @@ void CEdemChannelEditorDlg::OnEnChangeEditNumPrev()
 
 void CEdemChannelEditorDlg::OnEnChangeEditArchiveCheck()
 {
+	UpdateData(TRUE);
+
 	if (m_archiveCheck < 0)
 		m_archiveCheck = 0;
 

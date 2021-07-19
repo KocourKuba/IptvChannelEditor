@@ -257,6 +257,7 @@ protected:
 	int m_prevDays = 0;
 	int m_nextDays = 0;
 	int m_archiveCheck = 0;
+	int m_archiveDays = 0;
 
 private:
 	static CString m_gl_domain;
