@@ -23,71 +23,76 @@
 		</tv_category>
 		<tv_category>
 			<id>5</id>
+			<caption>BTV</caption>
+			<icon_url>plugin_file://icons/BTV.png</icon_url>
+		</tv_category>
+		<tv_category>
+			<id>6</id>
 			<caption>CineMan</caption>
 			<icon_url>plugin_file://icons/CineMan.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>6</id>
+			<id>7</id>
 			<caption>KBC</caption>
 			<icon_url>plugin_file://icons/KBC.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>7</id>
+			<id>8</id>
 			<caption>MiniMax</caption>
 			<icon_url>plugin_file://icons/MiniMax.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>8</id>
+			<id>9</id>
 			<caption>VF</caption>
 			<icon_url>plugin_file://icons/VF.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>9</id>
+			<id>11</id>
 			<caption>UZ</caption>
 			<icon_url>plugin_file://icons/UZ_TV.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>11</id>
+			<id>12</id>
 			<caption>Новостные</caption>
 			<icon_url>plugin_file://icons/4.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>12</id>
+			<id>13</id>
 			<caption>Детские</caption>
 			<icon_url>plugin_file://icons/7.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>13</id>
+			<id>14</id>
 			<caption>Музыка</caption>
 			<icon_url>plugin_file://icons/3.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>14</id>
+			<id>15</id>
 			<caption>Спорт</caption>
 			<icon_url>plugin_file://icons/6.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>15</id>
+			<id>16</id>
 			<caption>Развлекательные</caption>
 			<icon_url>plugin_file://icons/8.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>16</id>
+			<id>17</id>
 			<caption>Познавательные</caption>
 			<icon_url>plugin_file://icons/22.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>17</id>
+			<id>18</id>
 			<caption>HD Каналы</caption>
 			<icon_url>plugin_file://icons/15.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>18</id>
+			<id>19</id>
 			<caption>Разное</caption>
 			<icon_url>plugin_file://icons/5.png</icon_url>
 		</tv_category>
 		<tv_category>
-			<id>19</id>
+			<id>20</id>
 			<caption>Тест</caption>
 			<icon_url>plugin_file://icons/16.png</icon_url>
 		</tv_category>
@@ -115,7 +120,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -142,7 +147,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -169,7 +174,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/235/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -196,7 +201,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/213/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -223,7 +228,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2024/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -250,7 +255,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5033/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -277,7 +282,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/237/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -317,7 +322,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5031/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -344,7 +349,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>1</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6303/index.m3u8</streaming_url>
 		</tv_channel>
@@ -473,7 +478,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>18</tv_category_id>
+				<tv_category_id>19</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/983/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -941,7 +946,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/200/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -955,7 +960,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/201/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1021,7 +1026,7 @@
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
 				<tv_category_id>2</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/202/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1736,7 +1741,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2442/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1749,8 +1754,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>14</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/236/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1763,7 +1768,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/711/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1776,7 +1781,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/120/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1789,7 +1794,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/122/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1802,8 +1807,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>14</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/1037/index.m3u8</streaming_url>
 		</tv_channel>
@@ -1815,7 +1820,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2395/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1828,7 +1833,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/115/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1841,7 +1846,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/836/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1854,7 +1859,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/142/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1867,7 +1872,7 @@
 			<num_past_epg_days>2</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/558/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1880,7 +1885,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/153/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1893,8 +1898,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>14</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/221/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1907,7 +1912,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/1038/index.m3u8</streaming_url>
 		</tv_channel>
@@ -1919,7 +1924,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/707/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1932,8 +1937,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>14</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/208/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1946,7 +1951,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/838/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1959,7 +1964,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2048/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1972,7 +1977,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6394/index.m3u8</streaming_url>
 		</tv_channel>
@@ -1984,7 +1989,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/724/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -1997,7 +2002,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/507/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2010,7 +2015,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/106/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2023,7 +2028,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/712/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2036,7 +2041,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2107/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2049,7 +2054,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/969/index.m3u8</streaming_url>
 		</tv_channel>
@@ -2061,7 +2066,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2008/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2074,7 +2079,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/523/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2087,7 +2092,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/828/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2100,7 +2105,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2086/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2113,7 +2118,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/831/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2126,7 +2131,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/962/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2140,7 +2145,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>18</tv_category_id>
+				<tv_category_id>19</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/955/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2153,7 +2158,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/141/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2166,7 +2171,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>18</tv_category_id>
+				<tv_category_id>19</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/505/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2179,8 +2184,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/228/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2193,8 +2198,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/234/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2207,7 +2212,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2002/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2220,7 +2225,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/144/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2233,7 +2238,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/519/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2246,7 +2251,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/270/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2259,7 +2264,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/271/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2272,7 +2277,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/160/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2285,7 +2290,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2007/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2298,8 +2303,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/996/index.m3u8</streaming_url>
 		</tv_channel>
@@ -2311,7 +2316,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/870/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2324,8 +2329,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>18</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>19</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/738/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2338,8 +2343,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/214/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2352,7 +2357,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/531/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2365,8 +2370,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/220/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2379,7 +2384,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/107/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2392,7 +2397,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/535/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2405,8 +2410,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/212/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2419,7 +2424,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/528/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2432,8 +2437,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/207/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2446,7 +2451,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/150/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2459,7 +2464,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/529/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2472,8 +2477,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/225/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2486,7 +2491,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/123/index.m3u8</streaming_url>
 		</tv_channel>
@@ -2498,7 +2503,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/124/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2511,8 +2516,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/222/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2525,7 +2530,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/730/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2538,7 +2543,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/543/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2551,7 +2556,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/156/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2564,8 +2569,8 @@
 			<num_past_epg_days>22</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>13</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/240/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2578,7 +2583,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/109/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2591,7 +2596,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/108/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2604,7 +2609,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/114/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2617,7 +2622,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/541/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2630,8 +2635,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>13</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/223/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2644,7 +2649,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/849/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2657,7 +2662,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/524/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2670,7 +2675,7 @@
 			<num_past_epg_days>22</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/909/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2683,8 +2688,8 @@
 			<num_past_epg_days>22</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>13</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/921/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2697,7 +2702,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5055/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2710,7 +2715,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/129/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2723,7 +2728,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/723/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2736,7 +2741,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/138/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2749,7 +2754,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/143/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2762,7 +2767,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2011/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2775,7 +2780,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/737/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2788,7 +2793,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2098/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2801,7 +2806,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/1041/index.m3u8</streaming_url>
 		</tv_channel>
@@ -2813,7 +2818,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/749/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2826,7 +2831,7 @@
 			<num_past_epg_days>22</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/727/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2839,7 +2844,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2052/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2852,7 +2857,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/137/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2865,7 +2870,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2001/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2878,7 +2883,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2157/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2891,8 +2896,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/218/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2905,8 +2910,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>16</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2044/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2919,8 +2924,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>16</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2045/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2933,8 +2938,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>16</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5049/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2947,7 +2952,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
+				<tv_category_id>16</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/105/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2960,7 +2965,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
+				<tv_category_id>16</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2129/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2973,7 +2978,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
+				<tv_category_id>16</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/546/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2986,7 +2991,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
+				<tv_category_id>16</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/748/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -2999,7 +3004,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/706/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3012,8 +3017,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2006/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3026,7 +3031,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/140/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3039,8 +3044,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/227/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3053,7 +3058,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/136/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3066,8 +3071,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6001/index.m3u8</streaming_url>
 		</tv_channel>
@@ -3079,8 +3084,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/968/index.m3u8</streaming_url>
 		</tv_channel>
@@ -3092,8 +3097,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
 				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/736/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3106,7 +3111,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/735/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3119,7 +3124,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10026/index.m3u8</streaming_url>
 		</tv_channel>
@@ -3131,8 +3136,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5045/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3145,7 +3150,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/1052/index.m3u8</streaming_url>
 		</tv_channel>
@@ -3157,8 +3162,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2033/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3171,8 +3176,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/226/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3185,7 +3190,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/837/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3198,8 +3203,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/231/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3212,7 +3217,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/133/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3225,8 +3230,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/216/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3239,7 +3244,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/134/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3252,8 +3257,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/230/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3266,7 +3271,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/703/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3279,7 +3284,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/119/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3292,9 +3297,9 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
-				<tv_category_id>19</tv_category_id>
+				<tv_category_id>18</tv_category_id>
+				<tv_category_id>20</tv_category_id>
 			</tv_categories>
 			<streaming_url>https://ts://rtmp.api.rt.com/hls/rtdru.m3u8</streaming_url>
 		</tv_channel>
@@ -3306,8 +3311,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/210/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3320,8 +3325,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/232/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3334,7 +3339,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/130/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3347,8 +3352,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/233/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3361,7 +3366,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/163/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3374,8 +3379,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6381/index.m3u8</streaming_url>
 		</tv_channel>
@@ -3387,7 +3392,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/162/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3400,8 +3405,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6002/index.m3u8</streaming_url>
 		</tv_channel>
@@ -3413,7 +3418,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/161/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3426,8 +3431,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/203/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3440,7 +3445,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/538/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3453,7 +3458,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/151/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3466,7 +3471,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/725/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3479,7 +3484,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/552/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3492,7 +3497,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/512/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3505,7 +3510,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/158/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3518,8 +3523,8 @@
 			<num_past_epg_days>3</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/918/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3532,7 +3537,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/731/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3545,7 +3550,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2124/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3558,7 +3563,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/111/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3571,7 +3576,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/152/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3584,7 +3589,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2127/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3597,7 +3602,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/704/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3610,7 +3615,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/742/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3623,7 +3628,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/117/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3636,7 +3641,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/743/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3649,7 +3654,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/745/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3662,7 +3667,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2135/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3675,7 +3680,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5056/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3688,8 +3693,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2155/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3702,8 +3707,8 @@
 			<num_past_epg_days>3</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/917/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3716,7 +3721,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/701/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3742,7 +3747,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/536/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3755,7 +3760,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/116/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3768,7 +3773,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/729/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3782,7 +3787,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/545/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3952,8 +3957,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2090/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3966,7 +3971,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/155/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3979,7 +3984,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/530/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -3992,8 +3997,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/211/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4006,7 +4011,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/522/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4019,8 +4024,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/206/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4033,8 +4038,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>15</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/215/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4047,7 +4052,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>14</tv_category_id>
+				<tv_category_id>15</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/290/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4060,7 +4065,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/135/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4073,8 +4078,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/920/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4087,7 +4092,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/121/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4100,8 +4105,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/954/index.m3u8</streaming_url>
 		</tv_channel>
@@ -4139,8 +4144,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>16</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/5035/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4153,8 +4158,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
-				<tv_category_id>17</tv_category_id>
+				<tv_category_id>12</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6308/index.m3u8</streaming_url>
 			<disabled>true</disabled>
@@ -4270,7 +4275,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/159/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4335,7 +4340,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>11</tv_category_id>
+				<tv_category_id>12</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/407/index.m3u8</streaming_url>
 		</tv_channel>
@@ -4347,7 +4352,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/710/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4360,7 +4365,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2130/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4373,7 +4378,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2141/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4386,7 +4391,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/7224/index.m3u8</streaming_url>
 		</tv_channel>
@@ -4723,7 +4728,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/532/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4736,8 +4741,8 @@
 			<num_past_epg_days>3</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
 				<tv_category_id>17</tv_category_id>
+				<tv_category_id>18</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/908/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4750,7 +4755,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/2084/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4763,7 +4768,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10063/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4776,7 +4781,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10065/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4789,7 +4794,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10076/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4802,7 +4807,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10072/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4815,7 +4820,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10071/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4906,7 +4911,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10000/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4919,7 +4924,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10001/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4932,7 +4937,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11119/index.m3u8</streaming_url>
 		</tv_channel>
@@ -4944,8 +4949,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>13</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/537/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4958,7 +4963,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11117/index.m3u8</streaming_url>
 		</tv_channel>
@@ -4970,7 +4975,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10003/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -4983,7 +4988,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11120/index.m3u8</streaming_url>
 		</tv_channel>
@@ -4995,7 +5000,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10004/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5008,7 +5013,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10005/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5021,7 +5026,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11121/index.m3u8</streaming_url>
 		</tv_channel>
@@ -5033,7 +5038,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10006/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5046,7 +5051,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10007/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5059,7 +5064,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11116/index.m3u8</streaming_url>
 		</tv_channel>
@@ -5071,7 +5076,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10009/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5084,7 +5089,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10008/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5097,7 +5102,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10010/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5110,7 +5115,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10051/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5123,7 +5128,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10052/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5136,7 +5141,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10053/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5162,7 +5167,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10054/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5175,7 +5180,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10055/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5188,7 +5193,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10080/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5201,7 +5206,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10081/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5214,7 +5219,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11122/index.m3u8</streaming_url>
 		</tv_channel>
@@ -5226,7 +5231,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10082/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5239,7 +5244,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10083/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5252,7 +5257,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10084/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5265,7 +5270,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10085/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5278,7 +5283,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13064/index.m3u8</streaming_url>
 		</tv_channel>
@@ -5290,7 +5295,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10087/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5563,7 +5568,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11004/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5576,7 +5581,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11006/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5589,7 +5594,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11005/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5602,7 +5607,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11007/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5615,7 +5620,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11008/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5628,7 +5633,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11009/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5641,7 +5646,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11010/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5654,7 +5659,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11011/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5667,7 +5672,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11012/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5680,7 +5685,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11013/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5719,7 +5724,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11072/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5732,7 +5737,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11073/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5745,7 +5750,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11074/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5758,7 +5763,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11075/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5771,7 +5776,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11076/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5784,7 +5789,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11077/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5797,7 +5802,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11078/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5810,7 +5815,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11105/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5823,7 +5828,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11089/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5836,7 +5841,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>13</tv_category_id>
+				<tv_category_id>14</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11082/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5849,7 +5854,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11079/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5862,7 +5867,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11080/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5875,7 +5880,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11081/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5888,7 +5893,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11084/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5914,7 +5919,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11085/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5927,7 +5932,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11086/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5940,7 +5945,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11087/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5953,7 +5958,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11088/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5966,7 +5971,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11091/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -5979,7 +5984,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13060/index.m3u8</streaming_url>
 		</tv_channel>
@@ -5991,7 +5996,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11001/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6004,7 +6009,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11002/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6017,7 +6022,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11003/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6030,7 +6035,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11025/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6043,7 +6048,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11035/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6056,7 +6061,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11036/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6069,7 +6074,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11057/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6082,7 +6087,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11058/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6095,7 +6100,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11090/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6108,7 +6113,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10002/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6120,7 +6125,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>6</tv_category_id>
+				<tv_category_id>7</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11093/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6193,7 +6198,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13009/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6205,7 +6210,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13010/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6217,7 +6222,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13011/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6229,7 +6234,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13012/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6241,7 +6246,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13013/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6253,7 +6258,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13014/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6265,7 +6270,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13015/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6277,7 +6282,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11118/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6289,7 +6294,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13017/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6301,7 +6306,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13018/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6313,7 +6318,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13019/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6325,7 +6330,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11123/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6337,7 +6342,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10086/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6350,7 +6355,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13022/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6362,7 +6367,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13023/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6374,7 +6379,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13024/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6386,7 +6391,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13025/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6398,7 +6403,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13016/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6410,7 +6415,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13027/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6422,7 +6427,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13028/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6434,7 +6439,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13029/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6446,8 +6451,8 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>8</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13020/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6459,7 +6464,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13031/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6471,7 +6476,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13032/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6483,7 +6488,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13033/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6495,7 +6500,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13034/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6507,7 +6512,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13035/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6519,7 +6524,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13036/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6531,7 +6536,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13037/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6543,7 +6548,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13038/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6555,7 +6560,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13039/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6567,7 +6572,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13040/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6579,7 +6584,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13041/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6591,7 +6596,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13021/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6603,7 +6608,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13026/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6615,7 +6620,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13044/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6627,7 +6632,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/6369/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -6640,7 +6645,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13045/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6652,7 +6657,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13046/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6664,7 +6669,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13047/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6676,7 +6681,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13048/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6688,7 +6693,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13049/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6700,7 +6705,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13050/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6712,7 +6717,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13051/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6724,7 +6729,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13052/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6736,7 +6741,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13053/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6748,7 +6753,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13054/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6760,7 +6765,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13055/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6772,7 +6777,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13056/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6784,7 +6789,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13030/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6835,7 +6840,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13058/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6847,7 +6852,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13059/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6859,7 +6864,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13042/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6871,7 +6876,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13061/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6883,7 +6888,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13062/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6895,7 +6900,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13063/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6907,7 +6912,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13043/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6919,7 +6924,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13065/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6931,7 +6936,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13066/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6943,7 +6948,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13067/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6955,7 +6960,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13068/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6967,7 +6972,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13069/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6979,7 +6984,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13070/index.m3u8</streaming_url>
 		</tv_channel>
@@ -6991,7 +6996,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13071/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7003,7 +7008,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13072/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7015,7 +7020,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13073/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7027,7 +7032,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13074/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7039,7 +7044,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13075/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7051,7 +7056,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13076/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7063,7 +7068,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13077/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7075,7 +7080,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13078/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7087,7 +7092,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13079/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7099,7 +7104,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13080/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7111,7 +7116,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13081/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7123,7 +7128,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13082/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7135,7 +7140,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13083/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7147,7 +7152,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13084/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7159,7 +7164,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13085/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7171,7 +7176,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13087/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7183,7 +7188,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13086/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7195,7 +7200,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13088/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7207,7 +7212,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13089/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7219,7 +7224,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13090/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7231,7 +7236,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13091/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7243,7 +7248,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13092/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7255,7 +7260,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13093/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7267,7 +7272,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>8</tv_category_id>
+				<tv_category_id>9</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13094/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7279,7 +7284,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>12</tv_category_id>
+				<tv_category_id>13</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13057/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7291,7 +7296,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>5</tv_category_id>
+				<tv_category_id>6</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11014/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -7316,7 +7321,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13095/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7328,7 +7333,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13096/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7340,7 +7345,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13097/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7352,7 +7357,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13098/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7364,7 +7369,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>7</tv_category_id>
+				<tv_category_id>8</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13099/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7376,7 +7381,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13100/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7388,7 +7393,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>9</tv_category_id>
+				<tv_category_id>11</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13101/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7400,7 +7405,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11071/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -7413,7 +7418,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/9076/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -7426,7 +7431,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/7246/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7438,7 +7443,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/7349/index.m3u8</streaming_url>
 		</tv_channel>
@@ -7450,7 +7455,7 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>16</tv_category_id>
+				<tv_category_id>17</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10056/index.m3u8</streaming_url>
 			<archive>1</archive>
@@ -7463,9 +7468,1451 @@
 			<num_past_epg_days>7</num_past_epg_days>
 			<num_future_epg_days>7</num_future_epg_days>
 			<tv_categories>
-				<tv_category_id>15</tv_category_id>
+				<tv_category_id>16</tv_category_id>
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/13000/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>минимакс-ужасы classic HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5215</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5215.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>8</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14128/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>UZ Кино Новинки HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5216</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5216.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>11</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14126/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>UZ Комедия HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5217</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5217.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>11</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14127/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Робокоп HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5218</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5218.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14005/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Обитель зла HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5219</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5219.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14007/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Счастливы в месте</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5220</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5220.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14010/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Брэд Питт и Анджелина Джоли HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5221</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5221.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14015/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Мистер Бин HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5222</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5222.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14016/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Семейные комедии HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5223</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5223.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14023/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Жан Рено HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5224</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5224.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14025/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Квентин Тарантино</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5225</epg_id>
+			<icon_url/>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14030/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Чернобыль HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5226</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5226.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14032/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Трансформеры HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5227</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5227.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14033/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Брюс Виллис HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5228</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5228.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14034/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Сильвестр Сталлоне HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5229</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5229.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14035/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Афганистан Чечня</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5230</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5230.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14037/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Пираты карибскго моря HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5231</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5231.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14038/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Сделано в СССР</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5232</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5232.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14039/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Игра престолов HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5233</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5233.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14040/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Кошмар на улице Вязов (VHS)</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5234</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5234.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14041/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Арнольд Шварценеггер HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5235</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5235.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14042/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Дьявольщина HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5236</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5236.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14043/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Сэмюэл Лерой Джексон HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5237</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5237.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14044/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Криминал ТВ</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5238</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5238.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14048/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV X-Files HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5239</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5239.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14049/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Стивен Сигал HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5240</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5240.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14060/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Луи де Фюнес HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5241</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5241.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14061/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Джеки Чан HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5242</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5242.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14062/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Николас Кейдж HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5243</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5243.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14063/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Бесмертный полк</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5244</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5244.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14064/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Вин Дизель HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5245</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5245.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14065/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Дензел Вашингтон HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5246</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5246.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14066/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Александр Панкратов-Черный</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5247</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5247.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14070/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Мортал Комбат</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5248</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5248.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14074/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Mix ужасы</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5249</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5249.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14075/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Военные сериалы HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5250</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5250.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14079/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Джейсон Стейтем HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5251</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5251.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14080/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Гарри Поттер HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5252</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5252.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14082/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Жан-Клод Ван Дамм HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5253</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5253.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14083/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Дембель ТВ HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5254</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5254.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14084/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Black Tv HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5255</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5255.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14085/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Индиана Джонс HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5256</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5256.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14086/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Marvel HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5257</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5257.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14087/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Леонид Гайдай</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5258</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5258.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14089/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Эльдар Рязанов</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5259</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5259.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14090/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Агент 007</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5260</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5260.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14092/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Мылодрама HD (16+)</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5261</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5261.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14093/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Джим Керри HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5262</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5262.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14094/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Брюс Ли HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5263</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5263.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14099/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Ивановы-Ивановы HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5264</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5264.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14101/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Паранормальное явление</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5265</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5265.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14102/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Полицейский с Рублёвки HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5266</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5266.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14103/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Воронины</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5267</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5267.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14104/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Универ. Новая общага HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5268</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5268.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14105/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Пьер Ришар и Жерар Депардье HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5269</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5269.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14107/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Солдаты HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5270</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5270.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14108/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Чарли Чаплин</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5271</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5271.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14116/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Свердловская киностудия</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5272</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5272.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14117/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Рижская киностудия</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5273</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5273.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14118/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Элен и ребята</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5274</epg_id>
+			<icon_url/>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14119/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Пятница 13-е HD (коллекция)</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5275</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5275.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14124/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Человек паук</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5276</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5276.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>5</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14125/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z! Channel HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>1113</epg_id>
+			<icon_url/>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14134/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z! Comedy HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>1114</epg_id>
+			<icon_url/>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14135/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z! Crime HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>1115</epg_id>
+			<icon_url/>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14136/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z! Horror HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>1116</epg_id>
+			<icon_url/>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14137/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Baraza Music HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>4651</epg_id>
+			<icon_url>http://epg.it999.ru/img2/4651.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/10077/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Eurodance</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5281</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5281.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14029/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Relax Космос</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5282</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5282.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14031/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Хит за хитом (шансон)</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5283</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5283.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14081/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Михаил Круг HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5284</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5284.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14110/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Виктор Цой (группа КИНО)</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5285</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5285.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14111/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Бутырка</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5286</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5286.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14112/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Dubstep</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5287</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5287.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14120/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV The Offspring</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5288</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5288.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14121/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV ClubHouse HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5289</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5289.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14122/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z! Musiс HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5290</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5290.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14138/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z! Rock HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5291</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5291.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>14</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14139/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Фиксики</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5305</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5305.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14000/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Русалочка</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5306</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5306.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14002/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Том и Джерри HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5307</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5307.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14004/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Вуншпунш</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5308</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5308.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14006/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Детки из класса 402</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5309</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5309.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14008/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Кот Ик</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5310</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5310.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14009/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Мультфильмы СССР -1</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5311</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5311.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14018/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Чип и Дейл</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5312</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5312.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14019/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Тимон и Пумба</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5313</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5313.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14021/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Алладин</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5314</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5314.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14022/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Мультфильмы СССР -3</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5315</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5315.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14024/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Ералаш</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5316</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5316.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14026/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Мультпарад 60FPS HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5317</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5317.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14036/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Anime HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5318</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5318.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14045/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Ну погоди</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5319</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5319.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14046/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Маша медведь</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5320</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5320.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14047/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Гравити Фолз</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5321</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5321.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14057/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Футурама</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5322</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5322.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14067/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Винни-Пух</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5323</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5323.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14068/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Огги и тараканы</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5324</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5324.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14069/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Гуфи и его команда</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5325</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5325.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14071/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Барбоскины</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5326</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5326.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14072/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Приключения мишек Гамми</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5327</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5327.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14073/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Чудеса на виражах</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5328</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5328.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14088/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV DreamWorks HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5329</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5329.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14091/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Черепашки-ниндзя HD VHS</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5330</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5330.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14100/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Черепашки-ниндзя HD (кино)</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5331</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5331.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14113/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Масяня</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5332</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5332.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14114/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Утиные истории</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5333</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5333.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14123/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Millennium TV HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5356</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5356.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14160/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Akudji FilmBox HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5357</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5357.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14161/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>YOSSO TV GRAND</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5358</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5358.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14171/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>YOSSO TV VHS</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5359</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5359.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14172/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>YOSSO TV Русские фильмы</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5360</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5360.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14174/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>YOSSO TV Советские фильмы</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5361</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5361.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14175/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>YOSSO TV NEW Кино</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5362</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5362.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>3</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14177/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>WWE Russian</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>4734</epg_id>
+			<icon_url>http://epg.it999.ru/img2/4734.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>15</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/11056/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Комбат</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5344</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5344.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>15</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14001/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Йога</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5345</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5345.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>15</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14028/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV WWE HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5346</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5346.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>15</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14055/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Фитнес HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5347</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5347.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>15</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14056/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV BUSHIDO</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5348</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5348.png</icon_url>
+			<num_past_epg_days>7</num_past_epg_days>
+			<num_future_epg_days>7</num_future_epg_days>
+			<tv_categories>
+				<tv_category_id>15</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14076/index.m3u8</streaming_url>
 		</tv_channel>
 	</tv_channels>
 </tv_info>
