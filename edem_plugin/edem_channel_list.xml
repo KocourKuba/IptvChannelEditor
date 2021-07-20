@@ -5425,7 +5425,7 @@
 			<caption>CineMan</caption>
 			<tvg_id>0</tvg_id>
 			<epg_id>4682</epg_id>
-			<icon_url>plugin_file://icons/channels/4682.png</icon_url>
+			<icon_url>http://epg.it999.ru/img2/4682.png</icon_url>
 			<tv_categories>
 				<tv_category_id>6</tv_category_id>
 			</tv_categories>
