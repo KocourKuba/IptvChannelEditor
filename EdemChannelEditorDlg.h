@@ -89,8 +89,8 @@ protected:
 	afx_msg void OnPlayPlaylistStream();
 	afx_msg void OnUpdatePlayPlaylistStream(CCmdUI* pCmdUI);
 	afx_msg void OnPlayChannelStreamArchive();
-	afx_msg void OnSyncEntry();
-	afx_msg void OnUpdateSyncEntry(CCmdUI* pCmdUI);
+	afx_msg void OnSyncTreeItem();
+	afx_msg void OnUpdateSyncTreeItem(CCmdUI* pCmdUI);
 
 	afx_msg void OnBnClickedButtonAddNewChannelsList();
 	afx_msg void OnBnClickedButtonPlFilter();

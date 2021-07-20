@@ -158,8 +158,8 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM, &CEdemChannelEditorDlg::OnUpdatePlayChannelStream)
 	ON_COMMAND(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnPlayPlaylistStream)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM_PL, &CEdemChannelEditorDlg::OnUpdatePlayPlaylistStream)
-	ON_COMMAND(ID_SYNC_ENTRY, &CEdemChannelEditorDlg::OnSyncEntry)
-	ON_UPDATE_COMMAND_UI(ID_SYNC_ENTRY, &CEdemChannelEditorDlg::OnUpdateSyncEntry)
+	ON_COMMAND(ID_SYNC_TREE_ITEM, &CEdemChannelEditorDlg::OnSyncTreeItem)
+	ON_UPDATE_COMMAND_UI(ID_SYNC_TREE_ITEM, &CEdemChannelEditorDlg::OnUpdateSyncTreeItem)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_MESSAGE(WN_START_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnStartLoadPlaylist)
@@ -1614,7 +1614,7 @@ void CEdemChannelEditorDlg::OnAddTo(UINT id)
 	for (const auto& hSelectedItem : m_wndPlaylistTree.GetSelectedItems())
 	{
 		changed |= AddChannel(hSelectedItem, category_id);
-		OnSyncEntry();
+		OnSyncTreeItem();
 	}
 
 	if (changed)
@@ -2436,7 +2436,7 @@ void CEdemChannelEditorDlg::OnAddUpdateChannel()
 	for (const auto& hSelectedItem : m_wndPlaylistTree.GetSelectedItems())
 	{
 		needCheckExisting |= AddChannel(hSelectedItem);
-		OnSyncEntry();
+		OnSyncTreeItem();
 	}
 
 	if (needCheckExisting)
@@ -2497,7 +2497,7 @@ void CEdemChannelEditorDlg::OnUpdateIcon()
 		channel->set_icon_uri(entry->get_icon_uri());
 		channel->copy_icon(entry->get_icon());
 		theApp.SetImage(channel->get_icon(), m_wndIcon);
-		OnSyncEntry();
+		OnSyncTreeItem();
 		set_allow_save();
 	}
 }
@@ -2776,31 +2776,60 @@ void CEdemChannelEditorDlg::OnPlayChannelStreamArchive()
 	}
 }
 
-void CEdemChannelEditorDlg::OnSyncEntry()
+void CEdemChannelEditorDlg::OnSyncTreeItem()
 {
-	auto entry = GetPlaylistEntry(m_wndPlaylistTree.GetSelectedItem());
-	if (!entry)
-		return;
-
-	int id = entry->get_channel_id();
-	auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
-							  {
-								  return channel->get_channel_id() == id;
-							  });
-
-	if (found != m_channels.end())
+	if (m_lastTree == m_wndPlaylistTree.GetSafeHwnd())
 	{
-		if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+		auto entry = GetPlaylistEntry(m_wndPlaylistTree.GetSelectedItem());
+		if (!entry)
+			return;
+
+		int id = entry->get_channel_id();
+		auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
+								  {
+									  return channel->get_channel_id() == id;
+								  });
+
+		if (found != m_channels.end())
 		{
-			m_wndChannelsTree.SelectItem(hSelected);
-			LoadChannelInfo(hSelected);
+			if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+			{
+				m_wndChannelsTree.SelectItem(hSelected);
+			}
+		}
+	}
+	else if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
+	{
+		auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
+		if (!channel)
+			return;
+
+		int id = channel->get_channel_id();
+		auto found = std::find_if(m_playlist.begin(), m_playlist.end(), [id](const auto& channel)
+								  {
+									  return channel->get_channel_id() == id;
+								  });
+
+		if (found != m_playlist.end())
+		{
+			if (auto hSelected = FindTreeItem(m_wndPlaylistTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+			{
+				m_wndPlaylistTree.SelectItem(hSelected);
+			}
 		}
 	}
 }
 
-void CEdemChannelEditorDlg::OnUpdateSyncEntry(CCmdUI* pCmdUI)
+void CEdemChannelEditorDlg::OnUpdateSyncTreeItem(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!m_bAutoSync && m_wndPlaylistTree.GetSelectedCount() == 1 && GetPlaylistEntry(m_wndPlaylistTree.GetSelectedItem()) != nullptr);
+	CWnd* pFocus = GetFocus();
+	BOOL enable = FALSE;
+	if (pFocus == &m_wndChannelsTree)
+		enable = (m_wndChannelsTree.GetSelectedCount() == 1 && GetChannel(m_wndChannelsTree.GetSelectedItem()) != nullptr);
+	else if (pFocus == &m_wndPlaylistTree)
+		enable = (!m_bAutoSync && m_wndPlaylistTree.GetSelectedCount() == 1 && GetPlaylistEntry(m_wndPlaylistTree.GetSelectedItem()) != nullptr);
+
+	pCmdUI->Enable(enable);
 }
 
 void CEdemChannelEditorDlg::OnToggleChannel()

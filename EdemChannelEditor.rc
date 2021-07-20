@@ -524,9 +524,9 @@ BEGIN
     VK_INSERT,      ID_NEW_CHANNEL,         VIRTKEY, NOINVERT
     VK_DELETE,      ID_REMOVE_CHANNEL,      VIRTKEY, NOINVERT
     "S",            ID_SAVE,                VIRTKEY, CONTROL, NOINVERT
+    VK_SPACE,       ID_SYNC_TREE_ITEM,      VIRTKEY, CONTROL, NOINVERT
     VK_F5,          ID_UPDATE_CHANNEL,      VIRTKEY, NOINVERT
     VK_F6,          ID_UPDATE_ICON,         VIRTKEY, NOINVERT
-    VK_SPACE,       ID_SYNC_ENTRY,          VIRTKEY, NOINVERT
 END
 
 
@@ -554,6 +554,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Get Stream Info for All channels", ID_GET_STREAM_INFO_ALL
         MENUITEM "Get Stream Info\tF4",         ID_GET_STREAM_INFO
+        MENUITEM SEPARATOR
+        MENUITEM "Sync with Playlist\tCtrl+SPACE", ID_SYNC_TREE_ITEM
     END
 END
 
@@ -567,10 +569,10 @@ BEGIN
         MENUITEM "Add/Update Channel\tF5",      ID_UPDATE_CHANNEL
         MENUITEM "SubMenu",                     ID_PLAYLISTMENU_SUBMENU
         MENUITEM SEPARATOR
-        MENUITEM "Sync with Channel\tSPACE",    ID_SYNC_ENTRY
-        MENUITEM SEPARATOR
         MENUITEM "Get Stream Info for All channels", ID_GET_STREAM_INFO_ALL
         MENUITEM "Get Stream Info\tF4",         ID_GET_STREAM_INFO
+        MENUITEM SEPARATOR
+        MENUITEM "Sync with Channel\tCtrl+SPACE", ID_SYNC_TREE_ITEM
     END
 END
 

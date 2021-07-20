@@ -109,11 +109,11 @@
 #define ID_TOGGLE_CHANNEL               32792
 #define ID_UPDATE_CHANNEL               32793
 #define ID_UPDATE_ICON                  32794
-#define ID_SYNC_ENTRY                   32795
-#define ID_PLAYLISTMENU_SUBMENU         32796
+#define ID_PLAYLISTMENU_SUBMENU         32795
+#define ID_SYNC_TREE_ITEM               32796
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
