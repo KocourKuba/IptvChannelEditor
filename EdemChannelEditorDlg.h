@@ -95,13 +95,11 @@ protected:
 	afx_msg void OnBnClickedButtonAddNewChannelsList();
 	afx_msg void OnBnClickedButtonPlFilter();
 	afx_msg void OnBnClickedButtonAbout();
-	afx_msg void OnBnClickedButtonAddToShowIn();
 	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonCustomPlaylist();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonPlSearchNext();
-	afx_msg void OnBnClickedButtonRemoveFromShowIn();
 	afx_msg void OnBnClickedButtonAccessInfo();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
@@ -110,7 +108,6 @@ protected:
 	afx_msg void OnUpdateIcon();
 	afx_msg void OnUpdateUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckCustomize();
-	afx_msg void OnBnClickedButtonAddCategory();
 	afx_msg void OnEditChangeTvIdd();
 	afx_msg void OnBnClickedCheckAdult();
 	afx_msg void OnBnClickedCheckArchive();
@@ -137,9 +134,9 @@ protected:
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
-	afx_msg void OnLbnSelchangeListCategories();
 	afx_msg void OnCopyTo(UINT id);
 	afx_msg void OnMoveTo(UINT id);
+	afx_msg void OnAddTo(UINT id);
 	afx_msg LRESULT OnStartLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 
 	DECLARE_MESSAGE_MAP()
@@ -149,10 +146,9 @@ private:
 	void set_allow_save(BOOL val = TRUE);
 
 	bool LoadChannels(const CString& path);
-	bool AddChannel(HTREEITEM hSelectedItem);
+	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
 	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry, BOOL bRegex, BOOL bCase);
 
-	void FillCategories();
 	void FillChannels();
 	void FillPlaylist();
 
@@ -182,6 +178,7 @@ private:
 
 	bool IsSelectedTheSameType() const;
 	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
+	bool IsSelectedCategory() const;
 	bool IsChannelSelectionConsistent() const;
 	bool IsSelectedTheSameCategory() const;
 	bool IsChannel(HTREEITEM hItem) const;
@@ -190,8 +187,9 @@ private:
 	bool IsPlaylistCategory(HTREEITEM hItem) const;
 	bool IsCategoryInChannels(const ChannelCategory* category) const;
 
-	const ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
+	ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
 	int GetNewCategoryID() const;
+	int GetCategoryByName(const std::wstring& categoryName);
 	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
@@ -201,8 +199,6 @@ public:
 protected:
 	CToolTipCtrl m_pToolTipCtrl;
 	CTreeCtrlEx m_wndChannelsTree;
-	CComboBox m_wndCategories;
-	CListBox m_wndCategoriesList;
 	CComboBox m_wndPlaylistType;
 	CTreeCtrlEx m_wndPlaylistTree;
 	CComboBox m_wndChannels;
@@ -221,8 +217,6 @@ protected:
 	CButton m_wndPlArchive;
 	CButton m_wndTestTVG;
 	CButton m_wndTestEPG;
-	CButton m_wndAddToShow;
-	CButton m_wndRemoveFromShow;
 	CButton m_wndChooseUrl;
 	CButton m_wndDownloadUrl;
 	CButton m_wndGetInfo;

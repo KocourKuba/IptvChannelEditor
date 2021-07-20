@@ -20,8 +20,6 @@
 #define IDR_MAINFRAME                   128
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_ACCESS_INFO          1002
-#define IDC_BUTTON_ADD_CATEGORY         1003
-#define IDC_BUTTON_ADD_TO_SHOW          1004
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
 #define IDC_BUTTON_GET                  1007
@@ -32,7 +30,6 @@
 #define IDC_BUTTON_PACK                 1013
 #define IDC_BUTTON_PL_FILTER            1014
 #define IDC_BUTTON_PL_SEARCH_NEXT       1015
-#define IDC_BUTTON_REMOVE_FROM_SHOW     1016
 #define IDC_BUTTON_SAVE                 1017
 #define IDC_BUTTON_SEARCH_NEXT          1018
 #define IDC_BUTTON_SETTINGS             1019
@@ -48,7 +45,6 @@
 #define IDC_CHECK_GLOBAL                1029
 #define IDC_CHECK_PL_ARCHIVE            1030
 #define IDC_CHECK_REGEX                 1031
-#define IDC_COMBO_CATEGORY              1033
 #define IDC_COMBO_CHANNELS              1034
 #define IDC_COMBO_PLAYLIST              1035
 #define IDC_COMBO_SORT                  1036
@@ -67,7 +63,6 @@
 #define IDC_EDIT_STRING                 1053
 #define IDC_EDIT_TVG_ID                 1054
 #define IDC_EDIT_URL_ID                 1055
-#define IDC_LIST_CATEGORIES             1056
 #define IDC_MFCEDITBROWSE_PLAYER        1057
 #define IDC_MFCEDITBROWSE_PROBE         1058
 #define IDC_MFCLINK_DONATE              1059
@@ -108,23 +103,21 @@
 #define ID_PLAY_STREAM                  32786
 #define ID_PLAY_STREAM_PL               32787
 #define ID_PLAYARCHIVE_                 32788
-#define ID_PLAYARCHIVE_32796            32789
-#define ID_PLAYARCHIVE_32797            32790
-#define ID_PLAYARCHIVE_32798            32791
-#define ID_REMOVE_CATEGORY              32792
-#define ID_REMOVE_CHANNEL               32793
-#define ID_SAVE                         32794
-#define ID_TOGGLE_CHANNEL               32795
-#define ID_UPDATE_CHANNEL               32796
-#define ID_UPDATE_ICON                  32797
-#define ID_SYNC_ENTRY                   32798
+#define ID_REMOVE_CATEGORY              32789
+#define ID_REMOVE_CHANNEL               32790
+#define ID_SAVE                         32791
+#define ID_TOGGLE_CHANNEL               32792
+#define ID_UPDATE_CHANNEL               32793
+#define ID_UPDATE_ICON                  32794
+#define ID_SYNC_ENTRY                   32795
+#define ID_PLAYLISTMENU_SUBMENU         32796
 
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
-#define _APS_NEXT_COMMAND_VALUE         32799
+#define _APS_NEXT_COMMAND_VALUE         32797
 #define _APS_NEXT_CONTROL_VALUE         1084
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif
