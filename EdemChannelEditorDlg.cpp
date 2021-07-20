@@ -28,6 +28,12 @@
 
 #define WN_START_LOAD_PLAYLIST (WM_USER + 301)
 
+#define ID_COPY_TO_START	40000
+#define ID_COPY_TO_END		ID_COPY_TO_START + 511
+
+#define ID_MOVE_TO_START	40512
+#define ID_MOVE_TO_END		ID_MOVE_TO_START + 511
+
 BOOL CEdemChannelEditorDlg::m_embedded_info = FALSE;
 CString CEdemChannelEditorDlg::m_gl_domain;
 CString CEdemChannelEditorDlg::m_gl_access_key;
@@ -56,16 +62,6 @@ inline BOOL CheckForTimeOut(DWORD dwStartTime, DWORD dwTimeOut)
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
 	return lParam1 > lParam2;
-}
-
-void AfxPump()
-{
-	MSG iMsg;
-	while (::PeekMessage(&iMsg, NULL, NULL, NULL, PM_NOREMOVE))
-	{
-		::AfxGetThread()->PumpMessage();   // pump messages until queue is
-										   // empty
-	}
 }
 
 using namespace SevenZip;
@@ -168,6 +164,9 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_MESSAGE(WN_START_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnStartLoadPlaylist)
 	ON_LBN_SELCHANGE(IDC_LIST_CATEGORIES, &CEdemChannelEditorDlg::OnLbnSelchangeListCategories)
+
+	ON_COMMAND_RANGE(ID_COPY_TO_START, ID_COPY_TO_END, &CEdemChannelEditorDlg::OnCopyTo)
+	ON_COMMAND_RANGE(ID_MOVE_TO_START, ID_MOVE_TO_END, &CEdemChannelEditorDlg::OnMoveTo)
 END_MESSAGE_MAP()
 
 CEdemChannelEditorDlg::CEdemChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -1083,8 +1082,7 @@ void CEdemChannelEditorDlg::OnRemoveChannel()
 
 void CEdemChannelEditorDlg::OnUpdateRemoveChannel(CCmdUI* pCmdUI)
 {
-	BOOL enable = GetChannel(m_wndChannelsTree.GetFirstSelectedItem()) != nullptr && IsSelectedTheSameType();
-	pCmdUI->Enable(enable);
+	pCmdUI->Enable(!!IsSelectedChannelsOrEntries(true));
 }
 
 void CEdemChannelEditorDlg::OnChannelUp()
@@ -1444,24 +1442,48 @@ void CEdemChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResul
 	CMenu menu;
 	VERIFY(menu.LoadMenu(IDR_MENU_CHANNEL));
 
-	CMenu* popup = menu.GetSubMenu(0);
-	if (!popup)
+	CMenu* pMenu = menu.GetSubMenu(0);
+	if (!pMenu)
 		return;
 
 	if (m_wndChannelsTree.GetSelectedCount() == 1)
-		popup->SetDefaultItem(ID_PLAY_STREAM);
+		pMenu->SetDefaultItem(ID_PLAY_STREAM);
 
 	CCmdUI cmdUI;
-	cmdUI.m_nIndexMax = popup->GetMenuItemCount();
+	cmdUI.m_nIndexMax = pMenu->GetMenuItemCount();
 	for (UINT i = 0; i < cmdUI.m_nIndexMax; ++i)
 	{
 		cmdUI.m_nIndex = i;
-		cmdUI.m_nID = popup->GetMenuItemID(i);
-		cmdUI.m_pMenu = popup;
+		cmdUI.m_nID = pMenu->GetMenuItemID(i);
+		cmdUI.m_pMenu = pMenu;
 		cmdUI.DoUpdate(this, FALSE);
 	}
 
-	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, ptScreen.x, ptScreen.y, this, nullptr);
+	if (!m_categories.empty() && IsSelectedChannelsOrEntries())
+	{
+		CMenu subMenuCopy;
+		subMenuCopy.CreatePopupMenu();
+
+		CMenu subMenuMove;
+		subMenuMove.CreatePopupMenu();
+
+		auto itemCategory = GetItemCategory(m_wndChannelsTree.GetFirstSelectedItem());
+		int i = 0;
+		for (const auto& category : m_categories)
+		{
+			if (itemCategory->get_id() == category.first) continue;
+
+			subMenuCopy.AppendMenu(MF_STRING | MF_ENABLED, ID_COPY_TO_START + category.first, category.second->get_caption().c_str());
+			subMenuMove.AppendMenu(MF_STRING | MF_ENABLED, ID_MOVE_TO_START + category.first, category.second->get_caption().c_str());
+		}
+
+		pMenu->InsertMenu(ID_EDIT_RENAME, MF_BYCOMMAND | MF_POPUP, (UINT_PTR)subMenuCopy.Detach(), _T("Copy To"));
+		pMenu->InsertMenu(ID_EDIT_RENAME, MF_BYCOMMAND | MF_POPUP, (UINT_PTR)subMenuMove.Detach(), _T("Move To"));
+	}
+
+	CContextMenuManager* manager = theApp.GetContextMenuManager();
+	//for CDialogEx:
+	theApp.GetContextMenuManager()->ShowPopupMenu(pMenu->GetSafeHmenu(), ptScreen.x, ptScreen.y, this, TRUE, TRUE, FALSE);
 }
 
 void CEdemChannelEditorDlg::OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1517,6 +1539,78 @@ void CEdemChannelEditorDlg::OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResu
 	}
 
 	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, ptScreen.x, ptScreen.y, this, nullptr);
+}
+
+void CEdemChannelEditorDlg::OnCopyTo(UINT id)
+{
+	UINT category_id = id - ID_COPY_TO_START;
+	auto pair = m_categories.find(category_id);
+	if (pair == m_categories.end())
+		return;
+
+	HTREEITEM hLastItem = nullptr;
+	bool changed = false;
+	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
+	{
+		auto channel = GetChannel(hItem);
+		if (!channel || channel->find_category(pair->first)) continue;
+
+		changed = true;
+
+		channel->set_category(pair->first);
+
+		TVINSERTSTRUCTW tvInsert = { nullptr };
+		tvInsert.hParent = GetCategoryItem(pair->first);
+		tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
+		tvInsert.item.lParam = (LPARAM)channel;
+		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
+		m_wndChannelsTree.InsertItem(&tvInsert);
+	}
+
+	if (changed)
+	{
+		CheckForExisting();
+		m_wndChannelsTree.SelectItem(hLastItem);
+		set_allow_save();
+	}
+}
+
+void CEdemChannelEditorDlg::OnMoveTo(UINT id)
+{
+	UINT category_id = id - ID_MOVE_TO_START;
+	auto pair = m_categories.find(category_id);
+	if (pair == m_categories.end())
+		return;
+
+	bool changed = false;
+	HTREEITEM hNewItem = nullptr;
+	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
+	{
+		auto channel = GetChannel(hItem);
+		if (!channel || channel->find_category(pair->first)) continue;
+
+		changed = true;
+
+		channel->set_category(pair->first);
+
+		TVINSERTSTRUCTW tvInsert = { nullptr };
+		tvInsert.hParent = GetCategoryItem(pair->first);
+		tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
+		tvInsert.item.lParam = (LPARAM)channel;
+		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
+		hNewItem = m_wndChannelsTree.InsertItem(&tvInsert);
+
+		auto category = GetItemCategory(hItem);
+		channel->erase_category(category->get_id());
+		m_wndChannelsTree.DeleteItem(hItem);
+	}
+
+	if (changed)
+	{
+		CheckForExisting();
+		m_wndChannelsTree.SelectItem(hNewItem);
+		set_allow_save();
+	}
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonAddToShowIn()
@@ -2423,7 +2517,7 @@ void CEdemChannelEditorDlg::OnAddUpdateChannel()
 
 void CEdemChannelEditorDlg::OnUpdateAddUpdateChannel(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(IsSelectedTheSameType() && IsPlaylistEntry(m_wndPlaylistTree.GetFirstSelectedItem()));
+	pCmdUI->Enable(IsSelectedChannelsOrEntries());
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonSettings()
@@ -2786,9 +2880,6 @@ void CEdemChannelEditorDlg::OnToggleChannel()
 		{
 			channel->set_disabled(!m_menu_enable_channel);
 			m_wndChannelsTree.SetItemColor(hItem, ::GetSysColor(COLOR_GRAYTEXT));
-// 			CRect rc;
-// 			m_wndChannelsTree.GetItemRect(hItem, rc, FALSE);
-// 			m_wndChannelsTree.InvalidateRect(rc, FALSE);
 			set_allow_save();
 		}
 	}
@@ -2797,7 +2888,7 @@ void CEdemChannelEditorDlg::OnToggleChannel()
 void CEdemChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
-	if (IsSelectedTheSameType())
+	if (IsSelectedChannelsOrEntries())
 	{
 		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 		{
@@ -3243,6 +3334,43 @@ bool CEdemChannelEditorDlg::IsSelectedTheSameType() const
 	}
 
 	return true;
+}
+
+bool CEdemChannelEditorDlg::IsSelectedChannelsOrEntries(bool onlyChannel /*= false*/) const
+{
+	if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
+	{
+		auto selected = m_wndChannelsTree.GetSelectedItems();
+		if (selected.empty())
+			return false;
+
+		for (const auto& hItem : selected)
+		{
+			auto channel = GetChannel(hItem);
+			if (!channel)
+				return false;
+		}
+
+		return true;
+	}
+
+	if (m_lastTree == m_wndPlaylistTree.GetSafeHwnd() && !onlyChannel)
+	{
+		auto selected = m_wndPlaylistTree.GetSelectedItems();
+		if (selected.empty())
+			return false;
+
+		for (const auto& hItem : selected)
+		{
+			auto entry = GetPlaylistEntry(hItem);
+			if (!entry)
+				return false;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 bool CEdemChannelEditorDlg::IsSelectedTheSameCategory() const

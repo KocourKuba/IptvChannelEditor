@@ -15,7 +15,7 @@
 // See EdemChannelEditor.cpp for the implementation of this class
 //
 
-class CEdemChannelEditorApp : public CWinApp
+class CEdemChannelEditorApp : public CWinAppEx
 {
 public:
 	CEdemChannelEditorApp();

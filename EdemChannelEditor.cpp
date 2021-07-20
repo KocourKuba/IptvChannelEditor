@@ -49,11 +49,11 @@ BOOL CEdemChannelEditorApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
-	CWinApp::InitInstance();
+	CWinAppEx::InitInstance();
 
 	// Create the shell manager, in case the dialog contains
 	// any shell tree view or shell list view controls.
-	CShellManager* pShellManager = new CShellManager;
+	//CShellManager* pShellManager = new CShellManager;
 
 	// Activate "Windows Native" visual manager for enabling themes in MFC controls
 	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
@@ -68,6 +68,8 @@ BOOL CEdemChannelEditorApp::InitInstance()
 
 	m_pszAppName = _tcsdup(_T("Dune Edem TV Channel Editor"));
 	SetRegistryKey(_T("Dune Edem TV Channel Editor"));
+
+	InitContextMenuManager();
 
 	CEdemChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;
@@ -89,7 +91,7 @@ BOOL CEdemChannelEditorApp::InitInstance()
 	}
 
 	// Delete the shell manager created above.
-	delete pShellManager;
+	//delete pShellManager;
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.

@@ -138,6 +138,8 @@ protected:
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
 	afx_msg void OnLbnSelchangeListCategories();
+	afx_msg void OnCopyTo(UINT id);
+	afx_msg void OnMoveTo(UINT id);
 	afx_msg LRESULT OnStartLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 
 	DECLARE_MESSAGE_MAP()
@@ -179,6 +181,7 @@ private:
 	PlaylistEntry* GetPlaylistEntry(HTREEITEM item) const;
 
 	bool IsSelectedTheSameType() const;
+	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
 	bool IsChannelSelectionConsistent() const;
 	bool IsSelectedTheSameCategory() const;
 	bool IsChannel(HTREEITEM hItem) const;
