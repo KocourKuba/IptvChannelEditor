@@ -3,7 +3,6 @@
 #include "uri.h"
 #include "ColoringProperty.h"
 #include "IconContainer.h"
-#include "ChannelCategory.h"
 #include "StreamContainer.h"
 
 // <tv_channel>
@@ -20,6 +19,8 @@
 //     <archive>1</archive>
 //     <protected>1</protected>
 // /tv_channel>
+
+class ChannelCategory;
 
 class ChannelInfo
 	: public IconContainer
@@ -43,8 +44,8 @@ public:
 	static constexpr auto DISABLED = "disabled";
 
 public:
-	ChannelInfo(const std::map<int, std::unique_ptr<ChannelCategory>>& all_categories);
-	ChannelInfo(rapidxml::xml_node<>* node, const std::map<int, std::unique_ptr<ChannelCategory>>& all_categories);
+	ChannelInfo();
+	ChannelInfo(rapidxml::xml_node<>* node);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);
@@ -72,23 +73,10 @@ public:
 
 	bool is_icon_local() const;
 
-	int get_prev_epg_days() const { return prev_epg_days; }
-	void set_prev_epg_days(int val) { prev_epg_days = val; }
-
-	int get_next_epg_days() const { return next_epg_days; }
-	void set_next_epg_days(int val) { next_epg_days = val; }
-
 	int get_time_shift_hours() const { return time_shift_hours; }
 	void set_time_shift_hours(int val) { time_shift_hours = val; }
 
-	const std::map<int, ChannelCategory*>& get_categores() const { return categories; }
-	void set_categores(const std::set<int>& val);
-	const std::set<int> get_category_ids() const;
-
-	void set_category(int val);
-	void erase_category(int id) { categories.erase(id); }
-	ChannelCategory* find_category(int id);
-	void rebiuld_categories();
+	std::set<int>& get_category_ids() { return categories; }
 
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }
@@ -97,11 +85,8 @@ private:
 	std::wstring title;
 	int tvg_id = 0; // TVGuide id http://www.teleguide.info/kanal%d.html
 	int epg_id = 0; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
-	std::map<int, ChannelCategory*> categories;
-	const std::map<int, std::unique_ptr<ChannelCategory>>& m_all_categories;
-	int prev_epg_days = 7;
-	int next_epg_days = 7;
 	int time_shift_hours = 0;
 	int adult = 0;
 	int has_archive = 0;
+	std::set<int> categories;
 };

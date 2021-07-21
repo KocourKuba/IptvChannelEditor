@@ -348,7 +348,7 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	CString channels = (LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel());
 	if (LoadChannels(channels))
 	{
-		FillChannels();
+		FillTreeChannels();
 	}
 
 	if (!m_channels.empty())
@@ -448,7 +448,7 @@ LRESULT CEdemChannelEditorDlg::OnStartLoadPlaylist(WPARAM wParam, LPARAM lParam 
 		}
 
 		m_wndProgress.ShowWindow(SW_HIDE);
-		FillPlaylist();
+		FillTreePlaylist();
 	}
 
 	return 0;
@@ -541,38 +541,29 @@ void CEdemChannelEditorDlg::set_allow_save(BOOL val)
 		m_wndSave.EnableWindow(m_allow_save);
 }
 
-void CEdemChannelEditorDlg::FillChannels()
+void CEdemChannelEditorDlg::FillTreeChannels()
 {
 	m_wndChannelsTree.LockWindowUpdate();
 
 	m_wndChannelsTree.DeleteAllItems();
 
-	std::map<int, HTREEITEM> tree_categories;
-
 	for (auto& category : m_categories)
 	{
-		TVINSERTSTRUCTW tvInsert = { nullptr };
-		tvInsert.hParent = TVI_ROOT;
-		tvInsert.item.pszText = (LPWSTR)category.second->get_caption().c_str();
-		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
-		tvInsert.item.lParam = (DWORD_PTR)category.second->get_id();
-		auto item = m_wndChannelsTree.InsertItem(&tvInsert);
-		tree_categories.emplace(category.first, item);
-	}
+		TVINSERTSTRUCTW tvCategory = { nullptr };
+		tvCategory.hParent = TVI_ROOT;
+		tvCategory.item.pszText = (LPWSTR)category.second->get_caption().c_str();
+		tvCategory.item.mask = TVIF_TEXT | TVIF_PARAM;
+		tvCategory.item.lParam = (DWORD_PTR)category.second->get_id();
+		auto item = m_wndChannelsTree.InsertItem(&tvCategory);
 
-	for (const auto& channel : m_channels)
-	{
-		for(const auto& category : channel->get_categores())
+		for (const auto& channel : category.second->get_channels())
 		{
-			auto pair = tree_categories.find(category.first);
-			ASSERT(pair != tree_categories.end());
-
-			TVINSERTSTRUCTW tvInsert = { nullptr };
-			tvInsert.hParent = pair->second;
-			tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
-			tvInsert.item.lParam = (LPARAM)channel.get();
-			tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
-			m_wndChannelsTree.InsertItem(&tvInsert);
+			TVINSERTSTRUCTW tvChannel = { nullptr };
+			tvChannel.hParent = item;
+			tvChannel.item.pszText = (LPWSTR)channel->get_title().c_str();
+			tvChannel.item.lParam = (LPARAM)channel.get();
+			tvChannel.item.mask = TVIF_TEXT | TVIF_PARAM;
+			m_wndChannelsTree.InsertItem(&tvChannel);
 		}
 	}
 
@@ -740,14 +731,9 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 
 		if (m_bAutoSync)
 		{
-			auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
-									  {
-										  return channel->get_channel_id() == id;
-									  });
-
-			if (found != m_channels.end())
+			if (auto pair = m_channels.find(id); pair != m_channels.end())
 			{
-				if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+				if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)pair->second.get()); hSelected != nullptr)
 				{
 					m_wndChannelsTree.SelectItem(hSelected);
 				}
@@ -761,6 +747,15 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 ChannelInfo* CEdemChannelEditorDlg::GetChannel(HTREEITEM hItem) const
 {
 	return IsChannel(hItem) ? (ChannelInfo*)m_wndChannelsTree.GetItemData(hItem) : nullptr;
+}
+
+std::shared_ptr<ChannelInfo> CEdemChannelEditorDlg::FindChannel(HTREEITEM hItem) const
+{
+	auto channel = GetChannel(hItem);
+	if (!channel)
+		return nullptr;
+
+	return m_channels.at(channel->get_channel_id());
 }
 
 ChannelCategory* CEdemChannelEditorDlg::GetItemCategory(HTREEITEM hItem) const
@@ -816,7 +811,7 @@ int CEdemChannelEditorDlg::GetNewCategoryID() const
 	return ++id;
 }
 
-int CEdemChannelEditorDlg::GetCategoryByName(const std::wstring& categoryName)
+int CEdemChannelEditorDlg::GetCategoryIdByName(const std::wstring& categoryName)
 {
 	// Search for existing category
 	for (const auto& category : m_categories)
@@ -893,7 +888,25 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 	// Iterate <tv_channel> nodes
 	while (ch_node)
 	{
-		m_channels.emplace_back(std::move(std::make_unique<ChannelInfo>(ch_node, m_categories)));
+		auto channel = std::make_shared<ChannelInfo>(ch_node);
+		if (auto pair = m_channels.find(channel->get_channel_id()); pair == m_channels.end())
+		{
+			m_channels.emplace(channel->get_channel_id(), channel);
+		}
+		else
+		{
+			pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
+			channel = pair->second;
+		}
+
+		auto category_ids = channel->get_category_ids();
+		for (const auto& id : category_ids)
+		{
+			auto pair = m_categories.find(id);
+			ASSERT(pair != m_categories.end());
+			pair->second->add_channel(channel);
+		}
+
 		ch_node = ch_node->next_sibling();
 	}
 
@@ -990,9 +1003,8 @@ void CEdemChannelEditorDlg::OnNewChannel()
 	if (!category)
 		return;
 
-	auto channel = std::make_unique<ChannelInfo>(m_categories);
+	auto channel = std::make_shared<ChannelInfo>();
 	channel->set_title(L"New Channel");
-	channel->set_category(category->get_id());
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
 	const auto& path = channel->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
@@ -1009,7 +1021,7 @@ void CEdemChannelEditorDlg::OnNewChannel()
 	tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 	auto hNewItem = m_wndChannelsTree.InsertItem(&tvInsert);
 
-	m_channels.emplace_back(std::move(channel));
+	category->add_channel(channel);
 
 	m_wndChannelsTree.SelectItem(hNewItem);
 	m_wndChannelsTree.EditLabel(hNewItem);
@@ -1037,16 +1049,7 @@ void CEdemChannelEditorDlg::OnRemoveChannel()
 		auto category = GetItemCategory(hItem);
 		if (!category) continue;
 
-		channel->erase_category(category->get_id());
-
-		if (channel->get_categores().empty())
-		{
-			m_channels.erase(std::remove_if(m_channels.begin(), m_channels.end(), [channel](const auto& item)
-											{
-												return item.get() == channel;
-											}),
-							 m_channels.end());
-		}
+		category->remove_channel(channel->get_channel_id());
 	}
 
 	for (const auto& hItem : toDelete)
@@ -1118,8 +1121,9 @@ void CEdemChannelEditorDlg::OnUpdateChannelDown(CCmdUI* pCmdUI)
 
 void CEdemChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down)
 {
-	auto range_start = GetChannel(hBegin);
-	auto range_end = GetChannel(hEnd);
+	auto& channels = GetItemCategory(hBegin)->get_channels();
+	const auto range_start = GetChannel(hBegin);
+	const auto range_end = GetChannel(hEnd);
 
 	HTREEITEM hMoved = nullptr;
 	HTREEITEM hAfter = nullptr;
@@ -1129,12 +1133,12 @@ void CEdemChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 		hAfter = m_wndChannelsTree.GetPrevSiblingItem(hBegin);
 		hAfter = hAfter ? hAfter : TVI_FIRST;
 
-		auto it_bgn = std::find_if(m_channels.begin(), m_channels.end(), [range_start](const auto& item)
+		auto it_bgn = std::find_if(channels.begin(), channels.end(), [range_start](const auto& item)
 								   {
 									   return item.get() == range_start;
 								   });
 
-		auto it_end = std::find_if(m_channels.begin(), m_channels.end(), [range_end](const auto& item)
+		auto it_end = std::find_if(channels.begin(), channels.end(), [range_end](const auto& item)
 								   {
 									   return item.get() == range_end;
 								   });
@@ -1146,12 +1150,12 @@ void CEdemChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 		hMoved = m_wndChannelsTree.GetPrevSiblingItem(hBegin);
 		hAfter = hEnd;
 
-		auto it_bgn = std::find_if(m_channels.rbegin(), m_channels.rend(), [range_start](const auto& item)
+		auto it_bgn = std::find_if(channels.rbegin(), channels.rend(), [range_start](const auto& item)
 								   {
 									   return item.get() == range_start;
 								   });
 
-		auto it_end = std::find_if(m_channels.rbegin(), m_channels.rend(), [range_end](const auto& item)
+		auto it_end = std::find_if(channels.rbegin(), channels.rend(), [range_end](const auto& item)
 								   {
 									   return item.get() == range_end;
 								   });
@@ -1221,12 +1225,6 @@ void CEdemChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	for (const auto& it : itemData)
 	{
 		m_wndChannelsTree.SetItemData(it.hItem, it.lParam);
-	}
-
-	// Перестраиваем списки категорий для каналов
-	for (auto& channel : m_channels)
-	{
-		channel->rebiuld_categories();
 	}
 
 	m_wndChannelsTree.SelectItem(hLeft);
@@ -1542,17 +1540,16 @@ void CEdemChannelEditorDlg::OnCopyTo(UINT id)
 	bool changed = false;
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
-		auto channel = GetChannel(hItem);
-		if (!channel || channel->find_category(pair->first)) continue;
+		auto channel = FindChannel(hItem);
+		if (!channel) continue;
 
 		changed = true;
-
-		channel->set_category(pair->first);
+		pair->second->add_channel(channel);
 
 		TVINSERTSTRUCTW tvInsert = { nullptr };
 		tvInsert.hParent = GetCategoryItem(pair->first);
 		tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
-		tvInsert.item.lParam = (LPARAM)channel;
+		tvInsert.item.lParam = (LPARAM)channel.get();
 		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 		m_wndChannelsTree.InsertItem(&tvInsert);
 	}
@@ -1576,23 +1573,25 @@ void CEdemChannelEditorDlg::OnMoveTo(UINT id)
 	HTREEITEM hNewItem = nullptr;
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
-		auto channel = GetChannel(hItem);
-		if (!channel || channel->find_category(pair->first)) continue;
+		auto category = GetItemCategory(hItem);
+		auto pair_ch = m_channels.find(GetChannel(hItem)->get_channel_id());
+		if (pair_ch == m_channels.end()) continue;
 
+		auto& channel = pair_ch->second;
 		changed = true;
 
-		channel->set_category(pair->first);
+		pair->second->add_channel(channel);
+
+		category->remove_channel(channel->get_channel_id());
+		m_wndChannelsTree.DeleteItem(hItem);
 
 		TVINSERTSTRUCTW tvInsert = { nullptr };
 		tvInsert.hParent = GetCategoryItem(pair->first);
 		tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
-		tvInsert.item.lParam = (LPARAM)channel;
+		tvInsert.item.lParam = (LPARAM)channel.get();
 		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 		hNewItem = m_wndChannelsTree.InsertItem(&tvInsert);
 
-		auto category = GetItemCategory(hItem);
-		channel->erase_category(category->get_id());
-		m_wndChannelsTree.DeleteItem(hItem);
 	}
 
 	if (changed)
@@ -1891,7 +1890,7 @@ bool CEdemChannelEditorDlg::AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& ent
 	return true;
 }
 
-void CEdemChannelEditorDlg::FillPlaylist()
+void CEdemChannelEditorDlg::FillTreePlaylist()
 {
 	m_wndPlaylistTree.DeleteAllItems();
 	// fill playlist tree
@@ -1941,23 +1940,18 @@ void CEdemChannelEditorDlg::OnSave()
 	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
 
-	std::set<int> group_ids;
-	for (const auto& channel : m_channels)
-	{
-		const auto& cats = channel->get_category_ids();
-		group_ids.insert(cats.begin(), cats.end());
-	}
-
 	bool need_reload = false;
-	for (auto it = m_categories.begin(); it != m_categories.end();)
+	auto it = m_categories.begin();
+	while (it != m_categories.end())
 	{
-		if (group_ids.find(it->first) == group_ids.end())
+		if (it->second->get_channels().empty())
 		{
 			it = m_categories.erase(it);
 			need_reload = true;
+			continue;
 		}
-		else
-			++it;
+
+		++it;
 	}
 
 	try
@@ -1995,10 +1989,15 @@ void CEdemChannelEditorDlg::OnSave()
 
 		// create <tv_channels> node
 		auto ch_node = doc.allocate_node(rapidxml::node_element, utils::TV_CHANNELS);
-		// append <tv_channel> to <tv_channels> node
-		for (auto& channel : m_channels)
+		// append <tv_channel> to <v_channels> node
+		for (const auto& pair : m_categories)
 		{
-			ch_node->append_node(channel->GetNode(doc));
+			for (auto& channel : pair.second->get_channels())
+			{
+				channel->get_category_ids().clear();
+				channel->get_category_ids().emplace(pair.first);
+				ch_node->append_node(channel->GetNode(doc));
+			}
 		}
 		// append <tv_channel> to <tv_info> node
 		tv_info->append_node(ch_node);
@@ -2012,7 +2011,7 @@ void CEdemChannelEditorDlg::OnSave()
 		set_allow_save(FALSE);
 		if (need_reload)
 		{
-			FillChannels();
+			FillTreeChannels();
 		}
 	}
 	catch (const rapidxml::parse_error& ex)
@@ -2071,41 +2070,11 @@ void CEdemChannelEditorDlg::OnRemoveCategory()
 	if (AfxMessageBox(msg, MB_YESNO | MB_ICONWARNING) != IDYES)
 		return;
 
-	std::vector<ChannelCategory*> channels;
-	std::vector<HTREEITEM> toDelete;
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
-		auto category = GetCategory(hItem);
-		if (category)
-		{
-			channels.emplace_back(category);
-		}
-
-		toDelete.emplace_back(hItem);
-	}
-
-	for (const auto& hItem : toDelete)
+		m_categories.erase(GetCategory(hItem)->get_id());
 		m_wndChannelsTree.DeleteItem(hItem);
-
-	for (auto& channel : m_channels)
-	{
-		for (const auto& category : channels)
-		{
-			channel->erase_category(category->get_id());
-		}
-
-		if (channel->get_categores().empty())
-		{
-			channel.release();
-		}
 	}
-
-	for (const auto& category : channels)
-	{
-		m_categories.erase(category->get_id());
-	}
-
-	m_channels.erase(std::remove_if(m_channels.begin(), m_channels.end(), [](const auto& elem) { return elem == nullptr; }), m_channels.end());
 
 	CheckForExisting();
 	set_allow_save();
@@ -2245,56 +2214,49 @@ void CEdemChannelEditorDlg::OnBnClickedButtonSearchNext()
 		return;
 
 	HTREEITEM hSelected = nullptr;
-	auto it = m_cur_it;
+	auto pair = m_cur_pair;
 
 	if (m_search.GetLength() > 1 && m_search.GetAt(0) == '\\')
 	{
 		// plain search because no duplicate channels and search next not possible
 		int id = _tstoi(m_search.Mid(1).GetString());
-		for (it = m_channels.begin(); it != m_channels.end(); ++it)
+		if (auto pair = m_channels.find(id); pair != m_channels.end())
 		{
-			const auto& entry = *it;
-			if (entry && entry->get_channel_id() == id)
-			{
-				hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)entry.get());
-				if (hSelected) break;
-			}
+			hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)pair->second.get());
 		}
-
-		it = m_cur_it;
 	}
 	else
 	{
 		// cyclic search thru playlist
-		if (it != m_channels.end())
+		if (pair != m_channels.end())
 		{
-			++it;
+			++pair;
 		}
 		else
 		{
-			m_cur_it = it = m_channels.begin();
+			m_cur_pair = pair = m_channels.begin();
 		}
 
 		do
 		{
 			// check whether the current item is the searched one
-			const auto& entry = *it;
-			if (entry && StrStrI(entry->get_title().c_str(), m_search.GetString()) != nullptr)
+			const auto& channel = pair->second;
+			if (channel && StrStrI(channel->get_title().c_str(), m_search.GetString()) != nullptr)
 			{
-				hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)entry.get());
+				hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)channel.get());
 				if (hSelected) break;
 			}
 
-			if (++it == m_channels.end())
+			if (++pair == m_channels.end())
 			{
-				it = m_channels.begin();
+				pair = m_channels.begin();
 			}
-		} while (it != m_cur_it);
+		} while (pair != m_cur_pair);
 	}
 
 	if (hSelected)
 	{
-		m_cur_it = it;
+		m_cur_pair = pair;
 		m_wndChannelsTree.SelectItem(hSelected);
 		m_wndChannelsTree.Expand(m_wndChannelsTree.GetParentItem(hSelected), TVE_EXPAND);
 		m_wndChannelsTree.EnsureVisible(hSelected);
@@ -2388,31 +2350,6 @@ bool CEdemChannelEditorDlg::IsPlaylistEntry(HTREEITEM hItem) const
 bool CEdemChannelEditorDlg::IsPlaylistCategory(HTREEITEM hItem) const
 {
 	return (hItem != nullptr && m_wndPlaylistTree.GetParentItem(hItem) == nullptr);
-}
-
-ChannelInfo* CEdemChannelEditorDlg::FindChannelByEntry(const PlaylistEntry* entry) const
-{
-	int ch_id = entry->get_channel_id();
-	auto found = std::find_if(m_channels.begin(), m_channels.end(), [ch_id](const auto& item)
-							  {
-								  return item->get_channel_id() == ch_id;
-							  });
-
-	return found != m_channels.end() ? (*found).get() : nullptr;
-}
-
-bool CEdemChannelEditorDlg::IsCategoryInChannels(const ChannelCategory* category) const
-{
-	if (!category)
-		return false;
-
-	auto id = category->get_id();
-	auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
-							  {
-								  return channel->find_category(id) != nullptr;
-							  });
-
-	return found != m_channels.end();
 }
 
 std::map<int, HTREEITEM> CEdemChannelEditorDlg::GetCategoriesTreeMap() const
@@ -2548,7 +2485,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		CImage img;
 		if (theApp.LoadImage(fullPath.c_str(), img))
 		{
-			channel->set_icon_uri(icon_uri.get_uri().c_str());
+			channel->set_icon_uri(icon_uri.get_uri());
 			channel->set_icon(img);
 		}
 
@@ -2703,13 +2640,9 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 	{
 		std::vector<ChannelInfo*> channels;
 		auto category = GetItemCategory(m_wndChannelsTree.GetSelectedItem());
-		for (const auto& channel : m_channels)
+		for (const auto& channel : category->get_channels())
 		{
-			if (category == nullptr || channel->find_category(category->get_id()))
-			{
-				// add all
-				channels.emplace_back(channel.get());
-			}
+			channels.emplace_back(channel.get());
 		}
 
 		GetStreamInfo(channels, m_wndChInfo);
@@ -2784,15 +2717,9 @@ void CEdemChannelEditorDlg::OnSyncTreeItem()
 		if (!entry)
 			return;
 
-		int id = entry->get_channel_id();
-		auto found = std::find_if(m_channels.begin(), m_channels.end(), [id](const auto& channel)
-								  {
-									  return channel->get_channel_id() == id;
-								  });
-
-		if (found != m_channels.end())
+		if (auto pair = m_channels.find(entry->get_channel_id()); pair != m_channels.end())
 		{
-			if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)found->get()); hSelected != nullptr)
+			if (auto hSelected = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)pair->second.get()); hSelected != nullptr)
 			{
 				m_wndChannelsTree.SelectItem(hSelected);
 			}
@@ -2960,66 +2887,66 @@ bool CEdemChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	if (!entry)
 		return needCheckExisting;
 
+	auto tree_categories = GetCategoriesTreeMap();
 	// is add to category?
 	if (categoryId == -1)
-		categoryId = GetCategoryByName(entry->get_category());
+		categoryId = GetCategoryIdByName(entry->get_category());
 
-	auto tree_categories = GetCategoriesTreeMap();
-
-	HTREEITEM hFoundItem = nullptr;
-	ChannelInfo* channel = FindChannelByEntry(entry);
-	if (channel != nullptr)
+	std::shared_ptr<ChannelCategory> category;
+	if (categoryId != -1)
 	{
-		// Channel alredy exist
-		hFoundItem = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)channel);
+		category = m_categories.at(categoryId);
 	}
 	else
 	{
-		// Create new channel
-		auto newChannel = std::make_unique<ChannelInfo>(m_categories);
-		newChannel->set_channel_id(entry->get_channel_id());
-		newChannel->set_title(entry->get_title());
-		channel = newChannel.get();
-
-		// Add to channel array
-		m_channels.emplace_back(std::move(newChannel));
-	}
-
-	if (categoryId == -1)
-	{
 		// Category not exist, create new
-		auto newCategory = std::make_unique<ChannelCategory>();
+		category = std::make_shared<ChannelCategory>();
 		categoryId = GetNewCategoryID();
-		newCategory->set_id(categoryId);
-		newCategory->set_caption(entry->get_category());
+		category->set_id(categoryId);
+		category->set_caption(entry->get_category());
 
 		TVINSERTSTRUCTW tvInsert = { nullptr };
 		tvInsert.hParent = TVI_ROOT;
-		tvInsert.item.pszText = (LPWSTR)newCategory->get_caption().c_str();
+		tvInsert.item.pszText = (LPWSTR)category->get_caption().c_str();
 		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 		tvInsert.item.lParam = categoryId;
 
 		tree_categories.emplace(categoryId, m_wndChannelsTree.InsertItem(&tvInsert));
-
-		m_categories.emplace(categoryId, std::move(newCategory));
+		m_categories.emplace(categoryId, category);
 	}
 
+	HTREEITEM hFoundItem = nullptr;
+	auto pair = m_channels.find(entry->get_channel_id());
+	if (pair != m_channels.end())
+	{
+		// Channel already exist
+		hFoundItem = FindTreeItem(m_wndChannelsTree, (DWORD_PTR)pair->second.get());
+	}
+	else
+	{
+		// Create new channel
+		auto newChannel = std::make_unique<ChannelInfo>();
+		newChannel->set_channel_id(entry->get_channel_id());
+		newChannel->set_title(entry->get_title());
+		// Add to channel array
+		pair = m_channels.emplace(entry->get_channel_id(), std::move(newChannel)).first;
+	}
+
+	auto& channel = pair->second;
 	// is channel in this category?
-	if (channel->find_category(categoryId) == nullptr)
+	if (category->find_channel(channel->get_channel_id()) == nullptr)
 	{
 		// add channel to category tree leaf
 		TVINSERTSTRUCTW tvInsert = { nullptr };
 		tvInsert.hParent = tree_categories[categoryId];
 		tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
-		tvInsert.item.lParam = (LPARAM)channel;
+		tvInsert.item.lParam = (LPARAM)channel.get();
 		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 		hFoundItem = m_wndChannelsTree.InsertItem(&tvInsert);
 
+		category->add_channel(channel);
 		needCheckExisting = true;
 	}
-
-	// Update categories in channel
-	channel->set_category(categoryId);
 
 	// Is title changed?
 	if (channel->get_title() != entry->get_title())
@@ -3029,7 +2956,7 @@ bool CEdemChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 		while (hFoundItem != nullptr)
 		{
 			m_wndChannelsTree.SetItemText(hFoundItem, channel->get_title().c_str());
-			hFoundItem = FindTreeNextItem(m_wndChannelsTree, hFoundItem, (DWORD_PTR)channel);
+			hFoundItem = FindTreeNextItem(m_wndChannelsTree, hFoundItem, (DWORD_PTR)channel.get());
 		}
 	}
 
@@ -3243,7 +3170,7 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 
 	int idx = m_wndChannels.GetCurSel();
 	LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx));
-	FillChannels();
+	FillTreeChannels();
 	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
 	theApp.WriteProfileInt(_T("Setting"), _T("ChannelsType"), idx);
 	set_allow_save(FALSE);

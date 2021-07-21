@@ -149,8 +149,8 @@ private:
 	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
 	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry, BOOL bRegex, BOOL bCase);
 
-	void FillChannels();
-	void FillPlaylist();
+	void FillTreeChannels();
+	void FillTreePlaylist();
 
 	template <class T>
 	void GetStreamInfo(const std::vector<T*>& channels, CStatic& staticCtrl);
@@ -174,6 +174,7 @@ private:
 	std::map<int, HTREEITEM> GetCategoriesTreeMap() const;
 
 	ChannelInfo* GetChannel(HTREEITEM hItem) const;
+	std::shared_ptr<ChannelInfo> FindChannel(HTREEITEM hItem) const;
 	PlaylistEntry* GetPlaylistEntry(HTREEITEM item) const;
 
 	bool IsSelectedTheSameType() const;
@@ -185,11 +186,9 @@ private:
 	bool IsCategory(HTREEITEM hItem) const;
 	bool IsPlaylistEntry(HTREEITEM hItem) const;
 	bool IsPlaylistCategory(HTREEITEM hItem) const;
-	bool IsCategoryInChannels(const ChannelCategory* category) const;
 
-	ChannelInfo* FindChannelByEntry(const PlaylistEntry* entry) const;
 	int GetNewCategoryID() const;
-	int GetCategoryByName(const std::wstring& categoryName);
+	int GetCategoryIdByName(const std::wstring& categoryName);
 	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
@@ -270,10 +269,10 @@ private:
 	HACCEL m_hAccel = nullptr;
 
 	std::vector<std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
-	std::vector<std::unique_ptr<ChannelInfo>>::iterator m_cur_it;
+	std::map<int, std::shared_ptr<ChannelInfo>>::iterator m_cur_pair;
 
-	std::vector<std::unique_ptr<ChannelInfo>> m_channels;
-	std::map<int, std::unique_ptr<ChannelCategory>> m_categories;
+	std::map<int, std::shared_ptr<ChannelInfo>> m_channels;
+	std::map<int, std::shared_ptr<ChannelCategory>> m_categories;
 
 	std::set<int> m_playlistIds;
 	std::vector<std::unique_ptr<PlaylistEntry>> m_playlist;
