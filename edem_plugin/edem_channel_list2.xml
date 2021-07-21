@@ -7530,6 +7530,136 @@
 			</tv_categories>
 			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14076/index.m3u8</streaming_url>
 		</tv_channel>
+		<tv_channel>
+			<caption>Жара kids HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5382</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5382.png</icon_url>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14147/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Сказки Зайки</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>1112</epg_id>
+			<icon_url/>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14150/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Советские мультфильмы</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>1111</epg_id>
+			<icon_url/>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14151/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>WOW!TV HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5385</epg_id>
+			<icon_url/>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14168/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>YOSSO TV KIDS</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5386</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5386.png</icon_url>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14173/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>YOSSO TV Союзмульт</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5387</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5387.png</icon_url>
+			<tv_categories>
+				<tv_category_id>13</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14178/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Едим дома HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5294</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5294.png</icon_url>
+			<tv_categories>
+				<tv_category_id>17</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14017/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Хлеб соль HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5295</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5295.png</icon_url>
+			<tv_categories>
+				<tv_category_id>17</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14050/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Tech Box HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5298</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5298.png</icon_url>
+			<tv_categories>
+				<tv_category_id>17</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14053/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Вкуснейшн ТВ</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5301</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5301.png</icon_url>
+			<tv_categories>
+				<tv_category_id>17</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14059/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Маски Шоу</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5335</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5335.png</icon_url>
+			<tv_categories>
+				<tv_category_id>16</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14014/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Каламбур</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5336</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5336.png</icon_url>
+			<tv_categories>
+				<tv_category_id>16</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14020/index.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>BTV Городок HD</caption>
+			<tvg_id>0</tvg_id>
+			<epg_id>5338</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5338.png</icon_url>
+			<tv_categories>
+				<tv_category_id>16</tv_category_id>
+			</tv_categories>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/14109/index.m3u8</streaming_url>
+		</tv_channel>
 	</tv_channels>
 </tv_info>
 
