@@ -547,6 +547,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "New Category",                ID_NEW_CATEGORY
         MENUITEM "Delete Category",             ID_REMOVE_CATEGORY
+        MENUITEM "Sort Category",               ID_SORT_CATEGORY
         MENUITEM SEPARATOR
         MENUITEM "Rename\tF2",                  ID_EDIT_RENAME
         MENUITEM "Move Up\tCtrl+Up",            ID_CHANNEL_UP

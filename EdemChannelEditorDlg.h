@@ -80,6 +80,8 @@ protected:
 	afx_msg void OnUpdateNewCategory(CCmdUI* pCmdUI);
 	afx_msg void OnRemoveCategory();
 	afx_msg void OnUpdateRemoveCategory(CCmdUI* pCmdUI);
+	afx_msg void OnSortCategory();
+	afx_msg void OnUpdateSortCategory(CCmdUI* pCmdUI);
 	afx_msg void OnGetStreamInfo();
 	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnGetStreamInfoAll();
@@ -166,11 +168,12 @@ private:
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
 
-	void CheckForExisting();
+	void CheckForExistingChannels(HTREEITEM root = nullptr);
+	void CheckForExistingPlaylist();
 
 	ChannelCategory* GetItemCategory(HTREEITEM hItem) const;
 	ChannelCategory* GetCategory(HTREEITEM hItem) const;
-	HTREEITEM GetCategoryItem(int id) const;
+	HTREEITEM GetCategoryTreeItemById(int id) const;
 	std::map<int, HTREEITEM> GetCategoriesTreeMap() const;
 
 	ChannelInfo* GetChannel(HTREEITEM hItem) const;
@@ -267,6 +270,11 @@ private:
 	BOOL m_allow_save = FALSE;
 	bool m_menu_enable_channel = false;
 	HACCEL m_hAccel = nullptr;
+
+	COLORREF m_normal;
+	COLORREF m_gray;
+	COLORREF m_red;
+	COLORREF m_green;
 
 	std::vector<std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
 	std::map<int, std::shared_ptr<ChannelInfo>>::iterator m_cur_pair;
