@@ -359,7 +359,7 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	if (!m_channels.empty())
 	{
-		m_wndChannelsTree.SelectItem(FindTreeItem(m_wndChannelsTree, (DWORD_PTR)m_channels[0].get()));
+		m_wndChannelsTree.SelectItem(FindTreeItem(m_wndChannelsTree, (DWORD_PTR)m_categories.begin()->second->get_channels().at(0).get()));
 	}
 
 	OnCbnSelchangeComboPlaylist();
@@ -594,6 +594,31 @@ void CEdemChannelEditorDlg::UpdatePlaylistCount()
 	str.Format(_T("Playlist: %s (%d%s)"), m_plFileName.GetString(), m_playlist.size(), (m_filterString.IsEmpty() ? _T("") : _T("*")));
 	m_wndPlInfo.SetWindowText(str);
 	UpdateData(FALSE);
+}
+
+void CEdemChannelEditorDlg::RemoveOrphanChannels()
+{
+	std::set<int> ids;
+	for (const auto& cat : m_categories)
+	{
+		for (const auto& ch : cat.second->get_channels())
+		{
+			ids.emplace(ch->get_channel_id());
+		}
+	}
+
+	auto pair = m_channels.begin();
+	while (pair != m_channels.end())
+	{
+		if (ids.find(pair->second->get_channel_id()) == ids.end())
+		{
+			pair = m_channels.erase(pair);
+		}
+		else
+		{
+			++pair;
+		}
+	}
 }
 
 void CEdemChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*/)
@@ -1062,6 +1087,7 @@ void CEdemChannelEditorDlg::OnRemoveChannel()
 	for (const auto& hItem : toDelete)
 		m_wndChannelsTree.DeleteItem(hItem);
 
+	RemoveOrphanChannels();
 	CheckForExistingPlaylist();
 	set_allow_save();
 	UpdateChannelsCount();
@@ -2092,6 +2118,7 @@ void CEdemChannelEditorDlg::OnRemoveCategory()
 		m_wndChannelsTree.DeleteItem(hItem);
 	}
 
+	RemoveOrphanChannels();
 	CheckForExistingPlaylist();
 	set_allow_save();
 	UpdateChannelsCount();

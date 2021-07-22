@@ -168,6 +168,7 @@ private:
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
 
+	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
 
