@@ -9,6 +9,8 @@ class DemoChannel extends DefaultChannel
 {
     private $has_archive;
     private $number;
+    private $epg_id;
+    private $tvg_id;
     private $past_epg_days;
     private $future_epg_days;
     private $is_protected;
@@ -18,13 +20,14 @@ class DemoChannel extends DefaultChannel
     ///////////////////////////////////////////////////////////////////////
 
     public function __construct(
-        $id, $title, $icon_url, $has_archive, $streaming_url, $number, $past_epg_days, $future_epg_days, $is_protected, $timeshift_hours, $buf_time)
+        $id, $title, $icon_url, $has_archive, $streaming_url, $number, $tvg_id, $epg_id, $past_epg_days, $future_epg_days, $is_protected, $timeshift_hours, $buf_time)
     {
-//        hd_print($streaming_url);
         parent::__construct($id, $title, $icon_url, $streaming_url);
 
         $this->has_archive = $has_archive;
         $this->number = $number;
+        $this->tvg_id = $tvg_id;
+        $this->epg_id = $epg_id;
         $this->past_epg_days = $past_epg_days;
         $this->future_epg_days = $future_epg_days;
         $this->is_protected = $is_protected;
@@ -62,6 +65,16 @@ class DemoChannel extends DefaultChannel
     public function get_number()
     {
         return $this->number;
+    }
+
+    public function get_tvg_id()
+    {
+        return $this->tvg_id;
+    }
+
+    public function get_epg_id()
+    {
+        return $this->epg_id;
     }
 
     public function get_past_epg_days()

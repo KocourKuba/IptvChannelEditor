@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tv_info>
+	<tv_categories>
+		<tv_category>
+			<id>1</id>
+			<caption>Разное</caption>
+			<icon_url>plugin_file://icons/5.png</icon_url>
+		</tv_category>
+		<tv_category>
+			<id>2</id>
+			<caption>Тест</caption>
+			<icon_url>plugin_file://icons/16.png</icon_url>
+		</tv_category>
+	</tv_categories>
+	<tv_channels>
+		<tv_channel>
+			<caption>Спас ТВ</caption>
+			<tvg_id>222</tvg_id>
+			<epg_id>2141</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2141.png</icon_url>
+			<tv_category_id>1</tv_category_id>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/983/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>CNL</caption>
+			<tvg_id>32299988</tvg_id>
+			<epg_id>2130</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2130.png</icon_url>
+			<tv_category_id>1</tv_category_id>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/955/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Россия-Культура</caption>
+			<tvg_id>5</tvg_id>
+			<epg_id>187</epg_id>
+			<icon_url>http://epg.it999.ru/img2/187.png</icon_url>
+			<tv_category_id>1</tv_category_id>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/505/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>ЖИВИ!</caption>
+			<tvg_id>672</tvg_id>
+			<epg_id>113</epg_id>
+			<icon_url>http://epg.it999.ru/img2/113.png</icon_url>
+			<tv_category_id>1</tv_category_id>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/738/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>RT Д (Русский)</caption>
+			<tvg_id>1884</tvg_id>
+			<epg_id>961</epg_id>
+			<icon_url>plugin_file://icons/channels/rt_doc.png</icon_url>
+			<tv_category_id>1</tv_category_id>
+			<streaming_url>https://ts://rtmp.api.rt.com/hls/rtdru.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>RT Д (Русский)</caption>
+			<tvg_id>1884</tvg_id>
+			<epg_id>961</epg_id>
+			<icon_url>plugin_file://icons/channels/rt_doc.png</icon_url>
+			<tv_category_id>2</tv_category_id>
+			<streaming_url>https://ts://rtmp.api.rt.com/hls/rtdru.m3u8</streaming_url>
+		</tv_channel>
+		<tv_channel>
+			<caption>Спас ТВ</caption>
+			<tvg_id>222</tvg_id>
+			<epg_id>2141</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2141.png</icon_url>
+			<tv_category_id>2</tv_category_id>
+			<streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/983/index.m3u8</streaming_url>
+			<archive>1</archive>
+		</tv_channel>
+	</tv_channels>
+</tv_info>
+

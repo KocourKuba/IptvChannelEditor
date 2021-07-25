@@ -1982,19 +1982,28 @@ void CEdemChannelEditorDlg::OnSave()
 	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
 
-	bool need_reload = false;
 	auto it = m_categories.begin();
 	while (it != m_categories.end())
 	{
 		if (it->second->get_channels().empty())
 		{
 			it = m_categories.erase(it);
-			need_reload = true;
 			continue;
 		}
 
 		++it;
 	}
+
+	// renumber categories id
+	int cat_id = 1;
+	std::map<int, std::shared_ptr<ChannelCategory>> ren_categories;
+	for (auto& category : m_categories)
+	{
+		ren_categories.emplace(cat_id, category.second);
+		category.second->set_id(cat_id++);
+
+	}
+	m_categories = std::move(ren_categories);
 
 	try
 	{
@@ -2051,10 +2060,7 @@ void CEdemChannelEditorDlg::OnSave()
 		os << doc;
 
 		set_allow_save(FALSE);
-		if (need_reload)
-		{
-			FillTreeChannels();
-		}
+		FillTreeChannels();
 	}
 	catch (const rapidxml::parse_error& ex)
 	{

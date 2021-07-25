@@ -53,7 +53,7 @@ class DemoSetupScreen extends AbstractControlsScreen
         $this->add_combobox($defs,'show_tv', 'Показывать iEdem/iLook TV в главном меню:',
             $show_tv, $show_ops, 0, true);
 
-        $this->add_button($defs, 'key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и поддомен', 0);
+        $this->add_button($defs, 'key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
 
         $this->add_combobox($defs,'channels_list', 'Используемый список каналов:',
             $channels_list, $channels, 0, true);
@@ -114,7 +114,7 @@ class DemoSetupScreen extends AbstractControlsScreen
 
         $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
 
-        $this->add_text_field($defs,'subdomain', 'Введите поддомен:',
+        $this->add_text_field($defs,'subdomain', 'Введите домен:',
             $subdomain, false, false, false, true, 500);
 
         $this->add_close_dialog_and_apply_button($defs,'ott_key_apply', 'ОК', 200);

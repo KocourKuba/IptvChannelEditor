@@ -37,6 +37,10 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 			catNode = catNode->next_sibling();
 		}
 	}
+	else
+	{
+		categories.insert(utils::get_value_int(node->first_node(TV_CATEGORY_ID)));
+	}
 
 	get_stream_uri().set_uri(utils::get_value_wstring(node->first_node(STREAMING_URL)));
 	has_archive = utils::get_value_int(node->first_node(ARCHIVE));
@@ -61,27 +65,12 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	// <icon_url>http://epg.it999.ru/img/146.png</icon_url>
 	channel_node->append_node(utils::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 
-	// <num_past_epg_days>4</num_past_epg_days>
-	//channel_node->append_node(utils::alloc_node(alloc, NUM_PAST_EPG_DAYS, utils::int_to_char(prev_epg_days).c_str()));
-
-	// <num_future_epg_days>2</num_future_epg_days>
-	//channel_node->append_node(utils::alloc_node(alloc, NUM_FUTURE_EPG_DAYS, utils::int_to_char(next_epg_days).c_str()));
-
 	if (time_shift_hours != 0)
 		channel_node->append_node(utils::alloc_node(alloc, TIME_SHIFT_HOURS, utils::int_to_char(time_shift_hours).c_str()));
 
-	// <tv_categories>
-	//    <tv_category_id>1</tv_category_id>
-	// </tv_categories>
-	if (!categories.empty())
-	{
-		auto node = utils::alloc_node(alloc, TV_CATEGORIES);
-		for (const auto& category : categories)
-		{
-			node->append_node(utils::alloc_node(alloc, TV_CATEGORY_ID, utils::int_to_char(category).c_str()));
-		}
-		channel_node->append_node(node);
-	}
+	// <tv_category_id>1</tv_category_id>
+	// new version must not have more than on entry
+	channel_node->append_node(utils::alloc_node(alloc, TV_CATEGORY_ID, utils::int_to_char(*categories.begin()).c_str()));
 
 	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/127/index.m3u8</streaming_url>
 	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, utils::utf16_to_utf8(get_stream_uri().get_id_translated_url()).c_str()));

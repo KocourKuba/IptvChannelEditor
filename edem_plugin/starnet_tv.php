@@ -97,55 +97,74 @@ class DemoTv extends AbstractTv
 
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
             if ($xml_tv_category->getName() !== 'tv_category') {
-                hd_print("Error: unexpected node '" . $xml_tv_category->getName() . "'. Expected: 'tv_category'");
-                throw new Exception('Invalid XML document');
+                $error_string = "Error: unexpected node '" . $xml_tv_category->getName() . "'. Expected: 'tv_category'";
+                hd_print($error_string);
+                throw new Exception($error_string);
             }
 
             $this->groups->put(new DefaultGroup(strval($xml_tv_category->id), strval($xml_tv_category->caption), strval($xml_tv_category->icon_url)));
         }
 
-        $id = 0;
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {
                 hd_print("Error: unexpected node '" . $xml_tv_channel->getName() . "'. Expected: 'tv_channel'");
-                throw new Exception('Invalid XML document');
+                continue;
             }
 
+            // ignore disabled channel
             if (isset($xml_tv_channel->disabled)) continue;
 
-            $cid = $id . "_" . $xml_tv_channel->epg_id . "_" . $xml_tv_channel->tvg_id;
-            $id++;
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0; //буферизация
 
-            $channel = new DemoChannel(
-                $cid,
-                strval($xml_tv_channel->caption),
-                strval($xml_tv_channel->icon_url),
-                intval($xml_tv_channel->archive),
-                strval($xml_tv_channel->streaming_url),
-                intval($xml_tv_channel->number),
-                $epg_prev,
-                $epg_next,
-                intval($xml_tv_channel->protected),
-                intval($xml_tv_channel->timeshift_hours),
-                $buf_time);
+            // calculate unique id from url hash
+            $id = hash("crc32", $xml_tv_channel->streaming_url);
+            if ($this->channels->get($id) == null) {
+                $new_channel = new DemoChannel(
+                    $id,
+                    strval($xml_tv_channel->caption),
+                    strval($xml_tv_channel->icon_url),
+                    intval($xml_tv_channel->archive),
+                    strval($xml_tv_channel->streaming_url),
+                    intval($xml_tv_channel->number),
+                    intval($xml_tv_channel->tvg_id),
+                    intval($xml_tv_channel->epg_id),
+                    $epg_prev,
+                    $epg_next,
+                    intval($xml_tv_channel->protected),
+                    intval($xml_tv_channel->timeshift_hours),
+                    $buf_time);
 
-            $this->channels->put($channel);
+                $this->channels->put($new_channel);
+            }
 
-            foreach ($xml_tv_channel->tv_categories->children() as $xml_tv_cat_id) {
-                if ($xml_tv_cat_id->getName() !== 'tv_category_id') {
-                    hd_print("Error: unexpected node '" . $xml_tv_cat_id->getName() . "'. Expected: 'tv_category_id'");
-                    throw new Exception('Invalid XML document');
-                }
+            // get ref to channel
+            $channel =& $this->channels->get_ref($id);
 
-                $tv_category_id = intval($xml_tv_cat_id);
-
+            if (isset($xml_tv_channel->tv_category_id)) {
+                // new format
+                $tv_category_id = intval($xml_tv_channel->tv_category_id);
                 $group = $this->groups->get($tv_category_id);
 
                 // Link group and channel.
-
                 $channel->add_group($group);
                 $group->add_channel($channel);
+            } else if (isset($xml_tv_channel->tv_categories)) {
+                // old format
+                foreach ($xml_tv_channel->tv_categories->children() as $xml_tv_cat_id) {
+                    if ($xml_tv_cat_id->getName() !== 'tv_category_id') {
+                        hd_print("Error: unexpected node '" . $xml_tv_cat_id->getName() . "'. Expected: 'tv_category_id'");
+                        throw new Exception('Invalid XML document');
+                    }
+
+                    $tv_category_id = intval($xml_tv_cat_id);
+                    $group = $this->groups->get($tv_category_id);
+
+                    // Link group and channel.
+                    $channel->add_group($group);
+                    $group->add_channel($channel);
+                }
+            } else {
+                hd_print("Error: Category undefined for channel $id ($xml_tv_channel->caption) !");
             }
         }
     }
@@ -219,15 +238,16 @@ class DemoTv extends AbstractTv
             '&#316;' => 'ļ',
         );
 
-        list($garb, $epg_id, $tvg_id) = preg_split('/_/', $channel_id);
-
         try {
-            $time_shift = $this->get_channel($channel_id)->get_timeshift_hours() * 3600;
-            hd_print("Timeshift for channel: $time_shift sec");
+            $channel = $this->get_channel($channel_id);
         } catch (Exception $ex) {
             hd_print("Can't get channel with ID: $channel_id");
             return array();
         }
+
+        $time_shift = $channel->get_timeshift_hours() * 3600;
+        $tvg_id = $channel->get_tvg_id();
+        $epg_id = $channel->get_epg_id();
 
         $epg_date = gmdate("Ymd", $day_start_ts);
 
@@ -241,8 +261,13 @@ class DemoTv extends AbstractTv
             $doc = file_get_contents($cache_file);
             $epg = unserialize($doc);
         } else {
-            $type = 'json'; // ott-play.com
-            if ($tvg_id == 0) {
+            $type = 'json'; // epg.ott-play.com
+            // if all tvg & epg empty no need to fetch data
+            if (intval($tvg_id) == 0 && intval($epg_id) == 0)
+                return array();
+
+            // teleguide.info first. Otherwise try to get info from epg.ott-play.com
+            if (intval($tvg_id) == 0) {
                 try {
                     $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $epg_id));
                 }
@@ -260,6 +285,7 @@ class DemoTv extends AbstractTv
                     return array();
                 }
             }
+
             if ($type === 'json') {
                 // time in UTC
                 $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));

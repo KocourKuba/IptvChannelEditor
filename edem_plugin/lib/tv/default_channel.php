@@ -59,6 +59,16 @@ class DefaultChannel implements Channel
         return false;
     }
 
+    public function get_tvg_id()
+    {
+        return 0;
+    }
+
+    public function get_epg_id()
+    {
+        return 0;
+    }
+
     public function get_past_epg_days()
     {
         return 14;

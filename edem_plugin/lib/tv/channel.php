@@ -15,6 +15,10 @@ interface Channel
 
     public function is_protected();
 
+    public function get_tvg_id();
+
+    public function get_epg_id();
+
     public function get_past_epg_days();
 
     public function get_future_epg_days();
