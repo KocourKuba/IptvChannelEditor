@@ -208,7 +208,9 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK, m_archiveCheck);
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndIcon);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
+	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
 	DDX_Control(pDX, IDC_TREE_PLAYLIST, m_wndPlaylistTree);
+	DDX_Control(pDX, IDC_EDIT_PL_SEARCH, m_wndPlSearch);
 	DDX_Text(pDX, IDC_EDIT_PL_SEARCH, m_plSearch);
 	DDX_Text(pDX, IDC_STATIC_ICON_NAME, m_iconUrl);
 	DDX_Control(pDX, IDC_STATIC_PL_ICON, m_wndPlIcon);
@@ -325,7 +327,7 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	m_wndPlaylistType.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("PlaylistType"), 0));
 
-	m_all_playlists.emplace_back(_T("Standard"), theApp.GetAppPath(utils::CHANNELS_CONFIG));
+	m_all_channels_lists.emplace_back(_T("Standard"), theApp.GetAppPath(utils::CHANNELS_CONFIG));
 	CFileFind ffind;
 	BOOL bFound = ffind.FindFile(_T("edem_plugin\\*.xml"));
 	while (bFound)
@@ -333,11 +335,11 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 		bFound = ffind.FindNextFile();
 		if (!ffind.IsDirectory() && ffind.GetFileName() != "dune_plugin.xml" && ffind.GetFileName() != "edem_channel_list.xml")
 		{
-			m_all_playlists.emplace_back(ffind.GetFileName(), ffind.GetFilePath());
+			m_all_channels_lists.emplace_back(ffind.GetFileName(), ffind.GetFilePath());
 		}
 	}
 
-	for(const auto& playlist : m_all_playlists)
+	for(const auto& playlist : m_all_channels_lists)
 	{
 		int idx = m_wndChannels.AddString(playlist.first);
 		m_wndChannels.SetItemData(idx, (DWORD_PTR)playlist.second.GetString());
@@ -351,10 +353,34 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	set_allow_save(FALSE);
 
-	CString channels = (LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel());
-	if (LoadChannels(channels))
+	m_wndSearch.EnableWindow(FALSE);
+	m_wndPlSearch.EnableWindow(FALSE);
+	m_wndCustom.EnableWindow(FALSE);
+	m_wndTvgID.EnableWindow(FALSE);
+	m_wndEpgID.EnableWindow(FALSE);
+	m_wndArchive.EnableWindow(FALSE);
+	m_wndAdult.EnableWindow(FALSE);
+	m_wndTestTVG.EnableWindow(FALSE);
+	m_wndTestEPG.EnableWindow(FALSE);
+	m_wndStreamID.EnableWindow(FALSE);
+	m_wndStreamUrl.EnableWindow(FALSE);
+	m_wndCheckArchive.EnableWindow(FALSE);
+	m_wndTimeShift.EnableWindow(FALSE);
+	m_wndSpinTimeShift.EnableWindow(FALSE);
+	m_wndInfoVideo.EnableWindow(FALSE);
+	m_wndInfoAudio.EnableWindow(FALSE);
+
+	if (m_wndChannels.GetCount() == 0)
 	{
-		FillTreeChannels();
+		AfxMessageBox(_T("No channels list found!!"), MB_ICONERROR | MB_OK);
+		m_wndChannels.EnableWindow(FALSE);
+	}
+	else
+	{
+		if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel())))
+		{
+			FillTreeChannels();
+		}
 	}
 
 	if (!m_channels.empty())
@@ -456,6 +482,8 @@ LRESULT CEdemChannelEditorDlg::OnStartLoadPlaylist(WPARAM wParam, LPARAM lParam 
 		m_wndProgress.ShowWindow(SW_HIDE);
 		FillTreePlaylist();
 	}
+
+	m_wndPlSearch.EnableWindow(!m_channels.empty());
 
 	return 0;
 }
@@ -939,6 +967,8 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 		ch_node = ch_node->next_sibling();
 	}
 
+	m_wndSearch.EnableWindow(!m_channels.empty());
+
 	return true;
 }
 
@@ -1352,6 +1382,7 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndSpinTimeShift.EnableWindow(state);
 	m_wndInfoVideo.EnableWindow(enable);
 	m_wndInfoAudio.EnableWindow(enable);
+	m_wndSearch.EnableWindow(TRUE);
 
 	if (state == 2)
 	{
@@ -2626,16 +2657,17 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 		if (cFile.Open(dlg.GetPathName(), CFile::modeWrite | CFile::modeCreate | CFile::typeBinary | CFile::shareDenyRead, &ex))
 		{
 			cFile.Close();
-			auto found = std::find_if(m_all_playlists.begin(), m_all_playlists.end(), [&dlg](const auto& item)
+			auto found = std::find_if(m_all_channels_lists.begin(), m_all_channels_lists.end(), [&dlg](const auto& item)
 									  {
 										  return item.first == dlg.GetFileName();
 									  });
 
-			if (found == m_all_playlists.end())
+			if (found == m_all_channels_lists.end())
 			{
 				m_channels.clear();
 				m_categories.clear();
-				const auto& pair = m_all_playlists.emplace_back(dlg.GetFileName(), dlg.GetPathName());
+				const auto& pair = m_all_channels_lists.emplace_back(dlg.GetFileName(), dlg.GetPathName());
+				m_wndChannels.EnableWindow(TRUE);
 				int idx = m_wndChannels.AddString(pair.first);
 				m_wndChannels.SetItemData(idx, (DWORD_PTR)pair.second.GetString());
 				m_wndChannels.SetCurSel(idx);

@@ -157,8 +157,6 @@ private:
 	template <class T>
 	void GetStreamInfo(const std::vector<T*>& channels, CStatic& staticCtrl);
 
-	void GetInfoPlaylist(const std::vector<PlaylistEntry*>& playlist);
-
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
 
@@ -212,6 +210,8 @@ protected:
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
+	CEdit m_wndSearch;
+	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
 	CProgressCtrl m_wndProgress;
 	CButton m_wndArchive;
@@ -287,7 +287,7 @@ private:
 	std::vector<std::unique_ptr<PlaylistEntry>> m_playlist;
 	std::vector<std::pair<std::wstring, HTREEITEM>> m_pl_categories;
 
-	std::vector<std::pair<CString, CString>> m_all_playlists;
+	std::vector<std::pair<CString, CString>> m_all_channels_lists;
 };
 
 template <class T>
