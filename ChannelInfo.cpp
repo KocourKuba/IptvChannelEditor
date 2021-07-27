@@ -25,6 +25,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	time_shift_hours = utils::get_value_int(node->first_node(TIME_SHIFT_HOURS));
 	set_icon_uri(utils::get_value_wstring(node->first_node(ICON_URL)));
 	set_disabled(utils::string_tolower(utils::get_value_string(node->first_node(DISABLED))) == "true");
+	set_favorite(utils::string_tolower(utils::get_value_string(node->first_node(FAVORITE))) == "true");
 
 	auto cnode = node->first_node(TV_CATEGORIES);
 	if (cnode)
@@ -90,6 +91,11 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	if (is_disabled())
 	{
 		channel_node->append_node(utils::alloc_node(alloc, DISABLED, "true"));
+	}
+
+	if (is_favorite())
+	{
+		channel_node->append_node(utils::alloc_node(alloc, FAVORITE, "true"));
 	}
 
 	return channel_node;

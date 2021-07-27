@@ -2,17 +2,17 @@
 
 class DemoConfig
 {
-    const PluginVersion = '2.4.0';
-    const PluginDate = '20.07.2021';
+    const PluginVersion = '2.6.0';
+    const PluginDate = '27.07.2021';
     const VOD_MOVIE_PAGE_SUPPORTED = true;
     const VOD_FAVORITES_SUPPORTED = true;
     const TV_FAVORITES_SUPPORTED = true;
 
     const CHANNEL_LIST_URL = 'edem_channel_list.xml';
-    const CHANNEL_LIST_URL2 = 'edem_channel_list_backup.xml';
     const EPG_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%d.json';
     const TVG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';
     const EPG_CACHE_DIR = '/tmp/edem_epg/';
+    /** prefix to create cache file*/
     const EPG_CACHE_FILE = 'epg_channel_';
     const VOD_CATEGORIES_URL = 'http://online.dune-hd.com/demo2/vod_categories.pl';
     const MOVIE_LIST_URL_FORMAT = 'http://online.dune-hd.com/demo2/movie_list.pl?category_id=%s';
@@ -21,6 +21,7 @@ class DemoConfig
     const ALL_CHANNEL_GROUP_CAPTION = 'Все каналы';
     const ALL_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/all.png';
 
+    const FAV_CHANNEL_GROUP_ID = '__favorites';
     const FAV_CHANNEL_GROUP_CAPTION = 'Избранное';
     const FAV_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/fav.png';
 

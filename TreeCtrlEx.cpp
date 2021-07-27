@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "TreeCtrlEx.h"
-#include "ColoringProperty.h"
 #include "ChannelInfo.h"
 #include "PlayListEntry.h"
 
@@ -520,7 +519,7 @@ HTREEITEM CTreeCtrlEx::GetNextItem(HTREEITEM hItem) const
 HTREEITEM CTreeCtrlEx::GetNextItem(HTREEITEM hItem, UINT nCode) const
 {
 	ASSERT(::IsWindow(m_hWnd));
-	return GetNextItem(hItem, nCode);
+	return hItem ? GetNextItem(hItem, nCode) : nullptr;
 }
 
 HTREEITEM CTreeCtrlEx::GetLastItem(HTREEITEM hItem) const

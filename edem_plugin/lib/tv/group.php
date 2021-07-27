@@ -13,7 +13,8 @@ interface Group
 
     public function is_all_channels();
 
-    public function get_channels(&$plugin_cookies); // Array<Channel>
+    /** Returns array<Channel>*/
+    public function get_channels(&$plugin_cookies);
 }
 
 ///////////////////////////////////////////////////////////////////////////

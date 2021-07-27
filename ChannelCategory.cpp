@@ -42,3 +42,58 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 
 	return category_node;
 }
+
+void ChannelCategory::move_channels(const ChannelInfo* range_start, const ChannelInfo* range_end, bool down)
+{
+	if (!range_start || !range_end)
+		return;
+
+	if (down)
+	{
+		auto it_bgn = std::find(channels.begin(), channels.end(), range_start);
+		auto it_end = std::find(channels.begin(), channels.end(), range_end);
+		std::rotate(it_bgn, it_end + 1, it_end + 2);
+	}
+	else
+	{
+		auto it_bgn = std::find(channels.rbegin(), channels.rend(), range_start);
+		auto it_end = std::find(channels.rbegin(), channels.rend(), range_end);
+		std::rotate(it_end, it_bgn + 1, it_bgn + 2);
+	}
+}
+
+void ChannelCategory::add_channel(std::shared_ptr<ChannelInfo>& channel)
+{
+	int id = channel->get_id();
+	if (channels_map.find(id) == channels_map.end())
+	{
+		channels_map.emplace(id, channel);
+		channels.emplace_back(channel.get());
+	}
+}
+
+void ChannelCategory::remove_channel(int ch_id)
+{
+	if (auto pair = channels_map.find(ch_id); pair != channels_map.end())
+	{
+		channels.erase(std::find(channels.begin(), channels.end(), pair->second.get()));
+		channels_map.erase(pair);
+	}
+}
+
+void ChannelCategory::sort_channels()
+{
+	if (!channels.empty())
+	{
+		std::sort(channels.begin(), channels.end(), [](const auto& left, const auto& right)
+				  {
+					  return left->get_title() < right->get_title();
+				  });
+	}
+}
+
+std::shared_ptr<ChannelInfo> ChannelCategory::find_channel(int ch_id)
+{
+	auto pair = channels_map.find(ch_id);
+	return pair != channels_map.end() ? pair->second : nullptr;
+}

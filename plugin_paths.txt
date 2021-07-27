@@ -5,7 +5,7 @@ Temp EPG storage
 /tmp/edem_epg/
 
 Logs
-/tmp/iedem.tv.log
+/tmp/run/iedem.tv.log
 
 Cookies
 /mnt/config

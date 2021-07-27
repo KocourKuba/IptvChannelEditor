@@ -75,7 +75,7 @@ void m3u_entry::Parse(const std::string& str)
 		{
 			std::regex re(R"((-?\d+)\s*(.+=\".+"\s*)*,\s*(.+))");
 			std::smatch m;
-			std::string value = m_dir[2].str();
+			const auto& value = m_dir[2].str();
 			if (std::regex_match(value, m, re))
 			{
 				duration = utils::char_to_int(m[1].str());
@@ -133,8 +133,9 @@ void PlaylistEntry::Parse(const std::string& str)
 			domain = m_url[1].str();
 			access_key = m_url[2].str();
 			int id = utils::char_to_int(m_url[3].str());
-			get_stream_uri().set_uri(utils::URI_TEMPLATE);
-			get_stream_uri().set_Id(id);
+			auto& uri = get_stream_uri();
+			uri.set_uri(utils::URI_TEMPLATE);
+			uri.set_Id(id);
 		}
 		else
 		{

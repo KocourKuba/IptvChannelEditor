@@ -81,9 +81,6 @@
     <ClInclude Include="utils.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="ColoringProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IconContainer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>

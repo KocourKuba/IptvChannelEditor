@@ -5,8 +5,7 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
-class TvChannelListScreen extends AbstractPreloadedRegularScreen
-    implements UserInputHandler
+class TvChannelListScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'tv_channel_list';
 
@@ -44,18 +43,12 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
         $actions[GUI_EVENT_KEY_PLAY] = ActionFactory::tv_play();
 
         if ($this->tv->is_favorites_supported()) {
-            $add_favorite_action =
-                UserInputHandlerRegistry::create_action(
-                    $this, 'add_favorite');
+            $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
             $add_favorite_action['caption'] = 'В избранное';
 
-            $popup_menu_action =
-                UserInputHandlerRegistry::create_action(
-                    $this, 'popup_menu');
+            $popup_menu_action = UserInputHandlerRegistry::create_action($this, 'popup_menu');
 
-            $open_settings =
-                ActionFactory::open_folder(
-                    DemoSetupScreen::get_media_url_str());
+            $open_settings = ActionFactory::open_folder(DemoSetupScreen::get_media_url_str());
             $open_settings['caption'] = 'Настройки';
 
             $actions[GUI_EVENT_KEY_B_GREEN] = $open_settings;
@@ -63,9 +56,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
             $actions[GUI_EVENT_KEY_POPUP_MENU] = $popup_menu_action;
         }
 
-        $actions[GUI_EVENT_KEY_INFO] =
-            UserInputHandlerRegistry::create_action(
-                $this, 'info');
+        $actions[GUI_EVENT_KEY_INFO] = UserInputHandlerRegistry::create_action($this, 'info');
 
         return $actions;
     }
@@ -96,58 +87,34 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'info') {
-            if (!isset($user_input->selected_media_url))
-                return null;
+        if (!isset($user_input->selected_media_url))
+            return null;
 
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $channel_id = $media_url->channel_id;
+        $channel_id = MediaURL::decode($user_input->selected_media_url)->channel_id;
 
-            $channels = $this->tv->get_channels();
-            $c = $channels->get($channel_id);
-            $id = $c->get_id();
-            $title = $c->get_title();
+        switch ($user_input->control_id) {
+            case 'info':
+                $c = $this->tv->get_channels()->get($channel_id);
+                $id = $c->get_id();
+                $title = $c->get_title();
 
-            return ActionFactory::show_title_dialog("Channel '$title' (id=$id)");
-        } else if ($user_input->control_id == 'popup_menu') {
-            if (!isset($user_input->selected_media_url))
-                return null;
+                return ActionFactory::show_title_dialog("Channel '$title' (id=$id)");
+            case 'popup_menu':
+                $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
+                $caption = 'Добавить в избранное';
+                $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_favorite_action);
 
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $channel_id = $media_url->channel_id;
+                return ActionFactory::show_popup_menu($menu_items);
+            case 'add_favorite':
+                if ($this->tv->is_favorite_channel_id($channel_id, $plugin_cookies)) {
+                    return ActionFactory::show_title_dialog('Канал уже в избранном',
+                        $this->get_sel_item_update_action($user_input, $plugin_cookies));
+                }
 
-            $is_favorite = $this->tv->is_favorite_channel_id($channel_id, $plugin_cookies);
-            $add_favorite_action =
-                UserInputHandlerRegistry::create_action(
-                    $this, 'add_favorite');
-            $caption = 'Добавить в избранное';
-            $menu_items[] = array(
-                GuiMenuItemDef::caption => $caption,
-                GuiMenuItemDef::action => $add_favorite_action);
+                $this->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $channel_id, $plugin_cookies);
 
-            return ActionFactory::show_popup_menu($menu_items);
-        } else if ($user_input->control_id == 'add_favorite') {
-            if (!isset($user_input->selected_media_url))
-                return null;
-
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $channel_id = $media_url->channel_id;
-
-            $is_favorite = $this->tv->is_favorite_channel_id($channel_id, $plugin_cookies);
-            if ($is_favorite) {
-                return ActionFactory::show_title_dialog(
-                    'Канал уже в избранном',
-                    $this->get_sel_item_update_action(
-                        $user_input, $plugin_cookies));
-            } else {
-                $this->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD,
-                    $channel_id, $plugin_cookies);
-
-                return ActionFactory::show_title_dialog(
-                    'Канал добавлен в избранное',
-                    $this->get_sel_item_update_action(
-                        $user_input, $plugin_cookies));
-            }
+                return ActionFactory::show_title_dialog('Канал добавлен в избранное',
+                    $this->get_sel_item_update_action($user_input, $plugin_cookies));
         }
 
         return null;
@@ -159,20 +126,14 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
     {
         return array
         (
-            PluginRegularFolderItem::media_url =>
-                MediaURL::encode(
-                    array(
-                        'channel_id' => $c->get_id(),
-                        'group_id' => $group->get_id())),
+            PluginRegularFolderItem::media_url => MediaURL::encode(array('channel_id' => $c->get_id(), 'group_id' => $group->get_id())),
             PluginRegularFolderItem::caption => $c->get_title(),
             PluginRegularFolderItem::view_item_params => array
             (
                 ViewItemParams::icon_path => $c->get_icon_url(),
                 ViewItemParams::item_detailed_icon_path => $c->get_icon_url(),
             ),
-            PluginRegularFolderItem::starred =>
-                $this->tv->is_favorite_channel_id(
-                    $c->get_id(), $plugin_cookies),
+            PluginRegularFolderItem::starred => $this->tv->is_favorite_channel_id($c->get_id(), $plugin_cookies),
         );
     }
 
@@ -187,8 +148,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen
         $items = array();
 
         foreach ($group->get_channels($plugin_cookies) as $c) {
-            $items[] = $this->get_regular_folder_item(
-                $group, $c, $plugin_cookies);
+            $items[] = $this->get_regular_folder_item($group, $c, $plugin_cookies);
         }
 
         return $items;

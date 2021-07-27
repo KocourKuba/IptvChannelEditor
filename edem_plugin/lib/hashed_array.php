@@ -45,11 +45,6 @@ class HashedArray implements Iterator
         return HD::get_map_element($this->map, $key);
     }
 
-    public function & get_ref($key)
-    {
-        return $this->map[$key];
-    }
-
     public function has($key)
     {
         return isset($this->map[$key]);

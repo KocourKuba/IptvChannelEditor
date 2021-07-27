@@ -211,7 +211,6 @@
     <ClInclude Include="AccessDlg.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
-    <ClInclude Include="ColoringProperty.h" />
     <ClInclude Include="Crc32.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="CustomPlaylistDlg.h" />

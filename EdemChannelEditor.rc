@@ -549,6 +549,7 @@ BEGIN
         MENUITEM "Delete Category",             ID_REMOVE_CATEGORY
         MENUITEM "Sort Category",               ID_SORT_CATEGORY
         MENUITEM SEPARATOR
+        MENUITEM "Add to Favorite",             32798
         MENUITEM "Rename\tF2",                  ID_EDIT_RENAME
         MENUITEM "Move Up\tCtrl+Up",            ID_CHANNEL_UP
         MENUITEM "Move Down\tCtrl+Down",        ID_CHANNEL_DOWN

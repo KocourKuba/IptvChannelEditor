@@ -63,6 +63,7 @@ protected:
 	afx_msg void OnSave();
 	afx_msg void OnUpdateSave(CCmdUI* pCmdUI);
 	afx_msg void OnNewChannel();
+	afx_msg void OnUpdateNewChannel(CCmdUI* pCmdUI);
 	afx_msg void OnAddUpdateChannel();
 	afx_msg void OnRemoveChannel();
 	afx_msg void OnUpdateRemoveChannel(CCmdUI* pCmdUI);
@@ -136,6 +137,8 @@ protected:
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
+	afx_msg void OnAddToFavorite();
+	afx_msg void OnUpdateAddToFavorite(CCmdUI* pCmdUI);
 	afx_msg void OnCopyTo(UINT id);
 	afx_msg void OnMoveTo(UINT id);
 	afx_msg void OnAddTo(UINT id);
@@ -182,6 +185,7 @@ private:
 	bool IsSelectedTheSameType() const;
 	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
 	bool IsSelectedCategory() const;
+	bool IsSelectedNotFavorite() const;
 	bool IsChannelSelectionConsistent() const;
 	bool IsSelectedTheSameCategory() const;
 	bool IsChannel(HTREEITEM hItem) const;

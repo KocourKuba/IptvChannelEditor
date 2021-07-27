@@ -1,6 +1,5 @@
 #pragma once
 #include "uri.h"
-#include "ColoringProperty.h"
 #include "IconContainer.h"
 #include "StreamContainer.h"
 
@@ -65,7 +64,6 @@ class PlaylistEntry
 	: public m3u_entry
 	, public IconContainer
 	, public StreamContainer
-	, public ColoringProperty
 {
 public:
 	PlaylistEntry() = default;
@@ -74,7 +72,7 @@ public:
 	void Parse(const std::string& str) override;
 	void Clear() override;
 
-	int get_channel_id() const { return get_stream_uri().get_Id(); }
+	int get_id() const { return get_stream_uri().get_Id(); }
 	int get_channel_length() const { return channel_len; }
 	int get_tvg_id() { return tvg_id; };
 	int get_archive() const { return archive; }

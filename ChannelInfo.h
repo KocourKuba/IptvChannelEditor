@@ -1,7 +1,6 @@
 #pragma once
 #include "rapidxml.hpp"
 #include "uri.h"
-#include "ColoringProperty.h"
 #include "IconContainer.h"
 #include "StreamContainer.h"
 
@@ -25,7 +24,6 @@ class ChannelCategory;
 class ChannelInfo
 	: public IconContainer
 	, public StreamContainer
-	, public ColoringProperty
 {
 public:
 	static constexpr auto TV_CHANNEL = "tv_channel";
@@ -42,6 +40,7 @@ public:
 	static constexpr auto ARCHIVE = "archive";
 	static constexpr auto PROTECTED = "protected";
 	static constexpr auto DISABLED = "disabled";
+	static constexpr auto FAVORITE = "favorite";
 
 public:
 	ChannelInfo();
@@ -56,8 +55,8 @@ public:
 
 // Getters/Setters
 
-	int get_channel_id() const { return get_stream_uri().get_Id(); }
-	void set_channel_id(int val) { get_stream_uri().set_Id(val); }
+	int get_id() const { return get_stream_uri().get_Id(); }
+	void set_id(int val) { get_stream_uri().set_Id(val); }
 
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
@@ -81,6 +80,12 @@ public:
 	int get_has_archive() const { return has_archive; }
 	void set_has_archive(int val) { has_archive = val; }
 
+	bool is_favorite() const { return favorite; }
+	void set_favorite(bool val) { favorite = val; }
+
+	bool is_disabled() const { return disabled; }
+	void set_disabled(bool val) { disabled = val; }
+
 private:
 	std::wstring title;
 	int tvg_id = 0; // TVGuide id http://www.teleguide.info/kanal%d.html
@@ -88,5 +93,7 @@ private:
 	int time_shift_hours = 0;
 	int adult = 0;
 	int has_archive = 0;
+	bool disabled = false;
+	bool favorite = false;
 	std::set<int> categories;
 };
