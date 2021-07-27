@@ -2245,6 +2245,10 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 	if (!hCur)
 		return;
 
+	auto category = GetCategory(hCur);
+	if (category != nullptr && category->get_id() == ID_ADD_TO_FAVORITE)
+		return;
+
 	bool isChannel = IsChannel(hCur);
 
 	CFileDialog dlg(TRUE);
@@ -2304,8 +2308,7 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 		}
 		else
 		{
-			auto category = GetCategory(hCur);
-			if (category && category->get_id() != ID_ADD_TO_FAVORITE && m_iconUrl != category->get_icon_uri().get_uri().c_str())
+			if (category && m_iconUrl != category->get_icon_uri().get_uri().c_str())
 			{
 				category->set_icon_uri(m_iconUrl.GetString());
 				const auto& path = category->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
