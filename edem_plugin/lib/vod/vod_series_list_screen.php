@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'lib/vod/vod.php';
+require_once 'vod.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
 class VodSeriesListScreen extends AbstractPreloadedRegularScreen

@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'lib/action_factory.php';
+require_once 'action_factory.php';
 
 class ControlFactory
 {

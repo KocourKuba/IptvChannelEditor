@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'lib/vod/vod.php';
+require_once 'vod.php';
 
 abstract class AbstractVod implements Vod
 {
@@ -159,7 +159,7 @@ abstract class AbstractVod implements Vod
 
     public function get_buffering_ms()
     {
-        return 3000;
+        return 4000;
     }
 
     ///////////////////////////////////////////////////////////////////////

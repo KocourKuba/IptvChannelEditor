@@ -1,6 +1,6 @@
 <?php
 
-require_once 'lib/tv/tv.php';
+require_once 'tv.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
 class TvFavoritesScreen extends AbstractPreloadedRegularScreen
@@ -33,19 +33,13 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $move_backward_favorite_action =
-            UserInputHandlerRegistry::create_action(
-                $this, 'move_backward_favorite');
+        $move_backward_favorite_action = UserInputHandlerRegistry::create_action($this, 'move_backward_favorite');
         $move_backward_favorite_action['caption'] = 'Назад';
 
-        $move_forward_favorite_action =
-            UserInputHandlerRegistry::create_action(
-                $this, 'move_forward_favorite');
+        $move_forward_favorite_action = UserInputHandlerRegistry::create_action($this, 'move_forward_favorite');
         $move_forward_favorite_action['caption'] = 'Вперед';
 
-        $remove_favorite_action =
-            UserInputHandlerRegistry::create_action(
-                $this, 'remove_favorite');
+        $remove_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_favorite');
         $remove_favorite_action['caption'] = 'Удалить';
 
         $menu_items[] = array(
@@ -70,13 +64,11 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         return self::ID;
     }
 
-    private function get_update_action($sel_increment,
-                                       &$user_input, &$plugin_cookies)
+    private function get_update_action($sel_increment, &$user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
 
-        $num_favorites =
-            count($this->tv->get_fav_channel_ids($plugin_cookies));
+        $num_favorites = count($this->tv->get_fav_channel_ids($plugin_cookies));
 
         $sel_ndx = $user_input->sel_ndx + $sel_increment;
         if ($sel_ndx < 0)
@@ -84,11 +76,8 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         if ($sel_ndx >= $num_favorites)
             $sel_ndx = $num_favorites - 1;
 
-        $range = HD::create_regular_folder_range(
-            $this->get_all_folder_items(
-                $parent_media_url, $plugin_cookies));
-        return ActionFactory::update_regular_folder(
-            $range, true, $sel_ndx);
+        $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
+        return ActionFactory::update_regular_folder($range, true, $sel_ndx);
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
@@ -97,42 +86,29 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'move_backward_favorite') {
-            if (!isset($user_input->selected_media_url))
-                return null;
+        if (!isset($user_input->selected_media_url))
+            return null;
 
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $channel_id = $media_url->channel_id;
-
-            $this->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_UP,
-                $channel_id, $plugin_cookies);
-
-            return $this->get_update_action(-1, $user_input, $plugin_cookies);
-        } else if ($user_input->control_id == 'move_forward_favorite') {
-            if (!isset($user_input->selected_media_url))
-                return null;
-
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $channel_id = $media_url->channel_id;
-
-            $this->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_DOWN,
-                $channel_id, $plugin_cookies);
-
-            return $this->get_update_action(1, $user_input, $plugin_cookies);
-        } else if ($user_input->control_id == 'remove_favorite') {
-            if (!isset($user_input->selected_media_url))
-                return null;
-
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $channel_id = $media_url->channel_id;
-
-            $this->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_REMOVE,
-                $channel_id, $plugin_cookies);
-
-            return $this->get_update_action(0, $user_input, $plugin_cookies);
+        switch ($user_input->control_id) {
+            case 'move_backward_favorite':
+                $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_UP;
+                $inc = -1;
+                break;
+            case 'move_forward_favorite':
+                $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_DOWN;
+                $inc = 1;
+                break;
+            case 'remove_favorite':
+                $fav_op_type = PLUGIN_FAVORITES_OP_REMOVE;
+                $inc = 0;
+                break;
+            default:
+                return  null;
         }
 
-        return null;
+        $channel_id = MediaURL::decode($user_input->selected_media_url)->channel_id;
+        $this->tv->change_tv_favorites($fav_op_type, $channel_id, $plugin_cookies);
+        return $this->get_update_action($inc, $user_input, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////

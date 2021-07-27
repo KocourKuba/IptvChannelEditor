@@ -34,7 +34,7 @@ interface Vod
 
     public function get_archive(MediaURL $media_url);
 
-    // Hook.
+    /** Hook.*/
     public function folder_entered(MediaURL $media_url, &$plugin_cookies);
 }
 

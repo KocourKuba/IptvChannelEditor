@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'lib/tv/default_group.php';
+require_once 'default_group.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +21,9 @@ class FavoritesGroup extends DefaultGroup
         return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_channels(&$plugin_cookies)
     {
         $channels = array();

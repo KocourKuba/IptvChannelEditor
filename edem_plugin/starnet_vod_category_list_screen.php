@@ -44,6 +44,9 @@ class DemoVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         if (is_null($this->category_index))
@@ -101,6 +104,9 @@ class DemoVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     private function fetch_vod_categories()
     {
         $doc = HD::http_get_document(DemoConfig::VOD_CATEGORIES_URL);

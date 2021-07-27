@@ -18,6 +18,9 @@ class DemoVod extends AbstractVod
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function try_load_movie($movie_id, &$plugin_cookies)
     {
         $doc =
@@ -76,6 +79,9 @@ class DemoVod extends AbstractVod
     ///////////////////////////////////////////////////////////////////////
     // Favorites.
 
+    /**
+     * @throws Exception
+     */
     protected function load_favorites(&$plugin_cookies)
     {
         $fav_movie_ids = $this->get_fav_movie_ids_from_cookies($plugin_cookies);
@@ -99,7 +105,7 @@ class DemoVod extends AbstractVod
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function get_fav_movie_ids_from_cookies(&$plugin_cookies)
+    public function get_fav_movie_ids_from_cookies($plugin_cookies)
     {
         if (!isset($plugin_cookies->{'favorite_movies'}))
             return array();

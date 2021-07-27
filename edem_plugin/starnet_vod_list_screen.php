@@ -21,6 +21,9 @@ class DemoVodListScreen extends VodListScreen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx,
                                              &$plugin_cookies)
     {

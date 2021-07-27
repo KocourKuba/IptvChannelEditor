@@ -33,26 +33,26 @@ class DemoTv extends AbstractTv
 
     public function get_setup_screen()
     {
-        if (!isset($this->SettingsScreen))
-            return false;
-
-        return $this->SettingsScreen;
+        return isset($this->SettingsScreen) ? $this->SettingsScreen : false;
     }
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function load_channels(&$plugin_cookies)
     {
+        $channels_list = $this->get_channel_list_url($plugin_cookies);
+        hd_print("Channels list: $channels_list");
+
         try {
-            $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : DemoConfig::CHANNEL_LIST_URL;
-            hd_print("Channels list: $channels_list");
             $doc = file_get_contents($channels_list, true);
             if($doc == false)
             {
                 hd_print("File not exist! $channels_list");
                 throw new Exception('File not exist');
             }
-
         } catch (Exception $e) {
             hd_print("Can't fetch channel_list, alternative copy used.");
             $doc = file_get_contents(DemoConfig::CHANNEL_LIST_URL, true);
@@ -71,6 +71,7 @@ class DemoTv extends AbstractTv
             throw new Exception('Invalid XML document');
         }
 
+        // read embedded access info
         $plugin_cookies->ott_key_local = "";
         $plugin_cookies->subdomain_local = "";
         if (isset($xml->channels_setup)
@@ -83,18 +84,24 @@ class DemoTv extends AbstractTv
             $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
         }
 
-        $epg_prev = isset($plugin_cookies->epg_prev) ? $plugin_cookies->epg_prev : 7;
-        $epg_next = isset($plugin_cookies->epg_next) ? $plugin_cookies->epg_next : 7;
-
+        // Create channels and groups
         $this->channels = new HashedArray();
         $this->groups = new HashedArray();
 
+        // Favorites group
         if ($this->is_favorites_supported()) {
-            $this->groups->put(new FavoritesGroup($this, '__favorites', DemoConfig::FAV_CHANNEL_GROUP_CAPTION, DemoConfig::FAV_CHANNEL_GROUP_ICON_PATH));
+            $this->groups->put(new FavoritesGroup($this,
+                DemoConfig::FAV_CHANNEL_GROUP_ID,
+                DemoConfig::FAV_CHANNEL_GROUP_CAPTION,
+                DemoConfig::FAV_CHANNEL_GROUP_ICON_PATH));
         }
 
-        $this->groups->put(new AllChannelsGroup($this, DemoConfig::ALL_CHANNEL_GROUP_CAPTION, DemoConfig::ALL_CHANNEL_GROUP_ICON_PATH));
+        // All channels group
+        $this->groups->put(new AllChannelsGroup($this,
+            DemoConfig::ALL_CHANNEL_GROUP_CAPTION,
+            DemoConfig::ALL_CHANNEL_GROUP_ICON_PATH));
 
+        // read category
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
             if ($xml_tv_category->getName() !== 'tv_category') {
                 $error_string = "Error: unexpected node '" . $xml_tv_category->getName() . "'. Expected: 'tv_category'";
@@ -102,9 +109,12 @@ class DemoTv extends AbstractTv
                 throw new Exception($error_string);
             }
 
-            $this->groups->put(new DefaultGroup(strval($xml_tv_category->id), strval($xml_tv_category->caption), strval($xml_tv_category->icon_url)));
+            $this->groups->put(new DefaultGroup(strval($xml_tv_category->id),
+                strval($xml_tv_category->caption),
+                strval($xml_tv_category->icon_url)));
         }
 
+        // Read channels
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {
                 hd_print("Error: unexpected node '" . $xml_tv_channel->getName() . "'. Expected: 'tv_channel'");
@@ -114,12 +124,15 @@ class DemoTv extends AbstractTv
             // ignore disabled channel
             if (isset($xml_tv_channel->disabled)) continue;
 
-            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0; //буферизация
-
             // calculate unique id from url hash
             $id = hash("crc32", $xml_tv_channel->streaming_url);
-            if ($this->channels->get($id) == null) {
-                $new_channel = new DemoChannel(
+            if ($this->channels->has($id)) {
+                // added or existing channel
+                $channel = $this->channels->get($id);
+            }
+            else
+            {
+                $channel = new DemoChannel(
                     $id,
                     strval($xml_tv_channel->caption),
                     strval($xml_tv_channel->icon_url),
@@ -128,18 +141,13 @@ class DemoTv extends AbstractTv
                     intval($xml_tv_channel->number),
                     intval($xml_tv_channel->tvg_id),
                     intval($xml_tv_channel->epg_id),
-                    $epg_prev,
-                    $epg_next,
                     intval($xml_tv_channel->protected),
-                    intval($xml_tv_channel->timeshift_hours),
-                    $buf_time);
+                    intval($xml_tv_channel->timeshift_hours));
 
-                $this->channels->put($new_channel);
+                $this->channels->put($channel);
             }
 
-            // get ref to channel
-            $channel =& $this->channels->get_ref($id);
-
+            // Read category id from channel
             if (isset($xml_tv_channel->tv_category_id)) {
                 // new format
                 $tv_category_id = intval($xml_tv_channel->tv_category_id);
@@ -148,6 +156,12 @@ class DemoTv extends AbstractTv
                 // Link group and channel.
                 $channel->add_group($group);
                 $group->add_channel($channel);
+
+                // only new format support favorites
+                if ($xml_tv_channel->favorite && $this->is_favorites_supported()) {
+                    hd_print("Add to favorite $id ($xml_tv_channel->caption)");
+                    $this->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $id, $plugin_cookies);
+                }
             } else if (isset($xml_tv_channel->tv_categories)) {
                 // old format
                 foreach ($xml_tv_channel->tv_categories->children() as $xml_tv_cat_id) {
@@ -167,6 +181,8 @@ class DemoTv extends AbstractTv
                 hd_print("Error: Category undefined for channel $id ($xml_tv_channel->caption) !");
             }
         }
+
+        hd_print("Loaded: channels: " . $this->channels->size() .", groups: " . $this->groups->size());
     }
 
     public function get_tv_stream_url($playback_url, &$plugin_cookies)
@@ -245,74 +261,33 @@ class DemoTv extends AbstractTv
             return array();
         }
 
+        // get personal time shift for channel
         $time_shift = $channel->get_timeshift_hours() * 3600;
-        $tvg_id = $channel->get_tvg_id();
-        $epg_id = $channel->get_epg_id();
-
+        $tvg_id = intval($channel->get_tvg_id());
+        $epg_id = intval($channel->get_epg_id());
         $epg_date = gmdate("Ymd", $day_start_ts);
 
-        $epg = array();
         if (!is_dir(DemoConfig::EPG_CACHE_DIR)) {
            mkdir(DemoConfig::EPG_CACHE_DIR);
         }
 
         $cache_file = DemoConfig::EPG_CACHE_DIR . DemoConfig::EPG_CACHE_FILE . $epg_id . "_" . $tvg_id . "_" . $day_start_ts;
         if (file_exists($cache_file)) {
-            $doc = file_get_contents($cache_file);
-            $epg = unserialize($doc);
+            $epg = unserialize(file_get_contents($cache_file));
         } else {
-            $type = 'json'; // epg.ott-play.com
             // if all tvg & epg empty no need to fetch data
-            if (intval($tvg_id) == 0 && intval($epg_id) == 0)
+            if ($tvg_id == 0 && $epg_id == 0)
                 return array();
 
-            // teleguide.info first. Otherwise try to get info from epg.ott-play.com
-            if (intval($tvg_id) == 0) {
-                try {
-                    $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $epg_id));
-                }
-                catch (Exception $ex) {
-                    hd_print("Can't fetch EPG ID: $epg_id DATE: $epg_date");
-                    return array();
-                }
-            } else {
-                $type = 'html'; // teleguide.info
-                try {
-                    $doc = HD::http_get_document(sprintf(DemoConfig::TVG_URL_FORMAT, $tvg_id, $epg_date));
-                }
-                catch (Exception $ex) {
-                    hd_print("Can't fetch TVG ID: $tvg_id DATE: $epg_date");
-                    return array();
-                }
+            try {
+                // teleguide.info first. Otherwise try to get info from epg.ott-play.com
+                $id = ($tvg_id ?: $epg_id);
+                $provider = ($tvg_id ? 'ott-play' : 'tele-guide');
+                $epg = $this->get_epg($provider, $id, $epg_date, $day_start_ts);
             }
-
-            if ($type === 'json') {
-                // time in UTC
-                $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
-                $epg_date_new = strtotime('-1 hour', $day_start_ts);
-                $epg_date_end = strtotime('+1 day', $day_start_ts);
-                foreach ($ch_data->epg_data as $channel) {
-                    if ($channel->time >= $epg_date_new and $channel->time < $epg_date_end) {
-                        $epg[$channel->time]['title'] = $channel->name;
-                        $epg[$channel->time]['desc'] = $channel->descr;
-                    }
-                }
-            }
-            else
-            {
-                // tvguide.info time in GMT+3 (moscow time)
-                // $timezone_suffix = date('T');
-                $e_time = strtotime("$epg_date, 0300 GMT+3");
-                preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
-                foreach ($keywords[1] as $key => $qid) {
-                    $qq = strip_tags($qid);
-                    preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
-                    $time = $keyw[1][0];
-                    $u_time = strtotime("$epg_date $time GMT+3");
-                    $last_time = ($u_time < $e_time) ? $u_time + 86400  : $u_time ;
-                    $epg[$last_time]["title"] = str_replace("&nbsp;", " ", $keyw[2][0]);
-                    $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
-                }
+            catch (Exception $ex) {
+                hd_print("Can't fetch TVG ID ($provider): $id DATE: $epg_date");
+                return array();
             }
         }
 
@@ -333,10 +308,52 @@ class DemoTv extends AbstractTv
             $epg_result[] = new DefaultEpgItem(
                     str_replace(array_keys($replace), $replace, strval($value["title"])),
                     str_replace(array_keys($replace), $replace, strval($value["desc"])),
-                    intval($tm), intval(-1));
+                    intval($tm), -1);
         }
 
         return new EpgIterator($epg_result, $start, $end);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function get_epg($provider, $epg_id, $epg_date, $day_start_ts)
+    {
+        $epg = array();
+
+        switch ($provider) {
+            case 'ott-play':
+                $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $epg_id));
+                // time in UTC
+                $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
+                $epg_date_new = strtotime('-1 hour', $day_start_ts);
+                $epg_date_end = strtotime('+1 day', $day_start_ts);
+                foreach ($ch_data->epg_data as $channel) {
+                    if ($channel->time >= $epg_date_new and $channel->time < $epg_date_end) {
+                        $epg[$channel->time]['title'] = $channel->name;
+                        $epg[$channel->time]['desc'] = $channel->descr;
+                    }
+                }
+                break;
+            case 'tele-guide':
+                $doc = HD::http_get_document(sprintf(DemoConfig::TVG_URL_FORMAT, $epg_id, $epg_date));
+                // tvguide.info time in GMT+3 (moscow time)
+                // $timezone_suffix = date('T');
+                $e_time = strtotime("$epg_date, 0300 GMT+3");
+                preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
+                foreach ($keywords[1] as $key => $qid) {
+                    $qq = strip_tags($qid);
+                    preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
+                    $time = $keyw[1][0];
+                    $u_time = strtotime("$epg_date $time GMT+3");
+                    $last_time = ($u_time < $e_time) ? $u_time + 86400  : $u_time ;
+                    $epg[$last_time]["title"] = str_replace("&nbsp;", " ", $keyw[2][0]);
+                    $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
+                }
+                break;
+        }
+
+        return $epg;
     }
 }
 

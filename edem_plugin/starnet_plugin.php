@@ -26,30 +26,24 @@ require_once 'starnet_main_screen.php';
 
 class DemoPlugin extends DefaultDunePlugin
 {
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         $this->tv = new DemoTv();
-        $this->vod = new DemoVod();
-
-        $tv_folder_views = $this->get_tv_folder_views();
-
         //$this->add_screen(new TvGroupListScreen($this->tv, DemoConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS()));
         $this->add_screen(new TvChannelListScreen($this->tv, DemoConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
         $this->add_screen(new TvFavoritesScreen($this->tv, DemoConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
         $this->add_screen(new Starnet_MainScreen($this->tv, DemoConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS()));
         $this->add_screen(new DemoSetupScreen($this->tv));
-        $this->add_screen(new VodFavoritesScreen($this->vod));
-        $this->add_screen(new DemoVodCategoryListScreen());
-        $this->add_screen(new DemoVodListScreen($this->vod));
-        $this->add_screen(new VodMovieScreen($this->vod));
-        $this->add_screen(new VodSeriesListScreen($this->vod));
-    }
 
-    ///////////////////////////////////////////////////////////////////////
-
-    private function get_tv_folder_views()
-    {
-        return DemoConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS();
+        //$this->vod = new DemoVod();
+        //$this->add_screen(new VodFavoritesScreen($this->vod));
+        //$this->add_screen(new DemoVodCategoryListScreen());
+        //$this->add_screen(new DemoVodListScreen($this->vod));
+        //$this->add_screen(new VodMovieScreen($this->vod));
+        //$this->add_screen(new VodSeriesListScreen($this->vod));
     }
 }
 

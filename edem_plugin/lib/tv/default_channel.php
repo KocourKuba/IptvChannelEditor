@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'lib/tv/channel.php';
+require_once 'channel.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -71,7 +71,7 @@ class DefaultChannel implements Channel
 
     public function get_past_epg_days()
     {
-        return 14;
+        return 7;
     }
 
     public function get_future_epg_days()
@@ -91,7 +91,7 @@ class DefaultChannel implements Channel
 
     public function get_buffering_ms()
     {
-        return 4000;
+        return 0;
     }
 
     public function get_timeshift_hours()
