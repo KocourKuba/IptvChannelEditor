@@ -2274,7 +2274,17 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 
 	if (nResult == IDOK)
 	{
-		CString newPath = file.Left(file.GetLength() - _tcslen(oFN.lpstrFileTitle));
+		size_t len = _tcslen(oFN.lpstrFileTitle);
+		for (size_t i = 0; i < len; i++)
+		{
+			if (oFN.lpstrFileTitle[i] > 127)
+			{
+				AfxMessageBox(_T("Non ASCII symbols in the icon name is not allowed!"), MB_ICONERROR | MB_OK);
+				return;
+			}
+		}
+
+		CString newPath = file.Left(file.GetLength() - len);
 		if (path.CompareNoCase(newPath) != 0)
 		{
 			path += oFN.lpstrFileTitle;
@@ -2700,6 +2710,16 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 	INT_PTR nResult = dlg.DoModal();
 	if (nResult == IDOK)
 	{
+		size_t len = _tcslen(oFN.lpstrFileTitle);
+		for (size_t i = 0; i < len; i++)
+		{
+			if (oFN.lpstrFileTitle[i] > 127)
+			{
+				AfxMessageBox(_T("Non ASCII symbols in the channel list name is not allowed!"), MB_ICONERROR | MB_OK);
+				return;
+			}
+		}
+
 		CFile cFile;
 		CFileException ex;
 		if (cFile.Open(dlg.GetPathName(), CFile::modeWrite | CFile::modeCreate | CFile::typeBinary | CFile::shareDenyRead, &ex))
