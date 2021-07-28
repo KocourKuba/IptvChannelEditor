@@ -3,7 +3,7 @@
 class uri
 {
 public:
-	static constexpr auto PLUGIN_SCHEME = L"plugin_file://";
+	static constexpr auto PLUGIN_SCHEME = "plugin_file://";
 
 public:
 	uri() = default;
@@ -11,25 +11,25 @@ public:
 public:
 	virtual void clear() { schema.clear(); path.clear(); }
 
-	virtual std::wstring get_uri() const { return schema + path; }
-	virtual void set_uri(const std::wstring& url);
+	virtual std::string get_uri() const { return schema + path; }
+	virtual void set_uri(const std::string& url);
 
-	virtual std::wstring get_path() const { return path; }
-	virtual void set_path(const std::wstring& val) { path = val; };
+	virtual std::string get_path() const { return path; }
+	virtual void set_path(const std::string& val) { path = val; };
 
-	virtual std::wstring get_schema() const { return schema; }
-	virtual void set_schema(const std::wstring& val) { schema = val; };
+	virtual std::string get_schema() const { return schema; }
+	virtual void set_schema(const std::string& val) { schema = val; };
 
 	bool is_local() const { return schema == PLUGIN_SCHEME; }
 
-	std::wstring get_icon_relative_path(LPCWSTR szRoot = nullptr) const;
+	std::string get_icon_absolute_path(const std::string& root) const;
 
 	bool operator==(const uri& src) const { return src.get_schema() == schema && src.get_path() == path; }
 	bool operator!=(const uri& src) const { return src.get_schema() != schema && src.get_path() != path; }
 
 protected:
-	std::wstring schema;
-	std::wstring path;
+	std::string schema;
+	std::string path;
 };
 
 class uri_stream : public uri
@@ -46,20 +46,20 @@ public:
 	/// and substituted channel id
 	/// </summary>
 	/// <returns></returns>
-	std::wstring get_ts_translated_url() const;
+	std::string get_ts_translated_url() const;
 
 	/// <summary>
 	/// getter for id translated uri
 	/// return url with substituted channel id
 	/// </summary>
 	/// <returns></returns>
-	std::wstring get_id_translated_url() const;
+	std::string get_id_translated_url() const;
 
 	/// <summary>
 	/// setter not translated uri
 	/// </summary>
 	/// <param name="url"></param>
-	void set_uri(const std::wstring& url) override;
+	void set_uri(const std::string& url) override;
 
 	/// <summary>
 	/// getter channel id

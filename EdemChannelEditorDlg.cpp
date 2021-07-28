@@ -433,9 +433,9 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	const CString& file = theApp.GetProfileString(_T("Setting"), _T("Playlist"));
 	auto data = std::make_unique<std::vector<BYTE>>();
-	if (utils::CrackUrl(file.GetString()))
+	if (utils::CrackUrl(utils::utf16_to_utf8(file.GetString())))
 	{
-		if (utils::DownloadFile(file.GetString(), *data) && saveToFile)
+		if (utils::DownloadFile(utils::utf16_to_utf8(file.GetString()), *data) && saveToFile)
 		{
 			std::ofstream os(m_plFileName);
 			os.write((char*)data->data(), data->size());
@@ -830,7 +830,7 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 		m_infoVideo = entry->get_video().c_str();
 
 		CImage img;
-		if (theApp.LoadImage(entry->get_icon_uri().get_uri().c_str(), img))
+		if (theApp.LoadImage(utils::utf8_to_utf16(entry->get_icon_uri().get_uri()).c_str(), img))
 		{
 			entry->set_icon(img);
 		}
@@ -995,7 +995,7 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 	}
 
 	auto fav_category = std::make_unique<ChannelCategory>();
-	fav_category->set_icon_uri(L"plugin_file:////icons//fav.png");
+	fav_category->set_icon_uri("plugin_file:////icons//fav.png");
 	fav_category->set_caption(L"Favorites");
 	fav_category->set_id(ID_ADD_TO_FAVORITE);
 
@@ -1131,7 +1131,8 @@ void CEdemChannelEditorDlg::OnNewChannel()
 	channel->set_title(L"New Channel");
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
-	const auto& path = channel->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
+	const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
+	const auto& path = utils::utf8_to_utf16(channel->get_icon_uri().get_icon_absolute_path(root));
 	CImage img;
 	if (theApp.LoadImage(path.c_str(), img))
 	{
@@ -1401,7 +1402,8 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				if (category)
 				{
 					m_iconUrl = category->get_icon_uri().get_uri().c_str();
-					const auto& path = category->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
+					const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
+					const auto& path = utils::utf8_to_utf16(category->get_icon_uri().get_icon_absolute_path(root));
 					CImage img;
 					if (theApp.LoadImage(path.c_str(), img))
 					{
@@ -1853,7 +1855,7 @@ void CEdemChannelEditorDlg::OnEnChangeEditStreamUrl()
 		auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
 		if (channel && m_wndCustom.GetCheck())
 		{
-			channel->set_stream_uri(m_streamUrl.GetString());
+			channel->set_stream_uri(utils::utf16_to_utf8(m_streamUrl.GetString()));
 			set_allow_save();
 		}
 	}
@@ -1970,13 +1972,13 @@ void CEdemChannelEditorDlg::PlayPlaylistEntry(HTREEITEM hItem, int archive_hour 
 	}
 }
 
-void CEdemChannelEditorDlg::PlayStream(const std::wstring& stream_url, int archive_hour /*= 0*/) const
+void CEdemChannelEditorDlg::PlayStream(const std::string& stream_url, int archive_hour /*= 0*/) const
 {
 	TRACE(_T("Test URL: %s\n"), stream_url.c_str());
 	CStringW test(stream_url.c_str());
 	if (archive_hour)
 	{
-		test.Format(L"%s?utc=%d&lutc=%d", stream_url.c_str(), _time32(nullptr) - 3600 * archive_hour, _time32(nullptr));
+		test.Format(L"%hs?utc=%d&lutc=%d", stream_url.c_str(), _time32(nullptr) - 3600 * archive_hour, _time32(nullptr));
 	}
 
 	ShellExecuteW(nullptr, L"open", m_player, test, nullptr, SW_SHOWNORMAL);
@@ -2172,7 +2174,8 @@ void CEdemChannelEditorDlg::OnNewCategory()
 	newCategory->set_caption(L"New Category");
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
 
-	const auto& path = newCategory->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
+	const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
+	const auto& path = utils::utf8_to_utf16(newCategory->get_icon_uri().get_icon_absolute_path(root));
 	CImage img;
 	if (theApp.LoadImage(path.c_str(), img))
 	{
@@ -2317,8 +2320,9 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 			auto channel = GetChannel(hCur);
 			if (channel && m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 			{
-				channel->set_icon_uri(m_iconUrl.GetString());
-				const auto& path = channel->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
+				channel->set_icon_uri(utils::utf16_to_utf8(m_iconUrl.GetString()));
+				const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
+				const auto& path = utils::utf8_to_utf16(channel->get_icon_uri().get_icon_absolute_path(root));
 				CImage img;
 				if (theApp.LoadImage(path.c_str(), img))
 				{
@@ -2330,8 +2334,9 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 		{
 			if (category && m_iconUrl != category->get_icon_uri().get_uri().c_str())
 			{
-				category->set_icon_uri(m_iconUrl.GetString());
-				const auto& path = category->get_icon_uri().get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
+				category->set_icon_uri(utils::utf16_to_utf8(m_iconUrl.GetString()));
+				const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
+				const auto& path = utils::utf8_to_utf16(category->get_icon_uri().get_icon_absolute_path(root));
 				CImage img;
 				if (theApp.LoadImage(path.c_str(), img))
 				{
@@ -2355,12 +2360,12 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 		return;
 
 #ifdef _DEBUG
-	CString dllFile = theApp.GetAppPath(_T("..\\dll\\7za.dll"));
+	const auto& dllFile = theApp.GetAppPath(_T("..\\dll\\7za.dll"));
 #else
-	CString dllFile = theApp.GetAppPath(_T("7za.dll"));
+	const auto& dllFile = theApp.GetAppPath(_T("7za.dll"));
 #endif // _DEBUG
 
-	CString plugin_folder = theApp.GetAppPath(utils::PLUGIN_ROOT);
+	const auto& plugin_folder = theApp.GetAppPath(utils::PLUGIN_ROOT);
 
 	SevenZipWrapper archiver(dllFile.GetString());
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
@@ -2647,7 +2652,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		if (pos == std::string::npos) continue;
 
 		fname = fname.substr(pos + 1);
-		std::wstring path = utils::CHANNELS_LOGO_URL;
+		std::string path = utils::CHANNELS_LOGO_URL;
 		path += fname;
 
 		uri icon_uri;
@@ -2657,7 +2662,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		std::vector<BYTE> image;
 		if (!utils::DownloadFile(channel->get_icon_uri().get_uri(), image)) continue;
 
-		std::wstring fullPath = icon_uri.get_icon_relative_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
+		const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
+		const auto& fullPath = utils::utf8_to_utf16(icon_uri.get_icon_absolute_path(root));
 		std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
 		os.write((char*)&image[0], image.size());
 		os.close();
@@ -3163,19 +3169,19 @@ bool CEdemChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	return needCheckExisting;
 }
 
-std::wstring CEdemChannelEditorDlg::TranslateStreamUri(const std::wstring& stream_uri)
+std::string CEdemChannelEditorDlg::TranslateStreamUri(const std::string& stream_uri)
 {
 	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
 
-	std::wregex re_domain(LR"(\{SUBDOMAIN\})");
-	std::wregex re_uid(LR"(\{UID\})");
+	static std::regex re_domain(R"(\{SUBDOMAIN\})");
+	static std::regex re_uid(R"(\{UID\})");
 
-	std::wstring stream_url(stream_uri);
-	stream_url = std::regex_replace(stream_url, re_domain, CEdemChannelEditorDlg::GetAccessDomain().GetString());
-	return std::regex_replace(stream_url, re_uid, CEdemChannelEditorDlg::GetAccessKey().GetString());
+	std::string stream_url(stream_uri);
+	stream_url = std::regex_replace(stream_url, re_domain, utils::utf16_to_utf8(CEdemChannelEditorDlg::GetAccessDomain().GetString()));
+	return std::regex_replace(stream_url, re_uid, utils::utf16_to_utf8(CEdemChannelEditorDlg::GetAccessKey().GetString()));
 }
 
-void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::wstring& url, std::string& audio, std::string& video)
+void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video)
 {
 	if (url.empty())
 		return;
@@ -3214,7 +3220,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::wstring& url, std::s
 
 	// argv[0] имя исполняемого файла
 	CString csCommand;
-	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %s"), CEdemChannelEditorDlg::m_probe.GetString(), TranslateStreamUri(url).c_str());
+	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %hs"), CEdemChannelEditorDlg::m_probe.GetString(), TranslateStreamUri(url).c_str());
 
 	BOOL bRunProcess = CreateProcess(CEdemChannelEditorDlg::m_probe.GetString(),	// 	__in_opt     LPCTSTR lpApplicationName
 									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine

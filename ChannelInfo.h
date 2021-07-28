@@ -51,7 +51,7 @@ public:
 
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& doc) const;
 
-	std::wstring GetIconRelativePath(LPCTSTR szRoot = nullptr) const;
+	std::string GetIconRelativePath(LPCSTR szRoot = nullptr) const;
 
 // Getters/Setters
 

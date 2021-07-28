@@ -348,7 +348,7 @@ std::wstring get_value_wstring(rapidxml::xml_node<>* node)
 	return std::wstring();
 }
 
-bool CrackUrl(const std::wstring& url, std::wstring& host /*= std::wstring()*/, std::wstring& path /*= std::wstring()*/)
+bool CrackUrl(const std::string& url, std::string& host /*= std::string()*/, std::string& path /*= std::string()*/)
 {
 	URL_COMPONENTS urlComp;
 	SecureZeroMemory(&urlComp, sizeof(urlComp));
@@ -359,20 +359,20 @@ bool CrackUrl(const std::wstring& url, std::wstring& host /*= std::wstring()*/, 
 	urlComp.dwUrlPathLength = (DWORD)-1;
 
 
-	if (::WinHttpCrackUrl(url.c_str(), (DWORD)url.size(), 0, &urlComp))
+	if (::WinHttpCrackUrl(utils::utf8_to_utf16(url).c_str(), (DWORD)url.size(), 0, &urlComp))
 	{
-		host.assign(urlComp.lpszHostName, urlComp.dwHostNameLength);
-		path.assign(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
+		host = utils::utf16_to_utf8(std::wstring(urlComp.lpszHostName, urlComp.dwHostNameLength));
+		path = utils::utf16_to_utf8(std::wstring(urlComp.lpszUrlPath, urlComp.dwUrlPathLength));
 		return true;
 	}
 
 	return false;
 }
 
-bool DownloadFile(const std::wstring& url, std::vector<BYTE>& data)
+bool DownloadFile(const std::string& url, std::vector<BYTE>& data)
 {
-	std::wstring host;
-	std::wstring path;
+	std::string host;
+	std::string path;
 	if (!CrackUrl(url, host, path))
 		return false;
 
@@ -387,13 +387,13 @@ bool DownloadFile(const std::wstring& url, std::vector<BYTE>& data)
 	// Specify an HTTP server.
 	HINTERNET hConnect = nullptr;
 	if (hSession)
-		hConnect = WinHttpConnect(hSession, host.c_str(), INTERNET_DEFAULT_HTTP_PORT, 0);
+		hConnect = WinHttpConnect(hSession, utils::utf8_to_utf16(host).c_str(), INTERNET_DEFAULT_HTTP_PORT, 0);
 
 
 	// Create an HTTP request handle.
 	HINTERNET hRequest = nullptr;
 	if (hConnect)
-		hRequest = WinHttpOpenRequest(hConnect, L"GET", path.c_str(),
+		hRequest = WinHttpOpenRequest(hConnect, L"GET", utils::utf8_to_utf16(path).c_str(),
 									  nullptr,
 									  WINHTTP_NO_REFERER,
 									  nullptr,

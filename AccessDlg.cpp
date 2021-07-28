@@ -97,9 +97,9 @@ void CAccessDlg::OnBnClickedBtnGet()
 
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
-	if (utils::CrackUrl(m_url.GetString()))
+	if (utils::CrackUrl(utils::utf16_to_utf8(m_url.GetString())))
 	{
-		if (utils::DownloadFile(m_url.GetString(), data))
+		if (utils::DownloadFile(utils::utf16_to_utf8(m_url.GetString()), data))
 		{
 			utils::vector_to_streambuf<char> buf(data);
 			pl_stream = std::make_unique<std::istream>(&buf);

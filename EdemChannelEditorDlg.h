@@ -24,8 +24,8 @@ public:
 	static HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
 	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
-	static std::wstring TranslateStreamUri(const std::wstring& stream_uri);
-	static void GetChannelStreamInfo(const std::wstring& url, std::string& audio, std::string& video);
+	static std::string TranslateStreamUri(const std::string& stream_uri);
+	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
 
 	static CString GetAccessKey() { return m_embedded_info ? m_ch_access_key : m_gl_access_key; }
 	static CString GetAccessDomain() { return m_embedded_info ? m_ch_domain : m_gl_domain; }
@@ -168,7 +168,7 @@ private:
 
 	void PlayChannel(HTREEITEM hItem, int archive_hour = 0) const;
 	void PlayPlaylistEntry(HTREEITEM hItem, int archive_hour = 0) const;
-	void PlayStream(const std::wstring& stream_url, int archive_hour = 0) const;
+	void PlayStream(const std::string& stream_url, int archive_hour = 0) const;
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
 

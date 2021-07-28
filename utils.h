@@ -3,8 +3,8 @@
 
 namespace utils
 {
-	static constexpr auto URI_TEMPLATE = L"http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
-	static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channel_unset.png";
+	static constexpr auto URI_TEMPLATE = "http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
+	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/channel_unset.png";
 
 	static constexpr auto CHANNELS_SETUP = "channels_setup";
 	static constexpr auto ACCESS_KEY = "access_key";
@@ -13,8 +13,8 @@ namespace utils
 	static constexpr auto TV_INFO = "tv_info";
 	static constexpr auto TV_CATEGORIES = "tv_categories";
 	static constexpr auto TV_CHANNELS = "tv_channels";
-	static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
-	static constexpr auto CATEGORIES_LOGO_URL = L"icons/";
+	static constexpr auto CHANNELS_LOGO_URL = "icons/channels/";
+	static constexpr auto CATEGORIES_LOGO_URL = "icons/";
 
 #ifdef _DEBUG
 	static constexpr auto PLUGIN_ROOT = L"..\\edem_plugin\\";
@@ -154,8 +154,8 @@ public:
 	}
 };
 
-bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring());
+bool CrackUrl(const std::string& url, std::string& host = std::string(), std::string& path = std::string());
 
-bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image);
+bool DownloadFile(const std::string& url, std::vector<BYTE>& image);
 
 }

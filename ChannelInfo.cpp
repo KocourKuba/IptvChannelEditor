@@ -23,7 +23,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	tvg_id = utils::get_value_int(node->first_node(TVG_ID));
 	epg_id = utils::get_value_int(node->first_node(EPG_ID));
 	time_shift_hours = utils::get_value_int(node->first_node(TIME_SHIFT_HOURS));
-	set_icon_uri(utils::get_value_wstring(node->first_node(ICON_URL)));
+	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
 	set_disabled(utils::string_tolower(utils::get_value_string(node->first_node(DISABLED))) == "true");
 	set_favorite(utils::string_tolower(utils::get_value_string(node->first_node(FAVORITE))) == "true");
 
@@ -43,7 +43,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		categories.insert(utils::get_value_int(node->first_node(TV_CATEGORY_ID)));
 	}
 
-	get_stream_uri().set_uri(utils::get_value_wstring(node->first_node(STREAMING_URL)));
+	get_stream_uri().set_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
 	has_archive = utils::get_value_int(node->first_node(ARCHIVE));
 	adult = utils::get_value_int(node->first_node(PROTECTED));
 }
@@ -64,7 +64,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// <icon_url>plugin_file://icons/channels/pervyi.png</icon_url>
 	// <icon_url>http://epg.it999.ru/img/146.png</icon_url>
-	channel_node->append_node(utils::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, ICON_URL, get_icon_uri().get_uri().c_str()));
 
 	if (time_shift_hours != 0)
 		channel_node->append_node(utils::alloc_node(alloc, TIME_SHIFT_HOURS, utils::int_to_char(time_shift_hours).c_str()));
@@ -74,7 +74,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(utils::alloc_node(alloc, TV_CATEGORY_ID, utils::int_to_char(*categories.begin()).c_str()));
 
 	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/127/index.m3u8</streaming_url>
-	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, utils::utf16_to_utf8(get_stream_uri().get_id_translated_url()).c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, get_stream_uri().get_id_translated_url().c_str()));
 
 	// <archive>1</archive>
 	if (has_archive)
@@ -103,10 +103,10 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 bool ChannelInfo::is_icon_local() const
 {
-	return (get_icon_uri().get_schema() == L"plugin_file://");
+	return (get_icon_uri().get_schema() == "plugin_file://");
 }
 
-std::wstring ChannelInfo::GetIconRelativePath(LPCTSTR szRoot /*= nullptr*/) const
+std::string ChannelInfo::GetIconRelativePath(LPCSTR szRoot /*= nullptr*/) const
 {
-	return get_icon_uri().get_icon_relative_path(szRoot);
+	return get_icon_uri().get_icon_absolute_path(szRoot);
 }

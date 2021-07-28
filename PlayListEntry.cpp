@@ -37,6 +37,9 @@ void m3u_entry::Parse(const std::string& str)
 	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
 	// http://example.tv/live.strm
 
+	static std::regex re_dir(R"((#[A-Z0-9-]+)[:\s]?(.*))");
+	static std::regex re_info(R"((-?\d+)\s*(.+=\".+"\s*)*,\s*(.+))");
+
 	if (str.empty())
 		return;
 
@@ -56,7 +59,6 @@ void m3u_entry::Parse(const std::string& str)
 	// #EXT_NAME:<EXT_VALUE>
 	// extarr[0] = #EXT_NAME
 	// extarr[1] = <EXT_VALUE>
-	std::regex re_dir(R"((#[A-Z0-9-]+)[:\s]?(.*))");
 	std::smatch m_dir;
 	if (!std::regex_match(str, m_dir, re_dir))
 		return;
@@ -73,10 +75,9 @@ void m3u_entry::Parse(const std::string& str)
 			return;
 		case ext_info:
 		{
-			std::regex re(R"((-?\d+)\s*(.+=\".+"\s*)*,\s*(.+))");
 			std::smatch m;
 			const auto& value = m_dir[2].str();
-			if (std::regex_match(value, m, re))
+			if (std::regex_match(value, m, re_info))
 			{
 				duration = utils::char_to_int(m[1].str());
 				dir_title = m[3].str();
@@ -113,6 +114,9 @@ void m3u_entry::ParseDirectiveTags(const std::string& str)
 
 void PlaylistEntry::Parse(const std::string& str)
 {
+	static std::regex re_url(R"([a-z]+:\/\/([0-9a-z\.]+)\/iptv\/([0-9A-Za-z\.]+)\/(\d+)\/index.m3u8)");
+	static std::regex re_img(R"(\/\/epg.it999.ru\/img\/)");
+
 	m3u_entry::Parse(str);
 
 	if (ext_name == ext_group)
@@ -126,7 +130,6 @@ void PlaylistEntry::Parse(const std::string& str)
 		// 2 - access key
 		// 3 - channel id
 
-		std::regex re_url(R"([a-z]+:\/\/([0-9a-z\.]+)\/iptv\/([0-9A-Za-z\.]+)\/(\d+)\/index.m3u8)");
 		std::smatch m_url;
 		if (std::regex_match(ext_value, m_url, re_url))
 		{
@@ -139,7 +142,7 @@ void PlaylistEntry::Parse(const std::string& str)
 		}
 		else
 		{
-			get_stream_uri().set_uri(utils::utf8_to_utf16(ext_value));
+			get_stream_uri().set_uri(ext_value);
 		}
 	}
 
@@ -152,8 +155,7 @@ void PlaylistEntry::Parse(const std::string& str)
 
 	if (const auto& pair = ext_tags.find(tag_tvg_logo); pair != ext_tags.end())
 	{
-		std::wregex re_url(LR"(\/\/epg.it999.ru\/img\/)");
-		set_icon_uri(std::regex_replace(utils::utf8_to_utf16(pair->second), re_url, L"//epg.it999.ru/img2/"));
+		set_icon_uri(std::regex_replace(pair->second, re_img, "//epg.it999.ru/img2/"));
 	}
 
 	if (const auto& pair = ext_tags.find(tag_tvg_rec); pair != ext_tags.end())
@@ -177,6 +179,6 @@ void PlaylistEntry::Clear()
 	title.clear();
 	category.clear();
 	get_stream_uri().clear();
-	set_icon_uri(L"");
+	set_icon_uri("");
 	set_icon(CImage());
 }
