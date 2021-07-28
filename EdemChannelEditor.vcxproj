@@ -212,6 +212,7 @@
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="Crc32.h" />
+    <ClInclude Include="PlaylistParseThread.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="CustomPlaylistDlg.h" />
     <ClInclude Include="FilterDialog.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="Crc32.cpp" />
+    <ClCompile Include="PlaylistParseThread.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
     <ClCompile Include="CustomPlaylistDlg.cpp" />
     <ClCompile Include="FilterDialog.cpp" />

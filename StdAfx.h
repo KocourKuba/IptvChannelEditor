@@ -19,5 +19,6 @@
 #include <sstream>
 #include <fstream>
 #include <regex>
+#include <memory>
 
 #endif //PCH_H

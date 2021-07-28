@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include <memory>
 #include "PlayListEntry.h"
 #include "TreeCtrlEx.h"
 #include "ChannelCategory.h"
@@ -52,6 +51,7 @@ protected:
 	void OnOK() override;
 	void OnCancel() override;
 	BOOL PreTranslateMessage(MSG* pMsg) override;
+	BOOL DestroyWindow() override;
 
 	afx_msg void OnKickIdle();
 	afx_msg void OnPaint();
@@ -142,7 +142,8 @@ protected:
 	afx_msg void OnCopyTo(UINT id);
 	afx_msg void OnMoveTo(UINT id);
 	afx_msg void OnAddTo(UINT id);
-	afx_msg LRESULT OnStartLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -151,8 +152,10 @@ private:
 	void set_allow_save(BOOL val = TRUE);
 
 	bool LoadChannels(const CString& path);
+	void LoadPlaylist(bool saveToFile = false);
+
 	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
-	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry, BOOL bRegex, BOOL bCase);
+	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
 
 	void FillTreeChannels();
 	void FillTreePlaylist();
@@ -198,13 +201,14 @@ private:
 	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
+	void RestoreWindowPos();
 public:
 	static CString m_probe;
 
 protected:
 	CToolTipCtrl m_pToolTipCtrl;
 	CTreeCtrlEx m_wndChannelsTree;
-	CComboBox m_wndPlaylistType;
+	CComboBox m_wndPlaylist;
 	CTreeCtrlEx m_wndPlaylistTree;
 	CComboBox m_wndChannels;
 	CEdit m_wndStreamID;
@@ -268,14 +272,15 @@ private:
 	CString m_chFileName;
 	CString m_plFileName;
 	CString m_player;
-	CString m_filterString;
 	BOOL m_bAutoSync = FALSE;
 	BOOL m_filterRegex = FALSE;
 	BOOL m_filterCase = FALSE;
 	BOOL m_allow_save = FALSE;
 	bool m_menu_enable_channel = false;
+	BOOL m_loading = FALSE;
 	HACCEL m_hAccel = nullptr;
 
+	CEvent m_evtStop;
 	COLORREF m_normal;
 	COLORREF m_gray;
 	COLORREF m_red;
