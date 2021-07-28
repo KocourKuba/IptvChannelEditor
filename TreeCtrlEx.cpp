@@ -838,7 +838,6 @@ BOOL CTreeCtrlEx::CreateDragImageEx(CPoint ptDragPoint)
 		return FALSE; // no row selected
 
 	CRect rectSingle;
-	CRect rectText;
 	CRect rectComplete(0, 0, 0, 0);
 
 	HTREEITEM hItem;

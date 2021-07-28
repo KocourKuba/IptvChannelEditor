@@ -688,9 +688,6 @@ void CEdemChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 void CEdemChannelEditorDlg::CheckForExistingPlaylist()
 {
 	TRACE("Start Check for existing\n");
-	COLORREF m_normal = ::GetSysColor(COLOR_WINDOWTEXT);
-	COLORREF m_red = RGB(200, 0, 0);
-
 	HTREEITEM root = m_wndPlaylistTree.GetRootItem();
 	while (root != nullptr)
 	{
@@ -1173,7 +1170,7 @@ void CEdemChannelEditorDlg::OnUpdateChannelUp(CCmdUI* pCmdUI)
 		&& IsChannelSelectionConsistent()
 		&& IsSelectedTheSameCategory()
 		&& IsSelectedNotFavorite()
-		&& (IsChannel(hCur) || IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1)
+		&& (IsChannel(hCur) || (IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1))
 		&& m_wndChannelsTree.GetPrevSiblingItem(hCur) != nullptr;
 
 	pCmdUI->Enable(enable);
@@ -1201,7 +1198,7 @@ void CEdemChannelEditorDlg::OnUpdateChannelDown(CCmdUI* pCmdUI)
 		&& IsChannelSelectionConsistent()
 		&& IsSelectedTheSameCategory()
 		&& IsSelectedNotFavorite()
-		&& (IsChannel(hCur) || IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1)
+		&& (IsChannel(hCur) || (IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1))
 		&& m_wndChannelsTree.GetNextSiblingItem(m_wndChannelsTree.GetLastSelectedItem()) != nullptr;
 
 	pCmdUI->Enable(enable);
@@ -1281,7 +1278,6 @@ void CEdemChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 
 	// сортируем. Пусть TreeCtrl сам переупорядочит внутренний список
 	TVSORTCB sortInfo = { nullptr };
-	sortInfo.hParent = nullptr;
 	sortInfo.lpfnCompare = &CBCompareForSwap;
 	m_wndChannelsTree.SortChildrenCB(&sortInfo);
 
@@ -2754,8 +2750,6 @@ void CEdemChannelEditorDlg::OnGetStreamInfo()
 	m_wndProgress.ShowWindow(SW_SHOW);
 	CWaitCursor cur;
 
-	std::string audio;
-	std::string video;
 	if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
 	{
 		auto selected = m_wndChannelsTree.GetSelectedItems();
@@ -3371,7 +3365,7 @@ bool CEdemChannelEditorDlg::IsSelectedTheSameType() const
 		for (const auto& hItem : selected)
 		{
 			auto channel = GetChannel(hItem);
-			if (isChannel && !channel || !isChannel && channel)
+			if (isChannel != (channel != nullptr))
 				return false;
 		}
 	}
@@ -3385,7 +3379,7 @@ bool CEdemChannelEditorDlg::IsSelectedTheSameType() const
 		for (const auto& hItem : selected)
 		{
 			auto entry = GetPlaylistEntry(hItem);
-			if (isEntry && !entry || !isEntry && entry)
+			if (isEntry != (entry != nullptr))
 				return false;
 		}
 	}

@@ -49,8 +49,9 @@ void CFilterDialog::OnOK()
 
 	try
 	{
+		// Check expression
 		std::wregex re(m_filterString.GetString());
-		re;
+		UNUSED_ALWAYS(re);
 	}
 	catch (std::regex_error& ex)
 	{
