@@ -383,9 +383,11 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	}
 	else
 	{
-		if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel())))
+		bool changed = false;
+		if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel()), changed))
 		{
 			FillTreeChannels();
+			set_allow_save(changed != false);
 		}
 	}
 
@@ -933,7 +935,7 @@ int CEdemChannelEditorDlg::GetCategoryIdByName(const std::wstring& categoryName)
 	return -1;
 }
 
-bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
+bool CEdemChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
 {
 	set_allow_save(FALSE);
 
@@ -1004,6 +1006,7 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path)
 	while (ch_node)
 	{
 		auto channel = std::make_shared<ChannelInfo>(ch_node);
+		changed = channel->is_changed();
 		auto ch_pair = m_channels.find(channel->get_id());
 		if (ch_pair == m_channels.end())
 		{
@@ -3357,9 +3360,11 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 	}
 
 	int idx = m_wndChannels.GetCurSel();
-	if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx)))
+	bool changed = false;
+	if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx), changed))
 	{
 		FillTreeChannels();
+		set_allow_save(changed != false);
 	}
 
 	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);

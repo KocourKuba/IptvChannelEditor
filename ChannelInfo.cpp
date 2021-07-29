@@ -30,6 +30,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	auto cnode = node->first_node(TV_CATEGORIES);
 	if (cnode)
 	{
+		changed = true;
 		auto catNode = cnode->first_node();
 		while (catNode)
 		{

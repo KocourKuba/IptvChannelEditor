@@ -151,7 +151,7 @@ private:
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
 
-	bool LoadChannels(const CString& path);
+	bool LoadChannels(const CString& path, bool& changed);
 	void LoadPlaylist(bool saveToFile = false);
 
 	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
