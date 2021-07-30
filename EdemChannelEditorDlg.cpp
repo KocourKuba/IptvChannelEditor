@@ -2935,15 +2935,17 @@ void CEdemChannelEditorDlg::SelectTreeItem(bool inChannelsList, CTreeCtrl& ctl, 
 	HTREEITEM hItem = ctl.GetSelectedItem();
 	HTREEITEM root = ctl.GetParentItem(hItem);
 	HTREEITEM hStart = hItem;
-	if (!root)
+	if (root)
+	{
+		// shift to next item
+		hItem = ctl.GetNextSiblingItem(hItem);
+	}
+	else
 	{
 		// Category selected or none of item selected. Select first child item
 		root = hItem ? hItem : ctl.GetRootItem();
 		hStart = hItem = ctl.GetChildItem(root);
 	}
-
-	// shift to next item
-	hItem = ctl.GetNextSiblingItem(hItem);
 
 	// cyclic search thru channel list
 	HTREEITEM hFound = nullptr;
@@ -2952,13 +2954,6 @@ void CEdemChannelEditorDlg::SelectTreeItem(bool inChannelsList, CTreeCtrl& ctl, 
 		// iterate subitems
 		while (hItem)
 		{
-			if (hItem == hStart)
-			{
-				// We make full circle. Exit from search loop
-				hFound = hItem;
-				break;
-			}
-
 			DWORD_PTR entry = 0;
 			if (ctl.GetParentItem(hItem) != nullptr)
 				entry = ctl.GetItemData(hItem);
@@ -2988,6 +2983,13 @@ void CEdemChannelEditorDlg::SelectTreeItem(bool inChannelsList, CTreeCtrl& ctl, 
 
 			// get the next sibling item
 			hItem = ctl.GetNextSiblingItem(hItem);
+
+			if (hItem == hStart)
+			{
+				// We make full circle. Exit from search loop
+				hFound = hItem;
+				break;
+			}
 		}
 
 		if (hFound) break;
