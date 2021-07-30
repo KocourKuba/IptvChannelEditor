@@ -74,17 +74,7 @@ BOOL CEdemChannelEditorApp::InitInstance()
 	CEdemChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
-	if (nResponse == IDOK)
-	{
-		// TODO: Place code here to handle when the dialog is
-		//  dismissed with OK
-	}
-	else if (nResponse == IDCANCEL)
-	{
-		// TODO: Place code here to handle when the dialog is
-		//  dismissed with Cancel
-	}
-	else if (nResponse == -1)
+	if (nResponse == -1)
 	{
 		TRACE(traceAppMsg, 0, "Warning: dialog creation failed, so application is terminating unexpectedly.\n");
 		TRACE(traceAppMsg, 0, "Warning: if you are using MFC controls on the dialog, you cannot #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS.\n");
@@ -98,11 +88,11 @@ BOOL CEdemChannelEditorApp::InitInstance()
 	return FALSE;
 }
 
-CString CEdemChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/)
+std::wstring CEdemChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/)
 {
 	CString fileName;
 
-	if (GetModuleFileName(theApp.m_hInstance, fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
+	if (GetModuleFileName(m_hInstance, fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
 	{
 		fileName.ReleaseBuffer();
 		int pos = fileName.ReverseFind('\\');
@@ -110,64 +100,7 @@ CString CEdemChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/)
 			fileName.Truncate(pos + 1);
 	}
 
-	return fileName + szSubFolder;
-}
+	fileName += szSubFolder;
 
-BOOL CEdemChannelEditorApp::LoadImage(const CString& fullPath, CImage& image)
-{
-	// png size
-#if 0
-	int pixelX = 245;
-	int pixelY = 140;
-	static const int multiplier = 1000;
-	CRect rc(0, 0, multiplier, multiplier);
-	MapDialogRect(wnd.GetParent()->GetSafeHwnd(), rc);
-	int dlX = pixelX * multiplier / rc.Width();
-	int dlY = pixelY * multiplier / rc.Width();
-	float ratio = (float)dlX / (float)dlY;
-	int newdlY = 80.F / ratio;
-#endif // 0
-
-	HRESULT hr = E_FAIL;
-	if (utils::CrackUrl(utils::utf16_to_utf8(fullPath.GetString())))
-	{
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(utils::utf16_to_utf8(fullPath.GetString()), data))
-		{
-			// Still not clear if this is making a copy internally
-			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), data.size()));
-			hr = image.Load(stream);
-		}
-	}
-	else
-	{
-		hr = image.Load(fullPath);
-	}
-
-	return SUCCEEDED(hr);
-}
-
-void CEdemChannelEditorApp::SetImage(const CImage& image, CStatic& wnd)
-{
-	HBITMAP hImg = nullptr;
-	if (image)
-	{
-		CRect rc;
-		wnd.GetClientRect(rc);
-
-		CImage resized;
-		resized.Create(rc.Width(), rc.Height(), 32);
-		HDC dcImage = resized.GetDC();
-		SetStretchBltMode(dcImage, COLORONCOLOR);
-		image.StretchBlt(dcImage, rc, SRCCOPY);
-		// The next two lines test the image on a picture control.
-		image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
-
-		resized.ReleaseDC();
-		hImg = (HBITMAP)resized.Detach();
-	}
-
-	HBITMAP hOld = wnd.SetBitmap(hImg);
-	if (hOld)
-		::DeleteObject(hOld);
+	return fileName.GetString();
 }

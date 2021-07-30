@@ -158,4 +158,8 @@ bool CrackUrl(const std::string& url, std::string& host = std::string(), std::st
 
 bool DownloadFile(const std::string& url, std::vector<BYTE>& image);
 
+BOOL LoadImage(const std::wstring& fullPath, CImage& image);
+BOOL LoadImage(const std::string& fullPath, CImage& image);
+void SetImage(const CImage& image, CStatic& wnd);
+
 }

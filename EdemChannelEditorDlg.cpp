@@ -336,7 +336,7 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	m_wndPlaylist.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("PlaylistType"), 0));
 
-	m_all_channels_lists.emplace_back(_T("Standard"), theApp.GetAppPath(utils::CHANNELS_CONFIG));
+	m_all_channels_lists.emplace_back(_T("Standard"), theApp.GetAppPath(utils::CHANNELS_CONFIG).c_str());
 	CFileFind ffind;
 	BOOL bFound = ffind.FindFile(_T("edem_plugin\\*.xml"));
 	while (bFound)
@@ -794,12 +794,12 @@ void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		{
 			m_iconUrl = channel->get_icon_uri().get_uri().c_str();
 			CImage img;
-			if (theApp.LoadImage(m_iconUrl, img))
+			if (utils::LoadImage(m_iconUrl.GetString(), img))
 			{
 				channel->set_icon(img);
 			}
 
-			theApp.SetImage(channel->get_icon(), m_wndIcon);
+			utils::SetImage(channel->get_icon(), m_wndIcon);
 		}
 	}
 	else
@@ -839,12 +839,12 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 		m_infoVideo = entry->get_video().c_str();
 
 		CImage img;
-		if (theApp.LoadImage(utils::utf8_to_utf16(entry->get_icon_uri().get_uri()).c_str(), img))
+		if (utils::LoadImage(entry->get_icon_uri().get_uri(), img))
 		{
 			entry->set_icon(img);
 		}
 
-		theApp.SetImage(entry->get_icon(), m_wndPlIcon);
+		utils::SetImage(entry->get_icon(), m_wndPlIcon);
 
 		if (m_bAutoSync)
 		{
@@ -1135,12 +1135,10 @@ void CEdemChannelEditorDlg::OnNewChannel()
 	channel->set_title(L"New Channel");
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
-	const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
-	const auto& path = utils::utf8_to_utf16(channel->get_icon_uri().get_icon_absolute_path(root));
 	CImage img;
-	if (theApp.LoadImage(path.c_str(), img))
+	if (utils::LoadImage(channel->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
 	{
-		theApp.SetImage(img, m_wndIcon);
+		utils::SetImage(img, m_wndIcon);
 	}
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -1408,12 +1406,10 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				if (category)
 				{
 					m_iconUrl = category->get_icon_uri().get_uri().c_str();
-					const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
-					const auto& path = utils::utf8_to_utf16(category->get_icon_uri().get_icon_absolute_path(root));
 					CImage img;
-					if (theApp.LoadImage(path.c_str(), img))
+					if (utils::LoadImage(category->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
 					{
-						theApp.SetImage(img, m_wndIcon);
+						utils::SetImage(img, m_wndIcon);
 					}
 				}
 			}
@@ -2048,7 +2044,7 @@ void CEdemChannelEditorDlg::FillTreePlaylist()
 
 void CEdemChannelEditorDlg::OnSave()
 {
-	std::wstring path = theApp.GetAppPath(utils::PLUGIN_ROOT + m_chFileName).GetString();
+	const auto& path = theApp.GetAppPath(utils::PLUGIN_ROOT + m_chFileName);
 
 	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
@@ -2157,12 +2153,10 @@ void CEdemChannelEditorDlg::OnNewCategory()
 	newCategory->set_caption(L"New Category");
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
 
-	const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
-	const auto& path = utils::utf8_to_utf16(newCategory->get_icon_uri().get_icon_absolute_path(root));
 	CImage img;
-	if (theApp.LoadImage(path.c_str(), img))
+	if (utils::LoadImage(newCategory->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
 	{
-		theApp.SetImage(img, m_wndIcon);
+		utils::SetImage(img, m_wndIcon);
 	}
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -2248,8 +2242,8 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 	bool isChannel = IsChannel(hCur);
 
 	CFileDialog dlg(TRUE);
-	CString path = theApp.GetAppPath(isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH);
-	CString file = theApp.GetAppPath(utils::PLUGIN_ROOT) + m_iconUrl;
+	CString path = theApp.GetAppPath(isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
+	CString file = theApp.GetAppPath(utils::PLUGIN_ROOT).c_str() + m_iconUrl;
 	file.Replace('/', '\\');
 
 	CString filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
@@ -2286,9 +2280,9 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 			path += oFN.lpstrFileTitle;
 			CopyFile(file, path, FALSE);
 			CImage img;
-			if (theApp.LoadImage(path, img))
+			if (utils::LoadImage(path.GetString(), img))
 			{
-				theApp.SetImage(img, m_wndIcon);
+				utils::SetImage(img, m_wndIcon);
 			}
 		}
 
@@ -2303,11 +2297,9 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 			auto channel = GetChannel(hCur);
 			if (channel && m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 			{
-				channel->set_icon_uri(utils::utf16_to_utf8(m_iconUrl.GetString()));
-				const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
-				const auto& path = utils::utf8_to_utf16(channel->get_icon_uri().get_icon_absolute_path(root));
+				channel->set_icon_uri(m_iconUrl.GetString());
 				CImage img;
-				if (theApp.LoadImage(path.c_str(), img))
+				if (utils::LoadImage(channel->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
 				{
 					channel->set_icon(img);
 				}
@@ -2317,11 +2309,9 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 		{
 			if (category && m_iconUrl != category->get_icon_uri().get_uri().c_str())
 			{
-				category->set_icon_uri(utils::utf16_to_utf8(m_iconUrl.GetString()));
-				const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
-				const auto& path = utils::utf8_to_utf16(category->get_icon_uri().get_icon_absolute_path(root));
+				category->set_icon_uri(m_iconUrl.GetString());
 				CImage img;
-				if (theApp.LoadImage(path.c_str(), img))
+				if (utils::LoadImage(category->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
 				{
 					category->set_icon(img);
 				}
@@ -2350,9 +2340,9 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 
 	const auto& plugin_folder = theApp.GetAppPath(utils::PLUGIN_ROOT);
 
-	SevenZipWrapper archiver(dllFile.GetString());
+	SevenZipWrapper archiver(dllFile);
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
-	bool res = archiver.GetCompressor().AddFiles(plugin_folder.GetString(), _T("*.*"), true);
+	bool res = archiver.GetCompressor().AddFiles(plugin_folder, _T("*.*"), true);
 	if (!res)
 		return;
 
@@ -2522,7 +2512,7 @@ void CEdemChannelEditorDlg::OnUpdateIcon()
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
 		channel->copy_icon(entry->get_icon());
-		theApp.SetImage(channel->get_icon(), m_wndIcon);
+		utils::SetImage(channel->get_icon(), m_wndIcon);
 		OnSyncTreeItem();
 		set_allow_save();
 	}
@@ -2566,14 +2556,13 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		std::vector<BYTE> image;
 		if (!utils::DownloadFile(channel->get_icon_uri().get_uri(), image)) continue;
 
-		const auto& root = utils::utf16_to_utf8(theApp.GetAppPath(utils::PLUGIN_ROOT).GetString());
-		const auto& fullPath = utils::utf8_to_utf16(icon_uri.get_icon_absolute_path(root));
+		const auto& fullPath = icon_uri.get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
 		std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
 		os.write((char*)&image[0], image.size());
 		os.close();
 
 		CImage img;
-		if (theApp.LoadImage(fullPath.c_str(), img))
+		if (utils::LoadImage(fullPath, img))
 		{
 			channel->set_icon_uri(icon_uri.get_uri());
 			channel->set_icon(img);

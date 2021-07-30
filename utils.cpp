@@ -448,4 +448,54 @@ bool DownloadFile(const std::string& url, std::vector<BYTE>& data)
 	return !data.empty();
 }
 
+BOOL LoadImage(const std::wstring& fullPath, CImage& image)
+{
+	return LoadImage(utils::utf16_to_utf8(fullPath), image);
+}
+
+BOOL LoadImage(const std::string& fullPath, CImage& image)
+{
+	HRESULT hr = E_FAIL;
+	if (utils::CrackUrl(fullPath))
+	{
+		std::vector<BYTE> data;
+		if (utils::DownloadFile(fullPath, data))
+		{
+			// Still not clear if this is making a copy internally
+			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), data.size()));
+			hr = image.Load(stream);
+		}
+	}
+	else
+	{
+		hr = image.Load(utils::utf8_to_utf16(fullPath).c_str());
+	}
+
+	return SUCCEEDED(hr);
+}
+
+void SetImage(const CImage& image, CStatic& wnd)
+{
+	HBITMAP hImg = nullptr;
+	if (image)
+	{
+		CRect rc;
+		wnd.GetClientRect(rc);
+
+		CImage resized;
+		resized.Create(rc.Width(), rc.Height(), 32);
+		HDC dcImage = resized.GetDC();
+		SetStretchBltMode(dcImage, COLORONCOLOR);
+		image.StretchBlt(dcImage, rc, SRCCOPY);
+		// The next two lines test the image on a picture control.
+		image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
+
+		resized.ReleaseDC();
+		hImg = (HBITMAP)resized.Detach();
+	}
+
+	HBITMAP hOld = wnd.SetBitmap(hImg);
+	if (hOld)
+		::DeleteObject(hOld);
+}
 }

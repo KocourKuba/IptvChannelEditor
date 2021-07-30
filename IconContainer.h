@@ -36,8 +36,12 @@ public:
 
 	const uri& get_icon_uri() const { return icon_uri; }
 
+	std::string get_icon_absolute_path(const std::string& root) const { return get_icon_uri().get_icon_absolute_path(root); };
+	std::string get_icon_absolute_path(const std::wstring& root) const { return get_icon_uri().get_icon_absolute_path(root); };
+
 	void set_icon_uri(const uri& val) { icon_uri = val; }
 	void set_icon_uri(const std::string& val) { icon_uri.set_uri(val); }
+	void set_icon_uri(const std::wstring& val) { icon_uri.set_uri(utils::utf16_to_utf8(val)); }
 
 	const CImage& get_icon() const { return icon; }
 	void set_icon(CImage& val)

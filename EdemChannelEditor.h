@@ -24,10 +24,7 @@ public:
 public:
 	BOOL InitInstance() override;
 
-	BOOL LoadImage(const CString& fullPath, CImage& image);
-	void SetImage(const CImage& image, CStatic& wnd);
-	CString GetAppPath(LPCTSTR szSubFolder = nullptr);
-// Implementation
+	std::wstring GetAppPath(LPCTSTR szSubFolder = nullptr);
 
 	DECLARE_MESSAGE_MAP()
 };

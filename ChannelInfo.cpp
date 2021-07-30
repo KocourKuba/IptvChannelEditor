@@ -109,5 +109,5 @@ bool ChannelInfo::is_icon_local() const
 
 std::string ChannelInfo::GetIconRelativePath(LPCSTR szRoot /*= nullptr*/) const
 {
-	return get_icon_uri().get_icon_absolute_path(szRoot);
+	return get_icon_absolute_path(szRoot);
 }

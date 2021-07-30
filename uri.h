@@ -23,6 +23,7 @@ public:
 	bool is_local() const { return schema == PLUGIN_SCHEME; }
 
 	std::string get_icon_absolute_path(const std::string& root) const;
+	std::string get_icon_absolute_path(const std::wstring& root) const;
 
 	bool operator==(const uri& src) const { return src.get_schema() == schema && src.get_path() == path; }
 	bool operator!=(const uri& src) const { return src.get_schema() != schema && src.get_path() != path; }

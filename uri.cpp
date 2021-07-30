@@ -30,6 +30,19 @@ std::string uri::get_icon_absolute_path(const std::string& root) const
 	return get_uri();
 }
 
+std::string uri::get_icon_absolute_path(const std::wstring& root) const
+{
+	if (is_local())
+	{
+		std::string rpath = utils::utf16_to_utf8(root) + get_path();
+
+		static std::regex re_pf(R"(\/)");
+		return std::regex_replace(rpath, re_pf, R"(\)");
+	}
+
+	return get_uri();
+}
+
 void uri_stream::clear()
 {
 	uri::clear();
