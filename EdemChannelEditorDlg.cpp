@@ -2766,7 +2766,7 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 
 void CEdemChannelEditorDlg::OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_lastTree != nullptr && !m_probe.IsEmpty());
+	pCmdUI->Enable(m_lastTree != nullptr && !m_probe.IsEmpty() && !m_loading);
 }
 
 void CEdemChannelEditorDlg::OnPlayChannelStream()
