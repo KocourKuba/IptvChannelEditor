@@ -22,6 +22,7 @@ public:
 
 public:
 	static HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
+	static void SelectTreeItem(bool inChannelsList, CTreeCtrl& ctl, const CString& searchString, bool byId, int id);
 	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static std::string TranslateStreamUri(const std::string& stream_uri);
@@ -155,7 +156,6 @@ private:
 	void LoadPlaylist(bool saveToFile = false);
 
 	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
-	bool AddPlaylistEntry(std::unique_ptr<PlaylistEntry>& entry);
 
 	void FillTreeChannels();
 	void FillTreePlaylist();
@@ -202,10 +202,12 @@ private:
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
 	void RestoreWindowPos();
-public:
-	static CString m_probe;
 
 protected:
+	CFont m_largeFont;
+
+	// GUI controls and variables
+
 	CToolTipCtrl m_pToolTipCtrl;
 	CTreeCtrlEx m_wndChannelsTree;
 	CComboBox m_wndPlaylist;
@@ -218,6 +220,7 @@ protected:
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
+	CEdit m_wndArchiveDays;
 	CEdit m_wndSearch;
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
@@ -239,63 +242,71 @@ protected:
 	CStatic m_wndPlIcon;
 	CStatic m_wndChInfo;
 	CStatic m_wndPlInfo;
-	CFont m_largeFont;
 
-	CString m_search;
-	CString m_streamUrl;
+	CString m_search; // m_wndSearch
+	CString m_streamUrl; // m_wndStreamUrl
 	CString m_iconUrl;
 
-	CString m_plSearch;
+	CString m_plSearch; // m_wndPlSearch
 	CString m_plIconName;
 	CString m_plID;
 	CString m_plEPG;
-	CString m_infoVideo;
-	CString m_infoAudio;
+	CString m_infoVideo; // m_wndInfoVideo
+	CString m_infoAudio; // m_wndInfoAudio
 
-	HWND m_lastTree = nullptr;
-	BOOL m_hasArchive = FALSE;
-	BOOL m_isAdult = FALSE;
-	int m_streamID = 0;
-	int m_tvgID = 0;
-	int m_epgID = 0;
-	int m_archiveCheck = 0;
-	int m_archiveDays = 0;
-	int m_timeShiftHours = 0;
+	BOOL m_hasArchive = FALSE; // m_wndArchive
+	BOOL m_isAdult = FALSE; // m_wndAdult
+	int m_streamID = 0; // m_wndStreamID
+	int m_tvgID = 0; // m_wndTvgID
+	int m_epgID = 0; // m_wndEpgID
+	int m_archiveCheck = 0; // m_wndCheckArchive
+	int m_archiveDays = 0; // m_wndArchiveDays
+	int m_timeShiftHours = 0; // m_wndTimeShift
 
 private:
+	static CString m_probe;
 	static CString m_gl_domain;
 	static CString m_gl_access_key;
 	static CString m_ch_access_key;
 	static CString m_ch_domain;
 	static BOOL m_embedded_info;
 
+	HACCEL m_hAccel = nullptr;
+	HWND m_lastTree = nullptr;
+
 	CString m_chFileName;
 	CString m_plFileName;
 	CString m_player;
 	BOOL m_bAutoSync = FALSE;
-	BOOL m_filterRegex = FALSE;
-	BOOL m_filterCase = FALSE;
 	BOOL m_allow_save = FALSE;
 	bool m_menu_enable_channel = false;
 	BOOL m_loading = FALSE;
-	HACCEL m_hAccel = nullptr;
 
+	// Event to signal for load playlist thread
 	CEvent m_evtStop;
+
 	COLORREF m_normal;
 	COLORREF m_gray;
 	COLORREF m_red;
 	COLORREF m_green;
 
-	std::vector<std::unique_ptr<PlaylistEntry>>::iterator m_pl_cur_it;
-	std::map<int, std::shared_ptr<ChannelInfo>>::iterator m_cur_pair;
+	// map of all channels for fast search
+	std::map<int, std::shared_ptr<ChannelInfo>> m_channelsMap;
+	// map of all categories for fast search
+	std::map<int, std::shared_ptr<ChannelCategory>> m_categoriesMap;
 
-	std::map<int, std::shared_ptr<ChannelInfo>> m_channels;
-	std::map<int, std::shared_ptr<ChannelCategory>> m_categories;
+	// list of playlist id's in the same order as in the playlist
+	// Must not contains duplicates!
+	std::vector<int> m_playlistIds;
+	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlistMap;
 
-	std::set<int> m_playlistIds;
-	std::vector<std::unique_ptr<PlaylistEntry>> m_playlist;
-	std::vector<std::pair<std::wstring, HTREEITEM>> m_pl_categories;
+	// list of playlist categories in the same order as in the playlist
+	// Must not contains duplicates!
+	std::vector<std::wstring> m_pl_categories;
+	// map of category and TREEITEM for fast add to tree
+	std::map<std::wstring, HTREEITEM> m_pl_categoriesMap;
 
+	// list of all channel lists
 	std::vector<std::pair<CString, CString>> m_all_channels_lists;
 };
 
