@@ -358,8 +358,8 @@ bool CrackUrl(const std::string& url, std::string& host /*= std::string()*/, std
 	urlComp.dwHostNameLength = (DWORD)-1;
 	urlComp.dwUrlPathLength = (DWORD)-1;
 
-
-	if (::WinHttpCrackUrl(utils::utf8_to_utf16(url).c_str(), (DWORD)url.size(), 0, &urlComp))
+	std::wstring urlW = utils::utf8_to_utf16(url);
+	if (::WinHttpCrackUrl(urlW.c_str(), (DWORD)urlW.size(), 0, &urlComp))
 	{
 		host = utils::utf16_to_utf8(std::wstring(urlComp.lpszHostName, urlComp.dwHostNameLength));
 		path = utils::utf16_to_utf8(std::wstring(urlComp.lpszUrlPath, urlComp.dwUrlPathLength));
