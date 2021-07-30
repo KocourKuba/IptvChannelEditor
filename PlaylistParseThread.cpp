@@ -56,9 +56,11 @@ BOOL CPlaylistParseThread::InitInstance()
 				if (line.empty()) continue;
 
 				entry->Parse(line);
-				if (entry->get_directive() == ext_pathname && !filterEntry(entry.get()))
+				if (entry->get_directive() == ext_pathname)
 				{
-					entries->emplace_back(std::move(entry));
+					if (!filterEntry(entry.get()))
+						entries->emplace_back(std::move(entry));
+
 					entry = std::make_unique<PlaylistEntry>();
 				}
 			}
