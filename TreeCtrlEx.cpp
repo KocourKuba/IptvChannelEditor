@@ -691,9 +691,10 @@ BOOL CTreeCtrlEx::SelectItems(HTREEITEM hFromItem, HTREEITEM hToItem)
 // Clear selected state on all visible items
 void CTreeCtrlEx::ClearSelection(BOOL bMultiOnly /*=FALSE*/)
 {
+	HTREEITEM hFirst = GetSelectedItem();
 	for (HTREEITEM hItem = GetRootItem(); hItem != nullptr; hItem = GetNextVisibleItem(hItem))
 	{
-		if (GetItemState(hItem, TVIS_SELECTED) & TVIS_SELECTED)
+		if (hFirst != hItem && GetItemState(hItem, TVIS_SELECTED) & TVIS_SELECTED)
 			SetItemState(hItem, 0, TVIS_SELECTED);
 	}
 }
