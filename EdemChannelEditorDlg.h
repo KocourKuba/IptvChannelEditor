@@ -131,6 +131,8 @@ protected:
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMSetfocusTree(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnUpdateAddUpdateChannel(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
@@ -273,6 +275,8 @@ private:
 
 	HACCEL m_hAccel = nullptr;
 	HWND m_lastTree = nullptr;
+
+	CString m_toolTipText;
 
 	CString m_chFileName;
 	CString m_plFileName;

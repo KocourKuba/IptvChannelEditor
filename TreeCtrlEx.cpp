@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(CTreeCtrlEx, CTreeCtrl)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_TIMER()
 	ON_WM_NCHITTEST()
+
 END_MESSAGE_MAP()
 
 BOOL CTreeCtrlEx::Create(DWORD dwStyle, DWORD dwExStyle, const RECT& rect, CWnd* pParentWnd, UINT nID)
@@ -750,7 +751,6 @@ BOOL CTreeCtrlEx::OnItemexpanding(NMHDR* pNMHDR, LRESULT* pResult)
 	return FALSE;   // Allow parent to handle this notification as well
 }
 
-
 // Intercept TVN_SELCHANGED and pass it only to the parent window of the
 // selection process is finished
 BOOL CTreeCtrlEx::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1027,7 +1027,6 @@ COLORREF CTreeCtrlEx::GetItemBackColor(HTREEITEM hItem)
 void CTreeCtrlEx::OnPaint()
 {
 	CPaintDC dc(this);
-	TRACE("OnPaint\n");
 	// Create a memory DC compatible with the paint DC
 	CDC memDC;
 	memDC.CreateCompatibleDC(&dc);

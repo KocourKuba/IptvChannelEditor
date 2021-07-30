@@ -121,11 +121,13 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(TVN_ENDLABELEDIT, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnEndlabeleditTreeChannels)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnNMRclickTreeChannel)
 	ON_NOTIFY(NM_SETFOCUS, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnNMSetfocusTree)
+	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_CHANNELS, &CEdemChannelEditorDlg::OnTvnChannelsGetInfoTip)
 
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PLAYLIST, &CEdemChannelEditorDlg::OnNMDblclkTreePaylist)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_PLAYLIST, &CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_PLAYLIST, &CEdemChannelEditorDlg::OnNMRclickTreePlaylist)
 	ON_NOTIFY(NM_SETFOCUS, IDC_TREE_PLAYLIST, &CEdemChannelEditorDlg::OnNMSetfocusTree)
+	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_PLAYLIST, &CEdemChannelEditorDlg::OnTvnPlaylistGetInfoTip)
 
 	ON_COMMAND(ID_SAVE, &CEdemChannelEditorDlg::OnSave)
 	ON_UPDATE_COMMAND_UI(ID_SAVE, &CEdemChannelEditorDlg::OnUpdateSave)
@@ -376,6 +378,7 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_wndSpinTimeShift.EnableWindow(FALSE);
 	m_wndInfoVideo.EnableWindow(FALSE);
 	m_wndInfoAudio.EnableWindow(FALSE);
+	m_wndChannelsTree.EnableToolTips(TRUE);
 
 	if (m_wndChannels.GetCount() == 0)
 	{
@@ -782,9 +785,9 @@ void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		m_streamID = channel->get_id();
 		m_infoAudio = channel->get_audio().c_str();
 		m_infoVideo = channel->get_video().c_str();
-		m_wndCustom.SetCheck(m_streamID == 0 && channel->get_stream_uri().is_template());
+		m_wndCustom.SetCheck(!channel->get_stream_uri().is_template());
 		m_timeShiftHours = channel->get_time_shift_hours();
-		m_hasArchive = channel->get_has_archive();
+		m_hasArchive = channel->get_archive();
 		m_isAdult = channel->get_adult();
 
 		if(m_iconUrl != channel->get_icon_uri().get_uri().c_str())
@@ -1373,7 +1376,8 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	bool bSameType = IsSelectedTheSameType();
 	if (bSameType)
 	{
-		if (IsChannel(hSelected))
+		auto channel = GetChannel(hSelected);
+		if (channel != nullptr)
 		{
 			LoadChannelInfo(hSelected);
 			state = 2;
@@ -1382,9 +1386,10 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 
 		if (m_wndChannelsTree.GetSelectedCount() == 1)
 		{
-			if (IsChannel(hSelected))
+			if (channel != nullptr)
 			{
 				state = 1;
+				m_streamID = channel->get_stream_uri().is_template() ? m_streamID : 0;
 				m_wndIcon.EnableWindow(TRUE);
 			}
 			else if (IsCategory(hSelected))
@@ -1814,7 +1819,7 @@ void CEdemChannelEditorDlg::OnBnClickedCheckArchive()
 	{
 		auto channel = GetChannel(hItem);
 		if (channel)
-			channel->set_has_archive(m_hasArchive);
+			channel->set_archive(m_hasArchive);
 	}
 
 	set_allow_save();
@@ -3132,7 +3137,7 @@ bool CEdemChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	if (auto id = entry->get_tvg_id(); id != -1)
 		channel->set_epg_id(id);
 
-	channel->set_has_archive(entry->get_archive());
+	channel->set_archive(entry->get_archive());
 	channel->set_stream_uri(entry->get_stream_uri());
 	if (entry->get_icon_uri() != channel->get_icon_uri() && !channel->get_icon_uri().get_uri().empty())
 	{
@@ -3483,6 +3488,58 @@ bool CEdemChannelEditorDlg::IsChannelSelectionConsistent() const
 void CEdemChannelEditorDlg::OnNMSetfocusTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	m_lastTree = pNMHDR->hwndFrom;
+	*pResult = 0;
+}
+
+void CEdemChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTVGETINFOTIP pGetInfoTip = reinterpret_cast<LPNMTVGETINFOTIP>(pNMHDR);
+
+	auto channel = GetChannel(pGetInfoTip->hItem);
+	if (channel)
+	{
+		auto ch_id = channel->get_id();
+		CString categories;
+		for (const auto& pair : m_categoriesMap)
+		{
+			if (pair.second->find_channel(ch_id))
+			{
+				if (!categories.IsEmpty())
+					categories += _T(", ");
+				categories.Append(pair.second->get_caption().c_str());
+			}
+		}
+
+		m_toolTipText.Format(_T("Name: %s\nID: %s\nArchive: %s\nAdult: %s\nIn categories: %s"),
+							 channel->get_title().c_str(),
+							 channel->get_stream_uri().is_template() ? utils::int_to_wchar(ch_id).c_str() : _T("Custom"),
+							 channel->get_archive() ? _T("Yes") : _T("No"),
+							 channel->get_adult() ? _T("Yes") : _T("No"),
+							 categories.GetString());
+
+
+		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
+	}
+
+	*pResult = 0;
+}
+
+void CEdemChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTVGETINFOTIP pGetInfoTip = reinterpret_cast<LPNMTVGETINFOTIP>(pNMHDR);
+
+	auto entry = GetPlaylistEntry(pGetInfoTip->hItem);
+	if (entry)
+	{
+		m_toolTipText.Format(_T("Name: %s\nID: %d\nEPG: %d\nArchive: %s"),
+							 entry->get_title().c_str(),
+							 entry->get_id(),
+							 entry->get_tvg_id(),
+							 entry->get_archive() ? _T("Yes") : _T("No"));
+
+		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
+	}
+
 	*pResult = 0;
 }
 

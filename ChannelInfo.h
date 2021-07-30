@@ -77,8 +77,8 @@ public:
 
 	std::set<int>& get_category_ids() { return categories; }
 
-	int get_has_archive() const { return has_archive; }
-	void set_has_archive(int val) { has_archive = val; }
+	int get_archive() const { return has_archive; }
+	void set_archive(int val) { has_archive = val; }
 
 	bool is_favorite() const { return favorite; }
 	void set_favorite(bool val) { favorite = val; }
