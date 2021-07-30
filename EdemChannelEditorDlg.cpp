@@ -2802,6 +2802,7 @@ void CEdemChannelEditorDlg::OnSyncTreeItem()
 	if (m_loading)
 		return;
 
+	CWaitCursor cur;
 	if (m_lastTree == m_wndPlaylistTree.GetSafeHwnd())
 	{
 		auto entry = GetPlaylistEntry(m_wndPlaylistTree.GetSelectedItem());
