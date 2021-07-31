@@ -271,7 +271,7 @@ class DemoTv extends AbstractTv
            mkdir(DemoConfig::EPG_CACHE_DIR);
         }
 
-        $cache_file = DemoConfig::EPG_CACHE_DIR . DemoConfig::EPG_CACHE_FILE . $epg_id . "_" . $tvg_id . "_" . $day_start_ts;
+        $cache_file = DemoConfig::EPG_CACHE_DIR . DemoConfig::EPG_CACHE_FILE . $channel_id . "_" . $day_start_ts;
         if (file_exists($cache_file)) {
             $epg = unserialize(file_get_contents($cache_file));
         } else {
@@ -280,9 +280,9 @@ class DemoTv extends AbstractTv
                 return array();
 
             try {
-                // teleguide.info first. Otherwise try to get info from epg.ott-play.com
+                // teleguide.info first. Otherwise, try to get info from epg.ott-play.com
                 $id = ($tvg_id ?: $epg_id);
-                $provider = ($tvg_id ? 'ott-play' : 'tele-guide');
+                $provider = ($tvg_id ? DemoConfig::TVG_URL_FORMAT : DemoConfig::EPG_URL_FORMAT);
                 $epg = $this->get_epg($provider, $id, $epg_date, $day_start_ts);
             }
             catch (Exception $ex) {
@@ -317,13 +317,14 @@ class DemoTv extends AbstractTv
     /**
      * @throws Exception
      */
-    protected function get_epg($provider, $epg_id, $epg_date, $day_start_ts)
+    protected function get_epg($provider, $id, $epg_date, $day_start_ts)
     {
         $epg = array();
 
         switch ($provider) {
-            case 'ott-play':
-                $doc = HD::http_get_document(sprintf(DemoConfig::EPG_URL_FORMAT, $epg_id));
+            case DemoConfig::EPG_URL_FORMAT:
+                $url = sprintf($provider, $id);
+                $doc = HD::http_get_document($url);
                 // time in UTC
                 $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
                 $epg_date_new = strtotime('-1 hour', $day_start_ts);
@@ -335,8 +336,9 @@ class DemoTv extends AbstractTv
                     }
                 }
                 break;
-            case 'tele-guide':
-                $doc = HD::http_get_document(sprintf(DemoConfig::TVG_URL_FORMAT, $epg_id, $epg_date));
+            case DemoConfig::TVG_URL_FORMAT:
+                $url = sprintf($provider, $id, $epg_date);
+                $doc = HD::http_get_document($url);
                 // tvguide.info time in GMT+3 (moscow time)
                 // $timezone_suffix = date('T');
                 $e_time = strtotime("$epg_date, 0300 GMT+3");
@@ -351,6 +353,9 @@ class DemoTv extends AbstractTv
                     $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
                 }
                 break;
+			default:
+                hd_print("Unknown provider: $provider");
+				break;
         }
 
         return $epg;
