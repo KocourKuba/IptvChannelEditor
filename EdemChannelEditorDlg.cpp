@@ -37,11 +37,11 @@ constexpr auto ID_ADD_TO_START = ID_MOVE_TO_END + 1;
 constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 
 BOOL CEdemChannelEditorDlg::m_embedded_info = FALSE;
-CString CEdemChannelEditorDlg::m_gl_domain;
-CString CEdemChannelEditorDlg::m_gl_access_key;
-CString CEdemChannelEditorDlg::m_ch_domain;
-CString CEdemChannelEditorDlg::m_ch_access_key;
 CString CEdemChannelEditorDlg::m_probe;
+std::string CEdemChannelEditorDlg::m_gl_domain;
+std::string CEdemChannelEditorDlg::m_gl_access_key;
+std::string CEdemChannelEditorDlg::m_ch_domain;
+std::string CEdemChannelEditorDlg::m_ch_access_key;
 
 // ¬озвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
@@ -358,6 +358,15 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	if (idx < m_wndChannels.GetCount())
 		m_wndChannels.SetCurSel(idx);
 
+	// read document
+	const auto& path = theApp.GetAppPath() + _T("stream_info.bin");
+	std::ifstream is(path, std::istream::binary);
+	if (is.good())
+	{
+		std::vector<char> dump((std::istreambuf_iterator<char>(is)), std::istreambuf_iterator<char>());
+		m_stream_infos.deserialize(dump);
+	}
+
 	UpdateData(FALSE);
 
 	set_allow_save(FALSE);
@@ -570,6 +579,13 @@ void CEdemChannelEditorDlg::OnCancel()
 
 	m_evtStop.SetEvent();
 
+	const auto& dump = m_stream_infos.serialize();
+	// write document
+	const auto& path = theApp.GetAppPath() + _T("stream_info.bin");
+	std::ofstream os(path, std::istream::binary);
+	os.write(dump.data(), dump.size());
+	os.close();
+
 	EndDialog(IDCANCEL);
 }
 
@@ -771,8 +787,6 @@ void CEdemChannelEditorDlg::CheckForExistingPlaylist()
 
 void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 {
-	TRACE("LoadChannelInfo\n");
-
 	m_infoAudio.Empty();
 	m_infoVideo.Empty();
 
@@ -783,8 +797,12 @@ void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		m_epgID = channel->get_epg_id();
 		m_streamUrl = channel->get_stream_uri().get_uri().c_str();
 		m_streamID = channel->get_id();
-		m_infoAudio = channel->get_audio().c_str();
-		m_infoVideo = channel->get_video().c_str();
+		auto hash = channel->get_stream_uri().get_hash();
+		if (auto pair = m_stream_infos.find(hash); pair != m_stream_infos.end())
+		{
+			m_infoAudio = pair->second.first.c_str();
+			m_infoVideo = pair->second.second.c_str();
+		}
 		m_wndCustom.SetCheck(!channel->get_stream_uri().is_template());
 		m_timeShiftHours = channel->get_time_shift_hours();
 		m_hasArchive = channel->get_archive();
@@ -823,6 +841,9 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 {
 	UpdateData(TRUE);
 
+	m_infoAudio.Empty();
+	m_infoVideo.Empty();
+
 	auto entry = GetPlaylistEntry(hItem);
 	if (entry)
 	{
@@ -835,8 +856,12 @@ void CEdemChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
 		m_archiveDays = entry->get_archive();
-		m_infoAudio = entry->get_audio().c_str();
-		m_infoVideo = entry->get_video().c_str();
+		auto hash = entry->get_stream_uri().get_hash();
+		if (auto pair = m_stream_infos.find(hash); pair != m_stream_infos.end())
+		{
+			m_infoAudio = pair->second.first.c_str();
+			m_infoVideo = pair->second.second.c_str();
+		}
 
 		CImage img;
 		if (utils::LoadImage(entry->get_icon_uri().get_uri(), img))
@@ -978,13 +1003,13 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
 	auto i_node = doc.first_node(utils::TV_INFO);
 
 	m_embedded_info = FALSE;
-	m_ch_access_key.Empty();
-	m_ch_domain.Empty();
+	m_ch_access_key.clear();
+	m_ch_domain.clear();
 	auto setup_node = i_node->first_node(utils::CHANNELS_SETUP);
 	if (setup_node)
 	{
-		m_ch_access_key = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_KEY)).c_str();
-		m_ch_domain = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN)).c_str();
+		m_ch_access_key = utils::get_value_string(setup_node->first_node(utils::ACCESS_KEY));
+		m_ch_domain = utils::get_value_string(setup_node->first_node(utils::ACCESS_DOMAIN));
 		m_embedded_info = TRUE;
 	}
 
@@ -1962,7 +1987,9 @@ void CEdemChannelEditorDlg::PlayChannel(HTREEITEM hItem, int archive_hour /*= 0*
 {
 	if (auto channel = GetChannel(hItem); channel != nullptr)
 	{
-		PlayStream(TranslateStreamUri(channel->get_stream_uri().get_ts_translated_url()), archive_hour);
+		const auto& access_domain = CEdemChannelEditorDlg::GetAccessDomain();
+		const auto& access_key = CEdemChannelEditorDlg::GetAccessKey();
+		PlayStream(channel->get_stream_uri().get_playable_url(access_domain, access_key), archive_hour);
 	}
 }
 
@@ -1970,7 +1997,9 @@ void CEdemChannelEditorDlg::PlayPlaylistEntry(HTREEITEM hItem, int archive_hour 
 {
 	if (auto entry = GetPlaylistEntry(hItem); entry != nullptr)
 	{
-		PlayStream(TranslateStreamUri(entry->get_stream_uri().get_ts_translated_url()), archive_hour);
+		const auto& access_domain = CEdemChannelEditorDlg::GetAccessDomain();
+		const auto& access_key = CEdemChannelEditorDlg::GetAccessKey();
+		PlayStream(entry->get_stream_uri().get_playable_url(access_domain, access_key), archive_hour);
 	}
 }
 
@@ -2082,8 +2111,8 @@ void CEdemChannelEditorDlg::OnSave()
 		if (m_embedded_info)
 		{
 			auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
-			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_KEY, utils::utf16_to_utf8(GetAccessKey().GetString()).c_str()));
-			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(GetAccessDomain().GetString()).c_str()));
+			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_KEY, GetAccessKey().c_str()));
+			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, GetAccessDomain().c_str()));
 			tv_info->append_node(setup_node);
 		}
 
@@ -2482,8 +2511,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAccessInfo()
 {
 	CAccessDlg dlg;
 	dlg.m_bEmbedded = m_embedded_info;
-	dlg.m_accessKey = GetAccessKey();
-	dlg.m_domain = GetAccessDomain();
+	dlg.m_accessKey = GetAccessKey().c_str();
+	dlg.m_domain = GetAccessDomain().c_str();
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -2665,9 +2694,8 @@ void CEdemChannelEditorDlg::OnGetStreamInfo()
 
 	if (m_lastTree == m_wndChannelsTree.GetSafeHwnd())
 	{
-		auto selected = m_wndChannelsTree.GetSelectedItems();
 		std::vector<ChannelInfo*> channels;
-		for (const auto& hItem : selected)
+		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 		{
 			auto channel = GetChannel(hItem);
 			if (channel)
@@ -2680,9 +2708,8 @@ void CEdemChannelEditorDlg::OnGetStreamInfo()
 	}
 	else if (m_lastTree == m_wndPlaylistTree.GetSafeHwnd())
 	{
-		auto selected = m_wndPlaylistTree.GetSelectedItems();
 		std::vector<PlaylistEntry*> playlist;
-		for (const auto& hItem : selected)
+		for (const auto& hItem : m_wndPlaylistTree.GetSelectedItems())
 		{
 			auto entry = GetPlaylistEntry(hItem);
 			if (entry)
@@ -2723,7 +2750,6 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 {
 	CWaitCursor cur;
 	m_wndProgress.ShowWindow(SW_SHOW);
-	StreamContainer* container = nullptr;
 	HWND hFocus = ::GetFocus();
 	if (hFocus == m_wndChannelsTree.GetSafeHwnd())
 	{
@@ -3143,18 +3169,6 @@ bool CEdemChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	return needCheckExisting;
 }
 
-std::string CEdemChannelEditorDlg::TranslateStreamUri(const std::string& stream_uri)
-{
-	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
-
-	static std::regex re_domain(R"(\{SUBDOMAIN\})");
-	static std::regex re_uid(R"(\{UID\})");
-
-	std::string stream_url(stream_uri);
-	stream_url = std::regex_replace(stream_url, re_domain, utils::utf16_to_utf8(CEdemChannelEditorDlg::GetAccessDomain().GetString()));
-	return std::regex_replace(stream_url, re_uid, utils::utf16_to_utf8(CEdemChannelEditorDlg::GetAccessKey().GetString()));
-}
-
 void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video)
 {
 	if (url.empty())
@@ -3194,7 +3208,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 
 	// argv[0] им€ исполн€емого файла
 	CString csCommand;
-	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %hs"), CEdemChannelEditorDlg::m_probe.GetString(), TranslateStreamUri(url).c_str());
+	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %hs"), CEdemChannelEditorDlg::m_probe.GetString(), url.c_str());
 
 	BOOL bRunProcess = CreateProcess(CEdemChannelEditorDlg::m_probe.GetString(),	// 	__in_opt     LPCTSTR lpApplicationName
 									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine

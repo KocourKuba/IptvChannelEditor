@@ -57,6 +57,13 @@ public:
 	std::string get_id_translated_url() const;
 
 	/// <summary>
+	/// getter for playable translated uri
+	/// return url with substituted access_key and access_domain
+	/// </summary>
+	/// <returns></returns>
+	std::string get_playable_url(const std::string& access_domain, const std::string& access_key) const;
+
+	/// <summary>
 	/// setter not translated uri
 	/// </summary>
 	/// <param name="url"></param>
@@ -66,12 +73,18 @@ public:
 	/// getter channel id
 	/// </summary>
 	/// <returns></returns>
-	int get_Id() const { return templated ? id : hash; }
+	int get_Id() const { return templated ? id : get_hash(); }
 	/// <summary>
 	/// setter channel id
 	/// </summary>
 	/// <param name="val"></param>
 	void set_Id(int val) { id = val; }
+
+	/// <summary>
+	/// getter channel hash
+	/// </summary>
+	/// <returns></returns>
+	int get_hash() const;
 
 	/// <summary>
 	/// check if uri templated
@@ -82,6 +95,6 @@ public:
 protected:
 	int id = 0;
 	bool templated = false;
-	int hash = 0;
+	mutable int hash = 0;
 };
 

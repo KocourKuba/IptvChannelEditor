@@ -45,7 +45,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	}
 
 	get_stream_uri().set_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
-	has_archive = utils::get_value_int(node->first_node(ARCHIVE));
+	archive = utils::get_value_int(node->first_node(ARCHIVE));
 	adult = utils::get_value_int(node->first_node(PROTECTED));
 }
 
@@ -78,9 +78,9 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, get_stream_uri().get_id_translated_url().c_str()));
 
 	// <archive>1</archive>
-	if (has_archive)
+	if (archive)
 	{
-		channel_node->append_node(utils::alloc_node(alloc, ARCHIVE, utils::int_to_char(has_archive).c_str()));
+		channel_node->append_node(utils::alloc_node(alloc, ARCHIVE, utils::int_to_char(archive).c_str()));
 	}
 
 	// <protected>1</protected>

@@ -212,6 +212,7 @@
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="Crc32.h" />
+    <ClInclude Include="map_serializer.h" />
     <ClInclude Include="PlaylistParseThread.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="CustomPlaylistDlg.h" />

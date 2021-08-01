@@ -114,6 +114,9 @@
     <ClInclude Include="PlaylistParseThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="map_serializer.h">
+      <Filter>Source Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EdemChannelEditor.cpp">

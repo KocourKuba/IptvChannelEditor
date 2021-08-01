@@ -77,8 +77,8 @@ public:
 
 	std::set<int>& get_category_ids() { return categories; }
 
-	int get_archive() const { return has_archive; }
-	void set_archive(int val) { has_archive = val; }
+	int get_archive() const { return archive; }
+	void set_archive(int val) { archive = val; }
 
 	bool is_favorite() const { return favorite; }
 	void set_favorite(bool val) { favorite = val; }
@@ -93,7 +93,7 @@ private:
 	int epg_id = 0; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
 	int time_shift_hours = 0;
 	int adult = 0;
-	int has_archive = 0;
+	int archive = 0;
 	bool disabled = false;
 	bool favorite = false;
 	std::set<int> categories;

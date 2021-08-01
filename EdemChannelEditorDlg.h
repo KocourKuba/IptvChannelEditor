@@ -7,6 +7,7 @@
 #include "TreeCtrlEx.h"
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
+#include "map_serializer.h"
 
 // CEdemChannelEditorDlg dialog
 class CEdemChannelEditorDlg : public CDialogEx
@@ -25,21 +26,21 @@ public:
 	static void SelectTreeItem(bool inChannelsList, CTreeCtrl& ctl, const CString& searchString, bool byId, int id);
 	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
-	static std::string TranslateStreamUri(const std::string& stream_uri);
+
 	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
 
-	static CString GetAccessKey() { return m_embedded_info ? m_ch_access_key : m_gl_access_key; }
-	static CString GetAccessDomain() { return m_embedded_info ? m_ch_domain : m_gl_domain; }
+	static std::string GetAccessKey() { return m_embedded_info ? m_ch_access_key : m_gl_access_key; }
+	static std::string GetAccessDomain() { return m_embedded_info ? m_ch_domain : m_gl_domain; }
 	static void SetAccessKey(const CString& access_key)
 	{
 		auto& target = m_embedded_info ? m_ch_access_key : m_gl_access_key;
-		target = access_key;
+		target = utils::utf16_to_utf8(access_key.GetString());
 	}
 
 	static void SetDomain(const CString& domain)
 	{
 		auto& target = m_embedded_info ? m_ch_domain : m_gl_domain;
-		target = domain;
+		target = utils::utf16_to_utf8(domain.GetString());
 	}
 
 	// Implementation
@@ -267,10 +268,10 @@ protected:
 
 private:
 	static CString m_probe;
-	static CString m_gl_domain;
-	static CString m_gl_access_key;
-	static CString m_ch_access_key;
-	static CString m_ch_domain;
+	static std::string m_gl_domain;
+	static std::string m_gl_access_key;
+	static std::string m_ch_access_key;
+	static std::string m_ch_domain;
 	static BOOL m_embedded_info;
 
 	HACCEL m_hAccel = nullptr;
@@ -312,11 +313,16 @@ private:
 
 	// list of all channel lists
 	std::vector<std::pair<CString, CString>> m_all_channels_lists;
+
+	serializable_map m_stream_infos;
 };
 
 template <class T>
 void CEdemChannelEditorDlg::GetStreamInfo(const std::vector<T*>& container, CStatic& staticCtrl)
 {
+	const auto& access_domain = CEdemChannelEditorDlg::GetAccessDomain();
+	const auto& access_key = CEdemChannelEditorDlg::GetAccessKey();
+
 	m_wndProgress.SetRange32(0, container.size());
 	auto it = container.begin();
 	while (it != container.end())
@@ -328,7 +334,7 @@ void CEdemChannelEditorDlg::GetStreamInfo(const std::vector<T*>& container, CSta
 		int j = 0;
 		while (j < 5 && pool != container.end())
 		{
-			const auto& url = (*pool)->get_stream_uri().get_ts_translated_url();
+			const auto& url = (*pool)->get_stream_uri().get_playable_url(access_domain, access_key);
 			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
 			j++;
 			++pool;
@@ -340,8 +346,15 @@ void CEdemChannelEditorDlg::GetStreamInfo(const std::vector<T*>& container, CSta
 			if (!w.joinable()) continue;
 
 			w.join();
-			(*it)->set_audio(audio[j]);
-			(*it)->set_video(video[j]);
+
+			auto hash = (*it)->get_stream_uri().get_hash();
+			std::pair<std::string, std::string> info(audio[j], video[j]);
+			auto& pair = m_stream_infos.emplace(hash, info);
+			if (!pair.second)
+			{
+				pair.first->second = std::move(info);
+			}
+
 			++it;
 			j++;
 

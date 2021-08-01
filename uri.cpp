@@ -70,9 +70,23 @@ std::string uri_stream::get_id_translated_url() const
 	return schema + std::regex_replace(path, re_ch, utils::int_to_char(id));
 }
 
+std::string uri_stream::get_playable_url(const std::string& access_domain, const std::string& access_key) const
+{
+	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
+
+	static std::regex re_domain(R"(\{SUBDOMAIN\})");
+	static std::regex re_uid(R"(\{UID\})");
+
+	std::string stream_url(get_ts_translated_url());
+	stream_url = std::regex_replace(stream_url, re_domain, access_domain);
+	return std::regex_replace(stream_url, re_uid, access_key);
+}
+
 void uri_stream::set_uri(const std::string& url)
 {
 	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8
+	// http://localhost/iptv/00000000000000/204/index.m3u8
+
 	static std::regex re(R"([a-z_]+:\/\/ts:\/\/[a-zA-Z0-9\.\-|\{ID\}]+\/iptv\/[A-Z0-9|\{ID\}]+\/([0-9|\{ID\}]+)\/index.m3u8)");
 	std::smatch m;
 	if (std::regex_match(url, m, re))
@@ -88,6 +102,15 @@ void uri_stream::set_uri(const std::string& url)
 		templated = false;
 		uri::set_uri(url);
 	}
+}
 
-	hash = crc32_bitwise(url.c_str(), url.size());
+int uri_stream::get_hash() const
+{
+	if (!hash)
+	{
+		const auto& uri = get_id_translated_url();
+		hash = crc32_bitwise(uri.c_str(), uri.size());
+	}
+
+	return hash;
 }
