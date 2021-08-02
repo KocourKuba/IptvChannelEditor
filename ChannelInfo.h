@@ -1,8 +1,7 @@
 #pragma once
 #include "rapidxml.hpp"
 #include "uri.h"
-#include "IconContainer.h"
-#include "StreamContainer.h"
+#include "BaseInfo.h"
 
 // <tv_channel>
 //     <caption>Первый канал</caption>
@@ -21,9 +20,7 @@
 
 class ChannelCategory;
 
-class ChannelInfo
-	: public IconContainer
-	, public StreamContainer
+class ChannelInfo : public BaseInfo
 {
 public:
 	static constexpr auto TV_CHANNEL = "tv_channel";
@@ -55,30 +52,12 @@ public:
 
 // Getters/Setters
 
-	int get_id() const { return get_stream_uri().get_Id(); }
-	void set_id(int val) { get_stream_uri().set_Id(val); }
-
-	const std::wstring& get_title() const { return title; }
-	void set_title(const std::wstring& val) { title = val; }
-
-	int get_tvg_id() const { return tvg_id; }
-	void set_tvg_id(int val) { tvg_id = val; }
-
-	int get_epg_id() const { return epg_id; }
-	void set_epg_id(int val) { epg_id = val; }
-
-	int get_adult() const { return adult; }
-	void set_adult(int val) { adult = val; }
-
 	bool is_icon_local() const;
 
 	int get_time_shift_hours() const { return time_shift_hours; }
 	void set_time_shift_hours(int val) { time_shift_hours = val; }
 
 	std::set<int>& get_category_ids() { return categories; }
-
-	int get_archive() const { return archive; }
-	void set_archive(int val) { archive = val; }
 
 	bool is_favorite() const { return favorite; }
 	void set_favorite(bool val) { favorite = val; }
@@ -87,13 +66,9 @@ public:
 	void set_disabled(bool val) { disabled = val; }
 
 	bool is_changed() const { return changed; }
+
 private:
-	std::wstring title;
-	int tvg_id = 0; // TVGuide id http://www.teleguide.info/kanal%d.html
-	int epg_id = 0; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
 	int time_shift_hours = 0;
-	int adult = 0;
-	int archive = 0;
 	bool disabled = false;
 	bool favorite = false;
 	std::set<int> categories;

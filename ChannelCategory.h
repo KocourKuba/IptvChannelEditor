@@ -1,7 +1,6 @@
 #pragma once
 #include "rapidxml.hpp"
 #include "uri.h"
-#include "IconContainer.h"
 #include "ChannelInfo.h"
 
 // <tv_category>
@@ -10,8 +9,7 @@
 //   <icon_url>plugin_file://icons/1.png</icon_url>
 // </tv_category>
 
-class ChannelCategory
-	: public IconContainer
+class ChannelCategory : public BaseInfo
 {
 public:
 	static constexpr auto TV_CATEGORY = "tv_category";
@@ -26,13 +24,8 @@ public:
 	void ParseNode(rapidxml::xml_node<>* node);
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& alloc) const;
 
-	int get_id() const { return id; }
-	void set_id(int val) { id = val; }
-
-	void swap_id(ChannelCategory& src) { std::swap(id, src.id); }
-
-	const std::wstring& get_caption() const { return caption; }
-	void set_caption(const std::wstring& val) { caption = val; }
+	int get_id() const override { return id; }
+	void set_id(int val) override { id = val; }
 
 	bool is_empty() const { return channels_map.empty(); }
 
@@ -50,7 +43,6 @@ public:
 
 private:
 	int id = 0;
-	std::wstring caption;
 	std::vector<ChannelInfo*> channels;
 	std::map<int, std::shared_ptr<ChannelInfo>> channels_map;
 };

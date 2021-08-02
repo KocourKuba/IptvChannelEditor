@@ -117,6 +117,9 @@
     <ClInclude Include="map_serializer.h">
       <Filter>Source Files\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="BaseInfo.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EdemChannelEditor.cpp">

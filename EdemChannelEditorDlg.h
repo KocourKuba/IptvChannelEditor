@@ -22,10 +22,18 @@ public:
 #endif
 
 public:
+	struct SearchParams
+	{
+		int id = 0;
+		int hash = 0;
+		CString searchString;
+	};
+
+	static void SelectTreeItem(CTreeCtrl& ctl, const SearchParams& searchParams);
 	static HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
-	static void SelectTreeItem(bool inChannelsList, CTreeCtrl& ctl, const CString& searchString, bool byId, int id);
 	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
+	static BaseInfo* GetBaseInfo(const CTreeCtrl* pTreeCtrl, HTREEITEM hItem);
 
 	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
 
@@ -89,10 +97,8 @@ protected:
 	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnGetStreamInfoAll();
 	afx_msg void OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI);
-	afx_msg void OnPlayChannelStream();
-	afx_msg void OnUpdatePlayChannelStream(CCmdUI* pCmdUI);
-	afx_msg void OnPlayPlaylistStream();
-	afx_msg void OnUpdatePlayPlaylistStream(CCmdUI* pCmdUI);
+	afx_msg void OnPlayStream();
+	afx_msg void OnUpdatePlayStream(CCmdUI* pCmdUI);
 	afx_msg void OnPlayChannelStreamArchive();
 	afx_msg void OnSyncTreeItem();
 	afx_msg void OnUpdateSyncTreeItem(CCmdUI* pCmdUI);
@@ -163,14 +169,12 @@ private:
 	void FillTreeChannels();
 	void FillTreePlaylist();
 
-	template <class T>
-	void GetStreamInfo(const std::vector<T*>& channels, CStatic& staticCtrl);
+	void GetStreamInfo(std::vector<BaseInfo*>& container, CStatic& staticCtrl);
 
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
 
-	void PlayChannel(HTREEITEM hItem, int archive_hour = 0) const;
-	void PlayPlaylistEntry(HTREEITEM hItem, int archive_hour = 0) const;
+	void PlayItem(HTREEITEM hItem, int archive_hour = 0) const;
 	void PlayStream(const std::string& stream_url, int archive_hour = 0) const;
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
@@ -182,7 +186,6 @@ private:
 	ChannelCategory* GetItemCategory(HTREEITEM hItem) const;
 	ChannelCategory* GetCategory(HTREEITEM hItem) const;
 	HTREEITEM GetCategoryTreeItemById(int id) const;
-	std::map<int, HTREEITEM> GetCategoriesTreeMap() const;
 
 	ChannelInfo* GetChannel(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelInfo> FindChannel(HTREEITEM hItem) const;
@@ -275,7 +278,7 @@ private:
 	static BOOL m_embedded_info;
 
 	HACCEL m_hAccel = nullptr;
-	HWND m_lastTree = nullptr;
+	CTreeCtrlEx* m_lastTree = nullptr;
 
 	CString m_toolTipText;
 
@@ -299,6 +302,7 @@ private:
 	std::map<int, std::shared_ptr<ChannelInfo>> m_channelsMap;
 	// map of all categories for fast search
 	std::map<int, std::shared_ptr<ChannelCategory>> m_categoriesMap;
+	std::map<int, HTREEITEM> m_categoriesTreeMap;
 
 	// list of playlist id's in the same order as in the playlist
 	// Must not contains duplicates!
@@ -309,7 +313,7 @@ private:
 	// Must not contains duplicates!
 	std::vector<std::wstring> m_pl_categories;
 	// map of category and TREEITEM for fast add to tree
-	std::map<std::wstring, HTREEITEM> m_pl_categoriesMap;
+	std::map<std::wstring, HTREEITEM> m_pl_categoriesTreeMap;
 
 	// list of all channel lists
 	std::vector<std::pair<CString, CString>> m_all_channels_lists;
@@ -317,52 +321,3 @@ private:
 	serializable_map m_stream_infos;
 };
 
-template <class T>
-void CEdemChannelEditorDlg::GetStreamInfo(const std::vector<T*>& container, CStatic& staticCtrl)
-{
-	const auto& access_domain = CEdemChannelEditorDlg::GetAccessDomain();
-	const auto& access_key = CEdemChannelEditorDlg::GetAccessKey();
-
-	m_wndProgress.SetRange32(0, container.size());
-	auto it = container.begin();
-	while (it != container.end())
-	{
-		std::array<std::thread, 5> workers;
-		std::array<std::string, 5> audio;
-		std::array<std::string, 5> video;
-		auto pool = it;
-		int j = 0;
-		while (j < 5 && pool != container.end())
-		{
-			const auto& url = (*pool)->get_stream_uri().get_playable_url(access_domain, access_key);
-			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
-			j++;
-			++pool;
-		}
-
-		j = 0;
-		for (auto& w : workers)
-		{
-			if (!w.joinable()) continue;
-
-			w.join();
-
-			auto hash = (*it)->get_stream_uri().get_hash();
-			std::pair<std::string, std::string> info(audio[j], video[j]);
-			auto& pair = m_stream_infos.emplace(hash, info);
-			if (!pair.second)
-			{
-				pair.first->second = std::move(info);
-			}
-
-			++it;
-			j++;
-
-			auto step = std::distance(container.begin(), it);
-			CString str;
-			str.Format(_T("Get Stream Info: %d from %d"), step, container.size());
-			staticCtrl.SetWindowText(str);
-			m_wndProgress.SetPos(step);
-		}
-	}
-}

@@ -1,7 +1,6 @@
 #pragma once
 #include "uri.h"
-#include "IconContainer.h"
-#include "StreamContainer.h"
+#include "BaseInfo.h"
 
 enum directives
 {
@@ -46,13 +45,13 @@ public:
 	const std::string& get_dvalue() const { return ext_value; }
 	void set_dvalue(const std::string& val) { ext_value = val; }
 
-	const std::string& get_title() const { return dir_title; }
-	void set_title(const std::string& val) { dir_title = val; }
+	const std::string& get_dir_title() const { return dir_title; }
+	void set_dir_title(const std::string& val) { dir_title = val; }
 
 protected:
 	void ParseDirectiveTags(const std::string& str);
 
-protected:
+private:
 	int duration = 0;
 	directives ext_name = ext_unknown;
 	std::string ext_value;
@@ -61,34 +60,23 @@ protected:
 };
 
 class PlaylistEntry
-	: public m3u_entry
-	, public IconContainer
-	, public StreamContainer
+	: public BaseInfo
+	, public m3u_entry
 {
 public:
-	PlaylistEntry() = default;
-	PlaylistEntry(const PlaylistEntry& src) = default;
+	PlaylistEntry() : BaseInfo(BaseType::enPlEntry) {}
+	PlaylistEntry(const PlaylistEntry& src) : BaseInfo(BaseType::enPlEntry) {}
 
 	void Parse(const std::string& str) override;
 	void Clear() override;
 
-	int get_id() const { return get_stream_uri().get_Id(); }
 	int get_channel_length() const { return channel_len; }
-	int get_tvg_id() { return tvg_id; };
-	int get_archive() const { return archive; }
-	bool is_archive() const { return archive != 0; }
-
-	const std::wstring& get_title() const { return title; }
 	const std::wstring& get_category() const { return category; }
-
 	const std::string& get_domain() const { return domain; }
 	const std::string& get_access_key() const { return access_key; }
 
 protected:
-	int archive = 0;
-	int tvg_id = -1;
 	int channel_len = 0;
-	std::wstring title;
 	std::wstring category;
 	std::string domain;
 	std::string access_key;

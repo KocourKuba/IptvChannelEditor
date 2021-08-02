@@ -3,13 +3,13 @@
 #include "utils.h"
 #include "ChannelCategory.h"
 
-ChannelInfo::ChannelInfo()
+ChannelInfo::ChannelInfo() : BaseInfo(BaseType::enChannel)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
 	get_stream_uri().set_uri(utils::URI_TEMPLATE);
 }
 
-ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node)
+ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node) : BaseInfo(BaseType::enChannel)
 {
 	ParseNode(node);
 }
@@ -19,13 +19,13 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	if (!node)
 		return;
 
-	title = utils::get_value_wstring(node->first_node(CAPTION));
-	tvg_id = utils::get_value_int(node->first_node(TVG_ID));
-	epg_id = utils::get_value_int(node->first_node(EPG_ID));
-	time_shift_hours = utils::get_value_int(node->first_node(TIME_SHIFT_HOURS));
+	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
+	set_tvg_id(utils::get_value_int(node->first_node(TVG_ID)));
+	set_epg_id(utils::get_value_int(node->first_node(EPG_ID)));
 	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
 	set_disabled(utils::string_tolower(utils::get_value_string(node->first_node(DISABLED))) == "true");
 	set_favorite(utils::string_tolower(utils::get_value_string(node->first_node(FAVORITE))) == "true");
+	time_shift_hours = utils::get_value_int(node->first_node(TIME_SHIFT_HOURS));
 
 	auto cnode = node->first_node(TV_CATEGORIES);
 	if (cnode)
@@ -35,18 +35,18 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		while (catNode)
 		{
 			auto cat_id = utils::get_value_int(catNode);
-			categories.insert(cat_id);
+			categories.emplace(cat_id);
 			catNode = catNode->next_sibling();
 		}
 	}
 	else
 	{
-		categories.insert(utils::get_value_int(node->first_node(TV_CATEGORY_ID)));
+		categories.emplace(utils::get_value_int(node->first_node(TV_CATEGORY_ID)));
 	}
 
 	get_stream_uri().set_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
-	archive = utils::get_value_int(node->first_node(ARCHIVE));
-	adult = utils::get_value_int(node->first_node(PROTECTED));
+	set_archive(utils::get_value_int(node->first_node(ARCHIVE)));
+	set_adult(utils::get_value_int(node->first_node(PROTECTED)));
 }
 
 rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
@@ -55,13 +55,13 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	auto channel_node = utils::alloc_node(alloc, TV_CHANNEL);
 
 	// <caption>Первый канал</caption>
-	channel_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(title).c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <tvg_id>1</tvg_id>
-	channel_node->append_node(utils::alloc_node(alloc, TVG_ID, utils::int_to_char(tvg_id).c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, TVG_ID, utils::int_to_char(get_tvg_id()).c_str()));
 
 	// <epg_id>8</epg_id>
-	channel_node->append_node(utils::alloc_node(alloc, EPG_ID, utils::int_to_char(epg_id).c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, EPG_ID, utils::int_to_char(get_epg_id()).c_str()));
 
 	// <icon_url>plugin_file://icons/channels/pervyi.png</icon_url>
 	// <icon_url>http://epg.it999.ru/img/146.png</icon_url>
@@ -78,15 +78,15 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, get_stream_uri().get_id_translated_url().c_str()));
 
 	// <archive>1</archive>
-	if (archive)
+	if (get_archive())
 	{
-		channel_node->append_node(utils::alloc_node(alloc, ARCHIVE, utils::int_to_char(archive).c_str()));
+		channel_node->append_node(utils::alloc_node(alloc, ARCHIVE, utils::int_to_char(get_archive()).c_str()));
 	}
 
 	// <protected>1</protected>
-	if (adult)
+	if (get_adult())
 	{
-		channel_node->append_node(utils::alloc_node(alloc, PROTECTED, utils::int_to_char(adult).c_str()));
+		channel_node->append_node(utils::alloc_node(alloc, PROTECTED, utils::int_to_char(get_adult()).c_str()));
 	}
 
 	if (is_disabled())

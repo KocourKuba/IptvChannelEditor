@@ -101,7 +101,6 @@
 #define ID_NEW_CATEGORY                 32784
 #define ID_PLAY_ARCHIVE                 32785
 #define ID_PLAY_STREAM                  32786
-#define ID_PLAY_STREAM_PL               32787
 #define ID_PLAYARCHIVE_                 32788
 #define ID_REMOVE_CATEGORY              32789
 #define ID_REMOVE_CHANNEL               32790
@@ -115,7 +114,7 @@
 #define ID_ADD_TO_FAVORITE              32798
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129

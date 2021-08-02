@@ -119,64 +119,75 @@ void PlaylistEntry::Parse(const std::string& str)
 
 	m3u_entry::Parse(str);
 
-	if (ext_name == ext_group)
+	switch (get_directive())
 	{
-		category = utils::utf8_to_utf16(ext_value);
+		case ext_pathname:
+		{
+			// 1 - domain
+			// 2 - access key
+			// 3 - channel id
+
+			std::smatch m_url;
+			if (!std::regex_match(get_dvalue(), m_url, re_url))
+			{
+				get_stream_uri().set_uri(get_dvalue());
+			}
+			else
+			{
+				domain = m_url[1].str();
+				access_key = m_url[2].str();
+				int id = utils::char_to_int(m_url[3].str());
+				auto& uri = get_stream_uri();
+				uri.set_uri(utils::URI_TEMPLATE);
+				uri.set_Id(id);
+			}
+		}
+		break;
+		case ext_group:
+			category = utils::utf8_to_utf16(get_dvalue());
+		break;
+		default:
+			break;
 	}
 
-	if (ext_name == ext_pathname)
-	{
-		// 1 - domain
-		// 2 - access key
-		// 3 - channel id
-
-		std::smatch m_url;
-		if (std::regex_match(ext_value, m_url, re_url))
-		{
-			domain = m_url[1].str();
-			access_key = m_url[2].str();
-			int id = utils::char_to_int(m_url[3].str());
-			auto& uri = get_stream_uri();
-			uri.set_uri(utils::URI_TEMPLATE);
-			uri.set_Id(id);
-		}
-		else
-		{
-			get_stream_uri().set_uri(ext_value);
-		}
-	}
-
-	if(const auto& pair = ext_tags.find(tag_group_title); pair != ext_tags.end())
+	if(const auto& pair = get_tags().find(tag_group_title); pair != get_tags().end())
 	{
 		category = utils::utf8_to_utf16(pair->second);
 		if (category.empty())
 			category = L"Unset";
+		else if (category.find(L"зрослые") != std::wstring::npos)
+		{
+			// Channel for adult
+			set_adult(1);
+		}
 	}
 
-	if (const auto& pair = ext_tags.find(tag_tvg_logo); pair != ext_tags.end())
+	if (const auto& pair = get_tags().find(tag_tvg_logo); pair != get_tags().end())
 	{
 		set_icon_uri(std::regex_replace(pair->second, re_img, "//epg.it999.ru/img2/"));
 	}
 
-	if (const auto& pair = ext_tags.find(tag_tvg_rec); pair != ext_tags.end())
+	if (const auto& pair = get_tags().find(tag_tvg_rec); pair != get_tags().end())
 	{
-		archive = utils::char_to_int(pair->second);
+		set_archive(utils::char_to_int(pair->second));
 	}
 
-	if (const auto& pair = ext_tags.find(tag_tvg_id); pair != ext_tags.end())
+	if (const auto& pair = get_tags().find(tag_tvg_id); pair != get_tags().end())
 	{
-		tvg_id = utils::char_to_int(pair->second);
+		set_tvg_id(utils::char_to_int(pair->second));
 	}
 
-	if(!dir_title.empty())
-		title = utils::utf8_to_utf16(dir_title);
+	if(!get_dir_title().empty())
+	{
+		set_title(utils::utf8_to_utf16(get_dir_title()));
+	}
 }
 
 void PlaylistEntry::Clear()
 {
 	m3u_entry::Clear();
 
-	title.clear();
+	set_title(L"");
 	category.clear();
 	get_stream_uri().clear();
 	set_icon_uri("");
