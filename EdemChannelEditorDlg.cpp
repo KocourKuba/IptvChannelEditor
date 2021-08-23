@@ -2213,9 +2213,9 @@ void CEdemChannelEditorDlg::OnUpdateSave(CCmdUI* pCmdUI)
 
 void CEdemChannelEditorDlg::OnNewCategory()
 {
-	auto id = GetNewCategoryID();
+	auto category_id = GetNewCategoryID();
 	auto newCategory = std::make_unique<ChannelCategory>();
-	newCategory->set_id(id);
+	newCategory->set_id(category_id);
 	newCategory->set_title(L"New Category");
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
 
@@ -2232,7 +2232,8 @@ void CEdemChannelEditorDlg::OnNewCategory()
 	tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 	auto hNewItem = m_wndChannelsTree.InsertItem(&tvInsert);
 
-	m_categoriesMap.emplace(id, std::move(newCategory));
+	m_categoriesMap.emplace(category_id, std::move(newCategory));
+	m_categoriesTreeMap.emplace(category_id, hNewItem);
 
 	m_wndChannelsTree.SelectItem(hNewItem);
 	m_wndChannelsTree.EditLabel(hNewItem);
