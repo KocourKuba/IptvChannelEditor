@@ -2006,11 +2006,13 @@ void CEdemChannelEditorDlg::PlayStream(const std::string& stream_url, int archiv
 void CEdemChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 {
 	CCustomPlaylistDlg dlg;
-	dlg.m_url = theApp.GetProfileString(_T("Setting"), _T("CustomPlaylist"));
 	dlg.m_isFile = (m_wndPlaylist.GetCurSel() == 3);
+	LPCTSTR szType = dlg.m_isFile ? _T("CustomPlaylist") : _T("CustomUrl");
+	dlg.m_url = theApp.GetProfileString(_T("Setting"), szType);
 	if (dlg.DoModal() == IDOK)
 	{
-		theApp.WriteProfileString(_T("Setting"), _T("CustomPlaylist"), dlg.m_url);
+		theApp.WriteProfileString(_T("Setting"), szType, dlg.m_url);
+		theApp.WriteProfileString(_T("Setting"), _T("Playlist"), dlg.m_url);
 		LoadPlaylist();
 	}
 }
@@ -2906,7 +2908,7 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 			url = _T("http://epg.it999.ru/edem_epg_ico2.m3u8");
 			break;
 		case 2:
-			url = theApp.GetProfileString(_T("Setting"), _T("CustomPlaylist"));
+			url = theApp.GetProfileString(_T("Setting"), _T("CustomUrl"));
 			enableCustom = TRUE;
 			break;
 		case 3:
