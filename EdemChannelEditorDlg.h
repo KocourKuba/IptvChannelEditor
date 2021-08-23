@@ -289,7 +289,7 @@ private:
 	BOOL m_allow_save = FALSE;
 	bool m_menu_enable_channel = false;
 	BOOL m_loading = FALSE;
-	BOOL m_bInFillTree = FALSE;
+	bool m_bInFillTree = false;
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;

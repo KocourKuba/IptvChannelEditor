@@ -644,9 +644,9 @@ void CEdemChannelEditorDlg::set_allow_save(BOOL val)
 
 void CEdemChannelEditorDlg::FillTreeChannels()
 {
-	m_wndChannelsTree.LockWindowUpdate();
+	m_bInFillTree = true;
 
-	m_bInFillTree = TRUE;
+	m_wndChannelsTree.LockWindowUpdate();
 
 	m_wndChannelsTree.DeleteAllItems();
 
@@ -675,12 +675,12 @@ void CEdemChannelEditorDlg::FillTreeChannels()
 		}
 	}
 
-	m_bInFillTree = FALSE;
+	UpdateChannelsCount();
+	CheckForExistingChannels();
 
 	m_wndChannelsTree.UnlockWindowUpdate();
 
-	UpdateChannelsCount();
-	CheckForExistingChannels();
+	m_bInFillTree = false;
 
 	if (!m_channelsMap.empty())
 	{
@@ -2019,7 +2019,14 @@ void CEdemChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 
 void CEdemChannelEditorDlg::FillTreePlaylist()
 {
+	m_bInFillTree = true;
+
+	m_wndPlaylistTree.LockWindowUpdate();
+
 	m_wndPlaylistTree.DeleteAllItems();
+
+	m_pl_categoriesTreeMap.clear();
+
 	// fill playlist tree
 	if (!m_playlistIds.empty())
 	{
@@ -2057,6 +2064,10 @@ void CEdemChannelEditorDlg::FillTreePlaylist()
 	UpdatePlaylistCount();
 	CheckForExistingChannels();
 	CheckForExistingPlaylist();
+
+	m_wndPlaylistTree.UnlockWindowUpdate();
+
+	m_bInFillTree = false;
 
 	UpdateData(FALSE);
 }
@@ -2563,7 +2574,7 @@ void CEdemChannelEditorDlg::OnUpdateIcon()
 void CEdemChannelEditorDlg::OnUpdateUpdateIcon(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
-	if (m_wndPlaylistTree.GetSelectedCount() == 1)
+	if (m_wndPlaylistTree.GetSelectedCount() == 1 && !m_bInFillTree)
 	{
 		auto channel = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 		auto entry = GetBaseInfo(&m_wndPlaylistTree, m_wndPlaylistTree.GetSelectedItem());
@@ -2624,6 +2635,9 @@ void CEdemChannelEditorDlg::OnUpdateButtonCacheIcon(CCmdUI* pCmdUI)
 
 void CEdemChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	if (m_bInFillTree)
+		return;
+
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
 	*pResult = 0;
