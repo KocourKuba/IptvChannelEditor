@@ -646,6 +646,8 @@ void CEdemChannelEditorDlg::FillTreeChannels()
 {
 	m_wndChannelsTree.LockWindowUpdate();
 
+	m_bInFillTree = TRUE;
+
 	m_wndChannelsTree.DeleteAllItems();
 
 	m_categoriesTreeMap.clear();
@@ -672,6 +674,8 @@ void CEdemChannelEditorDlg::FillTreeChannels()
 			m_wndChannelsTree.InsertItem(&tvChannel);
 		}
 	}
+
+	m_bInFillTree = FALSE;
 
 	m_wndChannelsTree.UnlockWindowUpdate();
 
@@ -1395,6 +1399,9 @@ void CEdemChannelEditorDlg::OnBnClickedCheckCustomize()
 
 void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	if (m_bInFillTree)
+		return;
+
 	HTREEITEM hSelected = reinterpret_cast<LPNMTREEVIEW>(pNMHDR)->itemNew.hItem;
 	int state = 0;
 	bool bSameType = IsSelectedTheSameType();
@@ -2296,7 +2303,7 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 	if (!entry)
 		return;
 
-	if (IsCategory(hCur) && entry != nullptr && entry->get_id() == ID_ADD_TO_FAVORITE)
+	if (IsCategory(hCur) && entry->get_id() == ID_ADD_TO_FAVORITE)
 		return;
 
 	CFileDialog dlg(TRUE);
@@ -2348,7 +2355,7 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 		m_iconUrl += IsChannel(hCur) ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
 		m_iconUrl += oFN.lpstrFileTitle;
 
-		if (entry && m_iconUrl != entry->get_icon_uri().get_uri().c_str())
+		if (m_iconUrl != entry->get_icon_uri().get_uri().c_str())
 		{
 			entry->set_icon_uri(m_iconUrl.GetString());
 			CImage img;
@@ -3380,7 +3387,7 @@ bool CEdemChannelEditorDlg::IsSelectedTheSameType() const
 
 bool CEdemChannelEditorDlg::IsSelectedChannelsOrEntries(bool onlyChannel /*= false*/) const
 {
-	if (!m_lastTree || m_lastTree == &m_wndPlaylistTree && onlyChannel)
+	if (!m_lastTree || (m_lastTree == &m_wndPlaylistTree && onlyChannel))
 		return false;
 
 	auto selected = m_lastTree->GetSelectedItems();
@@ -3494,7 +3501,7 @@ void CEdemChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	auto entry = GetBaseInfo(&m_wndPlaylistTree, pGetInfoTip->hItem);
 	if (entry)
 	{
-		m_toolTipText.Format(_T("Name: %s\nID: %d\nEPG: %d\nArchive: %s\nAdult: %s"),
+		m_toolTipText.Format(_T("Name: %s\nID: %s\nEPG: %d\nArchive: %s\nAdult: %s"),
 							 entry->get_title().c_str(),
 							 entry->get_stream_uri().is_template() ? utils::int_to_wchar(entry->get_id()).c_str() : _T("Custom"),
 							 entry->get_tvg_id(),
