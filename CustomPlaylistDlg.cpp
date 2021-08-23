@@ -33,7 +33,7 @@ BOOL CCustomPlaylistDlg::OnInitDialog()
 	if (m_isFile)
 	{
 		m_wndUrl.EnableFileBrowseButton(_T("*.m3u8"),
-										_T("Playlist m3u8(*.m3u8)|*.m3u8|All Files (*.*)|*.*||"),
+										_T("Playlist m3u(*.m3u8, *.m3u)|*.m3u8;*.m3u|All Files (*.*)|*.*||"),
 										OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON);
 	}
 	else
