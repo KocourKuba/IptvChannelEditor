@@ -34,6 +34,12 @@
     <Filter Include="Header Files\Controls">
       <UniqueIdentifier>{e2754532-c3c7-4b7d-afc9-6299de30f11a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\uri">
+      <UniqueIdentifier>{03d4e956-7422-4117-bfd8-1a29f833727a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\uri">
+      <UniqueIdentifier>{528ca71c-ee35-46f6-956e-054a25b21675}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EdemChannelEditor.h">
@@ -73,9 +79,6 @@
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
     <ClInclude Include="PlayListEntry.h">
-      <Filter>Header Files\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="uri.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
@@ -120,6 +123,27 @@
     <ClInclude Include="BaseInfo.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="uri_edem.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_base.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_sharavoz.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_channels.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_nostream.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_stream.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="m3u_entry.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EdemChannelEditor.cpp">
@@ -138,9 +162,6 @@
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="PlayListEntry.cpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="uri.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
@@ -169,6 +190,24 @@
     </ClCompile>
     <ClCompile Include="PlaylistParseThread.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_edem.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_base.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_sharavoz.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_channels.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="m3u_entry.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamContainer.cpp">
+      <Filter>Source Files\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

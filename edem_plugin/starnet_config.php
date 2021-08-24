@@ -1,6 +1,6 @@
 ﻿<?php
 
-class DemoConfig
+class PluginConfig
 {
     const PluginVersion = '2.6.0';
     const PluginDate = '27.07.2021';
@@ -8,6 +8,7 @@ class DemoConfig
     const VOD_FAVORITES_SUPPORTED = true;
     const TV_FAVORITES_SUPPORTED = true;
 
+    const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8';
     const CHANNEL_LIST_URL = 'edem_channel_list.xml';
     const EPG_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%d.json';
     const TVG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';

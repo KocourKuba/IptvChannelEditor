@@ -3,7 +3,6 @@
 
 namespace utils
 {
-	static constexpr auto URI_TEMPLATE = "http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
 	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/channel_unset.png";
 
 	static constexpr auto CHANNELS_SETUP = "channels_setup";
@@ -55,6 +54,24 @@ inline std::basic_string<T>& string_trim(std::basic_string<T>& str, const T* cha
 {
 	return string_ltrim(string_rtrim(str, chars), chars);
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <summary>inplace replace for substring case insensitive</summary>
+/// <param name="source">string where to search</param>
+/// <param name="search">substring to search</param>
+/// <param name="replace">substring to replace</param>
+/// <param name="pos">position from searching will start</param>
+/// <returns>how many changes performed</returns>
+size_t string_replace_inplace(std::string& source, const std::string& search, const std::string& replace, size_t pos = 0);
+
+//////////////////////////////////////////////////////////////////////////
+/// <summary>replace for substring case insensitive</summary>
+/// <param name="source">string where to search</param>
+/// <param name="search">substring to search</param>
+/// <param name="replace">substring to replace</param>
+/// <param name="pos">position from searching will start</param>
+/// <returns>replaced string</returns>
+std::string string_replace(const std::string& source, const std::string& search, const std::string& replace, size_t pos = 0);
 
 /// <summary>
 /// Converts char string to int.

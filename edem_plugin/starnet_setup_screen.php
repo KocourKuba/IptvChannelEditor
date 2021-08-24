@@ -28,7 +28,7 @@ class DemoSetupScreen extends AbstractControlsScreen
     {
         $defs = array();
 
-        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : DemoConfig::CHANNEL_LIST_URL;
+        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : PluginConfig::CHANNEL_LIST_URL;
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
         $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0;
@@ -48,7 +48,7 @@ class DemoSetupScreen extends AbstractControlsScreen
         }
 
         ControlFactory::add_vgap($defs, -10);
-        $this->add_label($defs, 'iEdem/iLook TV', 'Версия ' . DemoConfig::PluginVersion . '. [' . DemoConfig::PluginDate . ']');
+        $this->add_label($defs, 'iEdem/iLook TV', 'Версия ' . PluginConfig::PluginVersion . '. [' . PluginConfig::PluginDate . ']');
 
         $this->add_combobox($defs,'show_tv', 'Показывать iEdem/iLook TV в главном меню:',
             $show_tv, $show_ops, 0, true);

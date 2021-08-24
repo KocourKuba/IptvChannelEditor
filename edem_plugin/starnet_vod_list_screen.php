@@ -30,7 +30,7 @@ class DemoVodListScreen extends VodListScreen
         $doc =
             HD::http_get_document(
                 sprintf(
-                    DemoConfig::MOVIE_LIST_URL_FORMAT,
+                    PluginConfig::MOVIE_LIST_URL_FORMAT,
                     $media_url->category_id));
 
         if (is_null($doc))

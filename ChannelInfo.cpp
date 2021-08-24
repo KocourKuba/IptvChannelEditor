@@ -3,13 +3,12 @@
 #include "utils.h"
 #include "ChannelCategory.h"
 
-ChannelInfo::ChannelInfo() : BaseInfo(BaseType::enChannel)
+ChannelInfo::ChannelInfo(StreamType streamType) : BaseInfo(InfoType::enChannel, streamType)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
-	get_stream_uri().set_uri(utils::URI_TEMPLATE);
 }
 
-ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node) : BaseInfo(BaseType::enChannel)
+ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node, StreamType streamType) : BaseInfo(InfoType::enChannel, streamType)
 {
 	ParseNode(node);
 }
@@ -20,6 +19,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		return;
 
 	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
+	stream_uri->set_id(utils::get_value_string(node->first_node(CHANNEL_ID)));
 	set_tvg_id(utils::get_value_int(node->first_node(TVG_ID)));
 	set_epg_id(utils::get_value_int(node->first_node(EPG_ID)));
 	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
@@ -44,7 +44,9 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		categories.emplace(utils::get_value_int(node->first_node(TV_CATEGORY_ID)));
 	}
 
-	get_stream_uri().set_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
+	if (stream_uri->get_id().empty())
+		stream_uri->parse_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
+
 	set_archive(utils::get_value_int(node->first_node(ARCHIVE)));
 	set_adult(utils::get_value_int(node->first_node(PROTECTED)));
 }
@@ -56,6 +58,9 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// <caption>Первый канал</caption>
 	channel_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
+
+	// <channel_id>1</channel_id> or <channel_id>tv3</channel_id>
+	channel_node->append_node(utils::alloc_node(alloc, CHANNEL_ID, get_id().c_str()));
 
 	// <tvg_id>1</tvg_id>
 	channel_node->append_node(utils::alloc_node(alloc, TVG_ID, utils::int_to_char(get_tvg_id()).c_str()));
@@ -74,8 +79,12 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	// new version must not have more than on entry
 	channel_node->append_node(utils::alloc_node(alloc, TV_CATEGORY_ID, utils::int_to_char(*categories.begin()).c_str()));
 
+	// Only if channel not templated. Otherwise template handled by plugin
 	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/127/index.m3u8</streaming_url>
-	channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, get_stream_uri().get_id_translated_url().c_str()));
+	if (!stream_uri->is_template())
+	{
+		channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, stream_uri->get_id_translated_url().c_str()));
+	}
 
 	// <archive>1</archive>
 	if (get_archive())

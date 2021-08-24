@@ -1,6 +1,5 @@
 #pragma once
 #include "rapidxml.hpp"
-#include "uri.h"
 #include "BaseInfo.h"
 
 // <tv_channel>
@@ -24,6 +23,7 @@ class ChannelInfo : public BaseInfo
 {
 public:
 	static constexpr auto TV_CHANNEL = "tv_channel";
+	static constexpr auto CHANNEL_ID = "channel_id";
 	static constexpr auto EPG_ID = "epg_id";
 	static constexpr auto TVG_ID = "tvg_id";
 	static constexpr auto CAPTION = "caption";
@@ -40,8 +40,9 @@ public:
 	static constexpr auto FAVORITE = "favorite";
 
 public:
-	ChannelInfo();
-	ChannelInfo(rapidxml::xml_node<>* node);
+	ChannelInfo() = delete;
+	ChannelInfo(StreamType streamType);
+	ChannelInfo(rapidxml::xml_node<>* node, StreamType streamType);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);

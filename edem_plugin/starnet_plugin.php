@@ -33,9 +33,9 @@ class DemoPlugin extends DefaultDunePlugin
     {
         $this->tv = new DemoTv();
         //$this->add_screen(new TvGroupListScreen($this->tv, DemoConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new TvChannelListScreen($this->tv, DemoConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new TvFavoritesScreen($this->tv, DemoConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new Starnet_MainScreen($this->tv, DemoConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new TvChannelListScreen($this->tv, PluginConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new TvFavoritesScreen($this->tv, PluginConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new Starnet_MainScreen($this->tv, PluginConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS()));
         $this->add_screen(new DemoSetupScreen($this->tv));
 
         //$this->vod = new DemoVod();

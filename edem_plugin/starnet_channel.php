@@ -5,7 +5,7 @@ require_once 'lib/tv/default_channel.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
-class DemoChannel extends DefaultChannel
+class PluginChannel extends DefaultChannel
 {
     private $has_archive;
     private $number;

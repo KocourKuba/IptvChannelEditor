@@ -1,14 +1,13 @@
 #include "StdAfx.h"
 #include "ChannelCategory.h"
 #include "utils.h"
-#include "uri.h"
 
-ChannelCategory::ChannelCategory() : BaseInfo(BaseType::enCategory)
+ChannelCategory::ChannelCategory(StreamType streamType) : BaseInfo(InfoType::enCategory, streamType)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
 }
 
-ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node) : BaseInfo(BaseType::enCategory)
+ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node, StreamType streamType) : BaseInfo(InfoType::enCategory, streamType)
 {
 	ParseNode(node);
 }
@@ -19,7 +18,7 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 		return;
 
 	// <id>1</id>
-	set_id(utils::get_value_int(node->first_node(ID)));
+	set_key(utils::get_value_int(node->first_node(ID)));
 	// <caption>Общие</caption>
 	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
 	// <icon_url>plugin_file://icons/1.png</icon_url>
@@ -32,7 +31,7 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 	auto category_node = utils::alloc_node(alloc, TV_CATEGORY);
 
 	// <id>1</id>
-	category_node->append_node(utils::alloc_node(alloc, ID, utils::int_to_char(get_id()).c_str()));
+	category_node->append_node(utils::alloc_node(alloc, ID, utils::int_to_char(get_key()).c_str()));
 
 	// <caption>Общие</caption>
 	category_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
@@ -64,15 +63,14 @@ void ChannelCategory::move_channels(const ChannelInfo* range_start, const Channe
 
 void ChannelCategory::add_channel(std::shared_ptr<ChannelInfo>& channel)
 {
-	int id = channel->get_id();
-	if (channels_map.find(id) == channels_map.end())
+	if (channels_map.find(channel->get_id()) == channels_map.end())
 	{
-		channels_map.emplace(id, channel);
+		channels_map.emplace(channel->get_id(), channel);
 		channels.emplace_back(channel.get());
 	}
 }
 
-void ChannelCategory::remove_channel(int ch_id)
+void ChannelCategory::remove_channel(const std::string& ch_id)
 {
 	if (auto pair = channels_map.find(ch_id); pair != channels_map.end())
 	{
@@ -92,7 +90,7 @@ void ChannelCategory::sort_channels()
 	}
 }
 
-std::shared_ptr<ChannelInfo> ChannelCategory::find_channel(int ch_id)
+std::shared_ptr<ChannelInfo> ChannelCategory::find_channel(const std::string& ch_id)
 {
 	auto pair = channels_map.find(ch_id);
 	return pair != channels_map.end() ? pair->second : nullptr;

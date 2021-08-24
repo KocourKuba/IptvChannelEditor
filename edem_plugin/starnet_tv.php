@@ -16,13 +16,13 @@ class DemoTv extends AbstractTv
     {
         parent::__construct(
             AbstractTv::MODE_CHANNELS_N_TO_M,
-            DemoConfig::TV_FAVORITES_SUPPORTED,
+            PluginConfig::TV_FAVORITES_SUPPORTED,
             false);
     }
 
     public function get_fav_icon_url()
     {
-        return DemoConfig::FAV_CHANNEL_GROUP_ICON_PATH;
+        return PluginConfig::FAV_CHANNEL_GROUP_ICON_PATH;
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ class DemoTv extends AbstractTv
             }
         } catch (Exception $e) {
             hd_print("Can't fetch channel_list, alternative copy used.");
-            $doc = file_get_contents(DemoConfig::CHANNEL_LIST_URL, true);
+            $doc = file_get_contents(PluginConfig::CHANNEL_LIST_URL, true);
         }
 
         $xml = simplexml_load_string($doc);
@@ -91,15 +91,15 @@ class DemoTv extends AbstractTv
         // Favorites group
         if ($this->is_favorites_supported()) {
             $this->groups->put(new FavoritesGroup($this,
-                DemoConfig::FAV_CHANNEL_GROUP_ID,
-                DemoConfig::FAV_CHANNEL_GROUP_CAPTION,
-                DemoConfig::FAV_CHANNEL_GROUP_ICON_PATH));
+                PluginConfig::FAV_CHANNEL_GROUP_ID,
+                PluginConfig::FAV_CHANNEL_GROUP_CAPTION,
+                PluginConfig::FAV_CHANNEL_GROUP_ICON_PATH));
         }
 
         // All channels group
         $this->groups->put(new AllChannelsGroup($this,
-            DemoConfig::ALL_CHANNEL_GROUP_CAPTION,
-            DemoConfig::ALL_CHANNEL_GROUP_ICON_PATH));
+            PluginConfig::ALL_CHANNEL_GROUP_CAPTION,
+            PluginConfig::ALL_CHANNEL_GROUP_ICON_PATH));
 
         // read category
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
@@ -124,20 +124,26 @@ class DemoTv extends AbstractTv
             // ignore disabled channel
             if (isset($xml_tv_channel->disabled)) continue;
 
+            // make substitute template
+            if (isset($xml_tv_channel->channel_id))
+                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, PluginConfig::MEDIA_URL_TEMPLATE);
+            else
+                $streaming_url = strval($xml_tv_channel->streaming_url);
+
             // calculate unique id from url hash
-            $id = hash("crc32", $xml_tv_channel->streaming_url);
+            $id = hash("crc32", $streaming_url);
             if ($this->channels->has($id)) {
                 // added or existing channel
                 $channel = $this->channels->get($id);
             }
             else
             {
-                $channel = new DemoChannel(
+                $channel = new PluginChannel(
                     $id,
                     strval($xml_tv_channel->caption),
                     strval($xml_tv_channel->icon_url),
                     intval($xml_tv_channel->archive),
-                    strval($xml_tv_channel->streaming_url),
+                    $streaming_url,
                     intval($xml_tv_channel->number),
                     intval($xml_tv_channel->tvg_id),
                     intval($xml_tv_channel->epg_id),
@@ -201,6 +207,10 @@ class DemoTv extends AbstractTv
             }
 
             $url = $channel->get_streaming_url();
+            // unify streaming url
+            if (strpos($url, 'http://ts://') === false) {
+                $url = str_replace('http://', 'http://ts://', $url);
+            }
         } catch (Exception $ex) {
             return '';
         }
@@ -217,7 +227,12 @@ class DemoTv extends AbstractTv
 
         if (intval($archive_ts) > 0) {
             $now_ts = intval(time());
-            $url .= "?utc=$archive_ts&lutc=$now_ts";
+			if (strpos($url, '?') === false)
+				$url .= '?';
+			else
+				$url .= '&';
+
+            $url .= "utc=$archive_ts&lutc=$now_ts";
         }
 
         return $url;
@@ -267,11 +282,11 @@ class DemoTv extends AbstractTv
         $epg_id = intval($channel->get_epg_id());
         $epg_date = gmdate("Ymd", $day_start_ts);
 
-        if (!is_dir(DemoConfig::EPG_CACHE_DIR)) {
-           mkdir(DemoConfig::EPG_CACHE_DIR);
+        if (!is_dir(PluginConfig::EPG_CACHE_DIR)) {
+           mkdir(PluginConfig::EPG_CACHE_DIR);
         }
 
-        $cache_file = DemoConfig::EPG_CACHE_DIR . DemoConfig::EPG_CACHE_FILE . $channel_id . "_" . $day_start_ts;
+        $cache_file = PluginConfig::EPG_CACHE_DIR . PluginConfig::EPG_CACHE_FILE . $channel_id . "_" . $day_start_ts;
         if (file_exists($cache_file)) {
             $epg = unserialize(file_get_contents($cache_file));
         } else {
@@ -282,7 +297,7 @@ class DemoTv extends AbstractTv
             try {
                 // teleguide.info first. Otherwise, try to get info from epg.ott-play.com
                 $id = ($tvg_id ?: $epg_id);
-                $provider = ($tvg_id ? DemoConfig::TVG_URL_FORMAT : DemoConfig::EPG_URL_FORMAT);
+                $provider = ($tvg_id ? PluginConfig::TVG_URL_FORMAT : PluginConfig::EPG_URL_FORMAT);
                 $epg = $this->get_epg($provider, $id, $epg_date, $day_start_ts);
             }
             catch (Exception $ex) {
@@ -322,7 +337,7 @@ class DemoTv extends AbstractTv
         $epg = array();
 
         switch ($provider) {
-            case DemoConfig::EPG_URL_FORMAT:
+            case PluginConfig::EPG_URL_FORMAT:
                 $url = sprintf($provider, $id);
                 $doc = HD::http_get_document($url);
                 // time in UTC
@@ -336,7 +351,7 @@ class DemoTv extends AbstractTv
                     }
                 }
                 break;
-            case DemoConfig::TVG_URL_FORMAT:
+            case PluginConfig::TVG_URL_FORMAT:
                 $url = sprintf($provider, $id, $epg_date);
                 $doc = HD::http_get_document($url);
                 // tvguide.info time in GMT+3 (moscow time)

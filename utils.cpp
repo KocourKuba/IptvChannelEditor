@@ -197,6 +197,28 @@ std::vector<std::string> regex_split(const std::string& str, const std::string& 
 	return elems;
 }
 
+size_t string_replace_inplace(std::string& source, const std::string& search, const std::string& replace, size_t pos /*= 0*/)
+{
+	size_t replaced = 0;
+	if (!search.empty() && pos < source.size())
+	{
+		for (; (pos = source.find(search, pos)) != std::string::npos; pos += replace.size())
+		{
+			source.replace(pos, search.size(), replace);
+			replaced++;
+		}
+	}
+
+	return replaced;
+}
+
+std::string string_replace(const std::string& source, const std::string& search, const std::string& replace, size_t pos /*= 0*/)
+{
+	std::string replaced(source);
+	string_replace_inplace(replaced, search, replace, pos);
+	return replaced;
+}
+
 int char_to_int(const std::string& str)
 {
 	int value = 0;

@@ -1,17 +1,30 @@
 #pragma once
-#include "uri.h"
+#include "uri_stream.h"
 
+enum class StreamType
+{
+	enNoStream = 0,
+	enChannels,
+	enEdem,
+	enSharovoz,
+	enGlanz,
+	enSharaclub,
+};
+
+/// <summary>
+/// Container for stream interface
+/// </summary>
 class StreamContainer
 {
 public:
-	StreamContainer() = default;
+	StreamContainer() = delete;
+	StreamContainer(StreamType type);
 	~StreamContainer() = default;
 
-	const uri_stream& get_stream_uri() const { return stream_uri; }
-	uri_stream& get_stream_uri() { return stream_uri; }
-	void set_stream_uri(const uri_stream& val) { stream_uri = val; }
-	void set_stream_uri(const std::string& val) { stream_uri.set_uri(val); }
+	const uri_stream* get_stream_uri() { return stream_uri.get(); }
+	void set_stream_uri(const uri_stream* val) { ASSERT(val); *stream_uri = *val; }
+	void set_stream_uri(const std::string& val) { stream_uri->set_uri(val); }
 
-private:
-	uri_stream stream_uri;
+protected:
+	std::unique_ptr<uri_stream> stream_uri;
 };

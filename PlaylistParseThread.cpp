@@ -40,7 +40,7 @@ BOOL CPlaylistParseThread::InitInstance()
 		if (stream.good())
 		{
 			int step = 0;
-			auto entry = std::make_unique<PlaylistEntry>();
+			auto entry = std::make_unique<PlaylistEntry>(StreamType::enEdem);
 			std::string line;
 			while (std::getline(stream, line))
 			{
@@ -53,16 +53,12 @@ BOOL CPlaylistParseThread::InitInstance()
 				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++);
 
 				utils::string_rtrim(line, "\r");
-				if (line.empty()) continue;
+				if (line.empty() || !entry->Parse(line)) continue;
 
-				entry->Parse(line);
-				if (entry->get_directive() == ext_pathname)
-				{
-					if (!filterEntry(entry.get()))
-						entries->emplace_back(std::move(entry));
+				if (!filterEntry(entry.get()))
+					entries->emplace_back(std::move(entry));
 
-					entry = std::make_unique<PlaylistEntry>();
-				}
+				entry = std::make_unique<PlaylistEntry>(StreamType::enEdem);
 			}
 		}
 	}

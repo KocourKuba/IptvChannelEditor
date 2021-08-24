@@ -1,6 +1,5 @@
 #pragma once
 #include "rapidxml.hpp"
-#include "uri.h"
 #include "ChannelInfo.h"
 
 // <tv_category>
@@ -17,15 +16,16 @@ public:
 	static constexpr auto CAPTION = "caption";
 
 public:
-	ChannelCategory();
-	ChannelCategory(rapidxml::xml_node<>* node);
+	ChannelCategory() = delete;
+	ChannelCategory(StreamType streamType);
+	ChannelCategory(rapidxml::xml_node<>* node, StreamType streamType);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& alloc) const;
 
-	int get_id() const override { return id; }
-	void set_id(int val) override { id = val; }
+	const std::string& get_id() const override { return id; }
+	void set_id(const std::string& val) override { id = val; }
 
 	bool is_empty() const { return channels_map.empty(); }
 
@@ -35,15 +35,15 @@ public:
 
 	void add_channel(std::shared_ptr<ChannelInfo>& channel);
 
-	void remove_channel(int ch_id);
+	void remove_channel(const std::string& ch_id);
 
 	void sort_channels();
 
-	std::shared_ptr<ChannelInfo> find_channel(int ch_id);
+	std::shared_ptr<ChannelInfo> find_channel(const std::string& ch_id);
 
 private:
-	int id = 0;
+	std::string id;
 	std::vector<ChannelInfo*> channels;
-	std::map<int, std::shared_ptr<ChannelInfo>> channels_map;
+	std::map<std::string, std::shared_ptr<ChannelInfo>> channels_map;
 };
 

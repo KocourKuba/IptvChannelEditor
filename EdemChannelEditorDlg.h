@@ -24,7 +24,7 @@ public:
 public:
 	struct SearchParams
 	{
-		int id = 0;
+		std::string id;
 		int hash = 0;
 		CString searchString;
 	};
@@ -262,7 +262,7 @@ protected:
 
 	BOOL m_hasArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
-	int m_streamID = 0; // m_wndStreamID
+	CString m_streamID; // m_wndStreamID
 	int m_tvgID = 0; // m_wndTvgID
 	int m_epgID = 0; // m_wndEpgID
 	int m_archiveCheck = 0; // m_wndCheckArchive
@@ -300,15 +300,15 @@ private:
 	COLORREF m_green;
 
 	// map of all channels for fast search
-	std::map<int, std::shared_ptr<ChannelInfo>> m_channelsMap;
+	std::map<std::string, std::shared_ptr<ChannelInfo>> m_channelsMap;
 	// map of all categories for fast search
 	std::map<int, std::shared_ptr<ChannelCategory>> m_categoriesMap;
 	std::map<int, HTREEITEM> m_categoriesTreeMap;
 
 	// list of playlist id's in the same order as in the playlist
 	// Must not contains duplicates!
-	std::vector<int> m_playlistIds;
-	std::map<int, std::unique_ptr<PlaylistEntry>> m_playlistMap;
+	std::vector<std::string> m_playlistIds;
+	std::map<std::string, std::unique_ptr<PlaylistEntry>> m_playlistMap;
 
 	// list of playlist categories in the same order as in the playlist
 	// Must not contains duplicates!

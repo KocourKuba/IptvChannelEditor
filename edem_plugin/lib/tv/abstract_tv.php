@@ -84,7 +84,7 @@ abstract class AbstractTv implements Tv
 
     public function get_channel_list_url($plugin_cookies)
     {
-        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : DemoConfig::CHANNEL_LIST_URL;
+        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : PluginConfig::CHANNEL_LIST_URL;
     }
     ///////////////////////////////////////////////////////////////////////
 

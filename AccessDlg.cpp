@@ -114,12 +114,11 @@ void CAccessDlg::OnBnClickedBtnGet()
 
 	int step = 0;
 	std::string line;
-	auto entry = std::make_unique<PlaylistEntry>();
+	auto entry = std::make_unique<PlaylistEntry>(StreamType::enEdem);
 	while (std::getline(*pl_stream, line))
 	{
 		utils::string_rtrim(line, "\r");
-		entry->Parse(line);
-		if (entry->get_directive() != ext_pathname) continue;
+		if (!entry->Parse(line)) continue;
 
 		const auto& access_key = entry->get_access_key();
 		const auto& domain = entry->get_domain();
