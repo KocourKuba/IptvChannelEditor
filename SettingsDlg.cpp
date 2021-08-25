@@ -37,10 +37,6 @@ BOOL CSettingsDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
-	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
-	m_bAutoSync = theApp.GetProfileInt(_T("Setting"), _T("AutoSyncChannel"), FALSE);
-
 	CString filter(_T("EXE file(*.exe)|*.exe|All Files (*.*)|*.*||"));
 	m_wndPlayer.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
 	m_wndProbe.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
@@ -49,15 +45,4 @@ BOOL CSettingsDlg::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
-}
-
-void CSettingsDlg::OnOK()
-{
-	CDialogEx::OnOK();
-
-	UpdateData(TRUE);
-
-	theApp.WriteProfileString(_T("Setting"), _T("Player"), m_player);
-	theApp.WriteProfileString(_T("Setting"), _T("FFProbe"), m_probe);
-	theApp.WriteProfileInt(_T("Setting"), _T("AutoSyncChannel"), m_bAutoSync);
 }

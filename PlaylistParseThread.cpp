@@ -40,7 +40,7 @@ BOOL CPlaylistParseThread::InitInstance()
 		if (stream.good())
 		{
 			int step = 0;
-			auto entry = std::make_unique<PlaylistEntry>(StreamType::enEdem);
+			auto entry = std::make_unique<PlaylistEntry>(m_config.m_pluginType);
 			std::string line;
 			while (std::getline(stream, line))
 			{
@@ -58,7 +58,7 @@ BOOL CPlaylistParseThread::InitInstance()
 				if (!filterEntry(entry.get()))
 					entries->emplace_back(std::move(entry));
 
-				entry = std::make_unique<PlaylistEntry>(StreamType::enEdem);
+				entry = std::make_unique<PlaylistEntry>(m_config.m_pluginType);
 			}
 		}
 	}

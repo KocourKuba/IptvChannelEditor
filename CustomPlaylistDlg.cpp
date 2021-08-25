@@ -22,6 +22,7 @@ CCustomPlaylistDlg::CCustomPlaylistDlg(CWnd* pParent /*=nullptr*/)
 void CCustomPlaylistDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+
 	DDX_Control(pDX, IDC_CUSTOM_PLAYLIST, m_wndUrl);
 	DDX_Text(pDX, IDC_CUSTOM_PLAYLIST, m_url);
 }

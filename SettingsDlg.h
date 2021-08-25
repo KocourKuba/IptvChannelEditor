@@ -18,17 +18,18 @@ public:
 
 protected:
 	BOOL OnInitDialog() override;
-	void OnOK() override;
 
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 
+public:
+	CString m_player;
+	CString m_probe;
+	BOOL m_bAutoSync;
+
 protected:
 	CMFCEditBrowseCtrl m_wndProbe;
 	CMFCEditBrowseCtrl m_wndPlayer;
 
-	CString m_player;
-	CString m_probe;
-	BOOL m_bAutoSync;
 };

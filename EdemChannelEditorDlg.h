@@ -145,6 +145,7 @@ protected:
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
+	afx_msg void OnCbnSelchangeComboPluginType();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
 	afx_msg void OnAddToFavorite();
@@ -169,7 +170,7 @@ private:
 	void FillTreeChannels();
 	void FillTreePlaylist();
 
-	void GetStreamInfo(std::vector<BaseInfo*>& container, CStatic& staticCtrl);
+	void GetStreamInfo(std::vector<uri_stream*>& container, CStatic& staticCtrl);
 
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
@@ -178,6 +179,10 @@ private:
 	void PlayStream(const std::string& stream_url, int archive_hour = 0) const;
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
+
+	std::string GetPlayableURL(const uri_stream* stream_uri,
+							   const std::string& access_domain,
+							   const std::string& access_key) const;
 
 	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
@@ -208,6 +213,9 @@ private:
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
 	void RestoreWindowPos();
+	void SwitchPlugin();
+	std::wstring GetPluginName() const;
+	std::wstring GetPluginRegPath() const;
 
 protected:
 	CFont m_largeFont;
@@ -260,6 +268,7 @@ protected:
 	CString m_infoVideo; // m_wndInfoVideo
 	CString m_infoAudio; // m_wndInfoAudio
 
+	int m_pluginIdx = 0;
 	BOOL m_hasArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
 	CString m_streamID; // m_wndStreamID
@@ -290,6 +299,8 @@ private:
 	bool m_menu_enable_channel = false;
 	BOOL m_loading = FALSE;
 	bool m_bInFillTree = false;
+	StreamType m_pluginType = StreamType::enEdem;
+	CString m_pluginName;
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
@@ -317,7 +328,7 @@ private:
 	std::map<std::wstring, HTREEITEM> m_pl_categoriesTreeMap;
 
 	// list of all channel lists
-	std::vector<std::pair<CString, CString>> m_all_channels_lists;
+	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
 
 	serializable_map m_stream_infos;
 };

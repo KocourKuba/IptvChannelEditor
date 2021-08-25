@@ -7,6 +7,7 @@
 #include <afxdialogex.h>
 #include <array>
 #include <thread>
+#include <filesystem>
 
 #include "EdemChannelEditor.h"
 #include "EdemChannelEditorDlg.h"
@@ -20,6 +21,7 @@
 
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
+#include "fmt\format.h"
 
 #include "SevenZip/7zip/SevenZipWrapper.h"
 
@@ -36,12 +38,36 @@ constexpr auto ID_MOVE_TO_END = ID_MOVE_TO_START + 512;
 constexpr auto ID_ADD_TO_START = ID_MOVE_TO_END + 1;
 constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 
+// Common
+constexpr auto REG_SETTING = _T("Setting");
+constexpr auto REG_PLAYER = _T("Player");
+constexpr auto REG_FFPROBE = _T("FFProbe");
+constexpr auto REG_HOURS_BACK = _T("HoursBack");
+constexpr auto REG_AUTOSYNC = _T("AutoSyncChannel");
+constexpr auto REG_PLUGIN = _T("PluginType");
+constexpr auto REG_FILTER_STRING = _T("FilterString");
+constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
+constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
+
+// Plugin dependent
+constexpr auto REG_ACCESS_KEY = _T("AccessKey");
+constexpr auto REG_DOMAIN = _T("Domain");
+constexpr auto REG_ACCESS_URL = _T("AccessUrl");
+constexpr auto REG_CHANNELS_TYPE = _T("ChannelsType");
+constexpr auto REG_PLAYLIST_TYPE = _T("PlaylistType");
+constexpr auto REG_CUSTOM_URL = _T("CustomUrl");
+constexpr auto REG_CUSTOM_FILE = _T("CustomPlaylist");
+
 BOOL CEdemChannelEditorDlg::m_embedded_info = FALSE;
 CString CEdemChannelEditorDlg::m_probe;
 std::string CEdemChannelEditorDlg::m_gl_domain;
 std::string CEdemChannelEditorDlg::m_gl_access_key;
 std::string CEdemChannelEditorDlg::m_ch_domain;
 std::string CEdemChannelEditorDlg::m_ch_access_key;
+
+static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
+static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={UID}";
+
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
@@ -78,6 +104,7 @@ BEGIN_MESSAGE_MAP(CEdemChannelEditorDlg, CDialogEx)
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 
+	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CEdemChannelEditorDlg::OnCbnSelchangeComboPluginType)
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CEdemChannelEditorDlg::OnBnClickedButtonAbout)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_PLAYLIST, &CEdemChannelEditorDlg::OnBnClickedButtonCustomPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_PL_SEARCH_NEXT, &CEdemChannelEditorDlg::OnBnClickedButtonPlSearchNext)
@@ -191,6 +218,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
+	DDX_CBIndex(pDX, IDC_COMBO_PLUGIN_TYPE, m_pluginIdx);
 	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_hasArchive);
 	DDX_Control(pDX, IDC_CHECK_ARCHIVE, m_wndArchive);
 	DDX_Check(pDX, IDC_CHECK_ADULT, m_isAdult);
@@ -294,13 +322,6 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
 
-	SetAccessKey(theApp.GetProfileString(_T("Setting"), _T("AccessKey")));
-	SetDomain(theApp.GetProfileString(_T("Setting"), _T("Domain")));
-	m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
-	m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
-	m_archiveCheck = theApp.GetProfileInt(_T("Setting"), _T("HoursBack"), 0);
-	m_bAutoSync = theApp.GetProfileInt(_T("Setting"), _T("AutoSyncChannel"), FALSE);
-
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose a playlist to import. Standard and Thematic downloaded from it999.ru"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Add custom playlist"));
@@ -331,39 +352,39 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_VIDEO), _T("Video stream info"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Plugin type"));
 
-	m_wndPlaylist.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("PlaylistType"), 0));
+	m_player = theApp.GetProfileString(REG_SETTING, REG_PLAYER);
+	m_probe = theApp.GetProfileString(REG_SETTING, REG_FFPROBE);
+	m_archiveCheck = theApp.GetProfileInt(REG_SETTING, REG_HOURS_BACK, 0);
+	m_bAutoSync = theApp.GetProfileInt(REG_SETTING, REG_AUTOSYNC, FALSE);
+	m_pluginIdx = theApp.GetProfileInt(REG_SETTING, REG_PLUGIN, 0);
 
-	m_all_channels_lists.emplace_back(_T("Standard"), theApp.GetAppPath(utils::CHANNELS_CONFIG).c_str());
-	CFileFind ffind;
-	BOOL bFound = ffind.FindFile(_T("edem_plugin\\*.xml"));
-	while (bFound)
+	if (theApp.GetProfileString(REG_SETTING, REG_ACCESS_KEY).IsEmpty())
 	{
-		bFound = ffind.FindNextFile();
-		if (!ffind.IsDirectory() && ffind.GetFileName() != "dune_plugin.xml" && ffind.GetFileName() != "edem_channel_list.xml")
+		const auto& regPath = GetPluginRegPath();
+		SetAccessKey(theApp.GetProfileString(regPath.c_str(), REG_ACCESS_KEY));
+		SetDomain(theApp.GetProfileString(regPath.c_str(), REG_DOMAIN));
+	}
+	else
+	{
+		SetAccessKey(theApp.GetProfileString(REG_SETTING, REG_ACCESS_KEY));
+		SetDomain(theApp.GetProfileString(REG_SETTING, REG_DOMAIN));
+		HKEY hKey = nullptr;
+		const auto& reg = fmt::format(_T("SOFTWARE\\{:s}\\{:s}\\{:s}"), theApp.m_pszAppName, theApp.m_pszProfileName, REG_SETTING);
+		if (RegOpenKeyEx(HKEY_CURRENT_USER, reg.c_str(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS)
 		{
-			m_all_channels_lists.emplace_back(ffind.GetFileName(), ffind.GetFilePath());
+			RegDeleteValue(hKey, REG_ACCESS_KEY);
+			RegDeleteValue(hKey, REG_DOMAIN);
+			RegDeleteValue(hKey, REG_CHANNELS_TYPE);
+			RegDeleteValue(hKey, _T("Playlist"));
+			RegDeleteValue(hKey, _T("ChannelList"));
+			RegDeleteValue(hKey, REG_CUSTOM_URL);
+			RegDeleteValue(hKey, REG_CUSTOM_FILE);
 		}
 	}
 
-	for(const auto& playlist : m_all_channels_lists)
-	{
-		int idx = m_wndChannels.AddString(playlist.first);
-		m_wndChannels.SetItemData(idx, (DWORD_PTR)playlist.second.GetString());
-	}
-
-	int idx = theApp.GetProfileInt(_T("Setting"), _T("ChannelsType"), 0);
-	if (idx < m_wndChannels.GetCount())
-		m_wndChannels.SetCurSel(idx);
-
-	// read document
-	const auto& path = theApp.GetAppPath() + _T("stream_info.bin");
-	std::ifstream is(path, std::istream::binary);
-	if (is.good())
-	{
-		std::vector<char> dump((std::istreambuf_iterator<char>(is)), std::istreambuf_iterator<char>());
-		m_stream_infos.deserialize(dump);
-	}
+	SwitchPlugin();
 
 	UpdateData(FALSE);
 
@@ -407,6 +428,107 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
+void CEdemChannelEditorDlg::SwitchPlugin()
+{
+	// Rebuld available playlist types and set current plugin parameters
+	switch (m_pluginIdx)
+	{
+		case 0: // Edem
+		{
+			m_pluginType = StreamType::enEdem;
+			m_pluginName = _T("Edem");
+
+			m_wndPlaylist.ResetContent();
+			m_wndPlaylist.AddString(_T("Edem Standard"));
+			m_wndPlaylist.AddString(_T("Edem Thematic"));
+			m_wndPlaylist.AddString(_T("Custom URL"));
+			int idx = m_wndPlaylist.AddString(_T("Custom File"));
+			m_wndPlaylist.SetItemData(idx, TRUE);
+			break;
+		}
+		case 1: // Sharavoz
+		{
+			m_pluginType = StreamType::enSharovoz;
+			m_pluginName = _T("Sharavoz");
+
+			m_wndPlaylist.ResetContent();
+			m_wndPlaylist.AddString(_T("Custom URL"));
+			int idx = m_wndPlaylist.AddString(_T("Custom File"));
+			m_wndPlaylist.SetItemData(idx, TRUE);
+			break;
+		}
+		default:
+			ASSERT(false);
+			break;
+	}
+
+	const auto& regPath = GetPluginRegPath();
+
+	// Load access credentials
+	SetAccessKey(theApp.GetProfileString(regPath.c_str(), REG_ACCESS_KEY));
+	SetDomain(theApp.GetProfileString(regPath.c_str(), REG_DOMAIN));
+
+	// Set selected playlist
+	m_wndPlaylist.SetCurSel(theApp.GetProfileInt(regPath.c_str(), REG_PLAYLIST_TYPE, 0));
+
+	// Load channel lists
+	m_all_channels_lists.clear();
+
+	const auto& playlistPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+	for (auto const& dir_entry : std::filesystem::directory_iterator{ playlistPath })
+	{
+		const auto& path = dir_entry.path();
+		if (path.extension() == _T(".xml"))
+		{
+			m_all_channels_lists.emplace_back(path.filename(), path);
+		}
+	}
+
+	m_wndChannels.ResetContent();
+	for (const auto& playlist : m_all_channels_lists)
+	{
+		int idx = m_wndChannels.AddString(playlist.first.c_str());
+		m_wndChannels.SetItemData(idx, (DWORD_PTR)playlist.second.c_str());
+	}
+
+	int idx = theApp.GetProfileInt(regPath.c_str(), REG_CHANNELS_TYPE, 0);
+	if (idx < m_wndChannels.GetCount())
+		m_wndChannels.SetCurSel(idx);
+
+	// load stream info
+	const auto& path = playlistPath + _T("stream_info.bin");
+	std::ifstream is(path, std::istream::binary);
+	if (is.good())
+	{
+		std::vector<char> dump((std::istreambuf_iterator<char>(is)), std::istreambuf_iterator<char>());
+		m_stream_infos.deserialize(dump);
+	}
+
+	// Reload selected channels list
+	OnCbnSelchangeComboChannels();
+
+	// Reload selected playlist
+	OnCbnSelchangeComboPlaylist();
+}
+
+std::wstring CEdemChannelEditorDlg::GetPluginName() const
+{
+	switch (m_pluginIdx)
+	{
+		case 0: // Edem
+			return L"edem";
+		case 1: // Sharavoz
+			return L"sharavoz";
+	}
+
+	return L"";
+}
+
+std::wstring CEdemChannelEditorDlg::GetPluginRegPath() const
+{
+	return fmt::format(_T("{:s}\\{:s}"), REG_SETTING, GetPluginName().c_str());
+}
+
 void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 {
 	// #EXTM3U <--- header
@@ -414,9 +536,53 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	// #EXTGRP:Общие <-- Category
 	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/2402/index.m3u8
 
-	AfxGetApp()->BeginWaitCursor();
+	CString url;
+	int idx = m_wndPlaylist.GetCurSel();
+	BOOL isFile = (BOOL)m_wndPlaylist.GetItemData(idx);
 
-	CString slashed = theApp.GetProfileString(_T("Setting"), _T("Playlist"));
+	const auto& regPath = GetPluginRegPath();
+
+	switch (m_pluginIdx)
+	{
+		case 0: // Edem
+		{
+			switch (idx)
+			{
+				case 0:
+					url = _T("http://epg.it999.ru/edem_epg_ico.m3u8");
+					break;
+				case 1:
+					url = _T("http://epg.it999.ru/edem_epg_ico2.m3u8");
+					break;
+				case 2:
+					url = theApp.GetProfileString(regPath.c_str(), REG_CUSTOM_URL);
+					break;
+				case 3:
+					url = theApp.GetProfileString(regPath.c_str(), REG_CUSTOM_FILE);
+					break;
+				default:
+					break;
+			}
+			break;
+		}
+		case 1: // Sharavoz
+		{
+			switch (idx)
+			{
+				case 0:
+					url = theApp.GetProfileString(regPath.c_str(), REG_CUSTOM_URL);
+					break;
+				case 1:
+					url = theApp.GetProfileString(regPath.c_str(), REG_CUSTOM_FILE);
+					break;
+				default:
+					break;
+			}
+			break;
+		}
+	}
+
+	CString slashed(url);
 	slashed.Replace('\\', '/');
 	auto pos = slashed.ReverseFind('/');
 	if (pos != -1)
@@ -445,11 +611,15 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	// #EXTGRP:Общие
 	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
 
-	const CString& file = theApp.GetProfileString(_T("Setting"), _T("Playlist"));
 	auto data = std::make_unique<std::vector<BYTE>>();
-	if (utils::CrackUrl(utils::utf16_to_utf8(file.GetString())))
+	if (isFile)
 	{
-		if (utils::DownloadFile(utils::utf16_to_utf8(file.GetString()), *data) && saveToFile)
+		std::ifstream stream(url.GetString());
+		data->assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+	}
+	else if (utils::CrackUrl(utils::utf16_to_utf8(url.GetString())))
+	{
+		if (utils::DownloadFile(utils::utf16_to_utf8(url.GetString()), *data) && saveToFile)
 		{
 			std::ofstream os(m_plFileName);
 			os.write((char*)data->data(), data->size());
@@ -457,43 +627,38 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			return;
 		}
 	}
-	else
+
+	if (data->empty())
+		return;
+
+	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
+	m_wndProgress.SetPos(0);
+	m_wndProgress.ShowWindow(SW_SHOW);
+
+	auto* pThread = (CPlaylistParseThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+	if (!pThread)
 	{
-		std::ifstream stream(file.GetString());
-		data->assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+		AfxMessageBox(_T("Problem with starting load playlist thread!"), MB_OK | MB_ICONERROR);
 	}
 
-	if (!data->empty())
-	{
-		m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
-		m_wndProgress.SetPos(0);
-		m_wndProgress.ShowWindow(SW_SHOW);
+	m_loading = TRUE;
+	m_wndGetInfo.EnableWindow(FALSE);
+	m_wndCheckArchive.EnableWindow(FALSE);
+	m_wndPlaylist.EnableWindow(FALSE);
+	m_wndPlaylistTree.EnableWindow(FALSE);
+	m_evtStop.ResetEvent();
 
-		auto* pThread = (CPlaylistParseThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
-		if (pThread)
-		{
-			m_loading = TRUE;
-			m_wndGetInfo.EnableWindow(FALSE);
-			m_wndCheckArchive.EnableWindow(FALSE);
-			m_wndPlaylist.EnableWindow(FALSE);
-			m_evtStop.ResetEvent();
+	CPlaylistParseThread::ThreadConfig cfg;
+	cfg.m_parent = this;
+	cfg.m_data = data.release();
+	cfg.m_hStop = m_evtStop;
+	cfg.m_filter = theApp.GetProfileString(REG_SETTING, REG_FILTER_STRING);
+	cfg.m_regex = theApp.GetProfileInt(REG_SETTING, REG_FILTER_REGEX, FALSE);
+	cfg.m_case = theApp.GetProfileInt(REG_SETTING, REG_FILTER_CASE, FALSE);
+	cfg.m_pluginType = m_pluginType;
 
-			CPlaylistParseThread::ThreadConfig cfg;
-			cfg.m_parent = this;
-			cfg.m_data = data.release();
-			cfg.m_hStop = m_evtStop;
-			cfg.m_filter = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
-			cfg.m_regex = theApp.GetProfileInt(_T("Setting"), _T("FilterUseRegex"), FALSE);
-			cfg.m_case = theApp.GetProfileInt(_T("Setting"), _T("FilterUseCase"), FALSE);
-
-			pThread->SetData(cfg);
-			pThread->ResumeThread();
-
-			return;
-		}
-	}
-
-	AfxGetApp()->EndWaitCursor();
+	pThread->SetData(cfg);
+	pThread->ResumeThread();
 }
 
 LRESULT CEdemChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
@@ -526,6 +691,7 @@ LRESULT CEdemChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndPlSearch.EnableWindow(!m_channelsMap.empty());
+	m_wndPlaylistTree.EnableWindow(TRUE);
 
 	FillTreePlaylist();
 
@@ -570,6 +736,8 @@ void CEdemChannelEditorDlg::OnOK()
 
 void CEdemChannelEditorDlg::OnCancel()
 {
+	UpdateData(FALSE);
+
 	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
 	{
 		return;
@@ -577,6 +745,7 @@ void CEdemChannelEditorDlg::OnCancel()
 
 	m_evtStop.SetEvent();
 
+	theApp.WriteProfileInt(REG_SETTING, REG_PLUGIN, m_pluginIdx);
 	const auto& dump = m_stream_infos.serialize();
 	// write document
 	const auto& path = theApp.GetAppPath() + _T("stream_info.bin");
@@ -701,12 +870,49 @@ void CEdemChannelEditorDlg::UpdateChannelsCount()
 
 void CEdemChannelEditorDlg::UpdatePlaylistCount()
 {
-	const auto& filterString = theApp.GetProfileString(_T("Setting"), _T("FilterString"));
+	const auto& filterString = theApp.GetProfileString(REG_SETTING, REG_FILTER_STRING);
 
 	CString str;
 	str.Format(_T("Playlist: %s (%d%s)"), m_plFileName.GetString(), m_playlistMap.size(), (filterString.IsEmpty() ? _T("") : _T("*")));
 	m_wndPlInfo.SetWindowText(str);
 	UpdateData(FALSE);
+}
+
+std::string CEdemChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri,
+												  const std::string& access_domain,
+												  const std::string& access_key) const
+{
+	// templated url changed, custom is unchanged
+	// edem
+	// http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8 -> http://ts://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8
+	// http://ts://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8 -> http://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8
+	// http://ts://rtmp.api.rt.com/hls/rtdru.m3u8 -> http://rtmp.api.rt.com/hls/rtdru.m3u8
+	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
+	//
+	// sharavoz
+	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={UID} -> http://{SUBDOMAIN}/204/index.m3u8?token={UID}
+	// http://{SUBDOMAIN}/204/index.m3u8?token={UID} -> http://domain.com/204/index.m3u8?token=adsdaSDFJKHKJd
+
+	std::string uri_template;
+	switch (m_pluginType)
+	{
+		case StreamType::enEdem:
+			uri_template = URI_TEMPLATE_EDEM;
+			break;
+		case StreamType::enSharovoz:
+			uri_template = URI_TEMPLATE_SHARAVOZ;
+			break;
+		case StreamType::enGlanz:
+		case StreamType::enSharaclub:
+		default:
+			break;
+	}
+
+	auto& uri = stream_uri->is_template() ? utils::string_replace(uri_template, "{ID}", stream_uri->get_id()) : stream_uri->get_uri();
+	utils::string_replace_inplace(uri, "{SUBDOMAIN}", access_domain);
+	utils::string_replace_inplace(uri, "{UID}", access_key);
+
+	return uri;
 }
 
 void CEdemChannelEditorDlg::RemoveOrphanChannels()
@@ -1453,11 +1659,11 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	bool bSameCategory = IsSelectedTheSameCategory();
 
 	m_wndCustom.EnableWindow(enable);
-	m_wndTvgID.EnableWindow(enable);
+	m_wndTvgID.EnableWindow(enable && m_pluginType == StreamType::enEdem);
 	m_wndEpgID.EnableWindow(enable);
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
-	m_wndTestTVG.EnableWindow(enable);
+	m_wndTestTVG.EnableWindow(enable && m_pluginType == StreamType::enEdem);
 	m_wndTestEPG.EnableWindow(enable);
 	m_wndStreamID.EnableWindow(enable && !m_streamID.IsEmpty());
 	m_wndStreamUrl.EnableWindow(enable && m_streamID.IsEmpty());
@@ -1933,7 +2139,7 @@ void CEdemChannelEditorDlg::OnEnChangeEditArchiveCheck()
 
 	UpdateData(FALSE);
 
-	theApp.WriteProfileInt(_T("Setting"), _T("HoursBack"), m_archiveCheck);
+	theApp.WriteProfileInt(REG_SETTING, REG_HOURS_BACK, m_archiveCheck);
 }
 
 void CEdemChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1987,7 +2193,7 @@ void CEdemChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/) 
 	{
 		const auto& access_domain = CEdemChannelEditorDlg::GetAccessDomain();
 		const auto& access_key = CEdemChannelEditorDlg::GetAccessKey();
-		PlayStream(entry->get_stream_uri()->get_playable_url(access_domain, access_key), archive_hour);
+		PlayStream(GetPlayableURL(entry->get_stream_uri(), access_domain, access_key), archive_hour);
 	}
 }
 
@@ -2006,13 +2212,12 @@ void CEdemChannelEditorDlg::PlayStream(const std::string& stream_url, int archiv
 void CEdemChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 {
 	CCustomPlaylistDlg dlg;
-	dlg.m_isFile = (m_wndPlaylist.GetCurSel() == 3);
-	LPCTSTR szType = dlg.m_isFile ? _T("CustomPlaylist") : _T("CustomUrl");
-	dlg.m_url = theApp.GetProfileString(_T("Setting"), szType);
+	dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
+	LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
+	dlg.m_url = theApp.GetProfileString(REG_SETTING, szType);
 	if (dlg.DoModal() == IDOK)
 	{
-		theApp.WriteProfileString(_T("Setting"), szType, dlg.m_url);
-		theApp.WriteProfileString(_T("Setting"), _T("Playlist"), dlg.m_url);
+		theApp.WriteProfileString(GetPluginRegPath().c_str(), szType, dlg.m_url);
 		LoadPlaylist();
 	}
 }
@@ -2072,7 +2277,7 @@ void CEdemChannelEditorDlg::FillTreePlaylist()
 	UpdateData(FALSE);
 }
 
-void CEdemChannelEditorDlg::GetStreamInfo(std::vector<BaseInfo*>& container, CStatic& staticCtrl)
+void CEdemChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container, CStatic& staticCtrl)
 {
 	const auto& access_domain = CEdemChannelEditorDlg::GetAccessDomain();
 	const auto& access_key = CEdemChannelEditorDlg::GetAccessKey();
@@ -2088,7 +2293,7 @@ void CEdemChannelEditorDlg::GetStreamInfo(std::vector<BaseInfo*>& container, CSt
 		int j = 0;
 		while (j < 5 && pool != container.end())
 		{
-			const auto& url = (*pool)->get_stream_uri()->get_playable_url(access_domain, access_key);
+			const auto& url = GetPlayableURL(*pool, access_domain, access_key);
 			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
 			j++;
 			++pool;
@@ -2101,7 +2306,7 @@ void CEdemChannelEditorDlg::GetStreamInfo(std::vector<BaseInfo*>& container, CSt
 
 			w.join();
 
-			auto hash = (*it)->get_stream_uri()->get_hash();
+			auto hash = (*it)->get_hash();
 			std::pair<std::string, std::string> info(audio[j], video[j]);
 			auto& pair = m_stream_infos.emplace(hash, info);
 			if (!pair.second)
@@ -2123,8 +2328,6 @@ void CEdemChannelEditorDlg::GetStreamInfo(std::vector<BaseInfo*>& container, CSt
 
 void CEdemChannelEditorDlg::OnSave()
 {
-	const auto& path = theApp.GetAppPath(utils::PLUGIN_ROOT + m_chFileName);
-
 	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
 
@@ -2201,7 +2404,10 @@ void CEdemChannelEditorDlg::OnSave()
 		doc.append_node(tv_info);
 
 		// write document
-		std::ofstream os(path, std::istream::binary);
+		auto& playlistPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+		playlistPath += m_chFileName;
+
+		std::ofstream os(playlistPath, std::istream::binary);
 		os << doc;
 
 		set_allow_save(FALSE);
@@ -2338,6 +2544,7 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
 	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
 
+	dlg.ApplyOFNToShellDialog();
 	INT_PTR nResult = dlg.DoModal();
 	file.ReleaseBuffer();
 
@@ -2395,29 +2602,70 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nContinue?"), MB_YESNO) != IDYES)
 		return;
 
-#ifdef _DEBUG
-	const auto& dllFile = theApp.GetAppPath(_T("..\\dll\\7za.dll"));
-#else
-	const auto& dllFile = theApp.GetAppPath(_T("7za.dll"));
-#endif // _DEBUG
+	const auto& name = GetPluginName();
 
-	const auto& plugin_folder = theApp.GetAppPath(utils::PLUGIN_ROOT);
+	const auto& packFolder = fmt::format(theApp.GetAppPath(utils::PACK_PATH).c_str(), name.c_str());
 
-	SevenZipWrapper archiver(dllFile);
+	std::error_code err;
+	// remove previous packed folder if exist
+	std::filesystem::remove_all(packFolder, err);
+
+	// copy new one
+	std::filesystem::copy(theApp.GetAppPath(utils::PLUGIN_ROOT),
+						  packFolder,
+						  std::filesystem::copy_options::recursive,
+						  err);
+
+	// set plugin config
+	std::filesystem::rename(packFolder + fmt::format(_T("{:s}_plugin.xml.in"), name),
+							packFolder + _T("dune_plugin.xml"),
+							err);
+
+	// remove over configs
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder })
+	{
+		if (dir_entry.path().extension() == _T(".in"))
+			std::filesystem::remove(dir_entry, err);
+	}
+
+	// copy channel lists
+	for (const auto& file : m_all_channels_lists)
+	{
+		std::filesystem::path src(std::filesystem::absolute(file.second));
+		std::filesystem::copy_file(src, packFolder + file.first, std::filesystem::copy_options::overwrite_existing, err);
+		ASSERT(!err.value());
+	}
+
+	// write setup file
+	auto& capsName = utils::utf16_to_utf8(name);
+	capsName[0] = toupper(capsName[0]);
+	char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
+	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
+	os.write(smarker, sizeof(smarker));
+	os << fmt::format("<?php\ndefine(\"PLUGIN_TYPE\", '{:s}PluginConfig')\n?>\n", capsName.c_str());
+	os.close();
+
+	// pack folder
+	SevenZipWrapper archiver(theApp.GetAppPath(utils::PACK_DLL));
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
-	bool res = archiver.GetCompressor().AddFiles(plugin_folder, _T("*.*"), true);
+	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
 	if (!res)
 		return;
 
-	res = archiver.CreateArchive(_T("dune_plugin_edem_mod.zip"));
+	const auto& pluginName = fmt::format(utils::DUNE_PLUGIN_NAME, name.c_str());
+
+	res = archiver.CreateArchive(pluginName);
 	if (res)
 	{
 		AfxMessageBox(_T("Plugin created.\nInstall it to the DUNE mediaplayer"), MB_OK);
 	}
 	else
 	{
-		::DeleteFile(_T("dune_plugin_edem_mod.zip"));
+		std::filesystem::remove(pluginName, err);
 	}
+
+	// remove temporary folder
+	std::filesystem::remove_all(packFolder, err);
 }
 
 void CEdemChannelEditorDlg::OnUpdateButtonSearchNext(CCmdUI* pCmdUI)
@@ -2523,24 +2771,38 @@ void CEdemChannelEditorDlg::OnUpdateAddUpdateChannel(CCmdUI* pCmdUI)
 void CEdemChannelEditorDlg::OnBnClickedButtonSettings()
 {
 	CSettingsDlg dlg;
+	dlg.m_player = m_player;
+	dlg.m_probe = m_probe;
+	dlg.m_bAutoSync = m_bAutoSync;
+
 	if (dlg.DoModal() == IDOK)
 	{
-		m_player = theApp.GetProfileString(_T("Setting"), _T("Player"));
-		m_probe = theApp.GetProfileString(_T("Setting"), _T("FFProbe"));
-		m_bAutoSync = theApp.GetProfileInt(_T("Setting"), _T("AutoSyncChannel"), FALSE);
+		m_player = dlg.m_player;
+		m_probe = dlg.m_probe;
+		m_bAutoSync = dlg.m_bAutoSync;
+
+		theApp.WriteProfileString(REG_SETTING, REG_PLAYER, m_player);
+		theApp.WriteProfileString(REG_SETTING, REG_FFPROBE, m_probe);
+		theApp.WriteProfileInt(REG_SETTING, REG_AUTOSYNC, m_bAutoSync);
 	}
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonAccessInfo()
 {
+	const auto& regPath = GetPluginRegPath();
+
 	CAccessDlg dlg;
 	dlg.m_bEmbedded = m_embedded_info;
 	dlg.m_accessKey = GetAccessKey().c_str();
 	dlg.m_domain = GetAccessDomain().c_str();
+	dlg.m_streamType = m_pluginType;
+	dlg.m_url = theApp.GetProfileString(regPath.c_str(), REG_ACCESS_URL);
 
 	if (dlg.DoModal() == IDOK)
 	{
 		m_embedded_info = dlg.m_bEmbedded;
+		theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_URL, dlg.m_url);
+
 		SetAccessKey(dlg.m_accessKey);
 		SetDomain(dlg.m_domain);
 
@@ -2550,8 +2812,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAccessInfo()
 		}
 		else
 		{
-			theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), dlg.m_accessKey);
-			theApp.WriteProfileString(_T("Setting"), _T("Domain"), dlg.m_domain);
+			theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_KEY, dlg.m_accessKey);
+			theApp.WriteProfileString(regPath.c_str(), REG_DOMAIN, dlg.m_domain);
 		}
 	}
 }
@@ -2662,15 +2924,27 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 {
 	CFileDialog dlg(FALSE);
 
+	const auto& pluginName = GetPluginName();
+	const auto& name = fmt::format(_T("{:s}_channels_list.xml"), pluginName.c_str());
+
+	auto& newList = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), pluginName.c_str());
+	std::filesystem::create_directory(newList);
+
+	newList += name;
+
 	CString filter(_T("Channels xml(*.xml)|*.xml||"));
 	filter.Replace('|', '\0');
 
+	CString buffer(newList.c_str());
 	OPENFILENAME& oFN = dlg.GetOFN();
 	oFN.lpstrFilter = filter.GetString();
 	oFN.nMaxFile = MAX_PATH;
 	oFN.nFilterIndex = 0;
-	oFN.lpstrTitle = _T("Add new Edem TV channels list");
+	oFN.lpstrTitle = _T("Add new channels list");
 	oFN.Flags |= OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_NONETWORKBUTTON;
+	oFN.lpstrFile = buffer.GetBuffer(MAX_PATH);
+
+	dlg.ApplyOFNToShellDialog();
 
 	INT_PTR nResult = dlg.DoModal();
 	if (nResult == IDOK)
@@ -2692,7 +2966,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 			cFile.Close();
 			auto found = std::find_if(m_all_channels_lists.begin(), m_all_channels_lists.end(), [&dlg](const auto& item)
 									  {
-										  return item.first == dlg.GetFileName();
+										  return dlg.GetFileName().CompareNoCase(item.first.c_str()) == 0;
 									  });
 
 			if (found == m_all_channels_lists.end())
@@ -2701,8 +2975,8 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 				m_categoriesMap.clear();
 				const auto& pair = m_all_channels_lists.emplace_back(dlg.GetFileName(), dlg.GetPathName());
 				m_wndChannels.EnableWindow(TRUE);
-				int idx = m_wndChannels.AddString(pair.first);
-				m_wndChannels.SetItemData(idx, (DWORD_PTR)pair.second.GetString());
+				int idx = m_wndChannels.AddString(pair.first.c_str());
+				m_wndChannels.SetItemData(idx, (DWORD_PTR)pair.second.c_str());
 				m_wndChannels.SetCurSel(idx);
 				set_allow_save();
 			}
@@ -2722,22 +2996,24 @@ void CEdemChannelEditorDlg::OnGetStreamInfo()
 	m_wndProgress.ShowWindow(SW_SHOW);
 	CWaitCursor cur;
 
-	std::vector<BaseInfo*> channels;
+	std::vector<uri_stream*> streams;
 	for (const auto& hItem : m_lastTree->GetSelectedItems())
 	{
 		auto channel = GetBaseInfo(m_lastTree, hItem);
 		if (channel)
-			channels.emplace_back(channel);
+		{
+			streams.emplace_back(channel->get_stream_uri());
+		}
 	}
 
 	if (m_lastTree == &m_wndChannelsTree)
 	{
-		GetStreamInfo(channels, m_wndChInfo);
+		GetStreamInfo(streams, m_wndChInfo);
 		LoadChannelInfo(m_lastTree->GetFirstSelectedItem());
 	}
 	else if (m_lastTree == &m_wndPlaylistTree)
 	{
-		GetStreamInfo(channels, m_wndPlInfo);
+		GetStreamInfo(streams, m_wndPlInfo);
 		LoadPlayListInfo(m_lastTree->GetFirstSelectedItem());
 	}
 
@@ -2773,12 +3049,14 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 	CWaitCursor cur;
 	m_wndProgress.ShowWindow(SW_SHOW);
 
-	std::vector<BaseInfo*> container;
+	std::vector<uri_stream*> container;
 	if (m_lastTree == &m_wndChannelsTree)
 	{
 		for (const auto& item : GetItemCategory(m_lastTree->GetSelectedItem())->get_channels())
 		{
-			container.emplace_back(dynamic_cast<BaseInfo*>(item));
+			auto info = dynamic_cast<BaseInfo*>(item);
+			if (info)
+				container.emplace_back(info->get_stream_uri());
 		}
 		GetStreamInfo(container, m_wndChInfo);
 		LoadChannelInfo(m_lastTree->GetSelectedItem());
@@ -2792,7 +3070,9 @@ void CEdemChannelEditorDlg::OnGetStreamInfoAll()
 			if (curEntry == nullptr || curEntry->get_category() == pair.second->get_category())
 			{
 				// add all
-				container.emplace_back(dynamic_cast<BaseInfo*>(pair.second.get()));
+				auto info = dynamic_cast<BaseInfo*>(pair.second.get());
+				if (info)
+					container.emplace_back(info->get_stream_uri());
 			}
 		}
 
@@ -2907,38 +3187,72 @@ void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 	LoadPlaylist(true);
 }
 
+void CEdemChannelEditorDlg::OnCbnSelchangeComboPluginType()
+{
+	int old = m_pluginIdx;
+
+	UpdateData(TRUE);
+
+	if (m_pluginIdx != old && is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	{
+		m_pluginIdx = old;
+		UpdateData(FALSE);
+		return;
+	}
+
+	SwitchPlugin();
+}
+
 void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 {
-	CString url;
+	UpdateData(TRUE);
+
 	int idx = m_wndPlaylist.GetCurSel();
 	BOOL enableDownload = TRUE;
 	BOOL enableCustom = FALSE;
-	switch (idx)
+
+	switch (m_pluginIdx)
 	{
-		case 0:
-			url = _T("http://epg.it999.ru/edem_epg_ico.m3u8");
+		case 0: // Edem
+		{
+			switch (idx)
+			{
+				case 0:
+				case 1:
+					break;
+				case 2:
+					enableCustom = TRUE;
+					break;
+				case 3:
+					enableDownload = FALSE;
+					enableCustom = TRUE;
+					break;
+				default:
+					break;
+			}
 			break;
-		case 1:
-			url = _T("http://epg.it999.ru/edem_epg_ico2.m3u8");
+		}
+		case 1: // Sharavoz
+		{
+			switch (idx)
+			{
+				case 0:
+					enableCustom = TRUE;
+					break;
+				case 1:
+					enableDownload = FALSE;
+					enableCustom = TRUE;
+					break;
+				default:
+					break;
+			}
 			break;
-		case 2:
-			url = theApp.GetProfileString(_T("Setting"), _T("CustomUrl"));
-			enableCustom = TRUE;
-			break;
-		case 3:
-			url = theApp.GetProfileString(_T("Setting"), _T("CustomPlaylist"));
-			enableDownload = FALSE;
-			enableCustom = TRUE;
-			break;
-		default:
-			break;
+		}
 	}
 
 	m_wndDownloadUrl.EnableWindow(enableDownload);
 	m_wndChooseUrl.EnableWindow(enableCustom);
-	theApp.WriteProfileString(_T("Setting"), _T("Playlist"), url);
-	theApp.WriteProfileInt(_T("Setting"), _T("PlaylistType"), idx);
-
+	theApp.WriteProfileInt(GetPluginRegPath().c_str(), REG_PLAYLIST_TYPE, idx);
 	LoadPlaylist();
 }
 
@@ -3171,7 +3485,10 @@ bool CEdemChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 
 	// is tvg_id changed?
 	if (auto id = entry->get_tvg_id(); id != -1)
+	{
+		// tvg_id in playlist == epg_id in channels
 		channel->set_epg_id(id);
+	}
 
 	channel->set_archive(entry->get_archive());
 	channel->set_stream_uri(entry->get_stream_uri());
@@ -3358,7 +3675,7 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 {
 	if (is_allow_save() && AfxMessageBox(_T("Changes not saved. Are you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
 	{
-		m_wndChannels.SetCurSel(theApp.GetProfileInt(_T("Setting"), _T("ChannelsType"), 0));
+		m_wndChannels.SetCurSel(theApp.GetProfileInt(REG_SETTING, REG_CHANNELS_TYPE, 0));
 		return;
 	}
 
@@ -3371,14 +3688,22 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 	}
 
 	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
-	theApp.WriteProfileInt(_T("Setting"), _T("ChannelsType"), idx);
+	theApp.WriteProfileInt(REG_SETTING, REG_CHANNELS_TYPE, idx);
 }
 
 void CEdemChannelEditorDlg::OnBnClickedButtonPlFilter()
 {
 	CFilterDialog dlg;
+	dlg.m_filterString = theApp.GetProfileString(REG_SETTING, REG_FILTER_STRING);
+	dlg.m_filterRegex = theApp.GetProfileInt(REG_SETTING, REG_FILTER_REGEX, FALSE);
+	dlg.m_filterCase = theApp.GetProfileInt(REG_SETTING, REG_FILTER_CASE, FALSE);
+
 	if (dlg.DoModal() == IDOK)
 	{
+		theApp.WriteProfileString(REG_SETTING, REG_FILTER_STRING, dlg.m_filterString);
+		theApp.WriteProfileInt(REG_SETTING, REG_FILTER_REGEX, dlg.m_filterRegex);
+		theApp.WriteProfileInt(REG_SETTING, REG_FILTER_CASE, dlg.m_filterCase);
+
 		LoadPlaylist();
 	}
 }
@@ -3536,7 +3861,7 @@ void CEdemChannelEditorDlg::RestoreWindowPos()
 	WINDOWPLACEMENT wp = { 0 };
 	UINT nSize = 0;
 	WINDOWPLACEMENT* pwp = nullptr;
-	if (!AfxGetApp()->GetProfileBinary(_T("Setting"), _T("WindowPos"), (LPBYTE*)&pwp, &nSize))
+	if (!AfxGetApp()->GetProfileBinary(REG_SETTING, _T("WindowPos"), (LPBYTE*)&pwp, &nSize))
 		return;
 
 	// Success
@@ -3575,7 +3900,7 @@ BOOL CEdemChannelEditorDlg::DestroyWindow()
 	GetWindowPlacement(&wp);
 	// Save the info
 	CWinApp* pApp = AfxGetApp();
-	pApp->WriteProfileBinary(_T("Setting"), _T("WindowPos"), (LPBYTE)&wp, sizeof(wp));
+	pApp->WriteProfileBinary(REG_SETTING, _T("WindowPos"), (LPBYTE)&wp, sizeof(wp));
 
 	return __super::DestroyWindow();
 }

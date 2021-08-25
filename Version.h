@@ -8,8 +8,8 @@
 
 #include "VerGIT.h"
 
-#define MAJOR	1
-#define MINOR	12
+#define MAJOR	2
+#define MINOR	0
 #define SPECIAL 0
 
 #define FILEVER        MAJOR,MINOR,BUILD,SPECIAL

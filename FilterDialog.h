@@ -18,14 +18,12 @@ public:
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK();
+	void OnOK() override;
 
 	DECLARE_MESSAGE_MAP()
 
-private:
+public:
 	CString m_filterString;
 	BOOL m_filterRegex = FALSE;
 	BOOL m_filterCase = FALSE;
-public:
-	virtual BOOL OnInitDialog();
 };

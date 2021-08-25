@@ -5,6 +5,7 @@
 #include "StdAfx.h"
 #include "framework.h"
 #include <Shlwapi.h>
+#include <filesystem>
 
 #include "EdemChannelEditor.h"
 #include "EdemChannelEditorDlg.h"
@@ -102,5 +103,5 @@ std::wstring CEdemChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/
 
 	fileName += szSubFolder;
 
-	return fileName.GetString();
+	return std::filesystem::absolute(fileName.GetString());
 }

@@ -21,7 +21,7 @@ public:
 	StreamContainer(StreamType type);
 	~StreamContainer() = default;
 
-	const uri_stream* get_stream_uri() { return stream_uri.get(); }
+	uri_stream* get_stream_uri() { return stream_uri.get(); }
 	void set_stream_uri(const uri_stream* val) { ASSERT(val); *stream_uri = *val; }
 	void set_stream_uri(const std::string& val) { stream_uri->set_uri(val); }
 

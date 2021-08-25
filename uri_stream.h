@@ -25,27 +25,12 @@ public:
 	/// <summary>
 	/// parse uri to get id
 	/// </summary>
-	/// <returns></returns>
 	virtual void parse_uri(const std::string&) = 0;
-
-	/// <summary>
-	/// getter for id translated uri
-	/// return url with substituted channel id
-	/// </summary>
-	/// <returns></returns>
-	virtual std::string get_id_translated_url() const = 0;
-
-	/// <summary>
-	/// getter for playable translated uri
-	/// return url with substituted access_key and access_domain
-	/// </summary>
-	/// <returns></returns>
-	virtual std::string get_playable_url(const std::string& access_domain, const std::string& access_key) const = 0;
 
 	/// <summary>
 	/// getter channel id
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>id</returns>
 	virtual const std::string& get_id() const { return templated ? id : str_hash; }
 
 	/// <summary>
@@ -62,8 +47,7 @@ public:
 	{
 		if (!hash)
 		{
-			const auto& uri = get_id_translated_url();
-
+			const auto& uri = is_template() ? id : get_uri();
 			hash = crc32_bitwise(uri.c_str(), uri.size());
 			str_hash = utils::int_to_char(hash);
 		}
@@ -116,6 +100,7 @@ protected:
 	std::string id;
 	std::string domain;
 	std::string uid;
+	std::string uri_template;
 	mutable std::string str_hash;
 	mutable int hash = 0;
 };

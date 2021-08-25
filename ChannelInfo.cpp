@@ -83,7 +83,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{UID}/127/index.m3u8</streaming_url>
 	if (!stream_uri->is_template())
 	{
-		channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, stream_uri->get_id_translated_url().c_str()));
+		channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, stream_uri->get_uri().c_str()));
 	}
 
 	// <archive>1</archive>

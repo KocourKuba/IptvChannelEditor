@@ -2,30 +2,6 @@
 #include "uri_edem.h"
 #include "utils.h"
 
-std::string uri_edem::get_id_translated_url() const
-{
-	// templated url changed, custom is unchanged
-	// http://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8 -> http://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8
-	if (is_template())
-	{
-		return utils::string_replace(URI_TEMPLATE, "{ID}", get_id());
-	}
-
-	return get_uri();
-}
-
-std::string uri_edem::get_playable_url(const std::string& access_domain, const std::string& access_key) const
-{
-	std::string stream_url = get_id_translated_url();
-
-	// http://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8 -> http://domain.com/iptv/000000000000/204/index.m3u8
-
-	utils::string_replace_inplace(stream_url, "{SUBDOMAIN}", access_domain);
-	utils::string_replace_inplace(stream_url, "{UID}", access_key);
-
-	return stream_url;
-}
-
 void uri_edem::parse_uri(const std::string& url)
 {
 	// http://localhost/iptv/00000000000000/204/index.m3u8

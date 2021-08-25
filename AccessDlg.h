@@ -1,4 +1,5 @@
 #pragma once
+#include "StreamContainer.h"
 
 
 // CAccessDlg dialog
@@ -17,13 +18,10 @@ public:
 #endif
 
 protected:
-	BOOL OnInitDialog() override;
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	void OnOK() override;
 
 	DECLARE_MESSAGE_MAP()
 
-	afx_msg void OnBnClickedCheckGlobal();
 	afx_msg void OnEnChangeEditPlaylistUrl();
 	afx_msg void OnBnClickedBtnGet();
 
@@ -35,4 +33,5 @@ public:
 	CString m_domain;
 	BOOL m_bEmbedded;
 	CString m_url;
+	StreamType m_streamType = StreamType::enEdem;
 };

@@ -3,6 +3,7 @@
 
 namespace utils
 {
+	static constexpr auto DUNE_PLUGIN_NAME = _T("dune_plugin_{:s}_mod.zip");
 	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/channel_unset.png";
 
 	static constexpr auto CHANNELS_SETUP = "channels_setup";
@@ -16,15 +17,19 @@ namespace utils
 	static constexpr auto CATEGORIES_LOGO_URL = "icons/";
 
 #ifdef _DEBUG
-	static constexpr auto PLUGIN_ROOT = L"..\\edem_plugin\\";
-	static constexpr auto CHANNELS_CONFIG = L"..\\edem_plugin\\edem_channel_list.xml";
-	static constexpr auto CHANNELS_LOGO_PATH = L"..\\edem_plugin\\icons\\channels\\";
-	static constexpr auto CATEGORIES_LOGO_PATH = L"..\\edem_plugin\\icons\\";
+	static constexpr auto PLUGIN_ROOT = L"..\\dune_plugin\\";
+	static constexpr auto PLAYLISTS_ROOT = L"..\\playlists\\{:s}\\";
+	static constexpr auto CHANNELS_LOGO_PATH = L"..\\dune_plugin\\icons\\channels\\";
+	static constexpr auto CATEGORIES_LOGO_PATH = L"..\\dune_plugin\\icons\\";
+	static constexpr auto PACK_PATH = L"..\\{:s}_plugin\\";
+	static constexpr auto PACK_DLL = L"..\\dll\\7za.dll";
 #else
-	static constexpr auto PLUGIN_ROOT = L".\\edem_plugin\\";
-	static constexpr auto CHANNELS_CONFIG = L".\\edem_plugin\\edem_channel_list.xml";
-	static constexpr auto CHANNELS_LOGO_PATH = L".\\edem_plugin\\icons\\channels\\";
-	static constexpr auto CATEGORIES_LOGO_PATH = L".\\edem_plugin\\icons\\";
+	static constexpr auto PLUGIN_ROOT = L".\\dune_plugin\\";
+	static constexpr auto PLAYLISTS_ROOT = L".\\playlists\\{:S}\\";
+	static constexpr auto CHANNELS_LOGO_PATH = L".\\dune_plugin\\icons\\channels\\";
+	static constexpr auto CATEGORIES_LOGO_PATH = L".\\dune_plugin\\icons\\";
+	static constexpr auto PACK_PATH = L".\\{:s}_plugin\\";
+	static constexpr auto PACK_DLL = L"7za.dll";
 #endif // _DEBUG
 
 inline std::string& string_tolower(std::string& s)

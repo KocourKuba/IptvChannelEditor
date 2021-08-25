@@ -12,7 +12,6 @@
 IMPLEMENT_DYNAMIC(CAccessDlg, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CAccessDlg, CDialogEx)
-	ON_BN_CLICKED(IDC_CHECK_GLOBAL, &CAccessDlg::OnBnClickedCheckGlobal)
 	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_URL, &CAccessDlg::OnEnChangeEditPlaylistUrl)
 	ON_BN_CLICKED(IDC_BUTTON_GET, &CAccessDlg::OnBnClickedBtnGet)
 END_MESSAGE_MAP()
@@ -37,44 +36,6 @@ void CAccessDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 }
 
-BOOL CAccessDlg::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
-
-	m_url = theApp.GetProfileString(_T("Setting"), _T("EdemUrl"));
-
-	UpdateData(FALSE);
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
-}
-
-void CAccessDlg::OnOK()
-{
-	UpdateData(TRUE);
-
-	if (!m_bEmbedded)
-	{
-		theApp.WriteProfileString(_T("Setting"), _T("AccessKey"), m_accessKey);
-		theApp.WriteProfileString(_T("Setting"), _T("Domain"), m_domain);
-	}
-
-	CDialogEx::OnOK();
-}
-
-void CAccessDlg::OnBnClickedCheckGlobal()
-{
-	UpdateData(TRUE);
-
-	if (!m_bEmbedded)
-	{
-		m_accessKey = theApp.GetProfileString(_T("Setting"), _T("AccessKey"));
-		m_domain = theApp.GetProfileString(_T("Setting"), _T("Domain"));
-	}
-
-	UpdateData(FALSE);
-}
-
 void CAccessDlg::OnEnChangeEditPlaylistUrl()
 {
 	UpdateData(TRUE);
@@ -86,8 +47,6 @@ void CAccessDlg::OnEnChangeEditPlaylistUrl()
 void CAccessDlg::OnBnClickedBtnGet()
 {
 	UpdateData(TRUE);
-
-	theApp.WriteProfileString(_T("Setting"), _T("EdemUrl"), m_url);
 
 	// Short (OTTPplay.es) format
 	// #EXTM3U
@@ -114,7 +73,7 @@ void CAccessDlg::OnBnClickedBtnGet()
 
 	int step = 0;
 	std::string line;
-	auto entry = std::make_unique<PlaylistEntry>(StreamType::enEdem);
+	auto entry = std::make_unique<PlaylistEntry>(m_streamType);
 	while (std::getline(*pl_stream, line))
 	{
 		utils::string_rtrim(line, "\r");

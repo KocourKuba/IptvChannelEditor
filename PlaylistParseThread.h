@@ -13,12 +13,14 @@ public:
 	{
 	public:
 		void NotifyParent(UINT message, WPARAM wParam);
+
 		std::vector<BYTE>* m_data = nullptr;
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
 		CString m_filter;
 		BOOL m_regex = FALSE;
 		BOOL m_case = FALSE;
+		StreamType m_pluginType = StreamType::enEdem;
 	};
 
 protected:
