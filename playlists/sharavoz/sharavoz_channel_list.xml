@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tv_info>
-	<channels_setup>
-		<access_key>A4Fv8DWeKCceEf</access_key>
-		<access_domain>fr01.spr24.net</access_domain>
-	</channels_setup>
 	<tv_categories>
 		<tv_category>
 			<id>1</id>
@@ -55,2856 +51,2856 @@
 		<tv_channel>
 			<caption>Первый HD</caption>
 			<channel_id>128</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>128</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Первый канал</caption>
 			<channel_id>5005</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5005</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Россия 1 HD</caption>
 			<channel_id>129</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>129</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Россия 1</caption>
 			<channel_id>20002</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20002</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Россия-Культура</caption>
 			<channel_id>5099</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5099</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>РТР Планета</caption>
 			<channel_id>5299</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5299</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ HD</caption>
 			<channel_id>253</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>253</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ</caption>
 			<channel_id>5097</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5097</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ Мир</caption>
 			<channel_id>5633</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5633</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>РЕН HD</caption>
 			<channel_id>200</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>200</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>РЕН ТВ</caption>
 			<channel_id>5106</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5106</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ HD</caption>
 			<channel_id>301</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>301</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ</caption>
 			<channel_id>5001</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5001</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ4</caption>
 			<channel_id>364</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>364</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ International</caption>
 			<channel_id>5296</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5296</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС HD</caption>
 			<channel_id>3187</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>3187</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС</caption>
 			<channel_id>292</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>292</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС International</caption>
 			<channel_id>5297</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5297</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС Love</caption>
 			<channel_id>5253</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5253</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Суббота!</caption>
 			<channel_id>6856</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6856</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Пятый Канал</caption>
 			<channel_id>338</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>338</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Телеканал Звезда</caption>
 			<channel_id>337</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>337</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТВЦ</caption>
 			<channel_id>334</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>334</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Домашний</caption>
 			<channel_id>291</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>291</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Пятница HD</caption>
 			<channel_id>213</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>213</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Пятница</caption>
 			<channel_id>5300</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5300</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Че</caption>
 			<channel_id>363</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>363</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТВ3</caption>
 			<channel_id>336</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>336</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мама</caption>
 			<channel_id>314</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>314</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мир HD</caption>
 			<channel_id>138</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>138</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мир 24</caption>
 			<channel_id>5129</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5129</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Новый мир</caption>
 			<channel_id>6737</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6737</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>360° HD</caption>
 			<channel_id>6791</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6791</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>360°</caption>
 			<channel_id>6792</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6792</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>8 канал</caption>
 			<channel_id>5288</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5288</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ОТР</caption>
 			<channel_id>5501</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5501</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Перец International</caption>
 			<channel_id>6711</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6711</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Продвижение</caption>
 			<channel_id>6759</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6759</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Ретро ТВ</caption>
 			<channel_id>6722</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6722</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Сарафан</caption>
 			<channel_id>5332</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5332</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Союз</caption>
 			<channel_id>5047</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5047</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Спас Тв</caption>
 			<channel_id>5133</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5133</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Телеканал Театр</caption>
 			<channel_id>5116</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5116</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Телекафе</caption>
 			<channel_id>5323</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5323</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Успех</caption>
 			<channel_id>6853</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6853</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Ю ТВ</caption>
 			<channel_id>5142</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5142</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>КРИК-ТВ</caption>
 			<channel_id>309</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>309</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Ратник</caption>
 			<channel_id>23667</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23667</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Москва Доверие</caption>
 			<channel_id>20321</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20321</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Время</caption>
 			<channel_id>5628</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5628</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>INSIGHT UHD</caption>
 			<channel_id>383</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>383</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>12 Канал (Омск)</caption>
 			<channel_id>6680</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6680</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>БСТ HD</caption>
 			<channel_id>6657</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6657</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Грозный</caption>
 			<channel_id>5691</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5691</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ДОН 24</caption>
 			<channel_id>6760</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6760</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>КРЫМ 24</caption>
 			<channel_id>5010</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5010</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Санкт-Петербург</caption>
 			<channel_id>6665</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6665</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТРК HD (Сочи)</caption>
 			<channel_id>480</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>480</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНВ Планета</caption>
 			<channel_id>5500</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5500</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Югра</caption>
 			<channel_id>6708</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6708</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>26 регион HD</caption>
 			<channel_id>22951</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22951</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ЛенТВ24</caption>
 			<channel_id>20781</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20781</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>АТВ Ставрополь</caption>
 			<channel_id>20319</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20319</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Башкортостан ТВ HD</caption>
 			<channel_id>23538</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23538</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Белгород 24</caption>
 			<channel_id>20341</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20341</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ВМЕСТЕ-РФ</caption>
 			<channel_id>23555</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23555</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Время Н</caption>
 			<channel_id>23426</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23426</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Вся Уфа</caption>
 			<channel_id>24000</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>24000</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Томское время</caption>
 			<channel_id>23780</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23780</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Катунь 24</caption>
 			<channel_id>23983</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23983</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Курай HD</caption>
 			<channel_id>23923</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23923</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Курай TV</caption>
 			<channel_id>23905</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23905</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Липецкое время</caption>
 			<channel_id>20798</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20798</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Матур ТВ</caption>
 			<channel_id>23423</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23423</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НВК Саха HD</caption>
 			<channel_id>23666</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23666</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Первый городской (Омск)</caption>
 			<channel_id>22813</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22813</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Первый городской НН</caption>
 			<channel_id>24004</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>24004</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Тамыр</caption>
 			<channel_id>20283</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20283</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНВ Татарстан</caption>
 			<channel_id>20247</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20247</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Тномер</caption>
 			<channel_id>20113</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20113</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Хузур</caption>
 			<channel_id>20302</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20302</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Юрган</caption>
 			<channel_id>23462</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23462</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Россия-24</caption>
 			<channel_id>302</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>302</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Euronews Россия</caption>
 			<channel_id>325</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>325</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Дождь</caption>
 			<channel_id>266</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>266</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>RT HD</caption>
 			<channel_id>105</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>105</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>RT Doc HD (English version)</caption>
 			<channel_id>214</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>214</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Москва 24</caption>
 			<channel_id>295</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>295</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>360° Новости HD</caption>
 			<channel_id>6790</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6790</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>РБК-ТВ</caption>
 			<channel_id>316</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>316</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>IZ.RU</caption>
 			<channel_id>6750</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6750</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>RTVi</caption>
 			<channel_id>5673</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5673</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Настоящее время</caption>
 			<channel_id>5674</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5674</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Авто 24</caption>
 			<channel_id>315</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>315</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Драйв</caption>
 			<channel_id>20097</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20097</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Большая Азия</caption>
 			<channel_id>6452</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6452</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Discovery Channel HD</caption>
 			<channel_id>267</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>267</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Discovery Channel</caption>
 			<channel_id>5180</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5180</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Discovery Science HD</caption>
 			<channel_id>303</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>303</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Discovery Science</caption>
 			<channel_id>6391</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6391</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Investigation Discovery</caption>
 			<channel_id>5035</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5035</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ID Xtra HD</caption>
 			<channel_id>149</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>149</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>DTX</caption>
 			<channel_id>210</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>210</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>National Geographic HD</caption>
 			<channel_id>203</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>203</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>National Geographic</caption>
 			<channel_id>5493</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5493</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Nat Geo Wild HD</caption>
 			<channel_id>20162</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20162</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Nat Geo Wild</caption>
 			<channel_id>124</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>124</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Animal Planet HD</caption>
 			<channel_id>254</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>254</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Animal Planet</caption>
 			<channel_id>5322</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5322</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>В мире животных HD</caption>
 			<channel_id>219</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>219</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Моя Планета</caption>
 			<channel_id>168</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>168</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Travel+Adventure HD</caption>
 			<channel_id>208</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>208</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Приключения HD</caption>
 			<channel_id>136</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>136</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Travel Channel HD</caption>
 			<channel_id>261</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>261</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Глазами Туриста HD</caption>
 			<channel_id>252</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>252</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Russian Travel Guide HD</caption>
 			<channel_id>125</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>125</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>RTG TV</caption>
 			<channel_id>5233</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5233</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>History HD</caption>
 			<channel_id>259</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>259</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>H2</caption>
 			<channel_id>205</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>205</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat Nature/History HD</caption>
 			<channel_id>263</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>263</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat History HD</caption>
 			<channel_id>20491</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20491</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat History</caption>
 			<channel_id>20078</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20078</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat Nature HD</caption>
 			<channel_id>23963</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23963</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat Nature</caption>
 			<channel_id>20119</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20119</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat Explore</caption>
 			<channel_id>321</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>321</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>DocuBox HD</caption>
 			<channel_id>332</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>332</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Живая Природа</caption>
 			<channel_id>217</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>217</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Живая Планета</caption>
 			<channel_id>341</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>341</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Охотник и рыболов HD</caption>
 			<channel_id>144</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>144</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Охота и Рыбалка</caption>
 			<channel_id>5257</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5257</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Дикая охота HD</caption>
 			<channel_id>327</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>327</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Дикая рыбалка HD</caption>
 			<channel_id>326</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>326</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Диалоги о рыбалке</caption>
 			<channel_id>6751</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6751</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Тайны галактики</caption>
 			<channel_id>146</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>146</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Первый космический</caption>
 			<channel_id>145</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>145</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ЕДА Премиум</caption>
 			<channel_id>137</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>137</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Еда</caption>
 			<channel_id>20241</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20241</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Food Network</caption>
 			<channel_id>5168</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5168</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>TLC HD</caption>
 			<channel_id>260</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>260</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>TLC</caption>
 			<channel_id>5152</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5152</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Наука</caption>
 			<channel_id>20240</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20240</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>24 Техно</caption>
 			<channel_id>6811</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6811</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>История</caption>
 			<channel_id>342</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>342</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мужской</caption>
 			<channel_id>344</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>344</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Оружие</caption>
 			<channel_id>5811</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5811</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Сов. Секретно</caption>
 			<channel_id>296</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>296</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Бобёр</caption>
 			<channel_id>5391</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5391</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Дикий</caption>
 			<channel_id>6754</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6754</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Домашние Животные</caption>
 			<channel_id>5452</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5452</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Зоопарк</caption>
 			<channel_id>5270</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5270</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>OCEAN-TV</caption>
 			<channel_id>5139</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5139</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Морской</caption>
 			<channel_id>329</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>329</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Galaxy TV</caption>
 			<channel_id>6864</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6864</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>CBS Reality</caption>
 			<channel_id>5102</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5102</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Вопросы и ответы</caption>
 			<channel_id>20123</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20123</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Зоо ТВ</caption>
 			<channel_id>20386</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20386</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мир Вокруг HD</caption>
 			<channel_id>23740</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23740</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Нано ТВ HD</caption>
 			<channel_id>23769</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23769</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Открытый мир</caption>
 			<channel_id>20346</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20346</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Пес и ко</caption>
 			<channel_id>23683</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23683</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Загородная Жизнь</caption>
 			<channel_id>345</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>345</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Загородный int HD</caption>
 			<channel_id>23684</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23684</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ Стиль</caption>
 			<channel_id>349</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>349</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Усадьба ТВ</caption>
 			<channel_id>6668</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6668</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Доктор</caption>
 			<channel_id>311</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>311</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Первый Вегетарианский</caption>
 			<channel_id>6658</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6658</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Психология 21</caption>
 			<channel_id>5239</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5239</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>#КтоКуда</caption>
 			<channel_id>17453</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>17453</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>English Club TV</caption>
 			<channel_id>6725</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6725</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Fashion TV</caption>
 			<channel_id>211</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>211</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Fashion One HD</caption>
 			<channel_id>20226</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20226</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Арсенал</caption>
 			<channel_id>222</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>222</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Поехали!</caption>
 			<channel_id>246</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>246</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Тайна</caption>
 			<channel_id>395</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>395</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Здоровое ТВ</caption>
 			<channel_id>422</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>422</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Красная линия</caption>
 			<channel_id>420</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>420</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Точка ТВ</caption>
 			<channel_id>426</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>426</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>7D7</caption>
 			<channel_id>1002</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>1002</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Кино UHD</caption>
 			<channel_id>17372</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>17372</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Сериал UHD</caption>
 			<channel_id>17728</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>17728</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Комедия</caption>
 			<channel_id>5089</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5089</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>VIP Premiere</caption>
 			<channel_id>104</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>104</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>VIP Megahit</caption>
 			<channel_id>103</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>103</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>VIP Comedy</caption>
 			<channel_id>102</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>102</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>VIP Serial</caption>
 			<channel_id>109</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>109</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>TV1000</caption>
 			<channel_id>320</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>320</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>TV1000 Action</caption>
 			<channel_id>319</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>319</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>TV1000 Русское кино</caption>
 			<channel_id>318</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>318</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>TV1000 World Kino</caption>
 			<channel_id>430</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>430</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НСТ</caption>
 			<channel_id>312</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>312</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Премиальное HD</caption>
 			<channel_id>121</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>121</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Остросюжетное HD</caption>
 			<channel_id>122</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>122</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Шокирующее</caption>
 			<channel_id>119</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>119</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Страшное HD</caption>
 			<channel_id>218</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>218</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>КИНО ТВ</caption>
 			<channel_id>147</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>147</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Комедийное</caption>
 			<channel_id>120</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>120</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Наше Крутое HD</caption>
 			<channel_id>123</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>123</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Наш Кинороман</caption>
 			<channel_id>107</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>107</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Русский роман</caption>
 			<channel_id>142</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>142</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Дом Кино Премиум HD</caption>
 			<channel_id>108</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>108</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Дом Кино</caption>
 			<channel_id>333</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>333</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Наше Любимое</caption>
 			<channel_id>139</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>139</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Наше любимое кино</caption>
 			<channel_id>335</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>335</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Русский бестселлер</caption>
 			<channel_id>276</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>276</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Русский Иллюзион</caption>
 			<channel_id>294</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>294</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Иллюзион +</caption>
 			<channel_id>293</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>293</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Русский детектив</caption>
 			<channel_id>277</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>277</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Феникс Плюс Кино</caption>
 			<channel_id>350</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>350</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Sony Entertainment Television HD</caption>
 			<channel_id>140</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>140</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Sony Turbo</caption>
 			<channel_id>227</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>227</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>SONY Sci-Fi</caption>
 			<channel_id>228</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>228</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Amedia Hit</caption>
 			<channel_id>270</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>270</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Amedia Premium</caption>
 			<channel_id>258</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>258</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>A1</caption>
 			<channel_id>268</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>268</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>A2</caption>
 			<channel_id>269</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>269</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>FOX HD</caption>
 			<channel_id>101</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>101</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Fox Russia</caption>
 			<channel_id>5266</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5266</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Fox Life HD</caption>
 			<channel_id>207</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>207</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Fox Life</caption>
 			<channel_id>5668</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5668</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Paramount Comedy HD</caption>
 			<channel_id>220</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>220</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Paramount Channel HD</caption>
 			<channel_id>221</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>221</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Paramount channel</caption>
 			<channel_id>5158</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5158</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Bollywood HD</caption>
 			<channel_id>251</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>251</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Hollywood HD</caption>
 			<channel_id>127</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>127</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Hollywood</caption>
 			<channel_id>5511</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5511</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>TV XXI</caption>
 			<channel_id>310</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>310</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Еврокино</caption>
 			<channel_id>275</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>275</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ-ХИТ</caption>
 			<channel_id>328</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>328</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ Право</caption>
 			<channel_id>348</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>348</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ Сериал</caption>
 			<channel_id>347</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>347</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мир Сериала</caption>
 			<channel_id>5264</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5264</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>FilmBox</caption>
 			<channel_id>6888</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6888</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Filmbox Arthouse</caption>
 			<channel_id>6887</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6887</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Дорама</caption>
 			<channel_id>6723</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6723</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Победа</caption>
 			<channel_id>3085</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>3085</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>FAN HD</caption>
 			<channel_id>23562</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23562</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>О!Кино</caption>
 			<channel_id>394</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>394</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мосфильм. Золотая коллекция</caption>
 			<channel_id>429</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>429</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Ultra HD Cinema</caption>
 			<channel_id>20799</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20799</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Наш Кинопоказ</caption>
 			<channel_id>20800</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20800</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Блокбастер</caption>
 			<channel_id>20801</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20801</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Наше Мужское</caption>
 			<channel_id>20802</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20802</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Хит</caption>
 			<channel_id>20803</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20803</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Про Любовь</caption>
 			<channel_id>20804</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20804</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Камеди</caption>
 			<channel_id>20805</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20805</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Кинопоказ</caption>
 			<channel_id>20806</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20806</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>День Победы</caption>
 			<channel_id>20807</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20807</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Романтичное</caption>
 			<channel_id>419</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>419</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>КиноСат</caption>
 			<channel_id>425</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>425</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Cinema</caption>
 			<channel_id>22223</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22223</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU ACTION HD</caption>
 			<channel_id>20810</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20810</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU CATASTROPHE HD</caption>
 			<channel_id>20811</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20811</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU CINEMA HD</caption>
 			<channel_id>20812</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20812</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU CINEMA+ HD</caption>
 			<channel_id>20832</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20832</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU COMEDY HD</caption>
 			<channel_id>20813</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20813</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU FANTASTIC HD</caption>
 			<channel_id>20814</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20814</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU FILMYSTIC HD</caption>
 			<channel_id>20815</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20815</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU HISTORY HD</caption>
 			<channel_id>20816</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20816</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU KINORATING HD</caption>
 			<channel_id>20817</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20817</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU MARVEL HD</caption>
 			<channel_id>20818</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20818</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU PREMIERE HD</caption>
 			<channel_id>20819</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20819</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU ROMANTIC HD</caption>
 			<channel_id>20820</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20820</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU RUSSIAN HD</caption>
 			<channel_id>20821</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20821</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU STARS HD</caption>
 			<channel_id>20833</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20833</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU VHS HD</caption>
 			<channel_id>20822</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20822</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU Kids HD</caption>
 			<channel_id>20827</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20827</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU Kids+ HD</caption>
 			<channel_id>20834</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20834</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU МУЛЬТСЕРИАЛ</caption>
 			<channel_id>20828</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20828</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU СВАТЫ HD</caption>
 			<channel_id>20829</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20829</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU RUSERIAL HD</caption>
 			<channel_id>20836</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20836</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU СССР HD</caption>
 			<channel_id>20830</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20830</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU MEDIA HD</caption>
 			<channel_id>20831</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20831</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU Criminal HD</caption>
 			<channel_id>20837</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20837</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 1 HD</caption>
 			<channel_id>20823</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20823</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 2 HD</caption>
 			<channel_id>20824</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20824</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 3 HD</caption>
 			<channel_id>20825</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20825</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 4 HD</caption>
 			<channel_id>20826</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20826</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 5 HD</caption>
 			<channel_id>20839</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20839</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 6 HD</caption>
 			<channel_id>20840</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20840</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 7 HD</caption>
 			<channel_id>20841</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20841</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 8 HD</caption>
 			<channel_id>20842</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20842</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 9 HD</caption>
 			<channel_id>20843</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20843</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BCU КИНОЗАЛ PREMIERE 10 HD</caption>
 			<channel_id>20844</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20844</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Boomerang</caption>
 			<channel_id>306</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>306</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мульт HD</caption>
 			<channel_id>141</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>141</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мультимузыка</caption>
 			<channel_id>340</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>340</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мульт</caption>
 			<channel_id>5161</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5161</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Рыжий</caption>
 			<channel_id>6867</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6867</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Детский</caption>
 			<channel_id>5275</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5275</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Детский мир</caption>
 			<channel_id>5276</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5276</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Карусель</caption>
 			<channel_id>339</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>339</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мультиландия</caption>
 			<channel_id>304</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>304</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Tiji TV</caption>
 			<channel_id>299</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>299</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>В гостях у сказки</caption>
 			<channel_id>330</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>330</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС Kids HD</caption>
 			<channel_id>362</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>362</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Gulli Girl</caption>
 			<channel_id>300</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>300</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Cartoon Network</caption>
 			<channel_id>6859</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6859</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Disney</caption>
 			<channel_id>307</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>307</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Ani</caption>
 			<channel_id>343</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>343</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Nickelodeon HD</caption>
 			<channel_id>135</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>135</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Nickelodeon</caption>
 			<channel_id>5341</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5341</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Nick Jr.</caption>
 			<channel_id>5494</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5494</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>NickToons</caption>
 			<channel_id>5016</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5016</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Jim Jam</caption>
 			<channel_id>5342</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5342</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>2x2</caption>
 			<channel_id>5245</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5245</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>O!</caption>
 			<channel_id>5315</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5315</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Капитан Фантастика</caption>
 			<channel_id>148</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>148</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Da Vinci Kids</caption>
 			<channel_id>317</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>317</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>1HD</caption>
 			<channel_id>256</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>256</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ MUSIC</caption>
 			<channel_id>365</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>365</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Музыка первого</caption>
 			<channel_id>5491</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5491</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Europa Plus TV</caption>
 			<channel_id>280</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>280</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BRIDGE TV Deluxe</caption>
 			<channel_id>297</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>297</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BRIDGE TV Русский Хит</caption>
 			<channel_id>298</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>298</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Bridge TV</caption>
 			<channel_id>5283</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5283</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Bridge TV Classic</caption>
 			<channel_id>6861</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6861</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BRIDGE TV HITS</caption>
 			<channel_id>5662</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5662</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>RU.TV</caption>
 			<channel_id>5664</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5664</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>iConcerts</caption>
 			<channel_id>126</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>126</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Mezzo Live HD</caption>
 			<channel_id>3126</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>3126</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>MTV</caption>
 			<channel_id>5490</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5490</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>MTV Hits</caption>
 			<channel_id>5162</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5162</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>MTV Rocks</caption>
 			<channel_id>5631</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5631</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>MTV Live HD</caption>
 			<channel_id>134</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>134</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>МУЗ</caption>
 			<channel_id>324</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>324</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>C Music TV</caption>
 			<channel_id>257</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>257</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Шансон ТВ</caption>
 			<channel_id>5247</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5247</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>MCM Top</caption>
 			<channel_id>5268</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5268</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Жара HD</caption>
 			<channel_id>17734</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>17734</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Music Box Russian</caption>
 			<channel_id>20230</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20230</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Trace Urban HD</caption>
 			<channel_id>20960</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20960</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>MTV 80s</caption>
 			<channel_id>20051</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>20051</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>VIVA HD</caption>
 			<channel_id>479</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>479</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Футбол</caption>
 			<channel_id>5249</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5249</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Матч! HD</caption>
 			<channel_id>255</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>255</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Матч ТВ</caption>
 			<channel_id>5027</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5027</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Матч! Планета</caption>
 			<channel_id>6062</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6062</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat Sport HD</caption>
 			<channel_id>5244</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5244</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat Sport</caption>
 			<channel_id>106</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>106</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Eurosport 1 HD</caption>
 			<channel_id>264</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>264</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Eurosport 2 HD</caption>
 			<channel_id>265</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>265</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Eurosport Gold HD</caption>
 			<channel_id>23922</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23922</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Setanta Sports 1 HD</caption>
 			<channel_id>933</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>933</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Setanta Sports 2 HD</caption>
 			<channel_id>934</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>934</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Конный мир HD</caption>
 			<channel_id>5689</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5689</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Конный Мир</caption>
 			<channel_id>150</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>150</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Extreme Sports</caption>
 			<channel_id>5242</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5242</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Русский Экстрим</caption>
 			<channel_id>143</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>143</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Точка отрыва</caption>
 			<channel_id>6667</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>6667</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Моторспорт ТВ</caption>
 			<channel_id>23919</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>23919</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>UFC</caption>
 			<channel_id>17111</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>17111</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Fast and Fun Box HD</caption>
 			<channel_id>240</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>240</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>FightBox HD</caption>
 			<channel_id>241</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>241</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Старт</caption>
 			<channel_id>248</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>248</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мир Баскетбола</caption>
 			<channel_id>436</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>436</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Спортивный</caption>
 			<channel_id>478</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>478</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>HUSTLER HD</caption>
 			<channel_id>902</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>902</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2912,8 +2908,8 @@
 		<tv_channel>
 			<caption>REDLIGHT HD</caption>
 			<channel_id>904</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>904</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2921,8 +2917,8 @@
 		<tv_channel>
 			<caption>PENTHOUSE GOLD</caption>
 			<channel_id>909</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>909</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2930,8 +2926,8 @@
 		<tv_channel>
 			<caption>PENTHOUSE QUICKIES</caption>
 			<channel_id>903</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>903</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2939,8 +2935,8 @@
 		<tv_channel>
 			<caption>Pink O TV</caption>
 			<channel_id>5880</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5880</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2948,8 +2944,8 @@
 		<tv_channel>
 			<caption>Dorcel</caption>
 			<channel_id>5881</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5881</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2957,8 +2953,8 @@
 		<tv_channel>
 			<caption>Private TV</caption>
 			<channel_id>5758</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5758</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2966,8 +2962,8 @@
 		<tv_channel>
 			<caption>Babes</caption>
 			<channel_id>17976</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>17976</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2975,8 +2971,8 @@
 		<tv_channel>
 			<caption>Шалун HD</caption>
 			<channel_id>22401</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22401</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2984,8 +2980,8 @@
 		<tv_channel>
 			<caption>Playboy TV</caption>
 			<channel_id>5235</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5235</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -2993,8 +2989,8 @@
 		<tv_channel>
 			<caption>Playboy  Plus</caption>
 			<channel_id>22414</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22414</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3002,8 +2998,8 @@
 		<tv_channel>
 			<caption>O-la-la</caption>
 			<channel_id>907</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>907</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3011,8 +3007,8 @@
 		<tv_channel>
 			<caption>NuArt</caption>
 			<channel_id>910</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>910</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3020,8 +3016,8 @@
 		<tv_channel>
 			<caption>EXXXOTICA HD</caption>
 			<channel_id>901</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>901</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3029,8 +3025,8 @@
 		<tv_channel>
 			<caption>EroXXX</caption>
 			<channel_id>22402</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22402</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3038,8 +3034,8 @@
 		<tv_channel>
 			<caption>Reality Kings</caption>
 			<channel_id>22403</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22403</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3047,8 +3043,8 @@
 		<tv_channel>
 			<caption>Barely legal</caption>
 			<channel_id>22404</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22404</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3056,8 +3052,8 @@
 		<tv_channel>
 			<caption>Vivid RED HD</caption>
 			<channel_id>19180</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>19180</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3065,8 +3061,8 @@
 		<tv_channel>
 			<caption>Bang Bros UHD</caption>
 			<channel_id>29010</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29010</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3074,8 +3070,8 @@
 		<tv_channel>
 			<caption>Cum4k UHD</caption>
 			<channel_id>29029</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29029</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3083,8 +3079,8 @@
 		<tv_channel>
 			<caption>Tiny4k UHD</caption>
 			<channel_id>29106</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29106</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3092,8 +3088,8 @@
 		<tv_channel>
 			<caption>21 Sextury</caption>
 			<channel_id>29000</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29000</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3101,8 +3097,8 @@
 		<tv_channel>
 			<caption>Adult Time</caption>
 			<channel_id>29002</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29002</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3110,8 +3106,8 @@
 		<tv_channel>
 			<caption>Amateur Boxxx</caption>
 			<channel_id>29120</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29120</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3119,8 +3115,8 @@
 		<tv_channel>
 			<caption>AST TV</caption>
 			<channel_id>29005</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29005</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3128,8 +3124,8 @@
 		<tv_channel>
 			<caption>AST TV 2</caption>
 			<channel_id>29006</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29006</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3137,8 +3133,8 @@
 		<tv_channel>
 			<caption>Babes HD</caption>
 			<channel_id>29007</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29007</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3146,8 +3142,8 @@
 		<tv_channel>
 			<caption>Balkan Erotic</caption>
 			<channel_id>29008</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29008</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3155,8 +3151,8 @@
 		<tv_channel>
 			<caption>Banana Fever</caption>
 			<channel_id>29121</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29121</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3164,8 +3160,8 @@
 		<tv_channel>
 			<caption>Bang Bros HD</caption>
 			<channel_id>29009</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29009</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3173,8 +3169,8 @@
 		<tv_channel>
 			<caption>Bang!</caption>
 			<channel_id>29011</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29011</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3182,8 +3178,8 @@
 		<tv_channel>
 			<caption>Blacked HD</caption>
 			<channel_id>29015</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29015</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3191,8 +3187,8 @@
 		<tv_channel>
 			<caption>Blue Hustler</caption>
 			<channel_id>29018</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29018</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3200,8 +3196,8 @@
 		<tv_channel>
 			<caption>Bratty Sis</caption>
 			<channel_id>29019</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29019</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3209,8 +3205,8 @@
 		<tv_channel>
 			<caption>BRAZZERS</caption>
 			<channel_id>22421</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22421</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3218,8 +3214,8 @@
 		<tv_channel>
 			<caption>Brazzers eXXtra</caption>
 			<channel_id>29020</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29020</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3227,8 +3223,8 @@
 		<tv_channel>
 			<caption>Cherry Pimps</caption>
 			<channel_id>29024</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29024</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3236,8 +3232,8 @@
 		<tv_channel>
 			<caption>Club 17</caption>
 			<channel_id>29025</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29025</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3245,8 +3241,8 @@
 		<tv_channel>
 			<caption>Cum Louder</caption>
 			<channel_id>29028</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29028</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3254,8 +3250,8 @@
 		<tv_channel>
 			<caption>Dad Crush</caption>
 			<channel_id>29030</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29030</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3263,8 +3259,8 @@
 		<tv_channel>
 			<caption>Day with a Pornstar</caption>
 			<channel_id>29032</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29032</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3272,8 +3268,8 @@
 		<tv_channel>
 			<caption>DDF Busty</caption>
 			<channel_id>29033</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29033</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3281,8 +3277,8 @@
 		<tv_channel>
 			<caption>DDF Network</caption>
 			<channel_id>29034</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29034</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3290,8 +3286,8 @@
 		<tv_channel>
 			<caption>Deep Lush</caption>
 			<channel_id>29035</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29035</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3299,8 +3295,8 @@
 		<tv_channel>
 			<caption>Digital Desire HD</caption>
 			<channel_id>29036</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29036</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3308,8 +3304,8 @@
 		<tv_channel>
 			<caption>Digital Playground HD</caption>
 			<channel_id>29037</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29037</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3317,8 +3313,8 @@
 		<tv_channel>
 			<caption>Dorcel Club</caption>
 			<channel_id>29038</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29038</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3326,8 +3322,8 @@
 		<tv_channel>
 			<caption>Dorcel XXX HD</caption>
 			<channel_id>29039</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29039</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3335,8 +3331,8 @@
 		<tv_channel>
 			<caption>Evil Angel HD</caption>
 			<channel_id>29041</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29041</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3344,8 +3340,8 @@
 		<tv_channel>
 			<caption>Fake Taxi HD</caption>
 			<channel_id>29043</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29043</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3353,8 +3349,8 @@
 		<tv_channel>
 			<caption>Family xxx</caption>
 			<channel_id>29044</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29044</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3362,8 +3358,8 @@
 		<tv_channel>
 			<caption>Fap TV 2</caption>
 			<channel_id>22437</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22437</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3371,8 +3367,8 @@
 		<tv_channel>
 			<caption>Fap TV 3</caption>
 			<channel_id>22442</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22442</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3380,8 +3376,8 @@
 		<tv_channel>
 			<caption>Fap TV 4</caption>
 			<channel_id>22443</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22443</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3389,8 +3385,8 @@
 		<tv_channel>
 			<caption>Fap TV Anal</caption>
 			<channel_id>29048</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29048</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3398,8 +3394,8 @@
 		<tv_channel>
 			<caption>Fap TV BBW</caption>
 			<channel_id>29049</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29049</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3407,8 +3403,8 @@
 		<tv_channel>
 			<caption>Fap TV Compilation</caption>
 			<channel_id>22441</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22441</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3416,8 +3412,8 @@
 		<tv_channel>
 			<caption>Fap TV Lesbian</caption>
 			<channel_id>22440</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22440</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3425,8 +3421,8 @@
 		<tv_channel>
 			<caption>Fap TV Parody</caption>
 			<channel_id>22439</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22439</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3434,8 +3430,8 @@
 		<tv_channel>
 			<caption>Fap TV Teens</caption>
 			<channel_id>22435</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22435</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3443,8 +3439,8 @@
 		<tv_channel>
 			<caption>FTV</caption>
 			<channel_id>29056</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29056</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3452,8 +3448,8 @@
 		<tv_channel>
 			<caption>Gangbang Adult TV</caption>
 			<channel_id>29057</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29057</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3461,8 +3457,8 @@
 		<tv_channel>
 			<caption>Gay Adult TV</caption>
 			<channel_id>29058</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29058</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3470,8 +3466,8 @@
 		<tv_channel>
 			<caption>Girls Rimming</caption>
 			<channel_id>29059</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29059</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3479,8 +3475,8 @@
 		<tv_channel>
 			<caption>Got MYLF</caption>
 			<channel_id>29060</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29060</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3488,8 +3484,8 @@
 		<tv_channel>
 			<caption>Hands on Hardcore</caption>
 			<channel_id>29061</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29061</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3497,8 +3493,8 @@
 		<tv_channel>
 			<caption>Hard X</caption>
 			<channel_id>29062</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29062</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3506,8 +3502,8 @@
 		<tv_channel>
 			<caption>Hitzefrei HD</caption>
 			<channel_id>29064</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29064</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3515,8 +3511,8 @@
 		<tv_channel>
 			<caption>Holed</caption>
 			<channel_id>29065</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29065</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3524,8 +3520,8 @@
 		<tv_channel>
 			<caption>Hot and Mean</caption>
 			<channel_id>29066</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29066</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3533,8 +3529,8 @@
 		<tv_channel>
 			<caption>Hot Guys Fuck</caption>
 			<channel_id>29067</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29067</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3542,8 +3538,8 @@
 		<tv_channel>
 			<caption>House of Fyre</caption>
 			<channel_id>29068</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29068</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3551,8 +3547,8 @@
 		<tv_channel>
 			<caption>Interracial Red TV</caption>
 			<channel_id>29069</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29069</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3560,8 +3556,8 @@
 		<tv_channel>
 			<caption>J and  M TV</caption>
 			<channel_id>29070</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29070</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3569,8 +3565,8 @@
 		<tv_channel>
 			<caption>Japan HDV</caption>
 			<channel_id>29071</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29071</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3578,8 +3574,8 @@
 		<tv_channel>
 			<caption>Jerk Off with Me</caption>
 			<channel_id>29072</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29072</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3587,8 +3583,8 @@
 		<tv_channel>
 			<caption>Lesbea</caption>
 			<channel_id>29074</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29074</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3596,8 +3592,8 @@
 		<tv_channel>
 			<caption>Lethal Hardcore</caption>
 			<channel_id>29076</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29076</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3605,8 +3601,8 @@
 		<tv_channel>
 			<caption>MetArt HD</caption>
 			<channel_id>29080</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29080</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3614,8 +3610,8 @@
 		<tv_channel>
 			<caption>Mia Khalifa HD</caption>
 			<channel_id>29081</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29081</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3623,8 +3619,8 @@
 		<tv_channel>
 			<caption>Monsters of Cock</caption>
 			<channel_id>29083</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29083</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3632,8 +3628,8 @@
 		<tv_channel>
 			<caption>MYLF TV HD</caption>
 			<channel_id>29084</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29084</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3641,8 +3637,8 @@
 		<tv_channel>
 			<caption>Naughty America</caption>
 			<channel_id>29085</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29085</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3650,8 +3646,8 @@
 		<tv_channel>
 			<caption>Nubiles TV HD</caption>
 			<channel_id>29086</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29086</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3659,8 +3655,8 @@
 		<tv_channel>
 			<caption>Private TV HD</caption>
 			<channel_id>19184</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>19184</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3668,8 +3664,8 @@
 		<tv_channel>
 			<caption>Public Agent</caption>
 			<channel_id>29093</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29093</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3677,8 +3673,8 @@
 		<tv_channel>
 			<caption>RK Prime</caption>
 			<channel_id>29094</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29094</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3686,8 +3682,8 @@
 		<tv_channel>
 			<caption>RK TV</caption>
 			<channel_id>29095</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29095</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3695,8 +3691,8 @@
 		<tv_channel>
 			<caption>SuperONE HD</caption>
 			<channel_id>22387</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22387</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3704,8 +3700,8 @@
 		<tv_channel>
 			<caption>Taboo</caption>
 			<channel_id>29102</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29102</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3713,8 +3709,8 @@
 		<tv_channel>
 			<caption>The Nudie</caption>
 			<channel_id>29104</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29104</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3722,8 +3718,8 @@
 		<tv_channel>
 			<caption>Threesome Red TV</caption>
 			<channel_id>29105</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29105</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3731,8 +3727,8 @@
 		<tv_channel>
 			<caption>True Amateurs</caption>
 			<channel_id>29108</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29108</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3740,8 +3736,8 @@
 		<tv_channel>
 			<caption>Tushy HD</caption>
 			<channel_id>29109</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29109</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3749,8 +3745,8 @@
 		<tv_channel>
 			<caption>TushyRAW</caption>
 			<channel_id>29110</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29110</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3758,8 +3754,8 @@
 		<tv_channel>
 			<caption>Vixen HD</caption>
 			<channel_id>29113</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29113</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3767,8 +3763,8 @@
 		<tv_channel>
 			<caption>We Live Together</caption>
 			<channel_id>29114</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29114</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3776,8 +3772,8 @@
 		<tv_channel>
 			<caption>White Boxxx</caption>
 			<channel_id>29115</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29115</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3785,8 +3781,8 @@
 		<tv_channel>
 			<caption>Wicked</caption>
 			<channel_id>29116</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29116</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3794,8 +3790,8 @@
 		<tv_channel>
 			<caption>XY Mix</caption>
 			<channel_id>29118</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29118</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3803,8 +3799,8 @@
 		<tv_channel>
 			<caption>XY Plus</caption>
 			<channel_id>29119</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29119</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3812,8 +3808,8 @@
 		<tv_channel>
 			<caption>A3 Bikini</caption>
 			<channel_id>29001</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29001</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3821,8 +3817,8 @@
 		<tv_channel>
 			<caption>Anal Red TV</caption>
 			<channel_id>29003</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29003</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3830,8 +3826,8 @@
 		<tv_channel>
 			<caption>Analized HD</caption>
 			<channel_id>29004</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29004</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3839,8 +3835,8 @@
 		<tv_channel>
 			<caption>Big Ass Adult TV</caption>
 			<channel_id>29012</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29012</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3848,8 +3844,8 @@
 		<tv_channel>
 			<caption>Big Dick Red TV</caption>
 			<channel_id>29013</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29013</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3857,8 +3853,8 @@
 		<tv_channel>
 			<caption>Big Tits Adult TV</caption>
 			<channel_id>29014</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29014</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3866,8 +3862,8 @@
 		<tv_channel>
 			<caption>Blonde Adult TV</caption>
 			<channel_id>29016</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29016</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3875,8 +3871,8 @@
 		<tv_channel>
 			<caption>Blowjob Red TV</caption>
 			<channel_id>29017</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29017</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3884,8 +3880,8 @@
 		<tv_channel>
 			<caption>Brunette Adult TV</caption>
 			<channel_id>29021</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29021</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3893,8 +3889,8 @@
 		<tv_channel>
 			<caption>Candy TV</caption>
 			<channel_id>22436</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22436</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3902,8 +3898,8 @@
 		<tv_channel>
 			<caption>cento x cento</caption>
 			<channel_id>22438</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22438</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3911,8 +3907,8 @@
 		<tv_channel>
 			<caption>Compilation Adult TV</caption>
 			<channel_id>29026</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29026</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3920,8 +3916,8 @@
 		<tv_channel>
 			<caption>Cuckold Red TV</caption>
 			<channel_id>29027</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29027</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3929,8 +3925,8 @@
 		<tv_channel>
 			<caption>Daughter Swap</caption>
 			<channel_id>29031</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29031</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3938,8 +3934,8 @@
 		<tv_channel>
 			<caption>Evolved Fights</caption>
 			<channel_id>29042</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29042</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3947,8 +3943,8 @@
 		<tv_channel>
 			<caption>Extasy HD XXX</caption>
 			<channel_id>22461</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22461</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3956,8 +3952,8 @@
 		<tv_channel>
 			<caption>FemJoy</caption>
 			<channel_id>29054</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29054</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3965,8 +3961,8 @@
 		<tv_channel>
 			<caption>Fetish Red TV</caption>
 			<channel_id>29055</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29055</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3974,8 +3970,8 @@
 		<tv_channel>
 			<caption>Hardcore Red TV</caption>
 			<channel_id>29063</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29063</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3983,8 +3979,8 @@
 		<tv_channel>
 			<caption>JASMIN</caption>
 			<channel_id>22429</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22429</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -3992,8 +3988,8 @@
 		<tv_channel>
 			<caption>Latina Red TV</caption>
 			<channel_id>29073</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29073</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4001,8 +3997,8 @@
 		<tv_channel>
 			<caption>Lesbian Red TV</caption>
 			<channel_id>29075</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29075</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4010,8 +4006,8 @@
 		<tv_channel>
 			<caption>Little Asians HD</caption>
 			<channel_id>29077</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29077</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4019,8 +4015,8 @@
 		<tv_channel>
 			<caption>Live Cams Adult TV</caption>
 			<channel_id>29078</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29078</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4028,8 +4024,8 @@
 		<tv_channel>
 			<caption>MILF Red TV</caption>
 			<channel_id>29082</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29082</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4037,8 +4033,8 @@
 		<tv_channel>
 			<caption>ox-ax HD</caption>
 			<channel_id>29087</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29087</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4046,8 +4042,8 @@
 		<tv_channel>
 			<caption>Pornstar Red TV</caption>
 			<channel_id>29090</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29090</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4055,8 +4051,8 @@
 		<tv_channel>
 			<caption>POV Adult TV</caption>
 			<channel_id>29091</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29091</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4064,8 +4060,8 @@
 		<tv_channel>
 			<caption>Princess Cum</caption>
 			<channel_id>29092</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29092</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4073,8 +4069,8 @@
 		<tv_channel>
 			<caption>Rough Adult TV</caption>
 			<channel_id>29096</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29096</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4082,8 +4078,8 @@
 		<tv_channel>
 			<caption>Russian Adult TV</caption>
 			<channel_id>29097</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29097</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4091,8 +4087,8 @@
 		<tv_channel>
 			<caption>SCT</caption>
 			<channel_id>22432</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22432</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4100,8 +4096,8 @@
 		<tv_channel>
 			<caption>SexArt</caption>
 			<channel_id>29099</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29099</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4109,8 +4105,8 @@
 		<tv_channel>
 			<caption>sext 6 senso</caption>
 			<channel_id>29100</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29100</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4118,8 +4114,8 @@
 		<tv_channel>
 			<caption>SINematica</caption>
 			<channel_id>29101</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29101</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4127,8 +4123,8 @@
 		<tv_channel>
 			<caption>Teen Red TV</caption>
 			<channel_id>29103</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29103</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4136,8 +4132,8 @@
 		<tv_channel>
 			<caption>Trans Angels</caption>
 			<channel_id>29107</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29107</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4145,8 +4141,8 @@
 		<tv_channel>
 			<caption>Visit-X TV</caption>
 			<channel_id>29112</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29112</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4154,8 +4150,8 @@
 		<tv_channel>
 			<caption>XY Max HD XXX</caption>
 			<channel_id>22459</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22459</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4163,8 +4159,8 @@
 		<tv_channel>
 			<caption>Pink Erotic 4</caption>
 			<channel_id>29089</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29089</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4172,8 +4168,8 @@
 		<tv_channel>
 			<caption>XXL</caption>
 			<channel_id>19186</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>19186</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4181,8 +4177,8 @@
 		<tv_channel>
 			<caption>Hot</caption>
 			<channel_id>22412</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22412</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4190,8 +4186,8 @@
 		<tv_channel>
 			<caption>Brazzers TV</caption>
 			<channel_id>5236</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>5236</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4199,8 +4195,8 @@
 		<tv_channel>
 			<caption>ALBA XXX 1</caption>
 			<channel_id>22444</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22444</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4208,8 +4204,8 @@
 		<tv_channel>
 			<caption>ALBA XXX 2</caption>
 			<channel_id>22445</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22445</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4217,8 +4213,8 @@
 		<tv_channel>
 			<caption>PENTHOUSE PASSION</caption>
 			<channel_id>19183</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>19183</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4226,8 +4222,8 @@
 		<tv_channel>
 			<caption>Hustler TV</caption>
 			<channel_id>19185</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>19185</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4235,8 +4231,8 @@
 		<tv_channel>
 			<caption>DUSK! XXX</caption>
 			<channel_id>22462</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22462</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4244,8 +4240,8 @@
 		<tv_channel>
 			<caption>Erox HD</caption>
 			<channel_id>29040</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29040</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4253,8 +4249,8 @@
 		<tv_channel>
 			<caption>Lust Cinema</caption>
 			<channel_id>29079</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29079</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4262,8 +4258,8 @@
 		<tv_channel>
 			<caption>Passion XXX</caption>
 			<channel_id>22431</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>22431</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4271,8 +4267,8 @@
 		<tv_channel>
 			<caption>Sex With Muslims</caption>
 			<channel_id>29098</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29098</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4280,8 +4276,8 @@
 		<tv_channel>
 			<caption>U Bang</caption>
 			<channel_id>29111</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29111</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
@@ -4289,8 +4285,8 @@
 		<tv_channel>
 			<caption>Xpanded TV</caption>
 			<channel_id>29117</channel_id>
-			<tvg_id>0</tvg_id>
 			<epg_id>29117</epg_id>
+			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
