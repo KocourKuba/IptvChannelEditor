@@ -423,8 +423,6 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 		}
 	}
 
-	OnCbnSelchangeComboPlaylist();
-
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -594,11 +592,6 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		m_plFileName = slashed;
 	}
 
-	m_playlistIds.clear();
-	m_playlistMap.clear();
-	m_pl_categories.clear();
-	m_pl_categoriesTreeMap.clear();
-
 	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
 	// Full playlist format
 	// #EXTM3U tvg-shift="1"
@@ -652,9 +645,6 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	cfg.m_parent = this;
 	cfg.m_data = data.release();
 	cfg.m_hStop = m_evtStop;
-	cfg.m_filter = theApp.GetProfileString(REG_SETTING, REG_FILTER_STRING);
-	cfg.m_regex = theApp.GetProfileInt(REG_SETTING, REG_FILTER_REGEX, FALSE);
-	cfg.m_case = theApp.GetProfileInt(REG_SETTING, REG_FILTER_CASE, FALSE);
 	cfg.m_pluginType = m_pluginType;
 
 	pThread->SetData(cfg);
@@ -663,31 +653,7 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 LRESULT CEdemChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 {
-	std::unique_ptr<std::vector<std::unique_ptr<PlaylistEntry>>> entries;
-	entries.reset((std::vector<std::unique_ptr<PlaylistEntry>>*)wParam);
-	if (entries)
-	{
-		std::set<std::wstring> categories;
-		for (auto& entry : *entries)
-		{
-			auto res = m_playlistMap.emplace(entry->get_id(), std::move(entry));
-			if (res.second)
-			{
-				m_playlistIds.emplace_back(res.first->second->get_id());
-
-				const auto& category = res.first->second->get_category();
-				if (categories.find(category) == categories.end())
-				{
-					m_pl_categories.emplace_back(category);
-					categories.emplace(category);
-				}
-			}
-			else
-			{
-				TRACE("Duplicate channel: %s (%d)\n", res.first->second->get_title().c_str(), res.first->second->get_id());
-			}
-		}
-	}
+	m_playlistEntries.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
 
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndPlSearch.EnableWindow(!m_channelsMap.empty());
@@ -873,7 +839,11 @@ void CEdemChannelEditorDlg::UpdatePlaylistCount()
 	const auto& filterString = theApp.GetProfileString(REG_SETTING, REG_FILTER_STRING);
 
 	CString str;
-	str.Format(_T("Playlist: %s (%d%s)"), m_plFileName.GetString(), m_playlistMap.size(), (filterString.IsEmpty() ? _T("") : _T("*")));
+	if (m_playlistIds.size() != m_playlistMap.size())
+		str.Format(_T("Playlist: %s %d (%d)"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size());
+	else
+		str.Format(_T("Playlist: %s %d"), m_plFileName.GetString(), m_playlistIds.size());
+
 	m_wndPlInfo.SetWindowText(str);
 	UpdateData(FALSE);
 }
@@ -2226,16 +2196,92 @@ void CEdemChannelEditorDlg::FillTreePlaylist()
 {
 	m_bInFillTree = true;
 
-	m_wndPlaylistTree.LockWindowUpdate();
-
 	m_wndPlaylistTree.DeleteAllItems();
 
+	// Filter out playlist
+	auto filter = theApp.GetProfileString(REG_SETTING, REG_FILTER_STRING);
+	auto bRegex = theApp.GetProfileInt(REG_SETTING, REG_FILTER_REGEX, FALSE);
+	auto bCase = theApp.GetProfileInt(REG_SETTING, REG_FILTER_CASE, FALSE);
+
+	std::wregex re;
+	if (bRegex)
+	{
+		try
+		{
+			re = filter.GetString();
+		}
+		catch (std::regex_error& ex)
+		{
+			ex;
+			bRegex = false;
+			filter.Empty();
+		}
+	}
+
+	m_playlistIds.clear();
+	m_playlistMap.clear();
 	m_pl_categoriesTreeMap.clear();
+
+	// list of playlist categories in the same order as in the playlist
+	// Must not contains duplicates!
+	std::vector<std::wstring> pl_categories;
+
+	if (m_playlistEntries)
+	{
+		// for fast search categories
+		std::set<std::wstring> categories;
+		for (auto& entry : *m_playlistEntries)
+		{
+			auto res = m_playlistMap.emplace(entry->get_id(), entry);
+			if (!res.second)
+			{
+				TRACE("Duplicate channel: %s (%d)\n", res.first->second->get_title().c_str(), res.first->second->get_id());
+				continue;
+			}
+
+			const auto& plEntry = res.first;
+			bool found = false;
+			if (bRegex)
+			{
+				try
+				{
+					found = std::regex_search(plEntry->second->get_title(), re);
+				}
+				catch (std::regex_error& ex)
+				{
+					ex;
+					found = true;
+				}
+			}
+			else if (!filter.IsEmpty())
+			{
+				if (bCase)
+				{
+					found = (plEntry->second->get_title().find(filter.GetString()) != std::wstring::npos);
+				}
+				else
+				{
+					found = (StrStrI(plEntry->second->get_title().c_str(), filter.GetString()) != nullptr);
+				}
+			}
+
+			if (!found)
+			{
+				m_playlistIds.emplace_back(plEntry->first);
+				const auto& category = plEntry->second->get_category();
+				if (categories.find(category) == categories.end())
+				{
+					pl_categories.emplace_back(category);
+					categories.emplace(category);
+				}
+			}
+		}
+	}
 
 	// fill playlist tree
 	if (!m_playlistIds.empty())
 	{
-		for (auto& category : m_pl_categories)
+		for (auto& category : pl_categories)
 		{
 			TVINSERTSTRUCTW tvInsert = { nullptr };
 			tvInsert.hParent = TVI_ROOT;
@@ -2269,8 +2315,6 @@ void CEdemChannelEditorDlg::FillTreePlaylist()
 	UpdatePlaylistCount();
 	CheckForExistingChannels();
 	CheckForExistingPlaylist();
-
-	m_wndPlaylistTree.UnlockWindowUpdate();
 
 	m_bInFillTree = false;
 
@@ -2639,9 +2683,9 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPack()
 	// write setup file
 	auto& capsName = utils::utf16_to_utf8(name);
 	capsName[0] = toupper(capsName[0]);
-	char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
+	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
-	os.write(smarker, sizeof(smarker));
+	os.write((const char*)smarker, sizeof(smarker));
 	os << fmt::format("<?php\ndefine(\"PLUGIN_TYPE\", '{:s}PluginConfig')\n?>\n", capsName.c_str());
 	os.close();
 
@@ -3704,7 +3748,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonPlFilter()
 		theApp.WriteProfileInt(REG_SETTING, REG_FILTER_REGEX, dlg.m_filterRegex);
 		theApp.WriteProfileInt(REG_SETTING, REG_FILTER_CASE, dlg.m_filterCase);
 
-		LoadPlaylist();
+		FillTreePlaylist();
 	}
 }
 

@@ -17,9 +17,6 @@ public:
 		std::vector<BYTE>* m_data = nullptr;
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
-		CString m_filter;
-		BOOL m_regex = FALSE;
-		BOOL m_case = FALSE;
 		StreamType m_pluginType = StreamType::enEdem;
 	};
 
@@ -35,8 +32,6 @@ public:
 	void SetData(const ThreadConfig& config) { m_config = config; };
 
 protected:
-	bool filterEntry(const PlaylistEntry* entry);
-
 	ThreadConfig m_config;
 	std::wregex m_re;
 };

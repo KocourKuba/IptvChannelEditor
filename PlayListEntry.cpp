@@ -17,8 +17,8 @@ bool PlaylistEntry::Parse(const std::string& str)
 		case m3u_entry::ext_group:
 			category = utils::utf8_to_utf16(m3uEntry.get_dvalue());
 			if (category.find(L"зрослые") != std::wstring::npos
-				&& category.find(L"Adult") != std::wstring::npos
-				&& category.find(L"XXX") != std::wstring::npos)
+				|| category.find(L"Adult") != std::wstring::npos
+				|| category.find(L"XXX") != std::wstring::npos)
 			{
 				// Channel for adult
 				set_adult(1);
@@ -33,8 +33,8 @@ bool PlaylistEntry::Parse(const std::string& str)
 					category = L"Unset";
 				}
 				else if (category.find(L"зрослые") != std::wstring::npos
-						 && category.find(L"Adult") != std::wstring::npos
-						 && category.find(L"XXX") != std::wstring::npos)
+						 || category.find(L"Adult") != std::wstring::npos
+						 || category.find(L"XXX") != std::wstring::npos)
 				{
 					// Channel for adult
 					set_adult(1);

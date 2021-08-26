@@ -310,6 +310,9 @@ private:
 	COLORREF m_red;
 	COLORREF m_green;
 
+	// all entries loaded from playlist
+	std::unique_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_playlistEntries;
+
 	// map of all channels for fast search
 	std::map<std::string, std::shared_ptr<ChannelInfo>> m_channelsMap;
 	// map of all categories for fast search
@@ -319,11 +322,8 @@ private:
 	// list of playlist id's in the same order as in the playlist
 	// Must not contains duplicates!
 	std::vector<std::string> m_playlistIds;
-	std::map<std::string, std::unique_ptr<PlaylistEntry>> m_playlistMap;
+	std::map<std::string, std::shared_ptr<PlaylistEntry>> m_playlistMap;
 
-	// list of playlist categories in the same order as in the playlist
-	// Must not contains duplicates!
-	std::vector<std::wstring> m_pl_categories;
 	// map of category and TREEITEM for fast add to tree
 	std::map<std::wstring, HTREEITEM> m_pl_categoriesTreeMap;
 
