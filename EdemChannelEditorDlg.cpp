@@ -731,7 +731,8 @@ void CEdemChannelEditorDlg::OnCancel()
 	theApp.WriteProfileInt(REG_SETTING, REG_PLUGIN, m_wndPluginType.GetCurSel());
 	const auto& dump = m_stream_infos.serialize();
 	// write document
-	const auto& path = theApp.GetAppPath() + _T("stream_info.bin");
+	const auto& playlistPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+	const auto& path = playlistPath + _T("stream_info.bin");
 	std::ofstream os(path, std::istream::binary);
 	os.write(dump.data(), dump.size());
 	os.close();
@@ -2414,17 +2415,18 @@ void CEdemChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container, C
 {
 	const auto& access_domain = CEdemChannelEditorDlg::GetAccessDomain();
 	const auto& access_key = CEdemChannelEditorDlg::GetAccessKey();
+	const auto max_threads = 3;
 
 	auto newEnd = std::unique(container.begin(), container.end());
 	m_wndProgress.SetRange32(0, std::distance(container.begin(), newEnd));
 	for (auto it = container.begin(); it != newEnd;)
 	{
-		std::array<std::thread, 5> workers;
-		std::array<std::string, 5> audio;
-		std::array<std::string, 5> video;
+		std::array<std::thread, max_threads> workers;
+		std::array<std::string, max_threads> audio;
+		std::array<std::string, max_threads> video;
 		auto pool = it;
 		int j = 0;
-		while (j < 5 && pool != container.end())
+		while (j < max_threads && pool != container.end())
 		{
 			const auto& url = GetPlayableURL(*pool, access_domain, access_key);
 			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
@@ -3685,7 +3687,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 
 	// argv[0] имя исполняемого файла
 	CString csCommand;
-	csCommand.Format(_T("\"%s\" -hide_banner -show_streams %hs"), CEdemChannelEditorDlg::m_probe.GetString(), url.c_str());
+	csCommand.Format(_T("\"%s\" -hide_banner -show_streams \"%hs\""), CEdemChannelEditorDlg::m_probe.GetString(), url.c_str());
 
 	BOOL bRunProcess = CreateProcess(CEdemChannelEditorDlg::m_probe.GetString(),	// 	__in_opt     LPCTSTR lpApplicationName
 									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
@@ -3706,7 +3708,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 	{
 		ResumeThread(pi.hThread);
 
-		long nTimeout = 20;
+		long nTimeout = 30;
 
 		int nErrorCount = 0;
 		DWORD dwExitCode = STILL_ACTIVE;
@@ -3716,7 +3718,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 		{
 			if (dwExitCode != STILL_ACTIVE)
 			{
-				TRACE(_T("Success! Exit code: %u\n"), dwExitCode);
+				TRACE("Success! Exit code: %u for %s\n", dwExitCode, url.c_str());
 				break;
 			}
 
@@ -3724,7 +3726,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 			{
 				bTimeout = TRUE;
 				::TerminateProcess(pi.hProcess, 0);
-				TRACE(_T("Failed! Execution Timeout\n"));
+				TRACE("Failed! Execution Timeout. %s\n", url.c_str());
 				break;
 			}
 
@@ -3748,7 +3750,7 @@ void CEdemChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 			else
 			{
 				// По каким то причинам обломался
-				TRACE(_T("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d\n"), ::GetLastError(), nErrorCount);
+				TRACE("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d, source %hs\n", ::GetLastError(), nErrorCount, url.c_str());
 				nErrorCount++;
 				if (nErrorCount > 10) break;
 				continue;
