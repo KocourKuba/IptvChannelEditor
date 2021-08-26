@@ -3,7 +3,7 @@
 
 #include "StdAfx.h"
 #include "afxdialogex.h"
-#include "EdemChannelEditor.h"
+#include "IPTVChannelEditor.h"
 #include "CustomPlaylistDlg.h"
 
 

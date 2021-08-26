@@ -27,12 +27,12 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "FileDescription", "Channel Editor for Dune HD Edem TV plugin"
+            VALUE "FileDescription", "IPTV Channel Editor for Dune HD Edem TV plugin"
             VALUE "FileVersion", STRFILEVERSION
-            VALUE "InternalName", "EdemChannelEditor.exe"
+            VALUE "InternalName", "IPTVChannelEditor.exe"
             VALUE "LegalCopyright", "All rights reserved."
-            VALUE "OriginalFilename", "EdemChannelEditor.exe"
-            VALUE "ProductName", "Dune HD Edem TV Channel Editor"
+            VALUE "OriginalFilename", "IPTVChannelEditor.exe"
+            VALUE "ProductName", "Dune HD IPTV Channel Editor"
             VALUE "ProductVersion", STRPRODUCTVER
         END
     END

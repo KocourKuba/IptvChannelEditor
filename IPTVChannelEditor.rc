@@ -1,0 +1,621 @@
+// Microsoft Visual C++ generated resource script.
+//
+#pragma code_page(65001)
+
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+#include "verrsrc.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""verrsrc.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#include ""res\\IPTVChannelEditor.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""      // Standard components\r\n"
+    "#if !defined(_AFXDLL)\r\n"
+    "#include ""afxribbon.rc""   // MFC ribbon and control bar resources\r\n"
+    "#endif\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\IPTVChannelEditor.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG_QR              PNG                     "res\\QR Code.png"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 215, 158
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Dune HD IPTV Channel Editor"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,4,4,21,20
+    LTEXT           "Version 1.0",IDC_STATIC_VERSION,43,4,85,9,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2020-2021, Pavel Abakanov",IDC_STATIC,43,15,133,8
+    DEFPUSHBUTTON   "OK",IDOK,78,140,50,14,WS_GROUP
+    CONTROL         "Donate $5 if you like this App",IDC_MFCLINK_DONATE_ABOUT,
+                    "MfcLink",WS_TABSTOP,51,38,105,14
+    CONTROL         "",IDC_STATIC_QR,"Static",SS_BITMAP | SS_CENTERIMAGE,60,53,85,78
+END
+
+IDD_EDEMCHANNELEDITOR_DIALOG DIALOGEX 0, 0, 523, 318
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TREE_CHANNELS,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_EDITLABELS | TVS_SHOWSELALWAYS | TVS_INFOTIP | WS_BORDER | WS_HSCROLL | WS_TABSTOP,4,82,155,167
+    EDITTEXT        IDC_EDIT_SEARCH,4,66,137,12,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO_CHANNELS,4,48,137,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "+",IDC_BUTTON_ADD_NEW_CHANNELS_LIST,144,47,16,15,BS_MULTILINE
+    PUSHBUTTON      "»",IDC_BUTTON_SEARCH_NEXT,144,64,16,15
+    EDITTEXT        IDC_EDIT_EPG_ID,235,64,50,12,ES_AUTOHSCROLL | ES_NUMBER
+    PUSHBUTTON      "View EPG",IDC_BUTTON_TEST_EPG,293,63,43,14
+    CONTROL         "Custom Url",IDC_CHECK_CUSTOMIZE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,171,142,46,10
+    EDITTEXT        IDC_EDIT_URL_ID,235,47,50,12,ES_AUTOHSCROLL
+    CONTROL         "Archive",IDC_CHECK_ARCHIVE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,171,116,40,10
+    CONTROL         "Adult",IDC_CHECK_ADULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,171,129,40,10
+    EDITTEXT        IDC_EDIT_STREAM_URL,223,141,131,12,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "Get Info",IDC_BUTTON_GET_INFO,226,225,63,19
+    EDITTEXT        IDC_EDIT_INFO_VIDEO,170,190,183,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_EDIT_INFO_AUDIO,170,207,183,12,ES_AUTOHSCROLL | ES_READONLY
+    COMBOBOX        IDC_COMBO_PLAYLIST,363,48,119,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "...",IDC_BUTTON_LOAD_PLAYLIST,486,47,16,15,BS_MULTILINE
+    PUSHBUTTON      "↓",IDC_BUTTON_DOWNLOAD_PLAYLIST,502,47,16,15,BS_MULTILINE
+    EDITTEXT        IDC_EDIT_PL_SEARCH,363,66,120,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "»",IDC_BUTTON_PL_SEARCH_NEXT,486,64,16,15
+    CONTROL         "",IDC_TREE_PLAYLIST,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | TVS_INFOTIP | WS_BORDER | WS_HSCROLL | WS_TABSTOP,363,82,155,167
+    PUSHBUTTON      "Cache Icon",IDC_BUTTON_CACHE_ICON,97,253,62,19
+    PUSHBUTTON      "Save Channels",IDC_BUTTON_SAVE,164,253,62,19
+    PUSHBUTTON      "Access info",IDC_BUTTON_ACCESS_INFO,230,253,62,19
+    PUSHBUTTON      "Make plugin",IDC_BUTTON_PACK,296,253,62,19
+    PUSHBUTTON      "Update Icon",IDC_BUTTON_UPDATE_ICON,363,253,62,19
+    PUSHBUTTON      "Settings",IDC_BUTTON_SETTINGS,164,295,62,19
+    PUSHBUTTON      "About",IDC_BUTTON_ABOUT,230,295,62,19
+    PUSHBUTTON      "Exit",IDCANCEL,296,295,62,19
+    CONTROL         "",IDC_STATIC_PL_ICON,"Static",SS_BITMAP | SS_NOTIFY | SS_CENTERIMAGE | SS_SUNKEN,438,254,80,45
+    CONTROL         "",IDC_STATIC_ICON,"Static",SS_BITMAP | SS_NOTIFY | SS_CENTERIMAGE | SS_SUNKEN,4,254,80,45
+    CONTROL         "Donate if you like this App",IDC_MFCLINK_DONATE,"MfcLink",WS_TABSTOP,431,4,87,13
+    LTEXT           "IPTV Channel Editor",IDC_STATIC_TITLE,4,7,180,14
+    LTEXT           "for DUNE HD",IDC_STATIC_APP_TITLE,65,25,87,8
+    LTEXT           "Channels:",IDC_STATIC_CHANNELS,4,36,156,8
+    GROUPBOX        "Channel Info",IDC_STATIC,165,36,193,121
+    LTEXT           "Playlist:",IDC_STATIC_PLAYLIST,364,35,154,8,SS_WORDELLIPSIS
+    LTEXT           "Channel ID",IDC_STATIC,172,48,57,8
+    LTEXT           "name",IDC_STATIC_ICON_NAME,4,301,156,8
+    LTEXT           "name",IDC_STATIC_PL_ICON_NAME,364,306,154,8
+    LTEXT           "EPG:",IDC_STATIC_PL_TVG,365,284,44,8
+    CONTROL         "Archive",IDC_CHECK_PL_ARCHIVE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,365,295,39,10
+    LTEXT           "First EPG ID",IDC_STATIC,172,65,57,8
+    LTEXT           "ID:",IDC_STATIC_PL_ID,365,273,44,8
+    GROUPBOX        "Stream Info",IDC_STATIC,165,160,193,89
+    PUSHBUTTON      ".*",IDC_BUTTON_PL_FILTER,502,64,16,15
+    CONTROL         "",IDC_PROGRESS_LOAD,"msctls_progress32",PBS_SMOOTH | NOT WS_VISIBLE | WS_BORDER,165,276,193,14
+    EDITTEXT        IDC_EDIT_ARCHIVE_CHECK,244,173,18,13,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_ARCHIVE_CHECK,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS,261,172,11,14
+    PUSHBUTTON      "Check Archive",IDC_BUTTON_CHECK_ARCHIVE,170,172,57,14
+    LTEXT           "Hours back to check",IDC_STATIC,275,175,76,8
+    EDITTEXT        IDC_EDIT_ARCHIVE_DAYS,410,294,16,12,ES_AUTOHSCROLL | ES_READONLY | ES_NUMBER | NOT WS_BORDER,WS_EX_CLIENTEDGE
+    EDITTEXT        IDC_EDIT_TIME_SHIFT,235,99,39,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_TIME_SHIFT,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS,274,98,11,14
+    LTEXT           "EPG Time Shift",IDC_STATIC,172,101,57,8
+    COMBOBOX        IDC_COMBO_PLUGIN_TYPE,414,18,104,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Second EPG ID",IDC_STATIC,172,83,57,8
+    EDITTEXT        IDC_EDIT_TVG_ID,235,81,50,12,ES_AUTOHSCROLL | ES_NUMBER
+    PUSHBUTTON      "View TVG",IDC_BUTTON_TEST_TVG,293,81,43,14
+END
+
+IDD_DIALOG_NEW_CATEGORY DIALOGEX 0, 0, 231, 59
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Category"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,38,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,83,38,50,14
+    EDITTEXT        IDC_EDIT_CATEGORY,7,18,126,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_STATIC_CATEGORY_ICON,"Static",SS_BITMAP | SS_NOTIFY | SS_CENTERIMAGE | SS_SUNKEN,139,7,80,45
+END
+
+IDD_DIALOG_NEW_CHANNEL DIALOGEX 0, 0, 143, 59
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Channel"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_CATEGORY,7,18,129,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,38,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,86,38,50,14
+END
+
+IDD_DIALOG_SETTINGS DIALOGEX 0, 0, 231, 99
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,53,78,50,14
+    LTEXT           "Player m3u8 (for example Media Player Classic)",IDC_STATIC,7,7,218,8
+    CONTROL         "",IDC_MFCEDITBROWSE_PLAYER,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x800,7,18,216,14
+    LTEXT           "FFProbe (https://ffmpeg.org)",IDC_STATIC,7,35,218,8
+    CONTROL         "",IDC_MFCEDITBROWSE_PROBE,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x800,7,46,216,14
+    PUSHBUTTON      "Cancel",IDCANCEL,129,78,50,14
+    CONTROL         "Sync Channel with Playlist Entry",IDC_CHECK_AUTO_SYNC_CHANNELS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,65,138,10
+END
+
+IDD_DIALOG_FILTER DIALOGEX 0, 0, 189, 57
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Exclude channels"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,42,36,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,96,36,50,14
+    EDITTEXT        IDC_EDIT_STRING,7,7,175,14,ES_AUTOHSCROLL
+    CONTROL         "Regular Expression",IDC_CHECK_REGEX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,24,84,10
+    CONTROL         "Case sensitive",IDC_CHECK_CASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,99,24,78,10
+END
+
+IDD_DIALOG_ACCESS_INFO DIALOGEX 0, 0, 231, 100
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,53,79,50,14
+    LTEXT           "OTT Access Key",IDC_STATIC,7,20,69,8
+    EDITTEXT        IDC_EDIT_KEY,7,31,93,14,ES_AUTOHSCROLL
+    LTEXT           "Stream Domain",IDC_STATIC,108,20,69,8
+    EDITTEXT        IDC_EDIT_DOMAIN,108,31,115,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Cancel",IDCANCEL,129,79,50,14
+    CONTROL         "Embed into playlist",IDC_CHECK_GLOBAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,92,10
+    LTEXT           "Read from URL or File (direct ling)",IDC_STATIC,7,48,217,8
+    CONTROL         "",IDC_EDIT_PLAYLIST_URL,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,7,59,182,14
+    PUSHBUTTON      "Get",IDC_BUTTON_GET,193,59,31,14
+END
+
+IDD_CUSTOM_PLAYLIST DIALOGEX 0, 0, 217, 51
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,57,30,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,111,30,50,14
+    CONTROL         "",IDC_CUSTOM_PLAYLIST,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,7,7,203,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 211
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 154
+    END
+
+    IDD_EDEMCHANNELEDITOR_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 518
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 314
+    END
+
+    IDD_DIALOG_NEW_CATEGORY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 224
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 52
+    END
+
+    IDD_DIALOG_NEW_CHANNEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 136
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 52
+    END
+
+    IDD_DIALOG_SETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 224
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 92
+    END
+
+    IDD_DIALOG_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 182
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 50
+    END
+
+    IDD_DIALOG_ACCESS_INFO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 224
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 93
+    END
+
+    IDD_CUSTOM_PLAYLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 210
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 44
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_EDEMCHANNELEDITOR_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0,
+    0, 0, 50, 100,
+    0, 0, 50, 0,
+    0, 0, 50, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 50, 0,
+    100, 0, 0, 0,
+    100, 0, 0, 0,
+    50, 0, 50, 0,
+    100, 0, 0, 0,
+    50, 0, 50, 100,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    100, 100, 0, 0,
+    0, 100, 0, 0,
+    100, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
+    0, 0, 100, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    0, 100, 50, 0,
+    50, 100, 50, 0,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    50, 0, 0, 0,
+    50, 100, 0, 0,
+    50, 0, 0, 0,
+    100, 0, 0, 0,
+    50, 100, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 100, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    100, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0,
+    50, 0, 0, 0
+END
+
+IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_NEW_CATEGORY AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_NEW_CHANNEL AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_SETTINGS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_FILTER AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_ACCESS_INFO AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_CUSTOM_PLAYLIST AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_EDEMCHANNELEDITOR_DIALOG DLGINIT
+BEGIN
+    IDC_MFCLINK_DONATE, 0x37c, 259, 0
+0x4d3c, 0x4346, 0x694c, 0x6b6e, 0x555f, 0x6c72, 0x683e, 0x7474, 0x7370, 
+0x2f3a, 0x772f, 0x7777, 0x702e, 0x7961, 0x6170, 0x2e6c, 0x6f63, 0x2f6d, 
+0x6763, 0x2d69, 0x6962, 0x2f6e, 0x6577, 0x7362, 0x7263, 0x633f, 0x646d, 
+0x5f3d, 0x6f64, 0x616e, 0x6974, 0x6e6f, 0x2673, 0x7562, 0x6973, 0x656e, 
+0x7373, 0x353d, 0x5944, 0x5037, 0x5345, 0x4c5a, 0x4434, 0x4c38, 0x6326, 
+0x7275, 0x6572, 0x636e, 0x5f79, 0x6f63, 0x6564, 0x553d, 0x4453, 0x6126, 
+0x6f6d, 0x6e75, 0x3d74, 0x3c35, 0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x555f, 
+0x6c72, 0x3c3e, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7255, 0x506c, 0x6572, 
+0x6966, 0x3e78, 0x2f3c, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7255, 0x506c, 
+0x6572, 0x6966, 0x3e78, 0x4d3c, 0x4346, 0x694c, 0x6b6e, 0x545f, 0x6f6f, 
+0x746c, 0x7069, 0x3c3e, 0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x545f, 0x6f6f, 
+0x746c, 0x7069, 0x3c3e, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7546, 0x6c6c, 
+0x6554, 0x7478, 0x6f54, 0x6c6f, 0x6974, 0x3e70, 0x4146, 0x534c, 0x3c45, 
+0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x465f, 0x6c75, 0x546c, 0x7865, 0x5474, 
+0x6f6f, 0x746c, 0x7069, "\076" 
+    IDC_COMBO_PLUGIN_TYPE, 0x403, 15, 0
+0x6445, 0x6d65, 0x2820, 0x4c69, 0x6f6f, 0x546b, 0x2956, "\000" 
+    IDC_COMBO_PLUGIN_TYPE, 0x403, 11, 0
+0x6853, 0x7261, 0x7661, 0x7a6f, 0x5654, "\000" 
+    0
+END
+
+IDD_ABOUTBOX DLGINIT
+BEGIN
+    IDC_MFCLINK_DONATE_ABOUT, 0x37c, 259, 0
+0x4d3c, 0x4346, 0x694c, 0x6b6e, 0x555f, 0x6c72, 0x683e, 0x7474, 0x7370, 
+0x2f3a, 0x772f, 0x7777, 0x702e, 0x7961, 0x6170, 0x2e6c, 0x6f63, 0x2f6d, 
+0x6763, 0x2d69, 0x6962, 0x2f6e, 0x6577, 0x7362, 0x7263, 0x633f, 0x646d, 
+0x5f3d, 0x6f64, 0x616e, 0x6974, 0x6e6f, 0x2673, 0x7562, 0x6973, 0x656e, 
+0x7373, 0x353d, 0x5944, 0x5037, 0x5345, 0x4c5a, 0x4434, 0x4c38, 0x6326, 
+0x7275, 0x6572, 0x636e, 0x5f79, 0x6f63, 0x6564, 0x553d, 0x4453, 0x6126, 
+0x6f6d, 0x6e75, 0x3d74, 0x3c35, 0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x555f, 
+0x6c72, 0x3c3e, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7255, 0x506c, 0x6572, 
+0x6966, 0x3e78, 0x2f3c, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7255, 0x506c, 
+0x6572, 0x6966, 0x3e78, 0x4d3c, 0x4346, 0x694c, 0x6b6e, 0x545f, 0x6f6f, 
+0x746c, 0x7069, 0x3c3e, 0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x545f, 0x6f6f, 
+0x746c, 0x7069, 0x3c3e, 0x464d, 0x4c43, 0x6e69, 0x5f6b, 0x7546, 0x6c6c, 
+0x6554, 0x7478, 0x6f54, 0x6c6f, 0x6974, 0x3e70, 0x4146, 0x534c, 0x3c45, 
+0x4d2f, 0x4346, 0x694c, 0x6b6e, 0x465f, 0x6c75, 0x546c, 0x7865, 0x5474, 
+0x6f6f, 0x746c, 0x7069, "\076" 
+    0
+END
+
+IDD_DIALOG_SETTINGS DLGINIT
+BEGIN
+    IDC_MFCEDITBROWSE_PLAYER, 0x37c, 42, 0
+0x4d3c, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 0x4d5f, 0x646f, 
+0x3e65, 0x3c31, 0x4d2f, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 
+0x4d5f, 0x646f, 0x3e65, 
+    IDC_MFCEDITBROWSE_PROBE, 0x37c, 42, 0
+0x4d3c, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 0x4d5f, 0x646f, 
+0x3e65, 0x3c31, 0x4d2f, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 
+0x4d5f, 0x646f, 0x3e65, 
+    0
+END
+
+IDD_DIALOG_ACCESS_INFO DLGINIT
+BEGIN
+    IDC_EDIT_PLAYLIST_URL, 0x37c, 42, 0
+0x4d3c, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 0x4d5f, 0x646f, 
+0x3e65, 0x3c31, 0x4d2f, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 
+0x4d5f, 0x646f, 0x3e65, 
+    0
+END
+
+IDD_CUSTOM_PLAYLIST DLGINIT
+BEGIN
+    IDC_CUSTOM_PLAYLIST, 0x37c, 42, 0
+0x4d3c, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 0x4d5f, 0x646f, 
+0x3e65, 0x3c31, 0x4d2f, 0x4346, 0x6445, 0x7469, 0x7242, 0x776f, 0x6573, 
+0x4d5f, 0x646f, 0x3e65, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR_TABLE ACCELERATORS
+BEGIN
+    VK_DOWN,        ID_CHANNEL_DOWN,        VIRTKEY, CONTROL, NOINVERT
+    VK_UP,          ID_CHANNEL_UP,          VIRTKEY, CONTROL, NOINVERT
+    VK_F2,          ID_EDIT_RENAME,         VIRTKEY, NOINVERT
+    VK_F4,          ID_GET_STREAM_INFO,     VIRTKEY, NOINVERT
+    VK_INSERT,      ID_NEW_CHANNEL,         VIRTKEY, NOINVERT
+    VK_DELETE,      ID_REMOVE_CHANNEL,      VIRTKEY, NOINVERT
+    "S",            ID_SAVE,                VIRTKEY, CONTROL, NOINVERT
+    VK_SPACE,       ID_SYNC_TREE_ITEM,      VIRTKEY, CONTROL, NOINVERT
+    VK_F5,          ID_UPDATE_CHANNEL,      VIRTKEY, NOINVERT
+    VK_F6,          ID_UPDATE_ICON,         VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU_CHANNEL MENU
+BEGIN
+    POPUP "ChannelMenu"
+    BEGIN
+        MENUITEM "Play",                        ID_PLAY_STREAM
+        MENUITEM SEPARATOR
+        MENUITEM "New Channel\tIns",            ID_NEW_CHANNEL
+        MENUITEM "Delete Channel\tDel",         ID_REMOVE_CHANNEL
+        MENUITEM "Disable Channel",             ID_TOGGLE_CHANNEL
+        MENUITEM SEPARATOR
+        MENUITEM "New Category",                ID_NEW_CATEGORY
+        MENUITEM "Delete Category",             ID_REMOVE_CATEGORY
+        MENUITEM "Sort Category",               ID_SORT_CATEGORY
+        MENUITEM SEPARATOR
+        MENUITEM "Add to Favorite",             32798
+        MENUITEM "Rename\tF2",                  ID_EDIT_RENAME
+        MENUITEM "Move Up\tCtrl+Up",            ID_CHANNEL_UP
+        MENUITEM "Move Down\tCtrl+Down",        ID_CHANNEL_DOWN
+        MENUITEM SEPARATOR
+        MENUITEM "Get Stream Info for All channels", ID_GET_STREAM_INFO_ALL
+        MENUITEM "Get Stream Info\tF4",         ID_GET_STREAM_INFO
+        MENUITEM SEPARATOR
+        MENUITEM "Sync with Playlist\tCtrl+SPACE", ID_SYNC_TREE_ITEM
+    END
+END
+
+IDR_MENU_PLAYLIST MENU
+BEGIN
+    POPUP "PlayListMenu"
+    BEGIN
+        MENUITEM "Play",                        ID_PLAY_STREAM
+        MENUITEM SEPARATOR
+        MENUITEM "Add Category",                ID_ADD_CATEGORY
+        MENUITEM "Add/Update Channel\tF5",      ID_UPDATE_CHANNEL
+        MENUITEM "SubMenu",                     ID_PLAYLISTMENU_SUBMENU
+        MENUITEM SEPARATOR
+        MENUITEM "Get Stream Info for All channels", ID_GET_STREAM_INFO_ALL
+        MENUITEM "Get Stream Info\tF4",         ID_GET_STREAM_INFO
+        MENUITEM SEPARATOR
+        MENUITEM "Sync with Channel\tCtrl+SPACE", ID_SYNC_TREE_ITEM
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDR_MAINFRAME           "Dune IPTV Channel Editor\nChannelEditor\nChannelEditor\n\n\n\n"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "&About Dune IPTV Channel Editor..."
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#include "res\IPTVChannelEditor.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"      // Standard components
+#if !defined(_AFXDLL)
+#include "afxribbon.rc"   // MFC ribbon and control bar resources
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
