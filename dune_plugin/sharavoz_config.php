@@ -21,7 +21,7 @@ class SharavozPluginConfig extends DefaultConfig
     public function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {
         $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        hd_print("stream $format");
+        hd_print("AdjustStreamUri: stream $format");
         switch ($format)
         {
             case 'hls':
