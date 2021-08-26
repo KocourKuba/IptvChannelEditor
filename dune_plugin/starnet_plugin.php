@@ -40,9 +40,9 @@ class StarnetDunePlugin extends DefaultDunePlugin
             throw new Exception('Unknown plugin type!');
 
         $this->tv = new StarnetPluginTv(new $className);
-        $this->add_screen(new TvChannelListScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new TvFavoritesScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new StarnetMainScreen($this->tv, ViewsConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new TvChannelListScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($this->tv->config->BG_PICTURE)));
+        $this->add_screen(new TvFavoritesScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($this->tv->config->BG_PICTURE)));
+        $this->add_screen(new StarnetMainScreen($this->tv, ViewsConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS($this->tv->config->BG_PICTURE)));
         $this->add_screen(new StarnetSetupScreen($this->tv));
     }
 }

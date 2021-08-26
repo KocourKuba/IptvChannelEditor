@@ -9,6 +9,7 @@ class SharavozPluginConfig extends DefaultConfig
         $this->PluginVersion = '1.0.0';
         $this->PluginDate = '27.07.2021';
 
+        $this->BG_PICTURE = 'plugin_file://bg_edem.jpg';
         $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={UID}';
         $this->CHANNEL_LIST_URL = 'sharavoz_channel_list.xml';
         $this->EPG_URL_FORMAT = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s';

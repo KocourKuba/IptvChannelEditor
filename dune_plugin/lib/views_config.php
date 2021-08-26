@@ -15,7 +15,7 @@ class ViewsConfig
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 
-    public static function GET_TV_GROUP_LIST_FOLDER_VIEWS()
+    public static function GET_TV_GROUP_LIST_FOLDER_VIEWS($bg_picture)
     {
         return array(
 
@@ -35,7 +35,7 @@ class ViewsConfig
                     ViewParams::sandwich_width => 245,
                     ViewParams::sandwich_height => 140,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_path => $bg_picture,
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
@@ -56,7 +56,7 @@ class ViewsConfig
         );
     }
 
-    public static function GET_TV_CHANNEL_LIST_FOLDER_VIEWS()
+    public static function GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)
     {
         return array(
             array
@@ -67,7 +67,7 @@ class ViewsConfig
                 (
                     ViewParams::num_cols => 2,
                     ViewParams::num_rows => 10,
-                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_path => $bg_picture,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => true,
                 ),
@@ -97,7 +97,7 @@ class ViewsConfig
                 (
                     ViewParams::num_cols => 5,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_path => $bg_picture,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -132,7 +132,7 @@ class ViewsConfig
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_path => $bg_picture,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -167,7 +167,7 @@ class ViewsConfig
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_path => $bg_picture,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -202,7 +202,7 @@ class ViewsConfig
                 (
                     ViewParams::num_cols => 3,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path => 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_path => $bg_picture,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -231,7 +231,7 @@ class ViewsConfig
         );
     }
 
-    public static function GET_VOD_MOVIE_LIST_FOLDER_VIEWS()
+    public static function GET_VOD_MOVIE_LIST_FOLDER_VIEWS($bg_picture)
     {
         return array(
             array
@@ -266,7 +266,7 @@ class ViewsConfig
             ));
     }
 
-    public static function GET_VOD_CATEGORY_LIST_FOLDER_VIEWS()
+    public static function GET_VOD_CATEGORY_LIST_FOLDER_VIEWS($bg_picture)
     {
         return array(
             array

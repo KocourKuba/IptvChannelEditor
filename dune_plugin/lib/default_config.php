@@ -24,7 +24,7 @@ abstract class DefaultConfig
     public $EPG_CACHE_DIR = '/tmp/epg/';
     public $TVG_PROVIDER = 'unknown';
     public $EPG_PROVIDER = 'unknown';
-
+    public $BG_PICTURE = '';
     abstract public function AdjustStreamUri($plugin_cookies, $archive_ts, $url);
 }
 
