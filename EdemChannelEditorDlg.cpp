@@ -1059,7 +1059,7 @@ void CEdemChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		{
 			m_iconUrl = channel->get_icon_uri().get_uri().c_str();
 			CImage img;
-			if (utils::LoadImage(m_iconUrl.GetString(), img))
+			if (utils::LoadImage(channel->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
 			{
 				channel->set_icon(img);
 			}
