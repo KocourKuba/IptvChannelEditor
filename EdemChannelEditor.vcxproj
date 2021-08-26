@@ -238,7 +238,6 @@
     <ClInclude Include="uri_channels.h" />
     <ClInclude Include="uri_edem.h" />
     <ClInclude Include="uri_base.h" />
-    <ClInclude Include="uri_nostream.h" />
     <ClInclude Include="uri_sharavoz.h" />
     <ClInclude Include="uri_stream.h" />
     <ClInclude Include="utils.h" />

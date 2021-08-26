@@ -3,7 +3,7 @@
 
 enum class StreamType
 {
-	enNoStream = 0,
+	enBase = 0,
 	enChannels,
 	enEdem,
 	enSharovoz,

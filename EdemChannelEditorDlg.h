@@ -114,8 +114,8 @@ protected:
 	afx_msg void OnBnClickedButtonAccessInfo();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
-	afx_msg void OnBnClickedButtonTestEpg();
-	afx_msg void OnBnClickedButtonTestTvg();
+	afx_msg void OnBnClickedButtonTestEpg1();
+	afx_msg void OnBnClickedButtonTestEpg2();
 	afx_msg void OnUpdateIcon();
 	afx_msg void OnUpdateUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckCustomize();
@@ -184,6 +184,8 @@ private:
 							   const std::string& access_domain,
 							   const std::string& access_key) const;
 
+	std::string GetEpg1Template() const;
+	std::string GetEpg2Template() const;
 	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
@@ -269,13 +271,13 @@ protected:
 	CString m_infoVideo; // m_wndInfoVideo
 	CString m_infoAudio; // m_wndInfoAudio
 
-	int m_pluginIdx = 0;
-	int m_pluginIdxOld = -1;
+	int m_pluginIdxOld = -2;
+	int m_plistIdxOld = -2;
 	BOOL m_hasArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
 	CString m_streamID; // m_wndStreamID
-	int m_tvgID = 0; // m_wndTvgID
-	int m_epgID = 0; // m_wndEpgID
+	int m_epgID2 = 0; // m_wndTvgID
+	int m_epgID1 = 0; // m_wndEpgID
 	int m_archiveCheck = 0; // m_wndCheckArchive
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift

@@ -22,11 +22,11 @@ public:
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
 
-	int get_tvg_id() const { return tvg_id; }
-	void set_tvg_id(int val) { tvg_id = val; }
+	int get_epg1_id() const { return epg_id; }
+	void set_epg1_id(int val) { epg_id = val; }
 
-	int get_epg_id() const { return epg_id; }
-	void set_epg_id(int val) { epg_id = val; }
+	int get_epg2_id() const { return tvg_id; }
+	void set_epg2_id(int val) { tvg_id = val; }
 
 	int get_adult() const { return adult; }
 	void set_adult(int val) { adult = val; }

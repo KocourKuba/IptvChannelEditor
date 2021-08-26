@@ -15,7 +15,8 @@ bool PlaylistEntry::Parse(const std::string& str)
 			access_key = stream_uri->get_uid();
 			if (stream_type == StreamType::enSharovoz)
 			{
-				set_tvg_id(utils::char_to_int(get_stream_uri()->get_id()));
+				set_epg2_id(utils::char_to_int(get_stream_uri()->get_id()));
+				set_epg1_id(get_epg2_id());
 			}
 			return true;
 		case m3u_entry::ext_group:
@@ -57,7 +58,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 
 			if (const auto& pair = m3uEntry.get_tags().find(m3u_entry::tag_tvg_id); pair != m3uEntry.get_tags().end())
 			{
-				set_tvg_id(utils::char_to_int(pair->second));
+				set_epg2_id(utils::char_to_int(pair->second));
 			}
 
 			if (!m3uEntry.get_dir_title().empty())

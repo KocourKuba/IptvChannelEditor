@@ -141,9 +141,6 @@
     <ClInclude Include="uri_channels.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
-    <ClInclude Include="uri_nostream.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="uri_stream.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>

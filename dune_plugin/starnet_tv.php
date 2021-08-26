@@ -267,24 +267,31 @@ class StarnetPluginTv extends AbstractTv
            mkdir($this->config->EPG_CACHE_DIR);
         }
 
+        $epg = array();
         $cache_file = $this->config->EPG_CACHE_DIR . $this->config->EPG_CACHE_FILE . $channel_id . "_" . $day_start_ts;
         if (file_exists($cache_file)) {
             $epg = unserialize(file_get_contents($cache_file));
         } else {
             // if all tvg & epg empty no need to fetch data
             if ($tvg_id == 0 && $epg_id == 0)
-                return array();
+                return $epg;
 
             try {
-                // teleguide.info first. Otherwise, try to get info from epg.ott-play.com
-                // sharavoz tvg not present but used as backup epg source
-                $id = ($tvg_id ?: $epg_id);
-                $provider = ($tvg_id ? $this->config->TVG_PROVIDER : $this->config->EPG_PROVIDER);
+                // tvguide used as backup of ott-play epg source
+                // sharavoz used as backup of arlekino epg source
+                $id = $epg_id;
+                $provider = $this->config->EPG_PROVIDER;
                 $epg = $this->get_epg($provider, $id, $epg_date, $day_start_ts);
-            }
-            catch (Exception $ex) {
-                hd_print("Can't fetch TVG ID ($provider): $id DATE: $epg_date");
-                return array();
+            } catch (Exception $ex) {
+                try {
+                    hd_print("Can't fetch EPG ID from ($provider): $id DATE: $epg_date");
+                    $provider = $this->config->TVG_PROVIDER;
+                    hd_print("using second ($provider)");
+                    $epg = $this->get_epg($provider, $id, $epg_date, $day_start_ts);
+                } catch (Exception $ex) {
+                    hd_print("Can't fetch EPG ID from backup ($provider): $id DATE: $epg_date");
+                    return $epg;
+                }
             }
         }
 
@@ -339,16 +346,19 @@ class StarnetPluginTv extends AbstractTv
         }
 
         hd_print("provider:$provider epg url: $url");
-        $doc = HD::http_get_document($url);
         switch ($provider) {
-            case 'arlekino':
             case 'ott-play':
+            case 'arlekino':
             case 'sharavoz':
+                // json parse
+                $doc = HD::http_get_document($url);
                 $epg = $this->parse_epg_json($doc, $day_start_ts);
                 break;
             case 'teleguide':
+                // html parse
                 // tvguide.info time in GMT+3 (moscow time)
                 // $timezone_suffix = date('T');
+                $doc = HD::http_get_document($url);
                 $e_time = strtotime("$epg_date, 0300 GMT+3");
                 preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
                 foreach ($keywords[1] as $qid) {

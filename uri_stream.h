@@ -25,7 +25,7 @@ public:
 	/// <summary>
 	/// parse uri to get id
 	/// </summary>
-	virtual void parse_uri(const std::string&) = 0;
+	virtual void parse_uri(const std::string&) {}
 
 	/// <summary>
 	/// getter channel id
