@@ -909,10 +909,8 @@ std::string CEdemChannelEditorDlg::GetEpg1Template() const
 	{
 		case StreamType::enEdem:
 			return "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
-			break;
 		case StreamType::enSharovoz:
 			return "http://epg.arlekino.tv/api/program?epg={:d}&date={:4d}-{:02d}-{:02d}";
-			break;
 		case StreamType::enBase:
 		case StreamType::enChannels:
 		case StreamType::enGlanz:
@@ -920,6 +918,8 @@ std::string CEdemChannelEditorDlg::GetEpg1Template() const
 		default:
 			break;
 	}
+
+	return "";
 }
 
 std::string CEdemChannelEditorDlg::GetEpg2Template() const
@@ -928,10 +928,8 @@ std::string CEdemChannelEditorDlg::GetEpg2Template() const
 	{
 		case StreamType::enEdem:
 			return "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
-			break;
 		case StreamType::enSharovoz:
 			return "http://api.program.spr24.net/api/program?epg={:d}&date={:4d}-{:02d}-{:02d}";
-			break;
 		case StreamType::enBase:
 		case StreamType::enChannels:
 		case StreamType::enGlanz:
@@ -939,6 +937,8 @@ std::string CEdemChannelEditorDlg::GetEpg2Template() const
 		default:
 			break;
 	}
+
+	return "";
 }
 
 void CEdemChannelEditorDlg::RemoveOrphanChannels()

@@ -25,7 +25,7 @@ namespace utils
 	static constexpr auto PACK_DLL = L"..\\dll\\7za.dll";
 #else
 	static constexpr auto PLUGIN_ROOT = L".\\dune_plugin\\";
-	static constexpr auto PLAYLISTS_ROOT = L".\\playlists\\{:S}\\";
+	static constexpr auto PLAYLISTS_ROOT = L".\\playlists\\{:s}\\";
 	static constexpr auto CHANNELS_LOGO_PATH = L".\\dune_plugin\\icons\\channels\\";
 	static constexpr auto CATEGORIES_LOGO_PATH = L".\\dune_plugin\\icons\\";
 	static constexpr auto PACK_PATH = L".\\{:s}_plugin\\";
