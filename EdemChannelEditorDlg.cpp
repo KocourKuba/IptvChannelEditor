@@ -428,10 +428,8 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 void CEdemChannelEditorDlg::SwitchPlugin()
 {
-	m_pluginIdxOld = m_wndPluginType.GetCurSel();
-
 	// Rebuld available playlist types and set current plugin parameters
-	switch (m_pluginIdxOld)
+	switch (m_wndPluginType.GetCurSel())
 	{
 		case 0: // Edem
 		{
@@ -462,6 +460,13 @@ void CEdemChannelEditorDlg::SwitchPlugin()
 			break;
 	}
 
+	// Set selected playlist
+	int pl_idx = theApp.GetProfileInt(GetPluginRegPath().c_str(), REG_PLAYLIST_TYPE, 0);
+	if (pl_idx > m_wndPlaylist.GetCount() || pl_idx < 0)
+		pl_idx = 0;
+
+	m_wndPlaylist.SetCurSel(pl_idx);
+
 	const auto& regPath = GetPluginRegPath();
 
 	// Load access credentials
@@ -471,8 +476,8 @@ void CEdemChannelEditorDlg::SwitchPlugin()
 	// Load channel lists
 	m_all_channels_lists.clear();
 
-	const auto& playlistPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
-	for (auto const& dir_entry : std::filesystem::directory_iterator{ playlistPath })
+	const auto& channelsPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+	for (auto const& dir_entry : std::filesystem::directory_iterator{ channelsPath })
 	{
 		const auto& path = dir_entry.path();
 		if (path.extension() == _T(".xml"))
@@ -493,7 +498,7 @@ void CEdemChannelEditorDlg::SwitchPlugin()
 		m_wndChannels.SetCurSel(idx);
 
 	// load stream info
-	const auto& path = playlistPath + _T("stream_info.bin");
+	const auto& path = channelsPath + _T("stream_info.bin");
 	std::ifstream is(path, std::istream::binary);
 	if (is.good())
 	{
@@ -3327,35 +3332,19 @@ void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 
 void CEdemChannelEditorDlg::OnCbnSelchangeComboPluginType()
 {
-	if (m_pluginIdxOld == m_wndPluginType.GetCurSel())
-		return;
-
-	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
-	{
-		m_wndPluginType.SetCurSel(m_pluginIdxOld);
-		return;
-	}
-
 	SwitchPlugin();
 }
 
 void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 {
-	if (m_plistIdxOld == m_wndPlaylist.GetCurSel())
-		return;
-
-	// Set selected playlist
-	m_wndPlaylist.SetCurSel(theApp.GetProfileInt(GetPluginRegPath().c_str(), REG_PLAYLIST_TYPE, 0));
-
-	m_plistIdxOld = m_wndPlaylist.GetCurSel();
 	BOOL enableDownload = TRUE;
 	BOOL enableCustom = FALSE;
-
+	int pl_idx = m_wndPlaylist.GetCurSel();
 	switch (m_wndPluginType.GetCurSel())
 	{
 		case 0: // Edem
 		{
-			switch (m_plistIdxOld)
+			switch (pl_idx)
 			{
 				case 0:
 				case 1:
@@ -3374,7 +3363,7 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 		}
 		case 1: // Sharavoz
 		{
-			switch (m_plistIdxOld)
+			switch (pl_idx)
 			{
 				case 0:
 					enableCustom = TRUE;
@@ -3392,7 +3381,7 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 
 	m_wndDownloadUrl.EnableWindow(enableDownload);
 	m_wndChooseUrl.EnableWindow(enableCustom);
-	theApp.WriteProfileInt(GetPluginRegPath().c_str(), REG_PLAYLIST_TYPE, m_plistIdxOld);
+	theApp.WriteProfileInt(GetPluginRegPath().c_str(), REG_PLAYLIST_TYPE, pl_idx);
 	LoadPlaylist();
 }
 

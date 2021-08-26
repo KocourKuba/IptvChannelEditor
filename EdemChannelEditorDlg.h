@@ -271,8 +271,6 @@ protected:
 	CString m_infoVideo; // m_wndInfoVideo
 	CString m_infoAudio; // m_wndInfoAudio
 
-	int m_pluginIdxOld = -2;
-	int m_plistIdxOld = -2;
 	BOOL m_hasArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
 	CString m_streamID; // m_wndStreamID
