@@ -1305,6 +1305,7 @@ HCURSOR CEdemChannelEditorDlg::OnQueryDragIcon()
 
 void CEdemChannelEditorDlg::OnAddCategory()
 {
+	CWaitCursor cur;
 	BOOL autoSyncOld = m_bAutoSync;
 	m_bAutoSync = FALSE;
 
@@ -2789,6 +2790,8 @@ bool CEdemChannelEditorDlg::IsPlaylistCategory(HTREEITEM hItem) const
 
 void CEdemChannelEditorDlg::OnAddUpdateChannel()
 {
+	CWaitCursor cur;
+
 	bool needCheckExisting = false;
 	for (const auto& hSelectedItem : m_wndPlaylistTree.GetSelectedItems())
 	{

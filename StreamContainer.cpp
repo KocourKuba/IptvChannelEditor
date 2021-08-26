@@ -5,9 +5,9 @@
 #include "uri_edem.h"
 #include "uri_sharavoz.h"
 
-StreamContainer::StreamContainer(StreamType type)
+StreamContainer::StreamContainer(StreamType type) : stream_type(type)
 {
-	switch (type)
+	switch (stream_type)
 	{
 		case StreamType::enNoStream: // ChannelsCategory
 			stream_uri = std::make_unique<uri_nostream>();

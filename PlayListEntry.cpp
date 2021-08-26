@@ -13,6 +13,10 @@ bool PlaylistEntry::Parse(const std::string& str)
 			stream_uri->parse_uri(str);
 			domain = stream_uri->get_domain();
 			access_key = stream_uri->get_uid();
+			if (stream_type == StreamType::enSharovoz)
+			{
+				set_tvg_id(utils::char_to_int(get_stream_uri()->get_id()));
+			}
 			return true;
 		case m3u_entry::ext_group:
 			category = utils::utf8_to_utf16(m3uEntry.get_dvalue());
