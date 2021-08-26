@@ -22,6 +22,8 @@ abstract class DefaultConfig
     public $EPG_URL_FORMAT = 'http://online.dune-hd.com/epg/%d.json';
     public $TVG_URL_FORMAT = 'http://online.dune-hd.com/%d.html';
     public $EPG_CACHE_DIR = '/tmp/epg/';
+    public $TVG_PROVIDER = 'unknown';
+    public $EPG_PROVIDER = 'unknown';
 
     abstract public function AdjustStreamUri($plugin_cookies, $archive_ts, $url);
 }

@@ -5,8 +5,6 @@ class SharavozPluginConfig extends DefaultConfig
 {
     public function __construct()
     {
-        parent::__construct();
-
         $this->PluginName = 'Sharavoz TV';
         $this->PluginVersion = '1.0.0';
         $this->PluginDate = '27.07.2021';
@@ -16,6 +14,8 @@ class SharavozPluginConfig extends DefaultConfig
         $this->EPG_URL_FORMAT = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s';
         $this->TVG_URL_FORMAT = 'http://api.program.spr24.net/api/program?epg=%s&date=%s';
         $this->EPG_CACHE_DIR = '/tmp/sharavoz_epg/';
+        $this->TVG_PROVIDER = 'sharavoz';
+        $this->EPG_PROVIDER = 'arlekino';
     }
 
     public function AdjustStreamUri($plugin_cookies, $archive_ts, $url)

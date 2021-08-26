@@ -13,10 +13,7 @@ class StarnetPluginTv extends AbstractTv
 {
     public function __construct(DefaultConfig $config)
     {
-        parent::__construct(
-            AbstractTv::MODE_CHANNELS_N_TO_M,
-            $config,
-            false);
+        parent::__construct(AbstractTv::MODE_CHANNELS_N_TO_M, $config, false);
     }
 
     public function get_fav_icon_url()
@@ -203,7 +200,6 @@ class StarnetPluginTv extends AbstractTv
             if ($channel->is_protected() && $protect_code !== $pass_sex) {
                 throw new Exception('Wrong password');
             }
-
         } catch (Exception $ex) {
             return '';
         }
@@ -281,8 +277,9 @@ class StarnetPluginTv extends AbstractTv
 
             try {
                 // teleguide.info first. Otherwise, try to get info from epg.ott-play.com
+                // sharavoz tvg not present but used as backup epg source
                 $id = ($tvg_id ?: $epg_id);
-                $provider = ($tvg_id ? $this->config->TVG_URL_FORMAT : $this->config->EPG_URL_FORMAT);
+                $provider = ($tvg_id ? $this->config->TVG_PROVIDER : $this->config->EPG_PROVIDER);
                 $epg = $this->get_epg($provider, $id, $epg_date, $day_start_ts);
             }
             catch (Exception $ex) {
@@ -317,33 +314,44 @@ class StarnetPluginTv extends AbstractTv
     /**
      * @throws Exception
      */
-    protected function get_epg($provider, $id, $epg_date, $day_start_ts)
+    protected function get_epg($provider, $epg_id, $epg_date, $day_start_ts)
     {
         $epg = array();
 
         switch ($provider) {
-            case $this->config->EPG_URL_FORMAT:
-                $url = sprintf($provider, $id);
-                $doc = HD::http_get_document($url);
-                // time in UTC
-                $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
-                $epg_date_new = strtotime('-1 hour', $day_start_ts);
-                $epg_date_end = strtotime('+1 day', $day_start_ts);
-                foreach ($ch_data->epg_data as $channel) {
-                    if ($channel->time >= $epg_date_new and $channel->time < $epg_date_end) {
-                        $epg[$channel->time]['title'] = $channel->name;
-                        $epg[$channel->time]['desc'] = $channel->descr;
-                    }
-                }
+            case 'ott-play':
+                $url = sprintf($this->config->EPG_URL_FORMAT, $epg_id);
                 break;
-            case $this->config->TVG_URL_FORMAT:
-                $url = sprintf($provider, $id, $epg_date);
-                $doc = HD::http_get_document($url);
+            case 'arlekino':
+                $url = sprintf($this->config->EPG_URL_FORMAT, $epg_id, $epg_date);
+                break;
+            case 'teleguide':
+            case 'sharavoz':
+                $url = sprintf($this->config->TVG_URL_FORMAT, $epg_id, $epg_date);
+                break;
+            default:
+                break;
+        }
+
+        if (empty($url)) {
+            hd_print("Unknown provider: $provider");
+            return $epg;
+        }
+
+        hd_print("provider:$provider epg url: $url");
+        $doc = HD::http_get_document($url);
+        switch ($provider) {
+            case 'arlekino':
+            case 'ott-play':
+            case 'sharavoz':
+                $epg = $this->parse_epg_json($doc, $day_start_ts);
+                break;
+            case 'teleguide':
                 // tvguide.info time in GMT+3 (moscow time)
                 // $timezone_suffix = date('T');
                 $e_time = strtotime("$epg_date, 0300 GMT+3");
                 preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
-                foreach ($keywords[1] as $key => $qid) {
+                foreach ($keywords[1] as $qid) {
                     $qq = strip_tags($qid);
                     preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
                     $time = $keyw[1][0];
@@ -354,10 +362,25 @@ class StarnetPluginTv extends AbstractTv
                 }
                 break;
 			default:
-                hd_print("Unknown provider: $provider");
 				break;
         }
 
+        return $epg;
+    }
+
+    protected function parse_epg_json($doc, $day_start_ts)
+    {
+        $epg = array();
+        $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
+        // time in UTC
+        $epg_date_start = strtotime('-1 hour', $day_start_ts);
+        $epg_date_end = strtotime('+1 day', $day_start_ts);
+        foreach ($ch_data->epg_data as $channel) {
+            if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
+                $epg[$channel->time]['title'] = $channel->name;
+                $epg[$channel->time]['desc'] = $channel->descr;
+            }
+        }
         return $epg;
     }
 }

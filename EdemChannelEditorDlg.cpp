@@ -219,6 +219,7 @@ void CEdemChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_CBIndex(pDX, IDC_COMBO_PLUGIN_TYPE, m_pluginIdx);
+	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
 	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_hasArchive);
 	DDX_Control(pDX, IDC_CHECK_ARCHIVE, m_wndArchive);
 	DDX_Check(pDX, IDC_CHECK_ADULT, m_isAdult);
@@ -428,6 +429,8 @@ BOOL CEdemChannelEditorDlg::OnInitDialog()
 
 void CEdemChannelEditorDlg::SwitchPlugin()
 {
+	m_pluginIdxOld = m_pluginIdx;
+
 	// Rebuld available playlist types and set current plugin parameters
 	switch (m_pluginIdx)
 	{
@@ -612,17 +615,28 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 	else if (utils::CrackUrl(utils::utf16_to_utf8(url.GetString())))
 	{
-		if (utils::DownloadFile(utils::utf16_to_utf8(url.GetString()), *data) && saveToFile)
+		if (utils::DownloadFile(utils::utf16_to_utf8(url.GetString()), *data))
 		{
-			std::ofstream os(m_plFileName);
-			os.write((char*)data->data(), data->size());
-			os.close();
+			if(saveToFile)
+			{
+				std::ofstream os(m_plFileName);
+				os.write((char*)data->data(), data->size());
+				os.close();
+				return;
+			}
+		}
+		else
+		{
+			AfxMessageBox(_T("Unable to download playlist!"), MB_OK | MB_ICONERROR);
 			return;
 		}
 	}
 
 	if (data->empty())
+	{
+		AfxMessageBox(_T("Empty playlist!"), MB_OK | MB_ICONERROR);
 		return;
+	}
 
 	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
 	m_wndProgress.SetPos(0);
@@ -635,10 +649,14 @@ void CEdemChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 
 	m_loading = TRUE;
+
+	m_wndPluginType.EnableWindow(FALSE);
 	m_wndGetInfo.EnableWindow(FALSE);
 	m_wndCheckArchive.EnableWindow(FALSE);
 	m_wndPlaylist.EnableWindow(FALSE);
 	m_wndPlaylistTree.EnableWindow(FALSE);
+	m_wndChannels.EnableWindow(FALSE);
+	m_wndChannelsTree.EnableWindow(FALSE);
 	m_evtStop.ResetEvent();
 
 	CPlaylistParseThread::ThreadConfig cfg;
@@ -655,9 +673,12 @@ LRESULT CEdemChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 {
 	m_playlistEntries.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
 
+	m_wndPluginType.EnableWindow(TRUE);
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndPlSearch.EnableWindow(!m_channelsMap.empty());
 	m_wndPlaylistTree.EnableWindow(TRUE);
+	m_wndChannels.EnableWindow(TRUE);
+	m_wndChannelsTree.EnableWindow(TRUE);
 
 	FillTreePlaylist();
 
@@ -828,7 +849,7 @@ void CEdemChannelEditorDlg::FillTreeChannels()
 void CEdemChannelEditorDlg::UpdateChannelsCount()
 {
 	CString str;
-	str.Format(_T("Channels: %s (%d)"), m_chFileName.GetString(), m_channelsMap.size());
+	str.Format(_T("Channels: %s - %d"), m_chFileName.GetString(), m_channelsMap.size());
 	m_wndChInfo.SetWindowText(str);
 
 	UpdateData(FALSE);
@@ -840,9 +861,9 @@ void CEdemChannelEditorDlg::UpdatePlaylistCount()
 
 	CString str;
 	if (m_playlistIds.size() != m_playlistMap.size())
-		str.Format(_T("Playlist: %s %d (%d)"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size());
+		str.Format(_T("Playlist: %s - %d (%d)"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size());
 	else
-		str.Format(_T("Playlist: %s %d"), m_plFileName.GetString(), m_playlistIds.size());
+		str.Format(_T("Playlist: %s - %d"), m_plFileName.GetString(), m_playlistIds.size());
 
 	m_wndPlInfo.SetWindowText(str);
 	UpdateData(FALSE);
@@ -1214,7 +1235,7 @@ bool CEdemChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
 	}
 
 	auto fav_category = std::make_unique<ChannelCategory>(StreamType::enNoStream);
-	fav_category->set_icon_uri("plugin_file:////icons//fav.png");
+	fav_category->set_icon_uri("plugin_file://icons/fav.png");
 	fav_category->set_title(L"Favorites");
 	fav_category->set_key(ID_ADD_TO_FAVORITE);
 
@@ -1621,6 +1642,10 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 					{
 						utils::SetImage(img, m_wndIcon);
 					}
+					else
+					{
+						m_wndIcon.SetBitmap(nullptr);
+					}
 				}
 			}
 		}
@@ -1631,7 +1656,7 @@ void CEdemChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 
 	m_wndCustom.EnableWindow(enable);
 	m_wndTvgID.EnableWindow(enable && m_pluginType == StreamType::enEdem);
-	m_wndEpgID.EnableWindow(enable);
+	m_wndEpgID.EnableWindow(enable && m_pluginType == StreamType::enEdem);
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
 	m_wndTestTVG.EnableWindow(enable && m_pluginType == StreamType::enEdem);
@@ -2573,7 +2598,7 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 
 	CFileDialog dlg(TRUE);
 	CString path = theApp.GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
-	CString file = theApp.GetAppPath(utils::PLUGIN_ROOT).c_str() + m_iconUrl;
+	CString file(path);
 	file.Replace('/', '\\');
 
 	CString filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
@@ -2628,6 +2653,7 @@ void CEdemChannelEditorDlg::OnStnClickedStaticIcon()
 			if (utils::LoadImage(entry->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
 			{
 				entry->set_icon(img);
+				utils::SetImage(entry->get_icon(), m_wndIcon);
 			}
 		}
 
@@ -2972,7 +2998,7 @@ void CEdemChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 	CFileDialog dlg(FALSE);
 
 	const auto& pluginName = GetPluginName();
-	const auto& name = fmt::format(_T("{:s}_channels_list.xml"), pluginName.c_str());
+	const auto& name = fmt::format(_T("{:s}_channel_list.xml"), pluginName.c_str());
 
 	auto& newList = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), pluginName.c_str());
 	std::filesystem::create_directory(newList);
@@ -3236,13 +3262,12 @@ void CEdemChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 
 void CEdemChannelEditorDlg::OnCbnSelchangeComboPluginType()
 {
-	int old = m_pluginIdx;
+	if (m_pluginIdx == m_pluginIdxOld)
+		return;
 
-	UpdateData(TRUE);
-
-	if (m_pluginIdx != old && is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
 	{
-		m_pluginIdx = old;
+		m_pluginIdx = m_pluginIdxOld;
 		UpdateData(FALSE);
 		return;
 	}

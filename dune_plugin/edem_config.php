@@ -14,6 +14,8 @@ class EdemPluginConfig extends DefaultConfig
         $this->EPG_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%d.json';
         $this->TVG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';
         $this->EPG_CACHE_DIR = '/tmp/edem_epg/';
+        $this->TVG_PROVIDER = 'teleguide';
+        $this->EPG_PROVIDER = 'ott-play';
     }
 
     public function AdjustStreamUri($plugin_cookies, $archive_ts, $url)

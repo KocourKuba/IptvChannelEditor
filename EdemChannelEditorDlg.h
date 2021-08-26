@@ -223,6 +223,7 @@ protected:
 	// GUI controls and variables
 
 	CToolTipCtrl m_pToolTipCtrl;
+	CComboBox m_wndPluginType;
 	CTreeCtrlEx m_wndChannelsTree;
 	CComboBox m_wndPlaylist;
 	CTreeCtrlEx m_wndPlaylistTree;
@@ -269,6 +270,7 @@ protected:
 	CString m_infoAudio; // m_wndInfoAudio
 
 	int m_pluginIdx = 0;
+	int m_pluginIdxOld = -1;
 	BOOL m_hasArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
 	CString m_streamID; // m_wndStreamID

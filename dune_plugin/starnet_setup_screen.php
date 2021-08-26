@@ -31,10 +31,10 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $format        = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
         $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->tv->config->CHANNEL_LIST_URL;
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
-        $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0;
-        $epg_prev = isset($plugin_cookies->epg_prev) ? $plugin_cookies->epg_prev : 7;
-        $epg_next = isset($plugin_cookies->epg_next) ? $plugin_cookies->epg_next : 7;
+        $show_tv       = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
+        $buf_time      = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
+        $epg_prev      = isset($plugin_cookies->epg_prev) ? $plugin_cookies->epg_prev : 7;
+        $epg_next      = isset($plugin_cookies->epg_next) ? $plugin_cookies->epg_next : 7;
 
         $show_ops = array();
         $show_ops['yes'] = 'Да';
@@ -49,9 +49,10 @@ class StarnetSetupScreen extends AbstractControlsScreen
         }
 
         ControlFactory::add_vgap($defs, -10);
-        $this->add_label($defs, $this->tv->config->PuginName, 'Версия ' . $this->tv->config->PluginVersion . '. [' . $this->tv->config->PluginDate . ']');
+        $title = $this->tv->config->PluginName . ' v.' . $this->tv->config->PluginVersion . '. [' . $this->tv->config->PluginDate . ']';
+        $this->add_button($defs, 'restart', $title, 'Перезагрузить плеер', 0);
 
-        $this->add_combobox($defs,'show_tv', 'Показывать ' . $this->tv->config->PuginName .' TV в главном меню:',
+        $this->add_combobox($defs,'show_tv', 'Показывать ' . $this->tv->config->PluginName .' TV в главном меню:',
             $show_tv, $show_ops, 0, true);
 
         if (PLUGIN_TYPE === 'SharavozPluginConfig') {
@@ -101,7 +102,6 @@ class StarnetSetupScreen extends AbstractControlsScreen
             $epg_font_size, $epg_font_size_ops, 700, true);
 
         $this->add_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль', 0);
-        $this->add_button($defs, 'restart', '', 'Перезагрузить плеер', 0);
         ControlFactory::add_vgap($defs, -10);
 
         return $defs;
