@@ -477,7 +477,9 @@ void CEdemChannelEditorDlg::SwitchPlugin()
 	m_all_channels_lists.clear();
 
 	const auto& channelsPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
-	for (auto const& dir_entry : std::filesystem::directory_iterator{ channelsPath })
+	std::error_code err;
+	std::filesystem::directory_iterator dir_iter(channelsPath, err);
+	for (auto const& dir_entry : dir_iter)
 	{
 		const auto& path = dir_entry.path();
 		if (path.extension() == _T(".xml"))
@@ -3813,6 +3815,9 @@ void CEdemChannelEditorDlg::OnCbnSelchangeComboChannels()
 	}
 
 	int idx = m_wndChannels.GetCurSel();
+	if (idx == -1)
+		return;
+
 	bool changed = false;
 	if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx), changed))
 	{
