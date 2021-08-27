@@ -252,7 +252,6 @@ protected:
 	CButton m_wndTestEPG;
 	CButton m_wndChooseUrl;
 	CButton m_wndDownloadUrl;
-	CButton m_wndGetInfo;
 	CButton m_wndCheckArchive;
 	CButton m_wndCacheIcon;
 	CButton m_wndUpdateIcon;

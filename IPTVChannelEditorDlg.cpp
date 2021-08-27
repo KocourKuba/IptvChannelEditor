@@ -113,8 +113,6 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnUpdateButtonSearchNext)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter)
-	ON_BN_CLICKED(IDC_BUTTON_GET_INFO, &CIPTVChannelEditorDlg::OnGetStreamInfo)
-	ON_UPDATE_COMMAND_UI(IDC_BUTTON_GET_INFO, &CIPTVChannelEditorDlg::OnUpdateGetStreamInfo)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList)
 	ON_BN_CLICKED(IDC_BUTTON_ACCESS_INFO, &CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
@@ -261,7 +259,6 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_ARCHIVE_DAYS, m_archiveDays);
 	DDX_Control(pDX, IDC_EDIT_INFO_AUDIO, m_wndInfoAudio);
 	DDX_Control(pDX, IDC_STATIC_CHANNELS, m_wndChInfo);
-	DDX_Control(pDX, IDC_BUTTON_GET_INFO, m_wndGetInfo);
 	DDX_Control(pDX, IDC_BUTTON_CHECK_ARCHIVE, m_wndCheckArchive);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylist);
 	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
@@ -339,7 +336,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Use custom stream URL for the channel"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Channel archive is supported"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Channel contents for adults"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_GET_INFO), _T("Get info about selected channel or playlist entry"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Store icon to the local folder instead of downloading it from internet"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Save channels list"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ACCESS_INFO), _T("Provider access parameters"));
@@ -666,7 +662,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_loading = TRUE;
 
 	m_wndPluginType.EnableWindow(FALSE);
-	m_wndGetInfo.EnableWindow(FALSE);
 	m_wndCheckArchive.EnableWindow(FALSE);
 	m_wndPlaylist.EnableWindow(FALSE);
 	m_wndPlaylistTree.EnableWindow(FALSE);
@@ -705,7 +700,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 
 	m_loading = FALSE;
 	m_wndPlaylist.EnableWindow(TRUE);
-	m_wndGetInfo.EnableWindow(TRUE);
 	m_wndCheckArchive.EnableWindow(TRUE);
 
 	AfxGetApp()->EndWaitCursor();
@@ -1681,15 +1675,8 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				if (category)
 				{
 					m_iconUrl = category->get_icon_uri().get_uri().c_str();
-					CImage img;
-					if (utils::LoadImage(category->get_icon_absolute_path(), img))
-					{
-						utils::SetImage(img, m_wndIcon);
-					}
-					else
-					{
-						m_wndIcon.SetBitmap(nullptr);
-					}
+					const auto& img = GetIconCache().get_icon(category->get_title(), category->get_icon_absolute_path());
+					utils::SetImage(img, m_wndIcon);
 				}
 			}
 		}
@@ -1727,11 +1714,6 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		}
 
 		bEnable = bEnable && bSameType;
-		m_wndGetInfo.EnableWindow(bEnable && !m_loading);
-	}
-	else
-	{
-		m_wndGetInfo.EnableWindow(state && !m_loading);
 	}
 
 	UpdateData(FALSE);

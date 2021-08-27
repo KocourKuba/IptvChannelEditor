@@ -25,7 +25,6 @@
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
 #define IDC_BUTTON_GET                  1007
-#define IDC_BUTTON_GET_INFO             1008
 #define IDC_BUTTON_IMPORT               1010
 #define IDC_BUTTON_ADD_NEW_CHANNELS_LIST 1011
 #define IDC_BUTTON_LOAD_PLAYLIST        1012
@@ -122,7 +121,7 @@
 #define ID_ADD_TO_FAVORITE              32798
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
