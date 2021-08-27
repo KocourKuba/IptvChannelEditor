@@ -29,7 +29,7 @@ BOOL CPlaylistParseThread::InitInstance()
 		if (stream.good())
 		{
 			int step = 0;
-			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType);
+			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 			std::string line;
 			while (std::getline(stream, line))
 			{
@@ -45,7 +45,7 @@ BOOL CPlaylistParseThread::InitInstance()
 				if (!line.empty() && entry->Parse(line))
 				{
 					entries->emplace_back(entry);
-					entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType);
+					entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 				}
 			}
 		}

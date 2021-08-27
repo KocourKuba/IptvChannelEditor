@@ -17,8 +17,8 @@ public:
 
 public:
 	ChannelCategory() = delete;
-	ChannelCategory(StreamType streamType);
-	ChannelCategory(rapidxml::xml_node<>* node, StreamType streamType);
+	ChannelCategory(StreamType streamType, const std::wstring& root_path);
+	ChannelCategory(rapidxml::xml_node<>* node, StreamType streamType, const std::wstring& root_path);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);

@@ -41,15 +41,13 @@ public:
 
 public:
 	ChannelInfo() = delete;
-	ChannelInfo(StreamType streamType);
-	ChannelInfo(rapidxml::xml_node<>* node, StreamType streamType);
+	ChannelInfo(StreamType streamType, const std::wstring& root_path);
+	ChannelInfo(rapidxml::xml_node<>* node, StreamType streamType, const std::wstring& root_path);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);
 
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& doc) const;
-
-	std::string GetIconRelativePath(LPCSTR szRoot = nullptr) const;
 
 // Getters/Setters
 

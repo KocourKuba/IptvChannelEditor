@@ -3,12 +3,14 @@
 #include "utils.h"
 #include "ChannelCategory.h"
 
-ChannelInfo::ChannelInfo(StreamType streamType) : BaseInfo(InfoType::enChannel, streamType)
+ChannelInfo::ChannelInfo(StreamType streamType, const std::wstring& root_path)
+	: BaseInfo(InfoType::enChannel, streamType, root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
 }
 
-ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node, StreamType streamType) : BaseInfo(InfoType::enChannel, streamType)
+ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node, StreamType streamType, const std::wstring& root_path)
+	: BaseInfo(InfoType::enChannel, streamType, root_path)
 {
 	ParseNode(node);
 }
@@ -114,9 +116,4 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 bool ChannelInfo::is_icon_local() const
 {
 	return (get_icon_uri().get_schema() == "plugin_file://");
-}
-
-std::string ChannelInfo::GetIconRelativePath(LPCSTR szRoot /*= nullptr*/) const
-{
-	return get_icon_absolute_path(szRoot);
 }

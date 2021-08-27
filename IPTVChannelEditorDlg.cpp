@@ -17,6 +17,7 @@
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
 #include "PlaylistParseThread.h"
+#include "IconCache.h"
 #include "utils.h"
 
 #include "rapidxml.hpp"
@@ -481,6 +482,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_wndChannels.SetCurSel(idx);
 
 	// load stream info
+	m_stream_infos.clear();
 	const auto& path = channelsPath + _T("stream_info.bin");
 	std::ifstream is(path, std::istream::binary);
 	if (is.good())
@@ -656,6 +658,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	cfg.m_data = data.release();
 	cfg.m_hStop = m_evtStop;
 	cfg.m_pluginType = m_pluginType;
+	cfg.m_rootPath = theApp.GetAppPath(utils::PLUGIN_ROOT);
 
 	pThread->SetData(cfg);
 	pThread->ResumeThread();
@@ -1047,13 +1050,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		if(m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 		{
 			m_iconUrl = channel->get_icon_uri().get_uri().c_str();
-			CImage img;
-			if (utils::LoadImage(channel->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
-			{
-				channel->set_icon(img);
-			}
-
-			utils::SetImage(channel->get_icon(), m_wndIcon);
+			const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
+			utils::SetImage(img, m_wndIcon);
 		}
 	}
 	else
@@ -1098,13 +1096,8 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 			m_infoVideo = pair->second.second.c_str();
 		}
 
-		CImage img;
-		if (utils::LoadImage(entry->get_icon_uri().get_uri(), img))
-		{
-			entry->set_icon(img);
-		}
-
-		utils::SetImage(entry->get_icon(), m_wndPlIcon);
+		const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
+		utils::SetImage(img, m_wndPlIcon);
 
 		if (m_bAutoSync)
 		{
@@ -1257,16 +1250,17 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
 		m_embedded_info = TRUE;
 	}
 
+	const auto& root_path = theApp.GetAppPath(utils::PLUGIN_ROOT);
 	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(ChannelCategory::TV_CATEGORY);
 	// Iterate <tv_category> nodes
 	while (cat_node)
 	{
-		auto category = std::make_unique<ChannelCategory>(cat_node, StreamType::enBase);
+		auto category = std::make_unique<ChannelCategory>(cat_node, StreamType::enBase, root_path);
 		m_categoriesMap.emplace(category->get_key(), std::move(category));
 		cat_node = cat_node->next_sibling();
 	}
 
-	auto fav_category = std::make_unique<ChannelCategory>(StreamType::enBase);
+	auto fav_category = std::make_unique<ChannelCategory>(StreamType::enBase, root_path);
 	fav_category->set_icon_uri("plugin_file://icons/fav.png");
 	fav_category->set_title(L"Favorites");
 	fav_category->set_key(ID_ADD_TO_FAVORITE);
@@ -1275,7 +1269,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
 	// Iterate <tv_channel> nodes
 	while (ch_node)
 	{
-		auto channel = std::make_shared<ChannelInfo>(ch_node, StreamType::enChannels);
+		auto channel = std::make_shared<ChannelInfo>(ch_node, StreamType::enChannels, root_path);
 		changed = channel->is_changed();
 		auto ch_pair = m_channelsMap.find(channel->get_id());
 		if (ch_pair == m_channelsMap.end())
@@ -1401,12 +1395,12 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 	if (!category)
 		return;
 
-	auto channel = std::make_shared<ChannelInfo>(StreamType::enChannels);
+	auto channel = std::make_shared<ChannelInfo>(StreamType::enChannels, theApp.GetAppPath(utils::PLUGIN_ROOT));
 	channel->set_title(L"New Channel");
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
 	CImage img;
-	if (utils::LoadImage(channel->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
+	if (utils::LoadImage(channel->get_icon_absolute_path(), img))
 	{
 		utils::SetImage(img, m_wndIcon);
 	}
@@ -1670,7 +1664,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				{
 					m_iconUrl = category->get_icon_uri().get_uri().c_str();
 					CImage img;
-					if (utils::LoadImage(category->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
+					if (utils::LoadImage(category->get_icon_absolute_path(), img))
 					{
 						utils::SetImage(img, m_wndIcon);
 					}
@@ -2565,13 +2559,13 @@ void CIPTVChannelEditorDlg::OnUpdateSave(CCmdUI* pCmdUI)
 void CIPTVChannelEditorDlg::OnNewCategory()
 {
 	auto category_id = GetNewCategoryID();
-	auto newCategory = std::make_unique<ChannelCategory>(StreamType::enBase);
+	auto newCategory = std::make_unique<ChannelCategory>(StreamType::enBase, theApp.GetAppPath(utils::PLUGIN_ROOT));
 	newCategory->set_key(category_id);
 	newCategory->set_title(L"New Category");
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
 
 	CImage img;
-	if (utils::LoadImage(newCategory->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
+	if (utils::LoadImage(newCategory->get_icon_absolute_path(), img))
 	{
 		utils::SetImage(img, m_wndIcon);
 	}
@@ -2711,12 +2705,8 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 		if (m_iconUrl != entry->get_icon_uri().get_uri().c_str())
 		{
 			entry->set_icon_uri(m_iconUrl.GetString());
-			CImage img;
-			if (utils::LoadImage(entry->get_icon_absolute_path(theApp.GetAppPath(utils::PLUGIN_ROOT)), img))
-			{
-				entry->set_icon(img);
-				utils::SetImage(entry->get_icon(), m_wndIcon);
-			}
+			const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
+			utils::SetImage(img, m_wndIcon);
 		}
 
 		set_allow_save();
@@ -2961,8 +2951,9 @@ void CIPTVChannelEditorDlg::OnUpdateIcon()
 	if (entry && channel && channel->get_icon_uri() != entry->get_icon_uri())
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
-		channel->copy_icon(entry->get_icon());
-		utils::SetImage(channel->get_icon(), m_wndIcon);
+		const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
+		utils::SetImage(img, m_wndIcon);
+
 		OnSyncTreeItem();
 		set_allow_save();
 	}
@@ -3006,17 +2997,12 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		std::vector<BYTE> image;
 		if (!utils::DownloadFile(channel->get_icon_uri().get_uri(), image)) continue;
 
+		channel->set_icon_uri(icon_uri.get_uri());
+
 		const auto& fullPath = icon_uri.get_filesystem_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
 		std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
 		os.write((char*)&image[0], image.size());
 		os.close();
-
-		CImage img;
-		if (utils::LoadImage(fullPath, img))
-		{
-			channel->set_icon_uri(icon_uri.get_uri());
-			channel->set_icon(img);
-		}
 
 		LoadChannelInfo(hItem);
 		set_allow_save();
@@ -3526,6 +3512,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	if (categoryId == -1)
 		categoryId = GetCategoryIdByName(entry->get_category());
 
+	const auto& root_path = theApp.GetAppPath(utils::PLUGIN_ROOT);
 	std::shared_ptr<ChannelCategory> category;
 	if (categoryId != -1)
 	{
@@ -3534,7 +3521,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	else
 	{
 		// Category not exist, create new
-		category = std::make_shared<ChannelCategory>(StreamType::enBase);
+		category = std::make_shared<ChannelCategory>(StreamType::enBase, root_path);
 		categoryId = GetNewCategoryID();
 		category->set_key(categoryId);
 		category->set_title(entry->get_category());
@@ -3569,7 +3556,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	else
 	{
 		// Create new channel
-		auto newChannel = std::make_unique<ChannelInfo>(StreamType::enChannels);
+		auto newChannel = std::make_unique<ChannelInfo>(StreamType::enChannels, root_path);
 		newChannel->set_id(entry->get_id());
 		newChannel->set_title(entry->get_title());
 		// Add to channel array
@@ -3620,7 +3607,6 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	if (entry->get_icon_uri() != channel->get_icon_uri() && !channel->get_icon_uri().get_uri().empty())
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
-		channel->copy_icon(entry->get_icon());
 	}
 
 	// Channel for adult

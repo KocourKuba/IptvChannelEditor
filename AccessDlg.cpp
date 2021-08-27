@@ -73,7 +73,7 @@ void CAccessDlg::OnBnClickedBtnGet()
 
 	int step = 0;
 	std::string line;
-	auto entry = std::make_unique<PlaylistEntry>(m_streamType);
+	auto entry = std::make_unique<PlaylistEntry>(m_streamType, theApp.GetAppPath(utils::PLUGIN_ROOT));
 	while (std::getline(*pl_stream, line))
 	{
 		utils::string_rtrim(line, "\r");

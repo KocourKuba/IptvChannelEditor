@@ -5,7 +5,8 @@ class PlaylistEntry : public BaseInfo
 {
 public:
 	PlaylistEntry() = delete;
-	PlaylistEntry(StreamType streamType) : BaseInfo(InfoType::enPlEntry, streamType) {}
+	PlaylistEntry(StreamType streamType, const std::wstring& root_path)
+		: BaseInfo(InfoType::enPlEntry, streamType, root_path) {}
 
 	bool Parse(const std::string& str);
 

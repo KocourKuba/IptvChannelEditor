@@ -28,14 +28,14 @@ std::string uri_base::get_filesystem_path(const std::string& root) const
 	return get_uri();
 }
 
-std::string uri_base::get_filesystem_path(const std::wstring& root) const
+std::wstring uri_base::get_filesystem_path(const std::wstring& root) const
 {
 	if (is_local())
 	{
-		std::string rpath = utils::utf16_to_utf8(root) + get_path();
+		std::wstring rpath = root + utils::utf8_to_utf16(get_path());
 		std::replace(rpath.begin(), rpath.end(), '/', '\\');
 		return rpath;
 	}
 
-	return get_uri();
+	return utils::utf8_to_utf16(get_uri());
 }

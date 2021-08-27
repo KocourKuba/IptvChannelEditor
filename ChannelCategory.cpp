@@ -2,12 +2,14 @@
 #include "ChannelCategory.h"
 #include "utils.h"
 
-ChannelCategory::ChannelCategory(StreamType streamType) : BaseInfo(InfoType::enCategory, streamType)
+ChannelCategory::ChannelCategory(StreamType streamType, const std::wstring& root_path)
+	: BaseInfo(InfoType::enCategory, streamType, root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
 }
 
-ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node, StreamType streamType) : BaseInfo(InfoType::enCategory, streamType)
+ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node, StreamType streamType, const std::wstring& root_path)
+	: BaseInfo(InfoType::enCategory, streamType, root_path)
 {
 	ParseNode(node);
 }

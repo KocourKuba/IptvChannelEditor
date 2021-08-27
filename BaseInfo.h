@@ -10,7 +10,10 @@ class BaseInfo
 {
 public:
 	BaseInfo() = default;
-	BaseInfo(InfoType type, StreamType streamType) : StreamContainer(streamType), base_type(type) {};
+	BaseInfo(InfoType type, StreamType streamType, const std::wstring& root_path)
+		: StreamContainer(streamType)
+		, IconContainer(root_path)
+		, base_type(type) {};
 
 public:
 	virtual const std::string& get_id() const { return stream_uri->get_id(); }

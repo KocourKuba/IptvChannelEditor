@@ -183,6 +183,12 @@
     <ClInclude Include="fmt\ranges.h">
       <Filter>Header Files\fmt</Filter>
     </ClInclude>
+    <ClInclude Include="IconCache.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageContainer.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -253,6 +259,12 @@
     </ClCompile>
     <ClCompile Include="fmt\os.cc">
       <Filter>Source Files\fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="IconCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageContainer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

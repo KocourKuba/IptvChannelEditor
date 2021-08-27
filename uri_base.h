@@ -72,7 +72,7 @@ public:
 	/// </summary>
 	/// <returns>string</returns>
 	std::string get_filesystem_path(const std::string& root) const;
-	std::string get_filesystem_path(const std::wstring& root) const;
+	std::wstring get_filesystem_path(const std::wstring& root) const;
 
 	bool operator==(const uri_base& src) const { return src.get_schema() == schema && src.get_path() == path; }
 	bool operator!=(const uri_base& src) const { return src.get_schema() != schema && src.get_path() != path; }

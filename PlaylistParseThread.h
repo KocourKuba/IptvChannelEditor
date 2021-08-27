@@ -18,6 +18,7 @@ public:
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
 		StreamType m_pluginType = StreamType::enEdem;
+		std::wstring m_rootPath;
 	};
 
 protected:
