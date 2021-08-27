@@ -847,8 +847,6 @@ void CIPTVChannelEditorDlg::UpdateChannelsCount()
 
 void CIPTVChannelEditorDlg::UpdatePlaylistCount()
 {
-	const auto& filterString = theApp.GetProfileString(REG_SETTINGS, REG_FILTER_STRING);
-
 	CString str;
 	if (m_playlistIds.size() != m_playlistMap.size())
 		str.Format(_T("Playlist: %s - %d (%d)"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size());
@@ -2282,9 +2280,10 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	m_wndPlaylistTree.DeleteAllItems();
 
 	// Filter out playlist
-	auto filter = theApp.GetProfileString(REG_SETTINGS, REG_FILTER_STRING);
-	auto bRegex = theApp.GetProfileInt(REG_SETTINGS, REG_FILTER_REGEX, FALSE);
-	auto bCase = theApp.GetProfileInt(REG_SETTINGS, REG_FILTER_CASE, FALSE);
+	const auto& regPath = GetPluginRegPath();
+	auto filter = theApp.GetProfileString(regPath.c_str(), REG_FILTER_STRING);
+	auto bRegex = theApp.GetProfileInt(regPath.c_str(), REG_FILTER_REGEX, FALSE);
+	auto bCase = theApp.GetProfileInt(regPath.c_str(), REG_FILTER_CASE, FALSE);
 
 	std::wregex re;
 	if (bRegex)
@@ -3818,15 +3817,17 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 void CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter()
 {
 	CFilterDialog dlg;
-	dlg.m_filterString = theApp.GetProfileString(REG_SETTINGS, REG_FILTER_STRING);
-	dlg.m_filterRegex = theApp.GetProfileInt(REG_SETTINGS, REG_FILTER_REGEX, FALSE);
-	dlg.m_filterCase = theApp.GetProfileInt(REG_SETTINGS, REG_FILTER_CASE, FALSE);
+
+	const auto& regPath = GetPluginRegPath();
+	dlg.m_filterString = theApp.GetProfileString(regPath.c_str(), REG_FILTER_STRING);
+	dlg.m_filterRegex = theApp.GetProfileInt(regPath.c_str(), REG_FILTER_REGEX, FALSE);
+	dlg.m_filterCase = theApp.GetProfileInt(regPath.c_str(), REG_FILTER_CASE, FALSE);
 
 	if (dlg.DoModal() == IDOK)
 	{
-		theApp.WriteProfileString(REG_SETTINGS, REG_FILTER_STRING, dlg.m_filterString);
-		theApp.WriteProfileInt(REG_SETTINGS, REG_FILTER_REGEX, dlg.m_filterRegex);
-		theApp.WriteProfileInt(REG_SETTINGS, REG_FILTER_CASE, dlg.m_filterCase);
+		theApp.WriteProfileString(regPath.c_str(), REG_FILTER_STRING, dlg.m_filterString);
+		theApp.WriteProfileInt(regPath.c_str(), REG_FILTER_REGEX, dlg.m_filterRegex);
+		theApp.WriteProfileInt(regPath.c_str(), REG_FILTER_CASE, dlg.m_filterCase);
 
 		FillTreePlaylist();
 	}
