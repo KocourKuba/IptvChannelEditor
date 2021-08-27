@@ -6,9 +6,9 @@ enum class StreamType
 	enBase = 0,
 	enChannels,
 	enEdem,
-	enSharovoz,
-	enGlanz,
+	enSharavoz,
 	enSharaclub,
+	enGlanz,
 };
 
 /// <summary>

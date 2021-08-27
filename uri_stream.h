@@ -25,7 +25,12 @@ public:
 	/// <summary>
 	/// parse uri to get id
 	/// </summary>
-	virtual void parse_uri(const std::string&) {}
+	virtual void parse_uri(const std::string& url)
+	{
+		// http://rtmp.api.rt.com/hls/rtdru.m3u8
+		set_template(false);
+		uri_base::set_uri(url);
+	}
 
 	/// <summary>
 	/// getter channel id
@@ -68,16 +73,16 @@ public:
 	virtual void set_domain(const std::string& val) { domain = val; };
 
 	/// <summary>
-	/// getter uid
+	/// getter token
 	/// </summary>
 	/// <returns></returns>
-	virtual const std::string& get_uid() const { return uid; };
+	virtual const std::string& get_token() const { return token; };
 
 	/// <summary>
-	/// setter uid
+	/// setter token
 	/// </summary>
 	/// <returns></returns>
-	virtual void set_uid(const std::string& val) { uid = val; };
+	virtual void set_token(const std::string& val) { token = val; };
 
 	const uri_stream& operator=(const uri_stream& src)
 	{
@@ -88,7 +93,7 @@ public:
 			set_template(src.is_template());
 			id = src.id;
 			domain = src.domain;
-			uid = src.uid;
+			token = src.token;
 			str_hash = src.str_hash;
 			hash = src.hash;
 		}
@@ -99,7 +104,7 @@ public:
 protected:
 	std::string id;
 	std::string domain;
-	std::string uid;
+	std::string token;
 	std::string uri_template;
 	mutable std::string str_hash;
 	mutable int hash = 0;

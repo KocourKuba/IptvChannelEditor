@@ -137,7 +137,7 @@ class StarnetPluginTv extends AbstractTv
                 $channel = new StarnetChannel(
                     $id,
                     strval($xml_tv_channel->caption),
-                    strval($xml_tv_channel->icon_url),
+                    str_replace('https', 'https', strval($xml_tv_channel->icon_url),
                     intval($xml_tv_channel->archive),
                     $streaming_url,
                     intval($xml_tv_channel->number),

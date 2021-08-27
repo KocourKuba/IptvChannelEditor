@@ -7,7 +7,7 @@ void uri_base::set_uri(const std::string& url)
 	clear();
 
 	// https, udp, http, file, plugin_file
-	static std::regex re(R"((http?:\/\/|plugin_file:\/\/)(.*))");
+	static std::regex re(R"((https?:\/\/|plugin_file:\/\/)(.*))");
 	std::smatch m;
 	if (std::regex_match(url, m, re))
 	{

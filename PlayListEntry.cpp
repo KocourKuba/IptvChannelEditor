@@ -12,8 +12,8 @@ bool PlaylistEntry::Parse(const std::string& str)
 		case m3u_entry::ext_pathname:
 			stream_uri->parse_uri(str);
 			domain = stream_uri->get_domain();
-			access_key = stream_uri->get_uid();
-			if (stream_type == StreamType::enSharovoz)
+			access_key = stream_uri->get_token();
+			if (stream_type == StreamType::enSharavoz)
 			{
 				set_epg2_id(utils::char_to_int(get_stream_uri()->get_id()));
 				set_epg1_id(get_epg2_id());

@@ -66,9 +66,9 @@ std::string CIPTVChannelEditorDlg::m_gl_access_key;
 std::string CIPTVChannelEditorDlg::m_ch_domain;
 std::string CIPTVChannelEditorDlg::m_ch_access_key;
 
-static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8";
-static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={UID}";
-
+static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
+static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
@@ -363,6 +363,11 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_probe = theApp.GetProfileString(REG_SETTINGS, REG_FFPROBE);
 	m_archiveCheck = theApp.GetProfileInt(REG_SETTINGS, REG_HOURS_BACK, 0);
 	m_bAutoSync = theApp.GetProfileInt(REG_SETTINGS, REG_AUTOSYNC, FALSE);
+
+	m_wndPluginType.AddString(_T("Edem (iLook TV)"));
+	m_wndPluginType.AddString(_T("Sharavoz TV"));
+	//m_wndPluginType.AddString(_T("Sharaclub TV"));
+
 	m_wndPluginType.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_PLUGIN, 0));
 
 	const auto& regPath = GetPluginRegPath();
@@ -431,8 +436,19 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		}
 		case 1: // Sharavoz
 		{
-			m_pluginType = StreamType::enSharovoz;
+			m_pluginType = StreamType::enSharavoz;
 			m_pluginName = _T("Sharavoz");
+
+			m_wndPlaylist.ResetContent();
+			m_wndPlaylist.AddString(_T("Custom URL"));
+			int idx = m_wndPlaylist.AddString(_T("Custom File"));
+			m_wndPlaylist.SetItemData(idx, TRUE);
+			break;
+		}
+		case 2: // Sharclub
+		{
+			m_pluginType = StreamType::enSharaclub;
+			m_pluginName = _T("Sharaclub");
 
 			m_wndPlaylist.ResetContent();
 			m_wndPlaylist.AddString(_T("Custom URL"));
@@ -509,6 +525,8 @@ std::wstring CIPTVChannelEditorDlg::GetPluginName() const
 			return L"edem";
 		case 1: // Sharavoz
 			return L"sharavoz";
+		case 2: // Sharaclub
+			return L"sharaclub";
 	}
 
 	return L"";
@@ -556,6 +574,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			break;
 		}
 		case 1: // Sharavoz
+		case 2: // Sharaclub
 		{
 			switch (idx)
 			{
@@ -847,22 +866,18 @@ void CIPTVChannelEditorDlg::FillTreeChannels()
 
 void CIPTVChannelEditorDlg::UpdateChannelsCount()
 {
-	CString str;
-	str.Format(_T("%s - %d"), m_chFileName.GetString(), m_channelsMap.size());
-	m_wndChInfo.SetWindowText(str);
+	m_wndChInfo.SetWindowText(fmt::format(_T("Channels: {:d}"), m_channelsMap.size()).c_str());
 
 	UpdateData(FALSE);
 }
 
 void CIPTVChannelEditorDlg::UpdatePlaylistCount()
 {
-	CString str;
 	if (m_playlistIds.size() != m_playlistMap.size())
-		str.Format(_T("%s - %d (%d)"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size());
+		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d} ({:d})"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size()).c_str());
 	else
-		str.Format(_T("%s - %d"), m_plFileName.GetString(), m_playlistIds.size());
+		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d}"), m_plFileName.GetString(), m_playlistIds.size()).c_str());
 
-	m_wndPlInfo.SetWindowText(str);
 	UpdateData(FALSE);
 }
 
@@ -872,14 +887,14 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri,
 {
 	// templated url changed, custom is unchanged
 	// edem
-	// http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8 -> http://ts://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8
-	// http://ts://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8 -> http://{SUBDOMAIN}/iptv/{UID}/204/index.m3u8
+	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8 -> http://ts://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8
+	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8 -> http://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8
 	// http://ts://rtmp.api.rt.com/hls/rtdru.m3u8 -> http://rtmp.api.rt.com/hls/rtdru.m3u8
-	// http://ts://{SUBDOMAIN}/iptv/{UID}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
+	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
 	//
 	// sharavoz
-	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={UID} -> http://{SUBDOMAIN}/204/index.m3u8?token={UID}
-	// http://{SUBDOMAIN}/204/index.m3u8?token={UID} -> http://domain.com/204/index.m3u8?token=adsdaSDFJKHKJd
+	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN} -> http://{SUBDOMAIN}/204/index.m3u8?token={TOKEN}
+	// http://{SUBDOMAIN}/204/index.m3u8?token={TOKEN} -> http://domain.com/204/index.m3u8?token=adsdaSDFJKHKJd
 
 	std::string uri_template;
 	switch (m_pluginType)
@@ -887,18 +902,20 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri,
 		case StreamType::enEdem:
 			uri_template = URI_TEMPLATE_EDEM;
 			break;
-		case StreamType::enSharovoz:
+		case StreamType::enSharavoz:
 			uri_template = URI_TEMPLATE_SHARAVOZ;
 			break;
-		case StreamType::enGlanz:
 		case StreamType::enSharaclub:
+			uri_template = URI_TEMPLATE_SHARACLUB;
+			break;
+		case StreamType::enGlanz:
 		default:
 			break;
 	}
 
 	auto& uri = stream_uri->is_template() ? utils::string_replace(uri_template, "{ID}", stream_uri->get_id()) : stream_uri->get_uri();
 	utils::string_replace_inplace(uri, "{SUBDOMAIN}", access_domain);
-	utils::string_replace_inplace(uri, "{UID}", access_key);
+	utils::string_replace_inplace(uri, "{TOKEN}", access_key);
 
 	return uri;
 }
@@ -909,7 +926,7 @@ std::string CIPTVChannelEditorDlg::GetEpg1Template() const
 	{
 		case StreamType::enEdem:
 			return "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
-		case StreamType::enSharovoz:
+		case StreamType::enSharavoz:
 			return "http://epg.arlekino.tv/api/program?epg={:d}&date={:4d}-{:02d}-{:02d}";
 		case StreamType::enBase:
 		case StreamType::enChannels:
@@ -928,7 +945,7 @@ std::string CIPTVChannelEditorDlg::GetEpg2Template() const
 	{
 		case StreamType::enEdem:
 			return "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
-		case StreamType::enSharovoz:
+		case StreamType::enSharavoz:
 			return "http://api.program.spr24.net/api/program?epg={:d}&date={:4d}-{:02d}-{:02d}";
 		case StreamType::enBase:
 		case StreamType::enChannels:
@@ -2195,7 +2212,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 			case StreamType::enEdem:
 				url = fmt::format(GetEpg1Template(), channel->get_epg1_id());
 				break;
-			case StreamType::enSharovoz:
+			case StreamType::enSharavoz:
 				url = fmt::format(GetEpg1Template(), channel->get_epg1_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 				break;
 			case StreamType::enGlanz:
@@ -2223,7 +2240,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 			case StreamType::enEdem:
 				url = fmt::format(GetEpg2Template(), channel->get_epg2_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 				break;
-			case StreamType::enSharovoz:
+			case StreamType::enSharavoz:
 				url = fmt::format(GetEpg2Template(), channel->get_epg2_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 				break;
 			case StreamType::enGlanz:
@@ -3361,6 +3378,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 			break;
 		}
 		case 1: // Sharavoz
+		case 2: // Sharaclub
 		{
 			switch (pl_idx)
 			{
@@ -3625,7 +3643,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 
 	channel->set_archive(entry->get_archive());
 	channel->set_stream_uri(entry->get_stream_uri());
-	if (entry->get_icon_uri() != channel->get_icon_uri() && !channel->get_icon_uri().get_uri().empty())
+	if (entry->get_icon_uri() != channel->get_icon_uri() && !entry->get_icon_uri().get_uri().empty())
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
 	}

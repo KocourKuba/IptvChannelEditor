@@ -192,6 +192,9 @@
     <ClInclude Include="IconsList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="uri_sharaclub.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -271,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="IconsList.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_sharaclub.cpp">
+      <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

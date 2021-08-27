@@ -3,6 +3,7 @@
 #include "uri_channels.h"
 #include "uri_edem.h"
 #include "uri_sharavoz.h"
+#include "uri_sharaclub.h"
 
 StreamContainer::StreamContainer(StreamType type) : stream_type(type)
 {
@@ -17,8 +18,11 @@ StreamContainer::StreamContainer(StreamType type) : stream_type(type)
 		case StreamType::enEdem: // Edem playlist
 			stream_uri = std::make_unique<uri_edem>();
 			break;
-		case StreamType::enSharovoz: // Sharavoz playlist
+		case StreamType::enSharavoz: // Sharavoz playlist
 			stream_uri = std::make_unique<uri_sharavoz>();
+			break;
+		case StreamType::enSharaclub: // Sharaclub playlist
+			stream_uri = std::make_unique<uri_sharaclub>();
 			break;
 		default:
 			ASSERT(false);

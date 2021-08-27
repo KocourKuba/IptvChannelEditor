@@ -10,13 +10,14 @@ static std::map<std::string, m3u_entry::directives> s_ext_directives = {
 };
 
 static std::map<std::string, m3u_entry::info_tags> s_tags = {
-	{ "channel-id",  m3u_entry::tag_channel_id  },
-	{ "group-title", m3u_entry::tag_group_title },
-	{ "tvg-id",      m3u_entry::tag_tvg_id      },
-	{ "tvg-logo",    m3u_entry::tag_tvg_logo    },
-	{ "tvg-rec",     m3u_entry::tag_tvg_rec     },
-	{ "tvg-name",    m3u_entry::tag_tvg_name    },
-	{ "tvg-shift",   m3u_entry::tag_tvg_shift   },
+	{ "channel-id",   m3u_entry::tag_channel_id   },
+	{ "group-title",  m3u_entry::tag_group_title  },
+	{ "tvg-id",       m3u_entry::tag_tvg_id       },
+	{ "tvg-logo",     m3u_entry::tag_tvg_logo     },
+	{ "tvg-rec",      m3u_entry::tag_tvg_rec      },
+	{ "tvg-name",     m3u_entry::tag_tvg_name     },
+	{ "tvg-shift",    m3u_entry::tag_tvg_shift    },
+	{ "timeshift",    m3u_entry::tag_tvg_shift    },
 };
 
 void m3u_entry::clear()

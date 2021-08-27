@@ -23,6 +23,7 @@ public:
 		tag_tvg_rec,
 		tag_tvg_name,
 		tag_tvg_shift,
+		tag_catchup_days,
 	} info_tags;
 
 public:
