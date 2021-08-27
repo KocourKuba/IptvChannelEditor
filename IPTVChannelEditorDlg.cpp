@@ -205,6 +205,7 @@ END_MESSAGE_MAP()
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
 	, m_evtStop(FALSE, TRUE)
+	, m_iconSourceIdx(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_plID = _T("ID:");
@@ -272,6 +273,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
 	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
 	DDX_Control(pDX, IDC_STATIC_PROGRESS_INFO, m_wndProgressInfo);
+	DDX_CBIndex(pDX, IDC_COMBO_ICON_SOURCE, m_iconSourceIdx);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -2643,6 +2645,8 @@ void CIPTVChannelEditorDlg::OnUpdateSortCategory(CCmdUI* pCmdUI)
 
 void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 {
+	UpdateData(TRUE);
+
 	auto hCur = m_wndChannelsTree.GetSelectedItem();
 	auto entry = GetBaseInfo(&m_wndChannelsTree, hCur);
 	if (!entry)
@@ -2651,66 +2655,73 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	if (IsCategory(hCur) && entry->get_key() == ID_ADD_TO_FAVORITE)
 		return;
 
-	CFileDialog dlg(TRUE);
-	CString path = theApp.GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
-	CString file(path);
-	file.Replace('/', '\\');
-
-	CString filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
-	filter.Replace('|', '\0');
-
-	OPENFILENAME& oFN = dlg.GetOFN();
-	oFN.lpstrFilter = filter.GetString();
-	oFN.nMaxFile = MAX_PATH;
-	oFN.nFilterIndex = 0;
-	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
-	oFN.lpstrTitle = _T("Load logotype image");
-	oFN.lpstrInitialDir = path.GetString();
-	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
-	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
-
-	dlg.ApplyOFNToShellDialog();
-	INT_PTR nResult = dlg.DoModal();
-	file.ReleaseBuffer();
-
-	if (nResult == IDOK)
+	if (m_iconSourceIdx == 0)
 	{
-		size_t len = _tcslen(oFN.lpstrFileTitle);
-		for (size_t i = 0; i < len; i++)
-		{
-			if (oFN.lpstrFileTitle[i] > 127)
-			{
-				AfxMessageBox(_T("Non ASCII symbols in the icon name is not allowed!"), MB_ICONERROR | MB_OK);
-				return;
-			}
-		}
+		CFileDialog dlg(TRUE);
+		CString path = theApp.GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
+		CString file(path);
+		file.Replace('/', '\\');
 
-		CString newPath = file.Left(file.GetLength() - len);
-		if (path.CompareNoCase(newPath) != 0)
+		CString filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
+		filter.Replace('|', '\0');
+
+		OPENFILENAME& oFN = dlg.GetOFN();
+		oFN.lpstrFilter = filter.GetString();
+		oFN.nMaxFile = MAX_PATH;
+		oFN.nFilterIndex = 0;
+		oFN.lpstrFile = file.GetBuffer(MAX_PATH);
+		oFN.lpstrTitle = _T("Load logotype image");
+		oFN.lpstrInitialDir = path.GetString();
+		oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
+		oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
+
+		dlg.ApplyOFNToShellDialog();
+		INT_PTR nResult = dlg.DoModal();
+		file.ReleaseBuffer();
+
+		if (nResult == IDOK)
 		{
-			path += oFN.lpstrFileTitle;
-			CopyFile(file, path, FALSE);
-			CImage img;
-			if (utils::LoadImage(path.GetString(), img))
+			size_t len = _tcslen(oFN.lpstrFileTitle);
+			for (size_t i = 0; i < len; i++)
 			{
+				if (oFN.lpstrFileTitle[i] > 127)
+				{
+					AfxMessageBox(_T("Non ASCII symbols in the icon name is not allowed!"), MB_ICONERROR | MB_OK);
+					return;
+				}
+			}
+
+			CString newPath = file.Left(file.GetLength() - len);
+			if (path.CompareNoCase(newPath) != 0)
+			{
+				path += oFN.lpstrFileTitle;
+				CopyFile(file, path, FALSE);
+				CImage img;
+				if (utils::LoadImage(path.GetString(), img))
+				{
+					utils::SetImage(img, m_wndIcon);
+				}
+			}
+
+			m_iconUrl = uri_base::PLUGIN_SCHEME;
+			m_iconUrl += IsChannel(hCur) ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
+			m_iconUrl += oFN.lpstrFileTitle;
+
+			if (m_iconUrl != entry->get_icon_uri().get_uri().c_str())
+			{
+				entry->set_icon_uri(m_iconUrl.GetString());
+				const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
 				utils::SetImage(img, m_wndIcon);
 			}
 		}
-
-		m_iconUrl = uri_base::PLUGIN_SCHEME;
-		m_iconUrl += IsChannel(hCur) ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
-		m_iconUrl += oFN.lpstrFileTitle;
-
-		if (m_iconUrl != entry->get_icon_uri().get_uri().c_str())
-		{
-			entry->set_icon_uri(m_iconUrl.GetString());
-			const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
-			utils::SetImage(img, m_wndIcon);
-		}
-
-		set_allow_save();
-		UpdateData(FALSE);
 	}
+	else
+	{
+
+	}
+
+	set_allow_save();
+	UpdateData(FALSE);
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAbout()

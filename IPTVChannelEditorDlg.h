@@ -282,6 +282,7 @@ protected:
 	int m_archiveCheck = 0; // m_wndCheckArchive
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
+	int m_iconSourceIdx = 0;
 
 private:
 	static CString m_probe;
