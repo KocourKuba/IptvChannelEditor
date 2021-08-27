@@ -3108,6 +3108,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 		return;
 
 	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndProgress.SetPos(0);
 	CWaitCursor cur;
 
 	std::vector<uri_stream*> streams;
@@ -3144,7 +3145,7 @@ void CIPTVChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
 	BOOL enable = !m_probe.IsEmpty();
 	if (m_lastTree)
 	{
-		enable &= (GetBaseInfo(m_lastTree, m_lastTree->GetFirstSelectedItem()) != nullptr);
+		enable &= IsSelectedTheSameType() && IsChannel(m_lastTree->GetFirstSelectedItem());
 	}
 	else
 	{
@@ -3163,15 +3164,19 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 
 	CWaitCursor cur;
 	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndProgress.SetPos(0);
 
 	std::vector<uri_stream*> container;
 	if (m_lastTree == &m_wndChannelsTree)
 	{
-		for (const auto& item : GetItemCategory(m_lastTree->GetSelectedItem())->get_channels())
+		for (auto hItem = m_lastTree->GetFirstSelectedItem(); hItem != nullptr;  hItem = m_lastTree->GetNextSelectedItem(hItem))
 		{
-			auto info = dynamic_cast<BaseInfo*>(item);
-			if (info)
-				container.emplace_back(info->get_stream_uri());
+			for (const auto& item : GetItemCategory(hItem)->get_channels())
+			{
+				auto info = dynamic_cast<BaseInfo*>(item);
+				if (info)
+					container.emplace_back(info->get_stream_uri());
+			}
 		}
 		GetStreamInfo(container, m_wndChInfo);
 		LoadChannelInfo(m_lastTree->GetSelectedItem());
