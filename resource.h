@@ -81,6 +81,8 @@
 #define IDC_STATIC_QR                   1074
 #define IDC_STATIC_TITLE                1075
 #define IDC_STATIC_VERSION              1076
+#define IDC_STATIC_CHANNELS2            1076
+#define IDC_STATIC_PROGRESS_INFO        1076
 #define IDC_TREE_CHANNELS               1077
 #define IDC_TREE_PLAYLIST               1078
 #define IDC_MFCLINK_DONATE_ABOUT        1079

@@ -271,6 +271,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_UPDATE_ICON, m_wndUpdateIcon);
 	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
 	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
+	DDX_Control(pDX, IDC_STATIC_PROGRESS_INFO, m_wndProgressInfo);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -633,6 +634,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
 	m_wndProgress.SetPos(0);
 	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndProgressInfo.ShowWindow(SW_SHOW);
 
 	auto* pThread = (CPlaylistParseThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
@@ -670,6 +672,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 
 	m_wndPluginType.EnableWindow(TRUE);
 	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndProgressInfo.ShowWindow(SW_HIDE);
 	m_wndDownloadUrl.EnableWindow(TRUE);
 	m_wndFilter.EnableWindow(TRUE);
 	m_wndPlSearch.EnableWindow(!m_channelsMap.empty());
@@ -691,7 +694,10 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 
 LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam, LPARAM lParam /*= 0*/)
 {
-	m_wndProgress.SetPos(wParam);
+	CString str;
+	str.Format(_T("Channels readed: %d"), wParam);
+	m_wndProgressInfo.SetWindowText(str);
+	m_wndProgress.SetPos(lParam);
 
 	return 0;
 }
@@ -840,7 +846,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels()
 void CIPTVChannelEditorDlg::UpdateChannelsCount()
 {
 	CString str;
-	str.Format(_T("Channels: %s - %d"), m_chFileName.GetString(), m_channelsMap.size());
+	str.Format(_T("%s - %d"), m_chFileName.GetString(), m_channelsMap.size());
 	m_wndChInfo.SetWindowText(str);
 
 	UpdateData(FALSE);
@@ -850,9 +856,9 @@ void CIPTVChannelEditorDlg::UpdatePlaylistCount()
 {
 	CString str;
 	if (m_playlistIds.size() != m_playlistMap.size())
-		str.Format(_T("Playlist: %s - %d (%d)"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size());
+		str.Format(_T("%s - %d (%d)"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size());
 	else
-		str.Format(_T("Playlist: %s - %d"), m_plFileName.GetString(), m_playlistIds.size());
+		str.Format(_T("%s - %d"), m_plFileName.GetString(), m_playlistIds.size());
 
 	m_wndPlInfo.SetWindowText(str);
 	UpdateData(FALSE);
@@ -2395,7 +2401,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	UpdateData(FALSE);
 }
 
-void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container, CStatic& staticCtrl)
+void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 {
 	const auto& access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
 	const auto& access_key = CIPTVChannelEditorDlg::GetAccessKey();
@@ -2439,7 +2445,7 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container, C
 			auto step = std::distance(container.begin(), it);
 			CString str;
 			str.Format(_T("Get Stream Info: %d from %d"), step, container.size());
-			staticCtrl.SetWindowText(str);
+			m_wndProgressInfo.SetWindowText(str);
 			m_wndProgress.SetPos(step);
 		}
 	}
@@ -3108,6 +3114,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 		return;
 
 	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndProgressInfo.ShowWindow(SW_SHOW);
 	m_wndProgress.SetPos(0);
 	CWaitCursor cur;
 
@@ -3123,12 +3130,12 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 
 	if (m_lastTree == &m_wndChannelsTree)
 	{
-		GetStreamInfo(streams, m_wndChInfo);
+		GetStreamInfo(streams);
 		LoadChannelInfo(m_lastTree->GetFirstSelectedItem());
 	}
 	else if (m_lastTree == &m_wndPlaylistTree)
 	{
-		GetStreamInfo(streams, m_wndPlInfo);
+		GetStreamInfo(streams);
 		LoadPlayListInfo(m_lastTree->GetFirstSelectedItem());
 	}
 
@@ -3136,6 +3143,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	UpdateChannelsCount();
 	UpdatePlaylistCount();
 	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndProgressInfo.ShowWindow(SW_HIDE);
 
 	UpdateData(FALSE);
 }
@@ -3164,6 +3172,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 
 	CWaitCursor cur;
 	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndProgressInfo.ShowWindow(SW_SHOW);
 	m_wndProgress.SetPos(0);
 
 	std::vector<uri_stream*> container;
@@ -3178,7 +3187,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 					container.emplace_back(info->get_stream_uri());
 			}
 		}
-		GetStreamInfo(container, m_wndChInfo);
+		GetStreamInfo(container);
 		LoadChannelInfo(m_lastTree->GetSelectedItem());
 	}
 	else if (m_lastTree == &m_wndPlaylistTree)
@@ -3196,7 +3205,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 			}
 		}
 
-		GetStreamInfo(container, m_wndPlInfo);
+		GetStreamInfo(container);
 		LoadPlayListInfo(m_lastTree->GetSelectedItem());
 	}
 
@@ -3204,6 +3213,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 	UpdateChannelsCount();
 	UpdatePlaylistCount();
 	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndProgressInfo.ShowWindow(SW_HIDE);
 }
 
 void CIPTVChannelEditorDlg::OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI)

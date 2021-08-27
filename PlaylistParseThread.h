@@ -12,7 +12,7 @@ public:
 	class ThreadConfig
 	{
 	public:
-		void NotifyParent(UINT message, WPARAM wParam);
+		void NotifyParent(UINT message, WPARAM wParam, LPARAM lParam);
 
 		std::vector<BYTE>* m_data = nullptr;
 		CWnd* m_parent = nullptr;

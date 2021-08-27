@@ -8,10 +8,10 @@
 // COnlineCheckActivation
 
 
-void CPlaylistParseThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam)
+void CPlaylistParseThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (m_parent->GetSafeHwnd())
-		m_parent->SendMessage(message, wParam);
+		m_parent->SendMessage(message, wParam, lParam);
 
 }
 
@@ -31,6 +31,7 @@ BOOL CPlaylistParseThread::InitInstance()
 			int step = 0;
 			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 			std::string line;
+			int count = 0;
 			while (std::getline(stream, line))
 			{
 				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
@@ -39,11 +40,11 @@ BOOL CPlaylistParseThread::InitInstance()
 					break;
 				}
 
-				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++);
-
 				utils::string_rtrim(line, "\r");
+				count++;
 				if (!line.empty() && entry->Parse(line))
 				{
+					m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
 					entries->emplace_back(entry);
 					entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 				}
@@ -51,7 +52,7 @@ BOOL CPlaylistParseThread::InitInstance()
 		}
 	}
 
-	m_config.NotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)entries.release());
+	m_config.NotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)entries.release(), 0);
 
 	CoUninitialize();
 

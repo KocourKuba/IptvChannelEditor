@@ -170,7 +170,7 @@ private:
 	void FillTreeChannels();
 	void FillTreePlaylist();
 
-	void GetStreamInfo(std::vector<uri_stream*>& container, CStatic& staticCtrl);
+	void GetStreamInfo(std::vector<uri_stream*>& container);
 
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
@@ -261,6 +261,7 @@ protected:
 	CStatic m_wndPlIcon;
 	CStatic m_wndChInfo;
 	CStatic m_wndPlInfo;
+	CStatic m_wndProgressInfo;
 
 	CString m_search; // m_wndSearch
 	CString m_streamUrl; // m_wndStreamUrl
