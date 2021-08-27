@@ -218,6 +218,7 @@ private:
 	void SwitchPlugin();
 	std::wstring GetPluginName() const;
 	std::wstring GetPluginRegPath() const;
+	void SaveStreamInfo();
 
 protected:
 	CFont m_largeFont;

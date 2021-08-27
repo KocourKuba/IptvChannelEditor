@@ -730,13 +730,6 @@ void CIPTVChannelEditorDlg::OnCancel()
 	m_evtStop.SetEvent();
 
 	theApp.WriteProfileInt(REG_SETTINGS, REG_PLUGIN, m_wndPluginType.GetCurSel());
-	const auto& dump = m_stream_infos.serialize();
-	// write document
-	const auto& playlistPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
-	const auto& path = playlistPath + _T("stream_info.bin");
-	std::ofstream os(path, std::istream::binary);
-	os.write(dump.data(), dump.size());
-	os.close();
 
 	EndDialog(IDCANCEL);
 }
@@ -3138,6 +3131,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 		LoadPlayListInfo(m_lastTree->GetFirstSelectedItem());
 	}
 
+	SaveStreamInfo();
 	UpdateChannelsCount();
 	UpdatePlaylistCount();
 	m_wndProgress.ShowWindow(SW_HIDE);
@@ -3201,6 +3195,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 		LoadPlayListInfo(m_lastTree->GetSelectedItem());
 	}
 
+	SaveStreamInfo();
 	UpdateChannelsCount();
 	UpdatePlaylistCount();
 	m_wndProgress.ShowWindow(SW_HIDE);
@@ -4019,4 +4014,15 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 	pApp->WriteProfileBinary(REG_SETTINGS, _T("WindowPos"), (LPBYTE)&wp, sizeof(wp));
 
 	return __super::DestroyWindow();
+}
+
+void CIPTVChannelEditorDlg::SaveStreamInfo()
+{
+	const auto& dump = m_stream_infos.serialize();
+	// write document
+	const auto& playlistPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+	const auto& path = playlistPath + _T("stream_info.bin");
+	std::ofstream os(path, std::istream::binary);
+	os.write(dump.data(), dump.size());
+	os.close();
 }
