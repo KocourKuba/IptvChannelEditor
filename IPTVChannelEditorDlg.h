@@ -242,6 +242,7 @@ protected:
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
 	CProgressCtrl m_wndProgress;
+	CButton m_wndFilter;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
 	CButton m_wndCustom;

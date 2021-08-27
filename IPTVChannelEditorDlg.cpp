@@ -242,6 +242,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
 	DDX_Control(pDX, IDC_TREE_PLAYLIST, m_wndPlaylistTree);
+	DDX_Control(pDX, IDC_BUTTON_PL_FILTER, m_wndFilter);
 	DDX_Control(pDX, IDC_EDIT_PL_SEARCH, m_wndPlSearch);
 	DDX_Text(pDX, IDC_EDIT_PL_SEARCH, m_plSearch);
 	DDX_Text(pDX, IDC_STATIC_ICON_NAME, m_iconUrl);
@@ -646,6 +647,8 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndPlaylistTree.EnableWindow(FALSE);
 	m_wndChannels.EnableWindow(FALSE);
 	m_wndChannelsTree.EnableWindow(FALSE);
+	m_wndFilter.EnableWindow(FALSE);
+	m_wndDownloadUrl.EnableWindow(FALSE);
 	m_evtStop.ResetEvent();
 
 	CPlaylistParseThread::ThreadConfig cfg;
@@ -664,6 +667,8 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 
 	m_wndPluginType.EnableWindow(TRUE);
 	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndDownloadUrl.EnableWindow(TRUE);
+	m_wndFilter.EnableWindow(TRUE);
 	m_wndPlSearch.EnableWindow(!m_channelsMap.empty());
 	m_wndPlaylistTree.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(TRUE);
