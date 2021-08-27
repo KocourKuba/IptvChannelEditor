@@ -67,8 +67,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
 
-	m_pszAppName = _tcsdup(_T("Dune IPTV Channel Editor"));
-	SetRegistryKey(_T("Editor"));
+	m_pszAppName = _tcsdup(_T("Editor"));
+	SetRegistryKey(_T("Dune IPTV Channel Editor"));
 
 	InitContextMenuManager();
 

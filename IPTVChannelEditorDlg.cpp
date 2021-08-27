@@ -566,6 +566,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		}
 	}
 
+	if (url.IsEmpty())
+	{
+		AfxMessageBox(_T("Playlist source not set!"), MB_OK | MB_ICONERROR);
+		return;
+	}
+
 	CString slashed(url);
 	slashed.Replace('\\', '/');
 	auto pos = slashed.ReverseFind('/');
@@ -2261,7 +2267,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 	CCustomPlaylistDlg dlg;
 	dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
 	LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
-	dlg.m_url = theApp.GetProfileString(REG_SETTINGS, szType);
+	dlg.m_url = theApp.GetProfileString(GetPluginRegPath().c_str(), szType);
 	if (dlg.DoModal() == IDOK)
 	{
 		theApp.WriteProfileString(GetPluginRegPath().c_str(), szType, dlg.m_url);

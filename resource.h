@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by EdemChannelEditor.rc
+// Used by IPTVChannelEditor.rc
 //
 #define IDM_ABOUTBOX                    16
 #define IDB_PNG_QR                      101
@@ -115,7 +115,7 @@
 #define ID_ADD_TO_FAVORITE              32798
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
