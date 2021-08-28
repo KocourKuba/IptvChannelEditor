@@ -134,10 +134,12 @@ class StarnetPluginTv extends AbstractTv
             }
             else
             {
+                // https not supported for old players
+                $icon_url = str_replace('https', 'https', strval($xml_tv_channel->icon_url));
                 $channel = new StarnetChannel(
                     $id,
                     strval($xml_tv_channel->caption),
-                    str_replace('https', 'https', strval($xml_tv_channel->icon_url),
+                    $icon_url,
                     intval($xml_tv_channel->archive),
                     $streaming_url,
                     intval($xml_tv_channel->number),
@@ -210,10 +212,10 @@ class StarnetPluginTv extends AbstractTv
 
         if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
             $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
-            $url = str_replace('{UID}', $plugin_cookies->ott_key_local, $url);
+            $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);
         } else {
             $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
-            $url = str_replace('{UID}', $plugin_cookies->ott_key, $url);
+            $url = str_replace('{TOKEN}', $plugin_cookies->ott_key, $url);
         }
 
         return $url;

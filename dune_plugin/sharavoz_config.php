@@ -10,7 +10,7 @@ class SharavozPluginConfig extends DefaultConfig
         $this->PluginDate = '27.07.2021';
 
         $this->BG_PICTURE = 'plugin_file://bg_edem.jpg';
-        $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={UID}';
+        $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
         $this->CHANNEL_LIST_URL = 'sharavoz_channel_list.xml';
         $this->EPG_URL_FORMAT = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s';
         $this->TVG_URL_FORMAT = 'http://api.program.spr24.net/api/program?epg=%s&date=%s';
@@ -41,6 +41,7 @@ class SharavozPluginConfig extends DefaultConfig
                 break;
         }
 
+        hd_print("AdjustStreamUri: uri: $url");
         return $url;
     }
 }

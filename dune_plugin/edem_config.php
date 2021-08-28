@@ -10,7 +10,7 @@ class EdemPluginConfig extends DefaultConfig
         $this->PluginDate = '27.07.2021';
 
         $this->BG_PICTURE = 'plugin_file://bg_edem.jpg';
-        $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/iptv/{UID}/{ID}/index.m3u8';
+        $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
         $this->CHANNEL_LIST_URL = 'edem_channel_list.xml';
         $this->EPG_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%d.json';
         $this->TVG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';
