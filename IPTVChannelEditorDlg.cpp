@@ -18,6 +18,7 @@
 #include "CustomPlaylistDlg.h"
 #include "PlaylistParseThread.h"
 #include "IconCache.h"
+#include "IconsListDlg.h"
 #include "utils.h"
 
 #include "rapidxml.hpp"
@@ -46,6 +47,7 @@ constexpr auto REG_FFPROBE = _T("FFProbe");
 constexpr auto REG_HOURS_BACK = _T("HoursBack");
 constexpr auto REG_AUTOSYNC = _T("AutoSyncChannel");
 constexpr auto REG_PLUGIN = _T("PluginType");
+constexpr auto REG_ICON_SOURCE = _T("IconSource");
 constexpr auto REG_FILTER_STRING = _T("FilterString");
 constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
 constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
@@ -105,7 +107,6 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 
-	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType)
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CIPTVChannelEditorDlg::OnBnClickedButtonAbout)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_PL_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext)
@@ -139,8 +140,11 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ARCHIVE_CHECK, &CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheck)
 	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CIPTVChannelEditorDlg::OnEnChangeEditUrlID)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CIPTVChannelEditorDlg::OnStnClickedStaticIcon)
+
+	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType)
 	ON_CBN_SELCHANGE(IDC_COMBO_CHANNELS, &CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST, &CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist)
+	ON_CBN_SELCHANGE(IDC_COMBO_ICON_SOURCE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboIconSource)
 
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels)
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMDblclkTreeChannels)
@@ -203,7 +207,6 @@ END_MESSAGE_MAP()
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
 	, m_evtStop(FALSE, TRUE)
-	, m_iconSourceIdx(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_plID = _T("ID:");
@@ -238,7 +241,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT, m_timeShiftHours);
 	DDX_Control(pDX, IDC_EDIT_TIME_SHIFT, m_wndTimeShift);
 	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK, m_archiveCheck);
-	DDX_Control(pDX, IDC_STATIC_ICON, m_wndIcon);
+	DDX_Control(pDX, IDC_STATIC_ICON, m_wndChannelIcon);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
 	DDX_Control(pDX, IDC_TREE_PLAYLIST, m_wndPlaylistTree);
@@ -270,7 +273,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
 	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
 	DDX_Control(pDX, IDC_STATIC_PROGRESS_INFO, m_wndProgressInfo);
-	DDX_CBIndex(pDX, IDC_COMBO_ICON_SOURCE, m_iconSourceIdx);
+	DDX_Control(pDX, IDC_COMBO_ICON_SOURCE, m_wndIconSource);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -365,6 +368,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndPluginType.AddString(_T("Shara Club TV"));
 
 	m_wndPluginType.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_PLUGIN, 0));
+	m_wndIconSource.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_ICON_SOURCE, 0));
 
 	const auto& regPath = GetPluginRegPath();
 	SetAccessKey(theApp.GetProfileString(regPath.c_str(), REG_ACCESS_KEY));
@@ -387,6 +391,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndTestEPG.EnableWindow(FALSE);
 	m_wndStreamID.EnableWindow(FALSE);
 	m_wndStreamUrl.EnableWindow(FALSE);
+	m_wndCheckArchive.EnableWindow(FALSE);
 	m_wndCheckArchive.EnableWindow(FALSE);
 	m_wndTimeShift.EnableWindow(FALSE);
 	m_wndSpinTimeShift.EnableWindow(FALSE);
@@ -1059,11 +1064,15 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		m_hasArchive = channel->get_archive();
 		m_isAdult = channel->get_adult();
 
-		if(m_iconUrl != channel->get_icon_uri().get_uri().c_str())
+		if (channel->get_icon_uri().get_uri().empty())
+		{
+			m_wndChannelIcon.SetBitmap(nullptr);
+		}
+		else
 		{
 			m_iconUrl = channel->get_icon_uri().get_uri().c_str();
 			const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
-			utils::SetImage(img, m_wndIcon);
+			utils::SetImage(img, m_wndChannelIcon);
 		}
 	}
 	else
@@ -1076,7 +1085,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		m_streamID.Empty();
 		m_infoAudio.Empty();
 		m_infoVideo.Empty();
-		m_wndIcon.SetBitmap(nullptr);
+		m_wndChannelIcon.SetBitmap(nullptr);
 		m_wndCustom.SetCheck(FALSE);
 	}
 
@@ -1414,7 +1423,7 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 	CImage img;
 	if (utils::LoadImage(channel->get_icon_absolute_path(), img))
 	{
-		utils::SetImage(img, m_wndIcon);
+		utils::SetImage(img, m_wndChannelIcon);
 	}
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -1647,7 +1656,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		{
 			LoadChannelInfo(hSelected);
 			state = 2;
-			m_wndIcon.EnableWindow(FALSE);
+			m_wndChannelIcon.EnableWindow(FALSE);
 		}
 
 		if (m_wndChannelsTree.GetSelectedCount() == 1)
@@ -1657,7 +1666,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				state = 1;
 				if (!channel->get_stream_uri()->is_template())
 					m_streamID.Empty();
-				m_wndIcon.EnableWindow(TRUE);
+				m_wndChannelIcon.EnableWindow(TRUE);
 			}
 			else if (IsCategory(hSelected))
 			{
@@ -1670,13 +1679,13 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				m_infoAudio.Empty();
 				m_infoVideo.Empty();
 
-				m_wndIcon.EnableWindow(TRUE);
+				m_wndChannelIcon.EnableWindow(TRUE);
 				auto category = GetCategory(hSelected);
 				if (category)
 				{
 					m_iconUrl = category->get_icon_uri().get_uri().c_str();
 					const auto& img = GetIconCache().get_icon(category->get_title(), category->get_icon_absolute_path());
-					utils::SetImage(img, m_wndIcon);
+					utils::SetImage(img, m_wndChannelIcon);
 				}
 			}
 		}
@@ -2567,7 +2576,7 @@ void CIPTVChannelEditorDlg::OnNewCategory()
 	CImage img;
 	if (utils::LoadImage(newCategory->get_icon_absolute_path(), img))
 	{
-		utils::SetImage(img, m_wndIcon);
+		utils::SetImage(img, m_wndChannelIcon);
 	}
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -2654,7 +2663,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	if (IsCategory(hCur) && entry->get_key() == ID_ADD_TO_FAVORITE)
 		return;
 
-	if (m_iconSourceIdx == 0)
+	if (m_wndIconSource.GetCurSel() == 0)
 	{
 		CFileDialog dlg(TRUE);
 		CString path = theApp.GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
@@ -2698,7 +2707,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 				CImage img;
 				if (utils::LoadImage(path.GetString(), img))
 				{
-					utils::SetImage(img, m_wndIcon);
+					utils::SetImage(img, m_wndChannelIcon);
 				}
 			}
 
@@ -2710,16 +2719,32 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			{
 				entry->set_icon_uri(m_iconUrl.GetString());
 				const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
-				utils::SetImage(img, m_wndIcon);
+				utils::SetImage(img, m_wndChannelIcon);
 			}
+			set_allow_save();
 		}
 	}
 	else
 	{
+		CIconsListDlg dlg(m_Icons, "http://epg.it999.ru/edem_epg_ico2.m3u8");
+		dlg.m_selected = m_lastIconSelected;
+		dlg.m_search = entry->get_title().c_str();
 
+		if (dlg.DoModal() == IDOK)
+		{
+			const auto& choosed = m_Icons->at(dlg.m_selected);
+			if (m_iconUrl != choosed->get_icon_uri().get_uri().c_str())
+			{
+				entry->set_icon_uri(choosed->get_icon_uri());
+				const auto& img = GetIconCache().get_icon(choosed->get_title(), choosed->get_icon_absolute_path());
+				utils::SetImage(img, m_wndChannelIcon);
+				m_lastIconSelected = dlg.m_selected;
+			}
+
+			set_allow_save();
+		}
 	}
 
-	set_allow_save();
 	UpdateData(FALSE);
 }
 
@@ -2961,7 +2986,7 @@ void CIPTVChannelEditorDlg::OnUpdateIcon()
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
 		const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
-		utils::SetImage(img, m_wndIcon);
+		utils::SetImage(img, m_wndChannelIcon);
 
 		OnSyncTreeItem();
 		set_allow_save();
@@ -3380,7 +3405,9 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 
 	m_wndDownloadUrl.EnableWindow(enableDownload);
 	m_wndChooseUrl.EnableWindow(enableCustom);
+	theApp.WriteProfileInt(GetPluginRegPath().c_str(), REG_PLUGIN, m_wndPluginType.GetCurSel());
 	theApp.WriteProfileInt(GetPluginRegPath().c_str(), REG_PLAYLIST_TYPE, pl_idx);
+
 	LoadPlaylist();
 }
 
@@ -4036,8 +4063,7 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 	wp.length = sizeof(WINDOWPLACEMENT);
 	GetWindowPlacement(&wp);
 	// Save the info
-	CWinApp* pApp = AfxGetApp();
-	pApp->WriteProfileBinary(REG_SETTINGS, _T("WindowPos"), (LPBYTE)&wp, sizeof(wp));
+	theApp.WriteProfileBinary(REG_SETTINGS, _T("WindowPos"), (LPBYTE)&wp, sizeof(wp));
 
 	return __super::DestroyWindow();
 }
@@ -4051,4 +4077,9 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 	std::ofstream os(path, std::istream::binary);
 	os.write(dump.data(), dump.size());
 	os.close();
+}
+
+void CIPTVChannelEditorDlg::OnCbnSelchangeComboIconSource()
+{
+	theApp.WriteProfileInt(REG_SETTINGS, REG_ICON_SOURCE, m_wndIconSource.GetCurSel());
 }

@@ -231,6 +231,8 @@ protected:
 	CComboBox m_wndPlaylist;
 	CTreeCtrlEx m_wndPlaylistTree;
 	CComboBox m_wndChannels;
+	CComboBox m_wndIconSource;
+
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
 	CEdit m_wndTvgID;
@@ -256,7 +258,7 @@ protected:
 	CButton m_wndCacheIcon;
 	CButton m_wndUpdateIcon;
 	CButton m_wndSave;
-	CStatic m_wndIcon;
+	CStatic m_wndChannelIcon;
 	CStatic m_wndPlIcon;
 	CStatic m_wndChInfo;
 	CStatic m_wndPlInfo;
@@ -281,7 +283,6 @@ protected:
 	int m_archiveCheck = 0; // m_wndCheckArchive
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
-	int m_iconSourceIdx = 0;
 
 private:
 	static CString m_probe;
@@ -306,7 +307,7 @@ private:
 	bool m_bInFillTree = false;
 	StreamType m_pluginType = StreamType::enEdem;
 	CString m_pluginName;
-
+	int m_lastIconSelected = 0;
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
 
@@ -314,6 +315,9 @@ private:
 	COLORREF m_gray;
 	COLORREF m_red;
 	COLORREF m_green;
+
+	// Icons entries
+	std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_Icons;
 
 	// all entries loaded from playlist
 	std::unique_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_playlistEntries;
@@ -336,5 +340,7 @@ private:
 	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
 
 	serializable_map m_stream_infos;
+public:
+	afx_msg void OnCbnSelchangeComboIconSource();
 };
 

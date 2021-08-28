@@ -53,7 +53,7 @@
 			<channel_id>128</channel_id>
 			<epg_id>128</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/983.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -61,7 +61,7 @@
 			<channel_id>5005</channel_id>
 			<epg_id>5005</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/146.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -69,7 +69,7 @@
 			<channel_id>129</channel_id>
 			<epg_id>129</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/984.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -77,7 +77,7 @@
 			<channel_id>20002</channel_id>
 			<epg_id>20002</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/711.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -85,7 +85,7 @@
 			<channel_id>5099</channel_id>
 			<epg_id>5099</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/187.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -101,7 +101,7 @@
 			<channel_id>253</channel_id>
 			<epg_id>253</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2001.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -109,7 +109,7 @@
 			<channel_id>5097</channel_id>
 			<epg_id>5097</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/162.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -125,7 +125,7 @@
 			<channel_id>200</channel_id>
 			<epg_id>200</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/18.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -133,7 +133,7 @@
 			<channel_id>5106</channel_id>
 			<epg_id>5106</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/18.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -141,7 +141,7 @@
 			<channel_id>301</channel_id>
 			<epg_id>301</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1767.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -149,7 +149,7 @@
 			<channel_id>5001</channel_id>
 			<epg_id>5001</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/353.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -157,7 +157,7 @@
 			<channel_id>364</channel_id>
 			<epg_id>364</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1649.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -173,7 +173,7 @@
 			<channel_id>3187</channel_id>
 			<epg_id>3187</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/79.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -181,7 +181,7 @@
 			<channel_id>292</channel_id>
 			<epg_id>292</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/79.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -197,7 +197,7 @@
 			<channel_id>5253</channel_id>
 			<epg_id>5253</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1322.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -205,7 +205,7 @@
 			<channel_id>6856</channel_id>
 			<epg_id>6856</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2288.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -213,7 +213,7 @@
 			<channel_id>338</channel_id>
 			<epg_id>338</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/427.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -221,7 +221,7 @@
 			<channel_id>337</channel_id>
 			<epg_id>337</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/405.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -229,7 +229,7 @@
 			<channel_id>334</channel_id>
 			<epg_id>334</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/649.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -237,7 +237,7 @@
 			<channel_id>291</channel_id>
 			<epg_id>291</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/304.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -245,7 +245,7 @@
 			<channel_id>213</channel_id>
 			<epg_id>213</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2765.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -253,7 +253,7 @@
 			<channel_id>5300</channel_id>
 			<epg_id>5300</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1003.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -261,7 +261,7 @@
 			<channel_id>363</channel_id>
 			<epg_id>363</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1598.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -269,7 +269,7 @@
 			<channel_id>336</channel_id>
 			<epg_id>336</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/698.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -277,7 +277,7 @@
 			<channel_id>314</channel_id>
 			<epg_id>314</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/618.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -285,7 +285,7 @@
 			<channel_id>138</channel_id>
 			<epg_id>138</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/726.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -293,7 +293,7 @@
 			<channel_id>5129</channel_id>
 			<epg_id>5129</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2078.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -309,7 +309,7 @@
 			<channel_id>6791</channel_id>
 			<epg_id>6791</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2265.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -317,7 +317,7 @@
 			<channel_id>6792</channel_id>
 			<epg_id>6792</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2265.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -325,7 +325,7 @@
 			<channel_id>5288</channel_id>
 			<epg_id>5288</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2550.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -333,7 +333,7 @@
 			<channel_id>5501</channel_id>
 			<epg_id>5501</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1000.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -349,7 +349,7 @@
 			<channel_id>6759</channel_id>
 			<epg_id>6759</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2297.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -357,7 +357,7 @@
 			<channel_id>6722</channel_id>
 			<epg_id>6722</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2402.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -365,7 +365,7 @@
 			<channel_id>5332</channel_id>
 			<epg_id>5332</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/663.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -373,7 +373,7 @@
 			<channel_id>5047</channel_id>
 			<epg_id>5047</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2448.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -381,7 +381,7 @@
 			<channel_id>5133</channel_id>
 			<epg_id>5133</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2141.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -389,7 +389,7 @@
 			<channel_id>5116</channel_id>
 			<epg_id>5116</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2827.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -397,7 +397,7 @@
 			<channel_id>5323</channel_id>
 			<epg_id>5323</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2304.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -405,7 +405,7 @@
 			<channel_id>6853</channel_id>
 			<epg_id>6853</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2455.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -413,7 +413,7 @@
 			<channel_id>5142</channel_id>
 			<epg_id>5142</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/898.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -429,7 +429,7 @@
 			<channel_id>23667</channel_id>
 			<epg_id>23667</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2470.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -437,7 +437,7 @@
 			<channel_id>20321</channel_id>
 			<epg_id>20321</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2308.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -445,7 +445,7 @@
 			<channel_id>5628</channel_id>
 			<epg_id>5628</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/669.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -453,7 +453,7 @@
 			<channel_id>383</channel_id>
 			<epg_id>383</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2800.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -709,7 +709,7 @@
 			<channel_id>302</channel_id>
 			<epg_id>302</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1683.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -717,7 +717,7 @@
 			<channel_id>325</channel_id>
 			<epg_id>325</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2266.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -725,7 +725,7 @@
 			<channel_id>266</channel_id>
 			<epg_id>266</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2399.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -733,7 +733,7 @@
 			<channel_id>105</channel_id>
 			<epg_id>105</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2269.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -741,7 +741,7 @@
 			<channel_id>214</channel_id>
 			<epg_id>214</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2295.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -749,7 +749,7 @@
 			<channel_id>295</channel_id>
 			<epg_id>295</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/334.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -757,7 +757,7 @@
 			<channel_id>6790</channel_id>
 			<epg_id>6790</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2265.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -765,7 +765,7 @@
 			<channel_id>316</channel_id>
 			<epg_id>316</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/743.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -781,7 +781,7 @@
 			<channel_id>5673</channel_id>
 			<epg_id>5673</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2401.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -789,7 +789,7 @@
 			<channel_id>5674</channel_id>
 			<epg_id>5674</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2142.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -797,7 +797,7 @@
 			<channel_id>315</channel_id>
 			<epg_id>315</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2008.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -805,7 +805,7 @@
 			<channel_id>20097</channel_id>
 			<epg_id>20097</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2443.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1477,7 +1477,7 @@
 			<channel_id>17372</channel_id>
 			<epg_id>17372</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2804.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1485,7 +1485,7 @@
 			<channel_id>17728</channel_id>
 			<epg_id>17728</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2749.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1501,7 +1501,7 @@
 			<channel_id>104</channel_id>
 			<epg_id>104</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1013.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1509,7 +1509,7 @@
 			<channel_id>103</channel_id>
 			<epg_id>103</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1012.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1517,7 +1517,7 @@
 			<channel_id>102</channel_id>
 			<epg_id>102</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1011.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1525,7 +1525,7 @@
 			<channel_id>109</channel_id>
 			<epg_id>109</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2838.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1533,7 +1533,7 @@
 			<channel_id>320</channel_id>
 			<epg_id>320</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/127.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1541,7 +1541,7 @@
 			<channel_id>319</channel_id>
 			<epg_id>319</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/125.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1549,7 +1549,7 @@
 			<channel_id>318</channel_id>
 			<epg_id>318</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/267.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1557,7 +1557,7 @@
 			<channel_id>430</channel_id>
 			<epg_id>430</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2274.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1565,7 +1565,7 @@
 			<channel_id>312</channel_id>
 			<epg_id>312</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/518.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1573,7 +1573,7 @@
 			<channel_id>121</channel_id>
 			<epg_id>121</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2732.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1581,7 +1581,7 @@
 			<channel_id>122</channel_id>
 			<epg_id>122</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1588.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1589,7 +1589,7 @@
 			<channel_id>119</channel_id>
 			<epg_id>119</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2309.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1597,7 +1597,7 @@
 			<channel_id>218</channel_id>
 			<epg_id>218</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2857.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1605,7 +1605,7 @@
 			<channel_id>147</channel_id>
 			<epg_id>147</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1037.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1613,7 +1613,7 @@
 			<channel_id>120</channel_id>
 			<epg_id>120</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/138.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1621,7 +1621,7 @@
 			<channel_id>123</channel_id>
 			<epg_id>123</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2018.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1629,7 +1629,7 @@
 			<channel_id>107</channel_id>
 			<epg_id>107</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2019.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1637,7 +1637,7 @@
 			<channel_id>142</channel_id>
 			<epg_id>142</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/401.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1645,7 +1645,7 @@
 			<channel_id>108</channel_id>
 			<epg_id>108</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2020.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1653,7 +1653,7 @@
 			<channel_id>333</channel_id>
 			<epg_id>333</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/834.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1661,7 +1661,7 @@
 			<channel_id>139</channel_id>
 			<epg_id>139</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2509.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1677,7 +1677,7 @@
 			<channel_id>276</channel_id>
 			<epg_id>276</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/994.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1685,7 +1685,7 @@
 			<channel_id>294</channel_id>
 			<epg_id>294</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/53.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1693,7 +1693,7 @@
 			<channel_id>293</channel_id>
 			<epg_id>293</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2403.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1701,7 +1701,7 @@
 			<channel_id>277</channel_id>
 			<epg_id>277</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1570.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1709,7 +1709,7 @@
 			<channel_id>350</channel_id>
 			<epg_id>350</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2404.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1717,7 +1717,7 @@
 			<channel_id>140</channel_id>
 			<epg_id>140</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/311.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1725,7 +1725,7 @@
 			<channel_id>227</channel_id>
 			<epg_id>227</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/935.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1733,7 +1733,7 @@
 			<channel_id>228</channel_id>
 			<epg_id>228</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/516.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1741,7 +1741,7 @@
 			<channel_id>270</channel_id>
 			<epg_id>270</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2007.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1749,7 +1749,7 @@
 			<channel_id>258</channel_id>
 			<epg_id>258</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1372.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1773,7 +1773,7 @@
 			<channel_id>101</channel_id>
 			<epg_id>101</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1031.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1781,7 +1781,7 @@
 			<channel_id>5266</channel_id>
 			<epg_id>5266</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/659.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1789,7 +1789,7 @@
 			<channel_id>207</channel_id>
 			<epg_id>207</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/615.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1797,7 +1797,7 @@
 			<channel_id>5668</channel_id>
 			<epg_id>5668</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/615.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1805,7 +1805,7 @@
 			<channel_id>220</channel_id>
 			<epg_id>220</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/920.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1813,7 +1813,7 @@
 			<channel_id>221</channel_id>
 			<epg_id>221</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2405.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1821,7 +1821,7 @@
 			<channel_id>5158</channel_id>
 			<epg_id>5158</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2405.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1829,7 +1829,7 @@
 			<channel_id>251</channel_id>
 			<epg_id>251</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/5071.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1837,7 +1837,7 @@
 			<channel_id>127</channel_id>
 			<epg_id>127</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/934.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1845,7 +1845,7 @@
 			<channel_id>5511</channel_id>
 			<epg_id>5511</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/608.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1853,7 +1853,7 @@
 			<channel_id>310</channel_id>
 			<epg_id>310</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/309.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1861,7 +1861,7 @@
 			<channel_id>275</channel_id>
 			<epg_id>275</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/352.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1869,7 +1869,7 @@
 			<channel_id>328</channel_id>
 			<epg_id>328</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2041.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1877,7 +1877,7 @@
 			<channel_id>348</channel_id>
 			<epg_id>348</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1753.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1885,7 +1885,7 @@
 			<channel_id>347</channel_id>
 			<epg_id>347</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1754.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1893,7 +1893,7 @@
 			<channel_id>5264</channel_id>
 			<epg_id>5264</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2275.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1901,7 +1901,7 @@
 			<channel_id>6888</channel_id>
 			<epg_id>6888</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2181.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1909,7 +1909,7 @@
 			<channel_id>6887</channel_id>
 			<epg_id>6887</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2182.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1917,7 +1917,7 @@
 			<channel_id>6723</channel_id>
 			<epg_id>6723</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2174.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1925,7 +1925,7 @@
 			<channel_id>3085</channel_id>
 			<epg_id>3085</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2447.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1933,7 +1933,7 @@
 			<channel_id>23562</channel_id>
 			<epg_id>23562</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2359.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1941,7 +1941,7 @@
 			<channel_id>394</channel_id>
 			<epg_id>394</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/1757.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1949,7 +1949,7 @@
 			<channel_id>429</channel_id>
 			<epg_id>429</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/3357.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1957,7 +1957,7 @@
 			<channel_id>20799</channel_id>
 			<epg_id>20799</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2743.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1965,7 +1965,7 @@
 			<channel_id>20800</channel_id>
 			<epg_id>20800</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2831.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1973,7 +1973,7 @@
 			<channel_id>20801</channel_id>
 			<epg_id>20801</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2832.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1981,7 +1981,7 @@
 			<channel_id>20802</channel_id>
 			<epg_id>20802</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2835.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1989,7 +1989,7 @@
 			<channel_id>20803</channel_id>
 			<epg_id>20803</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2833.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -1997,7 +1997,7 @@
 			<channel_id>20804</channel_id>
 			<epg_id>20804</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2829.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2005,7 +2005,7 @@
 			<channel_id>20805</channel_id>
 			<epg_id>20805</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2836.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2013,7 +2013,7 @@
 			<channel_id>20806</channel_id>
 			<epg_id>20806</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2834.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2021,7 +2021,7 @@
 			<channel_id>20807</channel_id>
 			<epg_id>20807</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2773.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2029,7 +2029,7 @@
 			<channel_id>419</channel_id>
 			<epg_id>419</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2772.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2037,7 +2037,7 @@
 			<channel_id>425</channel_id>
 			<epg_id>425</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2407.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2045,7 +2045,7 @@
 			<channel_id>22223</channel_id>
 			<epg_id>22223</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/2549.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2053,7 +2053,7 @@
 			<channel_id>20810</channel_id>
 			<epg_id>20810</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4748.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2061,7 +2061,7 @@
 			<channel_id>20811</channel_id>
 			<epg_id>20811</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4749.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2069,7 +2069,7 @@
 			<channel_id>20812</channel_id>
 			<epg_id>20812</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4750.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2077,7 +2077,7 @@
 			<channel_id>20832</channel_id>
 			<epg_id>20832</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4751.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2085,7 +2085,7 @@
 			<channel_id>20813</channel_id>
 			<epg_id>20813</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4752.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2093,7 +2093,7 @@
 			<channel_id>20814</channel_id>
 			<epg_id>20814</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4753.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2101,7 +2101,7 @@
 			<channel_id>20815</channel_id>
 			<epg_id>20815</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4754.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2109,7 +2109,7 @@
 			<channel_id>20816</channel_id>
 			<epg_id>20816</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4755.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2117,7 +2117,7 @@
 			<channel_id>20817</channel_id>
 			<epg_id>20817</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4758.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2125,7 +2125,7 @@
 			<channel_id>20818</channel_id>
 			<epg_id>20818</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4759.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2133,7 +2133,7 @@
 			<channel_id>20819</channel_id>
 			<epg_id>20819</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4760.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2141,7 +2141,7 @@
 			<channel_id>20820</channel_id>
 			<epg_id>20820</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4761.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2149,7 +2149,7 @@
 			<channel_id>20821</channel_id>
 			<epg_id>20821</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4762.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2157,7 +2157,7 @@
 			<channel_id>20833</channel_id>
 			<epg_id>20833</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4765.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2165,7 +2165,7 @@
 			<channel_id>20822</channel_id>
 			<epg_id>20822</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4763.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2173,7 +2173,7 @@
 			<channel_id>20827</channel_id>
 			<epg_id>20827</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4756.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2181,7 +2181,7 @@
 			<channel_id>20834</channel_id>
 			<epg_id>20834</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4757.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2189,7 +2189,7 @@
 			<channel_id>20828</channel_id>
 			<epg_id>20828</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4746.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2197,7 +2197,7 @@
 			<channel_id>20829</channel_id>
 			<epg_id>20829</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4768.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2205,7 +2205,7 @@
 			<channel_id>20836</channel_id>
 			<epg_id>20836</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4767.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2213,7 +2213,7 @@
 			<channel_id>20830</channel_id>
 			<epg_id>20830</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4747.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2221,7 +2221,7 @@
 			<channel_id>20831</channel_id>
 			<epg_id>20831</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4764.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2229,7 +2229,7 @@
 			<channel_id>20837</channel_id>
 			<epg_id>20837</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4769.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2237,7 +2237,7 @@
 			<channel_id>20823</channel_id>
 			<epg_id>20823</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4736.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2245,7 +2245,7 @@
 			<channel_id>20824</channel_id>
 			<epg_id>20824</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4737.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2253,7 +2253,7 @@
 			<channel_id>20825</channel_id>
 			<epg_id>20825</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4738.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2261,7 +2261,7 @@
 			<channel_id>20826</channel_id>
 			<epg_id>20826</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4739.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2269,7 +2269,7 @@
 			<channel_id>20839</channel_id>
 			<epg_id>20839</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4740.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2277,7 +2277,7 @@
 			<channel_id>20840</channel_id>
 			<epg_id>20840</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4741.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2285,7 +2285,7 @@
 			<channel_id>20841</channel_id>
 			<epg_id>20841</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4742.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2293,7 +2293,7 @@
 			<channel_id>20842</channel_id>
 			<epg_id>20842</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4743.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2301,7 +2301,7 @@
 			<channel_id>20843</channel_id>
 			<epg_id>20843</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4744.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2309,7 +2309,7 @@
 			<channel_id>20844</channel_id>
 			<epg_id>20844</epg_id>
 			<tvg_id>0</tvg_id>
-			<icon_url/>
+			<icon_url>http://epg.it999.ru/img2/4745.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>

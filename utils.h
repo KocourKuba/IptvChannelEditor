@@ -4,7 +4,7 @@
 namespace utils
 {
 	static constexpr auto DUNE_PLUGIN_NAME = _T("dune_plugin_{:s}_mod.zip");
-	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/channel_unset.png";
+	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/shablon.png";
 
 	static constexpr auto CHANNELS_SETUP = "channels_setup";
 	static constexpr auto ACCESS_KEY = "access_key";

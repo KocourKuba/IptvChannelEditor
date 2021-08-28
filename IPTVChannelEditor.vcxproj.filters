@@ -189,7 +189,7 @@
     <ClInclude Include="ImageContainer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="IconsList.h">
+    <ClInclude Include="IconsListDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="uri_sharaclub.h">
@@ -272,7 +272,7 @@
     <ClCompile Include="ImageContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IconsList.cpp">
+    <ClCompile Include="IconsListDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="uri_sharaclub.cpp">
