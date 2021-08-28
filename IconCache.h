@@ -21,7 +21,7 @@ protected:
 
 private:
 	CIconCache(const CIconCache& source) = delete;
-	std::map<std::wstring, std::unique_ptr<ImageContainer>> m_imageMap;
+	std::map<int, std::unique_ptr<ImageContainer>> m_imageMap;
 };
 
 inline CIconCache& GetIconCache() { return CIconCache::Instance(); }
