@@ -1,4 +1,4 @@
 ﻿<?php
+// Will be overrided in target plugin
 define("PLUGIN_TYPE", 'EdemPluginConfig');
-//define("PLUGIN_TYPE", 'SharavozPluginConfig');
 ?>

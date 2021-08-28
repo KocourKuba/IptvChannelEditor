@@ -362,7 +362,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	m_wndPluginType.AddString(_T("Edem (iLook TV)"));
 	m_wndPluginType.AddString(_T("Sharavoz TV"));
-	//m_wndPluginType.AddString(_T("Sharaclub TV"));
+	m_wndPluginType.AddString(_T("Shara Club TV"));
 
 	m_wndPluginType.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_PLUGIN, 0));
 
@@ -441,7 +441,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.SetItemData(idx, TRUE);
 			break;
 		}
-		case 2: // Sharclub
+		case 2: // Sharaclub
 		{
 			m_pluginType = StreamType::enSharaclub;
 			m_pluginName = _T("Sharaclub");
@@ -1392,7 +1392,7 @@ void CIPTVChannelEditorDlg::OnAddCategory()
 
 void CIPTVChannelEditorDlg::OnUpdateAddCategory(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(IsPlaylistCategory(m_wndPlaylistTree.GetFirstSelectedItem()) && IsSelectedTheSameType());
+	pCmdUI->Enable(!m_chFileName.IsEmpty() && IsPlaylistCategory(m_wndPlaylistTree.GetFirstSelectedItem()) && IsSelectedTheSameType());
 }
 
 void CIPTVChannelEditorDlg::OnNewChannel()
@@ -2406,7 +2406,7 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 {
 	const auto& access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
 	const auto& access_key = CIPTVChannelEditorDlg::GetAccessKey();
-	const auto max_threads = 3;
+	const auto max_threads = 2;
 
 	auto newEnd = std::unique(container.begin(), container.end());
 	m_wndProgress.SetRange32(0, std::distance(container.begin(), newEnd));
@@ -2899,7 +2899,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 
 void CIPTVChannelEditorDlg::OnUpdateAddUpdateChannel(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(IsSelectedChannelsOrEntries());
+	pCmdUI->Enable(!m_chFileName.IsEmpty() && IsSelectedChannelsOrEntries());
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()

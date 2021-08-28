@@ -7,7 +7,7 @@ class SharavozPluginConfig extends DefaultConfig
     {
         $this->PluginName = 'Sharavoz TV';
         $this->PluginVersion = '1.0.0';
-        $this->PluginDate = '27.07.2021';
+        $this->PluginDate = '28.08.2021';
 
         $this->BG_PICTURE = 'plugin_file://bg_edem.jpg';
         $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
@@ -41,9 +41,7 @@ class SharavozPluginConfig extends DefaultConfig
                 break;
         }
 
-        hd_print("AdjustStreamUri: uri: $url");
+        hd_print("AdjustStreamUri: $url");
         return $url;
     }
 }
-
-?>

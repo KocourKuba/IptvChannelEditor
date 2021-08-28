@@ -4,6 +4,7 @@
 require_once 'lib/hashed_array.php';
 require_once 'lib/tv/abstract_tv.php';
 require_once 'lib/tv/default_epg_item.php';
+require_once 'lib/epg_parser.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_channel.php';
 
@@ -287,6 +288,9 @@ class StarnetPluginTv extends AbstractTv
             } catch (Exception $ex) {
                 try {
                     hd_print("Can't fetch EPG ID from ($provider): $id DATE: $epg_date");
+                    if ($provider === $this->config->TVG_PROVIDER)
+                        return $epg;
+
                     $provider = $this->config->TVG_PROVIDER;
                     hd_print("using second ($provider)");
                     $epg = $this->get_epg($provider, $id, $epg_date, $day_start_ts);
@@ -297,6 +301,7 @@ class StarnetPluginTv extends AbstractTv
             }
         }
 
+        // sort epg by date
         if (count($epg) > 0) {
             ksort($epg, SORT_NUMERIC);
             file_put_contents($cache_file, serialize($epg));
@@ -338,6 +343,9 @@ class StarnetPluginTv extends AbstractTv
             case 'sharavoz':
                 $url = sprintf($this->config->TVG_URL_FORMAT, $epg_id, $epg_date);
                 break;
+            case 'sharaclub':
+                $url = $this->config->EPG_URL_FORMAT;
+                break;
             default:
                 break;
         }
@@ -352,41 +360,42 @@ class StarnetPluginTv extends AbstractTv
             case 'ott-play':
             case 'arlekino':
             case 'sharavoz':
-                // json parse
-                $doc = HD::http_get_document($url);
-                $epg = $this->parse_epg_json($doc, $day_start_ts);
+                $epg = $this->parse_epg_json($url, $day_start_ts);
                 break;
             case 'teleguide':
-                // html parse
-                // tvguide.info time in GMT+3 (moscow time)
-                // $timezone_suffix = date('T');
-                $doc = HD::http_get_document($url);
-                $e_time = strtotime("$epg_date, 0300 GMT+3");
-                preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
-                foreach ($keywords[1] as $qid) {
-                    $qq = strip_tags($qid);
-                    preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
-                    $time = $keyw[1][0];
-                    $u_time = strtotime("$epg_date $time GMT+3");
-                    $last_time = ($u_time < $e_time) ? $u_time + 86400  : $u_time ;
-                    $epg[$last_time]["title"] = str_replace("&nbsp;", " ", $keyw[2][0]);
-                    $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
-                }
+                $epg = $this->parse_epg_html($url, $epg_date);
                 break;
-			default:
+            case 'sharaclub':
+                $epg = $this->parse_epg_iptvx($url, $epg_id, $day_start_ts);
+                break;
+            default:
 				break;
         }
 
         return $epg;
     }
 
-    protected function parse_epg_json($doc, $day_start_ts)
+    /**
+     * @param $url
+     * @param $day_start_ts
+     * @return array
+     */
+    protected function parse_epg_json($url, $day_start_ts)
     {
         $epg = array();
-        $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
         // time in UTC
         $epg_date_start = strtotime('-1 hour', $day_start_ts);
         $epg_date_end = strtotime('+1 day', $day_start_ts);
+
+        try {
+            $doc = HD::http_get_document($url);
+        }
+        catch (Exception $ex) {
+            hd_print($ex->getMessage());
+            return $epg;
+        }
+
+        $ch_data = json_decode(ltrim($doc, chr(239) . chr(187) . chr(191)));
         foreach ($ch_data->epg_data as $channel) {
             if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
                 $epg[$channel->time]['title'] = $channel->name;
@@ -395,7 +404,86 @@ class StarnetPluginTv extends AbstractTv
         }
         return $epg;
     }
+
+    /**
+     * @param $url
+     * @param $epg_id
+     * @param $day_start_ts
+     * @return array
+     */
+    protected function parse_epg_iptvx($url, $epg_id, $day_start_ts)
+    {
+        $epg = array();
+        // time in UTC
+        $epg_date_start = strtotime('-1 hour', $day_start_ts);
+        $epg_date_end = strtotime('+1 day', $day_start_ts);
+
+        try {
+            // checks if epg already loaded
+            preg_match('^.*\/(.+)$', $url, $match);
+            $epgCacheFile = $this->config->EPG_CACHE_DIR . $match[1] . '_'. $day_start_ts;
+            if (!file_exists($epgCacheFile)) {
+                $doc = HD::http_get_document($url);
+                if(!file_put_contents($epgCacheFile, $doc)){
+                    throw new Exception("Writing to {$epgCacheFile} is not possible.");
+                }
+            }
+
+            // parse
+            $Parser = new EpgParser();
+            $Parser->setFile($epgCacheFile);
+            //$Parser->setTargetTimeZone('Europe/Berlin');
+            $Parser->setChannelfilter($epg_id);
+            $epg_data = $Parser->getEpgData();
+
+            foreach ($epg_data as $channel) {
+                if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
+                    $epg[$channel->time]['title'] = $channel->name;
+                    $epg[$channel->time]['desc'] = $channel->descr;
+                }
+            }
+        }
+        catch (Exception $ex) {
+            hd_print($ex->getMessage());
+            return $epg;
+        }
+
+        return $epg;
+    }
+
+    /**
+     * @param $url
+     * @param $epg_date
+     * @return array
+     */
+    protected function parse_epg_html($url, $epg_date)
+    {
+        // html parse
+        // tvguide.info time in GMT+3 (moscow time)
+
+        $epg = array();
+        $e_time = strtotime("$epg_date, 0300 GMT+3");
+
+        try {
+            $doc = HD::http_get_document($url);
+        }
+        catch (Exception $ex) {
+            hd_print($ex->getMessage());
+            return $epg;
+        }
+
+        preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
+        foreach ($keywords[1] as $qid) {
+            $qq = strip_tags($qid);
+            preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
+            $time = $keyw[1][0];
+            $u_time = strtotime("$epg_date $time GMT+3");
+            $last_time = ($u_time < $e_time) ? $u_time + 86400 : $u_time;
+            $epg[$last_time]["title"] = str_replace("&nbsp;", " ", $keyw[2][0]);
+            $epg[$last_time]["desc"] = str_replace("&nbsp;", " ", $keyw[3][0]);
+        }
+        return $epg;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
-?>

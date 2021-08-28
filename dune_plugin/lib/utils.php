@@ -131,6 +131,9 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public static function http_get_document($url, $opts = null)
     {
         $ch = curl_init();
@@ -174,6 +177,9 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public static function http_post_document($url, $post_data)
     {
         return self::http_get_document($url,
@@ -186,6 +192,9 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public static function parse_xml_document($doc)
     {
         $xml = simplexml_load_string($doc);
@@ -205,15 +214,13 @@ class HD
     {
         static $request_id = 0;
 
-        $request = array
+        return array
         (
             'jsonrpc' => '2.0',
             'id' => ++$request_id,
             'method' => $op_name,
             'params' => $params
         );
-
-        return $request;
     }
 
     ///////////////////////////////////////////////////////////////////////////
