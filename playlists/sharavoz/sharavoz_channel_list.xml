@@ -55,6 +55,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/983.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Первый канал</caption>
@@ -63,6 +64,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/146.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Россия 1 HD</caption>
@@ -71,6 +73,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/984.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Россия 1</caption>
@@ -79,6 +82,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/711.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Россия-Культура</caption>
@@ -87,6 +91,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/187.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>РТР Планета</caption>
@@ -95,6 +100,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ HD</caption>
@@ -103,6 +109,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2001.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ</caption>
@@ -111,6 +118,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/162.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>НТВ Мир</caption>
@@ -119,6 +127,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>РЕН HD</caption>
@@ -127,6 +136,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/18.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>РЕН ТВ</caption>
@@ -135,6 +145,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/18.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ HD</caption>
@@ -143,6 +154,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/1767.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ</caption>
@@ -151,6 +163,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/353.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ4</caption>
@@ -159,6 +172,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/1649.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ International</caption>
@@ -167,6 +181,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС HD</caption>
@@ -175,6 +190,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/79.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС</caption>
@@ -183,6 +199,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/79.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС International</caption>
@@ -191,6 +208,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url/>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС Love</caption>
@@ -199,6 +217,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/1322.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Суббота!</caption>
@@ -207,6 +226,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2288.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Пятый Канал</caption>
@@ -215,6 +235,7 @@
 			<tvg_id>0</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/427.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Телеканал Звезда</caption>
