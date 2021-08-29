@@ -37,20 +37,6 @@ public:
 
 	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
 
-	static std::string GetAccessKey() { return m_embedded_info ? m_ch_access_key : m_gl_access_key; }
-	static std::string GetAccessDomain() { return m_embedded_info ? m_ch_domain : m_gl_domain; }
-	static void SetAccessKey(const CString& access_key)
-	{
-		auto& target = m_embedded_info ? m_ch_access_key : m_gl_access_key;
-		target = utils::utf16_to_utf8(access_key.GetString());
-	}
-
-	static void SetDomain(const CString& domain)
-	{
-		auto& target = m_embedded_info ? m_ch_domain : m_gl_domain;
-		target = utils::utf16_to_utf8(domain.GetString());
-	}
-
 	// Implementation
 protected:
 	HICON m_hIcon;
@@ -159,8 +145,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	const std::string& GetAccessKey() const { return m_embedded_info ? m_ch_access_key : m_gl_access_key; }
+	const std::string& GetAccessDomain() const { return m_embedded_info ? m_ch_domain : m_gl_domain; }
+
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
+
+	void SaveAccessInfo();
 
 	bool LoadChannels(const CString& path, bool& changed);
 	void LoadPlaylist(bool saveToFile = false);

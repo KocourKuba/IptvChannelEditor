@@ -365,14 +365,10 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	m_wndPluginType.AddString(_T("Edem (iLook TV)"));
 	m_wndPluginType.AddString(_T("Sharavoz TV"));
-	m_wndPluginType.AddString(_T("Shara Club TV"));
+	m_wndPluginType.AddString(_T("Sharaclub TV"));
 
 	m_wndPluginType.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_PLUGIN, 0));
 	m_wndIconSource.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_ICON_SOURCE, 0));
-
-	const auto& regPath = GetPluginRegPath();
-	SetAccessKey(theApp.GetProfileString(regPath.c_str(), REG_ACCESS_KEY));
-	SetDomain(theApp.GetProfileString(regPath.c_str(), REG_DOMAIN));
 
 	SwitchPlugin();
 
@@ -417,9 +413,17 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
+void CIPTVChannelEditorDlg::SaveAccessInfo()
+{
+	const auto& regPath = GetPluginRegPath();
+
+	theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_KEY, utils::utf8_to_utf16(m_gl_access_key).c_str());
+	theApp.WriteProfileString(regPath.c_str(), REG_DOMAIN, utils::utf8_to_utf16(m_gl_domain).c_str());
+}
+
 void CIPTVChannelEditorDlg::SwitchPlugin()
 {
-	// Rebuld available playlist types and set current plugin parameters
+	// Rebuild available playlist types and set current plugin parameters
 	switch (m_wndPluginType.GetCurSel())
 	{
 		case 0: // Edem
@@ -472,8 +476,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	const auto& regPath = GetPluginRegPath();
 
 	// Load access credentials
-	SetAccessKey(theApp.GetProfileString(regPath.c_str(), REG_ACCESS_KEY));
-	SetDomain(theApp.GetProfileString(regPath.c_str(), REG_DOMAIN));
+	m_gl_access_key = utils::utf16_to_utf8(theApp.GetProfileString(regPath.c_str(), REG_ACCESS_KEY).GetString());
+	m_gl_domain = utils::utf16_to_utf8(theApp.GetProfileString(regPath.c_str(), REG_DOMAIN).GetString());
 
 	// Load channel lists
 	m_all_channels_lists.clear();
@@ -1266,9 +1270,9 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
 	auto setup_node = i_node->first_node(utils::CHANNELS_SETUP);
 	if (setup_node)
 	{
+		m_embedded_info = TRUE;
 		m_ch_access_key = utils::get_value_string(setup_node->first_node(utils::ACCESS_KEY));
 		m_ch_domain = utils::get_value_string(setup_node->first_node(utils::ACCESS_DOMAIN));
-		m_embedded_info = TRUE;
 	}
 
 	const auto& root_path = theApp.GetAppPath(utils::PLUGIN_ROOT);
@@ -2499,8 +2503,8 @@ void CIPTVChannelEditorDlg::OnSave()
 		if (m_embedded_info)
 		{
 			auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
-			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_KEY, GetAccessKey().c_str()));
-			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, GetAccessDomain().c_str()));
+			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_KEY, m_ch_access_key.c_str()));
+			setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, m_ch_domain.c_str()));
 			tv_info->append_node(setup_node);
 		}
 
@@ -2953,28 +2957,32 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo()
 	const auto& regPath = GetPluginRegPath();
 
 	CAccessDlg dlg;
-	dlg.m_bEmbedded = m_embedded_info;
-	dlg.m_accessKey = GetAccessKey().c_str();
-	dlg.m_domain = GetAccessDomain().c_str();
+	dlg.m_type = m_embedded_info;
+	dlg.m_accessKeyGlobal = m_gl_access_key.c_str();
+	dlg.m_domainGlobal = m_gl_domain.c_str();
+	dlg.m_accessKeyEmbedded = m_ch_access_key.c_str();
+	dlg.m_domainEmbedded = m_ch_domain.c_str();
 	dlg.m_streamType = m_pluginType;
 	dlg.m_url = theApp.GetProfileString(regPath.c_str(), REG_ACCESS_URL);
 
 	if (dlg.DoModal() == IDOK)
 	{
-		SetAccessKey(dlg.m_accessKey);
-		SetDomain(dlg.m_domain);
+		m_gl_access_key = utils::utf16_to_utf8(dlg.m_accessKeyGlobal.GetString());
+		m_gl_domain = utils::utf16_to_utf8(dlg.m_domainGlobal.GetString());
+		m_ch_access_key = utils::utf16_to_utf8(dlg.m_accessKeyEmbedded.GetString());
+		m_ch_domain = utils::utf16_to_utf8(dlg.m_domainEmbedded.GetString());
 
 		theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_URL, dlg.m_url);
 
-		if (m_embedded_info != dlg.m_bEmbedded)
+		if (dlg.m_type == 1)
 		{
-			m_embedded_info = dlg.m_bEmbedded;
+			m_embedded_info = TRUE;
 			set_allow_save();
 		}
 		else
 		{
-			theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_KEY, dlg.m_accessKey);
-			theApp.WriteProfileString(regPath.c_str(), REG_DOMAIN, dlg.m_domain);
+			m_embedded_info = FALSE;
+			SaveAccessInfo();
 		}
 	}
 }

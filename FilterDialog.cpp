@@ -49,5 +49,3 @@ void CFilterDialog::OnOK()
 
 	__super::OnOK();
 }
-
-
