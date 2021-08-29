@@ -28,4 +28,32 @@ class SharaclubPluginConfig extends DefaultConfig
         hd_print("AdjustStreamUri: $url");
         return $url;
     }
+
+    public function GetEPG($channel, $day_start_ts)
+    {
+        $this->create_cache_folder();
+        $cache_file = $this->EPG_CACHE_DIR . $this->EPG_CACHE_FILE . $channel->get_id() . "_" . $day_start_ts;
+
+        $epg = array();
+        $epg_id = intval($channel->get_epg_id());
+        // if epg is empty, no need to fetch data
+        if (DefaultConfig::LoadCachedEPG($cache_file, $epg) === false
+            && $epg_id !== 0) {
+            try {
+                // xml epg source, no backup source
+                hd_print("Fetching EPG ID from primary epg source '$this->EPG_PROVIDER': $epg_id");
+                $epg = HD::parse_epg_xml($this->EPG_URL_FORMAT, $epg_id, $day_start_ts, $this->EPG_CACHE_DIR);
+            } catch (Exception $ex) {
+                hd_print("Can't fetch EPG ID from primary epg source '$this->EPG_PROVIDER':" . $ex->getMessage());
+            }
+        }
+
+        // sort epg by date
+        if (count($epg) > 0) {
+            ksort($epg, SORT_NUMERIC);
+            file_put_contents($cache_file, serialize($epg));
+        }
+
+        return $epg;
+    }
 }

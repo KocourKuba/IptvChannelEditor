@@ -21,8 +21,6 @@ require_once 'starnet_setup_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 require_once 'starnet_vod_list_screen.php';
 require_once 'starnet_main_screen.php';
-require_once 'edem_config.php';
-require_once 'sharavoz_config.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +35,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
 
         $className = PLUGIN_TYPE;
         if(!class_exists($className) || !is_subclass_of($className, 'DefaultConfig'))
-            throw new Exception('Unknown plugin type!');
+            throw new Exception('Unknown plugin type: ' . $className);
 
         $this->tv = new StarnetPluginTv(new $className);
         $this->add_screen(new TvChannelListScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($this->tv->config->BG_PICTURE)));

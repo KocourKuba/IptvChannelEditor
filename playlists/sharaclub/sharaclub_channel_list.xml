@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tv_info>
+	<channels_setup>
+		<access_key>s.265258.1d25ecee4e77d0419432d2e38eb0ee525</access_key>
+		<access_domain>em.gazoni1.com</access_domain>
+	</channels_setup>
 	<tv_categories>
 		<tv_category>
 			<id>1</id>

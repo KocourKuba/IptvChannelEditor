@@ -2794,13 +2794,15 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	}
 
 	// write setup file
-	auto& capsName = utils::utf16_to_utf8(name);
+	const auto& aName = utils::utf16_to_utf8(name);
+	auto capsName(aName);
 	capsName[0] = toupper(capsName[0]);
 	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\ndefine(\"PLUGIN_TYPE\", '{:s}PluginConfig')\n?>\n", capsName.c_str());
+	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\ndefine('PLUGIN_TYPE', '{:s}PluginConfig');\n", aName.c_str(), capsName.c_str());
 	os.close();
+
 
 	// pack folder
 	SevenZipWrapper archiver(theApp.GetAppPath(utils::PACK_DLL));

@@ -284,6 +284,118 @@ class HD
         }
     }
 
+    /**
+     * @param $url
+     * @param $day_start_ts
+     * @return array
+     */
+    public static function parse_epg_json($url, $day_start_ts)
+    {
+        $epg = array();
+        // time in UTC
+        $epg_date_start = strtotime('-1 hour', $day_start_ts);
+        $epg_date_end = strtotime('+1 day', $day_start_ts);
+
+        try {
+            hd_print($url);
+            $doc = HD::http_get_document($url);
+        }
+        catch (Exception $ex) {
+            hd_print($ex->getMessage());
+            return $epg;
+        }
+
+        // stripe UTF8 BOM if exists
+        $ch_data = json_decode(ltrim($doc, "\0xEF\0xBB\0xBF"));
+        foreach ($ch_data->epg_data as $channel) {
+            if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
+                $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
+                $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
+            }
+        }
+        return $epg;
+    }
+    /**
+     * @param $url
+     * @param $epg_id
+     * @param $day_start_ts
+     * @param $cache_dir
+     * @return array
+     */
+    public static function parse_epg_xml($url, $epg_id, $day_start_ts, $cache_dir)
+    {
+        $epg = array();
+        // time in UTC
+        $epg_date_start = strtotime('-1 hour', $day_start_ts);
+        $epg_date_end = strtotime('+1 day', $day_start_ts);
+
+        try {
+            // checks if epg already loaded
+            preg_match('^.*\/(.+)$', $url, $match);
+            $epgCacheFile = $cache_dir . $match[1] . '_'. $day_start_ts;
+            if (!file_exists($epgCacheFile)) {
+                $doc = HD::http_get_document($url);
+                if(!file_put_contents($epgCacheFile, $doc)) {
+                    hd_print("Writing to {$epgCacheFile} is not possible!");
+                }
+            }
+
+            // parse
+            $Parser = new EpgParser();
+            $Parser->setFile($epgCacheFile);
+            //$Parser->setTargetTimeZone('Europe/Berlin');
+            $Parser->setChannelfilter($epg_id);
+            $epg_data = $Parser->getEpgData();
+
+            foreach ($epg_data as $channel) {
+                if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
+                    $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
+                    $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
+                }
+            }
+        }
+        catch (Exception $ex) {
+            hd_print($ex->getMessage());
+            return $epg;
+        }
+
+        return $epg;
+    }
+
+    public static function unescape_entity_string($raw_string)
+    {
+        $replace = array(
+            '&#196;' => 'Г„',
+            '&#228;' => 'Г¤',
+            '&#214;' => 'Г–',
+            '&#220;' => 'Гњ',
+            '&#223;' => 'Гџ',
+            '&#246;' => 'Г¶',
+            '&#252;' => 'Гј',
+            "&nbsp;" => ' ',
+            '&#39;'  => "'",
+            '&quot;' => '"',
+            '&#257;' => 'ā',
+            '&#258;' => 'Ă',
+            '&#268;' => 'Č',
+            '&#326;' => 'ņ',
+            '&#327;' => 'Ň',
+            '&#363;' => 'ū',
+            '&#362;' => 'Ū',
+            '&#352;' => 'Š',
+            '&#353;' => 'š',
+            '&#382;' => 'ž',
+            '&#275;' => 'ē',
+            '&#276;' => 'Ĕ',
+            '&#298;' => 'Ī',
+            '&#299;' => 'ī',
+            '&#291;' => 'ģ',
+            '&#311;' => 'ķ',
+            '&#316;' => 'ļ',
+        );
+
+        return str_replace(array_keys($replace), $replace, $raw_string);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

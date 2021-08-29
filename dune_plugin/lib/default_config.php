@@ -25,7 +25,23 @@ abstract class DefaultConfig
     public $TVG_PROVIDER = 'unknown';
     public $EPG_PROVIDER = 'unknown';
     public $BG_PICTURE = '';
-    abstract public function AdjustStreamUri($plugin_cookies, $archive_ts, $url);
-}
 
-?>
+    abstract public function AdjustStreamUri($plugin_cookies, $archive_ts, $url);
+
+    public function create_cache_folder()
+    {
+        if (!is_dir($this->EPG_CACHE_DIR)) {
+           mkdir($this->EPG_CACHE_DIR);
+        }
+    }
+
+    public static function LoadCachedEPG($cache_file, &$epg)
+    {
+        if (!file_exists($cache_file))
+            return false;
+
+        hd_print("Load EPG from cache: $cache_file");
+        $epg = unserialize(file_get_contents($cache_file));
+        return true;
+    }
+}
