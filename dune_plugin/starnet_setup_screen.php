@@ -29,7 +29,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $defs = array();
 
         $format        = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->tv->config->CHANNEL_LIST_URL;
+        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->tv->config->GET_CHANNEL_LIST_URL();
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $show_tv       = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
         $buf_time      = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
@@ -49,10 +49,10 @@ class StarnetSetupScreen extends AbstractControlsScreen
         }
 
         ControlFactory::add_vgap($defs, -10);
-        $title = $this->tv->config->PluginName . ' v.' . $this->tv->config->PluginVersion . '. [' . $this->tv->config->PluginDate . ']';
+        $title = $this->tv->config->GET_PLUGIN_NAME() . ' v.' . $this->tv->config->GET_PLUGIN_VERSION() . '. [' . $this->tv->config->GET_PLUGIN_DATE() . ']';
         $this->add_button($defs, 'restart', $title, 'Перезагрузить плеер', 0);
 
-        $this->add_combobox($defs,'show_tv', 'Показывать ' . $this->tv->config->PluginName .' TV в главном меню:',
+        $this->add_combobox($defs,'show_tv', 'Показывать ' . $this->tv->config->GET_PLUGIN_NAME() .' в главном меню:',
             $show_tv, $show_ops, 0, true);
 
         if (PLUGIN_TYPE === 'SharavozPluginConfig') {
