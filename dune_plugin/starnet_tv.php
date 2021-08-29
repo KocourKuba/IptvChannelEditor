@@ -2,6 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once 'lib/hashed_array.php';
+require_once 'lib/config.php';
 require_once 'lib/tv/abstract_tv.php';
 require_once 'lib/tv/default_epg_item.php';
 require_once 'lib/epg_parser.php';
@@ -12,9 +13,12 @@ require_once 'starnet_channel.php';
 
 class StarnetPluginTv extends AbstractTv
 {
-    public function __construct(DefaultConfig $config)
+    public $config = null;
+
+    public function __construct(IConfig $config)
     {
-        parent::__construct(AbstractTv::MODE_CHANNELS_N_TO_M, $config, false);
+        parent::__construct(AbstractTv::MODE_CHANNELS_N_TO_M, false);
+        $this->config = $config;
     }
 
     public function get_fav_icon_url()
@@ -31,6 +35,16 @@ class StarnetPluginTv extends AbstractTv
     public function get_setup_screen()
     {
         return isset($this->SettingsScreen) ? $this->SettingsScreen : false;
+    }
+
+    public function is_favorites_supported()
+    {
+        return $this->config->GET_TV_FAVORITES_SUPPORTED();
+    }
+
+    public function get_channel_list_url($plugin_cookies)
+    {
+        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->config->GET_CHANNEL_LIST_URL();
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -122,11 +136,13 @@ class StarnetPluginTv extends AbstractTv
             if (isset($xml_tv_channel->disabled)) continue;
 
             // make substitute template
-            if (isset($xml_tv_channel->channel_id))
-                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, $this->config->MEDIA_URL_TEMPLATE);
-            else
+            if (isset($xml_tv_channel->channel_id)) {
+                $channel_id = strval($xml_tv_channel->channel_id);
+                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, $this->config->GET_MEDIA_URL_TEMPLATE());
+            } else {
+                $channel_id ='';
                 $streaming_url = strval($xml_tv_channel->streaming_url);
-
+            }
             // calculate unique id from url hash
             $id = hash("crc32", $streaming_url);
             if ($this->channels->has($id)) {
@@ -139,11 +155,11 @@ class StarnetPluginTv extends AbstractTv
                 $icon_url = str_replace('https', 'https', strval($xml_tv_channel->icon_url));
                 $channel = new StarnetChannel(
                     $id,
+                    $channel_id,
                     strval($xml_tv_channel->caption),
                     $icon_url,
-                    intval($xml_tv_channel->archive),
                     $streaming_url,
-                    intval($xml_tv_channel->number),
+                    intval($xml_tv_channel->archive),
                     intval($xml_tv_channel->tvg_id),
                     intval($xml_tv_channel->epg_id),
                     intval($xml_tv_channel->protected),
@@ -231,7 +247,11 @@ class StarnetPluginTv extends AbstractTv
             return array();
         }
 
-        $epg = $this->config->GetEPG($channel, $channel_id, $day_start_ts);
+        if ($this->config->LoadCachedEPG($channel, $day_start_ts, $epg) === false) {
+            $epg = $this->config->GetEPG($channel, $day_start_ts);
+        }
+
+        hd_print("Loaded " . count($epg) . " EPG entries");
 
         $epg_result = array();
         $start = 0;

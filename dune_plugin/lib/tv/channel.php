@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-interface Channel
+interface IChannel
 {
     public function get_id();
 
@@ -10,6 +10,8 @@ interface Channel
     public function get_icon_url();
 
     public function get_groups(); // Array<Group>
+
+    public function get_number();
 
     public function has_archive();
 

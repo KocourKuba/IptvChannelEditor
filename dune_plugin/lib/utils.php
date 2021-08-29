@@ -331,8 +331,8 @@ class HD
 
         try {
             // checks if epg already loaded
-            preg_match('^.*\/(.+)$', $url, $match);
-            $epgCacheFile = $cache_dir . $match[1] . '_'. $day_start_ts;
+            preg_match('|^.*\/(.+)$|', $url, $match);
+            $epgCacheFile = $cache_dir . $day_start_ts . '_' . $match[1];
             if (!file_exists($epgCacheFile)) {
                 $doc = HD::http_get_document($url);
                 if(!file_put_contents($epgCacheFile, $doc)) {
@@ -345,12 +345,16 @@ class HD
             $Parser->setFile($epgCacheFile);
             //$Parser->setTargetTimeZone('Europe/Berlin');
             $Parser->setChannelfilter($epg_id);
+            $Parser->parseEpg();
             $epg_data = $Parser->getEpgData();
-
-            foreach ($epg_data as $channel) {
-                if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
-                    $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
-                    $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
+            if (empty($epg_data)){
+                hd_print("No EPG data found");
+            } else {
+                foreach ($epg_data as $channel) {
+                    if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
+                        $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
+                        $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
+                    }
                 }
             }
         }

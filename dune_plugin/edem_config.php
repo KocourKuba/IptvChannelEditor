@@ -1,26 +1,21 @@
 ﻿<?php
 require_once 'lib/default_config.php';
-require_once 'starnet_channel.php';
 
 class EdemPluginConfig extends DefaultConfig
 {
-    public function __construct()
-    {
-        $this->PluginName = 'iEdem/iLook TV';
-        $this->PluginVersion = '2.6.0';
-        $this->PluginDate = '28.08.2021';
+    const PLUGIN_NAME = 'iEdem/iLook TV';
+    const PLUGIN_SHORT_NAME = 'edem';
+    const PLUGIN_VERSION = '2.6.0';
+    const PLUGIN_DATE = '28.08.2021';
 
-        $this->BG_PICTURE = 'plugin_file://bg_edem.jpg';
-        $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
-        $this->CHANNEL_LIST_URL = 'edem_channel_list.xml';
-        $this->EPG_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%d.json';
-        $this->TVG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';
-        $this->EPG_CACHE_DIR = '/tmp/edem_epg/';
-        $this->TVG_PROVIDER = 'tvguide.info';
-        $this->EPG_PROVIDER = 'ott-play';
-    }
+    const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
+    const CHANNEL_LIST_URL = 'edem_channel_list.xml';
+    const EPG_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%d.json';
+    const TVG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';
+    const EPG_PROVIDER = 'ott-play';
+    const TVG_PROVIDER = 'tvguide.info';
 
-    public function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
+    public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {
         if (strpos($url, 'http://ts://') === false) {
             $url = str_replace('http://', 'http://ts://', $url);
@@ -40,41 +35,39 @@ class EdemPluginConfig extends DefaultConfig
         return $url;
     }
 
-    public function GetEPG($channel, $day_start_ts)
+    public final function GetEPG(IChannel $channel, $day_start_ts)
     {
         $epg_id = intval($channel->get_epg_id());
         $tvg_id = intval($channel->get_tvg_id());
 
-        $this->create_cache_folder();
-        $cache_file = $this->EPG_CACHE_DIR . $this->EPG_CACHE_FILE . $channel->get_id() . "_" . $day_start_ts;
-
         // if all tvg & epg are empty, no need to fetch data
         $epg = array();
-        if (DefaultConfig::LoadCachedEPG($cache_file, $epg) === false
-            && ($tvg_id !== 0 || $epg_id !== 0)) {
+        if ($tvg_id === 0 && $epg_id === 0) {
+            hd_print("EPG not defined for channel '" . $channel->get_title() . "'");
+            return $epg;
+        }
 
-            $epg_date = gmdate("Ymd", $day_start_ts);
+        $epg_date = gmdate("Ymd", $day_start_ts);
+        $provider = $this->GET_EPG_PROVIDER();
+        try {
+            // ott-play - primary epg source
+            hd_print("Fetching EPG ID from primary epg source '$provider': '$epg_id'");
+            $url = sprintf($this->GET_EPG_URL_FORMAT(), $epg_id);
+            $epg = HD::parse_epg_json($url, $day_start_ts);
+        } catch (Exception $ex) {
             try {
-                // tvguide used as backup of ott-play epg source
-                hd_print("Fetching EPG ID from primary epg source '$this->EPG_PROVIDER': $epg_id DATE: $epg_date");
-                $url = sprintf($this->EPG_URL_FORMAT, $epg_id);
-                $epg = HD::parse_epg_json($url, $day_start_ts);
+                hd_print("Can't fetch EPG ID from primary epg source '$provider': " . $ex->getMessage());
+                // tvguide.info - backup epg source
+                $provider = $this->GET_TVG_PROVIDER();
+                hd_print("Fetching EPG ID from secondary epg source '$provider': '$tvg_id' DATE: $epg_date");
+                $epg = EdemPluginConfig::parse_epg_html(sprintf($this->GET_TVG_URL_FORMAT(), $tvg_id, $epg_date), $epg_date);
             } catch (Exception $ex) {
-                try {
-                    hd_print("Can't fetch EPG ID from primary epg source '$this->EPG_PROVIDER': " . $ex->getMessage());
-                    hd_print("Fetching EPG ID from secondary epg source '$this->TVG_PROVIDER': $tvg_id DATE: $epg_date");
-                    $epg = $this->parse_epg_html(sprintf($this->TVG_URL_FORMAT, $tvg_id, $epg_date), $epg_date);
-                } catch (Exception $ex) {
-                    hd_print("Can't fetch EPG ID from '$this->TVG_PROVIDER': " . $ex->getMessage());
-                }
+                hd_print("Can't fetch EPG ID from '$provider': " . $ex->getMessage());
+                return $epg;
             }
         }
 
-        // sort epg by date
-        if (count($epg) > 0) {
-            ksort($epg, SORT_NUMERIC);
-            file_put_contents($cache_file, serialize($epg));
-        }
+        $this->SortAndStore($channel, $day_start_ts, $epg);
 
         return $epg;
     }
@@ -84,7 +77,7 @@ class EdemPluginConfig extends DefaultConfig
      * @param $epg_date
      * @return array
      */
-    protected function parse_epg_html($url, $epg_date)
+    protected static function parse_epg_html($url, $epg_date)
     {
         // html parse for tvguide.info
         // tvguide.info time in GMT+3 (moscow time)

@@ -13,8 +13,6 @@ abstract class AbstractTv implements Tv
 
     ///////////////////////////////////////////////////////////////////////
     public $SettingsScreen;
-    public $config;
-
     private $mode;
 
     private $playback_url_is_stream_url;
@@ -23,21 +21,13 @@ abstract class AbstractTv implements Tv
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected function __construct($mode,
-                                   $config,
-                                   $playback_url_is_stream_url)
+    protected function __construct($mode, $playback_url_is_stream_url)
     {
         $this->mode = $mode;
-        $this->config = $config;
         $this->playback_url_is_stream_url = $playback_url_is_stream_url;
     }
 
     ///////////////////////////////////////////////////////////////////////
-
-    public function is_favorites_supported()
-    {
-        return $this->config->TV_FAVORITES_SUPPORTED;
-    }
 
     public function get_all_channel_group_id()
     {
@@ -82,10 +72,6 @@ abstract class AbstractTv implements Tv
         return $c;
     }
 
-    public function get_channel_list_url($plugin_cookies)
-    {
-        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->config->CHANNEL_LIST_URL;
-    }
     ///////////////////////////////////////////////////////////////////////
 
     public function get_groups()

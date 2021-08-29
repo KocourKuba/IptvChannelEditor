@@ -1,5 +1,5 @@
 ﻿<dune_plugin>
-  <name>SharavozTV</name>
+  <name>sharavoz.tv</name>
   <caption>Sharavoz TV</caption>
   <auto_resume>
     <enable>yes</enable>

@@ -67,7 +67,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        if ($this->config->VOD_FAVORITES_SUPPORTED &&
+        if ($this->config->GET_VOD_FAVORITES_SUPPORTED() &&
             !isset($media_url->category_id)) {
             $items[] = array
             (
@@ -109,7 +109,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
      */
     private function fetch_vod_categories()
     {
-        $doc = HD::http_get_document($this->config->VOD_CATEGORIES_URL);
+        $doc = HD::http_get_document($this->config->GET_VOD_CATEGORIES_URL());
 
         if (is_null($doc))
             throw new Exception('Can not fetch playlist');

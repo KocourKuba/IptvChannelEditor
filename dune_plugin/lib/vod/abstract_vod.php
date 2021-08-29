@@ -18,9 +18,7 @@ abstract class AbstractVod implements Vod
     private $genres;
     public  $config;
 
-    protected function __construct(
-        $config,
-        $playback_url_is_stream_url)
+    protected function __construct(IConfig $config, $playback_url_is_stream_url)
     {
         $this->config = $config;
         $this->playback_url_is_stream_url = $playback_url_is_stream_url;
@@ -37,6 +35,9 @@ abstract class AbstractVod implements Vod
         $this->short_movie_by_id[$short_movie->id] = $short_movie;
     }
 
+    /**
+     * @throws Exception
+     */
     public function set_cached_movie(Movie $movie)
     {
         $this->movie_by_id[$movie->id] = $movie;
@@ -62,12 +63,12 @@ abstract class AbstractVod implements Vod
 
     public function is_favorites_supported()
     {
-        return $this->config->VOD_FAVORITES_SUPPORTED;
+        return $this->config->GET_VOD_FAVORITES_SUPPORTED();
     }
 
     public function is_movie_page_supported()
     {
-        return $this->config->VOD_MOVIE_PAGE_SUPPORTED;
+        return $this->config->GET_VOD_MOVIE_PAGE_SUPPORTED();
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -116,6 +117,9 @@ abstract class AbstractVod implements Vod
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function ensure_movie_loaded($movie_id, &$plugin_cookies)
     {
         if (!isset($movie_id))
@@ -129,6 +133,9 @@ abstract class AbstractVod implements Vod
             $this->try_load_movie($movie_id, $plugin_cookies);
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_loaded_movie($movie_id, &$plugin_cookies)
     {
         $this->ensure_movie_loaded($movie_id, $plugin_cookies);
@@ -138,6 +145,9 @@ abstract class AbstractVod implements Vod
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function get_vod_info(MediaURL $media_url, &$plugin_cookies)
     {
         $movie = $this->get_loaded_movie($media_url->movie_id, $plugin_cookies);
@@ -161,8 +171,11 @@ abstract class AbstractVod implements Vod
 
     ///////////////////////////////////////////////////////////////////////
 
-    // This method should be overridden if and only if the
-    // $playback_url_is_stream_url is false.
+    /**
+     * This method should be overridden if and only if the
+     * $playback_url_is_stream_url is false.
+     * @throws Exception
+     */
     public function get_vod_stream_url($playback_url, &$plugin_cookies)
     {
         throw new Exception('Not implemented.');
@@ -171,12 +184,15 @@ abstract class AbstractVod implements Vod
     ///////////////////////////////////////////////////////////////////////
     // Favorites.
 
-    // This function is responsible for the following:
-    //  - $this->fav_movie_ids should be initialized with array of movie
-    //  ids
-    //  - each of these movie ids should have loaded ShortMovie in
-    //  short_movie_by_id map.
-    //  - exception should be thrown if error occured.
+    /**
+     * This function is responsible for the following:
+     *  - $this->fav_movie_ids should be initialized with array of movie
+     *  ids
+     *  - each of these movie ids should have loaded ShortMovie in
+     *  short_movie_by_id map.
+     *  - exception should be thrown if error occurred.
+     * @throws Exception
+     */
     protected function load_favorites(&$plugin_cookies)
     {
         throw new Exception('Not implemented');
@@ -197,6 +213,9 @@ abstract class AbstractVod implements Vod
     { /* nop */
     }
 
+    /**
+     * @throws Exception
+     */
     public function ensure_favorites_loaded(&$plugin_cookies)
     {
         if ($this->fav_movie_ids !== null)
@@ -257,21 +276,33 @@ abstract class AbstractVod implements Vod
     ///////////////////////////////////////////////////////////////////////
     // Genres.
 
+    /**
+     * @throws Exception
+     */
     protected function load_genres(&$plugin_cookies)
     {
         throw new Exception("Not implemented.");
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_genre_icon_url($genre_id)
     {
         throw new Exception('Not implemented');
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_genre_media_url_str($genre_id)
     {
         throw new Exception('Not implemented');
     }
 
+    /**
+     * @throws Exception
+     */
     public function ensure_genres_loaded(&$plugin_cookies)
     {
         if ($this->genres !== null)
@@ -283,6 +314,9 @@ abstract class AbstractVod implements Vod
             throw new Exception('Invalid VOD genres loaded');
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_genre_ids()
     {
         if ($this->genres === null)
@@ -291,6 +325,9 @@ abstract class AbstractVod implements Vod
         return array_keys($this->genres);
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_genre_caption($genre_id)
     {
         if ($this->genres === null)
@@ -302,6 +339,9 @@ abstract class AbstractVod implements Vod
     ///////////////////////////////////////////////////////////////////////
     // Search.
 
+    /**
+     * @throws Exception
+     */
     public function get_search_media_url_str($pattern)
     {
         throw new Exception('Not implemented');
@@ -310,11 +350,17 @@ abstract class AbstractVod implements Vod
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 
+    /**
+     * @throws Exception
+     */
     public function get_vod_list_folder_views()
     {
         throw new Exception('Not implemented');
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_vod_genres_folder_views()
     {
         throw new Exception('Not implemented');
@@ -337,4 +383,3 @@ abstract class AbstractVod implements Vod
 }
 
 ///////////////////////////////////////////////////////////////////////////
-?>

@@ -15,7 +15,7 @@ class StarnetVodListScreen extends VodListScreen
     private $config;
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct(Vod $vod, DefaultConfig $config)
+    public function __construct(Vod $vod, IConfig $config)
     {
         parent::__construct($vod);
         $this->config = $config;
@@ -26,14 +26,9 @@ class StarnetVodListScreen extends VodListScreen
     /**
      * @throws Exception
      */
-    protected function get_short_movie_range(MediaURL $media_url, $from_ndx,
-                                             &$plugin_cookies)
+    protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        $doc =
-            HD::http_get_document(
-                sprintf(
-                    $this->config->MOVIE_LIST_URL_FORMAT,
-                    $media_url->category_id));
+        $doc = HD::http_get_document(sprintf($this->config->GET_MOVIE_LIST_URL_FORMAT(), $media_url->category_id));
 
         if (is_null($doc))
             throw new Exception('Can not fetch movie list');

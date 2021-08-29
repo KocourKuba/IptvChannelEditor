@@ -33,14 +33,15 @@ class StarnetDunePlugin extends DefaultDunePlugin
     {
         parent::__construct();
 
-        $className = PLUGIN_TYPE;
-        if(!class_exists($className) || !is_subclass_of($className, 'DefaultConfig'))
-            throw new Exception('Unknown plugin type: ' . $className);
+        $plugin_type = PLUGIN_TYPE;
+        if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'IConfig'))
+            throw new Exception('Unknown plugin type: ' . $plugin_type);
 
-        $this->tv = new StarnetPluginTv(new $className);
-        $this->add_screen(new TvChannelListScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($this->tv->config->BG_PICTURE)));
-        $this->add_screen(new TvFavoritesScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($this->tv->config->BG_PICTURE)));
-        $this->add_screen(new StarnetMainScreen($this->tv, ViewsConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS($this->tv->config->BG_PICTURE)));
+        $this->tv = new StarnetPluginTv(new $plugin_type);
+        $bg_picture = $this->tv->config->get_bg_picture();
+        $this->add_screen(new TvChannelListScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)));
+        $this->add_screen(new TvFavoritesScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)));
+        $this->add_screen(new StarnetMainScreen($this->tv, ViewsConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS($bg_picture)));
         $this->add_screen(new StarnetSetupScreen($this->tv));
     }
 }
