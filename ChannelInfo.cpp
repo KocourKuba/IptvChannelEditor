@@ -49,7 +49,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	if (stream_uri->get_id().empty())
 		stream_uri->parse_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
 
-	set_archive(utils::get_value_int(node->first_node(ARCHIVE)));
+	set_archive_days(utils::get_value_int(node->first_node(ARCHIVE)));
 	set_adult(utils::get_value_int(node->first_node(PROTECTED)));
 }
 
@@ -89,9 +89,9 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	}
 
 	// <archive>1</archive>
-	if (get_archive())
+	if (is_archive())
 	{
-		channel_node->append_node(utils::alloc_node(alloc, ARCHIVE, utils::int_to_char(get_archive()).c_str()));
+		channel_node->append_node(utils::alloc_node(alloc, ARCHIVE, utils::int_to_char(get_archive_days()).c_str()));
 	}
 
 	// <protected>1</protected>

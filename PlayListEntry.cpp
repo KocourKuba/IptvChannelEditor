@@ -53,7 +53,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 
 			if (const auto& pair = m3uEntry.get_tags().find(m3u_entry::tag_tvg_rec); pair != m3uEntry.get_tags().end())
 			{
-				set_archive(utils::char_to_int(pair->second));
+				set_archive_days(utils::char_to_int(pair->second));
 			}
 
 			if (const auto& pair = m3uEntry.get_tags().find(m3u_entry::tag_tvg_id); pair != m3uEntry.get_tags().end())

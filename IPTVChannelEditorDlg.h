@@ -275,7 +275,7 @@ protected:
 	CString m_infoVideo; // m_wndInfoVideo
 	CString m_infoAudio; // m_wndInfoAudio
 
-	BOOL m_hasArchive = FALSE; // m_wndArchive
+	BOOL m_isArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
 	CString m_streamID; // m_wndStreamID
 	int m_epgID2 = 0; // m_wndTvgID

@@ -34,8 +34,10 @@ public:
 	int get_adult() const { return adult; }
 	void set_adult(int val) { adult = val; }
 
-	int get_archive() const { return archive; }
-	void set_archive(int val) { archive = val; }
+	bool is_archive() const { return archive_days > 0; }
+
+	int get_archive_days() const { return archive_days; }
+	void set_archive_days(int val) { archive_days = val; }
 
 	void swap_id(BaseInfo& src)
 	{
@@ -56,7 +58,7 @@ private:
 	int epg_id = 0; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
 	int time_shift_hours = 0;
 	int adult = 0;
-	int archive = 0;
+	int archive_days = 0;
 	bool disabled = false;
 	bool favorite = false;
 	std::set<int> categories;

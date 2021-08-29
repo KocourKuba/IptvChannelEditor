@@ -222,7 +222,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
-	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_hasArchive);
+	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_isArchive);
 	DDX_Control(pDX, IDC_CHECK_ARCHIVE, m_wndArchive);
 	DDX_Check(pDX, IDC_CHECK_ADULT, m_isAdult);
 	DDX_Control(pDX, IDC_CHECK_ADULT, m_wndAdult);
@@ -1061,7 +1061,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		}
 		m_wndCustom.SetCheck(!channel->get_stream_uri()->is_template());
 		m_timeShiftHours = channel->get_time_shift_hours();
-		m_hasArchive = channel->get_archive();
+		m_isArchive = !!channel->is_archive();
 		m_isAdult = channel->get_adult();
 
 		if (channel->get_icon_uri().get_uri().empty())
@@ -1108,8 +1108,8 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 		if (entry->get_epg2_id() > 0)
 			m_plEPG.Format(_T("EPG: %d"), entry->get_epg2_id());
 
-		m_wndPlArchive.SetCheck(entry->get_archive() != 0);
-		m_archiveDays = entry->get_archive();
+		m_wndPlArchive.SetCheck(!!entry->is_archive());
+		m_archiveDays = entry->get_archive_days();
 		auto hash = entry->get_stream_uri()->get_hash();
 		if (auto pair = m_stream_infos.find(hash); pair != m_stream_infos.end())
 		{
@@ -1672,7 +1672,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 			{
 				m_epgID2 = 0;
 				m_epgID1 = 0;
-				m_hasArchive = 0;
+				m_isArchive = 0;
 				m_isAdult = 0;
 				m_streamUrl.Empty();
 				m_streamID.Empty();
@@ -2075,7 +2075,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckArchive()
 	{
 		auto channel = GetChannel(hItem);
 		if (channel)
-			channel->set_archive(m_hasArchive);
+			channel->set_archive_days(m_isArchive ? 1 : 0);
 	}
 
 	set_allow_save();
@@ -2778,7 +2778,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 							packFolder + _T("dune_plugin.xml"),
 							err);
 
-	// remove over configs
+	// remove over config's
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder })
 	{
 		if (dir_entry.path().extension() == _T(".in"))
@@ -2800,7 +2800,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\ndefine('PLUGIN_TYPE', '{:s}PluginConfig');\n", aName.c_str(), capsName.c_str());
+	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n", aName.c_str(), capsName.c_str());
 	os.close();
 
 
@@ -3652,7 +3652,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 		channel->set_epg2_id(entry->get_epg2_id());
 	}
 
-	channel->set_archive(entry->get_archive());
+	channel->set_archive_days(entry->get_archive_days());
 	channel->set_stream_uri(entry->get_stream_uri());
 	if (entry->get_icon_uri() != channel->get_icon_uri() && !entry->get_icon_uri().get_uri().empty())
 	{
@@ -3991,7 +3991,7 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 		m_toolTipText.Format(_T("Name: %s\nID: %hs\nArchive: %s\nAdult: %s\nIn categories: %s"),
 							 entry->get_title().c_str(),
 							 entry->get_stream_uri()->is_template() ? ch_id.c_str() : "Custom",
-							 entry->get_archive() ? _T("Yes") : _T("No"),
+							 entry->is_archive() ? _T("Yes") : _T("No"),
 							 entry->get_adult() ? _T("Yes") : _T("No"),
 							 categories.GetString());
 
@@ -4013,7 +4013,7 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 							 entry->get_title().c_str(),
 							 entry->get_stream_uri()->is_template() ? entry->get_id().c_str() : "Custom",
 							 entry->get_epg2_id(),
-							 entry->get_archive() ? _T("Yes") : _T("No"),
+							 entry->is_archive() ? _T("Yes") : _T("No"),
 							 entry->get_adult() ? _T("Yes") : _T("No"));
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
