@@ -2961,14 +2961,14 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo()
 
 	if (dlg.DoModal() == IDOK)
 	{
-		m_embedded_info = dlg.m_bEmbedded;
-		theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_URL, dlg.m_url);
-
 		SetAccessKey(dlg.m_accessKey);
 		SetDomain(dlg.m_domain);
 
-		if (m_embedded_info)
+		theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_URL, dlg.m_url);
+
+		if (m_embedded_info != dlg.m_bEmbedded)
 		{
+			m_embedded_info = dlg.m_bEmbedded;
 			set_allow_save();
 		}
 		else

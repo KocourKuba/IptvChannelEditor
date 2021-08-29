@@ -235,6 +235,7 @@ class StarnetPluginTv extends AbstractTv
             $url = str_replace('{TOKEN}', $plugin_cookies->ott_key, $url);
         }
 
+        //hd_print("get_tv_playback_url: $url");
         return $url;
     }
 
