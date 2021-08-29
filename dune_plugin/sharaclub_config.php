@@ -10,7 +10,8 @@ class SharaclubPluginConfig extends DefaultConfig
 
     const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
     const CHANNEL_LIST_URL = 'sharaclub_channel_list.xml';
-    const EPG_URL_FORMAT = 'https://list.playtv.pro/f/epg.xml.gz';
+    const EPG_URL_FORMAT = '';
+    //const EPG_URL_FORMAT = 'https://list.playtv.pro/f/epg.xml.gz';
     const EPG_PROVIDER = 'sharaclub';
 
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
