@@ -1,7 +1,7 @@
 ﻿<?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'lib/config.php';
+require_once 'lib/default_config.php';
 require_once 'lib/vod/abstract_vod.php';
 require_once 'lib/vod/movie.php';
 
