@@ -22,8 +22,8 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 
 	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
 	stream_uri->set_id(utils::get_value_string(node->first_node(CHANNEL_ID)));
-	set_epg1_id(utils::get_value_int(node->first_node(EPG_ID)));
-	set_epg2_id(utils::get_value_int(node->first_node(TVG_ID)));
+	set_epg1_id(utils::get_value_string(node->first_node(EPG_ID)));
+	set_epg2_id(utils::get_value_string(node->first_node(TVG_ID)));
 	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
 	set_disabled(utils::string_tolower(utils::get_value_string(node->first_node(DISABLED))) == "true");
 	set_favorite(utils::string_tolower(utils::get_value_string(node->first_node(FAVORITE))) == "true");
@@ -65,10 +65,10 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(utils::alloc_node(alloc, CHANNEL_ID, get_id().c_str()));
 
 	// <epg_id>8</epg_id>
-	channel_node->append_node(utils::alloc_node(alloc, EPG_ID, utils::int_to_char(get_epg1_id()).c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, EPG_ID, get_epg1_id().c_str()));
 
 	// <tvg_id>1</tvg_id>
-	channel_node->append_node(utils::alloc_node(alloc, TVG_ID, utils::int_to_char(get_epg2_id()).c_str()));
+	channel_node->append_node(utils::alloc_node(alloc, TVG_ID, get_epg2_id().c_str()));
 
 	// <icon_url>plugin_file://icons/channels/pervyi.png</icon_url>
 	// <icon_url>http://epg.it999.ru/img/146.png</icon_url>

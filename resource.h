@@ -77,7 +77,7 @@
 #define IDC_STATIC_PL_ICON              1069
 #define IDC_STATIC_PL_ICON_NAME         1070
 #define IDC_STATIC_PL_ID                1071
-#define IDC_STATIC_PL_TVG               1072
+#define IDC_STATIC_PL_EPG               1072
 #define IDC_STATIC_PLAYLIST             1073
 #define IDC_STATIC_QR                   1074
 #define IDC_STATIC_TITLE                1075
@@ -123,7 +123,7 @@
 #define ID_ADD_TO_FAVORITE              32798
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131

@@ -269,8 +269,8 @@ protected:
 	BOOL m_isArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
 	CString m_streamID; // m_wndStreamID
-	int m_epgID2 = 0; // m_wndTvgID
-	int m_epgID1 = 0; // m_wndEpgID
+	CString m_epgID1; // Primary EPG source m_wndEpgID
+	CString m_epgID2; // Secondary EPG source m_wndTvgID
 	int m_archiveCheck = 0; // m_wndCheckArchive
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift

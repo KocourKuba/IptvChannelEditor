@@ -25,11 +25,11 @@ public:
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
 
-	int get_epg1_id() const { return epg_id; }
-	void set_epg1_id(int val) { epg_id = val; }
+	std::string get_epg1_id() const { return epg_id1; }
+	void set_epg1_id(const std::string& val) { epg_id1 = val; }
 
-	int get_epg2_id() const { return tvg_id; }
-	void set_epg2_id(int val) { tvg_id = val; }
+	std::string get_epg2_id() const { return epg_id2; }
+	void set_epg2_id(const std::string& val) { epg_id2 = val; }
 
 	int get_adult() const { return adult; }
 	void set_adult(int val) { adult = val; }
@@ -54,8 +54,8 @@ protected:
 private:
 	std::wstring title;
 	int key = 0;
-	int tvg_id = 0; // TVGuide id http://www.teleguide.info/kanal%d.html
-	int epg_id = 0; // ott-play epg http://epg.ott-play.com/edem/epg/%d.json
+	std::string epg_id1; // primary epg source ott-play epg http://epg.ott-play.com/edem/epg/%d.json
+	std::string epg_id2; // secondary epg source TVGuide id http://www.teleguide.info/kanal%d.html
 	int time_shift_hours = 0;
 	int adult = 0;
 	int archive_days = 0;

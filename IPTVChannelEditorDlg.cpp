@@ -253,7 +253,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_PL_ICON_NAME, m_plIconName);
 	DDX_Control(pDX, IDC_STATIC_PLAYLIST, m_wndPlInfo);
 	DDX_Text(pDX, IDC_STATIC_PL_ID, m_plID);
-	DDX_Text(pDX, IDC_STATIC_PL_TVG, m_plEPG);
+	DDX_Text(pDX, IDC_STATIC_PL_EPG, m_plEPG);
 	DDX_Control(pDX, IDC_CHECK_PL_ARCHIVE, m_wndPlArchive);
 	DDX_Text(pDX, IDC_EDIT_INFO_VIDEO, m_infoVideo);
 	DDX_Control(pDX, IDC_EDIT_INFO_VIDEO, m_wndInfoVideo);
@@ -930,11 +930,12 @@ std::string CIPTVChannelEditorDlg::GetEpg1Template() const
 		case StreamType::enEdem:
 			return "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
 		case StreamType::enSharavoz:
-			return "http://epg.arlekino.tv/api/program?epg={:d}&date={:4d}-{:02d}-{:02d}";
+			return "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}{:02d}{:02d}";
+		case StreamType::enSharaclub:
+			return "http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}{:02d}{:02d}";
 		case StreamType::enBase:
 		case StreamType::enChannels:
 		case StreamType::enGlanz:
-		case StreamType::enSharaclub:
 		default:
 			break;
 	}
@@ -949,11 +950,13 @@ std::string CIPTVChannelEditorDlg::GetEpg2Template() const
 		case StreamType::enEdem:
 			return "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
 		case StreamType::enSharavoz:
-			return "http://api.program.spr24.net/api/program?epg={:d}&date={:4d}-{:02d}-{:02d}";
+			return "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}{:02d}{:02d}";
+		case StreamType::enSharaclub:
+			return "http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}{:02d}{:02d}";
+			break;
 		case StreamType::enBase:
 		case StreamType::enChannels:
 		case StreamType::enGlanz:
-		case StreamType::enSharaclub:
 		default:
 			break;
 	}
@@ -1052,8 +1055,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 	auto channel = GetChannel(hItem);
 	if (channel)
 	{
-		m_epgID1 = channel->get_epg1_id();
-		m_epgID2 = channel->get_epg2_id();
+		m_epgID1 = channel->get_epg1_id().c_str();
+		m_epgID2 = channel->get_epg2_id().c_str();
 
 		m_streamUrl = channel->get_stream_uri()->get_uri().c_str();
 		m_streamID = channel->get_id().c_str();
@@ -1081,8 +1084,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 	}
 	else
 	{
-		m_epgID2 = 0;
-		m_epgID1 = 0;
+		m_epgID2.Empty();
+		m_epgID1.Empty();
 		m_timeShiftHours = 0;
 		m_iconUrl.Empty();
 		m_streamUrl.Empty();
@@ -1109,8 +1112,8 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
 		m_plID.Format(_T("ID: %hs"), entry->get_id().c_str());
 
-		if (entry->get_epg2_id() > 0)
-			m_plEPG.Format(_T("EPG: %d"), entry->get_epg2_id());
+		if (!entry->get_epg1_id().empty())
+			m_plEPG.Format(_T("EPG: %hs"), entry->get_epg1_id().c_str());
 
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
 		m_archiveDays = entry->get_archive_days();
@@ -1674,8 +1677,8 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 			}
 			else if (IsCategory(hSelected))
 			{
-				m_epgID2 = 0;
-				m_epgID1 = 0;
+				m_epgID1.Empty();
+				m_epgID2.Empty();
 				m_isArchive = 0;
 				m_isAdult = 0;
 				m_streamUrl.Empty();
@@ -1703,8 +1706,8 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndEpgID.EnableWindow(enable && m_pluginType == StreamType::enEdem);
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
-	m_wndTestTVG.EnableWindow(enable && m_pluginType == StreamType::enEdem);
-	m_wndTestEPG.EnableWindow(enable);
+	m_wndTestEPG.EnableWindow(enable && !m_epgID1.IsEmpty());
+	m_wndTestTVG.EnableWindow(enable && !m_epgID2.IsEmpty());
 	m_wndStreamID.EnableWindow(enable && !m_streamID.IsEmpty());
 	m_wndStreamUrl.EnableWindow(enable && m_streamID.IsEmpty());
 	m_wndCheckArchive.EnableWindow(enable && !m_probe.IsEmpty() && !m_loading);
@@ -2093,7 +2096,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditTvgID()
 		auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
 		if (channel)
 		{
-			channel->set_epg2_id(m_epgID2);
+			channel->set_epg2_id(utils::utf16_to_utf8(m_epgID2.GetString()));
 			set_allow_save();
 		}
 	}
@@ -2107,7 +2110,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditEpgID()
 		auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
 		if (channel)
 		{
-			channel->set_epg1_id(m_epgID1);
+			channel->set_epg1_id(utils::utf16_to_utf8(m_epgID1.GetString()));
 			set_allow_save();
 		}
 	}
@@ -2207,12 +2210,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 			case StreamType::enEdem:
 				url = fmt::format(GetEpg1Template(), channel->get_epg1_id());
 				break;
+			case StreamType::enSharaclub:
 			case StreamType::enSharavoz:
 				url = fmt::format(GetEpg1Template(), channel->get_epg1_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 				break;
 			case StreamType::enGlanz:
-				break;
-			case StreamType::enSharaclub:
 				break;
 			default:
 				break;
@@ -2233,14 +2235,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 		switch (m_pluginType)
 		{
 			case StreamType::enEdem:
-				url = fmt::format(GetEpg2Template(), channel->get_epg2_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
-				break;
+			case StreamType::enSharaclub:
 			case StreamType::enSharavoz:
 				url = fmt::format(GetEpg2Template(), channel->get_epg2_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 				break;
 			case StreamType::enGlanz:
-				break;
-			case StreamType::enSharaclub:
 				break;
 			default:
 				break;
@@ -3650,17 +3649,21 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	}
 
 	// is tvg_id changed?
-	if (entry->get_epg1_id() > 0)
+	if (!entry->get_epg1_id().empty())
 	{
-		channel->set_epg1_id(entry->get_epg2_id());
+		channel->set_epg1_id(entry->get_epg1_id());
 	}
 
-	if (entry->get_epg2_id() > 0)
+	if (!entry->get_epg2_id().empty())
 	{
 		channel->set_epg2_id(entry->get_epg2_id());
 	}
 
-	channel->set_archive_days(entry->get_archive_days());
+	if (entry->get_archive_days() != 0)
+	{
+		channel->set_archive_days(entry->get_archive_days());
+	}
+
 	channel->set_stream_uri(entry->get_stream_uri());
 	if (entry->get_icon_uri() != channel->get_icon_uri() && !entry->get_icon_uri().get_uri().empty())
 	{
@@ -3996,9 +3999,11 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 			}
 		}
 
-		m_toolTipText.Format(_T("Name: %s\nID: %hs\nArchive: %s\nAdult: %s\nIn categories: %s"),
+		m_toolTipText.Format(_T("Name: %s\nID: %hs\nEPG1 ID: %hs\nEPG2 ID: %hs\nArchive: %s\nAdult: %s\nIn categories: %s"),
 							 entry->get_title().c_str(),
 							 entry->get_stream_uri()->is_template() ? ch_id.c_str() : "Custom",
+							 entry->get_epg1_id().c_str(),
+							 entry->get_epg2_id().c_str(),
 							 entry->is_archive() ? _T("Yes") : _T("No"),
 							 entry->get_adult() ? _T("Yes") : _T("No"),
 							 categories.GetString());
@@ -4017,10 +4022,10 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	auto entry = GetBaseInfo(&m_wndPlaylistTree, pGetInfoTip->hItem);
 	if (entry)
 	{
-		m_toolTipText.Format(_T("Name: %s\nID: %hs\nEPG: %d\nArchive: %s\nAdult: %s"),
+		m_toolTipText.Format(_T("Name: %s\nID: %hs\nEPG: %hs\nArchive: %s\nAdult: %s"),
 							 entry->get_title().c_str(),
 							 entry->get_stream_uri()->is_template() ? entry->get_id().c_str() : "Custom",
-							 entry->get_epg2_id(),
+							 entry->get_epg1_id().c_str(),
 							 entry->is_archive() ? _T("Yes") : _T("No"),
 							 entry->get_adult() ? _T("Yes") : _T("No"));
 

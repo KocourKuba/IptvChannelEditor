@@ -13,10 +13,10 @@ bool PlaylistEntry::Parse(const std::string& str)
 			stream_uri->parse_uri(str);
 			domain = stream_uri->get_domain();
 			access_key = stream_uri->get_token();
-			if (stream_type == StreamType::enSharavoz)
+			if (stream_type == StreamType::enSharavoz || stream_type == StreamType::enSharaclub)
 			{
-				set_epg2_id(utils::char_to_int(get_stream_uri()->get_id()));
-				set_epg1_id(get_epg2_id());
+				set_epg2_id(get_stream_uri()->get_id()); // primary EPG
+				set_epg1_id(get_epg2_id()); // sercondary EPG
 			}
 			return true;
 		case m3u_entry::ext_group:
@@ -58,7 +58,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 
 			if (const auto& pair = m3uEntry.get_tags().find(m3u_entry::tag_tvg_id); pair != m3uEntry.get_tags().end())
 			{
-				set_epg2_id(utils::char_to_int(pair->second));
+				set_epg1_id(pair->second);
 			}
 
 			if (!m3uEntry.get_dir_title().empty())
