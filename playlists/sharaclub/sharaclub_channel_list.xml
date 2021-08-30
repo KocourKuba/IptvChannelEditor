@@ -45,8 +45,8 @@
 		<tv_channel>
 			<caption>Первый HD</caption>
 			<channel_id>pervyHD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>pervyHD</epg_id>
+			<tvg_id>pervyHD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/pervyj-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>5</archive>
@@ -54,8 +54,8 @@
 		<tv_channel>
 			<caption>Россия 1 HD</caption>
 			<channel_id>rossia1HD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>rossia1HD</epg_id>
+			<tvg_id>rossia1HD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/rossia-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>5</archive>
@@ -63,8 +63,8 @@
 		<tv_channel>
 			<caption>НТВ HD</caption>
 			<channel_id>ntvHD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>ntvHD</epg_id>
+			<tvg_id>ntvHD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/ntvhd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>5</archive>
@@ -72,8 +72,8 @@
 		<tv_channel>
 			<caption>ТНТ HD</caption>
 			<channel_id>tntHD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>tntHD</epg_id>
+			<tvg_id>tntHD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/tnthd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>5</archive>
@@ -81,8 +81,8 @@
 		<tv_channel>
 			<caption>РЕН HD</caption>
 			<channel_id>rentvHD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>rentvHD</epg_id>
+			<tvg_id>rentvHD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/upl/rentvHD.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>3</archive>
@@ -90,8 +90,8 @@
 		<tv_channel>
 			<caption>Пятница HD</caption>
 			<channel_id>piatnicaHD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>piatnicaHD</epg_id>
+			<tvg_id>piatnicaHD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/upl/piatnicaHD.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>2</archive>
@@ -99,8 +99,8 @@
 		<tv_channel>
 			<caption>Первый канал</caption>
 			<channel_id>pervy</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>pervy</epg_id>
+			<tvg_id>pervy</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/pervyj.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>4</archive>
@@ -108,8 +108,8 @@
 		<tv_channel>
 			<caption>Россия 1</caption>
 			<channel_id>rossia1</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>rossia1</epg_id>
+			<tvg_id>rossia1</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/rossia1.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>4</archive>
@@ -117,8 +117,8 @@
 		<tv_channel>
 			<caption>НТВ</caption>
 			<channel_id>ntv</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>ntv</epg_id>
+			<tvg_id>ntv</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/ntv-white.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>5</archive>
@@ -126,8 +126,8 @@
 		<tv_channel>
 			<caption>ТНТ</caption>
 			<channel_id>tnt</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>tnt</epg_id>
+			<tvg_id>tnt</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/tnt.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>4</archive>
@@ -135,8 +135,8 @@
 		<tv_channel>
 			<caption>РЕН ТВ</caption>
 			<channel_id>rentv</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>rentv</epg_id>
+			<tvg_id>rentv</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/rentv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>3</archive>
@@ -144,8 +144,8 @@
 		<tv_channel>
 			<caption>СТС</caption>
 			<channel_id>sts</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>sts</epg_id>
+			<tvg_id>sts</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/sts.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>4</archive>
@@ -153,8 +153,8 @@
 		<tv_channel>
 			<caption>ТВ Центр</caption>
 			<channel_id>tvcentr</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>tvcentr</epg_id>
+			<tvg_id>tvcentr</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/tvcentr.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>3</archive>
@@ -171,8 +171,8 @@
 		<tv_channel>
 			<caption>Пятница</caption>
 			<channel_id>piatnica</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>piatnica</epg_id>
+			<tvg_id>piatnica</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/pyatnica.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>2</archive>
@@ -180,8 +180,8 @@
 		<tv_channel>
 			<caption>Домашний</caption>
 			<channel_id>domashny</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>domashny</epg_id>
+			<tvg_id>domashny</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/domashny.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>3</archive>
@@ -189,8 +189,8 @@
 		<tv_channel>
 			<caption>Че</caption>
 			<channel_id>che</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>che</epg_id>
+			<tvg_id>che</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/che.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>2</archive>
@@ -198,8 +198,8 @@
 		<tv_channel>
 			<caption>Суббота!</caption>
 			<channel_id>super</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>super</epg_id>
+			<tvg_id>super</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/super.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>2</archive>
@@ -207,8 +207,8 @@
 		<tv_channel>
 			<caption>ТНТ4</caption>
 			<channel_id>tnt4</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>tnt4</epg_id>
+			<tvg_id>tnt4</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/tnt4.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>2</archive>
@@ -216,8 +216,8 @@
 		<tv_channel>
 			<caption>Мир</caption>
 			<channel_id>mir</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>mir</epg_id>
+			<tvg_id>mir</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/mir.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>2</archive>
@@ -225,8 +225,8 @@
 		<tv_channel>
 			<caption>Телеканал Звезда</caption>
 			<channel_id>zvezda</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>zvezda</epg_id>
+			<tvg_id>zvezda</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/zvezda.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>3</archive>
@@ -234,8 +234,8 @@
 		<tv_channel>
 			<caption>Ю</caption>
 			<channel_id>yu</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>yu</epg_id>
+			<tvg_id>yu</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/yu.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>2</archive>
@@ -243,8 +243,8 @@
 		<tv_channel>
 			<caption>ОТР</caption>
 			<channel_id>otr</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>otr</epg_id>
+			<tvg_id>otr</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/otr_ru.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>2</archive>
@@ -252,8 +252,8 @@
 		<tv_channel>
 			<caption>Дикий</caption>
 			<channel_id>dikiy</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>dikiy</epg_id>
+			<tvg_id>dikiy</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/dikiy.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -261,8 +261,8 @@
 		<tv_channel>
 			<caption>History2 HD</caption>
 			<channel_id>h2</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>h2</epg_id>
+			<tvg_id>h2</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/h2.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -270,8 +270,8 @@
 		<tv_channel>
 			<caption>DTX</caption>
 			<channel_id>dtx</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>dtx</epg_id>
+			<tvg_id>dtx</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/dtx.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -279,8 +279,8 @@
 		<tv_channel>
 			<caption>TLC HD</caption>
 			<channel_id>tlcHD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>tlcHD</epg_id>
+			<tvg_id>tlcHD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/upl/tlcHD.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -288,8 +288,8 @@
 		<tv_channel>
 			<caption>TLC</caption>
 			<channel_id>tlc</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>tlc</epg_id>
+			<tvg_id>tlc</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/tlc.ru.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -297,8 +297,8 @@
 		<tv_channel>
 			<caption>Бобёр</caption>
 			<channel_id>bobior</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>bobior</epg_id>
+			<tvg_id>bobior</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/bober.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -306,8 +306,8 @@
 		<tv_channel>
 			<caption>Авто 24</caption>
 			<channel_id>avto24</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>avto24</epg_id>
+			<tvg_id>avto24</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/avto24.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -315,8 +315,8 @@
 		<tv_channel>
 			<caption>Драйв</caption>
 			<channel_id>drive</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>drive</epg_id>
+			<tvg_id>drive</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/drive.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -324,8 +324,8 @@
 		<tv_channel>
 			<caption>Моя стихия</caption>
 			<channel_id>morskoy</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>morskoy</epg_id>
+			<tvg_id>morskoy</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/morskoy.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -333,8 +333,8 @@
 		<tv_channel>
 			<caption>FAN HD</caption>
 			<channel_id>fanhd</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>fanhd</epg_id>
+			<tvg_id>fanhd</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/fan.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -342,8 +342,8 @@
 		<tv_channel>
 			<caption>FAN</caption>
 			<channel_id>fan</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>fan</epg_id>
+			<tvg_id>fan</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/fan.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -351,8 +351,8 @@
 		<tv_channel>
 			<caption>Арсенал HD</caption>
 			<channel_id>arsenal</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>arsenal</epg_id>
+			<tvg_id>arsenal</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/arsenal.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>2</archive>
@@ -360,8 +360,8 @@
 		<tv_channel>
 			<caption>TV 1000</caption>
 			<channel_id>tv1000</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>tv1000</epg_id>
+			<tvg_id>tv1000</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/tv1000.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -369,8 +369,8 @@
 		<tv_channel>
 			<caption>Еврокино</caption>
 			<channel_id>evrokino</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>evrokino</epg_id>
+			<tvg_id>evrokino</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/eurokino.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -378,8 +378,8 @@
 		<tv_channel>
 			<caption>НСТ</caption>
 			<channel_id>nst</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>nst</epg_id>
+			<tvg_id>nst</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/nst.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -387,8 +387,8 @@
 		<tv_channel>
 			<caption>Fox Russia HD</caption>
 			<channel_id>foxHD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>foxHD</epg_id>
+			<tvg_id>foxHD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/upl/foxHD.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -396,8 +396,8 @@
 		<tv_channel>
 			<caption>Fox Russia</caption>
 			<channel_id>fox</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>fox</epg_id>
+			<tvg_id>fox</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/fox.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -405,8 +405,8 @@
 		<tv_channel>
 			<caption>Fox Life</caption>
 			<channel_id>foxlife</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>foxlife</epg_id>
+			<tvg_id>foxlife</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/foxlife.ru.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -414,8 +414,8 @@
 		<tv_channel>
 			<caption>Amedia 1</caption>
 			<channel_id>amedia1</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>amedia1</epg_id>
+			<tvg_id>amedia1</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/amedia1.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -423,8 +423,8 @@
 		<tv_channel>
 			<caption>Amedia 2</caption>
 			<channel_id>amedia2</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>amedia2</epg_id>
+			<tvg_id>amedia2</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/amedia2.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -432,8 +432,8 @@
 		<tv_channel>
 			<caption>Дом кино</caption>
 			<channel_id>domkino</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>domkino</epg_id>
+			<tvg_id>domkino</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/dom-kino.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>3</archive>
@@ -441,8 +441,8 @@
 		<tv_channel>
 			<caption>Победа</caption>
 			<channel_id>pobeda</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>pobeda</epg_id>
+			<tvg_id>pobeda</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/pobeda.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>2</archive>
@@ -450,8 +450,8 @@
 		<tv_channel>
 			<caption>Eurosport 1 HD</caption>
 			<channel_id>eurosport1hd</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>eurosport1hd</epg_id>
+			<tvg_id>eurosport1hd</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/upl/eurosport1hd.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>2</archive>
@@ -459,8 +459,8 @@
 		<tv_channel>
 			<caption>Eurosport 2 HD</caption>
 			<channel_id>eurosport2HD</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>eurosport2HD</epg_id>
+			<tvg_id>eurosport2HD</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/eurosport2.ru.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>2</archive>
@@ -468,8 +468,8 @@
 		<tv_channel>
 			<caption>UFC ТВ</caption>
 			<channel_id>ufc</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>ufc</epg_id>
+			<tvg_id>ufc</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/ufctv.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>2</archive>
@@ -477,8 +477,8 @@
 		<tv_channel>
 			<caption>КХЛ</caption>
 			<channel_id>kxl</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>kxl</epg_id>
+			<tvg_id>kxl</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/khl.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>2</archive>
@@ -486,16 +486,16 @@
 		<tv_channel>
 			<caption>MTV 00s</caption>
 			<channel_id>vh1euro</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>5180</tvg_id>
+			<epg_id>vh1euro</epg_id>
+			<tvg_id>vh1euro</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/upl/vh1euro.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Жара</caption>
 			<channel_id>zhara</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>zhara</epg_id>
+			<tvg_id>zhara</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/zara.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
@@ -503,8 +503,8 @@
 		<tv_channel>
 			<caption>Муз-ТВ</caption>
 			<channel_id>muztv</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>muztv</epg_id>
+			<tvg_id>muztv</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/muztv.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
@@ -512,8 +512,8 @@
 		<tv_channel>
 			<caption>iConcerts HD</caption>
 			<channel_id>iconcerts</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>iconcerts</epg_id>
+			<tvg_id>iconcerts</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/iconcerts.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
@@ -521,8 +521,8 @@
 		<tv_channel>
 			<caption>Карусель</caption>
 			<channel_id>karusel</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>karusel</epg_id>
+			<tvg_id>karusel</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/karusel.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -530,8 +530,8 @@
 		<tv_channel>
 			<caption>Мульт</caption>
 			<channel_id>mult</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>mult</epg_id>
+			<tvg_id>mult</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/mult.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -539,8 +539,8 @@
 		<tv_channel>
 			<caption>Мультимузыка</caption>
 			<channel_id>multimuzyka</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>multimuzyka</epg_id>
+			<tvg_id>multimuzyka</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/multimuzyka.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -548,8 +548,8 @@
 		<tv_channel>
 			<caption>В гостях у сказки</caption>
 			<channel_id>vgosuskaz</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>vgosuskaz</epg_id>
+			<tvg_id>vgosuskaz</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/vgosusk.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -557,8 +557,8 @@
 		<tv_channel>
 			<caption>O!</caption>
 			<channel_id>o_</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>o_</epg_id>
+			<tvg_id>o_</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/o!.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -566,8 +566,8 @@
 		<tv_channel>
 			<caption>Disney</caption>
 			<channel_id>disney</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>disney</epg_id>
+			<tvg_id>disney</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/disney_channel.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -575,8 +575,8 @@
 		<tv_channel>
 			<caption>Boomerang</caption>
 			<channel_id>boomerang</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>boomerang</epg_id>
+			<tvg_id>boomerang</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/boomerang.ru.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -584,8 +584,8 @@
 		<tv_channel>
 			<caption>2x2</caption>
 			<channel_id>2na2</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>2</tvg_id>
+			<epg_id>2na2</epg_id>
+			<tvg_id>2na2</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/2x2.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -593,8 +593,8 @@
 		<tv_channel>
 			<caption>Jim Jam</caption>
 			<channel_id>jimjam</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>jimjam</epg_id>
+			<tvg_id>jimjam</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/jimjam.ru.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -602,8 +602,8 @@
 		<tv_channel>
 			<caption>Tiji TV</caption>
 			<channel_id>tiji</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>tiji</epg_id>
+			<tvg_id>tiji</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/tiji.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -611,8 +611,8 @@
 		<tv_channel>
 			<caption>Уникум</caption>
 			<channel_id>detsky</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>detsky</epg_id>
+			<tvg_id>detsky</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/upl/detsky.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -620,8 +620,8 @@
 		<tv_channel>
 			<caption>Мама</caption>
 			<channel_id>mama</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>mama</epg_id>
+			<tvg_id>mama</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/mama.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>2</archive>
@@ -629,8 +629,8 @@
 		<tv_channel>
 			<caption>Euronews</caption>
 			<channel_id>euronews</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>euronews</epg_id>
+			<tvg_id>euronews</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/euronews.ru.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>2</archive>
@@ -638,8 +638,8 @@
 		<tv_channel>
 			<caption>RTVi</caption>
 			<channel_id>rtvi</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>rtvi</epg_id>
+			<tvg_id>rtvi</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/rtvi.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>2</archive>
@@ -647,8 +647,8 @@
 		<tv_channel>
 			<caption>РБК</caption>
 			<channel_id>rbk</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>rbk</epg_id>
+			<tvg_id>rbk</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/rbk.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>2</archive>
@@ -656,8 +656,8 @@
 		<tv_channel>
 			<caption>Дождь HD</caption>
 			<channel_id>dozhd</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>dozhd</epg_id>
+			<tvg_id>dozhd</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/dozhd.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>1</archive>
@@ -665,8 +665,8 @@
 		<tv_channel>
 			<caption>Дождь</caption>
 			<channel_id>dozd</channel_id>
-			<epg_id>0</epg_id>
-			<tvg_id>0</tvg_id>
+			<epg_id>dozd</epg_id>
+			<tvg_id>dozd</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/dozhd.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>2</archive>
