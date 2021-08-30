@@ -72,6 +72,14 @@ static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/
 static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 
+static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
+static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG1_TEMPLATE_SHARACLUB = "http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}-{:02d}-{:02d}";
+
+static constexpr auto EPG2_TEMPLATE_EDEM = "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
+static constexpr auto EPG2_TEMPLATE_SHARAVOZ = "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG2_TEMPLATE_SHARACLUB = "http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}-{:02d}-{:02d}";
+
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
 {
@@ -923,40 +931,19 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri,
 	return uri;
 }
 
-std::string CIPTVChannelEditorDlg::GetEpg1Template() const
+std::string CIPTVChannelEditorDlg::GetEpgTemplate(BOOL first) const
 {
 	switch (m_pluginType)
 	{
 		case StreamType::enEdem:
-			return "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
+			return first ? EPG1_TEMPLATE_EDEM : EPG2_TEMPLATE_EDEM;
 		case StreamType::enSharavoz:
-			return "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}{:02d}{:02d}";
+			return first ? EPG1_TEMPLATE_SHARAVOZ : EPG2_TEMPLATE_SHARAVOZ;
 		case StreamType::enSharaclub:
-			return "http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}{:02d}{:02d}";
+			return first ? EPG1_TEMPLATE_SHARACLUB : EPG2_TEMPLATE_SHARACLUB;
+		case StreamType::enGlanz:
 		case StreamType::enBase:
 		case StreamType::enChannels:
-		case StreamType::enGlanz:
-		default:
-			break;
-	}
-
-	return "";
-}
-
-std::string CIPTVChannelEditorDlg::GetEpg2Template() const
-{
-	switch (m_pluginType)
-	{
-		case StreamType::enEdem:
-			return "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
-		case StreamType::enSharavoz:
-			return "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}{:02d}{:02d}";
-		case StreamType::enSharaclub:
-			return "http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}{:02d}{:02d}";
-			break;
-		case StreamType::enBase:
-		case StreamType::enChannels:
-		case StreamType::enGlanz:
 		default:
 			break;
 	}
@@ -2208,11 +2195,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 		switch (m_pluginType)
 		{
 			case StreamType::enEdem:
-				url = fmt::format(GetEpg1Template(), channel->get_epg1_id());
+				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id());
 				break;
 			case StreamType::enSharaclub:
 			case StreamType::enSharavoz:
-				url = fmt::format(GetEpg1Template(), channel->get_epg1_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
+				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 				break;
 			case StreamType::enGlanz:
 				break;
@@ -2237,7 +2224,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 			case StreamType::enEdem:
 			case StreamType::enSharaclub:
 			case StreamType::enSharavoz:
-				url = fmt::format(GetEpg2Template(), channel->get_epg2_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
+				url = fmt::format(GetEpgTemplate(FALSE), channel->get_epg2_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 				break;
 			case StreamType::enGlanz:
 				break;

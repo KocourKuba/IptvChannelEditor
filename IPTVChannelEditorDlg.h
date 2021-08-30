@@ -175,8 +175,7 @@ private:
 							   const std::string& access_domain,
 							   const std::string& access_key) const;
 
-	std::string GetEpg1Template() const;
-	std::string GetEpg2Template() const;
+	std::string GetEpgTemplate(BOOL first) const;
 	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
