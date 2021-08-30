@@ -18,7 +18,6 @@
 #define IDR_MENU_PLAYLIST               114
 #define IDS_ABOUTBOX                    115
 #define IDR_MAINFRAME                   128
-#define IDD_DIALOG1                     129
 #define IDD_DIALOG_ICONS_LIST           129
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_ACCESS_INFO          1002
@@ -35,8 +34,8 @@
 #define IDC_BUTTON_SEARCH_NEXT          1018
 #define IDC_BUTTON_SETTINGS             1019
 #define IDC_BUTTON_SORT                 1020
-#define IDC_BUTTON_TEST_EPG             1021
-#define IDC_BUTTON_TEST_TVG             1022
+#define IDC_BUTTON_TEST_EPG1            1021
+#define IDC_BUTTON_TEST_EPG2            1022
 #define IDC_BUTTON_UPDATE_ICON          1023
 #define IDC_BUTTON_CHECK_ARCHIVE        1024
 #define IDC_CHECK_ADULT                 1025
@@ -53,7 +52,7 @@
 #define IDC_EDIT_ARCHIVE_CHECK          1039
 #define IDC_EDIT_CATEGORY               1040
 #define IDC_EDIT_DOMAIN                 1041
-#define IDC_EDIT_EPG_ID                 1043
+#define IDC_EDIT_EPG1_ID                1043
 #define IDC_EDIT_INFO_AUDIO             1044
 #define IDC_EDIT_INFO_VIDEO             1045
 #define IDC_EDIT_KEY                    1046
@@ -62,7 +61,7 @@
 #define IDC_EDIT_SEARCH                 1051
 #define IDC_EDIT_STREAM_URL             1052
 #define IDC_EDIT_STRING                 1053
-#define IDC_EDIT_TVG_ID                 1054
+#define IDC_EDIT_EPG2_ID                1054
 #define IDC_EDIT_URL_ID                 1055
 #define IDC_MFCEDITBROWSE_PLAYER        1057
 #define IDC_MFCEDITBROWSE_PROBE         1058

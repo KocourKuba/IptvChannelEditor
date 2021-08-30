@@ -24,8 +24,8 @@ class ChannelInfo : public BaseInfo
 public:
 	static constexpr auto TV_CHANNEL = "tv_channel";
 	static constexpr auto CHANNEL_ID = "channel_id";
-	static constexpr auto EPG_ID = "epg_id";
-	static constexpr auto TVG_ID = "tvg_id";
+	static constexpr auto EPG1_ID = "epg_id";
+	static constexpr auto EPG2_ID = "tvg_id";
 	static constexpr auto CAPTION = "caption";
 	static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 	static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";

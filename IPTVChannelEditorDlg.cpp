@@ -117,8 +117,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList)
 	ON_BN_CLICKED(IDC_BUTTON_ACCESS_INFO, &CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
-	ON_BN_CLICKED(IDC_BUTTON_TEST_TVG, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2)
-	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1)
+	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2)
+	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CIPTVChannelEditorDlg::OnBnClickedCheckAdult)
 	ON_BN_CLICKED(IDC_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckArchive)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOMIZE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomize)
@@ -131,8 +131,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_UPDATE_ICON, &CIPTVChannelEditorDlg::OnUpdateUpdateIcon)
 	ON_BN_CLICKED(IDC_BUTTON_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnPlayChannelStreamArchive)
 
-	ON_EN_CHANGE(IDC_EDIT_TVG_ID, &CIPTVChannelEditorDlg::OnEnChangeEditTvgID)
-	ON_EN_CHANGE(IDC_EDIT_EPG_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpgID)
+	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
+	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
 	ON_EN_CHANGE(IDC_EDIT_TIME_SHIFT, &CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours)
 	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_CHECK, &CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheck)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_URL, &CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl)
@@ -230,12 +230,12 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_CUSTOMIZE, m_wndCustom);
 	DDX_Text(pDX, IDC_EDIT_URL_ID, m_streamID);
 	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
-	DDX_Text(pDX, IDC_EDIT_TVG_ID, m_epgID2);
-	DDX_Control(pDX, IDC_EDIT_TVG_ID, m_wndTvgID);
-	DDX_Control(pDX, IDC_BUTTON_TEST_TVG, m_wndTestTVG);
-	DDX_Text(pDX, IDC_EDIT_EPG_ID, m_epgID1);
-	DDX_Control(pDX, IDC_EDIT_EPG_ID, m_wndEpgID);
-	DDX_Control(pDX, IDC_BUTTON_TEST_EPG, m_wndTestEPG);
+	DDX_Text(pDX, IDC_EDIT_EPG2_ID, m_epgID2);
+	DDX_Control(pDX, IDC_EDIT_EPG2_ID, m_wndEpg2ID);
+	DDX_Control(pDX, IDC_BUTTON_TEST_EPG2, m_wndTestEPG2);
+	DDX_Text(pDX, IDC_EDIT_EPG1_ID, m_epgID1);
+	DDX_Control(pDX, IDC_EDIT_EPG1_ID, m_wndEpgID1);
+	DDX_Control(pDX, IDC_BUTTON_TEST_EPG1, m_wndTestEPG1);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT, m_timeShiftHours);
@@ -332,10 +332,10 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Add custom playlist"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels. Use \\ prefix to find by ID"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TVG_ID), _T("EPG ID from teleguide.info"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_TVG), _T("Test EPG teleguide.info URL"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG_ID), _T("EPG ID from it999.ru"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG), _T("Test EPG it999.ru URL"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("EPG ID from teleguide.info"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG2), _T("Test EPG teleguide.info URL"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("EPG ID from it999.ru"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG1), _T("Test EPG it999.ru URL"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Use custom stream URL for the channel"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Channel archive is supported"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Channel contents for adults"));
@@ -379,12 +379,12 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndSearch.EnableWindow(FALSE);
 	m_wndPlSearch.EnableWindow(FALSE);
 	m_wndCustom.EnableWindow(FALSE);
-	m_wndTvgID.EnableWindow(FALSE);
-	m_wndEpgID.EnableWindow(FALSE);
+	m_wndEpg2ID.EnableWindow(FALSE);
+	m_wndEpgID1.EnableWindow(FALSE);
 	m_wndArchive.EnableWindow(FALSE);
 	m_wndAdult.EnableWindow(FALSE);
-	m_wndTestTVG.EnableWindow(FALSE);
-	m_wndTestEPG.EnableWindow(FALSE);
+	m_wndTestEPG2.EnableWindow(FALSE);
+	m_wndTestEPG1.EnableWindow(FALSE);
 	m_wndStreamID.EnableWindow(FALSE);
 	m_wndStreamUrl.EnableWindow(FALSE);
 	m_wndCheckArchive.EnableWindow(FALSE);
@@ -1702,12 +1702,12 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	bool bSameCategory = IsSelectedTheSameCategory();
 
 	m_wndCustom.EnableWindow(enable);
-	m_wndTvgID.EnableWindow(enable && m_pluginType == StreamType::enEdem);
-	m_wndEpgID.EnableWindow(enable && m_pluginType == StreamType::enEdem);
+	m_wndEpg2ID.EnableWindow(enable && m_pluginType == StreamType::enEdem);
+	m_wndEpgID1.EnableWindow(enable && m_pluginType == StreamType::enEdem);
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
-	m_wndTestEPG.EnableWindow(enable && !m_epgID1.IsEmpty());
-	m_wndTestTVG.EnableWindow(enable && !m_epgID2.IsEmpty());
+	m_wndTestEPG1.EnableWindow(enable && !m_epgID1.IsEmpty());
+	m_wndTestEPG2.EnableWindow(enable && !m_epgID2.IsEmpty());
 	m_wndStreamID.EnableWindow(enable && !m_streamID.IsEmpty());
 	m_wndStreamUrl.EnableWindow(enable && m_streamID.IsEmpty());
 	m_wndCheckArchive.EnableWindow(enable && !m_probe.IsEmpty() && !m_loading);
@@ -2088,7 +2088,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckArchive()
 	set_allow_save();
 }
 
-void CIPTVChannelEditorDlg::OnEnChangeEditTvgID()
+void CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID()
 {
 	UpdateData(TRUE);
 	if (m_wndChannelsTree.GetSelectedCount() == 1)
@@ -2102,7 +2102,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditTvgID()
 	}
 }
 
-void CIPTVChannelEditorDlg::OnEnChangeEditEpgID()
+void CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID()
 {
 	UpdateData(TRUE);
 	if (m_wndChannelsTree.GetSelectedCount() == 1)

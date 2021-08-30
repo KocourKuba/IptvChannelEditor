@@ -108,8 +108,8 @@ protected:
 	afx_msg void OnEditChangeTvIdd();
 	afx_msg void OnBnClickedCheckAdult();
 	afx_msg void OnBnClickedCheckArchive();
-	afx_msg void OnEnChangeEditTvgID();
-	afx_msg void OnEnChangeEditEpgID();
+	afx_msg void OnEnChangeEditEpg2ID();
+	afx_msg void OnEnChangeEditEpg1ID();
 	afx_msg void OnEnChangeEditStreamUrl();
 	afx_msg void OnEnChangeEditUrlID();
 	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
@@ -226,8 +226,8 @@ protected:
 
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
-	CEdit m_wndTvgID;
-	CEdit m_wndEpgID;
+	CEdit m_wndEpg2ID;
+	CEdit m_wndEpgID1;
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
@@ -241,8 +241,8 @@ protected:
 	CButton m_wndAdult;
 	CButton m_wndCustom;
 	CButton m_wndPlArchive;
-	CButton m_wndTestTVG;
-	CButton m_wndTestEPG;
+	CButton m_wndTestEPG2;
+	CButton m_wndTestEPG1;
 	CButton m_wndChooseUrl;
 	CButton m_wndDownloadUrl;
 	CButton m_wndCheckArchive;
@@ -269,8 +269,8 @@ protected:
 	BOOL m_isArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
 	CString m_streamID; // m_wndStreamID
-	CString m_epgID1; // Primary EPG source m_wndEpgID
-	CString m_epgID2; // Secondary EPG source m_wndTvgID
+	CString m_epgID1; // Primary EPG source m_wndEpg1ID
+	CString m_epgID2; // Secondary EPG source m_wndEpg2ID
 	int m_archiveCheck = 0; // m_wndCheckArchive
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
