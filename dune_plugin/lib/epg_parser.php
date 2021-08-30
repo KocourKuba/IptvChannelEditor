@@ -253,7 +253,7 @@ class EpgParser
         $i = 0;
         while ($xml->name === 'programme') {
             $element = new SimpleXMLElement($xml->readOuterXML());
-
+            //hd_print("read: " . strval($element->attributes()->channel));
             if (!count($this->channelFilter) || $this->channelMatchFilter(strval($element->attributes()->channel))) {
                 $startString = $this->getDate(strval($element->attributes()->start));
                 $stopString = $this->getDate(strval($element->attributes()->stop));
@@ -273,7 +273,7 @@ class EpgParser
                     'icon' => strval($element->icon),
                     'episode-num' => strval($element->{'episode-num'}),
                 );
-
+                //hd_print("found: " . strval($element->title) . strval($element->desc));
             }
 
             $xml->next('programme');

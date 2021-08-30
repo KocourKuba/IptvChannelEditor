@@ -315,6 +315,43 @@ class HD
         }
         return $epg;
     }
+
+    /**
+     * @param $url
+     * @param $epg_date
+     * @return array
+     */
+    public static function parse_epg_html($url, $epg_date)
+    {
+        // html parse for tvguide.info
+        // tvguide.info time in GMT+3 (moscow time)
+
+        $epg = array();
+        $e_time = strtotime("$epg_date, 0300 GMT+3");
+
+        try {
+            hd_print($url);
+            $doc = HD::http_get_document($url);
+        }
+        catch (Exception $ex) {
+            hd_print($ex->getMessage());
+            return $epg;
+        }
+
+        preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
+        foreach ($keywords[1] as $qid) {
+            $qq = strip_tags($qid);
+            preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
+            $time = $keyw[1][0];
+            $u_time = strtotime("$epg_date $time GMT+3");
+            $last_time = ($u_time < $e_time) ? $u_time + 86400 : $u_time;
+            $epg[$last_time]["title"] = HD::unescape_entity_string($keyw[2][0]);
+            $epg[$last_time]["desc"] = HD::unescape_entity_string($keyw[3][0]);
+        }
+
+        return $epg;
+    }
+
     /**
      * @param $url
      * @param $epg_id

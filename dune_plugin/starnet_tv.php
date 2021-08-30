@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once 'lib/hashed_array.php';
-require_once 'lib/config.php';
+require_once 'lib/default_config.php';
 require_once 'lib/tv/abstract_tv.php';
 require_once 'lib/tv/default_epg_item.php';
 require_once 'lib/epg_parser.php';
@@ -15,7 +15,7 @@ class StarnetPluginTv extends AbstractTv
 {
     public $config = null;
 
-    public function __construct(IConfig $config)
+    public function __construct(DefaultConfig $config)
     {
         parent::__construct(AbstractTv::MODE_CHANNELS_N_TO_M, false);
         $this->config = $config;
@@ -160,8 +160,8 @@ class StarnetPluginTv extends AbstractTv
                     $icon_url,
                     $streaming_url,
                     intval($xml_tv_channel->archive),
-                    intval($xml_tv_channel->tvg_id),
-                    intval($xml_tv_channel->epg_id),
+                    strval($xml_tv_channel->tvg_id),
+                    strval($xml_tv_channel->epg_id),
                     intval($xml_tv_channel->protected),
                     intval($xml_tv_channel->timeshift_hours));
 
@@ -248,8 +248,8 @@ class StarnetPluginTv extends AbstractTv
             return array();
         }
 
-        if ($this->config->LoadCachedEPG($channel, $day_start_ts, $epg) === false) {
-            $epg = $this->config->GetEPG($channel, $day_start_ts);
+        if (DefaultConfig::LoadCachedEPG($channel, $day_start_ts, $epg) === false) {
+            $epg = DefaultConfig::GetEPG($channel, $day_start_ts);
         }
 
         hd_print("Loaded " . count($epg) . " EPG entries");

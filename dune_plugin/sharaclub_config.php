@@ -10,8 +10,9 @@ class SharaclubPluginConfig extends DefaultConfig
 
     const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
     const CHANNEL_LIST_URL = 'sharaclub_channel_list.xml';
-    const EPG_URL_FORMAT = '';
-    //const EPG_URL_FORMAT = 'https://list.playtv.pro/f/epg.xml.gz';
+    const EPG_URL_FORMAT = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s';
+    const TVG_URL_FORMAT = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s';
+    //const EPG_URL_FORMAT = 'https://list.playtv.pro/f/epg_lite.xml.gz';
     const EPG_PROVIDER = 'sharaclub';
 
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
@@ -22,31 +23,5 @@ class SharaclubPluginConfig extends DefaultConfig
 
         hd_print("AdjustStreamUri: $url");
         return $url;
-    }
-
-    public final function GetEPG(IChannel $channel, $day_start_ts)
-    {
-        $epg = array();
-        // epg same as channel id
-        $epg_id = $channel->get_channel_id();
-        // if epg is empty, no need to fetch data
-        if (empty($epg_id)) {
-            hd_print("EPG not defined for channel '" . $channel->get_title() . "'");
-            return $epg;
-        }
-
-        $provider = $this->GET_EPG_PROVIDER();
-        try {
-            // xml epg source, no backup source
-            hd_print("Fetching EPG ID from primary epg source '$provider': '$epg_id'");
-            $epg = HD::parse_epg_xml($this->GET_EPG_URL_FORMAT(), $epg_id, $day_start_ts, $this->get_epg_cache_dir());
-        } catch (Exception $ex) {
-            hd_print("Can't fetch EPG ID from primary epg source '$provider':" . $ex->getMessage());
-            return $epg;
-        }
-
-        $this->SortAndStore($channel, $day_start_ts, $epg);
-
-        return $epg;
     }
 }

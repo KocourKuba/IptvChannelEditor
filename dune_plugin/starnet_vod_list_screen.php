@@ -15,7 +15,7 @@ class StarnetVodListScreen extends VodListScreen
     private $config;
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct(Vod $vod, IConfig $config)
+    public function __construct(Vod $vod, DefaultConfig $config)
     {
         parent::__construct($vod);
         $this->config = $config;

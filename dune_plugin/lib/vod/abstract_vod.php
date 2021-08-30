@@ -18,7 +18,7 @@ abstract class AbstractVod implements Vod
     private $genres;
     public  $config;
 
-    protected function __construct(IConfig $config, $playback_url_is_stream_url)
+    protected function __construct(DefaultConfig $config, $playback_url_is_stream_url)
     {
         $this->config = $config;
         $this->playback_url_is_stream_url = $playback_url_is_stream_url;
