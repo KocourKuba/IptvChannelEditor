@@ -34,7 +34,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
         parent::__construct();
 
         $plugin_type = PLUGIN_TYPE;
-        if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'IConfig'))
+        if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig'))
             throw new Exception('Unknown plugin type: ' . $plugin_type);
 
         $this->tv = new StarnetPluginTv(new $plugin_type);

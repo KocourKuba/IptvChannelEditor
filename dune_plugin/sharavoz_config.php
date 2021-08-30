@@ -10,8 +10,8 @@ class SharavozPluginConfig extends DefaultConfig
 
     const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
     const CHANNEL_LIST_URL = 'sharavoz_channel_list.xml';
-    const EPG_URL_FORMAT = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s';
-    const TVG_URL_FORMAT = 'http://api.program.spr24.net/api/program?epg=%s&date=%s';
+    const EPG1_URL_FORMAT = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
+    const EPG2_URL_FORMAT = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
 
     public function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {

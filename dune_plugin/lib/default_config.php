@@ -24,11 +24,11 @@ abstract class DefaultConfig
 
     const MEDIA_URL_TEMPLATE = '';
     const CHANNEL_LIST_URL = '';
-    const EPG_URL_FORMAT = '';
-    const TVG_URL_FORMAT = '';
+    const EPG1_URL_FORMAT = '';
+    const EPG2_URL_FORMAT = '';
 
-    protected static $EPG_PARSER = 'HD::parse_epg_json';
-    protected static $TVG_PARSER = 'HD::parse_epg_json';
+    protected static $EPG_PARSER = 'parse_epg_json';
+    protected static $TVG_PARSER = 'parse_epg_json';
 
     public abstract function AdjustStreamUri($plugin_cookies, $archive_ts, $url);
 
@@ -50,7 +50,7 @@ abstract class DefaultConfig
     public static function GetEPG(IChannel $channel, $day_start_ts)
     {
         $epg = array();
-        $epg_date = gmdate("Ymd", $day_start_ts);
+        $epg_date = gmdate("Ymd", $day_start_ts); // 'YYYYMMDD'
         try {
             $epg_id = $channel->get_epg_id();
             if (empty($epg_id)) {
@@ -58,7 +58,7 @@ abstract class DefaultConfig
             }
             hd_print("Fetching EPG ID from primary epg source: '$epg_id' DATE: $epg_date");
             $parser = static::$EPG_PARSER;
-            $epg = $parser(sprintf(static::GET_EPG_URL_FORMAT(), $epg_id, $epg_date), $day_start_ts);
+            $epg = HD::$parser(sprintf(static::GET_EPG_URL_FORMAT(1), $epg_id, $epg_date), $day_start_ts);
         } catch (Exception $ex) {
             try {
                 hd_print("Can't fetch EPG ID from primary epg source");
@@ -68,7 +68,7 @@ abstract class DefaultConfig
                 }
                 hd_print("Fetching EPG ID from secondary epg source: '$tvg_id' DATE: $epg_date");
                 $parser = static::$TVG_PARSER;
-                $epg = $parser(sprintf(static::GET_TVG_URL_FORMAT(), $tvg_id, $epg_date), $day_start_ts);
+                $epg = HD::$parser(sprintf(static::GET_EPG_URL_FORMAT(2), $tvg_id, $epg_date), $day_start_ts);
             } catch (Exception $ex) {
                 hd_print("Can't fetch EPG ID from secondary epg source: " . $ex->getMessage());
                 return $epg;
@@ -153,11 +153,15 @@ abstract class DefaultConfig
         return static::CHANNEL_LIST_URL;
     }
 
-    public static function GET_EPG_URL_FORMAT() {
-        return static::EPG_URL_FORMAT;
-    }
+    public static function GET_EPG_URL_FORMAT($type) {
+        switch ($type)
+        {
+            case 1:
+                return static::EPG1_URL_FORMAT;
+            case 2:
+                return static::EPG2_URL_FORMAT;
+        }
 
-    public static function GET_TVG_URL_FORMAT() {
-        return static::TVG_URL_FORMAT;
+        return  "";
     }
 }

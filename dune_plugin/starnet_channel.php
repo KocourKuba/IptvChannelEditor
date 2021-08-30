@@ -10,8 +10,8 @@ class StarnetChannel extends DefaultChannel
                                 $icon_url,
                                 $streaming_url,
                                 $has_archive,
-                                $tvg_id,
                                 $epg_id,
+                                $tvg_id,
                                 $is_protected,
                                 $timeshift_hours)
     {
@@ -23,8 +23,8 @@ class StarnetChannel extends DefaultChannel
             $streaming_url,
             $has_archive,
             0,
-            $tvg_id,
             $epg_id,
+            $tvg_id,
             $is_protected,
             $timeshift_hours);
     }

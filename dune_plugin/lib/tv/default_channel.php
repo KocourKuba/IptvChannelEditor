@@ -20,7 +20,7 @@ class DefaultChannel implements IChannel
     protected $_tvg_id;
     protected $_timeshift_hours;
 
-    public function __construct($id, $channel_id, $title, $icon_url, $streaming_url, $has_archive, $number, $tvg_id, $epg_id, $is_protected, $timeshift_hours)
+    public function __construct($id, $channel_id, $title, $icon_url, $streaming_url, $has_archive, $number, $epg_id, $tvg_id, $is_protected, $timeshift_hours)
     {
         $this->_id = $id;
         $this->_channel_id = $channel_id;
@@ -30,8 +30,8 @@ class DefaultChannel implements IChannel
         $this->_groups = array();
         $this->_has_archive = $has_archive;
         $this->_number = $number;
-        $this->_tvg_id = $tvg_id;
         $this->_epg_id = $epg_id;
+        $this->_tvg_id = $tvg_id;
         $this->_is_protected = $is_protected;
         $this->_timeshift_hours = $timeshift_hours;
     }

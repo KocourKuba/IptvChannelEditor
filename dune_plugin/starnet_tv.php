@@ -160,8 +160,8 @@ class StarnetPluginTv extends AbstractTv
                     $icon_url,
                     $streaming_url,
                     intval($xml_tv_channel->archive),
-                    strval($xml_tv_channel->tvg_id),
                     strval($xml_tv_channel->epg_id),
+                    strval($xml_tv_channel->tvg_id),
                     intval($xml_tv_channel->protected),
                     intval($xml_tv_channel->timeshift_hours));
 

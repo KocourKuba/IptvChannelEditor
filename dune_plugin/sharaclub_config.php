@@ -10,8 +10,8 @@ class SharaclubPluginConfig extends DefaultConfig
 
     const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
     const CHANNEL_LIST_URL = 'sharaclub_channel_list.xml';
-    const EPG_URL_FORMAT = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s';
-    const TVG_URL_FORMAT = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s';
+    const EPG1_URL_FORMAT = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
+    const EPG2_URL_FORMAT = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
     //const EPG_URL_FORMAT = 'https://list.playtv.pro/f/epg_lite.xml.gz';
     const EPG_PROVIDER = 'sharaclub';
 

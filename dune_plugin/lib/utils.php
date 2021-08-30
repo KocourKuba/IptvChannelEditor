@@ -297,7 +297,7 @@ class HD
         $epg_date_end = strtotime('+1 day', $day_start_ts);
 
         try {
-            hd_print($url);
+            hd_print("epg uri: $url");
             $doc = HD::http_get_document($url);
         }
         catch (Exception $ex) {
@@ -330,7 +330,7 @@ class HD
         $e_time = strtotime("$epg_date, 0300 GMT+3");
 
         try {
-            hd_print($url);
+            hd_print("epg uri: $url");
             $doc = HD::http_get_document($url);
         }
         catch (Exception $ex) {
@@ -371,6 +371,7 @@ class HD
             preg_match('|^.*\/(.+)$|', $url, $match);
             $epgCacheFile = $cache_dir . $day_start_ts . '_' . $match[1];
             if (!file_exists($epgCacheFile)) {
+                hd_print("epg uri: $url");
                 $doc = HD::http_get_document($url);
                 if(!file_put_contents($epgCacheFile, $doc)) {
                     hd_print("Writing to {$epgCacheFile} is not possible!");

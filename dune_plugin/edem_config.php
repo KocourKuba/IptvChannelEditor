@@ -10,12 +10,10 @@ class EdemPluginConfig extends DefaultConfig
 
     const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
     const CHANNEL_LIST_URL = 'edem_channel_list.xml';
-    const EPG_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%d.json';
-    const TVG_URL_FORMAT = 'http://www.teleguide.info/kanal%d_%s.html';
-    const EPG_PROVIDER = 'ott-play';
-    const TVG_PROVIDER = 'tvguide.info';
+    const EPG1_URL_FORMAT = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
+    const EPG2_URL_FORMAT = 'http://www.teleguide.info/kanal%s_%s.html'; // epg_id date(YYYYMMDD)
 
-    protected static $TVG_PARSER = 'HD::parse_epg_html';
+    protected static $TVG_PARSER = 'parse_epg_html';
 
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {
