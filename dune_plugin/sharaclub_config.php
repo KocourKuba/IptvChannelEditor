@@ -21,7 +21,6 @@ class SharaclubPluginConfig extends DefaultConfig
             $url = str_replace("index.m3u8", "archive-" . $archive_ts . "-10800.m3u8", $url);
         }
 
-        hd_print("AdjustStreamUri: $url");
         return $url;
     }
 }

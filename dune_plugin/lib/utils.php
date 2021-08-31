@@ -106,8 +106,7 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
-    public static function create_regular_folder_range($items,
-                                                       $from_ndx = 0, $total = -1, $more_items_available = false)
+    public static function create_regular_folder_range($items, $from_ndx = 0, $total = -1, $more_items_available = false)
     {
         if ($total === -1)
             $total = $from_ndx + count($items);
@@ -282,126 +281,6 @@ class HD
                 '  - ' . $f['function'] .
                 ' at ' . $f['file'] . ':' . $f['line']);
         }
-    }
-
-    /**
-     * @param $url
-     * @param $day_start_ts
-     * @return array
-     */
-    public static function parse_epg_json($url, $day_start_ts)
-    {
-        $epg = array();
-        // time in UTC
-        $epg_date_start = strtotime('-1 hour', $day_start_ts);
-        $epg_date_end = strtotime('+1 day', $day_start_ts);
-
-        try {
-            hd_print("epg uri: $url");
-            $doc = HD::http_get_document($url);
-        }
-        catch (Exception $ex) {
-            hd_print($ex->getMessage());
-            return $epg;
-        }
-
-        // stripe UTF8 BOM if exists
-        $ch_data = json_decode(ltrim($doc, "\0xEF\0xBB\0xBF"));
-        foreach ($ch_data->epg_data as $channel) {
-            if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
-                $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
-                $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
-            }
-        }
-        return $epg;
-    }
-
-    /**
-     * @param $url
-     * @param $epg_date
-     * @return array
-     */
-    public static function parse_epg_html($url, $epg_date)
-    {
-        // html parse for tvguide.info
-        // tvguide.info time in GMT+3 (moscow time)
-
-        $epg = array();
-        $e_time = strtotime("$epg_date, 0300 GMT+3");
-
-        try {
-            hd_print("epg uri: $url");
-            $doc = HD::http_get_document($url);
-        }
-        catch (Exception $ex) {
-            hd_print($ex->getMessage());
-            return $epg;
-        }
-
-        preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
-        foreach ($keywords[1] as $qid) {
-            $qq = strip_tags($qid);
-            preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
-            $time = $keyw[1][0];
-            $u_time = strtotime("$epg_date $time GMT+3");
-            $last_time = ($u_time < $e_time) ? $u_time + 86400 : $u_time;
-            $epg[$last_time]["title"] = HD::unescape_entity_string($keyw[2][0]);
-            $epg[$last_time]["desc"] = HD::unescape_entity_string($keyw[3][0]);
-        }
-
-        return $epg;
-    }
-
-    /**
-     * @param $url
-     * @param $epg_id
-     * @param $day_start_ts
-     * @param $cache_dir
-     * @return array
-     */
-    public static function parse_epg_xml($url, $epg_id, $day_start_ts, $cache_dir)
-    {
-        $epg = array();
-        // time in UTC
-        $epg_date_start = strtotime('-1 hour', $day_start_ts);
-        $epg_date_end = strtotime('+1 day', $day_start_ts);
-
-        try {
-            // checks if epg already loaded
-            preg_match('|^.*\/(.+)$|', $url, $match);
-            $epgCacheFile = $cache_dir . $day_start_ts . '_' . $match[1];
-            if (!file_exists($epgCacheFile)) {
-                hd_print("epg uri: $url");
-                $doc = HD::http_get_document($url);
-                if(!file_put_contents($epgCacheFile, $doc)) {
-                    hd_print("Writing to {$epgCacheFile} is not possible!");
-                }
-            }
-
-            // parse
-            $Parser = new EpgParser();
-            $Parser->setFile($epgCacheFile);
-            //$Parser->setTargetTimeZone('Europe/Berlin');
-            $Parser->setChannelfilter($epg_id);
-            $Parser->parseEpg();
-            $epg_data = $Parser->getEpgData();
-            if (empty($epg_data)){
-                hd_print("No EPG data found");
-            } else {
-                foreach ($epg_data as $channel) {
-                    if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
-                        $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
-                        $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
-                    }
-                }
-            }
-        }
-        catch (Exception $ex) {
-            hd_print($ex->getMessage());
-            return $epg;
-        }
-
-        return $epg;
     }
 
     public static function unescape_entity_string($raw_string)

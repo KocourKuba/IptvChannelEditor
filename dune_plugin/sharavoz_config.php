@@ -13,10 +13,10 @@ class SharavozPluginConfig extends DefaultConfig
     const EPG1_URL_FORMAT = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
     const EPG2_URL_FORMAT = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
 
-    public function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
+    public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {
         $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        hd_print("AdjustStreamUri: stream $format");
+        hd_print("AdjustStreamUri: change stream format to '$format'");
         switch ($format)
         {
             case 'hls':
@@ -35,7 +35,6 @@ class SharavozPluginConfig extends DefaultConfig
                 break;
         }
 
-        hd_print("AdjustStreamUri: $url");
         return $url;
     }
 }

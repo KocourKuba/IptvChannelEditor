@@ -1,5 +1,5 @@
 ﻿<?php
-require_once 'tv/channel.php';
+require_once 'epg_manager.php';
 
 abstract class DefaultConfig
 {
@@ -13,96 +13,56 @@ abstract class DefaultConfig
     const TV_FAVORITES_SUPPORTED = true;
 
     /** prefix to create cache file*/
-    const EPG_CACHE_FILE_TEMPLATE = '%sepg_channel_%d_%d';
     const BG_PICTURE_TEMPLATE = 'plugin_file://bg_%s.jpg';
-    const EPG_CACHE_DIR_TEMPLATE = '/tmp/%s_epg/';
 
-    const PLUGIN_NAME = '';
-    const PLUGIN_SHORT_NAME = '';
-    const PLUGIN_VERSION = '';
-    const PLUGIN_DATE = '';
+    const PLUGIN_NAME = 'StarNet';
+    const PLUGIN_SHORT_NAME = 'starnet';
+    const PLUGIN_VERSION = '0.0.0';
+    const PLUGIN_DATE = '1972.1.1';
 
-    const MEDIA_URL_TEMPLATE = '';
-    const CHANNEL_LIST_URL = '';
-    const EPG1_URL_FORMAT = '';
-    const EPG2_URL_FORMAT = '';
+    const MEDIA_URL_TEMPLATE = 'http://online.dune-hd.com/demo/index.m3u8?channel=%s';
+    const CHANNEL_LIST_URL = 'default_channel_list.xml';
+    const EPG1_URL_FORMAT = 'http://online.dune-hd.com/epg1/?channel=%s&date=%s';
+    const EPG2_URL_FORMAT = 'http://online.dune-hd.com/epg2/?channel=%s&date=%s';
 
-    protected static $EPG_PARSER = 'parse_epg_json';
-    protected static $TVG_PARSER = 'parse_epg_json';
+    protected static $EPG_PARSER = 'json';
+    protected static $TVG_PARSER = 'json';
 
     public abstract function AdjustStreamUri($plugin_cookies, $archive_ts, $url);
 
-    public static function LoadCachedEPG(IChannel $channel, $day_start_ts, &$epg)
-    {
-        if (!is_dir(self::GET_EPG_CACHE_DIR())) {
-            mkdir(self::GET_EPG_CACHE_DIR());
-        }
-
-        $cache_file = self::GET_CACHE_FILE($channel->get_id(), $day_start_ts);
-        if (!file_exists($cache_file))
-            return false;
-
-        hd_print("Load EPG from cache: $cache_file");
-        $epg = unserialize(file_get_contents($cache_file));
-        return true;
-    }
-
     public static function GetEPG(IChannel $channel, $day_start_ts)
     {
-        $epg = array();
-        $epg_date = gmdate("Ymd", $day_start_ts); // 'YYYYMMDD'
         try {
-            $epg_id = $channel->get_epg_id();
-            if (empty($epg_id)) {
-                throw new Exception("EPG not defined for channel" . $channel->get_title() . "'");
-            }
-            hd_print("Fetching EPG ID from primary epg source: '$epg_id' DATE: $epg_date");
-            $parser = static::$EPG_PARSER;
-            $epg = HD::$parser(sprintf(static::GET_EPG_URL_FORMAT(1), $epg_id, $epg_date), $day_start_ts);
+            $epg = EpgManager::get_epg(static::$EPG_PARSER,
+                $channel,
+                'first',
+                $day_start_ts,
+                static::GET_EPG_URL_FORMAT(1),
+                static::GET_PLUGIN_SHORT_NAME()
+            );
         } catch (Exception $ex) {
             try {
                 hd_print("Can't fetch EPG ID from primary epg source");
-                $tvg_id = $channel->get_tvg_id();
-                if (empty($tvg_id)) {
-                    throw new Exception("EPG not defined for channel" . $channel->get_title() . "'");
-                }
-                hd_print("Fetching EPG ID from secondary epg source: '$tvg_id' DATE: $epg_date");
-                $parser = static::$TVG_PARSER;
-                $epg = HD::$parser(sprintf(static::GET_EPG_URL_FORMAT(2), $tvg_id, $epg_date), $day_start_ts);
+                $epg = EpgManager::get_epg(static::$EPG_PARSER,
+                    $channel,
+                    'second',
+                    $day_start_ts,
+                    static::GET_EPG_URL_FORMAT(2),
+                    static::GET_PLUGIN_SHORT_NAME()
+                );
             } catch (Exception $ex) {
                 hd_print("Can't fetch EPG ID from secondary epg source: " . $ex->getMessage());
-                return $epg;
+                $epg = array();
             }
         }
 
-        DefaultConfig::SortAndStore($channel, $day_start_ts, $epg);
+        hd_print("Loaded " . count($epg) . " EPG entries");
 
         return $epg;
     }
 
-    protected static function SortAndStore(IChannel $channel, $day_start_ts, $epg)
-    {
-        // sort epg by date
-        $counts = count($epg);
-        $cache_file = self::GET_CACHE_FILE($channel->get_id(), $day_start_ts);
-        hd_print("Save EPG to cache: $cache_file $counts entries");
-
-        if ($counts > 0) {
-            ksort($epg, SORT_NUMERIC);
-            file_put_contents(self::GET_CACHE_FILE($channel->get_id(), $day_start_ts), serialize($epg));
-        }
-    }
-
-    protected static function GET_CACHE_FILE($id, $day_start_ts) {
-        return sprintf(self::EPG_CACHE_FILE_TEMPLATE, self::GET_EPG_CACHE_DIR(), $id, $day_start_ts);
-    }
-
-    protected static function GET_EPG_CACHE_DIR() {
-        return sprintf(self::EPG_CACHE_DIR_TEMPLATE, static::GET_PLUGIN_SHORT_NAME());
-    }
-
     public static function GET_BG_PICTURE() {
-        return sprintf(self::BG_PICTURE_TEMPLATE, static::GET_PLUGIN_SHORT_NAME());
+        return sprintf(static::BG_PICTURE_TEMPLATE, static::GET_PLUGIN_SHORT_NAME());
     }
 
     public static function GET_TV_FAVORITES_SUPPORTED() {

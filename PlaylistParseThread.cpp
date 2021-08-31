@@ -44,6 +44,12 @@ BOOL CPlaylistParseThread::InitInstance()
 				count++;
 				if (!line.empty() && entry->Parse(line))
 				{
+					if (m_config.m_pluginType == StreamType::enSharavoz)
+					{
+						entry->set_epg2_id(entry->get_stream_uri()->get_id()); // primary EPG
+						entry->set_epg1_id(entry->get_epg2_id()); // secondary EPG
+					}
+
 					m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
 					entries->emplace_back(entry);
 					entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);

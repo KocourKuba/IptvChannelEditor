@@ -9,11 +9,11 @@ require_once 'lib/vod/movie.php';
 
 class StarnetVod extends AbstractVod
 {
-    public function __construct(DefaultConfig $config)
+    public static $config = null;
+
+    public function __construct()
     {
-        parent::__construct(
-            $config,
-            true);
+        parent::__construct(true);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,7 @@ class StarnetVod extends AbstractVod
      */
     public function try_load_movie($movie_id, &$plugin_cookies)
     {
-        $doc =
-            HD::http_get_document(sprintf($this->config->GET_MOVIE_INFO_URL_FORMAT(), $movie_id));
+        $doc = HD::http_get_document(sprintf(static::$config->GET_MOVIE_INFO_URL_FORMAT(), $movie_id));
 
         if (is_null($doc))
             throw new Exception('Can not fetch movie info');

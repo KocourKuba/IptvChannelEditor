@@ -9,6 +9,9 @@ require_once 'starnet_vod_list_screen.php';
 class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 {
     const ID = 'vod_category_list';
+    public static $config = null;
+    private $category_list;
+    private $category_index;
 
     public static function get_media_url_str($category_id)
     {
@@ -21,16 +24,10 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
     }
 
     ///////////////////////////////////////////////////////////////////////
-    private $config;
-    private $category_list;
-    private $category_index;
-
-    ///////////////////////////////////////////////////////////////////////
 
     public function __construct()
     {
         parent::__construct(self::ID, $this->get_folder_views());
-        $this->config = new EdemPluginConfig();
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -67,7 +64,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        if ($this->config->GET_VOD_FAVORITES_SUPPORTED() &&
+        if (static::$config->GET_VOD_FAVORITES_SUPPORTED() &&
             !isset($media_url->category_id)) {
             $items[] = array
             (
@@ -109,7 +106,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
      */
     private function fetch_vod_categories()
     {
-        $doc = HD::http_get_document($this->config->GET_VOD_CATEGORIES_URL());
+        $doc = HD::http_get_document(static::$config->GET_VOD_CATEGORIES_URL());
 
         if (is_null($doc))
             throw new Exception('Can not fetch playlist');

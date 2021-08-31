@@ -5,7 +5,7 @@ require_once 'lib/hashed_array.php';
 require_once 'lib/default_config.php';
 require_once 'lib/tv/abstract_tv.php';
 require_once 'lib/tv/default_epg_item.php';
-require_once 'lib/epg_parser.php';
+require_once 'lib/epg_xml_parser.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_channel.php';
 
@@ -13,12 +13,11 @@ require_once 'starnet_channel.php';
 
 class StarnetPluginTv extends AbstractTv
 {
-    public $config = null;
+    public static $config = null;
 
-    public function __construct(DefaultConfig $config)
+    public function __construct()
     {
         parent::__construct(AbstractTv::MODE_CHANNELS_N_TO_M, false);
-        $this->config = $config;
     }
 
     public function get_fav_icon_url()
@@ -39,12 +38,17 @@ class StarnetPluginTv extends AbstractTv
 
     public function is_favorites_supported()
     {
-        return $this->config->GET_TV_FAVORITES_SUPPORTED();
+        return self::$config->GET_TV_FAVORITES_SUPPORTED();
     }
 
     public function get_channel_list_url($plugin_cookies)
     {
-        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->config->GET_CHANNEL_LIST_URL();
+        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : self::$config->GET_CHANNEL_LIST_URL();
+    }
+
+    public function get_config()
+    {
+        return self::$config;
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -69,13 +73,7 @@ class StarnetPluginTv extends AbstractTv
             return;
         }
 
-        $xml = simplexml_load_string($doc);
-
-        if ($xml === false) {
-            hd_print("Error: can not parse XML document.");
-            hd_print("XML-text: $doc.");
-            throw new Exception('Illegal XML document');
-        }
+        $xml = HD::parse_xml_document($doc);
 
         if ($xml->getName() !== 'tv_info') {
             hd_print("Error: unexpected node '" . $xml->getName() . "'. Expected: 'tv_info'");
@@ -90,7 +88,7 @@ class StarnetPluginTv extends AbstractTv
             && !empty($xml->channels_setup->access_domain)
            )
         {
-            hd_print("Overriding access settings found in playlist: " . $channels_list);
+            hd_print("Overriding access settings found in playlist: $channels_list");
             $plugin_cookies->ott_key_local = strval($xml->channels_setup->access_key);
             $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
         }
@@ -135,26 +133,26 @@ class StarnetPluginTv extends AbstractTv
             // ignore disabled channel
             if (isset($xml_tv_channel->disabled)) continue;
 
-            // make substitute template
+            // substitute template
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = strval($xml_tv_channel->channel_id);
-                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, $this->config->GET_MEDIA_URL_TEMPLATE());
+                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, self::$config->GET_MEDIA_URL_TEMPLATE());
             } else {
-                $channel_id ='';
                 $streaming_url = strval($xml_tv_channel->streaming_url);
+                $channel_id = hash("crc32", $streaming_url);
             }
             // calculate unique id from url hash
-            $id = hash("crc32", $streaming_url);
-            if ($this->channels->has($id)) {
+            $hash = hash("crc32", $streaming_url);
+            if ($this->channels->has($hash)) {
                 // added or existing channel
-                $channel = $this->channels->get($id);
+                $channel = $this->channels->get($hash);
             }
             else
             {
                 // https not supported for old players
                 $icon_url = str_replace('https', 'https', strval($xml_tv_channel->icon_url));
                 $channel = new StarnetChannel(
-                    $id,
+                    $hash,
                     $channel_id,
                     strval($xml_tv_channel->caption),
                     $icon_url,
@@ -180,8 +178,8 @@ class StarnetPluginTv extends AbstractTv
 
                 // only new format support favorites
                 if ($xml_tv_channel->favorite && $this->is_favorites_supported()) {
-                    hd_print("Add to favorite $id ($xml_tv_channel->caption)");
-                    $this->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $id, $plugin_cookies);
+                    hd_print("Add to favorite $hash ($xml_tv_channel->caption)");
+                    $this->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $hash, $plugin_cookies);
                 }
             } else if (isset($xml_tv_channel->tv_categories)) {
                 // old format
@@ -199,7 +197,7 @@ class StarnetPluginTv extends AbstractTv
                     $group->add_channel($channel);
                 }
             } else {
-                hd_print("Error: Category undefined for channel $id ($xml_tv_channel->caption) !");
+                hd_print("Error: Category undefined for channel $hash ($xml_tv_channel->caption) !");
             }
         }
 
@@ -215,6 +213,7 @@ class StarnetPluginTv extends AbstractTv
     {
         try {
             $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
+            // get channel by hash
             $channel = $this->get_channel($channel_id);
             if ($channel->is_protected() && $protect_code !== $pass_sex) {
                 throw new Exception('Wrong password');
@@ -223,7 +222,10 @@ class StarnetPluginTv extends AbstractTv
             return '';
         }
 
-        $url = $this->config->AdjustStreamUri($plugin_cookies, $archive_ts, $channel->get_streaming_url());
+        $url = $channel->get_streaming_url();
+        hd_print("StreamUri: $url");
+        $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $url);
+        hd_print("AdjustedStreamUri: $url");
 
         $plugin_cookies->subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : 'dunehd.iptvspy.net';
 
@@ -242,29 +244,29 @@ class StarnetPluginTv extends AbstractTv
     public function get_day_epg_iterator($channel_id, $day_start_ts, &$plugin_cookies)
     {
         try {
+            // get channel by hash
             $channel = $this->get_channel($channel_id);
         } catch (Exception $ex) {
             hd_print("Can't get channel with ID: $channel_id");
             return array();
         }
 
-        if (DefaultConfig::LoadCachedEPG($channel, $day_start_ts, $epg) === false) {
-            $epg = DefaultConfig::GetEPG($channel, $day_start_ts);
-        }
-
-        hd_print("Loaded " . count($epg) . " EPG entries");
-
-        $epg_result = array();
         $start = 0;
         $end = 0;
         // get personal time shift for channel
         $time_shift = $channel->get_timeshift_hours() * 3600;
+
+        $epg_date = gmdate(DATE_ATOM, $day_start_ts);
+        hd_print("start date: $epg_date");
+        $epg_result = array();
+        $epg = static::$config->GetEPG($channel, $day_start_ts);
         foreach ($epg as $time => $value) {
             $tm =  $time + $time_shift;
             $end = $tm;
             if ($start == 0)
                 $start = $tm;
 
+            hd_print("entry: start: " . gmdate(DATE_ATOM, $time) . " '" . $value['title'] . "' '" . $value['desc'] . "'");
             $epg_result[] = new DefaultEpgItem($value['title'], $value['desc'], intval($tm), -1);
         }
 

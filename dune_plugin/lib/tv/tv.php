@@ -40,6 +40,8 @@ interface Tv
 
     /** Put id's in the cookie.*/
     public function set_fav_channel_ids($plugin_cookies, $ids);
+
+    public function get_config();
 }
 
 ///////////////////////////////////////////////////////////////////////////

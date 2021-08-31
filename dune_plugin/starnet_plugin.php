@@ -37,7 +37,13 @@ class StarnetDunePlugin extends DefaultDunePlugin
         if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig'))
             throw new Exception('Unknown plugin type: ' . $plugin_type);
 
-        $this->tv = new StarnetPluginTv(new $plugin_type);
+        $keys = array_keys(DuneSystem::$properties);
+        foreach($keys as $key){
+            hd_print("'$key' = '" . DuneSystem::$properties[$key] . "'");
+        }
+
+        StarnetPluginTv::$config = new $plugin_type;
+        $this->tv = new StarnetPluginTv();
         $bg_picture = $plugin_type::GET_BG_PICTURE();
         $this->add_screen(new TvChannelListScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)));
         $this->add_screen(new TvFavoritesScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)));

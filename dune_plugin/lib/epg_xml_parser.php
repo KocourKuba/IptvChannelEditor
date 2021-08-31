@@ -1,7 +1,7 @@
 <?php
 require_once 'utils.php';
 
-class EpgParser
+class EpgXmlParser
 {
     //	Source data
     private $file;
