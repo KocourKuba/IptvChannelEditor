@@ -103,7 +103,6 @@ BOOL CIconsListDlg::OnInitDialog()
 				cfg.m_parent = this;
 				cfg.m_data = data.release();
 				cfg.m_hStop = m_evtStop;
-				cfg.m_pluginType = StreamType::enEdem;
 				cfg.m_rootPath = theApp.GetAppPath(utils::PLUGIN_ROOT);
 
 				pThread->SetData(cfg);
