@@ -24,7 +24,7 @@ public:
 public:
 	struct SearchParams
 	{
-		std::wstring id;
+		std::string id;
 		int hash = 0;
 		CString searchString;
 	};
@@ -159,7 +159,7 @@ private:
 
 	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
 
-	void FillTreeChannels();
+	void FillTreeChannels(LPCSTR select = nullptr);
 	void FillTreePlaylist();
 
 	void GetStreamInfo(std::vector<uri_stream*>& container);

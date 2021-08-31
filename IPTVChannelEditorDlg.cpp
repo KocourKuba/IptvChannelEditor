@@ -812,7 +812,7 @@ void CIPTVChannelEditorDlg::set_allow_save(BOOL val)
 		m_wndSave.EnableWindow(m_allow_save);
 }
 
-void CIPTVChannelEditorDlg::FillTreeChannels()
+void CIPTVChannelEditorDlg::FillTreeChannels(LPCSTR select /*= nullptr*/)
 {
 	m_bInFillTree = true;
 
@@ -855,7 +855,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels()
 	if (!m_channelsMap.empty())
 	{
 		SearchParams params;
-		params.id = m_categoriesMap.begin()->second->get_channels().front()->get_id();
+		params.id = select ? select : m_categoriesMap.begin()->second->get_channels().front()->get_id();
 		SelectTreeItem(m_wndChannelsTree, params);
 	}
 }
@@ -2440,6 +2440,11 @@ void CIPTVChannelEditorDlg::OnSave()
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
 
 	// renumber categories id
+	LPCSTR old_selected = nullptr;
+	auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
+	if (channel)
+		old_selected = channel->get_id().c_str();
+
 	int cat_id = 1;
 	std::map<int, std::shared_ptr<ChannelCategory>> ren_categories;
 	for (auto& pair : m_categoriesMap)
@@ -2519,7 +2524,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		os << doc;
 
 		set_allow_save(FALSE);
-		FillTreeChannels();
+		FillTreeChannels(old_selected);
 	}
 	catch (const rapidxml::parse_error& ex)
 	{
