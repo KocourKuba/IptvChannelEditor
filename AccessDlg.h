@@ -35,7 +35,7 @@ public:
 	CString m_domainEmbedded;
 	CString m_url;
 	StreamType m_streamType = StreamType::enEdem;
-	int m_type;
+	int m_type = 0;
 
 protected:
 	CButton m_wndGet;

@@ -10,7 +10,6 @@
 #include "IconCache.h"
 #include "utils.h"
 
-
 // CIconsList dialog
 
 IMPLEMENT_DYNAMIC(CIconsListDlg, CDialogEx)
@@ -54,6 +53,8 @@ void CIconsListDlg::DoDataExchange(CDataExchange* pDX)
 BOOL CIconsListDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+
+	theApp.RestoreWindowPos(GetSafeHwnd(), _T("IconsWindowPos"));
 
 	// This image list is only used to hold the place.  The images are loaded
 	// dynamically as the list control is scrolled.
@@ -327,4 +328,11 @@ void CIconsListDlg::UpdateListCtrl()
 		m_wndIconsList.SetItemCountEx((int)m_Icons->size(), LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
 		OnBnClickedButtonSearchNext();
 	}
+}
+
+BOOL CIconsListDlg::DestroyWindow()
+{
+	theApp.SaveWindowPos(GetSafeHwnd(), _T("IconsWindowPos"));
+
+	return __super::DestroyWindow();
 }

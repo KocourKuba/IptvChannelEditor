@@ -189,11 +189,11 @@
     <ClInclude Include="ImageContainer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="IconsListDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="uri_sharaclub.h">
       <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="IconsListDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -272,11 +272,11 @@
     <ClCompile Include="ImageContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IconsListDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="uri_sharaclub.cpp">
       <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="IconsListDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

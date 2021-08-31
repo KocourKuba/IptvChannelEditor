@@ -15,6 +15,8 @@
 #define new DEBUG_NEW
 #endif
 
+constexpr auto REG_SETTINGS = _T("Settings");
+
 // CEdemChannelEditorApp
 
 BEGIN_MESSAGE_MAP(CIPTVChannelEditorApp, CWinApp)
@@ -104,4 +106,51 @@ std::wstring CIPTVChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/
 	fileName += szSubFolder;
 
 	return std::filesystem::absolute(fileName.GetString());
+}
+
+
+void CIPTVChannelEditorApp::RestoreWindowPos(HWND hWnd, LPCTSTR name)
+{
+	WINDOWPLACEMENT wp = { 0 };
+	UINT nSize = 0;
+	WINDOWPLACEMENT* pwp = nullptr;
+	if (!theApp.GetProfileBinary(REG_SETTINGS, name, (LPBYTE*)&pwp, &nSize))
+		return;
+
+	// Success
+	::memcpy((void*)&wp, pwp, sizeof(wp));
+	delete[] pwp; // free the buffer
+
+	// Get a handle to the monitor
+	HMONITOR hMonitor = ::MonitorFromPoint(CPoint(wp.rcNormalPosition.left, wp.rcNormalPosition.top), MONITOR_DEFAULTTONEAREST);
+
+	// Get the monitor info
+	MONITORINFO monInfo;
+	monInfo.cbSize = sizeof(MONITORINFO);
+	if (::GetMonitorInfo(hMonitor, &monInfo))
+	{
+		// Adjust for work area
+		CRect rc = wp.rcNormalPosition;
+		rc.OffsetRect(monInfo.rcWork.left - monInfo.rcMonitor.left, monInfo.rcWork.top - monInfo.rcMonitor.top);
+
+		// Ensure top left point is on screen
+		CRect rc_monitor(monInfo.rcWork);
+		if (rc_monitor.PtInRect(rc.TopLeft()) == FALSE)
+		{
+			rc.OffsetRect(rc_monitor.TopLeft());
+		}
+		wp.rcNormalPosition = rc;
+	}
+
+	SetWindowPlacement(hWnd, &wp);
+}
+
+void CIPTVChannelEditorApp::SaveWindowPos(HWND hWnd, LPCTSTR name)
+{
+	// Get the window position
+	WINDOWPLACEMENT wp;
+	wp.length = sizeof(WINDOWPLACEMENT);
+	GetWindowPlacement(hWnd, &wp);
+	// Save the info
+	theApp.WriteProfileBinary(REG_SETTINGS, name, (LPBYTE)&wp, sizeof(wp));
 }

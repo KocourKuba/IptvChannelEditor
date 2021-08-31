@@ -290,7 +290,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	RestoreWindowPos();
+	theApp.RestoreWindowPos(GetSafeHwnd(), _T("WindowPos"));
 
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
@@ -662,6 +662,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	if (!pThread)
 	{
 		AfxMessageBox(_T("Problem with starting load playlist thread!"), MB_OK | MB_ICONERROR);
+		return;
 	}
 
 	m_loading = TRUE;
@@ -2733,7 +2734,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 
 	const auto& name = GetPluginName();
 
-	const auto& packFolder = fmt::format(GetAbsPathGetAppPath(utils::PACK_PATH).c_str(), name.c_str());
+	const auto& packFolder = fmt::format(GetAbsPath(utils::PACK_PATH).c_str(), name.c_str());
 
 	std::error_code err;
 	// remove previous packed folder if exist
@@ -2812,7 +2813,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext()
 	SearchParams params;
 	if (m_search.GetLength() > 1 && m_search.GetAt(0) == '\\')
 	{
-		params.id = _tstoi(m_search.Mid(1).GetString());
+		params.id = utils::utf16_to_utf8(m_search.Mid(1).GetString());
 		if (m_channelsMap.find(params.id) == m_channelsMap.end())
 			return;
 	}
@@ -2839,7 +2840,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 	SearchParams params;
 	if (m_plSearch.GetLength() > 1 && m_plSearch.GetAt(0) == '\\')
 	{
-		params.id = _tstoi(m_plSearch.Mid(1).GetString());
+		params.id = utils::utf16_to_utf8(m_plSearch.Mid(1).GetString());
 		if (m_playlistMap.find(params.id) == m_playlistMap.end())
 			return;
 	}
@@ -4012,50 +4013,9 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	*pResult = 0;
 }
 
-void CIPTVChannelEditorDlg::RestoreWindowPos()
-{
-	WINDOWPLACEMENT wp = { 0 };
-	UINT nSize = 0;
-	WINDOWPLACEMENT* pwp = nullptr;
-	if (!theApp.GetProfileBinary(REG_SETTINGS, _T("WindowPos"), (LPBYTE*)&pwp, &nSize))
-		return;
-
-	// Success
-	::memcpy((void*)&wp, pwp, sizeof(wp));
-	delete[] pwp; // free the buffer
-
-	// Get a handle to the monitor
-	HMONITOR hMonitor = ::MonitorFromPoint(CPoint(wp.rcNormalPosition.left, wp.rcNormalPosition.top), MONITOR_DEFAULTTONEAREST);
-
-	// Get the monitor info
-	MONITORINFO monInfo;
-	monInfo.cbSize = sizeof(MONITORINFO);
-	if (::GetMonitorInfo(hMonitor, &monInfo))
-	{
-		// Adjust for work area
-		CRect rc = wp.rcNormalPosition;
-		rc.OffsetRect(monInfo.rcWork.left - monInfo.rcMonitor.left, monInfo.rcWork.top - monInfo.rcMonitor.top);
-
-		// Ensure top left point is on screen
-		CRect rc_monitor(monInfo.rcWork);
-		if (rc_monitor.PtInRect(rc.TopLeft()) == FALSE)
-		{
-			rc.OffsetRect(rc_monitor.TopLeft());
-		}
-		wp.rcNormalPosition = rc;
-	}
-
-	SetWindowPlacement(&wp);
-}
-
 BOOL CIPTVChannelEditorDlg::DestroyWindow()
 {
-	// Get the window position
-	WINDOWPLACEMENT wp;
-	wp.length = sizeof(WINDOWPLACEMENT);
-	GetWindowPlacement(&wp);
-	// Save the info
-	theApp.WriteProfileBinary(REG_SETTINGS, _T("WindowPos"), (LPBYTE)&wp, sizeof(wp));
+	theApp.SaveWindowPos(GetSafeHwnd(), _T("WindowPos"));
 
 	return __super::DestroyWindow();
 }

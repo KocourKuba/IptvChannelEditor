@@ -23,6 +23,8 @@ protected:
 	void OnCancel() override;
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	BOOL DestroyWindow() override;
+
 
 	DECLARE_MESSAGE_MAP()
 

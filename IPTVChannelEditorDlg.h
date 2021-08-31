@@ -24,7 +24,7 @@ public:
 public:
 	struct SearchParams
 	{
-		std::string id;
+		std::wstring id;
 		int hash = 0;
 		CString searchString;
 	};
@@ -131,6 +131,7 @@ protected:
 	afx_msg void OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateButtonSearchNext(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
+	afx_msg void OnCbnSelchangeComboIconSource();
 	afx_msg void OnCbnSelchangeComboPluginType();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
@@ -204,7 +205,6 @@ private:
 	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
 	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
 
-	void RestoreWindowPos();
 	void SwitchPlugin();
 
 	std::wstring GetPluginName() const;
@@ -345,7 +345,5 @@ private:
 	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
 
 	serializable_map m_stream_infos;
-public:
-	afx_msg void OnCbnSelchangeComboIconSource();
 };
 

@@ -25,6 +25,8 @@ public:
 	BOOL InitInstance() override;
 
 	std::wstring GetAppPath(LPCTSTR szSubFolder = nullptr);
+	void SaveWindowPos(HWND hWnd, LPCTSTR name);
+	void RestoreWindowPos(HWND hWnd, LPCTSTR name);
 
 	DECLARE_MESSAGE_MAP()
 };
