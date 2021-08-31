@@ -62,5 +62,4 @@ private:
 	bool disabled = false;
 	bool favorite = false;
 	std::set<int> categories;
-	bool changed = false;
 };

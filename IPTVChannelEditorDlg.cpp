@@ -366,17 +366,17 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Plugin type"));
 
-	m_player = theApp.GetProfileString(REG_SETTINGS, REG_PLAYER);
-	m_probe = theApp.GetProfileString(REG_SETTINGS, REG_FFPROBE);
-	m_archiveCheck = theApp.GetProfileInt(REG_SETTINGS, REG_HOURS_BACK, 0);
-	m_bAutoSync = theApp.GetProfileInt(REG_SETTINGS, REG_AUTOSYNC, FALSE);
+	m_player = ReadRegString(REG_PLAYER);
+	m_probe = ReadRegString(REG_FFPROBE);
+	m_archiveCheck = ReadRegInt(REG_HOURS_BACK);
+	m_bAutoSync = ReadRegInt(REG_AUTOSYNC);
 
 	m_wndPluginType.AddString(_T("Edem (iLook TV)"));
 	m_wndPluginType.AddString(_T("Sharavoz TV"));
 	m_wndPluginType.AddString(_T("Sharaclub TV"));
 
-	m_wndPluginType.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_PLUGIN, 0));
-	m_wndIconSource.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_ICON_SOURCE, 0));
+	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
+	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
 
 	SwitchPlugin();
 
@@ -410,11 +410,10 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	}
 	else
 	{
-		bool changed = false;
-		if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel()), changed))
+		if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel())))
 		{
 			FillTreeChannels();
-			set_allow_save(changed != false);
+			set_allow_save(FALSE);
 		}
 	}
 
@@ -423,10 +422,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 void CIPTVChannelEditorDlg::SaveAccessInfo()
 {
-	const auto& regPath = GetPluginRegPath();
-
-	theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_KEY, utils::utf8_to_utf16(m_gl_access_key).c_str());
-	theApp.WriteProfileString(regPath.c_str(), REG_DOMAIN, utils::utf8_to_utf16(m_gl_domain).c_str());
+	SaveRegPlugin(REG_ACCESS_KEY, utils::utf8_to_utf16(m_gl_access_key).c_str());
+	SaveRegPlugin(REG_DOMAIN, utils::utf8_to_utf16(m_gl_domain).c_str());
 }
 
 void CIPTVChannelEditorDlg::SwitchPlugin()
@@ -475,22 +472,20 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	}
 
 	// Set selected playlist
-	int pl_idx = theApp.GetProfileInt(GetPluginRegPath().c_str(), REG_PLAYLIST_TYPE, 0);
+	int pl_idx = ReadRegIntPlugin(REG_PLAYLIST_TYPE);
 	if (pl_idx > m_wndPlaylist.GetCount() || pl_idx < 0)
 		pl_idx = 0;
 
 	m_wndPlaylist.SetCurSel(pl_idx);
 
-	const auto& regPath = GetPluginRegPath();
-
 	// Load access credentials
-	m_gl_access_key = utils::utf16_to_utf8(theApp.GetProfileString(regPath.c_str(), REG_ACCESS_KEY).GetString());
-	m_gl_domain = utils::utf16_to_utf8(theApp.GetProfileString(regPath.c_str(), REG_DOMAIN).GetString());
+	m_gl_access_key = utils::utf16_to_utf8(ReadRegStringPlugin(REG_ACCESS_KEY).GetString());
+	m_gl_domain = utils::utf16_to_utf8(ReadRegStringPlugin(REG_DOMAIN).GetString());
 
 	// Load channel lists
 	m_all_channels_lists.clear();
 
-	const auto& channelsPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+	const auto& channelsPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
 	std::error_code err;
 	std::filesystem::directory_iterator dir_iter(channelsPath, err);
 	for (auto const& dir_entry : dir_iter)
@@ -509,7 +504,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_wndChannels.SetItemData(idx, (DWORD_PTR)playlist.second.c_str());
 	}
 
-	int idx = theApp.GetProfileInt(regPath.c_str(), REG_CHANNELS_TYPE, 0);
+	int idx = ReadRegIntPlugin(REG_CHANNELS_TYPE);
 	if (idx < m_wndChannels.GetCount())
 		m_wndChannels.SetCurSel(idx);
 
@@ -545,11 +540,6 @@ std::wstring CIPTVChannelEditorDlg::GetPluginName() const
 	return L"";
 }
 
-std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const
-{
-	return fmt::format(_T("{:s}\\{:s}"), REG_SETTINGS, GetPluginName().c_str());
-}
-
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 {
 	// #EXTM3U <--- header
@@ -560,8 +550,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	CString url;
 	int idx = m_wndPlaylist.GetCurSel();
 	BOOL isFile = (BOOL)m_wndPlaylist.GetItemData(idx);
-
-	const auto& regPath = GetPluginRegPath();
 
 	switch (m_wndPluginType.GetCurSel())
 	{
@@ -576,10 +564,10 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 					url = _T("http://epg.it999.ru/edem_epg_ico2.m3u8");
 					break;
 				case 2:
-					url = theApp.GetProfileString(regPath.c_str(), REG_CUSTOM_URL);
+					url = ReadRegStringPlugin(REG_CUSTOM_URL);
 					break;
 				case 3:
-					url = theApp.GetProfileString(regPath.c_str(), REG_CUSTOM_FILE);
+					url = ReadRegStringPlugin(REG_CUSTOM_FILE);
 					break;
 				default:
 					break;
@@ -592,10 +580,10 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0:
-					url = theApp.GetProfileString(regPath.c_str(), REG_CUSTOM_URL);
+					url = ReadRegStringPlugin(REG_CUSTOM_URL);
 					break;
 				case 1:
-					url = theApp.GetProfileString(regPath.c_str(), REG_CUSTOM_FILE);
+					url = ReadRegStringPlugin(REG_CUSTOM_FILE);
 					break;
 				default:
 					break;
@@ -693,7 +681,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	cfg.m_data = data.release();
 	cfg.m_hStop = m_evtStop;
 	cfg.m_pluginType = m_pluginType;
-	cfg.m_rootPath = theApp.GetAppPath(utils::PLUGIN_ROOT);
+	cfg.m_rootPath = GetAbsPath(utils::PLUGIN_ROOT);
 
 	pThread->SetData(cfg);
 	pThread->ResumeThread();
@@ -758,16 +746,12 @@ void CIPTVChannelEditorDlg::OnOK()
 
 void CIPTVChannelEditorDlg::OnCancel()
 {
-	UpdateData(FALSE);
-
 	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
 	{
 		return;
 	}
 
 	m_evtStop.SetEvent();
-
-	theApp.WriteProfileInt(REG_SETTINGS, REG_PLUGIN, m_wndPluginType.GetCurSel());
 
 	EndDialog(IDCANCEL);
 }
@@ -1213,7 +1197,7 @@ int CIPTVChannelEditorDlg::GetCategoryIdByName(const std::wstring& categoryName)
 	return -1;
 }
 
-bool CIPTVChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
+bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 {
 	set_allow_save(FALSE);
 
@@ -1265,7 +1249,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
 		m_ch_domain = utils::get_value_string(setup_node->first_node(utils::ACCESS_DOMAIN));
 	}
 
-	const auto& root_path = theApp.GetAppPath(utils::PLUGIN_ROOT);
+	const auto& root_path = GetAbsPath(utils::PLUGIN_ROOT);
 	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(ChannelCategory::TV_CATEGORY);
 	// Iterate <tv_category> nodes
 	while (cat_node)
@@ -1285,7 +1269,6 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path, bool& changed)
 	while (ch_node)
 	{
 		auto channel = std::make_shared<ChannelInfo>(ch_node, StreamType::enChannels, root_path);
-		changed = channel->is_changed();
 		auto ch_pair = m_channelsMap.find(channel->get_id());
 		if (ch_pair == m_channelsMap.end())
 		{
@@ -1410,7 +1393,7 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 	if (!category)
 		return;
 
-	auto channel = std::make_shared<ChannelInfo>(StreamType::enChannels, theApp.GetAppPath(utils::PLUGIN_ROOT));
+	auto channel = std::make_shared<ChannelInfo>(StreamType::enChannels, GetAbsPath(utils::PLUGIN_ROOT));
 	channel->set_title(L"New Channel");
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
@@ -2164,7 +2147,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheck()
 
 	UpdateData(FALSE);
 
-	theApp.WriteProfileInt(REG_SETTINGS, REG_HOURS_BACK, m_archiveCheck);
+	SaveReg(REG_HOURS_BACK, m_archiveCheck);
 }
 
 void CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult)
@@ -2263,10 +2246,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 	CCustomPlaylistDlg dlg;
 	dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
 	LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
-	dlg.m_url = theApp.GetProfileString(GetPluginRegPath().c_str(), szType);
+	dlg.m_url = ReadRegStringPlugin(szType);
 	if (dlg.DoModal() == IDOK)
 	{
-		theApp.WriteProfileString(GetPluginRegPath().c_str(), szType, dlg.m_url);
+		SaveRegPlugin(szType, dlg.m_url);
 		LoadPlaylist();
 	}
 }
@@ -2278,10 +2261,9 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	m_wndPlaylistTree.DeleteAllItems();
 
 	// Filter out playlist
-	const auto& regPath = GetPluginRegPath();
-	auto filter = theApp.GetProfileString(regPath.c_str(), REG_FILTER_STRING);
-	auto bRegex = theApp.GetProfileInt(regPath.c_str(), REG_FILTER_REGEX, FALSE);
-	auto bCase = theApp.GetProfileInt(regPath.c_str(), REG_FILTER_CASE, FALSE);
+	auto filter = ReadRegStringPlugin(REG_FILTER_STRING);
+	auto bRegex = ReadRegIntPlugin(REG_FILTER_REGEX);
+	auto bCase = ReadRegIntPlugin(REG_FILTER_CASE);
 
 	std::wregex re;
 	if (bRegex)
@@ -2529,7 +2511,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		doc.append_node(tv_info);
 
 		// write document
-		auto& playlistPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+		auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
 		playlistPath += m_chFileName;
 
 		std::ofstream os(playlistPath, std::istream::binary);
@@ -2558,7 +2540,7 @@ void CIPTVChannelEditorDlg::OnUpdateSave(CCmdUI* pCmdUI)
 void CIPTVChannelEditorDlg::OnNewCategory()
 {
 	auto category_id = GetNewCategoryID();
-	auto newCategory = std::make_unique<ChannelCategory>(StreamType::enBase, theApp.GetAppPath(utils::PLUGIN_ROOT));
+	auto newCategory = std::make_unique<ChannelCategory>(StreamType::enBase, GetAbsPath(utils::PLUGIN_ROOT));
 	newCategory->set_key(category_id);
 	newCategory->set_title(L"New Category");
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
@@ -2656,7 +2638,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	if (m_wndIconSource.GetCurSel() == 0)
 	{
 		CFileDialog dlg(TRUE);
-		CString path = theApp.GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
+		CString path = GetAbsPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
 		CString file(path);
 		file.Replace('/', '\\');
 
@@ -2746,19 +2728,19 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAbout()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 {
-	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nContinue?"), MB_YESNO) != IDYES)
+	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nContinue?"), MB_YESNO | MB_ICONWARNING) != IDYES)
 		return;
 
 	const auto& name = GetPluginName();
 
-	const auto& packFolder = fmt::format(theApp.GetAppPath(utils::PACK_PATH).c_str(), name.c_str());
+	const auto& packFolder = fmt::format(GetAbsPathGetAppPath(utils::PACK_PATH).c_str(), name.c_str());
 
 	std::error_code err;
 	// remove previous packed folder if exist
 	std::filesystem::remove_all(packFolder, err);
 
 	// copy new one
-	std::filesystem::copy(theApp.GetAppPath(utils::PLUGIN_ROOT),
+	std::filesystem::copy(GetAbsPath(utils::PLUGIN_ROOT),
 						  packFolder,
 						  std::filesystem::copy_options::recursive,
 						  err);
@@ -2795,7 +2777,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 
 
 	// pack folder
-	SevenZipWrapper archiver(theApp.GetAppPath(utils::PACK_DLL));
+	SevenZipWrapper archiver(GetAbsPath(utils::PACK_DLL));
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
 	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
 	if (!res)
@@ -2932,16 +2914,14 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 		m_probe = dlg.m_probe;
 		m_bAutoSync = dlg.m_bAutoSync;
 
-		theApp.WriteProfileString(REG_SETTINGS, REG_PLAYER, m_player);
-		theApp.WriteProfileString(REG_SETTINGS, REG_FFPROBE, m_probe);
-		theApp.WriteProfileInt(REG_SETTINGS, REG_AUTOSYNC, m_bAutoSync);
+		SaveReg(REG_PLAYER, m_player);
+		SaveReg(REG_FFPROBE, m_probe);
+		SaveReg(REG_AUTOSYNC, m_bAutoSync);
 	}
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo()
 {
-	const auto& regPath = GetPluginRegPath();
-
 	CAccessDlg dlg;
 	dlg.m_type = m_embedded_info;
 	dlg.m_accessKeyGlobal = m_gl_access_key.c_str();
@@ -2949,7 +2929,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo()
 	dlg.m_accessKeyEmbedded = m_ch_access_key.c_str();
 	dlg.m_domainEmbedded = m_ch_domain.c_str();
 	dlg.m_streamType = m_pluginType;
-	dlg.m_url = theApp.GetProfileString(regPath.c_str(), REG_ACCESS_URL);
+	dlg.m_url = ReadRegStringPlugin(REG_ACCESS_URL);
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -2958,7 +2938,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo()
 		m_ch_access_key = utils::utf16_to_utf8(dlg.m_accessKeyEmbedded.GetString());
 		m_ch_domain = utils::utf16_to_utf8(dlg.m_domainEmbedded.GetString());
 
-		theApp.WriteProfileString(regPath.c_str(), REG_ACCESS_URL, dlg.m_url);
+		SaveRegPlugin(REG_ACCESS_URL, dlg.m_url);
 
 		if (dlg.m_type == 1)
 		{
@@ -3029,7 +3009,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 
 		channel->set_icon_uri(icon_uri.get_uri());
 
-		const auto& fullPath = icon_uri.get_filesystem_path(theApp.GetAppPath(utils::PLUGIN_ROOT));
+		const auto& fullPath = icon_uri.get_filesystem_path(GetAbsPath(utils::PLUGIN_ROOT));
 		std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
 		os.write((char*)&image[0], image.size());
 		os.close();
@@ -3078,7 +3058,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 	const auto& pluginName = GetPluginName();
 	const auto& name = fmt::format(_T("{:s}_channel_list.xml"), pluginName.c_str());
 
-	auto& newList = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), pluginName.c_str());
+	auto& newList = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), pluginName.c_str());
 	std::filesystem::create_directory(newList);
 
 	newList += name;
@@ -3349,8 +3329,20 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
 	LoadPlaylist(true);
 }
 
+void CIPTVChannelEditorDlg::OnCbnSelchangeComboIconSource()
+{
+	SaveReg(REG_ICON_SOURCE, m_wndIconSource.GetCurSel());
+}
+
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 {
+	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	{
+		m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
+		return;
+	}
+
+	set_allow_save(FALSE);
 	SwitchPlugin();
 }
 
@@ -3401,8 +3393,8 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 
 	m_wndDownloadUrl.EnableWindow(enableDownload);
 	m_wndChooseUrl.EnableWindow(enableCustom);
-	theApp.WriteProfileInt(GetPluginRegPath().c_str(), REG_PLUGIN, m_wndPluginType.GetCurSel());
-	theApp.WriteProfileInt(GetPluginRegPath().c_str(), REG_PLAYLIST_TYPE, pl_idx);
+	SaveReg(REG_PLUGIN, m_wndPluginType.GetCurSel());
+	SaveRegPlugin(REG_PLAYLIST_TYPE, pl_idx);
 
 	LoadPlaylist();
 }
@@ -3556,7 +3548,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	if (categoryId == -1)
 		categoryId = GetCategoryIdByName(entry->get_category());
 
-	const auto& root_path = theApp.GetAppPath(utils::PLUGIN_ROOT);
+	const auto& root_path = GetAbsPath(utils::PLUGIN_ROOT);
 	std::shared_ptr<ChannelCategory> category;
 	if (categoryId != -1)
 	{
@@ -3832,41 +3824,39 @@ void CIPTVChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 {
-	if (is_allow_save() && AfxMessageBox(_T("Changes not saved. Are you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
-	{
-		m_wndChannels.SetCurSel(theApp.GetProfileInt(REG_SETTINGS, REG_CHANNELS_TYPE, 0));
-		return;
-	}
-
 	int idx = m_wndChannels.GetCurSel();
 	if (idx == -1)
 		return;
 
-	bool changed = false;
-	if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx), changed))
+	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure??"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	{
+		m_wndChannels.SetCurSel(ReadRegIntPlugin(REG_CHANNELS_TYPE));
+		return;
+	}
+
+	if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx)))
 	{
 		FillTreeChannels();
-		set_allow_save(changed != false);
+		set_allow_save(FALSE);
 	}
 
 	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
-	theApp.WriteProfileInt(REG_SETTINGS, REG_CHANNELS_TYPE, idx);
+	SaveRegPlugin(REG_CHANNELS_TYPE, idx);
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter()
 {
 	CFilterDialog dlg;
 
-	const auto& regPath = GetPluginRegPath();
-	dlg.m_filterString = theApp.GetProfileString(regPath.c_str(), REG_FILTER_STRING);
-	dlg.m_filterRegex = theApp.GetProfileInt(regPath.c_str(), REG_FILTER_REGEX, FALSE);
-	dlg.m_filterCase = theApp.GetProfileInt(regPath.c_str(), REG_FILTER_CASE, FALSE);
+	dlg.m_filterString = ReadRegStringPlugin(REG_FILTER_STRING);
+	dlg.m_filterRegex = ReadRegIntPlugin(REG_FILTER_REGEX);
+	dlg.m_filterCase = ReadRegIntPlugin(REG_FILTER_CASE);
 
 	if (dlg.DoModal() == IDOK)
 	{
-		theApp.WriteProfileString(regPath.c_str(), REG_FILTER_STRING, dlg.m_filterString);
-		theApp.WriteProfileInt(regPath.c_str(), REG_FILTER_REGEX, dlg.m_filterRegex);
-		theApp.WriteProfileInt(regPath.c_str(), REG_FILTER_CASE, dlg.m_filterCase);
+		SaveRegPlugin(REG_FILTER_STRING, dlg.m_filterString);
+		SaveRegPlugin(REG_FILTER_REGEX, dlg.m_filterRegex);
+		SaveRegPlugin(REG_FILTER_CASE, dlg.m_filterCase);
 
 		FillTreePlaylist();
 	}
@@ -4027,7 +4017,7 @@ void CIPTVChannelEditorDlg::RestoreWindowPos()
 	WINDOWPLACEMENT wp = { 0 };
 	UINT nSize = 0;
 	WINDOWPLACEMENT* pwp = nullptr;
-	if (!AfxGetApp()->GetProfileBinary(REG_SETTINGS, _T("WindowPos"), (LPBYTE*)&pwp, &nSize))
+	if (!theApp.GetProfileBinary(REG_SETTINGS, _T("WindowPos"), (LPBYTE*)&pwp, &nSize))
 		return;
 
 	// Success
@@ -4074,14 +4064,54 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 {
 	const auto& dump = m_stream_infos.serialize();
 	// write document
-	const auto& playlistPath = fmt::format(theApp.GetAppPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+	const auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
 	const auto& path = playlistPath + _T("stream_info.bin");
 	std::ofstream os(path, std::istream::binary);
 	os.write(dump.data(), dump.size());
 	os.close();
 }
 
-void CIPTVChannelEditorDlg::OnCbnSelchangeComboIconSource()
+std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const
 {
-	theApp.WriteProfileInt(REG_SETTINGS, REG_ICON_SOURCE, m_wndIconSource.GetCurSel());
+	return fmt::format(_T("{:s}\\{:s}"), REG_SETTINGS, GetPluginName().c_str());
+}
+
+void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, LPCTSTR szValue)
+{
+	theApp.WriteProfileString(REG_SETTINGS, path, szValue);
+}
+
+void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, int value)
+{
+	theApp.WriteProfileInt(REG_SETTINGS, path, value);
+}
+
+void CIPTVChannelEditorDlg::SaveRegPlugin(LPCTSTR path, LPCTSTR szValue)
+{
+	theApp.WriteProfileString(GetPluginRegPath().c_str(), path, szValue);
+}
+
+void CIPTVChannelEditorDlg::SaveRegPlugin(LPCTSTR path, int value)
+{
+	theApp.WriteProfileInt(GetPluginRegPath().c_str(), path, value);
+}
+
+CString CIPTVChannelEditorDlg::ReadRegString(LPCTSTR path)
+{
+	return theApp.GetProfileString(REG_SETTINGS, path);
+}
+
+int CIPTVChannelEditorDlg::ReadRegInt(LPCTSTR path, int default /*= 0*/)
+{
+	return theApp.GetProfileInt(REG_SETTINGS, path, default);
+}
+
+CString CIPTVChannelEditorDlg::ReadRegStringPlugin(LPCTSTR path)
+{
+	return theApp.GetProfileString(GetPluginRegPath().c_str(), path);
+}
+
+int CIPTVChannelEditorDlg::ReadRegIntPlugin(LPCTSTR path, int default /*= 0*/)
+{
+	return theApp.GetProfileInt(GetPluginRegPath().c_str(), path, default);
 }

@@ -153,7 +153,7 @@ private:
 
 	void SaveAccessInfo();
 
-	bool LoadChannels(const CString& path, bool& changed);
+	bool LoadChannels(const CString& path);
 	void LoadPlaylist(bool saveToFile = false);
 
 	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
@@ -206,9 +206,24 @@ private:
 
 	void RestoreWindowPos();
 	void SwitchPlugin();
+
 	std::wstring GetPluginName() const;
-	std::wstring GetPluginRegPath() const;
 	void SaveStreamInfo();
+
+	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
+	std::wstring GetPluginRegPath() const;
+
+	void SaveReg(LPCTSTR path, LPCTSTR szValue);
+	void SaveReg(LPCTSTR path, int value);
+
+	CString ReadRegString(LPCTSTR path);
+	int ReadRegInt(LPCTSTR path, int default = 0);
+
+	void SaveRegPlugin(LPCTSTR path, LPCTSTR szValue);
+	void SaveRegPlugin(LPCTSTR path, int value);
+
+	CString ReadRegStringPlugin(LPCTSTR path);
+	int ReadRegIntPlugin(LPCTSTR path, int default = 0);
 
 protected:
 	CFont m_largeFont;

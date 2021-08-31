@@ -64,12 +64,9 @@ public:
 	bool is_disabled() const { return disabled; }
 	void set_disabled(bool val) { disabled = val; }
 
-	bool is_changed() const { return changed; }
-
 private:
 	int time_shift_hours = 0;
 	bool disabled = false;
 	bool favorite = false;
 	std::set<int> categories;
-	bool changed = false;
 };
