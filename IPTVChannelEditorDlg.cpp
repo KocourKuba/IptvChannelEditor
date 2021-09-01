@@ -508,22 +508,30 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_all_channels_lists.clear();
 
 	const auto& channelsPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+	const auto& default_name = fmt::format(L"{:s}_channel_list.xml", GetPluginName().c_str());
+	m_all_channels_lists.emplace_back(default_name, channelsPath + default_name);
+
 	std::error_code err;
 	std::filesystem::directory_iterator dir_iter(channelsPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
 		const auto& path = dir_entry.path();
-		if (path.extension() == _T(".xml"))
+		if (path.extension() == _T(".xml") && path.filename() != default_name)
 		{
 			m_all_channels_lists.emplace_back(path.filename(), path);
 		}
 	}
 
 	m_wndChannels.ResetContent();
-	for (const auto& playlist : m_all_channels_lists)
+	m_wndChannels.AddString(_T("Standard"));
+	m_wndChannels.SetItemData(0, (DWORD_PTR)m_all_channels_lists.front().second.c_str());
+
+	auto it = m_all_channels_lists.begin();
+	++it;
+	for (;it != m_all_channels_lists.end(); ++it)
 	{
-		int idx = m_wndChannels.AddString(playlist.first.c_str());
-		m_wndChannels.SetItemData(idx, (DWORD_PTR)playlist.second.c_str());
+		int idx = m_wndChannels.AddString(it->first.c_str());
+		m_wndChannels.SetItemData(idx, (DWORD_PTR)it->second.c_str());
 	}
 
 	int idx = ReadRegIntPlugin(REG_CHANNELS_TYPE);
@@ -1267,10 +1275,6 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 	m_categoriesMap.clear();
 	m_channelsMap.clear();
 
-	std::ifstream is(path.GetString(), std::istream::binary);
-	if (!is.good())
-		return false;
-
 	auto pos = path.ReverseFind('\\');
 	if (pos != -1)
 	{
@@ -1280,6 +1284,10 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 	{
 		m_chFileName = path;
 	}
+
+	std::ifstream is(path.GetString(), std::istream::binary);
+	if (!is.good())
+		return false;
 
 	// Read the xml file into a vector
 	std::vector<char> buffer((std::istreambuf_iterator<char>(is)), std::istreambuf_iterator<char>());
@@ -3035,7 +3043,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo()
 		if (dlg.m_type == 1)
 		{
 			m_embedded_info = TRUE;
-			set_allow_save();
+			//set_allow_save();
+			OnSave();
 		}
 		else
 		{
