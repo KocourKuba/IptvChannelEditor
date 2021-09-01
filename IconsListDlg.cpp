@@ -244,15 +244,18 @@ LRESULT CIconsListDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 	GetDlgItem(IDC_BUTTON_SEARCH_NEXT)->ShowWindow(SW_SHOW);
 	m_wndProgress.ShowWindow(SW_HIDE);
 
-	m_Icons.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
-	std::sort(m_Icons->begin(), m_Icons->end(), [](const auto& left, const auto& right)
-			  {
-				  return left->get_title() < right->get_title();
-			  });
-
 	m_wndIconsList.DeleteAllItems();
+	m_Icons.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
+	if (m_Icons)
+	{
+		std::sort(m_Icons->begin(), m_Icons->end(), [](const auto& left, const auto& right)
+				  {
+					  return left->get_title() < right->get_title();
+				  });
 
-	UpdateListCtrl();
+
+		UpdateListCtrl();
+	}
 
 	return 0;
 }
