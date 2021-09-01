@@ -44,20 +44,22 @@ constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 constexpr auto REG_SETTINGS = _T("Settings");
 constexpr auto REG_PLAYER = _T("Player");
 constexpr auto REG_FFPROBE = _T("FFProbe");
+constexpr auto REG_DAYS_BACK = _T("DaysBack");
 constexpr auto REG_HOURS_BACK = _T("HoursBack");
 constexpr auto REG_AUTOSYNC = _T("AutoSyncChannel");
 constexpr auto REG_PLUGIN = _T("PluginType");
 constexpr auto REG_ICON_SOURCE = _T("IconSource");
-constexpr auto REG_FILTER_STRING = _T("FilterString");
-constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
-constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
 
 // Plugin dependent
 constexpr auto REG_ACCESS_KEY = _T("AccessKey");
 constexpr auto REG_DOMAIN = _T("Domain");
 constexpr auto REG_ACCESS_URL = _T("AccessUrl");
+constexpr auto REG_FILTER_STRING = _T("FilterString");
+constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
+constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
 constexpr auto REG_CHANNELS_TYPE = _T("ChannelsType");
 constexpr auto REG_PLAYLIST_TYPE = _T("PlaylistType");
+constexpr auto REG_STREAM_TYPE = _T("StreamType");
 constexpr auto REG_CUSTOM_URL = _T("CustomUrl");
 constexpr auto REG_CUSTOM_FILE = _T("CustomPlaylist");
 
@@ -70,7 +72,7 @@ std::string CIPTVChannelEditorDlg::m_ch_access_key;
 
 static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
+static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/index.m3u8";
 
 static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
 static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
@@ -130,6 +132,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CIPTVChannelEditorDlg::OnBnClickedCheckAdult)
 	ON_BN_CLICKED(IDC_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckArchive)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOMIZE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomize)
+	ON_BN_CLICKED(IDC_BUTTON_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickCheckArchive)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CIPTVChannelEditorDlg::OnSave)
 	ON_BN_CLICKED(IDC_BUTTON_PACK, &CIPTVChannelEditorDlg::OnBnClickedButtonPack)
 	ON_BN_CLICKED(IDC_BUTTON_SETTINGS, &CIPTVChannelEditorDlg::OnBnClickedButtonSettings)
@@ -137,15 +140,16 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CACHE_ICON, &CIPTVChannelEditorDlg::OnUpdateButtonCacheIcon)
 	ON_BN_CLICKED(IDC_BUTTON_UPDATE_ICON, &CIPTVChannelEditorDlg::OnUpdateIcon)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_UPDATE_ICON, &CIPTVChannelEditorDlg::OnUpdateUpdateIcon)
-	ON_BN_CLICKED(IDC_BUTTON_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnPlayChannelStreamArchive)
 
 	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
 	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
 	ON_EN_CHANGE(IDC_EDIT_TIME_SHIFT, &CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours)
-	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_CHECK, &CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheck)
+	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_CHECK_DAYS, &CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckDays)
+	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_CHECK_HOURS, &CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckHours)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_URL, &CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TIME_SHIFT, &CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ARCHIVE_CHECK, &CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheck)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ARCHIVE_CHECK_DAYS, &CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckDay)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ARCHIVE_CHECK_HOURS, &CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckHour)
 	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CIPTVChannelEditorDlg::OnEnChangeEditUrlID)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CIPTVChannelEditorDlg::OnStnClickedStaticIcon)
 
@@ -153,6 +157,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO_CHANNELS, &CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST, &CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist)
 	ON_CBN_SELCHANGE(IDC_COMBO_ICON_SOURCE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboIconSource)
+	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboStreamType)
 
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels)
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMDblclkTreeChannels)
@@ -248,7 +253,10 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT, m_timeShiftHours);
 	DDX_Control(pDX, IDC_EDIT_TIME_SHIFT, m_wndTimeShift);
-	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK, m_archiveCheck);
+	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK_DAYS, m_archiveCheckDays);
+	DDX_Control(pDX, IDC_EDIT_ARCHIVE_CHECK_DAYS, m_wndArchiveCheckDays);
+	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK_HOURS, m_archiveCheckHours);
+	DDX_Control(pDX, IDC_EDIT_ARCHIVE_CHECK_HOURS, m_wndArchiveCheckHours);
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndChannelIcon);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
@@ -266,11 +274,12 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_INFO_VIDEO, m_infoVideo);
 	DDX_Control(pDX, IDC_EDIT_INFO_VIDEO, m_wndInfoVideo);
 	DDX_Text(pDX, IDC_EDIT_INFO_AUDIO, m_infoAudio);
-	DDX_Control(pDX, IDC_EDIT_ARCHIVE_DAYS, m_wndArchiveDays);
-	DDX_Text(pDX, IDC_EDIT_ARCHIVE_DAYS, m_archiveDays);
+	DDX_Text(pDX, IDC_EDIT_PL_ARCHIVE_DAYS, m_archivePlDays);
 	DDX_Control(pDX, IDC_EDIT_INFO_AUDIO, m_wndInfoAudio);
 	DDX_Control(pDX, IDC_STATIC_CHANNELS, m_wndChInfo);
 	DDX_Control(pDX, IDC_BUTTON_CHECK_ARCHIVE, m_wndCheckArchive);
+	DDX_Control(pDX, IDC_COMBO_STREAM_TYPE, m_wndStreamType);
+	DDX_CBIndex(pDX, IDC_COMBO_STREAM_TYPE, m_StreamType);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylist);
 	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
 	DDX_Control(pDX, IDC_BUTTON_LOAD_PLAYLIST, m_wndChooseUrl);
@@ -335,6 +344,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
 
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Plugin type"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose a playlist to import. Standard and Thematic downloaded from it999.ru"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Add custom playlist"));
@@ -358,17 +368,21 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Search next"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Filter the playlist"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Click to change the icon"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK), _T("Hours in the past to test archive play"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK), _T("Hours in the past to test archive play"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_DAYS), _T("Days in the past to test archive play"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_DAYS), _T("Days in the past to test archive play"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_HOURS), _T("Hours added to day in the past to test archive play"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_HOURS), _T("Hours added to day in the past to test archive play"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_VIDEO), _T("Video stream info"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Plugin type"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Stream type used to test play stream"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Source type for loaded icon. Local file or internet link"));
 
 	m_player = ReadRegString(REG_PLAYER);
 	m_probe = ReadRegString(REG_FFPROBE);
-	m_archiveCheck = ReadRegInt(REG_HOURS_BACK);
+	m_archiveCheckDays = ReadRegInt(REG_DAYS_BACK);
+	m_archiveCheckHours = ReadRegInt(REG_HOURS_BACK);
 	m_bAutoSync = ReadRegInt(REG_AUTOSYNC);
 
 	m_wndPluginType.AddString(_T("Edem (iLook TV)"));
@@ -442,6 +456,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.AddString(_T("Custom URL"));
 			int idx = m_wndPlaylist.AddString(_T("Custom File"));
 			m_wndPlaylist.SetItemData(idx, TRUE);
+			m_wndStreamType.ShowWindow(FALSE);
+			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(FALSE);
 			break;
 		}
 		case 1: // Sharavoz
@@ -453,6 +469,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.AddString(_T("Custom URL"));
 			int idx = m_wndPlaylist.AddString(_T("Custom File"));
 			m_wndPlaylist.SetItemData(idx, TRUE);
+			m_wndStreamType.ShowWindow(TRUE);
+			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
 			break;
 		}
 		case 2: // Sharaclub
@@ -464,12 +482,16 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.AddString(_T("Custom URL"));
 			int idx = m_wndPlaylist.AddString(_T("Custom File"));
 			m_wndPlaylist.SetItemData(idx, TRUE);
+			m_wndStreamType.ShowWindow(TRUE);
+			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
 			break;
 		}
 		default:
 			ASSERT(false);
 			break;
 	}
+
+	m_wndStreamType.SetCurSel(ReadRegIntPlugin(REG_STREAM_TYPE));
 
 	// Set selected playlist
 	int pl_idx = ReadRegIntPlugin(REG_PLAYLIST_TYPE);
@@ -879,41 +901,81 @@ void CIPTVChannelEditorDlg::UpdatePlaylistCount()
 
 std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri,
 												  const std::string& access_domain,
-												  const std::string& access_key) const
+												  const std::string& access_key,
+												  int archive_day /*= 0*/,
+												  int archive_hour /*= 0*/) const
 {
 	// templated url changed, custom is unchanged
+	// http://ts://rtmp.api.rt.com/hls/rtdru.m3u8 -> http://rtmp.api.rt.com/hls/rtdru.m3u8
+	//
 	// edem
 	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8 -> http://ts://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8
 	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8 -> http://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8
-	// http://ts://rtmp.api.rt.com/hls/rtdru.m3u8 -> http://rtmp.api.rt.com/hls/rtdru.m3u8
 	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
 	//
 	// sharavoz
 	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN} -> http://{SUBDOMAIN}/204/index.m3u8?token={TOKEN}
 	// http://{SUBDOMAIN}/204/index.m3u8?token={TOKEN} -> http://domain.com/204/index.m3u8?token=adsdaSDFJKHKJd
+	//
+	// sharaclub
+	// http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8 -> http://{SUBDOMAIN}/live/{TOKEN}/204/video.m3u8
+	// http://{SUBDOMAIN}/live/{TOKEN}/204/video.m3u8 -> http://domain.com/live/adsdaSDFJKHKJd/204/video.m3u8
 
+	int hours_back = 86400 * archive_day - 3600 * archive_hour;
+	int shift_back = _time32(nullptr) - hours_back;
 	std::string uri_template;
+
 	switch (m_pluginType)
 	{
 		case StreamType::enEdem:
 			uri_template = URI_TEMPLATE_EDEM;
+			if (hours_back)
+			{
+				uri_template += fmt::format("?utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+			}
 			break;
 		case StreamType::enSharavoz:
 			uri_template = URI_TEMPLATE_SHARAVOZ;
+			if (hours_back)
+			{
+				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+			}
+
+			switch (m_StreamType)
+			{
+				case 0: // hls
+					break;
+				case 1: // mpeg-ts
+					utils::string_replace_inplace(uri_template, "index.m3u8", "mpegts");
+					break;
+			}
 			break;
 		case StreamType::enSharaclub:
 			uri_template = URI_TEMPLATE_SHARACLUB;
+			if (hours_back)
+			{
+				uri_template += fmt::format("?utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+			}
+
+			switch (m_StreamType)
+			{
+				case 0: // hls
+					utils::string_replace_inplace(uri_template, "index.m3u8", "video.m3u8");
+				case 1: // mpeg-ts
+					utils::string_replace_inplace(uri_template, "/index.m3u8", ".ts");
+					break;
+			}
 			break;
 		case StreamType::enGlanz:
 		default:
 			break;
 	}
 
-	auto& uri = stream_uri->is_template() ? utils::string_replace(uri_template, "{ID}", stream_uri->get_id()) : stream_uri->get_uri();
-	utils::string_replace_inplace(uri, "{SUBDOMAIN}", access_domain);
-	utils::string_replace_inplace(uri, "{TOKEN}", access_key);
+	auto& url = stream_uri->is_template() ? utils::string_replace(uri_template, "{ID}", stream_uri->get_id()) : stream_uri->get_uri();
+	utils::string_replace_inplace(url, "{SUBDOMAIN}", access_domain);
+	utils::string_replace_inplace(url, "{TOKEN}", access_key);
 
-	return uri;
+	return url;
 }
 
 std::string CIPTVChannelEditorDlg::GetEpgTemplate(BOOL first) const
@@ -1088,7 +1150,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 			m_plEPG.Format(_T("EPG: %hs"), entry->get_epg1_id().c_str());
 
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
-		m_archiveDays = entry->get_archive_days();
+		m_archivePlDays = entry->get_archive_days();
 		auto hash = entry->get_stream_uri()->get_hash();
 		if (auto pair = m_stream_infos.find(hash); pair != m_stream_infos.end())
 		{
@@ -2139,16 +2201,34 @@ void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours()
 	set_allow_save();
 }
 
-void CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheck()
+void CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckDays()
 {
 	UpdateData(TRUE);
 
-	if (m_archiveCheck < 0)
-		m_archiveCheck = 0;
+	if (m_archiveCheckDays < 0)
+		m_archiveCheckDays = 0;
+
+	if (m_archiveCheckDays > 14) // really more than two weeks?
+		m_archiveCheckDays = 14;
 
 	UpdateData(FALSE);
 
-	SaveReg(REG_HOURS_BACK, m_archiveCheck);
+	SaveReg(REG_DAYS_BACK, m_archiveCheckDays);
+}
+
+void CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckHours()
+{
+	UpdateData(TRUE);
+
+	if (m_archiveCheckHours < 0)
+		m_archiveCheckHours = 0;
+
+	if (m_archiveCheckHours > 23)
+		m_archiveCheckHours = 23;
+
+	UpdateData(FALSE);
+
+	SaveReg(REG_HOURS_BACK, m_archiveCheckHours);
 }
 
 void CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult)
@@ -2160,12 +2240,21 @@ void CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT*
 	*pResult = 0;
 }
 
-void CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheck(NMHDR* pNMHDR, LRESULT* pResult)
+void CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckDay(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	UpdateData(TRUE);
-	m_archiveCheck -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
+	m_archiveCheckDays -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
 	UpdateData(FALSE);
-	OnEnChangeEditArchiveCheck();
+	OnEnChangeEditArchiveCheckDays();
+	*pResult = 0;
+}
+
+void CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckHour(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	UpdateData(TRUE);
+	m_archiveCheckHours -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
+	UpdateData(FALSE);
+	OnEnChangeEditArchiveCheckHours();
 	*pResult = 0;
 }
 
@@ -2220,26 +2309,23 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 	}
 }
 
-void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/) const
+void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/) const
 {
 	if (auto entry = GetBaseInfo(m_lastTree, hItem); entry != nullptr)
 	{
 		const auto& access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
 		const auto& access_key = CIPTVChannelEditorDlg::GetAccessKey();
-		PlayStream(GetPlayableURL(entry->get_stream_uri(), access_domain, access_key), archive_hour);
-	}
-}
+		auto test_url = utils::utf8_to_utf16(GetPlayableURL(entry->get_stream_uri(),
+															access_domain,
+															access_key,
+															archive_day,
+															archive_hour
+		));
 
-void CIPTVChannelEditorDlg::PlayStream(const std::string& stream_url, int archive_hour /*= 0*/) const
-{
-	TRACE(_T("Test URL: %s\n"), stream_url.c_str());
-	CStringW test(stream_url.c_str());
-	if (archive_hour)
-	{
-		test.Format(L"%hs?utc=%d&lutc=%d", stream_url.c_str(), _time32(nullptr) - 3600 * archive_hour, _time32(nullptr));
-	}
+		TRACE(L"Test URL: %s\n", test_url.c_str());
 
-	ShellExecuteW(nullptr, L"open", m_player, test, nullptr, SW_SHOWNORMAL);
+		ShellExecuteW(nullptr, L"open", m_player.GetString(), test_url.c_str(), nullptr, SW_SHOWNORMAL);
+	}
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
@@ -2401,7 +2487,7 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 		int j = 0;
 		while (j < max_threads && pool != container.end())
 		{
-			const auto& url = GetPlayableURL(*pool, access_domain, access_key);
+			const auto& url = GetPlayableURL(*pool, access_domain, access_key, 0);
 			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
 			j++;
 			++pool;
@@ -3254,13 +3340,13 @@ void CIPTVChannelEditorDlg::OnUpdatePlayStream(CCmdUI* pCmdUI)
 	pCmdUI->Enable(!m_probe.IsEmpty() && enable);
 }
 
-void CIPTVChannelEditorDlg::OnPlayChannelStreamArchive()
+void CIPTVChannelEditorDlg::OnBnClickCheckArchive()
 {
 	UpdateData(TRUE);
 
 	if (m_lastTree)
 	{
-		PlayItem(m_lastTree->GetSelectedItem(), m_archiveCheck);
+		PlayItem(m_lastTree->GetSelectedItem(), m_archiveCheckDays, m_archiveCheckHours);
 	}
 }
 
@@ -3403,6 +3489,11 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 	SaveRegPlugin(REG_PLAYLIST_TYPE, pl_idx);
 
 	LoadPlaylist();
+}
+
+void CIPTVChannelEditorDlg::OnCbnSelchangeComboStreamType()
+{
+	SaveRegPlugin(REG_STREAM_TYPE, m_wndStreamType.GetCurSel());
 }
 
 BaseInfo* CIPTVChannelEditorDlg::GetBaseInfo(const CTreeCtrl* pTreeCtrl, HTREEITEM hItem)

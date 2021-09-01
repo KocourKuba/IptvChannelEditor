@@ -25,7 +25,9 @@ bool PlaylistEntry::Parse(const std::string& str)
 			}
 			break;
 		case m3u_entry::ext_info:
-			if (const auto& pair = m3uEntry.get_tags().find(m3u_entry::tag_group_title); pair != m3uEntry.get_tags().end())
+		{
+			const auto& tags = m3uEntry.get_tags();
+			if (const auto& pair = tags.find(m3u_entry::tag_group_title); pair != tags.end())
 			{
 				category = utils::utf8_to_utf16(pair->second);
 				if (category.empty())
@@ -41,17 +43,17 @@ bool PlaylistEntry::Parse(const std::string& str)
 				}
 			}
 
-			if (const auto& pair = m3uEntry.get_tags().find(m3u_entry::tag_tvg_logo); pair != m3uEntry.get_tags().end())
+			if (const auto& pair = tags.find(m3u_entry::tag_tvg_logo); pair != tags.end())
 			{
 				set_icon_uri(utils::string_replace(pair->second, "//epg.it999.ru/img/", "//epg.it999.ru/img2/"));
 			}
 
-			if (const auto& pair = m3uEntry.get_tags().find(m3u_entry::tag_tvg_rec); pair != m3uEntry.get_tags().end())
+			if (const auto& pair = tags.find(m3u_entry::tag_tvg_rec); pair != tags.end())
 			{
 				set_archive_days(utils::char_to_int(pair->second));
 			}
 
-			if (const auto& pair = m3uEntry.get_tags().find(m3u_entry::tag_tvg_id); pair != m3uEntry.get_tags().end())
+			if (const auto& pair = tags.find(m3u_entry::tag_tvg_id); pair != tags.end())
 			{
 				set_epg1_id(pair->second);
 				set_epg2_id(pair->second);
@@ -61,8 +63,8 @@ bool PlaylistEntry::Parse(const std::string& str)
 			{
 				set_title(utils::utf8_to_utf16(m3uEntry.get_dir_title()));
 			}
-
-			break;
+		}
+		break;
 		default:
 			break;
 	}

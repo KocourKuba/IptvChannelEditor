@@ -85,7 +85,7 @@ protected:
 	afx_msg void OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI);
 	afx_msg void OnPlayStream();
 	afx_msg void OnUpdatePlayStream(CCmdUI* pCmdUI);
-	afx_msg void OnPlayChannelStreamArchive();
+	afx_msg void OnBnClickCheckArchive();
 	afx_msg void OnSyncTreeItem();
 	afx_msg void OnUpdateSyncTreeItem(CCmdUI* pCmdUI);
 
@@ -113,9 +113,11 @@ protected:
 	afx_msg void OnEnChangeEditStreamUrl();
 	afx_msg void OnEnChangeEditUrlID();
 	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinArchiveCheck(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaposSpinArchiveCheckDay(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaposSpinArchiveCheckHour(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditTimeShiftHours();
-	afx_msg void OnEnChangeEditArchiveCheck();
+	afx_msg void OnEnChangeEditArchiveCheckDays();
+	afx_msg void OnEnChangeEditArchiveCheckHours();
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResult);
@@ -167,14 +169,15 @@ private:
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
 
-	void PlayItem(HTREEITEM hItem, int archive_hour = 0) const;
-	void PlayStream(const std::string& stream_url, int archive_hour = 0) const;
+	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0) const;
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
 
 	std::string GetPlayableURL(const uri_stream* stream_uri,
 							   const std::string& access_domain,
-							   const std::string& access_key) const;
+							   const std::string& access_key,
+							   int archive_day = 0,
+							   int archive_hour = 0) const;
 
 	std::string GetEpgTemplate(BOOL first) const;
 	void RemoveOrphanChannels();
@@ -237,6 +240,7 @@ protected:
 	CTreeCtrlEx m_wndPlaylistTree;
 	CComboBox m_wndChannels;
 	CComboBox m_wndIconSource;
+	CComboBox m_wndStreamType;
 
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
@@ -245,11 +249,11 @@ protected:
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
-	CEdit m_wndArchiveDays;
+	CEdit m_wndArchiveCheckDays;
+	CEdit m_wndArchiveCheckHours;
 	CEdit m_wndSearch;
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
-	CProgressCtrl m_wndProgress;
 	CButton m_wndFilter;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
@@ -268,6 +272,7 @@ protected:
 	CStatic m_wndChInfo;
 	CStatic m_wndPlInfo;
 	CStatic m_wndProgressInfo;
+	CProgressCtrl m_wndProgress;
 
 	CString m_search; // m_wndSearch
 	CString m_streamUrl; // m_wndStreamUrl
@@ -285,9 +290,11 @@ protected:
 	CString m_streamID; // m_wndStreamID
 	CString m_epgID1; // Primary EPG source m_wndEpg1ID
 	CString m_epgID2; // Secondary EPG source m_wndEpg2ID
-	int m_archiveCheck = 0; // m_wndCheckArchive
-	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
+	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
+	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
+	int m_archivePlDays = 0; // m_wndArchiveDays
+	int m_StreamType = 0;
 
 private:
 	static CString m_probe;
@@ -345,5 +352,7 @@ private:
 	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
 
 	serializable_map m_stream_infos;
+public:
+	afx_msg void OnCbnSelchangeComboStreamType();
 };
 
