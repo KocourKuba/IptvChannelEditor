@@ -6,19 +6,30 @@ class SharaclubPluginConfig extends DefaultConfig
     const PLUGIN_NAME = 'Sharaclub TV';
     const PLUGIN_SHORT_NAME = 'sharaclub';
     const PLUGIN_VERSION = '1.0.0';
-    const PLUGIN_DATE = '28.08.2021';
+    const PLUGIN_DATE = '01.09.2021';
 
     const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
     const CHANNEL_LIST_URL = 'sharaclub_channel_list.xml';
     const EPG1_URL_FORMAT = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
     const EPG2_URL_FORMAT = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
-    //const EPG_URL_FORMAT = 'https://list.playtv.pro/f/epg_lite.xml.gz';
-    const EPG_PROVIDER = 'sharaclub';
 
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {
-        if ($archive_ts > 0) {
-            $url = str_replace("index.m3u8", "archive-" . $archive_ts . "-10800.m3u8", $url);
+        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+        hd_print("AdjustStreamUri: using stream format to '$format'");
+
+        if (intval($archive_ts) > 0) {
+            $now_ts = time();
+            $url .= "?utc=$archive_ts&lutc=$now_ts";
+        }
+
+        switch ($format)
+        {
+            case 'hls':
+                break;
+            case 'mpeg':
+                $url = str_replace('/video.m3u8', '.ts', $url);
+                break;
         }
 
         return $url;

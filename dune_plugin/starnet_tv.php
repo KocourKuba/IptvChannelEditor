@@ -223,6 +223,9 @@ class StarnetPluginTv extends AbstractTv
         }
 
         $url = $channel->get_streaming_url();
+        if (strpos($url, 'http://ts://') === false) {
+            $url = str_replace('http://', 'http://ts://', $url);
+        }
         hd_print("StreamUri: $url");
         $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $url);
         hd_print("AdjustedStreamUri: $url");
