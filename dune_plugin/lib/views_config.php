@@ -12,6 +12,8 @@ class ViewsConfig
     const FAV_MOVIES_CATEGORY_CAPTION = 'Избранное';
     const FAV_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/fav.png';
 
+    const DEFAULT_CHANNEL_ICON_PATH = 'plugin_file://icons/channel_unset.png';
+
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 
@@ -83,7 +85,7 @@ class ViewsConfig
                     ViewItemParams::icon_height => 48,
                     ViewItemParams::item_caption_width => 485,
                     ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
-                    ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png',
+                    ViewItemParams::icon_path => ViewsConfig::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -118,7 +120,7 @@ class ViewsConfig
                     ViewItemParams::item_paint_caption => false,
                     ViewItemParams::icon_scale_factor => 1.0,
                     ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png'
+                    ViewItemParams::icon_path => ViewsConfig::DEFAULT_CHANNEL_ICON_PATH
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -153,7 +155,7 @@ class ViewsConfig
                     ViewItemParams::item_paint_caption => true,
                     ViewItemParams::icon_scale_factor => 1.25,
                     ViewItemParams::icon_sel_scale_factor => 1.5,
-                    ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png',
+                    ViewItemParams::icon_path => ViewsConfig::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -188,7 +190,7 @@ class ViewsConfig
                     ViewItemParams::item_paint_caption => false,
                     ViewItemParams::icon_scale_factor => 1.0,
                     ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png',
+                    ViewItemParams::icon_path => ViewsConfig::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -223,7 +225,7 @@ class ViewsConfig
                     ViewItemParams::item_paint_caption => false,
                     ViewItemParams::icon_scale_factor => 1.25,
                     ViewItemParams::icon_sel_scale_factor => 1.5,
-                    ViewItemParams::icon_path => 'plugin_file://icons/channel_unset.png',
+                    ViewItemParams::icon_path => ViewsConfig::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),

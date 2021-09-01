@@ -267,6 +267,7 @@ protected:
 	CButton m_wndCacheIcon;
 	CButton m_wndUpdateIcon;
 	CButton m_wndSave;
+	CButton m_wndAccessInfo;
 	CStatic m_wndChannelIcon;
 	CStatic m_wndPlIcon;
 	CStatic m_wndChInfo;

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tv_info>
-	<channels_setup>
-		<access_key>s.267597.cb4a6efe59d2d90ead1ab98bcf14c0464</access_key>
-		<access_domain>em.gazoni1.com</access_domain>
-	</channels_setup>
 	<tv_categories>
 		<tv_category>
 			<id>1</id>
@@ -49,7 +45,7 @@
 			<tvg_id>pervyhd</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/pervyj-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
-			<archive>5</archive>
+			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Первый канал</caption>

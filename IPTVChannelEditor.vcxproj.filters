@@ -195,6 +195,9 @@
     <ClInclude Include="IconsListDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="AccessInfoPassDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -276,6 +279,9 @@
       <Filter>Source Files\uri</Filter>
     </ClCompile>
     <ClCompile Include="IconsListDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="AccessInfoPassDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,9 +23,9 @@
 
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
-#include "fmt\format.h"
 
 #include "SevenZip/7zip/SevenZipWrapper.h"
+#include "AccessInfoPassDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -51,6 +51,7 @@ constexpr auto REG_PLUGIN = _T("PluginType");
 constexpr auto REG_ICON_SOURCE = _T("IconSource");
 
 // Plugin dependent
+constexpr auto REG_LOGIN = _T("LoginToken");
 constexpr auto REG_ACCESS_KEY = _T("AccessKey");
 constexpr auto REG_DOMAIN = _T("Domain");
 constexpr auto REG_ACCESS_URL = _T("AccessUrl");
@@ -291,6 +292,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
 	DDX_Control(pDX, IDC_STATIC_PROGRESS_INFO, m_wndProgressInfo);
 	DDX_Control(pDX, IDC_COMBO_ICON_SOURCE, m_wndIconSource);
+	DDX_Control(pDX, IDC_BUTTON_ACCESS_INFO, m_wndAccessInfo);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -454,10 +456,12 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.AddString(_T("Edem Standard"));
 			m_wndPlaylist.AddString(_T("Edem Thematic"));
 			m_wndPlaylist.AddString(_T("Custom URL"));
+			m_wndPlaylist.EnableWindow(TRUE);
 			int idx = m_wndPlaylist.AddString(_T("Custom File"));
 			m_wndPlaylist.SetItemData(idx, TRUE);
 			m_wndStreamType.ShowWindow(FALSE);
 			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(FALSE);
+			m_wndAccessInfo.EnableWindow(TRUE);
 			break;
 		}
 		case 1: // Sharavoz
@@ -469,21 +473,24 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.AddString(_T("Custom URL"));
 			int idx = m_wndPlaylist.AddString(_T("Custom File"));
 			m_wndPlaylist.SetItemData(idx, TRUE);
+			m_wndPlaylist.EnableWindow(TRUE);
 			m_wndStreamType.ShowWindow(TRUE);
 			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
+			m_wndAccessInfo.EnableWindow(TRUE);
 			break;
 		}
 		case 2: // Sharaclub
 		{
 			m_pluginType = StreamType::enSharaclub;
 			m_pluginName = _T("Sharaclub");
+			m_embedded_info = FALSE;
 
 			m_wndPlaylist.ResetContent();
-			m_wndPlaylist.AddString(_T("Custom URL"));
-			int idx = m_wndPlaylist.AddString(_T("Custom File"));
-			m_wndPlaylist.SetItemData(idx, TRUE);
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_wndPlaylist.EnableWindow(FALSE);
 			m_wndStreamType.ShowWindow(TRUE);
 			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
+			m_wndAccessInfo.EnableWindow(FALSE);
 			break;
 		}
 		default:
@@ -577,6 +584,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	// #EXTGRP:Общие <-- Category
 	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/2402/index.m3u8
 
+	m_plFileName.Empty();
 	CString url;
 	int idx = m_wndPlaylist.GetCurSel();
 	BOOL isFile = (BOOL)m_wndPlaylist.GetItemData(idx);
@@ -605,7 +613,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			break;
 		}
 		case 1: // Sharavoz
-		case 2: // Sharaclub
 		{
 			switch (idx)
 			{
@@ -620,6 +627,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			}
 			break;
 		}
+		case 2: // Sharaclub
+		{
+			url.Format(_T("http://list.playtv.pro/tv_live-m3u8/%s"), ReadRegStringPlugin(REG_LOGIN).GetString());
+			m_plFileName = _T("SharaClub_Playlist.m3u8");
+			break;
+		}
 	}
 
 	if (url.IsEmpty())
@@ -628,16 +641,19 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		return;
 	}
 
-	CString slashed(url);
-	slashed.Replace('\\', '/');
-	auto pos = slashed.ReverseFind('/');
-	if (pos != -1)
+	if (m_plFileName.IsEmpty())
 	{
-		m_plFileName = slashed.Mid(++pos);
-	}
-	else
-	{
-		m_plFileName = slashed;
+		CString slashed(url);
+		slashed.Replace('\\', '/');
+		auto pos = slashed.ReverseFind('/');
+		if (pos != -1)
+		{
+			m_plFileName = slashed.Mid(++pos);
+		}
+		else
+		{
+			m_plFileName = slashed;
+		}
 	}
 
 	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
@@ -716,6 +732,8 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	pThread->SetData(cfg);
 	pThread->ResumeThread();
+
+	UpdatePlaylistCount();
 }
 
 LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
@@ -2344,13 +2362,46 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 {
-	CCustomPlaylistDlg dlg;
-	dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
-	LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
-	dlg.m_url = ReadRegStringPlugin(szType);
-	if (dlg.DoModal() == IDOK)
+	bool loaded = false;
+	switch (m_pluginType)
 	{
-		SaveRegPlugin(szType, dlg.m_url);
+		case StreamType::enEdem:
+		case StreamType::enSharavoz:
+		case StreamType::enGlanz:
+		{
+			CCustomPlaylistDlg dlg;
+			dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
+			LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
+			dlg.m_url = ReadRegStringPlugin(szType);
+			if (dlg.DoModal() == IDOK)
+			{
+				loaded = true;
+				SaveRegPlugin(szType, dlg.m_url);
+			}
+			break;
+		}
+		case StreamType::enSharaclub:
+		{
+			CAccessInfoPassDlg dlg;
+			dlg.m_token = ReadRegStringPlugin(REG_LOGIN);
+			dlg.m_accessKey = ReadRegStringPlugin(REG_ACCESS_KEY);
+			dlg.m_domain = ReadRegStringPlugin(REG_DOMAIN);
+			dlg.m_streamType = StreamType::enSharaclub;
+			if (dlg.DoModal() == IDOK)
+			{
+				loaded = true;
+				SaveRegPlugin(REG_LOGIN, dlg.m_token);
+				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_accessKey);
+				SaveRegPlugin(REG_DOMAIN, dlg.m_domain);
+			}
+			break;
+		}
+		default:
+			break;
+	}
+
+	if (loaded)
+	{
 		LoadPlaylist();
 	}
 }
@@ -2465,6 +2516,12 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 			auto found = m_pl_categoriesTreeMap.find(entry->get_category());
 			ASSERT(found != m_pl_categoriesTreeMap.end());
 			if (found == m_pl_categoriesTreeMap.end()) continue;
+
+			if (m_gl_access_key.empty() && m_gl_domain.empty())
+			{
+				m_gl_access_key = entry->get_access_key();
+				m_gl_domain = entry->get_domain();
+			}
 
 			TVINSERTSTRUCTW tvInsert = { nullptr };
 			tvInsert.hParent = found->second;
@@ -3480,7 +3537,6 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 			break;
 		}
 		case 1: // Sharavoz
-		case 2: // Sharaclub
 		{
 			switch (pl_idx)
 			{
@@ -3495,6 +3551,13 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 					break;
 			}
 			break;
+		}
+		case 2: // Sharaclub
+		{
+			enableCustom = TRUE;
+				break;
+			default:
+				break;
 		}
 	}
 
