@@ -11,6 +11,7 @@ abstract class DefaultConfig
     const VOD_MOVIE_PAGE_SUPPORTED = false;
     const VOD_FAVORITES_SUPPORTED = false;
     const TV_FAVORITES_SUPPORTED = true;
+    const MPEG_TS_SUPPORTED = false;
 
     /** prefix to create cache file*/
     const BG_PICTURE_TEMPLATE = 'plugin_file://bg_%s.jpg';

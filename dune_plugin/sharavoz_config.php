@@ -8,6 +8,8 @@ class SharavozPluginConfig extends DefaultConfig
     const PLUGIN_VERSION = '1.0.0';
     const PLUGIN_DATE = '01.09.2021';
 
+    const MPEG_TS_SUPPORTED = true;
+
     const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
     const CHANNEL_LIST_URL = 'sharavoz_channel_list.xml';
     const EPG1_URL_FORMAT = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)

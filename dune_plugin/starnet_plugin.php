@@ -37,10 +37,12 @@ class StarnetDunePlugin extends DefaultDunePlugin
         if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig'))
             throw new Exception('Unknown plugin type: ' . $plugin_type);
 
+        /*
         $keys = array_keys(DuneSystem::$properties);
         foreach($keys as $key){
             hd_print("'$key' = '" . DuneSystem::$properties[$key] . "'");
         }
+        */
 
         StarnetPluginTv::$config = new $plugin_type;
         $this->tv = new StarnetPluginTv();

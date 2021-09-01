@@ -58,7 +58,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $this->add_combobox($defs,'show_tv', 'Показывать ' . $this->config->GET_PLUGIN_NAME() .' в главном меню:',
             $show_tv, $show_ops, 0, true);
 
-        if (PLUGIN_TYPE === 'SharavozPluginConfig') {
+        if ($this->config->MPEG_TS_SUPPORTED) {
             $format_ops = array();
             $format_ops['hls'] = 'HLS';
             $format_ops['mpeg'] = 'MPEG-TS';
