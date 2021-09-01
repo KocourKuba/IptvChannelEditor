@@ -1501,6 +1501,12 @@ void CIPTVChannelEditorDlg::OnRemoveChannel()
 		return;
 	}
 
+	if (IsCategory(m_wndChannelsTree.GetFirstSelectedItem()))
+	{
+		OnRemoveCategory();
+		return;
+	}
+
 	if (!m_wndChannelsTree.GetSelectedCount() || AfxMessageBox(_T("Delete channel(s). Are your sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
 		return;
 
