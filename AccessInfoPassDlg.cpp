@@ -80,9 +80,12 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		json js_data = js["data"];
 
 		m_status = js.value("status", "").c_str();
-		m_subscription = utils::utf8_to_utf16(js_data.value("abon", "")).c_str();
-		m_balance.Format(_T("%hs RUR"), js_data.value("money", "").c_str());
-		m_forecast.Format(_T("%hs RUR"), js_data.value("money_need", "").c_str());
+		if (m_status == _T("ok"))
+		{
+			m_subscription = utils::utf8_to_utf16(js_data.value("abon", "")).c_str();
+			m_balance.Format(_T("%hs RUR"), js_data.value("money", "").c_str());
+			m_forecast.Format(_T("%hs RUR"), js_data.value("money_need", "").c_str());
+		}
 	}
 	catch (const json::parse_error&)
 	{

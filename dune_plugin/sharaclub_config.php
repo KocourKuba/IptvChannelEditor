@@ -9,11 +9,17 @@ class SharaclubPluginConfig extends DefaultConfig
     const PLUGIN_DATE = '01.09.2021';
 
     const MPEG_TS_SUPPORTED = true;
+    const USE_TOKEN = true;
 
     const MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
     const CHANNEL_LIST_URL = 'sharaclub_channel_list.xml';
     const EPG1_URL_FORMAT = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
     const EPG2_URL_FORMAT = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
+
+    const ACCOUNT_INFO_URL = 'http://%s/api/dune-api5m.php?subscr=%s-%s';
+    const ACCOUNT_PLAYLIST_URL = 'http://%s/tv_live-m3u8/%s-%s';
+    const ACCOUNT_PRIMARY_DOMAIN = 'list.playtv.pro';
+    const ACCOUNT_SECONDARY_DOMAIN = 'list.shara.tv';
 
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {
@@ -35,5 +41,76 @@ class SharaclubPluginConfig extends DefaultConfig
         }
 
         return $url;
+    }
+
+    public function GetAccountStatus($plugin_cookies)
+    {
+        if (empty($plugin_cookies->token) && empty($plugin_cookies->pin))
+            return false;
+
+        try {
+            $url = sprintf(self::ACCOUNT_INFO_URL,
+                self::ACCOUNT_PRIMARY_DOMAIN,
+                $plugin_cookies->token,
+                $plugin_cookies->pin);
+            $content = HD::http_get_document($url);
+        } catch (Exception $ex) {
+            try {
+                $url = sprintf(self::ACCOUNT_INFO_URL,
+                    self::ACCOUNT_SECONDARY_DOMAIN,
+                    $plugin_cookies->token,
+                    $plugin_cookies->pin);
+                $content = HD::http_get_document($url);
+            } catch (Exception $ex) {
+                return false;
+            }
+        }
+
+        $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"));
+        if (isset($account_data->status) && $account_data->status == 'ok') {
+            return $account_data;
+        }
+
+        return false;
+    }
+
+    public function GetAccessInfo($plugin_cookies)
+    {
+        hd_print("Collect information from account");
+        $found = false;
+        if (!empty($plugin_cookies->token) && !empty($plugin_cookies->pin)) {
+            try {
+                $url = sprintf(self::ACCOUNT_PLAYLIST_URL,
+                    self::ACCOUNT_PRIMARY_DOMAIN,
+                    $plugin_cookies->token,
+                    $plugin_cookies->pin);
+                $content = HD::http_get_document($url);
+            } catch (Exception $ex) {
+                try {
+                    $url = sprintf(self::ACCOUNT_PLAYLIST_URL,
+                        self::ACCOUNT_SECONDARY_DOMAIN,
+                        $plugin_cookies->token,
+                        $plugin_cookies->pin);
+                    $content = HD::http_get_document($url);
+                } catch (Exception $ex) {
+                    return false;
+                }
+            }
+
+            $tmp_file = '/tmp/playlist.tmp';
+            file_put_contents($tmp_file, $content);
+            $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            for ($i = 0; $i < count($lines); ++$i) {
+                if (preg_match('/^https?:\/\/(.+)\/live\/(.+)\/.+\/.*\.m3u8$/', $lines[$i], $matches)) {
+                    $plugin_cookies->subdomain_local = $matches[1];
+                    $plugin_cookies->ott_key_local = $matches[2];
+                    $found = true;
+                    break;
+                }
+            }
+            unlink($tmp_file);
+        }
+
+        return $found;
     }
 }

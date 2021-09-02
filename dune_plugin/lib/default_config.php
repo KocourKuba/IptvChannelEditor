@@ -11,10 +11,12 @@ abstract class DefaultConfig
     const VOD_MOVIE_PAGE_SUPPORTED = false;
     const VOD_FAVORITES_SUPPORTED = false;
     const TV_FAVORITES_SUPPORTED = true;
+
     const MPEG_TS_SUPPORTED = false;
+    const USE_TOKEN = false;
 
     /** prefix to create cache file*/
-    const BG_PICTURE_TEMPLATE = 'plugin_file://bg_%s.jpg';
+    const BG_PICTURE_TEMPLATE = 'plugin_file://icons/bg_%s.jpg';
 
     const PLUGIN_NAME = 'StarNet';
     const PLUGIN_SHORT_NAME = 'starnet';
@@ -30,6 +32,10 @@ abstract class DefaultConfig
     protected static $TVG_PARSER = 'json';
 
     public abstract function AdjustStreamUri($plugin_cookies, $archive_ts, $url);
+    public function GetAccessInfo($plugin_cookies)
+    {
+        return false;
+    }
 
     public static function GetEPG(IChannel $channel, $day_start_ts)
     {
@@ -64,6 +70,14 @@ abstract class DefaultConfig
 
     public static function GET_BG_PICTURE() {
         return sprintf(static::BG_PICTURE_TEMPLATE, static::GET_PLUGIN_SHORT_NAME());
+    }
+
+    public static function GET_MPEG_TS_SUPPORTED() {
+        return static::MPEG_TS_SUPPORTED;
+    }
+
+    public static function GET_USE_TOKEN() {
+        return static::USE_TOKEN;
     }
 
     public static function GET_TV_FAVORITES_SUPPORTED() {

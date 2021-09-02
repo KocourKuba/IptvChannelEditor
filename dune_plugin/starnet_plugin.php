@@ -47,6 +47,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
         StarnetPluginTv::$config = new $plugin_type;
         $this->tv = new StarnetPluginTv();
         $bg_picture = $plugin_type::GET_BG_PICTURE();
+        //hd_print("bg_pic: $bg_picture");
         $this->add_screen(new StarnetMainScreen($this->tv, ViewsConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS($bg_picture)));
         $this->add_screen(new TvChannelListScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)));
         $this->add_screen(new TvFavoritesScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)));

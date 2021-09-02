@@ -126,8 +126,8 @@ abstract class AbstractTv implements Tv
                     PluginTvChannel::is_protected => $c->is_protected(),
 
                     // set default epg range
-                    PluginTvChannel::past_epg_days => intval(isset($plugin_cookies->epg_prev) ? $plugin_cookies->epg_prev : $c->get_past_epg_days()),
-                    PluginTvChannel::future_epg_days => intval(isset($plugin_cookies->epg_next) ? $plugin_cookies->epg_next : $c->get_future_epg_days()),
+                    PluginTvChannel::past_epg_days => intval($c->get_past_epg_days()),
+                    PluginTvChannel::future_epg_days => intval($c->get_future_epg_days()),
 
                     PluginTvChannel::archive_past_sec => intval($c->get_archive_past_sec()),
                     PluginTvChannel::archive_delay_sec => intval($c->get_archive_delay_sec()),

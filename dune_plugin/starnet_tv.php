@@ -93,6 +93,8 @@ class StarnetPluginTv extends AbstractTv
             $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
         }
 
+        self::$config->GetAccessInfo($plugin_cookies);
+
         // Create channels and groups
         $this->channels = new HashedArray();
         $this->groups = new HashedArray();
@@ -219,6 +221,7 @@ class StarnetPluginTv extends AbstractTv
                 throw new Exception('Wrong password');
             }
         } catch (Exception $ex) {
+            hd_print("get_tv_playback_url: Exception " . $ex->getMessage());
             return '';
         }
 
@@ -226,21 +229,26 @@ class StarnetPluginTv extends AbstractTv
         if (strpos($url, 'http://ts://') === false) {
             $url = str_replace('http://', 'http://ts://', $url);
         }
+
         hd_print("StreamUri: $url");
         $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $url);
         hd_print("AdjustedStreamUri: $url");
 
-        $plugin_cookies->subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : 'dunehd.iptvspy.net';
+        if (self::$config->GET_USE_TOKEN()
+            && empty($plugin_cookies->subdomain_local)
+            && empty($plugin_cookies->ott_key_local)) {
+            hd_print("Error: pin not set");
+        }
 
         if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
             $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
             $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);
-        } else {
+        } else if (!empty($plugin_cookies->subdomain) && !empty($plugin_cookies->ott_key)) {
             $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
             $url = str_replace('{TOKEN}', $plugin_cookies->ott_key, $url);
         }
 
-        //hd_print("get_tv_playback_url: $url");
+        hd_print("get_tv_playback_url: $url");
         return $url;
     }
 
@@ -269,7 +277,6 @@ class StarnetPluginTv extends AbstractTv
             if ($start == 0)
                 $start = $tm;
 
-            hd_print("entry: start: " . gmdate(DATE_ATOM, $time) . " '" . $value['title'] . "' '" . $value['desc'] . "'");
             $epg_result[] = new DefaultEpgItem($value['title'], $value['desc'], intval($tm), -1);
         }
 

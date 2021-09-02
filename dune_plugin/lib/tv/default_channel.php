@@ -108,7 +108,7 @@ class DefaultChannel implements IChannel
 
     public function get_archive_delay_sec()
     {
-        return 5 * 60;
+        return 7 * 60;
     }
 
     public function get_buffering_ms()

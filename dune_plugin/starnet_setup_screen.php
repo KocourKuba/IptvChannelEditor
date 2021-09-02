@@ -43,6 +43,27 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $show_ops['yes'] = 'Да';
         $show_ops['no'] = 'Нет';
 
+        //////////////////////////////////////
+        // Plugin name
+        ControlFactory::add_vgap($defs, -10);
+        $title = $this->config->GET_PLUGIN_NAME() . ' v.' . $this->config->GET_PLUGIN_VERSION() . '. [' . $this->config->GET_PLUGIN_DATE() . ']';
+        $this->add_button($defs, 'restart', $title, 'Перезагрузить плеер', 0);
+
+        //////////////////////////////////////
+        // Show in main screen
+        $this->add_combobox($defs,'show_tv', 'Показывать ' . $this->config->GET_PLUGIN_NAME() .' в главном меню:',
+            $show_tv, $show_ops, 0, true);
+
+        //////////////////////////////////////
+        // ott or token dialog
+        if ($this->config->GET_USE_TOKEN()) {
+            $this->add_button($defs, 'token_dialog', 'Активировать просмотр:', 'Введите логин и пароль', 0);
+        } else {
+            $this->add_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
+        }
+
+        //////////////////////////////////////
+        // channels lists
         $channels = array();
         $list = glob(DuneSystem::$properties['install_dir_path'] . "/*.xml");
         foreach ($list as $filename) {
@@ -51,25 +72,20 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 $channels[$filename] = $filename;
         }
 
-        ControlFactory::add_vgap($defs, -10);
-        $title = $this->config->GET_PLUGIN_NAME() . ' v.' . $this->config->GET_PLUGIN_VERSION() . '. [' . $this->config->GET_PLUGIN_DATE() . ']';
-        $this->add_button($defs, 'restart', $title, 'Перезагрузить плеер', 0);
+        $this->add_combobox($defs,'channels_list', 'Используемый список каналов:',
+            $channels_list, $channels, 0, true);
 
-        $this->add_combobox($defs,'show_tv', 'Показывать ' . $this->config->GET_PLUGIN_NAME() .' в главном меню:',
-            $show_tv, $show_ops, 0, true);
-
-        if ($this->config->MPEG_TS_SUPPORTED) {
+        //////////////////////////////////////
+        // select stream type
+        if ($this->config->GET_MPEG_TS_SUPPORTED()) {
             $format_ops = array();
             $format_ops['hls'] = 'HLS';
             $format_ops['mpeg'] = 'MPEG-TS';
             $this->add_combobox($defs, 'format', 'Выбор потока:', $format, $format_ops, 0, true);
         }
 
-        $this->add_button($defs, 'key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
-
-        $this->add_combobox($defs,'channels_list', 'Используемый список каналов:',
-            $channels_list, $channels, 0, true);
-
+        //////////////////////////////////////
+        // buffering time
         $show_buf_time_ops = array();
         $show_buf_time_ops[0] = 'По умолчанию';
         $show_buf_time_ops[500] = '0.5 с';
@@ -82,28 +98,16 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $this->add_combobox($defs, 'buf_time', 'Время буферизации:',
             $buf_time, $show_buf_time_ops, 0, true);
 
-        $epg_prefetch = array();
-        $epg_prefetch[0] = '0';
-        $epg_prefetch[1] = '1';
-        $epg_prefetch[2] = '2';
-        $epg_prefetch[3] = '3';
-        $epg_prefetch[4] = '4';
-        $epg_prefetch[5] = '5';
-        $epg_prefetch[6] = '6';
-        $epg_prefetch[7] = '7';
-
-        $this->add_combobox($defs, 'epg_prev', 'Предыдущие дни EPG:',
-            $epg_prev, $epg_prefetch, 0, true);
-
-        $this->add_combobox($defs, 'epg_next', 'Следующие дни EPG:',
-            $epg_next, $epg_prefetch, 0, true);
-
+        //////////////////////////////////////
+        // font size
         $epg_font_size_ops = array();
         $epg_font_size_ops ['normal'] = 'Обычный';
         $epg_font_size_ops ['small'] = 'Мелкий';
         $this->add_combobox($defs, 'epg_font_size', 'Размер шрифта EPG:',
             $epg_font_size, $epg_font_size_ops, 700, true);
 
+        //////////////////////////////////////
+        // adult channel password
         $this->add_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль', 0);
         ControlFactory::add_vgap($defs, -10);
 
@@ -115,7 +119,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
         return $this->do_get_control_defs($plugin_cookies);
     }
 
-    public function do_get_key_control_defs(&$plugin_cookies)
+    /**
+     * ott key dialog
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function do_get_ott_key_control_defs(&$plugin_cookies)
     {
         $defs = array();
         $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
@@ -128,11 +137,41 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $this->add_text_field($defs,'subdomain', 'Введите домен:',
             $subdomain, false, false, false, true, 500);
 
-        $this->add_close_dialog_and_apply_button($defs,'ott_key_apply', 'ОК', 200);
-        $this->add_close_dialog_button($defs,'Отмена', 200);
+        $this->add_vgap($defs, 50);
+
+        $this->add_close_dialog_and_apply_button($defs,'ott_key_apply', 'ОК', 300);
+        $this->add_close_dialog_button($defs,'Отмена', 300);
+
         return $defs;
     }
 
+    /**
+     * token dialog
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function do_get_token_control_defs(&$plugin_cookies)
+    {
+        $defs = array();
+
+        $this->add_text_field($defs, 'token', 'Логин:',
+            $plugin_cookies->token, false, false, false, true, 500);
+        $this->add_text_field($defs, 'pin', 'Пароль:',
+            $plugin_cookies->pin, false, false, false, true, 500);
+
+        $this->add_vgap($defs, 50);
+
+        $this->add_close_dialog_and_apply_button($defs, 'token_apply', 'Применить', 300);
+        $this->add_close_dialog_button($defs,'Отмена', 300);
+
+        return $defs;
+    }
+
+    /**
+     * adult pass dialog
+     * @param $plugin_cookies
+     * @return array
+     */
     public function do_get_pass_control_defs(&$plugin_cookies)
     {
         $defs = array();
@@ -145,20 +184,27 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $this->add_text_field($defs,'pass2', 'Новый пароль:',
             $pass2, 1, 1, 0, 1, 500, 0, false);
 
-        $this->add_label($defs, '', '');
+        $this->add_vgap($defs, 50);
 
-        $this->add_close_dialog_and_apply_button($defs,'pass_apply', 'ОК', 250);
-        $this->add_close_dialog_button($defs,'Отмена', 250);
+        $this->add_close_dialog_and_apply_button($defs,'pass_apply', 'ОК', 300);
+        $this->add_close_dialog_button($defs,'Отмена', 300);
 
         return $defs;
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
+        hd_print('Setup: handle_user_input:');
+        foreach ($user_input as $key => $value)
+            hd_print("$key => $value");
+
+        if ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply') {
             $control_id = $user_input->control_id;
-            $new_value = $user_input->{$control_id};
-            hd_print("Setup: changing $control_id value to $new_value");
+            $new_value = '';
+            if (isset($user_input->{$control_id})) {
+                $new_value = $user_input->{$control_id};
+                hd_print("Setup: changing $control_id value to $new_value");
+            }
 
             switch ($control_id)
             {
@@ -184,28 +230,30 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'buf_time':
                     $plugin_cookies->buf_time = $new_value;
                     break;
-                case 'epg_prev':
-                    $plugin_cookies->epg_prev = $new_value;
-                    break;
-                case 'epg_next':
-                    $plugin_cookies->epg_next = $new_value;
-                    break;
                 case 'epg_font_size':
                     $plugin_cookies->epg_font_size = $new_value;
                     break;
-                case 'key_dialog':
-                    $defs = $this->do_get_key_control_defs($plugin_cookies);
-                    $msg = 'Ключ чувствителен к регистру. Переключение регистра кнопкой Select';
-                    return ActionFactory::show_dialog($msg, $defs, true);
-                case 'ott_key_apply':
+                case 'ott_key_dialog': // show ott key dialog
+                    $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
+                    return ActionFactory::show_dialog('Ключ чувствителен к регистру. Переключение регистра кнопкой Select',
+                        $defs, true);
+                case 'ott_key_apply': // handle ott key dialog result
                     $plugin_cookies->ott_key = $user_input->ott_key;
                     $plugin_cookies->subdomain = $user_input->subdomain;
                     break;
-                case 'pass_dialog':
+                case 'token_dialog': // token dialog
+                    $defs = $this->do_get_token_control_defs($plugin_cookies);
+                    return ActionFactory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select',
+                        $defs, true);
+                case 'token_apply': // handle token dialog result
+                    $plugin_cookies->token = $user_input->token;
+                    $plugin_cookies->pin = $user_input->pin;
+                    if ($this->config->GetAccessInfo($plugin_cookies)) break;
+                    return ActionFactory::show_title_dialog("Неправильные логин и пароль или неактивна подписка");
+                case 'pass_dialog': // show pass dialog
                     $defs = $this->do_get_pass_control_defs($plugin_cookies);
-                    $msg = 'Родительский контроль';
-                    return ActionFactory::show_dialog($msg, $defs, true);
-                case 'pass_apply':
+                    return ActionFactory::show_dialog('Родительский контроль', $defs, true);
+                case 'pass_apply': // handle pass dialog result
                     if ($user_input->pass1 == '' || $user_input->pass2 == '')
                         return null;
 
@@ -222,13 +270,6 @@ class StarnetSetupScreen extends AbstractControlsScreen
             }
         }
 
-        hd_print('Setup: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("$key => $value");
-
         return ActionFactory::reset_controls($this->do_get_control_defs($plugin_cookies));
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

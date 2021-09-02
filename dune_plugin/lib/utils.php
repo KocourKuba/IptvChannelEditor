@@ -71,9 +71,6 @@ class HD
 
     public static function encode_user_data($a, $b = null)
     {
-        $media_url = null;
-        $user_data = null;
-
         if (is_array($a) && is_null($b)) {
             $media_url = '';
             $user_data = $a;
@@ -318,6 +315,3 @@ class HD
         return str_replace(array_keys($replace), $replace, $raw_string);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>
