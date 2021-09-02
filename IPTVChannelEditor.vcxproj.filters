@@ -123,9 +123,6 @@
     <ClInclude Include="PlaylistParseThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="map_serializer.h">
-      <Filter>Source Files\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="BaseInfo.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
@@ -200,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="uri_ottglanz.h">
       <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="map_serializer.h">
+      <Filter>Header Files\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

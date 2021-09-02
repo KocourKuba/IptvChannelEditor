@@ -56,8 +56,8 @@ constexpr auto REG_PASSWORD = _T("Password");
 constexpr auto REG_ACCESS_KEY = _T("AccessKey");
 constexpr auto REG_DOMAIN = _T("Domain");
 constexpr auto REG_ACCESS_URL = _T("AccessUrl");
-constexpr auto REG_INT_ID = _T("IntId");
-constexpr auto REG_HOST = _T("Host");
+// constexpr auto REG_INT_ID = _T("IntId");
+// constexpr auto REG_HOST = _T("Host");
 constexpr auto REG_FILTER_STRING = _T("FilterString");
 constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
 constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
@@ -77,7 +77,7 @@ std::string CIPTVChannelEditorDlg::m_ch_access_key;
 static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/index.m3u8";
-static constexpr auto URI_TEMPLATE_OTTGLANZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+static constexpr auto URI_TEMPLATE_OTTGLANZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}"; // &ch_id={INT_ID}&req_host={HOST} doesn't matter
 
 static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
 static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
@@ -1048,8 +1048,8 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, 
 
 			utils::string_replace_inplace(uri_template, "{LOGIN}", ReadRegStringPluginA(REG_LOGIN));
 			utils::string_replace_inplace(uri_template, "{PASSWORD}", ReadRegStringPluginA(REG_PASSWORD));
-			utils::string_replace_inplace(uri_template, "{INT_ID}", ReadRegStringPluginA(REG_INT_ID));
-			utils::string_replace_inplace(uri_template, "{HOST}", ReadRegStringPluginA(REG_HOST));
+			// utils::string_replace_inplace(uri_template, "{INT_ID}", ReadRegStringPluginA(REG_INT_ID));
+			// utils::string_replace_inplace(uri_template, "{HOST}", ReadRegStringPluginA(REG_HOST));
 			break;
 		default:
 			break;
@@ -2465,8 +2465,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
 			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
 			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
-			dlg.m_entry->get_uri_stream()->set_int_id(ReadRegStringPluginA(REG_INT_ID));
-			dlg.m_entry->get_uri_stream()->set_host(ReadRegStringPluginA(REG_HOST));
+			// dlg.m_entry->get_uri_stream()->set_int_id(ReadRegStringPluginA(REG_INT_ID));
+			// dlg.m_entry->get_uri_stream()->set_host(ReadRegStringPluginA(REG_HOST));
 			if (dlg.DoModal() == IDOK)
 			{
 				loaded = true;
@@ -2474,8 +2474,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->get_stream_uri()->get_password().c_str());
 				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->get_stream_uri()->get_token().c_str());
 				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->get_stream_uri()->get_domain().c_str());
-				SaveRegPlugin(REG_INT_ID, dlg.m_entry->get_stream_uri()->get_int_id().c_str());
-				SaveRegPlugin(REG_HOST, dlg.m_entry->get_stream_uri()->get_host().c_str());
+				// SaveRegPlugin(REG_INT_ID, dlg.m_entry->get_stream_uri()->get_int_id().c_str());
+				// SaveRegPlugin(REG_HOST, dlg.m_entry->get_stream_uri()->get_host().c_str());
 			}
 			break;
 		}
