@@ -68,13 +68,14 @@ class SharaclubPluginConfig extends DefaultConfig
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"));
         if (isset($account_data->status) && $account_data->status == 'ok') {
+            hd_print("account ok");
             return $account_data;
         }
 
         return false;
     }
 
-    public function GetAccessInfo($plugin_cookies)
+    public static function GetAccessInfo($plugin_cookies)
     {
         hd_print("Collect information from account");
         $found = false;

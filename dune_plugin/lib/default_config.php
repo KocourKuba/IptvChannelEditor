@@ -32,7 +32,13 @@ abstract class DefaultConfig
     protected static $TVG_PARSER = 'json';
 
     public abstract function AdjustStreamUri($plugin_cookies, $archive_ts, $url);
-    public function GetAccessInfo($plugin_cookies)
+
+    public function GetAccountStatus($plugin_cookies)
+    {
+        return false;
+    }
+
+    public static function GetAccessInfo($plugin_cookies)
     {
         return false;
     }

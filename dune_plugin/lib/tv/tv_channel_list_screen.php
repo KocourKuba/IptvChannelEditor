@@ -66,6 +66,9 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         return self::ID;
     }
 
+    /**
+     * @throws Exception
+     */
     private function get_sel_item_update_action(&$user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
@@ -78,9 +81,12 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         $range = HD::create_regular_folder_range($items,
             $sel_ndx, $channels->size());
 
-        return ActionFactory::update_regular_folder($range, false);
+        return ActionFactory::update_regular_folder($range);
     }
 
+    /**
+     * @throws Exception
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         hd_print('Tv favorites: handle_user_input:');
@@ -137,6 +143,9 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->tv->folder_entered($media_url, $plugin_cookies);
@@ -159,6 +168,3 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         return $this->tv->get_archive($media_url);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

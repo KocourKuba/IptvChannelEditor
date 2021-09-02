@@ -1,5 +1,4 @@
 ﻿<?php
-///////////////////////////////////////////////////////////////////////////
 require_once 'lib/abstract_preloaded_regular_screen.php';
 require_once 'lib/abstract_controls_screen.php';
 
@@ -12,14 +11,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
     ///////////////////////////////////////////////////////////////////////
     protected $tv;
-    protected $config;
 
     public function __construct(Tv $tv)
     {
         parent::__construct(self::ID);
 
         $this->tv = $tv;
-        $this->config = $tv->get_config();
     }
 
     public static function get_media_url_str()
@@ -30,33 +27,32 @@ class StarnetSetupScreen extends AbstractControlsScreen
     public function do_get_control_defs(&$plugin_cookies)
     {
         $defs = array();
+        $config = $this->tv->get_config();
 
         $format        = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->config->GET_CHANNEL_LIST_URL();
+        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $config->GET_CHANNEL_LIST_URL();
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $show_tv       = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
         $buf_time      = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
-        $epg_prev      = isset($plugin_cookies->epg_prev) ? $plugin_cookies->epg_prev : 7;
-        $epg_next      = isset($plugin_cookies->epg_next) ? $plugin_cookies->epg_next : 7;
 
-        $show_ops = array();
+        $show_ops      = array();
         $show_ops['yes'] = 'Да';
         $show_ops['no'] = 'Нет';
 
         //////////////////////////////////////
         // Plugin name
         ControlFactory::add_vgap($defs, -10);
-        $title = $this->config->GET_PLUGIN_NAME() . ' v.' . $this->config->GET_PLUGIN_VERSION() . '. [' . $this->config->GET_PLUGIN_DATE() . ']';
+        $title = $config->GET_PLUGIN_NAME() . ' v.' . $config->GET_PLUGIN_VERSION() . '. [' . $config->GET_PLUGIN_DATE() . ']';
         $this->add_button($defs, 'restart', $title, 'Перезагрузить плеер', 0);
 
         //////////////////////////////////////
         // Show in main screen
-        $this->add_combobox($defs,'show_tv', 'Показывать ' . $this->config->GET_PLUGIN_NAME() .' в главном меню:',
+        $this->add_combobox($defs,'show_tv', 'Показывать ' . $config->GET_PLUGIN_NAME() .' в главном меню:',
             $show_tv, $show_ops, 0, true);
 
         //////////////////////////////////////
         // ott or token dialog
-        if ($this->config->GET_USE_TOKEN()) {
+        if ($config->GET_USE_TOKEN()) {
             $this->add_button($defs, 'token_dialog', 'Активировать просмотр:', 'Введите логин и пароль', 0);
         } else {
             $this->add_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
@@ -77,7 +73,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // select stream type
-        if ($this->config->GET_MPEG_TS_SUPPORTED()) {
+        if ($config->GET_MPEG_TS_SUPPORTED()) {
             $format_ops = array();
             $format_ops['hls'] = 'HLS';
             $format_ops['mpeg'] = 'MPEG-TS';
@@ -180,9 +176,9 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $pass2 = '';
 
         $this->add_text_field($defs,'pass1', 'Старый пароль:',
-            $pass1, 1, 1, 0, 1, 500, 0, false);
+            $pass1, 1, 1, 0, 1, 500, 0);
         $this->add_text_field($defs,'pass2', 'Новый пароль:',
-            $pass2, 1, 1, 0, 1, 500, 0, false);
+            $pass2, 1, 1, 0, 1, 500, 0);
 
         $this->add_vgap($defs, 50);
 
@@ -248,8 +244,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'token_apply': // handle token dialog result
                     $plugin_cookies->token = $user_input->token;
                     $plugin_cookies->pin = $user_input->pin;
-                    if ($this->config->GetAccessInfo($plugin_cookies)) break;
-                    return ActionFactory::show_title_dialog("Неправильные логин и пароль или неактивна подписка");
+                    if ($this->tv->get_config()->GetAccessInfo($plugin_cookies)) break;
+                    return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                 case 'pass_dialog': // show pass dialog
                     $defs = $this->do_get_pass_control_defs($plugin_cookies);
                     return ActionFactory::show_dialog('Родительский контроль', $defs, true);

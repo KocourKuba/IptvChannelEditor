@@ -15,7 +15,7 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct($tv, $folder_views)
+    public function __construct(Tv $tv, $folder_views)
     {
         parent::__construct(self::ID, $folder_views);
 

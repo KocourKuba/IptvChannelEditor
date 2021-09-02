@@ -13,7 +13,7 @@ require_once 'starnet_channel.php';
 
 class StarnetPluginTv extends AbstractTv
 {
-    public static $config = null;
+    protected static $config = null;
 
     public function __construct()
     {
@@ -51,6 +51,10 @@ class StarnetPluginTv extends AbstractTv
         return self::$config;
     }
 
+    public function set_config(DefaultConfig $config)
+    {
+        return self::$config = $config;
+    }
     ///////////////////////////////////////////////////////////////////////
 
     /**
