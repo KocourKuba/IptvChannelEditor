@@ -8,7 +8,7 @@ enum class StreamType
 	enEdem,
 	enSharavoz,
 	enSharaclub,
-	enGlanz,
+	enOttglanz,
 };
 
 /// <summary>

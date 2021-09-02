@@ -35,7 +35,7 @@ public:
 	/// <summary>
 	/// getter channel id
 	/// </summary>
-	/// <returns>id</returns>
+	/// <returns>string</returns>
 	virtual const std::string& get_id() const { return templated ? id : str_hash; }
 
 	/// <summary>
@@ -47,7 +47,7 @@ public:
 	/// <summary>
 	/// getter channel hash
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>int</returns>
 	virtual const int get_hash() const
 	{
 		if (!hash)
@@ -63,25 +63,67 @@ public:
 	/// <summary>
 	/// getter domain
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>string</returns>
 	virtual const std::string& get_domain() const { return domain; };
 
 	/// <summary>
 	/// setter domain
 	/// </summary>
-	/// <returns></returns>
 	virtual void set_domain(const std::string& val) { domain = val; };
+
+	/// <summary>
+	/// getter login
+	/// </summary>
+	/// <returns>string</returns>
+	virtual const std::string& get_login() const { return login; };
+
+	/// <summary>
+	/// setter login
+	/// </summary>
+	virtual void set_login(const std::string& val) { login = val; };
+
+	/// <summary>
+	/// setter password
+	/// </summary>
+	virtual void set_password(const std::string& val) { password = val; };
+
+	/// <summary>
+	/// getter password
+	/// </summary>
+	/// <returns>string</returns>
+	virtual const std::string& get_password() const { return password; };
+
+	/// <summary>
+	/// setter int_id
+	/// </summary>
+	virtual void set_int_id(const std::string& val) { int_id = val; };
+
+	/// <summary>
+	/// getter int_id
+	/// </summary>
+	/// <returns>string</returns>
+	virtual const std::string& get_int_id() const { return int_id; };
+
+	/// <summary>
+	/// setter host
+	/// </summary>
+	virtual void set_host(const std::string& val) { host = val; };
+
+	/// <summary>
+	/// getter host
+	/// </summary>
+	/// <returns>string</returns>
+	virtual const std::string& get_host() const { return host; };
 
 	/// <summary>
 	/// getter token
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>string</returns>
 	virtual const std::string& get_token() const { return token; };
 
 	/// <summary>
 	/// setter token
 	/// </summary>
-	/// <returns></returns>
 	virtual void set_token(const std::string& val) { token = val; };
 
 	const uri_stream& operator=(const uri_stream& src)
@@ -93,7 +135,11 @@ public:
 			set_template(src.is_template());
 			id = src.id;
 			domain = src.domain;
+			login = src.login;
+			password = src.password;
 			token = src.token;
+			int_id = src.int_id;
+			host = src.host;
 			str_hash = src.str_hash;
 			hash = src.hash;
 		}
@@ -104,7 +150,11 @@ public:
 protected:
 	std::string id;
 	std::string domain;
+	std::string login;
+	std::string password;
 	std::string token;
+	std::string int_id;
+	std::string host;
 	std::string uri_template;
 	mutable std::string str_hash;
 	mutable int hash = 0;

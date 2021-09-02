@@ -1,5 +1,6 @@
 #pragma once
 #include "StreamContainer.h"
+#include "PlayListEntry.h"
 
 class CAccessInfoPassDlg : public CDialogEx
 {
@@ -24,10 +25,7 @@ protected:
 	afx_msg void OnBnClickedBtnGet();
 
 public:
-	CString m_token;
-	CString m_accessKey;
-	CString m_domain;
-	StreamType m_streamType = StreamType::enEdem;
+	std::shared_ptr<PlaylistEntry> m_entry;
 
 protected:
 	CButton m_wndGet;

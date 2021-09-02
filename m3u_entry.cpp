@@ -17,7 +17,9 @@ static std::map<std::string, m3u_entry::info_tags> s_tags = {
 	{ "tvg-rec",      m3u_entry::tag_tvg_rec      },
 	{ "tvg-name",     m3u_entry::tag_tvg_name     },
 	{ "tvg-shift",    m3u_entry::tag_tvg_shift    },
-	{ "timeshift",    m3u_entry::tag_tvg_shift    },
+	{ "timeshift",    m3u_entry::tag_timeshift    },
+	{ "catchup-days", m3u_entry::tag_catchup_days },
+	{ "catchup-type", m3u_entry::tag_catchup_type },
 };
 
 void m3u_entry::clear()

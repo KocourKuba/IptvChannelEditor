@@ -23,7 +23,9 @@ public:
 		tag_tvg_rec,
 		tag_tvg_name,
 		tag_tvg_shift,
+		tag_timeshift,
 		tag_catchup_days,
+		tag_catchup_type,
 	} info_tags;
 
 public:

@@ -29,6 +29,14 @@ public:
 		CString searchString;
 	};
 
+	struct PlayParams
+	{
+		std::string access_domain;
+		std::string access_key;
+		int archive_day = 0;
+		int archive_hour = 0;
+	};
+
 	static void SelectTreeItem(CTreeCtrl& ctl, const SearchParams& searchParams);
 	static HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
 	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
@@ -173,11 +181,7 @@ private:
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
 
-	std::string GetPlayableURL(const uri_stream* stream_uri,
-							   const std::string& access_domain,
-							   const std::string& access_key,
-							   int archive_day = 0,
-							   int archive_hour = 0) const;
+	std::string GetPlayableURL(const uri_stream* stream_uri, const PlayParams& params) const;
 
 	std::string GetEpgTemplate(BOOL first) const;
 	void RemoveOrphanChannels();
@@ -216,17 +220,23 @@ private:
 	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
 	std::wstring GetPluginRegPath() const;
 
-	void SaveReg(LPCTSTR path, LPCTSTR szValue);
+	void SaveReg(LPCTSTR path, LPCSTR szValue);
+	void SaveReg(LPCTSTR path, LPCWSTR szValue);
 	void SaveReg(LPCTSTR path, int value);
 
-	CString ReadRegString(LPCTSTR path);
-	int ReadRegInt(LPCTSTR path, int default = 0);
+	CString ReadRegStringT(LPCTSTR path) const;
+	std::string ReadRegStringA(LPCTSTR path) const;
+	std::wstring ReadRegStringW(LPCTSTR path) const;
+	int ReadRegInt(LPCTSTR path, int default = 0) const;
 
-	void SaveRegPlugin(LPCTSTR path, LPCTSTR szValue);
+	void SaveRegPlugin(LPCTSTR path, LPCSTR szValue);
+	void SaveRegPlugin(LPCTSTR path, LPCWSTR szValue);
 	void SaveRegPlugin(LPCTSTR path, int value);
 
-	CString ReadRegStringPlugin(LPCTSTR path);
-	int ReadRegIntPlugin(LPCTSTR path, int default = 0);
+	CString ReadRegStringPluginT(LPCTSTR path) const;
+	std::string ReadRegStringPluginA(LPCTSTR path) const;
+	std::wstring ReadRegStringPluginW(LPCTSTR path) const;
+	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
 
 protected:
 	CFont m_largeFont;

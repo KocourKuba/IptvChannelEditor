@@ -51,10 +51,13 @@ constexpr auto REG_PLUGIN = _T("PluginType");
 constexpr auto REG_ICON_SOURCE = _T("IconSource");
 
 // Plugin dependent
-constexpr auto REG_LOGIN = _T("LoginToken");
+constexpr auto REG_LOGIN = _T("Login");
+constexpr auto REG_PASSWORD = _T("Password");
 constexpr auto REG_ACCESS_KEY = _T("AccessKey");
 constexpr auto REG_DOMAIN = _T("Domain");
 constexpr auto REG_ACCESS_URL = _T("AccessUrl");
+constexpr auto REG_INT_ID = _T("IntId");
+constexpr auto REG_HOST = _T("Host");
 constexpr auto REG_FILTER_STRING = _T("FilterString");
 constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
 constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
@@ -74,14 +77,17 @@ std::string CIPTVChannelEditorDlg::m_ch_access_key;
 static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/index.m3u8";
+static constexpr auto URI_TEMPLATE_OTTGLANZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 
 static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
 static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG1_TEMPLATE_SHARACLUB = "http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG1_TEMPLATE_OTTGLANZ = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json";
 
 static constexpr auto EPG2_TEMPLATE_EDEM = "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
 static constexpr auto EPG2_TEMPLATE_SHARAVOZ = "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG2_TEMPLATE_SHARACLUB = "http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG2_TEMPLATE_OTTGLANZ = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json";
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
@@ -119,7 +125,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_WM_GETMINMAXINFO()
 
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CIPTVChannelEditorDlg::OnBnClickedButtonAbout)
-	ON_BN_CLICKED(IDC_BUTTON_LOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist)
+	ON_BN_CLICKED(IDC_BUTTON_CHOOSE_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_PL_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_PL_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnUpdateButtonPlSearchNext)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext)
@@ -283,7 +289,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_COMBO_STREAM_TYPE, m_StreamType);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylist);
 	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
-	DDX_Control(pDX, IDC_BUTTON_LOAD_PLAYLIST, m_wndChooseUrl);
+	DDX_Control(pDX, IDC_BUTTON_CHOOSE_PLAYLIST, m_wndChooseUrl);
 	DDX_Control(pDX, IDC_BUTTON_DOWNLOAD_PLAYLIST, m_wndDownloadUrl);
 	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
 	DDX_Control(pDX, IDC_BUTTON_CACHE_ICON, m_wndCacheIcon);
@@ -364,7 +370,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ACCESS_INFO), _T("Provider access parameters"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Make a plugin to install on player"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Set channel icon from original playlist"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_LOAD_PLAYLIST), _T("Load playlist from file"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHOOSE_PLAYLIST), _T("Choose playlist"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST), _T("Save downloaded playlist to disk"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_PL_SEARCH), _T("Search in the playlist. Use \\ prefix to find by ID"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Search next"));
@@ -381,8 +387,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Stream type used to test play stream"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Source type for loaded icon. Local file or internet link"));
 
-	m_player = ReadRegString(REG_PLAYER);
-	m_probe = ReadRegString(REG_FFPROBE);
+	m_player = ReadRegStringT(REG_PLAYER);
+	m_probe = ReadRegStringT(REG_FFPROBE);
 	m_archiveCheckDays = ReadRegInt(REG_DAYS_BACK);
 	m_archiveCheckHours = ReadRegInt(REG_HOURS_BACK);
 	m_bAutoSync = ReadRegInt(REG_AUTOSYNC);
@@ -390,6 +396,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndPluginType.AddString(_T("Edem (iLook TV)"));
 	m_wndPluginType.AddString(_T("Sharavoz TV"));
 	m_wndPluginType.AddString(_T("Sharaclub TV"));
+	m_wndPluginType.AddString(_T("Glanz TV"));
 
 	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
@@ -493,6 +500,20 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndAccessInfo.EnableWindow(FALSE);
 			break;
 		}
+		case 3: // glanz
+		{
+			m_pluginType = StreamType::enOttglanz;
+			m_pluginName = _T("Glanz");
+			m_embedded_info = FALSE;
+
+			m_wndPlaylist.ResetContent();
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_wndPlaylist.EnableWindow(FALSE);
+			m_wndStreamType.ShowWindow(TRUE);
+			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
+			m_wndAccessInfo.EnableWindow(FALSE);
+			break;
+		}
 		default:
 			ASSERT(false);
 			break;
@@ -508,8 +529,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndPlaylist.SetCurSel(pl_idx);
 
 	// Load access credentials
-	m_gl_access_key = utils::utf16_to_utf8(ReadRegStringPlugin(REG_ACCESS_KEY).GetString());
-	m_gl_domain = utils::utf16_to_utf8(ReadRegStringPlugin(REG_DOMAIN).GetString());
+	m_gl_access_key = ReadRegStringPluginA(REG_ACCESS_KEY);
+	m_gl_domain = ReadRegStringPluginA(REG_DOMAIN);
 
 	// Load channel lists
 	m_all_channels_lists.clear();
@@ -572,6 +593,8 @@ std::wstring CIPTVChannelEditorDlg::GetPluginName() const
 			return L"sharavoz";
 		case 2: // Sharaclub
 			return L"sharaclub";
+		case 3: // Glanz
+			return L"ottglanz";
 	}
 
 	return L"";
@@ -602,10 +625,10 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 					url = _T("http://epg.it999.ru/edem_epg_ico2.m3u8");
 					break;
 				case 2:
-					url = ReadRegStringPlugin(REG_CUSTOM_URL);
+					url = ReadRegStringPluginT(REG_CUSTOM_URL);
 					break;
 				case 3:
-					url = ReadRegStringPlugin(REG_CUSTOM_FILE);
+					url = ReadRegStringPluginT(REG_CUSTOM_FILE);
 					break;
 				default:
 					break;
@@ -617,10 +640,10 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0:
-					url = ReadRegStringPlugin(REG_CUSTOM_URL);
+					url = ReadRegStringPluginT(REG_CUSTOM_URL);
 					break;
 				case 1:
-					url = ReadRegStringPlugin(REG_CUSTOM_FILE);
+					url = ReadRegStringPluginT(REG_CUSTOM_FILE);
 					break;
 				default:
 					break;
@@ -629,10 +652,22 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		}
 		case 2: // Sharaclub
 		{
-			url.Format(_T("http://list.playtv.pro/tv_live-m3u8/%s"), ReadRegStringPlugin(REG_LOGIN).GetString());
+			url.Format(_T("http://list.playtv.pro/tv_live-m3u8/%s-%s"),
+					   ReadRegStringPluginT(REG_LOGIN).GetString(),
+					   ReadRegStringPluginT(REG_PASSWORD).GetString());
 			m_plFileName = _T("SharaClub_Playlist.m3u8");
 			break;
 		}
+		case 3: // Glanz
+		{
+			url.Format(_T("http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls"),
+					   ReadRegStringPluginT(REG_LOGIN).GetString(),
+					   ReadRegStringPluginT(REG_PASSWORD).GetString());
+			m_plFileName = _T("Glanz_Playlist.m3u8");
+			break;
+		}
+		default:
+			return;
 	}
 
 	if (url.IsEmpty())
@@ -689,6 +724,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		else
 		{
 			AfxMessageBox(_T("Unable to download playlist!"), MB_OK | MB_ICONERROR);
+			OnEndLoadPlaylist(0);
 			return;
 		}
 	}
@@ -696,6 +732,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	if (data->empty())
 	{
 		AfxMessageBox(_T("Empty playlist!"), MB_OK | MB_ICONERROR);
+		OnEndLoadPlaylist(0);
 		return;
 	}
 
@@ -708,6 +745,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	if (!pThread)
 	{
 		AfxMessageBox(_T("Problem with starting load playlist thread!"), MB_OK | MB_ICONERROR);
+		OnEndLoadPlaylist(0);
 		return;
 	}
 
@@ -721,6 +759,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndChannelsTree.EnableWindow(FALSE);
 	m_wndFilter.EnableWindow(FALSE);
 	m_wndDownloadUrl.EnableWindow(FALSE);
+	m_wndChooseUrl.EnableWindow(FALSE);
 	m_evtStop.ResetEvent();
 
 	CPlaylistParseThread::ThreadConfig cfg;
@@ -749,6 +788,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 	m_wndPlaylistTree.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(TRUE);
 	m_wndChannelsTree.EnableWindow(TRUE);
+	m_wndChooseUrl.EnableWindow(TRUE);
 
 	FillTreePlaylist();
 
@@ -925,29 +965,25 @@ void CIPTVChannelEditorDlg::UpdatePlaylistCount()
 	UpdateData(FALSE);
 }
 
-std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri,
-												  const std::string& access_domain,
-												  const std::string& access_key,
-												  int archive_day /*= 0*/,
-												  int archive_hour /*= 0*/) const
+std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, const PlayParams& params) const
 {
 	// templated url changed, custom is unchanged
 	// http://ts://rtmp.api.rt.com/hls/rtdru.m3u8 -> http://rtmp.api.rt.com/hls/rtdru.m3u8
 	//
 	// edem
-	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8 -> http://ts://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8
-	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8 -> http://{SUBDOMAIN}/iptv/{TOKEN}/204/index.m3u8
-	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/205/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
+	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
 	//
 	// sharavoz
-	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN} -> http://{SUBDOMAIN}/204/index.m3u8?token={TOKEN}
-	// http://{SUBDOMAIN}/204/index.m3u8?token={TOKEN} -> http://domain.com/204/index.m3u8?token=adsdaSDFJKHKJd
+	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN} -> http://domain.com/204/index.m3u8?token=adsdaSDFJKHKJd
 	//
 	// sharaclub
-	// http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8 -> http://{SUBDOMAIN}/live/{TOKEN}/204/video.m3u8
-	// http://{SUBDOMAIN}/live/{TOKEN}/204/video.m3u8 -> http://domain.com/live/adsdaSDFJKHKJd/204/video.m3u8
+	// http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8 -> http://{SUBDOMAIN}/live/adsdaSDFJKHKJd/204/video.m3u8
+	//
+	// glanz
+	// http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST} ->
+	// http://{SUBDOMAIN}/205/index.m3u8?username={LOGIN}&password={PASSWORD}&token=f5afea07cef148278ae074acaf67a547&ch_id={INT_ID}&req_host={HOST}
 
-	int hours_back = 86400 * archive_day - 3600 * archive_hour;
+	int hours_back = 86400 * params.archive_day - 3600 * params.archive_hour;
 	int shift_back = _time32(nullptr) - hours_back;
 	std::string uri_template;
 
@@ -987,19 +1023,41 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri,
 			{
 				case 0: // hls
 					utils::string_replace_inplace(uri_template, "index.m3u8", "video.m3u8");
+					break;
 				case 1: // mpeg-ts
 					utils::string_replace_inplace(uri_template, "/index.m3u8", ".ts");
 					break;
 			}
 			break;
-		case StreamType::enGlanz:
+		case StreamType::enOttglanz:
+			uri_template = URI_TEMPLATE_OTTGLANZ;
+			if (hours_back)
+			{
+				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+			}
+
+			switch (m_StreamType)
+			{
+				case 0: // hls
+					utils::string_replace_inplace(uri_template, "index.m3u8", "video.m3u8");
+					break;
+				case 1: // mpeg-ts
+					utils::string_replace_inplace(uri_template, "index.m3u8", "mpegts");
+					break;
+			}
+
+			utils::string_replace_inplace(uri_template, "{LOGIN}", ReadRegStringPluginA(REG_LOGIN));
+			utils::string_replace_inplace(uri_template, "{PASSWORD}", ReadRegStringPluginA(REG_PASSWORD));
+			utils::string_replace_inplace(uri_template, "{INT_ID}", ReadRegStringPluginA(REG_INT_ID));
+			utils::string_replace_inplace(uri_template, "{HOST}", ReadRegStringPluginA(REG_HOST));
+			break;
 		default:
 			break;
 	}
 
 	auto& url = stream_uri->is_template() ? utils::string_replace(uri_template, "{ID}", stream_uri->get_id()) : stream_uri->get_uri();
-	utils::string_replace_inplace(url, "{SUBDOMAIN}", access_domain);
-	utils::string_replace_inplace(url, "{TOKEN}", access_key);
+	utils::string_replace_inplace(url, "{SUBDOMAIN}", params.access_domain);
+	utils::string_replace_inplace(url, "{TOKEN}", params.access_key);
 
 	return url;
 }
@@ -1014,7 +1072,8 @@ std::string CIPTVChannelEditorDlg::GetEpgTemplate(BOOL first) const
 			return first ? EPG1_TEMPLATE_SHARAVOZ : EPG2_TEMPLATE_SHARAVOZ;
 		case StreamType::enSharaclub:
 			return first ? EPG1_TEMPLATE_SHARACLUB : EPG2_TEMPLATE_SHARACLUB;
-		case StreamType::enGlanz:
+		case StreamType::enOttglanz:
+			return first ? EPG1_TEMPLATE_OTTGLANZ : EPG2_TEMPLATE_OTTGLANZ;
 		case StreamType::enBase:
 		case StreamType::enChannels:
 		default:
@@ -2300,13 +2359,13 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 		switch (m_pluginType)
 		{
 			case StreamType::enEdem:
+			case StreamType::enOttglanz:
 				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id());
 				break;
 			case StreamType::enSharaclub:
 			case StreamType::enSharavoz:
 				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
 				break;
-			case StreamType::enGlanz:
 				break;
 			default:
 				break;
@@ -2327,11 +2386,12 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 		switch (m_pluginType)
 		{
 			case StreamType::enEdem:
+			case StreamType::enOttglanz:
+				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id());
+				break;
 			case StreamType::enSharaclub:
 			case StreamType::enSharavoz:
 				url = fmt::format(GetEpgTemplate(FALSE), channel->get_epg2_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
-				break;
-			case StreamType::enGlanz:
 				break;
 			default:
 				break;
@@ -2345,14 +2405,13 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 {
 	if (auto entry = GetBaseInfo(m_lastTree, hItem); entry != nullptr)
 	{
-		const auto& access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
-		const auto& access_key = CIPTVChannelEditorDlg::GetAccessKey();
-		auto test_url = utils::utf8_to_utf16(GetPlayableURL(entry->get_stream_uri(),
-															access_domain,
-															access_key,
-															archive_day,
-															archive_hour
-		));
+		PlayParams params;
+		params.access_key = CIPTVChannelEditorDlg::GetAccessKey();
+		params.access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
+		params.archive_day = archive_day;
+		params.archive_hour = archive_hour;
+
+		auto test_url = utils::utf8_to_utf16(GetPlayableURL(entry->get_stream_uri(), params));
 
 		TRACE(L"Test URL: %s\n", test_url.c_str());
 
@@ -2367,12 +2426,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 	{
 		case StreamType::enEdem:
 		case StreamType::enSharavoz:
-		case StreamType::enGlanz:
 		{
 			CCustomPlaylistDlg dlg;
 			dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
 			LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
-			dlg.m_url = ReadRegStringPlugin(szType);
+			dlg.m_url = ReadRegStringPluginT(szType);
 			if (dlg.DoModal() == IDOK)
 			{
 				loaded = true;
@@ -2383,16 +2441,41 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enSharaclub:
 		{
 			CAccessInfoPassDlg dlg;
-			dlg.m_token = ReadRegStringPlugin(REG_LOGIN);
-			dlg.m_accessKey = ReadRegStringPlugin(REG_ACCESS_KEY);
-			dlg.m_domain = ReadRegStringPlugin(REG_DOMAIN);
-			dlg.m_streamType = StreamType::enSharaclub;
+			dlg.m_entry = std::make_shared<PlaylistEntry>(StreamType::enSharaclub, theApp.GetAppPath(utils::PLUGIN_ROOT));
+			dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
+			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
+			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
+			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
+
 			if (dlg.DoModal() == IDOK)
 			{
 				loaded = true;
-				SaveRegPlugin(REG_LOGIN, dlg.m_token);
-				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_accessKey);
-				SaveRegPlugin(REG_DOMAIN, dlg.m_domain);
+				SaveRegPlugin(REG_LOGIN, dlg.m_entry->get_stream_uri()->get_login().c_str());
+				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->get_stream_uri()->get_password().c_str());
+				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->get_stream_uri()->get_token().c_str());
+				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->get_stream_uri()->get_domain().c_str());
+			}
+			break;
+		}
+		case StreamType::enOttglanz:
+		{
+			CAccessInfoPassDlg dlg;
+			dlg.m_entry = std::make_shared<PlaylistEntry>(StreamType::enOttglanz, theApp.GetAppPath(utils::PLUGIN_ROOT));
+			dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
+			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
+			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
+			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
+			dlg.m_entry->get_uri_stream()->set_int_id(ReadRegStringPluginA(REG_INT_ID));
+			dlg.m_entry->get_uri_stream()->set_host(ReadRegStringPluginA(REG_HOST));
+			if (dlg.DoModal() == IDOK)
+			{
+				loaded = true;
+				SaveRegPlugin(REG_LOGIN, dlg.m_entry->get_stream_uri()->get_login().c_str());
+				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->get_stream_uri()->get_password().c_str());
+				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->get_stream_uri()->get_token().c_str());
+				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->get_stream_uri()->get_domain().c_str());
+				SaveRegPlugin(REG_INT_ID, dlg.m_entry->get_stream_uri()->get_int_id().c_str());
+				SaveRegPlugin(REG_HOST, dlg.m_entry->get_stream_uri()->get_host().c_str());
 			}
 			break;
 		}
@@ -2413,7 +2496,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	m_wndPlaylistTree.DeleteAllItems();
 
 	// Filter out playlist
-	auto filter = ReadRegStringPlugin(REG_FILTER_STRING);
+	auto filter = ReadRegStringPluginT(REG_FILTER_STRING);
 	auto bRegex = ReadRegIntPlugin(REG_FILTER_REGEX);
 	auto bCase = ReadRegIntPlugin(REG_FILTER_CASE);
 
@@ -2519,8 +2602,8 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 
 			if (m_gl_access_key.empty() && m_gl_domain.empty())
 			{
-				m_gl_access_key = entry->get_access_key();
-				m_gl_domain = entry->get_domain();
+				m_gl_access_key = entry->get_uri_stream()->get_token();
+				m_gl_domain = entry->get_uri_stream()->get_domain();
 			}
 
 			TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -2543,8 +2626,10 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 
 void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 {
-	const auto& access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
-	const auto& access_key = CIPTVChannelEditorDlg::GetAccessKey();
+	PlayParams params;
+	params.access_key = CIPTVChannelEditorDlg::GetAccessKey();
+	params.access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
+
 	const auto max_threads = 2;
 
 	auto newEnd = std::unique(container.begin(), container.end());
@@ -2558,7 +2643,7 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 		int j = 0;
 		while (j < max_threads && pool != container.end())
 		{
-			const auto& url = GetPlayableURL(*pool, access_domain, access_key, 0);
+			const auto& url = GetPlayableURL(*pool, params);
 			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
 			j++;
 			++pool;
@@ -3092,7 +3177,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccessInfo()
 	dlg.m_accessKeyEmbedded = m_ch_access_key.c_str();
 	dlg.m_domainEmbedded = m_ch_domain.c_str();
 	dlg.m_streamType = m_pluginType;
-	dlg.m_url = ReadRegStringPlugin(REG_ACCESS_URL);
+	dlg.m_url = ReadRegStringPluginT(REG_ACCESS_URL);
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -3553,12 +3638,12 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 			break;
 		}
 		case 2: // Sharaclub
-		{
+		case 3: // Glanz
 			enableCustom = TRUE;
-				break;
-			default:
-				break;
-		}
+			break;
+
+		default:
+			break;
 	}
 
 	m_wndDownloadUrl.EnableWindow(enableDownload);
@@ -4023,7 +4108,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter()
 {
 	CFilterDialog dlg;
 
-	dlg.m_filterString = ReadRegStringPlugin(REG_FILTER_STRING);
+	dlg.m_filterString = ReadRegStringPluginT(REG_FILTER_STRING);
 	dlg.m_filterRegex = ReadRegIntPlugin(REG_FILTER_REGEX);
 	dlg.m_filterCase = ReadRegIntPlugin(REG_FILTER_CASE);
 
@@ -4210,7 +4295,12 @@ std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const
 	return fmt::format(_T("{:s}\\{:s}"), REG_SETTINGS, GetPluginName().c_str());
 }
 
-void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, LPCTSTR szValue)
+void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, LPCSTR szValue)
+{
+	theApp.WriteProfileString(REG_SETTINGS, path, utils::utf8_to_utf16(szValue).c_str());
+}
+
+void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, LPCWSTR szValue)
 {
 	theApp.WriteProfileString(REG_SETTINGS, path, szValue);
 }
@@ -4220,7 +4310,12 @@ void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, int value)
 	theApp.WriteProfileInt(REG_SETTINGS, path, value);
 }
 
-void CIPTVChannelEditorDlg::SaveRegPlugin(LPCTSTR path, LPCTSTR szValue)
+void CIPTVChannelEditorDlg::SaveRegPlugin(LPCTSTR path, LPCSTR szValue)
+{
+	theApp.WriteProfileString(GetPluginRegPath().c_str(), path, utils::utf8_to_utf16(szValue).c_str());
+}
+
+void CIPTVChannelEditorDlg::SaveRegPlugin(LPCTSTR path, LPCWSTR szValue)
 {
 	theApp.WriteProfileString(GetPluginRegPath().c_str(), path, szValue);
 }
@@ -4230,22 +4325,42 @@ void CIPTVChannelEditorDlg::SaveRegPlugin(LPCTSTR path, int value)
 	theApp.WriteProfileInt(GetPluginRegPath().c_str(), path, value);
 }
 
-CString CIPTVChannelEditorDlg::ReadRegString(LPCTSTR path)
+CString CIPTVChannelEditorDlg::ReadRegStringT(LPCTSTR path) const
 {
 	return theApp.GetProfileString(REG_SETTINGS, path);
 }
 
-int CIPTVChannelEditorDlg::ReadRegInt(LPCTSTR path, int default /*= 0*/)
+std::string CIPTVChannelEditorDlg::ReadRegStringA(LPCTSTR path) const
+{
+	return utils::utf16_to_utf8(theApp.GetProfileString(REG_SETTINGS, path).GetString());
+}
+
+std::wstring CIPTVChannelEditorDlg::ReadRegStringW(LPCTSTR path) const
+{
+	return theApp.GetProfileString(REG_SETTINGS, path).GetString();
+}
+
+int CIPTVChannelEditorDlg::ReadRegInt(LPCTSTR path, int default /*= 0*/) const
 {
 	return theApp.GetProfileInt(REG_SETTINGS, path, default);
 }
 
-CString CIPTVChannelEditorDlg::ReadRegStringPlugin(LPCTSTR path)
+CString CIPTVChannelEditorDlg::ReadRegStringPluginT(LPCTSTR path) const
 {
 	return theApp.GetProfileString(GetPluginRegPath().c_str(), path);
 }
 
-int CIPTVChannelEditorDlg::ReadRegIntPlugin(LPCTSTR path, int default /*= 0*/)
+std::string CIPTVChannelEditorDlg::ReadRegStringPluginA(LPCTSTR path) const
+{
+	return utils::utf16_to_utf8(theApp.GetProfileString(GetPluginRegPath().c_str(), path).GetString());
+}
+
+std::wstring CIPTVChannelEditorDlg::ReadRegStringPluginW(LPCTSTR path) const
+{
+	return theApp.GetProfileString(GetPluginRegPath().c_str(), path).GetString();
+}
+
+int CIPTVChannelEditorDlg::ReadRegIntPlugin(LPCTSTR path, int default /*= 0*/) const
 {
 	return theApp.GetProfileInt(GetPluginRegPath().c_str(), path, default);
 }

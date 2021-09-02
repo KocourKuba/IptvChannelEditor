@@ -11,8 +11,6 @@ bool PlaylistEntry::Parse(const std::string& str)
 	{
 		case m3u_entry::ext_pathname:
 			stream_uri->parse_uri(str);
-			domain = stream_uri->get_domain();
-			access_key = stream_uri->get_token();
 			return true;
 		case m3u_entry::ext_group:
 			category = utils::utf8_to_utf16(m3uEntry.get_dvalue());
@@ -43,12 +41,18 @@ bool PlaylistEntry::Parse(const std::string& str)
 				}
 			}
 
+			// #EXTINF:-1 timeshift="14" catchup-days="14" catchup-type="flussonic" tvg-id="pervy"  group-title="Общие" tvg-logo="http://pl.ottglanz.tv:80/icon/2214.png",Первый HD
 			if (const auto& pair = tags.find(m3u_entry::tag_tvg_logo); pair != tags.end())
 			{
 				set_icon_uri(utils::string_replace(pair->second, "//epg.it999.ru/img/", "//epg.it999.ru/img2/"));
 			}
 
 			if (const auto& pair = tags.find(m3u_entry::tag_tvg_rec); pair != tags.end())
+			{
+				set_archive_days(utils::char_to_int(pair->second));
+			}
+
+			if (const auto& pair = tags.find(m3u_entry::tag_catchup_days); pair != tags.end())
 			{
 				set_archive_days(utils::char_to_int(pair->second));
 			}

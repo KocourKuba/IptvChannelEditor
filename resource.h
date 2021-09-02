@@ -27,7 +27,7 @@
 #define IDC_BUTTON_GET                  1007
 #define IDC_BUTTON_IMPORT               1010
 #define IDC_BUTTON_ADD_NEW_CHANNELS_LIST 1011
-#define IDC_BUTTON_LOAD_PLAYLIST        1012
+#define IDC_BUTTON_CHOOSE_PLAYLIST      1012
 #define IDC_BUTTON_PACK                 1013
 #define IDC_BUTTON_PL_FILTER            1014
 #define IDC_BUTTON_PL_SEARCH_NEXT       1015
@@ -54,10 +54,12 @@
 #define IDC_EDIT_ARCHIVE_CHECK_HOURS    1039
 #define IDC_EDIT_CATEGORY               1040
 #define IDC_EDIT_DOMAIN                 1041
+#define IDC_EDIT_PASSWORD               1041
 #define IDC_EDIT_EPG1_ID                1043
 #define IDC_EDIT_INFO_AUDIO             1044
 #define IDC_EDIT_INFO_VIDEO             1045
 #define IDC_EDIT_KEY                    1046
+#define IDC_EDIT_LOGIN                  1047
 #define IDC_EDIT_PL_SEARCH              1048
 #define IDC_EDIT_PLAYLIST_URL           1049
 #define IDC_EDIT_SEARCH                 1051

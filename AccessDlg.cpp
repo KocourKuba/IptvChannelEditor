@@ -109,8 +109,8 @@ void CAccessDlg::OnBnClickedBtnGet()
 		utils::string_rtrim(line, "\r");
 		if (!entry->Parse(line)) continue;
 
-		const auto& access_key = entry->get_access_key();
-		const auto& domain = entry->get_domain();
+		const auto& access_key = entry->get_uri_stream()->get_token();
+		const auto& domain = entry->get_uri_stream()->get_domain();
 		if (!access_key.empty() && !domain.empty() && access_key != "00000000000000" && domain != "localhost")
 		{
 			m_accessKey = access_key.c_str();
