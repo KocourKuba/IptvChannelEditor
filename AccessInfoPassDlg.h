@@ -34,7 +34,7 @@ protected:
 	CString m_status;
 	CString m_subscription;
 	CString m_balance;
-	CString m_forecast;
+	CString m_packages_price;
 	CString m_login;
 	CString m_password;
 };

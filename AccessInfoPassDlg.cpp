@@ -30,7 +30,7 @@ void CAccessInfoPassDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_STATUS, m_status);
 	DDX_Text(pDX, IDC_EDIT_SUBSCRIPTION, m_subscription);
 	DDX_Text(pDX, IDC_EDIT_BALANCE, m_balance);
-	DDX_Text(pDX, IDC_EDIT_FORECAST, m_forecast);
+	DDX_Text(pDX, IDC_EDIT_PACKAGES_PRICE, m_packages_price);
 	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 }
 
@@ -84,7 +84,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		{
 			m_subscription = utils::utf8_to_utf16(js_data.value("abon", "")).c_str();
 			m_balance.Format(_T("%hs RUR"), js_data.value("money", "").c_str());
-			m_forecast.Format(_T("%hs RUR"), js_data.value("money_need", "").c_str());
+			m_packages_price.Format(_T("%hs RUR"), js_data.value("money_need", "").c_str());
 		}
 	}
 	catch (const json::parse_error&)

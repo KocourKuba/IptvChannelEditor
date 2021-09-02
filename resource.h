@@ -102,8 +102,7 @@
 #define IDC_EDIT_STATUS                 1092
 #define IDC_EDIT_SUBSCRIPTION           1093
 #define IDC_EDIT_BALANCE                1094
-#define IDC_EDIT_STATUS4                1095
-#define IDC_EDIT_FORECAST               1095
+#define IDC_EDIT_PACKAGES_PRICE         1095
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -130,7 +129,7 @@
 #define ID_ADD_TO_FAVORITE              32798
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
