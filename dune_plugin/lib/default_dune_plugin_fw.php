@@ -17,8 +17,9 @@ class DefaultDunePluginFw extends DunePluginFw
         return new DefaultDunePluginFw::$plugin_class_name;
     }
 
-    ///////////////////////////////////////////////////////////////////////
-
+    /**
+     * @throws Exception
+     */
     public function call_plugin($call_ctx_json)
     {
         // $call_ctx = json_decode($call_ctx_json);
@@ -31,8 +32,9 @@ class DefaultDunePluginFw extends DunePluginFw
                     json_decode($call_ctx_json)));
     }
 
-    ///////////////////////////////////////////////////////////////////////
-
+    /**
+     * @throws Exception
+     */
     protected function call_plugin_impl($call_ctx)
     {
         static $plugin;
@@ -63,8 +65,6 @@ class DefaultDunePluginFw extends DunePluginFw
         }
 
         // assert($plugin);
-
-        $out_data = null;
 
         try {
             $out_data = $this->invoke_operation($plugin, $call_ctx);
@@ -122,6 +122,3 @@ class DefaultDunePluginFw extends DunePluginFw
 ///////////////////////////////////////////////////////////////////////////
 
 DunePluginFw::$instance = new DefaultDunePluginFw();
-
-///////////////////////////////////////////////////////////////////////////
-?>

@@ -75,9 +75,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen
 
             $this->vod->remove_favorite_movie($movie_id, $plugin_cookies);
 
-            return ActionFactory::invalidate_folders(
-                array(
-                    self::get_media_url_str($movie_id)));
+            return ActionFactory::invalidate_folders(array(self::get_media_url_str()));
         }
 
         return null;
@@ -125,5 +123,3 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen
         return $this->vod->get_archive($media_url);
     }
 }
-
-?>

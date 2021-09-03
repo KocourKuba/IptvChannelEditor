@@ -77,17 +77,17 @@ std::string CIPTVChannelEditorDlg::m_ch_access_key;
 static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/index.m3u8";
-static constexpr auto URI_TEMPLATE_OTTGLANZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+static constexpr auto URI_TEMPLATE_GLANZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 
 static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
 static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG1_TEMPLATE_SHARACLUB = "http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG1_TEMPLATE_OTTGLANZ = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json";
+static constexpr auto EPG1_TEMPLATE_GLANZ = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json";
 
 static constexpr auto EPG2_TEMPLATE_EDEM = "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
 static constexpr auto EPG2_TEMPLATE_SHARAVOZ = "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG2_TEMPLATE_SHARACLUB = "http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE_OTTGLANZ = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json";
+static constexpr auto EPG2_TEMPLATE_GLANZ = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json";
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
@@ -1033,7 +1033,7 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, 
 			}
 			break;
 		case StreamType::enGlanz:
-			uri_template = URI_TEMPLATE_OTTGLANZ;
+			uri_template = URI_TEMPLATE_GLANZ;
 			if (hours_back)
 			{
 				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
@@ -1076,7 +1076,7 @@ std::string CIPTVChannelEditorDlg::GetEpgTemplate(BOOL first) const
 		case StreamType::enSharaclub:
 			return first ? EPG1_TEMPLATE_SHARACLUB : EPG2_TEMPLATE_SHARACLUB;
 		case StreamType::enGlanz:
-			return first ? EPG1_TEMPLATE_OTTGLANZ : EPG2_TEMPLATE_OTTGLANZ;
+			return first ? EPG1_TEMPLATE_GLANZ : EPG2_TEMPLATE_GLANZ;
 		case StreamType::enBase:
 		case StreamType::enChannels:
 		default:
@@ -2390,7 +2390,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 		{
 			case StreamType::enEdem:
 			case StreamType::enGlanz:
-				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id());
+				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg2_id());
 				break;
 			case StreamType::enSharaclub:
 			case StreamType::enSharavoz:
@@ -3026,7 +3026,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n", aName.c_str(), capsName.c_str());
+	os << fmt::format("<?php\nrequire_once 'configs/{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n", aName.c_str(), capsName.c_str());
 	os.close();
 
 

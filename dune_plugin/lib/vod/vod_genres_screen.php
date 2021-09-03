@@ -100,5 +100,3 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
         return $this->vod->get_archive($media_url);
     }
 }
-
-?>

@@ -1,5 +1,4 @@
 ﻿<?php
-///////////////////////////////////////////////////////////////////////////
 
 require_once 'tv.php';
 require_once 'default_group.php';
@@ -348,6 +347,3 @@ abstract class AbstractTv implements Tv
         return 'favorite_channels_' . hash('crc32', $this->get_channel_list_url($plugin_cookies));
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

@@ -233,6 +233,3 @@ class DefaultDunePlugin implements DunePlugin
             $user_input, $plugin_cookies);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

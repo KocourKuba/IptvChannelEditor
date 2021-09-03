@@ -22,7 +22,7 @@ class StarnetPluginTv extends AbstractTv
 
     public function get_fav_icon_url()
     {
-        return ViewsConfig::FAV_CHANNEL_GROUP_ICON_PATH;
+        return DefaultConfig::FAV_CHANNEL_GROUP_ICON_PATH;
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -38,12 +38,12 @@ class StarnetPluginTv extends AbstractTv
 
     public function is_favorites_supported()
     {
-        return self::$config->GET_TV_FAVORITES_SUPPORTED();
+        return self::$config->TV_FAVORITES_SUPPORTED;
     }
 
     public function get_channel_list_url($plugin_cookies)
     {
-        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : self::$config->GET_CHANNEL_LIST_URL();
+        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : self::$config->CHANNEL_LIST_URL;
     }
 
     public function get_config()
@@ -106,15 +106,15 @@ class StarnetPluginTv extends AbstractTv
         // Favorites group
         if ($this->is_favorites_supported()) {
             $this->groups->put(new FavoritesGroup($this,
-                ViewsConfig::FAV_CHANNEL_GROUP_ID,
-                ViewsConfig::FAV_CHANNEL_GROUP_CAPTION,
-                ViewsConfig::FAV_CHANNEL_GROUP_ICON_PATH));
+                DefaultConfig::FAV_CHANNEL_GROUP_ID,
+                DefaultConfig::FAV_CHANNEL_GROUP_CAPTION,
+                DefaultConfig::FAV_CHANNEL_GROUP_ICON_PATH));
         }
 
         // All channels group
         $this->groups->put(new AllChannelsGroup($this,
-            ViewsConfig::ALL_CHANNEL_GROUP_CAPTION,
-            ViewsConfig::ALL_CHANNEL_GROUP_ICON_PATH));
+            DefaultConfig::ALL_CHANNEL_GROUP_CAPTION,
+            DefaultConfig::ALL_CHANNEL_GROUP_ICON_PATH));
 
         // read category
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
@@ -142,7 +142,7 @@ class StarnetPluginTv extends AbstractTv
             // substitute template
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = strval($xml_tv_channel->channel_id);
-                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, self::$config->GET_MEDIA_URL_TEMPLATE());
+                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, self::$config->MEDIA_URL_TEMPLATE);
             } else {
                 $streaming_url = strval($xml_tv_channel->streaming_url);
                 $channel_id = hash("crc32", $streaming_url);
@@ -240,7 +240,7 @@ class StarnetPluginTv extends AbstractTv
         $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $url);
         hd_print("AdjustedStreamUri: $url");
 
-        if (self::$config->GET_USE_TOKEN()
+        if (self::$config->USE_TOKEN
             && empty($plugin_cookies->subdomain_local)
             && empty($plugin_cookies->ott_key_local)) {
             hd_print("Error: pin not set");

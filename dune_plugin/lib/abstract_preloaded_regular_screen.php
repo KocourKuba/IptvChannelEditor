@@ -3,8 +3,7 @@
 
 require_once 'abstract_regular_screen.php';
 
-abstract class AbstractPreloadedRegularScreen
-    extends AbstractRegularScreen
+abstract class AbstractPreloadedRegularScreen extends AbstractRegularScreen
 {
     protected function __construct($id, $folder_views)
     {
@@ -23,6 +22,3 @@ abstract class AbstractPreloadedRegularScreen
             $this->get_all_folder_items($media_url, &$plugin_cookies));
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

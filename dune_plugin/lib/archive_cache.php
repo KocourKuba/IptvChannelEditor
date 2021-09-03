@@ -31,5 +31,3 @@ class ArchiveCache
         self::$archive_by_id = null;
     }
 }
-
-?>

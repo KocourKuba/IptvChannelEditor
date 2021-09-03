@@ -9,7 +9,7 @@ using json = nlohmann::json;
 
 static constexpr auto ACCESS_TEMPLATE_SHARACLUB = "http://list.playtv.pro/api/dune-api5m.php?subscr={:s}-{:s}";
 static constexpr auto PLAYLIST_TEMPLATE_SHARACLUB = "http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}";
-static constexpr auto PLAYLIST_TEMPLATE_OTTGLANZ = "http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
+static constexpr auto PLAYLIST_TEMPLATE_GLANZ = "http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
 
 // CAccessDlg dialog
 
@@ -107,7 +107,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 			tpl = PLAYLIST_TEMPLATE_SHARACLUB;
 			break;
 		case StreamType::enGlanz:
-			tpl = PLAYLIST_TEMPLATE_OTTGLANZ;
+			tpl = PLAYLIST_TEMPLATE_GLANZ;
 			break;
 		default:
 			return;

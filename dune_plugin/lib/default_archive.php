@@ -138,5 +138,3 @@ class DefaultArchive implements Archive
         return 'plugin_archive://' . $this->id . '/' . $key;
     }
 }
-
-?>

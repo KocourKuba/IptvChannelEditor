@@ -1,6 +1,4 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-
 require_once 'lib/screen.php';
 require_once 'vod.php';
 require_once 'vod_series_list_screen.php';
@@ -120,6 +118,3 @@ class VodMovieScreen implements Screen, UserInputHandler
         return null;
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

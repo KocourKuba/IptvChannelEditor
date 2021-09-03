@@ -173,13 +173,13 @@ class EpgManager
 
         try {
             // checks if epg already loaded
-            preg_match('|^.*\/(.+)$|', $url, $match);
+            preg_match('/^.*\/(.+)$/', $url, $match);
             $epgCacheFile = $cache_dir . $day_start_ts . '_' . $match[1];
             if (!file_exists($epgCacheFile)) {
                 hd_print("epg uri: $url");
                 $doc = HD::http_get_document($url);
                 if(!file_put_contents($epgCacheFile, $doc)) {
-                    hd_print("Writing to {$epgCacheFile} is not possible!");
+                    hd_print("Writing to $epgCacheFile is not possible!");
                 }
             }
 
@@ -207,6 +207,4 @@ class EpgManager
 
         return $epg;
     }
-
-
 }

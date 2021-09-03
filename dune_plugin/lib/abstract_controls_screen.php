@@ -106,6 +106,3 @@ abstract class AbstractControlsScreen
             $need_confirm, $need_apply);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

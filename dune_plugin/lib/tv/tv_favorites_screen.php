@@ -1,5 +1,4 @@
 <?php
-
 require_once 'tv.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
@@ -158,5 +157,3 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         return $this->tv->get_archive($media_url);
     }
 }
-
-?>

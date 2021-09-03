@@ -37,5 +37,3 @@ interface Vod
     /** Hook.*/
     public function folder_entered(MediaURL $media_url, &$plugin_cookies);
 }
-
-?>

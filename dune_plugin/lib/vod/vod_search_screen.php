@@ -1,22 +1,15 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-
 require_once 'lib/abstract_controls_screen.php';
-
-///////////////////////////////////////////////////////////////////////////
 
 class VodSearchScreen extends AbstractControlsScreen
 {
     const ID = 'vod_search';
+    protected $vod;
 
     public static function get_media_url_str()
     {
         return MediaURL::encode(array('screen_id' => self::ID));
     }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    protected $vod;
 
     public function __construct(Vod $vod)
     {
@@ -33,8 +26,7 @@ class VodSearchScreen extends AbstractControlsScreen
 
         $defs = array();
 
-        $this->add_label($defs, null,
-            "Enter part of movie name:");
+        $this->add_label($defs, null,"Enter part of movie name:");
 
         $this->add_text_field($defs, 'pattern', null,
             $pattern, false, false, true, false,
@@ -69,19 +61,15 @@ class VodSearchScreen extends AbstractControlsScreen
                 $defs = $this->do_get_control_defs($plugin_cookies);
 
                 return ActionFactory::reset_controls($defs,
-                    ActionFactory::open_folder(
-                        $this->vod->get_search_media_url_str($pattern),
-                        $pattern));
+                    ActionFactory::open_folder($this->vod->get_search_media_url_str($pattern), $pattern));
             }
         } else if ($user_input->action_type === 'confirm') {
             $control_id = $user_input->control_id;
-            $new_value = $user_input->{$control_id};
 
             if ($control_id === 'pattern') {
                 $pattern = $user_input->pattern;
                 if (preg_match('/^\s*$/', $pattern)) {
-                    return ActionFactory::show_error(false,
-                        'Pattern should not be empty');
+                    return ActionFactory::show_error(false, 'Pattern should not be empty');
                 }
             }
         }
@@ -89,6 +77,3 @@ class VodSearchScreen extends AbstractControlsScreen
         return null;
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

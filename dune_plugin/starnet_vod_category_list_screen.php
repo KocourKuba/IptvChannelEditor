@@ -64,16 +64,16 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        if (static::$config->GET_VOD_FAVORITES_SUPPORTED() &&
+        if (static::$config->VOD_FAVORITES_SUPPORTED &&
             !isset($media_url->category_id)) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => VodFavoritesScreen::get_media_url_str(),
-                PluginRegularFolderItem::caption => ViewsConfig::FAV_MOVIES_CATEGORY_CAPTION,
+                PluginRegularFolderItem::caption => DefaultConfig::FAV_MOVIES_CATEGORY_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => ViewsConfig::FAV_MOVIES_CATEGORY_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => ViewsConfig::FAV_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::icon_path => DefaultConfig::FAV_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => DefaultConfig::FAV_MOVIES_CATEGORY_ICON_PATH,
                 )
             );
         }
@@ -106,7 +106,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
      */
     private function fetch_vod_categories()
     {
-        $doc = HD::http_get_document(static::$config->GET_VOD_CATEGORIES_URL());
+        $doc = HD::http_get_document(static::$config->VOD_CATEGORIES_URL);
 
         if (is_null($doc))
             throw new Exception('Can not fetch playlist');
@@ -157,7 +157,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
     private function get_folder_views()
     {
-        return ViewsConfig::GET_VOD_CATEGORY_LIST_FOLDER_VIEWS();
+        return static::$config->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS();
     }
 }
 

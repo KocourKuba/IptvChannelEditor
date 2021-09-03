@@ -6,6 +6,9 @@ class ShortMovie
     public $name;
     public $poster_url;
 
+    /**
+     * @throws Exception
+     */
     public function __construct($id, $name, $poster_url)
     {
         if (is_null($id))
@@ -36,6 +39,9 @@ class MovieSeries
 {
     public $id;
 
+    /**
+     * @throws Exception
+     */
     public function __construct($id)
     {
         if (is_null($id))
@@ -70,6 +76,9 @@ class Movie
 
     public $series_list = null;
 
+    /**
+     * @throws Exception
+     */
     public function __construct($id)
     {
         if (is_null($id))
@@ -128,6 +137,9 @@ class Movie
         $this->series_list = array();
     }
 
+    /**
+     * @throws Exception
+     */
     public function add_series_data($id, $name,
                                     $playback_url, $playback_url_is_stream_url)
     {
@@ -162,6 +174,9 @@ class Movie
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_vod_info($sel_id, $buffering_ms)
     {
         if (!is_array($this->series_list) ||
@@ -194,5 +209,3 @@ class Movie
         );
     }
 }
-
-?>

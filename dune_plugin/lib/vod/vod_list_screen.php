@@ -1,14 +1,10 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-
 require_once 'lib/abstract_regular_screen.php';
 
 abstract class VodListScreen extends AbstractRegularScreen
     implements UserInputHandler
 {
     const ID = 'vod_list';
-
-    ///////////////////////////////////////////////////////////////////////
 
     private $vod;
 
@@ -18,8 +14,7 @@ abstract class VodListScreen extends AbstractRegularScreen
 
         $this->vod = $vod;
 
-        UserInputHandlerRegistry::get_instance()->
-        register_handler($this);
+        UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -34,14 +29,11 @@ abstract class VodListScreen extends AbstractRegularScreen
             $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::vod_play();
 
         if ($this->vod->is_favorites_supported()) {
-            $add_favorite_action =
-                UserInputHandlerRegistry::create_action(
-                    $this, 'add_favorite');
+            $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
             $add_favorite_action['caption'] = 'Favorite';
 
             $popup_menu_action =
-                UserInputHandlerRegistry::create_action(
-                    $this, 'popup_menu');
+                UserInputHandlerRegistry::create_action($this, 'popup_menu');
 
             $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
             $actions[GUI_EVENT_KEY_POPUP_MENU] = $popup_menu_action;
@@ -65,13 +57,7 @@ abstract class VodListScreen extends AbstractRegularScreen
             if (!isset($user_input->selected_media_url))
                 return null;
 
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $movie_id = $media_url->movie_id;
-
-            $is_favorite = $this->vod->is_favorite_movie_id($movie_id);
-            $add_favorite_action =
-                UserInputHandlerRegistry::create_action(
-                    $this, 'add_favorite');
+            $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
             $caption = 'Add to My Movies';
             $menu_items[] = array(
                 GuiMenuItemDef::caption => $caption,
@@ -87,13 +73,11 @@ abstract class VodListScreen extends AbstractRegularScreen
 
             $is_favorite = $this->vod->is_favorite_movie_id($movie_id);
             if ($is_favorite) {
-                return ActionFactory::show_title_dialog(
-                    'Movie already resides in My Movies');
+                return ActionFactory::show_title_dialog('Movie already resides in My Movies');
             } else {
                 $this->vod->add_favorite_movie($movie_id, $plugin_cookies);
 
-                return ActionFactory::show_title_dialog(
-                    'Movie has been added to My Movies');
+                return ActionFactory::show_title_dialog('Movie has been added to My Movies');
             }
         }
 
@@ -106,6 +90,9 @@ abstract class VodListScreen extends AbstractRegularScreen
     protected abstract function get_short_movie_range(
         MediaURL $media_url, $from_ndx, &$plugin_cookies);
 
+    /**
+     * @throws Exception
+     */
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
         $movie_range = $this->get_short_movie_range(
@@ -148,6 +135,3 @@ abstract class VodListScreen extends AbstractRegularScreen
         return parent::get_folder_view($media_url, $plugin_cookies);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

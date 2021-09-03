@@ -1,6 +1,4 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-
 require_once 'vod.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
@@ -11,9 +9,7 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
     public static function get_media_url_str($movie_id)
     {
         return MediaURL::encode(
-            array(
-                'screen_id' => self::ID,
-                'movie_id' => $movie_id));
+            array('screen_id' => self::ID, 'movie_id' => $movie_id));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -107,6 +103,3 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
         return $this->vod->get_archive($media_url);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

@@ -7,7 +7,6 @@ require_once 'lib/utils.php';
 require_once 'lib/tv/tv_group_list_screen.php';
 require_once 'lib/tv/tv_channel_list_screen.php';
 require_once 'lib/tv/tv_favorites_screen.php';
-require_once 'lib/views_config.php';
 
 require_once 'lib/vod/vod_list_screen.php';
 require_once 'lib/vod/vod_movie_screen.php';
@@ -45,15 +44,11 @@ class StarnetDunePlugin extends DefaultDunePlugin
         */
 
         $this->tv = new StarnetPluginTv();
-        $this->tv->set_config(new $plugin_type);
-        $bg_picture = $plugin_type::GET_BG_PICTURE();
-        //hd_print("bg_pic: $bg_picture");
-        $this->add_screen(new StarnetMainScreen($this->tv, ViewsConfig::GET_TV_GROUP_LIST_FOLDER_VIEWS($bg_picture)));
-        $this->add_screen(new TvChannelListScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)));
-        $this->add_screen(new TvFavoritesScreen($this->tv, ViewsConfig::GET_TV_CHANNEL_LIST_FOLDER_VIEWS($bg_picture)));
+        $config = new $plugin_type;
+        $this->tv->set_config(new $config);
+        $this->add_screen(new StarnetMainScreen($this->tv, $config->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new TvChannelListScreen($this->tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new TvFavoritesScreen($this->tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
         $this->add_screen(new StarnetSetupScreen($this->tv));
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

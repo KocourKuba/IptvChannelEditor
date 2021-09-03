@@ -28,7 +28,7 @@ class StarnetVodListScreen extends VodListScreen
      */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        $doc = HD::http_get_document(sprintf(static::$config->GET_MOVIE_LIST_URL_FORMAT(), $media_url->category_id));
+        $doc = HD::http_get_document(sprintf(static::$config->MOVIE_LIST_URL_FORMAT, $media_url->category_id));
 
         if (is_null($doc))
             throw new Exception('Can not fetch movie list');
@@ -58,6 +58,3 @@ class StarnetVodListScreen extends VodListScreen
         return new ShortMovieRange(0, count($movies), $movies);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

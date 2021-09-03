@@ -3,19 +3,23 @@ require_once 'lib/default_config.php';
 
 class GlanzPluginConfig extends DefaultConfig
 {
-    const PLUGIN_NAME = 'Glanz TV';
-    const PLUGIN_SHORT_NAME = 'glanz';
-    const PLUGIN_VERSION = '1.0.0';
-    const PLUGIN_DATE = '01.09.2021';
+    public static $PLUGIN_NAME = 'Glanz TV';
+    public static $PLUGIN_SHORT_NAME = 'glanz';
+    public static $PLUGIN_VERSION = '1.0.0';
+    public static $PLUGIN_DATE = '01.09.2021';
 
-    const MEDIA_URL_TEMPLATE = 'http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
-    const CHANNEL_LIST_URL = 'ottglanz_channel_list.xml';
-    const EPG1_URL_FORMAT = 'http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json'; // epg_id date(YYYYMMDD)
-    const EPG2_URL_FORMAT = 'http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json'; // epg_id date(YYYYMMDD)
+    public static $MEDIA_URL_TEMPLATE = 'http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
+    public static $CHANNEL_LIST_URL = 'ottglanz_channel_list.xml';
+    public static $EPG1_URL_FORMAT = 'http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json'; // epg_id date(YYYYMMDD)
+    public static $EPG2_URL_FORMAT = 'http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json'; // epg_id date(YYYYMMDD)
 
+    // Views constants
+    public static $TV_CHANNEL_ICON_WIDTH = 60;
+    public static $TV_CHANNEL_ICON_HEIGHT = 60;
+
+    // local parameters
     const ACCOUNT_PLAYLIST_URL = 'http://%s/tv_live-m3u8/%s-%s';
     const ACCOUNT_PRIMARY_DOMAIN = 'pl.ottglanz.tv';
-
     const STREAM_URL_PATTERN = '/^https?:\/\/(.+)\/\d+\/(?:mpegts|.+\.m3u8)\?username=.+&password=.+&token=(.+)&ch_id=\d+&req_host=(.+)$/';
 
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)

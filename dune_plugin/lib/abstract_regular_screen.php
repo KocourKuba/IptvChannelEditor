@@ -112,6 +112,3 @@ abstract class AbstractRegularScreen implements RegularScreen
         return null;
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

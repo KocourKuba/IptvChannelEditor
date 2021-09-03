@@ -1,6 +1,4 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-
 require_once 'vod.php';
 
 abstract class AbstractVod implements Vod
@@ -59,15 +57,9 @@ abstract class AbstractVod implements Vod
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function is_favorites_supported()
-    {
-        return $this->config->GET_VOD_FAVORITES_SUPPORTED();
-    }
+    public abstract function is_favorites_supported();
 
-    public function is_movie_page_supported()
-    {
-        return $this->config->GET_VOD_MOVIE_PAGE_SUPPORTED();
-    }
+    public abstract function is_movie_page_supported();
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -379,5 +371,3 @@ abstract class AbstractVod implements Vod
     { /* Nop */
     }
 }
-
-///////////////////////////////////////////////////////////////////////////

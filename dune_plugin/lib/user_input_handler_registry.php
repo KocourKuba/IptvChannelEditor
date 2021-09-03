@@ -1,11 +1,16 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
 
 require_once('user_input_handler.php');
 
 class UserInputHandlerRegistry
 {
     private static $instance = null;
+    private $handlers;
+
+    private function __construct()
+    {
+        $this->handlers = array();
+    }
 
     public static function get_instance()
     {
@@ -32,16 +37,6 @@ class UserInputHandlerRegistry
         );
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////
-
-    private $handlers;
-
-    private function __construct()
-    {
-        $this->handlers = array();
-    }
-
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         if (!isset($user_input->handler_id))
@@ -61,6 +56,3 @@ class UserInputHandlerRegistry
         $this->handlers[$handler_id] = $handler;
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

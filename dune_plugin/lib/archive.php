@@ -6,5 +6,3 @@ interface Archive
 
     public function get_archive_def();
 }
-
-?>
