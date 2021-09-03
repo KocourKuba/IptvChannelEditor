@@ -33,6 +33,7 @@ public:
 	static constexpr auto TIME_SHIFT_HOURS = "timeshift_hours";
 	static constexpr auto TV_CATEGORIES = "tv_categories";
 	static constexpr auto TV_CATEGORY_ID = "tv_category_id";
+	static constexpr auto INT_ID = "int_id";
 	static constexpr auto STREAMING_URL = "streaming_url";
 	static constexpr auto ARCHIVE = "archive";
 	static constexpr auto PROTECTED = "protected";

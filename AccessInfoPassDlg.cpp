@@ -7,6 +7,10 @@
 
 using json = nlohmann::json;
 
+static constexpr auto ACCESS_TEMPLATE_SHARACLUB = "http://list.playtv.pro/api/dune-api5m.php?subscr={:s}-{:s}";
+static constexpr auto PLAYLIST_TEMPLATE_SHARACLUB = "http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}";
+static constexpr auto PLAYLIST_TEMPLATE_OTTGLANZ = "http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
+
 // CAccessDlg dialog
 
 IMPLEMENT_DYNAMIC(CAccessInfoPassDlg, CDialogEx)
@@ -68,9 +72,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	if (m_entry->get_stream_type() == StreamType::enSharaclub)
 	{
-		const auto& access_url = fmt::format("http://list.playtv.pro/api/dune-api5m.php?subscr={:s}-{:s}",
-											 login.c_str(),
-											 password.c_str());
+		const auto& access_url = fmt::format(ACCESS_TEMPLATE_SHARACLUB, login.c_str(), password.c_str());
 		std::vector<BYTE> data;
 		if (!utils::DownloadFile(access_url, data) || data.empty())
 			return;
@@ -98,22 +100,20 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		}
 	}
 
-	std::string pl_url;
+	LPCSTR tpl = nullptr;
 	switch (m_entry->get_stream_type())
 	{
 		case StreamType::enSharaclub:
-			pl_url = fmt::format("http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}",
-								 login.c_str(),
-								 password.c_str());
+			tpl = PLAYLIST_TEMPLATE_SHARACLUB;
 			break;
 		case StreamType::enOttglanz:
-			pl_url = fmt::format("http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls",
-								 login.c_str(),
-								 password.c_str());
+			tpl = PLAYLIST_TEMPLATE_OTTGLANZ;
 			break;
 		default:
 			return;
 	}
+
+	const auto& pl_url = fmt::format(tpl, login.c_str(), password.c_str());
 
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;

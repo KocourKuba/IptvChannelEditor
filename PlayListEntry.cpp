@@ -60,7 +60,6 @@ bool PlaylistEntry::Parse(const std::string& str)
 			if (const auto& pair = tags.find(m3u_entry::tag_tvg_id); pair != tags.end())
 			{
 				set_epg1_id(pair->second);
-				set_epg2_id(pair->second);
 			}
 
 			if (!m3uEntry.get_dir_title().empty())

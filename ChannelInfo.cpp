@@ -22,6 +22,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 
 	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
 	stream_uri->set_id(utils::get_value_string(node->first_node(CHANNEL_ID)));
+	stream_uri->set_int_id(utils::get_value_string(node->first_node(INT_ID)));
 	set_epg1_id(utils::get_value_string(node->first_node(EPG1_ID)));
 	set_epg2_id(utils::get_value_string(node->first_node(EPG2_ID)));
 	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
@@ -62,6 +63,13 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// <channel_id>1</channel_id> or <channel_id>tv3</channel_id>
 	channel_node->append_node(utils::alloc_node(alloc, CHANNEL_ID, get_id().c_str()));
+
+	// used in ottglanz
+	// <int_id>1</int_id>
+	if (!stream_uri->get_int_id().empty())
+	{
+		channel_node->append_node(utils::alloc_node(alloc, INT_ID, stream_uri->get_int_id().c_str()));
+	}
 
 	// <epg_id>8</epg_id>
 	channel_node->append_node(utils::alloc_node(alloc, EPG1_ID, get_epg1_id().c_str()));
