@@ -24,7 +24,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
     {
         $defs = array();
         try {
-            $result = $this->tv->get_config()->GetAccountStatus($plugin_cookies);
+            $result = $this->tv->config->GetAccountStatus($plugin_cookies);
             if ($result === false || $result->status != 'ok')
                 throw new Exception('Account error');
 

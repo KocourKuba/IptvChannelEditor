@@ -46,17 +46,6 @@ class StarnetPluginTv extends AbstractTv
         return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->config->CHANNEL_LIST_URL;
     }
 
-    public function get_config()
-    {
-        return $this->config;
-    }
-
-    public function set_config(DefaultConfig $config)
-    {
-        return $this->config = $config;
-    }
-    ///////////////////////////////////////////////////////////////////////
-
     /**
      * @throws Exception
      */

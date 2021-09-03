@@ -163,6 +163,12 @@ class HD
             throw new Exception($err_msg);
         }
 
+        if (empty($content)) {
+            $err_msg = "Empty content";
+            hd_print($err_msg);
+            throw new Exception($err_msg);
+        }
+
         hd_print("HTTP OK ($http_code)");
 
         curl_close($ch);

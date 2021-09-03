@@ -44,9 +44,9 @@ class StarnetDunePlugin extends DefaultDunePlugin
         */
 
         $this->tv = new StarnetPluginTv($plugin_type);
-        $this->add_screen(new StarnetMainScreen($this->tv, $this->tv->get_config()->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new TvChannelListScreen($this->tv, $this->tv->get_config()->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new TvFavoritesScreen($this->tv, $this->tv->get_config()->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new StarnetMainScreen($this->tv, $this->tv->config->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new TvChannelListScreen($this->tv, $this->tv->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new TvFavoritesScreen($this->tv, $this->tv->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
         $this->add_screen(new StarnetSetupScreen($this->tv));
     }
 }

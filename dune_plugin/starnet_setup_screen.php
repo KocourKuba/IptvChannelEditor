@@ -27,7 +27,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
     public function do_get_control_defs(&$plugin_cookies)
     {
         $defs = array();
-        $config = $this->tv->get_config();
+        $config = $this->tv->config;
 
         $format        = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
         $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $config->CHANNEL_LIST_URL;
@@ -244,7 +244,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'token_apply': // handle token dialog result
                     $plugin_cookies->login = $user_input->login;
                     $plugin_cookies->password = $user_input->password;
-                    if ($this->tv->get_config()->GetAccessInfo($plugin_cookies)) break;
+                    if ($this->tv->config->GetAccessInfo($plugin_cookies)) break;
                     return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                 case 'pass_dialog': // show pass dialog
                     $defs = $this->do_get_pass_control_defs($plugin_cookies);

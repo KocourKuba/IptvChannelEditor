@@ -82,7 +82,7 @@ class SharaclubPluginConfig extends DefaultConfig
 
     public static function GetAccessInfo($plugin_cookies)
     {
-        hd_print("Collect information from account");
+        hd_print("Collect information from sharaclub account");
         $found = false;
         if (!empty($plugin_cookies->login) && !empty($plugin_cookies->password)) {
             try {
