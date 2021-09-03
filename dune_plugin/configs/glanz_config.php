@@ -20,9 +20,8 @@ class GlanzPluginConfig extends DefaultConfig
 
         $this->MEDIA_URL_TEMPLATE = 'http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
         $this->CHANNEL_LIST_URL = 'glanz_channel_list.xml';
-        $this->EPG1_URL_FORMAT = 'http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/%s.json'; // epg_id date(YYYYMMDD)
-        $this->EPG2_URL_FORMAT = 'http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/%s.json'; // epg_id date(YYYYMMDD)
-
+        $this->EPG1_URL_FORMAT = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id date(YYYYMMDD)
+        $this->EPG2_URL_FORMAT = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id date(YYYYMMDD)
         // Views constants
         $this->TV_SANDWICH_WIDTH = 245;
         $this->TV_SANDWICH_HEIGHT = 140;

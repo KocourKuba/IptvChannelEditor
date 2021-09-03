@@ -79,15 +79,15 @@ static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u
 static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/index.m3u8";
 static constexpr auto URI_TEMPLATE_GLANZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 
-static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:d}.json";
+static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/edem/epg/%s.json";
 static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG1_TEMPLATE_SHARACLUB = "http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG1_TEMPLATE_GLANZ = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json";
+static constexpr auto EPG1_TEMPLATE_GLANZ = "http://epg.ott-play.com/ottg/epg/%s.json";
 
 static constexpr auto EPG2_TEMPLATE_EDEM = "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
 static constexpr auto EPG2_TEMPLATE_SHARAVOZ = "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG2_TEMPLATE_SHARACLUB = "http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE_GLANZ = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:d}.json";
+static constexpr auto EPG2_TEMPLATE_GLANZ = "http://epg.ott-play.com/ottg/epg/%s.json";
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
