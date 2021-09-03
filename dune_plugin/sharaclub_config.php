@@ -21,6 +21,8 @@ class SharaclubPluginConfig extends DefaultConfig
     const ACCOUNT_PRIMARY_DOMAIN = 'list.playtv.pro';
     const ACCOUNT_SECONDARY_DOMAIN = 'list.shara.tv';
 
+    const STREAM_URL_PATTERN = '/^https?:\/\/(.+)\/live\/(.+)\/.+\/.*\.m3u8$/';
+
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {
         $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
@@ -45,21 +47,21 @@ class SharaclubPluginConfig extends DefaultConfig
 
     public function GetAccountStatus($plugin_cookies)
     {
-        if (empty($plugin_cookies->token) && empty($plugin_cookies->pin))
+        if (empty($plugin_cookies->login) && empty($plugin_cookies->password))
             return false;
 
         try {
             $url = sprintf(self::ACCOUNT_INFO_URL,
                 self::ACCOUNT_PRIMARY_DOMAIN,
-                $plugin_cookies->token,
-                $plugin_cookies->pin);
+                $plugin_cookies->login,
+                $plugin_cookies->password);
             $content = HD::http_get_document($url);
         } catch (Exception $ex) {
             try {
                 $url = sprintf(self::ACCOUNT_INFO_URL,
                     self::ACCOUNT_SECONDARY_DOMAIN,
-                    $plugin_cookies->token,
-                    $plugin_cookies->pin);
+                    $plugin_cookies->login,
+                    $plugin_cookies->password);
                 $content = HD::http_get_document($url);
             } catch (Exception $ex) {
                 return false;
@@ -79,19 +81,19 @@ class SharaclubPluginConfig extends DefaultConfig
     {
         hd_print("Collect information from account");
         $found = false;
-        if (!empty($plugin_cookies->token) && !empty($plugin_cookies->pin)) {
+        if (!empty($plugin_cookies->login) && !empty($plugin_cookies->password)) {
             try {
                 $url = sprintf(self::ACCOUNT_PLAYLIST_URL,
                     self::ACCOUNT_PRIMARY_DOMAIN,
-                    $plugin_cookies->token,
-                    $plugin_cookies->pin);
+                    $plugin_cookies->login,
+                    $plugin_cookies->password);
                 $content = HD::http_get_document($url);
             } catch (Exception $ex) {
                 try {
                     $url = sprintf(self::ACCOUNT_PLAYLIST_URL,
                         self::ACCOUNT_SECONDARY_DOMAIN,
-                        $plugin_cookies->token,
-                        $plugin_cookies->pin);
+                        $plugin_cookies->login,
+                        $plugin_cookies->password);
                     $content = HD::http_get_document($url);
                 } catch (Exception $ex) {
                     return false;
@@ -102,7 +104,7 @@ class SharaclubPluginConfig extends DefaultConfig
             file_put_contents($tmp_file, $content);
             $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             for ($i = 0; $i < count($lines); ++$i) {
-                if (preg_match('/^https?:\/\/(.+)\/live\/(.+)\/.+\/.*\.m3u8$/', $lines[$i], $matches)) {
+                if (preg_match(self::STREAM_URL_PATTERN, $lines[$i], $matches)) {
                     $plugin_cookies->subdomain_local = $matches[1];
                     $plugin_cookies->ott_key_local = $matches[2];
                     $found = true;

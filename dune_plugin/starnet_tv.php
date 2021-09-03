@@ -157,6 +157,7 @@ class StarnetPluginTv extends AbstractTv
             {
                 // https not supported for old players
                 $icon_url = str_replace('https', 'https', strval($xml_tv_channel->icon_url));
+                $number = isset($xml_tv_channel->number) ? intval($xml_tv_channel->number) : 0;
                 $channel = new StarnetChannel(
                     $hash,
                     $channel_id,
@@ -164,6 +165,7 @@ class StarnetPluginTv extends AbstractTv
                     $icon_url,
                     $streaming_url,
                     intval($xml_tv_channel->archive),
+                    $number,
                     strval($xml_tv_channel->epg_id),
                     strval($xml_tv_channel->tvg_id),
                     intval($xml_tv_channel->protected),
@@ -243,6 +245,8 @@ class StarnetPluginTv extends AbstractTv
             && empty($plugin_cookies->ott_key_local)) {
             hd_print("Error: pin not set");
         }
+
+        $url = str_replace('{INT_ID}', $channel->get_number, $url);
 
         if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
             $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);

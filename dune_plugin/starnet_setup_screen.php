@@ -150,10 +150,10 @@ class StarnetSetupScreen extends AbstractControlsScreen
     {
         $defs = array();
 
-        $this->add_text_field($defs, 'token', 'Логин:',
-            $plugin_cookies->token, false, false, false, true, 500);
-        $this->add_text_field($defs, 'pin', 'Пароль:',
-            $plugin_cookies->pin, false, false, false, true, 500);
+        $this->add_text_field($defs, 'login', 'Логин:',
+            $plugin_cookies->login, false, false, false, true, 500);
+        $this->add_text_field($defs, 'password', 'Пароль:',
+            $plugin_cookies->password, false, false, false, true, 500);
 
         $this->add_vgap($defs, 50);
 
@@ -242,8 +242,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     return ActionFactory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select',
                         $defs, true);
                 case 'token_apply': // handle token dialog result
-                    $plugin_cookies->token = $user_input->token;
-                    $plugin_cookies->pin = $user_input->pin;
+                    $plugin_cookies->login = $user_input->login;
+                    $plugin_cookies->password = $user_input->password;
                     if ($this->tv->get_config()->GetAccessInfo($plugin_cookies)) break;
                     return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                 case 'pass_dialog': // show pass dialog

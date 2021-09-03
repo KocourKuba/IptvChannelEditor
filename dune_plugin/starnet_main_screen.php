@@ -85,7 +85,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
         $add_action['caption'] = 'Настройки плагина';
 
         // if token not set force to open setup screen
-        $token = isset($plugin_cookies->token) ? $plugin_cookies->token : '0';
+        $token = isset($plugin_cookies->login) ? $plugin_cookies->login : '0';
         if ($token == '0') {
             $setup_screen = ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки');
             return array(
