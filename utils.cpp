@@ -501,17 +501,37 @@ void SetImage(const CImage& image, CStatic& wnd)
 	HBITMAP hImg = nullptr;
 	if (image)
 	{
-		CRect rc;
-		wnd.GetClientRect(rc);
+		CRect rcDst;
+		wnd.GetClientRect(rcDst);
+
+		int srcWidth = image.GetWidth();
+		int srcHeight = image.GetHeight();
+
+		float Factor_X = (float)((float)rcDst.Width() / (float)srcWidth);
+		float Factor_Y = (float)((float)rcDst.Height() / (float)srcHeight);
+
+		int x = 0;
+		int y = 0;
+		if (Factor_X > Factor_Y)
+		{
+			x = (int)((rcDst.right - (int)((float)srcWidth * Factor_Y)) / 2);
+			Factor_X = Factor_Y;
+		}
+		else
+		{
+			y = (int)((rcDst.bottom - (int)((float)srcHeight * Factor_X)) / 2);
+			Factor_Y = Factor_X;
+		}
+
+		int Width = (int)(Factor_X * srcWidth);
+		int Height = (int)(Factor_Y * srcHeight);
 
 		CImage resized;
-		resized.Create(rc.Width(), rc.Height(), 32);
+		resized.Create(rcDst.Width(), rcDst.Height(), 32);
 		HDC dcImage = resized.GetDC();
 		SetStretchBltMode(dcImage, COLORONCOLOR);
-		image.StretchBlt(dcImage, rc, SRCCOPY);
-		// The next two lines test the image on a picture control.
-		image.StretchBlt(wnd.GetDC()->m_hDC, rc, SRCCOPY);
-
+		image.StretchBlt(dcImage, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
+		image.StretchBlt(wnd.GetDC()->m_hDC, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
 		resized.ReleaseDC();
 		hImg = (HBITMAP)resized.Detach();
 	}
@@ -520,4 +540,5 @@ void SetImage(const CImage& image, CStatic& wnd)
 	if (hOld)
 		::DeleteObject(hOld);
 }
-}
+
+} // namespace utils
