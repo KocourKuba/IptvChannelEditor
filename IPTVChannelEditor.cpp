@@ -9,6 +9,7 @@
 
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
+#include "IconCache.h"
 #include "utils.h"
 
 #ifdef _DEBUG
@@ -88,6 +89,10 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
+#ifdef _DEBUG
+	GetIconCache().DestroyInstance();
+#endif // _DEBUG
+
 	return FALSE;
 }
 
