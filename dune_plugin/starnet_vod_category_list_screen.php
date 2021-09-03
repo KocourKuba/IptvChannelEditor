@@ -1,10 +1,6 @@
 ﻿<?php
-///////////////////////////////////////////////////////////////////////////
-
 require_once 'starnet_vod_category.php';
 require_once 'starnet_vod_list_screen.php';
-
-///////////////////////////////////////////////////////////////////////////
 
 class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 {
@@ -160,6 +156,3 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
         return static::$config->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS();
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

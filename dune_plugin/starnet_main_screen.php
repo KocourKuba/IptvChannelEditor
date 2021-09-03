@@ -1,9 +1,6 @@
 ﻿<?php
-
 require_once 'lib/abstract_preloaded_regular_screen.php';
 require_once 'starnet_setup_screen.php';
-
-///////////////////////////////////////////////////////////////////////////
 
 class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 {

@@ -2,12 +2,19 @@
 
 interface Tv
 {
-    /** Return Array<Channel>*/
+    /**
+     * Return Array<Channel>
+     */
     public function get_channels();
 
-    /** Return Array<Group>*/
+    /**
+     * Return Array<Group>
+     */
     public function get_groups();
 
+    /**
+     * unload all channels
+     */
     public function unload_channels();
 
     public function ensure_channels_loaded(&$plugin_cookies);
@@ -28,16 +35,24 @@ interface Tv
 
     public function get_archive(MediaURL $media_url);
 
-    /** Hook.*/
+    /**
+     * Hook.
+     */
     public function folder_entered(MediaURL $media_url, &$plugin_cookies);
 
-    /** Hook for adding special group items.*/
+    /**
+     * Hook for adding special group items.
+     */
     public function add_special_groups(&$items);
 
-    /** Get id's stored in the cookie.*/
+    /**
+     * Get id's stored in the cookie.
+     */
     public function get_fav_channel_ids($plugin_cookies);
 
-    /** Put id's in the cookie.*/
+    /**
+     * Put id's in the cookie.
+     */
     public function set_fav_channel_ids($plugin_cookies, $ids);
 
     public function get_config();

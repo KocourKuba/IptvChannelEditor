@@ -24,7 +24,7 @@ class FavoritesGroup extends DefaultGroup
     {
         $channels = array();
 
-        $fav_channel_ids = $this->tv->get_fav_channel_ids();
+        $fav_channel_ids = $this->tv->get_fav_channel_ids($plugin_cookies);
         foreach ($fav_channel_ids as $channel_id)
             $channels[] = $this->tv->get_channel($channel_id);
 

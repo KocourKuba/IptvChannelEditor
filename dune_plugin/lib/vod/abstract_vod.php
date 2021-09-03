@@ -142,7 +142,6 @@ abstract class AbstractVod implements Vod
     {
         $movie = $this->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if ($movie === null) {
-            // TODO: dialog?
             return null;
         }
 

@@ -1,19 +1,22 @@
 ﻿<?php
-require_once 'lib/default_config.php';
+require_once 'default_config.php';
 
 class SharavozPluginConfig extends DefaultConfig
 {
-    public static $PLUGIN_NAME = 'Sharavoz TV';
-    public static $PLUGIN_SHORT_NAME = 'sharavoz';
-    public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '01.09.2021';
+    public function __construct()
+    {
+        $this->PLUGIN_NAME = 'Sharavoz TV';
+        $this->PLUGIN_SHORT_NAME = 'sharavoz';
+        $this->PLUGIN_VERSION = '1.0.0';
+        $this->PLUGIN_DATE = '01.09.2021';
 
-    public static $MPEG_TS_SUPPORTED = true;
+        $this->MPEG_TS_SUPPORTED = true;
 
-    public static $MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
-    public static $CHANNEL_LIST_URL = 'sharavoz_channel_list.xml';
-    public static $EPG1_URL_FORMAT = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
-    public static $EPG2_URL_FORMAT = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
+        $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
+        $this->CHANNEL_LIST_URL = 'sharavoz_channel_list.xml';
+        $this->EPG1_URL_FORMAT = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
+        $this->EPG2_URL_FORMAT = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
+    }
 
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {

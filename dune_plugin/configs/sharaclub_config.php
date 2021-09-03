@@ -1,27 +1,30 @@
 ﻿<?php
-require_once 'lib/default_config.php';
+require_once 'default_config.php';
 
 class SharaclubPluginConfig extends DefaultConfig
 {
-    public static $PLUGIN_NAME = 'Sharaclub TV';
-    public static $PLUGIN_SHORT_NAME = 'sharaclub';
-    public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '01.09.2021';
-
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $USE_TOKEN = true;
-
-    public static $MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
-    public static $CHANNEL_LIST_URL = 'sharaclub_channel_list.xml';
-    public static $EPG1_URL_FORMAT = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
-    public static $EPG2_URL_FORMAT = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
-
     // local parameters
     const ACCOUNT_INFO_URL = 'http://%s/api/dune-api5m.php?subscr=%s-%s';
     const ACCOUNT_PLAYLIST_URL = 'http://%s/tv_live-m3u8/%s-%s';
     const ACCOUNT_PRIMARY_DOMAIN = 'list.playtv.pro';
     const ACCOUNT_SECONDARY_DOMAIN = 'list.shara.tv';
     const STREAM_URL_PATTERN = '/^https?:\/\/(.+)\/live\/(.+)\/.+\/.*\.m3u8$/';
+
+    public function __construct()
+    {
+        $this->PLUGIN_NAME = 'Sharaclub TV';
+        $this->PLUGIN_SHORT_NAME = 'sharaclub';
+        $this->PLUGIN_VERSION = '1.0.0';
+        $this->PLUGIN_DATE = '01.09.2021';
+
+        $this->MPEG_TS_SUPPORTED = true;
+        $this->USE_TOKEN = true;
+
+        $this->MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
+        $this->CHANNEL_LIST_URL = 'sharaclub_channel_list.xml';
+        $this->EPG1_URL_FORMAT = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
+        $this->EPG2_URL_FORMAT = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
+    }
 
     public final function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
     {

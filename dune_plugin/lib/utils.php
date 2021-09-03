@@ -238,7 +238,6 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // TODO: localization
     private static $MONTHS = array(
         'January',
         'February',

@@ -47,7 +47,6 @@ class VodMovieScreen implements Screen, UserInputHandler
 
         $movie = $this->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if ($movie === null) {
-            // TODO: dialog?
             return null;
         }
 
