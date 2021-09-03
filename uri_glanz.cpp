@@ -1,7 +1,7 @@
 #include "StdAfx.h"
-#include "uri_ottglanz.h"
+#include "uri_glanz.h"
 
-void uri_ottglanz::parse_uri(const std::string& url)
+void uri_glanz::parse_uri(const std::string& url)
 {
 	// http://str01.ottg.cc/9195/video.m3u8?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkjX3BL
 	// http://str01.ottg.cc/9195/mpegts?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkjX3BL

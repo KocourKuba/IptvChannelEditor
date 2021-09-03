@@ -502,7 +502,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		}
 		case 3: // glanz
 		{
-			m_pluginType = StreamType::enOttglanz;
+			m_pluginType = StreamType::enGlanz;
 			m_pluginName = _T("Glanz");
 			m_embedded_info = FALSE;
 
@@ -594,7 +594,7 @@ std::wstring CIPTVChannelEditorDlg::GetPluginName() const
 		case 2: // Sharaclub
 			return L"sharaclub";
 		case 3: // Glanz
-			return L"ottglanz";
+			return L"glanz";
 	}
 
 	return L"";
@@ -1032,7 +1032,7 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, 
 					break;
 			}
 			break;
-		case StreamType::enOttglanz:
+		case StreamType::enGlanz:
 			uri_template = URI_TEMPLATE_OTTGLANZ;
 			if (hours_back)
 			{
@@ -1075,7 +1075,7 @@ std::string CIPTVChannelEditorDlg::GetEpgTemplate(BOOL first) const
 			return first ? EPG1_TEMPLATE_SHARAVOZ : EPG2_TEMPLATE_SHARAVOZ;
 		case StreamType::enSharaclub:
 			return first ? EPG1_TEMPLATE_SHARACLUB : EPG2_TEMPLATE_SHARACLUB;
-		case StreamType::enOttglanz:
+		case StreamType::enGlanz:
 			return first ? EPG1_TEMPLATE_OTTGLANZ : EPG2_TEMPLATE_OTTGLANZ;
 		case StreamType::enBase:
 		case StreamType::enChannels:
@@ -2362,7 +2362,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 		switch (m_pluginType)
 		{
 			case StreamType::enEdem:
-			case StreamType::enOttglanz:
+			case StreamType::enGlanz:
 				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id());
 				break;
 			case StreamType::enSharaclub:
@@ -2389,7 +2389,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 		switch (m_pluginType)
 		{
 			case StreamType::enEdem:
-			case StreamType::enOttglanz:
+			case StreamType::enGlanz:
 				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id());
 				break;
 			case StreamType::enSharaclub:
@@ -2460,10 +2460,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			}
 			break;
 		}
-		case StreamType::enOttglanz:
+		case StreamType::enGlanz:
 		{
 			CAccessInfoPassDlg dlg;
-			dlg.m_entry = std::make_shared<PlaylistEntry>(StreamType::enOttglanz, theApp.GetAppPath(utils::PLUGIN_ROOT));
+			dlg.m_entry = std::make_shared<PlaylistEntry>(StreamType::enGlanz, theApp.GetAppPath(utils::PLUGIN_ROOT));
 			dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
 			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
 			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));

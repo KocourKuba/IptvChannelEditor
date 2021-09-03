@@ -195,7 +195,7 @@
     <ClInclude Include="AccessInfoPassDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="uri_ottglanz.h">
+    <ClInclude Include="uri_glanz.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
     <ClInclude Include="map_serializer.h">
@@ -287,7 +287,7 @@
     <ClCompile Include="AccessInfoPassDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="uri_ottglanz.cpp">
+    <ClCompile Include="uri_glanz.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>

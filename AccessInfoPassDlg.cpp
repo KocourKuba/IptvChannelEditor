@@ -106,7 +106,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		case StreamType::enSharaclub:
 			tpl = PLAYLIST_TEMPLATE_SHARACLUB;
 			break;
-		case StreamType::enOttglanz:
+		case StreamType::enGlanz:
 			tpl = PLAYLIST_TEMPLATE_OTTGLANZ;
 			break;
 		default:
