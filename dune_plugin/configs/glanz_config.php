@@ -24,6 +24,9 @@ class GlanzPluginConfig extends DefaultConfig
         $this->EPG2_URL_FORMAT = 'http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/%s.json'; // epg_id date(YYYYMMDD)
 
         // Views constants
+        $this->TV_SANDWICH_WIDTH = 245;
+        $this->TV_SANDWICH_HEIGHT = 140;
+
         $this->TV_CHANNEL_ICON_WIDTH = 60;
         $this->TV_CHANNEL_ICON_HEIGHT = 60;
     }
