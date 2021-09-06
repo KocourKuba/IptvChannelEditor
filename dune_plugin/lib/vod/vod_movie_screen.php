@@ -1,5 +1,6 @@
 <?php
 require_once 'lib/screen.php';
+require_once 'configs/default_config.php';
 require_once 'vod.php';
 require_once 'vod_series_list_screen.php';
 
@@ -7,27 +8,29 @@ class VodMovieScreen implements Screen, UserInputHandler
 {
     const ID = 'vod_movie';
 
-    public static function get_media_url_str($movie_id)
-    {
-        return MediaURL::encode(
-            array(
-                'screen_id' => self::ID,
-                'movie_id' => $movie_id));
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
     private $vod;
 
     public function __construct(Vod $vod)
     {
         $this->vod = $vod;
 
-        UserInputHandlerRegistry::get_instance()->
-        register_handler($this);
+        UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
-    ///////////////////////////////////////////////////////////////////////
+    public static function get_media_url_str($movie_id, $name = false, $poster_url = false, $info = false) {
+        $arr['screen_id'] = self::ID;
+        $arr['movie_id'] = $movie_id;
+        if ($name == true)
+            $arr['name'] = $name;
+        if ($poster_url == true)
+            $arr['poster_url'] = $poster_url;
+        if ($info == true)
+            $arr['info'] = $info;
+
+        //hd_print("Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url");
+
+        return MediaURL::encode($arr);
+    }
 
     public function get_id()
     {
@@ -41,12 +44,16 @@ class VodMovieScreen implements Screen, UserInputHandler
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         $this->vod->folder_entered($media_url, $plugin_cookies);
 
         $movie = $this->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if ($movie === null) {
+            hd_print("empty movie");
             return null;
         }
 
@@ -58,7 +65,7 @@ class VodMovieScreen implements Screen, UserInputHandler
 
             $is_favorite = $this->vod->is_favorite_movie_id($movie->id);
             $right_button_caption = $is_favorite ?
-                'Remove from My Movies' : 'Add to My Movies';
+                'Удалить из Избранного' : 'Добавить в Избранное';
             $right_button_action = UserInputHandlerRegistry::create_action(
                 $this, 'favorites',
                 array('movie_id' => $movie->id));
@@ -70,10 +77,15 @@ class VodMovieScreen implements Screen, UserInputHandler
             PluginMovieFolderView::has_right_button => $has_right_button,
             PluginMovieFolderView::right_button_caption => $right_button_caption,
             PluginMovieFolderView::right_button_action => $right_button_action,
-            PluginMovieFolderView::has_multiple_series =>
-                (count($movie->series_list) > 1),
+            PluginMovieFolderView::has_multiple_series => (count($movie->series_list) > 1),
             PluginMovieFolderView::series_media_url =>
                 VodSeriesListScreen::get_media_url_str($movie->id),
+                PluginMovieFolderView::params => array
+                (			               
+                    PluginFolderViewParams::paint_path_box =>false,
+                    PluginFolderViewParams::paint_content_box_background => true,
+                    PluginFolderViewParams::background_url => DefaultConfig::GET_BG_PICTURE()
+                )
         );
 
         return array
@@ -84,8 +96,6 @@ class VodMovieScreen implements Screen, UserInputHandler
             PluginFolderView::data => $movie_folder_view,
         );
     }
-
-    ///////////////////////////////////////////////////////////////////////
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
@@ -103,8 +113,8 @@ class VodMovieScreen implements Screen, UserInputHandler
                 $this->vod->add_favorite_movie($movie_id, $plugin_cookies);
 
             $message = $is_favorite ?
-                'Movie has been removed from My Movies' :
-                'Movie has been added to My Movies';
+                'Удалено из Избранного' :
+                'Добавлено в Избранное';
 
             return ActionFactory::show_title_dialog($message,
                 ActionFactory::invalidate_folders(

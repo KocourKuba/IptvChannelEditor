@@ -3,8 +3,7 @@
 require_once 'vod.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class VodFavoritesScreen extends AbstractPreloadedRegularScreen
-    implements UserInputHandler
+class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'vod_favorites';
 
@@ -41,10 +40,10 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen
         $remove_favorite_action =
             UserInputHandlerRegistry::create_action(
                 $this, 'remove_favorite');
-        $remove_favorite_action['caption'] = 'Favorite';
+        $remove_favorite_action['caption'] = 'Удалить';
 
         $menu_items[] = array(
-            GuiMenuItemDef::caption => 'Remove from My Movies',
+            GuiMenuItemDef::caption => 'Удалить из Избранного',
             GuiMenuItemDef::action => $remove_favorite_action);
 
         $popup_menu_action = ActionFactory::show_popup_menu($menu_items);
@@ -83,6 +82,9 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->vod->folder_entered($media_url, $plugin_cookies);

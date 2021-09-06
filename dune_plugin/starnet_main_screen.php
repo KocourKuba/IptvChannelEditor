@@ -5,6 +5,7 @@ require_once 'starnet_setup_screen.php';
 class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 {
     const ID = 'main_screen';
+    public static $config = null;
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -24,7 +25,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
     {
         $defs = array();
         try {
-            $result = $this->tv->config->GetAccountStatus($plugin_cookies);
+            $result = self::$config->GetAccountStatus($plugin_cookies);
             if ($result === false || $result->status != 'ok')
                 throw new Exception('Account error');
 
@@ -82,7 +83,11 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
         $add_action['caption'] = 'Настройки плагина';
 
         // if token not set force to open setup screen
-        $setup_needs = isset($plugin_cookies->subdomain) || isset($plugin_cookies->subdomain_local) ? true : false;
+        $config = self::$config;
+        $setup_needs = $config::$USE_LOGIN_PASS ?
+            (isset($plugin_cookies->login) || isset($plugin_cookies->password))
+            : (isset($plugin_cookies->subdomain) || isset($plugin_cookies->subdomain_local));
+
         if ($setup_needs === false) {
             $setup_screen = ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки');
             return array(
@@ -95,13 +100,22 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
         $balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
         $balance['caption'] = 'Подписка';
 
-        return array
-        (
-            GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
-            GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
-            GUI_EVENT_KEY_B_GREEN => $add_action,
-            GUI_EVENT_KEY_C_YELLOW => $balance
-        );
+        if ($config::$USE_LOGIN_PASS) {
+            return array
+            (
+                GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
+                GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
+                GUI_EVENT_KEY_B_GREEN => $add_action,
+                GUI_EVENT_KEY_C_YELLOW => $balance
+            );
+        } else {
+            return array
+            (
+                GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
+                GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
+                GUI_EVENT_KEY_B_GREEN => $add_action,
+            );
+        }
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)

@@ -5,6 +5,7 @@ class ShortMovie
     public $id;
     public $name;
     public $poster_url;
+    public $info;
 
     /**
      * @throws Exception
@@ -30,8 +31,7 @@ class ShortMovieRange
     {
         $this->from_ndx = intval($from_ndx);
         $this->total = intval($total);
-        $this->short_movies = $short_movies === null ?
-            array() : $short_movies;
+        $this->short_movies = $short_movies === null ? array() : $short_movies;
     }
 }
 
@@ -53,6 +53,20 @@ class MovieSeries
     public $name = '';
     public $playback_url = '';
     public $playback_url_is_stream_url = true;
+}
+
+class MovieSeason
+{
+    public $id;
+    public function __construct($id)
+    {
+        if (is_null($id))
+            hd_print("MovieSeason::id is not set");
+        $this->id = strval($id);
+    }
+    public $name = '';
+    public $season_url = '';
+	public $type = '';
 }
 
 class Movie
@@ -140,15 +154,13 @@ class Movie
     /**
      * @throws Exception
      */
-    public function add_series_data($id, $name,
-                                    $playback_url, $playback_url_is_stream_url)
+    public function add_series_data($id, $name, $playback_url, $playback_url_is_stream_url)
     {
         $series = new MovieSeries($id);
 
         $series->name = $this->to_string($name);
         $series->playback_url = $this->to_string($playback_url);
-        $series->playback_url_is_stream_url =
-            $playback_url_is_stream_url === true;
+        $series->playback_url_is_stream_url = $playback_url_is_stream_url === true;
 
         $this->series_list[] = $series;
     }

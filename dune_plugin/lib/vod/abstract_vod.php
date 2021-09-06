@@ -8,17 +8,13 @@ abstract class AbstractVod implements Vod
     private $movie_by_id;
     private $failed_movie_ids;
 
-    private $playback_url_is_stream_url;
-
     private $fav_movie_ids;
     private $fav_movie_ids_set;
 
     private $genres;
 
-    protected function __construct($playback_url_is_stream_url)
+    protected function __construct()
     {
-        $this->playback_url_is_stream_url = $playback_url_is_stream_url;
-
         $this->short_movie_by_id = array();
         $this->movie_by_id = array();
         $this->failed_movie_ids = array();
@@ -38,8 +34,7 @@ abstract class AbstractVod implements Vod
     {
         $this->movie_by_id[$movie->id] = $movie;
 
-        $this->set_cached_short_movie(
-            new ShortMovie($movie->id, $movie->name, $movie->poster_url));
+        $this->set_cached_short_movie(new ShortMovie($movie->id, $movie->name, $movie->poster_url));
     }
 
     public function set_failed_movie_id($movie_id)
@@ -115,12 +110,15 @@ abstract class AbstractVod implements Vod
         if (!isset($movie_id))
             throw new Exception('Movie ID is not set');
 
-        if ($this->is_failed_movie_id($movie_id))
+        if ($this->is_failed_movie_id($movie_id)) {
+            hd_print("No movie with ID: $movie_id");
             return null;
+        }
 
         $movie = $this->get_cached_movie($movie_id);
-        if ($movie === null)
+        if ($movie === null) {
             $this->try_load_movie($movie_id, $plugin_cookies);
+        }
     }
 
     /**

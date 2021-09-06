@@ -2,17 +2,18 @@
 
 class StarnetVodCategory
 {
+    const DEFAULT_ICON = 'plugin_file://icons/movie_folder.png';
     private $id;
     private $caption;
     private $icon_url;
 
     private $sub_categories;
 
-    public function __construct($id, $caption, $icon_url)
+    public function __construct($id, $caption)
     {
         $this->id = $id;
         $this->caption = $caption;
-        $this->icon_url = $icon_url;
+        $this->icon_url = StarnetVodCategory::DEFAULT_ICON;
         $this->sub_categories = null;
     }
 

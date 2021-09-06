@@ -209,6 +209,14 @@ class HD
         return $xml;
     }
 
+    public static function parse_json_file($path)
+    {
+        return json_decode(file_get_contents(
+            $path,
+            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES),
+            true);
+    }
+
     ///////////////////////////////////////////////////////////////////////
 
     public static function make_json_rpc_request($op_name, $params)
@@ -295,7 +303,7 @@ class HD
             '&#246;' => 'Г¶',
             '&#252;' => 'Гј',
             "&nbsp;" => ' ',
-            '&#39;'  => "'",
+            '&#39;' => "'",
             '&quot;' => '"',
             '&#257;' => 'ā',
             '&#258;' => 'Ă',
@@ -317,5 +325,43 @@ class HD
         );
 
         return str_replace(array_keys($replace), $replace, $raw_string);
+    }
+
+    public static function ArrayToStr($arrayItems)
+    {
+        $array = array();
+        foreach ($arrayItems as $item) {
+            if (!empty($item))
+                array_push($array, $item);
+        }
+
+        return implode(", ", $array);
+    }
+
+    public static function get_items($path)
+    {
+        $full_path = HD::get_data_path($path);
+        return file_exists($full_path) ? unserialize(file_get_contents($full_path)) : array();
+    }
+
+    public static function put_items($path, $items)
+    {
+        file_put_contents(HD::get_data_path($path), serialize($items));
+    }
+
+    public static function get_item($path)
+    {
+        $full_path = HD::get_data_path($path);
+        return file_exists($full_path) ? file_get_contents($full_path) : '';
+    }
+
+    public static function put_item($path, $item)
+    {
+        file_put_contents(HD::get_data_path($path), $item);
+    }
+
+    public static function get_data_path($path)
+    {
+        return DuneSystem::$properties['data_dir_path'] . '/' . $path;
     }
 }

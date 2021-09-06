@@ -6,54 +6,36 @@ class StarnetVodListScreen extends VodListScreen
 {
     public static $config = null;
 
-    public static function get_media_url_str($cat_id)
-    {
-        $arr['screen_id'] = self::ID;
-        $arr['category_id'] = $cat_id;
-        return MediaURL::encode($arr);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
     public function __construct(Vod $vod)
     {
         parent::__construct($vod);
     }
 
-    ///////////////////////////////////////////////////////////////////////
+    public static function get_media_url_str($cat_id, $genre_id, $name = false)
+    {
+        $arr['screen_id'] = self::ID;
+        $arr['category_id'] = $cat_id;
+        $arr['genre_id'] = $genre_id;
+        if ($name == true)
+            $arr['name'] = $name;
+
+        return MediaURL::encode($arr);
+    }
 
     /**
      * @throws Exception
      */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        $doc = HD::http_get_document(sprintf(static::$config->MOVIE_LIST_URL_FORMAT, $media_url->category_id));
-
-        if (is_null($doc))
-            throw new Exception('Can not fetch movie list');
-
-        $xml = simplexml_load_string($doc);
-
-        if ($xml === false) {
-            hd_print("Error: can not parse XML document.");
-            hd_print("XML-text: $doc.");
-            throw new Exception('Illegal XML document');
+        if ($media_url->category_id == 'search') {
+            $movies = self::$config->getSearchList($media_url->genre_id);
+        } else {
+            $movies = self::$config->getVideoList($media_url->category_id, $media_url->genre_id);
         }
 
-        if ($xml->getName() !== 'movies') {
-            hd_print("Error: unexpected node '" . $xml->getName() . "'. Expected: 'vod_categories'");
-            throw new Exception('Invalid XML document');
-        }
+        if (count($movies))
+            return new ShortMovieRange($from_ndx, count($movies), $movies);
 
-        $movies = array();
-
-        foreach ($xml->children() as $movie) {
-            $movies[] = new ShortMovie(
-                strval($movie->id),
-                strval($movie->caption),
-                strval($movie->poster_url));
-        }
-
-        return new ShortMovieRange(0, count($movies), $movies);
+        return new ShortMovieRange(0, 0);
     }
 }

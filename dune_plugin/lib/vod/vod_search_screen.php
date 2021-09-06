@@ -26,7 +26,7 @@ class VodSearchScreen extends AbstractControlsScreen
 
         $defs = array();
 
-        $this->add_label($defs, null,"Enter part of movie name:");
+        $this->add_label($defs, null, "Enter part of movie name:");
 
         $this->add_text_field($defs, 'pattern', null,
             $pattern, false, false, true, false,

@@ -15,8 +15,7 @@ abstract class AbstractControlsScreen
     {
         $this->id = $id;
 
-        UserInputHandlerRegistry::get_instance()->
-        register_handler($this);
+        UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -64,22 +63,19 @@ abstract class AbstractControlsScreen
         ControlFactory::add_label($defs, $title, $text);
     }
 
-    protected function add_button(&$defs,
-                                  $name, $title, $caption, $width)
+    protected function add_button(&$defs, $name, $title, $caption, $width)
     {
         ControlFactory::add_button($defs, $this, null,
             $name, $title, $caption, $width);
     }
 
-    protected function add_close_dialog_button(&$defs,
-                                               $caption, $width)
+    protected function add_close_dialog_button(&$defs, $caption, $width)
     {
         ControlFactory::add_close_dialog_button($defs,
             $caption, $width);
     }
 
-    protected function add_close_dialog_and_apply_button(&$defs,
-                                                         $name, $caption, $width)
+    protected function add_close_dialog_and_apply_button(&$defs, $name, $caption, $width)
     {
         ControlFactory::add_close_dialog_and_apply_button($defs,
             $this, null,

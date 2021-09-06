@@ -1,22 +1,19 @@
 ﻿<?php
-///////////////////////////////////////////////////////////////////////////
-
 require_once 'lib/hashed_array.php';
 require_once 'lib/tv/abstract_tv.php';
 require_once 'lib/tv/default_epg_item.php';
 require_once 'lib/epg_xml_parser.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_channel.php';
+require_once 'starnet_vod_category_list_screen.php';
 
-///////////////////////////////////////////////////////////////////////////
 
 class StarnetPluginTv extends AbstractTv
 {
-    public $config = null;
+    public static $config = null;
 
-    public function __construct($plugin_type)
+    public function __construct()
     {
-        $this->config = new $plugin_type;
         parent::__construct(AbstractTv::MODE_CHANNELS_N_TO_M, false);
     }
 
@@ -25,7 +22,6 @@ class StarnetPluginTv extends AbstractTv
         return DefaultConfig::FAV_CHANNEL_GROUP_ICON_PATH;
     }
 
-    ///////////////////////////////////////////////////////////////////////
     public function set_setup_screen($setup_screen)
     {
         $this->SettingsScreen = $setup_screen;
@@ -38,12 +34,35 @@ class StarnetPluginTv extends AbstractTv
 
     public function is_favorites_supported()
     {
-        return $this->config->TV_FAVORITES_SUPPORTED;
+        $config = self::$config;
+        return $config::$TV_FAVORITES_SUPPORTED;
     }
 
     public function get_channel_list_url($plugin_cookies)
     {
-        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->config->CHANNEL_LIST_URL;
+        $config = self::$config;
+        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $config::$CHANNELS_LIST;
+    }
+
+    public function add_special_groups(&$items)
+    {
+        array_unshift($items,
+            array
+            (
+                PluginRegularFolderItem::media_url =>
+                    MediaURL::encode(
+                        array
+                        (
+                            'screen_id' => StarnetVodCategoryListScreen::ID,
+                            'name' => 'VOD',
+                        )),
+                PluginRegularFolderItem::caption => DefaultConfig::VOD_GROUP_CAPTION,
+                PluginRegularFolderItem::view_item_params => array
+                (
+                    ViewItemParams::icon_path => DefaultConfig::VOD_GROUP_ICON
+                )
+            )
+        );
     }
 
     /**
@@ -61,7 +80,7 @@ class StarnetPluginTv extends AbstractTv
                 hd_print("File not exist! $channels_list");
                 throw new Exception('File not exist');
             }
-        } catch (Exception $e) {
+        } catch (Exception $ex) {
             hd_print("Can't fetch channel_list, alternative copy used.");
             return;
         }
@@ -86,7 +105,7 @@ class StarnetPluginTv extends AbstractTv
             $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
         }
 
-        $this->config->GetAccessInfo($plugin_cookies);
+        self::$config->GetAccessInfo($plugin_cookies);
 
         // Create channels and groups
         $this->channels = new HashedArray();
@@ -131,7 +150,8 @@ class StarnetPluginTv extends AbstractTv
             // substitute template
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = strval($xml_tv_channel->channel_id);
-                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, $this->config->MEDIA_URL_TEMPLATE);
+                $config = self::$config;
+                $streaming_url = str_replace('{ID}', $xml_tv_channel->channel_id, $config::$MEDIA_URL_TEMPLATE);
             } else {
                 $streaming_url = strval($xml_tv_channel->streaming_url);
                 $channel_id = hash("crc32", $streaming_url);
@@ -226,13 +246,14 @@ class StarnetPluginTv extends AbstractTv
         }
 
         hd_print("StreamUri: $url");
-        $url = $this->config->AdjustStreamUri($plugin_cookies, $archive_ts, $url);
+        $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $url);
         hd_print("AdjustedStreamUri: $url");
 
-        if ($this->config->USE_TOKEN
+        $config = self::$config;
+        if ($config::$USE_LOGIN_PASS
             && empty($plugin_cookies->subdomain_local)
             && empty($plugin_cookies->ott_key_local)) {
-            hd_print("Error: pin not set");
+            hd_print("Error: subdomain/token not set");
         }
 
         $url = str_replace('{INT_ID}', $channel->get_number, $url);
@@ -267,7 +288,7 @@ class StarnetPluginTv extends AbstractTv
         $epg_date = gmdate(DATE_ATOM, $day_start_ts);
         hd_print("start date: $epg_date");
         $epg_result = array();
-        $epg = $this->config->GetEPG($channel, $day_start_ts);
+        $epg = self::$config->GetEPG($channel, $day_start_ts);
         foreach ($epg as $time => $value) {
             $tm =  $time + $time_shift;
             $end = $tm;
@@ -280,5 +301,3 @@ class StarnetPluginTv extends AbstractTv
         return new EpgIterator($epg_result, $start, $end);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////

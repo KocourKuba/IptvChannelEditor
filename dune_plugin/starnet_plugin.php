@@ -17,6 +17,7 @@ require_once 'plugin_type.php';
 require_once 'starnet_tv.php';
 require_once 'starnet_vod.php';
 require_once 'starnet_setup_screen.php';
+require_once 'starnet_search_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 require_once 'starnet_vod_list_screen.php';
 require_once 'starnet_main_screen.php';
@@ -43,10 +44,44 @@ class StarnetDunePlugin extends DefaultDunePlugin
         }
         */
 
-        $this->tv = new StarnetPluginTv($plugin_type);
-        $this->add_screen(new StarnetMainScreen($this->tv, $this->tv->config->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new TvChannelListScreen($this->tv, $this->tv->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new TvFavoritesScreen($this->tv, $this->tv->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new StarnetSetupScreen($this->tv));
+        $config = new $plugin_type;
+        StarnetPluginTv::$config = $config;
+        StarnetMainScreen::$config = $config;
+        StarnetSetupScreen::$config = $config;
+
+        hd_print("Plugin name:     " . $config::$PLUGIN_NAME);
+        hd_print("Plugin version:  " . $config::$PLUGIN_VERSION);
+        hd_print("Plugin date:     " . $config::$PLUGIN_DATE);
+        hd_print("Plugin config:   " . $plugin_type);
+        hd_print("TV fav:          " . $config::$TV_FAVORITES_SUPPORTED);
+        hd_print("VOD page:        " . $config::$VOD_MOVIE_PAGE_SUPPORTED);
+        hd_print("VOD fav:         " . $config::$VOD_FAVORITES_SUPPORTED);
+        hd_print("MPEG-TS support: " . $config::$MPEG_TS_SUPPORTED);
+
+        $tv = new StarnetPluginTv();
+        $this->tv = $tv;
+        $this->add_screen(new StarnetMainScreen($tv, $config->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new TvChannelListScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
+        if ($config::$TV_FAVORITES_SUPPORTED) {
+            $this->add_screen(new TvFavoritesScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
+        }
+        $this->add_screen(new StarnetSetupScreen($tv));
+
+        if ($config::$VOD_MOVIE_PAGE_SUPPORTED) {
+
+            StarnetVod::$config = $config;
+            StarnetVodListScreen::$config = $config;
+            StarnetVodCategoryListScreen::$config = $config;
+
+            $vod = new StarnetVod();
+            $this->vod = $vod;
+
+            $this->add_screen(new StarnetSearchScreen($vod));
+            $this->add_screen(new VodFavoritesScreen($vod));
+            $this->add_screen(new StarnetVodCategoryListScreen());
+            $this->add_screen(new StarnetVodListScreen($vod));
+            $this->add_screen(new VodMovieScreen($vod));
+            $this->add_screen(new VodSeriesListScreen($vod));
+        }
     }
 }

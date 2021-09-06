@@ -6,13 +6,13 @@ require_once 'lib/vod/movie.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
-abstract class StarnetVod extends AbstractVod
+class StarnetVod extends AbstractVod
 {
-    public $config = null;
+    public static $config = null;
 
     public function __construct()
     {
-        parent::__construct(true);
+        parent::__construct();
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -22,52 +22,7 @@ abstract class StarnetVod extends AbstractVod
      */
     public function try_load_movie($movie_id, &$plugin_cookies)
     {
-        $doc = HD::http_get_document(sprintf($this->config->MOVIE_INFO_URL_FORMAT, $movie_id));
-
-        if (is_null($doc))
-            throw new Exception('Can not fetch movie info');
-
-        $xml = simplexml_load_string($doc);
-
-        if ($xml === false) {
-            hd_print("Error: can not parse XML document.");
-            throw new Exception('Illegal XML document');
-        }
-
-        if ($xml->getName() !== 'movie_info') {
-            hd_print("Error: unexpected node '" . $xml->getName() .
-                "'. Expected: 'movie_info'");
-            throw new Exception('Invalid XML document');
-        }
-
-        $movie = new Movie($xml->id);
-
-        $movie->set_data(
-            $xml->caption,
-            $xml->caption_original,
-            $xml->description,
-            $xml->poster_url,
-            $xml->length,
-            $xml->year,
-            $xml->director,
-            $xml->scenario,
-            $xml->actors,
-            $xml->genres,
-            $xml->rate_imdb,
-            $xml->rate_kinopoisk,
-            $xml->rate_mpaa,
-            $xml->country,
-            $xml->budget);
-
-        foreach ($xml->series->item as $item) {
-            $movie->add_series_data(
-                $item->id,
-                $item->title,
-                $item->playback_url,
-                true);
-        }
-
-        $this->set_cached_movie($movie);
+        $this->set_cached_movie(self::$config->TryLoadMovie($movie_id, $plugin_cookies));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -89,7 +44,9 @@ abstract class StarnetVod extends AbstractVod
 
         $this->set_fav_movie_ids($fav_movie_ids);
 
-        hd_print('The ' . count($fav_movie_ids) . ' favorite movies loaded.');
+        $favorites = count($fav_movie_ids);
+        if ($favorites > 0)
+            hd_print("The $favorites favorite movies loaded.");
     }
 
     protected function do_save_favorite_movies(&$fav_movie_ids, &$plugin_cookies)
@@ -101,10 +58,10 @@ abstract class StarnetVod extends AbstractVod
 
     public function get_fav_movie_ids_from_cookies($plugin_cookies)
     {
-        if (!isset($plugin_cookies->{'favorite_movies'}))
+        if (!isset($plugin_cookies->favorite_movies))
             return array();
 
-        $arr = preg_split('/,/', $plugin_cookies->{'favorite_movies'});
+        $arr = preg_split('/,/', $plugin_cookies->favorite_movies);
 
         $ids = array();
         foreach ($arr as $id) {
@@ -116,7 +73,12 @@ abstract class StarnetVod extends AbstractVod
 
     public function set_fav_movie_ids_to_cookies(&$plugin_cookies, &$ids)
     {
-        $plugin_cookies->{'favorite_movies'} = join(',', $ids);
+        $plugin_cookies->favorite_movies = implode(',', $ids);
+    }
+
+    public function get_search_media_url_str($pattern)
+    {
+        return StarnetVodListScreen::get_media_url_str('search', $pattern);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -124,6 +86,23 @@ abstract class StarnetVod extends AbstractVod
 
     public function get_vod_list_folder_views()
     {
-        return $this->config->GET_VOD_MOVIE_LIST_FOLDER_VIEWS();
+        return self::$config->GET_VOD_MOVIE_LIST_FOLDER_VIEWS();
+    }
+
+    public function get_vod_search_folder_views()
+    {
+        return self::$config->GET_TEXT_ONE_COL_VIEWS();
+    }
+
+    public function is_favorites_supported()
+    {
+        $config = self::$config;
+        return $config::$VOD_FAVORITES_SUPPORTED;
+    }
+
+    public function is_movie_page_supported()
+    {
+        $config = self::$config;
+        return $config::$VOD_MOVIE_PAGE_SUPPORTED;
     }
 }

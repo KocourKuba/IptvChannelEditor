@@ -6,13 +6,13 @@ abstract class VodListScreen extends AbstractRegularScreen
 {
     const ID = 'vod_list';
 
-    private $vod;
+    public $vod;
 
     protected function __construct(Vod $vod)
     {
-        parent::__construct(self::ID, $vod->get_vod_list_folder_views());
-
         $this->vod = $vod;
+
+        parent::__construct(self::ID, $this->vod->get_vod_list_folder_views());
 
         UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
@@ -23,21 +23,12 @@ abstract class VodListScreen extends AbstractRegularScreen
     {
         $actions = array();
 
-        if ($this->vod->is_movie_page_supported())
-            $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::open_folder();
-        else
-            $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::vod_play();
+        $actions[GUI_EVENT_KEY_ENTER] = $this->vod->is_movie_page_supported() ?
+            ActionFactory::open_folder() : ActionFactory::vod_play();
 
-        if ($this->vod->is_favorites_supported()) {
-            $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
-            $add_favorite_action['caption'] = 'Favorite';
-
-            $popup_menu_action =
-                UserInputHandlerRegistry::create_action($this, 'popup_menu');
-
-            $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
-            $actions[GUI_EVENT_KEY_POPUP_MENU] = $popup_menu_action;
-        }
+		$add_action = UserInputHandlerRegistry::create_action($this, 'search');
+        $add_action['caption'] = 'Поиск';
+        $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
 
         return $actions;
     }
@@ -49,36 +40,38 @@ abstract class VodListScreen extends AbstractRegularScreen
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Vod favorites: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("  $key => $value");
+        switch ($user_input->control_id)
+        {
+            case 'search':
+                if (!isset($user_input->selected_media_url))
+                    return null;
 
-        if ($user_input->control_id == 'popup_menu') {
-            if (!isset($user_input->selected_media_url))
-                return null;
+                $media_url = MediaURL::decode($user_input->selected_media_url);
+                $defs = array();
+                ControlFactory::add_text_field($defs,
+                    $this, null, 'new_search', '',
+                    $media_url->name, 0, 0, 1, 1, 1300,0,1);
+                ControlFactory::add_vgap($defs, 500);
+                return ActionFactory::show_dialog('Поиск', $defs, true);
 
-            $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
-            $caption = 'Add to My Movies';
-            $menu_items[] = array(
-                GuiMenuItemDef::caption => $caption,
-                GuiMenuItemDef::action => $add_favorite_action);
+            case 'new_search':
+                return ActionFactory::close_dialog_and_run(
+                    UserInputHandlerRegistry::create_action($this, 'run_search'));
 
-            return ActionFactory::show_popup_menu($menu_items);
-        } else if ($user_input->control_id == 'add_favorite') {
-            if (!isset($user_input->selected_media_url))
-                return null;
+            case 'run_search':
+                HD::put_item('search_item', $user_input->do_new_search);
+                $search_items = HD::get_items('search_items');
+                $k = array_search($user_input->do_new_search, $search_items);
+                if ($k !== false)
+                    unset ($search_items [$k]);
 
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $movie_id = $media_url->movie_id;
-
-            $is_favorite = $this->vod->is_favorite_movie_id($movie_id);
-            if ($is_favorite) {
-                return ActionFactory::show_title_dialog('Movie already resides in My Movies');
-            } else {
-                $this->vod->add_favorite_movie($movie_id, $plugin_cookies);
-
-                return ActionFactory::show_title_dialog('Movie has been added to My Movies');
-            }
+                array_unshift($search_items, $user_input->do_new_search);
+                HD::put_items('search_items', $search_items);
+                return ActionFactory::invalidate_folders(
+                    array('search_screen'),
+                    ActionFactory::open_folder(
+                        static::get_media_url_str('search', $user_input->do_new_search),
+                        "Поиск: " . $user_input->do_new_search));
         }
 
         return null;
@@ -87,16 +80,14 @@ abstract class VodListScreen extends AbstractRegularScreen
     ///////////////////////////////////////////////////////////////////////
 
     // Returns ShortMovieRange.
-    protected abstract function get_short_movie_range(
-        MediaURL $media_url, $from_ndx, &$plugin_cookies);
+    protected abstract function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies);
 
     /**
      * @throws Exception
      */
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        $movie_range = $this->get_short_movie_range(
-            $media_url, $from_ndx, $plugin_cookies);
+        $movie_range = $this->get_short_movie_range($media_url, $from_ndx, $plugin_cookies);
 
         $total = intval($movie_range->total);
         if ($total <= 0)
@@ -104,23 +95,23 @@ abstract class VodListScreen extends AbstractRegularScreen
 
         $items = array();
         foreach ($movie_range->short_movies as $movie) {
+            $media_url_str = VodMovieScreen::get_media_url_str($movie->id, $movie->name, $movie->poster_url, $movie->info);
             $items[] = array
             (
-                PluginRegularFolderItem::media_url =>
-                    VodMovieScreen::get_media_url_str($movie->id),
+                PluginRegularFolderItem::media_url => $media_url_str,
                 PluginRegularFolderItem::caption => $movie->name,
                 PluginRegularFolderItem::view_item_params => array
                 (
                     ViewItemParams::icon_path => $movie->poster_url,
+                    ViewItemParams::item_detailed_info => $movie->info,
+                    ViewItemParams::item_caption_color => 15,
                 )
             );
 
-            $this->vod->set_cached_short_movie(
-                new ShortMovie($movie->id, $movie->name, $movie->poster_url));
+            $this->vod->set_cached_short_movie(new ShortMovie($movie->id, $movie->name, $movie->poster_url));
         }
 
-        return HD::create_regular_folder_range(
-            $items, $movie_range->from_ndx, $total);
+        return HD::create_regular_folder_range($items, $movie_range->from_ndx, $total, true);
     }
 
     public function get_archive(MediaURL $media_url)
@@ -130,6 +121,7 @@ abstract class VodListScreen extends AbstractRegularScreen
 
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
+        $this->vod->clear_movie_cache();
         $this->vod->folder_entered($media_url, $plugin_cookies);
 
         return parent::get_folder_view($media_url, $plugin_cookies);
