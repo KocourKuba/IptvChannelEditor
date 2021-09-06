@@ -494,7 +494,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 			m_wndPlaylist.ResetContent();
 			m_wndPlaylist.AddString(_T("Playlist"));
-			m_wndPlaylist.EnableWindow(FALSE);
+			int idx = m_wndPlaylist.AddString(_T("Custom File"));
+			m_wndPlaylist.SetItemData(idx, TRUE);
+			//m_wndPlaylist.AddString(_T("Mediateka"));
+			//m_wndPlaylist.EnableWindow(FALSE);
 			m_wndStreamType.ShowWindow(TRUE);
 			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
 			m_wndAccessInfo.EnableWindow(FALSE);
@@ -533,33 +536,32 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_gl_domain = ReadRegStringPluginA(REG_DOMAIN);
 
 	// Load channel lists
+	const auto& channelsPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
+	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", GetPluginName().c_str());
+	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", GetPluginName().c_str());
+
 	m_all_channels_lists.clear();
 
-	const auto& channelsPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginName().c_str());
-	const auto& default_name = fmt::format(L"{:s}_channel_list.xml", GetPluginName().c_str());
-	m_all_channels_lists.emplace_back(default_name, channelsPath + default_name);
+	m_wndChannels.ResetContent();
+	m_all_channels_lists.emplace_back(_T("Standard"), channelsPath + default_tv_name);
 
 	std::error_code err;
 	std::filesystem::directory_iterator dir_iter(channelsPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
 		const auto& path = dir_entry.path();
-		if (path.extension() == _T(".xml") && path.filename() != default_name)
+		if (path.extension() == _T(".xml")
+			&& path.filename() != default_tv_name
+			&& path.filename() != default_vod_name)
 		{
 			m_all_channels_lists.emplace_back(path.filename(), path);
 		}
 	}
 
-	m_wndChannels.ResetContent();
-	m_wndChannels.AddString(_T("Standard"));
-	m_wndChannels.SetItemData(0, (DWORD_PTR)m_all_channels_lists.front().second.c_str());
-
-	auto it = m_all_channels_lists.begin();
-	++it;
-	for (;it != m_all_channels_lists.end(); ++it)
+	for (const auto& item : m_all_channels_lists)
 	{
-		int idx = m_wndChannels.AddString(it->first.c_str());
-		m_wndChannels.SetItemData(idx, (DWORD_PTR)it->second.c_str());
+		int idx = m_wndChannels.AddString(item.first.c_str());
+		m_wndChannels.SetItemData(idx, (DWORD_PTR)item.second.c_str());
 	}
 
 	int idx = ReadRegIntPlugin(REG_CHANNELS_TYPE);
@@ -652,18 +654,43 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		}
 		case 2: // Sharaclub
 		{
-			url.Format(_T("http://list.playtv.pro/tv_live-m3u8/%s-%s"),
-					   ReadRegStringPluginT(REG_LOGIN).GetString(),
-					   ReadRegStringPluginT(REG_PASSWORD).GetString());
-			m_plFileName = _T("SharaClub_Playlist.m3u8");
+			switch (idx)
+			{
+				case 0:
+					url.Format(_T("http://list.playtv.pro/tv_live-m3u8/%s-%s"),
+							   ReadRegStringPluginT(REG_LOGIN).GetString(),
+							   ReadRegStringPluginT(REG_PASSWORD).GetString());
+					m_plFileName = _T("SharaClub_Playlist.m3u8");
+					break;
+				case 1:
+					url = ReadRegStringPluginT(REG_CUSTOM_FILE);
+					break;
+				case 2:
+					url.Format(_T("http://list.playtv.pro/kino-full/%s-%s"),
+							   ReadRegStringPluginT(REG_LOGIN).GetString(),
+							   ReadRegStringPluginT(REG_PASSWORD).GetString());
+					m_plFileName = _T("SharaClub_Movie.m3u8");
+					break;
+				default:
+					break;
+			}
 			break;
 		}
 		case 3: // Glanz
 		{
-			url.Format(_T("http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls"),
-					   ReadRegStringPluginT(REG_LOGIN).GetString(),
-					   ReadRegStringPluginT(REG_PASSWORD).GetString());
-			m_plFileName = _T("Glanz_Playlist.m3u8");
+			switch (idx)
+			{
+				case 0:
+					url.Format(_T("http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls"),
+							   ReadRegStringPluginT(REG_LOGIN).GetString(),
+							   ReadRegStringPluginT(REG_PASSWORD).GetString());
+					m_plFileName = _T("Glanz_Playlist.m3u8");
+					break;
+				case 1:
+					break;
+				default:
+					break;
+			}
 			break;
 		}
 		default:
@@ -762,7 +789,8 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndChooseUrl.EnableWindow(FALSE);
 	m_evtStop.ResetEvent();
 
-	auto playlistEntriesOld(m_playlistEntries.release());
+	std::unique_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> playlistEntriesOld = std::move(m_playlistEntries);
+
 	FillTreePlaylist();
 
 	CPlaylistParseThread::ThreadConfig cfg;
@@ -1712,16 +1740,23 @@ void CIPTVChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 
 void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight)
 {
-	auto lCat = GetCategory(hLeft);
-	auto rCat = GetCategory(hRight);
-
-	// swap categories id
-	lCat->swap_id(*rCat);
+	auto lKey = GetCategory(hLeft)->get_key();
+	auto rKey = GetCategory(hRight)->get_key();
 
 	// swap pointers in map
-	std::swap(m_categoriesMap[lCat->get_key()], m_categoriesMap[rCat->get_key()]);
+	auto lCat = m_categoriesMap[lKey];
+	auto rCat = m_categoriesMap[rKey];
+	lCat->set_key(rKey);
+	rCat->set_key(lKey);
+	m_categoriesMap[lKey] = rCat;
+	m_categoriesMap[rKey] = lCat;
+
 	// swap HTREEITEM in map
-	std::swap(m_categoriesTreeMap[lCat->get_key()], m_categoriesTreeMap[rCat->get_key()]);
+	auto lItem = m_categoriesTreeMap[lKey];
+	auto rItem = m_categoriesTreeMap[rKey];
+	m_categoriesTreeMap[lKey] = rItem;
+	m_categoriesTreeMap[rKey] = lItem;
+	//std::swap(m_categoriesTreeMap[lKey], m_categoriesTreeMap[rKey]);
 
 	// запоминаем ItemData для нод и подменяем на счетчик
 	std::vector<std::pair<HTREEITEM, DWORD_PTR>> itemData;
@@ -2443,23 +2478,44 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		}
 		case StreamType::enSharaclub:
 		{
-			CAccessInfoPassDlg dlg;
-			dlg.m_entry = std::make_shared<PlaylistEntry>(StreamType::enSharaclub, theApp.GetAppPath(utils::PLUGIN_ROOT));
-			dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
-			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
-			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
-			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
-
-			if (dlg.DoModal() == IDOK)
+			switch (m_wndPlaylist.GetCurSel())
 			{
-				loaded = true;
-				SaveRegPlugin(REG_LOGIN, dlg.m_entry->get_stream_uri()->get_login().c_str());
-				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->get_stream_uri()->get_password().c_str());
-				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->get_stream_uri()->get_token().c_str());
-				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->get_stream_uri()->get_domain().c_str());
+				case 0:
+				{
+					CAccessInfoPassDlg dlg;
+					dlg.m_entry = std::make_shared<PlaylistEntry>(StreamType::enSharaclub, theApp.GetAppPath(utils::PLUGIN_ROOT));
+					dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
+					dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
+					dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
+					dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
+
+					if (dlg.DoModal() == IDOK)
+					{
+						loaded = true;
+						SaveRegPlugin(REG_LOGIN, dlg.m_entry->get_stream_uri()->get_login().c_str());
+						SaveRegPlugin(REG_PASSWORD, dlg.m_entry->get_stream_uri()->get_password().c_str());
+						SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->get_stream_uri()->get_token().c_str());
+						SaveRegPlugin(REG_DOMAIN, dlg.m_entry->get_stream_uri()->get_domain().c_str());
+					}
+					break;
+				}
+				case 1:
+				{
+					CCustomPlaylistDlg dlg;
+					dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
+					LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
+					dlg.m_url = ReadRegStringPluginT(szType);
+					if (dlg.DoModal() == IDOK)
+					{
+						loaded = true;
+						SaveRegPlugin(szType, dlg.m_url);
+					}
+					break;
+				}
+				default:
+					break;
 			}
-			break;
-		}
+	}
 		case StreamType::enGlanz:
 		{
 			CAccessInfoPassDlg dlg;
@@ -2690,20 +2746,16 @@ void CIPTVChannelEditorDlg::OnSave()
 	if (channel)
 		old_selected = channel->get_id().c_str();
 
-	int cat_id = 1;
-	std::map<int, std::shared_ptr<ChannelCategory>> ren_categories;
-	for (auto& pair : m_categoriesMap)
-	{
-		if (!pair.second->is_empty() || pair.first == ID_ADD_TO_FAVORITE)
-		{
-			int new_id = pair.first == ID_ADD_TO_FAVORITE ? ID_ADD_TO_FAVORITE : cat_id;
-			ren_categories.emplace(new_id, pair.second);
-			pair.second->set_key(new_id);
-			cat_id++;
-		}
-	}
-
-	m_categoriesMap = std::move(ren_categories);
+// 	std::map<int, std::shared_ptr<ChannelCategory>> ren_categories;
+// 	for (auto& pair : m_categoriesMap)
+// 	{
+// 		if (!pair.second->is_empty() || pair.first == ID_ADD_TO_FAVORITE)
+// 		{
+// 			ren_categories.emplace(pair.second->get_key(), pair.second);
+// 		}
+// 	}
+//
+// 	m_categoriesMap = std::move(ren_categories);
 
 	try
 	{
@@ -3605,6 +3657,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 {
 	BOOL enableDownload = TRUE;
 	BOOL enableCustom = FALSE;
+	BOOL enableMediateka = FALSE;
 	int pl_idx = m_wndPlaylist.GetCurSel();
 	switch (m_wndPluginType.GetCurSel())
 	{
@@ -3638,16 +3691,30 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 					enableDownload = FALSE;
 					enableCustom = TRUE;
 					break;
-				default:
-					break;
 			}
 			break;
 		}
 		case 2: // Sharaclub
 		case 3: // Glanz
+		{
 			enableCustom = TRUE;
+			m_wndChannels.SetCurSel(pl_idx);
+			switch (pl_idx)
+			{
+				case 1:
+					enableDownload = FALSE;
+					enableCustom = TRUE;
+					break;
+				case 2:
+					if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel())))
+					{
+						FillTreeChannels();
+						set_allow_save(FALSE);
+					}
+					break;
+			}
 			break;
-
+		}
 		default:
 			break;
 	}
@@ -3663,6 +3730,26 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboStreamType()
 {
 	SaveRegPlugin(REG_STREAM_TYPE, m_wndStreamType.GetCurSel());
+}
+
+void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
+{
+	int idx = m_wndChannels.GetCurSel();
+	if (idx == -1)
+		return;
+
+	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure??"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	{
+		m_wndChannels.SetCurSel(ReadRegIntPlugin(REG_CHANNELS_TYPE));
+		return;
+	}
+
+	LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx));
+	FillTreeChannels();
+	set_allow_save(FALSE);
+
+	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
+	SaveRegPlugin(REG_CHANNELS_TYPE, idx);
 }
 
 BaseInfo* CIPTVChannelEditorDlg::GetBaseInfo(const CTreeCtrl* pTreeCtrl, HTREEITEM hItem)
@@ -4086,26 +4173,6 @@ void CIPTVChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::st
 			video += stream["codec_long_name"];
 		}
 	}
-}
-
-void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
-{
-	int idx = m_wndChannels.GetCurSel();
-	if (idx == -1)
-		return;
-
-	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure??"), MB_YESNO | MB_ICONWARNING) != IDYES)
-	{
-		m_wndChannels.SetCurSel(ReadRegIntPlugin(REG_CHANNELS_TYPE));
-		return;
-	}
-
-	LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx));
-	FillTreeChannels();
-	set_allow_save(FALSE);
-
-	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
-	SaveRegPlugin(REG_CHANNELS_TYPE, idx);
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter()
