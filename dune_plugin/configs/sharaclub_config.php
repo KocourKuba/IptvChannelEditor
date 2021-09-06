@@ -9,7 +9,7 @@ class SharaclubPluginConfig extends DefaultConfig
     const ACCOUNT_PRIMARY_DOMAIN = 'list.playtv.pro';
     const ACCOUNT_SECONDARY_DOMAIN = 'list.shara.tv';
     const STREAM_URL_PATTERN = '/^https?:\/\/(.+)\/live\/(.+)\/.+\/.*\.m3u8$/';
-    const STREAM_VOD_PATTERN = '/^https?:\/\/([\w\.]+)\/series\/.+\.mp4([\w\.]+)$/';
+    const SERIES_VOD_PATTERN = '/^https?:\/\/([\w\.]+)\/series\/.+\.mp4([\w\.]+)$/';
     const VOD_PLAYLIST_NAME = 'vod_playlist.json';
 
     // info
@@ -190,7 +190,7 @@ class SharaclubPluginConfig extends DefaultConfig
                     foreach ($season["episodes"] as $episode) {
                         $episodeCaption = "Сезон " . $seasonNumber . ":  Эпизод " . $episode['episode'];
                         $playback_url = $episode['video'];
-                        if (preg_match(self::STREAM_VOD_PATTERN, $playback_url, $matches)) {
+                        if (preg_match(self::SERIES_VOD_PATTERN, $playback_url, $matches)) {
                             $playback_url = str_replace(
                                 array('{SUBDOMAIN}', '{TOKEN}', '{ID}'),
                                 array($matches[1], $matches[2], "vod-" . $episode['id']),

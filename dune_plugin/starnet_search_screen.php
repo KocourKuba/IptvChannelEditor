@@ -5,6 +5,7 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'search_screen';
+    const SEARCH_ICON_PATH = 'plugin_file://icons/icon_search.png';
     private $vod;
 
     public function __construct(Vod $vod)
@@ -181,10 +182,10 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
             $items,
             array
             (
-                PluginRegularFolderItem::caption => '[Новый запрос]',
+                PluginRegularFolderItem::caption => '[Новый поиск]',
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => 'plugin_file://icons/ico_search.png',
+                    ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
                     ViewItemParams::item_layout => HALIGN_LEFT,
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 20,
@@ -207,7 +208,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                         PluginRegularFolderItem::caption => "Поиск: $item",
                         PluginRegularFolderItem::view_item_params => array
                         (
-                            ViewItemParams::icon_path => 'plugin_file://icons/ico_search.png',
+                            ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
                             ViewItemParams::item_layout => HALIGN_LEFT,
                             ViewItemParams::icon_valign => VALIGN_CENTER,
                             ViewItemParams::icon_dx => 20,
