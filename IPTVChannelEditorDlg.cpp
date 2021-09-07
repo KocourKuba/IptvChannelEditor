@@ -1025,6 +1025,10 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, 
 
 	utils::string_replace_inplace(url, "{SUBDOMAIN}", params.access_domain);
 	utils::string_replace_inplace(url, "{TOKEN}", params.access_key);
+	utils::string_replace_inplace(url, "{LOGIN}", params.login);
+	utils::string_replace_inplace(url, "{PASSWORD}", params.password);
+	utils::string_replace_inplace(url, "{INT_ID}", params.int_id);
+	utils::string_replace_inplace(url, "{HOST}", params.host);
 
 	return url;
 }
@@ -2333,6 +2337,10 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		PlayParams params;
 		params.access_key = CIPTVChannelEditorDlg::GetAccessKey();
 		params.access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
+		params.login = ReadRegStringPluginA(REG_LOGIN);
+		params.password = ReadRegStringPluginA(REG_PASSWORD);
+		params.int_id = ReadRegStringPluginA(REG_INT_ID);
+		params.host = ReadRegStringPluginA(REG_HOST);
 		params.archive_day = archive_day;
 		params.archive_hour = archive_hour;
 
@@ -2593,6 +2601,10 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 	PlayParams params;
 	params.access_key = CIPTVChannelEditorDlg::GetAccessKey();
 	params.access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
+	params.login = ReadRegStringPluginA(REG_LOGIN);
+	params.password = ReadRegStringPluginA(REG_PASSWORD);
+	params.int_id = ReadRegStringPluginA(REG_INT_ID);
+	params.host = ReadRegStringPluginA(REG_HOST);
 
 	const auto max_threads = 2;
 

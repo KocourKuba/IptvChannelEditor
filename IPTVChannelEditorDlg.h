@@ -33,6 +33,10 @@ public:
 	{
 		std::string access_domain;
 		std::string access_key;
+		std::string login;
+		std::string password;
+		std::string int_id;
+		std::string host;
 		int archive_day = 0;
 		int archive_hour = 0;
 	};
