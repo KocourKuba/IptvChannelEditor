@@ -204,6 +204,9 @@
     <ClInclude Include="uri_antifriz.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">

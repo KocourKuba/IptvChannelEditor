@@ -23,7 +23,8 @@ abstract class DefaultConfig
     public static $USE_PIN = false;
 
     // tv
-    public static $MEDIA_URL_TEMPLATE = 'http://online.dune-hd.com/demo/index.m3u8?channel=%s';
+    public static $MEDIA_URL_TEMPLATE = 'http://ts://online.dune-hd.com/demo/index.m3u8?channel=%s';
+    public static $MEDIA_URL_TEMPLATE_TS = 'http://ts://online.dune-hd.com/demo/mpegts?channel=%s';
     public static $CHANNELS_LIST = 'default_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://online.dune-hd.com/epg1/?channel=%s&date=%s';
     protected static $EPG2_URL_TEMPLATE = 'http://online.dune-hd.com/epg2/?channel=%s&date=%s';
@@ -76,8 +77,27 @@ abstract class DefaultConfig
     protected static $TV_CHANNEL_ICON_WIDTH = 84;
     protected static $TV_CHANNEL_ICON_HEIGHT = 48;
 
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
+    public static function AdjustStreamUri($plugin_cookies, $archive_ts, $url, $channel_id)
     {
+        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+        hd_print("AdjustStreamUri: using stream format to '$format'");
+
+        if (intval($archive_ts) > 0) {
+            $now_ts = time();
+            $url .= "&utc=$archive_ts&lutc=$now_ts";
+        }
+
+        switch ($format) {
+            case 'hls':
+                $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE);
+                break;
+            case 'mpeg':
+                $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_TS);
+                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+                $url .= "|||dune_params|||buffering_ms:$buf_time";
+                break;
+        }
+
         return $url;
     }
 

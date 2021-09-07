@@ -78,12 +78,6 @@ void CAccessDlg::OnBnClickedBtnGet()
 {
 	UpdateData(TRUE);
 
-	// Short (OTTPplay.es) format
-	// #EXTM3U
-	// #EXTINF:0 tvg-rec="3",Первый HD
-	// #EXTGRP:Общие
-	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
-
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
 	if (utils::CrackUrl(utils::utf16_to_utf8(m_url.GetString())))

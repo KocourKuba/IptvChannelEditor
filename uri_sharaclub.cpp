@@ -3,7 +3,7 @@
 
 void uri_sharaclub::parse_uri(const std::string& url)
 {
-	// http://em.gazoni1.com:80/live/s.265258.1d25ecee4e77d0419432d2e38eb0ee525/pervyHD/video.m3u8
+	// http://em.gazoni1.com:80/live/s.277258.1d25esee4e77f0419432d2ed8eb0ee525/pervyHD/video.m3u8
 
 	static std::regex re_url(R"(^https?:\/\/(.+)\/live\/(.+)\/(.+)\/.+\.m3u8$)");
 	std::smatch m;

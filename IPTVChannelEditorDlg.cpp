@@ -20,6 +20,7 @@
 #include "IconCache.h"
 #include "IconsListDlg.h"
 #include "utils.h"
+#include "plugin_constants.h"
 
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
@@ -40,58 +41,12 @@ constexpr auto ID_MOVE_TO_END = ID_MOVE_TO_START + 512;
 constexpr auto ID_ADD_TO_START = ID_MOVE_TO_END + 1;
 constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 
-// Common
-constexpr auto REG_SETTINGS = _T("Settings");
-constexpr auto REG_PLAYER = _T("Player");
-constexpr auto REG_FFPROBE = _T("FFProbe");
-constexpr auto REG_DAYS_BACK = _T("DaysBack");
-constexpr auto REG_HOURS_BACK = _T("HoursBack");
-constexpr auto REG_AUTOSYNC = _T("AutoSyncChannel");
-constexpr auto REG_PLUGIN = _T("PluginType");
-constexpr auto REG_ICON_SOURCE = _T("IconSource");
-
-// Plugin dependent
-constexpr auto REG_LOGIN = _T("Login");
-constexpr auto REG_PASSWORD = _T("Password");
-constexpr auto REG_ACCESS_KEY = _T("AccessKey");
-constexpr auto REG_DOMAIN = _T("Domain");
-constexpr auto REG_ACCESS_URL = _T("AccessUrl");
-constexpr auto REG_INT_ID = _T("IntId");
-constexpr auto REG_HOST = _T("Host");
-constexpr auto REG_FILTER_STRING = _T("FilterString");
-constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
-constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
-constexpr auto REG_CHANNELS_TYPE = _T("ChannelsType");
-constexpr auto REG_PLAYLIST_TYPE = _T("PlaylistType");
-constexpr auto REG_STREAM_TYPE = _T("StreamType");
-constexpr auto REG_CUSTOM_URL = _T("CustomUrl");
-constexpr auto REG_CUSTOM_FILE = _T("CustomPlaylist");
-
 BOOL CIPTVChannelEditorDlg::m_embedded_info = FALSE;
 CString CIPTVChannelEditorDlg::m_probe;
 std::string CIPTVChannelEditorDlg::m_gl_domain;
 std::string CIPTVChannelEditorDlg::m_gl_access_key;
 std::string CIPTVChannelEditorDlg::m_ch_domain;
 std::string CIPTVChannelEditorDlg::m_ch_access_key;
-
-static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
-static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/index.m3u8";
-static constexpr auto URI_TEMPLATE_GLANZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
-static constexpr auto URI_TEMPLATE_ANTIFRIZ = "http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8";
-static constexpr auto URI_TEMPLATE_ANTIFRIZ_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
-
-static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/edem/epg/%s.json";
-static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG1_TEMPLATE_SHARACLUB = "http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG1_TEMPLATE_GLANZ = "http://epg.ott-play.com/ottg/epg/%s.json";
-static constexpr auto EPG1_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz/epg/%s.json";
-
-static constexpr auto EPG2_TEMPLATE_EDEM = "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
-static constexpr auto EPG2_TEMPLATE_SHARAVOZ = "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE_SHARACLUB = "http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE_GLANZ = "http://epg.ott-play.com/ottg/epg/%s.json";
-static constexpr auto EPG2_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz/epg/%s.json";
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
@@ -3115,22 +3070,18 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	std::filesystem::remove_all(packFolder, err);
 
 	// copy new one
-	std::filesystem::copy(GetAbsPath(utils::PLUGIN_ROOT),
-						  packFolder,
-						  std::filesystem::copy_options::recursive,
-						  err);
+	const auto& plugin_root = GetAbsPath(utils::PLUGIN_ROOT);
+	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::recursive, err);
 
-	// set plugin config
-	std::filesystem::rename(packFolder + fmt::format(_T("{:s}_plugin.xml.in"), name),
-							packFolder + _T("dune_plugin.xml"),
-							err);
+	// copy plugin manifest
+	const auto& manifest = fmt::format(L"{:s}manifest\\{:s}_plugin.xml", plugin_root.c_str(), name.c_str());
+	const auto& config = fmt::format(L"{:s}configs\\{:s}_config.php", plugin_root.c_str(), name.c_str());
+	std::filesystem::copy_file(manifest, packFolder + L"dune_plugin.xml", std::filesystem::copy_options::overwrite_existing, err);
+	std::filesystem::copy_file(config, fmt::format(L"{:s}{:s}_config.php", packFolder.c_str(), name.c_str()), std::filesystem::copy_options::overwrite_existing, err);
 
 	// remove over config's
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder })
-	{
-		if (dir_entry.path().extension() == _T(".in"))
-			std::filesystem::remove(dir_entry, err);
-	}
+	std::filesystem::remove_all(packFolder + L"manifest", err);
+	std::filesystem::remove_all(packFolder + L"configs", err);
 
 	// copy channel lists
 	for (const auto& file : m_all_channels_lists)
@@ -3147,7 +3098,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once 'configs/{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n", aName.c_str(), capsName.c_str());
+	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n", aName.c_str(), capsName.c_str());
 	os.close();
 
 

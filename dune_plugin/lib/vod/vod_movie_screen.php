@@ -1,6 +1,6 @@
 <?php
 require_once 'lib/screen.php';
-require_once 'configs/default_config.php';
+require_once 'default_config.php';
 require_once 'vod.php';
 require_once 'vod_series_list_screen.php';
 

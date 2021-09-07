@@ -4,13 +4,9 @@
 #include "utils.h"
 #include "json.hpp"
 #include "PlayListEntry.h"
+#include "plugin_constants.h"
 
 using json = nlohmann::json;
-
-static constexpr auto ACCESS_TEMPLATE_SHARACLUB = "http://list.playtv.pro/api/dune-api5m.php?subscr={:s}-{:s}";
-static constexpr auto PLAYLIST_TEMPLATE_SHARACLUB = "http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}";
-static constexpr auto PLAYLIST_TEMPLATE_GLANZ = "http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
-static constexpr auto PLAYLIST_TEMPLATE_ANTIFRIZ = "https://antifriz.tv/playlist/{:s}.m3u8";
 
 // CAccessDlg dialog
 

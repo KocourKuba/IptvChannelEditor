@@ -28,36 +28,13 @@ class SharaclubPluginConfig extends DefaultConfig
 
     // tv
     public static $MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
+    public static $MEDIA_URL_TEMPLATE_TS = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts';
     public static $CHANNELS_LIST = 'sharaclub_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
     protected static $EPG2_URL_TEMPLATE = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
 
     // vod
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
-
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, $url)
-    {
-        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-
-        hd_print("AdjustStreamUri: using stream format to '$format'");
-
-        if (intval($archive_ts) > 0) {
-            $now_ts = time();
-            $url .= "?utc=$archive_ts&lutc=$now_ts";
-        }
-
-        switch ($format) {
-            case 'hls':
-                break;
-            case 'mpeg':
-                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-                $url = str_replace('/video.m3u8', '.ts', $url);
-                $url .= "|||dune_params|||buffering_ms:$buf_time";
-                break;
-        }
-
-        return $url;
-    }
 
     /**
      * @return string
