@@ -20,6 +20,7 @@
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_ICONS_LIST           129
 #define IDD_DIALOG_ACCESS_INFO_PASS     130
+#define IDD_DIALOG_ACCESS_INFO_PIN      131
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_ACCESS_INFO          1002
 #define IDC_BUTTON_CACHE_ICON           1005
@@ -105,6 +106,11 @@
 #define IDC_EDIT_SUBSCRIPTION           1093
 #define IDC_EDIT_BALANCE                1094
 #define IDC_EDIT_PACKAGES_PRICE         1095
+#define IDC_STATIC_LOGIN                1096
+#define IDC_STATIC_PASSWORD             1097
+#define IDC_STATIC_SUBSCRIPTION         1098
+#define IDC_STATIC_BALANCE              1099
+#define IDC_STATIC_PRICE                1100
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -136,7 +142,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32799
-#define _APS_NEXT_CONTROL_VALUE         1093
+#define _APS_NEXT_CONTROL_VALUE         1101
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif
 #endif

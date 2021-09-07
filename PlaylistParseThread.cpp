@@ -46,7 +46,7 @@ BOOL CPlaylistParseThread::InitInstance()
 				{
 					if (m_config.m_pluginType == StreamType::enSharavoz)
 					{
-						entry->set_epg1_id(entry->get_stream_uri()->get_id()); // primary EPG
+						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
 						entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
 					}
 

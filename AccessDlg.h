@@ -34,7 +34,7 @@ public:
 	CString m_accessKeyEmbedded;
 	CString m_domainEmbedded;
 	CString m_url;
-	StreamType m_streamType = StreamType::enEdem;
+	StreamType m_streamType;
 	int m_type = 0;
 
 protected:

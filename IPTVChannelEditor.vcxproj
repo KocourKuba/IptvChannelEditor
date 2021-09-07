@@ -211,6 +211,7 @@
     <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="AccessDlg.h" />
     <ClInclude Include="AccessInfoPassDlg.h" />
+    <ClInclude Include="AccessInfoPinDlg.h" />
     <ClInclude Include="BaseInfo.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="AccessDlg.cpp" />
     <ClCompile Include="AccessInfoPassDlg.cpp" />
+    <ClCompile Include="AccessInfoPinDlg.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="Crc32.cpp" />

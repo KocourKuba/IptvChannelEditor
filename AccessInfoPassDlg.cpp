@@ -40,13 +40,8 @@ BOOL CAccessInfoPassDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_login = m_entry->get_stream_uri()->get_login().c_str();
-	m_password = m_entry->get_stream_uri()->get_password().c_str();
-
-	if (m_entry->get_stream_type() == StreamType::enAntifriz)
-	{
-		m_wndLogin.EnableWindow(FALSE);
-	}
+	m_login = m_entry->stream_uri->get_login().c_str();
+	m_password = m_entry->stream_uri->get_password().c_str();
 
 	UpdateData(FALSE);
 
@@ -60,8 +55,8 @@ void CAccessInfoPassDlg::OnOK()
 {
 	UpdateData(TRUE);
 
-	m_entry->get_stream_uri()->set_login(utils::utf16_to_utf8(m_login.GetString()));
-	m_entry->get_stream_uri()->set_password(utils::utf16_to_utf8(m_password.GetString()));
+	m_entry->stream_uri->set_login(utils::utf16_to_utf8(m_login.GetString()));
+	m_entry->stream_uri->set_password(utils::utf16_to_utf8(m_password.GetString()));
 
 	__super::OnOK();
 }
@@ -72,11 +67,10 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	const auto& login = utils::utf16_to_utf8(m_login.GetString());
 	const auto& password = utils::utf16_to_utf8(m_password.GetString());
-	const auto& access_url = m_entry->get_stream_uri()->get_access_url(login, password);
-	if (!access_url.empty())
+	if (m_entry->stream_uri->isAccessInfo())
 	{
 		std::vector<BYTE> data;
-		if (!utils::DownloadFile(access_url, data) || data.empty())
+		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(login, password), data) || data.empty())
 			return;
 
 		try
@@ -102,7 +96,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		}
 	}
 
-	const auto& pl_url = m_entry->get_stream_uri()->get_playlist_url(login, password);
+	const auto& pl_url = m_entry->stream_uri->get_playlist_url(login, password);
 
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
@@ -118,7 +112,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 			while (std::getline(*pl_stream, line))
 			{
 				utils::string_rtrim(line, "\r");
-				if (m_entry->Parse(line) && !m_entry->get_stream_uri()->get_token().empty())
+				if (m_entry->Parse(line) && !m_entry->stream_uri->get_token().empty())
 				{
 					m_status = _T("Ok");
 					break;

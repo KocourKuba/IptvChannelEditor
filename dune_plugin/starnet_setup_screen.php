@@ -152,12 +152,16 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $defs = array();
         $config = self::$config;
 
-        $this->add_text_field($defs, 'login', 'Логин:',
-            $plugin_cookies->login, false, false, false, true, 500);
-        if (!$config::$USE_PIN) {
+        if ($config::$USE_PIN) {
+            $this->add_text_field($defs, 'password', 'Ключ доступа:',
+                $plugin_cookies->password, false, false, false, true, 500);
+        } else {
+            $this->add_text_field($defs, 'login', 'Логин:',
+                $plugin_cookies->login, false, false, false, true, 500);
             $this->add_text_field($defs, 'password', 'Пароль:',
                 $plugin_cookies->password, false, false, false, true, 500);
         }
+
         $this->add_vgap($defs, 50);
 
         $this->add_close_dialog_and_apply_button($defs, 'token_apply', 'Применить', 300);

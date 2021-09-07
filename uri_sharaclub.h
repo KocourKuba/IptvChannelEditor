@@ -10,4 +10,6 @@ public:
 	std::string get_epg2_uri(const std::string& id) const override;
 	std::string get_playlist_url(const std::string& login, const std::string& password) const override;
 	std::string get_access_url(const std::string& login, const std::string& password) const override;
+	bool isLCPAccess() const override { return true; }
+	bool isAccessInfo() const override { return true; }
 };

@@ -20,6 +20,7 @@ END_MESSAGE_MAP()
 
 CAccessDlg::CAccessDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_ACCESS_INFO, pParent)
+	, m_streamType(StreamType::enEdem)
 {
 
 }

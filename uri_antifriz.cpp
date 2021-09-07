@@ -10,8 +10,8 @@ static constexpr auto EPG2_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz
 
 void uri_antifriz::parse_uri(const std::string& url)
 {
-	// http://tchaikovsky.antifriz.tv:1600/s/ibfpt72t/demo-4k/video.m3u8
-	// http://tchaikovsky.antifriz.tv:80/demo-4k/mpegts?token=ibfpt72t
+	// http://tchaikovsky.antifriz.tv:1600/s/ibzsdpt2t/demo-4k/video.m3u8
+	// http://tchaikovsky.antifriz.tv:80/demo-4k/mpegts?token=ibzsdpt2t
 
 	static std::regex re_url_hls(R"(^https?:\/\/(.+)\/s\/(.+)\/(.+)\/video\.m3u8$)");
 	static std::regex re_url_mpeg(R"(^https?:\/\/(.+)\/(.+)\/mpegts\?token=(.+)$)");
@@ -68,9 +68,7 @@ std::string uri_antifriz::get_epg2_uri(const std::string& id) const
 	return fmt::format(EPG2_TEMPLATE_ANTIFRIZ, id);
 }
 
-std::string uri_antifriz::get_playlist_url(const std::string& login, const std::string& password) const
+std::string uri_antifriz::get_playlist_url(const std::string& /*login*/, const std::string& password) const
 {
-	UNUSED_ALWAYS(login);
-
 	return fmt::format(PLAYLIST_TEMPLATE_ANTIFRIZ, password.c_str());
 }

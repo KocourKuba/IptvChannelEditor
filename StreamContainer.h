@@ -22,12 +22,12 @@ public:
 	StreamContainer(StreamType type);
 	~StreamContainer() = default;
 
-	uri_stream* get_stream_uri() { return stream_uri.get(); }
-	void set_stream_uri(const uri_stream* val) { ASSERT(val); *stream_uri = *val; }
-	void set_stream_uri(const std::string& val) { stream_uri->set_uri(val); }
-	StreamType get_stream_type() const { return stream_type; }
+	static LPCTSTR get_name(StreamType type);
 
-protected:
+	std::unique_ptr<uri_stream> get_instance(StreamType type);
+
+	void set_type(StreamType type);
+
 	std::unique_ptr<uri_stream> stream_uri;
-	StreamType stream_type = StreamType::enEdem;
+	StreamType stream_type;
 };

@@ -9,31 +9,64 @@
 
 StreamContainer::StreamContainer(StreamType type) : stream_type(type)
 {
-	switch (stream_type)
+	stream_uri = get_instance(type);
+}
+
+LPCTSTR StreamContainer::get_name(StreamType type)
+{
+	switch (type)
 	{
 		case StreamType::enBase: // ChannelsCategory
-			stream_uri = std::make_unique<uri_stream>();
-			break;
+			return _T("Base");
 		case StreamType::enChannels: // Channels list
-			stream_uri = std::make_unique<uri_channels>();
-			break;
+			return _T("Channels");
 		case StreamType::enEdem: // Edem playlist
-			stream_uri = std::make_unique<uri_edem>();
-			break;
+			return _T("Edem");
 		case StreamType::enSharavoz: // Sharavoz playlist
-			stream_uri = std::make_unique<uri_sharavoz>();
-			break;
+			return _T("Sharavoz");
 		case StreamType::enSharaclub: // Sharaclub playlist
-			stream_uri = std::make_unique<uri_sharaclub>();
-			break;
+			return _T("Sharaclub");
 		case StreamType::enGlanz: // Glanz playlist
-			stream_uri = std::make_unique<uri_glanz>();
-			break;
+			return _T("Glanz");
 		case StreamType::enAntifriz: // Antifriz playlist
-			stream_uri = std::make_unique<uri_antifriz>();
-			break;
+			return _T("Antifriz");
 		default:
 			ASSERT(false);
-			break;
+			return _T("");
+	}
+}
+
+std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
+{
+	switch (type)
+	{
+		case StreamType::enBase: // ChannelsCategory
+			return std::make_unique<uri_stream>();
+		case StreamType::enChannels: // Channels list
+			return std::make_unique<uri_channels>();
+		case StreamType::enEdem: // Edem playlist
+			return  std::make_unique<uri_edem>();
+		case StreamType::enSharavoz: // Sharavoz playlist
+			return  std::make_unique<uri_sharavoz>();
+		case StreamType::enSharaclub: // Sharaclub playlist
+			return  std::make_unique<uri_sharaclub>();
+		case StreamType::enGlanz: // Glanz playlist
+			return  std::make_unique<uri_glanz>();
+		case StreamType::enAntifriz: // Antifriz playlist
+			return  std::make_unique<uri_antifriz>();
+		default:
+			ASSERT(false);
+			return nullptr;
+	}
+}
+
+void StreamContainer::set_type(StreamType type)
+{
+	if (stream_type != type)
+	{
+		auto newStream = get_instance(type);
+		newStream->copy(stream_uri.get());
+		stream_uri = std::move(newStream);
+		stream_type = type;
 	}
 }

@@ -156,6 +156,36 @@ public:
 	/// <returns>string</returns>
 	virtual std::string get_access_url(const std::string& login, const std::string& password) const { return ""; }
 
+	/// <summary>
+	/// is used Control Panel access
+	/// </summary>
+	/// <returns>bool</returns>
+	virtual bool isLCPAccess() const { return false; }
+
+	/// <summary>
+	/// is used pin access (only key access)
+	/// </summary>
+	/// <returns>bool</returns>
+	virtual bool isPinAccess() const { return false; }
+
+	/// <summary>
+	/// is has access info
+	/// </summary>
+	/// <returns>bool</returns>
+	virtual bool isAccessInfo() const { return false; }
+
+	/// <summary>
+	/// copy info
+	/// </summary>
+	void copy(const uri_stream* src)
+	{
+		*this = *src;
+	}
+
+	/// <summary>
+	/// copy info
+	/// </summary>
+	/// <returns>uri_stream&</returns>
 	const uri_stream& operator=(const uri_stream& src)
 	{
 		if (&src != this)
