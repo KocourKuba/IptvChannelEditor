@@ -16,7 +16,7 @@ class AntifrizPluginConfig extends DefaultConfig
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
-    public static $USE_LOGIN_PASS = true;
+    public static $USE_PIN = true;
 
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
@@ -33,7 +33,7 @@ class AntifrizPluginConfig extends DefaultConfig
     {
         hd_print("Collect information from account antifriz");
         $found = false;
-        if (!empty($plugin_cookies->login) && !empty($plugin_cookies->password)) {
+        if (!empty($plugin_cookies->password)) {
             try {
                 $url = sprintf(self::ACCOUNT_PLAYLIST_URL,
                     self::ACCOUNT_PRIMARY_DOMAIN,
