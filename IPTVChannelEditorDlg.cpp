@@ -440,6 +440,12 @@ void CIPTVChannelEditorDlg::SaveAccessInfo()
 void CIPTVChannelEditorDlg::SwitchPlugin()
 {
 	// Rebuild available playlist types and set current plugin parameters
+	GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(SW_SHOW);
+	BOOL bStreamType = TRUE;
+	BOOL bAccessInfo = FALSE;
+	BOOL bPlaylist = TRUE;
+	BOOL bAddCustomFile = TRUE;
+
 	switch (m_wndPluginType.GetCurSel())
 	{
 		case 0: // Edem
@@ -449,25 +455,18 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.AddString(_T("Edem Standard"));
 			m_wndPlaylist.AddString(_T("Edem Thematic"));
 			m_wndPlaylist.AddString(_T("Custom URL"));
-			m_wndPlaylist.EnableWindow(TRUE);
-			int idx = m_wndPlaylist.AddString(_T("Custom File"));
-			m_wndPlaylist.SetItemData(idx, TRUE);
-			m_wndStreamType.ShowWindow(FALSE);
-			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(FALSE);
-			m_wndAccessInfo.EnableWindow(TRUE);
+			bStreamType = FALSE;
+			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(SW_HIDE);
+			bAccessInfo = TRUE;
 			break;
 		}
 		case 1: // Sharavoz
 		{
 			m_pluginType = StreamType::enSharavoz;
+			m_embedded_info = FALSE;
 			m_wndPlaylist.ResetContent();
-			m_wndPlaylist.AddString(_T("Custom URL"));
-			int idx = m_wndPlaylist.AddString(_T("Custom File"));
-			m_wndPlaylist.SetItemData(idx, TRUE);
-			m_wndPlaylist.EnableWindow(TRUE);
-			m_wndStreamType.ShowWindow(TRUE);
-			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
-			m_wndAccessInfo.EnableWindow(TRUE);
+			m_wndPlaylist.AddString(_T("Playlist"));
+			bAccessInfo = TRUE;
 			break;
 		}
 		case 2: // Sharaclub
@@ -477,13 +476,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 			m_wndPlaylist.ResetContent();
 			m_wndPlaylist.AddString(_T("Playlist"));
-			int idx = m_wndPlaylist.AddString(_T("Custom File"));
-			m_wndPlaylist.SetItemData(idx, TRUE);
+			bAddCustomFile = FALSE;
 			//m_wndPlaylist.AddString(_T("Mediateka"));
 			//m_wndPlaylist.EnableWindow(FALSE);
-			m_wndStreamType.ShowWindow(TRUE);
-			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
-			m_wndAccessInfo.EnableWindow(FALSE);
 			break;
 		}
 		case 3: // glanz
@@ -493,10 +488,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 			m_wndPlaylist.ResetContent();
 			m_wndPlaylist.AddString(_T("Playlist"));
-			m_wndPlaylist.EnableWindow(FALSE);
-			m_wndStreamType.ShowWindow(TRUE);
-			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
-			m_wndAccessInfo.EnableWindow(FALSE);
+			bPlaylist = FALSE;
+			bAddCustomFile = FALSE;
 			break;
 		}
 		case 4: // antifriz
@@ -506,17 +499,21 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 			m_wndPlaylist.ResetContent();
 			m_wndPlaylist.AddString(_T("Playlist"));
-			int idx = m_wndPlaylist.AddString(_T("Custom File"));
-			m_wndPlaylist.SetItemData(idx, TRUE);
-			m_wndPlaylist.EnableWindow(FALSE);
-			m_wndStreamType.ShowWindow(TRUE);
-			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
-			m_wndAccessInfo.EnableWindow(FALSE);
+			bPlaylist = FALSE;
 			break;
 		}
 		default:
 			ASSERT(false);
 			break;
+	}
+
+	m_wndStreamType.ShowWindow(bStreamType);
+	m_wndAccessInfo.EnableWindow(bAccessInfo);
+	m_wndPlaylist.EnableWindow(bPlaylist);
+	if (bAddCustomFile)
+	{
+		int idx = m_wndPlaylist.AddString(_T("Custom File"));
+		m_wndPlaylist.SetItemData(idx, TRUE);
 	}
 
 	m_pluginName = StreamContainer::get_name(m_pluginType);
@@ -637,7 +634,9 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0:
-					url = ReadRegStringPluginW(REG_CUSTOM_URL);
+					url = fmt::format(L"http://sharavoz.tk/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u",
+									  ReadRegStringPluginW(REG_PASSWORD).c_str());
+					m_plFileName = _T("Sharavoz_Playlist.m3u8");
 					break;
 				case 1:
 					url = ReadRegStringPluginW(REG_CUSTOM_FILE);
@@ -2359,7 +2358,6 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 	switch (m_pluginType)
 	{
 		case StreamType::enEdem:
-		case StreamType::enSharavoz:
 		{
 			CCustomPlaylistDlg dlg;
 			dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
@@ -2369,6 +2367,22 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			{
 				loaded = true;
 				SaveRegPlugin(szType, dlg.m_url);
+			}
+			break;
+		}
+		case StreamType::enSharavoz:
+		{
+			CAccessInfoPinDlg dlg;
+			dlg.m_entry = entry;
+			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
+			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
+			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
+			if (dlg.DoModal() == IDOK)
+			{
+				loaded = true;
+				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->stream_uri->get_password().c_str());
+				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->stream_uri->get_token().c_str());
+				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->stream_uri->get_domain().c_str());
 			}
 			break;
 		}

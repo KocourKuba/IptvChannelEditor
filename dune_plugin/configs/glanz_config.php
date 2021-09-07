@@ -40,7 +40,7 @@ class GlanzPluginConfig extends DefaultConfig
 
     public static function GetAccessInfo($plugin_cookies)
     {
-        hd_print("Collect information from account glanz");
+        hd_print("Collect information from account");
         $found = false;
         if (!empty($plugin_cookies->login) && !empty($plugin_cookies->password)) {
             try {

@@ -4,8 +4,7 @@ require_once 'default_config.php';
 class AntifrizPluginConfig extends DefaultConfig
 {
     // local parameters
-    const ACCOUNT_PLAYLIST_URL = 'http://%s/playlist/%s.m3u8';
-    const ACCOUNT_PRIMARY_DOMAIN = 'antifriz.tv';
+    const ACCOUNT_PLAYLIST_URL = 'http://antifriz.tv/playlist/%s.m3u8';
     const STREAM_URL_PATTERN = '/^https?:\/\/(.+)\/s\/(.+)\/.+\/video\.m3u8$/';
 
     // info
@@ -31,13 +30,11 @@ class AntifrizPluginConfig extends DefaultConfig
 
     public static function GetAccessInfo($plugin_cookies)
     {
-        hd_print("Collect information from account antifriz");
+        hd_print("Collect information from account");
         $found = false;
         if (!empty($plugin_cookies->password)) {
             try {
-                $url = sprintf(self::ACCOUNT_PLAYLIST_URL,
-                    self::ACCOUNT_PRIMARY_DOMAIN,
-                    $plugin_cookies->password);
+                $url = sprintf(self::ACCOUNT_PLAYLIST_URL, $plugin_cookies->password);
                 $content = HD::http_get_document($url);
             } catch (Exception $ex) {
                 hd_print("Failed to fetch provider playlist");
@@ -48,7 +45,6 @@ class AntifrizPluginConfig extends DefaultConfig
             file_put_contents($tmp_file, $content);
             $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             for ($i = 0; $i < count($lines); ++$i) {
-                hd_print($lines);
                 if (preg_match(self::STREAM_URL_PATTERN, $lines[$i], $matches)) {
                     $plugin_cookies->subdomain_local = $matches[1];
                     $plugin_cookies->ott_key_local = $matches[2];
