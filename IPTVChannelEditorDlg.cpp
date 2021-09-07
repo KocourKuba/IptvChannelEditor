@@ -2403,6 +2403,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 				default:
 					break;
 			}
+			break;
 		}
 		case StreamType::enGlanz:
 		{
