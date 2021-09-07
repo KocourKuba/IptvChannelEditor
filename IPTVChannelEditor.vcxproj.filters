@@ -201,6 +201,9 @@
     <ClInclude Include="map_serializer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="uri_antifriz.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -288,6 +291,9 @@
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="uri_glanz.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_antifriz.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>

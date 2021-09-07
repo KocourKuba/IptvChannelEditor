@@ -240,6 +240,7 @@
     <ClInclude Include="PlayListEntry.h" />
     <ClInclude Include="SettingsDlg.h" />
     <ClInclude Include="StreamContainer.h" />
+    <ClInclude Include="uri_antifriz.h" />
     <ClInclude Include="uri_channels.h" />
     <ClInclude Include="uri_edem.h" />
     <ClInclude Include="uri_base.h" />
@@ -290,6 +291,7 @@
     <ClCompile Include="FilterDialog.cpp" />
     <ClCompile Include="PlayListEntry.cpp" />
     <ClCompile Include="SettingsDlg.cpp" />
+    <ClCompile Include="uri_antifriz.cpp" />
     <ClCompile Include="uri_channels.cpp" />
     <ClCompile Include="uri_edem.cpp" />
     <ClCompile Include="uri_base.cpp" />

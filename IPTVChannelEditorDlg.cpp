@@ -78,16 +78,20 @@ static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/
 static constexpr auto URI_TEMPLATE_SHARAVOZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_SHARACLUB = "http://{SUBDOMAIN}/live/{TOKEN}/{ID}/index.m3u8";
 static constexpr auto URI_TEMPLATE_GLANZ = "http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+static constexpr auto URI_TEMPLATE_ANTIFRIZ = "http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8";
+static constexpr auto URI_TEMPLATE_ANTIFRIZ_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 
 static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/edem/epg/%s.json";
 static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG1_TEMPLATE_SHARACLUB = "http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG1_TEMPLATE_GLANZ = "http://epg.ott-play.com/ottg/epg/%s.json";
+static constexpr auto EPG1_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz/epg/%s.json";
 
 static constexpr auto EPG2_TEMPLATE_EDEM = "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
 static constexpr auto EPG2_TEMPLATE_SHARAVOZ = "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG2_TEMPLATE_SHARACLUB = "http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG2_TEMPLATE_GLANZ = "http://epg.ott-play.com/ottg/epg/%s.json";
+static constexpr auto EPG2_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz/epg/%s.json";
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
@@ -397,6 +401,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndPluginType.AddString(_T("Sharavoz TV"));
 	m_wndPluginType.AddString(_T("Sharaclub TV"));
 	m_wndPluginType.AddString(_T("Glanz TV"));
+	m_wndPluginType.AddString(_T("Antifriz TV"));
 
 	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
@@ -517,6 +522,22 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndAccessInfo.EnableWindow(FALSE);
 			break;
 		}
+		case 4: // antifriz
+		{
+			m_pluginType = StreamType::enAntifriz;
+			m_pluginName = _T("Antifriz");
+			m_embedded_info = FALSE;
+
+			m_wndPlaylist.ResetContent();
+			m_wndPlaylist.AddString(_T("Playlist"));
+			int idx = m_wndPlaylist.AddString(_T("Custom File"));
+			m_wndPlaylist.SetItemData(idx, TRUE);
+			m_wndPlaylist.EnableWindow(FALSE);
+			m_wndStreamType.ShowWindow(TRUE);
+			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(TRUE);
+			m_wndAccessInfo.EnableWindow(FALSE);
+			break;
+		}
 		default:
 			ASSERT(false);
 			break;
@@ -597,6 +618,8 @@ std::wstring CIPTVChannelEditorDlg::GetPluginName() const
 			return L"sharaclub";
 		case 3: // Glanz
 			return L"glanz";
+		case 4: // Antifriz
+			return L"antifriz";
 	}
 
 	return L"";
@@ -610,7 +633,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/2402/index.m3u8
 
 	m_plFileName.Empty();
-	CString url;
+	std::wstring url;
 	int idx = m_wndPlaylist.GetCurSel();
 	BOOL isFile = (BOOL)m_wndPlaylist.GetItemData(idx);
 
@@ -621,16 +644,16 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0:
-					url = _T("http://epg.it999.ru/edem_epg_ico.m3u8");
+					url = L"http://epg.it999.ru/edem_epg_ico.m3u8";
 					break;
 				case 1:
-					url = _T("http://epg.it999.ru/edem_epg_ico2.m3u8");
+					url = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 					break;
 				case 2:
-					url = ReadRegStringPluginT(REG_CUSTOM_URL);
+					url = ReadRegStringPluginW(REG_CUSTOM_URL);
 					break;
 				case 3:
-					url = ReadRegStringPluginT(REG_CUSTOM_FILE);
+					url = ReadRegStringPluginW(REG_CUSTOM_FILE);
 					break;
 				default:
 					break;
@@ -642,10 +665,10 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0:
-					url = ReadRegStringPluginT(REG_CUSTOM_URL);
+					url = ReadRegStringPluginW(REG_CUSTOM_URL);
 					break;
 				case 1:
-					url = ReadRegStringPluginT(REG_CUSTOM_FILE);
+					url = ReadRegStringPluginW(REG_CUSTOM_FILE);
 					break;
 				default:
 					break;
@@ -657,18 +680,18 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0:
-					url.Format(_T("http://list.playtv.pro/tv_live-m3u8/%s-%s"),
-							   ReadRegStringPluginT(REG_LOGIN).GetString(),
-							   ReadRegStringPluginT(REG_PASSWORD).GetString());
+					url = fmt::format(L"http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}",
+							   ReadRegStringPluginW(REG_LOGIN).c_str(),
+							   ReadRegStringPluginW(REG_PASSWORD).c_str());
 					m_plFileName = _T("SharaClub_Playlist.m3u8");
 					break;
 				case 1:
 					url = ReadRegStringPluginT(REG_CUSTOM_FILE);
 					break;
 				case 2:
-					url.Format(_T("http://list.playtv.pro/kino-full/%s-%s"),
-							   ReadRegStringPluginT(REG_LOGIN).GetString(),
-							   ReadRegStringPluginT(REG_PASSWORD).GetString());
+					url = fmt::format(L"http://list.playtv.pro/kino-full/{:s}-{:s}",
+							   ReadRegStringPluginW(REG_LOGIN).c_str(),
+							   ReadRegStringPluginW(REG_PASSWORD).c_str());
 					m_plFileName = _T("SharaClub_Movie.m3u8");
 					break;
 				default:
@@ -681,10 +704,26 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0:
-					url.Format(_T("http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls"),
-							   ReadRegStringPluginT(REG_LOGIN).GetString(),
-							   ReadRegStringPluginT(REG_PASSWORD).GetString());
+					url = fmt::format(L"http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls",
+							   ReadRegStringPluginW(REG_LOGIN).c_str(),
+							   ReadRegStringPluginW(REG_PASSWORD).c_str());
 					m_plFileName = _T("Glanz_Playlist.m3u8");
+					break;
+				case 1:
+					break;
+				default:
+					break;
+			}
+			break;
+		}
+		case 4: // Antifriz
+		{
+			switch (idx)
+			{
+				case 0:
+					url = fmt::format(L"https://antifriz.tv/playlist/{:s}.m3u8",
+							   ReadRegStringPluginW(REG_PASSWORD).c_str());
+					m_plFileName = _T("Antifriz_Playlist.m3u8");
 					break;
 				case 1:
 					break;
@@ -697,7 +736,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			return;
 	}
 
-	if (url.IsEmpty())
+	if (url.empty())
 	{
 		AfxMessageBox(_T("Playlist source not set!"), MB_OK | MB_ICONERROR);
 		return;
@@ -705,7 +744,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	if (m_plFileName.IsEmpty())
 	{
-		CString slashed(url);
+		CString slashed(url.c_str());
 		slashed.Replace('\\', '/');
 		auto pos = slashed.ReverseFind('/');
 		if (pos != -1)
@@ -733,12 +772,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	auto data = std::make_unique<std::vector<BYTE>>();
 	if (isFile)
 	{
-		std::ifstream stream(url.GetString());
+		std::ifstream stream(url);
 		data->assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
 	}
-	else if (utils::CrackUrl(utils::utf16_to_utf8(url.GetString())))
+	else if (utils::CrackUrl(utils::utf16_to_utf8(url)))
 	{
-		if (utils::DownloadFile(utils::utf16_to_utf8(url.GetString()), *data))
+		if (utils::DownloadFile(utils::utf16_to_utf8(url), *data))
 		{
 			if(saveToFile)
 			{
@@ -1027,6 +1066,7 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, 
 				uri_template += fmt::format("?utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
 			}
 			break;
+
 		case StreamType::enSharavoz:
 			uri_template = URI_TEMPLATE_SHARAVOZ;
 			if (hours_back)
@@ -1043,13 +1083,9 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, 
 					break;
 			}
 			break;
+
 		case StreamType::enSharaclub:
 			uri_template = URI_TEMPLATE_SHARACLUB;
-			if (hours_back)
-			{
-				uri_template += fmt::format("?utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
-			}
-
 			switch (m_StreamType)
 			{
 				case 0: // hls
@@ -1059,14 +1095,15 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, 
 					utils::string_replace_inplace(uri_template, "/index.m3u8", ".ts");
 					break;
 			}
-			break;
-		case StreamType::enGlanz:
-			uri_template = URI_TEMPLATE_GLANZ;
+
 			if (hours_back)
 			{
-				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+				uri_template += fmt::format("?utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
 			}
+			break;
 
+		case StreamType::enGlanz:
+			uri_template = URI_TEMPLATE_GLANZ;
 			switch (m_StreamType)
 			{
 				case 0: // hls
@@ -1077,11 +1114,30 @@ std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, 
 					break;
 			}
 
-			utils::string_replace_inplace(uri_template, "{LOGIN}", ReadRegStringPluginA(REG_LOGIN));
-			utils::string_replace_inplace(uri_template, "{PASSWORD}", ReadRegStringPluginA(REG_PASSWORD));
-			utils::string_replace_inplace(uri_template, "{INT_ID}", ReadRegStringPluginA(REG_INT_ID));
-			utils::string_replace_inplace(uri_template, "{HOST}", ReadRegStringPluginA(REG_HOST));
+			if (hours_back)
+			{
+				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+			}
 			break;
+
+		case StreamType::enAntifriz:
+
+			switch (m_StreamType)
+			{
+				case 0: // hls
+					uri_template = URI_TEMPLATE_ANTIFRIZ;
+					break;
+				case 1: // mpeg-ts
+					uri_template = URI_TEMPLATE_ANTIFRIZ_MPEG;
+					break;
+			}
+
+			if (hours_back)
+			{
+				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+			}
+			break;
+
 		default:
 			break;
 	}
@@ -1105,8 +1161,8 @@ std::string CIPTVChannelEditorDlg::GetEpgTemplate(BOOL first) const
 			return first ? EPG1_TEMPLATE_SHARACLUB : EPG2_TEMPLATE_SHARACLUB;
 		case StreamType::enGlanz:
 			return first ? EPG1_TEMPLATE_GLANZ : EPG2_TEMPLATE_GLANZ;
-		case StreamType::enBase:
-		case StreamType::enChannels:
+		case StreamType::enAntifriz:
+			return first ? EPG1_TEMPLATE_ANTIFRIZ : EPG2_TEMPLATE_ANTIFRIZ;
 		default:
 			break;
 	}
@@ -2398,6 +2454,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 		{
 			case StreamType::enEdem:
 			case StreamType::enGlanz:
+			case StreamType::enAntifriz:
 				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id());
 				break;
 			case StreamType::enSharaclub:
@@ -2425,6 +2482,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 		{
 			case StreamType::enEdem:
 			case StreamType::enGlanz:
+			case StreamType::enAntifriz:
 				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg2_id());
 				break;
 			case StreamType::enSharaclub:
@@ -2515,11 +2573,33 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 				default:
 					break;
 			}
-	}
+		}
 		case StreamType::enGlanz:
 		{
 			CAccessInfoPassDlg dlg;
 			dlg.m_entry = std::make_shared<PlaylistEntry>(StreamType::enGlanz, theApp.GetAppPath(utils::PLUGIN_ROOT));
+			dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
+			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
+			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
+			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
+			dlg.m_entry->get_uri_stream()->set_int_id(ReadRegStringPluginA(REG_INT_ID));
+			dlg.m_entry->get_uri_stream()->set_host(ReadRegStringPluginA(REG_HOST));
+			if (dlg.DoModal() == IDOK)
+			{
+				loaded = true;
+				SaveRegPlugin(REG_LOGIN, dlg.m_entry->get_stream_uri()->get_login().c_str());
+				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->get_stream_uri()->get_password().c_str());
+				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->get_stream_uri()->get_token().c_str());
+				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->get_stream_uri()->get_domain().c_str());
+				SaveRegPlugin(REG_INT_ID, dlg.m_entry->get_stream_uri()->get_int_id().c_str());
+				SaveRegPlugin(REG_HOST, dlg.m_entry->get_stream_uri()->get_host().c_str());
+			}
+			break;
+		}
+		case StreamType::enAntifriz:
+		{
+			CAccessInfoPassDlg dlg;
+			dlg.m_entry = std::make_shared<PlaylistEntry>(StreamType::enAntifriz, theApp.GetAppPath(utils::PLUGIN_ROOT));
 			dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
 			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
 			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
@@ -2745,17 +2825,6 @@ void CIPTVChannelEditorDlg::OnSave()
 	auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
 		old_selected = channel->get_id().c_str();
-
-// 	std::map<int, std::shared_ptr<ChannelCategory>> ren_categories;
-// 	for (auto& pair : m_categoriesMap)
-// 	{
-// 		if (!pair.second->is_empty() || pair.first == ID_ADD_TO_FAVORITE)
-// 		{
-// 			ren_categories.emplace(pair.second->get_key(), pair.second);
-// 		}
-// 	}
-//
-// 	m_categoriesMap = std::move(ren_categories);
 
 	try
 	{
@@ -3067,7 +3136,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	for (const auto& file : m_all_channels_lists)
 	{
 		std::filesystem::path src(std::filesystem::absolute(file.second));
-		std::filesystem::copy_file(src, packFolder + file.first, std::filesystem::copy_options::overwrite_existing, err);
+		std::filesystem::copy_file(src, packFolder + src.filename().c_str(), std::filesystem::copy_options::overwrite_existing, err);
 		ASSERT(!err.value());
 	}
 
@@ -3696,6 +3765,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 		}
 		case 2: // Sharaclub
 		case 3: // Glanz
+		case 4: // Antifriz
 		{
 			enableCustom = TRUE;
 			m_wndChannels.SetCurSel(pl_idx);

@@ -10,6 +10,7 @@ using json = nlohmann::json;
 static constexpr auto ACCESS_TEMPLATE_SHARACLUB = "http://list.playtv.pro/api/dune-api5m.php?subscr={:s}-{:s}";
 static constexpr auto PLAYLIST_TEMPLATE_SHARACLUB = "http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}";
 static constexpr auto PLAYLIST_TEMPLATE_GLANZ = "http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
+static constexpr auto PLAYLIST_TEMPLATE_ANTIFRIZ = "https://antifriz.tv/playlist/{:s}.m3u8";
 
 // CAccessDlg dialog
 
@@ -29,7 +30,9 @@ void CAccessInfoPassDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_EDIT_LOGIN, m_wndLogin);
 	DDX_Text(pDX, IDC_EDIT_LOGIN, m_login);
+	DDX_Control(pDX, IDC_EDIT_PASSWORD, m_wndPassword);
 	DDX_Text(pDX, IDC_EDIT_PASSWORD, m_password);
 	DDX_Text(pDX, IDC_EDIT_STATUS, m_status);
 	DDX_Text(pDX, IDC_EDIT_SUBSCRIPTION, m_subscription);
@@ -44,6 +47,11 @@ BOOL CAccessInfoPassDlg::OnInitDialog()
 
 	m_login = m_entry->get_stream_uri()->get_login().c_str();
 	m_password = m_entry->get_stream_uri()->get_password().c_str();
+
+	if (m_entry->get_stream_type() == StreamType::enAntifriz)
+	{
+		m_wndLogin.EnableWindow(FALSE);
+	}
 
 	UpdateData(FALSE);
 
@@ -101,19 +109,21 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	}
 
 	LPCSTR tpl = nullptr;
+	std::string pl_url;
 	switch (m_entry->get_stream_type())
 	{
 		case StreamType::enSharaclub:
-			tpl = PLAYLIST_TEMPLATE_SHARACLUB;
+			pl_url = fmt::format(PLAYLIST_TEMPLATE_SHARACLUB, login.c_str(), password.c_str());
 			break;
 		case StreamType::enGlanz:
-			tpl = PLAYLIST_TEMPLATE_GLANZ;
+			pl_url = fmt::format(PLAYLIST_TEMPLATE_GLANZ, login.c_str(), password.c_str());
+			break;
+		case StreamType::enAntifriz:
+			pl_url = fmt::format(PLAYLIST_TEMPLATE_ANTIFRIZ, password.c_str());
 			break;
 		default:
 			return;
 	}
-
-	const auto& pl_url = fmt::format(tpl, login.c_str(), password.c_str());
 
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;

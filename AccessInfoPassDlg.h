@@ -29,6 +29,9 @@ public:
 
 protected:
 	CButton m_wndGet;
+	CEdit m_wndLogin;
+	CEdit m_wndPassword;
+
 	CString m_status;
 	CString m_subscription;
 	CString m_balance;
