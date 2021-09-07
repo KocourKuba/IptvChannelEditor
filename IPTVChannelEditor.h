@@ -29,6 +29,19 @@ public:
 	void RestoreWindowPos(HWND hWnd, LPCTSTR name);
 
 	DECLARE_MESSAGE_MAP()
+
+private:
+	BOOL m_devMode = FALSE;
+};
+
+class CCommandLineInfoEx : public CCommandLineInfo
+{
+public:
+	CCommandLineInfoEx() = default;
+	void ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast) override;
+
+public:
+	BOOL m_bDev = FALSE;
 };
 
 extern CIPTVChannelEditorApp theApp;

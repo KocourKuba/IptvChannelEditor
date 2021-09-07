@@ -18,6 +18,20 @@
 
 constexpr auto REG_SETTINGS = _T("Settings");
 
+void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
+{
+	if (bFlag)
+	{
+		if (_tcsicmp(szParam, _T("Dev")) == 0)
+		{
+			m_bDev = TRUE;
+			return;
+		}
+	}
+
+	CCommandLineInfo::ParseParam(szParam, bFlag, bLast);
+}
+
 // CEdemChannelEditorApp
 
 BEGIN_MESSAGE_MAP(CIPTVChannelEditorApp, CWinApp)
@@ -75,6 +89,10 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	InitContextMenuManager();
 
+	CCommandLineInfoEx cmdInfo;
+	ParseCommandLine(cmdInfo);
+	m_devMode = cmdInfo.m_bDev;
+
 	CIPTVChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
@@ -107,6 +125,15 @@ std::wstring CIPTVChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/
 		if(pos != -1)
 			fileName.Truncate(pos + 1);
 	}
+
+#ifdef _DEBUG
+	fileName += _T("..\\");
+#else
+	if (m_devMode)
+	{
+		fileName += _T("..\\");
+	}
+#endif // _DEBUG
 
 	fileName += szSubFolder;
 

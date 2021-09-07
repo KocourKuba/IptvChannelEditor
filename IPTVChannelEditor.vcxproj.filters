@@ -87,9 +87,6 @@
     <ClInclude Include="PlayListEntry.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>Header Files\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="IconContainer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
@@ -207,6 +204,9 @@
     <ClInclude Include="plugin_constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -225,9 +225,6 @@
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="PlayListEntry.cpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="AboutDlg.cpp">
@@ -298,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="uri_antifriz.cpp">
       <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

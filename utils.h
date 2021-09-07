@@ -16,19 +16,15 @@ namespace utils
 	static constexpr auto CHANNELS_LOGO_URL = "icons/channels/";
 	static constexpr auto CATEGORIES_LOGO_URL = "icons/";
 
+	static constexpr auto PLUGIN_ROOT = L"dune_plugin\\";
+	static constexpr auto PLAYLISTS_ROOT = L"playlists\\{:s}\\";
+	static constexpr auto CHANNELS_LOGO_PATH = L"dune_plugin\\icons\\channels\\";
+	static constexpr auto CATEGORIES_LOGO_PATH = L"dune_plugin\\icons\\";
+	static constexpr auto PACK_PATH = L"{:s}_plugin\\";
+
 #ifdef _DEBUG
-	static constexpr auto PLUGIN_ROOT = L"..\\dune_plugin\\";
-	static constexpr auto PLAYLISTS_ROOT = L"..\\playlists\\{:s}\\";
-	static constexpr auto CHANNELS_LOGO_PATH = L"..\\dune_plugin\\icons\\channels\\";
-	static constexpr auto CATEGORIES_LOGO_PATH = L"..\\dune_plugin\\icons\\";
-	static constexpr auto PACK_PATH = L"..\\{:s}_plugin\\";
-	static constexpr auto PACK_DLL = L"..\\dll\\7za.dll";
+	static constexpr auto PACK_DLL = L"dll\\7za.dll";
 #else
-	static constexpr auto PLUGIN_ROOT = L".\\dune_plugin\\";
-	static constexpr auto PLAYLISTS_ROOT = L".\\playlists\\{:s}\\";
-	static constexpr auto CHANNELS_LOGO_PATH = L".\\dune_plugin\\icons\\channels\\";
-	static constexpr auto CATEGORIES_LOGO_PATH = L".\\dune_plugin\\icons\\";
-	static constexpr auto PACK_PATH = L".\\{:s}_plugin\\";
 	static constexpr auto PACK_DLL = L"7za.dll";
 #endif // _DEBUG
 

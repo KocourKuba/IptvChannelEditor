@@ -3091,6 +3091,23 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 		ASSERT(!err.value());
 	}
 
+	// remove files for other plugins
+	std::vector<std::wstring> to_remove = {
+		L"bg_antifriz.jpg", L"antifriz.png",
+		L"bg_edem.jpg", L"edem.png",
+		L"bg_glanz.jpg", L"glanz.png",
+		L"bg_sharaclub.jpg", L"sharaclub.png",
+		L"bg_sharavoz.jpg", L"sharavoz.png",
+	};
+	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name.c_str())), to_remove.end());
+	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"{:s}.png", name.c_str())), to_remove.end());
+
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + L"icons\\"})
+	{
+		if (std::find(to_remove.begin(), to_remove.end(), dir_entry.path().filename().wstring()) != to_remove.end())
+			std::filesystem::remove(dir_entry, err);
+	}
+
 	// write setup file
 	const auto& aName = utils::utf16_to_utf8(name);
 	auto capsName(aName);
