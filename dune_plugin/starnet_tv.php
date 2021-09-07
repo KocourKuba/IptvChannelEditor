@@ -46,23 +46,27 @@ class StarnetPluginTv extends AbstractTv
 
     public function add_special_groups(&$items)
     {
-        array_unshift($items,
-            array
-            (
-                PluginRegularFolderItem::media_url =>
-                    MediaURL::encode(
-                        array
-                        (
-                            'screen_id' => StarnetVodCategoryListScreen::ID,
-                            'name' => 'VOD',
-                        )),
-                PluginRegularFolderItem::caption => DefaultConfig::VOD_GROUP_CAPTION,
-                PluginRegularFolderItem::view_item_params => array
+        $config = self::$config;
+        if ($config::$VOD_MOVIE_PAGE_SUPPORTED) {
+
+            array_unshift($items,
+                array
                 (
-                    ViewItemParams::icon_path => DefaultConfig::VOD_GROUP_ICON
+                    PluginRegularFolderItem::media_url =>
+                        MediaURL::encode(
+                            array
+                            (
+                                'screen_id' => StarnetVodCategoryListScreen::ID,
+                                'name' => 'VOD',
+                            )),
+                    PluginRegularFolderItem::caption => DefaultConfig::VOD_GROUP_CAPTION,
+                    PluginRegularFolderItem::view_item_params => array
+                    (
+                        ViewItemParams::icon_path => DefaultConfig::VOD_GROUP_ICON
+                    )
                 )
-            )
-        );
+            );
+        }
     }
 
     /**
@@ -247,7 +251,7 @@ class StarnetPluginTv extends AbstractTv
         }
 
         hd_print("StreamUri: $url");
-        $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $url, $channel->get_channel_id);
+        $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $url, $channel->get_channel_id());
         hd_print("AdjustedStreamUri: $url");
 
         $config = self::$config;
@@ -257,7 +261,7 @@ class StarnetPluginTv extends AbstractTv
             hd_print("Error: subdomain/token not set");
         }
 
-        $url = str_replace('{INT_ID}', $channel->get_number, $url);
+        $url = str_replace('{INT_ID}', $channel->get_number(), $url);
 
         if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
             $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
