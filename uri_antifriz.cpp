@@ -2,6 +2,12 @@
 #include "uri_antifriz.h"
 #include "utils.h"
 
+static constexpr auto PLAYLIST_TEMPLATE_ANTIFRIZ = "https://antifriz.tv/playlist/{:s}.m3u8";
+static constexpr auto URI_TEMPLATE_ANTIFRIZ_HLS = "http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8";
+static constexpr auto URI_TEMPLATE_ANTIFRIZ_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
+static constexpr auto EPG1_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz/epg/%s.json";
+static constexpr auto EPG2_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz/epg/%s.json";
+
 void uri_antifriz::parse_uri(const std::string& url)
 {
 	// http://tchaikovsky.antifriz.tv:1600/s/ibfpt72t/demo-4k/video.m3u8
@@ -29,4 +35,42 @@ void uri_antifriz::parse_uri(const std::string& url)
 	}
 
 	uri_stream::parse_uri(url);
+}
+
+std::string uri_antifriz::get_templated(StreamSubType subType, int shift_back) const
+{
+	std::string uri_template;
+	switch (subType)
+	{
+		case StreamSubType::enHLS:
+			uri_template = URI_TEMPLATE_ANTIFRIZ_HLS;
+			break;
+		case StreamSubType::enMPEGTS:
+			uri_template = URI_TEMPLATE_ANTIFRIZ_MPEG;
+			break;
+	}
+
+	if (shift_back)
+	{
+		uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+	}
+
+	return uri_template;
+}
+
+std::string uri_antifriz::get_epg1_uri(const std::string& id) const
+{
+	return fmt::format(EPG1_TEMPLATE_ANTIFRIZ, id);
+}
+
+std::string uri_antifriz::get_epg2_uri(const std::string& id) const
+{
+	return fmt::format(EPG2_TEMPLATE_ANTIFRIZ, id);
+}
+
+std::string uri_antifriz::get_playlist_url(const std::string& login, const std::string& password) const
+{
+	UNUSED_ALWAYS(login);
+
+	return fmt::format(PLAYLIST_TEMPLATE_ANTIFRIZ, password.c_str());
 }

@@ -23,8 +23,8 @@ abstract class DefaultConfig
     public static $USE_PIN = false;
 
     // tv
-    public static $MEDIA_URL_TEMPLATE = 'http://ts://online.dune-hd.com/demo/index.m3u8?channel=%s';
-    public static $MEDIA_URL_TEMPLATE_TS = 'http://ts://online.dune-hd.com/demo/mpegts?channel=%s';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://online.dune-hd.com/demo/index.m3u8?channel=%s';
+    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://online.dune-hd.com/demo/mpegts?channel=%s';
     public static $CHANNELS_LIST = 'default_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://online.dune-hd.com/epg1/?channel=%s&date=%s';
     protected static $EPG2_URL_TEMPLATE = 'http://online.dune-hd.com/epg2/?channel=%s&date=%s';
@@ -89,10 +89,10 @@ abstract class DefaultConfig
 
         switch ($format) {
             case 'hls':
-                $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE);
+                $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
                 break;
             case 'mpeg':
-                $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_TS);
+                $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_MPEG);
                 $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
                 $url .= "|||dune_params|||buffering_ms:$buf_time";
                 break;

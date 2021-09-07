@@ -27,8 +27,8 @@ class SharaclubPluginConfig extends DefaultConfig
     public static $USE_LOGIN_PASS = true;
 
     // tv
-    public static $MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
-    public static $MEDIA_URL_TEMPLATE_TS = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
+    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts';
     public static $CHANNELS_LIST = 'sharaclub_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
     protected static $EPG2_URL_TEMPLATE = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
@@ -171,7 +171,7 @@ class SharaclubPluginConfig extends DefaultConfig
                             $playback_url = str_replace(
                                 array('{SUBDOMAIN}', '{TOKEN}', '{ID}'),
                                 array($matches[1], $matches[2], "vod-" . $episode['id']),
-                                self::$MEDIA_URL_TEMPLATE);
+                                self::$MEDIA_URL_TEMPLATE_HLS);
                         }
                         $movie->add_series_data($episode['id'], $episodeCaption, $playback_url, true);
                     }

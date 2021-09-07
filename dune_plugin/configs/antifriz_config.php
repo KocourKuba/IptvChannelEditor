@@ -19,8 +19,8 @@ class AntifrizPluginConfig extends DefaultConfig
     public static $USE_LOGIN_PASS = true;
 
     // tv
-    public static $MEDIA_URL_TEMPLATE = 'http://ts://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
-    public static $MEDIA_URL_TEMPLATE_TS = 'http://ts://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
+    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
     public static $CHANNELS_LIST = 'antifriz_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id date(YYYYMMDD)
     protected static $EPG2_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id date(YYYYMMDD)

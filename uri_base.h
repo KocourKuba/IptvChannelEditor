@@ -1,5 +1,12 @@
 #pragma once
 
+enum class StreamSubType
+{
+	enHLS = 0,
+	enMPEGTS,
+};
+
+
 /// <summary>
 /// Base uri class
 /// </summary>
@@ -12,6 +19,7 @@ public:
 	uri_base() = default;
 
 public:
+
 	virtual void clear() { schema.clear(); path.clear(); set_template(true); }
 
 	/// <summary>

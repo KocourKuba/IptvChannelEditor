@@ -20,7 +20,7 @@
 #include "IconCache.h"
 #include "IconsListDlg.h"
 #include "utils.h"
-#include "plugin_constants.h"
+#include "uri_antifriz.h"
 
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
@@ -40,6 +40,33 @@ constexpr auto ID_MOVE_TO_END = ID_MOVE_TO_START + 512;
 
 constexpr auto ID_ADD_TO_START = ID_MOVE_TO_END + 1;
 constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
+
+// Common
+constexpr auto REG_SETTINGS = _T("Settings");
+constexpr auto REG_PLAYER = _T("Player");
+constexpr auto REG_FFPROBE = _T("FFProbe");
+constexpr auto REG_DAYS_BACK = _T("DaysBack");
+constexpr auto REG_HOURS_BACK = _T("HoursBack");
+constexpr auto REG_AUTOSYNC = _T("AutoSyncChannel");
+constexpr auto REG_PLUGIN = _T("PluginType");
+constexpr auto REG_ICON_SOURCE = _T("IconSource");
+
+// Plugin dependent
+constexpr auto REG_LOGIN = _T("Login");
+constexpr auto REG_PASSWORD = _T("Password");
+constexpr auto REG_ACCESS_KEY = _T("AccessKey");
+constexpr auto REG_DOMAIN = _T("Domain");
+constexpr auto REG_ACCESS_URL = _T("AccessUrl");
+constexpr auto REG_INT_ID = _T("IntId");
+constexpr auto REG_HOST = _T("Host");
+constexpr auto REG_FILTER_STRING = _T("FilterString");
+constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
+constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
+constexpr auto REG_CHANNELS_TYPE = _T("ChannelsType");
+constexpr auto REG_PLAYLIST_TYPE = _T("PlaylistType");
+constexpr auto REG_STREAM_TYPE = _T("StreamType");
+constexpr auto REG_CUSTOM_URL = _T("CustomUrl");
+constexpr auto REG_CUSTOM_FILE = _T("CustomPlaylist");
 
 BOOL CIPTVChannelEditorDlg::m_embedded_info = FALSE;
 CString CIPTVChannelEditorDlg::m_probe;
@@ -582,11 +609,6 @@ std::wstring CIPTVChannelEditorDlg::GetPluginName() const
 
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 {
-	// #EXTM3U <--- header
-	// #EXTINF:0 tvg-rec="3",Первый FHD <-- caption
-	// #EXTGRP:Общие <-- Category
-	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/2402/index.m3u8
-
 	m_plFileName.Empty();
 	std::wstring url;
 	int idx = m_wndPlaylist.GetCurSel();
@@ -993,136 +1015,23 @@ void CIPTVChannelEditorDlg::UpdatePlaylistCount()
 std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, const PlayParams& params) const
 {
 	// templated url changed, custom is unchanged
-	// http://ts://rtmp.api.rt.com/hls/rtdru.m3u8 -> http://rtmp.api.rt.com/hls/rtdru.m3u8
-	//
-	// edem
-	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8 -> http://ts://domain.com/iptv/000000000000/205/index.m3u8
-	//
-	// sharavoz
-	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN} -> http://domain.com/204/index.m3u8?token=adsdaSDFJKHKJd
-	//
-	// sharaclub
-	// http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8 -> http://{SUBDOMAIN}/live/adsdaSDFJKHKJd/204/video.m3u8
-	//
-	// glanz
-	// http://{SUBDOMAIN}/{ID}/index.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST} ->
-	// http://{SUBDOMAIN}/205/index.m3u8?username={LOGIN}&password={PASSWORD}&token=f5afea07cef148278ae074acaf67a547&ch_id={INT_ID}&req_host={HOST}
 
 	int hours_back = 86400 * params.archive_day - 3600 * params.archive_hour;
-	int shift_back = _time32(nullptr) - hours_back;
-	std::string uri_template;
-
-	switch (m_pluginType)
+	int shift_back = hours_back ? _time32(nullptr) - hours_back : 0;
+	std::string url;
+	if (stream_uri->is_template())
 	{
-		case StreamType::enEdem:
-			uri_template = URI_TEMPLATE_EDEM;
-			if (hours_back)
-			{
-				uri_template += fmt::format("?utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
-			}
-			break;
-
-		case StreamType::enSharavoz:
-			uri_template = URI_TEMPLATE_SHARAVOZ;
-			if (hours_back)
-			{
-				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
-			}
-
-			switch (m_StreamType)
-			{
-				case 0: // hls
-					break;
-				case 1: // mpeg-ts
-					utils::string_replace_inplace(uri_template, "index.m3u8", "mpegts");
-					break;
-			}
-			break;
-
-		case StreamType::enSharaclub:
-			uri_template = URI_TEMPLATE_SHARACLUB;
-			switch (m_StreamType)
-			{
-				case 0: // hls
-					utils::string_replace_inplace(uri_template, "index.m3u8", "video.m3u8");
-					break;
-				case 1: // mpeg-ts
-					utils::string_replace_inplace(uri_template, "/index.m3u8", ".ts");
-					break;
-			}
-
-			if (hours_back)
-			{
-				uri_template += fmt::format("?utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
-			}
-			break;
-
-		case StreamType::enGlanz:
-			uri_template = URI_TEMPLATE_GLANZ;
-			switch (m_StreamType)
-			{
-				case 0: // hls
-					utils::string_replace_inplace(uri_template, "index.m3u8", "video.m3u8");
-					break;
-				case 1: // mpeg-ts
-					utils::string_replace_inplace(uri_template, "index.m3u8", "mpegts");
-					break;
-			}
-
-			if (hours_back)
-			{
-				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
-			}
-			break;
-
-		case StreamType::enAntifriz:
-
-			switch (m_StreamType)
-			{
-				case 0: // hls
-					uri_template = URI_TEMPLATE_ANTIFRIZ;
-					break;
-				case 1: // mpeg-ts
-					uri_template = URI_TEMPLATE_ANTIFRIZ_MPEG;
-					break;
-			}
-
-			if (hours_back)
-			{
-				uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
-			}
-			break;
-
-		default:
-			break;
+		url = utils::string_replace(stream_uri->get_templated((StreamSubType)m_StreamType, shift_back), "{ID}", stream_uri->get_id());
+	}
+	else
+	{
+		url = stream_uri->get_uri();
 	}
 
-	auto& url = stream_uri->is_template() ? utils::string_replace(uri_template, "{ID}", stream_uri->get_id()) : stream_uri->get_uri();
 	utils::string_replace_inplace(url, "{SUBDOMAIN}", params.access_domain);
 	utils::string_replace_inplace(url, "{TOKEN}", params.access_key);
 
 	return url;
-}
-
-std::string CIPTVChannelEditorDlg::GetEpgTemplate(BOOL first) const
-{
-	switch (m_pluginType)
-	{
-		case StreamType::enEdem:
-			return first ? EPG1_TEMPLATE_EDEM : EPG2_TEMPLATE_EDEM;
-		case StreamType::enSharavoz:
-			return first ? EPG1_TEMPLATE_SHARAVOZ : EPG2_TEMPLATE_SHARAVOZ;
-		case StreamType::enSharaclub:
-			return first ? EPG1_TEMPLATE_SHARACLUB : EPG2_TEMPLATE_SHARACLUB;
-		case StreamType::enGlanz:
-			return first ? EPG1_TEMPLATE_GLANZ : EPG2_TEMPLATE_GLANZ;
-		case StreamType::enAntifriz:
-			return first ? EPG1_TEMPLATE_ANTIFRIZ : EPG2_TEMPLATE_ANTIFRIZ;
-		default:
-			break;
-	}
-
-	return "";
 }
 
 void CIPTVChannelEditorDlg::RemoveOrphanChannels()
@@ -2403,24 +2312,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 	auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
 	{
-		COleDateTime dt = COleDateTime::GetCurrentTime();
-		std::string url;
-		switch (m_pluginType)
-		{
-			case StreamType::enEdem:
-			case StreamType::enGlanz:
-			case StreamType::enAntifriz:
-				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id());
-				break;
-			case StreamType::enSharaclub:
-			case StreamType::enSharavoz:
-				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg1_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
-				break;
-				break;
-			default:
-				break;
-		}
-
+		std::string url = channel->get_stream_uri()->get_epg1_uri(channel->get_epg2_id());
 		if (!url.empty())
 			ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
@@ -2431,24 +2323,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 	auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
 	{
-		COleDateTime dt = COleDateTime::GetCurrentTime();
-		std::string url;
-		switch (m_pluginType)
-		{
-			case StreamType::enEdem:
-			case StreamType::enGlanz:
-			case StreamType::enAntifriz:
-				url = fmt::format(GetEpgTemplate(TRUE), channel->get_epg2_id());
-				break;
-			case StreamType::enSharaclub:
-			case StreamType::enSharavoz:
-				url = fmt::format(GetEpgTemplate(FALSE), channel->get_epg2_id(), dt.GetYear(), dt.GetMonth(), dt.GetDay());
-				break;
-			default:
-				break;
-		}
-
-		ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+		std::string url = channel->get_stream_uri()->get_epg2_uri(channel->get_epg2_id());
+		if (!url.empty())
+			ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
 }
 

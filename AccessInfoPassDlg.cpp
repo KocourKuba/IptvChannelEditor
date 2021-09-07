@@ -1,10 +1,9 @@
 #include "StdAfx.h"
 #include "AccessInfoPassDlg.h"
-#include "IPTVChannelEditor.h"
+#include "resource.h"
 #include "utils.h"
 #include "json.hpp"
 #include "PlayListEntry.h"
-#include "plugin_constants.h"
 
 using json = nlohmann::json;
 
@@ -73,10 +72,9 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	const auto& login = utils::utf16_to_utf8(m_login.GetString());
 	const auto& password = utils::utf16_to_utf8(m_password.GetString());
-
-	if (m_entry->get_stream_type() == StreamType::enSharaclub)
+	const auto& access_url = m_entry->get_stream_uri()->get_access_url(login, password);
+	if (!access_url.empty())
 	{
-		const auto& access_url = fmt::format(ACCESS_TEMPLATE_SHARACLUB, login.c_str(), password.c_str());
 		std::vector<BYTE> data;
 		if (!utils::DownloadFile(access_url, data) || data.empty())
 			return;
@@ -104,26 +102,11 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		}
 	}
 
-	LPCSTR tpl = nullptr;
-	std::string pl_url;
-	switch (m_entry->get_stream_type())
-	{
-		case StreamType::enSharaclub:
-			pl_url = fmt::format(PLAYLIST_TEMPLATE_SHARACLUB, login.c_str(), password.c_str());
-			break;
-		case StreamType::enGlanz:
-			pl_url = fmt::format(PLAYLIST_TEMPLATE_GLANZ, login.c_str(), password.c_str());
-			break;
-		case StreamType::enAntifriz:
-			pl_url = fmt::format(PLAYLIST_TEMPLATE_ANTIFRIZ, password.c_str());
-			break;
-		default:
-			return;
-	}
+	const auto& pl_url = m_entry->get_stream_uri()->get_playlist_url(login, password);
 
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
-	if (utils::DownloadFile(pl_url, data))
+	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
 	{
 		utils::vector_to_streambuf<char> buf(data);
 		pl_stream = std::make_unique<std::istream>(&buf);

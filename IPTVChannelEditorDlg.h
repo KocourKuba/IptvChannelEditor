@@ -183,7 +183,6 @@ private:
 
 	std::string GetPlayableURL(const uri_stream* stream_uri, const PlayParams& params) const;
 
-	std::string GetEpgTemplate(BOOL first) const;
 	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();

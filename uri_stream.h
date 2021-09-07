@@ -126,6 +126,36 @@ public:
 	/// </summary>
 	virtual void set_token(const std::string& val) { token = val; };
 
+	/// <summary>
+	/// get templated url
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_templated(StreamSubType /*subType*/, int /*shift_back*/) const { return ""; };
+
+	/// <summary>
+	/// get epg url
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg1_uri(const std::string& id) const { return ""; };
+
+	/// <summary>
+	/// get epg url
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg2_uri(const std::string& id) const { return ""; };
+
+	/// <summary>
+	/// get playlist template url
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_playlist_url(const std::string& login, const std::string& password) const { return ""; }
+
+	/// <summary>
+	/// get cabinet access url
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_access_url(const std::string& login, const std::string& password) const { return ""; }
+
 	const uri_stream& operator=(const uri_stream& src)
 	{
 		if (&src != this)
