@@ -37,13 +37,6 @@ class StarnetDunePlugin extends DefaultDunePlugin
         if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig'))
             throw new Exception('Unknown plugin type: ' . $plugin_type);
 
-        /*
-        $keys = array_keys(DuneSystem::$properties);
-        foreach($keys as $key){
-            hd_print("'$key' = '" . DuneSystem::$properties[$key] . "'");
-        }
-        */
-
         $config = new $plugin_type;
         StarnetPluginTv::$config = $config;
         StarnetMainScreen::$config = $config;
@@ -53,10 +46,10 @@ class StarnetDunePlugin extends DefaultDunePlugin
         hd_print("Plugin version:  " . $config::$PLUGIN_VERSION);
         hd_print("Plugin date:     " . $config::$PLUGIN_DATE);
         hd_print("Plugin config:   " . $plugin_type);
-        hd_print("TV fav:          " . $config::$TV_FAVORITES_SUPPORTED);
-        hd_print("VOD page:        " . $config::$VOD_MOVIE_PAGE_SUPPORTED);
-        hd_print("VOD fav:         " . $config::$VOD_FAVORITES_SUPPORTED);
-        hd_print("MPEG-TS support: " . $config::$MPEG_TS_SUPPORTED);
+        hd_print("TV fav:          " . ($config::$TV_FAVORITES_SUPPORTED ? "yes" : "no"));
+        hd_print("VOD page:        " . ($config::$VOD_MOVIE_PAGE_SUPPORTED ? "yes" : "no"));
+        hd_print("VOD fav:         " . ($config::$VOD_FAVORITES_SUPPORTED ? "yes" : "no"));
+        hd_print("MPEG-TS support: " . ($config::$MPEG_TS_SUPPORTED ? "yes" : "no"));
 
         $tv = new StarnetPluginTv();
         $this->tv = $tv;
@@ -68,7 +61,6 @@ class StarnetDunePlugin extends DefaultDunePlugin
         $this->add_screen(new StarnetSetupScreen($tv));
 
         if ($config::$VOD_MOVIE_PAGE_SUPPORTED) {
-
             StarnetVod::$config = $config;
             StarnetVodListScreen::$config = $config;
             StarnetVodCategoryListScreen::$config = $config;
