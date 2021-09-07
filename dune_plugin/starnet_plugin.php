@@ -64,6 +64,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
             StarnetVod::$config = $config;
             StarnetVodListScreen::$config = $config;
             StarnetVodCategoryListScreen::$config = $config;
+            VodMovieScreen::$config = $config;
 
             $vod = new StarnetVod();
             $this->vod = $vod;

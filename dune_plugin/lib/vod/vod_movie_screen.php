@@ -7,7 +7,7 @@ require_once 'vod_series_list_screen.php';
 class VodMovieScreen implements Screen, UserInputHandler
 {
     const ID = 'vod_movie';
-
+    public static $config = null;
     private $vod;
 
     public function __construct(Vod $vod)
@@ -84,7 +84,7 @@ class VodMovieScreen implements Screen, UserInputHandler
                 (			               
                     PluginFolderViewParams::paint_path_box =>false,
                     PluginFolderViewParams::paint_content_box_background => true,
-                    PluginFolderViewParams::background_url => DefaultConfig::GET_BG_PICTURE()
+                    PluginFolderViewParams::background_url => self::$config->GET_BG_PICTURE()
                 )
         );
 
