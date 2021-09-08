@@ -32,25 +32,31 @@ class AntifrizPluginConfig extends DefaultConfig
 
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        if (empty($plugin_cookies->subdomain_local) || empty($plugin_cookies->ott_key_local))
-            return  "";
+        if (empty($plugin_cookies->subdomain_local) || empty($plugin_cookies->ott_key_local)) {
+            hd_print("token or subdomain not defined");
+            return "";
+        }
 
-        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
         $domain = explode(':', $plugin_cookies->subdomain_local);
-
+        $id = $channel->get_channel_id();
+        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
         switch ($format) {
             case 'hls':
-                $subdomain = $plugin_cookies->subdomain_local;
-                if ($archive_ts) {
+                if (intval($archive_ts) > 0) {
                     $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS;
                     $subdomain = $domain[0];
                 } else {
+                    $subdomain = $plugin_cookies->subdomain_local;
                     $url = $channel->get_streaming_url();
                 }
                 break;
             case 'mpeg':
                 $subdomain = $domain[0];
-                $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG;
+                if (intval($archive_ts) > 0) {
+                    $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG;
+                } else {
+                    $url = $channel->get_streaming_url();
+                }
                 $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
                 $url .= "|||dune_params|||buffering_ms:$buf_time";
                 break;
@@ -59,7 +65,14 @@ class AntifrizPluginConfig extends DefaultConfig
                 return "";
         }
 
-        $url = str_replace('{ID}', $channel->get_channel_id(), $url);
+        hd_print("Stream type: " . $format);
+        hd_print("Stream url:  " . $url);
+        hd_print("Channel ID:  " . $id);
+        hd_print("Domain:      " . $subdomain);
+        hd_print("Token:       " . $plugin_cookies->ott_key_local);
+        hd_print("Archive TS:  " . $archive_ts);
+
+        $url = str_replace('{ID}', $id, $url);
         $url = str_replace('{START}', $archive_ts, $url);
         $url = str_replace('{SUBDOMAIN}', $subdomain, $url);
         $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);

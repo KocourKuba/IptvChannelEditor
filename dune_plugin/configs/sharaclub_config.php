@@ -23,7 +23,7 @@ class SharaclubPluginConfig extends DefaultConfig
     public static $USE_LOGIN_PASS = true;
 
     // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'http://%s/tv_live-m3u8/%s-%s';
+    public static $ACCOUNT_PLAYLIST_URL1 = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
     public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/.+/.+\.m3u8$|';
 
     // tv

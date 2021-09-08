@@ -156,8 +156,8 @@ class StarnetPluginTv extends AbstractTv
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = strval($xml_tv_channel->channel_id);
                 $config = self::$config;
-                $streaming_url = $config::$MEDIA_URL_TEMPLATE;
-                $hash = hash("crc32", (str_replace('{ID}', $xml_tv_channel->channel_id, $config::$MEDIA_URL_TEMPLATE)));
+                $streaming_url = $config::$MEDIA_URL_TEMPLATE_HLS;
+                $hash = hash("crc32", (str_replace('{ID}', $xml_tv_channel->channel_id, $config::$MEDIA_URL_TEMPLATE_HLS)));
             } else {
                 $streaming_url = strval($xml_tv_channel->streaming_url);
                 $hash = $channel_id = hash("crc32", $streaming_url);

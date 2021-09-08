@@ -53,10 +53,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // ott or token dialog
-        if ($config::$USE_LOGIN_PASS) {
-            $this->add_button($defs, 'token_dialog', 'Активировать просмотр:', 'Введите логин и пароль', 0);
-        } else {
+        if ($config::$USE_OTT_KEY) {
             $this->add_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
+        } else if ($config::$USE_LOGIN_PASS) {
+            $this->add_button($defs, 'login_dialog', 'Активировать просмотр:', 'Введите логин и пароль', 0);
+        } else if ($config::$USE_PIN) {
+            $this->add_button($defs, 'pin_dialog', 'Активировать просмотр:', 'Введите ключ доступа', 0);
         }
 
         //////////////////////////////////////
@@ -147,24 +149,42 @@ class StarnetSetupScreen extends AbstractControlsScreen
      * @param $plugin_cookies
      * @return array
      */
-    public function do_get_token_control_defs(&$plugin_cookies)
+    public function do_get_login_control_defs(&$plugin_cookies)
     {
         $defs = array();
-        $config = self::$config;
 
-        if ($config::$USE_PIN) {
-            $this->add_text_field($defs, 'password', 'Ключ доступа:',
-                $plugin_cookies->password, false, false, false, true, 500);
-        } else {
-            $this->add_text_field($defs, 'login', 'Логин:',
-                $plugin_cookies->login, false, false, false, true, 500);
-            $this->add_text_field($defs, 'password', 'Пароль:',
-                $plugin_cookies->password, false, false, false, true, 500);
-        }
+        $login = isset($plugin_cookies->login) ? $plugin_cookies->login : '';
+        $this->add_text_field($defs, 'login', 'Логин:',
+            $login, false, false, false, true, 500);
+
+        $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
+        $this->add_text_field($defs, 'password', 'Пароль:',
+            $password, false, false, false, true, 500);
 
         $this->add_vgap($defs, 50);
 
-        $this->add_close_dialog_and_apply_button($defs, 'token_apply', 'Применить', 300);
+        $this->add_close_dialog_and_apply_button($defs, 'login_apply', 'Применить', 300);
+        $this->add_close_dialog_button($defs, 'Отмена', 300);
+
+        return $defs;
+    }
+
+    /**
+     * token dialog
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function do_get_pin_control_defs(&$plugin_cookies)
+    {
+        $defs = array();
+
+        $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
+        $this->add_text_field($defs, 'password', 'Ключ доступа:',
+            $password, false, false, false, true, 500);
+
+        $this->add_vgap($defs, 50);
+
+        $this->add_close_dialog_and_apply_button($defs, 'pin_apply', 'Применить', 300);
         $this->add_close_dialog_button($defs, 'Отмена', 300);
 
         return $defs;
@@ -201,7 +221,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         foreach ($user_input as $key => $value)
             hd_print("$key => $value");
 
-        if ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply') {
+        if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $control_id = $user_input->control_id;
             $new_value = '';
             if (isset($user_input->{$control_id})) {
@@ -250,13 +270,26 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     $plugin_cookies->subdomain = $user_input->subdomain;
                     break;
 
-                case 'token_dialog': // token dialog
-                    $defs = $this->do_get_token_control_defs($plugin_cookies);
+                case 'login_dialog': // token dialog
+                    $defs = $this->do_get_login_control_defs($plugin_cookies);
                     return ActionFactory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select',
                         $defs, true);
 
-                case 'token_apply': // handle token dialog result
+                case 'login_apply': // handle token dialog result
                     $plugin_cookies->login = $user_input->login;
+                    $plugin_cookies->password = $user_input->password;
+                    if (!self::$config->GetAccountStreamInfo($plugin_cookies))
+                        return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
+
+                    $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
+                    return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
+
+                case 'pin_dialog': // token dialog
+                    $defs = $this->do_get_pin_control_defs($plugin_cookies);
+                    return ActionFactory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select',
+                        $defs, true);
+
+                case 'pin_apply': // handle token dialog result
                     $plugin_cookies->password = $user_input->password;
                     if (!self::$config->GetAccountStreamInfo($plugin_cookies))
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');

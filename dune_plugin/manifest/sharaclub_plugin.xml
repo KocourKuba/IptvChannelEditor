@@ -1,5 +1,5 @@
 ﻿<dune_plugin>
-  <name>sharaclub.TV</name>
+  <name>sharaclub.tv</name>
   <caption>Sharaclub TV</caption>
   <auto_resume>
     <enable>yes</enable>

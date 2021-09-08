@@ -20,6 +20,7 @@ abstract class DefaultConfig
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = false;
+    public static $USE_OTT_KEY = false;
     public static $USE_LOGIN_PASS = false;
     public static $USE_PIN = false;
 
@@ -85,12 +86,32 @@ abstract class DefaultConfig
 
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        hd_print("AdjustStreamUri: using stream format to '$format'");
+        if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
+            $subdomain = $plugin_cookies->subdomain_local;
+            $token = $plugin_cookies->ott_key_local;
+        } else if (!empty($plugin_cookies->subdomain) && !empty($plugin_cookies->ott_key)) {
+            $subdomain = $plugin_cookies->subdomain;
+            $token = $plugin_cookies->ott_key;
+        } else {
+            hd_print("token or subdomain not defined");
+            return "";
+        }
 
-        $url = $channel->get_streaming_url();
-        if (strpos($url, 'http://ts://') === false) {
-            $url = str_replace('http://', 'http://ts://', $url);
+        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+        $id = $channel->get_channel_id();
+
+        switch ($format) {
+            case 'hls':
+                $url = $channel->get_streaming_url();
+                break;
+            case 'mpeg':
+                $url = static::$MEDIA_URL_TEMPLATE_MPEG;
+                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+                $url .= "|||dune_params|||buffering_ms:$buf_time";
+                break;
+            default:
+                hd_print("unknown format: $format");
+                return "";
         }
 
         if (intval($archive_ts) > 0) {
@@ -103,23 +124,18 @@ abstract class DefaultConfig
             $url .= "utc=$archive_ts&lutc=$now_ts";
         }
 
-        switch ($format) {
-            case 'hls':
-                $url = str_replace('{ID}', $channel->get_channel_id(), static::$MEDIA_URL_TEMPLATE_HLS);
-                break;
-            case 'mpeg':
-                $url = str_replace('{ID}', $channel->get_channel_id(), static::$MEDIA_URL_TEMPLATE_MPEG);
-                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-                $url .= "|||dune_params|||buffering_ms:$buf_time";
-                break;
-        }
+        hd_print("Stream type: " . $format);
+        hd_print("Stream url:  " . $url);
+        hd_print("Channel ID:  " . $id);
+        hd_print("Domain:      " . $subdomain);
+        hd_print("Token:       " . $token);
+        hd_print("Archive TS:  " . $archive_ts);
 
-        if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
-            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
-            $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);
-        } else if (!empty($plugin_cookies->subdomain) && !empty($plugin_cookies->ott_key)) {
-            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
-            $url = str_replace('{TOKEN}', $plugin_cookies->ott_key, $url);
+        $url = str_replace('{SUBDOMAIN}', $subdomain, $url);
+        $url = str_replace('{ID}', $id, $url);
+        $url = str_replace('{TOKEN}', $token, $url);
+        if (strpos($url, 'http://ts://') === false) {
+            $url = str_replace('http://', 'http://ts://', $url);
         }
 
         return $url;
@@ -156,14 +172,18 @@ abstract class DefaultConfig
         $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         for ($i = 0; $i < count($lines); ++$i) {
             if (preg_match(static::$STREAM_URL_PATTERN, $lines[$i], $matches)) {
-                $plugin_cookies->subdomain_local = $matches['subdomain'];
-                $plugin_cookies->ott_key_local = $matches['token'];
-                if (isset($matches['host']))
-                    $plugin_cookies->host = $matches['host'];
 
+                $plugin_cookies->subdomain_local = $matches['subdomain'];
                 hd_print("domain: $plugin_cookies->subdomain_local");
+
+                $plugin_cookies->ott_key_local = $matches['token'];
                 hd_print("token: $plugin_cookies->ott_key_local");
-                hd_print("host: $plugin_cookies->host");
+
+                if (isset($matches['host'])) {
+                    $plugin_cookies->host = $matches['host'];
+                    hd_print("host: $plugin_cookies->host");
+                }
+
                 $found = true;
                 break;
             }
