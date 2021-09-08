@@ -53,7 +53,6 @@
 			<channel_id>9195</channel_id>
 			<int_id>70</int_id>
 			<epg_id>pervy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9195.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -63,7 +62,6 @@
 			<channel_id>2214</channel_id>
 			<int_id>76</int_id>
 			<epg_id>pervy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2214.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -73,7 +71,6 @@
 			<channel_id>9226</channel_id>
 			<int_id>80</int_id>
 			<epg_id>rossia1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9226.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -83,7 +80,6 @@
 			<channel_id>5963</channel_id>
 			<int_id>81</int_id>
 			<epg_id>rossia1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5963.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -93,7 +89,6 @@
 			<channel_id>9413</channel_id>
 			<int_id>86</int_id>
 			<epg_id>ntv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9413.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -103,7 +98,6 @@
 			<channel_id>8711</channel_id>
 			<int_id>87</int_id>
 			<epg_id>ntv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8711.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -113,7 +107,6 @@
 			<channel_id>7870</channel_id>
 			<int_id>92</int_id>
 			<epg_id>ntv-mir</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7870.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -123,7 +116,6 @@
 			<channel_id>7846</channel_id>
 			<int_id>93</int_id>
 			<epg_id>tvcentr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7846.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -133,7 +125,6 @@
 			<channel_id>4750</channel_id>
 			<int_id>97</int_id>
 			<epg_id>5kanal-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4750.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -143,7 +134,6 @@
 			<channel_id>2468</channel_id>
 			<int_id>101</int_id>
 			<epg_id>tnt</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2468.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -153,7 +143,6 @@
 			<channel_id>1337</channel_id>
 			<int_id>102</int_id>
 			<epg_id>tnt</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1337.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -163,7 +152,6 @@
 			<channel_id>9716</channel_id>
 			<int_id>106</int_id>
 			<epg_id>sts</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9716.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -173,7 +161,6 @@
 			<channel_id>6621</channel_id>
 			<int_id>110</int_id>
 			<epg_id>sts-love</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6621.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -183,7 +170,6 @@
 			<channel_id>8082</channel_id>
 			<int_id>111</int_id>
 			<epg_id>rentv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8082.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -193,7 +179,6 @@
 			<channel_id>2810</channel_id>
 			<int_id>114</int_id>
 			<epg_id>mir</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2810.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -203,7 +188,6 @@
 			<channel_id>2345</channel_id>
 			<int_id>118</int_id>
 			<epg_id>otr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2345.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -213,7 +197,6 @@
 			<channel_id>7796</channel_id>
 			<int_id>119</int_id>
 			<epg_id>zvezda</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7796.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -223,7 +206,6 @@
 			<channel_id>8708</channel_id>
 			<int_id>123</int_id>
 			<epg_id>che</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8708.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -233,7 +215,6 @@
 			<channel_id>7473</channel_id>
 			<int_id>125</int_id>
 			<epg_id>tv3-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7473.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -243,7 +224,6 @@
 			<channel_id>3755</channel_id>
 			<int_id>129</int_id>
 			<epg_id>piatnica</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3755.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -253,7 +233,6 @@
 			<channel_id>9657</channel_id>
 			<int_id>130</int_id>
 			<epg_id>piatnica</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9657.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -263,7 +242,6 @@
 			<channel_id>5498</channel_id>
 			<int_id>133</int_id>
 			<epg_id>rtvi</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5498.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -273,7 +251,6 @@
 			<channel_id>3573</channel_id>
 			<int_id>134</int_id>
 			<epg_id>super</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3573.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -283,7 +260,6 @@
 			<channel_id>9505</channel_id>
 			<int_id>138</int_id>
 			<epg_id>domashny</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9505.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -293,7 +269,6 @@
 			<channel_id>4539</channel_id>
 			<int_id>142</int_id>
 			<epg_id>kultura</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4539.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -303,7 +278,6 @@
 			<channel_id>5330</channel_id>
 			<int_id>146</int_id>
 			<epg_id>rtr-planeta-eu</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5330.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -313,7 +287,6 @@
 			<channel_id>2455</channel_id>
 			<int_id>147</int_id>
 			<epg_id>8kanal-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2455.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -323,7 +296,6 @@
 			<channel_id>3482</channel_id>
 			<int_id>148</int_id>
 			<epg_id>vremia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3482.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -333,7 +305,6 @@
 			<channel_id>9997</channel_id>
 			<int_id>149</int_id>
 			<epg_id>nostalgia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9997.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -343,7 +314,6 @@
 			<channel_id>4785</channel_id>
 			<int_id>150</int_id>
 			<epg_id>yu</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4785.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -353,7 +323,6 @@
 			<channel_id>2935</channel_id>
 			<int_id>154</int_id>
 			<epg_id>2na2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2935.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -363,7 +332,6 @@
 			<channel_id>4848</channel_id>
 			<int_id>158</int_id>
 			<epg_id>tnt4</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4848.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -373,7 +341,6 @@
 			<channel_id>7270</channel_id>
 			<int_id>162</int_id>
 			<epg_id>kvn-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7270.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -383,7 +350,6 @@
 			<channel_id>8267</channel_id>
 			<int_id>163</int_id>
 			<epg_id>sarafan</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8267.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -393,7 +359,6 @@
 			<channel_id>8132</channel_id>
 			<int_id>164</int_id>
 			<epg_id>voprosy-i-otvety</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8132.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -403,7 +368,6 @@
 			<channel_id>9349</channel_id>
 			<int_id>198</int_id>
 			<epg_id>rtd-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9349.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -413,7 +377,6 @@
 			<channel_id>7865</channel_id>
 			<int_id>375</int_id>
 			<epg_id>e-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7865.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -423,7 +386,6 @@
 			<channel_id>4361</channel_id>
 			<int_id>382</int_id>
 			<epg_id>tochka-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4361.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -433,7 +395,6 @@
 			<channel_id>4898</channel_id>
 			<int_id>394</int_id>
 			<epg_id>360-podmoskovie</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4898.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -443,7 +404,6 @@
 			<channel_id>2291</channel_id>
 			<int_id>395</int_id>
 			<epg_id>spas</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2291.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -453,7 +413,6 @@
 			<channel_id>8666</channel_id>
 			<int_id>396</int_id>
 			<epg_id>soyuz</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8666.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -463,7 +422,6 @@
 			<channel_id>7504</channel_id>
 			<int_id>397</int_id>
 			<epg_id>prosveschenie</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7504.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -473,7 +431,6 @@
 			<channel_id>4396</channel_id>
 			<int_id>419</int_id>
 			<epg_id>zhar-ptica</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4396.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -483,7 +440,6 @@
 			<channel_id>5063</channel_id>
 			<int_id>422</int_id>
 			<epg_id>bobior</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5063.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -493,7 +449,6 @@
 			<channel_id>6289</channel_id>
 			<int_id>425</int_id>
 			<epg_id>doverie</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6289.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -503,7 +458,6 @@
 			<channel_id>3638</channel_id>
 			<int_id>432</int_id>
 			<epg_id>krasnaya-linia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3638.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -513,7 +467,6 @@
 			<channel_id>2211</channel_id>
 			<int_id>433</int_id>
 			<epg_id>ldpr-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2211.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -523,7 +476,6 @@
 			<channel_id>9320</channel_id>
 			<int_id>438</int_id>
 			<epg_id>echotv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9320.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -533,7 +485,6 @@
 			<channel_id>9886</channel_id>
 			<int_id>439</int_id>
 			<epg_id>yuvelirochka</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9886.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -543,7 +494,6 @@
 			<channel_id>7489</channel_id>
 			<int_id>446</int_id>
 			<epg_id>deutsche-welle-eu</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7489.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -553,7 +503,6 @@
 			<channel_id>1223</channel_id>
 			<int_id>448</int_id>
 			<epg_id>fashion-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1223.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -563,7 +512,6 @@
 			<channel_id>4102</channel_id>
 			<int_id>455</int_id>
 			<epg_id>nhk-world</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4102.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -573,7 +521,6 @@
 			<channel_id>9106</channel_id>
 			<int_id>461</int_id>
 			<epg_id>shop-n-show</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9106.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -583,7 +530,6 @@
 			<channel_id>3258</channel_id>
 			<int_id>476</int_id>
 			<epg_id>gags-network</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3258.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -593,7 +539,6 @@
 			<channel_id>6401</channel_id>
 			<int_id>477</int_id>
 			<epg_id>rentv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6401.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -603,7 +548,6 @@
 			<channel_id>2580</channel_id>
 			<int_id>518</int_id>
 			<epg_id>pervy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2580.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -613,7 +557,6 @@
 			<channel_id>2151</channel_id>
 			<int_id>519</int_id>
 			<epg_id>rossia1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2151.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -623,7 +566,6 @@
 			<channel_id>2017</channel_id>
 			<int_id>520</int_id>
 			<epg_id>ntv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2017.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -633,7 +575,6 @@
 			<channel_id>2304</channel_id>
 			<int_id>595</int_id>
 			<epg_id>tnt4</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2304.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -643,7 +584,6 @@
 			<channel_id>8025</channel_id>
 			<int_id>596</int_id>
 			<epg_id>ntv-pravo</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8025.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -653,7 +593,6 @@
 			<channel_id>6190</channel_id>
 			<int_id>597</int_id>
 			<epg_id>ntv-style</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6190.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -663,7 +602,6 @@
 			<channel_id>6097</channel_id>
 			<int_id>624</int_id>
 			<epg_id>sovsek</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6097.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -673,7 +611,6 @@
 			<channel_id>5850</channel_id>
 			<int_id>632</int_id>
 			<epg_id>perec-int</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5850.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -683,7 +620,6 @@
 			<channel_id>5889</channel_id>
 			<int_id>644</int_id>
 			<epg_id>tnt</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5889.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -693,7 +629,6 @@
 			<channel_id>1540</channel_id>
 			<int_id>660</int_id>
 			<epg_id>tv3-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1540.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -703,7 +638,6 @@
 			<channel_id>3894</channel_id>
 			<int_id>661</int_id>
 			<epg_id>super</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3894.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -713,7 +647,6 @@
 			<channel_id>4795</channel_id>
 			<int_id>678</int_id>
 			<epg_id>pervy-kanal-eu</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4795.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -723,7 +656,6 @@
 			<channel_id>2990</channel_id>
 			<int_id>688</int_id>
 			<epg_id>sts</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2990.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -733,7 +665,6 @@
 			<channel_id>4131</channel_id>
 			<int_id>718</int_id>
 			<epg_id>domashny</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4131.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -743,7 +674,6 @@
 			<channel_id>7322</channel_id>
 			<int_id>790</int_id>
 			<epg_id>zal-suda</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7322.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -753,7 +683,6 @@
 			<channel_id>9348</channel_id>
 			<int_id>846</int_id>
 			<epg_id>zvezda</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9348.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -763,7 +692,6 @@
 			<channel_id>5799</channel_id>
 			<int_id>860</int_id>
 			<epg_id>sts</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5799.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -773,7 +701,6 @@
 			<channel_id>5484</channel_id>
 			<int_id>871</int_id>
 			<epg_id>pervy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5484.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -783,7 +710,6 @@
 			<channel_id>3461</channel_id>
 			<int_id>872</int_id>
 			<epg_id>tnt</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3461.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -793,7 +719,6 @@
 			<channel_id>2661</channel_id>
 			<int_id>906</int_id>
 			<epg_id>rossia1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2661.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -803,7 +728,6 @@
 			<channel_id>3618</channel_id>
 			<int_id>912</int_id>
 			<epg_id>tv3-int</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3618.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -813,7 +737,6 @@
 			<channel_id>7866</channel_id>
 			<int_id>915</int_id>
 			<epg_id>vmeste-rf</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7866.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -823,7 +746,6 @@
 			<channel_id>3561</channel_id>
 			<int_id>918</int_id>
 			<epg_id>tv-rus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3561.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -833,7 +755,6 @@
 			<channel_id>6511</channel_id>
 			<int_id>927</int_id>
 			<epg_id>zvezda-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6511.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -843,7 +764,6 @@
 			<channel_id>4380</channel_id>
 			<int_id>982</int_id>
 			<epg_id>ege-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4380.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -853,7 +773,6 @@
 			<channel_id>3394</channel_id>
 			<int_id>1019</int_id>
 			<epg_id>zvezda-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -863,7 +782,6 @@
 			<channel_id>3655</channel_id>
 			<int_id>1020</int_id>
 			<epg_id>tvcentr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
@@ -873,7 +791,6 @@
 			<channel_id>4707</channel_id>
 			<int_id>1027</int_id>
 			<epg_id>tvci</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -883,7 +800,6 @@
 			<channel_id>5789</channel_id>
 			<int_id>1029</int_id>
 			<epg_id>mir</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -893,7 +809,6 @@
 			<channel_id>4428</channel_id>
 			<int_id>346</int_id>
 			<epg_id>rbk</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4428.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -903,7 +818,6 @@
 			<channel_id>7146</channel_id>
 			<int_id>347</int_id>
 			<epg_id>rossia-24</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7146.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -913,7 +827,6 @@
 			<channel_id>3882</channel_id>
 			<int_id>348</int_id>
 			<epg_id>euronews</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3882.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -923,7 +836,6 @@
 			<channel_id>4330</channel_id>
 			<int_id>349</int_id>
 			<epg_id>bbc</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4330.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -933,7 +845,6 @@
 			<channel_id>1797</channel_id>
 			<int_id>350</int_id>
 			<epg_id>cnn</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1797.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -943,7 +854,6 @@
 			<channel_id>7554</channel_id>
 			<int_id>351</int_id>
 			<epg_id>moskva-24</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7554.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -953,7 +863,6 @@
 			<channel_id>1751</channel_id>
 			<int_id>384</int_id>
 			<epg_id>izvestia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1751.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -963,7 +872,6 @@
 			<channel_id>1306</channel_id>
 			<int_id>385</int_id>
 			<epg_id>mir-24</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1306.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -973,7 +881,6 @@
 			<channel_id>6969</channel_id>
 			<int_id>386</int_id>
 			<epg_id>russia-today</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6969.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -983,7 +890,6 @@
 			<channel_id>7702</channel_id>
 			<int_id>387</int_id>
 			<epg_id>dozhd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7702.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -993,7 +899,6 @@
 			<channel_id>2782</channel_id>
 			<int_id>412</int_id>
 			<epg_id>nastoyaschee-vremia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2782.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -1003,7 +908,6 @@
 			<channel_id>3082</channel_id>
 			<int_id>420</int_id>
 			<epg_id>360-news</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3082.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -1013,7 +917,6 @@
 			<channel_id>9153</channel_id>
 			<int_id>449</int_id>
 			<epg_id>france-24</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9153.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -1023,7 +926,6 @@
 			<channel_id>9142</channel_id>
 			<int_id>536</int_id>
 			<epg_id>newsnetwork</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9142.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -1033,7 +935,6 @@
 			<channel_id>1238</channel_id>
 			<int_id>684</int_id>
 			<epg_id>dozhd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1238.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -1043,7 +944,6 @@
 			<channel_id>7374</channel_id>
 			<int_id>708</int_id>
 			<epg_id>krik-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7374.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -1053,7 +953,6 @@
 			<channel_id>7462</channel_id>
 			<int_id>903</int_id>
 			<epg_id>mir-24</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7462.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 			<archive>7</archive>
@@ -1063,7 +962,6 @@
 			<channel_id>1593</channel_id>
 			<int_id>837</int_id>
 			<epg_id>premierehd1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1593.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1073,7 +971,6 @@
 			<channel_id>5752</channel_id>
 			<int_id>838</int_id>
 			<epg_id>premierehd2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5752.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1083,7 +980,6 @@
 			<channel_id>4185</channel_id>
 			<int_id>839</int_id>
 			<epg_id>premierehd3</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4185.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1093,7 +989,6 @@
 			<channel_id>9245</channel_id>
 			<int_id>840</int_id>
 			<epg_id>premierehd4</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9245.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1103,7 +998,6 @@
 			<channel_id>7167</channel_id>
 			<int_id>874</int_id>
 			<epg_id>bcu-kinozal-prem-1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7167.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1113,7 +1007,6 @@
 			<channel_id>2938</channel_id>
 			<int_id>875</int_id>
 			<epg_id>bcu-kinozal-prem-2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2938.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1123,7 +1016,6 @@
 			<channel_id>7597</channel_id>
 			<int_id>876</int_id>
 			<epg_id>bcu-kinozal-prem-3</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7597.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1133,7 +1025,6 @@
 			<channel_id>2310</channel_id>
 			<int_id>877</int_id>
 			<epg_id>bcu-kinozal-prem-4</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2310.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1143,7 +1034,6 @@
 			<channel_id>8590</channel_id>
 			<int_id>878</int_id>
 			<epg_id>bcu-multserial</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8590.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1153,7 +1043,6 @@
 			<channel_id>2420</channel_id>
 			<int_id>879</int_id>
 			<epg_id>bcu-ruserial</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2420.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1163,7 +1052,6 @@
 			<channel_id>9118</channel_id>
 			<int_id>880</int_id>
 			<epg_id>bcu-sssr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9118.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1173,7 +1061,6 @@
 			<channel_id>7255</channel_id>
 			<int_id>881</int_id>
 			<epg_id>bcu-action</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7255.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1183,7 +1070,6 @@
 			<channel_id>5577</channel_id>
 			<int_id>882</int_id>
 			<epg_id>bcu-catastrophe</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5577.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1193,7 +1079,6 @@
 			<channel_id>1086</channel_id>
 			<int_id>883</int_id>
 			<epg_id>bcu-cinema</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1086.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1203,7 +1088,6 @@
 			<channel_id>6536</channel_id>
 			<int_id>884</int_id>
 			<epg_id>bcu-cinemaplus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6536.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1213,7 +1097,6 @@
 			<channel_id>2718</channel_id>
 			<int_id>885</int_id>
 			<epg_id>bcu-comedy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2718.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1223,7 +1106,6 @@
 			<channel_id>7834</channel_id>
 			<int_id>886</int_id>
 			<epg_id>bcu-fantastic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7834.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1233,7 +1115,6 @@
 			<channel_id>6071</channel_id>
 			<int_id>887</int_id>
 			<epg_id>bcu-filmystic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6071.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1243,7 +1124,6 @@
 			<channel_id>8129</channel_id>
 			<int_id>888</int_id>
 			<epg_id>bcu-history</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8129.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1253,7 +1133,6 @@
 			<channel_id>8585</channel_id>
 			<int_id>889</int_id>
 			<epg_id>bcu-kids</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8585.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1263,7 +1142,6 @@
 			<channel_id>6398</channel_id>
 			<int_id>890</int_id>
 			<epg_id>bcu-kids-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6398.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1273,7 +1151,6 @@
 			<channel_id>2071</channel_id>
 			<int_id>891</int_id>
 			<epg_id>bcu-kinorating</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2071.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1283,7 +1160,6 @@
 			<channel_id>1740</channel_id>
 			<int_id>892</int_id>
 			<epg_id>bcu-marvel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1740.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1293,7 +1169,6 @@
 			<channel_id>3078</channel_id>
 			<int_id>893</int_id>
 			<epg_id>bcu-premiere</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3078.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1303,7 +1178,6 @@
 			<channel_id>8010</channel_id>
 			<int_id>894</int_id>
 			<epg_id>bcu-romantic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8010.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1313,7 +1187,6 @@
 			<channel_id>4165</channel_id>
 			<int_id>895</int_id>
 			<epg_id>bcu-russian</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4165.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1323,7 +1196,6 @@
 			<channel_id>3239</channel_id>
 			<int_id>896</int_id>
 			<epg_id>bcu-vhs</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3239.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1333,7 +1205,6 @@
 			<channel_id>1231</channel_id>
 			<int_id>897</int_id>
 			<epg_id>bcu-media</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1231.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1343,7 +1214,6 @@
 			<channel_id>9944</channel_id>
 			<int_id>898</int_id>
 			<epg_id>bcu-stars</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9944.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1353,7 +1223,6 @@
 			<channel_id>2307</channel_id>
 			<int_id>931</int_id>
 			<epg_id>bcu-svaty</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2307.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1363,7 +1232,6 @@
 			<channel_id>1201</channel_id>
 			<int_id>932</int_id>
 			<epg_id>premiere-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1201.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1373,7 +1241,6 @@
 			<channel_id>9613</channel_id>
 			<int_id>933</int_id>
 			<epg_id>premium-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9613.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1383,7 +1250,6 @@
 			<channel_id>5745</channel_id>
 			<int_id>934</int_id>
 			<epg_id>rukino-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5745.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1393,7 +1259,6 @@
 			<channel_id>8509</channel_id>
 			<int_id>935</int_id>
 			<epg_id>thriller-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8509.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1403,7 +1268,6 @@
 			<channel_id>5992</channel_id>
 			<int_id>936</int_id>
 			<epg_id>paradise-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5992.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1413,7 +1277,6 @@
 			<channel_id>9926</channel_id>
 			<int_id>937</int_id>
 			<epg_id>serial-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9926.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1423,7 +1286,6 @@
 			<channel_id>6974</channel_id>
 			<int_id>938</int_id>
 			<epg_id>paradox-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6974.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1433,7 +1295,6 @@
 			<channel_id>6243</channel_id>
 			<int_id>939</int_id>
 			<epg_id>victory-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6243.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1443,7 +1304,6 @@
 			<channel_id>3871</channel_id>
 			<int_id>942</int_id>
 			<epg_id>bcu-criminal</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3871.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1453,7 +1313,6 @@
 			<channel_id>7653</channel_id>
 			<int_id>943</int_id>
 			<epg_id>kbc-vov</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7653.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1463,7 +1322,6 @@
 			<channel_id>5871</channel_id>
 			<int_id>944</int_id>
 			<epg_id>kbc-comics</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5871.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1473,7 +1331,6 @@
 			<channel_id>1812</channel_id>
 			<int_id>945</int_id>
 			<epg_id>kbc-elite-comedys</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1812.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1483,7 +1340,6 @@
 			<channel_id>8076</channel_id>
 			<int_id>946</int_id>
 			<epg_id>kbc-family-animation</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8076.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1493,7 +1349,6 @@
 			<channel_id>8376</channel_id>
 			<int_id>947</int_id>
 			<epg_id>kbc-fantastic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8376.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1503,7 +1358,6 @@
 			<channel_id>9911</channel_id>
 			<int_id>948</int_id>
 			<epg_id>kbc-history</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9911.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1513,7 +1367,6 @@
 			<channel_id>7292</channel_id>
 			<int_id>949</int_id>
 			<epg_id>kbc-light-serial-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7292.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1523,7 +1376,6 @@
 			<channel_id>2669</channel_id>
 			<int_id>950</int_id>
 			<epg_id>kbc-newfilm</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2669.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1533,7 +1385,6 @@
 			<channel_id>6047</channel_id>
 			<int_id>951</int_id>
 			<epg_id>kbc-premium</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6047.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1543,7 +1394,6 @@
 			<channel_id>1946</channel_id>
 			<int_id>952</int_id>
 			<epg_id>kbc-russian-comedia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1946.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1553,7 +1403,6 @@
 			<channel_id>8002</channel_id>
 			<int_id>954</int_id>
 			<epg_id>kbc-ultra</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8002.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1563,7 +1412,6 @@
 			<channel_id>8195</channel_id>
 			<int_id>955</int_id>
 			<epg_id>kbc-vidak</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8195.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1573,7 +1421,6 @@
 			<channel_id>3757</channel_id>
 			<int_id>956</int_id>
 			<epg_id>kbc-ritchie-tarantino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3757.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1583,7 +1430,6 @@
 			<channel_id>1486</channel_id>
 			<int_id>957</int_id>
 			<epg_id>kbc-dramatic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1486.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1593,7 +1439,6 @@
 			<channel_id>9041</channel_id>
 			<int_id>958</int_id>
 			<epg_id>kbc-kinoteatr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9041.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1603,7 +1448,6 @@
 			<channel_id>2506</channel_id>
 			<int_id>959</int_id>
 			<epg_id>kbc-koshmar</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2506.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1613,7 +1457,6 @@
 			<channel_id>3301</channel_id>
 			<int_id>961</int_id>
 			<epg_id>kbc-multzal</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3301.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1623,7 +1466,6 @@
 			<channel_id>8173</channel_id>
 			<int_id>962</int_id>
 			<epg_id>kbc-sssr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8173.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1633,7 +1475,6 @@
 			<channel_id>7862</channel_id>
 			<int_id>963</int_id>
 			<epg_id>kbc-spy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7862.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1643,7 +1484,6 @@
 			<channel_id>3515</channel_id>
 			<int_id>953</int_id>
 			<epg_id>kbc-second-hit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3515.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1653,7 +1493,6 @@
 			<channel_id>5284</channel_id>
 			<int_id>960</int_id>
 			<epg_id>kbc-nash-rock</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5284.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1663,7 +1502,6 @@
 			<channel_id>5671</channel_id>
 			<int_id>976</int_id>
 			<epg_id>bcu-kinozal-prem-5</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5671.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1673,7 +1511,6 @@
 			<channel_id>1861</channel_id>
 			<int_id>977</int_id>
 			<epg_id>bcu-kinozal-prem-6</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1861.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1683,7 +1520,6 @@
 			<channel_id>6571</channel_id>
 			<int_id>978</int_id>
 			<epg_id>bcu-kinozal-prem-7</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6571.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1693,7 +1529,6 @@
 			<channel_id>6035</channel_id>
 			<int_id>979</int_id>
 			<epg_id>bcu-kinozal-prem-8</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6035.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1703,7 +1538,6 @@
 			<channel_id>7192</channel_id>
 			<int_id>980</int_id>
 			<epg_id>bcu-kinozal-prem-9</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7192.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1713,7 +1547,6 @@
 			<channel_id>4522</channel_id>
 			<int_id>981</int_id>
 			<epg_id>bcu-kinozal-prem-10</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4522.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1722,7 +1555,6 @@
 			<caption>Prime 4k</caption>
 			<channel_id/>
 			<epg_id>prime-4k</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/prime_4k.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1732,7 +1564,6 @@
 			<channel_id>7027</channel_id>
 			<int_id>1009</int_id>
 			<epg_id>ussr-premieregroup</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7027.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1742,7 +1573,6 @@
 			<channel_id>3227</channel_id>
 			<int_id>1010</int_id>
 			<epg_id>vhshd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3227.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
@@ -1752,7 +1582,6 @@
 			<channel_id>7998</channel_id>
 			<int_id>229</int_id>
 			<epg_id>kinopremiera-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7998.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1762,7 +1591,6 @@
 			<channel_id>6659</channel_id>
 			<int_id>230</int_id>
 			<epg_id>ostrosiuzhetnoe-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6659.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1772,7 +1600,6 @@
 			<channel_id>4505</channel_id>
 			<int_id>231</int_id>
 			<epg_id>kinopremium-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4505.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1782,7 +1609,6 @@
 			<channel_id>6359</channel_id>
 			<int_id>232</int_id>
 			<epg_id>nash-detektiv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6359.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1792,7 +1618,6 @@
 			<channel_id>4416</channel_id>
 			<int_id>233</int_id>
 			<epg_id>nash-kinoroman</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4416.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1802,7 +1627,6 @@
 			<channel_id>1119</channel_id>
 			<int_id>234</int_id>
 			<epg_id>kinokomedia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1119.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1812,7 +1636,6 @@
 			<channel_id>9448</channel_id>
 			<int_id>235</int_id>
 			<epg_id>kinosemiya</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9448.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1822,7 +1645,6 @@
 			<channel_id>5897</channel_id>
 			<int_id>236</int_id>
 			<epg_id>kinosvidanie</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5897.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1832,7 +1654,6 @@
 			<channel_id>3955</channel_id>
 			<int_id>237</int_id>
 			<epg_id>kinoxit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3955.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1842,7 +1663,6 @@
 			<channel_id>2446</channel_id>
 			<int_id>238</int_id>
 			<epg_id>kinomiks</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2446.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1852,7 +1672,6 @@
 			<channel_id>3259</channel_id>
 			<int_id>239</int_id>
 			<epg_id>nashe-novoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3259.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1862,7 +1681,6 @@
 			<channel_id>7965</channel_id>
 			<int_id>240</int_id>
 			<epg_id>rodnoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7965.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1872,7 +1690,6 @@
 			<channel_id>6200</channel_id>
 			<int_id>241</int_id>
 			<epg_id>indiyskoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6200.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1882,7 +1699,6 @@
 			<channel_id>1411</channel_id>
 			<int_id>242</int_id>
 			<epg_id>tv1000</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1411.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1892,7 +1708,6 @@
 			<channel_id>9080</channel_id>
 			<int_id>243</int_id>
 			<epg_id>tv1000-action</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9080.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1902,7 +1717,6 @@
 			<channel_id>1502</channel_id>
 			<int_id>244</int_id>
 			<epg_id>tv1000-russkoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1502.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1912,7 +1726,6 @@
 			<channel_id>8785</channel_id>
 			<int_id>245</int_id>
 			<epg_id>vip-premiere</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8785.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1922,7 +1735,6 @@
 			<channel_id>8448</channel_id>
 			<int_id>246</int_id>
 			<epg_id>vip-megahit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8448.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1932,7 +1744,6 @@
 			<channel_id>2903</channel_id>
 			<int_id>247</int_id>
 			<epg_id>vip-comedy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2903.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1942,7 +1753,6 @@
 			<channel_id>1514</channel_id>
 			<int_id>248</int_id>
 			<epg_id>vip-serial</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1514.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1952,7 +1762,6 @@
 			<channel_id>7023</channel_id>
 			<int_id>249</int_id>
 			<epg_id>kinopokaz-hd1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7023.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1962,7 +1771,6 @@
 			<channel_id>4010</channel_id>
 			<int_id>250</int_id>
 			<epg_id>kinopokaz-hd2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4010.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1972,7 +1780,6 @@
 			<channel_id>3610</channel_id>
 			<int_id>251</int_id>
 			<epg_id>amedia-premium</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3610.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1982,7 +1789,6 @@
 			<channel_id>7386</channel_id>
 			<int_id>252</int_id>
 			<epg_id>amedia1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7386.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1992,7 +1798,6 @@
 			<channel_id>4546</channel_id>
 			<int_id>253</int_id>
 			<epg_id>amedia-hit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4546.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2002,7 +1807,6 @@
 			<channel_id>3574</channel_id>
 			<int_id>254</int_id>
 			<epg_id>russky-roman</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3574.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2012,7 +1816,6 @@
 			<channel_id>9282</channel_id>
 			<int_id>255</int_id>
 			<epg_id>russky-illuzion</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9282.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2022,7 +1825,6 @@
 			<channel_id>6590</channel_id>
 			<int_id>256</int_id>
 			<epg_id>russky-detektiv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6590.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2032,7 +1834,6 @@
 			<channel_id>7525</channel_id>
 			<int_id>257</int_id>
 			<epg_id>russky-bestseller</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7525.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2042,7 +1843,6 @@
 			<channel_id>4167</channel_id>
 			<int_id>258</int_id>
 			<epg_id>russkaya-komedia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4167.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2052,7 +1852,6 @@
 			<channel_id>2988</channel_id>
 			<int_id>259</int_id>
 			<epg_id>pobeda</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2988.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2062,7 +1861,6 @@
 			<channel_id>9764</channel_id>
 			<int_id>260</int_id>
 			<epg_id>fox</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9764.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2072,7 +1870,6 @@
 			<channel_id>3108</channel_id>
 			<int_id>261</int_id>
 			<epg_id>foxlife</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3108.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2082,7 +1879,6 @@
 			<channel_id>4830</channel_id>
 			<int_id>262</int_id>
 			<epg_id>sony-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4830.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2092,7 +1888,6 @@
 			<channel_id>5009</channel_id>
 			<int_id>263</int_id>
 			<epg_id>sony-scifi</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5009.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2102,7 +1897,6 @@
 			<channel_id>1490</channel_id>
 			<int_id>264</int_id>
 			<epg_id>sony-turbo</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1490.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2112,7 +1906,6 @@
 			<channel_id>5930</channel_id>
 			<int_id>265</int_id>
 			<epg_id>kino-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5930.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2122,7 +1915,6 @@
 			<channel_id>9591</channel_id>
 			<int_id>266</int_id>
 			<epg_id>kinopokaz</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9591.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2132,7 +1924,6 @@
 			<channel_id>5974</channel_id>
 			<int_id>267</int_id>
 			<epg_id>cinema-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5974.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2142,7 +1933,6 @@
 			<channel_id>9044</channel_id>
 			<int_id>268</int_id>
 			<epg_id>nst</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9044.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2152,7 +1942,6 @@
 			<channel_id>1961</channel_id>
 			<int_id>269</int_id>
 			<epg_id>strashnoe-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1961.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2162,7 +1951,6 @@
 			<channel_id>3043</channel_id>
 			<int_id>270</int_id>
 			<epg_id>tvxxi</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3043.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2172,7 +1960,6 @@
 			<channel_id>9462</channel_id>
 			<int_id>271</int_id>
 			<epg_id>paramount-channel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9462.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2182,7 +1969,6 @@
 			<channel_id>4957</channel_id>
 			<int_id>272</int_id>
 			<epg_id>paramount-comedy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4957.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2192,7 +1978,6 @@
 			<channel_id>5595</channel_id>
 			<int_id>273</int_id>
 			<epg_id>muzhskoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5595.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2202,7 +1987,6 @@
 			<channel_id>2851</channel_id>
 			<int_id>274</int_id>
 			<epg_id>domkino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2851.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2212,7 +1996,6 @@
 			<channel_id>6799</channel_id>
 			<int_id>275</int_id>
 			<epg_id>domkino-premium</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6799.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2222,7 +2005,6 @@
 			<channel_id>1996</channel_id>
 			<int_id>276</int_id>
 			<epg_id>hollywood-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1996.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2232,7 +2014,6 @@
 			<channel_id>2006</channel_id>
 			<int_id>373</int_id>
 			<epg_id>fanhd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2006.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2242,7 +2023,6 @@
 			<channel_id>6923</channel_id>
 			<int_id>380</int_id>
 			<epg_id>feniks-plus-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6923.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2252,7 +2032,6 @@
 			<channel_id>4309</channel_id>
 			<int_id>383</int_id>
 			<epg_id>retro-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4309.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2262,7 +2041,6 @@
 			<channel_id>5408</channel_id>
 			<int_id>388</int_id>
 			<epg_id>kino-ultra-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5408.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2272,7 +2050,6 @@
 			<channel_id>7515</channel_id>
 			<int_id>393</int_id>
 			<epg_id>amedia2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7515.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2282,7 +2059,6 @@
 			<channel_id>4140</channel_id>
 			<int_id>400</int_id>
 			<epg_id>okino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4140.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2292,7 +2068,6 @@
 			<channel_id>8314</channel_id>
 			<int_id>405</int_id>
 			<epg_id>lubimoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8314.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2302,7 +2077,6 @@
 			<channel_id>7148</channel_id>
 			<int_id>407</int_id>
 			<epg_id>bollywood-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7148.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2312,7 +2086,6 @@
 			<channel_id>2233</channel_id>
 			<int_id>426</int_id>
 			<epg_id>dorama</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2233.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2322,7 +2095,6 @@
 			<channel_id>5240</channel_id>
 			<int_id>428</int_id>
 			<epg_id>evrokino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5240.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2332,7 +2104,6 @@
 			<channel_id>9804</channel_id>
 			<int_id>431</int_id>
 			<epg_id>illuzion-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9804.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2342,7 +2113,6 @@
 			<channel_id>2207</channel_id>
 			<int_id>436</int_id>
 			<epg_id>tayna</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2207.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2352,7 +2122,6 @@
 			<channel_id>7564</channel_id>
 			<int_id>440</int_id>
 			<epg_id>amedia-premium</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7564.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2362,7 +2131,6 @@
 			<channel_id>6956</channel_id>
 			<int_id>458</int_id>
 			<epg_id>paramount-channel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6956.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2372,7 +2140,6 @@
 			<channel_id>2829</channel_id>
 			<int_id>462</int_id>
 			<epg_id>shot-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2829.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2382,7 +2149,6 @@
 			<channel_id>8803</channel_id>
 			<int_id>464</int_id>
 			<epg_id>star-cinema</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5109.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2392,7 +2158,6 @@
 			<channel_id>6870</channel_id>
 			<int_id>466</int_id>
 			<epg_id>ultra-hd-cinema</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6870.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2402,7 +2167,6 @@
 			<channel_id>7669</channel_id>
 			<int_id>469</int_id>
 			<epg_id>zee-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7669.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2412,7 +2176,6 @@
 			<channel_id>7262</channel_id>
 			<int_id>479</int_id>
 			<epg_id>romantichnoe</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7262.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2422,7 +2185,6 @@
 			<channel_id>8420</channel_id>
 			<int_id>480</int_id>
 			<epg_id>nashe-lubimoe</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8420.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2432,7 +2194,6 @@
 			<channel_id>1445</channel_id>
 			<int_id>482</int_id>
 			<epg_id>ntv-xit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1445.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2442,7 +2203,6 @@
 			<channel_id>6198</channel_id>
 			<int_id>525</int_id>
 			<epg_id>star-family</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8048.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2452,7 +2212,6 @@
 			<channel_id>2488</channel_id>
 			<int_id>555</int_id>
 			<epg_id>mosfilm</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2488.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2462,7 +2221,6 @@
 			<channel_id>1382</channel_id>
 			<int_id>571</int_id>
 			<epg_id>bolt-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1382.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2472,7 +2230,6 @@
 			<channel_id>6899</channel_id>
 			<int_id>603</int_id>
 			<epg_id>kinosat</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6899.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2482,7 +2239,6 @@
 			<channel_id>3213</channel_id>
 			<int_id>604</int_id>
 			<epg_id>ntv-serial</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3213.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2492,7 +2248,6 @@
 			<channel_id>3127</channel_id>
 			<int_id>605</int_id>
 			<epg_id>tv1000-premium</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3127.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2502,7 +2257,6 @@
 			<channel_id>9769</channel_id>
 			<int_id>606</int_id>
 			<epg_id>kinoseria</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9769.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2512,7 +2266,6 @@
 			<channel_id>5792</channel_id>
 			<int_id>609</int_id>
 			<epg_id>amc</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7676.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2522,7 +2275,6 @@
 			<channel_id>8952</channel_id>
 			<int_id>626</int_id>
 			<epg_id>paramount-comedy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8952.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2532,7 +2284,6 @@
 			<channel_id>9948</channel_id>
 			<int_id>627</int_id>
 			<epg_id>tv1000</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9948.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2542,7 +2293,6 @@
 			<channel_id>2884</channel_id>
 			<int_id>628</int_id>
 			<epg_id>hollywood</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2884.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2552,7 +2302,6 @@
 			<channel_id>9605</channel_id>
 			<int_id>629</int_id>
 			<epg_id>sony-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9605.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2562,7 +2311,6 @@
 			<channel_id>2166</channel_id>
 			<int_id>630</int_id>
 			<epg_id>fox</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2166.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2572,7 +2320,6 @@
 			<channel_id>7353</channel_id>
 			<int_id>631</int_id>
 			<epg_id>foxlife</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7353.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2582,7 +2329,6 @@
 			<channel_id>8934</channel_id>
 			<int_id>643</int_id>
 			<epg_id>pobeda</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8934.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2592,7 +2338,6 @@
 			<channel_id>9667</channel_id>
 			<int_id>646</int_id>
 			<epg_id>mir-seriala</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9667.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2602,7 +2347,6 @@
 			<channel_id>2110</channel_id>
 			<int_id>649</int_id>
 			<epg_id>vip-premiere</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2110.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2612,7 +2356,6 @@
 			<channel_id>7787</channel_id>
 			<int_id>650</int_id>
 			<epg_id>vip-megahit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7787.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2622,7 +2365,6 @@
 			<channel_id>9807</channel_id>
 			<int_id>651</int_id>
 			<epg_id>vip-comedy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9807.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2632,7 +2374,6 @@
 			<channel_id>6241</channel_id>
 			<int_id>652</int_id>
 			<epg_id>muzhskoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6241.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2642,7 +2383,6 @@
 			<channel_id>2095</channel_id>
 			<int_id>663</int_id>
 			<epg_id>kinopremiera-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2095.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2652,7 +2392,6 @@
 			<channel_id>2733</channel_id>
 			<int_id>665</int_id>
 			<epg_id>kino-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2733.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2662,7 +2401,6 @@
 			<channel_id>5312</channel_id>
 			<int_id>668</int_id>
 			<epg_id>serial-ultrahd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5312.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2672,7 +2410,6 @@
 			<channel_id>9018</channel_id>
 			<int_id>680</int_id>
 			<epg_id>tv1000-worldkino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9018.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2682,7 +2419,6 @@
 			<channel_id>8833</channel_id>
 			<int_id>685</int_id>
 			<epg_id>russky-roman</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8833.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2692,7 +2428,6 @@
 			<channel_id>1755</channel_id>
 			<int_id>687</int_id>
 			<epg_id>kinouzhas</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1755.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2702,7 +2437,6 @@
 			<channel_id>7385</channel_id>
 			<int_id>689</int_id>
 			<epg_id>kinomiks</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7385.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2712,7 +2446,6 @@
 			<channel_id>4999</channel_id>
 			<int_id>692</int_id>
 			<epg_id>ostrosiuzhetnoe-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4999.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2722,7 +2455,6 @@
 			<channel_id>7718</channel_id>
 			<int_id>693</int_id>
 			<epg_id>kinopremium-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7718.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2732,7 +2464,6 @@
 			<channel_id>2414</channel_id>
 			<int_id>715</int_id>
 			<epg_id>kinoseria</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2414.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2742,7 +2473,6 @@
 			<channel_id>6140</channel_id>
 			<int_id>716</int_id>
 			<epg_id>kinoxit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6140.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2752,7 +2482,6 @@
 			<channel_id>9098</channel_id>
 			<int_id>717</int_id>
 			<epg_id>kinosemiya</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9098.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2762,7 +2491,6 @@
 			<channel_id>5415</channel_id>
 			<int_id>732</int_id>
 			<epg_id>epik-drama</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5415.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2772,7 +2500,6 @@
 			<channel_id>1203</channel_id>
 			<int_id>733</int_id>
 			<epg_id>filmzone</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1203.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2782,7 +2509,6 @@
 			<channel_id>2423</channel_id>
 			<int_id>734</int_id>
 			<epg_id>filmzone-plus-lt</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2423.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2792,7 +2518,6 @@
 			<channel_id>8937</channel_id>
 			<int_id>736</int_id>
 			<epg_id>filmbox-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8937.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2802,7 +2527,6 @@
 			<channel_id>9238</channel_id>
 			<int_id>737</int_id>
 			<epg_id>filmbox-arthouse</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9238.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2812,7 +2536,6 @@
 			<channel_id>8394</channel_id>
 			<int_id>756</int_id>
 			<epg_id>dorama</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8394.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2822,7 +2545,6 @@
 			<channel_id>2159</channel_id>
 			<int_id>757</int_id>
 			<epg_id>nash-kinopokaz-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2159.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2832,7 +2554,6 @@
 			<channel_id>6759</channel_id>
 			<int_id>758</int_id>
 			<epg_id>blokbaster-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6759.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2842,7 +2563,6 @@
 			<channel_id>5365</channel_id>
 			<int_id>759</int_id>
 			<epg_id>nashe-muzhskoe-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5365.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2852,7 +2572,6 @@
 			<channel_id>2645</channel_id>
 			<int_id>760</int_id>
 			<epg_id>pro-lyubov</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2645.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2862,7 +2581,6 @@
 			<channel_id>2119</channel_id>
 			<int_id>761</int_id>
 			<epg_id>khit-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2119.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2872,7 +2590,6 @@
 			<channel_id>6565</channel_id>
 			<int_id>762</int_id>
 			<epg_id>kamedi</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6565.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2882,7 +2599,6 @@
 			<channel_id>7736</channel_id>
 			<int_id>763</int_id>
 			<epg_id>kinopokaz-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7736.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2892,7 +2608,6 @@
 			<channel_id>8409</channel_id>
 			<int_id>770</int_id>
 			<epg_id>kino-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8409.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2902,7 +2617,6 @@
 			<channel_id>1388</channel_id>
 			<int_id>771</int_id>
 			<epg_id>nashe-novoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1388.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2912,7 +2626,6 @@
 			<channel_id>2572</channel_id>
 			<int_id>780</int_id>
 			<epg_id>vip-serial</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2572.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2922,7 +2635,6 @@
 			<channel_id>5425</channel_id>
 			<int_id>782</int_id>
 			<epg_id>denpobedy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5425.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2932,7 +2644,6 @@
 			<channel_id>1654</channel_id>
 			<int_id>783</int_id>
 			<epg_id>kinosvidanie</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1654.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2942,7 +2653,6 @@
 			<channel_id>4690</channel_id>
 			<int_id>793</int_id>
 			<epg_id>flixsnip</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4690.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2952,7 +2662,6 @@
 			<channel_id>1505</channel_id>
 			<int_id>829</int_id>
 			<epg_id>kinopremium-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1505.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2962,7 +2671,6 @@
 			<channel_id>5606</channel_id>
 			<int_id>844</int_id>
 			<epg_id>trashtv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5606.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2972,7 +2680,6 @@
 			<channel_id>3013</channel_id>
 			<int_id>847</int_id>
 			<epg_id>romantichnoe</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3013.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2982,7 +2689,6 @@
 			<channel_id>1112</channel_id>
 			<int_id>848</int_id>
 			<epg_id>amedia-premium</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1112.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2992,7 +2698,6 @@
 			<channel_id>8006</channel_id>
 			<int_id>849</int_id>
 			<epg_id>amedia2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8006.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3002,7 +2707,6 @@
 			<channel_id>5150</channel_id>
 			<int_id>850</int_id>
 			<epg_id>amedia-hit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5150.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3012,7 +2716,6 @@
 			<channel_id>6978</channel_id>
 			<int_id>866</int_id>
 			<epg_id>amedia1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6978.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3022,7 +2725,6 @@
 			<channel_id>1567</channel_id>
 			<int_id>792</int_id>
 			<epg_id>siestahd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1567.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3032,7 +2734,6 @@
 			<channel_id>4178</channel_id>
 			<int_id>900</int_id>
 			<epg_id>mosfilm</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4178.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3042,7 +2743,6 @@
 			<channel_id>1045</channel_id>
 			<int_id>902</int_id>
 			<epg_id>mosfilm</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1045.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3052,7 +2752,6 @@
 			<channel_id>8831</channel_id>
 			<int_id>904</int_id>
 			<epg_id>kinojam1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8831.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3062,7 +2761,6 @@
 			<channel_id>7041</channel_id>
 			<int_id>905</int_id>
 			<epg_id>kinojam2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7041.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3072,7 +2770,6 @@
 			<channel_id>9441</channel_id>
 			<int_id>926</int_id>
 			<epg_id>flixsnip</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9441.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3082,7 +2779,6 @@
 			<channel_id>5460</channel_id>
 			<int_id>972</int_id>
 			<epg_id>sony-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5460.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3092,7 +2788,6 @@
 			<channel_id>8344</channel_id>
 			<int_id>973</int_id>
 			<epg_id>muzhskoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8344.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3102,7 +2797,6 @@
 			<channel_id>9164</channel_id>
 			<int_id>974</int_id>
 			<epg_id>nashe-novoe-kino</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9164.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3112,7 +2806,6 @@
 			<channel_id>1323</channel_id>
 			<int_id>988</int_id>
 			<epg_id>kinomiks</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1323.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3122,7 +2815,6 @@
 			<channel_id>7436</channel_id>
 			<int_id>990</int_id>
 			<epg_id>domkino-premium</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7436.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3132,7 +2824,6 @@
 			<channel_id>4756</channel_id>
 			<int_id>991</int_id>
 			<epg_id>bollywood-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4756.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3142,7 +2833,6 @@
 			<channel_id>1262</channel_id>
 			<int_id>993</int_id>
 			<epg_id>kinokomedia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1262.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3152,7 +2842,6 @@
 			<channel_id>9754</channel_id>
 			<int_id>994</int_id>
 			<epg_id>fox</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9754.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3162,7 +2851,6 @@
 			<channel_id>6137</channel_id>
 			<int_id>995</int_id>
 			<epg_id>kinoseria</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6137.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3172,7 +2860,6 @@
 			<channel_id>5128</channel_id>
 			<int_id>996</int_id>
 			<epg_id>kinopokaz-hd1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5128.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3182,7 +2869,6 @@
 			<channel_id>5902</channel_id>
 			<int_id>997</int_id>
 			<epg_id>kinopokaz-hd2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5902.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3192,7 +2878,6 @@
 			<channel_id>5794</channel_id>
 			<int_id>1011</int_id>
 			<epg_id>nash-detektiv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5794.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3202,7 +2887,6 @@
 			<channel_id>6176</channel_id>
 			<int_id>1012</int_id>
 			<epg_id>nash-kinoroman</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6176.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3212,7 +2896,6 @@
 			<channel_id>7795</channel_id>
 			<int_id>1013</int_id>
 			<epg_id>kinosemiya</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7795.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3222,7 +2905,6 @@
 			<channel_id>6948</channel_id>
 			<int_id>1015</int_id>
 			<epg_id>timeless-dizi</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6948.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3232,7 +2914,6 @@
 			<channel_id>4668</channel_id>
 			<int_id>1021</int_id>
 			<epg_id>sony-turbo</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3242,7 +2923,6 @@
 			<channel_id>2251</channel_id>
 			<int_id>1022</int_id>
 			<epg_id>sony-scifi</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -3252,7 +2932,6 @@
 			<channel_id>5438</channel_id>
 			<int_id>303</int_id>
 			<epg_id>detsky</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5438.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3262,7 +2941,6 @@
 			<channel_id>3240</channel_id>
 			<int_id>304</int_id>
 			<epg_id>nickelodeon-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3240.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3272,7 +2950,6 @@
 			<channel_id>7952</channel_id>
 			<int_id>305</int_id>
 			<epg_id>mult</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7952.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3282,7 +2959,6 @@
 			<channel_id>7528</channel_id>
 			<int_id>306</int_id>
 			<epg_id>disney</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7528.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3292,7 +2968,6 @@
 			<channel_id>7419</channel_id>
 			<int_id>308</int_id>
 			<epg_id>karusel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7419.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3302,7 +2977,6 @@
 			<channel_id>9954</channel_id>
 			<int_id>312</int_id>
 			<epg_id>sts-kids-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9954.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3312,7 +2986,6 @@
 			<channel_id>7521</channel_id>
 			<int_id>313</int_id>
 			<epg_id>tiji</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7521.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3322,7 +2995,6 @@
 			<channel_id>9985</channel_id>
 			<int_id>314</int_id>
 			<epg_id>mult</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9985.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3332,7 +3004,6 @@
 			<channel_id>5321</channel_id>
 			<int_id>315</int_id>
 			<epg_id>multimuzyka</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5321.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3342,7 +3013,6 @@
 			<channel_id>9763</channel_id>
 			<int_id>316</int_id>
 			<epg_id>jimjam</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9763.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3352,7 +3022,6 @@
 			<channel_id>5635</channel_id>
 			<int_id>317</int_id>
 			<epg_id>cartoon-network</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5635.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3362,7 +3031,6 @@
 			<channel_id>3727</channel_id>
 			<int_id>318</int_id>
 			<epg_id>nick-jr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3727.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3372,7 +3040,6 @@
 			<channel_id>9375</channel_id>
 			<int_id>319</int_id>
 			<epg_id>v-gostiax-u-skazki</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9375.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3382,7 +3049,6 @@
 			<channel_id>4299</channel_id>
 			<int_id>320</int_id>
 			<epg_id>o_</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4299.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3392,7 +3058,6 @@
 			<channel_id>2275</channel_id>
 			<int_id>321</int_id>
 			<epg_id>boomerang</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2275.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3402,7 +3067,6 @@
 			<channel_id>5876</channel_id>
 			<int_id>322</int_id>
 			<epg_id>radost-moya</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5876.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3412,7 +3076,6 @@
 			<channel_id>9170</channel_id>
 			<int_id>323</int_id>
 			<epg_id>ani</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9170.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3422,7 +3085,6 @@
 			<channel_id>9295</channel_id>
 			<int_id>324</int_id>
 			<epg_id>detsky-mir</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9295.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3432,7 +3094,6 @@
 			<channel_id>3723</channel_id>
 			<int_id>325</int_id>
 			<epg_id>gulli-girl</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3723.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3442,7 +3103,6 @@
 			<channel_id>7114</channel_id>
 			<int_id>326</int_id>
 			<epg_id>baby-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7114.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3452,7 +3112,6 @@
 			<channel_id>2466</channel_id>
 			<int_id>456</int_id>
 			<epg_id>nickelodeon-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2466.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3462,7 +3121,6 @@
 			<channel_id>4852</channel_id>
 			<int_id>601</int_id>
 			<epg_id>malysh</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4852.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3472,7 +3130,6 @@
 			<channel_id>5672</channel_id>
 			<int_id>602</int_id>
 			<epg_id>ryzhy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5672.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3482,7 +3139,6 @@
 			<channel_id>9603</channel_id>
 			<int_id>620</int_id>
 			<epg_id>cartoon-network</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9603.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3492,7 +3148,6 @@
 			<channel_id>2229</channel_id>
 			<int_id>634</int_id>
 			<epg_id>multimania</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2229.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3502,7 +3157,6 @@
 			<channel_id>9549</channel_id>
 			<int_id>654</int_id>
 			<epg_id>ginger-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9549.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3512,7 +3166,6 @@
 			<channel_id>9521</channel_id>
 			<int_id>664</int_id>
 			<epg_id>kidzone-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9521.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3522,7 +3175,6 @@
 			<channel_id>2314</channel_id>
 			<int_id>711</int_id>
 			<epg_id>ducktv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2314.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3532,7 +3184,6 @@
 			<channel_id>8296</channel_id>
 			<int_id>789</int_id>
 			<epg_id>ducktv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8296.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3542,7 +3193,6 @@
 			<channel_id>2313</channel_id>
 			<int_id>798</int_id>
 			<epg_id>disney-jr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2313.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3552,7 +3202,6 @@
 			<channel_id>7087</channel_id>
 			<int_id>857</int_id>
 			<epg_id>nicktoons</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7087.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3562,7 +3211,6 @@
 			<channel_id>5058</channel_id>
 			<int_id>984</int_id>
 			<epg_id>nickelodeon-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5058.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3572,7 +3220,6 @@
 			<channel_id>3483</channel_id>
 			<int_id>986</int_id>
 			<epg_id>mult</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3483.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3582,7 +3229,6 @@
 			<channel_id>8770</channel_id>
 			<int_id>992</int_id>
 			<epg_id>sts-kids-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8770.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>7</archive>
@@ -3592,7 +3238,6 @@
 			<channel_id>2753</channel_id>
 			<int_id>139</int_id>
 			<epg_id>galaxy-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2753.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3602,7 +3247,6 @@
 			<channel_id>8979</channel_id>
 			<int_id>180</int_id>
 			<epg_id>discovery-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8979.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3612,7 +3256,6 @@
 			<channel_id>6482</channel_id>
 			<int_id>181</int_id>
 			<epg_id>discovery-science</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6482.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3622,7 +3265,6 @@
 			<channel_id>7612</channel_id>
 			<int_id>182</int_id>
 			<epg_id>dtx</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7612.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3632,7 +3274,6 @@
 			<channel_id>2267</channel_id>
 			<int_id>183</int_id>
 			<epg_id>history-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2267.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3642,7 +3283,6 @@
 			<channel_id>1940</channel_id>
 			<int_id>184</int_id>
 			<epg_id>h2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1940.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3652,7 +3292,6 @@
 			<channel_id>5885</channel_id>
 			<int_id>185</int_id>
 			<epg_id>id-xtra-eu</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5885.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3662,7 +3301,6 @@
 			<channel_id>9012</channel_id>
 			<int_id>186</int_id>
 			<epg_id>tlc</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9012.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3672,7 +3310,6 @@
 			<channel_id>7223</channel_id>
 			<int_id>187</int_id>
 			<epg_id>moya-planeta</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7223.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3682,7 +3319,6 @@
 			<channel_id>3269</channel_id>
 			<int_id>188</int_id>
 			<epg_id>eureka-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3269.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3692,7 +3328,6 @@
 			<channel_id>4998</channel_id>
 			<int_id>189</int_id>
 			<epg_id>national-geographic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4998.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3702,7 +3337,6 @@
 			<channel_id>5138</channel_id>
 			<int_id>190</int_id>
 			<epg_id>nauka-20</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5138.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3712,7 +3346,6 @@
 			<channel_id>1215</channel_id>
 			<int_id>191</int_id>
 			<epg_id>nano-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1215.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3722,7 +3355,6 @@
 			<channel_id>6157</channel_id>
 			<int_id>192</int_id>
 			<epg_id>galaxy-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6157.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3732,7 +3364,6 @@
 			<channel_id>2534</channel_id>
 			<int_id>193</int_id>
 			<epg_id>texno-24</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2534.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3742,7 +3373,6 @@
 			<channel_id>6836</channel_id>
 			<int_id>194</int_id>
 			<epg_id>oruzhie</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6836.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3752,7 +3382,6 @@
 			<channel_id>7501</channel_id>
 			<int_id>195</int_id>
 			<epg_id>nat-geo-wild</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7501.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3762,7 +3391,6 @@
 			<channel_id>3507</channel_id>
 			<int_id>196</int_id>
 			<epg_id>animal-planet</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3507.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3772,7 +3400,6 @@
 			<channel_id>3907</channel_id>
 			<int_id>197</int_id>
 			<epg_id>v-mire-zhivotnyx-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3907.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3782,7 +3409,6 @@
 			<channel_id>3737</channel_id>
 			<int_id>199</int_id>
 			<epg_id>mama</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3737.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3792,7 +3418,6 @@
 			<channel_id>9022</channel_id>
 			<int_id>200</int_id>
 			<epg_id>doktor</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9022.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3802,7 +3427,6 @@
 			<channel_id>9395</channel_id>
 			<int_id>202</int_id>
 			<epg_id>da-vinci</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9395.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3812,7 +3436,6 @@
 			<channel_id>3139</channel_id>
 			<int_id>203</int_id>
 			<epg_id>viasat-explore</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3139.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3822,7 +3445,6 @@
 			<channel_id>8772</channel_id>
 			<int_id>204</int_id>
 			<epg_id>viasat-nature-history-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8772.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3832,7 +3454,6 @@
 			<channel_id>4637</channel_id>
 			<int_id>205</int_id>
 			<epg_id>viasat-history</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4637.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>14</archive>
@@ -3842,7 +3463,6 @@
 			<channel_id>8719</channel_id>
 			<int_id>206</int_id>
 			<epg_id>istoria</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8719.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3852,7 +3472,6 @@
 			<channel_id>2331</channel_id>
 			<int_id>207</int_id>
 			<epg_id>365-dnej</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2331.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3862,7 +3481,6 @@
 			<channel_id>5359</channel_id>
 			<int_id>208</int_id>
 			<epg_id>moya-planeta</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5359.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3872,7 +3490,6 @@
 			<channel_id>1636</channel_id>
 			<int_id>209</int_id>
 			<epg_id>rtg-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1636.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3882,7 +3499,6 @@
 			<channel_id>3242</channel_id>
 			<int_id>210</int_id>
 			<epg_id>prikluchenia-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3242.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3892,7 +3508,6 @@
 			<channel_id>5730</channel_id>
 			<int_id>211</int_id>
 			<epg_id>travel-channel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5730.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3902,7 +3517,6 @@
 			<channel_id>4485</channel_id>
 			<int_id>212</int_id>
 			<epg_id>travel-adventure</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4485.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3912,7 +3526,6 @@
 			<channel_id>4351</channel_id>
 			<int_id>214</int_id>
 			<epg_id>oxota-i-rybalka</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4351.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3922,7 +3535,6 @@
 			<channel_id>5955</channel_id>
 			<int_id>215</int_id>
 			<epg_id>oxotnik-i-rybolov-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5955.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3932,7 +3544,6 @@
 			<channel_id>5891</channel_id>
 			<int_id>216</int_id>
 			<epg_id>dialogi-o-rybalke</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5891.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3942,7 +3553,6 @@
 			<channel_id>9212</channel_id>
 			<int_id>217</int_id>
 			<epg_id>dikaya-oxota-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9212.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3952,7 +3562,6 @@
 			<channel_id>9250</channel_id>
 			<int_id>218</int_id>
 			<epg_id>dikaya-rybalka-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9250.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3962,7 +3571,6 @@
 			<channel_id>7063</channel_id>
 			<int_id>220</int_id>
 			<epg_id>zhivaya-priroda</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7063.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3972,7 +3580,6 @@
 			<channel_id>1313</channel_id>
 			<int_id>221</int_id>
 			<epg_id>zhivaya-planeta</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1313.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3982,7 +3589,6 @@
 			<channel_id>9708</channel_id>
 			<int_id>222</int_id>
 			<epg_id>kuxnia-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9708.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -3992,7 +3598,6 @@
 			<channel_id>9940</channel_id>
 			<int_id>223</int_id>
 			<epg_id>eda-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9940.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4002,7 +3607,6 @@
 			<channel_id>4922</channel_id>
 			<int_id>224</int_id>
 			<epg_id>food-network</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4922.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4012,7 +3616,6 @@
 			<channel_id>8624</channel_id>
 			<int_id>225</int_id>
 			<epg_id>avto24</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8624.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4022,7 +3625,6 @@
 			<channel_id>2339</channel_id>
 			<int_id>226</int_id>
 			<epg_id>avto-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2339.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4032,7 +3634,6 @@
 			<channel_id>7138</channel_id>
 			<int_id>227</int_id>
 			<epg_id>morskoy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7138.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4042,7 +3643,6 @@
 			<channel_id>6256</channel_id>
 			<int_id>228</int_id>
 			<epg_id>hd-life</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6256.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4052,7 +3652,6 @@
 			<channel_id>8254</channel_id>
 			<int_id>377</int_id>
 			<epg_id>usadba</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8254.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4062,7 +3661,6 @@
 			<channel_id>7310</channel_id>
 			<int_id>378</int_id>
 			<epg_id>teatr</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7310.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4072,7 +3670,6 @@
 			<channel_id>7060</channel_id>
 			<int_id>390</int_id>
 			<epg_id>id-xtra-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7060.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4082,7 +3679,6 @@
 			<channel_id>4479</channel_id>
 			<int_id>398</int_id>
 			<epg_id>pes-i-ko</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4479.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4092,7 +3688,6 @@
 			<channel_id>9283</channel_id>
 			<int_id>402</int_id>
 			<epg_id>muzhskoy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9283.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4102,7 +3697,6 @@
 			<channel_id>3605</channel_id>
 			<int_id>410</int_id>
 			<epg_id>museum-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3605.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4112,7 +3706,6 @@
 			<channel_id>5532</channel_id>
 			<int_id>415</int_id>
 			<epg_id>viasat-nature</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5532.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4122,7 +3715,6 @@
 			<channel_id>6657</channel_id>
 			<int_id>423</int_id>
 			<epg_id>bolshaya-azia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6657.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4132,7 +3724,6 @@
 			<channel_id>2503</channel_id>
 			<int_id>424</int_id>
 			<epg_id>dikiy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2503.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4142,7 +3733,6 @@
 			<channel_id>2048</channel_id>
 			<int_id>429</int_id>
 			<epg_id>eda</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2048.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4152,7 +3742,6 @@
 			<channel_id>7715</channel_id>
 			<int_id>430</int_id>
 			<epg_id>zdorovoe-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7715.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4162,7 +3751,6 @@
 			<channel_id>7435</channel_id>
 			<int_id>441</int_id>
 			<epg_id>animal-planet</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7435.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4172,7 +3760,6 @@
 			<channel_id>3721</channel_id>
 			<int_id>443</int_id>
 			<epg_id>discovery-channel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3721.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4182,7 +3769,6 @@
 			<channel_id>9502</channel_id>
 			<int_id>444</int_id>
 			<epg_id>discovery-science</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9502.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4192,7 +3778,6 @@
 			<channel_id>5508</channel_id>
 			<int_id>445</int_id>
 			<epg_id>dtx</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5508.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4202,7 +3787,6 @@
 			<channel_id>9038</channel_id>
 			<int_id>453</int_id>
 			<epg_id>nat-geo-wild</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9038.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4212,7 +3796,6 @@
 			<channel_id>5938</channel_id>
 			<int_id>454</int_id>
 			<epg_id>national-geographic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5938.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4222,7 +3805,6 @@
 			<channel_id>9427</channel_id>
 			<int_id>465</int_id>
 			<epg_id>tlc</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9427.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4232,7 +3814,6 @@
 			<channel_id>6822</channel_id>
 			<int_id>497</int_id>
 			<epg_id>nat-geo-wild</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6822.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4242,7 +3823,6 @@
 			<channel_id>3999</channel_id>
 			<int_id>498</int_id>
 			<epg_id>national-geographic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3999.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4252,7 +3832,6 @@
 			<channel_id>3186</channel_id>
 			<int_id>499</int_id>
 			<epg_id>discovery-channel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3186.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4262,7 +3841,6 @@
 			<channel_id>5474</channel_id>
 			<int_id>500</int_id>
 			<epg_id>animal-planet</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5474.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4272,7 +3850,6 @@
 			<channel_id>5446</channel_id>
 			<int_id>501</int_id>
 			<epg_id>hd-life</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5446.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4282,7 +3859,6 @@
 			<channel_id>4399</channel_id>
 			<int_id>592</int_id>
 			<epg_id>cbs-reality</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4399.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4292,7 +3868,6 @@
 			<channel_id>2273</channel_id>
 			<int_id>598</int_id>
 			<epg_id>arsenaltv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2273.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4302,7 +3877,6 @@
 			<channel_id>7182</channel_id>
 			<int_id>600</int_id>
 			<epg_id>kto-est-kto</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7182.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4312,7 +3886,6 @@
 			<channel_id>5180</channel_id>
 			<int_id>610</int_id>
 			<epg_id>zagorodny</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5180.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4322,7 +3895,6 @@
 			<channel_id>3366</channel_id>
 			<int_id>611</int_id>
 			<epg_id>zagorodnaya-zhizn</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3366.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4332,7 +3904,6 @@
 			<channel_id>9704</channel_id>
 			<int_id>612</int_id>
 			<epg_id>travel-channel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9704.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4342,7 +3913,6 @@
 			<channel_id>8819</channel_id>
 			<int_id>613</int_id>
 			<epg_id>psixologia-21</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8819.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4352,7 +3922,6 @@
 			<channel_id>3646</channel_id>
 			<int_id>614</int_id>
 			<epg_id>domashnie-zhivotnye</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3646.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4362,7 +3931,6 @@
 			<channel_id>6767</channel_id>
 			<int_id>615</int_id>
 			<epg_id>zoopark</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6767.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4372,7 +3940,6 @@
 			<channel_id>7840</channel_id>
 			<int_id>616</int_id>
 			<epg_id>uspex</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7840.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4382,7 +3949,6 @@
 			<channel_id>6063</channel_id>
 			<int_id>617</int_id>
 			<epg_id>rtg-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6063.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4392,7 +3958,6 @@
 			<channel_id>3719</channel_id>
 			<int_id>618</int_id>
 			<epg_id>telekafe</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3719.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4402,7 +3967,6 @@
 			<channel_id>1410</channel_id>
 			<int_id>619</int_id>
 			<epg_id>history-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1410.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4412,7 +3976,6 @@
 			<channel_id>7083</channel_id>
 			<int_id>625</int_id>
 			<epg_id>glazami-turista</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7083.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4422,7 +3985,6 @@
 			<channel_id>8568</channel_id>
 			<int_id>647</int_id>
 			<epg_id>discovery-world</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8568.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4432,7 +3994,6 @@
 			<channel_id>7783</channel_id>
 			<int_id>653</int_id>
 			<epg_id>english-club-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7783.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4442,7 +4003,6 @@
 			<channel_id>5630</channel_id>
 			<int_id>656</int_id>
 			<epg_id>id-xtra-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5630.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4452,7 +4012,6 @@
 			<channel_id>7157</channel_id>
 			<int_id>670</int_id>
 			<epg_id>nasa4k</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7157.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4462,7 +4021,6 @@
 			<channel_id>5656</channel_id>
 			<int_id>677</int_id>
 			<epg_id>nauka-20</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5656.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4472,7 +4030,6 @@
 			<channel_id>5291</channel_id>
 			<int_id>697</int_id>
 			<epg_id>docubox-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5291.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4482,7 +4039,6 @@
 			<channel_id>3385</channel_id>
 			<int_id>702</int_id>
 			<epg_id>teleputeshestvia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3385.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4492,7 +4048,6 @@
 			<channel_id>7164</channel_id>
 			<int_id>709</int_id>
 			<epg_id>mir-vokrug</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7164.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4502,7 +4057,6 @@
 			<channel_id>2491</channel_id>
 			<int_id>714</int_id>
 			<epg_id>zagorodny-int</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2491.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4512,7 +4066,6 @@
 			<channel_id>1146</channel_id>
 			<int_id>767</int_id>
 			<epg_id>viasat-explore</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1146.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4522,7 +4075,6 @@
 			<channel_id>4504</channel_id>
 			<int_id>768</int_id>
 			<epg_id>viasat-nature</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4504.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4532,7 +4084,6 @@
 			<channel_id>1212</channel_id>
 			<int_id>769</int_id>
 			<epg_id>viasat-history</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1212.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4542,7 +4093,6 @@
 			<channel_id>9081</channel_id>
 			<int_id>794</int_id>
 			<epg_id>poexali</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9081.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4552,7 +4102,6 @@
 			<channel_id>1627</channel_id>
 			<int_id>800</int_id>
 			<epg_id>national-geographic-cee</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1627.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4562,7 +4111,6 @@
 			<channel_id>1746</channel_id>
 			<int_id>801</int_id>
 			<epg_id>animal-planet-eu</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1746.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4572,7 +4120,6 @@
 			<channel_id>2963</channel_id>
 			<int_id>802</int_id>
 			<epg_id>discovery-channel-ce</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2963.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4581,8 +4128,6 @@
 			<caption>Discovery Science CEE</caption>
 			<channel_id>8806</channel_id>
 			<int_id>803</int_id>
-			<epg_id/>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8806.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4592,7 +4137,6 @@
 			<channel_id>3017</channel_id>
 			<int_id>815</int_id>
 			<epg_id>smartzone</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3017.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4602,7 +4146,6 @@
 			<channel_id>4072</channel_id>
 			<int_id>816</int_id>
 			<epg_id>mir-uvlecheniy</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4072.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4612,7 +4155,6 @@
 			<channel_id>6883</channel_id>
 			<int_id>817</int_id>
 			<epg_id>motor-trend</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6883.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4622,7 +4164,6 @@
 			<channel_id>8608</channel_id>
 			<int_id>820</int_id>
 			<epg_id>tlc</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8608.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4632,7 +4173,6 @@
 			<channel_id>1827</channel_id>
 			<int_id>821</int_id>
 			<epg_id>dtx</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1827.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4642,7 +4182,6 @@
 			<channel_id>1728</channel_id>
 			<int_id>822</int_id>
 			<epg_id>discovery-science</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1728.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4652,7 +4191,6 @@
 			<channel_id>9017</channel_id>
 			<int_id>823</int_id>
 			<epg_id>hgtv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9017.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4662,7 +4200,6 @@
 			<channel_id>9896</channel_id>
 			<int_id>830</int_id>
 			<epg_id>nat-geo-wild</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9896.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4672,7 +4209,6 @@
 			<channel_id>2252</channel_id>
 			<int_id>831</int_id>
 			<epg_id>national-geographic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2252.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4682,7 +4218,6 @@
 			<channel_id>2605</channel_id>
 			<int_id>843</int_id>
 			<epg_id>ocean-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2605.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4692,7 +4227,6 @@
 			<channel_id>6651</channel_id>
 			<int_id>845</int_id>
 			<epg_id>rybalka</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6651.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4702,7 +4236,6 @@
 			<channel_id>7585</channel_id>
 			<int_id>858</int_id>
 			<epg_id>nasha-tema</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7585.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4712,7 +4245,6 @@
 			<channel_id>7232</channel_id>
 			<int_id>859</int_id>
 			<epg_id>sea-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7232.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4722,7 +4254,6 @@
 			<channel_id>8696</channel_id>
 			<int_id>864</int_id>
 			<epg_id>discovery-ultra</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8696.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4732,7 +4263,6 @@
 			<channel_id>3903</channel_id>
 			<int_id>910</int_id>
 			<epg_id>bolshaya-azia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3903.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4742,7 +4272,6 @@
 			<channel_id>5022</channel_id>
 			<int_id>919</int_id>
 			<epg_id>kuxnia-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5022.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4752,7 +4281,6 @@
 			<channel_id>8464</channel_id>
 			<int_id>925</int_id>
 			<epg_id>doktor</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8464.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4762,7 +4290,6 @@
 			<channel_id>3145</channel_id>
 			<int_id>928</int_id>
 			<epg_id>nasha-tema</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3145.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4772,7 +4299,6 @@
 			<channel_id>1156</channel_id>
 			<int_id>983</int_id>
 			<epg_id>museum-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1156.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4782,7 +4308,6 @@
 			<channel_id>5590</channel_id>
 			<int_id>985</int_id>
 			<epg_id>glazami-turista</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5590.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4792,7 +4317,6 @@
 			<channel_id>5391</channel_id>
 			<int_id>987</int_id>
 			<epg_id>dikaya-rybalka-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5391.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4802,7 +4326,6 @@
 			<channel_id>2134</channel_id>
 			<int_id>989</int_id>
 			<epg_id>history-eu</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2134.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4812,7 +4335,6 @@
 			<channel_id>3438</channel_id>
 			<int_id>1023</int_id>
 			<epg_id>glazami-turista-4k</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4821,8 +4343,6 @@
 			<caption>Aquarium 4k</caption>
 			<channel_id>4393</channel_id>
 			<int_id>1024</int_id>
-			<epg_id/>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
@@ -4831,7 +4351,6 @@
 			<channel_id>1035</channel_id>
 			<int_id>1025</int_id>
 			<epg_id>travel-xp-4k</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
@@ -4841,7 +4360,6 @@
 			<channel_id>6252</channel_id>
 			<int_id>213</int_id>
 			<epg_id>extreme-sports</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6252.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4851,7 +4369,6 @@
 			<channel_id>4780</channel_id>
 			<int_id>277</int_id>
 			<epg_id>match-igra</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4780.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4861,7 +4378,6 @@
 			<channel_id>7937</channel_id>
 			<int_id>278</int_id>
 			<epg_id>match-nash-sport</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7937.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4871,7 +4387,6 @@
 			<channel_id>3226</channel_id>
 			<int_id>279</int_id>
 			<epg_id>match-arena</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3226.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4881,7 +4396,6 @@
 			<channel_id>5292</channel_id>
 			<int_id>280</int_id>
 			<epg_id>match-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5292.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4891,7 +4405,6 @@
 			<channel_id>2321</channel_id>
 			<int_id>282</int_id>
 			<epg_id>match-football1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2321.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4901,7 +4414,6 @@
 			<channel_id>6026</channel_id>
 			<int_id>283</int_id>
 			<epg_id>match-football2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6026.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4911,7 +4423,6 @@
 			<channel_id>6866</channel_id>
 			<int_id>284</int_id>
 			<epg_id>match-football3</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6866.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4921,7 +4432,6 @@
 			<channel_id>7517</channel_id>
 			<int_id>285</int_id>
 			<epg_id>match-premier</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7517.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4931,7 +4441,6 @@
 			<channel_id>8521</channel_id>
 			<int_id>286</int_id>
 			<epg_id>football1-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8521.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4941,7 +4450,6 @@
 			<channel_id>2070</channel_id>
 			<int_id>287</int_id>
 			<epg_id>football2-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2070.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4951,7 +4459,6 @@
 			<channel_id>1515</channel_id>
 			<int_id>288</int_id>
 			<epg_id>eurosport1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1515.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4961,7 +4468,6 @@
 			<channel_id>1525</channel_id>
 			<int_id>289</int_id>
 			<epg_id>eurosport2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1525.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4971,7 +4477,6 @@
 			<channel_id>5813</channel_id>
 			<int_id>291</int_id>
 			<epg_id>belarus5</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5813.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4981,7 +4486,6 @@
 			<channel_id>9686</channel_id>
 			<int_id>292</int_id>
 			<epg_id>kazsport</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9686.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -4991,7 +4495,6 @@
 			<channel_id>1072</channel_id>
 			<int_id>293</int_id>
 			<epg_id>viasat-sport</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1072.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5001,7 +4504,6 @@
 			<channel_id>1285</channel_id>
 			<int_id>294</int_id>
 			<epg_id>extreme-sports</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1285.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5011,7 +4513,6 @@
 			<channel_id>4652</channel_id>
 			<int_id>295</int_id>
 			<epg_id>setanta-sports</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4652.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5021,7 +4522,6 @@
 			<channel_id>1931</channel_id>
 			<int_id>296</int_id>
 			<epg_id>setanta-sports-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1931.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5031,7 +4531,6 @@
 			<channel_id>1403</channel_id>
 			<int_id>297</int_id>
 			<epg_id>match-boets</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1403.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5041,7 +4540,6 @@
 			<channel_id>9550</channel_id>
 			<int_id>298</int_id>
 			<epg_id>box-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9550.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5051,7 +4549,6 @@
 			<channel_id>9546</channel_id>
 			<int_id>299</int_id>
 			<epg_id>ufc</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9546.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5061,7 +4558,6 @@
 			<channel_id>2957</channel_id>
 			<int_id>300</int_id>
 			<epg_id>kxl</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2957.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5071,7 +4567,6 @@
 			<channel_id>6328</channel_id>
 			<int_id>301</int_id>
 			<epg_id>kxl-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6328.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5081,7 +4576,6 @@
 			<channel_id>8809</channel_id>
 			<int_id>302</int_id>
 			<epg_id>russky-ekstrim</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8809.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5091,7 +4585,6 @@
 			<channel_id>2647</channel_id>
 			<int_id>376</int_id>
 			<epg_id>football-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2647.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5101,7 +4594,6 @@
 			<channel_id>2746</channel_id>
 			<int_id>381</int_id>
 			<epg_id>tochka-otryva</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2746.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5111,7 +4603,6 @@
 			<channel_id>7004</channel_id>
 			<int_id>389</int_id>
 			<epg_id>insight-ultra-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7004.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5121,7 +4612,6 @@
 			<channel_id>9006</channel_id>
 			<int_id>391</int_id>
 			<epg_id>eurosport-4k</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9006.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5131,7 +4621,6 @@
 			<channel_id>2697</channel_id>
 			<int_id>403</int_id>
 			<epg_id>motorsportv-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2697.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5141,7 +4630,6 @@
 			<channel_id>8036</channel_id>
 			<int_id>408</int_id>
 			<epg_id>m1global</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8036.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5151,7 +4639,6 @@
 			<channel_id>2284</channel_id>
 			<int_id>413</int_id>
 			<epg_id>football1-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2284.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5161,7 +4648,6 @@
 			<channel_id>7054</channel_id>
 			<int_id>414</int_id>
 			<epg_id>football2-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7054.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5171,7 +4657,6 @@
 			<channel_id>9643</channel_id>
 			<int_id>417</int_id>
 			<epg_id>zhivi</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9643.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5181,7 +4666,6 @@
 			<channel_id>5603</channel_id>
 			<int_id>427</int_id>
 			<epg_id>drive</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5603.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5191,7 +4675,6 @@
 			<channel_id>2575</channel_id>
 			<int_id>434</int_id>
 			<epg_id>match-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2575.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5201,7 +4684,6 @@
 			<channel_id>6623</channel_id>
 			<int_id>447</int_id>
 			<epg_id>eurosport1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6623.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5211,7 +4693,6 @@
 			<channel_id>3146</channel_id>
 			<int_id>459</int_id>
 			<epg_id>russian-extreme-uhd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3146.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5221,7 +4702,6 @@
 			<channel_id>2839</channel_id>
 			<int_id>467</int_id>
 			<epg_id>viasat-sport</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2839.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5231,7 +4711,6 @@
 			<channel_id>8609</channel_id>
 			<int_id>478</int_id>
 			<epg_id>konny-mir</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8609.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5241,7 +4720,6 @@
 			<channel_id>3271</channel_id>
 			<int_id>481</int_id>
 			<epg_id>mir-basketbola</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3271.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5251,7 +4729,6 @@
 			<channel_id>2065</channel_id>
 			<int_id>485</int_id>
 			<epg_id>match-football1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2065.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5261,7 +4738,6 @@
 			<channel_id>4286</channel_id>
 			<int_id>486</int_id>
 			<epg_id>match-football2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4286.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5271,7 +4747,6 @@
 			<channel_id>2773</channel_id>
 			<int_id>487</int_id>
 			<epg_id>match-football3</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2773.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5281,7 +4756,6 @@
 			<channel_id>3570</channel_id>
 			<int_id>488</int_id>
 			<epg_id>match-igra</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3570.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5291,7 +4765,6 @@
 			<channel_id>9517</channel_id>
 			<int_id>489</int_id>
 			<epg_id>match-arena</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9517.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5301,7 +4774,6 @@
 			<channel_id>2616</channel_id>
 			<int_id>490</int_id>
 			<epg_id>match-planeta</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2616.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5311,7 +4783,6 @@
 			<channel_id>7962</channel_id>
 			<int_id>491</int_id>
 			<epg_id>match-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7962.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5321,7 +4792,6 @@
 			<channel_id>3678</channel_id>
 			<int_id>492</int_id>
 			<epg_id>match-premier</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3678.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5331,7 +4801,6 @@
 			<channel_id>3069</channel_id>
 			<int_id>493</int_id>
 			<epg_id>kxl-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3069.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5341,7 +4810,6 @@
 			<channel_id>8413</channel_id>
 			<int_id>494</int_id>
 			<epg_id>eurosport1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8413.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5351,7 +4819,6 @@
 			<channel_id>9523</channel_id>
 			<int_id>495</int_id>
 			<epg_id>eurosport2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9523.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5361,7 +4828,6 @@
 			<channel_id>2453</channel_id>
 			<int_id>496</int_id>
 			<epg_id>viasat-sport</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2453.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5371,7 +4837,6 @@
 			<channel_id>6904</channel_id>
 			<int_id>522</int_id>
 			<epg_id>eurosport2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6904.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5381,7 +4846,6 @@
 			<channel_id>7662</channel_id>
 			<int_id>418</int_id>
 			<epg_id>setanta-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7662.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5391,7 +4855,6 @@
 			<channel_id>6107</channel_id>
 			<int_id>591</int_id>
 			<epg_id>supertennis</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6107.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5401,7 +4864,6 @@
 			<channel_id>7729</channel_id>
 			<int_id>594</int_id>
 			<epg_id>tvplay-sports</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7729.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5411,7 +4873,6 @@
 			<channel_id>4490</channel_id>
 			<int_id>607</int_id>
 			<epg_id>tvplay-sports-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4490.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5421,7 +4882,6 @@
 			<channel_id>7976</channel_id>
 			<int_id>621</int_id>
 			<epg_id>football-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7976.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5431,7 +4891,6 @@
 			<channel_id>1182</channel_id>
 			<int_id>623</int_id>
 			<epg_id>match-igra</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1182.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5441,7 +4900,6 @@
 			<channel_id>3336</channel_id>
 			<int_id>633</int_id>
 			<epg_id>fightbox-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3336.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5451,7 +4909,6 @@
 			<channel_id>7439</channel_id>
 			<int_id>636</int_id>
 			<epg_id>football1-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7439.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5461,7 +4918,6 @@
 			<channel_id>7486</channel_id>
 			<int_id>637</int_id>
 			<epg_id>football2-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7486.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5471,7 +4927,6 @@
 			<channel_id>7721</channel_id>
 			<int_id>638</int_id>
 			<epg_id>match-football1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7721.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5481,7 +4936,6 @@
 			<channel_id>9099</channel_id>
 			<int_id>639</int_id>
 			<epg_id>match-football2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9099.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5491,7 +4945,6 @@
 			<channel_id>7197</channel_id>
 			<int_id>640</int_id>
 			<epg_id>match-football3</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7197.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5501,7 +4954,6 @@
 			<channel_id>3863</channel_id>
 			<int_id>641</int_id>
 			<epg_id>match-premier</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3863.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5511,7 +4963,6 @@
 			<channel_id>9879</channel_id>
 			<int_id>657</int_id>
 			<epg_id>fastfunbox-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9879.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5521,7 +4972,6 @@
 			<channel_id>2290</channel_id>
 			<int_id>662</int_id>
 			<epg_id>setanta-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2290.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5531,7 +4981,6 @@
 			<channel_id>6495</channel_id>
 			<int_id>686</int_id>
 			<epg_id>match-arena</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6495.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5541,7 +4990,6 @@
 			<channel_id>1949</channel_id>
 			<int_id>696</int_id>
 			<epg_id>fightbox-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1949.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5551,7 +4999,6 @@
 			<channel_id>1647</channel_id>
 			<int_id>698</int_id>
 			<epg_id>fastfunbox-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1647.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5561,7 +5008,6 @@
 			<channel_id>5493</channel_id>
 			<int_id>699</int_id>
 			<epg_id>setanta-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5493.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5571,7 +5017,6 @@
 			<channel_id>8180</channel_id>
 			<int_id>705</int_id>
 			<epg_id>start</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8180.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5581,7 +5026,6 @@
 			<channel_id>5528</channel_id>
 			<int_id>706</int_id>
 			<epg_id>setanta-sports</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5528.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5591,7 +5035,6 @@
 			<channel_id>6754</channel_id>
 			<int_id>707</int_id>
 			<epg_id>setanta-sports-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6754.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5601,7 +5044,6 @@
 			<channel_id>4035</channel_id>
 			<int_id>727</int_id>
 			<epg_id>sport1-lt</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4035.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5611,7 +5053,6 @@
 			<channel_id>2515</channel_id>
 			<int_id>747</int_id>
 			<epg_id>football3-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2515.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5621,7 +5062,6 @@
 			<channel_id>3600</channel_id>
 			<int_id>748</int_id>
 			<epg_id>football3-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3600.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5631,7 +5071,6 @@
 			<channel_id>4275</channel_id>
 			<int_id>749</int_id>
 			<epg_id>football3-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4275.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5641,7 +5080,6 @@
 			<channel_id>2094</channel_id>
 			<int_id>754</int_id>
 			<epg_id>match-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2094.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5651,7 +5089,6 @@
 			<channel_id>2955</channel_id>
 			<int_id>755</int_id>
 			<epg_id>setanta-plus-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2955.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5661,7 +5098,6 @@
 			<channel_id>7881</channel_id>
 			<int_id>772</int_id>
 			<epg_id>match-football1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7881.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5671,7 +5107,6 @@
 			<channel_id>2222</channel_id>
 			<int_id>773</int_id>
 			<epg_id>match-football2</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2222.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5681,7 +5116,6 @@
 			<channel_id>1846</channel_id>
 			<int_id>774</int_id>
 			<epg_id>match-football3</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1846.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5691,7 +5125,6 @@
 			<channel_id>5442</channel_id>
 			<int_id>775</int_id>
 			<epg_id>match-premier</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5442.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5701,7 +5134,6 @@
 			<channel_id>1610</channel_id>
 			<int_id>776</int_id>
 			<epg_id>match-igra</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1610.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5711,7 +5143,6 @@
 			<channel_id>5079</channel_id>
 			<int_id>777</int_id>
 			<epg_id>kxl-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5079.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5721,7 +5152,6 @@
 			<channel_id>9397</channel_id>
 			<int_id>778</int_id>
 			<epg_id>motorsportv-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9397.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5731,7 +5161,6 @@
 			<channel_id>4578</channel_id>
 			<int_id>779</int_id>
 			<epg_id>setanta-plus-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4578.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5741,7 +5170,6 @@
 			<channel_id>8233</channel_id>
 			<int_id>832</int_id>
 			<epg_id>nba-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8233.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5751,7 +5179,6 @@
 			<channel_id>9987</channel_id>
 			<int_id>851</int_id>
 			<epg_id>shakhtar-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9987.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5761,7 +5188,6 @@
 			<channel_id>8318</channel_id>
 			<int_id>852</int_id>
 			<epg_id>m1global</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8318.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5771,7 +5197,6 @@
 			<channel_id>2708</channel_id>
 			<int_id>861</int_id>
 			<epg_id>setanta-plus-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2708.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5781,7 +5206,6 @@
 			<channel_id>8842</channel_id>
 			<int_id>862</int_id>
 			<epg_id>viasat-golf-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8842.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5791,7 +5215,6 @@
 			<channel_id>3897</channel_id>
 			<int_id>863</int_id>
 			<epg_id>belarus5</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3897.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5801,7 +5224,6 @@
 			<channel_id>2841</channel_id>
 			<int_id>867</int_id>
 			<epg_id>sky-sports-f1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2841.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5811,7 +5233,6 @@
 			<channel_id>3993</channel_id>
 			<int_id>907</int_id>
 			<epg_id>xokkejny</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4319.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5821,7 +5242,6 @@
 			<channel_id>2856</channel_id>
 			<int_id>920</int_id>
 			<epg_id>ufc</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2856.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5831,7 +5251,6 @@
 			<channel_id>3686</channel_id>
 			<int_id>929</int_id>
 			<epg_id>sportivny</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3686.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5841,7 +5260,6 @@
 			<channel_id>6803</channel_id>
 			<int_id>930</int_id>
 			<epg_id>footbolny</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6803.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5851,7 +5269,6 @@
 			<channel_id>8722</channel_id>
 			<int_id>940</int_id>
 			<epg_id>setanta-sports</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8722.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5861,7 +5278,6 @@
 			<channel_id>1226</channel_id>
 			<int_id>941</int_id>
 			<epg_id>setanta-sports-plus</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1226.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5871,7 +5287,6 @@
 			<channel_id>8749</channel_id>
 			<int_id>290</int_id>
 			<epg_id>eurosport-gold</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8749.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5881,7 +5296,6 @@
 			<channel_id>5297</channel_id>
 			<int_id>1017</int_id>
 			<epg_id>eurosport1</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5297.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5891,7 +5305,6 @@
 			<channel_id>5943</channel_id>
 			<int_id>1018</int_id>
 			<epg_id>eurosport2-ne</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5943.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5901,7 +5314,6 @@
 			<channel_id>7068</channel_id>
 			<int_id>1028</int_id>
 			<epg_id>setanta-kz</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
@@ -5911,7 +5323,6 @@
 			<channel_id>3533</channel_id>
 			<int_id>327</int_id>
 			<epg_id>1hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3533.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -5921,7 +5332,6 @@
 			<channel_id>7349</channel_id>
 			<int_id>328</int_id>
 			<epg_id>m1-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7349.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -5931,7 +5341,6 @@
 			<channel_id>1806</channel_id>
 			<int_id>329</int_id>
 			<epg_id>muztv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1806.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -5941,7 +5350,6 @@
 			<channel_id>1774</channel_id>
 			<int_id>330</int_id>
 			<epg_id>bridge-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1774.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -5951,7 +5359,6 @@
 			<channel_id>3413</channel_id>
 			<int_id>331</int_id>
 			<epg_id>bridge-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3413.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -5961,7 +5368,6 @@
 			<channel_id>9334</channel_id>
 			<int_id>332</int_id>
 			<epg_id>bridge-tv-classic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9334.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -5971,7 +5377,6 @@
 			<channel_id>3704</channel_id>
 			<int_id>333</int_id>
 			<epg_id>bridge-tv-dance</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3704.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -5981,7 +5386,6 @@
 			<channel_id>5747</channel_id>
 			<int_id>334</int_id>
 			<epg_id>bridge-tv-ruxit</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5747.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -5991,7 +5395,6 @@
 			<channel_id>9995</channel_id>
 			<int_id>335</int_id>
 			<epg_id>europa-plus-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9995.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6001,7 +5404,6 @@
 			<channel_id>5778</channel_id>
 			<int_id>336</int_id>
 			<epg_id>ru-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5778.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6011,7 +5413,6 @@
 			<channel_id>9621</channel_id>
 			<int_id>337</int_id>
 			<epg_id>mtv-russia</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9621.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6021,7 +5422,6 @@
 			<channel_id>9197</channel_id>
 			<int_id>338</int_id>
 			<epg_id>mtv-dance</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9197.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6031,7 +5431,6 @@
 			<channel_id>2922</channel_id>
 			<int_id>339</int_id>
 			<epg_id>mtv-rocks</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2922.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6041,7 +5440,6 @@
 			<channel_id>1635</channel_id>
 			<int_id>340</int_id>
 			<epg_id>vh1-classic</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1635.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6051,7 +5449,6 @@
 			<channel_id>8870</channel_id>
 			<int_id>341</int_id>
 			<epg_id>vh1-european</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8870.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6061,7 +5458,6 @@
 			<channel_id>1148</channel_id>
 			<int_id>342</int_id>
 			<epg_id>mcm-top</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1148.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6071,7 +5467,6 @@
 			<channel_id>4885</channel_id>
 			<int_id>343</int_id>
 			<epg_id>tnt-music</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4885.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6081,7 +5476,6 @@
 			<channel_id>3203</channel_id>
 			<int_id>344</int_id>
 			<epg_id>mezzo-live-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3203.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6091,7 +5485,6 @@
 			<channel_id>4880</channel_id>
 			<int_id>345</int_id>
 			<epg_id>iconcerts</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4880.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6101,7 +5494,6 @@
 			<channel_id>5260</channel_id>
 			<int_id>379</int_id>
 			<epg_id>shanson-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5260.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6111,7 +5503,6 @@
 			<channel_id>9843</channel_id>
 			<int_id>404</int_id>
 			<epg_id>la-minor</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9843.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6121,7 +5512,6 @@
 			<channel_id>8131</channel_id>
 			<int_id>409</int_id>
 			<epg_id>musicbox</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8131.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6131,7 +5521,6 @@
 			<channel_id>4248</channel_id>
 			<int_id>416</int_id>
 			<epg_id>zhara</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4248.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6141,7 +5530,6 @@
 			<channel_id>5568</channel_id>
 			<int_id>451</int_id>
 			<epg_id>mtv-hits</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5568.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6151,7 +5539,6 @@
 			<channel_id>8299</channel_id>
 			<int_id>452</int_id>
 			<epg_id>mtv-live-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8299.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6161,7 +5548,6 @@
 			<channel_id>6802</channel_id>
 			<int_id>457</int_id>
 			<epg_id>o2tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6802.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6171,7 +5557,6 @@
 			<channel_id>4787</channel_id>
 			<int_id>541</int_id>
 			<epg_id>o-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4787.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6181,7 +5566,6 @@
 			<channel_id>1046</channel_id>
 			<int_id>556</int_id>
 			<epg_id>m2-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1046.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6191,7 +5575,6 @@
 			<channel_id>8805</channel_id>
 			<int_id>599</int_id>
 			<epg_id>muzyka-pervogo</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8805.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6201,7 +5584,6 @@
 			<channel_id>9047</channel_id>
 			<int_id>622</int_id>
 			<epg_id>4ever-music</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9047.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6211,7 +5593,6 @@
 			<channel_id>5355</channel_id>
 			<int_id>671</int_id>
 			<epg_id>onemuz</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5355.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6221,7 +5602,6 @@
 			<channel_id>3147</channel_id>
 			<int_id>679</int_id>
 			<epg_id>musicbox</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3147.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6231,7 +5611,6 @@
 			<channel_id>2784</channel_id>
 			<int_id>691</int_id>
 			<epg_id>eu-music</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2784.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6241,7 +5620,6 @@
 			<channel_id>3499</channel_id>
 			<int_id>703</int_id>
 			<epg_id>c-music-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3499.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6251,7 +5629,6 @@
 			<channel_id>1543</channel_id>
 			<int_id>704</int_id>
 			<epg_id>aiva</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1543.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6261,7 +5638,6 @@
 			<channel_id>2603</channel_id>
 			<int_id>735</int_id>
 			<epg_id>mezzo-live-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2603.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6271,7 +5647,6 @@
 			<channel_id>9748</channel_id>
 			<int_id>745</int_id>
 			<epg_id>m1-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9748.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6281,7 +5656,6 @@
 			<channel_id>6388</channel_id>
 			<int_id>746</int_id>
 			<epg_id>m2-ua</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6388.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6291,7 +5665,6 @@
 			<channel_id>3300</channel_id>
 			<int_id>811</int_id>
 			<epg_id>ru-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3300.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6301,7 +5674,6 @@
 			<channel_id>4903</channel_id>
 			<int_id>812</int_id>
 			<epg_id>europa-plus-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4903.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6311,7 +5683,6 @@
 			<channel_id>8673</channel_id>
 			<int_id>813</int_id>
 			<epg_id>tnt-music</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8673.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6321,7 +5692,6 @@
 			<channel_id>7933</channel_id>
 			<int_id>853</int_id>
 			<epg_id>inrating</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7933.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6331,7 +5701,6 @@
 			<channel_id>3396</channel_id>
 			<int_id>901</int_id>
 			<epg_id>tancuj</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3396.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6341,7 +5710,6 @@
 			<channel_id>4363</channel_id>
 			<int_id>908</int_id>
 			<epg_id>bridge-tv-shlager</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4363.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6351,7 +5719,6 @@
 			<channel_id>7640</channel_id>
 			<int_id>909</int_id>
 			<epg_id>trace-urban</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7640.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6361,7 +5728,6 @@
 			<channel_id>7506</channel_id>
 			<int_id>971</int_id>
 			<epg_id>mezzo</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7506.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 			<archive>7</archive>
@@ -6371,7 +5737,6 @@
 			<channel_id>1608</channel_id>
 			<int_id>1026</int_id>
 			<epg_id>nashe-music-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>8</tv_category_id>
 		</tv_channel>
@@ -6380,7 +5745,6 @@
 			<channel_id>8930</channel_id>
 			<int_id>353</int_id>
 			<epg_id>russkaya-noch</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8930.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6390,7 +5754,6 @@
 			<channel_id>8917</channel_id>
 			<int_id>354</int_id>
 			<epg_id>brazzers-tv-europe</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8917.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6400,7 +5763,6 @@
 			<channel_id>7065</channel_id>
 			<int_id>355</int_id>
 			<epg_id>shalun</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7065.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6410,7 +5772,6 @@
 			<channel_id>6534</channel_id>
 			<int_id>356</int_id>
 			<epg_id>playboy-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6534.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6420,7 +5781,6 @@
 			<channel_id>3467</channel_id>
 			<int_id>358</int_id>
 			<epg_id>dorcel</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3467.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6430,7 +5790,6 @@
 			<channel_id>5504</channel_id>
 			<int_id>359</int_id>
 			<epg_id>redlight-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5504.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6440,7 +5799,6 @@
 			<channel_id>1971</channel_id>
 			<int_id>360</int_id>
 			<epg_id>hustler-hd</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1971.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6450,7 +5808,6 @@
 			<channel_id>1143</channel_id>
 			<int_id>361</int_id>
 			<epg_id>brazzers-tv-europe-ru</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1143.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6460,7 +5817,6 @@
 			<channel_id>8559</channel_id>
 			<int_id>362</int_id>
 			<epg_id>xxl-xxx</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8559.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6470,7 +5826,6 @@
 			<channel_id>1265</channel_id>
 			<int_id>365</int_id>
 			<epg_id>private-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1265.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6480,7 +5835,6 @@
 			<channel_id>4639</channel_id>
 			<int_id>366</int_id>
 			<epg_id>vivid-red</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4639.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6490,7 +5844,6 @@
 			<channel_id>3567</channel_id>
 			<int_id>367</int_id>
 			<epg_id>french-lover</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3567.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6500,7 +5853,6 @@
 			<channel_id>9259</channel_id>
 			<int_id>368</int_id>
 			<epg_id>sextosenso</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/9259.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6510,7 +5862,6 @@
 			<channel_id>5182</channel_id>
 			<int_id>369</int_id>
 			<epg_id>barely-legal</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5182.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6520,7 +5871,6 @@
 			<channel_id>3797</channel_id>
 			<int_id>371</int_id>
 			<epg_id>digital-desire</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/3797.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6530,7 +5880,6 @@
 			<channel_id>6774</channel_id>
 			<int_id>372</int_id>
 			<epg_id>passionxxx</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6774.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6540,7 +5889,6 @@
 			<channel_id>8942</channel_id>
 			<int_id>399</int_id>
 			<epg_id>o-la-la</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8942.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6550,7 +5898,6 @@
 			<channel_id>4736</channel_id>
 			<int_id>411</int_id>
 			<epg_id>babes-tv</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4736.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6560,7 +5907,6 @@
 			<channel_id>2288</channel_id>
 			<int_id>712</int_id>
 			<epg_id>erox</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2288.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6570,7 +5916,6 @@
 			<channel_id>6057</channel_id>
 			<int_id>868</int_id>
 			<epg_id>cum4k</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6057.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6580,7 +5925,6 @@
 			<channel_id>8538</channel_id>
 			<int_id>869</int_id>
 			<epg_id>tiny4k</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/8538.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6590,7 +5934,6 @@
 			<channel_id>2341</channel_id>
 			<int_id>921</int_id>
 			<epg_id>blue-hustler</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2341.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6600,7 +5943,6 @@
 			<channel_id>6012</channel_id>
 			<int_id>924</int_id>
 			<epg_id>penthouse-quickies</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6012.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
@@ -6610,7 +5952,6 @@
 			<channel_id>5918</channel_id>
 			<int_id>1016</int_id>
 			<epg_id>eromania4k</epg_id>
-			<tvg_id/>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5918.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>

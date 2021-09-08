@@ -98,7 +98,6 @@
 			<channel_id>5299</channel_id>
 			<epg_id>5299</epg_id>
 			<tvg_id>5299</tvg_id>
-			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -125,7 +124,6 @@
 			<channel_id>5633</channel_id>
 			<epg_id>5633</epg_id>
 			<tvg_id>5633</tvg_id>
-			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -179,7 +177,6 @@
 			<channel_id>5296</channel_id>
 			<epg_id>5296</epg_id>
 			<tvg_id>5296</tvg_id>
-			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -206,7 +203,6 @@
 			<channel_id>5297</channel_id>
 			<epg_id>5297</epg_id>
 			<tvg_id>5297</tvg_id>
-			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -322,7 +318,6 @@
 			<channel_id>6737</channel_id>
 			<epg_id>6737</epg_id>
 			<tvg_id>6737</tvg_id>
-			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -362,7 +357,6 @@
 			<channel_id>6711</channel_id>
 			<epg_id>6711</epg_id>
 			<tvg_id>6711</tvg_id>
-			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -442,7 +436,6 @@
 			<channel_id>309</channel_id>
 			<epg_id>309</epg_id>
 			<tvg_id>309</tvg_id>
-			<icon_url/>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -482,7 +475,6 @@
 			<channel_id>6680</channel_id>
 			<epg_id>6680</epg_id>
 			<tvg_id>6680</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -491,7 +483,6 @@
 			<channel_id>6657</channel_id>
 			<epg_id>6657</epg_id>
 			<tvg_id>6657</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -500,7 +491,6 @@
 			<channel_id>5691</channel_id>
 			<epg_id>5691</epg_id>
 			<tvg_id>5691</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -509,7 +499,6 @@
 			<channel_id>6760</channel_id>
 			<epg_id>6760</epg_id>
 			<tvg_id>6760</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -518,7 +507,6 @@
 			<channel_id>5010</channel_id>
 			<epg_id>5010</epg_id>
 			<tvg_id>5010</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -527,7 +515,6 @@
 			<channel_id>6665</channel_id>
 			<epg_id>6665</epg_id>
 			<tvg_id>6665</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -536,7 +523,6 @@
 			<channel_id>480</channel_id>
 			<epg_id>480</epg_id>
 			<tvg_id>480</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -545,7 +531,6 @@
 			<channel_id>5500</channel_id>
 			<epg_id>5500</epg_id>
 			<tvg_id>5500</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -554,7 +539,6 @@
 			<channel_id>6708</channel_id>
 			<epg_id>6708</epg_id>
 			<tvg_id>6708</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -563,7 +547,6 @@
 			<channel_id>22951</channel_id>
 			<epg_id>22951</epg_id>
 			<tvg_id>22951</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -572,7 +555,6 @@
 			<channel_id>20781</channel_id>
 			<epg_id>20781</epg_id>
 			<tvg_id>20781</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -581,7 +563,6 @@
 			<channel_id>20319</channel_id>
 			<epg_id>20319</epg_id>
 			<tvg_id>20319</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -590,7 +571,6 @@
 			<channel_id>23538</channel_id>
 			<epg_id>23538</epg_id>
 			<tvg_id>23538</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -599,7 +579,6 @@
 			<channel_id>20341</channel_id>
 			<epg_id>20341</epg_id>
 			<tvg_id>20341</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -608,7 +587,6 @@
 			<channel_id>23555</channel_id>
 			<epg_id>23555</epg_id>
 			<tvg_id>23555</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -617,7 +595,6 @@
 			<channel_id>23426</channel_id>
 			<epg_id>23426</epg_id>
 			<tvg_id>23426</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -626,7 +603,6 @@
 			<channel_id>24000</channel_id>
 			<epg_id>24000</epg_id>
 			<tvg_id>24000</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -635,7 +611,6 @@
 			<channel_id>23780</channel_id>
 			<epg_id>23780</epg_id>
 			<tvg_id>23780</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -644,7 +619,6 @@
 			<channel_id>23983</channel_id>
 			<epg_id>23983</epg_id>
 			<tvg_id>23983</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -653,7 +627,6 @@
 			<channel_id>23923</channel_id>
 			<epg_id>23923</epg_id>
 			<tvg_id>23923</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -662,7 +635,6 @@
 			<channel_id>23905</channel_id>
 			<epg_id>23905</epg_id>
 			<tvg_id>23905</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -671,7 +643,6 @@
 			<channel_id>20798</channel_id>
 			<epg_id>20798</epg_id>
 			<tvg_id>20798</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -680,7 +651,6 @@
 			<channel_id>23423</channel_id>
 			<epg_id>23423</epg_id>
 			<tvg_id>23423</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -689,7 +659,6 @@
 			<channel_id>23666</channel_id>
 			<epg_id>23666</epg_id>
 			<tvg_id>23666</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -698,7 +667,6 @@
 			<channel_id>22813</channel_id>
 			<epg_id>22813</epg_id>
 			<tvg_id>22813</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -707,7 +675,6 @@
 			<channel_id>24004</channel_id>
 			<epg_id>24004</epg_id>
 			<tvg_id>24004</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -716,7 +683,6 @@
 			<channel_id>20283</channel_id>
 			<epg_id>20283</epg_id>
 			<tvg_id>20283</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -725,7 +691,6 @@
 			<channel_id>20247</channel_id>
 			<epg_id>20247</epg_id>
 			<tvg_id>20247</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -734,7 +699,6 @@
 			<channel_id>20113</channel_id>
 			<epg_id>20113</epg_id>
 			<tvg_id>20113</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -743,7 +707,6 @@
 			<channel_id>20302</channel_id>
 			<epg_id>20302</epg_id>
 			<tvg_id>20302</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -752,7 +715,6 @@
 			<channel_id>23462</channel_id>
 			<epg_id>23462</epg_id>
 			<tvg_id>23462</tvg_id>
-			<icon_url/>
 			<tv_category_id>2</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -833,7 +795,6 @@
 			<channel_id>6750</channel_id>
 			<epg_id>6750</epg_id>
 			<tvg_id>6750</tvg_id>
-			<icon_url/>
 			<tv_category_id>3</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1058,7 +1019,6 @@
 			<channel_id>125</channel_id>
 			<epg_id>125</epg_id>
 			<tvg_id>125</tvg_id>
-			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1220,7 +1180,6 @@
 			<channel_id>146</channel_id>
 			<epg_id>146</epg_id>
 			<tvg_id>146</tvg_id>
-			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1247,7 +1206,6 @@
 			<channel_id>20241</channel_id>
 			<epg_id>20241</epg_id>
 			<tvg_id>20241</tvg_id>
-			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1292,7 +1250,6 @@
 			<channel_id>6811</channel_id>
 			<epg_id>6811</epg_id>
 			<tvg_id>6811</tvg_id>
-			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1427,7 +1384,6 @@
 			<channel_id>23740</channel_id>
 			<epg_id>23740</epg_id>
 			<tvg_id>23740</tvg_id>
-			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1454,7 +1410,6 @@
 			<channel_id>23683</channel_id>
 			<epg_id>23683</epg_id>
 			<tvg_id>23683</tvg_id>
-			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1615,7 +1570,6 @@
 			<channel_id>1002</channel_id>
 			<epg_id>1002</epg_id>
 			<tvg_id>1002</tvg_id>
-			<icon_url/>
 			<tv_category_id>4</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1642,7 +1596,6 @@
 			<channel_id>5089</channel_id>
 			<epg_id>5089</epg_id>
 			<tvg_id>5089</tvg_id>
-			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1840,7 +1793,6 @@
 			<channel_id>335</channel_id>
 			<epg_id>335</epg_id>
 			<tvg_id>335</tvg_id>
-			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1939,7 +1891,6 @@
 			<channel_id>268</channel_id>
 			<epg_id>268</epg_id>
 			<tvg_id>268</tvg_id>
-			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1948,7 +1899,6 @@
 			<channel_id>269</channel_id>
 			<epg_id>269</epg_id>
 			<tvg_id>269</tvg_id>
-			<icon_url/>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -2614,7 +2564,6 @@
 			<channel_id>5275</channel_id>
 			<epg_id>5275</epg_id>
 			<tvg_id>5275</tvg_id>
-			<icon_url/>
 			<tv_category_id>6</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -2920,7 +2869,6 @@
 			<channel_id>5631</channel_id>
 			<epg_id>5631</epg_id>
 			<tvg_id>5631</tvg_id>
-			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -2947,7 +2895,6 @@
 			<channel_id>257</channel_id>
 			<epg_id>257</epg_id>
 			<tvg_id>257</tvg_id>
-			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -2992,7 +2939,6 @@
 			<channel_id>20960</channel_id>
 			<epg_id>20960</epg_id>
 			<tvg_id>20960</tvg_id>
-			<icon_url/>
 			<tv_category_id>7</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -3091,7 +3037,6 @@
 			<channel_id>23922</channel_id>
 			<epg_id>23922</epg_id>
 			<tvg_id>23922</tvg_id>
-			<icon_url/>
 			<tv_category_id>8</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -3433,7 +3378,6 @@
 			<channel_id>29120</channel_id>
 			<epg_id>29120</epg_id>
 			<tvg_id>29120</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3478,7 +3422,6 @@
 			<channel_id>29121</channel_id>
 			<epg_id>29121</epg_id>
 			<tvg_id>29121</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3523,7 +3466,6 @@
 			<channel_id>29019</channel_id>
 			<epg_id>29019</epg_id>
 			<tvg_id>29019</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3577,7 +3519,6 @@
 			<channel_id>29030</channel_id>
 			<epg_id>29030</epg_id>
 			<tvg_id>29030</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3613,7 +3554,6 @@
 			<channel_id>29035</channel_id>
 			<epg_id>29035</epg_id>
 			<tvg_id>29035</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3676,7 +3616,6 @@
 			<channel_id>29044</channel_id>
 			<epg_id>29044</epg_id>
 			<tvg_id>29044</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3766,7 +3705,6 @@
 			<channel_id>29056</channel_id>
 			<epg_id>29056</epg_id>
 			<tvg_id>29056</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3793,7 +3731,6 @@
 			<channel_id>29059</channel_id>
 			<epg_id>29059</epg_id>
 			<tvg_id>29059</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3865,7 +3802,6 @@
 			<channel_id>29068</channel_id>
 			<epg_id>29068</epg_id>
 			<tvg_id>29068</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3883,7 +3819,6 @@
 			<channel_id>29070</channel_id>
 			<epg_id>29070</epg_id>
 			<tvg_id>29070</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3901,7 +3836,6 @@
 			<channel_id>29072</channel_id>
 			<epg_id>29072</epg_id>
 			<tvg_id>29072</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -3937,7 +3871,6 @@
 			<channel_id>29081</channel_id>
 			<epg_id>29081</epg_id>
 			<tvg_id>29081</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -4036,7 +3969,6 @@
 			<channel_id>29104</channel_id>
 			<epg_id>29104</epg_id>
 			<tvg_id>29104</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -4306,7 +4238,6 @@
 			<channel_id>22429</channel_id>
 			<epg_id>22429</epg_id>
 			<tvg_id>22429</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -4387,7 +4318,6 @@
 			<channel_id>29092</channel_id>
 			<epg_id>29092</epg_id>
 			<tvg_id>29092</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>
@@ -4603,7 +4533,6 @@
 			<channel_id>29111</channel_id>
 			<epg_id>29111</epg_id>
 			<tvg_id>29111</tvg_id>
-			<icon_url/>
 			<tv_category_id>9</tv_category_id>
 			<protected>1</protected>
 		</tv_channel>

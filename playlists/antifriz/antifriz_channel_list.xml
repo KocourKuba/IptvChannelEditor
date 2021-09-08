@@ -17,7 +17,6 @@
 			<caption>Первый канал</caption>
 			<channel_id>pervyj</channel_id>
 			<epg_id>pervyj</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/pervyj.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -26,7 +25,6 @@
 			<caption>Первый HD</caption>
 			<channel_id>pervyj-hd</channel_id>
 			<epg_id>pervyj-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/pervyj-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -35,7 +33,6 @@
 			<caption>Россия 1</caption>
 			<channel_id>rossija1</channel_id>
 			<epg_id>rossija1</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/rossija1.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -44,7 +41,6 @@
 			<caption>Россия 1 HD</caption>
 			<channel_id>rossija-hd</channel_id>
 			<epg_id>rossija-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/rossija-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -53,7 +49,6 @@
 			<caption>НТВ</caption>
 			<channel_id>ntv</channel_id>
 			<epg_id>ntv</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/ntv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -62,7 +57,6 @@
 			<caption>НТВ HD</caption>
 			<channel_id>ntv-hd</channel_id>
 			<epg_id>ntv-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/ntv-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -71,7 +65,6 @@
 			<caption>НТВ Мир</caption>
 			<channel_id>ntv-mir</channel_id>
 			<epg_id>ntv-mir</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/ntv-mir.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -80,7 +73,6 @@
 			<caption>ТНТ</caption>
 			<channel_id>TNT</channel_id>
 			<epg_id>TNT</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/TNT.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -89,7 +81,6 @@
 			<caption>ТНТ HD</caption>
 			<channel_id>tnt-hd</channel_id>
 			<epg_id>tnt-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/tnt-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -98,7 +89,6 @@
 			<caption>ТНТ4</caption>
 			<channel_id>tnt-4</channel_id>
 			<epg_id>tnt-4</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/tnt-4.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -107,7 +97,6 @@
 			<caption>ТНТ4 HD</caption>
 			<channel_id>tnt4-hd</channel_id>
 			<epg_id>tnt4-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/6e39c1d8efe3035d35ec941a5d8b3402.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -116,7 +105,6 @@
 			<caption>СТС</caption>
 			<channel_id>CTC</channel_id>
 			<epg_id>CTC</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/CTC.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -125,7 +113,6 @@
 			<caption>СТС HD</caption>
 			<channel_id>ctc-hd</channel_id>
 			<epg_id>ctc-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/ctc-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -134,7 +121,6 @@
 			<caption>СТС Love</caption>
 			<channel_id>sts-love</channel_id>
 			<epg_id>sts-love</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/sts-love.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -143,7 +129,6 @@
 			<caption>Домашний</caption>
 			<channel_id>domashnij</channel_id>
 			<epg_id>domashnij</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/domashnij.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -152,7 +137,6 @@
 			<caption>Перец</caption>
 			<channel_id>perec</channel_id>
 			<epg_id>perec</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/perec.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -161,7 +145,6 @@
 			<caption>РЕН ТВ</caption>
 			<channel_id>ren-tv</channel_id>
 			<epg_id>ren-tv</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/ren-tv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -170,7 +153,6 @@
 			<caption>РЕН ТВ HD</caption>
 			<channel_id>ren-tv-hd</channel_id>
 			<epg_id>ren-tv-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/ren-tv-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -179,7 +161,6 @@
 			<caption>ТВ3</caption>
 			<channel_id>tv-3</channel_id>
 			<epg_id>tv-3</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/tv-3.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -188,7 +169,6 @@
 			<caption>ТВ3 HD</caption>
 			<channel_id>tv3-hd</channel_id>
 			<epg_id>tv3-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/tv3-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -197,7 +177,6 @@
 			<caption>Че</caption>
 			<channel_id>4e</channel_id>
 			<epg_id>4e</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/4e.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -206,7 +185,6 @@
 			<caption>Звезда</caption>
 			<channel_id>zvezda</channel_id>
 			<epg_id>zvezda</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/zvezda.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -215,7 +193,6 @@
 			<caption>Звезда HD</caption>
 			<channel_id>zvezda-hd</channel_id>
 			<epg_id>zvezda-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/f2b1554644034dba7e80709ec4255637.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -224,7 +201,6 @@
 			<caption>Звезда Плюс</caption>
 			<channel_id>zvezda-plus</channel_id>
 			<epg_id>zvezda-plus</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/1c483e8300d10ddf2f145341f4fb1555.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -233,7 +209,6 @@
 			<caption>ТВЦ</caption>
 			<channel_id>tvc</channel_id>
 			<epg_id>tvc</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/tvc.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -242,7 +217,6 @@
 			<caption>5 канал</caption>
 			<channel_id>5kanal</channel_id>
 			<epg_id>5kanal</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/5kanal.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -251,7 +225,6 @@
 			<caption>Россия Культура</caption>
 			<channel_id>rossija-k</channel_id>
 			<epg_id>rossija-k</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/rossija-k.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -260,7 +233,6 @@
 			<caption>Красная линия</caption>
 			<channel_id>krasnaja-linija</channel_id>
 			<epg_id>krasnaja-linija</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/d74d311141669efc8f60f80227d42d29.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -269,7 +241,6 @@
 			<caption>8 канал</caption>
 			<channel_id>8-kanal</channel_id>
 			<epg_id>8-kanal</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/8-kanal.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -278,7 +249,6 @@
 			<caption>9 Канал</caption>
 			<channel_id>9-kanal</channel_id>
 			<epg_id>9-kanal</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/685aa2c9ce8f9c4460afa56f2e86d30d.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -287,7 +257,6 @@
 			<caption>ОТР</caption>
 			<channel_id>otp</channel_id>
 			<epg_id>otp</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/b2c82a92c9c4f88eecc9fa0a3180bdbd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -296,7 +265,6 @@
 			<caption>Мир</caption>
 			<channel_id>mir</channel_id>
 			<epg_id>mir</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/mir.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -305,7 +273,6 @@
 			<caption>Мир HD</caption>
 			<channel_id>mir-hd</channel_id>
 			<epg_id>mir-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/517e7fdfcab12896dc4a98cc38527bbf.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -314,7 +281,6 @@
 			<caption>Мир 24</caption>
 			<channel_id>mir-24</channel_id>
 			<epg_id>mir-24</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/mir-24.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -323,7 +289,6 @@
 			<caption>Мир 24 HD</caption>
 			<channel_id>mir-24-hd</channel_id>
 			<epg_id>mir-24-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/0a08948b5b2b17a759009932998a30fe.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -332,7 +297,6 @@
 			<caption>Сарафан</caption>
 			<channel_id>sarafan</channel_id>
 			<epg_id>sarafan</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/sarafan.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -341,7 +305,6 @@
 			<caption>Gagsnetwork</caption>
 			<channel_id>gagsnetwork</channel_id>
 			<epg_id>gagsnetwork</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/806d492e6eb23379069ca47ef23df79a.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -350,7 +313,6 @@
 			<caption>КВН ТВ</caption>
 			<channel_id>kvn-tv</channel_id>
 			<epg_id>kvn-tv</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/kvn-tv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -359,7 +321,6 @@
 			<caption>Пятница</caption>
 			<channel_id>piatnica</channel_id>
 			<epg_id>piatnica</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/piatnica.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -368,7 +329,6 @@
 			<caption>Пятница HD</caption>
 			<channel_id>piatnica-hd</channel_id>
 			<epg_id>piatnica-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/piatnica-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -377,7 +337,6 @@
 			<caption>Суббота</caption>
 			<channel_id>super</channel_id>
 			<epg_id>super</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/9a4aadca52d83ac7082a2d0a6fb71bf0.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -386,7 +345,6 @@
 			<caption>Суббота HD</caption>
 			<channel_id>super-hd</channel_id>
 			<epg_id>super-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/e911bb2e54086327c1fabb758a1fcf06.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -395,7 +353,6 @@
 			<caption>Телеканал 360</caption>
 			<channel_id>podmoskovje</channel_id>
 			<epg_id>podmoskovje</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/adbad9e9aec2c7df5d10e1920f18f3ba.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -404,7 +361,6 @@
 			<caption>Телеканал 360 HD</caption>
 			<channel_id>telekanal-360-hd</channel_id>
 			<epg_id>telekanal-360-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/9358fc9d16cbb434631cb5542083bf14.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -413,7 +369,6 @@
 			<caption>Ю ТВ</caption>
 			<channel_id>yu-tv</channel_id>
 			<epg_id>yu-tv</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/yu-tv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -422,7 +377,6 @@
 			<caption>Теледом HD</caption>
 			<channel_id>teledom-hd</channel_id>
 			<epg_id>teledom-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/2ed9e11f1df32bb89cb42bb1bade2f36.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -431,7 +385,6 @@
 			<caption>Время</caption>
 			<channel_id>vremya</channel_id>
 			<epg_id>vremya</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/923ce8cc696cfeaf31d4c4fc284526dd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -440,7 +393,6 @@
 			<caption>RT Док</caption>
 			<channel_id>rt-doc</channel_id>
 			<epg_id>rt-doc</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/rt-doc.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
@@ -448,7 +400,6 @@
 			<caption>RT Док HD</caption>
 			<channel_id>russia-today-doc-hd</channel_id>
 			<epg_id>russia-today-doc-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/russia-today-doc-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
@@ -456,7 +407,6 @@
 			<caption>RTVi</caption>
 			<channel_id>rtvi</channel_id>
 			<epg_id>rtvi</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/rtvi.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -465,7 +415,6 @@
 			<caption>Дождь</caption>
 			<channel_id>dozhd</channel_id>
 			<epg_id>dozhd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/dozhd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -474,7 +423,6 @@
 			<caption>Дождь HD</caption>
 			<channel_id>dozhd-hd</channel_id>
 			<epg_id>dozhd-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/dozhd-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -483,7 +431,6 @@
 			<caption>Настоящее время HD</caption>
 			<channel_id>nastoyaschee-vremya-hd</channel_id>
 			<epg_id>nastoyaschee-vremya-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/nastoyaschee-vremya-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
@@ -492,7 +439,6 @@
 			<caption>Россия 24</caption>
 			<channel_id>rossija24</channel_id>
 			<epg_id>rossija24</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/rossija24.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -500,7 +446,6 @@
 			<caption>EuroNews</caption>
 			<channel_id>evronews</channel_id>
 			<epg_id>evronews</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/evronews.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -508,7 +453,6 @@
 			<caption>Известия</caption>
 			<channel_id>izvestija</channel_id>
 			<epg_id>izvestija</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/izvestija.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -516,7 +460,6 @@
 			<caption>Известия HD</caption>
 			<channel_id>izvestija-hd</channel_id>
 			<epg_id>izvestija-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/9239fbfc62b6981763605f9115911779.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -524,7 +467,6 @@
 			<caption>Москва 24</caption>
 			<channel_id>moskva-24</channel_id>
 			<epg_id>moskva-24</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/moskva-24.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -532,7 +474,6 @@
 			<caption>РБК</caption>
 			<channel_id>rbk</channel_id>
 			<epg_id>rbk</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/01ad28b10ef3f199d5ce768d6eaf0a76.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -540,7 +481,6 @@
 			<caption>RT</caption>
 			<channel_id>rt-english</channel_id>
 			<epg_id>rt-english</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/rt-english.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -548,7 +488,6 @@
 			<caption>RT HD</caption>
 			<channel_id>russia-today-hd</channel_id>
 			<epg_id>russia-today-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/russia-today-hd.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -556,7 +495,6 @@
 			<caption>BBC World</caption>
 			<channel_id>bbc-world-news</channel_id>
 			<epg_id>bbc-world-news</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/eb5a02c53847d426c403920ff579d10a.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -564,7 +502,6 @@
 			<caption>BBC World HD</caption>
 			<channel_id>bbc-world-news-hd</channel_id>
 			<epg_id>bbc-world-news-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/be74123a9a72dab0f82664c4804df20d.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -572,7 +509,6 @@
 			<caption>CNN</caption>
 			<channel_id>cnn</channel_id>
 			<epg_id>cnn</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/7b87e191b6c5592984bfa95fc72e5334.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -580,7 +516,6 @@
 			<caption>CNN HD</caption>
 			<channel_id>cnn-hd</channel_id>
 			<epg_id>cnn-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/6ea55f38d04ca6c24a37777c81b516b2.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -588,7 +523,6 @@
 			<caption>Bloomberg TV HD</caption>
 			<channel_id>bloomberg-hd</channel_id>
 			<epg_id>bloomberg-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/12966d52f4ca86aa0c4ae837211ccf2d.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
@@ -596,7 +530,6 @@
 			<caption>Al Jazeera HD</caption>
 			<channel_id>al-jazeera-hd</channel_id>
 			<epg_id>al-jazeera-hd</epg_id>
-			<tvg_id/>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/ce79433e2a4f213677c2a85091b5f8fe.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
