@@ -258,7 +258,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'token_apply': // handle token dialog result
                     $plugin_cookies->login = $user_input->login;
                     $plugin_cookies->password = $user_input->password;
-                    if (!self::$config->GetAccessInfo($plugin_cookies))
+                    if (!self::$config->GetAccountStreamInfo($plugin_cookies))
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
 
                     $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');

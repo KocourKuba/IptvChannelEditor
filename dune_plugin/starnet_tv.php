@@ -109,7 +109,7 @@ class StarnetPluginTv extends AbstractTv
             $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
         }
 
-        self::$config->GetAccessInfo($plugin_cookies);
+        self::$config->GetAccountStreamInfo($plugin_cookies);
 
         // Create channels and groups
         $this->channels = new HashedArray();
