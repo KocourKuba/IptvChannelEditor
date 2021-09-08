@@ -440,43 +440,39 @@ void CIPTVChannelEditorDlg::SaveAccessInfo()
 void CIPTVChannelEditorDlg::SwitchPlugin()
 {
 	// Rebuild available playlist types and set current plugin parameters
-	GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(SW_SHOW);
 	BOOL bStreamType = TRUE;
 	BOOL bAccessInfo = FALSE;
 	BOOL bPlaylist = TRUE;
-	BOOL bAddCustomFile = TRUE;
+	BOOL bEmbedded_info = FALSE;
+
+	m_wndPlaylist.ResetContent();
 
 	switch (m_wndPluginType.GetCurSel())
 	{
 		case 0: // Edem
 		{
 			m_pluginType = StreamType::enEdem;
-			m_wndPlaylist.ResetContent();
+			bStreamType = FALSE;
+			bAccessInfo = TRUE;
+			bEmbedded_info = m_embedded_info;
+
 			m_wndPlaylist.AddString(_T("Edem Standard"));
 			m_wndPlaylist.AddString(_T("Edem Thematic"));
 			m_wndPlaylist.AddString(_T("Custom URL"));
-			bStreamType = FALSE;
-			GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(SW_HIDE);
-			bAccessInfo = TRUE;
 			break;
 		}
 		case 1: // Sharavoz
 		{
 			m_pluginType = StreamType::enSharavoz;
-			m_embedded_info = FALSE;
-			m_wndPlaylist.ResetContent();
+
 			m_wndPlaylist.AddString(_T("Playlist"));
-			bAccessInfo = TRUE;
 			break;
 		}
 		case 2: // Sharaclub
 		{
 			m_pluginType = StreamType::enSharaclub;
-			m_embedded_info = FALSE;
 
-			m_wndPlaylist.ResetContent();
 			m_wndPlaylist.AddString(_T("Playlist"));
-			bAddCustomFile = FALSE;
 			//m_wndPlaylist.AddString(_T("Mediateka"));
 			//m_wndPlaylist.EnableWindow(FALSE);
 			break;
@@ -484,22 +480,15 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case 3: // glanz
 		{
 			m_pluginType = StreamType::enGlanz;
-			m_embedded_info = FALSE;
 
-			m_wndPlaylist.ResetContent();
 			m_wndPlaylist.AddString(_T("Playlist"));
-			bPlaylist = FALSE;
-			bAddCustomFile = FALSE;
 			break;
 		}
 		case 4: // antifriz
 		{
 			m_pluginType = StreamType::enAntifriz;
-			m_embedded_info = FALSE;
 
-			m_wndPlaylist.ResetContent();
 			m_wndPlaylist.AddString(_T("Playlist"));
-			bPlaylist = FALSE;
 			break;
 		}
 		default:
@@ -507,14 +496,12 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			break;
 	}
 
+	GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(bStreamType ? SW_SHOW : SW_HIDE);
 	m_wndStreamType.ShowWindow(bStreamType);
 	m_wndAccessInfo.EnableWindow(bAccessInfo);
 	m_wndPlaylist.EnableWindow(bPlaylist);
-	if (bAddCustomFile)
-	{
-		int idx = m_wndPlaylist.AddString(_T("Custom File"));
-		m_wndPlaylist.SetItemData(idx, TRUE);
-	}
+	int idx = m_wndPlaylist.AddString(_T("Custom File"));
+	m_wndPlaylist.SetItemData(idx, TRUE);
 
 	m_pluginName = StreamContainer::get_name(m_pluginType);
 	m_wndStreamType.SetCurSel(ReadRegIntPlugin(REG_STREAM_TYPE));
@@ -559,7 +546,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_wndChannels.SetItemData(idx, (DWORD_PTR)item.second.c_str());
 	}
 
-	int idx = ReadRegIntPlugin(REG_CHANNELS_TYPE);
+	idx = ReadRegIntPlugin(REG_CHANNELS_TYPE);
 	if (idx < m_wndChannels.GetCount())
 		m_wndChannels.SetCurSel(idx);
 
@@ -710,6 +697,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	if (url.empty())
 	{
 		AfxMessageBox(_T("Playlist source not set!"), MB_OK | MB_ICONERROR);
+		OnEndLoadPlaylist(0);
 		return;
 	}
 
@@ -823,17 +811,62 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 	m_wndPluginType.EnableWindow(TRUE);
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndProgressInfo.ShowWindow(SW_HIDE);
-	m_wndDownloadUrl.EnableWindow(TRUE);
 	m_wndFilter.EnableWindow(TRUE);
 	m_wndPlSearch.EnableWindow(!m_channelsMap.empty());
 	m_wndPlaylistTree.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(TRUE);
 	m_wndChannelsTree.EnableWindow(TRUE);
-	m_wndChooseUrl.EnableWindow(TRUE);
+
+	BOOL enableDownload = TRUE;
+	BOOL enableCustom = FALSE;
+	int pl_idx = m_wndPlaylist.GetCurSel();
+	switch (m_wndPluginType.GetCurSel())
+	{
+		case 0: // Edem
+		{
+			switch (pl_idx)
+			{
+				case 0:
+				case 1:
+					break;
+				case 2:
+					enableCustom = TRUE;
+					break;
+				case 3:
+					enableDownload = FALSE;
+					enableCustom = TRUE;
+					break;
+				default:
+					break;
+			}
+			break;
+		}
+		case 1: // Sharavoz
+		case 2: // Sharaclub
+		case 3: // Glanz
+		case 4: // Antifriz
+		{
+			switch (pl_idx)
+			{
+				case 0:
+					enableCustom = TRUE;
+					break;
+				case 1:
+					enableDownload = FALSE;
+					enableCustom = TRUE;
+					break;
+			}
+			break;
+		}
+		default:
+			break;
+	}
 
 	FillTreePlaylist();
 
 	m_loading = FALSE;
+	m_wndChooseUrl.EnableWindow(enableCustom);
+	m_wndDownloadUrl.EnableWindow(enableDownload);
 	m_wndPlaylist.EnableWindow(TRUE);
 	m_wndCheckArchive.EnableWindow(TRUE);
 
@@ -1004,32 +1037,6 @@ void CIPTVChannelEditorDlg::UpdatePlaylistCount()
 		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d}"), m_plFileName.GetString(), m_playlistIds.size()).c_str());
 
 	UpdateData(FALSE);
-}
-
-std::string CIPTVChannelEditorDlg::GetPlayableURL(const uri_stream* stream_uri, const PlayParams& params) const
-{
-	// templated url changed, custom is unchanged
-
-	int hours_back = 86400 * params.archive_day - 3600 * params.archive_hour;
-	int shift_back = hours_back ? _time32(nullptr) - hours_back : 0;
-	std::string url;
-	if (stream_uri->is_template())
-	{
-		url = utils::string_replace(stream_uri->get_templated((StreamSubType)m_StreamType, shift_back), "{ID}", stream_uri->get_id());
-	}
-	else
-	{
-		url = stream_uri->get_uri();
-	}
-
-	utils::string_replace_inplace(url, "{SUBDOMAIN}", params.access_domain);
-	utils::string_replace_inplace(url, "{TOKEN}", params.access_key);
-	utils::string_replace_inplace(url, "{LOGIN}", params.login);
-	utils::string_replace_inplace(url, "{PASSWORD}", params.password);
-	utils::string_replace_inplace(url, "{INT_ID}", params.int_id);
-	utils::string_replace_inplace(url, "{HOST}", params.host);
-
-	return url;
 }
 
 void CIPTVChannelEditorDlg::RemoveOrphanChannels()
@@ -2312,7 +2319,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 	auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
 	{
-		std::string url = channel->stream_uri->get_epg1_uri(channel->get_epg2_id());
+		std::string url = channel->stream_uri->get_epg1_uri(channel->get_epg1_id());
 		if (!url.empty())
 			ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
@@ -2333,21 +2340,21 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 {
 	if (auto entry = GetBaseInfo(m_lastTree, hItem); entry != nullptr)
 	{
-		PlayParams params;
-		params.access_key = CIPTVChannelEditorDlg::GetAccessKey();
-		params.access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
+		TemplateParams params;
+		params.token = CIPTVChannelEditorDlg::GetAccessKey();
+		params.domain = CIPTVChannelEditorDlg::GetAccessDomain();
 		params.login = ReadRegStringPluginA(REG_LOGIN);
 		params.password = ReadRegStringPluginA(REG_PASSWORD);
 		params.int_id = ReadRegStringPluginA(REG_INT_ID);
 		params.host = ReadRegStringPluginA(REG_HOST);
-		params.archive_day = archive_day;
-		params.archive_hour = archive_hour;
+		int sec_back = 86400 * archive_day + 3600 * archive_hour;
+		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
-		auto test_url = utils::utf8_to_utf16(GetPlayableURL(entry->stream_uri.get(), params));
+		const auto& url = utils::utf8_to_utf16(entry->stream_uri->get_templated((StreamSubType)m_StreamType, params));
 
-		TRACE(L"Test URL: %s\n", test_url.c_str());
+		TRACE(L"Test URL: %s\n", url.c_str());
 
-		ShellExecuteW(nullptr, L"open", m_player.GetString(), test_url.c_str(), nullptr, SW_SHOWNORMAL);
+		ShellExecuteW(nullptr, L"open", m_player.GetString(), url.c_str(), nullptr, SW_SHOWNORMAL);
 	}
 }
 
@@ -2372,17 +2379,39 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		}
 		case StreamType::enSharavoz:
 		{
-			CAccessInfoPinDlg dlg;
-			dlg.m_entry = entry;
-			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
-			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
-			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
-			if (dlg.DoModal() == IDOK)
+			switch (m_wndPlaylist.GetCurSel())
 			{
-				loaded = true;
-				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->stream_uri->get_password().c_str());
-				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->stream_uri->get_token().c_str());
-				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->stream_uri->get_domain().c_str());
+				case 0:
+				{
+					CAccessInfoPinDlg dlg;
+					dlg.m_entry = entry;
+					dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
+					dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
+					dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
+					if (dlg.DoModal() == IDOK)
+					{
+						loaded = true;
+						SaveRegPlugin(REG_PASSWORD, dlg.m_entry->stream_uri->get_password().c_str());
+						SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->stream_uri->get_token().c_str());
+						SaveRegPlugin(REG_DOMAIN, dlg.m_entry->stream_uri->get_domain().c_str());
+					}
+					break;
+				}
+				case 1:
+				{
+					CCustomPlaylistDlg dlg;
+					dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
+					LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
+					dlg.m_url = ReadRegStringPluginT(szType);
+					if (dlg.DoModal() == IDOK)
+					{
+						loaded = true;
+						SaveRegPlugin(szType, dlg.m_url);
+					}
+					break;
+				}
+				default:
+					break;
 			}
 			break;
 		}
@@ -2429,39 +2458,83 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		}
 		case StreamType::enGlanz:
 		{
-			CAccessInfoPassDlg dlg;
-			dlg.m_entry = entry;
-			dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
-			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
-			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
-			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
-			dlg.m_entry->get_uri_stream()->set_int_id(ReadRegStringPluginA(REG_INT_ID));
-			dlg.m_entry->get_uri_stream()->set_host(ReadRegStringPluginA(REG_HOST));
-			if (dlg.DoModal() == IDOK)
+			switch (m_wndPlaylist.GetCurSel())
 			{
-				loaded = true;
-				SaveRegPlugin(REG_LOGIN, dlg.m_entry->stream_uri->get_login().c_str());
-				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->stream_uri->get_password().c_str());
-				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->stream_uri->get_token().c_str());
-				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->stream_uri->get_domain().c_str());
-				SaveRegPlugin(REG_INT_ID, dlg.m_entry->stream_uri->get_int_id().c_str());
-				SaveRegPlugin(REG_HOST, dlg.m_entry->stream_uri->get_host().c_str());
+				case 0:
+				{
+					CAccessInfoPassDlg dlg;
+					dlg.m_entry = entry;
+					dlg.m_entry->get_uri_stream()->set_login(ReadRegStringPluginA(REG_LOGIN));
+					dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
+					dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
+					dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
+					dlg.m_entry->get_uri_stream()->set_int_id(ReadRegStringPluginA(REG_INT_ID));
+					dlg.m_entry->get_uri_stream()->set_host(ReadRegStringPluginA(REG_HOST));
+					if (dlg.DoModal() == IDOK)
+					{
+						loaded = true;
+						SaveRegPlugin(REG_LOGIN, dlg.m_entry->stream_uri->get_login().c_str());
+						SaveRegPlugin(REG_PASSWORD, dlg.m_entry->stream_uri->get_password().c_str());
+						SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->stream_uri->get_token().c_str());
+						SaveRegPlugin(REG_DOMAIN, dlg.m_entry->stream_uri->get_domain().c_str());
+						SaveRegPlugin(REG_INT_ID, dlg.m_entry->stream_uri->get_int_id().c_str());
+						SaveRegPlugin(REG_HOST, dlg.m_entry->stream_uri->get_host().c_str());
+					}
+					break;
+				}
+				case 1:
+				{
+					CCustomPlaylistDlg dlg;
+					dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
+					LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
+					dlg.m_url = ReadRegStringPluginT(szType);
+					if (dlg.DoModal() == IDOK)
+					{
+						loaded = true;
+						SaveRegPlugin(szType, dlg.m_url);
+					}
+					break;
+				}
+				default:
+					break;
 			}
 			break;
 		}
 		case StreamType::enAntifriz:
 		{
-			CAccessInfoPinDlg dlg;
-			dlg.m_entry = entry;
-			dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
-			dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
-			dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
-			if (dlg.DoModal() == IDOK)
+			switch (m_wndPlaylist.GetCurSel())
 			{
-				loaded = true;
-				SaveRegPlugin(REG_PASSWORD, dlg.m_entry->stream_uri->get_password().c_str());
-				SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->stream_uri->get_token().c_str());
-				SaveRegPlugin(REG_DOMAIN, dlg.m_entry->stream_uri->get_domain().c_str());
+				case 0:
+				{
+					CAccessInfoPinDlg dlg;
+					dlg.m_entry = entry;
+					dlg.m_entry->get_uri_stream()->set_password(ReadRegStringPluginA(REG_PASSWORD));
+					dlg.m_entry->get_uri_stream()->set_token(ReadRegStringPluginA(REG_ACCESS_KEY));
+					dlg.m_entry->get_uri_stream()->set_domain(ReadRegStringPluginA(REG_DOMAIN));
+					if (dlg.DoModal() == IDOK)
+					{
+						loaded = true;
+						SaveRegPlugin(REG_PASSWORD, dlg.m_entry->stream_uri->get_password().c_str());
+						SaveRegPlugin(REG_ACCESS_KEY, dlg.m_entry->stream_uri->get_token().c_str());
+						SaveRegPlugin(REG_DOMAIN, dlg.m_entry->stream_uri->get_domain().c_str());
+					}
+					break;
+				}
+				case 1:
+				{
+					CCustomPlaylistDlg dlg;
+					dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
+					LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
+					dlg.m_url = ReadRegStringPluginT(szType);
+					if (dlg.DoModal() == IDOK)
+					{
+						loaded = true;
+						SaveRegPlugin(szType, dlg.m_url);
+					}
+					break;
+				}
+				default:
+					break;
 			}
 			break;
 		}
@@ -2612,9 +2685,9 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 
 void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 {
-	PlayParams params;
-	params.access_key = CIPTVChannelEditorDlg::GetAccessKey();
-	params.access_domain = CIPTVChannelEditorDlg::GetAccessDomain();
+	TemplateParams params;
+	params.domain = CIPTVChannelEditorDlg::GetAccessDomain();
+	params.token = CIPTVChannelEditorDlg::GetAccessKey();
 	params.login = ReadRegStringPluginA(REG_LOGIN);
 	params.password = ReadRegStringPluginA(REG_PASSWORD);
 	params.int_id = ReadRegStringPluginA(REG_INT_ID);
@@ -2633,7 +2706,7 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 		int j = 0;
 		while (j < max_threads && pool != container.end())
 		{
-			const auto& url = GetPlayableURL(*pool, params);
+			const auto& url = (*pool)->get_templated((StreamSubType)m_StreamType, params);
 			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
 			j++;
 			++pool;
@@ -3589,75 +3662,8 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 {
-	BOOL enableDownload = TRUE;
-	BOOL enableCustom = FALSE;
-	BOOL enableMediateka = FALSE;
-	int pl_idx = m_wndPlaylist.GetCurSel();
-	switch (m_wndPluginType.GetCurSel())
-	{
-		case 0: // Edem
-		{
-			switch (pl_idx)
-			{
-				case 0:
-				case 1:
-					break;
-				case 2:
-					enableCustom = TRUE;
-					break;
-				case 3:
-					enableDownload = FALSE;
-					enableCustom = TRUE;
-					break;
-				default:
-					break;
-			}
-			break;
-		}
-		case 1: // Sharavoz
-		{
-			switch (pl_idx)
-			{
-				case 0:
-					enableCustom = TRUE;
-					break;
-				case 1:
-					enableDownload = FALSE;
-					enableCustom = TRUE;
-					break;
-			}
-			break;
-		}
-		case 2: // Sharaclub
-		case 3: // Glanz
-		case 4: // Antifriz
-		{
-			enableCustom = TRUE;
-			m_wndChannels.SetCurSel(pl_idx);
-			switch (pl_idx)
-			{
-				case 1:
-					enableDownload = FALSE;
-					enableCustom = TRUE;
-					break;
-				case 2:
-					if (LoadChannels((LPCTSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel())))
-					{
-						FillTreeChannels();
-						set_allow_save(FALSE);
-					}
-					break;
-			}
-			break;
-		}
-		default:
-			break;
-	}
-
-	m_wndDownloadUrl.EnableWindow(enableDownload);
-	m_wndChooseUrl.EnableWindow(enableCustom);
 	SaveReg(REG_PLUGIN, m_wndPluginType.GetCurSel());
-	SaveRegPlugin(REG_PLAYLIST_TYPE, pl_idx);
+	SaveRegPlugin(REG_PLAYLIST_TYPE, m_wndPlaylist.GetCurSel());
 
 	LoadPlaylist();
 }

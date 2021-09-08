@@ -3,12 +3,8 @@ require_once 'default_config.php';
 
 class SharaclubPluginConfig extends DefaultConfig
 {
-    // local parameters
-    const ACCOUNT_INFO_URL = 'http://%s/api/dune-api5m.php?subscr=%s-%s';
-    const ACCOUNT_PLAYLIST_URL = 'http://%s/tv_live-m3u8/%s-%s';
-    const ACCOUNT_PRIMARY_DOMAIN = 'list.playtv.pro';
-    const ACCOUNT_SECONDARY_DOMAIN = 'list.shara.tv';
-    const STREAM_URL_PATTERN = '/^https?:\/\/(.+)\/live\/(.+)\/.+\/.*\.m3u8$/';
+    const ACCOUNT_INFO_URL1 = 'http://list.playtv.pro/api/dune-api5m.php?subscr=%s-%s';
+    const ACCOUNT_INFO_URL2 = 'http://list.shara.tv/api/dune-api5m.php?subscr=%s-%s';
     const SERIES_VOD_PATTERN = '/^https?:\/\/([\w\.]+)\/series\/.+\.mp4([\w\.]+)$/';
     const VOD_PLAYLIST_NAME = 'vod_playlist.json';
 
@@ -25,6 +21,10 @@ class SharaclubPluginConfig extends DefaultConfig
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
     public static $USE_LOGIN_PASS = true;
+
+    // account
+    public static $ACCOUNT_PLAYLIST_URL1 = 'http://%s/tv_live-m3u8/%s-%s';
+    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/.+/.+\.m3u8$|';
 
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
@@ -50,15 +50,13 @@ class SharaclubPluginConfig extends DefaultConfig
             return false;
 
         try {
-            $url = sprintf(self::ACCOUNT_INFO_URL,
-                self::ACCOUNT_PRIMARY_DOMAIN,
+            $url = sprintf(static::ACCOUNT_INFO_URL1,
                 $plugin_cookies->login,
                 $plugin_cookies->password);
             $content = HD::http_get_document($url);
         } catch (Exception $ex) {
             try {
-                $url = sprintf(self::ACCOUNT_INFO_URL,
-                    self::ACCOUNT_SECONDARY_DOMAIN,
+                $url = sprintf(static::ACCOUNT_INFO_URL2,
                     $plugin_cookies->login,
                     $plugin_cookies->password);
                 $content = HD::http_get_document($url);
@@ -74,46 +72,6 @@ class SharaclubPluginConfig extends DefaultConfig
         }
 
         return false;
-    }
-
-    public static function GetAccessInfo($plugin_cookies)
-    {
-        hd_print("Collect information from account");
-        $found = false;
-        if (!empty($plugin_cookies->login) && !empty($plugin_cookies->password)) {
-            try {
-                $url = sprintf(self::ACCOUNT_PLAYLIST_URL,
-                    self::ACCOUNT_PRIMARY_DOMAIN,
-                    $plugin_cookies->login,
-                    $plugin_cookies->password);
-                $content = HD::http_get_document($url);
-            } catch (Exception $ex) {
-                try {
-                    $url = sprintf(self::ACCOUNT_PLAYLIST_URL,
-                        self::ACCOUNT_SECONDARY_DOMAIN,
-                        $plugin_cookies->login,
-                        $plugin_cookies->password);
-                    $content = HD::http_get_document($url);
-                } catch (Exception $ex) {
-                    return false;
-                }
-            }
-
-            $tmp_file = DefaultConfig::GET_TMP_STORAGE_PATH('playlist.m3u8');
-            file_put_contents($tmp_file, $content);
-            $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            for ($i = 0; $i < count($lines); ++$i) {
-                if (preg_match(self::STREAM_URL_PATTERN, $lines[$i], $matches)) {
-                    $plugin_cookies->subdomain_local = $matches[1];
-                    $plugin_cookies->ott_key_local = $matches[2];
-                    $found = true;
-                    break;
-                }
-            }
-            unlink($tmp_file);
-        }
-
-        return $found;
     }
 
     /**

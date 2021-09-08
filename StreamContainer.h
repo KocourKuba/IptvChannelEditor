@@ -1,17 +1,6 @@
 #pragma once
 #include "uri_stream.h"
 
-enum class StreamType
-{
-	enBase = 0,
-	enChannels,
-	enEdem,
-	enSharavoz,
-	enSharaclub,
-	enGlanz,
-	enAntifriz,
-};
-
 /// <summary>
 /// Container for stream interface
 /// </summary>

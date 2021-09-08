@@ -3,10 +3,6 @@ require_once 'default_config.php';
 
 class AntifrizPluginConfig extends DefaultConfig
 {
-    // local parameters
-    const ACCOUNT_PLAYLIST_URL = 'http://antifriz.tv/playlist/%s.m3u8';
-    const STREAM_URL_PATTERN = '/^https?:\/\/(.+)\/s\/(.+)\/.+\/video\.m3u8$/';
-
     // info
     public static $PLUGIN_NAME = 'AntiFriz TV';
     public static $PLUGIN_SHORT_NAME = 'antifriz';
@@ -17,9 +13,15 @@ class AntifrizPluginConfig extends DefaultConfig
     public static $MPEG_TS_SUPPORTED = true;
     public static $USE_PIN = true;
 
+    // account
+    public static $ACCOUNT_PLAYLIST_URL1 = 'http://antifriz.tv/playlist/%s.m3u8';
+    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/.+/video\.m3u8$|';
+
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
     public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
     public static $CHANNELS_LIST = 'antifriz_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id date(YYYYMMDD)
     protected static $EPG2_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id date(YYYYMMDD)
@@ -28,34 +30,33 @@ class AntifrizPluginConfig extends DefaultConfig
     public static $TV_CHANNEL_ICON_WIDTH = 60;
     public static $TV_CHANNEL_ICON_HEIGHT = 60;
 
-    public static function GetAccessInfo($plugin_cookies)
+    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        hd_print("Collect information from account");
-        $found = false;
-        if (!empty($plugin_cookies->password)) {
-            try {
-                $url = sprintf(self::ACCOUNT_PLAYLIST_URL, $plugin_cookies->password);
-                $content = HD::http_get_document($url);
-            } catch (Exception $ex) {
-                hd_print("Failed to fetch provider playlist");
-                return false;
+        $url = parent::AdjustStreamUri($plugin_cookies, $archive_ts, $channel);
+
+        if ($archive_ts)
+        {
+            $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+            switch ($format) {
+                case 'hls':
+                    $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS;
+                    break;
+                case 'mpeg':
+                    $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG;
+                    $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+                    $url .= "|||dune_params|||buffering_ms:$buf_time";
+                    break;
+                default:
+                    hd_print("unknown format: $format");
+                    return "";
             }
 
-            $tmp_file = static::GET_TMP_STORAGE_PATH('playlist.m3u8');
-            file_put_contents($tmp_file, $content);
-            $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            for ($i = 0; $i < count($lines); ++$i) {
-                if (preg_match(self::STREAM_URL_PATTERN, $lines[$i], $matches)) {
-                    $plugin_cookies->subdomain_local = $matches[1];
-                    $plugin_cookies->ott_key_local = $matches[2];
-                    hd_print("info: $plugin_cookies->subdomain_local, $plugin_cookies->ott_key_local");
-                    $found = true;
-                    break;
-                }
-            }
-            unlink($tmp_file);
+            $url = str_replace('{ID}', $channel->get_channel_id(), $url);
+            $url = str_replace('{START}', $archive_ts, $url);
+            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
+            $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);
         }
 
-        return $found;
+        return $url;
     }
 }

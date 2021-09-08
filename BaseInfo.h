@@ -39,6 +39,9 @@ public:
 	int get_archive_days() const { return archive_days; }
 	void set_archive_days(int val) { archive_days = val; }
 
+	const std::string& get_archive_source() const { return archive_source; }
+	void set_archive_source(const std::string& val) { archive_source = val; }
+
 	void swap_id(BaseInfo& src)
 	{
 		std::string tmp = src.get_id();
@@ -56,6 +59,7 @@ private:
 	int key = 0;
 	std::string epg_id1; // primary epg source ott-play epg http://epg.ott-play.com/edem/epg/%d.json
 	std::string epg_id2; // secondary epg source TVGuide id http://www.teleguide.info/kanal%d.html
+	std::string archive_source;
 	int time_shift_hours = 0;
 	int adult = 0;
 	int archive_days = 0;

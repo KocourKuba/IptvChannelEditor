@@ -114,11 +114,11 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	return FALSE;
 }
 
-std::wstring CIPTVChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/)
+std::wstring CIPTVChannelEditorApp::GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 {
-	CString fileName;
+	CStringW fileName;
 
-	if (GetModuleFileName(m_hInstance, fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
+	if (GetModuleFileNameW(m_hInstance, fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
 	{
 		fileName.ReleaseBuffer();
 		int pos = fileName.ReverseFind('\\');
@@ -127,11 +127,11 @@ std::wstring CIPTVChannelEditorApp::GetAppPath(LPCTSTR szSubFolder /*= nullptr*/
 	}
 
 #ifdef _DEBUG
-	fileName += _T("..\\");
+	fileName += L"..\\";
 #else
 	if (m_devMode)
 	{
-		fileName += _T("..\\");
+		fileName += L"..\\";
 	}
 #endif // _DEBUG
 

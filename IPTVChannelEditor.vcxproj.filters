@@ -54,9 +54,6 @@
     <ClInclude Include="IPTVChannelEditorDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -206,6 +203,15 @@
     </ClInclude>
     <ClInclude Include="AccessInfoPinDlg.h">
       <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\xchar.h">
+      <Filter>Header Files\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\args.h">
+      <Filter>Header Files\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Header Files\fmt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

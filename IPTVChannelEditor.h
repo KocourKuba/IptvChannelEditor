@@ -24,7 +24,7 @@ public:
 public:
 	BOOL InitInstance() override;
 
-	std::wstring GetAppPath(LPCTSTR szSubFolder = nullptr);
+	std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);
 	void SaveWindowPos(HWND hWnd, LPCTSTR name);
 	void RestoreWindowPos(HWND hWnd, LPCTSTR name);
 

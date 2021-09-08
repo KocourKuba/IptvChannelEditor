@@ -16,20 +16,8 @@ class EdemPluginConfig extends DefaultConfig
     protected static $EPG2_URL_TEMPLATE = 'http://www.teleguide.info/kanal%s_%s.html'; // epg_id date(YYYYMMDD)
     protected static $EPG2_PARSER = 'html';
 
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, $url, $channel_id)
+    public static function GetAccountStreamInfo($plugin_cookies)
     {
-        $url = str_replace('{ID}', $channel_id, self::$MEDIA_URL_TEMPLATE_HLS);
-
-        if (intval($archive_ts) > 0) {
-            $now_ts = time();
-            if (strpos($url, '?') === false)
-                $url .= '?';
-            else
-                $url .= '&';
-
-            $url .= "utc=$archive_ts&lutc=$now_ts";
-        }
-
-        return $url;
+        return false;
     }
 }

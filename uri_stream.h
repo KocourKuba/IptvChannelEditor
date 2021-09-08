@@ -3,6 +3,28 @@
 #include "utils.h"
 #include "Crc32.h"
 
+enum class StreamType
+{
+	enBase = 0,
+	enChannels,
+	enEdem,
+	enSharavoz,
+	enSharaclub,
+	enGlanz,
+	enAntifriz,
+};
+
+typedef struct
+{
+	std::string domain;
+	std::string token;
+	std::string login;
+	std::string password;
+	std::string int_id;
+	std::string host;
+	int shift_back;
+}TemplateParams;
+
 /// <summary>
 /// Interface for stream
 /// </summary>
@@ -130,7 +152,7 @@ public:
 	/// get templated url
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_templated(StreamSubType /*subType*/, int /*shift_back*/) const { return ""; };
+	virtual std::string get_templated(StreamSubType /*subType*/, const TemplateParams& /*params*/) const { return ""; };
 
 	/// <summary>
 	/// get epg url

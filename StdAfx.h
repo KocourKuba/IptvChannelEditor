@@ -20,6 +20,7 @@
 #include <fstream>
 #include <regex>
 #include <memory>
+#include "fmt/xchar.h"
 #include "fmt/format.h"
 
 #endif //PCH_H

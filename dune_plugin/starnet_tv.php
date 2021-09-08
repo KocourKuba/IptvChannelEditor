@@ -245,32 +245,7 @@ class StarnetPluginTv extends AbstractTv
             return '';
         }
 
-        $url = $channel->get_streaming_url();
-        if (strpos($url, 'http://ts://') === false) {
-            $url = str_replace('http://', 'http://ts://', $url);
-        }
-
-        hd_print("StreamUri: $url");
-        $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $url, $channel->get_channel_id());
-        hd_print("AdjustedStreamUri: $url");
-
-        $config = self::$config;
-        if ($config::$USE_LOGIN_PASS
-            && empty($plugin_cookies->subdomain_local)
-            && empty($plugin_cookies->ott_key_local)) {
-            hd_print("Error: subdomain/token not set");
-        }
-
-        $url = str_replace('{INT_ID}', $channel->get_number(), $url);
-
-        if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
-            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
-            $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);
-        } else if (!empty($plugin_cookies->subdomain) && !empty($plugin_cookies->ott_key)) {
-            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
-            $url = str_replace('{TOKEN}', $plugin_cookies->ott_key, $url);
-        }
-
+        $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $channel);
         hd_print("get_tv_playback_url: $url");
         return $url;
     }

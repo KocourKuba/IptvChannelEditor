@@ -27,26 +27,44 @@ void uri_sharaclub::parse_uri(const std::string& url)
 	uri_stream::parse_uri(url);
 }
 
-std::string uri_sharaclub::get_templated(StreamSubType subType, int shift_back) const
+std::string uri_sharaclub::get_templated(StreamSubType subType, const TemplateParams& params) const
 {
-	std::string uri_template;
-	switch (subType)
+	std::string url;
+
+	if (!is_template())
 	{
-		case StreamSubType::enHLS:
-			uri_template = URI_TEMPLATE_HLS;
-			break;
-		case StreamSubType::enMPEGTS:
-			uri_template = URI_TEMPLATE_MPEG;
-			break;
+		url = get_uri();
+	}
+	else
+	{
+		std::string uri_template;
+		switch (subType)
+		{
+			case StreamSubType::enHLS:
+				uri_template = URI_TEMPLATE_HLS;
+				break;
+			case StreamSubType::enMPEGTS:
+				uri_template = URI_TEMPLATE_MPEG;
+				break;
+		}
+
+		// http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8
+		// http://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts
+		url = fmt::format(uri_template,
+						  fmt::arg("SUBDOMAIN", params.domain),
+						  fmt::arg("TOKEN", params.token),
+						  fmt::arg("ID", get_id())
+		);
 	}
 
-	if (shift_back)
+	if (params.shift_back)
 	{
-		uri_template += fmt::format("&utc={:d}&lutc={:d}", shift_back, _time32(nullptr));
+		url += fmt::format("&utc={:d}&lutc={:d}", params.shift_back, _time32(nullptr));
 	}
 
-	return uri_template;
+	return url;
 }
+
 std::string uri_sharaclub::get_epg1_uri(const std::string& id) const
 {
 	return fmt::format(EPG1_TEMPLATE, id);

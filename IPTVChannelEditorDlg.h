@@ -29,18 +29,6 @@ public:
 		CString searchString;
 	};
 
-	struct PlayParams
-	{
-		std::string access_domain;
-		std::string access_key;
-		std::string login;
-		std::string password;
-		std::string int_id;
-		std::string host;
-		int archive_day = 0;
-		int archive_hour = 0;
-	};
-
 	static void SelectTreeItem(CTreeCtrl& ctl, const SearchParams& searchParams);
 	static HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
 	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
@@ -184,8 +172,6 @@ private:
 	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0) const;
 	void UpdateChannelsCount();
 	void UpdatePlaylistCount();
-
-	std::string GetPlayableURL(const uri_stream* stream_uri, const PlayParams& params) const;
 
 	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
