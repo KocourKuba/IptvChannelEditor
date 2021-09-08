@@ -72,17 +72,28 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	}
 
 	// <epg_id>8</epg_id>
-	channel_node->append_node(utils::alloc_node(alloc, EPG1_ID, get_epg1_id().c_str()));
+	if (!get_epg1_id().empty() && get_epg1_id() != "0")
+	{
+		channel_node->append_node(utils::alloc_node(alloc, EPG1_ID, get_epg1_id().c_str()));
+	}
 
 	// <tvg_id>1</tvg_id>
-	channel_node->append_node(utils::alloc_node(alloc, EPG2_ID, get_epg2_id().c_str()));
+	if (!get_epg2_id().empty() && get_epg2_id() != "0")
+	{
+		channel_node->append_node(utils::alloc_node(alloc, EPG2_ID, get_epg2_id().c_str()));
+	}
 
 	// <icon_url>plugin_file://icons/channels/pervyi.png</icon_url>
 	// <icon_url>http://epg.it999.ru/img/146.png</icon_url>
-	channel_node->append_node(utils::alloc_node(alloc, ICON_URL, get_icon_uri().get_uri().c_str()));
+	if (!get_icon_uri().get_uri().empty())
+	{
+		channel_node->append_node(utils::alloc_node(alloc, ICON_URL, get_icon_uri().get_uri().c_str()));
+	}
 
 	if (time_shift_hours != 0)
+	{
 		channel_node->append_node(utils::alloc_node(alloc, TIME_SHIFT_HOURS, utils::int_to_char(time_shift_hours).c_str()));
+	}
 
 	// <tv_category_id>1</tv_category_id>
 	// new version must not have more than on entry
