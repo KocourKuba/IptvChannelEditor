@@ -149,22 +149,34 @@ abstract class DefaultConfig
     public static function GetAccountStreamInfo($plugin_cookies)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
-        $found = false;
-        try {
-            $url = static::GetTemplatedUrl(1, $plugin_cookies);
-            if ($url === false)
-                throw new Exception("try second");
-        } catch (Exception $ex) {
-                $url = static::GetTemplatedUrl(2, $plugin_cookies);
-                if ($url === false)
-                    return false;
+        if (static::$USE_LOGIN_PASS) {
+            if (empty($plugin_cookies->login) || empty($plugin_cookies->password)) {
+                hd_print("Login or password not set");
+                return false;
+            }
+            $type = 'LOGIN';
+        }
+        else if (static::$USE_PIN) {
+            if (empty($plugin_cookies->password)) {
+                hd_print("Password not set");
+                return false;
+            }
+            $type = 'PIN';
+        } else {
+            hd_print("Unknown scheme");
+            return false;
         }
 
+        $found = false;
         try {
-            $content = HD::http_get_document($url);
-        }catch (Exception $ex) {
-            hd_print("Failed to fetch provider playlist");
-            return false;
+            $content = self::FetchTemplatedUrl($type, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
+        } catch (Exception $ex) {
+            try {
+                $content = self::FetchTemplatedUrl($type, static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies);
+            } catch (Exception $ex) {
+                hd_print("Failed to fetch provider playlist");
+                return false;
+            }
         }
 
         $tmp_file = static::GET_TMP_STORAGE_PATH('playlist.m3u8');
@@ -242,6 +254,26 @@ abstract class DefaultConfig
         return $epg;
     }
 
+    /**
+     * @throws Exception
+     */
+    protected static function FetchTemplatedUrl($type, $template, $plugin_cookies)
+    {
+        hd_print("Type: $type");
+        hd_print("Template: $template");
+
+        if ($type == 'LOGIN') {
+            $url = sprintf($template, $plugin_cookies->login, $plugin_cookies->password);
+        }
+        else if ($type == 'PIN') {
+            $url = sprintf($template, $plugin_cookies->password);
+        } else {
+            throw new Exception("Unknown scheme");
+        }
+
+        return HD::http_get_document($url);
+    }
+
     public static function GET_BG_PICTURE()
     {
         return sprintf(DefaultConfig::BG_PICTURE_TEMPLATE, static::$PLUGIN_SHORT_NAME);
@@ -293,40 +325,6 @@ abstract class DefaultConfig
     public static function GET_TMP_STORAGE_PATH($name)
     {
         return sprintf(DefaultConfig::TMP_STORAGE, static::$PLUGIN_SHORT_NAME, $name);
-    }
-
-    protected static function GetTemplatedUrl($id, $plugin_cookies)
-    {
-        switch ($id)
-        {
-            case 1:
-                $template = static::$ACCOUNT_PLAYLIST_URL1;
-                break;
-            case 2:
-                $template = static::$ACCOUNT_PLAYLIST_URL2;
-                break;
-        }
-
-        if (empty($template)) {
-            hd_print("Unknown playlist url");
-            return false;
-        }
-
-        if (static::$USE_LOGIN_PASS) {
-            if (!empty($plugin_cookies->login) && !empty($plugin_cookies->password))
-                return sprintf($template, $plugin_cookies->login, $plugin_cookies->password);
-            hd_print("Login or password not set");
-        }
-        else if (static::$USE_PIN) {
-            if (!empty($plugin_cookies->password))
-                return sprintf($template, $plugin_cookies->password);
-            hd_print("Password not set");
-        }
-        else {
-            hd_print("Unknown scheme");
-        }
-
-        return false;
     }
 
     ///////////////////////////////////////////////////////////////////////

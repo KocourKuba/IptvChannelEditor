@@ -171,7 +171,7 @@ class StarnetPluginTv extends AbstractTv
             {
                 // https not supported for old players
                 $icon_url = str_replace('https', 'https', strval($xml_tv_channel->icon_url));
-                $number = isset($xml_tv_channel->number) ? intval($xml_tv_channel->number) : 0;
+                $number = isset($xml_tv_channel->int_id) ? intval($xml_tv_channel->int_id) : 0;
                 $channel = new StarnetChannel(
                     $hash,
                     $channel_id,

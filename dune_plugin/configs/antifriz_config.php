@@ -20,8 +20,8 @@ class AntifrizPluginConfig extends DefaultConfig
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
     public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://ts://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
     public static $CHANNELS_LIST = 'antifriz_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id date(YYYYMMDD)
     protected static $EPG2_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id date(YYYYMMDD)
@@ -46,8 +46,8 @@ class AntifrizPluginConfig extends DefaultConfig
                     $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS;
                     $subdomain = $domain[0];
                 } else {
-                    $subdomain = $plugin_cookies->subdomain_local;
                     $url = $channel->get_streaming_url();
+                    $subdomain = $plugin_cookies->subdomain_local;
                 }
                 break;
             case 'mpeg':
@@ -55,7 +55,7 @@ class AntifrizPluginConfig extends DefaultConfig
                 if (intval($archive_ts) > 0) {
                     $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG;
                 } else {
-                    $url = $channel->get_streaming_url();
+                    $url = self::$MEDIA_URL_TEMPLATE_MPEG;
                 }
                 $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
                 $url .= "|||dune_params|||buffering_ms:$buf_time";

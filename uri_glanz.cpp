@@ -4,6 +4,8 @@
 static constexpr auto PLAYLIST_TEMPLATE = "http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
 static constexpr auto URI_TEMPLATE_HLS = "http://{SUBDOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 static constexpr auto URI_TEMPLATE_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+static constexpr auto URI_TEMPLATE_ARCH_HLS = "http://{SUBDOMAIN}/{ID}/video-{START}-10800.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+static constexpr auto URI_TEMPLATE_ARCH_MPEG = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/ottg/epg/{:s}.json";
 
 void uri_glanz::parse_uri(const std::string& url)
@@ -37,16 +39,22 @@ std::string uri_glanz::get_templated(StreamSubType subType, const TemplateParams
 	if (!is_template())
 	{
 		url = get_uri();
+		if (params.shift_back)
+		{
+			utils::string_replace_inplace(url, "{LOGIN}", params.login);
+
+			url += fmt::format("&utc={:d}&lutc={:d}", params.shift_back, _time32(nullptr));
+		}
 	}
 	else
 	{
 		switch (subType)
 		{
 			case StreamSubType::enHLS: // hls
-				url = URI_TEMPLATE_HLS;
+				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
 				break;
 			case StreamSubType::enMPEGTS: // mpeg-ts
-				url = URI_TEMPLATE_MPEG;
+				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
 				break;
 		}
 
@@ -59,11 +67,7 @@ std::string uri_glanz::get_templated(StreamSubType subType, const TemplateParams
 		utils::string_replace_inplace(url, "{TOKEN}", params.token);
 		utils::string_replace_inplace(url, "{INT_ID}", params.int_id);
 		utils::string_replace_inplace(url, "{HOST}", params.host);
-	}
-
-	if (params.shift_back)
-	{
-		url += fmt::format("&utc={:d}&lutc={:d}", params.shift_back, _time32(nullptr));
+		utils::string_replace_inplace(url, "{START}", utils::int_to_char(params.shift_back));
 	}
 
 	return url;
