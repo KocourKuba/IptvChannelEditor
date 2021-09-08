@@ -2,11 +2,11 @@
 #include "uri_sharavoz.h"
 #include "utils.h"
 
-static constexpr auto PLAYLIST_TEMPLATE_SHARAVOZ = "http://sharavoz.tk/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
-static constexpr auto URI_TEMPLATE_SHARAVOZ_HLS = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_SHARAVOZ_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_SHARAVOZ = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE_SHARAVOZ = "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
+static constexpr auto PLAYLIST_TEMPLATE = "http://sharavoz.tk/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
+static constexpr auto URI_TEMPLATE_HLS = "http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
+static constexpr auto EPG1_TEMPLATE = "http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG2_TEMPLATE = "http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 
 void uri_sharavoz::parse_uri(const std::string& url)
 {
@@ -37,24 +37,21 @@ std::string uri_sharavoz::get_templated(StreamSubType subType, const TemplatePar
 	}
 	else
 	{
-		std::string uri_template;
 		switch (subType)
 		{
 			case StreamSubType::enHLS:
-				uri_template = URI_TEMPLATE_SHARAVOZ_HLS;
+				url = URI_TEMPLATE_HLS;
 				break;
 			case StreamSubType::enMPEGTS:
-				uri_template = URI_TEMPLATE_SHARAVOZ_MPEG;
+				url = URI_TEMPLATE_MPEG;
 				break;
 		}
 
 		// http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}
 		// http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}
-		url = fmt::format(uri_template,
-						  fmt::arg("SUBDOMAIN", params.domain),
-						  fmt::arg("ID", get_id()),
-						  fmt::arg("TOKEN", params.token)
-		);
+		utils::string_replace_inplace(url, "{SUBDOMAIN}", params.domain);
+		utils::string_replace_inplace(url, "{ID}", get_id());
+		utils::string_replace_inplace(url, "{TOKEN}", params.token);
 	}
 
 	if (params.shift_back)
@@ -67,17 +64,18 @@ std::string uri_sharavoz::get_templated(StreamSubType subType, const TemplatePar
 
 std::string uri_sharavoz::get_epg1_uri(const std::string& id) const
 {
-	return fmt::format(EPG1_TEMPLATE_SHARAVOZ, id);
+	COleDateTime dt = COleDateTime::GetCurrentTime();
+	return fmt::format(EPG1_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::string uri_sharavoz::get_epg2_uri(const std::string& id) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(EPG2_TEMPLATE_SHARAVOZ, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::string uri_sharavoz::get_playlist_url(const std::string& /*login*/, const std::string& password) const
 {
-	return fmt::format(PLAYLIST_TEMPLATE_SHARAVOZ, password.c_str());
+	return fmt::format(PLAYLIST_TEMPLATE, password.c_str());
 }
 

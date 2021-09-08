@@ -37,29 +37,26 @@ std::string uri_sharaclub::get_templated(StreamSubType subType, const TemplatePa
 	}
 	else
 	{
-		std::string uri_template;
 		switch (subType)
 		{
 			case StreamSubType::enHLS:
-				uri_template = URI_TEMPLATE_HLS;
+				url = URI_TEMPLATE_HLS;
 				break;
 			case StreamSubType::enMPEGTS:
-				uri_template = URI_TEMPLATE_MPEG;
+				url = URI_TEMPLATE_MPEG;
 				break;
 		}
 
 		// http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8
 		// http://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts
-		url = fmt::format(uri_template,
-						  fmt::arg("SUBDOMAIN", params.domain),
-						  fmt::arg("TOKEN", params.token),
-						  fmt::arg("ID", get_id())
-		);
+		utils::string_replace_inplace(url, "{SUBDOMAIN}", params.domain);
+		utils::string_replace_inplace(url, "{TOKEN}", params.token);
+		utils::string_replace_inplace(url, "{ID}", get_id());
 	}
 
 	if (params.shift_back)
 	{
-		url += fmt::format("&utc={:d}&lutc={:d}", params.shift_back, _time32(nullptr));
+		url += fmt::format("?utc={:d}&lutc={:d}", params.shift_back, _time32(nullptr));
 	}
 
 	return url;
@@ -67,7 +64,8 @@ std::string uri_sharaclub::get_templated(StreamSubType subType, const TemplatePa
 
 std::string uri_sharaclub::get_epg1_uri(const std::string& id) const
 {
-	return fmt::format(EPG1_TEMPLATE, id);
+	COleDateTime dt = COleDateTime::GetCurrentTime();
+	return fmt::format(EPG1_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::string uri_sharaclub::get_epg2_uri(const std::string& id) const

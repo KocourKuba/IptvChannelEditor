@@ -2,13 +2,12 @@
 #include "uri_antifriz.h"
 #include "utils.h"
 
-static constexpr auto PLAYLIST_TEMPLATE_ANTIFRIZ = "https://antifriz.tv/playlist/{:s}.m3u8";
-static constexpr auto URI_TEMPLATE_ANTIFRIZ_HLS = "http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8";
-static constexpr auto URI_TEMPLATE_ANTIFRIZ_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ANTIFRIZ_ARCH_HLS = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ANTIFRIZ_ARCH_MPEG = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE_ANTIFRIZ = "http://epg.ott-play.com/antifriz/epg/{:s}.json";
+static constexpr auto PLAYLIST_TEMPLATE = "https://antifriz.tv/playlist/{:s}.m3u8";
+static constexpr auto URI_TEMPLATE_HLS = "http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8";
+static constexpr auto URI_TEMPLATE_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_ARCH_HLS = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_ARCH_MPEG = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
+static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/antifriz/epg/{:s}.json";
 
 void uri_antifriz::parse_uri(const std::string& url)
 {
@@ -53,57 +52,33 @@ std::string uri_antifriz::get_templated(StreamSubType subType, const TemplatePar
 	}
 	else
 	{
-		std::string uri_template;
-		if (params.shift_back)
+		std::string no_port(params.domain);
+		if (auto pos = no_port.find(':'); pos != std::string::npos)
 		{
-			switch (subType)
-			{
-				case StreamSubType::enHLS:
-					uri_template = URI_TEMPLATE_ANTIFRIZ_ARCH_HLS;
-					break;
-				case StreamSubType::enMPEGTS:
-					uri_template = URI_TEMPLATE_ANTIFRIZ_ARCH_MPEG;
-					break;
-			}
-
-			std::string no_port(params.domain);
-			if (auto pos = no_port.find(':'); pos != std::string::npos)
-			{
-				no_port = no_port.substr(0, pos);
-			}
-
-			// http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}
-			// http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}
-			url = fmt::format(uri_template,
-							  fmt::arg("SUBDOMAIN", no_port),
-							  fmt::arg("ID", get_id()),
-							  fmt::arg("START", params.shift_back),
-							  fmt::arg("TOKEN", params.token)
-			);
+			no_port = no_port.substr(0, pos);
 		}
-		else
+
+		std::string subdomain;
+		switch (subType)
 		{
-			switch (subType)
-			{
-				case StreamSubType::enHLS:
-					// http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8
-					url = fmt::format(URI_TEMPLATE_ANTIFRIZ_HLS,
-									  fmt::arg("SUBDOMAIN", params.domain),
-									  fmt::arg("TOKEN", params.token),
-									  fmt::arg("ID", get_id())
-					);
-					break;
-				case StreamSubType::enMPEGTS:
-					// http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}
-					url = fmt::format(URI_TEMPLATE_ANTIFRIZ_MPEG,
-									  fmt::arg("SUBDOMAIN", params.domain),
-									  fmt::arg("ID", get_id()),
-									  fmt::arg("TOKEN", params.token)
-					);
-					break;
-			}
-
+			case StreamSubType::enHLS:
+				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
+				subdomain = params.shift_back ? no_port : params.domain;
+				break;
+			case StreamSubType::enMPEGTS:
+				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
+				subdomain = no_port;
+				break;
 		}
+
+		// http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8
+		// http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}
+		// http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}
+		// http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}
+		utils::string_replace_inplace(url, "{SUBDOMAIN}", subdomain);
+		utils::string_replace_inplace(url, "{TOKEN}", params.token);
+		utils::string_replace_inplace(url, "{ID}", get_id());
+		utils::string_replace_inplace(url, "{START}", utils::int_to_char(params.shift_back));
 	}
 
 	return url;
@@ -111,15 +86,10 @@ std::string uri_antifriz::get_templated(StreamSubType subType, const TemplatePar
 
 std::string uri_antifriz::get_epg1_uri(const std::string& id) const
 {
-	return fmt::format(EPG1_TEMPLATE_ANTIFRIZ, id);
-}
-
-std::string uri_antifriz::get_epg2_uri(const std::string& id) const
-{
-	return fmt::format(EPG2_TEMPLATE_ANTIFRIZ, id);
+	return fmt::format(EPG1_TEMPLATE, id);
 }
 
 std::string uri_antifriz::get_playlist_url(const std::string& /*login*/, const std::string& password) const
 {
-	return fmt::format(PLAYLIST_TEMPLATE_ANTIFRIZ, password.c_str());
+	return fmt::format(PLAYLIST_TEMPLATE, password.c_str());
 }

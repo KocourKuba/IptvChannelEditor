@@ -1,10 +1,10 @@
 #include "StdAfx.h"
 #include "uri_edem.h"
 
-static constexpr auto URI_TEMPLATE_EDEM = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
+static constexpr auto URI_TEMPLATE = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 
-static constexpr auto EPG1_TEMPLATE_EDEM = "http://epg.ott-play.com/edem/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE_EDEM = "http://www.teleguide.info/kanal{:d}_{:4d}{:02d}{:02d}.html";
+static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/edem/epg/{:s}.json";
+static constexpr auto EPG2_TEMPLATE = "http://www.teleguide.info/kanal{:s}_{:4d}{:02d}{:02d}.html";
 
 void uri_edem::parse_uri(const std::string& url)
 {
@@ -34,20 +34,16 @@ std::string uri_edem::get_templated(StreamSubType /*subType*/, const TemplatePar
 	}
 	else
 	{
-		std::string uri_template;
-
 		// http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8
-		url = fmt::format(URI_TEMPLATE_EDEM,
-						  fmt::arg("SUBDOMAIN", params.domain),
-						  fmt::arg("TOKEN", params.token),
-						  fmt::arg("ID", get_id())
-		);
-
+		url = URI_TEMPLATE;
+		utils::string_replace_inplace(url, "{SUBDOMAIN}", params.domain);
+		utils::string_replace_inplace(url, "{TOKEN}", params.token);
+		utils::string_replace_inplace(url, "{ID}", get_id());
 	}
 
 	if (params.shift_back)
 	{
-		url += fmt::format("&utc={:d}&lutc={:d}", params.shift_back, _time32(nullptr));
+		url += fmt::format("?utc={:d}&lutc={:d}", params.shift_back, _time32(nullptr));
 	}
 
 	return url;
@@ -55,10 +51,11 @@ std::string uri_edem::get_templated(StreamSubType /*subType*/, const TemplatePar
 
 std::string uri_edem::get_epg1_uri(const std::string& id) const
 {
-	return fmt::format(EPG1_TEMPLATE_EDEM, id);
+	return fmt::format(EPG1_TEMPLATE, id);
 }
 
 std::string uri_edem::get_epg2_uri(const std::string& id) const
 {
-	return fmt::format(EPG2_TEMPLATE_EDEM, id);
+	COleDateTime dt = COleDateTime::GetCurrentTime();
+	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }

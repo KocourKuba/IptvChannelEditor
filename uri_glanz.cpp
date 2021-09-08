@@ -1,10 +1,10 @@
 #include "StdAfx.h"
 #include "uri_glanz.h"
 
-static constexpr auto PLAYLIST_TEMPLATE_GLANZ = "http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
-static constexpr auto URI_TEMPLATE_GLANZ_HLS = "http://{SUBDOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
-static constexpr auto URI_TEMPLATE_GLANZ_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
-static constexpr auto EPG1_TEMPLATE_GLANZ = "http://epg.ott-play.com/ottg/epg/{:s}.json";
+static constexpr auto PLAYLIST_TEMPLATE = "http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
+static constexpr auto URI_TEMPLATE_HLS = "http://{SUBDOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+static constexpr auto URI_TEMPLATE_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/ottg/epg/{:s}.json";
 
 void uri_glanz::parse_uri(const std::string& url)
 {
@@ -40,28 +40,25 @@ std::string uri_glanz::get_templated(StreamSubType subType, const TemplateParams
 	}
 	else
 	{
-		std::string uri_template;
 		switch (subType)
 		{
 			case StreamSubType::enHLS: // hls
-				uri_template = URI_TEMPLATE_GLANZ_HLS;
+				url = URI_TEMPLATE_HLS;
 				break;
 			case StreamSubType::enMPEGTS: // mpeg-ts
-				uri_template = URI_TEMPLATE_GLANZ_MPEG;
+				url = URI_TEMPLATE_MPEG;
 				break;
 		}
 
 		// http://{SUBDOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
 		// http://{SUBDOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
-		url = fmt::format(uri_template,
-						  fmt::arg("SUBDOMAIN", params.domain),
-						  fmt::arg("ID", get_id()),
-						  fmt::arg("LOGIN", params.login),
-						  fmt::arg("PASSWORD", params.password),
-						  fmt::arg("TOKEN", params.token),
-						  fmt::arg("INT_ID", params.int_id),
-						  fmt::arg("HOST", params.host)
-		);
+		utils::string_replace_inplace(url, "{SUBDOMAIN}", params.domain);
+		utils::string_replace_inplace(url, "{ID}", get_id());
+		utils::string_replace_inplace(url, "{LOGIN}", params.login);
+		utils::string_replace_inplace(url, "{PASSWORD}", params.password);
+		utils::string_replace_inplace(url, "{TOKEN}", params.token);
+		utils::string_replace_inplace(url, "{INT_ID}", params.int_id);
+		utils::string_replace_inplace(url, "{HOST}", params.host);
 	}
 
 	if (params.shift_back)
@@ -74,10 +71,10 @@ std::string uri_glanz::get_templated(StreamSubType subType, const TemplateParams
 
 std::string uri_glanz::get_epg1_uri(const std::string& id) const
 {
-	return fmt::format(EPG1_TEMPLATE_GLANZ, id);
+	return fmt::format(EPG1_TEMPLATE, id);
 }
 
 std::string uri_glanz::get_playlist_url(const std::string& login, const std::string& password) const
 {
-	return fmt::format(PLAYLIST_TEMPLATE_GLANZ, login.c_str(), password.c_str());
+	return fmt::format(PLAYLIST_TEMPLATE, login.c_str(), password.c_str());
 }
