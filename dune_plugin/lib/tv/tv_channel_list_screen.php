@@ -37,6 +37,8 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         $actions = array();
         $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::tv_play();
         $actions[GUI_EVENT_KEY_PLAY] = ActionFactory::tv_play();
+        $actions[GUI_EVENT_KEY_INFO] = UserInputHandlerRegistry::create_action($this, 'info');
+        $actions[GUI_EVENT_KEY_B_GREEN] = ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки плагина');
 
         if ($this->tv->is_favorites_supported()) {
             $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
@@ -44,15 +46,9 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
 
             $popup_menu_action = UserInputHandlerRegistry::create_action($this, 'popup_menu');
 
-            $open_settings = ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str());
-            $open_settings['caption'] = 'Настройки';
-
-            $actions[GUI_EVENT_KEY_B_GREEN] = $open_settings;
             $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
             $actions[GUI_EVENT_KEY_POPUP_MENU] = $popup_menu_action;
         }
-
-        $actions[GUI_EVENT_KEY_INFO] = UserInputHandlerRegistry::create_action($this, 'info');
 
         return $actions;
     }
@@ -85,9 +81,9 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Tv favorites: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("  $key => $value");
+        // hd_print('Tv favorites: handle_user_input:');
+        // foreach ($user_input as $key => $value)
+        //     hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url))
             return null;

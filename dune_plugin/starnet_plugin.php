@@ -46,13 +46,11 @@ class StarnetDunePlugin extends DefaultDunePlugin
         hd_print("Plugin version:  " . $config::$PLUGIN_VERSION);
         hd_print("Plugin date:     " . $config::$PLUGIN_DATE);
         hd_print("Plugin config:   " . $plugin_type);
+        hd_print("Account type:    " . $config::$ACCOUNT_TYPE);
         hd_print("TV fav:          " . ($config::$TV_FAVORITES_SUPPORTED ? "yes" : "no"));
         hd_print("VOD page:        " . ($config::$VOD_MOVIE_PAGE_SUPPORTED ? "yes" : "no"));
         hd_print("VOD fav:         " . ($config::$VOD_FAVORITES_SUPPORTED ? "yes" : "no"));
         hd_print("MPEG-TS support: " . ($config::$MPEG_TS_SUPPORTED ? "yes" : "no"));
-        hd_print("OTT access:      " . ($config::$USE_OTT_KEY ? "yes" : "no"));
-        hd_print("L/P access:      " . ($config::$USE_LOGIN_PASS ? "yes" : "no"));
-        hd_print("PIN access:      " . ($config::$USE_PIN ? "yes" : "no"));
 
         $tv = new StarnetPluginTv();
         $this->tv = $tv;

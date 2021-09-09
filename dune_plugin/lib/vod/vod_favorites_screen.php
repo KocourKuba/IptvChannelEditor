@@ -61,9 +61,9 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Vod favorites: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("  $key => $value");
+        // hd_print('Vod favorites: handle_user_input:');
+        // foreach ($user_input as $key => $value)
+        //     hd_print("  $key => $value");
 
         if ($user_input->control_id == 'remove_favorite') {
             if (!isset($user_input->selected_media_url))

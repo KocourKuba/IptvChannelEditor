@@ -7,11 +7,11 @@ class SharavozPluginConfig extends DefaultConfig
     public static $PLUGIN_NAME = 'Sharavoz TV';
     public static $PLUGIN_SHORT_NAME = 'sharavoz';
     public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '07.09.2021';
+    public static $PLUGIN_DATE = '09.09.2021';
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
-    public static $USE_PIN = true;
+    public static $ACCOUNT_TYPE = 'PIN';
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://sharavoz.tk/iptv/p/%s/Sharavoz.Tv.navigator-ott.m3u';

@@ -7,11 +7,11 @@ class AntifrizPluginConfig extends DefaultConfig
     public static $PLUGIN_NAME = 'AntiFriz TV';
     public static $PLUGIN_SHORT_NAME = 'antifriz';
     public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '07.09.2021';
+    public static $PLUGIN_DATE = '09.09.2021';
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
-    public static $USE_PIN = true;
+    public static $ACCOUNT_TYPE = 'PIN';
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://antifriz.tv/playlist/%s.m3u8';
@@ -65,12 +65,12 @@ class AntifrizPluginConfig extends DefaultConfig
                 return "";
         }
 
-        hd_print("Stream type: " . $format);
-        hd_print("Stream url:  " . $url);
-        hd_print("Channel ID:  " . $id);
-        hd_print("Domain:      " . $subdomain);
-        hd_print("Token:       " . $plugin_cookies->ott_key_local);
-        hd_print("Archive TS:  " . $archive_ts);
+        // hd_print("Stream type: " . $format);
+        // hd_print("Stream url:  " . $url);
+        // hd_print("Channel ID:  " . $id);
+        // hd_print("Domain:      " . $subdomain);
+        // hd_print("Token:       " . $plugin_cookies->ott_key_local);
+        // hd_print("Archive TS:  " . $archive_ts);
 
         $url = str_replace('{ID}', $id, $url);
         $url = str_replace('{START}', $archive_ts, $url);

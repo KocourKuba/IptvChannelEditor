@@ -20,9 +20,7 @@ abstract class DefaultConfig
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = false;
-    public static $USE_OTT_KEY = false;
-    public static $USE_LOGIN_PASS = false;
-    public static $USE_PIN = false;
+    public static $ACCOUNT_TYPE = 'UNKNOWN';
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = '';
@@ -33,8 +31,8 @@ abstract class DefaultConfig
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://online.dune-hd.com/demo/index.m3u8?channel=%s';
     public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://online.dune-hd.com/demo/mpegts?channel=%s';
     public static $CHANNELS_LIST = 'default_channel_list.xml';
-    protected static $EPG1_URL_TEMPLATE = 'http://online.dune-hd.com/epg1/?channel=%s&date=%s';
-    protected static $EPG2_URL_TEMPLATE = 'http://online.dune-hd.com/epg2/?channel=%s&date=%s';
+    protected static $EPG1_URL_TEMPLATE = '';
+    protected static $EPG2_URL_TEMPLATE = '';
     protected static $EPG1_PARSER = 'json';
     protected static $EPG2_PARSER = 'json';
 
@@ -124,12 +122,12 @@ abstract class DefaultConfig
             $url .= "utc=$archive_ts&lutc=$now_ts";
         }
 
-        hd_print("Stream type: " . $format);
-        hd_print("Stream url:  " . $url);
-        hd_print("Channel ID:  " . $id);
-        hd_print("Domain:      " . $subdomain);
-        hd_print("Token:       " . $token);
-        hd_print("Archive TS:  " . $archive_ts);
+        // hd_print("Stream type: " . $format);
+        // hd_print("Stream url:  " . $url);
+        // hd_print("Channel ID:  " . $id);
+        // hd_print("Domain:      " . $subdomain);
+        // hd_print("Token:       " . $token);
+        // hd_print("Archive TS:  " . $archive_ts);
 
         $url = str_replace('{SUBDOMAIN}', $subdomain, $url);
         $url = str_replace('{ID}', $id, $url);
@@ -149,30 +147,35 @@ abstract class DefaultConfig
     public static function GetAccountStreamInfo($plugin_cookies)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
-        if (static::$USE_LOGIN_PASS) {
-            if (empty($plugin_cookies->login) || empty($plugin_cookies->password)) {
-                hd_print("Login or password not set");
-                return false;
-            }
-            $type = 'LOGIN';
-        }
-        else if (static::$USE_PIN) {
-            if (empty($plugin_cookies->password)) {
-                hd_print("Password not set");
-                return false;
-            }
-            $type = 'PIN';
-        } else {
-            hd_print("Unknown scheme");
-            return false;
+        switch (static::$ACCOUNT_TYPE)
+        {
+            case 'OTT_KEY':
+                if ((empty($plugin_cookies->ott_key) || empty($plugin_cookies->subdomain)) &&
+                    (empty($plugin_cookies->ott_key_local) || empty($plugin_cookies->subdomain_local))) {
+                    hd_print("OTT key or subdomain not set");
+                    return false;
+                }
+                break;
+            case 'LOGIN':
+                if (empty($plugin_cookies->login) || empty($plugin_cookies->password)) {
+                    hd_print("Login or password not set");
+                    return false;
+                }
+                break;
+            case 'PIN':
+                if (empty($plugin_cookies->password)) {
+                    hd_print("Password not set");
+                    return false;
+                }
+                break;
         }
 
         $found = false;
         try {
-            $content = self::FetchTemplatedUrl($type, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
+            $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
         } catch (Exception $ex) {
             try {
-                $content = self::FetchTemplatedUrl($type, static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies);
+                $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies);
             } catch (Exception $ex) {
                 hd_print("Failed to fetch provider playlist");
                 return false;
@@ -186,14 +189,14 @@ abstract class DefaultConfig
             if (preg_match(static::$STREAM_URL_PATTERN, $lines[$i], $matches)) {
 
                 $plugin_cookies->subdomain_local = $matches['subdomain'];
-                hd_print("domain: $plugin_cookies->subdomain_local");
+                // hd_print("domain: $plugin_cookies->subdomain_local");
 
                 $plugin_cookies->ott_key_local = $matches['token'];
-                hd_print("token: $plugin_cookies->ott_key_local");
+                // hd_print("token: $plugin_cookies->ott_key_local");
 
                 if (isset($matches['host'])) {
                     $plugin_cookies->host = $matches['host'];
-                    hd_print("host: $plugin_cookies->host");
+                    // hd_print("host: $plugin_cookies->host");
                 }
 
                 $found = true;
@@ -226,21 +229,27 @@ abstract class DefaultConfig
     public static function GetEPG(IChannel $channel, $day_start_ts)
     {
         try {
+            if (empty(static::$EPG1_URL_TEMPLATE))
+                throw new Exception("Empty epg template");
+
             $epg = EpgManager::get_epg(static::$EPG1_PARSER,
                 $channel,
                 'first',
                 $day_start_ts,
-                static::GET_EPG_URL_TEMPLATE('first'),
+                static::$EPG1_URL_TEMPLATE,
                 static::$PLUGIN_SHORT_NAME
             );
         } catch (Exception $ex) {
             try {
-                hd_print("Can't fetch EPG ID from primary epg source");
-                $epg = EpgManager::get_epg(static::$EPG1_PARSER,
+                hd_print("Can't fetch EPG ID from primary epg source " . $ex->getMessage());
+                if (empty(static::$EPG1_URL_TEMPLATE))
+                    throw new Exception("Empty epg template");
+
+                $epg = EpgManager::get_epg(static::$EPG2_PARSER,
                     $channel,
                     'second',
                     $day_start_ts,
-                    static::GET_EPG_URL_TEMPLATE('second'),
+                    static::$EPG2_URL_TEMPLATE,
                     static::$PLUGIN_SHORT_NAME
                 );
             } catch (Exception $ex) {
@@ -259,8 +268,8 @@ abstract class DefaultConfig
      */
     protected static function FetchTemplatedUrl($type, $template, $plugin_cookies)
     {
-        hd_print("Type: $type");
-        hd_print("Template: $template");
+        // hd_print("Type: $type");
+        // hd_print("Template: $template");
 
         if ($type == 'LOGIN') {
             $url = sprintf($template, $plugin_cookies->login, $plugin_cookies->password);
@@ -279,34 +288,22 @@ abstract class DefaultConfig
         return sprintf(DefaultConfig::BG_PICTURE_TEMPLATE, static::$PLUGIN_SHORT_NAME);
     }
 
-    public static function GET_EPG_URL_TEMPLATE($type)
-    {
-        switch ($type) {
-            case 'first':
-                return static::$EPG1_URL_TEMPLATE;
-            case 'second':
-                return static::$EPG2_URL_TEMPLATE;
-        }
-
-        return "";
-    }
-
-    public static function GET_TV_ICON_WIDTH()
+    protected static function GET_TV_ICON_WIDTH()
     {
         return static::$TV_CHANNEL_ICON_WIDTH;
     }
 
-    public static function GET_TV_ICON_HEIGHT()
+    protected static function GET_TV_ICON_HEIGHT()
     {
         return static::$TV_CHANNEL_ICON_HEIGHT;
     }
 
-    public static function GET_VOD_ICON_WIDTH()
+    protected static function GET_VOD_ICON_WIDTH()
     {
         return static::$VOD_CHANNEL_ICON_WIDTH;
     }
 
-    public static function GET_VOD_ICON_HEIGHT()
+    protected static function GET_VOD_ICON_HEIGHT()
     {
         return static::$VOD_CHANNEL_ICON_HEIGHT;
     }
@@ -469,8 +466,8 @@ abstract class DefaultConfig
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 10,
                     ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => DefaultConfig::GET_TV_ICON_WIDTH(),
-                    ViewItemParams::icon_height => DefaultConfig::GET_TV_ICON_HEIGHT(),
+                    ViewItemParams::icon_width => static::GET_TV_ICON_WIDTH(),
+                    ViewItemParams::icon_height => static::GET_TV_ICON_HEIGHT(),
                     ViewItemParams::item_caption_width => 485,
                     ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
                     ViewItemParams::icon_path => DefaultConfig::DEFAULT_CHANNEL_ICON_PATH,
@@ -640,8 +637,8 @@ abstract class DefaultConfig
                     ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
                     ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
                     ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => static::VOD_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => static::VOD_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_width => DefaultConfig::VOD_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => DefaultConfig::VOD_SANDWICH_HEIGHT,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
                     ViewParams::item_detailed_info_auto_line_break => true,
@@ -663,8 +660,8 @@ abstract class DefaultConfig
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 10,
                     ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => DefaultConfig::GET_VOD_ICON_WIDTH(),
-                    ViewItemParams::icon_height => DefaultConfig::GET_VOD_ICON_HEIGHT(),
+                    ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
+                    ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
                     ViewItemParams::icon_sel_margin_top => 0,
                     ViewItemParams::item_paint_caption => false,
                     ViewItemParams::item_caption_width => 1100
@@ -673,8 +670,8 @@ abstract class DefaultConfig
                 PluginRegularFolderView::not_loaded_view_item_params => array
                 (
                     ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_width => DefaultConfig::GET_VOD_ICON_WIDTH(),
-                    ViewItemParams::icon_height => DefaultConfig::GET_VOD_ICON_HEIGHT(),
+                    ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
+                    ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
                     ViewItemParams::icon_path => DefaultConfig::DEFAULT_MOV_ICON_PATH
                 ),
                 array
@@ -709,8 +706,8 @@ abstract class DefaultConfig
                     PluginRegularFolderView::not_loaded_view_item_params => array
                     (
                         ViewItemParams::item_paint_icon => true,
-                        ViewItemParams::icon_width => DefaultConfig::GET_VOD_ICON_WIDTH(),
-                        ViewItemParams::icon_height => DefaultConfig::GET_VOD_ICON_HEIGHT(),
+                        ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
+                        ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
                         //ViewItemParams::icon_width => 150,
                         //ViewItemParams::icon_height => 200,
                         ViewItemParams::icon_path => DefaultConfig::DEFAULT_MOV_ICON_PATH
@@ -725,8 +722,8 @@ abstract class DefaultConfig
                         ViewItemParams::icon_valign => VALIGN_CENTER,
                         ViewItemParams::icon_dx => 10,
                         ViewItemParams::icon_dy => -5,
-                        ViewItemParams::icon_width => DefaultConfig::GET_VOD_ICON_WIDTH(),
-                        ViewItemParams::icon_height => DefaultConfig::GET_VOD_ICON_HEIGHT(),
+                        ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
+                        ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
                         //ViewItemParams::icon_width => 150,
                         //ViewItemParams::icon_height => 200,
                         ViewItemParams::icon_sel_margin_top => 0,

@@ -99,9 +99,9 @@ class VodMovieScreen implements Screen, UserInputHandler
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Movie: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("  $key => $value");
+        // hd_print('Movie: handle_user_input:');
+        // foreach ($user_input as $key => $value)
+        //     hd_print("  $key => $value");
 
         if ($user_input->control_id == 'favorites') {
             $movie_id = $user_input->movie_id;

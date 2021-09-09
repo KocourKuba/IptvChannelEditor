@@ -27,6 +27,7 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
         (
             GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
             GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
+            GUI_EVENT_KEY_B_GREEN => ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки плагина'),
         );
     }
 

@@ -44,9 +44,9 @@ class VodSearchScreen extends AbstractControlsScreen
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Vod search: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("  $key => $value");
+        // hd_print('Vod search: handle_user_input:');
+        // foreach ($user_input as $key => $value)
+        //     hd_print("  $key => $value");
 
         if ($user_input->action_type === 'apply') {
             $control_id = $user_input->control_id;

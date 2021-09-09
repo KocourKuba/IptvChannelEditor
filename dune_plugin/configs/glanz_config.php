@@ -7,11 +7,11 @@ class GlanzPluginConfig extends DefaultConfig
     public static $PLUGIN_NAME = 'Glanz TV';
     public static $PLUGIN_SHORT_NAME = 'glanz';
     public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '07.09.2021';
+    public static $PLUGIN_DATE = '09.09.2021';
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
-    public static $USE_LOGIN_PASS = true;
+    public static $ACCOUNT_TYPE = 'LOGIN';
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
@@ -61,14 +61,14 @@ class GlanzPluginConfig extends DefaultConfig
                 return "";
         }
 
-        hd_print("Stream type: " . $format);
-        hd_print("Stream url:  " . $url);
-        hd_print("Channel ID:  " . $id);
-        hd_print("Domain:      " . $plugin_cookies->subdomain_local);
-        hd_print("Token:       " . $plugin_cookies->ott_key_local);
-        hd_print("Int ID:      " . $channel->get_number());
-        hd_print("Host:        " . $plugin_cookies->host);
-        hd_print("Archive TS:  " . $archive_ts);
+        // hd_print("Stream type: " . $format);
+        // hd_print("Stream url:  " . $url);
+        // hd_print("Channel ID:  " . $id);
+        // hd_print("Domain:      " . $plugin_cookies->subdomain_local);
+        // hd_print("Token:       " . $plugin_cookies->ott_key_local);
+        // hd_print("Int ID:      " . $channel->get_number());
+        // hd_print("Host:        " . $plugin_cookies->host);
+        // hd_print("Archive TS:  " . $archive_ts);
 
         $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
         $url = str_replace('{ID}', $id, $url);

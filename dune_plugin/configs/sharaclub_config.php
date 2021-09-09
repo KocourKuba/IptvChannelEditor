@@ -12,7 +12,7 @@ class SharaclubPluginConfig extends DefaultConfig
     public static $PLUGIN_NAME = 'Sharaclub TV';
     public static $PLUGIN_SHORT_NAME = 'sharaclub';
     public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '01.09.2021';
+    public static $PLUGIN_DATE = '09.09.2021';
 
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
@@ -20,7 +20,7 @@ class SharaclubPluginConfig extends DefaultConfig
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
-    public static $USE_LOGIN_PASS = true;
+    public static $ACCOUNT_TYPE = 'LOGIN';
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
@@ -67,7 +67,7 @@ class SharaclubPluginConfig extends DefaultConfig
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"));
         if (isset($account_data->status) && $account_data->status == 'ok') {
-            hd_print("account ok");
+            // hd_print("account ok");
             return $account_data;
         }
 

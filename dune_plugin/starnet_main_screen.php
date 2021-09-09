@@ -79,28 +79,40 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
+        // if token not set force to open setup screen
+        $config = self::$config;
+        switch ($config::$ACCOUNT_TYPE)
+        {
+            case 'OTT_KEY':
+                $setup_needs = (empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) &&
+                               (empty($plugin_cookies->ott_key_local) && empty($plugin_cookies->subdomain_local)));
+                break;
+            case 'LOGIN':
+                $setup_needs = (empty($plugin_cookies->login) && empty($plugin_cookies->password));
+                break;
+            case 'PIN':
+                $setup_needs = empty($plugin_cookies->password);
+                break;
+            default:
+                hd_print("Unknown plugin type");
+                return array();
+        }
+
         $add_action = UserInputHandlerRegistry::create_action($this, 'settings');
         $add_action['caption'] = 'Настройки плагина';
 
-        // if token not set force to open setup screen
-        $config = self::$config;
-        $setup_needs = $config::$USE_LOGIN_PASS ?
-            (isset($plugin_cookies->login) || isset($plugin_cookies->password))
-            : (isset($plugin_cookies->subdomain) || isset($plugin_cookies->subdomain_local));
-
-        if ($setup_needs === false) {
-            $setup_screen = ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки');
+        if ($setup_needs !== false) {
+            hd_print("Plugin not configured");
             return array(
-                GUI_EVENT_KEY_ENTER => $setup_screen,
-                GUI_EVENT_KEY_PLAY => $setup_screen,
-                GUI_EVENT_KEY_B_GREEN => $setup_screen
+                GUI_EVENT_KEY_ENTER => $add_action,
+                GUI_EVENT_KEY_PLAY => $add_action,
+                GUI_EVENT_KEY_B_GREEN => $add_action
             );
         }
 
-        $balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
-        $balance['caption'] = 'Подписка';
-
-        if ($config::$USE_LOGIN_PASS) {
+        if (PLUGIN_TYPE == 'SharaclubPluginConfig') {
+            $balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
+            $balance['caption'] = 'Подписка';
             return array
             (
                 GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
@@ -108,25 +120,25 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                 GUI_EVENT_KEY_B_GREEN => $add_action,
                 GUI_EVENT_KEY_C_YELLOW => $balance
             );
-        } else {
-            return array
-            (
-                GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
-                GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
-                GUI_EVENT_KEY_B_GREEN => $add_action,
-            );
         }
+
+        return array
+        (
+            GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
+            GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
+            GUI_EVENT_KEY_B_GREEN => $add_action,
+        );
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('main_screen: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("  $key => $value");
+        // hd_print('main_screen: handle_user_input:');
+        // foreach ($user_input as $key => $value)
+        //     hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
             case 'settings':
-                return ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки');
+                return ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки плагина');
             case 'check_balance':
                 return $this->account_info_dialog(&$plugin_cookies);
         }

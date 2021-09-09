@@ -6,7 +6,7 @@ require_once 'lib/abstract_controls_screen.php';
 
 class StarnetSetupScreen extends AbstractControlsScreen
 {
-    const ID = 'setup';
+    const ID = 'settings';
     const EPG_FONTSIZE_DEF_VALUE = 'normal';
     public static $config = null;
 
@@ -53,12 +53,17 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // ott or token dialog
-        if ($config::$USE_OTT_KEY) {
-            $this->add_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
-        } else if ($config::$USE_LOGIN_PASS) {
-            $this->add_button($defs, 'login_dialog', 'Активировать просмотр:', 'Введите логин и пароль', 0);
-        } else if ($config::$USE_PIN) {
-            $this->add_button($defs, 'pin_dialog', 'Активировать просмотр:', 'Введите ключ доступа', 0);
+        switch ($config::$ACCOUNT_TYPE)
+        {
+            case 'OTT_KEY':
+                $this->add_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
+                break;
+            case 'LOGIN':
+                $this->add_button($defs, 'login_dialog', 'Активировать просмотр:', 'Введите логин и пароль', 0);
+                break;
+            case 'PIN':
+                $this->add_button($defs, 'pin_dialog', 'Активировать просмотр:', 'Введите ключ доступа', 0);
+                break;
         }
 
         //////////////////////////////////////
@@ -217,9 +222,9 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Setup: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("$key => $value");
+        // hd_print('Setup: handle_user_input:');
+        // foreach ($user_input as $key => $value)
+        //     hd_print("$key => $value");
 
         if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $control_id = $user_input->control_id;

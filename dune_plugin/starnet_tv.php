@@ -266,7 +266,7 @@ class StarnetPluginTv extends AbstractTv
         $time_shift = $channel->get_timeshift_hours() * 3600;
 
         $epg_date = gmdate(DATE_ATOM, $day_start_ts);
-        hd_print("start date: $epg_date");
+        // hd_print("start date: $epg_date");
         $epg_result = array();
         $epg = self::$config->GetEPG($channel, $day_start_ts);
         foreach ($epg as $time => $value) {
