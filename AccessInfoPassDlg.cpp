@@ -65,8 +65,14 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 {
 	UpdateData(TRUE);
 
+	m_status = _T("Unknown");
+
 	const auto& login = utils::utf16_to_utf8(m_login.GetString());
 	const auto& password = utils::utf16_to_utf8(m_password.GetString());
+
+	// reset templated flag for new parse
+	m_entry->stream_uri->set_template(false);
+
 	if (m_entry->stream_uri->isAccessInfo())
 	{
 		std::vector<BYTE> data;

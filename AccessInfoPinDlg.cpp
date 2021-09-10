@@ -58,9 +58,13 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 {
 	UpdateData(TRUE);
 
-	const auto& password = utils::utf16_to_utf8(m_password.GetString());
+	m_status = _T("Unknown");
 
+	const auto& password = utils::utf16_to_utf8(m_password.GetString());
 	const auto& pl_url = m_entry->stream_uri->get_playlist_url("", password);
+
+	// reset templated flag for new parse
+	m_entry->stream_uri->set_template(false);
 
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;

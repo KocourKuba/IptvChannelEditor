@@ -20,7 +20,7 @@ public:
 
 public:
 
-	virtual void clear() { schema.clear(); path.clear(); set_template(true); }
+	virtual void clear() { schema.clear(); path.clear(); set_template(false); }
 
 	/// <summary>
 	/// get combined uri
@@ -75,6 +75,12 @@ public:
 	bool is_template() const { return templated; }
 
 	/// <summary>
+	/// is uri valid
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_valid() const { return is_template() ? true : (!schema.empty() && !path.empty());  }
+
+	/// <summary>
 	/// get filesystem path
 	/// convert local to filesystem path
 	/// </summary>
@@ -88,5 +94,5 @@ public:
 protected:
 	std::string schema;
 	std::string path;
-	bool templated = true;
+	bool templated = false;
 };

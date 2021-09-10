@@ -11,7 +11,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 	{
 		case m3u_entry::ext_pathname:
 			stream_uri->parse_uri(str);
-			return true;
+			return stream_uri->is_valid();
 		case m3u_entry::ext_group:
 			category = utils::utf8_to_utf16(m3uEntry.get_dvalue());
 			if (category.find(L"зрослые") != std::wstring::npos

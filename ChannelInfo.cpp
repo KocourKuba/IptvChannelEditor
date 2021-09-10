@@ -21,6 +21,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		return;
 
 	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
+	stream_uri->set_template(true);
 	stream_uri->set_id(utils::get_value_string(node->first_node(CHANNEL_ID)));
 	stream_uri->set_int_id(utils::get_value_string(node->first_node(INT_ID)));
 	set_epg1_id(utils::get_value_string(node->first_node(EPG1_ID)));
@@ -47,7 +48,10 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	}
 
 	if (stream_uri->get_id().empty())
+	{
+		stream_uri->set_template(false);
 		stream_uri->parse_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
+	}
 
 	set_archive_days(utils::get_value_int(node->first_node(ARCHIVE)));
 	set_adult(utils::get_value_int(node->first_node(PROTECTED)));

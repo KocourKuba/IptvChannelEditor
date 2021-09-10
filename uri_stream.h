@@ -50,7 +50,6 @@ public:
 	virtual void parse_uri(const std::string& url)
 	{
 		// http://rtmp.api.rt.com/hls/rtdru.m3u8
-		set_template(false);
 		uri_base::set_uri(url);
 	}
 
