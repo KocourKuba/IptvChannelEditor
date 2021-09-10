@@ -422,8 +422,7 @@ void CTreeCtrlEx::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 			if (pWnd)
 			{
-				NM_TREEVIEW tv;
-				memset(&tv.itemOld, 0, sizeof(tv.itemOld));
+				NM_TREEVIEW tv = { 0 };
 
 				tv.hdr.hwndFrom = GetSafeHwnd();
 				tv.hdr.idFrom = GetWindowLong(GetSafeHwnd(), GWL_ID);
@@ -446,7 +445,7 @@ void CTreeCtrlEx::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		CWnd* pWnd = GetParent();
 		if (pWnd)
 		{
-			NMTVKEYDOWN tvk;
+			NMTVKEYDOWN tvk = { 0 };
 
 			tvk.hdr.hwndFrom = GetSafeHwnd();
 			tvk.hdr.idFrom = GetWindowLong(GetSafeHwnd(), GWL_ID);

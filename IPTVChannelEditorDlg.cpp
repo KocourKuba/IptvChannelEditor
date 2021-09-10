@@ -1252,7 +1252,8 @@ HTREEITEM CIPTVChannelEditorDlg::GetCategoryTreeItemById(int id) const
 	HTREEITEM hRoot = m_wndChannelsTree.GetRootItem();
 	while (hRoot != nullptr)
 	{
-		if ((int)m_wndChannelsTree.GetItemData(hRoot) == id)
+		auto category = GetCategory(hRoot);
+		if (category && category->get_key() == id)
 			return hRoot;
 
 		hRoot = m_wndChannelsTree.GetNextSiblingItem(hRoot);
