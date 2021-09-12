@@ -3632,7 +3632,13 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 	if (m_lastTree == &m_wndPlaylistTree && m_channelsMap.find(params.id) != m_channelsMap.end() ||
 		m_lastTree == &m_wndChannelsTree && m_playlistMap.find(params.id) != m_playlistMap.end())
 	{
-		SelectTreeItem(*m_lastTree, params);
+		CTreeCtrlEx* opposite = nullptr;
+		if (m_lastTree == &m_wndPlaylistTree)
+			opposite = &m_wndChannelsTree;
+		else
+			opposite = &m_wndPlaylistTree;
+
+		SelectTreeItem(*opposite, params);
 	}
 }
 
