@@ -103,7 +103,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		}
 	}
 
-	const auto& pl_url = m_entry->stream_uri->get_playlist_url(login, password);
+	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
 
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;

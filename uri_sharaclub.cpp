@@ -74,12 +74,12 @@ std::string uri_sharaclub::get_epg2_uri(const std::string& id) const
 	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
-std::string uri_sharaclub::get_playlist_url(const std::string& login, const std::string& password) const
-{
-	return fmt::format(PLAYLIST_TEMPLATE, login.c_str(), password.c_str());
-}
-
 std::string uri_sharaclub::get_access_url(const std::string& login, const std::string& password) const
 {
 	return fmt::format(ACCOUNT_TEMPLATE, login.c_str(), password.c_str());
+}
+
+std::string uri_sharaclub::get_playlist_template(bool first /*= true*/) const
+{
+	return PLAYLIST_TEMPLATE;
 }

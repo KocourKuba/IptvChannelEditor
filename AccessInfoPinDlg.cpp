@@ -61,7 +61,7 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 	m_status = _T("Unknown");
 
 	const auto& password = utils::utf16_to_utf8(m_password.GetString());
-	const auto& pl_url = m_entry->stream_uri->get_playlist_url("", password);
+	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), password.c_str());
 
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);

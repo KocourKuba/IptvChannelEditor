@@ -591,18 +591,20 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	std::wstring url;
 	int idx = m_wndPlaylist.GetCurSel();
 	BOOL isFile = (BOOL)m_wndPlaylist.GetItemData(idx);
+	const auto& account_template = StreamContainer::get_instance(m_pluginType)->get_playlist_template();
+	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginNameW(true).c_str()).c_str();
 
-	switch (m_wndPluginType.GetCurSel())
+	switch (m_pluginType)
 	{
-		case 0: // Edem
+		case StreamType::enEdem:
 		{
 			switch (idx)
 			{
 				case 0: // Standard
-					url = L"http://epg.it999.ru/edem_epg_ico.m3u8";
+					url = utils::utf8_to_utf16(account_template);
 					break;
 				case 1: // Thematic
-					url = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
+					url = utils::utf8_to_utf16(StreamContainer::get_instance(m_pluginType)->get_playlist_template(false));
 					break;
 				case 2: // Custom URL
 					url = ReadRegStringPluginW(REG_CUSTOM_URL);
@@ -615,13 +617,13 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			}
 			break;
 		}
-		case 1: // Sharavoz
+		case StreamType::enSharavoz:
+		case StreamType::enAntifriz:
 		{
 			switch (idx)
 			{
 				case 0: // Playlist
-					url = utils::utf8_to_utf16(fmt::format("http://sharavoz.tk/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u", m_password.c_str()));
-					m_plFileName = _T("Sharavoz_Playlist.m3u8");
+					url = utils::utf8_to_utf16(fmt::format(account_template, m_password.c_str()));
 					break;
 				case 1: // Custom file
 					url = ReadRegStringPluginW(REG_CUSTOM_FILE);
@@ -631,53 +633,21 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			}
 			break;
 		}
-		case 2: // Sharaclub
+		case StreamType::enGlanz:
+		case StreamType::enSharaclub:
 		{
 			switch (idx)
 			{
 				case 0: // Playlist
-					url = utils::utf8_to_utf16(fmt::format("http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}", m_login.c_str(), m_password.c_str()));
-					m_plFileName = _T("SharaClub_Playlist.m3u8");
+					url = utils::utf8_to_utf16(fmt::format(account_template, m_login.c_str(), m_password.c_str()));
 					break;
 				case 1: // Custom file
 					url = ReadRegStringPluginT(REG_CUSTOM_FILE);
 					break;
-				case 2: // Mediateka
-					url = utils::utf8_to_utf16(fmt::format("http://list.playtv.pro/kino-full/{:s}-{:s}", m_login.c_str(), m_password.c_str()));
-					m_plFileName = _T("SharaClub_Movie.m3u8");
-					break;
-				default:
-					break;
-			}
-			break;
-		}
-		case 3: // Glanz
-		{
-			switch (idx)
-			{
-				case 0: // Playlist
-					url = utils::utf8_to_utf16(fmt::format("http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls", m_login.c_str(), m_password.c_str()));
-					m_plFileName = _T("Glanz_Playlist.m3u8");
-					break;
-				case 1: // Custom file
-					url = ReadRegStringPluginW(REG_CUSTOM_FILE);
-					break;
-				default:
-					break;
-			}
-			break;
-		}
-		case 4: // Antifriz
-		{
-			switch (idx)
-			{
-				case 0:
-					url = utils::utf8_to_utf16(fmt::format("https://antifriz.tv/playlist/{:s}.m3u8", m_password.c_str()));
-					m_plFileName = _T("Antifriz_Playlist.m3u8");
-					break;
-				case 1: // Custom file
-					url = ReadRegStringPluginW(REG_CUSTOM_FILE);
-					break;
+//				case 2: // Mediateka
+//					url = fmt::format(account_template, m_login.c_str(), m_password.c_str());
+//					m_plFileName = _T("SharaClub_Movie.m3u8");
+//					break;
 				default:
 					break;
 			}

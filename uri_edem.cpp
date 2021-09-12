@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "uri_edem.h"
 
+static constexpr auto PLAYLIST_TEMPLATE1 = "http://epg.it999.ru/edem_epg_ico.m3u8";
+static constexpr auto PLAYLIST_TEMPLATE2 = "http://epg.it999.ru/edem_epg_ico2.m3u8";
 static constexpr auto URI_TEMPLATE = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 
 static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/edem/epg/{:s}.json";
@@ -58,4 +60,9 @@ std::string uri_edem::get_epg2_uri(const std::string& id) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
 	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+}
+
+std::string uri_edem::get_playlist_template(bool first /*= true*/) const
+{
+	return first ? PLAYLIST_TEMPLATE1 : PLAYLIST_TEMPLATE2;
 }

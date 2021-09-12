@@ -166,12 +166,6 @@ public:
 	virtual std::string get_epg2_uri(const std::string& id) const { return ""; };
 
 	/// <summary>
-	/// get playlist template url
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::string get_playlist_url(const std::string& login, const std::string& password) const { return ""; }
-
-	/// <summary>
 	/// get cabinet access url
 	/// </summary>
 	/// <returns>string</returns>
@@ -182,6 +176,11 @@ public:
 	/// </summary>
 	/// <returns>bool</returns>
 	virtual bool isHasAccessInfo() const { return false; }
+
+	/// <summary>
+	/// get url template to obtain account playlist
+	/// </summary>
+	virtual std::string get_playlist_template(bool first = true) const { return ""; };
 
 	/// <summary>
 	/// copy info

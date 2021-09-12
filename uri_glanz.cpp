@@ -78,7 +78,7 @@ std::string uri_glanz::get_epg1_uri(const std::string& id) const
 	return fmt::format(EPG1_TEMPLATE, id);
 }
 
-std::string uri_glanz::get_playlist_url(const std::string& login, const std::string& password) const
+std::string uri_glanz::get_playlist_template(bool first /*= true*/) const
 {
-	return fmt::format(PLAYLIST_TEMPLATE, login.c_str(), password.c_str());
+	return PLAYLIST_TEMPLATE;
 }
