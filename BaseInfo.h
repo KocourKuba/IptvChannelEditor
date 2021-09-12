@@ -16,9 +16,6 @@ public:
 		, base_type(type) {};
 
 public:
-	virtual const std::string& get_id() const { return stream_uri->get_id(); }
-	virtual void set_id(const std::string& val) { stream_uri->set_id(val); }
-
 	const int get_key() const { return key; }
 	void set_key(const int val) { key = val; }
 
@@ -44,9 +41,9 @@ public:
 
 	void swap_id(BaseInfo& src)
 	{
-		std::string tmp = src.get_id();
-		src.set_id(get_id());
-		set_id(tmp);
+		std::string tmp = src.stream_uri->get_id();
+		src.stream_uri->set_id(stream_uri->get_id());
+		src.stream_uri->set_id(tmp);
 	}
 
 	bool is_type(InfoType type) const { return base_type == type; }

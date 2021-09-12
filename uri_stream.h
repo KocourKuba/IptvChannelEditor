@@ -57,19 +57,19 @@ public:
 	/// getter channel id
 	/// </summary>
 	/// <returns>string</returns>
-	virtual const std::string& get_id() const { return templated ? id : str_hash; }
+	const std::string& get_id() const { return templated ? id : str_hash; }
 
 	/// <summary>
 	/// setter channel id
 	/// </summary>
 	/// <param name="val"></param>
-	virtual void set_id(const std::string& val) { id = val; }
+	void set_id(const std::string& val) { id = val; }
 
 	/// <summary>
 	/// getter channel hash
 	/// </summary>
 	/// <returns>int</returns>
-	virtual const int get_hash() const
+	const int get_hash() const
 	{
 		if (!hash)
 		{
@@ -85,67 +85,67 @@ public:
 	/// getter domain
 	/// </summary>
 	/// <returns>string</returns>
-	virtual const std::string& get_domain() const { return domain; };
+	const std::string& get_domain() const { return domain; };
 
 	/// <summary>
 	/// setter domain
 	/// </summary>
-	virtual void set_domain(const std::string& val) { domain = val; };
+	void set_domain(const std::string& val) { domain = val; };
 
 	/// <summary>
 	/// getter login
 	/// </summary>
 	/// <returns>string</returns>
-	virtual const std::string& get_login() const { return login; };
+	const std::string& get_login() const { return login; };
 
 	/// <summary>
 	/// setter login
 	/// </summary>
-	virtual void set_login(const std::string& val) { login = val; };
+	void set_login(const std::string& val) { login = val; };
 
 	/// <summary>
 	/// setter password
 	/// </summary>
-	virtual void set_password(const std::string& val) { password = val; };
+	void set_password(const std::string& val) { password = val; };
 
 	/// <summary>
 	/// getter password
 	/// </summary>
 	/// <returns>string</returns>
-	virtual const std::string& get_password() const { return password; };
+	const std::string& get_password() const { return password; };
 
 	/// <summary>
 	/// setter int_id
 	/// </summary>
-	virtual void set_int_id(const std::string& val) { int_id = val; };
+	void set_int_id(const std::string& val) { int_id = val; };
 
 	/// <summary>
 	/// getter int_id
 	/// </summary>
 	/// <returns>string</returns>
-	virtual const std::string& get_int_id() const { return int_id; };
+	const std::string& get_int_id() const { return int_id; };
 
 	/// <summary>
 	/// setter host
 	/// </summary>
-	virtual void set_host(const std::string& val) { host = val; };
+	void set_host(const std::string& val) { host = val; };
 
 	/// <summary>
 	/// getter host
 	/// </summary>
 	/// <returns>string</returns>
-	virtual const std::string& get_host() const { return host; };
+	const std::string& get_host() const { return host; };
 
 	/// <summary>
 	/// getter token
 	/// </summary>
 	/// <returns>string</returns>
-	virtual const std::string& get_token() const { return token; };
+	const std::string& get_token() const { return token; };
 
 	/// <summary>
 	/// setter token
 	/// </summary>
-	virtual void set_token(const std::string& val) { token = val; };
+	void set_token(const std::string& val) { token = val; };
 
 	/// <summary>
 	/// get templated url
@@ -178,27 +178,15 @@ public:
 	virtual std::string get_access_url(const std::string& login, const std::string& password) const { return ""; }
 
 	/// <summary>
-	/// is used Control Panel access
-	/// </summary>
-	/// <returns>bool</returns>
-	virtual bool isLCPAccess() const { return false; }
-
-	/// <summary>
-	/// is used pin access (only key access)
-	/// </summary>
-	/// <returns>bool</returns>
-	virtual bool isPinAccess() const { return false; }
-
-	/// <summary>
 	/// is has access info
 	/// </summary>
 	/// <returns>bool</returns>
-	virtual bool isAccessInfo() const { return false; }
+	virtual bool isHasAccessInfo() const { return false; }
 
 	/// <summary>
 	/// copy info
 	/// </summary>
-	void copy(const uri_stream* src)
+	void copy(const std::unique_ptr<uri_stream>& src)
 	{
 		*this = *src;
 	}

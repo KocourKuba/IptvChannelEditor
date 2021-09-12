@@ -65,7 +65,7 @@ void StreamContainer::set_type(StreamType type)
 	if (stream_type != type)
 	{
 		auto newStream = get_instance(type);
-		newStream->copy(stream_uri.get());
+		newStream->copy(stream_uri);
 		stream_uri = std::move(newStream);
 		stream_type = type;
 	}

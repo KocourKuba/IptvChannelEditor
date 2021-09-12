@@ -24,9 +24,6 @@ public:
 	void ParseNode(rapidxml::xml_node<>* node);
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& alloc) const;
 
-	const std::string& get_id() const override { return id; }
-	void set_id(const std::string& val) override { id = val; }
-
 	bool is_empty() const { return channels_map.empty(); }
 
 	const std::vector<ChannelInfo*>& get_channels() const { return channels; }
@@ -42,7 +39,6 @@ public:
 	std::shared_ptr<ChannelInfo> find_channel(const std::string& ch_id);
 
 private:
-	std::string id;
 	std::vector<ChannelInfo*> channels;
 	std::map<std::string, std::shared_ptr<ChannelInfo>> channels_map;
 };

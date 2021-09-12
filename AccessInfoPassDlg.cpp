@@ -74,7 +74,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);
 
-	if (m_entry->stream_uri->isAccessInfo())
+	if (m_entry->stream_uri->isHasAccessInfo())
 	{
 		std::vector<BYTE> data;
 		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(login, password), data) || data.empty())
