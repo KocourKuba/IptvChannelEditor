@@ -29,11 +29,11 @@ public:
 		CString searchString;
 	};
 
-	static void SelectTreeItem(CTreeCtrl& ctl, const SearchParams& searchParams);
-	static HTREEITEM FindTreeItem(CTreeCtrl& ctl, DWORD_PTR entry);
-	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
-	static HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
-	static BaseInfo* GetBaseInfo(const CTreeCtrl* pTreeCtrl, HTREEITEM hItem);
+	void SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams& searchParams);
+	static HTREEITEM FindTreeItem(CTreeCtrlEx& ctl, DWORD_PTR entry);
+	static HTREEITEM FindTreeNextItem(CTreeCtrlEx& ctl, HTREEITEM hItem, DWORD_PTR entry);
+	static HTREEITEM FindTreeSubItem(CTreeCtrlEx& ctl, HTREEITEM hItem, DWORD_PTR entry);
+	static BaseInfo* GetBaseInfo(const CTreeCtrlEx* pTreeCtrl, HTREEITEM hItem);
 	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
 
 	// Implementation
@@ -316,6 +316,7 @@ private:
 	BOOL m_allow_save = FALSE;
 	bool m_menu_enable_channel = false;
 	BOOL m_loading = FALSE;
+	BOOL m_inSync = FALSE;
 	bool m_bInFillTree = false;
 	StreamType m_pluginType = StreamType::enEdem;
 	CString m_pluginName;
