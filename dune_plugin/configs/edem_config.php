@@ -6,8 +6,8 @@ class EdemPluginConfig extends DefaultConfig
     // info
     public static $PLUGIN_NAME = 'iEdem/iLook TV';
     public static $PLUGIN_SHORT_NAME = 'edem';
-    public static $PLUGIN_VERSION = '2.7.0';
-    public static $PLUGIN_DATE = '09.09.2021';
+    public static $PLUGIN_VERSION = '2.7.1';
+    public static $PLUGIN_DATE = '12.09.2021';
 
     // setup variables
     public static $ACCOUNT_TYPE = 'OTT_KEY';

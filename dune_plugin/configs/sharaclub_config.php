@@ -11,8 +11,8 @@ class SharaclubPluginConfig extends DefaultConfig
     // info
     public static $PLUGIN_NAME = 'Sharaclub TV';
     public static $PLUGIN_SHORT_NAME = 'sharaclub';
-    public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '09.09.2021';
+    public static $PLUGIN_VERSION = '1.0.1';
+    public static $PLUGIN_DATE = '12.09.2021';
 
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;

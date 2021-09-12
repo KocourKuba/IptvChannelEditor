@@ -6,8 +6,8 @@ class SharavozPluginConfig extends DefaultConfig
     // info
     public static $PLUGIN_NAME = 'Sharavoz TV';
     public static $PLUGIN_SHORT_NAME = 'sharavoz';
-    public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '09.09.2021';
+    public static $PLUGIN_VERSION = '1.0.1';
+    public static $PLUGIN_DATE = '12.09.2021';
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;

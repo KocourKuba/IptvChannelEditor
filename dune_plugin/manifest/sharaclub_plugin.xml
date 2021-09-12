@@ -39,5 +39,5 @@
      <program>starnet.php</program>
   </params>
   <version_index>1</version_index>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dune_plugin>
