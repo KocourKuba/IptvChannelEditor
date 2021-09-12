@@ -7,8 +7,10 @@ namespace utils
 	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/shablon.png";
 
 	static constexpr auto CHANNELS_SETUP = "channels_setup";
-	static constexpr auto ACCESS_KEY = "access_key";
+	static constexpr auto ACCESS_TOKEN = "access_key"; // token or password
 	static constexpr auto ACCESS_DOMAIN = "access_domain";
+	static constexpr auto ACCESS_LOGIN = "access_login";
+	static constexpr auto ACCESS_PASSWORD = "access_password";
 
 	static constexpr auto TV_INFO = "tv_info";
 	static constexpr auto TV_CATEGORIES = "tv_categories";

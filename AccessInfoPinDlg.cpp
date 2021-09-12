@@ -25,10 +25,10 @@ void CAccessInfoPinDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
-	DDX_Control(pDX, IDC_EDIT_PASSWORD, m_wndPassword);
+	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
+	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 	DDX_Text(pDX, IDC_EDIT_PASSWORD, m_password);
 	DDX_Text(pDX, IDC_EDIT_STATUS, m_status);
-	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 }
 
 BOOL CAccessInfoPinDlg::OnInitDialog()

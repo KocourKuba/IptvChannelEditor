@@ -1,16 +1,16 @@
 #pragma once
-#include "StreamContainer.h"
+#include "uri_stream.h"
 
 
 // CAccessDlg dialog
 
-class CAccessDlg : public CDialogEx
+class CAccessOttKeyDlg : public CDialogEx
 {
-	DECLARE_DYNAMIC(CAccessDlg)
+	DECLARE_DYNAMIC(CAccessOttKeyDlg)
 
 public:
-	CAccessDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CAccessDlg() = default;
+	CAccessOttKeyDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CAccessOttKeyDlg() = default;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -20,26 +20,20 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
-	void OnOK() override;
 
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnEnChangeEditPlaylistUrl();
 	afx_msg void OnBnClickedBtnGet();
-	afx_msg void OnCbnSelchangeComboType();
 
 public:
-	CString m_accessKeyGlobal;
-	CString m_domainGlobal;
-	CString m_accessKeyEmbedded;
-	CString m_domainEmbedded;
+	CString m_accessKey;
+	CString m_domain;
 	CString m_url;
 	StreamType m_streamType;
-	int m_type = 0;
+	BOOL m_bEmbed = FALSE;
 
 protected:
 	CButton m_wndGet;
 	CMFCEditBrowseCtrl m_wndUrl;
-	CString m_accessKey;
-	CString m_domain;
 };

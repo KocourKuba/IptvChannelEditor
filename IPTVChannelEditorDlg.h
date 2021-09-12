@@ -34,7 +34,6 @@ public:
 	static HTREEITEM FindTreeNextItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static HTREEITEM FindTreeSubItem(CTreeCtrl& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static BaseInfo* GetBaseInfo(const CTreeCtrl* pTreeCtrl, HTREEITEM hItem);
-
 	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
 
 	// Implementation
@@ -97,7 +96,6 @@ protected:
 	afx_msg void OnBnClickedButtonCustomPlaylist();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonPlSearchNext();
-	afx_msg void OnBnClickedButtonAccessInfo();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
 	afx_msg void OnBnClickedButtonTestEpg1();
@@ -148,13 +146,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	const std::string& GetAccessKey() const { return m_embedded_info ? m_ch_access_key : m_gl_access_key; }
-	const std::string& GetAccessDomain() const { return m_embedded_info ? m_ch_domain : m_gl_domain; }
-
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
-
-	void SaveAccessInfo();
 
 	bool LoadChannels(const CString& path);
 	void LoadPlaylist(bool saveToFile = false);
@@ -176,6 +169,11 @@ private:
 	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
+
+	bool SetupCustomPlaylist(bool loaded);
+	bool SetupOttKey(bool loaded);
+	bool SetupLogin(bool loaded);
+	bool SetupPin(bool loaded);
 
 	ChannelCategory* GetItemCategory(HTREEITEM hItem) const;
 	ChannelCategory* GetCategory(HTREEITEM hItem) const;
@@ -203,7 +201,8 @@ private:
 
 	void SwitchPlugin();
 
-	std::wstring GetPluginName() const;
+	std::wstring GetPluginNameW(bool bCamel = false) const;
+	std::string GetPluginNameA(bool bCamel = false) const;
 	void SaveStreamInfo();
 
 	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
@@ -228,6 +227,8 @@ private:
 	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
 
 protected:
+	static CString m_probe;
+
 	CFont m_largeFont;
 
 	// GUI controls and variables
@@ -266,7 +267,6 @@ protected:
 	CButton m_wndCacheIcon;
 	CButton m_wndUpdateIcon;
 	CButton m_wndSave;
-	CButton m_wndAccessInfo;
 	CStatic m_wndChannelIcon;
 	CStatic m_wndPlIcon;
 	CStatic m_wndChInfo;
@@ -297,12 +297,12 @@ protected:
 	int m_StreamType = 0;
 
 private:
-	static CString m_probe;
-	static std::string m_gl_domain;
-	static std::string m_gl_access_key;
-	static std::string m_ch_access_key;
-	static std::string m_ch_domain;
-	static BOOL m_embedded_info;
+	BOOL m_embedded_info;
+	std::string m_token;
+	std::string m_domain;
+	std::string m_login;
+	std::string m_password;
+	std::string m_host;
 
 	HACCEL m_hAccel = nullptr;
 	CTreeCtrlEx* m_lastTree = nullptr;

@@ -26,14 +26,15 @@ void CAccessInfoPassDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_EDIT_LOGIN, m_wndLogin);
-	DDX_Text(pDX, IDC_EDIT_LOGIN, m_login);
 	DDX_Control(pDX, IDC_EDIT_PASSWORD, m_wndPassword);
+	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
+	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
+	DDX_Text(pDX, IDC_EDIT_LOGIN, m_login);
 	DDX_Text(pDX, IDC_EDIT_PASSWORD, m_password);
 	DDX_Text(pDX, IDC_EDIT_STATUS, m_status);
 	DDX_Text(pDX, IDC_EDIT_SUBSCRIPTION, m_subscription);
 	DDX_Text(pDX, IDC_EDIT_BALANCE, m_balance);
 	DDX_Text(pDX, IDC_EDIT_PACKAGES_PRICE, m_packages_price);
-	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 }
 
 BOOL CAccessInfoPassDlg::OnInitDialog()
@@ -118,7 +119,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 			while (std::getline(*pl_stream, line))
 			{
 				utils::string_rtrim(line, "\r");
-				if (m_entry->Parse(line) && !m_entry->stream_uri->get_token().empty())
+				if (m_entry->Parse(line) && !m_entry->stream_uri->get_login().empty() && !m_entry->stream_uri->get_token().empty())
 				{
 					m_status = _T("Ok");
 					break;

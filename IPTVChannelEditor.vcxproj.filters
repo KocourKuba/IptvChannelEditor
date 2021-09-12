@@ -93,7 +93,7 @@
     <ClInclude Include="StreamContainer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="AccessDlg.h">
+    <ClInclude Include="AccessOttKeyDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="AboutDlg.h">
@@ -236,7 +236,7 @@
     <ClCompile Include="AboutDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="AccessDlg.cpp">
+    <ClCompile Include="AccessOttKeyDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="SettingsDlg.cpp">

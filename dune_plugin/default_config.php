@@ -189,14 +189,14 @@ abstract class DefaultConfig
             if (preg_match(static::$STREAM_URL_PATTERN, $lines[$i], $matches)) {
 
                 $plugin_cookies->subdomain_local = $matches['subdomain'];
-                // hd_print("domain: $plugin_cookies->subdomain_local");
+                hd_print("domain: $plugin_cookies->subdomain_local");
 
                 $plugin_cookies->ott_key_local = $matches['token'];
-                // hd_print("token: $plugin_cookies->ott_key_local");
+                hd_print("token: $plugin_cookies->ott_key_local");
 
                 if (isset($matches['host'])) {
                     $plugin_cookies->host = $matches['host'];
-                    // hd_print("host: $plugin_cookies->host");
+                    hd_print("host: $plugin_cookies->host");
                 }
 
                 $found = true;

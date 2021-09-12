@@ -88,10 +88,11 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                                (empty($plugin_cookies->ott_key_local) && empty($plugin_cookies->subdomain_local)));
                 break;
             case 'LOGIN':
-                $setup_needs = (empty($plugin_cookies->login) && empty($plugin_cookies->password));
+                $setup_needs = (empty($plugin_cookies->login) && empty($plugin_cookies->password)) &&
+                               (empty($plugin_cookies->login_local) && empty($plugin_cookies->password_local));
                 break;
             case 'PIN':
-                $setup_needs = empty($plugin_cookies->password);
+                $setup_needs = empty($plugin_cookies->password) && empty($plugin_cookies->password_local);
                 break;
             default:
                 hd_print("Unknown plugin type");

@@ -209,7 +209,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
-    <ClInclude Include="AccessDlg.h" />
+    <ClInclude Include="AccessOttKeyDlg.h" />
     <ClInclude Include="AccessInfoPassDlg.h" />
     <ClInclude Include="AccessInfoPinDlg.h" />
     <ClInclude Include="BaseInfo.h" />
@@ -266,7 +266,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
-    <ClCompile Include="AccessDlg.cpp" />
+    <ClCompile Include="AccessOttKeyDlg.cpp" />
     <ClCompile Include="AccessInfoPassDlg.cpp" />
     <ClCompile Include="AccessInfoPinDlg.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />

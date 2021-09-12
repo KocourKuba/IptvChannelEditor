@@ -1,5 +1,4 @@
 #pragma once
-#include "StreamContainer.h"
 #include "PlayListEntry.h"
 
 class CAccessInfoPinDlg : public CDialogEx
@@ -26,10 +25,10 @@ protected:
 
 public:
 	std::shared_ptr<PlaylistEntry> m_entry;
+	BOOL m_bEmbed = FALSE;
 
 protected:
 	CButton m_wndGet;
-	CEdit m_wndPassword;
 
 	CString m_status;
 	CString m_password;
