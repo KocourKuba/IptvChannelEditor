@@ -230,7 +230,7 @@ abstract class DefaultConfig
     {
         try {
             if (empty(static::$EPG1_URL_TEMPLATE))
-                throw new Exception("Empty epg template");
+                throw new Exception("Empty first epg template");
 
             $epg = EpgManager::get_epg(static::$EPG1_PARSER,
                 $channel,
@@ -239,11 +239,13 @@ abstract class DefaultConfig
                 static::$EPG1_URL_TEMPLATE,
                 static::$PLUGIN_SHORT_NAME
             );
+            if (count($epg) == 0)
+                throw new Exception("Empty first epg");
         } catch (Exception $ex) {
             try {
                 hd_print("Can't fetch EPG ID from primary epg source " . $ex->getMessage());
                 if (empty(static::$EPG1_URL_TEMPLATE))
-                    throw new Exception("Empty epg template");
+                    throw new Exception("Empty second epg template");
 
                 $epg = EpgManager::get_epg(static::$EPG2_PARSER,
                     $channel,
