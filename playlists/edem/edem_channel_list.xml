@@ -303,20 +303,20 @@
 		<tv_channel>
 			<caption>Первый HD</caption>
 			<channel_id>204</channel_id>
-			<epg_id>983</epg_id>
+			<epg_id>146</epg_id>
 			<tvg_id>300125</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/983.png</icon_url>
 			<tv_category_id>2</tv_category_id>
-			<archive>1</archive>
+			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Россия HD</caption>
 			<channel_id>205</channel_id>
-			<epg_id>984</epg_id>
+			<epg_id>711</epg_id>
 			<tvg_id>300124</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/984.png</icon_url>
 			<tv_category_id>2</tv_category_id>
-			<archive>1</archive>
+			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Мир HD</caption>
@@ -330,47 +330,47 @@
 		<tv_channel>
 			<caption>НТВ HD</caption>
 			<channel_id>213</channel_id>
-			<epg_id>2001</epg_id>
+			<epg_id>162</epg_id>
 			<tvg_id>4</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2001.png</icon_url>
 			<tv_category_id>2</tv_category_id>
-			<archive>1</archive>
+			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Рен ТВ HD</caption>
 			<channel_id>2024</channel_id>
-			<epg_id>2487</epg_id>
+			<epg_id>18</epg_id>
 			<tvg_id>103</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2487.png</icon_url>
 			<tv_category_id>2</tv_category_id>
-			<archive>1</archive>
+			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТВ3 HD</caption>
 			<channel_id>5033</channel_id>
-			<epg_id>2766</epg_id>
+			<epg_id>698</epg_id>
 			<tvg_id>105</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2766.png</icon_url>
 			<tv_category_id>2</tv_category_id>
-			<archive>1</archive>
+			<archive>3</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>ТНТ HD</caption>
 			<channel_id>237</channel_id>
-			<epg_id>1767</epg_id>
+			<epg_id>353</epg_id>
 			<tvg_id>2227</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/1767.png</icon_url>
 			<tv_category_id>2</tv_category_id>
-			<archive>1</archive>
+			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Пятница! HD</caption>
 			<channel_id>5031</channel_id>
-			<epg_id>2765</epg_id>
+			<epg_id>1003</epg_id>
 			<tvg_id>1671</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2765.png</icon_url>
 			<tv_category_id>2</tv_category_id>
-			<archive>1</archive>
+			<archive>3</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>СТС HD</caption>
@@ -397,13 +397,21 @@
 			<archive>3</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>Gametoon HD</caption>
+			<channel_id>5049</channel_id>
+			<epg_id>2770</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2770.png</icon_url>
+			<tv_category_id>2</tv_category_id>
+			<archive>3</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Россия-24</caption>
 			<channel_id>507</channel_id>
 			<epg_id>1683</epg_id>
 			<tvg_id>676</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/1683.png</icon_url>
 			<tv_category_id>3</tv_category_id>
-			<archive>1</archive>
+			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>РБК-ТВ</caption>
@@ -426,11 +434,11 @@
 		<tv_channel>
 			<caption>Мир 24 HD</caption>
 			<channel_id>2107</channel_id>
-			<epg_id>2510</epg_id>
+			<epg_id>2078</epg_id>
 			<tvg_id>400009</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2510.png</icon_url>
 			<tv_category_id>3</tv_category_id>
-			<archive>1</archive>
+			<archive>3</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Euronews HD</caption>
@@ -491,6 +499,14 @@
 			<tv_category_id>3</tv_category_id>
 		</tv_channel>
 		<tv_channel>
+			<caption>Центральное телевидение</caption>
+			<channel_id>2064</channel_id>
+			<epg_id>2400</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2400.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>3</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>CNBC HD</caption>
 			<channel_id>962</channel_id>
 			<epg_id>789</epg_id>
@@ -523,10 +539,11 @@
 		<tv_channel>
 			<caption>Дождь HD</caption>
 			<channel_id>6308</channel_id>
-			<epg_id>3267</epg_id>
+			<epg_id>2399</epg_id>
 			<tvg_id>300108</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/3267.png</icon_url>
 			<tv_category_id>3</tv_category_id>
+			<archive>3</archive>
 			<disabled>true</disabled>
 		</tv_channel>
 		<tv_channel>
@@ -5742,7 +5759,7 @@
 			<epg_id>2770</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2770.png</icon_url>
 			<tv_category_id>18</tv_category_id>
-			<archive>1</archive>
+			<archive>3</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Е HD</caption>
