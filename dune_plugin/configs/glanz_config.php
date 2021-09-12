@@ -79,4 +79,9 @@ class GlanzPluginConfig extends DefaultConfig
         $url = str_replace('{INT_ID}', strval($channel->get_number()), $url);
         return str_replace('{HOST}', $plugin_cookies->host, $url);
     }
+
+    public static function GetAccountStatus($plugin_cookies)
+    {
+        return static::GetAccountStreamInfo($plugin_cookies);
+    }
 }

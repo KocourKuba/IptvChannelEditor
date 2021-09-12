@@ -55,6 +55,8 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 {
 	UpdateData(TRUE);
 
+	m_accessKey.Empty();
+	m_domain.Empty();
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
 	if (utils::CrackUrl(utils::utf16_to_utf8(m_url.GetString())))

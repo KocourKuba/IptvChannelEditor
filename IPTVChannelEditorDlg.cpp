@@ -869,13 +869,17 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 				case StreamType::enSharavoz: // pin
 				case StreamType::enAntifriz:
 				case StreamType::enSharaclub:
-					if (!stream->get_token().empty() && !stream->get_domain().empty())
+				{
+					const auto& token = stream->get_token();
+					const auto& domain = stream->get_domain();
+					if (!token.empty() && token != "00000000000000" && !domain.empty() && domain != "localhost")
 					{
 						m_token = stream->get_token();
 						m_domain = stream->get_domain();
 					}
 					bSet = true;
 					break;
+				}
 				case StreamType::enGlanz: // login/pass
 					if (!stream->get_token().empty()
 						&& !stream->get_domain().empty()
@@ -2495,7 +2499,8 @@ bool CIPTVChannelEditorDlg::SetupOttKey(bool loaded)
 
 	if (dlg.DoModal() == IDOK)
 	{
-		loaded = true;
+		loaded = utils::utf8_to_utf16(m_token) != dlg.m_accessKey.GetString() && utils::utf8_to_utf16(m_domain) != dlg.m_domain.GetString();
+
 		if (m_embedded_info != dlg.m_bEmbed)
 		{
 			m_embedded_info = dlg.m_bEmbed;
@@ -2532,12 +2537,17 @@ bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
 
 	if (dlg.DoModal() == IDOK)
 	{
-		loaded = true;
 		if (m_embedded_info != dlg.m_bEmbed)
 		{
 			m_embedded_info = dlg.m_bEmbed;
 			set_allow_save(TRUE);
 		}
+
+		loaded = m_token != dlg.m_entry->stream_uri->get_token()
+			&& m_domain != dlg.m_entry->stream_uri->get_domain()
+			&& m_login != dlg.m_entry->stream_uri->get_login()
+			&& m_password != dlg.m_entry->stream_uri->get_password()
+			&& m_host != dlg.m_entry->stream_uri->get_host();
 
 		m_token = dlg.m_entry->stream_uri->get_token();
 		m_domain = dlg.m_entry->stream_uri->get_domain();
@@ -2551,6 +2561,7 @@ bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
 		SaveRegPlugin(m_embedded_info ? REG_PASSWORD_EMBEDDED : REG_PASSWORD, m_password.c_str());
 		SaveRegPlugin(m_embedded_info ? REG_HOST_EMBEDDED : REG_HOST, m_host.c_str());
 	}
+
 	return loaded;
 }
 
@@ -2570,12 +2581,15 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 
 	if (dlg.DoModal() == IDOK)
 	{
-		loaded = true;
 		if (m_embedded_info != dlg.m_bEmbed)
 		{
 			m_embedded_info = dlg.m_bEmbed;
 			set_allow_save(TRUE);
 		}
+
+		loaded = m_token != dlg.m_entry->stream_uri->get_token()
+			&& m_domain != dlg.m_entry->stream_uri->get_domain()
+			&& m_password != dlg.m_entry->stream_uri->get_password();
 
 		m_token = dlg.m_entry->stream_uri->get_token();
 		m_domain = dlg.m_entry->stream_uri->get_domain();

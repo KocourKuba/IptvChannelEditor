@@ -46,6 +46,7 @@ class SharaclubPluginConfig extends DefaultConfig
 
     public static function GetAccountStatus($plugin_cookies)
     {
+        // this account has special API to get account info
         if (empty($plugin_cookies->login) && empty($plugin_cookies->password))
             return false;
 

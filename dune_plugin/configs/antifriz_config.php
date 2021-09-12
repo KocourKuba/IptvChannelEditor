@@ -83,4 +83,9 @@ class AntifrizPluginConfig extends DefaultConfig
 
         return $url;
     }
+
+    public static function GetAccountStatus($plugin_cookies)
+    {
+        return static::GetAccountStreamInfo($plugin_cookies);
+    }
 }

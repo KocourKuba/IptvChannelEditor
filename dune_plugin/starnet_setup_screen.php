@@ -281,11 +281,15 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $defs, true);
 
                 case 'login_apply': // handle token dialog result
+                    $old_login = $plugin_cookies->login;
+                    $old_password = $plugin_cookies->password;
                     $plugin_cookies->login = $user_input->login;
                     $plugin_cookies->password = $user_input->password;
-                    if (!self::$config->GetAccountStreamInfo($plugin_cookies))
+                    if (!self::$config->GetAccountStreamInfo($plugin_cookies)) {
+                        $plugin_cookies->login = $old_login;
+                        $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
-
+                    }
                     $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
                     return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
 
@@ -295,10 +299,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $defs, true);
 
                 case 'pin_apply': // handle token dialog result
+                    $old_password = $plugin_cookies->password;
                     $plugin_cookies->password = $user_input->password;
-                    if (!self::$config->GetAccountStreamInfo($plugin_cookies))
+                    if (!self::$config->GetAccountStreamInfo($plugin_cookies)) {
+                        $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
-
+                    }
                     $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
                     return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
 

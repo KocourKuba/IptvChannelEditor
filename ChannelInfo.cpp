@@ -105,7 +105,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// Only if channel not templated. Otherwise template handled by plugin
 	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{TOKEN}/127/index.m3u8</streaming_url>
-	if (!stream_uri->is_template())
+	if (!stream_uri->is_template() && !stream_uri->get_uri().empty())
 	{
 		channel_node->append_node(utils::alloc_node(alloc, STREAMING_URL, stream_uri->get_uri().c_str()));
 	}

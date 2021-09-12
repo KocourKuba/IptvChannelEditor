@@ -104,17 +104,22 @@ class StarnetPluginTv extends AbstractTv
         if (isset($xml->channels_setup))
         {
             hd_print("Overriding access settings found in playlist: $channels_list");
-            if (isset($xml->channels_setup->access_key))
+            if (isset($xml->channels_setup->access_key)) {
                 $plugin_cookies->ott_key_local = strval($xml->channels_setup->access_key);
-
-            if (isset($xml->channels_setup->access_domain))
+                hd_print("access_key: $plugin_cookies->ott_key_local");
+            }
+            if (isset($xml->channels_setup->access_domain)) {
                 $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
-
-            if (isset($xml->channels_setup->access_login))
+                hd_print("subdomain: $plugin_cookies->subdomain_local");
+            }
+            if (isset($xml->channels_setup->access_login)) {
                 $plugin_cookies->login_local = strval($xml->channels_setup->access_login);
-
-            if (isset($xml->channels_setup->access_password))
+                hd_print("login: $plugin_cookies->login_local");
+            }
+            if (isset($xml->channels_setup->access_password)) {
                 $plugin_cookies->password_local = strval($xml->channels_setup->access_password);
+                hd_print("password: $plugin_cookies->password_local");
+            }
         }
 
         self::$config->GetAccountStreamInfo($plugin_cookies);

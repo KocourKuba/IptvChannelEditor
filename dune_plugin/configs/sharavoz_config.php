@@ -23,4 +23,9 @@ class SharavozPluginConfig extends DefaultConfig
     public static $CHANNELS_LIST = 'sharavoz_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
     protected static $EPG2_URL_TEMPLATE = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
+
+    public static function GetAccountStatus($plugin_cookies)
+    {
+        return static::GetAccountStreamInfo($plugin_cookies);
+    }
 }

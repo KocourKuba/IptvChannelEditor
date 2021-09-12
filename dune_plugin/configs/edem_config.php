@@ -18,9 +18,4 @@ class EdemPluginConfig extends DefaultConfig
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
     protected static $EPG2_URL_TEMPLATE = 'http://www.teleguide.info/kanal%s_%s.html'; // epg_id date(YYYYMMDD)
     protected static $EPG2_PARSER = 'html';
-
-    public static function GetAccountStreamInfo($plugin_cookies)
-    {
-        return false;
-    }
 }
