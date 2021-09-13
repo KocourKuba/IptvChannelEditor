@@ -2720,6 +2720,7 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 	params.login = m_login;
 	params.password = m_password;
 	params.host = m_host;
+	params.shift_back = 0;
 
 	const auto max_threads = 2;
 
