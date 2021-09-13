@@ -416,6 +416,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 void CIPTVChannelEditorDlg::SwitchPlugin()
 {
 	// Rebuild available playlist types and set current plugin parameters
+	m_inSync = TRUE;
 	BOOL bStreamType = TRUE;
 	BOOL bPlaylist = TRUE;
 	m_token.clear();
@@ -771,6 +772,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 {
 	m_playlistEntries.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
 
+	m_inSync = FALSE;
 	m_wndPluginType.EnableWindow(TRUE);
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndProgressInfo.ShowWindow(SW_HIDE);
