@@ -36,8 +36,10 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        if (is_null($this->category_index))
-            $this->fetch_vod_categories($plugin_cookies);
+        $config = self::$config;
+
+        if (is_null($this->category_index) || is_null($this->category_list))
+            $config->fetch_vod_categories($plugin_cookies, $this->category_list, $this->category_index);
 
         $category_list = $this->category_list;
 
@@ -53,7 +55,6 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        $config = self::$config;
         if ($config::$VOD_FAVORITES_SUPPORTED && !isset($media_url->category_id)) {
 
             $items[] = array
@@ -103,50 +104,6 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
     }
 
     ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @throws Exception
-     */
-    private function fetch_vod_categories($plugin_cookies)
-    {
-        $config = self::$config;
-        $url = sprintf($config::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies->login, $plugin_cookies->password);
-        try {
-            $doc = HD::http_get_document($url);
-            $categories = json_decode($doc, true);
-            if (empty($categories)) {
-                hd_print("empty playlist or not valid token");
-                return;
-            }
-        } catch (Exception $ex) {
-            hd_print("Unable to load movie categories: " . $ex->getMessage());
-            return;
-        }
-
-        file_put_contents(self::$config->GET_VOD_TMP_STORAGE_PATH(), json_encode($categories));
-
-        $this->category_list = array();
-        $this->category_index = array();
-
-        $this->fill_categories($categories, $this->category_list);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    private function fill_categories($categories, &$obj_arr)
-    {
-        $categoriesFound = array();
-
-        foreach ($categories as $movie) {
-
-            if (in_array($movie["category"], $categoriesFound)) continue;
-
-            array_push($categoriesFound, $movie["category"]);
-            $cat = new StarnetVodCategory(strval($movie["category"]), strval($movie["category"]));
-            $obj_arr[] = $cat;
-            $this->category_index[$cat->get_id()] = $cat;
-        }
-    }
 
     private function get_folder_views()
     {

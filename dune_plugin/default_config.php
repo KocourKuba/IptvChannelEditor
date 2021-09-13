@@ -6,6 +6,7 @@ abstract class DefaultConfig
 {
     const BG_PICTURE_TEMPLATE = 'plugin_file://icons/bg_%s.jpg';
     const TMP_STORAGE = "/tmp/%s_%s";
+    const VOD_PLAYLIST_NAME = 'vod_playlist.tmp';
 
     // info
     public static $PLUGIN_NAME = 'StarNet';
@@ -268,6 +269,15 @@ abstract class DefaultConfig
     /**
      * @throws Exception
      */
+    public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
+    {
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @throws Exception
+     */
     protected static function FetchTemplatedUrl($type, $template, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -315,7 +325,7 @@ abstract class DefaultConfig
      */
     public static function GET_VOD_TMP_STORAGE_PATH()
     {
-        return "/tmp/starnet_vod.json";
+        return static::GET_TMP_STORAGE_PATH(DefaultConfig::VOD_PLAYLIST_NAME);
     }
 
     /**

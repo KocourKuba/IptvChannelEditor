@@ -5,8 +5,7 @@ class SharaclubPluginConfig extends DefaultConfig
 {
     const ACCOUNT_INFO_URL1 = 'http://list.playtv.pro/api/dune-api5m.php?subscr=%s-%s';
     const ACCOUNT_INFO_URL2 = 'http://list.shara.tv/api/dune-api5m.php?subscr=%s-%s';
-    const SERIES_VOD_PATTERN = '/^https?:\/\/([\w\.]+)\/series\/.+\.mp4([\w\.]+)$/';
-    const VOD_PLAYLIST_NAME = 'vod_playlist.json';
+    const SERIES_VOD_PATTERN = '|^https?://(.+)/series/.+\.mp4(.+)$|';
 
     // info
     public static $PLUGIN_NAME = 'Sharaclub TV';
@@ -35,14 +34,6 @@ class SharaclubPluginConfig extends DefaultConfig
 
     // vod
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
-
-    /**
-     * @return string
-     */
-    public static function GET_VOD_TMP_STORAGE_PATH()
-    {
-        return static::GET_TMP_STORAGE_PATH(self::VOD_PLAYLIST_NAME);
-    }
 
     public static function GetAccountStatus($plugin_cookies)
     {
@@ -81,7 +72,7 @@ class SharaclubPluginConfig extends DefaultConfig
     public static function TryLoadMovie($movie_id, $plugin_cookies)
     {
         $movie = new Movie($movie_id);
-        $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
+        $jsonItems = HD::parse_json_file(static::GET_VOD_TMP_STORAGE_PATH());
         foreach ($jsonItems as $item) {
 
             $id = -1;
@@ -145,6 +136,43 @@ class SharaclubPluginConfig extends DefaultConfig
 
         return $movie;
     }
+
+    /**
+     * @throws Exception
+     */
+    public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
+    {
+        $url = sprintf(self::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies->login, $plugin_cookies->password);
+        try {
+            $doc = HD::http_get_document($url);
+            $categories = json_decode($doc, true);
+            if (empty($categories)) {
+                hd_print("empty playlist or not valid token");
+                return;
+            }
+        } catch (Exception $ex) {
+            hd_print("Unable to load movie categories: " . $ex->getMessage());
+            return;
+        }
+
+        file_put_contents(self::GET_VOD_TMP_STORAGE_PATH(), json_encode($categories));
+
+        $category_list = array();
+        $category_index = array();
+
+        $categoriesFound = array();
+
+        foreach ($categories as $movie) {
+            if (in_array($movie["category"], $categoriesFound)) continue;
+
+            array_push($categoriesFound, $movie["category"]);
+            $cat = new StarnetVodCategory(strval($movie["category"]), strval($movie["category"]));
+            $category_list[] = $cat;
+            $category_index[$cat->get_id()] = $cat;
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////
 
     /**
      * @throws Exception
