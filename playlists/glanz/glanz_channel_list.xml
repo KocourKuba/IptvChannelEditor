@@ -1602,7 +1602,7 @@
 			<caption>Премиальное HD</caption>
 			<channel_id>4505</channel_id>
 			<int_id>231</int_id>
-			<epg_id>kinopremium-hd</epg_id>
+			<epg_id>premialnoe-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4505.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1611,7 +1611,7 @@
 			<caption>Наше HD</caption>
 			<channel_id>6359</channel_id>
 			<int_id>232</int_id>
-			<epg_id>nash-detektiv</epg_id>
+			<epg_id>nashehd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6359.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1620,7 +1620,7 @@
 			<caption>Душевное HD</caption>
 			<channel_id>4416</channel_id>
 			<int_id>233</int_id>
-			<epg_id>nash-kinoroman</epg_id>
+			<epg_id>dushevnoe-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4416.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1764,7 +1764,7 @@
 			<caption>Шокирующее HD</caption>
 			<channel_id>7023</channel_id>
 			<int_id>249</int_id>
-			<epg_id>kinopokaz-hd1</epg_id>
+			<epg_id>shokiruyushchee-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7023.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -1773,7 +1773,7 @@
 			<caption>Комедийное HD</caption>
 			<channel_id>4010</channel_id>
 			<int_id>250</int_id>
-			<epg_id>kinopokaz-hd2</epg_id>
+			<epg_id>komedijnoe-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4010.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2457,7 +2457,7 @@
 			<caption>Премиальное HD PREMIUM+</caption>
 			<channel_id>7718</channel_id>
 			<int_id>693</int_id>
-			<epg_id>kinopremium-hd</epg_id>
+			<epg_id>premialnoe-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7718.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2664,7 +2664,7 @@
 			<caption>Премиальное HD 50fps</caption>
 			<channel_id>1505</channel_id>
 			<int_id>829</int_id>
-			<epg_id>kinopremium-hd</epg_id>
+			<epg_id>premialnoe-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/1505.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2862,7 +2862,7 @@
 			<caption>Шокирующее HD PREMIUM+</caption>
 			<channel_id>5128</channel_id>
 			<int_id>996</int_id>
-			<epg_id>kinopokaz-hd1</epg_id>
+			<epg_id>shokiruyushchee-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5128.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2871,7 +2871,7 @@
 			<caption>Комедийное HD PREMIUM+</caption>
 			<channel_id>5902</channel_id>
 			<int_id>997</int_id>
-			<epg_id>kinopokaz-hd2</epg_id>
+			<epg_id>komedijnoe-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5902.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2880,7 +2880,7 @@
 			<caption>Наше HD PREMIUM+</caption>
 			<channel_id>5794</channel_id>
 			<int_id>1011</int_id>
-			<epg_id>nash-detektiv</epg_id>
+			<epg_id>nashehd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/5794.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -2889,7 +2889,7 @@
 			<caption>Душевное HD PREMIUM+</caption>
 			<channel_id>6176</channel_id>
 			<int_id>1012</int_id>
-			<epg_id>nash-kinoroman</epg_id>
+			<epg_id>dushevnoe-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/6176.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
@@ -4557,7 +4557,7 @@
 			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>КХЛ ТВ</caption>
+			<caption>KHL</caption>
 			<channel_id>2957</channel_id>
 			<int_id>300</int_id>
 			<epg_id>kxl</epg_id>
@@ -4566,7 +4566,7 @@
 			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>КХЛ HD</caption>
+			<caption>KHL HD</caption>
 			<channel_id>6328</channel_id>
 			<int_id>301</int_id>
 			<epg_id>kxl-hd</epg_id>
@@ -4800,7 +4800,7 @@
 			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>КХЛ HD PREMIUM+</caption>
+			<caption>KHL HD PREMIUM+</caption>
 			<channel_id>3069</channel_id>
 			<int_id>493</int_id>
 			<epg_id>kxl-hd</epg_id>
@@ -5142,7 +5142,7 @@
 			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>КХЛ HD 50fps</caption>
+			<caption>KHL HD 50fps</caption>
 			<channel_id>5079</channel_id>
 			<int_id>777</int_id>
 			<epg_id>kxl-hd</epg_id>

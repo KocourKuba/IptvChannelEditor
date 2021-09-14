@@ -398,6 +398,7 @@
 			<epg_id>rt-doc</epg_id>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/rt-doc.png</icon_url>
 			<tv_category_id>1</tv_category_id>
+			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>RT Док HD</caption>
@@ -435,6 +436,14 @@
 			<channel_id>nastoyaschee-vremya-hd</channel_id>
 			<epg_id>nastoyaschee-vremya-hd</epg_id>
 			<icon_url>https://antifriz.tv/storage/images/channel_logos/nastoyaschee-vremya-hd.png</icon_url>
+			<tv_category_id>1</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Союз</caption>
+			<channel_id>souz</channel_id>
+			<epg_id>souz</epg_id>
+			<icon_url>https://antifriz.tv/storage/images/pack_logos/740cd092717cc4c933e53166d92956a3.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -534,6 +543,13 @@
 			<channel_id>al-jazeera-hd</channel_id>
 			<epg_id>al-jazeera-hd</epg_id>
 			<icon_url>https://antifriz.tv/storage/images/pack_logos/ce79433e2a4f213677c2a85091b5f8fe.png</icon_url>
+			<tv_category_id>2</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Sky News</caption>
+			<channel_id>sky-news-uk</channel_id>
+			<epg_id>sky-news-uk</epg_id>
+			<icon_url>https://antifriz.tv/storage/images/pack_logos/fe521f5b8705418ce9d2ec1801f6029e.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 	</tv_channels>
