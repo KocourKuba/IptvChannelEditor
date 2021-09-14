@@ -328,6 +328,7 @@ private:
 	COLORREF m_gray;
 	COLORREF m_red;
 	COLORREF m_green;
+	COLORREF m_brown;
 
 	// Icons entries
 	std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_Icons;

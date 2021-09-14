@@ -89,7 +89,7 @@ public:
 	std::wstring get_filesystem_path(const std::wstring& root) const;
 
 	bool operator==(const uri_base& src) const { return src.get_schema() == schema && src.get_path() == path; }
-	bool operator!=(const uri_base& src) const { return src.get_schema() != schema && src.get_path() != path; }
+	bool operator!=(const uri_base& src) const { return src.get_schema() != schema || src.get_path() != path; }
 
 protected:
 	std::string schema;

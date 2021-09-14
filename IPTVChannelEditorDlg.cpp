@@ -222,6 +222,7 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
 	m_red = RGB(200, 0, 0);
 	m_green = RGB(0, 200, 0);
+	m_brown = RGB(226, 135, 67);
 }
 
 void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
@@ -1093,8 +1094,24 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 			auto channel = (ChannelInfo*)m_wndChannelsTree.GetItemData(hItem);
 			if (channel)
 			{
-				bool bFound = m_playlistMap.find(channel->stream_uri->get_id()) != m_playlistMap.end();
-				COLORREF color = channel->is_disabled() ? m_gray : (bFound ? m_green : m_normal);
+				auto found = m_playlistMap.find(channel->stream_uri->get_id());
+				COLORREF color = m_normal;
+				if (channel->is_disabled())
+					color = m_gray;
+				else if (found != m_playlistMap.end())
+				{
+					const auto& entry = found->second;
+					if (channel->get_title() != entry->get_title()
+						|| channel->get_epg1_id() != entry->get_epg1_id()
+						|| !entry->get_icon_uri().get_uri().empty() && channel->get_icon_uri().get_uri() != entry->get_icon_uri().get_uri()
+						|| channel->get_archive_days() == 0 && channel->get_archive_days() != entry->get_archive_days()
+						)
+						color = m_brown;
+					else
+						color = m_green;
+
+				}
+
 				m_wndChannelsTree.SetItemColor(hItem, color);
 			}
 			// get the next sibling item
@@ -1192,6 +1209,10 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 
 	m_infoAudio.Empty();
 	m_infoVideo.Empty();
+	m_plIconName.Empty();
+	m_plID.Empty();
+	m_archivePlDays = 0;
+	m_wndPlArchive.SetCheck(0);
 
 	auto entry = GetPlaylistEntry(hItem);
 	if (entry)
@@ -1213,9 +1234,13 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 
 		const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
 		utils::SetImage(img, m_wndPlIcon);
-
-		UpdateData(FALSE);
 	}
+	else
+	{
+		m_wndChannelIcon.SetBitmap(nullptr);
+	}
+
+	UpdateData(FALSE);
 }
 
 ChannelInfo* CIPTVChannelEditorDlg::GetChannel(HTREEITEM hItem) const
@@ -3298,6 +3323,7 @@ void CIPTVChannelEditorDlg::OnUpdateIcon()
 		const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
 		utils::SetImage(img, m_wndChannelIcon);
 
+		CheckForExistingChannels();
 		OnSyncTreeItem();
 		set_allow_save();
 	}
@@ -3614,10 +3640,8 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 			m_lastTree == &m_wndChannelsTree && m_playlistMap.find(params.id) != m_playlistMap.end())
 		{
 			CTreeCtrlEx* opposite = nullptr;
-			LPCSTR tree = "Playlist";
 			if (m_lastTree == &m_wndPlaylistTree)
 			{
-				tree = "Channels";
 				opposite = &m_wndChannelsTree;
 			}
 			else
@@ -3774,6 +3798,7 @@ void CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams&
 	}
 
 	// cyclic search thru channel list
+	bool bFound = false;
 	HTREEITEM hFound = nullptr;
 	while (root != nullptr)
 	{
@@ -3790,6 +3815,7 @@ void CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams&
 				{
 					if (entry->stream_uri->get_id() == searchParams.id)
 					{
+						bFound = true;
 						hFound = hItem;
 						break;
 					}
@@ -3798,6 +3824,7 @@ void CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams&
 				{
 					if (entry->stream_uri->get_hash() == searchParams.hash)
 					{
+						bFound = true;
 						hFound = hItem;
 						break;
 					}
@@ -3806,6 +3833,7 @@ void CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams&
 				{
 					if (StrStrI(entry->get_title().c_str(), searchParams.searchString.GetString()) != nullptr)
 					{
+						bFound = true;
 						hFound = hItem;
 						break;
 					}
@@ -3832,7 +3860,7 @@ void CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams&
 		hItem = ctl.GetChildItem(root);
 	}
 
-	if (hFound)
+	if (bFound)
 	{
 		ctl.SelectItem(hFound);
 		ctl.Expand(ctl.GetParentItem(hFound), TVE_EXPAND);
