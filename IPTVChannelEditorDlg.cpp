@@ -1166,7 +1166,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		m_epgID2 = channel->get_epg2_id().c_str();
 
 		m_streamUrl = channel->stream_uri->get_uri().c_str();
-		m_streamID = channel->stream_uri->get_id().c_str();
+		m_streamID = channel->stream_uri->is_template() ? channel->stream_uri->get_id().c_str() : "";
 		auto hash = channel->stream_uri->get_hash();
 		if (auto pair = m_stream_infos.find(hash); pair != m_stream_infos.end())
 		{

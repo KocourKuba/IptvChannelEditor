@@ -66,7 +66,8 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <channel_id>1</channel_id> or <channel_id>tv3</channel_id>
-	channel_node->append_node(utils::alloc_node(alloc, CHANNEL_ID, stream_uri->get_id().c_str()));
+	if (stream_uri->is_template())
+		channel_node->append_node(utils::alloc_node(alloc, CHANNEL_ID, stream_uri->get_id().c_str()));
 
 	// used in glanz
 	// <int_id>1</int_id>
