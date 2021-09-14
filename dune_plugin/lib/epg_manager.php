@@ -111,10 +111,10 @@ class EpgManager
         else
             $data = $ch_data; // sharaclub
 
-        foreach ($data as $channel) {
-            if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
-                $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
-                $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
+        foreach ($data as $entry) {
+            if ($entry->time >= $epg_date_start and $entry->time < $epg_date_end) {
+                $epg[$entry->time]['title'] = HD::unescape_entity_string($entry->name);
+                $epg[$entry->time]['desc'] = HD::unescape_entity_string($entry->descr);
             }
         }
         return $epg;
