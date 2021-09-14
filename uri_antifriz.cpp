@@ -7,7 +7,7 @@ static constexpr auto URI_TEMPLATE_HLS = "http://{SUBDOMAIN}/s/{TOKEN}/{ID}/vide
 static constexpr auto URI_TEMPLATE_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/antifriz/epg/{:s}.json";
+static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/php/show_prog.php?f=antifriz/epg/{:s}.json";
 
 void uri_antifriz::parse_uri(const std::string& url)
 {
