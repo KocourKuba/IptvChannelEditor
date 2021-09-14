@@ -3971,7 +3971,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 		needCheckExisting = true;
 	}
 
-	if (!entry->get_archive_days() && entry->get_archive_days() != entry->get_archive_days())
+	if (entry->get_archive_days() && channel->get_archive_days() != entry->get_archive_days())
 	{
 		channel->set_archive_days(entry->get_archive_days());
 		needCheckExisting = true;
