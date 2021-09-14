@@ -204,9 +204,9 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,53,78,50,14
     LTEXT           "Player m3u8 (for example Media Player Classic)",IDC_STATIC,7,7,218,8
-    CONTROL         "",IDC_MFCEDITBROWSE_PLAYER,"MfcEditBrowse",WS_BORDER | WS_TABSTOP,7,18,216,14
+    CONTROL         "",IDC_MFCEDITBROWSE_PLAYER,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x800,7,18,216,14
     LTEXT           "FFProbe (https://ffmpeg.org)",IDC_STATIC,7,35,218,8
-    CONTROL         "",IDC_MFCEDITBROWSE_PROBE,"MfcEditBrowse",WS_BORDER | WS_TABSTOP,7,46,216,14
+    CONTROL         "",IDC_MFCEDITBROWSE_PROBE,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x800,7,46,216,14
     PUSHBUTTON      "Cancel",IDCANCEL,129,78,50,14
     CONTROL         "Sync Channel with Playlist Entry",IDC_CHECK_AUTO_SYNC_CHANNELS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,65,138,10

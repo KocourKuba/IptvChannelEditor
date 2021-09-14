@@ -2,10 +2,11 @@
 //
 
 #include "StdAfx.h"
+#include <filesystem>
+
 #include "IPTVChannelEditor.h"
 #include "SettingsDlg.h"
 #include "afxdialogex.h"
-
 
 // CSettingsDlg dialog
 
@@ -24,7 +25,7 @@ CSettingsDlg::CSettingsDlg(CWnd* pParent /*=nullptr*/)
 
 void CSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLAYER, m_player);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PROBE, m_probe);
@@ -35,7 +36,7 @@ void CSettingsDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CSettingsDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	CString filter(_T("EXE file(*.exe)|*.exe|All Files (*.*)|*.*||"));
 	m_wndPlayer.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
