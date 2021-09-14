@@ -148,28 +148,6 @@ abstract class DefaultConfig
     public static function GetAccountStreamInfo($plugin_cookies)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
-        switch (static::$ACCOUNT_TYPE)
-        {
-            case 'OTT_KEY':
-                if ((empty($plugin_cookies->ott_key) || empty($plugin_cookies->subdomain)) &&
-                    (empty($plugin_cookies->ott_key_local) || empty($plugin_cookies->subdomain_local))) {
-                    hd_print("OTT key or subdomain not set");
-                    return false;
-                }
-                break;
-            case 'LOGIN':
-                if (empty($plugin_cookies->login) || empty($plugin_cookies->password)) {
-                    hd_print("Login or password not set");
-                    return false;
-                }
-                break;
-            case 'PIN':
-                if (empty($plugin_cookies->password)) {
-                    hd_print("Password not set");
-                    return false;
-                }
-                break;
-        }
 
         $found = false;
         try {
@@ -284,12 +262,33 @@ abstract class DefaultConfig
         // hd_print("Template: $template");
 
         if ($type == 'LOGIN') {
-            $url = sprintf($template, $plugin_cookies->login, $plugin_cookies->password);
+            $login = $plugin_cookies->login_local;
+            if (empty($login)) {
+                $login = $plugin_cookies->login;
+            }
+
+            $password = $plugin_cookies->password_local;
+            if (empty($password)) {
+                $password = $plugin_cookies->password;
+            }
+
+            if (empty($login) || empty($password))
+                throw new Exception("Login or password not set");
+
+            $url = sprintf($template, $login, $password);
         }
         else if ($type == 'PIN') {
-            $url = sprintf($template, $plugin_cookies->password);
+            $password = $plugin_cookies->password_local;
+            if (empty($password)) {
+                $password = $plugin_cookies->password;
+            }
+
+            if (empty($password))
+                throw new Exception("Password not set");
+
+            $url = sprintf($template, $password);
         } else {
-            throw new Exception("Unknown scheme");
+            throw new Exception("Unknown auth scheme");
         }
 
         return HD::http_get_document($url);

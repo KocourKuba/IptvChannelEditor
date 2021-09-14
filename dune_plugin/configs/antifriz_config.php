@@ -15,7 +15,7 @@ class AntifrizPluginConfig extends DefaultConfig
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://antifriz.tv/playlist/%s.m3u8';
-    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/.+/video\.m3u8$|';
+    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?:.+)/.*$|';
 
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';

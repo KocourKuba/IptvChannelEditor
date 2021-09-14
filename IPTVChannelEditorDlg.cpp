@@ -1365,12 +1365,12 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 				break;
 			case StreamType::enSharavoz:
 			case StreamType::enAntifriz:
-				m_password = utils::get_value_string(setup_node->first_node(utils::ACCESS_TOKEN));
+				m_password = utils::get_value_string(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			case StreamType::enGlanz:
 			case StreamType::enSharaclub:
 				m_login = utils::get_value_string(setup_node->first_node(utils::ACCESS_LOGIN));
-				m_password = utils::get_value_string(setup_node->first_node(utils::ACCESS_TOKEN));
+				m_password = utils::get_value_string(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			default:
 				break;
@@ -2808,12 +2808,12 @@ void CIPTVChannelEditorDlg::OnSave()
 					break;
 				case StreamType::enSharavoz: // pin
 				case StreamType::enAntifriz:
-					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_TOKEN, m_password.c_str()));
+					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, m_password.c_str()));
 					break;
 				case StreamType::enSharaclub:
 				case StreamType::enGlanz: // login/pass
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_LOGIN, m_login.c_str()));
-					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_TOKEN, m_password.c_str()));
+					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, m_password.c_str()));
 					break;
 				default:
 					break;

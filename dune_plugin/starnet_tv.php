@@ -74,6 +74,7 @@ class StarnetPluginTv extends AbstractTv
      */
     public function load_channels(&$plugin_cookies)
     {
+        $config = self::$config;
         $channels_list = $this->get_channel_list_url($plugin_cookies);
         hd_print("Channels list: $channels_list");
 
@@ -101,28 +102,37 @@ class StarnetPluginTv extends AbstractTv
         $plugin_cookies->subdomain_local = "";
         $plugin_cookies->login_local = "";
         $plugin_cookies->password_local = "";
+
         if (isset($xml->channels_setup))
         {
             hd_print("Overriding access settings found in playlist: $channels_list");
-            if (isset($xml->channels_setup->access_key)) {
-                $plugin_cookies->ott_key_local = strval($xml->channels_setup->access_key);
-                hd_print("access_key: $plugin_cookies->ott_key_local");
+            if ($config::$ACCOUNT_TYPE == 'OTT_KEY') {
+                if (isset($xml->channels_setup->access_key)) {
+                    $plugin_cookies->ott_key_local = strval($xml->channels_setup->access_key);
+                    hd_print("access_key: $plugin_cookies->ott_key_local");
+                }
+                if (isset($xml->channels_setup->access_domain)) {
+                    $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
+                    hd_print("subdomain: $plugin_cookies->subdomain_local");
+                }
             }
-            if (isset($xml->channels_setup->access_domain)) {
-                $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
-                hd_print("subdomain: $plugin_cookies->subdomain_local");
+
+            if ($config::$ACCOUNT_TYPE == 'LOGIN') {
+                if (isset($xml->channels_setup->access_login)) {
+                    $plugin_cookies->login_local = strval($xml->channels_setup->access_login);
+                    hd_print("login: $plugin_cookies->login_local");
+                }
             }
-            if (isset($xml->channels_setup->access_login)) {
-                $plugin_cookies->login_local = strval($xml->channels_setup->access_login);
-                hd_print("login: $plugin_cookies->login_local");
-            }
-            if (isset($xml->channels_setup->access_password)) {
-                $plugin_cookies->password_local = strval($xml->channels_setup->access_password);
-                hd_print("password: $plugin_cookies->password_local");
+
+            if ($config::$ACCOUNT_TYPE == 'LOGIN' || $config::$ACCOUNT_TYPE == 'PIN') {
+                if (isset($xml->channels_setup->access_password)) {
+                    $plugin_cookies->password_local = strval($xml->channels_setup->access_password);
+                    hd_print("password: $plugin_cookies->password_local");
+                }
             }
         }
 
-        self::$config->GetAccountStreamInfo($plugin_cookies);
+        $config::GetAccountStreamInfo($plugin_cookies);
 
         // Create channels and groups
         $this->channels = new HashedArray();
@@ -168,7 +178,6 @@ class StarnetPluginTv extends AbstractTv
             // calculate unique id from url hash
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = strval($xml_tv_channel->channel_id);
-                $config = self::$config;
                 $streaming_url = $config::$MEDIA_URL_TEMPLATE_HLS;
                 $hash = hash("crc32", (str_replace('{ID}', $xml_tv_channel->channel_id, $config::$MEDIA_URL_TEMPLATE_HLS)));
             } else {
