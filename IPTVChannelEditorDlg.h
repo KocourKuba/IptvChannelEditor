@@ -135,6 +135,7 @@ protected:
 	afx_msg void OnCbnSelchangeComboPluginType();
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
+	afx_msg void OnCbnSelchangeComboStreamType();
 	afx_msg void OnAddToFavorite();
 	afx_msg void OnUpdateAddToFavorite(CCmdUI* pCmdUI);
 	afx_msg void OnCopyTo(UINT id);
@@ -315,9 +316,11 @@ private:
 	BOOL m_bAutoSync = FALSE;
 	BOOL m_allow_save = FALSE;
 	bool m_menu_enable_channel = false;
-	BOOL m_loading = FALSE;
-	BOOL m_inSync = FALSE;
+	bool m_loading = false;
+	bool m_inSync = false;
 	bool m_bInFillTree = false;
+	bool m_blockChecking = false;
+
 	StreamType m_pluginType = StreamType::enEdem;
 	CString m_pluginName;
 	int m_lastIconSelected = 0;
@@ -354,7 +357,5 @@ private:
 	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
 
 	serializable_map m_stream_infos;
-public:
-	afx_msg void OnCbnSelchangeComboStreamType();
 };
 

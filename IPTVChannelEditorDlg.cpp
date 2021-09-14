@@ -417,7 +417,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 void CIPTVChannelEditorDlg::SwitchPlugin()
 {
 	// Rebuild available playlist types and set current plugin parameters
-	m_inSync = TRUE;
+	m_inSync = true;
 	BOOL bStreamType = TRUE;
 	BOOL bPlaylist = TRUE;
 	m_token.clear();
@@ -542,11 +542,13 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_stream_infos.deserialize(dump);
 	}
 
+	m_blockChecking = true;
 	// Reload selected channels list
 	OnCbnSelchangeComboChannels();
 
 	// Reload selected playlist
 	OnCbnSelchangeComboPlaylist();
+	m_blockChecking = false;
 }
 
 std::wstring CIPTVChannelEditorDlg::GetPluginNameW(bool bCamel /*= false*/) const
@@ -739,7 +741,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		return;
 	}
 
-	m_loading = TRUE;
+	m_loading = true;
 
 	m_wndPluginType.EnableWindow(FALSE);
 	m_wndCheckArchive.EnableWindow(FALSE);
@@ -773,7 +775,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 {
 	m_playlistEntries.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
 
-	m_inSync = FALSE;
+	m_inSync = false;
 	m_wndPluginType.EnableWindow(TRUE);
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndProgressInfo.ShowWindow(SW_HIDE);
@@ -877,7 +879,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 
 	FillTreePlaylist();
 
-	m_loading = FALSE;
+	m_loading = false;
 	m_wndChooseUrl.EnableWindow(enableCustom);
 	m_wndDownloadUrl.EnableWindow(enableDownload);
 	m_wndPlaylist.EnableWindow(TRUE);
@@ -1080,6 +1082,9 @@ void CIPTVChannelEditorDlg::RemoveOrphanChannels()
 
 void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*/)
 {
+	if (m_blockChecking)
+		return;
+
 	TRACE("Start Check for existing\n");
 
 	if (root == nullptr)
@@ -3627,7 +3632,7 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 	if (m_loading || !m_lastTree || m_inSync)
 		return;
 
-	m_inSync = TRUE;
+	m_inSync = true;
 
 	CWaitCursor cur;
 	SearchParams params;
@@ -3653,7 +3658,7 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 		}
 	}
 
-	m_inSync = FALSE;
+	m_inSync = false;
 }
 
 void CIPTVChannelEditorDlg::OnUpdateSyncTreeItem(CCmdUI* pCmdUI)
