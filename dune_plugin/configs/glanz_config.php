@@ -204,7 +204,7 @@ class GlanzPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($category_id, $genre_id)
+    public static function getVideoList($idx)
     {
         $movies = array();
         $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -216,6 +216,12 @@ class GlanzPluginConfig extends DefaultConfig
             $caption = $matches[3];
             if(empty($category))
                 $category = 'Без категории';
+
+            $arr = explode("_", $idx);
+            if ($arr === false)
+                $category_id = $idx;
+            else
+                $category_id = $arr[0];
 
             if ($category_id == $category) {
                 $movies[] = new ShortMovie(strval($i), $caption, $logo);

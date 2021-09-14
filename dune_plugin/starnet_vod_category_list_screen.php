@@ -26,9 +26,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        return array(
-            GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
-        );
+        return array(GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),);
     }
 
     /**
@@ -84,9 +82,16 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
         );
 
         foreach ($category_list as $category) {
-            $media_url_str = is_null($category->get_sub_categories()) ?
-                StarnetVodListScreen::get_media_url_str($category->get_id(), null) :
-                self::get_media_url_str($category->get_id());
+            $id = $category->get_id();
+            if (!is_null($category->get_sub_categories())) {
+                $media_url_str = self::get_media_url_str($id);
+            } else  if($id == 'all' || $id == 'search') {
+                $media_url_str = StarnetVodListScreen::get_media_url_str($id, null);
+            } else if ($category->get_parent() != null) {
+                $media_url_str = StarnetVodListScreen::get_media_url_str($category->get_parent()->get_id(), $id);
+            } else {
+                $media_url_str = StarnetVodListScreen::get_media_url_str($id, null);
+            }
 
             $items[] = array
             (

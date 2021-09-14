@@ -4,8 +4,6 @@ require_once 'lib/vod/vod_list_screen.php';
 
 class StarnetVodListScreen extends VodListScreen
 {
-    public static $config = null;
-
     public function __construct(Vod $vod)
     {
         parent::__construct($vod);
@@ -27,14 +25,23 @@ class StarnetVodListScreen extends VodListScreen
      */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
+        //hd_print("get_short_movie_range");
+        static::$config->try_reset_pages();
+        $key = $media_url->category_id . "_" . $media_url->genre_id;
+
         if ($media_url->category_id == 'search') {
-            $movies = self::$config->getSearchList($media_url->genre_id);
+            $movies = static::$config->getSearchList($media_url->genre_id);
+        } else if ($media_url->category_id == 'all') {
+            $movies = static::$config->getVideoList($media_url->category_id);
         } else {
-            $movies = self::$config->getVideoList($media_url->category_id, $media_url->genre_id);
+            $movies = static::$config->getVideoList($media_url->category_id . "_" . $media_url->genre_id);
         }
 
-        if (count($movies))
-            return new ShortMovieRange($from_ndx, count($movies), $movies);
+        $count = count($movies);
+        if ($count) {
+            static::$config->add_movie_counter($key, $count);
+            return new ShortMovieRange($from_ndx, static::$config->get_movie_counter($key), $movies);
+        }
 
         return new ShortMovieRange(0, 0);
     }

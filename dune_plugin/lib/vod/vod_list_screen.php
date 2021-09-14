@@ -6,6 +6,8 @@ abstract class VodListScreen extends AbstractRegularScreen
 {
     const ID = 'vod_list';
 
+    public static $config = null;
+
     public $vod;
 
     protected function __construct(Vod $vod)
@@ -87,6 +89,7 @@ abstract class VodListScreen extends AbstractRegularScreen
      */
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
+        // hd_print("get_folder_range: $from_ndx");
         $movie_range = $this->get_short_movie_range($media_url, $from_ndx, $plugin_cookies);
 
         $total = intval($movie_range->total);
@@ -121,6 +124,9 @@ abstract class VodListScreen extends AbstractRegularScreen
 
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
+        //hd_print("get_folder_view");
+        static::$config->reset_movie_counter();
+
         $this->vod->clear_movie_cache();
         $this->vod->folder_entered($media_url, $plugin_cookies);
 

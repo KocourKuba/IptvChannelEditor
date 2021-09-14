@@ -205,8 +205,7 @@ class Movie
             $series_array[] = array(
                 PluginVodSeriesInfo::name => $series->name,
                 PluginVodSeriesInfo::playback_url => $series->playback_url,
-                PluginVodSeriesInfo::playback_url_is_stream_url =>
-                    $series->playback_url_is_stream_url,
+                PluginVodSeriesInfo::playback_url_is_stream_url => $series->playback_url_is_stream_url,
             );
         }
 

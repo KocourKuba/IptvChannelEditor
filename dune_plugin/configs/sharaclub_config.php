@@ -143,23 +143,14 @@ class SharaclubPluginConfig extends DefaultConfig
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = sprintf(self::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies->login, $plugin_cookies->password);
-        try {
-            $doc = HD::http_get_document($url);
-            $categories = json_decode($doc, true);
-            if (empty($categories)) {
-                hd_print("empty playlist or not valid token");
-                return;
-            }
-        } catch (Exception $ex) {
-            hd_print("Unable to load movie categories: " . $ex->getMessage());
+        $categories = static::LoadAndStoreJson($url, true, static::GET_VOD_TMP_STORAGE_PATH());
+        if ($categories === false)
+        {
             return;
         }
 
-        file_put_contents(self::GET_VOD_TMP_STORAGE_PATH(), json_encode($categories));
-
         $category_list = array();
         $category_index = array();
-
         $categoriesFound = array();
 
         foreach ($categories as $movie) {
@@ -195,10 +186,17 @@ class SharaclubPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($category_id, $genre_id)
+    public static function getVideoList($idx)
     {
         $movies = array();
         $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
+
+        $arr = explode("_", $idx);
+        if ($arr === false)
+            $category_id = $idx;
+        else
+            $category_id = $arr[0];
+
         foreach ($jsonItems as $item) {
             if ($category_id == $item["category"]) {
                 $movies[] = self::CreateMovie($item);
@@ -219,12 +217,12 @@ class SharaclubPluginConfig extends DefaultConfig
         else if (array_key_exists("series_id", $mov_array))
             $id = $mov_array["series_id"] . "season";
 
-        $movie = new ShortMovie(strval($id), strval($mov_array["name"]), strval($mov_array["info"]["poster"]));
+        $info_arr = $mov_array["info"];
+        $genres = HD::ArrayToStr($info_arr["genre"]);
+        $country = HD::ArrayToStr($info_arr["country"]);
+        $movie = new ShortMovie(strval($id), strval($mov_array["name"]), strval($info_arr["poster"]));
+        $movie->info = $mov_array["name"] . "|Год: " . $info_arr["year"] . "|Страна: $country|Жанр: $genres|Рейтинг: " . $info_arr["rating"];
 
-        $genres = HD::ArrayToStr($mov_array["info"]["genre"]);
-        $country = HD::ArrayToStr($mov_array["info"]["country"]);
-        $movie->info = $mov_array["name"] . "|Год: " . $mov_array["info"]["year"] . "|Страна: " . $country . "|Жанр: " . $genres . "|IMDB: " . $mov_array["info"]["rating"];
-
-        return $movie;
+        return  $movie;
     }
 }

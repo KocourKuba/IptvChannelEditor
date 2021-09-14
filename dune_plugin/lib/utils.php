@@ -146,7 +146,7 @@ class HD
                 curl_setopt($ch, $k, $v);
         }
 
-        hd_print("HTTP fetching '$url'...");
+        hd_print("HTTP fetching '$url'");
 
         $content = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -168,8 +168,6 @@ class HD
             hd_print($err_msg);
             throw new Exception($err_msg);
         }
-
-        hd_print("HTTP OK ($http_code)");
 
         curl_close($ch);
 
@@ -209,12 +207,12 @@ class HD
         return $xml;
     }
 
-    public static function parse_json_file($path)
+    public static function parse_json_file($path, $to_array = true)
     {
         return json_decode(file_get_contents(
             $path,
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES),
-            true);
+            $to_array);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -332,7 +330,7 @@ class HD
         $array = array();
         foreach ($arrayItems as $item) {
             if (!empty($item))
-                array_push($array, $item);
+                $array[] = $item;
         }
 
         return implode(", ", $array);

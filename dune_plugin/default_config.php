@@ -41,7 +41,10 @@ abstract class DefaultConfig
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://online.dune-hd.com/demo2/movie_list.pl?category_id=%s';
     public static $MOVIE_INFO_URL_TEMPLATE = 'http://online.dune-hd.com/demo2/movie_info.pl?movie_id=%s'; // not used yet
 
-    // EPG parsers html/json/xml
+    // page counter for some plugins
+    protected static $pages = array();
+    protected static $is_entered = false;
+    protected static $movie_counter = array();
 
     /////////////////////////////////////////////////////////////////////////////
     // views constants
@@ -82,6 +85,47 @@ abstract class DefaultConfig
 
     protected static $TV_CHANNEL_ICON_WIDTH = 84;
     protected static $TV_CHANNEL_ICON_HEIGHT = 48;
+
+    public static function try_reset_pages()
+    {
+        if (static::$is_entered) {
+            static::$is_entered = false;
+            static::$pages = array();
+        }
+    }
+
+    public static function reset_movie_counter()
+    {
+        static::$is_entered = true;
+        static::$movie_counter = array();
+    }
+
+    public static function get_movie_counter($key)
+    {
+        if (!array_key_exists($key, static::$movie_counter)) {
+            static::$movie_counter[$key] = 0;
+        }
+
+        return static::$movie_counter[$key];
+    }
+
+    public static function add_movie_counter($key, $val)
+    {
+        if (!array_key_exists($key, static::$movie_counter)) {
+            static::$movie_counter[$key] = 0;
+        }
+
+        static::$movie_counter[$key] += $val;
+    }
+
+    public static function get_next_page($idx)
+    {
+        if (!array_key_exists($idx, static::$pages)) {
+            static::$pages[$idx] = 0;
+        }
+
+        return ++static::$pages[$idx];
+    }
 
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
@@ -192,7 +236,7 @@ abstract class DefaultConfig
         return array();
     }
 
-    public static function getVideoList($category_id, $genre_id)
+    public static function getVideoList($idx)
     {
         return array();
     }
@@ -249,6 +293,45 @@ abstract class DefaultConfig
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
+    }
+
+    public static function LoadAndStoreJson($url, $to_array = true, $path = null)
+    {
+        try {
+            $doc = HD::http_get_document($url);
+            $categories = json_decode($doc, $to_array);
+            if (empty($categories)) {
+                hd_print("empty playlist or not valid token");
+                return false;
+            }
+
+            if (!empty($path))
+                file_put_contents($path, json_encode($categories));
+
+        } catch (Exception $ex) {
+            hd_print("Unable to load movie categories: " . $ex->getMessage());
+            return false;
+        }
+
+        return $categories;
+    }
+
+    public static function LoadAndStoreM3U($url)
+    {
+        try {
+            $doc = HD::http_get_document($url);
+            if (empty($doc)) {
+                hd_print("empty playlist or not valid token");
+                return false;
+            }
+
+            file_put_contents(static::GET_VOD_TMP_STORAGE_PATH(), $doc);
+        } catch (Exception $ex) {
+            hd_print("Unable to load movie categories: " . $ex->getMessage());
+            return false;
+        }
+
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////
