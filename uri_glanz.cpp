@@ -13,7 +13,7 @@ void uri_glanz::parse_uri(const std::string& url)
 	// http://str01.ottg.cc/9195/video.m3u8?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL
 	// http://str01.ottg.cc/9195/mpegts?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL
 
-	static std::regex re_url(R"(^https?:\/\/(.+)\/(\d+)\/(?:mpegts|.+\.m3u8)\?username=(.+)&password=(.+)&token=(.+)&ch_id=(\d+)&req_host=(.+)$)");
+	static std::regex re_url(R"(^https?:\/\/(.+)\/(.+)\/.+\?username=(.+)&password=(.+)&token=(.+)&ch_id=(\d+)&req_host=(.+)$)");
 	std::smatch m;
 	if (std::regex_match(url, m, re_url))
 	{
