@@ -776,7 +776,7 @@
 			<channel_id>3394</channel_id>
 			<int_id>1019</int_id>
 			<epg_id>zvezda-plus</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
+			<icon_url>http://pl.ottglanz.tv:80/icon/3394.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
 		</tv_channel>
@@ -785,7 +785,7 @@
 			<channel_id>3655</channel_id>
 			<int_id>1020</int_id>
 			<epg_id>tvcentr</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
+			<icon_url>http://pl.ottglanz.tv:80/icon/3655.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>14</archive>
 		</tv_channel>
@@ -794,7 +794,7 @@
 			<channel_id>4707</channel_id>
 			<int_id>1027</int_id>
 			<epg_id>tvci</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
+			<icon_url>http://pl.ottglanz.tv:80/icon/4707.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -803,7 +803,7 @@
 			<channel_id>5789</channel_id>
 			<int_id>1029</int_id>
 			<epg_id>mir</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
+			<icon_url>http://pl.ottglanz.tv:80/icon/5789.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -1551,14 +1551,6 @@
 			<int_id>981</int_id>
 			<epg_id>bcu-kinozal-prem-10</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/4522.png</icon_url>
-			<tv_category_id>3</tv_category_id>
-			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Prime 4k</caption>
-			<channel_id/>
-			<epg_id>prime-4k</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/prime_4k.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -2917,7 +2909,7 @@
 			<channel_id>4668</channel_id>
 			<int_id>1021</int_id>
 			<epg_id>sony-turbo</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
+			<icon_url>http://pl.ottglanz.tv:80/icon/4668.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -2926,7 +2918,7 @@
 			<channel_id>2251</channel_id>
 			<int_id>1022</int_id>
 			<epg_id>sony-scifi</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
+			<icon_url>http://pl.ottglanz.tv:80/icon/2251.png</icon_url>
 			<tv_category_id>4</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -4011,15 +4003,6 @@
 			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Nasa 4k (test)</caption>
-			<channel_id>7157</channel_id>
-			<int_id>670</int_id>
-			<epg_id>nasa4k</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/7157.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Наука 2.0 HD</caption>
 			<channel_id>5656</channel_id>
 			<int_id>677</int_id>
@@ -4298,15 +4281,6 @@
 			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Museum 4k</caption>
-			<channel_id>1156</channel_id>
-			<int_id>983</int_id>
-			<epg_id>museum-hd</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/1156.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Глазами туриста HD PREMIUM+</caption>
 			<channel_id>5590</channel_id>
 			<int_id>985</int_id>
@@ -4330,31 +4304,6 @@
 			<int_id>989</int_id>
 			<epg_id>history-eu</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/2134.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Глазами туриста 4k</caption>
-			<channel_id>3438</channel_id>
-			<int_id>1023</int_id>
-			<epg_id>glazami-turista-4k</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Aquarium 4k</caption>
-			<channel_id>4393</channel_id>
-			<int_id>1024</int_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>Travelxp 4k</caption>
-			<channel_id>1035</channel_id>
-			<int_id>1025</int_id>
-			<epg_id>travel-xp-4k</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -4607,15 +4556,6 @@
 			<int_id>389</int_id>
 			<epg_id>insight-ultra-hd</epg_id>
 			<icon_url>http://pl.ottglanz.tv:80/icon/7004.png</icon_url>
-			<tv_category_id>7</tv_category_id>
-			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Eurosport 4k PREMIUM+</caption>
-			<channel_id>9006</channel_id>
-			<int_id>391</int_id>
-			<epg_id>eurosport-4k</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/9006.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -5592,15 +5532,6 @@
 			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>One 4k (test)</caption>
-			<channel_id>5355</channel_id>
-			<int_id>671</int_id>
-			<epg_id>onemuz</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/5355.png</icon_url>
-			<tv_category_id>8</tv_category_id>
-			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Music Box GOLD</caption>
 			<channel_id>3147</channel_id>
 			<int_id>679</int_id>
@@ -5736,14 +5667,6 @@
 			<archive>7</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Наше Music 4k</caption>
-			<channel_id>1608</channel_id>
-			<int_id>1026</int_id>
-			<epg_id>nashe-music-hd</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
-			<tv_category_id>8</tv_category_id>
-		</tv_channel>
-		<tv_channel>
 			<caption>Русская ночь 18+</caption>
 			<channel_id>8930</channel_id>
 			<int_id>353</int_id>
@@ -5751,6 +5674,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/8930.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Brazzers EU HD 18+</caption>
@@ -5760,6 +5684,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/8917.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Шалун HD 18+</caption>
@@ -5769,6 +5694,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/7065.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Playboy TV 18+</caption>
@@ -5778,6 +5704,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/6534.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Dorcel HD 18+</caption>
@@ -5787,6 +5714,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/3467.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Redlight HD 18+</caption>
@@ -5796,6 +5724,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/5504.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Hustler HD 18+</caption>
@@ -5805,6 +5734,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/1971.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Brazzers TV 18+</caption>
@@ -5814,6 +5744,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/1143.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>XXL 18+</caption>
@@ -5823,6 +5754,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/8559.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Private HD 18+</caption>
@@ -5832,6 +5764,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/1265.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Vivid Red HD 18+</caption>
@@ -5841,6 +5774,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/4639.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>FrenchLOVER 18+</caption>
@@ -5850,6 +5784,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/3567.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>SEXTOSENSO 18+</caption>
@@ -5859,6 +5794,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/9259.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Barely Legal TV 18+</caption>
@@ -5868,6 +5804,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/5182.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Digital Desire HD 18+</caption>
@@ -5877,6 +5814,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/3797.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>PassionXXX 18+</caption>
@@ -5886,6 +5824,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/6774.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>О-ля-ля 18+</caption>
@@ -5895,6 +5834,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/8942.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Babes TV HD 18+</caption>
@@ -5904,6 +5844,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/4736.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Eroxxx HD 18+</caption>
@@ -5913,24 +5854,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/2288.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Cum4k UHD 18+</caption>
-			<channel_id>6057</channel_id>
-			<int_id>868</int_id>
-			<epg_id>cum4k</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/6057.png</icon_url>
-			<tv_category_id>9</tv_category_id>
-			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Tiny4k UHD 18+</caption>
-			<channel_id>8538</channel_id>
-			<int_id>869</int_id>
-			<epg_id>tiny4k</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/8538.png</icon_url>
-			<tv_category_id>9</tv_category_id>
-			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Blue Hustler 18+</caption>
@@ -5940,6 +5864,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/2341.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 		<tv_channel>
 			<caption>Penthouse Quickies HD 18+</caption>
@@ -5949,15 +5874,7 @@
 			<icon_url>http://pl.ottglanz.tv:80/icon/6012.png</icon_url>
 			<tv_category_id>9</tv_category_id>
 			<archive>7</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Eromania 4k 18+</caption>
-			<channel_id>5918</channel_id>
-			<int_id>1016</int_id>
-			<epg_id>eromania4k</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/5918.png</icon_url>
-			<tv_category_id>9</tv_category_id>
-			<archive>7</archive>
+			<protected>1</protected>
 		</tv_channel>
 	</tv_channels>
 </tv_info>
