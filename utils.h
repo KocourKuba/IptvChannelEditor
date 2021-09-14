@@ -6,8 +6,10 @@ namespace utils
 	static constexpr auto DUNE_PLUGIN_NAME = _T("dune_plugin_{:s}_mod.zip");
 	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/shablon.png";
 
+	static constexpr auto VERSION_INFO = "version_info";
+	static constexpr auto LIST_VERSION = "list_version";
 	static constexpr auto CHANNELS_SETUP = "channels_setup";
-	static constexpr auto ACCESS_TOKEN = "access_key"; // token or password
+	static constexpr auto ACCESS_TOKEN = "access_key";
 	static constexpr auto ACCESS_DOMAIN = "access_domain";
 	static constexpr auto ACCESS_LOGIN = "access_login";
 	static constexpr auto ACCESS_PASSWORD = "access_password";

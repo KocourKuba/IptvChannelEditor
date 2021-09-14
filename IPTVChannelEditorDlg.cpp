@@ -43,6 +43,8 @@ constexpr auto ID_ADD_TO_START = ID_MOVE_TO_END + 1;
 constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 
 // Common
+constexpr auto CHANNELS_LIST_VERSION = 2;
+
 constexpr auto REG_SETTINGS = _T("Settings");
 constexpr auto REG_PLAYER = _T("Player");
 constexpr auto REG_FFPROBE = _T("FFProbe");
@@ -407,8 +409,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
 
 	SwitchPlugin();
-
-	set_allow_save(FALSE);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -1347,10 +1347,15 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 		return false;
 	}
 
-
 	auto i_node = doc.first_node(utils::TV_INFO);
 
 	m_embedded_info = FALSE;
+
+	auto info_node = i_node->first_node(utils::VERSION_INFO);
+	if (!info_node || utils::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
+	{
+		set_allow_save(TRUE);
+	}
 
 	auto setup_node = i_node->first_node(utils::CHANNELS_SETUP);
 	if (setup_node)
@@ -2797,6 +2802,10 @@ void CIPTVChannelEditorDlg::OnSave()
 		// create <tv_info> root node
 		auto tv_info = doc.allocate_node(rapidxml::node_element, utils::TV_INFO);
 
+		auto info_node = doc.allocate_node(rapidxml::node_element, utils::VERSION_INFO);
+		info_node->append_node(utils::alloc_node(doc, utils::LIST_VERSION, utils::int_to_char(CHANNELS_LIST_VERSION).c_str()));
+		tv_info->append_node(info_node);
+
 		if (m_embedded_info)
 		{
 			auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
@@ -3718,7 +3727,6 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 
 	LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx));
 	FillTreeChannels();
-	set_allow_save(FALSE);
 
 	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
 	SaveRegPlugin(REG_CHANNELS_TYPE, idx);
