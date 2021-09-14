@@ -6545,11 +6545,11 @@
 		</tv_channel>
 		<tv_channel>
 			<caption>RT Д (Русский)</caption>
-			<channel_id/>
 			<epg_id>961</epg_id>
 			<tvg_id>1884</tvg_id>
-			<icon_url>plugin_file://icons/channels/rt_doc.png</icon_url>
+			<icon_url>http://epg.it999.ru/img2/2295.png</icon_url>
 			<tv_category_id>21</tv_category_id>
+			<streaming_url>http://rtmp.api.rt.com/hls/rtdru.m3u8</streaming_url>
 		</tv_channel>
 		<tv_channel>
 			<caption>Alba 1</caption>
