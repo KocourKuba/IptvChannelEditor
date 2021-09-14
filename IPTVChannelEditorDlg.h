@@ -245,7 +245,7 @@ protected:
 
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
-	CEdit m_wndEpg2ID;
+	CEdit m_wndEpgID2;
 	CEdit m_wndEpgID1;
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;

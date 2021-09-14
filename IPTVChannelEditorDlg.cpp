@@ -239,7 +239,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_URL_ID, m_streamID);
 	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
 	DDX_Text(pDX, IDC_EDIT_EPG2_ID, m_epgID2);
-	DDX_Control(pDX, IDC_EDIT_EPG2_ID, m_wndEpg2ID);
+	DDX_Control(pDX, IDC_EDIT_EPG2_ID, m_wndEpgID2);
 	DDX_Control(pDX, IDC_BUTTON_TEST_EPG2, m_wndTestEPG2);
 	DDX_Text(pDX, IDC_EDIT_EPG1_ID, m_epgID1);
 	DDX_Control(pDX, IDC_EDIT_EPG1_ID, m_wndEpgID1);
@@ -390,7 +390,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndSearch.EnableWindow(FALSE);
 	m_wndPlSearch.EnableWindow(FALSE);
 	m_wndCustom.EnableWindow(FALSE);
-	m_wndEpg2ID.EnableWindow(FALSE);
+	m_wndEpgID2.EnableWindow(FALSE);
 	m_wndEpgID1.EnableWindow(FALSE);
 	m_wndArchive.EnableWindow(FALSE);
 	m_wndAdult.EnableWindow(FALSE);
@@ -1850,8 +1850,8 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	bool bSameCategory = IsSelectedTheSameCategory();
 
 	m_wndCustom.EnableWindow(enable);
-	m_wndEpg2ID.EnableWindow(enable && m_pluginType == StreamType::enEdem);
-	m_wndEpgID1.EnableWindow(enable && m_pluginType == StreamType::enEdem);
+	m_wndEpgID1.EnableWindow(enable);
+	m_wndEpgID2.EnableWindow(enable && (m_pluginType != StreamType::enAntifriz && m_pluginType != StreamType::enGlanz));
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
 	m_wndTestEPG1.EnableWindow(enable && !m_epgID1.IsEmpty());
