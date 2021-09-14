@@ -223,7 +223,7 @@ abstract class DefaultConfig
         } catch (Exception $ex) {
             try {
                 hd_print("Can't fetch EPG ID from primary epg source " . $ex->getMessage());
-                if (empty(static::$EPG1_URL_TEMPLATE))
+                if (empty(static::$EPG2_URL_TEMPLATE))
                     throw new Exception("Empty second epg template");
 
                 $epg = EpgManager::get_epg(static::$EPG2_PARSER,

@@ -53,7 +53,7 @@ class EpgManager
                     $epg = self::get_epg_json($url, $day_start_ts);
                     break;
                 case 'html':
-                    $epg = self::get_epg_html($url, $day_start_ts);
+                    $epg = self::get_epg_html($url, $epg_date);
                     break;
                 case 'xml':
                     $epg = self::get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir);
