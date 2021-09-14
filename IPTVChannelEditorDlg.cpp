@@ -3218,7 +3218,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext()
 		params.searchString = m_search;
 	}
 
-	SelectTreeItem(m_wndChannelsTree, params);
+	if (!SelectTreeItem(m_wndChannelsTree, params))
+	{
+		AfxMessageBox(_T("Not found!"), MB_OK | MB_ICONINFORMATION);
+	}
 }
 
 void CIPTVChannelEditorDlg::OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI)
@@ -3245,7 +3248,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 		params.searchString = m_plSearch;
 	}
 
-	SelectTreeItem(m_wndPlaylistTree, params);
+	if (SelectTreeItem(m_wndPlaylistTree, params))
+	{
+		AfxMessageBox(_T("Not found!"), MB_OK | MB_ICONINFORMATION);
+	}
 }
 
 bool CIPTVChannelEditorDlg::IsChannel(HTREEITEM hItem) const
@@ -3785,7 +3791,7 @@ HTREEITEM CIPTVChannelEditorDlg::FindTreeItem(CTreeCtrlEx& ctl, DWORD_PTR entry)
 	return hSub;
 }
 
-void CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams& searchParams)
+bool CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams& searchParams)
 {
 	HTREEITEM hItem = ctl.GetSelectedItem();
 	HTREEITEM root = ctl.GetParentItem(hItem);
@@ -3845,15 +3851,15 @@ void CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams&
 				}
 			}
 
-			// get the next sibling item
-			hItem = ctl.GetNextSiblingItem(hItem);
-
 			if (hItem == hStart)
 			{
 				// We make full circle. Exit from search loop
 				hFound = hItem;
 				break;
 			}
+
+			// get the next sibling item
+			hItem = ctl.GetNextSiblingItem(hItem);
 		}
 
 		if (hFound) break;
@@ -3875,6 +3881,8 @@ void CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams&
 		else
 			LoadPlayListInfo(hFound);
 	}
+
+	return bFound;
 }
 
 HTREEITEM CIPTVChannelEditorDlg::FindTreeNextItem(CTreeCtrlEx& ctl, HTREEITEM hItem, DWORD_PTR entry)

@@ -29,7 +29,7 @@ public:
 		CString searchString;
 	};
 
-	void SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams& searchParams);
+	bool SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams& searchParams);
 	static HTREEITEM FindTreeItem(CTreeCtrlEx& ctl, DWORD_PTR entry);
 	static HTREEITEM FindTreeNextItem(CTreeCtrlEx& ctl, HTREEITEM hItem, DWORD_PTR entry);
 	static HTREEITEM FindTreeSubItem(CTreeCtrlEx& ctl, HTREEITEM hItem, DWORD_PTR entry);
