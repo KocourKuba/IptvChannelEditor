@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include <afxdialogex.h>
 #include "AccessInfoPinDlg.h"
 #include "resource.h"
 #include "utils.h"

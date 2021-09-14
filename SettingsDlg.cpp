@@ -2,10 +2,9 @@
 //
 
 #include "StdAfx.h"
-
+#include <afxdialogex.h>
 #include "IPTVChannelEditor.h"
 #include "SettingsDlg.h"
-#include "afxdialogex.h"
 
 // CSettingsDlg dialog
 

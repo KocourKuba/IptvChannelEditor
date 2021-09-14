@@ -1,7 +1,4 @@
 #pragma once
-#include <map>
-#include <memory>
-#include <string>
 #include "ImageContainer.h"
 
 class CIconCache

@@ -2,8 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include <memory>
-#include "afxdialogex.h"
+#include <afxdialogex.h>
 #include "IconsListDlg.h"
 #include "IPTVChannelEditor.h"
 #include "PlaylistParseThread.h"

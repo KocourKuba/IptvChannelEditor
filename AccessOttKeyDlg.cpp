@@ -2,9 +2,9 @@
 //
 
 #include "StdAfx.h"
+#include <afxdialogex.h>
 #include "IPTVChannelEditor.h"
 #include "AccessOttKeyDlg.h"
-#include "afxdialogex.h"
 #include "PlayListEntry.h"
 
 // CAccessDlg dialog
