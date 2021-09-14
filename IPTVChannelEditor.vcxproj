@@ -95,6 +95,9 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\fmt\include</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,6 +126,9 @@
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\fmt\include</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,6 +159,9 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\fmt\include</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -185,6 +194,9 @@
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\fmt\include</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -216,20 +228,6 @@
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="Crc32.h" />
-    <ClInclude Include="fmt\args.h" />
-    <ClInclude Include="fmt\chrono.h" />
-    <ClInclude Include="fmt\color.h" />
-    <ClInclude Include="fmt\compile.h" />
-    <ClInclude Include="fmt\core.h" />
-    <ClInclude Include="fmt\format-inl.h" />
-    <ClInclude Include="fmt\format.h" />
-    <ClInclude Include="fmt\locale.h" />
-    <ClInclude Include="fmt\os.h" />
-    <ClInclude Include="fmt\ostream.h" />
-    <ClInclude Include="fmt\posix.h" />
-    <ClInclude Include="fmt\printf.h" />
-    <ClInclude Include="fmt\ranges.h" />
-    <ClInclude Include="fmt\xchar.h" />
     <ClInclude Include="IconCache.h" />
     <ClInclude Include="IconsListDlg.h" />
     <ClInclude Include="ImageContainer.h" />
@@ -254,7 +252,6 @@
     <ClInclude Include="utils.h" />
     <ClInclude Include="IPTVChannelEditor.h" />
     <ClInclude Include="IPTVChannelEditorDlg.h" />
-    <ClInclude Include="framework.h" />
     <ClInclude Include="rapidxml.hpp" />
     <ClInclude Include="rapidxml_iterators.hpp" />
     <ClInclude Include="rapidxml_print.hpp" />
@@ -272,13 +269,13 @@
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="Crc32.cpp" />
-    <ClCompile Include="fmt\format.cc">
+    <ClCompile Include="fmt\src\format.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="fmt\os.cc">
+    <ClCompile Include="fmt\src\os.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">NotUsing</PrecompiledHeader>

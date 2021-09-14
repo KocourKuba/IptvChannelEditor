@@ -3,11 +3,9 @@
 //
 
 #include "StdAfx.h"
-#include "framework.h"
 #include <afxdialogex.h>
 #include <array>
 #include <thread>
-#include <filesystem>
 
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"

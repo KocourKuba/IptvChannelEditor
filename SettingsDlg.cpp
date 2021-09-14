@@ -2,7 +2,6 @@
 //
 
 #include "StdAfx.h"
-#include <filesystem>
 
 #include "IPTVChannelEditor.h"
 #include "SettingsDlg.h"

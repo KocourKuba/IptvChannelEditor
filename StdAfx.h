@@ -9,7 +9,6 @@
 
 // add headers that you want to pre-compile here
 #include "framework.h"
-
 #include "Version.h"
 
 #include <string>
@@ -20,6 +19,8 @@
 #include <fstream>
 #include <regex>
 #include <memory>
-#include "fmt/xchar.h"
+#include <filesystem>
+
+#include <fmt/xchar.h>
 
 #endif //PCH_H

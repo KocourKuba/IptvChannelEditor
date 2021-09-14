@@ -3,9 +3,7 @@
 //
 
 #include "StdAfx.h"
-#include "framework.h"
 #include <Shlwapi.h>
-#include <filesystem>
 
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
