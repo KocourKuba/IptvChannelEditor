@@ -3271,7 +3271,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 		params.searchString = m_plSearch;
 	}
 
-	if (SelectTreeItem(m_wndPlaylistTree, params))
+	if (!SelectTreeItem(m_wndPlaylistTree, params))
 	{
 		AfxMessageBox(_T("Not found!"), MB_OK | MB_ICONINFORMATION);
 	}
@@ -3817,18 +3817,40 @@ HTREEITEM CIPTVChannelEditorDlg::FindTreeItem(CTreeCtrlEx& ctl, DWORD_PTR entry)
 bool CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams& searchParams)
 {
 	HTREEITEM hItem = ctl.GetSelectedItem();
-	HTREEITEM root = ctl.GetParentItem(hItem);
-	HTREEITEM hStart = hItem;
-	if (root)
+	HTREEITEM root = nullptr;
+	HTREEITEM hStart = nullptr;
+	if (ctl.GetParentItem(hItem) != nullptr)
 	{
-		// shift to next item
-		hItem = ctl.GetNextSiblingItem(hItem);
+		// channel selected shift to next item
+		root = ctl.GetParentItem(hItem);
+		hStart = hItem;
 	}
 	else
 	{
-		// Category selected or none of item selected. Select first child item
-		root = hItem ? hItem : ctl.GetRootItem();
-		hStart = hItem = ctl.GetChildItem(root);
+		if (hItem == nullptr)
+		{
+			// none selected. Select first category
+			root = ctl.GetRootItem();
+		}
+		else
+		{
+			// Category selected. Select first child item
+			root = hItem;
+		}
+
+		hStart = ctl.GetChildItem(root);
+		while (hStart == nullptr)
+		{
+			root = ctl.GetNextSiblingItem(root);
+			hStart = ctl.GetChildItem(root);
+		}
+	}
+
+	hItem = ctl.GetNextSiblingItem(hStart);
+	while (hItem == nullptr)
+	{
+		root = ctl.GetNextSiblingItem(root);
+		hItem = ctl.GetChildItem(root);
 	}
 
 	// cyclic search thru channel list
