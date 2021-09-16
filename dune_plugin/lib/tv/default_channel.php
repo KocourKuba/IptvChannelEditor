@@ -10,13 +10,13 @@ class DefaultChannel implements IChannel
     protected $_streaming_url;
     protected $_groups; // Array<Group>
     protected $_number;
-    protected $_has_archive;
+    protected $_archive;
     protected $_is_protected;
     protected $_epg_id;
     protected $_tvg_id;
     protected $_timeshift_hours;
 
-    public function __construct($id, $channel_id, $title, $icon_url, $streaming_url, $has_archive, $number, $epg_id, $tvg_id, $is_protected, $timeshift_hours)
+    public function __construct($id, $channel_id, $title, $icon_url, $streaming_url, $_archive, $number, $epg_id, $tvg_id, $is_protected, $timeshift_hours)
     {
         $this->_id = $id;
         $this->_channel_id = $channel_id;
@@ -24,7 +24,7 @@ class DefaultChannel implements IChannel
         $this->_icon_url = $icon_url;
         $this->_streaming_url = $streaming_url;
         $this->_groups = array();
-        $this->_has_archive = $has_archive;
+        $this->_archive = $_archive > 1 ? $_archive : 7;
         $this->_number = $number;
         $this->_epg_id = $epg_id;
         $this->_tvg_id = $tvg_id;
@@ -69,7 +69,7 @@ class DefaultChannel implements IChannel
 
     public function has_archive()
     {
-        return $this->_has_archive;
+        return $this->_archive > 0;
     }
 
     public function get_timeshift_hours()
@@ -89,7 +89,7 @@ class DefaultChannel implements IChannel
 
     public function get_past_epg_days()
     {
-        return 7;
+        return $this->_archive > 1 ? $this->_archive : 7;
     }
 
     public function get_future_epg_days()
@@ -99,7 +99,7 @@ class DefaultChannel implements IChannel
 
     public function get_archive_past_sec()
     {
-        return 7 * 86400;
+        return $this->_archive * 86400;
     }
 
     public function get_archive_delay_sec()

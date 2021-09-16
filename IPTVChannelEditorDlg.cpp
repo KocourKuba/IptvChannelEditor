@@ -119,8 +119,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
-	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1)
+	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CIPTVChannelEditorDlg::OnBnClickedCheckAdult)
 	ON_BN_CLICKED(IDC_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckArchive)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOMIZE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomize)
@@ -139,6 +139,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_CHECK_DAYS, &CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckDays)
 	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_CHECK_HOURS, &CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckHours)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_URL, &CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl)
+	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_DAYS, &CIPTVChannelEditorDlg::OnEnChangeEditArchiveDays)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TIME_SHIFT, &CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ARCHIVE_CHECK_DAYS, &CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckDay)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ARCHIVE_CHECK_HOURS, &CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckHour)
@@ -236,13 +237,15 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_CUSTOMIZE, m_wndCustom);
 	DDX_Text(pDX, IDC_EDIT_URL_ID, m_streamID);
 	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
-	DDX_Text(pDX, IDC_EDIT_EPG2_ID, m_epgID2);
-	DDX_Control(pDX, IDC_EDIT_EPG2_ID, m_wndEpgID2);
-	DDX_Control(pDX, IDC_BUTTON_TEST_EPG2, m_wndTestEPG2);
 	DDX_Text(pDX, IDC_EDIT_EPG1_ID, m_epgID1);
 	DDX_Control(pDX, IDC_EDIT_EPG1_ID, m_wndEpgID1);
 	DDX_Control(pDX, IDC_BUTTON_TEST_EPG1, m_wndTestEPG1);
+	DDX_Text(pDX, IDC_EDIT_EPG2_ID, m_epgID2);
+	DDX_Control(pDX, IDC_EDIT_EPG2_ID, m_wndEpgID2);
+	DDX_Control(pDX, IDC_BUTTON_TEST_EPG2, m_wndTestEPG2);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
+	DDX_Text(pDX, IDC_EDIT_ARCHIVE_DAYS, m_archiveDays);
+	DDX_Control(pDX, IDC_EDIT_ARCHIVE_DAYS, m_wndArchiveDays);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT, m_timeShiftHours);
 	DDX_Control(pDX, IDC_EDIT_TIME_SHIFT, m_wndTimeShift);
@@ -1176,6 +1179,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		m_wndCustom.SetCheck(!channel->stream_uri->is_template());
 		m_timeShiftHours = channel->get_time_shift_hours();
 		m_isArchive = !!channel->is_archive();
+		m_wndArchiveDays.EnableWindow(m_isArchive);
+		m_archiveDays = channel->get_archive_days();
 		m_isAdult = channel->get_adult();
 
 		if (channel->get_icon_uri().get_uri().empty())
@@ -1855,6 +1860,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndTestEPG1.EnableWindow(enable && !m_epgID1.IsEmpty());
 	m_wndTestEPG2.EnableWindow(enable && !m_epgID2.IsEmpty());
 	m_wndStreamID.EnableWindow(enable && !m_streamID.IsEmpty());
+	m_wndArchiveDays.EnableWindow(enable && m_isArchive);
 	m_wndStreamUrl.EnableWindow(enable && m_streamID.IsEmpty());
 	m_wndCheckArchive.EnableWindow(enable && !m_probe.IsEmpty() && !m_loading);
 	m_wndTimeShift.EnableWindow(state);
@@ -2231,7 +2237,12 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckArchive()
 	{
 		auto channel = GetChannel(hItem);
 		if (channel)
-			channel->set_archive_days(m_isArchive ? 1 : 0);
+		{
+			m_archiveDays = m_isArchive ? (m_archiveDays != 0 ? m_archiveDays : 7) : 0;
+			channel->set_archive_days(m_archiveDays);
+			m_wndArchiveDays.EnableWindow(m_isArchive);
+			UpdateData(FALSE);
+		}
 	}
 
 	set_allow_save();
@@ -2274,6 +2285,20 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 		if (channel && m_wndCustom.GetCheck())
 		{
 			channel->stream_uri->set_uri(utils::utf16_to_utf8(m_streamUrl.GetString()));
+			set_allow_save();
+		}
+	}
+}
+
+void CIPTVChannelEditorDlg::OnEnChangeEditArchiveDays()
+{
+	UpdateData(TRUE);
+	if (m_wndChannelsTree.GetSelectedCount() == 1)
+	{
+		auto channel = GetChannel(m_wndChannelsTree.GetSelectedItem());
+		if (channel && m_isArchive)
+		{
+			channel->set_archive_days(m_archiveDays);
 			set_allow_save();
 		}
 	}

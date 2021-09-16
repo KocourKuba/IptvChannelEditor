@@ -100,6 +100,7 @@
 #define IDC_LIST_ICONS                  1086
 #define IDC_COMBO_STREAM_TYPE           1087
 #define IDC_STATIC_SEARCH               1088
+#define IDC_EDIT_ARCHIVE_DAYS           1089
 #define IDC_COMBO_TYPE                  1090
 #define IDC_EDIT_STATUS                 1092
 #define IDC_EDIT_SUBSCRIPTION           1093
@@ -138,7 +139,7 @@
 #define ID_ADD_TO_FAVORITE              32798
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131

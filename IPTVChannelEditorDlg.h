@@ -109,6 +109,7 @@ protected:
 	afx_msg void OnEnChangeEditEpg2ID();
 	afx_msg void OnEnChangeEditEpg1ID();
 	afx_msg void OnEnChangeEditStreamUrl();
+	afx_msg void OnEnChangeEditArchiveDays();
 	afx_msg void OnEnChangeEditUrlID();
 	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinArchiveCheckDay(NMHDR* pNMHDR, LRESULT* pResult);
@@ -245,8 +246,9 @@ protected:
 
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
-	CEdit m_wndEpgID2;
 	CEdit m_wndEpgID1;
+	CEdit m_wndEpgID2;
+	CEdit m_wndArchiveDays;
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
@@ -291,6 +293,7 @@ protected:
 	CString m_streamID; // m_wndStreamID
 	CString m_epgID1; // Primary EPG source m_wndEpg1ID
 	CString m_epgID2; // Secondary EPG source m_wndEpg2ID
+	int m_archiveDays; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
 	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
 	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
