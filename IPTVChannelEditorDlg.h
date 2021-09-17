@@ -103,7 +103,6 @@ protected:
 	afx_msg void OnUpdateIcon();
 	afx_msg void OnUpdateUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckCustomize();
-	afx_msg void OnEditChangeTvIdd();
 	afx_msg void OnBnClickedCheckAdult();
 	afx_msg void OnBnClickedCheckArchive();
 	afx_msg void OnEnChangeEditEpg2ID();

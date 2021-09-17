@@ -41,7 +41,7 @@ public:
 	{
 		uri_base::clear();
 		id.clear();
-		hash = 0;
+		clear_hash();
 	}
 
 	/// <summary>
@@ -50,6 +50,7 @@ public:
 	virtual void parse_uri(const std::string& url)
 	{
 		// http://rtmp.api.rt.com/hls/rtdru.m3u8
+		clear();
 		uri_base::set_uri(url);
 	}
 
@@ -80,6 +81,16 @@ public:
 
 		return hash;
 	}
+
+	/// <summary>
+	/// recalculate has variables
+	/// </summary>
+	int recalc_hash() { clear_hash(); return get_hash(); }
+
+	/// <summary>
+	/// clear hash variables
+	/// </summary>
+	void clear_hash() { hash = 0; str_hash.clear(); }
 
 	/// <summary>
 	/// getter domain

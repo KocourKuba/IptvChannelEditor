@@ -51,6 +51,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	{
 		stream_uri->set_template(false);
 		stream_uri->parse_uri(utils::get_value_string(node->first_node(STREAMING_URL)));
+		stream_uri->get_hash();
 	}
 
 	set_archive_days(utils::get_value_int(node->first_node(ARCHIVE)));
