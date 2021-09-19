@@ -180,7 +180,6 @@ private:
 	ChannelCategory* GetCategory(HTREEITEM hItem) const;
 	HTREEITEM GetCategoryTreeItemById(int id) const;
 
-	ChannelInfo* GetChannel(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelInfo> FindChannel(HTREEITEM hItem) const;
 	PlaylistEntry* GetPlaylistEntry(HTREEITEM item) const;
 

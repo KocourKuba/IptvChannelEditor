@@ -44,7 +44,7 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 	return category_node;
 }
 
-void ChannelCategory::move_channels(const ChannelInfo* range_start, const ChannelInfo* range_end, bool down)
+void ChannelCategory::move_channels(const std::shared_ptr<ChannelInfo>& range_start, const std::shared_ptr<ChannelInfo>& range_end, bool down)
 {
 	if (!range_start || !range_end)
 		return;
@@ -63,12 +63,12 @@ void ChannelCategory::move_channels(const ChannelInfo* range_start, const Channe
 	}
 }
 
-void ChannelCategory::add_channel(std::shared_ptr<ChannelInfo>& channel)
+void ChannelCategory::add_channel(const std::shared_ptr<ChannelInfo>& channel)
 {
 	if (channels_map.find(channel->stream_uri->get_id()) == channels_map.end())
 	{
 		channels_map.emplace(channel->stream_uri->get_id(), channel);
-		channels.emplace_back(channel.get());
+		channels.emplace_back(channel);
 	}
 }
 
@@ -76,7 +76,7 @@ void ChannelCategory::remove_channel(const std::string& ch_id)
 {
 	if (auto pair = channels_map.find(ch_id); pair != channels_map.end())
 	{
-		channels.erase(std::find(channels.begin(), channels.end(), pair->second.get()));
+		channels.erase(std::find(channels.begin(), channels.end(), pair->second));
 		channels_map.erase(pair);
 	}
 }

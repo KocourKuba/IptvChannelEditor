@@ -26,11 +26,11 @@ public:
 
 	bool is_empty() const { return channels_map.empty(); }
 
-	const std::vector<ChannelInfo*>& get_channels() const { return channels; }
+	const std::vector<std::shared_ptr<ChannelInfo>>& get_channels() const { return channels; }
 
-	void move_channels(const ChannelInfo* range_start, const ChannelInfo* range_end, bool down);
+	void move_channels(const std::shared_ptr<ChannelInfo>& range_start, const std::shared_ptr<ChannelInfo>& range_end, bool down);
 
-	void add_channel(std::shared_ptr<ChannelInfo>& channel);
+	void add_channel(const std::shared_ptr<ChannelInfo>& channel);
 
 	void remove_channel(const std::string& ch_id);
 
@@ -39,7 +39,7 @@ public:
 	std::shared_ptr<ChannelInfo> find_channel(const std::string& ch_id);
 
 private:
-	std::vector<ChannelInfo*> channels;
+	std::vector<std::shared_ptr<ChannelInfo>> channels;
 	std::map<std::string, std::shared_ptr<ChannelInfo>> channels_map;
 };
 
