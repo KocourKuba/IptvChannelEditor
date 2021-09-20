@@ -202,6 +202,15 @@ public:
 	}
 
 	/// <summary>
+	/// compare uri streams
+	/// </summary>
+	/// <returns>bool</returns>
+	bool compare(const std::unique_ptr<uri_stream>& src)
+	{
+		return *this == *src;
+	}
+
+	/// <summary>
 	/// copy info
 	/// </summary>
 	/// <returns>uri_stream&</returns>

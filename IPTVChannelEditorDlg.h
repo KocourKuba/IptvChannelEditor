@@ -29,11 +29,13 @@ public:
 		CString searchString;
 	};
 
-	bool SelectTreeItem(CTreeCtrlEx& ctl, const SearchParams& searchParams);
-	static HTREEITEM FindTreeItem(CTreeCtrlEx& ctl, DWORD_PTR entry);
-	static HTREEITEM FindTreeNextItem(CTreeCtrlEx& ctl, HTREEITEM hItem, DWORD_PTR entry);
-	static HTREEITEM FindTreeSubItem(CTreeCtrlEx& ctl, HTREEITEM hItem, DWORD_PTR entry);
-	static BaseInfo* GetBaseInfo(const CTreeCtrlEx* pTreeCtrl, HTREEITEM hItem);
+	struct CategoryInfo
+	{
+		HTREEITEM hItem;
+		std::shared_ptr<ChannelCategory> category;
+	};
+
+	bool SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, const SearchParams& searchParams);
 	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
 
 	// Implementation
@@ -176,12 +178,13 @@ private:
 	bool SetupLogin(bool loaded);
 	bool SetupPin(bool loaded);
 
-	ChannelCategory* GetItemCategory(HTREEITEM hItem) const;
-	ChannelCategory* GetCategory(HTREEITEM hItem) const;
+	std::shared_ptr<ChannelCategory> GetItemCategory(HTREEITEM hItem) const;
+	std::shared_ptr<ChannelCategory> GetCategory(HTREEITEM hItem) const;
 	HTREEITEM GetCategoryTreeItemById(int id) const;
 
 	std::shared_ptr<ChannelInfo> FindChannel(HTREEITEM hItem) const;
-	PlaylistEntry* GetPlaylistEntry(HTREEITEM item) const;
+	std::shared_ptr<PlaylistEntry> FindEntry(HTREEITEM item) const;
+	BaseInfo* GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM item) const;
 
 	bool IsSelectedTheSameType() const;
 	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
@@ -342,14 +345,25 @@ private:
 
 	// map of all channels for fast search
 	std::map<std::string, std::shared_ptr<ChannelInfo>> m_channelsMap;
+
+	// map of all channels htree items
+	std::map<HTREEITEM, std::shared_ptr<ChannelInfo>> m_channelsTreeMap;
+
 	// map of all categories for fast search
-	std::map<int, std::shared_ptr<ChannelCategory>> m_categoriesMap;
-	std::map<int, HTREEITEM> m_categoriesTreeMap;
+	std::map<int, CategoryInfo> m_categoriesMap;
+
+	// map HTREE items to categories id
+	std::map<HTREEITEM, int> m_categoriesTreeMap;
 
 	// list of playlist id's in the same order as in the playlist
 	// Must not contains duplicates!
 	std::vector<std::string> m_playlistIds;
+
+	// map of all playlist entries
 	std::map<std::string, std::shared_ptr<PlaylistEntry>> m_playlistMap;
+
+	// map HTREE items to entry
+	std::map<HTREEITEM, std::shared_ptr<PlaylistEntry>> m_playlistTreeMap;
 
 	// map of category and TREEITEM for fast add to tree
 	std::map<std::wstring, HTREEITEM> m_pl_categoriesTreeMap;
@@ -359,4 +373,3 @@ private:
 
 	serializable_map m_stream_infos;
 };
-

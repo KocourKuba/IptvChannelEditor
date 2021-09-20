@@ -57,6 +57,7 @@ public:
 	int get_time_shift_hours() const { return time_shift_hours; }
 	void set_time_shift_hours(int val) { time_shift_hours = val; }
 
+	// categories contains this channel. Compatibility with old channels list
 	std::set<int>& get_category_ids() { return categories; }
 
 	bool is_favorite() const { return favorite; }

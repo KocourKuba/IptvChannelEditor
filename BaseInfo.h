@@ -2,7 +2,7 @@
 #include "StreamContainer.h"
 #include "IconContainer.h"
 
-enum class InfoType { enUndefined, enChannel, enCategory, enPlEntry };
+enum class InfoType { enUndefined, enChannel, enCategory, enPlEntry, enPlCategory };
 
 class BaseInfo
 	: public StreamContainer
