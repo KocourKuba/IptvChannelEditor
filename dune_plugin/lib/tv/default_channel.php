@@ -24,7 +24,7 @@ class DefaultChannel implements IChannel
         $this->_icon_url = $icon_url;
         $this->_streaming_url = $streaming_url;
         $this->_groups = array();
-        $this->_archive = $_archive > 1 ? $_archive : 7;
+        $this->_archive = ($_archive != 0) ? ($_archive > 1 ? $_archive : 7) : 0;
         $this->_number = $number;
         $this->_epg_id = $epg_id;
         $this->_tvg_id = $tvg_id;
