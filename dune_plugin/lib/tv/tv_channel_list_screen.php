@@ -68,10 +68,8 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         $group = $this->tv->get_group($parent_media_url->group_id);
         $channels = $group->get_channels($plugin_cookies);
 
-        $items[] = $this->get_regular_folder_item($group,
-            $channels->get_by_ndx($sel_ndx), $plugin_cookies);
-        $range = HD::create_regular_folder_range($items,
-            $sel_ndx, $channels->size());
+        $items[] = $this->get_regular_folder_item($group, $channels->get_by_ndx($sel_ndx), $plugin_cookies);
+        $range = HD::create_regular_folder_range($items, $sel_ndx, $channels->size());
 
         return ActionFactory::update_regular_folder($range);
     }

@@ -145,8 +145,7 @@ abstract class AbstractTv implements Tv
             if ($g->is_favorite_channels())
                 continue;
 
-            if ($this->mode == self::MODE_CHANNELS_1_TO_N &&
-                $g->is_all_channels()) {
+            if ($this->mode == self::MODE_CHANNELS_1_TO_N && $g->is_all_channels()) {
                 continue;
             }
 

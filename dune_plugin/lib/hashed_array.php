@@ -27,8 +27,13 @@ class HashedArray implements Iterator
 
     public function put($o)
     {
-        $this->seq[] = $o;
-        $this->map[$o->get_id()] = $o;
+        $id = $o->get_id();
+        if ($this->has($o->get_id())) {
+            hd_print("dup: $id");
+        } else {
+            $this->seq[] = $o;
+            $this->map[$id] = $o;
+        }
     }
 
     public function get($key)
