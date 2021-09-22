@@ -2983,14 +2983,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>BCU Marvel HD</caption>
-			<channel_id>11038</channel_id>
-			<epg_id>4759</epg_id>
-			<icon_url>http://epg.it999.ru/img2/4759.png</icon_url>
-			<tv_category_id>8</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>BCU Marvel OLD</caption>
 			<channel_id>15025</channel_id>
 			<epg_id>5514</epg_id>
