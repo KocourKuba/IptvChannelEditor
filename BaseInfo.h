@@ -10,6 +10,11 @@ class BaseInfo
 {
 public:
 	BaseInfo() = default;
+	BaseInfo(const BaseInfo& src) : StreamContainer(src.stream_type)
+	{
+		*this = src;
+	}
+
 	BaseInfo(InfoType type, StreamType streamType, const std::wstring& root_path)
 		: StreamContainer(streamType)
 		, IconContainer(root_path)
@@ -48,6 +53,28 @@ public:
 
 	bool is_type(InfoType type) const { return base_type == type; }
 
+	const BaseInfo& operator=(const BaseInfo& src)
+	{
+		if (this != &src)
+		{
+			StreamContainer::operator=(src);
+			IconContainer::operator=(src);
+			base_type = src.base_type;
+			title = src.title;
+			key = src.key;
+			epg_id1 = src.epg_id1;
+			epg_id2 = src.epg_id2;
+			archive_source = src.archive_source;
+			time_shift_hours = src.time_shift_hours;
+			adult = src.adult;
+			archive_days = src.archive_days;
+			disabled = src.disabled;
+			favorite = src.favorite;
+		}
+
+		return *this;
+	}
+
 protected:
 	InfoType base_type = InfoType::enUndefined;
 
@@ -62,5 +89,4 @@ private:
 	int archive_days = 0;
 	bool disabled = false;
 	bool favorite = false;
-	std::set<int> categories;
 };

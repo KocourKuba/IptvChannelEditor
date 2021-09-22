@@ -8,6 +8,7 @@ public:
 	static constexpr auto ICON_URL = "icon_url";
 
 public:
+	IconContainer() = default;
 	IconContainer(const std::wstring& root) : root_path(root) {}
 	IconContainer(const IconContainer& src)
 	{
@@ -20,26 +21,30 @@ public:
 	}
 
 public:
-	IconContainer* operator=(const IconContainer& src)
+	const IconContainer& operator=(const IconContainer& src)
 	{
 		if (this != &src)
 		{
 			icon_uri = src.icon_uri;
+			root_path = src.root_path;
 		}
 
-		return this;
+		return *this;
 	}
 
-	IconContainer* operator=(IconContainer&& src)
+	IconContainer& operator=(IconContainer&& src)
 	{
 		if (this != &src)
 		{
 			icon_uri = std::move(src.icon_uri);
+			root_path = std::move(src.root_path);
 		}
-		return this;
+		return *this;
 	}
 
 	void set_root_path(const std::wstring& root) { root_path = root; }
+	const std::wstring& get_root_path() const { return root_path; }
+
 	const uri_base& get_icon_uri() const { return icon_uri; }
 
 	std::wstring get_icon_absolute_path() const { return get_icon_uri().get_filesystem_path(root_path); };

@@ -15,6 +15,11 @@ ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node, StreamType streamType, cons
 	ParseNode(node);
 }
 
+ChannelInfo::ChannelInfo(const ChannelInfo& src) : BaseInfo(src)
+{
+	*this = src;
+}
+
 void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 {
 	if (!node)

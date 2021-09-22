@@ -42,6 +42,7 @@ public:
 
 public:
 	ChannelInfo() = delete;
+	ChannelInfo(const ChannelInfo& src);
 	ChannelInfo(StreamType streamType, const std::wstring& root_path);
 	ChannelInfo(rapidxml::xml_node<>* node, StreamType streamType, const std::wstring& root_path);
 
@@ -65,6 +66,20 @@ public:
 
 	bool is_disabled() const { return disabled; }
 	void set_disabled(bool val) { disabled = val; }
+
+	const ChannelInfo& operator= (const ChannelInfo& src)
+	{
+		if (this != &src)
+		{
+			BaseInfo::operator=(src);
+			time_shift_hours = src.get_time_shift_hours();
+			disabled = src.disabled;
+			favorite = src.favorite;
+			categories = src.categories;
+		}
+
+		return *this;
+	}
 
 private:
 	int time_shift_hours = 0;
