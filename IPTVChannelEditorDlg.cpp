@@ -1259,6 +1259,19 @@ std::shared_ptr<ChannelInfo> CIPTVChannelEditorDlg::FindChannel(HTREEITEM hItem)
 	return pair != m_channelsTreeMap.end() ? pair->second : nullptr;
 }
 
+std::shared_ptr<ChannelCategory> CIPTVChannelEditorDlg::FindCategory(HTREEITEM hItem) const
+{
+	if (auto pair = m_categoriesTreeMap.find(hItem); pair != m_categoriesTreeMap.end())
+	{
+		if (auto cat_pair = m_categoriesMap.find(pair->second); cat_pair != m_categoriesMap.end())
+		{
+			return  cat_pair->second.category;
+		}
+	}
+
+	return nullptr;
+}
+
 std::shared_ptr<PlaylistEntry> CIPTVChannelEditorDlg::FindEntry(HTREEITEM hItem) const
 {
 	auto pair = m_playlistTreeMap.find(hItem);
@@ -1269,7 +1282,10 @@ BaseInfo* CIPTVChannelEditorDlg::GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM 
 {
 	if (pCtl == &m_wndChannelsTree)
 	{
-		return dynamic_cast<BaseInfo*>(FindChannel(hItem).get());
+		if (IsChannel(hItem))
+			return dynamic_cast<BaseInfo*>(FindChannel(hItem).get());
+		if (IsCategory(hItem))
+			return dynamic_cast<BaseInfo*>(FindCategory(hItem).get());
 	}
 
 	if (pCtl == &m_wndPlaylistTree)
@@ -3161,11 +3177,8 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	UpdateData(TRUE);
 
 	auto hCur = m_wndChannelsTree.GetSelectedItem();
-	auto entry = GetBaseInfo(&m_wndChannelsTree, hCur);
-	if (!entry)
-		return;
-
-	if (IsCategory(hCur) && entry->get_key() == ID_ADD_TO_FAVORITE)
+	auto info = GetBaseInfo(&m_wndChannelsTree, hCur);
+	if (!info || info->get_key() == ID_ADD_TO_FAVORITE)
 		return;
 
 	if (m_wndIconSource.GetCurSel() == 0)
@@ -3220,10 +3233,10 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			m_iconUrl += IsChannel(hCur) ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
 			m_iconUrl += oFN.lpstrFileTitle;
 
-			if (m_iconUrl != entry->get_icon_uri().get_uri().c_str())
+			if (m_iconUrl != info->get_icon_uri().get_uri().c_str())
 			{
-				entry->set_icon_uri(m_iconUrl.GetString());
-				const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
+				info->set_icon_uri(m_iconUrl.GetString());
+				const auto& img = GetIconCache().get_icon(info->get_title(), info->get_icon_absolute_path());
 				utils::SetImage(img, m_wndChannelIcon);
 			}
 			set_allow_save();
@@ -3233,14 +3246,14 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	{
 		CIconsListDlg dlg(m_Icons, "http://epg.it999.ru/edem_epg_ico2.m3u8");
 		dlg.m_selected = m_lastIconSelected;
-		dlg.m_search = entry->get_title().c_str();
+		dlg.m_search = info->get_title().c_str();
 
 		if (dlg.DoModal() == IDOK)
 		{
 			const auto& choosed = m_Icons->at(dlg.m_selected);
 			if (m_iconUrl != choosed->get_icon_uri().get_uri().c_str())
 			{
-				entry->set_icon_uri(choosed->get_icon_uri());
+				info->set_icon_uri(choosed->get_icon_uri());
 				const auto& img = GetIconCache().get_icon(choosed->get_title(), choosed->get_icon_absolute_path());
 				utils::SetImage(img, m_wndChannelIcon);
 				m_lastIconSelected = dlg.m_selected;

@@ -183,6 +183,7 @@ private:
 	HTREEITEM GetCategoryTreeItemById(int id) const;
 
 	std::shared_ptr<ChannelInfo> FindChannel(HTREEITEM hItem) const;
+	std::shared_ptr<ChannelCategory> FindCategory(HTREEITEM hItem) const;
 	std::shared_ptr<PlaylistEntry> FindEntry(HTREEITEM item) const;
 	BaseInfo* GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM item) const;
 
