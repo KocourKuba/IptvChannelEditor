@@ -300,7 +300,7 @@ protected:
 	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
 	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
 	int m_archivePlDays = 0; // m_wndArchiveDays
-	int m_StreamType = 0;
+	int m_StreamType = 0; // m_wndStreamType
 
 private:
 	BOOL m_embedded_info;
@@ -326,51 +326,70 @@ private:
 	bool m_bInFillTree = false;
 	bool m_blockChecking = false;
 
+	// current plugin type
 	StreamType m_pluginType = StreamType::enEdem;
-	CString m_pluginName;
+
+	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
+
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
 
-	COLORREF m_normal;
-	COLORREF m_gray;
-	COLORREF m_red;
-	COLORREF m_green;
-	COLORREF m_brown;
+	COLORREF m_normal; // channel not present in the current playlist
+	COLORREF m_gray; // channel disabled
+	COLORREF m_red; // playlist entry not present in the current channels list
+	COLORREF m_green; // channel present in the playlist and have not differences
+	COLORREF m_brown; // channel has difference with same entry in the playlist
+
+	// Stream info container. Loaded when switch plugin and updates by GetStreamInfo
+	serializable_map m_stream_infos;
 
 	// Icons entries
+	// loaded when used icon resource list
 	std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_Icons;
 
-	// all entries loaded from playlist
-	std::unique_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_playlistEntries;
+	//////////////////////////////////////////////////////////////////////////
+	// channels part
+
+	// list of all channel lists, filled when switch plugin. Reads from \playlists\plugin-name\*.xml
+	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
 
 	// map of all channels for fast search
+	// Loaded from channels list
 	std::map<std::string, std::shared_ptr<ChannelInfo>> m_channelsMap;
 
-	// map of all channels htree items
-	std::map<HTREEITEM, std::shared_ptr<ChannelInfo>> m_channelsTreeMap;
-
 	// map of all categories for fast search
+	// Loaded from channels list
 	std::map<int, CategoryInfo> m_categoriesMap;
 
+	// map of all channels htree items
+	// Loaded when fill channels tree
+	std::map<HTREEITEM, std::shared_ptr<ChannelInfo>> m_channelsTreeMap;
+
 	// map HTREE items to categories id
+	// Loaded when fill channels tree
 	std::map<HTREEITEM, int> m_categoriesTreeMap;
+
+	//////////////////////////////////////////////////////////////////////////
+	// playlist part
+
+	// all entries loaded from playlist, filled when parse playlist
+	std::unique_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_playlistEntries;
 
 	// list of playlist id's in the same order as in the playlist
 	// Must not contains duplicates!
+	// Loaded when fill playlist tree
 	std::vector<std::string> m_playlistIds;
 
-	// map of all playlist entries
+	// map of all playlist entries to entry id (channel id)
+	// Loaded when fill playlist tree
 	std::map<std::string, std::shared_ptr<PlaylistEntry>> m_playlistMap;
 
 	// map HTREE items to entry
+	// Loaded when fill playlist tree
 	std::map<HTREEITEM, std::shared_ptr<PlaylistEntry>> m_playlistTreeMap;
 
 	// map of category and TREEITEM for fast add to tree
+	// Loaded when fill playlist tree
 	std::map<std::wstring, HTREEITEM> m_pl_categoriesTreeMap;
-
-	// list of all channel lists
-	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
-
-	serializable_map m_stream_infos;
 };

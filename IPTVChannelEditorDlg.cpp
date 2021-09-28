@@ -490,7 +490,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	int idx = m_wndPlaylist.AddString(_T("Custom File"));
 	m_wndPlaylist.SetItemData(idx, TRUE);
 
-	m_pluginName = StreamContainer::get_name(m_pluginType);
 	m_wndStreamType.SetCurSel(ReadRegIntPlugin(REG_STREAM_TYPE));
 
 	// Set selected playlist
@@ -2808,6 +2807,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	m_playlistIds.clear();
 	m_playlistMap.clear();
 	m_pl_categoriesTreeMap.clear();
+	m_playlistTreeMap.clear();
 
 	// list of playlist categories in the same order as in the playlist
 	// Must not contains duplicates!
