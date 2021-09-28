@@ -1975,10 +1975,15 @@ void CIPTVChannelEditorDlg::OnTvnEndlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT
 	*pResult = FALSE;
 	if (pTVDispInfo->item.pszText && pTVDispInfo->item.pszText[0])
 	{
-		const auto& entry = FindChannel(pTVDispInfo->item.hItem);
-		if (entry)
+		if (const auto& channel = FindChannel(pTVDispInfo->item.hItem); channel != nullptr)
 		{
-			entry->set_title(pTVDispInfo->item.pszText);
+			channel->set_title(pTVDispInfo->item.pszText);
+			set_allow_save();
+			*pResult = TRUE;
+		}
+		else if (const auto& category = FindCategory(pTVDispInfo->item.hItem); category != nullptr)
+		{
+			category->set_title(pTVDispInfo->item.pszText);
 			set_allow_save();
 			*pResult = TRUE;
 		}
