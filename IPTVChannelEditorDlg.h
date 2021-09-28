@@ -192,7 +192,7 @@ private:
 	bool IsSelectedCategory() const;
 	bool IsSelectedNotFavorite() const;
 	bool IsChannelSelectionConsistent() const;
-	bool IsSelectedTheSameCategory() const;
+	bool IsSelectedInTheSameCategory() const;
 	bool IsChannel(HTREEITEM hItem) const;
 	bool IsCategory(HTREEITEM hItem) const;
 	bool IsPlaylistEntry(HTREEITEM hItem) const;
@@ -299,7 +299,7 @@ protected:
 	int m_timeShiftHours = 0; // m_wndTimeShift
 	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
 	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
-	int m_archivePlDays = 0; // m_wndArchiveDays
+	int m_archivePlDays = 0; // always read only field
 	int m_StreamType = 0; // m_wndStreamType
 
 private:
