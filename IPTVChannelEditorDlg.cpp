@@ -1099,11 +1099,12 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 			const auto& channel = FindChannel(hItem);
 			if (channel)
 			{
-				auto found = m_playlistMap.find(channel->stream_uri->get_id());
 				COLORREF color = m_normal;
 				if (channel->is_disabled())
+				{
 					color = m_gray;
-				else if (found != m_playlistMap.end())
+				}
+				else if (const auto& found = m_playlistMap.find(channel->stream_uri->get_id()); found != m_playlistMap.end())
 				{
 					const auto& entry = found->second;
 					if (channel->get_title() != entry->get_title()
@@ -1114,7 +1115,6 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 						color = m_brown;
 					else
 						color = m_green;
-
 				}
 
 				m_wndChannelsTree.SetItemColor(hItem, color);
@@ -1142,7 +1142,21 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 			const auto& entry = FindEntry(hItem);
 			if (entry)
 			{
-				COLORREF color = (m_channelsMap.find(entry->stream_uri->get_id()) == m_channelsMap.end()) ? m_red : m_normal;
+				COLORREF color = m_red;
+				if (const auto& pair = m_channelsMap.find(entry->stream_uri->get_id()); pair != m_channelsMap.end())
+				{
+					color = m_normal;
+					const auto& channel = pair->second;
+					if (channel->get_title() != entry->get_title()
+						|| channel->get_epg1_id() != entry->get_epg1_id()
+						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
+						|| channel->get_archive_days() == 0 && channel->get_archive_days() != entry->get_archive_days()
+					 )
+					{
+						color = m_brown;
+					}
+				}
+
 				m_wndPlaylistTree.SetItemColor(hItem, color);
 			}
 
