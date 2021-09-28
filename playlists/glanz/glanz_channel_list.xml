@@ -5257,7 +5257,7 @@
 			<channel_id>7068</channel_id>
 			<int_id>1028</int_id>
 			<epg_id>setanta-kz</epg_id>
-			<icon_url>http://pl.ottglanz.tv:80/icon/.png</icon_url>
+			<icon_url>http://pl.ottglanz.tv:80/icon/7068.png</icon_url>
 			<tv_category_id>7</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>

@@ -799,7 +799,7 @@
 		<tv_channel>
 			<caption>Шокирующее</caption>
 			<channel_id>kinopokaz-hd1</channel_id>
-			<epg_id>kinopokaz-hd1</epg_id>
+			<epg_id>shokiruyushchee-hd</epg_id>
 			<tvg_id>kinopokaz-hd1</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/shokiruyushchee.png</icon_url>
 			<tv_category_id>3</tv_category_id>
@@ -808,7 +808,7 @@
 		<tv_channel>
 			<caption>Премиальное HD</caption>
 			<channel_id>kinopremium-hd</channel_id>
-			<epg_id>kinopremium-hd</epg_id>
+			<epg_id>premialnoe-hd</epg_id>
 			<tvg_id>kinopremium-hd</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/kinopremiumhd.png</icon_url>
 			<tv_category_id>3</tv_category_id>
@@ -817,7 +817,7 @@
 		<tv_channel>
 			<caption>Комедийное HD</caption>
 			<channel_id>kinopokaz-hd2</channel_id>
-			<epg_id>kinopokaz-hd2</epg_id>
+			<epg_id>komedijnoe-hd</epg_id>
 			<tvg_id>kinopokaz-hd2</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/komediynoe.png</icon_url>
 			<tv_category_id>3</tv_category_id>
@@ -1069,7 +1069,7 @@
 		<tv_channel>
 			<caption>Наше крутое HD</caption>
 			<channel_id>nash-detektiv</channel_id>
-			<epg_id>nash-detektiv</epg_id>
+			<epg_id>nashehd</epg_id>
 			<tvg_id>nash-detektiv</tvg_id>
 			<icon_url>https://p.playtv.pro/picons/ru/nashe-krutoe.png</icon_url>
 			<tv_category_id>3</tv_category_id>
