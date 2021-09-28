@@ -168,6 +168,9 @@
     <ClInclude Include="uri_oneusd.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="uri_fox.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -264,6 +267,9 @@
       <Filter>Source Files\fmt</Filter>
     </ClCompile>
     <ClCompile Include="uri_oneusd.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_fox.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>
