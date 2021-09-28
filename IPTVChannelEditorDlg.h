@@ -201,7 +201,7 @@ private:
 	int GetNewCategoryID() const;
 	int GetCategoryIdByName(const std::wstring& categoryName);
 	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
-	void SwapCategories(const HTREEITEM hCur, const HTREEITEM hNext);
+	void SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight);
 
 	void SwitchPlugin();
 
@@ -354,21 +354,21 @@ private:
 	// list of all channel lists, filled when switch plugin. Reads from \playlists\plugin-name\*.xml
 	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
 
+	// map of all categories for fast search to category key (id)
+	// Loaded from channels list
+	std::map<int, CategoryInfo> m_categoriesMap;
+
 	// map of all channels for fast search
 	// Loaded from channels list
 	std::map<std::string, std::shared_ptr<ChannelInfo>> m_channelsMap;
 
-	// map of all categories for fast search
-	// Loaded from channels list
-	std::map<int, CategoryInfo> m_categoriesMap;
+	// map HTREE items to categories id
+	// Loaded when fill channels tree
+	std::map<HTREEITEM, int> m_categoriesTreeMap;
 
 	// map of all channels htree items
 	// Loaded when fill channels tree
 	std::map<HTREEITEM, std::shared_ptr<ChannelInfo>> m_channelsTreeMap;
-
-	// map HTREE items to categories id
-	// Loaded when fill channels tree
-	std::map<HTREEITEM, int> m_categoriesTreeMap;
 
 	//////////////////////////////////////////////////////////////////////////
 	// playlist part

@@ -95,7 +95,7 @@ inline BOOL CheckForTimeOut(DWORD dwStartTime, DWORD dwTimeOut)
 
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
-	return lParam1 > lParam2;
+	return lParam1 < lParam2 ? -1 : lParam1 == lParam2 ? 0 : 1;
 }
 
 using namespace SevenZip;
@@ -1680,7 +1680,7 @@ void CIPTVChannelEditorDlg::OnChannelUp()
 	}
 	else if (IsCategory(hTop) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
-		SwapCategories(hTop, m_wndChannelsTree.GetPrevSiblingItem(hTop));
+		SwapCategories(m_wndChannelsTree.GetPrevSiblingItem(hTop), hTop);
 	}
 }
 
@@ -1708,7 +1708,7 @@ void CIPTVChannelEditorDlg::OnChannelDown()
 	}
 	else if (IsCategory(hTop) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
-		SwapCategories(hTop, m_wndChannelsTree.GetNextSiblingItem(hTop));
+		SwapCategories(m_wndChannelsTree.GetNextSiblingItem(hTop), hTop);
 	}
 }
 
@@ -1761,22 +1761,32 @@ void CIPTVChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 
 void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight)
 {
+	// 1 2 3 4 5 - order left to right. Left has low value then right and position in the tree upper then right
+
 	auto lKey = GetCategory(hLeft)->get_key();
 	auto rKey = GetCategory(hRight)->get_key();
 
-	// swap pointers in map
-	auto lCat = m_categoriesMap[lKey];
-	auto rCat = m_categoriesMap[rKey];
-	lCat.category->set_key(rKey);
-	rCat.category->set_key(lKey);
-	m_categoriesMap[lKey] = rCat;
-	m_categoriesMap[rKey] = lCat;
+	// swap struct in map
+
+	// get copy struct
+	auto lStruct = m_categoriesMap[lKey];
+	auto rStruct = m_categoriesMap[rKey];
+
+	lStruct.category->set_key(rKey);
+	rStruct.category->set_key(lKey);
 
 	// swap HTREEITEM in map
-	auto lItem = m_categoriesMap[lKey].hItem;
-	auto rItem = m_categoriesMap[rKey].hItem;
-	m_categoriesMap[lKey].hItem = rItem;
-	m_categoriesMap[rKey].hItem = lItem;
+	std::swap(lStruct.hItem, rStruct.hItem);
+
+	// Set swapped struct
+	m_categoriesMap[lKey] = rStruct;
+	m_categoriesMap[rKey] = lStruct;
+
+	// swap id's in CategoriesTreeMap
+	auto lId = m_categoriesTreeMap[hLeft];
+	auto rId = m_categoriesTreeMap[hRight];
+	m_categoriesTreeMap[hLeft] = rId;
+	m_categoriesTreeMap[hRight] = lId;
 
 	// запоминаем ItemData для нод и подменяем на счетчик
 	std::vector<HTREEITEM> itemData;
@@ -1788,9 +1798,9 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	}
 
 	// Меняем местами нужные ItemData для сортировки
-	idx = m_wndChannelsTree.GetItemData(hRight);
-	m_wndChannelsTree.SetItemData(hRight, m_wndChannelsTree.GetItemData(hLeft));
-	m_wndChannelsTree.SetItemData(hLeft, idx);
+	idx = m_wndChannelsTree.GetItemData(hLeft);
+	m_wndChannelsTree.SetItemData(hLeft, m_wndChannelsTree.GetItemData(hRight));
+	m_wndChannelsTree.SetItemData(hRight, idx);
 
 	// сортируем. Пусть TreeCtrl сам переупорядочит внутренний список
 	TVSORTCB sortInfo = { nullptr };
@@ -1803,7 +1813,7 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 		m_wndChannelsTree.SetItemData(it, (DWORD_PTR)InfoType::enCategory);
 	}
 
-	m_wndChannelsTree.SelectItem(hLeft);
+	m_wndChannelsTree.SelectItem(hRight);
 
 	set_allow_save();
 }
