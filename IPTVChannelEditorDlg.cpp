@@ -1758,17 +1758,26 @@ void CIPTVChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 		hAfter = hEnd;
 	}
 
-	category->move_channels(FindChannel(hBegin), FindChannel(hEnd), down);
+	const auto& chBegin = FindChannel(hBegin);
+	const auto& chEnd = FindChannel(hEnd);
+	const auto& chMoved = FindChannel(hMoved);
+	if (!chBegin || !chEnd || !chMoved)
+		return;
 
-	const auto& channel = FindChannel(hMoved);
+	category->move_channels(chBegin, chEnd, down);
+
 	TVINSERTSTRUCTW tvInsert = { nullptr };
 	tvInsert.hParent = m_wndChannelsTree.GetParentItem(hBegin);
-	tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
+	tvInsert.item.pszText = (LPWSTR)chMoved->get_title().c_str();
 	tvInsert.item.lParam = (LPARAM)InfoType::enChannel;
 	tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 	tvInsert.hInsertAfter = hAfter;
 
-	m_wndChannelsTree.SetItemColor(m_wndChannelsTree.InsertItem(&tvInsert), m_wndChannelsTree.GetItemColor(hMoved));
+	HTREEITEM newItem = m_wndChannelsTree.InsertItem(&tvInsert);
+	m_wndChannelsTree.SetItemColor(newItem, m_wndChannelsTree.GetItemColor(hMoved));
+	m_channelsTreeMap.emplace(newItem, chMoved);
+
+	m_channelsTreeMap.erase(hMoved);
 	m_wndChannelsTree.DeleteItem(hMoved);
 
 	set_allow_save();
