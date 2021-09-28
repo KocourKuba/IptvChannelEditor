@@ -49,7 +49,19 @@ public:
 
 	std::wstring get_icon_absolute_path() const { return get_icon_uri().get_filesystem_path(root_path); };
 
-	void set_icon_uri(const uri_base& val) { icon_uri = val; }
+	void convert_https()
+	{
+		if (icon_uri.get_schema() == "https://")
+			icon_uri.set_schema("http://");
+	}
+
+	void set_icon_uri(const uri_base& val, bool make_http = true)
+	{
+		icon_uri = val;
+		if (make_http)
+			convert_https();
+	}
+
 	void set_icon_uri(const std::string& val) { icon_uri.set_uri(val); }
 	void set_icon_uri(const std::wstring& val) { icon_uri.set_uri(utils::utf16_to_utf8(val)); }
 

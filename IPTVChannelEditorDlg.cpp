@@ -215,8 +215,6 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	, m_evtStop(FALSE, TRUE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	m_plID = _T("ID:");
-	m_plEPG = _T("EPG:");
 	m_normal = ::GetSysColor(COLOR_WINDOWTEXT);
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
 	m_red = RGB(200, 0, 0);
@@ -1110,7 +1108,7 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 					const auto& entry = found->second;
 					if (channel->get_title() != entry->get_title()
 						|| channel->get_epg1_id() != entry->get_epg1_id()
-						|| !entry->get_icon_uri().get_uri().empty() && channel->get_icon_uri().get_uri() != entry->get_icon_uri().get_uri()
+						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
 						|| channel->get_archive_days() == 0 && channel->get_archive_days() != entry->get_archive_days()
 						)
 						color = m_brown;
@@ -1227,10 +1225,10 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	if (entry)
 	{
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
-		m_plID.Format(_T("ID: %hs"), entry->stream_uri->get_id().c_str());
+		m_plID.Format(_T("%hs"), entry->stream_uri->get_id().c_str());
 
 		if (!entry->get_epg1_id().empty())
-			m_plEPG.Format(_T("EPG: %hs"), entry->get_epg1_id().c_str());
+			m_plEPG.Format(_T("%hs"), entry->get_epg1_id().c_str());
 
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
 		m_archivePlDays = entry->get_archive_days();
@@ -1246,7 +1244,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	}
 	else
 	{
-		m_wndChannelIcon.SetBitmap(nullptr);
+		m_wndPlIcon.SetBitmap(nullptr);
 	}
 
 	UpdateData(FALSE);
@@ -3278,6 +3276,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 				const auto& img = GetIconCache().get_icon(info->get_title(), info->get_icon_absolute_path());
 				utils::SetImage(img, m_wndChannelIcon);
 			}
+			CheckForExistingChannels();
 			set_allow_save();
 		}
 	}
@@ -3298,6 +3297,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 				m_lastIconSelected = dlg.m_selected;
 			}
 
+			CheckForExistingChannels();
 			set_allow_save();
 		}
 	}
@@ -3523,7 +3523,7 @@ void CIPTVChannelEditorDlg::OnUpdateIcon()
 	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
 	const auto& entry = FindEntry(m_wndPlaylistTree.GetSelectedItem());
 
-	if (entry && channel && channel->get_icon_uri() != entry->get_icon_uri())
+	if (entry && channel && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
 		const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
@@ -3544,7 +3544,7 @@ void CIPTVChannelEditorDlg::OnUpdateUpdateIcon(CCmdUI* pCmdUI)
 		const auto& entry = FindEntry(m_wndPlaylistTree.GetSelectedItem());
 		if (channel && entry)
 		{
-			enable = channel->stream_uri->get_id() == entry->stream_uri->get_id() && channel->get_icon_uri() != entry->get_icon_uri();
+			enable = channel->stream_uri->get_id() == entry->stream_uri->get_id() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false);
 		}
 	}
 
@@ -3608,7 +3608,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 		const auto& entry = FindEntry(m_wndPlaylistTree.GetSelectedItem());
 		if (channel && entry)
 		{
-			enable = channel->get_icon_uri() != entry->get_icon_uri();
+			enable = !channel->get_icon_uri().is_equal(entry->get_icon_uri());
 		}
 	}
 
@@ -4169,7 +4169,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 		needCheckExisting = true;
 	}
 
-	if (entry->get_icon_uri() != channel->get_icon_uri() && !entry->get_icon_uri().get_uri().empty())
+	if (!entry->get_icon_uri().get_uri().empty() && !entry->get_icon_uri().is_equal(channel->get_icon_uri(), false))
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
 		needCheckExisting = true;
