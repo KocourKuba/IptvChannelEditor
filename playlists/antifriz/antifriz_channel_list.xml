@@ -14,13 +14,23 @@
 			<caption>Новости</caption>
 			<icon_url>plugin_file://icons/4.png</icon_url>
 		</tv_category>
+		<tv_category>
+			<id>3</id>
+			<caption>Украина</caption>
+			<icon_url>plugin_file://icons/ua.png</icon_url>
+		</tv_category>
+		<tv_category>
+			<id>4</id>
+			<caption>Беларусь</caption>
+			<icon_url>plugin_file://icons/by.png</icon_url>
+		</tv_category>
 	</tv_categories>
 	<tv_channels>
 		<tv_channel>
 			<caption>Первый канал</caption>
 			<channel_id>pervyj</channel_id>
 			<epg_id>pervyj</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/pervyj.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/pervyj.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -28,7 +38,7 @@
 			<caption>Первый HD</caption>
 			<channel_id>pervyj-hd</channel_id>
 			<epg_id>pervyj-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/pervyj-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/pervyj-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -36,7 +46,7 @@
 			<caption>Россия 1</caption>
 			<channel_id>rossija1</channel_id>
 			<epg_id>rossija1</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/rossija1.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/rossija1.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -44,7 +54,7 @@
 			<caption>Россия 1 HD</caption>
 			<channel_id>rossija-hd</channel_id>
 			<epg_id>rossija-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/rossija-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/rossija-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -52,7 +62,7 @@
 			<caption>НТВ</caption>
 			<channel_id>ntv</channel_id>
 			<epg_id>ntv</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/ntv.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/ntv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -60,7 +70,7 @@
 			<caption>НТВ HD</caption>
 			<channel_id>ntv-hd</channel_id>
 			<epg_id>ntv-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/ntv-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/ntv-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -68,7 +78,7 @@
 			<caption>НТВ Мир</caption>
 			<channel_id>ntv-mir</channel_id>
 			<epg_id>ntv-mir</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/ntv-mir.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/ntv-mir.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -76,7 +86,7 @@
 			<caption>ТНТ</caption>
 			<channel_id>TNT</channel_id>
 			<epg_id>TNT</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/TNT.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/TNT.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -84,7 +94,7 @@
 			<caption>ТНТ HD</caption>
 			<channel_id>tnt-hd</channel_id>
 			<epg_id>tnt-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/tnt-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/tnt-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -92,7 +102,7 @@
 			<caption>ТНТ4</caption>
 			<channel_id>tnt-4</channel_id>
 			<epg_id>tnt-4</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/tnt-4.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/tnt-4.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -100,7 +110,7 @@
 			<caption>ТНТ4 HD</caption>
 			<channel_id>tnt4-hd</channel_id>
 			<epg_id>tnt4-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/6e39c1d8efe3035d35ec941a5d8b3402.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/6e39c1d8efe3035d35ec941a5d8b3402.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -108,7 +118,7 @@
 			<caption>СТС</caption>
 			<channel_id>CTC</channel_id>
 			<epg_id>CTC</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/CTC.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/CTC.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -116,7 +126,7 @@
 			<caption>СТС HD</caption>
 			<channel_id>ctc-hd</channel_id>
 			<epg_id>ctc-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/ctc-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/ctc-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -124,7 +134,7 @@
 			<caption>СТС Love</caption>
 			<channel_id>sts-love</channel_id>
 			<epg_id>sts-love</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/sts-love.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/sts-love.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -132,7 +142,7 @@
 			<caption>Домашний</caption>
 			<channel_id>domashnij</channel_id>
 			<epg_id>domashnij</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/domashnij.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/domashnij.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -140,7 +150,7 @@
 			<caption>Перец</caption>
 			<channel_id>perec</channel_id>
 			<epg_id>perec</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/perec.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/perec.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -148,7 +158,7 @@
 			<caption>РЕН ТВ</caption>
 			<channel_id>ren-tv</channel_id>
 			<epg_id>ren-tv</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/ren-tv.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/ren-tv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -156,7 +166,7 @@
 			<caption>РЕН ТВ HD</caption>
 			<channel_id>ren-tv-hd</channel_id>
 			<epg_id>ren-tv-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/ren-tv-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/ren-tv-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -164,7 +174,7 @@
 			<caption>ТВ3</caption>
 			<channel_id>tv-3</channel_id>
 			<epg_id>tv-3</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/tv-3.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/tv-3.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -172,7 +182,7 @@
 			<caption>ТВ3 HD</caption>
 			<channel_id>tv3-hd</channel_id>
 			<epg_id>tv3-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/tv3-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/tv3-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -180,7 +190,7 @@
 			<caption>Че</caption>
 			<channel_id>4e</channel_id>
 			<epg_id>4e</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/4e.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/4e.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -188,7 +198,7 @@
 			<caption>Звезда</caption>
 			<channel_id>zvezda</channel_id>
 			<epg_id>zvezda</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/zvezda.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/zvezda.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -196,7 +206,7 @@
 			<caption>Звезда HD</caption>
 			<channel_id>zvezda-hd</channel_id>
 			<epg_id>zvezda-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/f2b1554644034dba7e80709ec4255637.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/f2b1554644034dba7e80709ec4255637.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -204,7 +214,7 @@
 			<caption>Звезда Плюс</caption>
 			<channel_id>zvezda-plus</channel_id>
 			<epg_id>zvezda-plus</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/1c483e8300d10ddf2f145341f4fb1555.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/1c483e8300d10ddf2f145341f4fb1555.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -212,7 +222,7 @@
 			<caption>ТВЦ</caption>
 			<channel_id>tvc</channel_id>
 			<epg_id>tvc</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/tvc.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/tvc.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -220,7 +230,7 @@
 			<caption>5 канал</caption>
 			<channel_id>5kanal</channel_id>
 			<epg_id>5kanal</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/5kanal.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/5kanal.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -228,7 +238,7 @@
 			<caption>Россия Культура</caption>
 			<channel_id>rossija-k</channel_id>
 			<epg_id>rossija-k</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/rossija-k.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/rossija-k.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -236,7 +246,7 @@
 			<caption>Красная линия</caption>
 			<channel_id>krasnaja-linija</channel_id>
 			<epg_id>krasnaja-linija</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/d74d311141669efc8f60f80227d42d29.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/d74d311141669efc8f60f80227d42d29.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -244,7 +254,7 @@
 			<caption>8 канал</caption>
 			<channel_id>8-kanal</channel_id>
 			<epg_id>8-kanal</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/8-kanal.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/8-kanal.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -252,7 +262,7 @@
 			<caption>9 Канал</caption>
 			<channel_id>9-kanal</channel_id>
 			<epg_id>9-kanal</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/685aa2c9ce8f9c4460afa56f2e86d30d.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/685aa2c9ce8f9c4460afa56f2e86d30d.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -260,7 +270,7 @@
 			<caption>ОТР</caption>
 			<channel_id>otp</channel_id>
 			<epg_id>otp</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/b2c82a92c9c4f88eecc9fa0a3180bdbd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/b2c82a92c9c4f88eecc9fa0a3180bdbd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -268,7 +278,7 @@
 			<caption>Мир</caption>
 			<channel_id>mir</channel_id>
 			<epg_id>mir</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/mir.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/mir.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -276,7 +286,7 @@
 			<caption>Мир HD</caption>
 			<channel_id>mir-hd</channel_id>
 			<epg_id>mir-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/517e7fdfcab12896dc4a98cc38527bbf.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/517e7fdfcab12896dc4a98cc38527bbf.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -284,7 +294,7 @@
 			<caption>Мир 24</caption>
 			<channel_id>mir-24</channel_id>
 			<epg_id>mir-24</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/mir-24.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/mir-24.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -292,7 +302,7 @@
 			<caption>Мир 24 HD</caption>
 			<channel_id>mir-24-hd</channel_id>
 			<epg_id>mir-24-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/0a08948b5b2b17a759009932998a30fe.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/0a08948b5b2b17a759009932998a30fe.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -300,7 +310,7 @@
 			<caption>Сарафан</caption>
 			<channel_id>sarafan</channel_id>
 			<epg_id>sarafan</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/sarafan.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/sarafan.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -308,7 +318,7 @@
 			<caption>Gagsnetwork</caption>
 			<channel_id>gagsnetwork</channel_id>
 			<epg_id>gagsnetwork</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/806d492e6eb23379069ca47ef23df79a.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/806d492e6eb23379069ca47ef23df79a.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -316,7 +326,7 @@
 			<caption>КВН ТВ</caption>
 			<channel_id>kvn-tv</channel_id>
 			<epg_id>kvn-tv</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/kvn-tv.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/kvn-tv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -324,7 +334,7 @@
 			<caption>Пятница</caption>
 			<channel_id>piatnica</channel_id>
 			<epg_id>piatnica</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/piatnica.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/piatnica.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -332,7 +342,7 @@
 			<caption>Пятница HD</caption>
 			<channel_id>piatnica-hd</channel_id>
 			<epg_id>piatnica-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/piatnica-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/piatnica-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -340,7 +350,7 @@
 			<caption>Суббота</caption>
 			<channel_id>super</channel_id>
 			<epg_id>super</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/9a4aadca52d83ac7082a2d0a6fb71bf0.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/9a4aadca52d83ac7082a2d0a6fb71bf0.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -348,7 +358,7 @@
 			<caption>Суббота HD</caption>
 			<channel_id>super-hd</channel_id>
 			<epg_id>super-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/e911bb2e54086327c1fabb758a1fcf06.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/e911bb2e54086327c1fabb758a1fcf06.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -356,7 +366,7 @@
 			<caption>Телеканал 360</caption>
 			<channel_id>podmoskovje</channel_id>
 			<epg_id>podmoskovje</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/adbad9e9aec2c7df5d10e1920f18f3ba.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/adbad9e9aec2c7df5d10e1920f18f3ba.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -364,7 +374,7 @@
 			<caption>Телеканал 360 HD</caption>
 			<channel_id>telekanal-360-hd</channel_id>
 			<epg_id>telekanal-360-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/9358fc9d16cbb434631cb5542083bf14.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/9358fc9d16cbb434631cb5542083bf14.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -372,7 +382,7 @@
 			<caption>Ю ТВ</caption>
 			<channel_id>yu-tv</channel_id>
 			<epg_id>yu-tv</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/yu-tv.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/yu-tv.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -380,7 +390,7 @@
 			<caption>Теледом HD</caption>
 			<channel_id>teledom-hd</channel_id>
 			<epg_id>teledom-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/2ed9e11f1df32bb89cb42bb1bade2f36.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/2ed9e11f1df32bb89cb42bb1bade2f36.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -388,7 +398,7 @@
 			<caption>Время</caption>
 			<channel_id>vremya</channel_id>
 			<epg_id>vremya</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/923ce8cc696cfeaf31d4c4fc284526dd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/923ce8cc696cfeaf31d4c4fc284526dd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -396,7 +406,7 @@
 			<caption>RT Док</caption>
 			<channel_id>rt-doc</channel_id>
 			<epg_id>rt-doc</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/rt-doc.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/rt-doc.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -404,14 +414,14 @@
 			<caption>RT Док HD</caption>
 			<channel_id>russia-today-doc-hd</channel_id>
 			<epg_id>russia-today-doc-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/russia-today-doc-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/russia-today-doc-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>RTVi</caption>
 			<channel_id>rtvi</channel_id>
 			<epg_id>rtvi</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/rtvi.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/rtvi.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -419,7 +429,7 @@
 			<caption>Дождь</caption>
 			<channel_id>dozhd</channel_id>
 			<epg_id>dozhd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/dozhd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/dozhd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -427,7 +437,7 @@
 			<caption>Дождь HD</caption>
 			<channel_id>dozhd-hd</channel_id>
 			<epg_id>dozhd-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/dozhd-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/dozhd-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -435,7 +445,7 @@
 			<caption>Настоящее время HD</caption>
 			<channel_id>nastoyaschee-vremya-hd</channel_id>
 			<epg_id>nastoyaschee-vremya-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/nastoyaschee-vremya-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/nastoyaschee-vremya-hd.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -443,7 +453,7 @@
 			<caption>Союз</caption>
 			<channel_id>souz</channel_id>
 			<epg_id>souz</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/740cd092717cc4c933e53166d92956a3.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/740cd092717cc4c933e53166d92956a3.png</icon_url>
 			<tv_category_id>1</tv_category_id>
 			<archive>7</archive>
 		</tv_channel>
@@ -451,106 +461,655 @@
 			<caption>Россия 24</caption>
 			<channel_id>rossija24</channel_id>
 			<epg_id>rossija24</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/rossija24.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/rossija24.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>EuroNews</caption>
 			<channel_id>evronews</channel_id>
 			<epg_id>evronews</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/evronews.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/evronews.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Известия</caption>
 			<channel_id>izvestija</channel_id>
 			<epg_id>izvestija</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/izvestija.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/izvestija.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Известия HD</caption>
 			<channel_id>izvestija-hd</channel_id>
 			<epg_id>izvestija-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/9239fbfc62b6981763605f9115911779.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/9239fbfc62b6981763605f9115911779.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Москва 24</caption>
 			<channel_id>moskva-24</channel_id>
 			<epg_id>moskva-24</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/moskva-24.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/moskva-24.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>РБК</caption>
 			<channel_id>rbk</channel_id>
 			<epg_id>rbk</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/01ad28b10ef3f199d5ce768d6eaf0a76.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/01ad28b10ef3f199d5ce768d6eaf0a76.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>RT</caption>
 			<channel_id>rt-english</channel_id>
 			<epg_id>rt-english</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/rt-english.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/rt-english.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>RT HD</caption>
 			<channel_id>russia-today-hd</channel_id>
 			<epg_id>russia-today-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/channel_logos/russia-today-hd.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/channel_logos/russia-today-hd.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BBC World</caption>
 			<channel_id>bbc-world-news</channel_id>
 			<epg_id>bbc-world-news</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/eb5a02c53847d426c403920ff579d10a.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/eb5a02c53847d426c403920ff579d10a.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BBC World HD</caption>
 			<channel_id>bbc-world-news-hd</channel_id>
 			<epg_id>bbc-world-news-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/be74123a9a72dab0f82664c4804df20d.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/be74123a9a72dab0f82664c4804df20d.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>CNN</caption>
 			<channel_id>cnn</channel_id>
 			<epg_id>cnn</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/7b87e191b6c5592984bfa95fc72e5334.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/7b87e191b6c5592984bfa95fc72e5334.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>CNN HD</caption>
 			<channel_id>cnn-hd</channel_id>
 			<epg_id>cnn-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/6ea55f38d04ca6c24a37777c81b516b2.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/6ea55f38d04ca6c24a37777c81b516b2.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Bloomberg TV HD</caption>
 			<channel_id>bloomberg-hd</channel_id>
 			<epg_id>bloomberg-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/12966d52f4ca86aa0c4ae837211ccf2d.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/12966d52f4ca86aa0c4ae837211ccf2d.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Al Jazeera HD</caption>
 			<channel_id>al-jazeera-hd</channel_id>
 			<epg_id>al-jazeera-hd</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/ce79433e2a4f213677c2a85091b5f8fe.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/ce79433e2a4f213677c2a85091b5f8fe.png</icon_url>
 			<tv_category_id>2</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Sky News</caption>
 			<channel_id>sky-news-uk</channel_id>
 			<epg_id>sky-news-uk</epg_id>
-			<icon_url>https://antifriz.tv/storage/images/pack_logos/fe521f5b8705418ce9d2ec1801f6029e.png</icon_url>
+			<icon_url>https://af-play.com/storage/images/pack_logos/fe521f5b8705418ce9d2ec1801f6029e.png</icon_url>
 			<tv_category_id>2</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Перший Незалежний</caption>
+			<channel_id>1nezalegny-ua</channel_id>
+			<epg_id>1nezalegny-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/4d87be28e89255d4f7926131bba4a839.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Перший Незалежний HD</caption>
+			<channel_id>1nezalegny-hd-ua</channel_id>
+			<epg_id>1nezalegny-hd-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/9810aed25d09b9c229273f0a40fc02a2.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>24 Канал</caption>
+			<channel_id>24tv-ua</channel_id>
+			<epg_id>24tv-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/24tv-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Украина 24 HD</caption>
+			<channel_id>ukraina-24-hd</channel_id>
+			<epg_id>ukraina-24-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/77a1dfac95819b4353c0098798fe06a0.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>ЧП Info</caption>
+			<channel_id>chptv-ua</channel_id>
+			<epg_id>chptv-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/chptv-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>OBOZ TV HD</caption>
+			<channel_id>oboz-ua-hd</channel_id>
+			<epg_id>oboz-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/e47158bfc78b284925b60717ee687714.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>НТН</caption>
+			<channel_id>ntn</channel_id>
+			<epg_id>ntn</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/ce48efa878d1708cb8b130fa80a8788a.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>НТН HD</caption>
+			<channel_id>ntn-ua-hd</channel_id>
+			<epg_id>ntn-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/43282250911ce06825c752587601ab80.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>ТЕТ</caption>
+			<channel_id>tet</channel_id>
+			<epg_id>tet</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/56c9877c6bf61a9bc96c7bab0033b1a6.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>ТЕТ HD</caption>
+			<channel_id>tet-ua-hd</channel_id>
+			<epg_id>tet-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/124eb36fe79d08c024cf48c6e5b07cf5.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Eспресо TV</caption>
+			<channel_id>plus-plus</channel_id>
+			<epg_id>plus-plus</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/8a6fb065ad83bf7f0a02b6900b9c2b50.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Eспресо TV HD</caption>
+			<channel_id>espresso-ua-hd</channel_id>
+			<epg_id>espresso-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/2bd0b013b187ef47dd88e38128c3717f.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Прямий</caption>
+			<channel_id>tonis-ua</channel_id>
+			<epg_id>tonis-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/af5ad905e3b50b2c7cf77c18aaf738b9.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Прямий HD</caption>
+			<channel_id>tonis-hd-ua</channel_id>
+			<epg_id>tonis-hd-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/3721bc2f5356b1023f5fc7a10aba9dbf.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Наш</caption>
+			<channel_id>kanal-nash</channel_id>
+			<epg_id>kanal-nash</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/nash.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Дом</caption>
+			<channel_id>dom-ua</channel_id>
+			<epg_id>dom-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/9d7e44f079235ca30d50e44d6865d963.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>K1</caption>
+			<channel_id>k1-ua</channel_id>
+			<epg_id>k1-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/k1-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>К1 HD</caption>
+			<channel_id>k1-ua-hd</channel_id>
+			<epg_id>k1-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/792d37bb51f0369ccef873c4a5261e37.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>K2</caption>
+			<channel_id>k2-ua</channel_id>
+			<epg_id>k2-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/k2-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>К2 HD</caption>
+			<channel_id>k2-ua-hd</channel_id>
+			<epg_id>k2-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/81a4b03af63fffa683481f42ffb550cc.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Квартал ТВ</caption>
+			<channel_id>kvartal-tv-ua</channel_id>
+			<epg_id>kvartal-tv-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/kvartal-tv-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>5 канал HD UA</caption>
+			<channel_id>5kanal-ukraina</channel_id>
+			<epg_id>5kanal-ukraina</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/2bd137b6a0098bf26a7684731528cd8a.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Enter-фільм</caption>
+			<channel_id>enter-film-ua</channel_id>
+			<epg_id>enter-film-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/enter-film-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Enter-фильм HD</caption>
+			<channel_id>enter-film-ua-hd</channel_id>
+			<epg_id>enter-film-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/92b0e1692effdefc95ec1031ccec0f2d.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Star Cinema HD</caption>
+			<channel_id>star-cinema-ua-hd</channel_id>
+			<epg_id>star-cinema-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/4a60fa143f692d24901f13ce5d98231c.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Star Family HD</caption>
+			<channel_id>star-family-ua-hd</channel_id>
+			<epg_id>star-family-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/6d5be588ef9d9f58299d910f34bf0c19.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Болт HD</caption>
+			<channel_id>bolt-ua-hd</channel_id>
+			<epg_id>bolt-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/bolt-ua-hd.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>ICTV</caption>
+			<channel_id>ictv</channel_id>
+			<epg_id>ictv</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/ictv.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>ICTV HD</caption>
+			<channel_id>ictv-ua-hd</channel_id>
+			<epg_id>ictv-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/c1208931dd7581f438fb7e6c81c08fda.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>СТБ</caption>
+			<channel_id>stb</channel_id>
+			<epg_id>stb</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/4adfd2cb44a67b62d7f2d441e9b873e0.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>СТБ HD</caption>
+			<channel_id>stb-ua-hd</channel_id>
+			<epg_id>stb-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/ea2879beaac1594ceac50346b7c7a305.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Перший Національний</caption>
+			<channel_id>pervyj-national-ua</channel_id>
+			<epg_id>pervyj-national-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/1ed10a0ce10d46e514a6450707284333.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Перший Національний HD</caption>
+			<channel_id>pervyj-ua-hd</channel_id>
+			<epg_id>pervyj-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/e5e8b41181342129a7a8ce1f0b4c34d6.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Интер</caption>
+			<channel_id>inter</channel_id>
+			<epg_id>inter</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/8fee435074c50609a7ed6d3c87104d90.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Интер HD</caption>
+			<channel_id>inter-ua-hd</channel_id>
+			<epg_id>inter-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/8ecde299d0c2862e37ea7fd7e7688ad1.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Интер+</caption>
+			<channel_id>inter-plus-ua</channel_id>
+			<epg_id>inter-plus-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/64f01b61bccb0f6fc2a305cc23f2f705.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Интер+ HD</caption>
+			<channel_id>inter-plus-ua-hd</channel_id>
+			<epg_id>inter-plus-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/fa15f5c7d12d72d2f55cd22e492b6f2a.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Бигуди</caption>
+			<channel_id>bigudi-ua</channel_id>
+			<epg_id>bigudi-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/feafb02c2ae3c32428879704af407eea.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>УНІАН</caption>
+			<channel_id>unian-tv-ua</channel_id>
+			<epg_id>unian-tv-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/unian-tv-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Уніан HD</caption>
+			<channel_id>unian-hd-ua</channel_id>
+			<epg_id>unian-hd-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/77f1c9f5a3a40dafc9184e2fa69966d2.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Новый Канал</caption>
+			<channel_id>novij-kanal</channel_id>
+			<epg_id>novij-kanal</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/e5c6e9815c8d13ce530b45a0ccf41848.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Новый Канал HD</caption>
+			<channel_id>novyj-kanal-ua-hd</channel_id>
+			<epg_id>novyj-kanal-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/c64ba68b24928c054d92fc0cd0f66058.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Україна</caption>
+			<channel_id>trk-ua</channel_id>
+			<epg_id>trk-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/07786801209c084d74bcfabed0da058b.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Україна HD</caption>
+			<channel_id>trk-ua-hd</channel_id>
+			<epg_id>trk-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/da22ffe5c1a844af2639c9932258dbba.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>ОЦЕ HD</caption>
+			<channel_id>oce-ua-hd</channel_id>
+			<epg_id>oce-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/16d1c9fc0c36b4a06763635a53508a53.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>ZOOM</caption>
+			<channel_id>zoom-ua</channel_id>
+			<epg_id>zoom-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/zoom-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>ZOOM HD</caption>
+			<channel_id>zoom-ua-hd</channel_id>
+			<epg_id>zoom-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/0ab535b3e4ac281aee0b75d866563054.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Мега</caption>
+			<channel_id>mega-ua</channel_id>
+			<epg_id>mega-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/mega-ua.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Мега HD</caption>
+			<channel_id>mega-ua-hd</channel_id>
+			<epg_id>mega-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/cf01f9336ae84d3056a5b2399428e1f2.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>НЛО</caption>
+			<channel_id>nlo-ua</channel_id>
+			<epg_id>nlo-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/ae81941ee763d445f6fe4a05081ccc3c.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>НЛО HD</caption>
+			<channel_id>nlo-ua-hd</channel_id>
+			<epg_id>nlo-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/5f9e0b091da95ce6a2a7acc3f58628e9.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Индиго</caption>
+			<channel_id>indigo-ua</channel_id>
+			<epg_id>indigo-ua</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/3fe7fc88abd88ab2102924d511ab726a.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Индиго HD</caption>
+			<channel_id>indigo-ua-hd</channel_id>
+			<epg_id>indigo-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/d1c8fd606545c1aab43f9511eb295e01.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Кус Кус HD</caption>
+			<channel_id>kus-kus-ua-hd</channel_id>
+			<epg_id>kus-kus-ua-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/e6fc1b53524eac15848446f3c273cfd7.png</icon_url>
+			<tv_category_id>3</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 1</caption>
+			<channel_id>belarus1-by</channel_id>
+			<epg_id>belarus1-by</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/belarus1-by.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 1 HD</caption>
+			<channel_id>belarus1-by-hd</channel_id>
+			<epg_id>belarus1-by-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/belarus1-by-hd.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 2</caption>
+			<channel_id>belarus2</channel_id>
+			<epg_id>belarus2</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/belarus2.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 2 HD</caption>
+			<channel_id>belarus2-by-hd</channel_id>
+			<epg_id>belarus2-by-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/f13bbe8f3057fb14b90917900ac55d23.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 3</caption>
+			<channel_id>belarus3-by</channel_id>
+			<epg_id>belarus3-by</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/belarus3-by.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 3 HD</caption>
+			<channel_id>belarus3-by-hd</channel_id>
+			<epg_id>belarus3-by-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/5d0303afbac3b0fd8d603e240567a53f.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 5</caption>
+			<channel_id>belarus5</channel_id>
+			<epg_id>belarus5</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/belarus5.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 5 HD</caption>
+			<channel_id>belarus5-by-hd</channel_id>
+			<epg_id>belarus5-by-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/belarus5-by-hd.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 24</caption>
+			<channel_id>belarus-24</channel_id>
+			<epg_id>belarus-24</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/belarus-24.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Беларусь 24 HD</caption>
+			<channel_id>belarus-24-hd</channel_id>
+			<epg_id>belarus-24-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/belarus-24.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>ОНТ BY</caption>
+			<channel_id>ont-by</channel_id>
+			<epg_id>ont-by</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/ont-by.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>ОНТ BY HD</caption>
+			<channel_id>ont-by-hd</channel_id>
+			<epg_id>ont-by-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/e92463a2df8a2571da8a491199940b29.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>СТВ Беларусь</caption>
+			<channel_id>stv-by</channel_id>
+			<epg_id>stv-by</epg_id>
+			<icon_url>https://af-play.com/storage/images/channel_logos/stv-by.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>СТВ Беларусь HD</caption>
+			<channel_id>stv-by-hd</channel_id>
+			<epg_id>stv-by-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/eee49c3519ed571f172b9854a99cf9a9.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>8 канал HD BY</caption>
+			<channel_id>8kanal-by-hd</channel_id>
+			<epg_id>8kanal-by-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/82740c12af376b6649f1ef9bd0743e68.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Белсат</caption>
+			<channel_id>belsat-by</channel_id>
+			<epg_id>belsat-by</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/a583a110ada03e39ac0e7adc13c681c7.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Белсат HD</caption>
+			<channel_id>belsat-by-hd</channel_id>
+			<epg_id>belsat-by-hd</epg_id>
+			<icon_url>https://af-play.com/storage/images/pack_logos/d7b9847faa0e5ae1dd9926df1a776f98.png</icon_url>
+			<tv_category_id>4</tv_category_id>
+			<archive>7</archive>
 		</tv_channel>
 	</tv_channels>
 </tv_info>
