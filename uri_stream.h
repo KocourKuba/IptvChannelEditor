@@ -12,6 +12,7 @@ enum class StreamType
 	enSharaclub,
 	enGlanz,
 	enAntifriz,
+	enOneUsd,
 };
 
 typedef struct

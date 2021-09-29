@@ -165,6 +165,9 @@
     <ClInclude Include="AccessInfoPinDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="uri_oneusd.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -259,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="fmt\src\format.cc">
       <Filter>Source Files\fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_oneusd.cpp">
+      <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

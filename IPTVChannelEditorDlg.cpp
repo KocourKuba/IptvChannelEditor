@@ -73,6 +73,30 @@ constexpr auto REG_STREAM_TYPE = _T("StreamType");
 constexpr auto REG_CUSTOM_URL = _T("CustomUrl");
 constexpr auto REG_CUSTOM_FILE = _T("CustomPlaylist");
 
+typedef enum
+{
+	enAntifriz = 0,
+	enEdem,
+	enGlanz,
+	enOneUsd,
+	enSharaclub,
+	enSharavoz,
+} SupportedPlugins;
+
+struct PluginDesc
+{
+	SupportedPlugins type;
+	CString name;
+};
+PluginDesc all_plugins[] = {
+	{ enAntifriz,  _T("Antifriz") },
+	{ enEdem,      _T("Edem (iLook TV)") },
+	{ enGlanz,     _T("Glanz TV") },
+	{ enOneUsd,    _T("1USD") },
+	{ enSharaclub, _T("Sharaclub TV") },
+	{ enSharavoz,  _T("Sharavoz TV") },
+};
+
 CString CIPTVChannelEditorDlg::m_probe;
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
@@ -380,11 +404,10 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	UpdateData(FALSE);
 
-	m_wndPluginType.AddString(_T("Edem (iLook TV)"));
-	m_wndPluginType.AddString(_T("Sharavoz TV"));
-	m_wndPluginType.AddString(_T("Sharaclub TV"));
-	m_wndPluginType.AddString(_T("Glanz TV"));
-	m_wndPluginType.AddString(_T("Antifriz TV"));
+	for (const auto& item : all_plugins)
+	{
+		m_wndPluginType.AddString(item.name);
+	}
 
 	m_wndSearch.EnableWindow(FALSE);
 	m_wndPlSearch.EnableWindow(FALSE);
@@ -429,7 +452,15 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	switch (m_wndPluginType.GetCurSel())
 	{
-		case 0: // Edem
+		case enAntifriz: // antifriz
+		{
+			m_pluginType = StreamType::enAntifriz;
+
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_password = ReadRegStringPluginA(REG_PASSWORD);
+			break;
+		}
+		case enEdem: // Edem
 		{
 			m_pluginType = StreamType::enEdem;
 			bStreamType = FALSE;
@@ -441,15 +472,24 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_domain = ReadRegStringPluginA(REG_DOMAIN);
 			break;
 		}
-		case 1: // Sharavoz
+		case enGlanz: // glanz
 		{
-			m_pluginType = StreamType::enSharavoz;
+			m_pluginType = StreamType::enGlanz;
+
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_login = ReadRegStringPluginA(REG_LOGIN);
+			m_password = ReadRegStringPluginA(REG_PASSWORD);
+			break;
+		}
+		case enOneUsd: // 1USD
+		{
+			m_pluginType = StreamType::enOneUsd;
 
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_password = ReadRegStringPluginA(REG_PASSWORD);
 			break;
 		}
-		case 2: // Sharaclub
+		case enSharaclub: // Sharaclub
 		{
 			m_pluginType = StreamType::enSharaclub;
 
@@ -460,18 +500,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_password = ReadRegStringPluginA(REG_PASSWORD);
 			break;
 		}
-		case 3: // glanz
+		case enSharavoz: // Sharavoz
 		{
-			m_pluginType = StreamType::enGlanz;
-
-			m_wndPlaylist.AddString(_T("Playlist"));
-			m_login = ReadRegStringPluginA(REG_LOGIN);
-			m_password = ReadRegStringPluginA(REG_PASSWORD);
-			break;
-		}
-		case 4: // antifriz
-		{
-			m_pluginType = StreamType::enAntifriz;
+			m_pluginType = StreamType::enSharavoz;
 
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_password = ReadRegStringPluginA(REG_PASSWORD);
@@ -553,16 +584,18 @@ std::wstring CIPTVChannelEditorDlg::GetPluginNameW(bool bCamel /*= false*/) cons
 {
 	switch (m_wndPluginType.GetCurSel())
 	{
-		case 0: // Edem
+		case enEdem: // Edem
 			return bCamel ? L"Edem" : L"edem";
-		case 1: // Sharavoz
+		case enSharavoz: // Sharavoz
 			return bCamel ? L"Sharavoz" : L"sharavoz";
-		case 2: // Sharaclub
+		case enSharaclub: // Sharaclub
 			return bCamel ? L"Sharaclub" : L"sharaclub";
-		case 3: // Glanz
+		case enGlanz: // Glanz
 			return bCamel ? L"Glanz" : L"glanz";
-		case 4: // Antifriz
+		case enAntifriz: // Antifriz
 			return bCamel ? L"Antifriz" : L"antifriz";
+		case enOneUsd: // 1USD
+			return bCamel ? L"Oneusd" : L"oneusd";
 	}
 
 	return L"";
@@ -572,16 +605,18 @@ std::string CIPTVChannelEditorDlg::GetPluginNameA(bool bCamel /*= false*/) const
 {
 	switch (m_wndPluginType.GetCurSel())
 	{
-		case 0: // Edem
+		case enEdem: // Edem
 			return bCamel ? "Edem" : "edem";
-		case 1: // Sharavoz
+		case enSharavoz: // Sharavoz
 			return bCamel ? "Sharavoz" : "sharavoz";
-		case 2: // Sharaclub
+		case enSharaclub: // Sharaclub
 			return bCamel ? "Sharaclub" : "sharaclub";
-		case 3: // Glanz
+		case enGlanz: // Glanz
 			return bCamel ? "Glanz" : "glanz";
-		case 4: // Antifriz
+		case enAntifriz: // Antifriz
 			return bCamel ? "Antifriz" : "antifriz";
+		case enOneUsd: // 1USD
+			return bCamel ? "Oneusd" : "oneusd";
 	}
 
 	return "";
@@ -621,6 +656,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		}
 		case StreamType::enSharavoz:
 		case StreamType::enAntifriz:
+		case StreamType::enOneUsd:
 		{
 			switch (idx)
 			{
@@ -788,7 +824,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 	int pl_idx = m_wndPlaylist.GetCurSel();
 	switch (m_wndPluginType.GetCurSel())
 	{
-		case 0: // Edem
+		case enEdem: // Edem
 		{
 			switch (pl_idx)
 			{
@@ -806,10 +842,11 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 			}
 			break;
 		}
-		case 1: // Sharavoz
-		case 2: // Sharaclub
-		case 3: // Glanz
-		case 4: // Antifriz
+		case enAntifriz: // Antifriz
+		case enGlanz: // Glanz
+		case enOneUsd: // Antifriz
+		case enSharavoz: // Sharavoz
+		case enSharaclub: // Sharaclub
 		{
 			switch (pl_idx)
 			{
