@@ -18,12 +18,12 @@ class FoxPluginConfig extends DefaultConfig
     public static $VOD_FAVORITES_SUPPORTED = false;
 
     // setup variables
-    public static $MPEG_TS_SUPPORTED = true;
+    public static $MPEG_TS_SUPPORTED = false;
     public static $ACCOUNT_TYPE = 'LOGIN';
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
-    public static $STREAM_URL_PATTERN = '|^https?://([^/]+)/([^/]+)(?:/.+\.m3u8){0,1}$|';
+    public static $STREAM_URL_PATTERN = '|^https?://([^/]+)/([^/]+)/?(.+\.m3u8){0,1}$|';
 
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{TOKEN}/index.m3u8';
@@ -108,6 +108,7 @@ class FoxPluginConfig extends DefaultConfig
         $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         for ($i = 0; $i < count($lines); ++$i) {
             if (preg_match(static::$STREAM_URL_PATTERN, $lines[$i], $matches)) {
+                $plugin_cookies->format = isset($matches[3]) ? 'hls' : 'mpeg';
                 return true;
             }
         }
