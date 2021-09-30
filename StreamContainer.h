@@ -11,8 +11,6 @@ public:
 	StreamContainer(StreamType type);
 	~StreamContainer() = default;
 
-	static LPCTSTR get_name(StreamType type);
-
 	static std::unique_ptr<uri_stream> get_instance(StreamType type);
 
 	void set_type(StreamType type);

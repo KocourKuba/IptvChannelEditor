@@ -209,6 +209,7 @@ private:
 	std::string GetPluginNameA(bool bCamel = false) const;
 	void SaveStreamInfo();
 
+	bool HasEPG2();
 	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
 	std::wstring GetPluginRegPath() const;
 

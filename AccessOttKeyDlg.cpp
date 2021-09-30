@@ -57,6 +57,7 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 
 	m_accessKey.Empty();
 	m_domain.Empty();
+	m_status.Empty();
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
 	if (utils::CrackUrl(utils::utf16_to_utf8(m_url.GetString())))
@@ -88,6 +89,7 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 		{
 			m_accessKey = access_key.c_str();
 			m_domain = domain.c_str();
+			m_status = _T("ok");
 			break;
 		}
 	}

@@ -285,7 +285,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     $old_password = $plugin_cookies->password;
                     $plugin_cookies->login = $user_input->login;
                     $plugin_cookies->password = $user_input->password;
-                    if (!self::$config->GetAccountStreamInfo($plugin_cookies)) {
+                    if (!self::$config->GetAccountInfo($plugin_cookies)) {
                         $plugin_cookies->login = $old_login;
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
@@ -301,7 +301,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'pin_apply': // handle token dialog result
                     $old_password = $plugin_cookies->password;
                     $plugin_cookies->password = $user_input->password;
-                    if (!self::$config->GetAccountStreamInfo($plugin_cookies)) {
+                    if (!self::$config->GetAccountInfo($plugin_cookies)) {
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }

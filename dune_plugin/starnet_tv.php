@@ -132,7 +132,8 @@ class StarnetPluginTv extends AbstractTv
             }
         }
 
-        $config::GetAccountStreamInfo($plugin_cookies);
+        $config::GetAccountInfo($plugin_cookies);
+        $pl_entries = $config::GetPlaylistStreamInfo($plugin_cookies);
 
         // Create channels and groups
         $this->channels = new HashedArray();
@@ -178,8 +179,14 @@ class StarnetPluginTv extends AbstractTv
             // calculate unique id from url hash
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = strval($xml_tv_channel->channel_id);
-                $streaming_url = $config::$MEDIA_URL_TEMPLATE_HLS;
-                $hash = hash("crc32", (str_replace('{ID}', $xml_tv_channel->channel_id, $config::$MEDIA_URL_TEMPLATE_HLS)));
+                if (isset($pl_entries[$channel_id]))
+                {
+                    $streaming_url = $pl_entries[$channel_id];
+                    $hash = $channel_id = hash("crc32", $streaming_url);
+                } else {
+                    $streaming_url = $config::$MEDIA_URL_TEMPLATE_HLS;
+                    $hash = hash("crc32", (str_replace('{ID}', $xml_tv_channel->channel_id, $config::$MEDIA_URL_TEMPLATE_HLS)));
+                }
             } else {
                 $streaming_url = strval($xml_tv_channel->streaming_url);
                 $hash = $channel_id = hash("crc32", $streaming_url);

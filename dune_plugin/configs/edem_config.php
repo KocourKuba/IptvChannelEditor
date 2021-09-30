@@ -19,7 +19,7 @@ class EdemPluginConfig extends DefaultConfig
     protected static $EPG2_URL_TEMPLATE = 'http://www.teleguide.info/kanal%s_%s.html'; // epg_id date(YYYYMMDD)
     protected static $EPG2_PARSER = 'html';
 
-    public static function GetAccountStreamInfo($plugin_cookies)
+    public static function GetAccountInfo($plugin_cookies)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
         return true;

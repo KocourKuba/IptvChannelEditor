@@ -17,6 +17,7 @@ public:
 	{
 		tag_unknown = -1,
 		tag_channel_id,
+		tag_cuid,
 		tag_group_title,
 		tag_tvg_id,
 		tag_tvg_logo,

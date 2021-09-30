@@ -11,6 +11,7 @@ static std::map<std::string, m3u_entry::directives> s_ext_directives = {
 
 static std::map<std::string, m3u_entry::info_tags> s_tags = {
 	{ "channel-id",     m3u_entry::tag_channel_id     },
+	{ "CUID",           m3u_entry::tag_cuid           },
 	{ "group-title",    m3u_entry::tag_group_title    },
 	{ "tvg-id",         m3u_entry::tag_tvg_id         },
 	{ "tvg-logo",       m3u_entry::tag_tvg_logo       },

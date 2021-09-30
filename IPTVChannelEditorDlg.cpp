@@ -77,6 +77,7 @@ typedef enum
 {
 	enAntifriz = 0,
 	enEdem,
+	enFox,
 	enGlanz,
 	enOneUsd,
 	enSharaclub,
@@ -91,8 +92,9 @@ struct PluginDesc
 PluginDesc all_plugins[] = {
 	{ enAntifriz,  _T("Antifriz") },
 	{ enEdem,      _T("Edem (iLook TV)") },
+	{ enFox,       _T("Fox TV") },
 	{ enGlanz,     _T("Glanz TV") },
-	{ enOneUsd,    _T("1USD") },
+//	{ enOneUsd,    _T("1USD") },
 	{ enSharaclub, _T("Sharaclub TV") },
 	{ enSharavoz,  _T("Sharavoz TV") },
 };
@@ -472,6 +474,15 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_domain = ReadRegStringPluginA(REG_DOMAIN);
 			break;
 		}
+		case enFox: // Fox
+		{
+			m_pluginType = StreamType::enFox;
+
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_login = ReadRegStringPluginA(REG_LOGIN);
+			m_password = ReadRegStringPluginA(REG_PASSWORD);
+			break;
+		}
 		case enGlanz: // glanz
 		{
 			m_pluginType = StreamType::enGlanz;
@@ -594,6 +605,8 @@ std::wstring CIPTVChannelEditorDlg::GetPluginNameW(bool bCamel /*= false*/) cons
 			return bCamel ? L"Glanz" : L"glanz";
 		case enAntifriz: // Antifriz
 			return bCamel ? L"Antifriz" : L"antifriz";
+		case enFox: // Fox
+			return bCamel ? L"Fox" : L"fox";
 		case enOneUsd: // 1USD
 			return bCamel ? L"Oneusd" : L"oneusd";
 	}
@@ -615,6 +628,8 @@ std::string CIPTVChannelEditorDlg::GetPluginNameA(bool bCamel /*= false*/) const
 			return bCamel ? "Glanz" : "glanz";
 		case enAntifriz: // Antifriz
 			return bCamel ? "Antifriz" : "antifriz";
+		case enFox: // Fox
+			return bCamel ? "Fox" : "fox";
 		case enOneUsd: // 1USD
 			return bCamel ? "Oneusd" : "oneusd";
 	}
@@ -671,6 +686,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			}
 			break;
 		}
+		case StreamType::enFox:
 		case StreamType::enGlanz:
 		case StreamType::enSharaclub:
 		{
@@ -843,6 +859,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 			break;
 		}
 		case enAntifriz: // Antifriz
+		case enFox: // Fox
 		case enGlanz: // Glanz
 		case enOneUsd: // Antifriz
 		case enSharavoz: // Sharavoz
@@ -872,10 +889,12 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 			const auto& stream = entry->get_uri_stream();
 			switch (m_pluginType)
 			{
+				case StreamType::enAntifriz: // pin
 				case StreamType::enEdem: // ott_key
+				case StreamType::enFox: // login/token
+				case StreamType::enOneUsd: // pin
 				case StreamType::enSharavoz: // pin
-				case StreamType::enAntifriz:
-				case StreamType::enSharaclub:
+				case StreamType::enSharaclub: // login/pass
 				{
 					const auto& token = stream->get_token();
 					const auto& domain = stream->get_domain();
@@ -887,7 +906,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 					bSet = true;
 					break;
 				}
-				case StreamType::enGlanz: // login/pass
+				case StreamType::enGlanz: // login/token
 					if (!stream->get_token().empty()
 						&& !stream->get_domain().empty()
 						&& !stream->get_login().empty()
@@ -1269,6 +1288,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	m_infoVideo.Empty();
 	m_plIconName.Empty();
 	m_plID.Empty();
+	m_plEPG.Empty();
 	m_archivePlDays = 0;
 	m_wndPlArchive.SetCheck(0);
 
@@ -1466,10 +1486,12 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 				break;
 			case StreamType::enSharavoz:
 			case StreamType::enAntifriz:
+			case StreamType::enOneUsd:
 				m_password = utils::get_value_string(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			case StreamType::enGlanz:
 			case StreamType::enSharaclub:
+			case StreamType::enFox:
 				m_login = utils::get_value_string(setup_node->first_node(utils::ACCESS_LOGIN));
 				m_password = utils::get_value_string(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
@@ -2011,7 +2033,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 
 	m_wndCustom.EnableWindow(single);
 	m_wndEpgID1.EnableWindow(single);
-	m_wndEpgID2.EnableWindow(single && (m_pluginType != StreamType::enAntifriz && m_pluginType != StreamType::enGlanz));
+	m_wndEpgID2.EnableWindow(single && HasEPG2());
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
 	m_wndTestEPG1.EnableWindow(single && !m_epgID1.IsEmpty());
@@ -2622,7 +2644,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
 	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
 	{
-		std::string url = channel->stream_uri->get_epg1_uri(channel->get_epg1_id());
+		const auto& url = channel->stream_uri->get_epg1_uri(channel->get_epg1_id());
 		if (!url.empty())
 			ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
@@ -2633,7 +2655,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
 	{
-		std::string url = channel->stream_uri->get_epg2_uri(channel->get_epg2_id());
+		const auto& url = channel->stream_uri->get_epg2_uri(channel->get_epg2_id());
 		if (!url.empty())
 			ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
@@ -2648,8 +2670,15 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.domain = m_domain;
 		params.login = m_login;
 		params.password = m_password;
-		params.int_id = entry->stream_uri->get_int_id();
 		params.host = m_host;
+		params.ext_param = nullptr;
+		if (m_lastTree == &m_wndChannelsTree)
+		{
+			// fox and 1usd uses a unique token for each channel depends on user credentials
+			// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id
+			const auto& pair = m_playlistMap.find(entry->stream_uri->get_id());
+			params.ext_param = pair != m_playlistMap.end() ? pair->second.get() : nullptr;
+		}
 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
@@ -2685,8 +2714,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			}
 			break;
 		}
-		case StreamType::enSharavoz:
 		case StreamType::enAntifriz:
+		case StreamType::enOneUsd:
+		case StreamType::enSharavoz:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -2703,8 +2733,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			}
 			break;
 		}
-		case StreamType::enSharaclub:
+		case StreamType::enFox:
 		case StreamType::enGlanz:
+		case StreamType::enSharaclub:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -2742,7 +2773,7 @@ bool CIPTVChannelEditorDlg::SetupOttKey(bool loaded)
 
 	if (dlg.DoModal() == IDOK)
 	{
-		loaded = utils::utf8_to_utf16(m_token) != dlg.m_accessKey.GetString() && utils::utf8_to_utf16(m_domain) != dlg.m_domain.GetString();
+		loaded = dlg.m_status == _T("ok");
 
 		if (m_embedded_info != dlg.m_bEmbed)
 		{
@@ -2786,11 +2817,7 @@ bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
 			set_allow_save(TRUE);
 		}
 
-		loaded = m_token != dlg.m_entry->stream_uri->get_token()
-			&& m_domain != dlg.m_entry->stream_uri->get_domain()
-			&& m_login != dlg.m_entry->stream_uri->get_login()
-			&& m_password != dlg.m_entry->stream_uri->get_password()
-			&& m_host != dlg.m_entry->stream_uri->get_host();
+		loaded = dlg.m_status == _T("ok");
 
 		m_token = dlg.m_entry->stream_uri->get_token();
 		m_domain = dlg.m_entry->stream_uri->get_domain();
@@ -2830,13 +2857,11 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 			set_allow_save(TRUE);
 		}
 
-		loaded = m_token != dlg.m_entry->stream_uri->get_token()
-			&& m_domain != dlg.m_entry->stream_uri->get_domain()
-			&& m_password != dlg.m_entry->stream_uri->get_password();
-
 		m_token = dlg.m_entry->stream_uri->get_token();
 		m_domain = dlg.m_entry->stream_uri->get_domain();
 		m_password = dlg.m_entry->stream_uri->get_password();
+
+		loaded = dlg.m_status == _T("ok");
 
 		SaveRegPlugin(m_embedded_info ? REG_TOKEN_EMBEDDED : REG_TOKEN, m_token.c_str());
 		SaveRegPlugin(m_embedded_info ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, m_domain.c_str());
@@ -3016,7 +3041,14 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 		int j = 0;
 		while (j < max_threads && pool != container.end())
 		{
-			params.int_id = (*pool)->get_int_id();
+			params.ext_param = nullptr;
+			if (m_lastTree == &m_wndChannelsTree)
+			{
+				// fox and 1usd uses a unique token for each channel depends on user credentials
+				// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id
+				const auto& pair = m_playlistMap.find((*pool)->get_id());
+				params.ext_param = pair != m_playlistMap.end() ? pair->second.get() : nullptr;
+			}
 
 			const auto& url = (*pool)->get_templated((StreamSubType)m_StreamType, params);
 			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
@@ -3404,6 +3436,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 		L"bg_glanz.jpg", L"glanz.png",
 		L"bg_sharaclub.jpg", L"sharaclub.png",
 		L"bg_sharavoz.jpg", L"sharavoz.png",
+		L"bg_fox.jpg", L"fox-logo.png",
 	};
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name.c_str())), to_remove.end());
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"{:s}.png", name.c_str())), to_remove.end());
@@ -4010,6 +4043,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 
 	LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx));
 	FillTreeChannels();
+	CheckForExistingPlaylist();
 
 	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
 	SaveRegPlugin(REG_CHANNELS_TYPE, idx);
@@ -4587,6 +4621,11 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 	std::ofstream os(path, std::istream::binary);
 	os.write(dump.data(), dump.size());
 	os.close();
+}
+
+bool CIPTVChannelEditorDlg::HasEPG2()
+{
+	return (m_pluginType == StreamType::enEdem || m_pluginType == StreamType::enSharaclub || m_pluginType == StreamType::enSharavoz);
 }
 
 std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const

@@ -83,7 +83,7 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 				utils::string_rtrim(line, "\r");
 				if (m_entry->Parse(line) && !m_entry->stream_uri->get_token().empty())
 				{
-					m_status = _T("Ok");
+					m_status = _T("ok");
 					break;
 				}
 			}

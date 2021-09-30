@@ -26,11 +26,11 @@ protected:
 public:
 	std::shared_ptr<PlaylistEntry> m_entry;
 	BOOL m_bEmbed = FALSE;
+	CString m_status;
 
 protected:
 	CButton m_wndGet;
 
-	CString m_status;
 	CString m_password;
 };
 

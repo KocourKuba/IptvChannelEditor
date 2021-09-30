@@ -32,6 +32,7 @@ abstract class DefaultConfig
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://online.dune-hd.com/demo/index.m3u8?channel=%s';
     public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://online.dune-hd.com/demo/mpegts?channel=%s';
     public static $CHANNELS_LIST = 'default_channel_list.xml';
+    public static $PLAY_LIST = 'playlist.m3u8';
     protected static $EPG1_URL_TEMPLATE = '';
     protected static $EPG2_URL_TEMPLATE = '';
     protected static $EPG1_PARSER = 'json';
@@ -140,9 +141,7 @@ abstract class DefaultConfig
             return "";
         }
 
-        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        $id = $channel->get_channel_id();
-
+        $format = static::get_format($plugin_cookies);
         switch ($format) {
             case 'hls':
                 $url = $channel->get_streaming_url();
@@ -169,27 +168,24 @@ abstract class DefaultConfig
 
         // hd_print("Stream type: " . $format);
         // hd_print("Stream url:  " . $url);
-        // hd_print("Channel ID:  " . $id);
+        // hd_print("Channel ID:  " . $channel->get_channel_id());
         // hd_print("Domain:      " . $subdomain);
         // hd_print("Token:       " . $token);
         // hd_print("Archive TS:  " . $archive_ts);
 
         $url = str_replace('{SUBDOMAIN}', $subdomain, $url);
-        $url = str_replace('{ID}', $id, $url);
+        $url = str_replace('{ID}', $channel->get_channel_id(), $url);
         $url = str_replace('{TOKEN}', $token, $url);
-        if (strpos($url, 'http://ts://') === false) {
-            $url = str_replace('http://', 'http://ts://', $url);
-        }
 
-        return $url;
+        return static::make_ts($url);
     }
 
-    public static function GetAccountStatus($plugin_cookies)
+    public static function GetPlaylistStreamInfo($plugin_cookies)
     {
-        return false;
+        return array();
     }
 
-    public static function GetAccountStreamInfo($plugin_cookies)
+    public static function GetAccountInfo($plugin_cookies)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
 
@@ -205,7 +201,7 @@ abstract class DefaultConfig
             }
         }
 
-        $tmp_file = static::GET_TMP_STORAGE_PATH('playlist.m3u8');
+        $tmp_file = static::GET_TMP_STORAGE_PATH();
         file_put_contents($tmp_file, $content);
         $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         for ($i = 0; $i < count($lines); ++$i) {
@@ -223,7 +219,6 @@ abstract class DefaultConfig
                 }
 
                 $found = true;
-                break;
             }
         }
         unlink($tmp_file);
@@ -246,6 +241,19 @@ abstract class DefaultConfig
         return null;
     }
 
+    public static function make_ts($url)
+    {
+        if (strpos($url, 'http://ts://') === false) {
+            $url = str_replace('http://', 'http://ts://', $url);
+        }
+
+        return $url;
+    }
+
+    public static function get_format($plugin_cookies)
+    {
+        return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+    }
     /**
      * @return array
      */
@@ -341,8 +349,8 @@ abstract class DefaultConfig
      */
     protected static function FetchTemplatedUrl($type, $template, $plugin_cookies)
     {
-        // hd_print("Type: $type");
-        // hd_print("Template: $template");
+        hd_print("Type: $type");
+        hd_print("Template: $template");
 
         if ($type == 'LOGIN') {
             $login = $plugin_cookies->login_local;
@@ -413,8 +421,11 @@ abstract class DefaultConfig
     /**
      * @return string
      */
-    public static function GET_TMP_STORAGE_PATH($name)
+    public static function GET_TMP_STORAGE_PATH($name = null)
     {
+        if ($name == null)
+            $name = static::$PLAY_LIST;
+
         return sprintf(DefaultConfig::TMP_STORAGE, static::$PLUGIN_SHORT_NAME, $name);
     }
 

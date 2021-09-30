@@ -65,7 +65,7 @@ std::string uri_glanz::get_templated(StreamSubType subType, const TemplateParams
 		utils::string_replace_inplace(url, "{LOGIN}", params.login);
 		utils::string_replace_inplace(url, "{PASSWORD}", params.password);
 		utils::string_replace_inplace(url, "{TOKEN}", params.token);
-		utils::string_replace_inplace(url, "{INT_ID}", params.int_id);
+		utils::string_replace_inplace(url, "{INT_ID}", get_int_id());
 		utils::string_replace_inplace(url, "{HOST}", params.host);
 		utils::string_replace_inplace(url, "{START}", utils::int_to_char(params.shift_back));
 	}

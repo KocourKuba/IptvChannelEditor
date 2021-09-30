@@ -30,6 +30,7 @@ public:
 	CString m_accessKey;
 	CString m_domain;
 	CString m_url;
+	CString m_status;
 	StreamType m_streamType;
 	BOOL m_bEmbed = FALSE;
 

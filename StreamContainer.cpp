@@ -6,34 +6,12 @@
 #include "uri_sharavoz.h"
 #include "uri_sharaclub.h"
 #include "uri_glanz.h"
+#include "uri_fox.h"
+#include "uri_oneusd.h"
 
 StreamContainer::StreamContainer(StreamType type) : stream_type(type)
 {
 	stream_uri = get_instance(type);
-}
-
-LPCTSTR StreamContainer::get_name(StreamType type)
-{
-	switch (type)
-	{
-		case StreamType::enBase: // ChannelsCategory
-			return _T("Base");
-		case StreamType::enChannels: // Channels list
-			return _T("Channels");
-		case StreamType::enEdem: // Edem playlist
-			return _T("Edem");
-		case StreamType::enSharavoz: // Sharavoz playlist
-			return _T("Sharavoz");
-		case StreamType::enSharaclub: // Sharaclub playlist
-			return _T("Sharaclub");
-		case StreamType::enGlanz: // Glanz playlist
-			return _T("Glanz");
-		case StreamType::enAntifriz: // Antifriz playlist
-			return _T("Antifriz");
-		default:
-			ASSERT(false);
-			return _T("");
-	}
 }
 
 std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
@@ -54,6 +32,10 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 			return  std::make_unique<uri_glanz>();
 		case StreamType::enAntifriz: // Antifriz playlist
 			return  std::make_unique<uri_antifriz>();
+		case StreamType::enFox: // Fox playlist
+			return  std::make_unique<uri_fox>();
+		case StreamType::enOneUsd: // 1USD playlist
+			return  std::make_unique<uri_oneusd>();
 		default:
 			ASSERT(false);
 			return nullptr;

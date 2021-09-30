@@ -25,8 +25,8 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
     {
         $defs = array();
         try {
-            $result = self::$config->GetAccountStatus($plugin_cookies);
-            if ($result === false || $result->status != 'ok')
+            $result = self::$config->GetAccountInfo($plugin_cookies);
+            if ($result === false)
                 throw new Exception('Account error');
 
             ControlFactory::add_label($defs, 'Баланс:', $result->data->money . ' руб.');

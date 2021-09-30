@@ -42,6 +42,16 @@ inline std::string& string_tolower(std::string& s)
 	return s;
 }
 
+inline std::wstring& wstring_tolower(std::wstring& s)
+{
+	std::transform(s.begin(), s.end(), s.begin(), [](wchar_t c)
+				   {
+					   return (wchar_t)std::tolower(c);
+				   });
+
+	return s;
+}
+
 template<typename T>
 inline std::basic_string<T>& string_ltrim(std::basic_string<T>& str, const T* chars)
 {

@@ -48,25 +48,15 @@ class AntifrizPluginConfig extends DefaultConfig
         }
 
         $domain = explode(':', $plugin_cookies->subdomain_local);
-        $id = $channel->get_channel_id();
-        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+        $format = static::get_format($plugin_cookies);
         switch ($format) {
             case 'hls':
-                if (intval($archive_ts) > 0) {
-                    $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS;
-                    $subdomain = $domain[0];
-                } else {
-                    $url = $channel->get_streaming_url();
-                    $subdomain = $plugin_cookies->subdomain_local;
-                }
+                $url = (intval($archive_ts) > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS : $channel->get_streaming_url();
+                $subdomain = (intval($archive_ts) > 0) ? $domain[0] : $plugin_cookies->subdomain_local;
                 break;
             case 'mpeg':
                 $subdomain = $domain[0];
-                if (intval($archive_ts) > 0) {
-                    $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG;
-                } else {
-                    $url = self::$MEDIA_URL_TEMPLATE_MPEG;
-                }
+                $url = (intval($archive_ts) > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::$MEDIA_URL_TEMPLATE_MPEG;
                 $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
                 $url .= "|||dune_params|||buffering_ms:$buf_time";
                 break;
@@ -77,26 +67,17 @@ class AntifrizPluginConfig extends DefaultConfig
 
         // hd_print("Stream type: " . $format);
         // hd_print("Stream url:  " . $url);
-        // hd_print("Channel ID:  " . $id);
+        // hd_print("Channel ID:  " . $channel->get_channel_id());
         // hd_print("Domain:      " . $subdomain);
         // hd_print("Token:       " . $plugin_cookies->ott_key_local);
         // hd_print("Archive TS:  " . $archive_ts);
 
-        $url = str_replace('{ID}', $id, $url);
+        $url = str_replace('{ID}', $channel->get_channel_id(), $url);
         $url = str_replace('{START}', $archive_ts, $url);
         $url = str_replace('{SUBDOMAIN}', $subdomain, $url);
         $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);
 
-        if (strpos($url, 'http://ts://') === false) {
-            $url = str_replace('http://', 'http://ts://', $url);
-        }
-
-        return $url;
-    }
-
-    public static function GetAccountStatus($plugin_cookies)
-    {
-        return static::GetAccountStreamInfo($plugin_cookies);
+        return static::make_ts($url);
     }
 
     /**

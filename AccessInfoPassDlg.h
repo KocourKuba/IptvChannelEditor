@@ -27,6 +27,7 @@ public:
 	std::shared_ptr<PlaylistEntry> m_entry;
 	CString m_login;
 	CString m_password;
+	CString m_status;
 	BOOL m_bEmbed = FALSE;
 
 	std::string m_access_key;
@@ -38,7 +39,6 @@ protected:
 	CButton m_wndGet;
 	CEdit m_wndLogin;
 	CEdit m_wndPassword;
-	CString m_status;
 	CString m_subscription;
 	CString m_balance;
 	CString m_packages_price;

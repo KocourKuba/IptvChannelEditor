@@ -12,6 +12,7 @@ enum class StreamType
 	enSharaclub,
 	enGlanz,
 	enAntifriz,
+	enFox,
 	enOneUsd,
 };
 
@@ -21,9 +22,9 @@ typedef struct
 	std::string token;
 	std::string login;
 	std::string password;
-	std::string int_id;
 	std::string host;
 	int shift_back;
+	void* ext_param; // custom parameter
 }TemplateParams;
 
 /// <summary>
