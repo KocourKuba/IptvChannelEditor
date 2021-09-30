@@ -3436,7 +3436,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 		L"bg_glanz.jpg", L"glanz.png",
 		L"bg_sharaclub.jpg", L"sharaclub.png",
 		L"bg_sharavoz.jpg", L"sharavoz.png",
-		L"bg_fox.jpg", L"fox-logo.png",
+		L"bg_fox.jpg", L"fox.png",
 	};
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name.c_str())), to_remove.end());
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"{:s}.png", name.c_str())), to_remove.end());

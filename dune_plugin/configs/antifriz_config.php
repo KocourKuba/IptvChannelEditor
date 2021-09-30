@@ -179,7 +179,7 @@ class AntifrizPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getSearchList($keyword)
+    public static function getSearchList($keyword, $plugin_cookies)
     {
         //hd_print("getSearchList");
         $url = self::VOD_URL . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . static::get_next_page($keyword);
@@ -190,7 +190,7 @@ class AntifrizPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($idx)
+    public static function getVideoList($idx, $plugin_cookies)
     {
         //hd_print("getVideoList: $keyword");
         $val = static::get_next_page($idx);

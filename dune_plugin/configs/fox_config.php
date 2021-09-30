@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class FoxPluginConfig extends DefaultConfig
 {
     const SERIES_VOD_PATTERN = '|^https?://.+/vod/(.+)\.mp4/video\.m3u8\?token=.+$|';
-    const EXTINF_VOD_PATTERN = '|^#EXTINF:.+group-title="(.*)".+tvg-logo="(.*)"\s*,\s*(.*)$|';
+    const EXTINF_VOD_PATTERN = '|^#EXTINF:.+tvg-logo="([^"]+)".+group-title="([^"]+)".*,\s*(.*)$|';
     const EXTINF_TV_PATTERN  = '|^#EXTINF:.+CUID="(\d+)".+$|';
 
     // info
@@ -14,8 +14,8 @@ class FoxPluginConfig extends DefaultConfig
     public static $PLUGIN_DATE = '1.10.2021';
 
     // supported features
-    public static $VOD_MOVIE_PAGE_SUPPORTED = false;
-    public static $VOD_FAVORITES_SUPPORTED = false;
+    public static $VOD_MOVIE_PAGE_SUPPORTED = true;
+    public static $VOD_FAVORITES_SUPPORTED = true;
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = false;
@@ -31,7 +31,7 @@ class FoxPluginConfig extends DefaultConfig
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id date(YYYYMMDD)
 
     // vod
-    public static $MOVIE_LIST_URL_TEMPLATE = 'http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vod.m3u';
+    public static $MOVIE_LIST_URL_TEMPLATE = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
 
     // Views variables
     public static $TV_CHANNEL_ICON_WIDTH = 60;
@@ -74,40 +74,23 @@ class FoxPluginConfig extends DefaultConfig
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         $pl_entries = array();
-        $tmp_file = static::GET_TMP_STORAGE_PATH();
-        try {
-            $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
-            file_put_contents($tmp_file, $content);
-
-            $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            for ($i = 0; $i < count($lines); ++$i) {
-                if (preg_match(self::EXTINF_TV_PATTERN, $lines[$i], $m_id)) {
-                    $pl_entries[$m_id[1]] = $lines[$i + 1];
-                }
+        $m3u_lines = static::FetchTvM3U($plugin_cookies);
+        for ($i = 0; $i < count($m3u_lines); ++$i) {
+            if (preg_match(self::EXTINF_TV_PATTERN, $m3u_lines[$i], $m_id)) {
+                $pl_entries[$m_id[1]] = $m3u_lines[$i + 1];
             }
-        } catch (Exception $ex) {
-            hd_print("Failed to fetch provider playlist");
         }
 
         hd_print("Read Playlist entries: " . count($pl_entries));
         return $pl_entries;
     }
 
-    public static function GetAccountInfo($plugin_cookies)
+    public static function GetAccountInfo($plugin_cookies, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
-        try {
-            $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
-        } catch (Exception $ex) {
-            hd_print("Failed to fetch provider playlist");
-            return false;
-        }
-
-        $tmp_file = static::GET_TMP_STORAGE_PATH();
-        file_put_contents($tmp_file, $content);
-        $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        for ($i = 0; $i < count($lines); ++$i) {
-            if (preg_match(static::$STREAM_URL_PATTERN, $lines[$i], $matches)) {
+        $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
+        for ($i = 0; $i < count($m3u_lines); ++$i) {
+            if (preg_match(static::$STREAM_URL_PATTERN, $m3u_lines[$i], $matches)) {
                 $plugin_cookies->format = isset($matches[3]) ? 'hls' : 'mpeg';
                 return true;
             }
@@ -122,19 +105,23 @@ class FoxPluginConfig extends DefaultConfig
     public static function TryLoadMovie($movie_id, $plugin_cookies)
     {
         //hd_print("Movie ID: $movie_id");
+        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
         $movie = new Movie($movie_id);
-        $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        $m3u_lines = static::FetchVodM3U($plugin_cookies);
         for ($i = 0; $i < count($m3u_lines); ++$i) {
-            if($i != $movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $match)) continue;
 
-            $logo = $matches[2];
-            $caption = $matches[3];
+            $logo = $match[1];
+            $caption = explode('/', $match[3]);
+            $title = $caption[0];
+            $title_orig = $caption[1];
+            $url = static::make_ts($m3u_lines[$i + 1]) . "|||dune_params|||buffering_ms:$buf_time";
 
-            $url = $m3u_lines[$i + 1];
             //hd_print("Vod url: $playback_url");
             $movie->set_data(
-                $caption,// $xml->caption,
-                '',// $xml->caption_original,
+                $title,// $xml->caption,
+                $title_orig,// $xml->caption_original,
                 '',// $xml->description,
                 $logo,// $xml->poster_url,
                 '',// $xml->length,
@@ -150,7 +137,7 @@ class FoxPluginConfig extends DefaultConfig
                 ''// $xml->budget
             );
 
-            $movie->add_series_data($movie_id, $caption, $url, true);
+            $movie->add_series_data($movie_id, $title, $url, true);
             break;
         }
 
@@ -162,31 +149,16 @@ class FoxPluginConfig extends DefaultConfig
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        $url = sprintf(self::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies->login, $plugin_cookies->password);
-        try {
-            $doc = HD::http_get_document($url);
-            if (empty($doc)) {
-                hd_print("empty playlist or not valid token");
-                return;
-            }
-
-            file_put_contents(self::GET_VOD_TMP_STORAGE_PATH(), $doc);
-        } catch (Exception $ex) {
-            hd_print("Unable to load movie categories: " . $ex->getMessage());
-            return;
-        }
-
-        $m3u_lines = file(self::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
         $category_list = array();
         $category_index = array();
         $categoriesFound = array();
 
+        $m3u_lines = static::FetchVodM3U($plugin_cookies);
         for ($i = 0; $i < count($m3u_lines); ++$i) {
             if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
 
-            $category = $matches[1];
-            if(empty($category))
+            $category = $matches[2];
+            if (empty($category))
                 $category = 'Без категории';
 
             if (!in_array($category, $categoriesFound)) {
@@ -201,19 +173,19 @@ class FoxPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getSearchList($keyword)
+    public static function getSearchList($keyword, $plugin_cookies)
     {
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
-        $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $m3u_lines = static::FetchVodM3U($plugin_cookies);
         for ($i = 0; $i < count($m3u_lines); ++$i) {
             if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
 
-            $logo = $matches[2];
+            $logo = $matches[1];
             $caption = $matches[3];
 
-            $search  = utf8_encode(mb_strtolower($caption, 'UTF-8'));
+            $search = utf8_encode(mb_strtolower($caption, 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
                 $movies[] = new ShortMovie(strval($i), $caption, $logo);
             }
@@ -225,15 +197,15 @@ class FoxPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($idx)
+    public static function getVideoList($idx, $plugin_cookies)
     {
         $movies = array();
-        $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $m3u_lines = static::FetchVodM3U($plugin_cookies);
         for ($i = 0; $i < count($m3u_lines); ++$i) {
             if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
 
-            $category = $matches[1];
-            $logo = $matches[2];
+            $logo = $matches[1];
+            $category = $matches[2];
             $caption = $matches[3];
             if(empty($category))
                 $category = 'Без категории';

@@ -35,7 +35,7 @@ class SharaclubPluginConfig extends DefaultConfig
     // vod
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
 
-    public static function GetAccountInfo($plugin_cookies)
+    public static function GetAccountInfo($plugin_cookies, $force = false)
     {
         // this account has special API to get account info
         if (empty($plugin_cookies->login) && empty($plugin_cookies->password))
@@ -57,7 +57,7 @@ class SharaclubPluginConfig extends DefaultConfig
             }
         }
 
-        parent::GetAccountInfo($plugin_cookies);
+        parent::GetAccountInfo($plugin_cookies, $force);
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"));
         if (isset($account_data->status) && $account_data->status == 'ok') {
@@ -169,7 +169,7 @@ class SharaclubPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getSearchList($keyword)
+    public static function getSearchList($keyword, $plugin_cookies)
     {
         $movies = array();
         $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
@@ -187,7 +187,7 @@ class SharaclubPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($idx)
+    public static function getVideoList($idx, $plugin_cookies)
     {
         $movies = array();
         $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());

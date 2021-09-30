@@ -30,11 +30,11 @@ class StarnetVodListScreen extends VodListScreen
         $key = $media_url->category_id . "_" . $media_url->genre_id;
 
         if ($media_url->category_id == 'search') {
-            $movies = static::$config->getSearchList($media_url->genre_id);
+            $movies = static::$config->getSearchList($media_url->genre_id, $plugin_cookies);
         } else if ($media_url->category_id == 'all') {
-            $movies = static::$config->getVideoList($media_url->category_id);
+            $movies = static::$config->getVideoList($media_url->category_id, $plugin_cookies);
         } else {
-            $movies = static::$config->getVideoList($media_url->category_id . "_" . $media_url->genre_id);
+            $movies = static::$config->getVideoList($media_url->category_id . "_" . $media_url->genre_id, $plugin_cookies);
         }
 
         $count = count($movies);

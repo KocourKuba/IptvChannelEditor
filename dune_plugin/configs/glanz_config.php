@@ -169,7 +169,7 @@ class GlanzPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getSearchList($keyword)
+    public static function getSearchList($keyword, $plugin_cookies)
     {
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
@@ -193,7 +193,7 @@ class GlanzPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($idx)
+    public static function getVideoList($idx, $plugin_cookies)
     {
         $movies = array();
         $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

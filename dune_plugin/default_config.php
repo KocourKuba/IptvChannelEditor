@@ -6,7 +6,7 @@ abstract class DefaultConfig
 {
     const BG_PICTURE_TEMPLATE = 'plugin_file://icons/bg_%s.jpg';
     const TMP_STORAGE = "/tmp/%s_%s";
-    const VOD_PLAYLIST_NAME = 'vod_playlist.tmp';
+    const VOD_PLAYLIST_NAME = 'playlist_vod.m3u8';
 
     // info
     public static $PLUGIN_NAME = 'StarNet';
@@ -32,7 +32,7 @@ abstract class DefaultConfig
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://online.dune-hd.com/demo/index.m3u8?channel=%s';
     public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://online.dune-hd.com/demo/mpegts?channel=%s';
     public static $CHANNELS_LIST = 'default_channel_list.xml';
-    public static $PLAY_LIST = 'playlist.m3u8';
+    public static $PLAY_LIST = 'playlist_tv.m3u8';
     protected static $EPG1_URL_TEMPLATE = '';
     protected static $EPG2_URL_TEMPLATE = '';
     protected static $EPG1_PARSER = 'json';
@@ -185,53 +185,37 @@ abstract class DefaultConfig
         return array();
     }
 
-    public static function GetAccountInfo($plugin_cookies)
+    public static function GetAccountInfo($plugin_cookies, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
 
-        $found = false;
-        try {
-            $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
-        } catch (Exception $ex) {
-            try {
-                $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies);
-            } catch (Exception $ex) {
-                hd_print("Failed to fetch provider playlist");
-                return false;
+        $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
+        for ($i = 0; $i < count($m3u_lines); ++$i) {
+            if (!preg_match(static::$STREAM_URL_PATTERN, $m3u_lines[$i], $matches)) continue;
+
+            $plugin_cookies->subdomain_local = $matches['subdomain'];
+            // hd_print("domain: $plugin_cookies->subdomain_local");
+
+            $plugin_cookies->ott_key_local = $matches['token'];
+            // hd_print("token: $plugin_cookies->ott_key_local");
+
+            if (isset($matches['host'])) {
+                $plugin_cookies->host = $matches['host'];
+                // hd_print("host: $plugin_cookies->host");
             }
+
+            return true;
         }
 
-        $tmp_file = static::GET_TMP_STORAGE_PATH();
-        file_put_contents($tmp_file, $content);
-        $lines = file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        for ($i = 0; $i < count($lines); ++$i) {
-            if (preg_match(static::$STREAM_URL_PATTERN, $lines[$i], $matches)) {
-
-                $plugin_cookies->subdomain_local = $matches['subdomain'];
-                // hd_print("domain: $plugin_cookies->subdomain_local");
-
-                $plugin_cookies->ott_key_local = $matches['token'];
-                // hd_print("token: $plugin_cookies->ott_key_local");
-
-                if (isset($matches['host'])) {
-                    $plugin_cookies->host = $matches['host'];
-                    // hd_print("host: $plugin_cookies->host");
-                }
-
-                $found = true;
-            }
-        }
-        unlink($tmp_file);
-
-        return $found;
+        return false;
     }
 
-    public static function getSearchList($keyword)
+    public static function getSearchList($keyword, $plugin_cookies)
     {
         return array();
     }
 
-    public static function getVideoList($idx)
+    public static function getVideoList($idx, $plugin_cookies)
     {
         return array();
     }
@@ -248,6 +232,47 @@ abstract class DefaultConfig
         }
 
         return $url;
+    }
+
+    public static function FetchTvM3U($plugin_cookies, $force = false)
+    {
+        $tmp_file = static::GET_TMP_STORAGE_PATH();
+        if (!file_exists($tmp_file) || $force != false) {
+            try {
+                $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
+                file_put_contents($tmp_file, $content);
+            } catch (Exception $ex) {
+                try {
+                    if (empty(static::$ACCOUNT_PLAYLIST_URL2))
+                        throw new Exception("Second playlist not defined");
+
+                    $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies);
+                    file_put_contents($tmp_file, $content);
+                } catch (Exception $ex) {
+                    hd_print("Unable to load tv playlist: " . $ex->getMessage());
+                    return array();
+                }
+            }
+        }
+
+        return file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    }
+
+    public static function FetchVodM3U($plugin_cookies, $force = false)
+    {
+        $m3u_file = static::GET_VOD_TMP_STORAGE_PATH();
+
+        if (!file_exists($m3u_file) || $force != false) {
+            try {
+                $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies);
+                file_put_contents($m3u_file, $content);
+            } catch (Exception $ex) {
+                hd_print("Unable to load movie playlist: " . $ex->getMessage());
+                return array();
+            }
+        }
+
+        return file($m3u_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     }
 
     public static function get_format($plugin_cookies)
@@ -324,24 +349,6 @@ abstract class DefaultConfig
         return $categories;
     }
 
-    public static function LoadAndStoreM3U($url)
-    {
-        try {
-            $doc = HD::http_get_document($url);
-            if (empty($doc)) {
-                hd_print("empty playlist or not valid token");
-                return false;
-            }
-
-            file_put_contents(static::GET_VOD_TMP_STORAGE_PATH(), $doc);
-        } catch (Exception $ex) {
-            hd_print("Unable to load movie categories: " . $ex->getMessage());
-            return false;
-        }
-
-        return true;
-    }
-
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -349,8 +356,8 @@ abstract class DefaultConfig
      */
     protected static function FetchTemplatedUrl($type, $template, $plugin_cookies)
     {
-        hd_print("Type: $type");
-        hd_print("Template: $template");
+        // hd_print("Type: $type");
+        // hd_print("Template: $template");
 
         if ($type == 'LOGIN') {
             $login = $plugin_cookies->login_local;
@@ -413,9 +420,12 @@ abstract class DefaultConfig
     /**
      * @return string
      */
-    public static function GET_VOD_TMP_STORAGE_PATH()
+    public static function GET_VOD_TMP_STORAGE_PATH($name = null)
     {
-        return static::GET_TMP_STORAGE_PATH(DefaultConfig::VOD_PLAYLIST_NAME);
+        if ($name == null)
+            $name = DefaultConfig::VOD_PLAYLIST_NAME;
+
+        return static::GET_TMP_STORAGE_PATH($name);
     }
 
     /**
