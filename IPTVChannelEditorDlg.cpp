@@ -408,7 +408,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	for (const auto& item : all_plugins)
 	{
-		m_wndPluginType.AddString(item.name);
+		int idx = m_wndPluginType.AddString(item.name);
+		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
 	}
 
 	m_wndSearch.EnableWindow(FALSE);
@@ -452,7 +453,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_wndPlaylist.ResetContent();
 
-	switch (m_wndPluginType.GetCurSel())
+	switch (m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
 	{
 		case enAntifriz: // antifriz
 		{
@@ -593,7 +594,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 std::wstring CIPTVChannelEditorDlg::GetPluginNameW(bool bCamel /*= false*/) const
 {
-	switch (m_wndPluginType.GetCurSel())
+	switch (m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
 	{
 		case enEdem: // Edem
 			return bCamel ? L"Edem" : L"edem";
@@ -616,7 +617,7 @@ std::wstring CIPTVChannelEditorDlg::GetPluginNameW(bool bCamel /*= false*/) cons
 
 std::string CIPTVChannelEditorDlg::GetPluginNameA(bool bCamel /*= false*/) const
 {
-	switch (m_wndPluginType.GetCurSel())
+	switch (m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
 	{
 		case enEdem: // Edem
 			return bCamel ? "Edem" : "edem";
@@ -838,7 +839,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 	BOOL enableDownload = TRUE;
 	BOOL enableCustom = FALSE;
 	int pl_idx = m_wndPlaylist.GetCurSel();
-	switch (m_wndPluginType.GetCurSel())
+	switch (m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
 	{
 		case enEdem: // Edem
 		{
