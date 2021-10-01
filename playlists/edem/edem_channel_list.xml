@@ -545,7 +545,7 @@
 			<channel_id>6308</channel_id>
 			<epg_id>2399</epg_id>
 			<tvg_id>300108</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/3267.png</icon_url>
+			<icon_url>http://epg.it999.ru/img2/2399.png</icon_url>
 			<tv_category_id>3</tv_category_id>
 			<archive>3</archive>
 			<disabled>true</disabled>
@@ -1314,6 +1314,51 @@
 			<tv_category_id>4</tv_category_id>
 		</tv_channel>
 		<tv_channel>
+			<caption>.black</caption>
+			<channel_id>708</channel_id>
+			<epg_id>935</epg_id>
+			<tvg_id>1503</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/935.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>.red</caption>
+			<channel_id>559</channel_id>
+			<epg_id>311</epg_id>
+			<tvg_id>689</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/311.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>.sci-fi</caption>
+			<channel_id>110</channel_id>
+			<epg_id>516</epg_id>
+			<tvg_id>300001</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/516.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>2x2</caption>
+			<channel_id>702</channel_id>
+			<epg_id>323</epg_id>
+			<tvg_id>276</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/323.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>AMEDIA HIT</caption>
+			<channel_id>556</channel_id>
+			<epg_id>2007</epg_id>
+			<tvg_id>1926</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2007.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Amedia 1</caption>
 			<channel_id>554</channel_id>
 			<epg_id>1371</epg_id>
@@ -1332,38 +1377,11 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>AMEDIA HIT</caption>
-			<channel_id>556</channel_id>
-			<epg_id>2007</epg_id>
-			<tvg_id>1926</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2007.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>Amedia Premium HD (SD)</caption>
 			<channel_id>555</channel_id>
 			<epg_id>1372</epg_id>
 			<tvg_id>1683</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/1372.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Fox Russia</caption>
-			<channel_id>550</channel_id>
-			<epg_id>659</epg_id>
-			<tvg_id>300010</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/659.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Fox Life</caption>
-			<channel_id>553</channel_id>
-			<epg_id>615</epg_id>
-			<tvg_id>300056</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/615.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1385,15 +1403,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>2x2</caption>
-			<channel_id>702</channel_id>
-			<epg_id>323</epg_id>
-			<tvg_id>276</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/323.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>FAN</caption>
 			<channel_id>734</channel_id>
 			<epg_id>2359</epg_id>
@@ -1403,11 +1412,36 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>FilmZone Plus HD</caption>
+			<channel_id>15279</channel_id>
+			<epg_id>5635</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+		</tv_channel>
+		<tv_channel>
 			<caption>Filmbox Arthouse</caption>
 			<channel_id>1071</channel_id>
 			<epg_id>2182</epg_id>
 			<tvg_id>2249</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2182.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Fox Life</caption>
+			<channel_id>553</channel_id>
+			<epg_id>615</epg_id>
+			<tvg_id>300056</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/615.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Fox Russia</caption>
+			<channel_id>550</channel_id>
+			<epg_id>659</epg_id>
+			<tvg_id>300010</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/659.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1439,33 +1473,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>.red</caption>
-			<channel_id>559</channel_id>
-			<epg_id>311</epg_id>
-			<tvg_id>689</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/311.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>.sci-fi</caption>
-			<channel_id>110</channel_id>
-			<epg_id>516</epg_id>
-			<tvg_id>300001</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/516.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>.black</caption>
-			<channel_id>708</channel_id>
-			<epg_id>935</epg_id>
-			<tvg_id>1503</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/935.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
 			<caption>TV 1000</caption>
 			<channel_id>132</channel_id>
 			<epg_id>127</epg_id>
@@ -1493,6 +1500,15 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>TV XXI</caption>
+			<channel_id>525</channel_id>
+			<epg_id>309</epg_id>
+			<tvg_id>289</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/309.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>TV1000 World Kino</caption>
 			<channel_id>1065</channel_id>
 			<epg_id>2274</epg_id>
@@ -1501,13 +1517,11 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>TV XXI</caption>
-			<channel_id>525</channel_id>
-			<epg_id>309</epg_id>
-			<tvg_id>289</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/309.png</icon_url>
+			<caption>Tv100_world_kino</caption>
+			<channel_id>15165</channel_id>
+			<epg_id>2274</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2274.png</icon_url>
 			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>VIP Comedy</caption>
@@ -1569,240 +1583,6 @@
 			<epg_id>352</epg_id>
 			<tvg_id>300076</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/352.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Иллюзион +</caption>
-			<channel_id>2038</channel_id>
-			<epg_id>2403</epg_id>
-			<tvg_id>300023</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2403.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>КИНО ТВ</caption>
-			<channel_id>732</channel_id>
-			<epg_id>1037</epg_id>
-			<tvg_id>1653</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/1037.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>КИНОКОМЕДИЯ</caption>
-			<channel_id>145</channel_id>
-			<epg_id>821</epg_id>
-			<tvg_id>291</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/821.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>КИНОМИКС</caption>
-			<channel_id>509</channel_id>
-			<epg_id>644</epg_id>
-			<tvg_id>100053</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/644.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Киносат</caption>
-			<channel_id>2121</channel_id>
-			<epg_id>2407</epg_id>
-			<tvg_id>300147</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2407.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>КИНОСВИДАНИЕ</caption>
-			<channel_id>728</channel_id>
-			<epg_id>462</epg_id>
-			<tvg_id>201</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/462.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>КИНОСЕМЬЯ</caption>
-			<channel_id>125</channel_id>
-			<epg_id>987</epg_id>
-			<tvg_id>100037</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/987.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>КИНОСЕРИЯ</caption>
-			<channel_id>148</channel_id>
-			<epg_id>799</epg_id>
-			<tvg_id>558</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/799.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Кинохит</caption>
-			<channel_id>516</channel_id>
-			<epg_id>542</epg_id>
-			<tvg_id>298</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/542.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Любимое Кино</caption>
-			<channel_id>722</channel_id>
-			<epg_id>477</epg_id>
-			<tvg_id>1093</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/477.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Мир Сериала</caption>
-			<channel_id>856</channel_id>
-			<epg_id>2275</epg_id>
-			<tvg_id>974</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2275.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Мосфильм. Золотая коллекция</caption>
-			<channel_id>6392</channel_id>
-			<epg_id>3357</epg_id>
-			<tvg_id>3161</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/3357.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>МУЖСКОЕ КИНО</caption>
-			<channel_id>164</channel_id>
-			<epg_id>1584</epg_id>
-			<tvg_id>2044</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/1584.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>НСТ</caption>
-			<channel_id>726</channel_id>
-			<epg_id>518</epg_id>
-			<tvg_id>300033</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/518.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>НТВ Сериал</caption>
-			<channel_id>744</channel_id>
-			<epg_id>1754</epg_id>
-			<tvg_id>2215</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/1754.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>НТВ‑ХИТ</caption>
-			<channel_id>741</channel_id>
-			<epg_id>2041</epg_id>
-			<tvg_id>900100010</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2041.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Наше новое кино</caption>
-			<channel_id>517</channel_id>
-			<epg_id>485</epg_id>
-			<tvg_id>447</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/485.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Победа</caption>
-			<channel_id>2003</channel_id>
-			<epg_id>2447</epg_id>
-			<tvg_id>2487</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2447.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Ретро</caption>
-			<channel_id>2018</channel_id>
-			<epg_id>2402</epg_id>
-			<tvg_id>329</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2402.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>РОДНОЕ КИНО</caption>
-			<channel_id>126</channel_id>
-			<epg_id>12</epg_id>
-			<tvg_id>202</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/12.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Русская Комедия</caption>
-			<channel_id>733</channel_id>
-			<epg_id>1620</epg_id>
-			<tvg_id>300141</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/1620.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Русский Иллюзион</caption>
-			<channel_id>547</channel_id>
-			<epg_id>53</epg_id>
-			<tvg_id>200000</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/53.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Русский бестселлер</caption>
-			<channel_id>905</channel_id>
-			<epg_id>994</epg_id>
-			<tvg_id>1367</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/994.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Русский детектив</caption>
-			<channel_id>907</channel_id>
-			<epg_id>1570</epg_id>
-			<tvg_id>1794</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/1570.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Русский роман</caption>
-			<channel_id>906</channel_id>
-			<epg_id>401</epg_id>
-			<tvg_id>401</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/401.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Феникс плюс Кино</caption>
-			<channel_id>2039</channel_id>
-			<epg_id>2404</epg_id>
-			<tvg_id>300025</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2404.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1903,14 +1683,6 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Шокирующее</caption>
-			<channel_id>913</channel_id>
-			<epg_id>2309</epg_id>
-			<tvg_id>300095</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2309.png</icon_url>
-			<tv_category_id>5</tv_category_id>
-		</tv_channel>
-		<tv_channel>
 			<caption>ИНДИЙСКОЕ КИНО</caption>
 			<channel_id>146</channel_id>
 			<epg_id>798</epg_id>
@@ -1920,10 +1692,65 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
-			<caption>Кинозал! СССР</caption>
-			<channel_id>11061</channel_id>
-			<epg_id>4695</epg_id>
-			<icon_url>http://epg.it999.ru/img2/4695.png</icon_url>
+			<caption>Иллюзион +</caption>
+			<channel_id>2038</channel_id>
+			<epg_id>2403</epg_id>
+			<tvg_id>300023</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2403.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>КИНО ТВ</caption>
+			<channel_id>732</channel_id>
+			<epg_id>1037</epg_id>
+			<tvg_id>1653</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/1037.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>КИНОКОМЕДИЯ</caption>
+			<channel_id>145</channel_id>
+			<epg_id>821</epg_id>
+			<tvg_id>291</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/821.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>КИНОМИКС</caption>
+			<channel_id>509</channel_id>
+			<epg_id>644</epg_id>
+			<tvg_id>100053</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/644.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>КИНОСВИДАНИЕ</caption>
+			<channel_id>728</channel_id>
+			<epg_id>462</epg_id>
+			<tvg_id>201</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/462.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>КИНОСЕМЬЯ</caption>
+			<channel_id>125</channel_id>
+			<epg_id>987</epg_id>
+			<tvg_id>100037</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/987.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>КИНОСЕРИЯ</caption>
+			<channel_id>148</channel_id>
+			<epg_id>799</epg_id>
+			<tvg_id>558</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/799.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1932,6 +1759,14 @@
 			<channel_id>11060</channel_id>
 			<epg_id>4694</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4694.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Кинозал! СССР</caption>
+			<channel_id>11061</channel_id>
+			<epg_id>4695</epg_id>
+			<icon_url>http://epg.it999.ru/img2/4695.png</icon_url>
 			<tv_category_id>5</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -1952,6 +1787,210 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>Киноман (Киносат)</caption>
+			<channel_id>15311</channel_id>
+			<epg_id>2407</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2407.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Киносат</caption>
+			<channel_id>2121</channel_id>
+			<epg_id>2407</epg_id>
+			<tvg_id>300147</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2407.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Кинохит</caption>
+			<channel_id>516</channel_id>
+			<epg_id>542</epg_id>
+			<tvg_id>298</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/542.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Любимое Кино</caption>
+			<channel_id>722</channel_id>
+			<epg_id>477</epg_id>
+			<tvg_id>1093</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/477.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>МУЖСКОЕ КИНО</caption>
+			<channel_id>164</channel_id>
+			<epg_id>1584</epg_id>
+			<tvg_id>2044</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/1584.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Мир Сериала</caption>
+			<channel_id>856</channel_id>
+			<epg_id>2275</epg_id>
+			<tvg_id>974</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2275.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Мосфильм. Золотая коллекция</caption>
+			<channel_id>6392</channel_id>
+			<epg_id>3357</epg_id>
+			<tvg_id>3161</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/3357.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>НСТ</caption>
+			<channel_id>726</channel_id>
+			<epg_id>518</epg_id>
+			<tvg_id>300033</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/518.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>НТВ Сериал</caption>
+			<channel_id>744</channel_id>
+			<epg_id>1754</epg_id>
+			<tvg_id>2215</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/1754.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>НТВ‑ХИТ</caption>
+			<channel_id>741</channel_id>
+			<epg_id>2041</epg_id>
+			<tvg_id>900100010</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2041.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Наше новое кино</caption>
+			<channel_id>517</channel_id>
+			<epg_id>485</epg_id>
+			<tvg_id>447</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/485.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Победа</caption>
+			<channel_id>2003</channel_id>
+			<epg_id>2447</epg_id>
+			<tvg_id>2487</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2447.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>РОДНОЕ КИНО</caption>
+			<channel_id>126</channel_id>
+			<epg_id>12</epg_id>
+			<tvg_id>202</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/12.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Ретро</caption>
+			<channel_id>2018</channel_id>
+			<epg_id>2402</epg_id>
+			<tvg_id>329</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2402.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Русская Комедия</caption>
+			<channel_id>733</channel_id>
+			<epg_id>1620</epg_id>
+			<tvg_id>300141</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/1620.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Русский Иллюзион</caption>
+			<channel_id>547</channel_id>
+			<epg_id>53</epg_id>
+			<tvg_id>200000</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/53.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Русский бестселлер</caption>
+			<channel_id>905</channel_id>
+			<epg_id>994</epg_id>
+			<tvg_id>1367</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/994.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Русский детектив</caption>
+			<channel_id>907</channel_id>
+			<epg_id>1570</epg_id>
+			<tvg_id>1794</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/1570.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Русский роман</caption>
+			<channel_id>906</channel_id>
+			<epg_id>401</epg_id>
+			<tvg_id>401</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/401.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Феникс плюс Кино</caption>
+			<channel_id>2039</channel_id>
+			<epg_id>2404</epg_id>
+			<tvg_id>300025</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2404.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Шокирующее</caption>
+			<channel_id>913</channel_id>
+			<epg_id>2309</epg_id>
+			<tvg_id>300095</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2309.png</icon_url>
+			<tv_category_id>5</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>.red HD</caption>
+			<channel_id>2062</channel_id>
+			<epg_id>311</epg_id>
+			<tvg_id>689</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/311.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>A2 HD</caption>
+			<channel_id>2046</channel_id>
+			<epg_id>2492</epg_id>
+			<tvg_id>300143</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2492.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Akudji FilmBox HD</caption>
 			<channel_id>14161</channel_id>
 			<epg_id>5357</epg_id>
@@ -1966,15 +2005,6 @@
 			<icon_url>http://epg.it999.ru/img2/1371.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>3</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>A2 HD</caption>
-			<channel_id>2046</channel_id>
-			<epg_id>2492</epg_id>
-			<tvg_id>300143</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2492.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Amedia Hit HD</caption>
@@ -2062,12 +2092,103 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>LIBERRTY THE SIMSONS</caption>
+			<channel_id>15111</channel_id>
+			<epg_id>5590</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>LIBERTY DC</caption>
+			<channel_id>15087</channel_id>
+			<epg_id>5516</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5516.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>LIBERTY KINOMIKS</caption>
+			<channel_id>15110</channel_id>
+			<epg_id>5589</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>LIBERTY MARVEL</caption>
+			<channel_id>15090</channel_id>
+			<epg_id>5519</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5519.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>LIBERTY TRILLER</caption>
+			<channel_id>15089</channel_id>
+			<epg_id>5518</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5518.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>LIBERTY UJASY</caption>
+			<channel_id>15088</channel_id>
+			<epg_id>5517</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5517.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>LIBERTY boevik</caption>
+			<channel_id>15096</channel_id>
+			<epg_id>5522</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5522.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>LIBERTY drama</caption>
+			<channel_id>15095</channel_id>
+			<epg_id>5521</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5521.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>LIBERTY korotkie</caption>
+			<channel_id>15091</channel_id>
+			<epg_id>5520</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5520.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
 			<caption>LOST HD</caption>
 			<channel_id>11053</channel_id>
 			<epg_id>4772</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4772.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>MS ANIMATED HD</caption>
+			<channel_id>15135</channel_id>
+			<epg_id>5592</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5592.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>MS PRISONS HD</caption>
+			<channel_id>15137</channel_id>
+			<epg_id>5593</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5593.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>MS TOONS HD</caption>
+			<channel_id>15138</channel_id>
+			<epg_id>5594</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5594.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>MS YOUNG BLOOD HD</caption>
+			<channel_id>15139</channel_id>
+			<epg_id>5595</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5595.png</icon_url>
+			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Millennium TV HD</caption>
@@ -2127,6 +2248,69 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>SC TV HD</caption>
+			<channel_id>15114</channel_id>
+			<epg_id>5591</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5591.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH ADULT HD</caption>
+			<channel_id>15166</channel_id>
+			<epg_id>5632</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH EPOCH HD</caption>
+			<channel_id>14243</channel_id>
+			<epg_id>5449</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5449.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH FRESH HD</caption>
+			<channel_id>14244</channel_id>
+			<epg_id>5450</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5450.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH FUTURE HD</caption>
+			<channel_id>15103</channel_id>
+			<epg_id>5588</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5588.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH HEROES HD</caption>
+			<channel_id>14242</channel_id>
+			<epg_id>5448</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5448.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH MIX 3D</caption>
+			<channel_id>14246</channel_id>
+			<epg_id>5451</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5451.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH SERIES HD</caption>
+			<channel_id>14240</channel_id>
+			<epg_id>5447</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5447.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH SPIRIT HD</caption>
+			<channel_id>14249</channel_id>
+			<epg_id>5452</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5452.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
 			<caption>Serial HD</caption>
 			<channel_id>11101</channel_id>
 			<epg_id>4726</epg_id>
@@ -2139,23 +2323,6 @@
 			<channel_id>11054</channel_id>
 			<epg_id>4773</epg_id>
 			<icon_url>http://epg.it999.ru/img2/4773.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>.red HD</caption>
-			<channel_id>2062</channel_id>
-			<epg_id>311</epg_id>
-			<tvg_id>689</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/311.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Spike HD</caption>
-			<channel_id>7243</channel_id>
-			<epg_id>2284</epg_id>
-			<icon_url>http://epg.it999.ru/img2/2284.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -2253,6 +2420,13 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>VHS HD</caption>
+			<channel_id>15000</channel_id>
+			<epg_id>5462</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5462.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
 			<caption>VIP Serial HD</caption>
 			<channel_id>2443</channel_id>
 			<epg_id>2838</epg_id>
@@ -2268,6 +2442,13 @@
 			<icon_url>http://epg.it999.ru/img2/4722.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>YOSSO TV Thriller</caption>
+			<channel_id>15168</channel_id>
+			<epg_id>5631</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
+			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Z! Channel HD</caption>
@@ -2295,6 +2476,27 @@
 			<channel_id>14137</channel_id>
 			<epg_id>1116</epg_id>
 			<icon_url>http://epg.it999.ru/img2/1116.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z!Serial HD</caption>
+			<channel_id>15140</channel_id>
+			<epg_id>5898</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z!Sitcom HD</caption>
+			<channel_id>15141</channel_id>
+			<epg_id>5899</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Z!Smile HD</caption>
+			<channel_id>15142</channel_id>
+			<epg_id>5900</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
@@ -2342,6 +2544,15 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>Душевное кино HD</caption>
+			<channel_id>914</channel_id>
+			<epg_id>2019</epg_id>
+			<tvg_id>2200</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/2019.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Илья ТВ Кино HD</caption>
 			<channel_id>11103</channel_id>
 			<epg_id>4782</epg_id>
@@ -2366,6 +2577,24 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>КИНО ТВ HD</caption>
+			<channel_id>2097</channel_id>
+			<epg_id>1037</epg_id>
+			<tvg_id>1653</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/1037.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>КИНОПРЕМЬЕРА HD</caption>
+			<channel_id>224</channel_id>
+			<epg_id>566</epg_id>
+			<tvg_id>203</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/566.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Камеди HD</caption>
 			<channel_id>2441</channel_id>
 			<epg_id>2836</epg_id>
@@ -2378,15 +2607,6 @@
 			<channel_id>10046</channel_id>
 			<epg_id>2438</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2438.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>КИНО ТВ HD</caption>
-			<channel_id>2097</channel_id>
-			<epg_id>1037</epg_id>
-			<tvg_id>1653</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/1037.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -2444,15 +2664,6 @@
 			<epg_id>2834</epg_id>
 			<tvg_id>2875</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2834.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>КИНОПРЕМЬЕРА HD</caption>
-			<channel_id>224</channel_id>
-			<epg_id>566</epg_id>
-			<tvg_id>203</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/566.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -2531,15 +2742,6 @@
 			<epg_id>2831</epg_id>
 			<tvg_id>3137</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/2831.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Душевное кино HD</caption>
-			<channel_id>914</channel_id>
-			<epg_id>2019</epg_id>
-			<tvg_id>2200</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/2019.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -2650,6 +2852,20 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>Сериал &quot;Симпсоны&quot;</caption>
+			<channel_id>15101</channel_id>
+			<epg_id>5525</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5525.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Сериал &quot;Скорая помощь&quot;</caption>
+			<channel_id>15100</channel_id>
+			<epg_id>5524</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5524.png</icon_url>
+			<tv_category_id>6</tv_category_id>
+		</tv_channel>
+		<tv_channel>
 			<caption>Страшное HD</caption>
 			<channel_id>7247</channel_id>
 			<epg_id>2857</epg_id>
@@ -2689,174 +2905,6 @@
 			<icon_url>http://epg.it999.ru/img2/2309.png</icon_url>
 			<tv_category_id>6</tv_category_id>
 			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>SKY HIGH SERIES HD</caption>
-			<channel_id>14240</channel_id>
-			<epg_id>5447</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5447.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>SKY HIGH HEROES HD</caption>
-			<channel_id>14242</channel_id>
-			<epg_id>5448</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5448.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>SKY HIGH EPOCH HD</caption>
-			<channel_id>14243</channel_id>
-			<epg_id>5449</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5449.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>SKY HIGH FRESH HD</caption>
-			<channel_id>14244</channel_id>
-			<epg_id>5450</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5450.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>SKY HIGH MIX 3D</caption>
-			<channel_id>14246</channel_id>
-			<epg_id>5451</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5451.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>SKY HIGH SPIRIT HD</caption>
-			<channel_id>14249</channel_id>
-			<epg_id>5452</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5452.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>SKY HIGH FUTURE HD</caption>
-			<channel_id>15103</channel_id>
-			<epg_id>5588</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5588.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERTY DC</caption>
-			<channel_id>15087</channel_id>
-			<epg_id>5516</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5516.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERTY UJASY</caption>
-			<channel_id>15088</channel_id>
-			<epg_id>5517</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5517.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERTY TRILLER</caption>
-			<channel_id>15089</channel_id>
-			<epg_id>5518</epg_id>
-			<icon_url>plugin_file://icons/shablon.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERTY MARVEL</caption>
-			<channel_id>15090</channel_id>
-			<epg_id>5519</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5519.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERTY korotkie</caption>
-			<channel_id>15091</channel_id>
-			<epg_id>5520</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5520.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERTY drama</caption>
-			<channel_id>15095</channel_id>
-			<epg_id>5521</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5521.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERTY boevik</caption>
-			<channel_id>15096</channel_id>
-			<epg_id>5522</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5522.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERTY KINOMIKS</caption>
-			<channel_id>15110</channel_id>
-			<epg_id>5589</epg_id>
-			<icon_url>plugin_file://icons/shablon.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>LIBERRTY THE SIMSONS</caption>
-			<channel_id>15111</channel_id>
-			<epg_id>5590</epg_id>
-			<icon_url>plugin_file://icons/shablon.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>Сериал &quot;Скорая помощь&quot;</caption>
-			<channel_id>15100</channel_id>
-			<epg_id>5524</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5524.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>Сериал &quot;Симпсоны&quot;</caption>
-			<channel_id>15101</channel_id>
-			<epg_id>5525</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5525.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>VHS HD</caption>
-			<channel_id>15000</channel_id>
-			<epg_id>5462</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5462.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>SC TV HD</caption>
-			<channel_id>15114</channel_id>
-			<epg_id>5591</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5591.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>MS ANIMATED HD</caption>
-			<channel_id>15135</channel_id>
-			<epg_id>5592</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5592.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>MS PRISONS HD</caption>
-			<channel_id>15137</channel_id>
-			<epg_id>5593</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5593.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>MS TOONS HD</caption>
-			<channel_id>15138</channel_id>
-			<epg_id>5594</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5594.png</icon_url>
-			<tv_category_id>6</tv_category_id>
-		</tv_channel>
-		<tv_channel>
-			<caption>MS YOUNG BLOOD HD</caption>
-			<channel_id>15139</channel_id>
-			<epg_id>5595</epg_id>
-			<icon_url>http://epg.it999.ru/img2/5595.png</icon_url>
-			<tv_category_id>6</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>Dosug Comedy HD</caption>
@@ -5278,6 +5326,20 @@
 			<archive>3</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>MTV Biggest Pop HD</caption>
+			<channel_id>15018</channel_id>
+			<epg_id>5481</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5481.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>MTV Block Party HD</caption>
+			<channel_id>15019</channel_id>
+			<epg_id>5482</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5482.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
 			<caption>MTV Hits</caption>
 			<channel_id>153</channel_id>
 			<epg_id>1723</epg_id>
@@ -5384,6 +5446,27 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>SKY HIGH CLASSIC HD</caption>
+			<channel_id>15104</channel_id>
+			<epg_id>5596</epg_id>
+			<icon_url>plugin_file://icons/shablon.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH CONCERT HD</caption>
+			<channel_id>14241</channel_id>
+			<epg_id>5454</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5454.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>SKY HIGH DANCE HD</caption>
+			<channel_id>14250</channel_id>
+			<epg_id>5455</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5455.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
 			<caption>SONG TV HD RU</caption>
 			<channel_id>6394</channel_id>
 			<epg_id>3358</epg_id>
@@ -5398,6 +5481,118 @@
 			<icon_url>http://epg.it999.ru/img2/4657.png</icon_url>
 			<tv_category_id>16</tv_category_id>
 			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Alternative HD</caption>
+			<channel_id>15014</channel_id>
+			<epg_id>5477</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5477.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Classic Rock HD</caption>
+			<channel_id>15012</channel_id>
+			<epg_id>5475</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5475.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Classica HD</caption>
+			<channel_id>15009</channel_id>
+			<epg_id>5472</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5472.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Exitos Del Momento HD</caption>
+			<channel_id>15008</channel_id>
+			<epg_id>5471</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5471.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Flashback 70S HD</caption>
+			<channel_id>15013</channel_id>
+			<epg_id>5476</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5476.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Greatest Hits HD</caption>
+			<channel_id>15007</channel_id>
+			<epg_id>5470</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5470.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Hip Hop/R&amp;B HD</caption>
+			<channel_id>15005</channel_id>
+			<epg_id>5468</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5468.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Hit List HD</caption>
+			<channel_id>15003</channel_id>
+			<epg_id>5466</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5466.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Hot Country HD</caption>
+			<channel_id>15001</channel_id>
+			<epg_id>5464</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5464.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Jazz HD</caption>
+			<channel_id>15010</channel_id>
+			<epg_id>5473</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5473.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Karaoke HD</caption>
+			<channel_id>15011</channel_id>
+			<epg_id>5474</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5474.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Pop Adult HD</caption>
+			<channel_id>15002</channel_id>
+			<epg_id>5465</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5465.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Qello TV HD</caption>
+			<channel_id>15004</channel_id>
+			<epg_id>5467</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5467.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Remember The 80S HD</caption>
+			<channel_id>15015</channel_id>
+			<epg_id>5478</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5478.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>Stingray Soul Storm STORM HD</caption>
+			<channel_id>15006</channel_id>
+			<epg_id>5469</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5469.png</icon_url>
+			<tv_category_id>16</tv_category_id>
+		</tv_channel>
+		<tv_channel>
+			<caption>V2BEAT HD</caption>
+			<channel_id>15020</channel_id>
+			<epg_id>5483</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5483.png</icon_url>
+			<tv_category_id>16</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>VH1 European</caption>
@@ -5572,11 +5767,10 @@
 		</tv_channel>
 		<tv_channel>
 			<caption>Eurosport Gold HD</caption>
-			<channel_id>2002</channel_id>
+			<channel_id>15226</channel_id>
 			<epg_id>2482</epg_id>
 			<icon_url>http://epg.it999.ru/img2/2482.png</icon_url>
 			<tv_category_id>17</tv_category_id>
-			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Extreme Sports</caption>
@@ -5597,6 +5791,13 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>SKY HIGH FIGHT + HD</caption>
+			<channel_id>15097</channel_id>
+			<epg_id>5559</epg_id>
+			<icon_url>http://epg.it999.ru/img2/5559.png</icon_url>
+			<tv_category_id>17</tv_category_id>
+		</tv_channel>
+		<tv_channel>
 			<caption>Setanta Sports 2</caption>
 			<channel_id>270</channel_id>
 			<epg_id>2363</epg_id>
@@ -5611,6 +5812,14 @@
 			<icon_url>http://epg.it999.ru/img2/2364.png</icon_url>
 			<tv_category_id>17</tv_category_id>
 			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>UFC FIGHT PASS</caption>
+			<channel_id>6554</channel_id>
+			<epg_id>3552</epg_id>
+			<icon_url>http://epg.it999.ru/img2/3552.png</icon_url>
+			<tv_category_id>17</tv_category_id>
+			<archive>3</archive>
 		</tv_channel>
 		<tv_channel>
 			<caption>Viasat Sport</caption>
@@ -5659,15 +5868,6 @@
 			<epg_id>113</epg_id>
 			<tvg_id>672</tvg_id>
 			<icon_url>http://epg.it999.ru/img2/113.png</icon_url>
-			<tv_category_id>17</tv_category_id>
-			<archive>1</archive>
-		</tv_channel>
-		<tv_channel>
-			<caption>Мир</caption>
-			<channel_id>214</channel_id>
-			<epg_id>726</epg_id>
-			<tvg_id>2137</tvg_id>
-			<icon_url>http://epg.it999.ru/img2/726.png</icon_url>
 			<tv_category_id>17</tv_category_id>
 			<archive>1</archive>
 		</tv_channel>
@@ -5825,6 +6025,31 @@
 			<archive>1</archive>
 		</tv_channel>
 		<tv_channel>
+			<caption>Мир</caption>
+			<channel_id>214</channel_id>
+			<epg_id>726</epg_id>
+			<tvg_id>2137</tvg_id>
+			<icon_url>http://epg.it999.ru/img2/726.png</icon_url>
+			<tv_category_id>17</tv_category_id>
+			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Спортивный HD</caption>
+			<channel_id>10057</channel_id>
+			<epg_id>4678</epg_id>
+			<icon_url>http://epg.it999.ru/img2/4678.png</icon_url>
+			<tv_category_id>17</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Старт HD</caption>
+			<channel_id>6384</channel_id>
+			<epg_id>2530</epg_id>
+			<icon_url>http://epg.it999.ru/img2/2530.png</icon_url>
+			<tv_category_id>17</tv_category_id>
+			<archive>3</archive>
+		</tv_channel>
+		<tv_channel>
 			<caption>Телеканал КХЛ HD</caption>
 			<channel_id>215</channel_id>
 			<epg_id>1038</epg_id>
@@ -5840,6 +6065,21 @@
 			<icon_url>http://epg.it999.ru/img2/2669.png</icon_url>
 			<tv_category_id>17</tv_category_id>
 			<archive>1</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Футбольный HD</caption>
+			<channel_id>10058</channel_id>
+			<epg_id>4679</epg_id>
+			<icon_url>http://epg.it999.ru/img2/4679.png</icon_url>
+			<tv_category_id>17</tv_category_id>
+			<archive>7</archive>
+		</tv_channel>
+		<tv_channel>
+			<caption>Хоккейный HD</caption>
+			<channel_id>10013</channel_id>
+			<epg_id>4605</epg_id>
+			<icon_url>http://epg.it999.ru/img2/4605.png</icon_url>
+			<tv_category_id>17</tv_category_id>
 		</tv_channel>
 		<tv_channel>
 			<caption>BTV 95 квартал сказки HD</caption>

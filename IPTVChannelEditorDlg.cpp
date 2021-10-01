@@ -364,24 +364,27 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
 
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Plugin type"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Select Plugin for edit"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose a playlist to import. Standard and Thematic downloaded from it999.ru"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose a playlist to import."));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Add custom playlist"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels. Use \\ prefix to find by ID"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("EPG ID from teleguide.info"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG2), _T("Test EPG teleguide.info URL"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("EPG ID from it999.ru"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG1), _T("Test EPG it999.ru URL"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_URL_ID), _T("Channel ID"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("EPG ID1"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG1), _T("View EPG1 data"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("EPG ID2"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG2), _T("View EPG2 data"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Use custom stream URL for the channel"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Channel archive is supported"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_DAYS), _T("How many days archive is supported"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Channel contents for adults"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Store icon to the local folder instead of downloading it from internet"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Save channels list"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Make a plugin to install on player"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SETTINGS), _T("Editor settings"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Set channel icon from original playlist"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHOOSE_PLAYLIST), _T("Choose playlist"));
+	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHOOSE_PLAYLIST), _T("Choose playlist or download it from account"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST), _T("Save downloaded playlist to disk"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_PL_SEARCH), _T("Search in the playlist. Use \\ prefix to find by ID"));
 	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Search next"));
