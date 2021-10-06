@@ -8,6 +8,9 @@
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
 #include "map_serializer.h"
+#include "GetStreamInfoThread.h"
+
+class BaseInfo;
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -36,7 +39,6 @@ public:
 	};
 
 	bool SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, const SearchParams& searchParams);
-	static void GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video);
 
 	// Implementation
 protected:
@@ -97,6 +99,7 @@ protected:
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedButtonCustomPlaylist();
 	afx_msg void OnBnClickedButtonPack();
+	afx_msg void OnBnClickedButtonStop();
 	afx_msg void OnBnClickedButtonPlSearchNext();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
@@ -143,8 +146,10 @@ protected:
 	afx_msg void OnCopyTo(UINT id);
 	afx_msg void OnMoveTo(UINT id);
 	afx_msg void OnAddTo(UINT id);
-	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnUpdateProgressStream(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -159,8 +164,6 @@ private:
 
 	void FillTreeChannels(LPCSTR select = nullptr);
 	void FillTreePlaylist();
-
-	void GetStreamInfo(std::vector<uri_stream*>& container);
 
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);
@@ -231,11 +234,11 @@ private:
 	std::wstring ReadRegStringPluginW(LPCTSTR path) const;
 	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
 
+	void UpdateExtToken(BaseInfo* info) const;
+	void RunGetInfoStreamThread(const CGetStreamInfoThread::ThreadConfig& cfg);
+
 protected:
-	static CString m_probe;
-
 	CFont m_largeFont;
-
 	// GUI controls and variables
 
 	CToolTipCtrl m_pToolTipCtrl;
@@ -273,6 +276,7 @@ protected:
 	CButton m_wndCacheIcon;
 	CButton m_wndUpdateIcon;
 	CButton m_wndSave;
+	CButton m_wndStop;
 	CStatic m_wndChannelIcon;
 	CStatic m_wndPlIcon;
 	CStatic m_wndChInfo;
@@ -316,6 +320,7 @@ private:
 
 	CString m_toolTipText;
 
+	CString m_probe;
 	CString m_chFileName;
 	CString m_plFileName;
 	CString m_player;

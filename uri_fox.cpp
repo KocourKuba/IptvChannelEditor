@@ -47,14 +47,8 @@ std::string uri_fox::get_templated(StreamSubType subType, const TemplateParams& 
 				break;
 		}
 
-		std::string token = get_token();
-		if (params.ext_param != nullptr)
-		{
-			token = ((PlaylistEntry*)params.ext_param)->stream_uri->get_token();
-		}
-
 		utils::string_replace_inplace(url, "{SUBDOMAIN}", params.domain);
-		utils::string_replace_inplace(url, "{TOKEN}", token);
+		utils::string_replace_inplace(url, "{TOKEN}", get_token());
 	}
 
 	if (!url.empty() && params.shift_back)

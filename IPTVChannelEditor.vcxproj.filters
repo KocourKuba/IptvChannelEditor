@@ -171,6 +171,9 @@
     <ClInclude Include="uri_fox.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="GetStreamInfoThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -271,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="uri_fox.cpp">
       <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="GetStreamInfoThread.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

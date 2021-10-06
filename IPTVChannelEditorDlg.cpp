@@ -99,26 +99,6 @@ PluginDesc all_plugins[] = {
 	{ enSharavoz,  _T("Sharavoz TV") },
 };
 
-CString CIPTVChannelEditorDlg::m_probe;
-
-// Возвращает разницу между заданным и текущим значением времени в тиках
-inline DWORD GetTimeDiff(DWORD dwStartTime)
-{
-	DWORD dwCurrent = ::GetTickCount();
-
-	if (dwStartTime > dwCurrent)
-		return (0xffffffff - dwCurrent - dwStartTime);
-
-	return (dwCurrent - dwStartTime);
-}
-
-// Требует начальное время и таймаут в миллисекундах
-// Возвращает TRUE, если таймаут вышел
-inline BOOL CheckForTimeOut(DWORD dwStartTime, DWORD dwTimeOut)
-{
-	return (GetTimeDiff(dwStartTime) > dwTimeOut);
-}
-
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
 	return lParam1 < lParam2 ? -1 : lParam1 == lParam2 ? 0 : 1;
@@ -153,6 +133,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickCheckArchive)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CIPTVChannelEditorDlg::OnSave)
 	ON_BN_CLICKED(IDC_BUTTON_PACK, &CIPTVChannelEditorDlg::OnBnClickedButtonPack)
+	ON_BN_CLICKED(IDC_BUTTON_STOP, &CIPTVChannelEditorDlg::OnBnClickedButtonStop)
 	ON_BN_CLICKED(IDC_BUTTON_SETTINGS, &CIPTVChannelEditorDlg::OnBnClickedButtonSettings)
 	ON_BN_CLICKED(IDC_BUTTON_CACHE_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CACHE_ICON, &CIPTVChannelEditorDlg::OnUpdateButtonCacheIcon)
@@ -228,8 +209,10 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnUpdateAddToFavorite)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
-	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnEndLoadPlaylist)
 	ON_MESSAGE(WM_UPDATE_PROGRESS, &CIPTVChannelEditorDlg::OnUpdateProgress)
+	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnEndLoadPlaylist)
+	ON_MESSAGE(WM_UPDATE_PROGRESS_STREAM, &CIPTVChannelEditorDlg::OnUpdateProgressStream)
+	ON_MESSAGE(WM_END_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnEndGetStreamInfo)
 
 	ON_COMMAND_RANGE(ID_COPY_TO_START, ID_COPY_TO_END, &CIPTVChannelEditorDlg::OnCopyTo)
 	ON_COMMAND_RANGE(ID_MOVE_TO_START, ID_MOVE_TO_END, &CIPTVChannelEditorDlg::OnMoveTo)
@@ -308,6 +291,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_CACHE_ICON, m_wndCacheIcon);
 	DDX_Control(pDX, IDC_BUTTON_UPDATE_ICON, m_wndUpdateIcon);
 	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
+	DDX_Control(pDX, IDC_BUTTON_STOP, m_wndStop);
 	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
 	DDX_Control(pDX, IDC_STATIC_PROGRESS_INFO, m_wndProgressInfo);
 	DDX_Control(pDX, IDC_COMBO_ICON_SOURCE, m_wndIconSource);
@@ -782,6 +766,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		return;
 	}
 
+	m_wndStop.EnableWindow(TRUE);
 	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
 	m_wndProgress.SetPos(0);
 	m_wndProgress.ShowWindow(SW_SHOW);
@@ -838,6 +823,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 	m_wndPlaylistTree.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(TRUE);
 	m_wndChannelsTree.EnableWindow(TRUE);
+	m_wndStop.EnableWindow(FALSE);
 
 	BOOL enableDownload = TRUE;
 	BOOL enableCustom = FALSE;
@@ -954,6 +940,16 @@ LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam, LPARAM lParam /*=
 	str.Format(_T("Channels readed: %d"), wParam);
 	m_wndProgressInfo.SetWindowText(str);
 	m_wndProgress.SetPos(lParam);
+
+	return 0;
+}
+
+LRESULT CIPTVChannelEditorDlg::OnUpdateProgressStream(WPARAM wParam, LPARAM lParam /*= 0*/)
+{
+	CString str;
+	str.Format(_T("Get Stream Info: %d from %d"), wParam, lParam);
+	m_wndProgressInfo.SetWindowText(str);
+	m_wndProgress.SetPos(wParam);
 
 	return 0;
 }
@@ -2667,7 +2663,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 
 void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/) const
 {
-	if (auto entry = GetBaseInfo(m_lastTree, hItem); entry != nullptr)
+	if (auto info = GetBaseInfo(m_lastTree, hItem); info != nullptr)
 	{
 		TemplateParams params;
 		params.token = m_token;
@@ -2675,19 +2671,15 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.login = m_login;
 		params.password = m_password;
 		params.host = m_host;
-		params.ext_param = nullptr;
 		if (m_lastTree == &m_wndChannelsTree)
 		{
-			// fox and 1usd uses a unique token for each channel depends on user credentials
-			// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id
-			const auto& pair = m_playlistMap.find(entry->stream_uri->get_id());
-			params.ext_param = pair != m_playlistMap.end() ? pair->second.get() : nullptr;
+			UpdateExtToken(info);
 		}
 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
-		const auto& url = utils::utf8_to_utf16(entry->stream_uri->get_templated((StreamSubType)m_StreamType, params));
+		const auto& url = utils::utf8_to_utf16(info->stream_uri->get_templated((StreamSubType)m_StreamType, params));
 
 		TRACE(L"Test URL: %s\n", url.c_str());
 
@@ -3022,71 +3014,6 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	m_bInFillTree = false;
 
 	UpdateData(FALSE);
-}
-
-void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
-{
-	TemplateParams params;
-	params.token = m_token;
-	params.domain = m_domain;
-	params.login = m_login;
-	params.password = m_password;
-	params.host = m_host;
-	params.shift_back = 0;
-
-	const auto max_threads = 4;
-
-	auto newEnd = std::unique(container.begin(), container.end());
-	m_wndProgress.SetRange32(0, std::distance(container.begin(), newEnd));
-	for (auto it = container.begin(); it != newEnd;)
-	{
-		std::array<std::thread, max_threads> workers;
-		std::array<std::string, max_threads> audio;
-		std::array<std::string, max_threads> video;
-		auto pool = it;
-		int j = 0;
-		while (j < max_threads && pool != container.end())
-		{
-			params.ext_param = nullptr;
-			if (m_lastTree == &m_wndChannelsTree)
-			{
-				// fox and 1usd uses a unique token for each channel depends on user credentials
-				// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id
-				const auto& pair = m_playlistMap.find((*pool)->get_id());
-				params.ext_param = pair != m_playlistMap.end() ? pair->second.get() : nullptr;
-			}
-
-			const auto& url = (*pool)->get_templated((StreamSubType)m_StreamType, params);
-			workers[j] = std::thread(GetChannelStreamInfo, url, std::ref(audio[j]), std::ref(video[j]));
-			j++;
-			++pool;
-		}
-
-		j = 0;
-		for (auto& w : workers)
-		{
-			if (!w.joinable()) continue;
-
-			w.join();
-
-			auto hash = (*it)->get_hash();
-			std::pair<std::string, std::string> info(audio[j], video[j]);
-			auto& pair = m_stream_infos.emplace(hash, info);
-			if (!pair.second)
-			{
-				pair.first->second = std::move(info);
-			}
-
-			++it;
-			j++;
-
-			auto step = std::distance(container.begin(), it);
-			CString str;
-			str.Format(_T("Get Stream Info: %d from %d"), step, container.size());
-			m_wndProgressInfo.SetWindowText(str);
-			m_wndProgress.SetPos(step);
-		}
-	}
 }
 
 void CIPTVChannelEditorDlg::OnSave()
@@ -3484,6 +3411,12 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	std::filesystem::remove_all(packFolder, err);
 }
 
+void CIPTVChannelEditorDlg::OnBnClickedButtonStop()
+{
+	m_evtStop.SetEvent();
+	m_wndStop.EnableWindow(FALSE);
+}
+
 void CIPTVChannelEditorDlg::OnUpdateButtonSearchNext(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!m_search.IsEmpty());
@@ -3783,39 +3716,31 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	if (!m_lastTree)
 		return;
 
-	m_wndProgress.ShowWindow(SW_SHOW);
-	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetPos(0);
-	CWaitCursor cur;
-
-	std::vector<uri_stream*> streams;
+	bool isChannelsTree = m_lastTree == &m_wndChannelsTree;
+	auto container = std::make_unique<std::vector<uri_stream*>>();
 	for (const auto& hItem : m_lastTree->GetSelectedItems())
 	{
 		auto channel = GetBaseInfo(m_lastTree, hItem);
 		if (channel)
 		{
-			streams.emplace_back(channel->stream_uri.get());
+			container->emplace_back(channel->stream_uri.get());
 		}
 	}
 
-	if (m_lastTree == &m_wndChannelsTree)
-	{
-		GetStreamInfo(streams);
-		LoadChannelInfo(m_lastTree->GetFirstSelectedItem());
-	}
-	else if (m_lastTree == &m_wndPlaylistTree)
-	{
-		GetStreamInfo(streams);
-		LoadPlayListInfo(m_lastTree->GetFirstSelectedItem());
-	}
+	CGetStreamInfoThread::ThreadConfig cfg;
+	cfg.m_parent = this;
+	cfg.m_container = container.release();
+	cfg.m_hStop = m_evtStop;
+	cfg.m_probe = m_probe;
+	cfg.m_isChannelsTree = isChannelsTree;
+	cfg.m_params.token = m_token;
+	cfg.m_params.domain = m_domain;
+	cfg.m_params.login = m_login;
+	cfg.m_params.password = m_password;
+	cfg.m_params.host = m_host;
+	cfg.m_params.shift_back = 0;
 
-	SaveStreamInfo();
-	UpdateChannelsCount();
-	UpdatePlaylistCount();
-	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndProgressInfo.ShowWindow(SW_HIDE);
-
-	UpdateData(FALSE);
+	RunGetInfoStreamThread(cfg);
 }
 
 void CIPTVChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
@@ -3841,22 +3766,20 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 	if (!m_lastTree)
 		return;
 
-	CWaitCursor cur;
-	m_wndProgress.ShowWindow(SW_SHOW);
-	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetPos(0);
-	bool channelsList = m_lastTree == &m_wndChannelsTree;
-	std::vector<uri_stream*> container;
-
+	std::map<std::string, std::string> playlistTokens;
+	bool isChannelsTree = m_lastTree == &m_wndChannelsTree;
+	auto container = std::make_unique<std::vector<uri_stream*>>();
 	for (auto hItem = m_lastTree->GetFirstSelectedItem(); hItem != nullptr; hItem = m_lastTree->GetNextSelectedItem(hItem))
 	{
-		if (channelsList)
+		if (isChannelsTree)
 		{
 			for (const auto& item : GetItemCategory(hItem)->get_channels())
 			{
 				auto info = dynamic_cast<BaseInfo*>(item.get());
-				if (info)
-					container.emplace_back(info->stream_uri.get());
+				if (!info) continue;
+
+				container->emplace_back(info->stream_uri.get());
+				UpdateExtToken(info);
 			}
 		}
 		else
@@ -3875,36 +3798,86 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 
 			for (const auto& pair : m_playlistMap)
 			{
-				if (category == pair.second->get_category())
-				{
-					// add all
-					auto info = dynamic_cast<BaseInfo*>(pair.second.get());
-					if (info)
-						container.emplace_back(info->stream_uri.get());
-				}
+				if (category != pair.second->get_category()) continue;
+
+				// add all
+				auto info = dynamic_cast<BaseInfo*>(pair.second.get());
+				if (info)
+					container->emplace_back(info->stream_uri.get());
 			}
 		}
 	}
 
-	if (!container.empty())
-	{
-		GetStreamInfo(container);
-		if (m_lastTree == &m_wndChannelsTree)
-			LoadChannelInfo(m_lastTree->GetSelectedItem());
-		else
-			LoadPlayListInfo(m_lastTree->GetSelectedItem());
+	CGetStreamInfoThread::ThreadConfig cfg;
+	cfg.m_parent = this;
+	cfg.m_container = container.release();
+	cfg.m_hStop = m_evtStop;
+	cfg.m_probe = m_probe;
+	cfg.m_isChannelsTree = isChannelsTree;
+	cfg.m_params.token = m_token;
+	cfg.m_params.domain = m_domain;
+	cfg.m_params.login = m_login;
+	cfg.m_params.password = m_password;
+	cfg.m_params.host = m_host;
+	cfg.m_params.shift_back = 0;
 
-		SaveStreamInfo();
-		UpdateChannelsCount();
-		UpdatePlaylistCount();
-		m_wndProgress.ShowWindow(SW_HIDE);
-		m_wndProgressInfo.ShowWindow(SW_HIDE);
-	}
+	RunGetInfoStreamThread(cfg);
 }
 
 void CIPTVChannelEditorDlg::OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_lastTree != nullptr && !m_probe.IsEmpty() && !m_loading);
+}
+
+void CIPTVChannelEditorDlg::RunGetInfoStreamThread(const CGetStreamInfoThread::ThreadConfig& cfg)
+{
+	if (cfg.m_container->empty())
+		return;
+
+	m_evtStop.ResetEvent();
+	m_wndStop.EnableWindow(TRUE);
+	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndProgressInfo.ShowWindow(SW_SHOW);
+	m_wndProgress.SetRange32(0, (int)cfg.m_container->size());
+	m_wndProgress.SetPos(0);
+
+	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+	if (!pThread)
+	{
+		AfxMessageBox(_T("Problem with starting Get Stream Info thread!"), MB_OK | MB_ICONERROR);
+		OnEndGetStreamInfo(cfg.m_isChannelsTree);
+		return;
+	}
+
+	pThread->SetData(cfg);
+	pThread->ResumeThread();
+}
+
+LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam, LPARAM lParam /*= 0*/)
+{
+	if (lParam)
+		LoadChannelInfo(m_lastTree->GetSelectedItem());
+	else
+		LoadPlayListInfo(m_lastTree->GetSelectedItem());
+
+	auto stream_infos = (serializable_map*)wParam;
+	if (stream_infos)
+	{
+		for (const auto& pair : *stream_infos)
+		{
+			m_stream_infos[pair.first] = pair.second;
+		}
+	}
+
+	SaveStreamInfo();
+	UpdateChannelsCount();
+	UpdatePlaylistCount();
+
+	m_wndStop.EnableWindow(FALSE);
+	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndProgressInfo.ShowWindow(SW_HIDE);
+
+	return 0;
 }
 
 void CIPTVChannelEditorDlg::OnPlayStream()
@@ -4292,173 +4265,6 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	return needCheckExisting;
 }
 
-void CIPTVChannelEditorDlg::GetChannelStreamInfo(const std::string& url, std::string& audio, std::string& video)
-{
-	if (url.empty())
-		return;
-
-	SECURITY_ATTRIBUTES sa;
-	sa.nLength = sizeof(sa);
-	sa.bInheritHandle = TRUE;
-	sa.lpSecurityDescriptor = nullptr;
-
-	// Create a pipe for the child process's STDOUT
-	HANDLE hStdoutRd;
-	HANDLE hChildStdoutWr = nullptr;
-	HANDLE hChildStdoutRd = nullptr;
-	CreatePipe(&hChildStdoutRd, &hChildStdoutWr, &sa, 0);
-
-	// Duplicate the read handle to the pipe so it is not inherited and close src handle
-	HANDLE hSelf = GetCurrentProcess();
-	if (!DuplicateHandle(hSelf, hChildStdoutRd, hSelf, &hStdoutRd, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE))
-	{
-		TRACE(_T("Failed! Can't create stdout pipe to child process. Code: %u\n"), GetLastError());
-		return;
-	}
-
-	std::string result;
-	BOOL bResult = FALSE;
-
-	STARTUPINFO si = { 0 };
-	si.cb = sizeof(STARTUPINFO);
-	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
-	si.wShowWindow = SW_HIDE;
-	si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-	si.hStdInput = nullptr;
-	si.hStdOutput = hChildStdoutWr;
-
-	PROCESS_INFORMATION pi = { nullptr };
-
-	// argv[0] имя исполняемого файла
-	CString csCommand;
-	csCommand.Format(_T("\"%s\" -hide_banner -show_streams \"%hs\""), m_probe.GetString(), url.c_str());
-
-	BOOL bRunProcess = CreateProcess(CIPTVChannelEditorDlg::m_probe.GetString(),	// 	__in_opt     LPCTSTR lpApplicationName
-									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
-									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes
-									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes
-									 TRUE,						// 	__in         BOOL bInheritHandles
-									 CREATE_SUSPENDED,			// 	__in         DWORD dwCreationFlags
-									 nullptr,					// 	__in_opt     LPVOID lpEnvironment
-									 nullptr,					// 	__in_opt     LPCTSTR lpCurrentDirectory
-									 &si,						// 	__in         LPSTARTUPINFO lpStartupInfo
-									 &pi);						// 	__out        LPPROCESS_INFORMATION lpProcessInformation
-
-	if (!bRunProcess)
-	{
-		TRACE(_T("Failed! Can't execute command: %s\nCode: %u\n"), csCommand.GetString(), GetLastError());
-	}
-	else
-	{
-		ResumeThread(pi.hThread);
-
-		long nTimeout = 30;
-
-		int nErrorCount = 0;
-		DWORD dwExitCode = STILL_ACTIVE;
-		DWORD dwStart = GetTickCount();
-		BOOL bTimeout = FALSE;
-		for (;;)
-		{
-			if (dwExitCode != STILL_ACTIVE)
-			{
-				TRACE("Success! Exit code: %u for %s\n", dwExitCode, url.c_str());
-				break;
-			}
-
-			if (CheckForTimeOut(dwStart, nTimeout * 1000))
-			{
-				bTimeout = TRUE;
-				::TerminateProcess(pi.hProcess, 0);
-				TRACE("Failed! Execution Timeout. %s\n", url.c_str());
-				break;
-			}
-
-			if (::GetExitCodeProcess(pi.hProcess, &dwExitCode))
-			{
-				for (;;)
-				{
-					if (CheckForTimeOut(dwStart, nTimeout * 1000)) break;
-
-					// Peek data from stdout pipe
-					DWORD dwAvail = 0;
-					if (!::PeekNamedPipe(hStdoutRd, nullptr, 0, nullptr, &dwAvail, nullptr) || !dwAvail) break;
-
-					char szBuf[4096] = { 0 };
-					DWORD dwReaded = dwAvail;
-					if (!ReadFile(hStdoutRd, szBuf, min(4095, dwAvail), &dwReaded, nullptr)) break;
-
-					result.append(szBuf, dwReaded);
-				}
-			}
-			else
-			{
-				// По каким то причинам обломался
-				TRACE("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d, source %hs\n", ::GetLastError(), nErrorCount, url.c_str());
-				nErrorCount++;
-				if (nErrorCount > 10) break;
-				continue;
-			}
-		}
-
-		bResult = TRUE;
-	}
-
-	::CloseHandle(hStdoutRd);
-	::CloseHandle(hChildStdoutWr);
-	::CloseHandle(pi.hProcess);
-	::CloseHandle(pi.hThread);
-
-	// Parse stdout
-	std::stringstream ss(result);
-	std::string item;
-	std::vector<std::map<std::string, std::string>> streams;
-	bool skip = false;
-	size_t idx = 0;
-	while (std::getline(ss, item))
-	{
-		utils::string_rtrim(item, "\r\n");
-		if (item == "[STREAM]")
-		{
-			skip = false;
-			streams.emplace_back(std::map<std::string, std::string>());
-			idx = streams.size() - 1;
-			continue;
-		}
-
-		if (item == "[/STREAM]")
-		{
-			skip = true;
-			continue;
-		}
-
-		if (!skip)
-		{
-			auto pair = utils::string_split(item, '=');
-			if (pair.size() > 1)
-				streams[idx].emplace(pair[0], pair[1]);
-		}
-	}
-
-	audio = "Not available";
-	video = "Not available";
-	for (auto& stream : streams)
-	{
-		if (stream["codec_type"] == "audio")
-		{
-			audio = stream["codec_long_name"] + " ";
-			audio += stream["sample_rate"] + " ";
-			audio += stream["channel_layout"];
-		}
-		else if (stream["codec_type"] == "video")
-		{
-			video = stream["width"] + "x";
-			video += stream["height"] + " ";
-			video += stream["codec_long_name"];
-		}
-	}
-}
-
 void CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter()
 {
 	CFilterDialog dlg;
@@ -4643,6 +4449,18 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 	std::ofstream os(path, std::istream::binary);
 	os.write(dump.data(), dump.size());
 	os.close();
+}
+
+void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info) const
+{
+	if (m_pluginType != StreamType::enFox && m_pluginType != StreamType::enOneUsd) return;
+
+	// fox and 1usd uses a unique token for each channel depends on user credentials
+	// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id
+
+	const auto& pair = m_playlistMap.find(info->stream_uri->get_id());
+	if (pair != m_playlistMap.end())
+		info->stream_uri->set_token(pair->second->stream_uri->get_token());
 }
 
 bool CIPTVChannelEditorDlg::HasEPG2()

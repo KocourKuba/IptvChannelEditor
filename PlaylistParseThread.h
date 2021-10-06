@@ -2,9 +2,6 @@
 
 #include "PlayListEntry.h"
 
-#define WM_UPDATE_PROGRESS (WM_USER + 301)
-#define WM_END_LOAD_PLAYLIST (WM_USER + 302)
-
 class CPlaylistParseThread : public CWinThread
 {
 	DECLARE_DYNCREATE(CPlaylistParseThread)

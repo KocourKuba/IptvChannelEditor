@@ -24,7 +24,6 @@ typedef struct
 	std::string password;
 	std::string host;
 	int shift_back;
-	void* ext_param; // custom parameter
 }TemplateParams;
 
 /// <summary>

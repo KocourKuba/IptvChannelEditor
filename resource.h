@@ -34,7 +34,7 @@
 #define IDC_BUTTON_SAVE                 1017
 #define IDC_BUTTON_SEARCH_NEXT          1018
 #define IDC_BUTTON_SETTINGS             1019
-#define IDC_BUTTON_SORT                 1020
+#define IDC_BUTTON_STOP                 1020
 #define IDC_BUTTON_TEST_EPG1            1021
 #define IDC_BUTTON_TEST_EPG2            1022
 #define IDC_BUTTON_UPDATE_ICON          1023
@@ -54,7 +54,7 @@
 #define IDC_EDIT_ARCHIVE_CHECK_HOURS    1039
 #define IDC_EDIT_CATEGORY               1040
 #define IDC_EDIT_DOMAIN                 1041
-#define IDC_EDIT_PASSWORD               1041
+#define IDC_EDIT_PASSWORD               1042
 #define IDC_EDIT_EPG1_ID                1043
 #define IDC_EDIT_INFO_AUDIO             1044
 #define IDC_EDIT_INFO_VIDEO             1045
@@ -85,12 +85,10 @@
 #define IDC_STATIC_PLAYLIST             1073
 #define IDC_STATIC_QR                   1074
 #define IDC_STATIC_TITLE                1075
-#define IDC_STATIC_VERSION              1076
 #define IDC_STATIC_PROGRESS_INFO        1076
 #define IDC_TREE_CHANNELS               1077
 #define IDC_TREE_PLAYLIST               1078
 #define IDC_MFCLINK_DONATE_ABOUT        1079
-#define IDC_CHECK_AUTO_SYNC_CHANNELS    1080
 #define IDC_STATIC_STREAM_TYPE          1080
 #define IDC_EDIT_PL_ARCHIVE_DAYS        1081
 #define IDC_EDIT_TIME_SHIFT             1082
@@ -102,6 +100,7 @@
 #define IDC_STATIC_SEARCH               1088
 #define IDC_EDIT_ARCHIVE_DAYS           1089
 #define IDC_COMBO_TYPE                  1090
+#define IDC_CHECK_AUTO_SYNC_CHANNELS    1091
 #define IDC_EDIT_STATUS                 1092
 #define IDC_EDIT_SUBSCRIPTION           1093
 #define IDC_EDIT_BALANCE                1094
@@ -111,8 +110,8 @@
 #define IDC_STATIC_SUBSCRIPTION         1098
 #define IDC_STATIC_BALANCE              1099
 #define IDC_STATIC_PRICE                1100
-#define IDC_CHECK1                      1101
 #define IDC_CHECK_EMBED                 1101
+#define IDC_STATIC_VERSION              1102
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -139,7 +138,7 @@
 #define ID_ADD_TO_FAVORITE              32798
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131

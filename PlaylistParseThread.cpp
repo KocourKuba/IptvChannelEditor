@@ -5,9 +5,6 @@
 #include "PlaylistParseThread.h"
 #include "utils.h"
 
-// COnlineCheckActivation
-
-
 void CPlaylistParseThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (m_parent->GetSafeHwnd())

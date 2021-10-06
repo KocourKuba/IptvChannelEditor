@@ -55,13 +55,8 @@ std::string uri_oneusd::get_templated(StreamSubType subType, const TemplateParam
 				break;
 		}
 
-		std::string token = get_token();
-		if (params.ext_param != nullptr)
-		{
-			token = ((PlaylistEntry*)params.ext_param)->stream_uri->get_token();
-		}
 		utils::string_replace_inplace(url, "{SUBDOMAIN}", params.domain);
-		utils::string_replace_inplace(url, "{TOKEN}", token);
+		utils::string_replace_inplace(url, "{TOKEN}", get_token());
 		utils::string_replace_inplace(url, "{ID}", get_id());
 		utils::string_replace_inplace(url, "{START}", utils::int_to_char(params.shift_back));
 	}

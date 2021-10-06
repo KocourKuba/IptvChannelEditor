@@ -22,4 +22,9 @@
 #include "Version.h"
 #include "framework.h"
 
+#define WM_UPDATE_PROGRESS (WM_USER + 301)
+#define WM_END_LOAD_PLAYLIST (WM_USER + 302)
+#define WM_UPDATE_PROGRESS_STREAM (WM_USER + 303)
+#define WM_END_GET_STREAM_INFO (WM_USER + 304)
+
 #endif //PCH_H
