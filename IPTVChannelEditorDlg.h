@@ -393,4 +393,8 @@ private:
 	// map of category and TREEITEM for fast add to tree
 	// Loaded when fill playlist tree
 	std::map<std::wstring, HTREEITEM> m_pl_categoriesTreeMap;
+
+	// map of TREEITEM and category for fast search
+	// Loaded when fill playlist tree
+	std::map<HTREEITEM, std::wstring> m_pl_categoriesMap;
 };

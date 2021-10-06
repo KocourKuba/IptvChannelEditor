@@ -2919,6 +2919,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	m_playlistIds.clear();
 	m_playlistMap.clear();
 	m_pl_categoriesTreeMap.clear();
+	m_pl_categoriesMap.clear();
 	m_playlistTreeMap.clear();
 
 	// list of playlist categories in the same order as in the playlist
@@ -2989,6 +2990,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 			tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 			HTREEITEM hItem = m_wndPlaylistTree.InsertItem(&tvInsert);
 			m_pl_categoriesTreeMap[category] = hItem;
+			m_pl_categoriesMap[hItem] = category;
 		}
 
 		int step = 0;
@@ -3032,7 +3034,7 @@ void CIPTVChannelEditorDlg::GetStreamInfo(std::vector<uri_stream*>& container)
 	params.host = m_host;
 	params.shift_back = 0;
 
-	const auto max_threads = 2;
+	const auto max_threads = 4;
 
 	auto newEnd = std::unique(container.begin(), container.end());
 	m_wndProgress.SetRange32(0, std::distance(container.begin(), newEnd));
@@ -3843,11 +3845,12 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
 	m_wndProgress.SetPos(0);
-
+	bool channelsList = m_lastTree == &m_wndChannelsTree;
 	std::vector<uri_stream*> container;
-	if (m_lastTree == &m_wndChannelsTree)
+
+	for (auto hItem = m_lastTree->GetFirstSelectedItem(); hItem != nullptr; hItem = m_lastTree->GetNextSelectedItem(hItem))
 	{
-		for (auto hItem = m_lastTree->GetFirstSelectedItem(); hItem != nullptr;  hItem = m_lastTree->GetNextSelectedItem(hItem))
+		if (channelsList)
 		{
 			for (const auto& item : GetItemCategory(hItem)->get_channels())
 			{
@@ -3856,32 +3859,47 @@ void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
 					container.emplace_back(info->stream_uri.get());
 			}
 		}
-		GetStreamInfo(container);
-		LoadChannelInfo(m_lastTree->GetSelectedItem());
-	}
-	else if (m_lastTree == &m_wndPlaylistTree)
-	{
-		const auto& entry = FindEntry(m_lastTree->GetSelectedItem());
-		for (const auto& pair : m_playlistMap)
+		else
 		{
-			if (entry == nullptr || entry->get_category() == pair.second->get_category())
+			std::wstring category;
+			if (const auto& pair = m_pl_categoriesMap.find(hItem); pair != m_pl_categoriesMap.end())
 			{
-				// add all
-				auto info = dynamic_cast<BaseInfo*>(pair.second.get());
-				if (info)
-					container.emplace_back(info->stream_uri.get());
+				category = pair->second;
+			}
+			else if (const auto& entry = FindEntry(hItem); entry != nullptr)
+			{
+				category = entry->get_category();
+			}
+
+			if (category.empty()) continue;
+
+			for (const auto& pair : m_playlistMap)
+			{
+				if (category == pair.second->get_category())
+				{
+					// add all
+					auto info = dynamic_cast<BaseInfo*>(pair.second.get());
+					if (info)
+						container.emplace_back(info->stream_uri.get());
+				}
 			}
 		}
-
-		GetStreamInfo(container);
-		LoadPlayListInfo(m_lastTree->GetSelectedItem());
 	}
 
-	SaveStreamInfo();
-	UpdateChannelsCount();
-	UpdatePlaylistCount();
-	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndProgressInfo.ShowWindow(SW_HIDE);
+	if (!container.empty())
+	{
+		GetStreamInfo(container);
+		if (m_lastTree == &m_wndChannelsTree)
+			LoadChannelInfo(m_lastTree->GetSelectedItem());
+		else
+			LoadPlayListInfo(m_lastTree->GetSelectedItem());
+
+		SaveStreamInfo();
+		UpdateChannelsCount();
+		UpdatePlaylistCount();
+		m_wndProgress.ShowWindow(SW_HIDE);
+		m_wndProgressInfo.ShowWindow(SW_HIDE);
+	}
 }
 
 void CIPTVChannelEditorDlg::OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI)
