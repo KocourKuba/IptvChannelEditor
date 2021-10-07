@@ -8,9 +8,6 @@
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
 #include "map_serializer.h"
-#include "GetStreamInfoThread.h"
-
-class BaseInfo;
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -84,8 +81,6 @@ protected:
 	afx_msg void OnUpdateSortCategory(CCmdUI* pCmdUI);
 	afx_msg void OnGetStreamInfo();
 	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
-	afx_msg void OnGetStreamInfoAll();
-	afx_msg void OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI);
 	afx_msg void OnPlayStream();
 	afx_msg void OnUpdatePlayStream(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickCheckArchive();
@@ -211,7 +206,6 @@ private:
 
 	std::wstring GetPluginNameW(bool bCamel = false) const;
 	std::string GetPluginNameA(bool bCamel = false) const;
-	void SaveStreamInfo();
 
 	bool HasEPG2();
 	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
@@ -236,7 +230,6 @@ private:
 	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
 
 	void UpdateExtToken(BaseInfo* info) const;
-	void RunGetInfoStreamThread(const CGetStreamInfoThread::ThreadConfig& cfg);
 
 protected:
 	CFont m_largeFont;

@@ -9,13 +9,12 @@ public:
 	class ThreadConfig
 	{
 	public:
-		void NotifyParent(UINT message, WPARAM wParam, LPARAM lParam);
+		void NotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 
 		std::vector<uri_stream*>* m_container = nullptr;
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
 		CString m_probe;
-		bool m_isChannelsTree = true;
 		TemplateParams m_params;
 		StreamSubType m_StreamSubtype = StreamSubType::enHLS;
 	};

@@ -121,7 +121,6 @@
 #define ID_CHANNELMENU_SORTBY           32777
 #define ID_EDIT_RENAME                  32778
 #define ID_GET_STREAM_INFO              32779
-#define ID_GET_STREAM_INFO_ALL          32780
 #define ID_NEW_CATEGORY                 32784
 #define ID_PLAY_ARCHIVE                 32785
 #define ID_PLAY_STREAM                  32786

@@ -26,11 +26,10 @@ inline BOOL CheckForTimeOut(DWORD dwStartTime, DWORD dwTimeOut)
 	return (GetTimeDiff(dwStartTime) > dwTimeOut);
 }
 
-void CGetStreamInfoThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
+void CGetStreamInfoThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	if (m_parent->GetSafeHwnd())
 		m_parent->SendMessage(message, wParam, lParam);
-
 }
 
 IMPLEMENT_DYNCREATE(CGetStreamInfoThread, CWinThread)
@@ -89,7 +88,7 @@ BOOL CGetStreamInfoThread::InitInstance()
 		}
 	}
 
-	m_config.NotifyParent(WM_END_GET_STREAM_INFO, (WPARAM)stream_infos.release(), m_config.m_isChannelsTree);
+	m_config.NotifyParent(WM_END_GET_STREAM_INFO, (WPARAM)stream_infos.release());
 
 	CoUninitialize();
 

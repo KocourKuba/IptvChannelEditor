@@ -43,6 +43,12 @@
     <Filter Include="Source Files\fmt">
       <UniqueIdentifier>{665f0d5b-fb62-44f9-9eb7-cd7c335f380d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Threads">
+      <UniqueIdentifier>{9a2f096a-6b15-4709-863b-04340cbae644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Threads">
+      <UniqueIdentifier>{78483d34-8bd5-4e6b-8f57-ebf7a940eca5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">
@@ -111,9 +117,6 @@
     <ClInclude Include="Crc32.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="PlaylistParseThread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BaseInfo.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
@@ -172,7 +175,10 @@
       <Filter>Header Files\uri</Filter>
     </ClInclude>
     <ClInclude Include="GetStreamInfoThread.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaylistParseThread.h">
+      <Filter>Header Files\Threads</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -215,9 +221,6 @@
     <ClCompile Include="Crc32.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="PlaylistParseThread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="uri_edem.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
@@ -235,12 +238,6 @@
     </ClCompile>
     <ClCompile Include="StreamContainer.cpp">
       <Filter>Source Files\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="IconCache.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageContainer.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="uri_sharaclub.cpp">
       <Filter>Source Files\uri</Filter>
@@ -276,7 +273,16 @@
       <Filter>Source Files\uri</Filter>
     </ClCompile>
     <ClCompile Include="GetStreamInfoThread.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistParseThread.cpp">
+      <Filter>Source Files\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageContainer.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="IconCache.cpp">
+      <Filter>Source Files\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

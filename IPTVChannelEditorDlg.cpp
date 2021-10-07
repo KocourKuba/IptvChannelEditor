@@ -15,6 +15,7 @@
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
 #include "PlaylistParseThread.h"
+#include "GetStreamInfoThread.h"
 #include "IconCache.h"
 #include "IconsListDlg.h"
 #include "utils.h"
@@ -196,8 +197,6 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_TOGGLE_CHANNEL, &CIPTVChannelEditorDlg::OnUpdateToggleChannel)
 	ON_COMMAND(ID_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnGetStreamInfo)
 	ON_UPDATE_COMMAND_UI(ID_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnUpdateGetStreamInfo)
-	ON_COMMAND(ID_GET_STREAM_INFO_ALL, &CIPTVChannelEditorDlg::OnGetStreamInfoAll)
-	ON_UPDATE_COMMAND_UI(ID_GET_STREAM_INFO_ALL, &CIPTVChannelEditorDlg::OnUpdateGetStreamInfoAll)
 	ON_COMMAND(ID_PLAY_STREAM, &CIPTVChannelEditorDlg::OnPlayStream)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM, &CIPTVChannelEditorDlg::OnUpdatePlayStream)
 	ON_COMMAND(ID_SYNC_TREE_ITEM, &CIPTVChannelEditorDlg::OnSyncTreeItem)
@@ -3711,166 +3710,144 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	if (!m_lastTree)
 		return;
 
-	bool isChannelsTree = m_lastTree == &m_wndChannelsTree;
-	auto container = std::make_unique<std::vector<uri_stream*>>();
-	for (const auto& hItem : m_lastTree->GetSelectedItems())
-	{
-		auto channel = GetBaseInfo(m_lastTree, hItem);
-		if (channel)
-		{
-			container->emplace_back(channel->stream_uri.get());
-		}
-	}
-
-	CGetStreamInfoThread::ThreadConfig cfg;
-	cfg.m_parent = this;
-	cfg.m_container = container.release();
-	cfg.m_hStop = m_evtStop;
-	cfg.m_probe = m_probe;
-	cfg.m_isChannelsTree = isChannelsTree;
-	cfg.m_params.token = m_token;
-	cfg.m_params.domain = m_domain;
-	cfg.m_params.login = m_login;
-	cfg.m_params.password = m_password;
-	cfg.m_params.host = m_host;
-	cfg.m_params.shift_back = 0;
-
-	RunGetInfoStreamThread(cfg);
-}
-
-void CIPTVChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
-{
-	BOOL enable = !m_probe.IsEmpty();
-	if (m_lastTree)
-	{
-		HTREEITEM first = m_lastTree->GetFirstSelectedItem();
-		enable &= IsSelectedTheSameType() && (IsChannel(first) || IsPlaylistEntry(first));
-	}
-	else
-	{
-		enable = FALSE;
-	}
-
-	enable = enable && IsSelectedTheSameType() && !m_loading;
-
-	pCmdUI->Enable(enable);
-}
-
-void CIPTVChannelEditorDlg::OnGetStreamInfoAll()
-{
-	if (!m_lastTree)
-		return;
-
-	std::map<std::string, std::string> playlistTokens;
-	bool isChannelsTree = m_lastTree == &m_wndChannelsTree;
+	bool isChannelsTree = (m_lastTree == &m_wndChannelsTree);
 	auto container = std::make_unique<std::vector<uri_stream*>>();
 	for (auto hItem = m_lastTree->GetFirstSelectedItem(); hItem != nullptr; hItem = m_lastTree->GetNextSelectedItem(hItem))
 	{
 		if (isChannelsTree)
 		{
-			for (const auto& item : GetItemCategory(hItem)->get_channels())
+			if (IsChannel(hItem))
 			{
-				auto info = dynamic_cast<BaseInfo*>(item.get());
+				auto info = dynamic_cast<BaseInfo*>(FindChannel(hItem).get());
 				if (!info) continue;
 
 				container->emplace_back(info->stream_uri.get());
 				UpdateExtToken(info);
 			}
+			else
+			{
+				for (const auto& item : GetItemCategory(hItem)->get_channels())
+				{
+					auto info = dynamic_cast<BaseInfo*>(item.get());
+					if (!info) continue;
+
+					container->emplace_back(info->stream_uri.get());
+					UpdateExtToken(info);
+				}
+			}
 		}
 		else
 		{
-			std::wstring category;
-			if (const auto& pair = m_pl_categoriesMap.find(hItem); pair != m_pl_categoriesMap.end())
+			if (IsPlaylistEntry(hItem))
 			{
-				category = pair->second;
-			}
-			else if (const auto& entry = FindEntry(hItem); entry != nullptr)
-			{
-				category = entry->get_category();
-			}
-
-			if (category.empty()) continue;
-
-			for (const auto& pair : m_playlistMap)
-			{
-				if (category != pair.second->get_category()) continue;
-
-				// add all
-				auto info = dynamic_cast<BaseInfo*>(pair.second.get());
+				auto info = dynamic_cast<BaseInfo*>(FindEntry(hItem).get());
 				if (info)
 					container->emplace_back(info->stream_uri.get());
+			}
+			else
+			{
+				std::wstring category;
+				if (const auto& pair = m_pl_categoriesMap.find(hItem); pair != m_pl_categoriesMap.end())
+				{
+					category = pair->second;
+				}
+				else if (const auto& entry = FindEntry(hItem); entry != nullptr)
+				{
+					category = entry->get_category();
+				}
+
+				if (category.empty()) continue;
+
+				for (const auto& pair : m_playlistMap)
+				{
+					if (category != pair.second->get_category()) continue;
+
+					// add all
+					auto info = dynamic_cast<BaseInfo*>(pair.second.get());
+					if (info)
+						container->emplace_back(info->stream_uri.get());
+				}
 			}
 		}
 	}
 
-	CGetStreamInfoThread::ThreadConfig cfg;
-	cfg.m_parent = this;
-	cfg.m_container = container.release();
-	cfg.m_hStop = m_evtStop;
-	cfg.m_probe = m_probe;
-	cfg.m_isChannelsTree = isChannelsTree;
-	cfg.m_params.token = m_token;
-	cfg.m_params.domain = m_domain;
-	cfg.m_params.login = m_login;
-	cfg.m_params.password = m_password;
-	cfg.m_params.host = m_host;
-	cfg.m_params.shift_back = 0;
-
-	RunGetInfoStreamThread(cfg);
-}
-
-void CIPTVChannelEditorDlg::OnUpdateGetStreamInfoAll(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(m_lastTree != nullptr && !m_probe.IsEmpty() && !m_loading);
-}
-
-void CIPTVChannelEditorDlg::RunGetInfoStreamThread(const CGetStreamInfoThread::ThreadConfig& cfg)
-{
-	if (cfg.m_container->empty())
+	if (container->empty())
 		return;
 
 	m_evtStop.ResetEvent();
 	m_wndStop.EnableWindow(TRUE);
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetRange32(0, (int)cfg.m_container->size());
+	m_wndProgress.SetRange32(0, (int)container->size());
 	m_wndProgress.SetPos(0);
 
 	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
 	{
 		AfxMessageBox(_T("Problem with starting Get Stream Info thread!"), MB_OK | MB_ICONERROR);
-		OnEndGetStreamInfo(cfg.m_isChannelsTree);
+		OnEndGetStreamInfo();
 		return;
 	}
+
+	CGetStreamInfoThread::ThreadConfig cfg;
+	cfg.m_parent = this;
+	cfg.m_container = container.release();
+	cfg.m_hStop = m_evtStop;
+	cfg.m_probe = m_probe;
+	cfg.m_params.token = m_token;
+	cfg.m_params.domain = m_domain;
+	cfg.m_params.login = m_login;
+	cfg.m_params.password = m_password;
+	cfg.m_params.host = m_host;
+	cfg.m_params.shift_back = 0;
 
 	pThread->SetData(cfg);
 	pThread->ResumeThread();
 }
 
-LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam, LPARAM lParam /*= 0*/)
+void CIPTVChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
 {
-	if (lParam)
-		LoadChannelInfo(m_lastTree->GetSelectedItem());
+	BOOL enable = !m_probe.IsEmpty() && !m_loading;
+	if (m_lastTree)
+	{
+		HTREEITEM first = m_lastTree->GetFirstSelectedItem();
+		enable = enable && IsSelectedTheSameType();
+	}
 	else
-		LoadPlayListInfo(m_lastTree->GetSelectedItem());
+	{
+		enable = FALSE;
+	}
 
+	pCmdUI->Enable(enable);
+}
+
+LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+{
 	auto stream_infos = (serializable_map*)wParam;
-	if (stream_infos)
+	if (stream_infos && !stream_infos->empty())
 	{
 		for (const auto& pair : *stream_infos)
 		{
 			m_stream_infos[pair.first] = pair.second;
 		}
-	}
 
-	SaveStreamInfo();
-	UpdateChannelsCount();
-	UpdatePlaylistCount();
+		const auto& dump = m_stream_infos.serialize();
+		// write document
+		const auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginNameW().c_str());
+		const auto& path = playlistPath + _T("stream_info.bin");
+		std::ofstream os(path, std::istream::binary);
+		os.write(dump.data(), dump.size());
+		os.close();
+	}
 
 	m_wndStop.EnableWindow(FALSE);
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndProgressInfo.ShowWindow(SW_HIDE);
+
+	if (m_lastTree == &m_wndChannelsTree)
+		LoadChannelInfo(m_lastTree->GetSelectedItem());
+	else
+		LoadPlayListInfo(m_lastTree->GetSelectedItem());
 
 	return 0;
 }
@@ -4433,17 +4410,6 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 	theApp.SaveWindowPos(GetSafeHwnd(), _T("WindowPos"));
 
 	return __super::DestroyWindow();
-}
-
-void CIPTVChannelEditorDlg::SaveStreamInfo()
-{
-	const auto& dump = m_stream_infos.serialize();
-	// write document
-	const auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT).c_str(), GetPluginNameW().c_str());
-	const auto& path = playlistPath + _T("stream_info.bin");
-	std::ofstream os(path, std::istream::binary);
-	os.write(dump.data(), dump.size());
-	os.close();
 }
 
 void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info) const
