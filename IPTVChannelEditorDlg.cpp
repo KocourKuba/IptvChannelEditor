@@ -4,8 +4,6 @@
 
 #include "StdAfx.h"
 #include <afxdialogex.h>
-#include <array>
-#include <thread>
 
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
@@ -20,7 +18,6 @@
 #include "IconCache.h"
 #include "IconsListDlg.h"
 #include "utils.h"
-#include "uri_antifriz.h"
 
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
@@ -465,6 +462,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case enFox: // Fox
 		{
 			m_pluginType = StreamType::enFox;
+			bStreamType = FALSE;
 
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_login = ReadRegStringPluginA(REG_LOGIN);
@@ -2671,14 +2669,11 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.login = m_login;
 		params.password = m_password;
 		params.host = m_host;
-		if (m_lastTree == &m_wndChannelsTree)
-		{
-			UpdateExtToken(info);
-		}
 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
+		UpdateExtToken(info);
 		const auto& url = utils::utf8_to_utf16(info->stream_uri->get_templated((StreamSubType)m_StreamType, params));
 
 		TRACE(L"Test URL: %s\n", url.c_str());
@@ -4453,7 +4448,7 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 
 void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info) const
 {
-	if (m_pluginType != StreamType::enFox && m_pluginType != StreamType::enOneUsd) return;
+	if (m_lastTree != &m_wndChannelsTree || m_pluginType != StreamType::enFox && m_pluginType != StreamType::enOneUsd) return;
 
 	// fox and 1usd uses a unique token for each channel depends on user credentials
 	// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id

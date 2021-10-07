@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GetStreamInfoThread.h"
 #include "uri_stream.h"
 
 class CGetStreamInfoThread : public CWinThread

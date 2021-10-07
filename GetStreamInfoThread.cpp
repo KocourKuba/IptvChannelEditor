@@ -5,8 +5,8 @@
 #include <array>
 #include <thread>
 #include "GetStreamInfoThread.h"
-#include "utils.h"
 #include "map_serializer.h"
+#include "utils.h"
 
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
