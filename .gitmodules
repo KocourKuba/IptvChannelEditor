@@ -4,3 +4,6 @@
 [submodule "fmt"]
 	path = fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "playlists"]
+	path = playlists
+	url = //diskstation2/GitServer/Playlists.git
