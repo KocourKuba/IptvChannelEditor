@@ -2693,12 +2693,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			{
 				case 0:
 				case 1:
-				{
 					loaded = SetupOttKey(loaded);
 					break;
-				}
+				case 2:
 				case 3:
-				case 4:
 					loaded = SetupCustomPlaylist(loaded);
 					break;
 			}
