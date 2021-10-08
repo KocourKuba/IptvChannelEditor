@@ -80,6 +80,7 @@ typedef enum
 	enOneUsd,
 	enSharaclub,
 	enSharavoz,
+	enItv,
 } SupportedPlugins;
 
 struct PluginDesc
@@ -95,6 +96,7 @@ PluginDesc all_plugins[] = {
 //	{ enOneUsd,    _T("1USD") },
 	{ enSharaclub, _T("Sharaclub TV") },
 	{ enSharavoz,  _T("Sharavoz TV") },
+	{ enItv,       _T("ITV") },
 };
 
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
@@ -343,6 +345,54 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_largeFont.CreateFontIndirect(&lfDlg);
 
 	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
+
+	// Setup tooltips
+	SetUpToolTips();
+
+	// load settings
+	m_player = ReadRegStringT(REG_PLAYER);
+	m_probe = ReadRegStringT(REG_FFPROBE);
+	m_archiveCheckDays = ReadRegInt(REG_DAYS_BACK);
+	m_archiveCheckHours = ReadRegInt(REG_HOURS_BACK);
+	m_bAutoSync = ReadRegInt(REG_AUTOSYNC);
+
+	UpdateData(FALSE);
+
+	// Fill available plugins
+	for (const auto& item : all_plugins)
+	{
+		int idx = m_wndPluginType.AddString(item.name);
+		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
+	}
+
+	// Toggle controls state
+	m_wndSearch.EnableWindow(FALSE);
+	m_wndPlSearch.EnableWindow(FALSE);
+	m_wndCustom.EnableWindow(FALSE);
+	m_wndEpgID2.EnableWindow(FALSE);
+	m_wndEpgID1.EnableWindow(FALSE);
+	m_wndArchive.EnableWindow(FALSE);
+	m_wndAdult.EnableWindow(FALSE);
+	m_wndTestEPG2.EnableWindow(FALSE);
+	m_wndTestEPG1.EnableWindow(FALSE);
+	m_wndStreamID.EnableWindow(FALSE);
+	m_wndStreamUrl.EnableWindow(FALSE);
+	m_wndCheckArchive.EnableWindow(FALSE);
+	m_wndCheckArchive.EnableWindow(FALSE);
+	m_wndTimeShift.EnableWindow(FALSE);
+	m_wndSpinTimeShift.EnableWindow(FALSE);
+	m_wndInfoVideo.EnableWindow(FALSE);
+	m_wndInfoAudio.EnableWindow(FALSE);
+	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
+	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
+
+	SwitchPlugin();
+
+	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+void CIPTVChannelEditorDlg::SetUpToolTips()
+{
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 1500);
 
@@ -392,44 +442,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndToolTipCtrl.AddTool(&m_wndPlaylistTree);
 
 	m_wndToolTipCtrl.Activate(TRUE);
-
-	m_player = ReadRegStringT(REG_PLAYER);
-	m_probe = ReadRegStringT(REG_FFPROBE);
-	m_archiveCheckDays = ReadRegInt(REG_DAYS_BACK);
-	m_archiveCheckHours = ReadRegInt(REG_HOURS_BACK);
-	m_bAutoSync = ReadRegInt(REG_AUTOSYNC);
-
-	UpdateData(FALSE);
-
-	for (const auto& item : all_plugins)
-	{
-		int idx = m_wndPluginType.AddString(item.name);
-		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
-	}
-
-	m_wndSearch.EnableWindow(FALSE);
-	m_wndPlSearch.EnableWindow(FALSE);
-	m_wndCustom.EnableWindow(FALSE);
-	m_wndEpgID2.EnableWindow(FALSE);
-	m_wndEpgID1.EnableWindow(FALSE);
-	m_wndArchive.EnableWindow(FALSE);
-	m_wndAdult.EnableWindow(FALSE);
-	m_wndTestEPG2.EnableWindow(FALSE);
-	m_wndTestEPG1.EnableWindow(FALSE);
-	m_wndStreamID.EnableWindow(FALSE);
-	m_wndStreamUrl.EnableWindow(FALSE);
-	m_wndCheckArchive.EnableWindow(FALSE);
-	m_wndCheckArchive.EnableWindow(FALSE);
-	m_wndTimeShift.EnableWindow(FALSE);
-	m_wndSpinTimeShift.EnableWindow(FALSE);
-	m_wndInfoVideo.EnableWindow(FALSE);
-	m_wndInfoAudio.EnableWindow(FALSE);
-	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
-	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
-
-	SwitchPlugin();
-
-	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
 void CIPTVChannelEditorDlg::SwitchPlugin()
@@ -509,6 +521,14 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case enSharavoz: // Sharavoz
 		{
 			m_pluginType = StreamType::enSharavoz;
+
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_password = ReadRegStringPluginA(REG_PASSWORD);
+			break;
+		}
+		case enItv: // ITV
+		{
+			m_pluginType = StreamType::enItv;
 
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_password = ReadRegStringPluginA(REG_PASSWORD);
@@ -604,6 +624,8 @@ std::wstring CIPTVChannelEditorDlg::GetPluginNameW(bool bCamel /*= false*/) cons
 			return bCamel ? L"Fox" : L"fox";
 		case enOneUsd: // 1USD
 			return bCamel ? L"Oneusd" : L"oneusd";
+		case enItv: // ITV
+			return bCamel ? L"Itv" : L"itv";
 	}
 
 	return L"";
@@ -627,6 +649,8 @@ std::string CIPTVChannelEditorDlg::GetPluginNameA(bool bCamel /*= false*/) const
 			return bCamel ? "Fox" : "fox";
 		case enOneUsd: // 1USD
 			return bCamel ? "Oneusd" : "oneusd";
+		case enItv: // 1USD
+			return bCamel ? "Itv" : "Itv";
 	}
 
 	return "";
@@ -667,6 +691,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		case StreamType::enSharavoz:
 		case StreamType::enAntifriz:
 		case StreamType::enOneUsd:
+		case StreamType::enItv:
 		{
 			switch (idx)
 			{
@@ -817,7 +842,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	UpdatePlaylistCount();
 }
 
-LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	m_playlistEntries.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
 
@@ -861,6 +886,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 		case enOneUsd: // Antifriz
 		case enSharavoz: // Sharavoz
 		case enSharaclub: // Sharaclub
+		case enItv: // ITV
 		{
 			switch (pl_idx)
 			{
@@ -892,6 +918,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 				case StreamType::enOneUsd: // pin
 				case StreamType::enSharavoz: // pin
 				case StreamType::enSharaclub: // login/pass
+				case StreamType::enItv: // pin
 				{
 					const auto& token = stream->get_token();
 					const auto& domain = stream->get_domain();
@@ -941,7 +968,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*
 	return 0;
 }
 
-LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	CString str;
 	str.Format(_T("Channels readed: %d"), wParam);
@@ -951,7 +978,7 @@ LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam, LPARAM lParam /*=
 	return 0;
 }
 
-LRESULT CIPTVChannelEditorDlg::OnUpdateProgressStream(WPARAM wParam, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnUpdateProgressStream(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	CString str;
 	str.Format(_T("Get Stream Info: %d from %d"), wParam, lParam);
@@ -1494,6 +1521,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 			case StreamType::enSharavoz:
 			case StreamType::enAntifriz:
 			case StreamType::enOneUsd:
+			case StreamType::enItv:
 				m_password = utils::get_value_string(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			case StreamType::enGlanz:
@@ -2715,6 +2743,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enAntifriz:
 		case StreamType::enOneUsd:
 		case StreamType::enSharavoz:
+		case StreamType::enItv:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -3058,6 +3087,7 @@ void CIPTVChannelEditorDlg::OnSave()
 					break;
 				case StreamType::enSharavoz: // pin
 				case StreamType::enAntifriz:
+				case StreamType::enItv:
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, m_password.c_str()));
 					break;
 				case StreamType::enSharaclub:
@@ -4497,7 +4527,13 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 
 void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info) const
 {
-	if (m_lastTree != &m_wndChannelsTree || m_pluginType != StreamType::enFox && m_pluginType != StreamType::enOneUsd) return;
+	if (m_lastTree != &m_wndChannelsTree
+		|| (m_pluginType != StreamType::enFox
+			&& m_pluginType != StreamType::enOneUsd
+			&& m_pluginType != StreamType::enItv))
+	{
+		return;
+	}
 
 	// fox and 1usd uses a unique token for each channel depends on user credentials
 	// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id
@@ -4539,19 +4575,37 @@ CString CIPTVChannelEditorDlg::GetEpgText(BaseInfo* info, bool first /*= true*/)
 			epg_data = pair->second;
 		}
 
-		time_t now = time(nullptr);
+		time_t now = time(nullptr) + info->stream_uri->get_epg_time_shift();
 		auto root = info->stream_uri->get_epg_root();
 		if (!root.empty() && epg_data.contains(root))
 		{
 			epg_data = epg_data[root];
 		}
 
+		const auto& start = info->stream_uri->get_epg_time_start();
+		const auto& end = info->stream_uri->get_epg_time_end();
+
 		for (auto& item : epg_data.items())
 		{
 			const auto& val = item.value();
-			time_t time = val.value(info->stream_uri->get_epg_time_start(), 0);
-			time_t time_to = val.value(info->stream_uri->get_epg_time_end(), 0);
-			if (now < time || now > time_to) continue;
+			time_t time_start = 0;
+			time_t time_end = 0;
+			if (val.contains(start))
+			{
+				if (val[start].is_number())
+					time_start = val.value(start, 0);
+				else if (val[start].is_string())
+					time_start = utils::char_to_int(val.value(start, ""));
+			}
+			if (val.contains(end))
+			{
+				if (val[end].is_number())
+					time_end = val.value(end, 0);
+				else if (val[start].is_string())
+					time_end = utils::char_to_int(val.value(end, ""));
+			}
+
+			if (now < time_start || now > time_end) continue;
 
 			const auto& name = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_name(), ""));
 			const auto& desc = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_desc(), ""));

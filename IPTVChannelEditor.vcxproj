@@ -251,6 +251,7 @@
     <ClInclude Include="uri_base.h" />
     <ClInclude Include="uri_fox.h" />
     <ClInclude Include="uri_glanz.h" />
+    <ClInclude Include="uri_itv.h" />
     <ClInclude Include="uri_oneusd.h" />
     <ClInclude Include="uri_sharaclub.h" />
     <ClInclude Include="uri_sharavoz.h" />
@@ -306,6 +307,7 @@
     <ClCompile Include="uri_base.cpp" />
     <ClCompile Include="uri_fox.cpp" />
     <ClCompile Include="uri_glanz.cpp" />
+    <ClCompile Include="uri_itv.cpp" />
     <ClCompile Include="uri_oneusd.cpp" />
     <ClCompile Include="uri_sharaclub.cpp" />
     <ClCompile Include="uri_sharavoz.cpp" />

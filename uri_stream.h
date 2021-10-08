@@ -14,6 +14,7 @@ enum class StreamType
 	enAntifriz,
 	enFox,
 	enOneUsd,
+	enItv,
 };
 
 typedef struct
@@ -194,6 +195,42 @@ public:
 	/// </summary>
 	/// <returns>string</returns>
 	virtual std::string get_access_url(const std::string& login, const std::string& password) const { return ""; }
+
+	/// <summary>
+	/// json root for epg iteration
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg_root() const { return "epg_data"; }
+
+	/// <summary>
+	/// json epg name node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg_name() const { return "name"; }
+
+	/// <summary>
+	/// json epg description node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg_desc() const { return "descr"; }
+
+	/// <summary>
+	/// json epg start time node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual int get_epg_time_shift() const { return 0; }
+
+	/// <summary>
+	/// json epg start time node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg_time_start() const { return "time"; }
+
+	/// <summary>
+	/// json epg end time node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg_time_end() const { return "time_to"; }
 
 	/// <summary>
 	/// is has access info

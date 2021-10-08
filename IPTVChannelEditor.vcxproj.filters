@@ -183,6 +183,9 @@
     <ClInclude Include="RichToolTipCtrl.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="uri_itv.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -289,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="RichToolTipCtrl.cpp">
       <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_itv.cpp">
+      <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
