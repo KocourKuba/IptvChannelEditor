@@ -3,6 +3,7 @@
 #include <winhttp.h>
 
 #include "utils.h"
+#include <unordered_map>
 
 #pragma comment(lib, "Winhttp.lib")
 
@@ -539,6 +540,44 @@ void SetImage(const CImage& image, CStatic& wnd)
 	HBITMAP hOld = wnd.SetBitmap(hImg);
 	if (hOld)
 		::DeleteObject(hOld);
+}
+
+std::wstring entityDecrypt(std::wstring text)
+{
+	std::unordered_map<std::wstring, std::wstring> convert(
+		{
+			{L"&quot;"  , L"\""},
+			{L"&apos;"  , L"'"},
+			{L"&amp;"   , L"&"},
+			{L"&gt;"    , L">"},
+			{L"&lt;"    , L"<"},
+			{L"&frasl;" , L"/"}
+		});
+
+	std::wstring res;
+	for (size_t i = 0; i < text.size(); ++i)
+	{
+		bool flag = false;
+		for (auto & it : convert)
+		{
+			std::wstring key = it.first;
+			std::wstring value = it.second;
+			if (   i + key.size() - 1 < text.size()
+				&& text.substr(i, key.size()) == key)
+			{
+				res += value;
+				i += key.size() - 1;
+				flag = true;
+				break;
+			}
+		}
+
+		if (!flag)
+		{
+			res += text[i];
+		}
+	}
+	return res;
 }
 
 } // namespace utils

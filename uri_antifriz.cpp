@@ -8,6 +8,7 @@ static constexpr auto URI_TEMPLATE_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?token=
 static constexpr auto URI_TEMPLATE_ARCH_HLS = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/php/show_prog.php?f=antifriz/epg/{:s}.json";
+static constexpr auto EPG1_TEMPLATE_JSON = "http://epg.ott-play.com/antifriz/epg/{:s}.json";
 
 void uri_antifriz::parse_uri(const std::string& url)
 {
@@ -87,6 +88,11 @@ std::string uri_antifriz::get_templated(StreamSubType subType, const TemplatePar
 std::string uri_antifriz::get_epg1_uri(const std::string& id) const
 {
 	return fmt::format(EPG1_TEMPLATE, id);
+}
+
+std::string uri_antifriz::get_epg1_uri_json(const std::string& id) const
+{
+	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::string uri_antifriz::get_playlist_template(bool first /*= true*/) const

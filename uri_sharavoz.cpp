@@ -74,6 +74,16 @@ std::string uri_sharavoz::get_epg2_uri(const std::string& id) const
 	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
+std::string uri_sharavoz::get_epg1_uri_json(const std::string& id) const
+{
+	return get_epg1_uri(id);
+}
+
+std::string uri_sharavoz::get_epg2_uri_json(const std::string& id) const
+{
+	return get_epg2_uri(id);
+}
+
 std::string uri_sharavoz::get_playlist_template(bool first /*= true*/) const
 {
 	return PLAYLIST_TEMPLATE;

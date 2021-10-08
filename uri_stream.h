@@ -178,6 +178,18 @@ public:
 	virtual std::string get_epg2_uri(const std::string& id) const { return ""; };
 
 	/// <summary>
+	/// get epg json
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg1_uri_json(const std::string& id) const { return ""; };
+
+	/// <summary>
+	/// get epg json
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg2_uri_json(const std::string& id) const { return ""; };
+
+	/// <summary>
 	/// get cabinet access url
 	/// </summary>
 	/// <returns>string</returns>

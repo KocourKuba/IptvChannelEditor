@@ -3,10 +3,7 @@
 #include "AccessInfoPinDlg.h"
 #include "resource.h"
 #include "utils.h"
-#include "json.hpp"
 #include "PlayListEntry.h"
-
-using json = nlohmann::json;
 
 // CAccessDlg dialog
 

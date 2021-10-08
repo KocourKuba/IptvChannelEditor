@@ -6,6 +6,7 @@
 static constexpr auto PLAYLIST_TEMPLATE = "http://pl.fox-tv.fun/{:s}/{:s}/tv.m3u";
 static constexpr auto URI_TEMPLATE = "http://{SUBDOMAIN}/{TOKEN}";
 static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/php/show_prog.php?f=fox-tv/epg/{:s}.json";
+static constexpr auto EPG1_TEMPLATE_JSON = "http://epg.ott-play.com/fox-tv/epg/{:s}.json";
 
 void uri_fox::parse_uri(const std::string& url)
 {
@@ -51,6 +52,11 @@ std::string uri_fox::get_templated(StreamSubType /*subType*/, const TemplatePara
 std::string uri_fox::get_epg1_uri(const std::string& id) const
 {
 	return fmt::format(EPG1_TEMPLATE, id);
+}
+
+std::string uri_fox::get_epg1_uri_json(const std::string& id) const
+{
+	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::string uri_fox::get_playlist_template(bool first /*= true*/) const

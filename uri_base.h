@@ -88,6 +88,12 @@ public:
 	std::string get_filesystem_path(const std::string& root) const;
 	std::wstring get_filesystem_path(const std::wstring& root) const;
 
+	std::string get_epg_root() const { return "epg_data"; }
+	std::string get_epg_name() const { return "name"; }
+	std::string get_epg_desc() const { return "descr"; }
+	std::string get_epg_time_start() const { return "time"; }
+	std::string get_epg_time_end() const { return "time_to"; }
+
 	bool is_equal(const uri_base& src, bool compare_scheme = true) const
 	{
 		if (compare_scheme)

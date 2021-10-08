@@ -74,6 +74,16 @@ std::string uri_sharaclub::get_epg2_uri(const std::string& id) const
 	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
+std::string uri_sharaclub::get_epg1_uri_json(const std::string& id) const
+{
+	return get_epg1_uri(id);
+}
+
+std::string uri_sharaclub::get_epg2_uri_json(const std::string& id) const
+{
+	return get_epg2_uri(id);
+}
+
 std::string uri_sharaclub::get_access_url(const std::string& login, const std::string& password) const
 {
 	return fmt::format(ACCOUNT_TEMPLATE, login.c_str(), password.c_str());

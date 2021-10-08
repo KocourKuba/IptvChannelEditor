@@ -180,6 +180,9 @@
     <ClInclude Include="PlaylistParseThread.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
+    <ClInclude Include="RichToolTipCtrl.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -283,6 +286,9 @@
     </ClCompile>
     <ClCompile Include="IconCache.cpp">
       <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="RichToolTipCtrl.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

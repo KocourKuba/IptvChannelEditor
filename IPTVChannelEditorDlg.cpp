@@ -162,7 +162,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(TVN_ENDLABELEDIT, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnEndlabeleditTreeChannels)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMRclickTreeChannel)
 	ON_NOTIFY(NM_SETFOCUS, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMSetfocusTree)
-	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip)
+	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CIPTVChannelEditorDlg::OnToolTipNotify)
 
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnNMDblclkTreePaylist)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnTvnSelchangedTreePaylist)
@@ -270,10 +270,10 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_PL_ID, m_plID);
 	DDX_Text(pDX, IDC_STATIC_PL_EPG, m_plEPG);
 	DDX_Control(pDX, IDC_CHECK_PL_ARCHIVE, m_wndPlArchive);
+	DDX_Text(pDX, IDC_EDIT_PL_ARCHIVE_DAYS, m_archivePlDays);
 	DDX_Text(pDX, IDC_EDIT_INFO_VIDEO, m_infoVideo);
 	DDX_Control(pDX, IDC_EDIT_INFO_VIDEO, m_wndInfoVideo);
 	DDX_Text(pDX, IDC_EDIT_INFO_AUDIO, m_infoAudio);
-	DDX_Text(pDX, IDC_EDIT_PL_ARCHIVE_DAYS, m_archivePlDays);
 	DDX_Control(pDX, IDC_EDIT_INFO_AUDIO, m_wndInfoAudio);
 	DDX_Control(pDX, IDC_STATIC_CHANNELS, m_wndChInfo);
 	DDX_Control(pDX, IDC_BUTTON_CHECK_ARCHIVE, m_wndCheckArchive);
@@ -326,7 +326,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	m_hAccel = LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_ACCELERATOR_TABLE));
 
-	if (!m_pToolTipCtrl.Create(this, TTS_ALWAYSTIP))
+	if (!m_wndToolTipCtrl.Create(this, TTS_ALWAYSTIP))
 	{
 		TRACE(_T("Unable To create ToolTip\n"));
 		return FALSE;
@@ -343,43 +343,55 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_largeFont.CreateFontIndirect(&lfDlg);
 
 	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
+	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
+	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 1500);
 
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Select Plugin for edit"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose a playlist to import."));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Add custom playlist"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels. Use \\ prefix to find by ID"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_URL_ID), _T("Channel ID"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("EPG ID1"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG1), _T("View EPG1 data"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("EPG ID2"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG2), _T("View EPG2 data"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Use custom stream URL for the channel"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Channel archive is supported"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_DAYS), _T("How many days archive is supported"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Channel contents for adults"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Store icon to the local folder instead of downloading it from internet"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Save channels list"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Make a plugin to install on player"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SETTINGS), _T("Editor settings"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Set channel icon from original playlist"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHOOSE_PLAYLIST), _T("Choose playlist or download it from account"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST), _T("Save downloaded playlist to disk"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_PL_SEARCH), _T("Search in the playlist. Use \\ prefix to find by ID"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Search next"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Filter the playlist"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Click to change the icon"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_DAYS), _T("Days in the past to test archive play"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_DAYS), _T("Days in the past to test archive play"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_HOURS), _T("Hours added to day in the past to test archive play"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_HOURS), _T("Hours added to day in the past to test archive play"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_VIDEO), _T("Video stream info"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Stream type used to test play stream"));
-	m_pToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Source type for loaded icon. Local file or internet link"));
+	m_wndToolTipCtrl.SetMaxTipWidth(500);
+
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Select Plugin for edit"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose a playlist to import."));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Add custom playlist"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels. Use \\ prefix to find by ID"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_URL_ID), _T("Channel ID"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("EPG ID1"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG1), _T("View EPG1 data"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("EPG ID2"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG2), _T("View EPG2 data"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Use custom stream URL for the channel"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Channel archive is supported"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_DAYS), _T("How many days archive is supported"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Channel contents for adults"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Store icon to the local folder instead of downloading it from internet"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Save channels list"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Make a plugin to install on player"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SETTINGS), _T("Editor settings"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Set channel icon from original playlist"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHOOSE_PLAYLIST), _T("Choose playlist or download it from account"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST), _T("Save downloaded playlist to disk"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_PL_SEARCH), _T("Search in the playlist. Use \\ prefix to find by ID"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Search next"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Filter the playlist"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Click to change the icon"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_DAYS), _T("Days in the past to test archive play"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_DAYS), _T("Days in the past to test archive play"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_HOURS), _T("Hours added to day in the past to test archive play"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_HOURS), _T("Hours added to day in the past to test archive play"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_VIDEO), _T("Video stream info"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Stream type used to test play stream"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Source type for loaded icon. Local file or internet link"));
+
+	m_wndChannelsTree.SetToolTips(&m_wndToolTipCtrl);
+	m_wndToolTipCtrl.AddTool(&m_wndChannelsTree);
+
+	m_wndPlaylistTree.SetToolTips(&m_wndToolTipCtrl);
+	m_wndToolTipCtrl.AddTool(&m_wndPlaylistTree);
+
+	m_wndToolTipCtrl.Activate(TRUE);
 
 	m_player = ReadRegStringT(REG_PLAYER);
 	m_probe = ReadRegStringT(REG_FFPROBE);
@@ -412,8 +424,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndSpinTimeShift.EnableWindow(FALSE);
 	m_wndInfoVideo.EnableWindow(FALSE);
 	m_wndInfoAudio.EnableWindow(FALSE);
-	m_wndChannelsTree.EnableToolTips(TRUE);
-
 	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
 
@@ -994,7 +1004,7 @@ BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
 		|| pMsg->message == WM_LBUTTONUP
 		|| pMsg->message == WM_MOUSEMOVE)
 	{
-		m_pToolTipCtrl.RelayEvent(pMsg);
+		m_wndToolTipCtrl.RelayEvent(pMsg);
 	}
 
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE)
@@ -3469,22 +3479,22 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 
 bool CIPTVChannelEditorDlg::IsChannel(HTREEITEM hItem) const
 {
-	return m_wndChannelsTree.GetItemData(hItem) == (DWORD_PTR)InfoType::enChannel;
+	return hItem && m_wndChannelsTree.GetItemData(hItem) == (DWORD_PTR)InfoType::enChannel;
 }
 
 bool CIPTVChannelEditorDlg::IsCategory(HTREEITEM hItem) const
 {
-	return m_wndChannelsTree.GetItemData(hItem) == (DWORD_PTR)InfoType::enCategory;
+	return hItem && m_wndChannelsTree.GetItemData(hItem) == (DWORD_PTR)InfoType::enCategory;
 }
 
 bool CIPTVChannelEditorDlg::IsPlaylistEntry(HTREEITEM hItem) const
 {
-	return m_wndPlaylistTree.GetItemData(hItem) == (DWORD_PTR)InfoType::enPlEntry;
+	return hItem && m_wndPlaylistTree.GetItemData(hItem) == (DWORD_PTR)InfoType::enPlEntry;
 }
 
 bool CIPTVChannelEditorDlg::IsPlaylistCategory(HTREEITEM hItem) const
 {
-	return m_wndPlaylistTree.GetItemData(hItem) == (DWORD_PTR)InfoType::enPlCategory;
+	return hItem && m_wndPlaylistTree.GetItemData(hItem) == (DWORD_PTR)InfoType::enPlCategory;
 }
 
 void CIPTVChannelEditorDlg::OnAddUpdateChannel()
@@ -4348,39 +4358,114 @@ void CIPTVChannelEditorDlg::OnNMSetfocusTree(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
+BOOL CIPTVChannelEditorDlg::OnToolTipNotify(UINT id, NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMTVGETINFOTIP pGetInfoTip = reinterpret_cast<LPNMTVGETINFOTIP>(pNMHDR);
+	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
 
-	auto entry = GetBaseInfo(&m_wndChannelsTree, pGetInfoTip->hItem);
-	if (entry && entry->is_type(InfoType::enChannel))
+	// Do not process the message from built in tooltip
+	if (pNMHDR->idFrom == (UINT)m_hWnd && ((pNMHDR->code == TTN_NEEDTEXT && pTTT->uFlags & TTF_IDISHWND)))
 	{
-		auto ch_id = entry->stream_uri->get_id();
-		CString categories;
-		for (const auto& pair : m_categoriesMap)
-		{
-			if (pair.second.category->find_channel(ch_id))
-			{
-				if (!categories.IsEmpty())
-					categories += _T(", ");
-				categories.Append(pair.second.category->get_title().c_str());
-			}
-		}
-
-		m_toolTipText.Format(_T("Name: %s\nID: %hs\nEPG1 ID: %hs\nEPG2 ID: %hs\nArchive: %s\nAdult: %s\nIn categories: %s"),
-							 entry->get_title().c_str(),
-							 entry->stream_uri->is_template() ? ch_id.c_str() : "Custom",
-							 entry->get_epg1_id().c_str(),
-							 entry->get_epg2_id().c_str(),
-							 entry->is_archive() ? _T("Yes") : _T("No"),
-							 entry->get_adult() ? _T("Yes") : _T("No"),
-							 categories.GetString());
-
-
-		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
+		return FALSE;
 	}
 
-	*pResult = 0;
+	pTTT->lpszText = nullptr;
+	// Get the mouse position
+	const MSG* pMessage = GetCurrentMessage();
+	ASSERT(pMessage);
+	CPoint pt = pMessage->pt;
+	// idFrom is actually the HWND of the tool
+	UINT nID = ::GetDlgCtrlID((HWND)pNMHDR->idFrom);
+	switch (nID)
+	{
+		case IDC_TREE_CHANNELS:
+		{
+			//get tool tip-Control
+			CToolTipCtrl* pCtrl = m_wndChannelsTree.GetToolTips();
+
+			//map the coordinates on client
+			m_wndChannelsTree.ScreenToClient(&pt);
+
+			//Check if mouse moved over the tree item
+			HTREEITEM hCurrent = m_wndChannelsTree.HitTest(pt, nullptr);
+			if (!hCurrent) break;
+
+			auto entry = GetBaseInfo(&m_wndChannelsTree, hCurrent);
+			if (!entry || !entry->is_type(InfoType::enChannel)) break;
+
+			TRACE("OnToolTipNotify x:%d y:%d\n", pt.x, pt.y);
+			const auto& ch_id = entry->stream_uri->get_id();
+			std::wstring categories;
+			for (const auto& pair : m_categoriesMap)
+			{
+				if (pair.second.category->find_channel(ch_id))
+				{
+					if (!categories.empty())
+						categories += L", ";
+					categories += pair.second.category->get_title();
+				}
+			}
+
+			const auto& epg = GetEpgText(entry);
+			CString text;
+			text.Format(LR"(%s{\par\par\b{Name:}} %s{\par\b{ID:}} %hs{\par\b{EPG1 ID:}} %hs{\par})",
+						epg.GetString(),
+						entry->get_title().c_str(),
+						entry->stream_uri->is_template() ? ch_id.c_str() : "Custom",
+						entry->get_epg1_id().c_str()
+			);
+
+			if (!entry->get_epg2_id().empty())
+			{
+				text.AppendFormat(LR"({\b{EPG2 ID:}} %hs{\par})", entry->get_epg2_id().c_str());
+			}
+
+			text.AppendFormat(LR"({\b{Archive:}} %s{\par\b{Adult:}} %s{\par\b{In categories:}} %s)",
+							  entry->is_archive() ? L"Yes" : L"No",
+							  entry->get_adult() ? L"Yes" : L"No",
+							  categories.c_str());
+
+			m_toolTipText.Format(LR"({\rtf1\ansi\fs17 %s})", text.GetString());
+
+			pTTT->lpszText = m_toolTipText.GetBuffer();
+			*pResult = 0;
+			return TRUE; // message was handled
+		}
+		case IDC_TREE_PLAYLIST:
+		{
+			//get tool tip-Control
+			CToolTipCtrl* pCtrl = m_wndPlaylistTree.GetToolTips();
+
+			//map the coordinates on client
+			m_wndPlaylistTree.ScreenToClient(&pt);
+
+			//Check if mouse moved over the tree item
+			HTREEITEM hCurrent = m_wndPlaylistTree.HitTest(pt, nullptr);
+			if (!hCurrent) break;
+
+			auto entry = GetBaseInfo(&m_wndPlaylistTree, hCurrent);
+			if (!entry) break;
+
+			const auto& epg = GetEpgText(entry);
+
+			CString text;
+			text.Format(LR"(%s{\par\par\b{Name:}} %s{\par\b{ID:}} %hs{\par\b{EPG:}} %hs{\par\b{Archive:}} %s{\par\b{Adult:}} %s)",
+						epg.GetString(),
+						entry->get_title().c_str(),
+						entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : "Custom",
+						entry->get_epg1_id().c_str(),
+						entry->is_archive() ? L"Yes" : L"No",
+						entry->get_adult() ? L"Yes" : L"No");
+
+			m_toolTipText.Format(LR"({\rtf1\ansi\fs17 %s})", text.GetString());
+			pTTT->lpszText = m_toolTipText.GetBuffer();
+			*pResult = 0;
+			return TRUE; // message was handled
+		}
+		break;
+		default: break;
+	}
+
+	return FALSE;
 }
 
 void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
@@ -4425,6 +4510,66 @@ void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info) const
 bool CIPTVChannelEditorDlg::HasEPG2()
 {
 	return (m_pluginType == StreamType::enEdem || m_pluginType == StreamType::enSharaclub || m_pluginType == StreamType::enSharavoz);
+}
+
+CString CIPTVChannelEditorDlg::GetEpgText(BaseInfo* info, bool first /*= true*/)
+{
+	if (!info)
+		return L"";
+
+	CString res;
+	nlohmann::json epg_data;
+	try
+	{
+		const auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
+		const auto& pair = m_epgMap.find(epg_id);
+
+		if (pair == m_epgMap.end())
+		{
+			const auto& url = first ? info->stream_uri->get_epg1_uri_json(info->get_epg1_id()) : info->stream_uri->get_epg2_uri_json(info->get_epg2_id());
+			std::vector<BYTE> data;
+			if (!utils::DownloadFile(url, data))
+				return L"";
+
+			epg_data = nlohmann::json::parse(data);
+			m_epgMap.emplace(epg_id, epg_data);
+		}
+		else
+		{
+			epg_data = pair->second;
+		}
+
+		time_t now = time(nullptr);
+		auto root = info->stream_uri->get_epg_root();
+		if (!root.empty() && epg_data.contains(root))
+		{
+			epg_data = epg_data[root];
+		}
+
+		for (auto& item : epg_data.items())
+		{
+			const auto& val = item.value();
+			time_t time = val.value(info->stream_uri->get_epg_time_start(), 0);
+			time_t time_to = val.value(info->stream_uri->get_epg_time_end(), 0);
+			if (now < time || now > time_to) continue;
+
+			const auto& name = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_name(), ""));
+			const auto& desc = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_desc(), ""));
+			res.Format(LR"({\b{%s}}{\par}%s)",
+					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(name)).c_str(),
+					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(desc)).c_str());
+		}
+	}
+	catch (const nlohmann::json::parse_error&)
+	{
+		// parse errors are ok, because input may be random bytes
+	}
+	catch (const nlohmann::json::out_of_range&)
+	{
+		// out of range errors may happen if provided sizes are excessive
+	}
+
+	return res;
 }
 
 std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const

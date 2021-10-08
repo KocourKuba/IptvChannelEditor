@@ -7,6 +7,7 @@ static constexpr auto URI_TEMPLATE_MPEG = "http://{SUBDOMAIN}/{ID}/mpegts?userna
 static constexpr auto URI_TEMPLATE_ARCH_HLS = "http://{SUBDOMAIN}/{ID}/video-{START}-10800.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = "http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:s}.json";
+static constexpr auto EPG1_TEMPLATE_JSON = "http://epg.ott-play.com/ottg/epg/{:s}.json";
 
 void uri_glanz::parse_uri(const std::string& url)
 {
@@ -76,6 +77,11 @@ std::string uri_glanz::get_templated(StreamSubType subType, const TemplateParams
 std::string uri_glanz::get_epg1_uri(const std::string& id) const
 {
 	return fmt::format(EPG1_TEMPLATE, id);
+}
+
+std::string uri_glanz ::get_epg1_uri_json(const std::string& id) const
+{
+	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::string uri_glanz::get_playlist_template(bool first /*= true*/) const

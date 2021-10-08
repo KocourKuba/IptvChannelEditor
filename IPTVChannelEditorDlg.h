@@ -8,6 +8,8 @@
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
 #include "map_serializer.h"
+#include "json.hpp"
+#include "RichToolTipCtrl.h"
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -124,7 +126,7 @@ protected:
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMSetfocusTree(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg BOOL OnToolTipNotify(UINT id, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnUpdateAddUpdateChannel(CCmdUI* pCmdUI);
@@ -208,6 +210,7 @@ private:
 	std::string GetPluginNameA(bool bCamel = false) const;
 
 	bool HasEPG2();
+	CString GetEpgText(BaseInfo* info, bool first = true);
 	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
 	std::wstring GetPluginRegPath() const;
 
@@ -235,7 +238,7 @@ protected:
 	CFont m_largeFont;
 	// GUI controls and variables
 
-	CToolTipCtrl m_pToolTipCtrl;
+	CRichToolTipCtrl m_wndToolTipCtrl;
 	CComboBox m_wndPluginType;
 	CTreeCtrlEx m_wndChannelsTree;
 	CComboBox m_wndPlaylist;
@@ -396,4 +399,8 @@ private:
 	// map of TREEITEM and category for fast search
 	// Loaded when fill playlist tree
 	std::map<HTREEITEM, std::wstring> m_pl_categoriesMap;
+
+	//////////////////////////////////////////////////////////////////////////
+	// map epg to channel id
+	std::map<std::string, nlohmann::json> m_epgMap;
 };

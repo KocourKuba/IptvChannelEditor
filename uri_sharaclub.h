@@ -8,7 +8,10 @@ public:
 	std::string get_templated(StreamSubType subType, const TemplateParams& params) const override;
 	std::string get_epg1_uri(const std::string& id) const override;
 	std::string get_epg2_uri(const std::string& id) const override;
+	std::string get_epg1_uri_json(const std::string& id) const override;
+	std::string get_epg2_uri_json(const std::string& id) const override;
 	std::string get_access_url(const std::string& login, const std::string& password) const override;
 	std::string get_playlist_template(bool first = true) const override;
+	const std::string& get_epg_root() const { return ""; }
 	bool isHasAccessInfo() const override { return true; }
 };
