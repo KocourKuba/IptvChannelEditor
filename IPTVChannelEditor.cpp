@@ -55,7 +55,7 @@ CIPTVChannelEditorApp theApp;
 
 BOOL CIPTVChannelEditorApp::InitInstance()
 {
-	// InitCommonControlsEx() is required on Windows XP if an application
+// TODO: call AfxInitRichEdit2() to initialize richedit2 library.\n"	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
 	INITCOMMONCONTROLSEX InitCtrls;
@@ -65,7 +65,12 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+	AfxInitRichEdit2();
+
 	CWinAppEx::InitInstance();
+
+	AfxEnableControlContainer();
 
 	// Create the shell manager, in case the dialog contains
 	// any shell tree view or shell list view controls.

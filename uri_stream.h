@@ -218,12 +218,6 @@ public:
 	/// json epg start time node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual int get_epg_time_shift() const { return 0; }
-
-	/// <summary>
-	/// json epg start time node
-	/// </summary>
-	/// <returns>string</returns>
 	virtual std::string get_epg_time_start() const { return "time"; }
 
 	/// <summary>

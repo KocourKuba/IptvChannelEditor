@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <richole.h>
 #include "PlayListEntry.h"
 #include "TreeCtrlEx.h"
 #include "ChannelCategory.h"
@@ -102,6 +103,7 @@ protected:
 	afx_msg void OnBnClickedButtonSettings();
 	afx_msg void OnBnClickedButtonTestEpg1();
 	afx_msg void OnBnClickedButtonTestEpg2();
+	afx_msg void OnBnClickedButtonEpg();
 	afx_msg void OnUpdateIcon();
 	afx_msg void OnUpdateUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckCustomize();
@@ -126,7 +128,7 @@ protected:
 	afx_msg void OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMSetfocusTree(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg BOOL OnToolTipNotify(UINT id, NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStnClickedStaticIcon();
 	afx_msg void OnUpdateAddUpdateChannel(CCmdUI* pCmdUI);
@@ -212,7 +214,7 @@ private:
 	std::string GetPluginNameA(bool bCamel = false) const;
 
 	bool HasEPG2();
-	CString GetEpgText(BaseInfo* info, bool first = true);
+	void UpdateEPG();
 	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
 	std::wstring GetPluginRegPath() const;
 
@@ -240,7 +242,7 @@ protected:
 	CFont m_largeFont;
 	// GUI controls and variables
 
-	CRichToolTipCtrl m_wndToolTipCtrl;
+	CToolTipCtrl m_wndToolTipCtrl;
 	CComboBox m_wndPluginType;
 	CTreeCtrlEx m_wndChannelsTree;
 	CComboBox m_wndPlaylist;
@@ -248,6 +250,7 @@ protected:
 	CComboBox m_wndChannels;
 	CComboBox m_wndIconSource;
 	CComboBox m_wndStreamType;
+	CRichEditCtrl m_wndEpg;
 
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
@@ -281,6 +284,8 @@ protected:
 	CStatic m_wndChInfo;
 	CStatic m_wndPlInfo;
 	CStatic m_wndProgressInfo;
+	CButton m_wndEpg1;
+	CButton m_wndEpg2;
 	CProgressCtrl m_wndProgress;
 
 	CString m_search; // m_wndSearch

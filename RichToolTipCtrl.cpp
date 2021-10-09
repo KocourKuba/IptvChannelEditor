@@ -68,7 +68,36 @@ class _RichToolTipCtrlCookie
 public:
 	_RichToolTipCtrlCookie(CString sText) : m_sText(sText) { Reset(); }
 
-	DWORD Read(LPBYTE lpszBuffer, DWORD dwCount);
+	// read dwCount bytes into lpszBuffer, and return number read
+	// stop if source is empty, or when end of string reached
+	DWORD Read(LPBYTE lpBuffer, DWORD dwCount)
+	{
+		if (lpBuffer == nullptr)
+			return (DWORD)-1;
+
+		// have we already had it all?
+		DWORD dwLeft = m_dwLength - m_dwCount;
+		if (dwLeft <= 0)  // all done
+			return 0;
+
+		// start the source string from where we left off
+		CStringA sText(m_sText);
+		LPCSTR lpszText = sText.GetString() + m_dwCount;
+
+		// only copy what we've got left
+		if (dwLeft < dwCount)
+			dwCount = dwLeft;
+
+		// copy the text
+		strncpy_s((LPSTR)lpBuffer, dwCount + 1, lpszText, _TRUNCATE);
+
+		// keep where we got to
+		m_dwCount += dwCount;
+
+		// return how many we copied
+		return dwCount;
+	}
+
 	void Reset()
 	{
 		m_dwCount = 0;
@@ -80,36 +109,6 @@ protected:
 	DWORD m_dwLength;
 	DWORD m_dwCount;
 };
-
-// read dwCount bytes into lpszBuffer, and return number read
-// stop if source is empty, or when end of string reached
-DWORD _RichToolTipCtrlCookie::Read(LPBYTE lpBuffer, DWORD dwCount)
-{
-	if (lpBuffer == nullptr)
-		return (DWORD)-1;
-
-	// have we already had it all?
-	DWORD dwLeft = m_dwLength - m_dwCount;
-	if (dwLeft <= 0)  // all done
-		return 0;
-
-	// start the source string from where we left off
-	CStringA sText(m_sText);
-	LPCSTR lpszText = sText.GetString() + m_dwCount;
-
-	// only copy what we've got left
-	if (dwLeft < dwCount)
-		dwCount = dwLeft;
-
-	// copy the text
-	strncpy_s((LPSTR)lpBuffer, dwCount + 1, lpszText, _TRUNCATE);
-
-	// keep where we got to
-	m_dwCount += dwCount;
-
-	// return how many we copied
-	return dwCount;
-}
 
 static DWORD CALLBACK RichTextCtrlCallbackIn(DWORD_COOKIE dwCookie, LPBYTE pbBuff, LONG cb, LONG* pcb)
 {

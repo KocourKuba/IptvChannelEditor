@@ -29,6 +29,8 @@
 #define new DEBUG_NEW
 #endif
 
+using namespace SevenZip;
+
 constexpr auto ID_COPY_TO_START = 40000;
 constexpr auto ID_COPY_TO_END = ID_COPY_TO_START + 512;
 
@@ -104,7 +106,63 @@ int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 	return lParam1 < lParam2 ? -1 : lParam1 == lParam2 ? 0 : 1;
 }
 
-using namespace SevenZip;
+// cookie class to assist with streaming a CString into the richedit control
+class _RichToolTipCtrlCookie
+{
+public:
+	_RichToolTipCtrlCookie(CString sText) : m_sText(sText) { Reset(); }
+
+	// read dwCount bytes into lpszBuffer, and return number read
+	// stop if source is empty, or when end of string reached
+	DWORD Read(LPBYTE lpBuffer, DWORD dwCount)
+	{
+		if (lpBuffer == nullptr)
+			return (DWORD)-1;
+
+		// have we already had it all?
+		DWORD dwLeft = m_dwLength - m_dwCount;
+		if (dwLeft <= 0)  // all done
+			return 0;
+
+		// start the source string from where we left off
+		LPCWSTR lpszText = m_sText.GetString() + m_dwCount;
+
+		// only copy what we've got left
+		if (dwLeft < dwCount)
+			dwCount = dwLeft;
+
+		// copy the text
+		wcsncpy_s((LPWSTR)lpBuffer, dwCount + 1, lpszText, _TRUNCATE);
+
+		// keep where we got to
+		m_dwCount += dwCount;
+
+		// return how many we copied
+		return dwCount;
+	}
+
+	void Reset()
+	{
+		m_dwCount = 0;
+		m_dwLength = m_sText.GetLength() * sizeof(wchar_t);
+	}
+
+protected:
+	CString m_sText;
+	DWORD m_dwLength;
+	DWORD m_dwCount;
+};
+
+
+static DWORD CALLBACK RichTextCtrlCallbackIn(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG* pcb)
+{
+	// the cookie is a pointer to the text data struct
+	_RichToolTipCtrlCookie* pBuf = (_RichToolTipCtrlCookie*)dwCookie;
+	if (pBuf == nullptr)
+		return 1;
+	*pcb = pBuf->Read(pbBuff, cb);
+	return 0;
+}
 
 // CEdemChannelEditorDlg dialog
 
@@ -139,6 +197,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CACHE_ICON, &CIPTVChannelEditorDlg::OnUpdateButtonCacheIcon)
 	ON_BN_CLICKED(IDC_BUTTON_UPDATE_ICON, &CIPTVChannelEditorDlg::OnUpdateIcon)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_UPDATE_ICON, &CIPTVChannelEditorDlg::OnUpdateUpdateIcon)
+	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
+	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 
 	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
 	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
@@ -164,7 +224,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(TVN_ENDLABELEDIT, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnEndlabeleditTreeChannels)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMRclickTreeChannel)
 	ON_NOTIFY(NM_SETFOCUS, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMSetfocusTree)
-	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CIPTVChannelEditorDlg::OnToolTipNotify)
+	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip)
 
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnNMDblclkTreePaylist)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnTvnSelchangedTreePaylist)
@@ -293,6 +353,9 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
 	DDX_Control(pDX, IDC_STATIC_PROGRESS_INFO, m_wndProgressInfo);
 	DDX_Control(pDX, IDC_COMBO_ICON_SOURCE, m_wndIconSource);
+	DDX_Control(pDX, IDC_RICHEDIT_EPG, m_wndEpg);
+	DDX_Control(pDX, IDC_RADIO_EPG1, m_wndEpg1);
+	DDX_Control(pDX, IDC_RADIO_EPG2, m_wndEpg2);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -347,6 +410,11 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	GetDlgItem(IDC_STATIC_TITLE)->SetFont(&m_largeFont);
 
 	// Setup tooltips
+	m_wndChannelsTree.GetToolTips()->SetDelayTime(TTDT_AUTOPOP, 10000);
+	m_wndChannelsTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 1000);
+	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_AUTOPOP, 10000);
+	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 1000);
+
 	SetUpToolTips();
 
 	// load settings
@@ -385,6 +453,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndInfoAudio.EnableWindow(FALSE);
 	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
+	m_wndEpg1.SetCheck(TRUE);
 
 	SwitchPlugin();
 
@@ -434,12 +503,6 @@ void CIPTVChannelEditorDlg::SetUpToolTips()
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Stream type used to test play stream"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Source type for loaded icon. Local file or internet link"));
-
-	m_wndChannelsTree.SetToolTips(&m_wndToolTipCtrl);
-	m_wndToolTipCtrl.AddTool(&m_wndChannelsTree);
-
-	m_wndPlaylistTree.SetToolTips(&m_wndToolTipCtrl);
-	m_wndToolTipCtrl.AddTool(&m_wndPlaylistTree);
 
 	m_wndToolTipCtrl.Activate(TRUE);
 }
@@ -1296,6 +1359,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 			const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
 			utils::SetImage(img, m_wndChannelIcon);
 		}
+
+		UpdateEPG();
 	}
 	else
 	{
@@ -1325,6 +1390,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	m_plEPG.Empty();
 	m_archivePlDays = 0;
 	m_wndPlArchive.SetCheck(0);
+	m_wndEpg.SetWindowText(L"");
 
 	const auto& entry = FindEntry(hItem);
 	if (entry)
@@ -1346,6 +1412,8 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 
 		const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
 		utils::SetImage(img, m_wndPlIcon);
+
+		UpdateEPG();
 	}
 	else
 	{
@@ -1353,6 +1421,105 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	}
 
 	UpdateData(FALSE);
+}
+
+void CIPTVChannelEditorDlg::UpdateEPG()
+{
+	m_wndEpg.SetWindowText(L"");
+
+	const auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
+	if (!info)
+		return;
+
+	bool useTimeShift = m_lastTree == &m_wndChannelsTree;
+	bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG1) == IDC_RADIO_EPG1;
+	CString str;
+	nlohmann::json epg_data;
+	try
+	{
+		const auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
+		const auto& pair = m_epgMap.find(epg_id);
+
+		if (pair == m_epgMap.end())
+		{
+			const auto& url = first ? info->stream_uri->get_epg1_uri_json(info->get_epg1_id()) : info->stream_uri->get_epg2_uri_json(info->get_epg2_id());
+			std::vector<BYTE> data;
+			if (!utils::DownloadFile(url, data))
+				return;
+
+			epg_data = nlohmann::json::parse(data);
+			m_epgMap.emplace(epg_id, epg_data);
+		}
+		else
+		{
+			epg_data = pair->second;
+		}
+
+		time_t now = time(nullptr);
+		if (useTimeShift)
+			now += m_timeShiftHours * 3600;
+
+		auto root = info->stream_uri->get_epg_root();
+		if (!root.empty() && epg_data.contains(root))
+		{
+			epg_data = epg_data[root];
+		}
+
+		const auto& start = info->stream_uri->get_epg_time_start();
+		const auto& end = info->stream_uri->get_epg_time_end();
+
+		for (auto& item : epg_data.items())
+		{
+			const auto& val = item.value();
+			time_t time_start = 0;
+			time_t time_end = 0;
+			if (val.contains(start))
+			{
+				if (val[start].is_number())
+					time_start = val.value(start, 0);
+				else if (val[start].is_string())
+					time_start = utils::char_to_int(val.value(start, ""));
+			}
+			if (val.contains(end))
+			{
+				if (val[end].is_number())
+					time_end = val.value(end, 0);
+				else if (val[start].is_string())
+					time_end = utils::char_to_int(val.value(end, ""));
+			}
+
+			if (now < time_start || now > time_end) continue;
+
+			const auto& name = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_name(), ""));
+			const auto& desc = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_desc(), ""));
+			str.Format(LR"({\b{%s}}{\par}%s)",
+					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(name)).c_str(),
+					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(desc)).c_str());
+		}
+	}
+	catch (const nlohmann::json::parse_error&)
+	{
+		// parse errors are ok, because input may be random bytes
+	}
+	catch (const nlohmann::json::out_of_range&)
+	{
+		// out of range errors may happen if provided sizes are excessive
+	}
+
+
+	CString text;
+	text.Format(LR"({\rtf1\ansi\ansicpg1251 %s})", str.GetString());
+
+	_RichToolTipCtrlCookie data(text);
+	EDITSTREAM es = { 0 };
+	es.dwCookie = (DWORD_PTR)&data;
+	es.pfnCallback = RichTextCtrlCallbackIn;
+	int n = m_wndEpg.StreamIn(SF_RTF | SF_UNICODE, es);
+	if (n <= 0)
+	{
+		data.Reset();
+		n = m_wndEpg.StreamIn(SF_RTF | SF_UNICODE, es);
+	}
 }
 
 std::shared_ptr<ChannelInfo> CIPTVChannelEditorDlg::FindChannel(HTREEITEM hItem) const
@@ -2038,6 +2205,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				state = 1; // single selected
 				if (!channel->stream_uri->is_template())
 					m_streamID.Empty();
+
 				m_wndChannelIcon.EnableWindow(TRUE);
 			}
 			else if (IsCategory(hSelected))
@@ -2050,6 +2218,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				m_streamID.Empty();
 				m_infoAudio.Empty();
 				m_infoVideo.Empty();
+				m_wndEpg.SetWindowText(L"");
 
 				m_wndChannelIcon.EnableWindow(TRUE);
 				const auto& category = GetCategory(hSelected);
@@ -2082,6 +2251,8 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndInfoVideo.EnableWindow(single);
 	m_wndInfoAudio.EnableWindow(single);
 	m_wndSearch.EnableWindow(TRUE);
+	m_wndEpg1.EnableWindow(single);
+	m_wndEpg2.EnableWindow(single && HasEPG2());
 
 	if (state == 2)
 	{
@@ -2614,6 +2785,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours()
 		}
 	}
 
+	UpdateEPG();
 	set_allow_save();
 }
 
@@ -2694,6 +2866,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 		if (!url.empty())
 			ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
+{
+	UpdateEPG();
 }
 
 void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/) const
@@ -4388,114 +4565,44 @@ void CIPTVChannelEditorDlg::OnNMSetfocusTree(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-BOOL CIPTVChannelEditorDlg::OnToolTipNotify(UINT id, NMHDR* pNMHDR, LRESULT* pResult)
+void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
+	LPNMTVGETINFOTIP pGetInfoTip = reinterpret_cast<LPNMTVGETINFOTIP>(pNMHDR);
 
-	// Do not process the message from built in tooltip
-	if (pNMHDR->idFrom == (UINT)m_hWnd && ((pNMHDR->code == TTN_NEEDTEXT && pTTT->uFlags & TTF_IDISHWND)))
+	auto entry = GetBaseInfo(&m_wndChannelsTree, pGetInfoTip->hItem);
+	if (entry && entry->is_type(InfoType::enChannel))
 	{
-		return FALSE;
+		auto ch_id = entry->stream_uri->get_id();
+		CString categories;
+		for (const auto& pair : m_categoriesMap)
+		{
+			if (pair.second.category->find_channel(ch_id))
+			{
+				if (!categories.IsEmpty())
+					categories += _T(", ");
+				categories.Append(pair.second.category->get_title().c_str());
+			}
+		}
+
+		m_toolTipText.Format(_T("Name: %s\nID: %hs\nEPG1 ID: %hs\n"),
+							 entry->get_title().c_str(),
+							 entry->stream_uri->is_template() ? ch_id.c_str() : "Custom",
+							 entry->get_epg1_id().c_str());
+
+		if (!entry->get_epg2_id().empty())
+		{
+			m_toolTipText.AppendFormat(_T("EPG2 ID: %hs\n"), entry->get_epg2_id().c_str());
+		}
+
+		m_toolTipText.AppendFormat(_T("Archive: %s\nAdult: %s\nIn categories: %s"),
+								   entry->is_archive() ? _T("Yes") : _T("No"),
+								   entry->get_adult() ? _T("Yes") : _T("No"),
+								   categories.GetString());
+
+		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
 	}
 
-	pTTT->lpszText = nullptr;
-	// Get the mouse position
-	const MSG* pMessage = GetCurrentMessage();
-	ASSERT(pMessage);
-	CPoint pt = pMessage->pt;
-	// idFrom is actually the HWND of the tool
-	UINT nID = ::GetDlgCtrlID((HWND)pNMHDR->idFrom);
-	switch (nID)
-	{
-		case IDC_TREE_CHANNELS:
-		{
-			//get tool tip-Control
-			CToolTipCtrl* pCtrl = m_wndChannelsTree.GetToolTips();
-
-			//map the coordinates on client
-			m_wndChannelsTree.ScreenToClient(&pt);
-
-			//Check if mouse moved over the tree item
-			HTREEITEM hCurrent = m_wndChannelsTree.HitTest(pt, nullptr);
-			if (!hCurrent) break;
-
-			auto entry = GetBaseInfo(&m_wndChannelsTree, hCurrent);
-			if (!entry || !entry->is_type(InfoType::enChannel)) break;
-
-			TRACE("OnToolTipNotify x:%d y:%d\n", pt.x, pt.y);
-			const auto& ch_id = entry->stream_uri->get_id();
-			std::wstring categories;
-			for (const auto& pair : m_categoriesMap)
-			{
-				if (pair.second.category->find_channel(ch_id))
-				{
-					if (!categories.empty())
-						categories += L", ";
-					categories += pair.second.category->get_title();
-				}
-			}
-
-			const auto& epg = GetEpgText(entry);
-			CString text;
-			text.Format(LR"(%s{\par\par\b{Name:}} %s{\par\b{ID:}} %hs{\par\b{EPG1 ID:}} %hs{\par})",
-						epg.GetString(),
-						entry->get_title().c_str(),
-						entry->stream_uri->is_template() ? ch_id.c_str() : "Custom",
-						entry->get_epg1_id().c_str()
-			);
-
-			if (!entry->get_epg2_id().empty())
-			{
-				text.AppendFormat(LR"({\b{EPG2 ID:}} %hs{\par})", entry->get_epg2_id().c_str());
-			}
-
-			text.AppendFormat(LR"({\b{Archive:}} %s{\par\b{Adult:}} %s{\par\b{In categories:}} %s)",
-							  entry->is_archive() ? L"Yes" : L"No",
-							  entry->get_adult() ? L"Yes" : L"No",
-							  categories.c_str());
-
-			m_toolTipText.Format(LR"({\rtf1\ansi\fs17 %s})", text.GetString());
-
-			pTTT->lpszText = m_toolTipText.GetBuffer();
-			*pResult = 0;
-			return TRUE; // message was handled
-		}
-		case IDC_TREE_PLAYLIST:
-		{
-			//get tool tip-Control
-			CToolTipCtrl* pCtrl = m_wndPlaylistTree.GetToolTips();
-
-			//map the coordinates on client
-			m_wndPlaylistTree.ScreenToClient(&pt);
-
-			//Check if mouse moved over the tree item
-			HTREEITEM hCurrent = m_wndPlaylistTree.HitTest(pt, nullptr);
-			if (!hCurrent) break;
-
-			auto entry = GetBaseInfo(&m_wndPlaylistTree, hCurrent);
-			if (!entry) break;
-
-			const auto& epg = GetEpgText(entry);
-
-			CString text;
-			text.Format(LR"(%s{\par\par\b{Name:}} %s{\par\b{ID:}} %hs{\par\b{EPG:}} %hs{\par\b{Archive:}} %s{\par\b{Adult:}} %s)",
-						epg.GetString(),
-						entry->get_title().c_str(),
-						entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : "Custom",
-						entry->get_epg1_id().c_str(),
-						entry->is_archive() ? L"Yes" : L"No",
-						entry->get_adult() ? L"Yes" : L"No");
-
-			m_toolTipText.Format(LR"({\rtf1\ansi\fs17 %s})", text.GetString());
-			pTTT->lpszText = m_toolTipText.GetBuffer();
-			*pResult = 0;
-			return TRUE; // message was handled
-		}
-		break;
-		default: break;
-	}
-
-	return FALSE;
+	*pResult = 0;
 }
 
 void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
@@ -4546,84 +4653,6 @@ void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info) const
 bool CIPTVChannelEditorDlg::HasEPG2()
 {
 	return (m_pluginType == StreamType::enEdem || m_pluginType == StreamType::enSharaclub || m_pluginType == StreamType::enSharavoz);
-}
-
-CString CIPTVChannelEditorDlg::GetEpgText(BaseInfo* info, bool first /*= true*/)
-{
-	if (!info)
-		return L"";
-
-	CString res;
-	nlohmann::json epg_data;
-	try
-	{
-		const auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
-		const auto& pair = m_epgMap.find(epg_id);
-
-		if (pair == m_epgMap.end())
-		{
-			const auto& url = first ? info->stream_uri->get_epg1_uri_json(info->get_epg1_id()) : info->stream_uri->get_epg2_uri_json(info->get_epg2_id());
-			std::vector<BYTE> data;
-			if (!utils::DownloadFile(url, data))
-				return L"";
-
-			epg_data = nlohmann::json::parse(data);
-			m_epgMap.emplace(epg_id, epg_data);
-		}
-		else
-		{
-			epg_data = pair->second;
-		}
-
-		time_t now = time(nullptr) + info->stream_uri->get_epg_time_shift();
-		auto root = info->stream_uri->get_epg_root();
-		if (!root.empty() && epg_data.contains(root))
-		{
-			epg_data = epg_data[root];
-		}
-
-		const auto& start = info->stream_uri->get_epg_time_start();
-		const auto& end = info->stream_uri->get_epg_time_end();
-
-		for (auto& item : epg_data.items())
-		{
-			const auto& val = item.value();
-			time_t time_start = 0;
-			time_t time_end = 0;
-			if (val.contains(start))
-			{
-				if (val[start].is_number())
-					time_start = val.value(start, 0);
-				else if (val[start].is_string())
-					time_start = utils::char_to_int(val.value(start, ""));
-			}
-			if (val.contains(end))
-			{
-				if (val[end].is_number())
-					time_end = val.value(end, 0);
-				else if (val[start].is_string())
-					time_end = utils::char_to_int(val.value(end, ""));
-			}
-
-			if (now < time_start || now > time_end) continue;
-
-			const auto& name = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_name(), ""));
-			const auto& desc = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_desc(), ""));
-			res.Format(LR"({\b{%s}}{\par}%s)",
-					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(name)).c_str(),
-					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(desc)).c_str());
-		}
-	}
-	catch (const nlohmann::json::parse_error&)
-	{
-		// parse errors are ok, because input may be random bytes
-	}
-	catch (const nlohmann::json::out_of_range&)
-	{
-		// out of range errors may happen if provided sizes are excessive
-	}
-
-	return res;
 }
 
 std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const

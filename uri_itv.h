@@ -14,5 +14,4 @@ public:
 	std::string get_epg_desc() const override { return "desc"; }
 	std::string get_epg_time_start() const override { return "startTime"; }
 	std::string get_epg_time_end() const override { return "stopTime"; }
-	int get_epg_time_shift() const override { return 3 * 3600; }
 };
