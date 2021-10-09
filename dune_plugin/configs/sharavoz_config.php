@@ -24,4 +24,9 @@ class SharavozPluginConfig extends DefaultConfig
     protected static $EPG1_URL_TEMPLATE = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
     protected static $EPG2_URL_TEMPLATE = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
 
+    public function __construct()
+    {
+        parent::__construct();
+        static::$EPG_PARSER_PARAMS['epg_root'] = 'epg_data';
+    }
 }

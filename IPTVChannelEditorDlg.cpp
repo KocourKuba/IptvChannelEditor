@@ -709,7 +709,7 @@ std::string CIPTVChannelEditorDlg::GetPluginNameA(bool bCamel /*= false*/) const
 		case enOneUsd: // 1USD
 			return bCamel ? "Oneusd" : "oneusd";
 		case enItv: // 1USD
-			return bCamel ? "Itv" : "Itv";
+			return bCamel ? "Itv" : "itv";
 	}
 
 	return "";

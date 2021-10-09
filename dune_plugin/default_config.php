@@ -33,6 +33,9 @@ abstract class DefaultConfig
     public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://online.dune-hd.com/demo/mpegts?channel=%s';
     public static $CHANNELS_LIST = 'default_channel_list.xml';
     public static $PLAY_LIST = 'playlist_tv.m3u8';
+
+    protected static $EPG_PARSER_PARAMS = array();
+
     protected static $EPG1_URL_TEMPLATE = '';
     protected static $EPG2_URL_TEMPLATE = '';
     protected static $EPG1_PARSER = 'json';
@@ -86,6 +89,21 @@ abstract class DefaultConfig
 
     protected static $TV_CHANNEL_ICON_WIDTH = 84;
     protected static $TV_CHANNEL_ICON_HEIGHT = 48;
+
+    public function __construct()
+    {
+        static::$EPG_PARSER_PARAMS['type'] = 'json';
+        static::$EPG_PARSER_PARAMS['epg_root'] = '';
+        static::$EPG_PARSER_PARAMS['start'] = 'time';
+        static::$EPG_PARSER_PARAMS['end'] = 'time_to';
+        static::$EPG_PARSER_PARAMS['title'] = 'name';
+        static::$EPG_PARSER_PARAMS['description'] = 'descr';
+    }
+
+    public static function get_epg_params()
+    {
+        return static::$EPG_PARSER_PARAMS;
+    }
 
     public static function try_reset_pages()
     {
@@ -190,8 +208,8 @@ abstract class DefaultConfig
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
 
         $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
-        for ($i = 0; $i < count($m3u_lines); ++$i) {
-            if (!preg_match(static::$STREAM_URL_PATTERN, $m3u_lines[$i], $matches)) continue;
+        foreach ($m3u_lines as $line) {
+            if (!preg_match(static::$STREAM_URL_PATTERN, $line, $matches)) continue;
 
             $plugin_cookies->subdomain_local = $matches['subdomain'];
             // hd_print("domain: $plugin_cookies->subdomain_local");
@@ -288,7 +306,7 @@ abstract class DefaultConfig
             if (empty(static::$EPG1_URL_TEMPLATE))
                 throw new Exception("Empty first epg template");
 
-            $epg = EpgManager::get_epg(static::$EPG1_PARSER,
+            $epg = EpgManager::get_epg(static::get_epg_params(),
                 $channel,
                 'first',
                 $day_start_ts,

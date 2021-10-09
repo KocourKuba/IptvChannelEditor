@@ -10,7 +10,7 @@ class EpgManager
     /**
      * try to load epg from cache otherwise request it from server
      * store parsed response to the cache
-     * @param $parser_type
+     * @param $parser_params
      * @param IChannel $channel
      * @param $type
      * @param $day_start_ts
@@ -19,7 +19,7 @@ class EpgManager
      * @return array
      * @throws Exception
      */
-    public static function get_epg($parser_type, IChannel $channel, $type, $day_start_ts, $url_format, $cache_name)
+    public static function get_epg($parser_params, IChannel $channel, $type, $day_start_ts, $url_format, $cache_name)
     {
         switch ($type)
         {
@@ -48,15 +48,12 @@ class EpgManager
             $url = sprintf($url_format, $epg_id, $epg_date);
             hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 
-            switch ($parser_type) {
+            switch ($parser_params['type']) {
                 case 'json':
-                    $epg = self::get_epg_json($url, $day_start_ts);
-                    break;
-                case 'html':
-                    $epg = self::get_epg_html($url, $epg_date);
+                    $epg = self::get_epg_json($parser_params, $url, $day_start_ts);
                     break;
                 case 'xml':
-                    $epg = self::get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir);
+                    $epg = self::get_epg_xml($parser_params, $url, $day_start_ts, $epg_id, $cache_dir);
                     break;
                 default:
                     $epg = array();
@@ -85,7 +82,7 @@ class EpgManager
      * @param $day_start_ts
      * @return array
      */
-    protected static function get_epg_json($url, $day_start_ts)
+    protected static function get_epg_json($parser_params, $url, $day_start_ts)
     {
         $epg = array();
         // time in UTC
@@ -105,54 +102,21 @@ class EpgManager
         }
 
         // stripe UTF8 BOM if exists
-        $ch_data = json_decode(ltrim($doc, "\0xEF\0xBB\0xBF"));
-        if (isset($ch_data->epg_data))
-            $data = $ch_data->epg_data; // sharvoz, edem
+        $ch_data = json_decode(ltrim($doc, "\0xEF\0xBB\0xBF"), true);
+        $epg_root = $parser_params['epg_root'];
+        if (!empty($epg_root) && isset($ch_data[$epg_root]))
+            $data = $ch_data[$epg_root]; // sharvoz, edem, itv
         else
-            $data = $ch_data; // sharaclub
+            $data = $ch_data; // sharaclub, no json root
 
         foreach ($data as $entry) {
-            if ($entry->time >= $epg_date_start and $entry->time < $epg_date_end) {
-                $epg[$entry->time]['title'] = HD::unescape_entity_string($entry->name);
-                $epg[$entry->time]['desc'] = HD::unescape_entity_string($entry->descr);
+            $start = $entry[$parser_params['start']];
+            $end = $entry[$parser_params['end']];
+            if ($start >= $epg_date_start && $end <= $epg_date_end) {
+                $epg[$start]['title'] = HD::unescape_entity_string($entry[$parser_params['title']]);
+                $epg[$start]['desc'] = HD::unescape_entity_string($entry[$parser_params['description']]);
             }
         }
-        return $epg;
-    }
-
-    /**
-     * request server for epg and parse html response
-     * @param $url
-     * @param $epg_date
-     * @return array
-     */
-    protected  static function get_epg_html($url, $epg_date)
-    {
-        // html parse for tvguide.info
-        // tvguide.info time in GMT+3 (moscow time)
-
-        $epg = array();
-        $e_time = strtotime("$epg_date, 0300 GMT+3");
-
-        try {
-            $doc = HD::http_get_document($url);
-        }
-        catch (Exception $ex) {
-            hd_print($ex->getMessage());
-            return $epg;
-        }
-
-        preg_match_all('|<div id="programm_text">(.*?)</div>|', $doc, $keywords);
-        foreach ($keywords[1] as $qid) {
-            $qq = strip_tags($qid);
-            preg_match_all('|(\d\d:\d\d)&nbsp;(.*?)&nbsp;(.*)|', $qq, $keyw);
-            $time = $keyw[1][0];
-            $u_time = strtotime("$epg_date $time GMT+3");
-            $last_time = ($u_time < $e_time) ? $u_time + 86400 : $u_time;
-            $epg[$last_time]["title"] = HD::unescape_entity_string($keyw[2][0]);
-            $epg[$last_time]["desc"] = HD::unescape_entity_string($keyw[3][0]);
-        }
-
         return $epg;
     }
 
@@ -164,7 +128,7 @@ class EpgManager
      * @param $cache_dir
      * @return array
      */
-    protected  static function get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir)
+    protected  static function get_epg_xml($parser_params, $url, $day_start_ts, $epg_id, $cache_dir)
     {
         $epg = array();
         // time in UTC
