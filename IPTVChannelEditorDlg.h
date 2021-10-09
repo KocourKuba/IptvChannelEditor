@@ -101,8 +101,7 @@ protected:
 	afx_msg void OnBnClickedButtonPlSearchNext();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
-	afx_msg void OnBnClickedButtonTestEpg1();
-	afx_msg void OnBnClickedButtonTestEpg2();
+	afx_msg void OnBnClickedButtonTestEpg();
 	afx_msg void OnBnClickedButtonEpg();
 	afx_msg void OnUpdateIcon();
 	afx_msg void OnUpdateUpdateIcon(CCmdUI* pCmdUI);
@@ -270,8 +269,7 @@ protected:
 	CButton m_wndAdult;
 	CButton m_wndCustom;
 	CButton m_wndPlArchive;
-	CButton m_wndTestEPG2;
-	CButton m_wndTestEPG1;
+	CButton m_wndTestEPG;
 	CButton m_wndChooseUrl;
 	CButton m_wndDownloadUrl;
 	CButton m_wndCheckArchive;

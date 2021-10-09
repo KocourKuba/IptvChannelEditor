@@ -183,8 +183,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
-	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1)
-	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2)
+	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CIPTVChannelEditorDlg::OnBnClickedCheckAdult)
 	ON_BN_CLICKED(IDC_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckArchive)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOMIZE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomize)
@@ -304,10 +303,9 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
 	DDX_Text(pDX, IDC_EDIT_EPG1_ID, m_epgID1);
 	DDX_Control(pDX, IDC_EDIT_EPG1_ID, m_wndEpgID1);
-	DDX_Control(pDX, IDC_BUTTON_TEST_EPG1, m_wndTestEPG1);
+	DDX_Control(pDX, IDC_BUTTON_TEST_EPG, m_wndTestEPG);
 	DDX_Text(pDX, IDC_EDIT_EPG2_ID, m_epgID2);
 	DDX_Control(pDX, IDC_EDIT_EPG2_ID, m_wndEpgID2);
-	DDX_Control(pDX, IDC_BUTTON_TEST_EPG2, m_wndTestEPG2);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
 	DDX_Text(pDX, IDC_EDIT_ARCHIVE_DAYS, m_archiveDays);
 	DDX_Control(pDX, IDC_EDIT_ARCHIVE_DAYS, m_wndArchiveDays);
@@ -441,8 +439,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndEpgID1.EnableWindow(FALSE);
 	m_wndArchive.EnableWindow(FALSE);
 	m_wndAdult.EnableWindow(FALSE);
-	m_wndTestEPG2.EnableWindow(FALSE);
-	m_wndTestEPG1.EnableWindow(FALSE);
+	m_wndTestEPG.EnableWindow(FALSE);
 	m_wndStreamID.EnableWindow(FALSE);
 	m_wndStreamUrl.EnableWindow(FALSE);
 	m_wndCheckArchive.EnableWindow(FALSE);
@@ -474,10 +471,9 @@ void CIPTVChannelEditorDlg::SetUpToolTips()
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels. Use \\ prefix to find by ID"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_URL_ID), _T("Channel ID"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG), _T("View channel EPG in browser"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("EPG ID1"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG1), _T("View EPG1 data"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("EPG ID2"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG2), _T("View EPG2 data"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Use custom stream URL for the channel"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Channel archive is supported"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_DAYS), _T("How many days archive is supported"));
@@ -2235,13 +2231,13 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	BOOL single = (state == 1);
 	bool bSameCategory = IsSelectedInTheSameCategory();
 
+	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 	m_wndCustom.EnableWindow(single);
 	m_wndEpgID1.EnableWindow(single);
 	m_wndEpgID2.EnableWindow(single && HasEPG2());
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
-	m_wndTestEPG1.EnableWindow(single && !m_epgID1.IsEmpty());
-	m_wndTestEPG2.EnableWindow(single && !m_epgID2.IsEmpty());
+	m_wndTestEPG.EnableWindow(single && (firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty()));
 	m_wndStreamID.EnableWindow(single && !m_streamID.IsEmpty());
 	m_wndArchiveDays.EnableWindow(state && m_isArchive);
 	m_wndStreamUrl.EnableWindow(single && m_streamID.IsEmpty());
@@ -2846,23 +2842,13 @@ void CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckHour(NMHDR* pNMHDR, LRESUL
 	*pResult = 0;
 }
 
-void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg1()
+void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg()
 {
 	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
 	{
-		const auto& url = channel->stream_uri->get_epg1_uri(channel->get_epg1_id());
-		if (!url.empty())
-			ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
-	}
-}
-
-void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
-{
-	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
-	if (channel)
-	{
-		const auto& url = channel->stream_uri->get_epg2_uri(channel->get_epg2_id());
+		bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+		const auto& url = first ? channel->stream_uri->get_epg1_uri(channel->get_epg1_id()) : channel->stream_uri->get_epg2_uri(channel->get_epg2_id());
 		if (!url.empty())
 			ShellExecuteA(nullptr, "open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 	}
@@ -2871,6 +2857,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg2()
 void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
 {
 	UpdateEPG();
+	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+	m_wndTestEPG.EnableWindow(firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty());
 }
 
 void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/) const

@@ -35,8 +35,7 @@
 #define IDC_BUTTON_SEARCH_NEXT          1018
 #define IDC_BUTTON_SETTINGS             1019
 #define IDC_BUTTON_STOP                 1020
-#define IDC_BUTTON_TEST_EPG1            1021
-#define IDC_BUTTON_TEST_EPG2            1022
+#define IDC_BUTTON_TEST_EPG             1021
 #define IDC_BUTTON_UPDATE_ICON          1023
 #define IDC_BUTTON_CHECK_ARCHIVE        1024
 #define IDC_CHECK_ADULT                 1025
