@@ -18,7 +18,7 @@ class EdemPluginConfig extends DefaultConfig
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
     protected static $EPG2_URL_TEMPLATE = 'http://epg.ott-play.com/teleguide.info/epg/%s.json'; // epg_id
 
-    public static function GetAccountInfo($plugin_cookies, $force = false)
+    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
         return true;

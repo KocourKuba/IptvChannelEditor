@@ -132,7 +132,8 @@ class StarnetPluginTv extends AbstractTv
             }
         }
 
-        $config::GetAccountInfo($plugin_cookies);
+        $account_data = null;
+        $config::GetAccountInfo($plugin_cookies, $account_data);
         $pl_entries = $config::GetPlaylistStreamInfo($plugin_cookies);
 
         // Create channels and groups

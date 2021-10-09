@@ -23,7 +23,7 @@ class FoxPluginConfig extends DefaultConfig
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
-    public static $STREAM_URL_PATTERN = '|^https?://([^/]+)/([^/]+)/?(.+\.m3u8){0,1}$|';
+    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
 
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{TOKEN}/index.m3u8';
@@ -85,13 +85,13 @@ class FoxPluginConfig extends DefaultConfig
         return $pl_entries;
     }
 
-    public static function GetAccountInfo($plugin_cookies, $force = false)
+    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
         $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
         for ($i = 0; $i < count($m3u_lines); ++$i) {
             if (preg_match(static::$STREAM_URL_PATTERN, $m3u_lines[$i], $matches)) {
-                $plugin_cookies->format = isset($matches[3]) ? 'hls' : 'mpeg';
+                $plugin_cookies->format = isset($matches['hls']) ? 'hls' : 'mpeg';
                 return true;
             }
         }

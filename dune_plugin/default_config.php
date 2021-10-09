@@ -185,7 +185,7 @@ abstract class DefaultConfig
         return array();
     }
 
-    public static function GetAccountInfo($plugin_cookies, $force = false)
+    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
 

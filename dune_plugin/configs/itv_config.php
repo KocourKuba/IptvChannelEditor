@@ -4,7 +4,6 @@ require_once 'default_config.php';
 class ItvPluginConfig extends DefaultConfig
 {
     const ACCOUNT_INFO_URL1 = 'http://api.itv.live/data/%s';
-    const SERIES_VOD_PATTERN = '|^https?://(.+)/series/.+\.mp4(.+)$|';
 
     // info
     public static $PLUGIN_NAME = 'ITV Live TV';
@@ -25,15 +24,12 @@ class ItvPluginConfig extends DefaultConfig
     public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/.+/.+\.m3u8$|';
 
     // tv
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
-    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{ID}}//video.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
     public static $CHANNELS_LIST = 'itv_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/ch001';
 
-    // vod
-    public static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
-
-    public static function GetAccountInfo($plugin_cookies, $force = false)
+    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
         if (empty($plugin_cookies->password))
@@ -43,181 +39,16 @@ class ItvPluginConfig extends DefaultConfig
             $url = sprintf(static::ACCOUNT_INFO_URL1, $plugin_cookies->password);
             $content = HD::http_get_document($url);
         } catch (Exception $ex) {
-            try {
-                $url = sprintf(static::ACCOUNT_INFO_URL2, $plugin_cookies->password);
-                $content = HD::http_get_document($url);
-            } catch (Exception $ex) {
-                return false;
-            }
+            return false;
         }
 
-        parent::GetAccountInfo($plugin_cookies, $force);
+        parent::GetAccountInfo($plugin_cookies, $account_data, $force);
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"));
-        if (isset($account_data->status) && $account_data->status == 'ok') {
+        if (isset($account_data->package_info) && !empty($account_data->package_info)) {
             return $account_data->status == 'ok';
         }
 
         return false;
-    }
-
-    /**
-     * @throws Exception
-     */
-    public static function TryLoadMovie($movie_id, $plugin_cookies)
-    {
-        $movie = new Movie($movie_id);
-        $jsonItems = HD::parse_json_file(static::GET_VOD_TMP_STORAGE_PATH());
-        foreach ($jsonItems as $item) {
-
-            $id = -1;
-            if (array_key_exists("id", $item))
-                $id = $item["id"];
-            else if (array_key_exists("series_id", $item))
-                $id = $item["series_id"] . "season";
-
-            if ($id !== $movie_id) continue;
-
-            $duration = "";
-            if (array_key_exists("duration_secs", $item["info"]))
-                $duration = $item["info"]["duration_secs"] / 60;
-            else if (array_key_exists("episode_run_time", $item["info"]))
-                $duration = $item["info"]["episode_run_time"];
-
-            $genres = HD::ArrayToStr($item["info"]["genre"]);
-            $country = HD::ArrayToStr($item["info"]["country"]);
-
-            $movie->set_data(
-                $item["name"],              // name,
-                '',             // name_original,
-                $item["info"]["plot"],      // description,
-                $item["info"]["poster"],    // poster_url,
-                $duration,                  // length_min,
-                $item["info"]["year"],      // year,
-                $item["info"]["director"],  // director_str,
-                '',               // scenario_str,
-                $item["info"]["cast"],      // actors_str,
-                $genres,                    // genres_str,
-                $item["info"]["rating"],    // rate_imdb,
-                '',             // rate_kinopoisk,
-                '',                // rate_mpaa,
-                $country,                   // country,
-                ''                   // budget
-            );
-
-            // case for serials
-            if (array_key_exists("seasons", $item)) {
-                foreach ($item["seasons"] as $season) {
-                    $seasonNumber = $season["season"];
-                    foreach ($season["episodes"] as $episode) {
-                        $episodeCaption = "Сезон " . $seasonNumber . ":  Эпизод " . $episode['episode'];
-                        $playback_url = $episode['video'];
-                        if (preg_match(self::SERIES_VOD_PATTERN, $playback_url, $matches)) {
-                            $playback_url = str_replace(
-                                array('{SUBDOMAIN}', '{TOKEN}', '{ID}'),
-                                array($matches[1], $matches[2], "vod-" . $episode['id']),
-                                self::$MEDIA_URL_TEMPLATE_HLS);
-                        }
-                        $movie->add_series_data($episode['id'], $episodeCaption, $playback_url, true);
-                    }
-                }
-            } else {
-                $playback_url = str_replace("https://", "http://", $item["video"]);
-                $movie->add_series_data($movie_id, $item['name'], $playback_url, true);
-            }
-
-            break;
-        }
-
-        return $movie;
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
-    {
-        $url = sprintf(self::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies->login, $plugin_cookies->password);
-        $categories = static::LoadAndStoreJson($url, true, static::GET_VOD_TMP_STORAGE_PATH());
-        if ($categories === false)
-        {
-            return;
-        }
-
-        $category_list = array();
-        $category_index = array();
-        $categoriesFound = array();
-
-        foreach ($categories as $movie) {
-            if (in_array($movie["category"], $categoriesFound)) continue;
-
-            array_push($categoriesFound, $movie["category"]);
-            $cat = new StarnetVodCategory(strval($movie["category"]), strval($movie["category"]));
-            $category_list[] = $cat;
-            $category_index[$cat->get_id()] = $cat;
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @throws Exception
-     */
-    public static function getSearchList($keyword, $plugin_cookies)
-    {
-        $movies = array();
-        $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
-        $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
-        foreach ($jsonItems as $item) {
-            $search  = utf8_encode(mb_strtolower($item["name"], 'UTF-8'));
-            if (strpos($search, $keyword) !== false) {
-                $movies[] = self::CreateMovie($item);
-            }
-        }
-
-        return $movies;
-    }
-
-    /**
-     * @throws Exception
-     */
-    public static function getVideoList($idx, $plugin_cookies)
-    {
-        $movies = array();
-        $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
-
-        $arr = explode("_", $idx);
-        if ($arr === false)
-            $category_id = $idx;
-        else
-            $category_id = $arr[0];
-
-        foreach ($jsonItems as $item) {
-            if ($category_id == $item["category"]) {
-                $movies[] = self::CreateMovie($item);
-            }
-        }
-
-        return $movies;
-    }
-
-    /**
-     * @throws Exception
-     */
-    protected static function CreateMovie($mov_array)
-    {
-        $id = -1;
-        if (array_key_exists("id", $mov_array))
-            $id = $mov_array["id"];
-        else if (array_key_exists("series_id", $mov_array))
-            $id = $mov_array["series_id"] . "season";
-
-        $info_arr = $mov_array["info"];
-        $genres = HD::ArrayToStr($info_arr["genre"]);
-        $country = HD::ArrayToStr($info_arr["country"]);
-        $movie = new ShortMovie(strval($id), strval($mov_array["name"]), strval($info_arr["poster"]));
-        $movie->info = $mov_array["name"] . "|Год: " . $info_arr["year"] . "|Страна: $country|Жанр: $genres|Рейтинг: " . $info_arr["rating"];
-
-        return  $movie;
     }
 }

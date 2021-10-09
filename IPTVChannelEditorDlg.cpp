@@ -3561,15 +3561,16 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 
 	// remove files for other plugins
 	std::vector<std::wstring> to_remove = {
-		L"bg_antifriz.jpg", L"antifriz.png",
-		L"bg_edem.jpg", L"edem.png",
-		L"bg_glanz.jpg", L"glanz.png",
-		L"bg_sharaclub.jpg", L"sharaclub.png",
-		L"bg_sharavoz.jpg", L"sharavoz.png",
-		L"bg_fox.jpg", L"fox.png",
+		L"bg_antifriz.jpg", L"logo_antifriz.png",
+		L"bg_edem.jpg", L"logo_edem.png",
+		L"bg_fox.jpg", L"logo_fox.png",
+		L"bg_glanz.jpg", L"logo_glanz.png",
+		L"bg_itv.jpg", L"logo_itv.png",
+		L"bg_sharaclub.jpg", L"logo_sharaclub.png",
+		L"bg_sharavoz.jpg", L"logo_sharavoz.png",
 	};
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name.c_str())), to_remove.end());
-	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"{:s}.png", name.c_str())), to_remove.end());
+	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"logo_{:s}.png", name.c_str())), to_remove.end());
 
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + L"icons\\"})
 	{
