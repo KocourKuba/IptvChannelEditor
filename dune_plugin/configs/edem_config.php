@@ -16,8 +16,7 @@ class EdemPluginConfig extends DefaultConfig
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
     public static $CHANNELS_LIST = 'edem_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
-    protected static $EPG2_URL_TEMPLATE = 'http://www.teleguide.info/kanal%s_%s.html'; // epg_id date(YYYYMMDD)
-    protected static $EPG2_PARSER = 'html';
+    protected static $EPG2_URL_TEMPLATE = 'http://epg.ott-play.com/teleguide.info/epg/%s.json'; // epg_id
 
     public static function GetAccountInfo($plugin_cookies, $force = false)
     {

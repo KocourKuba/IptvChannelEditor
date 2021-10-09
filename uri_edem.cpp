@@ -4,9 +4,10 @@
 static constexpr auto PLAYLIST_TEMPLATE1 = "http://epg.it999.ru/edem_epg_ico.m3u8";
 static constexpr auto PLAYLIST_TEMPLATE2 = "http://epg.it999.ru/edem_epg_ico2.m3u8";
 static constexpr auto URI_TEMPLATE = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
-static constexpr auto EPG1_TEMPLATE_JSON = "http://epg.ott-play.com/edem/epg/{:s}.json";
 static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE = "http://www.teleguide.info/kanal{:s}_{:4d}{:02d}{:02d}.html";
+static constexpr auto EPG2_TEMPLATE = "http://epg.ott-play.com/php/show_prog.php?f=teleguide.info/epg/{:s}.json";
+static constexpr auto EPG1_TEMPLATE_JSON = "http://epg.ott-play.com/edem/epg/{:s}.json";
+static constexpr auto EPG2_TEMPLATE_JSON = "http://epg.ott-play.com/teleguide.info/epg/{:s}.json";
 
 void uri_edem::parse_uri(const std::string& url)
 {
@@ -65,6 +66,11 @@ std::string uri_edem::get_epg2_uri(const std::string& id) const
 std::string uri_edem::get_epg1_uri_json(const std::string& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
+}
+
+std::string uri_edem::get_epg2_uri_json(const std::string& id) const
+{
+	return fmt::format(EPG2_TEMPLATE_JSON, id);
 }
 
 std::string uri_edem::get_playlist_template(bool first /*= true*/) const
