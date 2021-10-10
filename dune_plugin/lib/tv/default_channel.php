@@ -15,8 +15,9 @@ class DefaultChannel implements IChannel
     protected $_epg_id;
     protected $_tvg_id;
     protected $_timeshift_hours;
+    protected $_ext_params;
 
-    public function __construct($id, $channel_id, $title, $icon_url, $streaming_url, $_archive, $number, $epg_id, $tvg_id, $is_protected, $timeshift_hours)
+    public function __construct($id, $channel_id, $title, $icon_url, $streaming_url, $_archive, $number, $epg_id, $tvg_id, $is_protected, $timeshift_hours, $ext_params)
     {
         $this->_id = $id;
         $this->_channel_id = $channel_id;
@@ -30,6 +31,7 @@ class DefaultChannel implements IChannel
         $this->_tvg_id = $tvg_id;
         $this->_is_protected = $is_protected;
         $this->_timeshift_hours = $timeshift_hours;
+        $this->_ext_params = $ext_params;
     }
 
     public function get_id()
@@ -115,6 +117,11 @@ class DefaultChannel implements IChannel
     public function get_streaming_url()
     {
         return $this->_streaming_url;
+    }
+
+    public function get_ext_params()
+    {
+        return $this->_ext_params;
     }
 
     ///////////////////////////////////////////////////////////////////////

@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class GlanzPluginConfig extends DefaultConfig
 {
     const SERIES_VOD_PATTERN = '|^https?://.+/vod/(.+)\.mp4/video\.m3u8\?token=.+$|';
-    const EXTINF_VOD_PATTERN = '|^#EXTINF.+group-title="(.*)".+tvg-logo="(.*)"\s*,\s*(.*)$|';
+    const EXTINF_VOD_PATTERN = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
 
     // info
     public static $PLUGIN_NAME = 'Glanz TV';
@@ -22,16 +22,12 @@ class GlanzPluginConfig extends DefaultConfig
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
-    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/\d+/.+\.m3u8\?username=.+&password=.+&token=(?<token>.+)&ch_id=\d+&req_host=(?<host>.+)$|';
 
     // tv
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
-    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://ts://{SUBDOMAIN}/{ID}/video-{START}-10800.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
+    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=<?<[password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
     public static $CHANNELS_LIST = 'glanz_channel_list.xml';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id date(YYYYMMDD)
-    protected static $EPG2_URL_TEMPLATE = '';
+    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id
 
     // vod
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod';
@@ -42,19 +38,25 @@ class GlanzPluginConfig extends DefaultConfig
 
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        if (empty($plugin_cookies->subdomain_local) || empty($plugin_cookies->ott_key_local)) {
-            hd_print("token or subdomain not defined");
-            return "";
-        }
+        $url = $channel->get_streaming_url();
 
         $format = static::get_format($plugin_cookies);
-
+        // hd_print("Stream type: " . $format);
         switch ($format) {
             case 'hls':
-                $url = (intval($archive_ts) > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS : $channel->get_streaming_url();
+                if (intval($archive_ts) > 0) {
+                    // hd_print("Archive TS:  " . $archive_ts);
+                    $url = str_replace('video.m3u8', "video-$archive_ts-10800.m3u8", $url);
+                }
                 break;
             case 'mpeg':
-                $url = (intval($archive_ts) > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::$MEDIA_URL_TEMPLATE_MPEG;
+                if (intval($archive_ts) > 0) {
+                    // hd_print("Archive TS:  " . $archive_ts);
+                    $url = str_replace('video.m3u8', "archive-$archive_ts-10800.ts", $url);
+                }
+                else {
+                    $url = str_replace('video.m3u8', 'mpegts', $url);
+                }
                 $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
                 $url .= "|||dune_params|||buffering_ms:$buf_time";
                 break;
@@ -63,23 +65,32 @@ class GlanzPluginConfig extends DefaultConfig
                 return "";
         }
 
-        // hd_print("Stream type: " . $format);
         // hd_print("Stream url:  " . $url);
-        // hd_print("Channel ID:  " . $channel->get_channel_id());
-        // hd_print("Domain:      " . $plugin_cookies->subdomain_local);
-        // hd_print("Token:       " . $plugin_cookies->ott_key_local);
-        // hd_print("Int ID:      " . $channel->get_number());
-        // hd_print("Host:        " . $plugin_cookies->host);
-        // hd_print("Archive TS:  " . $archive_ts);
 
-        $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain_local, $url);
-        $url = str_replace('{ID}', $channel->get_channel_id(), $url);
-        $url = str_replace('{START}', $archive_ts, $url);
-        $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);
-        $url = str_replace('{LOGIN}', $plugin_cookies->login, $url);
-        $url = str_replace('{PASSWORD}', $plugin_cookies->password, $url);
-        $url = str_replace('{INT_ID}', strval($channel->get_number()), $url);
-        $url = str_replace('{HOST}', $plugin_cookies->host, $url);
+        return $url;
+    }
+
+    public static function GetPlaylistStreamInfo($plugin_cookies)
+    {
+        return parent::GetPlaylistStreamInfo($plugin_cookies);
+    }
+
+    /**
+     * Update url by provider additional parameters
+     * @param $channel_id
+     * @param $plugin_cookies
+     * @param $ext_params
+     * @return string
+     */
+    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
+    {
+        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], static::$MEDIA_URL_TEMPLATE_HLS);
+        $url = str_replace('{ID}', $channel_id, $url);
+        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        $url = str_replace('{LOGIN}', $ext_params['login'], $url);
+        $url = str_replace('{PASSWORD}', $ext_params['password'], $url);
+        $url = str_replace('{INT_ID}', $ext_params['int_id'], $url);
+        $url = str_replace('{HOST}', $ext_params['host'], $url);
 
         return static::make_ts($url);
     }
@@ -95,8 +106,8 @@ class GlanzPluginConfig extends DefaultConfig
         for ($i = 0; $i < count($m3u_lines); ++$i) {
             if($i != $movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
 
-            $logo = $matches[2];
-            $caption = $matches[3];
+            $logo = $matches['logo'];
+            $caption = $matches['title'];
 
             $url = $m3u_lines[$i + 1];
             //hd_print("Vod url: $playback_url");
@@ -150,10 +161,10 @@ class GlanzPluginConfig extends DefaultConfig
         $category_index = array();
         $categoriesFound = array();
 
-        for ($i = 0; $i < count($m3u_lines); ++$i) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
+        foreach ($m3u_lines as $line) {
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $line, $matches)) continue;
 
-            $category = $matches[1];
+            $category = $matches['category'];
             if(empty($category))
                 $category = 'Без категории';
 
@@ -178,8 +189,8 @@ class GlanzPluginConfig extends DefaultConfig
         for ($i = 0; $i < count($m3u_lines); ++$i) {
             if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
 
-            $logo = $matches[2];
-            $caption = $matches[3];
+            $logo = $matches['logo'];
+            $caption = $matches['title'];
 
             $search  = utf8_encode(mb_strtolower($caption, 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
@@ -200,9 +211,9 @@ class GlanzPluginConfig extends DefaultConfig
         for ($i = 0; $i < count($m3u_lines); ++$i) {
             if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
 
-            $category = $matches[1];
-            $logo = $matches[2];
-            $caption = $matches[3];
+            $category = $matches['category'];
+            $logo = $matches['logo'];
+            $caption = $matches['title'];
             if(empty($category))
                 $category = 'Без категории';
 

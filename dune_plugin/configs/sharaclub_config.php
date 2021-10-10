@@ -23,11 +23,10 @@ class SharaclubPluginConfig extends DefaultConfig
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
-    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/.+/.+\.m3u8$|';
 
     // tv
+    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
-    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts';
     public static $CHANNELS_LIST = 'sharaclub_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
     protected static $EPG2_URL_TEMPLATE = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYYMMDD)
@@ -35,6 +34,44 @@ class SharaclubPluginConfig extends DefaultConfig
     // vod
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
 
+    /**
+     * Transform url based on settings or archive playback
+     * @param $plugin_cookies
+     * @param $archive_ts
+     * @param IChannel $channel
+     * @return string
+     */
+    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    {
+        $url = $channel->get_streaming_url();
+
+        if (intval($archive_ts) > 0) {
+            $now_ts = time();
+            $url .= "?utc=$archive_ts&lutc=$now_ts";
+            // hd_print("Archive TS:  " . $archive_ts);
+            // hd_print("Now       :  " . $now_ts);
+        }
+
+        $format = static::get_format($plugin_cookies);
+        // hd_print("Stream type: " . $format);
+        if ($format == 'mpeg') {
+            $url = str_replace('/video.m3u8', '.ts', $url);
+            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+            $url .= "|||dune_params|||buffering_ms:$buf_time";
+        }
+
+        // hd_print("Stream url:  " . $url);
+
+        return $url;
+    }
+
+    /**
+     * Get information from the account
+     * @param $plugin_cookies
+     * @param &$account_data
+     * @param bool $force default false, force downloading playlist even it already cached
+     * @return bool true if information collected and status valid
+     */
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
@@ -57,14 +94,28 @@ class SharaclubPluginConfig extends DefaultConfig
             }
         }
 
-        parent::GetAccountInfo($plugin_cookies, $account_data, $force);
+        $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
+        return isset($account_data['status']) && $account_data['status'] == 'ok';
+    }
 
-        $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"));
-        if (isset($account_data->status) && $account_data->status == 'ok') {
-            return $account_data->status == 'ok';
-        }
+    public static function GetPlaylistStreamInfo($plugin_cookies)
+    {
+        return parent::GetPlaylistStreamInfo($plugin_cookies);
+    }
 
-        return false;
+    /**
+     * Update url by provider additional parameters
+     * @param $channel_id
+     * @param $plugin_cookies
+     * @param $ext_params
+     * @return string
+     */
+    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
+    {
+        $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
+        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], $url);
+        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        return static::make_ts($url);
     }
 
     /**

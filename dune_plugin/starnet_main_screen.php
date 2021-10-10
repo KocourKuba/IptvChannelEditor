@@ -25,40 +25,42 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
     {
         $defs = array();
         try {
-            $account_data = null;
+            $account_data = array();
             $result = self::$config->GetAccountInfo($plugin_cookies, $account_data, true);
-            if ($result === false || $account_data == null)
+            if ($result === false || empty($account_data))
                 throw new Exception('Account error');
 
             $title = 'Пакеты: ';
             $need_collect = false;
+            $list = array();
             switch (PLUGIN_TYPE)
             {
                 case 'SharaclubPluginConfig':
-                    ControlFactory::add_label($defs, 'Баланс:', $account_data->data->money . ' руб.');
-                    ControlFactory::add_label($defs, 'Цена подписки:', $result->data->money_need . ' руб.');
-                    $packages = $result->data->abon;
+                    ControlFactory::add_label($defs, 'Баланс:', $account_data['data']['money'] . ' руб.');
+                    ControlFactory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.');
+                    $packages = $account_data['data']['abon'];
                     $str_len = strlen($packages);
                     if ($str_len == 0)
                         ControlFactory::add_label($defs, $title, 'Нет пакетов');
 
-                    if($str_len < 25)
+                    if($str_len < 30)
                         ControlFactory::add_label($defs, $title, $packages);
 
-                    if($str_len >= 25) {
+                    if($str_len >= 30) {
                         $need_collect = true;
                         $list = explode(', ', $packages);
                     }
                     break;
                 case 'ItvPluginConfig':
-                    ControlFactory::add_label($defs, 'Баланс:', $account_data->user_info->cash . ' руб.');
-                    $packages = $account_data->package_info;
+                    ControlFactory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' руб.');
+                    $packages = $account_data['package_info'];
                     if (count($packages) == 0)
                         ControlFactory::add_label($defs, $title, 'Нет пакетов');
                     else {
                         $need_collect = true;
-                        foreach ($packages as $item)
-                            array_push($list, $item);
+                        foreach ($packages as $item) {
+                            $list[] = $item['name'];
+                        }
                     }
                     break;
                 default:
@@ -72,7 +74,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                 foreach($list as $item) {
                     array_push($list_collected, $item);
                     $collected = implode(', ', $list_collected);
-                    if (strlen($collected) < 25) continue;
+                    if (strlen($collected) < 30) continue;
 
                     ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected);
 

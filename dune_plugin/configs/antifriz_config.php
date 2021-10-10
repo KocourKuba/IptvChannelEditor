@@ -22,15 +22,15 @@ class AntifrizPluginConfig extends DefaultConfig
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://antifriz.tv/playlist/%s.m3u8';
-    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?:.+)/.*$|';
 
     // tv
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
-    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://ts://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://ts://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
+    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
+    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
     public static $CHANNELS_LIST = 'antifriz_channel_list.xml';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id date(YYYYMMDD)
+    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id
 
     // vod
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://antifriz.tv/smartup/%s.m3u';
@@ -42,21 +42,27 @@ class AntifrizPluginConfig extends DefaultConfig
 
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        if (empty($plugin_cookies->subdomain_local) || empty($plugin_cookies->ott_key_local)) {
-            hd_print("token or subdomain not defined");
-            return "";
-        }
-
-        $domain = explode(':', $plugin_cookies->subdomain_local);
+        $ext_params = $channel->get_ext_params();
+        $domain = explode(':', $ext_params['subdomain']);
         $format = static::get_format($plugin_cookies);
+        // hd_print("Stream type: " . $format);
+        $url = $channel->get_streaming_url();
         switch ($format) {
             case 'hls':
-                $url = (intval($archive_ts) > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS : $channel->get_streaming_url();
-                $subdomain = (intval($archive_ts) > 0) ? $domain[0] : $plugin_cookies->subdomain_local;
+                if (intval($archive_ts) <= 0) break;
+
+                $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS;
+                $url = str_replace('{SUBDOMAIN}', $domain[0], $url);
+                $url = str_replace('{ID}', $ext_params['id'], $url);
+                $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+                $url = str_replace('{START}', $archive_ts, $url);
                 break;
             case 'mpeg':
-                $subdomain = $domain[0];
                 $url = (intval($archive_ts) > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::$MEDIA_URL_TEMPLATE_MPEG;
+                $url = str_replace('{SUBDOMAIN}', $domain[0], $url);
+                $url = str_replace('{ID}', $ext_params['id'], $url);
+                $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+                $url = str_replace('{START}', $archive_ts, $url);
                 $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
                 $url .= "|||dune_params|||buffering_ms:$buf_time";
                 break;
@@ -65,18 +71,31 @@ class AntifrizPluginConfig extends DefaultConfig
                 return "";
         }
 
-        // hd_print("Stream type: " . $format);
         // hd_print("Stream url:  " . $url);
-        // hd_print("Channel ID:  " . $channel->get_channel_id());
         // hd_print("Domain:      " . $subdomain);
-        // hd_print("Token:       " . $plugin_cookies->ott_key_local);
+        // hd_print("Token:       " . $ext_params['token']);
         // hd_print("Archive TS:  " . $archive_ts);
 
-        $url = str_replace('{ID}', $channel->get_channel_id(), $url);
-        $url = str_replace('{START}', $archive_ts, $url);
-        $url = str_replace('{SUBDOMAIN}', $subdomain, $url);
-        $url = str_replace('{TOKEN}', $plugin_cookies->ott_key_local, $url);
+        return static::make_ts($url);
+    }
 
+    public static function GetPlaylistStreamInfo($plugin_cookies)
+    {
+        return parent::GetPlaylistStreamInfo($plugin_cookies);
+    }
+
+    /**
+     * Update url by provider additional parameters
+     * @param $channel_id
+     * @param $plugin_cookies
+     * @param $ext_params
+     * @return string
+     */
+    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
+    {
+        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], static::$MEDIA_URL_TEMPLATE_HLS);
+        $url = str_replace('{ID}', $ext_params['id'], $url);
+        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
         return static::make_ts($url);
     }
 

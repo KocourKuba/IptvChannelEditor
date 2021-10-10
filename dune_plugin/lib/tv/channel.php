@@ -43,4 +43,7 @@ interface IChannel
 
     // streaming url
     public function get_streaming_url();
+
+    // additional parameters
+    public function get_ext_params();
 }

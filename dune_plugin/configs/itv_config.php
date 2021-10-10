@@ -4,7 +4,6 @@ require_once 'default_config.php';
 class ItvPluginConfig extends DefaultConfig
 {
     const ACCOUNT_INFO_URL1 = 'http://api.itv.live/data/%s';
-    const EXTINF_TV_PATTERN  = '|^#EXTINF:.+CUID="(\d+)".+$|';
 
     // info
     public static $PLUGIN_NAME = 'ITV Live TV';
@@ -22,12 +21,12 @@ class ItvPluginConfig extends DefaultConfig
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'https://itv.ooo/p/%s/hls.m3u8';
-    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
 
     // tv
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{ID}}/video.m3u8?token={TOKEN}';
+    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}';
     public static $CHANNELS_LIST = 'itv_channel_list.xml';
-    protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s';
+    protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s'; // epg_id
 
     public function __construct()
     {
@@ -39,6 +38,39 @@ class ItvPluginConfig extends DefaultConfig
         static::$EPG_PARSER_PARAMS['description'] = 'desc';
     }
 
+    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    {
+        $url = $channel->get_streaming_url();
+        //hd_print("AdjustStreamUrl: $url");
+
+        if (intval($archive_ts) > 0) {
+            $now_ts = strval(time());
+            $url .= "&utc=$archive_ts&lutc=$now_ts";
+            // hd_print("Archive TS:  " . $archive_ts);
+            // hd_print("Now       :  " . $now_ts);
+        }
+
+        $format = static::get_format($plugin_cookies);
+        // hd_print("Stream type: " . $format);
+        if ($format == 'mpeg') {
+            // replace hls to mpegts
+            $url = str_replace('video.m3u8', 'mpegts', $url);
+            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+            $url .= "|||dune_params|||buffering_ms:$buf_time";
+        }
+
+        // hd_print("Stream url:  " . $url);
+
+        return $url;
+    }
+
+    /**
+     * Get information from the provider
+     * @param $plugin_cookies
+     * @param array &$account_data
+     * @param bool $force - ignored
+     * @return bool true if information collected and packages exists
+     */
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
@@ -52,56 +84,28 @@ class ItvPluginConfig extends DefaultConfig
             return false;
         }
 
-        $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"));
-        return isset($account_data->package_info) && !empty($account_data->package_info);
-    }
-
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
-    {
-        $format = static::get_format($plugin_cookies);
-        $url = $channel->get_streaming_url();
-        //hd_print("AdjustStreamUrl: $url");
-        switch ($format) {
-            case 'hls':
-                break;
-            case 'mpeg':
-                // replace hls to mpegts
-                $url = str_replace('/video.m3u8', 'mpegts', $url);
-                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-                $url .= "|||dune_params|||buffering_ms:$buf_time";
-                break;
-            default:
-                hd_print("unknown format: $format");
-                return "";
-        }
-
-        if (intval($archive_ts) > 0) {
-            $url .= '&utc={START}&lutc={NOW}';
-        }
-
-        // hd_print("Stream type: " . $format);
-        // hd_print("Stream url:  " . $url);
-        // hd_print("Channel ID:  " . $id);
-        // hd_print("Archive TS:  " . $archive_ts);
-
-        $url = str_replace('{START}', $archive_ts, $url);
-        $url = str_replace('{START}', $archive_ts, $url);
-        $url = str_replace('{NOW}', strval(time()), $url);
-
-        return static::make_ts($url);
+        $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
+        return isset($account_data['package_info']) && !empty($account_data['package_info']);
     }
 
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
-        $pl_entries = array();
-        $m3u_lines = static::FetchTvM3U($plugin_cookies);
-        foreach ($m3u_lines as $line) {
-            if (preg_match(self::$STREAM_URL_PATTERN, $line, $matches)) {
-                $pl_entries[$matches['id']] = $line;
-            }
-        }
+        return parent::GetPlaylistStreamInfo($plugin_cookies);
+    }
 
-        hd_print("Read Playlist entries: " . count($pl_entries));
-        return $pl_entries;
+    /**
+     * Update url by provider additional parameters
+     * @param $channel_id
+     * @param $plugin_cookies
+     * @param $ext_params
+     * @return string
+     */
+    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
+    {
+        // itv token unique for each channel
+        $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
+        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], $url);
+        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        return static::make_ts($url);
     }
 }

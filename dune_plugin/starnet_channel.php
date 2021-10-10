@@ -14,7 +14,9 @@ class StarnetChannel extends DefaultChannel
                                 $epg_id,
                                 $tvg_id,
                                 $is_protected,
-                                $timeshift_hours)
+                                $timeshift_hours,
+                                $ext_params
+    )
     {
         parent::__construct(
             $id,
@@ -27,6 +29,8 @@ class StarnetChannel extends DefaultChannel
             $epg_id,
             $tvg_id,
             $is_protected,
-            $timeshift_hours);
+            $timeshift_hours,
+            $ext_params
+        );
     }
 }

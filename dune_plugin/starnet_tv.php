@@ -132,10 +132,6 @@ class StarnetPluginTv extends AbstractTv
             }
         }
 
-        $account_data = null;
-        $config::GetAccountInfo($plugin_cookies, $account_data);
-        $pl_entries = $config::GetPlaylistStreamInfo($plugin_cookies);
-
         // Create channels and groups
         $this->channels = new HashedArray();
         $this->groups = new HashedArray();
@@ -166,6 +162,10 @@ class StarnetPluginTv extends AbstractTv
                 strval($xml_tv_category->icon_url)));
         }
 
+        $account_data = array();
+        self::$config->GetAccountInfo($plugin_cookies, $account_data);
+        $pl_entries = self::$config->GetPlaylistStreamInfo($plugin_cookies);
+
         // Read channels
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {
@@ -176,21 +176,18 @@ class StarnetPluginTv extends AbstractTv
             // ignore disabled channel
             if (isset($xml_tv_channel->disabled)) continue;
 
-            // substitute template
-            // calculate unique id from url hash
+            // update play stream url and calculate unique id from url hash
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = strval($xml_tv_channel->channel_id);
-                if (isset($pl_entries[$channel_id]))
-                {
-                    $streaming_url = $pl_entries[$channel_id];
-                    $hash = $channel_id = hash("crc32", $streaming_url);
-                } else {
-                    $streaming_url = $config::$MEDIA_URL_TEMPLATE_HLS;
-                    $hash = hash("crc32", (str_replace('{ID}', $xml_tv_channel->channel_id, $config::$MEDIA_URL_TEMPLATE_HLS)));
-                }
+                $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
+                // update stream url by provider parameters
+                $streaming_url = self::$config->UpdateStreamUri($channel_id, $plugin_cookies, $ext_params);
+                $hash = hash("crc32", $streaming_url);
             } else {
+                // custom url, play as is
                 $streaming_url = strval($xml_tv_channel->streaming_url);
                 $hash = $channel_id = hash("crc32", $streaming_url);
+                $ext_params = array();
             }
            // hd_print("load_channels: $streaming_url");
 
@@ -214,7 +211,9 @@ class StarnetPluginTv extends AbstractTv
                     strval($xml_tv_channel->epg_id),
                     strval($xml_tv_channel->tvg_id),
                     intval($xml_tv_channel->protected),
-                    intval($xml_tv_channel->timeshift_hours));
+                    intval($xml_tv_channel->timeshift_hours),
+                    $ext_params
+                );
 
                 $this->channels->put($channel);
             }
@@ -276,6 +275,7 @@ class StarnetPluginTv extends AbstractTv
             return '';
         }
 
+        // update url if play archive or different type of the stream
         $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $channel);
         hd_print("get_tv_playback_url: $url");
         return $url;

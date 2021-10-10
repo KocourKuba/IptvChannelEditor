@@ -26,7 +26,7 @@ abstract class DefaultConfig
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = '';
     public static $ACCOUNT_PLAYLIST_URL2 = '';
-    public static $STREAM_URL_PATTERN = '';
+    public static $M3U_STREAM_URL_PATTERN = '';
 
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://online.dune-hd.com/demo/index.m3u8?channel=%s';
@@ -146,86 +146,64 @@ abstract class DefaultConfig
         return ++static::$pages[$idx];
     }
 
+    /**
+     * Transform url based on settings or archive playback
+     * @param $plugin_cookies
+     * @param $archive_ts
+     * @param IChannel $channel
+     * @return string
+     */
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        if (!empty($plugin_cookies->subdomain_local) && !empty($plugin_cookies->ott_key_local)) {
-            $subdomain = $plugin_cookies->subdomain_local;
-            $token = $plugin_cookies->ott_key_local;
-        } else if (!empty($plugin_cookies->subdomain) && !empty($plugin_cookies->ott_key)) {
-            $subdomain = $plugin_cookies->subdomain;
-            $token = $plugin_cookies->ott_key;
-        } else {
-            hd_print("token or subdomain not defined");
-            return "";
-        }
-
-        $format = static::get_format($plugin_cookies);
-        switch ($format) {
-            case 'hls':
-                $url = $channel->get_streaming_url();
-                break;
-            case 'mpeg':
-                $url = static::$MEDIA_URL_TEMPLATE_MPEG;
-                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-                $url .= "|||dune_params|||buffering_ms:$buf_time";
-                break;
-            default:
-                hd_print("unknown format: $format");
-                return "";
-        }
-
-        if (intval($archive_ts) > 0) {
-            if (strpos($url, '?') === false)
-                $url .= '?';
-            else
-                $url .= '&';
-
-            $now_ts = time();
-            $url .= "utc=$archive_ts&lutc=$now_ts";
-        }
-
-        // hd_print("Stream type: " . $format);
-        // hd_print("Stream url:  " . $url);
-        // hd_print("Channel ID:  " . $channel->get_channel_id());
-        // hd_print("Domain:      " . $subdomain);
-        // hd_print("Token:       " . $token);
-        // hd_print("Archive TS:  " . $archive_ts);
-
-        $url = str_replace('{SUBDOMAIN}', $subdomain, $url);
-        $url = str_replace('{ID}', $channel->get_channel_id(), $url);
-        $url = str_replace('{TOKEN}', $token, $url);
-
+        $url = str_replace('{ID}', $channel->get_channel_id(), static::$MEDIA_URL_TEMPLATE_HLS);
         return static::make_ts($url);
     }
 
-    public static function GetPlaylistStreamInfo($plugin_cookies)
-    {
-        return array();
-    }
-
+    /**
+     * Get information from the provider m3u8 playlist: subdomain token host etc..
+     * @param $plugin_cookies
+     * @param &$account_data
+     * @param bool $force default false, force downloading playlist even it already cached
+     * @return bool true if information collected
+     */
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_NAME);
 
         $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
-            if (!preg_match(static::$STREAM_URL_PATTERN, $line, $matches)) continue;
-
-            $plugin_cookies->subdomain_local = $matches['subdomain'];
-            // hd_print("domain: $plugin_cookies->subdomain_local");
-
-            $plugin_cookies->ott_key_local = $matches['token'];
-            // hd_print("token: $plugin_cookies->ott_key_local");
-
-            if (isset($matches['host'])) {
-                $plugin_cookies->host = $matches['host'];
-                // hd_print("host: $plugin_cookies->host");
-            }
-
-            return true;
+            if (preg_match(static::$M3U_STREAM_URL_PATTERN, $line, $matches))
+                return true;
         }
 
         return false;
+    }
+
+    public static function GetPlaylistStreamInfo($plugin_cookies)
+    {
+        $pl_entries = array();
+        $m3u_lines = static::FetchTvM3U($plugin_cookies);
+        foreach ($m3u_lines as $line) {
+            if (preg_match(static::$M3U_STREAM_URL_PATTERN, $line, $matches)) {
+                $pl_entries[$matches['id']] = $matches;
+            }
+        }
+
+        hd_print("Read Playlist entries: " . count($pl_entries));
+        return $pl_entries;
+    }
+
+    /**
+     * Update url by provider additional parameters
+     * @param $channel_id
+     * @param $plugin_cookies
+     * @param $ext_params
+     * @return string
+     */
+    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
+    {
+        hd_print("UpdateStreamUri: Undefined function call");
+        return "";
     }
 
     public static function getSearchList($keyword, $plugin_cookies)
@@ -297,6 +275,7 @@ abstract class DefaultConfig
     {
         return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
     }
+
     /**
      * @return array
      */

@@ -5,7 +5,7 @@ class FoxPluginConfig extends DefaultConfig
 {
     const SERIES_VOD_PATTERN = '|^https?://.+/vod/(.+)\.mp4/video\.m3u8\?token=.+$|';
     const EXTINF_VOD_PATTERN = '|^#EXTINF:.+tvg-logo="([^"]+)".+group-title="([^"]+)".*,\s*(.*)$|';
-    const EXTINF_TV_PATTERN  = '|^#EXTINF:.+CUID="(\d+)".+$|';
+    const EXTINF_TV_PATTERN  = '|^#EXTINF:.+CUID="(?<id>\d+)".+$|';
 
     // info
     public static $PLUGIN_NAME = 'Fox TV';
@@ -23,12 +23,12 @@ class FoxPluginConfig extends DefaultConfig
 
     // account
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
-    public static $STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
 
     // tv
+    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{TOKEN}/index.m3u8';
     public static $CHANNELS_LIST = 'fox_channel_list.xml';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id date(YYYYMMDD)
+    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id
 
     // vod
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
@@ -39,36 +39,24 @@ class FoxPluginConfig extends DefaultConfig
 
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $format = static::get_format($plugin_cookies);
+        // entire url replaced in UpdateStreamUri, subdomain not subst
+        $ext_params = $channel->get_ext_params();
         $url = $channel->get_streaming_url();
 
-        switch ($format) {
-            case 'hls':
-                break;
-            case 'mpeg':
-                $url = str_replace('/index.m3u8', '', $url);
-                $url = str_replace('/video.m3u8', '', $url);
-                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-                $url .= "|||dune_params|||buffering_ms:$buf_time";
-                break;
-            default:
-                hd_print("unknown format: $format");
-                return "";
-        }
-
         if (intval($archive_ts) > 0) {
-            $url .= '?utc={START}&lutc={NOW}';
+            $now_ts = strval(time());
+            $url .= "?utc=$archive_ts&lutc=$now_ts";
+            // hd_print("Archive TS:  " . $archive_ts);
         }
 
-        // hd_print("Stream type: " . $format);
+        if (!isset($ext_params['hls'])) {
+            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+            $url .= "|||dune_params|||buffering_ms:$buf_time";
+        }
+
         // hd_print("Stream url:  " . $url);
-        // hd_print("Channel ID:  " . $id);
-        // hd_print("Archive TS:  " . $archive_ts);
 
-        $url = str_replace('{START}', $archive_ts, $url);
-        $url = str_replace('{NOW}', strval(time()), $url);
-
-        return static::make_ts($url);
+        return $url;
     }
 
     public static function GetPlaylistStreamInfo($plugin_cookies)
@@ -77,7 +65,9 @@ class FoxPluginConfig extends DefaultConfig
         $m3u_lines = static::FetchTvM3U($plugin_cookies);
         for ($i = 0; $i < count($m3u_lines); ++$i) {
             if (preg_match(self::EXTINF_TV_PATTERN, $m3u_lines[$i], $m_id)) {
-                $pl_entries[$m_id[1]] = $m3u_lines[$i + 1];
+                if (preg_match(self::$M3U_STREAM_URL_PATTERN, $m3u_lines[$i + 1], $matches)) {
+                    $pl_entries[$m_id['id']] = $matches;
+                }
             }
         }
 
@@ -85,18 +75,17 @@ class FoxPluginConfig extends DefaultConfig
         return $pl_entries;
     }
 
-    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
+    /**
+     * Update url by provider additional parameters
+     * @param $channel_id
+     * @param $plugin_cookies
+     * @param $ext_params
+     * @return string
+     */
+    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
-        hd_print("Collect information from account " . static::$PLUGIN_NAME);
-        $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
-        for ($i = 0; $i < count($m3u_lines); ++$i) {
-            if (preg_match(static::$STREAM_URL_PATTERN, $m3u_lines[$i], $matches)) {
-                $plugin_cookies->format = isset($matches['hls']) ? 'hls' : 'mpeg';
-                return true;
-            }
-        }
-
-        return false;
+        // fox does not have variable parameters, only token. Replace entire url
+        return static::make_ts($ext_params[0]);
     }
 
     /**
