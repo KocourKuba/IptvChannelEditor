@@ -897,8 +897,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	pThread->SetData(cfg);
 	pThread->ResumeThread();
-
-	UpdatePlaylistCount();
 }
 
 LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -1023,6 +1021,8 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndCheckArchive.EnableWindow(TRUE);
 
 	AfxGetApp()->EndWaitCursor();
+
+	CheckForExistingChannels();
 
 	return 0;
 }
@@ -1171,7 +1171,6 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCSTR select /*= nullptr*/)
 		}
 	}
 
-	UpdateChannelsCount();
 	CheckForExistingChannels();
 
 	m_wndChannelsTree.UnlockWindowUpdate();
@@ -1184,23 +1183,6 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCSTR select /*= nullptr*/)
 		params.id = select ? select : m_categoriesMap.begin()->second.category->get_channels().front()->stream_uri->get_id();
 		SelectTreeItem(m_wndChannelsTree, InfoType::enChannel, params);
 	}
-}
-
-void CIPTVChannelEditorDlg::UpdateChannelsCount()
-{
-	m_wndChInfo.SetWindowText(fmt::format(_T("Channels: {:d}"), m_channelsMap.size()).c_str());
-
-	UpdateData(FALSE);
-}
-
-void CIPTVChannelEditorDlg::UpdatePlaylistCount()
-{
-	if (m_playlistIds.size() != m_playlistMap.size())
-		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d} ({:d})"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size()).c_str());
-	else
-		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d}"), m_plFileName.GetString(), m_playlistIds.size()).c_str());
-
-	UpdateData(FALSE);
 }
 
 void CIPTVChannelEditorDlg::RemoveOrphanChannels()
@@ -1239,6 +1221,8 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 	if (root == nullptr)
 		root = m_wndChannelsTree.GetRootItem();
 
+	m_changedChannels.clear();
+
 	while (root != nullptr && !m_playlistMap.empty())
 	{
 		// iterate subitems
@@ -1249,11 +1233,7 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 			if (channel)
 			{
 				COLORREF color = m_normal;
-				if (channel->is_disabled())
-				{
-					color = m_gray;
-				}
-				else if (const auto& found = m_playlistMap.find(channel->stream_uri->get_id()); found != m_playlistMap.end())
+				if (const auto& found = m_playlistMap.find(channel->stream_uri->get_id()); found != m_playlistMap.end())
 				{
 					const auto& entry = found->second;
 					if (channel->get_title() != entry->get_title()
@@ -1261,9 +1241,19 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
 						|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
 						)
+					{
 						color = m_brown;
+						m_changedChannels.emplace(channel);
+					}
 					else
+					{
 						color = m_green;
+					}
+				}
+
+				if (channel->is_disabled())
+				{
+					color = m_gray;
 				}
 
 				m_wndChannelsTree.SetItemColor(hItem, color);
@@ -1274,6 +1264,8 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 
 		root = m_wndChannelsTree.GetNextSiblingItem(root);
 	}
+
+	m_wndChInfo.SetWindowText(fmt::format(_T("Channels: {:d} ({:d} changed)"), m_channelsMap.size(), m_changedChannels.size()).c_str());
 
 	TRACE("End Check channels for existing\n");
 }
@@ -1828,7 +1820,6 @@ void CIPTVChannelEditorDlg::OnAddCategory()
 
 	m_bAutoSync = autoSyncOld;
 
-	UpdateChannelsCount();
 	LoadChannelInfo(m_wndChannelsTree.GetSelectedItem());
 	set_allow_save();
 }
@@ -1934,7 +1925,6 @@ void CIPTVChannelEditorDlg::OnRemoveChannel()
 	RemoveOrphanChannels();
 	CheckForExistingPlaylist();
 	set_allow_save();
-	UpdateChannelsCount();
 }
 
 void CIPTVChannelEditorDlg::OnUpdateRemoveChannel(CCmdUI* pCmdUI)
@@ -2597,7 +2587,6 @@ void CIPTVChannelEditorDlg::OnAddTo(UINT id)
 	{
 		CheckForExistingChannels(hTarget);
 		CheckForExistingPlaylist();
-		UpdateChannelsCount();
 		set_allow_save();
 	}
 
@@ -3210,9 +3199,13 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 		}
 	}
 
-	UpdatePlaylistCount();
 	CheckForExistingChannels();
 	CheckForExistingPlaylist();
+
+	if (m_playlistIds.size() != m_playlistMap.size())
+		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d} ({:d})"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size()).c_str());
+	else
+		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d}"), m_plFileName.GetString(), m_playlistIds.size()).c_str());
 
 	m_bInFillTree = false;
 
@@ -3395,7 +3388,6 @@ void CIPTVChannelEditorDlg::OnRemoveCategory()
 	RemoveOrphanChannels();
 	CheckForExistingPlaylist();
 	set_allow_save();
-	UpdateChannelsCount();
 }
 
 void CIPTVChannelEditorDlg::OnUpdateRemoveCategory(CCmdUI* pCmdUI)
@@ -3735,7 +3727,6 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 		CheckForExistingPlaylist();
 	}
 
-	UpdateChannelsCount();
 	set_allow_save();
 }
 

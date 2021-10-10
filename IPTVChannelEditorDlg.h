@@ -170,8 +170,6 @@ private:
 	void LoadPlayListInfo(HTREEITEM hItem);
 
 	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0) const;
-	void UpdateChannelsCount();
-	void UpdatePlaylistCount();
 
 	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
@@ -339,6 +337,7 @@ private:
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
+	std::set<std::shared_ptr<ChannelInfo>> m_changedChannels;
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
