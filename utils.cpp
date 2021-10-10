@@ -548,20 +548,21 @@ std::wstring entityDecrypt(std::wstring text)
 		{
 			{L"&quot;"  , L"\""},
 			{L"&apos;"  , L"'"},
+			{L"&#39;"   , L"'"},
 			{L"&amp;"   , L"&"},
 			{L"&gt;"    , L">"},
 			{L"&lt;"    , L"<"},
-			{L"&frasl;" , L"/"}
+			{L"&frasl;" , L"/"},
 		});
 
 	std::wstring res;
 	for (size_t i = 0; i < text.size(); ++i)
 	{
 		bool flag = false;
-		for (auto & it : convert)
+		for (const auto& it : convert)
 		{
-			std::wstring key = it.first;
-			std::wstring value = it.second;
+			const auto& key = it.first;
+			const auto& value = it.second;
 			if (   i + key.size() - 1 < text.size()
 				&& text.substr(i, key.size()) == key)
 			{

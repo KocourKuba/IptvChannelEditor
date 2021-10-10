@@ -14,12 +14,11 @@ class EpgManager
      * @param IChannel $channel
      * @param $type
      * @param $day_start_ts
-     * @param $url_format
      * @param $cache_name
      * @return array
      * @throws Exception
      */
-    public static function get_epg($parser_params, IChannel $channel, $type, $day_start_ts, $url_format, $cache_name)
+    public static function get_epg($parser_params, IChannel $channel, $type, $day_start_ts, $cache_name)
     {
         switch ($type)
         {
@@ -33,10 +32,11 @@ class EpgManager
                 $epg_id = '';
         }
 
-        if (empty($epg_id)) {
+        if (empty($epg_id) || !isset($parser_params[$type]) || !isset($parser_params[$type]['epg_template'])) {
             throw new Exception("$type EPG not defined");
         }
 
+        $params = $parser_params[$type];
         $cache_dir =  sprintf(EpgManager::EPG_CACHE_DIR_TEMPLATE, $cache_name);
         $cache_file = sprintf(EpgManager::EPG_CACHE_FILE_TEMPLATE, $cache_name, $channel->get_id(), $day_start_ts);
 
@@ -44,16 +44,16 @@ class EpgManager
             hd_print("Load EPG from cache: $cache_file");
             $epg = unserialize(file_get_contents($cache_file));
         } else {
-            $epg_date = gmdate("Ymd", $day_start_ts); // 'YYYYMMDD'
-            $url = sprintf($url_format, $epg_id, $epg_date);
+            $epg_date = gmdate("Y-m-d", $day_start_ts); // 'YYYYMMDD'
+            $url = sprintf($params['epg_template'], $epg_id, $epg_date);
             hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 
-            switch ($parser_params['type']) {
+            switch ($params['parser']) {
                 case 'json':
-                    $epg = self::get_epg_json($parser_params, $url, $day_start_ts);
+                    $epg = self::get_epg_json($params, $url, $day_start_ts);
                     break;
                 case 'xml':
-                    $epg = self::get_epg_xml($parser_params, $url, $day_start_ts, $epg_id, $cache_dir);
+                    $epg = self::get_epg_xml($params, $url, $day_start_ts, $epg_id, $cache_dir);
                     break;
                 default:
                     $epg = array();
@@ -78,6 +78,7 @@ class EpgManager
 
     /**
      * request server for epg and parse json response
+     * @param $parser_params
      * @param $url
      * @param $day_start_ts
      * @return array
@@ -88,6 +89,8 @@ class EpgManager
         // time in UTC
         $epg_date_start = strtotime('-1 hour', $day_start_ts);
         $epg_date_end = strtotime('+1 day', $day_start_ts);
+        // hd_print("epg start: $epg_date_start");
+        // hd_print("epg end: $epg_date_end");
 
         try {
             $doc = HD::http_get_document($url);
@@ -104,17 +107,28 @@ class EpgManager
         // stripe UTF8 BOM if exists
         $ch_data = json_decode(ltrim($doc, "\0xEF\0xBB\0xBF"), true);
         $epg_root = $parser_params['epg_root'];
-        if (!empty($epg_root) && isset($ch_data[$epg_root]))
-            $data = $ch_data[$epg_root]; // sharvoz, edem, itv
-        else
-            $data = $ch_data; // sharaclub, no json root
+        // hd_print("json epg root: " . $parser_params['epg_root']);
+        // hd_print("json start: " . $parser_params['start']);
+        // hd_print("json end: " . $parser_params['end']);
+        // hd_print("json title: " . $parser_params['title']);
+        // hd_print("json desc: " . $parser_params['description']);
 
+        if (!empty($epg_root) && isset($ch_data[$epg_root])) {
+            // hd_print("use root: $epg_root");
+            $data = $ch_data[$epg_root]; // sharvoz, edem, fox, itv
+        } else {
+            // hd_print("no root");
+            $data = $ch_data; // sharaclub, no json root
+        }
+
+        // hd_print("total entries: " . count($data));
+        // collect all program that starts after day start and before day end
         foreach ($data as $entry) {
-            $start = $entry[$parser_params['start']];
-            $end = $entry[$parser_params['end']];
-            if ($start >= $epg_date_start && $end <= $epg_date_end) {
-                $epg[$start]['title'] = HD::unescape_entity_string($entry[$parser_params['title']]);
-                $epg[$start]['desc'] = HD::unescape_entity_string($entry[$parser_params['description']]);
+            $program_start = $entry[$parser_params['start']];
+            if ($epg_date_start <= $program_start && $program_start <= $epg_date_end) {
+                $epg[$program_start]['end'] = $entry[$parser_params['end']];
+                $epg[$program_start]['title'] = HD::unescape_entity_string($entry[$parser_params['title']]);
+                $epg[$program_start]['desc'] = HD::unescape_entity_string($entry[$parser_params['description']]);
             }
         }
         return $epg;
@@ -122,9 +136,10 @@ class EpgManager
 
     /**
      * request server for XMLTV epg and parse xml or xml.gx response
+     * @param $parser_params
      * @param $url
-     * @param $epg_id
      * @param $day_start_ts
+     * @param $epg_id
      * @param $cache_dir
      * @return array
      */

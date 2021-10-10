@@ -52,7 +52,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                     }
                     break;
                 case 'ItvPluginConfig':
-                    ControlFactory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' руб.');
+                    ControlFactory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' $');
                     $packages = $account_data['package_info'];
                     if (count($packages) == 0)
                         ControlFactory::add_label($defs, $title, 'Нет пакетов');

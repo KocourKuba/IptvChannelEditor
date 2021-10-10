@@ -292,23 +292,21 @@ class StarnetPluginTv extends AbstractTv
         }
 
         $start = 0;
-        $end = 0;
         // get personal time shift for channel
         $time_shift = $channel->get_timeshift_hours() * 3600;
 
-        $epg_date = gmdate(DATE_ATOM, $day_start_ts);
-        // hd_print("start date: $epg_date");
+        // hd_print("get_day_epg_iterator: start date: " . gmdate(DATE_ATOM, $day_start_ts));
         $epg_result = array();
         $epg = self::$config->GetEPG($channel, $day_start_ts);
         foreach ($epg as $time => $value) {
-            $tm =  $time + $time_shift;
-            $end = $tm;
+            $tm = $time + $time_shift;
             if ($start == 0)
                 $start = $tm;
 
-            $epg_result[] = new DefaultEpgItem($value['title'], $value['desc'], intval($tm), -1);
+            // hd_print("get_day_epg_iterator: epg date: " . gmdate(DATE_ATOM, $tm));
+            $epg_result[] = new DefaultEpgItem($value['title'], $value['desc'], intval($tm), $value['end']);
         }
 
-        return new EpgIterator($epg_result, $start, $end);
+        return new EpgIterator($epg_result, $day_start_ts, $day_start_ts + 86400);
     }
 }

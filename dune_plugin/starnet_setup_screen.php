@@ -281,11 +281,11 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $defs, true);
 
                 case 'login_apply': // handle token dialog result
-                    $old_login = $plugin_cookies->login;
-                    $old_password = $plugin_cookies->password;
+                    $old_login = isset($plugin_cookies->login) ? $plugin_cookies->login : '';
+                    $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
                     $plugin_cookies->login = $user_input->login;
                     $plugin_cookies->password = $user_input->password;
-                    $account_data = null;
+                    $account_data = array();
                     if (!self::$config->GetAccountInfo($plugin_cookies, $account_data, true)) {
                         $plugin_cookies->login = $old_login;
                         $plugin_cookies->password = $old_password;
@@ -300,9 +300,9 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $defs, true);
 
                 case 'pin_apply': // handle token dialog result
-                    $old_password = $plugin_cookies->password;
+                    $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
                     $plugin_cookies->password = $user_input->password;
-                    $account_data = null;
+                    $account_data = array();
                     if (!self::$config->GetAccountInfo($plugin_cookies, $account_data, true)) {
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');

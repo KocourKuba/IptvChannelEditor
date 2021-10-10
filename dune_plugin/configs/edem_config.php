@@ -6,8 +6,8 @@ class EdemPluginConfig extends DefaultConfig
     // info
     public static $PLUGIN_NAME = 'iEdem/iLook TV';
     public static $PLUGIN_SHORT_NAME = 'edem';
-    public static $PLUGIN_VERSION = '2.7.1';
-    public static $PLUGIN_DATE = '12.09.2021';
+    public static $PLUGIN_VERSION = '2.7.2';
+    public static $PLUGIN_DATE = '11.10.2021';
 
     // setup variables
     public static $ACCOUNT_TYPE = 'OTT_KEY';
@@ -17,12 +17,6 @@ class EdemPluginConfig extends DefaultConfig
     public static $CHANNELS_LIST = 'edem_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
     protected static $EPG2_URL_TEMPLATE = 'http://epg.ott-play.com/teleguide.info/epg/%s.json'; // epg_id
-
-    public function __construct()
-    {
-        parent::__construct();
-        static::$EPG_PARSER_PARAMS['epg_root'] = 'epg_data';
-    }
 
     /**
      * Transform url based on settings or archive playback

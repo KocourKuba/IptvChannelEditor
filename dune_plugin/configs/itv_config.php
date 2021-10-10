@@ -9,7 +9,7 @@ class ItvPluginConfig extends DefaultConfig
     public static $PLUGIN_NAME = 'ITV Live TV';
     public static $PLUGIN_SHORT_NAME = 'itv';
     public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '12.10.2021';
+    public static $PLUGIN_DATE = '11.10.2021';
 
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = false;
@@ -26,16 +26,16 @@ class ItvPluginConfig extends DefaultConfig
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}';
     public static $CHANNELS_LIST = 'itv_channel_list.xml';
-    protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s'; // epg_id
+    protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s/%s'; // epg_id YYYY-MM-DD
 
     public function __construct()
     {
         parent::__construct();
-        static::$EPG_PARSER_PARAMS['epg_root'] = 'res';
-        static::$EPG_PARSER_PARAMS['start'] = 'startTime';
-        static::$EPG_PARSER_PARAMS['end'] = 'stopTime';
-        static::$EPG_PARSER_PARAMS['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['description'] = 'desc';
+        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'res';
+        static::$EPG_PARSER_PARAMS['first']['start'] = 'startTime';
+        static::$EPG_PARSER_PARAMS['first']['end'] = 'stopTime';
+        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
+        static::$EPG_PARSER_PARAMS['first']['description'] = 'desc';
     }
 
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)

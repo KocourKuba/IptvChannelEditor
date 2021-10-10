@@ -1423,6 +1423,9 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 {
 	m_wndEpg.SetWindowText(L"");
 
+	if (!m_lastTree)
+		return;
+
 	const auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 	if (!info)
 		return;
@@ -4259,14 +4262,13 @@ HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type,
 	HTREEITEM hFirst = ctl.GetSelectedItem();
 	auto& pos = std::find(all_items.begin(), all_items.end(), hFirst);
 	auto& start = (pos != all_items.end()) ? pos : all_items.begin();
-	auto cur = start;
+	auto cur = start + 1;
+	if (cur == all_items.end())
+		cur = all_items.begin();
 
 	bool bFound = false;
 	do
 	{
-		if (cur == all_items.end())
-			cur = all_items.begin();
-
 		BaseInfo* entry = nullptr;
 		switch (type)
 		{
@@ -4312,7 +4314,9 @@ HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type,
 				break;
 			}
 		}
-		++cur;
+
+		if (++cur == all_items.end())
+			cur = all_items.begin();
 	} while (cur != start);
 
 	if (bFound)
