@@ -38,7 +38,7 @@ public:
 		std::shared_ptr<ChannelCategory> category;
 	};
 
-	bool SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, const SearchParams& searchParams);
+	HTREEITEM SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, const SearchParams& searchParams, bool select = true);
 
 	// Implementation
 protected:

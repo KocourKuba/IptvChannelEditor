@@ -1259,7 +1259,7 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 					if (channel->get_title() != entry->get_title()
 						|| channel->get_epg1_id() != entry->get_epg1_id()
 						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
-						|| channel->get_archive_days() == 0 && channel->get_archive_days() != entry->get_archive_days()
+						|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
 						)
 						color = m_brown;
 					else
@@ -1438,13 +1438,13 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 
 		if (pair == m_epgMap.end())
 		{
-			const auto& url = first ? info->stream_uri->get_epg1_uri_json(info->get_epg1_id()) : info->stream_uri->get_epg2_uri_json(info->get_epg2_id());
+			const auto& url = first ? info->stream_uri->get_epg1_uri_json(epg_id) : info->stream_uri->get_epg2_uri_json(epg_id);
 			std::vector<BYTE> data;
 			if (!utils::DownloadFile(url, data))
 				return;
 
 			epg_data = nlohmann::json::parse(data);
-			m_epgMap.emplace(epg_id, epg_data);
+			m_epgMap[epg_id] = epg_data;
 		}
 		else
 		{
@@ -1491,6 +1491,7 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 			str.Format(LR"({\b{%s}}{\par}%s)",
 					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(name)).c_str(),
 					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(desc)).c_str());
+			break;
 		}
 	}
 	catch (const nlohmann::json::parse_error&)
@@ -2630,6 +2631,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckArchive()
 		}
 	}
 
+	CheckForExistingChannels(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
 	set_allow_save();
 }
 
@@ -2708,15 +2710,17 @@ void CIPTVChannelEditorDlg::OnEnChangeEditArchiveDays()
 {
 	UpdateData(TRUE);
 
-	if (m_wndChannelsTree.GetSelectedCount() == 1)
+	for (const auto& hSelectedItem : m_wndChannelsTree.GetSelectedItems())
 	{
-		const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
+		const auto& channel = FindChannel(hSelectedItem);
 		if (channel && m_isArchive)
 		{
 			channel->set_archive_days(m_archiveDays);
 			set_allow_save();
 		}
 	}
+
+	CheckForExistingChannels(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
 }
 
 void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
@@ -3698,9 +3702,26 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 	CWaitCursor cur;
 
 	bool needCheckExisting = false;
-	for (const auto& hSelectedItem : m_wndPlaylistTree.GetSelectedItems())
+	if (m_lastTree == &m_wndPlaylistTree)
 	{
-		needCheckExisting |= AddChannel(hSelectedItem);
+		for (const auto& hSelectedItem : m_wndPlaylistTree.GetSelectedItems())
+		{
+			needCheckExisting |= AddChannel(hSelectedItem);
+		}
+	}
+	else
+	{
+		for (const auto& hSelectedItem : m_wndChannelsTree.GetSelectedItems())
+		{
+			auto info = GetBaseInfo(&m_wndChannelsTree, hSelectedItem);
+			if (!info) continue;
+
+			SearchParams params;
+			params.id = info->stream_uri->get_id();
+			HTREEITEM hPlItem = SelectTreeItem(m_wndPlaylistTree, InfoType::enPlEntry, params, false);
+			needCheckExisting |= AddChannel(hPlItem);
+		}
+		LoadChannelInfo(m_wndChannelsTree.GetSelectedItem());
 	}
 
 	OnSyncTreeItem();
@@ -4220,7 +4241,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 	SaveRegPlugin(REG_CHANNELS_TYPE, idx);
 }
 
-bool CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, const SearchParams& searchParams)
+HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, const SearchParams& searchParams, bool select /*= true*/)
 {
 	std::vector<HTREEITEM> all_items;
 	for (auto hItem = ctl.GetChildItem(nullptr); hItem != nullptr; hItem = ctl.GetNextSiblingItem(hItem))
@@ -4232,16 +4253,16 @@ bool CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, cons
 	}
 
 	if (all_items.empty())
-		return false;
+		return nullptr;
 
+	HTREEITEM hFound = nullptr;
 	HTREEITEM hFirst = ctl.GetSelectedItem();
 	auto& pos = std::find(all_items.begin(), all_items.end(), hFirst);
 	auto& start = (pos != all_items.end()) ? pos : all_items.begin();
 	auto cur = start;
-	++cur;
 
 	bool bFound = false;
-	for (;cur != start; ++cur)
+	do
 	{
 		if (cur == all_items.end())
 			cur = all_items.begin();
@@ -4291,17 +4312,21 @@ bool CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, cons
 				break;
 			}
 		}
-	}
+		++cur;
+	} while (cur != start);
 
 	if (bFound)
 	{
-		HTREEITEM hFound = *cur;
-		ctl.SelectItem(hFound);
-		ctl.Expand(ctl.GetParentItem(hFound), TVE_EXPAND);
-		ctl.EnsureVisible(hFound);
+		hFound = *cur;
+		if (select)
+		{
+			ctl.SelectItem(hFound);
+			ctl.Expand(ctl.GetParentItem(hFound), TVE_EXPAND);
+			ctl.EnsureVisible(hFound);
+		}
 	}
 
-	return bFound;
+	return hFound;
 }
 
 bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /*= -1*/)
