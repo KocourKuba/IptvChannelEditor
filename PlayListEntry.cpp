@@ -79,11 +79,11 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::str
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}
-	else if (const auto& pair = tags.find(m3u_entry::tag_catchup_days); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::tag_catchup_days); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}
-	else if (const auto& pair = tags.find(m3u_entry::tag_timeshift); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::tag_timeshift); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}

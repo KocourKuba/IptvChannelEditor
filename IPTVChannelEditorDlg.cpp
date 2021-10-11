@@ -1249,10 +1249,9 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 				{
 					const auto& entry = found->second;
 					if (channel->get_title() != entry->get_title()
-						|| !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id()
-						|| !entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id()
-						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
 						|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
+						|| !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id()
+						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
 						)
 					{
 						color = m_brown;
@@ -1298,9 +1297,9 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 					color = m_normal;
 					const auto& channel = pair->second;
 					if (channel->get_title() != entry->get_title()
-						|| channel->get_epg1_id() != entry->get_epg1_id()
+						|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
+						|| !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id()
 						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
-						|| channel->get_archive_days() == 0 && channel->get_archive_days() != entry->get_archive_days()
 					 )
 					{
 						color = m_brown;
