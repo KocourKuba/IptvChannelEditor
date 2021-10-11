@@ -414,8 +414,11 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	// Setup tooltips
 	m_wndChannelsTree.GetToolTips()->SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndChannelsTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 500);
+	m_wndChannelsTree.GetToolTips()->SetMaxTipWidth(100);
+
 	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 500);
+	m_wndPlaylistTree.GetToolTips()->SetMaxTipWidth(100);
 
 	SetUpToolTips();
 
@@ -469,44 +472,47 @@ void CIPTVChannelEditorDlg::SetUpToolTips()
 
 	m_wndToolTipCtrl.SetMaxTipWidth(500);
 
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Select Plugin for edit"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Choose channel list to edit"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Choose a playlist to import."));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Add custom playlist"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Search in channels. Use \\ prefix to find by ID"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Search next"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_URL_ID), _T("Channel ID"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG), _T("View channel EPG in browser"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("EPG ID1"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("EPG ID2"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Use custom stream URL for the channel"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Channel archive is supported"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_DAYS), _T("How many days archive is supported"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Channel contents for adults"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Store icon to the local folder instead of downloading it from internet"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Save channels list"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Make a plugin to install on player"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SETTINGS), _T("Editor settings"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Set channel icon from original playlist"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHOOSE_PLAYLIST), _T("Choose playlist or download it from account"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST), _T("Save downloaded playlist to disk"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_PL_SEARCH), _T("Search in the playlist. Use \\ prefix to find by ID"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Search next"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Filter the playlist"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Click to change the icon"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_DAYS), _T("Days in the past to test archive play"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_DAYS), _T("Days in the past to test archive play"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_HOURS), _T("Hours added to day in the past to test archive play"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_HOURS), _T("Hours added to day in the past to test archive play"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_TIME_SHIFT), _T("EPG Time shift for channel, hours"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_VIDEO), _T("Video stream info"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Stream type used to test play stream"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Source type for loaded icon. Local file or internet link"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_STOP), _T("Stop process"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_CHANGED), _T("Update channels changed in the playlist"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDCANCEL), _T("Exit from program"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_MFCLINK_DONATE), _T("Поддержите разработчика"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ABOUT), _T("О программе"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Выбор плагина"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Выбор списока каналов для редактирования"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Выбор плейлиста для импорта"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Добавить новый список каналов"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Поиск в каналах. Префикс \\ для поиска по номеру канала"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Искать далее"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_URL_ID), _T("Номер канала"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG), _T("Просмотр EPG для канала в браузере"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("Номер основного EPG"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("Номер вторичного EPG"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Произвольный URL для канала"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Канал поддерживает архив"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_DAYS), _T("Количество дней архива"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Канал для взрослых"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Сохранить иконку на диск. Иначе плагин будет скачивать её из интернета"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Сохранить список каналов"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Создать плагин для плейера"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SETTINGS), _T("Настройки редактора"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Установить иконку из плейлиста"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHOOSE_PLAYLIST), _T("Выбрать плейлист или скачать его из интернета"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST), _T("Сохранить скачанный плейлист на диск"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_PL_SEARCH), _T("Поиск в плейлисте. Префикс \\ для поиска по номеру канала"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Искать далее"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Фильтр плейлиста"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Кликните для выбора иконки"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_DAYS), _T("Дней назад для проверки архива"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_DAYS), _T("Дней назад для проверки архива"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_HOURS), _T("Часов назад для проверки архива"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_HOURS), _T("Часов назад для проверки архива"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TIME_SHIFT), _T("Сдвиг в часах для показа EPG канала"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_TIME_SHIFT), _T("Сдвиг в часах для показа EPG канала"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_VIDEO), _T("Информация о видео потоке канала"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Информация о аудио потоке канала"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Тип потока для проверки"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Источник для выбора иконки. Файл на диске или ссылка в интернете"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHECK_ARCHIVE), _T("Проверить архив"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_STOP), _T("Остановить процесс"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_CHANGED), _T("Обновить все каналы отличающиеся от данных в плейлисте"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDCANCEL), _T("Выйти из программы"));
 
 	m_wndToolTipCtrl.Activate(TRUE);
 }
@@ -4248,7 +4254,6 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 	FillTreeChannels();
 	CheckForExistingPlaylist();
 
-	GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST)->EnableWindow(idx > 0);
 	SaveRegPlugin(REG_CHANNELS_TYPE, idx);
 }
 
@@ -4612,19 +4617,19 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 			}
 		}
 
-		m_toolTipText.Format(_T("Name: %s\nID: %s\nEPG1 ID: %s\n"),
+		m_toolTipText.Format(_T("Название:\t%s\nНомер:\t\t%s\nНомер EPG1:\t%s\n"),
 							 entry->get_title().c_str(),
-							 entry->stream_uri->is_template() ? ch_id.c_str() : L"Custom",
+							 entry->stream_uri->is_template() ? ch_id.c_str() : L"Произвольный",
 							 entry->get_epg1_id().c_str());
 
 		if (!entry->get_epg2_id().empty())
 		{
-			m_toolTipText.AppendFormat(_T("EPG2 ID: %hs\n"), entry->get_epg2_id().c_str());
+			m_toolTipText.AppendFormat(_T("Номер EPG2:\t%s\n"), entry->get_epg2_id().c_str());
 		}
 
-		m_toolTipText.AppendFormat(_T("Archive: %s\nAdult: %s\nIn categories: %s"),
-								   entry->is_archive() ? _T("Yes") : _T("No"),
-								   entry->get_adult() ? _T("Yes") : _T("No"),
+		m_toolTipText.AppendFormat(_T("Архив:\t\t%d дней\nДля взрослых:\t%s\nВ категориях:\t%s"),
+								   entry->get_archive_days(),
+								   entry->get_adult() ? _T("Да") : _T("Нет"),
 								   categories.GetString());
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
@@ -4640,12 +4645,12 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	const auto& entry = FindEntry(pGetInfoTip->hItem);
 	if (entry)
 	{
-		m_toolTipText.Format(_T("Name: %s\nID: %s\nEPG: %s\nArchive: %s\nAdult: %s"),
+		m_toolTipText.Format(_T("Название:\t%s\nНомер:\t\t%s\nНомер EPG:\t%s\nАрхив:\t\t%d дней\nДля взрослых: %s"),
 							 entry->get_title().c_str(),
-							 entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : L"Custom",
+							 entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : L"Произвольный",
 							 entry->get_epg1_id().c_str(),
-							 entry->is_archive() ? _T("Yes") : _T("No"),
-							 entry->get_adult() ? _T("Yes") : _T("No"));
+							 entry->get_archive_days(),
+							 entry->get_adult() ? _T("Да") : _T("Нет"));
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
 	}

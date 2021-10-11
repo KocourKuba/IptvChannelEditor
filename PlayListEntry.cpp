@@ -116,8 +116,9 @@ void PlaylistEntry::check_adult(const std::wstring& category)
 {
 	std::wstring lowcase(category);
 	utils::wstring_tolower(lowcase);
-	if (lowcase.find(L"зрослые") != std::wstring::npos
+	if (lowcase.find(L"зрослы") != std::wstring::npos
 		|| lowcase.find(L"adult") != std::wstring::npos
+		|| lowcase.find(L"18+") != std::wstring::npos
 		|| lowcase.find(L"xxx") != std::wstring::npos)
 	{
 		// Channel for adult
