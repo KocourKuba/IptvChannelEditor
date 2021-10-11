@@ -49,6 +49,7 @@ constexpr auto REG_FFPROBE = _T("FFProbe");
 constexpr auto REG_DAYS_BACK = _T("DaysBack");
 constexpr auto REG_HOURS_BACK = _T("HoursBack");
 constexpr auto REG_AUTOSYNC = _T("AutoSyncChannel");
+constexpr auto REG_MAX_THREADS = _T("MaxStreamThreads");
 constexpr auto REG_PLUGIN = _T("PluginType");
 constexpr auto REG_ICON_SOURCE = _T("IconSource");
 
@@ -314,6 +315,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT, m_timeShiftHours);
 	DDX_Control(pDX, IDC_EDIT_TIME_SHIFT, m_wndTimeShift);
+	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
 	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK_DAYS, m_archiveCheckDays);
 	DDX_Control(pDX, IDC_EDIT_ARCHIVE_CHECK_DAYS, m_wndArchiveCheckDays);
 	DDX_Text(pDX, IDC_EDIT_ARCHIVE_CHECK_HOURS, m_archiveCheckHours);
@@ -350,7 +352,6 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_UPDATE_ICON, m_wndUpdateIcon);
 	DDX_Control(pDX, IDC_BUTTON_SAVE, m_wndSave);
 	DDX_Control(pDX, IDC_BUTTON_STOP, m_wndStop);
-	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
 	DDX_Control(pDX, IDC_STATIC_PROGRESS_INFO, m_wndProgressInfo);
 	DDX_Control(pDX, IDC_COMBO_ICON_SOURCE, m_wndIconSource);
 	DDX_Control(pDX, IDC_RICHEDIT_EPG, m_wndEpg);
@@ -424,6 +425,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_archiveCheckDays = ReadRegInt(REG_DAYS_BACK);
 	m_archiveCheckHours = ReadRegInt(REG_HOURS_BACK);
 	m_bAutoSync = ReadRegInt(REG_AUTOSYNC);
+	m_MaxThreads = ReadRegInt(REG_MAX_THREADS, 4);
 
 	UpdateData(FALSE);
 
@@ -447,14 +449,11 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndCheckArchive.EnableWindow(FALSE);
 	m_wndTimeShift.EnableWindow(FALSE);
 	m_wndSpinTimeShift.EnableWindow(FALSE);
-	m_wndInfoVideo.EnableWindow(FALSE);
-	m_wndInfoAudio.EnableWindow(FALSE);
 	m_wndEpg1.SetCheck(TRUE);
 	m_wndEpg1.EnableWindow(FALSE);
 	m_wndEpg2.EnableWindow(FALSE);
 	m_wndEpgID1.EnableWindow(FALSE);
 	m_wndEpgID2.EnableWindow(FALSE);
-	m_wndEpg.EnableWindow(FALSE);
 	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
 
@@ -2241,14 +2240,11 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndCheckArchive.EnableWindow(single && !m_probe.IsEmpty() && !m_loading);
 	m_wndTimeShift.EnableWindow(state);
 	m_wndSpinTimeShift.EnableWindow(state);
-	m_wndInfoVideo.EnableWindow(single);
-	m_wndInfoAudio.EnableWindow(single);
 	m_wndSearch.EnableWindow(TRUE);
 	m_wndEpg1.EnableWindow(single);
 	m_wndEpg2.EnableWindow(single && HasEPG2());
 	m_wndEpgID1.EnableWindow(single);
 	m_wndEpgID2.EnableWindow(single && HasEPG2());
-	m_wndEpg.EnableWindow(single);
 
 	if (state == 2)
 	{
@@ -3766,16 +3762,19 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	dlg.m_player = m_player;
 	dlg.m_probe = m_probe;
 	dlg.m_bAutoSync = m_bAutoSync;
+	dlg.m_MaxThreads = m_MaxThreads;
 
 	if (dlg.DoModal() == IDOK)
 	{
 		m_player = dlg.m_player;
 		m_probe = dlg.m_probe;
 		m_bAutoSync = dlg.m_bAutoSync;
+		m_MaxThreads = dlg.m_MaxThreads;
 
 		SaveReg(REG_PLAYER, m_player);
 		SaveReg(REG_FFPROBE, m_probe);
 		SaveReg(REG_AUTOSYNC, m_bAutoSync);
+		SaveReg(REG_MAX_THREADS, m_MaxThreads);
 	}
 }
 
@@ -4030,6 +4029,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_container = container.release();
 	cfg.m_hStop = m_evtStop;
 	cfg.m_probe = m_probe;
+	cfg.m_max_threads = m_MaxThreads;
 	cfg.m_params.token = m_token;
 	cfg.m_params.domain = m_domain;
 	cfg.m_params.login = m_login;

@@ -42,7 +42,7 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 	if (m_config.m_container)
 	{
-		const auto max_threads = 4;
+		const auto max_threads = m_config.m_max_threads;
 
 		m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, 0, m_config.m_container->size());
 
@@ -51,9 +51,9 @@ BOOL CGetStreamInfoThread::InitInstance()
 		{
 			if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0) break;
 
-			std::array<std::thread, max_threads> workers;
-			std::array<std::string, max_threads> audio;
-			std::array<std::string, max_threads> video;
+			std::vector<std::thread> workers(max_threads);
+			std::vector<std::string> audio(max_threads);
+			std::vector<std::string> video(max_threads);
 			auto pool = it;
 			int j = 0;
 			while (j < max_threads && pool != m_config.m_container->end())

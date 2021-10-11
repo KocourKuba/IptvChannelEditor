@@ -27,9 +27,14 @@ public:
 	CString m_player;
 	CString m_probe;
 	BOOL m_bAutoSync;
+	int m_MaxThreads;
 
 protected:
 	CMFCEditBrowseCtrl m_wndProbe;
 	CMFCEditBrowseCtrl m_wndPlayer;
-
+	CEdit m_wndMaxThreads;
+	CSpinButtonCtrl m_wndSpinMaxThreads;
+public:
+	afx_msg void OnEnChangeEditStreamThreads();
+	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
 };

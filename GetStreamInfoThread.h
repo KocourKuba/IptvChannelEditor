@@ -15,6 +15,7 @@ public:
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
 		CString m_probe;
+		int m_max_threads;
 		TemplateParams m_params;
 		StreamSubType m_StreamSubtype = StreamSubType::enHLS;
 	};

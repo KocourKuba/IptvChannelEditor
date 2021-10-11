@@ -329,6 +329,7 @@ private:
 	CString m_player;
 	BOOL m_bAutoSync = FALSE;
 	BOOL m_allow_save = FALSE;
+	int m_MaxThreads = 4;
 	bool m_menu_enable_channel = false;
 	bool m_loading = false;
 	bool m_inSync = false;
