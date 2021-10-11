@@ -198,28 +198,6 @@ std::vector<std::string> regex_split(const std::string& str, const std::string& 
 	return elems;
 }
 
-size_t string_replace_inplace(std::string& source, const std::string& search, const std::string& replace, size_t pos /*= 0*/)
-{
-	size_t replaced = 0;
-	if (!search.empty() && pos < source.size())
-	{
-		for (; (pos = source.find(search, pos)) != std::string::npos; pos += replace.size())
-		{
-			source.replace(pos, search.size(), replace);
-			replaced++;
-		}
-	}
-
-	return replaced;
-}
-
-std::string string_replace(const std::string& source, const std::string& search, const std::string& replace, size_t pos /*= 0*/)
-{
-	std::string replaced(source);
-	string_replace_inplace(replaced, search, replace, pos);
-	return replaced;
-}
-
 int char_to_int(const std::string& str)
 {
 	int value = 0;
@@ -371,7 +349,7 @@ std::wstring get_value_wstring(rapidxml::xml_node<>* node)
 	return std::wstring();
 }
 
-bool CrackUrl(const std::string& url, std::string& host /*= std::string()*/, std::string& path /*= std::string()*/)
+bool CrackUrl(const std::wstring& url, std::wstring& host /*= std::wstring()*/, std::wstring& path /*= std::wstring()*/)
 {
 	URL_COMPONENTS urlComp;
 	SecureZeroMemory(&urlComp, sizeof(urlComp));
@@ -381,21 +359,20 @@ bool CrackUrl(const std::string& url, std::string& host /*= std::string()*/, std
 	urlComp.dwHostNameLength = (DWORD)-1;
 	urlComp.dwUrlPathLength = (DWORD)-1;
 
-	std::wstring urlW = utils::utf8_to_utf16(url);
-	if (::WinHttpCrackUrl(urlW.c_str(), (DWORD)urlW.size(), 0, &urlComp))
+	if (::WinHttpCrackUrl(url.c_str(), (DWORD)url.size(), 0, &urlComp))
 	{
-		host = utils::utf16_to_utf8(std::wstring(urlComp.lpszHostName, urlComp.dwHostNameLength));
-		path = utils::utf16_to_utf8(std::wstring(urlComp.lpszUrlPath, urlComp.dwUrlPathLength));
+		host = std::wstring(urlComp.lpszHostName, urlComp.dwHostNameLength);
+		path = std::wstring(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
 		return true;
 	}
 
 	return false;
 }
 
-bool DownloadFile(const std::string& url, std::vector<BYTE>& data)
+bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image)
 {
-	std::string host;
-	std::string path;
+	std::wstring host;
+	std::wstring path;
 	if (!CrackUrl(url, host, path))
 		return false;
 
@@ -410,13 +387,13 @@ bool DownloadFile(const std::string& url, std::vector<BYTE>& data)
 	// Specify an HTTP server.
 	HINTERNET hConnect = nullptr;
 	if (hSession)
-		hConnect = WinHttpConnect(hSession, utils::utf8_to_utf16(host).c_str(), INTERNET_DEFAULT_HTTP_PORT, 0);
+		hConnect = WinHttpConnect(hSession, host.c_str(), INTERNET_DEFAULT_HTTP_PORT, 0);
 
 
 	// Create an HTTP request handle.
 	HINTERNET hRequest = nullptr;
 	if (hConnect)
-		hRequest = WinHttpOpenRequest(hConnect, L"GET", utils::utf8_to_utf16(path).c_str(),
+		hRequest = WinHttpOpenRequest(hConnect, L"GET", path.c_str(),
 									  nullptr,
 									  WINHTTP_NO_REFERER,
 									  nullptr,
@@ -454,7 +431,7 @@ bool DownloadFile(const std::string& url, std::vector<BYTE>& data)
 		if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
 		{
 			chunk.resize(dwSize);
-			data.insert(data.end(), chunk.begin(), chunk.end());
+			image.insert(image.end(), chunk.begin(), chunk.end());
 		}
 		else
 		{
@@ -468,15 +445,10 @@ bool DownloadFile(const std::string& url, std::vector<BYTE>& data)
 	if (hConnect) WinHttpCloseHandle(hConnect);
 	if (hSession) WinHttpCloseHandle(hSession);
 
-	return !data.empty();
+	return !image.empty();
 }
 
 BOOL LoadImage(const std::wstring& fullPath, CImage& image)
-{
-	return LoadImage(utils::utf16_to_utf8(fullPath), image);
-}
-
-BOOL LoadImage(const std::string& fullPath, CImage& image)
 {
 	HRESULT hr = E_FAIL;
 	if (utils::CrackUrl(fullPath))
@@ -491,7 +463,7 @@ BOOL LoadImage(const std::string& fullPath, CImage& image)
 	}
 	else
 	{
-		hr = image.Load(utils::utf8_to_utf16(fullPath).c_str());
+		hr = image.Load(fullPath.c_str());
 	}
 
 	return SUCCEEDED(hr);

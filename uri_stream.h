@@ -19,11 +19,11 @@ enum class StreamType
 
 typedef struct
 {
-	std::string domain;
-	std::string token;
-	std::string login;
-	std::string password;
-	std::string host;
+	std::wstring domain;
+	std::wstring token;
+	std::wstring login;
+	std::wstring password;
+	std::wstring host;
 	int shift_back;
 }TemplateParams;
 
@@ -32,6 +32,13 @@ typedef struct
 /// </summary>
 class uri_stream : public uri_base
 {
+protected:
+	static constexpr auto REPL_SUBDOMAIN = L"{SUBDOMAIN}";
+	static constexpr auto REPL_ID = L"{ID}";
+	static constexpr auto REPL_TOKEN = L"{TOKEN}";
+	static constexpr auto REPL_START = L"{START}";
+	static constexpr auto REPL_NOW = L"{NOW}";
+
 public:
 	uri_stream() = default;
 	uri_stream(const uri_stream& src)
@@ -39,6 +46,9 @@ public:
 		*this = src;
 	}
 
+	/// <summary>
+	/// clear uri
+	/// </summary>
 	void clear() override
 	{
 		uri_base::clear();
@@ -49,7 +59,8 @@ public:
 	/// <summary>
 	/// parse uri to get id
 	/// </summary>
-	virtual void parse_uri(const std::string& url)
+	/// <param name="url"></param>
+	virtual void parse_uri(const std::wstring& url)
 	{
 		// http://rtmp.api.rt.com/hls/rtdru.m3u8
 		clear();
@@ -60,13 +71,13 @@ public:
 	/// getter channel id
 	/// </summary>
 	/// <returns>string</returns>
-	const std::string& get_id() const { return templated ? id : str_hash; }
+	const std::wstring& get_id() const { return templated ? id : str_hash; }
 
 	/// <summary>
 	/// setter channel id
 	/// </summary>
 	/// <param name="val"></param>
-	void set_id(const std::string& val) { id = val; }
+	void set_id(const std::wstring& val) { id = val; }
 
 	/// <summary>
 	/// getter channel hash
@@ -78,7 +89,7 @@ public:
 		{
 			const auto& uri = is_template() ? id : get_uri();
 			hash = crc32_bitwise(uri.c_str(), uri.size());
-			str_hash = utils::int_to_char(hash);
+			str_hash = utils::int_to_wchar(hash);
 		}
 
 		return hash;
@@ -98,103 +109,105 @@ public:
 	/// getter domain
 	/// </summary>
 	/// <returns>string</returns>
-	const std::string& get_domain() const { return domain; };
+	const std::wstring& get_domain() const { return domain; };
 
 	/// <summary>
 	/// setter domain
 	/// </summary>
-	void set_domain(const std::string& val) { domain = val; };
+	void set_domain(const std::wstring& val) { domain = val; };
 
 	/// <summary>
 	/// getter login
 	/// </summary>
 	/// <returns>string</returns>
-	const std::string& get_login() const { return login; };
+	const std::wstring& get_login() const { return login; };
 
 	/// <summary>
 	/// setter login
 	/// </summary>
-	void set_login(const std::string& val) { login = val; };
+	void set_login(const std::wstring& val) { login = val; };
 
 	/// <summary>
 	/// setter password
 	/// </summary>
-	void set_password(const std::string& val) { password = val; };
+	void set_password(const std::wstring& val) { password = val; };
 
 	/// <summary>
 	/// getter password
 	/// </summary>
 	/// <returns>string</returns>
-	const std::string& get_password() const { return password; };
+	const std::wstring& get_password() const { return password; };
 
 	/// <summary>
 	/// setter int_id
 	/// </summary>
-	void set_int_id(const std::string& val) { int_id = val; };
+	void set_int_id(const std::wstring& val) { int_id = val; };
 
 	/// <summary>
 	/// getter int_id
 	/// </summary>
 	/// <returns>string</returns>
-	const std::string& get_int_id() const { return int_id; };
+	const std::wstring& get_int_id() const { return int_id; };
 
 	/// <summary>
 	/// setter host
 	/// </summary>
-	void set_host(const std::string& val) { host = val; };
+	void set_host(const std::wstring& val) { host = val; };
 
 	/// <summary>
 	/// getter host
 	/// </summary>
 	/// <returns>string</returns>
-	const std::string& get_host() const { return host; };
+	const std::wstring& get_host() const { return host; };
 
 	/// <summary>
 	/// getter token
 	/// </summary>
 	/// <returns>string</returns>
-	const std::string& get_token() const { return token; };
+	const std::wstring& get_token() const { return token; };
 
 	/// <summary>
 	/// setter token
 	/// </summary>
-	void set_token(const std::string& val) { token = val; };
+	void set_token(const std::wstring& val) { token = val; };
 
 	/// <summary>
 	/// get templated url
 	/// </summary>
-	/// <returns>string</returns>
-	virtual std::string get_templated(StreamSubType /*subType*/, const TemplateParams& /*params*/) const { return ""; };
+	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
+	/// <param name="params">parameters for generating url</param>
+	/// <returns>string url</returns>
+	virtual std::wstring get_templated(StreamSubType subType, const TemplateParams& params) const { return L""; };
 
 	/// <summary>
-	/// get epg url
+	/// get epg1 url for view
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg1_uri(const std::string& id) const { return ""; };
+	virtual std::wstring get_epg1_uri(const std::wstring& id) const { return L""; };
 
 	/// <summary>
-	/// get epg url
+	/// get epg2 url for view
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg2_uri(const std::string& id) const { return ""; };
+	virtual std::wstring get_epg2_uri(const std::wstring& id) const { return L""; };
 
 	/// <summary>
-	/// get epg json
+	/// get epg1 json url
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg1_uri_json(const std::string& id) const { return ""; };
+	virtual std::wstring get_epg1_uri_json(const std::wstring& id) const { return L""; };
 
 	/// <summary>
-	/// get epg json
+	/// get epg2 json url
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg2_uri_json(const std::string& id) const { return ""; };
+	virtual std::wstring get_epg2_uri_json(const std::wstring& id) const { return L""; };
 
 	/// <summary>
 	/// get cabinet access url
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_access_url(const std::string& login, const std::string& password) const { return ""; }
+	virtual std::wstring get_access_url(const std::wstring& login, const std::wstring& password) const { return L""; }
 
 	/// <summary>
 	/// json root for epg iteration
@@ -235,7 +248,9 @@ public:
 	/// <summary>
 	/// get url template to obtain account playlist
 	/// </summary>
-	virtual std::string get_playlist_template(bool first = true) const { return ""; };
+	/// <param name="first">number of playlist url</param>
+	/// <returns></returns>
+	virtual std::wstring get_playlist_template(bool first = true) const { return L""; };
 
 	/// <summary>
 	/// copy info
@@ -280,14 +295,24 @@ public:
 	}
 
 protected:
-	std::string id;
-	std::string domain;
-	std::string login;
-	std::string password;
-	std::string token;
-	std::string int_id;
-	std::string host;
-	std::string uri_template;
-	mutable std::string str_hash;
+	void ReplaceVars(std::wstring& url, const TemplateParams& params) const
+	{
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.domain);
+		utils::string_replace_inplace<wchar_t>(url, REPL_ID, get_id());
+		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, get_token());
+		utils::string_replace_inplace<wchar_t>(url, REPL_START, utils::int_to_wchar(params.shift_back));
+		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, utils::int_to_wchar(_time32(nullptr)));
+	}
+
+protected:
+	std::wstring id;
+	std::wstring domain;
+	std::wstring login;
+	std::wstring password;
+	std::wstring token;
+	std::wstring int_id;
+	std::wstring host;
+	std::wstring uri_template;
+	mutable std::wstring str_hash;
 	mutable int hash = 0;
 };

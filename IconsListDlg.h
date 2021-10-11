@@ -8,7 +8,7 @@ class CIconsListDlg : public CDialogEx
 
 public:
 	CIconsListDlg(std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>>& icons,
-				  const std::string& iconSource,
+				  const std::wstring& iconSource,
 				  CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CIconsListDlg();
 
@@ -46,7 +46,7 @@ public:
 	CString m_search; // m_wndSearch
 
 protected:
-	std::string m_iconSource;
+	std::wstring m_iconSource;
 	std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>>& m_Icons;
 
 	CProgressCtrl m_wndProgress;

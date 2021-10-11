@@ -1,20 +1,20 @@
 #include "StdAfx.h"
 #include "uri_edem.h"
 
-static constexpr auto PLAYLIST_TEMPLATE1 = "http://epg.it999.ru/edem_epg_ico.m3u8";
-static constexpr auto PLAYLIST_TEMPLATE2 = "http://epg.it999.ru/edem_epg_ico2.m3u8";
-static constexpr auto URI_TEMPLATE = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
-static constexpr auto EPG1_TEMPLATE = "http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE = "http://epg.ott-play.com/php/show_prog.php?f=teleguide.info/epg/{:s}.json";
-static constexpr auto EPG1_TEMPLATE_JSON = "http://epg.ott-play.com/edem/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE_JSON = "http://epg.ott-play.com/teleguide.info/epg/{:s}.json";
+static constexpr auto PLAYLIST_TEMPLATE1 = L"http://epg.it999.ru/edem_epg_ico.m3u8";
+static constexpr auto PLAYLIST_TEMPLATE2 = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
+static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
+static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:s}.json";
+static constexpr auto EPG2_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=teleguide.info/epg/{:s}.json";
+static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/edem/epg/{:s}.json";
+static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/teleguide.info/epg/{:s}.json";
 
-void uri_edem::parse_uri(const std::string& url)
+void uri_edem::parse_uri(const std::wstring& url)
 {
 	// http://localhost/iptv/00000000000000/204/index.m3u8
 
-	static std::regex re_url(R"(^https?:\/\/(.+)\/iptv\/(.+)\/(\d+)\/.*\.m3u8$)");
-	std::smatch m;
+	static std::wregex re_url(LR"(^https?:\/\/(.+)\/iptv\/(.+)\/(\d+)\/.*\.m3u8$)");
+	std::wsmatch m;
 	if (std::regex_match(url, m, re_url))
 	{
 		set_template(true);
@@ -27,53 +27,42 @@ void uri_edem::parse_uri(const std::string& url)
 	uri_stream::parse_uri(url);
 }
 
-std::string uri_edem::get_templated(StreamSubType /*subType*/, const TemplateParams& params) const
+std::wstring uri_edem::get_templated(StreamSubType subType, const TemplateParams& params) const
 {
-	std::string url;
-
-	if (!is_template())
-	{
-		url = get_uri();
-	}
-	else
-	{
-		// http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8
-		url = URI_TEMPLATE;
-		utils::string_replace_inplace(url, "{SUBDOMAIN}", params.domain);
-		utils::string_replace_inplace(url, "{TOKEN}", params.token);
-		utils::string_replace_inplace(url, "{ID}", get_id());
-	}
+	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
 
 	if (params.shift_back)
 	{
-		url += fmt::format("?utc={:d}&lutc={:d}", params.shift_back, _time32(nullptr));
+		url += L"?utc={START}&lutc={NOW}";
 	}
+
+	ReplaceVars(url, params);
 
 	return url;
 }
 
-std::string uri_edem::get_epg1_uri(const std::string& id) const
+std::wstring uri_edem::get_epg1_uri(const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE, id);
 }
 
-std::string uri_edem::get_epg2_uri(const std::string& id) const
+std::wstring uri_edem::get_epg2_uri(const std::wstring& id) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
 	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
-std::string uri_edem::get_epg1_uri_json(const std::string& id) const
+std::wstring uri_edem::get_epg1_uri_json(const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
-std::string uri_edem::get_epg2_uri_json(const std::string& id) const
+std::wstring uri_edem::get_epg2_uri_json(const std::wstring& id) const
 {
 	return fmt::format(EPG2_TEMPLATE_JSON, id);
 }
 
-std::string uri_edem::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_edem::get_playlist_template(bool first /*= true*/) const
 {
 	return first ? PLAYLIST_TEMPLATE1 : PLAYLIST_TEMPLATE2;
 }

@@ -57,8 +57,8 @@ void CAccessInfoPassDlg::OnOK()
 {
 	UpdateData(TRUE);
 
-	m_entry->stream_uri->set_login(utils::utf16_to_utf8(m_login.GetString()));
-	m_entry->stream_uri->set_password(utils::utf16_to_utf8(m_password.GetString()));
+	m_entry->stream_uri->set_login(m_login.GetString());
+	m_entry->stream_uri->set_password(m_password.GetString());
 
 	__super::OnOK();
 }
@@ -69,8 +69,8 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	m_status = _T("Unknown");
 
-	const auto& login = utils::utf16_to_utf8(m_login.GetString());
-	const auto& password = utils::utf16_to_utf8(m_password.GetString());
+	const auto& login = m_login.GetString();
+	const auto& password = m_password.GetString();
 
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);

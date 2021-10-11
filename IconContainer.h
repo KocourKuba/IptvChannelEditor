@@ -51,8 +51,8 @@ public:
 
 	void convert_https()
 	{
-		if (icon_uri.get_schema() == "https://")
-			icon_uri.set_schema("http://");
+		if (icon_uri.get_schema() == L"https://")
+			icon_uri.set_schema(L"http://");
 	}
 
 	void set_icon_uri(const uri_base& val, bool make_http = true)
@@ -62,8 +62,7 @@ public:
 			convert_https();
 	}
 
-	void set_icon_uri(const std::string& val) { icon_uri.set_uri(val); }
-	void set_icon_uri(const std::wstring& val) { icon_uri.set_uri(utils::utf16_to_utf8(val)); }
+	void set_icon_uri(const std::wstring& val) { icon_uri.set_uri(val); }
 
 private:
 	uri_base icon_uri;

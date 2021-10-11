@@ -32,14 +32,14 @@ public:
 
 	void add_channel(const std::shared_ptr<ChannelInfo>& channel);
 
-	void remove_channel(const std::string& ch_id);
+	void remove_channel(const std::wstring& ch_id);
 
 	void sort_channels();
 
-	std::shared_ptr<ChannelInfo> find_channel(const std::string& ch_id);
+	std::shared_ptr<ChannelInfo> find_channel(const std::wstring& ch_id);
 
 private:
 	std::vector<std::shared_ptr<ChannelInfo>> channels;
-	std::map<std::string, std::shared_ptr<ChannelInfo>> channels_map;
+	std::map<std::wstring, std::shared_ptr<ChannelInfo>> channels_map;
 };
 

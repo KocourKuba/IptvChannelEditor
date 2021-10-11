@@ -31,7 +31,7 @@ public:
 	void SetData(const ThreadConfig& config) { m_config = config; };
 
 protected:
-	static void GetChannelStreamInfo(const CString& probe, const std::string& url, std::string& audio, std::string& video);
+	static void GetChannelStreamInfo(const CString& probe, const std::wstring& url, std::string& audio, std::string& video);
 
 protected:
 	ThreadConfig m_config;

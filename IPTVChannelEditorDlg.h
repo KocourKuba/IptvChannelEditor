@@ -27,7 +27,7 @@ public:
 public:
 	struct SearchParams
 	{
-		std::string id;
+		std::wstring id;
 		int hash = 0;
 		CString searchString;
 	};
@@ -165,7 +165,7 @@ private:
 
 	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
 
-	void FillTreeChannels(LPCSTR select = nullptr);
+	void FillTreeChannels(LPCWSTR select = nullptr);
 	void FillTreePlaylist();
 
 	void LoadChannelInfo(HTREEITEM hItem);
@@ -312,11 +312,11 @@ protected:
 
 private:
 	BOOL m_embedded_info;
-	std::string m_token;
-	std::string m_domain;
-	std::string m_login;
-	std::string m_password;
-	std::string m_host;
+	std::wstring m_token;
+	std::wstring m_domain;
+	std::wstring m_login;
+	std::wstring m_password;
+	std::wstring m_host;
 
 	HACCEL m_hAccel = nullptr;
 	CTreeCtrlEx* m_lastTree = nullptr;
@@ -370,7 +370,7 @@ private:
 
 	// map of all channels for fast search
 	// Loaded from channels list
-	std::map<std::string, std::shared_ptr<ChannelInfo>> m_channelsMap;
+	std::map<std::wstring, std::shared_ptr<ChannelInfo>> m_channelsMap;
 
 	// map HTREE items to categories id
 	// Loaded when fill channels tree
@@ -389,11 +389,11 @@ private:
 	// list of playlist id's in the same order as in the playlist
 	// Must not contains duplicates!
 	// Loaded when fill playlist tree
-	std::vector<std::string> m_playlistIds;
+	std::vector<std::wstring> m_playlistIds;
 
 	// map of all playlist entries to entry id (channel id)
 	// Loaded when fill playlist tree
-	std::map<std::string, std::shared_ptr<PlaylistEntry>> m_playlistMap;
+	std::map<std::wstring, std::shared_ptr<PlaylistEntry>> m_playlistMap;
 
 	// map HTREE items to entry
 	// Loaded when fill playlist tree
@@ -409,5 +409,5 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
-	std::map<std::string, nlohmann::json> m_epgMap;
+	std::map<std::wstring, nlohmann::json> m_epgMap;
 };

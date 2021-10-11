@@ -47,7 +47,7 @@ void CAccessInfoPinDlg::OnOK()
 {
 	UpdateData(TRUE);
 
-	m_entry->stream_uri->set_password(utils::utf16_to_utf8(m_password.GetString()));
+	m_entry->stream_uri->set_password(m_password.GetString());
 
 	__super::OnOK();
 }
@@ -58,8 +58,7 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 
 	m_status = _T("Unknown");
 
-	const auto& password = utils::utf16_to_utf8(m_password.GetString());
-	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), password.c_str());
+	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), m_password.GetString());
 
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);

@@ -24,7 +24,7 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 	// <caption>Общие</caption>
 	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	set_icon_uri(utils::get_value_string(node->first_node(ICON_URL)));
+	set_icon_uri(utils::get_value_wstring(node->first_node(ICON_URL)));
 }
 
 rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) const
@@ -39,7 +39,7 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 	category_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	category_node->append_node(utils::alloc_node(alloc, ICON_URL, get_icon_uri().get_uri().c_str()));
+	category_node->append_node(utils::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 
 	return category_node;
 }
@@ -72,7 +72,7 @@ void ChannelCategory::add_channel(const std::shared_ptr<ChannelInfo>& channel)
 	}
 }
 
-void ChannelCategory::remove_channel(const std::string& ch_id)
+void ChannelCategory::remove_channel(const std::wstring& ch_id)
 {
 	if (auto pair = channels_map.find(ch_id); pair != channels_map.end())
 	{
@@ -92,7 +92,7 @@ void ChannelCategory::sort_channels()
 	}
 }
 
-std::shared_ptr<ChannelInfo> ChannelCategory::find_channel(const std::string& ch_id)
+std::shared_ptr<ChannelInfo> ChannelCategory::find_channel(const std::wstring& ch_id)
 {
 	auto pair = channels_map.find(ch_id);
 	return pair != channels_map.end() ? pair->second : nullptr;

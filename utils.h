@@ -4,7 +4,7 @@
 namespace utils
 {
 	static constexpr auto DUNE_PLUGIN_NAME = L"dune_plugin_{:s}_mod.zip";
-	static constexpr auto ICON_TEMPLATE = "plugin_file://icons/shablon.png";
+	static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/shablon.png";
 
 	static constexpr auto VERSION_INFO = "version_info";
 	static constexpr auto LIST_VERSION = "list_version";
@@ -17,8 +17,8 @@ namespace utils
 	static constexpr auto TV_INFO = "tv_info";
 	static constexpr auto TV_CATEGORIES = "tv_categories";
 	static constexpr auto TV_CHANNELS = "tv_channels";
-	static constexpr auto CHANNELS_LOGO_URL = "icons/channels/";
-	static constexpr auto CATEGORIES_LOGO_URL = "icons/";
+	static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
+	static constexpr auto CATEGORIES_LOGO_URL = L"icons/";
 
 	static constexpr auto PLUGIN_ROOT = L"dune_plugin\\";
 	static constexpr auto PLAYLISTS_ROOT = L"playlists\\{:s}\\";
@@ -77,7 +77,28 @@ inline std::basic_string<T>& string_trim(std::basic_string<T>& str, const T* cha
 /// <param name="replace">substring to replace</param>
 /// <param name="pos">position from searching will start</param>
 /// <returns>how many changes performed</returns>
-size_t string_replace_inplace(std::string& source, const std::string& search, const std::string& replace, size_t pos = 0);
+template<typename T>
+size_t string_replace_inplace(std::basic_string<T>& source, const std::basic_string<T>& search, const std::basic_string<T>& replace, size_t pos = 0)
+{
+	size_t replaced = 0;
+	if (!search.empty() && pos < source.size())
+	{
+		for (; (pos = source.find(search, pos)) != std::basic_string<T>::npos; pos += replace.size())
+		{
+			source.replace(pos, search.size(), replace);
+			replaced++;
+		}
+	}
+
+	return replaced;
+}
+
+template<typename T>
+size_t string_replace_inplace(std::basic_string<T>& source, const T* search, const T* replace, size_t pos = 0)
+{
+	replace string_replace_inplace(source, std::basic_string<T>(search), std::basic_string<T>(replace), pos);
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 /// <summary>replace for substring case insensitive</summary>
@@ -86,7 +107,13 @@ size_t string_replace_inplace(std::string& source, const std::string& search, co
 /// <param name="replace">substring to replace</param>
 /// <param name="pos">position from searching will start</param>
 /// <returns>replaced string</returns>
-std::string string_replace(const std::string& source, const std::string& search, const std::string& replace, size_t pos = 0);
+template<typename T>
+std::basic_string<T> string_replace(const std::basic_string<T>& source, const std::basic_string<T>& search, const std::basic_string<T>& replace, size_t pos = 0)
+{
+	std::basic_string<T> replaced(source);
+	string_replace_inplace(replaced, search, replace, pos);
+	return replaced;
+}
 
 /// <summary>
 /// Converts char string to int.
@@ -186,14 +213,13 @@ public:
 	}
 };
 
-bool CrackUrl(const std::string& url, std::string& host = std::string(), std::string& path = std::string());
+bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring());
 
-bool DownloadFile(const std::string& url, std::vector<BYTE>& image);
+bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image);
 
 std::wstring entityDecrypt(std::wstring text);
 
 BOOL LoadImage(const std::wstring& fullPath, CImage& image);
-BOOL LoadImage(const std::string& fullPath, CImage& image);
 void SetImage(const CImage& image, CStatic& wnd);
 
 }

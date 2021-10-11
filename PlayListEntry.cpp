@@ -9,7 +9,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 	switch (m3uEntry.get_directive())
 	{
 		case m3u_entry::ext_pathname:
-			stream_uri->parse_uri(str);
+			stream_uri->parse_uri(utils::utf8_to_utf16(str));
 			return stream_uri->is_valid();
 		case m3u_entry::ext_group:
 			if (!category.empty()) break;
@@ -36,7 +36,6 @@ bool PlaylistEntry::Parse(const std::string& str)
 			{
 				set_title(utils::utf8_to_utf16(m3uEntry.get_dir_title()));
 			}
-
 		}
 		break;
 		default:
@@ -50,11 +49,11 @@ void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::string>&
 {
 	if (const auto& pair = tags.find(m3u_entry::tag_channel_id); pair != tags.end())
 	{
-		stream_uri->set_id(pair->second);
+		stream_uri->set_id(utils::utf8_to_utf16(pair->second));
 	}
 	else if (const auto& pair = tags.find(m3u_entry::tag_cuid); pair != tags.end())
 	{
-		stream_uri->set_id(pair->second);
+		stream_uri->set_id(utils::utf8_to_utf16(pair->second));
 	}
 }
 
@@ -94,11 +93,11 @@ void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::string>
 {
 	if (const auto& pair = tags.find(m3u_entry::tag_tvg_id); pair != tags.end())
 	{
-		set_epg1_id(pair->second);
+		set_epg1_id(utils::utf8_to_utf16(pair->second));
 	}
 	else if (const auto& pair = tags.find(m3u_entry::tag_tvg_name); pair != tags.end())
 	{
-		set_epg1_id(pair->second);
+		set_epg1_id(utils::utf8_to_utf16(pair->second));
 	}
 }
 
@@ -106,7 +105,7 @@ void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::string
 {
 	if (const auto& pair = tags.find(m3u_entry::tag_tvg_logo); pair != tags.end())
 	{
-		set_icon_uri(utils::string_replace(pair->second, "//epg.it999.ru/img/", "//epg.it999.ru/img2/"));
+		set_icon_uri(utils::string_replace<wchar_t>(utils::utf8_to_utf16(pair->second), L"//epg.it999.ru/img/", L"//epg.it999.ru/img2/"));
 	}
 }
 

@@ -25,7 +25,7 @@ BEGIN_MESSAGE_MAP(CIconsListDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 CIconsListDlg::CIconsListDlg(std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>>& icons,
-							 const std::string& iconSource,
+							 const std::wstring& iconSource,
 							 CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_ICONS_LIST, pParent)
 	, m_Icons(icons)

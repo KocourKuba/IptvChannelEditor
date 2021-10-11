@@ -27,11 +27,11 @@ public:
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
 
-	std::string get_epg1_id() const { return epg_id1; }
-	void set_epg1_id(const std::string& val) { epg_id1 = val; }
+	std::wstring get_epg1_id() const { return epg_id1; }
+	void set_epg1_id(const std::wstring& val) { epg_id1 = val; }
 
-	std::string get_epg2_id() const { return epg_id2; }
-	void set_epg2_id(const std::string& val) { epg_id2 = val; }
+	std::wstring get_epg2_id() const { return epg_id2; }
+	void set_epg2_id(const std::wstring& val) { epg_id2 = val; }
 
 	int get_adult() const { return adult; }
 	void set_adult(int val) { adult = val; }
@@ -41,12 +41,9 @@ public:
 	int get_archive_days() const { return archive_days; }
 	void set_archive_days(int val) { archive_days = val; }
 
-	const std::string& get_archive_source() const { return archive_source; }
-	void set_archive_source(const std::string& val) { archive_source = val; }
-
 	void swap_id(BaseInfo& src)
 	{
-		std::string tmp = src.stream_uri->get_id();
+		auto tmp = src.stream_uri->get_id();
 		src.stream_uri->set_id(stream_uri->get_id());
 		src.stream_uri->set_id(tmp);
 	}
@@ -64,7 +61,6 @@ public:
 			key = src.key;
 			epg_id1 = src.epg_id1;
 			epg_id2 = src.epg_id2;
-			archive_source = src.archive_source;
 			time_shift_hours = src.time_shift_hours;
 			adult = src.adult;
 			archive_days = src.archive_days;
@@ -81,9 +77,8 @@ protected:
 private:
 	std::wstring title;
 	int key = 0;
-	std::string epg_id1; // primary epg source ott-play epg http://epg.ott-play.com/edem/epg/%d.json
-	std::string epg_id2; // secondary epg source TVGuide id http://www.teleguide.info/kanal%d.html
-	std::string archive_source;
+	std::wstring epg_id1; // primary epg source ott-play epg http://epg.ott-play.com/edem/epg/%d.json
+	std::wstring epg_id2; // secondary epg source TVGuide id http://www.teleguide.info/kanal%d.html
 	int time_shift_hours = 0;
 	int adult = 0;
 	int archive_days = 0;

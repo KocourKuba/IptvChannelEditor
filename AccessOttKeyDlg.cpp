@@ -60,9 +60,9 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 	m_status.Empty();
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
-	if (utils::CrackUrl(utils::utf16_to_utf8(m_url.GetString())))
+	if (utils::CrackUrl(m_url.GetString()))
 	{
-		if (utils::DownloadFile(utils::utf16_to_utf8(m_url.GetString()), data))
+		if (utils::DownloadFile(m_url.GetString(), data))
 		{
 			utils::vector_to_streambuf<char> buf(data);
 			pl_stream = std::make_unique<std::istream>(&buf);
@@ -85,7 +85,7 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 
 		const auto& access_key = entry->get_uri_stream()->get_token();
 		const auto& domain = entry->get_uri_stream()->get_domain();
-		if (!access_key.empty() && !domain.empty() && access_key != "00000000000000" && domain != "localhost")
+		if (!access_key.empty() && !domain.empty() && access_key != L"00000000000000" && domain != L"localhost")
 		{
 			m_accessKey = access_key.c_str();
 			m_domain = domain.c_str();
