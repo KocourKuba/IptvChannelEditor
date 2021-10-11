@@ -36,7 +36,7 @@ void CAccessInfoPinDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CAccessInfoPinDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	m_password = m_entry->stream_uri->get_password().c_str();
 

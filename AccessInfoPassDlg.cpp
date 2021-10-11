@@ -24,7 +24,7 @@ CAccessInfoPassDlg::CAccessInfoPassDlg(CWnd* pParent /*=nullptr*/)
 
 void CAccessInfoPassDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_EDIT_LOGIN, m_wndLogin);
 	DDX_Control(pDX, IDC_EDIT_PASSWORD, m_wndPassword);
@@ -40,7 +40,7 @@ void CAccessInfoPassDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CAccessInfoPassDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	m_login = m_entry->stream_uri->get_login().c_str();
 	m_password = m_entry->stream_uri->get_password().c_str();

@@ -67,6 +67,7 @@ constexpr auto REG_HOST_EMBEDDED = _T("HostEmbedded");
 constexpr auto REG_FILTER_STRING = _T("FilterString");
 constexpr auto REG_FILTER_REGEX = _T("FilterUseRegex");
 constexpr auto REG_FILTER_CASE = _T("FilterUseCase");
+constexpr auto REG_FILTER_NOT_ADDED = _T("FilterNotAdded");
 constexpr auto REG_CHANNELS_TYPE = _T("ChannelsType");
 constexpr auto REG_PLAYLIST_TYPE = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE = _T("StreamType");
@@ -1382,6 +1383,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	m_plEPG.Empty();
 	m_archivePlDays = 0;
 	m_wndPlArchive.SetCheck(0);
+	m_wndEpg.SetWindowText(_T(""));
 
 	const auto& entry = FindEntry(hItem);
 	if (entry)
@@ -3103,6 +3105,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	auto filter = ReadRegStringPluginT(REG_FILTER_STRING);
 	auto bRegex = ReadRegIntPlugin(REG_FILTER_REGEX);
 	auto bCase = ReadRegIntPlugin(REG_FILTER_CASE);
+	auto bNotAdded = ReadRegIntPlugin(REG_FILTER_NOT_ADDED);
 
 	std::wregex re;
 	if (bRegex)
@@ -3167,6 +3170,9 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 					found = (StrStrI(plEntry->second->get_title().c_str(), filter.GetString()) != nullptr);
 				}
 			}
+
+			if (!found && bNotAdded)
+				found = m_channelsMap.find(plEntry->first) != m_channelsMap.end();
 
 			if (!found)
 			{
@@ -3981,30 +3987,22 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 				auto info = dynamic_cast<BaseInfo*>(FindEntry(hItem).get());
 				if (info)
 					container->emplace_back(info->stream_uri.get());
+
+				continue;
 			}
-			else
+
+			const auto& pair = m_pl_categoriesMap.find(hItem);
+			if (pair == m_pl_categoriesMap.end()) continue;
+
+			const auto& category = pair->second;
+			for (auto hChildItem = m_lastTree->GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_lastTree->GetNextSiblingItem(hChildItem))
 			{
-				std::wstring category;
-				if (const auto& pair = m_pl_categoriesMap.find(hItem); pair != m_pl_categoriesMap.end())
-				{
-					category = pair->second;
-				}
-				else if (const auto& entry = FindEntry(hItem); entry != nullptr)
-				{
-					category = entry->get_category();
-				}
+				const auto& pairEntry = m_playlistTreeMap.find(hChildItem);
+				if (pairEntry == m_playlistTreeMap.end() || category != pairEntry->second->get_category()) continue;
 
-				if (category.empty()) continue;
-
-				for (const auto& pair : m_playlistMap)
-				{
-					if (category != pair.second->get_category()) continue;
-
-					// add all
-					auto info = dynamic_cast<BaseInfo*>(pair.second.get());
-					if (info)
-						container->emplace_back(info->stream_uri.get());
-				}
+				auto info = dynamic_cast<BaseInfo*>(pairEntry->second.get());
+				if (info)
+					container->emplace_back(info->stream_uri.get());
 			}
 		}
 	}
@@ -4487,12 +4485,14 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter()
 	dlg.m_filterString = ReadRegStringPluginT(REG_FILTER_STRING);
 	dlg.m_filterRegex = ReadRegIntPlugin(REG_FILTER_REGEX);
 	dlg.m_filterCase = ReadRegIntPlugin(REG_FILTER_CASE);
+	dlg.m_filterNotAdded = ReadRegIntPlugin(REG_FILTER_NOT_ADDED);
 
 	if (dlg.DoModal() == IDOK)
 	{
 		SaveRegPlugin(REG_FILTER_STRING, dlg.m_filterString);
 		SaveRegPlugin(REG_FILTER_REGEX, dlg.m_filterRegex);
 		SaveRegPlugin(REG_FILTER_CASE, dlg.m_filterCase);
+		SaveRegPlugin(REG_FILTER_NOT_ADDED, dlg.m_filterNotAdded);
 
 		FillTreePlaylist();
 	}

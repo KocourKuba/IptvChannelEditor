@@ -16,7 +16,6 @@ BEGIN_MESSAGE_MAP(CAccessOttKeyDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_GET, &CAccessOttKeyDlg::OnBnClickedBtnGet)
 END_MESSAGE_MAP()
 
-
 CAccessOttKeyDlg::CAccessOttKeyDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_ACCESS_INFO, pParent)
 	, m_streamType(StreamType::enEdem)
@@ -26,7 +25,7 @@ CAccessOttKeyDlg::CAccessOttKeyDlg(CWnd* pParent /*=nullptr*/)
 
 void CAccessOttKeyDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 
 	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_URL, m_wndUrl);
@@ -38,7 +37,7 @@ void CAccessOttKeyDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CAccessOttKeyDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE

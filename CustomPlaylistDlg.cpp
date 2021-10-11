@@ -21,7 +21,7 @@ CCustomPlaylistDlg::CCustomPlaylistDlg(CWnd* pParent /*=nullptr*/)
 
 void CCustomPlaylistDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_CUSTOM_PLAYLIST, m_wndUrl);
 	DDX_Text(pDX, IDC_CUSTOM_PLAYLIST, m_url);
@@ -29,7 +29,7 @@ void CCustomPlaylistDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CCustomPlaylistDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	if (m_isFile)
 	{

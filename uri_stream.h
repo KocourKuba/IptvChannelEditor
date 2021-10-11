@@ -87,7 +87,8 @@ public:
 	{
 		if (!hash)
 		{
-			const auto& uri = is_template() ? id : get_uri();
+			// convert to utf8
+			const auto& uri = utils::utf16_to_utf8(is_template() ? id : get_uri());
 			hash = crc32_bitwise(uri.c_str(), uri.size());
 			str_hash = utils::int_to_wchar(hash);
 		}

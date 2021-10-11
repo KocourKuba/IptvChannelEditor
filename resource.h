@@ -43,6 +43,7 @@
 #define IDC_CHECK_ARCHIVE               1026
 #define IDC_CHECK_CASE                  1027
 #define IDC_CHECK_CUSTOMIZE             1028
+#define IDC_CHECK_NOT_ADDED             1028
 #define IDC_CHECK_GLOBAL                1029
 #define IDC_CHECK_PL_ARCHIVE            1030
 #define IDC_CHECK_REGEX                 1031
