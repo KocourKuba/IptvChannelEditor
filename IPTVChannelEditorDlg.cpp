@@ -198,6 +198,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_UPDATE_ICON, &CIPTVChannelEditorDlg::OnUpdateUpdateIcon)
 	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
+	ON_BN_CLICKED(IDC_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
 
 	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
 	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
@@ -354,6 +355,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RICHEDIT_EPG, m_wndEpg);
 	DDX_Control(pDX, IDC_RADIO_EPG1, m_wndEpg1);
 	DDX_Control(pDX, IDC_RADIO_EPG2, m_wndEpg2);
+	DDX_Control(pDX, IDC_BUTTON_UPDATE_CHANGED, m_wndUpdateChanged);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -460,7 +462,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 void CIPTVChannelEditorDlg::SetUpToolTips()
 {
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
-	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 1500);
+	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 1000);
 
 	m_wndToolTipCtrl.SetMaxTipWidth(500);
 
@@ -499,6 +501,8 @@ void CIPTVChannelEditorDlg::SetUpToolTips()
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Audio stream info"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Stream type used to test play stream"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Source type for loaded icon. Local file or internet link"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_STOP), _T("Stop process"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_CHANGED), _T("Update channels changed in the playlist"));
 
 	m_wndToolTipCtrl.Activate(TRUE);
 }
@@ -1216,8 +1220,6 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 	if (m_blockChecking)
 		return;
 
-	TRACE("Start Check for existing\n");
-
 	if (root == nullptr)
 		root = m_wndChannelsTree.GetRootItem();
 
@@ -1266,8 +1268,7 @@ void CIPTVChannelEditorDlg::CheckForExistingChannels(HTREEITEM root /*= nullptr*
 	}
 
 	m_wndChInfo.SetWindowText(fmt::format(_T("Channels: {:d} ({:d} changed)"), m_channelsMap.size(), m_changedChannels.size()).c_str());
-
-	TRACE("End Check channels for existing\n");
+	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty());
 }
 
 void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
@@ -2855,6 +2856,25 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
 	UpdateEPG();
 	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 	m_wndTestEPG.EnableWindow(firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty());
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
+{
+	CWaitCursor cur;
+
+	bool changed = false;
+	for (const auto& channel : m_changedChannels)
+	{
+		if (!channel) continue;
+
+		SearchParams params;
+		params.id = channel->stream_uri->get_id();
+		HTREEITEM hPlItem = SelectTreeItem(m_wndPlaylistTree, InfoType::enPlEntry, params, false);
+		changed |= AddChannel(hPlItem);
+	}
+
+	CheckForExistingChannels();
+	set_allow_save(changed);
 }
 
 void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/) const

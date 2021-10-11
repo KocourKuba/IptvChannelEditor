@@ -103,6 +103,8 @@ protected:
 	afx_msg void OnBnClickedButtonSettings();
 	afx_msg void OnBnClickedButtonTestEpg();
 	afx_msg void OnBnClickedButtonEpg();
+	afx_msg void OnBnClickedButtonUpdateChanged();
+
 	afx_msg void OnUpdateIcon();
 	afx_msg void OnUpdateUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckCustomize();
@@ -282,6 +284,7 @@ protected:
 	CStatic m_wndProgressInfo;
 	CButton m_wndEpg1;
 	CButton m_wndEpg2;
+	CButton m_wndUpdateChanged;
 	CProgressCtrl m_wndProgress;
 
 	CString m_search; // m_wndSearch
