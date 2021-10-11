@@ -94,11 +94,11 @@ PluginDesc all_plugins[] = {
 	{ enAntifriz,  _T("Antifriz") },
 	{ enEdem,      _T("Edem (iLook TV)") },
 	{ enFox,       _T("Fox TV") },
+	{ enItv,       _T("ITV") },
 	{ enGlanz,     _T("Glanz TV") },
 //	{ enOneUsd,    _T("1USD") },
 	{ enSharaclub, _T("Sharaclub TV") },
 	{ enSharavoz,  _T("Sharavoz TV") },
-	{ enItv,       _T("ITV") },
 };
 
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
