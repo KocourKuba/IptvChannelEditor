@@ -10,7 +10,6 @@
 #include "ChannelInfo.h"
 #include "map_serializer.h"
 #include "json.hpp"
-#include "RichToolTipCtrl.h"
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx

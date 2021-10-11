@@ -96,8 +96,8 @@ PluginDesc all_plugins[] = {
 	{ enAntifriz,  _T("Antifriz") },
 	{ enEdem,      _T("Edem (iLook TV)") },
 	{ enFox,       _T("Fox TV") },
-	{ enItv,       _T("ITV") },
 	{ enGlanz,     _T("Glanz TV") },
+	{ enItv,       _T("ITV") },
 //	{ enOneUsd,    _T("1USD") },
 	{ enSharaclub, _T("Sharaclub TV") },
 	{ enSharavoz,  _T("Sharavoz TV") },
@@ -298,6 +298,8 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
 	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_isArchive);
 	DDX_Control(pDX, IDC_CHECK_ARCHIVE, m_wndArchive);
+	DDX_Text(pDX, IDC_EDIT_ARCHIVE_DAYS, m_archiveDays);
+	DDX_Control(pDX, IDC_EDIT_ARCHIVE_DAYS, m_wndArchiveDays);
 	DDX_Check(pDX, IDC_CHECK_ADULT, m_isAdult);
 	DDX_Control(pDX, IDC_CHECK_ADULT, m_wndAdult);
 	DDX_Control(pDX, IDC_TREE_CHANNELS, m_wndChannelsTree);
@@ -310,8 +312,6 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_EPG2_ID, m_epgID2);
 	DDX_Control(pDX, IDC_EDIT_EPG2_ID, m_wndEpgID2);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
-	DDX_Text(pDX, IDC_EDIT_ARCHIVE_DAYS, m_archiveDays);
-	DDX_Control(pDX, IDC_EDIT_ARCHIVE_DAYS, m_wndArchiveDays);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT, m_timeShiftHours);
 	DDX_Control(pDX, IDC_EDIT_TIME_SHIFT, m_wndTimeShift);
@@ -444,6 +444,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndPlSearch.EnableWindow(FALSE);
 	m_wndCustom.EnableWindow(FALSE);
 	m_wndArchive.EnableWindow(FALSE);
+	m_wndArchiveDays.EnableWindow(FALSE);
 	m_wndAdult.EnableWindow(FALSE);
 	m_wndTestEPG.EnableWindow(FALSE);
 	m_wndStreamID.EnableWindow(FALSE);
@@ -533,7 +534,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	switch (m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
 	{
-		case enAntifriz: // antifriz
+		case enAntifriz:
 		{
 			m_pluginType = StreamType::enAntifriz;
 
@@ -541,7 +542,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_password = ReadRegStringPluginW(REG_PASSWORD);
 			break;
 		}
-		case enEdem: // Edem
+		case enEdem:
 		{
 			m_pluginType = StreamType::enEdem;
 			bStreamType = FALSE;
@@ -553,7 +554,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_domain = ReadRegStringPluginW(REG_DOMAIN);
 			break;
 		}
-		case enFox: // Fox
+		case enFox:
 		{
 			m_pluginType = StreamType::enFox;
 			bStreamType = FALSE;
@@ -563,7 +564,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_password = ReadRegStringPluginW(REG_PASSWORD);
 			break;
 		}
-		case enGlanz: // glanz
+		case enGlanz:
 		{
 			m_pluginType = StreamType::enGlanz;
 
@@ -572,7 +573,15 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_password = ReadRegStringPluginW(REG_PASSWORD);
 			break;
 		}
-		case enOneUsd: // 1USD
+		case enItv:
+		{
+			m_pluginType = StreamType::enItv;
+
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_password = ReadRegStringPluginW(REG_PASSWORD);
+			break;
+		}
+		case enOneUsd:
 		{
 			m_pluginType = StreamType::enOneUsd;
 
@@ -591,17 +600,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_password = ReadRegStringPluginW(REG_PASSWORD);
 			break;
 		}
-		case enSharavoz: // Sharavoz
+		case enSharavoz:
 		{
 			m_pluginType = StreamType::enSharavoz;
-
-			m_wndPlaylist.AddString(_T("Playlist"));
-			m_password = ReadRegStringPluginW(REG_PASSWORD);
-			break;
-		}
-		case enItv: // ITV
-		{
-			m_pluginType = StreamType::enItv;
 
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_password = ReadRegStringPluginW(REG_PASSWORD);
@@ -683,22 +684,22 @@ std::wstring CIPTVChannelEditorDlg::GetPluginNameW(bool bCamel /*= false*/) cons
 {
 	switch (m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
 	{
-		case enEdem: // Edem
-			return bCamel ? L"Edem" : L"edem";
-		case enSharavoz: // Sharavoz
-			return bCamel ? L"Sharavoz" : L"sharavoz";
-		case enSharaclub: // Sharaclub
-			return bCamel ? L"Sharaclub" : L"sharaclub";
-		case enGlanz: // Glanz
-			return bCamel ? L"Glanz" : L"glanz";
-		case enAntifriz: // Antifriz
+		case enAntifriz:
 			return bCamel ? L"Antifriz" : L"antifriz";
-		case enFox: // Fox
+		case enEdem:
+			return bCamel ? L"Edem" : L"edem";
+		case enFox:
 			return bCamel ? L"Fox" : L"fox";
-		case enOneUsd: // 1USD
-			return bCamel ? L"Oneusd" : L"oneusd";
-		case enItv: // ITV
+		case enGlanz:
+			return bCamel ? L"Glanz" : L"glanz";
+		case enItv:
 			return bCamel ? L"Itv" : L"itv";
+		case enOneUsd:
+			return bCamel ? L"Oneusd" : L"oneusd";
+		case enSharavoz:
+			return bCamel ? L"Sharavoz" : L"sharavoz";
+		case enSharaclub:
+			return bCamel ? L"Sharaclub" : L"sharaclub";
 	}
 
 	return L"";
@@ -708,22 +709,22 @@ std::string CIPTVChannelEditorDlg::GetPluginNameA(bool bCamel /*= false*/) const
 {
 	switch (m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
 	{
-		case enEdem: // Edem
-			return bCamel ? "Edem" : "edem";
-		case enSharavoz: // Sharavoz
-			return bCamel ? "Sharavoz" : "sharavoz";
-		case enSharaclub: // Sharaclub
-			return bCamel ? "Sharaclub" : "sharaclub";
-		case enGlanz: // Glanz
-			return bCamel ? "Glanz" : "glanz";
-		case enAntifriz: // Antifriz
+		case enAntifriz:
 			return bCamel ? "Antifriz" : "antifriz";
-		case enFox: // Fox
+		case enEdem:
+			return bCamel ? "Edem" : "edem";
+		case enFox:
 			return bCamel ? "Fox" : "fox";
-		case enOneUsd: // 1USD
-			return bCamel ? "Oneusd" : "oneusd";
-		case enItv: // 1USD
+		case enGlanz:
+			return bCamel ? "Glanz" : "glanz";
+		case enItv:
 			return bCamel ? "Itv" : "itv";
+		case enOneUsd:
+			return bCamel ? "Oneusd" : "oneusd";
+		case enSharaclub:
+			return bCamel ? "Sharaclub" : "sharaclub";
+		case enSharavoz:
+			return bCamel ? "Sharavoz" : "sharavoz";
 	}
 
 	return "";
@@ -1494,8 +1495,8 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 			const auto& name = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_name(), ""));
 			const auto& desc = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_desc(), ""));
 			str.Format(LR"({\b{%s}}{\par}%s)",
-					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(name)).c_str(),
-					   CRichToolTipCtrl::MakeTextRTFSafe(utils::entityDecrypt(desc)).c_str());
+					   utils::make_text_rtf_safe(utils::entityDecrypt(name)).c_str(),
+					   utils::make_text_rtf_safe(utils::entityDecrypt(desc)).c_str());
 			break;
 		}
 	}

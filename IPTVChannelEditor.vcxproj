@@ -237,7 +237,6 @@
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="PlaylistParseThread.h" />
-    <ClInclude Include="RichToolTipCtrl.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="CustomPlaylistDlg.h" />
     <ClInclude Include="FilterDialog.h" />
@@ -294,7 +293,6 @@
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
     <ClCompile Include="PlaylistParseThread.cpp" />
-    <ClCompile Include="RichToolTipCtrl.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
     <ClCompile Include="CustomPlaylistDlg.cpp" />

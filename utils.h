@@ -213,6 +213,48 @@ public:
 	}
 };
 
+template <typename Ch, size_t S>
+static constexpr auto any_string(const char(&literal)[S]) -> const std::array<Ch, S>
+{
+	std::array<Ch, S> r = {};
+
+	for (size_t i = 0; i < S; i++)
+		r[i] = literal[i];
+
+	return r;
+}
+
+template<typename T>
+static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
+{
+	// modify the specified text to make it safe for use in a rich-edit
+	// control, by escaping special RTF characters '\', '{' and '}'
+
+	const auto& paragraph = any_string<char>(R"({\par})");
+
+	std::wstring rtf;
+	for (auto& it = text.begin(); it != text.end(); ++it)
+	{
+		if (*it == '\r') continue;;
+
+		if (*it == '\n')
+		{
+			rtf.append(paragraph.begin(), paragraph.end());
+			++it;
+			continue;
+		}
+
+		if (*it == '\\' || *it == '{' || *it == '}')
+		{
+			rtf += '\\';
+		}
+
+		rtf += *it;
+	}
+
+	return rtf;
+}
+
 bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring());
 
 bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image);
