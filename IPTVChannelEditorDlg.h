@@ -340,7 +340,7 @@ private:
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
-	std::set<std::shared_ptr<ChannelInfo>> m_changedChannels;
+	std::vector<HTREEITEM> m_changedChannels;
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;

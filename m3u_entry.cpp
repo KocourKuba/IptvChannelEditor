@@ -10,6 +10,8 @@ static std::map<std::string, m3u_entry::directives> s_ext_directives = {
 };
 
 static std::map<std::string, m3u_entry::info_tags> s_tags = {
+	{ "url-tvg",        m3u_entry::tag_url_tvg        },
+	{ "url-logo",       m3u_entry::tag_url_logo       },
 	{ "channel-id",     m3u_entry::tag_channel_id     },
 	{ "CUID",           m3u_entry::tag_cuid           },
 	{ "group-title",    m3u_entry::tag_group_title    },
@@ -77,7 +79,12 @@ void m3u_entry::parse(const std::string& str)
 	switch (ext_name)
 	{
 		case ext_header:
-			return;
+		{
+			// #EXTM3U url-tvg="http://iptv-content.webhop.net/guide.xml" url-logo="http://iptv-content.webhop.net/220x132/"
+			if (!m_dir[2].str().empty())
+				parse_directive_tags(m_dir[2].str());
+			break;
+		}
 		case ext_info:
 		{
 			std::smatch m;

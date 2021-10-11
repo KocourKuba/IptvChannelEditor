@@ -81,7 +81,8 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 	while (std::getline(*pl_stream, line))
 	{
 		utils::string_rtrim(line, "\r");
-		if (!entry->Parse(line)) continue;
+		m3u_entry m3uEntry(line);
+		if (!entry->Parse(line, m3uEntry)) continue;
 
 		const auto& access_key = entry->get_uri_stream()->get_token();
 		const auto& domain = entry->get_uri_stream()->get_domain();

@@ -120,7 +120,8 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 			while (std::getline(*pl_stream, line))
 			{
 				utils::string_rtrim(line, "\r");
-				if (m_entry->Parse(line) && !m_entry->stream_uri->get_login().empty() && !m_entry->stream_uri->get_token().empty())
+				m3u_entry m3uEntry(line);
+				if (m_entry->Parse(line, m3uEntry) && !m_entry->stream_uri->get_login().empty() && !m_entry->stream_uri->get_token().empty())
 				{
 					m_status = _T("Ok");
 					break;

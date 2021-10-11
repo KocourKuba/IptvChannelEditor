@@ -9,11 +9,13 @@ public:
 	PlaylistEntry(StreamType streamType, const std::wstring& root_path)
 		: BaseInfo(InfoType::enPlEntry, streamType, root_path) {}
 
-	bool Parse(const std::string& str);
+	bool Parse(const std::string& str, const m3u_entry& entry);
 
 	int get_channel_length() const { return channel_len; }
 	const auto& get_category() const { return category; }
 	const auto& get_uri_stream() { return stream_uri; }
+	void set_logo_root(const std::string& val) { logo_root = val; }
+	std::string get_logo_root() { return logo_root; }
 
 protected:
 	void search_id(const std::map<m3u_entry::info_tags, std::string>& tags);
@@ -26,4 +28,5 @@ protected:
 protected:
 	int channel_len = 0;
 	std::wstring category;
+	std::string logo_root;
 };

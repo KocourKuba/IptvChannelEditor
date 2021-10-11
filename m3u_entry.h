@@ -16,6 +16,8 @@ public:
 	typedef enum
 	{
 		tag_unknown = -1,
+		tag_url_tvg,
+		tag_url_logo,
 		tag_channel_id,
 		tag_cuid,
 		tag_group_title,

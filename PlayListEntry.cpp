@@ -2,9 +2,9 @@
 #include "PlayListEntry.h"
 #include "utils.h"
 
-bool PlaylistEntry::Parse(const std::string& str)
+bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 {
-	m3u_entry m3uEntry(str);
+	if (str.empty()) return false;
 
 	switch (m3uEntry.get_directive())
 	{
@@ -105,7 +105,10 @@ void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::string
 {
 	if (const auto& pair = tags.find(m3u_entry::tag_tvg_logo); pair != tags.end())
 	{
-		set_icon_uri(utils::string_replace<wchar_t>(utils::utf8_to_utf16(pair->second), L"//epg.it999.ru/img/", L"//epg.it999.ru/img2/"));
+		if (logo_root.empty())
+			set_icon_uri(utils::string_replace<wchar_t>(utils::utf8_to_utf16(pair->second), L"//epg.it999.ru/img/", L"//epg.it999.ru/img2/"));
+		else
+			set_icon_uri(utils::utf8_to_utf16(logo_root + pair->second));
 	}
 }
 

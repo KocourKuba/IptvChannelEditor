@@ -29,6 +29,7 @@ BOOL CPlaylistParseThread::InitInstance()
 			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 			std::string line;
 			int count = 0;
+			std::string logo_root;
 			while (std::getline(stream, line))
 			{
 				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
@@ -39,18 +40,29 @@ BOOL CPlaylistParseThread::InitInstance()
 
 				utils::string_rtrim(line, "\r");
 				count++;
-				if (!line.empty() && entry->Parse(line))
-				{
-					if (m_config.m_pluginType == StreamType::enSharavoz)
-					{
-						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
-						entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
-					}
 
-					m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
-					entries->emplace_back(entry);
-					entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
+				m3u_entry m3uEntry(line);
+				if (m3uEntry.get_directive() == m3u_entry::ext_header)
+				{
+					const auto& tags = m3uEntry.get_tags();
+					if (const auto& pair = tags.find(m3u_entry::tag_url_logo); pair != tags.end())
+					{
+						logo_root = pair->second;
+					}
 				}
+
+				entry->set_logo_root(logo_root);
+				if (!entry->Parse(line, m3uEntry)) continue;
+
+				if (m_config.m_pluginType == StreamType::enSharavoz)
+				{
+					entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
+					entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
+				}
+
+				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
+				entries->emplace_back(entry);
+				entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 			}
 		}
 	}
