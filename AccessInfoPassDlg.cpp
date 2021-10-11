@@ -77,6 +77,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	if (m_entry->stream_uri->isHasAccessInfo())
 	{
+		// currently supported only in sharaclub
 		std::vector<BYTE> data;
 		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(login, password), data) || data.empty())
 			return;
@@ -86,7 +87,6 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 			json js = json::parse(data);
 			json js_data = js["data"];
 
-			m_status = js.value("status", "").c_str();
 			if (m_status == _T("ok"))
 			{
 				m_subscription = utils::utf8_to_utf16(js_data.value("abon", "")).c_str();

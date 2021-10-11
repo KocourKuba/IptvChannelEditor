@@ -2,8 +2,11 @@
 #include <afxdialogex.h>
 #include "AccessInfoPinDlg.h"
 #include "resource.h"
+#include "json.hpp"
 #include "utils.h"
 #include "PlayListEntry.h"
+
+using json = nlohmann::json;
 
 // CAccessDlg dialog
 
@@ -27,6 +30,8 @@ void CAccessInfoPinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 	DDX_Text(pDX, IDC_EDIT_PASSWORD, m_password);
 	DDX_Text(pDX, IDC_EDIT_STATUS, m_status);
+	DDX_Text(pDX, IDC_EDIT_SUBSCRIPTION, m_subscription);
+	DDX_Text(pDX, IDC_EDIT_BALANCE, m_balance);
 }
 
 BOOL CAccessInfoPinDlg::OnInitDialog()
@@ -63,6 +68,47 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);
 
+	if (m_entry->stream_uri->isHasAccessInfo())
+	{
+		// currently supported only in ITV
+		std::vector<BYTE> data;
+		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(L"", m_password.GetString()), data) || data.empty())
+			return;
+
+		try
+		{
+			json js = json::parse(data);
+
+			json js_data = js["user_info"];
+
+			m_balance.Format(_T("%hs $"), js_data.value("cash", "").c_str());
+
+			if (!js.contains("package_info"))
+			{
+				m_subscription = _T("No packages");
+			}
+			else
+			{
+				json pkg_data = js["package_info"];
+				for (const auto& item : pkg_data)
+				{
+					if (!m_subscription.IsEmpty())
+						m_subscription += _T(", ");
+
+					m_subscription.AppendFormat(_T("%s"), utils::utf8_to_utf16(item.value("name", "")).c_str());
+				}
+			}
+		}
+		catch (const json::parse_error&)
+		{
+			// parse errors are ok, because input may be random bytes
+		}
+		catch (const json::out_of_range&)
+		{
+			// out of range errors may happen if provided sizes are excessive
+		}
+	}
+
 	std::vector<BYTE> data;
 	std::unique_ptr<std::istream> pl_stream;
 	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
@@ -79,7 +125,7 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 				utils::string_rtrim(line, "\r");
 				if (m_entry->Parse(line) && !m_entry->stream_uri->get_token().empty())
 				{
-					m_status = _T("ok");
+					m_status = _T("Ok");
 					break;
 				}
 			}

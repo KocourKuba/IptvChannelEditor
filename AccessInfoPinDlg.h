@@ -30,7 +30,9 @@ public:
 
 protected:
 	CButton m_wndGet;
-
+	CEdit m_wndPassword;
 	CString m_password;
+	CString m_subscription;
+	CString m_balance;
 };
 

@@ -411,9 +411,9 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	// Setup tooltips
 	m_wndChannelsTree.GetToolTips()->SetDelayTime(TTDT_AUTOPOP, 10000);
-	m_wndChannelsTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 1000);
+	m_wndChannelsTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 500);
 	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_AUTOPOP, 10000);
-	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 1000);
+	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 500);
 
 	SetUpToolTips();
 
@@ -437,8 +437,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndSearch.EnableWindow(FALSE);
 	m_wndPlSearch.EnableWindow(FALSE);
 	m_wndCustom.EnableWindow(FALSE);
-	m_wndEpgID2.EnableWindow(FALSE);
-	m_wndEpgID1.EnableWindow(FALSE);
 	m_wndArchive.EnableWindow(FALSE);
 	m_wndAdult.EnableWindow(FALSE);
 	m_wndTestEPG.EnableWindow(FALSE);
@@ -450,9 +448,14 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndSpinTimeShift.EnableWindow(FALSE);
 	m_wndInfoVideo.EnableWindow(FALSE);
 	m_wndInfoAudio.EnableWindow(FALSE);
+	m_wndEpg1.SetCheck(TRUE);
+	m_wndEpg1.EnableWindow(FALSE);
+	m_wndEpg2.EnableWindow(FALSE);
+	m_wndEpgID1.EnableWindow(FALSE);
+	m_wndEpgID2.EnableWindow(FALSE);
+	m_wndEpg.EnableWindow(FALSE);
 	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
-	m_wndEpg1.SetCheck(TRUE);
 
 	SwitchPlugin();
 
@@ -462,7 +465,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 void CIPTVChannelEditorDlg::SetUpToolTips()
 {
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
-	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 1000);
+	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 
 	m_wndToolTipCtrl.SetMaxTipWidth(500);
 
@@ -503,6 +506,7 @@ void CIPTVChannelEditorDlg::SetUpToolTips()
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Source type for loaded icon. Local file or internet link"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_STOP), _T("Stop process"));
 	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_CHANGED), _T("Update channels changed in the playlist"));
+	m_wndToolTipCtrl.AddTool(GetDlgItem(IDCANCEL), _T("Exit from program"));
 
 	m_wndToolTipCtrl.Activate(TRUE);
 }
@@ -1354,8 +1358,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 	}
 	else
 	{
-		m_epgID2.Empty();
 		m_epgID1.Empty();
+		m_epgID2.Empty();
 		m_timeShiftHours = 0;
 		m_iconUrl.Empty();
 		m_streamUrl.Empty();
@@ -1380,7 +1384,6 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	m_plEPG.Empty();
 	m_archivePlDays = 0;
 	m_wndPlArchive.SetCheck(0);
-	m_wndEpg.SetWindowText(L"");
 
 	const auto& entry = FindEntry(hItem);
 	if (entry)
@@ -2229,8 +2232,6 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 
 	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 	m_wndCustom.EnableWindow(single);
-	m_wndEpgID1.EnableWindow(single);
-	m_wndEpgID2.EnableWindow(single && HasEPG2());
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
 	m_wndTestEPG.EnableWindow(single && (firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty()));
@@ -2245,6 +2246,9 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndSearch.EnableWindow(TRUE);
 	m_wndEpg1.EnableWindow(single);
 	m_wndEpg2.EnableWindow(single && HasEPG2());
+	m_wndEpgID1.EnableWindow(single);
+	m_wndEpgID2.EnableWindow(single && HasEPG2());
+	m_wndEpg.EnableWindow(single);
 
 	if (state == 2)
 	{
@@ -2982,7 +2986,7 @@ bool CIPTVChannelEditorDlg::SetupOttKey(bool loaded)
 
 	if (dlg.DoModal() == IDOK)
 	{
-		loaded = dlg.m_status == _T("ok");
+		loaded = dlg.m_status == _T("Ok");
 
 		if (m_embedded_info != dlg.m_bEmbed)
 		{
@@ -3026,7 +3030,7 @@ bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
 			set_allow_save(TRUE);
 		}
 
-		loaded = dlg.m_status == _T("ok");
+		loaded = dlg.m_status == _T("Ok");
 
 		m_token = dlg.m_entry->stream_uri->get_token();
 		m_domain = dlg.m_entry->stream_uri->get_domain();
@@ -3070,7 +3074,7 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 		m_domain = dlg.m_entry->stream_uri->get_domain();
 		m_password = dlg.m_entry->stream_uri->get_password();
 
-		loaded = dlg.m_status == _T("ok");
+		loaded = dlg.m_status == _T("Ok");
 
 		SaveRegPlugin(m_embedded_info ? REG_TOKEN_EMBEDDED : REG_TOKEN, m_token.c_str());
 		SaveRegPlugin(m_embedded_info ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, m_domain.c_str());

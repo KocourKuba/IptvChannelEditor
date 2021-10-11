@@ -81,7 +81,7 @@ std::wstring uri_sharaclub::get_epg2_uri_json(const std::wstring& id) const
 
 std::wstring uri_sharaclub::get_access_url(const std::wstring& login, const std::wstring& password) const
 {
-	return fmt::format(ACCOUNT_TEMPLATE, login.c_str(), password.c_str());
+	return fmt::format(ACCOUNT_TEMPLATE, login, password);
 }
 
 std::wstring uri_sharaclub::get_playlist_template(bool first /*= true*/) const

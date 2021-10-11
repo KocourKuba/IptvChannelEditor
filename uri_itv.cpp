@@ -2,6 +2,7 @@
 #include "uri_itv.h"
 #include "utils.h"
 
+static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"https://itv.ooo/p/{:s}/hls.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -61,6 +62,11 @@ std::wstring uri_itv::get_templated(StreamSubType subType, const TemplateParams&
 	ReplaceVars(url, params);
 
 	return url;
+}
+
+std::wstring uri_itv::get_access_url(const std::wstring& login, const std::wstring& password) const
+{
+	return fmt::format(ACCOUNT_TEMPLATE, password);
 }
 
 std::wstring uri_itv::get_epg1_uri(const std::wstring& id) const

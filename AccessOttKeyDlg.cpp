@@ -89,7 +89,7 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 		{
 			m_accessKey = access_key.c_str();
 			m_domain = domain.c_str();
-			m_status = _T("ok");
+			m_status = _T("Ok");
 			break;
 		}
 	}
