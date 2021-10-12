@@ -3781,7 +3781,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	dlg.m_probe = m_probe;
 	dlg.m_bAutoSync = m_bAutoSync;
 	dlg.m_MaxThreads = m_MaxThreads;
-	ReadRegInt(REG_LANGUAGE, dlg.m_nLang);
+	dlg.m_nLang = ReadRegInt(REG_LANGUAGE);
 
 	if (dlg.DoModal() == IDOK)
 	{

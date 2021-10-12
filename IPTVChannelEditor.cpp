@@ -215,7 +215,6 @@ void CIPTVChannelEditorApp::FillLangMap()
 	CFileVersionInfo cVer;
 	cVer.Open(fileName);
 	LANGID nExeTrans = cVer.GetCurLID();
-	WORD exeCP = cVer.GetCurCP();
 	cVer.Close();
 
 	LangStruct sLang;
@@ -235,8 +234,7 @@ void CIPTVChannelEditorApp::FillLangMap()
 		const auto& file = cFind.GetFilePath();
 		CFileVersionInfo cVer;
 		cVer.Open(file);
-		LANGID nLibTrans = cVer.GetCurLID();
-		WORD libCP = cVer.GetCurCP();
+		LANGID nLibTrans = MAKELANGID(cVer.GetCurLID(), SUBLANG_DEFAULT);
 		cVer.Close();
 
 		HMODULE hRes = LoadLibrary(file);
