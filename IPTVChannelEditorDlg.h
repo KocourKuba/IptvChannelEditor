@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include <richole.h>
 #include "PlayListEntry.h"
 #include "TreeCtrlEx.h"
 #include "ChannelCategory.h"

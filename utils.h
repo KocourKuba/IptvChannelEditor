@@ -230,9 +230,9 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 	// modify the specified text to make it safe for use in a rich-edit
 	// control, by escaping special RTF characters '\', '{' and '}'
 
-	const auto& paragraph = any_string<char>(R"({\par})");
+	const auto& paragraph = any_string<T>(R"({\par})");
 
-	std::wstring rtf;
+	std::basic_string<T> rtf;
 	for (auto& it = text.begin(); it != text.end(); ++it)
 	{
 		if (*it == '\r') continue;;

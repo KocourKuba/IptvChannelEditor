@@ -154,7 +154,7 @@ int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 class _RichToolTipCtrlCookie
 {
 public:
-	_RichToolTipCtrlCookie(CString sText) : m_sText(sText) { Reset(); }
+	_RichToolTipCtrlCookie(const CString& sText) : m_sText(sText) { Reset(); }
 
 	// read dwCount bytes into lpszBuffer, and return number read
 	// stop if source is empty, or when end of string reached
@@ -169,14 +169,14 @@ public:
 			return 0;
 
 		// start the source string from where we left off
-		LPCWSTR lpszText = m_sText.GetString() + m_dwCount;
+		LPCSTR lpszText = m_sText.GetString() + m_dwCount;
 
 		// only copy what we've got left
 		if (dwLeft < dwCount)
 			dwCount = dwLeft;
 
 		// copy the text
-		wcsncpy_s((LPWSTR)lpBuffer, dwCount + 1, lpszText, _TRUNCATE);
+		strncpy_s((char*)lpBuffer, dwCount + 1, lpszText, _TRUNCATE);
 
 		// keep where we got to
 		m_dwCount += dwCount;
@@ -188,11 +188,11 @@ public:
 	void Reset()
 	{
 		m_dwCount = 0;
-		m_dwLength = m_sText.GetLength() * sizeof(wchar_t);
+		m_dwLength = m_sText.GetLength();
 	}
 
 protected:
-	CString m_sText;
+	CStringA m_sText;
 	DWORD m_dwLength;
 	DWORD m_dwCount;
 };
@@ -1521,11 +1521,11 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 	EDITSTREAM es = { 0 };
 	es.dwCookie = (DWORD_PTR)&data;
 	es.pfnCallback = RichTextCtrlCallbackIn;
-	int n = m_wndEpg.StreamIn(SF_RTF | SF_UNICODE, es);
+	int n = m_wndEpg.StreamIn(SF_RTF, es);
 	if (n <= 0)
 	{
 		data.Reset();
-		n = m_wndEpg.StreamIn(SF_RTF | SF_UNICODE, es);
+		n = m_wndEpg.StreamIn(SF_TEXT | SF_UNICODE, es);
 	}
 }
 
