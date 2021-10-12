@@ -1,0 +1,1236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd" xmlns:sl="http://www.sisulizer.com">
+  <file original="Release Unicode\IPTVChannelEditor.exe" datatype="winres" source-language="en-US" target-language="ru">
+    <body>
+      <group id="Accelerators" datatype="winres">
+        <group id="112" datatype="winres">
+        </group>
+      </group>
+      <group id="Dialogs" datatype="winres">
+        <group id="102" datatype="winres">
+        </group>
+        <group id="103" datatype="winres">
+          <trans-unit id="Dialogs.103.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.103.Text">
+            <source>Custom URL</source>
+            <target state="final">Своя ссылка</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.103.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.103.2.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.103.2.Text">
+            <source>Cancel</source>
+            <target state="final">Отмена</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.103.2.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="105" datatype="winres">
+          <trans-unit id="Dialogs.105.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.105.Text">
+            <source>Access Info</source>
+            <target state="final">Информация о доступе</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.105.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.105.STATIC_OTT_Access.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.105.STATIC_OTT_Access.Text">
+            <source>OTT Access Key</source>
+            <target state="final">Ключ доступа OTT</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.105.STATIC_OTT_Access.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.105.STATIC_Stream_Domain.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.105.STATIC_Stream_Domain.Text">
+            <source>Stream Domain</source>
+            <target state="final">Потоковый домен</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.105.STATIC_Stream_Domain.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.105.STATIC_Read_from_URL.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.105.STATIC_Read_from_URL.Text">
+            <source>Read from URL (direct link) or File</source>
+            <target state="final">Прочитать из ссылки (прямая ссылка) или из файла</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.105.STATIC_Read_from_URL.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.105.1101.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.105.1101.Text">
+            <source>Embed into the current list</source>
+            <target state="final">Встроить в список каналов</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.105.1101.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.105.1007.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.105.1007.Text">
+            <source>Get</source>
+            <target state="final">Получить</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.105.1007.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="106" datatype="winres">
+          <trans-unit id="Dialogs.106.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.106.Text">
+            <source>Exclude channels</source>
+            <target state="final">Исключить из показа</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.106.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.106.1031.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.106.1031.Text">
+            <source>Regular Expression</source>
+            <target state="final">Регулярное выражение</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.106.1031.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.106.1027.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.106.1027.Text">
+            <source>Case sensitive</source>
+            <target state="final">Учитывать регистр</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.106.1027.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.106.1028.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.106.1028.Text">
+            <source>Not added</source>
+            <target state="final">Не добавленные</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.106.1028.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="107" datatype="winres">
+          <trans-unit id="Dialogs.107.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.107.Text">
+            <source>New Category</source>
+            <target state="final">Новая категория</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.107.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="108" datatype="winres">
+        </group>
+        <group id="109" datatype="winres">
+          <trans-unit id="Dialogs.109.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.109.Text">
+            <source>Settings</source>
+            <target state="final">Настройки</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.109.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.109.STATIC_Player_m3u8.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Player_m3u8.Text">
+            <source>Player m3u8 (for example Media Player Classic)</source>
+            <target state="final">Проигрыватель m3u8 файлов (например Media Player Classic)</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Player_m3u8.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.109.1091.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.109.1091.Text">
+            <source>Sync Channel with Playlist Entry</source>
+            <target state="final">Синхронизировать канал с записью в плейлисте</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.109.1091.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.109.STATIC_Max_stream.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Max_stream.Text">
+            <source>Max stream threads</source>
+            <target state="final">Количество потоков для проверки канала</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Max_stream.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.109.STATIC_Language.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Language.Text">
+            <source>Language</source>
+            <target state="final">Язык</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Language.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="110" datatype="winres">
+          <trans-unit id="Dialogs.110.BUTTON_Stream_Info.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.BUTTON_Stream_Info.Text">
+            <source>Stream Info</source>
+            <target state="final">Информация о потоке</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.BUTTON_Stream_Info.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.BUTTON_Channel_Info.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.BUTTON_Channel_Info.Text">
+            <source>Channel Info</source>
+            <target state="final">Информация о канале</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.BUTTON_Channel_Info.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1064.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1064.Text">
+            <source>for DUNE HD Players</source>
+            <target state="final">для приставок DUNE HD</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1064.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1066.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1066.Text">
+            <source>Channels:</source>
+            <target state="final">Каналы:</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1066.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.STATIC_Channel_ID.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_Channel_ID.Text">
+            <source>Channel ID</source>
+            <target state="final">№ Канала</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_Channel_ID.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.STATIC_EPG_Time_Shift.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_EPG_Time_Shift.Text">
+            <source>EPG Time Shift</source>
+            <target state="final">Сдвиг EPG</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_EPG_Time_Shift.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1025.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1025.Text">
+            <source>Adult</source>
+            <target state="final">Взрослый</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1025.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1026.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1026.Text">
+            <source>Archive</source>
+            <target state="final">Архив</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1026.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1028.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1028.Text">
+            <source>Custom Url</source>
+            <target state="final">Произвольная ссылка</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1028.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1105.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1105.Text">
+            <source>First EPG ID</source>
+            <target state="final">Основной EPG</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1105.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1106.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1106.Text">
+            <source>Second EPG ID</source>
+            <target state="final">Вторичный EPG</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1106.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.STATIC_Day.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_Day.Text">
+            <source>Day</source>
+            <target state="final">День</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_Day.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.STATIC_Hour.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_Hour.Text">
+            <source>Hour</source>
+            <target state="final">Час</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_Hour.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1080.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1080.Text">
+            <source>Play Stream Type</source>
+            <target state="final">Тип потока</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1080.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1073.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1073.Text">
+            <source>Playlist:</source>
+            <target state="final">Плейлист:</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1073.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.STATIC_Icons_source.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_Icons_source.Text">
+            <source>Icons source</source>
+            <target state="final">Источник иконок</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_Icons_source.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.STATIC_ID.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_ID.Text">
+            <source>ID:</source>
+            <target state="final">№:</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.STATIC_ID.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1001.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1001.Text">
+            <source>About</source>
+            <target state="final">О редакторе</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1001.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1021.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1021.Text">
+            <source>View EPG</source>
+            <target state="final">Просмотр</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1021.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1024.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1024.Text">
+            <source>Check Archive</source>
+            <target state="final">Проверить архив</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1024.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1005.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1005.Text">
+            <source>Cache Icon</source>
+            <target state="final">Сохранить иконку</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1005.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1017.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1017.Text">
+            <source>Save Channels</source>
+            <target state="final">Сохранить</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1017.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1020.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1020.Text">
+            <source>Stop</source>
+            <target state="final">Стоп</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1020.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1013.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1013.Text">
+            <source>Make plugin</source>
+            <target state="final">Создать плагин</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1013.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1023.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1023.Text">
+            <source>Update Icon</source>
+            <target state="final">Обновить иконку</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1023.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.2.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.2.Text">
+            <source>Exit</source>
+            <target state="final">Выход</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.2.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.110.1022.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1022.Text">
+            <source>Update changed</source>
+            <target state="final">Обновить каналы</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1022.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="129" datatype="winres">
+          <trans-unit id="Dialogs.129.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.129.Text">
+            <source>Icons List</source>
+            <target state="final">Список иконок</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.129.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="130" datatype="winres">
+          <trans-unit id="Dialogs.130.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.130.Text">
+            <source>Account Info</source>
+            <target state="final">Информация о кабинете</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.130.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.130.1096.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1096.Text">
+            <source>Login</source>
+            <target state="final">Логин</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1096.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.130.1097.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1097.Text">
+            <source>Password</source>
+            <target state="final">Пароль</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1097.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.130.STATIC_Status.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.130.STATIC_Status.Text">
+            <source>Status:</source>
+            <target state="final">Статус:</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.130.STATIC_Status.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.130.1098.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1098.Text">
+            <source>Subscription:</source>
+            <target state="final">Подписка:</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1098.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.130.1099.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1099.Text">
+            <source>Balance:</source>
+            <target state="final">Баланс:</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1099.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.130.1100.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1100.Text">
+            <source>Price:</source>
+            <target state="final">Цена:</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1100.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.130.1007.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1007.Text">
+            <source>Get Account Info</source>
+            <target state="final">Получить</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.130.1007.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="131" datatype="winres">
+          <trans-unit id="Dialogs.131.1097.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.131.1097.Text">
+            <source>Key access</source>
+            <target state="final">Ключ доступа</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.131.1097.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="16104" datatype="winres">
+        </group>
+        <group id="16105" datatype="winres">
+        </group>
+        <group id="16130" datatype="winres">
+        </group>
+        <group id="16132" datatype="winres">
+        </group>
+        <group id="16133" datatype="winres">
+        </group>
+        <group id="16134" datatype="winres">
+        </group>
+        <group id="16135" datatype="winres">
+        </group>
+        <group id="16136" datatype="winres">
+        </group>
+        <group id="16137" datatype="winres">
+        </group>
+        <group id="16658" datatype="winres">
+        </group>
+        <group id="16927" datatype="winres">
+        </group>
+        <group id="16928" datatype="winres">
+        </group>
+        <group id="16961" datatype="winres">
+        </group>
+        <group id="16962" datatype="winres">
+        </group>
+        <group id="16963" datatype="winres">
+        </group>
+        <group id="16982" datatype="winres">
+        </group>
+        <group id="17004" datatype="winres">
+        </group>
+        <group id="17058" datatype="winres">
+        </group>
+        <group id="17074" datatype="winres">
+        </group>
+        <group id="17076" datatype="winres">
+        </group>
+        <group id="30721" datatype="winres">
+        </group>
+        <group id="30734" datatype="winres">
+        </group>
+      </group>
+      <group id="Menus" datatype="winres">
+        <group id="113" datatype="winres">
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32786.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32786.Text">
+            <source>Play</source>
+            <target state="final">Играть</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32786.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32772.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32772.Text">
+            <source>New Channel	Ins</source>
+            <target state="final">Новый канал	Ins</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32772.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32790.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32790.Text">
+            <source>Delete Channel	Del</source>
+            <target state="final">Удалить канал	Del</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32790.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32792.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32792.Text">
+            <source>Disable Channel</source>
+            <target state="final">Отключить канал</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32792.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32789.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32789.Text">
+            <source>Delete Category</source>
+            <target state="final">Удалить категорию</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32789.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32797.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32797.Text">
+            <source>Sort Category</source>
+            <target state="final">Сортировать категорию</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32797.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32798.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32798.Text">
+            <source>Add to Favorite</source>
+            <target state="final">Добавить в Избранное</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32798.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32778.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32778.Text">
+            <source>Rename	F2</source>
+            <target state="final">Переименовать	F2</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32778.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32775.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32775.Text">
+            <source>Move Up	Ctrl+Up</source>
+            <target state="final">Вверх	Ctrl+Вверх</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32775.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32774.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32774.Text">
+            <source>Move Down	Ctrl+Down</source>
+            <target state="final">Вниз	Ctrl+Вниз</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32774.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32779.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32779.Text">
+            <source>Get Stream Info	F4</source>
+            <target state="final">Информация о потоке	F4</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32779.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32796.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32796.Text">
+            <source>Sync with Playlist	Ctrl+SPACE</source>
+            <target state="final">Найти в плейлисте	Ctrl+Пробел</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32796.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="114" datatype="winres">
+          <trans-unit id="Menus.114.POPUP_PlayListMenu.32771.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.114.POPUP.32771.Text">
+            <source>Add Category</source>
+            <target state="final">Добавить категорию</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.114.POPUP.32771.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.114.POPUP_PlayListMenu.32793.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.114.POPUP.32793.Text">
+            <source>Add/Update Channel	F5</source>
+            <target state="final">Добавить/Обновить канал	F5</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.114.POPUP.32793.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.114.POPUP_PlayListMenu.32796.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.114.POPUP.32796.Text">
+            <source>Sync with Channel	Ctrl+SPACE</source>
+            <target state="final">Найти в списке каналов	Ctrl+Пробел</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.114.POPUP.32796.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="16102" datatype="winres">
+        </group>
+      </group>
+      <group id="Strings" datatype="winres">
+        <group id="10" datatype="winres">
+          <trans-unit id="Strings.10.IDS_STRING_FMT_CHANNELS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_CHANNELS">
+            <source>Channels: {:d} ({:d} changed)</source>
+            <target state="final">Каналы: {:d} ({:d} изменено)</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_CHANNELS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_FMT_CHANNELS_READED" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_CHANNELS_READED">
+            <source>Channels readed: %d</source>
+            <target state="final">Каналов прочитано: %d</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_CHANNELS_READED</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_FMT_CHANNELS_TOOLTIP1" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_CHANNELS_TOOLTIP1">
+            <source>Name:		%s
+ID:		%s
+EPG1 ID:	%s
+</source>
+            <target state="final">Название:	%s
+№:		%s
+EPG1 №:	%s
+</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_CHANNELS_TOOLTIP1</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_FMT_CHANNELS_TOOLTIP2" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_CHANNELS_TOOLTIP2">
+            <source>EPG2 ID:	%s
+</source>
+            <target state="final">EPG2 №:	%s
+</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_CHANNELS_TOOLTIP2</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_FMT_PLAYLIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_PLAYLIST">
+            <source>{:s}, Channels: {:d}</source>
+            <target state="final">{:s}, Каналы: {:d}</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_PLAYLIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_FMT_PLAYLIST_FLT" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_PLAYLIST_FLT">
+            <source>{:s}, Channels: {:d} ({:d})</source>
+            <target state="final">{:s}, Каналы: {:d} ({:d})</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_PLAYLIST_FLT</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_FMT_STREAM_INFO" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_STREAM_INFO">
+            <source>Get Stream Info: %d from %d</source>
+            <target state="final">Информация о потоке: %d из %d</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_FMT_STREAM_INFO</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_INFO_CREATE_SUCCESS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_INFO_CREATE_SUCCESS">
+            <source>Plugin created.
+Install it to the DUNE</source>
+            <target state="final">Плагин создан!
+Установите его на DUNE</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_INFO_CREATE_SUCCESS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_INFO_NOT_FOUND" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_INFO_NOT_FOUND">
+            <source>Not found!</source>
+            <target state="final">Не найден!</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_INFO_NOT_FOUND</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_INFO_RESTART_NEED" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_INFO_RESTART_NEED">
+            <source>Restart application to take effect</source>
+            <target state="final">Перезапустите приложения чтобы применить изменения</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_INFO_RESTART_NEED</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_WRN_CHANNEL_EXIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_CHANNEL_EXIST">
+            <source>Channel already exist!</source>
+            <target state="final">Канал уже существует!</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_CHANNEL_EXIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_WRN_CHANNEL_ID_EXIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_CHANNEL_ID_EXIST">
+            <source>Channel with this ID already exist!
+Are you sure to replace?</source>
+            <target state="final">Канал с этим номером уже существует!
+Заменить?</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_CHANNEL_ID_EXIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_WRN_DELETE_CHANNEL" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_DELETE_CHANNEL">
+            <source>Delete channel(s). Are your sure?</source>
+            <target state="final">Удалить канал(ы). Вы уверены?</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_DELETE_CHANNEL</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_WRN_NON_ASCII" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_NON_ASCII">
+            <source>Non ASCII symbols in the icon name is not allowed!</source>
+            <target state="final">Только латинские символы допустимы в имени иконки!</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_NON_ASCII</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_WRN_NON_ASCII_LIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_NON_ASCII_LIST">
+            <source>Non ASCII symbols in the channel list name is not allowed!</source>
+            <target state="final">Только латинские символы допустимы в имени списка каналов!</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_NON_ASCII_LIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.10.IDS_STRING_WRN_NOT_SAVED" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_NOT_SAVED">
+            <source>You have unsaved changes.
+Are you sure?</source>
+            <target state="final">Изменения не сохранены.
+Вы уверены?</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_NOT_SAVED</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="1001" datatype="winres">
+        </group>
+        <group id="1002" datatype="winres">
+        </group>
+        <group id="1003" datatype="winres">
+        </group>
+        <group id="1007" datatype="winres">
+        </group>
+        <group id="1008" datatype="winres">
+        </group>
+        <group id="1016" datatype="winres">
+        </group>
+        <group id="1019" datatype="winres">
+        </group>
+        <group id="1057" datatype="winres">
+        </group>
+        <group id="1064" datatype="winres">
+        </group>
+        <group id="1065" datatype="winres">
+        </group>
+        <group id="1066" datatype="winres">
+        </group>
+        <group id="1068" datatype="winres">
+        </group>
+        <group id="1069" datatype="winres">
+        </group>
+        <group id="1070" datatype="winres">
+        </group>
+        <group id="1071" datatype="winres">
+        </group>
+        <group id="11" datatype="winres">
+          <trans-unit id="Strings.11.IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST">
+            <source>Add new channels list</source>
+            <target state="final">Добавить новый список каналов</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_BUTTON_SEARCH_NEXT" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_BUTTON_SEARCH_NEXT">
+            <source>Search next</source>
+            <target state="final">Искать далее</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_BUTTON_SEARCH_NEXT</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_BUTTON_TEST_EPG" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_BUTTON_TEST_EPG">
+            <source>View channel EPG in browser</source>
+            <target state="final">Просмотр EPG для канала в браузере</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_BUTTON_TEST_EPG</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_COMBO_CHANNELS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_COMBO_CHANNELS">
+            <source>Choose channel list to edit</source>
+            <target state="final">Выбор списка каналов для редактирования</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_COMBO_CHANNELS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_COMBO_PLAYLIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_COMBO_PLAYLIST">
+            <source>Choose a playlist to import</source>
+            <target state="final">Выбор плейлиста для импорта</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_COMBO_PLAYLIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_COMBO_PLUGIN_TYPE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_COMBO_PLUGIN_TYPE">
+            <source>Select Plugin for edit</source>
+            <target state="final">Выбор плагина для редактирования</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_COMBO_PLUGIN_TYPE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_DONATE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_DONATE">
+            <source>Please donate to support the developer</source>
+            <target state="final">Поддержите разработчика</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_DONATE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_EDIT_EPG1_ID" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_EDIT_EPG1_ID">
+            <source>Main EPG ID</source>
+            <target state="final">Номер основного EPG</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_EDIT_EPG1_ID</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_EDIT_EPG2_ID" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_EDIT_EPG2_ID">
+            <source>Secondary EPG ID</source>
+            <target state="final">Номер вторичного EPG</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_EDIT_EPG2_ID</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_EDIT_SEARCH" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_EDIT_SEARCH">
+            <source>Search in channels. Use \ prefix to find by ID</source>
+            <target state="final">Поиск в каналах. Префикс \\ для поиска по номеру</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_EDIT_SEARCH</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_FMT_CHANNELS_TOOLTIP3" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_FMT_CHANNELS_TOOLTIP3">
+            <source>Archive:	%d day(s)
+Adult:		%s
+In categories:	%s</source>
+            <target state="final">Архив:		%d дней
+Взрослый:	%s
+В категории:	%s</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_FMT_CHANNELS_TOOLTIP3</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_FMT_PLAYLIST_TOOLTIPS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_FMT_PLAYLIST_TOOLTIPS">
+            <source>Name:		%s
+ID:		%s
+EPG ID:		%s
+Archive:	%d day(s)
+Adult:		%s</source>
+            <target state="final">Название:	%s
+№:		%s
+EPG №:		%s
+Архив:		%d дней
+Взрослый:	%s</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_FMT_PLAYLIST_TOOLTIPS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_NO" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_NO">
+            <source>No</source>
+            <target state="final">Нет</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_NO</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.11.IDS_STRING_YES" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_YES">
+            <source>Yes</source>
+            <target state="final">Да</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_YES</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="12" datatype="winres">
+          <trans-unit id="Strings.12.IDS_STRING_BUTTON_CACHE_ICON" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_CACHE_ICON">
+            <source>Store icon to the local folder instead of downloading it from internet</source>
+            <target state="final">Сохранить иконку на диск. Иначе плагин будет скачивать её из Интернета</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_CACHE_ICON</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_BUTTON_CHOOSE_PLAYLIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_CHOOSE_PLAYLIST">
+            <source>Choose playlist or download it from account</source>
+            <target state="final">Выбрать плейлист или скачать его из Интернета</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_CHOOSE_PLAYLIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST">
+            <source>Save downloaded playlist to disk</source>
+            <target state="final">Сохранить скачанный плейлист на диск</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_BUTTON_PACK" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_PACK">
+            <source>Make a plugin to install on player</source>
+            <target state="final">Создать плагин для DUNE</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_PACK</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_BUTTON_PL_FILTER" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_PL_FILTER">
+            <source>Filter the playlist</source>
+            <target state="final">Фильтр плейлиста</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_PL_FILTER</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_BUTTON_SAVE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_SAVE">
+            <source>Save channels list</source>
+            <target state="final">Сохранить список каналов</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_SAVE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_BUTTON_SETTINGS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_SETTINGS">
+            <source>Editor settings</source>
+            <target state="final">Настройки редактора</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_SETTINGS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_BUTTON_UPDATE_ICON" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_UPDATE_ICON">
+            <source>Set channel icon from original playlist</source>
+            <target state="final">Установить иконку из плейлиста</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_UPDATE_ICON</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_CHECK_ADULT" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_CHECK_ADULT">
+            <source>Channel contents for adults</source>
+            <target state="final">Канал для взрослых</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_CHECK_ADULT</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_CHECK_ARCHIVE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_CHECK_ARCHIVE">
+            <source>Channel archive is supported</source>
+            <target state="final">Канал поддерживает архив</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_CHECK_ARCHIVE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_CHECK_CUSTOMIZE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_CHECK_CUSTOMIZE">
+            <source>Use custom stream URL for the channel</source>
+            <target state="final">Произвольный URL для канала</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_CHECK_CUSTOMIZE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS">
+            <source>Days in the past to test archive play</source>
+            <target state="final">Дней назад для проверки архива</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_EDIT_ARCHIVE_DAYS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_EDIT_ARCHIVE_DAYS">
+            <source>How many days archive is supported</source>
+            <target state="final">Количество дней архива</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_EDIT_ARCHIVE_DAYS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_EDIT_PL_SEARCH" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_EDIT_PL_SEARCH">
+            <source>Search in the playlist. Use \ prefix to find by ID</source>
+            <target state="final">Поиск в плейлисте. Префикс \\ для поиска по номеру</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_EDIT_PL_SEARCH</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.12.IDS_STRING_STATIC_ICON" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_STATIC_ICON">
+            <source>Click to change the icon</source>
+            <target state="final">Кликните для выбора иконки</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_STATIC_ICON</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="13" datatype="winres">
+          <trans-unit id="Strings.13.IDS_STRING_BUTTON_CHECK_ARCHIVE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_BUTTON_CHECK_ARCHIVE">
+            <source>Try to play the archive channel</source>
+            <target state="final">Проверить архив канала</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_BUTTON_CHECK_ARCHIVE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_BUTTON_STOP" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_BUTTON_STOP">
+            <source>Stop process</source>
+            <target state="final">Остановить процесс</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_BUTTON_STOP</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_BUTTON_UPDATE_CHANGED" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_BUTTON_UPDATE_CHANGED">
+            <source>Update channels changed in the playlist</source>
+            <target state="final">Обновить все каналы отличающиеся от данных в плейлисте</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_BUTTON_UPDATE_CHANGED</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_COMBO_ICON_SOURCE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_COMBO_ICON_SOURCE">
+            <source>Source type for loaded icon. Local file or internet link</source>
+            <target state="final">Источник для выбора иконки. Файл на диске или ссылка в Интернете</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_COMBO_ICON_SOURCE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_COMBO_STREAM_TYPE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_COMBO_STREAM_TYPE">
+            <source>Stream type used to test play stream</source>
+            <target state="final">Тип потока для проверки проигрывания канала</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_COMBO_STREAM_TYPE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS">
+            <source>Hours added to day in the past to test archive play</source>
+            <target state="final">Часов назад для проверки архива</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_EDIT_INFO_AUDIO" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_EDIT_INFO_AUDIO">
+            <source>Audio stream info</source>
+            <target state="final">Информация о аудио потоке канала</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_EDIT_INFO_AUDIO</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_EDIT_INFO_VIDEO" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_EDIT_INFO_VIDEO">
+            <source>Video stream info</source>
+            <target state="final">Информация о видео потоке канала</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_EDIT_INFO_VIDEO</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_EDIT_TIME_SHIFT" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_EDIT_TIME_SHIFT">
+            <source>EPG Time shift for channel, hours</source>
+            <target state="final">Сдвиг в часах для показа EPG канала</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_EDIT_TIME_SHIFT</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="3633" datatype="winres">
+        </group>
+        <group id="3841" datatype="winres">
+        </group>
+        <group id="3842" datatype="winres">
+        </group>
+        <group id="3843" datatype="winres">
+        </group>
+        <group id="3857" datatype="winres">
+        </group>
+        <group id="3858" datatype="winres">
+        </group>
+        <group id="3859" datatype="winres">
+        </group>
+        <group id="3860" datatype="winres">
+        </group>
+        <group id="3865" datatype="winres">
+        </group>
+        <group id="3866" datatype="winres">
+        </group>
+        <group id="3867" datatype="winres">
+        </group>
+        <group id="3868" datatype="winres">
+        </group>
+        <group id="3869" datatype="winres">
+        </group>
+        <group id="3887" datatype="winres">
+        </group>
+        <group id="8" datatype="winres">
+          <trans-unit id="Strings.8.IDS_ABOUTBOX" resname="Release Unicode\IPTVChannelEditor.exe.Strings.8.IDS_ABOUTBOX">
+            <source>&amp;About Dune IPTV Channel Editor...</source>
+            <target state="final">&amp;О Dune IPTV Channel Editor...</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.8.IDS_ABOUTBOX</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.8.IDS_LANGUAGE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.8.IDS_LANGUAGE">
+            <source>&lt;Language name&gt;</source>
+            <target state="final">Русский</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.8.IDS_LANGUAGE</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="9" datatype="winres">
+          <trans-unit id="Strings.9.IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.9.IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST">
+            <source>Unable to download playlist!</source>
+            <target state="final">Не могу скачать плейлист!</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.9.IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.9.IDS_STRING_ERR_EMPTY_PLAYLIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.9.IDS_STRING_ERR_EMPTY_PLAYLIST">
+            <source>Empty playlist!</source>
+            <target state="final">Пустой плейлист!</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.9.IDS_STRING_ERR_EMPTY_PLAYLIST</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.9.IDS_STRING_ERR_SOURCE_NOT_SET" resname="Release Unicode\IPTVChannelEditor.exe.Strings.9.IDS_STRING_ERR_SOURCE_NOT_SET">
+            <source>Playlist source not set!</source>
+            <target state="final">Источник плейлиста не задан!</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.9.IDS_STRING_ERR_SOURCE_NOT_SET</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.9.IDS_STRING_ERR_THREAD_NOT_START" resname="Release Unicode\IPTVChannelEditor.exe.Strings.9.IDS_STRING_ERR_THREAD_NOT_START">
+            <source>Problem with starting thread!</source>
+            <target state="final">Ошибка при запуске потока!</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.9.IDS_STRING_ERR_THREAD_NOT_START</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+      </group>
+      <group id="Versions" datatype="winres">
+        <group id="1" datatype="winres">
+          <trans-unit id="Versions.1.ProductVersion" resname="Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion">
+            <source>2.1.424</source>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+      </group>
+    </body>
+  </file>
+</xliff>

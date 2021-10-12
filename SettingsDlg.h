@@ -23,18 +23,21 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
+	afx_msg void OnEnChangeEditStreamThreads();
+	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnCbnSelchangeComboLang();
+
 public:
 	CString m_player;
 	CString m_probe;
 	BOOL m_bAutoSync;
 	int m_MaxThreads;
+	WORD m_nLang = 0;
 
 protected:
 	CMFCEditBrowseCtrl m_wndProbe;
 	CMFCEditBrowseCtrl m_wndPlayer;
 	CEdit m_wndMaxThreads;
 	CSpinButtonCtrl m_wndSpinMaxThreads;
-public:
-	afx_msg void OnEnChangeEditStreamThreads();
-	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
+	CComboBox m_wndLanguage;
 };

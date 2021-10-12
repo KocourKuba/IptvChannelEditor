@@ -13,6 +13,7 @@ IMPLEMENT_DYNAMIC(CSettingsDlg, CDialogEx)
 BEGIN_MESSAGE_MAP(CSettingsDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_THREADS, &CSettingsDlg::OnEnChangeEditStreamThreads)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_STREAM_THREADS, &CSettingsDlg::OnDeltaposSpinStreamThreads)
+	ON_CBN_SELCHANGE(IDC_COMBO_LANG, &CSettingsDlg::OnCbnSelchangeComboLang)
 END_MESSAGE_MAP()
 
 
@@ -35,11 +36,26 @@ void CSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_STREAM_THREADS, m_MaxThreads);
 	DDX_Control(pDX, IDC_EDIT_STREAM_THREADS, m_wndMaxThreads);
 	DDX_Control(pDX, IDC_SPIN_STREAM_THREADS, m_wndSpinMaxThreads);
+	DDX_Control(pDX, IDC_COMBO_LANG, m_wndLanguage);
 }
 
 BOOL CSettingsDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
+
+	int nCurrent = 0;
+	for (const auto& pair : theApp.m_LangMap)
+	{
+		int nIdx = m_wndLanguage.AddString(pair.second.csLang);
+		m_wndLanguage.SetItemData(nIdx, pair.first);
+		if (pair.first == m_nLang)
+			nCurrent = nIdx;
+	}
+
+	if (m_wndLanguage.GetCount())
+	{
+		m_wndLanguage.SetCurSel(nCurrent);
+	}
 
 	CString filter(_T("EXE file(*.exe)|*.exe|All Files (*.*)|*.*||"));
 	m_wndPlayer.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
@@ -73,4 +89,10 @@ void CSettingsDlg::OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult)
 	UpdateData(FALSE);
 	OnEnChangeEditStreamThreads();
 	*pResult = 0;
+}
+
+void CSettingsDlg::OnCbnSelchangeComboLang()
+{
+	AfxMessageBox(IDS_STRING_INFO_RESTART_NEED, MB_OK | MB_ICONINFORMATION);
+	m_nLang = (WORD)m_wndLanguage.GetItemData(m_wndLanguage.GetCurSel());
 }

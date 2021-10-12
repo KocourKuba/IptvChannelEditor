@@ -183,6 +183,9 @@
     <ClInclude Include="uri_itv.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="FileVersionInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -289,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="uri_itv.cpp">
       <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="FileVersionInfo.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

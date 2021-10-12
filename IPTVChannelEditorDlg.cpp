@@ -103,6 +103,48 @@ PluginDesc all_plugins[] = {
 	{ enSharavoz,  _T("Sharavoz TV") },
 };
 
+std::map<UINT, UINT> tooltips_info =
+{
+	{ IDC_MFCLINK_DONATE, IDS_STRING_DONATE },
+	{ IDC_COMBO_PLUGIN_TYPE, IDS_STRING_COMBO_PLUGIN_TYPE },
+	{ IDC_COMBO_CHANNELS, IDS_STRING_COMBO_CHANNELS },
+	{ IDC_COMBO_PLAYLIST, IDS_STRING_COMBO_PLAYLIST },
+	{ IDC_BUTTON_ADD_NEW_CHANNELS_LIST, IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST },
+	{ IDC_EDIT_SEARCH, IDS_STRING_EDIT_SEARCH },
+	{ IDC_BUTTON_SEARCH_NEXT, IDS_STRING_BUTTON_SEARCH_NEXT },
+	{ IDC_EDIT_URL_ID, IDS_STRING_EDIT_URL_ID },
+	{ IDC_BUTTON_TEST_EPG, IDS_STRING_BUTTON_TEST_EPG },
+	{ IDC_EDIT_EPG1_ID, IDS_STRING_EDIT_EPG1_ID },
+	{ IDC_EDIT_EPG2_ID, IDS_STRING_EDIT_EPG2_ID },
+	{ IDC_CHECK_CUSTOMIZE, IDS_STRING_CHECK_CUSTOMIZE },
+	{ IDC_CHECK_ARCHIVE, IDS_STRING_CHECK_ARCHIVE },
+	{ IDC_EDIT_ARCHIVE_DAYS, IDS_STRING_EDIT_ARCHIVE_DAYS },
+	{ IDC_CHECK_ADULT, IDS_STRING_CHECK_ADULT },
+	{ IDC_BUTTON_CACHE_ICON, IDS_STRING_BUTTON_CACHE_ICON },
+	{ IDC_BUTTON_SAVE, IDS_STRING_BUTTON_SAVE },
+	{ IDC_BUTTON_PACK, IDS_STRING_BUTTON_PACK },
+	{ IDC_BUTTON_SETTINGS, IDS_STRING_BUTTON_SETTINGS },
+	{ IDC_BUTTON_UPDATE_ICON, IDS_STRING_BUTTON_UPDATE_ICON },
+	{ IDC_BUTTON_CHOOSE_PLAYLIST, IDS_STRING_BUTTON_CHOOSE_PLAYLIST },
+	{ IDC_BUTTON_DOWNLOAD_PLAYLIST, IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST },
+	{ IDC_EDIT_PL_SEARCH, IDS_STRING_EDIT_PL_SEARCH },
+	{ IDC_BUTTON_PL_SEARCH_NEXT, IDS_STRING_BUTTON_PL_SEARCH_NEXT },
+	{ IDC_BUTTON_PL_FILTER, IDS_STRING_BUTTON_PL_FILTER },
+	{ IDC_STATIC_ICON, IDS_STRING_STATIC_ICON },
+	{ IDC_EDIT_ARCHIVE_CHECK_DAYS, IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS },
+	{ IDC_SPIN_ARCHIVE_CHECK_DAYS, IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS },
+	{ IDC_EDIT_ARCHIVE_CHECK_HOURS, IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS },
+	{ IDC_SPIN_ARCHIVE_CHECK_HOURS, IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS },
+	{ IDC_EDIT_TIME_SHIFT, IDS_STRING_EDIT_TIME_SHIFT },
+	{ IDC_SPIN_TIME_SHIFT, IDS_STRING_EDIT_TIME_SHIFT },
+	{ IDC_EDIT_INFO_VIDEO, IDS_STRING_EDIT_INFO_VIDEO },
+	{ IDC_EDIT_INFO_AUDIO, IDS_STRING_EDIT_INFO_AUDIO },
+	{ IDC_COMBO_STREAM_TYPE, IDS_STRING_COMBO_STREAM_TYPE },
+	{ IDC_COMBO_ICON_SOURCE, IDS_STRING_COMBO_ICON_SOURCE },
+	{ IDC_BUTTON_STOP, IDS_STRING_BUTTON_STOP },
+	{ IDC_BUTTON_CHECK_ARCHIVE, IDS_STRING_BUTTON_CHECK_ARCHIVE },
+	{ IDC_BUTTON_UPDATE_CHANGED, IDS_STRING_BUTTON_UPDATE_CHANGED },
+};
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
 	return lParam1 < lParam2 ? -1 : lParam1 == lParam2 ? 0 : 1;
@@ -420,7 +462,16 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 500);
 	m_wndPlaylistTree.GetToolTips()->SetMaxTipWidth(100);
 
-	SetUpToolTips();
+	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
+	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
+	m_wndToolTipCtrl.SetMaxTipWidth(500);
+
+	for (const auto& pair : tooltips_info)
+	{
+		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), pair.second);
+	}
+
+	m_wndToolTipCtrl.Activate(TRUE);
 
 	// load settings
 	m_player = ReadRegStringT(REG_PLAYER);
@@ -438,6 +489,11 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		int idx = m_wndPluginType.AddString(item.name);
 		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
 	}
+
+	CString res;
+	res.LoadString(IDS_STRING_FILE);
+	m_wndIconSource.AddString(res);
+	m_wndIconSource.AddString(_T("it999.ru"));
 
 	// Toggle controls state
 	m_wndSearch.EnableWindow(FALSE);
@@ -464,58 +520,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SwitchPlugin();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
-}
-
-void CIPTVChannelEditorDlg::SetUpToolTips()
-{
-	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
-	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
-
-	m_wndToolTipCtrl.SetMaxTipWidth(500);
-
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_MFCLINK_DONATE), _T("Поддержите разработчика"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ABOUT), _T("О программе"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLUGIN_TYPE), _T("Выбор плагина"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_CHANNELS), _T("Выбор списока каналов для редактирования"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_PLAYLIST), _T("Выбор плейлиста для импорта"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST), _T("Добавить новый список каналов"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_SEARCH), _T("Поиск в каналах. Префикс \\ для поиска по номеру канала"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SEARCH_NEXT), _T("Искать далее"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_URL_ID), _T("Номер канала"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_TEST_EPG), _T("Просмотр EPG для канала в браузере"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG1_ID), _T("Номер основного EPG"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_EPG2_ID), _T("Номер вторичного EPG"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_CUSTOMIZE), _T("Произвольный URL для канала"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ARCHIVE), _T("Канал поддерживает архив"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_DAYS), _T("Количество дней архива"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_CHECK_ADULT), _T("Канал для взрослых"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CACHE_ICON), _T("Сохранить иконку на диск. Иначе плагин будет скачивать её из интернета"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SAVE), _T("Сохранить список каналов"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PACK), _T("Создать плагин для плейера"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_SETTINGS), _T("Настройки редактора"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_ICON), _T("Установить иконку из плейлиста"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHOOSE_PLAYLIST), _T("Выбрать плейлист или скачать его из интернета"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_DOWNLOAD_PLAYLIST), _T("Сохранить скачанный плейлист на диск"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_PL_SEARCH), _T("Поиск в плейлисте. Префикс \\ для поиска по номеру канала"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT), _T("Искать далее"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_PL_FILTER), _T("Фильтр плейлиста"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_STATIC_ICON), _T("Кликните для выбора иконки"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_DAYS), _T("Дней назад для проверки архива"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_DAYS), _T("Дней назад для проверки архива"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_ARCHIVE_CHECK_HOURS), _T("Часов назад для проверки архива"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_ARCHIVE_CHECK_HOURS), _T("Часов назад для проверки архива"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_TIME_SHIFT), _T("Сдвиг в часах для показа EPG канала"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_SPIN_TIME_SHIFT), _T("Сдвиг в часах для показа EPG канала"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_VIDEO), _T("Информация о видео потоке канала"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_EDIT_INFO_AUDIO), _T("Информация о аудио потоке канала"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_STREAM_TYPE), _T("Тип потока для проверки"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_COMBO_ICON_SOURCE), _T("Источник для выбора иконки. Файл на диске или ссылка в интернете"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_CHECK_ARCHIVE), _T("Проверить архив"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_STOP), _T("Остановить процесс"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDC_BUTTON_UPDATE_CHANGED), _T("Обновить все каналы отличающиеся от данных в плейлисте"));
-	m_wndToolTipCtrl.AddTool(GetDlgItem(IDCANCEL), _T("Выйти из программы"));
-
-	m_wndToolTipCtrl.Activate(TRUE);
 }
 
 void CIPTVChannelEditorDlg::SwitchPlugin()
@@ -807,7 +811,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	if (url.empty())
 	{
-		AfxMessageBox(_T("Playlist source not set!"), MB_OK | MB_ICONERROR);
+		AfxMessageBox(IDS_STRING_ERR_SOURCE_NOT_SET, MB_OK | MB_ICONERROR);
 		OnEndLoadPlaylist(0);
 		return;
 	}
@@ -859,7 +863,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		}
 		else
 		{
-			AfxMessageBox(_T("Unable to download playlist!"), MB_OK | MB_ICONERROR);
+			AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);
 			return;
 		}
@@ -867,7 +871,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	if (data->empty())
 	{
-		AfxMessageBox(_T("Empty playlist!"), MB_OK | MB_ICONERROR);
+		AfxMessageBox(IDS_STRING_ERR_EMPTY_PLAYLIST, MB_OK | MB_ICONERROR);
 		OnEndLoadPlaylist(0);
 		return;
 	}
@@ -881,7 +885,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	auto* pThread = (CPlaylistParseThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
 	{
-		AfxMessageBox(_T("Problem with starting load playlist thread!"), MB_OK | MB_ICONERROR);
+		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
 		OnEndLoadPlaylist(0);
 		return;
 	}
@@ -1045,7 +1049,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	CString str;
-	str.Format(_T("Channels readed: %d"), wParam);
+	str.Format(IDS_STRING_FMT_CHANNELS_READED, wParam);
 	m_wndProgressInfo.SetWindowText(str);
 	m_wndProgress.SetPos(lParam);
 
@@ -1055,7 +1059,7 @@ LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lP
 LRESULT CIPTVChannelEditorDlg::OnUpdateProgressStream(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	CString str;
-	str.Format(_T("Get Stream Info: %d from %d"), wParam, lParam);
+	str.Format(IDS_STRING_FMT_STREAM_INFO, wParam, lParam);
 	m_wndProgressInfo.SetWindowText(str);
 	m_wndProgress.SetPos(wParam);
 
@@ -1086,7 +1090,7 @@ void CIPTVChannelEditorDlg::OnOK()
 
 void CIPTVChannelEditorDlg::OnCancel()
 {
-	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
 	{
 		return;
 	}
@@ -1317,7 +1321,9 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 		root = m_wndPlaylistTree.GetNextSiblingItem(root);
 	}
 
-	m_wndChInfo.SetWindowText(fmt::format(_T("Channels: {:d} ({:d} changed)"), m_channelsMap.size(), m_changedChannels.size()).c_str());
+	CString fmt;
+	fmt.LoadString(IDS_STRING_FMT_CHANNELS);
+	m_wndChInfo.SetWindowText(fmt::format(fmt.GetString(), m_channelsMap.size(), m_changedChannels.size()).c_str());
 	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty());
 }
 
@@ -1388,7 +1394,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	m_plEPG.Empty();
 	m_archivePlDays = 0;
 	m_wndPlArchive.SetCheck(0);
-	m_wndEpg.SetWindowText(_T(""));
+	m_wndEpg.SetWindowText(L"");
 
 	const auto& entry = FindEntry(hItem);
 	if (entry)
@@ -1507,7 +1513,6 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 	{
 		// out of range errors may happen if provided sizes are excessive
 	}
-
 
 	CString text;
 	text.Format(LR"({\rtf1\ansi\ansicpg1251 %s})", str.GetString());
@@ -1907,7 +1912,7 @@ void CIPTVChannelEditorDlg::OnRemoveChannel()
 		return;
 	}
 
-	if (!m_wndChannelsTree.GetSelectedCount() || AfxMessageBox(_T("Delete channel(s). Are your sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (!m_wndChannelsTree.GetSelectedCount() || AfxMessageBox(IDS_STRING_WRN_DELETE_CHANNEL, MB_YESNO | MB_ICONWARNING) != IDYES)
 		return;
 
 	const auto& category = GetItemCategory(m_wndChannelsTree.GetFirstSelectedItem());
@@ -2687,7 +2692,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 
 			if (m_channelsMap.find(newChannel->stream_uri->get_id()) != m_channelsMap.end())
 			{
-				AfxMessageBox(_T("Channel already exist!"), MB_OK|MB_ICONWARNING);
+				AfxMessageBox(IDS_STRING_WRN_CHANNEL_EXIST, MB_OK|MB_ICONWARNING);
 				return;
 			}
 
@@ -2739,7 +2744,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
 		{
 			if (m_channelsMap.find(new_id) != m_channelsMap.end())
 			{
-				INT_PTR res = AfxMessageBox(_T("Channel with this ID already exist!\nAre you sure to replace?"), MB_YESNO | MB_ICONWARNING);
+				INT_PTR res = AfxMessageBox(IDS_STRING_WRN_CHANNEL_ID_EXIST, MB_YESNO | MB_ICONWARNING);
 				if (res != IDYES)
 					return;
 			}
@@ -3229,10 +3234,17 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	CheckForExistingChannels();
 	CheckForExistingPlaylist();
 
+	CString fmt;
 	if (m_playlistIds.size() != m_playlistMap.size())
-		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d} ({:d})"), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size()).c_str());
+	{
+		fmt.LoadString(IDS_STRING_FMT_PLAYLIST_FLT);
+		m_wndPlInfo.SetWindowText(fmt::format(fmt.GetString(), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size()).c_str());
+	}
 	else
+	{
+		fmt.LoadString(IDS_STRING_FMT_CHANNELS);
 		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d}"), m_plFileName.GetString(), m_playlistIds.size()).c_str());
+	}
 
 	m_bInFillTree = false;
 
@@ -3488,7 +3500,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			{
 				if (oFN.lpstrFileTitle[i] > 127)
 				{
-					AfxMessageBox(_T("Non ASCII symbols in the icon name is not allowed!"), MB_ICONERROR | MB_OK);
+					AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
 					return;
 				}
 			}
@@ -3552,7 +3564,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAbout()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 {
-	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nContinue?"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
 		return;
 
 	const auto& name = GetPluginNameW();
@@ -3624,7 +3636,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	res = archiver.CreateArchive(pluginName);
 	if (res)
 	{
-		AfxMessageBox(_T("Plugin created.\nInstall it to the DUNE mediaplayer"), MB_OK);
+		AfxMessageBox(IDS_STRING_INFO_CREATE_SUCCESS, MB_OK);
 	}
 	else
 	{
@@ -3665,7 +3677,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext()
 
 	if (!SelectTreeItem(m_wndChannelsTree, InfoType::enChannel, params))
 	{
-		AfxMessageBox(_T("Not found!"), MB_OK | MB_ICONINFORMATION);
+		AfxMessageBox(IDS_STRING_INFO_NOT_FOUND, MB_OK | MB_ICONINFORMATION);
 	}
 }
 
@@ -3695,7 +3707,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 
 	if (!SelectTreeItem(m_wndPlaylistTree, InfoType::enPlEntry, params))
 	{
-		AfxMessageBox(_T("Not found!"), MB_OK | MB_ICONINFORMATION);
+		AfxMessageBox(IDS_STRING_INFO_NOT_FOUND, MB_OK | MB_ICONINFORMATION);
 	}
 }
 
@@ -3769,6 +3781,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	dlg.m_probe = m_probe;
 	dlg.m_bAutoSync = m_bAutoSync;
 	dlg.m_MaxThreads = m_MaxThreads;
+	ReadRegInt(REG_LANGUAGE, dlg.m_nLang);
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -3781,6 +3794,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 		SaveReg(REG_FFPROBE, m_probe);
 		SaveReg(REG_AUTOSYNC, m_bAutoSync);
 		SaveReg(REG_MAX_THREADS, m_MaxThreads);
+		SaveReg(REG_LANGUAGE, dlg.m_nLang);
 	}
 }
 
@@ -3920,7 +3934,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 		{
 			if (oFN.lpstrFileTitle[i] > 127)
 			{
-				AfxMessageBox(_T("Non ASCII symbols in the channel list name is not allowed!"), MB_ICONERROR | MB_OK);
+				AfxMessageBox(IDS_STRING_WRN_NON_ASCII_LIST, MB_ICONERROR | MB_OK);
 				return;
 			}
 		}
@@ -4025,7 +4039,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
 	{
-		AfxMessageBox(_T("Problem with starting Get Stream Info thread!"), MB_OK | MB_ICONERROR);
+		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
 		OnEndGetStreamInfo();
 		return;
 	}
@@ -4215,7 +4229,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboIconSource()
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 {
-	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure?"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
 	{
 		m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 		return;
@@ -4244,7 +4258,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 	if (idx == -1)
 		return;
 
-	if (is_allow_save() && AfxMessageBox(_T("You have unsaved changes.\nAre you sure??"), MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
 	{
 		m_wndChannels.SetCurSel(ReadRegIntPlugin(REG_CHANNELS_TYPE));
 		return;
@@ -4602,6 +4616,9 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 {
 	LPNMTVGETINFOTIP pGetInfoTip = reinterpret_cast<LPNMTVGETINFOTIP>(pNMHDR);
 
+	CString custom;
+	custom.LoadString(IDS_STRING_CUSTOM);
+
 	auto entry = GetBaseInfo(&m_wndChannelsTree, pGetInfoTip->hItem);
 	if (entry && entry->is_type(InfoType::enChannel))
 	{
@@ -4617,19 +4634,22 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 			}
 		}
 
-		m_toolTipText.Format(_T("Название:\t%s\nНомер:\t\t%s\nНомер EPG1:\t%s\n"),
+		m_toolTipText.Format(IDS_STRING_FMT_CHANNELS_TOOLTIP1,
 							 entry->get_title().c_str(),
-							 entry->stream_uri->is_template() ? ch_id.c_str() : L"Произвольный",
+							 entry->stream_uri->is_template() ? ch_id.c_str() : custom.GetString(),
 							 entry->get_epg1_id().c_str());
 
 		if (!entry->get_epg2_id().empty())
 		{
-			m_toolTipText.AppendFormat(_T("Номер EPG2:\t%s\n"), entry->get_epg2_id().c_str());
+			m_toolTipText.AppendFormat(IDS_STRING_FMT_CHANNELS_TOOLTIP2, entry->get_epg2_id().c_str());
 		}
 
-		m_toolTipText.AppendFormat(_T("Архив:\t\t%d дней\nДля взрослых:\t%s\nВ категориях:\t%s"),
+		CString adult;
+		adult.LoadString(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO);
+
+		m_toolTipText.AppendFormat(IDS_STRING_FMT_CHANNELS_TOOLTIP3,
 								   entry->get_archive_days(),
-								   entry->get_adult() ? _T("Да") : _T("Нет"),
+								   adult.GetString(),
 								   categories.GetString());
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
@@ -4645,12 +4665,18 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	const auto& entry = FindEntry(pGetInfoTip->hItem);
 	if (entry)
 	{
-		m_toolTipText.Format(_T("Название:\t%s\nНомер:\t\t%s\nНомер EPG:\t%s\nАрхив:\t\t%d дней\nДля взрослых: %s"),
+
+		CString custom;
+		custom.LoadString(IDS_STRING_CUSTOM);
+
+		CString adult;
+		adult.LoadString(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO);
+		m_toolTipText.Format(IDS_STRING_FMT_PLAYLIST_TOOLTIPS,
 							 entry->get_title().c_str(),
-							 entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : L"Произвольный",
+							 entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : custom.GetString(),
 							 entry->get_epg1_id().c_str(),
 							 entry->get_archive_days(),
-							 entry->get_adult() ? _T("Да") : _T("Нет"));
+							 adult.GetString());
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
 	}

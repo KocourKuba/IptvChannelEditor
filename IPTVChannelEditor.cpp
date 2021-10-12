@@ -3,10 +3,9 @@
 //
 
 #include "StdAfx.h"
-#include <Shlwapi.h>
-
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
+#include "FileVersionInfo.h"
 #include "IconCache.h"
 #include "utils.h"
 
@@ -95,6 +94,19 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	CCommandLineInfoEx cmdInfo;
 	ParseCommandLine(cmdInfo);
 	m_devMode = cmdInfo.m_bDev;
+
+	FillLangMap();
+	int nLangCurrent = GetProfileInt(REG_SETTINGS, REG_LANGUAGE, 1033);
+
+	if (auto pair = m_LangMap.find(nLangCurrent); pair != m_LangMap.cend())
+	{
+		if (nLangCurrent != 1033)
+		{
+			HMODULE hLib = LoadLibrary(pair->second.csPath);
+			if (hLib != nullptr)
+				AfxSetResourceHandle(hLib);
+		}
+	}
 
 	CIPTVChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;
@@ -188,4 +200,56 @@ void CIPTVChannelEditorApp::SaveWindowPos(HWND hWnd, LPCTSTR name)
 	GetWindowPlacement(hWnd, &wp);
 	// Save the info
 	theApp.WriteProfileBinary(REG_SETTINGS, name, (LPBYTE)&wp, sizeof(wp));
+}
+
+void CIPTVChannelEditorApp::FillLangMap()
+{
+	m_LangMap.clear();
+
+	CStringW fileName;
+	if (!GetModuleFileNameW(m_hInstance, fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
+		return;
+
+	fileName.ReleaseBuffer();
+
+	CFileVersionInfo cVer;
+	cVer.Open(fileName);
+	LANGID nExeTrans = cVer.GetCurLID();
+	WORD exeCP = cVer.GetCurCP();
+	cVer.Close();
+
+	LangStruct sLang;
+	sLang.csLang = _T("English");
+	sLang.csSuffix = _T("ENG");
+	m_LangMap.emplace(nExeTrans, sLang);
+
+	std::filesystem::path cFile(fileName.GetString());
+	cFile.replace_filename(cFile.stem().native() + _T("???.dll"));
+
+	//Берем первый файлик и хреначим его данные, если удастся...
+	CFileFind cFind;
+	BOOL bFound = cFind.FindFile(cFile.c_str());
+	while (bFound)
+	{
+		bFound = cFind.FindNextFile();
+		const auto& file = cFind.GetFilePath();
+		CFileVersionInfo cVer;
+		cVer.Open(file);
+		LANGID nLibTrans = cVer.GetCurLID();
+		WORD libCP = cVer.GetCurCP();
+		cVer.Close();
+
+		HMODULE hRes = LoadLibrary(file);
+		if (!hRes) continue;
+
+		sLang.csLang.LoadString(hRes, IDS_LANGUAGE);
+		sLang.csPath = file;
+		sLang.csSuffix = cFind.GetFileTitle().Right(3);
+		m_LangMap.emplace(nLibTrans, sLang);
+
+		if (hRes != AfxGetResourceHandle())
+		{
+			::FreeLibrary(hRes);
+		}
+	}
 }

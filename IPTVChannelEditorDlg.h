@@ -154,8 +154,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	void SetUpToolTips();
-
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
 

@@ -230,6 +230,7 @@
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="Crc32.h" />
+    <ClInclude Include="FileVersionInfo.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
     <ClInclude Include="IconCache.h" />
     <ClInclude Include="IconsListDlg.h" />
@@ -275,6 +276,7 @@
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="Crc32.cpp" />
+    <ClCompile Include="FileVersionInfo.cpp" />
     <ClCompile Include="fmt\src\format.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">NotUsing</PrecompiledHeader>
