@@ -3448,8 +3448,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::recursive, err);
 
 	// copy plugin manifest
-	const auto& manifest = fmt::format(L"{:s}manifest\\{:s}_plugin.xml", plugin_root, name);
-	const auto& config = fmt::format(L"{:s}configs\\{:s}_config.php", plugin_root, name);
+	const auto& manifest = fmt::format(LR"({:s}manifest\{:s}_plugin.xml)", plugin_root, name);
+	const auto& config = fmt::format(LR"({:s}configs\{:s}_config.php)", plugin_root, name);
 	std::filesystem::copy_file(manifest, packFolder + L"dune_plugin.xml", std::filesystem::copy_options::overwrite_existing, err);
 	std::filesystem::copy_file(config, fmt::format(L"{:s}{:s}_config.php", packFolder, name), std::filesystem::copy_options::overwrite_existing, err);
 
@@ -3478,7 +3478,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name)), to_remove.end());
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"logo_{:s}.png", name)), to_remove.end());
 
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + L"icons\\"})
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)"})
 	{
 		if (std::find(to_remove.begin(), to_remove.end(), dir_entry.path().filename().wstring()) != to_remove.end())
 			std::filesystem::remove(dir_entry, err);
