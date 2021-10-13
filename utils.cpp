@@ -514,20 +514,20 @@ void SetImage(const CImage& image, CStatic& wnd)
 		::DeleteObject(hOld);
 }
 
-std::wstring entityDecrypt(std::wstring text)
+std::string entityDecrypt(const std::string& text)
 {
-	std::unordered_map<std::wstring, std::wstring> convert(
+	std::unordered_map<std::string, std::string> convert(
 		{
-			{L"&quot;"  , L"\""},
-			{L"&apos;"  , L"'"},
-			{L"&#39;"   , L"'"},
-			{L"&amp;"   , L"&"},
-			{L"&gt;"    , L">"},
-			{L"&lt;"    , L"<"},
-			{L"&frasl;" , L"/"},
+			{ "&quot;"  , "\"" },
+			{ "&apos;"  , "'"  },
+			{ "&#39;"   , "'"  },
+			{ "&amp;"   , "&"  },
+			{ "&gt;"    , ">"  },
+			{ "&lt;"    , "<"  },
+			{ "&frasl;" , "/"  },
 		});
 
-	std::wstring res;
+	std::string res;
 	for (size_t i = 0; i < text.size(); ++i)
 	{
 		bool flag = false;

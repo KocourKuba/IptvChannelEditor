@@ -259,7 +259,7 @@ bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std:
 
 bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image);
 
-std::wstring entityDecrypt(std::wstring text);
+std::string entityDecrypt(const std::string& text);
 
 BOOL LoadImage(const std::wstring& fullPath, CImage& image);
 void SetImage(const CImage& image, CStatic& wnd);

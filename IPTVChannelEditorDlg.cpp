@@ -150,64 +150,6 @@ int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 	return lParam1 < lParam2 ? -1 : lParam1 == lParam2 ? 0 : 1;
 }
 
-// cookie class to assist with streaming a CString into the richedit control
-class _RichToolTipCtrlCookie
-{
-public:
-	_RichToolTipCtrlCookie(const CString& sText) : m_sText(sText) { Reset(); }
-
-	// read dwCount bytes into lpszBuffer, and return number read
-	// stop if source is empty, or when end of string reached
-	DWORD Read(LPBYTE lpBuffer, DWORD dwCount)
-	{
-		if (lpBuffer == nullptr)
-			return (DWORD)-1;
-
-		// have we already had it all?
-		DWORD dwLeft = m_dwLength - m_dwCount;
-		if (dwLeft <= 0)  // all done
-			return 0;
-
-		// start the source string from where we left off
-		LPCSTR lpszText = m_sText.GetString() + m_dwCount;
-
-		// only copy what we've got left
-		if (dwLeft < dwCount)
-			dwCount = dwLeft;
-
-		// copy the text
-		strncpy_s((char*)lpBuffer, dwCount + 1, lpszText, _TRUNCATE);
-
-		// keep where we got to
-		m_dwCount += dwCount;
-
-		// return how many we copied
-		return dwCount;
-	}
-
-	void Reset()
-	{
-		m_dwCount = 0;
-		m_dwLength = m_sText.GetLength();
-	}
-
-protected:
-	CStringA m_sText;
-	DWORD m_dwLength;
-	DWORD m_dwCount;
-};
-
-
-static DWORD CALLBACK RichTextCtrlCallbackIn(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG* pcb)
-{
-	// the cookie is a pointer to the text data struct
-	_RichToolTipCtrlCookie* pBuf = (_RichToolTipCtrlCookie*)dwCookie;
-	if (pBuf == nullptr)
-		return 1;
-	*pcb = pBuf->Read(pbBuff, cb);
-	return 0;
-}
-
 // CEdemChannelEditorDlg dialog
 
 BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
@@ -1431,16 +1373,12 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 {
 	m_wndEpg.SetWindowText(L"");
 
-	if (!m_lastTree)
-		return;
-
 	const auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 	if (!info)
 		return;
 
 	bool useTimeShift = m_lastTree == &m_wndChannelsTree;
 	bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG1) == IDC_RADIO_EPG1;
-	CString str;
 	nlohmann::json epg_data;
 	try
 	{
@@ -1466,42 +1404,46 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 		if (useTimeShift)
 			now += m_timeShiftHours * 3600;
 
-		auto root = info->stream_uri->get_epg_root();
+		const auto& root = info->stream_uri->get_epg_root();
 		if (!root.empty() && epg_data.contains(root))
 		{
 			epg_data = epg_data[root];
 		}
 
-		const auto& start = info->stream_uri->get_epg_time_start();
-		const auto& end = info->stream_uri->get_epg_time_end();
+		const auto& tag_start = info->stream_uri->get_epg_time_start();
+		const auto& tag_end = info->stream_uri->get_epg_time_end();
+		const auto& tag_name = info->stream_uri->get_epg_name();
+		const auto& tag_desc = info->stream_uri->get_epg_desc();
 
 		for (auto& item : epg_data.items())
 		{
 			const auto& val = item.value();
 			time_t time_start = 0;
 			time_t time_end = 0;
-			if (val.contains(start))
+			if (val.contains(tag_start))
 			{
-				if (val[start].is_number())
-					time_start = val.value(start, 0);
-				else if (val[start].is_string())
-					time_start = utils::char_to_int(val.value(start, ""));
+				if (val[tag_start].is_number())
+					time_start = val.value(tag_start, 0);
+				else if (val[tag_start].is_string())
+					time_start = utils::char_to_int(val.value(tag_start, ""));
 			}
-			if (val.contains(end))
+			if (val.contains(tag_end))
 			{
-				if (val[end].is_number())
-					time_end = val.value(end, 0);
-				else if (val[start].is_string())
-					time_end = utils::char_to_int(val.value(end, ""));
+				if (val[tag_end].is_number())
+					time_end = val.value(tag_end, 0);
+				else if (val[tag_start].is_string())
+					time_end = utils::char_to_int(val.value(tag_end, ""));
 			}
 
 			if (now < time_start || now > time_end) continue;
 
-			const auto& name = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_name(), ""));
-			const auto& desc = utils::utf8_to_utf16(val.value(info->stream_uri->get_epg_desc(), ""));
-			str.Format(LR"({\b{%s}}{\par}%s)",
-					   utils::make_text_rtf_safe(utils::entityDecrypt(name)).c_str(),
-					   utils::make_text_rtf_safe(utils::entityDecrypt(desc)).c_str());
+			std::string text = "{\\rtf1 \\b";
+			text += utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_name, "")));
+			text += "\\b0\\par";
+			text += utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_desc, ""))) + "}";
+
+			SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
+			m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
 			break;
 		}
 	}
@@ -1512,20 +1454,6 @@ void CIPTVChannelEditorDlg::UpdateEPG()
 	catch (const nlohmann::json::out_of_range&)
 	{
 		// out of range errors may happen if provided sizes are excessive
-	}
-
-	CString text;
-	text.Format(LR"({\rtf1\ansi\ansicpg1251 %s})", str.GetString());
-
-	_RichToolTipCtrlCookie data(text);
-	EDITSTREAM es = { 0 };
-	es.dwCookie = (DWORD_PTR)&data;
-	es.pfnCallback = RichTextCtrlCallbackIn;
-	int n = m_wndEpg.StreamIn(SF_RTF, es);
-	if (n <= 0)
-	{
-		data.Reset();
-		n = m_wndEpg.StreamIn(SF_TEXT | SF_UNICODE, es);
 	}
 }
 
