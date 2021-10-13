@@ -51,7 +51,6 @@ std::wstring uri_sharaclub::get_templated(StreamSubType subType, const TemplateP
 
 	// http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8
 	// http://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts
-	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
 	ReplaceVars(url, params);
 
 	return url;

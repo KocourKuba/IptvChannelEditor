@@ -1,9 +1,9 @@
 #include "StdAfx.h"
 #include <stdexcept>
 #include <winhttp.h>
+#include <unordered_map>
 
 #include "utils.h"
-#include <unordered_map>
 
 #pragma comment(lib, "Winhttp.lib")
 
@@ -518,13 +518,13 @@ std::string entityDecrypt(const std::string& text)
 {
 	std::unordered_map<std::string, std::string> convert(
 		{
-			{ "&quot;"  , "\"" },
-			{ "&apos;"  , "'"  },
-			{ "&#39;"   , "'"  },
-			{ "&amp;"   , "&"  },
-			{ "&gt;"    , ">"  },
-			{ "&lt;"    , "<"  },
-			{ "&frasl;" , "/"  },
+			{ "&quot;",  "\"" },
+			{ "&apos;",  "'"  },
+			{ "&#39;",   "'"  },
+			{ "&amp;",   "&"  },
+			{ "&gt;",    ">"  },
+			{ "&lt;",    "<"  },
+			{ "&frasl;", "/"  },
 		});
 
 	std::string res;

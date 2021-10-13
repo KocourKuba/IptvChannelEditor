@@ -7,15 +7,15 @@ static constexpr auto PLAYLIST_TEMPLATE = L"http://1usd.tv/pl-{:s}-hls";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/index-{START}-7200.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/index-{START}-7200.ts?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-7200.ts?token={TOKEN}";
 static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=tvteam/epg/{:s}.json";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/tvteam/epg/{:s}.json";
 
 void uri_oneusd::parse_uri(const std::wstring& url)
 {
-	// http://1.1usd.tv:34000/ch001/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2EzeRAFw9-bIam9oFxeFb0Va
-	// http://2.1usd.tv:34000/ch001/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2EzwI7un-s5g5Fb3RXYL5YSb
-	// http://1.1usd.tv:34000/ch054/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2EzIYa-46CRxneMeOaVVgd87
+	// http://1.1usd.tv:34000/ch001/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2Eyc7d7GPdA4CT8plX8MekNzcvYSCKA9C7SsfNNryytxJg..
+	// http://1.1usd.tv:34000/ch002/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2EzWB4Sdv5ZgmYMp5dx5SZqpGpZdSDUI6YVkqEciNnrvBA..
+	// http://1.1usd.tv:34000/ch025/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2Ezbn-vBVpPlFCl2dNce4nnKhFT1o9jM6oFrM-csWTJQCA..
 
 	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/(.+)\/mono\.m3u8\?token=(.+)$)");
 
@@ -36,29 +36,35 @@ std::wstring uri_oneusd::get_templated(StreamSubType subType, const TemplatePara
 {
 	std::wstring url;
 
-	if (!is_template())
-	{
-		url = get_uri();
-		if (params.shift_back)
-		{
-			url += L"&utc={START}&lutc={NOW}";
-		}
-	}
-	else
+	if (is_template())
 	{
 		switch (subType)
 		{
 			case StreamSubType::enHLS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
+				//url = URI_TEMPLATE_HLS;
 				break;
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
+				//url = URI_TEMPLATE_MPEG;
 				break;
 		}
 	}
+	else
+	{
+		url = get_uri();
+	}
+
+// 	if (params.shift_back)
+// 	{
+// 		url += L"&utc={START}&lutc={NOW}";
+// 	}
 
 	ReplaceVars(url, params);
-
+	if (params.shift_back)
+	{
+		//utils::string_replace_inplace(url, L":34", L":24");
+	}
 	return url;
 }
 

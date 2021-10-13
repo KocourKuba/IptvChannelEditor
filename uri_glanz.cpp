@@ -60,7 +60,6 @@ std::wstring uri_glanz::get_templated(StreamSubType subType, const TemplateParam
 
 	// http://{SUBDOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
 	// http://{SUBDOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
-	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
 	utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
 	utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
 	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, get_int_id());

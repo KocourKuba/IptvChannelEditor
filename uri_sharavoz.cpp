@@ -51,7 +51,6 @@ std::wstring uri_sharavoz::get_templated(StreamSubType subType, const TemplatePa
 
 	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}
 	// http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}
-	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
 	ReplaceVars(url, params);
 
 	return url;

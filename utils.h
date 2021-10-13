@@ -96,7 +96,7 @@ size_t string_replace_inplace(std::basic_string<T>& source, const std::basic_str
 template<typename T>
 size_t string_replace_inplace(std::basic_string<T>& source, const T* search, const T* replace, size_t pos = 0)
 {
-	replace string_replace_inplace(source, std::basic_string<T>(search), std::basic_string<T>(replace), pos);
+	return string_replace_inplace(source, std::basic_string<T>(search), std::basic_string<T>(replace), pos);
 }
 
 

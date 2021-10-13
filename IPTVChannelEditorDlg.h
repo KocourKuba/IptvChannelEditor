@@ -210,8 +210,8 @@ private:
 
 	void SwitchPlugin();
 
-	std::wstring GetPluginNameW(bool bCamel = false) const;
-	std::string GetPluginNameA(bool bCamel = false) const;
+	template<typename T>
+	std::basic_string<T> GetPluginName(bool bCamel = false) const;
 
 	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
@@ -236,7 +236,7 @@ private:
 	std::wstring ReadRegStringPluginW(LPCTSTR path) const;
 	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
 
-	void UpdateExtToken(BaseInfo* info) const;
+	void UpdateExtToken(BaseInfo* info, const std::wstring& token) const;
 
 protected:
 	CFont m_largeFont;
@@ -413,3 +413,30 @@ private:
 	// map epg to channel id
 	std::map<std::wstring, nlohmann::json> m_epgMap;
 };
+
+template<typename T>
+std::basic_string<T>
+CIPTVChannelEditorDlg::GetPluginName(bool bCamel /*= false*/) const
+{
+	static std::unordered_map<SupportedPlugins, std::string> plugins =
+	{
+		{ enAntifriz,  "antifriz"   },
+		{ enEdem,      "edem"       },
+		{ enFox,       "fox"        },
+		{ enGlanz,     "glanz"      },
+		{ enItv,       "itv"        },
+		{ enOneUsd,    "oneusd"     },
+		{ enSharavoz,  "sharavoz"   },
+		{ enSharaclub, "sharaclub"  },
+	};
+
+	const auto& pair = plugins.find((SupportedPlugins)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()));
+	if (pair == plugins.end())
+		return std::basic_string<T>();
+
+	std::basic_string<T> plugin_name(pair->second.begin(), pair->second.end());
+	if (bCamel)
+		plugin_name[0] = plugin_name[0] - 32;
+
+	return plugin_name;
+}

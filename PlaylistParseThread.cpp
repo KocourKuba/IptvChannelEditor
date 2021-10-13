@@ -60,6 +60,11 @@ BOOL CPlaylistParseThread::InitInstance()
 					entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
 				}
 
+				if (m_config.m_pluginType == StreamType::enOneUsd)
+				{
+					entry->set_epg1_id(entry->get_title()); // primary EPG
+				}
+
 				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
 				entries->emplace_back(entry);
 				entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
