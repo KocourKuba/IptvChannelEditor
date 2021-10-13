@@ -84,6 +84,8 @@
 #define IDS_STRING_BUTTON_STOP          198
 #define IDS_STRING_BUTTON_UPDATE_CHANGED 199
 #define IDS_STRING_BUTTON_CHECK_ARCHIVE 200
+#define IDS_STRING118                   201
+#define IDS_STRING_WARN_DELETE_ITEMS    201
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
@@ -195,9 +197,7 @@
 #define ID_NEW_CATEGORY                 32784
 #define ID_PLAY_ARCHIVE                 32785
 #define ID_PLAY_STREAM                  32786
-#define ID_PLAYARCHIVE_                 32788
-#define ID_REMOVE_CATEGORY              32789
-#define ID_REMOVE_CHANNEL               32790
+#define ID_REMOVE                       32790
 #define ID_SAVE                         32791
 #define ID_TOGGLE_CHANNEL               32792
 #define ID_UPDATE_CHANNEL               32793
@@ -208,7 +208,7 @@
 #define ID_ADD_TO_FAVORITE              32798
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        201

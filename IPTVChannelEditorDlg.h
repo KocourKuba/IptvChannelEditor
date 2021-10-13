@@ -65,8 +65,8 @@ protected:
 	afx_msg void OnNewChannel();
 	afx_msg void OnUpdateNewChannel(CCmdUI* pCmdUI);
 	afx_msg void OnAddUpdateChannel();
-	afx_msg void OnRemoveChannel();
-	afx_msg void OnUpdateRemoveChannel(CCmdUI* pCmdUI);
+	afx_msg void OnRemove();
+	afx_msg void OnUpdateRemove(CCmdUI* pCmdUI);
 	afx_msg void OnAddCategory();
 	afx_msg void OnUpdateAddCategory(CCmdUI* pCmdUI);
 	afx_msg void OnChannelUp();
@@ -79,8 +79,6 @@ protected:
 	afx_msg void OnUpdateRenameChannel(CCmdUI* pCmdUI);
 	afx_msg void OnNewCategory();
 	afx_msg void OnUpdateNewCategory(CCmdUI* pCmdUI);
-	afx_msg void OnRemoveCategory();
-	afx_msg void OnUpdateRemoveCategory(CCmdUI* pCmdUI);
 	afx_msg void OnSortCategory();
 	afx_msg void OnUpdateSortCategory(CCmdUI* pCmdUI);
 	afx_msg void OnGetStreamInfo();
@@ -175,7 +173,7 @@ private:
 	void SearchTreeItem(InfoType type, bool next = false);
 
 	void RemoveOrphanChannels();
-	void CheckForExistingChannels(HTREEITEM root = nullptr);
+	void UpdateChannelsTreeColors(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
 
 	bool SetupCustomPlaylist(bool loaded);
