@@ -524,51 +524,19 @@
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
-          <trans-unit id="Menus.113.POPUP_ChannelMenu.32772.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32772.Text">
-            <source>New Channel	Ins</source>
-            <target state="final">Новый канал	Ins</target>
-            <context-group>
-              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32772.Text</context>
-            </context-group>
-            <sl:rowstatus>rsInUse</sl:rowstatus>
-          </trans-unit>
-          <trans-unit id="Menus.113.POPUP_ChannelMenu.32790.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32790.Text">
-            <source>Delete Channel	Del</source>
-            <target state="final">Удалить канал	Del</target>
-            <context-group>
-              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32790.Text</context>
-            </context-group>
-            <sl:rowstatus>rsInUse</sl:rowstatus>
-          </trans-unit>
-          <trans-unit id="Menus.113.POPUP_ChannelMenu.32792.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32792.Text">
-            <source>Disable Channel</source>
-            <target state="final">Отключить канал</target>
-            <context-group>
-              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32792.Text</context>
-            </context-group>
-            <sl:rowstatus>rsInUse</sl:rowstatus>
-          </trans-unit>
-          <trans-unit id="Menus.113.POPUP_ChannelMenu.32789.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32789.Text">
-            <source>Delete Category</source>
-            <target state="final">Удалить категорию</target>
-            <context-group>
-              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32789.Text</context>
-            </context-group>
-            <sl:rowstatus>rsInUse</sl:rowstatus>
-          </trans-unit>
-          <trans-unit id="Menus.113.POPUP_ChannelMenu.32797.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32797.Text">
-            <source>Sort Category</source>
-            <target state="final">Сортировать категорию</target>
-            <context-group>
-              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32797.Text</context>
-            </context-group>
-            <sl:rowstatus>rsInUse</sl:rowstatus>
-          </trans-unit>
           <trans-unit id="Menus.113.POPUP_ChannelMenu.32798.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32798.Text">
             <source>Add to Favorite</source>
             <target state="final">Добавить в Избранное</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32798.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32772.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32772.Text">
+            <source>New Channel	Ins</source>
+            <target state="final">Новый канал	Ins</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32772.Text</context>
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
@@ -580,11 +548,35 @@
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32792.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32792.Text">
+            <source>Disable Channel</source>
+            <target state="final">Отключить канал</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32792.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32797.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32797.Text">
+            <source>Sort Category</source>
+            <target state="final">Сортировать категорию</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32797.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
           <trans-unit id="Menus.113.POPUP_ChannelMenu.32778.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32778.Text">
             <source>Rename	F2</source>
             <target state="final">Переименовать	F2</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32778.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32790.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32790.Text">
+            <source>Delete	Del</source>
+            <target state="final">Удалить	Del</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32790.Text</context>
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
@@ -619,6 +611,14 @@
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32796.Text</context>
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32789.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32789.Text">
+            <source>Delete Category</source>
+            <target state="final">Удалить категорию</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32789.Text</context>
+            </context-group>
+            <sl:rowstatus>rsUnused</sl:rowstatus>
           </trans-unit>
         </group>
         <group id="114" datatype="winres">
@@ -1146,6 +1146,14 @@ EPG №:		%s
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_WARN_DELETE_ITEMS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_WARN_DELETE_ITEMS">
+            <source>Delete selected items. Are your sure?</source>
+            <target state="final">Удалить выделенные элементы. Вы уверены?</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_WARN_DELETE_ITEMS</context>
+            </context-group>
+            <sl:rowstatus>rsNew</sl:rowstatus>
+          </trans-unit>
         </group>
         <group id="3633" datatype="winres">
         </group>
@@ -1231,7 +1239,7 @@ EPG №:		%s
       <group id="Versions" datatype="winres">
         <group id="1" datatype="winres">
           <trans-unit id="Versions.1.ProductVersion" resname="Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion">
-            <source>2.1.430</source>
+            <source>2.1.432</source>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion</context>
             </context-group>
