@@ -572,6 +572,14 @@
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32793.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32793.Text">
+            <source>Update Channel	F5</source>
+            <target state="final">Обновить канал	F5</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32793.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
           <trans-unit id="Menus.113.POPUP_ChannelMenu.32778.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32778.Text">
             <source>Rename	F2</source>
             <target state="final">Переименовать	F2</target>
@@ -946,7 +954,7 @@ EPG №:		%s
         <group id="12" datatype="winres">
           <trans-unit id="Strings.12.IDS_STRING_BUTTON_CACHE_ICON" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_CACHE_ICON">
             <source>Store icon to the local folder instead of downloading it from internet</source>
-            <target state="final">Сохранить иконку на диск. Иначе плагин будет скачивать её из Интернета</target>
+            <target state="final">Сохранить иконку в плагин. Или плагин будет скачивать её из Интернета</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_CACHE_ICON</context>
             </context-group>
@@ -954,7 +962,7 @@ EPG №:		%s
           </trans-unit>
           <trans-unit id="Strings.12.IDS_STRING_BUTTON_CHOOSE_PLAYLIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_CHOOSE_PLAYLIST">
             <source>Choose playlist or download it from account</source>
-            <target state="final">Выбрать плейлист или скачать его из Интернета</target>
+            <target state="final">Задать плейлист или скачать его из кабинета</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_CHOOSE_PLAYLIST</context>
             </context-group>
@@ -1002,7 +1010,7 @@ EPG №:		%s
           </trans-unit>
           <trans-unit id="Strings.12.IDS_STRING_BUTTON_UPDATE_ICON" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_UPDATE_ICON">
             <source>Set channel icon from original playlist</source>
-            <target state="final">Установить иконку из плейлиста</target>
+            <target state="final">Установить иконку указанную в плейлисте</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_BUTTON_UPDATE_ICON</context>
             </context-group>
@@ -1026,7 +1034,7 @@ EPG №:		%s
           </trans-unit>
           <trans-unit id="Strings.12.IDS_STRING_CHECK_CUSTOMIZE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_CHECK_CUSTOMIZE">
             <source>Use custom stream URL for the channel</source>
-            <target state="final">Произвольный URL для канала</target>
+            <target state="final">Произвольная ссылка для канала</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_CHECK_CUSTOMIZE</context>
             </context-group>
@@ -1058,7 +1066,7 @@ EPG №:		%s
           </trans-unit>
           <trans-unit id="Strings.12.IDS_STRING_STATIC_ICON" resname="Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_STATIC_ICON">
             <source>Click to change the icon</source>
-            <target state="final">Кликните для выбора иконки</target>
+            <target state="final">Нажмите для выбора иконки</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.12.IDS_STRING_STATIC_ICON</context>
             </context-group>
@@ -1223,11 +1231,11 @@ EPG №:		%s
       <group id="Versions" datatype="winres">
         <group id="1" datatype="winres">
           <trans-unit id="Versions.1.ProductVersion" resname="Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion">
-            <source>2.1.424</source>
+            <source>2.1.430</source>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion</context>
             </context-group>
-            <sl:rowstatus>rsInUse</sl:rowstatus>
+            <sl:rowstatus>rsChanged</sl:rowstatus>
           </trans-unit>
         </group>
       </group>

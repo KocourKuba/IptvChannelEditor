@@ -4052,7 +4052,6 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 			m_lastTree == &m_wndChannelsTree && m_playlistMap.find(params.id) != m_playlistMap.end())
 		{
 			CTreeCtrlEx* opposite = nullptr;
-			InfoType type;
 			if (m_lastTree == &m_wndPlaylistTree)
 			{
 				opposite = &m_wndChannelsTree;
