@@ -1142,7 +1142,8 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 	{
 		SearchParams params;
 		params.id = select ? select : m_categoriesMap.begin()->second.category->get_channels().front()->stream_uri->get_id();
-		SelectTreeItem(m_wndChannelsTree, InfoType::enChannel, params);
+		params.type = InfoType::enChannel;
+		SelectTreeItem(&m_wndChannelsTree, params);
 	}
 }
 
@@ -1306,7 +1307,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 			utils::SetImage(img, m_wndChannelIcon);
 		}
 
-		UpdateEPG();
+		UpdateEPG(&m_wndChannelsTree);
 	}
 	else
 	{
@@ -1359,7 +1360,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 		const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
 		utils::SetImage(img, m_wndPlIcon);
 
-		UpdateEPG();
+		UpdateEPG(&m_wndPlaylistTree);
 	}
 	else
 	{
@@ -1369,15 +1370,17 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 	UpdateData(FALSE);
 }
 
-void CIPTVChannelEditorDlg::UpdateEPG()
+void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 {
 	m_wndEpg.SetWindowText(L"");
+	if (!pTreeCtl)
+		return;
 
-	const auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
+	const auto info = GetBaseInfo(pTreeCtl, pTreeCtl->GetSelectedItem());
 	if (!info)
 		return;
 
-	bool useTimeShift = m_lastTree == &m_wndChannelsTree;
+	bool useTimeShift = (pTreeCtl == &m_wndChannelsTree);
 	bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG1) == IDC_RADIO_EPG1;
 	nlohmann::json epg_data;
 	try
@@ -1769,7 +1772,7 @@ void CIPTVChannelEditorDlg::OnAddCategory()
 
 void CIPTVChannelEditorDlg::OnUpdateAddCategory(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!m_chFileName.IsEmpty() && IsPlaylistCategory(m_wndPlaylistTree.GetFirstSelectedItem()) && IsSelectedTheSameType());
+	pCmdUI->Enable(!m_chFileName.IsEmpty() && IsPlaylistCategory(m_wndPlaylistTree.GetFirstSelectedItem()) && IsSelectedTheSameType(&m_wndPlaylistTree));
 }
 
 void CIPTVChannelEditorDlg::OnNewChannel()
@@ -2120,7 +2123,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 
 	HTREEITEM hSelected = reinterpret_cast<LPNMTREEVIEW>(pNMHDR)->itemNew.hItem;
 	int state = 0; // none selected
-	bool bSameType = IsSelectedTheSameType();
+	bool bSameType = IsSelectedTheSameType(&m_wndChannelsTree);
 	if (bSameType)
 	{
 		const auto& channel = FindChannel(hSelected);
@@ -2718,7 +2721,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours()
 		}
 	}
 
-	UpdateEPG();
+	UpdateEPG(m_lastTree);
 	set_allow_save();
 }
 
@@ -2793,7 +2796,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
 {
-	UpdateEPG();
+	UpdateEPG(m_lastTree);
 	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 	m_wndTestEPG.EnableWindow(firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty());
 }
@@ -3076,7 +3079,9 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 			auto res = m_playlistMap.emplace(entry->stream_uri->get_id(), entry);
 			if (!res.second)
 			{
-				TRACE("Duplicate channel: %s (%d)\n", res.first->second->get_title().c_str(), res.first->second->stream_uri->get_id());
+				TRACE(L"Duplicate channel: %s (%s)\n",
+					  res.first->second->get_title().c_str(),
+					  res.first->second->stream_uri->get_id().c_str());
 				continue;
 			}
 
@@ -3588,25 +3593,7 @@ void CIPTVChannelEditorDlg::OnUpdateButtonSearchNext(CCmdUI* pCmdUI)
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext()
 {
-	if (m_search.IsEmpty())
-		return;
-
-	SearchParams params;
-	if (m_search.GetLength() > 1 && m_search.GetAt(0) == '\\')
-	{
-		params.id = m_search.Mid(1).GetString();
-		if (m_channelsMap.find(params.id) == m_channelsMap.end())
-			return;
-	}
-	else
-	{
-		params.searchString = m_search;
-	}
-
-	if (!SelectTreeItem(m_wndChannelsTree, InfoType::enChannel, params))
-	{
-		AfxMessageBox(IDS_STRING_INFO_NOT_FOUND, MB_OK | MB_ICONINFORMATION);
-	}
+	SearchTreeItem(InfoType::enChannel, true);
 }
 
 void CIPTVChannelEditorDlg::OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI)
@@ -3618,25 +3605,7 @@ void CIPTVChannelEditorDlg::OnUpdateButtonPlSearchNext(CCmdUI* pCmdUI)
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 {
-	if (m_plSearch.IsEmpty())
-		return;
-
-	SearchParams params;
-	if (m_plSearch.GetLength() > 1 && m_plSearch.GetAt(0) == '\\')
-	{
-		params.id = m_plSearch.Mid(1).GetString();
-		if (m_playlistMap.find(params.id) == m_playlistMap.end())
-			return;
-	}
-	else
-	{
-		params.searchString = m_plSearch;
-	}
-
-	if (!SelectTreeItem(m_wndPlaylistTree, InfoType::enPlEntry, params))
-	{
-		AfxMessageBox(IDS_STRING_INFO_NOT_FOUND, MB_OK | MB_ICONINFORMATION);
-	}
+	SearchTreeItem(InfoType::enPlEntry, true);
 }
 
 bool CIPTVChannelEditorDlg::IsChannel(HTREEITEM hItem) const
@@ -3680,7 +3649,9 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 
 			SearchParams params;
 			params.id = info->stream_uri->get_id();
-			HTREEITEM hPlItem = SelectTreeItem(m_wndPlaylistTree, InfoType::enPlEntry, params, false);
+			params.type = InfoType::enPlEntry;
+			params.select = false;
+			HTREEITEM hPlItem = SelectTreeItem(m_lastTree, params);
 			needCheckExisting |= AddChannel(hPlItem);
 		}
 		LoadChannelInfo(m_wndChannelsTree.GetSelectedItem());
@@ -3995,7 +3966,7 @@ void CIPTVChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
 	if (m_lastTree)
 	{
 		HTREEITEM first = m_lastTree->GetFirstSelectedItem();
-		enable = enable && IsSelectedTheSameType();
+		enable = enable && IsSelectedTheSameType(m_lastTree);
 	}
 	else
 	{
@@ -4076,6 +4047,7 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 	if (info)
 	{
 		params.id = info->stream_uri->get_id();
+		params.next = true;
 		if (m_lastTree == &m_wndPlaylistTree && m_channelsMap.find(params.id) != m_channelsMap.end() ||
 			m_lastTree == &m_wndChannelsTree && m_playlistMap.find(params.id) != m_playlistMap.end())
 		{
@@ -4084,15 +4056,15 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 			if (m_lastTree == &m_wndPlaylistTree)
 			{
 				opposite = &m_wndChannelsTree;
-				type = InfoType::enChannel;
+				params.type = InfoType::enChannel;
 			}
 			else
 			{
 				opposite = &m_wndPlaylistTree;
-				type = InfoType::enPlEntry;
+				params.type = InfoType::enPlEntry;
 			}
 
-			SelectTreeItem(*opposite, type, params);
+			SelectTreeItem(opposite, params);
 		}
 	}
 
@@ -4199,12 +4171,15 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 	SaveRegPlugin(REG_CHANNELS_TYPE, idx);
 }
 
-HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, const SearchParams& searchParams, bool select /*= true*/)
+HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx* pTreeCtl, const SearchParams& searchParams)
 {
+	if (!pTreeCtl)
+		return nullptr;
+
 	std::vector<HTREEITEM> all_items;
-	for (auto hItem = ctl.GetChildItem(nullptr); hItem != nullptr; hItem = ctl.GetNextSiblingItem(hItem))
+	for (auto hItem = pTreeCtl->GetChildItem(nullptr); hItem != nullptr; hItem = pTreeCtl->GetNextSiblingItem(hItem))
 	{
-		for (auto hChildItem = ctl.GetChildItem(hItem); hChildItem != nullptr; hChildItem = ctl.GetNextSiblingItem(hChildItem))
+		for (auto hChildItem = pTreeCtl->GetChildItem(hItem); hChildItem != nullptr; hChildItem = pTreeCtl->GetNextSiblingItem(hChildItem))
 		{
 			all_items.emplace_back(hChildItem);
 		}
@@ -4214,18 +4189,19 @@ HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type,
 		return nullptr;
 
 	HTREEITEM hFound = nullptr;
-	HTREEITEM hFirst = ctl.GetSelectedItem();
+	HTREEITEM hFirst = pTreeCtl->GetSelectedItem();
 	auto& pos = std::find(all_items.begin(), all_items.end(), hFirst);
 	auto& start = (pos != all_items.end()) ? pos : all_items.begin();
-	auto cur = start + 1;
-	if (cur == all_items.end())
+	auto cur = start;
+
+	if (searchParams.next && ++cur == all_items.end())
 		cur = all_items.begin();
 
 	bool bFound = false;
 	do
 	{
 		BaseInfo* entry = nullptr;
-		switch (type)
+		switch (searchParams.type)
 		{
 			case InfoType::enChannel:
 				if (auto pair = m_channelsTreeMap.find(*cur); pair != m_channelsTreeMap.end())
@@ -4277,15 +4253,71 @@ HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx& ctl, InfoType type,
 	if (bFound)
 	{
 		hFound = *cur;
-		if (select)
+		if (searchParams.select)
 		{
-			ctl.SelectItem(hFound);
-			ctl.Expand(ctl.GetParentItem(hFound), TVE_EXPAND);
-			ctl.EnsureVisible(hFound);
+			pTreeCtl->SelectItem(hFound);
+			pTreeCtl->Expand(pTreeCtl->GetParentItem(hFound), TVE_EXPAND);
+			pTreeCtl->EnsureVisible(hFound);
 		}
 	}
 
 	return hFound;
+}
+
+void CIPTVChannelEditorDlg::SearchTreeItem(InfoType type, bool next /*= false*/)
+{
+	CTreeCtrlEx* pTreeCtl = nullptr;
+	SearchParams params;
+	params.next = next;
+	params.type = type;
+
+	switch (type)
+	{
+		case InfoType::enChannel:
+		{
+			if (m_search.IsEmpty())
+				return;
+
+			pTreeCtl = &m_wndChannelsTree;
+			if (m_search.GetLength() > 1 && m_search.GetAt(0) == '\\')
+			{
+				params.id = m_search.Mid(1).GetString();
+				if (m_channelsMap.find(params.id) == m_channelsMap.end())
+					return;
+			}
+			else
+			{
+				params.searchString = m_search;
+			}
+			break;
+		}
+		case InfoType::enPlEntry:
+		{
+			if (m_plSearch.IsEmpty())
+				return;
+
+			SearchParams params;
+			if (m_plSearch.GetLength() > 1 && m_plSearch.GetAt(0) == '\\')
+			{
+				params.id = m_plSearch.Mid(1).GetString();
+				if (m_playlistMap.find(params.id) == m_playlistMap.end())
+					return;
+			}
+			else
+			{
+				params.searchString = m_plSearch;
+			}
+
+			break;
+		}
+		default:
+			return;
+	}
+
+	if (!SelectTreeItem(pTreeCtl, params))
+	{
+		AfxMessageBox(IDS_STRING_INFO_NOT_FOUND, MB_OK | MB_ICONINFORMATION);
+	}
 }
 
 bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /*= -1*/)
@@ -4445,19 +4477,19 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter()
 	}
 }
 
-bool CIPTVChannelEditorDlg::IsSelectedTheSameType() const
+bool CIPTVChannelEditorDlg::IsSelectedTheSameType(const CTreeCtrlEx* pTreeCtl) const
 {
-	if (!m_lastTree)
+	if (!pTreeCtl)
 		return false;
 
-	auto selected = m_lastTree->GetSelectedItems();
+	auto selected = pTreeCtl->GetSelectedItems();
 	if (selected.empty())
 		return false;
 
-	bool isEntry = (GetBaseInfo(m_lastTree, selected[0]) != nullptr);
+	bool isEntry = (GetBaseInfo(pTreeCtl, selected[0]) != nullptr);
 	for (const auto& hItem : selected)
 	{
-		if (isEntry != (GetBaseInfo(m_lastTree, hItem) != nullptr))
+		if (isEntry != (GetBaseInfo(pTreeCtl, hItem) != nullptr))
 			return false;
 	}
 
@@ -4484,7 +4516,7 @@ bool CIPTVChannelEditorDlg::IsSelectedChannelsOrEntries(bool onlyChannel /*= fal
 
 bool CIPTVChannelEditorDlg::IsSelectedCategory() const
 {
-	return (m_lastTree == &m_wndChannelsTree && GetCategory(m_wndChannelsTree.GetFirstSelectedItem()) != nullptr && IsSelectedTheSameType());
+	return (m_lastTree == &m_wndChannelsTree && GetCategory(m_wndChannelsTree.GetFirstSelectedItem()) != nullptr && IsSelectedTheSameType(&m_wndChannelsTree));
 }
 
 bool CIPTVChannelEditorDlg::IsSelectedNotFavorite() const
@@ -4501,7 +4533,7 @@ bool CIPTVChannelEditorDlg::IsSelectedNotFavorite() const
 
 bool CIPTVChannelEditorDlg::IsSelectedInTheSameCategory() const
 {
-	if (m_lastTree != &m_wndChannelsTree || !m_wndChannelsTree.GetSelectedCount() || !IsSelectedTheSameType())
+	if (m_lastTree != &m_wndChannelsTree || !m_wndChannelsTree.GetSelectedCount() || !IsSelectedTheSameType(&m_wndChannelsTree))
 		return false;
 
 	const auto& category = GetItemCategory(m_wndChannelsTree.GetFirstSelectedItem());

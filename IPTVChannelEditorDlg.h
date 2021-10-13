@@ -28,6 +28,9 @@ public:
 		std::wstring id;
 		int hash = 0;
 		CString searchString;
+		InfoType type = InfoType::enChannel;
+		bool select = true;
+		bool next = false;
 	};
 
 	struct CategoryInfo
@@ -36,7 +39,7 @@ public:
 		std::shared_ptr<ChannelCategory> category;
 	};
 
-	HTREEITEM SelectTreeItem(CTreeCtrlEx& ctl, InfoType type, const SearchParams& searchParams, bool select = true);
+	HTREEITEM SelectTreeItem(CTreeCtrlEx* ctl, const SearchParams& searchParams);
 
 	// Implementation
 protected:
@@ -169,6 +172,8 @@ private:
 
 	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0) const;
 
+	void SearchTreeItem(InfoType type, bool next = false);
+
 	void RemoveOrphanChannels();
 	void CheckForExistingChannels(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
@@ -187,7 +192,7 @@ private:
 	std::shared_ptr<PlaylistEntry> FindEntry(HTREEITEM item) const;
 	BaseInfo* GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM item) const;
 
-	bool IsSelectedTheSameType() const;
+	bool IsSelectedTheSameType(const CTreeCtrlEx* pTreeCtl) const;
 	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
 	bool IsSelectedCategory() const;
 	bool IsSelectedNotFavorite() const;
@@ -209,7 +214,7 @@ private:
 	std::string GetPluginNameA(bool bCamel = false) const;
 
 	bool HasEPG2();
-	void UpdateEPG();
+	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
 	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
 	std::wstring GetPluginRegPath() const;
 
