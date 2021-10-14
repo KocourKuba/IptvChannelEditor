@@ -7,7 +7,7 @@ class GlanzPluginConfig extends DefaultConfig
     const EXTINF_VOD_PATTERN = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
 
     // info
-    public static $PLUGIN_NAME = 'Glanz TV';
+    public static $PLUGIN_SHOW_NAME = 'Glanz TV';
     public static $PLUGIN_SHORT_NAME = 'glanz';
     public static $PLUGIN_VERSION = '1.0.2';
     public static $PLUGIN_DATE = '14.09.2021';
@@ -36,6 +36,13 @@ class GlanzPluginConfig extends DefaultConfig
     public static $TV_CHANNEL_ICON_WIDTH = 60;
     public static $TV_CHANNEL_ICON_HEIGHT = 60;
 
+    /**
+     * Transform url based on settings or archive playback
+     * @param $plugin_cookies
+     * @param $archive_ts
+     * @param IChannel $channel
+     * @return string
+     */
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = $channel->get_streaming_url();
@@ -70,6 +77,11 @@ class GlanzPluginConfig extends DefaultConfig
         return $url;
     }
 
+    /**
+     * Collect information from m3u8 playlist
+     * @param $plugin_cookies
+     * @return array
+     */
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         return parent::GetPlaylistStreamInfo($plugin_cookies);

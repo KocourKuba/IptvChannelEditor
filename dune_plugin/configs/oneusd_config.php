@@ -1,15 +1,15 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class ItvPluginConfig extends DefaultConfig
+class OneusdPluginConfig extends DefaultConfig
 {
     const ACCOUNT_INFO_URL1 = 'http://api.itv.live/data/%s';
 
     // info
-    public static $PLUGIN_SHOW_NAME = 'ITV Live TV';
-    public static $PLUGIN_SHORT_NAME = 'itv';
+    public static $PLUGIN_SHOW_NAME = '1USD TV';
+    public static $PLUGIN_SHORT_NAME = 'oneusd';
     public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '11.10.2021';
+    public static $PLUGIN_DATE = '17.10.2021';
 
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = false;
@@ -20,23 +20,13 @@ class ItvPluginConfig extends DefaultConfig
     public static $ACCOUNT_TYPE = 'PIN';
 
     // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'https://itv.ooo/p/%s/hls.m3u8';
+    public static $ACCOUNT_PLAYLIST_URL1 = 'http://1usd.tv/pl-%s-hls';
 
     // tv
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}';
-    public static $CHANNELS_LIST = 'itv_channel_list.xml';
-    protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s/%s'; // epg_id YYYY-MM-DD
-
-    public function __construct()
-    {
-        parent::__construct();
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'res';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'startTime';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'stopTime';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'desc';
-    }
+    public static $M3U_STREAM_URL_PATTERN = '^https?://(?<subdomain>.+)/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$|';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/mono.m3u8?token={TOKEN}';
+    public static $CHANNELS_LIST = 'oneusd_channel_list.xml';
+    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/tvteam/epg/%s.json'; // epg_id
 
     /**
      * Transform url based on settings or archive playback
@@ -50,20 +40,28 @@ class ItvPluginConfig extends DefaultConfig
         $url = $channel->get_streaming_url();
         //hd_print("AdjustStreamUrl: $url");
 
-        if (intval($archive_ts) > 0) {
-            $now_ts = strval(time());
-            $url .= "&utc=$archive_ts&lutc=$now_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
-        }
-
         $format = static::get_format($plugin_cookies);
         // hd_print("Stream type: " . $format);
-        if ($format == 'mpeg') {
-            // replace hls to mpegts
-            $url = str_replace('video.m3u8', 'mpegts', $url);
-            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-            $url .= "|||dune_params|||buffering_ms:$buf_time";
+        switch ($format)
+        {
+            case 'hls':
+                if (intval($archive_ts) > 0) {
+                    // hd_print("Archive TS:  " . $archive_ts);
+                    $url = str_replace('mono.m3u8', "index-$archive_ts-7200.m3u8", $url);
+                }
+                break;
+            case 'mpeg':
+                if (intval($archive_ts) > 0) {
+                    // hd_print("Archive TS:  " . $archive_ts);
+                    $url = str_replace('mono.m3u8', "archive-$archive_ts-7200.ts", $url);
+                }
+                else {
+                    $url = str_replace('video.m3u8', 'mpegts', $url);
+                }
+
+                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+                $url .= "|||dune_params|||buffering_ms:$buf_time";
+                break;
         }
 
         // hd_print("Stream url:  " . $url);
@@ -80,19 +78,7 @@ class ItvPluginConfig extends DefaultConfig
      */
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
-        // this account has special API to get account info
-        if (empty($plugin_cookies->password))
-            return false;
-
-        try {
-            $url = sprintf(static::ACCOUNT_INFO_URL1, $plugin_cookies->password);
-            $content = HD::http_get_document($url);
-        } catch (Exception $ex) {
-            return false;
-        }
-
-        $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
-        return isset($account_data['package_info']) && !empty($account_data['package_info']);
+        return parent::GetAccountInfo($plugin_cookies, $account_data, $force);
     }
 
     /**

@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class EdemPluginConfig extends DefaultConfig
 {
     // info
-    public static $PLUGIN_NAME = 'iEdem/iLook TV';
+    public static $PLUGIN_SHOW_NAME = 'iEdem/iLook TV';
     public static $PLUGIN_SHORT_NAME = 'edem';
     public static $PLUGIN_VERSION = '2.7.2';
     public static $PLUGIN_DATE = '11.10.2021';
@@ -40,13 +40,25 @@ class EdemPluginConfig extends DefaultConfig
         return $url;
     }
 
+    /**
+     * Get information from the provider
+     * @param $plugin_cookies
+     * @param array &$account_data
+     * @param bool $force - ignored
+     * @return bool true if information collected and packages exists
+     */
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
-        hd_print("Collect information from account " . static::$PLUGIN_NAME);
+        hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
 
         return true;
     }
 
+    /**
+     * Collect information from m3u8 playlist
+     * @param $plugin_cookies
+     * @return array
+     */
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         return array();

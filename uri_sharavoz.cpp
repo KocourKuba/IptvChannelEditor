@@ -4,7 +4,6 @@
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://sharavoz.tk/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto EPG1_TEMPLATE = L"http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 static constexpr auto EPG2_TEMPLATE = L"http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 
@@ -29,19 +28,11 @@ void uri_sharavoz::parse_uri(const std::wstring& url)
 
 std::wstring uri_sharavoz::get_templated(StreamSubType subType, const TemplateParams& params) const
 {
-	std::wstring url = get_uri();
+	std::wstring url = is_template() ? URI_TEMPLATE_HLS : get_uri();
 
-	if (is_template())
+	if (subType == StreamSubType::enMPEGTS)
 	{
-		switch (subType)
-		{
-			case StreamSubType::enHLS:
-				url = URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = URI_TEMPLATE_MPEG;
-				break;
-		}
+		utils::string_replace_inplace(url, L"index.m3u8", L"mpegts");
 	}
 
 	if (params.shift_back)

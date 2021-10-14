@@ -43,12 +43,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
         //////////////////////////////////////
         // Plugin name
         ControlFactory::add_vgap($defs, -10);
-        $title = $config::$PLUGIN_NAME . ' v.' . $config::$PLUGIN_VERSION . '. [' . $config::$PLUGIN_DATE . ']';
+        $title = $config::$PLUGIN_SHOW_NAME . ' v.' . $config::$PLUGIN_VERSION . '. [' . $config::$PLUGIN_DATE . ']';
         $this->add_button($defs, 'restart', $title, 'Перезагрузить плеер', 0);
 
         //////////////////////////////////////
         // Show in main screen
-        $this->add_combobox($defs, 'show_tv', 'Показывать ' . $config::$PLUGIN_NAME . ' в главном меню:',
+        $this->add_combobox($defs, 'show_tv', 'Показывать ' . $config::$PLUGIN_SHOW_NAME . ' в главном меню:',
             $show_tv, $show_ops, 0, true);
 
         //////////////////////////////////////

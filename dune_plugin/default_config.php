@@ -9,7 +9,7 @@ abstract class DefaultConfig
     const VOD_PLAYLIST_NAME = 'playlist_vod.m3u8';
 
     // info
-    public static $PLUGIN_NAME = 'StarNet';
+    public static $PLUGIN_SHOW_NAME = 'StarNet';
     public static $PLUGIN_SHORT_NAME = 'starnet';
     public static $PLUGIN_VERSION = '0.0.0';
     public static $PLUGIN_DATE = '04.01.1972';
@@ -179,7 +179,7 @@ abstract class DefaultConfig
      */
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
-        hd_print("Collect information from account " . static::$PLUGIN_NAME);
+        hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
 
         $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
@@ -190,6 +190,11 @@ abstract class DefaultConfig
         return false;
     }
 
+    /**
+     * Collect information from m3u8 playlist
+     * @param $plugin_cookies
+     * @return array
+     */
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         $pl_entries = array();

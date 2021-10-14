@@ -8,7 +8,7 @@ class SharaclubPluginConfig extends DefaultConfig
     const SERIES_VOD_PATTERN = '|^https?://(.+)/series/.+\.mp4(.+)$|';
 
     // info
-    public static $PLUGIN_NAME = 'Sharaclub TV';
+    public static $PLUGIN_SHOW_NAME = 'Sharaclub TV';
     public static $PLUGIN_SHORT_NAME = 'sharaclub';
     public static $PLUGIN_VERSION = '1.0.1';
     public static $PLUGIN_DATE = '12.09.2021';
@@ -105,6 +105,11 @@ class SharaclubPluginConfig extends DefaultConfig
         return isset($account_data['status']) && $account_data['status'] == 'ok';
     }
 
+    /**
+     * Collect information from m3u8 playlist
+     * @param $plugin_cookies
+     * @return array
+     */
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         return parent::GetPlaylistStreamInfo($plugin_cookies);

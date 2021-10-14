@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class SharavozPluginConfig extends DefaultConfig
 {
     // info
-    public static $PLUGIN_NAME = 'Sharavoz TV';
+    public static $PLUGIN_SHOW_NAME = 'Sharavoz TV';
     public static $PLUGIN_SHORT_NAME = 'sharavoz';
     public static $PLUGIN_VERSION = '1.0.1';
     public static $PLUGIN_DATE = '12.09.2021';
@@ -54,6 +54,11 @@ class SharavozPluginConfig extends DefaultConfig
         return $url;
     }
 
+    /**
+     * Collect information from m3u8 playlist
+     * @param $plugin_cookies
+     * @return array
+     */
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         return parent::GetPlaylistStreamInfo($plugin_cookies);

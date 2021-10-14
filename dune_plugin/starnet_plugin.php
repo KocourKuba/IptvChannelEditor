@@ -42,7 +42,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
         StarnetMainScreen::$config = $config;
         StarnetSetupScreen::$config = $config;
 
-        hd_print("Plugin name:     " . $config::$PLUGIN_NAME);
+        hd_print("Plugin name:     " . $config::$PLUGIN_SHOW_NAME);
         hd_print("Plugin version:  " . $config::$PLUGIN_VERSION);
         hd_print("Plugin date:     " . $config::$PLUGIN_DATE);
         hd_print("Plugin config:   " . $plugin_type);

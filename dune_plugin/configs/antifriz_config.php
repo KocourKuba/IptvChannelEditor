@@ -7,7 +7,7 @@ class AntifrizPluginConfig extends DefaultConfig
     const EXTINF_VOD_PATTERN = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
 
     // info
-    public static $PLUGIN_NAME = 'AntiFriz TV';
+    public static $PLUGIN_SHOW_NAME = 'AntiFriz TV';
     public static $PLUGIN_SHORT_NAME = 'antifriz';
     public static $PLUGIN_VERSION = '1.0.2';
     public static $PLUGIN_DATE = '23.09.2021';
@@ -40,6 +40,13 @@ class AntifrizPluginConfig extends DefaultConfig
     public static $TV_CHANNEL_ICON_WIDTH = 60;
     public static $TV_CHANNEL_ICON_HEIGHT = 60;
 
+    /**
+     * Transform url based on settings or archive playback
+     * @param $plugin_cookies
+     * @param $archive_ts
+     * @param IChannel $channel
+     * @return string
+     */
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $ext_params = $channel->get_ext_params();
@@ -79,6 +86,11 @@ class AntifrizPluginConfig extends DefaultConfig
         return static::make_ts($url);
     }
 
+    /**
+     * Collect information from m3u8 playlist
+     * @param $plugin_cookies
+     * @return array
+     */
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         return parent::GetPlaylistStreamInfo($plugin_cookies);

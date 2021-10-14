@@ -42,29 +42,22 @@ std::wstring uri_oneusd::get_templated(StreamSubType subType, const TemplatePara
 		{
 			case StreamSubType::enHLS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				//url = URI_TEMPLATE_HLS;
 				break;
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				//url = URI_TEMPLATE_MPEG;
 				break;
 		}
 	}
 	else
 	{
 		url = get_uri();
+		if (params.shift_back)
+		{
+			url += L"&utc={START}&lutc={NOW}";
+		}
 	}
-
-// 	if (params.shift_back)
-// 	{
-// 		url += L"&utc={START}&lutc={NOW}";
-// 	}
 
 	ReplaceVars(url, params);
-	if (params.shift_back)
-	{
-		//utils::string_replace_inplace(url, L":34", L":24");
-	}
 	return url;
 }
 
