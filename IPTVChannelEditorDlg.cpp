@@ -91,16 +91,17 @@ struct PluginDesc
 {
 	SupportedPlugins type;
 	CString name;
+	std::string int_name;
 };
-PluginDesc all_plugins[] = {
-	{ enAntifriz,  _T("Antifriz") },
-	{ enEdem,      _T("Edem (iLook TV)") },
-	{ enFox,       _T("Fox TV") },
-	{ enGlanz,     _T("Glanz TV") },
-	{ enItv,       _T("ITV") },
-//	{ enOneUsd,    _T("1USD") },
-	{ enSharaclub, _T("Sharaclub TV") },
-	{ enSharavoz,  _T("Sharavoz TV") },
+static PluginDesc all_plugins[] = {
+	{ enAntifriz,  _T("Antifriz"),        "antifriz"   },
+	{ enEdem,      _T("Edem (iLook TV)"), "edem"       },
+	{ enFox,       _T("Fox TV"),          "fox"        },
+	{ enGlanz,     _T("Glanz TV"),        "glanz"      },
+	{ enItv,       _T("ITV"),             "itv"        },
+	{ enSharaclub, _T("Sharaclub TV"),    "sharaclub"  },
+	{ enSharavoz,  _T("Sharavoz TV"),     "sharavoz"   },
+	{ enOneUsd,    _T("1USD TV"),         "oneusd"     },
 };
 
 std::map<UINT, UINT> tooltips_info =
@@ -879,24 +880,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			const auto& stream = entry->get_uri_stream();
 			switch (m_pluginType)
 			{
-				case StreamType::enAntifriz: // pin
-				case StreamType::enEdem: // ott_key
-				case StreamType::enFox: // login/token
-				case StreamType::enOneUsd: // pin
-				case StreamType::enSharavoz: // pin
-				case StreamType::enSharaclub: // login/pass
-				case StreamType::enItv: // pin
-				{
-					const auto& token = stream->get_token();
-					const auto& domain = stream->get_domain();
-					if (!token.empty() && token != L"00000000000000" && !domain.empty() && domain != L"localhost")
-					{
-						m_token = stream->get_token();
-						m_domain = stream->get_domain();
-					}
-					bSet = true;
-					break;
-				}
 				case StreamType::enGlanz: // login/token
 					if (!stream->get_token().empty()
 						&& !stream->get_domain().empty()
@@ -915,7 +898,17 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 					bSet = true;
 					break;
 				default:
+				{
+					const auto& token = stream->get_token();
+					const auto& domain = stream->get_domain();
+					if (!token.empty() && token != L"00000000000000" && !domain.empty() && domain != L"localhost")
+					{
+						m_token = stream->get_token();
+						m_domain = stream->get_domain();
+					}
+					bSet = true;
 					break;
+				}
 			}
 
 			if (bSet) break;
@@ -1572,10 +1565,10 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 				m_token = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_TOKEN));
 				m_domain = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN));
 				break;
-			case StreamType::enSharavoz:
 			case StreamType::enAntifriz:
-			case StreamType::enOneUsd:
 			case StreamType::enItv:
+			case StreamType::enOneUsd:
+			case StreamType::enSharavoz:
 				m_password = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			case StreamType::enGlanz:
@@ -2825,9 +2818,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			break;
 		}
 		case StreamType::enAntifriz:
+		case StreamType::enItv:
 		case StreamType::enOneUsd:
 		case StreamType::enSharavoz:
-		case StreamType::enItv:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -3186,14 +3179,15 @@ void CIPTVChannelEditorDlg::OnSave()
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_TOKEN, utils::utf16_to_utf8(m_token).c_str()));
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(m_domain).c_str()));
 					break;
-				case StreamType::enSharavoz: // pin
-				case StreamType::enAntifriz:
-				case StreamType::enItv:
+				case StreamType::enGlanz: // login/pass
+				case StreamType::enSharaclub:
+					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_LOGIN, utils::utf16_to_utf8(m_login).c_str()));
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
-				case StreamType::enSharaclub:
-				case StreamType::enGlanz: // login/pass
-					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_LOGIN, utils::utf16_to_utf8(m_login).c_str()));
+				case StreamType::enAntifriz: // pin
+				case StreamType::enItv:
+				case StreamType::enOneUsd:
+				case StreamType::enSharavoz:
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
 				default:
@@ -3472,6 +3466,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 		L"bg_fox.jpg",        L"logo_fox.png",
 		L"bg_glanz.jpg",      L"logo_glanz.png",
 		L"bg_itv.jpg",        L"logo_itv.png",
+		L"bg_oneusd.jpg",     L"logo_oneusd.png",
 		L"bg_sharaclub.jpg",  L"logo_sharaclub.png",
 		L"bg_sharavoz.jpg",   L"logo_sharavoz.png",
 	};
@@ -4592,8 +4587,10 @@ void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info, const std::wstring& t
 {
 	if (m_lastTree != &m_wndChannelsTree
 		|| (m_pluginType != StreamType::enFox
+			&& m_pluginType != StreamType::enItv
 			&& m_pluginType != StreamType::enOneUsd
-			&& m_pluginType != StreamType::enItv))
+			)
+		)
 	{
 		info->stream_uri->set_token(token);
 		return;
@@ -4614,7 +4611,7 @@ bool CIPTVChannelEditorDlg::HasEPG2()
 
 std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const
 {
-	return fmt::format(L"{:s}\\{:s}", REG_SETTINGS, GetPluginName<wchar_t>());
+	return fmt::format(LR"({:s}\{:s})", REG_SETTINGS, GetPluginName<wchar_t>());
 }
 
 void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, LPCSTR szValue)

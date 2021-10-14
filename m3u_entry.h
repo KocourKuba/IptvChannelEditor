@@ -15,7 +15,7 @@ public:
 
 	typedef enum
 	{
-		tag_unknown = -1,
+		tag_directive_title = -1,
 		tag_url_tvg,
 		tag_url_logo,
 		tag_channel_id,
@@ -27,6 +27,7 @@ public:
 		tag_tvg_name,
 		tag_tvg_shift,
 		tag_timeshift,
+		tag_catchup,
 		tag_catchup_days,
 		tag_catchup_type,
 		tag_catchup_source,

@@ -26,16 +26,17 @@ bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 			// #EXTINF:0 CUID="1" tvg-name="1:458" tvg-id="1:458" arc-time="120" catchup="shift" catchup-days="5"
 			//           tvg-logo="http://stb.fox-tv.fun/images/logo_chanel/1RUSTV200.png" group-title="Общие",Первый канал
 
+			if (!m3uEntry.get_dir_title().empty())
+			{
+				set_title(utils::utf8_to_utf16(m3uEntry.get_dir_title()));
+			}
+
 			search_id(tags);
 			search_group(tags);
 			search_archive(tags);
 			search_epg(tags);
 			search_logo(tags);
 
-			if (!m3uEntry.get_dir_title().empty())
-			{
-				set_title(utils::utf8_to_utf16(m3uEntry.get_dir_title()));
-			}
 		}
 		break;
 		default:
@@ -91,11 +92,16 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::str
 
 void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::string>& tags)
 {
+	// priority -> tvg_id -> tvg_name -> title
 	if (const auto& pair = tags.find(m3u_entry::tag_tvg_id); pair != tags.end())
 	{
 		set_epg1_id(utils::utf8_to_utf16(pair->second));
 	}
 	else if (const auto& pair = tags.find(m3u_entry::tag_tvg_name); pair != tags.end())
+	{
+		set_epg1_id(utils::utf8_to_utf16(pair->second));
+	}
+	else if (const auto& pair = tags.find(m3u_entry::tag_directive_title); pair != tags.end())
 	{
 		set_epg1_id(utils::utf8_to_utf16(pair->second));
 	}

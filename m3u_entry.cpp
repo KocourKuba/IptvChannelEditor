@@ -21,6 +21,7 @@ static std::map<std::string, m3u_entry::info_tags> s_tags = {
 	{ "tvg-name",       m3u_entry::tag_tvg_name       },
 	{ "tvg-shift",      m3u_entry::tag_tvg_shift      },
 	{ "timeshift",      m3u_entry::tag_timeshift      },
+	{ "catchup",        m3u_entry::tag_catchup        },
 	{ "catchup-days",   m3u_entry::tag_catchup_days   },
 	{ "catchup-type",   m3u_entry::tag_catchup_type   },
 	{ "catchup-source", m3u_entry::tag_catchup_source },
@@ -93,6 +94,9 @@ void m3u_entry::parse(const std::string& str)
 			{
 				duration = utils::char_to_int(m[1].str());
 				dir_title = m[3].str();
+				// put title to directive for tvg parsing
+				ext_tags.emplace(tag_directive_title, dir_title);
+
 				if (m[2].matched)
 				{
 					parse_directive_tags(m[2].str());

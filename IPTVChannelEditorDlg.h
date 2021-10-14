@@ -416,25 +416,17 @@ template<typename T>
 std::basic_string<T>
 CIPTVChannelEditorDlg::GetPluginName(bool bCamel /*= false*/) const
 {
-	static std::unordered_map<SupportedPlugins, std::string> plugins =
+	const auto plugin_type = (SupportedPlugins)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
+	for (const auto& item : all_plugins)
 	{
-		{ enAntifriz,  "antifriz"   },
-		{ enEdem,      "edem"       },
-		{ enFox,       "fox"        },
-		{ enGlanz,     "glanz"      },
-		{ enItv,       "itv"        },
-		{ enOneUsd,    "oneusd"     },
-		{ enSharavoz,  "sharavoz"   },
-		{ enSharaclub, "sharaclub"  },
-	};
+		if (item.type != plugin_type) continue;
 
-	const auto& pair = plugins.find((SupportedPlugins)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()));
-	if (pair == plugins.end())
-		return std::basic_string<T>();
+		std::basic_string<T> plugin_name(item.int_name.begin(), item.int_name.end());
+		if (bCamel)
+			plugin_name[0] = std::toupper(plugin_name[0]);
 
-	std::basic_string<T> plugin_name(pair->second.begin(), pair->second.end());
-	if (bCamel)
-		plugin_name[0] = plugin_name[0] - 32;
+		return plugin_name;
+	}
 
-	return plugin_name;
+	return std::basic_string<T>();
 }
