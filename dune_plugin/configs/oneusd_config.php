@@ -23,7 +23,7 @@ class OneusdPluginConfig extends DefaultConfig
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://1usd.tv/pl-%s-hls';
 
     // tv
-    public static $M3U_STREAM_URL_PATTERN = '^https?://(?<subdomain>.+)/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$|';
+    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/mono.m3u8?token={TOKEN}';
     public static $CHANNELS_LIST = 'oneusd_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/tvteam/epg/%s.json'; // epg_id

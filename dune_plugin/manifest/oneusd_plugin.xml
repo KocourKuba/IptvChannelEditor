@@ -1,4 +1,4 @@
-﻿<dune_plugin>
+<dune_plugin>
   <name>oneusd.tv</name>
   <caption>1USD TV</caption>
   <auto_resume>
@@ -9,7 +9,7 @@
         <parent_media_url>root://tv</parent_media_url>
         <media_url>tv_group_list</media_url>
         <caption>1USD TV</caption>
-        <icon_url>plugin_file://icons/logo_itv.png</icon_url>
+        <icon_url>plugin_file://icons/logo_oneusd.png</icon_url>
         <actions>
           <key_enter>
             <type>plugin_open_folder</type>
@@ -26,7 +26,7 @@
         <parent_media_url>setup://applications</parent_media_url>
         <media_url>setup</media_url>
         <caption>1USD TV</caption>
-        <icon_url>plugin_file://icons/logo_itv.png</icon_url>
+        <icon_url>plugin_file://icons/logo_oneusd.png</icon_url>
         <actions>
           <key_enter>
             <type>plugin_open_folder</type>

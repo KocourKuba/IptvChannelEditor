@@ -17,7 +17,7 @@ class SharavozPluginConfig extends DefaultConfig
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://sharavoz.tk/iptv/p/%s/Sharavoz.Tv.navigator-ott.m3u';
 
     // tv
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.*)/(?:.*)\?token=(?<token>.+)$|';
+    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?:.*)\?token=(?<token>.+)$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
     public static $CHANNELS_LIST = 'sharavoz_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
