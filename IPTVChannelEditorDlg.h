@@ -234,7 +234,7 @@ private:
 	std::wstring ReadRegStringPluginW(LPCTSTR path) const;
 	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
 
-	void UpdateExtToken(BaseInfo* info, const std::wstring& token) const;
+	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
 
 protected:
 	CFont m_largeFont;

@@ -2787,7 +2787,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
-		UpdateExtToken(info, m_token);
+		UpdateExtToken(info->stream_uri.get(), m_token);
 		const auto& url = info->stream_uri->get_templated((StreamSubType)m_StreamType, params);
 
 		TRACE(L"Test URL: %s\n", url.c_str());
@@ -3814,20 +3814,16 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 			if (IsChannel(hItem))
 			{
 				auto info = dynamic_cast<BaseInfo*>(FindChannel(hItem).get());
-				if (!info) continue;
-
-				container->emplace_back(info->stream_uri.get());
-				UpdateExtToken(info, m_token);
+				if (info)
+					container->emplace_back(info->stream_uri.get());
 			}
 			else
 			{
 				for (const auto& item : GetItemCategory(hItem)->get_channels())
 				{
 					auto info = dynamic_cast<BaseInfo*>(item.get());
-					if (!info) continue;
-
-					container->emplace_back(info->stream_uri.get());
-					UpdateExtToken(info, m_token);
+					if (info)
+						container->emplace_back(info->stream_uri.get());
 				}
 			}
 		}
@@ -3838,28 +3834,33 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 				auto info = dynamic_cast<BaseInfo*>(FindEntry(hItem).get());
 				if (info)
 					container->emplace_back(info->stream_uri.get());
-
-				continue;
 			}
-
-			const auto& pair = m_pl_categoriesMap.find(hItem);
-			if (pair == m_pl_categoriesMap.end()) continue;
-
-			const auto& category = pair->second;
-			for (auto hChildItem = m_lastTree->GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_lastTree->GetNextSiblingItem(hChildItem))
+			else
 			{
-				const auto& pairEntry = m_playlistTreeMap.find(hChildItem);
-				if (pairEntry == m_playlistTreeMap.end() || category != pairEntry->second->get_category()) continue;
+				const auto& pair = m_pl_categoriesMap.find(hItem);
+				if (pair == m_pl_categoriesMap.end()) continue;
 
-				auto info = dynamic_cast<BaseInfo*>(pairEntry->second.get());
-				if (info)
-					container->emplace_back(info->stream_uri.get());
+				const auto& category = pair->second;
+				for (auto hChildItem = m_lastTree->GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_lastTree->GetNextSiblingItem(hChildItem))
+				{
+					const auto& pairEntry = m_playlistTreeMap.find(hChildItem);
+					if (pairEntry == m_playlistTreeMap.end() || category != pairEntry->second->get_category()) continue;
+
+					auto info = dynamic_cast<BaseInfo*>(pairEntry->second.get());
+					if (info)
+						container->emplace_back(info->stream_uri.get());
+				}
 			}
 		}
 	}
 
 	if (container->empty())
 		return;
+
+	for (auto& item : *container)
+	{
+		UpdateExtToken(item, m_token);
+	}
 
 	m_evtStop.ResetEvent();
 	m_wndStop.EnableWindow(TRUE);
@@ -4583,7 +4584,7 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 	return __super::DestroyWindow();
 }
 
-void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info, const std::wstring& token) const
+void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& token) const
 {
 	if (m_lastTree != &m_wndChannelsTree
 		|| (m_pluginType != StreamType::enFox
@@ -4592,16 +4593,16 @@ void CIPTVChannelEditorDlg::UpdateExtToken(BaseInfo* info, const std::wstring& t
 			)
 		)
 	{
-		info->stream_uri->set_token(token);
+		uri->set_token(token);
 		return;
 	}
 
 	// fox and 1usd uses a unique token for each channel depends on user credentials
 	// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id
 
-	const auto& pair = m_playlistMap.find(info->stream_uri->get_id());
+	const auto& pair = m_playlistMap.find(uri->get_id());
 	if (pair != m_playlistMap.end())
-		info->stream_uri->set_token(pair->second->stream_uri->get_token());
+		uri->set_token(pair->second->stream_uri->get_token());
 }
 
 bool CIPTVChannelEditorDlg::HasEPG2()
