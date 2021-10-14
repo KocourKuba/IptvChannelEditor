@@ -206,13 +206,14 @@
 #define ID_SYNC_TREE_ITEM               32796
 #define ID_SORT_CATEGORY                32797
 #define ID_ADD_TO_FAVORITE              32798
+#define ID_CLEAR_STREAM_INFO            32799
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        201
-#define _APS_NEXT_COMMAND_VALUE         32799
+#define _APS_NEXT_COMMAND_VALUE         32800
 #define _APS_NEXT_CONTROL_VALUE         1109
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif

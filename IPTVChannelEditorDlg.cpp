@@ -244,6 +244,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_TOGGLE_CHANNEL, &CIPTVChannelEditorDlg::OnUpdateToggleChannel)
 	ON_COMMAND(ID_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnGetStreamInfo)
 	ON_UPDATE_COMMAND_UI(ID_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnUpdateGetStreamInfo)
+	ON_COMMAND(ID_CLEAR_STREAM_INFO, &CIPTVChannelEditorDlg::OnClearStreamInfo)
+	ON_UPDATE_COMMAND_UI(ID_CLEAR_STREAM_INFO, &CIPTVChannelEditorDlg::OnUpdateClearStreamInfo)
 	ON_COMMAND(ID_PLAY_STREAM, &CIPTVChannelEditorDlg::OnPlayStream)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM, &CIPTVChannelEditorDlg::OnUpdatePlayStream)
 	ON_COMMAND(ID_SYNC_TREE_ITEM, &CIPTVChannelEditorDlg::OnSyncTreeItem)
@@ -3897,6 +3899,87 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 void CIPTVChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
 {
 	BOOL enable = !m_probe.IsEmpty() && !m_loading;
+	if (m_lastTree)
+	{
+		HTREEITEM first = m_lastTree->GetFirstSelectedItem();
+		enable = enable && IsSelectedTheSameType(m_lastTree);
+	}
+	else
+	{
+		enable = FALSE;
+	}
+
+	pCmdUI->Enable(enable);
+}
+
+void CIPTVChannelEditorDlg::OnClearStreamInfo()
+{
+	if (!m_lastTree)
+		return;
+
+	bool isChannelsTree = (m_lastTree == &m_wndChannelsTree);
+	std::set<int> to_erase;
+	for (auto hItem = m_lastTree->GetFirstSelectedItem(); hItem != nullptr; hItem = m_lastTree->GetNextSelectedItem(hItem))
+	{
+		if (isChannelsTree)
+		{
+			if (IsChannel(hItem))
+			{
+				auto info = dynamic_cast<BaseInfo*>(FindChannel(hItem).get());
+				if (info)
+					to_erase.emplace(info->stream_uri->get_hash());
+			}
+			else
+			{
+				for (const auto& item : GetItemCategory(hItem)->get_channels())
+				{
+					auto info = dynamic_cast<BaseInfo*>(item.get());
+					if (info)
+						to_erase.emplace(info->stream_uri->get_hash());
+				}
+			}
+		}
+		else
+		{
+			if (IsPlaylistEntry(hItem))
+			{
+				auto info = dynamic_cast<BaseInfo*>(FindEntry(hItem).get());
+				if (info)
+					to_erase.emplace(info->stream_uri->get_hash());
+			}
+			else
+			{
+				const auto& pair = m_pl_categoriesMap.find(hItem);
+				if (pair == m_pl_categoriesMap.end()) continue;
+
+				const auto& category = pair->second;
+				for (auto hChildItem = m_lastTree->GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_lastTree->GetNextSiblingItem(hChildItem))
+				{
+					const auto& pairEntry = m_playlistTreeMap.find(hChildItem);
+					if (pairEntry == m_playlistTreeMap.end() || category != pairEntry->second->get_category()) continue;
+
+					auto info = dynamic_cast<BaseInfo*>(pairEntry->second.get());
+					if (info)
+						to_erase.emplace(info->stream_uri->get_hash());
+				}
+			}
+		}
+	}
+
+	for (const auto& item : to_erase)
+	{
+		m_stream_infos.erase(item);
+	}
+
+	if (m_lastTree == &m_wndChannelsTree)
+		LoadChannelInfo(m_lastTree->GetSelectedItem());
+	else
+		LoadPlayListInfo(m_lastTree->GetSelectedItem());
+}
+
+void CIPTVChannelEditorDlg::OnUpdateClearStreamInfo(CCmdUI* pCmdUI)
+{
+	BOOL enable = !m_loading;
 	if (m_lastTree)
 	{
 		HTREEITEM first = m_lastTree->GetFirstSelectedItem();

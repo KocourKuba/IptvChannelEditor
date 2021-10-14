@@ -604,6 +604,14 @@
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32800.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32800.Text">
+            <source>Clear Stream Info</source>
+            <target state="final">Удалить информацию о потоке</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32800.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
           <trans-unit id="Menus.113.POPUP_ChannelMenu.32796.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32796.Text">
             <source>Sync with Playlist	Ctrl+SPACE</source>
             <target state="final">Найти в плейлисте	Ctrl+Пробел</target>
@@ -611,14 +619,6 @@
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32796.Text</context>
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
-          </trans-unit>
-          <trans-unit id="Menus.113.POPUP_ChannelMenu.32789.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32789.Text">
-            <source>Delete Category</source>
-            <target state="final">Удалить категорию</target>
-            <context-group>
-              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32789.Text</context>
-            </context-group>
-            <sl:rowstatus>rsUnused</sl:rowstatus>
           </trans-unit>
         </group>
         <group id="114" datatype="winres">
@@ -1152,7 +1152,7 @@ EPG №:		%s
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_WARN_DELETE_ITEMS</context>
             </context-group>
-            <sl:rowstatus>rsNew</sl:rowstatus>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
         </group>
         <group id="3633" datatype="winres">
@@ -1239,11 +1239,11 @@ EPG №:		%s
       <group id="Versions" datatype="winres">
         <group id="1" datatype="winres">
           <trans-unit id="Versions.1.ProductVersion" resname="Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion">
-            <source>2.1.432</source>
+            <source>2.2.441</source>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion</context>
             </context-group>
-            <sl:rowstatus>rsChanged</sl:rowstatus>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
         </group>
       </group>

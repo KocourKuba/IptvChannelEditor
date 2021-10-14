@@ -82,6 +82,8 @@ protected:
 	afx_msg void OnSortCategory();
 	afx_msg void OnUpdateSortCategory(CCmdUI* pCmdUI);
 	afx_msg void OnGetStreamInfo();
+	afx_msg void OnUpdateClearStreamInfo(CCmdUI* pCmdUI);
+	afx_msg void OnClearStreamInfo();
 	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnPlayStream();
 	afx_msg void OnUpdatePlayStream(CCmdUI* pCmdUI);
