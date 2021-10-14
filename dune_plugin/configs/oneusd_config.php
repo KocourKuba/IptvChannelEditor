@@ -9,7 +9,7 @@ class OneusdPluginConfig extends DefaultConfig
     public static $PLUGIN_SHOW_NAME = '1USD TV';
     public static $PLUGIN_SHORT_NAME = 'oneusd';
     public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '17.10.2021';
+    public static $PLUGIN_DATE = '14.10.2021';
 
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = false;
