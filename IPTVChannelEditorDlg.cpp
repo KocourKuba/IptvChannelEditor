@@ -1223,7 +1223,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 	if (channel)
 	{
 		m_epgID1 = channel->get_epg1_id().c_str();
-		m_epgID2 = channel->get_epg2_id().c_str();
+		m_epgID2 = HasEPG2() ? channel->get_epg2_id().c_str() : L"";
 
 		m_streamUrl = channel->stream_uri->get_uri().c_str();
 		m_streamID = channel->stream_uri->is_template() ? channel->stream_uri->get_id().c_str() : L"";
@@ -4690,7 +4690,7 @@ void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& 
 
 bool CIPTVChannelEditorDlg::HasEPG2()
 {
-	return (m_pluginType == StreamType::enEdem || m_pluginType == StreamType::enSharaclub || m_pluginType == StreamType::enSharavoz);
+	return (/*m_pluginType == StreamType::enEdem ||*/ m_pluginType == StreamType::enSharaclub || m_pluginType == StreamType::enSharavoz);
 }
 
 std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const
