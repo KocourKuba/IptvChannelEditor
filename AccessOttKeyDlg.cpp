@@ -58,26 +58,19 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 	m_domain.Empty();
 	m_status.Empty();
 	std::vector<BYTE> data;
-	std::unique_ptr<std::istream> pl_stream;
-	if (utils::CrackUrl(m_url.GetString()))
+	if (!utils::DownloadFile(m_url.GetString(), data))
 	{
-		if (utils::DownloadFile(m_url.GetString(), data))
-		{
-			utils::vector_to_streambuf<char> buf(data);
-			pl_stream = std::make_unique<std::istream>(&buf);
-		}
-	}
-	else
-	{
-		pl_stream = std::make_unique<std::ifstream>(m_url.GetString());
+		std::ifstream instream(m_url.GetString());
+		data.assign((std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
 	}
 
-	if (!pl_stream || !pl_stream->good()) return;
+	utils::vector_to_streambuf<char> buf(data);
+	std::istream stream(&buf);
+	if (!stream.good()) return;
 
-	int step = 0;
-	std::string line;
 	auto entry = std::make_unique<PlaylistEntry>(m_streamType, theApp.GetAppPath(utils::PLUGIN_ROOT));
-	while (std::getline(*pl_stream, line))
+	std::string line;
+	while (std::getline(stream, line))
 	{
 		utils::string_rtrim(line, "\r");
 		m3u_entry m3uEntry(line);

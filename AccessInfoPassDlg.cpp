@@ -107,17 +107,16 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
 
 	std::vector<BYTE> data;
-	std::unique_ptr<std::istream> pl_stream;
 	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
 	{
 		utils::vector_to_streambuf<char> buf(data);
-		pl_stream = std::make_unique<std::istream>(&buf);
+		std::istream stream(&buf);
 
-		if (pl_stream && pl_stream->good())
+		if (stream.good())
 		{
 			int step = 0;
 			std::string line;
-			while (std::getline(*pl_stream, line))
+			while (std::getline(stream, line))
 			{
 				utils::string_rtrim(line, "\r");
 				m3u_entry m3uEntry(line);
