@@ -75,18 +75,6 @@ constexpr auto REG_STREAM_TYPE = _T("StreamType");
 constexpr auto REG_CUSTOM_URL = _T("CustomUrl");
 constexpr auto REG_CUSTOM_FILE = _T("CustomPlaylist");
 
-typedef enum
-{
-	enAntifriz = 0,
-	enEdem,
-	enFox,
-	enGlanz,
-	enOneUsd,
-	enSharaclub,
-	enSharavoz,
-	enItv,
-} SupportedPlugins;
-
 struct PluginDesc
 {
 	SupportedPlugins type;
@@ -576,9 +564,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndPlaylist.SetCurSel(pl_idx);
 
 	// Load channel lists
-	const auto& channelsPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), GetPluginName<wchar_t>());
-	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", GetPluginName<wchar_t>());
-	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", GetPluginName<wchar_t>());
+	const auto& name = GetPluginName<wchar_t>(GetCurrentPlugin());
+	const auto& channelsPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), name);
+	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", name);
+	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", name);
 
 	m_all_channels_lists.clear();
 
@@ -635,7 +624,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	int idx = m_wndPlaylist.GetCurSel();
 	BOOL isFile = (BOOL)m_wndPlaylist.GetItemData(idx);
 	const auto& account_template = StreamContainer::get_instance(m_pluginType)->get_playlist_template();
-	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginName<TCHAR>(true)).c_str();
+	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginName<TCHAR>(GetCurrentPlugin(), true)).c_str();
 
 	switch (m_pluginType)
 	{
@@ -3233,7 +3222,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		doc.append_node(tv_info);
 
 		// write document
-		auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), GetPluginName<wchar_t>());
+		auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), GetPluginName<wchar_t>(GetCurrentPlugin()));
 		std::error_code err;
 		std::filesystem::create_directories(playlistPath, err);
 
@@ -3431,7 +3420,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
 		return;
 
-	const auto& name = GetPluginName<wchar_t>();
+	const auto cur_plugin = GetCurrentPlugin();
+	const auto& name = GetPluginName<wchar_t>(cur_plugin);
 
 	const auto& packFolder = fmt::format(GetAbsPath(utils::PACK_PATH), name);
 
@@ -3486,8 +3476,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
 	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n",
-					  GetPluginName<char>(),
-					  GetPluginName<char>(true));
+					  GetPluginName<char>(cur_plugin),
+					  GetPluginName<char>(cur_plugin, true));
 	os.close();
 
 
@@ -3738,7 +3728,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 {
 	CFileDialog dlg(FALSE);
 
-	const auto& pluginName = GetPluginName<wchar_t>();
+	const auto& pluginName = GetPluginName<wchar_t>(GetCurrentPlugin());
 	const auto& name = fmt::format(L"{:s}_channel_list.xml", pluginName);
 
 	auto& newList = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), pluginName);
@@ -4005,7 +3995,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 
 		const auto& dump = m_stream_infos.serialize();
 		// write document
-		const auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), GetPluginName<wchar_t>());
+		const auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), GetPluginName<wchar_t>(GetCurrentPlugin()));
 		const auto& path = playlistPath + _T("stream_info.bin");
 		std::ofstream os(path, std::istream::binary);
 		os.write(dump.data(), dump.size());
@@ -4695,7 +4685,7 @@ bool CIPTVChannelEditorDlg::HasEPG2()
 
 std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const
 {
-	return fmt::format(LR"({:s}\{:s})", REG_SETTINGS, GetPluginName<wchar_t>());
+	return fmt::format(LR"({:s}\{:s})", REG_SETTINGS, GetPluginName<wchar_t>(GetCurrentPlugin()));
 }
 
 void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, LPCSTR szValue)

@@ -10,6 +10,18 @@
 #include "map_serializer.h"
 #include "json.hpp"
 
+typedef enum
+{
+	enAntifriz = 0,
+	enEdem,
+	enFox,
+	enGlanz,
+	enOneUsd,
+	enSharaclub,
+	enSharavoz,
+	enItv,
+} SupportedPlugins;
+
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
 {
@@ -210,8 +222,7 @@ private:
 
 	void SwitchPlugin();
 
-	template<typename T>
-	std::basic_string<T> GetPluginName(bool bCamel = false) const;
+	const SupportedPlugins GetCurrentPlugin() const { return (SupportedPlugins)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()); }
 
 	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
@@ -237,6 +248,23 @@ private:
 	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
 
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
+
+	template<typename T>
+	std::basic_string<T> GetPluginName(const SupportedPlugins plugin_type, bool bCamel = false) const
+	{
+		for (const auto& item : all_plugins)
+		{
+			if (item.type != plugin_type) continue;
+
+			std::basic_string<T> plugin_name(item.int_name.begin(), item.int_name.end());
+			if (bCamel)
+				plugin_name[0] = std::toupper(plugin_name[0]);
+
+			return plugin_name;
+		}
+
+		return std::basic_string<T>();
+	}
 
 protected:
 	CFont m_largeFont;
@@ -413,22 +441,3 @@ private:
 	// map epg to channel id
 	std::map<std::wstring, nlohmann::json> m_epgMap;
 };
-
-template<typename T>
-std::basic_string<T>
-CIPTVChannelEditorDlg::GetPluginName(bool bCamel /*= false*/) const
-{
-	const auto plugin_type = (SupportedPlugins)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
-	for (const auto& item : all_plugins)
-	{
-		if (item.type != plugin_type) continue;
-
-		std::basic_string<T> plugin_name(item.int_name.begin(), item.int_name.end());
-		if (bCamel)
-			plugin_name[0] = std::toupper(plugin_name[0]);
-
-		return plugin_name;
-	}
-
-	return std::basic_string<T>();
-}
