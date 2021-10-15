@@ -98,6 +98,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	FillLangMap();
 	int nLangCurrent = GetProfileInt(REG_SETTINGS, REG_LANGUAGE, 1033);
 
+	AfxSetResourceHandle(AfxGetInstanceHandle());
 	if (auto pair = m_LangMap.find(nLangCurrent); pair != m_LangMap.cend())
 	{
 		if (nLangCurrent != 1033)
