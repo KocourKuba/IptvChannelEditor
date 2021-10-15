@@ -111,7 +111,7 @@ std::map<UINT, UINT> tooltips_info =
 	{ IDC_CHECK_ADULT, IDS_STRING_CHECK_ADULT },
 	{ IDC_BUTTON_CACHE_ICON, IDS_STRING_BUTTON_CACHE_ICON },
 	{ IDC_BUTTON_SAVE, IDS_STRING_BUTTON_SAVE },
-	{ IDC_BUTTON_PACK, IDS_STRING_BUTTON_PACK },
+	{ IDC_SPLIT_BUTTON_PACK, IDS_STRING_BUTTON_PACK },
 	{ IDC_BUTTON_SETTINGS, IDS_STRING_BUTTON_SETTINGS },
 	{ IDC_BUTTON_UPDATE_ICON, IDS_STRING_BUTTON_UPDATE_ICON },
 	{ IDC_BUTTON_CHOOSE_PLAYLIST, IDS_STRING_BUTTON_CHOOSE_PLAYLIST },
@@ -164,7 +164,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOMIZE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomize)
 	ON_BN_CLICKED(IDC_BUTTON_CHECK_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickCheckArchive)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CIPTVChannelEditorDlg::OnSave)
-	ON_BN_CLICKED(IDC_BUTTON_PACK, &CIPTVChannelEditorDlg::OnBnClickedButtonPack)
+	ON_BN_CLICKED(IDC_SPLIT_BUTTON_PACK, &CIPTVChannelEditorDlg::OnBnClickedButtonPack)
 	ON_BN_CLICKED(IDC_BUTTON_STOP, &CIPTVChannelEditorDlg::OnBnClickedButtonStop)
 	ON_BN_CLICKED(IDC_BUTTON_SETTINGS, &CIPTVChannelEditorDlg::OnBnClickedButtonSettings)
 	ON_BN_CLICKED(IDC_BUTTON_CACHE_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon)
@@ -240,6 +240,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_SYNC_TREE_ITEM, &CIPTVChannelEditorDlg::OnUpdateSyncTreeItem)
 	ON_COMMAND(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnAddToFavorite)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnUpdateAddToFavorite)
+	ON_COMMAND(ID_MAKE_ALL, &CIPTVChannelEditorDlg::OnMakeAll)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_MESSAGE(WM_UPDATE_PROGRESS, &CIPTVChannelEditorDlg::OnUpdateProgress)
@@ -331,6 +332,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RADIO_EPG1, m_wndEpg1);
 	DDX_Control(pDX, IDC_RADIO_EPG2, m_wndEpg2);
 	DDX_Control(pDX, IDC_BUTTON_UPDATE_CHANGED, m_wndUpdateChanged);
+	DDX_Control(pDX, IDC_SPLIT_BUTTON_PACK, m_wndPack);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -447,6 +449,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndEpgID2.EnableWindow(FALSE);
 	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
+	m_wndPack.SetDropDownMenu(IDR_MENU_SPLIT, 0);
 
 	SwitchPlugin();
 
@@ -3409,21 +3412,15 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	UpdateData(FALSE);
 }
 
-void CIPTVChannelEditorDlg::OnBnClickedButtonAbout()
-{
-	CAboutDlg dlg;
-	dlg.DoModal();
-}
-
-void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
+bool CIPTVChannelEditorDlg::PackPlugin(const SupportedPlugins plugin_type, bool showMessage /*= true*/)
 {
 	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
-		return;
+		return false;
 
-	const auto cur_plugin = GetCurrentPlugin();
-	const auto& name = GetPluginName<wchar_t>(cur_plugin);
-
-	const auto& packFolder = fmt::format(GetAbsPath(utils::PACK_PATH), name);
+	const auto& name = GetPluginName<wchar_t>(plugin_type);
+	auto& temp_pack_path = std::filesystem::temp_directory_path();
+	temp_pack_path += utils::PACK_PATH;
+	const auto& packFolder = fmt::format(temp_pack_path.c_str(), name);
 
 	std::error_code err;
 	// remove previous packed folder if exist
@@ -3465,7 +3462,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name)), to_remove.end());
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"logo_{:s}.png", name)), to_remove.end());
 
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)"})
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
 	{
 		if (std::find(to_remove.begin(), to_remove.end(), dir_entry.path().filename().wstring()) != to_remove.end())
 			std::filesystem::remove(dir_entry, err);
@@ -3476,32 +3473,68 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
 	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n",
-					  GetPluginName<char>(cur_plugin),
-					  GetPluginName<char>(cur_plugin, true));
+					  GetPluginName<char>(plugin_type),
+					  GetPluginName<char>(plugin_type, true));
 	os.close();
-
 
 	// pack folder
 	SevenZipWrapper archiver(GetAbsPath(utils::PACK_DLL));
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
 	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
 	if (!res)
-		return;
+	{
+		AfxMessageBox(_T("Some file missing!!!"), MB_OK | MB_ICONSTOP);
+		return false;
+	}
 
-	const auto& pluginName = fmt::format(utils::DUNE_PLUGIN_NAME, name);
+	auto& target = fmt::format(GetAbsPath(L""), name);
+	target += utils::DUNE_PLUGIN_NAME;
+	const auto& pluginName = fmt::format(target, name);
 
 	res = archiver.CreateArchive(pluginName);
-	if (res)
-	{
-		AfxMessageBox(IDS_STRING_INFO_CREATE_SUCCESS, MB_OK);
-	}
-	else
-	{
-		std::filesystem::remove(pluginName, err);
-	}
-
 	// remove temporary folder
 	std::filesystem::remove_all(packFolder, err);
+	if (!res && showMessage)
+	{
+		std::filesystem::remove(pluginName, err);
+		AfxMessageBox(IDS_STRING_ERR_FAILED_PACK, MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
+	if (showMessage)
+		AfxMessageBox(IDS_STRING_INFO_CREATE_SUCCESS, MB_OK);
+
+	return true;
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonAbout()
+{
+	CAboutDlg dlg;
+	dlg.DoModal();
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
+{
+	PackPlugin(GetCurrentPlugin());
+}
+
+void CIPTVChannelEditorDlg::OnMakeAll()
+{
+	CWaitCursor cur;
+	bool success = true;
+	for (const auto& item : all_plugins)
+	{
+		if (!PackPlugin(item.type, false))
+		{
+			success = false;
+			CString str;
+			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name);
+			AfxMessageBox(str, MB_OK);
+		}
+	}
+
+	if (success)
+		AfxMessageBox(IDS_STRING_INFO_CREATE_ALL_SUCCESS, MB_OK);
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonStop()

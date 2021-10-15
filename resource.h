@@ -13,6 +13,7 @@
 #define IDD_DIALOG_NEW_CHANNEL          108
 #define IDD_DIALOG_SETTINGS             109
 #define IDD_EDEMCHANNELEDITOR_DIALOG    110
+#define IDR_MENU_SPLIT                  111
 #define IDR_ACCELERATOR_TABLE           112
 #define IDR_MENU_CHANNEL                113
 #define IDR_MENU_PLAYLIST               114
@@ -84,8 +85,11 @@
 #define IDS_STRING_BUTTON_STOP          198
 #define IDS_STRING_BUTTON_UPDATE_CHANGED 199
 #define IDS_STRING_BUTTON_CHECK_ARCHIVE 200
-#define IDS_STRING118                   201
 #define IDS_STRING_WARN_DELETE_ITEMS    201
+#define IDS_STRING_ERR_FAILED_PACK      202
+#define IDS_STRIN_ERR_FAILED_PACK_PLUGIN 203
+#define IDS_STRING_ERR_FAILED_PACK_PLUGIN 203
+#define IDS_STRING_INFO_CREATE_ALL_SUCCESS 204
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
@@ -93,7 +97,6 @@
 #define IDC_BUTTON_IMPORT               1010
 #define IDC_BUTTON_ADD_NEW_CHANNELS_LIST 1011
 #define IDC_BUTTON_CHOOSE_PLAYLIST      1012
-#define IDC_BUTTON_PACK                 1013
 #define IDC_BUTTON_PL_FILTER            1014
 #define IDC_BUTTON_PL_SEARCH_NEXT       1015
 #define IDC_BUTTON_SAVE                 1017
@@ -185,6 +188,7 @@
 #define IDC_EDIT_STREAM_THREADS         1106
 #define IDC_SPIN_STREAM_THREADS         1107
 #define IDC_COMBO_LANG                  1108
+#define IDC_SPLIT_BUTTON_PACK           1109
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -207,14 +211,15 @@
 #define ID_SORT_CATEGORY                32797
 #define ID_ADD_TO_FAVORITE              32798
 #define ID_CLEAR_STREAM_INFO            32799
+#define ID_MAKE_ALL                     32800
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        201
-#define _APS_NEXT_COMMAND_VALUE         32800
-#define _APS_NEXT_CONTROL_VALUE         1109
+#define _APS_NEXT_RESOURCE_VALUE        202
+#define _APS_NEXT_COMMAND_VALUE         32801
+#define _APS_NEXT_CONTROL_VALUE         1111
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif
 #endif

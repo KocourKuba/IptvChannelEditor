@@ -136,7 +136,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_EPG1_ID,171,123,50,12,ES_AUTOHSCROLL | ES_NUMBER
     EDITTEXT        IDC_EDIT_EPG2_ID,247,123,50,12,ES_AUTOHSCROLL | ES_NUMBER
     PUSHBUTTON      "View EPG",IDC_BUTTON_TEST_EPG,315,122,48,14
-    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",WS_VSCROLL | WS_TABSTOP | 0x844,171,139,191,80,WS_EX_STATICEDGE
+    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL | WS_TABSTOP,171,139,191,80,WS_EX_STATICEDGE
     GROUPBOX        "Stream Info",IDC_STATIC,165,230,203,46
     EDITTEXT        IDC_EDIT_INFO_VIDEO,171,241,192,12,ES_AUTOHSCROLL | ES_READONLY
     EDITTEXT        IDC_EDIT_INFO_AUDIO,171,258,192,12,ES_AUTOHSCROLL | ES_READONLY
@@ -164,7 +164,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_ICON_SOURCE,93,357,66,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Save Channels",IDC_BUTTON_SAVE,165,323,65,19
     PUSHBUTTON      "Stop",IDC_BUTTON_STOP,235,323,65,19
-    PUSHBUTTON      "Make plugin",IDC_BUTTON_PACK,304,323,65,19
+    CONTROL         "Make plugin",IDC_SPLIT_BUTTON_PACK,"Button",BS_SPLITBUTTON | WS_TABSTOP,304,323,65,19
     LTEXT           "Progress info",IDC_STATIC_PROGRESS_INFO,165,346,189,8,NOT WS_VISIBLE
     CONTROL         "",IDC_PROGRESS_LOAD,"msctls_progress32",PBS_SMOOTH | NOT WS_VISIBLE | WS_BORDER,165,358,203,12
     CONTROL         "name",IDC_STATIC_PL_ICON_NAME,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,374,312,154,8
@@ -483,7 +483,6 @@ BEGIN
     50, 100, 0, 0,
     50, 100, 0, 0,
     50, 100, 0, 0,
-    50, 100, 0, 0,
     50, 100, 50, 0,
     50, 100, 0, 0,
     100, 100, 0, 0,
@@ -491,6 +490,7 @@ BEGIN
     50, 100, 50, 0,
     50, 100, 0, 0,
     50, 100, 50, 0,
+    50, 100, 0, 0,
     50, 100, 0, 0,
     50, 100, 0, 0,
     50, 100, 0, 0,
@@ -718,6 +718,14 @@ BEGIN
     END
 END
 
+IDR_MENU_SPLIT MENU
+BEGIN
+    POPUP "SplitButton"
+    BEGIN
+        MENUITEM "Make All",                    ID_MAKE_ALL
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -822,6 +830,9 @@ BEGIN
     IDS_STRING_BUTTON_UPDATE_CHANGED "Update channels changed in the playlist"
     IDS_STRING_BUTTON_CHECK_ARCHIVE "Try to play the archive channel"
     IDS_STRING_WARN_DELETE_ITEMS "Delete selected items. Are your sure?"
+    IDS_STRING_ERR_FAILED_PACK "Failed to pack plugin"
+    IDS_STRING_ERR_FAILED_PACK_PLUGIN "Failed to pack plugin %s"
+    IDS_STRING_INFO_CREATE_ALL_SUCCESS "All plugins created succesefully"
 END
 
 #endif    // English (United States) resources

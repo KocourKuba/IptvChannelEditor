@@ -350,11 +350,11 @@
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
-          <trans-unit id="Dialogs.110.1013.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1013.Text">
+          <trans-unit id="Dialogs.110.1109.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1109.Text">
             <source>Make plugin</source>
             <target state="final">Создать плагин</target>
             <context-group>
-              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1013.Text</context>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.110.1109.Text</context>
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
@@ -515,6 +515,16 @@
         </group>
       </group>
       <group id="Menus" datatype="winres">
+        <group id="111" datatype="winres">
+          <trans-unit id="Menus.111.POPUP_SplitButton.32800.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.111.POPUP.32800.Text">
+            <source>Make All</source>
+            <target state="final">Создать все</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.111.POPUP.32800.Text</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
         <group id="113" datatype="winres">
           <trans-unit id="Menus.113.POPUP_ChannelMenu.32786.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32786.Text">
             <source>Play</source>
@@ -604,11 +614,11 @@
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
-          <trans-unit id="Menus.113.POPUP_ChannelMenu.32800.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32800.Text">
+          <trans-unit id="Menus.113.POPUP_ChannelMenu.32799.Text" resname="Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32799.Text">
             <source>Clear Stream Info</source>
             <target state="final">Удалить информацию о потоке</target>
             <context-group>
-              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32800.Text</context>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Menus.113.POPUP.32799.Text</context>
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
@@ -1146,6 +1156,30 @@ EPG №:		%s
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_ERR_FAILED_PACK" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_ERR_FAILED_PACK">
+            <source>Failed to pack plugin</source>
+            <target state="final">Ошибка создания плагина</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_ERR_FAILED_PACK</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_ERR_FAILED_PACK_PLUGIN" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_ERR_FAILED_PACK_PLUGIN">
+            <source>Failed to pack plugin %s</source>
+            <target state="final">Ошибка создания плагина %s</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_ERR_FAILED_PACK_PLUGIN</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_INFO_CREATE_ALL_SUCCESS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_INFO_CREATE_ALL_SUCCESS">
+            <source>All plugins created succesefully</source>
+            <target state="final">Все плагины успешно созданы</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_INFO_CREATE_ALL_SUCCESS</context>
+            </context-group>
+            <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
           <trans-unit id="Strings.13.IDS_STRING_WARN_DELETE_ITEMS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_WARN_DELETE_ITEMS">
             <source>Delete selected items. Are your sure?</source>
             <target state="final">Удалить выделенные элементы. Вы уверены?</target>
@@ -1239,11 +1273,11 @@ EPG №:		%s
       <group id="Versions" datatype="winres">
         <group id="1" datatype="winres">
           <trans-unit id="Versions.1.ProductVersion" resname="Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion">
-            <source>2.2.441</source>
+            <source>2.2.449</source>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion</context>
             </context-group>
-            <sl:rowstatus>rsInUse</sl:rowstatus>
+            <sl:rowstatus>rsChanged</sl:rowstatus>
           </trans-unit>
         </group>
       </group>

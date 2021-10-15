@@ -159,6 +159,7 @@ protected:
 	afx_msg void OnCopyTo(UINT id);
 	afx_msg void OnMoveTo(UINT id);
 	afx_msg void OnAddTo(UINT id);
+	afx_msg void OnMakeAll();
 
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -221,6 +222,7 @@ private:
 	void SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight);
 
 	void SwitchPlugin();
+	bool PackPlugin(const SupportedPlugins plugin_type, bool showMessage = true);
 
 	const SupportedPlugins GetCurrentPlugin() const { return (SupportedPlugins)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()); }
 
@@ -279,6 +281,7 @@ protected:
 	CComboBox m_wndIconSource;
 	CComboBox m_wndStreamType;
 	CRichEditCtrl m_wndEpg;
+	CSplitButton m_wndPack;
 
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
