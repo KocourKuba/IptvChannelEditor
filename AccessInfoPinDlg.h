@@ -11,11 +11,11 @@ public:
 
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG_ACCESS_INFO_PIN};
+	enum { IDD = IDD_DIALOG_ACCESS_INFO_PIN };
 #endif
 
 protected:
-	void DoDataExchange(CDataExchange * pDX) override;    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
 	void OnOK() override;
 

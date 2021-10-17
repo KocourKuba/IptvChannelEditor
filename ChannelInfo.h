@@ -51,7 +51,7 @@ public:
 
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& doc) const;
 
-// Getters/Setters
+	// Getters/Setters
 
 	bool is_icon_local() const;
 

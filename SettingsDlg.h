@@ -11,7 +11,7 @@ public:
 	CSettingsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CSettingsDlg() = default;
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_SETTINGS };
 #endif

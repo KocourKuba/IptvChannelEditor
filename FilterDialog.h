@@ -11,7 +11,7 @@ public:
 	CFilterDialog(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CFilterDialog() = default;
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_FILTER };
 #endif

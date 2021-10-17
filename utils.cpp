@@ -409,7 +409,7 @@ bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image)
 		bResults = WinHttpReceiveResponse(hRequest, nullptr);
 
 	DWORD dwSize = 0;
-	for(;;)
+	for (;;)
 	{
 		if (!bResults)
 		{
@@ -535,7 +535,7 @@ std::string entityDecrypt(const std::string& text)
 		{
 			const auto& key = it.first;
 			const auto& value = it.second;
-			if (   i + key.size() - 1 < text.size()
+			if (i + key.size() - 1 < text.size()
 				&& text.substr(i, key.size()) == key)
 			{
 				res += value;

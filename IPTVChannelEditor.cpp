@@ -54,9 +54,9 @@ CIPTVChannelEditorApp theApp;
 
 BOOL CIPTVChannelEditorApp::InitInstance()
 {
-// TODO: call AfxInitRichEdit2() to initialize richedit2 library.\n"	// InitCommonControlsEx() is required on Windows XP if an application
-	// manifest specifies use of ComCtl32.dll version 6 or later to enable
-	// visual styles.  Otherwise, any window creation will fail.
+	// TODO: call AfxInitRichEdit2() to initialize richedit2 library.\n"	// InitCommonControlsEx() is required on Windows XP if an application
+		// manifest specifies use of ComCtl32.dll version 6 or later to enable
+		// visual styles.  Otherwise, any window creation will fail.
 	INITCOMMONCONTROLSEX InitCtrls;
 	InitCtrls.dwSize = sizeof(InitCtrls);
 	// Set this to include all the common control classes you want to use
@@ -138,7 +138,7 @@ std::wstring CIPTVChannelEditorApp::GetAppPath(LPCWSTR szSubFolder /*= nullptr*/
 	{
 		fileName.ReleaseBuffer();
 		int pos = fileName.ReverseFind('\\');
-		if(pos != -1)
+		if (pos != -1)
 			fileName.Truncate(pos + 1);
 	}
 

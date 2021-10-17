@@ -20,7 +20,7 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void OnOK() override;
 
-// Implementation
+	// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 

@@ -21,7 +21,7 @@ public:
 	};
 
 protected:
-	CGetStreamInfoThread() { m_bAutoDelete = TRUE;  }
+	CGetStreamInfoThread() { m_bAutoDelete = TRUE; }
 
 public:
 	virtual ~CGetStreamInfoThread() { delete m_config.m_container; }

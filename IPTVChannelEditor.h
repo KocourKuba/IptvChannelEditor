@@ -5,7 +5,7 @@
 #pragma once
 
 #ifndef __AFXWIN_H__
-	#error "include 'StdAfx.h' before including this file for PCH"
+#error "include 'StdAfx.h' before including this file for PCH"
 #endif
 
 #include "resource.h"		// main symbols
@@ -28,7 +28,7 @@ class CIPTVChannelEditorApp : public CWinAppEx
 public:
 	CIPTVChannelEditorApp();
 
-// Overrides
+	// Overrides
 public:
 	BOOL InitInstance() override;
 

@@ -15,7 +15,7 @@ public:
 #endif
 
 protected:
-	void DoDataExchange(CDataExchange * pDX) override;    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
 	void OnOK() override;
 

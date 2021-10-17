@@ -19,7 +19,7 @@ public:
 	};
 
 protected:
-	CPlaylistParseThread() { m_bAutoDelete = TRUE;  }
+	CPlaylistParseThread() { m_bAutoDelete = TRUE; }
 
 public:
 	virtual ~CPlaylistParseThread() { delete m_config.m_data; }

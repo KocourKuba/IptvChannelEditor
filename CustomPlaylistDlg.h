@@ -10,7 +10,7 @@ public:
 	CCustomPlaylistDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CCustomPlaylistDlg() = default;
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_CUSTOM_PLAYLIST };
 #endif

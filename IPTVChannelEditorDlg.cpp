@@ -682,10 +682,10 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 				case 1: // Custom file
 					url = ReadRegStringPluginT(REG_CUSTOM_FILE);
 					break;
-//				case 2: // Mediateka
-//					url = fmt::format(account_template, m_login.c_str(), m_password);
-//					m_plFileName = _T("SharaClub_Movie.m3u8");
-//					break;
+					// case 2: // Mediateka
+					// 	url = fmt::format(account_template, m_login.c_str(), m_password);
+					// 	m_plFileName = _T("SharaClub_Movie.m3u8");
+					// 	break;
 				default:
 					break;
 			}
@@ -737,20 +737,18 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 	else if (utils::CrackUrl(url))
 	{
-		if (utils::DownloadFile(url, *data))
-		{
-			if(saveToFile)
-			{
-				std::ofstream os(m_plFileName);
-				os.write((char*)data->data(), data->size());
-				os.close();
-				return;
-			}
-		}
-		else
+		if (!utils::DownloadFile(url, *data))
 		{
 			AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);
+			return;
+		}
+
+		if (saveToFile)
+		{
+			std::ofstream os(m_plFileName);
+			os.write((char*)data->data(), data->size());
+			os.close();
 			return;
 		}
 	}
@@ -1183,7 +1181,7 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 						|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
 						|| !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id()
 						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
-					 )
+						)
 					{
 						color = m_brown;
 						m_changedChannels.emplace_back(hItem);
@@ -1473,7 +1471,7 @@ int CIPTVChannelEditorDlg::GetNewCategoryID() const
 	int id = 0;
 	if (!m_categoriesMap.empty())
 	{
-		for(auto pair = m_categoriesMap.crbegin(); pair != m_categoriesMap.crend(); ++pair)
+		for (auto pair = m_categoriesMap.crbegin(); pair != m_categoriesMap.crend(); ++pair)
 		{
 			if (pair->first != ID_ADD_TO_FAVORITE)
 			{
@@ -1582,7 +1580,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 	while (cat_node)
 	{
 		auto category = std::make_shared<ChannelCategory>(cat_node, StreamType::enBase, root_path);
-		CategoryInfo info = { nullptr, category};
+		CategoryInfo info = { nullptr, category };
 		m_categoriesMap.emplace(category->get_key(), info);
 		cat_node = cat_node->next_sibling();
 	}
@@ -1849,7 +1847,6 @@ void CIPTVChannelEditorDlg::OnUpdateChannelUp(CCmdUI* pCmdUI)
 	if (IsChannel(hCur))
 	{
 		enable = IsChannelSelectionConsistent() && IsSelectedInTheSameCategory() && hPrev != nullptr;
-;
 	}
 	else if (IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
@@ -1866,7 +1863,7 @@ void CIPTVChannelEditorDlg::OnChannelDown()
 	HTREEITEM hTop = m_wndChannelsTree.GetFirstSelectedItem();
 	HTREEITEM hBottom = m_wndChannelsTree.GetLastSelectedItem();
 
-	if(IsChannel(m_wndChannelsTree.GetNextSiblingItem(hBottom)))
+	if (IsChannel(m_wndChannelsTree.GetNextSiblingItem(hBottom)))
 	{
 		MoveChannels(hTop, hBottom, true);
 	}
@@ -2209,7 +2206,7 @@ void CIPTVChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResul
 	UINT uFlags;
 	HTREEITEM hItem = m_wndChannelsTree.HitTest(ptClient, &uFlags);
 
-	if(!hItem || !(TVHT_ONITEM & uFlags))
+	if (!hItem || !(TVHT_ONITEM & uFlags))
 		return;
 
 	// The user hasn't clicked on any item.
@@ -2574,7 +2571,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 
 			if (m_channelsMap.find(newChannel->stream_uri->get_id()) != m_channelsMap.end())
 			{
-				AfxMessageBox(IDS_STRING_WRN_CHANNEL_EXIST, MB_OK|MB_ICONWARNING);
+				AfxMessageBox(IDS_STRING_WRN_CHANNEL_EXIST, MB_OK | MB_ICONWARNING);
 				return;
 			}
 
@@ -3275,7 +3272,7 @@ void CIPTVChannelEditorDlg::OnNewCategory()
 	tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
 	auto hNewItem = m_wndChannelsTree.InsertItem(&tvInsert);
 
-	CategoryInfo info = { hNewItem, newCategory};
+	CategoryInfo info = { hNewItem, newCategory };
 	m_categoriesMap.emplace(categoryId, info);
 	m_categoriesTreeMap.emplace(hNewItem, categoryId);
 
@@ -4598,7 +4595,7 @@ bool CIPTVChannelEditorDlg::IsChannelSelectionConsistent() const
 	bool continues = false;
 	auto hItem = m_wndChannelsTree.GetFirstSelectedItem();
 	auto hNext = hItem;
-	for (;hItem != nullptr; hItem = m_wndChannelsTree.GetNextSelectedItem(hItem))
+	for (; hItem != nullptr; hItem = m_wndChannelsTree.GetNextSelectedItem(hItem))
 	{
 		if (hItem != hNext)
 		{

@@ -25,7 +25,7 @@ typedef enum
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
 {
-// Construction
+	// Construction
 public:
 	CIPTVChannelEditorDlg(CWnd* pParent = nullptr);	// standard constructor
 

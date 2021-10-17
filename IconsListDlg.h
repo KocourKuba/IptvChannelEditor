@@ -12,7 +12,7 @@ public:
 				  CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CIconsListDlg();
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_ICONS_LIST };
 #endif

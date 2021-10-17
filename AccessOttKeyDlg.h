@@ -12,7 +12,7 @@ public:
 	CAccessOttKeyDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CAccessOttKeyDlg() = default;
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_ACCESS_INFO };
 #endif
