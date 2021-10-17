@@ -1180,6 +1180,30 @@ EPG №:		%s
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_LOAD_CHANNELS_MASK" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_LOAD_CHANNELS_MASK">
+            <source>Channels xml(*.xml)|*.xml||</source>
+            <target state="final">Список каналов xml(*.xml)|*.xml||</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_LOAD_CHANNELS_MASK</context>
+            </context-group>
+            <sl:rowstatus>rsNew</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_LOAD_ICON" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_LOAD_ICON">
+            <source>PNG file(*.png)|*.png|All Files (*.*)|*.*||</source>
+            <target state="final">Файл PNG(*.png)|*.png|All Files (*.*)|*.*||</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_LOAD_ICON</context>
+            </context-group>
+            <sl:rowstatus>rsNew</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Strings.13.IDS_STRING_LOAD_PLAYLIST" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_LOAD_PLAYLIST">
+            <source>Playlist m3u(*.m3u8, *.m3u)|*.m3u8;*.m3u|All Files (*.*)|*.*||</source>
+            <target state="final">Плейлист m3u(*.m3u8, *.m3u)|*.m3u8;*.m3u|All Files (*.*)|*.*||</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_LOAD_PLAYLIST</context>
+            </context-group>
+            <sl:rowstatus>rsNew</sl:rowstatus>
+          </trans-unit>
           <trans-unit id="Strings.13.IDS_STRING_WARN_DELETE_ITEMS" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_WARN_DELETE_ITEMS">
             <source>Delete selected items. Are your sure?</source>
             <target state="final">Удалить выделенные элементы. Вы уверены?</target>
@@ -1187,6 +1211,16 @@ EPG №:		%s
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_WARN_DELETE_ITEMS</context>
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
+          </trans-unit>
+        </group>
+        <group id="14" datatype="winres">
+          <trans-unit id="Strings.14.IDS_STRING_LOAD_ICONS_TITLE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.14.IDS_STRING_LOAD_ICONS_TITLE">
+            <source>Load logotype image</source>
+            <target state="final">Загрузить иконку</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.14.IDS_STRING_LOAD_ICONS_TITLE</context>
+            </context-group>
+            <sl:rowstatus>rsNew</sl:rowstatus>
           </trans-unit>
         </group>
         <group id="3633" datatype="winres">
@@ -1273,7 +1307,7 @@ EPG №:		%s
       <group id="Versions" datatype="winres">
         <group id="1" datatype="winres">
           <trans-unit id="Versions.1.ProductVersion" resname="Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion">
-            <source>2.2.449</source>
+            <source>2.2.451</source>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion</context>
             </context-group>

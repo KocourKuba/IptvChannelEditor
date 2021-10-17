@@ -3330,15 +3330,19 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 		CString file(path);
 		file.Replace('/', '\\');
 
-		CString filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
+		CString filter;
+		filter.LoadString(IDS_STRING_LOAD_ICON);
 		filter.Replace('|', '\0');
+
+		CString title;
+		title.LoadString(IDS_STRING_LOAD_ICONS_TITLE);
 
 		OPENFILENAME& oFN = dlg.GetOFN();
 		oFN.lpstrFilter = filter.GetString();
 		oFN.nMaxFile = MAX_PATH;
 		oFN.nFilterIndex = 0;
 		oFN.lpstrFile = file.GetBuffer(MAX_PATH);
-		oFN.lpstrTitle = _T("Load logotype image");
+		oFN.lpstrTitle = title.GetString();
 		oFN.lpstrInitialDir = path.GetString();
 		oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
 		oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
@@ -3769,15 +3773,19 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 
 	newList += name;
 
-	CString filter(_T("Channels xml(*.xml)|*.xml||"));
+	CString filter;
+	filter.LoadString(IDS_STRING_LOAD_CHANNELS_MASK);
 	filter.Replace('|', '\0');
+
+	CString title;
+	title.LoadString(IDS_STRING_ADD_NEW_CHANNELS);
 
 	CString buffer(newList.c_str());
 	OPENFILENAME& oFN = dlg.GetOFN();
 	oFN.lpstrFilter = filter.GetString();
 	oFN.nMaxFile = MAX_PATH;
 	oFN.nFilterIndex = 0;
-	oFN.lpstrTitle = _T("Add new channels list");
+	oFN.lpstrTitle = title.GetString();
 	oFN.Flags |= OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_NONETWORKBUTTON;
 	oFN.lpstrFile = buffer.GetBuffer(MAX_PATH);
 

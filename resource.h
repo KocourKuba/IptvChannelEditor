@@ -20,6 +20,7 @@
 #define IDS_ABOUTBOX                    115
 #define IDS_LANGUAGE                    116
 #define IDS_STRING_FILE                 117
+#define IDS_STRING119                   119
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_ICONS_LIST           129
 #define IDD_DIALOG_ACCESS_INFO_PASS     130
@@ -90,6 +91,11 @@
 #define IDS_STRIN_ERR_FAILED_PACK_PLUGIN 203
 #define IDS_STRING_ERR_FAILED_PACK_PLUGIN 203
 #define IDS_STRING_INFO_CREATE_ALL_SUCCESS 204
+#define IDS_STRING_LOAD_CHANNELS_MASK   205
+#define IDS_STRING_LOAD_ICON            206
+#define IDS_STRING_LOAD_PLAYLIST        207
+#define IDS_STRING_LOAD_ICONS_TITLE     208
+#define IDS_STRING_ADD_NEW_CHANNELS     209
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
