@@ -4429,6 +4429,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 		info = { hParent, category };
 		m_categoriesMap.emplace(categoryId, info);
 		m_categoriesTreeMap.emplace(hParent, categoryId);
+		needCheckExisting = true;
 	}
 
 	auto& channel = pair->second;
@@ -4451,6 +4452,7 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	// Is title changed?
 	if (channel->get_title() != entry->get_title())
 	{
+		needCheckExisting = true;
 		channel->set_title(entry->get_title());
 		// Search and update tree items present in other leafs
 		for (const auto& pair : m_channelsTreeMap)
@@ -4464,12 +4466,6 @@ bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /
 	if (!entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id())
 	{
 		channel->set_epg1_id(entry->get_epg1_id());
-		needCheckExisting = true;
-	}
-
-	if (!entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
-	{
-		channel->set_epg2_id(entry->get_epg2_id());
 		needCheckExisting = true;
 	}
 
