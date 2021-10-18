@@ -11,10 +11,6 @@ class OneusdPluginConfig extends DefaultConfig
     public static $PLUGIN_VERSION = '1.0.0';
     public static $PLUGIN_DATE = '14.10.2021';
 
-    // supported features
-    public static $VOD_MOVIE_PAGE_SUPPORTED = false;
-    public static $VOD_FAVORITES_SUPPORTED = false;
-
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
     public static $ACCOUNT_TYPE = 'PIN';

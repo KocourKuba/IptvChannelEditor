@@ -1118,40 +1118,36 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 	while (root != nullptr && !m_playlistMap.empty())
 	{
 		// iterate subitems
-		HTREEITEM hItem = m_wndChannelsTree.GetChildItem(root);
-		while (hItem)
+		for (HTREEITEM hItem = m_wndChannelsTree.GetChildItem(root); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 		{
 			const auto& channel = FindChannel(hItem);
-			if (channel)
+			if (!channel) continue;
+
+			COLORREF color = m_normal;
+			const auto& id = channel->stream_uri->get_id();
+			if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
 			{
-				COLORREF color = m_normal;
-				const auto& id = channel->stream_uri->get_id();
-				if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
+				const auto& entry = found->second;
+				if (channel->get_title() != entry->get_title()
+					|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
+					|| !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id()
+					|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
+					)
 				{
-					const auto& entry = found->second;
-					if (channel->get_title() != entry->get_title()
-						|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
-						|| !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id()
-						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
-						)
-					{
-						color = m_brown;
-					}
-					else
-					{
-						color = m_green;
-					}
+					color = m_brown;
 				}
-
-				if (channel->is_disabled())
+				else
 				{
-					color = m_gray;
+					color = m_green;
 				}
-
-				m_wndChannelsTree.SetItemColor(hItem, color);
 			}
-			// get the next sibling item
-			hItem = m_wndChannelsTree.GetNextSiblingItem(hItem);
+
+			if (channel->is_disabled())
+			{
+				color = m_gray;
+			}
+
+			m_wndChannelsTree.SetItemColor(hItem, color);
 		}
 
 		root = m_wndChannelsTree.GetNextSiblingItem(root);
@@ -1166,33 +1162,28 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 	while (root != nullptr)
 	{
 		// iterate subitems
-		HTREEITEM hItem = m_wndPlaylistTree.GetChildItem(root);
-		while (hItem)
+		for (HTREEITEM hItem = m_wndPlaylistTree.GetChildItem(root); hItem != nullptr; hItem = m_wndPlaylistTree.GetNextSiblingItem(hItem))
 		{
 			const auto& entry = FindEntry(hItem);
-			if (entry)
-			{
-				COLORREF color = m_red;
-				if (const auto& pair = m_channelsMap.find(entry->stream_uri->get_id()); pair != m_channelsMap.end())
-				{
-					color = m_normal;
-					const auto& channel = pair->second;
-					if (channel->get_title() != entry->get_title()
-						|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
-						|| !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id()
-						|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
-						)
-					{
-						color = m_brown;
-						m_changedChannels.emplace_back(hItem);
-					}
-				}
+			if (!entry) continue;
 
-				m_wndPlaylistTree.SetItemColor(hItem, color);
+			COLORREF color = m_red;
+			if (const auto& pair = m_channelsMap.find(entry->stream_uri->get_id()); pair != m_channelsMap.end())
+			{
+				color = m_normal;
+				const auto& channel = pair->second;
+				if (channel->get_title() != entry->get_title()
+					|| entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
+					|| !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id()
+					|| !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false)
+					)
+				{
+					color = m_brown;
+					m_changedChannels.emplace_back(hItem);
+				}
 			}
 
-			// get the next sibling item
-			hItem = m_wndPlaylistTree.GetNextSiblingItem(hItem);
+			m_wndPlaylistTree.SetItemColor(hItem, color);
 		}
 
 		root = m_wndPlaylistTree.GetNextSiblingItem(root);
@@ -1425,6 +1416,7 @@ BaseInfo* CIPTVChannelEditorDlg::GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM 
 	{
 		if (IsChannel(hItem))
 			return dynamic_cast<BaseInfo*>(FindChannel(hItem).get());
+
 		if (IsCategory(hItem))
 			return dynamic_cast<BaseInfo*>(FindCategory(hItem).get());
 	}
@@ -2426,23 +2418,22 @@ void CIPTVChannelEditorDlg::OnMoveTo(UINT id)
 	{
 		const auto& category = GetItemCategory(hItem);
 		const auto& channel = FindChannel(hItem);
-		if (channel)
-		{
-			changed = true;
+		if (!channel || !category) continue;
 
-			pair->second.category->add_channel(channel);
+		changed = true;
 
-			category->remove_channel(channel->stream_uri->get_id());
-			m_wndChannelsTree.DeleteItem(hItem);
+		pair->second.category->add_channel(channel);
 
-			TVINSERTSTRUCTW tvInsert = { nullptr };
-			tvInsert.hParent = hTarget;
-			tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
-			tvInsert.item.lParam = (LPARAM)InfoType::enChannel;
-			tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
-			hNewItem = m_wndChannelsTree.InsertItem(&tvInsert);
-			m_channelsTreeMap.emplace(hNewItem, channel);
-		}
+		category->remove_channel(channel->stream_uri->get_id());
+		m_wndChannelsTree.DeleteItem(hItem);
+
+		TVINSERTSTRUCTW tvInsert = { nullptr };
+		tvInsert.hParent = hTarget;
+		tvInsert.item.pszText = (LPWSTR)channel->get_title().c_str();
+		tvInsert.item.lParam = (LPARAM)InfoType::enChannel;
+		tvInsert.item.mask = TVIF_TEXT | TVIF_PARAM;
+		hNewItem = m_wndChannelsTree.InsertItem(&tvInsert);
+		m_channelsTreeMap.emplace(hNewItem, channel);
 	}
 
 	if (changed)
@@ -2503,13 +2494,12 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckArchive()
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
 		const auto& channel = FindChannel(hItem);
-		if (channel)
-		{
-			m_archiveDays = m_isArchive ? (m_archiveDays != 0 ? m_archiveDays : 7) : 0;
-			channel->set_archive_days(m_archiveDays);
-			m_wndArchiveDays.EnableWindow(m_isArchive);
-			UpdateData(FALSE);
-		}
+		if (!channel) continue;
+
+		m_archiveDays = m_isArchive ? (m_archiveDays != 0 ? m_archiveDays : 7) : 0;
+		channel->set_archive_days(m_archiveDays);
+		m_wndArchiveDays.EnableWindow(m_isArchive);
+		UpdateData(FALSE);
 	}
 
 	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
@@ -2553,41 +2543,38 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 {
 	UpdateData(TRUE);
 
-	if (m_streamUrl.IsEmpty())
+	if (m_streamUrl.IsEmpty() || m_wndChannelsTree.GetSelectedCount() != 1 || !m_wndCustom.GetCheck())
 		return;
 
-	if (m_wndChannelsTree.GetSelectedCount() == 1)
+	auto hItem = m_wndChannelsTree.GetSelectedItem();
+	const auto& channel = FindChannel(hItem);
+	if (!channel)
+		return;
+
+	const auto& category = GetItemCategory(hItem);
+	const auto old_id = channel->stream_uri->get_id();
+
+	auto newChannel = std::make_shared<ChannelInfo>(*channel);
+	newChannel->stream_uri->set_uri(m_streamUrl.GetString());
+	newChannel->stream_uri->recalc_hash();
+
+	if (m_channelsMap.find(newChannel->stream_uri->get_id()) != m_channelsMap.end())
 	{
-		auto hItem = m_wndChannelsTree.GetSelectedItem();
-		const auto& channel = FindChannel(hItem);
-		if (channel && m_wndCustom.GetCheck())
-		{
-			const auto& category = GetItemCategory(hItem);
-			auto old_id = channel->stream_uri->get_id();
-
-			auto newChannel = std::make_shared<ChannelInfo>(*channel);
-			newChannel->stream_uri->set_uri(m_streamUrl.GetString());
-			newChannel->stream_uri->recalc_hash();
-
-			if (m_channelsMap.find(newChannel->stream_uri->get_id()) != m_channelsMap.end())
-			{
-				AfxMessageBox(IDS_STRING_WRN_CHANNEL_EXIST, MB_OK | MB_ICONWARNING);
-				return;
-			}
-
-			category->remove_channel(old_id);
-			m_channelsMap.erase(old_id);
-
-			category->add_channel(newChannel);
-			m_channelsMap.emplace(newChannel->stream_uri->get_id(), newChannel);
-			m_channelsTreeMap[hItem] = newChannel;
-
-			UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(hItem));
-			CheckForExistingPlaylist();
-
-			set_allow_save();
-		}
+		AfxMessageBox(IDS_STRING_WRN_CHANNEL_EXIST, MB_OK | MB_ICONWARNING);
+		return;
 	}
+
+	category->remove_channel(old_id);
+	m_channelsMap.erase(old_id);
+
+	category->add_channel(newChannel);
+	m_channelsMap.emplace(newChannel->stream_uri->get_id(), newChannel);
+	m_channelsTreeMap[hItem] = newChannel;
+
+	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(hItem));
+	CheckForExistingPlaylist();
+
+	set_allow_save();
 }
 
 void CIPTVChannelEditorDlg::OnEnChangeEditArchiveDays()
@@ -2611,43 +2598,40 @@ void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
 {
 	UpdateData(TRUE);
 
-	if (m_streamID.IsEmpty())
+	if (m_streamID.IsEmpty() || m_wndChannelsTree.GetSelectedCount() != 1)
 		return;
 
-	if (m_wndChannelsTree.GetSelectedCount() == 1)
+	auto hItem = m_wndChannelsTree.GetSelectedItem();
+	const auto& channel = FindChannel(hItem);
+	std::wstring new_id = m_streamID.GetString();
+	if (!channel || channel->stream_uri->get_id() == new_id)
+		return;
+
+	if (m_channelsMap.find(new_id) != m_channelsMap.end())
 	{
-		auto hItem = m_wndChannelsTree.GetSelectedItem();
-		const auto& channel = FindChannel(hItem);
-		std::wstring new_id = m_streamID.GetString();
-		if (channel && channel->stream_uri->get_id() != new_id)
-		{
-			if (m_channelsMap.find(new_id) != m_channelsMap.end())
-			{
-				INT_PTR res = AfxMessageBox(IDS_STRING_WRN_CHANNEL_ID_EXIST, MB_YESNO | MB_ICONWARNING);
-				if (res != IDYES)
-					return;
-			}
-
-			const auto& category = GetItemCategory(hItem);
-			auto old_id = channel->stream_uri->get_id();
-
-			channel->stream_uri->set_id(new_id);
-
-			// recalculate hash
-			channel->stream_uri->recalc_hash();
-
-
-			category->remove_channel(old_id);
-			m_channelsMap.erase(old_id);
-
-			m_channelsMap.emplace(channel->stream_uri->get_id(), channel);
-			category->add_channel(channel);
-
-			UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
-			CheckForExistingPlaylist();
-			set_allow_save();
-		}
+		INT_PTR res = AfxMessageBox(IDS_STRING_WRN_CHANNEL_ID_EXIST, MB_YESNO | MB_ICONWARNING);
+		if (res != IDYES)
+			return;
 	}
+
+	const auto& category = GetItemCategory(hItem);
+	const auto old_id = channel->stream_uri->get_id();
+
+	channel->stream_uri->set_id(new_id);
+
+	// recalculate hash
+	channel->stream_uri->recalc_hash();
+
+
+	category->remove_channel(old_id);
+	m_channelsMap.erase(old_id);
+
+	m_channelsMap.emplace(channel->stream_uri->get_id(), channel);
+	category->add_channel(channel);
+
+	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
+	CheckForExistingPlaylist();
+	set_allow_save();
 }
 
 void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours()
@@ -2680,8 +2664,8 @@ void CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckDays()
 	if (m_archiveCheckDays < 0)
 		m_archiveCheckDays = 0;
 
-	if (m_archiveCheckDays > 14) // really more than two weeks?
-		m_archiveCheckDays = 14;
+	if (m_archiveCheckDays > 31)
+		m_archiveCheckDays = 31;
 
 	UpdateData(FALSE);
 
@@ -2816,10 +2800,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			switch (m_wndPlaylist.GetCurSel())
 			{
 				case 0:
-				{
 					loaded = SetupPin(loaded);
 					break;
-				}
 				case 1:
 					loaded = SetupCustomPlaylist(loaded);
 					break;
@@ -2835,10 +2817,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 			switch (m_wndPlaylist.GetCurSel())
 			{
 				case 0:
-				{
 					loaded = SetupLogin(loaded);
 					break;
-				}
 				case 1:
 					loaded = SetupCustomPlaylist(loaded);
 					break;
@@ -3206,14 +3186,13 @@ void CIPTVChannelEditorDlg::OnSave()
 		// append <tv_channel> to <v_channels> node
 		for (const auto& pair : m_categoriesMap)
 		{
-			if (pair.first != ID_ADD_TO_FAVORITE)
+			if (pair.first == ID_ADD_TO_FAVORITE) continue;
+
+			for (auto& channel : pair.second.category->get_channels())
 			{
-				for (auto& channel : pair.second.category->get_channels())
-				{
-					channel->get_category_ids().clear();
-					channel->get_category_ids().emplace(pair.first);
-					ch_node->append_node(channel->GetNode(doc));
-				}
+				channel->get_category_ids().clear();
+				channel->get_category_ids().emplace(pair.first);
+				ch_node->append_node(channel->GetNode(doc));
 			}
 		}
 		// append <tv_channel> to <tv_info> node
@@ -3789,44 +3768,44 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 	dlg.ApplyOFNToShellDialog();
 
 	INT_PTR nResult = dlg.DoModal();
-	if (nResult == IDOK)
+	if (nResult != IDOK)
+		return;
+
+	size_t len = _tcslen(oFN.lpstrFileTitle);
+	for (size_t i = 0; i < len; i++)
 	{
-		size_t len = _tcslen(oFN.lpstrFileTitle);
-		for (size_t i = 0; i < len; i++)
+		if (oFN.lpstrFileTitle[i] > 127)
 		{
-			if (oFN.lpstrFileTitle[i] > 127)
-			{
-				AfxMessageBox(IDS_STRING_WRN_NON_ASCII_LIST, MB_ICONERROR | MB_OK);
-				return;
-			}
+			AfxMessageBox(IDS_STRING_WRN_NON_ASCII_LIST, MB_ICONERROR | MB_OK);
+			return;
 		}
+	}
 
-		CFile cFile;
-		CFileException ex;
-		if (cFile.Open(dlg.GetPathName(), CFile::modeWrite | CFile::modeCreate | CFile::typeBinary | CFile::shareDenyRead, &ex))
-		{
-			cFile.Close();
-			auto found = std::find_if(m_all_channels_lists.begin(), m_all_channels_lists.end(), [&dlg](const auto& item)
-									  {
-										  return dlg.GetFileName().CompareNoCase(item.first.c_str()) == 0;
-									  });
+	CFile cFile;
+	CFileException ex;
+	if (!cFile.Open(dlg.GetPathName(), CFile::modeWrite | CFile::modeCreate | CFile::typeBinary | CFile::shareDenyRead, &ex))
+		return;
 
-			if (found == m_all_channels_lists.end())
-			{
-				m_channelsMap.clear();
-				m_categoriesMap.clear();
-				const auto& pair = m_all_channels_lists.emplace_back(dlg.GetFileName(), dlg.GetPathName());
-				m_wndChannels.EnableWindow(TRUE);
-				int idx = m_wndChannels.AddString(pair.first.c_str());
-				m_wndChannels.SetItemData(idx, (DWORD_PTR)pair.second.c_str());
-				m_wndChannels.SetCurSel(idx);
-				set_allow_save();
-			}
-			else
-			{
-				m_wndChannels.SetCurSel(m_wndChannels.FindString(-1, dlg.GetFileName()));
-			}
-		}
+	cFile.Close();
+	auto found = std::find_if(m_all_channels_lists.begin(), m_all_channels_lists.end(), [&dlg](const auto& item)
+							  {
+								  return dlg.GetFileName().CompareNoCase(item.first.c_str()) == 0;
+							  });
+
+	if (found == m_all_channels_lists.end())
+	{
+		m_channelsMap.clear();
+		m_categoriesMap.clear();
+		const auto& pair = m_all_channels_lists.emplace_back(dlg.GetFileName(), dlg.GetPathName());
+		m_wndChannels.EnableWindow(TRUE);
+		int idx = m_wndChannels.AddString(pair.first.c_str());
+		m_wndChannels.SetItemData(idx, (DWORD_PTR)pair.second.c_str());
+		m_wndChannels.SetCurSel(idx);
+		set_allow_save();
+	}
+	else
+	{
+		m_wndChannels.SetCurSel(m_wndChannels.FindString(-1, dlg.GetFileName()));
 	}
 }
 
