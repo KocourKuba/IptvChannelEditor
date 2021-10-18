@@ -6,7 +6,7 @@ require_once 'lib/abstract_controls_screen.php';
 
 class StarnetSetupScreen extends AbstractControlsScreen
 {
-    const ID = 'settings';
+    const ID = 'setup';
     const EPG_FONTSIZE_DEF_VALUE = 'normal';
     public static $config = null;
 
