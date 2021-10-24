@@ -7,6 +7,7 @@
 #include "uri_sharaclub.h"
 #include "uri_glanz.h"
 #include "uri_fox.h"
+#include "uri_onecent.h"
 #include "uri_oneusd.h"
 #include "uri_itv.h"
 
@@ -35,6 +36,8 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 			return  std::make_unique<uri_antifriz>();
 		case StreamType::enFox: // Fox playlist
 			return  std::make_unique<uri_fox>();
+		case StreamType::enOneCent: // 1CENT playlist
+			return  std::make_unique<uri_onecent>();
 		case StreamType::enOneUsd: // 1USD playlist
 			return  std::make_unique<uri_oneusd>();
 		case StreamType::enItv: // 1USD playlist

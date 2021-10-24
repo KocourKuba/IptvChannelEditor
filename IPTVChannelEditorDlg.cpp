@@ -89,6 +89,7 @@ static PluginDesc all_plugins[] = {
 	{ enItv,       _T("ITV"),             "itv"        },
 	{ enSharaclub, _T("Sharaclub TV"),    "sharaclub"  },
 	{ enSharavoz,  _T("Sharavoz TV"),     "sharavoz"   },
+	{ enOneCent,   _T("1CENT TV"),        "onecent"    },
 	{ enOneUsd,    _T("1USD TV"),         "oneusd"     },
 };
 
@@ -519,6 +520,14 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_password = ReadRegStringPluginW(REG_PASSWORD);
 			break;
 		}
+		case enOneCent:
+		{
+			m_pluginType = StreamType::enOneCent;
+
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_password = ReadRegStringPluginW(REG_PASSWORD);
+			break;
+		}
 		case enOneUsd:
 		{
 			m_pluginType = StreamType::enOneUsd;
@@ -654,6 +663,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		}
 		case StreamType::enSharavoz:
 		case StreamType::enAntifriz:
+		case StreamType::enOneCent:
 		case StreamType::enOneUsd:
 		case StreamType::enItv:
 		{
@@ -843,7 +853,8 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		case enAntifriz: // Antifriz
 		case enFox: // Fox
 		case enGlanz: // Glanz
-		case enOneUsd: // Antifriz
+		case enOneCent: // 1CENT
+		case enOneUsd: // 1USD
 		case enSharavoz: // Sharavoz
 		case enSharaclub: // Sharaclub
 		case enItv: // ITV
@@ -1551,6 +1562,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 				break;
 			case StreamType::enAntifriz:
 			case StreamType::enItv:
+			case StreamType::enOneCent:
 			case StreamType::enOneUsd:
 			case StreamType::enSharavoz:
 				m_password = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
@@ -2794,6 +2806,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		}
 		case StreamType::enAntifriz:
 		case StreamType::enItv:
+		case StreamType::enOneCent:
 		case StreamType::enOneUsd:
 		case StreamType::enSharavoz:
 		{
@@ -3157,6 +3170,7 @@ void CIPTVChannelEditorDlg::OnSave()
 					break;
 				case StreamType::enAntifriz: // pin
 				case StreamType::enItv:
+				case StreamType::enOneCent:
 				case StreamType::enOneUsd:
 				case StreamType::enSharavoz:
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
@@ -3439,6 +3453,7 @@ bool CIPTVChannelEditorDlg::PackPlugin(const SupportedPlugins plugin_type, bool 
 		L"bg_fox.jpg",        L"logo_fox.png",
 		L"bg_glanz.jpg",      L"logo_glanz.png",
 		L"bg_itv.jpg",        L"logo_itv.png",
+		L"bg_onecent.jpg",    L"logo_onecent.png",
 		L"bg_oneusd.jpg",     L"logo_oneusd.png",
 		L"bg_sharaclub.jpg",  L"logo_sharaclub.png",
 		L"bg_sharavoz.jpg",   L"logo_sharavoz.png",

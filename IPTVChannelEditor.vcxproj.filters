@@ -186,6 +186,9 @@
     <ClInclude Include="FileVersionInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="uri_onecent.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -295,6 +298,9 @@
     </ClCompile>
     <ClCompile Include="FileVersionInfo.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_onecent.cpp">
+      <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

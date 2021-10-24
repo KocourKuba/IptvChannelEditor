@@ -16,10 +16,11 @@ typedef enum
 	enEdem,
 	enFox,
 	enGlanz,
+	enItv,
+	enOneCent,
 	enOneUsd,
 	enSharaclub,
 	enSharavoz,
-	enItv,
 } SupportedPlugins;
 
 // CEdemChannelEditorDlg dialog

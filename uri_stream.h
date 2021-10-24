@@ -13,6 +13,7 @@ enum class StreamType
 	enGlanz,
 	enAntifriz,
 	enFox,
+	enOneCent,
 	enOneUsd,
 	enItv,
 };
