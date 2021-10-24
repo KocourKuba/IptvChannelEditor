@@ -3421,11 +3421,15 @@ bool CIPTVChannelEditorDlg::PackPlugin(const SupportedPlugins plugin_type, bool 
 	std::filesystem::remove_all(packFolder + L"configs", err);
 
 	// copy channel lists
-	for (const auto& file : m_all_channels_lists)
+	std::filesystem::directory_iterator dir_iter(fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), name), err);
+	for (auto const& dir_entry : dir_iter)
 	{
-		std::filesystem::path src(std::filesystem::absolute(file.second));
-		std::filesystem::copy_file(src, packFolder + src.filename().c_str(), std::filesystem::copy_options::overwrite_existing, err);
-		ASSERT(!err.value());
+		const auto& path = dir_entry.path();
+		if (path.extension() == L".xml")
+		{
+			std::filesystem::copy_file(path, packFolder + path.filename().c_str(), std::filesystem::copy_options::overwrite_existing, err);
+			ASSERT(!err.value());
+		}
 	}
 
 	// remove files for other plugins
