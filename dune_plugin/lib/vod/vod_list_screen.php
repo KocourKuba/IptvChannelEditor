@@ -25,10 +25,9 @@ abstract class VodListScreen extends AbstractRegularScreen
     {
         $actions = array();
 
-        $actions[GUI_EVENT_KEY_ENTER] = $this->vod->is_movie_page_supported() ?
-            ActionFactory::open_folder() : ActionFactory::vod_play();
+        $actions[GUI_EVENT_KEY_ENTER] = $this->vod->is_movie_page_supported() ? ActionFactory::open_folder() : ActionFactory::vod_play();
 
-		$add_action = UserInputHandlerRegistry::create_action($this, 'search');
+        $add_action = UserInputHandlerRegistry::create_action($this, 'search');
         $add_action['caption'] = 'Поиск';
         $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
 
@@ -42,6 +41,10 @@ abstract class VodListScreen extends AbstractRegularScreen
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
+        // hd_print('VodListScreen: handle_user_input:');
+        // foreach ($user_input as $key => $value)
+        //     hd_print("  $key => $value");
+
         switch ($user_input->control_id)
         {
             case 'search':

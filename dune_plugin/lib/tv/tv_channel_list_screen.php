@@ -86,7 +86,8 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         if (!isset($user_input->selected_media_url))
             return null;
 
-        $channel_id = MediaURL::decode($user_input->selected_media_url)->channel_id;
+        $media_url = MediaURL::decode($user_input->selected_media_url);
+        $channel_id = $media_url->channel_id;
 
         switch ($user_input->control_id) {
             case 'info':
@@ -97,20 +98,15 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
                 return ActionFactory::show_title_dialog("Channel '$title' (id=$id)");
             case 'popup_menu':
                 $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
-                $caption = 'Добавить в избранное';
+                $caption = $this->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? 'Удалить из Избранного' : 'Добавить в избранное';
                 $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_favorite_action);
 
                 return ActionFactory::show_popup_menu($menu_items);
             case 'add_favorite':
-                if ($this->tv->is_favorite_channel_id($channel_id, $plugin_cookies)) {
-                    return ActionFactory::show_title_dialog('Канал уже в избранном',
-                        $this->get_sel_item_update_action($user_input, $plugin_cookies));
-                }
+                $opt_type = $this->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
+                $this->tv->change_tv_favorites($opt_type, $channel_id, $plugin_cookies);
 
-                $this->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $channel_id, $plugin_cookies);
-
-                return ActionFactory::show_title_dialog('Канал добавлен в избранное',
-                    $this->get_sel_item_update_action($user_input, $plugin_cookies));
+                return ActionFactory::invalidate_folders(array(self::get_media_url_str($media_url->group_id)));
         }
 
         return null;

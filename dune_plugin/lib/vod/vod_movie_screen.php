@@ -62,10 +62,7 @@ class VodMovieScreen implements Screen, UserInputHandler
         $right_button_action = null;
         if ($has_right_button) {
             $this->vod->ensure_favorites_loaded($plugin_cookies);
-
-            $is_favorite = $this->vod->is_favorite_movie_id($movie->id);
-            $right_button_caption = $is_favorite ?
-                'Удалить из Избранного' : 'Добавить в Избранное';
+            $right_button_caption = $this->vod->is_favorite_movie_id($movie->id) ? 'Удалить из Избранного' : 'Добавить в Избранное';
             $right_button_action = UserInputHandlerRegistry::create_action(
                 $this, 'favorites',
                 array('movie_id' => $movie->id));
@@ -112,9 +109,7 @@ class VodMovieScreen implements Screen, UserInputHandler
             else
                 $this->vod->add_favorite_movie($movie_id, $plugin_cookies);
 
-            $message = $is_favorite ?
-                'Удалено из Избранного' :
-                'Добавлено в Избранное';
+            $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
 
             return ActionFactory::show_title_dialog($message,
                 ActionFactory::invalidate_folders(
