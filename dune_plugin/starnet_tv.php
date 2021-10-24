@@ -49,7 +49,7 @@ class StarnetPluginTv extends AbstractTv
         $config = self::$config;
         if ($config::$VOD_MOVIE_PAGE_SUPPORTED) {
 
-            array_unshift($items,
+            array_push($items,
                 array
                 (
                     PluginRegularFolderItem::media_url =>
