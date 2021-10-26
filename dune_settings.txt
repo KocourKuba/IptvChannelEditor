@@ -1,0 +1,9 @@
+﻿DuneSystem::$properties[]
+
+'sdk_version' = '1.0.0'
+'plugin_name' = 'iedem.tv'
+'install_dir_path' = '/persistfs/plugins/iedem.tv'
+'tmp_dir_path' = '/tmp/plugins/iedem.tv'
+'data_dir_path' = '/persistfs/plugins_data/iedem.tv'
+'plugin_www_url' = 'http://127.0.0.1/plugins/iedem.tv/'
+'plugin_cgi_url' = 'http://127.0.0.1/cgi-bin/plugins/iedem.tv/'
