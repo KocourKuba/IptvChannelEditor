@@ -21,11 +21,11 @@ require_once 'starnet_search_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 require_once 'starnet_vod_list_screen.php';
 require_once 'starnet_main_screen.php';
-
-///////////////////////////////////////////////////////////////////////////
+require_once 'starnet_entry_handler.php';
 
 class StarnetDunePlugin extends DefaultDunePlugin
 {
+    private $entry_handler;
     /**
      * @throws Exception
      */
@@ -54,12 +54,14 @@ class StarnetDunePlugin extends DefaultDunePlugin
 
         $tv = new StarnetPluginTv();
         $this->tv = $tv;
+        $this->entry_handler = new StarnetEntryHandler();
         $this->add_screen(new StarnetMainScreen($tv, $config->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
         $this->add_screen(new TvChannelListScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
+        $this->add_screen(new StarnetSetupScreen($tv));
+
         if ($config::$TV_FAVORITES_SUPPORTED) {
             $this->add_screen(new TvFavoritesScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
         }
-        $this->add_screen(new StarnetSetupScreen($tv));
 
         if ($config::$VOD_MOVIE_PAGE_SUPPORTED) {
             StarnetVod::$config = $config;

@@ -7,12 +7,6 @@ class SharaclubPluginConfig extends DefaultConfig
     const ACCOUNT_INFO_URL2 = 'http://list.shara.tv/api/dune-api5m.php?subscr=%s-%s';
     const SERIES_VOD_PATTERN = '|^https?://(.+)/series/.+\.mp4(.+)$|';
 
-    // info
-    public static $PLUGIN_SHOW_NAME = 'Sharaclub TV';
-    public static $PLUGIN_SHORT_NAME = 'sharaclub';
-    public static $PLUGIN_VERSION = '1.0.1';
-    public static $PLUGIN_DATE = '12.09.2021';
-
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;

@@ -7,12 +7,6 @@ class FoxPluginConfig extends DefaultConfig
     const EXTINF_VOD_PATTERN = '|^#EXTINF:.+tvg-logo="([^"]+)".+group-title="([^"]+)".*,\s*(.*)$|';
     const EXTINF_TV_PATTERN  = '|^#EXTINF:.+CUID="(?<id>\d+)".+$|';
 
-    // info
-    public static $PLUGIN_SHOW_NAME = 'Fox TV';
-    public static $PLUGIN_SHORT_NAME = 'fox';
-    public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '1.10.2021';
-
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;

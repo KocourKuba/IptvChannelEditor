@@ -3,12 +3,6 @@ require_once 'default_config.php';
 
 class OnecentPluginConfig extends DefaultConfig
 {
-    // info
-    public static $PLUGIN_SHOW_NAME = '1CENT TV';
-    public static $PLUGIN_SHORT_NAME = 'onecent';
-    public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '25.10.2021';
-
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
     public static $ACCOUNT_TYPE = 'PIN';

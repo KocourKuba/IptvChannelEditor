@@ -3,12 +3,6 @@ require_once 'default_config.php';
 
 class EdemPluginConfig extends DefaultConfig
 {
-    // info
-    public static $PLUGIN_SHOW_NAME = 'iEdem/iLook TV';
-    public static $PLUGIN_SHORT_NAME = 'edem';
-    public static $PLUGIN_VERSION = '2.7.2';
-    public static $PLUGIN_DATE = '11.10.2021';
-
     // setup variables
     public static $ACCOUNT_TYPE = 'OTT_KEY';
 

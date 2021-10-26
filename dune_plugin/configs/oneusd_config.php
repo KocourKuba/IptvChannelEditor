@@ -5,12 +5,6 @@ class OneusdPluginConfig extends DefaultConfig
 {
     const ACCOUNT_INFO_URL1 = 'http://api.itv.live/data/%s';
 
-    // info
-    public static $PLUGIN_SHOW_NAME = '1USD TV';
-    public static $PLUGIN_SHORT_NAME = 'oneusd';
-    public static $PLUGIN_VERSION = '1.0.0';
-    public static $PLUGIN_DATE = '14.10.2021';
-
     // setup variables
     public static $MPEG_TS_SUPPORTED = true;
     public static $ACCOUNT_TYPE = 'PIN';

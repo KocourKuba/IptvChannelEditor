@@ -6,12 +6,6 @@ class GlanzPluginConfig extends DefaultConfig
     const SERIES_VOD_PATTERN = '|^https?://.+/vod/(.+)\.mp4/video\.m3u8\?token=.+$|';
     const EXTINF_VOD_PATTERN = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
 
-    // info
-    public static $PLUGIN_SHOW_NAME = 'Glanz TV';
-    public static $PLUGIN_SHORT_NAME = 'glanz';
-    public static $PLUGIN_VERSION = '1.0.2';
-    public static $PLUGIN_DATE = '14.09.2021';
-
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;

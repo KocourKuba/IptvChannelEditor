@@ -6,12 +6,6 @@ class AntifrizPluginConfig extends DefaultConfig
     const VOD_URL = 'http://api.iptvx.tv';
     const EXTINF_VOD_PATTERN = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
 
-    // info
-    public static $PLUGIN_SHOW_NAME = 'AntiFriz TV';
-    public static $PLUGIN_SHORT_NAME = 'antifriz';
-    public static $PLUGIN_VERSION = '1.0.2';
-    public static $PLUGIN_DATE = '23.09.2021';
-
     // supported features
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;
