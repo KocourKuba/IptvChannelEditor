@@ -79,18 +79,11 @@ class StarnetPluginTv extends AbstractTv
         hd_print("Channels list: $channels_list");
 
         try {
-            $doc = file_get_contents($channels_list, true);
-            if($doc == false)
-            {
-                hd_print("File not exist! $channels_list");
-                throw new Exception('File not exist');
-            }
+            $xml = HD::parse_xml_file(DuneSystem::$properties['install_dir_path'] . '/' . $channels_list);
         } catch (Exception $ex) {
-            hd_print("Can't fetch channel_list, alternative copy used.");
+            hd_print("Can't fetch channel_list $channels_list");
             return;
         }
-
-        $xml = HD::parse_xml_document($doc);
 
         if ($xml->getName() !== 'tv_info') {
             hd_print("Error: unexpected node '" . $xml->getName() . "'. Expected: 'tv_info'");

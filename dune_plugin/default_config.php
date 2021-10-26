@@ -95,8 +95,7 @@ abstract class DefaultConfig
      */
     public function __construct()
     {
-        $doc = file_get_contents(DuneSystem::$properties['install_dir_path'] . '/dune_plugin.xml');
-        $xml = HD::parse_xml_document($doc);
+        $xml = HD::parse_xml_file(DuneSystem::$properties['install_dir_path'] . '/dune_plugin.xml');
 
         static::$PLUGIN_SHOW_NAME = $xml->caption;
         static::$PLUGIN_SHORT_NAME = $xml->short_name;
@@ -120,6 +119,12 @@ abstract class DefaultConfig
             static::$EPG_PARSER_PARAMS['second']['title'] = 'name';
             static::$EPG_PARSER_PARAMS['second']['description'] = 'descr';
         }
+    }
+
+    public static function sort_channels_cb($a, $b)
+    {
+        // Sort by channel numbers.
+        return strnatcasecmp($a->get_number(), $b->get_number());
     }
 
     public static function get_epg_params()
