@@ -32,13 +32,13 @@ class EpgManager
                 $epg_id = '';
         }
 
-        if (empty($epg_id) || !isset($parser_params[$type]) || !isset($parser_params[$type]['epg_template'])) {
+        if (!isset($parser_params[$type]['epg_template']) || empty($epg_id)) {
             throw new Exception("$type EPG not defined");
         }
 
         $params = $parser_params[$type];
-        $cache_dir =  sprintf(EpgManager::EPG_CACHE_DIR_TEMPLATE, $cache_name);
-        $cache_file = sprintf(EpgManager::EPG_CACHE_FILE_TEMPLATE, $cache_name, $channel->get_id(), $day_start_ts);
+        $cache_dir =  sprintf(self::EPG_CACHE_DIR_TEMPLATE, $cache_name);
+        $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $cache_name, $channel->get_id(), $day_start_ts);
 
         if (file_exists($cache_file)) {
             hd_print("Load EPG from cache: $cache_file");
@@ -53,7 +53,7 @@ class EpgManager
                     $epg = self::get_epg_json($params, $url, $day_start_ts);
                     break;
                 case 'xml':
-                    $epg = self::get_epg_xml($params, $url, $day_start_ts, $epg_id, $cache_dir);
+                    $epg = self::get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir);
                     break;
                 default:
                     $epg = array();
@@ -136,14 +136,13 @@ class EpgManager
 
     /**
      * request server for XMLTV epg and parse xml or xml.gx response
-     * @param $parser_params
      * @param $url
      * @param $day_start_ts
      * @param $epg_id
      * @param $cache_dir
      * @return array
      */
-    protected  static function get_epg_xml($parser_params, $url, $day_start_ts, $epg_id, $cache_dir)
+    protected static function get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir)
     {
         $epg = array();
         // time in UTC
@@ -172,7 +171,7 @@ class EpgManager
                 hd_print("No EPG data found");
             } else {
                 foreach ($epg_data as $channel) {
-                    if ($channel->time >= $epg_date_start and $channel->time < $epg_date_end) {
+                    if ($channel->time >= $epg_date_start && $channel->time < $epg_date_end) {
                         $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
                         $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
                     }

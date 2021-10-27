@@ -50,20 +50,20 @@ class AntifrizPluginConfig extends DefaultConfig
         $url = $channel->get_streaming_url();
         switch ($format) {
             case 'hls':
-                if (intval($archive_ts) <= 0) break;
+                if ((int)$archive_ts <= 0) break;
 
                 $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS;
-                $url = str_replace('{SUBDOMAIN}', $domain[0], $url);
-                $url = str_replace('{ID}', $ext_params['id'], $url);
-                $url = str_replace('{TOKEN}', $ext_params['token'], $url);
-                $url = str_replace('{START}', $archive_ts, $url);
+                $url = str_replace(
+                    array('{SUBDOMAIN}', '{ID}', '{TOKEN}', '{START}'),
+                    array($domain[0], $ext_params['id'], $ext_params['token'], $archive_ts),
+                    $url);
                 break;
             case 'mpeg':
-                $url = (intval($archive_ts) > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::$MEDIA_URL_TEMPLATE_MPEG;
-                $url = str_replace('{SUBDOMAIN}', $domain[0], $url);
-                $url = str_replace('{ID}', $ext_params['id'], $url);
-                $url = str_replace('{TOKEN}', $ext_params['token'], $url);
-                $url = str_replace('{START}', $archive_ts, $url);
+                $url = ((int)$archive_ts > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::$MEDIA_URL_TEMPLATE_MPEG;
+                $url = str_replace(
+                    array('{SUBDOMAIN}', '{ID}', '{TOKEN}', '{START}'),
+                    array($domain[0], $ext_params['id'], $ext_params['token'], $archive_ts),
+                    $url);
                 $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
                 $url .= "|||dune_params|||buffering_ms:$buf_time";
                 break;
@@ -81,16 +81,6 @@ class AntifrizPluginConfig extends DefaultConfig
     }
 
     /**
-     * Collect information from m3u8 playlist
-     * @param $plugin_cookies
-     * @return array
-     */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
-    {
-        return parent::GetPlaylistStreamInfo($plugin_cookies);
-    }
-
-    /**
      * Update url by provider additional parameters
      * @param $channel_id
      * @param $plugin_cookies
@@ -99,9 +89,10 @@ class AntifrizPluginConfig extends DefaultConfig
      */
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
-        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], static::$MEDIA_URL_TEMPLATE_HLS);
-        $url = str_replace('{ID}', $ext_params['id'], $url);
-        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        $url = str_replace(
+            array('{SUBDOMAIN}', '{ID}', '{TOKEN}'),
+            array($ext_params['subdomain'], $ext_params['id'], $ext_params['token']),
+            static::$MEDIA_URL_TEMPLATE_HLS);
         return static::make_ts($url);
     }
 
@@ -182,8 +173,8 @@ class AntifrizPluginConfig extends DefaultConfig
         $category_index[$category->get_id()] = $category;
 
         foreach ($categories->data as $node) {
-            $id = strval($node->id);
-            $category = new StarnetVodCategory($id, strval($node->name));
+            $id = (string)$node->id;
+            $category = new StarnetVodCategory($id, (string)$node->name);
 
             // fetch genres for category
             $genres = static::LoadAndStoreJson(self::VOD_URL . "/cat/$id/genres", false);
@@ -191,7 +182,7 @@ class AntifrizPluginConfig extends DefaultConfig
 
             $gen_arr = array();
             foreach ($genres->data as $genre) {
-                $gen_arr[] = new StarnetVodCategory(strval($genre->id), strval($genre->title), $category);
+                $gen_arr[] = new StarnetVodCategory((string)$genre->id, (string)$genre->title, $category);
             }
 
             $category->set_sub_categories($gen_arr);
@@ -220,14 +211,15 @@ class AntifrizPluginConfig extends DefaultConfig
         //hd_print("getVideoList: $keyword");
         $val = static::get_next_page($idx);
 
-        if ($idx == 'all') {
+        if ($idx === 'all') {
             $url = "/filter/new?page=$val";
         } else {
             $arr = explode("_", $idx);
-            if ($arr === false)
+            if ($arr === false) {
                 $genre_id = $idx;
-            else
+            } else {
                 $genre_id = $arr[1];
+            }
 
             $url = "/genres/$genre_id?page=$val";
         }
@@ -252,7 +244,7 @@ class AntifrizPluginConfig extends DefaultConfig
                 }
             }
             if (isset($entry->name)) {
-                $movie = new ShortMovie(strval($entry->id), strval($entry->name), strval($entry->poster));
+                $movie = new ShortMovie((string)$entry->id, (string)$entry->name, (string)$entry->poster);
                 $genre_str = implode(", ", $genresArray);
                 $movie->info = "$entry->name|Год: $entry->year|Страна: $entry->country|Жанр: $genre_str|Рейтинг: $entry->rating";
                 $movies[] = $movie;

@@ -20,12 +20,15 @@ class VodMovieScreen implements Screen, UserInputHandler
     public static function get_media_url_str($movie_id, $name = false, $poster_url = false, $info = false) {
         $arr['screen_id'] = self::ID;
         $arr['movie_id'] = $movie_id;
-        if ($name == true)
+        if ($name === true) {
             $arr['name'] = $name;
-        if ($poster_url == true)
+        }
+        if ($poster_url === true) {
             $arr['poster_url'] = $poster_url;
-        if ($info == true)
+        }
+        if ($info === true) {
             $arr['info'] = $info;
+        }
 
         //hd_print("Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url");
 
@@ -52,7 +55,7 @@ class VodMovieScreen implements Screen, UserInputHandler
         $this->vod->folder_entered($media_url, $plugin_cookies);
 
         $movie = $this->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-        if ($movie === null) {
+        if (is_null($movie)) {
             hd_print("empty movie");
             return null;
         }

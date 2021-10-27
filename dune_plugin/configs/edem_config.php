@@ -23,7 +23,7 @@ class EdemPluginConfig extends DefaultConfig
         $url = $channel->get_streaming_url();
         // hd_print("Stream url:  " . $url);
 
-        if (intval($archive_ts) > 0) {
+        if ((int)$archive_ts > 0) {
             $now_ts = time();
             $url .= "?utc=$archive_ts&lutc=$now_ts";
             // hd_print("Archive TS:  " . $archive_ts);
@@ -73,9 +73,10 @@ class EdemPluginConfig extends DefaultConfig
         }
 
         // substitute subdomain token and id parameters
-        $url = str_replace('{SUBDOMAIN}', $subdomain, static::$MEDIA_URL_TEMPLATE_HLS);
-        $url = str_replace('{ID}', $channel_id, $url);
-        $url = str_replace('{TOKEN}', $token, $url);
+        $url = str_replace(
+            array('{SUBDOMAIN}', '{ID}', '{TOKEN}'),
+            array($subdomain, $channel_id, $token),
+            static::$MEDIA_URL_TEMPLATE_HLS);
         return static::make_ts($url);
     }
 }

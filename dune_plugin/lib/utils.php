@@ -32,13 +32,17 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public static function format_timestamp($ts, $fmt = null)
     {
         // NOTE: for some reason, explicit timezone is required for PHP
         // on Dune (no builtin timezone info?).
 
-        if (is_null($fmt))
+        if (is_null($fmt)) {
             $fmt = 'Y:m:d H:i:s';
+        }
 
         $dt = new DateTime('@' . $ts);
         return $dt->format($fmt);
@@ -48,22 +52,60 @@ class HD
 
     public static function format_duration($msecs)
     {
-        $n = intval($msecs);
+        $n = (int)$msecs;
 
-        if (strlen($msecs) <= 0 || $n <= 0)
+        if ($n <= 0 || strlen($msecs) <= 0) {
             return "--:--";
+        }
 
-        $n = $n / 1000;
+        $n /= 1000;
         $hours = $n / 3600;
         $remainder = $n % 3600;
         $minutes = $remainder / 60;
         $seconds = $remainder % 60;
 
-        if (intval($hours) > 0) {
+        if ((int)$hours > 0) {
             return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
-        } else {
-            return sprintf("%02d:%02d", $minutes, $seconds);
         }
+
+        return sprintf("%02d:%02d", $minutes, $seconds);
+    }
+
+    public static function get_filesize_str($size)
+    {
+        if ($size < 1024) {
+            $size_num = $size;
+            $size_suf = "B";
+        } else if ($size < 1048576) { // 1M
+            $size_num = round($size / 1024, 2);
+            $size_suf = "KiB";
+        } else if ($size < 1073741824) { // 1G
+            $size_num = round($size / 1048576, 2);
+            $size_suf = "MiB";
+        } else {
+            $size_num = round($size / 1073741824, 2);
+            $size_suf = "GiB";
+        }
+        return "$size_num $size_suf";
+    }
+
+    public static function get_storage_size($path, $arg = null)
+    {
+        $d[0] = disk_free_space($path);
+        $d[1] = disk_total_space($path);
+        foreach ($d as $bytes) {
+            $si_prefix = array('B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB');
+            $base = 1024;
+            $class = min((int)log($bytes, $base), count($si_prefix) - 1);
+            $size[] = sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class];
+        }
+
+        if ($arg !== null) {
+            $arr['str'] = $size[0] . '/' . $size[1];
+            $arr['free_space'] = ($arg < $d[0]);
+            return $arr;
+        }
+        return $size[0] . '/' . $size[1];
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -78,8 +120,9 @@ class HD
             $user_data = $b;
         }
 
-        if (!is_null($user_data))
+        if (!is_null($user_data)) {
             $media_url .= '||' . json_encode($user_data);
+        }
 
         return $media_url;
     }
@@ -97,15 +140,16 @@ class HD
         }
 
         $media_url = substr($media_url_str, 0, $idx);
-        $user_data = json_decode(substr($media_url_str, $idx + 2));
+        $user_data = json_decode(substr($media_url_str, $idx + 2), true);
     }
 
     ///////////////////////////////////////////////////////////////////////
 
     public static function create_regular_folder_range($items, $from_ndx = 0, $total = -1, $more_items_available = false)
     {
-        if ($total === -1)
+        if ($total === -1) {
             $total = $from_ndx + count($items);
+        }
 
         if ($from_ndx >= $total) {
             $from_ndx = $total;
@@ -116,9 +160,9 @@ class HD
 
         return array
         (
-            PluginRegularFolderRange::total => intval($total),
+            PluginRegularFolderRange::total => (int)$total,
             PluginRegularFolderRange::more_items_available => $more_items_available,
-            PluginRegularFolderRange::from_ndx => intval($from_ndx),
+            PluginRegularFolderRange::from_ndx => (int)$from_ndx,
             PluginRegularFolderRange::count => count($items),
             PluginRegularFolderRange::items => $items
         );
@@ -143,8 +187,9 @@ class HD
         curl_setopt($ch, CURLOPT_URL, $url);
 
         if (isset($opts)) {
-            foreach ($opts as $k => $v)
+            foreach ($opts as $k => $v) {
                 curl_setopt($ch, $k, $v);
+            }
         }
 
         hd_print("HTTP fetching '$url'");
@@ -158,7 +203,7 @@ class HD
             throw new Exception($err_msg);
         }
 
-        if ($http_code != 200) {
+        if ($http_code !== 200) {
             $err_msg = "HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
             hd_print($err_msg);
             throw new Exception($err_msg);
@@ -288,7 +333,7 @@ class HD
      */
     public static function parse_xml_file($path)
     {
-        $xml = simplexml_load_file($path);
+        $xml = simplexml_load_string(file_get_contents($path));
 
         if ($xml === false) {
             hd_print("Error: can not parse XML document.");
@@ -340,6 +385,21 @@ class HD
         return $mac_addr;
     }
 
+    public static function get_ip_address()
+    {
+        static $ip_address = null;
+
+        if (is_null($ip_address)) {
+            preg_match_all('/inet'.(false ? '6?' : '').' addr: ?([^ ]+)/', `ifconfig`, $ips);
+            if ($ips[1][0] !== '127.0.0.1') {
+                $ip_address = $ips[1][0];
+            } else if ($ips[1][1] !== '127.0.0.1') {
+                $ip_address = $ips[1][1];
+            }
+        }
+        return $ip_address;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     private static $MONTHS = array(
@@ -367,8 +427,9 @@ class HD
     public static function format_date_time_time($tm, $with_sec = false)
     {
         $format = '%H:%M';
-        if ($with_sec)
+        if ($with_sec) {
             $format .= ':%S';
+        }
         return strftime($format, $tm);
     }
 
@@ -434,28 +495,83 @@ class HD
 
     public static function get_items($path)
     {
-        $full_path = HD::get_data_path($path);
+        $full_path = self::get_data_path($path);
         return file_exists($full_path) ? unserialize(file_get_contents($full_path)) : array();
     }
 
     public static function put_items($path, $items)
     {
-        file_put_contents(HD::get_data_path($path), serialize($items));
+        file_put_contents(self::get_data_path($path), serialize($items));
     }
 
     public static function get_item($path)
     {
-        $full_path = HD::get_data_path($path);
+        $full_path = self::get_data_path($path);
         return file_exists($full_path) ? file_get_contents($full_path) : '';
     }
 
     public static function put_item($path, $item)
     {
-        file_put_contents(HD::get_data_path($path), $item);
+        file_put_contents(self::get_data_path($path), $item);
     }
 
-    public static function get_data_path($path)
+    public static function get_data_path($path = '')
     {
-        return DuneSystem::$properties['data_dir_path'] . '/' . $path;
+        if (!empty($path)) {
+            $path = '/' . $path;
+        }
+
+        return DuneSystem::$properties['data_dir_path'] . $path;
+    }
+
+    public static function get_install_path($path = '')
+    {
+        if (!empty($path)) {
+            $path = '/' . $path;
+        }
+
+        return DuneSystem::$properties['install_dir_path'] . $path;
+    }
+
+    public static function get_versions($t = false)
+    {
+        static $versions = array();
+
+        if (empty($versions)) {
+            $versions = parse_ini_file('/tmp/run/versions.txt');
+        }
+
+        if ($t !== false) {
+            return $versions[$t];
+        }
+
+        if (false !== strpos($versions['firmware_version'], "r10")) {
+            return false;
+        }
+
+        return (preg_match('|r1\d|', $versions['firmware_version']));
+    }
+
+    public static function get_platform_kind()
+    {
+        static $platform_kind = null;
+
+        if (!is_null($platform_kind))
+        {
+            $ini_arr = parse_ini_file('/tmp/run/versions.txt');
+            if (preg_match('|87\d\d|', $ini_arr['platform_kind'])) {
+                $platform_kind = '87xx';
+            } else if (preg_match('|864\d|', $ini_arr['platform_kind'])) {
+                $platform_kind = '864x';
+            } else if (preg_match('|867\d|', $ini_arr['platform_kind'])) {
+                $platform_kind = '867x';
+            } else if (preg_match('|865\d|', $ini_arr['platform_kind'])) {
+                $platform_kind = '865x';
+            } else if (false !== strpos($ini_arr['platform_kind'], "android")) {
+                $platform_kind = 'android';
+            }
+        }
+
+        return $platform_kind;
     }
 }

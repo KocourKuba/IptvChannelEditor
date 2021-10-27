@@ -45,13 +45,13 @@ class GlanzPluginConfig extends DefaultConfig
         // hd_print("Stream type: " . $format);
         switch ($format) {
             case 'hls':
-                if (intval($archive_ts) > 0) {
+                if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
                     $url = str_replace('video.m3u8', "video-$archive_ts-10800.m3u8", $url);
                 }
                 break;
             case 'mpeg':
-                if (intval($archive_ts) > 0) {
+                if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
                     $url = str_replace('video.m3u8', "archive-$archive_ts-10800.ts", $url);
                 }
@@ -72,16 +72,6 @@ class GlanzPluginConfig extends DefaultConfig
     }
 
     /**
-     * Collect information from m3u8 playlist
-     * @param $plugin_cookies
-     * @return array
-     */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
-    {
-        return parent::GetPlaylistStreamInfo($plugin_cookies);
-    }
-
-    /**
      * Update url by provider additional parameters
      * @param $channel_id
      * @param $plugin_cookies
@@ -90,13 +80,26 @@ class GlanzPluginConfig extends DefaultConfig
      */
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
-        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], static::$MEDIA_URL_TEMPLATE_HLS);
-        $url = str_replace('{ID}', $channel_id, $url);
-        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
-        $url = str_replace('{LOGIN}', $ext_params['login'], $url);
-        $url = str_replace('{PASSWORD}', $ext_params['password'], $url);
-        $url = str_replace('{INT_ID}', $ext_params['int_id'], $url);
-        $url = str_replace('{HOST}', $ext_params['host'], $url);
+        $url = str_replace(
+            array(
+                '{SUBDOMAIN}',
+                '{ID}',
+                '{TOKEN}',
+                '{LOGIN}',
+                '{PASSWORD}',
+                '{INT_ID}',
+                '{HOST}'
+            ),
+            array(
+                $ext_params['subdomain'],
+                $channel_id,
+                $ext_params['token'],
+                $ext_params['login'],
+                $ext_params['password'],
+                $ext_params['int_id'],
+                $ext_params['host']
+            ),
+            static::$MEDIA_URL_TEMPLATE_HLS);
 
         return static::make_ts($url);
     }
@@ -109,8 +112,8 @@ class GlanzPluginConfig extends DefaultConfig
         //hd_print("Movie ID: $movie_id");
         $movie = new Movie($movie_id);
         $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        for ($i = 0; $i < count($m3u_lines); ++$i) {
-            if($i != $movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
+        foreach ($m3u_lines as $i => $iValue) {
+            if ($i !== (int)$movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) continue;
 
             $logo = $matches['logo'];
             $caption = $matches['title'];
@@ -171,11 +174,12 @@ class GlanzPluginConfig extends DefaultConfig
             if (!preg_match(self::EXTINF_VOD_PATTERN, $line, $matches)) continue;
 
             $category = $matches['category'];
-            if(empty($category))
+            if(empty($category)) {
                 $category = 'Без категории';
+            }
 
-            if (!in_array($category, $categoriesFound)) {
-                array_push($categoriesFound, $category);
+            if (!in_array($category, $categoriesFound, false)) {
+                $categoriesFound[] = $category;
                 $cat = new StarnetVodCategory($category, $category);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
@@ -191,16 +195,16 @@ class GlanzPluginConfig extends DefaultConfig
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
-        $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        for ($i = 0; $i < count($m3u_lines); ++$i) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
+        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        foreach ($m3u_lines as $i => $iValue) {
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) continue;
 
             $logo = $matches['logo'];
             $caption = $matches['title'];
 
-            $search  = utf8_encode(mb_strtolower($caption, 'UTF-8'));
+            $search = utf8_encode(mb_strtolower($caption, 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
-                $movies[] = new ShortMovie(strval($i), $caption, $logo);
+                $movies[] = new ShortMovie((string)$i, $caption, $logo);
             }
         }
 
@@ -214,23 +218,25 @@ class GlanzPluginConfig extends DefaultConfig
     {
         $movies = array();
         $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        for ($i = 0; $i < count($m3u_lines); ++$i) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $matches)) continue;
+        foreach ($m3u_lines as $i => $iValue) {
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) continue;
 
             $category = $matches['category'];
             $logo = $matches['logo'];
             $caption = $matches['title'];
-            if(empty($category))
+            if(empty($category)) {
                 $category = 'Без категории';
+            }
 
             $arr = explode("_", $idx);
-            if ($arr === false)
+            if ($arr === false) {
                 $category_id = $idx;
-            else
+            } else {
                 $category_id = $arr[0];
+            }
 
-            if ($category_id == $category) {
-                $movies[] = new ShortMovie(strval($i), $caption, $logo);
+            if ($category_id === $category) {
+                $movies[] = new ShortMovie((string)$i, $caption, $logo);
             }
         }
 

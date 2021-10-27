@@ -35,13 +35,13 @@ class OneusdPluginConfig extends DefaultConfig
         switch ($format)
         {
             case 'hls':
-                if (intval($archive_ts) > 0) {
+                if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
                     $url = str_replace('mono.m3u8', "index-$archive_ts-7200.m3u8", $url);
                 }
                 break;
             case 'mpeg':
-                if (intval($archive_ts) > 0) {
+                if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
                     $url = str_replace('mono.m3u8', "archive-$archive_ts-7200.ts", $url);
                 }
@@ -60,28 +60,6 @@ class OneusdPluginConfig extends DefaultConfig
     }
 
     /**
-     * Get information from the provider
-     * @param $plugin_cookies
-     * @param array &$account_data
-     * @param bool $force - ignored
-     * @return bool true if information collected and packages exists
-     */
-    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
-    {
-        return parent::GetAccountInfo($plugin_cookies, $account_data, $force);
-    }
-
-    /**
-     * Collect information from m3u8 playlist
-     * @param $plugin_cookies
-     * @return array
-     */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
-    {
-        return parent::GetPlaylistStreamInfo($plugin_cookies);
-    }
-
-    /**
      * Update url by provider additional parameters
      * @param $channel_id
      * @param $plugin_cookies
@@ -91,9 +69,10 @@ class OneusdPluginConfig extends DefaultConfig
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
         // itv token unique for each channel
-        $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
-        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], $url);
-        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        $url = str_replace(
+            array('{ID}', '{SUBDOMAIN}', '{TOKEN}'),
+            array($channel_id, $ext_params['subdomain'], $ext_params['token']),
+            static::$MEDIA_URL_TEMPLATE_HLS);
         return static::make_ts($url);
     }
 }

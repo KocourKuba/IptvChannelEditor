@@ -32,6 +32,23 @@ class ControlFactory
         );
     }
 
+    public static function add_multiline_label(&$defs, $title, $text, $lines = 2)
+    {
+        $defs[] = array(
+            GuiControlDef::name => '',
+            GuiControlDef::title => $title,
+            GuiControlDef::kind => GUI_CONTROL_LABEL,
+            GuiControlDef::specific_def =>
+                array
+                (
+                    GuiLabelDef::caption => $text,
+                ),
+            GuiControlDef::params => array(
+                'max_lines' => $lines,
+            )
+        );
+    }
+
     public static function add_button(&$defs,
                                       $handler, $add_params,
                                       $name, $title, $caption, $width)
@@ -79,8 +96,7 @@ class ControlFactory
                                                              $handler, $add_params,
                                                              $name, $caption, $width)
     {
-        $push_action = UserInputHandlerRegistry::create_action(
-            $handler, $name, $add_params);
+        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -99,8 +115,7 @@ class ControlFactory
         );
     }
 
-    public static function add_custom_close_dialog_and_apply_buffon(&$defs,
-                                                                    $name, $caption, $width, $action)
+    public static function add_custom_close_dialog_and_apply_buffon(&$defs, $name, $caption, $width, $action)
     {
         $defs[] = array
         (
@@ -126,15 +141,13 @@ class ControlFactory
     {
         $apply_action = null;
         if ($need_apply) {
-            $apply_action = UserInputHandlerRegistry::create_action(
-                $handler, $name, $add_params);
+            $apply_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
             $apply_action['params']['action_type'] = 'apply';
         }
 
         $confirm_action = null;
         if ($need_confirm) {
-            $confirm_action = UserInputHandlerRegistry::create_action(
-                $handler, $name, $add_params);
+            $confirm_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
             $confirm_action['params']['action_type'] = 'confirm';
         }
 
@@ -165,15 +178,13 @@ class ControlFactory
     {
         $apply_action = null;
         if ($need_apply) {
-            $apply_action = UserInputHandlerRegistry::create_action(
-                $handler, $name, $add_params);
+            $apply_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
             $apply_action['params']['action_type'] = 'apply';
         }
 
         $confirm_action = null;
         if ($need_confirm) {
-            $confirm_action = UserInputHandlerRegistry::create_action(
-                $handler, $name, $add_params);
+            $confirm_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
             $confirm_action['params']['action_type'] = 'confirm';
         }
 

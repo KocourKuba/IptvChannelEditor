@@ -46,7 +46,7 @@ class SharaclubPluginConfig extends DefaultConfig
     {
         $url = $channel->get_streaming_url();
 
-        if (intval($archive_ts) > 0) {
+        if ((int)$archive_ts > 0) {
             $now_ts = time();
             $url .= "?utc=$archive_ts&lutc=$now_ts";
             // hd_print("Archive TS:  " . $archive_ts);
@@ -55,7 +55,7 @@ class SharaclubPluginConfig extends DefaultConfig
 
         $format = static::get_format($plugin_cookies);
         // hd_print("Stream type: " . $format);
-        if ($format == 'mpeg') {
+        if ($format === 'mpeg') {
             $url = str_replace('/video.m3u8', '.ts', $url);
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
             $url .= "|||dune_params|||buffering_ms:$buf_time";
@@ -76,8 +76,9 @@ class SharaclubPluginConfig extends DefaultConfig
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
-        if (empty($plugin_cookies->login) && empty($plugin_cookies->password))
+        if (empty($plugin_cookies->login) && empty($plugin_cookies->password)) {
             return false;
+        }
 
         try {
             $url = sprintf(static::ACCOUNT_INFO_URL1,
@@ -96,17 +97,7 @@ class SharaclubPluginConfig extends DefaultConfig
         }
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
-        return isset($account_data['status']) && $account_data['status'] == 'ok';
-    }
-
-    /**
-     * Collect information from m3u8 playlist
-     * @param $plugin_cookies
-     * @return array
-     */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
-    {
-        return parent::GetPlaylistStreamInfo($plugin_cookies);
+        return isset($account_data['status']) && $account_data['status'] === 'ok';
     }
 
     /**
@@ -118,9 +109,10 @@ class SharaclubPluginConfig extends DefaultConfig
      */
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
-        $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
-        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], $url);
-        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        $url = str_replace(
+            array('{ID}', '{SUBDOMAIN}', '{TOKEN}'),
+            array($channel_id, $ext_params['subdomain'], $ext_params['token']),
+            static::$MEDIA_URL_TEMPLATE_HLS);
         return static::make_ts($url);
     }
 
@@ -134,18 +126,20 @@ class SharaclubPluginConfig extends DefaultConfig
         foreach ($jsonItems as $item) {
 
             $id = -1;
-            if (array_key_exists("id", $item))
+            if (array_key_exists("id", $item)) {
                 $id = $item["id"];
-            else if (array_key_exists("series_id", $item))
+            } else if (array_key_exists("series_id", $item)) {
                 $id = $item["series_id"] . "season";
+            }
 
-            if ($id !== $movie_id) continue;
+            if ($id != $movie_id) continue;
 
             $duration = "";
-            if (array_key_exists("duration_secs", $item["info"]))
+            if (array_key_exists("duration_secs", $item["info"])) {
                 $duration = $item["info"]["duration_secs"] / 60;
-            else if (array_key_exists("episode_run_time", $item["info"]))
+            } else if (array_key_exists("episode_run_time", $item["info"])) {
                 $duration = $item["info"]["episode_run_time"];
+            }
 
             $genres = HD::ArrayToStr($item["info"]["genre"]);
             $country = HD::ArrayToStr($item["info"]["country"]);
@@ -212,10 +206,10 @@ class SharaclubPluginConfig extends DefaultConfig
         $categoriesFound = array();
 
         foreach ($categories as $movie) {
-            if (in_array($movie["category"], $categoriesFound)) continue;
+            if (in_array($movie["category"], $categoriesFound, false)) continue;
 
-            array_push($categoriesFound, $movie["category"]);
-            $cat = new StarnetVodCategory(strval($movie["category"]), strval($movie["category"]));
+            $categoriesFound[] = $movie["category"];
+            $cat = new StarnetVodCategory((string)$movie["category"], (string)$movie["category"]);
             $category_list[] = $cat;
             $category_index[$cat->get_id()] = $cat;
         }
@@ -250,13 +244,14 @@ class SharaclubPluginConfig extends DefaultConfig
         $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
 
         $arr = explode("_", $idx);
-        if ($arr === false)
+        if ($arr === false) {
             $category_id = $idx;
-        else
+        } else {
             $category_id = $arr[0];
+        }
 
         foreach ($jsonItems as $item) {
-            if ($category_id == $item["category"]) {
+            if ($category_id === $item["category"]) {
                 $movies[] = self::CreateMovie($item);
             }
         }
@@ -270,15 +265,16 @@ class SharaclubPluginConfig extends DefaultConfig
     protected static function CreateMovie($mov_array)
     {
         $id = -1;
-        if (array_key_exists("id", $mov_array))
+        if (array_key_exists("id", $mov_array)) {
             $id = $mov_array["id"];
-        else if (array_key_exists("series_id", $mov_array))
+        } else if (array_key_exists("series_id", $mov_array)) {
             $id = $mov_array["series_id"] . "season";
+        }
 
         $info_arr = $mov_array["info"];
         $genres = HD::ArrayToStr($info_arr["genre"]);
         $country = HD::ArrayToStr($info_arr["country"]);
-        $movie = new ShortMovie(strval($id), strval($mov_array["name"]), strval($info_arr["poster"]));
+        $movie = new ShortMovie((string)$id, (string)$mov_array["name"], (string)$info_arr["poster"]);
         $movie->info = $mov_array["name"] . "|Год: " . $info_arr["year"] . "|Страна: $country|Жанр: $genres|Рейтинг: " . $info_arr["rating"];
 
         return  $movie;

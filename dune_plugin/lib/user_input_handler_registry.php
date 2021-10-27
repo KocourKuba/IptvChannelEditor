@@ -14,8 +14,9 @@ class UserInputHandlerRegistry
 
     public static function get_instance()
     {
-        if (is_null(self::$instance))
+        if (is_null(self::$instance)) {
             self::$instance = new UserInputHandlerRegistry();
+        }
         return self::$instance;
     }
 
@@ -25,8 +26,9 @@ class UserInputHandlerRegistry
         $params = array(
             'handler_id' => $handler->get_handler_id(),
             'control_id' => $name);
-        if (isset($add_params))
+        if (isset($add_params)) {
             $params = array_merge($params, $add_params);
+        }
 
         return array
         (
@@ -39,12 +41,14 @@ class UserInputHandlerRegistry
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        if (!isset($user_input->handler_id))
+        if (!isset($user_input->handler_id)) {
             return null;
+        }
 
         $handler_id = $user_input->handler_id;
-        if (!isset($this->handlers[$handler_id]))
+        if (!isset($this->handlers[$handler_id])) {
             return null;
+        }
 
         return $this->handlers[$handler_id]->handle_user_input(
             $user_input, $plugin_cookies);
@@ -54,5 +58,10 @@ class UserInputHandlerRegistry
     {
         $handler_id = $handler->get_handler_id();
         $this->handlers[$handler_id] = $handler;
+    }
+
+    public function get_registered_handler($id)
+    {
+        return isset($this->handlers[$id]) ? $this->handlers[$id] : null;
     }
 }

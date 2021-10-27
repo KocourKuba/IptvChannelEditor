@@ -14,8 +14,7 @@ class StarnetVodCategory
     {
         $this->id = $id;
         $this->caption = $caption;
-        $this->icon_url = StarnetVodCategory::DEFAULT_ICON;
-        $this->sub_categories = null;
+        $this->icon_url = self::DEFAULT_ICON;
         $this->parent = $parent;
         $this->url = $url;
     }

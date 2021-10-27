@@ -5,7 +5,7 @@ require_once 'starnet_setup_screen.php';
 class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 {
     const ID = 'main_screen';
-    public static $config = null;
+    public static $config;
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -27,8 +27,9 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
         try {
             $account_data = array();
             $result = self::$config->GetAccountInfo($plugin_cookies, $account_data, true);
-            if ($result === false || empty($account_data))
+            if ($result === false || empty($account_data)) {
                 throw new Exception('Account error');
+            }
 
             $title = 'Пакеты: ';
             $need_collect = false;
@@ -40,11 +41,13 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                     ControlFactory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.');
                     $packages = $account_data['data']['abon'];
                     $str_len = strlen($packages);
-                    if ($str_len == 0)
+                    if ($str_len === 0) {
                         ControlFactory::add_label($defs, $title, 'Нет пакетов');
+                    }
 
-                    if($str_len < 30)
+                    if($str_len < 30) {
                         ControlFactory::add_label($defs, $title, $packages);
+                    }
 
                     if($str_len >= 30) {
                         $need_collect = true;
@@ -54,8 +57,9 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                 case 'ItvPluginConfig':
                     ControlFactory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' $');
                     $packages = $account_data['package_info'];
-                    if (count($packages) == 0)
+                    if (count($packages) === 0) {
                         ControlFactory::add_label($defs, $title, 'Нет пакетов');
+                    }
                     else {
                         $need_collect = true;
                         foreach ($packages as $item) {
@@ -72,20 +76,24 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                 $list_collected = array();
                 $isFirstLabel = true;
                 foreach($list as $item) {
-                    array_push($list_collected, $item);
+                    $list_collected[] = $item;
                     $collected = implode(', ', $list_collected);
-                    if (strlen($collected) < 30) continue;
+                    if (strlen($collected) < 30) {
+                        continue;
+                    }
 
                     ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected);
 
-                    if ($isFirstLabel)
+                    if ($isFirstLabel) {
                         $isFirstLabel = false;
+                    }
 
                     $list_collected = array();
                 }
 
-                if (count($list_collected) != 0)
+                if (count($list_collected) !== 0) {
                     ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
+                }
             }
         } catch (Exception $ex) {
             hd_print("Can't get account status");
@@ -136,7 +144,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
             );
         }
 
-        if (PLUGIN_TYPE == 'SharaclubPluginConfig' || PLUGIN_TYPE == 'ItvPluginConfig') {
+        if (PLUGIN_TYPE === 'SharaclubPluginConfig' || PLUGIN_TYPE === 'ItvPluginConfig') {
             $balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
             $balance['caption'] = 'Подписка';
             return array

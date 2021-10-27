@@ -95,7 +95,7 @@ abstract class DefaultConfig
      */
     public function __construct()
     {
-        $xml = HD::parse_xml_file(DuneSystem::$properties['install_dir_path'] . '/dune_plugin.xml');
+        $xml = HD::parse_xml_file(HD::get_install_path('dune_plugin.xml'));
 
         static::$PLUGIN_SHOW_NAME = $xml->caption;
         static::$PLUGIN_SHORT_NAME = $xml->short_name;
@@ -199,8 +199,9 @@ abstract class DefaultConfig
 
         $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
-            if (preg_match(static::$M3U_STREAM_URL_PATTERN, $line, $matches))
+            if (preg_match(static::$M3U_STREAM_URL_PATTERN, $line, $matches)) {
                 return true;
+            }
         }
 
         return false;
@@ -265,14 +266,15 @@ abstract class DefaultConfig
     public static function FetchTvM3U($plugin_cookies, $force = false)
     {
         $tmp_file = static::GET_TMP_STORAGE_PATH();
-        if (!file_exists($tmp_file) || $force != false) {
+        if ($force !== false || !file_exists($tmp_file)) {
             try {
                 $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
                 file_put_contents($tmp_file, $content);
             } catch (Exception $ex) {
                 try {
-                    if (empty(static::$ACCOUNT_PLAYLIST_URL2))
+                    if (empty(static::$ACCOUNT_PLAYLIST_URL2)) {
                         throw new Exception("Second playlist not defined");
+                    }
 
                     $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies);
                     file_put_contents($tmp_file, $content);
@@ -290,7 +292,7 @@ abstract class DefaultConfig
     {
         $m3u_file = static::GET_VOD_TMP_STORAGE_PATH();
 
-        if (!file_exists($m3u_file) || $force != false) {
+        if ($force !== false || !file_exists($m3u_file)) {
             try {
                 $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies);
                 file_put_contents($m3u_file, $content);
@@ -315,17 +317,20 @@ abstract class DefaultConfig
     {
         $parser_params = static::get_epg_params();
         try {
-            if (empty(static::$EPG1_URL_TEMPLATE))
+            if (empty(static::$EPG1_URL_TEMPLATE)) {
                 throw new Exception("Empty first epg template");
+            }
 
             $epg = EpgManager::get_epg($parser_params, $channel, 'first', $day_start_ts, static::$PLUGIN_SHORT_NAME);
-            if (count($epg) == 0)
+            if (count($epg) === 0) {
                 throw new Exception("Empty first epg");
+            }
         } catch (Exception $ex) {
             try {
                 hd_print("Can't fetch EPG ID from primary epg source: " . $ex->getMessage());
-                if (empty(static::$EPG2_URL_TEMPLATE))
+                if (empty(static::$EPG2_URL_TEMPLATE)) {
                     throw new Exception("Empty second epg template");
+                }
 
                 $epg = EpgManager::get_epg($parser_params, $channel, 'second', $day_start_ts, static::$PLUGIN_SHORT_NAME);
             } catch (Exception $ex) {
@@ -355,8 +360,9 @@ abstract class DefaultConfig
                 return false;
             }
 
-            if (!empty($path))
+            if (!empty($path)) {
                 file_put_contents($path, json_encode($categories));
+            }
 
         } catch (Exception $ex) {
             hd_print("Unable to load movie categories: " . $ex->getMessage());
@@ -376,7 +382,7 @@ abstract class DefaultConfig
         // hd_print("Type: $type");
         // hd_print("Template: $template");
 
-        if ($type == 'LOGIN') {
+        if ($type === 'LOGIN') {
             $login = $plugin_cookies->login_local;
             if (empty($login)) {
                 $login = $plugin_cookies->login;
@@ -387,19 +393,21 @@ abstract class DefaultConfig
                 $password = $plugin_cookies->password;
             }
 
-            if (empty($login) || empty($password))
+            if (empty($login) || empty($password)) {
                 throw new Exception("Login or password not set");
+            }
 
             $url = sprintf($template, $login, $password);
         }
-        else if ($type == 'PIN') {
+        else if ($type === 'PIN') {
             $password = $plugin_cookies->password_local;
             if (empty($password)) {
                 $password = $plugin_cookies->password;
             }
 
-            if (empty($password))
+            if (empty($password)) {
                 throw new Exception("Password not set");
+            }
 
             $url = sprintf($template, $password);
         } else {
@@ -411,7 +419,7 @@ abstract class DefaultConfig
 
     public static function GET_BG_PICTURE()
     {
-        return sprintf(DefaultConfig::BG_PICTURE_TEMPLATE, static::$PLUGIN_SHORT_NAME);
+        return sprintf(self::BG_PICTURE_TEMPLATE, self::$PLUGIN_SHORT_NAME);
     }
 
     protected static function GET_TV_ICON_WIDTH()
@@ -439,8 +447,9 @@ abstract class DefaultConfig
      */
     public static function GET_VOD_TMP_STORAGE_PATH($name = null)
     {
-        if ($name == null)
-            $name = DefaultConfig::VOD_PLAYLIST_NAME;
+        if (is_null($name)) {
+            $name = self::VOD_PLAYLIST_NAME;
+        }
 
         return static::GET_TMP_STORAGE_PATH($name);
     }
@@ -450,10 +459,11 @@ abstract class DefaultConfig
      */
     public static function GET_TMP_STORAGE_PATH($name = null)
     {
-        if ($name == null)
+        if (is_null($name)) {
             $name = static::$PLAY_LIST;
+        }
 
-        return sprintf(DefaultConfig::TMP_STORAGE, static::$PLUGIN_SHORT_NAME, $name);
+        return sprintf(self::TMP_STORAGE, self::$PLUGIN_SHORT_NAME, $name);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -474,11 +484,11 @@ abstract class DefaultConfig
                     ViewParams::num_rows => 4,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => DefaultConfig::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => DefaultConfig::TV_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
                     ViewParams::background_path => static::GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
@@ -510,11 +520,11 @@ abstract class DefaultConfig
                     ViewParams::num_rows => 3,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => DefaultConfig::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => DefaultConfig::TV_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     //ViewParams::sandwich_width => 200,
                     //ViewParams::sandwich_height => 120,
                     ViewParams::content_box_padding_left => 70,
@@ -548,11 +558,11 @@ abstract class DefaultConfig
                     ViewParams::num_rows => 3,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => DefaultConfig::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => DefaultConfig::TV_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
                     ViewParams::background_path => static::GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
@@ -602,7 +612,7 @@ abstract class DefaultConfig
                     ViewItemParams::icon_height => static::GET_TV_ICON_HEIGHT(),
                     ViewItemParams::item_caption_width => 485,
                     ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
-                    ViewItemParams::icon_path => DefaultConfig::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -620,11 +630,11 @@ abstract class DefaultConfig
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => DefaultConfig::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => DefaultConfig::TV_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
                 ),
@@ -637,7 +647,7 @@ abstract class DefaultConfig
                     ViewItemParams::item_paint_caption => false,
                     ViewItemParams::icon_scale_factor => 1.0,
                     ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => DefaultConfig::DEFAULT_CHANNEL_ICON_PATH
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -655,11 +665,11 @@ abstract class DefaultConfig
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => DefaultConfig::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => DefaultConfig::TV_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
                 ),
@@ -672,7 +682,7 @@ abstract class DefaultConfig
                     ViewItemParams::item_paint_caption => true,
                     ViewItemParams::icon_scale_factor => 1.25,
                     ViewItemParams::icon_sel_scale_factor => 1.5,
-                    ViewItemParams::icon_path => DefaultConfig::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -690,11 +700,11 @@ abstract class DefaultConfig
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => DefaultConfig::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => DefaultConfig::TV_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
                 ),
@@ -707,7 +717,7 @@ abstract class DefaultConfig
                     ViewItemParams::item_paint_caption => false,
                     ViewItemParams::icon_scale_factor => 1.0,
                     ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => DefaultConfig::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -725,11 +735,11 @@ abstract class DefaultConfig
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => DefaultConfig::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => DefaultConfig::TV_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
                 ),
@@ -742,7 +752,7 @@ abstract class DefaultConfig
                     ViewItemParams::item_paint_caption => false,
                     ViewItemParams::icon_scale_factor => 1.25,
                     ViewItemParams::icon_sel_scale_factor => 1.5,
-                    ViewItemParams::icon_path => DefaultConfig::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
@@ -766,11 +776,11 @@ abstract class DefaultConfig
                     ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
 
                     ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
-                    ViewParams::sandwich_width => DefaultConfig::VOD_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => DefaultConfig::VOD_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::VOD_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::VOD_SANDWICH_HEIGHT,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
                     ViewParams::item_detailed_info_auto_line_break => true,
@@ -787,7 +797,7 @@ abstract class DefaultConfig
                 (
                     ViewItemParams::item_paint_icon => true,
                     ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => DefaultConfig::VOD_ICON_PATH,
+                    ViewItemParams::icon_path => self::VOD_ICON_PATH,
                     ViewItemParams::item_layout => HALIGN_LEFT,
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 10,
@@ -804,7 +814,7 @@ abstract class DefaultConfig
                     ViewItemParams::item_paint_icon => true,
                     ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
                     ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
-                    ViewItemParams::icon_path => DefaultConfig::DEFAULT_MOV_ICON_PATH
+                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
                 ),
                 array
                 (
@@ -826,9 +836,9 @@ abstract class DefaultConfig
                         ViewParams::optimize_full_screen_background => true,
 
                         ViewParams::paint_sandwich => false,
-                        ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                        ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                        ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
+                        ViewParams::sandwich_base => self::SANDWICH_BASE,
+                        ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                        ViewParams::sandwich_cover => self::SANDWICH_COVER,
                         ViewParams::sandwich_width => static::VOD_SANDWICH_WIDTH,
                         ViewParams::sandwich_height => static::VOD_SANDWICH_HEIGHT,
                         ViewParams::sandwich_icon_upscale_enabled => true,
@@ -842,14 +852,14 @@ abstract class DefaultConfig
                         ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
                         //ViewItemParams::icon_width => 150,
                         //ViewItemParams::icon_height => 200,
-                        ViewItemParams::icon_path => DefaultConfig::DEFAULT_MOV_ICON_PATH
+                        ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
                     ),
 
                     PluginRegularFolderView::base_view_item_params => array
                     (
                         ViewItemParams::item_paint_icon => true,
                         ViewItemParams::icon_sel_scale_factor => 1.2,
-                        ViewItemParams::icon_path => DefaultConfig::VOD_ICON_PATH,
+                        ViewItemParams::icon_path => self::VOD_ICON_PATH,
                         ViewItemParams::item_layout => HALIGN_LEFT,
                         ViewItemParams::icon_valign => VALIGN_CENTER,
                         ViewItemParams::icon_dx => 10,
@@ -882,9 +892,9 @@ abstract class DefaultConfig
                         ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
 
                         ViewParams::paint_sandwich => false,
-                        ViewParams::sandwich_base => DefaultConfig::SANDWICH_BASE,
-                        ViewParams::sandwich_mask => DefaultConfig::SANDWICH_MASK,
-                        ViewParams::sandwich_cover => DefaultConfig::SANDWICH_COVER,
+                        ViewParams::sandwich_base => self::SANDWICH_BASE,
+                        ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                        ViewParams::sandwich_cover => self::SANDWICH_COVER,
                         ViewParams::sandwich_width => static::VOD_SANDWICH_WIDTH,
                         ViewParams::sandwich_height => static::VOD_SANDWICH_HEIGHT,
                         ViewParams::sandwich_icon_upscale_enabled => true,
@@ -896,14 +906,14 @@ abstract class DefaultConfig
                         ViewItemParams::item_paint_icon => true,
                         ViewItemParams::icon_width => 50,
                         ViewItemParams::icon_height => 50,
-                        ViewItemParams::icon_path => DefaultConfig::DEFAULT_MOV_ICON_PATH
+                        ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
                     ),
 
                     PluginRegularFolderView::base_view_item_params => array
                     (
                         ViewItemParams::item_paint_icon => true,
                         ViewItemParams::icon_sel_scale_factor => 1.2,
-                        ViewItemParams::icon_path => DefaultConfig::VOD_ICON_PATH,
+                        ViewItemParams::icon_path => self::VOD_ICON_PATH,
                         ViewItemParams::item_layout => HALIGN_LEFT,
                         ViewItemParams::icon_valign => VALIGN_CENTER,
                         ViewItemParams::icon_dx => 10,

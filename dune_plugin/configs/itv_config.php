@@ -40,8 +40,8 @@ class ItvPluginConfig extends DefaultConfig
         $url = $channel->get_streaming_url();
         //hd_print("AdjustStreamUrl: $url");
 
-        if (intval($archive_ts) > 0) {
-            $now_ts = strval(time());
+        if ((int)$archive_ts > 0) {
+            $now_ts = (string)time();
             $url .= "&utc=$archive_ts&lutc=$now_ts";
             // hd_print("Archive TS:  " . $archive_ts);
             // hd_print("Now       :  " . $now_ts);
@@ -49,7 +49,7 @@ class ItvPluginConfig extends DefaultConfig
 
         $format = static::get_format($plugin_cookies);
         // hd_print("Stream type: " . $format);
-        if ($format == 'mpeg') {
+        if ($format === 'mpeg') {
             // replace hls to mpegts
             $url = str_replace('video.m3u8', 'mpegts', $url);
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
@@ -86,16 +86,6 @@ class ItvPluginConfig extends DefaultConfig
     }
 
     /**
-     * Collect information from m3u8 playlist
-     * @param $plugin_cookies
-     * @return array
-     */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
-    {
-        return parent::GetPlaylistStreamInfo($plugin_cookies);
-    }
-
-    /**
      * Update url by provider additional parameters
      * @param $channel_id
      * @param $plugin_cookies
@@ -105,9 +95,10 @@ class ItvPluginConfig extends DefaultConfig
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
         // itv token unique for each channel
-        $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
-        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], $url);
-        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        $url = str_replace(
+            array('{ID}', '{SUBDOMAIN}', '{TOKEN}'),
+            array($channel_id, $ext_params['subdomain'], $ext_params['token']),
+            static::$MEDIA_URL_TEMPLATE_HLS);
         return static::make_ts($url);
     }
 }

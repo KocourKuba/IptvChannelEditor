@@ -37,9 +37,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
         else
             $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::vod_play();
 
-        $remove_favorite_action =
-            UserInputHandlerRegistry::create_action(
-                $this, 'remove_favorite');
+        $remove_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_favorite');
         $remove_favorite_action['caption'] = 'Удалить';
 
         $menu_items[] = array(
@@ -65,7 +63,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
         // foreach ($user_input as $key => $value)
         //     hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'remove_favorite') {
+        if ($user_input->control_id === 'remove_favorite') {
             if (!isset($user_input->selected_media_url))
                 return null;
 

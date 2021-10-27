@@ -28,7 +28,7 @@ class SharavozPluginConfig extends DefaultConfig
     {
         $url = $channel->get_streaming_url();
 
-        if (intval($archive_ts) > 0) {
+        if ((int)$archive_ts > 0) {
             $now_ts = time();
             $url .= "&utc=$archive_ts&lutc=$now_ts";
             // hd_print("Archive TS:  " . $archive_ts);
@@ -37,7 +37,7 @@ class SharavozPluginConfig extends DefaultConfig
 
         $format = static::get_format($plugin_cookies);
         // hd_print("Stream type: " . $format);
-        if ($format == 'mpeg') {
+        if ($format === 'mpeg') {
             $url = str_replace('index.m3u8', 'mpegts', $url);
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
             $url .= "|||dune_params|||buffering_ms:$buf_time";
@@ -67,9 +67,10 @@ class SharavozPluginConfig extends DefaultConfig
      */
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
-        $url = str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
-        $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], $url);
-        $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        $url = str_replace(
+            array('{ID}', '{SUBDOMAIN}', '{TOKEN}'),
+            array($channel_id, $ext_params['subdomain'], $ext_params['token']),
+            static::$MEDIA_URL_TEMPLATE_HLS);
         return static::make_ts($url);
     }
 }

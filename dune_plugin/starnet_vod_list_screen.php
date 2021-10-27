@@ -14,8 +14,9 @@ class StarnetVodListScreen extends VodListScreen
         $arr['screen_id'] = self::ID;
         $arr['category_id'] = $cat_id;
         $arr['genre_id'] = $genre_id;
-        if ($name == true)
+        if ($name !== false) {
             $arr['name'] = $name;
+        }
 
         return MediaURL::encode($arr);
     }
@@ -29,9 +30,9 @@ class StarnetVodListScreen extends VodListScreen
         static::$config->try_reset_pages();
         $key = $media_url->category_id . "_" . $media_url->genre_id;
 
-        if ($media_url->category_id == 'search') {
+        if ($media_url->category_id === 'search') {
             $movies = static::$config->getSearchList($media_url->genre_id, $plugin_cookies);
-        } else if ($media_url->category_id == 'all') {
+        } else if ($media_url->category_id === 'all') {
             $movies = static::$config->getVideoList($media_url->category_id, $plugin_cookies);
         } else {
             $movies = static::$config->getVideoList($media_url->category_id . "_" . $media_url->genre_id, $plugin_cookies);

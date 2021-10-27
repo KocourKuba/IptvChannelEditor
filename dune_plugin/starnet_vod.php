@@ -36,8 +36,9 @@ class StarnetVod extends AbstractVod
         $fav_movie_ids = $this->get_fav_movie_ids_from_cookies($plugin_cookies);
 
         foreach ($fav_movie_ids as $movie_id) {
-            if ($this->has_cached_short_movie($movie_id))
+            if ($this->has_cached_short_movie($movie_id)) {
                 continue;
+            }
 
             $this->ensure_movie_loaded($movie_id, $plugin_cookies);
         }
@@ -45,8 +46,9 @@ class StarnetVod extends AbstractVod
         $this->set_fav_movie_ids($fav_movie_ids);
 
         $favorites = count($fav_movie_ids);
-        if ($favorites > 0)
+        if ($favorites > 0) {
             hd_print("The $favorites favorite movies loaded.");
+        }
     }
 
     protected function do_save_favorite_movies(&$fav_movie_ids, &$plugin_cookies)
@@ -58,15 +60,17 @@ class StarnetVod extends AbstractVod
 
     public function get_fav_movie_ids_from_cookies($plugin_cookies)
     {
-        if (!isset($plugin_cookies->favorite_movies))
+        if (!isset($plugin_cookies->favorite_movies)) {
             return array();
+        }
 
-        $arr = preg_split('/,/', $plugin_cookies->favorite_movies);
+        $arr = explode(",", $plugin_cookies->favorite_movies);
 
         $ids = array();
         foreach ($arr as $id) {
-            if (preg_match('/\S/', $id))
+            if (preg_match('/\S/', $id)) {
                 $ids[] = $id;
+            }
         }
         return $ids;
     }

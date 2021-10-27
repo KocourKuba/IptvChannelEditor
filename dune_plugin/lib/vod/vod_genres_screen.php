@@ -29,8 +29,7 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         $select_genre_action =
-            UserInputHandlerRegistry::create_action(
-                $this, 'select_genre');
+            UserInputHandlerRegistry::create_action($this, 'select_genre');
 
         return array
         (

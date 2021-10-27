@@ -73,18 +73,21 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
     {
         switch ($user_input->control_id) {
             case 'search':
-                if (!isset($user_input->parent_media_url))
+                if (!isset($user_input->parent_media_url)) {
                     return null;
+                }
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
-                if (($media_url->genre_id != 'search') && ($user_input->search_actions != 'keyboard'))
+                if ($media_url->genre_id !== 'search' && $user_input->search_actions !== 'keyboard') {
                     return ActionFactory::open_folder($user_input->selected_media_url);
+                }
 
                 $defs = array();
-                if ($user_input->search_actions == 'keyboard')
+                if ($user_input->search_actions === 'keyboard') {
                     $search_text = $media_url->genre_id;
-                else
+                } else {
                     $search_text = HD::get_item('search_item');
+                }
 
                 ControlFactory::add_text_field($defs,
                     $this, null,
@@ -102,8 +105,9 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 HD::put_item('search_item', $user_input->do_new_search);
                 $search_items = HD::get_items('search_items');
                 $i = array_search($user_input->do_new_search, $search_items);
-                if ($i !== false)
+                if ($i !== false) {
                     unset ($search_items [$i]);
+                }
                 array_unshift($search_items, $user_input->do_new_search);
                 HD::put_items('search_items', $search_items);
                 $action = ActionFactory::open_folder(
@@ -113,8 +117,9 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 return ActionFactory::invalidate_folders(array('search_screen'), $action);
 
             case 'item_up':
-                if (!isset($user_input->selected_media_url))
+                if (!isset($user_input->selected_media_url)) {
                     return null;
+                }
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
@@ -132,13 +137,14 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 return ActionFactory::update_regular_folder($range, false, $user_input->sel_ndx - 1);
 
             case 'item_down':
-                if (!isset($user_input->selected_media_url))
+                if (!isset($user_input->selected_media_url)) {
                     return null;
+                }
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
                 $search_items = HD::get_items('search_items');
-                $i = array_search($video_id, $search_items);
+                $i = array_search($video_id, $search_items, false);
                 if ($i !== false && $i !== count($search_items) - 1) {
                     $t = $search_items[$i + 1];
                     $search_items[$i + 1] = $search_items[$i];
@@ -151,14 +157,17 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 return ActionFactory::update_regular_folder($range, false, $user_input->sel_ndx + 1);
 
             case 'delete':
-                if (!isset($user_input->selected_media_url))
+                if (!isset($user_input->selected_media_url)) {
                     return null;
+                }
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
                 $search_items = HD::get_items('search_items');
                 $i = array_search($video_id, $search_items);
-                unset ($search_items[$i]);
+                if ($i !== false) {
+                	unset ($search_items[$i]);
+				}
                 HD::put_items('search_items', $search_items);
 
                 return ActionFactory::invalidate_folders(array('search_screen'));
@@ -177,47 +186,39 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
         $this->vod->folder_entered($media_url, $plugin_cookies);
         $items = array();
 
-        array_push
+        $items[] = array
         (
-            $items,
-            array
+            PluginRegularFolderItem::caption => '[Новый поиск]',
+            PluginRegularFolderItem::view_item_params => array
             (
-                PluginRegularFolderItem::caption => '[Новый поиск]',
-                PluginRegularFolderItem::view_item_params => array
-                (
-                    ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 20,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
-                    ViewItemParams::item_caption_width => 1100
-                ),
-                PluginRegularFolderItem::media_url => $this->vod->get_search_media_url_str('search')
-            )
+                ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
+                ViewItemParams::item_layout => HALIGN_LEFT,
+                ViewItemParams::icon_valign => VALIGN_CENTER,
+                ViewItemParams::icon_dx => 20,
+                ViewItemParams::icon_dy => -5,
+                ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
+                ViewItemParams::item_caption_width => 1100
+            ),
+            PluginRegularFolderItem::media_url => $this->vod->get_search_media_url_str('search')
         );
 
         $search_items = HD::get_items('search_items');
         foreach ($search_items as $item) {
-            if ($item !== "") {
-                array_push
+            if (!empty($item)) {
+                $items[] = array
                 (
-                    $items,
-                    array
+                    PluginRegularFolderItem::caption => "Поиск: $item",
+                    PluginRegularFolderItem::view_item_params => array
                     (
-                        PluginRegularFolderItem::caption => "Поиск: $item",
-                        PluginRegularFolderItem::view_item_params => array
-                        (
-                            ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
-                            ViewItemParams::item_layout => HALIGN_LEFT,
-                            ViewItemParams::icon_valign => VALIGN_CENTER,
-                            ViewItemParams::icon_dx => 20,
-                            ViewItemParams::icon_dy => -5,
-                            ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
-                            ViewItemParams::item_caption_width => 1100
-                        ),
-                        PluginRegularFolderItem::media_url => $this->vod->get_search_media_url_str($item)
-                    )
+                        ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
+                        ViewItemParams::item_layout => HALIGN_LEFT,
+                        ViewItemParams::icon_valign => VALIGN_CENTER,
+                        ViewItemParams::icon_dx => 20,
+                        ViewItemParams::icon_dy => -5,
+                        ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
+                        ViewItemParams::item_caption_width => 1100
+                    ),
+                    PluginRegularFolderItem::media_url => $this->vod->get_search_media_url_str($item)
                 );
             }
         }

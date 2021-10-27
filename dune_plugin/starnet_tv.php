@@ -48,22 +48,19 @@ class StarnetPluginTv extends AbstractTv
     {
         $config = self::$config;
         if ($config::$VOD_MOVIE_PAGE_SUPPORTED) {
-
-            array_push($items,
-                array
+            $items[] = array
+            (
+                PluginRegularFolderItem::media_url =>
+                    MediaURL::encode(
+                        array
+                        (
+                            'screen_id' => StarnetVodCategoryListScreen::ID,
+                            'name' => 'VOD',
+                        )),
+                PluginRegularFolderItem::caption => DefaultConfig::VOD_GROUP_CAPTION,
+                PluginRegularFolderItem::view_item_params => array
                 (
-                    PluginRegularFolderItem::media_url =>
-                        MediaURL::encode(
-                            array
-                            (
-                                'screen_id' => StarnetVodCategoryListScreen::ID,
-                                'name' => 'VOD',
-                            )),
-                    PluginRegularFolderItem::caption => DefaultConfig::VOD_GROUP_CAPTION,
-                    PluginRegularFolderItem::view_item_params => array
-                    (
-                        ViewItemParams::icon_path => DefaultConfig::VOD_GROUP_ICON
-                    )
+                    ViewItemParams::icon_path => DefaultConfig::VOD_GROUP_ICON
                 )
             );
         }
@@ -76,12 +73,13 @@ class StarnetPluginTv extends AbstractTv
     {
         $config = self::$config;
         $channels_list = $this->get_channel_list_url($plugin_cookies);
-        hd_print("Channels list: $channels_list");
+        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . '/' . $channels_list;
+        hd_print("Channels list: $channels_list_path");
 
         try {
-            $xml = HD::parse_xml_file(DuneSystem::$properties['install_dir_path'] . '/' . $channels_list);
+            $xml = HD::parse_xml_file($channels_list_path);
         } catch (Exception $ex) {
-            hd_print("Can't fetch channel_list $channels_list");
+            hd_print("Can't fetch channel_list $channels_list_path");
             return;
         }
 
@@ -99,27 +97,25 @@ class StarnetPluginTv extends AbstractTv
         if (isset($xml->channels_setup))
         {
             hd_print("Overriding access settings found in playlist: $channels_list");
-            if ($config::$ACCOUNT_TYPE == 'OTT_KEY') {
+            if ($config::$ACCOUNT_TYPE === 'OTT_KEY') {
                 if (isset($xml->channels_setup->access_key)) {
-                    $plugin_cookies->ott_key_local = strval($xml->channels_setup->access_key);
+                    $plugin_cookies->ott_key_local = (string)$xml->channels_setup->access_key;
                     hd_print("access_key: $plugin_cookies->ott_key_local");
                 }
                 if (isset($xml->channels_setup->access_domain)) {
-                    $plugin_cookies->subdomain_local = strval($xml->channels_setup->access_domain);
+                    $plugin_cookies->subdomain_local = (string)$xml->channels_setup->access_domain;
                     hd_print("subdomain: $plugin_cookies->subdomain_local");
                 }
             }
 
-            if ($config::$ACCOUNT_TYPE == 'LOGIN') {
-                if (isset($xml->channels_setup->access_login)) {
-                    $plugin_cookies->login_local = strval($xml->channels_setup->access_login);
-                    hd_print("login: $plugin_cookies->login_local");
-                }
+            if (($config::$ACCOUNT_TYPE === 'LOGIN') && isset($xml->channels_setup->access_login)) {
+                $plugin_cookies->login_local = (string)$xml->channels_setup->access_login;
+                hd_print("login: $plugin_cookies->login_local");
             }
 
-            if ($config::$ACCOUNT_TYPE == 'LOGIN' || $config::$ACCOUNT_TYPE == 'PIN') {
+            if ($config::$ACCOUNT_TYPE === 'LOGIN' || $config::$ACCOUNT_TYPE === 'PIN') {
                 if (isset($xml->channels_setup->access_password)) {
-                    $plugin_cookies->password_local = strval($xml->channels_setup->access_password);
+                    $plugin_cookies->password_local = (string)$xml->channels_setup->access_password;
                     hd_print("password: $plugin_cookies->password_local");
                 }
             }
@@ -150,9 +146,9 @@ class StarnetPluginTv extends AbstractTv
                 throw new Exception($error_string);
             }
 
-            $this->groups->put(new DefaultGroup(strval($xml_tv_category->id),
-                strval($xml_tv_category->caption),
-                strval($xml_tv_category->icon_url)));
+            $this->groups->put(new DefaultGroup((string)$xml_tv_category->id,
+                (string)$xml_tv_category->caption,
+                (string)$xml_tv_category->icon_url));
         }
 
         $account_data = array();
@@ -167,18 +163,20 @@ class StarnetPluginTv extends AbstractTv
             }
 
             // ignore disabled channel
-            if (isset($xml_tv_channel->disabled)) continue;
+            if (isset($xml_tv_channel->disabled)) {
+                continue;
+            }
 
             // update play stream url and calculate unique id from url hash
             if (isset($xml_tv_channel->channel_id)) {
-                $channel_id = strval($xml_tv_channel->channel_id);
+                $channel_id = (string)$xml_tv_channel->channel_id;
                 $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
                 // update stream url by provider parameters
                 $streaming_url = self::$config->UpdateStreamUri($channel_id, $plugin_cookies, $ext_params);
                 $hash = hash("crc32", $streaming_url);
             } else {
                 // custom url, play as is
-                $streaming_url = strval($xml_tv_channel->streaming_url);
+                $streaming_url = (string)$xml_tv_channel->streaming_url;
                 $hash = $channel_id = hash("crc32", $streaming_url);
                 $ext_params = array();
             }
@@ -191,20 +189,20 @@ class StarnetPluginTv extends AbstractTv
             else
             {
                 // https not supported for old players
-                $icon_url = str_replace('https', 'https', strval($xml_tv_channel->icon_url));
-                $number = isset($xml_tv_channel->int_id) ? intval($xml_tv_channel->int_id) : 0;
+                $icon_url = str_replace('https', 'https', (string)$xml_tv_channel->icon_url);
+                $number = isset($xml_tv_channel->int_id) ? (int)$xml_tv_channel->int_id : 0;
                 $channel = new StarnetChannel(
                     $hash,
                     $channel_id,
-                    strval($xml_tv_channel->caption),
+                    (string)$xml_tv_channel->caption,
                     $icon_url,
                     $streaming_url,
-                    intval($xml_tv_channel->archive),
+                    (int)$xml_tv_channel->archive,
                     $number,
-                    strval($xml_tv_channel->epg_id),
-                    strval($xml_tv_channel->tvg_id),
-                    intval($xml_tv_channel->protected),
-                    intval($xml_tv_channel->timeshift_hours),
+                    (string)$xml_tv_channel->epg_id,
+                    (string)$xml_tv_channel->tvg_id,
+                    (int)$xml_tv_channel->protected,
+                    (int)$xml_tv_channel->timeshift_hours,
                     $ext_params
                 );
 
@@ -214,7 +212,7 @@ class StarnetPluginTv extends AbstractTv
             // Read category id from channel
             if (isset($xml_tv_channel->tv_category_id)) {
                 // new format
-                $tv_category_id = intval($xml_tv_channel->tv_category_id);
+                $tv_category_id = (int)$xml_tv_channel->tv_category_id;
                 $group = $this->groups->get($tv_category_id);
 
                 // Link group and channel.
@@ -234,7 +232,7 @@ class StarnetPluginTv extends AbstractTv
                         throw new Exception('Invalid XML document');
                     }
 
-                    $tv_category_id = intval($xml_tv_cat_id);
+                    $tv_category_id = (int)$xml_tv_cat_id;
                     $group = $this->groups->get($tv_category_id);
 
                     // Link group and channel.
@@ -293,11 +291,12 @@ class StarnetPluginTv extends AbstractTv
         $epg = self::$config->GetEPG($channel, $day_start_ts);
         foreach ($epg as $time => $value) {
             $tm = $time + $time_shift;
-            if ($start == 0)
+            if ($start === 0) {
                 $start = $tm;
+            }
 
             // hd_print("get_day_epg_iterator: epg date: " . gmdate(DATE_ATOM, $tm));
-            $epg_result[] = new DefaultEpgItem($value['title'], $value['desc'], intval($tm), $value['end']);
+            $epg_result[] = new DefaultEpgItem($value['title'], $value['desc'], (int)$tm, $value['end']);
         }
 
         return new EpgIterator($epg_result, $day_start_ts, $day_start_ts + 86400);

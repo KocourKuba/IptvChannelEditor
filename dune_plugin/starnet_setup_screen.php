@@ -8,7 +8,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
 {
     const ID = 'setup';
     const EPG_FONTSIZE_DEF_VALUE = 'normal';
-    public static $config = null;
+    public static $config;
 
     ///////////////////////////////////////////////////////////////////////
     protected $tv;
@@ -31,6 +31,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $config = self::$config;
 
         $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
         $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $config::$CHANNELS_LIST;
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
@@ -68,23 +69,31 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // channels lists
-        $channels = array();
-        $list = glob(DuneSystem::$properties['install_dir_path'] . "/*.xml");
+        $paths_list = array(
+            'current_path' => $channels_list_path,
+            'select_new_path' => 'Выбрать папку',
+            'reset_path' => 'Сбросить по умолчанию'
+        );
+        $this->add_combobox($defs, 'change_list_path','Расположение списка каналов', $channels_list_path, $paths_list,0, true);
+
+        $all_channels = array();
+        $list = glob($channels_list_path . '/*.xml');
         foreach ($list as $filename) {
             $filename = basename($filename);
-            if ($filename != 'dune_plugin.xml')
-                $channels[$filename] = $filename;
+            if ($filename !== 'dune_plugin.xml') {
+                $all_channels[$filename] = $filename;
+            }
         }
-
-        $this->add_combobox($defs, 'channels_list', 'Используемый список каналов:',
-            $channels_list, $channels, 0, true);
+        if (!empty($all_channels)) {
+            $this->add_combobox($defs, 'channels_list', 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
+        } else {
+            $this->add_label($defs, 'Используемый список каналов:', 'No Channels List!!!');
+        }
 
         //////////////////////////////////////
         // select stream type
         if ($config::$MPEG_TS_SUPPORTED) {
-            $format_ops = array();
-            $format_ops['hls'] = 'HLS';
-            $format_ops['mpeg'] = 'MPEG-TS';
+            $format_ops = array('hls' => 'HLS', 'mpeg' => 'MPEG-TS');
             $this->add_combobox($defs, 'format', 'Выбор потока:', $format, $format_ops, 0, true);
         }
 
@@ -223,9 +232,10 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('Setup: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("$key => $value");
+        //hd_print('Setup: handle_user_input:');
+        //foreach ($user_input as $key => $value) {
+        //    hd_print("$key => $value");
+        //}
 
         if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $control_id = $user_input->control_id;
@@ -240,6 +250,29 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     shell_exec('reboot now');
                     break;
 
+                case 'change_list_path':
+                    $this->tv->unload_channels();
+                    switch ($new_value)
+                    {
+                        case 'select_new_path':
+                            hd_print("select new path");
+                            $media_url = MediaURL::encode(
+                                array
+                                (
+                                    'screen_id' => 'file_list',
+                                    'save_data' => 'ch_list_path'
+                                ));
+                            $this->tv->unload_channels();
+                            return ActionFactory::open_folder($media_url,'Папка со списком каналов');
+                        case 'reset_path':
+                            hd_print("reset path to default");
+                            $plugin_cookies->ch_list_path = '';
+                            break;
+                    }
+
+                    $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
+                    return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
+
                 case 'channels_list':
                     $old_value = $plugin_cookies->channels_list;
                     $this->tv->unload_channels();
@@ -251,8 +284,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $plugin_cookies->channels_list = $old_value;
                         ActionFactory::show_title_dialog('Ошибка загрузки плейлиста!');
                     }
-                    $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
-                    return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
+                    $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
+                    return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
 
                 case 'show_tv':
                     $plugin_cookies->show_tv = $new_value;
@@ -292,8 +325,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }
-                    $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
-                    return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
+                    $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
+                    return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
 
                 case 'pin_dialog': // token dialog
                     $defs = $this->do_get_pin_control_defs($plugin_cookies);
@@ -308,20 +341,21 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }
-                    $perform_new_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
-                    return ActionFactory::invalidate_folders(array('tv_group_list'), $perform_new_action);
+                    $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
+                    return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
 
                 case 'pass_dialog': // show pass dialog
                     $defs = $this->do_get_pass_control_defs($plugin_cookies);
                     return ActionFactory::show_dialog('Родительский контроль', $defs, true);
 
                 case 'pass_apply': // handle pass dialog result
-                    if ($user_input->pass1 == '' || $user_input->pass2 == '')
+                    if (empty($user_input->pass1) || empty($user_input->pass2)) {
                         return null;
+                    }
 
                     $msg = 'Пароль не изменен!';
                     $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
-                    if ($user_input->pass1 == $pass_sex) {
+                    if ($user_input->pass1 === $pass_sex) {
                         $plugin_cookies->pass_sex = $user_input->{'pass2'};
                         $msg = 'Пароль изменен!';
                     }

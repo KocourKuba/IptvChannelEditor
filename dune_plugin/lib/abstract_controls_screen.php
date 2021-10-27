@@ -4,8 +4,7 @@
 require_once 'controls_screen.php';
 require_once 'control_factory.php';
 
-abstract class AbstractControlsScreen
-    implements ControlsScreen
+abstract class AbstractControlsScreen implements ControlsScreen
 {
     private $id;
 
@@ -22,7 +21,7 @@ abstract class AbstractControlsScreen
 
     public function get_handler_id()
     {
-        return 'controls_' . $this->id;
+        return $this->id;
     }
 
     public function get_id()

@@ -36,12 +36,15 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->vod->folder_entered($media_url, $plugin_cookies);
 
         $movie = $this->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-        if ($movie === null) {
+        if (is_null($movie)) {
             return array();
         }
 

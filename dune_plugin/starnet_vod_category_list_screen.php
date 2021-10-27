@@ -5,7 +5,7 @@ require_once 'starnet_vod_list_screen.php';
 class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 {
     const ID = 'vod_category_list';
-    public static $config = null;
+    public static $config;
     private $category_list;
     private $category_index;
 
@@ -36,8 +36,9 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
     {
         $config = self::$config;
 
-        if (is_null($this->category_index) || is_null($this->category_list))
+        if (is_null($this->category_index) || is_null($this->category_list)) {
             $config->fetch_vod_categories($plugin_cookies, $this->category_list, $this->category_index);
+        }
 
         $category_list = $this->category_list;
 
@@ -85,9 +86,9 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
             $id = $category->get_id();
             if (!is_null($category->get_sub_categories())) {
                 $media_url_str = self::get_media_url_str($id);
-            } else  if($id == 'all' || $id == 'search') {
+            } else  if($id === 'all' || $id === 'search') {
                 $media_url_str = StarnetVodListScreen::get_media_url_str($id, null);
-            } else if ($category->get_parent() != null) {
+            } else if ($category->get_parent() !== null) {
                 $media_url_str = StarnetVodListScreen::get_media_url_str($category->get_parent()->get_id(), $id);
             } else {
                 $media_url_str = StarnetVodListScreen::get_media_url_str($id, null);
