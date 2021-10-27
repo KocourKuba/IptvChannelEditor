@@ -99,13 +99,13 @@ class FoxPluginConfig extends DefaultConfig
      */
     public static function TryLoadMovie($movie_id, $plugin_cookies)
     {
-        //hd_print("Movie ID: $movie_id");
+        // hd_print("Movie ID: $movie_id ");
         $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
         $movie = new Movie($movie_id);
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         for ($i = 0; $i < count($m3u_lines); ++$i) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $match)) continue;
+            if ($i !== (int)$movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $match)) continue;
 
             $logo = $match[1];
             $caption = explode('/', $match[3]);
@@ -133,6 +133,9 @@ class FoxPluginConfig extends DefaultConfig
             );
 
             $movie->add_series_data($movie_id, $title, $url, true);
+            // hd_print("movie_id: $movie_id");
+            // hd_print("title: $title");
+            // hd_print("url: $url");
             break;
         }
 
