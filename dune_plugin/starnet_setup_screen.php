@@ -122,7 +122,6 @@ class StarnetSetupScreen extends AbstractControlsScreen
         //////////////////////////////////////
         // adult channel password
         $this->add_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль', 0);
-        $this->add_button($defs, 'restart', 'Перезагрузить плеер', 'Перезагрузка', 0);
         ControlFactory::add_vgap($defs, -10);
 
         return $defs;
@@ -246,10 +245,6 @@ class StarnetSetupScreen extends AbstractControlsScreen
             }
 
             switch ($control_id) {
-                case 'restart':
-                    shell_exec('reboot now');
-                    break;
-
                 case 'change_list_path':
                     $this->tv->unload_channels();
                     switch ($new_value)
