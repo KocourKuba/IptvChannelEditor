@@ -4,7 +4,7 @@ require_once 'lib/user_input_handler_registry.php';
 require_once 'lib/smb_tree.php';
 require_once 'lib/utils.php';
 
-class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
+class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHandler
 {
     const ID = 'file_list';
     private $counter = 0;
@@ -17,9 +17,9 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
 
     public static function get_media_url_str($id, $caption, $filepath, $type, $ip_path, $user, $password, $nfs_protocol, $err, $save_data, $save_file, $windowCounter = null)
     {
-        //hd_print("SmartFileScreen: get_media_url_str: $id");
-        //hd_print("SmartFileScreen: get_media_url_str: $caption");
-        //hd_print("SmartFileScreen: get_media_url_str: $filepath");
+        //hd_print("StarnetFolderScreen: get_media_url_str: $id");
+        //hd_print("StarnetFolderScreen: get_media_url_str: $caption");
+        //hd_print("StarnetFolderScreen: get_media_url_str: $filepath");
 
         return MediaURL::encode
         (
@@ -43,7 +43,7 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
 
     public function get_file_list($dir)
     {
-        //hd_print("SmartFileScreen: get_file_list: $dir");
+        //hd_print("StarnetFolderScreen: get_file_list: $dir");
         $smb_shares = new smb_tree();
         $fileData['folder'] = array();
         $fileData['file'] = array();
@@ -86,8 +86,9 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("SmartFileScreen: get_action_map: " . $media_url->get_raw_string());
+        //hd_print("StarnetFolderScreen: get_action_map: " . $media_url->get_raw_string());
         $actions = array();
+        $fs_action = UserInputHandlerRegistry::create_action($this, 'fs_action');
         $save_folder = UserInputHandlerRegistry::create_action($this, 'select_folder');
         $save_folder['caption'] = "Выбрать папку";
         $open_folder = UserInputHandlerRegistry::create_action($this, 'open_folder');
@@ -97,22 +98,20 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
         $smb_setup = UserInputHandlerRegistry::create_action($this, 'smb_setup');
         $smb_setup['caption'] = "Настройки SMB";
 
-        $actions[GUI_EVENT_KEY_ENTER] = UserInputHandlerRegistry::create_action($this, 'fs_action');
-        $actions[GUI_EVENT_KEY_PLAY] = UserInputHandlerRegistry::create_action($this, 'fs_action');
+        $actions[GUI_EVENT_KEY_ENTER] = $fs_action;
+        $actions[GUI_EVENT_KEY_PLAY] = $fs_action;
 
         if (empty($media_url->filepath)) {
-            $actions[GUI_EVENT_KEY_D_BLUE] = $smb_setup;
+            $actions[GUI_EVENT_KEY_B_GREEN] = $smb_setup;
         } else if ($media_url->filepath !== '/tmp/mnt/storage' &&
             $media_url->filepath !== '/tmp/mnt/network' &&
             $media_url->filepath !== '/tmp/mnt/smb') {
 
             if (!empty($media_url->save_data)) {
+                $actions[GUI_EVENT_KEY_A_RED] = $open_folder;
+                $actions[GUI_EVENT_KEY_C_YELLOW] = $create_folder;
                 $actions[GUI_EVENT_KEY_D_BLUE] = $save_folder;
                 $actions[GUI_EVENT_KEY_RIGHT] = $save_folder;
-                if (false === strpos($media_url->filepath, "main_screen_items")) {
-                    $actions[GUI_EVENT_KEY_B_GREEN] = $open_folder;
-                }
-                $actions[GUI_EVENT_KEY_C_YELLOW] = $create_folder;
             }
 
             $actions[GUI_EVENT_TIMER] = UserInputHandlerRegistry::create_action($this, 'timer');
@@ -126,7 +125,7 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
 
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        //hd_print('SmartFileScreen: get_folder_range' . $media_url->get_raw_string());
+        //hd_print('StarnetFolderScreen: get_folder_range' . $media_url->get_raw_string());
         $items = array();
         $dir = empty($media_url->filepath) ? "/tmp/mnt" : $media_url->filepath;
         $windowCounter = isset($media_url->windowCounter) ? $media_url->windowCounter + 1 : 2;
@@ -192,7 +191,7 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
                         $media_url->filepath !== '/tmp/mnt/network' &&
                         $media_url->filepath !== '/tmp/mnt/smb' &&
                         $media_url->save_data === 'ch_list_path') {
-                        $info .= "||Нажмите синюю D для использования текущей папки|$caption";
+                        $info .= "||Нажмите синюю D или Вправо для выбора|$caption";
                     }
                     $type = 'folder';
                 } else if ($key === 'file') {
@@ -238,7 +237,7 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
         }
 
         if (empty($items)) {
-            $info = "||Нажмите синюю D для использования текущей папки|" . $media_url->caption;
+            $info = "||Нажмите синюю D или Вправо для выбора|$media_url->caption||Файлы показываются";
 
             $items[] = array(
                 PluginRegularFolderItem::caption => '',
@@ -403,7 +402,7 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
                     $post_action = ActionFactory::replace_path($parent_url->windowCounter, null, $post_action);
                 }
 
-                return ActionFactory::show_title_dialog('Выбрана папка', $post_action, $url->caption, 800);
+                return ActionFactory::show_title_dialog('Выбрана папка: ' . $url->caption, $post_action, 'Полный путь: ' . $url->filepath, 800);
 
             case 'create_folder':
                 $defs = array();
@@ -434,7 +433,7 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
                         if ($parent_url->user !== false && $parent_url->password !== false) {
                             $path = 'smb://' . $parent_url->user . ':' . $parent_url->password . '@' . preg_replace("|^/tmp/mnt/smb/\d|", str_replace('//', '', $parent_url->ip_path), $path);
                         } else {
-                            $path = 'smb:' . preg_replace("|^\/tmp\/mnt\/smb\/\d|", $parent_url->ip_path, $path);
+                            $path = 'smb:' . preg_replace("|^/tmp/mnt/smb/\d|", $parent_url->ip_path, $path);
                         }
                     } else if ($parent_url->nfs_protocol !== false && preg_match('|^/tmp/mnt/network/|', $path)) {
                         $prot = ($parent_url->nfs_protocol === 'tcp') ? 'nfs-tcp://' : 'nfs-udp://';
@@ -560,7 +559,7 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
 
     public function do_get_mount_smb_err_defs($err, $caption, $ip_path, $user, $password)
     {
-        //hd_print('SmartFileScreen: do_get_mount_smb_err_defs');
+        //hd_print('StarnetFolderScreen: do_get_mount_smb_err_defs');
         $defs = array();
         ControlFactory::add_multiline_label($defs, 'Error mount:', $err, 4);
         ControlFactory::add_label($defs, 'SMB folder:', $caption);
@@ -581,7 +580,7 @@ class SmartFileScreen extends AbstractRegularScreen implements UserInputHandler
      */
     protected function GetSMBAccessDefs(array &$defs, $user, $password)
     {
-        //hd_print('SmartFileScreen: GetSMBAccessDefs');
+        //hd_print('StarnetFolderScreen: GetSMBAccessDefs');
         ControlFactory::add_text_field($defs, $this, null,
             'new_user',
             'Имя пользователя SMB папки:',

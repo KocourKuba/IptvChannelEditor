@@ -72,7 +72,7 @@ class MediaURL
 
     public static function decode($s)
     {
-        if (substr($s, 0, 1) !== '{')
+        if (strpos($s, '{') !== 0)
             return new MediaURL($s, null);
 
         return new MediaURL($s, json_decode($s));

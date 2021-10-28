@@ -22,7 +22,7 @@ require_once 'starnet_vod_category_list_screen.php';
 require_once 'starnet_vod_list_screen.php';
 require_once 'starnet_main_screen.php';
 require_once 'starnet_entry_handler.php';
-require_once 'smart_file_screen.php';
+require_once 'starnet_folder_screen.php';
 
 class StarnetDunePlugin extends DefaultDunePlugin
 {
@@ -59,7 +59,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
         $this->add_screen(new StarnetMainScreen($tv, $config->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
         $this->add_screen(new TvChannelListScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
         $this->add_screen(new StarnetSetupScreen($tv));
-        $this->add_screen(new SmartFileScreen());
+        $this->add_screen(new StarnetFolderScreen());
 
         if ($config::$TV_FAVORITES_SUPPORTED) {
             $this->add_screen(new TvFavoritesScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));

@@ -25,21 +25,15 @@ class StarnetSetupScreen extends AbstractControlsScreen
         return MediaURL::encode(array('screen_id' => self::ID));
     }
 
+    /**
+     * defs for all controls on screen
+     * @param $plugin_cookies
+     * @return array
+     */
     public function do_get_control_defs(&$plugin_cookies)
     {
-        $defs = array();
         $config = self::$config;
-
-        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
-        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $config::$CHANNELS_LIST;
-        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
-        $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
-
-        $show_ops = array();
-        $show_ops['yes'] = 'Да';
-        $show_ops['no'] = 'Нет';
+        $defs = array();
 
         //////////////////////////////////////
         // Plugin name
@@ -49,6 +43,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // Show in main screen
+        $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
+        $show_ops = array('yes' => 'Да', 'no' => 'Нет');
         $this->add_combobox($defs, 'show_tv', 'Показывать ' . $config::$PLUGIN_SHOW_NAME . ' в главном меню:',
             $show_tv, $show_ops, 0, true);
 
@@ -69,6 +65,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // channels lists
+        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
         $paths_list = array(
             'current_path' => $channels_list_path,
             'select_new_path' => 'Выбрать папку',
@@ -85,14 +82,16 @@ class StarnetSetupScreen extends AbstractControlsScreen
             }
         }
         if (!empty($all_channels)) {
+            $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $config::$CHANNELS_LIST;
             $this->add_combobox($defs, 'channels_list', 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
         } else {
-            $this->add_label($defs, 'Используемый список каналов:', 'No Channels List!!!');
+            $this->add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         }
 
         //////////////////////////////////////
         // select stream type
         if ($config::$MPEG_TS_SUPPORTED) {
+            $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
             $format_ops = array('hls' => 'HLS', 'mpeg' => 'MPEG-TS');
             $this->add_combobox($defs, 'format', 'Выбор потока:', $format, $format_ops, 0, true);
         }
@@ -108,16 +107,14 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $show_buf_time_ops[5000] = '5 с';
         $show_buf_time_ops[10000] = '10 с';
 
-        $this->add_combobox($defs, 'buf_time', 'Время буферизации:',
-            $buf_time, $show_buf_time_ops, 0, true);
+        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
+        $this->add_combobox($defs, 'buf_time', 'Время буферизации:', $buf_time, $show_buf_time_ops, 0, true);
 
         //////////////////////////////////////
         // font size
-        $epg_font_size_ops = array();
-        $epg_font_size_ops ['normal'] = 'Обычный';
-        $epg_font_size_ops ['small'] = 'Мелкий';
-        $this->add_combobox($defs, 'epg_font_size', 'Размер шрифта EPG:',
-            $epg_font_size, $epg_font_size_ops, 700, true);
+        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
+        $epg_font_size_ops = array('normal' => 'Обычный', 'small' => 'Мелкий');
+        $this->add_combobox($defs, 'epg_font_size', 'Размер шрифта EPG:', $epg_font_size, $epg_font_size_ops, 700, true);
 
         //////////////////////////////////////
         // adult channel password
@@ -127,13 +124,18 @@ class StarnetSetupScreen extends AbstractControlsScreen
         return $defs;
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
         return $this->do_get_control_defs($plugin_cookies);
     }
 
     /**
-     * ott key dialog
+     * ott key dialog defs
      * @param $plugin_cookies
      * @return array
      */
@@ -159,7 +161,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
     }
 
     /**
-     * token dialog
+     * login dialog defs
      * @param $plugin_cookies
      * @return array
      */
@@ -184,7 +186,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
     }
 
     /**
-     * token dialog
+     * token dialog defs
      * @param $plugin_cookies
      * @return array
      */
@@ -205,7 +207,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
     }
 
     /**
-     * adult pass dialog
+     * adult pass dialog defs
      * @param $plugin_cookies
      * @return array
      */
@@ -229,6 +231,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
         return $defs;
     }
 
+    /**
+     * user remote input handler
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         //hd_print('Setup: handle_user_input:');
