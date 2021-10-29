@@ -195,6 +195,8 @@
 #define IDC_SPIN_STREAM_THREADS         1107
 #define IDC_COMBO_LANG                  1108
 #define IDC_SPLIT_BUTTON_PACK           1109
+#define IDC_MFCEDITBROWSE_CH_LIST_PATH  1110
+#define IDC_MFCEDITBROWSE_PLUGINS_PATH  1111
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -220,7 +222,7 @@
 #define ID_MAKE_ALL                     32800
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        202

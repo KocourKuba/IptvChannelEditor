@@ -29,9 +29,13 @@ void CSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLAYER, m_player);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLAYER, m_wndPlayer);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PROBE, m_probe);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PROBE, m_wndProbe);
-	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLAYER, m_wndPlayer);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_CH_LIST_PATH, m_wndListsPath);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE_CH_LIST_PATH, m_lists_path);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGINS_PATH, m_wndPluginsPath);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGINS_PATH, m_plugins_path);
 	DDX_Check(pDX, IDC_CHECK_AUTO_SYNC_CHANNELS, m_bAutoSync);
 	DDX_Text(pDX, IDC_EDIT_STREAM_THREADS, m_MaxThreads);
 	DDX_Control(pDX, IDC_EDIT_STREAM_THREADS, m_wndMaxThreads);

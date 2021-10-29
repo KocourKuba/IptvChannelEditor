@@ -229,25 +229,25 @@ private:
 
 	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
-	std::wstring GetAbsPath(LPCTSTR rel_path) { return theApp.GetAppPath(rel_path); };
+	std::wstring GetAbsPath(LPCTSTR rel_path = nullptr) { return theApp.GetAppPath(rel_path); };
 	std::wstring GetPluginRegPath() const;
 
 	void SaveReg(LPCTSTR path, LPCSTR szValue);
 	void SaveReg(LPCTSTR path, LPCWSTR szValue);
 	void SaveReg(LPCTSTR path, int value);
 
-	CString ReadRegStringT(LPCTSTR path) const;
-	std::string ReadRegStringA(LPCTSTR path) const;
-	std::wstring ReadRegStringW(LPCTSTR path) const;
+	CString ReadRegStringT(LPCTSTR path, LPCTSTR default = nullptr) const;
+	std::string ReadRegStringA(LPCTSTR path, LPCTSTR default = nullptr) const;
+	std::wstring ReadRegStringW(LPCTSTR path, LPCTSTR default = nullptr) const;
 	int ReadRegInt(LPCTSTR path, int default = 0) const;
 
 	void SaveRegPlugin(LPCTSTR path, LPCSTR szValue);
 	void SaveRegPlugin(LPCTSTR path, LPCWSTR szValue);
 	void SaveRegPlugin(LPCTSTR path, int value);
 
-	CString ReadRegStringPluginT(LPCTSTR path) const;
-	std::string ReadRegStringPluginA(LPCTSTR path) const;
-	std::wstring ReadRegStringPluginW(LPCTSTR path) const;
+	CString ReadRegStringPluginT(LPCTSTR path, LPCTSTR default = nullptr) const;
+	std::string ReadRegStringPluginA(LPCTSTR path, LPCTSTR default = nullptr) const;
+	std::wstring ReadRegStringPluginW(LPCTSTR path, LPCTSTR default = nullptr) const;
 	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
 
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
@@ -360,6 +360,8 @@ private:
 	CString m_chFileName;
 	CString m_plFileName;
 	CString m_player;
+	CString m_lists_path;
+	CString m_plugins_path;
 	BOOL m_bAutoSync = FALSE;
 	BOOL m_allow_save = FALSE;
 	int m_MaxThreads = 4;

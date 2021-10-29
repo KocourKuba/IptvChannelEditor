@@ -30,6 +30,8 @@ protected:
 public:
 	CString m_player;
 	CString m_probe;
+	CString m_lists_path;
+	CString m_plugins_path;
 	BOOL m_bAutoSync;
 	int m_MaxThreads;
 	WORD m_nLang = 0;
@@ -37,6 +39,8 @@ public:
 protected:
 	CMFCEditBrowseCtrl m_wndProbe;
 	CMFCEditBrowseCtrl m_wndPlayer;
+	CMFCEditBrowseCtrl m_wndListsPath;
+	CMFCEditBrowseCtrl m_wndPluginsPath;
 	CEdit m_wndMaxThreads;
 	CSpinButtonCtrl m_wndSpinMaxThreads;
 	CComboBox m_wndLanguage;

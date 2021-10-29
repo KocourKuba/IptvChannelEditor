@@ -46,6 +46,8 @@ constexpr auto CHANNELS_LIST_VERSION = 2;
 constexpr auto REG_SETTINGS = _T("Settings");
 constexpr auto REG_PLAYER = _T("Player");
 constexpr auto REG_FFPROBE = _T("FFProbe");
+constexpr auto REG_LISTS_PATH = _T("ListsPath");
+constexpr auto REG_PLUGINS_PATH = _T("PluginsPath");
 constexpr auto REG_DAYS_BACK = _T("DaysBack");
 constexpr auto REG_HOURS_BACK = _T("HoursBack");
 constexpr auto REG_AUTOSYNC = _T("AutoSyncChannel");
@@ -410,6 +412,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	// load settings
 	m_player = ReadRegStringT(REG_PLAYER);
 	m_probe = ReadRegStringT(REG_FFPROBE);
+	m_lists_path = ReadRegStringT(REG_LISTS_PATH, GetAbsPath(_T("playlists\\")).c_str());
+	m_plugins_path = ReadRegStringT(REG_PLUGINS_PATH, GetAbsPath().c_str());
 	m_archiveCheckDays = ReadRegInt(REG_DAYS_BACK);
 	m_archiveCheckHours = ReadRegInt(REG_HOURS_BACK);
 	m_bAutoSync = ReadRegInt(REG_AUTOSYNC);
@@ -577,7 +581,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	// Load channel lists
 	const auto& name = GetPluginName<wchar_t>(GetCurrentPlugin());
-	const auto& channelsPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), name);
+	const auto& channelsPath = fmt::format(L"{:s}{:s}\\", m_lists_path, name);
 	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", name);
 	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", name);
 
@@ -3215,7 +3219,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		doc.append_node(tv_info);
 
 		// write document
-		auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), GetPluginName<wchar_t>(GetCurrentPlugin()));
+		auto& playlistPath = fmt::format(L"{:s}{:s}\\", m_lists_path, GetPluginName<wchar_t>(GetCurrentPlugin()));
 		std::error_code err;
 		std::filesystem::create_directories(playlistPath, err);
 
@@ -3435,7 +3439,8 @@ bool CIPTVChannelEditorDlg::PackPlugin(const SupportedPlugins plugin_type, bool 
 	std::filesystem::remove_all(packFolder + L"configs", err);
 
 	// copy channel lists
-	std::filesystem::directory_iterator dir_iter(fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), name), err);
+	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", m_lists_path, name);
+	std::filesystem::directory_iterator dir_iter(playlistPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
 		const auto& path = dir_entry.path();
@@ -3486,16 +3491,15 @@ bool CIPTVChannelEditorDlg::PackPlugin(const SupportedPlugins plugin_type, bool 
 		return false;
 	}
 
-	auto& target = fmt::format(GetAbsPath(L""), name);
-	target += utils::DUNE_PLUGIN_NAME;
-	const auto& pluginName = fmt::format(target, name);
+	std::wstring pluginFile = m_plugins_path;
+	pluginFile += fmt::format(utils::DUNE_PLUGIN_NAME, name);
 
-	res = archiver.CreateArchive(pluginName);
+	res = archiver.CreateArchive(pluginFile);
 	// remove temporary folder
 	std::filesystem::remove_all(packFolder, err);
 	if (!res && showMessage)
 	{
-		std::filesystem::remove(pluginName, err);
+		std::filesystem::remove(pluginFile, err);
 		AfxMessageBox(IDS_STRING_ERR_FAILED_PACK, MB_OK | MB_ICONSTOP);
 		return false;
 	}
@@ -3634,6 +3638,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	CSettingsDlg dlg;
 	dlg.m_player = m_player;
 	dlg.m_probe = m_probe;
+	dlg.m_lists_path = m_lists_path;
+	dlg.m_plugins_path = m_plugins_path;
 	dlg.m_bAutoSync = m_bAutoSync;
 	dlg.m_MaxThreads = m_MaxThreads;
 	dlg.m_nLang = ReadRegInt(REG_LANGUAGE);
@@ -3642,14 +3648,22 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	{
 		m_player = dlg.m_player;
 		m_probe = dlg.m_probe;
+		CString old_list = m_lists_path;
+		m_lists_path = dlg.m_lists_path.Right(1) == '\\' ? dlg.m_lists_path : dlg.m_lists_path + '\\';
+		m_plugins_path = dlg.m_plugins_path.Right(1) == '\\' ? dlg.m_plugins_path : dlg.m_plugins_path + '\\';
 		m_bAutoSync = dlg.m_bAutoSync;
 		m_MaxThreads = dlg.m_MaxThreads;
 
 		SaveReg(REG_PLAYER, m_player);
 		SaveReg(REG_FFPROBE, m_probe);
+		SaveReg(REG_LISTS_PATH, m_lists_path);
+		SaveReg(REG_PLUGINS_PATH, m_plugins_path);
 		SaveReg(REG_AUTOSYNC, m_bAutoSync);
 		SaveReg(REG_MAX_THREADS, m_MaxThreads);
 		SaveReg(REG_LANGUAGE, dlg.m_nLang);
+
+		if (old_list != m_lists_path)
+			SwitchPlugin();
 	}
 }
 
@@ -3761,12 +3775,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 	CFileDialog dlg(FALSE);
 
 	const auto& pluginName = GetPluginName<wchar_t>(GetCurrentPlugin());
-	const auto& name = fmt::format(L"{:s}_channel_list.xml", pluginName);
-
-	auto& newList = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), pluginName);
+	auto& newList = fmt::format(L"{:s}{:s}\\", m_lists_path, pluginName);
 	std::filesystem::create_directory(newList);
 
-	newList += name;
+	newList += fmt::format(L"{:s}_channel_list.xml", pluginName);
 
 	CString filter;
 	filter.LoadString(IDS_STRING_LOAD_CHANNELS_MASK);
@@ -4031,9 +4043,8 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 
 		const auto& dump = m_stream_infos.serialize();
 		// write document
-		const auto& playlistPath = fmt::format(GetAbsPath(utils::PLAYLISTS_ROOT), GetPluginName<wchar_t>(GetCurrentPlugin()));
-		const auto& path = playlistPath + _T("stream_info.bin");
-		std::ofstream os(path, std::istream::binary);
+		const auto& streamInfoFile = fmt::format(L"{:s}{:s}\\stream_info.bin", m_lists_path, GetPluginName<wchar_t>(GetCurrentPlugin()));
+		std::ofstream os(streamInfoFile, std::istream::binary);
 		os.write(dump.data(), dump.size());
 		os.close();
 	}
@@ -4750,19 +4761,19 @@ void CIPTVChannelEditorDlg::SaveRegPlugin(LPCTSTR path, int value)
 	theApp.WriteProfileInt(GetPluginRegPath().c_str(), path, value);
 }
 
-CString CIPTVChannelEditorDlg::ReadRegStringT(LPCTSTR path) const
+CString CIPTVChannelEditorDlg::ReadRegStringT(LPCTSTR path, LPCTSTR default /*= nullptr*/) const
 {
-	return theApp.GetProfileString(REG_SETTINGS, path);
+	return theApp.GetProfileString(REG_SETTINGS, path, default);
 }
 
-std::string CIPTVChannelEditorDlg::ReadRegStringA(LPCTSTR path) const
+std::string CIPTVChannelEditorDlg::ReadRegStringA(LPCTSTR path, LPCTSTR default /*= nullptr*/) const
 {
-	return utils::utf16_to_utf8(theApp.GetProfileString(REG_SETTINGS, path).GetString());
+	return utils::utf16_to_utf8(theApp.GetProfileString(REG_SETTINGS, path, default).GetString());
 }
 
-std::wstring CIPTVChannelEditorDlg::ReadRegStringW(LPCTSTR path) const
+std::wstring CIPTVChannelEditorDlg::ReadRegStringW(LPCTSTR path, LPCTSTR default /*= nullptr*/) const
 {
-	return theApp.GetProfileString(REG_SETTINGS, path).GetString();
+	return theApp.GetProfileString(REG_SETTINGS, path, default).GetString();
 }
 
 int CIPTVChannelEditorDlg::ReadRegInt(LPCTSTR path, int default /*= 0*/) const
@@ -4770,19 +4781,19 @@ int CIPTVChannelEditorDlg::ReadRegInt(LPCTSTR path, int default /*= 0*/) const
 	return theApp.GetProfileInt(REG_SETTINGS, path, default);
 }
 
-CString CIPTVChannelEditorDlg::ReadRegStringPluginT(LPCTSTR path) const
+CString CIPTVChannelEditorDlg::ReadRegStringPluginT(LPCTSTR path, LPCTSTR default /*= nullptr*/) const
 {
-	return theApp.GetProfileString(GetPluginRegPath().c_str(), path);
+	return theApp.GetProfileString(GetPluginRegPath().c_str(), path, default);
 }
 
-std::string CIPTVChannelEditorDlg::ReadRegStringPluginA(LPCTSTR path) const
+std::string CIPTVChannelEditorDlg::ReadRegStringPluginA(LPCTSTR path, LPCTSTR default /*= nullptr*/) const
 {
-	return utils::utf16_to_utf8(theApp.GetProfileString(GetPluginRegPath().c_str(), path).GetString());
+	return utils::utf16_to_utf8(theApp.GetProfileString(GetPluginRegPath().c_str(), path, default).GetString());
 }
 
-std::wstring CIPTVChannelEditorDlg::ReadRegStringPluginW(LPCTSTR path) const
+std::wstring CIPTVChannelEditorDlg::ReadRegStringPluginW(LPCTSTR path, LPCTSTR default /*= nullptr*/) const
 {
-	return theApp.GetProfileString(GetPluginRegPath().c_str(), path).GetString();
+	return theApp.GetProfileString(GetPluginRegPath().c_str(), path, default).GetString();
 }
 
 int CIPTVChannelEditorDlg::ReadRegIntPlugin(LPCTSTR path, int default /*= 0*/) const
