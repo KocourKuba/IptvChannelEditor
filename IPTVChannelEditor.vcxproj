@@ -185,6 +185,35 @@
     <PreBuildEvent>
       <Command>UpdateVer.cmd</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>@echo OFF
+setlocal
+echo Build localized $(ProjectName).slp ...
+copy "$(ProjectDir)$(ProjectName).slp" "$(ProjectDir)_$(ProjectName).slp" &gt;nul 2&gt;&amp;1
+"$(ProgramFiles)\Sisulizer 4\slmake.exe" build -lang:ru-RU; "$(ProjectDir)_$(ProjectName).slp" -q -w &gt;nul 2&gt;&amp;1
+
+if ERRORLEVEL 2 (
+echo Builded with errors
+call :cleanup $(ProjectName)
+endlocal
+exit /B 1
+)
+
+if ERRORLEVEL 1 (
+echo Builded with warnings
+)
+
+call :cleanup $(ProjectName)
+endlocal
+exit /B 0
+
+:cleanup
+del "$(ProjectDir)_$(ProjectName).slp" &gt;nul 2&gt;&amp;1
+del "$(ProjectDir)_$(ProjectName).~slp" &gt;nul 2&gt;&amp;1
+del "$(ProjectDir)_$(ProjectName).sds" &gt;nul 2&gt;&amp;1
+goto :EOF
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">
     <ClCompile>
