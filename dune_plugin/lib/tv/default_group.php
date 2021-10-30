@@ -11,8 +11,9 @@ class DefaultGroup implements Group
 
     public function __construct($id, $title, $icon_url)
     {
-        if (is_null($icon_url))
+        if (is_null($icon_url)) {
             $icon_url = 'gui_skin://small_icons/iptv.aai';
+        }
 
         $this->_id = $id;
         $this->_title = $title;
@@ -56,6 +57,3 @@ class DefaultGroup implements Group
         $this->_channels->put($c);
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-?>

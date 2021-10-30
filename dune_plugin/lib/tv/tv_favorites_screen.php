@@ -70,10 +70,12 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         $num_favorites = count($this->tv->get_fav_channel_ids($plugin_cookies));
 
         $sel_ndx = $user_input->sel_ndx + $sel_increment;
-        if ($sel_ndx < 0)
+        if ($sel_ndx < 0) {
             $sel_ndx = 0;
-        if ($sel_ndx >= $num_favorites)
+        }
+        if ($sel_ndx >= $num_favorites) {
             $sel_ndx = $num_favorites - 1;
+        }
 
         $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
         return ActionFactory::update_regular_folder($range, true, $sel_ndx);
@@ -85,8 +87,9 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         // foreach ($user_input as $key => $value)
         //     hd_print("  $key => $value");
 
-        if (!isset($user_input->selected_media_url))
+        if (!isset($user_input->selected_media_url)) {
             return null;
+        }
 
         switch ($user_input->control_id) {
             case 'move_backward_favorite':
@@ -121,8 +124,9 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         $items = array();
 
         foreach ($fav_channel_ids as $channel_id) {
-            if (preg_match('/^\s*$/', $channel_id))
+            if (preg_match('/^\s*$/', $channel_id)) {
                 continue;
+            }
 
             try {
                 $c = $this->tv->get_channel($channel_id);
@@ -131,22 +135,21 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
                 continue;
             }
 
-            array_push($items,
-                array
+            $items[] = array
+            (
+                PluginRegularFolderItem::media_url =>
+                    MediaURL::encode(
+                        array(
+                            'channel_id' => $c->get_id(),
+                            'group_id' => '__favorites')),
+                PluginRegularFolderItem::caption => $c->get_title(),
+                PluginRegularFolderItem::view_item_params => array
                 (
-                    PluginRegularFolderItem::media_url =>
-                        MediaURL::encode(
-                            array(
-                                'channel_id' => $c->get_id(),
-                                'group_id' => '__favorites')),
-                    PluginRegularFolderItem::caption => $c->get_title(),
-                    PluginRegularFolderItem::view_item_params => array
-                    (
-                        ViewItemParams::icon_path => $c->get_icon_url(),
-                        ViewItemParams::item_detailed_icon_path => $c->get_icon_url(),
-                    ),
-                    PluginRegularFolderItem::starred => false,
-                ));
+                    ViewItemParams::icon_path => $c->get_icon_url(),
+                    ViewItemParams::item_detailed_icon_path => $c->get_icon_url(),
+                ),
+                PluginRegularFolderItem::starred => false,
+            );
         }
 
         return $items;

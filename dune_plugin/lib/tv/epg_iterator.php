@@ -7,7 +7,7 @@ class EpgIterator implements Iterator
     private $_till;
 
     private $_pos;
-    private $_depleted;
+    private $_depleted = false;
 
     public function __construct($epg, $from, $till)
     {
@@ -21,34 +21,33 @@ class EpgIterator implements Iterator
     public function rewind()
     {
         $this->_pos = -1;
-        $this->_depleted = 0;
+        $this->_depleted = false;
         $this->next();
     }
 
     public function current()
     {
-        if (!$this->valid())
-            return null;
-
-        return $this->_epg[$this->_pos];
+        return $this->valid() ? $this->_epg[$this->_pos] : null;
     }
 
     public function key()
     {
-        if (!$this->valid())
+        if (!$this->valid()) {
             return null;
+        }
 
         return $this->_pos;
     }
 
     public function next()
     {
-        if (!$this->valid())
+        if (!$this->valid()) {
             return;
+        }
 
         $found = 0;
 
-        for ($i = $this->_pos + 1; $i < count($this->_epg); ++$i) {
+        for ($i = $this->_pos + 1, $iMax = count($this->_epg); $i < $iMax; ++$i) {
             $t = $this->_epg[$i]->get_start_time();
 
             if ($this->_from <= $t && $t <= $this->_till) {
@@ -58,8 +57,9 @@ class EpgIterator implements Iterator
             }
         }
 
-        if (!$found)
-            $this->_depleted = 1;
+        if (!$found) {
+            $this->_depleted = true;
+        }
     }
 
     public function valid()

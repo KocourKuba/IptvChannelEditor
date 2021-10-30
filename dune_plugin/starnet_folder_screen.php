@@ -126,7 +126,7 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
 
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        //hd_print('StarnetFolderScreen: get_folder_range' . $media_url->get_raw_string());
+        //hd_print("StarnetFolderScreen: get_folder_range: $from_ndx, " . $media_url->get_raw_string());
         $items = array();
         $dir = empty($media_url->filepath) ? "/tmp/mnt" : $media_url->filepath;
         $windowCounter = isset($media_url->windowCounter) ? $media_url->windowCounter + 1 : 2;
@@ -333,10 +333,10 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('smart_file_screen: handle_user_input:');
-        foreach ($user_input as $key => $value) {
-            hd_print("  $key => $value");
-        }
+        //hd_print('smart_file_screen: handle_user_input:');
+        //foreach ($user_input as $key => $value) {
+        //    hd_print("  $key => $value");
+        //}
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -410,7 +410,7 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
                 ControlFactory::add_text_field($defs,
                     $this, null,
                     'do_folder_name', '',
-                    '', 0, 0, 1, 1, 1230, 0, 1
+                    '', 0, 0, 1, 1, 1230, false, true
                 );
                 ControlFactory::add_vgap($defs, 500);
                 return ActionFactory::show_dialog('Задайте имя папки', $defs, true);
@@ -547,8 +547,6 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
             $folder_icon = "gui_skin://small_icons/network_folder.aai";
         } else if ($caption === 'NFS') {
             $folder_icon = "gui_skin://small_icons/network.aai";
-        } else if ($caption === 'Dune Favorites Folder') {
-            $folder_icon = "gui_skin://small_icons/favorites.aai";
         } else if (preg_match("|/tmp/mnt/storage/.*$|", $filepath) && !preg_match("|/tmp/mnt/storage/.*/|", $filepath)) {
             $folder_icon = "gui_skin://small_icons/hdd.aai";
         } else {
@@ -585,15 +583,13 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
         ControlFactory::add_text_field($defs, $this, null,
             'new_user',
             'Имя пользователя SMB папки:',
-            $user,
-            0, 0, 0, 1, 500, 0, 0
+            $user, 0, 0, 0, 1, 500
         );
 
         ControlFactory::add_text_field($defs, $this, null,
             'new_pass',
             'Пароль SMB папки:',
-            $password,
-            0, 0, 0, 1, 500, 0, 0
+            $password,0, 0, 0, 1, 500
         );
 
         ControlFactory::add_custom_close_dialog_and_apply_buffon($defs,

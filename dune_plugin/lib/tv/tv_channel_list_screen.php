@@ -83,8 +83,9 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         // foreach ($user_input as $key => $value)
         //     hd_print("  $key => $value");
 
-        if (!isset($user_input->selected_media_url))
+        if (!isset($user_input->selected_media_url)) {
             return null;
+        }
 
         $media_url = MediaURL::decode($user_input->selected_media_url);
         $channel_id = $media_url->channel_id;

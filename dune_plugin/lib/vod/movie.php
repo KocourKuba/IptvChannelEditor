@@ -12,12 +12,13 @@ class ShortMovie
      */
     public function __construct($id, $name, $poster_url)
     {
-        if (is_null($id))
+        if (is_null($id)) {
             throw new Exception("ShortMovie::id is null");
+        }
 
-        $this->id = strval($id);
-        $this->name = strval($name);
-        $this->poster_url = strval($poster_url);
+        $this->id = (string)$id;
+        $this->name = (string)$name;
+        $this->poster_url = (string)$poster_url;
     }
 }
 
@@ -29,8 +30,8 @@ class ShortMovieRange
 
     public function __construct($from_ndx, $total, $short_movies = null)
     {
-        $this->from_ndx = intval($from_ndx);
-        $this->total = intval($total);
+        $this->from_ndx = (int)$from_ndx;
+        $this->total = (int)$total;
         $this->short_movies = $short_movies === null ? array() : $short_movies;
     }
 }
@@ -44,10 +45,11 @@ class MovieSeries
      */
     public function __construct($id)
     {
-        if (is_null($id))
+        if (is_null($id)) {
             throw new Exception("MovieSeries::id is null");
+        }
 
-        $this->id = strval($id);
+        $this->id = (string)$id;
     }
 
     public $name = '';
@@ -60,9 +62,10 @@ class MovieSeason
     public $id;
     public function __construct($id)
     {
-        if (is_null($id))
+        if (is_null($id)) {
             hd_print("MovieSeason::id is not set");
-        $this->id = strval($id);
+        }
+        $this->id = (string)$id;
     }
     public $name = '';
     public $season_url = '';
@@ -88,30 +91,32 @@ class Movie
     public $country = '';
     public $budget = '';
 
-    public $series_list = null;
+    public $series_list;
 
     /**
      * @throws Exception
      */
     public function __construct($id)
     {
-        if (is_null($id))
+        if (is_null($id)) {
             throw new Exception("Movie::id is null");
+        }
 
-        $this->id = strval($id);
+        $this->id = (string)$id;
     }
 
     private function to_string($v)
     {
-        return $v === null ? '' : strval($v);
+        return $v === null ? '' : (string)$v;
     }
 
     private function to_int($v, $default_value)
     {
-        $v = strval($v);
-        if (!is_numeric($v))
+        $v = (string)$v;
+        if (!is_numeric($v)) {
             return $default_value;
-        $v = intval($v);
+        }
+        $v = (int)$v;
         return $v <= 0 ? $default_value : $v;
     }
 
@@ -192,15 +197,16 @@ class Movie
     public function get_vod_info($sel_id, $buffering_ms)
     {
         if (!is_array($this->series_list) ||
-            count($this->series_list) == 0) {
+            count($this->series_list) === 0) {
             throw new Exception('Invalid movie: series list is empty');
         }
 
         $series_array = array();
         $initial_series_ndx = -1;
         foreach ($this->series_list as $ndx => $series) {
-            if (!is_null($sel_id) && $series->id === $sel_id)
+            if ($series->id === $sel_id && !is_null($sel_id)) {
                 $initial_series_ndx = $ndx;
+            }
 
             $series_array[] = array(
                 PluginVodSeriesInfo::name => $series->name,

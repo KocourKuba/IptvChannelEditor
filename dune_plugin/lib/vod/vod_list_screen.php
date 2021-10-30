@@ -6,7 +6,7 @@ abstract class VodListScreen extends AbstractRegularScreen
 {
     const ID = 'vod_list';
 
-    public static $config = null;
+    public static $config;
 
     public $vod;
 
@@ -48,8 +48,9 @@ abstract class VodListScreen extends AbstractRegularScreen
         switch ($user_input->control_id)
         {
             case 'search':
-                if (!isset($user_input->selected_media_url))
+                if (!isset($user_input->selected_media_url)) {
                     return null;
+                }
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $defs = array();
@@ -67,8 +68,9 @@ abstract class VodListScreen extends AbstractRegularScreen
                 HD::put_item('search_item', $user_input->do_new_search);
                 $search_items = HD::get_items('search_items');
                 $k = array_search($user_input->do_new_search, $search_items);
-                if ($k !== false)
+                if ($k !== false) {
                     unset ($search_items [$k]);
+                }
 
                 array_unshift($search_items, $user_input->do_new_search);
                 HD::put_items('search_items', $search_items);
@@ -85,7 +87,7 @@ abstract class VodListScreen extends AbstractRegularScreen
     ///////////////////////////////////////////////////////////////////////
 
     // Returns ShortMovieRange.
-    protected abstract function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies);
+    abstract protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies);
 
     /**
      * @throws Exception
@@ -95,9 +97,10 @@ abstract class VodListScreen extends AbstractRegularScreen
         // hd_print("get_folder_range: $from_ndx");
         $movie_range = $this->get_short_movie_range($media_url, $from_ndx, $plugin_cookies);
 
-        $total = intval($movie_range->total);
-        if ($total <= 0)
+        $total = (int)$movie_range->total;
+        if ($total <= 0) {
             return HD::create_regular_folder_range(array());
+        }
 
         $items = array();
         foreach ($movie_range->short_movies as $movie) {

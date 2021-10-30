@@ -46,15 +46,16 @@ abstract class AbstractVod implements Vod
     {
         $this->fav_movie_ids = $fav_movie_ids;
         $this->fav_movie_ids_set = array();
-        foreach ($this->fav_movie_ids as $id)
+        foreach ($this->fav_movie_ids as $id) {
             $this->fav_movie_ids_set[$id] = true;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////
 
-    public abstract function is_favorites_supported();
+    abstract public function is_favorites_supported();
 
-    public abstract function is_movie_page_supported();
+    abstract public function is_movie_page_supported();
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -107,8 +108,9 @@ abstract class AbstractVod implements Vod
      */
     public function ensure_movie_loaded($movie_id, &$plugin_cookies)
     {
-        if (!isset($movie_id))
+        if (!isset($movie_id)) {
             throw new Exception('Movie ID is not set');
+        }
 
         if ($this->is_failed_movie_id($movie_id)) {
             hd_print("No movie with ID: $movie_id");
@@ -205,19 +207,22 @@ abstract class AbstractVod implements Vod
      */
     public function ensure_favorites_loaded(&$plugin_cookies)
     {
-        if ($this->fav_movie_ids !== null)
+        if ($this->fav_movie_ids !== null) {
             return;
+        }
 
         $this->load_favorites($plugin_cookies);
 
-        if ($this->fav_movie_ids === null)
+        if ($this->fav_movie_ids === null) {
             throw new Exception('Illegal state: favorites not loaded.');
+        }
     }
 
     public function add_favorite_movie($movie_id, &$plugin_cookies)
     {
-        if (isset($this->fav_movie_ids_set[$movie_id]))
+        if (isset($this->fav_movie_ids_set[$movie_id])) {
             return false;
+        }
 
         $this->do_add_favorite_movie($movie_id, $plugin_cookies);
 
@@ -233,16 +238,18 @@ abstract class AbstractVod implements Vod
 
     public function remove_favorite_movie($movie_id, &$plugin_cookies)
     {
-        if (!isset($this->fav_movie_ids_set[$movie_id]))
+        if (!isset($this->fav_movie_ids_set[$movie_id])) {
             return false;
+        }
 
         $this->do_remove_favorite_movie($movie_id, $plugin_cookies);
 
         hd_print('Removed favorite movie ' . $movie_id);
 
         $k = array_search($movie_id, $this->fav_movie_ids);
-        if ($k !== false)
+        if ($k !== false) {
             unset ($this->fav_movie_ids[$k]);
+        }
         unset ($this->fav_movie_ids_set[$movie_id]);
 
         $this->do_save_favorite_movies($this->fav_movie_ids, $plugin_cookies);
@@ -292,13 +299,15 @@ abstract class AbstractVod implements Vod
      */
     public function ensure_genres_loaded(&$plugin_cookies)
     {
-        if ($this->genres !== null)
+        if ($this->genres !== null) {
             return;
+        }
 
         $this->genres = $this->load_genres($plugin_cookies);
 
-        if ($this->genres === null)
+        if ($this->genres === null) {
             throw new Exception('Invalid VOD genres loaded');
+        }
     }
 
     /**
@@ -306,8 +315,9 @@ abstract class AbstractVod implements Vod
      */
     public function get_genre_ids()
     {
-        if ($this->genres === null)
+        if ($this->genres === null) {
             throw new Exception('VOD genres not loaded');
+        }
 
         return array_keys($this->genres);
     }
@@ -317,8 +327,9 @@ abstract class AbstractVod implements Vod
      */
     public function get_genre_caption($genre_id)
     {
-        if ($this->genres === null)
+        if ($this->genres === null) {
             throw new Exception('VOD genres not loaded');
+        }
 
         return $this->genres[$genre_id];
     }

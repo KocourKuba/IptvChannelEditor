@@ -48,9 +48,10 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
         // foreach ($user_input as $key => $value)
         //     hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'select_genre') {
-            if (!isset($user_input->selected_media_url))
+        if ($user_input->control_id === 'select_genre') {
+            if (!isset($user_input->selected_media_url)) {
                 return null;
+            }
 
             $media_url = MediaURL::decode($user_input->selected_media_url);
             $genre_id = $media_url->genre_id;
@@ -65,6 +66,9 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @throws Exception
+     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->vod->folder_entered($media_url, $plugin_cookies);

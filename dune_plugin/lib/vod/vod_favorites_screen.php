@@ -32,10 +32,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
     {
         $actions = array();
 
-        if ($this->vod->is_movie_page_supported())
-            $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::open_folder();
-        else
-            $actions[GUI_EVENT_KEY_ENTER] = ActionFactory::vod_play();
+        $actions[GUI_EVENT_KEY_ENTER] = $this->vod->is_movie_page_supported() ? ActionFactory::open_folder() : ActionFactory::vod_play();
 
         $remove_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_favorite');
         $remove_favorite_action['caption'] = 'Удалить';
@@ -64,8 +61,9 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
         //     hd_print("  $key => $value");
 
         if ($user_input->control_id === 'remove_favorite') {
-            if (!isset($user_input->selected_media_url))
+            if (!isset($user_input->selected_media_url)) {
                 return null;
+            }
 
             $media_url = MediaURL::decode($user_input->selected_media_url);
             $movie_id = $media_url->movie_id;

@@ -7,7 +7,7 @@ require_once 'vod_series_list_screen.php';
 class VodMovieScreen implements Screen, UserInputHandler
 {
     const ID = 'vod_movie';
-    public static $config = null;
+    public static $config;
     private $vod;
 
     public function __construct(Vod $vod)
@@ -103,14 +103,15 @@ class VodMovieScreen implements Screen, UserInputHandler
         // foreach ($user_input as $key => $value)
         //     hd_print("  $key => $value");
 
-        if ($user_input->control_id == 'favorites') {
+        if ($user_input->control_id === 'favorites') {
             $movie_id = $user_input->movie_id;
 
             $is_favorite = $this->vod->is_favorite_movie_id($movie_id);
-            if ($is_favorite)
+            if ($is_favorite) {
                 $this->vod->remove_favorite_movie($movie_id, $plugin_cookies);
-            else
+            } else {
                 $this->vod->add_favorite_movie($movie_id, $plugin_cookies);
+            }
 
             $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
 

@@ -21,8 +21,9 @@ class VodSearchScreen extends AbstractControlsScreen
     private function do_get_control_defs(&$plugin_cookies)
     {
         $pattern = '';
-        if (isset($plugin_cookies->vod_search_pattern))
+        if (isset($plugin_cookies->vod_search_pattern)) {
             $pattern = $plugin_cookies->vod_search_pattern;
+        }
 
         $defs = array();
 
