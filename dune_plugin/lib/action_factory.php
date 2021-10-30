@@ -89,7 +89,7 @@ class ActionFactory
         return self::close_dialog_and_run(null);
     }
 
-    public static function show_title_dialog($title, $post_action = null, $multiline = null, $preferred_width = null, $glass = null)
+    public static function show_title_dialog($title, $post_action = null, $multiline = null, $preferred_width = 0)
     {
         $defs = array();
 
@@ -98,12 +98,7 @@ class ActionFactory
         }
         ControlFactory::add_custom_close_dialog_and_apply_buffon($defs, 'apply_subscription', 'OK', 300, $post_action);
 
-        $attrs = array();
-        if ($glass !== null) {
-            $attrs['dialog_params'] = array('frame_style' => DIALOG_FRAME_STYLE_GLASS);
-        }
-
-        return self::show_dialog($title, $defs, false, $preferred_width, $attrs);
+        return self::show_dialog($title, $defs, false, $preferred_width);
     }
 
     public static function timer($delay_ms)

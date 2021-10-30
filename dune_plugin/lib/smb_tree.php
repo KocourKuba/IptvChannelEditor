@@ -61,7 +61,7 @@ class smb_tree
         return $this->return_value;
     }
 
-    private function parse_smbtree_output($input_lines)
+    private static function parse_smbtree_output($input_lines)
     {
         $output = array();
 
@@ -94,22 +94,22 @@ class smb_tree
 
     public function get_xdomains()
     {
-        return ($this->execute('--xdomains') !== 0) ? array() : $this->parse_smbtree_output($this->smb_tree_output);
+        return ($this->execute('--xdomains') !== 0) ? array() : self::parse_smbtree_output($this->smb_tree_output);
     }
 
     public function get_domains()
     {
-        return ($this->execute('--domains') !== 0) ? array() : $this->parse_smbtree_output($this->smb_tree_output);
+        return ($this->execute('--domains') !== 0) ? array() : self::parse_smbtree_output($this->smb_tree_output);
     }
 
     public function get_workgroup_servers($domain)
     {
-        return ($this->execute('--workgroup-servers=' . $domain) !== 0) ? array() : $this->parse_smbtree_output($this->smb_tree_output);
+        return ($this->execute('--workgroup-servers=' . $domain) !== 0) ? array() : self::parse_smbtree_output($this->smb_tree_output);
     }
 
     public function get_server_shares($server)
     {
-        return ($this->execute('--server-shares=' . $server) !== 0) ? array() : $this->parse_smbtree_output($this->smb_tree_output);
+        return ($this->execute('--server-shares=' . $server) !== 0) ? array() : self::parse_smbtree_output($this->smb_tree_output);
     }
 
     public static function get_df_smb()
@@ -165,7 +165,7 @@ class smb_tree
         return $d;
     }
 
-    public function get_ip_network_folder_smb()
+    public static function get_ip_network_folder_smb()
     {
         $d = array();
         $network_folder_smb = self::get_network_folder_smb();
@@ -278,21 +278,21 @@ class smb_tree
 
     public static function get_mount_smb($ip_smb)
     {
-        $d = array();
+        $mounts = array();
         foreach ($ip_smb as $k => $vel) {
             $df_smb = self::get_df_smb();
             if (isset($df_smb[str_replace(array('/', '\134'), '', $k)])) {
-                $d['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['foldername'] = $vel['foldername'];
-                $d['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['ip'] = $k;
+                $mounts['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['foldername'] = $vel['foldername'];
+                $mounts['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['ip'] = $k;
                 if (isset($vel['user']) && !empty($vel['user'])) {
-                    $d['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['user'] = $vel['user'];
+                    $mounts['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['user'] = $vel['user'];
                 }
 
                 if ((isset($vel['password'])) && !empty($vel['password'])) {
-                    $d['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['password'] = $vel['password'];
+                    $mounts['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['password'] = $vel['password'];
                 }
             } else {
-                $q = false;
+                $ret_code = false;
                 $n = count($df_smb);
                 $username = 'guest';
                 $password = '';
@@ -317,71 +317,58 @@ class smb_tree
 
                 if ($wr === false) {
                     $fn = '/tmp/mnt/smb/' . $n;
-                    if (!file_exists($fn)) {
-                        mkdir($fn, 0777, true);
+                    if (!file_exists($fn) && !mkdir($fn, 0777, true) && !is_dir($fn)) {
+                        hd_print("Directory '$fn' was not created");
                     }
-                    $q = exec("mount -t cifs -o username=$username,password=$password,posixpaths,rsize=32768,wsize=130048 \"$k\" \"$fn\" 2>&1 &");
+                    $ret_code = exec("mount -t cifs -o username=$username,password=$password,posixpaths,rsize=32768,wsize=130048 \"$k\" \"$fn\" 2>&1 &");
                 } else {
                     $fn = $wr;
                 }
 
-                if ($q === true) {
-                    $d['err_' . $vel['foldername']]['foldername'] = $vel['foldername'];
-                    $d['err_' . $vel['foldername']]['ip'] = $k;
-                    $d['err_' . $vel['foldername']]['err'] = trim($q);
+                if ($ret_code === true) {
+                    $mounts['err_' . $vel['foldername']]['foldername'] = $vel['foldername'];
+                    $mounts['err_' . $vel['foldername']]['ip'] = $k;
+                    $mounts['err_' . $vel['foldername']]['err'] = trim($ret_code);
 
                     if (isset($vel['user']) && !empty($vel['user'])) {
-                        $d['err_' . $vel['foldername']]['user'] = $vel['user'];
+                        $mounts['err_' . $vel['foldername']]['user'] = $vel['user'];
                     }
 
                     if (isset($vel['password']) && !empty($vel['password'])) {
-                        $d['err_' . $vel['foldername']]['password'] = $vel['password'];
+                        $mounts['err_' . $vel['foldername']]['password'] = $vel['password'];
                     }
                 } else {
-                    $d[$fn]['foldername'] = $vel['foldername'];
-                    $d[$fn]['ip'] = $k;
+                    $mounts[$fn]['foldername'] = $vel['foldername'];
+                    $mounts[$fn]['ip'] = $k;
                     if ((isset($vel['user'])) && !empty($vel['user'])) {
-                        $d[$fn]['user'] = $vel['user'];
+                        $mounts[$fn]['user'] = $vel['user'];
                     }
                     if ((isset($vel['password'])) && !empty($vel['password'])) {
-                        $d[$fn]['password'] = $vel['password'];
+                        $mounts[$fn]['password'] = $vel['password'];
                     }
                 }
             }
         }
-        return $d;
+        return $mounts;
     }
 
-    public static function get_smb_infos($item = false)
+    public function get_mount_all_smb($info)
     {
-        $smb_setup = 1;
-        $path = HD::get_data_path('smb_setup');
-        if ($item !== false) {
-            file_put_contents($path, $item);
-            $smb_setup = $item;
-        } else if (file_exists($path)) {
-            $smb_setup = file_get_contents($path);
-        }
+        if ($info !== 3) { // not SMB search
+            $folders = self::get_mount_smb(self::get_ip_network_folder_smb());
 
-        return (int)$smb_setup;
-    }
-
-    public function get_mount_all_smb()
-    {
-        $q = self::get_smb_infos();
-        if ($q !== 3) {
-            $a = self::get_mount_smb($this->get_ip_network_folder_smb());
-
-            if ($q === 1) {
-                return $a;
+            if ($info === 1) { // only network folders
+                return $folders;
             }
         }
 
-        $b = self::get_mount_smb($this->get_ip_server_shares_smb());
-        if ($q === 3) {
-            return $b;
+        $shares = self::get_mount_smb($this->get_ip_server_shares_smb());
+        if ($info === 3) { // only SMB search
+            return $shares;
         }
-        return array_merge($b, $a);
+
+        // network folders and network folders + SMB search
+        return array_merge($shares, $folders);
     }
 
     public static function get_network_folder_nfs()
@@ -443,8 +430,8 @@ class smb_tree
 
                 if ($wr === false) {
                     $fn = '/tmp/mnt/network/' . $n;
-                    if (!file_exists($fn)) {
-                        mkdir($fn, 0777, true);
+                    if (!file_exists($fn) && !mkdir($fn, 0777, true) && !is_dir($fn)) {
+                        hd_print("Directory '$fn' was not created");
                     }
                     $q = shell_exec("mount -t nfs -o " . $vel['protocol'] . " $k $fn 2>&1");
                 } else {

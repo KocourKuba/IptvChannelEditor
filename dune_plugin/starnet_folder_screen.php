@@ -41,14 +41,15 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
         );
     }
 
-    public function get_file_list($dir)
+    public function get_file_list(&$plugin_cookies, $dir)
     {
         //hd_print("StarnetFolderScreen: get_file_list: $dir");
         $smb_shares = new smb_tree();
         $fileData['folder'] = array();
         $fileData['file'] = array();
         if ($dir === '/tmp/mnt/smb') {
-            $s['smb'] = $smb_shares->get_mount_all_smb();
+            $info = isset($plugin_cookies->smb_setup) ? (int)$plugin_cookies->smb_setup : 1;
+            $s['smb'] = $smb_shares->get_mount_all_smb($info);
             return $s;
         }
 
@@ -137,7 +138,7 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
         $save_data = isset($media_url->save_data) ? $media_url->save_data : false;
         $save_file = isset($media_url->save_file) ? $media_url->save_file : false;
 
-        foreach ($this->get_file_list($dir) as $key => $itm) {
+        foreach ($this->get_file_list($plugin_cookies, $dir) as $key => $itm) {
             ksort($itm);
             foreach ($itm as $k => $v) {
                 if ($key === 'smb') {
@@ -476,8 +477,7 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
                 return ActionFactory::open_folder($selected_url, $caption);
 
             case 'smb_setup':
-                $smb_shares = new smb_tree();
-                $smb_view = $smb_shares::get_smb_infos();
+                $smb_view = isset($plugin_cookies->smb_setup) ? (int)$plugin_cookies->smb_setup : 1;
 
                 $smb_view_ops[1] = 'Сетевые папки';
                 $smb_view_ops[2] = 'Сетевые папки + поиск SMB шар';
@@ -496,16 +496,17 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
                 return ActionFactory::show_dialog('Настройка поиска SMB', $defs, true, 1000, $attrs);
 
             case 'save_smb_setup':
-                $smb_shares = new smb_tree ();
                 $smb_view_ops = array();
+                $smb_view = 1;
                 $smb_view_ops[1] = 'Сетевые папки';
                 $smb_view_ops[2] = 'Сетевые папки + поиск SMB папок';
                 $smb_view_ops[3] = 'Поиск SMB папок';
                 if (isset($user_input->smb_view)) {
-                    $smb_view = $smb_shares::get_smb_infos($user_input->smb_view);
+                    $smb_view = $user_input->smb_view;
+                    $plugin_cookies->smb_setup = $user_input->smb_view;
                 }
 
-                return ActionFactory::show_title_dialog("Используется: " . $smb_view_ops[$smb_view], null, false, 0, 1);
+                return ActionFactory::show_title_dialog("Используется: " . $smb_view_ops[$smb_view]);
         }
         return null;
     }
