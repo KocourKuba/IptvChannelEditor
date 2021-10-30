@@ -159,12 +159,12 @@ class ControlFactory
             GuiControlDef::specific_def =>
                 array
                 (
-                    GuiTextFieldDef::initial_value => strval($initial_value),
-                    GuiTextFieldDef::numeric => intval($numeric),
-                    GuiTextFieldDef::password => intval($password),
-                    GuiTextFieldDef::has_osk => intval($has_osk),
-                    GuiTextFieldDef::always_active => intval($always_active),
-                    GuiTextFieldDef::width => intval($width),
+                    GuiTextFieldDef::initial_value => (string)$initial_value,
+                    GuiTextFieldDef::numeric => (int)$numeric,
+                    GuiTextFieldDef::password => (int)$password,
+                    GuiTextFieldDef::has_osk => (int)$has_osk,
+                    GuiTextFieldDef::always_active => (int)$always_active,
+                    GuiTextFieldDef::width => (int)$width,
                     GuiTextFieldDef::apply_action => $apply_action,
                     GuiTextFieldDef::confirm_action => $confirm_action,
                 ),

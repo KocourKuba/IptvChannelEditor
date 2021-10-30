@@ -6,18 +6,15 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
     implements UserInputHandler
 {
     const ID = 'tv_favorites';
+    private $tv;
 
     public static function get_media_url_str()
     {
-        return MediaURL::encode(
-            array(
-                'screen_id' => self::ID,
-                'is_favorites' => true));
+        return MediaURL::encode(array(
+            'screen_id' => self::ID,
+            'is_favorites' => true)
+        );
     }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    private $tv;
 
     public function __construct(Tv $tv, $folder_views)
     {
@@ -137,14 +134,12 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
 
             $items[] = array
             (
-                PluginRegularFolderItem::media_url =>
-                    MediaURL::encode(
-                        array(
-                            'channel_id' => $c->get_id(),
-                            'group_id' => '__favorites')),
+                PluginRegularFolderItem::media_url => MediaURL::encode(array(
+                    'channel_id' => $c->get_id(),
+                    'group_id' => '__favorites')
+                ),
                 PluginRegularFolderItem::caption => $c->get_title(),
-                PluginRegularFolderItem::view_item_params => array
-                (
+                PluginRegularFolderItem::view_item_params => array(
                     ViewItemParams::icon_path => $c->get_icon_url(),
                     ViewItemParams::item_detailed_icon_path => $c->get_icon_url(),
                 ),

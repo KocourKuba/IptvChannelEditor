@@ -22,32 +22,36 @@ class MediaURL
 
     public function __set($key, $value)
     {
-        if (is_null($this->map))
+        if (is_null($this->map)) {
             $this->map = (object)array();
+        }
 
         $this->map->{$key} = $value;
     }
 
     public function __unset($key)
     {
-        if (is_null($this->map))
+        if (is_null($this->map)) {
             return;
+        }
 
         unset($this->map->{$key});
     }
 
     public function __get($key)
     {
-        if (is_null($this->map))
+        if (is_null($this->map)) {
             return null;
+        }
 
         return isset($this->map->{$key}) ? $this->map->{$key} : null;
     }
 
     public function __isset($key)
     {
-        if (is_null($this->map))
+        if (is_null($this->map)) {
             return false;
+        }
 
         return isset($this->map->{$key});
     }
@@ -72,8 +76,9 @@ class MediaURL
 
     public static function decode($s)
     {
-        if (strpos($s, '{') !== 0)
+        if (strpos($s, '{') !== 0) {
             return new MediaURL($s, null);
+        }
 
         return new MediaURL($s, json_decode($s));
     }

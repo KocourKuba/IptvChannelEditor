@@ -23,8 +23,7 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        return array
-        (
+        return array(
             GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
             GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
             GUI_EVENT_KEY_B_GREEN => ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки плагина'),
@@ -42,13 +41,12 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
         $items = array();
 
         foreach ($this->tv->get_groups() as $group) {
-            $media_url = $group->is_favorite_channels() ?
+            $media_url_str = $group->is_favorite_channels() ?
                 TvFavoritesScreen::get_media_url_str() :
                 TvChannelListScreen::get_media_url_str($group->get_id());
 
-            $items[] = array
-            (
-                PluginRegularFolderItem::media_url => $media_url,
+            $items[] = array(
+                PluginRegularFolderItem::media_url => $media_url_str,
                 PluginRegularFolderItem::caption => $group->get_title(),
                 PluginRegularFolderItem::view_item_params => array
                 (

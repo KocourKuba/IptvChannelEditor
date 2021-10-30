@@ -13,15 +13,17 @@ class ArchiveCache
 
     public static function get_archive_by_id($id)
     {
-        if (is_null(self::$archive_by_id))
+        if (is_null(self::$archive_by_id)) {
             return null;
+        }
         return self::$archive_by_id[$id];
     }
 
     public static function clear_archive($id)
     {
-        if (is_null(self::$archive_by_id))
+        if (is_null(self::$archive_by_id)) {
             return;
+        }
 
         unset(self::$archive_by_id[$id]);
     }

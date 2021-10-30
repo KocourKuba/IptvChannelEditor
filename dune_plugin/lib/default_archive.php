@@ -22,8 +22,9 @@ class DefaultArchive implements Archive
     public static function get_archive($id, $url_prefix)
     {
         $archive = ArchiveCache::get_archive_by_id($id);
-        if (!is_null($archive))
+        if (!is_null($archive)) {
             return $archive;
+        }
 
         $version_url = $url_prefix . '/versions.txt';
         try {
@@ -64,7 +65,7 @@ class DefaultArchive implements Archive
                 $version_by_name = array();
             }
 
-            $total_size = intval($doc);
+            $total_size = (int)$doc;
             hd_print("Archive $id: size = $total_size");
         }
 
@@ -102,9 +103,9 @@ class DefaultArchive implements Archive
         $urls_with_keys = array();
         foreach ($this->version_by_name as $name => $version) {
             $pos = strrpos($name, ".");
-            if ($pos === false)
+            if ($pos === false) {
                 $key = $name . '.' . $version;
-            else {
+            } else {
                 $key = substr($name, 0, $pos) . '.' .
                     $version . substr($name, $pos);
             }
@@ -124,14 +125,15 @@ class DefaultArchive implements Archive
 
     public function get_archive_url($name)
     {
-        if (!isset($this->version_by_name[$name]))
+        if (!isset($this->version_by_name[$name])) {
             return "missing://";
+        }
         $version = $this->version_by_name[$name];
 
         $pos = strrpos($name, ".");
-        if ($pos === false)
+        if ($pos === false) {
             $key = $name . '.' . $version;
-        else {
+        } else {
             $key = substr($name, 0, $pos) . '.' .
                 $version . substr($name, $pos);
         }

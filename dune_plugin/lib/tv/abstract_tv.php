@@ -257,8 +257,9 @@ abstract class AbstractTv implements Tv
 
     public function is_favorite_channel_id($channel_id, $plugin_cookies)
     {
-        if (!$this->is_favorites_supported())
+        if (!$this->is_favorites_supported()) {
             return false;
+        }
 
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
 

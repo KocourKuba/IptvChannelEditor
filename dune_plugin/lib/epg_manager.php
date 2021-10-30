@@ -63,9 +63,8 @@ class EpgManager
             $counts = count($epg);
             if ($counts > 0) {
                 hd_print("Save $counts EPG entries to cache: $cache_file");
-
-                if (!is_dir($cache_dir)) {
-                    mkdir($cache_dir);
+                if (!is_dir($cache_dir) && !mkdir($cache_dir) && !is_dir($cache_dir)) {
+                    hd_print("Directory '$cache_dir' was not created");
                 }
 
                 ksort($epg, SORT_NUMERIC);

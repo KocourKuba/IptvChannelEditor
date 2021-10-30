@@ -78,8 +78,9 @@ abstract class AbstractRegularScreen implements RegularScreen
 
         ++$idx;
 
-        if ($idx >= count($this->folder_views))
+        if ($idx >= count($this->folder_views)) {
             $idx = 0;
+        }
 
         $plugin_cookies->{$this->folder_view_index_attr_name} = $idx;
 
@@ -90,19 +91,21 @@ abstract class AbstractRegularScreen implements RegularScreen
 
     private function get_folder_view_index(&$plugin_cookies)
     {
-        if (!isset($plugin_cookies->{$this->folder_view_index_attr_name}))
+        if (!isset($plugin_cookies->{$this->folder_view_index_attr_name})) {
             return 0;
+        }
 
         $idx = $plugin_cookies->{$this->folder_view_index_attr_name};
 
         $cnt = count($this->folder_views);
 
-        if ($idx < 0)
+        if ($idx < 0) {
             $idx = 0;
-        else if ($idx >= $cnt)
+        } else if ($idx >= $cnt) {
             $idx = $cnt - 1;
+        }
 
-        return intval($idx);
+        return $idx;
     }
 
     ///////////////////////////////////////////////////////////////////////

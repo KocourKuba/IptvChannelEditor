@@ -111,11 +111,9 @@ class EpgXmlParser
         }
 
         try {
-            $ex = explode(' ', $date);
-            $sd = $ex[0];
-            $ed = $ex[1];
+            list($sd, $ed) = explode(' ', $date);
 
-            if (strlen($sd) == 13) {
+            if (strlen($sd) === 13) {
                 $sd = "{$sd}0";
             }
 
@@ -181,7 +179,7 @@ class EpgXmlParser
     public function parseChannels()
     {
         $xml = new XMLReader();
-        $xml->open($this->getXmlFile());
+        $xml::open($this->getXmlFile());
 
         /** @noinspection PhpStatementHasEmptyBodyInspection */
         /** @noinspection LoopWhichDoesNotLoopInspection */
@@ -193,38 +191,38 @@ class EpgXmlParser
         while ($xml->name === 'channel') {
             $element = new SimpleXMLElement($xml->readOuterXML());
 
-            $group_by = $this->channels_groupby === '@id' ? (@$i++) : strval($element->attributes()->{$this->epg_data_groupby});
+            $group_by = $this->channels_groupby === '@id' ? (@$i++) : (string)$element->attributes()->{$this->epg_data_groupby};
 
             //	se the id
             $channel_id = $group_by ?: 1;
-            if (!count($this->channelFilter) || $this->channelMatchFilter(strval($element->attributes()->channel))) {
+            if (!count($this->channelFilter) || $this->channelMatchFilter((string)$element->attributes()->channel)) {
                 $this->channels[$channel_id] = array(
-                    'id' => strval($element->attributes()->id),
-                    'display-name' => strval($element->{'display-name'}),
-                    'url' => strval($element->{'url'}),
-                    'email' => strval($element->{'email'}),
+                    'id' => (string)$element->attributes()->id,
+                    'display-name' => (string)$element->{'display-name'},
+                    'url' => (string)$element->{'url'},
+                    'email' => (string)$element->{'email'},
                     'icon' => null,
                 );
 
                 if (isset($element->{'icon'}) && $element->{'icon'} instanceof SimpleXMLElement) {
-                    $attributes = $element->{'icon'}->attributes();
-                    $path_info = pathinfo($attributes->src);
+                    $src = $element->{'icon'}->attributes()->src;
+                    $path_info = pathinfo($src);
 
-                    if (empty($attributes->src)) {
-                        $this->channels[$channel_id]['icon'] = strval($element->{'icon'});
+                    if ($src === null) {
+                        $this->channels[$channel_id]['icon'] = (string)$element->{'icon'};
                         $xml->next('channel');
                         unset($element);
-                    } elseif (!filter_var($attributes->src, FILTER_VALIDATE_URL)) {
-                        $this->channels[$channel_id]['icon'] = strval($element->{'icon'});
+                    } elseif (!filter_var($src, FILTER_VALIDATE_URL)) {
+                        $this->channels[$channel_id]['icon'] = (string)$element->{'icon'};
                         $xml->next('channel');
                         unset($element);
                     } elseif (empty($path_info['extension'])) {
-                        $this->channels[$channel_id]['icon'] = strval($element->{'icon'});
+                        $this->channels[$channel_id]['icon'] = (string)$element->{'icon'};
                         $xml->next('channel');
                         unset($element);
                         continue;
                     } else {
-                        $this->channels[$channel_id]['icon'] = strval($attributes->src);
+                        $this->channels[$channel_id]['icon'] = (string)$src;
                     }
                 }
             }
@@ -242,7 +240,7 @@ class EpgXmlParser
     public function parseEpg()
     {
         $xml = new XMLReader();
-        $xml->open($this->getXmlFile());
+        $xml::open($this->getXmlFile());
 
         /** @noinspection PhpStatementHasEmptyBodyInspection */
         /** @noinspection LoopWhichDoesNotLoopInspection */
@@ -253,27 +251,27 @@ class EpgXmlParser
         $i = 0;
         while ($xml->name === 'programme') {
             $element = new SimpleXMLElement($xml->readOuterXML());
-            //hd_print("read: " . strval($element->attributes()->channel));
-            if (!count($this->channelFilter) || $this->channelMatchFilter(strval($element->attributes()->channel))) {
-                $startString = $this->getDate(strval($element->attributes()->start));
-                $stopString = $this->getDate(strval($element->attributes()->stop));
-                $grouper = $this->epg_data_groupby === '@id' ? (@$i++) : strval($element->attributes()->{$this->epg_data_groupby});
+            //hd_print("read: " . (string)$element->attributes()->channel);
+            if (!count($this->channelFilter) || $this->channelMatchFilter((string)$element->attributes()->channel)) {
+                $startString = $this->getDate((string)$element->attributes()->start);
+                $stopString = $this->getDate((string)$element->attributes()->stop);
+                $grouper = $this->epg_data_groupby === '@id' ? (@$i++) : (string)$element->attributes()->{$this->epg_data_groupby};
                 $this->epg_data[$grouper ?: 0] = array(
                     'start' => $startString,
-                    'start_raw' => strval($element->attributes()->start),
-                    'channel' => strval($element->attributes()->channel),
+                    'start_raw' => (string)$element->attributes()->start,
+                    'channel' => (string)$element->attributes()->channel,
                     'stop' => $stopString,
-                    'title' => strval($element->title),
-                    'sub-title' => strval($element->{'sub-title'}),
-                    'desc' => $this->filterDescr(strval($element->desc)),
-                    'date' => intval($element->date),
-                    'category' => strval($element->category),
-                    'credits' => strval($element->credits),
-                    'country' => strval($element->country),
-                    'icon' => strval($element->icon),
-                    'episode-num' => strval($element->{'episode-num'}),
+                    'title' => (string)$element->title,
+                    'sub-title' => (string)$element->{'sub-title'},
+                    'desc' => $this->filterDescr((string)$element->desc),
+                    'date' => (int)$element->date,
+                    'category' => (string)$element->category,
+                    'credits' => (string)$element->credits,
+                    'country' => (string)$element->country,
+                    'icon' => (string)$element->icon,
+                    'episode-num' => (string)$element->{'episode-num'},
                 );
-                //hd_print("found: " . strval($element->title) . strval($element->desc));
+                //hd_print("found: " . $element->title . $element->desc);
             }
 
             $xml->next('programme');
@@ -300,8 +298,9 @@ class EpgXmlParser
 
         $xml_file = '';
         preg_match('|^.*\/.*(\..+)$|', $this->file, $match);
-        if ($match[1] === '.gz')
+        if ($match[1] === '.gz') {
             $xml_file = 'compress.zlib://';
+        }
 
         $xml_file .= $this->file;
         return $xml_file;
