@@ -39,7 +39,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         // Plugin name
         ControlFactory::add_vgap($defs, -10);
         $title = $config::$PLUGIN_SHOW_NAME . ' v.' . $config::$PLUGIN_VERSION . '. [' . $config::$PLUGIN_DATE . ']';
-        $this->add_button($defs, ' ', $title, 'IPTV Channel Editor by sharky72', 0);
+        $this->add_label($defs, $title, 'IPTV Channel Editor by sharky72');
 
         //////////////////////////////////////
         // Show in main screen
@@ -66,12 +66,11 @@ class StarnetSetupScreen extends AbstractControlsScreen
         //////////////////////////////////////
         // channels lists
         $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
-        $paths_list = array(
-            'current_path' => $channels_list_path,
-            'select_new_path' => 'Выбрать папку',
-            'reset_path' => 'Сбросить по умолчанию'
-        );
-        $this->add_combobox($defs, 'change_list_path','Расположение списка каналов', $channels_list_path, $paths_list,0, true);
+        if (strlen($channels_list_path) > 30) {
+            $channels_list_path = "..." . substr($channels_list_path, -30);
+        }
+        $this->add_button($defs, 'change_list_path', 'Выбрать папку со списками каналов', $channels_list_path, 800);
+        $this->add_button($defs, 'reset_path', 'Установить по умолчанию', 'Установить', 800);
 
         $all_channels = array();
         $list = glob($channels_list_path . '/*.xml');
@@ -254,25 +253,19 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
             switch ($control_id) {
                 case 'change_list_path':
-                    $this->tv->unload_channels();
-                    switch ($new_value)
-                    {
-                        case 'select_new_path':
-                            hd_print("select new path");
-                            $media_url = MediaURL::encode(
-                                array
-                                (
-                                    'screen_id' => 'file_list',
-                                    'save_data' => 'ch_list_path'
-                                ));
-                            $this->tv->unload_channels();
-                            return ActionFactory::open_folder($media_url,'Папка со списком каналов');
-                        case 'reset_path':
-                            hd_print("reset path to default");
-                            $plugin_cookies->ch_list_path = '';
-                            break;
-                    }
+                    $media_url = MediaURL::encode(
+                        array(
+                            'screen_id' => 'file_list',
+                            'save_data' => 'ch_list_path',
+                        )
+                    );
 
+                    $this->tv->unload_channels();
+                    return ActionFactory::open_folder($media_url,'Папка со списком каналов');
+
+                case 'reset_path':
+                    hd_print("reset path to default");
+                    $plugin_cookies->ch_list_path = '';
                     $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
                     return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
 
