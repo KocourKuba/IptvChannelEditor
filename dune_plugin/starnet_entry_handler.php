@@ -1,16 +1,14 @@
 ﻿<?php
+/** @noinspection PhpUndefinedClassInspection */
 require_once 'lib/user_input_handler_registry.php';
 
 class StarnetEntryHandler implements UserInputHandler
 {
-    public function __construct()
-    {
-        UserInputHandlerRegistry::get_instance()-> register_handler($this);
-    }
+    const ID = 'entry';
 
     public function get_handler_id()
     {
-        return 'entry';
+        return self::ID;
     }
 	
     public function handle_user_input(&$user_input, &$plugin_cookies)
@@ -25,7 +23,7 @@ class StarnetEntryHandler implements UserInputHandler
             }
 
             if ($user_input->control_id === 'do_setup') {
-                return ActionFactory::open_folder('setup', 'Настройки' . DuneSystem::$properties['plugin_name']);
+                return ActionFactory::open_folder('setup', 'Настройки ' . DuneSystem::$properties['plugin_name']);
             }
         }
         if ($user_input->handler_id === 'entry') {

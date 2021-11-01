@@ -137,7 +137,12 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
     {
         $this->tv->folder_entered($media_url, $plugin_cookies);
 
-        $this->tv->ensure_channels_loaded($plugin_cookies);
+        try {
+            $this->tv->ensure_channels_loaded($plugin_cookies);
+        } catch (Exception $e) {
+            hd_print("Ошибка загрузки плейлиста! " . $e->getMessage());
+            return array();
+        }
 
         $group = $this->tv->get_group($media_url->group_id);
 

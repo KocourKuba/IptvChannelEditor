@@ -1,4 +1,5 @@
 ﻿<?php
+/** @noinspection PhpUndefinedClassInspection */
 
 class HD
 {
@@ -390,13 +391,9 @@ class HD
         static $ip_address = null;
 
         if (is_null($ip_address)) {
-            preg_match_all('/inet'.(false ? '6?' : '').' addr: ?([^ ]+)/', `ifconfig`, $ips);
-            if ($ips[1][0] !== '127.0.0.1') {
-                $ip_address = $ips[1][0];
-            } else if ($ips[1][1] !== '127.0.0.1') {
-                $ip_address = $ips[1][1];
-            }
+            $ip_address = trim(shell_exec('ifconfig eth0 | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
         }
+
         return $ip_address;
     }
 
@@ -437,9 +434,7 @@ class HD
     {
         hd_print('Back trace:');
         foreach (debug_backtrace() as $f) {
-            hd_print(
-                '  - ' . $f['function'] .
-                ' at ' . $f['file'] . ':' . $f['line']);
+            hd_print('  - ' . $f['function'] . ' at ' . $f['file'] . ':' . $f['line']);
         }
     }
 
@@ -486,8 +481,9 @@ class HD
     {
         $array = array();
         foreach ($arrayItems as $item) {
-            if (!empty($item))
+            if (!empty($item)) {
                 $array[] = $item;
+            }
         }
 
         return implode(", ", $array);
@@ -533,45 +529,56 @@ class HD
         return DuneSystem::$properties['install_dir_path'] . $path;
     }
 
-    public static function get_versions($t = false)
+    public static function is_newer_versions()
     {
-        static $versions = array();
+        $versions = self::get_firmware_version();
 
-        if (empty($versions)) {
-            $versions = parse_ini_file('/tmp/run/versions.txt');
-        }
-
-        if ($t !== false) {
-            return $versions[$t];
-        }
-
-        if (false !== strpos($versions['firmware_version'], "r10")) {
-            return false;
-        }
-
-        return (preg_match('|r1\d|', $versions['firmware_version']));
+        return (isset($versions['rev_number']) && $versions['rev_number'] > 10);
     }
 
     public static function get_platform_kind()
     {
-        static $platform_kind = null;
+        static $result = null;
 
-        if (!is_null($platform_kind))
-        {
-            $ini_arr = parse_ini_file('/tmp/run/versions.txt');
-            if (preg_match('|87\d\d|', $ini_arr['platform_kind'])) {
-                $platform_kind = '87xx';
-            } else if (preg_match('|864\d|', $ini_arr['platform_kind'])) {
-                $platform_kind = '864x';
-            } else if (preg_match('|867\d|', $ini_arr['platform_kind'])) {
-                $platform_kind = '867x';
-            } else if (preg_match('|865\d|', $ini_arr['platform_kind'])) {
-                $platform_kind = '865x';
-            } else if (false !== strpos($ini_arr['platform_kind'], "android")) {
-                $platform_kind = 'android';
-            }
+        if (is_null($result)) {
+            $result = trim(shell_exec('grep "platform_kind" /tmp/run/versions.txt | sed "s/^.*= *//"'));
         }
 
-        return $platform_kind;
+        return $result;
+    }
+
+    public static function get_product_id()
+    {
+        static $result = null;
+
+        if (is_null($result)) {
+            $result = trim(shell_exec('grep "product_id:" /tmp/sysinfo.txt | sed "s/^.*: *//"'));
+        }
+
+        return $result;
+    }
+
+    public static function get_raw_firmware_version()
+    {
+        static $fw = null;
+
+        if (is_null($fw)) {
+            return trim(shell_exec('grep "firmware_version:" /tmp/sysinfo.txt | sed "s/^.*: *//"'));
+        }
+
+        return $fw;
+    }
+
+    public static function get_firmware_version()
+    {
+        static $result = null;
+
+        if (is_null($result)) {
+            preg_match_all('/^(\d*)_(\d*)_(\D*)(\d*)(.*)$/', self::get_raw_firmware_version(), $matches, PREG_SET_ORDER);
+            $matches[0][5] = ltrim($matches[0][5], '_');
+            $result = array_combine(array('string', 'build_date', 'build_number', 'rev_literal', 'rev_number', 'features'), $matches[0]);
+        }
+
+        return $result;
     }
 }

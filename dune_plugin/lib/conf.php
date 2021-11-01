@@ -26,8 +26,8 @@ class Conf
 
         hd_print("Reading configuration from '$conf_file_path'...");
 
-        for ($i = 0; $i < count($lines); ++$i) {
-            if (preg_match('/^ *(\S+) *= *(\S+)$/', $lines[$i], $matches) != 1) {
+        for ($i = 0, $iMax = count($lines); $i < $iMax; ++$i) {
+            if (preg_match('/^ *(\S+) *= *(\S+)$/', $lines[$i], $matches) !== 1) {
                 hd_print(
                     "Warning: line " . ($i + 1) . ": unknown format. " .
                     "Data: '" . $lines[$i] . "'.");

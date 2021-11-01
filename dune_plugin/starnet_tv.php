@@ -10,7 +10,7 @@ require_once 'starnet_vod_category_list_screen.php';
 
 class StarnetPluginTv extends AbstractTv
 {
-    public static $config = null;
+    public static $config;
 
     public function __construct()
     {
@@ -170,9 +170,12 @@ class StarnetPluginTv extends AbstractTv
             // update play stream url and calculate unique id from url hash
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = (string)$xml_tv_channel->channel_id;
-                $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
+                $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : null;
                 // update stream url by provider parameters
                 $streaming_url = self::$config->UpdateStreamUri($channel_id, $plugin_cookies, $ext_params);
+                if (empty($streaming_url)) {
+                    continue;
+                }
                 $hash = hash("crc32", $streaming_url);
             } else {
                 // custom url, play as is
@@ -258,7 +261,7 @@ class StarnetPluginTv extends AbstractTv
             $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
             // get channel by hash
             $channel = $this->get_channel($channel_id);
-            if ($channel->is_protected() && $protect_code !== $pass_sex) {
+            if ($protect_code !== $pass_sex && $channel->is_protected()) {
                 throw new Exception('Wrong password');
             }
         } catch (Exception $ex) {

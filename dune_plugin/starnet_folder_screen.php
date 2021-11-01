@@ -116,7 +116,7 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
             }
 
             $actions[GUI_EVENT_TIMER] = UserInputHandlerRegistry::create_action($this, 'timer');
-            if (HD::get_versions() !== false) {
+            if (HD::is_newer_versions() !== false) {
                 $actions[GUI_EVENT_KEY_SETUP] = ActionFactory::replace_path($media_url->windowCounter);
             }
         }
@@ -399,7 +399,7 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
                 $action = is_null($setup_handler) ? null : UserInputHandlerRegistry::create_action($setup_handler, 'reset_controls');
                 $post_action = ActionFactory::invalidate_folders(array('setup', 'main_menu', 'tv_group_list'), $action);
 
-                if (HD::get_versions() !== false) {
+                if (HD::is_newer_versions() !== false) {
                     $post_action = ActionFactory::replace_path($parent_url->windowCounter, null, $post_action);
                 }
 

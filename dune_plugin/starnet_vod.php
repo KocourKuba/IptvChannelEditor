@@ -8,7 +8,7 @@ require_once 'lib/vod/movie.php';
 
 class StarnetVod extends AbstractVod
 {
-    public static $config = null;
+    public static $config;
 
     public function __construct()
     {

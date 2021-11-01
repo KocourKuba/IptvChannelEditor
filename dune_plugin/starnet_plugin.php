@@ -26,7 +26,6 @@ require_once 'starnet_folder_screen.php';
 
 class StarnetDunePlugin extends DefaultDunePlugin
 {
-    private $entry_handler;
     /**
      * @throws Exception
      */
@@ -35,14 +34,18 @@ class StarnetDunePlugin extends DefaultDunePlugin
         parent::__construct();
 
         $plugin_type = PLUGIN_TYPE;
-        if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig'))
+        if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig')) {
             throw new Exception('Unknown plugin type: ' . $plugin_type);
+        }
 
         $config = new $plugin_type;
         StarnetPluginTv::$config = $config;
         StarnetMainScreen::$config = $config;
         StarnetSetupScreen::$config = $config;
 
+        hd_print("Dune Product:    " . HD::get_product_id());
+        hd_print("Dune firmware:   " . HD::get_raw_firmware_version());
+        hd_print("----------------------------------------------------");
         hd_print("Plugin name:     " . $config::$PLUGIN_SHOW_NAME);
         hd_print("Plugin version:  " . $config::$PLUGIN_VERSION);
         hd_print("Plugin date:     " . $config::$PLUGIN_DATE);
@@ -53,9 +56,9 @@ class StarnetDunePlugin extends DefaultDunePlugin
         hd_print("VOD fav:         " . ($config::$VOD_FAVORITES_SUPPORTED ? "yes" : "no"));
         hd_print("MPEG-TS support: " . ($config::$MPEG_TS_SUPPORTED ? "yes" : "no"));
 
+        UserInputHandlerRegistry::get_instance()->register_handler(new StarnetEntryHandler());
         $tv = new StarnetPluginTv();
         $this->tv = $tv;
-        $this->entry_handler = new StarnetEntryHandler();
         $this->add_screen(new StarnetMainScreen($tv, $config->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
         $this->add_screen(new TvChannelListScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
         $this->add_screen(new StarnetSetupScreen($tv));

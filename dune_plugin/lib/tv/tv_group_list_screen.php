@@ -36,7 +36,11 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
     {
         $this->tv->folder_entered($media_url, $plugin_cookies);
 
-        $this->tv->ensure_channels_loaded($plugin_cookies);
+        try {
+            $this->tv->ensure_channels_loaded($plugin_cookies);
+        } catch (Exception $e) {
+            ActionFactory::show_title_dialog("Ошибка загрузки плейлиста! $e");
+        }
 
         $items = array();
 

@@ -187,7 +187,7 @@ abstract class DefaultConfig
     }
 
     /**
-     * Get information from the provider m3u8 playlist: subdomain token host etc..
+     * Get information from the provider m3u8 playlist: subdomain token host etc.
      * @param $plugin_cookies
      * @param &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
@@ -211,6 +211,7 @@ abstract class DefaultConfig
      * Collect information from m3u8 playlist
      * @param $plugin_cookies
      * @return array
+     * @throws Exception
      */
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
@@ -220,6 +221,10 @@ abstract class DefaultConfig
             if (preg_match(static::$M3U_STREAM_URL_PATTERN, $line, $matches)) {
                 $pl_entries[$matches['id']] = $matches;
             }
+        }
+
+        if (empty($pl_entries)) {
+            throw new Exception('Empty provider playlist! No channels mapped.');
         }
 
         hd_print("Read Playlist entries: " . count($pl_entries));
@@ -235,8 +240,16 @@ abstract class DefaultConfig
      */
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
-        hd_print("UpdateStreamUri: Undefined function call");
-        return "";
+        if ($ext_params === null || !isset($ext_params['subdomain'], $ext_params['token'])) {
+            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
+            return '';
+        }
+
+        $url = str_replace(
+            array('{SUBDOMAIN}', '{ID}', '{TOKEN}'),
+            array($ext_params['subdomain'], $channel_id, $ext_params['token']),
+            static::$MEDIA_URL_TEMPLATE_HLS);
+        return static::make_ts($url);
     }
 
     public static function getSearchList($keyword, $plugin_cookies)
@@ -525,8 +538,6 @@ abstract class DefaultConfig
                     ViewParams::sandwich_cover => self::SANDWICH_COVER,
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    //ViewParams::sandwich_width => 200,
-                    //ViewParams::sandwich_height => 120,
                     ViewParams::content_box_padding_left => 70,
                     ViewParams::background_path => static::GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
@@ -850,8 +861,6 @@ abstract class DefaultConfig
                         ViewItemParams::item_paint_icon => true,
                         ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
                         ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
-                        //ViewItemParams::icon_width => 150,
-                        //ViewItemParams::icon_height => 200,
                         ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
                     ),
 
@@ -866,8 +875,6 @@ abstract class DefaultConfig
                         ViewItemParams::icon_dy => -5,
                         ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
                         ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
-                        //ViewItemParams::icon_width => 150,
-                        //ViewItemParams::icon_height => 200,
                         ViewItemParams::icon_sel_margin_top => 0,
                         ViewItemParams::item_paint_caption => true,
                         ViewItemParams::item_caption_width => 950

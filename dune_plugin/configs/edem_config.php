@@ -69,7 +69,7 @@ class EdemPluginConfig extends DefaultConfig
         $subdomain = empty($plugin_cookies->subdomain_local) ? $plugin_cookies->subdomain : $plugin_cookies->subdomain_local;
         $token = empty($plugin_cookies->ott_key_local) ? $plugin_cookies->ott_key : $plugin_cookies->ott_key_local;
         if (empty($subdomain) || empty($token)) {
-            hd_print("subdomain or token not defined");
+            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
         }
 
         // substitute subdomain token and id parameters

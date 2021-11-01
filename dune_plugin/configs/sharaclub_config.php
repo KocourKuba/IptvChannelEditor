@@ -101,22 +101,6 @@ class SharaclubPluginConfig extends DefaultConfig
     }
 
     /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        $url = str_replace(
-            array('{ID}', '{SUBDOMAIN}', '{TOKEN}'),
-            array($channel_id, $ext_params['subdomain'], $ext_params['token']),
-            static::$MEDIA_URL_TEMPLATE_HLS);
-        return static::make_ts($url);
-    }
-
-    /**
      * @throws Exception
      */
     public static function TryLoadMovie($movie_id, $plugin_cookies)
@@ -132,7 +116,9 @@ class SharaclubPluginConfig extends DefaultConfig
                 $id = $item["series_id"] . "season";
             }
 
-            if ($id != $movie_id) continue;
+            if ($id !== (int)$movie_id) {
+                continue;
+            }
 
             $duration = "";
             if (array_key_exists("duration_secs", $item["info"])) {
@@ -206,7 +192,9 @@ class SharaclubPluginConfig extends DefaultConfig
         $categoriesFound = array();
 
         foreach ($categories as $movie) {
-            if (in_array($movie["category"], $categoriesFound, false)) continue;
+            if (in_array($movie["category"], $categoriesFound)) {
+                continue;
+            }
 
             $categoriesFound[] = $movie["category"];
             $cat = new StarnetVodCategory((string)$movie["category"], (string)$movie["category"]);

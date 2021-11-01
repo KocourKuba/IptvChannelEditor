@@ -71,8 +71,9 @@ class ItvPluginConfig extends DefaultConfig
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
-        if (empty($plugin_cookies->password))
+        if (empty($plugin_cookies->password)) {
             return false;
+        }
 
         try {
             $url = sprintf(static::ACCOUNT_INFO_URL1, $plugin_cookies->password);
@@ -83,22 +84,5 @@ class ItvPluginConfig extends DefaultConfig
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
         return isset($account_data['package_info']) && !empty($account_data['package_info']);
-    }
-
-    /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        // itv token unique for each channel
-        $url = str_replace(
-            array('{ID}', '{SUBDOMAIN}', '{TOKEN}'),
-            array($channel_id, $ext_params['subdomain'], $ext_params['token']),
-            static::$MEDIA_URL_TEMPLATE_HLS);
-        return static::make_ts($url);
     }
 }

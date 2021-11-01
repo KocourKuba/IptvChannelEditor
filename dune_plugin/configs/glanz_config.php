@@ -1,4 +1,5 @@
 ﻿<?php
+/** @noinspection DuplicatedCode */
 require_once 'default_config.php';
 
 class GlanzPluginConfig extends DefaultConfig
@@ -80,6 +81,11 @@ class GlanzPluginConfig extends DefaultConfig
      */
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
+        if ($ext_params === null || !isset($ext_params['subdomain'], $ext_params['token'])) {
+            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
+            return '';
+        }
+
         $url = str_replace(
             array(
                 '{SUBDOMAIN}',
@@ -113,7 +119,9 @@ class GlanzPluginConfig extends DefaultConfig
         $movie = new Movie($movie_id);
         $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($m3u_lines as $i => $iValue) {
-            if ($i !== (int)$movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) continue;
+            if ($i !== (int)$movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) {
+                continue;
+            }
 
             $logo = $matches['logo'];
             $caption = $matches['title'];
@@ -147,6 +155,7 @@ class GlanzPluginConfig extends DefaultConfig
 
     /**
      * @throws Exception
+     * @noinspection DuplicatedCode
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
@@ -171,14 +180,16 @@ class GlanzPluginConfig extends DefaultConfig
         $categoriesFound = array();
 
         foreach ($m3u_lines as $line) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $line, $matches)) continue;
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $line, $matches)) {
+                continue;
+            }
 
             $category = $matches['category'];
-            if(empty($category)) {
+            if (empty($category)) {
                 $category = 'Без категории';
             }
 
-            if (!in_array($category, $categoriesFound, false)) {
+            if (!in_array($category, $categoriesFound)) {
                 $categoriesFound[] = $category;
                 $cat = new StarnetVodCategory($category, $category);
                 $category_list[] = $cat;
@@ -197,7 +208,9 @@ class GlanzPluginConfig extends DefaultConfig
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) continue;
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) {
+                continue;
+            }
 
             $logo = $matches['logo'];
             $caption = $matches['title'];
@@ -219,7 +232,9 @@ class GlanzPluginConfig extends DefaultConfig
         $movies = array();
         $m3u_lines = file(static::GET_VOD_TMP_STORAGE_PATH(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($m3u_lines as $i => $iValue) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) continue;
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) {
+                continue;
+            }
 
             $category = $matches['category'];
             $logo = $matches['logo'];

@@ -8,13 +8,13 @@ require_once 'dune_exception.php';
 
 class DefaultDunePluginFw extends DunePluginFw
 {
-    public static $plugin_class_name = null;
+    public static $plugin_class_name;
 
     ///////////////////////////////////////////////////////////////////////
 
     public function create_plugin()
     {
-        return new DefaultDunePluginFw::$plugin_class_name;
+        return new self::$plugin_class_name;
     }
 
     /**
@@ -22,14 +22,7 @@ class DefaultDunePluginFw extends DunePluginFw
      */
     public function call_plugin($call_ctx_json)
     {
-        // $call_ctx = json_decode($call_ctx_json);
-        // $ret = $this->call_plugin_impl($call_ctx);
-        // return json_encode($ret);
-
-        return
-            json_encode(
-                $this->call_plugin_impl(
-                    json_decode($call_ctx_json)));
+        return json_encode($this->call_plugin_impl(json_decode($call_ctx_json)));
     }
 
     /**

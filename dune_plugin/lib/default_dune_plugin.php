@@ -48,8 +48,9 @@ class DefaultDunePlugin implements DunePlugin
      */
     protected function get_screen_by_id($screen_id)
     {
-        if (isset($this->screens[$screen_id]))
+        if (isset($this->screens[$screen_id])) {
             return $this->screens[$screen_id];
+        }
 
         hd_print("Error: no screen with id '$screen_id' found.");
         throw new Exception('Screen not found');
@@ -129,8 +130,9 @@ class DefaultDunePlugin implements DunePlugin
      */
     public function get_tv_info($media_url, &$plugin_cookies)
     {
-        if (is_null($this->tv))
+        if (is_null($this->tv)) {
             throw new Exception('TV is not supported');
+        }
 
         $decoded_media_url = MediaURL::decode($media_url);
 
@@ -144,8 +146,9 @@ class DefaultDunePlugin implements DunePlugin
      */
     public function get_tv_stream_url($media_url, &$plugin_cookies)
     {
-        if (is_null($this->tv))
+        if (is_null($this->tv)) {
             throw new Exception('TV is not supported');
+        }
 
         return $this->tv->get_tv_stream_url($media_url, $plugin_cookies);
     }
@@ -157,8 +160,9 @@ class DefaultDunePlugin implements DunePlugin
      */
     public function get_tv_playback_url($channel_id, $archive_tm_sec, $protect_code, &$plugin_cookies)
     {
-        if (is_null($this->tv))
+        if (is_null($this->tv)) {
             throw new Exception('TV is not supported');
+        }
 
         return $this->tv->get_tv_playback_url($channel_id, $archive_tm_sec, $protect_code, $plugin_cookies);
     }
@@ -170,8 +174,9 @@ class DefaultDunePlugin implements DunePlugin
      */
     public function get_day_epg($channel_id, $day_start_tm_sec, &$plugin_cookies)
     {
-        if (is_null($this->tv))
+        if (is_null($this->tv)) {
             throw new Exception('TV is not supported');
+        }
 
         return $this->tv->get_day_epg($channel_id, $day_start_tm_sec, $plugin_cookies);
     }
@@ -183,8 +188,9 @@ class DefaultDunePlugin implements DunePlugin
      */
     public function change_tv_favorites($op_type, $channel_id, &$plugin_cookies)
     {
-        if (is_null($this->tv))
+        if (is_null($this->tv)) {
             throw new Exception('TV is not supported');
+        }
 
         return $this->tv->change_tv_favorites($op_type, $channel_id, $plugin_cookies);
     }
@@ -200,8 +206,9 @@ class DefaultDunePlugin implements DunePlugin
      */
     public function get_vod_info($media_url, &$plugin_cookies)
     {
-        if (is_null($this->vod))
+        if (is_null($this->vod)) {
             throw new Exception('VOD is not supported');
+        }
 
         $decoded_media_url = MediaURL::decode($media_url);
 
@@ -215,8 +222,9 @@ class DefaultDunePlugin implements DunePlugin
      */
     public function get_vod_stream_url($media_url, &$plugin_cookies)
     {
-        if (is_null($this->vod))
+        if (is_null($this->vod)) {
             throw new Exception('VOD is not supported');
+        }
 
         return $this->vod->get_vod_stream_url($media_url, $plugin_cookies);
     }

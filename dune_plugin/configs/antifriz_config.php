@@ -50,7 +50,9 @@ class AntifrizPluginConfig extends DefaultConfig
         $url = $channel->get_streaming_url();
         switch ($format) {
             case 'hls':
-                if ((int)$archive_ts <= 0) break;
+                if ((int)$archive_ts <= 0) {
+                    break;
+                }
 
                 $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS;
                 $url = str_replace(
@@ -89,6 +91,11 @@ class AntifrizPluginConfig extends DefaultConfig
      */
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
+        if ($ext_params === null || !isset($ext_params['subdomain'], $ext_params['token'])) {
+            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
+            return '';
+        }
+
         $url = str_replace(
             array('{SUBDOMAIN}', '{ID}', '{TOKEN}'),
             array($ext_params['subdomain'], $ext_params['id'], $ext_params['token']),
@@ -178,7 +185,9 @@ class AntifrizPluginConfig extends DefaultConfig
 
             // fetch genres for category
             $genres = static::LoadAndStoreJson(self::VOD_URL . "/cat/$id/genres", false);
-            if ($genres === false) continue;
+            if ($genres === false) {
+                continue;
+            }
 
             $gen_arr = array();
             foreach ($genres->data as $genre) {

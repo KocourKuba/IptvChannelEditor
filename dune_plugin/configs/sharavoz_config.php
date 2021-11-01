@@ -47,30 +47,4 @@ class SharavozPluginConfig extends DefaultConfig
 
         return $url;
     }
-
-    /**
-     * Collect information from m3u8 playlist
-     * @param $plugin_cookies
-     * @return array
-     */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
-    {
-        return parent::GetPlaylistStreamInfo($plugin_cookies);
-    }
-
-    /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        $url = str_replace(
-            array('{ID}', '{SUBDOMAIN}', '{TOKEN}'),
-            array($channel_id, $ext_params['subdomain'], $ext_params['token']),
-            static::$MEDIA_URL_TEMPLATE_HLS);
-        return static::make_ts($url);
-    }
 }

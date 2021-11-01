@@ -144,7 +144,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
                 $search_items = HD::get_items('search_items');
-                $i = array_search($video_id, $search_items, false);
+                $i = array_search($video_id, $search_items);
                 if ($i !== false && $i !== count($search_items) - 1) {
                     $t = $search_items[$i + 1];
                     $search_items[$i + 1] = $search_items[$i];

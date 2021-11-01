@@ -4,7 +4,7 @@ require_once('user_input_handler.php');
 
 class UserInputHandlerRegistry
 {
-    private static $instance = null;
+    private static $instance;
     private $handlers;
 
     private function __construct()

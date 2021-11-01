@@ -1,10 +1,10 @@
 <?php
-
+/** @noinspection PhpUndefinedClassInspection */
 require_once 'utils.php';
 
 /**
- * @author: Andrii Kopyniak
- * @date:   2013 Jan 10
+ * @author Andrii Kopyniak
+ * @date   2013 Jan 10
  */
 class smb_tree
 {

@@ -1,4 +1,5 @@
 ﻿<?php
+/** @noinspection ForeachInvariantsInspection */
 require_once 'default_config.php';
 
 class FoxPluginConfig extends DefaultConfig
@@ -12,7 +13,6 @@ class FoxPluginConfig extends DefaultConfig
     public static $VOD_FAVORITES_SUPPORTED = true;
 
     // setup variables
-    public static $MPEG_TS_SUPPORTED = false;
     public static $ACCOUNT_TYPE = 'LOGIN';
 
     // account
@@ -64,17 +64,22 @@ class FoxPluginConfig extends DefaultConfig
      * Collect information from m3u8 playlist
      * @param $plugin_cookies
      * @return array
+     * @throws Exception
      */
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         $pl_entries = array();
         $m3u_lines = static::FetchTvM3U($plugin_cookies);
         for ($i = 0, $iMax = count($m3u_lines); $i < $iMax; ++$i) {
-            if (preg_match(self::EXTINF_TV_PATTERN, $m3u_lines[$i], $m_id)) {
-                if (preg_match(self::$M3U_STREAM_URL_PATTERN, $m3u_lines[$i + 1], $matches)) {
-                    $pl_entries[$m_id['id']] = $matches;
-                }
+            if (preg_match(self::EXTINF_TV_PATTERN, $m3u_lines[$i], $m_id)
+                && preg_match(self::$M3U_STREAM_URL_PATTERN, $m3u_lines[$i + 1], $matches)) {
+                $pl_entries[$m_id['id']] = $matches;
             }
+        }
+
+        if (empty($pl_entries)) {
+            hd_print('Empty provider playlist! No channels mapped.');
+            throw new Exception('Empty provider playlist! No channels mapped.');
         }
 
         hd_print("Read Playlist entries: " . count($pl_entries));
@@ -91,6 +96,11 @@ class FoxPluginConfig extends DefaultConfig
     public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
     {
         // fox does not have variable parameters, only token. Replace entire url
+        if ($ext_params === null || !isset($ext_params[0])) {
+            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
+            return '';
+        }
+
         return static::make_ts($ext_params[0]);
     }
 
@@ -105,7 +115,9 @@ class FoxPluginConfig extends DefaultConfig
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         for ($i = 0, $iMax = count($m3u_lines); $i < $iMax; ++$i) {
-            if ($i !== (int)$movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $match)) continue;
+            if ($i !== (int)$movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $match)) {
+                continue;
+            }
 
             $logo = $match['logo'];
             list($title, $title_orig) = explode('/', $match['title']);
@@ -151,14 +163,16 @@ class FoxPluginConfig extends DefaultConfig
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $line, $matches)) continue;
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $line, $matches)) {
+                continue;
+            }
 
             $category = $matches['category'];
             if (empty($category)) {
                 $category = 'Без категории';
             }
 
-            if (!in_array($category, $categoriesFound, false)) {
+            if (!in_array($category, $categoriesFound)) {
                 $categoriesFound[] = $category;
                 $cat = new StarnetVodCategory($category, $category);
                 $category_list[] = $cat;
@@ -177,7 +191,9 @@ class FoxPluginConfig extends DefaultConfig
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) continue;
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) {
+                continue;
+            }
 
             $logo = $matches['logo'];
             $caption = $matches['title'];
@@ -199,12 +215,13 @@ class FoxPluginConfig extends DefaultConfig
         $movies = array();
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
-            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) continue;
+            if (!preg_match(self::EXTINF_VOD_PATTERN, $iValue, $matches)) {
+                continue;
+            }
 
             $logo = $matches['logo'];
             $category = $matches['category'];
             $caption = $matches['title'];
-
             if(empty($category)) {
                 $category = 'Без категории';
             }
