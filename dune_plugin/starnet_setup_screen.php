@@ -64,14 +64,16 @@ class StarnetSetupScreen extends AbstractControlsScreen
         }
 
         //////////////////////////////////////
-        // channels lists
-        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
-        if (strlen($channels_list_path) > 30) {
-            $channels_list_path = "..." . substr($channels_list_path, -30);
+        // channels path
+        $display_path = $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
+        if (strlen($display_path) > 30) {
+            $display_path = "..." . substr($display_path, -30);
         }
-        $this->add_button($defs, 'change_list_path', 'Выбрать папку со списками каналов', $channels_list_path, 800);
-        $this->add_button($defs, 'reset_path', 'Установить по умолчанию', 'Установить', 800);
+        $this->add_button($defs, 'change_list_path', 'Выбрать папку со списками каналов:', $display_path, 800);
+        $this->add_button($defs, 'reset_path', 'Установить папку по умолчанию:', 'Установить', 800);
 
+        //////////////////////////////////////
+        // channels lists
         $all_channels = array();
         $list = glob($channels_list_path . '/*.xml');
         foreach ($list as $filename) {
@@ -92,7 +94,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         if ($config::$MPEG_TS_SUPPORTED) {
             $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
             $format_ops = array('hls' => 'HLS', 'mpeg' => 'MPEG-TS');
-            $this->add_combobox($defs, 'format', 'Выбор потока:', $format, $format_ops, 0, true);
+            $this->add_combobox($defs, 'stream_format', 'Выбор потока:', $format, $format_ops, 0, true);
         }
 
         //////////////////////////////////////
@@ -207,10 +209,9 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
     /**
      * adult pass dialog defs
-     * @param $plugin_cookies
      * @return array
      */
-    public function do_get_pass_control_defs(&$plugin_cookies)
+    public function do_get_pass_control_defs()
     {
         $defs = array();
 
@@ -260,14 +261,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         )
                     );
 
-                    $this->tv->unload_channels();
                     return ActionFactory::open_folder($media_url,'Папка со списком каналов');
 
                 case 'reset_path':
                     hd_print("reset path to default");
                     $plugin_cookies->ch_list_path = '';
-                    $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
-                    return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
+                    return $this->reload_channels();
 
                 case 'channels_list':
                     $old_value = $plugin_cookies->channels_list;
@@ -278,7 +277,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     } catch (Exception $e) {
                         hd_print("Load channel list failed: $new_value");
                         $plugin_cookies->channels_list = $old_value;
-                        ActionFactory::show_title_dialog('Ошибка загрузки плейлиста!');
+                        ActionFactory::show_title_dialog("Ошибка загрузки плейлиста! " . $e->getMessage());
                     }
                     $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
                     return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
@@ -303,6 +302,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'ott_key_apply': // handle ott key dialog result
                     $plugin_cookies->ott_key = $user_input->ott_key;
                     $plugin_cookies->subdomain = $user_input->subdomain;
+                    return $this->reload_channels();
                     break;
 
                 case 'login_dialog': // token dialog
@@ -321,8 +321,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }
-                    $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
-                    return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
+
+                    return $this->reload_channels();
 
                 case 'pin_dialog': // token dialog
                     $defs = $this->do_get_pin_control_defs($plugin_cookies);
@@ -337,11 +337,11 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }
-                    $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
-                    return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
+
+                    return $this->reload_channels();
 
                 case 'pass_dialog': // show pass dialog
-                    $defs = $this->do_get_pass_control_defs($plugin_cookies);
+                    $defs = $this->do_get_pass_control_defs();
                     return ActionFactory::show_dialog('Родительский контроль', $defs, true);
 
                 case 'pass_apply': // handle pass dialog result
@@ -357,12 +357,22 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     }
                     return ActionFactory::show_title_dialog($msg);
 
-                case 'format':
+                case 'stream_format':
                     $plugin_cookies->format = $new_value;
                     break;
             }
         }
 
         return ActionFactory::reset_controls($this->do_get_control_defs($plugin_cookies));
+    }
+
+    /**
+     * @return array
+     */
+    protected function reload_channels()
+    {
+        $this->tv->unload_channels();
+        $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
+        return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
     }
 }
