@@ -603,6 +603,14 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		}
 	}
 
+	if (m_all_channels_lists.empty())
+	{
+		CString str;
+		str.Format(_T("No channels found in directory %s"), channelsPath.c_str());
+		AfxMessageBox(str, MB_ICONERROR | MB_OK);
+		return;
+	}
+
 	for (const auto& item : m_all_channels_lists)
 	{
 		int idx = m_wndChannels.AddString(item.first.c_str());
@@ -612,6 +620,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	idx = ReadRegIntPlugin(REG_CHANNELS_TYPE);
 	if (idx < m_wndChannels.GetCount())
 		m_wndChannels.SetCurSel(idx);
+	else
+		m_wndChannels.SetCurSel(0);
 
 	// load stream info
 	m_stream_infos.clear();
@@ -4217,7 +4227,14 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 		return;
 	}
 
-	LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx));
+	if (!LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx)))
+	{
+		CString str;
+		str.Format(_T("Unable to load channels list %s"), (LPCTSTR)m_wndChannels.GetItemData(idx));
+		AfxMessageBox(str, MB_ICONERROR | MB_OK);
+		return;
+	}
+
 	FillTreeChannels();
 	CheckForExistingPlaylist();
 
