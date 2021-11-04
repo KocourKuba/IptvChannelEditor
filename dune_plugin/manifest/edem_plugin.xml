@@ -66,7 +66,7 @@
         <entry_point>
             <parent_media_url>setup://applications</parent_media_url>
             <media_url>setup</media_url>
-            <caption>ЄDЄM TV</caption>
+            <caption>iEdem/iLook TV</caption>
             <icon_url>plugin_file://icons/logo_edem.png</icon_url>
             <actions>
                 <key_enter>
