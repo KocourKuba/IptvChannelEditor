@@ -1864,7 +1864,10 @@ void CIPTVChannelEditorDlg::OnUpdateChannelUp(CCmdUI* pCmdUI)
 
 	if (IsChannel(hCur))
 	{
-		enable = IsChannelSelectionConsistent() && IsSelectedInTheSameCategory() && hPrev != nullptr;
+		enable = IsChannelSelectionConsistent()
+			&& IsSelectedInTheSameCategory()
+			&& IsSelectedNotInFavorite()
+			&& hPrev != nullptr;
 	}
 	else if (IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
@@ -1900,6 +1903,7 @@ void CIPTVChannelEditorDlg::OnUpdateChannelDown(CCmdUI* pCmdUI)
 	{
 		enable = IsChannelSelectionConsistent()
 			&& IsSelectedInTheSameCategory()
+			&& IsSelectedNotInFavorite()
 			&& m_wndChannelsTree.GetNextSiblingItem(m_wndChannelsTree.GetLastSelectedItem()) != nullptr;
 	}
 	else if (IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1)
@@ -4590,6 +4594,18 @@ bool CIPTVChannelEditorDlg::IsSelectedNotFavorite() const
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
 		const auto& category = GetCategory(hItem);
+		if (category && category->get_key() == ID_ADD_TO_FAVORITE)
+			return false;
+	}
+
+	return true;
+}
+
+bool CIPTVChannelEditorDlg::IsSelectedNotInFavorite() const
+{
+	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
+	{
+		const auto& category = GetItemCategory(hItem);
 		if (category && category->get_key() == ID_ADD_TO_FAVORITE)
 			return false;
 	}

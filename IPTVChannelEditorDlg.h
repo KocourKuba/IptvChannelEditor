@@ -210,6 +210,7 @@ private:
 	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
 	bool IsSelectedCategory() const;
 	bool IsSelectedNotFavorite() const;
+	bool IsSelectedNotInFavorite() const;
 	bool IsChannelSelectionConsistent() const;
 	bool IsSelectedInTheSameCategory() const;
 	bool IsChannel(HTREEITEM hItem) const;
