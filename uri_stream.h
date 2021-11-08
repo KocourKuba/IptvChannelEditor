@@ -16,6 +16,7 @@ enum class StreamType
 	enOneCent,
 	enOneUsd,
 	enItv,
+	enVipLime,
 };
 
 typedef struct

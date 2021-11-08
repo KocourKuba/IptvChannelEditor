@@ -13,9 +13,9 @@ static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/tvteam/epg/
 
 void uri_oneusd::parse_uri(const std::wstring& url)
 {
-	// http://1.1usd.tv:34000/ch001/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2Eyc7d7GPdA4CT8plX8MekNzcvYSCKA9C7SsfNNryytxJg..
-	// http://1.1usd.tv:34000/ch002/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2EzWB4Sdv5ZgmYMp5dx5SZqpGpZdSDUI6YVkqEciNnrvBA..
-	// http://1.1usd.tv:34000/ch025/mono.m3u8?token=1usdtv_robert21224.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2Ezbn-vBVpPlFCl2dNce4nnKhFT1o9jM6oFrM-csWTJQCA..
+	// http://1.1usd.tv:34000/ch001/mono.m3u8?token=1usdtv_roberto.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2Eyc7d7GPdA4CT8plX8MekNzcvYSCKA9C7SsfNNryytxJg..
+	// http://1.1usd.tv:34000/ch002/mono.m3u8?token=1usdtv_roberto.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2EzWB4Sdv5ZgmYMp5dx5SZqpGpZdSDUI6YVkqEciNnrvBA..
+	// http://1.1usd.tv:34000/ch025/mono.m3u8?token=1usdtv_roberto.VdOQFJwYXrBNhWugsGPRdx-HBrzPKotuzKtiuHlD2Ezbn-vBVpPlFCl2dNce4nnKhFT1o9jM6oFrM-csWTJQCA..
 
 	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/(.+)\/mono\.m3u8\?token=(.+)$)");
 

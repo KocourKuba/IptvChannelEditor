@@ -3,7 +3,7 @@
 #include "utils.h"
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"https://itv.ooo/p/{:s}/hls.m3u8";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://itv.ooo/p/{:s}/hls.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
@@ -55,10 +55,6 @@ std::wstring uri_itv::get_templated(StreamSubType subType, const TemplateParams&
 		}
 	}
 
-	// http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}
-	// http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}
-	// http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}
-	// http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}
 	ReplaceVars(url, params);
 
 	return url;

@@ -21,6 +21,7 @@ typedef enum
 	enOneUsd,
 	enSharaclub,
 	enSharavoz,
+	enVipLime,
 } SupportedPlugins;
 
 // CEdemChannelEditorDlg dialog
@@ -177,7 +178,7 @@ private:
 	void LoadPlaylist(bool saveToFile = false);
 
 	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
-
+	void CopyMoveChannelTo(int category_id, bool move);
 	void FillTreeChannels(LPCWSTR select = nullptr);
 	void FillTreePlaylist();
 
@@ -199,7 +200,6 @@ private:
 
 	std::shared_ptr<ChannelCategory> GetItemCategory(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelCategory> GetCategory(HTREEITEM hItem) const;
-	HTREEITEM GetCategoryTreeItemById(int id) const;
 
 	std::shared_ptr<ChannelInfo> FindChannel(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelCategory> FindCategory(HTREEITEM hItem) const;

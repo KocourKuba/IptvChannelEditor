@@ -10,6 +10,7 @@
 #include "uri_onecent.h"
 #include "uri_oneusd.h"
 #include "uri_itv.h"
+#include "uri_viplime.h"
 
 StreamContainer::StreamContainer(StreamType type) : stream_type(type)
 {
@@ -40,8 +41,10 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 			return  std::make_unique<uri_onecent>();
 		case StreamType::enOneUsd: // 1USD playlist
 			return  std::make_unique<uri_oneusd>();
-		case StreamType::enItv: // 1USD playlist
+		case StreamType::enItv: // ITV playlist
 			return  std::make_unique<uri_itv>();
+		case StreamType::enVipLime: // VipLime playlist
+			return  std::make_unique<uri_viplime>();
 		default:
 			ASSERT(false);
 			return nullptr;
