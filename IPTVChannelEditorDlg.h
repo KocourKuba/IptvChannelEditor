@@ -205,7 +205,6 @@ private:
 	bool IsPlaylistCategory(HTREEITEM hItem) const;
 
 	int GetNewCategoryID() const;
-	int GetCategoryIdByName(const std::wstring& categoryName);
 	void MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool down);
 	void SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight);
 
@@ -323,7 +322,7 @@ protected:
 	CString m_streamID; // m_wndStreamID
 	CString m_epgID1; // Primary EPG source m_wndEpg1ID
 	CString m_epgID2; // Secondary EPG source m_wndEpg2ID
-	int m_archiveDays; // m_wndArchiveDays
+	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
 	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
 	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
@@ -331,7 +330,7 @@ protected:
 	int m_StreamType = 0; // m_wndStreamType
 
 private:
-	BOOL m_embedded_info;
+	BOOL m_embedded_info = FALSE;
 	std::wstring m_token;
 	std::wstring m_domain;
 	std::wstring m_login;

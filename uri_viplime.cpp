@@ -36,7 +36,6 @@ std::wstring uri_viplime::get_templated(StreamSubType subType, const TemplatePar
 	}
 	else
 	{
-		std::string subdomain;
 		switch (subType)
 		{
 			case StreamSubType::enHLS:

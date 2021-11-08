@@ -33,7 +33,7 @@ public:
 	CString m_lists_path;
 	CString m_plugins_path;
 	BOOL m_bAutoSync;
-	int m_MaxThreads;
+	int m_MaxThreads = 1;
 	WORD m_nLang = 0;
 
 protected:

@@ -35,7 +35,6 @@ std::wstring uri_itv::get_templated(StreamSubType subType, const TemplateParams&
 
 	if (is_template())
 	{
-		std::string subdomain;
 		switch (subType)
 		{
 			case StreamSubType::enHLS:

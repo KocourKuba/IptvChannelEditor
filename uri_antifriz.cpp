@@ -60,7 +60,7 @@ std::wstring uri_antifriz::get_templated(StreamSubType subType, const TemplatePa
 				break;
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				subdomain = no_port;
+				subdomain = std::move(no_port);
 				break;
 		}
 	}
@@ -73,10 +73,6 @@ std::wstring uri_antifriz::get_templated(StreamSubType subType, const TemplatePa
 		}
 	}
 
-	// http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8
-	// http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}
-	// http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}
-	// http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}
 	ReplaceVars(url, params);
 
 	return url;
