@@ -371,6 +371,7 @@ bool CrackUrl(const std::wstring& url, std::wstring& host /*= std::wstring()*/, 
 
 bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image)
 {
+	TRACE(L"download url: %s\n", url.c_str());
 	std::wstring host;
 	std::wstring path;
 	if (!CrackUrl(url, host, path))

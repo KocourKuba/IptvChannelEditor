@@ -182,8 +182,7 @@ abstract class DefaultConfig
      */
     public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $url = str_replace('{ID}', $channel->get_channel_id(), static::$MEDIA_URL_TEMPLATE_HLS);
-        return static::make_ts($url);
+        return str_replace('{ID}', $channel->get_channel_id(), static::$MEDIA_URL_TEMPLATE_HLS);
     }
 
     /**

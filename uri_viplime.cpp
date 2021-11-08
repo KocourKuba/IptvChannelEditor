@@ -2,7 +2,7 @@
 #include "uri_viplime.h"
 #include "utils.h"
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://cdntv.online/middle/{:s}/playlist.m3u8";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://cdntv.online/high/{:s}/playlist.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}.mpeg";
 static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=viplime/epg/{:s}.json";
@@ -17,9 +17,9 @@ void uri_viplime::parse_uri(const std::wstring& url)
 	if (std::regex_match(url, m, re_url_hls))
 	{
 		set_template(true);
-		domain = m[1].str();
-		token = m[3].str();
-		id = m[4].str();
+		set_domain(m[1].str());
+		set_token(m[3].str());
+		set_id(m[4].str());
 		return;
 	}
 

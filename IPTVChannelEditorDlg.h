@@ -10,20 +10,6 @@
 #include "map_serializer.h"
 #include "json.hpp"
 
-typedef enum
-{
-	enAntifriz = 0,
-	enEdem,
-	enFox,
-	enGlanz,
-	enItv,
-	enOneCent,
-	enOneUsd,
-	enSharaclub,
-	enSharavoz,
-	enVipLime,
-} SupportedPlugins;
-
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
 {
@@ -224,9 +210,9 @@ private:
 	void SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight);
 
 	void SwitchPlugin();
-	bool PackPlugin(const SupportedPlugins plugin_type, bool showMessage = true);
+	bool PackPlugin(const StreamType plugin_type, bool showMessage = true);
 
-	const SupportedPlugins GetCurrentPlugin() const { return (SupportedPlugins)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()); }
+	const StreamType GetCurrentPlugin() const { return (StreamType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()); }
 
 	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
@@ -254,7 +240,7 @@ private:
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
 
 	template<typename T>
-	std::basic_string<T> GetPluginName(const SupportedPlugins plugin_type, bool bCamel = false) const
+	std::basic_string<T> GetPluginName(const StreamType plugin_type, bool bCamel = false) const
 	{
 		for (const auto& item : all_plugins)
 		{

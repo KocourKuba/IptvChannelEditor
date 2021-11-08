@@ -2,7 +2,7 @@
 #include "uri_antifriz.h"
 #include "utils.h"
 
-static constexpr auto PLAYLIST_TEMPLATE = L"https://antifriz.tv/playlist/{:s}.m3u8";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://antifriz.tv/playlist/{:s}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
@@ -21,18 +21,18 @@ void uri_antifriz::parse_uri(const std::wstring& url)
 	if (std::regex_match(url, m, re_url_hls))
 	{
 		set_template(true);
-		domain = m[1].str();
-		token = m[2].str();
-		id = m[3].str();
+		set_domain(m[1].str());
+		set_token(m[2].str());
+		set_id(m[3].str());
 		return;
 	}
 
 	if (std::regex_match(url, m, re_url_mpeg))
 	{
 		set_template(true);
-		domain = m[1].str();
-		id = m[2].str();
-		token = m[3].str();
+		set_domain(m[1].str());
+		set_id(m[2].str());
+		set_token(m[3].str());
 		return;
 	}
 

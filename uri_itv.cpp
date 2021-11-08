@@ -20,9 +20,9 @@ void uri_itv::parse_uri(const std::wstring& url)
 	if (std::regex_match(url, m, re_url_hls))
 	{
 		set_template(true);
-		domain = m[1].str();
-		id = m[2].str();
-		token = m[3].str();
+		set_domain(m[1].str());
+		set_id(m[2].str());
+		set_token(m[3].str());
 		return;
 	}
 

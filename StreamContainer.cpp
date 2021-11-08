@@ -1,15 +1,16 @@
 #include "StdAfx.h"
 #include "StreamContainer.h"
 #include "uri_channels.h"
-#include "uri_edem.h"
 #include "uri_antifriz.h"
-#include "uri_sharavoz.h"
-#include "uri_sharaclub.h"
-#include "uri_glanz.h"
+#include "uri_edem.h"
 #include "uri_fox.h"
+#include "uri_glanz.h"
+#include "uri_itv.h"
 #include "uri_onecent.h"
 #include "uri_oneusd.h"
-#include "uri_itv.h"
+#include "uri_sharaclub.h"
+#include "uri_sharatv.h"
+#include "uri_sharavoz.h"
 #include "uri_viplime.h"
 
 StreamContainer::StreamContainer(StreamType type) : stream_type(type)
@@ -23,28 +24,43 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 	{
 		case StreamType::enBase: // ChannelsCategory
 			return std::make_unique<uri_stream>();
+
 		case StreamType::enChannels: // Channels list
 			return std::make_unique<uri_channels>();
-		case StreamType::enEdem: // Edem playlist
-			return  std::make_unique<uri_edem>();
-		case StreamType::enSharavoz: // Sharavoz playlist
-			return  std::make_unique<uri_sharavoz>();
-		case StreamType::enSharaclub: // Sharaclub playlist
-			return  std::make_unique<uri_sharaclub>();
-		case StreamType::enGlanz: // Glanz playlist
-			return  std::make_unique<uri_glanz>();
-		case StreamType::enAntifriz: // Antifriz playlist
+
+		case StreamType::enAntifriz:
 			return  std::make_unique<uri_antifriz>();
-		case StreamType::enFox: // Fox playlist
+
+		case StreamType::enEdem:
+			return  std::make_unique<uri_edem>();
+
+		case StreamType::enFox:
 			return  std::make_unique<uri_fox>();
-		case StreamType::enOneCent: // 1CENT playlist
-			return  std::make_unique<uri_onecent>();
-		case StreamType::enOneUsd: // 1USD playlist
-			return  std::make_unique<uri_oneusd>();
-		case StreamType::enItv: // ITV playlist
+
+		case StreamType::enGlanz:
+			return  std::make_unique<uri_glanz>();
+
+		case StreamType::enItv:
 			return  std::make_unique<uri_itv>();
-		case StreamType::enVipLime: // VipLime playlist
+
+		case StreamType::enOneCent:
+			return  std::make_unique<uri_onecent>();
+
+		case StreamType::enOneUsd:
+			return  std::make_unique<uri_oneusd>();
+
+		case StreamType::enSharaclub:
+			return  std::make_unique<uri_sharaclub>();
+
+		case StreamType::enSharaTV:
+			return  std::make_unique<uri_sharatv>();
+
+		case StreamType::enSharavoz:
+			return  std::make_unique<uri_sharavoz>();
+
+		case StreamType::enVipLime:
 			return  std::make_unique<uri_viplime>();
+
 		default:
 			ASSERT(false);
 			return nullptr;

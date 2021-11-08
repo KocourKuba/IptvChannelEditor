@@ -5,18 +5,19 @@
 
 enum class StreamType
 {
-	enBase = 0,
-	enChannels,
-	enEdem,
-	enSharavoz,
-	enSharaclub,
-	enGlanz,
+	enBase = -2,
+	enChannels = -1,
 	enAntifriz,
+	enEdem,
 	enFox,
+	enGlanz,
+	enItv,
 	enOneCent,
 	enOneUsd,
-	enItv,
+	enSharaclub,
+	enSharavoz,
 	enVipLime,
+	enSharaTV,
 };
 
 typedef struct
