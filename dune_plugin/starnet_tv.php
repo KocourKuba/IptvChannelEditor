@@ -73,8 +73,10 @@ class StarnetPluginTv extends AbstractTv
     {
         $config = self::$config;
         $channels_list = $this->get_channel_list_url($plugin_cookies);
-        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . '/' . $channels_list;
-        hd_print("Channels list: $channels_list_path");
+        hd_print("Channels list: $channels_list");
+        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . '/';
+        hd_print("Channels list path: $channels_list_path");
+        $channels_list_path .= $channels_list;
 
         try {
             $xml = HD::parse_xml_file($channels_list_path);
