@@ -164,6 +164,22 @@
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
+          <trans-unit id="Dialogs.109.STATIC_Channels_list.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Channels_list.Text">
+            <source>Channels list path</source>
+            <target state="final">Путь к спискам каналов</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Channels_list.Text</context>
+            </context-group>
+            <sl:rowstatus>rsNew</sl:rowstatus>
+          </trans-unit>
+          <trans-unit id="Dialogs.109.STATIC_Plugins_save.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Plugins_save.Text">
+            <source>Plugins save path</source>
+            <target state="final">Путь для сохранения плагинов</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.109.STATIC_Plugins_save.Text</context>
+            </context-group>
+            <sl:rowstatus>rsNew</sl:rowstatus>
+          </trans-unit>
         </group>
         <group id="110" datatype="winres">
           <trans-unit id="Dialogs.110.BUTTON_Stream_Info.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.110.BUTTON_Stream_Info.Text">
@@ -1165,8 +1181,8 @@ EPG №:		%s
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
           <trans-unit id="Strings.13.IDS_STRING_ERR_FAILED_PACK_PLUGIN" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_ERR_FAILED_PACK_PLUGIN">
-            <source>Failed to pack plugin %s</source>
-            <target state="final">Ошибка создания плагина %s</target>
+            <source>Failed to pack plugin %s. Continue?</source>
+            <target state="final">Ошибка создания плагина %s. Продолжить?</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_ERR_FAILED_PACK_PLUGIN</context>
             </context-group>
@@ -1307,7 +1323,7 @@ EPG №:		%s
       <group id="Versions" datatype="winres">
         <group id="1" datatype="winres">
           <trans-unit id="Versions.1.ProductVersion" resname="Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion">
-            <source>2.2.451</source>
+            <source>2.2.493</source>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion</context>
             </context-group>

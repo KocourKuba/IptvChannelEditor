@@ -3321,7 +3321,9 @@ bool CIPTVChannelEditorDlg::PackPlugin(const StreamType plugin_type, bool showMe
 		L"bg_onecent.jpg",    L"logo_onecent.png",
 		L"bg_oneusd.jpg",     L"logo_oneusd.png",
 		L"bg_sharaclub.jpg",  L"logo_sharaclub.png",
+		L"bg_sharatv.jpg",    L"logo_sharatv.png",
 		L"bg_sharavoz.jpg",   L"logo_sharavoz.png",
+		L"bg_viplime.jpg",    L"logo_viplime.png",
 	};
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name)), to_remove.end());
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"logo_{:s}.png", name)), to_remove.end());
@@ -3357,10 +3359,13 @@ bool CIPTVChannelEditorDlg::PackPlugin(const StreamType plugin_type, bool showMe
 	res = archiver.CreateArchive(pluginFile);
 	// remove temporary folder
 	std::filesystem::remove_all(packFolder, err);
-	if (!res && showMessage)
+	if (!res)
 	{
-		std::filesystem::remove(pluginFile, err);
-		AfxMessageBox(IDS_STRING_ERR_FAILED_PACK, MB_OK | MB_ICONSTOP);
+		if (showMessage)
+		{
+			std::filesystem::remove(pluginFile, err);
+			AfxMessageBox(IDS_STRING_ERR_FAILED_PACK, MB_OK | MB_ICONSTOP);
+		}
 		return false;
 	}
 
@@ -3385,16 +3390,29 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 {
 	CWaitCursor cur;
 	bool success = true;
+	int i = 0;
+	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndProgressInfo.ShowWindow(SW_SHOW);
+	m_wndProgress.SetRange32(0, (int)_countof(all_plugins));
+	m_wndProgress.SetPos(i);
 	for (const auto& item : all_plugins)
 	{
+		CString str;
+		str.Format(_T("%s"), item.name.GetString());
+		m_wndProgressInfo.SetWindowText(str);
+		m_wndProgress.SetPos(++i);
+
 		if (!PackPlugin(item.type, false))
 		{
 			success = false;
 			CString str;
 			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name);
-			AfxMessageBox(str, MB_OK);
+			if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
 		}
 	}
+
+	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndProgressInfo.ShowWindow(SW_HIDE);
 
 	if (success)
 		AfxMessageBox(IDS_STRING_INFO_CREATE_ALL_SUCCESS, MB_OK);
