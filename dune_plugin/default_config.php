@@ -100,7 +100,6 @@ abstract class DefaultConfig
         static::$PLUGIN_SHOW_NAME = $xml->caption;
         static::$PLUGIN_SHORT_NAME = $xml->short_name;
         static::$PLUGIN_VERSION = $xml->version;
-        static::$PLUGIN_DATE = $xml->release_date;
 
         static::$EPG_PARSER_PARAMS['first']['parser'] = static::$EPG1_PARSER;
         static::$EPG_PARSER_PARAMS['first']['epg_template'] = static::$EPG1_URL_TEMPLATE;

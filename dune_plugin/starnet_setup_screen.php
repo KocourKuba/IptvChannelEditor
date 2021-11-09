@@ -38,7 +38,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         //////////////////////////////////////
         // Plugin name
         ControlFactory::add_vgap($defs, -10);
-        $title = $config::$PLUGIN_SHOW_NAME . ' v.' . $config::$PLUGIN_VERSION . '. [' . $config::$PLUGIN_DATE . ']';
+        $title = $config::$PLUGIN_SHOW_NAME . ' v.' . $config::$PLUGIN_VERSION . ' [' . $config::$PLUGIN_DATE . ']';
         $this->add_label($defs, $title, 'IPTV Channel Editor by sharky72');
 
         //////////////////////////////////////

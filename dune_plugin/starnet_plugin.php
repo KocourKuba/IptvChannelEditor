@@ -39,6 +39,8 @@ class StarnetDunePlugin extends DefaultDunePlugin
         }
 
         $config = new $plugin_type;
+        $config::$PLUGIN_VERSION .= '.' . PLUGIN_BUILD;
+        $config::$PLUGIN_DATE = PLUGIN_DATE;
         StarnetPluginTv::$config = $config;
         StarnetMainScreen::$config = $config;
         StarnetSetupScreen::$config = $config;
@@ -49,7 +51,6 @@ class StarnetDunePlugin extends DefaultDunePlugin
         hd_print("Plugin name:     " . $config::$PLUGIN_SHOW_NAME);
         hd_print("Plugin version:  " . $config::$PLUGIN_VERSION);
         hd_print("Plugin date:     " . $config::$PLUGIN_DATE);
-        hd_print("Plugin config:   " . $plugin_type);
         hd_print("Account type:    " . $config::$ACCOUNT_TYPE);
         hd_print("TV fav:          " . ($config::$TV_FAVORITES_SUPPORTED ? "yes" : "no"));
         hd_print("VOD page:        " . ($config::$VOD_MOVIE_PAGE_SUPPORTED ? "yes" : "no"));

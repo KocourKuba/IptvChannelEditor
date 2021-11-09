@@ -3338,9 +3338,12 @@ bool CIPTVChannelEditorDlg::PackPlugin(const StreamType plugin_type, bool showMe
 	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n",
+	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\nconst PLUGIN_BUILD = {:d};\nconst PLUGIN_DATE = '{:s}';\n",
 					  GetPluginName<char>(plugin_type),
-					  GetPluginName<char>(plugin_type, true));
+					  GetPluginName<char>(plugin_type, true),
+					  BUILD,
+					  RELEASEDATE
+	);
 	os.close();
 
 	// pack folder
