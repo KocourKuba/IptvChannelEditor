@@ -18,6 +18,7 @@ enum class StreamType
 	enSharavoz,
 	enVipLime,
 	enSharaTV,
+	enTvTeam,
 };
 
 typedef struct

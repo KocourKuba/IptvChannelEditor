@@ -60,7 +60,7 @@ BOOL CPlaylistParseThread::InitInstance()
 					entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
 				}
 
-				if (m_config.m_pluginType == StreamType::enOneUsd)
+				if (m_config.m_pluginType == StreamType::enOneUsd || m_config.m_pluginType == StreamType::enTvTeam)
 				{
 					entry->set_epg1_id(entry->get_title()); // primary EPG
 				}

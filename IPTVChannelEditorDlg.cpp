@@ -95,6 +95,7 @@ static PluginDesc all_plugins[] = {
 	{ StreamType::enOneUsd,    _T("1USD TV"),         "oneusd"     },
 	{ StreamType::enVipLime,   _T("VipLime TV"),      "viplime"    },
 	{ StreamType::enSharaTV,   _T("Shara TV"),        "sharatv"    },
+	{ StreamType::enTvTeam,    _T("TV Team"),         "tvteam"     },
 };
 
 std::map<UINT, UINT> tooltips_info =
@@ -503,6 +504,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enOneCent:
 		case StreamType::enOneUsd:
 		case StreamType::enSharavoz:
+		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
 		{
 			m_wndPlaylist.AddString(_T("Playlist"));
@@ -632,6 +634,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		case StreamType::enOneCent:
 		case StreamType::enOneUsd:
 		case StreamType::enItv:
+		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
 		{
 			switch (idx)
@@ -818,16 +821,17 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			}
 			break;
 		}
-		case StreamType::enAntifriz: // Antifriz
-		case StreamType::enFox: // Fox
-		case StreamType::enGlanz: // Glanz
-		case StreamType::enOneCent: // 1CENT
-		case StreamType::enOneUsd: // 1USD
-		case StreamType::enSharavoz: // Sharavoz
-		case StreamType::enSharaclub: // Sharaclub
-		case StreamType::enItv: // ITV
-		case StreamType::enVipLime: // VipLime
-		case StreamType::enSharaTV: // SharaTV
+		case StreamType::enAntifriz:
+		case StreamType::enFox:
+		case StreamType::enGlanz:
+		case StreamType::enItv:
+		case StreamType::enOneCent:
+		case StreamType::enOneUsd:
+		case StreamType::enSharaTV:
+		case StreamType::enSharaclub:
+		case StreamType::enSharavoz:
+		case StreamType::enTvTeam:
+		case StreamType::enVipLime:
 		{
 			switch (pl_idx)
 			{
@@ -1522,6 +1526,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 			case StreamType::enOneCent:
 			case StreamType::enOneUsd:
 			case StreamType::enSharavoz:
+			case StreamType::enTvTeam:
 			case StreamType::enVipLime:
 				m_password = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
@@ -2668,6 +2673,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enOneCent:
 		case StreamType::enOneUsd:
 		case StreamType::enSharavoz:
+		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
 		{
 			switch (m_wndPlaylist.GetCurSel())
@@ -3036,6 +3042,7 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enOneCent:
 				case StreamType::enOneUsd:
 				case StreamType::enSharavoz:
+				case StreamType::enTvTeam:
 				case StreamType::enVipLime:
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
@@ -3323,6 +3330,7 @@ bool CIPTVChannelEditorDlg::PackPlugin(const StreamType plugin_type, bool showMe
 		L"bg_sharaclub.jpg",  L"logo_sharaclub.png",
 		L"bg_sharatv.jpg",    L"logo_sharatv.png",
 		L"bg_sharavoz.jpg",   L"logo_sharavoz.png",
+		L"bg_tvteam.jpg",     L"logo_tvteam.png",
 		L"bg_viplime.jpg",    L"logo_viplime.png",
 	};
 	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name)), to_remove.end());
@@ -4655,13 +4663,14 @@ void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& 
 	if (   m_pluginType != StreamType::enFox
 		&& m_pluginType != StreamType::enItv
 		&& m_pluginType != StreamType::enOneUsd
+		&& m_pluginType != StreamType::enTvTeam
 		)
 	{
 		uri->set_token(token);
 		return;
 	}
 
-	// fox and 1usd uses a unique token for each channel depends on user credentials
+	// fox, itv, 1usd, tvteam uses a unique token for each channel depends on user credentials
 	// this token can't be saved to the playlist and the only way is to map channel id to playlist entry id
 
 	const auto& pair = m_playlistMap.find(uri->get_id());

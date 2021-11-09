@@ -11,6 +11,7 @@
 #include "uri_sharaclub.h"
 #include "uri_sharatv.h"
 #include "uri_sharavoz.h"
+#include "uri_tvteam.h"
 #include "uri_viplime.h"
 
 StreamContainer::StreamContainer(StreamType type) : stream_type(type)
@@ -57,6 +58,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enSharavoz:
 			return  std::make_unique<uri_sharavoz>();
+
+		case StreamType::enTvTeam:
+			return  std::make_unique<uri_tvteam>();
 
 		case StreamType::enVipLime:
 			return  std::make_unique<uri_viplime>();

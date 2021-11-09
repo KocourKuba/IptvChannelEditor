@@ -287,6 +287,7 @@ goto :EOF
     <ClInclude Include="uri_sharatv.h" />
     <ClInclude Include="uri_sharavoz.h" />
     <ClInclude Include="uri_stream.h" />
+    <ClInclude Include="uri_tvteam.h" />
     <ClInclude Include="uri_viplime.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="IPTVChannelEditor.h" />
@@ -345,6 +346,7 @@ goto :EOF
     <ClCompile Include="uri_sharaclub.cpp" />
     <ClCompile Include="uri_sharatv.cpp" />
     <ClCompile Include="uri_sharavoz.cpp" />
+    <ClCompile Include="uri_tvteam.cpp" />
     <ClCompile Include="uri_viplime.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="IPTVChannelEditor.cpp" />
