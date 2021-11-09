@@ -1776,7 +1776,7 @@ void CIPTVChannelEditorDlg::OnRemove()
 
 void CIPTVChannelEditorDlg::OnUpdateRemove(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable((IsSelectedChannelsOrEntries(true) || IsSelectedCategory()) && IsSelectedInTheSameCategory() && IsSelectedNotFavorite());
+	pCmdUI->Enable((IsSelectedChannelsOrEntries(true) && IsSelectedInTheSameCategory() || IsSelectedCategory()) && IsSelectedNotFavorite());
 }
 
 void CIPTVChannelEditorDlg::OnChannelUp()
@@ -4652,11 +4652,9 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& token) const
 {
-	if (m_lastTree != &m_wndChannelsTree
-		|| (m_pluginType != StreamType::enFox
-			&& m_pluginType != StreamType::enItv
-			&& m_pluginType != StreamType::enOneUsd
-			)
+	if (   m_pluginType != StreamType::enFox
+		&& m_pluginType != StreamType::enItv
+		&& m_pluginType != StreamType::enOneUsd
 		)
 	{
 		uri->set_token(token);
