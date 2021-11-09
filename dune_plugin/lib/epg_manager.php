@@ -99,7 +99,7 @@ class EpgManager
             }
         }
         catch (Exception $ex) {
-            hd_print($ex->getMessage());
+            hd_print("http exception: " . $ex->getMessage());
             return $epg;
         }
 
@@ -120,7 +120,7 @@ class EpgManager
             $data = $ch_data; // sharaclub, no json root
         }
 
-        // hd_print("total entries: " . count($data));
+        hd_print("total entries: " . count($data));
         // collect all program that starts after day start and before day end
         foreach ($data as $entry) {
             $program_start = $entry[$parser_params['start']];
