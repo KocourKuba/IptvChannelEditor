@@ -13,7 +13,7 @@ class SharatvPluginConfig extends DefaultConfig
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{ID}/{TOKEN}';
     public static $CHANNELS_LIST = 'sharatv_channel_list.xml';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/shartv/epg/%s.json'; // epg_id
+    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/shara-tv/epg/%s.json'; // epg_id
 
     /**
      * Transform url based on settings or archive playback

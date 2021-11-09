@@ -11,7 +11,7 @@ class ViplimePluginConfig extends DefaultConfig
     public static $ACCOUNT_PLAYLIST_URL1 = 'http://cdntv.online/high/%s/playlist.m3u8';
 
     // tv
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<quality>)/(?<token>.+)/(?<id>.+)\.m3u8$|';
+    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8';
     public static $CHANNELS_LIST = 'viplime_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/viplime/epg/%s.json'; // epg_id
