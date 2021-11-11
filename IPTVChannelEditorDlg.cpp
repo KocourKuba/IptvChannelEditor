@@ -2151,7 +2151,7 @@ void CIPTVChannelEditorDlg::OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResu
 	*pResult = 0;
 	UINT uFlags = 0;
 	HTREEITEM hItem = m_wndChannelsTree.HitTest(pt, &uFlags);
-	if (hItem && (uFlags & TVHT_ONITEM))
+	if (hItem && (uFlags & TVHT_ONITEM) && !IsCategory(hItem))
 	{
 		PlayItem(hItem);
 	}
