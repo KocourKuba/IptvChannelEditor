@@ -1099,6 +1099,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 	if (root == nullptr)
 		root = m_wndChannelsTree.GetRootItem();
 
+	m_changedChannels.clear();
 	while (root != nullptr && !m_playlistMap.empty())
 	{
 		// iterate subitems
@@ -1119,6 +1120,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 					)
 				{
 					color = m_brown;
+					m_changedChannels.emplace_back(hItem);
 				}
 				else
 				{
@@ -1136,12 +1138,15 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 
 		root = m_wndChannelsTree.GetNextSiblingItem(root);
 	}
+
+	CString fmt;
+	fmt.LoadString(IDS_STRING_FMT_CHANNELS);
+	m_wndChInfo.SetWindowText(fmt::format(fmt.GetString(), m_channelsMap.size(), m_changedChannels.size()).c_str());
+	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty());
 }
 
 void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 {
-	m_changedChannels.clear();
-
 	HTREEITEM root = m_wndPlaylistTree.GetRootItem();
 	while (root != nullptr)
 	{
@@ -1163,7 +1168,6 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 					)
 				{
 					color = m_brown;
-					m_changedChannels.emplace_back(hItem);
 				}
 			}
 
@@ -1172,11 +1176,6 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 
 		root = m_wndPlaylistTree.GetNextSiblingItem(root);
 	}
-
-	CString fmt;
-	fmt.LoadString(IDS_STRING_FMT_CHANNELS);
-	m_wndChInfo.SetWindowText(fmt::format(fmt.GetString(), m_channelsMap.size(), m_changedChannels.size()).c_str());
-	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty());
 }
 
 void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
