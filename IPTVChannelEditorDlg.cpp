@@ -1917,30 +1917,23 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	lStruct.category->set_key(rKey);
 	rStruct.category->set_key(lKey);
 
-	// swap HTREEITEM in map
-	std::swap(lStruct.hItem, rStruct.hItem);
-
 	// Set swapped struct
 	m_categoriesMap[lKey] = rStruct;
 	m_categoriesMap[rKey] = lStruct;
 
-	// swap id's in CategoriesTreeMap
-	auto lId = m_categoriesTreeMap[hLeft];
-	auto rId = m_categoriesTreeMap[hRight];
-	m_categoriesTreeMap[hLeft] = rId;
-	m_categoriesTreeMap[hRight] = lId;
-
 	// запоминаем ItemData для нод и подменяем на счетчик
 	std::vector<HTREEITEM> itemData;
-	DWORD_PTR idx = 0;
 	for (HTREEITEM hItem = m_wndChannelsTree.GetChildItem(nullptr); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 	{
 		itemData.emplace_back(hItem);
-		m_wndChannelsTree.SetItemData(hItem, idx++);
+		int key = m_categoriesTreeMap[hItem];
+		if (key == ID_ADD_TO_FAVORITE)
+			key = -ID_ADD_TO_FAVORITE; // move to first position for sort
+		m_wndChannelsTree.SetItemData(hItem, key);
 	}
 
 	// Меняем местами нужные ItemData для сортировки
-	idx = m_wndChannelsTree.GetItemData(hLeft);
+	int idx = m_wndChannelsTree.GetItemData(hLeft);
 	m_wndChannelsTree.SetItemData(hLeft, m_wndChannelsTree.GetItemData(hRight));
 	m_wndChannelsTree.SetItemData(hRight, idx);
 
@@ -1949,10 +1942,14 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	sortInfo.lpfnCompare = &CBCompareForSwap;
 	m_wndChannelsTree.SortChildrenCB(&sortInfo);
 
-	// Восстанавливаем значения ItemData
-	for (const auto& it : itemData)
+	for (HTREEITEM hItem = m_wndChannelsTree.GetChildItem(nullptr); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 	{
-		m_wndChannelsTree.SetItemData(it, (DWORD_PTR)InfoType::enCategory);
+		int key = m_wndChannelsTree.GetItemData(hItem);
+		if (key == -ID_ADD_TO_FAVORITE)
+			key = ID_ADD_TO_FAVORITE;
+		m_categoriesTreeMap[hItem] = key;
+		m_categoriesMap[key].hItem = hItem;
+		m_wndChannelsTree.SetItemData(hItem, (DWORD_PTR)InfoType::enCategory);
 	}
 
 	m_wndChannelsTree.SelectItem(hRight);
