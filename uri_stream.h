@@ -21,15 +21,15 @@ enum class StreamType
 	enTvTeam,
 };
 
-typedef struct
+struct TemplateParams
 {
 	std::wstring domain;
 	std::wstring token;
 	std::wstring login;
 	std::wstring password;
 	std::wstring host;
-	int shift_back;
-}TemplateParams;
+	int shift_back = 0;
+};
 
 /// <summary>
 /// Interface for stream

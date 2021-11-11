@@ -602,7 +602,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_plFileName.Empty();
 	std::wstring url;
 	int idx = m_wndPlaylist.GetCurSel();
-	BOOL isFile = (BOOL)m_wndPlaylist.GetItemData(idx);
+	BOOL isFile = m_wndPlaylist.GetItemData(idx) != 0;
 	const auto& account_template = StreamContainer::get_instance(m_pluginType)->get_playlist_template();
 	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginName<TCHAR>(GetCurrentPlugin(), true)).c_str();
 
@@ -2827,7 +2827,7 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 bool CIPTVChannelEditorDlg::SetupCustomPlaylist(bool loaded)
 {
 	CCustomPlaylistDlg dlg;
-	dlg.m_isFile = (BOOL)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel());
+	dlg.m_isFile = m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel()) != 0;
 	LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
 	dlg.m_url = ReadRegStringPluginT(szType);
 
