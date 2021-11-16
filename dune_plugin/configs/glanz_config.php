@@ -170,6 +170,8 @@ class GlanzPluginConfig extends DefaultConfig
                 $category_index[$cat->get_id()] = $cat;
             }
         }
+
+        hd_print("Categories read: " . count($category_list));
     }
 
     /**
@@ -177,6 +179,7 @@ class GlanzPluginConfig extends DefaultConfig
      */
     public static function getSearchList($keyword, $plugin_cookies)
     {
+        hd_print("getSearchList: $keyword");
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
@@ -195,6 +198,7 @@ class GlanzPluginConfig extends DefaultConfig
             }
         }
 
+        hd_print("Movies found: " . count($movies));
         return $movies;
     }
 
@@ -229,6 +233,7 @@ class GlanzPluginConfig extends DefaultConfig
             }
         }
 
+        hd_print("Movies read: " . count($movies));
         return $movies;
     }
 }

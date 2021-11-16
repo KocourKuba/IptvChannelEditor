@@ -49,6 +49,7 @@ abstract class DefaultConfig
     protected static $pages = array();
     protected static $is_entered = false;
     protected static $movie_counter = array();
+    protected static $lazy_load_vod = false;
 
     /////////////////////////////////////////////////////////////////////////////
     // views constants
@@ -156,11 +157,8 @@ abstract class DefaultConfig
 
     public static function add_movie_counter($key, $val)
     {
-        if (!array_key_exists($key, static::$movie_counter)) {
-            static::$movie_counter[$key] = 0;
-        }
-
-        static::$movie_counter[$key] += $val;
+        // entire list available, counter is final
+        static::$movie_counter[$key] = $val;
     }
 
     public static function get_next_page($idx)
@@ -170,6 +168,11 @@ abstract class DefaultConfig
         }
 
         return ++static::$pages[$idx];
+    }
+
+    public static function is_lazy_load_vod()
+	{
+        return static::$lazy_load_vod;
     }
 
     /**

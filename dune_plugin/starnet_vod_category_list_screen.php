@@ -44,7 +44,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
         if (isset($media_url->category_id)) {
             if (!isset($this->category_index[$media_url->category_id])) {
-                hd_print("Error: parent category (id: " . $media_url->category_id . ") not found.");
+                hd_print("Error: parent category (id: $media_url->category_id) not found.");
                 throw new Exception('No parent category found');
             }
 
@@ -101,7 +101,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
                 PluginRegularFolderItem::view_item_params => array
                 (
                     ViewItemParams::icon_path => $category->get_icon_path(),
-                    ViewItemParams::item_detailed_icon_path => $category->get_icon_path()
+                    ViewItemParams::item_detailed_icon_path => $category->get_icon_path(),
                 )
             );
         }

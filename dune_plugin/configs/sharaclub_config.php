@@ -37,6 +37,7 @@ class SharaclubPluginConfig extends DefaultConfig
         parent::__construct();
         static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
         static::$EPG_PARSER_PARAMS['second']['epg_root'] = '';
+        static::$lazy_load_vod = true;
     }
 
     /**
@@ -196,6 +197,8 @@ class SharaclubPluginConfig extends DefaultConfig
             $category_list[] = $cat;
             $category_index[$cat->get_id()] = $cat;
         }
+
+        hd_print("Categories read: " . count($category_list));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -205,6 +208,7 @@ class SharaclubPluginConfig extends DefaultConfig
      */
     public static function getSearchList($keyword, $plugin_cookies)
     {
+        hd_print("getSearchList: $keyword");
         $movies = array();
         $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
@@ -215,6 +219,7 @@ class SharaclubPluginConfig extends DefaultConfig
             }
         }
 
+        hd_print("Movies found: " . count($movies));
         return $movies;
     }
 
@@ -239,6 +244,7 @@ class SharaclubPluginConfig extends DefaultConfig
             }
         }
 
+        hd_print("Movies read: " . count($movies));
         return $movies;
     }
 
@@ -261,5 +267,15 @@ class SharaclubPluginConfig extends DefaultConfig
         $movie->info = $mov_array["name"] . "|Год: " . $info_arr["year"] . "|Страна: $country|Жанр: $genres|Рейтинг: " . $info_arr["rating"];
 
         return  $movie;
+    }
+
+    public static function add_movie_counter($key, $val)
+    {
+        // repeated count data
+        if (!array_key_exists($key, static::$movie_counter)) {
+            static::$movie_counter[$key] = 0;
+        }
+
+        static::$movie_counter[$key] += $val;
     }
 }

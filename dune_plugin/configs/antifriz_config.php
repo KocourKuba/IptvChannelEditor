@@ -34,6 +34,12 @@ class AntifrizPluginConfig extends DefaultConfig
     protected static $TV_CHANNEL_ICON_WIDTH = 84;
     protected static $TV_CHANNEL_ICON_HEIGHT = 48;
 
+    public function __construct()
+    {
+        parent::__construct();
+        static::$lazy_load_vod = true;
+    }
+
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
@@ -177,6 +183,8 @@ class AntifrizPluginConfig extends DefaultConfig
             $category_list[] = $category;
             $category_index[$category->get_id()] = $category;
         }
+
+        hd_print("Categories read: " . count($category_list));
     }
 
     /**
@@ -195,7 +203,7 @@ class AntifrizPluginConfig extends DefaultConfig
      */
     public static function getVideoList($idx, $plugin_cookies)
     {
-        //hd_print("getVideoList: $keyword");
+        hd_print("getVideoList: $idx");
         $val = static::get_next_page($idx);
 
         if ($idx === 'all') {
@@ -238,6 +246,17 @@ class AntifrizPluginConfig extends DefaultConfig
             }
         }
 
+        hd_print("Movies found: " . count($movies));
         return $movies;
+    }
+
+    public static function add_movie_counter($key, $val)
+    {
+        // repeated count data
+        if (!array_key_exists($key, static::$movie_counter)) {
+            static::$movie_counter[$key] = 0;
+        }
+
+        static::$movie_counter[$key] += $val;
     }
 }

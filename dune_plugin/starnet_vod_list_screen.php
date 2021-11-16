@@ -26,16 +26,19 @@ class StarnetVodListScreen extends VodListScreen
      */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        //hd_print("get_short_movie_range");
+        hd_print("get_short_movie_range: '$media_url->category_id', from_idx: $from_ndx");
         static::$config->try_reset_pages();
         $key = $media_url->category_id . "_" . $media_url->genre_id;
 
-        if ($media_url->category_id === 'search') {
-            $movies = static::$config->getSearchList($media_url->genre_id, $plugin_cookies);
-        } else if ($media_url->category_id === 'all') {
-            $movies = static::$config->getVideoList($media_url->category_id, $plugin_cookies);
-        } else {
-            $movies = static::$config->getVideoList($media_url->category_id . "_" . $media_url->genre_id, $plugin_cookies);
+        $movies = array();
+        if (static::$config->get_movie_counter($key) <= 0 || static::$config->is_lazy_load_vod()) {
+            if ($media_url->category_id === 'search') {
+                    $movies = static::$config->getSearchList($media_url->genre_id, $plugin_cookies);
+            } else if ($media_url->category_id === 'all') {
+                $movies = static::$config->getVideoList($media_url->category_id, $plugin_cookies);
+            } else {
+                $movies = static::$config->getVideoList($media_url->category_id . "_" . $media_url->genre_id, $plugin_cookies);
+            }
         }
 
         $count = count($movies);
