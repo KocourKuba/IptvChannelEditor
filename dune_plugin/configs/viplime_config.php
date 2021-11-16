@@ -16,6 +16,10 @@ class ViplimePluginConfig extends DefaultConfig
     public static $CHANNELS_LIST = 'viplime_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/viplime/epg/%s.json'; // epg_id
 
+    // Views variables
+    protected static $TV_CHANNEL_ICON_WIDTH = 84;
+    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
+
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
@@ -23,43 +27,27 @@ class ViplimePluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $url = $channel->get_streaming_url();
-        //hd_print("AdjustStreamUrl: $url");
+        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
 
-        if ((int)$archive_ts > 0) {
-            $now_ts = (string)time();
-            $url .= "?utc=$archive_ts&lutc=$now_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
+        $ext_params = $channel->get_ext_params();
+        if (isset($ext_params['quality'])) {
+            $url = str_replace('{QUALITY}', $ext_params['quality'], $url);
         }
 
-        $format = static::get_format($plugin_cookies);
-        // hd_print("Stream type: " . $format);
-        if ($format === 'mpeg') {
+        //hd_print("AdjustStreamUrl: $url");
+
+        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+
+        if (self::get_format($plugin_cookies) === 'mpeg') {
             // replace hls to mpegts
             $url = str_replace('.m3u8', '.mpeg', $url);
-            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-            $url .= "|||dune_params|||buffering_ms:$buf_time";
+            $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
         }
 
         // hd_print("Stream url:  " . $url);
 
         return $url;
-    }
-
-    /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        $url = parent::UpdateStreamUri($channel_id, $plugin_cookies, $ext_params);
-        $url = str_replace('{QUALITY}', $ext_params['quality'], $url);
-        return static::make_ts($url);
     }
 }

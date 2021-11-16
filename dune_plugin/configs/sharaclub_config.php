@@ -28,6 +28,10 @@ class SharaclubPluginConfig extends DefaultConfig
     // vod
     public static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
 
+    // Views variables
+    protected static $TV_CHANNEL_ICON_WIDTH = 84;
+    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
+
     public function __construct()
     {
         parent::__construct();
@@ -42,23 +46,14 @@ class SharaclubPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $url = $channel->get_streaming_url();
+        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
 
-        if ((int)$archive_ts > 0) {
-            $now_ts = time();
-            $url .= "?utc=$archive_ts&lutc=$now_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
-        }
-
-        $format = static::get_format($plugin_cookies);
-        // hd_print("Stream type: " . $format);
-        if ($format === 'mpeg') {
+        if (self::get_format($plugin_cookies) === 'mpeg') {
             $url = str_replace('/video.m3u8', '.ts', $url);
-            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-            $url .= "|||dune_params|||buffering_ms:$buf_time";
+            $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
         }
 
         // hd_print("Stream url:  " . $url);

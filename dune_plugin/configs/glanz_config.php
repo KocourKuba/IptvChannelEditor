@@ -38,13 +38,26 @@ class GlanzPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $url = $channel->get_streaming_url();
+        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $ext_params = $channel->get_ext_params();
+        $url = str_replace(
+            array(
+                '{LOGIN}',
+                '{PASSWORD}',
+                '{INT_ID}',
+                '{HOST}'
+            ),
+            array(
+                $ext_params['login'],
+                $ext_params['password'],
+                $ext_params['int_id'],
+                $ext_params['host']
+            ),
+            $url);
 
-        $format = static::get_format($plugin_cookies);
-        // hd_print("Stream type: " . $format);
-        switch ($format) {
+        switch (self::get_format($plugin_cookies)) {
             case 'hls':
                 if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
@@ -59,55 +72,16 @@ class GlanzPluginConfig extends DefaultConfig
                 else {
                     $url = str_replace('video.m3u8', 'mpegts', $url);
                 }
-                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-                $url .= "|||dune_params|||buffering_ms:$buf_time";
+                $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
                 break;
             default:
-                hd_print("unknown format: $format");
+                hd_print("unknown url format");
                 return "";
         }
 
         // hd_print("Stream url:  " . $url);
 
         return $url;
-    }
-
-    /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        if ($ext_params === null || !isset($ext_params['subdomain'], $ext_params['token'])) {
-            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
-            return '';
-        }
-
-        $url = str_replace(
-            array(
-                '{SUBDOMAIN}',
-                '{ID}',
-                '{TOKEN}',
-                '{LOGIN}',
-                '{PASSWORD}',
-                '{INT_ID}',
-                '{HOST}'
-            ),
-            array(
-                $ext_params['subdomain'],
-                $channel_id,
-                $ext_params['token'],
-                $ext_params['login'],
-                $ext_params['password'],
-                $ext_params['int_id'],
-                $ext_params['host']
-            ),
-            static::$MEDIA_URL_TEMPLATE_HLS);
-
-        return static::make_ts($url);
     }
 
     /**

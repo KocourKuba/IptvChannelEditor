@@ -143,7 +143,7 @@ class StarnetPluginTv extends AbstractTv
         // read category
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
             if ($xml_tv_category->getName() !== 'tv_category') {
-                $error_string = "Error: unexpected node '" . $xml_tv_category->getName() . "'. Expected: 'tv_category'";
+                $error_string = "Error: unexpected node '{$xml_tv_category->getName()}'. Expected: 'tv_category'";
                 hd_print($error_string);
                 throw new Exception($error_string);
             }
@@ -160,7 +160,7 @@ class StarnetPluginTv extends AbstractTv
         // Read channels
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {
-                hd_print("Error: unexpected node '" . $xml_tv_channel->getName() . "'. Expected: 'tv_channel'");
+                hd_print("Error: unexpected node '{$xml_tv_channel->getName()}'. Expected: 'tv_channel'");
                 continue;
             }
 
@@ -172,9 +172,9 @@ class StarnetPluginTv extends AbstractTv
             // update play stream url and calculate unique id from url hash
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = (string)$xml_tv_channel->channel_id;
-                $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : null;
-                // update stream url by provider parameters
-                $streaming_url = self::$config->UpdateStreamUri($channel_id, $plugin_cookies, $ext_params);
+                $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
+                // update stream url by channel ID
+                $streaming_url = self::$config->UpdateStreamUrlID($channel_id);
                 if (empty($streaming_url)) {
                     continue;
                 }
@@ -194,7 +194,7 @@ class StarnetPluginTv extends AbstractTv
             else
             {
                 // https not supported for old players
-                $icon_url = str_replace('https', 'https', (string)$xml_tv_channel->icon_url);
+                $icon_url = str_replace("https://", "http://", (string)$xml_tv_channel->icon_url);
                 $number = isset($xml_tv_channel->int_id) ? (int)$xml_tv_channel->int_id : 0;
                 $channel = new StarnetChannel(
                     $hash,
@@ -233,7 +233,7 @@ class StarnetPluginTv extends AbstractTv
                 // old format
                 foreach ($xml_tv_channel->tv_categories->children() as $xml_tv_cat_id) {
                     if ($xml_tv_cat_id->getName() !== 'tv_category_id') {
-                        hd_print("Error: unexpected node '" . $xml_tv_cat_id->getName() . "'. Expected: 'tv_category_id'");
+                        hd_print("Error: unexpected node '{$xml_tv_cat_id->getName()}'. Expected: 'tv_category_id'");
                         throw new Exception('Invalid XML document');
                     }
 
@@ -249,7 +249,7 @@ class StarnetPluginTv extends AbstractTv
             }
         }
 
-        hd_print("Loaded: channels: " . $this->channels->size() .", groups: " . $this->groups->size());
+        hd_print("Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
     }
 
     public function get_tv_stream_url($playback_url, &$plugin_cookies)
@@ -272,7 +272,7 @@ class StarnetPluginTv extends AbstractTv
         }
 
         // update url if play archive or different type of the stream
-        $url = self::$config->AdjustStreamUri($plugin_cookies, $archive_ts, $channel);
+        $url = self::$config->TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         hd_print("get_tv_playback_url: $url");
         return $url;
     }

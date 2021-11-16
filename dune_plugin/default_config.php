@@ -29,8 +29,8 @@ abstract class DefaultConfig
     public static $M3U_STREAM_URL_PATTERN = '';
 
     // tv
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://online.dune-hd.com/demo/index.m3u8?channel=%s';
-    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://ts://online.dune-hd.com/demo/mpegts?channel=%s';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://online.dune-hd.com/demo/index.m3u8?channel=%s';
+    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://online.dune-hd.com/demo/mpegts?channel=%s';
     public static $CHANNELS_LIST = 'default_channel_list.xml';
     public static $PLAY_LIST = 'playlist_tv.m3u8';
 
@@ -173,15 +173,40 @@ abstract class DefaultConfig
     }
 
     /**
-     * Transform url based on settings or archive playback
+     * Update url macros {SUBDOMAIN} and {TOKEN} by values from channel ext_params
+     * Make url ts wrapped
      * @param $plugin_cookies
      * @param $archive_ts
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        return str_replace('{ID}', $channel->get_channel_id(), static::$MEDIA_URL_TEMPLATE_HLS);
+        $url = $channel->get_streaming_url();
+        $ext_params = $channel->get_ext_params();
+        if (!isset($ext_params['subdomain'])) {
+            hd_print("TransformStreamUrl: parameter 'subdomain' for {$channel->get_channel_id()} not defined!");
+        } else {
+            $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], $url);
+        }
+
+        if (!isset($ext_params['token'])) {
+            hd_print("TransformStreamUrl: parameter 'token' for {$channel->get_channel_id()} not defined!");
+        } else {
+            $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        }
+
+        return self::make_ts($url);
+    }
+
+    /**
+     * Update url by channel ID (for correct hash calculation of url)
+     * @param $channel_id
+     * @return string
+     */
+    public static function UpdateStreamUrlID($channel_id)
+    {
+        return str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
     }
 
     /**
@@ -222,32 +247,18 @@ abstract class DefaultConfig
         }
 
         if (empty($pl_entries)) {
-            throw new Exception('Empty provider playlist! No channels mapped.');
+            hd_print('Empty provider playlist! No channels mapped.');
+            throw new DuneException(
+                'Empty provider playlist', 0,
+                ActionFactory::show_error(
+                    true,
+                    'Ошибка скачивания плейлиста',
+                    array(
+                        'Пустой плейлист провайдера!',
+                        'Проверьте подписку или подключение к Интернет.')));
         }
 
-        hd_print("Read Playlist entries: " . count($pl_entries));
         return $pl_entries;
-    }
-
-    /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        if ($ext_params === null || !isset($ext_params['subdomain'], $ext_params['token'])) {
-            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
-            return '';
-        }
-
-        $url = str_replace(
-            array('{SUBDOMAIN}', '{ID}', '{TOKEN}'),
-            array($ext_params['subdomain'], $channel_id, $ext_params['token']),
-            static::$MEDIA_URL_TEMPLATE_HLS);
-        return static::make_ts($url);
     }
 
     public static function getSearchList($keyword, $plugin_cookies)
@@ -265,7 +276,33 @@ abstract class DefaultConfig
         return null;
     }
 
-    public static function make_ts($url)
+    protected static function UpdateArchiveUrlParams($url, $archive_ts)
+    {
+        if ($archive_ts > 0) {
+            $now_ts = time();
+            $url .= (strpos($url, '?') === false) ? '?' : '&';
+            $url .= "utc=$archive_ts&lutc=$now_ts";
+            // hd_print("Archive TS:  " . $archive_ts);
+            // hd_print("Now       :  " . $now_ts);
+        }
+
+        return $url;
+    }
+
+    protected static function UpdateMpegTsBuffering($url, $plugin_cookies)
+    {
+        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+        $url .= "|||dune_params|||buffering_ms:$buf_time";
+        return $url;
+    }
+
+    protected static function get_format($plugin_cookies)
+    {
+        // hd_print("Stream type: " . isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls');
+        return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+    }
+
+    protected static function make_ts($url)
     {
         if (strpos($url, 'http://ts://') === false) {
             $url = str_replace('http://', 'http://ts://', $url);
@@ -284,13 +321,14 @@ abstract class DefaultConfig
             } catch (Exception $ex) {
                 try {
                     if (empty(static::$ACCOUNT_PLAYLIST_URL2)) {
-                        throw new Exception("Second playlist not defined");
+                        hd_print("Unable to load tv playlist: " . $ex->getMessage());
+                        return array();
                     }
 
                     $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies);
                     file_put_contents($tmp_file, $content);
                 } catch (Exception $ex) {
-                    hd_print("Unable to load tv playlist: " . $ex->getMessage());
+                    hd_print("Unable to load secondary tv playlist: " . $ex->getMessage());
                     return array();
                 }
             }
@@ -314,11 +352,6 @@ abstract class DefaultConfig
         }
 
         return file($m3u_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    }
-
-    public static function get_format($plugin_cookies)
-    {
-        return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
     }
 
     /**

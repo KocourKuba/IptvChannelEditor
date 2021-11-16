@@ -148,14 +148,7 @@ abstract class AbstractVod implements Vod
         $sel_id = isset($media_url->series_id) ?
             $media_url->series_id : null;
 
-        return $movie->get_vod_info($sel_id, $this->get_buffering_ms());
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    public function get_buffering_ms()
-    {
-        return 4000;
+        return $movie->get_vod_info($sel_id, (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000));
     }
 
     ///////////////////////////////////////////////////////////////////////

@@ -31,8 +31,8 @@ class AntifrizPluginConfig extends DefaultConfig
     public static $MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
 
     // Views variables
-    public static $TV_CHANNEL_ICON_WIDTH = 60;
-    public static $TV_CHANNEL_ICON_HEIGHT = 60;
+    protected static $TV_CHANNEL_ICON_WIDTH = 84;
+    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
 
     /**
      * Transform url based on settings or archive playback
@@ -41,37 +41,36 @@ class AntifrizPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $ext_params = $channel->get_ext_params();
-        $domain = explode(':', $ext_params['subdomain']);
-        $format = static::get_format($plugin_cookies);
-        // hd_print("Stream type: " . $format);
-        $url = $channel->get_streaming_url();
-        switch ($format) {
-            case 'hls':
-                if ((int)$archive_ts <= 0) {
-                    break;
-                }
+        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
 
-                $url = self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS;
-                $url = str_replace(
-                    array('{SUBDOMAIN}', '{ID}', '{TOKEN}', '{START}'),
-                    array($domain[0], $ext_params['id'], $ext_params['token'], $archive_ts),
-                    $url);
+        $ext_params = $channel->get_ext_params();
+        switch (self::get_format($plugin_cookies)) {
+            case 'hls':
+                if ((int)$archive_ts > 0) {
+                    // hls archive url completely different, make it from scratch
+                    $domain = explode(':', $ext_params['subdomain']);
+                    $url = str_replace(
+                        array('{SUBDOMAIN}', '{ID}', '{TOKEN}', '{START}'),
+                        array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
+                        self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS);
+                    $url = self::make_ts($url);
+                }
                 break;
             case 'mpeg':
+                // mpeg url also different against hls, make it from scratch
                 $url = ((int)$archive_ts > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::$MEDIA_URL_TEMPLATE_MPEG;
+                $domain = explode(':', $ext_params['subdomain']);
                 $url = str_replace(
                     array('{SUBDOMAIN}', '{ID}', '{TOKEN}', '{START}'),
-                    array($domain[0], $ext_params['id'], $ext_params['token'], $archive_ts),
+                    array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
                     $url);
-                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-                $url .= "|||dune_params|||buffering_ms:$buf_time";
+                $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
+                $url = self::make_ts($url);
                 break;
             default:
-                hd_print("unknown format: $format");
-                return "";
+                hd_print("unknown url format");
         }
 
         // hd_print("Stream url:  " . $url);
@@ -79,28 +78,7 @@ class AntifrizPluginConfig extends DefaultConfig
         // hd_print("Token:       " . $ext_params['token']);
         // hd_print("Archive TS:  " . $archive_ts);
 
-        return static::make_ts($url);
-    }
-
-    /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        if ($ext_params === null || !isset($ext_params['subdomain'], $ext_params['token'])) {
-            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
-            return '';
-        }
-
-        $url = str_replace(
-            array('{SUBDOMAIN}', '{ID}', '{TOKEN}'),
-            array($ext_params['subdomain'], $ext_params['id'], $ext_params['token']),
-            static::$MEDIA_URL_TEMPLATE_HLS);
-        return static::make_ts($url);
+        return $url;
     }
 
     /**

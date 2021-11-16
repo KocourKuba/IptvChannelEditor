@@ -20,7 +20,7 @@ class FoxPluginConfig extends DefaultConfig
 
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{TOKEN}/index.m3u8';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/{TOKEN}/index.m3u8';
     public static $CHANNELS_LIST = 'fox_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id
 
@@ -38,26 +38,27 @@ class FoxPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        // entire url replaced in UpdateStreamUri, subdomain not subst
-        $ext_params = $channel->get_ext_params();
         $url = $channel->get_streaming_url();
+        $ext_params = $channel->get_ext_params();
 
-        if ((int)$archive_ts > 0) {
-            $now_ts = (string)time();
-            $url .= "?utc=$archive_ts&lutc=$now_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
+        if (!isset($ext_params[0])) {
+            hd_print("TransformStreamUrl: parameters for {$channel->get_channel_id()} not defined!");
+        } else {
+            // fox does not have adjustable parameters, only token. Replace entire url from playlist
+            $url = $ext_params[0];
         }
 
+        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+
         if (!isset($ext_params['hls'])) {
-            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-            $url .= "|||dune_params|||buffering_ms:$buf_time";
+            $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
         }
 
         // hd_print("Stream url:  " . $url);
 
-        return $url;
+        return self::make_ts($url);
     }
 
     /**
@@ -79,29 +80,17 @@ class FoxPluginConfig extends DefaultConfig
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
-            throw new Exception('Empty provider playlist! No channels mapped.');
+            throw new DuneException(
+                'Empty provider playlist', 0,
+                ActionFactory::show_error(
+                    true,
+                    'Ошибка скачивания плейлиста',
+                    array(
+                        'Пустой плейлист провайдера!',
+                        'Проверьте подписку или подключение к Интернет.')));
         }
 
-        hd_print("Read Playlist entries: " . count($pl_entries));
         return $pl_entries;
-    }
-
-    /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        // fox does not have variable parameters, only token. Replace entire url
-        if ($ext_params === null || !isset($ext_params[0])) {
-            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
-            return '';
-        }
-
-        return static::make_ts($ext_params[0]);
     }
 
     /**
@@ -110,7 +99,6 @@ class FoxPluginConfig extends DefaultConfig
     public static function TryLoadMovie($movie_id, $plugin_cookies)
     {
         // hd_print("Movie ID: $movie_id ");
-        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
         $movie = new Movie($movie_id);
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
@@ -121,7 +109,8 @@ class FoxPluginConfig extends DefaultConfig
 
             $logo = $match['logo'];
             list($title, $title_orig) = explode('/', $match['title']);
-            $url = static::make_ts($m3u_lines[$i + 1]) . "|||dune_params|||buffering_ms:$buf_time";
+            $url = self::UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
+            $url = self::make_ts($url);
 
             //hd_print("Vod url: $playback_url");
             $movie->set_data(

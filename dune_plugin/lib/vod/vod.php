@@ -14,8 +14,6 @@ interface Vod
 
     public function get_vod_stream_url($playback_url, &$plugin_cookies);
 
-    public function get_buffering_ms();
-
     public function get_genre_ids();
 
     public function get_genre_caption($genre_id);

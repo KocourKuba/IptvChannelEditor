@@ -16,6 +16,10 @@ class TvteamPluginConfig extends DefaultConfig
     public static $CHANNELS_LIST = 'tvteam_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/tvteam/epg/%s.json'; // epg_id
 
+    // Views variables
+    public static $TV_CHANNEL_ICON_WIDTH = 60;
+    public static $TV_CHANNEL_ICON_HEIGHT = 60;
+
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
@@ -23,14 +27,12 @@ class TvteamPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $url = $channel->get_streaming_url();
+        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         //hd_print("AdjustStreamUrl: $url");
 
-        $format = static::get_format($plugin_cookies);
-        // hd_print("Stream type: " . $format);
-        switch ($format)
+        switch (self::get_format($plugin_cookies))
         {
             case 'hls':
                 if ((int)$archive_ts > 0) {
@@ -47,8 +49,7 @@ class TvteamPluginConfig extends DefaultConfig
                     $url = str_replace('video.m3u8', 'mpegts', $url);
                 }
 
-                $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-                $url .= "|||dune_params|||buffering_ms:$buf_time";
+                $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
                 break;
         }
 

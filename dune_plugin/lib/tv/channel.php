@@ -36,8 +36,6 @@ interface IChannel
 
     public function get_archive_delay_sec();
 
-    public function get_buffering_ms();
-
     // timeshift for epg to this channel
     public function get_timeshift_hours();
 

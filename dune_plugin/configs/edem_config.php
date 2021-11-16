@@ -11,6 +11,10 @@ class EdemPluginConfig extends DefaultConfig
     public static $CHANNELS_LIST = 'edem_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
 
+    // Views variables
+    protected static $TV_CHANNEL_ICON_WIDTH = 84;
+    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
+
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
@@ -18,19 +22,24 @@ class EdemPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = $channel->get_streaming_url();
         // hd_print("Stream url:  " . $url);
 
-        if ((int)$archive_ts > 0) {
-            $now_ts = time();
-            $url .= "?utc=$archive_ts&lutc=$now_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
+        $subdomain = empty($plugin_cookies->subdomain_local) ? $plugin_cookies->subdomain : $plugin_cookies->subdomain_local;
+        $token = empty($plugin_cookies->ott_key_local) ? $plugin_cookies->ott_key : $plugin_cookies->ott_key_local;
+        if (empty($subdomain) || empty($token)) {
+            hd_print("TransformStreamUrl: parameters for {$channel->get_channel_id()} not defined!");
+        } else {
+            // substitute subdomain token parameters
+            $url = str_replace(
+                array('{SUBDOMAIN}', '{TOKEN}'),
+                array($subdomain, $token),
+                $url);
         }
 
-        return $url;
+        return self::UpdateArchiveUrlParams($url, $archive_ts);
     }
 
     /**
@@ -55,28 +64,5 @@ class EdemPluginConfig extends DefaultConfig
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         return array();
-    }
-
-    /**
-     * Update url by provider additional parameters
-     * @param $channel_id
-     * @param $plugin_cookies
-     * @param $ext_params
-     * @return string
-     */
-    public static function UpdateStreamUri($channel_id, $plugin_cookies, $ext_params)
-    {
-        $subdomain = empty($plugin_cookies->subdomain_local) ? $plugin_cookies->subdomain : $plugin_cookies->subdomain_local;
-        $token = empty($plugin_cookies->ott_key_local) ? $plugin_cookies->ott_key : $plugin_cookies->ott_key_local;
-        if (empty($subdomain) || empty($token)) {
-            hd_print("UpdateStreamUri: parameters for $channel_id not defined!");
-        }
-
-        // substitute subdomain token and id parameters
-        $url = str_replace(
-            array('{SUBDOMAIN}', '{ID}', '{TOKEN}'),
-            array($subdomain, $channel_id, $token),
-            static::$MEDIA_URL_TEMPLATE_HLS);
-        return static::make_ts($url);
     }
 }

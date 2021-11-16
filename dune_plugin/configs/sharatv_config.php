@@ -15,6 +15,10 @@ class SharatvPluginConfig extends DefaultConfig
     public static $CHANNELS_LIST = 'sharatv_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/shara-tv/epg/%s.json'; // epg_id
 
+    // Views variables
+    protected static $TV_CHANNEL_ICON_WIDTH = 84;
+    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
+
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
@@ -22,20 +26,13 @@ class SharatvPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function AdjustStreamUri($plugin_cookies, $archive_ts, IChannel $channel)
+    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $url = $channel->get_streaming_url();
-
-        if ((int)$archive_ts > 0) {
-            $now_ts = time();
-            $url .= "?utc=$archive_ts&lutc=$now_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
-        }
+        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
 
         // shara tv does not support hls, only mpeg-ts
-        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-        $url .= "|||dune_params|||buffering_ms:$buf_time";
+        $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
 
         // hd_print("Stream url:  " . $url);
 

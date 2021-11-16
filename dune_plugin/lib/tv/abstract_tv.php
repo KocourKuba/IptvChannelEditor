@@ -136,7 +136,7 @@ abstract class AbstractTv implements Tv
                 PluginTvChannel::archive_delay_sec => (int)$c->get_archive_delay_sec(),
 
                 // Buffering time
-                PluginTvChannel::buffering_ms => (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 0),
+                PluginTvChannel::buffering_ms => (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000),
                 PluginTvChannel::timeshift_hours => (int)$c->get_timeshift_hours(),
 
                 PluginTvChannel::playback_url_is_stream_url => $this->playback_url_is_stream_url,
