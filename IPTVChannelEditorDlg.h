@@ -163,7 +163,7 @@ private:
 	bool LoadChannels(const CString& path);
 	void LoadPlaylist(bool saveToFile = false);
 
-	bool AddChannel(HTREEITEM hSelectedItem, int categoryId = -1);
+	bool AddChannel(const std::shared_ptr<PlaylistEntry>& entry, int categoryId = -1);
 	void CopyMoveChannelTo(int category_id, bool move);
 	void FillTreeChannels(LPCWSTR select = nullptr);
 	void FillTreePlaylist();
@@ -362,7 +362,7 @@ private:
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
-	std::vector<HTREEITEM> m_changedChannels;
+	std::vector<std::shared_ptr<PlaylistEntry>> m_changedChannels;
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;

@@ -1120,7 +1120,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 					)
 				{
 					color = m_brown;
-					m_changedChannels.emplace_back(hItem);
+					m_changedChannels.emplace_back(entry);
 				}
 				else
 				{
@@ -1652,7 +1652,7 @@ void CIPTVChannelEditorDlg::OnAddCategory()
 	{
 		for (auto hIter = m_wndPlaylistTree.GetChildItem(hCategory); hIter != nullptr; hIter = m_wndPlaylistTree.GetNextSiblingItem(hIter))
 		{
-			needCheckExisting |= AddChannel(hIter);
+			needCheckExisting |= AddChannel(FindEntry(hIter));
 		}
 	}
 
@@ -2336,7 +2336,7 @@ void CIPTVChannelEditorDlg::OnAddTo(UINT id)
 	bool changed = false;
 	for (const auto& hSelectedItem : m_wndPlaylistTree.GetSelectedItems())
 	{
-		changed |= AddChannel(hSelectedItem, category_id);
+		changed |= AddChannel(FindEntry(hSelectedItem), category_id);
 	}
 
 	OnSyncTreeItem();
@@ -3489,7 +3489,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 	{
 		for (const auto& hSelectedItem : m_wndPlaylistTree.GetSelectedItems())
 		{
-			needCheckExisting |= AddChannel(hSelectedItem);
+			needCheckExisting |= AddChannel(FindEntry(hSelectedItem));
 		}
 	}
 	else
@@ -3503,8 +3503,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 			params.id = info->stream_uri->get_id();
 			params.type = InfoType::enPlEntry;
 			params.select = false;
-			HTREEITEM hPlItem = SelectTreeItem(&m_wndPlaylistTree, params);
-			needCheckExisting |= AddChannel(hPlItem);
+			needCheckExisting |= AddChannel(FindEntry(SelectTreeItem(&m_wndPlaylistTree, params)));
 		}
 		LoadChannelInfo(m_wndChannelsTree.GetSelectedItem());
 	}
@@ -4269,14 +4268,12 @@ void CIPTVChannelEditorDlg::SearchTreeItem(InfoType type, bool next /*= false*/)
 	}
 }
 
-bool CIPTVChannelEditorDlg::AddChannel(HTREEITEM hSelectedItem, int categoryId /*= -1*/)
+bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& entry, int categoryId /*= -1*/)
 {
-	bool needCheckExisting = false;
-
-	const auto& entry = FindEntry(hSelectedItem);
 	if (!entry)
-		return needCheckExisting;
+		return false;
 
+	bool needCheckExisting = false;
 	const auto& root_path = GetAbsPath(utils::PLUGIN_ROOT);
 
 	HTREEITEM hFoundItem = nullptr;
