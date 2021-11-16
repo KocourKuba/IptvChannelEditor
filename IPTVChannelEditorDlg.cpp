@@ -762,7 +762,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndPlaylist.EnableWindow(FALSE);
 	m_wndPlaylistTree.EnableWindow(FALSE);
 	m_wndChannels.EnableWindow(FALSE);
-	m_wndChannelsTree.EnableWindow(FALSE);
 	m_wndFilter.EnableWindow(FALSE);
 	m_wndDownloadUrl.EnableWindow(FALSE);
 	m_wndChooseUrl.EnableWindow(FALSE);
@@ -795,7 +794,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndPlSearch.EnableWindow(!m_channelsMap.empty());
 	m_wndPlaylistTree.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(TRUE);
-	m_wndChannelsTree.EnableWindow(TRUE);
 	m_wndStop.EnableWindow(FALSE);
 
 	BOOL enableDownload = TRUE;
@@ -803,7 +801,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	int pl_idx = m_wndPlaylist.GetCurSel();
 	switch ((StreamType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
 	{
-		case StreamType::enEdem: // Edem
+		case StreamType::enEdem:
 		{
 			switch (pl_idx)
 			{
