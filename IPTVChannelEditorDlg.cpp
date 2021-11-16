@@ -1208,11 +1208,15 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		if (channel->get_icon_uri().get_uri().empty())
 		{
 			m_wndChannelIcon.SetBitmap(nullptr);
+			GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(_T(""));
 		}
 		else
 		{
 			m_iconUrl = channel->get_icon_uri().get_uri().c_str();
 			const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
+			CString str;
+			str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
+			GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
 			utils::SetImage(img, m_wndChannelIcon);
 		}
 
@@ -2067,6 +2071,9 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				{
 					m_iconUrl = category->get_icon_uri().get_uri().c_str();
 					const auto& img = GetIconCache().get_icon(category->get_title(), category->get_icon_absolute_path());
+					CString str;
+					str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
+					GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
 					utils::SetImage(img, m_wndChannelIcon);
 				}
 			}

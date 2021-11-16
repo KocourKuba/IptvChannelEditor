@@ -197,6 +197,7 @@
 #define IDC_SPLIT_BUTTON_PACK           1109
 #define IDC_MFCEDITBROWSE_CH_LIST_PATH  1110
 #define IDC_MFCEDITBROWSE_PLUGINS_PATH  1111
+#define IDC_STATIC_ICON_SIZE            1112
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -227,7 +228,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        202
 #define _APS_NEXT_COMMAND_VALUE         32801
-#define _APS_NEXT_CONTROL_VALUE         1111
+#define _APS_NEXT_CONTROL_VALUE         1112
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif
 #endif
