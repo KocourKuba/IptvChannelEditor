@@ -23,22 +23,13 @@ class AntifrizPluginConfig extends DefaultConfig
     public static $MEDIA_URL_TEMPLATE_MPEG = 'http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
     public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
     public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
-    public static $CHANNELS_LIST = 'antifriz_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id
 
     // vod
-    public static $MOVIE_LIST_URL_TEMPLATE = 'http://antifriz.tv/smartup/%s.m3u';
+    protected static $MOVIE_LIST_URL_TEMPLATE = 'http://antifriz.tv/smartup/%s.m3u';
     public static $MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
 
-    // Views variables
-    protected static $TV_CHANNEL_ICON_WIDTH = 84;
-    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
-
-    public function __construct()
-    {
-        parent::__construct();
-        static::$lazy_load_vod = true;
-    }
+    protected static $lazy_load_vod = true;
 
     /**
      * Transform url based on settings or archive playback
@@ -61,7 +52,6 @@ class AntifrizPluginConfig extends DefaultConfig
                         array('{SUBDOMAIN}', '{ID}', '{TOKEN}', '{START}'),
                         array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
                         self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS);
-                    $url = self::make_ts($url);
                 }
                 break;
             case 'mpeg':
@@ -73,7 +63,6 @@ class AntifrizPluginConfig extends DefaultConfig
                     array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
                     $url);
                 $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
-                $url = self::make_ts($url);
                 break;
             default:
                 hd_print("unknown url format");
@@ -84,7 +73,7 @@ class AntifrizPluginConfig extends DefaultConfig
         // hd_print("Token:       " . $ext_params['token']);
         // hd_print("Archive TS:  " . $archive_ts);
 
-        return $url;
+        return HD::make_ts($url);
     }
 
     /**
@@ -93,7 +82,7 @@ class AntifrizPluginConfig extends DefaultConfig
     public static function TryLoadMovie($movie_id, $plugin_cookies)
     {
         $movie = new Movie($movie_id);
-        $json = static::LoadAndStoreJson(self::VOD_URL . "/video/$movie_id", false);
+        $json = HD::LoadAndStoreJson(self::VOD_URL . "/video/$movie_id", false);
         if ($json === false) {
             return $movie;
         }
@@ -130,14 +119,14 @@ class AntifrizPluginConfig extends DefaultConfig
                 $seasonNumber = $season->number;
                 foreach ($season->series as $episode) {
                     $playback_url = sprintf(self::$MOVIE_URL_TEMPLATE, $domain[0], $episode->files[0]->url, $plugin_cookies->ott_key_local);
-                    //hd_print("episode playback_url: $playback_url");
+                    hd_print("episode playback_url: $playback_url");
                     $episode_caption = "Сезон $seasonNumber| Серия $episode->number $episode->name";
                     $movie->add_series_data($episode->id, $episode_caption, $playback_url, true);
                 }
             }
         } else {
             $playback_url = sprintf(self::$MOVIE_URL_TEMPLATE, $domain[0], $movieData->files[0]->url, $plugin_cookies->ott_key_local);
-            //hd_print("movie playback_url: $playback_url");
+            hd_print("movie playback_url: $playback_url");
             $movie->add_series_data($movie_id, $movieData->name, $playback_url, true);
         }
 
@@ -150,7 +139,7 @@ class AntifrizPluginConfig extends DefaultConfig
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         //hd_print("fetch_vod_categories");
-        $categories = static::LoadAndStoreJson(self::VOD_URL, false /*, "/tmp/run/vc.json" */);
+        $categories = HD::LoadAndStoreJson(self::VOD_URL, false /*, "/tmp/run/vc.json" */);
         if ($categories === false) {
             return;
         }
@@ -168,7 +157,7 @@ class AntifrizPluginConfig extends DefaultConfig
             $category = new StarnetVodCategory($id, (string)$node->name);
 
             // fetch genres for category
-            $genres = static::LoadAndStoreJson(self::VOD_URL . "/cat/$id/genres", false);
+            $genres = HD::LoadAndStoreJson(self::VOD_URL . "/cat/$id/genres", false);
             if ($genres === false) {
                 continue;
             }
@@ -194,7 +183,7 @@ class AntifrizPluginConfig extends DefaultConfig
     {
         //hd_print("getSearchList");
         $url = self::VOD_URL . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . static::get_next_page($keyword);
-        $searchRes = static::LoadAndStoreJson($url, false /*, "/tmp/run/sl.json"*/);
+        $searchRes = HD::LoadAndStoreJson($url, false /*, "/tmp/run/sl.json"*/);
         return $searchRes === false ? array() : self::CollectSearchResult($searchRes);
     }
 
@@ -219,7 +208,7 @@ class AntifrizPluginConfig extends DefaultConfig
             $url = "/genres/$genre_id?page=$val";
         }
 
-        $categories = static::LoadAndStoreJson(self::VOD_URL . $url, false/*, "/tmp/run/$keyword.json"*/);
+        $categories = HD::LoadAndStoreJson(self::VOD_URL . $url, false/*, "/tmp/run/$keyword.json"*/);
         return $categories === false ? array() : self::CollectSearchResult($categories);
     }
 

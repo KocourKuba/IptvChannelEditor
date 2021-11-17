@@ -185,7 +185,7 @@ class StarnetPluginTv extends AbstractTv
                 $hash = $channel_id = hash("crc32", $streaming_url);
                 $ext_params = array();
             }
-           // hd_print("load_channels: $streaming_url");
+            // hd_print("load_channels: $streaming_url");
 
             if ($this->channels->has($hash)) {
                 // added or existing channel

@@ -13,12 +13,11 @@ class OnecentPluginConfig extends DefaultConfig
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
-    public static $CHANNELS_LIST = 'onecent_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/only4/epg/%s.json'; // epg_id
 
     // Views variables
-    public static $TV_CHANNEL_ICON_WIDTH = 60;
-    public static $TV_CHANNEL_ICON_HEIGHT = 60;
+    protected static $TV_CHANNEL_ICON_WIDTH = 60;
+    protected static $TV_CHANNEL_ICON_HEIGHT = 60;
 
     /**
      * Transform url based on settings or archive playback

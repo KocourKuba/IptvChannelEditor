@@ -45,22 +45,18 @@ class StarnetDunePlugin extends DefaultDunePlugin
         StarnetMainScreen::$config = $config;
         StarnetSetupScreen::$config = $config;
 
-        hd_print("Dune Product:    " . HD::get_product_id());
-        hd_print("Dune firmware:   " . HD::get_raw_firmware_version());
-        hd_print("----------------------------------------------------");
-        hd_print("Plugin name:     " . $config::$PLUGIN_SHOW_NAME);
-        hd_print("Plugin version:  " . $config::$PLUGIN_VERSION);
-        hd_print("Plugin date:     " . $config::$PLUGIN_DATE);
-        hd_print("Account type:    " . $config::$ACCOUNT_TYPE);
-        hd_print("TV fav:          " . ($config::$TV_FAVORITES_SUPPORTED ? "yes" : "no"));
-        hd_print("VOD page:        " . ($config::$VOD_MOVIE_PAGE_SUPPORTED ? "yes" : "no"));
-        hd_print("VOD fav:         " . ($config::$VOD_FAVORITES_SUPPORTED ? "yes" : "no"));
-        hd_print("MPEG-TS support: " . ($config::$MPEG_TS_SUPPORTED ? "yes" : "no"));
+        HD::print_sysinfo();
 
-        $keys = array_keys(DuneSystem::$properties);
-        foreach($keys as $key){
-            hd_print("'$key' = '" . DuneSystem::$properties[$key] . "'");
-        }
+        hd_print("----------------------------------------------------");
+        hd_print("Plugin name:      " . $config::$PLUGIN_SHOW_NAME);
+        hd_print("Plugin version:   " . $config::$PLUGIN_VERSION);
+        hd_print("Plugin date:      " . $config::$PLUGIN_DATE);
+        hd_print("Account type:     " . $config::$ACCOUNT_TYPE);
+        hd_print("TV fav:           " . ($config::$TV_FAVORITES_SUPPORTED ? "yes" : "no"));
+        hd_print("VOD page:         " . ($config::$VOD_MOVIE_PAGE_SUPPORTED ? "yes" : "no"));
+        hd_print("VOD fav:          " . ($config::$VOD_FAVORITES_SUPPORTED ? "yes" : "no"));
+        hd_print("MPEG-TS support:  " . ($config::$MPEG_TS_SUPPORTED ? "yes" : "no"));
+        hd_print("----------------------------------------------------");
 
         UserInputHandlerRegistry::get_instance()->register_handler(new StarnetEntryHandler());
         $tv = new StarnetPluginTv();

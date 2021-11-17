@@ -4,10 +4,6 @@ require_once 'lib/tv/channel.php';
 
 abstract class DefaultConfig
 {
-    const BG_PICTURE_TEMPLATE = 'plugin_file://icons/bg_%s.jpg';
-    const TMP_STORAGE = "/tmp/%s_%s";
-    const VOD_PLAYLIST_NAME = 'playlist_vod.m3u8';
-
     // info
     public static $PLUGIN_SHOW_NAME = 'StarNet';
     public static $PLUGIN_SHORT_NAME = 'starnet';
@@ -32,7 +28,6 @@ abstract class DefaultConfig
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://online.dune-hd.com/demo/index.m3u8?channel=%s';
     public static $MEDIA_URL_TEMPLATE_MPEG = 'http://online.dune-hd.com/demo/mpegts?channel=%s';
     public static $CHANNELS_LIST = 'default_channel_list.xml';
-    public static $PLAY_LIST = 'playlist_tv.m3u8';
 
     protected static $EPG_PARSER_PARAMS = array();
 
@@ -42,8 +37,8 @@ abstract class DefaultConfig
     protected static $EPG2_PARSER = 'json';
 
     // vod
-    public static $MOVIE_LIST_URL_TEMPLATE = 'http://online.dune-hd.com/demo2/movie_list.pl?category_id=%s';
-    public static $MOVIE_INFO_URL_TEMPLATE = 'http://online.dune-hd.com/demo2/movie_info.pl?movie_id=%s'; // not used yet
+    protected static $MOVIE_LIST_URL_TEMPLATE = 'http://online.dune-hd.com/demo2/movie_list.pl?category_id=%s';
+    protected static $MOVIE_INFO_URL_TEMPLATE = 'http://online.dune-hd.com/demo2/movie_info.pl?movie_id=%s'; // not used yet
 
     // page counter for some plugins
     protected static $pages = array();
@@ -85,6 +80,7 @@ abstract class DefaultConfig
     const VOD_SANDWICH_WIDTH = 190;
     const VOD_SANDWICH_HEIGHT = 290;
 
+    protected static $BG_PICTURE;
     protected static $VOD_CHANNEL_ICON_WIDTH = 190;
     protected static $VOD_CHANNEL_ICON_HEIGHT = 290;
 
@@ -101,6 +97,9 @@ abstract class DefaultConfig
         static::$PLUGIN_SHOW_NAME = $xml->caption;
         static::$PLUGIN_SHORT_NAME = $xml->short_name;
         static::$PLUGIN_VERSION = $xml->version;
+
+        static::$BG_PICTURE = sprintf('plugin_file://icons/bg_%s.jpg', self::$PLUGIN_SHORT_NAME);
+        static::$CHANNELS_LIST = sprintf('%s_channel_list.xml', self::$PLUGIN_SHORT_NAME);
 
         static::$EPG_PARSER_PARAMS['first']['parser'] = static::$EPG1_PARSER;
         static::$EPG_PARSER_PARAMS['first']['epg_template'] = static::$EPG1_URL_TEMPLATE;
@@ -175,6 +174,11 @@ abstract class DefaultConfig
         return static::$lazy_load_vod;
     }
 
+    public static function GET_BG_PICTURE()
+    {
+        return self::$BG_PICTURE;
+    }
+
     /**
      * Update url macros {SUBDOMAIN} and {TOKEN} by values from channel ext_params
      * Make url ts wrapped
@@ -199,7 +203,7 @@ abstract class DefaultConfig
             $url = str_replace('{TOKEN}', $ext_params['token'], $url);
         }
 
-        return self::make_ts($url);
+        return HD::make_ts($url);
     }
 
     /**
@@ -223,7 +227,7 @@ abstract class DefaultConfig
     {
         hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
 
-        $m3u_lines = static::FetchTvM3U($plugin_cookies, $force);
+        $m3u_lines = self::FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
             if (preg_match(static::$M3U_STREAM_URL_PATTERN, $line, $matches)) {
                 return true;
@@ -242,7 +246,7 @@ abstract class DefaultConfig
     public static function GetPlaylistStreamInfo($plugin_cookies)
     {
         $pl_entries = array();
-        $m3u_lines = static::FetchTvM3U($plugin_cookies);
+        $m3u_lines = self::FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
             if (preg_match(static::$M3U_STREAM_URL_PATTERN, $line, $matches)) {
                 $pl_entries[$matches['id']] = $matches;
@@ -264,14 +268,62 @@ abstract class DefaultConfig
         return $pl_entries;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function getSearchList($keyword, $plugin_cookies)
     {
-        return array();
+        hd_print("getSearchList: $keyword");
+        $movies = array();
+        $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
+
+        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        foreach ($m3u_lines as $i => $line) {
+            if (!preg_match(static::EXTINF_VOD_PATTERN, $line, $matches)) {
+                continue;
+            }
+
+            $logo = $matches['logo'];
+            $caption = $matches['title'];
+
+            $search = utf8_encode(mb_strtolower($caption, 'UTF-8'));
+            if (strpos($search, $keyword) !== false) {
+                $movies[] = new ShortMovie((string)$i, $caption, $logo);
+            }
+        }
+
+        hd_print("Movies found: " . count($movies));
+        return $movies;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function getVideoList($idx, $plugin_cookies)
     {
-        return array();
+        $movies = array();
+        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        foreach ($m3u_lines as $i => $line) {
+            if (!preg_match(static::EXTINF_VOD_PATTERN, $line, $matches)) {
+                continue;
+            }
+
+            $category = $matches['category'];
+            $logo = $matches['logo'];
+            $caption = $matches['title'];
+            if(empty($category)) {
+                $category = 'Без категории';
+            }
+
+            $arr = explode("_", $idx);
+            $category_id = ($arr === false) ? $idx : $arr[0];
+            if ($category_id === $category) {
+                $movies[] = new ShortMovie((string)$i, $caption, $logo);
+            }
+        }
+
+        hd_print("Movies read: " . count($movies));
+        return $movies;
     }
 
     public static function TryLoadMovie($movie_id, $plugin_cookies)
@@ -305,21 +357,12 @@ abstract class DefaultConfig
         return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
     }
 
-    protected static function make_ts($url)
+    protected static function FetchTvM3U($plugin_cookies, $force = false)
     {
-        if (strpos($url, 'http://ts://') === false) {
-            $url = str_replace('http://', 'http://ts://', $url);
-        }
-
-        return $url;
-    }
-
-    public static function FetchTvM3U($plugin_cookies, $force = false)
-    {
-        $tmp_file = static::GET_TMP_STORAGE_PATH();
+        $tmp_file = self::GET_TMP_STORAGE_PATH();
         if ($force !== false || !file_exists($tmp_file)) {
             try {
-                $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies);
+                $content = HD::http_get_document(self::GetTemplatedUrl(static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies));
                 file_put_contents($tmp_file, $content);
             } catch (Exception $ex) {
                 try {
@@ -328,7 +371,7 @@ abstract class DefaultConfig
                         return array();
                     }
 
-                    $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies);
+                    $content = HD::http_get_document(self::GetTemplatedUrl(static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies));
                     file_put_contents($tmp_file, $content);
                 } catch (Exception $ex) {
                     hd_print("Unable to load secondary tv playlist: " . $ex->getMessage());
@@ -342,11 +385,11 @@ abstract class DefaultConfig
 
     public static function FetchVodM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = static::GET_VOD_TMP_STORAGE_PATH();
+        $m3u_file = self::GET_VOD_TMP_STORAGE_PATH();
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {
-                $content = self::FetchTemplatedUrl(static::$ACCOUNT_TYPE, static::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies);
+                $content = HD::http_get_document(self::GetTemplatedUrl(static::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies));
                 file_put_contents($m3u_file, $content);
             } catch (Exception $ex) {
                 hd_print("Unable to load movie playlist: " . $ex->getMessage());
@@ -395,122 +438,93 @@ abstract class DefaultConfig
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-    }
+        $category_list = array();
+        $category_index = array();
+        $categoriesFound = array();
 
-    public static function LoadAndStoreJson($url, $to_array = true, $path = null)
-    {
-        try {
-            $doc = HD::http_get_document($url);
-            $categories = json_decode($doc, $to_array);
-            if (empty($categories)) {
-                hd_print("empty playlist or not valid token");
-                return false;
+        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        foreach ($m3u_lines as $line) {
+            if (!preg_match(static::EXTINF_VOD_PATTERN, $line, $matches)) {
+                continue;
             }
 
-            if (!empty($path)) {
-                file_put_contents($path, json_encode($categories));
+            $category = $matches['category'];
+            if (empty($category)) {
+                $category = 'Без категории';
             }
 
-        } catch (Exception $ex) {
-            hd_print("Unable to load movie categories: " . $ex->getMessage());
-            return false;
+            if (!in_array($category, $categoriesFound)) {
+                $categoriesFound[] = $category;
+                $cat = new StarnetVodCategory($category, $category);
+                $category_list[] = $cat;
+                $category_index[$cat->get_id()] = $cat;
+            }
         }
-
-        return $categories;
     }
 
     ///////////////////////////////////////////////////////////////////////
 
-    /**
-     * @throws Exception
-     */
-    protected static function FetchTemplatedUrl($type, $template, $plugin_cookies)
+    protected static function GetTemplatedUrl($template, $plugin_cookies)
     {
         // hd_print("Type: $type");
         // hd_print("Template: $template");
 
-        if ($type === 'LOGIN') {
-            $login = $plugin_cookies->login_local;
-            if (empty($login)) {
-                $login = $plugin_cookies->login;
-            }
+        switch (static::$ACCOUNT_TYPE) {
+            case 'LOGIN':
+                $login = $plugin_cookies->login_local;
+                if (empty($login)) {
+                    $login = $plugin_cookies->login;
+                }
 
-            $password = $plugin_cookies->password_local;
-            if (empty($password)) {
-                $password = $plugin_cookies->password;
-            }
+                $password = $plugin_cookies->password_local;
+                if (empty($password)) {
+                    $password = $plugin_cookies->password;
+                }
 
-            if (empty($login) || empty($password)) {
-                throw new Exception("Login or password not set");
-            }
+                if (empty($login) || empty($password)) {
+                    hd_print("Login or password not set");
+                }
 
-            $url = sprintf($template, $login, $password);
+                $url = sprintf($template, $login, $password);
+                break;
+            case 'PIN':
+                $password = $plugin_cookies->password_local;
+                if (empty($password)) {
+                    $password = $plugin_cookies->password;
+                }
+
+                if (empty($password)) {
+                    hd_print("Password not set");
+                }
+
+                $url = sprintf($template, $password);
+                break;
+            default:
+                $url = $template;
+                hd_print("Unknown auth scheme");
         }
-        else if ($type === 'PIN') {
-            $password = $plugin_cookies->password_local;
-            if (empty($password)) {
-                $password = $plugin_cookies->password;
-            }
 
-            if (empty($password)) {
-                throw new Exception("Password not set");
-            }
-
-            $url = sprintf($template, $password);
-        } else {
-            throw new Exception("Unknown auth scheme");
-        }
-
-        return HD::http_get_document($url);
-    }
-
-    public static function GET_BG_PICTURE()
-    {
-        return sprintf(self::BG_PICTURE_TEMPLATE, self::$PLUGIN_SHORT_NAME);
-    }
-
-    protected static function GET_TV_ICON_WIDTH()
-    {
-        return static::$TV_CHANNEL_ICON_WIDTH;
-    }
-
-    protected static function GET_TV_ICON_HEIGHT()
-    {
-        return static::$TV_CHANNEL_ICON_HEIGHT;
-    }
-
-    protected static function GET_VOD_ICON_WIDTH()
-    {
-        return static::$VOD_CHANNEL_ICON_WIDTH;
-    }
-
-    protected static function GET_VOD_ICON_HEIGHT()
-    {
-        return static::$VOD_CHANNEL_ICON_HEIGHT;
+        return $url;
     }
 
     /**
      * @return string
      */
-    public static function GET_VOD_TMP_STORAGE_PATH($name = null)
+    protected static function GET_VOD_TMP_STORAGE_PATH()
     {
-        if (is_null($name)) {
-            $name = self::VOD_PLAYLIST_NAME;
-        }
-
-        return static::GET_TMP_STORAGE_PATH($name);
+        return self::GET_TMP_STORAGE_PATH('playlist_vod.m3u8');
     }
 
     /**
      * @return string
      */
-    public static function GET_TMP_STORAGE_PATH($name = null)
+    protected static function GET_TMP_STORAGE_PATH($name = null)
     {
         if (is_null($name)) {
-            $name = static::$PLAY_LIST;
+            $name = 'playlist_tv.m3u8';
         }
 
-        return sprintf(self::TMP_STORAGE, self::$PLUGIN_SHORT_NAME, $name);
+        return sprintf('/tmp/%s_%s', self::$PLUGIN_SHORT_NAME, $name);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -537,7 +551,7 @@ abstract class DefaultConfig
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
@@ -573,7 +587,7 @@ abstract class DefaultConfig
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => false,
@@ -609,7 +623,7 @@ abstract class DefaultConfig
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => false,
@@ -641,7 +655,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 2,
                     ViewParams::num_rows => 10,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => true,
                 ),
@@ -653,8 +667,8 @@ abstract class DefaultConfig
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 10,
                     ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => static::GET_TV_ICON_WIDTH(),
-                    ViewItemParams::icon_height => static::GET_TV_ICON_HEIGHT(),
+                    ViewItemParams::icon_width => static::$TV_CHANNEL_ICON_WIDTH,
+                    ViewItemParams::icon_height => static::$TV_CHANNEL_ICON_HEIGHT,
                     ViewItemParams::item_caption_width => 485,
                     ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
@@ -671,7 +685,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 5,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -706,7 +720,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -741,7 +755,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -776,7 +790,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 3,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -831,7 +845,7 @@ abstract class DefaultConfig
                     ViewParams::item_detailed_info_auto_line_break => true,
                     ViewParams::item_detailed_info_title_color => 10,
                     ViewParams::item_detailed_info_text_color => 15,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -847,8 +861,8 @@ abstract class DefaultConfig
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 10,
                     ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
-                    ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
+                    ViewItemParams::icon_width => static::$VOD_CHANNEL_ICON_WIDTH,
+                    ViewItemParams::icon_height => static::$VOD_CHANNEL_ICON_HEIGHT,
                     ViewItemParams::icon_sel_margin_top => 0,
                     ViewItemParams::item_paint_caption => false,
                     ViewItemParams::item_caption_width => 1100
@@ -857,8 +871,8 @@ abstract class DefaultConfig
                 PluginRegularFolderView::not_loaded_view_item_params => array
                 (
                     ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
-                    ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
+                    ViewItemParams::icon_width => static::$VOD_CHANNEL_ICON_WIDTH,
+                    ViewItemParams::icon_height => static::$VOD_CHANNEL_ICON_HEIGHT,
                     ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
                 ),
                 array
@@ -874,7 +888,7 @@ abstract class DefaultConfig
                         ViewParams::item_detailed_info_auto_line_break => true,
                         ViewParams::item_detailed_info_title_color => 10,
                         ViewParams::item_detailed_info_text_color => 15,
-                        ViewParams::background_path => static::GET_BG_PICTURE(),
+                        ViewParams::background_path => self::$BG_PICTURE,
                         ViewParams::background_order => 0,
                         ViewParams::background_height => 1080,
                         ViewParams::background_width => 1920,
@@ -893,8 +907,8 @@ abstract class DefaultConfig
                     PluginRegularFolderView::not_loaded_view_item_params => array
                     (
                         ViewItemParams::item_paint_icon => true,
-                        ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
-                        ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
+                        ViewItemParams::icon_width => static::$VOD_CHANNEL_ICON_WIDTH,
+                        ViewItemParams::icon_height => static::$VOD_CHANNEL_ICON_HEIGHT,
                         ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
                     ),
 
@@ -907,8 +921,8 @@ abstract class DefaultConfig
                         ViewItemParams::icon_valign => VALIGN_CENTER,
                         ViewItemParams::icon_dx => 10,
                         ViewItemParams::icon_dy => -5,
-                        ViewItemParams::icon_width => static::GET_VOD_ICON_WIDTH(),
-                        ViewItemParams::icon_height => static::GET_VOD_ICON_HEIGHT(),
+                        ViewItemParams::icon_width => static::$VOD_CHANNEL_ICON_WIDTH,
+                        ViewItemParams::icon_height => static::$VOD_CHANNEL_ICON_HEIGHT,
                         ViewItemParams::icon_sel_margin_top => 0,
                         ViewItemParams::item_paint_caption => true,
                         ViewItemParams::item_caption_width => 950
@@ -926,7 +940,7 @@ abstract class DefaultConfig
                         ViewParams::item_detailed_info_auto_line_break => true,
                         ViewParams::item_detailed_info_title_color => 10,
                         ViewParams::item_detailed_info_text_color => 15,
-                        ViewParams::background_path => static::GET_BG_PICTURE(),
+                        ViewParams::background_path => self::$BG_PICTURE,
                         ViewParams::background_order => 0,
                         ViewParams::background_height => 1080,
                         ViewParams::background_width => 1920,
@@ -981,7 +995,7 @@ abstract class DefaultConfig
                     ViewParams::num_cols => 1,
                     ViewParams::num_rows => 12,
                     ViewParams::paint_details => true,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -1014,7 +1028,7 @@ abstract class DefaultConfig
                     ViewParams::num_cols => 1,
                     ViewParams::num_rows => 12,
                     ViewParams::paint_details => true,
-                    ViewParams::background_path => static::GET_BG_PICTURE(),
+                    ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,

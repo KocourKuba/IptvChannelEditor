@@ -21,23 +21,23 @@ class SharaclubPluginConfig extends DefaultConfig
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
-    public static $CHANNELS_LIST = 'sharaclub_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
     protected static $EPG2_URL_TEMPLATE = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
 
     // vod
-    public static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
+    protected static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
 
     // Views variables
     protected static $TV_CHANNEL_ICON_WIDTH = 84;
     protected static $TV_CHANNEL_ICON_HEIGHT = 48;
+
+    protected static $lazy_load_vod = true;
 
     public function __construct()
     {
         parent::__construct();
         static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
         static::$EPG_PARSER_PARAMS['second']['epg_root'] = '';
-        static::$lazy_load_vod = true;
     }
 
     /**
@@ -157,11 +157,13 @@ class SharaclubPluginConfig extends DefaultConfig
                                 array($matches[1], $matches[2], "vod-" . $episode['id']),
                                 self::$MEDIA_URL_TEMPLATE_HLS);
                         }
+                        hd_print("movie playback_url: $playback_url");
                         $movie->add_series_data($episode['id'], $episodeCaption, $playback_url, true);
                     }
                 }
             } else {
                 $playback_url = str_replace("https://", "http://", $item["video"]);
+                hd_print("movie playback_url: $playback_url");
                 $movie->add_series_data($movie_id, $item['name'], $playback_url, true);
             }
 
@@ -176,8 +178,8 @@ class SharaclubPluginConfig extends DefaultConfig
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        $url = sprintf(self::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies->login, $plugin_cookies->password);
-        $categories = static::LoadAndStoreJson($url, true, static::GET_VOD_TMP_STORAGE_PATH());
+        $url = self::GetTemplatedUrl(static::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies);
+        $categories = HD::LoadAndStoreJson($url, true, self::GET_VOD_TMP_STORAGE_PATH());
         if ($categories === false)
         {
             return;
@@ -188,14 +190,12 @@ class SharaclubPluginConfig extends DefaultConfig
         $categoriesFound = array();
 
         foreach ($categories as $movie) {
-            if (in_array($movie["category"], $categoriesFound)) {
-                continue;
+            if (!in_array($movie["category"], $categoriesFound)) {
+                $categoriesFound[] = $movie["category"];
+                $cat = new StarnetVodCategory((string)$movie["category"], (string)$movie["category"]);
+                $category_list[] = $cat;
+                $category_index[$cat->get_id()] = $cat;
             }
-
-            $categoriesFound[] = $movie["category"];
-            $cat = new StarnetVodCategory((string)$movie["category"], (string)$movie["category"]);
-            $category_list[] = $cat;
-            $category_index[$cat->get_id()] = $cat;
         }
 
         hd_print("Categories read: " . count($category_list));

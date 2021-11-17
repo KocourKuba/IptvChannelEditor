@@ -12,7 +12,6 @@ class SharatvPluginConfig extends DefaultConfig
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/{ID}/{TOKEN}';
-    public static $CHANNELS_LIST = 'sharatv_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/shara-tv/epg/%s.json'; // epg_id
 
     // Views variables
@@ -32,10 +31,7 @@ class SharatvPluginConfig extends DefaultConfig
         $url = self::UpdateArchiveUrlParams($url, $archive_ts);
 
         // shara tv does not support hls, only mpeg-ts
-        $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
-
         // hd_print("Stream url:  " . $url);
-
-        return $url;
+        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 }

@@ -581,4 +581,53 @@ class HD
 
         return $result;
     }
+
+    public static function print_sysinfo()
+    {
+        hd_print("----------------------------------------------------");
+        $table = array(
+            'Dune Product' => self::get_product_id(),
+            'Dune FW' => self::get_raw_firmware_version(),
+            );
+        $table = array_merge($table, DuneSystem::$properties);
+
+        $max = 0;
+        foreach (array_keys($table) as $key) {
+            $max = max(strlen($key), $max);
+        }
+        foreach ($table as $key => $value) {
+            hd_print(str_pad($key, $max + 2) . $value);
+        }
+    }
+
+    public static function make_ts($url)
+    {
+        if (strpos($url, 'http://ts://') === false) {
+            $url = str_replace('http://', 'http://ts://', $url);
+        }
+
+        return $url;
+    }
+
+    public static function LoadAndStoreJson($url, $to_array = true, $path = null)
+    {
+        try {
+            $doc = self::http_get_document($url);
+            $categories = json_decode($doc, $to_array);
+            if (empty($categories)) {
+                hd_print("empty playlist or not valid token");
+                return false;
+            }
+
+            if (!empty($path)) {
+                file_put_contents($path, json_encode($categories));
+            }
+
+        } catch (Exception $ex) {
+            hd_print("Unable to load movie categories: " . $ex->getMessage());
+            return false;
+        }
+
+        return $categories;
+    }
 }

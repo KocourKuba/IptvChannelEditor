@@ -8,7 +8,6 @@ class EdemPluginConfig extends DefaultConfig
 
     // tv
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
-    public static $CHANNELS_LIST = 'edem_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
 
     // Views variables

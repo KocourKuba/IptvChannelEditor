@@ -15,12 +15,11 @@ class ItvPluginConfig extends DefaultConfig
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}';
-    public static $CHANNELS_LIST = 'itv_channel_list.xml';
     protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s/%s'; // epg_id YYYY-MM-DD
 
     // Views variables
-    public static $TV_CHANNEL_ICON_WIDTH = 60;
-    public static $TV_CHANNEL_ICON_HEIGHT = 60;
+    protected static $TV_CHANNEL_ICON_WIDTH = 60;
+    protected static $TV_CHANNEL_ICON_HEIGHT = 60;
 
     public function __construct()
     {

@@ -140,6 +140,7 @@ std::map<UINT, UINT> tooltips_info =
 	{ IDC_BUTTON_CHECK_ARCHIVE, IDS_STRING_BUTTON_CHECK_ARCHIVE },
 	{ IDC_BUTTON_UPDATE_CHANGED, IDS_STRING_BUTTON_UPDATE_CHANGED },
 };
+
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
 	return lParam1 < lParam2 ? -1 : lParam1 == lParam2 ? 0 : 1;
@@ -492,7 +493,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enAntifriz:
 		case StreamType::enFox:
 		case StreamType::enGlanz:
-		case StreamType::enSharaclub: // Sharaclub
+		case StreamType::enSharaclub:
 		case StreamType::enSharaTV:
 		{
 			m_wndPlaylist.AddString(_T("Playlist"));
@@ -697,18 +698,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			m_plFileName = slashed;
 		}
 	}
-
-	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
-	// Full playlist format
-	// #EXTM3U tvg-shift="1"
-	// #EXTINF:-1 channel-id="204" group-title="Общие" tvg-id="983" tvg-logo="http://epg.it999.ru/img/983.png" tvg-name="Первый HD" tvg-shift="0",Первый HD
-	// http://aaaaaa.akadatel.com/iptv/xxxxxxxxxxxxxx/204/index.m3u8
-	//
-	// Short (OTTPplay.es) format
-	// #EXTM3U
-	// #EXTINF:0 tvg-rec="3",Первый HD
-	// #EXTGRP:Общие
-	// http://6646b6bc.akadatel.com/iptv/PWXQ2KD5G2VNSK/204/index.m3u8
 
 	auto data = std::make_unique<std::vector<BYTE>>();
 	if (isFile)
