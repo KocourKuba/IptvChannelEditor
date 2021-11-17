@@ -1340,13 +1340,18 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 
 			if (now < time_start || now > time_end) continue;
 
-			std::string text = "{\\rtf1 \\b";
-			text += utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_name, "")));
-			text += "\\b0\\par";
-			text += utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_desc, ""))) + "}";
+			COleDateTime time_s(time_start);
+			COleDateTime time_e(time_end);
+			CStringA text;
+			text.Format(R"({\rtf1 %ls - %ls\par\b%s\b0\par%s})",
+						time_s.Format(),
+						time_e.Format(),
+						utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_name, ""))).c_str(),
+						utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_desc, ""))).c_str()
+			);
 
 			SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
-			m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
+			m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
 			break;
 		}
 	}
