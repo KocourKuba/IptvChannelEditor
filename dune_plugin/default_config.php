@@ -570,9 +570,9 @@ abstract class DefaultConfig
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
+            // small with caption
             array
             (
-                // small with caption
                 PluginRegularFolderView::async_icon_loading => false,
 
                 PluginRegularFolderView::view_params => array
@@ -647,71 +647,7 @@ abstract class DefaultConfig
     public static function GET_TV_CHANNEL_LIST_FOLDER_VIEWS()
     {
         return array(
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 2,
-                    ViewParams::num_rows => 10,
-                    ViewParams::background_path => self::$BG_PICTURE,
-                    ViewParams::background_order => 0,
-                    ViewParams::paint_details => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 10,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => static::$TV_CHANNEL_ICON_WIDTH,
-                    ViewItemParams::icon_height => static::$TV_CHANNEL_ICON_HEIGHT,
-                    ViewItemParams::item_caption_width => 485,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
-            ),
-
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 5,
-                    ViewParams::num_rows => 4,
-                    ViewParams::background_path => self::$BG_PICTURE,
-                    ViewParams::background_order => 0,
-                    ViewParams::paint_details => false,
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_CENTER,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::item_paint_caption => false,
-                    ViewItemParams::icon_scale_factor => 1.0,
-                    ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
-            ),
-
+            // 4x3 with title
             array
             (
                 PluginRegularFolderView::async_icon_loading => true,
@@ -747,6 +683,43 @@ abstract class DefaultConfig
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
+            // 3x3 without title
+            array
+            (
+                PluginRegularFolderView::async_icon_loading => true,
+
+                PluginRegularFolderView::view_params => array
+                (
+                    ViewParams::num_cols => 3,
+                    ViewParams::num_rows => 3,
+                    ViewParams::background_path => self::$BG_PICTURE,
+                    ViewParams::background_order => 0,
+                    ViewParams::paint_details => false,
+                    ViewParams::paint_sandwich => true,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_icon_upscale_enabled => true,
+                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
+                ),
+
+                PluginRegularFolderView::base_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::item_layout => HALIGN_CENTER,
+                    ViewItemParams::icon_valign => VALIGN_CENTER,
+                    ViewItemParams::item_paint_caption => true,
+                    ViewItemParams::icon_scale_factor => 1.25,
+                    ViewItemParams::icon_sel_scale_factor => 1.5,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                ),
+
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
+            ),
+
+            // 4x4 without title
             array
             (
                 PluginRegularFolderView::async_icon_loading => true,
@@ -782,14 +755,15 @@ abstract class DefaultConfig
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
+            // 5x4 without title
             array
             (
                 PluginRegularFolderView::async_icon_loading => true,
 
                 PluginRegularFolderView::view_params => array
                 (
-                    ViewParams::num_cols => 3,
-                    ViewParams::num_rows => 3,
+                    ViewParams::num_cols => 5,
+                    ViewParams::num_rows => 4,
                     ViewParams::background_path => self::$BG_PICTURE,
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
@@ -809,13 +783,44 @@ abstract class DefaultConfig
                     ViewItemParams::item_layout => HALIGN_CENTER,
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::item_paint_caption => false,
-                    ViewItemParams::icon_scale_factor => 1.25,
-                    ViewItemParams::icon_sel_scale_factor => 1.5,
+                    ViewItemParams::icon_scale_factor => 1.0,
+                    ViewItemParams::icon_sel_scale_factor => 1.2,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH
+                ),
+
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
+            ),
+
+            // 2x10 list view with title
+            array
+            (
+                PluginRegularFolderView::async_icon_loading => true,
+
+                PluginRegularFolderView::view_params => array
+                (
+                    ViewParams::num_cols => 2,
+                    ViewParams::num_rows => 10,
+                    ViewParams::background_path => self::$BG_PICTURE,
+                    ViewParams::background_order => 0,
+                    ViewParams::paint_details => true,
+                ),
+
+                PluginRegularFolderView::base_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::item_layout => HALIGN_LEFT,
+                    ViewItemParams::icon_valign => VALIGN_CENTER,
+                    ViewItemParams::icon_dx => 10,
+                    ViewItemParams::icon_dy => -5,
+                    ViewItemParams::icon_width => static::$TV_CHANNEL_ICON_WIDTH,
+                    ViewItemParams::icon_height => static::$TV_CHANNEL_ICON_HEIGHT,
+                    ViewItemParams::item_caption_width => 485,
+                    ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
-            )
+            ),
         );
     }
 
