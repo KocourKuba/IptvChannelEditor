@@ -30,7 +30,7 @@ public:
 
 	void move_channels(const std::shared_ptr<ChannelInfo>& range_start, const std::shared_ptr<ChannelInfo>& range_end, bool down);
 
-	void add_channel(const std::shared_ptr<ChannelInfo>& channel);
+	bool add_channel(const std::shared_ptr<ChannelInfo>& channel);
 
 	void remove_channel(const std::wstring& ch_id);
 

@@ -4416,11 +4416,18 @@ void CIPTVChannelEditorDlg::CopyMoveChannelTo(int category_id, bool move)
 		if (!channel || !category) continue;
 
 		changed = true;
-		pair->second.category->add_channel(channel);
+		if (!pair->second.category->add_channel(channel))
+			continue;
+
 		if (move)
 		{
 			category->remove_channel(channel->stream_uri->get_id());
 			m_wndChannelsTree.DeleteItem(hItem);
+		}
+
+		if (pair->first == ID_ADD_TO_FAVORITE)
+		{
+			channel->set_favorite(true);
 		}
 
 		TVINSERTSTRUCTW tvInsert = { nullptr };

@@ -63,13 +63,16 @@ void ChannelCategory::move_channels(const std::shared_ptr<ChannelInfo>& range_st
 	}
 }
 
-void ChannelCategory::add_channel(const std::shared_ptr<ChannelInfo>& channel)
+bool ChannelCategory::add_channel(const std::shared_ptr<ChannelInfo>& channel)
 {
 	if (channels_map.find(channel->stream_uri->get_id()) == channels_map.end())
 	{
 		channels_map.emplace(channel->stream_uri->get_id(), channel);
 		channels.emplace_back(channel);
+		return true;
 	}
+
+	return false;
 }
 
 void ChannelCategory::remove_channel(const std::wstring& ch_id)
