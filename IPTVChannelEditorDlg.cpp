@@ -1343,14 +1343,21 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 
 			if (now < time_start || now > time_end) continue;
 
+			std::string name;
+			std::string desc;
+			if (val[tag_name].is_string())
+				name = val.value(tag_name, "");
+			if (val[tag_desc].is_string())
+				desc = val.value(tag_desc, "");
+
 			COleDateTime time_s(time_start);
 			COleDateTime time_e(time_end);
 			CStringA text;
-			text.Format(R"({\rtf1 %ls - %ls\par\b%s\b0\par%s})",
+			text.Format(R"({\rtf1 %ls - %ls\par\b %s\b0\par %s})",
 						time_s.Format(),
 						time_e.Format(),
-						utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_name, ""))).c_str(),
-						utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_desc, ""))).c_str()
+						utils::make_text_rtf_safe(utils::entityDecrypt(name)).c_str(),
+						utils::make_text_rtf_safe(utils::entityDecrypt(desc)).c_str()
 			);
 
 			SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
@@ -1358,13 +1365,24 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			break;
 		}
 	}
-	catch (const nlohmann::json::parse_error&)
+	catch (const nlohmann::json::parse_error& ex)
 	{
 		// parse errors are ok, because input may be random bytes
+		TRACE("parse error: %s\n", ex.what());
 	}
-	catch (const nlohmann::json::out_of_range&)
+	catch (const nlohmann::json::out_of_range& ex)
 	{
 		// out of range errors may happen if provided sizes are excessive
+		TRACE("out of range error: %s\n", ex.what());
+	}
+	catch (const nlohmann::detail::type_error& ex)
+	{
+		// type error
+		TRACE("type error: %s\n", ex.what());
+	}
+	catch (...)
+	{
+		TRACE("unknown exception\n");
 	}
 }
 
