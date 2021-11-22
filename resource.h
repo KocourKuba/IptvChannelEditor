@@ -9,7 +9,6 @@
 #define IDD_CUSTOM_URL                  104
 #define IDD_DIALOG_ACCESS_INFO          105
 #define IDD_DIALOG_FILTER               106
-#define IDD_DIALOG_NEW_CATEGORY         107
 #define IDD_DIALOG_NEW_CHANNEL          108
 #define IDD_DIALOG_SETTINGS             109
 #define IDD_EDEMCHANNELEDITOR_DIALOG    110
@@ -149,7 +148,6 @@
 #define IDC_SPIN_ARCHIVE_CHECK_HOURS    1061
 #define IDC_SPIN_ARCHIVE_CHECK_DAYS     1062
 #define IDC_STATIC_APP_TITLE            1064
-#define IDC_STATIC_CATEGORY_ICON        1065
 #define IDC_STATIC_CHANNELS             1066
 #define IDC_STATIC_ICON                 1067
 #define IDC_STATIC_ICON_NAME            1068
@@ -223,7 +221,7 @@
 #define ID_MAKE_ALL                     32800
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        202
