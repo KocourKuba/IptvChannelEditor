@@ -1202,7 +1202,10 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 			m_iconUrl = channel->get_icon_uri().get_uri().c_str();
 			const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
 			CString str;
-			str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
+			if (img != nullptr)
+			{
+				str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
+			}
 			GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
 			utils::SetImage(img, m_wndChannelIcon);
 		}
