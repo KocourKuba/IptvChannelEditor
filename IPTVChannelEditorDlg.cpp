@@ -50,7 +50,8 @@ constexpr auto REG_LISTS_PATH = _T("ListsPath");
 constexpr auto REG_PLUGINS_PATH = _T("PluginsPath");
 constexpr auto REG_DAYS_BACK = _T("DaysBack");
 constexpr auto REG_HOURS_BACK = _T("HoursBack");
-constexpr auto REG_AUTOSYNC = _T("AutoSyncChannel");
+constexpr auto REG_AUTO_SYNC = _T("AutoSyncChannel");
+constexpr auto REG_AUTO_HIDE = _T("AutoHideToTray");
 constexpr auto REG_MAX_THREADS = _T("MaxStreamThreads");
 constexpr auto REG_PLUGIN = _T("PluginType");
 constexpr auto REG_ICON_SOURCE = _T("IconSource");
@@ -249,15 +250,20 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnUpdateAddToFavorite)
 	ON_COMMAND(ID_MAKE_ALL, &CIPTVChannelEditorDlg::OnMakeAll)
 
+	ON_COMMAND(ID_RESTORE, &CIPTVChannelEditorDlg::OnRestore)
+	ON_COMMAND(ID_APP_EXIT, &CIPTVChannelEditorDlg::OnAppExit)
+
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
 	ON_MESSAGE(WM_UPDATE_PROGRESS, &CIPTVChannelEditorDlg::OnUpdateProgress)
 	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnEndLoadPlaylist)
 	ON_MESSAGE(WM_UPDATE_PROGRESS_STREAM, &CIPTVChannelEditorDlg::OnUpdateProgressStream)
 	ON_MESSAGE(WM_END_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnEndGetStreamInfo)
+	ON_MESSAGE(WM_TRAYICON_NOTIFY, &CIPTVChannelEditorDlg::OnTrayIconNotify)
 
 	ON_COMMAND_RANGE(ID_COPY_TO_START, ID_COPY_TO_END, &CIPTVChannelEditorDlg::OnCopyTo)
 	ON_COMMAND_RANGE(ID_MOVE_TO_START, ID_MOVE_TO_END, &CIPTVChannelEditorDlg::OnMoveTo)
 	ON_COMMAND_RANGE(ID_ADD_TO_START, ID_ADD_TO_END, &CIPTVChannelEditorDlg::OnAddTo)
+
 END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -381,6 +387,20 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		return FALSE;
 	}
 
+	TRACE0("Run as Application, create tray icon\n");
+	if (!m_wndTrayIcon.Create(
+		_T("IPTV Channel Editor for Dune HD"),	// Tooltip text
+		this,				// Parent window
+		IDR_MAINFRAME,		// Icon resource ID
+		IDR_POPUP_TRAY,		// Resource ID of pop-up menu
+		ID_RESTORE))		// Default menu item for pop-up menu
+	{
+		TRACE("Failed to create tray icon\n");
+		AfxMessageBox(_T("Failed to create tray icon. Verify Notification Area Icon settings"), MB_ICONERROR);
+	}
+
+	m_wndTrayIcon.HideIcon();
+
 	CString ver;
 	ver.Format(_T("for DUNE HD v%d.%d.%d"), MAJOR, MINOR, BUILD);
 	GetDlgItem(IDC_STATIC_APP_TITLE)->SetWindowText(ver);
@@ -414,14 +434,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndToolTipCtrl.Activate(TRUE);
 
 	// load settings
-	m_player = ReadRegStringT(REG_PLAYER);
-	m_probe = ReadRegStringT(REG_FFPROBE);
-	m_lists_path = ReadRegStringT(REG_LISTS_PATH, GetAbsPath(_T("playlists\\")).c_str());
-	m_plugins_path = ReadRegStringT(REG_PLUGINS_PATH, GetAbsPath().c_str());
-	m_archiveCheckDays = ReadRegInt(REG_DAYS_BACK);
-	m_archiveCheckHours = ReadRegInt(REG_HOURS_BACK);
-	m_bAutoSync = ReadRegInt(REG_AUTOSYNC);
-	m_MaxThreads = ReadRegInt(REG_MAX_THREADS, 4);
+	ReadAppSettings();
 
 	UpdateData(FALSE);
 
@@ -463,6 +476,19 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SwitchPlugin();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+void CIPTVChannelEditorDlg::ReadAppSettings()
+{
+	m_player = ReadRegStringT(REG_PLAYER);
+	m_probe = ReadRegStringT(REG_FFPROBE);
+	m_lists_path = ReadRegStringT(REG_LISTS_PATH, GetAbsPath(_T("playlists\\")).c_str());
+	m_plugins_path = ReadRegStringT(REG_PLUGINS_PATH, GetAbsPath().c_str());
+	m_archiveCheckDays = ReadRegInt(REG_DAYS_BACK);
+	m_archiveCheckHours = ReadRegInt(REG_HOURS_BACK);
+	m_bAutoSync = ReadRegInt(REG_AUTO_SYNC);
+	m_bAutoHide = ReadRegInt(REG_AUTO_HIDE);
+	m_MaxThreads = ReadRegInt(REG_MAX_THREADS, 4);
 }
 
 void CIPTVChannelEditorDlg::SwitchPlugin()
@@ -1611,11 +1637,16 @@ void CIPTVChannelEditorDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	{
 		CAboutDlg dlgAbout;
 		dlgAbout.DoModal();
+		return;
 	}
-	else
+
+	if (nID == SC_MINIMIZE && m_bAutoHide)
 	{
-		__super::OnSysCommand(nID, lParam);
+		m_wndTrayIcon.MinToTray(this);
+		return;
 	}
+
+	__super::OnSysCommand(nID, lParam);
 }
 
 // If you add a minimize button to your dialog, you will need the code below
@@ -3445,6 +3476,17 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 		AfxMessageBox(IDS_STRING_INFO_CREATE_ALL_SUCCESS, MB_OK);
 }
 
+void CIPTVChannelEditorDlg::OnRestore()
+{
+	m_wndTrayIcon.MaxFromTray(this);
+}
+
+void CIPTVChannelEditorDlg::OnAppExit()
+{
+	// post a message to ourself to close
+	::PostMessage(m_hWnd, WM_CLOSE, 0, 0);
+}
+
 void CIPTVChannelEditorDlg::OnBnClickedButtonStop()
 {
 	m_evtStop.SetEvent();
@@ -3545,26 +3587,23 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	dlg.m_lists_path = m_lists_path;
 	dlg.m_plugins_path = m_plugins_path;
 	dlg.m_bAutoSync = m_bAutoSync;
+	dlg.m_bAutoHide = m_bAutoHide;
 	dlg.m_MaxThreads = m_MaxThreads;
 	dlg.m_nLang = ReadRegInt(REG_LANGUAGE);
 
+	CString old_list = m_lists_path;
 	if (dlg.DoModal() == IDOK)
 	{
-		m_player = dlg.m_player;
-		m_probe = dlg.m_probe;
-		CString old_list = m_lists_path;
-		m_lists_path = dlg.m_lists_path.Right(1) == '\\' ? dlg.m_lists_path : dlg.m_lists_path + '\\';
-		m_plugins_path = dlg.m_plugins_path.Right(1) == '\\' ? dlg.m_plugins_path : dlg.m_plugins_path + '\\';
-		m_bAutoSync = dlg.m_bAutoSync;
-		m_MaxThreads = dlg.m_MaxThreads;
-
-		SaveReg(REG_PLAYER, m_player);
-		SaveReg(REG_FFPROBE, m_probe);
-		SaveReg(REG_LISTS_PATH, m_lists_path);
-		SaveReg(REG_PLUGINS_PATH, m_plugins_path);
-		SaveReg(REG_AUTOSYNC, m_bAutoSync);
-		SaveReg(REG_MAX_THREADS, m_MaxThreads);
+		SaveReg(REG_PLAYER, dlg.m_player);
+		SaveReg(REG_FFPROBE, dlg.m_probe);
+		SaveReg(REG_LISTS_PATH, dlg.m_lists_path);
+		SaveReg(REG_PLUGINS_PATH, dlg.m_plugins_path);
+		SaveReg(REG_AUTO_SYNC, dlg.m_bAutoSync);
+		SaveReg(REG_AUTO_HIDE, dlg.m_bAutoHide);
+		SaveReg(REG_MAX_THREADS, dlg.m_MaxThreads);
 		SaveReg(REG_LANGUAGE, dlg.m_nLang);
+
+		ReadAppSettings();
 
 		if (old_list != m_lists_path)
 			SwitchPlugin();
@@ -3960,6 +3999,68 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 		LoadChannelInfo(m_lastTree->GetSelectedItem());
 	else
 		LoadPlayListInfo(m_lastTree->GetSelectedItem());
+
+	return 0;
+}
+
+LRESULT CIPTVChannelEditorDlg::OnTrayIconNotify(WPARAM /*wParam*/, LPARAM lParam)
+{
+	//UINT uID       = (UINT)wParam; // resource ID of the tray icon.
+	UINT uMouseMsg = (UINT)lParam; // mouse message that was sent.
+
+	// We can let the tray icon control handle our context menu and
+	// mouse double click events, but we want handle our balloon tip
+	// notifications, so we will return 1 to let the tray icon control
+	// know that we have handled these messages already...
+
+	switch (uMouseMsg)
+	{
+		// Sent when the balloon is shown (balloons are queued).
+		case NIN_BALLOONSHOW:
+		return 1;
+
+		// Sent when the balloon disappears-for example, when the
+		// icon is deleted. This message is not sent if the balloon
+		// is dismissed because of a timeout or a mouse click.
+		case NIN_BALLOONHIDE:
+		return 1;
+
+		// Sent when the balloon is dismissed because of a timeout.
+		case NIN_BALLOONTIMEOUT:
+		return 1;
+
+		// Sent when the balloon is dismissed because of a mouse click.
+		case NIN_BALLOONUSERCLICK:
+		return 1;
+
+		case WM_RBUTTONUP:
+		{
+			CMenu menu;
+			if (!menu.LoadMenu(IDR_POPUP_TRAY))
+			{
+				return 0;
+			}
+
+			CMenu* pSubMenu = menu.GetSubMenu(0);
+			if (pSubMenu == nullptr)
+			{
+				return 0;
+			}
+
+			::SetMenuDefaultItem(pSubMenu->m_hMenu, ID_RESTORE, FALSE);
+
+			CPoint pos;
+			GetCursorPos(&pos);
+			::SetForegroundWindow(m_hWnd);
+
+			::TrackPopupMenu(pSubMenu->m_hMenu, 0, pos.x, pos.y, 0, GetSafeHwnd(), nullptr);
+
+			::PostMessage(m_hWnd, WM_NULL, 0, 0);
+
+			menu.DestroyMenu();
+		}
+		return 1;
+	}
 
 	return 0;
 }

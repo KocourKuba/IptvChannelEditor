@@ -9,6 +9,7 @@
 #include "ChannelInfo.h"
 #include "map_serializer.h"
 #include "json.hpp"
+#include "TRAYICON.H"
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -148,11 +149,15 @@ protected:
 	afx_msg void OnMoveTo(UINT id);
 	afx_msg void OnAddTo(UINT id);
 	afx_msg void OnMakeAll();
+	afx_msg void OnRestore();
+	afx_msg void OnAppExit();
 
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgressStream(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnTrayIconNotify(WPARAM wParam, LPARAM lParam);
+
 
 	DECLARE_MESSAGE_MAP()
 
@@ -217,6 +222,8 @@ private:
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
 	std::wstring GetAbsPath(LPCTSTR rel_path = nullptr) { return theApp.GetAppPath(rel_path); };
 	std::wstring GetPluginRegPath() const;
+
+	void ReadAppSettings();
 
 	void SaveReg(LPCTSTR path, LPCSTR szValue);
 	void SaveReg(LPCTSTR path, LPCWSTR szValue);
@@ -305,6 +312,7 @@ protected:
 	CButton m_wndEpg2;
 	CButton m_wndUpdateChanged;
 	CProgressCtrl m_wndProgress;
+	CTrayIcon m_wndTrayIcon;
 
 	CString m_search; // m_wndSearch
 	CString m_streamUrl; // m_wndStreamUrl
@@ -349,6 +357,7 @@ private:
 	CString m_lists_path;
 	CString m_plugins_path;
 	BOOL m_bAutoSync = FALSE;
+	BOOL m_bAutoHide = FALSE;
 	BOOL m_allow_save = FALSE;
 	int m_MaxThreads = 4;
 	bool m_menu_enable_channel = false;

@@ -19,7 +19,6 @@ END_MESSAGE_MAP()
 
 CSettingsDlg::CSettingsDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_SETTINGS, pParent)
-	, m_bAutoSync(FALSE)
 {
 
 }
@@ -38,6 +37,7 @@ void CSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGINS_PATH, m_plugins_path);
 	DDX_Check(pDX, IDC_CHECK_AUTO_SYNC_CHANNELS, m_bAutoSync);
 	DDX_Text(pDX, IDC_EDIT_STREAM_THREADS, m_MaxThreads);
+	DDX_Check(pDX, IDC_CHECK_AUTO_HIDE, m_bAutoHide);
 	DDX_Control(pDX, IDC_EDIT_STREAM_THREADS, m_wndMaxThreads);
 	DDX_Control(pDX, IDC_SPIN_STREAM_THREADS, m_wndSpinMaxThreads);
 	DDX_Control(pDX, IDC_COMBO_LANG, m_wndLanguage);
@@ -71,6 +71,19 @@ BOOL CSettingsDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+
+void CSettingsDlg::OnOK()
+{
+	UpdateData(TRUE);
+
+	if (m_lists_path.Right(1) != '\\')
+		m_lists_path += '\\';
+
+	if (m_plugins_path.Right(1) != '\\')
+		m_plugins_path += '\\';
+
+	__super::OnOK();
+}
 
 void CSettingsDlg::OnEnChangeEditStreamThreads()
 {

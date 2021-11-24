@@ -198,6 +198,9 @@
     <ClInclude Include="uri_tvteam.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="TrayIcon.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -319,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="uri_tvteam.cpp">
       <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="TrayIcon.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

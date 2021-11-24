@@ -267,6 +267,7 @@ goto :EOF
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="PlaylistParseThread.h" />
+    <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="CustomPlaylistDlg.h" />
     <ClInclude Include="FilterDialog.h" />
@@ -329,6 +330,7 @@ goto :EOF
     <ClCompile Include="m3u_entry.cpp" />
     <ClCompile Include="PlaylistParseThread.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
+    <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
     <ClCompile Include="CustomPlaylistDlg.cpp" />
     <ClCompile Include="FilterDialog.cpp" />

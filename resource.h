@@ -87,6 +87,8 @@
 #define IDS_STRING_BUTTON_CHECK_ARCHIVE 200
 #define IDS_STRING_WARN_DELETE_ITEMS    201
 #define IDS_STRING_ERR_FAILED_PACK      202
+#define IDR_MENU1                       202
+#define IDR_POPUP_TRAY                  202
 #define IDS_STRIN_ERR_FAILED_PACK_PLUGIN 203
 #define IDS_STRING_ERR_FAILED_PACK_PLUGIN 203
 #define IDS_STRING_INFO_CREATE_ALL_SUCCESS 204
@@ -175,6 +177,8 @@
 #define IDC_COMBO_TYPE                  1090
 #define IDC_CHECK_AUTO_SYNC_CHANNELS    1091
 #define IDC_EDIT_STATUS                 1092
+#define IDC_CHECK_AUTO_SYNC_CHANNELS2   1092
+#define IDC_CHECK_AUTO_HIDE             1092
 #define IDC_EDIT_SUBSCRIPTION           1093
 #define IDC_EDIT_BALANCE                1094
 #define IDC_EDIT_PACKAGES_PRICE         1095
@@ -205,6 +209,7 @@
 #define ID_CHANNELMENU_SORTBY           32777
 #define ID_EDIT_RENAME                  32778
 #define ID_GET_STREAM_INFO              32779
+#define ID_RESTORE                      32780
 #define ID_NEW_CATEGORY                 32784
 #define ID_PLAY_ARCHIVE                 32785
 #define ID_PLAY_STREAM                  32786
@@ -224,7 +229,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        202
+#define _APS_NEXT_RESOURCE_VALUE        203
 #define _APS_NEXT_COMMAND_VALUE         32801
 #define _APS_NEXT_CONTROL_VALUE         1112
 #define _APS_NEXT_SYMED_VALUE           1179

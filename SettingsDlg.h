@@ -18,7 +18,7 @@ public:
 
 protected:
 	BOOL OnInitDialog() override;
-
+	void OnOK() override;
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
@@ -32,7 +32,8 @@ public:
 	CString m_probe;
 	CString m_lists_path;
 	CString m_plugins_path;
-	BOOL m_bAutoSync;
+	BOOL m_bAutoSync = FALSE;
+	BOOL m_bAutoHide = FALSE;
 	int m_MaxThreads = 1;
 	WORD m_nLang = 0;
 
