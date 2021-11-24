@@ -1958,8 +1958,8 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	// swap struct in map
 
 	// get copy struct
-	auto lStruct = m_categoriesMap[lKey];
-	auto rStruct = m_categoriesMap[rKey];
+	CategoryInfo lStruct = m_categoriesMap[lKey];
+	CategoryInfo rStruct = m_categoriesMap[rKey];
 
 	lStruct.category->set_key(rKey);
 	rStruct.category->set_key(lKey);
@@ -2030,7 +2030,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomize()
 		if (channel)
 		{
 			const auto& category = GetItemCategory(hItem);
-			auto old_id = channel->stream_uri->get_id();
+			const std::wstring old_id = channel->stream_uri->get_id();
 
 			channel->stream_uri->set_template(!checked);
 			if (checked)
@@ -2475,7 +2475,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 		return;
 
 	const auto& category = GetItemCategory(hItem);
-	const auto old_id = channel->stream_uri->get_id();
+	const std::wstring old_id = channel->stream_uri->get_id();
 
 	auto newChannel = std::make_shared<ChannelInfo>(*channel);
 	newChannel->stream_uri->set_uri(m_streamUrl.GetString());
@@ -2538,7 +2538,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
 	}
 
 	const auto& category = GetItemCategory(hItem);
-	const auto old_id = channel->stream_uri->get_id();
+	const std::wstring old_id = channel->stream_uri->get_id();
 
 	channel->stream_uri->set_id(new_id);
 
@@ -4254,7 +4254,7 @@ HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx* pTreeCtl, const Sea
 	HTREEITEM hFirst = pTreeCtl->GetSelectedItem();
 	auto& pos = std::find(all_items.begin(), all_items.end(), hFirst);
 	auto& start = (pos != all_items.end()) ? pos : all_items.begin();
-	auto cur = start;
+	std::vector<HTREEITEM>::iterator cur = start;
 
 	if (searchParams.next && ++cur == all_items.end())
 		cur = all_items.begin();
@@ -4710,7 +4710,7 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	auto entry = GetBaseInfo(&m_wndChannelsTree, pGetInfoTip->hItem);
 	if (entry && entry->is_type(InfoType::enChannel))
 	{
-		auto ch_id = entry->stream_uri->get_id();
+		const std::wstring ch_id = entry->stream_uri->get_id();
 		CString categories;
 		for (const auto& pair : m_categoriesMap)
 		{
