@@ -217,31 +217,7 @@ private:
 
 	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
-	std::wstring GetPluginRegPath() const;
-
-	void ReadAppSettings();
-	void SaveAppSettings();
-
-	void SaveReg(LPCTSTR path, LPCSTR szValue);
-	void SaveReg(LPCTSTR path, LPCWSTR szValue);
-	void SaveReg(LPCTSTR path, int value);
-
-	CString ReadRegStringT(LPCTSTR path, LPCTSTR default = nullptr) const;
-	std::string ReadRegStringA(LPCTSTR path, LPCTSTR default = nullptr) const;
-	std::wstring ReadRegStringW(LPCTSTR path, LPCTSTR default = nullptr) const;
-	int ReadRegInt(LPCTSTR path, int default = 0) const;
-
-	void SaveRegPlugin(LPCTSTR path, LPCSTR szValue);
-	void SaveRegPlugin(LPCTSTR path, LPCWSTR szValue);
-	void SaveRegPlugin(LPCTSTR path, int value);
-
-	CString ReadRegStringPluginT(LPCTSTR path, LPCTSTR default = nullptr) const;
-	std::string ReadRegStringPluginA(LPCTSTR path, LPCTSTR default = nullptr) const;
-	std::wstring ReadRegStringPluginW(LPCTSTR path, LPCTSTR default = nullptr) const;
-	int ReadRegIntPlugin(LPCTSTR path, int default = 0) const;
-
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
-
 
 protected:
 	CFont m_largeFont;
@@ -313,10 +289,10 @@ protected:
 	CString m_epgID2; // Secondary EPG source m_wndEpg2ID
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
-	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
-	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
 	int m_archivePlDays = 0; // always read only field
 	int m_StreamType = 0; // m_wndStreamType
+	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
+	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
 
 private:
 	BOOL m_embedded_info = FALSE;
@@ -331,25 +307,15 @@ private:
 
 	CString m_toolTipText;
 
-	CString m_probe;
 	CString m_chFileName;
 	CString m_plFileName;
-	CString m_player;
-	CString m_lists_path;
-	CString m_plugins_path;
-	BOOL m_bAutoSync = FALSE;
-	BOOL m_bAutoHide = FALSE;
+
 	BOOL m_allow_save = FALSE;
-	int m_MaxThreads = 4;
-	int m_nLang = 0;
-	bool m_menu_enable_channel = false;
 	bool m_loading = false;
 	bool m_inSync = false;
 	bool m_bInFillTree = false;
 	bool m_blockChecking = false;
-
-	// current plugin type
-	StreamType m_pluginType = StreamType::enEdem;
+	bool m_menu_enable_channel = false;
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;

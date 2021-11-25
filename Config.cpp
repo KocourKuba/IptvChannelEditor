@@ -1,9 +1,6 @@
 #include "StdAfx.h"
 #include "Config.h"
-#include "resource.h"
 #include "utils.h"
-
-#include "SevenZip/7zip/SevenZipWrapper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -11,6 +8,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// special case for run under debugger from VS
 #ifdef _DEBUG
 CString PluginsConfig::DEV_PATH = LR"(..\)";
 CString PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
@@ -19,12 +17,10 @@ CString PluginsConfig::DEV_PATH;
 CString PluginsConfig::PACK_DLL_PATH;
 #endif // _DEBUG
 
-// special case for run under debugger from VS
-constexpr auto PACK_DLL = L"7za.dll";
+constexpr auto MAX_REGVAL_SIZE = 1024; // real max size - 32767 bytes;
+constexpr auto REGISTRY_APP_SETTINGS = LR"(SOFTWARE\Dune IPTV Channel Editor\Editor\Settings)";
 
-using namespace SevenZip;
-
-static std::vector<std::wstring> pics_to_remove = {
+static std::vector<std::wstring> plugins_images = {
 	L"bg_antifriz.jpg",   L"logo_antifriz.png",
 	L"bg_edem.jpg",       L"logo_edem.png",
 	L"bg_fox.jpg",        L"logo_fox.png",
@@ -54,119 +50,241 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enTvTeam,    _T("TV Team"),         "tvteam"     },
 };
 
-const std::vector<PluginDesc>& PluginsConfig::get_plugins_info()
+void PluginsConfig::ReadAppSettingsRegistry()
+{
+	m_settings.clear();
+	ReadSettingsRegistry(REGISTRY_APP_SETTINGS, m_settings);
+	int idx = get_plugin_idx();
+	m_pluginType = idx < (int)all_plugins.size() ? all_plugins[idx].type : StreamType::enEdem;
+}
+
+void PluginsConfig::SaveAppSettingsRegistry()
+{
+	SaveSettingsRegistry(REGISTRY_APP_SETTINGS, m_settings);
+}
+
+void PluginsConfig::ReadPluginSettingsRegistry()
+{
+	m_plugin_settings.clear();
+	ReadSettingsRegistry(fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetCurrentPluginName()), m_plugin_settings);
+}
+
+void PluginsConfig::SavePluginSettingsRegistry()
+{
+	SaveSettingsRegistry(fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetCurrentPluginName()), m_plugin_settings);
+}
+
+std::wstring PluginsConfig::GetCurrentPluginName(bool bCamel /*= false*/) const
+{
+	return GetPluginName<wchar_t>(m_pluginType, bCamel);
+}
+
+const std::vector<PluginDesc>& PluginsConfig::get_plugins_info() const
 {
 	return all_plugins;
 }
 
-std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
+const std::vector<std::wstring>& PluginsConfig::get_plugins_images() const
 {
-	CStringW fileName;
-
-	if (GetModuleFileNameW(AfxGetInstanceHandle(), fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
-	{
-		fileName.ReleaseBuffer();
-		int pos = fileName.ReverseFind('\\');
-		if (pos != -1)
-			fileName.Truncate(pos + 1);
-	}
-
-	fileName += PluginsConfig::DEV_PATH + szSubFolder;
-
-	return std::filesystem::absolute(fileName.GetString());
+	return plugins_images;
 }
 
-bool PackPlugin(const StreamType plugin_type,
-				const std::wstring& output_path,
-				const std::wstring& lists_path,
-				bool showMessage)
+int PluginsConfig::get_plugin_idx() const
 {
-	const auto& name = PluginsConfig::GetPluginName<wchar_t>(plugin_type);
-	auto& temp_pack_path = std::filesystem::temp_directory_path();
-	temp_pack_path += utils::PACK_PATH;
-	const auto& packFolder = fmt::format(temp_pack_path.c_str(), name);
+	return get_int(true, REG_PLUGIN);
+}
 
-	std::error_code err;
-	// remove previous packed folder if exist
-	std::filesystem::remove_all(packFolder, err);
+void PluginsConfig::set_plugin_idx(int val)
+{
+	set_int(true, REG_PLUGIN, val);
+	m_pluginType = val < (int)all_plugins.size() ? all_plugins[val].type : StreamType::enEdem;
+}
 
-	// copy new one
-	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
-	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::recursive, err);
+StreamType PluginsConfig::get_plugin_type() const
+{
+	return m_pluginType;
+}
 
-	// copy plugin manifest
-	const auto& manifest = fmt::format(LR"({:s}manifest\{:s}_plugin.xml)", plugin_root, name);
-	const auto& config = fmt::format(LR"({:s}configs\{:s}_config.php)", plugin_root, name);
-	std::filesystem::copy_file(manifest, packFolder + L"dune_plugin.xml", std::filesystem::copy_options::overwrite_existing, err);
-	std::filesystem::copy_file(config, fmt::format(L"{:s}{:s}_config.php", packFolder, name), std::filesystem::copy_options::overwrite_existing, err);
+void PluginsConfig::set_plugin_type(StreamType val)
+{
+	m_pluginType = val;
+}
 
-	// remove over config's
-	std::filesystem::remove_all(packFolder + L"manifest", err);
-	std::filesystem::remove_all(packFolder + L"configs", err);
+std::wstring PluginsConfig::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const
+{
+	const auto& sel_settings = isApp ? m_settings : m_plugin_settings;
 
-	// copy channel lists
-	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, name);
-	std::filesystem::directory_iterator dir_iter(playlistPath, err);
-	for (auto const& dir_entry : dir_iter)
+	const auto& pair = sel_settings.find(key);
+	if (pair != sel_settings.end())
 	{
-		const auto& path = dir_entry.path();
-		if (path.extension() == L".xml")
+		const auto var = std::get_if<std::wstring>(&pair->second);
+		return var ? *var : def;
+	}
+
+	return def;
+}
+
+void PluginsConfig::set_string(bool isApp, const std::wstring& key, const std::wstring& value)
+{
+	auto& settings = isApp ? m_settings : m_plugin_settings;
+	settings[key] = value;
+}
+
+void PluginsConfig::set_string(bool isApp, const std::wstring& key, const std::string& value)
+{
+	auto& settings = isApp ? m_settings : m_plugin_settings;
+	settings[key] = utils::utf8_to_utf16(value);
+}
+
+int PluginsConfig::get_int(bool isApp, const std::wstring& key, const int def /*= 0*/) const
+{
+	const auto& sel_settings = isApp ? m_settings : m_plugin_settings;
+
+	const auto& pair = sel_settings.find(key);
+	if (pair != sel_settings.end())
+	{
+		const auto var = std::get_if<int>(&pair->second);
+		return var ? *var : def;
+	}
+
+	return def;
+}
+
+void PluginsConfig::set_int(bool isApp, const std::wstring& key, const int value)
+{
+	auto& sel_settings = isApp ? m_settings : m_plugin_settings;
+	sel_settings[key] = value;
+}
+
+std::vector<BYTE> PluginsConfig::get_binary(bool isApp, const std::wstring& key) const
+{
+	const auto& sel_settings = isApp ? m_settings : m_plugin_settings;
+	const auto& pair = sel_settings.find(key);
+	if (pair != sel_settings.end())
+	{
+		const auto var = std::get_if<std::vector<BYTE>>(&pair->second);
+		return var ? *var : std::vector<BYTE>();
+	}
+
+	return std::vector<BYTE>();
+}
+
+bool PluginsConfig::get_binary(bool isApp, const std::wstring& key, LPBYTE* pbData, size_t& dwSize) const
+{
+	const auto& sel_settings = isApp ? m_settings : m_plugin_settings;
+	const auto& pair = sel_settings.find(key);
+	if (pair != sel_settings.end())
+	{
+		const auto var = std::get_if<std::vector<BYTE>>(&pair->second);
+		if (var)
 		{
-			std::filesystem::copy_file(path, packFolder + path.filename().c_str(), std::filesystem::copy_options::overwrite_existing, err);
-			ASSERT(!err.value());
+			memcpy(pbData, var->data(), dwSize);
+			return true;
 		}
 	}
 
-	// remove files for other plugins
-	std::vector<std::wstring> to_remove(pics_to_remove);
-	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name)), to_remove.end());
-	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"logo_{:s}.png", name)), to_remove.end());
+	return false;
+}
 
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
+void PluginsConfig::set_binary(bool isApp, const std::wstring & key, const std::vector<BYTE>& value)
+{
+	auto& sel_settings = isApp ? m_settings : m_plugin_settings;
+	sel_settings[key] = value;
+}
+
+void PluginsConfig::set_binary(bool isApp, const std::wstring& key, const BYTE* value, const size_t value_size)
+{
+	auto& sel_settings = isApp ? m_settings : m_plugin_settings;
+	sel_settings[key] = std::move(std::vector<BYTE>(value, value + value_size));
+}
+
+void PluginsConfig::ReadSettingsRegistry(const std::wstring& section, map_variant& settings)
+{
+	HKEY hkHive = nullptr;
+	if (::RegOpenCurrentUser(KEY_READ, &hkHive) != ERROR_SUCCESS)
+		return;
+
+	HKEY hKey = nullptr;
+	if (::RegOpenKeyExW(hkHive, section.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
 	{
-		if (std::find(to_remove.begin(), to_remove.end(), dir_entry.path().filename().wstring()) != to_remove.end())
-			std::filesystem::remove(dir_entry, err);
-	}
-
-	// write setup file
-	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
-	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
-	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\nconst PLUGIN_BUILD = {:d};\nconst PLUGIN_DATE = '{:s}';\n",
-					  PluginsConfig::GetPluginName<char>(plugin_type),
-					  PluginsConfig::GetPluginName<char>(plugin_type, true),
-					  BUILD,
-					  RELEASEDATE
-	);
-	os.close();
-
-	// pack folder
-	SevenZipWrapper archiver(GetAppPath(PluginsConfig::PACK_DLL_PATH + PACK_DLL));
-	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
-	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
-	if (!res)
-	{
-		AfxMessageBox(_T("Some file missing!!!"), MB_OK | MB_ICONSTOP);
-		return false;
-	}
-
-	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, name);
-
-	res = archiver.CreateArchive(pluginFile);
-	// remove temporary folder
-	std::filesystem::remove_all(packFolder, err);
-	if (!res)
-	{
-		if (showMessage)
+		DWORD dwIdx = 0;
+		for (;;)
 		{
-			std::filesystem::remove(pluginFile, err);
-			AfxMessageBox(IDS_STRING_ERR_FAILED_PACK, MB_OK | MB_ICONSTOP);
+			DWORD dwType = 0;
+			DWORD cbData = MAX_REGVAL_SIZE;
+			DWORD dwNameSize = MAX_REGVAL_SIZE / sizeof(wchar_t);
+
+			std::vector<wchar_t> szName(dwNameSize);
+			std::vector<BYTE> lpData(cbData);
+
+			if (::RegEnumValueW(hKey, dwIdx, (LPWSTR)szName.data(), &dwNameSize, nullptr, &dwType, (BYTE*)lpData.data(), &cbData) != ERROR_SUCCESS) break;
+
+			std::wstring name(szName.data(), dwNameSize);
+
+			switch (dwType)
+			{
+				case REG_DWORD:
+					settings[name] = *(DWORD*)lpData.data();
+					break;
+				case REG_SZ:
+					settings[name] = (wchar_t*)lpData.data();
+					break;
+				case REG_BINARY:
+					lpData.resize(cbData);
+					settings[name] = lpData;
+					break;
+				default:
+					break;
+			}
+
+			dwIdx++;
 		}
-		return false;
+
+		::RegCloseKey(hKey);
 	}
 
-	if (showMessage)
-		AfxMessageBox(IDS_STRING_INFO_CREATE_SUCCESS, MB_OK);
+	::RegCloseKey(hkHive);
+}
 
-	return true;
+void PluginsConfig::SaveSettingsRegistry(const std::wstring& section, map_variant& settings)
+{
+	HKEY hkHive = nullptr;
+	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
+		return;
+
+	HKEY hKey = nullptr;
+	DWORD dwDesp;
+
+	if (::RegCreateKeyExW(hkHive, section.c_str(), 0, REG_NONE, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDesp) == ERROR_SUCCESS)
+	{
+		for (const auto& pair : settings)
+		{
+			DWORD dwSize = 0;
+			switch (pair.second.index())
+			{
+				case 0: // int
+				{
+					auto pbData = (BYTE*)&std::get<int>(pair.second);
+					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_DWORD, pbData, sizeof(int));
+					break;
+				}
+				case 1: // std::wstring
+				{
+					const auto& szData = std::get<std::wstring>(pair.second);
+					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_SZ, (LPBYTE)szData.c_str(), (DWORD)(szData.size() * sizeof(wchar_t)));
+					break;
+				}
+				case 2: // std::vector<BYTE>
+				{
+					const auto& vData = std::get<std::vector<BYTE>>(pair.second);
+					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_BINARY, vData.data(), (DWORD)vData.size());
+					break;
+				}
+			}
+		}
+
+		::RegCloseKey(hKey);
+	}
+
+	::RegCloseKey(hkHive);
 }

@@ -101,7 +101,7 @@ BOOL CGetStreamInfoThread::InitInstance()
 	return FALSE;
 }
 
-void CGetStreamInfoThread::GetChannelStreamInfo(const CString& probe, const std::wstring& url, std::string& audio, std::string& video)
+void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const std::wstring& url, std::string& audio, std::string& video)
 {
 	if (url.empty())
 		return;
@@ -140,9 +140,9 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const CString& probe, const std:
 
 	// argv[0] имя исполняемого файла
 	CString csCommand;
-	csCommand.Format(_T("\"%s\" -hide_banner -show_streams \"%s\""), probe.GetString(), url.c_str());
+	csCommand.Format(_T("\"%s\" -hide_banner -show_streams \"%s\""), probe.c_str(), url.c_str());
 
-	BOOL bRunProcess = CreateProcess(probe.GetString(),			// 	__in_opt     LPCTSTR lpApplicationName
+	BOOL bRunProcess = CreateProcess(probe.c_str(),				// 	__in_opt     LPCTSTR lpApplicationName
 									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
 									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes
 									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes

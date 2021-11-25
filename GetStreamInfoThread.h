@@ -14,7 +14,7 @@ public:
 		std::vector<uri_stream*>* m_container = nullptr;
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
-		CString m_probe;
+		std::wstring m_probe;
 		int m_max_threads = 1;
 		TemplateParams m_params;
 		StreamSubType m_StreamSubtype = StreamSubType::enHLS;
@@ -32,7 +32,7 @@ public:
 	void SetData(const ThreadConfig& config) { m_config = config; };
 
 protected:
-	static void GetChannelStreamInfo(const CString& probe, const std::wstring& url, std::string& audio, std::string& video);
+	static void GetChannelStreamInfo(const std::wstring& probe, const std::wstring& url, std::string& audio, std::string& video);
 
 protected:
 	ThreadConfig m_config;

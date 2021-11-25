@@ -1,4 +1,5 @@
 #pragma once
+#include "Config.h"
 
 
 // CSettingsDlg dialog
@@ -27,16 +28,6 @@ protected:
 	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeComboLang();
 
-public:
-	CString m_player;
-	CString m_probe;
-	CString m_lists_path;
-	CString m_plugins_path;
-	BOOL m_bAutoSync = FALSE;
-	BOOL m_bAutoHide = FALSE;
-	int m_MaxThreads = 1;
-	WORD m_nLang = 0;
-
 protected:
 	CMFCEditBrowseCtrl m_wndProbe;
 	CMFCEditBrowseCtrl m_wndPlayer;
@@ -45,4 +36,14 @@ protected:
 	CEdit m_wndMaxThreads;
 	CSpinButtonCtrl m_wndSpinMaxThreads;
 	CComboBox m_wndLanguage;
+
+private:
+	CString m_player;
+	CString m_probe;
+	CString m_lists_path;
+	CString m_plugins_path;
+	BOOL m_bAutoSync = FALSE;
+	BOOL m_bAutoHide = FALSE;
+	int m_MaxThreads = 1;
+	WORD m_nLang = 0;
 };

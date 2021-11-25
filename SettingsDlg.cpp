@@ -53,6 +53,15 @@ BOOL CSettingsDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
+	m_player = GetConfig().get_string(true, REG_PLAYER).c_str();
+	m_probe = GetConfig().get_string(true, REG_FFPROBE).c_str();
+	m_lists_path = GetConfig().get_string(true, REG_LISTS_PATH).c_str();
+	m_plugins_path = GetConfig().get_string(true, REG_OUTPUT_PATH).c_str();
+	m_bAutoSync = GetConfig().get_int(true, REG_AUTO_SYNC);
+	m_bAutoHide = GetConfig().get_int(true, REG_AUTO_HIDE);
+	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS);
+	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
+
 	int nCurrent = 0;
 	for (const auto& pair : theApp.m_LangMap)
 	{
@@ -87,6 +96,17 @@ void CSettingsDlg::OnOK()
 
 	if (m_plugins_path.Right(1) != '\\')
 		m_plugins_path += '\\';
+
+	GetConfig().set_string(true, REG_PLAYER, m_player.GetString());
+	GetConfig().set_string(true, REG_FFPROBE, m_probe.GetString());
+	GetConfig().set_string(true, REG_LISTS_PATH, m_lists_path.GetString());
+	GetConfig().set_string(true, REG_OUTPUT_PATH, m_plugins_path.GetString());
+	GetConfig().set_int(true, REG_AUTO_SYNC, m_bAutoSync);
+	GetConfig().set_int(true, REG_AUTO_HIDE, m_bAutoHide);
+	GetConfig().set_int(true, REG_MAX_THREADS, m_MaxThreads);
+	GetConfig().set_int(true, REG_LANGUAGE, m_nLang);
+
+	GetConfig().SaveAppSettingsRegistry();
 
 	__super::OnOK();
 }

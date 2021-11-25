@@ -8,9 +8,16 @@
 #include "IconCache.h"
 #include "utils.h"
 
+#include "SevenZip/7zip/SevenZipWrapper.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+using namespace SevenZip;
+
+constexpr auto PACK_PATH = L"{:s}_plugin\\";
+constexpr auto PACK_DLL = L"7za.dll";
 
 void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 {
@@ -54,9 +61,10 @@ CIPTVChannelEditorApp theApp;
 
 BOOL CIPTVChannelEditorApp::InitInstance()
 {
-	// TODO: call AfxInitRichEdit2() to initialize richedit2 library.\n"	// InitCommonControlsEx() is required on Windows XP if an application
-		// manifest specifies use of ComCtl32.dll version 6 or later to enable
-		// visual styles.  Otherwise, any window creation will fail.
+	// TODO: call AfxInitRichEdit2() to initialize richedit2 library."
+	// InitCommonControlsEx() is required on Windows XP if an application
+	// manifest specifies use of ComCtl32.dll version 6 or later to enable
+	// visual styles.  Otherwise, any window creation will fail.
 	INITCOMMONCONTROLSEX InitCtrls;
 	InitCtrls.dwSize = sizeof(InitCtrls);
 	// Set this to include all the common control classes you want to use
@@ -91,15 +99,17 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	InitContextMenuManager();
 
+	GetConfig().ReadAppSettingsRegistry();
+
 	CCommandLineInfoEx cmdInfo;
 	ParseCommandLine(cmdInfo);
 	if (cmdInfo.m_bMakeAll)
 	{
-		const auto& output_path = GetProfileString(REG_SETTINGS, REG_PLUGINS_PATH, GetAppPath().c_str());
-		const auto& lists_path = GetProfileString(REG_SETTINGS, REG_LISTS_PATH, GetAppPath().c_str());
-		for (const auto& item : PluginsConfig::get_plugins_info())
+		const auto& output_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
+		const auto& lists_path = GetConfig().get_string(true, REG_LISTS_PATH);
+		for (const auto& item : GetConfig().get_plugins_info())
 		{
-			if (!PackPlugin(item.type, output_path.GetString(), lists_path.GetString(), false))
+			if (!PackPlugin(item.type, output_path, lists_path, false))
 			{
 				CString str;
 				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name);
@@ -111,7 +121,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	}
 
 	FillLangMap();
-	int nLangCurrent = GetProfileInt(REG_SETTINGS, REG_LANGUAGE, 1033);
+	int nLangCurrent = GetConfig().get_int(true, REG_LANGUAGE);
 
 	AfxSetResourceHandle(AfxGetInstanceHandle());
 	if (auto pair = m_LangMap.find(nLangCurrent); pair != m_LangMap.cend())
@@ -143,52 +153,6 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 #endif // _DEBUG
 
 	return FALSE;
-}
-
-void CIPTVChannelEditorApp::RestoreWindowPos(HWND hWnd, LPCTSTR name)
-{
-	WINDOWPLACEMENT wp = { 0 };
-	UINT nSize = 0;
-	WINDOWPLACEMENT* pwp = nullptr;
-	if (!theApp.GetProfileBinary(REG_SETTINGS, name, (LPBYTE*)&pwp, &nSize))
-		return;
-
-	// Success
-	::memcpy((void*)&wp, pwp, sizeof(wp));
-	delete[] pwp; // free the buffer
-
-	// Get a handle to the monitor
-	HMONITOR hMonitor = ::MonitorFromPoint(CPoint(wp.rcNormalPosition.left, wp.rcNormalPosition.top), MONITOR_DEFAULTTONEAREST);
-
-	// Get the monitor info
-	MONITORINFO monInfo;
-	monInfo.cbSize = sizeof(MONITORINFO);
-	if (::GetMonitorInfo(hMonitor, &monInfo))
-	{
-		// Adjust for work area
-		CRect rc = wp.rcNormalPosition;
-		rc.OffsetRect(monInfo.rcWork.left - monInfo.rcMonitor.left, monInfo.rcWork.top - monInfo.rcMonitor.top);
-
-		// Ensure top left point is on screen
-		CRect rc_monitor(monInfo.rcWork);
-		if (rc_monitor.PtInRect(rc.TopLeft()) == FALSE)
-		{
-			rc.OffsetRect(rc_monitor.TopLeft());
-		}
-		wp.rcNormalPosition = rc;
-	}
-
-	SetWindowPlacement(hWnd, &wp);
-}
-
-void CIPTVChannelEditorApp::SaveWindowPos(HWND hWnd, LPCTSTR name)
-{
-	// Get the window position
-	WINDOWPLACEMENT wp;
-	wp.length = sizeof(WINDOWPLACEMENT);
-	GetWindowPlacement(hWnd, &wp);
-	// Save the info
-	theApp.WriteProfileBinary(REG_SETTINGS, name, (LPBYTE)&wp, sizeof(wp));
 }
 
 void CIPTVChannelEditorApp::FillLangMap()
@@ -239,4 +203,163 @@ void CIPTVChannelEditorApp::FillLangMap()
 			::FreeLibrary(hRes);
 		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
+{
+	CStringW fileName;
+
+	if (GetModuleFileNameW(AfxGetInstanceHandle(), fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
+	{
+		fileName.ReleaseBuffer();
+		int pos = fileName.ReverseFind('\\');
+		if (pos != -1)
+			fileName.Truncate(pos + 1);
+	}
+
+	fileName += PluginsConfig::DEV_PATH + szSubFolder;
+
+	return std::filesystem::absolute(fileName.GetString());
+}
+
+bool PackPlugin(const StreamType plugin_type,
+				const std::wstring& output_path,
+				const std::wstring& lists_path,
+				bool showMessage)
+{
+	const auto& name = GetPluginName<wchar_t>(plugin_type);
+	auto& temp_pack_path = std::filesystem::temp_directory_path();
+	temp_pack_path += PACK_PATH;
+	const auto& packFolder = fmt::format(temp_pack_path.c_str(), name);
+
+	std::error_code err;
+	// remove previous packed folder if exist
+	std::filesystem::remove_all(packFolder, err);
+
+	// copy new one
+	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
+	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::recursive, err);
+
+	// copy plugin manifest
+	const auto& manifest = fmt::format(LR"({:s}manifest\{:s}_plugin.xml)", plugin_root, name);
+	const auto& config = fmt::format(LR"({:s}configs\{:s}_config.php)", plugin_root, name);
+	std::filesystem::copy_file(manifest, packFolder + L"dune_plugin.xml", std::filesystem::copy_options::overwrite_existing, err);
+	std::filesystem::copy_file(config, fmt::format(L"{:s}{:s}_config.php", packFolder, name), std::filesystem::copy_options::overwrite_existing, err);
+
+	// remove over config's
+	std::filesystem::remove_all(packFolder + L"manifest", err);
+	std::filesystem::remove_all(packFolder + L"configs", err);
+
+	// copy channel lists
+	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, name);
+	std::filesystem::directory_iterator dir_iter(playlistPath, err);
+	for (auto const& dir_entry : dir_iter)
+	{
+		const auto& path = dir_entry.path();
+		if (path.extension() == L".xml")
+		{
+			std::filesystem::copy_file(path, packFolder + path.filename().c_str(), std::filesystem::copy_options::overwrite_existing, err);
+			ASSERT(!err.value());
+		}
+	}
+
+	// remove files for other plugins
+	std::vector<std::wstring> to_remove(GetConfig().get_plugins_images());
+	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name)), to_remove.end());
+	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"logo_{:s}.png", name)), to_remove.end());
+
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
+	{
+		if (std::find(to_remove.begin(), to_remove.end(), dir_entry.path().filename().wstring()) != to_remove.end())
+			std::filesystem::remove(dir_entry, err);
+	}
+
+	// write setup file
+	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
+	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
+	os.write((const char*)smarker, sizeof(smarker));
+	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\nconst PLUGIN_BUILD = {:d};\nconst PLUGIN_DATE = '{:s}';\n",
+					  GetPluginName<char>(plugin_type),
+					  GetPluginName<char>(plugin_type, true),
+					  BUILD,
+					  RELEASEDATE
+	);
+	os.close();
+
+	// pack folder
+	SevenZipWrapper archiver(GetAppPath(PluginsConfig::PACK_DLL_PATH + PACK_DLL));
+	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
+	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
+	if (!res)
+	{
+		AfxMessageBox(_T("Some file missing!!!"), MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
+	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, name);
+
+	res = archiver.CreateArchive(pluginFile);
+	// remove temporary folder
+	std::filesystem::remove_all(packFolder, err);
+	if (!res)
+	{
+		if (showMessage)
+		{
+			std::filesystem::remove(pluginFile, err);
+			AfxMessageBox(IDS_STRING_ERR_FAILED_PACK, MB_OK | MB_ICONSTOP);
+		}
+		return false;
+	}
+
+	if (showMessage)
+		AfxMessageBox(IDS_STRING_INFO_CREATE_SUCCESS, MB_OK);
+
+	return true;
+}
+
+void RestoreWindowPos(HWND hWnd, LPCTSTR name)
+{
+	const auto& bin = GetConfig().get_binary(true, name);
+	if (bin.empty())
+		return;
+
+	// Success
+	WINDOWPLACEMENT wp = { 0 };
+	UINT nSize = 0;
+	::memcpy((void*)&wp, bin.data(), sizeof(wp));
+
+	// Get a handle to the monitor
+	HMONITOR hMonitor = ::MonitorFromPoint(CPoint(wp.rcNormalPosition.left, wp.rcNormalPosition.top), MONITOR_DEFAULTTONEAREST);
+
+	// Get the monitor info
+	MONITORINFO monInfo;
+	monInfo.cbSize = sizeof(MONITORINFO);
+	if (::GetMonitorInfo(hMonitor, &monInfo))
+	{
+		// Adjust for work area
+		CRect rc = wp.rcNormalPosition;
+		rc.OffsetRect(monInfo.rcWork.left - monInfo.rcMonitor.left, monInfo.rcWork.top - monInfo.rcMonitor.top);
+
+		// Ensure top left point is on screen
+		CRect rc_monitor(monInfo.rcWork);
+		if (rc_monitor.PtInRect(rc.TopLeft()) == FALSE)
+		{
+			rc.OffsetRect(rc_monitor.TopLeft());
+		}
+		wp.rcNormalPosition = rc;
+	}
+
+	SetWindowPlacement(hWnd, &wp);
+}
+
+void SaveWindowPos(HWND hWnd, LPCTSTR name)
+{
+	// Get the window position
+	WINDOWPLACEMENT wp;
+	wp.length = sizeof(WINDOWPLACEMENT);
+	GetWindowPlacement(hWnd, &wp);
+	// Save the info
+	GetConfig().set_binary(true, name, (LPBYTE)&wp, sizeof(wp));
 }

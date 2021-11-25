@@ -23,7 +23,6 @@ namespace utils
 	static constexpr auto PLUGIN_ROOT = L"dune_plugin\\";
 	static constexpr auto CHANNELS_LOGO_PATH = L"dune_plugin\\icons\\channels\\";
 	static constexpr auto CATEGORIES_LOGO_PATH = L"dune_plugin\\icons\\";
-	static constexpr auto PACK_PATH = L"{:s}_plugin\\";
 
 inline std::string& string_tolower(std::string& s)
 {
