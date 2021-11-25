@@ -258,6 +258,7 @@ goto :EOF
     <ClInclude Include="BaseInfo.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Crc32.h" />
     <ClInclude Include="FileVersionInfo.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
@@ -309,6 +310,7 @@ goto :EOF
     <ClCompile Include="AccessInfoPinDlg.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Crc32.cpp" />
     <ClCompile Include="FileVersionInfo.cpp" />
     <ClCompile Include="fmt\src\format.cc">

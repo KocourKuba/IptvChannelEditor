@@ -25,12 +25,6 @@ namespace utils
 	static constexpr auto CATEGORIES_LOGO_PATH = L"dune_plugin\\icons\\";
 	static constexpr auto PACK_PATH = L"{:s}_plugin\\";
 
-#ifdef _DEBUG
-	static constexpr auto PACK_DLL = L"dll\\7za.dll";
-#else
-	static constexpr auto PACK_DLL = L"7za.dll";
-#endif // _DEBUG
-
 inline std::string& string_tolower(std::string& s)
 {
 	std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c)

@@ -3,6 +3,12 @@
 #include "StdAfx.h"
 #include "Crc32.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 /// zlib's CRC32 polynomial
 constexpr uint32_t Polynomial = 0xEDB88320;
 

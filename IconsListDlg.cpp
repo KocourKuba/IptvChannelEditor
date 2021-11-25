@@ -9,6 +9,12 @@
 #include "IconCache.h"
 #include "utils.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 // CIconsList dialog
 
 IMPLEMENT_DYNAMIC(CIconsListDlg, CDialogEx)
@@ -102,7 +108,7 @@ BOOL CIconsListDlg::OnInitDialog()
 				cfg.m_parent = this;
 				cfg.m_data = data.release();
 				cfg.m_hStop = m_evtStop;
-				cfg.m_rootPath = theApp.GetAppPath(utils::PLUGIN_ROOT);
+				cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
 
 				pThread->SetData(cfg);
 				pThread->ResumeThread();

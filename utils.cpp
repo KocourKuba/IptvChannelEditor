@@ -5,6 +5,12 @@
 
 #include "utils.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 #pragma comment(lib, "Winhttp.lib")
 
 #define LOW_3BITS 0x7

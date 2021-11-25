@@ -9,7 +9,7 @@
 #include "ChannelInfo.h"
 #include "map_serializer.h"
 #include "json.hpp"
-#include "TRAYICON.H"
+#include "TrayIcon.h"
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -214,13 +214,11 @@ private:
 	void SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight);
 
 	void SwitchPlugin();
-	bool PackPlugin(const StreamType plugin_type, bool showMessage = true);
 
 	const StreamType GetCurrentPlugin() const { return (StreamType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()); }
 
 	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
-	std::wstring GetAbsPath(LPCTSTR rel_path = nullptr) { return theApp.GetAppPath(rel_path); };
 	std::wstring GetPluginRegPath() const;
 
 	void ReadAppSettings();
@@ -245,22 +243,6 @@ private:
 
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
 
-	template<typename T>
-	std::basic_string<T> GetPluginName(const StreamType plugin_type, bool bCamel = false) const
-	{
-		for (const auto& item : all_plugins)
-		{
-			if (item.type != plugin_type) continue;
-
-			std::basic_string<T> plugin_name(item.int_name.begin(), item.int_name.end());
-			if (bCamel)
-				plugin_name[0] = std::toupper(plugin_name[0]);
-
-			return plugin_name;
-		}
-
-		return std::basic_string<T>();
-	}
 
 protected:
 	CFont m_largeFont;

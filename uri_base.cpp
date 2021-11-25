@@ -2,6 +2,12 @@
 #include "uri_base.h"
 #include "utils.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 void uri_base::set_uri(const std::wstring& url)
 {
 	clear();

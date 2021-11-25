@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlayListEntry.h"
+#include "Config.h"
 
 class CPlaylistParseThread : public CWinThread
 {

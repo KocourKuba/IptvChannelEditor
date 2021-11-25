@@ -7,6 +7,12 @@
 #include "AccessOttKeyDlg.h"
 #include "PlayListEntry.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 // CAccessDlg dialog
 
 IMPLEMENT_DYNAMIC(CAccessOttKeyDlg, CDialogEx)
@@ -68,7 +74,7 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 	std::istream stream(&buf);
 	if (!stream.good()) return;
 
-	auto entry = std::make_unique<PlaylistEntry>(m_streamType, theApp.GetAppPath(utils::PLUGIN_ROOT));
+	auto entry = std::make_unique<PlaylistEntry>(m_streamType, GetAppPath(utils::PLUGIN_ROOT));
 	std::string line;
 	while (std::getline(stream, line))
 	{

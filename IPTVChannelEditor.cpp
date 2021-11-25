@@ -1,4 +1,3 @@
-
 // EdemChannelEditor.cpp : Defines the class behaviors for the application.
 //
 
@@ -12,8 +11,6 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-constexpr auto REG_SETTINGS = _T("Settings");
 
 void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 {
@@ -35,7 +32,6 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
-
 // CEdemChannelEditorApp construction
 
 CIPTVChannelEditorApp::CIPTVChannelEditorApp()
@@ -44,11 +40,9 @@ CIPTVChannelEditorApp::CIPTVChannelEditorApp()
 	// Place all significant initialization in InitInstance
 }
 
-
 // The one and only CEdemChannelEditorApp object
 
 CIPTVChannelEditorApp theApp;
-
 
 // CEdemChannelEditorApp initialization
 
@@ -129,33 +123,6 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	return FALSE;
 }
-
-std::wstring CIPTVChannelEditorApp::GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
-{
-	CStringW fileName;
-
-	if (GetModuleFileNameW(m_hInstance, fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
-	{
-		fileName.ReleaseBuffer();
-		int pos = fileName.ReverseFind('\\');
-		if (pos != -1)
-			fileName.Truncate(pos + 1);
-	}
-
-#ifdef _DEBUG
-	fileName += L"..\\";
-#else
-	if (m_devMode)
-	{
-		fileName += L"..\\";
-	}
-#endif // _DEBUG
-
-	fileName += szSubFolder;
-
-	return std::filesystem::absolute(fileName.GetString());
-}
-
 
 void CIPTVChannelEditorApp::RestoreWindowPos(HWND hWnd, LPCTSTR name)
 {

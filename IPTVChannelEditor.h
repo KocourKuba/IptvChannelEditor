@@ -10,8 +10,6 @@
 
 #include "resource.h"		// main symbols
 
-constexpr auto REG_LANGUAGE = _T("Language");
-
 // CEdemChannelEditorApp:
 // See EdemChannelEditor.cpp for the implementation of this class
 //
@@ -32,7 +30,6 @@ public:
 public:
 	BOOL InitInstance() override;
 
-	std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);
 	void SaveWindowPos(HWND hWnd, LPCTSTR name);
 	void RestoreWindowPos(HWND hWnd, LPCTSTR name);
 	void FillLangMap();

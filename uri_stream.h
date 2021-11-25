@@ -3,24 +3,6 @@
 #include "utils.h"
 #include "Crc32.h"
 
-enum class StreamType
-{
-	enBase = -2,
-	enChannels = -1,
-	enAntifriz,
-	enEdem,
-	enFox,
-	enGlanz,
-	enItv,
-	enOneCent,
-	enOneUsd,
-	enSharaclub,
-	enSharavoz,
-	enVipLime,
-	enSharaTV,
-	enTvTeam,
-};
-
 struct TemplateParams
 {
 	std::wstring domain;

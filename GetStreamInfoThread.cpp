@@ -8,6 +8,12 @@
 #include "map_serializer.h"
 #include "utils.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 // Возвращает разницу между заданным и текущим значением времени в тиках
 inline DWORD GetTimeDiff(DWORD dwStartTime)
 {

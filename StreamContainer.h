@@ -1,5 +1,6 @@
 #pragma once
 #include "uri_stream.h"
+#include "Config.h"
 
 /// <summary>
 /// Container for stream interface

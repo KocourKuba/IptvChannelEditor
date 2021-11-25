@@ -3,6 +3,12 @@
 #include "utils.h"
 #include "ChannelCategory.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 ChannelInfo::ChannelInfo(StreamType streamType, const std::wstring& root_path)
 	: BaseInfo(InfoType::enChannel, streamType, root_path)
 {

@@ -3,6 +3,12 @@
 #include "utils.h"
 #include "Crc32.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 const CImage& CIconCache::get_icon(const std::wstring& name, const std::wstring& path)
 {
 	static CImage nullImage;

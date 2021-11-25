@@ -3,6 +3,12 @@
 #include "utils.h"
 #include "PlayListEntry.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.fox-tv.fun/{:s}/{:s}/tv.m3u";
 static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{TOKEN}";
 static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=fox-tv/epg/{:s}.json";

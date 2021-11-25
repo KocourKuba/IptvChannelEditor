@@ -2,6 +2,12 @@
 #include "PlayListEntry.h"
 #include "utils.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 {
 	if (str.empty()) return false;

@@ -2,6 +2,12 @@
 #include "m3u_entry.h"
 #include "utils.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 static std::map<std::string, m3u_entry::directives> s_ext_directives = {
 	{ "#EXTM3U"   , m3u_entry::ext_header   },
 	{ "#EXTINF"   , m3u_entry::ext_info     },

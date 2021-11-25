@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "StreamContainer.h"
+#include "Config.h"
 #include "uri_channels.h"
 #include "uri_antifriz.h"
 #include "uri_edem.h"
@@ -13,6 +14,12 @@
 #include "uri_sharavoz.h"
 #include "uri_tvteam.h"
 #include "uri_viplime.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 StreamContainer::StreamContainer(StreamType type) : stream_type(type)
 {

@@ -2,6 +2,12 @@
 #include "uri_channels.h"
 #include "utils.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 void uri_channels::parse_uri(const std::wstring& url)
 {
 	// http://ts://{SUBDOMAIN}/iptv/{TOKEN}/205/index.m3u8

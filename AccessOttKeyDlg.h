@@ -1,5 +1,5 @@
 #pragma once
-#include "uri_stream.h"
+#include "Config.h"
 
 
 // CAccessDlg dialog
