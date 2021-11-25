@@ -18,8 +18,14 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 	{
 		if (_tcsicmp(szParam, _T("Dev")) == 0)
 		{
+			PluginsConfig::DEV_PATH = LR"(..\)";
+			PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
 			m_bDev = TRUE;
-			return;
+		}
+
+		if (_tcsicmp(szParam, _T("MakeAll")) == 0)
+		{
+			m_bMakeAll = TRUE;
 		}
 	}
 
@@ -87,7 +93,22 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	CCommandLineInfoEx cmdInfo;
 	ParseCommandLine(cmdInfo);
-	m_devMode = cmdInfo.m_bDev;
+	if (cmdInfo.m_bMakeAll)
+	{
+		const auto& output_path = GetProfileString(REG_SETTINGS, REG_PLUGINS_PATH, GetAppPath().c_str());
+		const auto& lists_path = GetProfileString(REG_SETTINGS, REG_LISTS_PATH, GetAppPath().c_str());
+		for (const auto& item : PluginsConfig::get_plugins_info())
+		{
+			if (!PackPlugin(item.type, output_path.GetString(), lists_path.GetString(), false))
+			{
+				CString str;
+				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name);
+				if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
+			}
+		}
+
+		return FALSE;
+	}
 
 	FillLangMap();
 	int nLangCurrent = GetProfileInt(REG_SETTINGS, REG_LANGUAGE, 1033);

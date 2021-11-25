@@ -12,10 +12,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #ifdef _DEBUG
-static constexpr auto PACK_DLL = L"dll\\7za.dll";
+CString PluginsConfig::DEV_PATH = LR"(..\)";
+CString PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
 #else
-static constexpr auto PACK_DLL = L"7za.dll";
+CString PluginsConfig::DEV_PATH;
+CString PluginsConfig::PACK_DLL_PATH;
 #endif // _DEBUG
+
+// special case for run under debugger from VS
+constexpr auto PACK_DLL = L"7za.dll";
 
 using namespace SevenZip;
 
@@ -66,11 +71,7 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 			fileName.Truncate(pos + 1);
 	}
 
-#ifdef _DEBUG
-	fileName += L"..\\";
-#endif // _DEBUG
-
-	fileName += szSubFolder;
+	fileName += PluginsConfig::DEV_PATH + szSubFolder;
 
 	return std::filesystem::absolute(fileName.GetString());
 }
@@ -140,7 +141,7 @@ bool PackPlugin(const StreamType plugin_type,
 	os.close();
 
 	// pack folder
-	SevenZipWrapper archiver(GetAppPath(PACK_DLL));
+	SevenZipWrapper archiver(GetAppPath(PluginsConfig::PACK_DLL_PATH + PACK_DLL));
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
 	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
 	if (!res)

@@ -415,6 +415,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndPluginType.SetCurSel(ReadRegInt(REG_PLUGIN));
 	m_wndIconSource.SetCurSel(ReadRegInt(REG_ICON_SOURCE));
 	m_wndPack.SetDropDownMenu(IDR_MENU_SPLIT, 0);
+	m_pluginType = (StreamType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
 
 	SwitchPlugin();
 
@@ -432,6 +433,21 @@ void CIPTVChannelEditorDlg::ReadAppSettings()
 	m_bAutoSync = ReadRegInt(REG_AUTO_SYNC);
 	m_bAutoHide = ReadRegInt(REG_AUTO_HIDE);
 	m_MaxThreads = ReadRegInt(REG_MAX_THREADS, 4);
+	m_nLang = ReadRegInt(REG_LANGUAGE);
+}
+
+void CIPTVChannelEditorDlg::SaveAppSettings()
+{
+	SaveReg(REG_PLAYER, m_player);
+	SaveReg(REG_FFPROBE, m_probe);
+	SaveReg(REG_LISTS_PATH, m_lists_path);
+	SaveReg(REG_PLUGINS_PATH, m_plugins_path);
+	SaveReg(REG_DAYS_BACK, m_archiveCheckDays);
+	SaveReg(REG_HOURS_BACK, m_archiveCheckHours);
+	SaveReg(REG_AUTO_SYNC, m_bAutoSync);
+	SaveReg(REG_AUTO_HIDE, m_bAutoHide);
+	SaveReg(REG_MAX_THREADS, m_MaxThreads);
+	SaveReg(REG_LANGUAGE, m_nLang);
 }
 
 void CIPTVChannelEditorDlg::SwitchPlugin()
@@ -445,8 +461,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_host.clear();
 
 	m_wndPlaylist.ResetContent();
-
-	m_pluginType = (StreamType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
 
 	switch (m_pluginType)
 	{
@@ -504,7 +518,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndPlaylist.SetCurSel(pl_idx);
 
 	// Load channel lists
-	const auto& name = PluginsConfig::GetPluginName<wchar_t>(GetCurrentPlugin());
+	const auto& name = PluginsConfig::GetPluginName<wchar_t>(m_pluginType);
 	const auto& channelsPath = fmt::format(L"{:s}{:s}\\", m_lists_path, name);
 	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", name);
 	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", name);
@@ -574,7 +588,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	int idx = m_wndPlaylist.GetCurSel();
 	BOOL isFile = m_wndPlaylist.GetItemData(idx) != 0;
 	const auto& account_template = StreamContainer::get_instance(m_pluginType)->get_playlist_template();
-	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), PluginsConfig::GetPluginName<TCHAR>(GetCurrentPlugin(), true)).c_str();
+	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), PluginsConfig::GetPluginName<TCHAR>(m_pluginType, true)).c_str();
 
 	switch (m_pluginType)
 	{
@@ -757,7 +771,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	BOOL enableDownload = TRUE;
 	BOOL enableCustom = FALSE;
 	int pl_idx = m_wndPlaylist.GetCurSel();
-	switch ((StreamType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()))
+	switch (m_pluginType)
 	{
 		case StreamType::enEdem:
 		{
@@ -3076,7 +3090,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		doc.append_node(tv_info);
 
 		// write document
-		auto& playlistPath = fmt::format(L"{:s}{:s}\\", m_lists_path, PluginsConfig::GetPluginName<wchar_t>(GetCurrentPlugin()));
+		auto& playlistPath = fmt::format(L"{:s}{:s}\\", m_lists_path, PluginsConfig::GetPluginName<wchar_t>(m_pluginType));
 		std::error_code err;
 		std::filesystem::create_directories(playlistPath, err);
 
@@ -3277,7 +3291,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 {
 	if (!is_allow_save() || AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) == IDYES)
 	{
-		PackPlugin(GetCurrentPlugin(), m_plugins_path.GetString(), m_lists_path.GetString(), true);
+		PackPlugin(m_pluginType, m_plugins_path.GetString(), m_lists_path.GetString(), true);
 	}
 }
 
@@ -3291,7 +3305,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 	int i = 0;
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetRange32(0, m_wndPluginType.GetCount());
+	m_wndProgress.SetRange32(0, (int)PluginsConfig::get_plugins_info().size());
 	m_wndProgress.SetPos(i);
 	for (const auto& item : PluginsConfig::get_plugins_info())
 	{
@@ -3429,21 +3443,22 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	dlg.m_bAutoSync = m_bAutoSync;
 	dlg.m_bAutoHide = m_bAutoHide;
 	dlg.m_MaxThreads = m_MaxThreads;
-	dlg.m_nLang = ReadRegInt(REG_LANGUAGE);
+	dlg.m_nLang = m_nLang;
 
-	CString old_list = m_lists_path;
 	if (dlg.DoModal() == IDOK)
 	{
-		SaveReg(REG_PLAYER, dlg.m_player);
-		SaveReg(REG_FFPROBE, dlg.m_probe);
-		SaveReg(REG_LISTS_PATH, dlg.m_lists_path);
-		SaveReg(REG_PLUGINS_PATH, dlg.m_plugins_path);
-		SaveReg(REG_AUTO_SYNC, dlg.m_bAutoSync);
-		SaveReg(REG_AUTO_HIDE, dlg.m_bAutoHide);
-		SaveReg(REG_MAX_THREADS, dlg.m_MaxThreads);
-		SaveReg(REG_LANGUAGE, dlg.m_nLang);
+		CString old_list = m_lists_path;
 
-		ReadAppSettings();
+		m_player = dlg.m_player;
+		m_probe = dlg.m_probe;
+		m_lists_path = dlg.m_lists_path;
+		m_plugins_path = dlg.m_plugins_path;
+		m_bAutoSync = dlg.m_bAutoSync;
+		m_bAutoHide = dlg.m_bAutoHide;
+		m_MaxThreads = dlg.m_MaxThreads;
+		m_nLang = dlg.m_nLang;
+
+		SaveAppSettings();
 
 		if (old_list != m_lists_path)
 			SwitchPlugin();
@@ -3557,7 +3572,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 {
 	CFileDialog dlg(FALSE);
 
-	const auto& pluginName = PluginsConfig::GetPluginName<wchar_t>(GetCurrentPlugin());
+	const auto& pluginName = PluginsConfig::GetPluginName<wchar_t>(m_pluginType);
 	auto& newList = fmt::format(L"{:s}{:s}\\", m_lists_path, pluginName);
 	std::filesystem::create_directory(newList);
 
@@ -3825,7 +3840,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 
 		const auto& dump = m_stream_infos.serialize();
 		// write document
-		const auto& streamInfoFile = fmt::format(L"{:s}{:s}\\stream_info.bin", m_lists_path, PluginsConfig::GetPluginName<wchar_t>(GetCurrentPlugin()));
+		const auto& streamInfoFile = fmt::format(L"{:s}{:s}\\stream_info.bin", m_lists_path, PluginsConfig::GetPluginName<wchar_t>(m_pluginType));
 		std::ofstream os(streamInfoFile, std::istream::binary);
 		os.write(dump.data(), dump.size());
 		os.close();
@@ -4031,13 +4046,16 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 		return;
 	}
 
+	int idx = m_wndPluginType.GetCurSel();
+	m_pluginType = (StreamType)m_wndPluginType.GetItemData(idx);
+	SaveReg(REG_PLUGIN, idx);
+
 	set_allow_save(FALSE);
 	SwitchPlugin();
 }
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 {
-	SaveReg(REG_PLUGIN, m_wndPluginType.GetCurSel());
 	SaveRegPlugin(REG_PLAYLIST_TYPE, m_wndPlaylist.GetCurSel());
 
 	LoadPlaylist();
@@ -4646,7 +4664,7 @@ bool CIPTVChannelEditorDlg::HasEPG2()
 
 std::wstring CIPTVChannelEditorDlg::GetPluginRegPath() const
 {
-	return fmt::format(LR"({:s}\{:s})", REG_SETTINGS, PluginsConfig::GetPluginName<wchar_t>(GetCurrentPlugin()));
+	return fmt::format(LR"({:s}\{:s})", REG_SETTINGS, PluginsConfig::GetPluginName<wchar_t>(m_pluginType));
 }
 
 void CIPTVChannelEditorDlg::SaveReg(LPCTSTR path, LPCSTR szValue)

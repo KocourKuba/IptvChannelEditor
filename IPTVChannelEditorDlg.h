@@ -215,13 +215,12 @@ private:
 
 	void SwitchPlugin();
 
-	const StreamType GetCurrentPlugin() const { return (StreamType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()); }
-
 	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
 	std::wstring GetPluginRegPath() const;
 
 	void ReadAppSettings();
+	void SaveAppSettings();
 
 	void SaveReg(LPCTSTR path, LPCSTR szValue);
 	void SaveReg(LPCTSTR path, LPCWSTR szValue);
@@ -342,6 +341,7 @@ private:
 	BOOL m_bAutoHide = FALSE;
 	BOOL m_allow_save = FALSE;
 	int m_MaxThreads = 4;
+	int m_nLang = 0;
 	bool m_menu_enable_channel = false;
 	bool m_loading = false;
 	bool m_inSync = false;

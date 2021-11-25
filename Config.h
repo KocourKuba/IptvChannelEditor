@@ -82,6 +82,9 @@ public:
 
 		return std::basic_string<T>();
 	}
+
+	static CStringW DEV_PATH;
+	static CStringW PACK_DLL_PATH;
 };
 
 std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);

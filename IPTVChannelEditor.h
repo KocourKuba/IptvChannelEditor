@@ -38,9 +38,6 @@ public:
 
 public:
 	std::map<WORD, LangStruct> m_LangMap;
-
-private:
-	BOOL m_devMode = FALSE;
 };
 
 class CCommandLineInfoEx : public CCommandLineInfo
@@ -51,6 +48,7 @@ public:
 
 public:
 	BOOL m_bDev = FALSE;
+	BOOL m_bMakeAll = FALSE;
 };
 
 extern CIPTVChannelEditorApp theApp;
