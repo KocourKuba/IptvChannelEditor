@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "PlaylistParseThread.h"
+#include "PlaylistParseM3U8Thread.h"
 #include "PlayListEntry.h"
 #include "utils.h"
 
@@ -12,16 +12,16 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-void CPlaylistParseThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
+void CPlaylistParseM3U8Thread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (m_parent->GetSafeHwnd())
 		m_parent->SendMessage(message, wParam, lParam);
 
 }
 
-IMPLEMENT_DYNCREATE(CPlaylistParseThread, CWinThread)
+IMPLEMENT_DYNCREATE(CPlaylistParseM3U8Thread, CWinThread)
 
-BOOL CPlaylistParseThread::InitInstance()
+BOOL CPlaylistParseM3U8Thread::InitInstance()
 {
 	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 

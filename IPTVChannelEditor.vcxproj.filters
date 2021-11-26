@@ -177,9 +177,6 @@
     <ClInclude Include="GetStreamInfoThread.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
-    <ClInclude Include="PlaylistParseThread.h">
-      <Filter>Header Files\Threads</Filter>
-    </ClInclude>
     <ClInclude Include="uri_itv.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
@@ -203,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaylistParseM3U8Thread.h">
+      <Filter>Header Files\Threads</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -299,9 +299,6 @@
     <ClCompile Include="GetStreamInfoThread.cpp">
       <Filter>Source Files\Threads</Filter>
     </ClCompile>
-    <ClCompile Include="PlaylistParseThread.cpp">
-      <Filter>Source Files\Threads</Filter>
-    </ClCompile>
     <ClCompile Include="ImageContainer.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
@@ -331,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="Config.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistParseM3U8Thread.cpp">
+      <Filter>Source Files\Threads</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

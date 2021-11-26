@@ -2,9 +2,9 @@
 
 #include "Config.h"
 
-class CPlaylistParseThread : public CWinThread
+class CPlaylistParseM3U8Thread : public CWinThread
 {
-	DECLARE_DYNCREATE(CPlaylistParseThread)
+	DECLARE_DYNCREATE(CPlaylistParseM3U8Thread)
 public:
 	class ThreadConfig
 	{
@@ -19,10 +19,10 @@ public:
 	};
 
 protected:
-	CPlaylistParseThread() { m_bAutoDelete = TRUE; }
+	CPlaylistParseM3U8Thread() { m_bAutoDelete = TRUE; }
 
 public:
-	virtual ~CPlaylistParseThread() { delete m_config.m_data; }
+	virtual ~CPlaylistParseM3U8Thread() { delete m_config.m_data; }
 
 public:
 	BOOL InitInstance() override;

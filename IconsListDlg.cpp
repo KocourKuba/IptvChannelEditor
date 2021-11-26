@@ -5,7 +5,7 @@
 #include <afxdialogex.h>
 #include "IconsListDlg.h"
 #include "IPTVChannelEditor.h"
-#include "PlaylistParseThread.h"
+#include "PlaylistParseM3U8Thread.h"
 #include "IconCache.h"
 #include "utils.h"
 
@@ -92,7 +92,7 @@ BOOL CIconsListDlg::OnInitDialog()
 		std::unique_ptr<std::istream> pl_stream;
 		if (utils::DownloadFile(m_iconSource, *data))
 		{
-			auto* pThread = (CPlaylistParseThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+			auto* pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 			if (pThread)
 			{
 				m_evtStop.ResetEvent();
@@ -104,7 +104,7 @@ BOOL CIconsListDlg::OnInitDialog()
 				m_wndProgress.SetPos(0);
 				m_wndProgress.ShowWindow(SW_SHOW);
 
-				CPlaylistParseThread::ThreadConfig cfg;
+				CPlaylistParseM3U8Thread::ThreadConfig cfg;
 				cfg.m_parent = this;
 				cfg.m_data = data.release();
 				cfg.m_hStop = m_evtStop;

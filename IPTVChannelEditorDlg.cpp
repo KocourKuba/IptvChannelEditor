@@ -14,7 +14,7 @@
 #include "AccessInfoPinDlg.h"
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
-#include "PlaylistParseThread.h"
+#include "PlaylistParseM3U8Thread.h"
 #include "GetStreamInfoThread.h"
 #include "IconCache.h"
 #include "IconsListDlg.h"
@@ -697,7 +697,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
 
-	auto* pThread = (CPlaylistParseThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+	auto* pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
 	{
 		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
@@ -721,7 +721,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	FillTreePlaylist();
 
-	CPlaylistParseThread::ThreadConfig cfg;
+	CPlaylistParseM3U8Thread::ThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_data = data.release();
 	cfg.m_hStop = m_evtStop;
