@@ -13,13 +13,13 @@ static constexpr auto PLAYLIST_TEMPLATE = L"http://list.1ott.net/api/{:s}/high/o
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}";
 static constexpr auto EPG1_TEMPLATE = L"http://epg.propg.net/{:s}/epg2/{:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/ottg/epg/{:s}.json";
+static constexpr auto EPG2_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=1ott/epg/{:s}.json";
+static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/1ott/epg/{:s}.json";
 
 
 void uri_oneott::parse_uri(const std::wstring& url)
 {
-	//http://rr2.1ott.net/~109dab8c798d54668dc9c42b3c3af80d59a/35985/hls/pl.m3u8
+	//http://rr2.1ott.net/~109dab8c798d546s8dc9c41b3c3af80d59a/35985/hls/pl.m3u8
 
 	static std::wregex re_url(LR"(^https?:\/\/(.+)\/~(.+)\/(.+)\/hls\/.+\.m3u8$)");
 	std::wsmatch m;

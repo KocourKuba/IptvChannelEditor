@@ -1108,6 +1108,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 				if (channel->get_title() != entry->get_title()
 					|| (entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
 					|| (!entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id())
+					|| (!entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
 					|| (!entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
 					)
 				{
@@ -4385,6 +4386,12 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		needCheckExisting = true;
 	}
 
+	if (HasEPG2() && !entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
+	{
+		channel->set_epg2_id(entry->get_epg2_id());
+		needCheckExisting = true;
+	}
+
 	if (entry->get_archive_days() && channel->get_archive_days() != entry->get_archive_days())
 	{
 		channel->set_archive_days(entry->get_archive_days());
@@ -4694,6 +4701,6 @@ void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& 
 bool CIPTVChannelEditorDlg::HasEPG2()
 {
 	auto pluginType = GetConfig().get_plugin_type();
-	return (pluginType == StreamType::enSharaclub || pluginType == StreamType::enSharavoz);
+	return (pluginType == StreamType::enSharaclub || pluginType == StreamType::enSharavoz || pluginType == StreamType::enOneOtt);
 }
 

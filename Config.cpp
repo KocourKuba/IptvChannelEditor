@@ -49,7 +49,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enVipLime,   _T("VipLime TV"),      "viplime"    },
 	{ StreamType::enSharaTV,   _T("Shara TV"),        "sharatv"    },
 	{ StreamType::enTvTeam,    _T("TV Team"),         "tvteam"     },
-	{ StreamType::enOneOtt,    _T("1ott"),            "oneott"     },
+	{ StreamType::enOneOtt,    _T("1OTT TV"),         "oneott"     },
 };
 
 void ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
@@ -66,7 +66,7 @@ void PluginsConfig::ReadAppSettingsRegistry()
 	m_settings.clear();
 	ReadSettingsRegistry(REGISTRY_APP_SETTINGS, m_settings);
 	int idx = get_plugin_idx();
-	m_pluginType = idx < (int)all_plugins.size() ? all_plugins[idx].type : StreamType::enEdem;
+	m_pluginType = (idx >= 0 && idx < (int)all_plugins.size()) ? all_plugins[idx].type : StreamType::enEdem;
 }
 
 void PluginsConfig::SaveAppSettingsRegistry()
