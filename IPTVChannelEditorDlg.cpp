@@ -15,9 +15,11 @@
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
 #include "PlaylistParseM3U8Thread.h"
+#include "PlaylistParseXMLThread.h"
 #include "GetStreamInfoThread.h"
 #include "IconCache.h"
 #include "IconsListDlg.h"
+#include "IconLinkDlg.h"
 #include "utils.h"
 #include "Config.h"
 
@@ -391,6 +393,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	CString res;
 	res.LoadString(IDS_STRING_FILE);
 	m_wndIconSource.AddString(res);
+	res.LoadString(IDS_STRING_URL);
+	m_wndIconSource.AddString(res);
 	m_wndIconSource.AddString(_T("it999.ru"));
 
 	// Toggle controls state
@@ -456,6 +460,14 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_login = GetConfig().get_string(false, REG_LOGIN);
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
+			break;
+		}
+		case StreamType::enOneOtt:
+		{
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_login = GetConfig().get_string(false, REG_LOGIN);
+			m_password = GetConfig().get_string(false, REG_PASSWORD);
+			m_token = GetConfig().get_string(false, REG_TOKEN);
 			break;
 		}
 		case StreamType::enItv:
@@ -565,7 +577,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	BOOL isFile = m_wndPlaylist.GetItemData(idx) != 0;
 	const auto plugin_type = GetConfig().get_plugin_type();
 
-	const auto& account_template = StreamContainer::get_instance(plugin_type)->get_playlist_template();
+	const auto& playlist_template = StreamContainer::get_instance(plugin_type)->get_playlist_template();
 	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetConfig().GetCurrentPluginName(true)).c_str();
 
 	switch (plugin_type)
@@ -575,7 +587,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0: // Standard
-					url = account_template;
+					url = playlist_template;
 					break;
 				case 1: // Thematic
 					url = StreamContainer::get_instance(plugin_type)->get_playlist_template(false);
@@ -602,7 +614,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0: // Playlist
-					url = fmt::format(account_template, m_password);
+					url = fmt::format(playlist_template, m_password);
 					break;
 				case 1: // Custom file
 					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
@@ -620,7 +632,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			switch (idx)
 			{
 				case 0: // Playlist
-					url = fmt::format(account_template, m_login.c_str(), m_password);
+					url = fmt::format(playlist_template, m_login, m_password);
 					break;
 				case 1: // Custom file
 					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
@@ -629,6 +641,21 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 					// 	url = fmt::format(account_template, m_login.c_str(), m_password);
 					// 	m_plFileName = _T("SharaClub_Movie.m3u8");
 					// 	break;
+				default:
+					break;
+			}
+			break;
+		}
+		case StreamType::enOneOtt:
+		{
+			switch (idx)
+			{
+				case 0: // Playlist
+					url = fmt::format(playlist_template, m_token);
+					break;
+				case 1: // Custom file
+					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
+					break;
 				default:
 					break;
 			}
@@ -697,7 +724,26 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
 
-	auto* pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+	ThreadConfig cfg;
+	cfg.m_parent = this;
+	cfg.m_data = data.release();
+	cfg.m_hStop = m_evtStop;
+	cfg.m_pluginType = plugin_type;
+	cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
+
+	CWinThread* pThread = nullptr;
+// 	if (plugin_type == StreamType::enOneOtt)
+// 	{
+// 		pThread = AfxBeginThread(RUNTIME_CLASS(CPlaylistParseXMLThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+// 		((CPlaylistParseXMLThread*)pThread)->SetData(cfg);
+//
+// 	}
+// 	else
+	{
+		pThread = AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+		((CPlaylistParseM3U8Thread*)pThread)->SetData(cfg);
+	}
+
 	if (!pThread)
 	{
 		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
@@ -717,24 +763,16 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndChooseUrl.EnableWindow(FALSE);
 	m_evtStop.ResetEvent();
 
-	std::unique_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> playlistEntriesOld = std::move(m_playlistEntries);
+	std::unique_ptr<Playlist> playlistEntriesOld = std::move(m_playlistEntries);
 
 	FillTreePlaylist();
 
-	CPlaylistParseM3U8Thread::ThreadConfig cfg;
-	cfg.m_parent = this;
-	cfg.m_data = data.release();
-	cfg.m_hStop = m_evtStop;
-	cfg.m_pluginType = plugin_type;
-	cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
-
-	pThread->SetData(cfg);
 	pThread->ResumeThread();
 }
 
 LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-	m_playlistEntries.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
+	m_playlistEntries.reset((Playlist*)wParam);
 
 	m_inSync = false;
 	m_wndPluginType.EnableWindow(TRUE);
@@ -782,6 +820,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		case StreamType::enSharavoz:
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
+		case StreamType::enOneOtt:
 		{
 			switch (pl_idx)
 			{
@@ -799,10 +838,10 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			break;
 	}
 
-	if (m_playlistEntries && !m_playlistEntries->empty())
+	if (m_playlistEntries && !m_playlistEntries->m_entries.empty())
 	{
 		bool bSet = false;
-		for (const auto& entry : *m_playlistEntries)
+		for (const auto& entry : m_playlistEntries->m_entries)
 		{
 			const auto& stream = entry->get_uri_stream();
 			switch (plugin_type)
@@ -1166,7 +1205,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 		else
 		{
 			m_iconUrl = channel->get_icon_uri().get_uri().c_str();
-			const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
+			const auto& img = GetIconCache().get_icon(channel->get_icon_absolute_path());
 			CString str;
 			if (img != nullptr)
 			{
@@ -1226,7 +1265,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 			m_infoVideo = pair->second.second.c_str();
 		}
 
-		const auto& img = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
+		const auto& img = GetIconCache().get_icon(entry->get_icon_absolute_path());
 		utils::SetImage(img, m_wndPlIcon);
 
 		UpdateEPG(&m_wndPlaylistTree);
@@ -1501,6 +1540,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 			case StreamType::enFox:
 			case StreamType::enSharaclub:
 			case StreamType::enSharaTV:
+			case StreamType::enOneOtt:
 				m_login = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_LOGIN));
 				m_password = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
@@ -1519,7 +1559,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 	}
 
 	const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
-	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(ChannelCategory::TV_CATEGORY);
+	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(utils::TV_CATEGORY);
 	// Iterate <tv_category> nodes
 	while (cat_node)
 	{
@@ -1536,7 +1576,7 @@ bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
 	CategoryInfo info = { nullptr, fav_category };
 	m_categoriesMap.emplace(ID_ADD_TO_FAVORITE, info);
 
-	auto ch_node = i_node->first_node(utils::TV_CHANNELS)->first_node(ChannelInfo::TV_CHANNEL);
+	auto ch_node = i_node->first_node(utils::TV_CHANNELS)->first_node(utils::TV_CHANNEL);
 	// Iterate <tv_channel> nodes
 	while (ch_node)
 	{
@@ -2057,10 +2097,17 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 				if (category)
 				{
 					m_iconUrl = category->get_icon_uri().get_uri().c_str();
-					const auto& img = GetIconCache().get_icon(category->get_title(), category->get_icon_absolute_path());
-					CString str;
-					str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
-					GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
+					const auto& img = GetIconCache().get_icon(category->get_icon_absolute_path());
+					if (img == nullptr)
+					{
+						GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(_T(""));
+					}
+					else
+					{
+						CString str;
+						str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
+						GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
+					}
 					utils::SetImage(img, m_wndChannelIcon);
 				}
 			}
@@ -2686,6 +2733,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enGlanz:
 		case StreamType::enSharaclub:
 		case StreamType::enSharaTV:
+		case StreamType::enOneOtt:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -2876,7 +2924,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	{
 		// for fast search categories
 		std::set<std::wstring> categories;
-		for (auto& entry : *m_playlistEntries)
+		for (auto& entry : m_playlistEntries->m_entries)
 		{
 			auto res = m_playlistMap.emplace(entry->stream_uri->get_id(), entry);
 			if (!res.second)
@@ -3027,6 +3075,7 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enGlanz: // login/pass
 				case StreamType::enSharaclub:
 				case StreamType::enSharaTV:
+				case StreamType::enOneOtt:
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_LOGIN, utils::utf16_to_utf8(m_login).c_str()));
 					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
@@ -3177,7 +3226,9 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	if (!info || info->get_key() == ID_ADD_TO_FAVORITE)
 		return;
 
-	if (m_wndIconSource.GetCurSel() == 0)
+	bool save = false;
+	int idx = m_wndIconSource.GetCurSel();
+	if (idx == 0)
 	{
 		CFileDialog dlg(TRUE);
 		CString path = GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
@@ -3236,15 +3287,24 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			if (m_iconUrl != info->get_icon_uri().get_uri().c_str())
 			{
 				info->set_icon_uri(m_iconUrl.GetString());
-				const auto& img = GetIconCache().get_icon(info->get_title(), info->get_icon_absolute_path());
-				utils::SetImage(img, m_wndChannelIcon);
+				save = true;
 			}
-			UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
-			CheckForExistingPlaylist();
-			set_allow_save();
 		}
 	}
-	else
+	else if (idx == 1)
+	{
+		CIconLinkDlg dlg;
+		dlg.m_url = info->get_icon_absolute_path().c_str();
+		if (dlg.DoModal() == IDOK)
+		{
+			if (dlg.m_url != info->get_icon_uri().get_uri().c_str())
+			{
+				info->set_icon_uri(dlg.m_url.GetString());
+				save = true;
+			}
+		}
+	}
+	else if (idx == 2)
 	{
 		CIconsListDlg dlg(m_Icons, L"http://epg.it999.ru/edem_epg_ico2.m3u8");
 		dlg.m_selected = m_lastIconSelected;
@@ -3252,19 +3312,24 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 		if (dlg.DoModal() == IDOK)
 		{
-			const auto& choosed = m_Icons->at(dlg.m_selected);
+			const auto& choosed = m_Icons->m_entries[dlg.m_selected];
 			if (m_iconUrl != choosed->get_icon_uri().get_uri().c_str())
 			{
 				info->set_icon_uri(choosed->get_icon_uri());
-				const auto& img = GetIconCache().get_icon(choosed->get_title(), choosed->get_icon_absolute_path());
-				utils::SetImage(img, m_wndChannelIcon);
 				m_lastIconSelected = dlg.m_selected;
+				save = true;
 			}
-
-			UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
-			CheckForExistingPlaylist();
-			set_allow_save();
 		}
+	}
+
+	if (save)
+	{
+		const auto& img = GetIconCache().get_icon(info->get_icon_absolute_path());
+		utils::SetImage(img, m_wndChannelIcon);
+
+		UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
+		CheckForExistingPlaylist();
+		set_allow_save();
 	}
 
 	UpdateData(FALSE);
@@ -3440,7 +3505,7 @@ void CIPTVChannelEditorDlg::OnUpdateIcon()
 	if (entry && channel && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
 	{
 		channel->set_icon_uri(entry->get_icon_uri());
-		const auto& img = GetIconCache().get_icon(channel->get_title(), channel->get_icon_absolute_path());
+		const auto& img = GetIconCache().get_icon(channel->get_icon_absolute_path());
 		utils::SetImage(img, m_wndChannelIcon);
 
 		UpdateChannelsTreeColors();

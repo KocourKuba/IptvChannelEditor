@@ -5,6 +5,7 @@ namespace utils
 {
 	static constexpr auto DUNE_PLUGIN_NAME = L"dune_plugin_{:s}_mod.zip";
 	static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channel_unset.png";
+	static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
 	static constexpr auto VERSION_INFO = "version_info";
 	static constexpr auto LIST_VERSION = "list_version";
@@ -16,7 +17,24 @@ namespace utils
 
 	static constexpr auto TV_INFO = "tv_info";
 	static constexpr auto TV_CATEGORIES = "tv_categories";
+	static constexpr auto TV_CATEGORY = "tv_category";
 	static constexpr auto TV_CHANNELS = "tv_channels";
+	static constexpr auto TV_CHANNEL = "tv_channel";
+	static constexpr auto CHANNEL_ID = "channel_id";
+	static constexpr auto EPG1_ID = "epg_id";
+	static constexpr auto EPG2_ID = "tvg_id";
+	static constexpr auto CAPTION = "caption";
+	static constexpr auto TIME_SHIFT_HOURS = "timeshift_hours";
+	static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
+	static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
+	static constexpr auto TV_CATEGORY_ID = "tv_category_id";
+	static constexpr auto INT_ID = "int_id";
+	static constexpr auto STREAMING_URL = "streaming_url";
+	static constexpr auto ARCHIVE = "archive";
+	static constexpr auto PROTECTED = "protected";
+	static constexpr auto DISABLED = "disabled";
+	static constexpr auto FAVORITE = "favorite";
+
 	static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
 	static constexpr auto CATEGORIES_LOGO_URL = L"icons/";
 

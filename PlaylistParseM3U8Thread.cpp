@@ -12,20 +12,13 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-void CPlaylistParseM3U8Thread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
-{
-	if (m_parent->GetSafeHwnd())
-		m_parent->SendMessage(message, wParam, lParam);
-
-}
-
 IMPLEMENT_DYNCREATE(CPlaylistParseM3U8Thread, CWinThread)
 
 BOOL CPlaylistParseM3U8Thread::InitInstance()
 {
 	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-	auto entries = std::make_unique<std::vector<std::shared_ptr<PlaylistEntry>>>();
+	auto playlist = std::make_unique<Playlist>();
 	if (m_config.m_data)
 	{
 		utils::vector_to_streambuf<char> buf(*m_config.m_data);
@@ -41,7 +34,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 			{
 				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
 				{
-					entries.reset();
+					playlist.reset();
 					break;
 				}
 
@@ -73,13 +66,13 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				}
 
 				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
-				entries->emplace_back(entry);
+				playlist->m_entries.emplace_back(entry);
 				entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 			}
 		}
 	}
 
-	m_config.NotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)entries.release(), 0);
+	m_config.NotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release(), 0);
 
 	CoUninitialize();
 

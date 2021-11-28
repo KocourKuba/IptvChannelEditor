@@ -335,7 +335,7 @@ private:
 
 	// Icons entries
 	// loaded when used icon resource list
-	std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_Icons;
+	std::shared_ptr<Playlist> m_Icons;
 
 	//////////////////////////////////////////////////////////////////////////
 	// channels part
@@ -363,7 +363,7 @@ private:
 	// playlist part
 
 	// all entries loaded from playlist, filled when parse playlist
-	std::unique_ptr<std::vector<std::shared_ptr<PlaylistEntry>>> m_playlistEntries;
+	std::unique_ptr<Playlist> m_playlistEntries;
 
 	// list of playlist id's in the same order as in the playlist
 	// Must not contains duplicates!

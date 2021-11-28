@@ -8,6 +8,7 @@
 #include "uri_glanz.h"
 #include "uri_itv.h"
 #include "uri_onecent.h"
+#include "uri_oneott.h"
 #include "uri_oneusd.h"
 #include "uri_sharaclub.h"
 #include "uri_sharatv.h"
@@ -71,6 +72,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enVipLime:
 			return  std::make_unique<uri_viplime>();
+
+		case StreamType::enOneOtt:
+			return  std::make_unique<uri_oneott>();
 
 		default:
 			ASSERT(false);

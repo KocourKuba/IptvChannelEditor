@@ -17,6 +17,7 @@ enum class StreamType
 	enVipLime,
 	enSharaTV,
 	enTvTeam,
+	enOneOtt,
 };
 
 constexpr auto REG_SETTINGS = _T("Settings");
@@ -84,6 +85,18 @@ static std::basic_string<T> GetPluginName(const StreamType plugin_type, bool bCa
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+class ThreadConfig
+{
+public:
+	void NotifyParent(UINT message, WPARAM wParam, LPARAM lParam);
+
+	std::vector<BYTE>* m_data = nullptr;
+	CWnd* m_parent = nullptr;
+	HANDLE m_hStop = nullptr;
+	StreamType m_pluginType = StreamType::enEdem;
+	std::wstring m_rootPath;
+};
 
 class PluginsConfig
 {

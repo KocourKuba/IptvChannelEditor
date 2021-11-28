@@ -263,11 +263,13 @@ goto :EOF
     <ClInclude Include="FileVersionInfo.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
     <ClInclude Include="IconCache.h" />
+    <ClInclude Include="IconLinkDlg.h" />
     <ClInclude Include="IconsListDlg.h" />
     <ClInclude Include="ImageContainer.h" />
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
+    <ClInclude Include="PlaylistParseXMLThread.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="CustomPlaylistDlg.h" />
@@ -284,6 +286,7 @@ goto :EOF
     <ClInclude Include="uri_glanz.h" />
     <ClInclude Include="uri_itv.h" />
     <ClInclude Include="uri_onecent.h" />
+    <ClInclude Include="uri_oneott.h" />
     <ClInclude Include="uri_oneusd.h" />
     <ClInclude Include="uri_sharaclub.h" />
     <ClInclude Include="uri_sharatv.h" />
@@ -327,10 +330,12 @@ goto :EOF
     </ClCompile>
     <ClCompile Include="GetStreamInfoThread.cpp" />
     <ClCompile Include="IconCache.cpp" />
+    <ClCompile Include="IconLinkDlg.cpp" />
     <ClCompile Include="IconsListDlg.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
+    <ClCompile Include="PlaylistParseXMLThread.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
@@ -346,6 +351,7 @@ goto :EOF
     <ClCompile Include="uri_glanz.cpp" />
     <ClCompile Include="uri_itv.cpp" />
     <ClCompile Include="uri_onecent.cpp" />
+    <ClCompile Include="uri_oneott.cpp" />
     <ClCompile Include="uri_oneusd.cpp" />
     <ClCompile Include="uri_sharaclub.cpp" />
     <ClCompile Include="uri_sharatv.cpp" />

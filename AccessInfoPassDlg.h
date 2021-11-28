@@ -27,6 +27,7 @@ public:
 	std::shared_ptr<PlaylistEntry> m_entry;
 	CString m_login;
 	CString m_password;
+	CString m_token;
 	CString m_status;
 	BOOL m_bEmbed = FALSE;
 

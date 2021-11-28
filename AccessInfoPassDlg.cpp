@@ -50,6 +50,7 @@ BOOL CAccessInfoPassDlg::OnInitDialog()
 
 	m_login = m_entry->stream_uri->get_login().c_str();
 	m_password = m_entry->stream_uri->get_password().c_str();
+	m_token = m_entry->stream_uri->get_token().c_str();
 
 	UpdateData(FALSE);
 
@@ -65,6 +66,7 @@ void CAccessInfoPassDlg::OnOK()
 
 	m_entry->stream_uri->set_login(m_login.GetString());
 	m_entry->stream_uri->set_password(m_password.GetString());
+	m_entry->stream_uri->set_token(m_token.GetString());
 
 	__super::OnOK();
 }
@@ -80,10 +82,11 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);
+	std::wstring pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
 
 	if (m_entry->stream_uri->isHasAccessInfo())
 	{
-		// currently supported only in sharaclub
+		// currently supported only in sharaclub, oneott use this to obtain token
 		std::vector<BYTE> data;
 		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(login, password), data) || data.empty())
 			return;
@@ -91,6 +94,12 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		try
 		{
 			json js = json::parse(data);
+			if (js.contains("token"))
+			{
+				m_token = js.value("token", "").c_str();
+				pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), m_token.GetString());
+			}
+
 			json js_data = js["data"];
 
 			if (m_status == _T("ok"))
@@ -108,9 +117,11 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		{
 			// out of range errors may happen if provided sizes are excessive
 		}
+		catch (const json::type_error&)
+		{
+			// type errors may happen if provided sizes are excessive
+		}
 	}
-
-	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
 
 	std::vector<BYTE> data;
 	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
@@ -126,7 +137,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 			{
 				utils::string_rtrim(line, "\r");
 				m3u_entry m3uEntry(line);
-				if (m_entry->Parse(line, m3uEntry) && !m_entry->stream_uri->get_login().empty() && !m_entry->stream_uri->get_token().empty())
+				if (m_entry->Parse(line, m3uEntry) && (!m_entry->stream_uri->get_login().empty() || !m_entry->stream_uri->get_token().empty()))
 				{
 					m_status = _T("Ok");
 					break;

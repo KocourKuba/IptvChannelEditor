@@ -33,6 +33,7 @@ static std::vector<std::wstring> plugins_images = {
 	L"bg_sharavoz.jpg",   L"logo_sharavoz.png",
 	L"bg_tvteam.jpg",     L"logo_tvteam.png",
 	L"bg_viplime.jpg",    L"logo_viplime.png",
+	L"bg_oneott.jpg",     L"logo_oneott.png",
 };
 
 static std::vector<PluginDesc> all_plugins = {
@@ -48,7 +49,17 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enVipLime,   _T("VipLime TV"),      "viplime"    },
 	{ StreamType::enSharaTV,   _T("Shara TV"),        "sharatv"    },
 	{ StreamType::enTvTeam,    _T("TV Team"),         "tvteam"     },
+	{ StreamType::enOneOtt,    _T("1ott"),            "oneott"     },
 };
+
+void ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	if (m_parent->GetSafeHwnd())
+		m_parent->SendMessage(message, wParam, lParam);
+
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 void PluginsConfig::ReadAppSettingsRegistry()
 {

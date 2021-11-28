@@ -36,7 +36,7 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) const
 {
 	// <tv_channel>
-	auto category_node = utils::alloc_node(alloc, TV_CATEGORY);
+	auto category_node = utils::alloc_node(alloc, utils::TV_CATEGORY);
 
 	// <id>1</id>
 	category_node->append_node(utils::alloc_node(alloc, ID, utils::int_to_char(get_key()).c_str()));

@@ -9,12 +9,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const CImage& CIconCache::get_icon(const std::wstring& name, const std::wstring& path)
+const CImage& CIconCache::get_icon(const std::wstring& path)
 {
 	static CImage nullImage;
 
-	const auto& key = name + path;
-	int hash = crc32_bitwise(key.c_str(), key.size());
+	int hash = crc32_bitwise(path.c_str(), path.size() * sizeof(wchar_t));
 
 	if (auto pair = m_imageMap.find(hash); pair != m_imageMap.end())
 		return pair->second->get_image();

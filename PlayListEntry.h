@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseInfo.h"
 #include "m3u_entry.h"
+#include "ChannelCategory.h"
 
 class PlaylistEntry : public BaseInfo
 {
@@ -29,4 +30,11 @@ protected:
 	int channel_len = 0;
 	std::wstring category;
 	std::string logo_root;
+};
+
+class Playlist
+{
+public:
+	std::map<int, std::shared_ptr<ChannelCategory>> categories;
+	std::vector<std::shared_ptr<PlaylistEntry>> m_entries;
 };

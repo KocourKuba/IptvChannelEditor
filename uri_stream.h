@@ -200,31 +200,31 @@ public:
 	/// json root for epg iteration
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg_root() const { return "epg_data"; }
+	virtual std::string get_epg_root(bool first = true) const { return "epg_data"; }
 
 	/// <summary>
 	/// json epg name node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg_name() const { return "name"; }
+	virtual std::string get_epg_name(bool first = true) const { return "name"; }
 
 	/// <summary>
 	/// json epg description node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg_desc() const { return "descr"; }
+	virtual std::string get_epg_desc(bool first = true) const { return "descr"; }
 
 	/// <summary>
 	/// json epg start time node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg_time_start() const { return "time"; }
+	virtual std::string get_epg_time_start(bool first = true) const { return "time"; }
 
 	/// <summary>
 	/// json epg end time node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg_time_end() const { return "time_to"; }
+	virtual std::string get_epg_time_end(bool first = true) const { return "time_to"; }
 
 	/// <summary>
 	/// is has access info

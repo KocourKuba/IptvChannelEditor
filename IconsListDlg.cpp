@@ -30,7 +30,7 @@ BEGIN_MESSAGE_MAP(CIconsListDlg, CDialogEx)
 	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIconsListDlg::OnEndLoadPlaylist)
 END_MESSAGE_MAP()
 
-CIconsListDlg::CIconsListDlg(std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>>& icons,
+CIconsListDlg::CIconsListDlg(std::shared_ptr<Playlist>& icons,
 							 const std::wstring& iconSource,
 							 CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_ICONS_LIST, pParent)
@@ -104,7 +104,7 @@ BOOL CIconsListDlg::OnInitDialog()
 				m_wndProgress.SetPos(0);
 				m_wndProgress.ShowWindow(SW_SHOW);
 
-				CPlaylistParseM3U8Thread::ThreadConfig cfg;
+				ThreadConfig cfg;
 				cfg.m_parent = this;
 				cfg.m_data = data.release();
 				cfg.m_hStop = m_evtStop;
@@ -179,10 +179,10 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 	//Which item number?
 	size_t nItem = pItem->iItem;
 
-	if (!m_Icons || nItem >= m_Icons->size())
+	if (!m_Icons || nItem >= m_Icons->m_entries.size())
 		return; // Just to be safe
 
-	const auto& entry = m_Icons->at(nItem);
+	const auto& entry = m_Icons->m_entries[nItem];
 
 	//Do we need text information?
 	if (pItem->mask & LVIF_TEXT)
@@ -190,7 +190,7 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 		CString csText;
 		//Which column?
 		if (pItem->iSubItem == 1) // Column 1
-			csText = m_Icons->at(nItem)->get_title().c_str();
+			csText = m_Icons->m_entries[nItem]->get_title().c_str();
 
 		//Copy the text to the LV_ITEM structure
 		//Maximum number of characters is in pItem->cchTextMax
@@ -200,7 +200,7 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 	//Does the list need image information?
 	if (pItem->mask & LVIF_IMAGE)
 	{
-		const auto& image = GetIconCache().get_icon(entry->get_title(), entry->get_icon_absolute_path());
+		const auto& image = GetIconCache().get_icon(entry->get_icon_absolute_path());
 
 		if (image)
 		{
@@ -250,10 +250,10 @@ LRESULT CIconsListDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 	m_wndProgress.ShowWindow(SW_HIDE);
 
 	m_wndIconsList.DeleteAllItems();
-	m_Icons.reset((std::vector<std::shared_ptr<PlaylistEntry>>*)wParam);
+	m_Icons.reset((Playlist*)wParam);
 	if (m_Icons)
 	{
-		std::sort(m_Icons->begin(), m_Icons->end(), [](const auto& left, const auto& right)
+		std::sort(m_Icons->m_entries.begin(), m_Icons->m_entries.end(), [](const auto& left, const auto& right)
 				  {
 					  return left->get_title() < right->get_title();
 				  });
@@ -310,12 +310,12 @@ void CIconsListDlg::OnBnClickedButtonSearchNext()
 	size_t idx = m_lastFound + 1;
 	for (;;)
 	{
-		if (idx >= m_Icons->size())
+		if (idx >= m_Icons->m_entries.size())
 			idx = 0;
 
 		if (idx == m_lastFound) break;
 
-		if (StrStrI(m_Icons->at(idx)->get_title().c_str(), m_search.GetString()) != nullptr)
+		if (StrStrI(m_Icons->m_entries[idx]->get_title().c_str(), m_search.GetString()) != nullptr)
 		{
 			m_wndIconsList.SetItemState(idx, LVIS_SELECTED, LVIS_SELECTED);
 			m_wndIconsList.EnsureVisible(idx, TRUE);
@@ -332,7 +332,7 @@ void CIconsListDlg::UpdateListCtrl()
 {
 	if (m_Icons)
 	{
-		m_wndIconsList.SetItemCountEx((int)m_Icons->size(), LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
+		m_wndIconsList.SetItemCountEx((int)m_Icons->m_entries.size(), LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
 		OnBnClickedButtonSearchNext();
 	}
 }

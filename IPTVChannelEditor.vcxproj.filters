@@ -204,6 +204,15 @@
     <ClInclude Include="PlaylistParseM3U8Thread.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
+    <ClInclude Include="PlaylistParseXMLThread.h">
+      <Filter>Header Files\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_oneott.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
+    <ClInclude Include="IconLinkDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -331,6 +340,15 @@
     </ClCompile>
     <ClCompile Include="PlaylistParseM3U8Thread.cpp">
       <Filter>Source Files\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistParseXMLThread.cpp">
+      <Filter>Source Files\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_oneott.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="IconLinkDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

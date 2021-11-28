@@ -22,25 +22,6 @@ class ChannelCategory;
 class ChannelInfo : public BaseInfo
 {
 public:
-	static constexpr auto TV_CHANNEL = "tv_channel";
-	static constexpr auto CHANNEL_ID = "channel_id";
-	static constexpr auto EPG1_ID = "epg_id";
-	static constexpr auto EPG2_ID = "tvg_id";
-	static constexpr auto CAPTION = "caption";
-	static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
-	static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
-	static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
-	static constexpr auto TIME_SHIFT_HOURS = "timeshift_hours";
-	static constexpr auto TV_CATEGORIES = "tv_categories";
-	static constexpr auto TV_CATEGORY_ID = "tv_category_id";
-	static constexpr auto INT_ID = "int_id";
-	static constexpr auto STREAMING_URL = "streaming_url";
-	static constexpr auto ARCHIVE = "archive";
-	static constexpr auto PROTECTED = "protected";
-	static constexpr auto DISABLED = "disabled";
-	static constexpr auto FAVORITE = "favorite";
-
-public:
 	ChannelInfo() = delete;
 	ChannelInfo(const ChannelInfo& src);
 	ChannelInfo(StreamType streamType, const std::wstring& root_path);

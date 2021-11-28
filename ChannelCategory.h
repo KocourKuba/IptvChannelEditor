@@ -11,7 +11,6 @@
 class ChannelCategory : public BaseInfo
 {
 public:
-	static constexpr auto TV_CATEGORY = "tv_category";
 	static constexpr auto ID = "id";
 	static constexpr auto CAPTION = "caption";
 

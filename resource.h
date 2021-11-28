@@ -19,11 +19,12 @@
 #define IDS_ABOUTBOX                    115
 #define IDS_LANGUAGE                    116
 #define IDS_STRING_FILE                 117
-#define IDS_STRING119                   119
+#define IDS_STRING_URL                  118
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_ICONS_LIST           129
 #define IDD_DIALOG_ACCESS_INFO_PASS     130
 #define IDD_DIALOG_ACCESS_INFO_PIN      131
+#define IDD_DIALOG_ICON_LINK            132
 #define IDS_STRING_ERR_SOURCE_NOT_SET   140
 #define IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST 141
 #define IDS_STRING_ERR_EMPTY_PLAYLIST   142
@@ -143,6 +144,7 @@
 #define IDC_EDIT_STRING                 1053
 #define IDC_EDIT_EPG2_ID                1054
 #define IDC_EDIT_URL_ID                 1055
+#define IDC_EDIT_URL                    1056
 #define IDC_MFCEDITBROWSE_PLAYER        1057
 #define IDC_MFCEDITBROWSE_PROBE         1058
 #define IDC_MFCLINK_DONATE              1059
@@ -229,7 +231,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        203
+#define _APS_NEXT_RESOURCE_VALUE        204
 #define _APS_NEXT_COMMAND_VALUE         32801
 #define _APS_NEXT_CONTROL_VALUE         1112
 #define _APS_NEXT_SYMED_VALUE           1179

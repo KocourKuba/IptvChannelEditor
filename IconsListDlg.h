@@ -7,7 +7,7 @@ class CIconsListDlg : public CDialogEx
 	DECLARE_DYNAMIC(CIconsListDlg)
 
 public:
-	CIconsListDlg(std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>>& icons,
+	CIconsListDlg(std::shared_ptr<Playlist>& icons,
 				  const std::wstring& iconSource,
 				  CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CIconsListDlg();
@@ -47,7 +47,7 @@ public:
 
 protected:
 	std::wstring m_iconSource;
-	std::shared_ptr<std::vector<std::shared_ptr<PlaylistEntry>>>& m_Icons;
+	std::shared_ptr<Playlist>& m_Icons;
 
 	CProgressCtrl m_wndProgress;
 	CListCtrl m_wndIconsList;

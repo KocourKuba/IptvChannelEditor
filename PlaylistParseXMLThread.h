@@ -2,15 +2,15 @@
 
 #include "Config.h"
 
-class CPlaylistParseM3U8Thread : public CWinThread
+class CPlaylistParseXMLThread : public CWinThread
 {
-	DECLARE_DYNCREATE(CPlaylistParseM3U8Thread)
+	DECLARE_DYNCREATE(CPlaylistParseXMLThread)
 
 protected:
-	CPlaylistParseM3U8Thread() { m_bAutoDelete = TRUE; }
+	CPlaylistParseXMLThread() { m_bAutoDelete = TRUE; }
 
 public:
-	virtual ~CPlaylistParseM3U8Thread() { delete m_config.m_data; }
+	virtual ~CPlaylistParseXMLThread() { delete m_config.m_data; }
 
 public:
 	BOOL InitInstance() override;
