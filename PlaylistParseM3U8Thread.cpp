@@ -1,7 +1,7 @@
 // PlaylistParseThread.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "pch.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "PlayListEntry.h"
 #include "utils.h"

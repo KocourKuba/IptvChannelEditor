@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include "ChannelInfo.h"
 #include "utils.h"
 #include "ChannelCategory.h"

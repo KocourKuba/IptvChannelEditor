@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include "uri_sharaclub.h"
 
 #ifdef _DEBUG

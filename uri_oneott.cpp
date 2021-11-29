@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include "uri_oneott.h"
 
 #ifdef _DEBUG

@@ -270,6 +270,7 @@ goto :EOF
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
     <ClInclude Include="PlaylistParseXMLThread.h" />
+    <ClInclude Include="SettingsPage.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="CustomPlaylistDlg.h" />
@@ -301,7 +302,7 @@ goto :EOF
     <ClInclude Include="rapidxml_iterators.hpp" />
     <ClInclude Include="rapidxml_print.hpp" />
     <ClInclude Include="rapidxml_utils.hpp" />
-    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Version.h" />
@@ -336,6 +337,7 @@ goto :EOF
     <ClCompile Include="m3u_entry.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
     <ClCompile Include="PlaylistParseXMLThread.cpp" />
+    <ClCompile Include="SettingsPage.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
@@ -361,7 +363,7 @@ goto :EOF
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="IPTVChannelEditor.cpp" />
     <ClCompile Include="IPTVChannelEditorDlg.cpp" />
-    <ClCompile Include="StdAfx.cpp">
+    <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">Create</PrecompiledHeader>

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include "IconCache.h"
 #include "utils.h"
 #include "Crc32.h"

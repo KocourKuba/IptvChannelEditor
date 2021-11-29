@@ -1,7 +1,7 @@
 // IconLink.cpp : implementation file
 //
 
-#include "StdAfx.h"
+#include "pch.h"
 #include <afxdialogex.h>
 #include "IconLinkDlg.h"
 #include "resource.h"

@@ -1,7 +1,7 @@
 // IconsList.cpp : implementation file
 //
 
-#include "StdAfx.h"
+#include "pch.h"
 #include <afxdialogex.h>
 #include "IconsListDlg.h"
 #include "IPTVChannelEditor.h"

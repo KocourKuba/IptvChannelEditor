@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "pch.h"
 #include "TreeCtrlEx.h"
 #include "ChannelInfo.h"
 #include "PlayListEntry.h"

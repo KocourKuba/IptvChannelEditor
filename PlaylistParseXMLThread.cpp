@@ -1,7 +1,7 @@
 // PlaylistParseThread.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "pch.h"
 #include "PlaylistParseXMLThread.h"
 #include "IPTVChannelEditor.h"
 #include "PlayListEntry.h"

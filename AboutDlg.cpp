@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include "resource.h"		// main symbols
 #include "AboutDlg.h"
 

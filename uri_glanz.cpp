@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include "uri_glanz.h"
 
 #ifdef _DEBUG

@@ -1,6 +1,6 @@
 // //////////////////////////////////////////////////////////
 // Crc32.cpp
-#include "StdAfx.h"
+#include "pch.h"
 #include "Crc32.h"
 
 #ifdef _DEBUG

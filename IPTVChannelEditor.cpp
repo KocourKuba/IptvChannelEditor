@@ -1,7 +1,7 @@
 // EdemChannelEditor.cpp : Defines the class behaviors for the application.
 //
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
 #include "FileVersionInfo.h"

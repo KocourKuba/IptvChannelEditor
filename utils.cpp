@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include <stdexcept>
 #include <winhttp.h>
 #include <unordered_map>

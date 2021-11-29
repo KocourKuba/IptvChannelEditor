@@ -1,7 +1,7 @@
 // GetStreamInfoThread.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "pch.h"
 #include <array>
 #include <thread>
 #include "GetStreamInfoThread.h"

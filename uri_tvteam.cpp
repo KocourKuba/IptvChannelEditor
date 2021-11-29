@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include "uri_tvteam.h"
 #include "utils.h"
 #include "PlayListEntry.h"

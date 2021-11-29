@@ -2,7 +2,7 @@
 // EdemChannelEditorDlg.cpp : implementation file
 //
 
-#include "StdAfx.h"
+#include "pch.h"
 #include <afxdialogex.h>
 
 #include "IPTVChannelEditor.h"
