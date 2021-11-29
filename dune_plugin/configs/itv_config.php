@@ -73,12 +73,18 @@ class ItvPluginConfig extends DefaultConfig
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
-        if (empty($plugin_cookies->password)) {
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        if ($force === false && !empty($password)) {
+            return true;
+        }
+
+        if (empty($password)) {
+            hd_print("Password not set");
             return false;
         }
 
         try {
-            $url = sprintf('http://api.itv.live/data/%s', $plugin_cookies->password);
+            $url = sprintf('http://api.itv.live/data/%s', $password);
             $content = HD::http_get_document($url);
         } catch (Exception $ex) {
             return false;

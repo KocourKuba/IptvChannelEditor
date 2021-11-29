@@ -223,6 +223,9 @@ abstract class DefaultConfig
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
+        if ($force === false) {
+            return true;
+        }
 
         $m3u_lines = self::FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
@@ -252,6 +255,7 @@ abstract class DefaultConfig
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
+            unlink(self::GET_TMP_STORAGE_PATH());
             throw new DuneException(
                 'Empty provider playlist', 0,
                 ActionFactory::show_error(

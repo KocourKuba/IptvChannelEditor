@@ -77,7 +77,15 @@ class SharaclubPluginConfig extends DefaultConfig
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
-        if (empty($plugin_cookies->login) && empty($plugin_cookies->password)) {
+        $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+
+        if ($force === false && !empty($login) && !empty($password)) {
+            return true;
+        }
+
+        if (empty($login) || empty($password)) {
+            hd_print("Login or password not set");
             return false;
         }
 

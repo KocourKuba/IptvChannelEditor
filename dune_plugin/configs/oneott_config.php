@@ -49,16 +49,11 @@ class OneottPluginConfig extends DefaultConfig
     {
         // hd_print("Type: $type");
 
-        $ott_key = $plugin_cookies->ott_key_local;
-        if (empty($ott_key)) {
-            $ott_key = $plugin_cookies->ott_key;
-        }
-
-        if (empty($ott_key)) {
+        if (empty($plugin_cookies->ott_key)) {
             hd_print("User token not set");
         }
 
-        return sprintf('http://list.1ott.net/api/%s/high/ottplay.m3u8', $ott_key);
+        return sprintf('http://list.1ott.net/api/%s/high/ottplay.m3u8', $plugin_cookies->ott_key);
     }
 
     /**
@@ -70,13 +65,19 @@ class OneottPluginConfig extends DefaultConfig
      */
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
-        if (empty($plugin_cookies->login) && empty($plugin_cookies->password)) {
+        if ($force === false && !empty($plugin_cookies->ott_key)) {
+            return true;
+        }
+
+        $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+
+        if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
-            return false;
         }
 
         try {
-            $url = sprintf('http://list.1ott.net/PinApi/%s/%s', $plugin_cookies->login, $plugin_cookies->password);
+            $url = sprintf('http://list.1ott.net/PinApi/%s/%s', $login, $password);
             // provider returns token used to download playlist
             $account_data = json_decode(HD::http_get_document($url), true);
             if (isset($account_data['token'])) {
