@@ -105,7 +105,7 @@
     <ClInclude Include="FilterDialog.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="SettingsDlg.h">
+    <ClInclude Include="MainSettingsPage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="CustomPlaylistDlg.h">
@@ -213,7 +213,7 @@
     <ClInclude Include="IconLinkDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="SettingsPage.h">
+    <ClInclude Include="PathsSettingsPage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
@@ -242,7 +242,7 @@
     <ClCompile Include="AccessOttKeyDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="SettingsDlg.cpp">
+    <ClCompile Include="MainSettingsPage.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="FilterDialog.cpp">
@@ -353,7 +353,7 @@
     <ClCompile Include="IconLinkDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="SettingsPage.cpp">
+    <ClCompile Include="PathsSettingsPage.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>

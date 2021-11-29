@@ -8,7 +8,8 @@
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
 #include "AboutDlg.h"
-#include "SettingsDlg.h"
+#include "MainSettingsPage.h"
+#include "PathsSettingsPage.h"
 #include "AccessOttKeyDlg.h"
 #include "AccessInfoPassDlg.h"
 #include "AccessInfoPinDlg.h"
@@ -3491,10 +3492,15 @@ void CIPTVChannelEditorDlg::OnUpdateAddUpdateChannel(CCmdUI* pCmdUI)
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 {
-	CSettingsDlg dlg;
+	CPropertySheet sheet;
+
+	CMainSettingsPage dlg1;
+	CPathsSettingsPage dlg2;
+	sheet.AddPage(&dlg1);
+	sheet.AddPage(&dlg2);
 
 	std::wstring old_list = GetConfig().get_string(true, REG_LISTS_PATH);
-	if (dlg.DoModal() == IDOK && old_list != GetConfig().get_string(true, REG_LISTS_PATH))
+	if (sheet.DoModal() == IDOK && old_list != GetConfig().get_string(true, REG_LISTS_PATH))
 		SwitchPlugin();
 }
 

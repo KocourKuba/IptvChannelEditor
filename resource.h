@@ -10,7 +10,7 @@
 #define IDD_DIALOG_ACCESS_INFO          105
 #define IDD_DIALOG_FILTER               106
 #define IDD_DIALOG_NEW_CHANNEL          108
-#define IDD_DIALOG_SETTINGS             109
+#define IDD_MAIN_SETTINGS_PAGE          109
 #define IDD_EDEMCHANNELEDITOR_DIALOG    110
 #define IDR_MENU_SPLIT                  111
 #define IDR_ACCELERATOR_TABLE           112
@@ -25,6 +25,7 @@
 #define IDD_DIALOG_ACCESS_INFO_PASS     130
 #define IDD_DIALOG_ACCESS_INFO_PIN      131
 #define IDD_DIALOG_ICON_LINK            132
+#define IDD_PATHS_SETTINGS_PAGE         133
 #define IDS_STRING_ERR_SOURCE_NOT_SET   140
 #define IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST 141
 #define IDS_STRING_ERR_EMPTY_PLAYLIST   142
@@ -228,7 +229,7 @@
 #define ID_MAKE_ALL                     32800
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        204

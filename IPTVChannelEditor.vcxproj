@@ -93,12 +93,12 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>.\fmt\include</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -125,12 +125,12 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>.\fmt\include</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,11 +159,11 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>.\fmt\include</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -223,11 +223,11 @@ goto :EOF
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>.\fmt\include</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -270,14 +270,14 @@ goto :EOF
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
     <ClInclude Include="PlaylistParseXMLThread.h" />
-    <ClInclude Include="SettingsPage.h" />
+    <ClInclude Include="PathsSettingsPage.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="CustomPlaylistDlg.h" />
     <ClInclude Include="FilterDialog.h" />
     <ClInclude Include="IconContainer.h" />
     <ClInclude Include="PlayListEntry.h" />
-    <ClInclude Include="SettingsDlg.h" />
+    <ClInclude Include="MainSettingsPage.h" />
     <ClInclude Include="StreamContainer.h" />
     <ClInclude Include="uri_antifriz.h" />
     <ClInclude Include="uri_channels.h" />
@@ -337,14 +337,14 @@ goto :EOF
     <ClCompile Include="m3u_entry.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
     <ClCompile Include="PlaylistParseXMLThread.cpp" />
-    <ClCompile Include="SettingsPage.cpp" />
+    <ClCompile Include="PathsSettingsPage.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
     <ClCompile Include="CustomPlaylistDlg.cpp" />
     <ClCompile Include="FilterDialog.cpp" />
     <ClCompile Include="PlayListEntry.cpp" />
-    <ClCompile Include="SettingsDlg.cpp" />
+    <ClCompile Include="MainSettingsPage.cpp" />
     <ClCompile Include="uri_antifriz.cpp" />
     <ClCompile Include="uri_channels.cpp" />
     <ClCompile Include="uri_edem.cpp" />
