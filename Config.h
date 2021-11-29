@@ -20,6 +20,13 @@ enum class StreamType
 	enOneOtt,
 };
 
+constexpr auto CMP_FLAG_TITLE   = 0x01;
+constexpr auto CMP_FLAG_ICON    = 0x02;
+constexpr auto CMP_FLAG_ARCHIVE = 0x04;
+constexpr auto CMP_FLAG_EPG1    = 0x08;
+constexpr auto CMP_FLAG_EPG2    = 0x10;
+constexpr auto CMP_FLAG_ALL     = CMP_FLAG_TITLE | CMP_FLAG_ICON | CMP_FLAG_ARCHIVE | CMP_FLAG_EPG1 | CMP_FLAG_EPG2;
+
 constexpr auto REG_SETTINGS = _T("Settings");
 
 // settings dialog
@@ -31,6 +38,7 @@ constexpr auto REG_AUTO_SYNC   = _T("AutoSyncChannel");
 constexpr auto REG_AUTO_HIDE   = _T("AutoHideToTray");
 constexpr auto REG_MAX_THREADS = _T("MaxStreamThreads");
 constexpr auto REG_LANGUAGE    = _T("Language");
+constexpr auto REG_CMP_FLAGS   = _T("CompareFlags");
 
 // main dialog
 constexpr auto REG_PLUGIN      = _T("PluginType");

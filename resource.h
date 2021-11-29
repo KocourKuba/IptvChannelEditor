@@ -70,7 +70,6 @@
 #define IDS_STRING_BUTTON_SAVE          181
 #define IDS_STRING_BUTTON_PACK          182
 #define IDS_STRING_BUTTON_SETTINGS      183
-#define IDS_STRING_BUTTON_UPDATE_ICON   184
 #define IDS_STRING_BUTTON_CHOOSE_PLAYLIST 185
 #define IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST 186
 #define IDS_STRING_EDIT_PL_SEARCH       187
@@ -114,7 +113,6 @@
 #define IDC_BUTTON_STOP                 1020
 #define IDC_BUTTON_TEST_EPG             1021
 #define IDC_BUTTON_UPDATE_CHANGED       1022
-#define IDC_BUTTON_UPDATE_ICON          1023
 #define IDC_BUTTON_CHECK_ARCHIVE        1024
 #define IDC_CHECK_ADULT                 1025
 #define IDC_CHECK_ARCHIVE               1026
@@ -180,7 +178,6 @@
 #define IDC_COMBO_TYPE                  1090
 #define IDC_CHECK_AUTO_SYNC_CHANNELS    1091
 #define IDC_EDIT_STATUS                 1092
-#define IDC_CHECK_AUTO_SYNC_CHANNELS2   1092
 #define IDC_CHECK_AUTO_HIDE             1092
 #define IDC_EDIT_SUBSCRIPTION           1093
 #define IDC_EDIT_BALANCE                1094
@@ -203,6 +200,11 @@
 #define IDC_MFCEDITBROWSE_CH_LIST_PATH  1110
 #define IDC_MFCEDITBROWSE_PLUGINS_PATH  1111
 #define IDC_STATIC_ICON_SIZE            1112
+#define IDC_CHECK_CMP_TITLE             1113
+#define IDC_CHECK_CMP_ICON              1114
+#define IDC_CHECK_CMP_EPG1              1115
+#define IDC_CHECK_CMP_EPG2              1117
+#define IDC_CHECK_CMP_ARCHIVE           1118
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -220,7 +222,6 @@
 #define ID_SAVE                         32791
 #define ID_TOGGLE_CHANNEL               32792
 #define ID_UPDATE_CHANNEL               32793
-#define ID_UPDATE_ICON                  32794
 #define ID_PLAYLISTMENU_SUBMENU         32795
 #define ID_SYNC_TREE_ITEM               32796
 #define ID_SORT_CATEGORY                32797
@@ -232,7 +233,7 @@
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        204
+#define _APS_NEXT_RESOURCE_VALUE        206
 #define _APS_NEXT_COMMAND_VALUE         32801
 #define _APS_NEXT_CONTROL_VALUE         1112
 #define _APS_NEXT_SYMED_VALUE           1179

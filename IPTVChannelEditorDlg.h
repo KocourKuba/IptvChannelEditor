@@ -107,8 +107,6 @@ protected:
 	afx_msg void OnBnClickedButtonEpg();
 	afx_msg void OnBnClickedButtonUpdateChanged();
 
-	afx_msg void OnUpdateIcon();
-	afx_msg void OnUpdateUpdateIcon(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedCheckAdult();
 	afx_msg void OnBnClickedCheckArchive();
@@ -257,7 +255,6 @@ protected:
 	CButton m_wndDownloadUrl;
 	CButton m_wndCheckArchive;
 	CButton m_wndCacheIcon;
-	CButton m_wndUpdateIcon;
 	CButton m_wndSave;
 	CButton m_wndStop;
 	CStatic m_wndChannelIcon;

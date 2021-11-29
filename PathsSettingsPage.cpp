@@ -66,7 +66,5 @@ void CPathsSettingsPage::OnOK()
 	GetConfig().set_string(true, REG_LISTS_PATH, m_lists_path.GetString());
 	GetConfig().set_string(true, REG_OUTPUT_PATH, m_plugins_path.GetString());
 
-	GetConfig().SaveAppSettingsRegistry();
-
 	__super::OnOK();
 }

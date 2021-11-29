@@ -35,6 +35,11 @@ protected:
 private:
 	BOOL m_bAutoSync = FALSE;
 	BOOL m_bAutoHide = FALSE;
+	BOOL m_bCmpTitle = TRUE;
+	BOOL m_bCmpIcon = TRUE;
+	BOOL m_bCmpArchive = TRUE;
+	BOOL m_bCmpEpg1 = TRUE;
+	BOOL m_bCmpEpg2 = TRUE;
 	int m_MaxThreads = 1;
 	WORD m_nLang = 0;
 };
