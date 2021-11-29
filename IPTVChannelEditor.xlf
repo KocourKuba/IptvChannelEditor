@@ -912,9 +912,9 @@ Are you sure to replace?</source>
           </trans-unit>
           <trans-unit id="Strings.10.IDS_STRING_WRN_NOT_SAVED" resname="Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_NOT_SAVED">
             <source>You have unsaved changes.
-Are you sure?</source>
+Save changes?</source>
             <target state="final">Изменения не сохранены.
-Вы уверены?</target>
+Сохранить?</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.10.IDS_STRING_WRN_NOT_SAVED</context>
             </context-group>

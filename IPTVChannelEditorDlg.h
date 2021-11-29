@@ -216,6 +216,7 @@ private:
 	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
+	bool CheckForSave();
 
 protected:
 	CFont m_largeFont;

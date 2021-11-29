@@ -953,7 +953,7 @@ void CIPTVChannelEditorDlg::OnOK()
 
 void CIPTVChannelEditorDlg::OnCancel()
 {
-	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (!CheckForSave())
 	{
 		return;
 	}
@@ -3358,7 +3358,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAbout()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 {
-	if (!is_allow_save() || AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) == IDYES)
+	if (CheckForSave())
 	{
 		PackPlugin(GetConfig().get_plugin_type(), GetConfig().get_string(true, REG_OUTPUT_PATH), GetConfig().get_string(true, REG_LISTS_PATH), true);
 	}
@@ -3366,7 +3366,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 
 void CIPTVChannelEditorDlg::OnMakeAll()
 {
-	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (!CheckForSave())
 		return;
 
 	CWaitCursor cur;
@@ -4081,7 +4081,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboIconSource()
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 {
-	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (!CheckForSave())
 	{
 		m_wndPluginType.SetCurSel(GetConfig().get_plugin_idx());
 		return;
@@ -4113,7 +4113,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 	if (idx == -1)
 		return;
 
-	if (is_allow_save() && AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNO | MB_ICONWARNING) != IDYES)
+	if (!CheckForSave())
 	{
 		m_wndChannels.SetCurSel(GetConfig().get_int(false, REG_CHANNELS_TYPE));
 		return;
@@ -4708,8 +4708,24 @@ void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& 
 		uri->set_token(pair->second->stream_uri->get_token());
 }
 
+bool CIPTVChannelEditorDlg::CheckForSave()
+{
+	if (!is_allow_save())
+		return true;
+
+	int res = AfxMessageBox(IDS_STRING_WRN_NOT_SAVED, MB_YESNOCANCEL | MB_ICONWARNING);
+	if (res == IDYES)
+	{
+		OnSave();
+		return true;
+	}
+
+	return res == IDNO ? true : false;
+}
+
 bool CIPTVChannelEditorDlg::HasEPG2()
 {
 	auto pluginType = GetConfig().get_plugin_type();
 	return (pluginType == StreamType::enSharaclub || pluginType == StreamType::enSharavoz || pluginType == StreamType::enOneOtt);
 }
+

@@ -806,7 +806,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_STRING_WRN_NOT_SAVED "You have unsaved changes.\nAre you sure?"
+    IDS_STRING_WRN_NOT_SAVED "You have unsaved changes.\nSave changes?"
     IDS_STRING_WRN_DELETE_CHANNEL "Delete channel(s). Are your sure?"
     IDS_STRING_WRN_CHANNEL_EXIST "Channel already exist!"
     IDS_STRING_WRN_CHANNEL_ID_EXIST
