@@ -59,7 +59,7 @@ BOOL CIconsListDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	RestoreWindowPos(GetSafeHwnd(), _T("IconsWindowPos"));
+	RestoreWindowPos(GetSafeHwnd(), REG_ICON_WINDOW_POS);
 
 	// This image list is only used to hold the place.  The images are loaded
 	// dynamically as the list control is scrolled.
@@ -339,7 +339,7 @@ void CIconsListDlg::UpdateListCtrl()
 
 BOOL CIconsListDlg::DestroyWindow()
 {
-	SaveWindowPos(GetSafeHwnd(), _T("IconsWindowPos"));
+	SaveWindowPos(GetSafeHwnd(), REG_ICON_WINDOW_POS);
 
 	return __super::DestroyWindow();
 }

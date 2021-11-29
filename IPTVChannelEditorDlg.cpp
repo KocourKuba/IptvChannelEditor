@@ -294,7 +294,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	RestoreWindowPos(GetSafeHwnd(), _T("WindowPos"));
+	RestoreWindowPos(GetSafeHwnd(), REG_WINDOW_POS);
 
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
@@ -4667,7 +4667,7 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 
 BOOL CIPTVChannelEditorDlg::DestroyWindow()
 {
-	SaveWindowPos(GetSafeHwnd(), _T("WindowPos"));
+	SaveWindowPos(GetSafeHwnd(), REG_WINDOW_POS);
 
 	return __super::DestroyWindow();
 }

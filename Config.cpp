@@ -20,6 +20,42 @@ CString PluginsConfig::PACK_DLL_PATH;
 constexpr auto MAX_REGVAL_SIZE = 1024; // real max size - 32767 bytes;
 constexpr auto REGISTRY_APP_SETTINGS = LR"(SOFTWARE\Dune IPTV Channel Editor\Editor\Settings)";
 
+static std::set<std::wstring> all_settings_keys = {
+	REG_WINDOW_POS,
+	REG_ICON_WINDOW_POS,
+	REG_PLAYER,
+	REG_FFPROBE,
+	REG_LISTS_PATH,
+	REG_OUTPUT_PATH,
+	REG_AUTO_SYNC,
+	REG_AUTO_HIDE,
+	REG_MAX_THREADS,
+	REG_LANGUAGE,
+	REG_CMP_FLAGS,
+	REG_PLUGIN,
+	REG_ICON_SOURCE,
+	REG_DAYS_BACK,
+	REG_HOURS_BACK,
+	REG_LOGIN,
+	REG_LOGIN_EMBEDDED,
+	REG_PASSWORD,
+	REG_PASSWORD_EMBEDDED,
+	REG_TOKEN,
+	REG_TOKEN_EMBEDDED,
+	REG_DOMAIN,
+	REG_DOMAIN_EMBEDDED,
+	REG_ACCESS_URL,
+	REG_HOST,
+	REG_HOST_EMBEDDED,
+	REG_FILTER_STRING,
+	REG_FILTER_FLAGS,
+	REG_CHANNELS_TYPE,
+	REG_PLAYLIST_TYPE,
+	REG_STREAM_TYPE,
+	REG_CUSTOM_URL,
+	REG_CUSTOM_FILE,
+};
+
 static std::vector<std::wstring> plugins_images = {
 	L"bg_antifriz.jpg",   L"logo_antifriz.png",
 	L"bg_edem.jpg",       L"logo_edem.png",
@@ -228,9 +264,11 @@ void PluginsConfig::ReadSettingsRegistry(const std::wstring& section, map_varian
 			std::vector<wchar_t> szName(dwNameSize);
 			std::vector<BYTE> lpData(cbData);
 
-			if (::RegEnumValueW(hKey, dwIdx, (LPWSTR)szName.data(), &dwNameSize, nullptr, &dwType, (BYTE*)lpData.data(), &cbData) != ERROR_SUCCESS) break;
+			if (::RegEnumValueW(hKey, dwIdx++, (LPWSTR)szName.data(), &dwNameSize, nullptr, &dwType, (BYTE*)lpData.data(), &cbData) != ERROR_SUCCESS) break;
 
 			std::wstring name(szName.data(), dwNameSize);
+			if (all_settings_keys.find(name) == all_settings_keys.end()) // ignore unknown keys
+				continue;
 
 			switch (dwType)
 			{
@@ -247,8 +285,6 @@ void PluginsConfig::ReadSettingsRegistry(const std::wstring& section, map_varian
 				default:
 					break;
 			}
-
-			dwIdx++;
 		}
 
 		::RegCloseKey(hKey);

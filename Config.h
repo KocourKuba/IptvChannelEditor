@@ -34,6 +34,9 @@ constexpr auto FILTER_FLAG_CHANGED   = 0x08;
 
 constexpr auto REG_SETTINGS = _T("Settings");
 
+constexpr auto REG_WINDOW_POS = _T("WindowPos");
+constexpr auto REG_ICON_WINDOW_POS = _T("IconsWindowPos");
+
 // settings dialog
 constexpr auto REG_PLAYER      = _T("Player");
 constexpr auto REG_FFPROBE     = _T("FFProbe");
