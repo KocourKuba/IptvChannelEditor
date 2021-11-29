@@ -833,7 +833,8 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			break;
 	}
 
-	if (m_playlistEntries && !m_playlistEntries->m_entries.empty())
+	m_playlistMap.clear();
+	if (m_playlistEntries)
 	{
 		bool bSet = false;
 		for (const auto& entry : m_playlistEntries->m_entries)
@@ -874,7 +875,21 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 
 			if (bSet) break;
 		}
+
+		for (auto& entry : m_playlistEntries->m_entries)
+		{
+			auto res = m_playlistMap.emplace(entry->stream_uri->get_id(), entry);
+			if (!res.second)
+			{
+				TRACE(L"Duplicate channel: %s (%s)\n",
+					  res.first->second->get_title().c_str(),
+					  res.first->second->stream_uri->get_id().c_str());
+				continue;
+			}
+		}
 	}
+
+	UpdateChannelsTreeColors();
 
 	FillTreePlaylist();
 
@@ -885,8 +900,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndCheckArchive.EnableWindow(TRUE);
 
 	AfxGetApp()->EndWaitCursor();
-
-	UpdateChannelsTreeColors();
 
 	return 0;
 }
@@ -2661,7 +2674,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
 	}
 
 	UpdateChannelsTreeColors();
-	CheckForExistingPlaylist();
+	FillTreePlaylist();
 	set_allow_save(changed);
 }
 
@@ -2894,9 +2907,12 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 
 	// Filter out playlist
 	auto filter = GetConfig().get_string(false, REG_FILTER_STRING);
-	auto bRegex = GetConfig().get_int(false, REG_FILTER_REGEX);
-	auto bCase = GetConfig().get_int(false, REG_FILTER_CASE);
-	auto bNotAdded = GetConfig().get_int(false, REG_FILTER_NOT_ADDED);
+	int flags = GetConfig().get_int(false, REG_FILTER_FLAGS);
+
+	auto bRegex    = (flags & FILTER_FLAG_REGEX) ? TRUE : FALSE;
+	auto bCase     = (flags & FILTER_FLAG_CASE) ? TRUE : FALSE;
+	auto bNotAdded = (flags & FILTER_FLAG_NOT_ADDED) ? TRUE : FALSE;
+	auto bChanged  = (flags & FILTER_FLAG_CHANGED) ? TRUE : FALSE;
 
 	std::wregex re;
 	if (bRegex)
@@ -2914,7 +2930,6 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	}
 
 	m_playlistIds.clear();
-	m_playlistMap.clear();
 	m_pl_categoriesTreeMap.clear();
 	m_pl_categoriesMap.clear();
 	m_playlistTreeMap.clear();
@@ -2927,24 +2942,16 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	{
 		// for fast search categories
 		std::set<std::wstring> categories;
-		for (auto& entry : m_playlistEntries->m_entries)
-		{
-			auto res = m_playlistMap.emplace(entry->stream_uri->get_id(), entry);
-			if (!res.second)
-			{
-				TRACE(L"Duplicate channel: %s (%s)\n",
-					  res.first->second->get_title().c_str(),
-					  res.first->second->stream_uri->get_id().c_str());
-				continue;
-			}
+		const auto& entries = bChanged ? m_changedChannels : m_playlistEntries->m_entries;
 
-			const auto& plEntry = res.first;
+		for (auto& entry : entries)
+		{
 			bool found = false;
 			if (bRegex)
 			{
 				try
 				{
-					found = std::regex_search(plEntry->second->get_title(), re);
+					found = std::regex_search(entry->get_title(), re);
 				}
 				catch (std::regex_error& ex)
 				{
@@ -2956,21 +2963,21 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 			{
 				if (bCase)
 				{
-					found = (plEntry->second->get_title().find(filter) != std::wstring::npos);
+					found = (entry->get_title().find(filter) != std::wstring::npos);
 				}
 				else
 				{
-					found = (StrStrI(plEntry->second->get_title().c_str(), filter.c_str()) != nullptr);
+					found = (StrStrI(entry->get_title().c_str(), filter.c_str()) != nullptr);
 				}
 			}
 
 			if (!found && bNotAdded)
-				found = m_channelsMap.find(plEntry->first) != m_channelsMap.end();
+				found = m_channelsMap.find(entry->stream_uri->get_id()) != m_channelsMap.end();
 
 			if (!found)
 			{
-				m_playlistIds.emplace_back(plEntry->first);
-				const auto& category = plEntry->second->get_category();
+				m_playlistIds.emplace_back(entry->stream_uri->get_id());
+				const auto& category = entry->get_category();
 				if (categories.find(category) == categories.end())
 				{
 					pl_categories.emplace_back(category);
@@ -4469,18 +4476,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter()
 {
 	CFilterDialog dlg;
 
-	dlg.m_filterString = GetConfig().get_string(false, REG_FILTER_STRING).c_str();
-	dlg.m_filterRegex = GetConfig().get_int(false, REG_FILTER_REGEX);
-	dlg.m_filterCase = GetConfig().get_int(false, REG_FILTER_CASE);
-	dlg.m_filterNotAdded = GetConfig().get_int(false, REG_FILTER_NOT_ADDED);
-
 	if (dlg.DoModal() == IDOK)
 	{
-		GetConfig().set_string(false, REG_FILTER_STRING, dlg.m_filterString.GetString());
-		GetConfig().set_int(false, REG_FILTER_REGEX, dlg.m_filterRegex);
-		GetConfig().set_int(false, REG_FILTER_CASE, dlg.m_filterCase);
-		GetConfig().set_int(false, REG_FILTER_NOT_ADDED, dlg.m_filterNotAdded);
-
 		FillTreePlaylist();
 	}
 }
