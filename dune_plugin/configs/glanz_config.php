@@ -1,22 +1,13 @@
 ﻿<?php
-/** @noinspection DuplicatedCode */
 require_once 'default_config.php';
 
 class GlanzPluginConfig extends DefaultConfig
 {
-    const SERIES_VOD_PATTERN = '|^https?://.+/vod/(.+)\.mp4/video\.m3u8\?token=.+$|';
-    const EXTINF_VOD_PATTERN = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
-
     // supported features
+    public static $ACCOUNT_TYPE = 'LOGIN';
+    public static $MPEG_TS_SUPPORTED = true;
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;
-
-    // setup variables
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $ACCOUNT_TYPE = 'LOGIN';
-
-    // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
 
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|';
@@ -24,7 +15,7 @@ class GlanzPluginConfig extends DefaultConfig
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id
 
     // vod
-    protected static $MOVIE_LIST_URL_TEMPLATE = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod';
+    public static $EXTINF_VOD_PATTERN = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
 
     // Views variables
     protected static $TV_CHANNEL_ICON_WIDTH = 60;
@@ -83,6 +74,27 @@ class GlanzPluginConfig extends DefaultConfig
         return $url;
     }
 
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+
+        if (empty($login) || empty($password)) {
+            hd_print("Login or password not set");
+        }
+
+        switch ($type) {
+            case 'tv1':
+                return sprintf('http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls', $login, $password);
+            case 'movie':
+                return sprintf('http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod', $login, $password);
+        }
+
+        return '';
+    }
+
     /**
      * @throws Exception
      */
@@ -92,7 +104,7 @@ class GlanzPluginConfig extends DefaultConfig
         $movie = new Movie($movie_id);
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
-            if ($i !== (int)$movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $line, $matches)) {
+            if ($i !== (int)$movie_id || !preg_match(static::$EXTINF_VOD_PATTERN, $line, $matches)) {
                 continue;
             }
 

@@ -99,27 +99,25 @@ class StarnetPluginTv extends AbstractTv
         if (isset($xml->channels_setup))
         {
             hd_print("Overriding access settings found in playlist: $channels_list");
-            if ($config::$ACCOUNT_TYPE === 'OTT_KEY') {
-                if (isset($xml->channels_setup->access_key)) {
-                    $plugin_cookies->ott_key_local = (string)$xml->channels_setup->access_key;
-                    hd_print("access_key: $plugin_cookies->ott_key_local");
-                }
-                if (isset($xml->channels_setup->access_domain)) {
-                    $plugin_cookies->subdomain_local = (string)$xml->channels_setup->access_domain;
-                    hd_print("subdomain: $plugin_cookies->subdomain_local");
-                }
+
+            if (isset($xml->channels_setup->access_key)) {
+                $plugin_cookies->ott_key_local = (string)$xml->channels_setup->access_key;
+                hd_print("access_key: $plugin_cookies->ott_key_local");
             }
 
-            if (($config::$ACCOUNT_TYPE === 'LOGIN') && isset($xml->channels_setup->access_login)) {
+            if (isset($xml->channels_setup->access_domain)) {
+                $plugin_cookies->subdomain_local = (string)$xml->channels_setup->access_domain;
+                hd_print("subdomain: $plugin_cookies->subdomain_local");
+            }
+
+            if (isset($xml->channels_setup->access_login)) {
                 $plugin_cookies->login_local = (string)$xml->channels_setup->access_login;
                 hd_print("login: $plugin_cookies->login_local");
             }
 
-            if ($config::$ACCOUNT_TYPE === 'LOGIN' || $config::$ACCOUNT_TYPE === 'PIN') {
-                if (isset($xml->channels_setup->access_password)) {
-                    $plugin_cookies->password_local = (string)$xml->channels_setup->access_password;
-                    hd_print("password: $plugin_cookies->password_local");
-                }
+            if (isset($xml->channels_setup->access_password)) {
+                $plugin_cookies->password_local = (string)$xml->channels_setup->access_password;
+                hd_print("password: $plugin_cookies->password_local");
             }
         }
 

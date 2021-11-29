@@ -44,7 +44,7 @@ class EpgManager
             hd_print("Load EPG from cache: $cache_file");
             $epg = unserialize(file_get_contents($cache_file));
         } else {
-            $epg_date = gmdate("Y-m-d", $day_start_ts); // 'YYYYMMDD'
+            $epg_date = gmdate("Y-m-d", $day_start_ts); // 'YYYY-MM-DD'
             $url = sprintf($params['epg_template'], str_replace(' ', '%20', $epg_id), $epg_date);
             hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 

@@ -10,10 +10,6 @@ class EdemPluginConfig extends DefaultConfig
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
 
-    // Views variables
-    protected static $TV_CHANNEL_ICON_WIDTH = 84;
-    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
-
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies

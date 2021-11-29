@@ -20,8 +20,6 @@ abstract class DefaultConfig
     public static $ACCOUNT_TYPE = 'UNKNOWN';
 
     // account
-    public static $ACCOUNT_PLAYLIST_URL1 = '';
-    public static $ACCOUNT_PLAYLIST_URL2 = '';
     public static $M3U_STREAM_URL_PATTERN = '';
 
     // tv
@@ -37,7 +35,6 @@ abstract class DefaultConfig
     protected static $EPG2_PARSER = 'json';
 
     // vod
-    protected static $MOVIE_LIST_URL_TEMPLATE = 'http://online.dune-hd.com/demo2/movie_list.pl?category_id=%s';
     protected static $MOVIE_INFO_URL_TEMPLATE = 'http://online.dune-hd.com/demo2/movie_info.pl?movie_id=%s'; // not used yet
 
     // page counter for some plugins
@@ -279,7 +276,7 @@ abstract class DefaultConfig
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
-            if (!preg_match(static::EXTINF_VOD_PATTERN, $line, $matches)) {
+            if (!preg_match(static::$EXTINF_VOD_PATTERN, $line, $matches)) {
                 continue;
             }
 
@@ -304,7 +301,7 @@ abstract class DefaultConfig
         $movies = array();
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
-            if (!preg_match(static::EXTINF_VOD_PATTERN, $line, $matches)) {
+            if (!preg_match(static::$EXTINF_VOD_PATTERN, $line, $matches)) {
                 continue;
             }
 
@@ -362,17 +359,22 @@ abstract class DefaultConfig
         $tmp_file = self::GET_TMP_STORAGE_PATH();
         if ($force !== false || !file_exists($tmp_file)) {
             try {
-                $content = HD::http_get_document(self::GetTemplatedUrl(static::$ACCOUNT_PLAYLIST_URL1, $plugin_cookies));
-                file_put_contents($tmp_file, $content);
+                $url = static::GetTemplatedUrl('tv1', $plugin_cookies);
+                //hd_print("tv1 m3u8 playlist: " . $url);
+                if (empty($url)) {
+                    throw new Exception('Tv1 playlist not defined');
+                }
+                file_put_contents($tmp_file, HD::http_get_document($url));
             } catch (Exception $ex) {
                 try {
-                    if (empty(static::$ACCOUNT_PLAYLIST_URL2)) {
-                        hd_print("Unable to load tv playlist: " . $ex->getMessage());
+                    $url = static::GetTemplatedUrl('tv2', $plugin_cookies);
+                    //hd_print("tv2 m3u8 playlist: " . $url);
+                    if (empty($url)) {
+                        hd_print("Tv2 playlist not defined");
                         return array();
                     }
 
-                    $content = HD::http_get_document(self::GetTemplatedUrl(static::$ACCOUNT_PLAYLIST_URL2, $plugin_cookies));
-                    file_put_contents($tmp_file, $content);
+                    file_put_contents($tmp_file, HD::http_get_document($url));
                 } catch (Exception $ex) {
                     hd_print("Unable to load secondary tv playlist: " . $ex->getMessage());
                     return array();
@@ -389,8 +391,12 @@ abstract class DefaultConfig
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {
-                $content = HD::http_get_document(self::GetTemplatedUrl(static::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies));
-                file_put_contents($m3u_file, $content);
+                $url = static::GetTemplatedUrl('movie', $plugin_cookies);
+                if (empty($url)) {
+                    throw new Exception('Vod playlist not defined');
+                }
+
+                file_put_contents($m3u_file, HD::http_get_document($url));
             } catch (Exception $ex) {
                 hd_print("Unable to load movie playlist: " . $ex->getMessage());
                 return array();
@@ -444,7 +450,7 @@ abstract class DefaultConfig
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
-            if (!preg_match(static::EXTINF_VOD_PATTERN, $line, $matches)) {
+            if (!preg_match(static::$EXTINF_VOD_PATTERN, $line, $matches)) {
                 continue;
             }
 
@@ -464,47 +470,9 @@ abstract class DefaultConfig
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected static function GetTemplatedUrl($template, $plugin_cookies)
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
     {
-        // hd_print("Type: $type");
-        // hd_print("Template: $template");
-
-        switch (static::$ACCOUNT_TYPE) {
-            case 'LOGIN':
-                $login = $plugin_cookies->login_local;
-                if (empty($login)) {
-                    $login = $plugin_cookies->login;
-                }
-
-                $password = $plugin_cookies->password_local;
-                if (empty($password)) {
-                    $password = $plugin_cookies->password;
-                }
-
-                if (empty($login) || empty($password)) {
-                    hd_print("Login or password not set");
-                }
-
-                $url = sprintf($template, $login, $password);
-                break;
-            case 'PIN':
-                $password = $plugin_cookies->password_local;
-                if (empty($password)) {
-                    $password = $plugin_cookies->password;
-                }
-
-                if (empty($password)) {
-                    hd_print("Password not set");
-                }
-
-                $url = sprintf($template, $password);
-                break;
-            default:
-                $url = $template;
-                hd_print("Unknown auth scheme");
-        }
-
-        return $url;
+        return '';
     }
 
     /**

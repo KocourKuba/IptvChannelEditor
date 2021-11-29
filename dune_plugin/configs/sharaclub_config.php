@@ -3,33 +3,17 @@ require_once 'default_config.php';
 
 class SharaclubPluginConfig extends DefaultConfig
 {
-    const ACCOUNT_INFO_URL1 = 'http://list.playtv.pro/api/dune-api5m.php?subscr=%s-%s';
-    const ACCOUNT_INFO_URL2 = 'http://list.shara.tv/api/dune-api5m.php?subscr=%s-%s';
-    const SERIES_VOD_PATTERN = '|^https?://(.+)/series/.+\.mp4(.+)$|';
-
     // supported features
+    public static $ACCOUNT_TYPE = 'LOGIN';
+    public static $MPEG_TS_SUPPORTED = true;
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;
 
-    // setup variables
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $ACCOUNT_TYPE = 'LOGIN';
-
-    // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
-
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://ts://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
     protected static $EPG1_URL_TEMPLATE = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
     protected static $EPG2_URL_TEMPLATE = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
-
-    // vod
-    protected static $MOVIE_LIST_URL_TEMPLATE = 'http://list.playtv.pro/kino-full/%s-%s';
-
-    // Views variables
-    protected static $TV_CHANNEL_ICON_WIDTH = 84;
-    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
 
     protected static $lazy_load_vod = true;
 
@@ -62,6 +46,27 @@ class SharaclubPluginConfig extends DefaultConfig
         return $url;
     }
 
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+
+        if (empty($login) || empty($password)) {
+            hd_print("Login or password not set");
+        }
+
+        switch ($type) {
+            case 'tv1':
+                return sprintf('http://list.playtv.pro/tv_live-m3u8/%s-%s', $login, $password);
+            case 'movie':
+                return sprintf('http://list.playtv.pro/kino-full/%s-%s', $login, $password);
+        }
+
+        return '';
+    }
+
     /**
      * Get information from the account
      * @param $plugin_cookies
@@ -77,13 +82,13 @@ class SharaclubPluginConfig extends DefaultConfig
         }
 
         try {
-            $url = sprintf(static::ACCOUNT_INFO_URL1,
+            $url = sprintf('http://list.playtv.pro/api/dune-api5m.php?subscr=%s-%s',
                 $plugin_cookies->login,
                 $plugin_cookies->password);
             $content = HD::http_get_document($url);
         } catch (Exception $ex) {
             try {
-                $url = sprintf(static::ACCOUNT_INFO_URL2,
+                $url = sprintf('http://list.shara.tv/api/dune-api5m.php?subscr=%s-%s',
                     $plugin_cookies->login,
                     $plugin_cookies->password);
                 $content = HD::http_get_document($url);
@@ -151,7 +156,7 @@ class SharaclubPluginConfig extends DefaultConfig
                     foreach ($season["episodes"] as $episode) {
                         $episodeCaption = "Сезон " . $seasonNumber . ":  Эпизод " . $episode['episode'];
                         $playback_url = $episode['video'];
-                        if (preg_match(self::SERIES_VOD_PATTERN, $playback_url, $matches)) {
+                        if (preg_match('|^https?://(.+)/series/.+\.mp4(.+)$|', $playback_url, $matches)) {
                             $playback_url = str_replace(
                                 array('{SUBDOMAIN}', '{TOKEN}', '{ID}'),
                                 array($matches[1], $matches[2], "vod-" . $episode['id']),
@@ -178,7 +183,7 @@ class SharaclubPluginConfig extends DefaultConfig
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        $url = self::GetTemplatedUrl(static::$MOVIE_LIST_URL_TEMPLATE, $plugin_cookies);
+        $url = static::GetTemplatedUrl('movie', $plugin_cookies);
         $categories = HD::LoadAndStoreJson($url, true, self::GET_VOD_TMP_STORAGE_PATH());
         if ($categories === false)
         {

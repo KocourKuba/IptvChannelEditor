@@ -4,18 +4,13 @@ require_once 'default_config.php';
 class AntifrizPluginConfig extends DefaultConfig
 {
     const VOD_URL = 'http://api.iptvx.tv';
-    const EXTINF_VOD_PATTERN = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
+    const MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
 
     // supported features
+    public static $ACCOUNT_TYPE = 'PIN';
+    public static $MPEG_TS_SUPPORTED = true;
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;
-
-    // setup variables
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $ACCOUNT_TYPE = 'PIN';
-
-    // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'http://antifriz.tv/playlist/%s.m3u8';
 
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|';
@@ -26,8 +21,7 @@ class AntifrizPluginConfig extends DefaultConfig
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id
 
     // vod
-    protected static $MOVIE_LIST_URL_TEMPLATE = 'http://antifriz.tv/smartup/%s.m3u';
-    public static $MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
+    public static $EXTINF_VOD_PATTERN = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
 
     protected static $lazy_load_vod = true;
 
@@ -76,6 +70,25 @@ class AntifrizPluginConfig extends DefaultConfig
         return HD::make_ts($url);
     }
 
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        if (empty($password)) {
+            hd_print("Password not set");
+        }
+
+        switch ($type) {
+            case 'tv1':
+                return sprintf('http://antifriz.tv/playlist/%s.m3u8', $password);
+            case 'movie':
+                return sprintf('http://antifriz.tv/smartup/%s.m3u', $password);
+        }
+
+        return '';
+    }
+
     /**
      * @throws Exception
      */
@@ -118,14 +131,14 @@ class AntifrizPluginConfig extends DefaultConfig
             foreach ($movieData->seasons as $season) {
                 $seasonNumber = $season->number;
                 foreach ($season->series as $episode) {
-                    $playback_url = sprintf(self::$MOVIE_URL_TEMPLATE, $domain[0], $episode->files[0]->url, $plugin_cookies->ott_key_local);
+                    $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $episode->files[0]->url, $plugin_cookies->ott_key_local);
                     hd_print("episode playback_url: $playback_url");
                     $episode_caption = "Сезон $seasonNumber| Серия $episode->number $episode->name";
                     $movie->add_series_data($episode->id, $episode_caption, $playback_url, true);
                 }
             }
         } else {
-            $playback_url = sprintf(self::$MOVIE_URL_TEMPLATE, $domain[0], $movieData->files[0]->url, $plugin_cookies->ott_key_local);
+            $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $movieData->files[0]->url, $plugin_cookies->ott_key_local);
             hd_print("movie playback_url: $playback_url");
             $movie->add_series_data($movie_id, $movieData->name, $playback_url, true);
         }

@@ -3,19 +3,14 @@ require_once 'default_config.php';
 
 class ItvPluginConfig extends DefaultConfig
 {
-    const ACCOUNT_INFO_URL1 = 'http://api.itv.live/data/%s';
-
     // setup variables
-    public static $MPEG_TS_SUPPORTED = true;
     public static $ACCOUNT_TYPE = 'PIN';
-
-    // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'https://itv.ooo/p/%s/hls.m3u8';
+    public static $MPEG_TS_SUPPORTED = true;
 
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}';
-    protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s/%s'; // epg_id YYYY-MM-DD
+    protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s/%s'; // epg_id date(YYYY-MM-DD)
 
     // Views variables
     protected static $TV_CHANNEL_ICON_WIDTH = 60;
@@ -56,6 +51,18 @@ class ItvPluginConfig extends DefaultConfig
         return $url;
     }
 
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        if (empty($password)) {
+            hd_print("Password not set");
+        }
+
+        return sprintf('https://itv.ooo/p/%s/hls.m3u8', $password);
+    }
+
     /**
      * Get information from the provider
      * @param $plugin_cookies
@@ -71,7 +78,7 @@ class ItvPluginConfig extends DefaultConfig
         }
 
         try {
-            $url = sprintf(static::ACCOUNT_INFO_URL1, $plugin_cookies->password);
+            $url = sprintf('http://api.itv.live/data/%s', $plugin_cookies->password);
             $content = HD::http_get_document($url);
         } catch (Exception $ex) {
             return false;

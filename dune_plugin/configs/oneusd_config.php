@@ -3,14 +3,9 @@ require_once 'default_config.php';
 
 class OneusdPluginConfig extends DefaultConfig
 {
-    const ACCOUNT_INFO_URL1 = 'http://api.itv.live/data/%s';
-
     // setup variables
-    public static $MPEG_TS_SUPPORTED = true;
     public static $ACCOUNT_TYPE = 'PIN';
-
-    // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'http://1usd.tv/pl-%s-hls';
+    public static $MPEG_TS_SUPPORTED = true;
 
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|';
@@ -57,5 +52,17 @@ class OneusdPluginConfig extends DefaultConfig
         // hd_print("Stream url:  " . $url);
 
         return $url;
+    }
+
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        if (empty($password)) {
+            hd_print("Password not set");
+        }
+
+        return sprintf('http://1usd.tv/pl-%s-hls', $password);
     }
 }

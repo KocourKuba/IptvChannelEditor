@@ -1,6 +1,4 @@
 ﻿<?php
-/** @noinspection PhpUndefinedClassInspection */
-
 class HD
 {
     public static function is_map($a)

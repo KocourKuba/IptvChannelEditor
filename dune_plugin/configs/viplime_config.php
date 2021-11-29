@@ -4,20 +4,13 @@ require_once 'default_config.php';
 class ViplimePluginConfig extends DefaultConfig
 {
     // setup variables
-    public static $MPEG_TS_SUPPORTED = true;
     public static $ACCOUNT_TYPE = 'PIN';
-
-    // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'http://cdntv.online/high/%s/playlist.m3u8';
+    public static $MPEG_TS_SUPPORTED = true;
 
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/viplime/epg/%s.json'; // epg_id
-
-    // Views variables
-    protected static $TV_CHANNEL_ICON_WIDTH = 84;
-    protected static $TV_CHANNEL_ICON_HEIGHT = 48;
 
     /**
      * Transform url based on settings or archive playback
@@ -48,5 +41,17 @@ class ViplimePluginConfig extends DefaultConfig
         // hd_print("Stream url:  " . $url);
 
         return $url;
+    }
+
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        if (empty($password)) {
+            hd_print("Password not set");
+        }
+
+        return sprintf('http://cdntv.online/high/%s/playlist.m3u8', $password);
     }
 }

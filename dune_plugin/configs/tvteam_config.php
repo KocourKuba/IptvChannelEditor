@@ -4,11 +4,8 @@ require_once 'default_config.php';
 class TvteamPluginConfig extends DefaultConfig
 {
     // setup variables
-    public static $MPEG_TS_SUPPORTED = true;
     public static $ACCOUNT_TYPE = 'PIN';
-
-    // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'http://tv.team/pl/11/%s/playlist.m3u8';
+    public static $MPEG_TS_SUPPORTED = true;
 
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|';
@@ -55,5 +52,17 @@ class TvteamPluginConfig extends DefaultConfig
         // hd_print("Stream url:  " . $url);
 
         return $url;
+    }
+
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        if (empty($password)) {
+            hd_print("Password not set");
+        }
+
+        return sprintf('http://tv.team/pl/11/%s/playlist.m3u8', $password);
     }
 }

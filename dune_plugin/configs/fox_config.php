@@ -1,22 +1,12 @@
 ﻿<?php
-/** @noinspection ForeachInvariantsInspection */
 require_once 'default_config.php';
 
 class FoxPluginConfig extends DefaultConfig
 {
-    const SERIES_VOD_PATTERN = '|^https?://.+/vod/(.+)\.mp4/video\.m3u8\?token=.+$|';
-    const EXTINF_VOD_PATTERN = '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|';
-    const EXTINF_TV_PATTERN  = '|^#EXTINF:.+CUID="(?<id>\d+)".+$|';
-
     // supported features
+    public static $ACCOUNT_TYPE = 'LOGIN';
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;
-
-    // setup variables
-    public static $ACCOUNT_TYPE = 'LOGIN';
-
-    // account
-    public static $ACCOUNT_PLAYLIST_URL1 = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
 
     // tv
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
@@ -24,7 +14,7 @@ class FoxPluginConfig extends DefaultConfig
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id
 
     // vod
-    protected static $MOVIE_LIST_URL_TEMPLATE = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
+    public static $EXTINF_VOD_PATTERN = '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|';
 
     // Views variables
     protected static $TV_CHANNEL_ICON_WIDTH = 60;
@@ -60,6 +50,27 @@ class FoxPluginConfig extends DefaultConfig
         return $url;
     }
 
+    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
+        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+
+        if (empty($login) || empty($password)) {
+            hd_print("Login or password not set");
+        }
+
+        switch ($type) {
+            case 'tv1':
+                return sprintf('http://pl.fox-tv.fun/%s/%s/tv.m3u', $login, $password);
+            case 'movie':
+                return sprintf('http://pl.fox-tv.fun/%s/%s/vodall.m3u', $login, $password);
+        }
+
+        return '';
+    }
+
     /**
      * Collect information from m3u8 playlist
      * @param $plugin_cookies
@@ -71,7 +82,7 @@ class FoxPluginConfig extends DefaultConfig
         $pl_entries = array();
         $m3u_lines = self::FetchTvM3U($plugin_cookies);
         for ($i = 0, $iMax = count($m3u_lines); $i < $iMax; ++$i) {
-            if (preg_match(self::EXTINF_TV_PATTERN, $m3u_lines[$i], $m_id)
+            if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)".+$|', $m3u_lines[$i], $m_id)
                 && preg_match(self::$M3U_STREAM_URL_PATTERN, $m3u_lines[$i + 1], $matches)) {
                 $pl_entries[$m_id['id']] = $matches;
             }
@@ -102,7 +113,7 @@ class FoxPluginConfig extends DefaultConfig
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         for ($i = 0, $iMax = count($m3u_lines); $i < $iMax; ++$i) {
-            if ($i !== (int)$movie_id || !preg_match(self::EXTINF_VOD_PATTERN, $m3u_lines[$i], $match)) {
+            if ($i !== (int)$movie_id || !preg_match(static::$EXTINF_VOD_PATTERN, $m3u_lines[$i], $match)) {
                 continue;
             }
 
