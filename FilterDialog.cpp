@@ -24,7 +24,6 @@ BEGIN_MESSAGE_MAP(CFilterDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_REGEX, &CFilterDialog::OnUpdateControls)
 	ON_BN_CLICKED(IDC_CHECK_CASE, &CFilterDialog::OnUpdateControls)
 	ON_BN_CLICKED(IDC_CHECK_NOT_ADDED, &CFilterDialog::OnUpdateControls)
-	ON_BN_CLICKED(IDC_CHECK_CHANGED, &CFilterDialog::OnUpdateControls)
 END_MESSAGE_MAP()
 
 CFilterDialog::CFilterDialog(CWnd* pParent /*=nullptr*/)
@@ -44,8 +43,6 @@ void CFilterDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_CASE, m_filterCase);
 	DDX_Control(pDX, IDC_CHECK_NOT_ADDED, m_wndFilterNotAdded);
 	DDX_Check(pDX, IDC_CHECK_NOT_ADDED, m_filterNotAdded);
-	DDX_Control(pDX, IDC_CHECK_CHANGED, m_wndFilterChanged);
-	DDX_Check(pDX, IDC_CHECK_CHANGED, m_filterChanged);
 }
 
 BOOL CFilterDialog::OnInitDialog()
@@ -57,7 +54,6 @@ BOOL CFilterDialog::OnInitDialog()
 	m_filterRegex    = (flags & FILTER_FLAG_REGEX) ? TRUE : FALSE;
 	m_filterCase     = (flags & FILTER_FLAG_CASE) ? TRUE : FALSE;
 	m_filterNotAdded = (flags & FILTER_FLAG_NOT_ADDED) ? TRUE : FALSE;
-	m_filterChanged  = (flags & FILTER_FLAG_CHANGED) ? TRUE : FALSE;
 
 	UpdateData(FALSE);
 
@@ -88,7 +84,6 @@ void CFilterDialog::OnOK()
 	flags |= m_filterRegex ? FILTER_FLAG_REGEX : 0;
 	flags |= m_filterCase ? FILTER_FLAG_CASE : 0;
 	flags |= m_filterNotAdded ? FILTER_FLAG_NOT_ADDED : 0;
-	flags |= m_filterChanged ? FILTER_FLAG_CHANGED : 0;
 
 	GetConfig().set_string(false, REG_FILTER_STRING, m_filterString.GetString());
 	GetConfig().set_int(false, REG_FILTER_FLAGS, flags);
@@ -114,20 +109,6 @@ void CFilterDialog::OnUpdateControls()
 		m_wndFilterRegex.EnableWindow(FALSE);
 	}
 	m_wndFilterRegex.EnableWindow(!m_filterCase);
-
-	if (m_filterNotAdded)
-	{
-		m_filterChanged = FALSE;
-		m_wndFilterChanged.EnableWindow(FALSE);
-	}
-	m_wndFilterChanged.EnableWindow(!m_filterNotAdded);
-
-	if (m_filterChanged)
-	{
-		m_filterNotAdded = FALSE;
-		m_wndFilterNotAdded.EnableWindow(FALSE);
-	}
-	m_wndFilterNotAdded.EnableWindow(!m_filterChanged);
 
 	UpdateData(FALSE);
 }

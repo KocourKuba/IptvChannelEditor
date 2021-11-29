@@ -70,6 +70,7 @@
 #define IDS_STRING_BUTTON_SAVE          181
 #define IDS_STRING_BUTTON_PACK          182
 #define IDS_STRING_BUTTON_SETTINGS      183
+#define IDS_STRING_SHOW_CHANGED         184
 #define IDS_STRING_BUTTON_CHOOSE_PLAYLIST 185
 #define IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST 186
 #define IDS_STRING_EDIT_PL_SEARCH       187
@@ -122,7 +123,6 @@
 #define IDC_CHECK_PL_ARCHIVE            1030
 #define IDC_CHECK_REGEX                 1031
 #define IDC_CHECK_NOT_ADDED             1032
-#define IDC_CHECK_CHANGED               1033
 #define IDC_COMBO_CHANNELS              1034
 #define IDC_COMBO_PLAYLIST              1035
 #define IDC_COMBO_SORT                  1036
@@ -199,6 +199,8 @@
 #define IDC_SPLIT_BUTTON_PACK           1110
 #define IDC_MFCEDITBROWSE_CH_LIST_PATH  1111
 #define IDC_MFCEDITBROWSE_PLUGINS_PATH  1112
+#define IDC_BUTTON1                     1112
+#define IDC_BUTTON_SHOW_CHANGED              1112
 #define IDC_STATIC_ICON_SIZE            1113
 #define IDC_CHECK_CMP_TITLE             1114
 #define IDC_CHECK_CMP_ICON              1115
@@ -236,7 +238,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        206
 #define _APS_NEXT_COMMAND_VALUE         32801
-#define _APS_NEXT_CONTROL_VALUE         1112
+#define _APS_NEXT_CONTROL_VALUE         1113
 #define _APS_NEXT_SYMED_VALUE           1179
 #endif
 #endif

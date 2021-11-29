@@ -246,6 +246,7 @@ protected:
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
 	CButton m_wndFilter;
+	CButton m_wndShowChanged;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
 	CButton m_wndCustom;
@@ -386,4 +387,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
 	std::map<std::wstring, nlohmann::json> m_epgMap;
+public:
+	afx_msg void OnBnClickedButtonShowChanged();
 };

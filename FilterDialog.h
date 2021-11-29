@@ -29,11 +29,9 @@ public:
 	CButton m_wndFilterRegex;
 	CButton m_wndFilterCase;
 	CButton m_wndFilterNotAdded;
-	CButton m_wndFilterChanged;
 
 	CString m_filterString;
 	BOOL m_filterRegex = FALSE; // m_wndFilterRegex
 	BOOL m_filterCase = FALSE; // m_wndFilterCase
 	BOOL m_filterNotAdded = FALSE; // m_wndFilterNotAdded
-	BOOL m_filterChanged = FALSE; // m_wndFilterChanged
 };

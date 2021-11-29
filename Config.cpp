@@ -36,6 +36,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_ICON_SOURCE,
 	REG_DAYS_BACK,
 	REG_HOURS_BACK,
+	REG_SHOW_CHANGED,
 	REG_LOGIN,
 	REG_LOGIN_EMBEDDED,
 	REG_PASSWORD,

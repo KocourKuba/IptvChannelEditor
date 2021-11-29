@@ -49,10 +49,11 @@ constexpr auto REG_LANGUAGE    = _T("Language");
 constexpr auto REG_CMP_FLAGS   = _T("CompareFlags");
 
 // main dialog
-constexpr auto REG_PLUGIN      = _T("PluginType");
-constexpr auto REG_ICON_SOURCE = _T("IconSource");
-constexpr auto REG_DAYS_BACK   = _T("DaysBack");
-constexpr auto REG_HOURS_BACK  = _T("HoursBack");
+constexpr auto REG_PLUGIN       = _T("PluginType");
+constexpr auto REG_ICON_SOURCE  = _T("IconSource");
+constexpr auto REG_DAYS_BACK    = _T("DaysBack");
+constexpr auto REG_HOURS_BACK   = _T("HoursBack");
+constexpr auto REG_SHOW_CHANGED = _T("ShowChanged");
 
 // Plugin dependent
 constexpr auto REG_LOGIN             = _T("Login");
