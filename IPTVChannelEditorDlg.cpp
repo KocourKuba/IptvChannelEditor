@@ -71,7 +71,8 @@ std::map<UINT, UINT> tooltips_info =
 	{ IDC_EDIT_PL_SEARCH, IDS_STRING_EDIT_PL_SEARCH },
 	{ IDC_BUTTON_PL_SEARCH_NEXT, IDS_STRING_BUTTON_PL_SEARCH_NEXT },
 	{ IDC_BUTTON_PL_FILTER, IDS_STRING_BUTTON_PL_FILTER },
-	{ IDC_BUTTON_SHOW_CHANGED, IDS_STRING_SHOW_CHANGED },
+	{ IDC_CHECK_SHOW_CHANGED, IDS_STRING_SHOW_CHANGED },
+	{ IDC_CHECK_NOT_ADDED, IDS_STRING_NOT_ADDED },
 	{ IDC_STATIC_ICON, IDS_STRING_STATIC_ICON },
 	{ IDC_EDIT_ARCHIVE_CHECK_DAYS, IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS },
 	{ IDC_SPIN_ARCHIVE_CHECK_DAYS, IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS },
@@ -126,7 +127,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
-	ON_BN_CLICKED(IDC_BUTTON_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonShowChanged)
+	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged)
 
 	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
 	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
@@ -207,7 +208,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_COMMAND_RANGE(ID_MOVE_TO_START, ID_MOVE_TO_END, &CIPTVChannelEditorDlg::OnMoveTo)
 	ON_COMMAND_RANGE(ID_ADD_TO_START, ID_ADD_TO_END, &CIPTVChannelEditorDlg::OnAddTo)
 
-END_MESSAGE_MAP()
+		ON_BN_CLICKED(IDC_CHECK_NOT_ADDED, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
+		END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -256,7 +258,8 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TREE_PLAYLIST, m_wndPlaylistTree);
 	DDX_Control(pDX, IDC_BUTTON_PL_FILTER, m_wndFilter);
 	DDX_Control(pDX, IDC_EDIT_PL_SEARCH, m_wndPlSearch);
-	DDX_Control(pDX, IDC_BUTTON_SHOW_CHANGED, m_wndShowChanged);
+	DDX_Control(pDX, IDC_CHECK_SHOW_CHANGED, m_wndShowChanged);
+	DDX_Control(pDX, IDC_CHECK_NOT_ADDED, m_wndNotAdded);
 	DDX_Text(pDX, IDC_EDIT_PL_SEARCH, m_plSearch);
 	DDX_Text(pDX, IDC_STATIC_ICON_NAME, m_iconUrl);
 	DDX_Control(pDX, IDC_STATIC_PL_ICON, m_wndPlIcon);
@@ -394,8 +397,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	res.LoadString(IDS_STRING_URL);
 	m_wndIconSource.AddString(res);
 	m_wndIconSource.AddString(_T("it999.ru"));
-
-	m_wndShowChanged.SetWindowText(GetConfig().get_int(true, REG_SHOW_CHANGED) ? _T("\u2260") : _T("="));
 
 	// Toggle controls state
 	m_wndSearch.EnableWindow(FALSE);
@@ -2904,13 +2905,12 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	m_wndPlaylistTree.DeleteAllItems();
 
 	// Filter out playlist
-	BOOL bChanged = GetConfig().get_int(true, REG_SHOW_CHANGED);
-	auto filter = GetConfig().get_string(false, REG_FILTER_STRING);
-	int flags = GetConfig().get_int(false, REG_FILTER_FLAGS);
+	BOOL bChanged = m_wndShowChanged.GetCheck();
+	BOOL bNotAdded = m_wndNotAdded.GetCheck();
 
-	auto bRegex    = (flags & FILTER_FLAG_REGEX) ? TRUE : FALSE;
-	auto bCase     = (flags & FILTER_FLAG_CASE) ? TRUE : FALSE;
-	auto bNotAdded = (flags & FILTER_FLAG_NOT_ADDED) ? TRUE : FALSE;
+	auto filter = GetConfig().get_string(false, REG_FILTER_STRING);
+	auto bRegex = GetConfig().get_int(false, REG_FILTER_REGEX);
+	auto bCase  = GetConfig().get_int(false, REG_FILTER_CASE);
 
 	std::wregex re;
 	if (bRegex)
@@ -3432,12 +3432,15 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 	SearchTreeItem(InfoType::enPlEntry, true);
 }
 
-void CIPTVChannelEditorDlg::OnBnClickedButtonShowChanged()
+void CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged()
 {
-	BOOL bChanged = !GetConfig().get_int(true, REG_SHOW_CHANGED);
-	GetConfig().set_int(true, REG_SHOW_CHANGED, bChanged);
+	m_wndShowChanged.SetWindowText(m_wndShowChanged.GetCheck() ? _T("\u2260") : _T("="));
+	FillTreePlaylist();
+}
 
-	m_wndShowChanged.SetWindowText(bChanged ? _T("\u2260") : _T("="));
+void CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded()
+{
+	m_wndNotAdded.SetWindowText(m_wndNotAdded.GetCheck() ? _T("\u2179") : _T("\u221A"));
 	FillTreePlaylist();
 }
 
@@ -4721,4 +4724,3 @@ bool CIPTVChannelEditorDlg::HasEPG2()
 	auto pluginType = GetConfig().get_plugin_type();
 	return (pluginType == StreamType::enSharaclub || pluginType == StreamType::enSharavoz || pluginType == StreamType::enOneOtt);
 }
-

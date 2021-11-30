@@ -108,7 +108,7 @@
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Dialogs.106.1032.Text</context>
             </context-group>
-            <sl:rowstatus>rsInUse</sl:rowstatus>
+            <sl:rowstatus>rsUnused</sl:rowstatus>
           </trans-unit>
           <trans-unit id="Dialogs.106.1033.Text" resname="Release Unicode\IPTVChannelEditor.exe.Dialogs.106.1033.Text">
             <source>Changed</source>
@@ -1338,6 +1338,14 @@ EPG №:		%s
             </context-group>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
+          <trans-unit id="Strings.14.IDS_STRING_NOT_ADDED" resname="Release Unicode\IPTVChannelEditor.exe.Strings.14.IDS_STRING_NOT_ADDED">
+            <source>Show only not added channels</source>
+            <target state="final">Показать только не добавленные каналы</target>
+            <context-group>
+              <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.14.IDS_STRING_NOT_ADDED</context>
+            </context-group>
+            <sl:rowstatus>rsNew</sl:rowstatus>
+          </trans-unit>
         </group>
         <group id="3633" datatype="winres">
         </group>
@@ -1431,7 +1439,7 @@ EPG №:		%s
       <group id="Versions" datatype="winres">
         <group id="1" datatype="winres">
           <trans-unit id="Versions.1.ProductVersion" resname="Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion">
-            <source>2.2.538</source>
+            <source>2.2.540</source>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Versions.1.ProductVersion</context>
             </context-group>

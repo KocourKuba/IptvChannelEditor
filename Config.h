@@ -27,11 +27,6 @@ constexpr auto CMP_FLAG_EPG1    = 0x08;
 constexpr auto CMP_FLAG_EPG2    = 0x10;
 constexpr auto CMP_FLAG_ALL     = CMP_FLAG_TITLE | CMP_FLAG_ICON | CMP_FLAG_ARCHIVE | CMP_FLAG_EPG1 | CMP_FLAG_EPG2;
 
-constexpr auto FILTER_FLAG_REGEX     = 0x01;
-constexpr auto FILTER_FLAG_CASE      = 0x02;
-constexpr auto FILTER_FLAG_NOT_ADDED = 0x04;
-constexpr auto FILTER_FLAG_CHANGED   = 0x08;
-
 constexpr auto REG_SETTINGS = _T("Settings");
 
 constexpr auto REG_WINDOW_POS = _T("WindowPos");
@@ -53,7 +48,6 @@ constexpr auto REG_PLUGIN       = _T("PluginType");
 constexpr auto REG_ICON_SOURCE  = _T("IconSource");
 constexpr auto REG_DAYS_BACK    = _T("DaysBack");
 constexpr auto REG_HOURS_BACK   = _T("HoursBack");
-constexpr auto REG_SHOW_CHANGED = _T("ShowChanged");
 
 // Plugin dependent
 constexpr auto REG_LOGIN             = _T("Login");
@@ -68,7 +62,8 @@ constexpr auto REG_ACCESS_URL        = _T("AccessUrl");
 constexpr auto REG_HOST              = _T("Host");
 constexpr auto REG_HOST_EMBEDDED     = _T("HostEmbedded");
 constexpr auto REG_FILTER_STRING     = _T("FilterString");
-constexpr auto REG_FILTER_FLAGS      = _T("FilterFlags");
+constexpr auto REG_FILTER_REGEX      = _T("FilterUseRegex");
+constexpr auto REG_FILTER_CASE       = _T("FilterUseCase");
 constexpr auto REG_CHANNELS_TYPE     = _T("ChannelsType");
 constexpr auto REG_PLAYLIST_TYPE     = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE       = _T("StreamType");
