@@ -144,14 +144,13 @@ class StarnetSetupScreen extends AbstractControlsScreen
     {
         $defs = array();
         $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
-
-        $this->add_text_field($defs, 'ott_key', 'Введите ОТТ ключ:',
-            $ott_key, false, false, false, true, 500);
-
         $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
 
         $this->add_text_field($defs, 'subdomain', 'Введите домен:',
             $subdomain, false, false, false, true, 500);
+
+        $this->add_text_field($defs, 'ott_key', 'Введите ОТТ ключ:',
+            $ott_key, false, true, false, true, 500);
 
         $this->add_vgap($defs, 50);
 
@@ -176,7 +175,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
         $this->add_text_field($defs, 'password', 'Пароль:',
-            $password, false, false, false, true, 500);
+            $password, false, true, false, true, 500);
 
         $this->add_vgap($defs, 50);
 
@@ -197,7 +196,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
         $this->add_text_field($defs, 'password', 'Ключ доступа:',
-            $password, false, false, false, true, 500);
+            $password, false, true, false, true, 500);
 
         $this->add_vgap($defs, 50);
 
@@ -219,9 +218,9 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $pass2 = '';
 
         $this->add_text_field($defs, 'pass1', 'Старый пароль:',
-            $pass1, 1, 1, 0, 1, 500, 0);
+            $pass1, 1, true, 0, 1, 500, 0);
         $this->add_text_field($defs, 'pass2', 'Новый пароль:',
-            $pass2, 1, 1, 0, 1, 500, 0);
+            $pass2, 1, true, 0, 1, 500, 0);
 
         $this->add_vgap($defs, 50);
 
