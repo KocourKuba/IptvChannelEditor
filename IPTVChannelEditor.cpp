@@ -19,6 +19,9 @@ using namespace SevenZip;
 constexpr auto PACK_PATH = L"{:s}_plugin\\";
 constexpr auto PACK_DLL = L"7za.dll";
 
+static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
+static HANDLE g_hAppRunningMutex = nullptr;
+
 void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 {
 	if (bFlag)
@@ -65,7 +68,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
-	INITCOMMONCONTROLSEX InitCtrls;
+	INITCOMMONCONTROLSEX InitCtrls = { 0 };
 	InitCtrls.dwSize = sizeof(InitCtrls);
 	// Set this to include all the common control classes you want to use
 	// in your application.
@@ -76,6 +79,16 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	AfxInitRichEdit2();
 
 	CWinAppEx::InitInstance();
+
+	HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
+	if (hAppRunningMutex)
+	{
+		AfxMessageBox(IDS_STRING_ALREADY_RUNNING, MB_OK | MB_ICONEXCLAMATION);
+		CloseHandle(hAppRunningMutex);
+		ExitProcess(0);
+	}
+
+	g_hAppRunningMutex = CreateMutex(nullptr, FALSE, g_sz_Run_GUID);
 
 	AfxEnableControlContainer();
 
@@ -151,6 +164,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 #ifdef _DEBUG
 	GetIconCache().DestroyInstance();
 #endif // _DEBUG
+
+	if (g_hAppRunningMutex)
+		::CloseHandle(g_hAppRunningMutex);
 
 	return FALSE;
 }

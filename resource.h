@@ -98,6 +98,7 @@
 #define IDS_STRING_LOAD_ICONS_TITLE     208
 #define IDS_STRING_ADD_NEW_CHANNELS     209
 #define IDS_STRING_NOT_ADDED            210
+#define IDS_STRING_ALREADY_RUNNING      211
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
@@ -232,7 +233,7 @@
 #define ID_MAKE_ALL                     32800
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        206
