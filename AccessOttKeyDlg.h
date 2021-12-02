@@ -1,5 +1,6 @@
 #pragma once
 #include "Config.h"
+#include "CMFCEditBrowsCtrlEx.h"
 
 
 // CAccessDlg dialog
@@ -36,5 +37,5 @@ public:
 
 protected:
 	CButton m_wndGet;
-	CMFCEditBrowseCtrl m_wndUrl;
+	CMFCEditBrowseCtrlEx m_wndUrl;
 };

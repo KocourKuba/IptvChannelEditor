@@ -1,4 +1,5 @@
 #pragma once
+#include "CMFCEditBrowsCtrlEx.h"
 
 // CCustomPlaylist dialog
 
@@ -22,7 +23,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	CMFCEditBrowseCtrl m_wndUrl;
+	CMFCEditBrowseCtrlEx m_wndUrl;
 
 public:
 	CString m_url;

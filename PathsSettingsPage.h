@@ -1,4 +1,5 @@
 #pragma once
+#include "CMFCEditBrowsCtrlEx.h"
 
 
 // CPathsSettingsPage dialog
@@ -24,10 +25,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	CMFCEditBrowseCtrl m_wndProbe;
-	CMFCEditBrowseCtrl m_wndPlayer;
-	CMFCEditBrowseCtrl m_wndListsPath;
-	CMFCEditBrowseCtrl m_wndPluginsPath;
+	CMFCEditBrowseCtrlEx m_wndProbe;
+	CMFCEditBrowseCtrlEx m_wndPlayer;
+	CMFCEditBrowseCtrlEx m_wndListsPath;
+	CMFCEditBrowseCtrlEx m_wndPluginsPath;
 
 private:
 	CString m_player;

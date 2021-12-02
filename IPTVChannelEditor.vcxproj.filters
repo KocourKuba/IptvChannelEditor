@@ -216,6 +216,9 @@
     <ClInclude Include="PathsSettingsPage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="CMFCEditBrowsCtrlEx.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">

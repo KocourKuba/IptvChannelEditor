@@ -258,6 +258,7 @@ goto :EOF
     <ClInclude Include="BaseInfo.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
+    <ClInclude Include="CMFCEditBrowsCtrlEx.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Crc32.h" />
     <ClInclude Include="FileVersionInfo.h" />
