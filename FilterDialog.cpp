@@ -31,7 +31,7 @@ void CFilterDialog::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
-	DDX_Text(pDX, IDC_EDIT_STRING, m_filterString);
+	DDX_Control(pDX, IDC_COMBO_STRING, m_wndFilterString);
 	DDX_Control(pDX, IDC_CHECK_REGEX, m_wndFilterRegex);
 	DDX_Check(pDX, IDC_CHECK_REGEX, m_filterRegex);
 	DDX_Control(pDX, IDC_CHECK_CASE, m_wndFilterCase);
@@ -42,9 +42,13 @@ BOOL CFilterDialog::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	m_filterString = GetConfig().get_string(false, REG_FILTER_STRING).c_str();
+	CString stringList = GetConfig().get_string(false, REG_FILTER_STRING_LST).c_str();
+	CString filterString = GetConfig().get_string(false, REG_FILTER_STRING).c_str();
+
 	m_filterRegex  = GetConfig().get_int(false, REG_FILTER_REGEX);
 	m_filterCase   = GetConfig().get_int(false, REG_FILTER_CASE);
+
+	m_wndFilterString.LoadHistoryFromText(stringList, filterString);
 
 	UpdateData(FALSE);
 
@@ -57,10 +61,13 @@ void CFilterDialog::OnOK()
 {
 	UpdateData(TRUE);
 
+	CString filterString;
+	m_wndFilterString.GetWindowText(filterString);
+
 	try
 	{
 		// Check expression
-		std::wregex re(m_filterString.GetString());
+		std::wregex re(filterString.GetString());
 		UNUSED_ALWAYS(re);
 	}
 	catch (std::regex_error& ex)
@@ -71,7 +78,8 @@ void CFilterDialog::OnOK()
 		return;
 	}
 
-	GetConfig().set_string(false, REG_FILTER_STRING, m_filterString.GetString());
+	GetConfig().set_string(false, REG_FILTER_STRING, filterString.GetString());
+	GetConfig().set_string(false, REG_FILTER_STRING_LST, m_wndFilterString.SaveHistoryToText().GetString());
 	GetConfig().set_int(false, REG_FILTER_REGEX, m_filterRegex);
 	GetConfig().set_int(false, REG_FILTER_CASE, m_filterCase);
 

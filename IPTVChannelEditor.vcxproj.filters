@@ -219,6 +219,9 @@
     <ClInclude Include="CMFCEditBrowsCtrlEx.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="HistoryCombo.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -358,6 +361,9 @@
     </ClCompile>
     <ClCompile Include="PathsSettingsPage.cpp">
       <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="HistoryCombo.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

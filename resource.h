@@ -142,7 +142,6 @@
 #define IDC_EDIT_PLAYLIST_URL           1049
 #define IDC_EDIT_SEARCH                 1051
 #define IDC_EDIT_STREAM_URL             1052
-#define IDC_EDIT_STRING                 1053
 #define IDC_EDIT_EPG2_ID                1054
 #define IDC_EDIT_URL_ID                 1055
 #define IDC_EDIT_URL                    1056
@@ -208,6 +207,7 @@
 #define IDC_CHECK_CMP_EPG2              1117
 #define IDC_CHECK_CMP_ARCHIVE           1118
 #define IDC_CHECK_AUTO_HIDE             1119
+#define IDC_COMBO_STRING                1120
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -238,7 +238,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        206
 #define _APS_NEXT_COMMAND_VALUE         32801
-#define _APS_NEXT_CONTROL_VALUE         1120
+#define _APS_NEXT_CONTROL_VALUE         1121
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

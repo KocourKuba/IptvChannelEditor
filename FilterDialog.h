@@ -1,4 +1,5 @@
 #pragma once
+#include "HistoryCombo.h"
 
 
 // CFilterDialog dialog
@@ -28,8 +29,8 @@ protected:
 public:
 	CButton m_wndFilterRegex;
 	CButton m_wndFilterCase;
+	CHistoryCombo m_wndFilterString;
 
-	CString m_filterString;
 	BOOL m_filterRegex = FALSE; // m_wndFilterRegex
 	BOOL m_filterCase = FALSE; // m_wndFilterCase
 };
