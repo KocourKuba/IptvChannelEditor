@@ -375,6 +375,7 @@ goto :EOF
     <ResourceCompile Include="IPTVChannelEditor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Changelog.md" />
     <None Include="res\IPTVChannelEditor.rc2" />
   </ItemGroup>
   <ItemGroup>
