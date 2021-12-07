@@ -65,6 +65,7 @@ constexpr auto REG_FILTER_STRING     = _T("FilterString");
 constexpr auto REG_FILTER_STRING_LST = _T("FilterStringList");
 constexpr auto REG_FILTER_REGEX      = _T("FilterUseRegex");
 constexpr auto REG_FILTER_CASE       = _T("FilterUseCase");
+constexpr auto REG_FILTER_STATE      = _T("FilterState");
 constexpr auto REG_CHANNELS_TYPE     = _T("ChannelsType");
 constexpr auto REG_PLAYLIST_TYPE     = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE       = _T("StreamType");

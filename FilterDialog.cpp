@@ -36,6 +36,8 @@ void CFilterDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_REGEX, m_filterRegex);
 	DDX_Control(pDX, IDC_CHECK_CASE, m_wndFilterCase);
 	DDX_Check(pDX, IDC_CHECK_CASE, m_filterCase);
+	DDX_Control(pDX, IDC_RADIO_SHOW_FILTERED, m_wndFilterShow);
+	DDX_Control(pDX, IDC_RADIO_HIDE_FILTERED, m_wndFilterHide);
 }
 
 BOOL CFilterDialog::OnInitDialog()
@@ -47,8 +49,11 @@ BOOL CFilterDialog::OnInitDialog()
 
 	m_filterRegex  = GetConfig().get_int(false, REG_FILTER_REGEX);
 	m_filterCase   = GetConfig().get_int(false, REG_FILTER_CASE);
+	BOOL state     = GetConfig().get_int(false, REG_FILTER_STATE);
 
 	m_wndFilterString.LoadHistoryFromText(stringList, filterString);
+	m_wndFilterShow.SetCheck(state);
+	m_wndFilterHide.SetCheck(state == 0);
 
 	UpdateData(FALSE);
 
@@ -82,10 +87,10 @@ void CFilterDialog::OnOK()
 	GetConfig().set_string(false, REG_FILTER_STRING_LST, m_wndFilterString.SaveHistoryToText().GetString());
 	GetConfig().set_int(false, REG_FILTER_REGEX, m_filterRegex);
 	GetConfig().set_int(false, REG_FILTER_CASE, m_filterCase);
+	GetConfig().set_int(false, REG_FILTER_STATE, GetCheckedRadioButton(IDC_RADIO_SHOW_FILTERED, IDC_RADIO_HIDE_FILTERED) == IDC_RADIO_SHOW_FILTERED);
 
 	__super::OnOK();
 }
-
 
 void CFilterDialog::OnUpdateControls()
 {

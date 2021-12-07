@@ -29,6 +29,8 @@ protected:
 public:
 	CButton m_wndFilterRegex;
 	CButton m_wndFilterCase;
+	CButton m_wndFilterHide;
+	CButton m_wndFilterShow;
 	CHistoryCombo m_wndFilterString;
 
 	BOOL m_filterRegex = FALSE; // m_wndFilterRegex

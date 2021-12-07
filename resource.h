@@ -71,7 +71,7 @@
 #define IDS_STRING_BUTTON_PACK          182
 #define IDS_STRING_BUTTON_SETTINGS      183
 #define IDS_STRING_SHOW_CHANGED         184
-#define IDS_STRING_BUTTON_CHOOSE_PLAYLIST 185
+#define IDS_STRING_ACCOUNT_SETTINGS     185
 #define IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST 186
 #define IDS_STRING_EDIT_PL_SEARCH       187
 #define IDS_STRING_BUTTON_PL_SEARCH_NEXT 188
@@ -201,13 +201,14 @@
 #define IDC_MFCEDITBROWSE_PLUGINS_PATH  1112
 #define IDC_STATIC_ICON_SIZE            1113
 #define IDC_CHECK_CMP_TITLE             1114
-#define IDC_CHECK1                      1114
 #define IDC_CHECK_CMP_ICON              1115
 #define IDC_CHECK_CMP_EPG1              1116
 #define IDC_CHECK_CMP_EPG2              1117
 #define IDC_CHECK_CMP_ARCHIVE           1118
 #define IDC_CHECK_AUTO_HIDE             1119
 #define IDC_COMBO_STRING                1120
+#define IDC_RADIO_SHOW_FILTERED         1121
+#define IDC_RADIO_HIDE_FILTERED         1122
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -233,12 +234,12 @@
 #define ID_MAKE_ALL                     32800
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        206
 #define _APS_NEXT_COMMAND_VALUE         32801
-#define _APS_NEXT_CONTROL_VALUE         1121
+#define _APS_NEXT_CONTROL_VALUE         1123
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

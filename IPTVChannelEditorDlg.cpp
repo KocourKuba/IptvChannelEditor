@@ -66,7 +66,7 @@ std::map<UINT, UINT> tooltips_info =
 	{ IDC_BUTTON_SAVE, IDS_STRING_BUTTON_SAVE },
 	{ IDC_SPLIT_BUTTON_PACK, IDS_STRING_BUTTON_PACK },
 	{ IDC_BUTTON_SETTINGS, IDS_STRING_BUTTON_SETTINGS },
-	{ IDC_BUTTON_CHOOSE_PLAYLIST, IDS_STRING_BUTTON_CHOOSE_PLAYLIST },
+	{ IDC_BUTTON_CHOOSE_PLAYLIST, IDS_STRING_ACCOUNT_SETTINGS },
 	{ IDC_BUTTON_DOWNLOAD_PLAYLIST, IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST },
 	{ IDC_EDIT_PL_SEARCH, IDS_STRING_EDIT_PL_SEARCH },
 	{ IDC_BUTTON_PL_SEARCH_NEXT, IDS_STRING_BUTTON_PL_SEARCH_NEXT },
@@ -2911,6 +2911,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	auto filter = GetConfig().get_string(false, REG_FILTER_STRING);
 	auto bRegex = GetConfig().get_int(false, REG_FILTER_REGEX);
 	auto bCase  = GetConfig().get_int(false, REG_FILTER_CASE);
+	auto bState = GetConfig().get_int(false, REG_FILTER_STATE);
 
 	std::wregex re;
 	if (bRegex)
@@ -2969,7 +2970,10 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 				}
 			}
 
-			if (!found && bNotAdded)
+			if (bState)
+				found = !found;
+
+			if (bNotAdded && !found)
 				found = m_channelsMap.find(entry->stream_uri->get_id()) != m_channelsMap.end();
 
 			if (!found)
