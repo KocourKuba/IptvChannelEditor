@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<desktop scan="55" scanned="20211209210449" built="20211207114355" lang="ru" pane="TLogPane" col="1" row="Dialogs.132.1.Text">
+  <language id="ru" autoime="0" autokeyboard="0"/>
+  <triggers>
+    <item class="TRemoveUnusedItemsTrigger" position="6"/>
+    <item class="TValidateTrigger" position="6" enabled="0"/>
+  </triggers>
+  <sheet>
+    <columns>
+      <item class="TFlagsColumn" width="38"/>
+      <item class="TPathColumn" width="162"/>
+      <item class="TTranslationStatusColumn" width="93"/>
+      <item class="TOriginalColumn" width="327"/>
+      <item class="TTranslationColumn" lang="ru" width="331"/>
+    </columns>
+    <filters>
+      <current>
+        <statuses>[tsNotTranslated,tsBestGuess,tsAutoTranslated,tsTranslated,tsForReview]</statuses>
+      </current>
+    </filters>
+    <params>
+      <findtext>Splash</findtext>
+      <findtext>2009</findtext>
+      <findtext>File</findtext>
+    </params>
+  </sheet>
+  <view node="TWindowsDialogNode" view="TFormEditor"/>
+  <view node="TWindowsAcceleratorNode" view="TWindowsAcceleratorEditor"/>
+  <view node="TWindowsMenuNode" view="TMenuEditor"/>
+  <path>
+    <item>All</item>
+    <item>Release Unicode\IPTVChannelEditor.exe</item>
+  </path>
+  <export format="efXliff">
+    <filter duplicates="dfDuplicatesEqual">
+    </filter>
+    <xliff escape="seNone" items="[eiContext,eiRowStatus,eiRowComment,eiRowLocked,eiRowMarked,eiTranslationStatus,eiTranslationComment,eiTranslationInvalidated,eiTranslationMarked,eiMaxChars,eiMaxPixels]" translation="teIngoreIfNoValue"/>
+  </export>
+</desktop>
