@@ -146,6 +146,10 @@ class StarnetPluginTv extends AbstractTv
                 throw new Exception($error_string);
             }
 
+            if (isset($xml_tv_category->disabled)) {
+                continue;
+            }
+
             $this->groups->put(new DefaultGroup((string)$xml_tv_category->id,
                 (string)$xml_tv_category->caption,
                 (string)$xml_tv_category->icon_url));
@@ -185,15 +189,26 @@ class StarnetPluginTv extends AbstractTv
             }
             // hd_print("load_channels: $streaming_url");
 
-            if ($this->channels->has($hash)) {
-                // added or existing channel
-                $channel = $this->channels->get($hash);
+            // Read category id from channel
+            if (!isset($xml_tv_channel->tv_category_id)) {
+                hd_print("Error: Category undefined for channel $hash ($xml_tv_channel->caption) !");
+                continue;
             }
-            else
-            {
+
+            $tv_category_id = (int)$xml_tv_channel->tv_category_id;
+            if (!$this->groups->has($tv_category_id)) {
+                // Category disabled or some went wrong
+                continue;
+            }
+
+            if ($this->channels->has($hash)) {
+                $channel = $this->channels->get($hash);
+            } else {
                 // https not supported for old players
-                $icon_url = str_replace("https://", "http://", (string)$xml_tv_channel->icon_url);
+                // $icon_url = str_replace("https://", "http://", (string)$xml_tv_channel->icon_url);
+                $icon_url = (string)$xml_tv_channel->icon_url;
                 $number = isset($xml_tv_channel->int_id) ? (int)$xml_tv_channel->int_id : 0;
+
                 $channel = new StarnetChannel(
                     $hash,
                     $channel_id,
@@ -208,42 +223,18 @@ class StarnetPluginTv extends AbstractTv
                     (int)$xml_tv_channel->timeshift_hours,
                     $ext_params
                 );
-
                 $this->channels->put($channel);
             }
 
-            // Read category id from channel
-            if (isset($xml_tv_channel->tv_category_id)) {
-                // new format
-                $tv_category_id = (int)$xml_tv_channel->tv_category_id;
-                $group = $this->groups->get($tv_category_id);
+            // Link group and channel.
+            $group = $this->groups->get($tv_category_id);
+            $channel->add_group($group);
+            $group->add_channel($channel);
 
-                // Link group and channel.
-                $channel->add_group($group);
-                $group->add_channel($channel);
-
-                // only new format support favorites
-                if ($xml_tv_channel->favorite && $this->is_favorites_supported()) {
-                    hd_print("Add to favorite $hash ($xml_tv_channel->caption)");
-                    $this->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $hash, $plugin_cookies);
-                }
-            } else if (isset($xml_tv_channel->tv_categories)) {
-                // old format
-                foreach ($xml_tv_channel->tv_categories->children() as $xml_tv_cat_id) {
-                    if ($xml_tv_cat_id->getName() !== 'tv_category_id') {
-                        hd_print("Error: unexpected node '{$xml_tv_cat_id->getName()}'. Expected: 'tv_category_id'");
-                        throw new Exception('Invalid XML document');
-                    }
-
-                    $tv_category_id = (int)$xml_tv_cat_id;
-                    $group = $this->groups->get($tv_category_id);
-
-                    // Link group and channel.
-                    $channel->add_group($group);
-                    $group->add_channel($channel);
-                }
-            } else {
-                hd_print("Error: Category undefined for channel $hash ($xml_tv_channel->caption) !");
+            // only new format support favorites
+            if ($xml_tv_channel->favorite && $this->is_favorites_supported()) {
+                hd_print("Add to favorite $hash ($xml_tv_channel->caption)");
+                $this->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $hash, $plugin_cookies);
             }
         }
 

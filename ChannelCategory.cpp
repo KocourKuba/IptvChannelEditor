@@ -31,6 +31,8 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
 	// <icon_url>plugin_file://icons/1.png</icon_url>
 	set_icon_uri(utils::get_value_wstring(node->first_node(ICON_URL)));
+	// <disabled>true</disabled>
+	set_disabled(utils::string_tolower(utils::get_value_string(node->first_node(utils::DISABLED))) == "true");
 }
 
 rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) const
@@ -46,6 +48,11 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 
 	// <icon_url>plugin_file://icons/1.png</icon_url>
 	category_node->append_node(utils::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
+
+	if (is_disabled())
+	{
+		category_node->append_node(utils::alloc_node(alloc, utils::DISABLED, "true"));
+	}
 
 	return category_node;
 }

@@ -99,6 +99,8 @@
 #define IDS_STRING_ADD_NEW_CHANNELS     209
 #define IDS_STRING_NOT_ADDED            210
 #define IDS_STRING_ALREADY_RUNNING      211
+#define IDS_STRING_ENABLE_CHANNEL       212
+#define IDS_STRING_ENABLE_CATEGORY      213
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
@@ -232,13 +234,14 @@
 #define ID_ADD_TO_FAVORITE              32798
 #define ID_CLEAR_STREAM_INFO            32799
 #define ID_MAKE_ALL                     32800
+#define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        206
-#define _APS_NEXT_COMMAND_VALUE         32801
+#define _APS_NEXT_COMMAND_VALUE         32802
 #define _APS_NEXT_CONTROL_VALUE         1123
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif

@@ -35,10 +35,14 @@ public:
 
 	void sort_channels();
 
+	bool is_disabled() const { return disabled; }
+	void set_disabled(bool val) { disabled = val; }
+
 	std::shared_ptr<ChannelInfo> find_channel(const std::wstring& ch_id);
 
 private:
 	std::vector<std::shared_ptr<ChannelInfo>> channels;
 	std::map<std::wstring, std::shared_ptr<ChannelInfo>> channels_map;
+	bool disabled = false;
 };
 

@@ -182,6 +182,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_SORT_CATEGORY, &CIPTVChannelEditorDlg::OnUpdateSortCategory)
 	ON_COMMAND(ID_TOGGLE_CHANNEL, &CIPTVChannelEditorDlg::OnToggleChannel)
 	ON_UPDATE_COMMAND_UI(ID_TOGGLE_CHANNEL, &CIPTVChannelEditorDlg::OnUpdateToggleChannel)
+	ON_COMMAND(ID_TOGGLE_CATEGORY, &CIPTVChannelEditorDlg::OnToggleCategory)
+	ON_UPDATE_COMMAND_UI(ID_TOGGLE_CATEGORY, &CIPTVChannelEditorDlg::OnUpdateToggleCategory)
 	ON_COMMAND(ID_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnGetStreamInfo)
 	ON_UPDATE_COMMAND_UI(ID_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnUpdateGetStreamInfo)
 	ON_COMMAND(ID_CLEAR_STREAM_INFO, &CIPTVChannelEditorDlg::OnClearStreamInfo)
@@ -1034,6 +1036,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		tvCategory.item.lParam = (DWORD_PTR)InfoType::enCategory;
 		tvCategory.hInsertAfter = (pair.first == ID_ADD_TO_FAVORITE) ? TVI_FIRST : nullptr;
 		auto hParent = m_wndChannelsTree.InsertItem(&tvCategory);
+		m_wndChannelsTree.SetItemColor(hParent, pair.second.category->is_disabled() ? m_gray : m_normal);
 
 		m_categoriesTreeMap.emplace(hParent, pair.first);
 		pair.second.hItem = hParent;
@@ -4042,7 +4045,7 @@ void CIPTVChannelEditorDlg::OnToggleChannel()
 		if (const auto& channel = FindChannel(hItem); channel != nullptr)
 		{
 			channel->set_disabled(!m_menu_enable_channel);
-			m_wndChannelsTree.SetItemColor(hItem, ::GetSysColor(COLOR_GRAYTEXT));
+			m_wndChannelsTree.SetItemColor(hItem, channel->is_disabled() ? m_gray : m_normal);
 			set_allow_save();
 		}
 	}
@@ -4053,22 +4056,65 @@ void CIPTVChannelEditorDlg::OnToggleChannel()
 void CIPTVChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
+	CString text;
+	text.LoadString(IDS_STRING_ENABLE_CHANNEL);
 	if (IsSelectedChannelsOrEntries() && IsSelectedNotFavorite())
 	{
 		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 		{
 			if (const auto& channel = FindChannel(hItem); channel != nullptr)
 			{
-				m_menu_enable_channel = channel->is_disabled();
-				if (m_menu_enable_channel)
-				{
-					pCmdUI->SetText(_T("Enable Channel"));
-				}
+				m_menu_enable_channel |= channel->is_disabled();
 				enable = TRUE;
 			}
 		}
 	}
 
+	if (m_menu_enable_channel)
+	{
+		pCmdUI->SetText(text);
+	}
+
+	pCmdUI->Enable(enable);
+}
+
+void CIPTVChannelEditorDlg::OnToggleCategory()
+{
+	const auto& selected = m_wndChannelsTree.GetSelectedItems();
+	for (const auto& hItem : selected)
+	{
+		if (const auto& category = FindCategory(hItem); category != nullptr)
+		{
+			category->set_disabled(!m_menu_enable_category);
+			m_wndChannelsTree.SetItemColor(hItem, category->is_disabled() ? m_gray : m_normal);
+			set_allow_save();
+		}
+	}
+
+	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(selected.front()));
+}
+
+void CIPTVChannelEditorDlg::OnUpdateToggleCategory(CCmdUI* pCmdUI)
+{
+	BOOL enable = FALSE;
+	CString text;
+	text.LoadString(IDS_STRING_ENABLE_CATEGORY);
+	if (IsSelectedCategory() && IsSelectedNotFavorite())
+	{
+		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
+		{
+			if (const auto& category = FindCategory(hItem); category != nullptr)
+			{
+				m_menu_enable_category |= category->is_disabled();
+				enable = TRUE;
+			}
+		}
+	}
+
+	if (m_menu_enable_category)
+	{
+		pCmdUI->SetText(text);
+	}
 	pCmdUI->Enable(enable);
 }
 

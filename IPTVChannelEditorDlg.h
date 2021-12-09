@@ -76,6 +76,8 @@ protected:
 	afx_msg void OnUpdateChannelDown(CCmdUI* pCmdUI);
 	afx_msg void OnToggleChannel();
 	afx_msg void OnUpdateToggleChannel(CCmdUI* pCmdUI);
+	afx_msg void OnToggleCategory();
+	afx_msg void OnUpdateToggleCategory(CCmdUI* pCmdUI);
 	afx_msg void OnRenameChannel();
 	afx_msg void OnUpdateRenameChannel(CCmdUI* pCmdUI);
 	afx_msg void OnNewCategory();
@@ -106,6 +108,8 @@ protected:
 	afx_msg void OnBnClickedButtonTestEpg();
 	afx_msg void OnBnClickedButtonEpg();
 	afx_msg void OnBnClickedButtonUpdateChanged();
+	afx_msg void OnBnClickedCheckShowChanged();
+	afx_msg void OnBnClickedCheckNotAdded();
 
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedCheckAdult();
@@ -316,6 +320,7 @@ private:
 	bool m_bInFillTree = false;
 	bool m_blockChecking = false;
 	bool m_menu_enable_channel = false;
+	bool m_menu_enable_category = false;
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
@@ -389,7 +394,4 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
 	std::map<std::wstring, nlohmann::json> m_epgMap;
-public:
-	afx_msg void OnBnClickedCheckShowChanged();
-	afx_msg void OnBnClickedCheckNotAdded();
 };
