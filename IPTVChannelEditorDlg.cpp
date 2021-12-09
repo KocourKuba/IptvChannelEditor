@@ -1303,7 +1303,6 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	if (!info)
 		return;
 
-	bool useTimeShift = (pTreeCtl == &m_wndChannelsTree);
 	bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG1) == IDC_RADIO_EPG1;
 	nlohmann::json epg_data;
 	try
@@ -1326,9 +1325,9 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			epg_data = pair->second;
 		}
 
-		time_t now = time(nullptr);
-		if (useTimeShift)
-			now += m_timeShiftHours * 3600;
+		time_t now = time(nullptr) - m_archiveCheckDays * 24 * 3600 - m_archiveCheckHours * 3600;
+		if (pTreeCtl == &m_wndChannelsTree)
+			now += m_timeShiftHours;
 
 		const auto& root = info->stream_uri->get_epg_root();
 		if (!root.empty() && epg_data.contains(root))
@@ -2599,6 +2598,8 @@ void CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckDays()
 	UpdateData(FALSE);
 
 	GetConfig().set_int(true, REG_DAYS_BACK, m_archiveCheckDays);
+
+	UpdateEPG(m_lastTree);
 }
 
 void CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckHours()
@@ -2614,6 +2615,8 @@ void CIPTVChannelEditorDlg::OnEnChangeEditArchiveCheckHours()
 	UpdateData(FALSE);
 
 	GetConfig().set_int(true, REG_HOURS_BACK, m_archiveCheckHours);
+
+	UpdateEPG(m_lastTree);
 }
 
 void CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult)
