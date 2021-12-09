@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20211209220458" scan="56" scanned="20211209220323">
+<document created="20211012165442" version="4.0.374" date="20211210001345" scan="59" scanned="20211210001330">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211209205818" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211209231248" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -145,7 +145,7 @@
           <row id="Font">MS Shell Dlg,8</row>
           <row id="Text">
             <native>Custom URL</native>
-            <lang id="ru" date="20211012173057">Своя ссылка</lang>
+            <lang id="ru" date="20211012173057" savedtotm="1">Своя ссылка</lang>
           </row>
           <row id="X">0</row>
           <row id="Y">0</row>
@@ -181,7 +181,7 @@
           <row id="Font">MS Shell Dlg,8</row>
           <row id="Text">
             <native>Access Info</native>
-            <lang id="ru" date="20211012170020">Информация о доступе</lang>
+            <lang id="ru" date="20211012170020" savedtotm="1">Информация о доступе</lang>
           </row>
           <row id="X">0</row>
           <row id="Y">0</row>
@@ -190,7 +190,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>OTT Access Key</native>
-              <lang id="ru" date="20211012170043">Ключ доступа OTT</lang>
+              <lang id="ru" date="20211012170043" savedtotm="1">Ключ доступа OTT</lang>
             </row>
             <row id="X">7</row>
             <row id="Y">35</row>
@@ -200,7 +200,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Stream Domain</native>
-              <lang id="ru" date="20211012170108">Потоковый домен</lang>
+              <lang id="ru" date="20211012170108" savedtotm="1">Потоковый домен</lang>
             </row>
             <row id="X">108</row>
             <row id="Y">35</row>
@@ -210,7 +210,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Read from URL (direct link) or File</native>
-              <lang id="ru" date="20211012170158">Прочитать из ссылки (прямая ссылка) или из файла</lang>
+              <lang id="ru" date="20211012170158" savedtotm="1">Прочитать из ссылки (прямая ссылка) или из файла</lang>
             </row>
             <row id="X">7</row>
             <row id="Y">7</row>
@@ -265,7 +265,7 @@
             <row id="CY">14</row>
             <row id="Text">
               <native>Get</native>
-              <lang id="ru" date="20211012170205">Получить</lang>
+              <lang id="ru" date="20211012170205" savedtotm="1">Получить</lang>
             </row>
             <row id="X" changed="20211012172720">179</row>
             <row id="Y">18</row>
@@ -275,66 +275,110 @@
       <node class="TWindowsDialogNode" name="106" resid="106" langid="1033">
         <form class="TWindowsForm" name="106" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
           <row id="CX" changed="20211207011045">219</row>
-          <row id="CY" changed="20211207010554">79</row>
+          <row id="CY" changed="20211209235941">124</row>
           <row id="Font">MS Shell Dlg,8</row>
           <row id="Text" changed="20211207010554">
             <native>Filter playlist</native>
-            <lang id="ru" date="20211207010616">Фильтр плейлиста</lang>
+            <lang id="ru" date="20211207010616" savedtotm="1">Фильтр плейлиста</lang>
           </row>
           <row id="X">0</row>
           <row id="Y">0</row>
+          <component class="TVisFramePicture" name="STATIC__" created="20211209235941" type="static" unnamed="1" kind="skEtched">
+            <row id="CX">205</row>
+            <row id="CY">1</row>
+            <row id="X">7</row>
+            <row id="Y">51</row>
+          </component>
+          <component class="TVisCheckBox" name="1122" created="20211210000532" type="button">
+            <row id="CX">103</row>
+            <row id="CY">10</row>
+            <row id="Text">
+              <native>Show matched</native>
+              <lang id="ru" date="20211210000633">Показать совпадающие</lang>
+            </row>
+            <row id="X">7</row>
+            <row id="Y">7</row>
+          </component>
           <component class="TVisCheckBox" name="1031" type="button">
-            <row id="CX" changed="20211012174121">90</row>
+            <row id="CX" changed="20211209235941">100</row>
             <row id="CY">10</row>
             <row id="Text">
               <native>Regular Expression</native>
-              <lang id="ru" date="20211012170509">Регулярное выражение</lang>
+              <lang id="ru" date="20211012170509" savedtotm="1">Регулярное выражение</lang>
             </row>
             <row id="X">7</row>
-            <row id="Y" changed="20211207010554">23</row>
+            <row id="Y" changed="20211209235941">35</row>
           </component>
           <component class="TVisCheckBox" name="1027" type="button">
-            <row id="CX" changed="20211130113005">78</row>
+            <row id="CX" changed="20211209235941">92</row>
             <row id="CY">10</row>
             <row id="Text">
               <native>Case sensitive</native>
-              <lang id="ru" date="20211012170521">Учитывать регистр</lang>
+              <lang id="ru" date="20211012170521" savedtotm="1">Учитывать регистр</lang>
             </row>
-            <row id="X" changed="20211207010554">7</row>
-            <row id="Y" changed="20211207010554">36</row>
+            <row id="X" changed="20211209235941">113</row>
+            <row id="Y" changed="20211209235941">35</row>
           </component>
-          <component class="TVisRadioButton" name="1121" created="20211207010554" type="button">
-            <row id="CX" changed="20211207011045">104</row>
+          <component class="TVisCheckBox" name="1123" created="20211209235941" type="button">
+            <row id="CX">103</row>
             <row id="CY">10</row>
-            <row id="Text" changed="20211207010923">
-              <native>Show matched</native>
-              <lang id="ru" date="20211207010733">Показать совпадающие</lang>
-            </row>
-            <row id="X" changed="20211207011045">108</row>
-            <row id="Y">23</row>
-          </component>
-          <component class="TVisRadioButton" name="1122" created="20211207010554" type="button">
-            <row id="CX" changed="20211207011045">104</row>
-            <row id="CY">10</row>
-            <row id="Text" changed="20211207010923">
+            <row id="Text" changed="20211210000532">
               <native>Hide matched</native>
-              <lang id="ru" date="20211207010936">Скрыть совпадающие</lang>
+              <lang id="ru" date="20211210000611">Скрыть совпадающие</lang>
             </row>
-            <row id="X" changed="20211207011045">108</row>
-            <row id="Y">36</row>
+            <row id="X">7</row>
+            <row id="Y" changed="20211210000532">57</row>
+          </component>
+          <component class="TVisCheckBox" name="1003" state="0" created="20211210001330" type="button">
+            <row id="CX" state="0">100</row>
+            <row id="CY" state="0">10</row>
+            <row id="Text" state="0">
+              <native>Regular Expression</native>
+              <lang id="ru">Регулярное выражение</lang>
+            </row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">86</row>
+          </component>
+          <component class="TVisCheckBox" name="1002" state="0" created="20211210001330" type="button">
+            <row id="CX" state="0">92</row>
+            <row id="CY" state="0">10</row>
+            <row id="Text" state="0">
+              <native>Case sensitive</native>
+              <lang id="ru">Учитывать регистр</lang>
+            </row>
+            <row id="X" state="0">113</row>
+            <row id="Y" state="0">86</row>
+          </component>
+          <component class="TVisCheckBox" name="1032" state="1" created="20211209235941" type="button">
+            <row id="Text" state="1">
+              <native>Regular Expression</native>
+              <lang id="ru">Регулярное выражение</lang>
+            </row>
+          </component>
+          <component class="TVisCheckBox" name="1028" state="1" created="20211209235941" type="button">
+            <row id="Text" state="1">
+              <native>Case sensitive</native>
+              <lang id="ru">Учитывать регистр</lang>
+            </row>
           </component>
           <component class="TVisComboBox" name="1120" created="20211207010554" type="combobox" autosize="1" integralheight="1">
             <row id="CX" changed="20211207011045">205</row>
             <row id="CY">30</row>
             <row id="X">7</row>
-            <row id="Y">7</row>
+            <row id="Y" changed="20211209235941">19</row>
+          </component>
+          <component class="TVisComboBox" name="1121" created="20211209235941" type="combobox" autosize="1" integralheight="1">
+            <row id="CX">205</row>
+            <row id="CY">30</row>
+            <row id="X">7</row>
+            <row id="Y">70</row>
           </component>
           <component class="TVisButton" name="1" type="button" default="1">
             <row id="CX">50</row>
             <row id="CY">14</row>
             <row id="Text" locked="1">OK</row>
             <row id="X" changed="20211207011045">57</row>
-            <row id="Y" changed="20211207010554">58</row>
+            <row id="Y" changed="20211209235941">103</row>
           </component>
           <component class="TVisButton" name="2" type="button">
             <row id="CX">50</row>
@@ -344,7 +388,7 @@
               <lang id="ru" date="20211012170005">Отмена</lang>
             </row>
             <row id="X" changed="20211207011045">111</row>
-            <row id="Y" changed="20211207010554">58</row>
+            <row id="Y" changed="20211209235941">103</row>
           </component>
         </form>
       </node>
@@ -391,7 +435,7 @@
           <row id="Font">MS Shell Dlg,8</row>
           <row id="Text" changed="20211129231254">
             <native>Main</native>
-            <lang id="ru" date="20211129231304">Основные</lang>
+            <lang id="ru" date="20211129231304" savedtotm="1">Основные</lang>
           </row>
           <row id="X">0</row>
           <row id="Y">0</row>
@@ -400,7 +444,7 @@
             <row id="CY">56</row>
             <row id="Text">
               <native>Update changes</native>
-              <lang id="ru" date="20211129231337">Обновление измененных</lang>
+              <lang id="ru" date="20211129231337" savedtotm="1">Обновление измененных</lang>
             </row>
             <row id="X">7</row>
             <row id="Y">63</row>
@@ -410,7 +454,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Language</native>
-              <lang id="ru" date="20211012175608">Язык</lang>
+              <lang id="ru" date="20211012175608" savedtotm="1">Язык</lang>
             </row>
             <row id="X" changed="20211129231254">7</row>
             <row id="Y" changed="20211129231254">7</row>
@@ -420,7 +464,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Max stream threads</native>
-              <lang id="ru" date="20211012170852">Количество потоков для проверки канала</lang>
+              <lang id="ru" date="20211012170852" savedtotm="1">Количество потоков для проверки канала</lang>
             </row>
             <row id="X" changed="20211129231254">90</row>
             <row id="Y" changed="20211129231254">7</row>
@@ -430,7 +474,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Sync Channel with Playlist Entry</native>
-              <lang id="ru" date="20211012170747">Синхронизировать канал с записью в плейлисте</lang>
+              <lang id="ru" date="20211012170747" savedtotm="1">Синхронизировать канал с записью в плейлисте</lang>
             </row>
             <row id="X">7</row>
             <row id="Y" changed="20211129231254">37</row>
@@ -440,7 +484,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Hide to Tray when Minimized</native>
-              <lang id="ru">Сворачивать в системный трей</lang>
+              <lang id="ru" savedtotm="1">Сворачивать в системный трей</lang>
             </row>
             <row id="X">7</row>
             <row id="Y">50</row>
@@ -450,7 +494,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Title</native>
-              <lang id="ru" date="20211129231347">Название</lang>
+              <lang id="ru" date="20211129231347" savedtotm="1">Название</lang>
             </row>
             <row id="X">16</row>
             <row id="Y">77</row>
@@ -460,7 +504,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Icon</native>
-              <lang id="ru" date="20211129231351">Иконка</lang>
+              <lang id="ru" date="20211129231351" savedtotm="1">Иконка</lang>
             </row>
             <row id="X">16</row>
             <row id="Y">90</row>
@@ -470,7 +514,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>First EPG</native>
-              <lang id="ru" date="20211129231357">Первичный EPG</lang>
+              <lang id="ru" date="20211129231357" savedtotm="1">Первичный EPG</lang>
             </row>
             <row id="X">99</row>
             <row id="Y">77</row>
@@ -480,7 +524,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Second EPG</native>
-              <lang id="ru" date="20211129231409">Вторичный EPG</lang>
+              <lang id="ru" date="20211129231409" savedtotm="1">Вторичный EPG</lang>
             </row>
             <row id="X">99</row>
             <row id="Y">90</row>
@@ -490,7 +534,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Archive</native>
-              <lang id="ru">Архив</lang>
+              <lang id="ru" savedtotm="1">Архив</lang>
             </row>
             <row id="X">16</row>
             <row id="Y">103</row>
@@ -527,7 +571,7 @@
             <row id="CY">46</row>
             <row id="Text">
               <native>Stream Info</native>
-              <lang id="ru" date="20211012171525">Информация о потоке</lang>
+              <lang id="ru" date="20211012171525" savedtotm="1">Информация о потоке</lang>
             </row>
             <row id="X">165</row>
             <row id="Y">230</row>
@@ -537,7 +581,7 @@
             <row id="CY">181</row>
             <row id="Text">
               <native>Channel Info</native>
-              <lang id="ru" date="20211012171305">Информация о канале</lang>
+              <lang id="ru" date="20211012171305" savedtotm="1">Информация о канале</lang>
             </row>
             <row id="X">165</row>
             <row id="Y">44</row>
@@ -554,7 +598,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>for DUNE HD Players</native>
-              <lang id="ru" date="20211012171149">для приставок DUNE HD</lang>
+              <lang id="ru" date="20211012171149" savedtotm="1">для приставок DUNE HD</lang>
             </row>
             <row id="X" changed="20211012172720">67</row>
             <row id="Y">25</row>
@@ -571,7 +615,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Channels:</native>
-              <lang id="ru" date="20211012171251">Каналы:</lang>
+              <lang id="ru" date="20211012171251" savedtotm="1">Каналы:</lang>
             </row>
             <row id="X">4</row>
             <row id="Y">36</row>
@@ -587,7 +631,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Channel ID</native>
-              <lang id="ru" date="20211012172838">№ Канала</lang>
+              <lang id="ru" date="20211012172838" savedtotm="1">№ Канала</lang>
             </row>
             <row id="X">172</row>
             <row id="Y">55</row>
@@ -597,7 +641,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>EPG Time Shift</native>
-              <lang id="ru" date="20211012171328">Сдвиг EPG</lang>
+              <lang id="ru" date="20211012171328" savedtotm="1">Сдвиг EPG</lang>
             </row>
             <row id="X" changed="20211124211848">244</row>
             <row id="Y">55</row>
@@ -607,7 +651,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Adult</native>
-              <lang id="ru" date="20211012171342">Взрослый</lang>
+              <lang id="ru" date="20211012171342" savedtotm="1">Взрослый</lang>
             </row>
             <row id="X" changed="20211124211848">314</row>
             <row id="Y">55</row>
@@ -627,7 +671,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Custom Url</native>
-              <lang id="ru" date="20211012171416">Произвольная ссылка</lang>
+              <lang id="ru" date="20211012171416" savedtotm="1">Произвольная ссылка</lang>
             </row>
             <row id="X">171</row>
             <row id="Y">82</row>
@@ -637,7 +681,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>First EPG ID</native>
-              <lang id="ru" date="20211012171456">Основной EPG</lang>
+              <lang id="ru" date="20211012171456" savedtotm="1">Основной EPG</lang>
             </row>
             <row id="X">172</row>
             <row id="Y">111</row>
@@ -647,7 +691,7 @@
             <row id="CY">10</row>
             <row id="Text">
               <native>Second EPG ID</native>
-              <lang id="ru" date="20211012171436">Вторичный EPG</lang>
+              <lang id="ru" date="20211012171436" savedtotm="1">Вторичный EPG</lang>
             </row>
             <row id="X" changed="20211124211848">255</row>
             <row id="Y">111</row>
@@ -663,7 +707,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Day</native>
-              <lang id="ru" date="20211012171616">День</lang>
+              <lang id="ru" date="20211012171616" savedtotm="1">День</lang>
             </row>
             <row id="X" changed="20211013140524">280</row>
             <row id="Y">282</row>
@@ -673,7 +717,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Hour</native>
-              <lang id="ru" date="20211012171619">Час</lang>
+              <lang id="ru" date="20211012171619" savedtotm="1">Час</lang>
             </row>
             <row id="X" changed="20211013140524">342</row>
             <row id="Y">282</row>
@@ -683,7 +727,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Play Stream Type</native>
-              <lang id="ru" date="20211012171628">Тип потока</lang>
+              <lang id="ru" date="20211012171628" savedtotm="1">Тип потока</lang>
             </row>
             <row id="X" changed="20211124211848">250</row>
             <row id="Y">299</row>
@@ -693,7 +737,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Playlist:</native>
-              <lang id="ru" date="20211012171636">Плейлист:</lang>
+              <lang id="ru" date="20211012171636" savedtotm="1">Плейлист:</lang>
             </row>
             <row id="X" changed="20211124211848">410</row>
             <row id="Y">36</row>
@@ -722,7 +766,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>Icons source</native>
-              <lang id="ru" date="20211012233441">Источник иконок</lang>
+              <lang id="ru" date="20211012233441" savedtotm="1">Источник иконок</lang>
             </row>
             <row id="X" changed="20211012174121">93</row>
             <row id="Y">345</row>
@@ -758,7 +802,7 @@
             <row id="CY">8</row>
             <row id="Text">
               <native>ID:</native>
-              <lang id="ru" date="20211012172846">№:</lang>
+              <lang id="ru" date="20211012172846" savedtotm="1">№:</lang>
             </row>
             <row id="X" changed="20211124211848">409</row>
             <row id="Y" changed="20211129231254">325</row>
@@ -927,7 +971,7 @@
             <row id="CY">15</row>
             <row id="Text">
               <native>About</native>
-              <lang id="ru" date="20211012171221">О редакторе</lang>
+              <lang id="ru" date="20211012171221" savedtotm="1">О редакторе</lang>
             </row>
             <row id="X" changed="20211124211848">504</row>
             <row id="Y">18</row>
@@ -957,7 +1001,7 @@
             <row id="CY">14</row>
             <row id="Text">
               <native>View EPG</native>
-              <lang id="ru" date="20211012171513">Просмотр</lang>
+              <lang id="ru" date="20211012171513" savedtotm="1">Просмотр</lang>
             </row>
             <row id="X" changed="20211124211848">337</row>
             <row id="Y" changed="20211124211848">121</row>
@@ -967,7 +1011,7 @@
             <row id="CY" changed="20211012172720">16</row>
             <row id="Text">
               <native>Check Archive</native>
-              <lang id="ru" date="20211012171546">Проверить архив</lang>
+              <lang id="ru" date="20211012171546" savedtotm="1">Проверить архив</lang>
             </row>
             <row id="X">165</row>
             <row id="Y" changed="20211012172720">278</row>
@@ -1017,7 +1061,7 @@
             <row id="CY">19</row>
             <row id="Text">
               <native>Cache Icon</native>
-              <lang id="ru" date="20211012172950">Сохранить иконку</lang>
+              <lang id="ru" date="20211012172950" savedtotm="1">Сохранить иконку</lang>
             </row>
             <row id="X" changed="20211012174121">92</row>
             <row id="Y">323</row>
@@ -1027,7 +1071,7 @@
             <row id="CY">19</row>
             <row id="Text">
               <native>Save Channels</native>
-              <lang id="ru" date="20211012171830">Сохранить</lang>
+              <lang id="ru" date="20211012171830" savedtotm="1">Сохранить</lang>
             </row>
             <row id="X" changed="20211012172720">165</row>
             <row id="Y">323</row>
@@ -1037,7 +1081,7 @@
             <row id="CY">19</row>
             <row id="Text">
               <native>Stop</native>
-              <lang id="ru" date="20211012171835">Стоп</lang>
+              <lang id="ru" date="20211012171835" savedtotm="1">Стоп</lang>
             </row>
             <row id="X" changed="20211124211848">247</row>
             <row id="Y">323</row>
@@ -1047,7 +1091,7 @@
             <row id="CY">19</row>
             <row id="Text">
               <native>Make plugin</native>
-              <lang id="ru">Создать плагин</lang>
+              <lang id="ru" savedtotm="1">Создать плагин</lang>
             </row>
             <row id="X">329</row>
             <row id="Y">323</row>
@@ -1057,7 +1101,7 @@
             <row id="CY">19</row>
             <row id="Text">
               <native>Settings</native>
-              <lang id="ru" date="20211012170621">Настройки</lang>
+              <lang id="ru" date="20211012170621" savedtotm="1">Настройки</lang>
             </row>
             <row id="X" changed="20211012172720">165</row>
             <row id="Y" changed="20211012174121">381</row>
@@ -1067,7 +1111,7 @@
             <row id="CY">19</row>
             <row id="Text">
               <native>Exit</native>
-              <lang id="ru" date="20211012171953">Выход</lang>
+              <lang id="ru" date="20211012171953" savedtotm="1">Выход</lang>
             </row>
             <row id="X" changed="20211124211848">330</row>
             <row id="Y" changed="20211012174121">381</row>
@@ -1077,7 +1121,7 @@
             <row id="CY">19</row>
             <row id="Text">
               <native>Update changed</native>
-              <lang id="ru" date="20211012172018">Обновить каналы</lang>
+              <lang id="ru" date="20211012172018" savedtotm="1">Обновить каналы</lang>
             </row>
             <row id="X" changed="20211124211848">248</row>
             <row id="Y" changed="20211012174121">381</row>
@@ -3139,10 +3183,10 @@
                 <lang id="ru" date="20211012174305">Сортировать категорию</lang>
               </row>
             </component>
-            <component class="TVisMenuItem" name="32802" created="20211209220323" type="menu">
+            <component class="TVisMenuItem" name="32801" created="20211209235941" type="menu">
               <row id="Text">
                 <native>Disable Category</native>
-                <lang id="ru" date="20211209220342">Отключить категорию</lang>
+                <lang id="ru">Отключить категорию</lang>
               </row>
             </component>
             <component class="TVisMenuItem" name="MENU_#2" created="20211209210449" type="menu">
@@ -3283,20 +3327,38 @@
           </component>
         </menu>
       </node>
-      <node class="TWindowsMenuNode" name="202" created="20211124211848" resid="202" langid="1033">
-        <menu class="TVisMenu" name="Menu">
-          <component class="TVisMenuItem" name="POPUP_TrayIcon" importname="POPUP" type="popup">
-            <row id="Text" locked="1">TrayIcon</row>
-            <component class="TVisMenuItem" name="32780" type="menu">
-              <row id="Text">
+      <node class="TWindowsMenuNode" name="17" state="0" created="20211210001330" resid="17" langid="1033">
+        <menu class="TVisMenu" name="Menu" state="0">
+          <component class="TVisMenuItem" name="POPUP_TrayIcon" importname="POPUP" state="0" type="popup">
+            <row id="Text" locked="1" state="0">TrayIcon</row>
+            <component class="TVisMenuItem" name="32780" state="0" type="menu">
+              <row id="Text" state="0">
                 <native>&amp;Restore from Tray</native>
-                <lang id="ru" date="20211124211957">&amp;Восстановить</lang>
+                <lang id="ru">&amp;Восстановить</lang>
               </row>
             </component>
-            <component class="TVisMenuItem" name="MENU" type="menu">
+            <component class="TVisMenuItem" name="MENU" state="0" type="menu">
             </component>
-            <component class="TVisMenuItem" name="57665" type="menu">
-              <row id="Text">
+            <component class="TVisMenuItem" name="57665" state="0" type="menu">
+              <row id="Text" state="0">
+                <native>E&amp;xit</native>
+                <lang id="ru">Вы&amp;ход</lang>
+              </row>
+            </component>
+          </component>
+        </menu>
+      </node>
+      <node class="TWindowsMenuNode" name="202" state="1" created="20211124211848" resid="202" langid="1033">
+        <menu class="TVisMenu" name="Menu">
+          <component class="TVisMenuItem" name="POPUP_TrayIcon" importname="POPUP" state="1" type="popup">
+            <component class="TVisMenuItem" name="32780" state="1" type="menu">
+              <row id="Text" state="1">
+                <native>&amp;Restore from Tray</native>
+                <lang id="ru" date="20211124211957" savedtotm="1">&amp;Восстановить</lang>
+              </row>
+            </component>
+            <component class="TVisMenuItem" name="57665" state="1" type="menu">
+              <row id="Text" state="1">
                 <native>E&amp;xit</native>
                 <lang id="ru" date="20211124212038">Вы&amp;ход</lang>
               </row>
@@ -3309,67 +3371,67 @@
       <node class="TWindowsStringNode" name="10" created="20211012205715" resid="10" langid="1033">
         <row id="IDS_STRING_FMT_CHANNELS" created="20211012215027">
           <native>Channels: {:d} ({:d} changed)</native>
-          <lang id="ru" date="20211012215118">Каналы: {:d} ({:d} изменено)</lang>
+          <lang id="ru" date="20211012215118" savedtotm="1">Каналы: {:d} ({:d} изменено)</lang>
         </row>
         <row id="IDS_STRING_FMT_CHANNELS_READED" created="20211012215027">
           <native>Channels readed: %d</native>
-          <lang id="ru" date="20211012215137">Каналов прочитано: %d</lang>
+          <lang id="ru" date="20211012215137" savedtotm="1">Каналов прочитано: %d</lang>
         </row>
         <row id="IDS_STRING_FMT_CHANNELS_TOOLTIP1" created="20211012215027" changed="20211012223617">
           <native>Name:		%s#lID:		%s#lEPG1 ID:	%s#l</native>
-          <lang id="ru" date="20211012215225">Название:	%s#n№:		%s#nEPG1 №:	%s#n</lang>
+          <lang id="ru" date="20211012215225" savedtotm="1">Название:	%s#n№:		%s#nEPG1 №:	%s#n</lang>
         </row>
         <row id="IDS_STRING_FMT_CHANNELS_TOOLTIP2" created="20211012215027" changed="20211012215442">
           <native>EPG2 ID:	%s#l</native>
-          <lang id="ru" date="20211012215502">EPG2 №:	%s#n</lang>
+          <lang id="ru" date="20211012215502" savedtotm="1">EPG2 №:	%s#n</lang>
         </row>
         <row id="IDS_STRING_FMT_PLAYLIST" created="20211012215027">
           <native>{:s}, Channels: {:d}</native>
-          <lang id="ru" date="20211012215128">{:s}, Каналы: {:d}</lang>
+          <lang id="ru" date="20211012215128" savedtotm="1">{:s}, Каналы: {:d}</lang>
         </row>
         <row id="IDS_STRING_FMT_PLAYLIST_FLT" created="20211012215027">
           <native>{:s}, Channels: {:d} ({:d})</native>
-          <lang id="ru" date="20211012215123">{:s}, Каналы: {:d} ({:d})</lang>
+          <lang id="ru" date="20211012215123" savedtotm="1">{:s}, Каналы: {:d} ({:d})</lang>
         </row>
         <row id="IDS_STRING_FMT_STREAM_INFO" created="20211012215027">
           <native>Get Stream Info: %d from %d</native>
-          <lang id="ru" date="20211012215159">Информация о потоке: %d из %d</lang>
+          <lang id="ru" date="20211012215159" savedtotm="1">Информация о потоке: %d из %d</lang>
         </row>
         <row id="IDS_STRING_INFO_CREATE_SUCCESS" changed="20211012225810">
           <native>Plugin created.#lInstall it to the DUNE</native>
-          <lang id="ru" date="20211012210012">Плагин создан!#nУстановите его на DUNE</lang>
+          <lang id="ru" date="20211012210012" savedtotm="1">Плагин создан!#nУстановите его на DUNE</lang>
         </row>
         <row id="IDS_STRING_INFO_NOT_FOUND">
           <native>Not found!</native>
-          <lang id="ru" date="20211012210019">Не найден!</lang>
+          <lang id="ru" date="20211012210019" savedtotm="1">Не найден!</lang>
         </row>
         <row id="IDS_STRING_INFO_RESTART_NEED">
           <native>Restart application to take effect</native>
-          <lang id="ru" date="20211012210048">Перезапустите приложения чтобы применить изменения</lang>
+          <lang id="ru" date="20211012210048" savedtotm="1">Перезапустите приложения чтобы применить изменения</lang>
         </row>
         <row id="IDS_STRING_WRN_CHANNEL_EXIST">
           <native>Channel already exist!</native>
-          <lang id="ru" date="20211012205826">Канал уже существует!</lang>
+          <lang id="ru" date="20211012205826" savedtotm="1">Канал уже существует!</lang>
         </row>
         <row id="IDS_STRING_WRN_CHANNEL_ID_EXIST">
           <native>Channel with this ID already exist!#lAre you sure to replace?</native>
-          <lang id="ru" date="20211012205849">Канал с этим номером уже существует!#nЗаменить?</lang>
+          <lang id="ru" date="20211012205849" savedtotm="1">Канал с этим номером уже существует!#nЗаменить?</lang>
         </row>
         <row id="IDS_STRING_WRN_DELETE_CHANNEL">
           <native>Delete channel(s). Are your sure?</native>
-          <lang id="ru" date="20211012205815">Удалить канал(ы). Вы уверены?</lang>
+          <lang id="ru" date="20211012205815" savedtotm="1">Удалить канал(ы). Вы уверены?</lang>
         </row>
         <row id="IDS_STRING_WRN_NON_ASCII">
           <native>Non ASCII symbols in the icon name is not allowed!</native>
-          <lang id="ru" date="20211012205923">Только латинские символы допустимы в имени иконки!</lang>
+          <lang id="ru" date="20211012205923" savedtotm="1">Только латинские символы допустимы в имени иконки!</lang>
         </row>
         <row id="IDS_STRING_WRN_NON_ASCII_LIST">
           <native>Non ASCII symbols in the channel list name is not allowed!</native>
-          <lang id="ru" date="20211012205937">Только латинские символы допустимы в имени списка каналов!</lang>
+          <lang id="ru" date="20211012205937" savedtotm="1">Только латинские символы допустимы в имени списка каналов!</lang>
         </row>
         <row id="IDS_STRING_WRN_NOT_SAVED" changed="20211130004501">
           <native>You have unsaved changes.#lSave changes?</native>
-          <lang id="ru" date="20211130004517">Изменения не сохранены.#nСохранить?</lang>
+          <lang id="ru" date="20211130004517" savedtotm="1">Изменения не сохранены.#nСохранить?</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="1001" locked="1" resid="1001" langid="1033">
@@ -3527,47 +3589,47 @@
       <node class="TWindowsStringNode" name="11" created="20211012215027" resid="11" langid="1033">
         <row id="IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST" created="20211012223617" changed="20211012224023">
           <native>Add new channels list</native>
-          <lang id="ru" date="20211012224018">Добавить новый список каналов</lang>
+          <lang id="ru" date="20211012224018" savedtotm="1">Добавить новый список каналов</lang>
         </row>
         <row id="IDS_STRING_BUTTON_SEARCH_NEXT" created="20211012223617">
           <native>Search next</native>
-          <lang id="ru" date="20211012224043">Искать далее</lang>
+          <lang id="ru" date="20211012224043" savedtotm="1">Искать далее</lang>
         </row>
         <row id="IDS_STRING_BUTTON_TEST_EPG" created="20211012223617">
           <native>View channel EPG in browser</native>
-          <lang id="ru" date="20211012224107">Просмотр EPG для канала в браузере</lang>
+          <lang id="ru" date="20211012224107" savedtotm="1">Просмотр EPG для канала в браузере</lang>
         </row>
         <row id="IDS_STRING_COMBO_CHANNELS" created="20211012223617">
           <native>Choose channel list to edit</native>
-          <lang id="ru" date="20211012223826">Выбор списка каналов для редактирования</lang>
+          <lang id="ru" date="20211012223826" savedtotm="1">Выбор списка каналов для редактирования</lang>
         </row>
         <row id="IDS_STRING_COMBO_PLAYLIST" created="20211012223617" changed="20211012230103">
           <native>Choose a playlist to import</native>
-          <lang id="ru" date="20211012223833">Выбор плейлиста для импорта</lang>
+          <lang id="ru" date="20211012223833" savedtotm="1">Выбор плейлиста для импорта</lang>
         </row>
         <row id="IDS_STRING_COMBO_PLUGIN_TYPE" created="20211012223617">
           <native>Select Plugin for edit</native>
-          <lang id="ru" date="20211012223816">Выбор плагина для редактирования</lang>
+          <lang id="ru" date="20211012223816" savedtotm="1">Выбор плагина для редактирования</lang>
         </row>
         <row id="IDS_STRING_CUSTOM">
           <native>Custom</native>
-          <lang id="ru" date="20211012215704">Произвольный</lang>
+          <lang id="ru" date="20211012215704" savedtotm="1">Произвольный</lang>
         </row>
         <row id="IDS_STRING_DONATE" created="20211012223617">
           <native>Please donate to support the developer</native>
-          <lang id="ru" date="20211012223802">Поддержите разработчика</lang>
+          <lang id="ru" date="20211012223802" savedtotm="1">Поддержите разработчика</lang>
         </row>
         <row id="IDS_STRING_EDIT_EPG1_ID" created="20211012223617" changed="20211012225005">
           <native>Main EPG ID</native>
-          <lang id="ru" date="20211012224119">Номер основного EPG</lang>
+          <lang id="ru" date="20211012224119" savedtotm="1">Номер основного EPG</lang>
         </row>
         <row id="IDS_STRING_EDIT_EPG2_ID" created="20211012223617" changed="20211012225005">
           <native>Secondary EPG ID</native>
-          <lang id="ru" date="20211012224206">Номер вторичного EPG</lang>
+          <lang id="ru" date="20211012224206" savedtotm="1">Номер вторичного EPG</lang>
         </row>
         <row id="IDS_STRING_EDIT_SEARCH" created="20211012223617">
           <native>Search in channels. Use \ prefix to find by ID</native>
-          <lang id="ru" date="20211012224442">Поиск в каналах. Префикс \\ для поиска по номеру</lang>
+          <lang id="ru" date="20211012224442" savedtotm="1">Поиск в каналах. Префикс \\ для поиска по номеру</lang>
         </row>
         <row id="IDS_STRING_EDIT_URL_ID" created="20211012223617">
           <native>Channel ID</native>
@@ -3575,41 +3637,41 @@
         </row>
         <row id="IDS_STRING_FMT_CHANNELS_TOOLTIP3" changed="20211012225552">
           <native>Archive:	%d day(s)#lAdult:		%s#lIn categories:	%s</native>
-          <lang id="ru" date="20211012225615">Архив:		%d дней#nВзрослый:	%s#nВ категории:	%s</lang>
+          <lang id="ru" date="20211012225615" savedtotm="1">Архив:		%d дней#nВзрослый:	%s#nВ категории:	%s</lang>
         </row>
         <row id="IDS_STRING_FMT_PLAYLIST_TOOLTIPS" changed="20211012225552">
           <native>Name:		%s#lID:		%s#lEPG ID:		%s#lArchive:	%d day(s)#lAdult:		%s</native>
-          <lang id="ru" date="20211012225249">Название:	%s#n№:		%s#nEPG №:		%s#nАрхив:		%d дней#nВзрослый:	%s</lang>
+          <lang id="ru" date="20211012225249" savedtotm="1">Название:	%s#n№:		%s#nEPG №:		%s#nАрхив:		%d дней#nВзрослый:	%s</lang>
         </row>
         <row id="IDS_STRING_NO">
           <native>No</native>
-          <lang id="ru" date="20211012215645">Нет</lang>
+          <lang id="ru" date="20211012215645" savedtotm="1">Нет</lang>
         </row>
         <row id="IDS_STRING_YES">
           <native>Yes</native>
-          <lang id="ru" date="20211012215640">Да</lang>
+          <lang id="ru" date="20211012215640" savedtotm="1">Да</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="12" created="20211012223617" resid="12" langid="1033">
         <row id="IDS_STRING_ACCOUNT_SETTINGS" created="20211207011650" changed="20211207011728">
           <native>Account setting</native>
-          <lang id="ru" date="20211207011825">Настройки кабинета IPTV провайдера</lang>
+          <lang id="ru" date="20211207011825" savedtotm="1">Настройки кабинета IPTV провайдера</lang>
         </row>
         <row id="IDS_STRING_BUTTON_CACHE_ICON">
           <native>Store icon to the local folder instead of downloading it from internet</native>
-          <lang id="ru" date="20211013140808">Сохранить иконку в плагин. Или плагин будет скачивать её из Интернета</lang>
+          <lang id="ru" date="20211013140808" savedtotm="1">Сохранить иконку в плагин. Или плагин будет скачивать её из Интернета</lang>
         </row>
         <row id="IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST">
           <native>Save downloaded playlist to disk</native>
-          <lang id="ru" date="20211012224420">Сохранить скачанный плейлист на диск</lang>
+          <lang id="ru" date="20211012224420" savedtotm="1">Сохранить скачанный плейлист на диск</lang>
         </row>
         <row id="IDS_STRING_BUTTON_PACK">
           <native>Make a plugin to install on player</native>
-          <lang id="ru" date="20211012224321">Создать плагин для DUNE</lang>
+          <lang id="ru" date="20211012224321" savedtotm="1">Создать плагин для DUNE</lang>
         </row>
         <row id="IDS_STRING_BUTTON_PL_FILTER">
           <native>Filter the playlist</native>
-          <lang id="ru" date="20211012224452">Фильтр плейлиста</lang>
+          <lang id="ru" date="20211012224452" savedtotm="1">Фильтр плейлиста</lang>
         </row>
         <row id="IDS_STRING_BUTTON_PL_SEARCH_NEXT">
           <native>Search next</native>
@@ -3617,109 +3679,109 @@
         </row>
         <row id="IDS_STRING_BUTTON_SAVE">
           <native>Save channels list</native>
-          <lang id="ru" date="20211012224302">Сохранить список каналов</lang>
+          <lang id="ru" date="20211012224302" savedtotm="1">Сохранить список каналов</lang>
         </row>
         <row id="IDS_STRING_BUTTON_SETTINGS">
           <native>Editor settings</native>
-          <lang id="ru" date="20211012224330">Настройки редактора</lang>
+          <lang id="ru" date="20211012224330" savedtotm="1">Настройки редактора</lang>
         </row>
         <row id="IDS_STRING_CHECK_ADULT">
           <native>Channel contents for adults</native>
-          <lang id="ru" date="20211012224241">Канал для взрослых</lang>
+          <lang id="ru" date="20211012224241" savedtotm="1">Канал для взрослых</lang>
         </row>
         <row id="IDS_STRING_CHECK_ARCHIVE">
           <native>Channel archive is supported</native>
-          <lang id="ru" date="20211012224226">Канал поддерживает архив</lang>
+          <lang id="ru" date="20211012224226" savedtotm="1">Канал поддерживает архив</lang>
         </row>
         <row id="IDS_STRING_CHECK_CUSTOMIZE">
           <native>Use custom stream URL for the channel</native>
-          <lang id="ru" date="20211013140939">Произвольная ссылка для канала</lang>
+          <lang id="ru" date="20211013140939" savedtotm="1">Произвольная ссылка для канала</lang>
         </row>
         <row id="IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS">
           <native>Days in the past to test archive play</native>
-          <lang id="ru" date="20211012224503">Дней назад для проверки архива</lang>
+          <lang id="ru" date="20211012224503" savedtotm="1">Дней назад для проверки архива</lang>
         </row>
         <row id="IDS_STRING_EDIT_ARCHIVE_DAYS">
           <native>How many days archive is supported</native>
-          <lang id="ru" date="20211012224232">Количество дней архива</lang>
+          <lang id="ru" date="20211012224232" savedtotm="1">Количество дней архива</lang>
         </row>
         <row id="IDS_STRING_EDIT_PL_SEARCH">
           <native>Search in the playlist. Use \ prefix to find by ID</native>
-          <lang id="ru" date="20211012224433">Поиск в плейлисте. Префикс \\ для поиска по номеру</lang>
+          <lang id="ru" date="20211012224433" savedtotm="1">Поиск в плейлисте. Префикс \\ для поиска по номеру</lang>
         </row>
         <row id="IDS_STRING_SHOW_CHANGED" created="20211130002702" changed="20211130002941">
           <native>Toggled show only changed channels.</native>
-          <lang id="ru" date="20211130003008">Показывать только измененные каналы</lang>
+          <lang id="ru" date="20211130003008" savedtotm="1">Показывать только измененные каналы</lang>
         </row>
         <row id="IDS_STRING_STATIC_ICON">
           <native>Click to change the icon</native>
-          <lang id="ru" date="20211013141021">Нажмите для выбора иконки</lang>
+          <lang id="ru" date="20211013141021" savedtotm="1">Нажмите для выбора иконки</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="13" created="20211012223617" resid="13" langid="1033">
         <row id="IDS_STRING_BUTTON_CHECK_ARCHIVE" created="20211012225005">
           <native>Try to play the archive channel</native>
-          <lang id="ru" date="20211012225033">Проверить архив канала</lang>
+          <lang id="ru" date="20211012225033" savedtotm="1">Проверить архив канала</lang>
         </row>
         <row id="IDS_STRING_BUTTON_STOP">
           <native>Stop process</native>
-          <lang id="ru" date="20211012224651">Остановить процесс</lang>
+          <lang id="ru" date="20211012224651" savedtotm="1">Остановить процесс</lang>
         </row>
         <row id="IDS_STRING_BUTTON_UPDATE_CHANGED">
           <native>Update channels changed in the playlist</native>
-          <lang id="ru" date="20211012224701">Обновить все каналы отличающиеся от данных в плейлисте</lang>
+          <lang id="ru" date="20211012224701" savedtotm="1">Обновить все каналы отличающиеся от данных в плейлисте</lang>
         </row>
         <row id="IDS_STRING_COMBO_ICON_SOURCE">
           <native>Source type for loaded icon. Local file or internet link</native>
-          <lang id="ru" date="20211012224644">Источник для выбора иконки. Файл на диске или ссылка в Интернете</lang>
+          <lang id="ru" date="20211012224644" savedtotm="1">Источник для выбора иконки. Файл на диске или ссылка в Интернете</lang>
         </row>
         <row id="IDS_STRING_COMBO_STREAM_TYPE">
           <native>Stream type used to test play stream</native>
-          <lang id="ru" date="20211012224624">Тип потока для проверки проигрывания канала</lang>
+          <lang id="ru" date="20211012224624" savedtotm="1">Тип потока для проверки проигрывания канала</lang>
         </row>
         <row id="IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS">
           <native>Hours added to day in the past to test archive play</native>
-          <lang id="ru" date="20211012224514">Часов назад для проверки архива</lang>
+          <lang id="ru" date="20211012224514" savedtotm="1">Часов назад для проверки архива</lang>
         </row>
         <row id="IDS_STRING_EDIT_INFO_AUDIO">
           <native>Audio stream info</native>
-          <lang id="ru" date="20211012224540">Информация о аудио потоке канала</lang>
+          <lang id="ru" date="20211012224540" savedtotm="1">Информация о аудио потоке канала</lang>
         </row>
         <row id="IDS_STRING_EDIT_INFO_VIDEO">
           <native>Video stream info</native>
-          <lang id="ru" date="20211012224535">Информация о видео потоке канала</lang>
+          <lang id="ru" date="20211012224535" savedtotm="1">Информация о видео потоке канала</lang>
         </row>
         <row id="IDS_STRING_EDIT_TIME_SHIFT">
           <native>EPG Time shift for channel, hours</native>
-          <lang id="ru" date="20211012224522">Сдвиг в часах для показа EPG канала</lang>
+          <lang id="ru" date="20211012224522" savedtotm="1">Сдвиг в часах для показа EPG канала</lang>
         </row>
         <row id="IDS_STRING_ERR_FAILED_PACK" created="20211015154619">
           <native>Failed to pack plugin</native>
-          <lang id="ru" date="20211015154701">Ошибка создания плагина</lang>
+          <lang id="ru" date="20211015154701" savedtotm="1">Ошибка создания плагина</lang>
         </row>
         <row id="IDS_STRING_ERR_FAILED_PACK_PLUGIN" created="20211015154619" changed="20211109160234">
           <native>Failed to pack plugin %s. Continue?</native>
-          <lang id="ru" date="20211109160245">Ошибка создания плагина %s. Продолжить?</lang>
+          <lang id="ru" date="20211109160245" savedtotm="1">Ошибка создания плагина %s. Продолжить?</lang>
         </row>
         <row id="IDS_STRING_INFO_CREATE_ALL_SUCCESS" created="20211015154619">
           <native>All plugins created succesefully</native>
-          <lang id="ru" date="20211015154750">Все плагины успешно созданы</lang>
+          <lang id="ru" date="20211015154750" savedtotm="1">Все плагины успешно созданы</lang>
         </row>
         <row id="IDS_STRING_LOAD_CHANNELS_MASK" created="20211017144052">
           <native>Channels xml(*.xml)|*.xml||</native>
-          <lang id="ru" date="20211017144109">Список каналов xml(*.xml)|*.xml||</lang>
+          <lang id="ru" date="20211017144109" savedtotm="1">Список каналов xml(*.xml)|*.xml||</lang>
         </row>
         <row id="IDS_STRING_LOAD_ICON" created="20211017144052">
           <native>PNG file(*.png)|*.png|All Files (*.*)|*.*||</native>
-          <lang id="ru" date="20211017144122">Файл PNG(*.png)|*.png|All Files (*.*)|*.*||</lang>
+          <lang id="ru" date="20211017144122" savedtotm="1">Файл PNG(*.png)|*.png|All Files (*.*)|*.*||</lang>
         </row>
         <row id="IDS_STRING_LOAD_PLAYLIST" created="20211017144052">
           <native>Playlist m3u(*.m3u8, *.m3u)|*.m3u8;*.m3u|All Files (*.*)|*.*||</native>
-          <lang id="ru" date="20211017144130">Плейлист m3u(*.m3u8, *.m3u)|*.m3u8;*.m3u|All Files (*.*)|*.*||</lang>
+          <lang id="ru" date="20211017144130" savedtotm="1">Плейлист m3u(*.m3u8, *.m3u)|*.m3u8;*.m3u|All Files (*.*)|*.*||</lang>
         </row>
         <row id="IDS_STRING_WARN_DELETE_ITEMS" created="20211013224909">
           <native>Delete selected items. Are your sure?</native>
-          <lang id="ru" date="20211013225008">Удалить выделенные элементы. Вы уверены?</lang>
+          <lang id="ru" date="20211013225008" savedtotm="1">Удалить выделенные элементы. Вы уверены?</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="14" created="20211017144717" resid="14" langid="1033">
@@ -3729,23 +3791,23 @@
         </row>
         <row id="IDS_STRING_ALREADY_RUNNING" created="20211207010554">
           <native>Program already running!</native>
-          <lang id="ru" date="20211207010746">Программа уже запущена!</lang>
+          <lang id="ru" date="20211207010746" savedtotm="1">Программа уже запущена!</lang>
         </row>
         <row id="IDS_STRING_ENABLE_CATEGORY" created="20211209220323">
           <native>Enable Category</native>
-          <lang id="ru" date="20211209220423">Включить категорию</lang>
+          <lang id="ru" date="20211209220423" savedtotm="1">Включить категорию</lang>
         </row>
         <row id="IDS_STRING_ENABLE_CHANNEL" created="20211209220323">
           <native>Enable Channel</native>
-          <lang id="ru" date="20211209220416">Включить канал</lang>
+          <lang id="ru" date="20211209220416" savedtotm="1">Включить канал</lang>
         </row>
         <row id="IDS_STRING_LOAD_ICONS_TITLE">
           <native>Load logotype image</native>
-          <lang id="ru" date="20211017144737">Загрузить иконку</lang>
+          <lang id="ru" date="20211017144737" savedtotm="1">Загрузить иконку</lang>
         </row>
         <row id="IDS_STRING_NOT_ADDED" created="20211130113005">
           <native>Show only not added channels</native>
-          <lang id="ru" date="20211130113023">Показать только не добавленные каналы</lang>
+          <lang id="ru" date="20211130113023" savedtotm="1">Показать только не добавленные каналы</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="3633" locked="1" resid="3633" langid="1033">
@@ -3893,36 +3955,48 @@
         <row id="IDR_MAINFRAME" locked="1">Dune IPTV Channel Editor#lChannelEditor#lChannelEditor#l#l#l#l</row>
         <row id="IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST" created="20211012205715">
           <native>Unable to download playlist!</native>
-          <lang id="ru" date="20211012210127">Не могу скачать плейлист!</lang>
+          <lang id="ru" date="20211012210127" savedtotm="1">Не могу скачать плейлист!</lang>
         </row>
         <row id="IDS_STRING_ERR_EMPTY_PLAYLIST" created="20211012205715">
           <native>Empty playlist!</native>
-          <lang id="ru" date="20211012210135">Пустой плейлист!</lang>
+          <lang id="ru" date="20211012210135" savedtotm="1">Пустой плейлист!</lang>
         </row>
         <row id="IDS_STRING_ERR_SOURCE_NOT_SET" created="20211012205715">
           <native>Playlist source not set!</native>
-          <lang id="ru" date="20211012210119">Источник плейлиста не задан!</lang>
+          <lang id="ru" date="20211012210119" savedtotm="1">Источник плейлиста не задан!</lang>
         </row>
         <row id="IDS_STRING_ERR_THREAD_NOT_START" created="20211012205715">
           <native>Problem with starting thread!</native>
-          <lang id="ru" date="20211012210148">Ошибка при запуске потока!</lang>
+          <lang id="ru" date="20211012210148" savedtotm="1">Ошибка при запуске потока!</lang>
         </row>
       </node>
     </node>
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" changed="20211209220323">2.2.552, 9 Dec 2021</row>
+        <row id="FileVersion" locked="1" state="3" changed="20211210001330">
+          <prev>2.2.553, 9 Dec 2021</prev>
+          <native>2.2.554, 10 Dec 2021</native>
+        </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20211013234256">2</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" changed="20211209220323">552</row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211210001330">
+          <prev>553</prev>
+          <native>554</native>
+        </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" changed="20211209220323">2.2.552</row>
+        <row id="ProductVersion" hidden="1" state="3" changed="20211210001330">
+          <prev>2.2.553</prev>
+          <native>2.2.554</native>
+        </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20211013234256">2</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" changed="20211209220323">552</row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211210001330">
+          <prev>553</prev>
+          <native>554</native>
+        </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
     </node>

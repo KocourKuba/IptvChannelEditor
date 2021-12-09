@@ -2914,23 +2914,35 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	BOOL bChanged = m_wndShowChanged.GetCheck();
 	BOOL bNotAdded = m_wndNotAdded.GetCheck();
 
-	auto filter = GetConfig().get_string(false, REG_FILTER_STRING);
-	auto bRegex = GetConfig().get_int(false, REG_FILTER_REGEX);
-	auto bCase  = GetConfig().get_int(false, REG_FILTER_CASE);
-	auto bState = GetConfig().get_int(false, REG_FILTER_STATE);
+	std::array<BOOL, 2> bState;
+	std::array<BOOL, 2> bRegex;
+	std::array<BOOL, 2> bCase;
+	std::array<std::wstring, 2> filter;
 
-	std::wregex re;
-	if (bRegex)
+	bState[0] = GetConfig().get_int(false, REG_FILTER_STATE_S);
+	bRegex[0] = GetConfig().get_int(false, REG_FILTER_REGEX_S);
+	bCase[0]  = GetConfig().get_int(false, REG_FILTER_CASE_S);
+	filter[0] = GetConfig().get_string(false, REG_FILTER_STRING_S);
+
+	bState[1] = GetConfig().get_int(false, REG_FILTER_STATE_H);
+	bRegex[1] = GetConfig().get_int(false, REG_FILTER_REGEX_H);
+	bCase[1]  = GetConfig().get_int(false, REG_FILTER_CASE_H);
+	filter[1] = GetConfig().get_string(false, REG_FILTER_STRING_H);
+
+	std::array<std::wregex, 2> re;
+	for (int i = 0; i < 2; i++)
 	{
+		if (!bRegex[i]) continue;
+
 		try
 		{
-			re = filter;
+			re[i] = filter[i];
 		}
 		catch (std::regex_error& ex)
 		{
 			ex;
-			bRegex = false;
-			filter.clear();
+			bRegex[i] = FALSE;
+			filter[i].clear();
 		}
 	}
 
@@ -2951,38 +2963,49 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 
 		for (auto& entry : entries)
 		{
-			bool found = false;
-			if (bRegex)
+			std::array<bool, 2> matched = { true, true };
+			for (int i = 0; i < 2; i++)
 			{
-				try
+				if (!bState[i]) continue;
+
+				if (bRegex[i])
 				{
-					found = std::regex_search(entry->get_title(), re);
+					try
+					{
+						matched[i] = std::regex_search(entry->get_title(), re[i]);
+					}
+					catch (std::regex_error& ex)
+					{
+						ex;
+						matched[i] = true;
+					}
+
+					if (i != 0)
+						matched[i] = !matched[i];
 				}
-				catch (std::regex_error& ex)
+				else if (!filter[i].empty())
 				{
-					ex;
-					found = true;
+					if (bCase[i])
+					{
+						matched[i] = (entry->get_title().find(filter[i]) != std::wstring::npos);
+					}
+					else
+					{
+						matched[i] = (StrStrI(entry->get_title().c_str(), filter[i].c_str()) != nullptr);
+					}
+
+					if (i != 0)
+						matched[i] = !matched[i];
 				}
 			}
-			else if (!filter.empty())
+
+			bool show = matched[0] && matched[1];
+			if (bNotAdded)
 			{
-				if (bCase)
-				{
-					found = (entry->get_title().find(filter) != std::wstring::npos);
-				}
-				else
-				{
-					found = (StrStrI(entry->get_title().c_str(), filter.c_str()) != nullptr);
-				}
+				show &= m_channelsMap.find(entry->stream_uri->get_id()) == m_channelsMap.end();
 			}
 
-			if (bState)
-				found = !found;
-
-			if (bNotAdded && !found)
-				found = m_channelsMap.find(entry->stream_uri->get_id()) != m_channelsMap.end();
-
-			if (!found)
+			if (show)
 			{
 				m_playlistIds.emplace_back(entry->stream_uri->get_id());
 				const auto& category = entry->get_category();

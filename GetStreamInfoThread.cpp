@@ -2,7 +2,6 @@
 //
 
 #include "pch.h"
-#include <array>
 #include <thread>
 #include "GetStreamInfoThread.h"
 #include "map_serializer.h"

@@ -3,6 +3,7 @@
 // Used by IPTVChannelEditor.rc
 //
 #define IDM_ABOUTBOX                    16
+#define IDR_POPUP_TRAY                  17
 #define IDB_PNG_QR                      101
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
@@ -89,7 +90,6 @@
 #define IDS_STRING_BUTTON_CHECK_ARCHIVE 200
 #define IDS_STRING_WARN_DELETE_ITEMS    201
 #define IDS_STRING_ERR_FAILED_PACK      202
-#define IDR_POPUP_TRAY                  202
 #define IDS_STRING_ERR_FAILED_PACK_PLUGIN 203
 #define IDS_STRING_INFO_CREATE_ALL_SUCCESS 204
 #define IDS_STRING_LOAD_CHANNELS_MASK   205
@@ -102,6 +102,8 @@
 #define IDS_STRING_ENABLE_CHANNEL       212
 #define IDS_STRING_ENABLE_CATEGORY      213
 #define IDC_BUTTON_ABOUT                1001
+#define IDC_CHECK_CASE_HIDE             1002
+#define IDC_CHECK_REGEX_HIDE            1003
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
 #define IDC_BUTTON_GET                  1007
@@ -119,11 +121,11 @@
 #define IDC_BUTTON_CHECK_ARCHIVE        1024
 #define IDC_CHECK_ADULT                 1025
 #define IDC_CHECK_ARCHIVE               1026
-#define IDC_CHECK_CASE                  1027
+#define IDC_CHECK_CASE_SHOW             1027
 #define IDC_CHECK_CUSTOMIZE             1028
 #define IDC_CHECK_GLOBAL                1029
 #define IDC_CHECK_PL_ARCHIVE            1030
-#define IDC_CHECK_REGEX                 1031
+#define IDC_CHECK_REGEX_SHOW            1031
 #define IDC_CHECK_NOT_ADDED             1032
 #define IDC_CHECK_SHOW_CHANGED          1033
 #define IDC_COMBO_CHANNELS              1034
@@ -208,9 +210,10 @@
 #define IDC_CHECK_CMP_EPG2              1117
 #define IDC_CHECK_CMP_ARCHIVE           1118
 #define IDC_CHECK_AUTO_HIDE             1119
-#define IDC_COMBO_STRING                1120
-#define IDC_RADIO_SHOW_FILTERED         1121
-#define IDC_RADIO_HIDE_FILTERED         1122
+#define IDC_COMBO_STRING_SHOW           1120
+#define IDC_COMBO_STRING_HIDE           1121
+#define IDC_CHECK_SHOW_MATCHED          1122
+#define IDC_CHECK_HIDE_MATCHED          1123
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -237,12 +240,12 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        206
+#define _APS_NEXT_RESOURCE_VALUE        214
 #define _APS_NEXT_COMMAND_VALUE         32802
-#define _APS_NEXT_CONTROL_VALUE         1123
+#define _APS_NEXT_CONTROL_VALUE         1124
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

@@ -17,43 +17,51 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNAMIC(CFilterDialog, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CFilterDialog, CDialogEx)
-	ON_BN_CLICKED(IDC_CHECK_REGEX, &CFilterDialog::OnUpdateControls)
-	ON_BN_CLICKED(IDC_CHECK_CASE, &CFilterDialog::OnUpdateControls)
+	ON_BN_CLICKED(IDC_CHECK_REGEX_SHOW, &CFilterDialog::OnUpdateControls)
+	ON_BN_CLICKED(IDC_CHECK_CASE_SHOW, &CFilterDialog::OnUpdateControls)
+	ON_BN_CLICKED(IDC_CHECK_REGEX_HIDE, &CFilterDialog::OnUpdateControls)
+	ON_BN_CLICKED(IDC_CHECK_CASE_HIDE, &CFilterDialog::OnUpdateControls)
 END_MESSAGE_MAP()
 
 CFilterDialog::CFilterDialog(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_FILTER, pParent)
 {
-
 }
 
 void CFilterDialog::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
-	DDX_Control(pDX, IDC_COMBO_STRING, m_wndFilterString);
-	DDX_Control(pDX, IDC_CHECK_REGEX, m_wndFilterRegex);
-	DDX_Check(pDX, IDC_CHECK_REGEX, m_filterRegex);
-	DDX_Control(pDX, IDC_CHECK_CASE, m_wndFilterCase);
-	DDX_Check(pDX, IDC_CHECK_CASE, m_filterCase);
-	DDX_Control(pDX, IDC_RADIO_SHOW_FILTERED, m_wndFilterShow);
-	DDX_Control(pDX, IDC_RADIO_HIDE_FILTERED, m_wndFilterHide);
+	DDX_Check(pDX, IDC_CHECK_SHOW_MATCHED, m_filterState[0]);
+	DDX_Control(pDX, IDC_COMBO_STRING_SHOW, m_wndFilterString[0]);
+	DDX_Control(pDX, IDC_CHECK_REGEX_SHOW, m_wndFilterRegex[0]);
+	DDX_Check(pDX, IDC_CHECK_REGEX_SHOW, m_filterRegex[0]);
+	DDX_Control(pDX, IDC_CHECK_CASE_SHOW, m_wndFilterCase[0]);
+	DDX_Check(pDX, IDC_CHECK_CASE_SHOW, m_filterCase[0]);
+
+	DDX_Check(pDX, IDC_CHECK_HIDE_MATCHED, m_filterState[1]);
+	DDX_Control(pDX, IDC_COMBO_STRING_HIDE, m_wndFilterString[1]);
+	DDX_Control(pDX, IDC_CHECK_REGEX_HIDE, m_wndFilterRegex[1]);
+	DDX_Check(pDX, IDC_CHECK_REGEX_HIDE, m_filterRegex[1]);
+	DDX_Control(pDX, IDC_CHECK_CASE_HIDE, m_wndFilterCase[1]);
+	DDX_Check(pDX, IDC_CHECK_CASE_HIDE, m_filterCase[1]);
 }
 
 BOOL CFilterDialog::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	CString stringList = GetConfig().get_string(false, REG_FILTER_STRING_LST).c_str();
-	CString filterString = GetConfig().get_string(false, REG_FILTER_STRING).c_str();
+	m_filterState[0] = GetConfig().get_int(false, REG_FILTER_STATE_S);
+	m_filterRegex[0] = GetConfig().get_int(false, REG_FILTER_REGEX_S);
+	m_filterCase[0] = GetConfig().get_int(false, REG_FILTER_CASE_S);
+	m_wndFilterString[0].LoadHistoryFromText(GetConfig().get_string(false, REG_FILTER_STRING_LST_S).c_str(),
+											 GetConfig().get_string(false, REG_FILTER_STRING_S).c_str());
 
-	m_filterRegex  = GetConfig().get_int(false, REG_FILTER_REGEX);
-	m_filterCase   = GetConfig().get_int(false, REG_FILTER_CASE);
-	BOOL state     = GetConfig().get_int(false, REG_FILTER_STATE);
-
-	m_wndFilterString.LoadHistoryFromText(stringList, filterString);
-	m_wndFilterShow.SetCheck(state);
-	m_wndFilterHide.SetCheck(state == 0);
+	m_filterState[1] = GetConfig().get_int(false, REG_FILTER_STATE_H);
+	m_filterRegex[1] = GetConfig().get_int(false, REG_FILTER_REGEX_H);
+	m_filterCase[1] = GetConfig().get_int(false, REG_FILTER_CASE_H);
+	m_wndFilterString[1].LoadHistoryFromText(GetConfig().get_string(false, REG_FILTER_STRING_LST_H).c_str(),
+											 GetConfig().get_string(false, REG_FILTER_STRING_H).c_str());
 
 	UpdateData(FALSE);
 
@@ -66,28 +74,40 @@ void CFilterDialog::OnOK()
 {
 	UpdateData(TRUE);
 
-	CString filterString;
-	m_wndFilterString.GetWindowText(filterString);
-
-	try
+	std::array<CString, 2> filterString;
+	for (int i = 0; i < 2; i++)
 	{
-		// Check expression
-		std::wregex re(filterString.GetString());
-		UNUSED_ALWAYS(re);
-	}
-	catch (std::regex_error& ex)
-	{
-		CString error;
-		error.Format(_T("Error in regular expression: %hs"), ex.what());
-		AfxMessageBox(error, MB_OK | MB_ICONERROR);
-		return;
+		m_wndFilterString[i].GetWindowText(filterString[i]);
+
+		try
+		{
+			// Check expression
+			if (m_filterRegex[i])
+			{
+				std::wregex re(filterString[i].GetString());
+				UNUSED_ALWAYS(re);
+			}
+		}
+		catch (std::regex_error& ex)
+		{
+			CString error;
+			error.Format(_T("Error in regular expression: %hs"), ex.what());
+			AfxMessageBox(error, MB_OK | MB_ICONERROR);
+			return;
+		}
 	}
 
-	GetConfig().set_string(false, REG_FILTER_STRING, filterString.GetString());
-	GetConfig().set_string(false, REG_FILTER_STRING_LST, m_wndFilterString.SaveHistoryToText().GetString());
-	GetConfig().set_int(false, REG_FILTER_REGEX, m_filterRegex);
-	GetConfig().set_int(false, REG_FILTER_CASE, m_filterCase);
-	GetConfig().set_int(false, REG_FILTER_STATE, GetCheckedRadioButton(IDC_RADIO_SHOW_FILTERED, IDC_RADIO_HIDE_FILTERED) == IDC_RADIO_SHOW_FILTERED);
+	GetConfig().set_string(false, REG_FILTER_STRING_S, filterString[0].GetString());
+	GetConfig().set_string(false, REG_FILTER_STRING_LST_S, m_wndFilterString[0].SaveHistoryToText().GetString());
+	GetConfig().set_int(false, REG_FILTER_REGEX_S, m_filterRegex[0]);
+	GetConfig().set_int(false, REG_FILTER_CASE_S, m_filterCase[0]);
+	GetConfig().set_int(false, REG_FILTER_STATE_S, m_filterState[0]);
+
+	GetConfig().set_string(false, REG_FILTER_STRING_H, filterString[1].GetString());
+	GetConfig().set_string(false, REG_FILTER_STRING_LST_H, m_wndFilterString[1].SaveHistoryToText().GetString());
+	GetConfig().set_int(false, REG_FILTER_REGEX_H, m_filterRegex[1]);
+	GetConfig().set_int(false, REG_FILTER_CASE_H, m_filterCase[1]);
+	GetConfig().set_int(false, REG_FILTER_STATE_H, m_filterState[1]);
 
 	__super::OnOK();
 }
@@ -96,19 +116,22 @@ void CFilterDialog::OnUpdateControls()
 {
 	UpdateData(TRUE);
 
-	if (m_filterRegex)
+	for (int i = 0; i < 2; i++)
 	{
-		m_filterCase = FALSE;
-		m_wndFilterCase.EnableWindow(FALSE);
-	}
-	m_wndFilterCase.EnableWindow(!m_filterRegex);
+		if (m_filterRegex[i])
+		{
+			m_filterCase[i] = FALSE;
+			m_wndFilterCase[i].EnableWindow(FALSE);
+		}
+		m_wndFilterCase[i].EnableWindow(!m_filterRegex[i]);
 
-	if (m_filterCase)
-	{
-		m_filterRegex = FALSE;
-		m_wndFilterRegex.EnableWindow(FALSE);
+		if (m_filterCase[i])
+		{
+			m_filterRegex[i] = FALSE;
+			m_wndFilterRegex[i].EnableWindow(FALSE);
+		}
+		m_wndFilterRegex[i].EnableWindow(!m_filterCase[i]);
 	}
-	m_wndFilterRegex.EnableWindow(!m_filterCase);
 
 	UpdateData(FALSE);
 }

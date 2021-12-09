@@ -27,50 +27,53 @@ constexpr auto CMP_FLAG_EPG1    = 0x08;
 constexpr auto CMP_FLAG_EPG2    = 0x10;
 constexpr auto CMP_FLAG_ALL     = CMP_FLAG_TITLE | CMP_FLAG_ICON | CMP_FLAG_ARCHIVE | CMP_FLAG_EPG1 | CMP_FLAG_EPG2;
 
-constexpr auto REG_SETTINGS = _T("Settings");
-
-constexpr auto REG_WINDOW_POS = _T("WindowPos");
+constexpr auto REG_WINDOW_POS      = _T("WindowPos");
 constexpr auto REG_ICON_WINDOW_POS = _T("IconsWindowPos");
 
 // settings dialog
-constexpr auto REG_PLAYER      = _T("Player");
-constexpr auto REG_FFPROBE     = _T("FFProbe");
-constexpr auto REG_LISTS_PATH  = _T("ListsPath");
-constexpr auto REG_OUTPUT_PATH = _T("PluginsPath");
-constexpr auto REG_AUTO_SYNC   = _T("AutoSyncChannel");
-constexpr auto REG_AUTO_HIDE   = _T("AutoHideToTray");
-constexpr auto REG_MAX_THREADS = _T("MaxStreamThreads");
-constexpr auto REG_LANGUAGE    = _T("Language");
-constexpr auto REG_CMP_FLAGS   = _T("CompareFlags");
+constexpr auto REG_PLAYER          = _T("Player");
+constexpr auto REG_FFPROBE         = _T("FFProbe");
+constexpr auto REG_LISTS_PATH      = _T("ListsPath");
+constexpr auto REG_OUTPUT_PATH     = _T("PluginsPath");
+constexpr auto REG_AUTO_SYNC       = _T("AutoSyncChannel");
+constexpr auto REG_AUTO_HIDE       = _T("AutoHideToTray");
+constexpr auto REG_MAX_THREADS     = _T("MaxStreamThreads");
+constexpr auto REG_LANGUAGE        = _T("Language");
+constexpr auto REG_CMP_FLAGS       = _T("CompareFlags");
 
 // main dialog
-constexpr auto REG_PLUGIN       = _T("PluginType");
-constexpr auto REG_ICON_SOURCE  = _T("IconSource");
-constexpr auto REG_DAYS_BACK    = _T("DaysBack");
-constexpr auto REG_HOURS_BACK   = _T("HoursBack");
+constexpr auto REG_PLUGIN          = _T("PluginType");
+constexpr auto REG_ICON_SOURCE     = _T("IconSource");
+constexpr auto REG_DAYS_BACK       = _T("DaysBack");
+constexpr auto REG_HOURS_BACK      = _T("HoursBack");
 
 // Plugin dependent
-constexpr auto REG_LOGIN             = _T("Login");
-constexpr auto REG_LOGIN_EMBEDDED    = _T("LoginEmbedded");
-constexpr auto REG_PASSWORD          = _T("Password");
-constexpr auto REG_PASSWORD_EMBEDDED = _T("PasswordEmbedded");
-constexpr auto REG_TOKEN             = _T("AccessKey");
-constexpr auto REG_TOKEN_EMBEDDED    = _T("AccessKeyEmbedded");
-constexpr auto REG_DOMAIN            = _T("Domain");
-constexpr auto REG_DOMAIN_EMBEDDED   = _T("DomainEmbedded");
-constexpr auto REG_ACCESS_URL        = _T("AccessUrl");
-constexpr auto REG_HOST              = _T("Host");
-constexpr auto REG_HOST_EMBEDDED     = _T("HostEmbedded");
-constexpr auto REG_FILTER_STRING     = _T("FilterString");
-constexpr auto REG_FILTER_STRING_LST = _T("FilterStringList");
-constexpr auto REG_FILTER_REGEX      = _T("FilterUseRegex");
-constexpr auto REG_FILTER_CASE       = _T("FilterUseCase");
-constexpr auto REG_FILTER_STATE      = _T("FilterState");
-constexpr auto REG_CHANNELS_TYPE     = _T("ChannelsType");
-constexpr auto REG_PLAYLIST_TYPE     = _T("PlaylistType");
-constexpr auto REG_STREAM_TYPE       = _T("StreamType");
-constexpr auto REG_CUSTOM_URL        = _T("CustomUrl");
-constexpr auto REG_CUSTOM_FILE       = _T("CustomPlaylist");
+constexpr auto REG_LOGIN               = _T("Login");
+constexpr auto REG_LOGIN_EMBEDDED      = _T("LoginEmbedded");
+constexpr auto REG_PASSWORD            = _T("Password");
+constexpr auto REG_PASSWORD_EMBEDDED   = _T("PasswordEmbedded");
+constexpr auto REG_TOKEN               = _T("AccessKey");
+constexpr auto REG_TOKEN_EMBEDDED      = _T("AccessKeyEmbedded");
+constexpr auto REG_DOMAIN              = _T("Domain");
+constexpr auto REG_DOMAIN_EMBEDDED     = _T("DomainEmbedded");
+constexpr auto REG_ACCESS_URL          = _T("AccessUrl");
+constexpr auto REG_HOST                = _T("Host");
+constexpr auto REG_HOST_EMBEDDED       = _T("HostEmbedded");
+constexpr auto REG_FILTER_STRING_S     = _T("FilterString");
+constexpr auto REG_FILTER_STRING_H     = _T("FilterStringHide");
+constexpr auto REG_FILTER_STRING_LST_S = _T("FilterStringList");
+constexpr auto REG_FILTER_STRING_LST_H = _T("FilterStringListHide");
+constexpr auto REG_FILTER_REGEX_S      = _T("FilterUseRegex");
+constexpr auto REG_FILTER_REGEX_H      = _T("FilterUseRegexHide");
+constexpr auto REG_FILTER_CASE_S       = _T("FilterUseCase");
+constexpr auto REG_FILTER_CASE_H       = _T("FilterUseCaseHide");
+constexpr auto REG_FILTER_STATE_S      = _T("FilterState");
+constexpr auto REG_FILTER_STATE_H      = _T("FilterStateHide");
+constexpr auto REG_CHANNELS_TYPE       = _T("ChannelsType");
+constexpr auto REG_PLAYLIST_TYPE       = _T("PlaylistType");
+constexpr auto REG_STREAM_TYPE         = _T("StreamType");
+constexpr auto REG_CUSTOM_URL          = _T("CustomUrl");
+constexpr auto REG_CUSTOM_FILE         = _T("CustomPlaylist");
 
 typedef struct
 {
