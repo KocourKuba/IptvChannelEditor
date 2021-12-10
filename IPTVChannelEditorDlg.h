@@ -174,6 +174,7 @@ private:
 	void CopyMoveChannelTo(int category_id, bool move);
 	void FillTreeChannels(LPCWSTR select = nullptr);
 	void FillTreePlaylist();
+	std::vector<std::wstring> FilterPlaylist();
 
 	void LoadChannelInfo(HTREEITEM hItem);
 	void LoadPlayListInfo(HTREEITEM hItem);

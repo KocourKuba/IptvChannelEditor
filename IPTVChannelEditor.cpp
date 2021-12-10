@@ -200,8 +200,6 @@ void CIPTVChannelEditorApp::FillLangMap()
 	while (bFound)
 	{
 		bFound = cFind.FindNextFile();
-		if (!bFound) continue;
-
 		const auto& file = cFind.GetFilePath();
 		CFileVersionInfo cVer;
 		cVer.Open(file);

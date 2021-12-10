@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20211210001345" scan="59" scanned="20211210001330">
+<document created="20211012165442" version="4.0.374" date="20211210163510" scan="60" scanned="20211210162708">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211209231248" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211210152648" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -611,7 +611,10 @@
             <row id="Y">4</row>
           </component>
           <component class="TVisLabel" name="1066" type="static" autosize="0" wordwrap="1">
-            <row id="CX">156</row>
+            <row id="CX" state="3" changed="20211210162708">
+              <prev>156</prev>
+              <native>161</native>
+            </row>
             <row id="CY">8</row>
             <row id="Text">
               <native>Channels:</native>
@@ -3369,9 +3372,9 @@
     </node>
     <node class="TWindowsStringFolder" name="Strings" resid="6">
       <node class="TWindowsStringNode" name="10" created="20211012205715" resid="10" langid="1033">
-        <row id="IDS_STRING_FMT_CHANNELS" created="20211012215027">
-          <native>Channels: {:d} ({:d} changed)</native>
-          <lang id="ru" date="20211012215118" savedtotm="1">Каналы: {:d} ({:d} изменено)</lang>
+        <row id="IDS_STRING_FMT_CHANNELS" created="20211012215027" changed="20211210162708">
+          <native>Channels: {:d} ({:d} changed, {:d} unknown)</native>
+          <lang id="ru" date="20211210163503">Каналы: {:d} ({:d} изменено, {:d} неизвестно)</lang>
         </row>
         <row id="IDS_STRING_FMT_CHANNELS_READED" created="20211012215027">
           <native>Channels readed: %d</native>
