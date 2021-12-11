@@ -1098,8 +1098,12 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 	BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
 	BOOL bCmpEpg2 = (flags & CMP_FLAG_EPG2) ? TRUE : FALSE;
 
-	std::set<std::wstring> unknownChannels;
-	m_changedChannels.clear();
+	if (root == nullptr)
+	{
+		m_unknownChannels.clear();
+		m_changedChannels.clear();
+	}
+
 	while (root != nullptr && !m_playlistMap.empty())
 	{
 		// iterate subitems
@@ -1121,16 +1125,17 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 					)
 				{
 					color = m_brown;
-					m_changedChannels.emplace_back(entry);
+					m_changedChannels.emplace(id, entry);
 				}
 				else
 				{
 					color = m_green;
+					m_changedChannels.erase(id);
 				}
 			}
 			else
 			{
-				unknownChannels.emplace(id);
+				m_unknownChannels.emplace(id);
 			}
 
 			if (channel->is_disabled())
@@ -1146,7 +1151,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 
 	CString fmt;
 	fmt.LoadString(IDS_STRING_FMT_CHANNELS);
-	m_wndChInfo.SetWindowText(fmt::format(fmt.GetString(), m_channelsMap.size(), m_changedChannels.size(), unknownChannels.size()).c_str());
+	m_wndChInfo.SetWindowText(fmt::format(fmt.GetString(), m_channelsMap.size(), m_changedChannels.size(), m_unknownChannels.size()).c_str());
 	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty());
 }
 
@@ -2670,7 +2675,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
 	bool changed = false;
 	for (const auto& item : m_changedChannels)
 	{
-		changed |= AddChannel(item);
+		changed |= AddChannel(item.second);
 	}
 
 	UpdateChannelsTreeColors();
@@ -3003,7 +3008,20 @@ std::vector<std::wstring> CIPTVChannelEditorDlg::FilterPlaylist()
 	{
 		// for fast search categories
 		std::set<std::wstring> categories;
-		const auto& entries = bChanged ? m_changedChannels : m_playlistEntries->m_entries;
+
+		std::vector<std::shared_ptr<PlaylistEntry>> entries;
+		if (bChanged)
+		{
+			entries.reserve(m_changedChannels.size());
+			for (const auto& entry : m_changedChannels)
+			{
+				entries.emplace_back(entry.second);
+			}
+		}
+		else
+		{
+			entries = m_playlistEntries->m_entries;
+		}
 
 		for (auto& entry : entries)
 		{
@@ -3689,6 +3707,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
 		int idx = m_wndChannels.AddString(pair.first.c_str());
 		m_wndChannels.SetItemData(idx, (DWORD_PTR)pair.second.c_str());
 		m_wndChannels.SetCurSel(idx);
+		FillTreeChannels();
 		set_allow_save();
 	}
 	else
@@ -4075,6 +4094,7 @@ void CIPTVChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 	text.LoadString(IDS_STRING_ENABLE_CHANNEL);
 	if (IsSelectedChannelsOrEntries() && IsSelectedNotFavorite())
 	{
+		m_menu_enable_channel = false;
 		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 		{
 			if (const auto& channel = FindChannel(hItem); channel != nullptr)
@@ -4116,6 +4136,7 @@ void CIPTVChannelEditorDlg::OnUpdateToggleCategory(CCmdUI* pCmdUI)
 	text.LoadString(IDS_STRING_ENABLE_CATEGORY);
 	if (IsSelectedCategory() && IsSelectedNotFavorite())
 	{
+		m_menu_enable_category = false;
 		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 		{
 			if (const auto& category = FindCategory(hItem); category != nullptr)

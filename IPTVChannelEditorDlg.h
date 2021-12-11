@@ -325,7 +325,8 @@ private:
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
-	std::vector<std::shared_ptr<PlaylistEntry>> m_changedChannels;
+	std::map<std::wstring, std::shared_ptr<PlaylistEntry>> m_changedChannels;
+	std::set<std::wstring> m_unknownChannels;
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
