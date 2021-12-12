@@ -270,6 +270,7 @@ goto :EOF
     <ClInclude Include="ImageContainer.h" />
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
+    <ClInclude Include="NewChannelsListDlg.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
     <ClInclude Include="PlaylistParseXMLThread.h" />
     <ClInclude Include="PathsSettingsPage.h" />
@@ -338,6 +339,7 @@ goto :EOF
     <ClCompile Include="IconsListDlg.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
+    <ClCompile Include="NewChannelsListDlg.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
     <ClCompile Include="PlaylistParseXMLThread.cpp" />
     <ClCompile Include="PathsSettingsPage.cpp" />

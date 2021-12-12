@@ -91,7 +91,7 @@ void CFilterDialog::OnOK()
 		catch (std::regex_error& ex)
 		{
 			CString error;
-			error.Format(_T("Error in regular expression: %hs"), ex.what());
+			error.Format(IDS_STRING_ERR_REGEX, ex.what());
 			AfxMessageBox(error, MB_OK | MB_ICONERROR);
 			return;
 		}

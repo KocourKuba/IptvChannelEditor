@@ -54,9 +54,6 @@
     <ClInclude Include="IPTVChannelEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IPTVChannelEditorDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -222,6 +219,12 @@
     <ClInclude Include="HistoryCombo.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="NewChannelsListDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPTVChannelEditorDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -364,6 +367,9 @@
     </ClCompile>
     <ClCompile Include="HistoryCombo.cpp">
       <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="NewChannelsListDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

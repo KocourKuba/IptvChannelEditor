@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20211210163510" scan="60" scanned="20211210162708">
+<document created="20211012165442" version="4.0.374" date="20211212011017" scan="63" scanned="20211212010909">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211210152648" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211212000904" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -349,18 +349,6 @@
             <row id="X" state="0">113</row>
             <row id="Y" state="0">86</row>
           </component>
-          <component class="TVisCheckBox" name="1032" state="1" created="20211209235941" type="button">
-            <row id="Text" state="1">
-              <native>Regular Expression</native>
-              <lang id="ru">Регулярное выражение</lang>
-            </row>
-          </component>
-          <component class="TVisCheckBox" name="1028" state="1" created="20211209235941" type="button">
-            <row id="Text" state="1">
-              <native>Case sensitive</native>
-              <lang id="ru">Учитывать регистр</lang>
-            </row>
-          </component>
           <component class="TVisComboBox" name="1120" created="20211207010554" type="combobox" autosize="1" integralheight="1">
             <row id="CX" changed="20211207011045">205</row>
             <row id="CY">30</row>
@@ -392,39 +380,39 @@
           </component>
         </form>
       </node>
-      <node class="TWindowsDialogNode" name="108" resid="108" langid="1033">
-        <form class="TWindowsForm" name="108" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
-          <row id="CX">143</row>
-          <row id="CY">59</row>
-          <row id="Font">MS Shell Dlg,8</row>
-          <row id="Text" locked="1">
-            <native>New Channel</native>
-            <lang id="ru" date="20211012170611">Новый канал</lang>
+      <node class="TWindowsDialogNode" name="107" state="0" created="20211212010309" resid="107" langid="1033">
+        <form class="TWindowsForm" name="107" state="0" bordericons="[]" borderstyle="bsDialog" style="2160066760">
+          <row id="CX" state="0">165</row>
+          <row id="CY" state="0">49</row>
+          <row id="Font" state="0">MS Shell Dlg,8</row>
+          <row id="Text" state="0">
+            <native>New Channels List</native>
+            <lang id="ru" date="20211212010326">Новый Список каналов</lang>
           </row>
-          <row id="X">0</row>
-          <row id="Y">0</row>
-          <component class="TVisEdit" name="1040" type="edit">
-            <row id="CX">129</row>
-            <row id="CY">12</row>
-            <row id="X">7</row>
-            <row id="Y">18</row>
+          <row id="X" state="0">0</row>
+          <row id="Y" state="0">0</row>
+          <component class="TVisEdit" name="1050" state="0" type="edit">
+            <row id="CX" state="0">151</row>
+            <row id="CY" state="0">12</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">7</row>
           </component>
-          <component class="TVisButton" name="1" type="button" default="1">
-            <row id="CX">50</row>
-            <row id="CY">14</row>
-            <row id="Text" locked="1">OK</row>
-            <row id="X">7</row>
-            <row id="Y">38</row>
+          <component class="TVisButton" name="1" state="0" type="button" default="1">
+            <row id="CX" state="0">50</row>
+            <row id="CY" state="0">14</row>
+            <row id="Text" locked="1" state="0">OK</row>
+            <row id="X" state="0">28</row>
+            <row id="Y" state="0">28</row>
           </component>
-          <component class="TVisButton" name="2" type="button">
-            <row id="CX">50</row>
-            <row id="CY">14</row>
-            <row id="Text">
+          <component class="TVisButton" name="2" state="0" type="button">
+            <row id="CX" state="0">50</row>
+            <row id="CY" state="0">14</row>
+            <row id="Text" state="0">
               <native>Cancel</native>
-              <lang id="ru" date="20211012170005">Отмена</lang>
+              <lang id="ru">Отмена</lang>
             </row>
-            <row id="X">86</row>
-            <row id="Y">38</row>
+            <row id="X" state="0">88</row>
+            <row id="Y" state="0">28</row>
           </component>
         </form>
       </node>
@@ -3351,24 +3339,6 @@
           </component>
         </menu>
       </node>
-      <node class="TWindowsMenuNode" name="202" state="1" created="20211124211848" resid="202" langid="1033">
-        <menu class="TVisMenu" name="Menu">
-          <component class="TVisMenuItem" name="POPUP_TrayIcon" importname="POPUP" state="1" type="popup">
-            <component class="TVisMenuItem" name="32780" state="1" type="menu">
-              <row id="Text" state="1">
-                <native>&amp;Restore from Tray</native>
-                <lang id="ru" date="20211124211957" savedtotm="1">&amp;Восстановить</lang>
-              </row>
-            </component>
-            <component class="TVisMenuItem" name="57665" state="1" type="menu">
-              <row id="Text" state="1">
-                <native>E&amp;xit</native>
-                <lang id="ru" date="20211124212038">Вы&amp;ход</lang>
-              </row>
-            </component>
-          </component>
-        </menu>
-      </node>
     </node>
     <node class="TWindowsStringFolder" name="Strings" resid="6">
       <node class="TWindowsStringNode" name="10" created="20211012205715" resid="10" langid="1033">
@@ -3590,9 +3560,9 @@
         <row id="17131">Modified</row>
       </node>
       <node class="TWindowsStringNode" name="11" created="20211012215027" resid="11" langid="1033">
-        <row id="IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST" created="20211012223617" changed="20211012224023">
-          <native>Add new channels list</native>
-          <lang id="ru" date="20211012224018" savedtotm="1">Добавить новый список каналов</lang>
+        <row id="IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST" created="20211012223617" changed="20211212010909">
+          <native>Create new Channels list</native>
+          <lang id="ru" date="20211212010501">Создать новый Список каналов</lang>
         </row>
         <row id="IDS_STRING_BUTTON_SEARCH_NEXT" created="20211012223617">
           <native>Search next</native>
@@ -3804,6 +3774,18 @@
           <native>Enable Channel</native>
           <lang id="ru" date="20211209220416" savedtotm="1">Включить канал</lang>
         </row>
+        <row id="IDS_STRING_ERR_LOAD_CHANNELS_LIST" created="20211212010309" changed="20211212010619">
+          <native>Unable to load channels list %s</native>
+          <lang id="ru" date="20211212010947">Не могу загрузить Список каналов %s</lang>
+        </row>
+        <row id="IDS_STRING_ERR_NO_CHANNELS" created="20211212010309" changed="20211212010619">
+          <native>No Channels list found in directory %s</native>
+          <lang id="ru" date="20211212010444">Не найдены списки каналов в каталоге %s</lang>
+        </row>
+        <row id="IDS_STRING_ERR_REGEX" state="0" created="20211212010309">
+          <native>Error in regular expression: %hs</native>
+          <lang id="ru" date="20211212010413">Ошибка в регулярном выражении: %hs</lang>
+        </row>
         <row id="IDS_STRING_LOAD_ICONS_TITLE">
           <native>Load logotype image</native>
           <lang id="ru" date="20211017144737" savedtotm="1">Загрузить иконку</lang>
@@ -3977,28 +3959,28 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20211210001330">
-          <prev>2.2.553, 9 Dec 2021</prev>
-          <native>2.2.554, 10 Dec 2021</native>
+        <row id="FileVersion" locked="1" state="3" changed="20211212010309">
+          <prev>2.2.554, 10 Dec 2021</prev>
+          <native>2.2.559, 12 Dec 2021</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20211013234256">2</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211210001330">
-          <prev>553</prev>
-          <native>554</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211212010309">
+          <prev>554</prev>
+          <native>559</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20211210001330">
-          <prev>2.2.553</prev>
-          <native>2.2.554</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20211212010309">
+          <prev>2.2.554</prev>
+          <native>2.2.559</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20211013234256">2</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211210001330">
-          <prev>553</prev>
-          <native>554</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211212010309">
+          <prev>554</prev>
+          <native>559</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

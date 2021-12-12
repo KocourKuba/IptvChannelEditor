@@ -10,6 +10,7 @@
 #define IDD_CUSTOM_URL                  104
 #define IDD_DIALOG_ACCESS_INFO          105
 #define IDD_DIALOG_FILTER               106
+#define IDD_DIALOG_NEW_CHANNELS_LIST    107
 #define IDD_DIALOG_NEW_CHANNEL          108
 #define IDD_MAIN_SETTINGS_PAGE          109
 #define IDD_EDEMCHANNELEDITOR_DIALOG    110
@@ -101,6 +102,9 @@
 #define IDS_STRING_ALREADY_RUNNING      211
 #define IDS_STRING_ENABLE_CHANNEL       212
 #define IDS_STRING_ENABLE_CATEGORY      213
+#define IDS_STRING_ERR_LOAD_CHANNELS_LIST 214
+#define IDS_STRING_ERR_REGEX            215
+#define IDS_STRING_ERR_NO_CHANNELS      216
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -144,6 +148,7 @@
 #define IDC_EDIT_LOGIN                  1047
 #define IDC_EDIT_PL_SEARCH              1048
 #define IDC_EDIT_PLAYLIST_URL           1049
+#define IDC_EDIT_NAME                   1050
 #define IDC_EDIT_SEARCH                 1051
 #define IDC_EDIT_STREAM_URL             1052
 #define IDC_EDIT_EPG2_ID                1054
@@ -240,7 +245,7 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        214

@@ -15,6 +15,7 @@
 #include "AccessInfoPinDlg.h"
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
+#include "NewChannelsListDlg.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "PlaylistParseXMLThread.h"
 #include "GetStreamInfoThread.h"
@@ -111,7 +112,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnUpdateButtonSearchNext)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter)
-	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG, &CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CIPTVChannelEditorDlg::OnBnClickedCheckAdult)
@@ -508,21 +509,21 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", name);
 
 	m_all_channels_lists.clear();
-
 	m_wndChannels.ResetContent();
-	m_all_channels_lists.emplace_back(_T("Standard"), channelsPath + default_tv_name);
 
 	std::error_code err;
 	std::filesystem::directory_iterator dir_iter(channelsPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
 		const auto& path = dir_entry.path();
-		if (path.extension() == _T(".xml")
-			&& path.filename() != default_tv_name
-			&& path.filename() != default_vod_name)
-		{
-			m_all_channels_lists.emplace_back(path.filename(), path);
-		}
+		if (path.extension() != _T(".xml")) continue;
+
+		if (path.filename() == default_tv_name)
+			m_all_channels_lists.insert(m_all_channels_lists.begin(), path.filename());
+		else if (path.filename() == default_vod_name)
+			m_all_channels_lists.insert(m_all_channels_lists.end(), path.filename());
+		else
+			m_all_channels_lists.emplace_back(path.filename());
 	}
 
 	if (m_all_channels_lists.empty())
@@ -535,8 +536,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	for (const auto& item : m_all_channels_lists)
 	{
-		int idx = m_wndChannels.AddString(item.first.c_str());
-		m_wndChannels.SetItemData(idx, (DWORD_PTR)item.second.c_str());
+		m_wndChannels.AddString(item.c_str());
 	}
 
 	idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
@@ -556,6 +556,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	}
 
 	m_blockChecking = true;
+	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
+
 	// Reload selected channels list
 	OnCbnSelchangeComboChannels();
 
@@ -767,7 +769,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndFilter.EnableWindow(TRUE);
 	m_wndPlSearch.EnableWindow(!m_channelsMap.empty());
 	m_wndPlaylistTree.EnableWindow(TRUE);
-	m_wndChannels.EnableWindow(TRUE);
+	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 	m_wndStop.EnableWindow(FALSE);
 
 	BOOL enableDownload = TRUE;
@@ -1089,7 +1091,11 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 		return;
 
 	if (root == nullptr)
+	{
 		root = m_wndChannelsTree.GetRootItem();
+		m_unknownChannels.clear();
+		m_changedChannels.clear();
+	}
 
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
 	BOOL bCmpTitle = (flags & CMP_FLAG_TITLE) ? TRUE : FALSE;
@@ -1097,12 +1103,6 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 	BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
 	BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
 	BOOL bCmpEpg2 = (flags & CMP_FLAG_EPG2) ? TRUE : FALSE;
-
-	if (root == nullptr)
-	{
-		m_unknownChannels.clear();
-		m_changedChannels.clear();
-	}
 
 	while (root != nullptr && !m_playlistMap.empty())
 	{
@@ -1493,24 +1493,20 @@ int CIPTVChannelEditorDlg::GetNewCategoryID() const
 	return ++id;
 }
 
-bool CIPTVChannelEditorDlg::LoadChannels(const CString& path)
+bool CIPTVChannelEditorDlg::LoadChannels()
 {
 	set_allow_save(FALSE);
 
 	m_categoriesMap.clear();
 	m_channelsMap.clear();
 
-	auto pos = path.ReverseFind('\\');
-	if (pos != -1)
-	{
-		m_chFileName = path.Mid(++pos);
-	}
-	else
-	{
-		m_chFileName = path;
-	}
+	int lst_idx = m_wndChannels.GetCurSel();
+	if (lst_idx == CB_ERR)
+		return false;
 
-	std::ifstream is(path.GetString(), std::istream::binary);
+	const auto& channelsPath = fmt::format(L"{:s}{:s}\\{:s}", GetConfig().get_string(true, REG_LISTS_PATH), GetConfig().GetCurrentPluginName(), m_all_channels_lists[lst_idx]);
+
+	std::ifstream is(channelsPath, std::istream::binary);
 	if (!is.good())
 		return false;
 
@@ -1714,7 +1710,7 @@ void CIPTVChannelEditorDlg::OnAddCategory()
 
 void CIPTVChannelEditorDlg::OnUpdateAddCategory(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!m_chFileName.IsEmpty() && IsPlaylistCategory(m_wndPlaylistTree.GetFirstSelectedItem()) && IsSelectedTheSameType(&m_wndPlaylistTree));
+	pCmdUI->Enable(IsPlaylistCategory(m_wndPlaylistTree.GetFirstSelectedItem()) && IsSelectedTheSameType(&m_wndPlaylistTree));
 }
 
 void CIPTVChannelEditorDlg::OnNewChannel()
@@ -1823,6 +1819,7 @@ void CIPTVChannelEditorDlg::OnRemove()
 
 	RemoveOrphanChannels();
 	CheckForExistingPlaylist();
+	UpdateChannelsTreeColors();
 	set_allow_save();
 }
 
@@ -3089,6 +3086,10 @@ void CIPTVChannelEditorDlg::OnSave()
 	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
 
+	int lst_idx = m_wndChannels.GetCurSel();
+	if (lst_idx == -1)
+		return;
+
 	// renumber categories id
 	LPCWSTR old_selected = nullptr;
 	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
@@ -3177,15 +3178,14 @@ void CIPTVChannelEditorDlg::OnSave()
 		tv_info->append_node(ch_node);
 
 		doc.append_node(tv_info);
-
 		// write document
-		auto& playlistPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), GetConfig().GetCurrentPluginName());
+		auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), GetConfig().GetCurrentPluginName());
 		std::error_code err;
-		std::filesystem::create_directories(playlistPath, err);
+		std::filesystem::create_directories(channelsPath, err);
 
-		playlistPath += m_chFileName;
+		channelsPath += m_all_channels_lists[lst_idx];
 
-		std::ofstream os(playlistPath, std::istream::binary);
+		std::ofstream os(channelsPath, std::istream::binary);
 		os << doc;
 
 		set_allow_save(FALSE);
@@ -3548,7 +3548,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 
 void CIPTVChannelEditorDlg::OnUpdateAddUpdateChannel(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!m_chFileName.IsEmpty() && IsSelectedChannelsOrEntries());
+	pCmdUI->Enable(IsSelectedChannelsOrEntries());
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
@@ -3645,75 +3645,60 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 		OnSyncTreeItem();
 }
 
-void CIPTVChannelEditorDlg::OnBnClickedButtonAddNewChannelsList()
+void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
 {
-	CFileDialog dlg(FALSE);
+	if (!CheckForSave())
+		return;
 
 	const auto& pluginName = GetConfig().GetCurrentPluginName();
+	int cnt = 2;
+	std::wstring newListName;
+	bool found = false;
+	do
+	{
+		newListName = fmt::format(L"{:s}_channel_list{:d}.xml", pluginName, cnt++);
+		for (const auto& item : m_all_channels_lists)
+		{
+			if (StrCmpI(item.c_str(), newListName.c_str()) == 0)
+			{
+				found = true;
+				break;
+			}
+		}
+	} while (found);
+
+	CNewChannelsListDlg dlg;
+	dlg.m_name = newListName.c_str();
+
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	int idx = 0;
+	for (const auto& item : m_all_channels_lists)
+	{
+		if (StrCmpI(newListName.c_str(), item.c_str()) == 0)
+		{
+			m_wndChannels.SetCurSel(idx);
+			OnCbnSelchangeComboChannels();
+			return;
+		}
+		idx++;
+	}
+
 	auto& newList = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), pluginName);
 	std::filesystem::create_directory(newList);
 
-	newList += fmt::format(L"{:s}_channel_list.xml", pluginName);
+	m_channelsMap.clear();
+	m_categoriesMap.clear();
 
-	CString filter;
-	filter.LoadString(IDS_STRING_LOAD_CHANNELS_MASK);
-	filter.Replace('|', '\0');
+	m_all_channels_lists.emplace_back(dlg.m_name.GetString());
+	idx = m_wndChannels.AddString(dlg.m_name);
+	m_wndChannels.SetCurSel(idx);
+	GetConfig().set_int(false, REG_CHANNELS_TYPE, idx);
+	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 
-	CString title;
-	title.LoadString(IDS_STRING_ADD_NEW_CHANNELS);
-
-	CString buffer(newList.c_str());
-	OPENFILENAME& oFN = dlg.GetOFN();
-	oFN.lpstrFilter = filter.GetString();
-	oFN.nMaxFile = MAX_PATH;
-	oFN.nFilterIndex = 0;
-	oFN.lpstrTitle = title.GetString();
-	oFN.Flags |= OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_NONETWORKBUTTON;
-	oFN.lpstrFile = buffer.GetBuffer(MAX_PATH);
-
-	dlg.ApplyOFNToShellDialog();
-
-	INT_PTR nResult = dlg.DoModal();
-	if (nResult != IDOK)
-		return;
-
-	size_t len = _tcslen(oFN.lpstrFileTitle);
-	for (size_t i = 0; i < len; i++)
-	{
-		if (oFN.lpstrFileTitle[i] > 127)
-		{
-			AfxMessageBox(IDS_STRING_WRN_NON_ASCII_LIST, MB_ICONERROR | MB_OK);
-			return;
-		}
-	}
-
-	CFile cFile;
-	CFileException ex;
-	if (!cFile.Open(dlg.GetPathName(), CFile::modeWrite | CFile::modeCreate | CFile::typeBinary | CFile::shareDenyRead, &ex))
-		return;
-
-	cFile.Close();
-	auto found = std::find_if(m_all_channels_lists.begin(), m_all_channels_lists.end(), [&dlg](const auto& item)
-							  {
-								  return dlg.GetFileName().CompareNoCase(item.first.c_str()) == 0;
-							  });
-
-	if (found == m_all_channels_lists.end())
-	{
-		m_channelsMap.clear();
-		m_categoriesMap.clear();
-		const auto& pair = m_all_channels_lists.emplace_back(dlg.GetFileName(), dlg.GetPathName());
-		m_wndChannels.EnableWindow(TRUE);
-		int idx = m_wndChannels.AddString(pair.first.c_str());
-		m_wndChannels.SetItemData(idx, (DWORD_PTR)pair.second.c_str());
-		m_wndChannels.SetCurSel(idx);
-		FillTreeChannels();
-		set_allow_save();
-	}
-	else
-	{
-		m_wndChannels.SetCurSel(m_wndChannels.FindString(-1, dlg.GetFileName()));
-	}
+	OnSave();
+	FillTreeChannels();
 }
 
 void CIPTVChannelEditorDlg::OnGetStreamInfo()
@@ -4204,10 +4189,10 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 		return;
 	}
 
-	if (!LoadChannels((LPCTSTR)m_wndChannels.GetItemData(idx)))
+	if (!LoadChannels())
 	{
 		CString str;
-		str.Format(_T("Unable to load channels list %s"), (LPCTSTR)m_wndChannels.GetItemData(idx));
+		str.Format(IDS_STRING_ERR_LOAD_CHANNELS_LIST, m_all_channels_lists[idx].c_str());
 		AfxMessageBox(str, MB_ICONERROR | MB_OK);
 	}
 

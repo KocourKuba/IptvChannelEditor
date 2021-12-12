@@ -94,7 +94,7 @@ protected:
 	afx_msg void OnSyncTreeItem();
 	afx_msg void OnUpdateSyncTreeItem(CCmdUI* pCmdUI);
 
-	afx_msg void OnBnClickedButtonAddNewChannelsList();
+	afx_msg void OnBnClickedButtonCreateNewChannelsList();
 	afx_msg void OnBnClickedButtonPlFilter();
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonCacheIcon();
@@ -167,7 +167,7 @@ private:
 	BOOL is_allow_save() const { return m_allow_save; }
 	void set_allow_save(BOOL val = TRUE);
 
-	bool LoadChannels(const CString& path);
+	bool LoadChannels();
 	void LoadPlaylist(bool saveToFile = false);
 
 	bool AddChannel(const std::shared_ptr<PlaylistEntry>& entry, int categoryId = -1);
@@ -312,7 +312,6 @@ private:
 
 	CString m_toolTipText;
 
-	CString m_chFileName;
 	CString m_plFileName;
 
 	BOOL m_allow_save = FALSE;
@@ -348,7 +347,7 @@ private:
 	// channels part
 
 	// list of all channel lists, filled when switch plugin. Reads from \playlists\plugin-name\*.xml
-	std::vector<std::pair<std::wstring, std::wstring>> m_all_channels_lists;
+	std::vector<std::wstring> m_all_channels_lists;
 
 	// map of all categories for fast search to category key (id)
 	// Loaded from channels list
