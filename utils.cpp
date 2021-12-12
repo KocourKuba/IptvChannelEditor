@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <winhttp.h>
 #include <unordered_map>
+#include <atltrace.h>
 
 #include "utils.h"
 
@@ -375,9 +376,9 @@ bool CrackUrl(const std::wstring& url, std::wstring& host /*= std::wstring()*/, 
 	return false;
 }
 
-bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image)
+bool DownloadFile(const std::wstring& url, std::vector<BYTE>& vData)
 {
-	TRACE(L"download url: %s\n", url.c_str());
+	ATLTRACE(L"download url: %s\n", url.c_str());
 	std::wstring host;
 	std::wstring path;
 	if (!CrackUrl(url, host, path))
@@ -420,13 +421,13 @@ bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image)
 	{
 		if (!bResults)
 		{
-			TRACE("Error %d has occurred.\n", GetLastError());
+			ATLTRACE("Error %d has occurred.\n", GetLastError());
 			break;
 		}
 		// Check for available data.
 		if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
 		{
-			TRACE("Error %u in WinHttpQueryDataAvailable.\n", GetLastError());
+			ATLTRACE("Error %u in WinHttpQueryDataAvailable.\n", GetLastError());
 			break;
 		}
 
@@ -438,11 +439,11 @@ bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image)
 		if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
 		{
 			chunk.resize(dwSize);
-			image.insert(image.end(), chunk.begin(), chunk.end());
+			vData.insert(vData.end(), chunk.begin(), chunk.end());
 		}
 		else
 		{
-			TRACE("Error %u in WinHttpReadData.\n", GetLastError());
+			ATLTRACE("Error %u in WinHttpReadData.\n", GetLastError());
 			break;
 		}
 	}
@@ -452,73 +453,19 @@ bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image)
 	if (hConnect) WinHttpCloseHandle(hConnect);
 	if (hSession) WinHttpCloseHandle(hSession);
 
-	return !image.empty();
+	return !vData.empty();
 }
 
-BOOL LoadImage(const std::wstring& fullPath, CImage& image)
+BOOL WriteDataToFile(const std::wstring& path, std::vector<BYTE>& vData)
 {
-	HRESULT hr = E_FAIL;
-	if (utils::CrackUrl(fullPath))
-	{
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(fullPath, data))
-		{
-			// Still not clear if this is making a copy internally
-			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), data.size()));
-			hr = image.Load(stream);
-		}
-	}
-	else
-	{
-		hr = image.Load(fullPath.c_str());
-	}
+	HANDLE hFile = ::CreateFileW(path.c_str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	if (hFile == INVALID_HANDLE_VALUE) return FALSE;
 
-	return SUCCEEDED(hr);
-}
+	DWORD dwWritten = 0;
+	BOOL res = ::WriteFile(hFile, vData.data(), vData.size(), &dwWritten, nullptr);;
+	::CloseHandle(hFile);
 
-void SetImage(const CImage& image, CStatic& wnd)
-{
-	HBITMAP hImg = nullptr;
-	if (image)
-	{
-		CRect rcDst;
-		wnd.GetClientRect(rcDst);
-
-		int srcWidth = image.GetWidth();
-		int srcHeight = image.GetHeight();
-
-		float Factor_X = (float)((float)rcDst.Width() / (float)srcWidth);
-		float Factor_Y = (float)((float)rcDst.Height() / (float)srcHeight);
-
-		int x = 0;
-		int y = 0;
-		if (Factor_X > Factor_Y)
-		{
-			x = (int)((rcDst.right - (int)((float)srcWidth * Factor_Y)) / 2);
-			Factor_X = Factor_Y;
-		}
-		else
-		{
-			y = (int)((rcDst.bottom - (int)((float)srcHeight * Factor_X)) / 2);
-			Factor_Y = Factor_X;
-		}
-
-		int Width = (int)(Factor_X * srcWidth);
-		int Height = (int)(Factor_Y * srcHeight);
-
-		CImage resized;
-		resized.Create(rcDst.Width(), rcDst.Height(), 32);
-		HDC dcImage = resized.GetDC();
-		SetStretchBltMode(dcImage, COLORONCOLOR);
-		image.StretchBlt(dcImage, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
-		image.StretchBlt(wnd.GetDC()->m_hDC, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
-		resized.ReleaseDC();
-		hImg = (HBITMAP)resized.Detach();
-	}
-
-	HBITMAP hOld = wnd.SetBitmap(hImg);
-	if (hOld)
-		::DeleteObject(hOld);
+	return res;
 }
 
 std::string entityDecrypt(const std::string& text)

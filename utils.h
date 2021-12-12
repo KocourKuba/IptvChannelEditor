@@ -267,11 +267,9 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 
 bool CrackUrl(const std::wstring& url, std::wstring& host = std::wstring(), std::wstring& path = std::wstring());
 
-bool DownloadFile(const std::wstring& url, std::vector<BYTE>& image);
+bool DownloadFile(const std::wstring& url, std::vector<BYTE>& vData);
+
+BOOL WriteDataToFile(const std::wstring& path, std::vector<BYTE>& vData);
 
 std::string entityDecrypt(const std::string& text);
-
-BOOL LoadImage(const std::wstring& fullPath, CImage& image);
-void SetImage(const CImage& image, CStatic& wnd);
-
 }

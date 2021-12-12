@@ -10,11 +10,11 @@ static char THIS_FILE[] = __FILE__;
 
 // special case for run under debugger from VS
 #ifdef _DEBUG
-CString PluginsConfig::DEV_PATH = LR"(..\)";
-CString PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
+std::wstring PluginsConfig::DEV_PATH = LR"(..\)";
+std::wstring PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
 #else
-CString PluginsConfig::DEV_PATH;
-CString PluginsConfig::PACK_DLL_PATH;
+std::wstring PluginsConfig::DEV_PATH;
+std::wstring PluginsConfig::PACK_DLL_PATH;
 #endif // _DEBUG
 
 constexpr auto MAX_REGVAL_SIZE = 1024; // real max size - 32767 bytes;
@@ -32,10 +32,14 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_MAX_THREADS,
 	REG_LANGUAGE,
 	REG_CMP_FLAGS,
+	REG_UPDATE_FREQ,
+	REG_UPDATE_PL,
 	REG_PLUGIN,
 	REG_ICON_SOURCE,
 	REG_DAYS_BACK,
 	REG_HOURS_BACK,
+	REG_NEXT_UPDATE,
+	REG_AVAIL_UPDATE,
 	REG_LOGIN,
 	REG_LOGIN_EMBEDDED,
 	REG_PASSWORD,
@@ -98,8 +102,9 @@ static std::vector<PluginDesc> all_plugins = {
 
 void ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (m_parent->GetSafeHwnd())
-		m_parent->SendMessage(message, wParam, lParam);
+	CWnd* parent = (CWnd*)m_parent;
+	if (parent->GetSafeHwnd())
+		parent->SendMessage(message, wParam, lParam);
 
 }
 
@@ -211,6 +216,26 @@ void PluginsConfig::set_int(bool isApp, const std::wstring& key, const int value
 	sel_settings[key] = value;
 }
 
+__int64 PluginsConfig::get_int64(bool isApp, const std::wstring& key, const __int64 def /*= 0*/) const
+{
+	const auto& sel_settings = isApp ? m_settings : m_plugin_settings;
+
+	const auto& pair = sel_settings.find(key);
+	if (pair != sel_settings.end())
+	{
+		const auto var = std::get_if<__int64>(&pair->second);
+		return var ? *var : def;
+	}
+
+	return def;
+}
+
+void PluginsConfig::set_int64(bool isApp, const std::wstring& key, const __int64 value)
+{
+	auto& sel_settings = isApp ? m_settings : m_plugin_settings;
+	sel_settings[key] = value;
+}
+
 std::vector<BYTE> PluginsConfig::get_binary(bool isApp, const std::wstring& key) const
 {
 	const auto& sel_settings = isApp ? m_settings : m_plugin_settings;
@@ -281,7 +306,10 @@ void PluginsConfig::ReadSettingsRegistry(const std::wstring& section, map_varian
 			switch (dwType)
 			{
 				case REG_DWORD:
-					settings[name] = *(DWORD*)lpData.data();
+					settings[name] = *(int*)lpData.data();
+					break;
+				case REG_QWORD:
+					settings[name] = *(__int64*)lpData.data();
 					break;
 				case REG_SZ:
 					settings[name] = (wchar_t*)lpData.data();
@@ -323,13 +351,19 @@ void PluginsConfig::SaveSettingsRegistry(const std::wstring& section, map_varian
 					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_DWORD, pbData, sizeof(int));
 					break;
 				}
-				case 1: // std::wstring
+				case 1: // __int64
+				{
+					auto pbData = (BYTE*)&std::get<__int64>(pair.second);
+					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_QWORD, pbData, sizeof(__int64));
+					break;
+				}
+				case 2: // std::wstring
 				{
 					const auto& szData = std::get<std::wstring>(pair.second);
 					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_SZ, (LPBYTE)szData.c_str(), (DWORD)(szData.size() * sizeof(wchar_t)));
 					break;
 				}
-				case 2: // std::vector<BYTE>
+				case 3: // std::vector<BYTE>
 				{
 					const auto& vData = std::get<std::vector<BYTE>>(pair.second);
 					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_BINARY, vData.data(), (DWORD)vData.size());

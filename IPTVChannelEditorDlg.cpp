@@ -390,7 +390,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	// Fill available plugins
 	for (const auto& item : GetConfig().get_plugins_info())
 	{
-		int idx = m_wndPluginType.AddString(item.name);
+		int idx = m_wndPluginType.AddString(item.name.c_str());
 		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
 	}
 
@@ -1230,7 +1230,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 				str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
 			}
 			GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
-			utils::SetImage(img, m_wndChannelIcon);
+			SetImage(img, m_wndChannelIcon);
 		}
 
 		UpdateEPG(&m_wndChannelsTree);
@@ -1284,7 +1284,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem)
 		}
 
 		const auto& img = GetIconCache().get_icon(entry->get_icon_absolute_path());
-		utils::SetImage(img, m_wndPlIcon);
+		SetImage(img, m_wndPlIcon);
 
 		UpdateEPG(&m_wndPlaylistTree);
 	}
@@ -1730,9 +1730,9 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
 	CImage img;
-	if (utils::LoadImage(channel->get_icon_absolute_path(), img))
+	if (LoadImage(channel->get_icon_absolute_path(), img))
 	{
-		utils::SetImage(img, m_wndChannelIcon);
+		SetImage(img, m_wndChannelIcon);
 	}
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -2122,7 +2122,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 						str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
 						GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
 					}
-					utils::SetImage(img, m_wndChannelIcon);
+					SetImage(img, m_wndChannelIcon);
 				}
 			}
 		}
@@ -3217,9 +3217,9 @@ void CIPTVChannelEditorDlg::OnNewCategory()
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
 
 	CImage img;
-	if (utils::LoadImage(newCategory->get_icon_absolute_path(), img))
+	if (LoadImage(newCategory->get_icon_absolute_path(), img))
 	{
-		utils::SetImage(img, m_wndChannelIcon);
+		SetImage(img, m_wndChannelIcon);
 	}
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -3325,9 +3325,9 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 				path += oFN.lpstrFileTitle;
 				CopyFile(file, path, FALSE);
 				CImage img;
-				if (utils::LoadImage(path.GetString(), img))
+				if (LoadImage(path.GetString(), img))
 				{
-					utils::SetImage(img, m_wndChannelIcon);
+					SetImage(img, m_wndChannelIcon);
 				}
 			}
 
@@ -3376,7 +3376,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	if (save)
 	{
 		const auto& img = GetIconCache().get_icon(info->get_icon_absolute_path());
-		utils::SetImage(img, m_wndChannelIcon);
+		SetImage(img, m_wndChannelIcon);
 
 		UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
 		CheckForExistingPlaylist();
@@ -3416,7 +3416,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 	for (const auto& item : GetConfig().get_plugins_info())
 	{
 		CString str;
-		str.Format(_T("%s"), item.name.GetString());
+		str.Format(_T("%s"), item.name.c_str());
 		m_wndProgressInfo.SetWindowText(str);
 		m_wndProgress.SetPos(++i);
 
@@ -3424,7 +3424,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 		{
 			success = false;
 			CString str;
-			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name);
+			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name.c_str());
 			if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
 		}
 	}

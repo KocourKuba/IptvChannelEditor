@@ -8,7 +8,7 @@
 #include "IconCache.h"
 #include "utils.h"
 
-#include "SevenZip/7zip/SevenZipWrapper.h"
+#include "7zip/SevenZipWrapper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -125,7 +125,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 			if (!PackPlugin(item.type, output_path, lists_path, false))
 			{
 				CString str;
-				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name);
+				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name.c_str());
 				if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
 			}
 		}
@@ -235,7 +235,8 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 			fileName.Truncate(pos + 1);
 	}
 
-	fileName += PluginsConfig::DEV_PATH + szSubFolder;
+	fileName += PluginsConfig::DEV_PATH.c_str();
+	fileName += szSubFolder;
 
 	return std::filesystem::absolute(fileName.GetString());
 }
@@ -305,7 +306,8 @@ bool PackPlugin(const StreamType plugin_type,
 	os.close();
 
 	// pack folder
-	SevenZipWrapper archiver(GetAppPath(PluginsConfig::PACK_DLL_PATH + PACK_DLL));
+	const auto& pack_dll = GetAppPath(PluginsConfig::PACK_DLL_PATH.c_str()) + PACK_DLL;
+	SevenZipWrapper archiver(pack_dll);
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
 	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
 	if (!res)
@@ -378,4 +380,70 @@ void SaveWindowPos(HWND hWnd, LPCTSTR name)
 	GetWindowPlacement(hWnd, &wp);
 	// Save the info
 	GetConfig().set_binary(true, name, (LPBYTE)&wp, sizeof(wp));
+}
+
+BOOL LoadImage(const std::wstring& fullPath, CImage& image)
+{
+	HRESULT hr = E_FAIL;
+	if (utils::CrackUrl(fullPath))
+	{
+		std::vector<BYTE> data;
+		if (utils::DownloadFile(fullPath, data))
+		{
+			// Still not clear if this is making a copy internally
+			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), data.size()));
+			hr = image.Load(stream);
+		}
+	}
+	else
+	{
+		hr = image.Load(fullPath.c_str());
+	}
+
+	return SUCCEEDED(hr);
+}
+
+void SetImage(const CImage& image, CStatic& wnd)
+{
+	HBITMAP hImg = nullptr;
+	if (image)
+	{
+		CRect rcDst;
+		wnd.GetClientRect(rcDst);
+
+		int srcWidth = image.GetWidth();
+		int srcHeight = image.GetHeight();
+
+		float Factor_X = (float)((float)rcDst.Width() / (float)srcWidth);
+		float Factor_Y = (float)((float)rcDst.Height() / (float)srcHeight);
+
+		int x = 0;
+		int y = 0;
+		if (Factor_X > Factor_Y)
+		{
+			x = (int)((rcDst.right - (int)((float)srcWidth * Factor_Y)) / 2);
+			Factor_X = Factor_Y;
+		}
+		else
+		{
+			y = (int)((rcDst.bottom - (int)((float)srcHeight * Factor_X)) / 2);
+			Factor_Y = Factor_X;
+		}
+
+		int Width = (int)(Factor_X * srcWidth);
+		int Height = (int)(Factor_Y * srcHeight);
+
+		CImage resized;
+		resized.Create(rcDst.Width(), rcDst.Height(), 32);
+		HDC dcImage = resized.GetDC();
+		SetStretchBltMode(dcImage, COLORONCOLOR);
+		image.StretchBlt(dcImage, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
+		image.StretchBlt(wnd.GetDC()->m_hDC, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
+		resized.ReleaseDC();
+		hImg = (HBITMAP)resized.Detach();
+	}
+
+	HBITMAP hOld = wnd.SetBitmap(hImg);
+	if (hOld)
+		::DeleteObject(hOld);
 }

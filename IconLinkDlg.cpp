@@ -4,9 +4,8 @@
 #include "pch.h"
 #include <afxdialogex.h>
 #include "IconLinkDlg.h"
-#include "resource.h"
+#include "IPTVChannelEditor.h"
 #include "IconCache.h"
-#include "utils.h"
 
 
 // CIconLink dialog
@@ -60,5 +59,5 @@ void CIconLinkDlg::OnBnClickedButtonGet()
 	}
 
 	const auto& img = GetIconCache().get_icon(m_url.GetString());
-	utils::SetImage(img, m_wndIcon);
+	SetImage(img, m_wndIcon);
 }

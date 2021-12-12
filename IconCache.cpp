@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "IconCache.h"
-#include "utils.h"
+#include "IPTVChannelEditor.h"
 #include "Crc32.h"
 
 #ifdef _DEBUG
@@ -20,7 +20,7 @@ const CImage& CIconCache::get_icon(const std::wstring& path)
 
 	// not found in cache, try to load
 	auto container = std::make_unique<ImageContainer>();
-	if (utils::LoadImage(path, container->get_image()))
+	if (LoadImage(path, container->get_image()))
 	{
 		return m_imageMap.emplace(hash, std::move(container)).first->second->get_image();
 	}

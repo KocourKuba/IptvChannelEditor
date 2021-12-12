@@ -50,6 +50,9 @@ public:
 	BOOL m_bMakeAll = FALSE;
 };
 
+BOOL LoadImage(const std::wstring& fullPath, CImage& image);
+void SetImage(const CImage& image, CStatic& wnd);
+
 std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);
 
 bool PackPlugin(const StreamType plugin_type,
