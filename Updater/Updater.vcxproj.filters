@@ -13,24 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\fmt">
-      <UniqueIdentifier>{b0f0bdd4-9fcd-471e-94cf-2b2bddcc4518}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Updater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CommandLine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\fmt\src\format.cc">
-      <Filter>Source Files\fmt</Filter>
-    </ClCompile>
-    <ClCompile Include="..\fmt\src\os.cc">
-      <Filter>Source Files\fmt</Filter>
-    </ClCompile>
-    <ClCompile Include="..\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">

@@ -6,7 +6,8 @@
 #include "IPTVChannelEditorDlg.h"
 #include "FileVersionInfo.h"
 #include "IconCache.h"
-#include "utils.h"
+
+#include "UtilsLib\inet_utils.h"
 
 #include "7zip/SevenZipWrapper.h"
 
@@ -385,7 +386,9 @@ void SaveWindowPos(HWND hWnd, LPCTSTR name)
 BOOL LoadImage(const std::wstring& fullPath, CImage& image)
 {
 	HRESULT hr = E_FAIL;
-	if (utils::CrackUrl(fullPath))
+	std::wstring host;
+	std::wstring path;
+	if (utils::CrackUrl(fullPath, host, path))
 	{
 		std::vector<BYTE> data;
 		if (utils::DownloadFile(fullPath, data))

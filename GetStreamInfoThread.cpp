@@ -5,7 +5,8 @@
 #include <thread>
 #include "GetStreamInfoThread.h"
 #include "map_serializer.h"
-#include "utils.h"
+
+#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

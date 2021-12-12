@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\rapidxml">
-      <UniqueIdentifier>{70607042-51a9-4203-898d-151f4cd6a164}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Containers">
       <UniqueIdentifier>{1cb04ffa-9406-4790-bf58-05208cac9c2f}</UniqueIdentifier>
     </Filter>
@@ -40,9 +37,6 @@
     <Filter Include="Source Files\uri">
       <UniqueIdentifier>{528ca71c-ee35-46f6-956e-054a25b21675}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\fmt">
-      <UniqueIdentifier>{665f0d5b-fb62-44f9-9eb7-cd7c335f380d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Threads">
       <UniqueIdentifier>{9a2f096a-6b15-4709-863b-04340cbae644}</UniqueIdentifier>
     </Filter>
@@ -62,18 +56,6 @@
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml.hpp">
-      <Filter>Header Files\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_iterators.hpp">
-      <Filter>Header Files\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_print.hpp">
-      <Filter>Header Files\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_utils.hpp">
-      <Filter>Header Files\rapidxml</Filter>
     </ClInclude>
     <ClInclude Include="ChannelCategory.h">
       <Filter>Header Files\Containers</Filter>
@@ -158,9 +140,6 @@
     </ClInclude>
     <ClInclude Include="uri_antifriz.h">
       <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AccessInfoPinDlg.h">
       <Filter>Header Files\Dialogs</Filter>
@@ -299,17 +278,8 @@
     <ClCompile Include="uri_antifriz.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
-    <ClCompile Include="utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AccessInfoPinDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
-    </ClCompile>
-    <ClCompile Include="fmt\src\os.cc">
-      <Filter>Source Files\fmt</Filter>
-    </ClCompile>
-    <ClCompile Include="fmt\src\format.cc">
-      <Filter>Source Files\fmt</Filter>
     </ClCompile>
     <ClCompile Include="uri_oneusd.cpp">
       <Filter>Source Files\uri</Filter>

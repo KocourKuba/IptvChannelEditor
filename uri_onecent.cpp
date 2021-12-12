@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "uri_onecent.h"
-#include "utils.h"
+#include "UtilsLib\utils.h"
 #include "PlayListEntry.h"
 
 #ifdef _DEBUG

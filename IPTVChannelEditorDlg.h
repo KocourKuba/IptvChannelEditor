@@ -8,8 +8,9 @@
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
 #include "map_serializer.h"
-#include "json.hpp"
 #include "TrayIcon.h"
+
+#include "UtilsLib\json.hpp"
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx

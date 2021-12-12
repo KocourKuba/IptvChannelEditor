@@ -2,9 +2,10 @@
 #include <afxdialogex.h>
 #include "AccessInfoPassDlg.h"
 #include "resource.h"
-#include "utils.h"
-#include "json.hpp"
 #include "PlayListEntry.h"
+
+#include "UtilsLib\json.hpp"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

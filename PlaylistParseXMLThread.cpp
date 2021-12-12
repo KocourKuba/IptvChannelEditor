@@ -6,7 +6,7 @@
 #include "IPTVChannelEditor.h"
 #include "PlayListEntry.h"
 #include "ChannelCategory.h"
-#include "utils.h"
+#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

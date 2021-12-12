@@ -1,6 +1,7 @@
 #pragma once
-#include "rapidxml.hpp"
 #include "BaseInfo.h"
+
+#include "UtilsLib\rapidxml.hpp"
 
 // <tv_channel>
 //     <caption>Первый канал</caption>

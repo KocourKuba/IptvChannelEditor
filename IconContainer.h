@@ -1,6 +1,7 @@
 #pragma once
 #include "uri_base.h"
-#include "utils.h"
+
+#include "UtilsLib\utils.h"
 
 class IconContainer
 {

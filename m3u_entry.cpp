@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "m3u_entry.h"
-#include "utils.h"
+
+#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

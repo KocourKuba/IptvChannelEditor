@@ -4,7 +4,7 @@
 #include "pch.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "PlayListEntry.h"
-#include "utils.h"
+#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ChannelCategory.h"
-#include "utils.h"
+
+#include "UtilsLib\rapidxml_value.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,32 +27,32 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 		return;
 
 	// <id>1</id>
-	set_key(utils::get_value_int(node->first_node(ID)));
+	set_key(rapidxml::get_value_int(node->first_node(ID)));
 	// <caption>Общие</caption>
-	set_title(utils::get_value_wstring(node->first_node(CAPTION)));
+	set_title(rapidxml::get_value_wstring(node->first_node(CAPTION)));
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	set_icon_uri(utils::get_value_wstring(node->first_node(ICON_URL)));
+	set_icon_uri(rapidxml::get_value_wstring(node->first_node(ICON_URL)));
 	// <disabled>true</disabled>
-	set_disabled(utils::string_tolower(utils::get_value_string(node->first_node(utils::DISABLED))) == "true");
+	set_disabled(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::DISABLED))) == "true");
 }
 
 rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) const
 {
 	// <tv_channel>
-	auto category_node = utils::alloc_node(alloc, utils::TV_CATEGORY);
+	auto category_node = rapidxml::alloc_node(alloc, utils::TV_CATEGORY);
 
 	// <id>1</id>
-	category_node->append_node(utils::alloc_node(alloc, ID, utils::int_to_char(get_key()).c_str()));
+	category_node->append_node(rapidxml::alloc_node(alloc, ID, utils::int_to_char(get_key()).c_str()));
 
 	// <caption>Общие</caption>
-	category_node->append_node(utils::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
+	category_node->append_node(rapidxml::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	category_node->append_node(utils::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
+	category_node->append_node(rapidxml::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 
 	if (is_disabled())
 	{
-		category_node->append_node(utils::alloc_node(alloc, utils::DISABLED, "true"));
+		category_node->append_node(rapidxml::alloc_node(alloc, utils::DISABLED, "true"));
 	}
 
 	return category_node;

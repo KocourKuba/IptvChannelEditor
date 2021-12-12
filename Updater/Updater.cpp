@@ -6,7 +6,10 @@
 #include <wtypes.h>
 
 #include "CommandLine.hpp"
-#include "utils.h"
+
+#include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
+#include "UtilsLib\rapidxml_value.hpp"
 
 #include "SevenZip\7zip\SevenZipWrapper.h"
 
@@ -31,6 +34,17 @@ constexpr auto err_open_pkg      = 108;
 constexpr auto err_open_pl       = 109;
 constexpr auto err_parse         = 200;
 
+struct UpdateInfo
+{
+	std::wstring version;
+	std::wstring update_path;
+	std::wstring info_file;
+	std::wstring package_name;
+	std::wstring playlists_name;
+	bool force = false;
+	bool playlists = false;
+};
+
 std::wstring GetAppPath(const wchar_t* szSubFolder /*= nullptr*/)
 {
 	std::wstring fileName;
@@ -50,10 +64,9 @@ std::wstring GetAppPath(const wchar_t* szSubFolder /*= nullptr*/)
 }
 
 
-int ParseInfo(std::wstring& version)
+int parse_info(UpdateInfo& info)
 {
-	const auto& updateFile = GetAppPath(L"Updates\\") + L"update.xml";
-	std::ifstream stream(updateFile);
+	std::ifstream stream(info.update_path + info.info_file);
 	if (!stream.good())
 	{
 		return err_load_info; // Unable to load update info!
@@ -81,107 +94,99 @@ int ParseInfo(std::wstring& version)
 		return err_parse; // Incorrect update info!
 	}
 
-	version = utils::get_value_wstring(i_node->first_node("version"));
+	info.version = rapidxml::get_value_wstring(i_node->first_node("version"));
+	info.package_name= fmt::format(L"dune_channel_editor_{:s}.7z", info.version);
+	info.playlists_name = fmt::format(L"dune_channel_editor_{:s}.7z", info.version);
+
 	return 0;
 }
 
-int check_for_update()
+int check_for_update(UpdateInfo& info)
 {
 	int ret = 0;
 
-	std::vector<BYTE> update_info;
-	if (!utils::DownloadFile(L"http://igores.ru/sharky72/update.xml", update_info))
+	const auto& updateFile = info.update_path + info.info_file;
+	if (info.force || !std::filesystem::exists(updateFile))
 	{
-		return err_download_info; // Unable to download update info!
+		std::vector<BYTE> update_info;
+		if (!utils::DownloadFile(L"http://igores.ru/sharky72/update.xml", update_info))
+		{
+			return err_download_info; // Unable to download update info!
+		}
+
+		if (!utils::WriteDataToFile(updateFile, update_info))
+		{
+			return err_save_info; // Unable to save update info!
+		}
 	}
 
-	const auto& updateFile = GetAppPath(L"Updates\\") + L"update.xml";
-	if (!utils::WriteDataToFile(updateFile, update_info))
-	{
-		return err_save_info; // Unable to save update info!
-	}
-
-	std::wstring version;
-	return ParseInfo(version);
+	return parse_info(info);
 }
 
-int download_update(bool playlists)
+int download_update(UpdateInfo& info)
 {
 	int ret = 0;
 	do
 	{
-		const auto& updateFolder = GetAppPath(L"Updates\\");
-		const auto& updateFile = updateFolder + L"update.xml";
-		if (!std::filesystem::exists(updateFile))
-		{
-			ret = check_for_update();
-			if (ret != 0) break;
-		}
-
-		std::wstring version;
-		ret = ParseInfo(version);
+		ret = check_for_update(info);
 		if (ret != 0) break;
 
-		const auto& package_name = fmt::format(L"dune_channel_editor_{:s}.7z", version);
-		std::vector<BYTE> update_package;
-		if (!utils::DownloadFile(L"http://igores.ru/sharky72/" + package_name, update_package))
+		if (!std::filesystem::exists(info.update_path + info.package_name))
 		{
-			ret = err_download_pkg; // Unable to download update package!
-			break;
+			std::vector<BYTE> package_data;
+			if (!utils::DownloadFile(L"http://igores.ru/sharky72/" + info.package_name, package_data))
+			{
+				ret = err_download_pkg; // Unable to download update package!
+				break;
+			}
+
+			if (!utils::WriteDataToFile(info.update_path + info.package_name, package_data))
+			{
+				ret = err_save_pkg; // Unable to save update package!
+				break;
+			}
 		}
 
-		if (!utils::WriteDataToFile(updateFolder + package_name, update_package))
+		if (info.playlists && !std::filesystem::exists(info.update_path + info.playlists_name))
 		{
-			ret = err_save_pkg; // Unable to save update package!
-			break;
-		}
-
-		const auto& channels_name = fmt::format(L"playlists_{:s}.7z", version);
-		std::vector<BYTE> update_channels;
-		if (playlists)
-		{
-			if (!utils::DownloadFile(L"http://igores.ru/sharky72/" + channels_name, update_channels))
+			std::vector<BYTE> playlists_data;
+			if (!utils::DownloadFile(L"http://igores.ru/sharky72/" + info.playlists_name, playlists_data))
 			{
 				ret = err_download_pl; // Unable to download channels list!
 				break;
 			}
 
-			if (!update_channels.empty() && !utils::WriteDataToFile(updateFolder + channels_name, update_channels))
+			if (!playlists_data.empty() && !utils::WriteDataToFile(info.update_path + info.playlists_name, playlists_data))
 			{
-				ret = err_save_pl; // Unable to save update package!
+				ret = err_save_pl; // Unable to save update channels list!
 				break;
 			}
 		}
-
 	} while (false);
 
 	return ret;
 }
 
-int update_app()
+int update_app(UpdateInfo& info)
 {
-	std::wstring version;
-	int ret = ParseInfo(version);
-	if (ret != 0) return ret;
-
-	if (version.empty()) return err_load_info;
-
-	const auto& updates_path = GetAppPath(L"Updates\\");
-	const auto& package_name = fmt::format(L"{:s}dune_channel_editor_{:s}.7z", updates_path, version);
-	const auto& channels_name = fmt::format(L"{:s}playlists_{:s}.7z", updates_path, version);
+	int ret = download_update(info);
+	if (ret != 0)
+		return ret;
 
 	const auto& pack_dll = GetAppPath(PACK_DLL_PATH.c_str()) + PACK_DLL;
 	SevenZip::SevenZipWrapper archiver(pack_dll);
-	if (!archiver.OpenArchive(package_name))
+	if (!archiver.OpenArchive(info.update_path + info.package_name))
 		return err_open_pkg;
 
 	const auto& packed_files = archiver.GetExtractor().GetItemsNames();
-	if (!archiver.GetExtractor().ExtractArchive(updates_path + L"package"))
+	const auto& unpack_pkg_folder = fmt::format(L"{:s}dune_package_{:s}", info.update_path, info.version);
+	if (!archiver.GetExtractor().ExtractArchive(unpack_pkg_folder))
 		return err_open_pkg;
 
 	const auto& root = GetAppPath(L"\\");
 	for (const auto& file : packed_files)
 	{
+		// rename only root items (files and folders)
 		if (file.find('\\') != std::wstring::npos) continue;
 
 		const auto& old_file = root + file;
@@ -190,20 +195,24 @@ int update_app()
 		std::filesystem::rename(old_file, bak_file, err);
 		if (!err.value())
 		{
-			const auto& new_file = fmt::format(L"{:s}package\\{:s}", updates_path, file);
+			const auto& new_file = unpack_pkg_folder + L"\\" + file;
 			std::filesystem::copy(new_file, old_file, std::filesystem::copy_options::recursive, err);
 		}
 	}
 
-	if (!archiver.OpenArchive(channels_name))
-		return err_open_pl;
+	if (info.playlists)
+	{
+		const auto& unpack_playlists_folder = fmt::format(L"{:s}playlists_{:s}", info.update_path, info.version);
+		if (!archiver.OpenArchive(info.update_path + info.playlists_name))
+			return err_open_pl;
 
-	if (!archiver.GetExtractor().ExtractArchive(updates_path))
-		return err_open_pl;
+		if (!archiver.GetExtractor().ExtractArchive(unpack_playlists_folder))
+			return err_open_pl;
 
-	std::error_code err;
-	std::filesystem::rename(root + L"playlists", root + L"playlists.bak", err);
-	std::filesystem::copy(updates_path + L"playlists", root, std::filesystem::copy_options::recursive, err);
+		std::error_code err;
+		std::filesystem::rename(root + L"playlists", root + L"playlists.bak", err);
+		std::filesystem::copy(unpack_playlists_folder, root, std::filesystem::copy_options::recursive, err);
+	}
 
 	return 0;
 }
@@ -244,22 +253,27 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	UpdateInfo info;
+	info.info_file = L"update.xml";
+	info.update_path = GetAppPath(L"Updates\\");
+	info.playlists = playlists;
+
 	if (check)
 	{
 		std::cout << "checking.." << std::endl;
-		return check_for_update();
+		return check_for_update(info);
 	}
 
 	if (download)
 	{
 		std::cout << "downloading.." << std::endl;
-		return download_update(playlists);
+		return download_update(info);
 	}
 
 	if (update)
 	{
 		std::cout << "updating.." << std::endl;
-		return update_app();
+		return update_app(info);
 	}
 
 	args.printHelp();

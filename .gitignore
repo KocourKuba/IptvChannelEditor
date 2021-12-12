@@ -3,6 +3,8 @@
 **/[Rr]elease
 **/[Rr]elease Unicode
 /ipch
+/lib
+/lib64
 /.idea
 /.vs
 /*.aps

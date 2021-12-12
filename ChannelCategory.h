@@ -1,6 +1,7 @@
 #pragma once
-#include "rapidxml.hpp"
 #include "ChannelInfo.h"
+
+#include "UtilsLib\rapidxml.hpp"
 
 // <tv_category>
 //   <id>1</id>

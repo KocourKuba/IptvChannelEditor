@@ -7,7 +7,8 @@
 #include "IPTVChannelEditor.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "IconCache.h"
-#include "utils.h"
+
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
