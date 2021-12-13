@@ -105,6 +105,7 @@
 #define IDS_STRING_ERR_LOAD_CHANNELS_LIST 214
 #define IDS_STRING_ERR_REGEX            215
 #define IDS_STRING_ERR_NO_CHANNELS      216
+#define IDS_STRING_STANDARD             217
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -248,7 +249,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        214
+#define _APS_NEXT_RESOURCE_VALUE        218
 #define _APS_NEXT_COMMAND_VALUE         32802
 #define _APS_NEXT_CONTROL_VALUE         1124
 #define _APS_NEXT_SYMED_VALUE           1180

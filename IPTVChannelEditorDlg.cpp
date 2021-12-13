@@ -22,11 +22,13 @@
 #include "IconCache.h"
 #include "IconsListDlg.h"
 #include "IconLinkDlg.h"
-#include "utils.h"
+#include "UtilsLib\utils.h"
 #include "Config.h"
 
-#include "rapidxml.hpp"
-#include "rapidxml_print.hpp"
+#include "UtilsLib\inet_utils.h"
+#include "UtilsLib\rapidxml.hpp"
+#include "UtilsLib\rapidxml_print.hpp"
+#include "UtilsLib\rapidxml_value.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -536,7 +538,17 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	for (const auto& item : m_all_channels_lists)
 	{
-		m_wndChannels.AddString(item.c_str());
+		if (item == default_tv_name)
+		{
+			CString str;
+			str.LoadString(IDS_STRING_STANDARD);
+			const auto& name = item + str.GetString();
+			m_wndChannels.AddString(name.c_str());
+		}
+		else
+		{
+			m_wndChannels.AddString(item.c_str());
+		}
 	}
 
 	idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
@@ -686,12 +698,14 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 
 	auto data = std::make_unique<std::vector<BYTE>>();
+	std::wstring host;
+	std::wstring path;
 	if (isFile)
 	{
 		std::ifstream stream(url);
 		data->assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
 	}
-	else if (utils::CrackUrl(url))
+	else if (utils::CrackUrl(url, host, path))
 	{
 		if (!utils::DownloadFile(url, *data))
 		{
@@ -1532,7 +1546,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	m_embedded_info = FALSE;
 
 	auto info_node = i_node->first_node(utils::VERSION_INFO);
-	if (!info_node || utils::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
+	if (!info_node || rapidxml::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
 	{
 		set_allow_save(TRUE);
 	}
@@ -1546,16 +1560,16 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		switch (plugin_type)
 		{
 			case StreamType::enEdem:
-				m_token = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_TOKEN));
-				m_domain = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN));
+				m_token = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_TOKEN));
+				m_domain = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN));
 				break;
 			case StreamType::enGlanz:
 			case StreamType::enFox:
 			case StreamType::enSharaclub:
 			case StreamType::enSharaTV:
 			case StreamType::enOneOtt:
-				m_login = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_LOGIN));
-				m_password = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
+				m_login = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_LOGIN));
+				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			case StreamType::enAntifriz:
 			case StreamType::enItv:
@@ -1564,7 +1578,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			case StreamType::enSharavoz:
 			case StreamType::enTvTeam:
 			case StreamType::enVipLime:
-				m_password = utils::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
+				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			default:
 				break;
@@ -3111,7 +3125,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		auto tv_info = doc.allocate_node(rapidxml::node_element, utils::TV_INFO);
 
 		auto info_node = doc.allocate_node(rapidxml::node_element, utils::VERSION_INFO);
-		info_node->append_node(utils::alloc_node(doc, utils::LIST_VERSION, utils::int_to_char(CHANNELS_LIST_VERSION).c_str()));
+		info_node->append_node(rapidxml::alloc_node(doc, utils::LIST_VERSION, utils::int_to_char(CHANNELS_LIST_VERSION).c_str()));
 		tv_info->append_node(info_node);
 
 		if (m_embedded_info)
@@ -3120,15 +3134,15 @@ void CIPTVChannelEditorDlg::OnSave()
 			switch (GetConfig().get_plugin_type())
 			{
 				case StreamType::enEdem: // ott_key
-					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_TOKEN, utils::utf16_to_utf8(m_token).c_str()));
-					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(m_domain).c_str()));
+					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_TOKEN, utils::utf16_to_utf8(m_token).c_str()));
+					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(m_domain).c_str()));
 					break;
 				case StreamType::enGlanz: // login/pass
 				case StreamType::enSharaclub:
 				case StreamType::enSharaTV:
 				case StreamType::enOneOtt:
-					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_LOGIN, utils::utf16_to_utf8(m_login).c_str()));
-					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
+					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_LOGIN, utils::utf16_to_utf8(m_login).c_str()));
+					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
 				case StreamType::enAntifriz: // pin
 				case StreamType::enItv:
@@ -3137,7 +3151,7 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enSharavoz:
 				case StreamType::enTvTeam:
 				case StreamType::enVipLime:
-					setup_node->append_node(utils::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
+					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
 				default:
 					break;

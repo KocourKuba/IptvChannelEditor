@@ -913,6 +913,7 @@ BEGIN
     IDS_STRING_ERR_LOAD_CHANNELS_LIST "Unable to load channels list %s"
     IDS_STRING_ERR_REGEX    "Error in regular expression: %hs"
     IDS_STRING_ERR_NO_CHANNELS "No Channels list found in directory %s"
+    IDS_STRING_STANDARD     " (Standard)"
 END
 
 #endif    // English (United States) resources

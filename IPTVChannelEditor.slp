@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20211212011017" scan="63" scanned="20211212010909">
+<document created="20211012165442" version="4.0.374" date="20211213131720" scan="64" scanned="20211213131652">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211212000904" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211213121634" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -3794,6 +3794,10 @@
           <native>Show only not added channels</native>
           <lang id="ru" date="20211130113023" savedtotm="1">Показать только не добавленные каналы</lang>
         </row>
+        <row id="IDS_STRING_STANDARD" state="0" created="20211213131652">
+          <native> (Standard)</native>
+          <lang id="ru" date="20211213131712"> (Основной)</lang>
+        </row>
       </node>
       <node class="TWindowsStringNode" name="3633" locked="1" resid="3633" langid="1033">
         <row id="58112">Close Print Preview#l&amp;Close</row>
@@ -3959,28 +3963,28 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20211212010309">
-          <prev>2.2.554, 10 Dec 2021</prev>
-          <native>2.2.559, 12 Dec 2021</native>
+        <row id="FileVersion" locked="1" state="3" changed="20211213131652">
+          <prev>2.2.559, 12 Dec 2021</prev>
+          <native>2.2.562, 13 Dec 2021</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20211013234256">2</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211212010309">
-          <prev>554</prev>
-          <native>559</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211213131652">
+          <prev>559</prev>
+          <native>562</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20211212010309">
-          <prev>2.2.554</prev>
-          <native>2.2.559</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20211213131652">
+          <prev>2.2.559</prev>
+          <native>2.2.562</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20211013234256">2</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211212010309">
-          <prev>554</prev>
-          <native>559</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211213131652">
+          <prev>559</prev>
+          <native>562</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
