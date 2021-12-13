@@ -8,6 +8,7 @@
 /.idea
 /.vs
 /Updates
+/package
 /*.aps
 /*.db
 /*.m3u8

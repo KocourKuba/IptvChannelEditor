@@ -119,7 +119,16 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	ParseCommandLine(cmdInfo);
 	if (cmdInfo.m_bMakeAll)
 	{
-		const auto& output_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
+		std::wstring output_path;
+		if (cmdInfo.m_strFileName.IsEmpty())
+			output_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
+		else
+			output_path = cmdInfo.m_strFileName.GetString();
+
+		output_path = std::filesystem::absolute(output_path);
+		if (output_path.back() != '\\')
+			output_path += '\\';
+
 		const auto& lists_path = GetConfig().get_string(true, REG_LISTS_PATH);
 		for (const auto& item : GetConfig().get_plugins_info())
 		{
