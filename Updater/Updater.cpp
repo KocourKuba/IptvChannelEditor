@@ -96,8 +96,9 @@ int parse_info(UpdateInfo& info)
 
 	info.version = rapidxml::get_value_wstring(i_node->first_node("version"));
 	info.package_name= fmt::format(L"dune_channel_editor_{:s}.7z", info.version);
-	info.playlists_name = fmt::format(L"dune_channel_editor_{:s}.7z", info.version);
+	info.playlists_name = fmt::format(L"playlists_{:s}.7z", info.version);
 
+	std::wcout << L"Version: " << info.version << std::endl;
 	return 0;
 }
 
@@ -146,6 +147,7 @@ int download_update(UpdateInfo& info)
 				break;
 			}
 		}
+		std::wcout << L"Package: " << info.package_name << std::endl;
 
 		if (info.playlists && !std::filesystem::exists(info.update_path + info.playlists_name))
 		{
@@ -161,6 +163,7 @@ int download_update(UpdateInfo& info)
 				ret = err_save_pl; // Unable to save update channels list!
 				break;
 			}
+			std::wcout << L"Playlists: " << info.playlists_name << std::endl;
 		}
 	} while (false);
 
@@ -179,24 +182,48 @@ int update_app(UpdateInfo& info)
 		return err_open_pkg;
 
 	const auto& packed_files = archiver.GetExtractor().GetItemsNames();
-	const auto& unpack_pkg_folder = fmt::format(L"{:s}dune_package_{:s}", info.update_path, info.version);
+	const auto& unpack_pkg_folder = fmt::format(L"{:s}dune_package_{:s}\\", info.update_path, info.version);
 	if (!archiver.GetExtractor().ExtractArchive(unpack_pkg_folder))
 		return err_open_pkg;
 
-	const auto& root = GetAppPath(L"\\");
-	for (const auto& file : packed_files)
+	bool succses = true;
+	const auto& target_folder = GetAppPath(L"\\Debug Unicode\\");
+	std::error_code err;
+	std::filesystem::directory_iterator dir_iter(unpack_pkg_folder, err);
+	for (auto const& dir_entry : dir_iter)
 	{
-		// rename only root items (files and folders)
-		if (file.find('\\') != std::wstring::npos) continue;
+		const auto& path = dir_entry.path();
 
-		const auto& old_file = root + file;
+		const auto& new_file = path.wstring();
+		const auto& old_file = target_folder + path.filename().wstring();
 		const auto& bak_file = old_file + L".bak";
-		std::error_code err;
-		std::filesystem::rename(old_file, bak_file, err);
-		if (!err.value())
+
+		if (std::filesystem::exists(old_file))
 		{
-			const auto& new_file = unpack_pkg_folder + L"\\" + file;
+			std::error_code err;
+			std::filesystem::rename(old_file, bak_file, err);
+			if (err.value() != 0)
+			{
+				succses = false;
+				continue;
+			}
+		}
+
+		if (std::filesystem::is_directory(bak_file))
+		{
 			std::filesystem::copy(new_file, old_file, std::filesystem::copy_options::recursive, err);
+			if (err.value() == 0)
+			{
+				std::filesystem::remove_all(bak_file, err);
+			}
+		}
+		else
+		{
+			std::filesystem::copy(new_file, old_file, std::filesystem::copy_options::none, err);
+			if (err.value() == 0)
+			{
+				std::filesystem::remove(bak_file, err);
+			}
 		}
 	}
 
@@ -210,8 +237,8 @@ int update_app(UpdateInfo& info)
 			return err_open_pl;
 
 		std::error_code err;
-		std::filesystem::rename(root + L"playlists", root + L"playlists.bak", err);
-		std::filesystem::copy(unpack_playlists_folder, root, std::filesystem::copy_options::recursive, err);
+		std::filesystem::rename(target_folder + L"playlists", target_folder + L"playlists.bak", err);
+		std::filesystem::copy(unpack_playlists_folder, target_folder, std::filesystem::copy_options::recursive, err);
 	}
 
 	return 0;
@@ -229,10 +256,10 @@ int main(int argc, char* argv[])
 	// First configure all possible command line options.
 	CommandLine args("IPTV Channel Editor Updater 1.0\n");
 
-	args.addArgument({ "-c", "--check" }, &check, "Check for update");
-	args.addArgument({ "-d", "--download" }, &download, "Download update");
-	args.addArgument({ "-p", "--playlists" }, &playlists, "Download playlists");
-	args.addArgument({ "-u", "--update" }, &update, "Perform update");
+	args.addArgument({ "check" }, &check, "Check for update");
+	args.addArgument({ "download" }, &download, "Download update");
+	args.addArgument({ "update" }, &update, "Perform update");
+	args.addArgument({ "-p", "--playlists" }, &playlists, "Download or Update playlists");
 	args.addArgument({ "-h", "--help" }, &printHelp, "Show parameters info");
 
 	std::error_code err;
