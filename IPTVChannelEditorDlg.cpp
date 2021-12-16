@@ -4327,7 +4327,7 @@ void CIPTVChannelEditorDlg::SearchTreeItem(InfoType type, bool next /*= false*/)
 			if (m_plSearch.IsEmpty())
 				return;
 
-			SearchParams params;
+			pTreeCtl = &m_wndPlaylistTree;
 			if (m_plSearch.GetLength() > 1 && m_plSearch.GetAt(0) == '\\')
 			{
 				params.id = m_plSearch.Mid(1).GetString();
