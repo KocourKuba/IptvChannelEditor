@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "IconCache.h"
 #include "IPTVChannelEditor.h"
-#include "Crc32.h"
+#include "UtilsLib\Crc32.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

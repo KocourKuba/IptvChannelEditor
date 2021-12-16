@@ -94,7 +94,7 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData)
 		if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
 		{
 			chunk.resize(dwSize);
-			vData.insert(vData.end(), chunk.begin(), chunk.end());
+			vData.insert(vData.end(), chunk.begin(), chunk.begin() + dwDownloaded);
 		}
 		else
 		{

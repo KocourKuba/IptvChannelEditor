@@ -110,12 +110,12 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	if (time_shift_hours != 0)
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::TIME_SHIFT_HOURS, utils::int_to_char(time_shift_hours).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::TIME_SHIFT_HOURS, std::to_string(time_shift_hours).c_str()));
 	}
 
 	// <tv_category_id>1</tv_category_id>
 	// new version must not have more than on entry
-	channel_node->append_node(rapidxml::alloc_node(alloc, utils::TV_CATEGORY_ID, utils::int_to_char(*categories.begin()).c_str()));
+	channel_node->append_node(rapidxml::alloc_node(alloc, utils::TV_CATEGORY_ID, std::to_string(*categories.begin()).c_str()));
 
 	// Only if channel not templated. Otherwise template handled by plugin
 	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{TOKEN}/127/index.m3u8</streaming_url>
@@ -127,13 +127,13 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	// <archive>1</archive>
 	if (is_archive())
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::ARCHIVE, utils::int_to_char(get_archive_days()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::ARCHIVE, std::to_string(get_archive_days()).c_str()));
 	}
 
 	// <protected>1</protected>
 	if (get_adult())
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::PROTECTED, utils::int_to_char(get_adult()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::PROTECTED, std::to_string(get_adult()).c_str()));
 	}
 
 	if (is_disabled())

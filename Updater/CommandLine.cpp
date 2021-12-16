@@ -4,13 +4,15 @@
 #include <iomanip>
 #include <sstream>
 
+#include "UtilsLib/utils.h"
+
 CommandLine::CommandLine(std::string description)
     : mDescription(std::move(description)) {
 }
 
-void CommandLine::addArgument(std::vector<std::string> const& flags,
-                              Value const& value, std::string const& help) {
-  mArguments.emplace_back(Argument{flags, value, help});
+void CommandLine::addArgument(const std::vector<std::string>& flags,
+                              const Value& value, const std::string& help) {
+  mArguments.emplace_back(Argument{ flags, value, help });
 }
 
 void CommandLine::printHelp(std::ostream& os) const {
@@ -76,6 +78,7 @@ void CommandLine::parse(int argc, char* argv[]) const {
     // First we have to identify wether the value is separated by a space
     // or a '='.
     std::string flag(argv[i]);
+    utils::string_tolower(flag);
     std::string value;
     bool        valueIsSeparate = false;
 

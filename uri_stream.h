@@ -1,7 +1,7 @@
 #pragma once
 #include "uri_base.h"
 #include "UtilsLib\utils.h"
-#include "Crc32.h"
+#include "UtilsLib\Crc32.h"
 
 struct TemplateParams
 {
@@ -76,7 +76,7 @@ public:
 			// convert to utf8
 			const auto& uri = utils::utf16_to_utf8(is_template() ? id : get_uri());
 			hash = crc32_bitwise(uri.c_str(), uri.size());
-			str_hash = utils::int_to_wchar(hash);
+			str_hash = std::to_wstring(hash);
 		}
 
 		return hash;
@@ -287,8 +287,8 @@ protected:
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.domain);
 		utils::string_replace_inplace<wchar_t>(url, REPL_ID, get_id());
 		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, get_token());
-		utils::string_replace_inplace<wchar_t>(url, REPL_START, utils::int_to_wchar(params.shift_back));
-		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, utils::int_to_wchar(_time32(nullptr)));
+		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
+		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
 	}
 
 protected:

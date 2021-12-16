@@ -127,39 +127,12 @@ std::basic_string<T> string_replace(const std::basic_string<T>& source, const st
 }
 
 /// <summary>
-/// Converts char string to int.
-/// </summary>
-/// <param name="str">string</param>
-/// <returns>int value if success, 0 otherwise</returns>
-int char_to_int(const std::string& str);
-
-/// <summary>
-/// Converts char string to int.
-/// </summary>
-/// <param name="str">string</param>
-/// <returns>int value if success, 0 otherwise</returns>
-int wchar_to_int(const std::wstring& str);
-
-/// <summary>
-/// Converts int to char string.
-/// </summary>
-/// <param name="value">int value</param>
-/// <returns>string representaion of value, empty string otherwise</returns>
-std::string int_to_char(int value);
-
-/// <summary>
-/// Converts int to char string.
-/// </summary>
-/// <param name="value">int value</param>
-/// <returns>string representaion of value, empty string otherwise</returns>
-std::wstring int_to_wchar(int value);
-
-/// <summary>
 /// Converts a UTF-16 string to a UTF-8 string.
 /// </summary>
 /// <param name="w">A two byte character UTF-16 string.</param>
 /// <returns>A single byte character UTF-8 string.</returns>
 std::string utf16_to_utf8(const std::wstring& w);
+std::string utf16_to_utf8(const wchar_t* srcData, size_t srcSize);
 
 /// <summary>
 /// Converts a UTF-8 string to a UTF-16
@@ -167,6 +140,7 @@ std::string utf16_to_utf8(const std::wstring& w);
 /// <param name="s">A single byte character UTF-8 string.</param>
 /// <returns>A two byte character UTF-16 string.</returns>
 std::wstring utf8_to_utf16(const std::string& s);
+std::wstring utf8_to_utf16(const char* srcData, size_t srcSize);
 
 std::vector<std::string> regex_split(const std::string& str, const std::string& token = "\\s+");
 

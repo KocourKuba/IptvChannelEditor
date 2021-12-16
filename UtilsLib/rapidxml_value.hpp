@@ -7,6 +7,21 @@
 namespace rapidxml
 {
 
+template<typename T>
+int char_to_int(const std::basic_string<T>& str, int base = 10)
+{
+	int value = 0;
+	try
+	{
+		value = std::stoul(str, nullptr, base);
+	}
+	catch (...)
+	{
+	}
+	return value;
+}
+
+
 /// <summary>
 /// Allocate node using memory_pool allocator
 /// </summary>
@@ -24,10 +39,17 @@ inline xml_node<>* alloc_node(memory_pool<>& alloc, const char* name, const char
 /// </summary>
 /// <param name="node"></param>
 /// <returns>int value</returns>
-inline int get_value_int(xml_node<>* node)
+inline int get_value_int(const xml_node<>* node)
 {
 	if (node && node->value())
-		return utils::char_to_int(node->value());
+		return char_to_int<char>(node->value());
+	return 0;
+}
+
+inline int get_value_int(const xml_attribute<>* attr)
+{
+	if (attr && attr->value())
+		return char_to_int<char>(attr->value());
 	return 0;
 }
 
@@ -36,10 +58,17 @@ inline int get_value_int(xml_node<>* node)
 /// </summary>
 /// <param name="node"></param>
 /// <returns>string</returns>
-inline std::string get_value_string(xml_node<>* node)
+inline std::string get_value_string(const xml_node<>* node)
 {
 	if (node && node->value())
 		return node->value();
+	return std::string();
+}
+
+inline std::string get_value_string(const xml_attribute<>* attr)
+{
+	if (attr && attr->value())
+		return std::string(attr->value(), attr->value_size());
 	return std::string();
 }
 
@@ -48,10 +77,17 @@ inline std::string get_value_string(xml_node<>* node)
 /// </summary>
 /// <param name="node"></param>
 /// <returns>wstring</returns>
-inline std::wstring get_value_wstring(xml_node<>* node)
+inline std::wstring get_value_wstring(const xml_node<>* node)
 {
 	if (node && node->value())
-		return utils::utf8_to_utf16(node->value());
+		return utils::utf8_to_utf16(node->value(), node->value_size());
+	return std::wstring();
+}
+
+inline std::wstring get_value_wstring(const xml_attribute<>* attr)
+{
+	if (attr && attr->value())
+		return utils::utf8_to_utf16(attr->value(), attr->value_size());
 	return std::wstring();
 }
 

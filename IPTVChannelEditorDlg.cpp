@@ -703,7 +703,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	if (isFile)
 	{
 		std::ifstream stream(url);
-		data->assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+		data->assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
 	}
 	else if (utils::CrackUrl(url, host, path))
 	{
@@ -1367,14 +1367,14 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 				if (val[tag_start].is_number())
 					time_start = val.value(tag_start, 0);
 				else if (val[tag_start].is_string())
-					time_start = utils::char_to_int(val.value(tag_start, ""));
+					time_start = rapidxml::char_to_int(val.value(tag_start, ""));
 			}
 			if (val.contains(tag_end))
 			{
 				if (val[tag_end].is_number())
 					time_end = val.value(tag_end, 0);
 				else if (val[tag_end].is_string())
-					time_end = utils::char_to_int(val.value(tag_end, ""));
+					time_end = rapidxml::char_to_int(val.value(tag_end, ""));
 			}
 
 			if (now < time_start || now > time_end) continue;
@@ -1758,12 +1758,12 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 
 	// templated url. set to -1 if empty
 	int id = -1;
-	while (m_channelsMap.find(utils::int_to_wchar(id)) != m_channelsMap.end())
+	while (m_channelsMap.find(std::to_wstring(id)) != m_channelsMap.end())
 	{
 		--id;
 	}
 
-	const auto& str_id = utils::int_to_wchar(id);
+	const auto& str_id = std::to_wstring(id);
 	channel->stream_uri->set_template(true);
 	channel->stream_uri->set_id(str_id);
 
@@ -2054,12 +2054,12 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomize()
 			{
 				// templated url. set to -1 if empty
 				int id = -1;
-				while (m_channelsMap.find(utils::int_to_wchar(id)) != m_channelsMap.end())
+				while (m_channelsMap.find(std::to_wstring(id)) != m_channelsMap.end())
 				{
 					--id;
 				}
 
-				const auto& str_id = utils::int_to_wchar(id);
+				const auto& str_id = std::to_wstring(id);
 				channel->stream_uri->set_id(str_id);
 				m_streamID = CString(str_id.c_str());
 			}
@@ -3125,7 +3125,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		auto tv_info = doc.allocate_node(rapidxml::node_element, utils::TV_INFO);
 
 		auto info_node = doc.allocate_node(rapidxml::node_element, utils::VERSION_INFO);
-		info_node->append_node(rapidxml::alloc_node(doc, utils::LIST_VERSION, utils::int_to_char(CHANNELS_LIST_VERSION).c_str()));
+		info_node->append_node(rapidxml::alloc_node(doc, utils::LIST_VERSION, std::to_string(CHANNELS_LIST_VERSION).c_str()));
 		tv_info->append_node(info_node);
 
 		if (m_embedded_info)

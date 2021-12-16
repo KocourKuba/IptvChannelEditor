@@ -20,10 +20,8 @@ constexpr auto H_SURROGATE_START = 0xD800;
 constexpr auto H_SURROGATE_END = 0xDBFF;
 constexpr auto SURROGATE_PAIR_START = 0x10000;
 
-inline size_t count_utf8_to_utf16(const std::string& s)
+inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
 {
-	const size_t sSize = s.size();
-	auto const sData = reinterpret_cast<const char*>(s.data());
 	size_t result{ sSize };
 
 	for (size_t index = 0; index < sSize;)
@@ -105,10 +103,8 @@ inline size_t count_utf8_to_utf16(const std::string& s)
 	return result;
 }
 
-inline size_t count_utf16_to_utf8(const std::wstring& w)
+inline size_t count_utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 {
-	const std::wstring::value_type* const srcData = &w[0];
-	const size_t srcSize = w.size();
 	size_t destSize(srcSize);
 	for (size_t index = 0; index < srcSize; ++index)
 	{
@@ -146,40 +142,15 @@ inline size_t count_utf16_to_utf8(const std::wstring& w)
 	return destSize;
 }
 
-int utils::char_to_int(const std::string& str)
-{
-	int value = 0;
-	return (sscanf_s(str.c_str(), "%d", &value) != 1) ? 0 : value;
-}
-
-int utils::wchar_to_int(const std::wstring& str)
-{
-	int value = 0;
-	return (swscanf_s(str.c_str(), L"%d", &value) != 1) ? 0 : value;
-}
-
-std::string utils::int_to_char(int value)
-{
-	char fmt[12];
-	sprintf_s(fmt, 12, "%d", value);
-
-	return fmt;
-}
-
-std::wstring utils::int_to_wchar(int value)
-{
-	wchar_t fmt[12];
-	swprintf_s(fmt, 12, L"%d", value);
-
-	return fmt;
-}
-
 std::string utils::utf16_to_utf8(const std::wstring& w)
 {
-	const size_t srcSize = w.size();
-	const std::wstring::value_type* const srcData = &w[0];
-	std::string dest(count_utf16_to_utf8(w), '\0');
-	std::string::value_type* const destData = &dest[0];
+	return utf16_to_utf8(w.c_str(), w.size());
+}
+
+std::string utils::utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
+{
+	std::string dest(count_utf16_to_utf8(srcData, srcSize), '\0');
+	char* destData = &dest[0];
 	size_t destIndex(0);
 
 	for (size_t index = 0; index < srcSize; ++index)
@@ -232,10 +203,13 @@ std::string utils::utf16_to_utf8(const std::wstring& w)
 
 std::wstring utils::utf8_to_utf16(const std::string& s)
 {
+	return utils::utf8_to_utf16(s.c_str(), s.size());
+}
+
+std::wstring utils::utf8_to_utf16(const char* srcData, size_t srcSize)
+{
 	// Save repeated heap allocations, use the length of resulting sequence.
-	const size_t srcSize = s.size();
-	auto const srcData = reinterpret_cast<const char*>(s.data());
-	std::wstring dest(count_utf8_to_utf16(s), L'\0');
+	std::wstring dest(count_utf8_to_utf16(srcData, srcSize), L'\0');
 	std::wstring::value_type* const destData = &dest[0];
 	size_t destIndex = 0;
 

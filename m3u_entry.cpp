@@ -2,6 +2,7 @@
 #include "m3u_entry.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\rapidxml_value.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -99,7 +100,7 @@ void m3u_entry::parse(const std::string& str)
 			const auto& value = m_dir[2].str();
 			if (std::regex_match(value, m, re_info))
 			{
-				duration = utils::char_to_int(m[1].str());
+				duration = rapidxml::char_to_int(m[1].str());
 				dir_title = m[3].str();
 				// put title to directive for tvg parsing
 				ext_tags.emplace(tag_directive_title, dir_title);

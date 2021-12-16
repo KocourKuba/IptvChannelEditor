@@ -42,7 +42,7 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 	auto category_node = rapidxml::alloc_node(alloc, utils::TV_CATEGORY);
 
 	// <id>1</id>
-	category_node->append_node(rapidxml::alloc_node(alloc, ID, utils::int_to_char(get_key()).c_str()));
+	category_node->append_node(rapidxml::alloc_node(alloc, ID, std::to_string(get_key()).c_str()));
 
 	// <caption>Общие</caption>
 	category_node->append_node(rapidxml::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));

@@ -260,7 +260,6 @@ goto :EOF
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="CMFCEditBrowsCtrlEx.h" />
     <ClInclude Include="Config.h" />
-    <ClInclude Include="Crc32.h" />
     <ClInclude Include="FileVersionInfo.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
     <ClInclude Include="HistoryCombo.h" />
@@ -313,7 +312,6 @@ goto :EOF
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="Config.cpp" />
-    <ClCompile Include="Crc32.cpp" />
     <ClCompile Include="FileVersionInfo.cpp" />
     <ClCompile Include="GetStreamInfoThread.cpp" />
     <ClCompile Include="HistoryCombo.cpp" />

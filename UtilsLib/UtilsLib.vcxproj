@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Crc32.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="inet_utils.h" />
     <ClInclude Include="json.hpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Crc32.cpp" />
     <ClCompile Include="inet_utils.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">Create</PrecompiledHeader>
