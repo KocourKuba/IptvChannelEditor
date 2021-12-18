@@ -153,9 +153,6 @@
     <ClInclude Include="uri_itv.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
-    <ClInclude Include="FileVersionInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="uri_onecent.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
@@ -199,6 +196,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IPTVChannelEditorDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateSettingsPage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
@@ -293,9 +293,6 @@
     <ClCompile Include="uri_itv.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
-    <ClCompile Include="FileVersionInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="uri_onecent.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
@@ -333,6 +330,9 @@
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
     <ClCompile Include="NewChannelsListDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateSettingsPage.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>

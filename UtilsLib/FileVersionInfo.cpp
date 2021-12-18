@@ -20,6 +20,8 @@ VERSION HISTORY:
 
 #include "pch.h"
 #include "FileVersionInfo.h"
+#include <string>
+#include <fmt/xchar.h>
 
 /////////////////////////////////////////////////////////////////////////////
 #ifdef _DEBUG
@@ -227,14 +229,13 @@ BOOL CFileVersionInfo::QueryStringValue(IN LPCTSTR lpszItem, OUT LPTSTR lpszValu
 
 	SecureZeroMemory( lpszValue, nBuf * sizeof( TCHAR ) );
 
-	CString csSFI;
-	csSFI.Format(_T( "\\StringFileInfo\\%04X%04X\\%s" ), GetCurLID(), GetCurCP(), lpszItem);
+	const auto& csSFI = fmt::format(L"\\StringFileInfo\\{:04x}{:04x}\\{:s}", GetCurLID(), GetCurCP(), lpszItem);
 
 	BOOL   bRes    = FALSE;
 	UINT   uLen    = 0;
 	LPTSTR lpszBuf = nullptr;
 
-	if( ::VerQueryValue( m_lpbyVIB, csSFI.GetString(), (LPVOID*)&lpszBuf, &uLen ) )
+	if( ::VerQueryValueW( m_lpbyVIB, csSFI.c_str(), (LPVOID*)&lpszBuf, &uLen ) )
 	{
 		if(uLen > 0 )
 		{

@@ -10,6 +10,7 @@
 #include "AboutDlg.h"
 #include "MainSettingsPage.h"
 #include "PathsSettingsPage.h"
+#include "UpdateSettingsPage.h"
 #include "AccessOttKeyDlg.h"
 #include "AccessInfoPassDlg.h"
 #include "AccessInfoPinDlg.h"
@@ -3571,8 +3572,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 
 	CMainSettingsPage dlg1;
 	CPathsSettingsPage dlg2;
+	CUpdateSettingsPage dlg3;
 	sheet.AddPage(&dlg1);
 	sheet.AddPage(&dlg2);
+	sheet.AddPage(&dlg3);
 
 	std::wstring old_list = GetConfig().get_string(true, REG_LISTS_PATH);
 	int old_flags = GetConfig().get_int(true, REG_CMP_FLAGS);

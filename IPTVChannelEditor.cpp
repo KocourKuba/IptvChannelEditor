@@ -4,9 +4,9 @@
 #include "pch.h"
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
-#include "FileVersionInfo.h"
 #include "IconCache.h"
 
+#include "UtilsLib\FileVersionInfo.h"
 #include "UtilsLib\inet_utils.h"
 
 #include "7zip/SevenZipWrapper.h"
@@ -157,6 +157,51 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		}
 	}
 
+	// cleanup old files
+	std::error_code err;
+	std::filesystem::directory_iterator dir_iter(GetAppPath(), err);
+	for (auto const& dir_entry : dir_iter)
+	{
+		const auto& path = dir_entry.path();
+		if (path.extension() != _T(".bak")) continue;
+
+		if (std::filesystem::is_regular_file(path))
+			std::filesystem::remove(path, err);
+		else if (std::filesystem::is_directory(path))
+			std::filesystem::remove_all(path, err);
+	}
+
+	int freq = GetConfig().get_int(true, REG_UPDATE_FREQ, 3);
+	if (freq && GetConfig().get_int64(true, REG_NEXT_UPDATE) < time(nullptr))
+	{
+		std::wstring cmd = L"check";
+		if (RequestToUpdateServer(cmd) == 0)
+		{
+			if (IDYES == AfxMessageBox(IDS_STRING_UPDATE_AVAILABLE, MB_YESNO))
+			{
+				cmd = L"update";
+				if (GetConfig().get_int(true, REG_UPDATE_PL))
+					cmd += L" --optional";
+
+				int err = RequestToUpdateServer(cmd);
+				if (err == 0)
+				{
+					time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
+					GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
+					AfxMessageBox(IDS_STRING_UPDATE_DONE, MB_OK | MB_ICONINFORMATION);
+					return FALSE;
+				}
+
+				CString csErr;
+				csErr.Format(IDS_STRING_ERR_UPDATE, err);
+				AfxMessageBox(csErr, MB_OK | MB_ICONERROR);
+			}
+		}
+	}
+
+	time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
+	GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
+
 	CIPTVChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
@@ -245,8 +290,9 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 			fileName.Truncate(pos + 1);
 	}
 
-	fileName += PluginsConfig::DEV_PATH.c_str();
-	fileName += szSubFolder;
+	//fileName += PluginsConfig::DEV_PATH.c_str();
+	if (szSubFolder)
+		fileName += szSubFolder;
 
 	return std::filesystem::absolute(fileName.GetString());
 }
@@ -458,4 +504,75 @@ void SetImage(const CImage& image, CStatic& wnd)
 	HBITMAP hOld = wnd.SetBitmap(hImg);
 	if (hOld)
 		::DeleteObject(hOld);
+}
+
+int RequestToUpdateServer(const std::wstring& command)
+{
+	const auto& cur_ver = utils::utf8_to_utf16(STRPRODUCTVER, sizeof(STRPRODUCTVER));
+	const auto& avail_ver = GetConfig().get_string(true, REG_AVAIL_UPDATE);
+
+	do
+	{
+		STARTUPINFO si = { 0 };
+		si.cb = sizeof(STARTUPINFO);
+		si.dwFlags = STARTF_USESHOWWINDOW;
+		si.wShowWindow = SW_HIDE;
+		si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+		si.hStdInput = nullptr;
+		si.hStdOutput = nullptr;
+
+		PROCESS_INFORMATION pi = { nullptr };
+
+		const auto& app = fmt::format(L"{:s}Updater.exe", GetAppPath());
+		std::wstring csCommand = fmt::format(L"\"{:s}\" {:s}", app, command);	// argv[0] имя исполняемого файла
+		BOOL bRunProcess = CreateProcessW(app.c_str(),		// 	__in_opt     LPCTSTR lpApplicationName
+										 csCommand.data(),	// 	__inout_opt  LPTSTR lpCommandLine
+										 nullptr,			// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes
+										 nullptr,			// 	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes
+										 TRUE,				// 	__in         BOOL bInheritHandles
+										 CREATE_SUSPENDED,	// 	__in         DWORD dwCreationFlags
+										 nullptr,			// 	__in_opt     LPVOID lpEnvironment
+										 nullptr,			// 	__in_opt     LPCTSTR lpCurrentDirectory
+										 &si,				// 	__in         LPSTARTUPINFO lpStartupInfo
+										 &pi);				// 	__out        LPPROCESS_INFORMATION lpProcessInformation
+
+		if (!bRunProcess)
+		{
+			TRACE("Error start process %d\n", GetLastError());
+			return -1;
+		}
+
+		ResumeThread(pi.hThread);
+
+		CStringA csOutBufA;
+		int nErrorCount = 0;
+		DWORD dwExitCode = STILL_ACTIVE;
+		uint64_t dwStart = utils::ChronoGetTickCount();
+		BOOL bTimeout = FALSE;
+		for (;;)
+		{
+			if (dwExitCode != STILL_ACTIVE)
+			{
+				break;
+			}
+
+			if (utils::CheckForTimeOut(dwStart, 60 * 1000))
+			{
+				bTimeout = TRUE;
+				::TerminateProcess(pi.hProcess, 0);
+				break;
+			}
+
+			if (!::GetExitCodeProcess(pi.hProcess, &dwExitCode))
+			{
+				nErrorCount++;
+				if (nErrorCount > 10) break;
+				continue;
+			}
+		}
+
+		return dwExitCode;
+	} while (false);
+
+	return -1;
 }

@@ -260,7 +260,6 @@ goto :EOF
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="CMFCEditBrowsCtrlEx.h" />
     <ClInclude Include="Config.h" />
-    <ClInclude Include="FileVersionInfo.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
     <ClInclude Include="HistoryCombo.h" />
     <ClInclude Include="IconCache.h" />
@@ -281,6 +280,7 @@ goto :EOF
     <ClInclude Include="PlayListEntry.h" />
     <ClInclude Include="MainSettingsPage.h" />
     <ClInclude Include="StreamContainer.h" />
+    <ClInclude Include="UpdateSettingsPage.h" />
     <ClInclude Include="uri_antifriz.h" />
     <ClInclude Include="uri_channels.h" />
     <ClInclude Include="uri_edem.h" />
@@ -312,7 +312,6 @@ goto :EOF
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="Config.cpp" />
-    <ClCompile Include="FileVersionInfo.cpp" />
     <ClCompile Include="GetStreamInfoThread.cpp" />
     <ClCompile Include="HistoryCombo.cpp" />
     <ClCompile Include="IconCache.cpp" />
@@ -331,6 +330,7 @@ goto :EOF
     <ClCompile Include="FilterDialog.cpp" />
     <ClCompile Include="PlayListEntry.cpp" />
     <ClCompile Include="MainSettingsPage.cpp" />
+    <ClCompile Include="UpdateSettingsPage.cpp" />
     <ClCompile Include="uri_antifriz.cpp" />
     <ClCompile Include="uri_channels.cpp" />
     <ClCompile Include="uri_edem.cpp" />

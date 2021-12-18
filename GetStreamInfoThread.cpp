@@ -14,24 +14,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// Возвращает разницу между заданным и текущим значением времени в тиках
-inline DWORD GetTimeDiff(DWORD dwStartTime)
-{
-	DWORD dwCurrent = ::GetTickCount();
-
-	if (dwStartTime > dwCurrent)
-		return (0xffffffff - dwCurrent - dwStartTime);
-
-	return (dwCurrent - dwStartTime);
-}
-
-// Требует начальное время и таймаут в миллисекундах
-// Возвращает TRUE, если таймаут вышел
-inline BOOL CheckForTimeOut(DWORD dwStartTime, DWORD dwTimeOut)
-{
-	return (GetTimeDiff(dwStartTime) > dwTimeOut);
-}
-
 void CGetStreamInfoThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	if (m_parent->GetSafeHwnd())
@@ -161,11 +143,11 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 	{
 		::ResumeThread(pi.hThread);
 
-		long nTimeout = 30;
+		long nTimeout = 60;
 
 		int nErrorCount = 0;
 		DWORD dwExitCode = STILL_ACTIVE;
-		DWORD dwStart = GetTickCount();
+		uint64_t dwStart = utils::ChronoGetTickCount();
 		BOOL bTimeout = FALSE;
 		for (;;)
 		{
@@ -175,7 +157,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 				break;
 			}
 
-			if (CheckForTimeOut(dwStart, nTimeout * 1000))
+			if (utils::CheckForTimeOut(dwStart, nTimeout * 1000))
 			{
 				bTimeout = TRUE;
 				::TerminateProcess(pi.hProcess, 0);
@@ -187,7 +169,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 			{
 				for (;;)
 				{
-					if (CheckForTimeOut(dwStart, nTimeout * 1000)) break;
+					if (utils::CheckForTimeOut(dwStart, nTimeout * 1000)) break;
 
 					// Peek data from stdout pipe
 					DWORD dwAvail = 0;

@@ -14,6 +14,7 @@
 #define IDD_DIALOG_NEW_CHANNEL          108
 #define IDD_MAIN_SETTINGS_PAGE          109
 #define IDD_EDEMCHANNELEDITOR_DIALOG    110
+#define IDD_UPDATE_SETTINGS_PAGE        111
 #define IDR_MENU_SPLIT                  111
 #define IDR_ACCELERATOR_TABLE           112
 #define IDR_MENU_CHANNEL                113
@@ -106,6 +107,10 @@
 #define IDS_STRING_ERR_REGEX            215
 #define IDS_STRING_ERR_NO_CHANNELS      216
 #define IDS_STRING_STANDARD             217
+#define IDS_STRING_UPDATE_AVAILABLE     218
+#define IDS_STRING_UPDATE_DONE          219
+#define IDS_STRING220                   220
+#define IDS_STRING_ERR_UPDATE           220
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -220,6 +225,10 @@
 #define IDC_COMBO_STRING_HIDE           1121
 #define IDC_CHECK_SHOW_MATCHED          1122
 #define IDC_CHECK_HIDE_MATCHED          1123
+#define IDC_SPIN_CHECK_UPDATE           1124
+#define IDC_SPLIT_BUTTON_UPDATE         1125
+#define IDC_EDIT_UPDATE_FREQ            1126
+#define IDC_CHECK_CHANNELS              1127
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773

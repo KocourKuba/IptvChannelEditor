@@ -34,8 +34,8 @@ call :add_node playlists.7z	true			>>%outfile%
 echo ^</package^> >>%outfile%
 
 echo build standard archive...
-rem IPTVChannelEditor.exe /MakeAll .
-rem 7z a -xr!*.bin "%~dp0\package\dune_channel_editor_universal.7z" IPTVChannelEditor.exe IPTVChannelEditorRUS.dll Updater.exe 7za.dll ChangeLog.md %~dp0\dune_plugin %~dp0\playlists dune_plugin_*.zip >nul
+IPTVChannelEditor.exe /MakeAll .
+7z a -xr!*.bin "%~dp0\package\dune_channel_editor_universal.7z" IPTVChannelEditor.exe IPTVChannelEditorRUS.dll Updater.exe 7za.dll ChangeLog.md %~dp0\dune_plugin %~dp0\playlists dune_plugin_*.zip >nul
 del dune_plugin_*.zip >nul 2>&1
 rd dune_plugin /q
 rd playlists /q

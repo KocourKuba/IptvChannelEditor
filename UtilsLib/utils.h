@@ -4,44 +4,50 @@
 
 namespace utils
 {
-	static constexpr auto DUNE_PLUGIN_NAME = L"dune_plugin_{:s}_mod.zip";
-	static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channel_unset.png";
-	static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
-	static constexpr auto VERSION_INFO = "version_info";
-	static constexpr auto LIST_VERSION = "list_version";
-	static constexpr auto CHANNELS_SETUP = "channels_setup";
-	static constexpr auto ACCESS_TOKEN = "access_key";
-	static constexpr auto ACCESS_DOMAIN = "access_domain";
-	static constexpr auto ACCESS_LOGIN = "access_login";
-	static constexpr auto ACCESS_PASSWORD = "access_password";
+static constexpr auto DUNE_PLUGIN_NAME = L"dune_plugin_{:s}_mod.zip";
+static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channel_unset.png";
+static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
-	static constexpr auto TV_INFO = "tv_info";
-	static constexpr auto TV_CATEGORIES = "tv_categories";
-	static constexpr auto TV_CATEGORY = "tv_category";
-	static constexpr auto TV_CHANNELS = "tv_channels";
-	static constexpr auto TV_CHANNEL = "tv_channel";
-	static constexpr auto CHANNEL_ID = "channel_id";
-	static constexpr auto EPG1_ID = "epg_id";
-	static constexpr auto EPG2_ID = "tvg_id";
-	static constexpr auto CAPTION = "caption";
-	static constexpr auto TIME_SHIFT_HOURS = "timeshift_hours";
-	static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
-	static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
-	static constexpr auto TV_CATEGORY_ID = "tv_category_id";
-	static constexpr auto INT_ID = "int_id";
-	static constexpr auto STREAMING_URL = "streaming_url";
-	static constexpr auto ARCHIVE = "archive";
-	static constexpr auto PROTECTED = "protected";
-	static constexpr auto DISABLED = "disabled";
-	static constexpr auto FAVORITE = "favorite";
+static constexpr auto VERSION_INFO = "version_info";
+static constexpr auto LIST_VERSION = "list_version";
+static constexpr auto CHANNELS_SETUP = "channels_setup";
+static constexpr auto ACCESS_TOKEN = "access_key";
+static constexpr auto ACCESS_DOMAIN = "access_domain";
+static constexpr auto ACCESS_LOGIN = "access_login";
+static constexpr auto ACCESS_PASSWORD = "access_password";
 
-	static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
-	static constexpr auto CATEGORIES_LOGO_URL = L"icons/";
+static constexpr auto TV_INFO = "tv_info";
+static constexpr auto TV_CATEGORIES = "tv_categories";
+static constexpr auto TV_CATEGORY = "tv_category";
+static constexpr auto TV_CHANNELS = "tv_channels";
+static constexpr auto TV_CHANNEL = "tv_channel";
+static constexpr auto CHANNEL_ID = "channel_id";
+static constexpr auto EPG1_ID = "epg_id";
+static constexpr auto EPG2_ID = "tvg_id";
+static constexpr auto CAPTION = "caption";
+static constexpr auto TIME_SHIFT_HOURS = "timeshift_hours";
+static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
+static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
+static constexpr auto TV_CATEGORY_ID = "tv_category_id";
+static constexpr auto INT_ID = "int_id";
+static constexpr auto STREAMING_URL = "streaming_url";
+static constexpr auto ARCHIVE = "archive";
+static constexpr auto PROTECTED = "protected";
+static constexpr auto DISABLED = "disabled";
+static constexpr auto FAVORITE = "favorite";
 
-	static constexpr auto PLUGIN_ROOT = L"dune_plugin\\";
-	static constexpr auto CHANNELS_LOGO_PATH = L"dune_plugin\\icons\\channels\\";
-	static constexpr auto CATEGORIES_LOGO_PATH = L"dune_plugin\\icons\\";
+static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
+static constexpr auto CATEGORIES_LOGO_URL = L"icons/";
+
+static constexpr auto PLUGIN_ROOT = L"dune_plugin\\";
+static constexpr auto CHANNELS_LOGO_PATH = L"dune_plugin\\icons\\channels\\";
+static constexpr auto CATEGORIES_LOGO_PATH = L"dune_plugin\\icons\\";
+
+
+uint64_t ChronoGetTickCount();
+uint64_t GetTimeDiff(uint64_t dwStartTime);
+bool CheckForTimeOut(uint64_t dwStartTime, uint32_t dwTimeOut);
 
 inline std::string& string_tolower(std::string& s)
 {
@@ -131,16 +137,34 @@ std::basic_string<T> string_replace(const std::basic_string<T>& source, const st
 /// </summary>
 /// <param name="w">A two byte character UTF-16 string.</param>
 /// <returns>A single byte character UTF-8 string.</returns>
-std::string utf16_to_utf8(const std::wstring& w);
 std::string utf16_to_utf8(const wchar_t* srcData, size_t srcSize);
+
+inline std::string utf16_to_utf8(std::wstring_view w)
+{
+	return utf16_to_utf8(w.data(), w.size());
+}
+
+inline std::string utf16_to_utf8(const std::wstring& w)
+{
+	return utf16_to_utf8(w.c_str(), w.size());
+}
 
 /// <summary>
 /// Converts a UTF-8 string to a UTF-16
 /// </summary>
 /// <param name="s">A single byte character UTF-8 string.</param>
 /// <returns>A two byte character UTF-16 string.</returns>
-std::wstring utf8_to_utf16(const std::string& s);
 std::wstring utf8_to_utf16(const char* srcData, size_t srcSize);
+
+inline std::wstring utf8_to_utf16(std::string_view s)
+{
+	return utf8_to_utf16(s.data(), s.size());
+}
+
+inline std::wstring utf8_to_utf16(const std::string& s)
+{
+	return utf8_to_utf16(s.c_str(), s.size());
+}
 
 std::vector<std::string> regex_split(const std::string& str, const std::string& token = "\\s+");
 

@@ -1,8 +1,11 @@
 #include "pch.h"
 #include <regex>
+#include <chrono>
 
 #include "utils.h"
 
+namespace utils
+{
 constexpr auto LOW_3BITS = 0x7;
 constexpr auto LOW_4BITS = 0xF;
 constexpr auto LOW_5BITS = 0x1F;
@@ -19,6 +22,27 @@ constexpr auto L_SURROGATE_END = 0xDFFF;
 constexpr auto H_SURROGATE_START = 0xD800;
 constexpr auto H_SURROGATE_END = 0xDBFF;
 constexpr auto SURROGATE_PAIR_START = 0x10000;
+
+// simulation of Windows GetTickCount()
+uint64_t ChronoGetTickCount()
+{
+	return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+}
+
+uint64_t GetTimeDiff(uint64_t dwStartTime)
+{
+	uint64_t dwCurrent = ChronoGetTickCount();
+
+	if (dwStartTime > dwCurrent)
+		return (unsigned long long) - 1 - dwCurrent - dwStartTime;
+
+	return (dwCurrent - dwStartTime);
+}
+
+bool CheckForTimeOut(uint64_t dwStartTime, uint32_t dwTimeOut)
+{
+	return (GetTimeDiff(dwStartTime) > dwTimeOut);
+}
 
 inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
 {
@@ -142,12 +166,7 @@ inline size_t count_utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 	return destSize;
 }
 
-std::string utils::utf16_to_utf8(const std::wstring& w)
-{
-	return utf16_to_utf8(w.c_str(), w.size());
-}
-
-std::string utils::utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
+std::string utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 {
 	std::string dest(count_utf16_to_utf8(srcData, srcSize), '\0');
 	char* destData = &dest[0];
@@ -201,12 +220,7 @@ std::string utils::utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 	return dest;
 }
 
-std::wstring utils::utf8_to_utf16(const std::string& s)
-{
-	return utils::utf8_to_utf16(s.c_str(), s.size());
-}
-
-std::wstring utils::utf8_to_utf16(const char* srcData, size_t srcSize)
+std::wstring utf8_to_utf16(const char* srcData, size_t srcSize)
 {
 	// Save repeated heap allocations, use the length of resulting sequence.
 	std::wstring dest(count_utf8_to_utf16(srcData, srcSize), L'\0');
@@ -275,7 +289,7 @@ std::wstring utils::utf8_to_utf16(const char* srcData, size_t srcSize)
 	return dest;
 }
 
-std::vector<std::string> utils::regex_split(const std::string& str, const std::string& token /*= "\\s+"*/)
+std::vector<std::string> regex_split(const std::string& str, const std::string& token /*= "\\s+"*/)
 {
 	std::vector<std::string> elems;
 
@@ -290,4 +304,5 @@ std::vector<std::string> utils::regex_split(const std::string& str, const std::s
 	}
 
 	return elems;
+}
 }

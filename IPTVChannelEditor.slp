@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20211213131720" scan="64" scanned="20211213131652">
+<document created="20211012165442" version="4.0.374" date="20211218214710" scan="65" scanned="20211218214512">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211213121634" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20211218204150" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -552,6 +552,7 @@
           <row id="CX" changed="20211124211848">569</row>
           <row id="CY" changed="20211012174121">404</row>
           <row id="Font">MS Shell Dlg,8</row>
+          <row id="Text" locked="1" state="0" created="20211218214512">IPTV Channel Editor</row>
           <row id="X">0</row>
           <row id="Y">0</row>
           <component class="TVisGroupBox" name="BUTTON_Stream_Info" type="button" unnamed="1">
@@ -1116,6 +1117,61 @@
             </row>
             <row id="X" changed="20211124211848">248</row>
             <row id="Y" changed="20211012174121">381</row>
+          </component>
+        </form>
+      </node>
+      <node class="TWindowsDialogNode" name="111" state="0" created="20211218214512" resid="111" langid="1033">
+        <form class="TWindowsForm" name="111" state="0" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
+          <row id="CX" state="0">263</row>
+          <row id="CY" state="0">130</row>
+          <row id="Font" state="0">MS Shell Dlg,8</row>
+          <row id="Text" state="0">
+            <native>Update</native>
+            <lang id="ru" date="20211218214538">Обновление</lang>
+          </row>
+          <row id="X" state="0">0</row>
+          <row id="Y" state="0">0</row>
+          <component class="TVisLabel" name="STATIC_Check_for_updates" state="0" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">166</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Check for updates every</native>
+              <lang id="ru" date="20211218214547">Проверять каждые</lang>
+            </row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">7</row>
+          </component>
+          <component class="TVisCheckBox" name="1127" state="0" type="button">
+            <row id="CX" state="0">166</row>
+            <row id="CY" state="0">10</row>
+            <row id="Text" state="0">
+              <native>Update Channel Lists</native>
+              <lang id="ru" date="20211218214602">Обновлять списки каналов</lang>
+            </row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">36</row>
+          </component>
+          <component class="TVisLabel" name="STATIC_days" state="0" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">25</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>days</native>
+              <lang id="ru" date="20211218214608">дней</lang>
+            </row>
+            <row id="X" state="0">39</row>
+            <row id="Y" state="0">20</row>
+          </component>
+          <component class="TVisEdit" name="1126" state="0" type="edit">
+            <row id="CX" state="0">19</row>
+            <row id="CY" state="0">12</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">19</row>
+          </component>
+          <component class="TVisUpDown" name="1124" state="0" type="msctls_updown32">
+            <row id="CX" state="0">11</row>
+            <row id="CY" state="0">14</row>
+            <row id="X" state="0">25</row>
+            <row id="Y" state="0">18</row>
           </component>
         </form>
       </node>
@@ -3786,6 +3842,10 @@
           <native>Error in regular expression: %hs</native>
           <lang id="ru" date="20211212010413">Ошибка в регулярном выражении: %hs</lang>
         </row>
+        <row id="IDS_STRING_ERR_UPDATE" state="0" created="20211218214512">
+          <native>Error during update. Error code %d</native>
+          <lang id="ru" date="20211218214702">Ошибка при обновлении. Код ошибки %d</lang>
+        </row>
         <row id="IDS_STRING_LOAD_ICONS_TITLE">
           <native>Load logotype image</native>
           <lang id="ru" date="20211017144737" savedtotm="1">Загрузить иконку</lang>
@@ -3797,6 +3857,14 @@
         <row id="IDS_STRING_STANDARD" state="0" created="20211213131652">
           <native> (Standard)</native>
           <lang id="ru" date="20211213131712"> (Основной)</lang>
+        </row>
+        <row id="IDS_STRING_UPDATE_AVAILABLE" state="0" created="20211218214512">
+          <native>Update available. Install it now?</native>
+          <lang id="ru" date="20211218214619">Доступно обновление. Установить?</lang>
+        </row>
+        <row id="IDS_STRING_UPDATE_DONE" state="0" created="20211218214512">
+          <native>Update Done. Exiting from the application.</native>
+          <lang id="ru" date="20211218214642">Обновление выполнено. Выход из приложения.</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="3633" locked="1" resid="3633" langid="1033">
@@ -3963,28 +4031,28 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20211213131652">
-          <prev>2.2.559, 12 Dec 2021</prev>
-          <native>2.2.562, 13 Dec 2021</native>
+        <row id="FileVersion" locked="1" state="3" changed="20211218214512">
+          <prev>2.2.562, 13 Dec 2021</prev>
+          <native>2.2.568, 16 Dec 2021</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20211013234256">2</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211213131652">
-          <prev>559</prev>
-          <native>562</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211218214512">
+          <prev>562</prev>
+          <native>568</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20211213131652">
-          <prev>2.2.559</prev>
-          <native>2.2.562</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20211218214512">
+          <prev>2.2.562</prev>
+          <native>2.2.568</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20211013234256">2</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211213131652">
-          <prev>559</prev>
-          <native>562</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20211218214512">
+          <prev>562</prev>
+          <native>568</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

@@ -62,5 +62,6 @@ bool PackPlugin(const StreamType plugin_type,
 
 void SaveWindowPos(HWND hWnd, LPCTSTR name);
 void RestoreWindowPos(HWND hWnd, LPCTSTR name);
+int RequestToUpdateServer(const std::wstring& command);
 
 extern CIPTVChannelEditorApp theApp;
