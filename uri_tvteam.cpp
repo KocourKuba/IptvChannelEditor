@@ -62,6 +62,7 @@ std::wstring uri_tvteam::get_templated(StreamSubType subType, const TemplatePara
 	}
 
 	ReplaceVars(url, params);
+
 	return url;
 }
 

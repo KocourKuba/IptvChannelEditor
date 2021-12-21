@@ -46,8 +46,6 @@ std::wstring uri_sharavoz::get_templated(StreamSubType subType, const TemplatePa
 		url += L"&utc={START}&lutc={NOW}";
 	}
 
-	// http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}
-	// http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}
 	ReplaceVars(url, params);
 
 	return url;

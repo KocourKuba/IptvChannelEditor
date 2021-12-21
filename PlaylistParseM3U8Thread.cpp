@@ -65,6 +65,11 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					entry->set_epg1_id(entry->get_title()); // primary EPG
 				}
 
+				if (m_config.m_pluginType == StreamType::enLightIptv)
+				{
+					entry->stream_uri->set_id(entry->get_epg1_id());
+				}
+
 				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
 				playlist->m_entries.emplace_back(entry);
 				entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);

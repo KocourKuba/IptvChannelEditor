@@ -11,8 +11,8 @@ static char THIS_FILE[] = __FILE__;
 
 // special case for run under debugger from VS
 #ifdef _DEBUG
-std::wstring PluginsConfig::DEV_PATH = LR"(..\)";
-std::wstring PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
+std::wstring PluginsConfig::DEV_PATH = L"..\\";
+std::wstring PluginsConfig::PACK_DLL_PATH = L"dll\\";
 #else
 std::wstring PluginsConfig::DEV_PATH;
 std::wstring PluginsConfig::PACK_DLL_PATH;
@@ -83,6 +83,7 @@ static std::vector<std::wstring> plugins_images = {
 	L"bg_tvteam.jpg",     L"logo_tvteam.png",
 	L"bg_viplime.jpg",    L"logo_viplime.png",
 	L"bg_oneott.jpg",     L"logo_oneott.png",
+	L"bg_lightiptv.jpg",  L"logo_lightiptv.png",
 };
 
 static std::vector<PluginDesc> all_plugins = {
@@ -99,6 +100,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enSharaTV,   _T("Shara TV"),        "sharatv"    },
 	{ StreamType::enTvTeam,    _T("TV Team"),         "tvteam"     },
 	{ StreamType::enOneOtt,    _T("1OTT TV"),         "oneott"     },
+	{ StreamType::enLightIptv, _T("LightIPTV"),       "lightiptv"  },
 };
 
 void ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)

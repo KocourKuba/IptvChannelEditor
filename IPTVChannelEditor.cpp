@@ -40,6 +40,16 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 		}
 	}
 
+#ifdef _DEBUG
+	m_bDev = TRUE;
+#endif // _DEBUG
+
+	if (m_bDev)
+	{
+		PluginsConfig::DEV_PATH = LR"(..\)";
+		PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
+	}
+
 	CCommandLineInfo::ParseParam(szParam, bFlag, bLast);
 }
 
@@ -362,7 +372,7 @@ bool PackPlugin(const StreamType plugin_type,
 	os.close();
 
 	// pack folder
-	const auto& pack_dll = GetAppPath(PluginsConfig::PACK_DLL_PATH.c_str()) + PACK_DLL;
+	const auto& pack_dll = GetAppPath((PluginsConfig::DEV_PATH + PluginsConfig::PACK_DLL_PATH).c_str()) + PACK_DLL;
 	SevenZipWrapper archiver(pack_dll);
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
 	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);

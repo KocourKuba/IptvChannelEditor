@@ -930,6 +930,7 @@ BEGIN
     IDS_STRING_UPDATE_AVAILABLE "Update available. Install it now?"
     IDS_STRING_UPDATE_DONE  "Update Done. Exiting from the application."
     IDS_STRING_ERR_UPDATE   "Error during update. Error code %d"
+    IDS_STRING_NO_CHANNELS  "No channels found in directory %s"
 END
 
 #endif    // English (United States) resources

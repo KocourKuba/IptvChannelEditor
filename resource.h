@@ -111,6 +111,7 @@
 #define IDS_STRING_UPDATE_DONE          219
 #define IDS_STRING220                   220
 #define IDS_STRING_ERR_UPDATE           220
+#define IDS_STRING_NO_CHANNELS          221
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003

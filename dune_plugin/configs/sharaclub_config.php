@@ -46,7 +46,7 @@ class SharaclubPluginConfig extends DefaultConfig
         return $url;
     }
 
-    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -191,7 +191,7 @@ class SharaclubPluginConfig extends DefaultConfig
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        $url = static::GetTemplatedUrl('movie', $plugin_cookies);
+        $url = static::GetPlaylistUrl('movie', $plugin_cookies);
         $categories = HD::LoadAndStoreJson($url, true, self::GET_VOD_TMP_STORAGE_PATH());
         if ($categories === false)
         {

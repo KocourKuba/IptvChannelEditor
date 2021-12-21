@@ -117,7 +117,7 @@ class StarnetPluginTv extends AbstractTv
 
             if (isset($xml->channels_setup->access_password)) {
                 $plugin_cookies->password_local = (string)$xml->channels_setup->access_password;
-                hd_print("password: $plugin_cookies->password_local");
+                hd_print("password: " . base64_encode($plugin_cookies->password_local));
             }
         }
 
@@ -176,7 +176,7 @@ class StarnetPluginTv extends AbstractTv
                 $channel_id = (string)$xml_tv_channel->channel_id;
                 $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
                 // update stream url by channel ID
-                $streaming_url = self::$config->UpdateStreamUrlID($channel_id);
+                $streaming_url = self::$config->UpdateStreamUrlID($channel_id, $ext_params);
                 if (empty($streaming_url)) {
                     continue;
                 }

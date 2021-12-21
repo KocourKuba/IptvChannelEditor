@@ -19,6 +19,7 @@ enum class StreamType
 	enSharaTV,
 	enTvTeam,
 	enOneOtt,
+	enLightIptv,
 };
 
 constexpr auto CMP_FLAG_TITLE   = 0x01;

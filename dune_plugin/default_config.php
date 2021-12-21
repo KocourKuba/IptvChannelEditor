@@ -17,6 +17,7 @@ abstract class DefaultConfig
 
     // setup variables
     public static $MPEG_TS_SUPPORTED = false;
+    public static $HLS2_SUPPORTED = false;
     public static $ACCOUNT_TYPE = 'UNKNOWN';
 
     // account
@@ -208,7 +209,7 @@ abstract class DefaultConfig
      * @param $channel_id
      * @return string
      */
-    public static function UpdateStreamUrlID($channel_id)
+    public static function UpdateStreamUrlID($channel_id, $ext_params)
     {
         return str_replace('{ID}', $channel_id, static::$MEDIA_URL_TEMPLATE_HLS);
     }
@@ -363,7 +364,7 @@ abstract class DefaultConfig
         $tmp_file = self::GET_TMP_STORAGE_PATH();
         if ($force !== false || !file_exists($tmp_file)) {
             try {
-                $url = static::GetTemplatedUrl('tv1', $plugin_cookies);
+                $url = static::GetPlaylistUrl('tv1', $plugin_cookies);
                 //hd_print("tv1 m3u8 playlist: " . $url);
                 if (empty($url)) {
                     throw new Exception('Tv1 playlist not defined');
@@ -371,7 +372,7 @@ abstract class DefaultConfig
                 file_put_contents($tmp_file, HD::http_get_document($url));
             } catch (Exception $ex) {
                 try {
-                    $url = static::GetTemplatedUrl('tv2', $plugin_cookies);
+                    $url = static::GetPlaylistUrl('tv2', $plugin_cookies);
                     //hd_print("tv2 m3u8 playlist: " . $url);
                     if (empty($url)) {
                         hd_print("Tv2 playlist not defined");
@@ -395,7 +396,7 @@ abstract class DefaultConfig
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {
-                $url = static::GetTemplatedUrl('movie', $plugin_cookies);
+                $url = static::GetPlaylistUrl('movie', $plugin_cookies);
                 if (empty($url)) {
                     throw new Exception('Vod playlist not defined');
                 }
@@ -474,7 +475,7 @@ abstract class DefaultConfig
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         return '';
     }

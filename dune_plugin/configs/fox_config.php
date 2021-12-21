@@ -50,7 +50,7 @@ class FoxPluginConfig extends DefaultConfig
         return $url;
     }
 
-    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -82,7 +82,7 @@ class FoxPluginConfig extends DefaultConfig
         $pl_entries = array();
         $m3u_lines = self::FetchTvM3U($plugin_cookies);
         for ($i = 0, $iMax = count($m3u_lines); $i < $iMax; ++$i) {
-            if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)".+$|', $m3u_lines[$i], $m_id)
+            if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)"|', $m3u_lines[$i], $m_id)
                 && preg_match(self::$M3U_STREAM_URL_PATTERN, $m3u_lines[$i + 1], $matches)) {
                 $pl_entries[$m_id['id']] = $matches;
             }

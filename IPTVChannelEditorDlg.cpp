@@ -476,6 +476,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enSharavoz:
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
+		case StreamType::enLightIptv:
 		{
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
@@ -506,10 +507,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndPlaylist.SetCurSel(pl_idx);
 
 	// Load channel lists
-	const auto& name = GetConfig().GetCurrentPluginName();
-	const auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), name);
-	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", name);
-	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", name);
+	const auto& plugin_name = GetConfig().GetCurrentPluginName();
+	const auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), plugin_name);
+	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
+	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", plugin_name);
 
 	m_all_channels_lists.clear();
 	m_wndChannels.ResetContent();
@@ -532,9 +533,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	if (m_all_channels_lists.empty())
 	{
 		CString str;
-		str.Format(_T("No channels found in directory %s"), channelsPath.c_str());
+		str.Format(IDS_STRING_NO_CHANNELS, channelsPath.c_str());
 		AfxMessageBox(str, MB_ICONERROR | MB_OK);
-		return;
 	}
 
 	for (const auto& item : m_all_channels_lists)
@@ -621,6 +621,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		case StreamType::enItv:
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
+		case StreamType::enLightIptv:
 		{
 			switch (idx)
 			{
@@ -824,6 +825,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
 		case StreamType::enOneOtt:
+		case StreamType::enLightIptv:
 		{
 			switch (pl_idx)
 			{
@@ -1579,6 +1581,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			case StreamType::enSharavoz:
 			case StreamType::enTvTeam:
 			case StreamType::enVipLime:
+			case StreamType::enLightIptv:
 				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			default:
@@ -2748,6 +2751,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enSharavoz:
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
+		case StreamType::enLightIptv:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -3103,7 +3107,18 @@ void CIPTVChannelEditorDlg::OnSave()
 
 	int lst_idx = m_wndChannels.GetCurSel();
 	if (lst_idx == -1)
-		return;
+	{
+		const auto& plugin_name = GetConfig().GetCurrentPluginName();
+		const auto& list_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
+		const auto& list_path = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), plugin_name);
+		std::error_code err;
+		std::filesystem::create_directory(list_path, err);
+
+		m_all_channels_lists.emplace_back(list_name);
+		lst_idx = m_wndChannels.AddString(list_name.c_str());
+		m_wndChannels.SetCurSel(lst_idx);
+		GetConfig().set_int(false, REG_CHANNELS_TYPE, lst_idx);
+	}
 
 	// renumber categories id
 	LPCWSTR old_selected = nullptr;
@@ -3152,6 +3167,7 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enSharavoz:
 				case StreamType::enTvTeam:
 				case StreamType::enVipLime:
+				case StreamType::enLightIptv:
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
 				default:

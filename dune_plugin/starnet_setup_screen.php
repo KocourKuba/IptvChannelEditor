@@ -91,9 +91,17 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // select stream type
+        $format_ops = array('hls' => 'HLS');
+        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+        if ($config::$HLS2_SUPPORTED) {
+            $format_ops['hls2'] = 'HLS2';
+        }
+
         if ($config::$MPEG_TS_SUPPORTED) {
-            $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-            $format_ops = array('hls' => 'HLS', 'mpeg' => 'MPEG-TS');
+            $format_ops['mpeg'] = 'MPEG-TS';
+        }
+
+        if (count($format_ops) > 1) {
             $this->add_combobox($defs, 'stream_format', 'Выбор потока:', $format, $format_ops, 0, true);
         }
 

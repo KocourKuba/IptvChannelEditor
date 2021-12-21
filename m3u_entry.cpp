@@ -124,14 +124,21 @@ void m3u_entry::parse(const std::string& str)
 
 void m3u_entry::parse_directive_tags(const std::string& str)
 {
-	auto tags_array = utils::regex_split(str, R"(\"\s+)");
-	for (const auto& tag : tags_array)
+	static std::regex re(R"((?:[^\s\"]+|\"[^\"]*\")+)");
+	std::smatch m;
+	auto string = str;
+	while(std::regex_search(string, m, re))
 	{
-		auto vtag = utils::string_split(tag, '=');
-		if (vtag.size() == 2 && !vtag[0].empty())
+		const auto& pair = m[0].str();
+		static std::regex re_pair(R"((.*)=(?=[\"\'])(.+))");
+		std::smatch m_pair;
+		if (std::regex_match(pair, m_pair, re_pair))
 		{
-			if (const auto& pair = s_tags.find(vtag[0]); pair != s_tags.end())
-				ext_tags.emplace(pair->second, utils::string_trim(vtag[1], " \"\'"));
+			std::string tag = m_pair[1];
+			std::string value = m_pair[2];
+			if (const auto& pair = s_tags.find(utils::string_trim(tag, " ")); pair != s_tags.end())
+				ext_tags.emplace(pair->second, utils::string_trim(value, " \"\'"));
 		}
+		string = string.c_str() + m.position() + m.length();
 	}
 }

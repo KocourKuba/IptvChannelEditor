@@ -15,6 +15,7 @@
 #include "uri_sharavoz.h"
 #include "uri_tvteam.h"
 #include "uri_viplime.h"
+#include "uri_lightiptv.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -75,6 +76,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enOneOtt:
 			return  std::make_unique<uri_oneott>();
+
+		case StreamType::enLightIptv:
+			return  std::make_unique<uri_lightiptv>();
 
 		default:
 			ASSERT(false);

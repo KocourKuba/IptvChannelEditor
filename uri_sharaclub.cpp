@@ -55,8 +55,6 @@ std::wstring uri_sharaclub::get_templated(StreamSubType subType, const TemplateP
 		url += L"?utc={START}&lutc={NOW}";
 	}
 
-	// http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8
-	// http://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts
 	ReplaceVars(url, params);
 
 	return url;

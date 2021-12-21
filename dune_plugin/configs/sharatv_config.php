@@ -28,7 +28,7 @@ class SharatvPluginConfig extends DefaultConfig
         return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 

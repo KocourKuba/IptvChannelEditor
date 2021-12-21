@@ -18,9 +18,11 @@
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
 
 #ifdef _DEBUG
-constexpr auto PACK_DLL_PATH = LR"(..\dll\)";
+std::wstring DEV_PATH = L"..\\";
+std::wstring PACK_DLL_PATH = L"dll\\";
 #else
-constexpr auto PACK_DLL_PATH = L"";
+std::wstring DEV_PATH;
+std::wstring PACK_DLL_PATH;
 #endif // _DEBUG
 
 constexpr auto PACK_DLL = L"7za.dll";
@@ -268,7 +270,7 @@ int update_app(UpdateInfo& info)
 	if (i != 0)
 		return err_no_updates;
 
-	const auto& pack_dll = GetAppPath(PACK_DLL_PATH) + PACK_DLL;
+	const auto& pack_dll = GetAppPath((DEV_PATH + PACK_DLL_PATH).c_str()) + PACK_DLL;
 
 	const auto& target_path = GetAppPath();
 	for (const auto& item : info.update_files)

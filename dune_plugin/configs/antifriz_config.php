@@ -70,7 +70,7 @@ class AntifrizPluginConfig extends DefaultConfig
         return HD::make_ts($url);
     }
 
-    protected static function GetTemplatedUrl($type, $plugin_cookies)
+    protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
