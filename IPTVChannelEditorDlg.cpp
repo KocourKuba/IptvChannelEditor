@@ -4212,27 +4212,28 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboStreamType()
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 {
-	int idx = m_wndChannels.GetCurSel();
-	if (idx == -1)
-		return;
-
 	if (!CheckForSave())
 	{
 		m_wndChannels.SetCurSel(GetConfig().get_int(false, REG_CHANNELS_TYPE));
 		return;
 	}
 
-	if (!LoadChannels())
+	m_categoriesMap.clear();
+	m_channelsMap.clear();
+	int idx = m_wndChannels.GetCurSel();
+	if (idx != -1)
 	{
-		CString str;
-		str.Format(IDS_STRING_ERR_LOAD_CHANNELS_LIST, m_all_channels_lists[idx].c_str());
-		AfxMessageBox(str, MB_ICONERROR | MB_OK);
+		GetConfig().set_int(false, REG_CHANNELS_TYPE, idx);
+		if (!LoadChannels())
+		{
+			CString str;
+			str.Format(IDS_STRING_ERR_LOAD_CHANNELS_LIST, m_all_channels_lists[idx].c_str());
+			AfxMessageBox(str, MB_ICONERROR | MB_OK);
+		}
 	}
 
 	FillTreeChannels();
 	CheckForExistingPlaylist();
-
-	GetConfig().set_int(false, REG_CHANNELS_TYPE, idx);
 }
 
 HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx* pTreeCtl, const SearchParams& searchParams)
