@@ -32,6 +32,7 @@ call :add_node Changelog.md					>>%outfile%
 call :add_node dune_plugin.7z				>>%outfile%
 call :add_node playlists.7z	true			>>%outfile%
 echo ^</package^> >>%outfile%
+copy %outfile% %outfile%.%BUILD%
 
 echo build standard archive...
 IPTVChannelEditor.exe /MakeAll .
