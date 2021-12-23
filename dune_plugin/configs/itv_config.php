@@ -36,14 +36,27 @@ class ItvPluginConfig extends DefaultConfig
     public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
-        //hd_print("AdjustStreamUrl: $url");
 
-        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
-
-        if (self::get_format($plugin_cookies) === 'mpeg') {
-            // replace hls to mpegts
-            $url = str_replace('video.m3u8', 'mpegts', $url);
-            $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        switch (self::get_format($plugin_cookies)) {
+            case 'hls':
+                if ((int)$archive_ts > 0) {
+                    // hd_print("Archive TS:  " . $archive_ts);
+                    $url = str_replace('video.m3u8', "archive-$archive_ts-10800.m3u8", $url);
+                }
+                break;
+            case 'mpeg':
+                if ((int)$archive_ts > 0) {
+                    // hd_print("Archive TS:  " . $archive_ts);
+                    $url = str_replace('video.m3u8', "archive-$archive_ts-10800.ts", $url);
+                }
+                else {
+                    $url = str_replace('video.m3u8', 'mpegts', $url);
+                }
+                $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
+                break;
+            default:
+                hd_print("unknown url format");
+                return "";
         }
 
         // hd_print("Stream url:  " . $url);
