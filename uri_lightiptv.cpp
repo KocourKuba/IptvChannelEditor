@@ -12,6 +12,7 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://lightiptv.cc/playlist/hls/{:s}.m3u";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
+static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{TOKEN}/index.m3u8?token={PASSWORD}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{TOKEN}/video-{START}-7200.m3u8?token={PASSWORD}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{TOKEN}/timeshift_abs-{START}.ts?token={PASSWORD}";
@@ -47,6 +48,9 @@ std::wstring uri_lightiptv::get_templated(StreamSubType subType, const TemplateP
 		{
 			case StreamSubType::enHLS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
+				break;
+			case StreamSubType::enHLS2:
+				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS2;
 				break;
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;

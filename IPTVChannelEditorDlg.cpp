@@ -487,17 +487,14 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			break;
 	}
 
-	BOOL bSupportMpegTS = (   plugin_type != StreamType::enEdem
-						   && plugin_type != StreamType::enFox
-						   && plugin_type != StreamType::enSharaTV);
+	auto& streams = StreamContainer::get_instance(plugin_type)->getSupportedStreamType();
 
-	GetDlgItem(IDC_STATIC_STREAM_TYPE)->ShowWindow(bSupportMpegTS ? SW_SHOW : SW_HIDE);
-	m_wndStreamType.ShowWindow(bSupportMpegTS);
+	m_wndStreamType.EnableWindow(streams.size() > 1);
+	m_wndStreamType.SetCurSel(GetConfig().get_int(false, REG_STREAM_TYPE));
+
 	m_wndPlaylist.EnableWindow(TRUE);
 	int idx = m_wndPlaylist.AddString(_T("Custom File"));
 	m_wndPlaylist.SetItemData(idx, TRUE);
-
-	m_wndStreamType.SetCurSel(GetConfig().get_int(false, REG_STREAM_TYPE));
 
 	// Set selected playlist
 	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);

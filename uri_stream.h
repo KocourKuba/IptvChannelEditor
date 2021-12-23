@@ -281,6 +281,12 @@ public:
 		return *this;
 	}
 
+	virtual std::vector<StreamSubType>& getSupportedStreamType() const
+	{
+		static std::vector<StreamSubType> streams = { StreamSubType::enHLS, StreamSubType::enMPEGTS };
+		return streams;
+	};
+
 protected:
 	void ReplaceVars(std::wstring& url, const TemplateParams& params) const
 	{
