@@ -178,7 +178,7 @@ abstract class DefaultConfig
     }
 
     /**
-     * Update url macros {SUBDOMAIN} and {TOKEN} by values from channel ext_params
+     * Update url macros {DOMAIN} and {TOKEN} by values from channel ext_params
      * Make url ts wrapped
      * @param $plugin_cookies
      * @param $archive_ts
@@ -192,7 +192,7 @@ abstract class DefaultConfig
         if (!isset($ext_params['subdomain'])) {
             hd_print("TransformStreamUrl: parameter 'subdomain' for {$channel->get_channel_id()} not defined!");
         } else {
-            $url = str_replace('{SUBDOMAIN}', $ext_params['subdomain'], $url);
+            $url = str_replace('{DOMAIN}', $ext_params['subdomain'], $url);
         }
 
         if (!isset($ext_params['token'])) {
@@ -224,13 +224,10 @@ abstract class DefaultConfig
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
-        if ($force === false) {
-            return true;
-        }
-
         $m3u_lines = self::FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
             if (preg_match(static::$M3U_STREAM_URL_PATTERN, $line, $matches)) {
+                $account_data = $matches;
                 return true;
             }
         }

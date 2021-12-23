@@ -219,7 +219,6 @@ private:
 
 	void SwitchPlugin();
 
-	bool HasEPG2();
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
 	bool CheckForSave();
@@ -296,7 +295,6 @@ protected:
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
 	int m_archivePlDays = 0; // always read only field
-	int m_StreamType = 0; // m_wndStreamType
 	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
 	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
 

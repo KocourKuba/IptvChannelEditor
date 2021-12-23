@@ -10,8 +10,10 @@ class GlanzPluginConfig extends DefaultConfig
     public static $VOD_FAVORITES_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
+    protected static $PLAYLIST_VOD_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id
 
     // vod
@@ -87,9 +89,9 @@ class GlanzPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf('http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls', $login, $password);
+                return sprintf(self::$PLAYLIST_TV_URL, $login, $password);
             case 'movie':
-                return sprintf('http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod', $login, $password);
+                return sprintf(self::$PLAYLIST_VOD_URL, $login, $password);
         }
 
         return '';

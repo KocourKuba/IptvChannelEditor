@@ -36,7 +36,7 @@ void uri_onecent::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_onecent::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_onecent::get_templated(StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url = get_uri();
 
@@ -56,7 +56,7 @@ std::wstring uri_onecent::get_templated(StreamSubType subType, const TemplatePar
 	{
 		if (params.shift_back)
 		{
-			url += L"&utc={START}&lutc={NOW}";
+			AppendArchive(url);
 		}
 	}
 

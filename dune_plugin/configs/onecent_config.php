@@ -8,10 +8,10 @@ class OnecentPluginConfig extends DefaultConfig
     public static $MPEG_TS_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://only4.tv/pl/%s/102/only4tv.m3u8';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/only4/epg/%s.json'; // epg_id
-
     // Views variables
     protected static $TV_CHANNEL_ICON_WIDTH = 60;
     protected static $TV_CHANNEL_ICON_HEIGHT = 60;
@@ -63,6 +63,6 @@ class OnecentPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf('http://only4.tv/pl/%s/102/only4tv.m3u8', $password);
+        return sprintf(self::$PLAYLIST_TV_URL, $password);
     }
 }

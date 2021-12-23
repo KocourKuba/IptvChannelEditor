@@ -32,7 +32,7 @@ void uri_sharavoz::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_sharavoz::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_sharavoz::get_templated(StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url = is_template() ? URI_TEMPLATE_HLS : get_uri();
 
@@ -43,7 +43,7 @@ std::wstring uri_sharavoz::get_templated(StreamSubType subType, const TemplatePa
 
 	if (params.shift_back)
 	{
-		url += L"&utc={START}&lutc={NOW}";
+		AppendArchive(url);
 	}
 
 	ReplaceVars(url, params);

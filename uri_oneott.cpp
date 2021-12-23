@@ -35,7 +35,7 @@ void uri_oneott::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_oneott::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_oneott::get_templated(StreamSubType subType, TemplateParams& params) const
 {
 	auto& url = get_uri();
 
@@ -54,8 +54,9 @@ std::wstring uri_oneott::get_templated(StreamSubType subType, const TemplatePara
 
 	if (params.shift_back)
 	{
-		url += L"?utc={START}&lutc={NOW}";
+		AppendArchive(url);
 	}
+
 	ReplaceVars(url, params);
 
 	return url;

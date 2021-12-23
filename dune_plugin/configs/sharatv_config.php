@@ -7,8 +7,9 @@ class SharatvPluginConfig extends DefaultConfig
     public static $ACCOUNT_TYPE = 'LOGIN';
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://tvfor.pro/g/%s:%s/1/playlist.m3u';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/{TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/{TOKEN}';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/shara-tv/epg/%s.json'; // epg_id
 
     /**
@@ -39,6 +40,6 @@ class SharatvPluginConfig extends DefaultConfig
             hd_print("Login or password not set");
         }
 
-        return sprintf('http://tvfor.pro/g/%s:%s/1/playlist.m3u', $login, $password);
+        return sprintf(self::$PLAYLIST_TV_URL, $login, $password);
     }
 }

@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include <afxdialogex.h>
+#include <tuple>
 
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
@@ -282,7 +283,6 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_CHANNELS, m_wndChInfo);
 	DDX_Control(pDX, IDC_BUTTON_CHECK_ARCHIVE, m_wndCheckArchive);
 	DDX_Control(pDX, IDC_COMBO_STREAM_TYPE, m_wndStreamType);
-	DDX_CBIndex(pDX, IDC_COMBO_STREAM_TYPE, m_StreamType);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylist);
 	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
 	DDX_Control(pDX, IDC_BUTTON_CHOOSE_PLAYLIST, m_wndChooseUrl);
@@ -477,6 +477,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
 		case StreamType::enLightIptv:
+		case StreamType::enCbilling:
 		{
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
@@ -489,8 +490,18 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	auto& streams = StreamContainer::get_instance(plugin_type)->getSupportedStreamType();
 
+	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE);
+	m_wndStreamType.ResetContent();
+	for (const auto& streamType : streams)
+	{
+		int idx = m_wndStreamType.AddString(std::get<1>(streamType).c_str());
+		DWORD_PTR type = (DWORD_PTR)std::get<0>(streamType);
+		m_wndStreamType.SetItemData(idx, type);
+		if (cur_sel == type)
+			m_wndStreamType.SetCurSel(idx);
+	}
+
 	m_wndStreamType.EnableWindow(streams.size() > 1);
-	m_wndStreamType.SetCurSel(GetConfig().get_int(false, REG_STREAM_TYPE));
 
 	m_wndPlaylist.EnableWindow(TRUE);
 	int idx = m_wndPlaylist.AddString(_T("Custom File"));
@@ -619,6 +630,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
 		case StreamType::enLightIptv:
+		case StreamType::enCbilling:
 		{
 			switch (idx)
 			{
@@ -823,6 +835,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		case StreamType::enVipLime:
 		case StreamType::enOneOtt:
 		case StreamType::enLightIptv:
+		case StreamType::enCbilling:
 		{
 			switch (pl_idx)
 			{
@@ -1211,7 +1224,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem)
 	if (channel)
 	{
 		m_epgID1 = channel->get_epg1_id().c_str();
-		m_epgID2 = HasEPG2() ? channel->get_epg2_id().c_str() : L"";
+		m_epgID2 = StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2() ? channel->get_epg2_id().c_str() : L"";
 
 		const auto& uri = channel->stream_uri;
 		m_streamUrl = uri->get_uri().c_str();
@@ -1320,7 +1333,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	if (!info)
 		return;
 
-	bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG1) == IDC_RADIO_EPG1;
+	bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 	nlohmann::json epg_data;
 	try
 	{
@@ -1579,6 +1592,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			case StreamType::enTvTeam:
 			case StreamType::enVipLime:
 			case StreamType::enLightIptv:
+			case StreamType::enCbilling:
 				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			default:
@@ -2160,9 +2174,9 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndSpinTimeShift.EnableWindow(state);
 	m_wndSearch.EnableWindow(TRUE);
 	m_wndEpg1.EnableWindow(single);
-	m_wndEpg2.EnableWindow(single && HasEPG2());
+	m_wndEpg2.EnableWindow(single && StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2());
 	m_wndEpgID1.EnableWindow(single);
-	m_wndEpgID2.EnableWindow(single && HasEPG2());
+	m_wndEpgID2.EnableWindow(single && StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2());
 
 	if (state == 2)
 	{
@@ -2710,7 +2724,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
 		UpdateExtToken(info->stream_uri.get(), m_token);
-		const auto& url = info->stream_uri->get_templated((StreamSubType)m_StreamType, params);
+		const auto& url = info->stream_uri->get_templated((StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()), params);
 
 		TRACE(L"Test URL: %s\n", url.c_str());
 
@@ -2749,6 +2763,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
 		case StreamType::enLightIptv:
+		case StreamType::enCbilling:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -3165,6 +3180,7 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enTvTeam:
 				case StreamType::enVipLime:
 				case StreamType::enLightIptv:
+				case StreamType::enCbilling:
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
 				default:
@@ -4204,7 +4220,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboStreamType()
 {
-	GetConfig().set_int(false, REG_STREAM_TYPE, m_wndStreamType.GetCurSel());
+	GetConfig().set_int(false, REG_STREAM_TYPE, (int)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()));
 }
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
@@ -4507,7 +4523,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		needCheckExisting = true;
 	}
 
-	if (bCmpEpg2 && HasEPG2() && !entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
+	if (bCmpEpg2 && StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2() && !entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
 	{
 		channel->set_epg2_id(entry->get_epg2_id());
 		needCheckExisting = true;
@@ -4822,10 +4838,4 @@ bool CIPTVChannelEditorDlg::CheckForSave()
 	}
 
 	return res == IDNO ? true : false;
-}
-
-bool CIPTVChannelEditorDlg::HasEPG2()
-{
-	auto pluginType = GetConfig().get_plugin_type();
-	return (pluginType == StreamType::enSharaclub || pluginType == StreamType::enSharavoz || pluginType == StreamType::enOneOtt);
 }

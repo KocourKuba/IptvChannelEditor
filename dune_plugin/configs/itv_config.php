@@ -8,8 +8,9 @@ class ItvPluginConfig extends DefaultConfig
     public static $MPEG_TS_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'https://itv.ooo/p/%s/hls.m3u8';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}';
     protected static $EPG1_URL_TEMPLATE = 'http://api.itv.live/epg/%s/%s'; // epg_id date(YYYY-MM-DD)
 
     // Views variables
@@ -73,7 +74,7 @@ class ItvPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf('https://itv.ooo/p/%s/hls.m3u8', $password);
+        return sprintf(self::$PLAYLIST_TV_URL, $password);
     }
 
     /**

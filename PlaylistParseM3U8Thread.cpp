@@ -54,15 +54,15 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				entry->set_logo_root(logo_root);
 				if (!entry->Parse(line, m3uEntry)) continue;
 
-				if (m_config.m_pluginType == StreamType::enSharavoz || m_config.m_pluginType == StreamType::enOneOtt)
-				{
-					entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
-					entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
-				}
-
 				if (m_config.m_pluginType == StreamType::enOneUsd || m_config.m_pluginType == StreamType::enTvTeam)
 				{
 					entry->set_epg1_id(entry->get_title()); // primary EPG
+				}
+
+				if (m_config.m_pluginType == StreamType::enSharavoz || m_config.m_pluginType == StreamType::enOneOtt || m_config.m_pluginType == StreamType::enCbilling)
+				{
+					entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
+					entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
 				}
 
 				if (m_config.m_pluginType == StreamType::enLightIptv)

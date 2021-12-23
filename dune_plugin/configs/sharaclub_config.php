@@ -10,8 +10,10 @@ class SharaclubPluginConfig extends DefaultConfig
     public static $VOD_FAVORITES_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
+    protected static $PLAYLIST_VOD_URL = 'http://list.playtv.pro/kino-full/%s-%s';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
     protected static $EPG1_URL_TEMPLATE = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
     protected static $EPG2_URL_TEMPLATE = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
 
@@ -59,9 +61,9 @@ class SharaclubPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf('http://list.playtv.pro/tv_live-m3u8/%s-%s', $login, $password);
+                return sprintf(self::$PLAYLIST_TV_URL, $login, $password);
             case 'movie':
-                return sprintf('http://list.playtv.pro/kino-full/%s-%s', $login, $password);
+                return sprintf(self::$PLAYLIST_VOD_URL, $login, $password);
         }
 
         return '';
@@ -166,7 +168,7 @@ class SharaclubPluginConfig extends DefaultConfig
                         $playback_url = $episode['video'];
                         if (preg_match('|^https?://(.+)/series/.+\.mp4(.+)$|', $playback_url, $matches)) {
                             $playback_url = str_replace(
-                                array('{SUBDOMAIN}', '{TOKEN}', '{ID}'),
+                                array('{DOMAIN}', '{TOKEN}', '{ID}'),
                                 array($matches[1], $matches[2], "vod-" . $episode['id']),
                                 self::$MEDIA_URL_TEMPLATE_HLS);
                         }

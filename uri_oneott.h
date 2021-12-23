@@ -5,7 +5,7 @@ class uri_oneott : public uri_stream
 {
 public:
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated(StreamSubType subType, const TemplateParams& params) const override;
+	std::wstring get_templated(StreamSubType subType, TemplateParams& params) const override;
 	std::wstring get_epg1_uri(const std::wstring& id) const override;
 	std::wstring get_epg2_uri(const std::wstring& id) const override;
 	std::wstring get_epg1_uri_json(const std::wstring& id) const override;
@@ -19,4 +19,5 @@ public:
 	std::string get_epg_time_end(bool first = true) const override { return first ? "stop" : "time"; }
 
 	bool isHasAccessInfo() const override { return true; }
+	bool has_epg2() const override { return true; };
 };

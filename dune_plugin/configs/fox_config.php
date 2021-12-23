@@ -9,8 +9,10 @@ class FoxPluginConfig extends DefaultConfig
     public static $VOD_FAVORITES_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
+    protected static $PLAYLIST_VOD_URL = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/{TOKEN}/index.m3u8';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/{TOKEN}/index.m3u8';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id
 
     // vod
@@ -63,9 +65,9 @@ class FoxPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf('http://pl.fox-tv.fun/%s/%s/tv.m3u', $login, $password);
+                return sprintf(self::$PLAYLIST_TV_URL, $login, $password);
             case 'movie':
-                return sprintf('http://pl.fox-tv.fun/%s/%s/vodall.m3u', $login, $password);
+                return sprintf(self::$PLAYLIST_VOD_URL, $login, $password);
         }
 
         return '';

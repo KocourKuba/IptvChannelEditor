@@ -164,7 +164,7 @@ public:
 	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	virtual std::wstring get_templated(StreamSubType subType, const TemplateParams& params) const { return L""; };
+	virtual std::wstring get_templated(StreamSubType subType, TemplateParams& params) const { return L""; };
 
 	/// <summary>
 	/// get epg1 url for view
@@ -281,10 +281,15 @@ public:
 		return *this;
 	}
 
-	virtual std::vector<StreamSubType>& getSupportedStreamType() const
+	virtual std::vector<std::tuple<StreamSubType, std::wstring>>& getSupportedStreamType() const
 	{
-		static std::vector<StreamSubType> streams = { StreamSubType::enHLS, StreamSubType::enMPEGTS };
+		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"}};
 		return streams;
+	};
+
+	virtual bool has_epg2() const
+	{
+		return false;
 	};
 
 protected:
@@ -296,6 +301,19 @@ protected:
 		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
 		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
 	}
+
+	std::wstring& AppendArchive(std::wstring& url) const
+	{
+		if (url.rfind('?') != std::wstring::npos)
+			url += '&';
+		else
+			url += '?';
+
+		url += L"utc={START}&lutc={NOW}";
+
+		return url;
+	}
+
 
 protected:
 	std::wstring id;

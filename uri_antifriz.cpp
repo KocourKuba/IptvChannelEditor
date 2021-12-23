@@ -46,7 +46,7 @@ void uri_antifriz::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_antifriz::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_antifriz::get_templated(StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -58,16 +58,15 @@ std::wstring uri_antifriz::get_templated(StreamSubType subType, const TemplatePa
 			no_port = no_port.substr(0, pos);
 		}
 
-		std::wstring subdomain;
 		switch (subType)
 		{
 			case StreamSubType::enHLS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				subdomain = params.shift_back ? no_port : params.domain;
+				params.domain = params.shift_back ? no_port : params.domain;
 				break;
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				subdomain = std::move(no_port);
+				params.domain = no_port;
 				break;
 		}
 	}
@@ -76,7 +75,7 @@ std::wstring uri_antifriz::get_templated(StreamSubType subType, const TemplatePa
 		url = get_uri();
 		if (params.shift_back)
 		{
-			url += L"&utc={START}&lutc={NOW}";
+			AppendArchive(url);
 		}
 	}
 

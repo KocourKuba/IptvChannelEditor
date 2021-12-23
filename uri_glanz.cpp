@@ -39,7 +39,7 @@ void uri_glanz::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_glanz::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_glanz::get_templated(StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -60,7 +60,7 @@ std::wstring uri_glanz::get_templated(StreamSubType subType, const TemplateParam
 		url = get_uri();
 		if (params.shift_back)
 		{
-			url += L"&utc={START}&lutc={NOW}";
+			AppendArchive(url);
 		}
 	}
 

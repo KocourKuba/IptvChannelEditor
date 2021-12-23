@@ -32,7 +32,7 @@ void uri_viplime::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_viplime::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_viplime::get_templated(StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -55,7 +55,7 @@ std::wstring uri_viplime::get_templated(StreamSubType subType, const TemplatePar
 
 	if (params.shift_back)
 	{
-		url += L"?utc={START}&lutc={NOW}";
+		AppendArchive(url);
 	}
 
 	ReplaceVars(url, params);

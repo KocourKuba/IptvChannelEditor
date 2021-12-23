@@ -8,8 +8,9 @@ class OneottPluginConfig extends DefaultConfig
     public static $MPEG_TS_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://list.1ott.net/api/%s/high/ottplay.m3u8';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.propg.net/%s/epg2/%s'; // epg_id date(YYYY-MM-DD)
     protected static $EPG2_URL_TEMPLATE = 'http://epg.ott-play.com/1ott/epg/%s.json'; // epg_id
 
@@ -53,7 +54,7 @@ class OneottPluginConfig extends DefaultConfig
             hd_print("User token not set");
         }
 
-        return sprintf('http://list.1ott.net/api/%s/high/ottplay.m3u8', $plugin_cookies->ott_key);
+        return sprintf(self::$PLAYLIST_TV_URL, $plugin_cookies->ott_key);
     }
 
     /**

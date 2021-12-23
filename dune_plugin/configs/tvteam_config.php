@@ -8,8 +8,9 @@ class TvteamPluginConfig extends DefaultConfig
     public static $MPEG_TS_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://tv.team/pl/11/%s/playlist.m3u8';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/mono.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/tvteam/epg/%s.json'; // epg_id
 
     // Views variables
@@ -63,6 +64,6 @@ class TvteamPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf('http://tv.team/pl/11/%s/playlist.m3u8', $password);
+        return sprintf(self::$PLAYLIST_TV_URL, $password);
     }
 }

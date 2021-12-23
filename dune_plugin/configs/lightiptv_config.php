@@ -9,8 +9,9 @@ class LightiptvPluginConfig extends DefaultConfig
     public static $HLS2_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://lightiptv.cc/playlist/hls/%s.m3u';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/lightiptv/epg/%s.json'; // epg_id
 
     // Views variables
@@ -77,7 +78,7 @@ class LightiptvPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf('http://lightiptv.cc/playlist/hls/%s.m3u', $password);
+        return sprintf(self::$PLAYLIST_TV_URL, $password);
     }
 
     /**

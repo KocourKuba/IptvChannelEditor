@@ -7,7 +7,7 @@ class EdemPluginConfig extends DefaultConfig
     public static $ACCOUNT_TYPE = 'OTT_KEY';
 
     // tv
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
 
     /**
@@ -29,7 +29,7 @@ class EdemPluginConfig extends DefaultConfig
         } else {
             // substitute subdomain token parameters
             $url = str_replace(
-                array('{SUBDOMAIN}', '{TOKEN}'),
+                array('{DOMAIN}', '{TOKEN}'),
                 array($subdomain, $token),
                 $url);
         }

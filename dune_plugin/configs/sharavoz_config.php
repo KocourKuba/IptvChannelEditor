@@ -8,8 +8,9 @@ class SharavozPluginConfig extends DefaultConfig
     public static $MPEG_TS_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://sharavoz.tk/iptv/p/%s/Sharavoz.Tv.navigator-ott.m3u';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?:.*)\?token=(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
     protected static $EPG1_URL_TEMPLATE = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYY-MM-DD)
     protected static $EPG2_URL_TEMPLATE = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
 
@@ -44,6 +45,6 @@ class SharavozPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf('http://sharavoz.tk/iptv/p/%s/Sharavoz.Tv.navigator-ott.m3u', $password);
+        return sprintf(self::$PLAYLIST_TV_URL, $password);
     }
 }
