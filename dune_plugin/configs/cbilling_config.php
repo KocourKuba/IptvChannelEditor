@@ -9,11 +9,14 @@ class CbillingPluginConfig extends DefaultConfig
     public static $ACCOUNT_TYPE = 'PIN';
     public static $HLS2_SUPPORTED = true;
     public static $MPEG_TS_SUPPORTED = true;
+    public static $DEVICES_SUPPORTED = true;
+    public static $BALANCE_SUPPORTED = true;
+
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;
 
     // tv
-    protected static $PLAYLIST_TV_URL = 'http://cbilling.pw/playlist/%s_otp_dev1.m3u8';
+    protected static $PLAYLIST_TV_URL = 'http://cbilling.pw/playlist/%s_otp_dev%s.m3u8';
     protected static $PLAYLIST_VOD_URL = 'http://api.iptvx.tv/';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/s/(?<token>[^/]+)/?(?<id>.+)\.m3u8$|';
     public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8';
@@ -83,14 +86,12 @@ class CbillingPluginConfig extends DefaultConfig
 
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
-        if (parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
+        if (!parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
             $plugin_cookies->subdomain_local = $account_data['subdomain'];
             $plugin_cookies->ott_key_local = $account_data['token'];
-            return true;
+            return false;
         }
 
-        return false;
-/*
         // this account has special API to get account info
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         if ($force === false && !empty($password)) {
@@ -103,16 +104,14 @@ class CbillingPluginConfig extends DefaultConfig
         }
 
         try {
-            $auth['code'] = $password;
-            $post_body = json_encode($auth);
-            $content = HD::http_post_document('http://api.iptvx.tv/auth', $post_body);
+            $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
+            $content = HD::http_get_document('http://api.iptvx.tv/auth/info', $headers);
         } catch (Exception $ex) {
             return false;
         }
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
-        return isset($account_data['package_info']) && !empty($account_data['package_info']);
-*/
+        return true;
     }
 
     protected static function GetPlaylistUrl($type, $plugin_cookies)
@@ -127,7 +126,7 @@ class CbillingPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::$PLAYLIST_TV_URL, $password);
+                return sprintf(self::$PLAYLIST_TV_URL, $password, $plugin_cookies->device_number);
             case 'movie':
                 return self::$PLAYLIST_VOD_URL;
         }

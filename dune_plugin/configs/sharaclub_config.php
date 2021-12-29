@@ -8,6 +8,7 @@ class SharaclubPluginConfig extends DefaultConfig
     public static $MPEG_TS_SUPPORTED = true;
     public static $VOD_MOVIE_PAGE_SUPPORTED = true;
     public static $VOD_FAVORITES_SUPPORTED = true;
+    public static $BALANCE_SUPPORTED = true;
 
     // tv
     protected static $PLAYLIST_TV_URL = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';

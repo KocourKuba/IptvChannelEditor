@@ -59,13 +59,18 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                     $packages = $account_data['package_info'];
                     if (count($packages) === 0) {
                         ControlFactory::add_label($defs, $title, 'Нет пакетов');
-                    }
-                    else {
+                    } else {
                         $need_collect = true;
                         foreach ($packages as $item) {
                             $list[] = $item['name'];
                         }
                     }
+                    break;
+                case 'CbillingPluginConfig':
+                    ControlFactory::add_label($defs, $title, empty($account_data['data']['package']) ? 'Нет пакетов' : $account_data['data']['package']);
+                    ControlFactory::add_label($defs, 'Дата окончания', $account_data['data']['end_date']);
+                    ControlFactory::add_label($defs, 'Устройств', $account_data['data']['devices_num']);
+                    ControlFactory::add_label($defs, 'Сервер', $account_data['data']['server']);
                     break;
                 default:
                     return ActionFactory::show_dialog('Подписка', $defs) ;
@@ -144,7 +149,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
             );
         }
 
-        if (PLUGIN_TYPE === 'SharaclubPluginConfig' || PLUGIN_TYPE === 'ItvPluginConfig') {
+        if ($config::$BALANCE_SUPPORTED) {
             $balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
             $balance['caption'] = 'Подписка';
             return array

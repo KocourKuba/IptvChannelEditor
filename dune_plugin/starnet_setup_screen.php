@@ -90,6 +90,14 @@ class StarnetSetupScreen extends AbstractControlsScreen
         }
 
         //////////////////////////////////////
+        // select device number
+        if ($config::$DEVICES_SUPPORTED) {
+            $dev_num = isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';
+            $device_ops = array('1' => '1', '2' => '2', '3' => '3');
+            $this->add_combobox($defs, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0, true);
+        }
+
+        //////////////////////////////////////
         // select stream type
         $format_ops = array('hls' => 'HLS');
         $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
@@ -310,7 +318,6 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     $plugin_cookies->ott_key = $user_input->ott_key;
                     $plugin_cookies->subdomain = $user_input->subdomain;
                     return $this->reload_channels();
-                    break;
 
                 case 'login_dialog': // token dialog
                     $defs = $this->do_get_login_control_defs($plugin_cookies);
@@ -367,6 +374,9 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'stream_format':
                     $plugin_cookies->format = $new_value;
                     break;
+                case 'devices':
+                    $plugin_cookies->device_number = $new_value;
+                    return $this->reload_channels();
             }
         }
 
@@ -379,6 +389,11 @@ class StarnetSetupScreen extends AbstractControlsScreen
     protected function reload_channels()
     {
         $this->tv->unload_channels();
+        try {
+            $this->tv->load_channels($plugin_cookies);
+        } catch (Exception $e) {
+            hd_print("Reload channel list failed: $plugin_cookies->channels_list");
+        }
         $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
         return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
     }

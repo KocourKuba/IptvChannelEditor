@@ -18,6 +18,8 @@ abstract class DefaultConfig
     // setup variables
     public static $MPEG_TS_SUPPORTED = false;
     public static $HLS2_SUPPORTED = false;
+    public static $DEVICES_SUPPORTED = false;
+    public static $BALANCE_SUPPORTED = false;
     public static $ACCOUNT_TYPE = 'UNKNOWN';
 
     // account

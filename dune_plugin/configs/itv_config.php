@@ -6,6 +6,7 @@ class ItvPluginConfig extends DefaultConfig
     // setup variables
     public static $ACCOUNT_TYPE = 'PIN';
     public static $MPEG_TS_SUPPORTED = true;
+    public static $BALANCE_SUPPORTED = true;
 
     // tv
     protected static $PLAYLIST_TV_URL = 'https://itv.ooo/p/%s/hls.m3u8';
