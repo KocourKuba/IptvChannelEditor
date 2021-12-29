@@ -13,11 +13,13 @@ class AntifrizPluginConfig extends DefaultConfig
     public static $VOD_FAVORITES_SUPPORTED = true;
 
     // tv
+    protected static $PLAYLIST_TV_URL = 'http://antifriz.tv/playlist/%s.m3u8';
+    protected static $PLAYLIST_VOD_URL = 'http://antifriz.tv/smartup/%s.m3u';
     public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{SUBDOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
-    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
+    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
+    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
     protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id
 
     // vod
@@ -43,7 +45,7 @@ class AntifrizPluginConfig extends DefaultConfig
                     // hls archive url completely different, make it from scratch
                     $domain = explode(':', $ext_params['subdomain']);
                     $url = str_replace(
-                        array('{SUBDOMAIN}', '{ID}', '{TOKEN}', '{START}'),
+                        array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
                         array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
                         self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS);
                 }
@@ -53,7 +55,7 @@ class AntifrizPluginConfig extends DefaultConfig
                 $url = ((int)$archive_ts > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::$MEDIA_URL_TEMPLATE_MPEG;
                 $domain = explode(':', $ext_params['subdomain']);
                 $url = str_replace(
-                    array('{SUBDOMAIN}', '{ID}', '{TOKEN}', '{START}'),
+                    array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
                     array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
                     $url);
                 $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
@@ -70,6 +72,17 @@ class AntifrizPluginConfig extends DefaultConfig
         return HD::make_ts($url);
     }
 
+    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
+    {
+        if (parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
+            $plugin_cookies->subdomain_local = $account_data['subdomain'];
+            $plugin_cookies->ott_key_local = $account_data['token'];
+            return true;
+        }
+
+        return false;
+    }
+
     protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -81,9 +94,9 @@ class AntifrizPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf('http://antifriz.tv/playlist/%s.m3u8', $password);
+                return sprintf(self::$PLAYLIST_TV_URL, $password);
             case 'movie':
-                return sprintf('http://antifriz.tv/smartup/%s.m3u', $password);
+                return sprintf(self::$PLAYLIST_VOD_URL, $password);
         }
 
         return '';
