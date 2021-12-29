@@ -31,7 +31,7 @@ bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path)
 	return false;
 }
 
-bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData)
+bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, std::wstring* pHeaders /*= nullptr*/)
 {
 	ATLTRACE(L"download url: %s\n", url.c_str());
 	std::wstring host;
@@ -61,6 +61,12 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData)
 									  WINHTTP_NO_REFERER,
 									  nullptr,
 									  NULL);
+
+	if (pHeaders && !pHeaders->empty())
+	{
+		BOOL result = WinHttpAddRequestHeaders(hRequest, pHeaders->c_str(), pHeaders->size(), WINHTTP_ADDREQ_FLAG_ADD);
+		ATLTRACE("header added: %d\n", result);
+	}
 
 	// Send a request.
 	BOOL bResults = FALSE;

@@ -2,6 +2,7 @@
 #include "uri_cbilling.h"
 #include "PlayListEntry.h"
 
+#include "UtilsLib\json.hpp"
 #include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
@@ -10,6 +11,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static constexpr auto ACCOUNT_TEMPLATE = L"http://api.iptvx.tv/auth/info";
+static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://cbilling.pw/playlist/{:s}_otp_dev1.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
@@ -83,6 +86,48 @@ std::wstring uri_cbilling::get_templated(StreamSubType subType, TemplateParams& 
 
 	ReplaceVars(url, params);
 	return url;
+}
+
+std::wstring uri_cbilling::get_access_url(const std::wstring& /*login*/, const std::wstring& /*password*/) const
+{
+	return ACCOUNT_TEMPLATE;
+}
+
+std::wstring uri_cbilling::get_access_info_header() const
+{
+	return ACCOUNT_HEADER_TEMPLATE;
+}
+
+bool uri_cbilling::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const
+{
+	using json = nlohmann::json;
+
+	try
+	{
+		json js = json::parse(json_data);
+
+		json js_data = js["data"];
+
+		std::wstring subscription = L"No packages";
+		if (js_data.contains("package"))
+		{
+			subscription = fmt::format(L"{:s}", utils::utf8_to_utf16(js_data.value("package", "")));
+		}
+
+		params.emplace("subscription", subscription);
+
+		return true;
+	}
+	catch (const json::parse_error&)
+	{
+		// parse errors are ok, because input may be random bytes
+	}
+	catch (const json::out_of_range&)
+	{
+		// out of range errors may happen if provided sizes are excessive
+	}
+
+	return false;
 }
 
 std::wstring uri_cbilling::get_epg1_uri(const std::wstring& id) const

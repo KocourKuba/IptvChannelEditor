@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "uri_itv.h"
+
+#include "UtilsLib\json.hpp"
 #include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
@@ -83,4 +85,48 @@ std::wstring uri_itv::get_epg1_uri_json(const std::wstring& id) const
 std::wstring uri_itv::get_playlist_template(bool first /*= true*/) const
 {
 	return PLAYLIST_TEMPLATE;
+}
+
+bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const
+{
+	using json = nlohmann::json;
+
+	try
+	{
+		json js = json::parse(json_data);
+
+		json js_data = js["user_info"];
+
+		params.emplace("balance", fmt::format(L"{:s} $", utils::utf8_to_utf16(js_data.value("cash", ""))));
+		std::wstring subscription;
+		if (!js.contains("package_info"))
+		{
+			subscription = L"No packages";
+		}
+		else
+		{
+			json pkg_data = js["package_info"];
+			for (const auto& item : pkg_data)
+			{
+				if (!subscription.empty())
+					subscription += L", ";
+
+				subscription += fmt::format(L"{:s}", utils::utf8_to_utf16(item.value("name", "")));
+			}
+		}
+
+		params.emplace("subscription", subscription);
+
+		return true;
+	}
+	catch (const json::parse_error&)
+	{
+		// parse errors are ok, because input may be random bytes
+	}
+	catch (const json::out_of_range&)
+	{
+		// out of range errors may happen if provided sizes are excessive
+	}
+
+	return false;
 }

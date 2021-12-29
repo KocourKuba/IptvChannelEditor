@@ -4,7 +4,6 @@
 #include "resource.h"
 #include "PlayListEntry.h"
 
-#include "UtilsLib\json.hpp"
 #include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
@@ -12,8 +11,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-using json = nlohmann::json;
 
 // CAccessDlg dialog
 
@@ -83,7 +80,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);
-	std::wstring pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
+	std::wstring pl_url;
 
 	if (m_entry->stream_uri->isHasAccessInfo())
 	{
@@ -92,36 +89,26 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(login, password), data) || data.empty())
 			return;
 
-		try
+		std::map<std::string, std::wstring> params;
+		if (m_entry->stream_uri->parse_access_info(data, params))
 		{
-			json js = json::parse(data);
-			if (js.contains("token"))
-			{
-				m_token = js.value("token", "").c_str();
-				pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), m_token.GetString());
-			}
+			if (!params["token"].empty())
+				m_token = params["token"].c_str();
 
-			json js_data = js["data"];
+			if (!params["url"].empty())
+				pl_url = params["url"];
 
-			if (m_status == _T("ok"))
-			{
-				m_subscription = utils::utf8_to_utf16(js_data.value("abon", "")).c_str();
-				m_balance.Format(_T("%hs RUR"), js_data.value("money", "").c_str());
-				m_packages_price.Format(_T("%hs RUR"), js_data.value("money_need", "").c_str());
-			}
+			if (!params["subscription"].empty())
+				m_subscription = params["subscription"].c_str();
+			if (!params["balance"].empty())
+				m_balance.Format(_T("%s RUR"), params["balance"].c_str());
+			if (!params["forecast_pay"].empty())
+				m_packages_price.Format(_T("%s RUR"), params["forecast_pay"].c_str());
 		}
-		catch (const json::parse_error&)
-		{
-			// parse errors are ok, because input may be random bytes
-		}
-		catch (const json::out_of_range&)
-		{
-			// out of range errors may happen if provided sizes are excessive
-		}
-		catch (const json::type_error&)
-		{
-			// type errors may happen if provided sizes are excessive
-		}
+	}
+	else
+	{
+		pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
 	}
 
 	std::vector<BYTE> data;

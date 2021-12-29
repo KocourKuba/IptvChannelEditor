@@ -4,7 +4,6 @@
 #include "resource.h"
 #include "PlayListEntry.h"
 
-#include "UtilsLib\json.hpp"
 #include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
@@ -12,8 +11,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-using json = nlohmann::json;
 
 // CAccessDlg dialog
 
@@ -75,43 +72,19 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 
 	if (m_entry->stream_uri->isHasAccessInfo())
 	{
-		// currently supported only in ITV
+		// currently supported only in ITV & Cbilling
+		std::wstring header;
+		if (!m_entry->stream_uri->get_access_info_header().empty())
+			header = fmt::format(m_entry->stream_uri->get_access_info_header(), m_password.GetString());
+
 		std::vector<BYTE> data;
-		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(L"", m_password.GetString()), data) || data.empty())
+		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(L"", m_password.GetString()), data, &header) || data.empty())
 			return;
 
-		try
-		{
-			json js = json::parse(data);
-
-			json js_data = js["user_info"];
-
-			m_balance.Format(_T("%hs $"), js_data.value("cash", "").c_str());
-
-			if (!js.contains("package_info"))
-			{
-				m_subscription = _T("No packages");
-			}
-			else
-			{
-				json pkg_data = js["package_info"];
-				for (const auto& item : pkg_data)
-				{
-					if (!m_subscription.IsEmpty())
-						m_subscription += _T(", ");
-
-					m_subscription.AppendFormat(_T("%s"), utils::utf8_to_utf16(item.value("name", "")).c_str());
-				}
-			}
-		}
-		catch (const json::parse_error&)
-		{
-			// parse errors are ok, because input may be random bytes
-		}
-		catch (const json::out_of_range&)
-		{
-			// out of range errors may happen if provided sizes are excessive
-		}
+		std::map<std::string, std::wstring> params;
+		m_entry->stream_uri->parse_access_info(data, params);
+		m_balance = params["balance"].c_str();
+		m_subscription = params["subscription"].c_str();
 	}
 
 	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), m_password.GetString());

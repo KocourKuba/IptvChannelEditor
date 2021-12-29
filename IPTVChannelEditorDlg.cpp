@@ -463,9 +463,16 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enGlanz:
 		case StreamType::enSharaclub:
 		case StreamType::enSharaTV:
+		{
+			m_wndPlaylist.AddString(_T("Playlist"));
+			m_login = GetConfig().get_string(false, REG_LOGIN);
+			m_password = GetConfig().get_string(false, REG_PASSWORD);
+			break;
+		}
 		case StreamType::enOneOtt:
 		{
 			m_wndPlaylist.AddString(_T("Playlist"));
+			m_token = GetConfig().get_string(false, REG_TOKEN);
 			m_login = GetConfig().get_string(false, REG_LOGIN);
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
 			break;

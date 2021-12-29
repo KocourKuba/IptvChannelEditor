@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "uri_oneott.h"
 
+#include "UtilsLib\json.hpp"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -92,4 +94,44 @@ std::wstring uri_oneott::get_access_url(const std::wstring& login, const std::ws
 std::wstring uri_oneott::get_playlist_template(bool first /*= true*/) const
 {
 	return PLAYLIST_TEMPLATE;
+}
+
+bool uri_oneott::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const
+{
+	using json = nlohmann::json;
+
+	try
+	{
+		json js = json::parse(json_data);
+		if (js.contains("token"))
+		{
+			const auto& token = utils::utf8_to_utf16(js.value("token", ""));
+			params.emplace("token", token);
+			params.emplace("url", fmt::format(get_playlist_template(), token));
+		}
+
+		json js_data = js["data"];
+		if (!js_data.is_null())
+		{
+			params.emplace("subscription", utils::utf8_to_utf16(js_data.value("abon", "")));
+			params.emplace("balance", utils::utf8_to_utf16(js_data.value("money", "")));
+			params.emplace("forecast_pay", utils::utf8_to_utf16(js_data.value("money_need", "")));
+		}
+
+		return true;
+	}
+	catch (const json::parse_error&)
+	{
+		// parse errors are ok, because input may be random bytes
+	}
+	catch (const json::out_of_range&)
+	{
+		// out of range errors may happen if provided sizes are excessive
+	}
+	catch (const json::type_error&)
+	{
+		// type errors may happen if provided sizes are excessive
+	}
+
+	return false;
 }

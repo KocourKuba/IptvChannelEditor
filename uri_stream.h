@@ -233,6 +233,18 @@ public:
 	virtual bool isHasAccessInfo() const { return false; }
 
 	/// <summary>
+	/// get additional get headers
+	/// </summary>
+	/// <returns>std::wstring</returns>
+	virtual std::wstring get_access_info_header() const { return L""; }
+
+	/// <summary>
+	/// parse access info
+	/// </summary>
+	/// <returns>bool</returns>
+	virtual bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const { return false; }
+
+	/// <summary>
 	/// get url template to obtain account playlist
 	/// </summary>
 	/// <param name="first">number of playlist url</param>
