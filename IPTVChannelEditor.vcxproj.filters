@@ -207,6 +207,9 @@
     <ClInclude Include="uri_cbilling.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="uri_ottclub.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -345,6 +348,9 @@
       <Filter>Source Files\uri</Filter>
     </ClCompile>
     <ClCompile Include="uri_cbilling.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_ottclub.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>

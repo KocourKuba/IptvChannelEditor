@@ -54,20 +54,28 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				entry->set_logo_root(logo_root);
 				if (!entry->Parse(line, m3uEntry)) continue;
 
-				if (m_config.m_pluginType == StreamType::enOneUsd || m_config.m_pluginType == StreamType::enTvTeam)
+				// special case after parsing
+				switch (m_config.m_pluginType)
 				{
-					entry->set_epg1_id(entry->get_title()); // primary EPG
-				}
-
-				if (m_config.m_pluginType == StreamType::enSharavoz || m_config.m_pluginType == StreamType::enOneOtt || m_config.m_pluginType == StreamType::enCbilling)
-				{
-					entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
-					entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
-				}
-
-				if (m_config.m_pluginType == StreamType::enLightIptv)
-				{
-					entry->stream_uri->set_id(entry->get_epg1_id());
+					case StreamType::enOneUsd:
+					case StreamType::enTvTeam:
+						entry->set_epg1_id(entry->get_title()); // primary EPG
+						break;
+					case StreamType::enSharavoz:
+					case StreamType::enOneOtt:
+					case StreamType::enCbilling:
+						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
+						entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
+						break;
+					case StreamType::enLightIptv:
+						entry->stream_uri->set_id(entry->get_epg1_id());
+						break;
+					case StreamType::enOttclub:
+						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
+						entry->set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", entry->stream_uri->get_domain(), entry->stream_uri->get_id()));
+						break;
+					default:
+						break;
 				}
 
 				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);

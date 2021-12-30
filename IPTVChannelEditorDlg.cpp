@@ -485,6 +485,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enVipLime:
 		case StreamType::enLightIptv:
 		case StreamType::enCbilling:
+		case StreamType::enOttclub:
 		{
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
@@ -638,6 +639,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		case StreamType::enVipLime:
 		case StreamType::enLightIptv:
 		case StreamType::enCbilling:
+		case StreamType::enOttclub:
 		{
 			switch (idx)
 			{
@@ -843,6 +845,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		case StreamType::enOneOtt:
 		case StreamType::enLightIptv:
 		case StreamType::enCbilling:
+		case StreamType::enOttclub:
 		{
 			switch (pl_idx)
 			{
@@ -1600,6 +1603,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			case StreamType::enVipLime:
 			case StreamType::enLightIptv:
 			case StreamType::enCbilling:
+			case StreamType::enOttclub:
 				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			default:
@@ -2771,6 +2775,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enVipLime:
 		case StreamType::enLightIptv:
 		case StreamType::enCbilling:
+		case StreamType::enOttclub:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -3188,6 +3193,7 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enVipLime:
 				case StreamType::enLightIptv:
 				case StreamType::enCbilling:
+				case StreamType::enOttclub:
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
 				default:

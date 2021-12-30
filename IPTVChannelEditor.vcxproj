@@ -293,6 +293,7 @@ goto :EOF
     <ClInclude Include="uri_onecent.h" />
     <ClInclude Include="uri_oneott.h" />
     <ClInclude Include="uri_oneusd.h" />
+    <ClInclude Include="uri_ottclub.h" />
     <ClInclude Include="uri_sharaclub.h" />
     <ClInclude Include="uri_sharatv.h" />
     <ClInclude Include="uri_sharavoz.h" />
@@ -345,6 +346,7 @@ goto :EOF
     <ClCompile Include="uri_onecent.cpp" />
     <ClCompile Include="uri_oneott.cpp" />
     <ClCompile Include="uri_oneusd.cpp" />
+    <ClCompile Include="uri_ottclub.cpp" />
     <ClCompile Include="uri_sharaclub.cpp" />
     <ClCompile Include="uri_sharatv.cpp" />
     <ClCompile Include="uri_sharavoz.cpp" />
