@@ -3,27 +3,25 @@ require_once 'default_config.php';
 
 class SharaclubPluginConfig extends DefaultConfig
 {
-    // supported features
-    public static $ACCOUNT_TYPE = 'LOGIN';
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $VOD_MOVIE_PAGE_SUPPORTED = true;
-    public static $VOD_FAVORITES_SUPPORTED = true;
-    public static $BALANCE_SUPPORTED = true;
-
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
-    protected static $PLAYLIST_VOD_URL = 'http://list.playtv.pro/kino-full/%s-%s';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
-    protected static $EPG1_URL_TEMPLATE = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
-    protected static $EPG2_URL_TEMPLATE = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
-
-    protected static $lazy_load_vod = true;
+    const PLAYLIST_TV_URL = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
+    const PLAYLIST_VOD_URL = 'http://list.playtv.pro/kino-full/%s-%s';
 
     public function __construct()
     {
         parent::__construct();
+
+        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
+        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
+        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
+        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
+        static::$FEATURES[BALANCE_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
+        static::$FEATURES[VOD_LAZY_LOAD] = true;
+
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
         static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
+        static::$EPG_PARSER_PARAMS['second']['epg_template'] = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
         static::$EPG_PARSER_PARAMS['second']['epg_root'] = '';
     }
 
@@ -61,9 +59,9 @@ class SharaclubPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::$PLAYLIST_TV_URL, $login, $password);
+                return sprintf(self::PLAYLIST_TV_URL, $login, $password);
             case 'movie':
-                return sprintf(self::$PLAYLIST_VOD_URL, $login, $password);
+                return sprintf(self::PLAYLIST_VOD_URL, $login, $password);
         }
 
         return '';
@@ -170,7 +168,7 @@ class SharaclubPluginConfig extends DefaultConfig
                             $playback_url = str_replace(
                                 array('{DOMAIN}', '{TOKEN}', '{ID}'),
                                 array($matches[1], $matches[2], "vod-" . $episode['id']),
-                                self::$MEDIA_URL_TEMPLATE_HLS);
+                                static::$FEATURES[MEDIA_URL_TEMPLATE_HLS]);
                         }
                         hd_print("movie playback_url: $playback_url");
                         $movie->add_series_data($episode['id'], $episodeCaption, $playback_url, true);

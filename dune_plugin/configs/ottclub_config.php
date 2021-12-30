@@ -3,14 +3,18 @@ require_once 'default_config.php';
 
 class OttclubPluginConfig extends DefaultConfig
 {
-    // setup variables
-    public static $ACCOUNT_TYPE = 'PIN';
+    const PLAYLIST_TV_URL = 'http://myott.top/playlist/%s/m3u';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://myott.top/playlist/%s/m3u';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/stream/(?<token>.+)/(?<id>.+)\.m3u8$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8';
-    protected static $EPG1_URL_TEMPLATE = 'http://myott.top/api/channel/%s'; // epg_id
+    public function __construct()
+    {
+        parent::__construct();
+
+        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/stream/(?<token>.+)/(?<id>.+)\.m3u8$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8';
+
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://myott.top/api/channel/%s'; // epg_id
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -36,6 +40,6 @@ class OttclubPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf(self::$PLAYLIST_TV_URL, $password);
+        return sprintf(self::PLAYLIST_TV_URL, $password);
     }
 }

@@ -118,8 +118,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         // if token not set force to open setup screen
-        $config = self::$config;
-        switch ($config::$ACCOUNT_TYPE)
+        switch (self::$config->get_account_type())
         {
             case 'OTT_KEY':
                 $setup_needs = (empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) &&
@@ -149,7 +148,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
             );
         }
 
-        if ($config::$BALANCE_SUPPORTED) {
+        if (self::$config->get_balance_support()) {
             $balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
             $balance['caption'] = 'Подписка';
             return array

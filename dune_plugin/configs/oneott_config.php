@@ -3,20 +3,19 @@ require_once 'default_config.php';
 
 class OneottPluginConfig extends DefaultConfig
 {
-    // setup variables
-    public static $ACCOUNT_TYPE = 'LOGIN';
-    public static $MPEG_TS_SUPPORTED = true;
-
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://list.1ott.net/api/%s/high/ottplay.m3u8';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.propg.net/%s/epg2/%s'; // epg_id date(YYYY-MM-DD)
-    protected static $EPG2_URL_TEMPLATE = 'http://epg.ott-play.com/1ott/epg/%s.json'; // epg_id
+    const PLAYLIST_TV_URL = 'http://list.1ott.net/api/%s/high/ottplay.m3u8';
 
     public function __construct()
     {
         parent::__construct();
+
+        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
+        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8';
+
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.propg.net/%s/epg2/%s'; // epg_id date(YYYY-MM-DD)
+        static::$EPG_PARSER_PARAMS['second']['epg_template'] = 'http://epg.ott-play.com/1ott/epg/%s.json'; // epg_id
         static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
         static::$EPG_PARSER_PARAMS['first']['start'] = 'start';
         static::$EPG_PARSER_PARAMS['first']['end'] = 'stop';
@@ -53,7 +52,7 @@ class OneottPluginConfig extends DefaultConfig
             hd_print("User token not set");
         }
 
-        return sprintf(self::$PLAYLIST_TV_URL, $plugin_cookies->ott_key);
+        return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->ott_key);
     }
 
     /**

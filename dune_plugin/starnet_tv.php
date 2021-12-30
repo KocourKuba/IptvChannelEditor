@@ -34,20 +34,17 @@ class StarnetPluginTv extends AbstractTv
 
     public function is_favorites_supported()
     {
-        $config = self::$config;
-        return $config::$TV_FAVORITES_SUPPORTED;
+        return self::$config->get_tv_fav_support();
     }
 
     public function get_channel_list_url($plugin_cookies)
     {
-        $config = self::$config;
-        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $config::$CHANNELS_LIST;
+        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : self::$config->get_channel_list();
     }
 
     public function add_special_groups(&$items)
     {
-        $config = self::$config;
-        if ($config::$VOD_MOVIE_PAGE_SUPPORTED) {
+        if (self::$config->get_vod_support()) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url =>
@@ -71,7 +68,6 @@ class StarnetPluginTv extends AbstractTv
      */
     public function load_channels(&$plugin_cookies)
     {
-        $config = self::$config;
         $channels_list = $this->get_channel_list_url($plugin_cookies);
         hd_print("Channels list: $channels_list");
         $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . '/';

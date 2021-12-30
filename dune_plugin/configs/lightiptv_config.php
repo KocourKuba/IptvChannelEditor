@@ -3,20 +3,21 @@ require_once 'default_config.php';
 
 class LightiptvPluginConfig extends DefaultConfig
 {
-    // supported features
-    public static $ACCOUNT_TYPE = 'PIN';
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $HLS2_SUPPORTED = true;
+    const PLAYLIST_TV_URL = 'http://lightiptv.cc/playlist/hls/%s.m3u';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://lightiptv.cc/playlist/hls/%s.m3u';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/lightiptv/epg/%s.json'; // epg_id
+    public function __construct()
+    {
+        parent::__construct();
 
-    // Views variables
-    protected static $TV_CHANNEL_ICON_WIDTH = 60;
-    protected static $TV_CHANNEL_ICON_HEIGHT = 60;
+        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
+        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
+        static::$FEATURES[HLS2_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}';
+        static::$FEATURES[SQUARE_ICONS] = true;
+
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/lightiptv/epg/%s.json'; // epg_id
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -27,9 +28,6 @@ class LightiptvPluginConfig extends DefaultConfig
      */
     public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $url = $channel->get_streaming_url();
-        $ext_params = $channel->get_ext_params();
-
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = str_replace('{PASSWORD}', $password, $url);
@@ -77,7 +75,7 @@ class LightiptvPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf(self::$PLAYLIST_TV_URL, $password);
+        return sprintf(self::PLAYLIST_TV_URL, $password);
     }
 
     /**
@@ -90,9 +88,9 @@ class LightiptvPluginConfig extends DefaultConfig
     {
         $pl_entries = array();
         $m3u_lines = self::FetchTvM3U($plugin_cookies);
-        for ($i = 0, $iMax = count($m3u_lines); $i < $iMax; ++$i) {
-            if (preg_match('|^#EXTINF:.+tvg-id="(?<id>[^"]+)"|', $m3u_lines[$i], $m_id)
-                && preg_match(self::$M3U_STREAM_URL_PATTERN, $m3u_lines[$i + 1], $matches)) {
+        foreach ($m3u_lines as $i => $iValue) {
+            if (preg_match('|^#EXTINF:.+tvg-id="(?<id>[^"]+)"|', $iValue, $m_id)
+                && preg_match(static::$FEATURES[M3U_STREAM_URL_PATTERN], $m3u_lines[$i + 1], $matches)) {
                 $pl_entries[$m_id['id']] = $matches;
             }
         }
@@ -114,6 +112,6 @@ class LightiptvPluginConfig extends DefaultConfig
 
     public static function UpdateStreamUrlID($channel_id, $ext_params)
     {
-        return str_replace('{TOKEN}', $ext_params['token'], static::$MEDIA_URL_TEMPLATE_HLS);
+        return str_replace('{TOKEN}', $ext_params['token'], static::$FEATURES[MEDIA_URL_TEMPLATE_HLS]);
     }
 }

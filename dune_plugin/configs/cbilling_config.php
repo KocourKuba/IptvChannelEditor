@@ -3,31 +3,33 @@ require_once 'default_config.php';
 
 class CbillingPluginConfig extends DefaultConfig
 {
-    // supported features
+    // vod
     const VOD_URL = 'http://api.iptvx.tv';
     const MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
-    public static $ACCOUNT_TYPE = 'PIN';
-    public static $HLS2_SUPPORTED = true;
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $DEVICES_SUPPORTED = true;
-    public static $BALANCE_SUPPORTED = true;
 
-    public static $VOD_MOVIE_PAGE_SUPPORTED = true;
-    public static $VOD_FAVORITES_SUPPORTED = true;
+    const PLAYLIST_TV_URL = 'http://cbilling.pw/playlist/%s_otp_dev%s.m3u8';
+    const PLAYLIST_VOD_URL = 'http://api.iptvx.tv/';
+    const MEDIA_URL_TEMPLATE_HLS2 = 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://cbilling.pw/playlist/%s_otp_dev%s.m3u8';
-    protected static $PLAYLIST_VOD_URL = 'http://api.iptvx.tv/';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/s/(?<token>[^/]+)/?(?<id>.+)\.m3u8$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8';
-    public static $MEDIA_URL_TEMPLATE_HLS2 = 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/cbilling/epg/%s.json'; // epg1_id
-    protected static $EPG2_URL_TEMPLATE = 'http://api.iptvx.tv/epg/%s?date=%s'; // epg2_id
+    public function __construct()
+    {
+        parent::__construct();
 
-    // vod
-    public static $EXTINF_VOD_PATTERN = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
+        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
+        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
+        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
+        static::$FEATURES[HLS2_SUPPORTED] = true;
+        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
+        static::$FEATURES[DEVICES_SUPPORTED] = true;
+        static::$FEATURES[BALANCE_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>[^/]+)/s/(?<token>[^/]+)/?(?<id>.+)\.m3u8$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8';
+        static::$FEATURES[VOD_LAZY_LOAD] = true;
+        static::$FEATURES[EXTINF_VOD_PATTERN] = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
 
-    protected static $lazy_load_vod = true;
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/cbilling/epg/%s.json'; // epg1_id
+        static::$EPG_PARSER_PARAMS['second']['epg_template'] = 'http://api.iptvx.tv/epg/%s?date=%s'; // epg2_id
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -47,7 +49,7 @@ class CbillingPluginConfig extends DefaultConfig
             $url = str_replace(
                 array('{DOMAIN}', '{ID}', '{TOKEN}'),
                 array($domain[0], $channel->get_channel_id(), $ext_params['token']),
-                self::$MEDIA_URL_TEMPLATE_HLS2);
+                self::MEDIA_URL_TEMPLATE_HLS2);
         }
 
         switch (self::get_format($plugin_cookies)) {
@@ -126,9 +128,9 @@ class CbillingPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::$PLAYLIST_TV_URL, $password, isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1');
+                return sprintf(self::PLAYLIST_TV_URL, $password, isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1');
             case 'movie':
-                return self::$PLAYLIST_VOD_URL;
+                return self::PLAYLIST_VOD_URL;
         }
 
         return '';

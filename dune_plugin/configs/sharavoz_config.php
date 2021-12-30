@@ -3,16 +3,20 @@ require_once 'default_config.php';
 
 class SharavozPluginConfig extends DefaultConfig
 {
-    // setup variables
-    public static $ACCOUNT_TYPE = 'PIN';
-    public static $MPEG_TS_SUPPORTED = true;
+    const PLAYLIST_TV_URL = 'http://sharavoz.tk/iptv/p/%s/Sharavoz.Tv.navigator-ott.m3u';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://sharavoz.tk/iptv/p/%s/Sharavoz.Tv.navigator-ott.m3u';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?:.*)\?token=(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
-    protected static $EPG1_URL_TEMPLATE = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYY-MM-DD)
-    protected static $EPG2_URL_TEMPLATE = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
+    public function __construct()
+    {
+        parent::__construct();
+
+        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
+        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?:.*)\?token=(?<token>.+)$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
+
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://api.program.spr24.net/api/program?epg=%s&date=%s'; // epg_id date(YYYY-MM-DD)
+        static::$EPG_PARSER_PARAMS['second']['epg_template'] = 'http://epg.arlekino.tv/api/program?epg=%s&date=%s'; // epg_id date(YYYYMMDD)
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -42,6 +46,6 @@ class SharavozPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf(self::$PLAYLIST_TV_URL, $password);
+        return sprintf(self::PLAYLIST_TV_URL, $password);
     }
 }

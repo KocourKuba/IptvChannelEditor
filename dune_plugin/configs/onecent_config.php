@@ -3,18 +3,20 @@ require_once 'default_config.php';
 
 class OnecentPluginConfig extends DefaultConfig
 {
-    // setup variables
-    public static $ACCOUNT_TYPE = 'PIN';
-    public static $MPEG_TS_SUPPORTED = true;
+    const PLAYLIST_TV_URL = 'http://only4.tv/pl/%s/102/only4tv.m3u8';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://only4.tv/pl/%s/102/only4tv.m3u8';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/only4/epg/%s.json'; // epg_id
-    // Views variables
-    protected static $TV_CHANNEL_ICON_WIDTH = 60;
-    protected static $TV_CHANNEL_ICON_HEIGHT = 60;
+    public function __construct()
+    {
+        parent::__construct();
+
+        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
+        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
+        static::$FEATURES[SQUARE_ICONS] = true;
+
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/only4/epg/%s.json'; // epg_id
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -61,6 +63,6 @@ class OnecentPluginConfig extends DefaultConfig
             hd_print("Password not set");
         }
 
-        return sprintf(self::$PLAYLIST_TV_URL, $password);
+        return sprintf(self::PLAYLIST_TV_URL, $password);
     }
 }

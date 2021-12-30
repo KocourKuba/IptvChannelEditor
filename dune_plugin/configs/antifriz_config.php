@@ -3,29 +3,30 @@ require_once 'default_config.php';
 
 class AntifrizPluginConfig extends DefaultConfig
 {
+    // vod
     const VOD_URL = 'http://api.iptvx.tv';
     const MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
 
-    // supported features
-    public static $ACCOUNT_TYPE = 'PIN';
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $VOD_MOVIE_PAGE_SUPPORTED = true;
-    public static $VOD_FAVORITES_SUPPORTED = true;
+    const PLAYLIST_TV_URL = 'http://antifriz.tv/playlist/%s.m3u8';
+    const PLAYLIST_VOD_URL = 'http://antifriz.tv/smartup/%s.m3u';
+    const MEDIA_URL_TEMPLATE_MPEG = 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}';
+    const MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
+    const MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://antifriz.tv/playlist/%s.m3u8';
-    protected static $PLAYLIST_VOD_URL = 'http://antifriz.tv/smartup/%s.m3u';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
-    public static $MEDIA_URL_TEMPLATE_MPEG = 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
-    public static $MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id
+    public function __construct()
+    {
+        parent::__construct();
 
-    // vod
-    public static $EXTINF_VOD_PATTERN = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
-
-    protected static $lazy_load_vod = true;
+        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
+        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
+        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
+        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
+        static::$FEATURES[VOD_LAZY_LOAD] = true;
+        static::$FEATURES[EXTINF_VOD_PATTERN] = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -47,12 +48,12 @@ class AntifrizPluginConfig extends DefaultConfig
                     $url = str_replace(
                         array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
                         array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
-                        self::$MEDIA_URL_TEMPLATE_ARCHIVE_HLS);
+                        self::MEDIA_URL_TEMPLATE_ARCHIVE_HLS);
                 }
                 break;
             case 'mpeg':
                 // mpeg url also different against hls, make it from scratch
-                $url = ((int)$archive_ts > 0) ? self::$MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::$MEDIA_URL_TEMPLATE_MPEG;
+                $url = ((int)$archive_ts > 0) ? self::MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::MEDIA_URL_TEMPLATE_MPEG;
                 $domain = explode(':', $ext_params['subdomain']);
                 $url = str_replace(
                     array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
@@ -93,9 +94,9 @@ class AntifrizPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::$PLAYLIST_TV_URL, $password);
+                return sprintf(self::PLAYLIST_TV_URL, $password);
             case 'movie':
-                return sprintf(self::$PLAYLIST_VOD_URL, $password);
+                return sprintf(self::PLAYLIST_VOD_URL, $password);
         }
 
         return '';

@@ -100,13 +100,11 @@ class StarnetVod extends AbstractVod
 
     public function is_favorites_supported()
     {
-        $config = self::$config;
-        return $config::$VOD_FAVORITES_SUPPORTED;
+        return self::$config->get_vod_fav_support();
     }
 
     public function is_movie_page_supported()
     {
-        $config = self::$config;
-        return $config::$VOD_MOVIE_PAGE_SUPPORTED;
+        return self::$config->get_vod_support();
     }
 }

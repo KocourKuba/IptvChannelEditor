@@ -51,11 +51,11 @@ class StarnetDunePlugin extends DefaultDunePlugin
         hd_print("Plugin name:      " . $config::$PLUGIN_SHOW_NAME);
         hd_print("Plugin version:   " . $config::$PLUGIN_VERSION);
         hd_print("Plugin date:      " . $config::$PLUGIN_DATE);
-        hd_print("Account type:     " . $config::$ACCOUNT_TYPE);
-        hd_print("TV fav:           " . ($config::$TV_FAVORITES_SUPPORTED ? "yes" : "no"));
-        hd_print("VOD page:         " . ($config::$VOD_MOVIE_PAGE_SUPPORTED ? "yes" : "no"));
-        hd_print("VOD fav:          " . ($config::$VOD_FAVORITES_SUPPORTED ? "yes" : "no"));
-        hd_print("MPEG-TS support:  " . ($config::$MPEG_TS_SUPPORTED ? "yes" : "no"));
+        hd_print("Account type:     " . $config->get_account_type());
+        hd_print("TV fav:           " . ($config->get_tv_fav_support() ? "yes" : "no"));
+        hd_print("VOD page:         " . ($config->get_vod_support() ? "yes" : "no"));
+        hd_print("VOD fav:          " . ($config->get_vod_fav_support() ? "yes" : "no"));
+        hd_print("MPEG-TS support:  " . ($config->get_mpeg_support() ? "yes" : "no"));
         hd_print("----------------------------------------------------");
 
         UserInputHandlerRegistry::get_instance()->register_handler(new StarnetEntryHandler());
@@ -66,11 +66,11 @@ class StarnetDunePlugin extends DefaultDunePlugin
         $this->add_screen(new StarnetSetupScreen($tv));
         $this->add_screen(new StarnetFolderScreen());
 
-        if ($config::$TV_FAVORITES_SUPPORTED) {
+        if ($config->get_tv_fav_support()) {
             $this->add_screen(new TvFavoritesScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
         }
 
-        if ($config::$VOD_MOVIE_PAGE_SUPPORTED) {
+        if ($config->get_vod_support()) {
             StarnetVod::$config = $config;
             StarnetVodListScreen::$config = $config;
             StarnetVodCategoryListScreen::$config = $config;

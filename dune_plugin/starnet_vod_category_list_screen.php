@@ -34,10 +34,8 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $config = self::$config;
-
         if (is_null($this->category_index) || is_null($this->category_list)) {
-            $config->fetch_vod_categories($plugin_cookies, $this->category_list, $this->category_index);
+            self::$config->fetch_vod_categories($plugin_cookies, $this->category_list, $this->category_index);
         }
 
         $category_list = $this->category_list;
@@ -54,7 +52,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
-        if ($config::$VOD_FAVORITES_SUPPORTED && !isset($media_url->category_id)) {
+        if (!isset($media_url->category_id) && self::$config->get_vod_fav_support()) {
 
             $items[] = array
             (

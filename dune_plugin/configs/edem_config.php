@@ -3,12 +3,14 @@ require_once 'default_config.php';
 
 class EdemPluginConfig extends DefaultConfig
 {
-    // setup variables
-    public static $ACCOUNT_TYPE = 'OTT_KEY';
+    public function __construct()
+    {
+        parent::__construct();
 
-    // tv
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
+        static::$FEATURES[ACCOUNT_TYPE] = 'OTT_KEY';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/edem/epg/%s.json'; // epg_id
+    }
 
     /**
      * Transform url based on settings or archive playback

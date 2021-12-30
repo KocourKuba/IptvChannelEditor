@@ -3,25 +3,24 @@ require_once 'default_config.php';
 
 class GlanzPluginConfig extends DefaultConfig
 {
-    // supported features
-    public static $ACCOUNT_TYPE = 'LOGIN';
-    public static $MPEG_TS_SUPPORTED = true;
-    public static $VOD_MOVIE_PAGE_SUPPORTED = true;
-    public static $VOD_FAVORITES_SUPPORTED = true;
+    const PLAYLIST_TV_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
+    const PLAYLIST_VOD_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
-    protected static $PLAYLIST_VOD_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id
+    public function __construct()
+    {
+        parent::__construct();
 
-    // vod
-    public static $EXTINF_VOD_PATTERN = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
+        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
+        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
+        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
+        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
+        static::$FEATURES[EXTINF_VOD_PATTERN] = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
+        static::$FEATURES[SQUARE_ICONS] = true;
 
-    // Views variables
-    protected static $TV_CHANNEL_ICON_WIDTH = 60;
-    protected static $TV_CHANNEL_ICON_HEIGHT = 60;
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -88,9 +87,9 @@ class GlanzPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::$PLAYLIST_TV_URL, $login, $password);
+                return sprintf(self::PLAYLIST_TV_URL, $login, $password);
             case 'movie':
-                return sprintf(self::$PLAYLIST_VOD_URL, $login, $password);
+                return sprintf(self::PLAYLIST_VOD_URL, $login, $password);
         }
 
         return '';
@@ -105,7 +104,7 @@ class GlanzPluginConfig extends DefaultConfig
         $movie = new Movie($movie_id);
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
-            if ($i !== (int)$movie_id || !preg_match(static::$EXTINF_VOD_PATTERN, $line, $matches)) {
+            if ($i !== (int)$movie_id || !preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
                 continue;
             }
 

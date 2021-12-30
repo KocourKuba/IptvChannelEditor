@@ -3,24 +3,22 @@ require_once 'default_config.php';
 
 class FoxPluginConfig extends DefaultConfig
 {
-    // supported features
-    public static $ACCOUNT_TYPE = 'LOGIN';
-    public static $VOD_MOVIE_PAGE_SUPPORTED = true;
-    public static $VOD_FAVORITES_SUPPORTED = true;
+    const PLAYLIST_TV_URL = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
+    const PLAYLIST_VOD_URL = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
-    protected static $PLAYLIST_VOD_URL = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/{TOKEN}/index.m3u8';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id
+    public function __construct()
+    {
+        parent::__construct();
 
-    // vod
-    public static $EXTINF_VOD_PATTERN = '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|';
-
-    // Views variables
-    protected static $TV_CHANNEL_ICON_WIDTH = 60;
-    protected static $TV_CHANNEL_ICON_HEIGHT = 60;
+        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
+        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
+        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/{TOKEN}/index.m3u8';
+        static::$FEATURES[EXTINF_VOD_PATTERN] = '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|';
+        static::$FEATURES[SQUARE_ICONS] = true;
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -61,9 +59,9 @@ class FoxPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::$PLAYLIST_TV_URL, $login, $password);
+                return sprintf(self::PLAYLIST_TV_URL, $login, $password);
             case 'movie':
-                return sprintf(self::$PLAYLIST_VOD_URL, $login, $password);
+                return sprintf(self::PLAYLIST_VOD_URL, $login, $password);
         }
 
         return '';
@@ -79,9 +77,9 @@ class FoxPluginConfig extends DefaultConfig
     {
         $pl_entries = array();
         $m3u_lines = self::FetchTvM3U($plugin_cookies);
-        for ($i = 0, $iMax = count($m3u_lines); $i < $iMax; ++$i) {
-            if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)"|', $m3u_lines[$i], $m_id)
-                && preg_match(self::$M3U_STREAM_URL_PATTERN, $m3u_lines[$i + 1], $matches)) {
+        foreach ($m3u_lines as $i => $iValue) {
+            if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)"|', $iValue, $m_id)
+                && preg_match(static::$FEATURES[M3U_STREAM_URL_PATTERN], $m3u_lines[$i + 1], $matches)) {
                 $pl_entries[$m_id['id']] = $matches;
             }
         }
@@ -110,8 +108,8 @@ class FoxPluginConfig extends DefaultConfig
         $movie = new Movie($movie_id);
 
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
-        for ($i = 0, $iMax = count($m3u_lines); $i < $iMax; ++$i) {
-            if ($i !== (int)$movie_id || !preg_match(static::$EXTINF_VOD_PATTERN, $m3u_lines[$i], $match)) {
+        foreach ($m3u_lines as $i => $iValue) {
+            if ($i !== (int)$movie_id || !preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $iValue, $match)) {
                 continue;
             }
 

@@ -32,12 +32,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
      */
     public function do_get_control_defs(&$plugin_cookies)
     {
-        $config = self::$config;
         $defs = array();
 
         //////////////////////////////////////
         // Plugin name
         ControlFactory::add_vgap($defs, -10);
+        $config = self::$config;
         $title = $config::$PLUGIN_SHOW_NAME . ' v.' . $config::$PLUGIN_VERSION . ' [' . $config::$PLUGIN_DATE . ']';
         $this->add_label($defs, $title, 'IPTV Channel Editor by sharky72');
 
@@ -49,7 +49,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // ott or token dialog
-        switch ($config::$ACCOUNT_TYPE)
+        switch (self::$config->get_account_type())
         {
             case 'OTT_KEY':
                 $this->add_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
@@ -82,7 +82,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
             }
         }
         if (!empty($all_channels)) {
-            $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $config::$CHANNELS_LIST;
+            $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : self::$config->get_channel_list();
             $this->add_combobox($defs, 'channels_list', 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
         } else {
             $this->add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
@@ -149,11 +149,10 @@ class StarnetSetupScreen extends AbstractControlsScreen
      */
     public function do_get_streaming_control_defs(&$plugin_cookies)
     {
-        $config = self::$config;
         $defs = array();
         //////////////////////////////////////
         // select device number
-        if ($config::$DEVICES_SUPPORTED) {
+        if (self::$config->get_device_support()) {
             $dev_num = isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';
             $device_ops = array('1' => '1', '2' => '2', '3' => '3');
             $this->add_combobox($defs, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
@@ -163,11 +162,11 @@ class StarnetSetupScreen extends AbstractControlsScreen
         // select stream type
         $format_ops = array('hls' => 'HLS');
         $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        if ($config::$HLS2_SUPPORTED) {
+        if (self::$config->get_hls2_support()) {
             $format_ops['hls2'] = 'HLS2';
         }
 
-        if ($config::$MPEG_TS_SUPPORTED) {
+        if (self::$config->get_mpeg_support()) {
             $format_ops['mpeg'] = 'MPEG-TS';
         }
 

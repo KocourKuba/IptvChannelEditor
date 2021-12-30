@@ -3,14 +3,18 @@ require_once 'default_config.php';
 
 class SharatvPluginConfig extends DefaultConfig
 {
-    // setup variables
-    public static $ACCOUNT_TYPE = 'LOGIN';
+    const PLAYLIST_TV_URL = 'http://tvfor.pro/g/%s:%s/1/playlist.m3u';
 
-    // tv
-    protected static $PLAYLIST_TV_URL = 'http://tvfor.pro/g/%s:%s/1/playlist.m3u';
-    public static $M3U_STREAM_URL_PATTERN = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
-    public static $MEDIA_URL_TEMPLATE_HLS = 'http://{DOMAIN}/{ID}/{TOKEN}';
-    protected static $EPG1_URL_TEMPLATE = 'http://epg.ott-play.com/shara-tv/epg/%s.json'; // epg_id
+    public function __construct()
+    {
+        parent::__construct();
+
+        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/{TOKEN}';
+
+        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/shara-tv/epg/%s.json'; // epg_id
+    }
 
     /**
      * Transform url based on settings or archive playback
@@ -40,6 +44,6 @@ class SharatvPluginConfig extends DefaultConfig
             hd_print("Login or password not set");
         }
 
-        return sprintf(self::$PLAYLIST_TV_URL, $login, $password);
+        return sprintf(self::PLAYLIST_TV_URL, $login, $password);
     }
 }
