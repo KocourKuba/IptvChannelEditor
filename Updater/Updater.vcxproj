@@ -101,6 +101,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmtd.lib;UtilsLibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>if NOT EXIST VerGit.h call UpdateVer.cmd</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">
     <ClCompile>
