@@ -86,10 +86,11 @@ class CbillingPluginConfig extends DefaultConfig
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
     {
         if (!parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
-            $plugin_cookies->subdomain_local = $account_data['subdomain'];
-            $plugin_cookies->ott_key_local = $account_data['token'];
             return false;
         }
+
+        $plugin_cookies->subdomain_local = $account_data['subdomain'];
+        $plugin_cookies->ott_key_local = $account_data['token'];
 
         // this account has special API to get account info
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
@@ -125,7 +126,7 @@ class CbillingPluginConfig extends DefaultConfig
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::$PLAYLIST_TV_URL, $password, $plugin_cookies->device_number);
+                return sprintf(self::$PLAYLIST_TV_URL, $password, isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1');
             case 'movie':
                 return self::$PLAYLIST_VOD_URL;
         }
