@@ -6,13 +6,16 @@ set outfile=%~dp0\package\update.xml
 echo %BUILD%
 
 echo prepare package folder...
-md "package\%BUILD%" >nul 2>&1
+set pkg=package\%BUILD%
+md "%~dp0\%pkg%" >nul 2>&1
+copy "%~dp0\Release Unicode\IPTVChannelEditor.exe" "%pkg%" >nul
+copy "%~dp0\Release Unicode\IPTVChannelEditorRUS.dll" "%pkg%" >nul
+copy "%~dp0\Release Unicode\Updater.exe" "%pkg%" >nul
+copy "%~dp0\dll\7za.dll" "%pkg%". >nul
+copy "%~dp0\Changelog.md" "%pkg%" >nul
+copy "%~dp0\Changelog.md" "%~dp0\package\Changelog.md.%BUILD%" >nul
+
 pushd "package\%BUILD%"
-copy "%~dp0\Release Unicode\IPTVChannelEditor.exe" . >nul
-copy "%~dp0\Release Unicode\IPTVChannelEditorRUS.dll" . >nul
-copy "%~dp0\Release Unicode\Updater.exe" . >nul
-copy "%~dp0\dll\7za.dll" . >nul
-copy "%~dp0\Changelog.md" . >nul
 mklink /D dune_plugin "%~dp0\dune_plugin" >nul 2>&1
 mklink /D playlists "%~dp0\playlists" >nul 2>&1
 
@@ -32,11 +35,12 @@ call :add_node Changelog.md					>>%outfile%
 call :add_node dune_plugin.7z				>>%outfile%
 call :add_node playlists.7z	true			>>%outfile%
 echo ^</package^> >>%outfile%
-copy %outfile% %outfile%.%BUILD%
+copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
 echo build standard archive...
 IPTVChannelEditor.exe /MakeAll .
 7z a -xr!*.bin "%~dp0\package\dune_channel_editor_universal.7z" IPTVChannelEditor.exe IPTVChannelEditorRUS.dll Updater.exe 7za.dll ChangeLog.md %~dp0\dune_plugin %~dp0\playlists dune_plugin_*.zip >nul
+copy /Y "%~dp0\package\dune_channel_editor_universal.7z" "%~dp0\package\dune_channel_editor_universal.7z.%BUILD%" >nul
 del dune_plugin_*.zip >nul 2>&1
 rd dune_plugin /q
 rd playlists /q
