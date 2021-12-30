@@ -11,8 +11,9 @@ md "%~dp0\%pkg%" >nul 2>&1
 copy "%~dp0\Release Unicode\IPTVChannelEditor.exe" "%pkg%" >nul
 copy "%~dp0\Release Unicode\IPTVChannelEditorRUS.dll" "%pkg%" >nul
 copy "%~dp0\Release Unicode\Updater.exe" "%pkg%" >nul
-copy "%~dp0\dll\7za.dll" "%pkg%". >nul
+copy "%~dp0\dll\7za.dll" "%pkg%" >nul
 copy "%~dp0\Changelog.md" "%pkg%" >nul
+copy "%~dp0\Changelog.md" "%~dp0\package\Changelog.md" >nul
 copy "%~dp0\Changelog.md" "%~dp0\package\Changelog.md.%BUILD%" >nul
 
 pushd "package\%BUILD%"

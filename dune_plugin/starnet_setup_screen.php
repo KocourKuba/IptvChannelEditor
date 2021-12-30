@@ -45,8 +45,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         // Show in main screen
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
         $show_ops = array('yes' => 'Да', 'no' => 'Нет');
-        $this->add_combobox($defs, 'show_tv', 'Показывать ' . $config::$PLUGIN_SHOW_NAME . ' в главном меню:',
-            $show_tv, $show_ops, 0, true);
+        $this->add_combobox($defs, 'show_tv', 'Показывать в главном меню:', $show_tv, $show_ops, 0, true);
 
         //////////////////////////////////////
         // ott or token dialog
@@ -90,42 +89,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
         }
 
         //////////////////////////////////////
-        // select device number
-        if ($config::$DEVICES_SUPPORTED) {
-            $dev_num = isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';
-            $device_ops = array('1' => '1', '2' => '2', '3' => '3');
-            $this->add_combobox($defs, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0, true);
-        }
-
-        //////////////////////////////////////
-        // select stream type
-        $format_ops = array('hls' => 'HLS');
-        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        if ($config::$HLS2_SUPPORTED) {
-            $format_ops['hls2'] = 'HLS2';
-        }
-
-        if ($config::$MPEG_TS_SUPPORTED) {
-            $format_ops['mpeg'] = 'MPEG-TS';
-        }
-
-        if (count($format_ops) > 1) {
-            $this->add_combobox($defs, 'stream_format', 'Выбор потока:', $format, $format_ops, 0, true);
-        }
-
-        //////////////////////////////////////
-        // buffering time
-        $show_buf_time_ops = array();
-        $show_buf_time_ops[1000] = '1 с (По умолчанию)';
-        $show_buf_time_ops[0] = 'Без буферизации';
-        $show_buf_time_ops[500] = '0.5 с';
-        $show_buf_time_ops[2000] = '2 с';
-        $show_buf_time_ops[3000] = '3 с';
-        $show_buf_time_ops[5000] = '5 с';
-        $show_buf_time_ops[10000] = '10 с';
-
-        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
-        $this->add_combobox($defs, 'buf_time', 'Время буферизации:', $buf_time, $show_buf_time_ops, 0, true);
+        // streaming dialog
+        $this->add_button($defs, 'streaming_dialog', 'Настройки проигрывания:', 'Изменить настройки', 0);
 
         //////////////////////////////////////
         // font size
@@ -136,7 +101,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         //////////////////////////////////////
         // adult channel password
         $this->add_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль', 0);
-        ControlFactory::add_vgap($defs, -10);
+        ControlFactory::add_vgap($defs, 10);
 
         return $defs;
     }
@@ -163,15 +128,72 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
 
         $this->add_text_field($defs, 'subdomain', 'Введите домен:',
-            $subdomain, false, false, false, true, 500);
+            $subdomain, false, false, false, true, 600);
 
         $this->add_text_field($defs, 'ott_key', 'Введите ОТТ ключ:',
-            $ott_key, false, true, false, true, 500);
+            $ott_key, false, true, false, true, 600);
 
         $this->add_vgap($defs, 50);
 
         $this->add_close_dialog_and_apply_button($defs, 'ott_key_apply', 'ОК', 300);
         $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_vgap($defs, 10);
+
+        return $defs;
+    }
+
+    /**
+     * streaming parameters dialog defs
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function do_get_streaming_control_defs(&$plugin_cookies)
+    {
+        $config = self::$config;
+        $defs = array();
+        //////////////////////////////////////
+        // select device number
+        if ($config::$DEVICES_SUPPORTED) {
+            $dev_num = isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';
+            $device_ops = array('1' => '1', '2' => '2', '3' => '3');
+            $this->add_combobox($defs, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
+        }
+
+        //////////////////////////////////////
+        // select stream type
+        $format_ops = array('hls' => 'HLS');
+        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+        if ($config::$HLS2_SUPPORTED) {
+            $format_ops['hls2'] = 'HLS2';
+        }
+
+        if ($config::$MPEG_TS_SUPPORTED) {
+            $format_ops['mpeg'] = 'MPEG-TS';
+        }
+
+        if (count($format_ops) > 1) {
+            $this->add_combobox($defs, 'stream_format', 'Выбор потока:', $format, $format_ops, 0);
+        }
+
+        //////////////////////////////////////
+        // buffering time
+        $show_buf_time_ops = array();
+        $show_buf_time_ops[1000] = '1 с (По умолчанию)';
+        $show_buf_time_ops[0] = 'Без буферизации';
+        $show_buf_time_ops[500] = '0.5 с';
+        $show_buf_time_ops[2000] = '2 с';
+        $show_buf_time_ops[3000] = '3 с';
+        $show_buf_time_ops[5000] = '5 с';
+        $show_buf_time_ops[10000] = '10 с';
+
+        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
+        $this->add_combobox($defs, 'buf_time', 'Время буферизации:', $buf_time, $show_buf_time_ops, 0);
+
+        $this->add_vgap($defs, 50);
+
+        $this->add_close_dialog_and_apply_button($defs, 'streaming_apply', 'ОК', 300);
+        $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_vgap($defs, 10);
 
         return $defs;
     }
@@ -187,16 +209,17 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         $login = isset($plugin_cookies->login) ? $plugin_cookies->login : '';
         $this->add_text_field($defs, 'login', 'Логин:',
-            $login, false, false, false, true, 500);
+            $login, false, false, false, true, 600);
 
         $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
         $this->add_text_field($defs, 'password', 'Пароль:',
-            $password, false, true, false, true, 500);
+            $password, false, true, false, true, 600);
 
         $this->add_vgap($defs, 50);
 
         $this->add_close_dialog_and_apply_button($defs, 'login_apply', 'Применить', 300);
         $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_vgap($defs, 10);
 
         return $defs;
     }
@@ -212,12 +235,13 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
         $this->add_text_field($defs, 'password', 'Ключ доступа:',
-            $password, false, true, false, true, 500);
+            $password, false, true, false, true, 600);
 
         $this->add_vgap($defs, 50);
 
         $this->add_close_dialog_and_apply_button($defs, 'pin_apply', 'Применить', 300);
         $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_vgap($defs, 10);
 
         return $defs;
     }
@@ -242,6 +266,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         $this->add_close_dialog_and_apply_button($defs, 'pass_apply', 'ОК', 300);
         $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_vgap($defs, 10);
 
         return $defs;
     }
@@ -301,13 +326,19 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     $plugin_cookies->show_tv = $new_value;
                     break;
 
-                case 'buf_time':
-                    $plugin_cookies->buf_time = $new_value;
-                    break;
-
                 case 'epg_font_size':
                     $plugin_cookies->epg_font_size = $new_value;
                     break;
+
+                case 'streaming_dialog': // show streaming settings dialog
+                    $defs = $this->do_get_streaming_control_defs($plugin_cookies);
+                    return ActionFactory::show_dialog('Настройки воспроизведения', $defs, true);
+
+                case 'streaming_apply': // handle streaming settings dialog result
+                    $plugin_cookies->buf_time = $user_input->buf_time;
+                    $plugin_cookies->format = $user_input->stream_format;
+                    $plugin_cookies->device_number = $user_input->devices;
+                    return $this->reload_channels();
 
                 case 'ott_key_dialog': // show ott key dialog
                     $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
@@ -370,13 +401,6 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         $msg = 'Пароль изменен!';
                     }
                     return ActionFactory::show_title_dialog($msg);
-
-                case 'stream_format':
-                    $plugin_cookies->format = $new_value;
-                    break;
-                case 'devices':
-                    $plugin_cookies->device_number = $new_value;
-                    return $this->reload_channels();
             }
         }
 
