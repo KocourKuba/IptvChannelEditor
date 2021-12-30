@@ -58,7 +58,6 @@ class AntifrizPluginConfig extends DefaultConfig
                     array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
                     array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
                     $url);
-                $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
                 break;
             default:
                 hd_print("unknown url format");
@@ -69,7 +68,7 @@ class AntifrizPluginConfig extends DefaultConfig
         // hd_print("Token:       " . $ext_params['token']);
         // hd_print("Archive TS:  " . $archive_ts);
 
-        return HD::make_ts($url);
+        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)

@@ -46,13 +46,12 @@ class OneusdPluginConfig extends DefaultConfig
                     $url = str_replace('video.m3u8', 'mpegts', $url);
                 }
 
-                $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
                 break;
         }
 
         // hd_print("Stream url:  " . $url);
 
-        return $url;
+        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     protected static function GetPlaylistUrl($type, $plugin_cookies)

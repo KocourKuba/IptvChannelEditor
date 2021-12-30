@@ -57,7 +57,6 @@ class LightiptvPluginConfig extends DefaultConfig
                 else {
                     $url = str_replace('video.m3u8', 'mpegts', $url);
                 }
-                $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
                 break;
             default:
                 hd_print("unknown url format");
@@ -66,7 +65,7 @@ class LightiptvPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return HD::make_ts($url);
+        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     protected static function GetPlaylistUrl($type, $plugin_cookies)

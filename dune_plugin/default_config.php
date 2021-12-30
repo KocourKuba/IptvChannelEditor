@@ -203,7 +203,7 @@ abstract class DefaultConfig
             $url = str_replace('{TOKEN}', $ext_params['token'], $url);
         }
 
-        return HD::make_ts($url);
+        return $url;
     }
 
     /**
@@ -347,9 +347,12 @@ abstract class DefaultConfig
 
     protected static function UpdateMpegTsBuffering($url, $plugin_cookies)
     {
-        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
-        $url .= "|||dune_params|||buffering_ms:$buf_time";
-        return $url;
+        if (self::get_format($plugin_cookies) === 'mpeg') {
+            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+            $url .= "|||dune_params|||buffering_ms:$buf_time";
+        }
+
+        return HD::make_ts($url);
     }
 
     protected static function get_format($plugin_cookies)

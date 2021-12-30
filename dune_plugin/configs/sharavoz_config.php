@@ -28,12 +28,9 @@ class SharavozPluginConfig extends DefaultConfig
 
         if (self::get_format($plugin_cookies) === 'mpeg') {
             $url = str_replace('index.m3u8', 'mpegts', $url);
-            $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
         }
 
-        // hd_print("Stream url:  " . $url);
-
-        return $url;
+        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     protected static function GetPlaylistUrl($type, $plugin_cookies)

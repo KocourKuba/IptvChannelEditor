@@ -64,7 +64,6 @@ class GlanzPluginConfig extends DefaultConfig
                 else {
                     $url = str_replace('video.m3u8', 'mpegts', $url);
                 }
-                $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
                 break;
             default:
                 hd_print("unknown url format");
@@ -73,7 +72,7 @@ class GlanzPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return $url;
+        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     protected static function GetPlaylistUrl($type, $plugin_cookies)

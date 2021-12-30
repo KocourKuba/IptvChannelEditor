@@ -41,15 +41,11 @@ class FoxPluginConfig extends DefaultConfig
             $url = $ext_params[0];
         }
 
-        $url = HD::make_ts(self::UpdateArchiveUrlParams($url, $archive_ts));
-
-        if (!isset($ext_params['hls'])) {
-            $url = self::UpdateMpegTsBuffering($url, $plugin_cookies);
-        }
+        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
 
         // hd_print("Stream url:  " . $url);
 
-        return $url;
+        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     protected static function GetPlaylistUrl($type, $plugin_cookies)
@@ -121,7 +117,7 @@ class FoxPluginConfig extends DefaultConfig
 
             $logo = $match['logo'];
             list($title, $title_orig) = explode('/', $match['title']);
-            $url = HD::make_ts(self::UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies));
+            $url = self::UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
 
             //hd_print("Vod url: $playback_url");
             $movie->set_data(
