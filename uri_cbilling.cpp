@@ -13,7 +13,7 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.iptvx.tv/auth/info";
 static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://cbilling.pw/playlist/{:s}_otp_dev1.m3u8";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://cbilling.pw/playlist/{:s}_otp_dev{:d}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -108,13 +108,19 @@ bool uri_cbilling::parse_access_info(const std::vector<BYTE>& json_data, std::ma
 
 		json js_data = js["data"];
 
-		std::wstring subscription = L"No packages";
 		if (js_data.contains("package"))
-		{
-			subscription = fmt::format(L"{:s}", utils::utf8_to_utf16(js_data.value("package", "")));
-		}
+			params.emplace("subscription", utils::utf8_to_utf16(js_data.value("package", "")));
+		else
+			params.emplace("subscription", L"No packages");
 
-		params.emplace("subscription", subscription);
+		if (js_data.contains("devices_num"))
+			params.emplace("devices_num", std::to_wstring(js_data.value("devices_num", 0)));
+
+		if (js_data.contains("end_date"))
+			params.emplace("balance", utils::utf8_to_utf16(js_data.value("end_date", "")));
+
+		if (js_data.contains("server"))
+			params.emplace("server", utils::utf8_to_utf16(js_data.value("server", "")));
 
 		return true;
 	}

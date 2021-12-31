@@ -67,6 +67,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_STREAM_TYPE,
 	REG_CUSTOM_URL,
 	REG_CUSTOM_FILE,
+	REG_DEVICE_ID,
 };
 
 static std::vector<std::wstring> plugins_images = {

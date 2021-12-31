@@ -101,19 +101,18 @@ bool uri_sharaclub::parse_access_info(const std::vector<BYTE>& json_data, std::m
 	try
 	{
 		json js = json::parse(json_data);
-		if (js.contains("token"))
+		if (js.contains("status"))
 		{
-			const auto& token = utils::utf8_to_utf16(js.value("token", ""));
-			params.emplace("token", token);
-			params.emplace("url", fmt::format(get_playlist_template(), token));
+			params.emplace("status", utils::utf8_to_utf16(js.value("status", "")));
 		}
 
 		json js_data = js["data"];
-		if (js_data)
+		if (!js_data.is_null())
 		{
-			params.emplace("subscription", utils::utf8_to_utf16(js_data.value("abon", "")));
+			params.emplace("login", utils::utf8_to_utf16(js_data.value("login", "")));
 			params.emplace("balance", utils::utf8_to_utf16(js_data.value("money", "")));
 			params.emplace("forecast_pay", utils::utf8_to_utf16(js_data.value("money_need", "")));
+			params.emplace("subscription", utils::utf8_to_utf16(js_data.value("abon", "")));
 		}
 
 		return true;

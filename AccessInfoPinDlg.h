@@ -6,7 +6,7 @@ class CAccessInfoPinDlg : public CDialogEx
 	DECLARE_DYNAMIC(CAccessInfoPinDlg)
 
 public:
-	CAccessInfoPinDlg(CWnd* pParent = nullptr);   // standard constructor
+	CAccessInfoPinDlg(StreamType type, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CAccessInfoPinDlg() = default;
 
 	// Dialog Data
@@ -27,12 +27,16 @@ public:
 	std::shared_ptr<PlaylistEntry> m_entry;
 	BOOL m_bEmbed = FALSE;
 	CString m_status;
+	int m_device_id = 0;
 
 protected:
+	StreamType m_type;
 	CButton m_wndGet;
 	CEdit m_wndPassword;
+	CComboBox m_wndDeviceID;
 	CString m_password;
 	CString m_subscription;
 	CString m_balance;
+	CString m_dev_info;
 };
 

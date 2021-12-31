@@ -21,8 +21,8 @@ BEGIN_MESSAGE_MAP(CAccessInfoPassDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-CAccessInfoPassDlg::CAccessInfoPassDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_DIALOG_ACCESS_INFO_PASS, pParent)
+CAccessInfoPassDlg::CAccessInfoPassDlg(StreamType type, CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_DIALOG_ACCESS_INFO_PASS, pParent), m_type(type)
 {
 }
 
@@ -82,7 +82,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	m_entry->stream_uri->set_template(false);
 	std::wstring pl_url;
 
-	if (m_entry->stream_uri->isHasAccessInfo())
+	if (m_type == StreamType::enOneOtt || m_type == StreamType::enSharaclub)
 	{
 		// currently supported only in sharaclub, oneott use this to obtain token
 		std::vector<BYTE> data;

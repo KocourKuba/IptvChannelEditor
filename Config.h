@@ -82,6 +82,7 @@ constexpr auto REG_PLAYLIST_TYPE       = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE         = _T("StreamType");
 constexpr auto REG_CUSTOM_URL          = _T("CustomUrl");
 constexpr auto REG_CUSTOM_FILE         = _T("CustomPlaylist");
+constexpr auto REG_DEVICE_ID           = _T("DeviceID");
 
 typedef struct
 {

@@ -227,12 +227,6 @@ public:
 	virtual std::string get_epg_time_end(bool first = true) const { return "time_to"; }
 
 	/// <summary>
-	/// is has access info
-	/// </summary>
-	/// <returns>bool</returns>
-	virtual bool isHasAccessInfo() const { return false; }
-
-	/// <summary>
 	/// get additional get headers
 	/// </summary>
 	/// <returns>std::wstring</returns>

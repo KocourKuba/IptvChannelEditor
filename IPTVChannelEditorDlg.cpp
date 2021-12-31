@@ -638,13 +638,27 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		case StreamType::enTvTeam:
 		case StreamType::enVipLime:
 		case StreamType::enLightIptv:
-		case StreamType::enCbilling:
 		case StreamType::enOttclub:
 		{
 			switch (idx)
 			{
 				case 0: // Playlist
 					url = fmt::format(playlist_template, m_password);
+					break;
+				case 1: // Custom file
+					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
+					break;
+				default:
+					break;
+			}
+			break;
+		}
+		case StreamType::enCbilling:
+		{
+			switch (idx)
+			{
+				case 0: // Playlist
+					url = fmt::format(playlist_template, m_password, GetConfig().get_int(false, REG_DEVICE_ID, 1));
 					break;
 				case 1: // Custom file
 					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
@@ -2861,7 +2875,7 @@ bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
 	stream->set_password(m_password);
 	stream->set_host(m_host);
 
-	CAccessInfoPassDlg dlg;
+	CAccessInfoPassDlg dlg(GetConfig().get_plugin_type());
 
 	dlg.m_bEmbed = m_embedded_info;
 	dlg.m_entry = entry;
@@ -2895,11 +2909,13 @@ bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
 
 bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 {
-	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
+	const auto plugin_type = GetConfig().get_plugin_type();
+	auto entry = std::make_shared<PlaylistEntry>(plugin_type, GetAppPath(utils::PLUGIN_ROOT));
 
-	CAccessInfoPinDlg dlg;
+	CAccessInfoPinDlg dlg(plugin_type);
 	dlg.m_bEmbed = m_embedded_info;
 	dlg.m_entry = entry;
+	dlg.m_device_id = GetConfig().get_int(false, REG_DEVICE_ID, 1);
 
 	auto& stream = entry->get_uri_stream();
 
@@ -2924,6 +2940,9 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 		GetConfig().set_string(false, m_embedded_info ? REG_TOKEN_EMBEDDED : REG_TOKEN, m_token);
 		GetConfig().set_string(false, m_embedded_info ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, m_domain);
 		GetConfig().set_string(false, m_embedded_info ? REG_PASSWORD_EMBEDDED : REG_PASSWORD, m_password);
+
+		if (plugin_type == StreamType::enCbilling)
+			GetConfig().set_int(false, REG_DEVICE_ID, dlg.m_device_id);
 	}
 
 	return loaded;

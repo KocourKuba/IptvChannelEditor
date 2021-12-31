@@ -15,7 +15,6 @@ public:
 	std::wstring get_playlist_template(bool first = true) const override;
 
 	std::wstring get_access_info_header() const override;
-	bool isHasAccessInfo() const override { return true; }
 	bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const override;
 	bool has_epg2() const override { return true; };
 

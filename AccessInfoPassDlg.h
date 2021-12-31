@@ -6,7 +6,7 @@ class CAccessInfoPassDlg : public CDialogEx
 	DECLARE_DYNAMIC(CAccessInfoPassDlg)
 
 public:
-	CAccessInfoPassDlg(CWnd* pParent = nullptr);   // standard constructor
+	CAccessInfoPassDlg(StreamType type, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CAccessInfoPassDlg() = default;
 
 	// Dialog Data
@@ -37,6 +37,7 @@ public:
 	std::string m_host;
 
 protected:
+	StreamType m_type;
 	CButton m_wndGet;
 	CEdit m_wndLogin;
 	CEdit m_wndPassword;
@@ -44,4 +45,3 @@ protected:
 	CString m_balance;
 	CString m_packages_price;
 };
-

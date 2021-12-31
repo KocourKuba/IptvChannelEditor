@@ -15,6 +15,6 @@ public:
 	std::string get_epg_desc(bool first = true) const override { return "desc"; }
 	std::string get_epg_time_start(bool first = true) const override { return "startTime"; }
 	std::string get_epg_time_end(bool first = true) const override { return "stopTime"; }
-	bool isHasAccessInfo() const override { return true; }
+
 	bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const override;
 };

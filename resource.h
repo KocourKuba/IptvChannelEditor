@@ -198,13 +198,17 @@
 #define IDC_EDIT_SUBSCRIPTION           1093
 #define IDC_EDIT_BALANCE                1094
 #define IDC_EDIT_PACKAGES_PRICE         1095
+#define IDC_EDIT_BALANCE2               1095
+#define IDC_EDIT_DEVICE_INFO            1095
 #define IDC_STATIC_LOGIN                1096
 #define IDC_STATIC_PASSWORD             1097
 #define IDC_STATIC_SUBSCRIPTION         1098
 #define IDC_STATIC_BALANCE              1099
 #define IDC_STATIC_PRICE                1100
+#define IDC_STATIC_DEVICE_ID            1100
 #define IDC_CHECK_EMBED                 1101
 #define IDC_STATIC_VERSION              1102
+#define IDC_STATIC_DEVICE_INFO          1102
 #define IDC_EDIT_EPG                    1103
 #define IDC_RICHEDIT_EPG                1104
 #define IDC_RADIO_EPG1                  1105
@@ -227,6 +231,7 @@
 #define IDC_CHECK_SHOW_MATCHED          1122
 #define IDC_CHECK_HIDE_MATCHED          1123
 #define IDC_SPIN_CHECK_UPDATE           1124
+#define IDC_COMBO_DEVICE_ID             1124
 #define IDC_SPLIT_BUTTON_UPDATE         1125
 #define IDC_EDIT_UPDATE_FREQ            1126
 #define IDC_CHECK_CHANNELS              1127
@@ -261,7 +266,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        218
 #define _APS_NEXT_COMMAND_VALUE         32802
-#define _APS_NEXT_CONTROL_VALUE         1124
+#define _APS_NEXT_CONTROL_VALUE         1125
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif
