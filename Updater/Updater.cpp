@@ -339,7 +339,7 @@ int update_app(UpdateInfo& info)
 		std::wstring type = L"copy file ";
 		if (std::filesystem::is_directory(source_file))
 		{
-			opt = std::filesystem::copy_options::recursive;
+			opt = std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing;
 			type = L"copy unpacked archive ";
 		}
 
