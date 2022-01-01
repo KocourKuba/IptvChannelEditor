@@ -59,6 +59,7 @@ std::map<UINT, UINT> tooltips_info =
 	{ IDC_BUTTON_ADD_NEW_CHANNELS_LIST, IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST },
 	{ IDC_EDIT_SEARCH, IDS_STRING_EDIT_SEARCH },
 	{ IDC_BUTTON_SEARCH_NEXT, IDS_STRING_BUTTON_SEARCH_NEXT },
+	{ IDC_CHECK_SHOW_UNKNOWN, IDS_STRING_SHOW_UNKNOWN },
 	{ IDC_EDIT_URL_ID, IDS_STRING_EDIT_URL_ID },
 	{ IDC_BUTTON_TEST_EPG, IDS_STRING_BUTTON_TEST_EPG },
 	{ IDC_EDIT_EPG1_ID, IDS_STRING_EDIT_EPG1_ID },
@@ -115,6 +116,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_PL_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnUpdateButtonPlSearchNext)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnUpdateButtonSearchNext)
+	ON_BN_CLICKED(IDC_CHECK_SHOW_UNKNOWN, &CIPTVChannelEditorDlg::OnBnClickedCheckShowUnknown)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
@@ -132,7 +134,6 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
-	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged)
 
 	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
 	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
@@ -215,8 +216,9 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_COMMAND_RANGE(ID_MOVE_TO_START, ID_MOVE_TO_END, &CIPTVChannelEditorDlg::OnMoveTo)
 	ON_COMMAND_RANGE(ID_ADD_TO_START, ID_ADD_TO_END, &CIPTVChannelEditorDlg::OnAddTo)
 
-		ON_BN_CLICKED(IDC_CHECK_NOT_ADDED, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
-		END_MESSAGE_MAP()
+	ON_BN_CLICKED(IDC_CHECK_NOT_ADDED, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
+	ON_BN_CLICKED(IDC_CHECK_SHOW_UNKNOWN, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
+END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -262,6 +264,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndChannelIcon);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
+	DDX_Control(pDX, IDC_CHECK_SHOW_UNKNOWN, m_wndShowUnknown);
 	DDX_Control(pDX, IDC_TREE_PLAYLIST, m_wndPlaylistTree);
 	DDX_Control(pDX, IDC_BUTTON_PL_FILTER, m_wndFilter);
 	DDX_Control(pDX, IDC_EDIT_PL_SEARCH, m_wndPlSearch);
@@ -529,6 +532,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", plugin_name);
 
 	m_all_channels_lists.clear();
+	m_unknownChannels.clear();
+	m_changedChannels.clear();
 	m_wndChannels.ResetContent();
 
 	std::error_code err;
@@ -1064,6 +1069,13 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 {
 	m_bInFillTree = true;
 
+	BOOL bUnknown = m_wndShowUnknown.GetCheck();
+	if (bUnknown && m_playlistMap.empty())
+	{
+		bUnknown = FALSE;
+		m_wndShowUnknown.SetCheck(FALSE);
+	}
+
 	m_wndChannelsTree.LockWindowUpdate();
 	m_wndChannelsTree.DeleteAllItems();
 
@@ -1084,6 +1096,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		m_categoriesTreeMap.emplace(hParent, pair.first);
 		pair.second.hItem = hParent;
 
+		int cnt = 0;
 		for (const auto& channel : pair.second.category->get_channels())
 		{
 			TVINSERTSTRUCTW tvChannel = { nullptr };
@@ -1091,8 +1104,17 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 			tvChannel.item.pszText = (LPWSTR)channel->get_title().c_str();
 			tvChannel.item.lParam = (DWORD_PTR)InfoType::enChannel;
 			tvChannel.item.mask = TVIF_TEXT | TVIF_PARAM;
+			if (bUnknown && m_playlistMap.find(channel->stream_uri->get_id()) != m_playlistMap.end()) continue;
+
 			HTREEITEM hItem = m_wndChannelsTree.InsertItem(&tvChannel);
 			m_channelsTreeMap.emplace(hItem, channel);
+			cnt++;
+		}
+
+		if (!cnt)
+		{
+			m_wndChannelsTree.DeleteItem(hParent);
+			m_categoriesTreeMap.erase(hParent);
 		}
 	}
 
@@ -1138,66 +1160,66 @@ void CIPTVChannelEditorDlg::RemoveOrphanChannels()
 
 void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*/)
 {
-	if (m_blockChecking)
-		return;
-
-	if (root == nullptr)
+	if (!m_blockChecking)
 	{
-		root = m_wndChannelsTree.GetRootItem();
-		m_unknownChannels.clear();
-		m_changedChannels.clear();
-	}
-
-	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
-	BOOL bCmpTitle = (flags & CMP_FLAG_TITLE) ? TRUE : FALSE;
-	BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
-	BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
-	BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
-	BOOL bCmpEpg2 = (flags & CMP_FLAG_EPG2) ? TRUE : FALSE;
-
-	while (root != nullptr && !m_playlistMap.empty())
-	{
-		// iterate subitems
-		for (HTREEITEM hItem = m_wndChannelsTree.GetChildItem(root); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
+		if (root == nullptr)
 		{
-			const auto& channel = FindChannel(hItem);
-			if (!channel) continue;
+			root = m_wndChannelsTree.GetRootItem();
+			m_unknownChannels.clear();
+			m_changedChannels.clear();
+		}
 
-			COLORREF color = m_normal;
-			const auto& id = channel->stream_uri->get_id();
-			if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
+		int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
+		BOOL bCmpTitle = (flags & CMP_FLAG_TITLE) ? TRUE : FALSE;
+		BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
+		BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
+		BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
+		BOOL bCmpEpg2 = (flags & CMP_FLAG_EPG2) ? TRUE : FALSE;
+
+		while (root != nullptr && !m_playlistMap.empty())
+		{
+			// iterate subitems
+			for (HTREEITEM hItem = m_wndChannelsTree.GetChildItem(root); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 			{
-				const auto& entry = found->second;
-				if (   (bCmpTitle && channel->get_title() != entry->get_title())
-					|| (bCmpArchive && entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
-					|| (bCmpEpg1 && !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id())
-					|| (bCmpEpg2 && !entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
-					|| (bCmpIcon && !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
-					)
+				const auto& channel = FindChannel(hItem);
+				if (!channel) continue;
+
+				COLORREF color = m_normal;
+				const auto& id = channel->stream_uri->get_id();
+				if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
 				{
-					color = m_brown;
-					m_changedChannels.emplace(id, entry);
+					const auto& entry = found->second;
+					if ((bCmpTitle && channel->get_title() != entry->get_title())
+						|| (bCmpArchive && entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
+						|| (bCmpEpg1 && !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id())
+						|| (bCmpEpg2 && !entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
+						|| (bCmpIcon && !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
+						)
+					{
+						color = m_brown;
+						m_changedChannels.emplace(id, entry);
+					}
+					else
+					{
+						color = m_green;
+						m_changedChannels.erase(id);
+					}
 				}
 				else
 				{
-					color = m_green;
-					m_changedChannels.erase(id);
+					m_unknownChannels.emplace(id);
 				}
-			}
-			else
-			{
-				m_unknownChannels.emplace(id);
+
+				if (channel->is_disabled())
+				{
+					color = m_gray;
+				}
+
+				m_wndChannelsTree.SetItemColor(hItem, color);
 			}
 
-			if (channel->is_disabled())
-			{
-				color = m_gray;
-			}
-
-			m_wndChannelsTree.SetItemColor(hItem, color);
+			root = m_wndChannelsTree.GetNextSiblingItem(root);
 		}
-
-		root = m_wndChannelsTree.GetNextSiblingItem(root);
 	}
 
 	CString fmt;
@@ -3561,6 +3583,11 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded()
 {
 	m_wndNotAdded.SetWindowText(m_wndNotAdded.GetCheck() ? _T("\u2179") : _T("\u221A"));
 	FillTreePlaylist();
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedCheckShowUnknown()
+{
+	FillTreeChannels();
 }
 
 bool CIPTVChannelEditorDlg::IsChannel(HTREEITEM hItem) const

@@ -111,6 +111,7 @@ protected:
 	afx_msg void OnBnClickedButtonUpdateChanged();
 	afx_msg void OnBnClickedCheckShowChanged();
 	afx_msg void OnBnClickedCheckNotAdded();
+	afx_msg void OnBnClickedCheckShowUnknown();
 
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedCheckAdult();
@@ -252,6 +253,7 @@ protected:
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
 	CButton m_wndFilter;
+	CButton m_wndShowUnknown;
 	CButton m_wndShowChanged;
 	CButton m_wndNotAdded;
 	CButton m_wndArchive;

@@ -113,6 +113,7 @@
 #define IDS_STRING_NO_CHANNELS          221
 #define IDS_STRING_STATUS               222
 #define IDS_STRING_STATUS_TEXT          223
+#define IDS_STRING_SHOW_UNKNOWN         224
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -227,6 +228,7 @@
 #define IDC_SPLIT_BUTTON_UPDATE         1125
 #define IDC_EDIT_UPDATE_FREQ            1126
 #define IDC_CHECK_CHANNELS              1127
+#define IDC_CHECK_SHOW_UNKNOWN          1128
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -256,7 +258,7 @@
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        224
+#define _APS_NEXT_RESOURCE_VALUE        225
 #define _APS_NEXT_COMMAND_VALUE         32802
 #define _APS_NEXT_CONTROL_VALUE         1127
 #define _APS_NEXT_SYMED_VALUE           1180
