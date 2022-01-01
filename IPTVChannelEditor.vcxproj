@@ -183,7 +183,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>UpdateVer.cmd</Command>
+      <Command>$(SolutionDir)UpdateVer.cmd</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>@echo OFF

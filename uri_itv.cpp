@@ -87,7 +87,7 @@ std::wstring uri_itv::get_playlist_template(bool first /*= true*/) const
 	return PLAYLIST_TEMPLATE;
 }
 
-bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const
+bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const
 {
 	using json = nlohmann::json;
 
@@ -96,8 +96,16 @@ bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std
 		json js = json::parse(json_data);
 
 		json js_data = js["user_info"];
+		for (auto& x : js_data.items())
+		{
+			if (x.value().is_number_integer())
+				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<int>()));
+			if (x.value().is_number_float())
+				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<float>()));
+			else if (x.value().is_string())
+				params.emplace(utils::utf8_to_utf16(x.key()), utils::utf8_to_utf16(x.value().get<std::string>()));
+		}
 
-		params.emplace("balance", fmt::format(L"{:s} $", utils::utf8_to_utf16(js_data.value("cash", ""))));
 		std::wstring subscription;
 		if (!js.contains("package_info"))
 		{
@@ -115,7 +123,7 @@ bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std
 			}
 		}
 
-		params.emplace("subscription", subscription);
+		params.emplace(L"package_info", subscription);
 
 		return true;
 	}

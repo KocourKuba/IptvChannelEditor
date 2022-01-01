@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="67" scanned="20211230104710" built="20211221212527" lang="ru" pane="TLogPane" col="4">
+<desktop scan="68" scanned="20220101161518" built="20211221212527" lang="ru" pane="TLogPane" col="1" row="Strings.14.IDS_STRING_STATUS_TEXT">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
+    <item class="TRemoveUnusedItemsTrigger" position="1"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>
@@ -29,7 +30,6 @@
   <path>
     <item>All</item>
     <item>Release Unicode\IPTVChannelEditor.exe</item>
-    <item>Strings</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

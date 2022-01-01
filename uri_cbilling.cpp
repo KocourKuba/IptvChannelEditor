@@ -98,37 +98,31 @@ std::wstring uri_cbilling::get_access_info_header() const
 	return ACCOUNT_HEADER_TEMPLATE;
 }
 
-bool uri_cbilling::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const
+bool uri_cbilling::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const
 {
-	using json = nlohmann::json;
-
 	try
 	{
-		json js = json::parse(json_data);
+		nlohmann::json js = nlohmann::json::parse(json_data);
 
-		json js_data = js["data"];
+		nlohmann::json js_data = js["data"];
 
-		if (js_data.contains("package"))
-			params.emplace("subscription", utils::utf8_to_utf16(js_data.value("package", "")));
-		else
-			params.emplace("subscription", L"No packages");
-
-		if (js_data.contains("devices_num"))
-			params.emplace("devices_num", std::to_wstring(js_data.value("devices_num", 0)));
-
-		if (js_data.contains("end_date"))
-			params.emplace("balance", utils::utf8_to_utf16(js_data.value("end_date", "")));
-
-		if (js_data.contains("server"))
-			params.emplace("server", utils::utf8_to_utf16(js_data.value("server", "")));
+		for (auto& x : js_data.items())
+		{
+			if (x.value().is_number_integer())
+				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<int>()));
+			if (x.value().is_number_float())
+				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<float>()));
+			else if (x.value().is_string())
+				params.emplace(utils::utf8_to_utf16(x.key()), utils::utf8_to_utf16(x.value().get<std::string>()));
+		}
 
 		return true;
 	}
-	catch (const json::parse_error&)
+	catch (const nlohmann::json::parse_error&)
 	{
 		// parse errors are ok, because input may be random bytes
 	}
-	catch (const json::out_of_range&)
+	catch (const nlohmann::json::out_of_range&)
 	{
 		// out of range errors may happen if provided sizes are excessive
 	}

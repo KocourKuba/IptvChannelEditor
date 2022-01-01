@@ -41,7 +41,5 @@ protected:
 	CButton m_wndGet;
 	CEdit m_wndLogin;
 	CEdit m_wndPassword;
-	CString m_subscription;
-	CString m_balance;
-	CString m_packages_price;
+	CListCtrl m_wndInfo;
 };

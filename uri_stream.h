@@ -236,7 +236,7 @@ public:
 	/// parse access info
 	/// </summary>
 	/// <returns>bool</returns>
-	virtual bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const { return false; }
+	virtual bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const { return false; }
 
 	/// <summary>
 	/// get url template to obtain account playlist

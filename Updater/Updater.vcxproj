@@ -125,6 +125,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmt.lib;UtilsLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>$(SolutionDir)UpdateVer.cmd</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">
     <ClCompile>

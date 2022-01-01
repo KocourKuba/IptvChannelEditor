@@ -94,7 +94,7 @@ std::wstring uri_sharaclub::get_playlist_template(bool first /*= true*/) const
 	return PLAYLIST_TEMPLATE;
 }
 
-bool uri_sharaclub::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::string, std::wstring>& params) const
+bool uri_sharaclub::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const
 {
 	using json = nlohmann::json;
 
@@ -103,16 +103,18 @@ bool uri_sharaclub::parse_access_info(const std::vector<BYTE>& json_data, std::m
 		json js = json::parse(json_data);
 		if (js.contains("status"))
 		{
-			params.emplace("status", utils::utf8_to_utf16(js.value("status", "")));
+			params.emplace(L"state", utils::utf8_to_utf16(js.value("status", "")));
 		}
 
 		json js_data = js["data"];
-		if (!js_data.is_null())
+		for (auto& x : js_data.items())
 		{
-			params.emplace("login", utils::utf8_to_utf16(js_data.value("login", "")));
-			params.emplace("balance", utils::utf8_to_utf16(js_data.value("money", "")));
-			params.emplace("forecast_pay", utils::utf8_to_utf16(js_data.value("money_need", "")));
-			params.emplace("subscription", utils::utf8_to_utf16(js_data.value("abon", "")));
+			if (x.value().is_number_integer())
+				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<int>()));
+			if (x.value().is_number_float())
+				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<float>()));
+			else if (x.value().is_string())
+				params.emplace(utils::utf8_to_utf16(x.key()), utils::utf8_to_utf16(x.value().get<std::string>()));
 		}
 
 		return true;

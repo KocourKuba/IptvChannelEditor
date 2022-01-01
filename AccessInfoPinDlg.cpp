@@ -33,35 +33,29 @@ void CAccessInfoPinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
 	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDeviceID);
+	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Text(pDX, IDC_EDIT_PASSWORD, m_password);
-	DDX_Text(pDX, IDC_EDIT_STATUS, m_status);
-	DDX_Text(pDX, IDC_EDIT_SUBSCRIPTION, m_subscription);
-	DDX_Text(pDX, IDC_EDIT_BALANCE, m_balance);
-	DDX_Text(pDX, IDC_EDIT_DEVICE_INFO, m_dev_info);
 }
 
 BOOL CAccessInfoPinDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
+	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES/* | LVS_EX_UNDERLINECOLD | LVS_EX_UNDERLINEHOT*/);
+	CRect rect;
+	m_wndInfo.GetClientRect(&rect);
+	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
+	int nWidth = vWidth / 4;
+
+	m_wndInfo.InsertColumn(0, _T("Info"), LVCFMT_LEFT, nWidth, 0);
+	m_wndInfo.InsertColumn(1, _T("Data"), LVCFMT_LEFT, vWidth - nWidth, 0);
+
 	m_password = m_entry->stream_uri->get_password().c_str();
 	switch (m_type)
 	{
-		case StreamType::enItv:
-			GetDlgItem(IDC_STATIC_SUBSCRIPTION)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_EDIT_SUBSCRIPTION)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_STATIC_BALANCE)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_EDIT_BALANCE)->ShowWindow(SW_SHOW);
-			break;
 		case StreamType::enCbilling:
-			GetDlgItem(IDC_STATIC_SUBSCRIPTION)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_EDIT_SUBSCRIPTION)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_STATIC_BALANCE)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_EDIT_BALANCE)->ShowWindow(SW_SHOW);
 			GetDlgItem(IDC_STATIC_DEVICE_ID)->ShowWindow(SW_SHOW);
 			GetDlgItem(IDC_COMBO_DEVICE_ID)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_STATIC_DEVICE_INFO)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_EDIT_DEVICE_INFO)->ShowWindow(SW_SHOW);
 			m_wndDeviceID.SetCurSel(m_device_id - 1);
 			break;
 		default:
@@ -97,29 +91,11 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 {
 	UpdateData(TRUE);
 
-	m_status = _T("Unknown");
+	m_status.LoadString(IDS_STRING_STATUS_TEXT);
 
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);
-
-	if (m_type == StreamType::enItv || m_type == StreamType::enCbilling)
-	{
-		// currently supported only in ITV & Cbilling
-		m_device_id = m_wndDeviceID.GetCurSel() + 1;
-		std::wstring header;
-		if (!m_entry->stream_uri->get_access_info_header().empty())
-			header = fmt::format(m_entry->stream_uri->get_access_info_header(), m_password.GetString());
-
-		std::vector<BYTE> data;
-		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(L"", m_password.GetString()), data, &header) || data.empty())
-			return;
-
-		std::map<std::string, std::wstring> params;
-		m_entry->stream_uri->parse_access_info(data, params);
-		m_balance = params["balance"].c_str();
-		m_subscription = params["subscription"].c_str();
-		m_dev_info = params["devices_num"].c_str();
-	}
+	m_device_id = m_wndDeviceID.GetCurSel() + 1;
 
 	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), m_password.GetString(), m_device_id);
 
@@ -142,6 +118,34 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 					m_status = _T("Ok");
 					break;
 				}
+			}
+		}
+	}
+
+	m_wndInfo.DeleteAllItems();
+
+	CString txt;
+	txt.LoadString(IDS_STRING_STATUS);
+	int idx = 0;
+	m_wndInfo.InsertItem(idx, txt);
+	m_wndInfo.SetItemText(idx++, 1, m_status);
+
+	if (m_type == StreamType::enItv || m_type == StreamType::enCbilling)
+	{
+		// currently supported only in ITV & Cbilling
+		std::wstring header;
+		if (!m_entry->stream_uri->get_access_info_header().empty())
+			header = fmt::format(m_entry->stream_uri->get_access_info_header(), m_password.GetString());
+
+		std::vector<BYTE> data;
+		if (utils::DownloadFile(m_entry->stream_uri->get_access_url(L"", m_password.GetString()), data, &header) && !data.empty())
+		{
+			std::map<std::wstring, std::wstring> params;
+			m_entry->stream_uri->parse_access_info(data, params);
+			for (const auto& pair : params)
+			{
+				m_wndInfo.InsertItem(idx, pair.first.c_str());
+				m_wndInfo.SetItemText(idx++, 1, pair.second.c_str());
 			}
 		}
 	}

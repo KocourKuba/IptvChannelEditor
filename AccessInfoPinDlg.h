@@ -34,9 +34,7 @@ protected:
 	CButton m_wndGet;
 	CEdit m_wndPassword;
 	CComboBox m_wndDeviceID;
+	CListCtrl m_wndInfo;
 	CString m_password;
-	CString m_subscription;
-	CString m_balance;
-	CString m_dev_info;
 };
 

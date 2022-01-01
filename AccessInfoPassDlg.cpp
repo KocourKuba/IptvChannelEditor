@@ -35,11 +35,8 @@ void CAccessInfoPassDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
 	DDX_Text(pDX, IDC_EDIT_LOGIN, m_login);
+	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Text(pDX, IDC_EDIT_PASSWORD, m_password);
-	DDX_Text(pDX, IDC_EDIT_STATUS, m_status);
-	DDX_Text(pDX, IDC_EDIT_SUBSCRIPTION, m_subscription);
-	DDX_Text(pDX, IDC_EDIT_BALANCE, m_balance);
-	DDX_Text(pDX, IDC_EDIT_PACKAGES_PRICE, m_packages_price);
 }
 
 BOOL CAccessInfoPassDlg::OnInitDialog()
@@ -49,6 +46,15 @@ BOOL CAccessInfoPassDlg::OnInitDialog()
 	m_login = m_entry->stream_uri->get_login().c_str();
 	m_password = m_entry->stream_uri->get_password().c_str();
 	m_token = m_entry->stream_uri->get_token().c_str();
+
+	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES/* | LVS_EX_UNDERLINECOLD | LVS_EX_UNDERLINEHOT*/);
+	CRect rect;
+	m_wndInfo.GetClientRect(&rect);
+	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
+	int nWidth = vWidth / 4;
+
+	m_wndInfo.InsertColumn(0, _T("Info"), LVCFMT_LEFT, nWidth, 0);
+	m_wndInfo.InsertColumn(1, _T("Data"), LVCFMT_LEFT, vWidth - nWidth, 0);
 
 	UpdateData(FALSE);
 
@@ -73,42 +79,30 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 {
 	UpdateData(TRUE);
 
-	m_status = _T("Unknown");
+	m_status.LoadString(IDS_STRING_STATUS_TEXT);
 
 	const auto& login = m_login.GetString();
 	const auto& password = m_password.GetString();
 
 	// reset templated flag for new parse
 	m_entry->stream_uri->set_template(false);
-	std::wstring pl_url;
 
+	std::wstring pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
+	std::map<std::wstring, std::wstring> params;
 	if (m_type == StreamType::enOneOtt || m_type == StreamType::enSharaclub)
 	{
 		// currently supported only in sharaclub, oneott use this to obtain token
 		std::vector<BYTE> data;
-		if (!utils::DownloadFile(m_entry->stream_uri->get_access_url(login, password), data) || data.empty())
-			return;
-
-		std::map<std::string, std::wstring> params;
-		if (m_entry->stream_uri->parse_access_info(data, params))
+		if (utils::DownloadFile(m_entry->stream_uri->get_access_url(login, password), data) && !data.empty())
 		{
-			if (!params["token"].empty())
-				m_token = params["token"].c_str();
+			m_entry->stream_uri->parse_access_info(data, params);
 
-			if (!params["url"].empty())
-				pl_url = params["url"];
+			if (params.find(L"token") != params.end())
+				m_token = params[L"token"].c_str();
 
-			if (!params["subscription"].empty())
-				m_subscription = params["subscription"].c_str();
-			if (!params["balance"].empty())
-				m_balance.Format(_T("%s RUR"), params["balance"].c_str());
-			if (!params["forecast_pay"].empty())
-				m_packages_price.Format(_T("%s RUR"), params["forecast_pay"].c_str());
+			if (params.find(L"url") != params.end())
+				pl_url = params[L"url"];
 		}
-	}
-	else
-	{
-		pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
 	}
 
 	std::vector<BYTE> data;
@@ -133,6 +127,19 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 			}
 		}
 	}
+
+	int idx = 0;
+	CString txt;
+	txt.LoadString(IDS_STRING_STATUS);
+	m_wndInfo.DeleteAllItems();
+	m_wndInfo.InsertItem(idx, txt);
+	m_wndInfo.SetItemText(idx++, 1, m_status);
+	for (const auto& pair : params)
+	{
+		m_wndInfo.InsertItem(idx, pair.first.c_str());
+		m_wndInfo.SetItemText(idx++, 1, pair.second.c_str());
+	}
+
 
 	UpdateData(FALSE);
 }
