@@ -288,6 +288,7 @@ goto :EOF
     <ClInclude Include="uri_base.h" />
     <ClInclude Include="uri_fox.h" />
     <ClInclude Include="uri_glanz.h" />
+    <ClInclude Include="uri_iptvonline.h" />
     <ClInclude Include="uri_itv.h" />
     <ClInclude Include="uri_lightiptv.h" />
     <ClInclude Include="uri_onecent.h" />
@@ -341,6 +342,7 @@ goto :EOF
     <ClCompile Include="uri_base.cpp" />
     <ClCompile Include="uri_fox.cpp" />
     <ClCompile Include="uri_glanz.cpp" />
+    <ClCompile Include="uri_iptvonline.cpp" />
     <ClCompile Include="uri_itv.cpp" />
     <ClCompile Include="uri_lightiptv.cpp" />
     <ClCompile Include="uri_onecent.cpp" />

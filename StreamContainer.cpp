@@ -18,6 +18,7 @@
 #include "uri_lightiptv.h"
 #include "uri_cbilling.h"
 #include "uri_ottclub.h"
+#include "uri_iptvonline.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -87,6 +88,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enOttclub:
 			return  std::make_unique<uri_ottclub>();
+
+		case StreamType::enIptvOnline:
+			return  std::make_unique<uri_iptvonline>();
 
 		default:
 			ASSERT(false);

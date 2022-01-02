@@ -54,7 +54,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				entry->set_logo_root(logo_root);
 				if (!entry->Parse(line, m3uEntry)) continue;
 
-				// special case after parsing
+				// special cases after parsing
 				switch (m_config.m_pluginType)
 				{
 					case StreamType::enOneUsd:
@@ -65,7 +65,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					case StreamType::enOneOtt:
 					case StreamType::enCbilling:
 						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
-						entry->set_epg2_id(entry->get_epg1_id()); // secondary EPG
+						entry->set_epg2_id(entry->stream_uri->get_id()); // secondary EPG
 						break;
 					case StreamType::enLightIptv:
 						entry->stream_uri->set_id(entry->get_epg1_id());
@@ -73,6 +73,10 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					case StreamType::enOttclub:
 						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
 						entry->set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", entry->stream_uri->get_domain(), entry->stream_uri->get_id()));
+						break;
+					case StreamType::enIptvOnline:
+						if (entry->get_epg1_id().front() == 'X')
+							entry->set_epg1_id(entry->get_epg1_id().substr(1)); // primary EPG
 						break;
 					default:
 						break;
