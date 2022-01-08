@@ -50,6 +50,8 @@ std::wstring uri_viplime::get_templated(StreamSubType subType, TemplateParams& p
 			case StreamSubType::enMPEGTS:
 				url = URI_TEMPLATE_MPEG;
 				break;
+			default:
+				break;
 		}
 	}
 

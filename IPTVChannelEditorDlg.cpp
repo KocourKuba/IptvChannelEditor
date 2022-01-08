@@ -545,9 +545,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		if (path.extension() != _T(".xml")) continue;
 
 		if (path.filename() == default_tv_name)
-			m_all_channels_lists.insert(m_all_channels_lists.begin(), path.filename());
+			m_all_channels_lists.emplace(m_all_channels_lists.begin(), path.filename());
 		else if (path.filename() == default_vod_name)
-			m_all_channels_lists.insert(m_all_channels_lists.end(), path.filename());
+			m_all_channels_lists.emplace(m_all_channels_lists.end(), path.filename());
 		else
 			m_all_channels_lists.emplace_back(path.filename());
 	}
@@ -785,8 +785,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
 
 	auto pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
-	pThread->SetData(cfg);
-
 	if (!pThread)
 	{
 		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
@@ -794,6 +792,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		return;
 	}
 
+	pThread->SetData(cfg);
 	m_loading = true;
 
 	m_wndPluginType.EnableWindow(FALSE);

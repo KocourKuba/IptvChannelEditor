@@ -52,6 +52,8 @@ std::wstring uri_oneusd::get_templated(StreamSubType subType, TemplateParams& pa
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
 				break;
+			default:
+				break;
 		}
 	}
 	else

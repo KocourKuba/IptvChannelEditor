@@ -554,7 +554,6 @@ int RequestToUpdateServer(const std::wstring& command)
 
 		ResumeThread(pi.hThread);
 
-		CStringA csOutBufA;
 		int nErrorCount = 0;
 		DWORD dwExitCode = STILL_ACTIVE;
 		uint64_t dwStart = utils::ChronoGetTickCount();

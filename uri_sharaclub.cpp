@@ -49,6 +49,8 @@ std::wstring uri_sharaclub::get_templated(StreamSubType subType, TemplateParams&
 			case StreamSubType::enMPEGTS:
 				url = URI_TEMPLATE_MPEG;
 				break;
+			default:
+				break;
 		}
 	}
 

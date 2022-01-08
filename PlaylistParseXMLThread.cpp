@@ -47,7 +47,6 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 			const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
 			auto cat_node = doc.first_node(utils::TV_CATEGORIES)->first_node(utils::TV_CATEGORY);
 			// Iterate <tv_category> nodes
-			std::map<int, std::shared_ptr<ChannelCategory>> categories;
 			while (cat_node)
 			{
 				auto category = std::make_shared<ChannelCategory>(cat_node, StreamType::enBase, root_path);

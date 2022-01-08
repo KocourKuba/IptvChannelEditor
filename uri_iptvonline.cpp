@@ -54,6 +54,8 @@ std::wstring uri_iptvonline::get_templated(StreamSubType subType, TemplateParams
 					utils::string_replace_inplace(url, L"mpegts", L"archive-{START}-10800.ts");
 				}
 				break;
+			default:
+				break;
 		}
 	}
 	else

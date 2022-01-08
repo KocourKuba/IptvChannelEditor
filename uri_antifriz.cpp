@@ -66,7 +66,9 @@ std::wstring uri_antifriz::get_templated(StreamSubType subType, TemplateParams& 
 				break;
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				params.domain = no_port;
+				params.domain = std::move(no_port);
+				break;
+			default:
 				break;
 		}
 	}

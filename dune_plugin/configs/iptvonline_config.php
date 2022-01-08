@@ -27,7 +27,6 @@ class IptvonlinePluginConfig extends DefaultConfig
      */
     public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
 
         switch (self::get_format($plugin_cookies)) {

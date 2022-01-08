@@ -51,6 +51,8 @@ std::wstring uri_oneott::get_templated(StreamSubType subType, TemplateParams& pa
 			case StreamSubType::enMPEGTS:
 				url = URI_TEMPLATE_MPEG;
 				break;
+			default:
+				break;
 		}
 	}
 

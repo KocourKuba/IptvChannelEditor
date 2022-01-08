@@ -71,7 +71,7 @@ std::wstring uri_cbilling::get_templated(StreamSubType subType, TemplateParams& 
 				break;
 			case StreamSubType::enMPEGTS:
 				url = URI_TEMPLATE_MPEG;
-				params.domain = no_port;
+				params.domain = std::move(no_port);
 				if (params.shift_back)
 				{
 					utils::string_replace_inplace(url, L"mpegts", L"archive-{START}-10800.ts");

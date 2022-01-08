@@ -26,6 +26,9 @@ END_MESSAGE_MAP()
 CFilterDialog::CFilterDialog(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_FILTER, pParent)
 {
+	m_filterState.fill(FALSE);
+	m_filterRegex.fill(FALSE);
+	m_filterCase.fill(FALSE);
 }
 
 void CFilterDialog::DoDataExchange(CDataExchange* pDX)

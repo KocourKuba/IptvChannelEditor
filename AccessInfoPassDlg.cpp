@@ -85,17 +85,18 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	const auto& password = m_password.GetString();
 
 	// reset templated flag for new parse
-	m_entry->stream_uri->set_template(false);
+	const auto& uri = m_entry->stream_uri;
+	uri->set_template(false);
 
-	std::wstring pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), login, password);
+	std::wstring pl_url = fmt::format(uri->get_playlist_template(), login, password);
 	std::map<std::wstring, std::wstring> params;
 	if (m_type == StreamType::enOneOtt || m_type == StreamType::enSharaclub)
 	{
 		// currently supported only in sharaclub, oneott use this to obtain token
 		std::vector<BYTE> data;
-		if (utils::DownloadFile(m_entry->stream_uri->get_access_url(login, password), data) && !data.empty())
+		if (utils::DownloadFile(uri->get_access_url(login, password), data) && !data.empty())
 		{
-			m_entry->stream_uri->parse_access_info(data, params);
+			uri->parse_access_info(data, params);
 
 			if (params.find(L"token") != params.end())
 				m_token = params[L"token"].c_str();

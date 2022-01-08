@@ -299,7 +299,7 @@ int update_app(UpdateInfo& info)
 			if (!archiver.GetExtractor().ExtractArchive(info.update_path))
 				return err_open_pkg;
 
-			source_file = info.update_path, src.stem().c_str();
+			source_file = info.update_path + src.stem().wstring();
 			target_file = target_path + src.stem().wstring();
 			bak_file = target_file + L".bak";
 		}
