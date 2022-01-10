@@ -1,24 +1,26 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class OneottPluginConfig extends DefaultConfig
+class VidokPluginConfig extends DefaultConfig
 {
-    const PLAYLIST_TV_URL = 'http://list.1ott.net/api/%s/high/ottplay.m3u8';
+    const PLAYLIST_TV_URL = 'http://bddpv.plist.top/p/%s';
 
     public function __construct()
     {
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8';
+        static::$FEATURES[BALANCE_SUPPORTED] = true;
+        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|';
+        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/p/{TOKEN}/{ID}';
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
+        static::$EPG_PARSER_PARAMS['first']['config'] = $this;
+        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'epg';
         static::$EPG_PARSER_PARAMS['first']['start'] = 'start';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'stop';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'epg';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'desc';
+        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
+        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
+        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
+        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'dmy';
     }
 
     /**
@@ -32,10 +34,6 @@ class OneottPluginConfig extends DefaultConfig
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = self::UpdateArchiveUrlParams($url, $archive_ts);
-
-        if (self::get_format($plugin_cookies) === 'mpeg') {
-            $url = str_replace('/hls/pl.m3u8', '', $url);
-        }
 
         // hd_print("Stream url:  " . $url);
 
@@ -73,12 +71,13 @@ class OneottPluginConfig extends DefaultConfig
             hd_print("Login or password not set");
         }
 
+        $plugin_cookies->ott_key = md5(strtolower($login) . md5($password));
+
         try {
-            $url = sprintf('http://list.1ott.net/PinApi/%s/%s', $login, $password);
+            $url = 'http://sapi.ott.st/v2.4/json/account?token=' . $plugin_cookies->ott_key;
             // provider returns token used to download playlist
             $account_data = json_decode(HD::http_get_document($url), true);
-            if (isset($account_data['token'])) {
-                $plugin_cookies->ott_key = $account_data['token'];
+            if (isset($account_data['account']['login'])) {
                 return true;
             }
         } catch (Exception $ex) {
@@ -90,22 +89,12 @@ class OneottPluginConfig extends DefaultConfig
 
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
-        switch($type)
-        {
-            case 'first':
-                $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
-                hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-                return sprintf('http://epg.propg.net/%s/epg2/%s', $id, $epg_date); // epg_id date(Y-m-d)
-            case 'second':
-                hd_print("Fetching EPG for ID: '$id'");
-                return sprintf('http://epg.ott-play.com/1ott/epg/%s.json', $id);
+        if ($type === 'first') {
+            $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
+            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+            return sprintf('http://sapi.ott.st/v2.4/json/epg?cid=%s&day=%s&token=%s', $id, $epg_date, $plugin_cookies->ott_key); // epg_id date(Ymd)
         }
 
         return null;
-    }
-
-    public static function get_epg_template2($plugin_cookies)
-    {
-        return '';
     }
 }

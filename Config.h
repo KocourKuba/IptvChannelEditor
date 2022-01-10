@@ -23,6 +23,7 @@ enum class StreamType
 	enCbilling,
 	enOttclub,
 	enIptvOnline,
+	enVidok,
 };
 
 constexpr auto CMP_FLAG_TITLE   = 0x01;

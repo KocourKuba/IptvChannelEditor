@@ -26,9 +26,6 @@ class CbillingPluginConfig extends DefaultConfig
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8';
         static::$FEATURES[VOD_LAZY_LOAD] = true;
         static::$FEATURES[EXTINF_VOD_PATTERN] = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
-
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/cbilling/epg/%s.json'; // epg1_id
-        static::$EPG_PARSER_PARAMS['second']['epg_template'] = 'http://api.iptvx.tv/epg/%s?date=%s'; // epg2_id
     }
 
     /**
@@ -134,6 +131,22 @@ class CbillingPluginConfig extends DefaultConfig
         }
 
         return '';
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
+        switch($type)
+        {
+            case 'first':
+                hd_print("Fetching EPG for ID: '$id'");
+                return sprintf('http://epg.ott-play.com/cbilling/epg/%s.json', $id);
+            case 'second':
+                hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+                return sprintf('http://api.iptvx.tv/epg/%s?date=%s', $id, $epg_date); // epg_id date(Y-m-d)
+        }
+
+        return null;
     }
 
     /**

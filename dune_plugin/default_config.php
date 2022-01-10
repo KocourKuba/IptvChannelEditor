@@ -94,20 +94,20 @@ abstract class DefaultConfig
         static::$FEATURES[EXTINF_VOD_PATTERN] = '';
 
         static::$EPG_PARSER_PARAMS['first']['parser'] = 'json';
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = '';
         static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'epg_data';
         static::$EPG_PARSER_PARAMS['first']['start'] = 'time';
         static::$EPG_PARSER_PARAMS['first']['end'] = 'time_to';
         static::$EPG_PARSER_PARAMS['first']['title'] = 'name';
         static::$EPG_PARSER_PARAMS['first']['description'] = 'descr';
+        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y-m-d';
 
         static::$EPG_PARSER_PARAMS['second']['parser'] = 'json';
-        static::$EPG_PARSER_PARAMS['second']['epg_template'] = '';
         static::$EPG_PARSER_PARAMS['second']['epg_root'] = 'epg_data';
         static::$EPG_PARSER_PARAMS['second']['start'] = 'time';
         static::$EPG_PARSER_PARAMS['second']['end'] = 'time_to';
         static::$EPG_PARSER_PARAMS['second']['title'] = 'name';
         static::$EPG_PARSER_PARAMS['second']['description'] = 'descr';
+        static::$EPG_PARSER_PARAMS['second']['date_format'] = 'Y-m-d';
     }
 
     public static function get_account_type()
@@ -368,6 +368,11 @@ abstract class DefaultConfig
         return null;
     }
 
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        return null;
+    }
+
     protected static function UpdateArchiveUrlParams($url, $archive_ts)
     {
         if ($archive_ts > 0) {
@@ -447,39 +452,6 @@ abstract class DefaultConfig
         }
 
         return file($m3u_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    }
-
-    /**
-     * @return array
-     */
-    public static function GetEPG(IChannel $channel, $day_start_ts)
-    {
-        $parser_params = static::get_epg_params();
-        try {
-            if (empty(static::$EPG_PARSER_PARAMS['first']['epg_template'])) {
-                throw new Exception("Empty first epg template");
-            }
-
-            $epg = EpgManager::get_epg($parser_params, $channel, 'first', $day_start_ts, static::$PLUGIN_SHORT_NAME);
-            if (count($epg) === 0) {
-                throw new Exception("Empty first epg");
-            }
-        } catch (Exception $ex) {
-            try {
-                hd_print("Can't fetch EPG ID from primary epg source: " . $ex->getMessage());
-                if (empty(static::$EPG_PARSER_PARAMS['second']['epg_template'])) {
-                    throw new Exception("Empty second epg template");
-                }
-
-                $epg = EpgManager::get_epg($parser_params, $channel, 'second', $day_start_ts, static::$PLUGIN_SHORT_NAME);
-            } catch (Exception $ex) {
-                hd_print("Can't fetch EPG ID from secondary epg source: " . $ex->getMessage());
-                $epg = array();
-            }
-        }
-
-        hd_print("Loaded " . count($epg) . " EPG entries");
-        return $epg;
     }
 
     /**

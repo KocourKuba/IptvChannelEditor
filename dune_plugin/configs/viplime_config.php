@@ -13,8 +13,6 @@ class ViplimePluginConfig extends DefaultConfig
         static::$FEATURES[MPEG_TS_SUPPORTED] = true;
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8';
-
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/viplime/epg/%s.json'; // epg_id
     }
 
     /**
@@ -57,5 +55,15 @@ class ViplimePluginConfig extends DefaultConfig
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf('http://epg.ott-play.com/viplime/epg/%s.json', $id);
+        }
+
+        return null;
     }
 }

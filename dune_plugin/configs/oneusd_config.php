@@ -14,8 +14,6 @@ class OneusdPluginConfig extends DefaultConfig
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}';
         static::$FEATURES[SQUARE_ICONS] = true;
-
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/tvteam/epg/%s.json'; // epg_id
     }
 
     /**
@@ -65,5 +63,15 @@ class OneusdPluginConfig extends DefaultConfig
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf('http://epg.ott-play.com/tvteam/epg/%s.json', $id);
+        }
+
+        return null;
     }
 }

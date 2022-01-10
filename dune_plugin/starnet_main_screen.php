@@ -72,6 +72,18 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
                     ControlFactory::add_label($defs, 'Устройств', $account_data['data']['devices_num']);
                     ControlFactory::add_label($defs, 'Сервер', $account_data['data']['server']);
                     break;
+                case 'VidokPluginConfig':
+                    ControlFactory::add_label($defs, 'Баланс:', $account_data['account']['balance'] . ' €');
+                    ControlFactory::add_label($defs, 'Логин:', $account_data['account']['login']);
+                    $packages = $account_data['packages'];
+                    if (count($packages) === 0) {
+                        ControlFactory::add_label($defs, $title, 'Нет пакетов');
+                    } else {
+                        foreach ($packages as $item) {
+                            ControlFactory::add_label($defs, "", 'Пакет '. $item->name .': до '. date('j.m.Y', (string)$item->expire));
+                        }
+                    }
+                    break;
                 default:
                     return ActionFactory::show_dialog('Подписка', $defs) ;
             }

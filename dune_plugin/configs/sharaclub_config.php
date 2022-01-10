@@ -19,9 +19,7 @@ class SharaclubPluginConfig extends DefaultConfig
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
         static::$FEATURES[VOD_LAZY_LOAD] = true;
 
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://api.sramtv.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
         static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
-        static::$EPG_PARSER_PARAMS['second']['epg_template'] = 'http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s'; // epg_id date(YYYY-MM-DD)
         static::$EPG_PARSER_PARAMS['second']['epg_root'] = '';
     }
 
@@ -107,6 +105,21 @@ class SharaclubPluginConfig extends DefaultConfig
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
         return isset($account_data['status']) && $account_data['status'] === 'ok';
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
+        hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+        switch($type)
+        {
+            case 'first':
+                return sprintf('http://api.sramtv.com/get/?type=epg&ch=%s&date=%s', $id, $epg_date); // epg_id date(Y-m-d)
+            case 'second':
+                return sprintf('http://api.gazoni1.com/get/?type=epg&ch=%s&date=%s', $id, $epg_date); // epg_id date(Y-m-d)
+        }
+
+        return null;
     }
 
     /**

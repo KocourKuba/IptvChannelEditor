@@ -16,7 +16,6 @@ class ItvPluginConfig extends DefaultConfig
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}';
         static::$FEATURES[SQUARE_ICONS] = true;
 
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://api.itv.live/epg/%s/%s'; // epg_id date(YYYY-MM-DD)
         static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'res';
         static::$EPG_PARSER_PARAMS['first']['start'] = 'startTime';
         static::$EPG_PARSER_PARAMS['first']['end'] = 'stopTime';
@@ -102,5 +101,16 @@ class ItvPluginConfig extends DefaultConfig
 
         $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
         return isset($account_data['package_info']) && !empty($account_data['package_info']);
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+            return sprintf('http://api.itv.live/epg/%s/%s', $id, $epg_date); // epg_id date(Y-m-d)
+        }
+
+        return null;
     }
 }

@@ -18,8 +18,6 @@ class GlanzPluginConfig extends DefaultConfig
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
         static::$FEATURES[EXTINF_VOD_PATTERN] = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
         static::$FEATURES[SQUARE_ICONS] = true;
-
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/ottg/epg/%s.json'; // epg_id
     }
 
     /**
@@ -93,6 +91,16 @@ class GlanzPluginConfig extends DefaultConfig
         }
 
         return '';
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf('http://epg.ott-play.com/ottg/epg/%s.json', $id);
+        }
+
+        return null;
     }
 
     /**

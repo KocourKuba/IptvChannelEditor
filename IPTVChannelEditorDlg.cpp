@@ -456,7 +456,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		{
 			m_wndPlaylist.AddString(_T("Edem Standard"));
 			m_wndPlaylist.AddString(_T("Edem Thematic"));
-			m_wndPlaylist.AddString(_T("Custom URL"));
 			m_token = GetConfig().get_string(false, REG_TOKEN);
 			m_domain = GetConfig().get_string(false, REG_DOMAIN);
 			break;
@@ -473,6 +472,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			break;
 		}
 		case StreamType::enOneOtt:
+		case StreamType::enVidok:
 		{
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_token = GetConfig().get_string(false, REG_TOKEN);
@@ -625,10 +625,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 				case 1: // Thematic
 					url = StreamContainer::get_instance(plugin_type)->get_playlist_template(false);
 					break;
-				case 2: // Custom URL
-					url = GetConfig().get_string(false, REG_CUSTOM_URL);
-					break;
-				case 3: // Custom file
+				case 2: // Custom file
 					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
 					break;
 				default:
@@ -698,6 +695,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			break;
 		}
 		case StreamType::enOneOtt:
+		case StreamType::enVidok:
 		{
 			switch (idx)
 			{
@@ -842,7 +840,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 					enableCustom = TRUE;
 					break;
 				case 2:
-				case 3:
 					enableDownload = FALSE;
 					enableCustom = TRUE;
 					break;
@@ -867,6 +864,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		case StreamType::enCbilling:
 		case StreamType::enOttclub:
 		case StreamType::enIptvOnline:
+		case StreamType::enVidok:
 		{
 			switch (pl_idx)
 			{
@@ -1390,6 +1388,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 
 		if (pair == m_epgMap.end())
 		{
+			UpdateExtToken(info->stream_uri.get(), m_token);
 			const auto& url = first ? info->stream_uri->get_epg1_uri_json(epg_id) : info->stream_uri->get_epg2_uri_json(epg_id);
 			std::vector<BYTE> data;
 			if (!utils::DownloadFile(url, data))
@@ -1629,6 +1628,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			case StreamType::enSharaclub:
 			case StreamType::enSharaTV:
 			case StreamType::enOneOtt:
+			case StreamType::enVidok:
 				m_login = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_LOGIN));
 				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
@@ -2731,6 +2731,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg()
 	if (channel)
 	{
 		bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+		UpdateExtToken(channel->stream_uri.get(), m_token);
 		const auto& url = first ? channel->stream_uri->get_epg1_uri(channel->get_epg1_id()) : channel->stream_uri->get_epg2_uri(channel->get_epg2_id());
 		if (!url.empty())
 			ShellExecuteW(nullptr, L"open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
@@ -2835,6 +2836,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enSharaclub:
 		case StreamType::enSharaTV:
 		case StreamType::enOneOtt:
+		case StreamType::enVidok:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -3226,6 +3228,7 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enSharaclub:
 				case StreamType::enSharaTV:
 				case StreamType::enOneOtt:
+				case StreamType::enVidok:
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_LOGIN, utils::utf16_to_utf8(m_login).c_str()));
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;

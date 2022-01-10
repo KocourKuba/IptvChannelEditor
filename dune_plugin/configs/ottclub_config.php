@@ -12,8 +12,6 @@ class OttclubPluginConfig extends DefaultConfig
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/stream/(?<token>.+)/(?<id>.+)\.m3u8$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8';
-
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://myott.top/api/channel/%s'; // epg_id
     }
 
     /**
@@ -41,5 +39,15 @@ class OttclubPluginConfig extends DefaultConfig
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf('http://myott.top/api/channel/%s', $id);
+        }
+
+        return null;
     }
 }

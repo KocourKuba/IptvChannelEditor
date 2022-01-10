@@ -7,53 +7,63 @@ class EpgManager
     const EPG_CACHE_DIR_TEMPLATE  = '/tmp/%s_epg/';
     const EPG_CACHE_FILE_TEMPLATE = '/tmp/%s_epg/epg_channel_%s_%s';
 
+    public $config;
+
+    public function __construct($config)
+    {
+        $this->config = $config;
+    }
+
     /**
      * try to load epg from cache otherwise request it from server
      * store parsed response to the cache
-     * @param $parser_params
      * @param IChannel $channel
      * @param $type
      * @param $day_start_ts
-     * @param $cache_name
      * @return array
      * @throws Exception
      */
-    public static function get_epg($parser_params, IChannel $channel, $type, $day_start_ts, $cache_name)
+    public function get_epg(IChannel $channel, $type, $day_start_ts, $plugin_cookies)
     {
         switch ($type)
         {
             case 'first':
-                $epg_id = $channel->get_epg_id();
+                $epg_id = str_replace(' ', '%20', $channel->get_epg_id());
                 break;
             case 'second':
-                $epg_id = $channel->get_tvg_id();
+                $epg_id = str_replace(' ', '%20', $channel->get_tvg_id());
                 break;
             default:
                 $epg_id = '';
         }
 
-        if (!isset($parser_params[$type]['epg_template']) || empty($epg_id)) {
-            throw new Exception("$type EPG not defined");
+        if (empty($epg_id)) {
+            throw new Exception("EPG: $epg_id not defined");
         }
 
+        $config = $this->config;
+        $epg_url = $config->get_epg_url($type, $epg_id, $day_start_ts, $plugin_cookies);
+        if (empty($epg_url)) {
+            throw new Exception("$type EPG url not defined");
+        }
+
+
+        $cache_dir =  sprintf(self::EPG_CACHE_DIR_TEMPLATE, $config::$PLUGIN_SHORT_NAME);
+        $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $config::$PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);
+
+        $parser_params = $config->get_epg_params();
         $params = $parser_params[$type];
-        $cache_dir =  sprintf(self::EPG_CACHE_DIR_TEMPLATE, $cache_name);
-        $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $cache_name, $channel->get_id(), $day_start_ts);
 
         if (file_exists($cache_file)) {
             hd_print("Load EPG from cache: $cache_file");
             $epg = unserialize(file_get_contents($cache_file));
         } else {
-            $epg_date = gmdate("Y-m-d", $day_start_ts); // 'YYYY-MM-DD'
-            $url = sprintf($params['epg_template'], str_replace(' ', '%20', $epg_id), $epg_date);
-            hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
-
             switch ($params['parser']) {
                 case 'json':
-                    $epg = self::get_epg_json($params, $url, $day_start_ts);
+                    $epg = self::get_epg_json($epg_url, $params, $day_start_ts);
                     break;
                 case 'xml':
-                    $epg = self::get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir);
+                    $epg = self::get_epg_xml($epg_url, $day_start_ts, $epg_id, $cache_dir);
                     break;
                 default:
                     $epg = array();
@@ -77,12 +87,12 @@ class EpgManager
 
     /**
      * request server for epg and parse json response
-     * @param $parser_params
      * @param $url
+     * @param $parser_params
      * @param $day_start_ts
      * @return array
      */
-    protected static function get_epg_json($parser_params, $url, $day_start_ts)
+    protected static function get_epg_json($url, $parser_params, $day_start_ts)
     {
         $epg = array();
         // time in UTC

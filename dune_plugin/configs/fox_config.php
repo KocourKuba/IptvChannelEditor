@@ -17,7 +17,6 @@ class FoxPluginConfig extends DefaultConfig
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/{TOKEN}/index.m3u8';
         static::$FEATURES[EXTINF_VOD_PATTERN] = '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|';
         static::$FEATURES[SQUARE_ICONS] = true;
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/fox-tv/epg/%s.json'; // epg_id
     }
 
     /**
@@ -97,6 +96,16 @@ class FoxPluginConfig extends DefaultConfig
         }
 
         return $pl_entries;
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf('http://epg.ott-play.com/fox-tv/epg/%s.json', $id);
+        }
+
+        return null;
     }
 
     /**

@@ -272,20 +272,34 @@ class StarnetPluginTv extends AbstractTv
             return array();
         }
 
+        $epg_man = new EpgManager(self::$config);
+        $epg = array();
+        try {
+            $epg = $epg_man->get_epg($channel, 'first', $day_start_ts, $plugin_cookies);
+            if (count($epg) === 0) {
+                throw new Exception("Empty first epg");
+            }
+        } catch (Exception $ex) {
+            try {
+                $epg = $epg_man->get_epg($channel, 'second', $day_start_ts, $plugin_cookies);
+            } catch (Exception $ex) {
+                hd_print("Can't fetch EPG ID from secondary epg source: " . $ex->getMessage());
+            }
+        }
+
+        hd_print("Loaded " . count($epg) . " EPG entries");
+
         $start = 0;
         // get personal time shift for channel
         $time_shift = $channel->get_timeshift_hours() * 3600;
 
-        // hd_print("get_day_epg_iterator: start date: " . gmdate(DATE_ATOM, $day_start_ts));
         $epg_result = array();
-        $epg = self::$config->GetEPG($channel, $day_start_ts);
         foreach ($epg as $time => $value) {
             $tm = $time + $time_shift;
             if ($start === 0) {
                 $start = $tm;
             }
 
-            // hd_print("get_day_epg_iterator: epg date: " . gmdate(DATE_ATOM, $tm));
             $epg_result[] = new DefaultEpgItem($value['title'], $value['desc'], (int)$tm, $value['end']);
         }
 

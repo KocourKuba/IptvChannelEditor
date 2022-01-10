@@ -5,6 +5,7 @@
 #include "PlayListEntry.h"
 
 #include "UtilsLib\inet_utils.h"
+#include "UtilsLib\md5.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -81,16 +82,25 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	m_status.LoadString(IDS_STRING_STATUS_TEXT);
 
-	const auto& login = m_login.GetString();
-	const auto& password = m_password.GetString();
+	const auto& login = std::wstring(m_login.GetString());
+	const auto& password = std::wstring(m_password.GetString());
 
 	// reset templated flag for new parse
 	const auto& uri = m_entry->stream_uri;
 	uri->set_template(false);
 
 	std::wstring pl_url = fmt::format(uri->get_playlist_template(), login, password);
+
+	if (m_type == StreamType::enVidok)
+	{
+		std::string login_a = utils::string_tolower(utils::utf16_to_utf8(login));
+		std::string password_a = utils::utf16_to_utf8(password);
+		const auto& token = utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
+		pl_url = fmt::format(uri->get_playlist_template(), token);
+	}
+
 	std::map<std::wstring, std::wstring> params;
-	if (m_type == StreamType::enOneOtt || m_type == StreamType::enSharaclub)
+	if (m_type == StreamType::enOneOtt || m_type == StreamType::enSharaclub || m_type == StreamType::enVidok)
 	{
 		// currently supported only in sharaclub, oneott use this to obtain token
 		std::vector<BYTE> data;

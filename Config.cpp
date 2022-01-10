@@ -88,6 +88,7 @@ static std::vector<std::wstring> plugins_images = {
 	L"bg_cbilling.jpg",   L"logo_cbilling.png",
 	L"bg_ottclub.jpg",    L"logo_ottclub.png",
 	L"bg_iptvonline.jpg", L"logo_iptvonline.png",
+	L"bg_vidok.jpg",      L"logo_vidok.png",
 };
 
 static std::vector<PluginDesc> all_plugins = {
@@ -108,6 +109,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enCbilling,   _T("Cbilling"),        "cbilling"   },
 	{ StreamType::enOttclub,    _T("OttClub"),         "ottclub"    },
 	{ StreamType::enIptvOnline, _T("Iptv Online"),     "iptvonline" },
+	{ StreamType::enVidok,      _T("Vidok TV"),        "vidok" },
 };
 
 void ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)

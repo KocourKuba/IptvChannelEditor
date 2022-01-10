@@ -54,6 +54,9 @@
     <ClInclude Include="FileVersionInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="md5.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

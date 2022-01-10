@@ -25,7 +25,6 @@ class AntifrizPluginConfig extends DefaultConfig
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
         static::$FEATURES[VOD_LAZY_LOAD] = true;
         static::$FEATURES[EXTINF_VOD_PATTERN] = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
-        static::$EPG_PARSER_PARAMS['first']['epg_template'] = 'http://epg.ott-play.com/antifriz/epg/%s.json'; // epg_id
     }
 
     /**
@@ -100,6 +99,16 @@ class AntifrizPluginConfig extends DefaultConfig
         }
 
         return '';
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf('http://epg.ott-play.com/antifriz/epg/%s.json', $id);
+        }
+
+        return null;
     }
 
     /**
