@@ -10,6 +10,7 @@ class OttclubPluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
+        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/stream/(?<token>.+)/(?<id>.+)\.m3u8$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8';
     }

@@ -10,7 +10,6 @@ class OneottPluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8';
 
@@ -46,23 +45,23 @@ class OneottPluginConfig extends DefaultConfig
     {
         // hd_print("Type: $type");
 
-        if (empty($plugin_cookies->ott_key)) {
+        if (empty($plugin_cookies->token)) {
             hd_print("User token not set");
         }
 
-        return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->ott_key);
+        return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->token);
     }
 
     /**
      * Get information from the account
-     * @param $plugin_cookies
-     * @param &$account_data
+     * @param &$plugin_cookies
+     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
      * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
+    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
-        if ($force === false && !empty($plugin_cookies->ott_key)) {
+        if ($force === false && !empty($plugin_cookies->token)) {
             return true;
         }
 
@@ -78,7 +77,7 @@ class OneottPluginConfig extends DefaultConfig
             // provider returns token used to download playlist
             $account_data = json_decode(HD::http_get_document($url), true);
             if (isset($account_data['token'])) {
-                $plugin_cookies->ott_key = $account_data['token'];
+                $plugin_cookies->token = $account_data['token'];
                 return true;
             }
         } catch (Exception $ex) {
@@ -102,10 +101,5 @@ class OneottPluginConfig extends DefaultConfig
         }
 
         return null;
-    }
-
-    public static function get_epg_template2($plugin_cookies)
-    {
-        return '';
     }
 }

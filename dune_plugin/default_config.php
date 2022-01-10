@@ -6,15 +6,16 @@ const ACCOUNT_TYPE = 'account';
 const TV_FAVORITES_SUPPORTED = 'tv_fav';
 const VOD_MOVIE_PAGE_SUPPORTED = 'vod_support';
 const VOD_FAVORITES_SUPPORTED = 'vod_fav';
-const MPEG_TS_SUPPORTED = 'mpeg_support';
-const HLS2_SUPPORTED = 'hls2_support';
-const DEVICES_SUPPORTED = 'device_support';
+const TS_OPTIONS = 'ts_options';
 const BALANCE_SUPPORTED = 'balance_support';
+const DEVICE_OPTIONS = 'device_options';
+const SERVER_SUPPORTED = 'server_support';
+const QUALITY_SUPPORTED = 'quality_support';
 const M3U_STREAM_URL_PATTERN = 'm3u8_pattern';
 const MEDIA_URL_TEMPLATE_HLS = 'hls_url';
 const VOD_LAZY_LOAD = 'vod_lazy';
 const EXTINF_VOD_PATTERN = 'vod_pattern';
-const SQUARE_ICONS = false;
+const SQUARE_ICONS = 'square_icons';
 
 abstract class DefaultConfig
 {
@@ -86,12 +87,14 @@ abstract class DefaultConfig
         static::$FEATURES[TV_FAVORITES_SUPPORTED] = true;
         static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = false;
         static::$FEATURES[VOD_FAVORITES_SUPPORTED] = false;
-        static::$FEATURES[MPEG_TS_SUPPORTED] = false;
-        static::$FEATURES[HLS2_SUPPORTED] = false;
-        static::$FEATURES[DEVICES_SUPPORTED] = false;
+        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS', 'mpeg' => 'MPEG-TS');
+        static::$FEATURES[DEVICE_OPTIONS] = array();
         static::$FEATURES[BALANCE_SUPPORTED] = false;
+        static::$FEATURES[SERVER_SUPPORTED] = false;
+        static::$FEATURES[QUALITY_SUPPORTED] = false;
         static::$FEATURES[VOD_LAZY_LOAD] = false;
         static::$FEATURES[EXTINF_VOD_PATTERN] = '';
+        static::$FEATURES[SQUARE_ICONS] = false;
 
         static::$EPG_PARSER_PARAMS['first']['parser'] = 'json';
         static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'epg_data';
@@ -130,24 +133,72 @@ abstract class DefaultConfig
         return self::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED];
     }
 
-    public static function get_mpeg_support()
+    public static function get_format_opts()
     {
-        return self::$FEATURES[MPEG_TS_SUPPORTED];
-    }
-
-    public static function get_hls2_support()
-    {
-        return self::$FEATURES[HLS2_SUPPORTED];
-    }
-
-    public static function get_device_support()
-    {
-        return self::$FEATURES[DEVICES_SUPPORTED];
+        return self::$FEATURES[TS_OPTIONS];
     }
 
     public static function get_balance_support()
     {
         return self::$FEATURES[BALANCE_SUPPORTED];
+    }
+
+    public static function get_device_support()
+    {
+        return !empty(self::$FEATURES[DEVICE_OPTIONS]);
+    }
+
+    public static function get_device_opts()
+    {
+        return self::$FEATURES[DEVICE_OPTIONS];
+    }
+
+    public static function get_device($plugin_cookies)
+    {
+        return null;
+    }
+
+    public static function set_device($plugin_cookies)
+    {
+    }
+
+    public static function get_quality_support()
+    {
+        return self::$FEATURES[QUALITY_SUPPORTED];
+    }
+
+    public static function get_quality_opts($plugin_cookies)
+    {
+        return array();
+    }
+
+    public static function get_quality($plugin_cookies)
+    {
+        return null;
+    }
+
+    public static function set_quality($plugin_cookies)
+    {
+    }
+
+    public static function get_server_support()
+    {
+        return self::$FEATURES[SERVER_SUPPORTED];
+    }
+
+    public static function get_server_opts($plugin_cookies)
+    {
+        return array();
+    }
+
+    public static function get_server($plugin_cookies)
+    {
+        return null;
+    }
+
+    public static function set_server($plugin_cookies)
+    {
+        return null;
     }
 
     public static function get_channel_list()
@@ -253,13 +304,13 @@ abstract class DefaultConfig
     }
 
     /**
-     * Get information from the provider m3u8 playlist: subdomain token host etc.
-     * @param $plugin_cookies
-     * @param &$account_data
+     * Get information from the account
+     * @param &$plugin_cookies
+     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool true if information collected
+     * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
+    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
         $m3u_lines = self::FetchTvM3U($plugin_cookies, $force);

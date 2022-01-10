@@ -55,7 +55,6 @@ class StarnetDunePlugin extends DefaultDunePlugin
         hd_print("TV fav:           " . ($config->get_tv_fav_support() ? "yes" : "no"));
         hd_print("VOD page:         " . ($config->get_vod_support() ? "yes" : "no"));
         hd_print("VOD fav:          " . ($config->get_vod_fav_support() ? "yes" : "no"));
-        hd_print("MPEG-TS support:  " . ($config->get_mpeg_support() ? "yes" : "no"));
         hd_print("----------------------------------------------------");
 
         UserInputHandlerRegistry::get_instance()->register_handler(new StarnetEntryHandler());

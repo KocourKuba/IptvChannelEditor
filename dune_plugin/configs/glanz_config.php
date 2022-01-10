@@ -11,7 +11,6 @@ class GlanzPluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
         static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
         static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|';

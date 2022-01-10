@@ -87,10 +87,18 @@ class StarnetPluginTv extends AbstractTv
         }
 
         // read embedded access info
-        $plugin_cookies->ott_key_local = "";
-        $plugin_cookies->subdomain_local = "";
-        $plugin_cookies->login_local = "";
-        $plugin_cookies->password_local = "";
+        if (isset($plugin_cookies->ott_key_local)) {
+            $plugin_cookies->ott_key_local = '';
+        }
+        if (isset($plugin_cookies->subdomain_local)) {
+            $plugin_cookies->subdomain_local = '';
+        }
+        if (isset($plugin_cookies->login_local)) {
+            $plugin_cookies->login_local = '';
+        }
+        if (isset($plugin_cookies->password_local)) {
+            $plugin_cookies->password_local = '';
+        }
 
         if (isset($xml->channels_setup))
         {

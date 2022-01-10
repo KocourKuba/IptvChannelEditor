@@ -149,28 +149,40 @@ class StarnetSetupScreen extends AbstractControlsScreen
      */
     public function do_get_streaming_control_defs(&$plugin_cookies)
     {
+        hd_print("do_get_streaming_control_defs");
         $defs = array();
         //////////////////////////////////////
         // select device number
         if (self::$config->get_device_support()) {
-            $dev_num = isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';
-            $device_ops = array('1' => '1', '2' => '2', '3' => '3');
+            hd_print("device supported");
+            $dev_num = self::$config->get_device($plugin_cookies);
+            $device_ops = self::$config->get_device_opts();
             $this->add_combobox($defs, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
         }
 
         //////////////////////////////////////
+        // select server
+        if (self::$config->get_server_support()) {
+            hd_print("server supported");
+            $server = self::$config->get_server($plugin_cookies);
+            $server_ops = self::$config->get_server_opts($plugin_cookies);
+            $this->add_combobox($defs, 'server', 'Сервер:', $server, $server_ops, 0);
+        }
+
+        //////////////////////////////////////
+        // select quality
+        if (self::$config->get_quality_support()) {
+            hd_print("quality supported");
+            $quality = self::$config->get_quality($plugin_cookies);
+            $quality_ops = self::$config->get_quality_opts($plugin_cookies);
+            $this->add_combobox($defs, 'quality', 'Качество:', $quality, $quality_ops, 0);
+        }
+
+        //////////////////////////////////////
         // select stream type
-        $format_ops = array('hls' => 'HLS');
-        $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-        if (self::$config->get_hls2_support()) {
-            $format_ops['hls2'] = 'HLS2';
-        }
-
-        if (self::$config->get_mpeg_support()) {
-            $format_ops['mpeg'] = 'MPEG-TS';
-        }
-
+        $format_ops = self::$config->get_format_opts();
         if (count($format_ops) > 1) {
+            $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
             $this->add_combobox($defs, 'stream_format', 'Выбор потока:', $format, $format_ops, 0);
         }
 
@@ -305,7 +317,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'reset_path':
                     hd_print("reset path to default");
                     $plugin_cookies->ch_list_path = '';
-                    return $this->reload_channels();
+                    return $this->reload_channels($plugin_cookies);
 
                 case 'channels_list':
                     $old_value = $plugin_cookies->channels_list;
@@ -335,9 +347,27 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
                 case 'streaming_apply': // handle streaming settings dialog result
                     $plugin_cookies->buf_time = $user_input->buf_time;
-                    $plugin_cookies->format = $user_input->stream_format;
-                    $plugin_cookies->device_number = $user_input->devices;
-                    return $this->reload_channels();
+
+                    if (isset($user_input->stream_format)) {
+                        $plugin_cookies->format = $user_input->stream_format;
+                    }
+
+                    if (isset($user_input->devices) && $plugin_cookies->device_number !== $user_input->devices) {
+                        $plugin_cookies->device_number = $user_input->devices;
+                        self::$config->set_device($plugin_cookies);
+                    }
+
+                    if (isset($user_input->server) && $plugin_cookies->server !== $user_input->server) {
+                        $plugin_cookies->server = $user_input->server;
+                        self::$config->set_server($plugin_cookies);
+                    }
+
+                    if (isset($user_input->quality) && $plugin_cookies->quality !== $user_input->quality) {
+                        $plugin_cookies->quality = $user_input->quality;
+                        self::$config->set_quality($plugin_cookies);
+                    }
+
+                    return $this->reload_channels($plugin_cookies);
 
                 case 'ott_key_dialog': // show ott key dialog
                     $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
@@ -347,7 +377,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                 case 'ott_key_apply': // handle ott key dialog result
                     $plugin_cookies->ott_key = $user_input->ott_key;
                     $plugin_cookies->subdomain = $user_input->subdomain;
-                    return $this->reload_channels();
+                    return $this->reload_channels($plugin_cookies);
 
                 case 'login_dialog': // token dialog
                     $defs = $this->do_get_login_control_defs($plugin_cookies);
@@ -366,7 +396,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }
 
-                    return $this->reload_channels();
+                    return $this->reload_channels($plugin_cookies);
 
                 case 'pin_dialog': // token dialog
                     $defs = $this->do_get_pin_control_defs($plugin_cookies);
@@ -382,7 +412,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }
 
-                    return $this->reload_channels();
+                    return $this->reload_channels($plugin_cookies);
 
                 case 'pass_dialog': // show pass dialog
                     $defs = $this->do_get_pass_control_defs();
@@ -409,7 +439,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
     /**
      * @return array
      */
-    protected function reload_channels()
+    protected function reload_channels(&$plugin_cookies)
     {
         $this->tv->unload_channels();
         try {

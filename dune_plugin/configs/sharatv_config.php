@@ -10,6 +10,7 @@ class SharatvPluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
+        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/{TOKEN}';
     }

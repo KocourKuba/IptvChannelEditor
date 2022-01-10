@@ -10,8 +10,7 @@ class LightiptvPluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
-        static::$FEATURES[HLS2_SUPPORTED] = true;
+        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS', 'hls2' => 'HLS2', 'mpeg' => 'MPEG-TS');
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}';
         static::$FEATURES[SQUARE_ICONS] = true;

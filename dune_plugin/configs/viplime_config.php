@@ -10,7 +10,6 @@ class ViplimePluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8';
     }

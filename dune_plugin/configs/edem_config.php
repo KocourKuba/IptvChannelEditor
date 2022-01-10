@@ -8,6 +8,7 @@ class EdemPluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'OTT_KEY';
+        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
     }
 
@@ -41,13 +42,13 @@ class EdemPluginConfig extends DefaultConfig
     }
 
     /**
-     * Get information from the provider
-     * @param $plugin_cookies
+     * Get information from the account
+     * @param &$plugin_cookies
      * @param array &$account_data
-     * @param bool $force - ignored
-     * @return bool true if information collected and packages exists
+     * @param bool $force default false, force downloading playlist even it already cached
+     * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
+    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
 

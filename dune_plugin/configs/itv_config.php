@@ -10,7 +10,6 @@ class ItvPluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
         static::$FEATURES[BALANCE_SUPPORTED] = true;
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}';
@@ -73,13 +72,13 @@ class ItvPluginConfig extends DefaultConfig
     }
 
     /**
-     * Get information from the provider
-     * @param $plugin_cookies
+     * Get information from the account
+     * @param &$plugin_cookies
      * @param array &$account_data
-     * @param bool $force - ignored
-     * @return bool true if information collected and packages exists
+     * @param bool $force default false, force downloading playlist even it already cached
+     * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
+    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;

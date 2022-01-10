@@ -18,7 +18,6 @@ class AntifrizPluginConfig extends DefaultConfig
         parent::__construct();
 
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[MPEG_TS_SUPPORTED] = true;
         static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
         static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|';
@@ -71,11 +70,18 @@ class AntifrizPluginConfig extends DefaultConfig
         return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    public static function GetAccountInfo($plugin_cookies, &$account_data, $force = false)
+    /**
+     * Get information from the account
+     * @param &$plugin_cookies
+     * @param array &$account_data
+     * @param bool $force default false, force downloading playlist even it already cached
+     * @return bool true if information collected and status valid
+     */
+    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         if (parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
             $plugin_cookies->subdomain_local = $account_data['subdomain'];
-            $plugin_cookies->ott_key_local = $account_data['token'];
+            $plugin_cookies->token = $account_data['token'];
             return true;
         }
 
@@ -153,14 +159,14 @@ class AntifrizPluginConfig extends DefaultConfig
             foreach ($movieData->seasons as $season) {
                 $seasonNumber = $season->number;
                 foreach ($season->series as $episode) {
-                    $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $episode->files[0]->url, $plugin_cookies->ott_key_local);
+                    $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $episode->files[0]->url, $plugin_cookies->token);
                     hd_print("episode playback_url: $playback_url");
                     $episode_caption = "Сезон $seasonNumber| Серия $episode->number $episode->name";
                     $movie->add_series_data($episode->id, $episode_caption, $playback_url, true);
                 }
             }
         } else {
-            $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $movieData->files[0]->url, $plugin_cookies->ott_key_local);
+            $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $movieData->files[0]->url, $plugin_cookies->token);
             hd_print("movie playback_url: $playback_url");
             $movie->add_series_data($movie_id, $movieData->name, $playback_url, true);
         }
