@@ -101,8 +101,8 @@ bool uri_vidok::parse_access_info(const std::vector<BYTE>& json_data, std::list<
 		for (auto& item : js_account["packages"].items())
 		{
 			json val = item.value();
-			time_t unix_time = utils::char_to_int64(val.value("expire", ""));
-			const auto& value = fmt::format("expired {:%d.%m.%Y}", fmt::localtime(unix_time));
+			COleDateTime dt(utils::char_to_int64(val.value("expire", "")));
+			const auto& value = fmt::format("expired {%d.%d.%d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
 			params.emplace_back(utils::utf8_to_utf16(val.value("name", "")), utils::utf8_to_utf16(value));
 		}
 
