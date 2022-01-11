@@ -14,6 +14,6 @@ public:
 	std::wstring get_playlist_template(bool first = true) const override;
 	std::string get_epg_root(bool first = true) const override { return ""; }
 
-	bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const override;
+	bool parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const override;
 	bool has_epg2() const override { return true; };
 };

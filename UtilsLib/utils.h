@@ -70,6 +70,35 @@ inline std::wstring& wstring_tolower(std::wstring& s)
 }
 
 template<typename T>
+int char_to_int(const std::basic_string<T>& str, int base = 10)
+{
+	int value = 0;
+	try
+	{
+		value = std::stoul(str, nullptr, base);
+	}
+	catch (...)
+	{
+	}
+	return value;
+}
+
+template<typename T>
+__int64 char_to_int64(const std::basic_string<T>& str, int base = 10)
+{
+	__int64 value = 0;
+	try
+	{
+		value = std::stoull(str, nullptr, base);
+	}
+	catch (...)
+	{
+	}
+	return value;
+}
+
+
+template<typename T>
 inline std::basic_string<T>& string_ltrim(std::basic_string<T>& str, const T* chars)
 {
 	return str.erase(0, str.find_first_not_of(chars));

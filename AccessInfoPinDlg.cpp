@@ -140,12 +140,12 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 		std::vector<BYTE> data;
 		if (utils::DownloadFile(m_entry->stream_uri->get_access_url(L"", m_password.GetString()), data, &header) && !data.empty())
 		{
-			std::map<std::wstring, std::wstring> params;
+			std::list<AccountParams> params;
 			m_entry->stream_uri->parse_access_info(data, params);
-			for (const auto& pair : params)
+			for (const auto& item : params)
 			{
-				m_wndInfo.InsertItem(idx, pair.first.c_str());
-				m_wndInfo.SetItemText(idx++, 1, pair.second.c_str());
+				m_wndInfo.InsertItem(idx, item.name.c_str());
+				m_wndInfo.SetItemText(idx++, 1, item.value.c_str());
 			}
 		}
 	}

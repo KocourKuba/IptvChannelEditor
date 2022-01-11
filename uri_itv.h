@@ -16,5 +16,5 @@ public:
 	std::string get_epg_time_start(bool first = true) const override { return "startTime"; }
 	std::string get_epg_time_end(bool first = true) const override { return "stopTime"; }
 
-	bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const override;
+	bool parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const override;
 };

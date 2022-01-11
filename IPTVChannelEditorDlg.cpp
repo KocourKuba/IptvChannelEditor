@@ -1427,14 +1427,14 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 				if (val[tag_start].is_number())
 					time_start = val.value(tag_start, 0);
 				else if (val[tag_start].is_string())
-					time_start = rapidxml::char_to_int(val.value(tag_start, ""));
+					time_start = utils::char_to_int(val.value(tag_start, ""));
 			}
 			if (val.contains(tag_end))
 			{
 				if (val[tag_end].is_number())
 					time_end = val.value(tag_end, 0);
 				else if (val[tag_end].is_string())
-					time_end = rapidxml::char_to_int(val.value(tag_end, ""));
+					time_end = utils::char_to_int(val.value(tag_end, ""));
 			}
 
 			if (now < time_start || now > time_end) continue;

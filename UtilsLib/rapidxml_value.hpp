@@ -7,21 +7,6 @@
 namespace rapidxml
 {
 
-template<typename T>
-int char_to_int(const std::basic_string<T>& str, int base = 10)
-{
-	int value = 0;
-	try
-	{
-		value = std::stoul(str, nullptr, base);
-	}
-	catch (...)
-	{
-	}
-	return value;
-}
-
-
 /// <summary>
 /// Allocate node using memory_pool allocator
 /// </summary>
@@ -42,14 +27,14 @@ inline xml_node<>* alloc_node(memory_pool<>& alloc, const char* name, const char
 inline int get_value_int(const xml_node<>* node)
 {
 	if (node && node->value())
-		return char_to_int<char>(node->value());
+		return utils::char_to_int<char>(node->value());
 	return 0;
 }
 
 inline int get_value_int(const xml_attribute<>* attr)
 {
 	if (attr && attr->value())
-		return char_to_int<char>(attr->value());
+		return utils::char_to_int<char>(attr->value());
 	return 0;
 }
 

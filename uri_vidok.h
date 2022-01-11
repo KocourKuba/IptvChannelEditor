@@ -16,7 +16,7 @@ public:
 	std::string get_epg_time_end(bool first = true) const override { return "end"; }
 
 	std::wstring get_access_url(const std::wstring& login, const std::wstring& password) const override;
-	bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const override;
+	bool parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const override;
 
 	std::vector<std::tuple<StreamSubType, std::wstring>>& getSupportedStreamType() const override
 	{

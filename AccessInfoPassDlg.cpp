@@ -99,7 +99,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		pl_url = fmt::format(uri->get_playlist_template(), token);
 	}
 
-	std::map<std::wstring, std::wstring> params;
+	std::list<AccountParams> params;
 	if (m_type == StreamType::enOneOtt || m_type == StreamType::enSharaclub || m_type == StreamType::enVidok)
 	{
 		// currently supported only in sharaclub, oneott use this to obtain token
@@ -108,11 +108,23 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		{
 			uri->parse_access_info(data, params);
 
-			if (params.find(L"token") != params.end())
-				m_token = params[L"token"].c_str();
-
-			if (params.find(L"url") != params.end())
-				pl_url = params[L"url"];
+			for (auto it = params.begin(); it != params.end(); )
+			{
+				if (it->name == (L"token"))
+				{
+					m_token = it->value.c_str();
+					it = params.erase(it);
+				}
+				else if (it->name == (L"url"))
+				{
+					pl_url = it->value;
+					it = params.erase(it);
+				}
+				else
+				{
+					++it;
+				}
+			}
 		}
 	}
 
@@ -145,10 +157,10 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	m_wndInfo.DeleteAllItems();
 	m_wndInfo.InsertItem(idx, txt);
 	m_wndInfo.SetItemText(idx++, 1, m_status);
-	for (const auto& pair : params)
+	for (const auto& item : params)
 	{
-		m_wndInfo.InsertItem(idx, pair.first.c_str());
-		m_wndInfo.SetItemText(idx++, 1, pair.second.c_str());
+		m_wndInfo.InsertItem(idx, item.name.c_str());
+		m_wndInfo.SetItemText(idx++, 1, item.value.c_str());
 	}
 
 

@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "uri_itv.h"
 
-#include "UtilsLib\json.hpp"
 #include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
@@ -89,7 +88,7 @@ std::wstring uri_itv::get_playlist_template(bool first /*= true*/) const
 	return PLAYLIST_TEMPLATE;
 }
 
-bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const
+bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const
 {
 	using json = nlohmann::json;
 
@@ -98,15 +97,9 @@ bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std
 		json js = json::parse(json_data);
 
 		json js_data = js["user_info"];
-		for (auto& x : js_data.items())
-		{
-			if (x.value().is_number_integer())
-				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<int>()));
-			if (x.value().is_number_float())
-				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<float>()));
-			else if (x.value().is_string())
-				params.emplace(utils::utf8_to_utf16(x.key()), utils::utf8_to_utf16(x.value().get<std::string>()));
-		}
+		PutAccountParameter("login", js_data, params);
+		PutAccountParameter("pay_system", js_data, params);
+		PutAccountParameter("cash", js_data, params);
 
 		std::wstring subscription;
 		if (!js.contains("package_info"))
@@ -125,7 +118,7 @@ bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std
 			}
 		}
 
-		params.emplace(L"package_info", subscription);
+		params.emplace_back(L"package_info", subscription);
 
 		return true;
 	}
@@ -136,6 +129,10 @@ bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::map<std
 	catch (const json::out_of_range&)
 	{
 		// out of range errors may happen if provided sizes are excessive
+	}
+	catch (const json::type_error&)
+	{
+		// type errors may happen if provided sizes are excessive
 	}
 
 	return false;

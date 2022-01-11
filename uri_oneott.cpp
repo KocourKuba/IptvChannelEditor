@@ -98,7 +98,7 @@ std::wstring uri_oneott::get_playlist_template(bool first /*= true*/) const
 	return PLAYLIST_TEMPLATE;
 }
 
-bool uri_oneott::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const
+bool uri_oneott::parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const
 {
 	using json = nlohmann::json;
 
@@ -108,19 +108,8 @@ bool uri_oneott::parse_access_info(const std::vector<BYTE>& json_data, std::map<
 		if (js.contains("token"))
 		{
 			const auto& token = utils::utf8_to_utf16(js.value("token", ""));
-			params.emplace(L"token", token);
-			params.emplace(L"url", fmt::format(get_playlist_template(), token));
-		}
-
-		json js_data = js["data"];
-		for (auto& x : js_data.items())
-		{
-			if (x.value().is_number_integer())
-				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<int>()));
-			if (x.value().is_number_float())
-				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<float>()));
-			else if (x.value().is_string())
-				params.emplace(utils::utf8_to_utf16(x.key()), utils::utf8_to_utf16(x.value().get<std::string>()));
+			params.emplace_back(L"token", token);
+			params.emplace_back(L"url", fmt::format(get_playlist_template(), token));
 		}
 
 		return true;

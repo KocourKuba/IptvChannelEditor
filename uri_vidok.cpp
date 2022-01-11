@@ -2,7 +2,6 @@
 #include "uri_vidok.h"
 
 #include "UtilsLib\md5.h"
-#include "UtilsLib\json.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -87,22 +86,24 @@ std::wstring uri_vidok::get_access_url(const std::wstring& login, const std::wst
 	return fmt::format(ACCOUNT_TEMPLATE, token);
 }
 
-bool uri_vidok::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const
+bool uri_vidok::parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const
 {
 	using json = nlohmann::json;
 
 	try
 	{
 		json js = json::parse(json_data);
-		json js_data = js["account"];
-		for (auto& x : js_data.items())
+		json js_account = js["account"];
+
+		PutAccountParameter("login", js_account, params);
+		PutAccountParameter("balance", js_account, params);
+
+		for (auto& item : js_account["packages"].items())
 		{
-			if (x.value().is_number_integer())
-				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<int>()));
-			if (x.value().is_number_float())
-				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<float>()));
-			else if (x.value().is_string())
-				params.emplace(utils::utf8_to_utf16(x.key()), utils::utf8_to_utf16(x.value().get<std::string>()));
+			json val = item.value();
+			time_t unix_time = utils::char_to_int64(val.value("expire", ""));
+			const auto& value = fmt::format("expired {:%d.%m.%Y}", fmt::localtime(unix_time));
+			params.emplace_back(utils::utf8_to_utf16(val.value("name", "")), utils::utf8_to_utf16(value));
 		}
 
 		return true;

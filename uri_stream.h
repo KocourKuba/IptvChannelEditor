@@ -2,6 +2,7 @@
 #include "uri_base.h"
 #include "UtilsLib\utils.h"
 #include "UtilsLib\Crc32.h"
+#include "UtilsLib\json.hpp"
 
 struct TemplateParams
 {
@@ -12,6 +13,41 @@ struct TemplateParams
 	std::wstring host;
 	int shift_back = 0;
 };
+
+struct AccountParams
+{
+	AccountParams(const std::wstring& r_name, const std::wstring& r_value) : name(r_name), value(r_value) {}
+	std::wstring name;
+	std::wstring value;
+};
+
+inline void PutAccountParameter(const std::string& name, nlohmann::json& js_data, std::list<AccountParams>& params)
+{
+	try
+	{
+		const auto& js_param = js_data[name];
+
+		if (js_param.is_number_integer())
+			params.emplace_back(utils::utf8_to_utf16(name), std::to_wstring(js_param.get<int>()));
+		if (js_param.is_number_float())
+			params.emplace_back(utils::utf8_to_utf16(name), std::to_wstring(js_param.get<float>()));
+		else if (js_param.is_string())
+			params.emplace_back(utils::utf8_to_utf16(name), utils::utf8_to_utf16(js_param.get<std::string>()));
+	}
+	catch (const nlohmann::json::parse_error&)
+	{
+		// parse errors are ok, because input may be random bytes
+	}
+	catch (const nlohmann::json::out_of_range&)
+	{
+		// out of range errors may happen if provided sizes are excessive
+	}
+	catch (const nlohmann::json::type_error&)
+	{
+		// type errors may happen if provided sizes are excessive
+	}
+}
+
 
 /// <summary>
 /// Interface for stream
@@ -236,7 +272,7 @@ public:
 	/// parse access info
 	/// </summary>
 	/// <returns>bool</returns>
-	virtual bool parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const { return false; }
+	virtual bool parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const { return false; }
 
 	/// <summary>
 	/// get url template to obtain account playlist

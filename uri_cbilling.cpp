@@ -2,7 +2,6 @@
 #include "uri_cbilling.h"
 #include "PlayListEntry.h"
 
-#include "UtilsLib\json.hpp"
 #include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
@@ -98,33 +97,36 @@ std::wstring uri_cbilling::get_access_info_header() const
 	return ACCOUNT_HEADER_TEMPLATE;
 }
 
-bool uri_cbilling::parse_access_info(const std::vector<BYTE>& json_data, std::map<std::wstring, std::wstring>& params) const
+
+bool uri_cbilling::parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const
 {
+	using json = nlohmann::json;
+
 	try
 	{
-		nlohmann::json js = nlohmann::json::parse(json_data);
+		json js = json::parse(json_data);
 
-		nlohmann::json js_data = js["data"];
+		json js_data = js["data"];
 
-		for (auto& x : js_data.items())
-		{
-			if (x.value().is_number_integer())
-				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<int>()));
-			if (x.value().is_number_float())
-				params.emplace(utils::utf8_to_utf16(x.key()), std::to_wstring(x.value().get<float>()));
-			else if (x.value().is_string())
-				params.emplace(utils::utf8_to_utf16(x.key()), utils::utf8_to_utf16(x.value().get<std::string>()));
-		}
+		PutAccountParameter("package", js_data, params);
+		PutAccountParameter("end_date", js_data, params);
+		PutAccountParameter("devices_num", js_data, params);
+		PutAccountParameter("server", js_data, params);
+		PutAccountParameter("vod", js_data, params);
 
 		return true;
 	}
-	catch (const nlohmann::json::parse_error&)
+	catch (const json::parse_error&)
 	{
 		// parse errors are ok, because input may be random bytes
 	}
-	catch (const nlohmann::json::out_of_range&)
+	catch (const json::out_of_range&)
 	{
 		// out of range errors may happen if provided sizes are excessive
+	}
+	catch (const json::type_error&)
+	{
+		// type errors may happen if provided sizes are excessive
 	}
 
 	return false;

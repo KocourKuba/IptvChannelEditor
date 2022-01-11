@@ -19,6 +19,7 @@
 #include <filesystem>
 
 #include <fmt/xchar.h>
+#include <fmt/chrono.h>
 
 #include "Version.h"
 #include "framework.h"
