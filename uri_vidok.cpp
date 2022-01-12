@@ -102,7 +102,7 @@ bool uri_vidok::parse_access_info(const std::vector<BYTE>& json_data, std::list<
 		{
 			json val = item.value();
 			COleDateTime dt(utils::char_to_int64(val.value("expire", "")));
-			const auto& value = fmt::format("expired {%d.%d.%d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
+			const auto& value = fmt::format("expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
 			params.emplace_back(utils::utf8_to_utf16(val.value("name", "")), utils::utf8_to_utf16(value));
 		}
 
