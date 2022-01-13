@@ -105,9 +105,8 @@ class ItvPluginConfig extends DefaultConfig
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
-            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
-            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('http://api.itv.live/epg/%s/%s', $id, $epg_date); // epg_id date(Y-m-d)
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf('http://api.itv.live/epg/%s', $id); // epg_id)
         }
 
         return null;
