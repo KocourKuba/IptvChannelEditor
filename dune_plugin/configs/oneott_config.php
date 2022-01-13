@@ -92,12 +92,12 @@ class OneottPluginConfig extends DefaultConfig
         switch($type)
         {
             case 'first':
-                $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
-                hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-                return sprintf('http://epg.propg.net/%s/epg2/%s', $id, $epg_date); // epg_id date(Y-m-d)
-            case 'second':
                 hd_print("Fetching EPG for ID: '$id'");
                 return sprintf('http://epg.ott-play.com/1ott/epg/%s.json', $id);
+            case 'second':
+                $epg_date = gmdate(static::$EPG_PARSER_PARAMS['second']['date_format'], $day_start_ts);
+                hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+                return sprintf('http://epg.propg.net/%s/epg2/%s', $id, $epg_date); // epg_id date(Y-m-d)
         }
 
         return null;

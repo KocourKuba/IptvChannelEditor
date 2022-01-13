@@ -49,13 +49,12 @@ class SharavozPluginConfig extends DefaultConfig
 
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
-        $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
-        hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+        hd_print("Fetching EPG for ID: '$id'");
         switch ($type) {
             case 'first':
-                return sprintf('http://api.program.spr24.net/api/program?epg=%s&date=%s', $id, $epg_date); // epg_id date(Y-m-d)
+                return sprintf('http://api.program.spr24.net/api/program?epg=%s', $id);
             case 'second':
-                return sprintf('http://epg.arlekino.tv/api/program?epg=%s&date=%s', $id, $epg_date); // epg_id date(Ymd)
+                return sprintf('http://epg.arlekino.tv/api/program?epg=%s', $id);
         }
 
         return null;

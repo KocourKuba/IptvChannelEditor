@@ -92,9 +92,8 @@ class VidokPluginConfig extends DefaultConfig
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
-            $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
-            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf(self::API_HOST . 'epg?cid=%s&day=%s&token=%s', $id, $epg_date, $plugin_cookies->token); // epg_id date(Ymd)
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf(self::API_HOST . 'epg2?cid=%s&token=%s', $id, $plugin_cookies->token);
         }
 
         return null;
