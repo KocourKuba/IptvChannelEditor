@@ -3,7 +3,7 @@ require_once 'default_config.php';
 
 class VidokPluginConfig extends DefaultConfig
 {
-    const PLAYLIST_TV_URL = 'http://bddpv.plist.top/p/%s';
+    const PLAYLIST_TV_URL = 'http://vidok.tv/p/%s';
     const API_HOST = 'http://sapi.ott.st/v2.4/json/';
 
     protected static $settings;

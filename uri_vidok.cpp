@@ -10,7 +10,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://sapi.ott.st/v2.4/json/account?token={:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://bddpv.plist.top/p/{:s}";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://vidok.tv/p/{:s}";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
 static constexpr auto EPG1_TEMPLATE = L"http://sapi.ott.st/v2.4/xml/epg2?cid={:s}&token={:s}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://sapi.ott.st/v2.4/json/epg2?cid={:s}&token={:s}";
