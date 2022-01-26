@@ -607,10 +607,10 @@ class HD
         return $url;
     }
 
-    public static function LoadAndStoreJson($url, $to_array = true, $path = null)
+    public static function LoadAndStoreJson($url, $to_array = true, $path = null, $opts = null)
     {
         try {
-            $doc = self::http_get_document($url);
+            $doc = self::http_get_document($url, $opts);
             $categories = json_decode($doc, $to_array);
             if (empty($categories)) {
                 hd_print("empty playlist or not valid token");

@@ -63,6 +63,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
         }
 
         //////////////////////////////////////
+        // vportal dialog
+        if (self::$config->get_vod_portal_support()) {
+            $this->add_button($defs, 'portal_dialog', 'Активировать VPortal:', 'Ввести ключ', 0);
+        }
+
+        //////////////////////////////////////
         // channels path
         $display_path = $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
         if (strlen($display_path) > 30) {
@@ -258,6 +264,28 @@ class StarnetSetupScreen extends AbstractControlsScreen
     }
 
     /**
+     * portal dialog defs
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function do_get_portal_control_defs(&$plugin_cookies)
+    {
+        $defs = array();
+
+        $url = isset($plugin_cookies->mediateka) ? $plugin_cookies->mediateka : '';
+        $this->add_text_field($defs, 'url', 'Ссылка на VPortal:',
+            $url, false, false, false, true, 800);
+
+        $this->add_vgap($defs, 50);
+
+        $this->add_close_dialog_and_apply_button($defs, 'portal_apply', 'Применить', 300);
+        $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_vgap($defs, 10);
+
+        return $defs;
+    }
+
+    /**
      * adult pass dialog defs
      * @return array
      */
@@ -413,6 +441,16 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     }
 
                     return $this->reload_channels($plugin_cookies);
+
+                case 'portal_dialog': // portal dialog
+                    $defs = $this->do_get_portal_control_defs($plugin_cookies);
+                    return ActionFactory::show_dialog('Переключение регистра кнопкой Select',
+                        $defs, true);
+
+                case 'portal_apply': // handle portal dialog result
+                    $plugin_cookies->mediateka = $user_input->url;
+                    $msg = self::$config->ParsePortalUrl($user_input->url, $plugin_cookies) ? "Сохранено!" : "Ошибка обработки";
+                    return ActionFactory::show_title_dialog($msg);
 
                 case 'pass_dialog': // show pass dialog
                     $defs = $this->do_get_pass_control_defs();

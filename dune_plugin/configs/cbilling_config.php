@@ -307,7 +307,7 @@ class CbillingPluginConfig extends DefaultConfig
                 }
             }
             if (isset($entry->name)) {
-                $movie = new ShortMovie((string)$entry->id, (string)$entry->name, (string)$entry->poster);
+                $movie = new ShortMovie($entry->id, $entry->name, $entry->poster);
                 $genre_str = implode(", ", $genresArray);
                 $movie->info = "$entry->name|Год: $entry->year|Страна: $entry->country|Жанр: $genre_str|Рейтинг: $entry->rating";
                 $movies[] = $movie;

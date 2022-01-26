@@ -287,7 +287,7 @@ class SharaclubPluginConfig extends DefaultConfig
         $info_arr = $mov_array["info"];
         $genres = HD::ArrayToStr($info_arr["genre"]);
         $country = HD::ArrayToStr($info_arr["country"]);
-        $movie = new ShortMovie((string)$id, (string)$mov_array["name"], (string)$info_arr["poster"]);
+        $movie = new ShortMovie($id, $mov_array["name"], $info_arr["poster"]);
         $movie->info = $mov_array["name"] . "|Год: " . $info_arr["year"] . "|Страна: $country|Жанр: $genres|Рейтинг: " . $info_arr["rating"];
 
         return  $movie;

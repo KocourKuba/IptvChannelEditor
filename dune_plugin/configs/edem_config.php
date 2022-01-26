@@ -10,6 +10,21 @@ class EdemPluginConfig extends DefaultConfig
         static::$FEATURES[ACCOUNT_TYPE] = 'OTT_KEY';
         static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
+        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
+        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
+        static::$FEATURES[VOD_PORTAL_SUPPORTED] = true;
+        static::$FEATURES[VOD_LAZY_LOAD] = true;
+    }
+
+    public static function ParsePortalUrl($url, $plugin_cookies)
+    {
+        if (preg_match('|^portal::\[key:([^]]+)\](.+)$|', $url, $matches)) {
+            $plugin_cookies->vkey = $matches[1];
+            $plugin_cookies->vportal = $matches[2];
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -73,5 +88,180 @@ class EdemPluginConfig extends DefaultConfig
         }
 
         return null;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function TryLoadMovie($movie_id, $plugin_cookies)
+    {
+        hd_print("TryLoadMovie: $movie_id");
+
+        $movie = new Movie($movie_id);
+
+        $movieData = self::make_json_request($plugin_cookies,
+            array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset'=> 0,'limit' => 0));
+
+        if ($movieData === false) {
+            return $movie;
+        }
+
+        $movie->set_data(
+            $movieData->title,// caption,
+            '',// caption_original,
+            $movieData->description,// description,
+            $movieData->img,// poster_url,
+            $movieData->duration,// length,
+            $movieData->year,// year,
+            '',// director,
+            '',// scenario,
+            '',// actors,
+            '',// genres,
+            '',// rate_imdb,
+            '',// rate_kinopoisk,
+            $movieData->agelimit,// rate_mpaa,
+            '',// country,
+            ''// budget
+        );
+
+        if ($movieData->type !== 'multistream') {
+            //hd_print("movie playback_url: $movieData->url");
+            $movie->add_series_data($movie_id, $movieData->title, $movieData->url, true);
+            return $movie;
+        }
+
+        // collect series
+        foreach ($movieData->items as $item) {
+            // hd_print("episode playback_url: $episode->url");
+            $movie->add_series_data($item->fid, $item->title, $item->url, true);
+        }
+
+        return $movie;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
+    {
+        hd_print("fetch_vod_categories");
+
+        $doc = self::make_json_request($plugin_cookies);
+        if ($doc === false) {
+            return;
+        }
+
+        $category_list = array();
+        $category_index = array();
+
+        foreach ($doc->items as $node) {
+            $cat = new StarnetVodCategory((string)$node->request->fid, (string)$node->title);
+            $category_list[] = $cat;
+            $category_index[$cat->get_id()] = $cat;
+        }
+
+        $filters = array();
+        foreach ($doc->controls->filters as $filter) {
+            $title = $filter->title;
+            foreach ($filter->items as $item) {
+                $filters[$title][] = $item;
+            }
+        }
+
+        self::set_filters($filters);
+
+        hd_print("Categories read: " . count($category_list));
+        hd_print("Filters count: " . count($filters));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function getSearchList($keyword, $plugin_cookies)
+    {
+        hd_print("getSearchList $keyword");
+        $searchRes = self::make_json_request($plugin_cookies,
+            array('cmd' => "search", 'query' => $keyword));
+
+        return $searchRes === false ? array() : self::CollectSearchResult('search', $searchRes);
+    }
+
+    public static function getFilterList($params, $plugin_cookies)
+    {
+        hd_print("getFilterList: $params");
+        return array();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function getVideoList($idx, $plugin_cookies)
+    {
+        $val = static::get_next_page($idx, 0);
+        hd_print("getVideoList: $idx, $val");
+
+        $categories = self::make_json_request($plugin_cookies,
+            array('cmd' => "flicks", 'fid' => (int)$idx, 'offset' => (int)$val, 'limit' => 0));
+
+        return $categories === false ? array() : self::CollectSearchResult($idx, $categories);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected static function CollectSearchResult($idx, $json)
+    {
+        hd_print("CollectSearchResult: $idx");
+        $movies = array();
+
+        foreach ($json->items as $entry) {
+            if ($entry->type === 'next') {
+                self::get_next_page($idx, $entry->request->offset);
+            } else {
+                $movie = new ShortMovie($entry->request->fid, $entry->title, $entry->img);
+                $movie->info = "$entry->title|Год: $entry->year|Рейтинг: $entry->agelimit";
+                $movies[] = $movie;
+            }
+        }
+
+        hd_print("Movies found: " . count($movies));
+        return $movies;
+    }
+
+    protected static function make_json_request($plugin_cookies, $params = null, $to_array = false, $save_path = null)
+    {
+        if (empty($plugin_cookies->vportal) || empty($plugin_cookies->vkey)) {
+            return false;
+        }
+
+        if ($params !== null) {
+            $pairs = $params;
+        }
+
+        // fill default params
+        $pairs['key'] = $plugin_cookies->vkey;
+        $pairs['mac'] = "000000000000";
+        $pairs['app'] = "edem_dune_plugin." . static::$PLUGIN_VERSION;
+
+        $curl_opt = array
+        (
+            CURLOPT_HTTPHEADER => array("Content-Type: application/json"),
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($pairs)
+        );
+
+        // hd_print("post_data: " . json_encode($pairs));
+
+        return HD::LoadAndStoreJson($plugin_cookies->vportal, $to_array, $save_path, $curl_opt);
+    }
+
+    public static function add_movie_counter($key, $val)
+    {
+        // repeated count data
+        if (!array_key_exists($key, static::$movie_counter)) {
+            static::$movie_counter[$key] = 0;
+        }
+
+        static::$movie_counter[$key] += $val;
     }
 }

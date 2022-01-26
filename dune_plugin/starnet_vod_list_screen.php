@@ -33,11 +33,13 @@ class StarnetVodListScreen extends VodListScreen
         $movies = array();
         if (static::$config->get_movie_counter($key) <= 0 || static::$config->is_lazy_load_vod()) {
             if ($media_url->category_id === 'search') {
-                    $movies = static::$config->getSearchList($media_url->genre_id, $plugin_cookies);
-            } else if ($media_url->category_id === 'all') {
+                $movies = static::$config->getSearchList($media_url->genre_id, $plugin_cookies);
+            } else if ($media_url->category_id === 'filter') {
+                $movies = static::$config->getFilterList($media_url->genre_id, $plugin_cookies);
+            } else if ($media_url->category_id === 'all' || empty($media_url->genre_id)) {
                 $movies = static::$config->getVideoList($media_url->category_id, $plugin_cookies);
             } else {
-                $movies = static::$config->getVideoList($media_url->category_id . "_" . $media_url->genre_id, $plugin_cookies);
+                $movies = static::$config->getVideoList($key, $plugin_cookies);
             }
         }
 

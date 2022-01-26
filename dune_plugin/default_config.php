@@ -6,6 +6,7 @@ const ACCOUNT_TYPE = 'account';
 const TV_FAVORITES_SUPPORTED = 'tv_fav';
 const VOD_MOVIE_PAGE_SUPPORTED = 'vod_support';
 const VOD_FAVORITES_SUPPORTED = 'vod_fav';
+const VOD_PORTAL_SUPPORTED = 'vod_portal';
 const TS_OPTIONS = 'ts_options';
 const BALANCE_SUPPORTED = 'balance_support';
 const DEVICE_OPTIONS = 'device_options';
@@ -34,6 +35,7 @@ abstract class DefaultConfig
     protected static $pages = array();
     protected static $is_entered = false;
     protected static $movie_counter = array();
+    protected static $filters = array();
 
     /////////////////////////////////////////////////////////////////////////////
     // views constants
@@ -131,6 +133,11 @@ abstract class DefaultConfig
     public static function get_vod_support()
     {
         return self::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED];
+    }
+
+    public static function get_vod_portal_support()
+    {
+        return self::$FEATURES[VOD_PORTAL_SUPPORTED];
     }
 
     public static function get_format_opts()
@@ -246,13 +253,15 @@ abstract class DefaultConfig
         static::$movie_counter[$key] = $val;
     }
 
-    public static function get_next_page($idx)
+    public static function get_next_page($idx, $increment = 1)
     {
         if (!array_key_exists($idx, static::$pages)) {
             static::$pages[$idx] = 0;
         }
 
-        return ++static::$pages[$idx];
+        static::$pages[$idx] += $increment;
+
+        return static::$pages[$idx];
     }
 
     public static function is_lazy_load_vod()
@@ -260,9 +269,24 @@ abstract class DefaultConfig
         return static::$FEATURES[VOD_LAZY_LOAD];
     }
 
+    public static function get_filters()
+    {
+        return static::$filters;
+    }
+
+    public static function set_filters($filters)
+    {
+        static::$filters = $filters;
+    }
+
     public static function GET_BG_PICTURE()
     {
         return sprintf('plugin_file://icons/bg_%s.jpg', self::$PLUGIN_SHORT_NAME);
+    }
+
+    public static function ParsePortalUrl($url, $plugin_cookies)
+    {
+        return false;
     }
 
     /**
@@ -382,6 +406,12 @@ abstract class DefaultConfig
 
         hd_print("Movies found: " . count($movies));
         return $movies;
+    }
+
+    public static function getFilterList($params, $plugin_cookies)
+    {
+        //hd_print("getFilterList: $params");
+        return array();
     }
 
     /**
