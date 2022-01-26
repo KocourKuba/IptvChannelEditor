@@ -389,7 +389,6 @@ int main(int argc, char* argv[])
 	UpdateInfo info;
 	info.info_file = L"update.xml";
 	info.update_path = GetAppPath(L"Updates\\");
-	info.install_option_files = playlists;
 
 	if (!std::filesystem::create_directories(info.update_path, err) && err.value())
 	{
