@@ -449,8 +449,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
                 case 'portal_apply': // handle portal dialog result
                     $plugin_cookies->mediateka = $user_input->url;
-                    $msg = self::$config->ParsePortalUrl($user_input->url, $plugin_cookies) ? "Сохранено!" : "Ошибка обработки";
-                    return ActionFactory::show_title_dialog($msg);
+                    hd_print("portal info: $plugin_cookies->mediateka");
+                    return null;
 
                 case 'pass_dialog': // show pass dialog
                     $defs = $this->do_get_pass_control_defs();

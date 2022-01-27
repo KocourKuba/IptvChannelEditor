@@ -85,6 +85,11 @@ class StarnetVod extends AbstractVod
         return StarnetVodListScreen::get_media_url_str('search', $pattern);
     }
 
+    public function get_filter_media_url_str($pattern)
+    {
+        return StarnetVodListScreen::get_media_url_str('filter', $pattern);
+    }
+
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 

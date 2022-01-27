@@ -5,6 +5,7 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 class VodSeriesListScreen extends AbstractPreloadedRegularScreen
 {
     const ID = 'vod_series';
+    public static $config;
 
     public static function get_media_url_str($movie_id)
     {
@@ -90,7 +91,7 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
 					ViewParams::item_detailed_info_auto_line_break => true,
 					ViewParams::item_detailed_info_title_color => 10,
 					ViewParams::item_detailed_info_text_color => 15,
-                    ViewParams::background_path=> 'plugin_file://icons/bg.jpg',
+                    ViewParams::background_path=> self::$config->GET_BG_PICTURE(),
 					ViewParams::background_order => 0,
 					ViewParams::background_height => 1080,
 					ViewParams::background_width => 1920,

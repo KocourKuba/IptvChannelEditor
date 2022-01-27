@@ -16,15 +16,61 @@ class EdemPluginConfig extends DefaultConfig
         static::$FEATURES[VOD_LAZY_LOAD] = true;
     }
 
-    public static function ParsePortalUrl($url, $plugin_cookies)
+    public static function AddFilterUI(&$defs, $parent, $initial = -1)
     {
-        if (preg_match('|^portal::\[key:([^]]+)\](.+)$|', $url, $matches)) {
-            $plugin_cookies->vkey = $matches[1];
-            $plugin_cookies->vportal = $matches[2];
-            return true;
+        $filters = array("years", "genre");
+        hd_print("AddFilterUI: $initial");
+        $added = false;
+        foreach ($filters as $name) {
+            $filter = static::get_filter($name);
+            if ($filter === null) {
+                hd_print("AddFilterUI: no filters with '$name'");
+                continue;
+            }
+
+            $values = $filter['values'];
+            if (empty($values)) {
+                hd_print("AddFilterUI: no filters values for '$name'");
+                continue;
+            }
+
+            $idx = $initial;
+            if ($initial !== -1) {
+                $pairs = explode(" ", $initial);
+                foreach ($pairs as $pair) {
+                    if (strpos($pair, $name . ":") !== false && preg_match("|^$name:(.+)|", $pair, $m)) {
+                        $idx = array_search($m[1], $values) ?: -1;
+                        break;
+                    }
+                }
+            }
+
+            ControlFactory::add_combobox($defs, $parent, null, $name,
+                $filter['title'], $idx, $values, 600, true);
+
+            ControlFactory::add_vgap($defs, 30);
+            $added = true;
         }
 
-        return false;
+        return $added;
+    }
+
+    public static function CompileSaveFilterItem($user_input)
+    {
+        $filters = array("years", "genre");
+        $compiled_string = "";
+        foreach ($filters as $name) {
+            $filter = static::get_filter($name);
+            if ($filter !== null && $user_input->{$name} !== -1) {
+                if (!empty($compiled_string)) {
+                    $compiled_string .= " ";
+                }
+
+                $compiled_string .= $name . ":" . $filter['values'][$user_input->{$name}];
+            }
+        }
+
+        return $compiled_string;
     }
 
     /**
@@ -146,7 +192,7 @@ class EdemPluginConfig extends DefaultConfig
     {
         hd_print("fetch_vod_categories");
 
-        $doc = self::make_json_request($plugin_cookies);
+        $doc = self::make_json_request($plugin_cookies, null, true);
         if ($doc === false) {
             return;
         }
@@ -154,17 +200,21 @@ class EdemPluginConfig extends DefaultConfig
         $category_list = array();
         $category_index = array();
 
-        foreach ($doc->items as $node) {
-            $cat = new StarnetVodCategory((string)$node->request->fid, (string)$node->title);
+        foreach ($doc['items'] as $node) {
+            $cat = new StarnetVodCategory((string)$node['request']['fid'], (string)$node['title']);
             $category_list[] = $cat;
             $category_index[$cat->get_id()] = $cat;
         }
 
         $filters = array();
-        foreach ($doc->controls->filters as $filter) {
-            $title = $filter->title;
-            foreach ($filter->items as $item) {
-                $filters[$title][] = $item;
+        foreach ($doc['controls']['filters'] as $filter) {
+            $first = reset($filter['items']);
+            $key = key(array_diff_key($first['request'], array('filter' => 'on')));
+            $filters[$key] = array('title' => $filter['title'], 'values' => array());
+            $filters[$key]['values'][-1] = 'Нет';
+            foreach ($filter['items'] as $item) {
+                $val = $item['request'][$key];
+                $filters[$key]['values'][$val] = $item['title'];
             }
         }
 
@@ -183,45 +233,78 @@ class EdemPluginConfig extends DefaultConfig
         $searchRes = self::make_json_request($plugin_cookies,
             array('cmd' => "search", 'query' => $keyword));
 
-        return $searchRes === false ? array() : self::CollectSearchResult('search', $searchRes);
+        return $searchRes === false ? array() : self::CollectSearchResult($keyword, $searchRes);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function getFilterList($params, $plugin_cookies)
     {
         hd_print("getFilterList: $params");
-        return array();
+        $pairs = explode(" ", $params);
+        $post_params = array();
+        foreach ($pairs as $pair) {
+            if (preg_match("|^(.+):(.+)$|", $pair, $m)) {
+                $filter = static::get_filter($m[1]);
+                if ($filter !== null && !empty($filter['values'])) {
+                    $item_idx = array_search($m[2], $filter['values']);
+                    if ($item_idx !== false && $item_idx !== -1) {
+                        if ($m[1] === 'years') {
+                            $post_params[$m[1]] = (string)$item_idx;
+                        } else {
+                            $post_params[$m[1]] = (int)$item_idx;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (empty($post_params)) {
+            return false;
+        }
+
+        $post_params['filter'] = 'on';
+        $post_params['offset'] = static::get_next_page($params, 0);
+        $filterRes = self::make_json_request($plugin_cookies, $post_params);
+
+        return $filterRes === false ? array() : self::CollectSearchResult($params, $filterRes);
     }
 
     /**
      * @throws Exception
      */
-    public static function getVideoList($idx, $plugin_cookies)
+    public static function getVideoList($query_id, $plugin_cookies)
     {
-        $val = static::get_next_page($idx, 0);
-        hd_print("getVideoList: $idx, $val");
+        $val = static::get_next_page($query_id, 0);
+        hd_print("getVideoList: $query_id, $val");
 
         $categories = self::make_json_request($plugin_cookies,
-            array('cmd' => "flicks", 'fid' => (int)$idx, 'offset' => (int)$val, 'limit' => 0));
+            array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => (int)$val, 'limit' => 0));
 
-        return $categories === false ? array() : self::CollectSearchResult($idx, $categories);
+        return $categories === false ? array() : self::CollectSearchResult($query_id, $categories);
     }
 
     /**
      * @throws Exception
      */
-    protected static function CollectSearchResult($idx, $json)
+    protected static function CollectSearchResult($query_id, $json)
     {
-        hd_print("CollectSearchResult: $idx");
+        // hd_print("CollectSearchResult: $query_id");
         $movies = array();
 
+        $current_offset = static::get_next_page($query_id, 0);
         foreach ($json->items as $entry) {
             if ($entry->type === 'next') {
-                self::get_next_page($idx, $entry->request->offset);
+                self::get_next_page($query_id, $entry->request->offset);
             } else {
                 $movie = new ShortMovie($entry->request->fid, $entry->title, $entry->img);
                 $movie->info = "$entry->title|Год: $entry->year|Рейтинг: $entry->agelimit";
                 $movies[] = $movie;
             }
+        }
+        if ($current_offset === static::get_next_page($query_id, 0)) {
+            static::get_next_page($query_id, count($movies));
         }
 
         hd_print("Movies found: " . count($movies));
@@ -230,18 +313,23 @@ class EdemPluginConfig extends DefaultConfig
 
     protected static function make_json_request($plugin_cookies, $params = null, $to_array = false, $save_path = null)
     {
-        if (empty($plugin_cookies->vportal) || empty($plugin_cookies->vkey)) {
+        if (!isset($plugin_cookies->mediateka)
+            || !preg_match('|^portal::\[key:([^]]+)\](.+)$|', $plugin_cookies->mediateka, $matches)) {
+            hd_print("incorrect VPortal key");
             return false;
         }
 
+        list(, $key, $url) = $matches;
+
+        $pairs = array();
         if ($params !== null) {
             $pairs = $params;
         }
 
         // fill default params
-        $pairs['key'] = $plugin_cookies->vkey;
-        $pairs['mac'] = "000000000000";
-        $pairs['app'] = "edem_dune_plugin." . static::$PLUGIN_VERSION;
+        $pairs['key'] = $key;
+        $pairs['mac'] = "000000000000"; // dummy
+        $pairs['app'] = "IPTV_ChannelEditor_edem_dune_plugin";
 
         $curl_opt = array
         (
@@ -252,7 +340,7 @@ class EdemPluginConfig extends DefaultConfig
 
         // hd_print("post_data: " . json_encode($pairs));
 
-        return HD::LoadAndStoreJson($plugin_cookies->vportal, $to_array, $save_path, $curl_opt);
+        return HD::LoadAndStoreJson($url, $to_array, $save_path, $curl_opt);
     }
 
     public static function add_movie_counter($key, $val)

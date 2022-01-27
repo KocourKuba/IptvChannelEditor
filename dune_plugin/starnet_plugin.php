@@ -18,6 +18,7 @@ require_once 'starnet_tv.php';
 require_once 'starnet_vod.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_search_screen.php';
+require_once 'starnet_filter_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 require_once 'starnet_vod_list_screen.php';
 require_once 'starnet_main_screen.php';
@@ -74,6 +75,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
             StarnetVodListScreen::$config = $config;
             StarnetVodCategoryListScreen::$config = $config;
             VodMovieScreen::$config = $config;
+            VodSeriesListScreen::$config = $config;
 
             $vod = new StarnetVod();
             $this->vod = $vod;
@@ -84,6 +86,9 @@ class StarnetDunePlugin extends DefaultDunePlugin
             $this->add_screen(new StarnetVodListScreen($vod));
             $this->add_screen(new VodMovieScreen($vod));
             $this->add_screen(new VodSeriesListScreen($vod));
+            if ($config->get_vod_portal_support()) {
+                $this->add_screen(new StarnetFilterScreen($vod));
+            }
         }
     }
 }

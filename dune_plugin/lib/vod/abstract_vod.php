@@ -339,6 +339,17 @@ abstract class AbstractVod implements Vod
     }
 
     ///////////////////////////////////////////////////////////////////////
+    // Filter.
+
+    /**
+     * @throws Exception
+     */
+    public function get_filter_media_url_str($pattern)
+    {
+        throw new Exception('Not implemented');
+    }
+
+    ///////////////////////////////////////////////////////////////////////
     // Folder views.
 
     /**

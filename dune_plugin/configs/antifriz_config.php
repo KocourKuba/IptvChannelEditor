@@ -231,17 +231,17 @@ class AntifrizPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($idx, $plugin_cookies)
+    public static function getVideoList($query_id, $plugin_cookies)
     {
-        hd_print("getVideoList: $idx");
-        $val = static::get_next_page($idx);
+        hd_print("getVideoList: $query_id");
+        $val = static::get_next_page($query_id);
 
-        if ($idx === 'all') {
+        if ($query_id === 'all') {
             $url = "/filter/new?page=$val";
         } else {
-            $arr = explode("_", $idx);
+            $arr = explode("_", $query_id);
             if ($arr === false) {
-                $genre_id = $idx;
+                $genre_id = $query_id;
             } else {
                 $genre_id = $arr[1];
             }

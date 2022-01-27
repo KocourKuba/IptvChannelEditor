@@ -250,14 +250,14 @@ class SharaclubPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($idx, $plugin_cookies)
+    public static function getVideoList($query_id, $plugin_cookies)
     {
         $movies = array();
         $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
 
-        $arr = explode("_", $idx);
+        $arr = explode("_", $query_id);
         if ($arr === false) {
-            $category_id = $idx;
+            $category_id = $query_id;
         } else {
             $category_id = $arr[0];
         }

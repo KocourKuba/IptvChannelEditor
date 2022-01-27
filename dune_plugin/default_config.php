@@ -56,6 +56,9 @@ abstract class DefaultConfig
     const SEARCH_MOVIES_CATEGORY_CAPTION = 'Поиск';
     const SEARCH_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/search_movie.png';
 
+    const FILTER_MOVIES_CATEGORY_CAPTION = 'Фильтр';
+    const FILTER_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/filter_movie.png';
+
     const DEFAULT_CHANNEL_ICON_PATH = 'plugin_file://icons/channel_unset.png';
     const DEFAULT_MOV_ICON_PATH = 'plugin_file://icons/mov_unset.png';
 
@@ -269,9 +272,9 @@ abstract class DefaultConfig
         return static::$FEATURES[VOD_LAZY_LOAD];
     }
 
-    public static function get_filters()
+    public static function get_filter($name)
     {
-        return static::$filters;
+        return isset(static::$filters[$name]) ? static::$filters[$name] : null;
     }
 
     public static function set_filters($filters)
@@ -284,9 +287,14 @@ abstract class DefaultConfig
         return sprintf('plugin_file://icons/bg_%s.jpg', self::$PLUGIN_SHORT_NAME);
     }
 
-    public static function ParsePortalUrl($url, $plugin_cookies)
+    public static function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         return false;
+    }
+
+    public static function CompileSaveFilterItem($user_input)
+    {
+        return null;
     }
 
     /**
@@ -417,7 +425,7 @@ abstract class DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($idx, $plugin_cookies)
+    public static function getVideoList($query_id, $plugin_cookies)
     {
         $movies = array();
         $m3u_lines = static::FetchVodM3U($plugin_cookies);
@@ -433,8 +441,8 @@ abstract class DefaultConfig
                 $category = 'Без категории';
             }
 
-            $arr = explode("_", $idx);
-            $category_id = ($arr === false) ? $idx : $arr[0];
+            $arr = explode("_", $query_id);
+            $category_id = ($arr === false) ? $query_id : $arr[0];
             if ($category_id === $category) {
                 $movies[] = new ShortMovie((string)$i, $caption, $logo);
             }

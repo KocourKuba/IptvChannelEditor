@@ -26,6 +26,8 @@ interface Vod
 
     public function get_search_media_url_str($pattern);
 
+    public function get_filter_media_url_str($pattern);
+
     public function get_vod_list_folder_views();
 
     public function get_vod_genres_folder_views();

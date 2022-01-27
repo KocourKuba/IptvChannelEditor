@@ -56,7 +56,7 @@ abstract class VodListScreen extends AbstractRegularScreen
                 $defs = array();
                 ControlFactory::add_text_field($defs,
                     $this, null, 'new_search', '',
-                    $media_url->name, 0, 0, 1, 1, 1300,0,1);
+                    $media_url->name, 0, 0, 1, 1, 1300,0,true);
                 ControlFactory::add_vgap($defs, 500);
                 return ActionFactory::show_dialog('Поиск', $defs, true);
 

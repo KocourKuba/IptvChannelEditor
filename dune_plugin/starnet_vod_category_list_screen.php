@@ -52,8 +52,8 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
         $items = array();
 
+        // Favorites
         if (!isset($media_url->category_id) && self::$config->get_vod_fav_support()) {
-
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => VodFavoritesScreen::get_media_url_str(),
@@ -80,28 +80,45 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
             )
         );
 
-        foreach ($category_list as $category) {
-            $id = $category->get_id();
-            if (!is_null($category->get_sub_categories())) {
-                $media_url_str = self::get_media_url_str($id);
-            } else  if($id === 'all' || $id === 'search') {
-                $media_url_str = StarnetVodListScreen::get_media_url_str($id, null);
-            } else if ($category->get_parent() !== null) {
-                $media_url_str = StarnetVodListScreen::get_media_url_str($category->get_parent()->get_id(), $id);
-            } else {
-                $media_url_str = StarnetVodListScreen::get_media_url_str($id, null);
-            }
-
+        // Filter
+        if (!isset($media_url->category_id) && self::$config->get_vod_portal_support()) {
             $items[] = array
             (
-                PluginRegularFolderItem::media_url => $media_url_str,
-                PluginRegularFolderItem::caption => $category->get_caption(),
+                PluginRegularFolderItem::media_url => 'filter_screen',
+                PluginRegularFolderItem::caption => DefaultConfig::FILTER_MOVIES_CATEGORY_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => $category->get_icon_path(),
-                    ViewItemParams::item_detailed_icon_path => $category->get_icon_path(),
+                    ViewItemParams::icon_path => DefaultConfig::FILTER_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::item_caption_color => 14,
+                    ViewItemParams::item_detailed_icon_path => DefaultConfig::FILTER_MOVIES_CATEGORY_ICON_PATH,
                 )
             );
+        }
+
+        if (!empty($category_list)) {
+            foreach ($category_list as $category) {
+                $id = $category->get_id();
+                if (!is_null($category->get_sub_categories())) {
+                    $media_url_str = self::get_media_url_str($id);
+                } else if ($id === 'all' || $id === 'search' || $id === 'filter') {
+                    $media_url_str = StarnetVodListScreen::get_media_url_str($id, null);
+                } else if ($category->get_parent() !== null) {
+                    $media_url_str = StarnetVodListScreen::get_media_url_str($category->get_parent()->get_id(), $id);
+                } else {
+                    $media_url_str = StarnetVodListScreen::get_media_url_str($id, null);
+                }
+
+                $items[] = array
+                (
+                    PluginRegularFolderItem::media_url => $media_url_str,
+                    PluginRegularFolderItem::caption => $category->get_caption(),
+                    PluginRegularFolderItem::view_item_params => array
+                    (
+                        ViewItemParams::icon_path => $category->get_icon_path(),
+                        ViewItemParams::item_detailed_icon_path => $category->get_icon_path(),
+                    )
+                );
+            }
         }
 
         return $items;
