@@ -125,6 +125,12 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	GetConfig().ReadAppSettingsRegistry();
 
+	if (GetConfig().get_string(true, REG_OUTPUT_PATH).empty())
+		GetConfig().set_string(true, REG_OUTPUT_PATH, GetAppPath());
+
+	if (GetConfig().get_string(true, REG_LISTS_PATH).empty())
+		GetConfig().set_string(true, REG_LISTS_PATH, GetAppPath(_T("playlists\\")));
+
 	CCommandLineInfoEx cmdInfo;
 	ParseCommandLine(cmdInfo);
 	if (cmdInfo.m_bMakeAll)
@@ -378,7 +384,7 @@ bool PackPlugin(const StreamType plugin_type,
 	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
 	if (!res)
 	{
-		AfxMessageBox(_T("Some file missing!!!"), MB_OK | MB_ICONSTOP);
+		AfxMessageBox(IDS_STRING_ERR_FILE_MISSING, MB_OK | MB_ICONSTOP);
 		return false;
 	}
 
@@ -392,13 +398,19 @@ bool PackPlugin(const StreamType plugin_type,
 		if (showMessage)
 		{
 			std::filesystem::remove(pluginFile, err);
-			AfxMessageBox(IDS_STRING_ERR_FAILED_PACK, MB_OK | MB_ICONSTOP);
+			CString msg;
+			msg.Format(IDS_STRING_ERR_FAILED_PACK, pluginFile.c_str());
+			AfxMessageBox(msg, MB_OK | MB_ICONSTOP);
 		}
 		return false;
 	}
 
 	if (showMessage)
-		AfxMessageBox(IDS_STRING_INFO_CREATE_SUCCESS, MB_OK);
+	{
+		CString msg;
+		msg.Format(IDS_STRING_INFO_CREATE_SUCCESS, output_path.c_str());
+		AfxMessageBox(msg, MB_OK);
+	}
 
 	return true;
 }

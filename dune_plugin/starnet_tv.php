@@ -86,7 +86,7 @@ class StarnetPluginTv extends AbstractTv
             throw new Exception('Invalid XML document');
         }
 
-        // read embedded access info
+        // clear saved embedded info
         if (isset($plugin_cookies->ott_key_local)) {
             $plugin_cookies->ott_key_local = '';
         }
@@ -99,9 +99,12 @@ class StarnetPluginTv extends AbstractTv
         if (isset($plugin_cookies->password_local)) {
             $plugin_cookies->password_local = '';
         }
+        if (isset($plugin_cookies->mediateka_local)) {
+            $plugin_cookies->mediateka_local = '';
+        }
 
-        if (isset($xml->channels_setup))
-        {
+        // read embedded access info
+        if (isset($xml->channels_setup)) {
             hd_print("Overriding access settings found in playlist: $channels_list");
 
             if (isset($xml->channels_setup->access_key)) {
@@ -123,6 +126,11 @@ class StarnetPluginTv extends AbstractTv
                 $plugin_cookies->password_local = (string)$xml->channels_setup->access_password;
                 hd_print("password: " . base64_encode($plugin_cookies->password_local));
             }
+        }
+
+        if (isset($xml->portal_setup, $xml->portal_setup->portal_key)) {
+            $plugin_cookies->mediateka_local = (string)$xml->portal_setup->portal_key;
+            hd_print("portal_key: $plugin_cookies->mediateka_local");
         }
 
         // Create channels and groups

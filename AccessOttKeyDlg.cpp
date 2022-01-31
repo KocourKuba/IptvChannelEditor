@@ -22,6 +22,7 @@ IMPLEMENT_DYNAMIC(CAccessOttKeyDlg, CDialogEx)
 BEGIN_MESSAGE_MAP(CAccessOttKeyDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_URL, &CAccessOttKeyDlg::OnEnChangeEditPlaylistUrl)
 	ON_BN_CLICKED(IDC_BUTTON_GET, &CAccessOttKeyDlg::OnBnClickedBtnGet)
+	ON_BN_CLICKED(IDC_CHECK_EMBED_VP, &CAccessOttKeyDlg::OnBnClickedCheckEmbedVp)
 END_MESSAGE_MAP()
 
 CAccessOttKeyDlg::CAccessOttKeyDlg(CWnd* pParent /*=nullptr*/)
@@ -41,11 +42,17 @@ void CAccessOttKeyDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_KEY, m_accessKey);
 	DDX_Text(pDX, IDC_EDIT_DOMAIN, m_domain);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_URL, m_url);
+	DDX_Text(pDX, IDC_EDIT_VP_KEY, m_vportal);
+	DDX_Control(pDX, IDC_EDIT_VP_KEY, m_wndVPortal);
+	DDX_Check(pDX, IDC_CHECK_EMBED_VP, m_bEmbed_vp);
 }
 
 BOOL CAccessOttKeyDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
+
+	OnBnClickedCheckEmbedVp();
+	OnBnClickedBtnGet();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
@@ -96,4 +103,11 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 	}
 
 	UpdateData(FALSE);
+}
+
+void CAccessOttKeyDlg::OnBnClickedCheckEmbedVp()
+{
+	UpdateData(TRUE);
+
+	m_wndVPortal.EnableWindow(m_bEmbed_vp);
 }

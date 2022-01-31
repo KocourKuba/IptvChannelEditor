@@ -445,6 +445,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_login.clear();
 	m_password.clear();
 	m_host.clear();
+	m_portal.clear();
+	m_embedded_info = FALSE;
 
 	m_wndPlaylist.ResetContent();
 
@@ -459,6 +461,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_wndPlaylist.AddString(_T("Edem Thematic"));
 			m_token = GetConfig().get_string(false, REG_TOKEN);
 			m_domain = GetConfig().get_string(false, REG_DOMAIN);
+			m_portal = GetConfig().get_string(false, REG_PORTAL);
 			break;
 		}
 		case StreamType::enAntifriz:
@@ -1572,9 +1575,6 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 {
 	set_allow_save(FALSE);
 
-	m_categoriesMap.clear();
-	m_channelsMap.clear();
-
 	int lst_idx = m_wndChannels.GetCurSel();
 	if (lst_idx == CB_ERR)
 		return false;
@@ -1602,10 +1602,8 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		return false;
 	}
 
-	auto i_node = doc.first_node(utils::TV_INFO);
-
 	m_embedded_info = FALSE;
-
+	auto i_node = doc.first_node(utils::TV_INFO);
 	auto info_node = i_node->first_node(utils::VERSION_INFO);
 	if (!info_node || rapidxml::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
 	{
@@ -1616,7 +1614,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	auto setup_node = i_node->first_node(utils::CHANNELS_SETUP);
 	if (setup_node)
 	{
-		m_embedded_info = TRUE;
+		m_embedded_info |= EmbedToken;
 
 		switch (plugin_type)
 		{
@@ -1649,6 +1647,13 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			default:
 				break;
 		}
+	}
+
+	auto portal_node = i_node->first_node(utils::PORTAL_SETUP);
+	if (portal_node)
+	{
+		m_embedded_info |= EmbedPortal;
+		m_portal = rapidxml::get_value_wstring(portal_node->first_node(utils::PORTAL_KEY));
 	}
 
 	const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
@@ -2865,28 +2870,34 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 bool CIPTVChannelEditorDlg::SetupOttKey(bool loaded)
 {
 	CAccessOttKeyDlg dlg;
-	dlg.m_bEmbed = m_embedded_info;
+	dlg.m_bEmbed = (m_embedded_info & EmbedToken) ? TRUE : FALSE;
+	dlg.m_bEmbed_vp = (m_embedded_info & EmbedPortal) ? TRUE : FALSE;
 	dlg.m_streamType = GetConfig().get_plugin_type();
 	dlg.m_accessKey = m_token.c_str();
 	dlg.m_domain = m_domain.c_str();
 	dlg.m_url = GetConfig().get_string(false, REG_ACCESS_URL).c_str();
+	dlg.m_vportal = m_portal.c_str();
 
 	if (dlg.DoModal() == IDOK)
 	{
 		loaded = dlg.m_status == _T("Ok");
 
-		if (m_embedded_info != dlg.m_bEmbed)
+		if (m_embedded_info != ((dlg.m_bEmbed ? EmbedToken : 0) | (dlg.m_bEmbed_vp ? EmbedPortal : 0)))
 		{
-			m_embedded_info = dlg.m_bEmbed;
+			m_embedded_info = 0;
+			m_embedded_info |= dlg.m_bEmbed ? EmbedToken : 0;
+			m_embedded_info |= dlg.m_bEmbed_vp ? EmbedPortal : 0;
 			set_allow_save(TRUE);
 		}
 
-		GetConfig().set_string(false, m_embedded_info ? REG_TOKEN_EMBEDDED : REG_TOKEN, dlg.m_accessKey.GetString());
-		GetConfig().set_string(false, m_embedded_info ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, dlg.m_domain.GetString());
+		GetConfig().set_string(false, dlg.m_bEmbed ? REG_TOKEN_EMBEDDED : REG_TOKEN, dlg.m_accessKey.GetString());
+		GetConfig().set_string(false, dlg.m_bEmbed ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, dlg.m_domain.GetString());
 		GetConfig().set_string(false, REG_ACCESS_URL, dlg.m_url.GetString());
+		GetConfig().set_string(false, REG_PORTAL, dlg.m_vportal.GetString());
 
-		m_token = GetConfig().get_string(false, m_embedded_info ? REG_TOKEN_EMBEDDED : REG_TOKEN);
-		m_domain = GetConfig().get_string(false, m_embedded_info ? REG_DOMAIN_EMBEDDED : REG_DOMAIN);
+		m_token = GetConfig().get_string(false, dlg.m_bEmbed ? REG_TOKEN_EMBEDDED : REG_TOKEN);
+		m_domain = GetConfig().get_string(false, dlg.m_bEmbed ? REG_DOMAIN_EMBEDDED : REG_DOMAIN);
+		m_portal = GetConfig().get_string(false, REG_PORTAL);
 	}
 
 	return loaded;
@@ -3177,7 +3188,7 @@ void CIPTVChannelEditorDlg::OnSave()
 	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
 
-	int lst_idx = m_wndChannels.GetCurSel();
+	int lst_idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
 	if (lst_idx == -1)
 	{
 		const auto& plugin_name = GetConfig().GetCurrentPluginName();
@@ -3216,7 +3227,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		info_node->append_node(rapidxml::alloc_node(doc, utils::LIST_VERSION, std::to_string(CHANNELS_LIST_VERSION).c_str()));
 		tv_info->append_node(info_node);
 
-		if (m_embedded_info)
+		if ((m_embedded_info & EmbedToken) == EmbedToken)
 		{
 			auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
 			switch (GetConfig().get_plugin_type())
@@ -3250,6 +3261,22 @@ void CIPTVChannelEditorDlg::OnSave()
 					break;
 			}
 			tv_info->append_node(setup_node);
+		}
+
+		if ((m_embedded_info & EmbedPortal) == EmbedPortal)
+		{
+			// Currently only for Edem/iLook
+			auto portal_node = doc.allocate_node(rapidxml::node_element, utils::PORTAL_SETUP);
+			switch (GetConfig().get_plugin_type())
+			{
+				case StreamType::enEdem: // ott_key
+					portal_node->append_node(rapidxml::alloc_node(doc, utils::PORTAL_KEY, utils::utf16_to_utf8(m_portal).c_str()));
+					break;
+				default:
+					break;
+			}
+
+			tv_info->append_node(portal_node);
 		}
 
 		// create <tv_categories> node

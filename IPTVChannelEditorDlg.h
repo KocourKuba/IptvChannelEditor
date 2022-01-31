@@ -12,6 +12,9 @@
 
 #include "UtilsLib\json.hpp"
 
+constexpr auto EmbedToken = 0x1;
+constexpr auto EmbedPortal = 0x02;
+
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
 {
@@ -307,6 +310,7 @@ private:
 	std::wstring m_login;
 	std::wstring m_password;
 	std::wstring m_host;
+	std::wstring m_portal;
 
 	HACCEL m_hAccel = nullptr;
 	CTreeCtrlEx* m_lastTree = nullptr;

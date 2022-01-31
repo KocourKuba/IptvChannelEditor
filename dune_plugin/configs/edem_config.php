@@ -313,9 +313,18 @@ class EdemPluginConfig extends DefaultConfig
 
     protected static function make_json_request($plugin_cookies, $params = null, $to_array = false, $save_path = null)
     {
-        if (!isset($plugin_cookies->mediateka)
-            || !preg_match('|^portal::\[key:([^]]+)\](.+)$|', $plugin_cookies->mediateka, $matches)) {
-            hd_print("incorrect VPortal key");
+        $mediateka = '';
+        if (isset($plugin_cookies->mediateka_local)) {
+            $mediateka = $plugin_cookies->mediateka_local;
+        }
+
+        if (empty($mediateka) && isset($plugin_cookies->mediateka)) {
+            $mediateka = $plugin_cookies->mediateka;
+        }
+
+        if (empty($mediateka)
+            || !preg_match('|^portal::\[key:([^]]+)\](.+)$|', $mediateka, $matches)) {
+            hd_print("incorrect or empty VPortal key");
             return false;
         }
 

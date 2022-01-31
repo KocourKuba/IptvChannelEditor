@@ -68,6 +68,7 @@ constexpr auto REG_DOMAIN              = _T("Domain");
 constexpr auto REG_DOMAIN_EMBEDDED     = _T("DomainEmbedded");
 constexpr auto REG_ACCESS_URL          = _T("AccessUrl");
 constexpr auto REG_HOST                = _T("Host");
+constexpr auto REG_PORTAL              = _T("VPortal");
 constexpr auto REG_HOST_EMBEDDED       = _T("HostEmbedded");
 constexpr auto REG_FILTER_STRING_S     = _T("FilterString");
 constexpr auto REG_FILTER_STRING_H     = _T("FilterStringHide");

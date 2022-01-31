@@ -26,16 +26,20 @@ protected:
 
 	afx_msg void OnEnChangeEditPlaylistUrl();
 	afx_msg void OnBnClickedBtnGet();
+	afx_msg void OnBnClickedCheckEmbedVp();
 
 public:
 	CString m_accessKey;
 	CString m_domain;
 	CString m_url;
 	CString m_status;
+	CString m_vportal;
 	StreamType m_streamType;
 	BOOL m_bEmbed = FALSE;
+	BOOL m_bEmbed_vp = FALSE;
 
 protected:
 	CButton m_wndGet;
+	CEdit m_wndVPortal;
 	CMFCEditBrowseCtrlEx m_wndUrl;
 };

@@ -12,10 +12,12 @@ static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 static constexpr auto VERSION_INFO = "version_info";
 static constexpr auto LIST_VERSION = "list_version";
 static constexpr auto CHANNELS_SETUP = "channels_setup";
+static constexpr auto PORTAL_SETUP = "portal_setup";
 static constexpr auto ACCESS_TOKEN = "access_key";
 static constexpr auto ACCESS_DOMAIN = "access_domain";
 static constexpr auto ACCESS_LOGIN = "access_login";
 static constexpr auto ACCESS_PASSWORD = "access_password";
+static constexpr auto PORTAL_KEY = "portal_key";
 
 static constexpr auto TV_INFO = "tv_info";
 static constexpr auto TV_CATEGORIES = "tv_categories";
