@@ -102,6 +102,59 @@ class ItvPluginConfig extends DefaultConfig
         return isset($account_data['package_info']) && !empty($account_data['package_info']);
     }
 
+    public static function AddSubscriptionUI(&$defs, $plugin_cookies)
+    {
+        $account_data = array();
+        $result = self::GetAccountInfo($plugin_cookies, $account_data, true);
+        if ($result === false || empty($account_data)) {
+            hd_print("Can't get account status");
+            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
+            $text = explode('\\n', $text);
+            $text = array_values($text);
+
+            ControlFactory::add_label($defs, 'Ошибка!', $text[0]);
+            ControlFactory::add_label($defs, 'Описание:', $text[1]);
+            return;
+        }
+
+        $title = 'Пакеты: ';
+
+        ControlFactory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' $');
+        $packages = $account_data['package_info'];
+        if (count($packages) === 0) {
+            ControlFactory::add_label($defs, $title, 'Нет пакетов');
+            return;
+        }
+
+        $list = array();
+        foreach ($packages as $item) {
+            $list[] = $item['name'];
+        }
+
+        $emptyTitle = str_repeat(' ', strlen($title));
+        $list_collected = array();
+        $isFirstLabel = true;
+        foreach($list as $item) {
+            $list_collected[] = $item;
+            $collected = implode(', ', $list_collected);
+            if (strlen($collected) < 30) {
+                continue;
+            }
+
+            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected);
+
+            if ($isFirstLabel) {
+                $isFirstLabel = false;
+            }
+
+            $list_collected = array();
+        }
+
+        if (count($list_collected) !== 0) {
+            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
+        }
+    }
+
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {

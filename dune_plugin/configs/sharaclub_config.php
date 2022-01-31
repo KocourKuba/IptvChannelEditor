@@ -106,6 +106,62 @@ class SharaclubPluginConfig extends DefaultConfig
         return isset($account_data['status']) && $account_data['status'] === 'ok';
     }
 
+    public static function AddSubscriptionUI(&$defs, $plugin_cookies)
+    {
+        $account_data = array();
+        $result = self::GetAccountInfo($plugin_cookies, $account_data, true);
+        if ($result === false || empty($account_data)) {
+            hd_print("Can't get account status");
+            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
+            $text = explode('\\n', $text);
+            $text = array_values($text);
+
+            ControlFactory::add_label($defs, 'Ошибка!', $text[0]);
+            ControlFactory::add_label($defs, 'Описание:', $text[1]);
+            return;
+        }
+
+        $title = 'Пакеты: ';
+
+        ControlFactory::add_label($defs, 'Баланс:', $account_data['data']['money'] . ' руб.');
+        ControlFactory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.');
+        $packages = $account_data['data']['abon'];
+        $str_len = strlen($packages);
+        if ($str_len === 0) {
+            ControlFactory::add_label($defs, $title, 'Нет пакетов');
+            return;
+        }
+
+        if ($str_len < 30) {
+            ControlFactory::add_label($defs, $title, $packages);
+            return;
+        }
+
+        $list = explode(', ', $packages);
+        $emptyTitle = str_repeat(' ', strlen($title));
+        $list_collected = array();
+        $isFirstLabel = true;
+        foreach($list as $item) {
+            $list_collected[] = $item;
+            $collected = implode(', ', $list_collected);
+            if (strlen($collected) < 30) {
+                continue;
+            }
+
+            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected);
+
+            if ($isFirstLabel) {
+                $isFirstLabel = false;
+            }
+
+            $list_collected = array();
+        }
+
+        if (count($list_collected) !== 0) {
+            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
+        }
+    }
+
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         hd_print("Fetching EPG for ID: '$id'");

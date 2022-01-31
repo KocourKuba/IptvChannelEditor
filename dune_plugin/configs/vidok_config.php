@@ -89,6 +89,36 @@ class VidokPluginConfig extends DefaultConfig
         return false;
     }
 
+    public static function AddSubscriptionUI(&$defs, $plugin_cookies)
+    {
+        $account_data = array();
+        $result = self::GetAccountInfo($plugin_cookies, $account_data, true);
+        if ($result === false || empty($account_data)) {
+            hd_print("Can't get account status");
+            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
+            $text = explode('\\n', $text);
+            $text = array_values($text);
+
+            ControlFactory::add_label($defs, 'Ошибка!', $text[0]);
+            ControlFactory::add_label($defs, 'Описание:', $text[1]);
+            return;
+        }
+
+        ControlFactory::add_label($defs, 'Баланс:', $account_data['account']['balance'] . ' €');
+        ControlFactory::add_label($defs, 'Логин:', $account_data['account']['login']);
+        $packages = $account_data['account']['packages'];
+        if (count($packages) === 0) {
+            ControlFactory::add_label($defs, 'Пакеты: ', 'Нет пакетов');
+            return;
+        }
+
+        foreach ($packages as $item) {
+            ControlFactory::add_label($defs, 'Пакет:', $item['name'] .' до '. date('j.m.Y', $item['expire']));
+            ControlFactory::add_vgap($defs, -10);
+        }
+        ControlFactory::add_vgap($defs, 20);
+    }
+
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {

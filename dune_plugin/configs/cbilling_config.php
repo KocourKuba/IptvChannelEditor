@@ -119,6 +119,27 @@ class CbillingPluginConfig extends DefaultConfig
         return true;
     }
 
+    public static function AddSubscriptionUI(&$defs, $plugin_cookies)
+    {
+        $account_data = array();
+        $result = self::GetAccountInfo($plugin_cookies, $account_data, true);
+        if ($result === false || empty($account_data)) {
+            hd_print("Can't get account status");
+            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
+            $text = explode('\\n', $text);
+            $text = array_values($text);
+
+            ControlFactory::add_label($defs, 'Ошибка!', $text[0]);
+            ControlFactory::add_label($defs, 'Описание:', $text[1]);
+            return;
+        }
+
+        ControlFactory::add_label($defs, 'Пакеты: ', empty($account_data['data']['package']) ? 'Нет пакетов' : $account_data['data']['package']);
+        ControlFactory::add_label($defs, 'Дата окончания', $account_data['data']['end_date']);
+        ControlFactory::add_label($defs, 'Устройств', $account_data['data']['devices_num']);
+        ControlFactory::add_label($defs, 'Сервер', $account_data['data']['server']);
+    }
+
     protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");

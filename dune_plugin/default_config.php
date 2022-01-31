@@ -297,6 +297,11 @@ abstract class DefaultConfig
         return null;
     }
 
+    public static function AddSubscriptionUI(&$defs, $plugin_cookies)
+    {
+        ControlFactory::add_label($defs, 'Баланс:', 'Информация о балансе не поддерживается');
+    }
+
     /**
      * Update url macros {DOMAIN} and {TOKEN} by values from channel ext_params
      * Make url ts wrapped
