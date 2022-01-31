@@ -130,63 +130,44 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         // if token not set force to open setup screen
-        switch (self::$config->get_account_type())
-        {
-            case 'OTT_KEY':
-                $setup_needs = (empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) &&
-                               (empty($plugin_cookies->ott_key_local) && empty($plugin_cookies->subdomain_local)));
-                break;
-            case 'LOGIN':
-                $setup_needs = (empty($plugin_cookies->login) && empty($plugin_cookies->password)) &&
-                               (empty($plugin_cookies->login_local) && empty($plugin_cookies->password_local));
-                break;
-            case 'PIN':
-                $setup_needs = empty($plugin_cookies->password) && empty($plugin_cookies->password_local);
-                break;
-            default:
-                hd_print("Unknown plugin type");
-                return array();
-        }
+        // hd_print('main_screen: get_action_map');
 
-        $add_action = UserInputHandlerRegistry::create_action($this, 'settings');
-        $add_action['caption'] = 'Настройки плагина';
+        $add_settings = UserInputHandlerRegistry::create_action($this, 'settings');
+        $add_settings['caption'] = 'Настройки плагина';
 
-        if ($setup_needs !== false) {
-            hd_print("Plugin not configured");
-            return array(
-                GUI_EVENT_KEY_ENTER => $add_action,
-                GUI_EVENT_KEY_PLAY => $add_action,
-                GUI_EVENT_KEY_B_GREEN => $add_action
-            );
+        $action = array(
+            GUI_EVENT_KEY_B_GREEN => $add_settings,
+            GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
+            GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
+        );
+
+        if ($this->IsSetupNeeds($plugin_cookies) !== false) {
+            $action[GUI_EVENT_KEY_ENTER] = UserInputHandlerRegistry::create_action($this, 'configure');
         }
 
         if (self::$config->get_balance_support()) {
-            $balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
-            $balance['caption'] = 'Подписка';
-            return array
-            (
-                GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
-                GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
-                GUI_EVENT_KEY_B_GREEN => $add_action,
-                GUI_EVENT_KEY_C_YELLOW => $balance
-            );
+            $add_balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
+            $add_balance['caption'] = 'Подписка';
+            $action[GUI_EVENT_KEY_C_YELLOW] = $add_balance;
         }
 
-        return array
-        (
-            GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
-            GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
-            GUI_EVENT_KEY_B_GREEN => $add_action,
-        );
+        return $action;
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('main_screen: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        //hd_print('main_screen: handle_user_input');
+        //foreach ($user_input as $key => $value) {
+        //    hd_print("  $key => $value");
+        //}
 
         switch ($user_input->control_id) {
+            case 'configure':
+                if ($this->IsSetupNeeds($plugin_cookies)) {
+                    return ActionFactory::show_error(false, 'Плагин не настроен', 'Зайдите в настройки плагина');
+                }
+
+                return ActionFactory::open_folder($user_input->selected_media_url);
             case 'settings':
                 return ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки плагина');
             case 'check_balance':
@@ -194,5 +175,28 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
         }
 
         return null;
+    }
+
+    protected function IsSetupNeeds($plugin_cookies)
+    {
+        switch (self::$config->get_account_type())
+        {
+            case 'OTT_KEY':
+                $setup_needs = (empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) &&
+                    (empty($plugin_cookies->ott_key_local) && empty($plugin_cookies->subdomain_local)));
+                break;
+            case 'LOGIN':
+                $setup_needs = (empty($plugin_cookies->login) && empty($plugin_cookies->password)) &&
+                    (empty($plugin_cookies->login_local) && empty($plugin_cookies->password_local));
+                break;
+            case 'PIN':
+                $setup_needs = empty($plugin_cookies->password) && empty($plugin_cookies->password_local);
+                break;
+            default:
+                hd_print("Unknown plugin type");
+                $setup_needs = false;
+        }
+
+        return $setup_needs;
     }
 }
