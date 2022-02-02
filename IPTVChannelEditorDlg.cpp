@@ -3794,9 +3794,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
 	const auto& pluginName = GetConfig().GetCurrentPluginName();
 	int cnt = 2;
 	std::wstring newListName;
-	bool found = false;
-	do
+	for(;;)
 	{
+		bool found = false;
 		newListName = fmt::format(L"{:s}_channel_list{:d}.xml", pluginName, cnt++);
 		for (const auto& item : m_all_channels_lists)
 		{
@@ -3806,7 +3806,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
 				break;
 			}
 		}
-	} while (found);
+
+		if (!found) break;
+	}
 
 	CNewChannelsListDlg dlg;
 	dlg.m_name = newListName.c_str();
