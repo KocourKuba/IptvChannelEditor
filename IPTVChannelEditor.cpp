@@ -213,10 +213,10 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 				AfxMessageBox(csErr, MB_OK | MB_ICONERROR);
 			}
 		}
-	}
 
-	time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
-	GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
+		time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
+		GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
+	}
 
 	CIPTVChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;

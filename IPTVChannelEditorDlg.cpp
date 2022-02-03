@@ -3701,6 +3701,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 
 	std::wstring old_list = GetConfig().get_string(true, REG_LISTS_PATH);
 	int old_flags = GetConfig().get_int(true, REG_CMP_FLAGS);
+	int old_update = GetConfig().get_int(true, REG_UPDATE_FREQ);
 	if (sheet.DoModal() == IDOK)
 	{
 		GetConfig().SaveAppSettingsRegistry();
@@ -3713,6 +3714,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 		if (old_flags != GetConfig().get_int(true, REG_CMP_FLAGS))
 		{
 			UpdateChannelsTreeColors();
+		}
+
+		if (old_update != GetConfig().get_int(true, REG_UPDATE_FREQ))
+		{
+			GetConfig().set_int64(true, REG_NEXT_UPDATE, 0);
 		}
 	}
 }
