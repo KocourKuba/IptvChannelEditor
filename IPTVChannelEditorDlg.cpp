@@ -4139,7 +4139,7 @@ void CIPTVChannelEditorDlg::OnUpdatePlayStream(CCmdUI* pCmdUI)
 	BOOL enable = (m_wndChannelsTree.GetSelectedCount() == 1 && IsChannel(m_wndChannelsTree.GetSelectedItem()))
 		|| (m_wndPlaylistTree.GetSelectedCount() == 1 && IsPlaylistEntry(m_wndPlaylistTree.GetSelectedItem()));
 
-	pCmdUI->Enable(!GetConfig().get_string(true, REG_FFPROBE).empty() && enable);
+	pCmdUI->Enable(!GetConfig().get_string(true, REG_PLAYER).empty() && enable);
 }
 
 void CIPTVChannelEditorDlg::OnBnClickCheckArchive()
