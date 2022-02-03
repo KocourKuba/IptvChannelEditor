@@ -450,8 +450,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_wndPlaylist.ResetContent();
 
-	GetConfig().ReadPluginSettingsRegistry();
-
 	const auto plugin_type = GetConfig().get_plugin_type();
 	switch (plugin_type)
 	{

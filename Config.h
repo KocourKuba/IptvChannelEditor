@@ -1,6 +1,7 @@
 #pragma once
 #include <variant>
 #include <map>
+#include "UtilsLib\json.hpp"
 
 enum class StreamType
 {
@@ -128,8 +129,13 @@ public:
 	void ReadAppSettingsRegistry();
 	void SaveAppSettingsRegistry();
 
-	void ReadPluginSettingsRegistry();
 	void SavePluginSettingsRegistry();
+
+	void ReadAppSettingsJson();
+	void SaveAppSettingsJson();
+
+	void ReadPluginSettingsJson();
+	void UpdatePluginSettingsJson();
 
 	const std::vector<PluginDesc>& get_plugins_info() const;
 	const std::vector<std::wstring>& get_plugins_images() const;
@@ -141,6 +147,7 @@ public:
 	void set_plugin_type(StreamType val);
 
 	std::wstring GetCurrentPluginName(bool bCamel = false) const;
+	std::string GetCurrentPluginNameA(bool bCamel = false) const;
 
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;
@@ -167,10 +174,14 @@ protected:
 	void ReadSettingsRegistry(const std::wstring& section, map_variant& settings);
 	void SaveSettingsRegistry(const std::wstring& section, map_variant& settings);
 
+	void ReadSettingsJson(const std::string& section, map_variant& settings);
+	void SaveSettingsJson(const std::string& section, map_variant& settings);
+
 private:
 	map_variant m_settings;
-	map_variant m_plugin_settings;
+	std::map<StreamType, map_variant> m_plugin_settings;
 	StreamType m_pluginType = StreamType::enEdem;
+	nlohmann::json m_config;
 };
 
 inline PluginsConfig& GetConfig() { return PluginsConfig::Instance(); }
