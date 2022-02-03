@@ -237,15 +237,12 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 	{
 		if (stream["codec_type"] == "audio")
 		{
-			audio = stream["codec_long_name"] + " ";
-			audio += stream["sample_rate"] + " ";
-			audio += stream["channel_layout"];
+			audio = stream["codec_long_name"] + ", " + stream["sample_rate"] + ", " + stream["channel_layout"];
 		}
 		else if (stream["codec_type"] == "video")
 		{
-			video = stream["width"] + "x";
-			video += stream["height"] + " ";
-			video += stream["codec_long_name"];
+			const auto& fps = stream["r_frame_rate"].substr(0, stream["r_frame_rate"].find('/'));
+			video = stream["width"] + "x" + stream["height"] + ", " + stream["codec_long_name"] + ", " + fps + "fps";
 		}
 	}
 }
