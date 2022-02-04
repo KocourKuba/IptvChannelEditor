@@ -231,18 +231,42 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 		}
 	}
 
-	audio = "Not available";
-	video = "Not available";
+	int a = 1;
+	int v = 1;
 	for (auto& stream : streams)
 	{
 		if (stream["codec_type"] == "audio")
 		{
-			audio = stream["codec_long_name"] + ", " + stream["sample_rate"] + ", " + stream["channel_layout"];
+			audio += fmt::format("#{:d} {:s}, {:s}, {:s} ", a++, stream["codec_long_name"], stream["sample_rate"], stream["channel_layout"]);
 		}
 		else if (stream["codec_type"] == "video")
 		{
-			const auto& fps = stream["r_frame_rate"].substr(0, stream["r_frame_rate"].find('/'));
-			video = stream["width"] + "x" + stream["height"] + ", " + stream["codec_long_name"] + ", " + fps + "fps";
+			video += fmt::format("#{:d} {:s}x{:s}, {:s}", v++, stream["width"], stream["height"], stream["codec_long_name"]);
+			double fps = 0.0F;
+			try
+			{
+				auto pos = stream["r_frame_rate"].find('/');
+				auto fps1 = std::stoi(stream["r_frame_rate"].substr(0, pos));
+				pos = (pos != std::string::npos) ? ++pos : pos;
+				auto fps2 = std::stoi(stream["r_frame_rate"].substr(pos));
+				fps = (double)fps1 / (double)fps2;
+				double integer;
+				double fractional = modf(fps, &integer);
+				if (fractional > 0)
+					video += fmt::format(", {:.3f}fps ", fps);
+				else
+					video += fmt::format(", {:d}fps ", (int)integer);
+			}
+			catch (...)
+			{
+				video += " ";
+			}
 		}
 	}
+
+	if (audio.empty())
+		audio = "Not available";
+
+	if (video.empty())
+		video = "Not available";
 }
