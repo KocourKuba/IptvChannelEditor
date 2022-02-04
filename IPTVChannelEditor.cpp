@@ -34,10 +34,8 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 			m_bDev = TRUE;
 		}
 
-		if (_tcsicmp(szParam, _T("MakeAll")) == 0)
-		{
-			m_bMakeAll = TRUE;
-		}
+		m_bMakeAll = (_tcsicmp(szParam, _T("MakeAll")) == 0);
+		m_bPortable = (_tcsicmp(szParam, _T("MakePortable")) == 0);
 	}
 
 #ifdef _DEBUG
@@ -123,7 +121,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	InitContextMenuManager();
 
-	GetConfig().ReadAppSettingsRegistry();
+	GetConfig().LoadSettings();
 
 	if (GetConfig().get_string(true, REG_OUTPUT_PATH).empty())
 		GetConfig().set_string(true, REG_OUTPUT_PATH, GetAppPath());
@@ -133,6 +131,12 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	CCommandLineInfoEx cmdInfo;
 	ParseCommandLine(cmdInfo);
+	if (cmdInfo.m_bPortable)
+	{
+		GetConfig().SaveSettingsJson();
+		return FALSE;
+	}
+
 	if (cmdInfo.m_bMakeAll)
 	{
 		std::wstring output_path;

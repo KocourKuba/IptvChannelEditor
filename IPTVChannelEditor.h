@@ -48,6 +48,7 @@ public:
 public:
 	BOOL m_bDev = FALSE;
 	BOOL m_bMakeAll = FALSE;
+	BOOL m_bPortable = FALSE;
 };
 
 BOOL LoadImage(const std::wstring& fullPath, CImage& image);

@@ -24,8 +24,9 @@ std::wstring PluginsConfig::PACK_DLL_PATH;
 #define MAKEQWORD(a, b) ((QWORD)(((DWORD)(((QWORD)(a)) & 0xffffffff)) | ((QWORD)((DWORD)(((QWORD)(b)) & 0xffffffff))) << 32))
 
 constexpr auto MAX_REGVAL_SIZE = 1024; // real max size - 32767 bytes;
+constexpr auto REGISTRY_APP_ROOT = LR"(SOFTWARE\Dune IPTV Channel Editor)";
 constexpr auto REGISTRY_APP_SETTINGS = LR"(SOFTWARE\Dune IPTV Channel Editor\Editor\Settings)";
-constexpr auto APP_SETTINGS = "Application";
+constexpr auto CONFIG_FILE = L"settings.cfg";
 
 static std::set<std::wstring> all_settings_keys = {
 	REG_WINDOW_POS,
@@ -128,63 +129,92 @@ void ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
 
 //////////////////////////////////////////////////////////////////////////
 
-void PluginsConfig::ReadAppSettingsRegistry()
+void PluginsConfig::SaveSettings()
+{
+	if (m_bPortable)
+		SaveSettingsJson();
+	else
+		SaveSectionRegistry(StreamType::enBase);
+}
+
+void PluginsConfig::LoadSettings()
 {
 	m_settings.clear();
-	ReadSettingsRegistry(REGISTRY_APP_SETTINGS, m_settings);
-	for (const auto& plugin : all_plugins)
+
+	std::ifstream in_file(GetAppPath() + CONFIG_FILE);
+	if (in_file.good())
 	{
-		m_pluginType = plugin.type;
-		ReadSettingsRegistry(fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginName<wchar_t>(plugin.type, false)), m_plugin_settings[plugin.type]);
+		try
+		{
+			in_file >> m_config;
+		}
+		catch (const nlohmann::json::out_of_range& ex)
+		{
+			// out of range errors may happen if provided sizes are excessive
+			TRACE("out of range error: %s\n", ex.what());
+		}
+		catch (const nlohmann::detail::type_error& ex)
+		{
+			// type error
+			TRACE("type error: %s\n", ex.what());
+		}
+		catch (...)
+		{
+			TRACE("unknown exception\n");
+		}
+
+		if (!m_config.empty())
+		{
+			bool res = ReadSettingsJson(StreamType::enBase);
+			for (const auto& plugin : all_plugins)
+			{
+				ReadSettingsJson(plugin.type);
+			}
+
+			m_bPortable = true;
+		}
+
+	}
+
+	if (!m_bPortable)
+	{
+		m_settings.clear();
+		ReadSettingsRegistry(StreamType::enBase);
+		for (const auto& plugin : all_plugins)
+		{
+			m_pluginType = plugin.type;
+			ReadSettingsRegistry(plugin.type);
+		}
 	}
 
 	int idx = get_plugin_idx();
 	m_pluginType = (idx >= 0 && idx < (int)all_plugins.size()) ? all_plugins[idx].type : StreamType::enEdem;
 }
 
-void PluginsConfig::SaveAppSettingsRegistry()
+void PluginsConfig::SaveSettingsJson()
 {
-	SaveSettingsRegistry(REGISTRY_APP_SETTINGS, m_settings);
-}
+	UpdateSettingsJson(StreamType::enBase);
 
-void PluginsConfig::SavePluginSettingsRegistry()
-{
-	SaveSettingsRegistry(fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetCurrentPluginName()), m_plugin_settings[m_pluginType]);
-}
+	for (const auto& plugin : all_plugins)
+	{
+		UpdateSettingsJson(plugin.type);
+	}
 
-void PluginsConfig::ReadAppSettingsJson()
-{
-	m_settings.clear();
-	ReadSettingsJson(APP_SETTINGS, m_settings);
-	int idx = get_plugin_idx();
-	m_pluginType = (idx >= 0 && idx < (int)all_plugins.size()) ? all_plugins[idx].type : StreamType::enEdem;
-}
-
-void PluginsConfig::SaveAppSettingsJson()
-{
-	SaveSettingsJson(APP_SETTINGS, m_settings);
-	std::ofstream out_file(GetAppPath() + L"settings.json");
+	std::ofstream out_file(GetAppPath() + CONFIG_FILE);
 	out_file << m_config << std::endl;
 }
 
-void PluginsConfig::ReadPluginSettingsJson()
+void PluginsConfig::UpdatePluginSettings()
 {
-	ReadSettingsJson(GetCurrentPluginNameA(), m_plugin_settings[m_pluginType]);
-}
-
-void PluginsConfig::UpdatePluginSettingsJson()
-{
-	SaveSettingsJson(GetCurrentPluginNameA(), m_plugin_settings[m_pluginType]);
+	if (m_bPortable)
+		UpdateSettingsJson(m_pluginType);
+	else
+		SaveSectionRegistry(m_pluginType);
 }
 
 std::wstring PluginsConfig::GetCurrentPluginName(bool bCamel /*= false*/) const
 {
 	return GetPluginName<wchar_t>(m_pluginType, bCamel);
-}
-
-std::string PluginsConfig::GetCurrentPluginNameA(bool bCamel /*= false*/) const
-{
-	return GetPluginName<char>(m_pluginType, bCamel);
 }
 
 const std::vector<PluginDesc>& PluginsConfig::get_plugins_info() const
@@ -220,10 +250,13 @@ void PluginsConfig::set_plugin_type(StreamType val)
 
 std::wstring PluginsConfig::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const
 {
-	const auto& sel_settings = isApp ? m_settings : m_plugin_settings.at(m_pluginType);
+	const auto& section = isApp ? StreamType::enBase : m_pluginType;
 
-	const auto& pair = sel_settings.find(key);
-	if (pair != sel_settings.end())
+	if (m_settings.find(section) == m_settings.end())
+		return def;
+
+	const auto& settings = m_settings.at(section);
+	if (const auto& pair = settings.find(key); pair != settings.end())
 	{
 		const auto var = std::get_if<std::wstring>(&pair->second);
 		return var ? *var : def;
@@ -234,22 +267,26 @@ std::wstring PluginsConfig::get_string(bool isApp, const std::wstring& key, cons
 
 void PluginsConfig::set_string(bool isApp, const std::wstring& key, const std::wstring& value)
 {
-	auto& settings = isApp ? m_settings : m_plugin_settings[m_pluginType];
+	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
+
 	settings[key] = value;
 }
 
 void PluginsConfig::set_string(bool isApp, const std::wstring& key, const std::string& value)
 {
-	auto& settings = isApp ? m_settings : m_plugin_settings[m_pluginType];
+	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
+
 	settings[key] = utils::utf8_to_utf16(value);
 }
 
 int PluginsConfig::get_int(bool isApp, const std::wstring& key, const int def /*= 0*/) const
 {
-	const auto& sel_settings = isApp ? m_settings : m_plugin_settings.at(m_pluginType);
+	const auto& section = isApp ? StreamType::enBase : m_pluginType;
+	if (m_settings.find(section) == m_settings.end())
+		return def;
 
-	const auto& pair = sel_settings.find(key);
-	if (pair != sel_settings.end())
+	const auto& settings = m_settings.at(section);
+	if (const auto& pair = settings.find(key); pair != settings.end())
 	{
 		const auto var = std::get_if<int>(&pair->second);
 		return var ? *var : def;
@@ -260,16 +297,19 @@ int PluginsConfig::get_int(bool isApp, const std::wstring& key, const int def /*
 
 void PluginsConfig::set_int(bool isApp, const std::wstring& key, const int value)
 {
-	auto& sel_settings = isApp ? m_settings : m_plugin_settings[m_pluginType];;
-	sel_settings[key] = value;
+	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
+
+	settings[key] = value;
 }
 
 __int64 PluginsConfig::get_int64(bool isApp, const std::wstring& key, const __int64 def /*= 0*/) const
 {
-	const auto& sel_settings = isApp ? m_settings : m_plugin_settings.at(m_pluginType);
+	const auto& section = isApp ? StreamType::enBase : m_pluginType;
+	if (m_settings.find(section) == m_settings.end())
+		return def;
 
-	const auto& pair = sel_settings.find(key);
-	if (pair != sel_settings.end())
+	const auto& settings = m_settings.at(section);
+	if (const auto& pair = settings.find(key); pair != settings.end())
 	{
 		const auto var = std::get_if<__int64>(&pair->second);
 		return var ? *var : def;
@@ -280,18 +320,22 @@ __int64 PluginsConfig::get_int64(bool isApp, const std::wstring& key, const __in
 
 void PluginsConfig::set_int64(bool isApp, const std::wstring& key, const __int64 value)
 {
-	auto& sel_settings = isApp ? m_settings : m_plugin_settings[m_pluginType];
-	sel_settings[key] = value;
+	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
+
+	settings[key] = value;
 }
 
 std::vector<BYTE> PluginsConfig::get_binary(bool isApp, const std::wstring& key) const
 {
-	const auto& sel_settings = isApp ? m_settings : m_plugin_settings.at(m_pluginType);
-	const auto& pair = sel_settings.find(key);
-	if (pair != sel_settings.end())
+	const auto& section = isApp ? StreamType::enBase : m_pluginType;
+	if (m_settings.find(section) != m_settings.end())
 	{
-		const auto var = std::get_if<std::vector<BYTE>>(&pair->second);
-		return var ? *var : std::vector<BYTE>();
+		const auto& settings = m_settings.at(section);
+		if (const auto& pair = settings.find(key); pair != settings.end())
+		{
+			const auto var = std::get_if<std::vector<BYTE>>(&pair->second);
+			return var ? *var : std::vector<BYTE>();
+		}
 	}
 
 	return {};
@@ -299,9 +343,12 @@ std::vector<BYTE> PluginsConfig::get_binary(bool isApp, const std::wstring& key)
 
 bool PluginsConfig::get_binary(bool isApp, const std::wstring& key, LPBYTE* pbData, size_t& dwSize) const
 {
-	const auto& sel_settings = isApp ? m_settings : m_plugin_settings.at(m_pluginType);
-	const auto& pair = sel_settings.find(key);
-	if (pair != sel_settings.end())
+	const auto& section = isApp ? StreamType::enBase : m_pluginType;
+	if (m_settings.find(section) == m_settings.end())
+		return false;
+
+	const auto& settings = m_settings.at(section);
+	if (const auto& pair = settings.find(key); pair != settings.end())
 	{
 		const auto var = std::get_if<std::vector<BYTE>>(&pair->second);
 		if (var)
@@ -316,25 +363,29 @@ bool PluginsConfig::get_binary(bool isApp, const std::wstring& key, LPBYTE* pbDa
 
 void PluginsConfig::set_binary(bool isApp, const std::wstring & key, const std::vector<BYTE>& value)
 {
-	auto& sel_settings = isApp ? m_settings : m_plugin_settings[m_pluginType];;
-	sel_settings[key] = value;
+	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
+
+	settings[key] = value;
 }
 
 void PluginsConfig::set_binary(bool isApp, const std::wstring& key, const BYTE* value, const size_t value_size)
 {
-	auto& sel_settings = isApp ? m_settings : m_plugin_settings[m_pluginType];;
-	sel_settings[key] = std::move(std::vector<BYTE>(value, value + value_size));
+	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
+
+	settings[key] = std::move(std::vector<BYTE>(value, value + value_size));
 }
 
-void PluginsConfig::ReadSettingsRegistry(const std::wstring& section, map_variant& settings)
+void PluginsConfig::ReadSettingsRegistry(StreamType plugin_type)
 {
 	HKEY hkHive = nullptr;
 	if (::RegOpenCurrentUser(KEY_READ, &hkHive) != ERROR_SUCCESS)
 		return;
 
+	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginName<wchar_t>(plugin_type, false));
 	HKEY hKey = nullptr;
-	if (::RegOpenKeyExW(hkHive, section.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+	if (::RegOpenKeyExW(hkHive, reg_key.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
 	{
+		auto& settings = m_settings[plugin_type];
 		DWORD dwIdx = 0;
 		for (;;)
 		{
@@ -377,17 +428,19 @@ void PluginsConfig::ReadSettingsRegistry(const std::wstring& section, map_varian
 	::RegCloseKey(hkHive);
 }
 
-void PluginsConfig::SaveSettingsRegistry(const std::wstring& section, map_variant& settings)
+void PluginsConfig::SaveSectionRegistry(StreamType plugin_type)
 {
 	HKEY hkHive = nullptr;
 	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
 		return;
 
+	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginName<wchar_t>(m_pluginType, false));
 	HKEY hKey = nullptr;
 	DWORD dwDesp;
 
-	if (::RegCreateKeyExW(hkHive, section.c_str(), 0, REG_NONE, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDesp) == ERROR_SUCCESS)
+	if (::RegCreateKeyExW(hkHive, reg_key.c_str(), 0, REG_NONE, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDesp) == ERROR_SUCCESS)
 	{
+		auto& settings = m_settings[plugin_type];
 		for (const auto& pair : settings)
 		{
 			DWORD dwSize = 0;
@@ -426,21 +479,19 @@ void PluginsConfig::SaveSettingsRegistry(const std::wstring& section, map_varian
 	::RegCloseKey(hkHive);
 }
 
-void PluginsConfig::ReadSettingsJson(const std::string& section, map_variant& settings)
+bool PluginsConfig::ReadSettingsJson(StreamType plugin_type)
 {
-	if (m_config.empty())
-	{
-		std::ifstream in_file(GetAppPath() + L"settings.json");
-		if (in_file.good())
-		{
-			in_file >> m_config;
-		}
-	}
+	std::string j_section;
+	if (plugin_type == StreamType::enBase)
+		j_section = utils::utf16_to_utf8(std::wstring_view(APP_SETTINGS));
+	else
+		j_section = GetPluginName<char>(plugin_type, false);
 
-	if (!m_config.contains(section))
-		return;
+	if (!m_config.contains(j_section))
+		return false;
 
-	nlohmann::json node = m_config[section];
+	auto& settings = m_settings[plugin_type];
+	nlohmann::json node = m_config[j_section];
 	for (const auto& item : node.items())
 	{
 		const auto& name = utils::utf8_to_utf16(item.key());
@@ -471,10 +522,13 @@ void PluginsConfig::ReadSettingsJson(const std::string& section, map_variant& se
 				break;
 		}
 	}
+
+	return true;
 }
 
-void PluginsConfig::SaveSettingsJson(const std::string& section, map_variant& settings)
+void PluginsConfig::UpdateSettingsJson(StreamType plugin_type)
 {
+	auto& settings = m_settings[plugin_type];
 	nlohmann::json node;
 	for (const auto& pair : settings)
 	{
@@ -524,5 +578,8 @@ void PluginsConfig::SaveSettingsJson(const std::string& section, map_variant& se
 		}
 	}
 
-	m_config[section] = node;
+	if (plugin_type == StreamType::enBase)
+		m_config[utils::utf16_to_utf8(std::wstring_view(APP_SETTINGS))] = node;
+	else
+		m_config[GetPluginName<char>(plugin_type, false)] = node;
 }

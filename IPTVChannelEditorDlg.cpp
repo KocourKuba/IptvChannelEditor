@@ -1006,8 +1006,8 @@ void CIPTVChannelEditorDlg::OnCancel()
 
 	m_evtStop.SetEvent();
 
-	GetConfig().SavePluginSettingsRegistry();
-	GetConfig().SaveAppSettingsRegistry();
+	GetConfig().UpdatePluginSettings();
+	GetConfig().SaveSettings();
 
 	EndDialog(IDCANCEL);
 }
@@ -3704,7 +3704,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	int old_update = GetConfig().get_int(true, REG_UPDATE_FREQ);
 	if (sheet.DoModal() == IDOK)
 	{
-		GetConfig().SaveAppSettingsRegistry();
+		GetConfig().SaveSettings();
 
 		if (old_list != GetConfig().get_string(true, REG_LISTS_PATH))
 		{
@@ -4304,7 +4304,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 		return;
 	}
 
-	GetConfig().SavePluginSettingsRegistry();
+	GetConfig().UpdatePluginSettings();
 
 	GetConfig().set_plugin_idx(m_wndPluginType.GetCurSel());
 

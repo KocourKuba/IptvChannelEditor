@@ -51,7 +51,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 
 	m_bAutoSync = GetConfig().get_int(true, REG_AUTO_SYNC);
 	m_bAutoHide = GetConfig().get_int(true, REG_AUTO_HIDE);
-	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS);
+	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
 
