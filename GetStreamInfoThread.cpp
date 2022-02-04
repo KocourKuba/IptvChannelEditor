@@ -232,7 +232,6 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 	}
 
 	int a = 1;
-	int v = 1;
 	for (auto& stream : streams)
 	{
 		if (stream["codec_type"] == "audio")
@@ -241,7 +240,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 		}
 		else if (stream["codec_type"] == "video")
 		{
-			video += fmt::format("#{:d} {:s}x{:s}, {:s}", v++, stream["width"], stream["height"], stream["codec_long_name"]);
+			video = fmt::format("{:s}x{:s}", stream["width"], stream["height"]);
 			double fps = 0.0F;
 			try
 			{
@@ -253,14 +252,15 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 				double integer;
 				double fractional = modf(fps, &integer);
 				if (fractional > 0)
-					video += fmt::format(", {:.3f}fps ", fps);
+					video += fmt::format(", {:.3f}fps", fps);
 				else
-					video += fmt::format(", {:d}fps ", (int)integer);
+					video += fmt::format(", {:d}fps", (int)integer);
 			}
 			catch (...)
 			{
-				video += " ";
 			}
+
+			video += fmt::format(", {:s}", stream["codec_long_name"]);
 		}
 	}
 
