@@ -124,10 +124,10 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	GetConfig().LoadSettings();
 
 	if (GetConfig().get_string(true, REG_OUTPUT_PATH).empty())
-		GetConfig().set_string(true, REG_OUTPUT_PATH, GetAppPath());
+		GetConfig().set_string(true, REG_OUTPUT_PATH, L".\\");
 
 	if (GetConfig().get_string(true, REG_LISTS_PATH).empty())
-		GetConfig().set_string(true, REG_LISTS_PATH, GetAppPath(_T("playlists\\")));
+		GetConfig().set_string(true, REG_LISTS_PATH, L".\\playlists\\");
 
 	CCommandLineInfoEx cmdInfo;
 	ParseCommandLine(cmdInfo);

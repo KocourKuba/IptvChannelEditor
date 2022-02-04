@@ -3930,7 +3930,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_container = container.release();
 	cfg.m_hStop = m_evtStop;
 	cfg.m_probe = GetConfig().get_string(true, REG_FFPROBE);
-	cfg.m_max_threads = GetConfig().get_int(true, REG_MAX_THREADS);
+	cfg.m_max_threads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	cfg.m_params.token = m_token;
 	cfg.m_params.domain = m_domain;
 	cfg.m_params.login = m_login;

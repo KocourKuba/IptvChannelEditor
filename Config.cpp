@@ -434,7 +434,7 @@ void PluginsConfig::SaveSectionRegistry(StreamType plugin_type)
 	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
 		return;
 
-	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginName<wchar_t>(m_pluginType, false));
+	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginName<wchar_t>(plugin_type, false));
 	HKEY hKey = nullptr;
 	DWORD dwDesp;
 

@@ -56,13 +56,13 @@ void CPathsSettingsPage::OnOK()
 	UpdateData(TRUE);
 
 	if (m_lists_path.IsEmpty())
-		m_lists_path = GetAppPath(_T("playlists")).c_str();
+		m_lists_path = _T(".\\playlists\\");
 
 	if (m_lists_path.Right(1) != '\\')
 		m_lists_path += '\\';
 
 	if (m_plugins_path.IsEmpty())
-		m_plugins_path = GetAppPath().c_str();
+		m_plugins_path = _T(".\\");
 
 	if (m_plugins_path.Right(1) != '\\')
 		m_plugins_path += '\\';
