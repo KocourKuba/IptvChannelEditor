@@ -133,7 +133,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	ParseCommandLine(cmdInfo);
 	if (cmdInfo.m_bPortable)
 	{
-		GetConfig().SaveSettingsJson();
+		GetConfig().SaveSettingsToJson();
 		return FALSE;
 	}
 

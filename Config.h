@@ -129,9 +129,9 @@ private:
 
 public:
 	void SaveSettings();
-
 	void LoadSettings();
-	void SaveSettingsJson();
+
+	void SaveSettingsToJson();
 
 	void UpdatePluginSettings();
 

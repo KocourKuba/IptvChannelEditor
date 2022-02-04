@@ -132,7 +132,7 @@ void ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
 void PluginsConfig::SaveSettings()
 {
 	if (m_bPortable)
-		SaveSettingsJson();
+		SaveSettingsToJson();
 	else
 		SaveSectionRegistry(StreamType::enBase);
 }
@@ -191,7 +191,7 @@ void PluginsConfig::LoadSettings()
 	m_pluginType = (idx >= 0 && idx < (int)all_plugins.size()) ? all_plugins[idx].type : StreamType::enEdem;
 }
 
-void PluginsConfig::SaveSettingsJson()
+void PluginsConfig::SaveSettingsToJson()
 {
 	UpdateSettingsJson(StreamType::enBase);
 
