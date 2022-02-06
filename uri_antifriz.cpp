@@ -46,12 +46,13 @@ void uri_antifriz::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_antifriz::get_templated(StreamSubType subType, TemplateParams& params) const
+std::wstring uri_antifriz::get_templated(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url;
 
 	if (is_template())
 	{
+		auto& new_params = const_cast<TemplateParams&>(params);
 		std::wstring no_port(params.domain);
 		if (auto pos = no_port.find(':'); pos != std::wstring::npos)
 		{
@@ -62,11 +63,11 @@ std::wstring uri_antifriz::get_templated(StreamSubType subType, TemplateParams& 
 		{
 			case StreamSubType::enHLS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				params.domain = params.shift_back ? no_port : params.domain;
+				new_params.domain = params.shift_back ? no_port : params.domain;
 				break;
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				params.domain = std::move(no_port);
+				new_params.domain = std::move(no_port);
 				break;
 			default:
 				break;

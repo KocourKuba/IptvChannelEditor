@@ -7,6 +7,7 @@
 #include "map_serializer.h"
 
 #include "UtilsLib\utils.h"
+#include "thread-pool\thread_pool.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -14,7 +15,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-void CGetStreamInfoThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+void CGetStreamInfoThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/) const
 {
 	if (m_parent->GetSafeHwnd())
 		m_parent->SendMessage(message, wParam, lParam);
@@ -30,48 +31,28 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 	if (m_config.m_container)
 	{
-		const auto max_threads = m_config.m_max_threads;
-
 		m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, 0, m_config.m_container->size());
 
-		auto newEnd = std::unique(m_config.m_container->begin(), m_config.m_container->end());
-		for (auto it = m_config.m_container->begin(); it != newEnd;)
+		thread_pool pool(m_config.m_max_threads);
+		std::atomic<int> count { 0 };
+		pool.parallelize_loop(0, m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
+							  {
+								  for (auto i = a; i < b; i++)
+								  {
+									  GetChannelStreamInfo(m_config, count, i);
+								  }
+							  });
+
+		for(const auto& it : *m_config.m_container)
 		{
-			if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0) break;
+			if (it->get_audio().empty() && it->get_video().empty()) continue;
 
-			std::vector<std::thread> workers(max_threads);
-			std::vector<std::string> audio(max_threads);
-			std::vector<std::string> video(max_threads);
-			auto pool = it;
-			int j = 0;
-			while (j < max_threads && pool != m_config.m_container->end())
+			auto hash = it->get_hash();
+			std::pair<std::string, std::string> infos(it->get_audio(), it->get_video());
+			auto& pair = stream_infos->emplace(hash, infos);
+			if (!pair.second)
 			{
-				const auto& url = (*pool)->get_templated(m_config.m_StreamSubtype, m_config.m_params);
-				workers[j] = std::thread(GetChannelStreamInfo, m_config.m_probe, url, std::ref(audio[j]), std::ref(video[j]));
-				j++;
-				++pool;
-			}
-
-			j = 0;
-			for (auto& w : workers)
-			{
-				if (!w.joinable()) continue;
-
-				w.join();
-
-				auto hash = (*it)->get_hash();
-				std::pair<std::string, std::string> info(audio[j], video[j]);
-				auto& pair = stream_infos->emplace(hash, info);
-				if (!pair.second)
-				{
-					pair.first->second = std::move(info);
-				}
-
-				++it;
-				j++;
-
-				auto step = std::distance(m_config.m_container->begin(), it);
-				m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, step, m_config.m_container->size());
+				pair.first->second = infos;
 			}
 		}
 	}
@@ -83,12 +64,16 @@ BOOL CGetStreamInfoThread::InitInstance()
 	return FALSE;
 }
 
-void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const std::wstring& url, std::string& audio, std::string& video)
+void CGetStreamInfoThread::GetChannelStreamInfo(const ThreadConfig& config, std::atomic<int>& count, int index)
 {
-	if (url.empty())
+	TRACE("GetChannelStreamInfo: thread %d start\n", index);
+	auto uri = config.m_container->at(index);
+	const auto& url = uri->get_templated(config.m_StreamSubtype, config.m_params);
+
+	if (url.empty() || ::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
 		return;
 
-	SECURITY_ATTRIBUTES sa;
+	SECURITY_ATTRIBUTES sa{};
 	sa.nLength = sizeof(sa);
 	sa.bInheritHandle = TRUE;
 	sa.lpSecurityDescriptor = nullptr;
@@ -122,9 +107,9 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 
 	// argv[0] имя исполняемого файла
 	CString csCommand;
-	csCommand.Format(_T("\"%s\" -hide_banner -show_streams \"%s\""), probe.c_str(), url.c_str());
+	csCommand.Format(_T("\"%s\" -hide_banner -show_streams \"%s\""), config.m_probe.c_str(), url.c_str());
 
-	BOOL bRunProcess = CreateProcess(probe.c_str(),				// 	__in_opt     LPCTSTR lpApplicationName
+	BOOL bRunProcess = CreateProcess(config.m_probe.c_str(),			// 	__in_opt     LPCTSTR lpApplicationName
 									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
 									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes
 									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes
@@ -153,7 +138,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 		{
 			if (dwExitCode != STILL_ACTIVE)
 			{
-				TRACE("Success! Exit code: %u for %s\n", dwExitCode, url.c_str());
+				TRACE("Success! Exit code: %u for %ls\n", dwExitCode, url.c_str());
 				break;
 			}
 
@@ -161,7 +146,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 			{
 				bTimeout = TRUE;
 				::TerminateProcess(pi.hProcess, 0);
-				TRACE("Failed! Execution Timeout. %s\n", url.c_str());
+				TRACE("Failed! Execution Timeout. %ls\n", url.c_str());
 				break;
 			}
 
@@ -185,7 +170,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 			else
 			{
 				// По каким то причинам обломался
-				TRACE("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d, source %hs\n", ::GetLastError(), nErrorCount, url.c_str());
+				TRACE("GetExitCodeProcess failed. ErrorCode: %0u, try count: %0d, source %ls\n", ::GetLastError(), nErrorCount, url.c_str());
 				nErrorCount++;
 				if (nErrorCount > 10) break;
 				continue;
@@ -232,6 +217,9 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 	}
 
 	int a = 1;
+	std::string audio;
+	std::string video;
+
 	for (auto& stream : streams)
 	{
 		if (stream["codec_type"] == "audio")
@@ -269,4 +257,10 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const std::wstring& probe, const
 
 	if (video.empty())
 		video = "Not available";
+
+	uri->set_audio(audio);
+	uri->set_video(video);
+
+	config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, ++count, config.m_container->size());
+	TRACE("GetChannelStreamInfo: Thread %d, Video: %s, Audio: %s\n", (int)count, video.c_str(), audio.c_str());
 }

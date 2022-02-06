@@ -226,6 +226,7 @@ private:
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
 	bool CheckForSave();
+	void SaveStreamInfo();
 
 protected:
 	CFont m_largeFont;
@@ -278,6 +279,7 @@ protected:
 	CButton m_wndEpg1;
 	CButton m_wndEpg2;
 	CButton m_wndUpdateChanged;
+	CButton m_wndSettings;
 	CProgressCtrl m_wndProgress;
 	CTrayIcon m_wndTrayIcon;
 
@@ -320,7 +322,9 @@ private:
 	CString m_plFileName;
 
 	BOOL m_allow_save = FALSE;
+	BOOL m_enableDownload = TRUE;
 	bool m_loading = false;
+	bool m_inStreamInfo = false;
 	bool m_inSync = false;
 	bool m_bInFillTree = false;
 	bool m_blockChecking = false;

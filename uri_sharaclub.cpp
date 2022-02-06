@@ -35,7 +35,7 @@ void uri_sharaclub::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_sharaclub::get_templated(StreamSubType subType, TemplateParams& params) const
+std::wstring uri_sharaclub::get_templated(StreamSubType subType, const TemplateParams& params) const
 {
 	auto& url = get_uri();
 

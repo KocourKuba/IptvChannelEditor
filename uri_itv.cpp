@@ -36,7 +36,7 @@ void uri_itv::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_itv::get_templated(StreamSubType subType, TemplateParams& params) const
+std::wstring uri_itv::get_templated(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url;
 

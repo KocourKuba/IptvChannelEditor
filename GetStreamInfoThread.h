@@ -9,7 +9,7 @@ public:
 	class ThreadConfig
 	{
 	public:
-		void NotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+		void NotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0) const;
 
 		std::vector<uri_stream*>* m_container = nullptr;
 		CWnd* m_parent = nullptr;
@@ -32,7 +32,7 @@ public:
 	void SetData(const ThreadConfig& config) { m_config = config; };
 
 protected:
-	static void GetChannelStreamInfo(const std::wstring& probe, const std::wstring& url, std::string& audio, std::string& video);
+	static void GetChannelStreamInfo(const ThreadConfig& config, std::atomic<int>& count, int index);
 
 protected:
 	ThreadConfig m_config;

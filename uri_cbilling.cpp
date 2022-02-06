@@ -39,12 +39,13 @@ void uri_cbilling::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_cbilling::get_templated(StreamSubType subType, TemplateParams& params) const
+std::wstring uri_cbilling::get_templated(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url;
 
 	if (is_template())
 	{
+		auto& new_params = const_cast<TemplateParams&>(params);
 		std::wstring no_port(params.domain);
 		if (auto pos = no_port.find(':'); pos != std::wstring::npos)
 		{
@@ -62,7 +63,7 @@ std::wstring uri_cbilling::get_templated(StreamSubType subType, TemplateParams& 
 				break;
 			case StreamSubType::enHLS2:
 				url = URI_TEMPLATE_HLS2;
-				params.domain = no_port;
+				new_params.domain = no_port;
 				if (params.shift_back)
 				{
 					utils::string_replace_inplace(url, L"video.m3u8", L"video-{START}-10800.m3u8");
@@ -70,7 +71,7 @@ std::wstring uri_cbilling::get_templated(StreamSubType subType, TemplateParams& 
 				break;
 			case StreamSubType::enMPEGTS:
 				url = URI_TEMPLATE_MPEG;
-				params.domain = std::move(no_port);
+				new_params.domain = std::move(no_port);
 				if (params.shift_back)
 				{
 					utils::string_replace_inplace(url, L"mpegts", L"archive-{START}-10800.ts");
