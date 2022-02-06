@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="73" scanned="20220131205451" built="20220131205855" lang="ru" pane="TLogPane" col="4">
+<desktop scan="75" scanned="20220207002501" built="20220131205855" lang="ru" pane="TLogPane" col="4" row="Strings.15.IDS_STRING_ERR_TRAY_ICON">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

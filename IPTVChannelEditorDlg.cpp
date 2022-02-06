@@ -353,7 +353,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		ID_RESTORE))		// Default menu item for pop-up menu
 	{
 		TRACE("Failed to create tray icon\n");
-		AfxMessageBox(_T("Failed to create tray icon. Verify Notification Area Icon settings"), MB_ICONERROR);
+		AfxMessageBox(IDS_STRING_ERR_TRAY_ICON, MB_ICONERROR);
 	}
 
 	m_wndTrayIcon.HideIcon();

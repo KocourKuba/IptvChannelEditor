@@ -36,6 +36,7 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 
 		m_bMakeAll = (_tcsicmp(szParam, _T("MakeAll")) == 0);
 		m_bPortable = (_tcsicmp(szParam, _T("MakePortable")) == 0);
+		m_bRestoreReg = (_tcsicmp(szParam, _T("RestorePortable")) == 0);
 	}
 
 #ifdef _DEBUG
@@ -135,6 +136,14 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	{
 		GetConfig().SaveSettingsToJson();
 		return FALSE;
+	}
+
+	if (cmdInfo.m_bPortable)
+	{
+		if (GetConfig().IsPortable())
+			GetConfig().SaveSettingsToRegistry();
+		else
+			AfxMessageBox(IDS_STRING_ERR_NOT_PORTABLE, MB_ICONERROR | MB_OK);
 	}
 
 	if (cmdInfo.m_bMakeAll)

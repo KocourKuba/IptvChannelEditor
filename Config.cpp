@@ -204,6 +204,16 @@ void PluginsConfig::SaveSettingsToJson()
 	out_file << m_config << std::endl;
 }
 
+void PluginsConfig::SaveSettingsToRegistry()
+{
+	SaveSectionRegistry(StreamType::enBase);
+
+	for (const auto& plugin : all_plugins)
+	{
+		SaveSectionRegistry(plugin.type);
+	}
+}
+
 void PluginsConfig::UpdatePluginSettings()
 {
 	if (m_bPortable)

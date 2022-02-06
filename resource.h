@@ -115,6 +115,8 @@
 #define IDS_STRING_STATUS_TEXT          223
 #define IDS_STRING_SHOW_UNKNOWN         224
 #define IDS_STRING_ERR_FILE_MISSING     225
+#define IDS_STRING_ERR_NOT_PORTABLE     226
+#define IDS_STRING_ERR_TRAY_ICON        227
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -260,7 +262,7 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        225

@@ -132,6 +132,7 @@ public:
 	void LoadSettings();
 
 	void SaveSettingsToJson();
+	void SaveSettingsToRegistry();
 
 	void UpdatePluginSettings();
 
@@ -145,6 +146,8 @@ public:
 	void set_plugin_type(StreamType val);
 
 	std::wstring GetCurrentPluginName(bool bCamel = false) const;
+
+	bool IsPortable() const { return m_bPortable; }
 
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;

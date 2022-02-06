@@ -941,6 +941,10 @@ STRINGTABLE
 BEGIN
     IDS_STRING_SHOW_UNKNOWN "Show unknown channels"
     IDS_STRING_ERR_FILE_MISSING "Some file missing!!!"
+    IDS_STRING_ERR_NOT_PORTABLE 
+                            "Portable config not loaded. Nothing to import!"
+    IDS_STRING_ERR_TRAY_ICON 
+                            "Failed to create tray icon. Verify Notification Area Icon settings"
 END
 
 #endif    // English (United States) resources
