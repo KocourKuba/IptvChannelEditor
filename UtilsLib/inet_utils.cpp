@@ -11,9 +11,9 @@
 namespace utils
 {
 
-bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path)
+bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, unsigned short& port)
 {
-	URL_COMPONENTS urlComp;
+	URL_COMPONENTS urlComp{};
 	SecureZeroMemory(&urlComp, sizeof(urlComp));
 	urlComp.dwStructSize = sizeof(urlComp);
 
@@ -25,6 +25,7 @@ bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path)
 	{
 		host = std::wstring(urlComp.lpszHostName, urlComp.dwHostNameLength);
 		path = std::wstring(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
+		port = urlComp.nPort;
 		return true;
 	}
 
@@ -33,10 +34,11 @@ bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path)
 
 bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, std::wstring* pHeaders /*= nullptr*/)
 {
-	ATLTRACE(L"download url: %s\n", url.c_str());
+	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
 	std::wstring host;
 	std::wstring path;
-	if (!CrackUrl(url, host, path))
+	WORD port = INTERNET_DEFAULT_HTTP_PORT;
+	if (!CrackUrl(url, host, path, port))
 		return false;
 
 	// Use WinHttpOpen to obtain a session handle.
@@ -50,7 +52,7 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, st
 	// Specify an HTTP server.
 	HINTERNET hConnect = nullptr;
 	if (hSession)
-		hConnect = WinHttpConnect(hSession, host.c_str(), INTERNET_DEFAULT_HTTP_PORT, 0);
+		hConnect = WinHttpConnect(hSession, host.c_str(), port, 0);
 
 
 	// Create an HTTP request handle.
@@ -65,7 +67,7 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, st
 	if (pHeaders && !pHeaders->empty())
 	{
 		BOOL result = WinHttpAddRequestHeaders(hRequest, pHeaders->c_str(), pHeaders->size(), WINHTTP_ADDREQ_FLAG_ADD);
-		ATLTRACE("header added: %d\n", result);
+		ATLTRACE("\nheader added: %d\n", result);
 	}
 
 	// Send a request.
@@ -77,18 +79,30 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, st
 	if (bResults)
 		bResults = WinHttpReceiveResponse(hRequest, nullptr);
 
-	DWORD dwSize = 0;
+	DWORD dwStatusCode = 0;
+	DWORD dwSize = sizeof(dwStatusCode);
+
+	if (WinHttpQueryHeaders(hRequest,
+							WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+							WINHTTP_HEADER_NAME_BY_INDEX,
+							&dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX) && dwStatusCode != 200)
+	{
+		ATLTRACE("\nrequested url %ls not found. error code: %d\n", url.c_str(), dwStatusCode);
+		return false;
+	}
+
+	dwSize = 0;
 	for (;;)
 	{
 		if (!bResults)
 		{
-			ATLTRACE("Error %d has occurred.\n", GetLastError());
+			ATLTRACE("\nError %d has occurred.\n", GetLastError());
 			break;
 		}
 		// Check for available data.
 		if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
 		{
-			ATLTRACE("Error %u in WinHttpQueryDataAvailable.\n", GetLastError());
+			ATLTRACE("\nError %u in WinHttpQueryDataAvailable.\n", GetLastError());
 			break;
 		}
 
@@ -104,7 +118,7 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, st
 		}
 		else
 		{
-			ATLTRACE("Error %u in WinHttpReadData.\n", GetLastError());
+			ATLTRACE("\nError %u in WinHttpReadData.\n", GetLastError());
 			break;
 		}
 	}

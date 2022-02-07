@@ -478,7 +478,8 @@ BOOL LoadImage(const std::wstring& fullPath, CImage& image)
 	HRESULT hr = E_FAIL;
 	std::wstring host;
 	std::wstring path;
-	if (utils::CrackUrl(fullPath, host, path))
+	WORD port = 0;
+	if (utils::CrackUrl(fullPath, host, path, port))
 	{
 		std::vector<BYTE> data;
 		if (utils::DownloadFile(fullPath, data))
@@ -486,6 +487,10 @@ BOOL LoadImage(const std::wstring& fullPath, CImage& image)
 			// Still not clear if this is making a copy internally
 			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), data.size()));
 			hr = image.Load(stream);
+		}
+		else
+		{
+			hr = image.Load(fullPath.c_str());
 		}
 	}
 	else
