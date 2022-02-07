@@ -272,9 +272,9 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_SHOW_CHANGED, m_wndShowChanged);
 	DDX_Control(pDX, IDC_CHECK_NOT_ADDED, m_wndNotAdded);
 	DDX_Text(pDX, IDC_EDIT_PL_SEARCH, m_plSearch);
-	DDX_Text(pDX, IDC_STATIC_ICON_NAME, m_iconUrl);
+	DDX_Text(pDX, IDC_EDIT_ICON_NAME, m_iconUrl);
 	DDX_Control(pDX, IDC_STATIC_PL_ICON, m_wndPlIcon);
-	DDX_Text(pDX, IDC_STATIC_PL_ICON_NAME, m_plIconName);
+	DDX_Text(pDX, IDC_EDIT_PL_ICON_NAME, m_plIconName);
 	DDX_Control(pDX, IDC_STATIC_PLAYLIST, m_wndPlInfo);
 	DDX_Text(pDX, IDC_STATIC_PL_ID, m_plID);
 	DDX_Text(pDX, IDC_STATIC_PL_EPG, m_plEPG);

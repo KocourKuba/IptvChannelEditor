@@ -178,9 +178,9 @@
 #define IDC_STATIC_APP_TITLE            1064
 #define IDC_STATIC_CHANNELS             1066
 #define IDC_STATIC_ICON                 1067
-#define IDC_STATIC_ICON_NAME            1068
+#define IDC_EDIT_ICON_NAME              1068
 #define IDC_STATIC_PL_ICON              1069
-#define IDC_STATIC_PL_ICON_NAME         1070
+#define IDC_EDIT_PL_ICON_NAME           1070
 #define IDC_STATIC_PL_ID                1071
 #define IDC_STATIC_PL_EPG               1072
 #define IDC_STATIC_PLAYLIST             1073
@@ -264,7 +264,7 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        225
