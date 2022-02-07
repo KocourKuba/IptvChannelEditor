@@ -28,6 +28,7 @@
 #include "Config.h"
 
 #include "UtilsLib\inet_utils.h"
+#include "UtilsLib\md5.h"
 #include "UtilsLib\rapidxml.hpp"
 #include "UtilsLib\rapidxml_print.hpp"
 #include "UtilsLib\rapidxml_value.hpp"
@@ -625,6 +626,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	{
 		case StreamType::enEdem:
 		{
+			// ottkey/subdomain
 			switch (idx)
 			{
 				case 0: // Standard
@@ -650,28 +652,23 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		case StreamType::enVipLime:
 		case StreamType::enLightIptv:
 		case StreamType::enOttclub:
+		case StreamType::enOneOtt:
 		case StreamType::enIptvOnline:
-		{
-			switch (idx)
-			{
-				case 0: // Playlist
-					url = fmt::format(playlist_template, m_password);
-					break;
-				case 1: // Custom file
-					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
-					break;
-				default:
-					break;
-			}
-			break;
-		}
 		case StreamType::enCbilling:
 		case StreamType::enShuraTV:
 		{
+			// pin
 			switch (idx)
 			{
 				case 0: // Playlist
-					url = fmt::format(playlist_template, m_password, GetConfig().get_int(false, REG_DEVICE_ID, 1));
+					if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV)
+					{
+						url = fmt::format(playlist_template, m_password, GetConfig().get_int(false, REG_DEVICE_ID, 1));
+					}
+					else if (plugin_type == StreamType::enOneOtt)
+					{
+						url = fmt::format(playlist_template, m_token);
+					}
 					break;
 				case 1: // Custom file
 					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
@@ -685,11 +682,22 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		case StreamType::enGlanz:
 		case StreamType::enSharaclub:
 		case StreamType::enSharaTV:
+		case StreamType::enVidok:
 		{
+			// login/password
 			switch (idx)
 			{
 				case 0: // Playlist
-					url = fmt::format(playlist_template, m_login, m_password);
+					if (plugin_type == StreamType::enVidok)
+					{
+						std::string login_a = std::move(utils::string_tolower(utils::utf16_to_utf8(m_login)));
+						std::string password_a = std::move(utils::utf16_to_utf8(m_password));
+						url = fmt::format(playlist_template, utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a))));
+					}
+					else
+					{
+						url = fmt::format(playlist_template, m_login, m_password);
+					}
 					break;
 				case 1: // Custom file
 					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
@@ -698,22 +706,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 					// 	url = fmt::format(account_template, m_login.c_str(), m_password);
 					// 	m_plFileName = _T("SharaClub_Movie.m3u8");
 					// 	break;
-				default:
-					break;
-			}
-			break;
-		}
-		case StreamType::enOneOtt:
-		case StreamType::enVidok:
-		{
-			switch (idx)
-			{
-				case 0: // Playlist
-					url = fmt::format(playlist_template, m_token);
-					break;
-				case 1: // Custom file
-					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
-					break;
 				default:
 					break;
 			}

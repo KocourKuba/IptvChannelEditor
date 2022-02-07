@@ -934,7 +934,7 @@ BEGIN
                             "Portable config not loaded. Nothing to import!"
     IDS_STRING_ERR_TRAY_ICON 
                             "Failed to create tray icon. Verify Notification Area Icon settings"
-    IDS_STRING_DEVICE_ID    "Device ID"
+    IDS_STRING_DEVICE_ID    "Device"
     IDS_STRING_SERVER_ID    "Server"
 END
 

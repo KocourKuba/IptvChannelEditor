@@ -19,6 +19,8 @@ IMPLEMENT_DYNAMIC(CAccessInfoPassDlg, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CAccessInfoPassDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_GET, &CAccessInfoPassDlg::OnBnClickedBtnGet)
+	ON_EN_CHANGE(IDC_EDIT_LOGIN, &CAccessInfoPassDlg::OnEnChangeEditLogin)
+	ON_EN_CHANGE(IDC_EDIT_PASSWORD, &CAccessInfoPassDlg::OnEnChangeEditLogin)
 END_MESSAGE_MAP()
 
 
@@ -89,14 +91,16 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	const auto& uri = m_entry->stream_uri;
 	uri->set_template(false);
 
-	std::wstring pl_url = fmt::format(uri->get_playlist_template(), login, password);
-
+	std::wstring url;
 	if (m_type == StreamType::enVidok)
 	{
-		std::string login_a = utils::string_tolower(utils::utf16_to_utf8(login));
-		std::string password_a = utils::utf16_to_utf8(password);
-		const auto& token = utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
-		pl_url = fmt::format(uri->get_playlist_template(), token);
+		std::string login_a = std::move(utils::string_tolower(utils::utf16_to_utf8(login)));
+		std::string password_a = std::move(utils::utf16_to_utf8(password));
+		url = fmt::format(uri->get_playlist_template(), utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a))));
+	}
+	else
+	{
+		url = fmt::format(uri->get_playlist_template(), login, password);
 	}
 
 	std::list<AccountParams> params;
@@ -117,7 +121,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 				}
 				else if (it->name == (L"url"))
 				{
-					pl_url = it->value;
+					url = it->value;
 					it = params.erase(it);
 				}
 				else
@@ -129,7 +133,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	}
 
 	std::vector<BYTE> data;
-	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
+	if (!url.empty() && utils::DownloadFile(url, data))
 	{
 		utils::vector_to_streambuf<char> buf(data);
 		std::istream stream(&buf);
@@ -163,6 +167,12 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 		m_wndInfo.SetItemText(idx++, 1, item.value.c_str());
 	}
 
+	GetDlgItem(IDOK)->EnableWindow(TRUE);
 
 	UpdateData(FALSE);
+}
+
+void CAccessInfoPassDlg::OnEnChangeEditLogin()
+{
+	GetDlgItem(IDOK)->EnableWindow(FALSE);
 }

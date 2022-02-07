@@ -22,6 +22,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnBnClickedBtnGet();
+	afx_msg void OnEnChangeEditLogin();
 
 public:
 	std::shared_ptr<PlaylistEntry> m_entry;

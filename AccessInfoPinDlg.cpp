@@ -18,6 +18,7 @@ IMPLEMENT_DYNAMIC(CAccessInfoPinDlg, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CAccessInfoPinDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_GET, &CAccessInfoPinDlg::OnBnClickedBtnGet)
+	ON_EN_CHANGE(IDC_EDIT_PASSWORD, &CAccessInfoPinDlg::OnEnChangeEditLogin)
 END_MESSAGE_MAP()
 
 
@@ -170,5 +171,12 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 		}
 	}
 
+	GetDlgItem(IDOK)->EnableWindow(TRUE);
+
 	UpdateData(FALSE);
+}
+
+void CAccessInfoPinDlg::OnEnChangeEditLogin()
+{
+	GetDlgItem(IDOK)->EnableWindow(FALSE);
 }
