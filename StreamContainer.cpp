@@ -20,6 +20,7 @@
 #include "uri_ottclub.h"
 #include "uri_iptvonline.h"
 #include "uri_vidok.h"
+#include "uri_shuratv.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -95,6 +96,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enVidok:
 			return  std::make_unique<uri_vidok>();
+
+		case StreamType::enShuraTV:
+			return  std::make_unique<uri_shuratv>();
 
 		default:
 			ASSERT(false);

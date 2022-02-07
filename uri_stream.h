@@ -263,6 +263,12 @@ public:
 	virtual std::string get_epg_time_end(bool first = true) const { return "time_to"; }
 
 	/// <summary>
+	/// is used duration instead of epg_time_end
+	/// </summary>
+	/// <returns>string</returns>
+	virtual bool get_use_duration(bool first = true) const { return false; }
+
+	/// <summary>
 	/// get additional get headers
 	/// </summary>
 	/// <returns>std::wstring</returns>
@@ -364,7 +370,7 @@ protected:
 		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
 	}
 
-	std::wstring& AppendArchive(std::wstring& url) const
+	virtual std::wstring& AppendArchive(std::wstring& url) const
 	{
 		if (url.rfind('?') != std::wstring::npos)
 			url += '&';

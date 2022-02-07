@@ -64,6 +64,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					case StreamType::enSharavoz:
 					case StreamType::enOneOtt:
 					case StreamType::enCbilling:
+					case StreamType::enShuraTV:
 						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
 						entry->set_epg2_id(entry->stream_uri->get_id()); // secondary EPG
 						break;

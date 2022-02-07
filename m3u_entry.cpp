@@ -31,6 +31,7 @@ static std::map<std::string, m3u_entry::info_tags> s_tags = {
 	{ "timeshift",      m3u_entry::tag_timeshift      },
 	{ "catchup",        m3u_entry::tag_catchup        },
 	{ "catchup-days",   m3u_entry::tag_catchup_days   },
+	{ "catchup-time",   m3u_entry::tag_catchup_time   },
 	{ "catchup-type",   m3u_entry::tag_catchup_type   },
 	{ "catchup-source", m3u_entry::tag_catchup_source },
 };

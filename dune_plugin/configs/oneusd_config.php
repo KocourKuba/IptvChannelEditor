@@ -43,7 +43,6 @@ class OneusdPluginConfig extends DefaultConfig
                 else {
                     $url = str_replace('video.m3u8', 'mpegts', $url);
                 }
-
                 break;
         }
 

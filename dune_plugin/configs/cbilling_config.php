@@ -53,7 +53,7 @@ class CbillingPluginConfig extends DefaultConfig
                 // http://s01.iptvx.tv:8090/s/8264fb5785dc128d5d64a681a94ba78f/pervyj-hd.m3u8
                 if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
-                    $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+                    $url = static::UpdateArchiveUrlParams($url, $archive_ts);
                 }
                 break;
             case 'hls2':

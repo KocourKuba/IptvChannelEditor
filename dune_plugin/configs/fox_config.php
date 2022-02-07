@@ -39,7 +39,7 @@ class FoxPluginConfig extends DefaultConfig
             $url = $ext_params[0];
         }
 
-        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         // hd_print("Stream url:  " . $url);
 

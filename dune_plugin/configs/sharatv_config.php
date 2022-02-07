@@ -25,7 +25,7 @@ class SharatvPluginConfig extends DefaultConfig
     public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
-        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         // shara tv does not support hls, only mpeg-ts
         // hd_print("Stream url:  " . $url);

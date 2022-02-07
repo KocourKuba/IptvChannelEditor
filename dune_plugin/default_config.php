@@ -92,6 +92,7 @@ abstract class DefaultConfig
         static::$FEATURES[TV_FAVORITES_SUPPORTED] = true;
         static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = false;
         static::$FEATURES[VOD_FAVORITES_SUPPORTED] = false;
+        static::$FEATURES[VOD_PORTAL_SUPPORTED] = false;
         static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS', 'mpeg' => 'MPEG-TS');
         static::$FEATURES[DEVICE_OPTIONS] = array();
         static::$FEATURES[BALANCE_SUPPORTED] = false;
@@ -108,6 +109,7 @@ abstract class DefaultConfig
         static::$EPG_PARSER_PARAMS['first']['title'] = 'name';
         static::$EPG_PARSER_PARAMS['first']['description'] = 'descr';
         static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y-m-d';
+        static::$EPG_PARSER_PARAMS['first']['use_duration'] = false;
 
         static::$EPG_PARSER_PARAMS['second']['parser'] = 'json';
         static::$EPG_PARSER_PARAMS['second']['epg_root'] = 'epg_data';
@@ -116,6 +118,7 @@ abstract class DefaultConfig
         static::$EPG_PARSER_PARAMS['second']['title'] = 'name';
         static::$EPG_PARSER_PARAMS['second']['description'] = 'descr';
         static::$EPG_PARSER_PARAMS['second']['date_format'] = 'Y-m-d';
+        static::$EPG_PARSER_PARAMS['second']['use_duration'] = false;
     }
 
     public static function get_account_type()
@@ -757,7 +760,12 @@ abstract class DefaultConfig
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
             ),
 
             // 3x3 without title
@@ -793,7 +801,12 @@ abstract class DefaultConfig
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
             ),
 
             // 4x4 without title
@@ -829,7 +842,12 @@ abstract class DefaultConfig
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
             ),
 
             // 5x4 without title
@@ -865,7 +883,12 @@ abstract class DefaultConfig
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
             ),
 
             // 2x10 list view with title
@@ -896,7 +919,12 @@ abstract class DefaultConfig
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
             ),
         );
     }
@@ -953,10 +981,10 @@ abstract class DefaultConfig
                 PluginRegularFolderView::not_loaded_view_item_params => array
                 (
                     ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_width => self::VOD_CHANNEL_ICON_WIDTH,
-                    ViewItemParams::icon_height => self::VOD_CHANNEL_ICON_HEIGHT,
-                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
+                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
                 ),
+
                 array
                 (
                     PluginRegularFolderView::async_icon_loading => true,
@@ -986,14 +1014,6 @@ abstract class DefaultConfig
                         ViewParams::sandwich_icon_keep_aspect_ratio => true,
                     ),
 
-                    PluginRegularFolderView::not_loaded_view_item_params => array
-                    (
-                        ViewItemParams::item_paint_icon => true,
-                        ViewItemParams::icon_width => self::VOD_CHANNEL_ICON_WIDTH,
-                        ViewItemParams::icon_height => self::VOD_CHANNEL_ICON_HEIGHT,
-                        ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
-                    ),
-
                     PluginRegularFolderView::base_view_item_params => array
                     (
                         ViewItemParams::item_paint_icon => true,
@@ -1008,6 +1028,13 @@ abstract class DefaultConfig
                         ViewItemParams::icon_sel_margin_top => 0,
                         ViewItemParams::item_paint_caption => true,
                         ViewItemParams::item_caption_width => 950
+                    ),
+
+                    PluginRegularFolderView::not_loaded_view_item_params => array
+                    (
+                        ViewItemParams::item_paint_icon => true,
+                        ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
+                        ViewItemParams::item_detailed_icon_path => 'missing://',
                     ),
                 ),
                 array
@@ -1038,14 +1065,6 @@ abstract class DefaultConfig
                         ViewParams::sandwich_icon_keep_aspect_ratio => true,
                     ),
 
-                    PluginRegularFolderView::not_loaded_view_item_params => array
-                    (
-                        ViewItemParams::item_paint_icon => true,
-                        ViewItemParams::icon_width => 50,
-                        ViewItemParams::icon_height => 50,
-                        ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH
-                    ),
-
                     PluginRegularFolderView::base_view_item_params => array
                     (
                         ViewItemParams::item_paint_icon => true,
@@ -1060,6 +1079,13 @@ abstract class DefaultConfig
                         ViewItemParams::icon_sel_margin_top => 0,
                         ViewItemParams::item_paint_caption => true,
                         ViewItemParams::item_caption_width => 1100
+                    ),
+
+                    PluginRegularFolderView::not_loaded_view_item_params => array
+                    (
+                        ViewItemParams::item_paint_icon => true,
+                        ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
+                        ViewItemParams::item_detailed_icon_path => 'missing://',
                     ),
                 ),
             )

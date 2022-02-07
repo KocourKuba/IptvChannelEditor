@@ -97,7 +97,7 @@ class EdemPluginConfig extends DefaultConfig
                 $url);
         }
 
-        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }

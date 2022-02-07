@@ -25,6 +25,7 @@ enum class StreamType
 	enOttclub,
 	enIptvOnline,
 	enVidok,
+	enShuraTV,
 };
 
 constexpr auto APP_SETTINGS = L"Application";

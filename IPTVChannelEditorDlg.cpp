@@ -498,6 +498,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enCbilling:
 		case StreamType::enOttclub:
 		case StreamType::enIptvOnline:
+		case StreamType::enShuraTV:
 		{
 			m_wndPlaylist.AddString(_T("Playlist"));
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
@@ -665,6 +666,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 			break;
 		}
 		case StreamType::enCbilling:
+		case StreamType::enShuraTV:
 		{
 			switch (idx)
 			{
@@ -746,12 +748,13 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	auto data = std::make_unique<std::vector<BYTE>>();
 	std::wstring host;
 	std::wstring path;
+	WORD port = 0;
 	if (isFile)
 	{
 		std::ifstream stream(url);
 		data->assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
 	}
-	else if (utils::CrackUrl(url, host, path))
+	else if (utils::CrackUrl(url, host, path, port))
 	{
 		if (!utils::DownloadFile(url, *data))
 		{
@@ -1367,6 +1370,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 		const auto& tag_end = info->stream_uri->get_epg_time_end();
 		const auto& tag_name = info->stream_uri->get_epg_name();
 		const auto& tag_desc = info->stream_uri->get_epg_desc();
+		const bool use_duration = info->stream_uri->get_use_duration();
 
 		for (auto& item : epg_data.items())
 		{
@@ -1386,6 +1390,9 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 					time_end = val.value(tag_end, 0);
 				else if (val[tag_end].is_string())
 					time_end = utils::char_to_int(val.value(tag_end, ""));
+
+				if (use_duration)
+					time_end += time_start;
 			}
 
 			if (now < time_start || now > time_end) continue;
@@ -1589,6 +1596,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			case StreamType::enCbilling:
 			case StreamType::enOttclub:
 			case StreamType::enIptvOnline:
+			case StreamType::enShuraTV:
 				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 				break;
 			default:
@@ -2776,6 +2784,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enCbilling:
 		case StreamType::enOttclub:
 		case StreamType::enIptvOnline:
+		case StreamType::enShuraTV:
 		{
 			switch (m_wndPlaylist.GetCurSel())
 			{
@@ -2934,8 +2943,10 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 		GetConfig().set_string(false, m_embedded_info ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, m_domain);
 		GetConfig().set_string(false, m_embedded_info ? REG_PASSWORD_EMBEDDED : REG_PASSWORD, m_password);
 
-		if (plugin_type == StreamType::enCbilling)
+		if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV)
+		{
 			GetConfig().set_int(false, REG_DEVICE_ID, dlg.m_device_id);
+		}
 	}
 
 	return loaded;
@@ -3142,7 +3153,7 @@ void CIPTVChannelEditorDlg::OnSave()
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
 
 	int lst_idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
-	if (lst_idx == -1)
+	if (lst_idx == -1 || m_all_channels_lists.empty())
 	{
 		const auto& plugin_name = GetConfig().GetCurrentPluginName();
 		const auto& list_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
@@ -3208,6 +3219,7 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enCbilling:
 				case StreamType::enOttclub:
 				case StreamType::enIptvOnline:
+				case StreamType::enShuraTV:
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
 				default:

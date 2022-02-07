@@ -39,8 +39,7 @@ class TvteamPluginConfig extends DefaultConfig
                 if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
                     $url = str_replace('mono.m3u8', "archive-$archive_ts-7200.ts", $url);
-                }
-                else {
+                } else {
                     $url = str_replace('video.m3u8', 'mpegts', $url);
                 }
                 break;

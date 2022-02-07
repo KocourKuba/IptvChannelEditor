@@ -4,7 +4,7 @@
 
 namespace utils
 {
-bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path);
+bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, unsigned short& port);
 
 bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, std::wstring* pHeaders = nullptr);
 

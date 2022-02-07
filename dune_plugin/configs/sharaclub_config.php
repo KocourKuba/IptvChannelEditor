@@ -32,7 +32,7 @@ class SharaclubPluginConfig extends DefaultConfig
     public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
-        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         if (self::get_format($plugin_cookies) === 'mpeg') {
             $url = str_replace('/video.m3u8', '.ts', $url);
@@ -62,6 +62,18 @@ class SharaclubPluginConfig extends DefaultConfig
         }
 
         return '';
+    }
+
+    protected static function UpdateArchiveUrlParams($url, $archive_ts)
+    {
+        if ($archive_ts > 0) {
+            $url .= (strpos($url, '?') === false) ? '?' : '&';
+            $url .= "utc=$archive_ts";
+            // hd_print("Archive TS:  " . $archive_ts);
+            // hd_print("Now       :  " . $now_ts);
+        }
+
+        return $url;
     }
 
     /**

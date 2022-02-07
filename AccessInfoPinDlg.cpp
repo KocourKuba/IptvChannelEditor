@@ -51,13 +51,32 @@ BOOL CAccessInfoPinDlg::OnInitDialog()
 	m_wndInfo.InsertColumn(1, _T("Data"), LVCFMT_LEFT, vWidth - nWidth, 0);
 
 	m_password = m_entry->stream_uri->get_password().c_str();
+
 	switch (m_type)
 	{
 		case StreamType::enCbilling:
+		case StreamType::enShuraTV:
+		{
+			int max_etry = 3;
+			CString text;
+			text.LoadString(IDS_STRING_DEVICE_ID);
+			if (m_type == StreamType::enShuraTV)
+			{
+				max_etry = 2;
+				text.LoadString(IDS_STRING_SERVER_ID);
+				GetDlgItem(IDC_STATIC_DEVICE_ID)->SetWindowText(text);
+			}
+
 			GetDlgItem(IDC_STATIC_DEVICE_ID)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDC_COMBO_DEVICE_ID)->ShowWindow(SW_SHOW);
+			for (int i = 1; i <= max_etry; i++)
+			{
+				text.Format(_T("%d"), i);
+				m_wndDeviceID.AddString(text);
+			}
 			m_wndDeviceID.SetCurSel(m_device_id - 1);
+			m_wndDeviceID.ShowWindow(SW_SHOW);
 			break;
+		}
 		default:
 			break;
 	}
@@ -78,6 +97,7 @@ void CAccessInfoPinDlg::OnOK()
 	switch (m_type)
 	{
 		case StreamType::enCbilling:
+		case StreamType::enShuraTV:
 			m_device_id = m_wndDeviceID.GetCurSel() + 1;
 			break;
 		default:

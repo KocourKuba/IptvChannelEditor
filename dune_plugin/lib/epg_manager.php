@@ -135,7 +135,11 @@ class EpgManager
         foreach ($data as $entry) {
             $program_start = $entry[$parser_params['start']];
             if ($epg_date_start <= $program_start && $program_start <= $epg_date_end) {
-                $epg[$program_start]['end'] = $entry[$parser_params['end']];
+                if ($parser_params['use_duration']) {
+                    $epg[$program_start]['end'] = $program_start + (int)$entry[$parser_params['end']];
+                } else {
+                    $epg[$program_start]['end'] = $entry[$parser_params['end']];
+                }
                 $epg[$program_start]['title'] = HD::unescape_entity_string($entry[$parser_params['title']]);
                 $epg[$program_start]['desc'] = HD::unescape_entity_string($entry[$parser_params['description']]);
             }

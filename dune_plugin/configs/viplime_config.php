@@ -32,7 +32,7 @@ class ViplimePluginConfig extends DefaultConfig
 
         //hd_print("AdjustStreamUrl: $url");
 
-        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         if (self::get_format($plugin_cookies) === 'mpeg') {
             // replace hls to mpegts

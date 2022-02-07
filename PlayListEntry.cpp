@@ -13,11 +13,17 @@ bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 {
 	if (str.empty()) return false;
 
+	bool result = false;
 	switch (m3uEntry.get_directive())
 	{
 		case m3u_entry::ext_pathname:
+		{
 			stream_uri->parse_uri(utils::utf8_to_utf16(str));
-			return stream_uri->is_valid();
+			result = stream_uri->is_valid();
+			if (result && category.empty())
+				category = L"Unset";
+			break;
+		}
 		case m3u_entry::ext_group:
 			if (!category.empty()) break;
 
@@ -50,7 +56,7 @@ bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 			break;
 	}
 
-	return false;
+	return result;
 }
 
 void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::string>& tags)
@@ -90,6 +96,10 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::str
 	if (const auto& pair = tags.find(m3u_entry::tag_catchup_days); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second));
+	}
+	if (const auto& pair = tags.find(m3u_entry::tag_catchup_time); pair != tags.end())
+	{
+		set_archive_days(utils::char_to_int(pair->second) / 86400);
 	}
 	if (const auto& pair = tags.find(m3u_entry::tag_timeshift); pair != tags.end())
 	{

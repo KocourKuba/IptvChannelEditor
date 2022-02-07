@@ -216,6 +216,9 @@
     <ClInclude Include="uri_vidok.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="uri_shuratv.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -363,6 +366,9 @@
       <Filter>Source Files\uri</Filter>
     </ClCompile>
     <ClCompile Include="uri_vidok.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_shuratv.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>

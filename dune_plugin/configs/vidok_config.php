@@ -39,7 +39,7 @@ class VidokPluginConfig extends DefaultConfig
     public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
-        $url = self::UpdateArchiveUrlParams($url, $archive_ts);
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         // hd_print("Stream url:  " . $url);
 
@@ -55,6 +55,18 @@ class VidokPluginConfig extends DefaultConfig
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->token);
+    }
+
+    protected static function UpdateArchiveUrlParams($url, $archive_ts)
+    {
+        if ($archive_ts > 0) {
+            $url .= (strpos($url, '?') === false) ? '?' : '&';
+            $url .= "utc=$archive_ts";
+            // hd_print("Archive TS:  " . $archive_ts);
+            // hd_print("Now       :  " . $now_ts);
+        }
+
+        return $url;
     }
 
     /**

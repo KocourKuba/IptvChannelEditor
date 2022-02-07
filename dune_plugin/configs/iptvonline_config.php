@@ -25,6 +25,7 @@ class IptvonlinePluginConfig extends DefaultConfig
     public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        //hd_print("AdjustStreamUrl: $url");
 
         switch (self::get_format($plugin_cookies)) {
             case 'hls':

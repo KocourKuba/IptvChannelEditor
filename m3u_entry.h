@@ -29,6 +29,7 @@ public:
 		tag_timeshift,
 		tag_catchup,
 		tag_catchup_days,
+		tag_catchup_time,
 		tag_catchup_type,
 		tag_catchup_source,
 	} info_tags;
