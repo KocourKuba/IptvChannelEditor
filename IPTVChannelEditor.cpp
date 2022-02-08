@@ -138,7 +138,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		return FALSE;
 	}
 
-	if (cmdInfo.m_bPortable)
+	if (cmdInfo.m_bRestoreReg)
 	{
 		if (GetConfig().IsPortable())
 			GetConfig().SaveSettingsToRegistry();
