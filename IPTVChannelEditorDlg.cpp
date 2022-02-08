@@ -3679,7 +3679,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 			UpdateChannelsTreeColors();
 		}
 
-		if (old_update != GetConfig().get_int(true, REG_UPDATE_FREQ))
+		if (old_update != GetConfig().get_int(true, REG_NEXT_UPDATE))
 		{
 			GetConfig().set_int64(true, REG_NEXT_UPDATE, 0);
 		}
