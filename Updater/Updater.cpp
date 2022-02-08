@@ -396,19 +396,19 @@ int main(int argc, char* argv[])
 		return err_create_dir; // Unable to create update directory!
 	}
 
-	if (check)
+	if (check) //-V547
 	{
 		LogProtocol("Checking for update.");
 		return check_for_update(info);
 	}
 
-	if (download)
+	if (download) //-V547
 	{
 		LogProtocol("Downloading update package.");
 		return download_update(info);
 	}
 
-	if (update)
+	if (update) //-V547
 	{
 		LogProtocol("Performing update application.");
 		return update_app(info);

@@ -484,7 +484,8 @@ LRESULT CTrayIcon::OnTrayNotification(WPARAM wParam, LPARAM lParam)
 
 			menu.DestroyMenu();
 
-			ShellNotify(NIM_SETFOCUS);
+			BOOL result = ShellNotify(NIM_SETFOCUS);
+			UNUSED_ALWAYS(result);
 		}
 		break;
 
