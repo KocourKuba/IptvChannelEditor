@@ -669,6 +669,10 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 					{
 						url = fmt::format(playlist_template, m_token);
 					}
+					else
+					{
+						url = fmt::format(playlist_template, m_password);
+					}
 					break;
 				case 1: // Custom file
 					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
