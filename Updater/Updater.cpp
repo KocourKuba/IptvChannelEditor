@@ -252,6 +252,7 @@ int update_app(UpdateInfo& info)
 
 			for(;;)
 			{
+				if (i > 20)
 				HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
 				if (!hAppRunningMutex)
 				{
