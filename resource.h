@@ -119,6 +119,8 @@
 #define IDS_STRING_ERR_TRAY_ICON        227
 #define IDS_STRING_DEVICE_ID            228
 #define IDS_STRING_SERVER_ID            229
+#define IDS_STRING_APP_TITLE            230
+#define IDS_STRING_APP_TITLE_PORTABLE   231
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -228,6 +230,7 @@
 #define IDC_CHECK_CMP_ARCHIVE           1118
 #define IDC_CHECK_AUTO_HIDE             1119
 #define IDC_COMBO_STRING_SHOW           1120
+#define IDC_CHECK_PORTABLE              1120
 #define IDC_COMBO_STRING_HIDE           1121
 #define IDC_CHECK_SHOW_MATCHED          1122
 #define IDC_CHECK_HIDE_MATCHED          1123

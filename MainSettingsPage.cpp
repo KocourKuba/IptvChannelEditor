@@ -37,6 +37,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SPIN_STREAM_THREADS, m_wndSpinMaxThreads);
 	DDX_Check(pDX, IDC_CHECK_AUTO_SYNC_CHANNELS, m_bAutoSync);
 	DDX_Check(pDX, IDC_CHECK_AUTO_HIDE, m_bAutoHide);
+	DDX_Check(pDX, IDC_CHECK_PORTABLE, m_bPortable);
 
 	DDX_Check(pDX, IDC_CHECK_CMP_TITLE, m_bCmpTitle);
 	DDX_Check(pDX, IDC_CHECK_CMP_ICON, m_bCmpIcon);
@@ -51,6 +52,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 
 	m_bAutoSync = GetConfig().get_int(true, REG_AUTO_SYNC);
 	m_bAutoHide = GetConfig().get_int(true, REG_AUTO_HIDE);
+	m_bPortable = GetConfig().IsPortable();
 	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
@@ -97,6 +99,8 @@ void CMainSettingsPage::OnOK()
 	flags |= (m_bCmpEpg1 ? CMP_FLAG_EPG1 : 0);
 	flags |= (m_bCmpEpg2 ? CMP_FLAG_EPG2 : 0);
 	GetConfig().set_int(true, REG_CMP_FLAGS, flags);
+
+	GetConfig().SetPortable(m_bPortable);
 
 	__super::OnOK();
 }

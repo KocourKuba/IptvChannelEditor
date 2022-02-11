@@ -227,6 +227,7 @@ private:
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
 	bool CheckForSave();
 	void SaveStreamInfo();
+	void UpdateWindowTitle();
 
 protected:
 	CFont m_largeFont;

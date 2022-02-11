@@ -172,7 +172,7 @@ void PluginsConfig::LoadSettings()
 				ReadSettingsJson(plugin.type);
 			}
 
-			m_bPortable = true;
+			m_bPortable = TRUE;
 		}
 
 	}
@@ -221,6 +221,12 @@ void PluginsConfig::UpdatePluginSettings()
 		UpdateSettingsJson(m_pluginType);
 	else
 		SaveSectionRegistry(m_pluginType);
+}
+
+void PluginsConfig::RemovePortableSettings()
+{
+	std::error_code ec;
+	std::filesystem::remove(GetAppPath() + CONFIG_FILE, ec);
 }
 
 std::wstring PluginsConfig::GetCurrentPluginName(bool bCamel /*= false*/) const

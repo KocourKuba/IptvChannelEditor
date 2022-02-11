@@ -359,13 +359,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	m_wndTrayIcon.HideIcon();
 
-	if (GetConfig().IsPortable())
-	{
-		CString text;
-		GetWindowText(text);
-		text += L" (Portable)";
-		SetWindowText(text);
-	}
+	UpdateWindowTitle();
 
 	CString ver;
 	ver.Format(_T("for DUNE HD v%d.%d.%d"), MAJOR, MINOR, BUILD);
@@ -444,6 +438,13 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SwitchPlugin();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+void CIPTVChannelEditorDlg::UpdateWindowTitle()
+{
+	CString text;
+	text.LoadString(GetConfig().IsPortable() ? IDS_STRING_APP_TITLE_PORTABLE : IDS_STRING_APP_TITLE);
+	SetWindowText(text);
 }
 
 void CIPTVChannelEditorDlg::SwitchPlugin()
@@ -3675,9 +3676,27 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	std::wstring old_list = GetConfig().get_string(true, REG_LISTS_PATH);
 	int old_flags = GetConfig().get_int(true, REG_CMP_FLAGS);
 	int old_update = GetConfig().get_int(true, REG_UPDATE_FREQ);
+	int old_portable = GetConfig().IsPortable();
+
 	if (sheet.DoModal() == IDOK)
 	{
-		GetConfig().SaveSettings();
+		if (old_portable != GetConfig().IsPortable())
+		{
+			if (GetConfig().IsPortable())
+			{
+				GetConfig().SaveSettingsToJson();
+			}
+			else
+			{
+				GetConfig().SaveSettingsToRegistry();
+				GetConfig().RemovePortableSettings();
+			}
+			UpdateWindowTitle();
+		}
+		else
+		{
+			GetConfig().SaveSettings();
+		}
 
 		if (old_list != GetConfig().get_string(true, REG_LISTS_PATH))
 		{

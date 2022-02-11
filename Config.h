@@ -137,6 +137,8 @@ public:
 
 	void UpdatePluginSettings();
 
+	void RemovePortableSettings();
+
 	const std::vector<PluginDesc>& get_plugins_info() const;
 	const std::vector<std::wstring>& get_plugins_images() const;
 
@@ -148,7 +150,8 @@ public:
 
 	std::wstring GetCurrentPluginName(bool bCamel = false) const;
 
-	bool IsPortable() const { return m_bPortable; }
+	BOOL IsPortable() const { return m_bPortable; }
+	void SetPortable(BOOL val) { m_bPortable = val; }
 
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;
@@ -182,7 +185,7 @@ private:
 	std::map<StreamType, map_variant> m_settings;
 	StreamType m_pluginType = StreamType::enEdem;
 	nlohmann::json m_config;
-	bool m_bPortable = false;
+	BOOL m_bPortable = FALSE;
 };
 
 inline PluginsConfig& GetConfig() { return PluginsConfig::Instance(); }
