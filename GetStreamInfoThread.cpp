@@ -42,22 +42,9 @@ BOOL CGetStreamInfoThread::InitInstance()
 									  GetChannelStreamInfo(m_config, count, i);
 								  }
 							  });
-
-		for(const auto& it : *m_config.m_container)
-		{
-			if (it->get_audio().empty() && it->get_video().empty()) continue;
-
-			auto hash = it->get_hash();
-			std::pair<std::string, std::string> infos(it->get_audio(), it->get_video());
-			auto& pair = stream_infos->emplace(hash, infos);
-			if (!pair.second)
-			{
-				pair.first->second = infos;
-			}
-		}
 	}
 
-	m_config.NotifyParent(WM_END_GET_STREAM_INFO, (WPARAM)stream_infos.release());
+	m_config.NotifyParent(WM_END_GET_STREAM_INFO);
 
 	CoUninitialize();
 
@@ -258,9 +245,10 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const ThreadConfig& config, std:
 	if (video.empty())
 		video = "Not available";
 
-	uri->set_audio(audio);
-	uri->set_video(video);
+	std::pair<std::string, std::string> pair(audio, video);
+	const auto& hash = uri->get_hash();
 
-	config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, ++count, config.m_container->size());
 	TRACE("GetChannelStreamInfo: Thread %d, Video: %s, Audio: %s\n", (int)count, video.c_str(), audio.c_str());
+
+	config.NotifyParent(WM_UPDATE_STREAM_INFO, hash, (LPARAM)&pair);
 }

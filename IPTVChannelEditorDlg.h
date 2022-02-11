@@ -162,6 +162,7 @@ protected:
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgressStream(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnUpdateStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnTrayIconNotify(WPARAM wParam, LPARAM lParam);
 

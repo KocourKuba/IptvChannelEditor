@@ -288,26 +288,6 @@ public:
 	virtual std::wstring get_playlist_template(bool first = true) const { return L""; };
 
 	/// <summary>
-	/// get audio info
-	/// </summary>
-	const std::string& get_audio() const { return audio_info; }
-
-	/// <summary>
-	/// set audio info
-	/// </summary>
-	void set_audio(const std::string& audio) { audio_info = audio; }
-
-	/// <summary>
-	/// get video info
-	/// </summary>
-	const std::string& get_video() const { return video_info; }
-
-	/// <summary>
-	/// set video info
-	/// </summary>
-	void set_video(const std::string& video) { video_info = video; }
-
-	/// <summary>
 	/// copy info
 	/// </summary>
 	void copy(const std::unique_ptr<uri_stream>& src)
@@ -392,8 +372,6 @@ protected:
 	std::wstring int_id;
 	std::wstring host;
 	std::wstring uri_template;
-	std::string audio_info;
-	std::string video_info;
 	mutable std::wstring str_hash;
 	mutable int hash = 0;
 };
