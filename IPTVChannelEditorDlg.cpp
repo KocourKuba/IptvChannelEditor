@@ -359,6 +359,14 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	m_wndTrayIcon.HideIcon();
 
+	if (GetConfig().IsPortable())
+	{
+		CString text;
+		GetWindowText(text);
+		text += L" (Portable)";
+		SetWindowText(text);
+	}
+
 	CString ver;
 	ver.Format(_T("for DUNE HD v%d.%d.%d"), MAJOR, MINOR, BUILD);
 	GetDlgItem(IDC_STATIC_APP_TITLE)->SetWindowText(ver);
