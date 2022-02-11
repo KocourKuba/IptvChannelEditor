@@ -1630,27 +1630,29 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	while (ch_node)
 	{
 		auto channel = std::make_shared<ChannelInfo>(ch_node, StreamType::enChannels, root_path);
-		channel->set_type(plugin_type);
-
 		ASSERT(!channel->stream_uri->get_id().empty());
+
 		auto ch_pair = m_channelsMap.find(channel->stream_uri->get_id());
-		if (ch_pair == m_channelsMap.end())
+		if (ch_pair != m_channelsMap.end())
 		{
-			m_channelsMap.emplace(channel->stream_uri->get_id(), channel);
+			// Only one unique channel must used!
+			channel = ch_pair->second;
+		}
+		else
+		{
+			channel->set_type(plugin_type);
+			ch_pair = m_channelsMap.emplace(channel->stream_uri->get_id(), channel).first;
 			if (channel->is_favorite())
 				fav_category->add_channel(channel);
 		}
+
+		ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
 
 		for (const auto& id : channel->get_category_ids())
 		{
 			auto cat_pair = m_categoriesMap.find(id);
 			ASSERT(cat_pair != m_categoriesMap.end());
 			cat_pair->second.category->add_channel(channel);
-		}
-
-		if (ch_pair != m_channelsMap.end())
-		{
-			ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
 		}
 
 		if (auto pair = m_stream_infos.find(channel->stream_uri->get_hash()); pair != m_stream_infos.end())
