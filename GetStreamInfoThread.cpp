@@ -31,7 +31,8 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 	if (m_config.m_container)
 	{
-		m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, 0, m_config.m_container->size());
+		ULARGE_INTEGER ul = { 0, m_config.m_container->size() };
+		m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul);
 
 		thread_pool pool(m_config.m_max_threads);
 		std::atomic<int> count { 0 };
@@ -245,10 +246,10 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const ThreadConfig& config, std:
 	if (video.empty())
 		video = "Not available";
 
-	std::pair<std::string, std::string> pair(audio, video);
-	const auto& hash = uri->get_hash();
-
 	TRACE("GetChannelStreamInfo: Thread %d, Video: %s, Audio: %s\n", (int)count, video.c_str(), audio.c_str());
 
-	config.NotifyParent(WM_UPDATE_STREAM_INFO, hash, (LPARAM)&pair);
+	ULARGE_INTEGER ul = { (DWORD)++count, config.m_container->size() };
+	std::tuple<int, std::string, std::string> tuple = { uri->get_hash(), audio, video };
+
+	config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul, (LPARAM)&tuple);
 }

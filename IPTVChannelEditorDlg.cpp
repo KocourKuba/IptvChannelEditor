@@ -211,7 +211,6 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_MESSAGE(WM_UPDATE_PROGRESS, &CIPTVChannelEditorDlg::OnUpdateProgress)
 	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnEndLoadPlaylist)
 	ON_MESSAGE(WM_UPDATE_PROGRESS_STREAM, &CIPTVChannelEditorDlg::OnUpdateProgressStream)
-	ON_MESSAGE(WM_UPDATE_STREAM_INFO, &CIPTVChannelEditorDlg::OnUpdateProgressStream)
 	ON_MESSAGE(WM_END_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnEndGetStreamInfo)
 	ON_MESSAGE(WM_TRAYICON_NOTIFY, &CIPTVChannelEditorDlg::OnTrayIconNotify)
 
@@ -926,21 +925,25 @@ LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lP
 
 LRESULT CIPTVChannelEditorDlg::OnUpdateProgressStream(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-	CString str;
-	str.Format(IDS_STRING_FMT_STREAM_INFO, wParam, lParam);
-	m_wndProgressInfo.SetWindowText(str);
-	m_wndProgress.SetPos(wParam);
-
-	return 0;
-}
-
-LRESULT CIPTVChannelEditorDlg::OnUpdateStreamInfo(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
-{
-	if (wParam && lParam)
+	if (wParam)
 	{
-		int hash = (int)wParam;
-		auto info_pair = (std::pair<std::string, std::string>*)lParam;
-		m_stream_infos[hash] = *info_pair;
+		ULARGE_INTEGER* ul = (ULARGE_INTEGER*)wParam;
+
+		m_wndProgress.SetPos(ul->LowPart);
+
+		CString str;
+		str.Format(IDS_STRING_FMT_STREAM_INFO, ul->LowPart, ul->HighPart);
+		m_wndProgressInfo.SetWindowText(str);
+	}
+
+	if (lParam)
+	{
+		auto tuple = (std::tuple<int, std::string, std::string>*)lParam;
+		int hash;
+		std::string audio;
+		std::string video;
+		std::tie(hash, audio, video) = *tuple;
+		m_stream_infos[hash] = {audio, video};
 	}
 
 	return 0;
