@@ -144,6 +144,8 @@
 #define IDC_CHECK_CASE_SHOW             1027
 #define IDC_CHECK_CUSTOMIZE             1028
 #define IDC_CHECK_GLOBAL                1029
+#define IDC_CHECK_CUSTOMIZE2            1029
+#define IDC_CHECK_SHOW_URL              1029
 #define IDC_CHECK_PL_ARCHIVE            1030
 #define IDC_CHECK_REGEX_SHOW            1031
 #define IDC_CHECK_NOT_ADDED             1032

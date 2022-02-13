@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220211231948" scan="79" scanned="20220211231838">
+<document created="20211012165442" version="4.0.374" date="20220213233653" scan="80" scanned="20220213233632">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220211221800" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220213222742" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -722,7 +722,10 @@
             <row id="Y">67</row>
           </component>
           <component class="TVisCheckBox" name="1028" type="button">
-            <row id="CX" changed="20211012172720">109</row>
+            <row id="CX" state="3" changed="20220213233632">
+              <prev>109</prev>
+              <native>93</native>
+            </row>
             <row id="CY">10</row>
             <row id="Text">
               <native>Custom Url</native>
@@ -932,6 +935,16 @@
               <native>329</native>
             </row>
           </component>
+          <component class="TVisCheckBox" name="1029" state="0" created="20220213233632" type="button">
+            <row id="CX" state="0">93</row>
+            <row id="CY" state="0">10</row>
+            <row id="Text" state="0">
+              <native>Show real Url</native>
+              <lang id="ru" date="20220213233650">Показывать полную ссылку</lang>
+            </row>
+            <row id="X" state="0">270</row>
+            <row id="Y" state="0">82</row>
+          </component>
           <component class="TVisComboBox" name="1084" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX">87</row>
             <row id="CY">30</row>
@@ -968,7 +981,7 @@
             <row id="X" changed="20211124211848">374</row>
             <row id="Y">65</row>
           </component>
-          <component class="TVisEdit" name="1052" type="edit" enabled="0">
+          <component class="TVisEdit" name="1052" type="edit" readonly="1">
             <row id="CX" changed="20211124211848">228</row>
             <row id="CY">12</row>
             <row id="X">171</row>
@@ -4129,34 +4142,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220211231838">
-          <prev>2.5.647, 8 Feb 2022</prev>
-          <native>2.5.657, 11 Feb 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220213233632">
+          <prev>2.5.657, 11 Feb 2022</prev>
+          <native>2.5.663, 13 Feb 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220208004505">
           <prev>4</prev>
           <native>5</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220211231838">
-          <prev>647</prev>
-          <native>657</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220213233632">
+          <prev>657</prev>
+          <native>663</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220211231838">
-          <prev>2.5.647</prev>
-          <native>2.5.657</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220213233632">
+          <prev>2.5.657</prev>
+          <native>2.5.663</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220208004505">
           <prev>4</prev>
           <native>5</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220211231838">
-          <prev>647</prev>
-          <native>657</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220213233632">
+          <prev>657</prev>
+          <native>663</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

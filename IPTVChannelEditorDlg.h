@@ -181,8 +181,8 @@ private:
 	void FillTreePlaylist();
 	std::vector<std::wstring> FilterPlaylist();
 
-	void LoadChannelInfo(HTREEITEM hItem);
-	void LoadPlayListInfo(HTREEITEM hItem);
+	void LoadChannelInfo(HTREEITEM hItem = nullptr);
+	void LoadPlayListInfo(HTREEITEM hItem = nullptr);
 
 	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0) const;
 
@@ -257,6 +257,7 @@ protected:
 	CEdit m_wndSearch;
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
+	CButton m_wndShowUrl;
 	CButton m_wndFilter;
 	CButton m_wndShowUnknown;
 	CButton m_wndShowChanged;
@@ -405,4 +406,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
 	std::map<std::wstring, nlohmann::json> m_epgMap;
+public:
+	afx_msg void OnBnClickedCheckShowUrl();
 };

@@ -40,6 +40,10 @@ constexpr auto CMP_FLAG_ALL     = CMP_FLAG_TITLE | CMP_FLAG_ICON | CMP_FLAG_ARCH
 constexpr auto REG_WINDOW_POS      = _T("WindowPos");
 constexpr auto REG_ICON_WINDOW_POS = _T("IconsWindowPos");
 
+// app
+constexpr auto REG_NEXT_UPDATE     = _T("NextUpdate");
+constexpr auto REG_AVAIL_UPDATE    = _T("AvailableUpdate");
+
 // settings dialog
 constexpr auto REG_PLAYER          = _T("Player");
 constexpr auto REG_FFPROBE         = _T("FFProbe");
@@ -58,8 +62,7 @@ constexpr auto REG_PLUGIN          = _T("PluginType");
 constexpr auto REG_ICON_SOURCE     = _T("IconSource");
 constexpr auto REG_DAYS_BACK       = _T("DaysBack");
 constexpr auto REG_HOURS_BACK      = _T("HoursBack");
-constexpr auto REG_NEXT_UPDATE     = _T("NextUpdate");
-constexpr auto REG_AVAIL_UPDATE    = _T("AvailableUpdate");
+constexpr auto REG_SHOW_URL        = _T("ShowStreamUrl");
 
 // Plugin dependent
 constexpr auto REG_LOGIN               = _T("Login");
