@@ -9,7 +9,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
+bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 {
 	if (str.empty()) return false;
 
@@ -18,7 +18,7 @@ bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 	{
 		case m3u_entry::ext_pathname:
 		{
-			stream_uri->parse_uri(utils::utf8_to_utf16(str));
+			stream_uri->parse_uri(str);
 			result = stream_uri->is_valid();
 			if (result && category.empty())
 				category = L"Unset";
@@ -27,7 +27,7 @@ bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 		case m3u_entry::ext_group:
 			if (!category.empty()) break;
 
-			category = utils::utf8_to_utf16(m3uEntry.get_dvalue());
+			category = m3uEntry.get_dvalue();
 			check_adult(category);
 			break;
 		case m3u_entry::ext_info:
@@ -41,7 +41,7 @@ bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 
 			if (!m3uEntry.get_dir_title().empty())
 			{
-				set_title(utils::utf8_to_utf16(m3uEntry.get_dir_title()));
+				set_title(m3uEntry.get_dir_title());
 			}
 
 			search_id(tags);
@@ -59,23 +59,23 @@ bool PlaylistEntry::Parse(const std::string& str, const m3u_entry& m3uEntry)
 	return result;
 }
 
-void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::string>& tags)
+void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::tag_channel_id); pair != tags.end())
 	{
-		stream_uri->set_id(utils::utf8_to_utf16(pair->second));
+		stream_uri->set_id(pair->second);
 	}
 	else if (const auto& pair = tags.find(m3u_entry::tag_cuid); pair != tags.end())
 	{
-		stream_uri->set_id(utils::utf8_to_utf16(pair->second));
+		stream_uri->set_id(pair->second);
 	}
 }
 
-void PlaylistEntry::search_group(const std::map<m3u_entry::info_tags, std::string>& tags)
+void PlaylistEntry::search_group(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::tag_group_title); pair != tags.end())
 	{
-		category = utils::utf8_to_utf16(pair->second);
+		category = pair->second;
 		if (category.empty())
 		{
 			category = L"Unset";
@@ -87,7 +87,7 @@ void PlaylistEntry::search_group(const std::map<m3u_entry::info_tags, std::strin
 	}
 }
 
-void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::string>& tags)
+void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::tag_tvg_rec); pair != tags.end())
 	{
@@ -107,31 +107,31 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::str
 	}
 }
 
-void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::string>& tags)
+void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
 	// priority -> tvg_id -> tvg_name -> title
 	if (const auto& pair = tags.find(m3u_entry::tag_tvg_id); pair != tags.end())
 	{
-		set_epg1_id(utils::utf8_to_utf16(pair->second));
+		set_epg1_id(pair->second);
 	}
 	else if (const auto& pair = tags.find(m3u_entry::tag_tvg_name); pair != tags.end())
 	{
-		set_epg1_id(utils::utf8_to_utf16(pair->second));
+		set_epg1_id(pair->second);
 	}
 	else if (const auto& pair = tags.find(m3u_entry::tag_directive_title); pair != tags.end())
 	{
-		set_epg1_id(utils::utf8_to_utf16(pair->second));
+		set_epg1_id(pair->second);
 	}
 }
 
-void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::string>& tags)
+void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::tag_tvg_logo); pair != tags.end())
 	{
 		if (logo_root.empty())
-			set_icon_uri(utils::string_replace<wchar_t>(utils::utf8_to_utf16(pair->second), L"//epg.it999.ru/img/", L"//epg.it999.ru/img2/"));
+			set_icon_uri(utils::string_replace<wchar_t>(pair->second, L"//epg.it999.ru/img/", L"//epg.it999.ru/img2/"));
 		else
-			set_icon_uri(utils::utf8_to_utf16(logo_root + pair->second));
+			set_icon_uri(logo_root + pair->second);
 	}
 }
 

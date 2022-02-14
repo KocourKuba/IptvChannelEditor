@@ -10,30 +10,30 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static std::map<std::string, m3u_entry::directives> s_ext_directives = {
-	{ "#EXTM3U"   , m3u_entry::ext_header   },
-	{ "#EXTINF"   , m3u_entry::ext_info     },
-	{ "#EXTGRP"   , m3u_entry::ext_group    },
-	{ "#PLAYLIST" , m3u_entry::ext_playlist },
+static std::map<std::wstring, m3u_entry::directives> s_ext_directives = {
+	{ L"#EXTM3U"   , m3u_entry::ext_header   },
+	{ L"#EXTINF"   , m3u_entry::ext_info     },
+	{ L"#EXTGRP"   , m3u_entry::ext_group    },
+	{ L"#PLAYLIST" , m3u_entry::ext_playlist },
 };
 
-static std::map<std::string, m3u_entry::info_tags> s_tags = {
-	{ "url-tvg",        m3u_entry::tag_url_tvg        },
-	{ "url-logo",       m3u_entry::tag_url_logo       },
-	{ "channel-id",     m3u_entry::tag_channel_id     },
-	{ "CUID",           m3u_entry::tag_cuid           },
-	{ "group-title",    m3u_entry::tag_group_title    },
-	{ "tvg-id",         m3u_entry::tag_tvg_id         },
-	{ "tvg-logo",       m3u_entry::tag_tvg_logo       },
-	{ "tvg-rec",        m3u_entry::tag_tvg_rec        },
-	{ "tvg-name",       m3u_entry::tag_tvg_name       },
-	{ "tvg-shift",      m3u_entry::tag_tvg_shift      },
-	{ "timeshift",      m3u_entry::tag_timeshift      },
-	{ "catchup",        m3u_entry::tag_catchup        },
-	{ "catchup-days",   m3u_entry::tag_catchup_days   },
-	{ "catchup-time",   m3u_entry::tag_catchup_time   },
-	{ "catchup-type",   m3u_entry::tag_catchup_type   },
-	{ "catchup-source", m3u_entry::tag_catchup_source },
+static std::map<std::wstring, m3u_entry::info_tags> s_tags = {
+	{ L"url-tvg",        m3u_entry::tag_url_tvg        },
+	{ L"url-logo",       m3u_entry::tag_url_logo       },
+	{ L"channel-id",     m3u_entry::tag_channel_id     },
+	{ L"CUID",           m3u_entry::tag_cuid           },
+	{ L"group-title",    m3u_entry::tag_group_title    },
+	{ L"tvg-id",         m3u_entry::tag_tvg_id         },
+	{ L"tvg-logo",       m3u_entry::tag_tvg_logo       },
+	{ L"tvg-rec",        m3u_entry::tag_tvg_rec        },
+	{ L"tvg-name",       m3u_entry::tag_tvg_name       },
+	{ L"tvg-shift",      m3u_entry::tag_tvg_shift      },
+	{ L"timeshift",      m3u_entry::tag_timeshift      },
+	{ L"catchup",        m3u_entry::tag_catchup        },
+	{ L"catchup-days",   m3u_entry::tag_catchup_days   },
+	{ L"catchup-time",   m3u_entry::tag_catchup_time   },
+	{ L"catchup-type",   m3u_entry::tag_catchup_type   },
+	{ L"catchup-source", m3u_entry::tag_catchup_source },
 };
 
 void m3u_entry::clear()
@@ -43,7 +43,7 @@ void m3u_entry::clear()
 	ext_tags.clear();
 }
 
-void m3u_entry::parse(const std::string& str)
+void m3u_entry::parse(const std::wstring& str)
 {
 	// #EXTINF:0 group-title="новости" tvg-id="828" tvg-logo="http://epg.it999.ru/img/828.png" tvg-rec="3",BBC World News
 	// #EXTGRP:Общие
@@ -54,8 +54,8 @@ void m3u_entry::parse(const std::string& str)
 	// #EXTINF:<DURATION> [<KEY>="<VALUE>"]*,<TITLE>
 	// http://example.tv/live.strm
 
-	static std::regex re_dir(R"((#[A-Z0-9-]+)[:\s]?(.*))");
-	static std::regex re_info(R"((-?\d+)\s*(.+=\".+"\s*)*,\s*(.+))");
+	static std::wregex re_dir(LR"((#[A-Z0-9-]+)[:\s]?(.*))");
+	static std::wregex re_info(LR"((-?\d+)\s*(.+=\".+"\s*)*,\s*(.+))");
 
 	if (str.empty())
 		return;
@@ -76,7 +76,7 @@ void m3u_entry::parse(const std::string& str)
 	// #EXT_NAME:<EXT_VALUE>
 	// extarr[0] = #EXT_NAME
 	// extarr[1] = <EXT_VALUE>
-	std::smatch m_dir;
+	std::wsmatch m_dir;
 	if (!std::regex_match(str, m_dir, re_dir))
 		return;
 
@@ -97,7 +97,7 @@ void m3u_entry::parse(const std::string& str)
 		}
 		case ext_info:
 		{
-			std::smatch m;
+			std::wsmatch m;
 			const auto& value = m_dir[2].str();
 			if (std::regex_match(value, m, re_info))
 			{
@@ -117,28 +117,29 @@ void m3u_entry::parse(const std::string& str)
 		{
 			// carray[0] = #EXTINF, carray[1] = <EXT_VALUE>
 			if (m_dir[2].matched)
-				ext_value = m_dir[2];
+				ext_value = m_dir[2].str();
 			break;
 		}
 	}
 }
 
-void m3u_entry::parse_directive_tags(const std::string& str)
+void m3u_entry::parse_directive_tags(const std::wstring& str)
 {
-	static std::regex re(R"((?:[^\s\"]+|\"[^\"]*\")+)");
-	std::smatch m;
+	static std::wregex re(LR"((?:[^\s\"]+|\"[^\"]*\")+)");
+	static std::wregex re_pair(LR"((.*)=(?=[\"\'])(.+))");
+
+	std::wsmatch m;
 	auto string = str;
 	while(std::regex_search(string, m, re))
 	{
 		const auto& pair = m[0].str();
-		static std::regex re_pair(R"((.*)=(?=[\"\'])(.+))");
-		std::smatch m_pair;
+		std::wsmatch m_pair;
 		if (std::regex_match(pair, m_pair, re_pair))
 		{
-			std::string tag = m_pair[1];
-			std::string value = m_pair[2];
-			if (const auto& pair = s_tags.find(utils::string_trim(tag, " ")); pair != s_tags.end())
-				ext_tags.emplace(pair->second, utils::string_trim(value, " \"\'"));
+			const std::wstring tag = std::move(utils::string_trim(m_pair[1].str(), L" "));
+			std::wstring value = std::move(utils::string_trim(m_pair[2].str(), L" \"\'"));
+			if (const auto& pair = s_tags.find(tag); pair != s_tags.end())
+				ext_tags.emplace(pair->second, std::move(value));
 		}
 		string = string.c_str() + m.position() + m.length();
 	}

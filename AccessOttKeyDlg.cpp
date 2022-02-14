@@ -78,15 +78,15 @@ void CAccessOttKeyDlg::OnBnClickedBtnGet()
 		data.assign((std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
 	}
 
-	utils::vector_to_streambuf<char> buf(data);
-	std::istream stream(&buf);
+	const auto& wbuf = utils::utf8_to_utf16((char*)data.data(), data.size());
+	std::wistringstream stream(wbuf);
 	if (!stream.good()) return;
 
 	auto entry = std::make_unique<PlaylistEntry>(m_streamType, GetAppPath(utils::PLUGIN_ROOT));
-	std::string line;
+	std::wstring line;
 	while (std::getline(stream, line))
 	{
-		utils::string_rtrim(line, "\r");
+		utils::string_rtrim(line, L"\r");
 		m3u_entry m3uEntry(line);
 		if (!entry->Parse(line, m3uEntry)) continue;
 

@@ -123,16 +123,16 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 	std::vector<BYTE> data;
 	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
 	{
-		utils::vector_to_streambuf<char> buf(data);
-		std::istream stream(&buf);
+		const auto& wbuf = utils::utf8_to_utf16((char*)data.data(), data.size());
+		std::wistringstream stream(wbuf);
 
 		if (stream.good())
 		{
 			int step = 0;
-			std::string line;
+			std::wstring line;
 			while (std::getline(stream, line))
 			{
-				utils::string_rtrim(line, "\r");
+				utils::string_rtrim(line, L"\r");
 				m3u_entry m3uEntry(line);
 				if (m_entry->Parse(line, m3uEntry) && !m_entry->stream_uri->get_token().empty())
 				{

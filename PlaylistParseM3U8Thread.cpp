@@ -4,6 +4,7 @@
 #include "pch.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "PlayListEntry.h"
+
 #include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
@@ -21,15 +22,16 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 	auto playlist = std::make_unique<Playlist>();
 	if (m_config.m_data)
 	{
-		utils::vector_to_streambuf<char> buf(*m_config.m_data);
-		std::istream stream(&buf);
+		const auto& wbuf = utils::utf8_to_utf16((char*)m_config.m_data->data(), m_config.m_data->size());
+		std::wistringstream stream(wbuf);
 		if (stream.good())
 		{
 			int step = 0;
 			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
-			std::string line;
+			std::wstring logo_root;
+
 			int count = 0;
-			std::string logo_root;
+			std::wstring line;
 			while (std::getline(stream, line))
 			{
 				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
@@ -38,7 +40,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					break;
 				}
 
-				utils::string_rtrim(line, "\r");
+				utils::string_rtrim(line, L"\r");
 				count++;
 
 				m3u_entry m3uEntry(line);

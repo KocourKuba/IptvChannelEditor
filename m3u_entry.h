@@ -36,11 +36,11 @@ public:
 
 public:
 	m3u_entry() = default;
-	m3u_entry(const std::string& str) { parse(str); };
+	m3u_entry(const std::wstring& str) { parse(str); };
 	virtual ~m3u_entry() = default;
 
 	void clear();
-	void parse(const std::string& str);
+	void parse(const std::wstring& str);
 
 	int get_duration() const { return duration; }
 	void set_duration(int val) { duration = val; }
@@ -48,22 +48,22 @@ public:
 	directives get_directive() const { return ext_name; }
 	void set_directive(directives val) { ext_name = val; }
 
-	const std::map<info_tags, std::string>& get_tags() const { return ext_tags; }
-	void set_tags(const std::map<info_tags, std::string>& val) { ext_tags = val; }
+	const std::map<info_tags, std::wstring>& get_tags() const { return ext_tags; }
+	void set_tags(const std::map<info_tags, std::wstring>& val) { ext_tags = val; }
 
-	const std::string& get_dvalue() const { return ext_value; }
-	void set_dvalue(const std::string& val) { ext_value = val; }
+	const std::wstring& get_dvalue() const { return ext_value; }
+	void set_dvalue(const std::wstring& val) { ext_value = val; }
 
-	const std::string& get_dir_title() const { return dir_title; }
-	void set_dir_title(const std::string& val) { dir_title = val; }
+	const std::wstring& get_dir_title() const { return dir_title; }
+	void set_dir_title(const std::wstring& val) { dir_title = val; }
 
 protected:
-	void parse_directive_tags(const std::string& str);
+	void parse_directive_tags(const std::wstring& str);
 
 private:
 	int duration = 0;
 	directives ext_name = ext_unknown;
-	std::string ext_value;
-	std::string dir_title;
-	std::map<info_tags, std::string> ext_tags;
+	std::wstring ext_value;
+	std::wstring dir_title;
+	std::map<info_tags, std::wstring> ext_tags;
 };
