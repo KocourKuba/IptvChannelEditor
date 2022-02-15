@@ -10,14 +10,14 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static std::map<std::wstring, m3u_entry::directives> s_ext_directives = {
+static std::map<std::wstring_view, m3u_entry::directives> s_ext_directives = {
 	{ L"#EXTM3U"   , m3u_entry::ext_header   },
 	{ L"#EXTINF"   , m3u_entry::ext_info     },
 	{ L"#EXTGRP"   , m3u_entry::ext_group    },
 	{ L"#PLAYLIST" , m3u_entry::ext_playlist },
 };
 
-static std::map<std::wstring, m3u_entry::info_tags> s_tags = {
+static std::map<std::wstring_view, m3u_entry::info_tags> s_tags = {
 	{ L"url-tvg",        m3u_entry::tag_url_tvg        },
 	{ L"url-logo",       m3u_entry::tag_url_logo       },
 	{ L"channel-id",     m3u_entry::tag_channel_id     },
@@ -36,6 +36,13 @@ static std::map<std::wstring, m3u_entry::info_tags> s_tags = {
 	{ L"catchup-source", m3u_entry::tag_catchup_source },
 };
 
+using wsvmatch = std::match_results<std::wstring_view::const_iterator>;
+
+std::wstring_view wmatch_view(const wsvmatch::value_type& sm)
+{
+	return sm.matched ? std::wstring_view(std::addressof(*sm.first), std::distance(sm.first, sm.second)) : std::wstring_view();
+}
+
 void m3u_entry::clear()
 {
 	duration = 0;
@@ -43,7 +50,7 @@ void m3u_entry::clear()
 	ext_tags.clear();
 }
 
-void m3u_entry::parse(const std::wstring& str)
+void m3u_entry::parse(const std::wstring_view& str)
 {
 	// #EXTINF:0 group-title="новости" tvg-id="828" tvg-logo="http://epg.it999.ru/img/828.png" tvg-rec="3",BBC World News
 	// #EXTGRP:Общие
@@ -76,11 +83,11 @@ void m3u_entry::parse(const std::wstring& str)
 	// #EXT_NAME:<EXT_VALUE>
 	// extarr[0] = #EXT_NAME
 	// extarr[1] = <EXT_VALUE>
-	std::wsmatch m_dir;
-	if (!std::regex_match(str, m_dir, re_dir))
+	wsvmatch m_dir;
+	if (!std::regex_match(str.begin(), str.end(), m_dir, re_dir))
 		return;
 
-	auto pair = s_ext_directives.find(m_dir[1].str());
+	auto pair = s_ext_directives.find(wmatch_view(m_dir[1]));
 	if (pair == s_ext_directives.end())
 		return;
 
@@ -91,15 +98,16 @@ void m3u_entry::parse(const std::wstring& str)
 		case ext_header:
 		{
 			// #EXTM3U url-tvg="http://iptv-content.webhop.net/guide.xml" url-logo="http://iptv-content.webhop.net/220x132/"
-			if (!m_dir[2].str().empty())
-				parse_directive_tags(m_dir[2].str());
+			auto hdr = wmatch_view(m_dir[2]);
+			if (!hdr.empty())
+				parse_directive_tags(hdr);
 			break;
 		}
 		case ext_info:
 		{
-			std::wsmatch m;
-			const auto& value = m_dir[2].str();
-			if (std::regex_match(value, m, re_info))
+			wsvmatch m;
+			auto value = wmatch_view(m_dir[2]);
+			if (std::regex_match(value.begin(), value.end(), m, re_info))
 			{
 				duration = utils::char_to_int(m[1].str());
 				dir_title = m[3].str();
@@ -108,7 +116,7 @@ void m3u_entry::parse(const std::wstring& str)
 
 				if (m[2].matched)
 				{
-					parse_directive_tags(m[2].str());
+					parse_directive_tags(wmatch_view(m[2]));
 				}
 			}
 			break;
@@ -117,30 +125,44 @@ void m3u_entry::parse(const std::wstring& str)
 		{
 			// carray[0] = #EXTINF, carray[1] = <EXT_VALUE>
 			if (m_dir[2].matched)
-				ext_value = m_dir[2].str();
+				ext_value = wmatch_view(m_dir[2]);
 			break;
 		}
 	}
 }
 
-void m3u_entry::parse_directive_tags(const std::wstring& str)
+void m3u_entry::parse_directive_tags(std::wstring_view str)
 {
 	static std::wregex re(LR"((?:[^\s\"]+|\"[^\"]*\")+)");
 	static std::wregex re_pair(LR"((.*)=(?=[\"\'])(.+))");
 
-	std::wsmatch m;
-	auto string = str;
-	while(std::regex_search(string, m, re))
+	//std::wsmatch m;
+	wsvmatch m;
+	while(std::regex_search(str.begin(), str.end(), m, re))
 	{
-		const auto& pair = m[0].str();
-		std::wsmatch m_pair;
-		if (std::regex_match(pair, m_pair, re_pair))
+		auto pair = wmatch_view(m[0]);
+		if (pair.empty())
+			continue;
+
+		wsvmatch m_pair;
+		if (std::regex_match(pair.begin(), pair.end(), m_pair, re_pair))
 		{
-			const std::wstring tag = std::move(utils::string_trim(m_pair[1].str(), L" "));
-			std::wstring value = std::move(utils::string_trim(m_pair[2].str(), L" \"\'"));
-			if (const auto& pair = s_tags.find(tag); pair != s_tags.end())
-				ext_tags.emplace(pair->second, std::move(value));
+			auto tag = wmatch_view(m_pair[1]);
+			utils::string_trim(tag, L" ");
+			if (!tag.empty())
+			{
+				auto value = wmatch_view(m_pair[2]);
+				utils::string_trim(value, L" \"\'");
+				if (!value.empty())
+				{
+					const auto& pair = s_tags.find(tag);
+					if (pair != s_tags.end())
+					{
+						ext_tags.emplace(pair->second, value);
+					}
+				}
+			}
 		}
-		string = string.c_str() + m.position() + m.length();
+		str.remove_prefix(m.position() + m.length());
 	}
 }

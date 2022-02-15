@@ -51,6 +51,36 @@ uint64_t ChronoGetTickCount();
 uint64_t GetTimeDiff(uint64_t dwStartTime);
 bool CheckForTimeOut(uint64_t dwStartTime, uint32_t dwTimeOut);
 
+template <typename T> class EMSLiterals;
+
+template <> class EMSLiterals<char>
+{
+public:
+	static constexpr char* crlf = "\r\n";
+	static constexpr char* whitespace = " \t";
+	static constexpr char* empty = "";
+	static constexpr char colon = ':';
+	static constexpr char cr = '\r';
+	static constexpr char lf = '\n';
+	static constexpr char space = ' ';
+	static constexpr char tab = '\t';
+	static constexpr char nil = '\0';
+};
+
+template <> class EMSLiterals<wchar_t>
+{
+public:
+	static constexpr wchar_t* crlf = L"\r\n";
+	static constexpr wchar_t* whitespace = L" \t";
+	static constexpr wchar_t* empty = L"";
+	static constexpr wchar_t colon = ':';
+	static constexpr wchar_t cr = L'\r';
+	static constexpr wchar_t lf = L'\n';
+	static constexpr wchar_t space = L' ';
+	static constexpr wchar_t tab = '\t';
+	static constexpr wchar_t nil = '\0';
+};
+
 inline std::string& string_tolower(std::string& s)
 {
 	std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c)
@@ -100,22 +130,99 @@ __int64 char_to_int64(const std::basic_string<T>& str, int base = 10)
 }
 
 
-template<typename T>
-inline std::basic_string<T>& string_ltrim(std::basic_string<T>& str, const T* chars)
+//////////////////////////////////////////////////////////////////////////
+/// <summary>left trim string</summary>
+/// <typeparam name="T">std::base_string or std::base_string_view class</typeparam>
+/// <typeparam name="_Elem">char or wchar_t type</typeparam>
+/// <param name="str">string to be trimmed by left side</param>
+/// <param name="chars">chars that will be removed</param>
+/// <returns>trimmed string</returns>
+template<class T, typename _Elem>
+T& string_ltrim(T& str, const _Elem chr = EMSLiterals<_Elem>::whitespace)
 {
-	return str.erase(0, str.find_first_not_of(chars));
+	if constexpr (std::is_pointer_v<_Elem>)
+	{
+		using __Elem = std::remove_cv_t<std::remove_pointer_t<_Elem>>;
+		if constexpr (std::is_same_v<T::const_iterator, std::basic_string<__Elem>::const_iterator>)
+		{
+			return str.erase(0, str.find_first_not_of(chr));
+		}
+		else if constexpr (std::is_same_v<T::const_iterator, std::basic_string_view<__Elem>::const_iterator>)
+		{
+			str.remove_prefix(str.find_first_not_of(chr));
+			return str;
+		}
+		else
+			static_assert(false, "std::basic_string or std::basic_string_view");
+	}
+	else
+	{
+		if constexpr (std::is_same_v<T::const_iterator, std::basic_string<_Elem>::const_iterator>)
+		{
+			return str.erase(0, str.find_first_not_of(chr));
+		}
+		else if constexpr (std::is_same_v<T::const_iterator, std::basic_string_view<_Elem>::const_iterator>)
+		{
+			str.remove_prefix(str.find_first_not_of(chr));
+			return str;
+		}
+		else
+			static_assert(false, "std::basic_string or std::basic_string_view");
+	}
 }
 
-template<typename T>
-inline std::basic_string<T>& string_rtrim(std::basic_string<T>& str, const T* chars)
+//////////////////////////////////////////////////////////////////////////
+/// <summary>right trim string</summary>
+/// <typeparam name="T">std::base_string or std::base_string_view class</typeparam>
+/// <typeparam name="_Elem">char or wchar_t type</typeparam>
+/// <param name="str">string to be trimmed by right side</param>
+/// <param name="chars">chars that will be removed</param>
+/// <returns>trimmed string</returns>
+template<class T, typename _Elem>
+T& string_rtrim(T& str, const _Elem chr = EMSLiterals<_Elem>::whitespace)
 {
-	return str.erase(str.find_last_not_of(chars) + 1);
+	using __Elem = std::remove_cv_t<std::remove_pointer_t<_Elem>>;
+	if constexpr (std::is_pointer_v<_Elem>)
+	{
+		if constexpr (std::is_same_v<T::const_iterator, std::basic_string<__Elem>::const_iterator>)
+		{
+			return str.erase(str.find_last_not_of(chr) + 1);
+		}
+		else if constexpr (std::is_same_v<T::const_iterator, std::basic_string_view<__Elem>::const_iterator>)
+		{
+			str.remove_suffix(str.size() - str.find_last_not_of(chr) - 1);
+			return str;
+		}
+		else
+			static_assert(false, "std::basic_string or std::basic_string_view");
+	}
+	else
+	{
+		if constexpr (std::is_same_v<T::const_iterator, std::basic_string<_Elem>::const_iterator>)
+		{
+			return str.erase(str.find_last_not_of(chr) + 1);
+		}
+		else if constexpr (std::is_same_v<T::const_iterator, std::basic_string_view<_Elem>::const_iterator>)
+		{
+			str.remove_suffix(str.size() - str.find_last_not_of(chr) - 1);
+			return str;
+		}
+		else
+			static_assert(false, "std::basic_string or std::basic_string_view");
+	}
 }
 
-template<typename T>
-inline std::basic_string<T>& string_trim(std::basic_string<T>& str, const T* chars)
+//////////////////////////////////////////////////////////////////////////
+/// <summary>trim string from both sides</summary>
+/// <typeparam name="T">std::base_string or std::base_string_view class</typeparam>
+/// <typeparam name="_Elem">char or wchar_t type</typeparam>
+/// <param name="s">string to be trimmed by right and left side</param>
+/// <param name="chars">chars that will be removed</param>
+/// <returns>trimmed string</returns>
+template<class T, typename _Elem>
+T& string_trim(T& s, const _Elem chars = EMSLiterals<_Elem>::whitespace)
 {
-	return string_ltrim(string_rtrim(str, chars), chars);
+	return string_ltrim(string_rtrim(s, chars), chars);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -26,22 +26,17 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 		std::wistringstream stream(wbuf);
 		if (stream.good())
 		{
-			int step = 0;
-			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 			std::wstring logo_root;
+			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 
-			int count = 0;
+			int channels = 0;
+			int step = 0;
+
 			std::wstring line;
 			while (std::getline(stream, line))
 			{
-				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
-				{
-					playlist.reset();
-					break;
-				}
-
 				utils::string_rtrim(line, L"\r");
-				count++;
+				step++;
 
 				m3u_entry m3uEntry(line);
 				if (m3uEntry.get_directive() == m3u_entry::ext_header)
@@ -85,9 +80,19 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 						break;
 				}
 
-				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
 				playlist->m_entries.emplace_back(entry);
 				entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
+				channels++;
+
+				if (channels % 50 == 0)
+				{
+					m_config.NotifyParent(WM_UPDATE_PROGRESS, channels, step);
+					if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
+					{
+						playlist.reset();
+						break;
+					}
+				}
 			}
 		}
 	}

@@ -16,8 +16,8 @@ void uri_channels::parse_uri(const std::wstring& url)
 	std::wsmatch m;
 	if (std::regex_match(url, m, re_url))
 	{
-		set_template(true);
-		id = m[1].str();
+		templated = true;
+		id = std::move(m[1].str());
 		return;
 	}
 

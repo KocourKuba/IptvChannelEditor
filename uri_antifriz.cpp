@@ -27,19 +27,19 @@ void uri_antifriz::parse_uri(const std::wstring& url)
 	std::wsmatch m;
 	if (std::regex_match(url, m, re_url_hls))
 	{
-		set_template(true);
-		set_domain(m[1].str());
-		set_token(m[2].str());
-		set_id(m[3].str());
+		templated = true;
+		domain = std::move(m[1].str());
+		token = std::move(m[2].str());
+		id = std::move(m[3].str());
 		return;
 	}
 
 	if (std::regex_match(url, m, re_url_mpeg))
 	{
-		set_template(true);
-		set_domain(m[1].str());
-		set_id(m[2].str());
-		set_token(m[3].str());
+		templated = true;
+		domain = std::move(m[1].str());
+		id = std::move(m[2].str());
+		token = std::move(m[3].str());
 		return;
 	}
 

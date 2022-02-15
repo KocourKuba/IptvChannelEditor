@@ -24,15 +24,14 @@ void uri_glanz::parse_uri(const std::wstring& url)
 	std::wsmatch m;
 	if (std::regex_match(url, m, re_url))
 	{
-		set_template(true);
-
-		set_domain(m[1].str());
-		set_id(m[2].str());
-		set_login(m[3].str());
-		set_password(m[4].str());
-		set_token(m[5].str());
-		set_int_id(m[6].str());
-		set_host(m[7].str());
+		templated = true;
+		domain = std::move(m[1].str());
+		id = std::move(m[2].str());
+		login = std::move(m[3].str());
+		password = std::move(m[4].str());
+		token = std::move(m[5].str());
+		int_id = std::move(m[6].str());
+		host = std::move(m[7].str());
 		return;
 	}
 

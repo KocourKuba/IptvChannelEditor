@@ -36,11 +36,11 @@ public:
 
 public:
 	m3u_entry() = default;
-	m3u_entry(const std::wstring& str) { parse(str); };
+	m3u_entry(const std::wstring_view& str) { parse(str); };
 	virtual ~m3u_entry() = default;
 
 	void clear();
-	void parse(const std::wstring& str);
+	void parse(const std::wstring_view& str);
 
 	int get_duration() const { return duration; }
 	void set_duration(int val) { duration = val; }
@@ -58,7 +58,7 @@ public:
 	void set_dir_title(const std::wstring& val) { dir_title = val; }
 
 protected:
-	void parse_directive_tags(const std::wstring& str);
+	void parse_directive_tags(std::wstring_view str);
 
 private:
 	int duration = 0;

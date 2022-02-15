@@ -791,7 +791,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 
 	m_wndStop.EnableWindow(TRUE);
-	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
+	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n') / 2);
 	m_wndProgress.SetPos(0);
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);

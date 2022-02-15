@@ -11,9 +11,7 @@ static constexpr auto PLAYLIST_TEMPLATE1 = L"http://epg.it999.ru/edem_epg_ico.m3
 static constexpr auto PLAYLIST_TEMPLATE2 = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:s}.json";
-//static constexpr auto EPG2_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=teleguide.info/epg/{:s}.json";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/edem/epg/{:s}.json";
-//static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/teleguide.info/epg/{:s}.json";
 
 void uri_edem::parse_uri(const std::wstring& url)
 {
@@ -23,10 +21,10 @@ void uri_edem::parse_uri(const std::wstring& url)
 	std::wsmatch m;
 	if (std::regex_match(url, m, re_url))
 	{
-		set_template(true);
-		set_domain(m[1].str());
-		set_token(m[2].str());
-		set_id(m[3].str());
+		templated = true;
+		domain = std::move(m[1].str());
+		token = std::move(m[2].str());
+		id = std::move(m[3].str());
 		return;
 	}
 
@@ -52,21 +50,10 @@ std::wstring uri_edem::get_epg1_uri(const std::wstring& id) const
 	return fmt::format(EPG1_TEMPLATE, id);
 }
 
-// std::wstring uri_edem::get_epg2_uri(const std::wstring& id) const
-// {
-// 	COleDateTime dt = COleDateTime::GetCurrentTime();
-// 	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
-// }
-
 std::wstring uri_edem::get_epg1_uri_json(const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
-
-// std::wstring uri_edem::get_epg2_uri_json(const std::wstring& id) const
-// {
-// 	return fmt::format(EPG2_TEMPLATE_JSON, id);
-// }
 
 std::wstring uri_edem::get_playlist_template(bool first /*= true*/) const
 {
