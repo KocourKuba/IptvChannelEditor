@@ -72,8 +72,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_CHANNELS_TYPE,
 	REG_PLAYLIST_TYPE,
 	REG_STREAM_TYPE,
-	REG_CUSTOM_URL,
-	REG_CUSTOM_FILE,
+	REG_CUSTOM_PLAYLIST,
 	REG_DEVICE_ID,
 	REG_SHOW_URL,
 };

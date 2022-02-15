@@ -90,8 +90,7 @@ constexpr auto REG_FILTER_STATE_H      = _T("FilterStateHide");
 constexpr auto REG_CHANNELS_TYPE       = _T("ChannelsType");
 constexpr auto REG_PLAYLIST_TYPE       = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE         = _T("StreamType");
-constexpr auto REG_CUSTOM_URL          = _T("CustomUrl");
-constexpr auto REG_CUSTOM_FILE         = _T("CustomPlaylist");
+constexpr auto REG_CUSTOM_PLAYLIST     = _T("CustomPlaylist");
 constexpr auto REG_DEVICE_ID           = _T("DeviceID");
 
 typedef struct

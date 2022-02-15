@@ -467,12 +467,17 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_enableDownload = TRUE;
 	const auto plugin_type = GetConfig().get_plugin_type();
 	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
+	CString str;
+	str.LoadString(IDS_STRING_PLAYLIST);
+
 	switch (plugin_type)
 	{
 		case StreamType::enEdem:
 		{
-			m_wndPlaylist.AddString(_T("Edem Standard"));
-			m_wndPlaylist.AddString(_T("Edem Thematic"));
+			str.LoadString(IDS_STRING_EDEM_STANDARD);
+			m_wndPlaylist.AddString(str);
+			str.LoadString(IDS_STRING_EDEM_THEMATIC);
+			m_wndPlaylist.AddString(str);
 			m_token = GetConfig().get_string(false, REG_TOKEN);
 			m_domain = GetConfig().get_string(false, REG_DOMAIN);
 			m_portal = GetConfig().get_string(false, REG_PORTAL);
@@ -485,7 +490,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enSharaclub:
 		case StreamType::enSharaTV:
 		{
-			m_wndPlaylist.AddString(_T("Playlist"));
+			m_wndPlaylist.AddString(str);
 			m_login = GetConfig().get_string(false, REG_LOGIN);
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
 			m_enableDownload = (pl_idx != 1);
@@ -494,7 +499,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enOneOtt:
 		case StreamType::enVidok:
 		{
-			m_wndPlaylist.AddString(_T("Playlist"));
+			m_wndPlaylist.AddString(str);
 			m_token = GetConfig().get_string(false, REG_TOKEN);
 			m_login = GetConfig().get_string(false, REG_LOGIN);
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
@@ -513,7 +518,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		case StreamType::enIptvOnline:
 		case StreamType::enShuraTV:
 		{
-			m_wndPlaylist.AddString(_T("Playlist"));
+			m_wndPlaylist.AddString(str);
 			m_password = GetConfig().get_string(false, REG_PASSWORD);
 			m_enableDownload = (pl_idx != 1);
 			break;
@@ -538,8 +543,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_wndStreamType.EnableWindow(streams.size() > 1);
 
+	str.LoadString(IDS_STRING_CUSTOM_PLAYLIST);
+
 	m_wndPlaylist.EnableWindow(TRUE);
-	int idx = m_wndPlaylist.AddString(_T("Custom File"));
+	int idx = m_wndPlaylist.AddString(str);
 	m_wndPlaylist.SetItemData(idx, TRUE);
 
 	// Set selected playlist
@@ -648,7 +655,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 					url = StreamContainer::get_instance(plugin_type)->get_playlist_template(false);
 					break;
 				case 2: // Custom file
-					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
+					url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 					m_plFileName.Empty();
 					break;
 				default:
@@ -688,7 +695,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 					}
 					break;
 				case 1: // Custom file
-					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
+					url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 					m_plFileName.Empty();
 					break;
 				default:
@@ -718,7 +725,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 					}
 					break;
 				case 1: // Custom file
-					url = GetConfig().get_string(false, REG_CUSTOM_FILE);
+					url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 					m_plFileName.Empty();
 					break;
 					// case 2: // Mediateka
@@ -3020,14 +3027,12 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 bool CIPTVChannelEditorDlg::SetupCustomPlaylist(bool loaded)
 {
 	CCustomPlaylistDlg dlg;
-	dlg.m_isFile = m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel()) != 0;
-	LPCTSTR szType = dlg.m_isFile ? REG_CUSTOM_FILE : REG_CUSTOM_URL;
-	dlg.m_url = GetConfig().get_string(false, szType).c_str();
+	dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
 
 	if (dlg.DoModal() == IDOK)
 	{
 		loaded = true;
-		GetConfig().set_string(false, szType, dlg.m_url.GetString());
+		GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
 	}
 	return loaded;
 }

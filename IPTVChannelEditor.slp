@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220215091640" scan="81" scanned="20220215091615">
+<document created="20211012165442" version="4.0.374" date="20220215094017" scan="83" scanned="20220215094004">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220215081554" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220215083948" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -144,7 +144,10 @@
       <node class="TWindowsDialogNode" name="103" resid="103" langid="1033">
         <form class="TWindowsForm" name="103" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
           <row id="CX">217</row>
-          <row id="CY">51</row>
+          <row id="CY" state="3" changed="20220215093802">
+            <prev>51</prev>
+            <native>63</native>
+          </row>
           <row id="Font">MS Shell Dlg,8</row>
           <row id="Text">
             <native>Custom URL</native>
@@ -156,14 +159,30 @@
             <row id="CX">203</row>
             <row id="CY">15</row>
             <row id="X">7</row>
-            <row id="Y">7</row>
+            <row id="Y" state="3" changed="20220215093802">
+              <prev>7</prev>
+              <native>23</native>
+            </row>
+          </component>
+          <component class="TVisCheckBox" name="1129" state="0" created="20220215093802" type="button">
+            <row id="CX" state="0">97</row>
+            <row id="CY" state="0">10</row>
+            <row id="Text" state="0">
+              <native>Load from file</native>
+              <lang id="ru" date="20220215093812">Загрузить из файла</lang>
+            </row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">7</row>
           </component>
           <component class="TVisButton" name="1" type="button" default="1">
             <row id="CX">50</row>
             <row id="CY">14</row>
             <row id="Text" locked="1">OK</row>
             <row id="X">57</row>
-            <row id="Y">30</row>
+            <row id="Y" state="3" changed="20220215093802">
+              <prev>30</prev>
+              <native>42</native>
+            </row>
           </component>
           <component class="TVisButton" name="2" type="button">
             <row id="CX">50</row>
@@ -173,7 +192,10 @@
               <lang id="ru" date="20211012170005">Отмена</lang>
             </row>
             <row id="X">111</row>
-            <row id="Y">30</row>
+            <row id="Y" state="3" changed="20220215093802">
+              <prev>30</prev>
+              <native>42</native>
+            </row>
           </component>
         </form>
       </node>
@@ -3842,9 +3864,21 @@
           <native>IPTV Channel Editor (Portable)</native>
           <lang id="ru" date="20220211231912">IPTV Channel Editor (Переносимый)</lang>
         </row>
+        <row id="IDS_STRING_CUSTOM_PLAYLIST" state="0" created="20220215093802">
+          <native>Custom Playlist</native>
+          <lang id="ru" date="20220215093846">Произвольный плейлист</lang>
+        </row>
         <row id="IDS_STRING_DEVICE_ID" created="20220208004505">
           <native>Device</native>
           <lang id="ru">Устройство</lang>
+        </row>
+        <row id="IDS_STRING_EDEM_STANDARD" created="20220215093802" changed="20220215094004">
+          <native>Standard</native>
+          <lang id="ru" date="20220215093916">Стандартный</lang>
+        </row>
+        <row id="IDS_STRING_EDEM_THEMATIC" created="20220215093802" changed="20220215094004">
+          <native>Thematic</native>
+          <lang id="ru" date="20220215093912">Тематический</lang>
         </row>
         <row id="IDS_STRING_ERR_FILE_MISSING" created="20220131205451">
           <native>Some file missing!!!</native>
@@ -3857,6 +3891,10 @@
         <row id="IDS_STRING_ERR_TRAY_ICON" created="20220207002501">
           <native>Failed to create tray icon. Verify Notification Area Icon settings</native>
           <lang id="ru" date="20220207002753">Ошибка создания иконки области Уведомлений панели задач. Проверьте настройки области Уведомлений панели задач.</lang>
+        </row>
+        <row id="IDS_STRING_PLAYLIST" state="0" created="20220215093802">
+          <native>Playlist</native>
+          <lang id="ru" date="20220215093819">Плейлист</lang>
         </row>
         <row id="IDS_STRING_SERVER_ID" created="20220208004505">
           <native>Server</native>

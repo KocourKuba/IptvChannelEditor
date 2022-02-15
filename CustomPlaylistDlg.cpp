@@ -17,6 +17,7 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNAMIC(CCustomPlaylistDlg, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CCustomPlaylistDlg, CDialogEx)
+	ON_BN_CLICKED(IDC_CHECK_FILE, &CCustomPlaylistDlg::OnBnClickedCheckFile)
 END_MESSAGE_MAP()
 
 CCustomPlaylistDlg::CCustomPlaylistDlg(CWnd* pParent /*=nullptr*/)
@@ -30,11 +31,23 @@ void CCustomPlaylistDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_CUSTOM_PLAYLIST, m_wndUrl);
 	DDX_Text(pDX, IDC_CUSTOM_PLAYLIST, m_url);
+	DDX_Check(pDX, IDC_CHECK_FILE, m_isFile);
 }
 
 BOOL CCustomPlaylistDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
+
+	OnBnClickedCheckFile();
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+
+void CCustomPlaylistDlg::OnBnClickedCheckFile()
+{
+	UpdateData(TRUE);
 
 	if (m_isFile)
 	{
@@ -48,7 +61,4 @@ BOOL CCustomPlaylistDlg::OnInitDialog()
 	{
 		m_wndUrl.EnableBrowseButton(FALSE);
 	}
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
 }

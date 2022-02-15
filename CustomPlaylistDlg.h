@@ -21,11 +21,12 @@ protected:
 	BOOL OnInitDialog() override;
 
 	DECLARE_MESSAGE_MAP()
+	afx_msg void OnBnClickedCheckFile();
 
 protected:
 	CMFCEditBrowseCtrlEx m_wndUrl;
 
 public:
 	CString m_url;
-	BOOL m_isFile = FALSE;
+	BOOL m_isFile = TRUE;
 };
