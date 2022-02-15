@@ -24,6 +24,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
+	afx_msg void OnBnClickedCheckCalculate();
 	afx_msg void OnEnChangeEditPlaylistUrl();
 	afx_msg void OnBnClickedBtnGet();
 	afx_msg void OnBnClickedCheckEmbedVp();
@@ -39,6 +40,7 @@ public:
 	BOOL m_bEmbed_vp = FALSE;
 
 protected:
+	CButton m_wndCalculate;
 	CButton m_wndGet;
 	CEdit m_wndVPortal;
 	CMFCEditBrowseCtrlEx m_wndUrl;

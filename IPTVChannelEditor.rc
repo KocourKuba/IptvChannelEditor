@@ -257,18 +257,19 @@ CAPTION "Access Info"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,53,106,50,14
-    LTEXT           "OTT Access Key",IDC_STATIC,7,35,92,8
-    EDITTEXT        IDC_EDIT_KEY,7,46,93,14,ES_AUTOHSCROLL
-    LTEXT           "Stream Domain",IDC_STATIC,108,35,116,8
-    EDITTEXT        IDC_EDIT_DOMAIN,108,46,115,14,ES_AUTOHSCROLL
+    LTEXT           "OTT Access Key",IDC_STATIC,7,36,92,8
+    EDITTEXT        IDC_EDIT_KEY,7,47,93,14,ES_AUTOHSCROLL
+    LTEXT           "Stream Domain",IDC_STATIC,108,36,116,8
+    EDITTEXT        IDC_EDIT_DOMAIN,108,47,115,14,ES_AUTOHSCROLL
     PUSHBUTTON      "Cancel",IDCANCEL,129,106,50,14
-    LTEXT           "Read info from playlist (direct link)",IDC_STATIC,7,7,217,8
-    CONTROL         "",IDC_EDIT_PLAYLIST_URL,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,7,18,169,14
-    PUSHBUTTON      "Get",IDC_BUTTON_GET,179,18,45,14
-    CONTROL         "Embed into the current list",IDC_CHECK_EMBED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,63,158,10
-    EDITTEXT        IDC_EDIT_VP_KEY,7,87,217,14,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "",IDC_EDIT_PLAYLIST_URL,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,7,19,169,14
+    PUSHBUTTON      "Get",IDC_BUTTON_GET,179,19,45,14
+    CONTROL         "Embed into the current list",IDC_CHECK_EMBED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,158,10
+    EDITTEXT        IDC_EDIT_VP_KEY,7,88,217,14,ES_AUTOHSCROLL | WS_DISABLED
     CONTROL         "Embed VPortal key into the current list",IDC_CHECK_EMBED_VP,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,75,158,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,76,158,10
+    CONTROL         "Read info from playlist (direct link)",IDC_CHECK_CALCULATE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,217,10
 END
 
 IDD_CUSTOM_PLAYLIST DIALOGEX 0, 0, 217, 51

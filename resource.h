@@ -144,7 +144,6 @@
 #define IDC_CHECK_CASE_SHOW             1027
 #define IDC_CHECK_CUSTOMIZE             1028
 #define IDC_CHECK_GLOBAL                1029
-#define IDC_CHECK_CUSTOMIZE2            1029
 #define IDC_CHECK_SHOW_URL              1029
 #define IDC_CHECK_PL_ARCHIVE            1030
 #define IDC_CHECK_REGEX_SHOW            1031
@@ -243,6 +242,7 @@
 #define IDC_CHECK_CHANNELS              1127
 #define IDC_STATIC_VPORTAL              1127
 #define IDC_CHECK_SHOW_UNKNOWN          1128
+#define IDC_CHECK_CALCULATE             1128
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -274,7 +274,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        225
 #define _APS_NEXT_COMMAND_VALUE         32802
-#define _APS_NEXT_CONTROL_VALUE         1128
+#define _APS_NEXT_CONTROL_VALUE         1129
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif
