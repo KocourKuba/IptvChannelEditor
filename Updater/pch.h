@@ -21,4 +21,6 @@
 
 #include <windows.h>
 
+#include "Version.h"
+
 #endif //PCH_H
