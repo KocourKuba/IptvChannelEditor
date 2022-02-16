@@ -263,7 +263,7 @@ abstract class AbstractTv implements Tv
 
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
 
-        $k = array_search($channel_id, $fav_channel_ids);
+        $k = in_array($channel_id, $fav_channel_ids);
 
         return $k !== false;
     }
@@ -352,6 +352,7 @@ abstract class AbstractTv implements Tv
 
     public function get_fav_cookie($plugin_cookies)
     {
-        return 'favorite_channels_' . hash('crc32', $this->get_channel_list_url($plugin_cookies));
+        $channel_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : 'default';
+        return 'favorite_channels_' . hash('crc32', $channel_list);
     }
 }

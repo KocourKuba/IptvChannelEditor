@@ -7,8 +7,7 @@ class AllChannelsGroup extends DefaultGroup
 
     public function __construct(Tv $tv, $title, $icon_url)
     {
-        parent::__construct(
-            $tv->get_all_channel_group_id(), $title, $icon_url);
+        parent::__construct($tv->get_all_channel_group_id(), $title, $icon_url);
 
         $this->tv = $tv;
     }

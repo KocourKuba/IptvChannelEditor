@@ -26,11 +26,11 @@ class Conf
 
         hd_print("Reading configuration from '$conf_file_path'...");
 
-        for ($i = 0, $iMax = count($lines); $i < $iMax; ++$i) {
-            if (preg_match('/^ *(\S+) *= *(\S+)$/', $lines[$i], $matches) !== 1) {
+        foreach ($lines as $i => $iValue) {
+            if (preg_match('/^ *(\S+) *= *(\S+)$/', $iValue, $matches) !== 1) {
                 hd_print(
                     "Warning: line " . ($i + 1) . ": unknown format. " .
-                    "Data: '" . $lines[$i] . "'.");
+                    "Data: '" . $iValue . "'.");
                 continue;
             }
 
@@ -45,6 +45,11 @@ class Conf
         return $this->data[$key];
     }
 
+    public function __set($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
+
     public function __isset($key)
     {
         return isset($this->data[$key]);
@@ -54,7 +59,7 @@ class Conf
     {
         if (!isset($this->data[$key])) {
             hd_print("Warning: no value for key '$key'. Using default: '$value'");
-            $this->data[$key] = $value;
+            $this->__set($key, $value);
         }
     }
 }

@@ -81,7 +81,7 @@ class LightiptvPluginConfig extends DefaultConfig
      * @return array
      * @throws Exception
      */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
+    public function GetPlaylistStreamInfo($plugin_cookies)
     {
         $pl_entries = array();
         $m3u_lines = self::FetchTvM3U($plugin_cookies);

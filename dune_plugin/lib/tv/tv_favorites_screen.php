@@ -6,7 +6,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
     implements UserInputHandler
 {
     const ID = 'tv_favorites';
-    private $tv;
+    protected $plugin;
 
     public static function get_media_url_str()
     {
@@ -16,11 +16,15 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         );
     }
 
-    public function __construct(Tv $tv, $folder_views)
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->tv = $tv;
+        $this->plugin = $plugin;
 
-        parent::__construct(self::ID, $folder_views);
+        parent::__construct(self::ID, $this->plugin->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS());
+
+        if ($this->plugin->config->get_tv_fav_support()) {
+            $this->plugin->create_screen($this);
+        }
 
         UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
@@ -57,14 +61,14 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID.'_handler';
     }
 
     private function get_update_action($sel_increment, &$user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
 
-        $num_favorites = count($this->tv->get_fav_channel_ids($plugin_cookies));
+        $num_favorites = count($this->plugin->tv->get_fav_channel_ids($plugin_cookies));
 
         $sel_ndx = $user_input->sel_ndx + $sel_increment;
         if ($sel_ndx < 0) {
@@ -106,7 +110,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
         }
 
         $channel_id = MediaURL::decode($user_input->selected_media_url)->channel_id;
-        $this->tv->change_tv_favorites($fav_op_type, $channel_id, $plugin_cookies);
+        $this->plugin->tv->change_tv_favorites($fav_op_type, $channel_id, $plugin_cookies);
         return $this->get_update_action($inc, $user_input, $plugin_cookies);
     }
 
@@ -114,9 +118,9 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
 
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->tv->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->tv->folder_entered($media_url, $plugin_cookies);
 
-        $fav_channel_ids = $this->tv->get_fav_channel_ids($plugin_cookies);
+        $fav_channel_ids = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
 
         $items = array();
 
@@ -126,7 +130,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
             }
 
             try {
-                $c = $this->tv->get_channel($channel_id);
+                $c = $this->plugin->tv->get_channel($channel_id);
             } catch (Exception $e) {
                 hd_print("Warning: channel '$channel_id' not found.");
                 continue;
@@ -152,6 +156,6 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
 
     public function get_archive(MediaURL $media_url)
     {
-        return $this->tv->get_archive($media_url);
+        return $this->plugin->tv->get_archive($media_url);
     }
 }

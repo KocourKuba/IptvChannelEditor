@@ -21,7 +21,7 @@ abstract class AbstractControlsScreen implements ControlsScreen
 
     public function get_handler_id()
     {
-        return $this->id;
+        return $this->id.'_handler';
     }
 
     public function get_id()

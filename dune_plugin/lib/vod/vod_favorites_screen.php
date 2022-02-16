@@ -7,6 +7,8 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 {
     const ID = 'vod_favorites';
 
+    protected $plugin;
+
     public static function get_media_url_str()
     {
         return MediaURL::encode(array('screen_id' => self::ID));
@@ -14,14 +16,15 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
     ///////////////////////////////////////////////////////////////////////
 
-    private $vod;
-
-    public function __construct(Vod $vod)
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->vod = $vod;
+        $this->plugin = $plugin;
 
-        parent::__construct(self::ID,
-            $vod->get_vod_list_folder_views());
+        parent::__construct(self::ID, $this->plugin->vod->get_vod_list_folder_views());
+
+        if ($this->plugin->config->get_vod_support()) {
+            $this->plugin->create_screen($this);
+        }
 
         UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
@@ -32,7 +35,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
     {
         $actions = array();
 
-        $actions[GUI_EVENT_KEY_ENTER] = $this->vod->is_movie_page_supported() ? ActionFactory::open_folder() : ActionFactory::vod_play();
+        $actions[GUI_EVENT_KEY_ENTER] = $this->plugin->vod->is_movie_page_supported() ? ActionFactory::open_folder() : ActionFactory::vod_play();
 
         $remove_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_favorite');
         $remove_favorite_action['caption'] = 'Удалить';
@@ -51,7 +54,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID.'_handler';
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
@@ -68,7 +71,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
             $media_url = MediaURL::decode($user_input->selected_media_url);
             $movie_id = $media_url->movie_id;
 
-            $this->vod->remove_favorite_movie($movie_id, $plugin_cookies);
+            $this->plugin->vod->remove_favorite_movie($movie_id, $plugin_cookies);
 
             return ActionFactory::invalidate_folders(array(self::get_media_url_str()));
         }
@@ -83,16 +86,16 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->vod->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
 
-        $this->vod->ensure_favorites_loaded($plugin_cookies);
+        $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
 
-        $movie_ids = $this->vod->get_favorite_movie_ids();
+        $movie_ids = $this->plugin->vod->get_favorite_movie_ids();
 
         $items = array();
 
         foreach ($movie_ids as $movie_id) {
-            $short_movie = $this->vod->get_cached_short_movie($movie_id);
+            $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
             if (is_null($short_movie)) {
                 $caption = "#$movie_id";
                 $poster_url = "missing://";
@@ -118,6 +121,6 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
     public function get_archive(MediaURL $media_url)
     {
-        return $this->vod->get_archive($media_url);
+        return $this->plugin->vod->get_archive($media_url);
     }
 }

@@ -3,15 +3,17 @@
 
 require_once 'lib/vod/abstract_vod.php';
 require_once 'lib/vod/movie.php';
+require_once 'lib/default_dune_plugin.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
 class StarnetVod extends AbstractVod
 {
-    public static $config;
+    protected $plugin;
 
-    public function __construct()
+    public function __construct(DefaultDunePlugin $plugin)
     {
+        $this->plugin = $plugin;
         parent::__construct();
     }
 
@@ -22,7 +24,7 @@ class StarnetVod extends AbstractVod
      */
     public function try_load_movie($movie_id, &$plugin_cookies)
     {
-        $this->set_cached_movie(self::$config->TryLoadMovie($movie_id, $plugin_cookies));
+        $this->set_cached_movie($this->plugin->config->TryLoadMovie($movie_id, $plugin_cookies));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -95,21 +97,21 @@ class StarnetVod extends AbstractVod
 
     public function get_vod_list_folder_views()
     {
-        return self::$config->GET_VOD_MOVIE_LIST_FOLDER_VIEWS();
+        return $this->plugin->config->GET_VOD_MOVIE_LIST_FOLDER_VIEWS();
     }
 
     public function get_vod_search_folder_views()
     {
-        return self::$config->GET_TEXT_ONE_COL_VIEWS();
+        return $this->plugin->config->GET_TEXT_ONE_COL_VIEWS();
     }
 
     public function is_favorites_supported()
     {
-        return self::$config->get_vod_fav_support();
+        return $this->plugin->config->get_vod_fav_support();
     }
 
     public function is_movie_page_supported()
     {
-        return self::$config->get_vod_support();
+        return $this->plugin->config->get_vod_support();
     }
 }

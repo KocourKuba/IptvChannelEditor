@@ -77,7 +77,7 @@ class AntifrizPluginConfig extends DefaultConfig
      * @param bool $force default false, force downloading playlist even it already cached
      * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         if (parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
             $plugin_cookies->subdomain_local = $account_data['subdomain'];
@@ -120,7 +120,7 @@ class AntifrizPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         $movie = new Movie($movie_id);
         $json = HD::LoadAndStoreJson(self::VOD_URL . "/video/$movie_id", false);
@@ -220,21 +220,21 @@ class AntifrizPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getSearchList($keyword, $plugin_cookies)
+    public function getSearchList($keyword, $plugin_cookies)
     {
         //hd_print("getSearchList");
-        $url = self::VOD_URL . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . static::get_next_page($keyword);
+        $url = self::VOD_URL . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
         $searchRes = HD::LoadAndStoreJson($url, false /*, "/tmp/run/sl.json"*/);
-        return $searchRes === false ? array() : self::CollectSearchResult($searchRes);
+        return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
     }
 
     /**
      * @throws Exception
      */
-    public static function getVideoList($query_id, $plugin_cookies)
+    public function getVideoList($query_id, $plugin_cookies)
     {
         hd_print("getVideoList: $query_id");
-        $val = static::get_next_page($query_id);
+        $val = $this->get_next_page($query_id);
 
         if ($query_id === 'all') {
             $url = "/filter/new?page=$val";
@@ -250,13 +250,13 @@ class AntifrizPluginConfig extends DefaultConfig
         }
 
         $categories = HD::LoadAndStoreJson(self::VOD_URL . $url, false/*, "/tmp/run/$keyword.json"*/);
-        return $categories === false ? array() : self::CollectSearchResult($categories);
+        return $categories === false ? array() :$this->CollectSearchResult($categories);
     }
 
     /**
      * @throws Exception
      */
-    protected static function CollectSearchResult($json)
+    protected function CollectSearchResult($json)
     {
         //hd_print("CollectSearchResult");
         $movies = array();

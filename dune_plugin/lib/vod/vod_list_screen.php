@@ -6,15 +6,13 @@ abstract class VodListScreen extends AbstractRegularScreen
 {
     const ID = 'vod_list';
 
-    public static $config;
+    protected $plugin;
 
-    public $vod;
-
-    protected function __construct(Vod $vod)
+    protected function __construct(DefaultDunePlugin $plugin)
     {
-        $this->vod = $vod;
+        $this->plugin = $plugin;
 
-        parent::__construct(self::ID, $this->vod->get_vod_list_folder_views());
+        parent::__construct(self::ID, $this->plugin->vod->get_vod_list_folder_views());
 
         UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
@@ -25,7 +23,7 @@ abstract class VodListScreen extends AbstractRegularScreen
     {
         $actions = array();
 
-        $actions[GUI_EVENT_KEY_ENTER] = $this->vod->is_movie_page_supported() ? ActionFactory::open_folder() : ActionFactory::vod_play();
+        $actions[GUI_EVENT_KEY_ENTER] = $this->plugin->vod->is_movie_page_supported() ? ActionFactory::open_folder() : ActionFactory::vod_play();
 
         $add_action = UserInputHandlerRegistry::create_action($this, 'search');
         $add_action['caption'] = 'Поиск';
@@ -36,7 +34,7 @@ abstract class VodListScreen extends AbstractRegularScreen
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID.'_handler';
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
@@ -117,7 +115,7 @@ abstract class VodListScreen extends AbstractRegularScreen
                 )
             );
 
-            $this->vod->set_cached_short_movie(new ShortMovie($movie->id, $movie->name, $movie->poster_url));
+            $this->plugin->vod->set_cached_short_movie(new ShortMovie($movie->id, $movie->name, $movie->poster_url));
         }
 
         return HD::create_regular_folder_range($items, $movie_range->from_ndx, $total, true);
@@ -125,16 +123,16 @@ abstract class VodListScreen extends AbstractRegularScreen
 
     public function get_archive(MediaURL $media_url)
     {
-        return $this->vod->get_archive($media_url);
+        return $this->plugin->vod->get_archive($media_url);
     }
 
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         //hd_print("get_folder_view");
-        static::$config->reset_movie_counter();
+        $this->plugin->config->reset_movie_counter();
 
-        $this->vod->clear_movie_cache();
-        $this->vod->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->vod->clear_movie_cache();
+        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
 
         return parent::get_folder_view($media_url, $plugin_cookies);
     }

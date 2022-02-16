@@ -6,12 +6,18 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
 {
     const ID = 'search_screen';
     const SEARCH_ICON_PATH = 'plugin_file://icons/icon_search.png';
-    private $vod;
 
-    public function __construct(Vod $vod)
+    protected $plugin;
+
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->vod = $vod;
-        parent::__construct(self::ID, $this->get_folder_views());
+        $this->plugin = $plugin;
+        parent::__construct(self::ID, $this->plugin->vod->get_vod_search_folder_views());
+
+        if ($this->plugin->config->get_vod_support()) {
+            $this->plugin->create_screen($this);
+        }
+
         UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
@@ -25,11 +31,6 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 'category' => $category
             )
         );
-    }
-
-    protected function get_folder_views()
-    {
-        return $this->vod->get_vod_search_folder_views();
     }
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
@@ -58,7 +59,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID.'_handler';
     }
 
     private function get_update_action(&$user_input, &$plugin_cookies)
@@ -187,7 +188,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
 
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->vod->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
         $items = array();
 
         $items[] = array
@@ -203,7 +204,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                 ViewItemParams::item_caption_width => 1100
             ),
-            PluginRegularFolderItem::media_url => $this->vod->get_search_media_url_str('search')
+            PluginRegularFolderItem::media_url => $this->plugin->vod->get_search_media_url_str('search')
         );
 
         $search_items = HD::get_items('search_items');
@@ -222,7 +223,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                         ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                         ViewItemParams::item_caption_width => 1100
                     ),
-                    PluginRegularFolderItem::media_url => $this->vod->get_search_media_url_str($item)
+                    PluginRegularFolderItem::media_url => $this->plugin->vod->get_search_media_url_str($item)
                 );
             }
         }
@@ -231,7 +232,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
 
     public function get_archive(MediaURL $media_url)
     {
-        return $this->vod->get_archive($media_url);
+        return $this->plugin->vod->get_archive($media_url);
     }
 }
 

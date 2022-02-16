@@ -105,7 +105,7 @@ class GlanzPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         //hd_print("Movie ID: $movie_id");
         $movie = new Movie($movie_id);

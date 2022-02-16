@@ -10,10 +10,11 @@ require_once 'starnet_vod_category_list_screen.php';
 
 class StarnetPluginTv extends AbstractTv
 {
-    public static $config;
+    protected $plugin;
 
-    public function __construct()
+    public function __construct(StarnetDunePlugin $plugin)
     {
+        $this->plugin = $plugin;
         parent::__construct(AbstractTv::MODE_CHANNELS_N_TO_M, false);
     }
 
@@ -34,17 +35,12 @@ class StarnetPluginTv extends AbstractTv
 
     public function is_favorites_supported()
     {
-        return self::$config->get_tv_fav_support();
-    }
-
-    public function get_channel_list_url($plugin_cookies)
-    {
-        return isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : self::$config->get_channel_list();
+        return $this->plugin->config->get_tv_fav_support();
     }
 
     public function add_special_groups(&$items)
     {
-        if (self::$config->get_vod_support()) {
+        if ($this->plugin->config->get_vod_support()) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url =>
@@ -68,7 +64,7 @@ class StarnetPluginTv extends AbstractTv
      */
     public function load_channels(&$plugin_cookies)
     {
-        $channels_list = $this->get_channel_list_url($plugin_cookies);
+        $channels_list = (isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->plugin->config->get_channel_list());
         hd_print("Channels list: $channels_list");
         $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . '/';
         hd_print("Channels list path: $channels_list_path");
@@ -168,8 +164,8 @@ class StarnetPluginTv extends AbstractTv
         }
 
         $account_data = array();
-        self::$config->GetAccountInfo($plugin_cookies, $account_data);
-        $pl_entries = self::$config->GetPlaylistStreamInfo($plugin_cookies);
+        $this->plugin->config->GetAccountInfo($plugin_cookies, $account_data);
+        $pl_entries = $this->plugin->config->GetPlaylistStreamInfo($plugin_cookies);
 
         // Read channels
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
@@ -188,7 +184,7 @@ class StarnetPluginTv extends AbstractTv
                 $channel_id = (string)$xml_tv_channel->channel_id;
                 $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
                 // update stream url by channel ID
-                $streaming_url = self::$config->UpdateStreamUrlID($channel_id, $ext_params);
+                $streaming_url = $this->plugin->config->UpdateStreamUrlID($channel_id, $ext_params);
                 if (empty($streaming_url)) {
                     continue;
                 }
@@ -273,7 +269,7 @@ class StarnetPluginTv extends AbstractTv
         }
 
         // update url if play archive or different type of the stream
-        $url = self::$config->TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $url = $this->plugin->config->TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         hd_print("get_tv_playback_url: $url");
         return $url;
     }
@@ -288,7 +284,7 @@ class StarnetPluginTv extends AbstractTv
             return array();
         }
 
-        $epg_man = new EpgManager(self::$config);
+        $epg_man = new EpgManager($this->plugin->config);
         $epg = array();
         try {
             $epg = $epg_man->get_epg($channel, 'first', $day_start_ts, $plugin_cookies);

@@ -4,9 +4,13 @@ require_once 'lib/vod/vod_list_screen.php';
 
 class StarnetVodListScreen extends VodListScreen
 {
-    public function __construct(Vod $vod)
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        parent::__construct($vod);
+        parent::__construct($plugin);
+
+        if ($this->plugin->config->get_vod_support()) {
+            $this->plugin->create_screen($this);
+        }
     }
 
     public static function get_media_url_str($cat_id, $genre_id, $name = false)
@@ -27,26 +31,26 @@ class StarnetVodListScreen extends VodListScreen
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
         hd_print("get_short_movie_range: '$media_url->category_id', from_idx: $from_ndx");
-        static::$config->try_reset_pages();
+        $this->plugin->config->try_reset_pages();
         $key = $media_url->category_id . "_" . $media_url->genre_id;
 
         $movies = array();
-        if (static::$config->get_movie_counter($key) <= 0 || static::$config->is_lazy_load_vod()) {
+        if ($this->plugin->config->get_movie_counter($key) <= 0 || $this->plugin->config->is_lazy_load_vod()) {
             if ($media_url->category_id === 'search') {
-                $movies = static::$config->getSearchList($media_url->genre_id, $plugin_cookies);
+                $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
             } else if ($media_url->category_id === 'filter') {
-                $movies = static::$config->getFilterList($media_url->genre_id, $plugin_cookies);
+                $movies = $this->plugin->config->getFilterList($media_url->genre_id, $plugin_cookies);
             } else if ($media_url->category_id === 'all' || empty($media_url->genre_id)) {
-                $movies = static::$config->getVideoList($media_url->category_id, $plugin_cookies);
+                $movies = $this->plugin->config->getVideoList($media_url->category_id, $plugin_cookies);
             } else {
-                $movies = static::$config->getVideoList($key, $plugin_cookies);
+                $movies = $this->plugin->config->getVideoList($key, $plugin_cookies);
             }
         }
 
         $count = count($movies);
         if ($count) {
-            static::$config->add_movie_counter($key, $count);
-            return new ShortMovieRange($from_ndx, static::$config->get_movie_counter($key), $movies);
+            $this->plugin->config->add_movie_counter($key, $count);
+            return new ShortMovieRange($from_ndx, $this->plugin->config->get_movie_counter($key), $movies);
         }
 
         return new ShortMovieRange(0, 0);

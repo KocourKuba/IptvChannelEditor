@@ -34,61 +34,42 @@ class StarnetDunePlugin extends DefaultDunePlugin
     {
         parent::__construct();
 
+        $this->plugin_path = __DIR__;
         $plugin_type = PLUGIN_TYPE;
-        if(!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig')) {
+        if (!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig')) {
             throw new Exception('Unknown plugin type: ' . $plugin_type);
         }
 
-        $config = new $plugin_type;
-        $config::$PLUGIN_VERSION .= '.' . PLUGIN_BUILD;
-        $config::$PLUGIN_DATE = PLUGIN_DATE;
-        StarnetPluginTv::$config = $config;
-        StarnetMainScreen::$config = $config;
-        StarnetSetupScreen::$config = $config;
+        $this->config = new $plugin_type;
 
-        HD::print_sysinfo();
+        print_sysinfo();
 
         hd_print("----------------------------------------------------");
-        hd_print("Plugin name:      " . $config::$PLUGIN_SHOW_NAME);
-        hd_print("Plugin version:   " . $config::$PLUGIN_VERSION);
-        hd_print("Plugin date:      " . $config::$PLUGIN_DATE);
-        hd_print("Account type:     " . $config->get_account_type());
-        hd_print("TV fav:           " . ($config->get_tv_fav_support() ? "yes" : "no"));
-        hd_print("VOD page:         " . ($config->get_vod_support() ? "yes" : "no"));
-        hd_print("VOD fav:          " . ($config->get_vod_fav_support() ? "yes" : "no"));
+        hd_print("Plugin name:      " . $this->config->PLUGIN_SHOW_NAME);
+        hd_print("Plugin version:   " . $this->config->PLUGIN_VERSION);
+        hd_print("Plugin date:      " . $this->config->PLUGIN_DATE);
+        hd_print("Account type:     " . $this->config->get_account_type());
+        hd_print("TV fav:           " . ($this->config->get_tv_fav_support() ? "yes" : "no"));
+        hd_print("VOD page:         " . ($this->config->get_vod_support() ? "yes" : "no"));
+        hd_print("VOD fav:          " . ($this->config->get_vod_fav_support() ? "yes" : "no"));
         hd_print("----------------------------------------------------");
 
         UserInputHandlerRegistry::get_instance()->register_handler(new StarnetEntryHandler());
-        $tv = new StarnetPluginTv();
-        $this->tv = $tv;
-        $this->add_screen(new StarnetMainScreen($tv, $config->GET_TV_GROUP_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new TvChannelListScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        $this->add_screen(new StarnetSetupScreen($tv));
-        $this->add_screen(new StarnetFolderScreen());
 
-        if ($config->get_tv_fav_support()) {
-            $this->add_screen(new TvFavoritesScreen($tv, $config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS()));
-        }
+        $this->tv = new StarnetPluginTv($this);
+        $this->vod = new StarnetVod($this);
 
-        if ($config->get_vod_support()) {
-            StarnetVod::$config = $config;
-            StarnetVodListScreen::$config = $config;
-            StarnetVodCategoryListScreen::$config = $config;
-            VodMovieScreen::$config = $config;
-            VodSeriesListScreen::$config = $config;
-
-            $vod = new StarnetVod();
-            $this->vod = $vod;
-
-            $this->add_screen(new StarnetSearchScreen($vod));
-            $this->add_screen(new VodFavoritesScreen($vod));
-            $this->add_screen(new StarnetVodCategoryListScreen());
-            $this->add_screen(new StarnetVodListScreen($vod));
-            $this->add_screen(new VodMovieScreen($vod));
-            $this->add_screen(new VodSeriesListScreen($vod));
-            if ($config->get_vod_portal_support()) {
-                $this->add_screen(new StarnetFilterScreen($vod));
-            }
-        }
+        $this->main_screen = new StarnetMainScreen($this);
+        $this->tv_channels_screen = new TvChannelListScreen($this);
+        $this->setup_screen = new StarnetSetupScreen($this);
+        $this->folder_screen = new StarnetFolderScreen($this);
+        $this->favorites_screen = new TvFavoritesScreen($this);
+        $this->search_screen = new StarnetSearchScreen($this);
+        $this->vod_favorites_screen = new VodFavoritesScreen($this);
+        $this->vod_category_list_Screen = new StarnetVodCategoryListScreen($this);
+        $this->vod_list_screen = new StarnetVodListScreen($this);
+        $this->vod_movie_screen = new VodMovieScreen($this);
+        $this->vod_series_list_screen = new VodSeriesListScreen($this);
+        $this->filter_screen = new StarnetFilterScreen($this);
     }
 }

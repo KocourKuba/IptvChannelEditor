@@ -1,4 +1,6 @@
 ﻿<?php
+require_once 'dune_stb_api.php';
+
 class HD
 {
     public static function is_map($a)
@@ -368,35 +370,6 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////////
 
-    public static function get_mac_addr()
-    {
-        static $mac_addr = null;
-
-        if (is_null($mac_addr)) {
-            $mac_addr = shell_exec(
-                'ifconfig  eth0 | head -1 | sed "s/^.*HWaddr //"');
-
-            $mac_addr = trim($mac_addr);
-
-            hd_print("MAC Address: '$mac_addr'");
-        }
-
-        return $mac_addr;
-    }
-
-    public static function get_ip_address()
-    {
-        static $ip_address = null;
-
-        if (is_null($ip_address)) {
-            $ip_address = trim(shell_exec('ifconfig eth0 | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
-        }
-
-        return $ip_address;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-
     private static $MONTHS = array(
         'January',
         'February',
@@ -489,113 +462,24 @@ class HD
 
     public static function get_items($path)
     {
-        $full_path = self::get_data_path($path);
+        $full_path = get_data_path($path);
         return file_exists($full_path) ? unserialize(file_get_contents($full_path)) : array();
     }
 
     public static function put_items($path, $items)
     {
-        file_put_contents(self::get_data_path($path), serialize($items));
+        file_put_contents(get_data_path($path), serialize($items));
     }
 
     public static function get_item($path)
     {
-        $full_path = self::get_data_path($path);
+        $full_path = get_data_path($path);
         return file_exists($full_path) ? file_get_contents($full_path) : '';
     }
 
     public static function put_item($path, $item)
     {
-        file_put_contents(self::get_data_path($path), $item);
-    }
-
-    public static function get_data_path($path = '')
-    {
-        if (!empty($path)) {
-            $path = '/' . $path;
-        }
-
-        return DuneSystem::$properties['data_dir_path'] . $path;
-    }
-
-    public static function get_install_path($path = '')
-    {
-        if (!empty($path)) {
-            $path = '/' . $path;
-        }
-
-        return DuneSystem::$properties['install_dir_path'] . $path;
-    }
-
-    public static function is_newer_versions()
-    {
-        $versions = self::get_firmware_version();
-
-        return (isset($versions['rev_number']) && $versions['rev_number'] > 10);
-    }
-
-    public static function get_platform_kind()
-    {
-        static $result = null;
-
-        if (is_null($result)) {
-            $result = trim(shell_exec('grep "platform_kind" /tmp/run/versions.txt | sed "s/^.*= *//"'));
-        }
-
-        return $result;
-    }
-
-    public static function get_product_id()
-    {
-        static $result = null;
-
-        if (is_null($result)) {
-            $result = trim(shell_exec('grep "product_id:" /tmp/sysinfo.txt | sed "s/^.*: *//"'));
-        }
-
-        return $result;
-    }
-
-    public static function get_raw_firmware_version()
-    {
-        static $fw = null;
-
-        if (is_null($fw)) {
-            return trim(shell_exec('grep "firmware_version:" /tmp/sysinfo.txt | sed "s/^.*: *//"'));
-        }
-
-        return $fw;
-    }
-
-    public static function get_firmware_version()
-    {
-        static $result = null;
-
-        if (is_null($result)) {
-            preg_match_all('/^(\d*)_(\d*)_(\D*)(\d*)(.*)$/', self::get_raw_firmware_version(), $matches, PREG_SET_ORDER);
-            $matches[0][5] = ltrim($matches[0][5], '_');
-            $result = array_combine(array('string', 'build_date', 'build_number', 'rev_literal', 'rev_number', 'features'), $matches[0]);
-        }
-
-        return $result;
-    }
-
-    public static function print_sysinfo()
-    {
-        hd_print("----------------------------------------------------");
-        $table = array(
-            'Dune Product' => self::get_product_id(),
-            'Dune FW' => self::get_raw_firmware_version(),
-            );
-        $table = array_merge($table, DuneSystem::$properties);
-
-        $max = 0;
-        foreach (array_keys($table) as $key) {
-            $max = max(strlen($key), $max);
-        }
-        foreach ($table as $key => $value) {
-            hd_print(str_pad($key, $max + 2) . $value);
-        }
+        file_put_contents(get_data_path($path), $item);
     }
 
     public static function make_ts($url)

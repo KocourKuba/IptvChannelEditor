@@ -16,7 +16,7 @@ class EdemPluginConfig extends DefaultConfig
         static::$FEATURES[VOD_LAZY_LOAD] = true;
     }
 
-    public static function AddFilterUI(&$defs, $parent, $initial = -1)
+    public function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         $filters = array("years", "genre");
         hd_print("AddFilterUI: $initial");
@@ -109,9 +109,9 @@ class EdemPluginConfig extends DefaultConfig
      * @param bool $force default false, force downloading playlist even it already cached
      * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
-        hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
+        hd_print("Collect information from account $this->PLUGIN_SHOW_NAME");
 
         return true;
     }
@@ -121,7 +121,7 @@ class EdemPluginConfig extends DefaultConfig
      * @param $plugin_cookies
      * @return array
      */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
+    public function GetPlaylistStreamInfo($plugin_cookies)
     {
         return array();
     }
@@ -139,7 +139,7 @@ class EdemPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         hd_print("TryLoadMovie: $movie_id");
 
@@ -227,19 +227,19 @@ class EdemPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getSearchList($keyword, $plugin_cookies)
+    public function getSearchList($keyword, $plugin_cookies)
     {
         hd_print("getSearchList $keyword");
         $searchRes = self::make_json_request($plugin_cookies,
             array('cmd' => "search", 'query' => $keyword));
 
-        return $searchRes === false ? array() : self::CollectSearchResult($keyword, $searchRes);
+        return $searchRes === false ? array() : $this->CollectSearchResult($keyword, $searchRes);
     }
 
     /**
      * @throws Exception
      */
-    public static function getFilterList($params, $plugin_cookies)
+    public function getFilterList($params, $plugin_cookies)
     {
         hd_print("getFilterList: $params");
         $pairs = explode(" ", $params);
@@ -265,46 +265,46 @@ class EdemPluginConfig extends DefaultConfig
         }
 
         $post_params['filter'] = 'on';
-        $post_params['offset'] = static::get_next_page($params, 0);
+        $post_params['offset'] = $this->get_next_page($params, 0);
         $filterRes = self::make_json_request($plugin_cookies, $post_params);
 
-        return $filterRes === false ? array() : self::CollectSearchResult($params, $filterRes);
+        return $filterRes === false ? array() : $this->CollectSearchResult($params, $filterRes);
     }
 
     /**
      * @throws Exception
      */
-    public static function getVideoList($query_id, $plugin_cookies)
+    public function getVideoList($query_id, $plugin_cookies)
     {
-        $val = static::get_next_page($query_id, 0);
+        $val = $this->get_next_page($query_id, 0);
         hd_print("getVideoList: $query_id, $val");
 
         $categories = self::make_json_request($plugin_cookies,
             array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => (int)$val, 'limit' => 0));
 
-        return $categories === false ? array() : self::CollectSearchResult($query_id, $categories);
+        return $categories === false ? array() : $this->CollectSearchResult($query_id, $categories);
     }
 
     /**
      * @throws Exception
      */
-    protected static function CollectSearchResult($query_id, $json)
+    protected function CollectSearchResult($query_id, $json)
     {
         // hd_print("CollectSearchResult: $query_id");
         $movies = array();
 
-        $current_offset = static::get_next_page($query_id, 0);
+        $current_offset = $this->get_next_page($query_id, 0);
         foreach ($json->items as $entry) {
             if ($entry->type === 'next') {
-                self::get_next_page($query_id, $entry->request->offset);
+                $this->get_next_page($query_id, $entry->request->offset);
             } else {
                 $movie = new ShortMovie($entry->request->fid, $entry->title, $entry->img);
                 $movie->info = "$entry->title|Год: $entry->year|Рейтинг: $entry->agelimit";
                 $movies[] = $movie;
             }
         }
-        if ($current_offset === static::get_next_page($query_id, 0)) {
-            static::get_next_page($query_id, count($movies));
+        if ($current_offset === $this->get_next_page($query_id, 0)) {
+            $this->get_next_page($query_id, count($movies));
         }
 
         hd_print("Movies found: " . count($movies));

@@ -5,13 +5,20 @@ require_once 'starnet_vod_list_screen.php';
 class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 {
     const ID = 'vod_category_list';
-    public static $config;
+    protected $plugin;
+
     private $category_list;
     private $category_index;
 
-    public function __construct()
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        parent::__construct(self::ID, $this->get_folder_views());
+        $this->plugin = $plugin;
+
+        parent::__construct(self::ID, $this->plugin->config->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS());
+
+        if ($this->plugin->config->get_vod_support()) {
+            $this->plugin->create_screen($this);
+        }
     }
 
     public static function get_media_url_str($category_id)
@@ -35,7 +42,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         if (is_null($this->category_index) || is_null($this->category_list)) {
-            self::$config->fetch_vod_categories($plugin_cookies, $this->category_list, $this->category_index);
+            $this->plugin->config->fetch_vod_categories($plugin_cookies, $this->category_list, $this->category_index);
         }
 
         $category_list = $this->category_list;
@@ -53,7 +60,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
         $items = array();
 
         // Favorites
-        if (!isset($media_url->category_id) && self::$config->get_vod_fav_support()) {
+        if (!isset($media_url->category_id) && $this->plugin->config->get_vod_fav_support()) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => VodFavoritesScreen::get_media_url_str(),
@@ -81,7 +88,7 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
         );
 
         // Filter
-        if (!isset($media_url->category_id) && self::$config->get_vod_portal_support()) {
+        if (!isset($media_url->category_id) && $this->plugin->config->get_vod_portal_support()) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => 'filter_screen',
@@ -122,12 +129,5 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
         }
 
         return $items;
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    private function get_folder_views()
-    {
-        return self::$config->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS();
     }
 }

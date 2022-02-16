@@ -39,7 +39,7 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID.'_handler';
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)

@@ -78,7 +78,7 @@ class ItvPluginConfig extends DefaultConfig
      * @param bool $force default false, force downloading playlist even it already cached
      * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         // this account has special API to get account info
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
@@ -98,14 +98,15 @@ class ItvPluginConfig extends DefaultConfig
             return false;
         }
 
-        $account_data = json_decode(ltrim($content, "\0xEF\0xBB\0xBF"), true);
+        // stripe UTF8 BOM if exists
+        $account_data = json_decode(ltrim($content, "\xEF\xBB\xBF"), true);
         return isset($account_data['package_info']) && !empty($account_data['package_info']);
     }
 
-    public static function AddSubscriptionUI(&$defs, $plugin_cookies)
+    public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
         $account_data = array();
-        $result = self::GetAccountInfo($plugin_cookies, $account_data, true);
+        $result = $this->GetAccountInfo($plugin_cookies, $account_data, true);
         if ($result === false || empty($account_data)) {
             hd_print("Can't get account status");
             $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';

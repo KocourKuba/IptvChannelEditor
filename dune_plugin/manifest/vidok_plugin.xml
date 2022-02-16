@@ -17,9 +17,21 @@
             <actions>
                 <key_enter>
                     <type>plugin_open_folder</type>
+                    <params>
+                        <handler_id>entry_handler</handler_id>
+                        <control_id>plugin_entry</control_id>
+                        <action_id>launch</action_id>
+                        <mandratory_playback>0</mandratory_playback>
+                    </params>
                 </key_enter>
                 <key_play>
-                    <type>plugin_tv_play</type>
+                    <type>plugin_handle_user_input</type>
+                    <params>
+                        <handler_id>entry_handler</handler_id>
+                        <control_id>plugin_entry</control_id>
+                        <action_id>launch</action_id>
+                        <mandratory_playback>1</mandratory_playback>
+                    </params>
                 </key_play>
             </actions>
             <popup_menu>
@@ -30,7 +42,7 @@
                         <action>
                             <type>plugin_handle_user_input</type>
                             <params>
-                                <handler_id>entry</handler_id>
+                                <handler_id>entry_handler</handler_id>
                                 <control_id>do_setup</control_id>
                             </params>
                         </action>
@@ -41,7 +53,7 @@
                         <action>
                             <type>plugin_handle_user_input</type>
                             <params>
-                                <handler_id>entry</handler_id>
+                                <handler_id>entry_handler</handler_id>
                                 <control_id>do_reboot</control_id>
                             </params>
                         </action>
@@ -52,7 +64,7 @@
                         <action>
                             <type>plugin_handle_user_input</type>
                             <params>
-                                <handler_id>entry</handler_id>
+                                <handler_id>entry_handler</handler_id>
                                 <control_id>power_off</control_id>
                             </params>
                         </action>
@@ -75,7 +87,7 @@
                 <key_play>
                     <type>plugin_handle_user_input</type>
                     <params>
-                        <handler_id>entry</handler_id>
+                        <handler_id>entry_handler</handler_id>
                     </params>
                 </key_play>
             </actions>

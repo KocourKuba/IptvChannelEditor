@@ -48,8 +48,8 @@ class EpgManager
         }
 
 
-        $cache_dir =  sprintf(self::EPG_CACHE_DIR_TEMPLATE, $config::$PLUGIN_SHORT_NAME);
-        $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $config::$PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);
+        $cache_dir =  sprintf(self::EPG_CACHE_DIR_TEMPLATE, $config->PLUGIN_SHORT_NAME);
+        $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $config->PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);
 
         $parser_params = $config->get_epg_params();
         $params = $parser_params[$type];
@@ -114,7 +114,7 @@ class EpgManager
         }
 
         // stripe UTF8 BOM if exists
-        $ch_data = json_decode(ltrim($doc, "\0xEF\0xBB\0xBF"), true);
+        $ch_data = json_decode(ltrim($doc, "\xEF\xBB\xBF"), true);
         $epg_root = $parser_params['epg_root'];
         // hd_print("json epg root: " . $parser_params['epg_root']);
         // hd_print("json start: " . $parser_params['start']);

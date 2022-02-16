@@ -9,11 +9,7 @@ class ControlFactory
         $defs[] = array
         (
             GuiControlDef::kind => GUI_CONTROL_VGAP,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiVGapDef::vgap => $vgap
-                ),
+            GuiControlDef::specific_def => array(GuiVGapDef::vgap => $vgap),
         );
     }
 
@@ -24,38 +20,36 @@ class ControlFactory
             GuiControlDef::name => '',
             GuiControlDef::title => $title,
             GuiControlDef::kind => GUI_CONTROL_LABEL,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiLabelDef::caption => $text
-                ),
+            GuiControlDef::specific_def => array(GuiLabelDef::caption => $text),
         );
     }
 
-    public static function add_multiline_label(&$defs, $title, $text, $lines = 2)
+    public static function add_smart_label(&$defs, $title, $text)
+    {
+        $defs[] = array (
+            GuiControlDef::name => '',
+            GuiControlDef::title => $title,
+            GuiControlDef::kind => GUI_CONTROL_LABEL,
+            GuiControlDef::specific_def => array(GuiLabelDef::caption => $text),
+            GuiControlDef::params => array('smart' => true),
+        );
+    }
+
+    public static function add_multiline_label(&$defs, $title, $text, $num_lines = 2)
     {
         $defs[] = array(
             GuiControlDef::name => '',
             GuiControlDef::title => $title,
             GuiControlDef::kind => GUI_CONTROL_LABEL,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiLabelDef::caption => $text,
-                ),
-            GuiControlDef::params => array(
-                'max_lines' => $lines,
-            )
+            GuiControlDef::specific_def => array(GuiLabelDef::caption => $text,),
+            GuiControlDef::params => array('smart' => false, 'max_lines' => $num_lines),
         );
     }
 
-    public static function add_button(&$defs,
-                                      $handler, $add_params,
-                                      $name, $title, $caption, $width)
+    public static function add_button(&$defs, $handler, $add_params,
+                                      $name, $title, $caption, $width,  $caption_centered = false)
     {
-        $push_action =
-            UserInputHandlerRegistry::create_action($handler,
-                $name, $add_params);
+        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -63,37 +57,86 @@ class ControlFactory
             GuiControlDef::name => $name,
             GuiControlDef::title => $title,
             GuiControlDef::kind => GUI_CONTROL_BUTTON,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiButtonDef::caption => $caption,
-                    GuiButtonDef::width => $width,
-                    GuiButtonDef::push_action => $push_action,
-                ),
+            GuiControlDef::params =>array('button_caption_centered' => $caption_centered),
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => $caption,
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => $push_action,
+            ),
         );
     }
 
-    public static function add_close_dialog_button(&$defs,
-                                                   $caption, $width)
+    public static function add_toggle_button(&$defs, $handler, $add_params,
+                                             $name, $title, $caption, $image, $width, $caption_centered = false)
+    {
+        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+        $push_action['params']['action_type'] = 'apply';
+
+        $defs[] = array
+        (
+            GuiControlDef::name => $name,
+            GuiControlDef::title => $title,
+            GuiControlDef::kind => GUI_CONTROL_BUTTON,
+            GuiControlDef::params =>array('button_caption_centered' => $caption_centered),
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => $caption,
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => $push_action,
+            ),
+        );
+
+        $gap = ($width === 0) ?: $width - 140;
+        self::add_vgap($defs, -65);
+        self::add_smart_label($defs, null,  "<gap width=$gap/><icon>$image</icon>");
+    }
+
+    public static function add_custom_button(&$defs, $push_action, $name, $title, $caption, $width,
+                                             $caption_centered = true, $smart_style = false, $height = -1)
+    {
+        $push_action['params']['action_type'] = 'apply';
+
+        $params['button_caption_centered'] = $caption_centered;
+        if ($smart_style) {
+            $params['button_style'] = 'smart_label';
+        }
+        if ($height > 0) {
+            $params['button_height'] = $height;
+        }
+
+        $defs[] = array
+        (
+            GuiControlDef::name => $name,
+            GuiControlDef::title => $title,
+            GuiControlDef::kind => GUI_CONTROL_BUTTON,
+            GuiControlDef::params => $params,
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => $caption,
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => $push_action,
+            ),
+        );
+    }
+
+    public static function add_close_dialog_button(&$defs, $caption, $width)
     {
         $defs[] = array
         (
             GuiControlDef::name => 'close',
             GuiControlDef::title => null,
             GuiControlDef::kind => GUI_CONTROL_BUTTON,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiButtonDef::caption => $caption,
-                    GuiButtonDef::width => $width,
-                    GuiButtonDef::push_action =>
-                        ActionFactory::close_dialog(),
-                ),
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => $caption,
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => ActionFactory::close_dialog(),
+            ),
         );
     }
 
-    public static function add_close_dialog_and_apply_button(&$defs,
-                                                             $handler, $add_params,
+    public static function add_close_dialog_and_apply_button(&$defs, $handler, $add_params,
                                                              $name, $caption, $width)
     {
         $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
@@ -104,14 +147,12 @@ class ControlFactory
             GuiControlDef::name => $name,
             GuiControlDef::title => null,
             GuiControlDef::kind => GUI_CONTROL_BUTTON,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiButtonDef::caption => $caption,
-                    GuiButtonDef::width => $width,
-                    GuiButtonDef::push_action =>
-                        ActionFactory::close_dialog_and_run($push_action),
-                ),
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => $caption,
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => ActionFactory::close_dialog_and_run($push_action),
+            ),
         );
     }
 
@@ -122,14 +163,12 @@ class ControlFactory
             GuiControlDef::name => $name,
             GuiControlDef::title => null,
             GuiControlDef::kind => GUI_CONTROL_BUTTON,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiButtonDef::caption => $caption,
-                    GuiButtonDef::width => $width,
-                    GuiButtonDef::push_action =>
-                        ActionFactory::close_dialog_and_run($action),
-                ),
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => $caption,
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => ActionFactory::close_dialog_and_run($action),
+            ),
         );
     }
 
@@ -156,18 +195,17 @@ class ControlFactory
             GuiControlDef::name => $name,
             GuiControlDef::title => $title,
             GuiControlDef::kind => GUI_CONTROL_TEXT_FIELD,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiTextFieldDef::initial_value => (string)$initial_value,
-                    GuiTextFieldDef::numeric => (int)$numeric,
-                    GuiTextFieldDef::password => (int)$password,
-                    GuiTextFieldDef::has_osk => (int)$has_osk,
-                    GuiTextFieldDef::always_active => (int)$always_active,
-                    GuiTextFieldDef::width => (int)$width,
-                    GuiTextFieldDef::apply_action => $apply_action,
-                    GuiTextFieldDef::confirm_action => $confirm_action,
-                ),
+            GuiControlDef::specific_def => array
+            (
+                GuiTextFieldDef::initial_value => (string)$initial_value,
+                GuiTextFieldDef::numeric => (int)$numeric,
+                GuiTextFieldDef::password => (int)$password,
+                GuiTextFieldDef::has_osk => (int)$has_osk,
+                GuiTextFieldDef::always_active => (int)$always_active,
+                GuiTextFieldDef::width => (int)$width,
+                GuiTextFieldDef::apply_action => $apply_action,
+                GuiTextFieldDef::confirm_action => $confirm_action,
+            ),
         );
     }
 
@@ -193,16 +231,14 @@ class ControlFactory
             GuiControlDef::name => $name,
             GuiControlDef::title => $title,
             GuiControlDef::kind => GUI_CONTROL_COMBOBOX,
-            GuiControlDef::specific_def =>
-                array
-                (
-                    GuiComboboxDef::initial_value => $initial_value,
-                    GuiComboboxDef::value_caption_pairs => $value_caption_pairs,
-                    GuiComboboxDef::width => $width,
-                    GuiComboboxDef::apply_action => $apply_action,
-                    GuiComboboxDef::confirm_action => $confirm_action,
-                ),
+            GuiControlDef::specific_def => array
+            (
+                GuiComboboxDef::initial_value => $initial_value,
+                GuiComboboxDef::value_caption_pairs => $value_caption_pairs,
+                GuiComboboxDef::width => $width,
+                GuiComboboxDef::apply_action => $apply_action,
+                GuiComboboxDef::confirm_action => $confirm_action,
+            ),
         );
     }
-
 }

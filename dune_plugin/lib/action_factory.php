@@ -177,7 +177,7 @@ class ActionFactory
     public static function replace_path($erase_count = null, $elements = null, $post_action = null)
     {
         hd_print("replace_path: erase_count: $erase_count,  elements: $elements, post_action: " . json_encode($post_action));
-        if (HD::is_newer_versions() === false) {
+        if (is_newer_versions() === false) {
             return $post_action;
         }
 
@@ -319,9 +319,9 @@ class ActionFactory
             );
     }
 
-    public static function restart($reboot = null)
+    public static function restart($reboot = false)
     {
-        if ($reboot !== null) {
+        if ($reboot !== false) {
             exec('reboot');
         }
 
@@ -341,5 +341,6 @@ class ActionFactory
         }
 
         exec('killall shell');
+        return array();
     }
 }

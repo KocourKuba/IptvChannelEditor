@@ -13,6 +13,10 @@ abstract class AbstractVod implements Vod
 
     private $genres;
 
+    private static $pages = array();
+    private static $is_entered = false;
+    private static $movie_counter = array();
+
     protected function __construct()
     {
         $this->short_movie_by_id = array();

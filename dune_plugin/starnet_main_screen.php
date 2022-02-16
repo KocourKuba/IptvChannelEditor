@@ -4,21 +4,22 @@ require_once 'starnet_setup_screen.php';
 
 class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 {
-    const ID = 'main_screen';
-    public static $config;
+    const ID = 'main_screen_handler';
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct(Tv $tv, $folder_views)
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        parent::__construct($tv, $folder_views);
+        parent::__construct($plugin);
+
+        $plugin->create_screen($this);
 
         UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID.'_handler';
     }
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
@@ -39,7 +40,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
             $action[GUI_EVENT_KEY_ENTER] = UserInputHandlerRegistry::create_action($this, 'configure');
         }
 
-        if (self::$config->get_balance_support()) {
+        if ($this->plugin->config->get_balance_support()) {
             $add_balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
             $add_balance['caption'] = 'Подписка';
             $action[GUI_EVENT_KEY_C_YELLOW] = $add_balance;
@@ -65,7 +66,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 
             case 'check_balance':
                 $defs = array();
-                self::$config->AddSubscriptionUI($defs, $plugin_cookies);
+                $this->plugin->config->AddSubscriptionUI($defs, $plugin_cookies);
                 ControlFactory::add_close_dialog_button($defs, 'OK', 150);
                 return ActionFactory::show_dialog('Подписка', $defs) ;
         }
@@ -75,7 +76,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 
     protected function IsSetupNeeds($plugin_cookies)
     {
-        switch (self::$config->get_account_type())
+        switch ($this->plugin->config->get_account_type())
         {
             case 'OTT_KEY':
                 $setup_needs = (empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) &&

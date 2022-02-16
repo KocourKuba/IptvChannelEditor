@@ -59,7 +59,7 @@ class OneottPluginConfig extends DefaultConfig
      * @param bool $force default false, force downloading playlist even it already cached
      * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         if ($force === false && !empty($plugin_cookies->token)) {
             return true;

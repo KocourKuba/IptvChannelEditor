@@ -191,7 +191,7 @@ class smb_tree
     public function get_ip_server_shares_smb()
     {
         $d = array();
-        $my_ip = HD::get_ip_address();
+        $my_ip = get_ip_address();
         $server_shares_smb = $this->get_server_shares_smb();
         foreach ($server_shares_smb as $k => $v) {
             $out = shell_exec('export LD_LIBRARY_PATH=/firmware/lib:$LD_LIBRARY_PATH&&/firmware/bin/nmblookup ' . $k . ' -R');
@@ -324,7 +324,7 @@ class smb_tree
                     $fn = $wr;
                 }
 
-                if ($ret_code === true) {
+                if ($ret_code !== false) {
                     $mounts['err_' . $vel['foldername']]['foldername'] = $vel['foldername'];
                     $mounts['err_' . $vel['foldername']]['ip'] = $k;
                     $mounts['err_' . $vel['foldername']]['err'] = trim($ret_code);
@@ -437,7 +437,7 @@ class smb_tree
                     $fn = $wr;
                 }
 
-                if ($q === true) {
+                if ($q !== false) {
                     $d['err_' . $vel['foldername']]['foldername'] = $vel['foldername'];
                     $d['err_' . $vel['foldername']]['ip'] = $k;
                     $d['err_' . $vel['foldername']]['protocol'] = $vel['protocol'];
@@ -484,7 +484,7 @@ class smb_tree
             }
         }
 
-        return (empty($select_folder)) ? HD::get_install_path(): $select_folder;
+        return (empty($select_folder)) ? get_install_path(): $select_folder;
     }
 
     public static function get_bug_platform_kind()

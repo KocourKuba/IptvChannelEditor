@@ -73,10 +73,10 @@ class FoxPluginConfig extends DefaultConfig
      * @return array
      * @throws Exception
      */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
+    public function GetPlaylistStreamInfo($plugin_cookies)
     {
         $pl_entries = array();
-        $m3u_lines = self::FetchTvM3U($plugin_cookies);
+        $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
             if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)"|', $iValue, $m_id)
                 && preg_match(static::$FEATURES[M3U_STREAM_URL_PATTERN], $m3u_lines[$i + 1], $matches)) {
@@ -112,12 +112,12 @@ class FoxPluginConfig extends DefaultConfig
     /**
      * @throws Exception
      */
-    public static function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         // hd_print("Movie ID: $movie_id ");
         $movie = new Movie($movie_id);
 
-        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
             if ($i !== (int)$movie_id || !preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $iValue, $match)) {
                 continue;

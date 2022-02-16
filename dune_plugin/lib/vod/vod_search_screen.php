@@ -4,18 +4,17 @@ require_once 'lib/abstract_controls_screen.php';
 class VodSearchScreen extends AbstractControlsScreen
 {
     const ID = 'vod_search';
-    protected $vod;
+    protected $plugin;
 
     public static function get_media_url_str()
     {
         return MediaURL::encode(array('screen_id' => self::ID));
     }
 
-    public function __construct(Vod $vod)
+    public function __construct(DefaultDunePlugin $plugin)
     {
+        $this->plugin = $plugin;
         parent::__construct(self::ID);
-
-        $this->vod = $vod;
     }
 
     private function do_get_control_defs(&$plugin_cookies)
@@ -38,7 +37,7 @@ class VodSearchScreen extends AbstractControlsScreen
 
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->vod->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
 
         return $this->do_get_control_defs($plugin_cookies);
     }
@@ -62,7 +61,7 @@ class VodSearchScreen extends AbstractControlsScreen
                 $defs = $this->do_get_control_defs($plugin_cookies);
 
                 return ActionFactory::reset_controls($defs,
-                    ActionFactory::open_folder($this->vod->get_search_media_url_str($pattern), $pattern));
+                    ActionFactory::open_folder($this->plugin->vod->get_search_media_url_str($pattern), $pattern));
             }
         } else if ($user_input->action_type === 'confirm') {
             $control_id = $user_input->control_id;

@@ -76,7 +76,7 @@ class VidokPluginConfig extends DefaultConfig
      * @param bool $force default false, force downloading playlist even it already cached
      * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         hd_print("GetAccountInfo");
         if (!self::ensure_token_loaded($plugin_cookies)) {
@@ -101,10 +101,10 @@ class VidokPluginConfig extends DefaultConfig
         return false;
     }
 
-    public static function AddSubscriptionUI(&$defs, $plugin_cookies)
+    public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
         $account_data = array();
-        $result = self::GetAccountInfo($plugin_cookies, $account_data, true);
+        $result = $this->GetAccountInfo($plugin_cookies, $account_data, true);
         if ($result === false || empty($account_data)) {
             hd_print("Can't get account status");
             $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';

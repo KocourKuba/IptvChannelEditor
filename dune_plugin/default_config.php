@@ -20,23 +20,6 @@ const SQUARE_ICONS = 'square_icons';
 
 abstract class DefaultConfig
 {
-    // features constants
-
-    // info
-    public static $PLUGIN_SHOW_NAME = 'StarNet';
-    public static $PLUGIN_SHORT_NAME = 'starnet';
-    public static $PLUGIN_VERSION = '0.0.0';
-    public static $PLUGIN_DATE = '04.01.1972';
-
-    protected static $FEATURES = array();
-    protected static $EPG_PARSER_PARAMS = array();
-
-    // page counter for some plugins
-    protected static $pages = array();
-    protected static $is_entered = false;
-    protected static $movie_counter = array();
-    protected static $filters = array();
-
     /////////////////////////////////////////////////////////////////////////////
     // views constants
     const ALL_CHANNEL_GROUP_CAPTION = 'Все каналы';
@@ -77,16 +60,34 @@ abstract class DefaultConfig
     const VOD_CHANNEL_ICON_WIDTH = 190;
     const VOD_CHANNEL_ICON_HEIGHT = 290;
 
+    // features constants
+
+    // info
+    public $PLUGIN_SHOW_NAME = 'StarNet';
+    public $PLUGIN_SHORT_NAME = 'starnet';
+    public $PLUGIN_VERSION = '0.0.0';
+    public $PLUGIN_DATE = '04.01.1972';
+
+    protected static $FEATURES = array();
+    protected static $EPG_PARSER_PARAMS = array();
+
+    // page counter for some plugins
+    protected static $pages = array();
+    protected static $is_entered = false;
+    protected static $movie_counter = array();
+    protected static $filters = array();
+
     /**
      * @throws Exception
      */
     public function __construct()
     {
-        $xml = HD::parse_xml_file(HD::get_install_path('dune_plugin.xml'));
+        $xml = HD::parse_xml_file(get_install_path('dune_plugin.xml'));
 
-        static::$PLUGIN_SHOW_NAME = $xml->caption;
-        static::$PLUGIN_SHORT_NAME = $xml->short_name;
-        static::$PLUGIN_VERSION = $xml->version;
+        $this->PLUGIN_SHOW_NAME = $xml->caption;
+        $this->PLUGIN_SHORT_NAME = $xml->short_name;
+        $this->PLUGIN_VERSION = $xml->version . '.' . PLUGIN_BUILD;
+        $this->PLUGIN_DATE = PLUGIN_DATE;
 
         static::$FEATURES[ACCOUNT_TYPE] = 'UNKNOWN';
         static::$FEATURES[TV_FAVORITES_SUPPORTED] = true;
@@ -214,9 +215,9 @@ abstract class DefaultConfig
         return null;
     }
 
-    public static function get_channel_list()
+    public function get_channel_list()
     {
-        return sprintf('%s_channel_list.xml', self::$PLUGIN_SHORT_NAME);
+        return sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
     }
 
     public static function sort_channels_cb($a, $b)
@@ -259,7 +260,7 @@ abstract class DefaultConfig
         static::$movie_counter[$key] = $val;
     }
 
-    public static function get_next_page($idx, $increment = 1)
+    public function get_next_page($idx, $increment = 1)
     {
         if (!array_key_exists($idx, static::$pages)) {
             static::$pages[$idx] = 0;
@@ -271,7 +272,7 @@ abstract class DefaultConfig
     }
 
     public static function is_lazy_load_vod()
-	{
+    {
         return static::$FEATURES[VOD_LAZY_LOAD];
     }
 
@@ -285,12 +286,12 @@ abstract class DefaultConfig
         static::$filters = $filters;
     }
 
-    public static function GET_BG_PICTURE()
+    public function GET_BG_PICTURE()
     {
-        return sprintf('plugin_file://icons/bg_%s.jpg', self::$PLUGIN_SHORT_NAME);
+        return sprintf('plugin_file://icons/bg_%s.jpg', $this->PLUGIN_SHORT_NAME);
     }
 
-    public static function AddFilterUI(&$defs, $parent, $initial = -1)
+    public function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         return false;
     }
@@ -300,7 +301,7 @@ abstract class DefaultConfig
         return null;
     }
 
-    public static function AddSubscriptionUI(&$defs, $plugin_cookies)
+    public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
         ControlFactory::add_label($defs, 'Баланс:', 'Информация о балансе не поддерживается');
     }
@@ -350,10 +351,10 @@ abstract class DefaultConfig
      * @param bool $force default false, force downloading playlist even it already cached
      * @return bool true if information collected and status valid
      */
-    public static function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
-        hd_print("Collect information from account " . static::$PLUGIN_SHOW_NAME);
-        $m3u_lines = self::FetchTvM3U($plugin_cookies, $force);
+        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+        $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
             if (preg_match(static::$FEATURES[M3U_STREAM_URL_PATTERN], $line, $matches)) {
                 $account_data = $matches;
@@ -370,10 +371,10 @@ abstract class DefaultConfig
      * @return array
      * @throws Exception
      */
-    public static function GetPlaylistStreamInfo($plugin_cookies)
+    public function GetPlaylistStreamInfo($plugin_cookies)
     {
         $pl_entries = array();
-        $m3u_lines = self::FetchTvM3U($plugin_cookies);
+        $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
             if (preg_match(self::$FEATURES[M3U_STREAM_URL_PATTERN], $line, $matches)) {
                 $pl_entries[$matches['id']] = $matches;
@@ -382,7 +383,7 @@ abstract class DefaultConfig
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
-            unlink(self::GET_TMP_STORAGE_PATH());
+            unlink($this->GET_TMP_STORAGE_PATH());
             throw new DuneException(
                 'Empty provider playlist', 0,
                 ActionFactory::show_error(
@@ -399,13 +400,13 @@ abstract class DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getSearchList($keyword, $plugin_cookies)
+    public function getSearchList($keyword, $plugin_cookies)
     {
         hd_print("getSearchList: $keyword");
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
-        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
             if (!preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
                 continue;
@@ -424,7 +425,7 @@ abstract class DefaultConfig
         return $movies;
     }
 
-    public static function getFilterList($params, $plugin_cookies)
+    public function getFilterList($params, $plugin_cookies)
     {
         //hd_print("getFilterList: $params");
         return array();
@@ -433,10 +434,10 @@ abstract class DefaultConfig
     /**
      * @throws Exception
      */
-    public static function getVideoList($query_id, $plugin_cookies)
+    public function getVideoList($query_id, $plugin_cookies)
     {
         $movies = array();
-        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
             if (!preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
                 continue;
@@ -445,7 +446,7 @@ abstract class DefaultConfig
             $category = $matches['category'];
             $logo = $matches['logo'];
             $caption = $matches['title'];
-            if(empty($category)) {
+            if (empty($category)) {
                 $category = 'Без категории';
             }
 
@@ -460,7 +461,7 @@ abstract class DefaultConfig
         return $movies;
     }
 
-    public static function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         return null;
     }
@@ -499,9 +500,9 @@ abstract class DefaultConfig
         return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
     }
 
-    protected static function FetchTvM3U($plugin_cookies, $force = false)
+    protected function FetchTvM3U($plugin_cookies, $force = false)
     {
-        $tmp_file = self::GET_TMP_STORAGE_PATH();
+        $tmp_file = $this->GET_TMP_STORAGE_PATH();
         if ($force !== false || !file_exists($tmp_file)) {
             try {
                 $url = static::GetPlaylistUrl('tv1', $plugin_cookies);
@@ -530,9 +531,9 @@ abstract class DefaultConfig
         return file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     }
 
-    public static function FetchVodM3U($plugin_cookies, $force = false)
+    public function FetchVodM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = self::GET_VOD_TMP_STORAGE_PATH();
+        $m3u_file = $this->GET_VOD_TMP_STORAGE_PATH();
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {
@@ -560,7 +561,7 @@ abstract class DefaultConfig
         $category_index = array();
         $categoriesFound = array();
 
-        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
             if (!preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
                 continue;
@@ -590,27 +591,27 @@ abstract class DefaultConfig
     /**
      * @return string
      */
-    protected static function GET_VOD_TMP_STORAGE_PATH()
+    protected function GET_VOD_TMP_STORAGE_PATH()
     {
-        return self::GET_TMP_STORAGE_PATH('playlist_vod.m3u8');
+        return $this->GET_TMP_STORAGE_PATH('playlist_vod.m3u8');
     }
 
     /**
      * @return string
      */
-    protected static function GET_TMP_STORAGE_PATH($name = null)
+    protected function GET_TMP_STORAGE_PATH($name = null)
     {
         if (is_null($name)) {
             $name = 'playlist_tv.m3u8';
         }
 
-        return sprintf('/tmp/%s_%s', self::$PLUGIN_SHORT_NAME, $name);
+        return sprintf('/tmp/%s_%s', $this->PLUGIN_SHORT_NAME, $name);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 
-    public static function GET_TV_GROUP_LIST_FOLDER_VIEWS()
+    public function GET_TV_GROUP_LIST_FOLDER_VIEWS()
     {
         return array(
 
@@ -631,7 +632,7 @@ abstract class DefaultConfig
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
@@ -667,7 +668,7 @@ abstract class DefaultConfig
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => false,
@@ -703,7 +704,7 @@ abstract class DefaultConfig
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => false,
@@ -724,7 +725,7 @@ abstract class DefaultConfig
         );
     }
 
-    public static function GET_TV_CHANNEL_LIST_FOLDER_VIEWS()
+    public function GET_TV_CHANNEL_LIST_FOLDER_VIEWS()
     {
         return array(
             // 4x3 with title
@@ -736,7 +737,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -777,7 +778,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 3,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -818,7 +819,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -859,7 +860,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 5,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -900,7 +901,7 @@ abstract class DefaultConfig
                 (
                     ViewParams::num_cols => 2,
                     ViewParams::num_rows => 10,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => true,
                 ),
@@ -929,7 +930,7 @@ abstract class DefaultConfig
         );
     }
 
-    public static function GET_VOD_MOVIE_LIST_FOLDER_VIEWS()
+    public function GET_VOD_MOVIE_LIST_FOLDER_VIEWS()
     {
         return array(
             array
@@ -955,7 +956,7 @@ abstract class DefaultConfig
                     ViewParams::item_detailed_info_auto_line_break => true,
                     ViewParams::item_detailed_info_title_color => 10,
                     ViewParams::item_detailed_info_text_color => 15,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -998,7 +999,7 @@ abstract class DefaultConfig
                         ViewParams::item_detailed_info_auto_line_break => true,
                         ViewParams::item_detailed_info_title_color => 10,
                         ViewParams::item_detailed_info_text_color => 15,
-                        ViewParams::background_path => self::GET_BG_PICTURE(),
+                        ViewParams::background_path => $this->GET_BG_PICTURE(),
                         ViewParams::background_order => 0,
                         ViewParams::background_height => 1080,
                         ViewParams::background_width => 1920,
@@ -1049,7 +1050,7 @@ abstract class DefaultConfig
                         ViewParams::item_detailed_info_auto_line_break => true,
                         ViewParams::item_detailed_info_title_color => 10,
                         ViewParams::item_detailed_info_text_color => 15,
-                        ViewParams::background_path => self::GET_BG_PICTURE(),
+                        ViewParams::background_path => $this->GET_BG_PICTURE(),
                         ViewParams::background_order => 0,
                         ViewParams::background_height => 1080,
                         ViewParams::background_width => 1920,
@@ -1092,7 +1093,7 @@ abstract class DefaultConfig
         );
     }
 
-    public static function GET_VOD_CATEGORY_LIST_FOLDER_VIEWS()
+    public function GET_VOD_CATEGORY_LIST_FOLDER_VIEWS()
     {
         return array(
             array
@@ -1103,7 +1104,7 @@ abstract class DefaultConfig
                     ViewParams::num_cols => 1,
                     ViewParams::num_rows => 12,
                     ViewParams::paint_details => true,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -1126,7 +1127,7 @@ abstract class DefaultConfig
         );
     }
 
-    public static function GET_TEXT_ONE_COL_VIEWS()
+    public function GET_TEXT_ONE_COL_VIEWS()
     {
         return array(
             array(
@@ -1136,7 +1137,7 @@ abstract class DefaultConfig
                     ViewParams::num_cols => 1,
                     ViewParams::num_rows => 12,
                     ViewParams::paint_details => true,
-                    ViewParams::background_path => self::GET_BG_PICTURE(),
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -1154,6 +1155,120 @@ abstract class DefaultConfig
                         ViewItemParams::item_caption_width => 1550
                     ),
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
+            ),
+        );
+    }
+
+    public static function GET_FOLDER_VIEWS()
+    {
+        if (defined('ViewParams::details_box_width')) {
+            $view[] = array(
+                PluginRegularFolderView::async_icon_loading => false,
+                PluginRegularFolderView::view_params => array(
+                    ViewParams::num_cols => 1,
+                    ViewParams::num_rows => 12,
+                    ViewParams::paint_content_box_background => false,
+                    ViewParams::paint_icon_selection_box => true,
+                    ViewParams::paint_details_box_background => false,
+                    ViewParams::icon_selection_box_width => 770,
+                    ViewParams::paint_path_box_background => false,
+                    ViewParams::paint_widget_background => false,
+                    ViewParams::paint_details => true,
+                    ViewParams::paint_item_info_in_details => true,
+                    ViewParams::details_box_width => 900,
+                    ViewParams::paint_scrollbar => false,
+                    ViewParams::content_box_padding_right => 500,
+                    ViewParams::item_detailed_info_title_color => 10,
+                    ViewParams::item_detailed_info_text_color => 15,
+                ),
+                PluginRegularFolderView::base_view_item_params => array(
+                    ViewItemParams::item_layout => 0,
+                    ViewItemParams::icon_width => 30,
+                    ViewItemParams::icon_height => 50,
+                    ViewItemParams::item_caption_dx => 55,
+                    ViewItemParams::icon_dx => 5,
+                    ViewItemParams::icon_sel_scale_factor => 1.01,
+                    ViewItemParams::icon_keep_aspect_ratio => true,
+                    ViewItemParams::icon_sel_dx => 6,
+                    ViewItemParams::item_paint_caption => true,
+                    ViewItemParams::icon_valign => 1,
+                ),
+                PluginRegularFolderView::not_loaded_view_item_params => array(),
+            );
+        }
+
+        $view[] = array(
+            PluginRegularFolderView::view_params => array(
+                ViewParams::num_cols => 1,
+                ViewParams::num_rows => 10,
+                ViewParams::paint_details => true,
+                ViewParams::paint_item_info_in_details => true,
+                ViewParams::detailed_icon_scale_factor => 0.5,
+                ViewParams::item_detailed_info_title_color => 10,
+                ViewParams::item_detailed_info_text_color => 15,
+                ViewParams::item_detailed_info_auto_line_break => true
+            ),
+            PluginRegularFolderView::base_view_item_params => array(
+                ViewItemParams::item_paint_icon => true,
+                ViewItemParams::icon_sel_scale_factor => 1.2,
+                ViewItemParams::item_layout => HALIGN_LEFT,
+                ViewItemParams::icon_valign => VALIGN_CENTER,
+                ViewItemParams::icon_dx => 10,
+                ViewItemParams::icon_dy => -5,
+                ViewItemParams::icon_width => 50,
+                ViewItemParams::icon_height => 50,
+                ViewItemParams::icon_sel_margin_top => 0,
+                ViewItemParams::item_paint_caption => true,
+                ViewItemParams::item_caption_width => 1100,
+                ViewItemParams::item_detailed_icon_path => 'missing://'
+            ),
+            PluginRegularFolderView::not_loaded_view_item_params => array(),
+            PluginRegularFolderView::async_icon_loading => false,
+            PluginRegularFolderView::timer => array(GuiTimerDef::delay_ms => 5000),
+        );
+        return $view;
+    }
+
+    public function GET_VOD_SERIES_FOLDER_VIEW()
+    {
+        return array(
+            array
+            (
+                PluginRegularFolderView::async_icon_loading => true,
+                PluginRegularFolderView::view_params => array
+                (
+                    ViewParams::num_cols => 1,
+                    ViewParams::num_rows => 12,
+                    ViewParams::paint_path_box => true,
+                    ViewParams::paint_details => true,
+                    ViewParams::paint_item_info_in_details => true,
+                    ViewParams::item_detailed_info_auto_line_break => true,
+                    ViewParams::item_detailed_info_title_color => 10,
+                    ViewParams::item_detailed_info_text_color => 15,
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
+                    ViewParams::background_order => 0,
+                    ViewParams::background_height => 1080,
+                    ViewParams::background_width => 1920,
+                    ViewParams::optimize_full_screen_background => true,
+                ),
+
+                PluginRegularFolderView::base_view_item_params => array
+                (
+                    ViewItemParams::item_layout => HALIGN_LEFT,
+                    ViewItemParams::icon_valign => VALIGN_CENTER,
+                    ViewItemParams::icon_dx => 10,
+                    ViewItemParams::icon_dy => -5,
+                    ViewItemParams::item_caption_dx => 60,
+                    ViewItemParams::icon_path => 'gui_skin://small_icons/movie.aai',
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
+
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
             ),
         );
     }

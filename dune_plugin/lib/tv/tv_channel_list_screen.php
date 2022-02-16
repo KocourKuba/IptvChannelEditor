@@ -4,6 +4,7 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 class TvChannelListScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'tv_channel_list';
+    protected $plugin;
 
     public static function get_media_url_str($group_id)
     {
@@ -17,15 +18,12 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected $tv;
-
-    ///////////////////////////////////////////////////////////////////////
-
-    public function __construct(Tv $tv, $folder_views)
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        parent::__construct(self::ID, $folder_views);
+        $this->plugin = $plugin;
+        parent::__construct(self::ID, $this->plugin->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS());
 
-        $this->tv = $tv;
+        $this->plugin->create_screen($this);
 
         UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
@@ -40,7 +38,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
         $actions[GUI_EVENT_KEY_INFO] = UserInputHandlerRegistry::create_action($this, 'info');
         $actions[GUI_EVENT_KEY_B_GREEN] = ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки плагина');
 
-        if ($this->tv->is_favorites_supported()) {
+        if ($this->plugin->tv->is_favorites_supported()) {
             $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
             $add_favorite_action['caption'] = 'В избранное';
 
@@ -55,7 +53,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID.'_handler';
     }
 
     /**
@@ -65,7 +63,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
         $sel_ndx = $user_input->sel_ndx;
-        $group = $this->tv->get_group($parent_media_url->group_id);
+        $group = $this->plugin->tv->get_group($parent_media_url->group_id);
         $channels = $group->get_channels($plugin_cookies);
 
         $items[] = $this->get_regular_folder_item($group, $channels->get_by_ndx($sel_ndx), $plugin_cookies);
@@ -92,20 +90,20 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
 
         switch ($user_input->control_id) {
             case 'info':
-                $c = $this->tv->get_channels()->get($channel_id);
+                $c = $this->plugin->tv->get_channels()->get($channel_id);
                 $id = $c->get_id();
                 $title = $c->get_title();
 
                 return ActionFactory::show_title_dialog("Channel '$title' (id=$id)");
             case 'popup_menu':
                 $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
-                $caption = $this->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? 'Удалить из Избранного' : 'Добавить в избранное';
+                $caption = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? 'Удалить из Избранного' : 'Добавить в избранное';
                 $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_favorite_action);
 
                 return ActionFactory::show_popup_menu($menu_items);
             case 'add_favorite':
-                $opt_type = $this->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-                $this->tv->change_tv_favorites($opt_type, $channel_id, $plugin_cookies);
+                $opt_type = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
+                $this->plugin->tv->change_tv_favorites($opt_type, $channel_id, $plugin_cookies);
 
                 return ActionFactory::invalidate_folders(array(self::get_media_url_str($media_url->group_id)));
         }
@@ -126,7 +124,7 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
                 ViewItemParams::icon_path => $c->get_icon_url(),
                 ViewItemParams::item_detailed_icon_path => $c->get_icon_url(),
             ),
-            PluginRegularFolderItem::starred => $this->tv->is_favorite_channel_id($c->get_id(), $plugin_cookies),
+            PluginRegularFolderItem::starred => $this->plugin->tv->is_favorite_channel_id($c->get_id(), $plugin_cookies),
         );
     }
 
@@ -135,16 +133,16 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->tv->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->tv->folder_entered($media_url, $plugin_cookies);
 
         try {
-            $this->tv->ensure_channels_loaded($plugin_cookies);
+            $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {
             hd_print("Ошибка загрузки плейлиста! " . $e->getMessage());
             return array();
         }
 
-        $group = $this->tv->get_group($media_url->group_id);
+        $group = $this->plugin->tv->get_group($media_url->group_id);
 
         $items = array();
 
@@ -157,6 +155,6 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
 
     public function get_archive(MediaURL $media_url)
     {
-        return $this->tv->get_archive($media_url);
+        return $this->plugin->tv->get_archive($media_url);
     }
 }

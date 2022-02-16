@@ -4,20 +4,42 @@ require_once 'lib/abstract_controls_screen.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
+class ControlSwitchDefs
+{
+    const switch_on  = 'yes';
+    const switch_off = 'no';
+}
+
 class StarnetSetupScreen extends AbstractControlsScreen
 {
     const ID = 'setup';
     const EPG_FONTSIZE_DEF_VALUE = 'normal';
-    public static $config;
+    const CONTROLS_WIDTH = 800;
+
+    protected $plugin;
+
+    private static $on_off_ops = array
+    (
+        ControlSwitchDefs::switch_on => 'Да',
+        ControlSwitchDefs::switch_off => 'Нет',
+    );
+
+    private static $on_off_img = array
+    (
+        ControlSwitchDefs::switch_on => 'on.png',
+        ControlSwitchDefs::switch_off => 'off.png',
+    );
 
     ///////////////////////////////////////////////////////////////////////
     protected $tv;
 
-    public function __construct(Tv $tv)
+    public function __construct(DefaultDunePlugin $plugin)
     {
+        $this->plugin = $plugin;
+
         parent::__construct(self::ID);
 
-        $this->tv = $tv;
+        $this->plugin->create_screen($this);
     }
 
     public static function get_media_url_str()
@@ -37,35 +59,34 @@ class StarnetSetupScreen extends AbstractControlsScreen
         //////////////////////////////////////
         // Plugin name
         ControlFactory::add_vgap($defs, -10);
-        $config = self::$config;
-        $title = $config::$PLUGIN_SHOW_NAME . ' v.' . $config::$PLUGIN_VERSION . ' [' . $config::$PLUGIN_DATE . ']';
+        $title = $this->plugin->config->PLUGIN_SHOW_NAME . ' v.' . $this->plugin->config->PLUGIN_VERSION . ' [' . $this->plugin->config->PLUGIN_DATE . ']';
         $this->add_label($defs, $title, 'IPTV Channel Editor by sharky72');
 
         //////////////////////////////////////
         // Show in main screen
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-        $show_ops = array('yes' => 'Да', 'no' => 'Нет');
-        $this->add_combobox($defs, 'show_tv', 'Показывать в главном меню:', $show_tv, $show_ops, 0, true);
+        ControlFactory::add_toggle_button($defs, $this, null, 'show_tv', 'Показывать в главном меню:',
+            self::$on_off_ops[$show_tv], $this->plugin->get_image_path(self::$on_off_img[$show_tv]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // ott or token dialog
-        switch (self::$config->get_account_type())
+        switch ($this->plugin->config->get_account_type())
         {
             case 'OTT_KEY':
-                $this->add_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', 0);
+                $this->add_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен', self::CONTROLS_WIDTH);
                 break;
             case 'LOGIN':
-                $this->add_button($defs, 'login_dialog', 'Активировать просмотр:', 'Введите логин и пароль', 0);
+                $this->add_button($defs, 'login_dialog', 'Активировать просмотр:', 'Введите логин и пароль', self::CONTROLS_WIDTH);
                 break;
             case 'PIN':
-                $this->add_button($defs, 'pin_dialog', 'Активировать просмотр:', 'Введите ключ доступа', 0);
+                $this->add_button($defs, 'pin_dialog', 'Активировать просмотр:', 'Введите ключ доступа', self::CONTROLS_WIDTH);
                 break;
         }
 
         //////////////////////////////////////
         // vportal dialog
-        if (self::$config->get_vod_portal_support()) {
-            $this->add_button($defs, 'portal_dialog', 'Активировать VPortal:', 'Ввести ключ', 0);
+        if ($this->plugin->config->get_vod_portal_support()) {
+            $this->add_button($defs, 'portal_dialog', 'Активировать VPortal:', 'Ввести ключ', self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////
@@ -74,8 +95,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
         if (strlen($display_path) > 30) {
             $display_path = "..." . substr($display_path, -30);
         }
-        $this->add_button($defs, 'change_list_path', 'Выбрать папку со списками каналов:', $display_path, 800);
-        $this->add_button($defs, 'reset_path', 'Установить папку по умолчанию:', 'Установить', 800);
+        $this->add_button($defs, 'change_list_path', 'Выбрать папку со списками каналов:', $display_path, self::CONTROLS_WIDTH);
+        $this->add_button($defs, 'reset_path', 'Установить папку по умолчанию:', 'Установить', self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // channels lists
@@ -88,25 +109,25 @@ class StarnetSetupScreen extends AbstractControlsScreen
             }
         }
         if (!empty($all_channels)) {
-            $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : self::$config->get_channel_list();
-            $this->add_combobox($defs, 'channels_list', 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
+            $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->plugin->config->get_channel_list();
+            $this->add_combobox($defs, 'channels_list', 'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
         } else {
             $this->add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         }
 
         //////////////////////////////////////
         // streaming dialog
-        $this->add_button($defs, 'streaming_dialog', 'Настройки проигрывания:', 'Изменить настройки', 0);
+        $this->add_button($defs, 'streaming_dialog', 'Настройки проигрывания:', 'Изменить настройки', self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // font size
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : self::EPG_FONTSIZE_DEF_VALUE;
         $epg_font_size_ops = array('normal' => 'Обычный', 'small' => 'Мелкий');
-        $this->add_combobox($defs, 'epg_font_size', 'Размер шрифта EPG:', $epg_font_size, $epg_font_size_ops, 700, true);
+        $this->add_combobox($defs, 'epg_font_size', 'Размер шрифта EPG:', $epg_font_size, $epg_font_size_ops, self::CONTROLS_WIDTH, true);
 
         //////////////////////////////////////
         // adult channel password
-        $this->add_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль', 0);
+        $this->add_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль', self::CONTROLS_WIDTH);
         ControlFactory::add_vgap($defs, 10);
 
         return $defs;
@@ -159,34 +180,34 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $defs = array();
         //////////////////////////////////////
         // select device number
-        if (self::$config->get_device_support()) {
+        if ($this->plugin->config->get_device_support()) {
             hd_print("device supported");
-            $dev_num = self::$config->get_device($plugin_cookies);
-            $device_ops = self::$config->get_device_opts();
+            $dev_num = $this->plugin->config->get_device($plugin_cookies);
+            $device_ops = $this->plugin->config->get_device_opts();
             $this->add_combobox($defs, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
         }
 
         //////////////////////////////////////
         // select server
-        if (self::$config->get_server_support()) {
+        if ($this->plugin->config->get_server_support()) {
             hd_print("server supported");
-            $server = self::$config->get_server($plugin_cookies);
-            $server_ops = self::$config->get_server_opts($plugin_cookies);
+            $server = $this->plugin->config->get_server($plugin_cookies);
+            $server_ops = $this->plugin->config->get_server_opts($plugin_cookies);
             $this->add_combobox($defs, 'server', 'Сервер:', $server, $server_ops, 0);
         }
 
         //////////////////////////////////////
         // select quality
-        if (self::$config->get_quality_support()) {
+        if ($this->plugin->config->get_quality_support()) {
             hd_print("quality supported");
-            $quality = self::$config->get_quality($plugin_cookies);
-            $quality_ops = self::$config->get_quality_opts($plugin_cookies);
+            $quality = $this->plugin->config->get_quality($plugin_cookies);
+            $quality_ops = $this->plugin->config->get_quality_opts($plugin_cookies);
             $this->add_combobox($defs, 'quality', 'Качество:', $quality, $quality_ops, 0);
         }
 
         //////////////////////////////////////
         // select stream type
-        $format_ops = self::$config->get_format_opts();
+        $format_ops = $this->plugin->config->get_format_opts();
         if (count($format_ops) > 1) {
             $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
             $this->add_combobox($defs, 'stream_format', 'Выбор потока:', $format, $format_ops, 0);
@@ -362,7 +383,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
 
                 case 'show_tv':
-                    $plugin_cookies->show_tv = $new_value;
+                    $plugin_cookies->show_tv = ($plugin_cookies->show_tv === ControlSwitchDefs::switch_on) ? ControlSwitchDefs::switch_off : ControlSwitchDefs::switch_on;
                     break;
 
                 case 'epg_font_size':
@@ -382,17 +403,17 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
                     if (isset($user_input->devices) && $plugin_cookies->device_number !== $user_input->devices) {
                         $plugin_cookies->device_number = $user_input->devices;
-                        self::$config->set_device($plugin_cookies);
+                        $this->plugin->config->set_device($plugin_cookies);
                     }
 
                     if (isset($user_input->server) && $plugin_cookies->server !== $user_input->server) {
                         $plugin_cookies->server = $user_input->server;
-                        self::$config->set_server($plugin_cookies);
+                        $this->plugin->config->set_server($plugin_cookies);
                     }
 
                     if (isset($user_input->quality) && $plugin_cookies->quality !== $user_input->quality) {
                         $plugin_cookies->quality = $user_input->quality;
-                        self::$config->set_quality($plugin_cookies);
+                        $this->plugin->config->set_quality($plugin_cookies);
                     }
 
                     return $this->reload_channels($plugin_cookies);
@@ -418,7 +439,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     $plugin_cookies->login = $user_input->login;
                     $plugin_cookies->password = $user_input->password;
                     $account_data = array();
-                    if (!self::$config->GetAccountInfo($plugin_cookies, $account_data, true)) {
+                    if (!$this->plugin->config->GetAccountInfo($plugin_cookies, $account_data, true)) {
                         $plugin_cookies->login = $old_login;
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
@@ -435,7 +456,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
                     $plugin_cookies->password = $user_input->password;
                     $account_data = array();
-                    if (!self::$config->GetAccountInfo($plugin_cookies, $account_data, true)) {
+                    if (!$this->plugin->config->GetAccountInfo($plugin_cookies, $account_data, true)) {
                         $plugin_cookies->password = $old_password;
                         return ActionFactory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }

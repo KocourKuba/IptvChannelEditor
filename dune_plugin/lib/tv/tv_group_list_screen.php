@@ -8,15 +8,15 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected $tv;
+    protected $plugin;
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct(Tv $tv, $folder_views)
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        parent::__construct(self::ID, $folder_views);
+        $this->plugin = $plugin;
 
-        $this->tv = $tv;
+        parent::__construct(self::ID, $this->plugin->config->GET_TV_GROUP_LIST_FOLDER_VIEWS());
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -34,17 +34,17 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
 
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->tv->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->tv->folder_entered($media_url, $plugin_cookies);
 
         try {
-            $this->tv->ensure_channels_loaded($plugin_cookies);
+            $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {
             ActionFactory::show_title_dialog("Ошибка загрузки плейлиста! $e");
         }
 
         $items = array();
 
-        foreach ($this->tv->get_groups() as $group) {
+        foreach ($this->plugin->tv->get_groups() as $group) {
             $media_url_str = $group->is_favorite_channels() ?
                 TvFavoritesScreen::get_media_url_str() :
                 TvChannelListScreen::get_media_url_str($group->get_id());
@@ -60,13 +60,13 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
             );
         }
 
-        $this->tv->add_special_groups($items);
+        $this->plugin->tv->add_special_groups($items);
 
         return $items;
     }
 
     public function get_archive(MediaURL $media_url)
     {
-        return $this->tv->get_archive($media_url);
+        return $this->plugin->tv->get_archive($media_url);
     }
 }

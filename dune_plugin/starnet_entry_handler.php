@@ -8,26 +8,25 @@ class StarnetEntryHandler implements UserInputHandler
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID.'_handler';
     }
 	
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         if (isset($user_input->control_id)) {
-            if ($user_input->control_id === 'do_reboot') {
-                return shell_exec('reboot');
+            switch ($user_input->control_id) {
+                case 'do_reboot':
+                    return ActionFactory::restart(true);
+                case 'power_off':
+                    return send_ir_code(GUI_EVENT_DISCRETE_POWER_OFF);
+                case 'do_setup':
+                    return ActionFactory::open_folder('setup', 'Настройки ' . DuneSystem::$properties['plugin_name']);
+                case 'launch':
+                    if ((int)$user_input->mandratory_playback === 1) {
+                        return ActionFactory::tv_play();
+                    }
+                    return ActionFactory::open_folder();
             }
-
-            if ($user_input->control_id === 'power_off') {
-                return shell_exec('echo A15EBF00 > /proc/ir/button');
-            }
-
-            if ($user_input->control_id === 'do_setup') {
-                return ActionFactory::open_folder('setup', 'Настройки ' . DuneSystem::$properties['plugin_name']);
-            }
-        }
-        if ($user_input->handler_id === 'entry') {
-            return ActionFactory::open_folder();
         }
 
         return null;
