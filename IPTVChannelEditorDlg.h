@@ -345,6 +345,7 @@ private:
 	COLORREF m_gray; // channel disabled
 	COLORREF m_red; // playlist entry not present in the current channels list
 	COLORREF m_green; // channel present in the playlist and have not differences
+	COLORREF m_hevc_color; // channel HEVC
 	COLORREF m_brown; // channel has difference with same entry in the playlist
 
 	// Stream info container. Loaded when switch plugin and updates by GetStreamInfo

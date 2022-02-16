@@ -105,7 +105,7 @@ typedef struct
 class ThreadConfig
 {
 public:
-	void NotifyParent(UINT message, WPARAM wParam, LPARAM lParam);
+	void NotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 
 	std::vector<BYTE>* m_data = nullptr;
 	void* m_parent = nullptr;

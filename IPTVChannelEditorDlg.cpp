@@ -232,6 +232,7 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
 	m_red = RGB(200, 0, 0);
 	m_green = RGB(0, 200, 0);
+	m_hevc_color = RGB(158, 255, 250);
 	m_brown = RGB(226, 135, 67);
 }
 
@@ -798,7 +799,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 
 	m_wndStop.EnableWindow(TRUE);
-	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n') / 2);
+	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
 	m_wndProgress.SetPos(0);
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
@@ -1262,6 +1263,14 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 					)
 				{
 					color = m_brown;
+				}
+			}
+
+			if (const auto& pair = m_stream_infos.find(entry->stream_uri->get_hash()); pair != m_stream_infos.end())
+			{
+				if (pair->second.second.find("HEVC") != std::string::npos)
+				{
+					m_wndPlaylistTree.SetItemBackColor(hItem, m_hevc_color);
 				}
 			}
 

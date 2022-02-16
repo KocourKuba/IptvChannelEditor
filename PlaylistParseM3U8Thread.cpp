@@ -97,7 +97,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 		}
 	}
 
-	m_config.NotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release(), 0);
+	m_config.NotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
 
 	CoUninitialize();
 

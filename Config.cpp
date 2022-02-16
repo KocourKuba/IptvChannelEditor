@@ -120,7 +120,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enShuraTV,    _T("Shura TV"),        "shuratv"    },
 };
 
-void ThreadConfig::NotifyParent(UINT message, WPARAM wParam, LPARAM lParam)
+void ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	CWnd* parent = (CWnd*)m_parent;
 	if (parent->GetSafeHwnd())
