@@ -67,59 +67,6 @@ class ControlFactory
         );
     }
 
-    public static function add_toggle_button(&$defs, $handler, $add_params,
-                                             $name, $title, $caption, $image, $width, $caption_centered = false)
-    {
-        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
-        $push_action['params']['action_type'] = 'apply';
-
-        $defs[] = array
-        (
-            GuiControlDef::name => $name,
-            GuiControlDef::title => $title,
-            GuiControlDef::kind => GUI_CONTROL_BUTTON,
-            GuiControlDef::params =>array('button_caption_centered' => $caption_centered),
-            GuiControlDef::specific_def => array
-            (
-                GuiButtonDef::caption => $caption,
-                GuiButtonDef::width => $width,
-                GuiButtonDef::push_action => $push_action,
-            ),
-        );
-
-        $gap = ($width === 0) ?: $width - 140;
-        self::add_vgap($defs, -65);
-        self::add_smart_label($defs, null,  "<gap width=$gap/><icon>$image</icon>");
-    }
-
-    public static function add_custom_button(&$defs, $push_action, $name, $title, $caption, $width,
-                                             $caption_centered = true, $smart_style = false, $height = -1)
-    {
-        $push_action['params']['action_type'] = 'apply';
-
-        $params['button_caption_centered'] = $caption_centered;
-        if ($smart_style) {
-            $params['button_style'] = 'smart_label';
-        }
-        if ($height > 0) {
-            $params['button_height'] = $height;
-        }
-
-        $defs[] = array
-        (
-            GuiControlDef::name => $name,
-            GuiControlDef::title => $title,
-            GuiControlDef::kind => GUI_CONTROL_BUTTON,
-            GuiControlDef::params => $params,
-            GuiControlDef::specific_def => array
-            (
-                GuiButtonDef::caption => $caption,
-                GuiButtonDef::width => $width,
-                GuiButtonDef::push_action => $push_action,
-            ),
-        );
-    }
-
     public static function add_close_dialog_button(&$defs, $caption, $width)
     {
         $defs[] = array

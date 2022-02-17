@@ -103,11 +103,18 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
         $open_folder['caption'] = "Открыть папку";
         $create_folder = UserInputHandlerRegistry::create_action($this, 'create_folder');
         $create_folder['caption'] = "Создать папку";
+        $reset_folder = UserInputHandlerRegistry::create_action($this, 'reset_folder');
+        $reset_folder['caption'] = "Сбросить по умолчанию";
         $smb_setup = UserInputHandlerRegistry::create_action($this, 'smb_setup');
         $smb_setup['caption'] = "Настройки SMB";
 
         $actions[GUI_EVENT_KEY_ENTER] = $fs_action;
         $actions[GUI_EVENT_KEY_PLAY] = $fs_action;
+        $actions[GUI_EVENT_KEY_D_BLUE] = $reset_folder;
+
+        if (is_newer_versions() !== false) {
+            $actions[GUI_EVENT_KEY_SETUP] = ActionFactory::replace_path($media_url->windowCounter);
+        }
 
         if (empty($media_url->filepath)) {
             $actions[GUI_EVENT_KEY_B_GREEN] = $smb_setup;
@@ -123,9 +130,6 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
             }
 
             $actions[GUI_EVENT_TIMER] = UserInputHandlerRegistry::create_action($this, 'timer');
-            if (is_newer_versions() !== false) {
-                $actions[GUI_EVENT_KEY_SETUP] = ActionFactory::replace_path($media_url->windowCounter);
-            }
         }
         //hd_print("actions: " . json_encode($actions));
         return $actions;
@@ -332,7 +336,7 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
             case 'select_folder':
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
                 smb_tree::set_folder_info($plugin_cookies, $url);
-                $setup_handler = UserInputHandlerRegistry::get_instance()->get_registered_handler(StarnetSetupScreen::ID);
+                $setup_handler = UserInputHandlerRegistry::get_instance()->get_registered_handler(StarnetSetupScreen::ID . '_handler');
                 $action = is_null($setup_handler) ? null : UserInputHandlerRegistry::create_action($setup_handler, 'reset_controls');
                 $post_action = ActionFactory::invalidate_folders(array('setup', 'main_menu', 'tv_group_list'), $action);
 
@@ -341,6 +345,15 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
                 }
 
                 return ActionFactory::show_title_dialog('Выбрана папка: ' . $url->caption, $post_action, 'Полный путь: ' . $url->filepath, 800);
+
+            case 'reset_folder':
+                $plugin_cookies->ch_list_path = '';
+                $setup_handler = UserInputHandlerRegistry::get_instance()->get_registered_handler(StarnetSetupScreen::ID . "_handler");
+                $action = is_null($setup_handler) ? null : UserInputHandlerRegistry::create_action($setup_handler, 'reset_controls');
+                $post_action = ActionFactory::replace_path($parent_url->windowCounter, null,
+                    ActionFactory::invalidate_folders(array('setup', 'main_menu', 'tv_group_list'), $action));
+
+                return ActionFactory::show_title_dialog('Выбрана папка по умолчанию ', $post_action, 'Полный путь: ' . get_install_path(), 800);
 
             case 'create_folder':
                 $defs = array();

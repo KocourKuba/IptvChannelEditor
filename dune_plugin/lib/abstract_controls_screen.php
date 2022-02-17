@@ -62,10 +62,31 @@ abstract class AbstractControlsScreen implements ControlsScreen
         ControlFactory::add_label($defs, $title, $text);
     }
 
-    protected function add_button(&$defs, $name, $title, $caption, $width)
+    protected function add_button(&$defs, $name, $title, $caption, $width = 0)
     {
-        ControlFactory::add_button($defs, $this, null,
-            $name, $title, $caption, $width);
+        ControlFactory::add_button($defs, $this, null, $name, $title, $caption, $width);
+    }
+
+    public function add_image_button(&$defs, $name, $title, $caption, $image, $width = 0)
+    {
+        $push_action = UserInputHandlerRegistry::create_action($this, $name, null);
+        $push_action['params']['action_type'] = 'apply';
+
+        $defs[] = array
+        (
+            GuiControlDef::name => $name,
+            GuiControlDef::title => $title,
+            GuiControlDef::kind => GUI_CONTROL_BUTTON,
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => '',
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => $push_action,
+            ),
+        );
+
+        ControlFactory::add_vgap($defs, -65);
+        ControlFactory::add_smart_label($defs, null,  "<gap width=15/><icon>$image</icon><gap width=20/><text dy='-2'>$caption</text>");
     }
 
     protected function add_close_dialog_button(&$defs, $caption, $width)

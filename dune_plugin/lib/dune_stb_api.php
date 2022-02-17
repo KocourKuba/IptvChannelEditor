@@ -290,17 +290,18 @@ function get_parsed_firmware_ver()
     //   (
     //     'string' => '150729_0139_r10_js_stb_opera33',
     //     'build_date' => '150729',
-    //     'build_num' => '0139',
-    //     'branch_number' => '10',
+    //     'build_number' => '0139',
+    //     'rev_literal => 'r',
+    //     'rev_number' => '10',
     //     'features' => 'js_stb_opera33',
     //	)
 
     static $result = null;
 
     if (is_null($result)) {
-        preg_match_all('/^(\d*)_(\d*)_\D*(\d*)(.*)$/', get_raw_firmware_version(), $matches, PREG_SET_ORDER);
-        $matches[0][4] = ltrim($matches[0][4], '_');
-        $result = array_combine(array('string', 'build_date', 'build_num', 'branch_number', 'features'), $matches[0]);
+        preg_match_all('/^(\d*)_(\d*)_(\D*)(\d*)(.*)$/', get_raw_firmware_version(), $matches, PREG_SET_ORDER);
+        $matches[0][5] = ltrim($matches[0][5], '_');
+        $result = array_combine(array('string', 'build_date', 'build_number', 'rev_literal', 'rev_number', 'features'), $matches[0]);
     }
 
     return $result;
