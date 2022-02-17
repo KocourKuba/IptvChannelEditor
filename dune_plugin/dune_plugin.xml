@@ -1,10 +1,10 @@
 ﻿<dune_plugin>
-    <name>ottclub</name>
-    <caption>Ottclub TV</caption>
-    <short_name>ottclub</short_name>
+    <name>{plugin_name}</name>
+    <caption>{plugin_title}</caption>
+    <short_name>{plugin_short_name}</short_name>
     <version_index>1</version_index>
-    <version>1.0.0</version>
-    <release_date>30.12.2021</release_date>
+    <version>{plugin_version}</version>
+    <release_date>{plugin_release_date}</release_date>
     <auto_resume>
         <enable>yes</enable>
     </auto_resume>
@@ -12,8 +12,8 @@
         <entry_point>
             <parent_media_url>root://tv</parent_media_url>
             <media_url>tv_group_list</media_url>
-            <caption>Ottclub TV</caption>
-            <icon_url>plugin_file://icons/logo_ottclub.png</icon_url>
+            <caption>{plugin_title}</caption>
+            <icon_url>plugin_file://icons/logo_{plugin_short_name}.png</icon_url>
             <actions>
                 <key_enter>
                     <type>plugin_open_folder</type>
@@ -37,7 +37,7 @@
             <popup_menu>
                 <menu_items>
                     <menu_item>
-                        <caption>Настройки Ottclub TV</caption>
+                        <caption>Настройки {plugin_title}</caption>
                         <icon_url>gui_skin://small_icons/setup.aai</icon_url>
                         <action>
                             <type>plugin_handle_user_input</type>
@@ -78,18 +78,12 @@
         <entry_point>
             <parent_media_url>setup://applications</parent_media_url>
             <media_url>setup</media_url>
-            <caption>ottclub TV</caption>
-            <icon_url>plugin_file://icons/logo_ottclub.png</icon_url>
+            <caption>{plugin_title}</caption>
+            <icon_url>plugin_file://icons/logo_{plugin_short_name}.png</icon_url>
             <actions>
                 <key_enter>
                     <type>plugin_open_folder</type>
                 </key_enter>
-                <key_play>
-                    <type>plugin_handle_user_input</type>
-                    <params>
-                        <handler_id>entry_handler</handler_id>
-                    </params>
-                </key_play>
             </actions>
         </entry_point>
     </entry_points>

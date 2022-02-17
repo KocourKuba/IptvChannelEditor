@@ -86,8 +86,8 @@ abstract class DefaultConfig
 
         $this->PLUGIN_SHOW_NAME = $xml->caption;
         $this->PLUGIN_SHORT_NAME = $xml->short_name;
-        $this->PLUGIN_VERSION = $xml->version . '.' . PLUGIN_BUILD;
-        $this->PLUGIN_DATE = PLUGIN_DATE;
+        $this->PLUGIN_VERSION = $xml->version;
+        $this->PLUGIN_DATE = $xml->release_date;
 
         static::$FEATURES[ACCOUNT_TYPE] = 'UNKNOWN';
         static::$FEATURES[TV_FAVORITES_SUPPORTED] = true;

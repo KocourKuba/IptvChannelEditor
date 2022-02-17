@@ -404,7 +404,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	// Fill available plugins
 	for (const auto& item : GetConfig().get_plugins_info())
 	{
-		int idx = m_wndPluginType.AddString(item.name.c_str());
+		int idx = m_wndPluginType.AddString(item.title.c_str());
 		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
 	}
 
@@ -3600,7 +3600,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 	for (const auto& item : GetConfig().get_plugins_info())
 	{
 		CString str;
-		str.Format(_T("%s"), item.name.c_str());
+		str.Format(_T("%s"), item.title.c_str());
 		m_wndProgressInfo.SetWindowText(str);
 		m_wndProgress.SetPos(++i);
 
@@ -3608,7 +3608,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 		{
 			success = false;
 			CString str;
-			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name.c_str());
+			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.title.c_str());
 			if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
 		}
 	}

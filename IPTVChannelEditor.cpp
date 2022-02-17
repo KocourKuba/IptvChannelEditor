@@ -164,7 +164,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 			if (!PackPlugin(item.type, output_path, lists_path, false))
 			{
 				CString str;
-				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.name.c_str());
+				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.title.c_str());
 				if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
 			}
 		}
@@ -331,31 +331,61 @@ bool PackPlugin(const StreamType plugin_type,
 				const std::wstring& lists_path,
 				bool showMessage)
 {
-	const auto& name = GetPluginName<wchar_t>(plugin_type);
-	auto& temp_pack_path = std::filesystem::temp_directory_path();
-	temp_pack_path += PACK_PATH;
-	const auto& packFolder = fmt::format(temp_pack_path.c_str(), name);
+	const auto& plugin_info = GetConfig().get_plugin_info(plugin_type);
+	const auto& short_name_w = utils::utf8_to_utf16(plugin_info.short_name);
+	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
 
 	std::error_code err;
 	// remove previous packed folder if exist
 	std::filesystem::remove_all(packFolder, err);
 
-	// copy new one
+	// copy entire plugin folder
 	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
 	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::recursive, err);
 
-	// copy plugin manifest
-	const auto& manifest = fmt::format(LR"({:s}manifest\{:s}_plugin.xml)", plugin_root, name);
-	const auto& config = fmt::format(LR"({:s}configs\{:s}_config.php)", plugin_root, name);
-	std::filesystem::copy_file(manifest, packFolder + L"dune_plugin.xml", std::filesystem::copy_options::overwrite_existing, err);
-	std::filesystem::copy_file(config, fmt::format(L"{:s}{:s}_config.php", packFolder, name), std::filesystem::copy_options::overwrite_existing, err);
-
-	// remove over config's
-	std::filesystem::remove_all(packFolder + L"manifest", err);
+	// remove config's folder
 	std::filesystem::remove_all(packFolder + L"configs", err);
 
+	// remove images for other plugins
+	std::vector<std::string> to_remove;
+	for (const auto& info : GetConfig().get_plugins_info())
+	{
+		if (info.short_name != plugin_info.short_name)
+		{
+			to_remove.emplace_back(fmt::format("bg_{:s}.jpg", info.short_name));
+			to_remove.emplace_back(fmt::format("logo_{:s}.jpg", info.short_name));
+		}
+	}
+
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
+	{
+		if (std::find(to_remove.begin(), to_remove.end(), dir_entry.path().filename().string()) != to_remove.end())
+		{
+			std::filesystem::remove(dir_entry, err);
+		}
+	}
+
+	// create plugin manifest
+	std::string data;
+	std::ifstream istream(plugin_root + L"dune_plugin.xml");
+	data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
+
+	utils::string_replace_inplace(data, "{plugin_name}", plugin_info.int_name.c_str());
+	utils::string_replace_inplace(data, "{plugin_title}", utils::utf16_to_utf8(plugin_info.title).c_str());
+	utils::string_replace_inplace(data, "{plugin_short_name}", plugin_info.short_name.c_str());
+	utils::string_replace_inplace(data, "{plugin_version}", fmt::format("{:s}.{:d}", plugin_info.version, BUILD).c_str());
+	utils::string_replace_inplace(data, "{plugin_release_date}", RELEASEDATE);
+
+	std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ios::out | std::ios::binary);
+	ostream << data;
+	ostream.close();
+
+	std::filesystem::copy_file(fmt::format(LR"({:s}configs\{:s}_config.php)", plugin_root, short_name_w),
+							   fmt::format(L"{:s}{:s}_config.php", packFolder, short_name_w),
+							   std::filesystem::copy_options::overwrite_existing, err);
+
 	// copy channel lists
-	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, name);
+	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, short_name_w);
 	std::filesystem::directory_iterator dir_iter(playlistPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
@@ -367,27 +397,13 @@ bool PackPlugin(const StreamType plugin_type,
 		}
 	}
 
-	// remove files for other plugins
-	std::vector<std::wstring> to_remove(GetConfig().get_plugins_images());
-	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"bg_{:s}.jpg", name)), to_remove.end());
-	to_remove.erase(std::remove(to_remove.begin(), to_remove.end(), fmt::format(L"logo_{:s}.png", name)), to_remove.end());
-
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
-	{
-		if (std::find(to_remove.begin(), to_remove.end(), dir_entry.path().filename().wstring()) != to_remove.end())
-			std::filesystem::remove(dir_entry, err);
-	}
-
 	// write setup file
 	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\nconst PLUGIN_BUILD = {:d};\nconst PLUGIN_DATE = '{:s}';\n",
+	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n",
 					  GetPluginName<char>(plugin_type),
-					  GetPluginName<char>(plugin_type, true),
-					  BUILD,
-					  RELEASEDATE
-	);
+					  GetPluginName<char>(plugin_type, true));
 	os.close();
 
 	// pack folder
@@ -401,7 +417,7 @@ bool PackPlugin(const StreamType plugin_type,
 		return false;
 	}
 
-	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, name);
+	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, short_name_w);
 
 	res = archiver.CreateArchive(pluginFile);
 	// remove temporary folder

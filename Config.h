@@ -96,8 +96,10 @@ constexpr auto REG_DEVICE_ID           = _T("DeviceID");
 typedef struct
 {
 	StreamType type;
-	std::wstring name;
+	std::wstring title;
+	std::string short_name;
 	std::string int_name;
+	std::string version;
 } PluginDesc;
 
 //////////////////////////////////////////////////////////////////////////
@@ -142,7 +144,7 @@ public:
 	void RemovePortableSettings();
 
 	const std::vector<PluginDesc>& get_plugins_info() const;
-	const std::vector<std::wstring>& get_plugins_images() const;
+	PluginDesc get_plugin_info(const StreamType plugin) const;
 
 	int get_plugin_idx() const;
 	void set_plugin_idx(int val);
@@ -199,7 +201,7 @@ static std::basic_string<T> GetPluginName(const StreamType plugin_type, bool bCa
 	{
 		if (item.type != plugin_type) continue;
 
-		std::basic_string<T> plugin_name(item.int_name.begin(), item.int_name.end());
+		std::basic_string<T> plugin_name(item.short_name.begin(), item.short_name.end());
 		if (bCamel)
 			plugin_name[0] = std::toupper(plugin_name[0]);
 
