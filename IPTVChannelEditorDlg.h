@@ -44,6 +44,13 @@ public:
 		std::shared_ptr<ChannelCategory> category;
 	};
 
+	struct EpgInfo
+	{
+		time_t time_end;
+		std::string name;
+		std::string desc;
+	};
+
 	HTREEITEM SelectTreeItem(CTreeCtrlEx* ctl, const SearchParams& searchParams);
 
 	// Implementation
@@ -115,6 +122,7 @@ protected:
 	afx_msg void OnBnClickedCheckShowChanged();
 	afx_msg void OnBnClickedCheckNotAdded();
 	afx_msg void OnBnClickedCheckShowUnknown();
+	afx_msg void OnBnClickedCheckShowUrl();
 
 	afx_msg void OnBnClickedCheckCustomize();
 	afx_msg void OnBnClickedCheckAdult();
@@ -406,7 +414,5 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
-	std::map<std::wstring, nlohmann::json> m_epgMap;
-public:
-	afx_msg void OnBnClickedCheckShowUrl();
+	std::map<std::wstring, std::map<time_t, EpgInfo> > m_epgMap;
 };

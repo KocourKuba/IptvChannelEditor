@@ -1421,9 +1421,9 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	try
 	{
 		const auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
-		const auto& pair = m_epgMap.find(epg_id);
+		auto& epg_map_pair = m_epgMap.find(epg_id);
 
-		if (pair == m_epgMap.end())
+		if (epg_map_pair == m_epgMap.end())
 		{
 			UpdateExtToken(info->stream_uri.get(), m_token);
 			const auto& url = first ? info->stream_uri->get_epg1_uri_json(epg_id) : info->stream_uri->get_epg2_uri_json(epg_id);
@@ -1431,70 +1431,106 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			if (!utils::DownloadFile(url, data))
 				return;
 
+			auto& epg_map = m_epgMap[epg_id];
+
 			epg_data = nlohmann::json::parse(data);
-			m_epgMap[epg_id] = epg_data;
-		}
-		else
-		{
-			epg_data = pair->second;
+
+			const auto& root = info->stream_uri->get_epg_root();
+			if (!root.empty() && epg_data.contains(root))
+			{
+				epg_data = epg_data[root];
+			}
+
+			const auto& tag_start = info->stream_uri->get_epg_time_start();
+			const auto& tag_end = info->stream_uri->get_epg_time_end();
+			const auto& tag_name = info->stream_uri->get_epg_name();
+			const auto& tag_desc = info->stream_uri->get_epg_desc();
+			const bool use_duration = info->stream_uri->get_use_duration();
+
+			for (auto& item : epg_data.items())
+			{
+				EpgInfo info;
+
+				const auto& val = item.value();
+
+				std::string name;
+				std::string desc;
+				if (val[tag_name].is_string())
+					info.name = utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_name, "")));
+
+				if (val[tag_desc].is_string())
+					info.desc = utils::make_text_rtf_safe(utils::entityDecrypt(val.value(tag_desc, "")));
+
+				time_t time_start = 0;
+				if (val.contains(tag_start))
+				{
+					if (val[tag_start].is_number())
+					{
+						time_start = val.value(tag_start, 0);
+					}
+					else if (val[tag_start].is_string())
+					{
+						time_start = utils::char_to_int(val.value(tag_start, ""));
+					}
+				}
+				if (val.contains(tag_end))
+				{
+					if (val[tag_end].is_number())
+					{
+						info.time_end = val.value(tag_end, 0);
+					}
+					else if (val[tag_end].is_string())
+					{
+						info.time_end = utils::char_to_int(val.value(tag_end, ""));
+					}
+
+					if (use_duration)
+					{
+						info.time_end += time_start;
+					}
+				}
+
+				if (time_start != 0)
+				{
+					epg_map.emplace(time_start, info);
+				}
+			}
+
+			epg_map_pair = m_epgMap.emplace(epg_id, epg_map).first;
 		}
 
-		time_t now = time(nullptr) - m_archiveCheckDays * 24 * 3600 - m_archiveCheckHours * 3600;
+		time_t now = time(nullptr) - (time_t)m_archiveCheckDays * 24 * 3600 - (time_t)m_archiveCheckHours * 3600;
 		if (pTreeCtl == &m_wndChannelsTree)
 			now += m_timeShiftHours;
 
-		const auto& root = info->stream_uri->get_epg_root();
-		if (!root.empty() && epg_data.contains(root))
+		// check end time
+		for (auto it = epg_map_pair->second.begin(); it != epg_map_pair->second.end(); ++it)
 		{
-			epg_data = epg_data[root];
+			if (it->second.time_end != 0) continue;
+
+			auto cur = it;
+			if (++cur != epg_map_pair->second.end())
+			{
+				it->second.time_end = cur->first;
+			}
+			else
+			{
+				it->second.time_end = -1;
+			}
 		}
 
-		const auto& tag_start = info->stream_uri->get_epg_time_start();
-		const auto& tag_end = info->stream_uri->get_epg_time_end();
-		const auto& tag_name = info->stream_uri->get_epg_name();
-		const auto& tag_desc = info->stream_uri->get_epg_desc();
-		const bool use_duration = info->stream_uri->get_use_duration();
-
-		for (auto& item : epg_data.items())
+		for (auto& epg_pair : epg_map_pair->second)
 		{
-			const auto& val = item.value();
-			time_t time_start = 0;
-			time_t time_end = 0;
-			if (val.contains(tag_start))
-			{
-				if (val[tag_start].is_number())
-					time_start = val.value(tag_start, 0);
-				else if (val[tag_start].is_string())
-					time_start = utils::char_to_int(val.value(tag_start, ""));
-			}
-			if (val.contains(tag_end))
-			{
-				if (val[tag_end].is_number())
-					time_end = val.value(tag_end, 0);
-				else if (val[tag_end].is_string())
-					time_end = utils::char_to_int(val.value(tag_end, ""));
+			if (now < epg_pair.first || now > epg_pair.second.time_end) continue;
 
-				if (use_duration)
-					time_end += time_start;
-			}
-
-			if (now < time_start || now > time_end) continue;
-
-			std::string name;
-			std::string desc;
-			if (val[tag_name].is_string())
-				name = val.value(tag_name, "");
-			if (val[tag_desc].is_string())
-				desc = val.value(tag_desc, "");
-
-			COleDateTime time_s(time_start);
-			COleDateTime time_e(time_end);
+			COleDateTime time_s(epg_pair.first);
+			COleDateTime time_e(epg_pair.second.time_end);
 			CStringA text;
 			text.Format(R"({\rtf1 %ls - %ls\par\b %s\b0\par %s})",
 						time_s.Format(),
 						time_e.Format(),
-						utils::make_text_rtf_safe(utils::entityDecrypt(name)).c_str(),
-						utils::make_text_rtf_safe(utils::entityDecrypt(desc)).c_str()
+						epg_pair.second.name.c_str(),
+						epg_pair.second.desc.c_str()
 			);
 
 			SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
