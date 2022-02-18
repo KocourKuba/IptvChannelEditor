@@ -26,6 +26,7 @@
 #include "IconLinkDlg.h"
 #include "UtilsLib\utils.h"
 #include "Config.h"
+#include "EpgListDlg.h"
 
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\md5.h"
@@ -1527,8 +1528,8 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			COleDateTime time_e(epg_pair.second.time_end);
 			CStringA text;
 			text.Format(R"({\rtf1 %ls - %ls\par\b %s\b0\par %s})",
-						time_s.Format(),
-						time_e.Format(),
+						time_s.Format(_T("%d.%m.%Y %H:%M:%S")),
+						time_e.Format(_T("%d.%m.%Y %H:%M:%S")),
 						epg_pair.second.name.c_str(),
 						epg_pair.second.desc.c_str()
 			);
@@ -2812,11 +2813,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg()
 	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
 	{
+		CEpgListDlg dlg;
 		bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
-		UpdateExtToken(channel->stream_uri.get(), m_token);
-		const auto& url = first ? channel->stream_uri->get_epg1_uri(channel->get_epg1_id()) : channel->stream_uri->get_epg2_uri(channel->get_epg2_id());
-		if (!url.empty())
-			ShellExecuteW(nullptr, L"open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+		dlg.m_epg_map = m_epgMap[first ? channel->get_epg1_id() : channel->get_epg2_id()];
+		dlg.m_epg_url = first ? channel->stream_uri->get_epg1_uri_json(channel->get_epg1_id()).c_str() : channel->stream_uri->get_epg1_uri_json(channel->get_epg2_id()).c_str();
+		dlg.DoModal();
 	}
 }
 

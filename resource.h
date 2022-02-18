@@ -16,6 +16,7 @@
 #define IDD_EDEMCHANNELEDITOR_DIALOG    110
 #define IDD_UPDATE_SETTINGS_PAGE        111
 #define IDR_MENU_SPLIT                  111
+#define IDD_DIALOG_EPG_LIST             112
 #define IDR_ACCELERATOR_TABLE           112
 #define IDR_MENU_CHANNEL                113
 #define IDR_MENU_PLAYLIST               114
@@ -125,6 +126,13 @@
 #define IDS_STRING_CUSTOM_PLAYLIST      233
 #define IDS_STRING_EDEM_STANDARD        234
 #define IDS_STRING_EDEM_THEMATIC        235
+#define IDS_STRING_COL_INFO             236
+#define IDS_STRING_COL_DATA             237
+#define IDS_STRING_COL_START            238
+#define IDS_STRING_COL_END              239
+#define IDS_STRING_COL_TITLE            240
+#define IDS_STRING_COL_ICON             241
+#define IDS_STRING_COL_CHANNEL_NAME     242
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -210,6 +218,7 @@
 #define IDC_COMBO_TYPE                  1090
 #define IDC_CHECK_AUTO_SYNC_CHANNELS    1091
 #define IDC_LIST_INFO                   1092
+#define IDC_LIST_EPG                    1093
 #define IDC_STATIC_LOGIN                1096
 #define IDC_STATIC_PASSWORD             1097
 #define IDC_STATIC_DEVICE_ID            1100
@@ -248,6 +257,8 @@
 #define IDC_CHECK_SHOW_UNKNOWN          1128
 #define IDC_CHECK_CALCULATE             1128
 #define IDC_CHECK_FILE                  1129
+#define IDC_EDIT1                       1130
+#define IDC_EDIT_EPG_URL                1130
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -279,7 +290,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        225
 #define _APS_NEXT_COMMAND_VALUE         32802
-#define _APS_NEXT_CONTROL_VALUE         1130
+#define _APS_NEXT_CONTROL_VALUE         1131
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

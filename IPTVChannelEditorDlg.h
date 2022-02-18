@@ -15,6 +15,13 @@
 constexpr auto EmbedToken = 0x1;
 constexpr auto EmbedPortal = 0x02;
 
+struct EpgInfo
+{
+	time_t time_end;
+	std::string name;
+	std::string desc;
+};
+
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
 {
@@ -42,13 +49,6 @@ public:
 	{
 		HTREEITEM hItem;
 		std::shared_ptr<ChannelCategory> category;
-	};
-
-	struct EpgInfo
-	{
-		time_t time_end;
-		std::string name;
-		std::string desc;
 	};
 
 	HTREEITEM SelectTreeItem(CTreeCtrlEx* ctl, const SearchParams& searchParams);

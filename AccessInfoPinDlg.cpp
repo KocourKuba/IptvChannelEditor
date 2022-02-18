@@ -48,8 +48,11 @@ BOOL CAccessInfoPinDlg::OnInitDialog()
 	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
 	int nWidth = vWidth / 4;
 
-	m_wndInfo.InsertColumn(0, _T("Info"), LVCFMT_LEFT, nWidth, 0);
-	m_wndInfo.InsertColumn(1, _T("Data"), LVCFMT_LEFT, vWidth - nWidth, 0);
+	CString str;
+	str.LoadString(IDS_STRING_COL_INFO);
+	m_wndInfo.InsertColumn(0, str, LVCFMT_LEFT, nWidth, 0);
+	str.LoadString(IDS_STRING_COL_DATA);
+	m_wndInfo.InsertColumn(1, str, LVCFMT_LEFT, vWidth - nWidth, 0);
 
 	m_password = m_entry->stream_uri->get_password().c_str();
 
