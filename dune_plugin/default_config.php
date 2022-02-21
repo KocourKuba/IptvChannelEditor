@@ -373,6 +373,7 @@ abstract class DefaultConfig
      */
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
+        hd_print("Get playlist information for: $this->PLUGIN_SHOW_NAME");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
@@ -383,7 +384,9 @@ abstract class DefaultConfig
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
-            unlink($this->GET_TMP_STORAGE_PATH());
+            if (file_exists($this->GET_TMP_STORAGE_PATH())) {
+                unlink($this->GET_TMP_STORAGE_PATH());
+            }
         }
 
         return $pl_entries;
@@ -500,6 +503,7 @@ abstract class DefaultConfig
                 $url = static::GetPlaylistUrl('tv1', $plugin_cookies);
                 //hd_print("tv1 m3u8 playlist: " . $url);
                 if (empty($url)) {
+                    hd_print("Tv1 playlist not defined");
                     throw new Exception('Tv1 playlist not defined');
                 }
                 file_put_contents($tmp_file, HD::http_get_document($url));
@@ -508,8 +512,7 @@ abstract class DefaultConfig
                     $url = static::GetPlaylistUrl('tv2', $plugin_cookies);
                     //hd_print("tv2 m3u8 playlist: " . $url);
                     if (empty($url)) {
-                        hd_print("Tv2 playlist not defined");
-                        return array();
+                        throw new Exception("Tv2 playlist not defined");
                     }
 
                     file_put_contents($tmp_file, HD::http_get_document($url));
@@ -531,6 +534,7 @@ abstract class DefaultConfig
             try {
                 $url = static::GetPlaylistUrl('movie', $plugin_cookies);
                 if (empty($url)) {
+                    hd_print('Vod playlist not defined');
                     throw new Exception('Vod playlist not defined');
                 }
 

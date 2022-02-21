@@ -15,9 +15,8 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
 
         if ($this->plugin->config->get_vod_portal_support()) {
             $this->plugin->create_screen($this);
+            UserInputHandlerRegistry::get_instance()->register_handler($this);
         }
-
-        UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
     public static function get_media_url_str($category = '')

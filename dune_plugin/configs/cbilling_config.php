@@ -149,6 +149,7 @@ class CbillingPluginConfig extends DefaultConfig
 
         if (empty($password)) {
             hd_print("Password not set");
+            return '';
         }
 
         switch ($type) {

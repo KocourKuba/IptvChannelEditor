@@ -52,6 +52,7 @@ class SharaclubPluginConfig extends DefaultConfig
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
+            return '';
         }
 
         switch ($type) {
@@ -85,6 +86,8 @@ class SharaclubPluginConfig extends DefaultConfig
      */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
+        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+
         // this account has special API to get account info
         $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;

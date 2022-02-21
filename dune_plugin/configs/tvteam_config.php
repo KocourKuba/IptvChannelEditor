@@ -57,6 +57,7 @@ class TvteamPluginConfig extends DefaultConfig
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         if (empty($password)) {
             hd_print("Password not set");
+            return '';
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
@@ -64,9 +65,12 @@ class TvteamPluginConfig extends DefaultConfig
 
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://epg.ott-play.com/tvteam/epg/%s.json', $id);
+        hd_print("Fetching EPG for ID: '$id'");
+        switch ($type) {
+            case 'first':
+                return sprintf('http://tv.team/%s.json', $id);
+            case 'second':
+                return sprintf('http://epg.ott-play.com/tvteam/epg/%s.json', $id);
         }
 
         return null;

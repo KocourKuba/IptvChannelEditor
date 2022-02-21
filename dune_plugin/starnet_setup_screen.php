@@ -10,6 +10,8 @@ class ControlSwitchDefs
     const switch_off = 'no';
     const switch_normal  = 'normal';
     const switch_small = 'small';
+    const switch_epg1  = 'first';
+    const switch_epg2 = 'second';
 }
 
 class StarnetSetupScreen extends AbstractControlsScreen
@@ -21,10 +23,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
     private static $on_off_ops = array
     (
-        ControlSwitchDefs::switch_on => 'Включить',
-        ControlSwitchDefs::switch_off => 'Выключить',
+        ControlSwitchDefs::switch_on => 'Да',
+        ControlSwitchDefs::switch_off => 'Нет',
         ControlSwitchDefs::switch_small => 'Мелкий',
         ControlSwitchDefs::switch_normal => 'Обычный',
+        ControlSwitchDefs::switch_epg1 => 'Нет',
+        ControlSwitchDefs::switch_epg2 => 'Да',
     );
 
     private static $on_off_img = array
@@ -33,6 +37,8 @@ class StarnetSetupScreen extends AbstractControlsScreen
         ControlSwitchDefs::switch_off => 'off.png',
         ControlSwitchDefs::switch_small => 'on.png',
         ControlSwitchDefs::switch_normal => 'off.png',
+        ControlSwitchDefs::switch_epg1 => 'off.png',
+        ControlSwitchDefs::switch_epg2 => 'on.png',
     );
 
     ///////////////////////////////////////////////////////////////////////
@@ -106,9 +112,6 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $this->add_image_button($defs, 'change_list_path', 'Выбрать папку со списками каналов:', $display_path,
             $this->plugin->get_image_path('folder.png'));
 
-//        if ($channels_list_path !== get_install_path())
-//            $this->add_button($defs, 'reset_path', 'Сбросить на папку по умолчанию:', 'Сбросить');
-
         //////////////////////////////////////
         // channels lists
         $all_channels = array();
@@ -133,6 +136,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
         //////////////////////////////////////
         // font size
+        if (isset($plugin_cookies->has_secondary_epg) && (int)$plugin_cookies->has_secondary_epg === 1) {
+            $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : ControlSwitchDefs::switch_epg1;
+            $this->add_image_button($defs, 'epg_source', 'Использовать вторичный источник EPG:',
+                self::$on_off_ops[$epg_source], $this->plugin->get_image_path(self::$on_off_img[$epg_source]));
+        }
+
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : ControlSwitchDefs::switch_normal;
         $this->add_image_button($defs, 'epg_font_size', 'Мелкий шрифт EPG:',
             self::$on_off_ops[$epg_font_size], $this->plugin->get_image_path(self::$on_off_img[$epg_font_size]));
@@ -451,10 +460,24 @@ class StarnetSetupScreen extends AbstractControlsScreen
                     $post_action = UserInputHandlerRegistry::create_action($this, 'reset_controls');
                     return ActionFactory::invalidate_folders(array('tv_group_list'), $post_action);
 
+                case 'epg_source':
+                    if (isset($plugin_cookies->epg_source)) {
+                        $plugin_cookies->epg_source = ($plugin_cookies->epg_source === ControlSwitchDefs::switch_epg1)
+                            ? ControlSwitchDefs::switch_epg2
+                            : ControlSwitchDefs::switch_epg1;
+                    } else {
+                        $plugin_cookies->epg_source = ControlSwitchDefs::switch_epg1;
+                    }
+                    break;
+
                 case 'epg_font_size':
-                    $plugin_cookies->epg_font_size = ($plugin_cookies->epg_font_size === ControlSwitchDefs::switch_normal)
-                        ? ControlSwitchDefs::switch_small
-                        : ControlSwitchDefs::switch_normal;
+                    if (isset($plugin_cookies->epg_font_size)) {
+                        $plugin_cookies->epg_font_size = ($plugin_cookies->epg_font_size === ControlSwitchDefs::switch_normal)
+                            ? ControlSwitchDefs::switch_small
+                            : ControlSwitchDefs::switch_normal;
+                    } else {
+                        $plugin_cookies->epg_font_size = ControlSwitchDefs::switch_normal;
+                    }
                     break;
 
                 case 'streaming_dialog': // show streaming settings dialog
@@ -511,6 +534,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
      */
     protected function reload_channels(&$plugin_cookies)
     {
+        hd_print("reload_channels");
         $this->plugin->tv->unload_channels();
         try {
             $this->plugin->tv->load_channels($plugin_cookies);

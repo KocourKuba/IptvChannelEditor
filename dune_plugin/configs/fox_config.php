@@ -55,6 +55,7 @@ class FoxPluginConfig extends DefaultConfig
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
+            return '';
         }
 
         switch ($type) {
@@ -75,6 +76,7 @@ class FoxPluginConfig extends DefaultConfig
      */
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
+        hd_print("Get playlist information for: $this->PLUGIN_SHOW_NAME");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
@@ -86,14 +88,9 @@ class FoxPluginConfig extends DefaultConfig
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
-            throw new DuneException(
-                'Empty provider playlist', 0,
-                ActionFactory::show_error(
-                    true,
-                    'Ошибка скачивания плейлиста',
-                    array(
-                        'Пустой плейлист провайдера!',
-                        'Проверьте подписку или подключение к Интернет.')));
+            if (file_exists($this->GET_TMP_STORAGE_PATH())) {
+                unlink($this->GET_TMP_STORAGE_PATH());
+            }
         }
 
         return $pl_entries;

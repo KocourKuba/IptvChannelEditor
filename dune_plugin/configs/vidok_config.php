@@ -52,6 +52,7 @@ class VidokPluginConfig extends DefaultConfig
 
         if (empty($plugin_cookies->token)) {
             hd_print("User token not set");
+            return '';
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->token);
@@ -78,7 +79,8 @@ class VidokPluginConfig extends DefaultConfig
      */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
-        hd_print("GetAccountInfo");
+        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+
         if (!self::ensure_token_loaded($plugin_cookies)) {
             return false;
         }

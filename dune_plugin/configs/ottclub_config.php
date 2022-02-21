@@ -37,6 +37,7 @@ class OttclubPluginConfig extends DefaultConfig
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         if (empty($password)) {
             hd_print("Password not set");
+            return '';
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);

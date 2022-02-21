@@ -101,7 +101,6 @@ class StarnetPluginTv extends AbstractTv
 
         // read embedded access info
         if (isset($xml->channels_setup)) {
-            hd_print("Overriding access settings found in playlist: $channels_list");
 
             if (isset($xml->channels_setup->access_key)) {
                 $plugin_cookies->ott_key_local = (string)$xml->channels_setup->access_key;
@@ -121,6 +120,11 @@ class StarnetPluginTv extends AbstractTv
             if (isset($xml->channels_setup->access_password)) {
                 $plugin_cookies->password_local = (string)$xml->channels_setup->access_password;
                 hd_print("password: " . base64_encode($plugin_cookies->password_local));
+            }
+
+            if (isset($xml->channels_setup->has_secondary_epg)) {
+                $plugin_cookies->has_secondary_epg = $xml->channels_setup->has_secondary_epg ? 1 : 0;
+                hd_print("Channels has secondary EPG: $plugin_cookies->has_secondary_epg");
             }
         }
 
@@ -166,10 +170,6 @@ class StarnetPluginTv extends AbstractTv
         $account_data = array();
         $this->plugin->config->GetAccountInfo($plugin_cookies, $account_data);
         $pl_entries = $this->plugin->config->GetPlaylistStreamInfo($plugin_cookies);
-        if (empty($pl_entries)) {
-            hd_print("Empty provider playlist");
-            throw new Exception('Empty provider playlist');
-        }
 
         // Read channels
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
@@ -265,7 +265,8 @@ class StarnetPluginTv extends AbstractTv
             // get channel by hash
             $channel = $this->get_channel($channel_id);
             if ($protect_code !== $pass_sex && $channel->is_protected()) {
-                throw new Exception('Wrong password');
+                hd_print('Wrong adult password');
+                throw new Exception('Wrong adult password');
             }
         } catch (Exception $ex) {
             hd_print("get_tv_playback_url: Exception " . $ex->getMessage());
@@ -288,19 +289,19 @@ class StarnetPluginTv extends AbstractTv
             return array();
         }
 
+        $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : ControlSwitchDefs::switch_epg1;
+
         $epg_man = new EpgManager($this->plugin->config);
-        $epg = array();
+
         try {
-            $epg = $epg_man->get_epg($channel, 'first', $day_start_ts, $plugin_cookies);
+            $epg = $epg_man->get_epg($channel, $epg_source, $day_start_ts, $plugin_cookies);
             if (count($epg) === 0) {
-                throw new Exception("Empty first epg");
+                hd_print("No data from $epg_source EPG");
+                return array();
             }
         } catch (Exception $ex) {
-            try {
-                $epg = $epg_man->get_epg($channel, 'second', $day_start_ts, $plugin_cookies);
-            } catch (Exception $ex) {
-                hd_print("Can't fetch EPG ID from secondary epg source: " . $ex->getMessage());
-            }
+            hd_print("Can't fetch EPG ID from $epg_source epg source: " . $ex->getMessage());
+            return array();
         }
 
         hd_print("Loaded " . count($epg) . " EPG entries");

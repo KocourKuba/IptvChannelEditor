@@ -4,7 +4,7 @@ require_once 'starnet_setup_screen.php';
 
 class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 {
-    const ID = 'main_screen_handler';
+    const ID = 'main_screen';
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -38,6 +38,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 
         if ($this->IsSetupNeeds($plugin_cookies) !== false) {
             hd_print("Create setup action");
+            $action[GUI_EVENT_KEY_PLAY] = UserInputHandlerRegistry::create_action($this, 'configure');
             $action[GUI_EVENT_KEY_ENTER] = UserInputHandlerRegistry::create_action($this, 'configure');
         }
 

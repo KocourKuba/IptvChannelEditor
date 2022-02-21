@@ -50,6 +50,7 @@ class ShuratvPluginConfig extends DefaultConfig
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         if (empty($password)) {
             hd_print("User password not set");
+            return '';
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password, static::get_server($plugin_cookies));

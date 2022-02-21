@@ -70,6 +70,7 @@ class LightiptvPluginConfig extends DefaultConfig
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         if (empty($password)) {
             hd_print("Password not set");
+            return '';
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
@@ -83,8 +84,9 @@ class LightiptvPluginConfig extends DefaultConfig
      */
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
+        hd_print("Get playlist information for: $this->PLUGIN_SHOW_NAME");
         $pl_entries = array();
-        $m3u_lines = self::FetchTvM3U($plugin_cookies);
+        $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
             if (preg_match('|^#EXTINF:.+tvg-id="(?<id>[^"]+)"|', $iValue, $m_id)
                 && preg_match(static::$FEATURES[M3U_STREAM_URL_PATTERN], $m3u_lines[$i + 1], $matches)) {
@@ -94,14 +96,9 @@ class LightiptvPluginConfig extends DefaultConfig
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
-            throw new DuneException(
-                'Empty provider playlist', 0,
-                ActionFactory::show_error(
-                    true,
-                    'Ошибка скачивания плейлиста',
-                    array(
-                        'Пустой плейлист провайдера!',
-                        'Проверьте подписку или подключение к Интернет.')));
+            if (file_exists($this->GET_TMP_STORAGE_PATH())) {
+                unlink($this->GET_TMP_STORAGE_PATH());
+            }
         }
 
         return $pl_entries;

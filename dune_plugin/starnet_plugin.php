@@ -37,7 +37,8 @@ class StarnetDunePlugin extends DefaultDunePlugin
         $this->plugin_path = __DIR__;
         $plugin_type = PLUGIN_TYPE;
         if (!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig')) {
-            throw new Exception('Unknown plugin type: ' . $plugin_type);
+            hd_print("Unknown plugin type: $plugin_type");
+            throw new Exception("Unknown plugin type: $plugin_type");
         }
 
         $this->config = new $plugin_type;
@@ -71,5 +72,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
         $this->vod_movie_screen = new VodMovieScreen($this);
         $this->vod_series_list_screen = new VodSeriesListScreen($this);
         $this->filter_screen = new StarnetFilterScreen($this);
+
+        hd_print("Init done.");
     }
 }

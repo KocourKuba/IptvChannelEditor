@@ -24,9 +24,8 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
         if ($this->plugin->config->get_vod_support()) {
             $this->plugin->create_screen($this);
+            UserInputHandlerRegistry::get_instance()->register_handler($this);
         }
-
-        UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
     ///////////////////////////////////////////////////////////////////////

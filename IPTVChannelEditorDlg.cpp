@@ -50,7 +50,7 @@ constexpr auto ID_ADD_TO_START = ID_MOVE_TO_END + 1;
 constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 
 // Common
-constexpr auto CHANNELS_LIST_VERSION = 2;
+constexpr auto CHANNELS_LIST_VERSION = 3;
 
 std::map<UINT, UINT> tooltips_info =
 {
@@ -1693,39 +1693,28 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	auto setup_node = i_node->first_node(utils::CHANNELS_SETUP);
 	if (setup_node)
 	{
-		m_embedded_info |= EmbedToken;
-
-		switch (plugin_type)
+		if (setup_node->first_node(utils::ACCESS_TOKEN))
 		{
-			case StreamType::enEdem:
-				m_token = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_TOKEN));
-				m_domain = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN));
-				break;
-			case StreamType::enGlanz:
-			case StreamType::enFox:
-			case StreamType::enSharaclub:
-			case StreamType::enSharaTV:
-			case StreamType::enOneOtt:
-			case StreamType::enVidok:
-				m_login = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_LOGIN));
-				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
-				break;
-			case StreamType::enAntifriz:
-			case StreamType::enItv:
-			case StreamType::enOneCent:
-			case StreamType::enOneUsd:
-			case StreamType::enSharavoz:
-			case StreamType::enTvTeam:
-			case StreamType::enVipLime:
-			case StreamType::enLightIptv:
-			case StreamType::enCbilling:
-			case StreamType::enOttclub:
-			case StreamType::enIptvOnline:
-			case StreamType::enShuraTV:
-				m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
-				break;
-			default:
-				break;
+			m_embedded_info |= EmbedToken;
+			m_token = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_TOKEN));
+		}
+
+		if (setup_node->first_node(utils::ACCESS_DOMAIN))
+		{
+			m_embedded_info |= EmbedToken;
+			m_domain = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN));
+		}
+
+		if (setup_node->first_node(utils::ACCESS_LOGIN))
+		{
+			m_embedded_info |= EmbedToken;
+			m_login = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_LOGIN));
+		}
+
+		if (setup_node->first_node(utils::ACCESS_PASSWORD))
+		{
+			m_embedded_info |= EmbedToken;
+			m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 		}
 	}
 
@@ -3313,9 +3302,15 @@ void CIPTVChannelEditorDlg::OnSave()
 		info_node->append_node(rapidxml::alloc_node(doc, utils::LIST_VERSION, std::to_string(CHANNELS_LIST_VERSION).c_str()));
 		tv_info->append_node(info_node);
 
+		auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
+
+		if (channel->stream_uri->has_epg2())
+		{
+			setup_node->append_node(rapidxml::alloc_node(doc, utils::HAS_SECONDARY_EPG, "true"));
+		}
+
 		if ((m_embedded_info & EmbedToken) == EmbedToken)
 		{
-			auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
 			switch (GetConfig().get_plugin_type())
 			{
 				case StreamType::enEdem: // ott_key
@@ -3347,6 +3342,10 @@ void CIPTVChannelEditorDlg::OnSave()
 				default:
 					break;
 			}
+		}
+
+		if (setup_node->last_node())
+		{
 			tv_info->append_node(setup_node);
 		}
 

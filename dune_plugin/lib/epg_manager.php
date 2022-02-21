@@ -38,12 +38,14 @@ class EpgManager
         }
 
         if (empty($epg_id)) {
+            hd_print("EPG: $epg_id not defined");
             throw new Exception("EPG: $epg_id not defined");
         }
 
         $config = $this->config;
         $epg_url = $config->get_epg_url($type, $epg_id, $day_start_ts, $plugin_cookies);
         if (empty($epg_url)) {
+            hd_print("$type EPG url not defined");
             throw new Exception("$type EPG url not defined");
         }
 

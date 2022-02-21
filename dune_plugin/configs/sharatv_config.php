@@ -41,6 +41,7 @@ class SharatvPluginConfig extends DefaultConfig
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
+            return '';
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $login, $password);

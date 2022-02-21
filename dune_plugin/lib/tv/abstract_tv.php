@@ -67,6 +67,7 @@ abstract class AbstractTv implements Tv
         $c = $this->channels->get($channel_id);
 
         if (is_null($c)) {
+            hd_print("Unknown channel: $channel_id");
             throw new Exception("Unknown channel: $channel_id");
         }
 
@@ -90,6 +91,7 @@ abstract class AbstractTv implements Tv
         $g = $this->groups->get($group_id);
 
         if (is_null($g)) {
+            hd_print("Unknown group: $group_id");
             throw new Exception("Unknown group: $group_id");
         }
 
@@ -102,12 +104,8 @@ abstract class AbstractTv implements Tv
     public function get_tv_info(MediaURL $media_url, &$plugin_cookies)
     {
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : ControlSwitchDefs::switch_normal;
-        try {
-            $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
-        } catch (Exception $e) {
-            hd_print("Ошибка загрузки плейлиста! " . $e->getMessage());
-            return array();
-        }
+
+        $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
 
         $channels = array();
 
@@ -218,6 +216,7 @@ abstract class AbstractTv implements Tv
      */
     public function get_tv_stream_url($playback_url, &$plugin_cookies)
     {
+        hd_print('Error: get_tv_stream_url() is not supported.');
         throw new Exception('Error: get_tv_stream_url() is not supported.');
     }
 

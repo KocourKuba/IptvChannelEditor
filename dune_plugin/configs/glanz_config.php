@@ -80,6 +80,7 @@ class GlanzPluginConfig extends DefaultConfig
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
+            return '';
         }
 
         switch ($type) {

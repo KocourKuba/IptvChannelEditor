@@ -13,6 +13,8 @@ class StarnetEntryHandler implements UserInputHandler
 	
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
+        //hd_print('StarnetEntryHandler: ' . json_encode($user_input));
+
         if (isset($user_input->control_id)) {
             switch ($user_input->control_id) {
                 case 'do_reboot':
@@ -23,8 +25,11 @@ class StarnetEntryHandler implements UserInputHandler
                     return ActionFactory::open_folder('setup', 'Настройки ' . DuneSystem::$properties['plugin_name']);
                 case 'launch':
                     if ((int)$user_input->mandratory_playback === 1) {
+                        hd_print("launch play");
                         return ActionFactory::tv_play();
                     }
+
+                    hd_print("launch open");
                     return ActionFactory::open_folder();
             }
         }

@@ -47,6 +47,7 @@ class OneottPluginConfig extends DefaultConfig
 
         if (empty($plugin_cookies->token)) {
             hd_print("User token not set");
+            return '';
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->token);
@@ -61,6 +62,8 @@ class OneottPluginConfig extends DefaultConfig
      */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
+        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+
         if ($force === false && !empty($plugin_cookies->token)) {
             return true;
         }

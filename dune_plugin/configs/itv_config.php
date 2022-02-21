@@ -66,6 +66,7 @@ class ItvPluginConfig extends DefaultConfig
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         if (empty($password)) {
             hd_print("Password not set");
+            return '';
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
@@ -80,6 +81,8 @@ class ItvPluginConfig extends DefaultConfig
      */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
+        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+
         // this account has special API to get account info
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         if ($force === false && !empty($password)) {

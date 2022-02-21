@@ -39,7 +39,7 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
         try {
             $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {
-            ActionFactory::show_title_dialog("Ошибка загрузки плейлиста! $e");
+            hd_print("Channels not loaded");
         }
 
         $items = array();
@@ -62,6 +62,7 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
 
         $this->plugin->tv->add_special_groups($items);
 
+        // hd_print("Loaded items " . count($items));
         return $items;
     }
 
