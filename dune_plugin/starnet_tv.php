@@ -166,6 +166,10 @@ class StarnetPluginTv extends AbstractTv
         $account_data = array();
         $this->plugin->config->GetAccountInfo($plugin_cookies, $account_data);
         $pl_entries = $this->plugin->config->GetPlaylistStreamInfo($plugin_cookies);
+        if (empty($pl_entries)) {
+            hd_print("Empty provider playlist");
+            throw new Exception('Empty provider playlist');
+        }
 
         // Read channels
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {

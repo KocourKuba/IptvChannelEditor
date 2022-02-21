@@ -384,14 +384,6 @@ abstract class DefaultConfig
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
             unlink($this->GET_TMP_STORAGE_PATH());
-            throw new DuneException(
-                'Empty provider playlist', 0,
-                ActionFactory::show_error(
-                    true,
-                    'Ошибка скачивания плейлиста',
-                    array(
-                        'Пустой плейлист провайдера!',
-                        'Проверьте подписку или подключение к Интернет.')));
         }
 
         return $pl_entries;

@@ -37,6 +37,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
         );
 
         if ($this->IsSetupNeeds($plugin_cookies) !== false) {
+            hd_print("Create setup action");
             $action[GUI_EVENT_KEY_ENTER] = UserInputHandlerRegistry::create_action($this, 'configure');
         }
 
@@ -56,7 +57,8 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
         switch ($user_input->control_id) {
             case 'configure':
                 if ($this->IsSetupNeeds($plugin_cookies)) {
-                    return ActionFactory::show_error(false, 'Плагин не настроен', 'Зайдите в настройки плагина');
+                    hd_print("Setup required!");
+                    return ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки плагина');
                 }
 
                 return ActionFactory::open_folder($user_input->selected_media_url);
