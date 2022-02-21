@@ -14,8 +14,10 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/mono.m3u8?tok
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/index-{START}-7200.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-7200.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=tvteam/epg/{:s}.json";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/tvteam/epg/{:s}.json";
+static constexpr auto EPG1_TEMPLATE = L"http://tv.team/{:s}.json";
+static constexpr auto EPG1_TEMPLATE_JSON = L"http://tv.team/{:s}.json";
+static constexpr auto EPG2_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=tvteam/epg/{:s}.json";
+static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/tvteam/epg/{:s}.json";
 
 void uri_tvteam::parse_uri(const std::wstring& url)
 {
@@ -81,4 +83,14 @@ std::wstring uri_tvteam::get_epg1_uri_json(const std::wstring& id) const
 std::wstring uri_tvteam::get_playlist_template(bool first /*= true*/) const
 {
 	return PLAYLIST_TEMPLATE;
+}
+
+std::wstring uri_tvteam::get_epg2_uri(const std::wstring& id) const
+{
+	return fmt::format(EPG2_TEMPLATE, id);
+}
+
+std::wstring uri_tvteam::get_epg2_uri_json(const std::wstring& id) const
+{
+	return fmt::format(EPG2_TEMPLATE_JSON, id);
 }

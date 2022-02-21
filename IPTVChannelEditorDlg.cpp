@@ -463,6 +463,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_host.clear();
 	m_portal.clear();
 	m_embedded_info = FALSE;
+	for (auto& map : m_epg_cache)
+	{
+		map.clear();
+	}
 
 	m_wndPlaylist.ResetContent();
 
@@ -1417,14 +1421,15 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	if (!info)
 		return;
 
-	bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+	BOOL first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 	nlohmann::json epg_data;
 	try
 	{
 		const auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
-		auto& epg_map_pair = m_epgMap.find(epg_id);
+		auto& epgMap = m_epg_cache[first];
+		auto& epg_map_pair = epgMap.find(epg_id);
 
-		if (epg_map_pair == m_epgMap.end())
+		if (epg_map_pair == epgMap.end())
 		{
 			UpdateExtToken(info->stream_uri.get(), m_token);
 			const auto& url = first ? info->stream_uri->get_epg1_uri_json(epg_id) : info->stream_uri->get_epg2_uri_json(epg_id);
@@ -1432,7 +1437,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			if (!utils::DownloadFile(url, data))
 				return;
 
-			auto& epg_map = m_epgMap[epg_id];
+			auto& epg_map = epgMap[epg_id];
 
 			epg_data = nlohmann::json::parse(data);
 
@@ -1497,7 +1502,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 				}
 			}
 
-			epg_map_pair = m_epgMap.emplace(epg_id, epg_map).first;
+			epg_map_pair = epgMap.emplace(epg_id, epg_map).first;
 		}
 
 		time_t now = time(nullptr) - (time_t)m_archiveCheckDays * 24 * 3600 - (time_t)m_archiveCheckHours * 3600;
@@ -2814,8 +2819,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonTestEpg()
 	if (channel)
 	{
 		CEpgListDlg dlg;
-		bool first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
-		dlg.m_epg_map = m_epgMap[first ? channel->get_epg1_id() : channel->get_epg2_id()];
+		BOOL first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+		const auto& id = first ? channel->get_epg1_id() : channel->get_epg2_id();
+		dlg.m_epg_map = m_epg_cache[first][id];
 		dlg.m_epg_url = first ? channel->stream_uri->get_epg1_uri_json(channel->get_epg1_id()).c_str() : channel->stream_uri->get_epg1_uri_json(channel->get_epg2_id()).c_str();
 		dlg.DoModal();
 	}

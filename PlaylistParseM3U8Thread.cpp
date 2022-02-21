@@ -56,7 +56,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				{
 					case StreamType::enOneUsd:
 					case StreamType::enTvTeam:
-						entry->set_epg1_id(entry->get_title()); // primary EPG
+						entry->set_epg2_id(entry->get_title()); // secondary EPG
 						break;
 					case StreamType::enSharavoz:
 					case StreamType::enOneOtt:

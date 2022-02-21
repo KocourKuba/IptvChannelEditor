@@ -40,6 +40,9 @@ using wsvmatch = std::match_results<std::wstring_view::const_iterator>;
 
 std::wstring_view wmatch_view(const wsvmatch::value_type& sm)
 {
+	if (sm.first == sm.second)
+		return std::wstring_view();
+
 	return sm.matched ? std::wstring_view(std::addressof(*sm.first), std::distance(sm.first, sm.second)) : std::wstring_view();
 }
 

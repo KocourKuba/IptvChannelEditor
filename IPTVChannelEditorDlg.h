@@ -414,5 +414,5 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
-	std::map<std::wstring, std::map<time_t, EpgInfo> > m_epgMap;
+	std::array<std::map<std::wstring, std::map<time_t, EpgInfo>>, 2> m_epg_cache;
 };
