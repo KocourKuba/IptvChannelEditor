@@ -101,7 +101,7 @@ abstract class AbstractTv implements Tv
 
     public function get_tv_info(MediaURL $media_url, &$plugin_cookies)
     {
-        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : StarnetSetupScreen::EPG_FONTSIZE_DEF_VALUE;
+        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : ControlSwitchDefs::switch_normal;
         $this->ensure_channels_loaded($plugin_cookies);
 
         $channels = array();
