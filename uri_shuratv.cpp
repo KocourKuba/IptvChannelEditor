@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "uri_shuratv.h"
 
-#include "UtilsLib\json.hpp"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -12,7 +10,7 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.tvshka.net/?uid={:s}&srv={:d}&type=halva";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}/";
-static constexpr auto EPG1_TEMPLATE = L"http://s1.tvshka.net/{:s}/epg/range14-7.json";
+static constexpr auto EPG1_TEMPLATE_JSON = L"http://s1.tvshka.net/{:s}/epg/range14-7.json";
 
 void uri_shuratv::parse_uri(const std::wstring& url)
 {
@@ -31,7 +29,7 @@ void uri_shuratv::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_shuratv::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_shuratv::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	auto& url = get_uri();
 
@@ -52,31 +50,26 @@ std::wstring uri_shuratv::get_templated(StreamSubType subType, const TemplatePar
 
 	if (params.shift_back)
 	{
-		AppendArchive(url);
+		append_archive(url);
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_shuratv::get_epg1_uri(const std::wstring& id) const
+std::wstring uri_shuratv::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(EPG1_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
-std::wstring uri_shuratv::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_shuratv::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return get_epg1_uri(id);
+	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.number);
 }
 
-std::wstring uri_shuratv::get_playlist_template(bool first /*= true*/) const
-{
-	return PLAYLIST_TEMPLATE;
-}
-
-std::wstring& uri_shuratv::AppendArchive(std::wstring& url) const
+std::wstring& uri_shuratv::append_archive(std::wstring& url) const
 {
 	if (url.rfind('?') != std::wstring::npos)
 		url += '&';

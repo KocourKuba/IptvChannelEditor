@@ -2,7 +2,8 @@
 #include "uri_base.h"
 #include "UtilsLib\utils.h"
 #include "UtilsLib\Crc32.h"
-#include "UtilsLib\json.hpp"
+#include "UtilsLib\json_wrapper.h"
+#include "UtilsLib\inet_utils.h"
 
 struct TemplateParams
 {
@@ -14,40 +15,28 @@ struct TemplateParams
 	int shift_back = 0;
 };
 
-struct AccountParams
+struct PlaylistTemplateParams
 {
-	AccountParams(const std::wstring& r_name, const std::wstring& r_value) : name(r_name), value(r_value) {}
+	int number = 0;
+	int device = 1;
+	std::wstring domain;
+	std::wstring token;
+	std::wstring login;
+	std::wstring password;
+};
+
+struct AccountInfo
+{
 	std::wstring name;
 	std::wstring value;
 };
 
-inline void PutAccountParameter(const std::string& name, nlohmann::json& js_data, std::list<AccountParams>& params)
+struct EpgInfo
 {
-	try
-	{
-		const auto& js_param = js_data[name];
-
-		if (js_param.is_number_integer())
-			params.emplace_back(utils::utf8_to_utf16(name), std::to_wstring(js_param.get<int>()));
-		if (js_param.is_number_float())
-			params.emplace_back(utils::utf8_to_utf16(name), std::to_wstring(js_param.get<float>()));
-		else if (js_param.is_string())
-			params.emplace_back(utils::utf8_to_utf16(name), utils::utf8_to_utf16(js_param.get<std::string>()));
-	}
-	catch (const nlohmann::json::parse_error&)
-	{
-		// parse errors are ok, because input may be random bytes
-	}
-	catch (const nlohmann::json::out_of_range&)
-	{
-		// out of range errors may happen if provided sizes are excessive
-	}
-	catch (const nlohmann::json::type_error&)
-	{
-		// type errors may happen if provided sizes are excessive
-	}
-}
-
+	time_t time_end;
+	std::string name;
+	std::string desc;
+};
 
 /// <summary>
 /// Interface for stream
@@ -200,73 +189,13 @@ public:
 	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	virtual std::wstring get_templated(StreamSubType subType, const TemplateParams& params) const { return L""; };
-
-	/// <summary>
-	/// get epg1 url for view
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::wstring get_epg1_uri(const std::wstring& id) const { return L""; };
-
-	/// <summary>
-	/// get epg2 url for view
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::wstring get_epg2_uri(const std::wstring& id) const { return L""; };
+	virtual std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const { return L""; };
 
 	/// <summary>
 	/// get epg1 json url
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::wstring get_epg1_uri_json(const std::wstring& id) const { return L""; };
-
-	/// <summary>
-	/// get epg2 json url
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::wstring get_epg2_uri_json(const std::wstring& id) const { return L""; };
-
-	/// <summary>
-	/// get cabinet access url
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::wstring get_access_url(const std::wstring& login, const std::wstring& password) const { return L""; }
-
-	/// <summary>
-	/// json root for epg iteration
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::string get_epg_root(bool first = true) const { return "epg_data"; }
-
-	/// <summary>
-	/// json epg name node
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::string get_epg_name(bool first = true) const { return "name"; }
-
-	/// <summary>
-	/// json epg description node
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::string get_epg_desc(bool first = true) const { return "descr"; }
-
-	/// <summary>
-	/// json epg start time node
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::string get_epg_time_start(bool first = true) const { return "time"; }
-
-	/// <summary>
-	/// json epg end time node
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::string get_epg_time_end(bool first = true) const { return "time_to"; }
-
-	/// <summary>
-	/// is used duration instead of epg_time_end
-	/// </summary>
-	/// <returns>string</returns>
-	virtual bool get_use_duration(bool first = true) const { return false; }
+	virtual std::wstring get_epg_uri_json(bool first, const std::wstring& id) const { return L""; };
 
 	/// <summary>
 	/// get additional get headers
@@ -278,14 +207,21 @@ public:
 	/// parse access info
 	/// </summary>
 	/// <returns>bool</returns>
-	virtual bool parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const { return false; }
+	virtual bool parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const { return false; }
 
 	/// <summary>
 	/// get url template to obtain account playlist
 	/// </summary>
 	/// <param name="first">number of playlist url</param>
 	/// <returns></returns>
-	virtual std::wstring get_playlist_template(bool first = true) const { return L""; };
+	virtual std::wstring get_playlist_template(const PlaylistTemplateParams& params) const { ASSERT(false); return L""; };
+
+	/// <summary>
+	/// get url template to obtain account playlist
+	/// </summary>
+	/// <param name="first">number of playlist url</param>
+	/// <returns></returns>
+	virtual std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const { return L""; };
 
 	/// <summary>
 	/// copy info
@@ -329,19 +265,110 @@ public:
 		return *this;
 	}
 
-	virtual std::vector<std::tuple<StreamSubType, std::wstring>>& getSupportedStreamType() const
+	virtual std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const
 	{
 		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"}};
 		return streams;
 	};
 
-	virtual bool has_epg2() const
+	bool has_epg2() const { return epg2; };
+
+	bool parse_epg(bool first, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map)
 	{
+		std::vector<BYTE> data;
+		if (!utils::DownloadFile(get_epg_uri_json(first, epg_id), data) || data.empty())
+			return false;
+
+		JSON_TRY
+		{
+			nlohmann::json parsed_json = nlohmann::json::parse(data);
+
+			for (const auto& item : get_epg_root(first, parsed_json).items())
+			{
+				const auto& val = item.value();
+
+				EpgInfo epg_info;
+				epg_info.name = std::move(get_epg_name(first, val));
+				epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_epg_name(first, val))));
+
+				time_t time_start = get_epg_time_start(first, val);
+				epg_info.time_end = get_epg_time_end(first, val);
+				if (first ? use_duration1 : use_duration2)
+				{
+					epg_info.time_end += time_start;
+				}
+
+				if (time_start != 0)
+				{
+					epg_map.emplace(time_start, epg_info);
+				}
+			}
+
+			return true;
+		}
+		JSON_CATCH;
+
 		return false;
-	};
+	}
 
 protected:
-	void ReplaceVars(std::wstring& url, const TemplateParams& params) const
+	/// <summary>
+	/// json root for epg iteration
+	/// </summary>
+	/// <returns>string</returns>
+	virtual const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const { return epg_data["epg_data"]; }
+
+	/// <summary>
+	/// json epg name node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg_name(bool first, const nlohmann::json& val) const { return get_json_value("name", val); }
+
+	/// <summary>
+	/// json epg description node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual std::string get_epg_desc(bool first, const nlohmann::json& val) const { return get_json_value("descr", val); }
+
+	/// <summary>
+	/// json epg start time node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual time_t get_epg_time_start(bool first, const nlohmann::json& val) const { return get_json_int_value("time", val); }
+
+	/// <summary>
+	/// json epg end time node
+	/// </summary>
+	/// <returns>string</returns>
+	virtual time_t get_epg_time_end(bool first, const nlohmann::json& val) const { return get_json_int_value("time_to", val); }
+
+	static void put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params)
+	{
+		JSON_TRY
+		{
+			const auto& js_param = js_data[name];
+
+			AccountInfo info;
+			info.name = std::move(utils::utf8_to_utf16(name));
+			if (js_param.is_number_integer())
+			{
+				info.value = std::move(std::to_wstring(js_param.get<int>()));
+			}
+			if (js_param.is_number_float())
+			{
+				info.value = std::move(std::to_wstring(js_param.get<float>()));
+			}
+			else if (js_param.is_string())
+			{
+				info.value = std::move(utils::utf8_to_utf16(js_param.get<std::string>()));
+			}
+
+			params.emplace_back(info);
+		}
+		JSON_CATCH;
+	}
+
+	void replace_vars(std::wstring& url, const TemplateParams& params) const
 	{
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.domain);
 		utils::string_replace_inplace<wchar_t>(url, REPL_ID, get_id());
@@ -350,7 +377,7 @@ protected:
 		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
 	}
 
-	virtual std::wstring& AppendArchive(std::wstring& url) const
+	virtual std::wstring& append_archive(std::wstring& url) const
 	{
 		if (url.rfind('?') != std::wstring::npos)
 			url += '&';
@@ -362,8 +389,30 @@ protected:
 		return url;
 	}
 
+	static std::string get_json_value(const std::string& key, const nlohmann::json& val)
+	{
+		return val.contains(key) && val[key].is_string() ? val[key] : "";
+	}
+
+	static time_t get_json_int_value(const std::string& key, const nlohmann::json& val)
+	{
+		if (val[key].is_number())
+		{
+			return val.value(key, 0);
+		}
+
+		if (val[key].is_string())
+		{
+			return utils::char_to_int(val.value(key, ""));
+		}
+
+		return 0;
+	}
 
 protected:
+	bool epg2 = false;
+	bool use_duration1 = false;
+	bool use_duration2 = false;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring login;

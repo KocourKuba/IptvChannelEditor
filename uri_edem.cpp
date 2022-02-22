@@ -10,7 +10,6 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto PLAYLIST_TEMPLATE1 = L"http://epg.it999.ru/edem_epg_ico.m3u8";
 static constexpr auto PLAYLIST_TEMPLATE2 = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
-static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=edem/epg/{:s}.json";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/edem/epg/{:s}.json";
 
 void uri_edem::parse_uri(const std::wstring& url)
@@ -31,31 +30,26 @@ void uri_edem::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_edem::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_edem::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
 
 	if (params.shift_back)
 	{
-		AppendArchive(url);
+		append_archive(url);
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_edem::get_epg1_uri(const std::wstring& id) const
-{
-	return fmt::format(EPG1_TEMPLATE, id);
-}
-
-std::wstring uri_edem::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_edem::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
-std::wstring uri_edem::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_edem::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return first ? PLAYLIST_TEMPLATE1 : PLAYLIST_TEMPLATE2;
+	return params.number == 0 ? PLAYLIST_TEMPLATE1 : PLAYLIST_TEMPLATE2;
 }

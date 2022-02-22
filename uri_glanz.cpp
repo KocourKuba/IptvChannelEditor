@@ -12,7 +12,6 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/video.m3u8?us
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/video-{START}-10800.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
-static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=ottg/epg/{:s}.json";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/ottg/epg/{:s}.json";
 
 void uri_glanz::parse_uri(const std::wstring& url)
@@ -38,7 +37,7 @@ void uri_glanz::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_glanz::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_glanz::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -61,7 +60,7 @@ std::wstring uri_glanz::get_templated(StreamSubType subType, const TemplateParam
 		url = get_uri();
 		if (params.shift_back)
 		{
-			AppendArchive(url);
+			append_archive(url);
 		}
 	}
 
@@ -71,22 +70,17 @@ std::wstring uri_glanz::get_templated(StreamSubType subType, const TemplateParam
 	utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
 	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, get_int_id());
 	utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_glanz::get_epg1_uri(const std::wstring& id) const
-{
-	return fmt::format(EPG1_TEMPLATE, id);
-}
-
-std::wstring uri_glanz::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_glanz::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
-std::wstring uri_glanz::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_glanz::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }

@@ -4,16 +4,14 @@
 class uri_sharaclub : public uri_stream
 {
 public:
-	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated(StreamSubType subType, const TemplateParams& params) const override;
-	std::wstring get_epg1_uri(const std::wstring& id) const override;
-	std::wstring get_epg2_uri(const std::wstring& id) const override;
-	std::wstring get_epg1_uri_json(const std::wstring& id) const override;
-	std::wstring get_epg2_uri_json(const std::wstring& id) const override;
-	std::wstring get_access_url(const std::wstring& login, const std::wstring& password) const override;
-	std::wstring get_playlist_template(bool first = true) const override;
-	std::string get_epg_root(bool first = true) const override { return ""; }
+	uri_sharaclub() { epg2 = true; }
 
-	bool parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const override;
-	bool has_epg2() const override { return true; };
+	void parse_uri(const std::wstring& url) override;
+	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;
+	std::wstring get_epg_uri_json(bool first, const std::wstring& id) const override;
+	std::wstring get_playlist_template(const PlaylistTemplateParams& params) const override;
+	bool parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const override;
+
+protected:
+	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override { return epg_data; }
 };

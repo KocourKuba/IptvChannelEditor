@@ -16,9 +16,7 @@ static constexpr auto PLAYLIST_TEMPLATE = L"http://cbilling.pw/playlist/{:s}_otp
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=cbilling/epg/{:s}.json";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/cbilling/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE = L"https://api.iptvx.tv/epg/{:s}";
 static constexpr auto EPG2_TEMPLATE_JSON = L"https://api.iptvx.tv/epg/{:s}";
 
 void uri_cbilling::parse_uri(const std::wstring& url)
@@ -39,7 +37,7 @@ void uri_cbilling::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_cbilling::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_cbilling::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -58,7 +56,7 @@ std::wstring uri_cbilling::get_templated(StreamSubType subType, const TemplatePa
 				url = URI_TEMPLATE_HLS;
 				if (params.shift_back)
 				{
-					AppendArchive(url);
+					append_archive(url);
 				}
 				break;
 			case StreamSubType::enHLS2:
@@ -84,13 +82,8 @@ std::wstring uri_cbilling::get_templated(StreamSubType subType, const TemplatePa
 		url = get_uri();
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 	return url;
-}
-
-std::wstring uri_cbilling::get_access_url(const std::wstring& /*login*/, const std::wstring& /*password*/) const
-{
-	return ACCOUNT_TEMPLATE;
 }
 
 std::wstring uri_cbilling::get_access_info_header() const
@@ -98,62 +91,39 @@ std::wstring uri_cbilling::get_access_info_header() const
 	return ACCOUNT_HEADER_TEMPLATE;
 }
 
-
-bool uri_cbilling::parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const
+bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
 {
-	using json = nlohmann::json;
-
-	try
+	auto& header = fmt::format(ACCOUNT_HEADER_TEMPLATE, params.password);
+	std::vector<BYTE> data;
+	if (!utils::DownloadFile(ACCOUNT_TEMPLATE, data, &header) || data.empty())
 	{
-		json js = json::parse(json_data);
+		return false;
+	}
 
-		json js_data = js["data"];
+	JSON_TRY
+	{
+		nlohmann::json parsed_json = nlohmann::json::parse(data);
+		nlohmann::json js_data = parsed_json["data"];
 
-		PutAccountParameter("package", js_data, params);
-		PutAccountParameter("end_date", js_data, params);
-		PutAccountParameter("devices_num", js_data, params);
-		PutAccountParameter("server", js_data, params);
-		PutAccountParameter("vod", js_data, params);
+		put_account_info("package", js_data, info_list);
+		put_account_info("end_date", js_data, info_list);
+		put_account_info("devices_num", js_data, info_list);
+		put_account_info("server", js_data, info_list);
+		put_account_info("vod", js_data, info_list);
 
 		return true;
 	}
-	catch (const json::parse_error&)
-	{
-		// parse errors are ok, because input may be random bytes
-	}
-	catch (const json::out_of_range&)
-	{
-		// out of range errors may happen if provided sizes are excessive
-	}
-	catch (const json::type_error&)
-	{
-		// type errors may happen if provided sizes are excessive
-	}
+	JSON_CATCH;
 
 	return false;
 }
 
-std::wstring uri_cbilling::get_epg1_uri(const std::wstring& id) const
+std::wstring uri_cbilling::get_epg_uri_json(bool first, const std::wstring& id) const
 {
-	return fmt::format(EPG1_TEMPLATE, id);
+	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id);
 }
 
-std::wstring uri_cbilling::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return fmt::format(EPG1_TEMPLATE_JSON, id);
-}
-
-std::wstring uri_cbilling::get_epg2_uri(const std::wstring& id) const
-{
-	return fmt::format(EPG2_TEMPLATE, id);
-}
-
-std::wstring uri_cbilling::get_epg2_uri_json(const std::wstring& id) const
-{
-	return fmt::format(EPG2_TEMPLATE_JSON, id);
-}
-
-std::wstring uri_cbilling::get_playlist_template(bool first /*= true*/) const
-{
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.number);
 }

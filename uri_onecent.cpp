@@ -14,7 +14,6 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/index.m3u8?to
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/index-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=only4/epg/{:s}.json";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/only4/epg/{:s}.json";
 
 void uri_onecent::parse_uri(const std::wstring& url)
@@ -36,7 +35,7 @@ void uri_onecent::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_onecent::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_onecent::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url = get_uri();
 
@@ -58,25 +57,20 @@ std::wstring uri_onecent::get_templated(StreamSubType subType, const TemplatePar
 	{
 		if (params.shift_back)
 		{
-			AppendArchive(url);
+			append_archive(url);
 		}
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 	return url;
 }
 
-std::wstring uri_onecent::get_epg1_uri(const std::wstring& id) const
-{
-	return fmt::format(EPG1_TEMPLATE, id);
-}
-
-std::wstring uri_onecent::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_onecent::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
-std::wstring uri_onecent::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_onecent::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

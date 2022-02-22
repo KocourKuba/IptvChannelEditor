@@ -11,7 +11,6 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://myott.top/playlist/{:s}/m3u";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/stream/{TOKEN}/{ID}.m3u8";
-static constexpr auto EPG1_TEMPLATE = L"http://myott.top/api/channel/{:s}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://myott.top/api/channel/{:s}";
 
 void uri_ottclub::parse_uri(const std::wstring& url)
@@ -32,7 +31,7 @@ void uri_ottclub::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_ottclub::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_ottclub::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -47,25 +46,20 @@ std::wstring uri_ottclub::get_templated(StreamSubType subType, const TemplatePar
 
 	if (params.shift_back)
 	{
-		AppendArchive(url);
+		append_archive(url);
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_ottclub::get_epg1_uri(const std::wstring& id) const
-{
-	return fmt::format(EPG1_TEMPLATE, id);
-}
-
-std::wstring uri_ottclub::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_ottclub::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
-std::wstring uri_ottclub::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_ottclub::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

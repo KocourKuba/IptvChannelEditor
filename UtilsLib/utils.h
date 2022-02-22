@@ -370,6 +370,6 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 		rtf += *it;
 	}
 
-	return rtf;
+	return std::move(rtf);
 }
 }

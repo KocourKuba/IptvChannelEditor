@@ -21,6 +21,7 @@
 #include "uri_iptvonline.h"
 #include "uri_vidok.h"
 #include "uri_shuratv.h"
+#include "uri_tvclub.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -67,17 +68,17 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 		case StreamType::enSharaclub:
 			return  std::make_unique<uri_sharaclub>();
 
-		case StreamType::enSharaTV:
-			return  std::make_unique<uri_sharatv>();
-
 		case StreamType::enSharavoz:
 			return  std::make_unique<uri_sharavoz>();
 
-		case StreamType::enTvTeam:
-			return  std::make_unique<uri_tvteam>();
-
 		case StreamType::enVipLime:
 			return  std::make_unique<uri_viplime>();
+
+		case StreamType::enSharaTV:
+			return  std::make_unique<uri_sharatv>();
+
+		case StreamType::enTvTeam:
+			return  std::make_unique<uri_tvteam>();
 
 		case StreamType::enOneOtt:
 			return  std::make_unique<uri_oneott>();
@@ -99,6 +100,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enShuraTV:
 			return  std::make_unique<uri_shuratv>();
+
+		case StreamType::enTVClub:
+			return  std::make_unique<uri_tvclub>();
 
 		default:
 			ASSERT(false);

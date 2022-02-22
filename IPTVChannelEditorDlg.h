@@ -10,17 +10,10 @@
 #include "map_serializer.h"
 #include "TrayIcon.h"
 
-#include "UtilsLib\json.hpp"
+#include "UtilsLib\json_wrapper.h"
 
 constexpr auto EmbedToken = 0x1;
 constexpr auto EmbedPortal = 0x02;
-
-struct EpgInfo
-{
-	time_t time_end;
-	std::string name;
-	std::string desc;
-};
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -110,13 +103,13 @@ protected:
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickedButtonCustomPlaylist();
+	afx_msg void OnBnClickedButtonAccountSettings();
 	afx_msg void OnBnClickedButtonPack();
 	afx_msg void OnBnClickedButtonStop();
 	afx_msg void OnBnClickedButtonPlSearchNext();
 	afx_msg void OnBnClickedButtonSearchNext();
 	afx_msg void OnBnClickedButtonSettings();
-	afx_msg void OnBnClickedButtonTestEpg();
+	afx_msg void OnBnClickedButtonViewEpg();
 	afx_msg void OnBnClickedButtonEpg();
 	afx_msg void OnBnClickedButtonUpdateChanged();
 	afx_msg void OnBnClickedCheckShowChanged();

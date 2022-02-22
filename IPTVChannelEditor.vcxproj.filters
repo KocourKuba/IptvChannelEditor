@@ -222,6 +222,9 @@
     <ClInclude Include="EpgListDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="uri_tvclub.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -376,6 +379,9 @@
     </ClCompile>
     <ClCompile Include="EpgListDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_tvclub.cpp">
+      <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

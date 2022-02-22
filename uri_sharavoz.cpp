@@ -10,8 +10,8 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://sharavoz.tk/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE = L"http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE = L"http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
 
 void uri_sharavoz::parse_uri(const std::wstring& url)
 {
@@ -32,7 +32,7 @@ void uri_sharavoz::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_sharavoz::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_sharavoz::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url = is_template() ? URI_TEMPLATE_HLS : get_uri();
 
@@ -43,37 +43,21 @@ std::wstring uri_sharavoz::get_templated(StreamSubType subType, const TemplatePa
 
 	if (params.shift_back)
 	{
-		AppendArchive(url);
+		append_archive(url);
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_sharavoz::get_epg1_uri(const std::wstring& id) const
+std::wstring uri_sharavoz::get_epg_uri_json(bool first, const std::wstring& id) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(EPG1_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
-std::wstring uri_sharavoz::get_epg2_uri(const std::wstring& id) const
+std::wstring uri_sharavoz::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
-}
-
-std::wstring uri_sharavoz::get_epg1_uri_json(const std::wstring& id) const
-{
-	return get_epg1_uri(id);
-}
-
-std::wstring uri_sharavoz::get_epg2_uri_json(const std::wstring& id) const
-{
-	return get_epg2_uri(id);
-}
-
-std::wstring uri_sharavoz::get_playlist_template(bool first /*= true*/) const
-{
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "uri_sharaclub.h"
 
-#include "UtilsLib\json.hpp"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -13,8 +11,8 @@ static constexpr auto ACCOUNT_TEMPLATE = L"http://list.playtv.pro/api/dune-api5m
 static constexpr auto PLAYLIST_TEMPLATE = L"http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts";
-static constexpr auto EPG1_TEMPLATE = L"http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE = L"http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.sramtv.com/get/?type=epg&ch={:s}&date=&date={:4d}-{:02d}-{:02d}";
+static constexpr auto EPG2_TEMPLATE_JSON = L"http://api.gazoni1.com/get/?type=epg&ch={:s}&date={:4d}-{:02d}-{:02d}";
 
 
 void uri_sharaclub::parse_uri(const std::wstring& url)
@@ -35,7 +33,7 @@ void uri_sharaclub::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_sharaclub::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_sharaclub::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	auto& url = get_uri();
 
@@ -56,78 +54,51 @@ std::wstring uri_sharaclub::get_templated(StreamSubType subType, const TemplateP
 
 	if (params.shift_back)
 	{
-		AppendArchive(url);
+		append_archive(url);
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_sharaclub::get_epg1_uri(const std::wstring& id) const
+std::wstring uri_sharaclub::get_epg_uri_json(bool first, const std::wstring& id) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(EPG1_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
-std::wstring uri_sharaclub::get_epg2_uri(const std::wstring& id) const
-{
-	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(EPG2_TEMPLATE, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
-}
-
-std::wstring uri_sharaclub::get_epg1_uri_json(const std::wstring& id) const
-{
-	return get_epg1_uri(id);
-}
-
-std::wstring uri_sharaclub::get_epg2_uri_json(const std::wstring& id) const
-{
-	return get_epg2_uri(id);
-}
-
-std::wstring uri_sharaclub::get_access_url(const std::wstring& login, const std::wstring& password) const
-{
-	return fmt::format(ACCOUNT_TEMPLATE, login, password);
-}
-
-std::wstring uri_sharaclub::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_sharaclub::get_playlist_template(const PlaylistTemplateParams& params) const
 {
 	return PLAYLIST_TEMPLATE;
 }
 
-bool uri_sharaclub::parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const
+bool uri_sharaclub::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
 {
-	using json = nlohmann::json;
-
-	try
+	std::vector<BYTE> data;
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data) || data.empty())
 	{
-		json js = json::parse(json_data);
-		if (js.contains("status"))
+		return false;
+	}
+
+	JSON_TRY
+	{
+		nlohmann::json parsed_json = nlohmann::json::parse(data);
+		if (parsed_json.contains("status"))
 		{
-			params.emplace_back(L"state", utils::utf8_to_utf16(js.value("status", "")));
+			AccountInfo info{ L"state", utils::utf8_to_utf16(parsed_json.value("status", "")) };
+			info_list.emplace_back(info);
 		}
 
-		json js_data = js["data"];
-		PutAccountParameter("login", js_data, params);
-		PutAccountParameter("money", js_data, params);
-		PutAccountParameter("money_need", js_data, params);
-		PutAccountParameter("abon", js_data, params);
+		nlohmann::json js_data = parsed_json["data"];
+		put_account_info("login", js_data, info_list);
+		put_account_info("money", js_data, info_list);
+		put_account_info("money_need", js_data, info_list);
+		put_account_info("abon", js_data, info_list);
 
 		return true;
 	}
-	catch (const json::parse_error&)
-	{
-		// parse errors are ok, because input may be random bytes
-	}
-	catch (const json::out_of_range&)
-	{
-		// out of range errors may happen if provided sizes are excessive
-	}
-	catch (const json::type_error&)
-	{
-		// type errors may happen if provided sizes are excessive
-	}
+	JSON_CATCH;
 
 	return false;
 }

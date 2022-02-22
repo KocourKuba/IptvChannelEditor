@@ -121,7 +121,10 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 	m_entry->stream_uri->set_template(false);
 	m_device_id = m_wndDeviceID.GetCurSel() + 1;
 
-	const auto& pl_url = fmt::format(m_entry->stream_uri->get_playlist_template(), m_password.GetString(), m_device_id);
+	PlaylistTemplateParams params;
+	params.device = m_device_id;
+	params.password = m_password.GetString();
+	const auto& pl_url = m_entry->stream_uri->get_playlist_template(params);
 
 	std::vector<BYTE> data;
 	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
@@ -154,23 +157,13 @@ void CAccessInfoPinDlg::OnBnClickedBtnGet()
 	m_wndInfo.InsertItem(idx, txt);
 	m_wndInfo.SetItemText(idx++, 1, m_status);
 
-	if (m_type == StreamType::enItv || m_type == StreamType::enCbilling)
+	std::list<AccountInfo> info_list;
+	if (m_entry->stream_uri->parse_access_info(params, info_list))
 	{
-		// currently supported only in ITV & Cbilling
-		std::wstring header;
-		if (!m_entry->stream_uri->get_access_info_header().empty())
-			header = fmt::format(m_entry->stream_uri->get_access_info_header(), m_password.GetString());
-
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(m_entry->stream_uri->get_access_url(L"", m_password.GetString()), data, &header) && !data.empty())
+		for (const auto& item : info_list)
 		{
-			std::list<AccountParams> params;
-			m_entry->stream_uri->parse_access_info(data, params);
-			for (const auto& item : params)
-			{
-				m_wndInfo.InsertItem(idx, item.name.c_str());
-				m_wndInfo.SetItemText(idx++, 1, item.value.c_str());
-			}
+			m_wndInfo.InsertItem(idx, item.name.c_str());
+			m_wndInfo.SetItemText(idx++, 1, item.value.c_str());
 		}
 	}
 

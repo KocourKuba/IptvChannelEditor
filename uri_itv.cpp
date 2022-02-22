@@ -15,8 +15,7 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/video.m3u8?to
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE = L"http://api.itv.live/epg/{:s}";
-static constexpr auto EPG1_TEMPLATE_JSON = EPG1_TEMPLATE;
+static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.itv.live/epg/{:s}";
 
 void uri_itv::parse_uri(const std::wstring& url)
 {
@@ -36,7 +35,7 @@ void uri_itv::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_itv::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_itv::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -59,56 +58,50 @@ std::wstring uri_itv::get_templated(StreamSubType subType, const TemplateParams&
 		url = get_uri();
 		if (params.shift_back)
 		{
-			AppendArchive(url);
+			append_archive(url);
 		}
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_itv::get_access_url(const std::wstring& login, const std::wstring& password) const
-{
-	return fmt::format(ACCOUNT_TEMPLATE, password);
-}
-
-std::wstring uri_itv::get_epg1_uri(const std::wstring& id) const
-{
-	return fmt::format(EPG1_TEMPLATE, id);
-}
-
-std::wstring uri_itv::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_itv::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
-std::wstring uri_itv::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_itv::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }
 
-bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const
+bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
 {
-	using json = nlohmann::json;
-
-	try
+	std::vector<BYTE> data;
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.password), data) || data.empty())
 	{
-		json js = json::parse(json_data);
+		return false;
+	}
 
-		json js_data = js["user_info"];
-		PutAccountParameter("login", js_data, params);
-		PutAccountParameter("pay_system", js_data, params);
-		PutAccountParameter("cash", js_data, params);
+	JSON_TRY
+	{
+		nlohmann::json parsed_json = nlohmann::json::parse(data);
+		nlohmann::json js_data = parsed_json["user_info"];
+
+		put_account_info("login", js_data, info_list);
+		put_account_info("pay_system", js_data, info_list);
+		put_account_info("cash", js_data, info_list);
 
 		std::wstring subscription;
-		if (!js.contains("package_info"))
+		if (!parsed_json.contains("package_info"))
 		{
 			subscription = L"No packages";
 		}
 		else
 		{
-			json pkg_data = js["package_info"];
+			nlohmann::json pkg_data = parsed_json["package_info"];
 			for (const auto& item : pkg_data)
 			{
 				if (!subscription.empty())
@@ -118,22 +111,12 @@ bool uri_itv::parse_access_info(const std::vector<BYTE>& json_data, std::list<Ac
 			}
 		}
 
-		params.emplace_back(L"package_info", subscription);
+		AccountInfo info{ L"package_info", subscription };
+		info_list.emplace_back(info);
 
 		return true;
 	}
-	catch (const json::parse_error&)
-	{
-		// parse errors are ok, because input may be random bytes
-	}
-	catch (const json::out_of_range&)
-	{
-		// out of range errors may happen if provided sizes are excessive
-	}
-	catch (const json::type_error&)
-	{
-		// type errors may happen if provided sizes are excessive
-	}
+	JSON_CATCH;
 
 	return false;
 }

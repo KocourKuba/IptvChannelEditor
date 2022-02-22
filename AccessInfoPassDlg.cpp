@@ -87,50 +87,34 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 
 	m_status.LoadString(IDS_STRING_STATUS_TEXT);
 
-	const auto& login = std::wstring(m_login.GetString());
-	const auto& password = std::wstring(m_password.GetString());
-
 	// reset templated flag for new parse
-	const auto& uri = m_entry->stream_uri;
+	auto& uri = m_entry->stream_uri;
 	uri->set_template(false);
 
-	std::wstring url;
-	if (m_type == StreamType::enVidok)
-	{
-		std::string login_a = std::move(utils::string_tolower(utils::utf16_to_utf8(login)));
-		std::string password_a = std::move(utils::utf16_to_utf8(password));
-		url = fmt::format(uri->get_playlist_template(), utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a))));
-	}
-	else
-	{
-		url = fmt::format(uri->get_playlist_template(), login, password);
-	}
+	PlaylistTemplateParams params;
+	params.login = m_login.GetString();
+	params.password = m_password.GetString();
+	std::wstring url = uri->get_playlist_template(params);
 
-	std::list<AccountParams> params;
-	if (m_type == StreamType::enOneOtt || m_type == StreamType::enSharaclub || m_type == StreamType::enVidok)
+	std::list<AccountInfo> acc_info;
+	if (uri->parse_access_info(params, acc_info))
 	{
 		// currently supported only in sharaclub, oneott use this to obtain token
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(uri->get_access_url(login, password), data) && !data.empty())
+		for (auto it = acc_info.begin(); it != acc_info.end(); )
 		{
-			uri->parse_access_info(data, params);
-
-			for (auto it = params.begin(); it != params.end(); )
+			if (it->name == (L"token"))
 			{
-				if (it->name == (L"token"))
-				{
-					m_token = it->value.c_str();
-					it = params.erase(it);
-				}
-				else if (it->name == (L"url"))
-				{
-					url = it->value;
-					it = params.erase(it);
-				}
-				else
-				{
-					++it;
-				}
+				m_token = it->value.c_str();
+				it = acc_info.erase(it);
+			}
+			else if (it->name == (L"url"))
+			{
+				url = it->value;
+				it = acc_info.erase(it);
+			}
+			else
+			{
+				++it;
 			}
 		}
 	}
@@ -164,7 +148,7 @@ void CAccessInfoPassDlg::OnBnClickedBtnGet()
 	m_wndInfo.DeleteAllItems();
 	m_wndInfo.InsertItem(idx, txt);
 	m_wndInfo.SetItemText(idx++, 1, m_status);
-	for (const auto& item : params)
+	for (const auto& item : acc_info)
 	{
 		m_wndInfo.InsertItem(idx, item.name.c_str());
 		m_wndInfo.SetItemText(idx++, 1, item.value.c_str());

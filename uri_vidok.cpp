@@ -12,7 +12,6 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto ACCOUNT_TEMPLATE = L"http://sapi.ott.st/v2.4/json/account?token={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://vidok.tv/p/{:s}";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
-static constexpr auto EPG1_TEMPLATE = L"http://sapi.ott.st/v2.4/xml/epg2?cid={:s}&token={:s}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://sapi.ott.st/v2.4/json/epg2?cid={:s}&token={:s}";
 
 void uri_vidok::parse_uri(const std::wstring& url)
@@ -32,7 +31,7 @@ void uri_vidok::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_vidok::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_vidok::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -54,72 +53,59 @@ std::wstring uri_vidok::get_templated(StreamSubType subType, const TemplateParam
 
 	if (params.shift_back)
 	{
-		AppendArchive(url);
+		append_archive(url);
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_vidok::get_epg1_uri(const std::wstring& id) const
-{
-	return fmt::format(EPG1_TEMPLATE, id, token);
-}
-
-std::wstring uri_vidok::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_vidok::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id, token);
 }
 
-std::wstring uri_vidok::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_vidok::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));
 }
 
-std::wstring uri_vidok::get_access_url(const std::wstring& login, const std::wstring& password) const
+std::wstring uri_vidok::get_api_token(const std::wstring& login, const std::wstring& password) const
 {
 	std::string login_a = utils::string_tolower(utils::utf16_to_utf8(login));
 	std::string password_a = utils::utf16_to_utf8(password);
-	const auto& token = utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
-
-	return fmt::format(ACCOUNT_TEMPLATE, token);
+	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }
 
-bool uri_vidok::parse_access_info(const std::vector<BYTE>& json_data, std::list<AccountParams>& params) const
+bool uri_vidok::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
 {
-	using json = nlohmann::json;
-
-	try
+	std::vector<BYTE> data;
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, get_api_token(params.login, params.password)), data) || data.empty())
 	{
-		json js = json::parse(json_data);
-		json js_account = js["account"];
+		return false;
+	}
 
-		PutAccountParameter("login", js_account, params);
-		PutAccountParameter("balance", js_account, params);
+	JSON_TRY
+	{
+		nlohmann::json parsed_json = nlohmann::json::parse(data);
+		nlohmann::json js_account = parsed_json["account"];
+
+		put_account_info("login", js_account, info_list);
+		put_account_info("balance", js_account, info_list);
 
 		for (auto& item : js_account["packages"].items())
 		{
-			json val = item.value();
+			nlohmann::json val = item.value();
 			COleDateTime dt(utils::char_to_int64(val.value("expire", "")));
 			const auto& value = fmt::format("expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
-			params.emplace_back(utils::utf8_to_utf16(val.value("name", "")), utils::utf8_to_utf16(value));
+			AccountInfo info { utils::utf8_to_utf16(val.value("name", "")), utils::utf8_to_utf16(value) };
+			info_list.emplace_back(info);
 		}
 
 		return true;
 	}
-	catch (const json::parse_error&)
-	{
-		// parse errors are ok, because input may be random bytes
-	}
-	catch (const json::out_of_range&)
-	{
-		// out of range errors may happen if provided sizes are excessive
-	}
-	catch (const json::type_error&)
-	{
-		// type errors may happen if provided sizes are excessive
-	}
+	JSON_CATCH;
 
 	return false;
 }

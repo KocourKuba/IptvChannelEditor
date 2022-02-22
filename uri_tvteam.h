@@ -4,13 +4,10 @@
 class uri_tvteam : public uri_stream
 {
 public:
-	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated(StreamSubType subType, const TemplateParams& params) const override;
-	std::wstring get_epg1_uri(const std::wstring& id) const override;
-	std::wstring get_epg1_uri_json(const std::wstring& id) const override;
-	std::wstring get_epg2_uri(const std::wstring& id) const override;
-	std::wstring get_epg2_uri_json(const std::wstring& id) const override;
-	std::wstring get_playlist_template(bool first = true) const override;
+	uri_tvteam() { epg2 = true; }
 
-	bool has_epg2() const override { return true; };
+	void parse_uri(const std::wstring& url) override;
+	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;
+	std::wstring get_epg_uri_json(bool first, const std::wstring& id) const override;
+	std::wstring get_playlist_template(const PlaylistTemplateParams& params) const override;
 };

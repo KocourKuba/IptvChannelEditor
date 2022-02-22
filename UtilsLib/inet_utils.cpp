@@ -179,7 +179,7 @@ std::string entityDecrypt(const std::string& text)
 			res += text[i];
 		}
 	}
-	return res;
+	return std::move(res);
 }
 
 }

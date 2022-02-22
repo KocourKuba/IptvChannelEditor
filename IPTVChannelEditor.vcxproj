@@ -303,6 +303,7 @@ goto :EOF
     <ClInclude Include="uri_sharavoz.h" />
     <ClInclude Include="uri_shuratv.h" />
     <ClInclude Include="uri_stream.h" />
+    <ClInclude Include="uri_tvclub.h" />
     <ClInclude Include="uri_tvteam.h" />
     <ClInclude Include="uri_vidok.h" />
     <ClInclude Include="uri_viplime.h" />
@@ -359,6 +360,7 @@ goto :EOF
     <ClCompile Include="uri_sharatv.cpp" />
     <ClCompile Include="uri_sharavoz.cpp" />
     <ClCompile Include="uri_shuratv.cpp" />
+    <ClCompile Include="uri_tvclub.cpp" />
     <ClCompile Include="uri_tvteam.cpp" />
     <ClCompile Include="uri_vidok.cpp" />
     <ClCompile Include="uri_viplime.cpp" />

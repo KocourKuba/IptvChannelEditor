@@ -11,7 +11,6 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.fox-tv.fun/{:s}/{:s}/tv.m3u";
 static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{TOKEN}";
-static constexpr auto EPG1_TEMPLATE = L"http://epg.ott-play.com/php/show_prog.php?f=fox-tv/epg/{:s}.json";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/fox-tv/epg/{:s}.json";
 
 void uri_fox::parse_uri(const std::wstring& url)
@@ -32,31 +31,26 @@ void uri_fox::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_fox::get_templated(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_fox::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
 {
 	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
 
 	if (params.shift_back)
 	{
-		AppendArchive(url);
+		append_archive(url);
 	}
 
-	ReplaceVars(url, params);
+	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_fox::get_epg1_uri(const std::wstring& id) const
-{
-	return fmt::format(EPG1_TEMPLATE, id);
-}
-
-std::wstring uri_fox::get_epg1_uri_json(const std::wstring& id) const
+std::wstring uri_fox::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
-std::wstring uri_fox::get_playlist_template(bool first /*= true*/) const
+std::wstring uri_fox::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }

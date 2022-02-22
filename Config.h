@@ -1,7 +1,7 @@
 #pragma once
 #include <variant>
 #include <map>
-#include "UtilsLib\json.hpp"
+#include "UtilsLib\json_wrapper.h"
 
 enum class StreamType
 {
@@ -26,6 +26,7 @@ enum class StreamType
 	enIptvOnline,
 	enVidok,
 	enShuraTV,
+	enTVClub,
 };
 
 constexpr auto APP_SETTINGS = L"Application";

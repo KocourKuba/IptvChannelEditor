@@ -98,6 +98,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enIptvOnline, _T("IPTV Online"),     "iptvonline", "iptvonline",     "1.0.0" },
 	{ StreamType::enVidok,      _T("Vidok TV"),        "vidok",      "vidok.tv",       "1.0.0" },
 	{ StreamType::enShuraTV,    _T("Shura TV"),        "shuratv",    "shura.tv",       "1.0.0" },
+	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tvclub",         "1.0.0" },
 };
 
 void ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
