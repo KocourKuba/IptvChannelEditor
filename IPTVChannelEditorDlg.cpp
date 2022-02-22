@@ -1805,7 +1805,6 @@ void CIPTVChannelEditorDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // If you add a minimize button to your dialog, you will need the code below
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
-
 void CIPTVChannelEditorDlg::OnPaint()
 {
 	if (IsIconic())
@@ -2867,26 +2866,15 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 {
 	bool loaded = false;
-	const auto plugin_type = GetConfig().get_plugin_type();
+	int playlist_idx = m_wndPlaylist.GetCurSel();
+	int dialogType = 0; // none
 
-	auto entry = std::make_shared<PlaylistEntry>(plugin_type, GetAppPath(utils::PLUGIN_ROOT));
-	switch (plugin_type)
+	switch (GetConfig().get_plugin_type())
 	{
 		case StreamType::enEdem: // subdomain/token
-		{
-			switch (m_wndPlaylist.GetCurSel())
-			{
-				case 0:
-				case 1:
-					loaded = SetupOttKey(loaded);
-					break;
-				case 2:
-				case 3:
-					loaded = SetupCustomPlaylist(loaded);
-					break;
-			}
+			if (playlist_idx == 0 || playlist_idx == 1)
+				dialogType = 1;
 			break;
-		}
 		case StreamType::enAntifriz: // pin
 		case StreamType::enItv:
 		case StreamType::enOneCent:
@@ -2899,40 +2887,36 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 		case StreamType::enOttclub:
 		case StreamType::enIptvOnline:
 		case StreamType::enShuraTV:
-		{
-			switch (m_wndPlaylist.GetCurSel())
-			{
-				case 0:
-					loaded = SetupPin(loaded);
-					break;
-				case 1:
-					loaded = SetupCustomPlaylist(loaded);
-					break;
-				default:
-					break;
-			}
+			if (playlist_idx == 0)
+				dialogType = 2;
 			break;
-		}
 		case StreamType::enFox: // login/password
 		case StreamType::enGlanz:
 		case StreamType::enSharaclub:
 		case StreamType::enSharaTV:
 		case StreamType::enOneOtt:
 		case StreamType::enVidok:
-		{
-			switch (m_wndPlaylist.GetCurSel())
-			{
-				case 0:
-					loaded = SetupLogin(loaded);
-					break;
-				case 1:
-					loaded = SetupCustomPlaylist(loaded);
-					break;
-				default:
-					break;
-			}
+			if (playlist_idx == 0)
+				dialogType = 3;
 			break;
-		}
+		default:
+			break;
+	}
+
+	switch (dialogType)
+	{
+		case 0: // custom
+			loaded = SetupCustomPlaylist();
+			break;
+		case 1: // subdomain/token
+			loaded = SetupOttKey();
+			break;
+		case 2: // pin
+			loaded = SetupPin();
+			break;
+		case 3: // login/password
+			loaded = SetupLogin();
+			break;
 		default:
 			break;
 	}
@@ -2943,7 +2927,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCustomPlaylist()
 	}
 }
 
-bool CIPTVChannelEditorDlg::SetupOttKey(bool loaded)
+bool CIPTVChannelEditorDlg::SetupOttKey()
 {
 	CAccessOttKeyDlg dlg;
 	dlg.m_bEmbed = (m_embedded_info & EmbedToken) ? TRUE : FALSE;
@@ -2954,6 +2938,7 @@ bool CIPTVChannelEditorDlg::SetupOttKey(bool loaded)
 	dlg.m_url = GetConfig().get_string(false, REG_ACCESS_URL).c_str();
 	dlg.m_vportal = m_portal.c_str();
 
+	bool loaded = false;
 	if (dlg.DoModal() == IDOK)
 	{
 		loaded = (dlg.m_status == _T("Ok")
@@ -2981,7 +2966,7 @@ bool CIPTVChannelEditorDlg::SetupOttKey(bool loaded)
 	return loaded;
 }
 
-bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
+bool CIPTVChannelEditorDlg::SetupLogin()
 {
 	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
 
@@ -2998,6 +2983,7 @@ bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
 	dlg.m_bEmbed = m_embedded_info;
 	dlg.m_entry = entry;
 
+	bool loaded = false;
 	if (dlg.DoModal() == IDOK)
 	{
 		if (m_embedded_info != dlg.m_bEmbed)
@@ -3025,7 +3011,7 @@ bool CIPTVChannelEditorDlg::SetupLogin(bool loaded)
 	return loaded;
 }
 
-bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
+bool CIPTVChannelEditorDlg::SetupPin()
 {
 	const auto plugin_type = GetConfig().get_plugin_type();
 	auto entry = std::make_shared<PlaylistEntry>(plugin_type, GetAppPath(utils::PLUGIN_ROOT));
@@ -3041,6 +3027,7 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 	stream->set_domain(m_domain);
 	stream->set_password(m_password);
 
+	bool loaded = false;
 	if (dlg.DoModal() == IDOK)
 	{
 		if (m_embedded_info != dlg.m_bEmbed)
@@ -3068,11 +3055,12 @@ bool CIPTVChannelEditorDlg::SetupPin(bool loaded)
 	return loaded;
 }
 
-bool CIPTVChannelEditorDlg::SetupCustomPlaylist(bool loaded)
+bool CIPTVChannelEditorDlg::SetupCustomPlaylist()
 {
 	CCustomPlaylistDlg dlg;
 	dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
 
+	bool loaded = false;
 	if (dlg.DoModal() == IDOK)
 	{
 		loaded = true;
@@ -3333,8 +3321,8 @@ void CIPTVChannelEditorDlg::OnSave()
 				case StreamType::enOneCent:
 				case StreamType::enOneUsd:
 				case StreamType::enSharavoz:
-				case StreamType::enTvTeam:
 				case StreamType::enVipLime:
+				case StreamType::enTvTeam:
 				case StreamType::enLightIptv:
 				case StreamType::enCbilling:
 				case StreamType::enOttclub:
