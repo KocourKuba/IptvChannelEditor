@@ -257,8 +257,8 @@
 #define IDC_CHECK_SHOW_UNKNOWN          1128
 #define IDC_CHECK_CALCULATE             1128
 #define IDC_CHECK_FILE                  1129
-#define IDC_EDIT1                       1130
 #define IDC_EDIT_EPG_URL                1130
+#define IDC_DATETIMEPICKER              1131
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -290,7 +290,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        225
 #define _APS_NEXT_COMMAND_VALUE         32802
-#define _APS_NEXT_CONTROL_VALUE         1131
+#define _APS_NEXT_CONTROL_VALUE         1132
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

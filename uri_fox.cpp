@@ -45,7 +45,7 @@ std::wstring uri_fox::get_templated_stream(StreamSubType subType, const Template
 	return url;
 }
 
-std::wstring uri_fox::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
+std::wstring uri_fox::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }

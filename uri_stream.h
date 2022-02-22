@@ -33,6 +33,7 @@ struct AccountInfo
 
 struct EpgInfo
 {
+	time_t time_start;
 	time_t time_end;
 	std::string name;
 	std::string desc;
@@ -195,7 +196,7 @@ public:
 	/// get epg1 json url
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::wstring get_epg_uri_json(bool first, const std::wstring& id) const { return L""; };
+	virtual std::wstring get_epg_uri_json(bool first, const std::wstring& id, time_t for_time = 0) const { return L""; };
 
 	/// <summary>
 	/// get additional get headers
@@ -273,40 +274,41 @@ public:
 
 	bool has_epg2() const { return epg2; };
 
-	bool parse_epg(bool first, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map)
+	bool parse_epg(bool first, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time)
 	{
 		std::vector<BYTE> data;
-		if (!utils::DownloadFile(get_epg_uri_json(first, epg_id), data) || data.empty())
+		if (!utils::DownloadFile(get_epg_uri_json(first, epg_id, for_time), data) || data.empty())
 			return false;
 
-		JSON_TRY
+		JSON_ALL_TRY
 		{
 			nlohmann::json parsed_json = nlohmann::json::parse(data);
 
+			bool added = false;
 			for (const auto& item : get_epg_root(first, parsed_json).items())
 			{
 				const auto& val = item.value();
 
 				EpgInfo epg_info;
-				epg_info.name = std::move(get_epg_name(first, val));
-				epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_epg_name(first, val))));
+				epg_info.name = std::move(utils::entityDecrypt(get_epg_name(first, val)));
+				epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_epg_desc(first, val))));
 
-				time_t time_start = get_epg_time_start(first, val);
+				epg_info.time_start = get_epg_time_start(first, val);
 				epg_info.time_end = get_epg_time_end(first, val);
 				if (first ? use_duration1 : use_duration2)
 				{
-					epg_info.time_end += time_start;
+					epg_info.time_end += epg_info.time_start;
 				}
 
-				if (time_start != 0)
+				if (epg_info.time_start != 0)
 				{
-					epg_map.emplace(time_start, epg_info);
+					added |= epg_map.emplace(epg_info.time_start, epg_info).second;
 				}
 			}
 
-			return true;
+			return added;
 		}
-		JSON_CATCH;
+		JSON_ALL_CATCH;
 
 		return false;
 	}
@@ -344,7 +346,7 @@ protected:
 
 	static void put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params)
 	{
-		JSON_TRY
+		JSON_ALL_TRY
 		{
 			const auto& js_param = js_data[name];
 
@@ -365,7 +367,7 @@ protected:
 
 			params.emplace_back(info);
 		}
-		JSON_CATCH;
+		JSON_ALL_CATCH;
 	}
 
 	void replace_vars(std::wstring& url, const TemplateParams& params) const

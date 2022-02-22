@@ -72,7 +72,7 @@ std::wstring uri_iptvonline::get_templated_stream(StreamSubType subType, const T
 	return url;
 }
 
-std::wstring uri_iptvonline::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
+std::wstring uri_iptvonline::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }

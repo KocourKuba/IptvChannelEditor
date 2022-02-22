@@ -43,7 +43,7 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 	m_bDev = TRUE;
 #endif // _DEBUG
 
-	if (m_bDev)
+	if (m_bDev) //-V547
 	{
 		PluginsConfig::DEV_PATH = LR"(..\)";
 		PluginsConfig::PACK_DLL_PATH = LR"(dll\)";

@@ -14,6 +14,11 @@ static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/video-{S
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/ottg/epg/{:s}.json";
 
+static constexpr auto REPL_LOGIN = L"{LOGIN}";
+static constexpr auto REPL_PASSWORD = L"{PASSWORD}";
+static constexpr auto REPL_INT_ID = L"{INT_ID}";
+static constexpr auto REPL_HOST = L"{HOST}";
+
 void uri_glanz::parse_uri(const std::wstring& url)
 {
 	// http://str01.ottg.cc/9195/video.m3u8?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL
@@ -75,7 +80,7 @@ std::wstring uri_glanz::get_templated_stream(StreamSubType subType, const Templa
 	return url;
 }
 
-std::wstring uri_glanz::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
+std::wstring uri_glanz::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }

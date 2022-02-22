@@ -253,15 +253,14 @@ int update_app(UpdateInfo& info)
 			for(;;)
 			{
 				if (i > 20)
-				HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
-				if (!hAppRunningMutex)
 				{
-					i = 0;
-					break;
+					hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
+					if (!hAppRunningMutex)  break;
+
+					CloseHandle(hAppRunningMutex);
+					hAppRunningMutex = nullptr;
 				}
 
-				CloseHandle(hAppRunningMutex);
-				hAppRunningMutex = nullptr;
 				Sleep(500);
 				i++;
 			}

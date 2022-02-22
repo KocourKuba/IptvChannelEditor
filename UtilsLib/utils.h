@@ -150,11 +150,15 @@ T& string_ltrim(T& str, const _Elem chr = EMSLiterals<_Elem>::whitespace)
 		}
 		else if constexpr (std::is_same_v<T::const_iterator, std::basic_string_view<__Elem>::const_iterator>)
 		{
-			str.remove_prefix(str.find_first_not_of(chr));
+			if (!str.empty())
+				str.remove_prefix(str.find_first_not_of(chr));
+
 			return str;
 		}
 		else
+		{
 			static_assert(false, "std::basic_string or std::basic_string_view");
+		}
 	}
 	else
 	{
@@ -164,11 +168,15 @@ T& string_ltrim(T& str, const _Elem chr = EMSLiterals<_Elem>::whitespace)
 		}
 		else if constexpr (std::is_same_v<T::const_iterator, std::basic_string_view<_Elem>::const_iterator>)
 		{
-			str.remove_prefix(str.find_first_not_of(chr));
+			if (!str.empty())
+				str.remove_prefix(str.find_first_not_of(chr));
+
 			return str;
 		}
 		else
+		{
 			static_assert(false, "std::basic_string or std::basic_string_view");
+		}
 	}
 }
 
@@ -370,6 +378,6 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 		rtf += *it;
 	}
 
-	return std::move(rtf);
+	return rtf;
 }
 }

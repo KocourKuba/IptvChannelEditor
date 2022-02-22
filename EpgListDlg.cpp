@@ -21,6 +21,7 @@ IMPLEMENT_DYNAMIC(CEpgListDlg, CDialogEx)
 BEGIN_MESSAGE_MAP(CEpgListDlg, CDialogEx)
 	ON_WM_GETMINMAXINFO()
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_EPG, &CEpgListDlg::OnItemchangedList)
+	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER, &CEpgListDlg::OnDtnDatetimechangeDatetimepicker)
 END_MESSAGE_MAP()
 
 CEpgListDlg::CEpgListDlg(CWnd* pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG_EPG_LIST, pParent)
@@ -31,9 +32,10 @@ void CEpgListDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
-	DDX_Text(pDX, IDC_EDIT_EPG_URL, m_epg_url);
+	DDX_Text(pDX, IDC_EDIT_EPG_URL, m_csEpgUrl);
 	DDX_Control(pDX, IDC_LIST_EPG, m_wndEpgList);
 	DDX_Control(pDX, IDC_RICHEDIT_EPG, m_wndEpg);
+	DDX_Control(pDX, IDC_DATETIMEPICKER, m_day);
 }
 
 BOOL CEpgListDlg::OnInitDialog()
@@ -54,12 +56,60 @@ BOOL CEpgListDlg::OnInitDialog()
 	str.LoadString(IDS_STRING_COL_TITLE);
 	m_wndEpgList.InsertColumn(2, str, LVCFMT_LEFT, 500);
 
-	time_t now = time(nullptr);
+	m_day.SetTime(COleDateTime::GetCurrentTime());
+
+	FillList(COleDateTime::GetCurrentTime());
+
+	m_wndEpgList.SetFocus();
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CEpgListDlg::FillList(const COleDateTime& sel_time)
+{
+	if (!m_epg_cache || !m_info)
+		return;
+
+	m_wndEpgList.DeleteAllItems();
+
+	CTime nt(sel_time.GetYear(), sel_time.GetMonth(), sel_time.GetDay(), sel_time.GetHour(), sel_time.GetMinute(), sel_time.GetSecond());
+	time_t now = nt.GetTime();
+
+	CTime st(sel_time.GetYear(), sel_time.GetMonth(), sel_time.GetDay(), 0, 0, 0);
+	time_t start_time = st.GetTime();
+
+	CTime et(sel_time.GetYear(), sel_time.GetMonth(), sel_time.GetDay(), 23, 59, 59);
+	time_t end_time = et.GetTime();
 
 	int i = 0;
 	int current_idx = -1;
-	for (const auto& epg : m_epg_map)
+	const auto& id = m_first ? m_info->get_epg1_id() : m_info->get_epg2_id();
+	m_pEpgChannelMap = &((*m_epg_cache)[m_first][id]);
+	m_csEpgUrl = m_info->stream_uri->get_epg_uri_json(!!m_first, id, start_time).c_str();
+
+	bool need_load = true;
+	while (need_load)
 	{
+		for (auto& epg_pair : *m_pEpgChannelMap)
+		{
+			if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+			{
+				need_load = false;
+				break;
+			}
+		}
+
+		if (need_load && !m_info->stream_uri->parse_epg(m_first, id, *m_pEpgChannelMap, now))
+		{
+			need_load = false;
+		}
+	}
+
+	for (const auto& epg : *m_pEpgChannelMap)
+	{
+		if (epg.second.time_start < start_time || epg.second.time_start > end_time) continue;
+
 		COleDateTime start(epg.first);
 		COleDateTime end(epg.second.time_end);
 		int idx = m_wndEpgList.InsertItem(i++, start.Format(_T("%d.%m.%Y %H:%M:%S")));
@@ -67,7 +117,7 @@ BOOL CEpgListDlg::OnInitDialog()
 		m_wndEpgList.SetItemText(idx, 2, utils::utf8_to_utf16(epg.second.name).c_str());
 		m_idx_map.emplace(idx, epg.first);
 
-		if (now > epg.first && now < epg.second.time_end)
+		if (now >= epg.first && now <= epg.second.time_end)
 		{
 			current_idx = idx;
 		}
@@ -81,8 +131,7 @@ BOOL CEpgListDlg::OnInitDialog()
 		m_wndEpgList.EnsureVisible(current_idx, TRUE);
 	}
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	UpdateData(FALSE);
 }
 
 void CEpgListDlg::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
@@ -103,25 +152,29 @@ void CEpgListDlg::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
 
 void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
+	do
 	{
+		if (!m_pEpgChannelMap) break;
+
+		NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+		if (!(pNMListView->uChanged & LVIF_STATE) || !(pNMListView->uNewState & LVIS_SELECTED)) break;
+
 		LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 
 		m_wndEpg.SetWindowText(L"");
 
-		if (auto& start_pair = m_idx_map.find(pNMItemActivate->iItem); start_pair != m_idx_map.end())
-		{
-			if(auto& epg_pair = m_epg_map.find(start_pair->second); epg_pair != m_epg_map.end())
-			{
-				CStringA text;
-				text.Format(R"({\rtf1 %s})", epg_pair->second.desc.c_str());
+		auto& start_pair = m_idx_map.find(pNMItemActivate->iItem);
+		if (start_pair == m_idx_map.end()) break;
 
-				SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
-				m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
-			}
-		}
-	}
+		auto& epg_pair = m_pEpgChannelMap->find(start_pair->second);
+		if (epg_pair == m_pEpgChannelMap->end()) break;
+
+		CStringA text;
+		text.Format(R"({\rtf1 %s})", epg_pair->second.desc.c_str());
+
+		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
+		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
+	} while (false);
 
 	*pResult = 0;
 }
@@ -131,4 +184,16 @@ BOOL CEpgListDlg::DestroyWindow()
 	SaveWindowPos(GetSafeHwnd(), REG_EPG_WINDOW_POS);
 
 	return __super::DestroyWindow();
+}
+
+
+void CEpgListDlg::OnDtnDatetimechangeDatetimepicker(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMDATETIMECHANGE pDTChange = reinterpret_cast<LPNMDATETIMECHANGE>(pNMHDR);
+	if (pDTChange && pDTChange->dwFlags == 0)
+	{
+		FillList(pDTChange->st);
+	}
+
+	*pResult = 0;
 }

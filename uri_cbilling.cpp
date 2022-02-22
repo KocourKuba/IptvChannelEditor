@@ -100,7 +100,7 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 		return false;
 	}
 
-	JSON_TRY
+	JSON_ALL_TRY
 	{
 		nlohmann::json parsed_json = nlohmann::json::parse(data);
 		nlohmann::json js_data = parsed_json["data"];
@@ -113,12 +113,12 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 
 		return true;
 	}
-	JSON_CATCH;
+	JSON_ALL_CATCH;
 
 	return false;
 }
 
-std::wstring uri_cbilling::get_epg_uri_json(bool first, const std::wstring& id) const
+std::wstring uri_cbilling::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id);
 }

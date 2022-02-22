@@ -267,7 +267,7 @@ protected:
 	CButton m_wndAdult;
 	CButton m_wndCustom;
 	CButton m_wndPlArchive;
-	CButton m_wndTestEPG;
+	CButton m_wndViewEPG;
 	CButton m_wndChooseUrl;
 	CButton m_wndDownloadUrl;
 	CButton m_wndCheckArchive;

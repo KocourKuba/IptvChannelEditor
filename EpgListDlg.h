@@ -18,6 +18,9 @@ public:
 
 protected:
 	BOOL OnInitDialog() override;
+
+	void FillList(const COleDateTime& now);
+
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL DestroyWindow() override;
 
@@ -26,14 +29,20 @@ protected:
 
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 	afx_msg void OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDtnDatetimechangeDatetimepicker(NMHDR* pNMHDR, LRESULT* pResult);
 
 public:
-	CString m_epg_url;
-	std::map < time_t, EpgInfo> m_epg_map;
+	BOOL m_first = TRUE;
+	BaseInfo* m_info = nullptr;
+	std::array<std::map<std::wstring, std::map<time_t, EpgInfo>>, 2>* m_epg_cache = nullptr;
 
 protected:
 	CListCtrl m_wndEpgList;
 	CRichEditCtrl m_wndEpg;
+	CDateTimeCtrl m_day;
 
+	CString m_csEpgUrl;
+
+	std::map<time_t, EpgInfo>* m_pEpgChannelMap = nullptr;
 	std::map<int, time_t> m_idx_map;
 };

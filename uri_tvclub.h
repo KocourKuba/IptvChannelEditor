@@ -1,7 +1,7 @@
 #pragma once
 #include "uri_stream.h"
 
-class uri_vidok : public uri_stream
+class uri_tvclub : public uri_stream
 {
 public:
 	void parse_uri(const std::wstring& url) override;
@@ -13,14 +13,17 @@ public:
 
 	std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const override
 	{
-		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"} };
+		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 		return streams;
 	};
 
 protected:
-	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override { return epg_data["epg"]; }
+	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override { return epg_data["epg"]["channels"][0]["epg"]; }
 	std::string get_epg_name(bool first, const nlohmann::json& val) const override { return get_json_value("text", val); }
 	std::string get_epg_desc(bool first, const nlohmann::json& val) const override { return get_json_value("description", val); }
 	time_t get_epg_time_start(bool first, const nlohmann::json& val) const override { return get_json_int_value("start", val); }
 	time_t get_epg_time_end(bool first, const nlohmann::json& val) const override { return get_json_int_value("end", val); }
+
+private:
+	std::wstring& append_archive(std::wstring& url) const override;
 };

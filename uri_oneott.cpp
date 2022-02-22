@@ -63,7 +63,7 @@ std::wstring uri_oneott::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_oneott::get_epg_uri_json(bool first, const std::wstring& id) const
+std::wstring uri_oneott::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
 	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
@@ -82,7 +82,7 @@ bool uri_oneott::parse_access_info(const PlaylistTemplateParams& params, std::li
 		return false;
 	}
 
-	JSON_TRY
+	JSON_ALL_TRY
 	{
 		nlohmann::json parsed_json = nlohmann::json::parse(data);
 		if (parsed_json.contains("token"))
@@ -100,7 +100,7 @@ bool uri_oneott::parse_access_info(const PlaylistTemplateParams& params, std::li
 
 		return true;
 	}
-	JSON_CATCH;
+	JSON_ALL_CATCH;
 
 	return false;
 }

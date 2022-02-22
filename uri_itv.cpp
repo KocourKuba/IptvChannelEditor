@@ -67,7 +67,7 @@ std::wstring uri_itv::get_templated_stream(StreamSubType subType, const Template
 	return url;
 }
 
-std::wstring uri_itv::get_epg_uri_json(bool /*first*/, const std::wstring& id) const
+std::wstring uri_itv::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
@@ -85,7 +85,7 @@ bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<
 		return false;
 	}
 
-	JSON_TRY
+	JSON_ALL_TRY
 	{
 		nlohmann::json parsed_json = nlohmann::json::parse(data);
 		nlohmann::json js_data = parsed_json["user_info"];
@@ -116,7 +116,7 @@ bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<
 
 		return true;
 	}
-	JSON_CATCH;
+	JSON_ALL_CATCH;
 
 	return false;
 }

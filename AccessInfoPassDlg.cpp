@@ -50,11 +50,11 @@ BOOL CAccessInfoPassDlg::OnInitDialog()
 	m_password = m_entry->stream_uri->get_password().c_str();
 	m_token = m_entry->stream_uri->get_token().c_str();
 
-	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES/* | LVS_EX_UNDERLINECOLD | LVS_EX_UNDERLINEHOT*/);
+	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES);
 	CRect rect;
 	m_wndInfo.GetClientRect(&rect);
 	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
-	int nWidth = vWidth / 4;
+	int nWidth = vWidth / 3;
 
 	CString str;
 	str.LoadString(IDS_STRING_COL_INFO);

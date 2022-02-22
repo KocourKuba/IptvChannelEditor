@@ -255,7 +255,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_URL_ID, m_wndStreamID);
 	DDX_Text(pDX, IDC_EDIT_EPG1_ID, m_epgID1);
 	DDX_Control(pDX, IDC_EDIT_EPG1_ID, m_wndEpgID1);
-	DDX_Control(pDX, IDC_BUTTON_TEST_EPG, m_wndTestEPG);
+	DDX_Control(pDX, IDC_BUTTON_TEST_EPG, m_wndViewEPG);
 	DDX_Text(pDX, IDC_EDIT_EPG2_ID, m_epgID2);
 	DDX_Control(pDX, IDC_EDIT_EPG2_ID, m_wndEpgID2);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
@@ -424,7 +424,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndArchive.EnableWindow(FALSE);
 	m_wndArchiveDays.EnableWindow(FALSE);
 	m_wndAdult.EnableWindow(FALSE);
-	m_wndTestEPG.EnableWindow(FALSE);
+	m_wndViewEPG.EnableWindow(FALSE);
 	m_wndStreamID.EnableWindow(FALSE);
 	m_wndStreamUrl.SetReadOnly(TRUE);
 	m_wndCheckArchive.EnableWindow(FALSE);
@@ -456,98 +456,54 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 {
 	// Rebuild available playlist types and set current plugin parameters
 	m_inSync = true;
-	m_token.clear();
-	m_domain.clear();
-	m_login.clear();
-	m_password.clear();
+
 	m_host.clear();
-	m_portal.clear();
 	m_embedded_info = FALSE;
+
 	for (auto& map : m_epg_cache)
 	{
 		map.clear();
 	}
 
+	m_domain = GetConfig().get_string(false, REG_DOMAIN);
+	m_token = GetConfig().get_string(false, REG_TOKEN);
+	m_login = GetConfig().get_string(false, REG_LOGIN);
+	m_password = GetConfig().get_string(false, REG_PASSWORD);
+
 	m_wndPlaylist.ResetContent();
 
-	m_enableDownload = TRUE;
-	const auto plugin_type = GetConfig().get_plugin_type();
-	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	CString str;
-	str.LoadString(IDS_STRING_PLAYLIST);
-
-	switch (plugin_type)
+	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
+	const auto plugin_type = GetConfig().get_plugin_type();
+	if (plugin_type == StreamType::enEdem)
 	{
-		case StreamType::enEdem:
-		{
-			str.LoadString(IDS_STRING_EDEM_STANDARD);
-			m_wndPlaylist.AddString(str);
-			str.LoadString(IDS_STRING_EDEM_THEMATIC);
-			m_wndPlaylist.AddString(str);
-			m_token = GetConfig().get_string(false, REG_TOKEN);
-			m_domain = GetConfig().get_string(false, REG_DOMAIN);
-			m_portal = GetConfig().get_string(false, REG_PORTAL);
-			m_enableDownload = (pl_idx != 2);
-			break;
-		}
-		case StreamType::enAntifriz:
-		case StreamType::enFox:
-		case StreamType::enGlanz:
-		case StreamType::enSharaclub:
-		case StreamType::enSharaTV:
-		case StreamType::enTVClub:
-		{
-			m_wndPlaylist.AddString(str);
-			m_login = GetConfig().get_string(false, REG_LOGIN);
-			m_password = GetConfig().get_string(false, REG_PASSWORD);
-			m_enableDownload = (pl_idx != 1);
-			break;
-		}
-		case StreamType::enOneOtt:
-		case StreamType::enVidok:
-		{
-			m_wndPlaylist.AddString(str);
-			m_token = GetConfig().get_string(false, REG_TOKEN);
-			m_login = GetConfig().get_string(false, REG_LOGIN);
-			m_password = GetConfig().get_string(false, REG_PASSWORD);
-			m_enableDownload = (pl_idx != 1);
-			break;
-		}
-		case StreamType::enItv:
-		case StreamType::enOneCent:
-		case StreamType::enOneUsd:
-		case StreamType::enSharavoz:
-		case StreamType::enTvTeam:
-		case StreamType::enVipLime:
-		case StreamType::enLightIptv:
-		case StreamType::enCbilling:
-		case StreamType::enOttclub:
-		case StreamType::enIptvOnline:
-		case StreamType::enShuraTV:
-		{
-			m_wndPlaylist.AddString(str);
-			m_password = GetConfig().get_string(false, REG_PASSWORD);
-			m_enableDownload = (pl_idx != 1);
-			break;
-		}
-		default:
-			ASSERT(false);
-			break;
+		str.LoadString(IDS_STRING_EDEM_STANDARD);
+		m_wndPlaylist.AddString(str);
+		str.LoadString(IDS_STRING_EDEM_THEMATIC);
+		m_wndPlaylist.AddString(str);
+		m_portal = GetConfig().get_string(false, REG_PORTAL);
+		m_enableDownload = (pl_idx != 2);
+	}
+	else
+	{
+		m_portal.clear();
+		str.LoadString(IDS_STRING_PLAYLIST);
+		m_wndPlaylist.AddString(str);
+		m_enableDownload = (pl_idx != 1);
 	}
 
-	auto& streams = StreamContainer::get_instance(plugin_type)->get_supported_stream_type();
+	const auto& streams = StreamContainer::get_instance(plugin_type)->get_supported_stream_type();
 
-	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE);
+	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();
 	for (const auto& streamType : streams)
 	{
 		int idx = m_wndStreamType.AddString(std::get<1>(streamType).c_str());
 		DWORD_PTR type = (DWORD_PTR)std::get<0>(streamType);
 		m_wndStreamType.SetItemData(idx, type);
-		if (cur_sel == type)
-			m_wndStreamType.SetCurSel(idx);
 	}
 
+	m_wndStreamType.SetCurSel(cur_sel);
 	m_wndStreamType.EnableWindow(streams.size() > 1);
 
 	str.LoadString(IDS_STRING_CUSTOM_PLAYLIST);
@@ -654,10 +610,14 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.device = GetConfig().get_int(false, REG_DEVICE_ID, 1);
 	params.number = idx;
 
-	if (plugin_type == StreamType::enEdem && idx == 2 || idx == 1)
+	if (plugin_type == StreamType::enEdem && idx == 2)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 		m_plFileName.Empty();
+	}
+	else if (plugin_type != StreamType::enEdem && idx == 1)
+	{
+		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 	}
 	else
 	{
@@ -1288,6 +1248,9 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 	if (hItem == nullptr)
 		hItem = m_wndPlaylistTree.GetSelectedItem();
 
+	if (!hItem)
+		return;
+
 	m_infoAudio.Empty();
 	m_infoVideo.Empty();
 	m_plIconName.Empty();
@@ -1295,7 +1258,6 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 	m_plEPG.Empty();
 	m_archivePlDays = 0;
 	m_wndPlArchive.SetCheck(0);
-	m_wndEpg.SetWindowText(L"");
 
 	const auto& entry = FindEntry(hItem);
 	if (entry)
@@ -1340,60 +1302,53 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 
 	BOOL first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 
-	const auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
-	auto& epgMap = m_epg_cache[first];
-	auto& epg_map_pair = epgMap.find(epg_id);
-
-	if (epg_map_pair == epgMap.end())
-	{
-		UpdateExtToken(info->stream_uri.get(), m_token);
-		auto& epg_map = epgMap[epg_id];
-		if (info->stream_uri->parse_epg(first, epg_id, epg_map))
-		{
-			epg_map_pair = epgMap.emplace(epg_id, epg_map).first;
-		}
-	}
-
 	time_t now = time(nullptr) - (time_t)m_archiveCheckDays * 24 * 3600 - (time_t)m_archiveCheckHours * 3600;
 	if (pTreeCtl == &m_wndChannelsTree)
 	{
 		now += m_timeShiftHours;
 	}
 
-	// check end time
-	auto& epg_map = epg_map_pair->second;
-	for (auto it = epg_map.begin(); it != epg_map.end(); ++it)
-	{
-		if (it->second.time_end != 0) continue;
+	const auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
+	auto& allEpgMap = m_epg_cache[first];
+	auto& epgChannelMap = allEpgMap[epg_id];
 
-		auto cur = it;
-		if (++cur != epg_map.end())
+	UpdateExtToken(info->stream_uri.get(), m_token);
+
+	// check end time
+	EpgInfo epg_info{};
+	bool need_load = true;
+	while(need_load)
+	{
+		for (auto& epg_pair : epgChannelMap)
 		{
-			it->second.time_end = cur->first;
+			if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+			{
+				epg_info = epg_pair.second;
+				need_load = false;
+				break;
+			}
 		}
-		else
+
+		if (need_load && !info->stream_uri->parse_epg(first, epg_id, epgChannelMap, now))
 		{
-			it->second.time_end = -1;
+			need_load = false;
 		}
 	}
 
-	for (auto& epg_pair : epg_map)
+	if (epg_info.time_start != 0)
 	{
-		if (now < epg_pair.first || now > epg_pair.second.time_end) continue;
-
-		COleDateTime time_s(epg_pair.first);
-		COleDateTime time_e(epg_pair.second.time_end);
+		COleDateTime time_s(epg_info.time_start);
+		COleDateTime time_e(epg_info.time_end);
 		CStringA text;
 		text.Format(R"({\rtf1 %ls - %ls\par\b %s\b0\par %s})",
 					time_s.Format(_T("%d.%m.%Y %H:%M:%S")),
 					time_e.Format(_T("%d.%m.%Y %H:%M:%S")),
-					epg_pair.second.name.c_str(),
-					epg_pair.second.desc.c_str()
+					epg_info.name.c_str(),
+					epg_info.desc.c_str()
 		);
 
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
-		break;
 	}
 }
 
@@ -2126,7 +2081,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndCustom.EnableWindow(single);
 	m_wndArchive.EnableWindow(state);
 	m_wndAdult.EnableWindow(state);
-	m_wndTestEPG.EnableWindow(single && (firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty()));
+	m_wndViewEPG.EnableWindow(single && (firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty()));
 	m_wndStreamID.EnableWindow(single && !m_streamID.IsEmpty());
 	m_wndArchiveDays.EnableWindow(state && m_isArchive);
 	//m_wndStreamUrl.EnableWindow(single && m_streamID.IsEmpty());
@@ -2638,14 +2593,13 @@ void CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckHour(NMHDR* pNMHDR, LRESUL
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 {
-	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
-	if (channel)
+	auto info = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
+	if (info)
 	{
 		CEpgListDlg dlg;
-		BOOL first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
-		const auto& id = first ? channel->get_epg1_id() : channel->get_epg2_id();
-		dlg.m_epg_map = m_epg_cache[first][id];
-		dlg.m_epg_url = channel->stream_uri->get_epg_uri_json(first, id).c_str();
+		dlg.m_first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+		dlg.m_info = info;
+		dlg.m_epg_cache= &m_epg_cache;
 		dlg.DoModal();
 	}
 }
@@ -2654,7 +2608,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
 {
 	UpdateEPG(m_lastTree);
 	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
-	m_wndTestEPG.EnableWindow(firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty());
+	m_wndViewEPG.EnableWindow(firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty());
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
