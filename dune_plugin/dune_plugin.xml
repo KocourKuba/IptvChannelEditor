@@ -16,12 +16,12 @@
             <icon_url>plugin_file://icons/logo_{plugin_short_name}.png</icon_url>
             <actions>
                 <key_enter>
-                    <type>plugin_open_folder</type>
+                    <type>plugin_handle_user_input</type>
                     <params>
                         <handler_id>entry_handler</handler_id>
                         <control_id>plugin_entry</control_id>
                         <action_id>launch</action_id>
-                        <mandratory_playback>0</mandratory_playback>
+                        <mandatory_playback>0</mandatory_playback>
                     </params>
                 </key_enter>
                 <key_play>
@@ -30,7 +30,7 @@
                         <handler_id>entry_handler</handler_id>
                         <control_id>plugin_entry</control_id>
                         <action_id>launch</action_id>
-                        <mandratory_playback>1</mandratory_playback>
+                        <mandatory_playback>1</mandatory_playback>
                     </params>
                 </key_play>
             </actions>

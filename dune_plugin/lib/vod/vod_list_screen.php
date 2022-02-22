@@ -1,8 +1,7 @@
 <?php
 require_once 'lib/abstract_regular_screen.php';
 
-abstract class VodListScreen extends AbstractRegularScreen
-    implements UserInputHandler
+abstract class VodListScreen extends AbstractRegularScreen implements UserInputHandler
 {
     const ID = 'vod_list';
 
@@ -14,7 +13,10 @@ abstract class VodListScreen extends AbstractRegularScreen
 
         parent::__construct(self::ID, $this->plugin->vod->get_vod_list_folder_views());
 
-        UserInputHandlerRegistry::get_instance()->register_handler($this);
+        if ($this->plugin->config->get_vod_support()) {
+            $this->plugin->create_screen($this);
+            UserInputHandlerRegistry::get_instance()->register_handler($this);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////

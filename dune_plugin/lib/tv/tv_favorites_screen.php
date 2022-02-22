@@ -2,8 +2,7 @@
 require_once 'tv.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class TvFavoritesScreen extends AbstractPreloadedRegularScreen
-    implements UserInputHandler
+class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'tv_favorites';
     protected $plugin;
@@ -24,9 +23,8 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen
 
         if ($this->plugin->config->get_tv_fav_support()) {
             $this->plugin->create_screen($this);
+            UserInputHandlerRegistry::get_instance()->register_handler($this);
         }
-
-        UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
     ///////////////////////////////////////////////////////////////////////

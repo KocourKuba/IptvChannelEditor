@@ -7,10 +7,6 @@ class StarnetVodListScreen extends VodListScreen
     public function __construct(DefaultDunePlugin $plugin)
     {
         parent::__construct($plugin);
-
-        if ($this->plugin->config->get_vod_support()) {
-            $this->plugin->create_screen($this);
-        }
     }
 
     public static function get_media_url_str($cat_id, $genre_id, $name = false)

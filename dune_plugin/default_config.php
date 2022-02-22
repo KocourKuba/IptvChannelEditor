@@ -575,6 +575,8 @@ abstract class DefaultConfig
                 $category_index[$cat->get_id()] = $cat;
             }
         }
+
+        hd_print("Categories read: " . count($category_list));
     }
 
     ///////////////////////////////////////////////////////////////////////

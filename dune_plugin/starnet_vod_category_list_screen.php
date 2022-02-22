@@ -2,7 +2,7 @@
 require_once 'starnet_vod_category.php';
 require_once 'starnet_vod_list_screen.php';
 
-class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
+class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'vod_category_list';
     protected $plugin;
@@ -33,7 +33,21 @@ class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        return array(GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),);
+        return array(GUI_EVENT_KEY_ENTER => ActionFactory::open_folder());
+    }
+
+    public function get_handler_id()
+    {
+        return self::ID.'_handler';
+    }
+
+    public function handle_user_input(&$user_input, &$plugin_cookies)
+    {
+        // hd_print('Vod favorites: handle_user_input:');
+        // foreach ($user_input as $key => $value)
+        //     hd_print("  $key => $value");
+
+        return null;
     }
 
     /**
