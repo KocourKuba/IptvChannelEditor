@@ -1754,6 +1754,9 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		if (ch_pair != m_channelsMap.end())
 		{
 			// Only one unique channel must used!
+			// at first add parsed categories
+			ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
+			// now replace channel to unique reference
 			channel = ch_pair->second;
 		}
 		else
@@ -1762,9 +1765,9 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			ch_pair = m_channelsMap.emplace(channel->stream_uri->get_id(), channel).first;
 			if (channel->is_favorite())
 				fav_category->add_channel(channel);
-		}
 
-		ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
+			ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
+		}
 
 		for (const auto& id : channel->get_category_ids())
 		{
@@ -3344,7 +3347,7 @@ void CIPTVChannelEditorDlg::OnSave()
 			}
 		}
 
-		if (setup_node->last_node())
+		if (setup_node->first_node())
 		{
 			tv_info->append_node(setup_node);
 		}
