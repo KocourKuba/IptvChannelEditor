@@ -8,15 +8,9 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected $plugin;
-
-    ///////////////////////////////////////////////////////////////////////
-
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
-
-        parent::__construct(self::ID, $this->plugin->config->GET_TV_GROUP_LIST_FOLDER_VIEWS());
+        parent::__construct(self::ID, $plugin, $plugin->config->GET_TV_GROUP_LIST_FOLDER_VIEWS());
     }
 
     ///////////////////////////////////////////////////////////////////////

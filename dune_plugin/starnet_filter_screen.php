@@ -6,16 +6,13 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
 {
     const ID = 'filter_screen';
     const FILTER_ICON_PATH = 'plugin_file://icons/icon_filter.png';
-    protected $plugin;
 
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
-        parent::__construct(self::ID, $this->plugin->vod->get_vod_search_folder_views());
+        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_search_folder_views());
 
-        if ($this->plugin->config->get_vod_portal_support()) {
-            $this->plugin->create_screen($this);
-            UserInputHandlerRegistry::get_instance()->register_handler($this);
+        if ($plugin->config->get_vod_portal_support()) {
+            $plugin->create_screen($this);
         }
     }
 

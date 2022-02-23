@@ -132,24 +132,24 @@ class SharaclubPluginConfig extends DefaultConfig
             $text = explode('\\n', $text);
             $text = array_values($text);
 
-            ControlFactory::add_label($defs, 'Ошибка!', $text[0]);
-            ControlFactory::add_label($defs, 'Описание:', $text[1]);
+            ControlFactory::add_label($defs, 'Ошибка!', $text[0], -10);
+            ControlFactory::add_label($defs, 'Описание:', $text[1], 20);
             return;
         }
 
         $title = 'Пакеты: ';
 
-        ControlFactory::add_label($defs, 'Баланс:', $account_data['data']['money'] . ' руб.');
-        ControlFactory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.');
+        ControlFactory::add_label($defs, 'Баланс:', $account_data['data']['money'] . ' руб.', -10);
+        ControlFactory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.', -10);
         $packages = $account_data['data']['abon'];
         $str_len = strlen($packages);
         if ($str_len === 0) {
-            ControlFactory::add_label($defs, $title, 'Нет пакетов');
+            ControlFactory::add_label($defs, $title, 'Нет пакетов', 20);
             return;
         }
 
         if ($str_len < 30) {
-            ControlFactory::add_label($defs, $title, $packages);
+            ControlFactory::add_label($defs, $title, $packages, 20);
             return;
         }
 
@@ -176,6 +176,8 @@ class SharaclubPluginConfig extends DefaultConfig
         if (count($list_collected) !== 0) {
             ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
         }
+
+        ControlFactory::add_vgap($defs, 20);
     }
 
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)

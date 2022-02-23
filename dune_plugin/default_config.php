@@ -481,7 +481,7 @@ abstract class DefaultConfig
 
     protected static function UpdateMpegTsBuffering($url, $plugin_cookies)
     {
-        if (self::get_format($plugin_cookies) === 'mpeg') {
+        if (static::get_format($plugin_cookies) === 'mpeg') {
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
             $url .= "|||dune_params|||buffering_ms:$buf_time";
         }
@@ -489,9 +489,8 @@ abstract class DefaultConfig
         return HD::make_ts($url);
     }
 
-    protected static function get_format($plugin_cookies)
+    public static function get_format($plugin_cookies)
     {
-        // hd_print("Stream type: " . isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls');
         return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
     }
 

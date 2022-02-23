@@ -1,10 +1,10 @@
 <?php
 require_once 'lib/abstract_controls_screen.php';
+require_once 'lib/user_input_handler.php';
 
-class VodSearchScreen extends AbstractControlsScreen
+class VodSearchScreen extends AbstractControlsScreen implements UserInputHandler
 {
     const ID = 'vod_search';
-    protected $plugin;
 
     public static function get_media_url_str()
     {
@@ -13,9 +13,17 @@ class VodSearchScreen extends AbstractControlsScreen
 
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
-        parent::__construct(self::ID);
+        parent::__construct(self::ID, $plugin);
+
+        $plugin->create_screen($this);
     }
+
+    public function get_handler_id()
+    {
+        return self::ID.'_handler';
+    }
+
+    ///////////////////////////////////////////////////////////////////////
 
     private function do_get_control_defs(&$plugin_cookies)
     {
@@ -26,15 +34,20 @@ class VodSearchScreen extends AbstractControlsScreen
 
         $defs = array();
 
-        $this->add_label($defs, null, "Enter part of movie name:");
+        ControlFactory::add_label($defs, null, "Enter part of movie name:");
 
-        $this->add_text_field($defs, 'pattern', null,
+        ControlFactory::add_text_field($defs, $this, null, 'pattern', null,
             $pattern, false, false, true, false,
             500, true, true);
 
         return $defs;
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
         $this->plugin->vod->folder_entered($media_url, $plugin_cookies);

@@ -1,6 +1,6 @@
 ﻿<?php
-require_once 'lib/abstract_preloaded_regular_screen.php';
-require_once 'lib/abstract_controls_screen.php';
+require_once 'lib/screen.php';
+require_once 'lib/user_input_handler.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -14,12 +14,10 @@ class ControlSwitchDefs
     const switch_epg2 = 'second';
 }
 
-class StarnetSetupScreen extends AbstractControlsScreen
+class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHandler
 {
     const ID = 'setup';
     const CONTROLS_WIDTH = 800;
-
-    protected $plugin;
 
     private static $on_off_ops = array
     (
@@ -43,19 +41,24 @@ class StarnetSetupScreen extends AbstractControlsScreen
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct(DefaultDunePlugin $plugin)
-    {
-        $this->plugin = $plugin;
-
-        parent::__construct(self::ID);
-
-        $this->plugin->create_screen($this);
-    }
-
     public static function get_media_url_str()
     {
         return MediaURL::encode(array('screen_id' => self::ID));
     }
+
+    public function __construct(DefaultDunePlugin $plugin)
+    {
+        parent::__construct(self::ID, $plugin);
+
+        $plugin->create_screen($this);
+    }
+
+    public function get_handler_id()
+    {
+        return self::ID.'_handler';
+    }
+
+    ///////////////////////////////////////////////////////////////////////
 
     /**
      * defs for all controls on screen
@@ -70,12 +73,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
         // Plugin name
         ControlFactory::add_vgap($defs, -10);
         $title = $this->plugin->config->PLUGIN_SHOW_NAME . ' v.' . $this->plugin->config->PLUGIN_VERSION . ' [' . $this->plugin->config->PLUGIN_DATE . ']';
-        $this->add_label($defs, $title, 'IPTV Channel Editor by sharky72');
+        ControlFactory::add_label($defs, $title, 'IPTV Channel Editor by sharky72');
 
         //////////////////////////////////////
         // Show in main screen
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-        $this->add_image_button($defs, 'show_tv', 'Показывать в главном меню:',
+        ControlFactory::add_image_button($defs, $this, null, 'show_tv', 'Показывать в главном меню:',
             self::$on_off_ops[$show_tv], $this->plugin->get_image_path(self::$on_off_img[$show_tv]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
@@ -83,15 +86,15 @@ class StarnetSetupScreen extends AbstractControlsScreen
         switch ($this->plugin->config->get_account_type())
         {
             case 'OTT_KEY':
-                $this->add_image_button($defs, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен',
+                ControlFactory::add_image_button($defs, $this, null, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен',
                     $this->plugin->get_image_path('text.png'));
                 break;
             case 'LOGIN':
-                $this->add_image_button($defs, 'login_dialog', 'Активировать просмотр:', 'Введите логин и пароль',
+                ControlFactory::add_image_button($defs, $this, null, 'login_dialog', 'Активировать просмотр:', 'Введите логин и пароль',
                     $this->plugin->get_image_path('text.png'));
                 break;
             case 'PIN':
-                $this->add_image_button($defs, 'pin_dialog', 'Активировать просмотр:', 'Введите ключ доступа',
+                ControlFactory::add_image_button($defs, $this, null, 'pin_dialog', 'Активировать просмотр:', 'Введите ключ доступа',
                     $this->plugin->get_image_path('text.png'));
                 break;
         }
@@ -99,7 +102,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         //////////////////////////////////////
         // vportal dialog
         if ($this->plugin->config->get_vod_portal_support()) {
-            $this->add_image_button($defs, 'portal_dialog', 'Активировать VPortal:', 'Ввести ключ',
+            ControlFactory::add_image_button($defs, $this, null, 'portal_dialog', 'Активировать VPortal:', 'Ввести ключ',
                 $this->plugin->get_image_path('text.png'));
         }
 
@@ -109,7 +112,7 @@ class StarnetSetupScreen extends AbstractControlsScreen
         if (strlen($display_path) > 30) {
             $display_path = "..." . substr($display_path, -30);
         }
-        $this->add_image_button($defs, 'change_list_path', 'Выбрать папку со списками каналов:', $display_path,
+        ControlFactory::add_image_button($defs, $this, null, 'change_list_path', 'Выбрать папку со списками каналов:', $display_path,
             $this->plugin->get_image_path('folder.png'));
 
         //////////////////////////////////////
@@ -124,31 +127,31 @@ class StarnetSetupScreen extends AbstractControlsScreen
         }
         if (!empty($all_channels)) {
             $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->plugin->config->get_channel_list();
-            $this->add_combobox($defs, 'channels_list', 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
+            ControlFactory::add_combobox($defs, $this, null, 'channels_list', 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
         } else {
-            $this->add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
+            ControlFactory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         }
 
         //////////////////////////////////////
         // streaming dialog
-        $this->add_image_button($defs, 'streaming_dialog', 'Настройки проигрывания:', 'Изменить настройки',
+        ControlFactory::add_image_button($defs, $this, null, 'streaming_dialog', 'Настройки проигрывания:', 'Изменить настройки',
             $this->plugin->get_image_path('settings.png'));
 
         //////////////////////////////////////
         // font size
         if (isset($plugin_cookies->has_secondary_epg) && (int)$plugin_cookies->has_secondary_epg === 1) {
             $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : ControlSwitchDefs::switch_epg1;
-            $this->add_image_button($defs, 'epg_source', 'Использовать вторичный источник EPG:',
+            ControlFactory::add_image_button($defs, $this, null, 'epg_source', 'Использовать вторичный источник EPG:',
                 self::$on_off_ops[$epg_source], $this->plugin->get_image_path(self::$on_off_img[$epg_source]));
         }
 
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : ControlSwitchDefs::switch_normal;
-        $this->add_image_button($defs, 'epg_font_size', 'Мелкий шрифт EPG:',
+        ControlFactory::add_image_button($defs, $this, null, 'epg_font_size', 'Мелкий шрифт EPG:',
             self::$on_off_ops[$epg_font_size], $this->plugin->get_image_path(self::$on_off_img[$epg_font_size]));
 
         //////////////////////////////////////
         // adult channel password
-        $this->add_image_button($defs, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль',
+        ControlFactory::add_image_button($defs, $this, null, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль',
             $this->plugin->get_image_path('text.png'));
 
         ControlFactory::add_vgap($defs, 10);
@@ -177,16 +180,16 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
         $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
 
-        $this->add_text_field($defs, 'subdomain', 'Введите домен:',
+        ControlFactory::add_text_field($defs, $this, null, 'subdomain', 'Введите домен:',
             $subdomain, false, false, false, true, 600);
 
-        $this->add_text_field($defs, 'ott_key', 'Введите ОТТ ключ:',
+        ControlFactory::add_text_field($defs, $this, null, 'ott_key', 'Введите ОТТ ключ:',
             $ott_key, false, true, false, true, 600);
 
-        $this->add_vgap($defs, 50);
+        ControlFactory::add_vgap($defs, 50);
 
-        $this->add_close_dialog_and_apply_button($defs, 'ott_key_apply', 'ОК', 300);
-        $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_close_dialog_and_apply_button($defs, $this, null, 'ott_key_apply', 'ОК', 300);
+        ControlFactory::add_close_dialog_button($defs, 'Отмена', 300);
         ControlFactory::add_vgap($defs, 10);
 
         return $defs;
@@ -204,36 +207,43 @@ class StarnetSetupScreen extends AbstractControlsScreen
         //////////////////////////////////////
         // select device number
         if ($this->plugin->config->get_device_support()) {
-            hd_print("device supported");
+            hd_print("Change device supported");
             $dev_num = $this->plugin->config->get_device($plugin_cookies);
             $device_ops = $this->plugin->config->get_device_opts();
-            $this->add_combobox($defs, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
+            if (!empty($device_ops)) {
+                ControlFactory::add_combobox($defs, $this, null, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
+            }
         }
 
         //////////////////////////////////////
         // select server
         if ($this->plugin->config->get_server_support()) {
-            hd_print("server supported");
+            hd_print("Change server supported");
             $server = $this->plugin->config->get_server($plugin_cookies);
             $server_ops = $this->plugin->config->get_server_opts($plugin_cookies);
-            $this->add_combobox($defs, 'server', 'Сервер:', $server, $server_ops, 0);
+            hd_print("Selected server $server");
+            if (!empty($server_ops)) {
+                ControlFactory::add_combobox($defs, $this, null, 'server', 'Сервер:', $server, $server_ops, 0);
+            }
         }
 
         //////////////////////////////////////
         // select quality
         if ($this->plugin->config->get_quality_support()) {
-            hd_print("quality supported");
+            hd_print("Change quality supported");
             $quality = $this->plugin->config->get_quality($plugin_cookies);
             $quality_ops = $this->plugin->config->get_quality_opts($plugin_cookies);
-            $this->add_combobox($defs, 'quality', 'Качество:', $quality, $quality_ops, 0);
+            if (!empty($quality_ops)) {
+                ControlFactory::add_combobox($defs, $this, null, 'quality', 'Качество:', $quality, $quality_ops, 0);
+            }
         }
 
         //////////////////////////////////////
         // select stream type
         $format_ops = $this->plugin->config->get_format_opts();
         if (count($format_ops) > 1) {
-            $format = isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
-            $this->add_combobox($defs, 'stream_format', 'Выбор потока:', $format, $format_ops, 0);
+            $format = $this->plugin->config->get_format($plugin_cookies);
+            ControlFactory::add_combobox($defs, $this, null, 'stream_format', 'Выбор потока:', $format, $format_ops, 0);
         }
 
         //////////////////////////////////////
@@ -248,12 +258,12 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $show_buf_time_ops[10000] = '10 с';
 
         $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
-        $this->add_combobox($defs, 'buf_time', 'Время буферизации:', $buf_time, $show_buf_time_ops, 0);
+        ControlFactory::add_combobox($defs, $this, null, 'buf_time', 'Время буферизации:', $buf_time, $show_buf_time_ops, 0);
 
-        $this->add_vgap($defs, 50);
+        ControlFactory::add_vgap($defs, 50);
 
-        $this->add_close_dialog_and_apply_button($defs, 'streaming_apply', 'ОК', 300);
-        $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_close_dialog_and_apply_button($defs, $this, null, 'streaming_apply', 'ОК', 300);
+        ControlFactory::add_close_dialog_button($defs, 'Отмена', 300);
         ControlFactory::add_vgap($defs, 10);
 
         return $defs;
@@ -269,17 +279,17 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $defs = array();
 
         $login = isset($plugin_cookies->login) ? $plugin_cookies->login : '';
-        $this->add_text_field($defs, 'login', 'Логин:',
+        ControlFactory::add_text_field($defs, $this, null, 'login', 'Логин:',
             $login, false, false, false, true, 600);
 
         $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
-        $this->add_text_field($defs, 'password', 'Пароль:',
+        ControlFactory::add_text_field($defs, $this, null, 'password', 'Пароль:',
             $password, false, true, false, true, 600);
 
-        $this->add_vgap($defs, 50);
+        ControlFactory::add_vgap($defs, 50);
 
-        $this->add_close_dialog_and_apply_button($defs, 'login_apply', 'Применить', 300);
-        $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_close_dialog_and_apply_button($defs, $this, null, 'login_apply', 'Применить', 300);
+        ControlFactory::add_close_dialog_button($defs, 'Отмена', 300);
         ControlFactory::add_vgap($defs, 10);
 
         return $defs;
@@ -295,13 +305,13 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $defs = array();
 
         $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
-        $this->add_text_field($defs, 'password', 'Ключ доступа:',
+        ControlFactory::add_text_field($defs, $this, null, 'password', 'Ключ доступа:',
             $password, false, true, false, true, 600);
 
-        $this->add_vgap($defs, 50);
+        ControlFactory::add_vgap($defs, 50);
 
-        $this->add_close_dialog_and_apply_button($defs, 'pin_apply', 'Применить', 300);
-        $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_close_dialog_and_apply_button($defs, $this, null, 'pin_apply', 'Применить', 300);
+        ControlFactory::add_close_dialog_button($defs, 'Отмена', 300);
         ControlFactory::add_vgap($defs, 10);
 
         return $defs;
@@ -317,13 +327,13 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $defs = array();
 
         $url = isset($plugin_cookies->mediateka) ? $plugin_cookies->mediateka : '';
-        $this->add_text_field($defs, 'url', 'Ссылка на VPortal:',
+        ControlFactory::add_text_field($defs, $this, null, 'url', 'Ссылка на VPortal:',
             $url, false, false, false, true, 800);
 
-        $this->add_vgap($defs, 50);
+        ControlFactory::add_vgap($defs, 50);
 
-        $this->add_close_dialog_and_apply_button($defs, 'portal_apply', 'Применить', 300);
-        $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_close_dialog_and_apply_button($defs, $this, null, 'portal_apply', 'Применить', 300);
+        ControlFactory::add_close_dialog_button($defs, 'Отмена', 300);
         ControlFactory::add_vgap($defs, 10);
 
         return $defs;
@@ -340,22 +350,22 @@ class StarnetSetupScreen extends AbstractControlsScreen
         $pass1 = '';
         $pass2 = '';
 
-        $this->add_text_field($defs, 'pass1', 'Старый пароль:',
+        ControlFactory::add_text_field($defs, $this, null, 'pass1', 'Старый пароль:',
             $pass1, 1, true, 0, 1, 500, 0);
-        $this->add_text_field($defs, 'pass2', 'Новый пароль:',
+        ControlFactory::add_text_field($defs, $this, null, 'pass2', 'Новый пароль:',
             $pass2, 1, true, 0, 1, 500, 0);
 
-        $this->add_vgap($defs, 50);
+        ControlFactory::add_vgap($defs, 50);
 
-        $this->add_close_dialog_and_apply_button($defs, 'pass_apply', 'ОК', 300);
-        $this->add_close_dialog_button($defs, 'Отмена', 300);
+        ControlFactory::add_close_dialog_and_apply_button($defs, $this, null, 'pass_apply', 'ОК', 300);
+        ControlFactory::add_close_dialog_button($defs, 'Отмена', 300);
         ControlFactory::add_vgap($defs, 10);
 
         return $defs;
     }
 
     /**
-     * user remote input handler
+     * user remote input handler Implementation of UserInputHandler
      * @param $user_input
      * @param $plugin_cookies
      * @return array|null

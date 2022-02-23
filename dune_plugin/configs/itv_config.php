@@ -116,17 +116,17 @@ class ItvPluginConfig extends DefaultConfig
             $text = explode('\\n', $text);
             $text = array_values($text);
 
-            ControlFactory::add_label($defs, 'Ошибка!', $text[0]);
-            ControlFactory::add_label($defs, 'Описание:', $text[1]);
+            ControlFactory::add_label($defs, 'Ошибка!', $text[0], -10);
+            ControlFactory::add_label($defs, 'Описание:', $text[1], 20);
             return;
         }
 
         $title = 'Пакеты: ';
 
-        ControlFactory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' $');
+        ControlFactory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' $', -10);
         $packages = $account_data['package_info'];
         if (count($packages) === 0) {
-            ControlFactory::add_label($defs, $title, 'Нет пакетов');
+            ControlFactory::add_label($defs, $title, 'Нет пакетов', 20);
             return;
         }
 
@@ -145,7 +145,7 @@ class ItvPluginConfig extends DefaultConfig
                 continue;
             }
 
-            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected);
+            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected, -10);
 
             if ($isFirstLabel) {
                 $isFirstLabel = false;
@@ -157,6 +157,8 @@ class ItvPluginConfig extends DefaultConfig
         if (count($list_collected) !== 0) {
             ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
         }
+
+        ControlFactory::add_vgap($defs, 20);
     }
 
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)

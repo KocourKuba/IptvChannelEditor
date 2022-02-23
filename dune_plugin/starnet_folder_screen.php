@@ -8,18 +8,13 @@ class StarnetFolderScreen extends AbstractRegularScreen implements UserInputHand
 {
     const ID = 'file_list';
 
-    protected $plugin;
-
     private $counter = 0;
 
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
-        parent::__construct(self::ID, $this->plugin->config->GET_FOLDER_VIEWS());
+        parent::__construct(self::ID, $plugin, $plugin->config->GET_FOLDER_VIEWS());
 
-        $this->plugin->create_screen($this);
-
-        UserInputHandlerRegistry::get_instance()->register_handler($this);
+        $plugin->create_screen($this);
     }
 
     public static function get_media_url_str($id, $caption, $filepath, $type, $ip_path, $user, $password, $nfs_protocol, $err, $save_data, $save_file, $windowCounter = null)

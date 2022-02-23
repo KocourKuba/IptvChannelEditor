@@ -1,7 +1,6 @@
 <?php
 
-class VodGenresScreen extends AbstractPreloadedRegularScreen
-    implements UserInputHandler
+class VodGenresScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'vod_genres';
 
@@ -12,16 +11,11 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
-    private $vod;
-
-    public function __construct(Vod $vod)
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->vod = $vod;
+        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_genres_folder_views());
 
-        parent::__construct(self::ID,
-            $vod->get_vod_genres_folder_views());
-
-        UserInputHandlerRegistry::get_instance()->register_handler($this);
+        $plugin->create_screen($this);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -55,8 +49,8 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
 
             $media_url = MediaURL::decode($user_input->selected_media_url);
             $genre_id = $media_url->genre_id;
-            $caption = $this->vod->get_genre_caption($genre_id);
-            $media_url_str = $this->vod->get_genre_media_url_str($genre_id);
+            $caption = $this->plugin->vod->get_genre_caption($genre_id);
+            $media_url_str = $this->plugin->vod->get_genre_media_url_str($genre_id);
 
             return ActionFactory::open_folder($media_url_str, $caption);
         }
@@ -71,18 +65,18 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->vod->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
 
-        $this->vod->ensure_genres_loaded($plugin_cookies);
+        $this->plugin->vod->ensure_genres_loaded($plugin_cookies);
 
-        $genre_ids = $this->vod->get_genre_ids();
+        $genre_ids = $this->plugin->vod->get_genre_ids();
 
         $items = array();
 
         foreach ($genre_ids as $genre_id) {
-            $caption = $this->vod->get_genre_caption($genre_id);
-            $media_url_str = $this->vod->get_genre_media_url_str($genre_id);
-            $icon_url = $this->vod->get_genre_icon_url($genre_id);
+            $caption = $this->plugin->vod->get_genre_caption($genre_id);
+            $media_url_str = $this->plugin->vod->get_genre_media_url_str($genre_id);
+            $icon_url = $this->plugin->vod->get_genre_icon_url($genre_id);
 
             $items[] = array
             (
@@ -100,6 +94,6 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen
 
     public function get_archive(MediaURL $media_url)
     {
-        return $this->vod->get_archive($media_url);
+        return $this->plugin->vod->get_archive($media_url);
     }
 }

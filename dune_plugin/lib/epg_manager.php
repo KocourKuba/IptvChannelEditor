@@ -49,7 +49,6 @@ class EpgManager
             throw new Exception("$type EPG url not defined");
         }
 
-
         $cache_dir =  sprintf(self::EPG_CACHE_DIR_TEMPLATE, $config->PLUGIN_SHORT_NAME);
         $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $config->PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);
 
@@ -117,24 +116,19 @@ class EpgManager
 
         // stripe UTF8 BOM if exists
         $ch_data = json_decode(ltrim($doc, "\xEF\xBB\xBF"), true);
-        $epg_root = $parser_params['epg_root'];
+        foreach (explode('|', $parser_params['epg_root']) as $level) {
+            $epg_root = $level;
+            $ch_data = $ch_data[$epg_root];
+        }
         // hd_print("json epg root: " . $parser_params['epg_root']);
         // hd_print("json start: " . $parser_params['start']);
         // hd_print("json end: " . $parser_params['end']);
         // hd_print("json title: " . $parser_params['title']);
         // hd_print("json desc: " . $parser_params['description']);
 
-        if (!empty($epg_root) && isset($ch_data[$epg_root])) {
-            // hd_print("use root: $epg_root");
-            $data = $ch_data[$epg_root]; // sharvoz, edem, fox, itv
-        } else {
-            // hd_print("no root");
-            $data = $ch_data; // sharaclub, no json root
-        }
-
-        hd_print("total entries: " . count($data));
+        hd_print("total entries: " . count($ch_data));
         // collect all program that starts after day start and before day end
-        foreach ($data as $entry) {
+        foreach ($ch_data as $entry) {
             $program_start = $entry[$parser_params['start']];
             if ($epg_date_start <= $program_start && $program_start <= $epg_date_end) {
                 if ($parser_params['use_duration']) {

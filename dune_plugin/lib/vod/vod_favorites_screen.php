@@ -7,8 +7,6 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 {
     const ID = 'vod_favorites';
 
-    protected $plugin;
-
     public static function get_media_url_str()
     {
         return MediaURL::encode(array('screen_id' => self::ID));
@@ -18,13 +16,10 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
+        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
 
-        parent::__construct(self::ID, $this->plugin->vod->get_vod_list_folder_views());
-
-        if ($this->plugin->config->get_vod_support()) {
-            $this->plugin->create_screen($this);
-            UserInputHandlerRegistry::get_instance()->register_handler($this);
+        if ($plugin->config->get_vod_support()) {
+            $plugin->create_screen($this);
         }
     }
 

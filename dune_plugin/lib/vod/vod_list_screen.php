@@ -5,17 +5,12 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
 {
     const ID = 'vod_list';
 
-    protected $plugin;
-
     protected function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
+        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
 
-        parent::__construct(self::ID, $this->plugin->vod->get_vod_list_folder_views());
-
-        if ($this->plugin->config->get_vod_support()) {
-            $this->plugin->create_screen($this);
-            UserInputHandlerRegistry::get_instance()->register_handler($this);
+        if ($plugin->config->get_vod_support()) {
+            $plugin->create_screen($this);
         }
     }
 

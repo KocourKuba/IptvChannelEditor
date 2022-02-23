@@ -5,19 +5,16 @@ require_once 'starnet_vod_list_screen.php';
 class StarnetVodCategoryListScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'vod_category_list';
-    protected $plugin;
 
     private $category_list;
     private $category_index;
 
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
+        parent::__construct(self::ID, $plugin, $plugin->config->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS());
 
-        parent::__construct(self::ID, $this->plugin->config->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS());
-
-        if ($this->plugin->config->get_vod_support()) {
-            $this->plugin->create_screen($this);
+        if ($plugin->config->get_vod_support()) {
+            $plugin->create_screen($this);
         }
     }
 

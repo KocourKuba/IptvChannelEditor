@@ -10,12 +10,14 @@ abstract class AbstractRegularScreen implements RegularScreen
     private $folder_views;
     private $folder_view_index_attr_name;
 
+    protected $plugin;
+
     ///////////////////////////////////////////////////////////////////////
 
-    protected function __construct($id, $folder_views)
+    protected function __construct($id, DefaultDunePlugin $plugin, $folder_views)
     {
         $this->id = $id;
-
+        $this->plugin = $plugin;
         $this->folder_views = $folder_views;
         $this->set_default_folder_view_index_attr_name();
     }

@@ -130,15 +130,15 @@ class CbillingPluginConfig extends DefaultConfig
             $text = explode('\\n', $text);
             $text = array_values($text);
 
-            ControlFactory::add_label($defs, 'Ошибка!', $text[0]);
-            ControlFactory::add_label($defs, 'Описание:', $text[1]);
+            ControlFactory::add_label($defs, 'Ошибка!', $text[0], -10);
+            ControlFactory::add_label($defs, 'Описание:', $text[1], -10);
             return;
         }
 
-        ControlFactory::add_label($defs, 'Пакеты: ', empty($account_data['data']['package']) ? 'Нет пакетов' : $account_data['data']['package']);
-        ControlFactory::add_label($defs, 'Дата окончания', $account_data['data']['end_date']);
-        ControlFactory::add_label($defs, 'Устройств', $account_data['data']['devices_num']);
-        ControlFactory::add_label($defs, 'Сервер', $account_data['data']['server']);
+        ControlFactory::add_label($defs, 'Пакеты: ', empty($account_data['data']['package']) ? 'Нет пакетов' : $account_data['data']['package'], -10);
+        ControlFactory::add_label($defs, 'Дата окончания', $account_data['data']['end_date'], -10);
+        ControlFactory::add_label($defs, 'Устройств', $account_data['data']['devices_num'], -10);
+        ControlFactory::add_label($defs, 'Сервер', $account_data['data']['server'], 20);
     }
 
     protected static function GetPlaylistUrl($type, $plugin_cookies)

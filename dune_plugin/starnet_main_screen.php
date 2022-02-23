@@ -13,8 +13,6 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
         parent::__construct($plugin);
 
         $plugin->create_screen($this);
-
-        UserInputHandlerRegistry::get_instance()->register_handler($this);
     }
 
     public function get_handler_id()

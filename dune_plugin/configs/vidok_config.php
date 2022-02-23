@@ -113,23 +113,23 @@ class VidokPluginConfig extends DefaultConfig
             $text = explode('\\n', $text);
             $text = array_values($text);
 
-            ControlFactory::add_label($defs, 'Ошибка!', $text[0]);
-            ControlFactory::add_label($defs, 'Описание:', $text[1]);
+            ControlFactory::add_label($defs, 'Ошибка!', $text[0], -10);
+            ControlFactory::add_label($defs, 'Описание:', $text[1], 20);
             return;
         }
 
-        ControlFactory::add_label($defs, 'Баланс:', $account_data['account']['balance'] . ' €');
-        ControlFactory::add_label($defs, 'Логин:', $account_data['account']['login']);
+        ControlFactory::add_label($defs, 'Баланс:', $account_data['account']['balance'] . ' €', -10);
+        ControlFactory::add_label($defs, 'Логин:', $account_data['account']['login'], -10);
         $packages = $account_data['account']['packages'];
         if (count($packages) === 0) {
-            ControlFactory::add_label($defs, 'Пакеты: ', 'Нет пакетов');
+            ControlFactory::add_label($defs, 'Пакеты: ', 'Нет пакетов', 20);
             return;
         }
 
         foreach ($packages as $item) {
-            ControlFactory::add_label($defs, 'Пакет:', $item['name'] .' до '. date('j.m.Y', $item['expire']));
-            ControlFactory::add_vgap($defs, -10);
+            ControlFactory::add_label($defs, 'Пакет:', $item['name'] .' до '. date('j.m.Y', $item['expire']), -10);
         }
+
         ControlFactory::add_vgap($defs, 20);
     }
 

@@ -43,6 +43,7 @@ class DefaultDunePlugin implements DunePlugin
         if (!is_null($object) && method_exists($object, 'get_id')) {
             hd_print('create_screen: ' . get_class($object));
             $this->add_screen($object);
+            UserInputHandlerRegistry::get_instance()->register_handler($object);
         } else {
             hd_print(get_class($object) . ': Screen class is illegal. get_id method not defined!');
         }

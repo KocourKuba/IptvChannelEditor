@@ -1,23 +1,13 @@
 <?php
-require_once 'lib/screen.php';
+require_once 'lib/abstract_controls_screen.php';
+require_once 'lib/user_input_handler.php';
 require_once 'default_config.php';
 require_once 'vod.php';
 require_once 'vod_series_list_screen.php';
 
-class VodMovieScreen implements Screen, UserInputHandler
+class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
 {
     const ID = 'vod_movie';
-    protected $plugin;
-
-    public function __construct(DefaultDunePlugin $plugin)
-    {
-        $this->plugin = $plugin;
-
-        if ($this->plugin->config->get_vod_support()) {
-            $this->plugin->create_screen($this);
-            UserInputHandlerRegistry::get_instance()->register_handler($this);
-        }
-    }
 
     public static function get_media_url_str($movie_id, $name = false, $poster_url = false, $info = false) {
         $arr['screen_id'] = self::ID;
@@ -37,14 +27,28 @@ class VodMovieScreen implements Screen, UserInputHandler
         return MediaURL::encode($arr);
     }
 
-    public function get_id()
+    public function __construct(DefaultDunePlugin $plugin)
     {
-        return self::ID;
+        parent::__construct(self::ID, $plugin);
+
+        if ($plugin->config->get_vod_support()) {
+            $plugin->create_screen($this);
+        }
     }
 
     public function get_handler_id()
     {
         return self::ID.'_handler';
+    }
+
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
+    {
+        return array();
     }
 
     ///////////////////////////////////////////////////////////////////////

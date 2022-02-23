@@ -13,7 +13,7 @@ class ControlFactory
         );
     }
 
-    public static function add_label(&$defs, $title, $text)
+    public static function add_label(&$defs, $title, $text, $vgap_after = false)
     {
         $defs[] = array
         (
@@ -22,6 +22,10 @@ class ControlFactory
             GuiControlDef::kind => GUI_CONTROL_LABEL,
             GuiControlDef::specific_def => array(GuiLabelDef::caption => $text),
         );
+
+        if ($vgap_after !== false) {
+            self::add_vgap($defs, $vgap_after);
+        }
     }
 
     public static function add_smart_label(&$defs, $title, $text)
@@ -65,6 +69,28 @@ class ControlFactory
                 GuiButtonDef::push_action => $push_action,
             ),
         );
+    }
+
+    public static function add_image_button(&$defs, $handler, $add_params, $name, $title, $caption, $image, $width = 0)
+    {
+        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+        $push_action['params']['action_type'] = 'apply';
+
+        $defs[] = array
+        (
+            GuiControlDef::name => $name,
+            GuiControlDef::title => $title,
+            GuiControlDef::kind => GUI_CONTROL_BUTTON,
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => '',
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => $push_action,
+            ),
+        );
+
+        self::add_vgap($defs, -65);
+        self::add_smart_label($defs, null,  "<gap width=15/><icon>$image</icon><gap width=20/><text dy='-2'>$caption</text>");
     }
 
     public static function add_close_dialog_button(&$defs, $caption, $width)

@@ -1,11 +1,9 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class VodSeriesListScreen extends AbstractPreloadedRegularScreen
+class VodSeriesListScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'vod_series';
-
-    protected $plugin;
 
     public static function get_media_url_str($movie_id)
     {
@@ -16,15 +14,22 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen
 
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
+        parent::__construct(self::ID, $plugin, $plugin->config->GET_VOD_SERIES_FOLDER_VIEW());
 
-        parent::__construct(self::ID, $this->plugin->config->GET_VOD_SERIES_FOLDER_VIEW());
-
-        if ($this->plugin->config->get_vod_support()) {
-            $this->plugin->create_screen($this);
+        if ($plugin->config->get_vod_support()) {
+            $plugin->create_screen($this);
         }
     }
 
+    public function get_handler_id()
+    {
+        return self::ID.'_handler';
+    }
+
+    public function handle_user_input(&$user_input, &$plugin_cookies)
+    {
+        return null;
+    }
     ///////////////////////////////////////////////////////////////////////
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)

@@ -5,7 +5,6 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
 {
     const ID = 'tv_favorites';
-    protected $plugin;
 
     public static function get_media_url_str()
     {
@@ -17,13 +16,10 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserIn
 
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
+        parent::__construct(self::ID, $plugin, $plugin->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS());
 
-        parent::__construct(self::ID, $this->plugin->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS());
-
-        if ($this->plugin->config->get_tv_fav_support()) {
-            $this->plugin->create_screen($this);
-            UserInputHandlerRegistry::get_instance()->register_handler($this);
+        if ($plugin->config->get_tv_fav_support()) {
+            $plugin->create_screen($this);
         }
     }
 

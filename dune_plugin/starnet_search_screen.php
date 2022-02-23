@@ -7,16 +7,12 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
     const ID = 'search_screen';
     const SEARCH_ICON_PATH = 'plugin_file://icons/icon_search.png';
 
-    protected $plugin;
-
     public function __construct(DefaultDunePlugin $plugin)
     {
-        $this->plugin = $plugin;
-        parent::__construct(self::ID, $this->plugin->vod->get_vod_search_folder_views());
+        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_search_folder_views());
 
-        if ($this->plugin->config->get_vod_support()) {
-            $this->plugin->create_screen($this);
-            UserInputHandlerRegistry::get_instance()->register_handler($this);
+        if ($plugin->config->get_vod_support()) {
+            $plugin->create_screen($this);
         }
     }
 
@@ -30,6 +26,11 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 'category' => $category
             )
         );
+    }
+
+    public function get_handler_id()
+    {
+        return self::ID.'_handler';
     }
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
@@ -54,11 +55,6 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
         $actions[GUI_EVENT_KEY_D_BLUE] = $add_action;
 
         return $actions;
-    }
-
-    public function get_handler_id()
-    {
-        return self::ID.'_handler';
     }
 
     private function get_update_action(&$user_input, &$plugin_cookies)
