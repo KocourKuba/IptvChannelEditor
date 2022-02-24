@@ -3095,11 +3095,13 @@ void CIPTVChannelEditorDlg::OnSave()
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_TOKEN, utils::utf16_to_utf8(m_token).c_str()));
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(m_domain).c_str()));
 					break;
-				case StreamType::enGlanz: // login/pass
+				case StreamType::enFox: // login/pass
+				case StreamType::enGlanz:
 				case StreamType::enSharaclub:
 				case StreamType::enSharaTV:
 				case StreamType::enOneOtt:
 				case StreamType::enVidok:
+				case StreamType::enTVClub:
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_LOGIN, utils::utf16_to_utf8(m_login).c_str()));
 					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
 					break;
