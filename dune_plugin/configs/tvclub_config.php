@@ -48,6 +48,10 @@ class TvclubPluginConfig extends DefaultConfig
     protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
+        if (!self::ensure_token_loaded($plugin_cookies)) {
+            hd_print("No token!");
+            return '';
+        }
 
         if (empty($plugin_cookies->token)) {
             hd_print("User token not set");
