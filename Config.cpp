@@ -83,7 +83,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enEdem,       _T("iEdem/iLook TV"),  "edem",       "iedem.tv",       "2.7.3" },
 	{ StreamType::enFox,        _T("Fox TV"),          "fox",        "fox-fun.tv",     "1.0.1" },
 	{ StreamType::enGlanz,      _T("glanz TV"),        "glanz",      "glanz.tv",       "1.0.3" },
-	{ StreamType::enItv,        _T("ITV TV"),          "itv",        "itv-live.tv",    "1.0.1" },
+	{ StreamType::enItv,        _T("ITV Live TV"),     "itv",        "itv-live.tv",    "1.0.1" },
 	{ StreamType::enSharaclub,  _T("Sharaclub TV"),    "sharaclub",  "sharaclub.tv",   "1.0.2" },
 	{ StreamType::enSharavoz,   _T("Sharavoz TV"),     "sharavoz",   "sharavoz.tv",    "1.0.2" },
 	{ StreamType::enOneCent,    _T("1CENT TV"),        "onecent",    "onecent.tv",     "1.0.0" },
