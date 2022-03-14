@@ -70,7 +70,7 @@ std::wstring uri_sharaclub::get_epg_uri_json(bool first, const std::wstring& id,
 
 std::wstring uri_sharaclub::get_playlist_template(const PlaylistTemplateParams& params) const
 {
-	return PLAYLIST_TEMPLATE;
+	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }
 
 bool uri_sharaclub::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
