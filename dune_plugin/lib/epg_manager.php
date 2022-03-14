@@ -116,9 +116,11 @@ class EpgManager
 
         // stripe UTF8 BOM if exists
         $ch_data = json_decode(ltrim($doc, "\xEF\xBB\xBF"), true);
-        foreach (explode('|', $parser_params['epg_root']) as $level) {
-            $epg_root = $level;
-            $ch_data = $ch_data[$epg_root];
+        if (!empty($parser_params['epg_root'])) {
+            foreach (explode('|', $parser_params['epg_root']) as $level) {
+                $epg_root = $level;
+                $ch_data = $ch_data[$epg_root];
+            }
         }
         // hd_print("json epg root: " . $parser_params['epg_root']);
         // hd_print("json start: " . $parser_params['start']);
