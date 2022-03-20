@@ -50,16 +50,12 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_NEXT_UPDATE,
 	REG_AVAIL_UPDATE,
 	REG_LOGIN,
-	REG_LOGIN_EMBEDDED,
 	REG_PASSWORD,
-	REG_PASSWORD_EMBEDDED,
 	REG_TOKEN,
-	REG_TOKEN_EMBEDDED,
 	REG_DOMAIN,
-	REG_DOMAIN_EMBEDDED,
 	REG_ACCESS_URL,
 	REG_HOST,
-	REG_HOST_EMBEDDED,
+	REG_PORTAL,
 	REG_FILTER_STRING_S,
 	REG_FILTER_STRING_H,
 	REG_FILTER_STRING_LST_S,
@@ -76,6 +72,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_CUSTOM_PLAYLIST,
 	REG_DEVICE_ID,
 	REG_SHOW_URL,
+	REG_CREDENTIALS,
 };
 
 static std::vector<PluginDesc> all_plugins = {
@@ -116,7 +113,7 @@ void PluginsConfig::SaveSettings()
 	if (m_bPortable)
 		SaveSettingsToJson();
 	else
-		SaveSectionRegistry(StreamType::enBase);
+		SaveSettingsToRegistry();
 }
 
 void PluginsConfig::LoadSettings()
@@ -227,7 +224,7 @@ PluginDesc PluginsConfig::get_plugin_info(const StreamType plugin) const
 		if (info.type == plugin)
 			return info;
 	}
-	return PluginDesc();
+	return {};
 }
 
 int PluginsConfig::get_plugin_idx() const
@@ -249,6 +246,40 @@ StreamType PluginsConfig::get_plugin_type() const
 void PluginsConfig::set_plugin_type(StreamType val)
 {
 	m_pluginType = val;
+}
+
+AccountType PluginsConfig::get_plugin_account_type() const
+{
+	switch (m_pluginType)
+	{
+		case StreamType::enEdem: // subdomain/token
+			return AccountType::enOtt;
+		case StreamType::enAntifriz: // pin
+		case StreamType::enItv:
+		case StreamType::enOneCent:
+		case StreamType::enOneUsd:
+		case StreamType::enSharavoz:
+		case StreamType::enTvTeam:
+		case StreamType::enVipLime:
+		case StreamType::enLightIptv:
+		case StreamType::enCbilling:
+		case StreamType::enOttclub:
+		case StreamType::enIptvOnline:
+		case StreamType::enShuraTV:
+			return AccountType::enPin;
+		case StreamType::enFox: // login/password
+		case StreamType::enGlanz:
+		case StreamType::enSharaclub:
+		case StreamType::enSharaTV:
+		case StreamType::enOneOtt:
+		case StreamType::enVidok:
+		case StreamType::enTVClub:
+			return AccountType::enLoginPass;
+		default:
+			break;
+	}
+
+	return AccountType::enUnknown;
 }
 
 std::wstring PluginsConfig::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const
@@ -273,13 +304,6 @@ void PluginsConfig::set_string(bool isApp, const std::wstring& key, const std::w
 	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
 
 	settings[key] = value;
-}
-
-void PluginsConfig::set_string(bool isApp, const std::wstring& key, const std::string& value)
-{
-	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
-
-	settings[key] = utils::utf8_to_utf16(value);
 }
 
 int PluginsConfig::get_int(bool isApp, const std::wstring& key, const int def /*= 0*/) const

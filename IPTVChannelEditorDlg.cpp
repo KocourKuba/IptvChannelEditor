@@ -12,9 +12,7 @@
 #include "MainSettingsPage.h"
 #include "PathsSettingsPage.h"
 #include "UpdateSettingsPage.h"
-#include "AccessOttKeyDlg.h"
-#include "AccessInfoPassDlg.h"
-#include "AccessInfoPinDlg.h"
+#include "AccessInfoDlg.h"
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
 #include "NewChannelsListDlg.h"
@@ -2655,57 +2653,14 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	int playlist_idx = m_wndPlaylist.GetCurSel();
 	int dialogType = 0; // none
 
-	switch (GetConfig().get_plugin_type())
+	auto account = GetConfig().get_plugin_account_type();
+	if (playlist_idx == 2 || (account != AccountType::enOtt && playlist_idx == 1))
 	{
-		case StreamType::enEdem: // subdomain/token
-			if (playlist_idx == 0 || playlist_idx == 1)
-				dialogType = 1;
-			break;
-		case StreamType::enAntifriz: // pin
-		case StreamType::enItv:
-		case StreamType::enOneCent:
-		case StreamType::enOneUsd:
-		case StreamType::enSharavoz:
-		case StreamType::enTvTeam:
-		case StreamType::enVipLime:
-		case StreamType::enLightIptv:
-		case StreamType::enCbilling:
-		case StreamType::enOttclub:
-		case StreamType::enIptvOnline:
-		case StreamType::enShuraTV:
-			if (playlist_idx == 0)
-				dialogType = 2;
-			break;
-		case StreamType::enFox: // login/password
-		case StreamType::enGlanz:
-		case StreamType::enSharaclub:
-		case StreamType::enSharaTV:
-		case StreamType::enOneOtt:
-		case StreamType::enVidok:
-		case StreamType::enTVClub:
-			if (playlist_idx == 0)
-				dialogType = 3;
-			break;
-		default:
-			break;
+		loaded = LoadCustomPlaylist();
 	}
-
-	switch (dialogType)
+	else
 	{
-		case 0: // custom
-			loaded = SetupCustomPlaylist();
-			break;
-		case 1: // subdomain/token
-			loaded = SetupOttKey();
-			break;
-		case 2: // pin
-			loaded = SetupPin();
-			break;
-		case 3: // login/password
-			loaded = SetupLogin();
-			break;
-		default:
-			break;
+		loaded = SetupAccount();
 	}
 
 	if (loaded)
@@ -2714,146 +2669,61 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	}
 }
 
-bool CIPTVChannelEditorDlg::SetupOttKey()
+bool CIPTVChannelEditorDlg::SetupAccount()
 {
-	CAccessOttKeyDlg dlg;
-	dlg.m_bEmbed = (m_embedded_info & EmbedToken) ? TRUE : FALSE;
-	dlg.m_bEmbed_vp = (m_embedded_info & EmbedPortal) ? TRUE : FALSE;
-	dlg.m_streamType = GetConfig().get_plugin_type();
-	dlg.m_accessKey = m_token.c_str();
-	dlg.m_domain = m_domain.c_str();
-	dlg.m_url = GetConfig().get_string(false, REG_ACCESS_URL).c_str();
-	dlg.m_vportal = m_portal.c_str();
+	CPropertySheet sheet(IDS_STRING_ACCOUNT_SETTINGS);
+	sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
+	sheet.m_psh.dwFlags &= ~PSH_HASHELP;
 
-	bool loaded = false;
-	if (dlg.DoModal() == IDOK)
+	CAccessInfoDlg dlgInfo;
+	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
+	dlgInfo.m_bEmbed = m_embedded_info;
+	dlgInfo.m_bEmbed_vp = (m_embedded_info & EmbedPortal) ? TRUE : FALSE;
+	dlgInfo.m_token = m_token;
+	dlgInfo.m_domain = m_domain;
+	dlgInfo.m_login = m_login;
+	dlgInfo.m_password = m_password;
+	dlgInfo.m_host = m_host;
+	dlgInfo.m_portal = m_portal;
+
+	sheet.AddPage(&dlgInfo);
+
+	if (sheet.DoModal() == IDOK)
 	{
-		loaded = (dlg.m_status == _T("Ok")
-					|| wcscmp(m_token.c_str(), dlg.m_accessKey.GetString()) != 0
-					|| wcscmp(m_domain.c_str(), dlg.m_domain.GetString()) != 0);
-
-		if (m_embedded_info != ((dlg.m_bEmbed ? EmbedToken : 0) | (dlg.m_bEmbed_vp ? EmbedPortal : 0)))
+		if (m_embedded_info != ((dlgInfo.m_bEmbed ? EmbedToken : 0) | (dlgInfo.m_bEmbed_vp ? EmbedPortal : 0)))
 		{
 			m_embedded_info = 0;
-			m_embedded_info |= dlg.m_bEmbed ? EmbedToken : 0;
-			m_embedded_info |= dlg.m_bEmbed_vp ? EmbedPortal : 0;
+			m_embedded_info |= dlgInfo.m_bEmbed ? EmbedToken : 0;
+			m_embedded_info |= dlgInfo.m_bEmbed_vp ? EmbedPortal : 0;
 			set_allow_save(TRUE);
 		}
 
-		GetConfig().set_string(false, dlg.m_bEmbed ? REG_TOKEN_EMBEDDED : REG_TOKEN, dlg.m_accessKey.GetString());
-		GetConfig().set_string(false, dlg.m_bEmbed ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, dlg.m_domain.GetString());
-		GetConfig().set_string(false, REG_ACCESS_URL, dlg.m_url.GetString());
-		GetConfig().set_string(false, REG_PORTAL, dlg.m_vportal.GetString());
+		m_domain = dlgInfo.m_domain;
+		m_token = dlgInfo.m_token;
+		m_login = dlgInfo.m_login;
+		m_password = dlgInfo.m_password;
+		m_host = dlgInfo.m_host;
+		m_portal = dlgInfo.m_portal;
 
-		m_token = GetConfig().get_string(false, dlg.m_bEmbed ? REG_TOKEN_EMBEDDED : REG_TOKEN);
-		m_domain = GetConfig().get_string(false, dlg.m_bEmbed ? REG_DOMAIN_EMBEDDED : REG_DOMAIN);
-		m_portal = GetConfig().get_string(false, REG_PORTAL);
+		GetConfig().UpdatePluginSettings();
+		return true;
 	}
 
-	return loaded;
+	return false;
 }
 
-bool CIPTVChannelEditorDlg::SetupLogin()
-{
-	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
-
-	auto& stream = entry->get_uri_stream();
-
-	stream->set_token(m_token);
-	stream->set_domain(m_domain);
-	stream->set_login(m_login);
-	stream->set_password(m_password);
-	stream->set_host(m_host);
-
-	CAccessInfoPassDlg dlg(GetConfig().get_plugin_type());
-
-	dlg.m_bEmbed = m_embedded_info;
-	dlg.m_entry = entry;
-
-	bool loaded = false;
-	if (dlg.DoModal() == IDOK)
-	{
-		if (m_embedded_info != dlg.m_bEmbed)
-		{
-			m_embedded_info = dlg.m_bEmbed;
-			set_allow_save(TRUE);
-		}
-
-		loaded = dlg.m_status == _T("Ok");
-
-		const auto& uri = dlg.m_entry->stream_uri;
-		m_token = uri->get_token();
-		m_domain = uri->get_domain();
-		m_login = uri->get_login();
-		m_password = uri->get_password();
-		m_host = uri->get_host();
-
-		GetConfig().set_string(false, m_embedded_info ? REG_TOKEN_EMBEDDED : REG_TOKEN, m_token);
-		GetConfig().set_string(false, m_embedded_info ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, m_domain);
-		GetConfig().set_string(false, m_embedded_info ? REG_LOGIN_EMBEDDED : REG_LOGIN, m_login);
-		GetConfig().set_string(false, m_embedded_info ? REG_PASSWORD_EMBEDDED : REG_PASSWORD, m_password);
-		GetConfig().set_string(false, m_embedded_info ? REG_HOST_EMBEDDED : REG_HOST, m_host);
-	}
-
-	return loaded;
-}
-
-bool CIPTVChannelEditorDlg::SetupPin()
-{
-	const auto plugin_type = GetConfig().get_plugin_type();
-	auto entry = std::make_shared<PlaylistEntry>(plugin_type, GetAppPath(utils::PLUGIN_ROOT));
-
-	CAccessInfoPinDlg dlg(plugin_type);
-	dlg.m_bEmbed = m_embedded_info;
-	dlg.m_entry = entry;
-	dlg.m_device_id = GetConfig().get_int(false, REG_DEVICE_ID, 1);
-
-	auto& stream = entry->get_uri_stream();
-
-	stream->set_token(m_token);
-	stream->set_domain(m_domain);
-	stream->set_password(m_password);
-
-	bool loaded = false;
-	if (dlg.DoModal() == IDOK)
-	{
-		if (m_embedded_info != dlg.m_bEmbed)
-		{
-			m_embedded_info = dlg.m_bEmbed;
-			set_allow_save(TRUE);
-		}
-
-		m_token = dlg.m_entry->stream_uri->get_token();
-		m_domain = dlg.m_entry->stream_uri->get_domain();
-		m_password = dlg.m_entry->stream_uri->get_password();
-
-		loaded = dlg.m_status == _T("Ok");
-
-		GetConfig().set_string(false, m_embedded_info ? REG_TOKEN_EMBEDDED : REG_TOKEN, m_token);
-		GetConfig().set_string(false, m_embedded_info ? REG_DOMAIN_EMBEDDED : REG_DOMAIN, m_domain);
-		GetConfig().set_string(false, m_embedded_info ? REG_PASSWORD_EMBEDDED : REG_PASSWORD, m_password);
-
-		if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV)
-		{
-			GetConfig().set_int(false, REG_DEVICE_ID, dlg.m_device_id);
-		}
-	}
-
-	return loaded;
-}
-
-bool CIPTVChannelEditorDlg::SetupCustomPlaylist()
+bool CIPTVChannelEditorDlg::LoadCustomPlaylist()
 {
 	CCustomPlaylistDlg dlg;
 	dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
 
-	bool loaded = false;
 	if (dlg.DoModal() == IDOK)
 	{
-		loaded = true;
 		GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
+		return true;
 	}
-	return loaded;
+
+	return false;
 }
 
 void CIPTVChannelEditorDlg::FillTreePlaylist()

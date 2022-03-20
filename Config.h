@@ -29,6 +29,14 @@ enum class StreamType
 	enTVClub,
 };
 
+enum class AccountType
+{
+	enUnknown = -1,
+	enOtt,
+	enPin,
+	enLoginPass
+};
+
 constexpr auto APP_SETTINGS = L"Application";
 
 constexpr auto CMP_FLAG_TITLE   = 0x01;
@@ -68,17 +76,12 @@ constexpr auto REG_SHOW_URL        = _T("ShowStreamUrl");
 
 // Plugin dependent
 constexpr auto REG_LOGIN               = _T("Login");
-constexpr auto REG_LOGIN_EMBEDDED      = _T("LoginEmbedded");
 constexpr auto REG_PASSWORD            = _T("Password");
-constexpr auto REG_PASSWORD_EMBEDDED   = _T("PasswordEmbedded");
 constexpr auto REG_TOKEN               = _T("AccessKey");
-constexpr auto REG_TOKEN_EMBEDDED      = _T("AccessKeyEmbedded");
 constexpr auto REG_DOMAIN              = _T("Domain");
-constexpr auto REG_DOMAIN_EMBEDDED     = _T("DomainEmbedded");
 constexpr auto REG_ACCESS_URL          = _T("AccessUrl");
 constexpr auto REG_HOST                = _T("Host");
 constexpr auto REG_PORTAL              = _T("VPortal");
-constexpr auto REG_HOST_EMBEDDED       = _T("HostEmbedded");
 constexpr auto REG_FILTER_STRING_S     = _T("FilterString");
 constexpr auto REG_FILTER_STRING_H     = _T("FilterStringHide");
 constexpr auto REG_FILTER_STRING_LST_S = _T("FilterStringList");
@@ -94,6 +97,7 @@ constexpr auto REG_PLAYLIST_TYPE       = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE         = _T("StreamType");
 constexpr auto REG_CUSTOM_PLAYLIST     = _T("CustomPlaylist");
 constexpr auto REG_DEVICE_ID           = _T("DeviceID");
+constexpr auto REG_CREDENTIALS         = _T("Credentials");
 
 typedef struct
 {
@@ -159,10 +163,11 @@ public:
 	BOOL IsPortable() const { return m_bPortable; }
 	void SetPortable(BOOL val) { m_bPortable = val; }
 
+	AccountType get_plugin_account_type() const;
+
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;
 	void set_string(bool isApp, const std::wstring& key, const std::wstring& value);
-	void set_string(bool isApp, const std::wstring& key, const std::string& value);
 
 	int get_int(bool isApp, const std::wstring& key, const int def = 0) const;
 	void set_int(bool isApp, const std::wstring& key, const int value);

@@ -193,10 +193,8 @@ private:
 	void UpdateChannelsTreeColors(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
 
-	bool SetupCustomPlaylist();
-	bool SetupOttKey();
-	bool SetupLogin();
-	bool SetupPin();
+	bool LoadCustomPlaylist();
+	bool SetupAccount();
 
 	std::shared_ptr<ChannelCategory> GetItemCategory(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelCategory> GetCategory(HTREEITEM hItem) const;

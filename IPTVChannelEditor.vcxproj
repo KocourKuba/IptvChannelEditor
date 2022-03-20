@@ -254,14 +254,13 @@ goto :EOF
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
-    <ClInclude Include="AccessOttKeyDlg.h" />
-    <ClInclude Include="AccessInfoPassDlg.h" />
-    <ClInclude Include="AccessInfoPinDlg.h" />
+    <ClInclude Include="AccessInfoDlg.h" />
     <ClInclude Include="BaseInfo.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="CMFCEditBrowsCtrlEx.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="EditableListCtrl.h" />
     <ClInclude Include="EpgListDlg.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
     <ClInclude Include="HistoryCombo.h" />
@@ -269,6 +268,7 @@ goto :EOF
     <ClInclude Include="IconLinkDlg.h" />
     <ClInclude Include="IconsListDlg.h" />
     <ClInclude Include="ImageContainer.h" />
+    <ClInclude Include="InPlaceEdit.h" />
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="NewChannelsListDlg.h" />
@@ -312,16 +312,16 @@ goto :EOF
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UrlDlg.h" />
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
-    <ClCompile Include="AccessOttKeyDlg.cpp" />
-    <ClCompile Include="AccessInfoPassDlg.cpp" />
-    <ClCompile Include="AccessInfoPinDlg.cpp" />
+    <ClCompile Include="AccessInfoDlg.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="EditableListCtrl.cpp" />
     <ClCompile Include="EpgListDlg.cpp" />
     <ClCompile Include="GetStreamInfoThread.cpp" />
     <ClCompile Include="HistoryCombo.cpp" />
@@ -329,6 +329,7 @@ goto :EOF
     <ClCompile Include="IconLinkDlg.cpp" />
     <ClCompile Include="IconsListDlg.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
+    <ClCompile Include="InPlaceEdit.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
     <ClCompile Include="NewChannelsListDlg.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
@@ -372,6 +373,7 @@ goto :EOF
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UrlDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IPTVChannelEditor.rc" />

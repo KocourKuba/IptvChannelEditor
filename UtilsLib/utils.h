@@ -65,6 +65,7 @@ public:
 	static constexpr char lf = '\n';
 	static constexpr char space = ' ';
 	static constexpr char tab = '\t';
+	static constexpr char quote = '\"';
 	static constexpr char nil = '\0';
 };
 
@@ -79,6 +80,7 @@ public:
 	static constexpr wchar_t lf = L'\n';
 	static constexpr wchar_t space = L' ';
 	static constexpr wchar_t tab = '\t';
+	static constexpr wchar_t quote = '\"';
 	static constexpr wchar_t nil = '\0';
 };
 

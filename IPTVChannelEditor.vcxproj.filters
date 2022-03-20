@@ -75,9 +75,6 @@
     <ClInclude Include="StreamContainer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="AccessOttKeyDlg.h">
-      <Filter>Header Files\Dialogs</Filter>
-    </ClInclude>
     <ClInclude Include="AboutDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
@@ -126,9 +123,6 @@
     <ClInclude Include="IconsListDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="AccessInfoPassDlg.h">
-      <Filter>Header Files\Dialogs</Filter>
-    </ClInclude>
     <ClInclude Include="uri_glanz.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
@@ -138,7 +132,7 @@
     <ClInclude Include="uri_antifriz.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
-    <ClInclude Include="AccessInfoPinDlg.h">
+    <ClInclude Include="AccessInfoDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="uri_oneusd.h">
@@ -225,6 +219,15 @@
     <ClInclude Include="uri_tvclub.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="EditableListCtrl.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="InPlaceEdit.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="UrlDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -246,9 +249,6 @@
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="AboutDlg.cpp">
-      <Filter>Source Files\Dialogs</Filter>
-    </ClCompile>
-    <ClCompile Include="AccessOttKeyDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="MainSettingsPage.cpp">
@@ -287,16 +287,13 @@
     <ClCompile Include="IconsListDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="AccessInfoPassDlg.cpp">
-      <Filter>Source Files\Dialogs</Filter>
-    </ClCompile>
     <ClCompile Include="uri_glanz.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
     <ClCompile Include="uri_antifriz.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
-    <ClCompile Include="AccessInfoPinDlg.cpp">
+    <ClCompile Include="AccessInfoDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="uri_oneusd.cpp">
@@ -382,6 +379,15 @@
     </ClCompile>
     <ClCompile Include="uri_tvclub.cpp">
       <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="EditableListCtrl.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="InPlaceEdit.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="UrlDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

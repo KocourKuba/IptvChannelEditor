@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="87" scanned="20220223173419" built="20220223173434" lang="ru" pane="TLogPane" col="2">
+<desktop scan="90" scanned="20220320161518" built="20220320161608" lang="ru" pane="TLogPane" col="3">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>
@@ -7,10 +7,10 @@
   <sheet>
     <columns>
       <item class="TFlagsColumn" width="38"/>
-      <item class="TPathColumn" width="162"/>
+      <item class="TPathColumn" width="260"/>
       <item class="TTranslationStatusColumn" width="93"/>
-      <item class="TOriginalColumn" width="327"/>
-      <item class="TTranslationColumn" lang="ru" width="331"/>
+      <item class="TOriginalColumn" width="524"/>
+      <item class="TTranslationColumn" lang="ru" width="532"/>
     </columns>
     <filters>
       <current>
