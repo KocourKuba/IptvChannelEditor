@@ -294,6 +294,9 @@ class EdemPluginConfig extends DefaultConfig
         $movies = array();
 
         $current_offset = $this->get_next_page($query_id, 0);
+        if ($current_offset < 0)
+            return $movies;
+
         foreach ($json->items as $entry) {
             if ($entry->type === 'next') {
                 $this->get_next_page($query_id, $entry->request->offset);
@@ -304,7 +307,7 @@ class EdemPluginConfig extends DefaultConfig
             }
         }
         if ($current_offset === $this->get_next_page($query_id, 0)) {
-            $this->get_next_page($query_id, count($movies));
+            $this->set_next_page($query_id, -1);
         }
 
         hd_print("Movies found: " . count($movies));

@@ -271,6 +271,11 @@ abstract class DefaultConfig
         return static::$pages[$idx];
     }
 
+    public function set_next_page($idx, $value)
+    {
+        static::$pages[$idx] = $value;
+    }
+
     public static function is_lazy_load_vod()
     {
         return static::$FEATURES[VOD_LAZY_LOAD];
