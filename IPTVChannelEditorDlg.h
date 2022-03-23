@@ -40,7 +40,7 @@ public:
 
 	struct CategoryInfo
 	{
-		HTREEITEM hItem;
+		HTREEITEM hItem = nullptr;
 		std::shared_ptr<ChannelCategory> category;
 	};
 

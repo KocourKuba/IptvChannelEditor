@@ -16,7 +16,7 @@ public:
 		*this = src;
 	}
 
-	IconContainer(IconContainer&& src)
+	IconContainer(IconContainer&& src) noexcept
 	{
 		*this = std::move(src);
 	}
@@ -33,7 +33,7 @@ public:
 		return *this;
 	}
 
-	IconContainer& operator=(IconContainer&& src)
+	IconContainer& operator=(IconContainer&& src) noexcept
 	{
 		if (this != &src)
 		{

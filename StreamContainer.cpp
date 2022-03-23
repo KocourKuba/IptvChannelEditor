@@ -45,64 +45,64 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 			return std::make_unique<uri_channels>();
 
 		case StreamType::enAntifriz:
-			return  std::make_unique<uri_antifriz>();
+			return std::make_unique<uri_antifriz>();
 
 		case StreamType::enEdem:
-			return  std::make_unique<uri_edem>();
+			return std::make_unique<uri_edem>();
 
 		case StreamType::enFox:
-			return  std::make_unique<uri_fox>();
+			return std::make_unique<uri_fox>();
 
 		case StreamType::enGlanz:
-			return  std::make_unique<uri_glanz>();
+			return std::make_unique<uri_glanz>();
 
 		case StreamType::enItv:
-			return  std::make_unique<uri_itv>();
+			return std::make_unique<uri_itv>();
 
 		case StreamType::enOneCent:
-			return  std::make_unique<uri_onecent>();
+			return std::make_unique<uri_onecent>();
 
 		case StreamType::enOneUsd:
-			return  std::make_unique<uri_oneusd>();
+			return std::make_unique<uri_oneusd>();
 
 		case StreamType::enSharaclub:
-			return  std::make_unique<uri_sharaclub>();
+			return std::make_unique<uri_sharaclub>();
 
 		case StreamType::enSharavoz:
-			return  std::make_unique<uri_sharavoz>();
+			return std::make_unique<uri_sharavoz>();
 
 		case StreamType::enVipLime:
-			return  std::make_unique<uri_viplime>();
+			return std::make_unique<uri_viplime>();
 
 		case StreamType::enSharaTV:
-			return  std::make_unique<uri_sharatv>();
+			return std::make_unique<uri_sharatv>();
 
 		case StreamType::enTvTeam:
-			return  std::make_unique<uri_tvteam>();
+			return std::make_unique<uri_tvteam>();
 
 		case StreamType::enOneOtt:
-			return  std::make_unique<uri_oneott>();
+			return std::make_unique<uri_oneott>();
 
 		case StreamType::enLightIptv:
-			return  std::make_unique<uri_lightiptv>();
+			return std::make_unique<uri_lightiptv>();
 
 		case StreamType::enCbilling:
-			return  std::make_unique<uri_cbilling>();
+			return std::make_unique<uri_cbilling>();
 
 		case StreamType::enOttclub:
-			return  std::make_unique<uri_ottclub>();
+			return std::make_unique<uri_ottclub>();
 
 		case StreamType::enIptvOnline:
-			return  std::make_unique<uri_iptvonline>();
+			return std::make_unique<uri_iptvonline>();
 
 		case StreamType::enVidok:
-			return  std::make_unique<uri_vidok>();
+			return std::make_unique<uri_vidok>();
 
 		case StreamType::enShuraTV:
-			return  std::make_unique<uri_shuratv>();
+			return std::make_unique<uri_shuratv>();
 
 		case StreamType::enTVClub:
-			return  std::make_unique<uri_tvclub>();
+			return std::make_unique<uri_tvclub>();
 
 		default:
 			ASSERT(false);

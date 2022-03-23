@@ -33,8 +33,8 @@ struct AccountInfo
 
 struct EpgInfo
 {
-	time_t time_start;
-	time_t time_end;
+	time_t time_start = 0;
+	time_t time_end = 0;
 	std::string name;
 	std::string desc;
 };

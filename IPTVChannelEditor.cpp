@@ -459,7 +459,7 @@ void RestoreWindowPos(HWND hWnd, LPCTSTR name)
 	HMONITOR hMonitor = ::MonitorFromPoint(CPoint(wp.rcNormalPosition.left, wp.rcNormalPosition.top), MONITOR_DEFAULTTONEAREST);
 
 	// Get the monitor info
-	MONITORINFO monInfo;
+	MONITORINFO monInfo{};
 	monInfo.cbSize = sizeof(MONITORINFO);
 	if (::GetMonitorInfo(hMonitor, &monInfo))
 	{
@@ -482,7 +482,7 @@ void RestoreWindowPos(HWND hWnd, LPCTSTR name)
 void SaveWindowPos(HWND hWnd, LPCTSTR name)
 {
 	// Get the window position
-	WINDOWPLACEMENT wp;
+	WINDOWPLACEMENT wp{};
 	wp.length = sizeof(WINDOWPLACEMENT);
 	GetWindowPlacement(hWnd, &wp);
 	// Save the info

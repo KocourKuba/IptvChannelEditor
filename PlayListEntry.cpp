@@ -16,7 +16,7 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 	bool result = false;
 	switch (m3uEntry.get_directive())
 	{
-		case m3u_entry::ext_pathname:
+	case m3u_entry::directives::ext_pathname:
 		{
 			stream_uri->parse_uri(str);
 			result = stream_uri->is_valid();
@@ -24,13 +24,13 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 				category = L"Unset";
 			break;
 		}
-		case m3u_entry::ext_group:
+		case m3u_entry::directives::ext_group:
 			if (!category.empty()) break;
 
 			category = m3uEntry.get_dvalue();
 			check_adult(category);
 			break;
-		case m3u_entry::ext_info:
+		case m3u_entry::directives::ext_info:
 		{
 			const auto& tags = m3uEntry.get_tags();
 
@@ -61,11 +61,11 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 
 void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
-	if (const auto& pair = tags.find(m3u_entry::tag_channel_id); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_channel_id); pair != tags.end())
 	{
 		stream_uri->set_id(pair->second);
 	}
-	else if (const auto& pair = tags.find(m3u_entry::tag_cuid); pair != tags.end())
+	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_cuid); pair != tags.end())
 	{
 		stream_uri->set_id(pair->second);
 	}
@@ -73,7 +73,7 @@ void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::wstring>
 
 void PlaylistEntry::search_group(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
-	if (const auto& pair = tags.find(m3u_entry::tag_group_title); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_group_title); pair != tags.end())
 	{
 		category = pair->second;
 		if (category.empty())
@@ -89,19 +89,19 @@ void PlaylistEntry::search_group(const std::map<m3u_entry::info_tags, std::wstri
 
 void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
-	if (const auto& pair = tags.find(m3u_entry::tag_tvg_rec); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_rec); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}
-	if (const auto& pair = tags.find(m3u_entry::tag_catchup_days); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_days); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}
-	if (const auto& pair = tags.find(m3u_entry::tag_catchup_time); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_time); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second) / 86400);
 	}
-	if (const auto& pair = tags.find(m3u_entry::tag_timeshift); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_timeshift); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}
@@ -110,15 +110,15 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wst
 void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
 	// priority -> tvg_id -> tvg_name -> title
-	if (const auto& pair = tags.find(m3u_entry::tag_tvg_id); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_id); pair != tags.end())
 	{
 		set_epg1_id(pair->second);
 	}
-	else if (const auto& pair = tags.find(m3u_entry::tag_tvg_name); pair != tags.end())
+	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_name); pair != tags.end())
 	{
 		set_epg1_id(pair->second);
 	}
-	else if (const auto& pair = tags.find(m3u_entry::tag_directive_title); pair != tags.end())
+	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_directive_title); pair != tags.end())
 	{
 		set_epg1_id(pair->second);
 	}
@@ -126,7 +126,7 @@ void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring
 
 void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
-	if (const auto& pair = tags.find(m3u_entry::tag_tvg_logo); pair != tags.end())
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_logo); pair != tags.end())
 	{
 		if (logo_root.empty())
 			set_icon_uri(utils::string_replace<wchar_t>(pair->second, L"//epg.it999.ru/img/", L"//epg.it999.ru/img2/"));

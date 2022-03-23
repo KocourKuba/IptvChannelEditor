@@ -97,7 +97,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const ThreadConfig& config, std:
 	CString csCommand;
 	csCommand.Format(_T("\"%s\" -hide_banner -show_streams \"%s\""), config.m_probe.c_str(), url.c_str());
 
-	BOOL bRunProcess = CreateProcess(config.m_probe.c_str(),			// 	__in_opt     LPCTSTR lpApplicationName
+	BOOL bRunProcess = CreateProcess(config.m_probe.c_str(),	// 	__in_opt     LPCTSTR lpApplicationName
 									 csCommand.GetBuffer(0),	// 	__inout_opt  LPTSTR lpCommandLine
 									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes
 									 nullptr,					// 	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes

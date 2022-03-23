@@ -11,29 +11,29 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static std::map<std::wstring_view, m3u_entry::directives> s_ext_directives = {
-	{ L"#EXTM3U"   , m3u_entry::ext_header   },
-	{ L"#EXTINF"   , m3u_entry::ext_info     },
-	{ L"#EXTGRP"   , m3u_entry::ext_group    },
-	{ L"#PLAYLIST" , m3u_entry::ext_playlist },
+	{ L"#EXTM3U"   , m3u_entry::directives::ext_header   },
+	{ L"#EXTINF"   , m3u_entry::directives::ext_info     },
+	{ L"#EXTGRP"   , m3u_entry::directives::ext_group    },
+	{ L"#PLAYLIST" , m3u_entry::directives::ext_playlist },
 };
 
 static std::map<std::wstring_view, m3u_entry::info_tags> s_tags = {
-	{ L"url-tvg",        m3u_entry::tag_url_tvg        },
-	{ L"url-logo",       m3u_entry::tag_url_logo       },
-	{ L"channel-id",     m3u_entry::tag_channel_id     },
-	{ L"CUID",           m3u_entry::tag_cuid           },
-	{ L"group-title",    m3u_entry::tag_group_title    },
-	{ L"tvg-id",         m3u_entry::tag_tvg_id         },
-	{ L"tvg-logo",       m3u_entry::tag_tvg_logo       },
-	{ L"tvg-rec",        m3u_entry::tag_tvg_rec        },
-	{ L"tvg-name",       m3u_entry::tag_tvg_name       },
-	{ L"tvg-shift",      m3u_entry::tag_tvg_shift      },
-	{ L"timeshift",      m3u_entry::tag_timeshift      },
-	{ L"catchup",        m3u_entry::tag_catchup        },
-	{ L"catchup-days",   m3u_entry::tag_catchup_days   },
-	{ L"catchup-time",   m3u_entry::tag_catchup_time   },
-	{ L"catchup-type",   m3u_entry::tag_catchup_type   },
-	{ L"catchup-source", m3u_entry::tag_catchup_source },
+	{ L"url-tvg",        m3u_entry::info_tags::tag_url_tvg        },
+	{ L"url-logo",       m3u_entry::info_tags::tag_url_logo       },
+	{ L"channel-id",     m3u_entry::info_tags::tag_channel_id     },
+	{ L"CUID",           m3u_entry::info_tags::tag_cuid           },
+	{ L"group-title",    m3u_entry::info_tags::tag_group_title    },
+	{ L"tvg-id",         m3u_entry::info_tags::tag_tvg_id         },
+	{ L"tvg-logo",       m3u_entry::info_tags::tag_tvg_logo       },
+	{ L"tvg-rec",        m3u_entry::info_tags::tag_tvg_rec        },
+	{ L"tvg-name",       m3u_entry::info_tags::tag_tvg_name       },
+	{ L"tvg-shift",      m3u_entry::info_tags::tag_tvg_shift      },
+	{ L"timeshift",      m3u_entry::info_tags::tag_timeshift      },
+	{ L"catchup",        m3u_entry::info_tags::tag_catchup        },
+	{ L"catchup-days",   m3u_entry::info_tags::tag_catchup_days   },
+	{ L"catchup-time",   m3u_entry::info_tags::tag_catchup_time   },
+	{ L"catchup-type",   m3u_entry::info_tags::tag_catchup_type   },
+	{ L"catchup-source", m3u_entry::info_tags::tag_catchup_source },
 };
 
 using wsvmatch = std::match_results<std::wstring_view::const_iterator>;
@@ -49,7 +49,7 @@ std::wstring_view wmatch_view(const wsvmatch::value_type& sm)
 void m3u_entry::clear()
 {
 	duration = 0;
-	ext_name = ext_pathname;
+	ext_name = directives::ext_pathname;
 	ext_tags.clear();
 }
 
@@ -73,7 +73,7 @@ void m3u_entry::parse(const std::wstring_view& str)
 	if (str.front() != '#')
 	{
 		// http://example.tv/live.strm
-		ext_name = ext_pathname;
+		ext_name = directives::ext_pathname;
 		ext_value = str;
 		return;
 	}
@@ -98,7 +98,7 @@ void m3u_entry::parse(const std::wstring_view& str)
 
 	switch (ext_name)
 	{
-		case ext_header:
+		case directives::ext_header:
 		{
 			// #EXTM3U url-tvg="http://iptv-content.webhop.net/guide.xml" url-logo="http://iptv-content.webhop.net/220x132/"
 			auto hdr = wmatch_view(m_dir[2]);
@@ -106,7 +106,7 @@ void m3u_entry::parse(const std::wstring_view& str)
 				parse_directive_tags(hdr);
 			break;
 		}
-		case ext_info:
+		case directives::ext_info:
 		{
 			wsvmatch m;
 			auto value = wmatch_view(m_dir[2]);
@@ -115,7 +115,7 @@ void m3u_entry::parse(const std::wstring_view& str)
 				duration = utils::char_to_int(m[1].str());
 				dir_title = m[3].str();
 				// put title to directive for tvg parsing
-				ext_tags.emplace(tag_directive_title, dir_title);
+				ext_tags.emplace(info_tags::tag_directive_title, dir_title);
 
 				if (m[2].matched)
 				{

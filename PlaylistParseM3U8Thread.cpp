@@ -39,10 +39,10 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				step++;
 
 				m3u_entry m3uEntry(line);
-				if (m3uEntry.get_directive() == m3u_entry::ext_header)
+				if (m3uEntry.get_directive() == m3u_entry::directives::ext_header)
 				{
 					const auto& tags = m3uEntry.get_tags();
-					if (const auto& pair = tags.find(m3u_entry::tag_url_logo); pair != tags.end())
+					if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_logo); pair != tags.end())
 					{
 						logo_root = pair->second;
 					}

@@ -9,7 +9,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-#define TCEX_EDITLABEL 1  // Edit label timer event
+constexpr auto TCEX_EDITLABEL = 1;  // Edit label timer event;
 #define COLORREF_NULL ((COLORREF)-1)
 
 // CTreeCtrlEx
@@ -422,7 +422,7 @@ void CTreeCtrlEx::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 			if (pWnd)
 			{
-				NM_TREEVIEW tv = { 0 };
+				NM_TREEVIEW tv{};
 
 				tv.hdr.hwndFrom = GetSafeHwnd();
 				tv.hdr.idFrom = GetWindowLong(GetSafeHwnd(), GWL_ID);
@@ -445,7 +445,7 @@ void CTreeCtrlEx::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		CWnd* pWnd = GetParent();
 		if (pWnd)
 		{
-			NMTVKEYDOWN tvk = { 0 };
+			NMTVKEYDOWN tvk{};
 
 			tvk.hdr.hwndFrom = GetSafeHwnd();
 			tvk.hdr.idFrom = GetWindowLong(GetSafeHwnd(), GWL_ID);
@@ -756,7 +756,7 @@ BOOL CTreeCtrlEx::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// Return TRUE if selection is not complete. This will prevent the
 	// notification from being sent to parent.
-	return !m_bSelectionComplete;
+	return m_bSelectionComplete == 0;
 }
 
 // Ensure the multiple selected items are drawn correctly when loosing/getting the focus

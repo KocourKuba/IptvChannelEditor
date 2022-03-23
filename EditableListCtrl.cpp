@@ -98,7 +98,7 @@ void CEditableListCtrl::EditCell(int nItem, int nCol)
 	}
 
 	// Get Column alignment
-	LV_COLUMN lvcol;
+	LV_COLUMN lvcol{};
 	lvcol.mask = LVCF_FMT;
 	GetColumn(nCol, &lvcol);
 	DWORD dwStyle;

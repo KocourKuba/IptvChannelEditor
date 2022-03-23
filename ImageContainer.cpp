@@ -47,7 +47,7 @@ void ImageContainer::set_image(const CImage& src)
 	if (srcBitsCount <= 8 && icon.IsIndexed())
 	{
 		//Need palette
-		RGBQUAD pal[256];
+		RGBQUAD pal[256] = {};
 		int nColors = src.GetMaxColorTableEntries();
 		if (nColors > 0)
 		{

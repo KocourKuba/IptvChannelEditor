@@ -14,7 +14,7 @@ public:
 		*this = src;
 	}
 
-	ImageContainer(ImageContainer&& src)
+	ImageContainer(ImageContainer&& src) noexcept
 	{
 		*this = std::move(src);
 	}
@@ -40,7 +40,7 @@ public:
 		return this;
 	}
 
-	ImageContainer* operator=(ImageContainer&& src)
+	ImageContainer* operator=(ImageContainer&& src) noexcept
 	{
 		if (this != &src)
 		{

@@ -3,7 +3,7 @@
 class m3u_entry
 {
 public:
-	typedef enum
+	enum class directives
 	{
 		ext_unknown = -1,
 		ext_pathname,
@@ -11,9 +11,9 @@ public:
 		ext_group,
 		ext_playlist,
 		ext_info,
-	} directives;
+	};
 
-	typedef enum
+	enum class info_tags
 	{
 		tag_directive_title = -1,
 		tag_url_tvg,
@@ -32,7 +32,7 @@ public:
 		tag_catchup_time,
 		tag_catchup_type,
 		tag_catchup_source,
-	} info_tags;
+	};
 
 public:
 	m3u_entry() = default;
@@ -62,7 +62,7 @@ protected:
 
 private:
 	int duration = 0;
-	directives ext_name = ext_unknown;
+	directives ext_name = directives::ext_unknown;
 	std::wstring ext_value;
 	std::wstring dir_title;
 	std::map<info_tags, std::wstring> ext_tags;

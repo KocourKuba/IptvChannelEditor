@@ -57,7 +57,7 @@ public:
 
 		std::vector<char> buffer((std::istreambuf_iterator<char>(ss)), std::istreambuf_iterator<char>());
 
-		return std::move(buffer);
+		return buffer;
 	}
 
 	void deserialize(std::vector<char>& buffer)

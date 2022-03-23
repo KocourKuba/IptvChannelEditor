@@ -560,7 +560,7 @@ void CTrayIcon::InstallIconPending()
 	}
 
 	m_niData.uFlags = m_flags;
-	m_isShowPending = !ShellNotify(NIM_ADD);
+	m_isShowPending = ShellNotify(NIM_ADD) == 0;
 }
 
 BOOL CALLBACK CTrayIcon::FindTrayWnd(HWND hWnd, LPARAM lParam)
