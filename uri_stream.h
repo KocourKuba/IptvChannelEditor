@@ -37,6 +37,10 @@ struct EpgInfo
 	time_t time_end = 0;
 	std::string name;
 	std::string desc;
+#ifdef _DEBUG
+	std::wstring start;
+	std::wstring end;
+#endif // _DEBUG
 };
 
 /// <summary>
@@ -305,6 +309,13 @@ public:
 				{
 					epg_info.time_end += epg_info.time_start;
 				}
+
+#ifdef _DEBUG
+				COleDateTime ts(epg_info.time_start);
+				COleDateTime te(epg_info.time_end);
+				epg_info.start = fmt::format(L"{:04d}-{:02d}-{:02d}", ts.GetYear(), ts.GetMonth(), ts.GetDay());
+				epg_info.end = fmt::format(L"{:04d}-{:02d}-{:02d}", te.GetYear(), te.GetMonth(), te.GetDay());
+#endif // _DEBUG
 
 				if (epg_info.time_start != 0)
 				{
