@@ -4,7 +4,7 @@
 class uri_cbilling : public uri_stream
 {
 public:
-	uri_cbilling() { epg2 = true; }
+	uri_cbilling() { epg2 = false; }
 
 	void parse_uri(const std::wstring& url) override;
 	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;
