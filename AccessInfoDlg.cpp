@@ -218,7 +218,7 @@ void CAccessInfoDlg::OnOK()
 	{
 		if (account_type == AccountType::enPin)
 		{
-			credentials += fmt::format(L"\"{:s}\";", m_wndAccounts.GetItemText(i, 0).GetString());
+			credentials += fmt::format(L"\"{:s}\";", m_wndAccounts.GetItemText(i, 1).GetString());
 			if (i == sel)
 			{
 				m_password = m_wndAccounts.GetItemText(i, 1).GetString();
