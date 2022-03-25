@@ -2106,7 +2106,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		}
 		else
 		{
-			bEnable = FALSE;
+			bEnable = false;
 		}
 
 		bEnable = bEnable && bSameType;
@@ -3732,7 +3732,7 @@ void CIPTVChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
 	}
 	else
 	{
-		enable = FALSE;
+		enable = false;
 	}
 
 	pCmdUI->Enable(enable);
@@ -3810,7 +3810,7 @@ void CIPTVChannelEditorDlg::OnUpdateClearStreamInfo(CCmdUI* pCmdUI)
 	}
 	else
 	{
-		enable = FALSE;
+		enable = false;
 	}
 
 	pCmdUI->Enable(enable);

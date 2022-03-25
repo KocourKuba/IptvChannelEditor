@@ -16,8 +16,8 @@ static constexpr auto PLAYLIST_TEMPLATE = L"http://cbilling.pw/playlist/{:s}_otp
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/cbilling/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE_JSON = L"https://api.iptvx.tv/epg/{:s}";
+static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.iptvx.tv/epg/{:s}";
+static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/cbilling/epg/{:s}.json";
 
 void uri_cbilling::parse_uri(const std::wstring& url)
 {
@@ -126,4 +126,9 @@ std::wstring uri_cbilling::get_epg_uri_json(bool first, const std::wstring& id, 
 std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.number);
+}
+
+const nlohmann::json& uri_cbilling::get_epg_root(bool first, const nlohmann::json& epg_data) const
+{
+	return first ? epg_data : uri_stream::get_epg_root(true, epg_data);
 }

@@ -69,6 +69,31 @@ std::wstring uri_shuratv::get_playlist_template(const PlaylistTemplateParams& pa
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.number);
 }
 
+const nlohmann::json& uri_shuratv::get_epg_root(bool first, const nlohmann::json& epg_data) const
+{
+	return first ? epg_data : uri_stream::get_epg_root(true, epg_data);
+}
+
+std::string uri_shuratv::get_epg_name(bool first, const nlohmann::json& val) const
+{
+	return first ? get_json_value("name", val) : uri_stream::get_epg_name(true, val);
+}
+
+std::string uri_shuratv::get_epg_desc(bool first, const nlohmann::json& val) const
+{
+	return first ? get_json_value("text", val) : uri_stream::get_epg_desc(true, val);
+}
+
+time_t uri_shuratv::get_epg_time_start(bool first, const nlohmann::json& val) const
+{
+	return first ? get_json_int_value("start_time", val) : uri_stream::get_epg_time_start(true, val);
+}
+
+time_t uri_shuratv::get_epg_time_end(bool first, const nlohmann::json& val) const
+{
+	return first ? get_json_int_value("duration", val) : uri_stream::get_epg_time_end(true, val);
+}
+
 std::wstring& uri_shuratv::append_archive(std::wstring& url) const
 {
 	if (url.rfind('?') != std::wstring::npos)

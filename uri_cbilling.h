@@ -19,4 +19,7 @@ public:
 		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enHLS2, L"HLS2"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 		return streams;
 	};
+
+protected:
+	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override;
 };

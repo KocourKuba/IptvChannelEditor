@@ -102,3 +102,8 @@ bool uri_sharaclub::parse_access_info(const PlaylistTemplateParams& params, std:
 
 	return false;
 }
+
+const nlohmann::json& uri_sharaclub::get_epg_root(bool first, const nlohmann::json& epg_data) const
+{
+	return epg_data;
+}

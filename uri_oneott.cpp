@@ -104,3 +104,28 @@ bool uri_oneott::parse_access_info(const PlaylistTemplateParams& params, std::li
 
 	return false;
 }
+
+const nlohmann::json& uri_oneott::get_epg_root(bool first, const nlohmann::json& epg_data) const
+{
+	return first ? epg_data : uri_stream::get_epg_root(true, epg_data);
+}
+
+std::string uri_oneott::get_epg_name(bool first, const nlohmann::json& val) const
+{
+	return first ? get_json_value("epg", val) : uri_stream::get_epg_name(true, val);
+}
+
+time_t uri_oneott::get_epg_time_start(bool first, const nlohmann::json& val) const
+{
+	return first ? get_json_int_value("start", val) : uri_stream::get_epg_time_start(true, val);
+}
+
+time_t uri_oneott::get_epg_time_end(bool first, const nlohmann::json& val) const
+{
+	return first ? get_json_int_value("stop", val) : uri_stream::get_epg_time_end(true, val);
+}
+
+std::string uri_oneott::get_epg_desc(bool first, const nlohmann::json& val) const
+{
+	return first ? get_json_value("desc", val) : uri_stream::get_epg_desc(true, val);
+}

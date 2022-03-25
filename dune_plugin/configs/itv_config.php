@@ -3,7 +3,7 @@ require_once 'default_config.php';
 
 class ItvPluginConfig extends DefaultConfig
 {
-    const PLAYLIST_TV_URL = 'https://itv.ooo/p/%s/hls.m3u8';
+    const PLAYLIST_TV_URL = 'http://itv.ooo/p/%s/hls.m3u8';
 
     public function __construct()
     {

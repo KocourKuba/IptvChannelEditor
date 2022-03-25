@@ -18,11 +18,11 @@ public:
 	};
 
 protected:
-	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override { return epg_data["epg"]["channels"][0]["epg"]; }
-	std::string get_epg_name(bool first, const nlohmann::json& val) const override { return get_json_value("text", val); }
-	std::string get_epg_desc(bool first, const nlohmann::json& val) const override { return get_json_value("description", val); }
-	time_t get_epg_time_start(bool first, const nlohmann::json& val) const override { return get_json_int_value("start", val); }
-	time_t get_epg_time_end(bool first, const nlohmann::json& val) const override { return get_json_int_value("end", val); }
+	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override;
+	std::string get_epg_name(bool first, const nlohmann::json& val) const override;
+	std::string get_epg_desc(bool first, const nlohmann::json& val) const override;
+	time_t get_epg_time_start(bool first, const nlohmann::json& val) const override;
+	time_t get_epg_time_end(bool first, const nlohmann::json& val) const override;
 
 private:
 	std::wstring& append_archive(std::wstring& url) const override;

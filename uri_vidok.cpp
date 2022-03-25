@@ -109,3 +109,28 @@ bool uri_vidok::parse_access_info(const PlaylistTemplateParams& params, std::lis
 
 	return false;
 }
+
+const nlohmann::json& uri_vidok::get_epg_root(bool first, const nlohmann::json& epg_data) const
+{
+	return epg_data["epg"];
+}
+
+std::string uri_vidok::get_epg_name(bool first, const nlohmann::json& val) const
+{
+	return get_json_value("text", val);
+}
+
+std::string uri_vidok::get_epg_desc(bool first, const nlohmann::json& val) const
+{
+	return get_json_value("description", val);
+}
+
+time_t uri_vidok::get_epg_time_start(bool first, const nlohmann::json& val) const
+{
+	return get_json_int_value("start", val);
+}
+
+time_t uri_vidok::get_epg_time_end(bool first, const nlohmann::json& val) const
+{
+	return get_json_int_value("end", val);
+}

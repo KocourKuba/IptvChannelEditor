@@ -120,3 +120,28 @@ bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<
 
 	return false;
 }
+
+const nlohmann::json& uri_itv::get_epg_root(bool first, const nlohmann::json& epg_data) const
+{
+	return epg_data["res"];
+}
+
+std::string uri_itv::get_epg_name(bool first, const nlohmann::json& val) const
+{
+	return get_json_value("title", val);
+}
+
+std::string uri_itv::get_epg_desc(bool first, const nlohmann::json& val) const
+{
+	return get_json_value("desc", val);
+}
+
+time_t uri_itv::get_epg_time_start(bool first, const nlohmann::json& val) const
+{
+	return get_json_int_value("startTime", val);
+}
+
+time_t uri_itv::get_epg_time_end(bool first, const nlohmann::json& val) const
+{
+	return get_json_int_value("stopTime", val);
+}

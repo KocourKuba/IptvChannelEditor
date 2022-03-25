@@ -118,6 +118,31 @@ bool uri_tvclub::parse_access_info(const PlaylistTemplateParams& params, std::li
 	return false;
 }
 
+const nlohmann::json& uri_tvclub::get_epg_root(bool first, const nlohmann::json& epg_data) const
+{
+	return epg_data["epg"]["channels"][0]["epg"];
+}
+
+std::string uri_tvclub::get_epg_name(bool first, const nlohmann::json& val) const
+{
+	return get_json_value("text", val);
+}
+
+std::string uri_tvclub::get_epg_desc(bool first, const nlohmann::json& val) const
+{
+	return get_json_value("description", val);
+}
+
+time_t uri_tvclub::get_epg_time_start(bool first, const nlohmann::json& val) const
+{
+	return get_json_int_value("start", val);
+}
+
+time_t uri_tvclub::get_epg_time_end(bool first, const nlohmann::json& val) const
+{
+	return get_json_int_value("end", val);
+}
+
 std::wstring& uri_tvclub::append_archive(std::wstring& url) const
 {
 	if (url.rfind('?') != std::wstring::npos)

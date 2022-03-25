@@ -427,7 +427,10 @@ void PluginsConfig::ReadSettingsRegistry(StreamType plugin_type)
 
 			std::wstring name(szName.data(), dwNameSize);
 			if (all_settings_keys.find(name) == all_settings_keys.end()) // ignore unknown keys
+			{
+				TRACE(L"Unknown key: %s", name.c_str());
 				continue;
+			}
 
 			switch (dwType)
 			{
@@ -523,7 +526,10 @@ bool PluginsConfig::ReadSettingsJson(StreamType plugin_type)
 	{
 		const auto& name = utils::utf8_to_utf16(item.key());
 		if (all_settings_keys.find(name) == all_settings_keys.end()) // ignore unknown keys
+		{
+			TRACE(L"Unknown key: %s", name.c_str());
 			continue;
+		}
 
 		switch (item.value().type())
 		{
