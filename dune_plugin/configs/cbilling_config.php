@@ -167,14 +167,9 @@ class CbillingPluginConfig extends DefaultConfig
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
-        switch($type)
-        {
-            case 'first':
-                hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-                return sprintf('http://api.iptvx.tv/epg/%s?date=%s', $id, $epg_date); // epg_id date(Y-m-d)
-            case 'second':
-                hd_print("Fetching EPG for ID: '$id'");
-                return sprintf('http://epg.ott-play.com/cbilling/epg/%s.json', $id);
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+            return sprintf('http://api.iptvx.tv/epg/%s?date=%s', $id, $epg_date); // epg_id date(Y-m-d)
         }
 
         return null;

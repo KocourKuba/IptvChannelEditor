@@ -38,6 +38,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_AUTO_SYNC_CHANNELS, m_bAutoSync);
 	DDX_Check(pDX, IDC_CHECK_AUTO_HIDE, m_bAutoHide);
 	DDX_Check(pDX, IDC_CHECK_PORTABLE, m_bPortable);
+	DDX_Check(pDX, IDC_CHECK_EPG_PROXY, m_bEpgProxy);
 
 	DDX_Check(pDX, IDC_CHECK_CMP_TITLE, m_bCmpTitle);
 	DDX_Check(pDX, IDC_CHECK_CMP_ICON, m_bCmpIcon);
@@ -52,6 +53,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 
 	m_bAutoSync = GetConfig().get_int(true, REG_AUTO_SYNC);
 	m_bAutoHide = GetConfig().get_int(true, REG_AUTO_HIDE);
+	m_bEpgProxy = GetConfig().get_int(true, REG_USE_EPG_PROXY);
 	m_bPortable = GetConfig().IsPortable();
 	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
@@ -89,6 +91,7 @@ void CMainSettingsPage::OnOK()
 
 	GetConfig().set_int(true, REG_AUTO_SYNC, m_bAutoSync);
 	GetConfig().set_int(true, REG_AUTO_HIDE, m_bAutoHide);
+	GetConfig().set_int(true, REG_USE_EPG_PROXY, m_bEpgProxy);
 	GetConfig().set_int(true, REG_MAX_THREADS, m_MaxThreads);
 	GetConfig().set_int(true, REG_LANGUAGE, m_nLang);
 

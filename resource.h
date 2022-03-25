@@ -244,6 +244,8 @@
 #define IDC_COMBO_STRING_SHOW           1116
 #define IDC_CHECK_PORTABLE              1117
 #define IDC_COMBO_STRING_HIDE           1118
+#define IDC_CHECK_PORTABLE2             1118
+#define IDC_CHECK_EPG_PROXY             1118
 #define IDC_CHECK_SHOW_MATCHED          1119
 #define IDC_CHECK_HIDE_MATCHED          1120
 #define IDC_SPIN_CHECK_UPDATE           1121

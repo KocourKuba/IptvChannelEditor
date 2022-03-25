@@ -17,6 +17,7 @@ class AntifrizPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
+        static::$EPG_PATH = 'antifriz';
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
         static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
         static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
@@ -105,16 +106,6 @@ class AntifrizPluginConfig extends DefaultConfig
         }
 
         return '';
-    }
-
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://epg.ott-play.com/antifriz/epg/%s.json', $id);
-        }
-
-        return null;
     }
 
     /**

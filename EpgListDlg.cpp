@@ -100,7 +100,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			}
 		}
 
-		if (need_load && !m_info->stream_uri->parse_epg(m_first, id, *m_pEpgChannelMap, now))
+		if (need_load && !m_info->stream_uri->parse_epg(m_first, id, *m_pEpgChannelMap, now, GetConfig().get_int(true, REG_USE_EPG_PROXY)))
 		{
 			need_load = false;
 		}

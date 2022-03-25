@@ -274,10 +274,16 @@ public:
 
 	bool has_epg2() const { return epg2; };
 
-	bool parse_epg(bool first, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time)
+	bool parse_epg(bool first, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time, bool use_proxy = false)
 	{
 		std::vector<BYTE> data;
-		if (!utils::DownloadFile(get_epg_uri_json(first, epg_id, for_time), data) || data.empty())
+		auto& epg_uri = get_epg_uri_json(first, epg_id, for_time);
+		if (epg_proxy && use_proxy)
+		{
+			utils::string_replace_inplace(epg_uri, L"ott-play.com", L"esalecrm.net");
+		}
+
+		if (!utils::DownloadFile(epg_uri, data) || data.empty())
 			return false;
 
 		JSON_ALL_TRY
@@ -413,6 +419,7 @@ protected:
 
 protected:
 	bool epg2 = false;
+	bool epg_proxy = false;
 	bool use_duration1 = false;
 	bool use_duration2 = false;
 	std::wstring id;

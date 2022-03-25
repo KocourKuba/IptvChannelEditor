@@ -66,6 +66,7 @@ constexpr auto REG_LANGUAGE        = _T("Language");
 constexpr auto REG_CMP_FLAGS       = _T("CompareFlags");
 constexpr auto REG_UPDATE_FREQ     = _T("UpdateFrequencies");
 constexpr auto REG_UPDATE_PL       = _T("UpdatePlaylists");
+constexpr auto REG_USE_EPG_PROXY   = _T("UseEpgProxy");
 
 // main dialog
 constexpr auto REG_PLUGIN          = _T("PluginType");

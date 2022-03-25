@@ -68,6 +68,8 @@ abstract class DefaultConfig
     public $PLUGIN_VERSION = '0.0.0';
     public $PLUGIN_DATE = '04.01.1972';
 
+    public static $EPG_PATH = '';
+
     protected static $FEATURES = array();
     protected static $EPG_PARSER_PARAMS = array();
 
@@ -120,6 +122,11 @@ abstract class DefaultConfig
         static::$EPG_PARSER_PARAMS['second']['description'] = 'descr';
         static::$EPG_PARSER_PARAMS['second']['date_format'] = 'Y-m-d';
         static::$EPG_PARSER_PARAMS['second']['use_duration'] = false;
+    }
+
+    public function is_third_party_epg()
+    {
+        return !empty(self::$EPG_PATH);
     }
 
     public static function get_account_type()
@@ -468,6 +475,16 @@ abstract class DefaultConfig
 
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            $url = sprintf('http://epg.ott-play.com/%s/epg/%s.json', static::$EPG_PATH, $id);
+            if (isset($plugin_cookies->use_epg_proxy) && $plugin_cookies->use_epg_proxy === 'yes') {
+                $url = str_replace('ott-play.com', 'esalecrm.net', $url);
+            }
+
+            return $url;
+        }
+
         return null;
     }
 

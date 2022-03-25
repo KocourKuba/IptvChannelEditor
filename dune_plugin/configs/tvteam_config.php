@@ -65,12 +65,9 @@ class TvteamPluginConfig extends DefaultConfig
 
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
-        hd_print("Fetching EPG for ID: '$id'");
-        switch ($type) {
-            case 'first':
-                return sprintf('http://tv.team/%s.json', $id);
-            case 'second':
-                return sprintf('http://epg.ott-play.com/tvteam/epg/%s.json', $id);
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            return sprintf('http://tv.team/%s.json', $id);
         }
 
         return null;

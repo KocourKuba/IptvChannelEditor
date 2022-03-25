@@ -9,6 +9,7 @@ class SharatvPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
+        static::$EPG_PATH = 'shara-tv';
         static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
         static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
@@ -45,15 +46,5 @@ class SharatvPluginConfig extends DefaultConfig
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $login, $password);
-    }
-
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://epg.ott-play.com/shara-tv/epg/%s.json', $id);
-        }
-
-        return null;
     }
 }

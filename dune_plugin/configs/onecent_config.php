@@ -9,6 +9,7 @@ class OnecentPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
+        static::$EPG_PATH = 'only4';
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
@@ -61,15 +62,5 @@ class OnecentPluginConfig extends DefaultConfig
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
-    }
-
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://epg.ott-play.com/only4/epg/%s.json', $id);
-        }
-
-        return null;
     }
 }

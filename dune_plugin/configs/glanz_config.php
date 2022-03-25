@@ -10,6 +10,7 @@ class GlanzPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
+        static::$EPG_PATH = 'ottg';
         static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
         static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
         static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
@@ -91,16 +92,6 @@ class GlanzPluginConfig extends DefaultConfig
         }
 
         return '';
-    }
-
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://epg.ott-play.com/ottg/epg/%s.json', $id);
-        }
-
-        return null;
     }
 
     /**

@@ -4,6 +4,7 @@
 class uri_lightiptv : public uri_stream
 {
 public:
+	uri_lightiptv() { epg_proxy = true; }
 	void parse_uri(const std::wstring& url) override;
 	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;
 	std::wstring get_epg_uri_json(bool first, const std::wstring& id, time_t for_time = 0) const override;

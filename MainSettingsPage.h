@@ -36,6 +36,7 @@ private:
 	BOOL m_bAutoSync = FALSE;
 	BOOL m_bAutoHide = FALSE;
 	BOOL m_bPortable = FALSE;
+	BOOL m_bEpgProxy = FALSE;
 
 	BOOL m_bCmpTitle = TRUE;
 	BOOL m_bCmpIcon = TRUE;

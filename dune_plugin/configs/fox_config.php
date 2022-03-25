@@ -10,6 +10,7 @@ class FoxPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
+        static::$EPG_PATH = 'fox-tv';
         static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
         static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
         static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
@@ -94,16 +95,6 @@ class FoxPluginConfig extends DefaultConfig
         }
 
         return $pl_entries;
-    }
-
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://epg.ott-play.com/fox-tv/epg/%s.json', $id);
-        }
-
-        return null;
     }
 
     /**

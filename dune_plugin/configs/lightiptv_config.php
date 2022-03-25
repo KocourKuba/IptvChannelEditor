@@ -9,6 +9,7 @@ class LightiptvPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
+        static::$EPG_PATH = 'lightiptv';
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
         static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS', 'hls2' => 'HLS2', 'mpeg' => 'MPEG-TS');
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|';
@@ -107,15 +108,5 @@ class LightiptvPluginConfig extends DefaultConfig
     public static function UpdateStreamUrlID($channel_id, $ext_params)
     {
         return str_replace('{TOKEN}', $ext_params['token'], static::$FEATURES[MEDIA_URL_TEMPLATE_HLS]);
-    }
-
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://epg.ott-play.com/lightiptv/epg/%s.json', $id);
-        }
-
-        return null;
     }
 }

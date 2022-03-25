@@ -1327,7 +1327,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			}
 		}
 
-		if (need_load && !info->stream_uri->parse_epg(first, epg_id, epgChannelMap, now))
+		if (need_load && !info->stream_uri->parse_epg(first, epg_id, epgChannelMap, now, GetConfig().get_int(true, REG_USE_EPG_PROXY)))
 		{
 			need_load = false;
 		}

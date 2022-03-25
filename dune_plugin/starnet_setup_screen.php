@@ -143,6 +143,10 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
             $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : ControlSwitchDefs::switch_epg1;
             ControlFactory::add_image_button($defs, $this, null, 'epg_source', 'Использовать вторичный источник EPG:',
                 self::$on_off_ops[$epg_source], $this->plugin->get_image_path(self::$on_off_img[$epg_source]));
+        } else if ($this->plugin->config->is_third_party_epg()){
+            $epg_proxy = isset($plugin_cookies->use_epg_proxy) ? $plugin_cookies->use_epg_proxy : ControlSwitchDefs::switch_off;
+            ControlFactory::add_image_button($defs, $this, null, 'epg_proxy', 'Использовать EPG Proxy:',
+                self::$on_off_ops[$epg_proxy], $this->plugin->get_image_path(self::$on_off_img[$epg_proxy]));
         }
 
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : ControlSwitchDefs::switch_normal;
@@ -477,6 +481,16 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
                             : ControlSwitchDefs::switch_epg1;
                     } else {
                         $plugin_cookies->epg_source = ControlSwitchDefs::switch_epg1;
+                    }
+                    break;
+
+                case 'epg_proxy':
+                    if (isset($plugin_cookies->use_epg_proxy)) {
+                        $plugin_cookies->use_epg_proxy = ($plugin_cookies->use_epg_proxy === ControlSwitchDefs::switch_on)
+                            ? ControlSwitchDefs::switch_off
+                            : ControlSwitchDefs::switch_on;
+                    } else {
+                        $plugin_cookies->use_epg_proxy = ControlSwitchDefs::switch_off;
                     }
                     break;
 
