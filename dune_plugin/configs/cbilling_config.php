@@ -7,8 +7,10 @@ class CbillingPluginConfig extends DefaultConfig
     const VOD_URL = 'http://api.iptvx.tv';
     const MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
 
+    const API_URL = 'http://protected-api.com/';
+
     const PLAYLIST_TV_URL = 'http://cbilling.pw/playlist/%s_otp_dev%s.m3u8';
-    const PLAYLIST_VOD_URL = 'http://api.iptvx.tv/';
+    const PLAYLIST_VOD_URL = API_URL;
     const MEDIA_URL_TEMPLATE_HLS2 = 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}';
 
     public function __construct()
@@ -169,7 +171,7 @@ class CbillingPluginConfig extends DefaultConfig
         $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
         if ($type === 'first') {
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('http://api.iptvx.tv/epg/%s?date=%s', $id, $epg_date); // epg_id date(Y-m-d)
+            return sprintf('%s/epg/%s/?date=%s', self::API_URL, $id, $epg_date); // epg_id date(Y-m-d)
         }
 
         return null;
