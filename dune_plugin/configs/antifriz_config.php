@@ -3,12 +3,12 @@ require_once 'default_config.php';
 
 class AntifrizPluginConfig extends DefaultConfig
 {
+    const API_HOST = 'http://protected-api.com';
+
     // vod
-    const VOD_URL = 'http://api.iptvx.tv';
     const MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
 
-    const PLAYLIST_TV_URL = 'http://antifriz.tv/playlist/%s.m3u8';
-    const PLAYLIST_VOD_URL = 'http://antifriz.tv/smartup/%s.m3u';
+    const PLAYLIST_TV_URL = 'http://af-play.com/playlist/%s.m3u8';
     const MEDIA_URL_TEMPLATE_MPEG = 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}';
     const MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}';
     const MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
@@ -17,7 +17,6 @@ class AntifrizPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$EPG_PATH = 'antifriz';
         static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
         static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
         static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
@@ -102,10 +101,21 @@ class AntifrizPluginConfig extends DefaultConfig
             case 'tv1':
                 return sprintf(self::PLAYLIST_TV_URL, $password);
             case 'movie':
-                return sprintf(self::PLAYLIST_VOD_URL, $password);
+                return self::API_HOST . '/genres';
         }
 
         return '';
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+            return sprintf('%s/epg/%s/?date=%s', self::API_HOST, $id, $epg_date); // epg_id date(Y-m-d)
+        }
+
+        return null;
     }
 
     /**
@@ -114,7 +124,7 @@ class AntifrizPluginConfig extends DefaultConfig
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         $movie = new Movie($movie_id);
-        $json = HD::LoadAndStoreJson(self::VOD_URL . "/video/$movie_id", false);
+        $json = HD::LoadAndStoreJson(self::API_HOST . "/video/$movie_id", false);
         if ($json === false) {
             return $movie;
         }
@@ -171,7 +181,7 @@ class AntifrizPluginConfig extends DefaultConfig
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         //hd_print("fetch_vod_categories");
-        $categories = HD::LoadAndStoreJson(self::VOD_URL, false /*, "/tmp/run/vc.json" */);
+        $categories = HD::LoadAndStoreJson(self::API_HOST, false /*, "/tmp/run/vc.json" */);
         if ($categories === false) {
             return;
         }
@@ -189,7 +199,7 @@ class AntifrizPluginConfig extends DefaultConfig
             $category = new StarnetVodCategory($id, (string)$node->name);
 
             // fetch genres for category
-            $genres = HD::LoadAndStoreJson(self::VOD_URL . "/cat/$id/genres", false);
+            $genres = HD::LoadAndStoreJson(self::API_HOST . "/cat/$id/genres", false);
             if ($genres === false) {
                 continue;
             }
@@ -214,7 +224,7 @@ class AntifrizPluginConfig extends DefaultConfig
     public function getSearchList($keyword, $plugin_cookies)
     {
         //hd_print("getSearchList");
-        $url = self::VOD_URL . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
+        $url = self::API_HOST . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
         $searchRes = HD::LoadAndStoreJson($url, false /*, "/tmp/run/sl.json"*/);
         return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
     }
@@ -240,8 +250,8 @@ class AntifrizPluginConfig extends DefaultConfig
             $url = "/genres/$genre_id?page=$val";
         }
 
-        $categories = HD::LoadAndStoreJson(self::VOD_URL . $url, false/*, "/tmp/run/$keyword.json"*/);
-        return $categories === false ? array() :$this->CollectSearchResult($categories);
+        $categories = HD::LoadAndStoreJson(self::API_HOST . $url, false/*, "/tmp/run/$keyword.json"*/);
+        return $categories === false ? array() : $this->CollectSearchResult($categories);
     }
 
     /**
