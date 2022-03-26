@@ -10,14 +10,13 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto ACCOUNT_TEMPLATE = L"http://api.iptvx.tv/auth/info";
+static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
 static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://cbilling.pw/playlist/{:s}_otp_dev{:d}.m3u8";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://247on.cc/playlist/{:s}_otp_dev{:d}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://protected-api.com/epg/{:s}/?date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/cbilling/epg/{:s}.json";
 
 void uri_cbilling::parse_uri(const std::wstring& url)
 {
@@ -121,7 +120,7 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 std::wstring uri_cbilling::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
-	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& params) const
@@ -131,5 +130,5 @@ std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& p
 
 const nlohmann::json& uri_cbilling::get_epg_root(bool first, const nlohmann::json& epg_data) const
 {
-	return first ? epg_data : uri_stream::get_epg_root(true, epg_data);
+	return epg_data;
 }

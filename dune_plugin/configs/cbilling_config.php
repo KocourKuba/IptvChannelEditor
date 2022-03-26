@@ -3,14 +3,12 @@ require_once 'default_config.php';
 
 class CbillingPluginConfig extends DefaultConfig
 {
+    const API_HOST = 'http://protected-api.com';
+
     // vod
-    const VOD_URL = 'http://api.iptvx.tv';
     const MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
 
-    const API_URL = 'http://protected-api.com/';
-
-    const PLAYLIST_TV_URL = 'http://cbilling.pw/playlist/%s_otp_dev%s.m3u8';
-    const PLAYLIST_VOD_URL = API_URL;
+    const PLAYLIST_TV_URL = 'http://247on.cc/playlist/%s_otp_dev%s.m3u8';
     const MEDIA_URL_TEMPLATE_HLS2 = 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}';
 
     public function __construct()
@@ -114,7 +112,7 @@ class CbillingPluginConfig extends DefaultConfig
 
         try {
             $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
-            $content = HD::http_get_document('http://api.iptvx.tv/auth/info', $headers);
+            $content = HD::http_get_document(self::API_HOST . '/auth/info', $headers);
         } catch (Exception $ex) {
             return false;
         }
@@ -160,7 +158,7 @@ class CbillingPluginConfig extends DefaultConfig
             case 'tv1':
                 return sprintf(self::PLAYLIST_TV_URL, $password, isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1');
             case 'movie':
-                return self::PLAYLIST_VOD_URL;
+                return self::API_HOST . '/genres';
         }
 
         return '';
@@ -171,7 +169,7 @@ class CbillingPluginConfig extends DefaultConfig
         $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
         if ($type === 'first') {
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('%s/epg/%s/?date=%s', self::API_URL, $id, $epg_date); // epg_id date(Y-m-d)
+            return sprintf('%s/epg/%s/?date=%s', self::API_HOST, $id, $epg_date); // epg_id date(Y-m-d)
         }
 
         return null;
@@ -183,7 +181,7 @@ class CbillingPluginConfig extends DefaultConfig
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         $movie = new Movie($movie_id);
-        $json = HD::LoadAndStoreJson(self::VOD_URL . "/video/$movie_id", false);
+        $json = HD::LoadAndStoreJson(self::API_HOST . "/video/$movie_id", false);
         if ($json === false) {
             return $movie;
         }
@@ -240,7 +238,7 @@ class CbillingPluginConfig extends DefaultConfig
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         //hd_print("fetch_vod_categories");
-        $categories = HD::LoadAndStoreJson(self::VOD_URL, false /*, "/tmp/run/vc.json" */);
+        $categories = HD::LoadAndStoreJson(self::API_HOST, false /*, "/tmp/run/vc.json" */);
         if ($categories === false) {
             return;
         }
@@ -258,7 +256,7 @@ class CbillingPluginConfig extends DefaultConfig
             $category = new StarnetVodCategory($id, (string)$node->name);
 
             // fetch genres for category
-            $genres = HD::LoadAndStoreJson(self::VOD_URL . "/cat/$id/genres", false);
+            $genres = HD::LoadAndStoreJson(self::API_HOST . "/cat/$id/genres", false);
             if ($genres === false) {
                 continue;
             }
@@ -283,7 +281,7 @@ class CbillingPluginConfig extends DefaultConfig
     public function getSearchList($keyword, $plugin_cookies)
     {
         //hd_print("getSearchList");
-        $url = self::VOD_URL . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
+        $url = self::API_HOST . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
         $searchRes = HD::LoadAndStoreJson($url, false /*, "/tmp/run/sl.json"*/);
         return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
     }
@@ -309,7 +307,7 @@ class CbillingPluginConfig extends DefaultConfig
             $url = "/genres/$genre_id?page=$val";
         }
 
-        $categories = HD::LoadAndStoreJson(self::VOD_URL . $url, false/*, "/tmp/run/$keyword.json"*/);
+        $categories = HD::LoadAndStoreJson(self::API_HOST . $url, false/*, "/tmp/run/$keyword.json"*/);
         return $categories === false ? array() : $this->CollectSearchResult($categories);
     }
 
