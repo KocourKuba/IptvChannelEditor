@@ -200,7 +200,7 @@ class SharaclubPluginConfig extends DefaultConfig
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         $movie = new Movie($movie_id);
-        $jsonItems = HD::parse_json_file(static::GET_VOD_TMP_STORAGE_PATH());
+        $jsonItems = HD::parse_json_file($this->GET_VOD_TMP_STORAGE_PATH());
         foreach ($jsonItems as $item) {
 
             $id = -1;
@@ -277,7 +277,7 @@ class SharaclubPluginConfig extends DefaultConfig
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = static::GetPlaylistUrl('movie', $plugin_cookies);
-        $categories = HD::LoadAndStoreJson($url, true, self::GET_VOD_TMP_STORAGE_PATH());
+        $categories = HD::LoadAndStoreJson($url, true, $this->GET_VOD_TMP_STORAGE_PATH());
         if ($categories === false)
         {
             return;
@@ -308,7 +308,7 @@ class SharaclubPluginConfig extends DefaultConfig
     {
         hd_print("getSearchList: $keyword");
         $movies = array();
-        $jsonItems = HD::parse_json_file(self::GET_VOD_TMP_STORAGE_PATH());
+        $jsonItems = HD::parse_json_file($this->GET_VOD_TMP_STORAGE_PATH());
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
         foreach ($jsonItems as $item) {
             $search  = utf8_encode(mb_strtolower($item["name"], 'UTF-8'));

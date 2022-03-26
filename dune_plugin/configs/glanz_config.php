@@ -101,7 +101,7 @@ class GlanzPluginConfig extends DefaultConfig
     {
         //hd_print("Movie ID: $movie_id");
         $movie = new Movie($movie_id);
-        $m3u_lines = static::FetchVodM3U($plugin_cookies);
+        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
             if ($i !== (int)$movie_id || !preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
                 continue;
