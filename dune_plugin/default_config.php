@@ -113,6 +113,7 @@ abstract class DefaultConfig
         static::$EPG_PARSER_PARAMS['first']['description'] = 'descr';
         static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y-m-d';
         static::$EPG_PARSER_PARAMS['first']['use_duration'] = false;
+        static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = array();
 
         static::$EPG_PARSER_PARAMS['second']['parser'] = 'json';
         static::$EPG_PARSER_PARAMS['second']['epg_root'] = 'epg_data';
@@ -122,6 +123,7 @@ abstract class DefaultConfig
         static::$EPG_PARSER_PARAMS['second']['description'] = 'descr';
         static::$EPG_PARSER_PARAMS['second']['date_format'] = 'Y-m-d';
         static::$EPG_PARSER_PARAMS['second']['use_duration'] = false;
+        static::$EPG_PARSER_PARAMS['second']['tvg_id_mapper'] = array();
     }
 
     public function is_third_party_epg()

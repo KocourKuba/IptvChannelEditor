@@ -4,6 +4,7 @@ require_once 'default_config.php';
 class SharatvPluginConfig extends DefaultConfig
 {
     const PLAYLIST_TV_URL = 'http://tvfor.pro/g/%s:%s/1/playlist.m3u';
+    const API_URL = 'http://technic.cf/epg-shara-tv';
 
     public function __construct()
     {
@@ -59,7 +60,7 @@ class SharatvPluginConfig extends DefaultConfig
         if ($type === 'first') {
             $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('http://technic.cf/epg-shara-tv/epg_day?id=%s&day=%s', $id, $epg_date); // epg_id date(Y.m.d)
+            return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
         }
 
         return null;

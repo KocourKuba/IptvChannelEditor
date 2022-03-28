@@ -3,6 +3,8 @@ require_once 'default_config.php';
 
 class EdemPluginConfig extends DefaultConfig
 {
+    const API_URL = 'http://technic.cf/epg-it999';
+
     public function __construct()
     {
         parent::__construct();
@@ -138,7 +140,7 @@ class EdemPluginConfig extends DefaultConfig
         if ($type === 'first') {
             $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('http://technic.cf/epg-it999/epg_day?id=%s&day=%s', $id, $epg_date); // epg_id date(Y.m.d)
+            return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
         }
 
         return null;

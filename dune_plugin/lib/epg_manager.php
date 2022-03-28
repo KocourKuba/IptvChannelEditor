@@ -43,6 +43,15 @@ class EpgManager
         }
 
         $config = $this->config;
+        $parser_params = $config->get_epg_params();
+        $params = $parser_params[$type];
+
+        $mapper = $params['tvg_id_mapper'];
+        if (!empty($mapper) && array_key_exists($epg_id, $mapper)) {
+            hd_print("EPG id replaced: $epg_id -> " . $mapper[$epg_id]);
+            $epg_id = $mapper[$epg_id];
+        }
+
         $epg_url = $config->get_epg_url($type, $epg_id, $day_start_ts, $plugin_cookies);
         if (empty($epg_url)) {
             hd_print("$type EPG url not defined");
@@ -51,9 +60,6 @@ class EpgManager
 
         $cache_dir =  sprintf(self::EPG_CACHE_DIR_TEMPLATE, $config->PLUGIN_SHORT_NAME);
         $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $config->PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);
-
-        $parser_params = $config->get_epg_params();
-        $params = $parser_params[$type];
 
         if (file_exists($cache_file)) {
             hd_print("Load EPG from cache: $cache_file");
