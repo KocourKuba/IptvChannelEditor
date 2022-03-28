@@ -7,7 +7,6 @@ class EdemPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$EPG_PATH = 'edem';
         static::$FEATURES[ACCOUNT_TYPE] = 'OTT_KEY';
         static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
@@ -15,6 +14,13 @@ class EdemPluginConfig extends DefaultConfig
         static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
         static::$FEATURES[VOD_PORTAL_SUPPORTED] = true;
         static::$FEATURES[VOD_LAZY_LOAD] = true;
+
+        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'data';
+        static::$EPG_PARSER_PARAMS['first']['start'] = 'begin';
+        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
+        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
+        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
+        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y.m.d';
     }
 
     public function AddFilterUI(&$defs, $parent, $initial = -1)
@@ -125,6 +131,17 @@ class EdemPluginConfig extends DefaultConfig
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
         return array();
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+            return sprintf('http://technic.cf/epg-it999/epg_day?id=%s&day=%s', $id, $epg_date); // epg_id date(Y.m.d)
+        }
+
+        return null;
     }
 
     /**
