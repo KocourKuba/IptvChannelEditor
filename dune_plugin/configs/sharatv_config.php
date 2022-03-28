@@ -9,11 +9,17 @@ class SharatvPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$EPG_PATH = 'shara-tv';
         static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
         static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/{TOKEN}';
+
+        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'data';
+        static::$EPG_PARSER_PARAMS['first']['start'] = 'begin';
+        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
+        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
+        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
+        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y.m.d';
     }
 
     /**
@@ -46,5 +52,16 @@ class SharatvPluginConfig extends DefaultConfig
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $login, $password);
+    }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+            return sprintf('http://technic.cf/epg-shara-tv/epg_day?id=%s&day=%s', $id, $epg_date); // epg_id date(Y.m.d)
+        }
+
+        return null;
     }
 }
