@@ -84,9 +84,17 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	int i = 0;
 	int current_idx = -1;
-	const auto& id = m_first ? m_info->get_epg1_id() : m_info->get_epg2_id();
-	m_pEpgChannelMap = &((*m_epg_cache)[m_first][id]);
-	m_csEpgUrl = m_info->stream_uri->get_epg_uri_json(!!m_first, id, start_time).c_str();
+	auto& epg_id = m_first ? m_info->get_epg1_id() : m_info->get_epg2_id();
+	if (m_epg_mapper && !m_epg_mapper->empty())
+	{
+		if (const auto& pair = m_epg_mapper->find(epg_id); pair != m_epg_mapper->end())
+		{
+			epg_id = pair->second;
+		}
+	}
+
+	m_pEpgChannelMap = &((*m_epg_cache)[m_first][epg_id]);
+	m_csEpgUrl = m_info->stream_uri->get_epg_uri_json(!!m_first, epg_id, start_time).c_str();
 
 	bool need_load = true;
 	while (need_load)
@@ -100,7 +108,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			}
 		}
 
-		if (need_load && !m_info->stream_uri->parse_epg(m_first, id, *m_pEpgChannelMap, now, GetConfig().get_int(true, REG_USE_EPG_PROXY)))
+		if (need_load && !m_info->stream_uri->parse_epg(m_first, epg_id, *m_pEpgChannelMap, now, GetConfig().get_int(true, REG_USE_EPG_PROXY)))
 		{
 			need_load = false;
 		}

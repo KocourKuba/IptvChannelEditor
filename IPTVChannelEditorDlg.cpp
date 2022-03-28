@@ -1309,7 +1309,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 		now += m_timeShiftHours;
 	}
 
-	auto epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
+	auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
 	if (!m_epg_mapper.empty())
 	{
 		if (const auto& pair = m_epg_mapper.find(epg_id); pair != m_epg_mapper.end())
@@ -2614,6 +2614,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 		dlg.m_info = info;
 		dlg.m_epg_cache= &m_epg_cache;
+		dlg.m_epg_mapper = &m_epg_mapper;
 		dlg.DoModal();
 	}
 }
