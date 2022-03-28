@@ -457,6 +457,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_host.clear();
 	m_embedded_info = FALSE;
+	m_epg_mapper.clear();
 
 	for (auto& map : m_epg_cache)
 	{
@@ -490,7 +491,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_enableDownload = (pl_idx != 1);
 	}
 
-	const auto& streams = StreamContainer::get_instance(plugin_type)->get_supported_stream_type();
+	const auto& plugin = StreamContainer::get_instance(plugin_type);
+	const auto& streams = plugin->get_supported_stream_type();
+	m_epg_mapper = plugin->get_tvg_id_mapper();
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();
@@ -1306,7 +1309,15 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 		now += m_timeShiftHours;
 	}
 
-	const auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
+	auto epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
+	if (!m_epg_mapper.empty())
+	{
+		if (const auto& pair = m_epg_mapper.find(epg_id); pair != m_epg_mapper.end())
+		{
+			epg_id = pair->second;
+		}
+	}
+
 	auto& allEpgMap = m_epg_cache[first];
 	auto& epgChannelMap = allEpgMap[epg_id];
 

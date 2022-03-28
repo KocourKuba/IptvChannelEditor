@@ -263,6 +263,7 @@ goto :EOF
     <ClInclude Include="Config.h" />
     <ClInclude Include="EditableListCtrl.h" />
     <ClInclude Include="EpgListDlg.h" />
+    <ClInclude Include="epg_technic.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
     <ClInclude Include="HistoryCombo.h" />
     <ClInclude Include="IconCache.h" />
@@ -324,6 +325,7 @@ goto :EOF
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="EditableListCtrl.cpp" />
     <ClCompile Include="EpgListDlg.cpp" />
+    <ClCompile Include="epg_technic.cpp" />
     <ClCompile Include="GetStreamInfoThread.cpp" />
     <ClCompile Include="HistoryCombo.cpp" />
     <ClCompile Include="IconCache.cpp" />

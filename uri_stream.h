@@ -274,7 +274,17 @@ public:
 	{
 		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"}};
 		return streams;
-	};
+	}
+
+	virtual const std::wstring get_tvg_id_mapper_url() const
+	{
+		return L"";
+	}
+
+	virtual std::map<std::wstring, std::wstring> get_tvg_id_mapper() const
+	{
+		return {};
+	}
 
 	bool has_epg2() const { return epg2; };
 

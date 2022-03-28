@@ -228,6 +228,9 @@
     <ClInclude Include="UrlDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="epg_technic.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -388,6 +391,9 @@
     </ClCompile>
     <ClCompile Include="UrlDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="epg_technic.cpp">
+      <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

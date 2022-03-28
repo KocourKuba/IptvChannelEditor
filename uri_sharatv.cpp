@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "uri_sharatv.h"
-#include "UtilsLib\utils.h"
-#include "PlayListEntry.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -11,7 +9,12 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://tvfor.pro/g/{:s}:{:s}/1/playlist.m3u";
 static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{ID}/{TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://technic.cf/epg-shara-tv/epg_day?id={:s}&day={:04d}.{:02d}.{:02d}";
+
+uri_sharatv::uri_sharatv()
+{
+	m_source = L"shara-tv";
+	m_use_mapper = false;
+}
 
 void uri_sharatv::parse_uri(const std::wstring& url)
 {
@@ -45,38 +48,7 @@ std::wstring uri_sharatv::get_templated_stream(StreamSubType subType, const Temp
 	return url;
 }
 
-std::wstring uri_sharatv::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
-	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
-}
-
 std::wstring uri_sharatv::get_playlist_template(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
-}
-
-const nlohmann::json& uri_sharatv::get_epg_root(bool first, const nlohmann::json& epg_data) const
-{
-	return epg_data["data"];
-}
-
-std::string uri_sharatv::get_epg_name(bool first, const nlohmann::json& val) const
-{
-	return get_json_value("title", val);
-}
-
-std::string uri_sharatv::get_epg_desc(bool first, const nlohmann::json& val) const
-{
-	return get_json_value("description", val);
-}
-
-time_t uri_sharatv::get_epg_time_start(bool first, const nlohmann::json& val) const
-{
-	return get_json_int_value("begin", val);
-}
-
-time_t uri_sharatv::get_epg_time_end(bool first, const nlohmann::json& val) const
-{
-	return get_json_int_value("end", val);
 }

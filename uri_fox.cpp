@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "uri_fox.h"
-#include "UtilsLib\utils.h"
-#include "PlayListEntry.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -11,7 +9,12 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.fox-tv.fun/{:s}/{:s}/tv.m3u";
 static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/fox-tv/epg/{:s}.json";
+
+uri_fox::uri_fox()
+{
+	m_source = L"fox";
+	m_use_mapper = true;
+}
 
 void uri_fox::parse_uri(const std::wstring& url)
 {
@@ -43,11 +46,6 @@ std::wstring uri_fox::get_templated_stream(StreamSubType subType, const Template
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_fox::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_fox::get_playlist_template(const PlaylistTemplateParams& params) const

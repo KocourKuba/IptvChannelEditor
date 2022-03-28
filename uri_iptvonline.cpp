@@ -11,7 +11,12 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://iptv.online/play/{:s}/m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/iptvx.one/epg/{:s}.json";
+
+uri_iptvonline::uri_iptvonline()
+{
+	m_source = L"iptvxone";
+	m_use_mapper = true;
+}
 
 void uri_iptvonline::parse_uri(const std::wstring& url)
 {
@@ -70,11 +75,6 @@ std::wstring uri_iptvonline::get_templated_stream(StreamSubType subType, const T
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_iptvonline::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_iptvonline::get_playlist_template(const PlaylistTemplateParams& params) const
