@@ -15,6 +15,7 @@ public:
 		return streams;
 	};
 
+protected:
 	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override;
 	std::string get_epg_name(bool first, const nlohmann::json& val) const override;
 	std::string get_epg_desc(bool first, const nlohmann::json& val) const override;
