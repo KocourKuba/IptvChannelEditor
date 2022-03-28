@@ -353,6 +353,10 @@ LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 
 	// Persist the selected attachment details upon updating its text
 	m_wndAccounts.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
+	if (GetChecked() == dispinfo->item.iItem)
+	{
+		GetAccountInfo();
+	}
 
 	return 0;
 }
@@ -374,23 +378,6 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 				{
 					m_wndAccounts.SetCheck(nItem, FALSE);
 				}
-			}
-
-			auto account_type = GetConfig().get_plugin_account_type();
-			if (account_type == AccountType::enPin)
-			{
-				m_password = m_wndAccounts.GetItemText(pNMLV->iItem, 1).GetString();
-			}
-			else if (account_type == AccountType::enLoginPass)
-			{
-				m_login = m_wndAccounts.GetItemText(pNMLV->iItem, 1).GetString();
-				m_password = m_wndAccounts.GetItemText(pNMLV->iItem, 2).GetString();
-			}
-			else if (account_type == AccountType::enOtt)
-			{
-				m_token = m_wndAccounts.GetItemText(pNMLV->iItem, 1).GetString();
-				m_domain = m_wndAccounts.GetItemText(pNMLV->iItem, 2).GetString();
-				m_portal = m_wndAccounts.GetItemText(pNMLV->iItem, 3).GetString();
 			}
 
 			m_wndGet.EnableWindow(TRUE);
@@ -422,6 +409,23 @@ void CAccessInfoDlg::GetAccountInfo()
 	int checked = GetChecked();
 	if (checked == -1)
 		return;
+
+	auto account_type = GetConfig().get_plugin_account_type();
+	if (account_type == AccountType::enPin)
+	{
+		m_password = m_wndAccounts.GetItemText(checked, 1).GetString();
+	}
+	else if (account_type == AccountType::enLoginPass)
+	{
+		m_login = m_wndAccounts.GetItemText(checked, 1).GetString();
+		m_password = m_wndAccounts.GetItemText(checked, 2).GetString();
+	}
+	else if (account_type == AccountType::enOtt)
+	{
+		m_token = m_wndAccounts.GetItemText(checked, 1).GetString();
+		m_domain = m_wndAccounts.GetItemText(checked, 2).GetString();
+		m_portal = m_wndAccounts.GetItemText(checked, 3).GetString();
+	}
 
 	// reset templated flag for new parse
 	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
