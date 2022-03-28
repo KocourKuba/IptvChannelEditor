@@ -161,16 +161,25 @@ class EdemPluginConfig extends DefaultConfig
             ''// budget
         );
 
-        if ($movieData->type !== 'multistream') {
-            //hd_print("movie playback_url: $movieData->url");
-            $movie->add_series_data($movie_id, $movieData->title, $movieData->url, true);
+        if ($movieData->type === 'multistream') {
+            // collect series
+            foreach ($movieData->items as $item) {
+                //hd_print("episode playback_url: $item->url");
+                $movie->add_series_data($item->fid, $item->title, $item->url, true);
+            }
             return $movie;
         }
 
-        // collect series
-        foreach ($movieData->items as $item) {
-            // hd_print("episode playback_url: $episode->url");
-            $movie->add_series_data($item->fid, $item->title, $item->url, true);
+        //hd_print("movie playback_url: \"$movieData->title\" $movieData->url");
+        $variants = (array)$movieData->variants;
+        //hd_print("playback_url variants: " . count($variants));
+        if (count($variants) > 1) {
+            foreach ($variants as $key => $item) {
+                //hd_print("variants playback_url: $key : $item");
+                $movie->add_series_data($movie_id, $key, $item, true);
+            }
+        } else {
+            $movie->add_series_data($movie_id, $movieData->title, $movieData->url, true);
         }
 
         return $movie;
