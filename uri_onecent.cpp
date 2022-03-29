@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "uri_onecent.h"
-#include "UtilsLib\utils.h"
-#include "PlayListEntry.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -14,7 +12,12 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/index.m3u8?to
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/index-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/only4/epg/{:s}.json";
+
+uri_onecent::uri_onecent()
+{
+	m_source = L"iptvxone";
+	m_use_mapper = true;
+}
 
 void uri_onecent::parse_uri(const std::wstring& url)
 {
@@ -63,11 +66,6 @@ std::wstring uri_onecent::get_templated_stream(StreamSubType subType, const Temp
 
 	replace_vars(url, params);
 	return url;
-}
-
-std::wstring uri_onecent::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_onecent::get_playlist_template(const PlaylistTemplateParams& params) const

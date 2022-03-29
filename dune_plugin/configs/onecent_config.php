@@ -4,6 +4,7 @@ require_once 'default_config.php';
 class OnecentPluginConfig extends DefaultConfig
 {
     const PLAYLIST_TV_URL = 'http://only4.tv/pl/%s/102/only4tv.m3u8';
+    const API_URL = 'http://technic.cf/epg-soveni';
 
     public function __construct()
     {
@@ -13,6 +14,13 @@ class OnecentPluginConfig extends DefaultConfig
         static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|';
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
         static::$FEATURES[SQUARE_ICONS] = true;
+
+        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'data';
+        static::$EPG_PARSER_PARAMS['first']['start'] = 'begin';
+        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
+        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
+        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
+        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y.m.d';
     }
 
     /**
@@ -50,11 +58,31 @@ class OnecentPluginConfig extends DefaultConfig
         return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    {
+        if (!parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
+            return false;
+        }
+
+        try {
+            $content = HD::http_get_document(self::API_URL . '/channels');
+            // stripe UTF8 BOM if exists
+            $json_data = json_decode(ltrim($content, "\xEF\xBB\xBF"), true);
+            static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = $json_data['data'];
+            hd_print("TVG ID Mapped: " . count(static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper']));
+        } catch (Exception $ex) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://epg.ott-play.com/only4/epg/%s.json', $id);
+            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
+            return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
         }
 
         return null;

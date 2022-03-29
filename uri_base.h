@@ -18,6 +18,7 @@ public:
 
 public:
 	uri_base() = default;
+	virtual ~uri_base() = default;
 
 public:
 
