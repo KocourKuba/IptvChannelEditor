@@ -1069,7 +1069,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 		BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
 		BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
 		BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
-		BOOL bCmpEpg2 = (flags & CMP_FLAG_EPG2) ? TRUE : FALSE;
+		BOOL bCmpEpg2 = ((flags & CMP_FLAG_EPG2) && StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2()) ? TRUE : FALSE;
 
 		while (root != nullptr && !m_playlistMap.empty())
 		{
