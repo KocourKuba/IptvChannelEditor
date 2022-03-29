@@ -40,6 +40,32 @@ class SharatvPluginConfig extends DefaultConfig
         return self::UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    {
+        if (!parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
+            return false;
+        }
+
+        try {
+            $content = HD::http_get_document(self::API_URL . '/channels');
+            // stripe UTF8 BOM if exists
+            $json_data = json_decode(ltrim($content, "\xEF\xBB\xBF"), true);
+            $mapped_ids = array();
+            foreach ($json_data['data'] as $key => $value)
+            {
+                if ($key !== (string)$value) {
+                    $mapped_ids[$key] = $value;
+                }
+            }
+            static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = $mapped_ids;
+            hd_print("TVG ID Mapped: " . count($mapped_ids));
+        } catch (Exception $ex) {
+            return false;
+        }
+
+        return true;
+    }
+
     protected static function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");

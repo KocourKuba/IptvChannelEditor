@@ -15,7 +15,6 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/play/{ID}/{TOKEN}/
 uri_iptvonline::uri_iptvonline()
 {
 	m_source = L"iptvxone";
-	m_use_mapper = true;
 }
 
 void uri_iptvonline::parse_uri(const std::wstring& url)

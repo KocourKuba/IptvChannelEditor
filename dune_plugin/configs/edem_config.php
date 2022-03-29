@@ -121,6 +121,22 @@ class EdemPluginConfig extends DefaultConfig
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account $this->PLUGIN_SHOW_NAME");
+        try {
+            $content = HD::http_get_document(self::API_URL . '/channels');
+            // stripe UTF8 BOM if exists
+            $json_data = json_decode(ltrim($content, "\xEF\xBB\xBF"), true);
+            $mapped_ids = array();
+            foreach ($json_data['data'] as $key => $value)
+            {
+                if ($key !== (string)$value) {
+                    $mapped_ids[$key] = $value;
+                }
+            }
+            static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = $mapped_ids;
+            hd_print("TVG ID Mapped: " . count($mapped_ids));
+        } catch (Exception $ex) {
+            return false;
+        }
 
         return true;
     }

@@ -14,7 +14,6 @@ static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/inde
 uri_edem::uri_edem()
 {
 	m_source = L"it999";
-	m_use_mapper = false;
 }
 
 void uri_edem::parse_uri(const std::wstring& url)

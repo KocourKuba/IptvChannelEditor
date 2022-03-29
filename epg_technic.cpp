@@ -7,33 +7,36 @@ static constexpr auto EPG_TEMPLATE_JSON = L"http://technic.cf/epg-{:s}/epg_day?i
 std::map<std::wstring, std::wstring> epg_technic::get_tvg_id_mapper() const
 {
 	std::map<std::wstring, std::wstring> mapper;
-	if (m_use_mapper)
+	std::vector<BYTE> data;
+	const auto& mapper_url = fmt::format(EPG_MAP_URL, m_source);
+	if (utils::DownloadFile(mapper_url, data) || data.empty())
 	{
-		std::vector<BYTE> data;
-		const auto& mapper_url = fmt::format(EPG_MAP_URL, m_source);
-		if (utils::DownloadFile(mapper_url, data) || data.empty())
+		JSON_ALL_TRY
 		{
-			JSON_ALL_TRY
+			nlohmann::json parsed_json = nlohmann::json::parse(data);
+			nlohmann::json js_data = parsed_json["data"];
+			for (const auto& item : js_data.items())
 			{
-				nlohmann::json parsed_json = nlohmann::json::parse(data);
-				nlohmann::json js_data = parsed_json["data"];
-				for (const auto& item : js_data.items())
+				std::wstring value;
+				const auto& name = utils::utf8_to_utf16(item.key());
+				switch (item.value().type())
 				{
-					const auto& name = utils::utf8_to_utf16(item.key());
-					switch (item.value().type())
-					{
-					case nlohmann::detail::value_t::number_integer:
-					case nlohmann::detail::value_t::number_unsigned:
-						mapper.emplace(name, std::to_wstring(item.value().get<int>()));
-						break;
-					case nlohmann::detail::value_t::string:
-						mapper.emplace(name, utils::utf8_to_utf16(item.value().get<std::string>()));
-						break;
-					}
+				case nlohmann::detail::value_t::number_integer:
+				case nlohmann::detail::value_t::number_unsigned:
+					value.swap(std::to_wstring(item.value().get<int>()));
+					break;
+				case nlohmann::detail::value_t::string:
+					value.swap(utils::utf8_to_utf16(item.value().get<std::string>()));
+					break;
+				}
+
+				if (name != value)
+				{
+					mapper.emplace(name, value);
 				}
 			}
-			JSON_ALL_CATCH;
 		}
+		JSON_ALL_CATCH;
 	}
 
 	return mapper;

@@ -21,7 +21,6 @@ static constexpr auto REPL_HOST = L"{HOST}";
 uri_glanz::uri_glanz()
 {
 	m_source = L"iptvxone";
-	m_use_mapper = true;
 }
 
 void uri_glanz::parse_uri(const std::wstring& url)

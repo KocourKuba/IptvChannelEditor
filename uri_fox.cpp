@@ -13,7 +13,6 @@ static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{TOKEN}";
 uri_fox::uri_fox()
 {
 	m_source = L"fox";
-	m_use_mapper = true;
 }
 
 void uri_fox::parse_uri(const std::wstring& url)

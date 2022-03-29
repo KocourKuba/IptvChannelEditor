@@ -13,7 +13,6 @@ static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{ID}/{TOKEN}";
 uri_sharatv::uri_sharatv()
 {
 	m_source = L"shara-tv";
-	m_use_mapper = false;
 }
 
 void uri_sharatv::parse_uri(const std::wstring& url)

@@ -16,5 +16,4 @@ protected:
 
 protected:
 	std::wstring m_source;
-	bool m_use_mapper = false;
 };

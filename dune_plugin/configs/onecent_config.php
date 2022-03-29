@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class OnecentPluginConfig extends DefaultConfig
 {
     const PLAYLIST_TV_URL = 'http://only4.tv/pl/%s/102/only4tv.m3u8';
-    const API_URL = 'http://technic.cf/epg-soveni';
+    const API_URL = 'http://technic.cf/epg-iptvxone';
 
     public function __construct()
     {
@@ -68,8 +68,15 @@ class OnecentPluginConfig extends DefaultConfig
             $content = HD::http_get_document(self::API_URL . '/channels');
             // stripe UTF8 BOM if exists
             $json_data = json_decode(ltrim($content, "\xEF\xBB\xBF"), true);
-            static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = $json_data['data'];
-            hd_print("TVG ID Mapped: " . count(static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper']));
+            $mapped_ids = array();
+            foreach ($json_data['data'] as $key => $value)
+            {
+                if ($key !== (string)$value) {
+                    $mapped_ids[$key] = $value;
+                }
+            }
+            static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = $mapped_ids;
+            hd_print("TVG ID Mapped: " . count($mapped_ids));
         } catch (Exception $ex) {
             return false;
         }

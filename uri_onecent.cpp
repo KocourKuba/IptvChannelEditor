@@ -16,7 +16,6 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive
 uri_onecent::uri_onecent()
 {
 	m_source = L"iptvxone";
-	m_use_mapper = true;
 }
 
 void uri_onecent::parse_uri(const std::wstring& url)
