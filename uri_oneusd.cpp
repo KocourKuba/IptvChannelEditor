@@ -15,7 +15,6 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/index-{START}-7200.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-7200.ts?token={TOKEN}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://tv.team/{:s}.json";
-static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/tvteam/epg/{:s}.json";
 
 void uri_oneusd::parse_uri(const std::wstring& url)
 {
@@ -71,7 +70,7 @@ std::wstring uri_oneusd::get_templated_stream(StreamSubType subType, const Templ
 
 std::wstring uri_oneusd::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
-	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id);
+	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_oneusd::get_playlist_template(const PlaylistTemplateParams& params) const

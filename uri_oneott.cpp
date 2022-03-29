@@ -13,7 +13,6 @@ static constexpr auto PLAYLIST_TEMPLATE = L"http://list.1ott.net/api/{:s}/high/o
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.propg.net/{:s}/epg2/{:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.ott-play.com/1ott/epg/{:s}.json";
 
 
 void uri_oneott::parse_uri(const std::wstring& url)
@@ -66,7 +65,7 @@ std::wstring uri_oneott::get_templated_stream(StreamSubType subType, const Templ
 std::wstring uri_oneott::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::wstring uri_oneott::get_playlist_template(const PlaylistTemplateParams& params) const
