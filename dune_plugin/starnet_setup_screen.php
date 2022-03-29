@@ -490,7 +490,7 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
                             ? ControlSwitchDefs::switch_off
                             : ControlSwitchDefs::switch_on;
                     } else {
-                        $plugin_cookies->use_epg_proxy = ControlSwitchDefs::switch_off;
+                        $plugin_cookies->use_epg_proxy = ControlSwitchDefs::switch_on;
                     }
                     break;
 
@@ -500,7 +500,7 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
                             ? ControlSwitchDefs::switch_small
                             : ControlSwitchDefs::switch_normal;
                     } else {
-                        $plugin_cookies->epg_font_size = ControlSwitchDefs::switch_normal;
+                        $plugin_cookies->epg_font_size = ControlSwitchDefs::switch_small;
                     }
                     break;
 
