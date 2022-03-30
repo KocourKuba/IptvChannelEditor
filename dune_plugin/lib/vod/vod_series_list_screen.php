@@ -58,6 +58,7 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen implements User
         $items = array();
 
         foreach ($movie->series_list as $series) {
+            // hd_print("name: $series->name movie_id: $movie->id series_id: $series->id");
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => MediaURL::encode(array

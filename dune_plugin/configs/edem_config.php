@@ -211,7 +211,7 @@ class EdemPluginConfig extends DefaultConfig
         if (count($variants) > 1) {
             foreach ($variants as $key => $item) {
                 //hd_print("variants playback_url: $key : $item");
-                $movie->add_series_data($movie_id, $key, $item, true);
+                $movie->add_series_data($movie_id . "_$key", $key, $item, true);
             }
         } else {
             $movie->add_series_data($movie_id, $movieData->title, $movieData->url, true);
