@@ -365,12 +365,12 @@ int main(int argc, char* argv[])
 	bool printHelp = false;
 
 	// First configure all possible command line options.
-	CommandLine args("IPTV Channel Editor Updater 1.0\n");
+	CommandLine args("IPTV Channel Editor Updater 1.1\n(c) Pavel Abakanov (aka sharky72 at forum.hdtv.ru)\n");
 
 	args.addArgument({ "check" }, &check, "Check for update");
 	args.addArgument({ "download" }, &download, "Download update");
 	args.addArgument({ "update" }, &update, "Perform update");
-	args.addArgument({ "-o", "--optional" }, &playlists, "Download or Update optional packages");
+	args.addArgument({ "-o", "--optional" }, &playlists, "Download or Update optional packages (playlists)");
 	args.addArgument({ "-h", "--help" }, &printHelp, "Show parameters info");
 
 	std::error_code err;
