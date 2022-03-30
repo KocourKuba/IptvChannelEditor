@@ -24,6 +24,8 @@ class AntifrizPluginConfig extends DefaultConfig
         static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
         static::$FEATURES[VOD_LAZY_LOAD] = true;
         static::$FEATURES[EXTINF_VOD_PATTERN] = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
+
+        static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
     }
 
     /**
