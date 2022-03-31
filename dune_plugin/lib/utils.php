@@ -512,4 +512,22 @@ class HD
 
         return $categories;
     }
+
+    public static function MapTvgID($url)
+    {
+        $mapped_ids = array();
+        try {
+            $json_data = json_decode(self::http_get_document($url), true);
+            foreach ($json_data['data'] as $key => $value)
+            {
+                if ((string)$key !== (string)$value) {
+                    $mapped_ids[$key] = $value;
+                }
+            }
+        } catch (Exception $ex) {
+            hd_print("Error mapping tvg id's: " . $ex->getMessage());
+        }
+
+        return $mapped_ids;
+    }
 }
