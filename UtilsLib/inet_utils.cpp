@@ -182,4 +182,140 @@ std::string entityDecrypt(const std::string& text)
 	return res;
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+bool CBase64Coder::Encode(const unsigned char* pData, int nSize, unsigned long dwFlags /*= ATL_BASE64_FLAG_NOCRLF*/)
+{
+	//Tidy up any heap memory we have been using
+	m_buf.clear();
+
+	//Calculate and allocate the buffer to store the encoded data
+	m_nSize = Base64EncodeGetRequiredLength(nSize, dwFlags) + 1; //We allocate an extra byte so that we can null terminate the result
+	m_buf.resize(m_nSize);
+
+	//Finally do the encoding
+	if (!ATL::Base64Encode(pData, nSize, (char*)m_buf.data(), &m_nSize, dwFlags)) return FALSE;
+
+	//Null terminate the data
+	m_buf[m_nSize] = 0;
+
+	return TRUE;
+}
+
+bool CBase64Coder::Encode(const char* szMessage, int nSize /*= 0*/, unsigned long dwFlags /*= ATL_BASE64_FLAG_NOCRLF*/)
+{
+	if (!nSize)
+		nSize = (int)strlen(szMessage);
+
+	return Encode(reinterpret_cast<const BYTE*>(szMessage), nSize, dwFlags);
+}
+
+bool CBase64Coder::Decode(const char* pData, int nSize)
+{
+	//Tidy up any heap memory we have been using
+	m_buf.clear();
+
+	//Calculate and allocate the buffer to store the encoded data
+	m_nSize = Base64DecodeGetRequiredLength(nSize) + 1;
+	m_buf.resize(m_nSize);
+
+	//Finally do the encoding
+	if (!Base64Decode(pData, nSize, m_buf.data(), &m_nSize)) return FALSE;
+
+	//Null terminate the data
+	m_buf[m_nSize] = 0;
+
+	return TRUE;
+}
+
+bool CBase64Coder::Decode(const char* szMessage)
+{
+	return Decode(szMessage, static_cast<int>(strlen(szMessage)));
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+CRC4Coder::CRC4Coder(const unsigned char* pKey, size_t nKeyLen)
+{
+	SetKey(pKey, nKeyLen);
+}
+
+CRC4Coder::CRC4Coder(const char* szKey, size_t nKeyLen)
+{
+	SetKey(szKey, nKeyLen);
+}
+
+void CRC4Coder::Init()
+{
+	SecureZeroMemory(m_state, 256);
+	m_nSize = 0;
+	m_x = 0;
+	m_y = 0;
+	m_bKeySet = false;
+}
+
+void CRC4Coder::SetKey(const char* szKey, size_t nKeyLen)
+{
+	SetKey((const BYTE*)szKey, nKeyLen);
+}
+
+void CRC4Coder::SetKey(const unsigned char* pKey, size_t nKeyLen)
+{
+	m_x = 0;
+	m_y = 0;
+	for (int i = 0; i < sizeof(m_state); i++)
+		m_state[i] = LOBYTE(i);
+
+	unsigned char idx1 = 0;
+	unsigned char idx2 = 0;
+	unsigned char nDataLen = LOBYTE(nKeyLen);
+	for (unsigned char& i : m_state)
+	{
+		idx2 = (pKey[idx1] + i + idx2) % 256;
+
+		unsigned char t = i;
+		i = m_state[idx2];
+		m_state[idx2] = t;
+
+		idx1 = (idx1 + 1) % nDataLen;
+	}
+
+	m_bKeySet = true;
+}
+
+bool CRC4Coder::Encode(const char* szBuf, size_t nBufLen)
+{
+	return Encode((const unsigned char*)szBuf, nBufLen);
+}
+
+bool CRC4Coder::Encode(const unsigned char* pBuf, size_t nBufLen)
+{
+	ATLASSERT(m_bKeySet);
+	if (!m_bKeySet)
+		return false;
+
+	m_nSize = nBufLen;
+	m_buf.assign(pBuf, pBuf + nBufLen);
+
+	unsigned char x = m_x;
+	unsigned char y = m_y;
+	for (size_t i = 0; i < m_nSize; i++)
+	{
+		x = (x + 1) % 256;
+		y = (m_state[x] + y) % 256; //-V537
+
+		unsigned char t = m_state[x];
+		m_state[x] = m_state[y];
+		m_state[y] = t;
+
+		unsigned char xorIndex = (m_state[x] + m_state[y]) % 256;
+		m_buf[i] ^= m_state[xorIndex];
+	}
+
+	m_x = x;
+	m_y = y;
+
+	return true;
+}
+
 }

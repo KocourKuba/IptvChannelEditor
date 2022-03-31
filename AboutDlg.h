@@ -27,5 +27,7 @@ protected:
 protected:
 	CStatic m_QR;
 	CString m_version;
+	CMFCLinkCtrl m_paypal;
+	CMFCLinkCtrl m_yoomoney;
 };
 

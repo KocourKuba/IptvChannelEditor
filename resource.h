@@ -137,6 +137,8 @@
 #define IDS_STRING_COL_TOKEN            245
 #define IDS_STRING_COL_DOMAIN           246
 #define IDS_STRING_COL_VPORTAL          247
+#define IDS_STRING_PAYPAL               248
+#define IDS_STRING_YOOMONEY             249
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -204,7 +206,7 @@
 #define IDC_STATIC_PROGRESS_INFO        1076
 #define IDC_TREE_CHANNELS               1077
 #define IDC_TREE_PLAYLIST               1078
-#define IDC_MFCLINK_DONATE_ABOUT        1079
+#define IDC_MFCLINK_DONATE_PAYPAL       1079
 #define IDC_STATIC_STREAM_TYPE          1080
 #define IDC_EDIT_PL_ARCHIVE_DAYS        1081
 #define IDC_EDIT_TIME_SHIFT             1082
@@ -262,7 +264,8 @@
 #define IDC_BUTTON_NEW                  1133
 #define IDC_BUTTON_REMOVE               1134
 #define IDC_BUTTON_NEW_FROM_URL         1135
-#define IDC_EDIT_PLAYLIST_URL           1135
+#define IDC_EDIT_PLAYLIST_URL           1136
+#define IDC_MFCLINK_DONATE_YOOMONEY     1137
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -289,12 +292,12 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         32805
-#define _APS_NEXT_CONTROL_VALUE         1136
+#define _APS_NEXT_CONTROL_VALUE         1138
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif
