@@ -2707,11 +2707,20 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 
 	if (sheet.DoModal() == IDOK)
 	{
-		if (m_embedded_info != ((dlgInfo.m_bEmbed ? EmbedToken : 0) | (dlgInfo.m_bEmbed_vp ? EmbedPortal : 0)))
+		BOOL embed = ((dlgInfo.m_bEmbed ? EmbedToken : 0) | (dlgInfo.m_bEmbed_vp ? EmbedPortal : 0));
+		if (m_embedded_info != embed)
 		{
-			m_embedded_info = 0;
-			m_embedded_info |= dlgInfo.m_bEmbed ? EmbedToken : 0;
-			m_embedded_info |= dlgInfo.m_bEmbed_vp ? EmbedPortal : 0;
+			m_embedded_info = embed;
+			set_allow_save(TRUE);
+		}
+		else if (embed
+			&& (   dlgInfo.m_token != m_token
+				|| dlgInfo.m_domain != m_domain
+				|| dlgInfo.m_login != m_login
+				|| dlgInfo.m_password != m_password
+				|| dlgInfo.m_portal != m_portal)
+			)
+		{
 			set_allow_save(TRUE);
 		}
 
