@@ -109,8 +109,7 @@ class ControlFactory
         );
     }
 
-    public static function add_close_dialog_and_apply_button(&$defs, $handler, $add_params,
-                                                             $name, $caption, $width)
+    public static function add_close_dialog_and_apply_button(&$defs, $handler, $add_params, $name, $caption, $width)
     {
         $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
         $push_action['params']['action_type'] = 'apply';
@@ -119,6 +118,25 @@ class ControlFactory
         (
             GuiControlDef::name => $name,
             GuiControlDef::title => null,
+            GuiControlDef::kind => GUI_CONTROL_BUTTON,
+            GuiControlDef::specific_def => array
+            (
+                GuiButtonDef::caption => $caption,
+                GuiButtonDef::width => $width,
+                GuiButtonDef::push_action => ActionFactory::close_dialog_and_run($push_action),
+            ),
+        );
+    }
+
+    public static function add_close_dialog_and_apply_button_title(&$defs, $handler, $add_params, $name, $title, $caption, $width)
+    {
+        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+        $push_action['params']['action_type'] = 'apply';
+
+        $defs[] = array
+        (
+            GuiControlDef::name => $name,
+            GuiControlDef::title => $title,
             GuiControlDef::kind => GUI_CONTROL_BUTTON,
             GuiControlDef::specific_def => array
             (
