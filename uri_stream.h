@@ -305,7 +305,8 @@ public:
 			nlohmann::json parsed_json = nlohmann::json::parse(data);
 
 			bool added = false;
-			for (const auto& item : get_epg_root(first, parsed_json).items())
+			const auto& root = get_epg_root(first, parsed_json);
+			for (const auto& item : root.items())
 			{
 				const auto& val = item.value();
 

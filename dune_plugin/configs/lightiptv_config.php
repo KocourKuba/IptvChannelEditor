@@ -109,4 +109,19 @@ class LightiptvPluginConfig extends DefaultConfig
     {
         return str_replace('{TOKEN}', $ext_params['token'], static::$FEATURES[MEDIA_URL_TEMPLATE_HLS]);
     }
+
+    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    {
+        if ($type === 'first') {
+            hd_print("Fetching EPG for ID: '$id'");
+            $url = sprintf('http://epg.ott-play.com/%s/epg/%s.json', static::$EPG_PATH, $id);
+            if (isset($plugin_cookies->use_epg_proxy) && $plugin_cookies->use_epg_proxy === 'yes') {
+                $url = str_replace('ott-play.com', 'esalecrm.net', $url);
+            }
+
+            return $url;
+        }
+
+        return null;
+    }
 }

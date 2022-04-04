@@ -42,7 +42,7 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, st
 		return false;
 
 	// Use WinHttpOpen to obtain a session handle.
-	HINTERNET hSession = WinHttpOpen(L"WinHTTP wget/1.0",
+	HINTERNET hSession = WinHttpOpen(L"Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0",
 									 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 									 WINHTTP_NO_PROXY_NAME,
 									 WINHTTP_NO_PROXY_BYPASS, 0);
