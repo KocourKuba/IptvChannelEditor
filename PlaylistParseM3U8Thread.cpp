@@ -49,48 +49,20 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				}
 
 				entry->set_logo_root(logo_root);
-				if (!entry->Parse(line, m3uEntry)) continue;
-
-				// special cases after parsing
-				switch (m_config.m_pluginType)
+				if (entry->Parse(line, m3uEntry))
 				{
-					case StreamType::enOneUsd:
-					case StreamType::enTvTeam:
-						entry->set_epg2_id(entry->get_title()); // secondary EPG
-						break;
-					case StreamType::enSharavoz:
-					case StreamType::enOneOtt:
-					case StreamType::enCbilling:
-					case StreamType::enShuraTV:
-						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
-						entry->set_epg2_id(entry->stream_uri->get_id()); // secondary EPG
-						break;
-					case StreamType::enLightIptv:
-						entry->stream_uri->set_id(entry->get_epg1_id());
-						break;
-					case StreamType::enOttclub:
-						entry->set_epg1_id(entry->stream_uri->get_id()); // primary EPG
-						entry->set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", entry->stream_uri->get_domain(), entry->stream_uri->get_id()));
-						break;
-					case StreamType::enIptvOnline:
-						if (entry->get_epg1_id().front() == 'X')
-							entry->set_epg1_id(entry->get_epg1_id().substr(1)); // primary EPG
-						break;
-					default:
-						break;
-				}
+					playlist->m_entries.emplace_back(entry);
+					entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
+					channels++;
 
-				playlist->m_entries.emplace_back(entry);
-				entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
-				channels++;
-
-				if (channels % 50 == 0)
-				{
-					m_config.NotifyParent(WM_UPDATE_PROGRESS, channels, step);
-					if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
+					if (channels % 50 == 0)
 					{
-						playlist.reset();
-						break;
+						m_config.NotifyParent(WM_UPDATE_PROGRESS, channels, step);
+						if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
+						{
+							playlist.reset();
+							break;
+						}
 					}
 				}
 			}

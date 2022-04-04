@@ -25,11 +25,14 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			break;
 		}
 		case m3u_entry::directives::ext_group:
-			if (!category.empty()) break;
-
-			category = m3uEntry.get_dvalue();
-			check_adult(category);
+		{
+			if (category.empty())
+			{
+				category = m3uEntry.get_dvalue();
+				check_adult(category);
+			}
 			break;
+		}
 		case m3u_entry::directives::ext_info:
 		{
 			const auto& tags = m3uEntry.get_tags();
@@ -50,10 +53,40 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			search_epg(tags);
 			search_logo(tags);
 
+			break;
 		}
-		break;
 		default:
 			break;
+	}
+
+	if (result)
+	{
+		// special cases after parsing
+		switch (stream_type)
+		{
+		case StreamType::enSharavoz:
+		case StreamType::enOneOtt:
+		case StreamType::enCbilling:
+		case StreamType::enShuraTV:
+			set_epg1_id(stream_uri->get_id()); // primary EPG
+			break;
+		case StreamType::enLightIptv:
+			stream_uri->set_id(get_epg1_id());
+			break;
+		case StreamType::enOttclub:
+			set_epg1_id(stream_uri->get_id()); // primary EPG
+			set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", stream_uri->get_domain(), stream_uri->get_id()));
+			break;
+		case StreamType::enIptvOnline:
+			if (get_epg1_id().front() == 'X')
+				set_epg1_id(get_epg1_id().substr(1)); // primary EPG
+			break;
+		case StreamType::enVidok:
+			set_icon_uri(fmt::format(L"http://ott.st/logos/{:s}.png", stream_uri->get_id()));
+			break;
+		default:
+			break;
+		}
 	}
 
 	return result;
