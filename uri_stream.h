@@ -345,7 +345,7 @@ protected:
 	/// json root for epg iteration
 	/// </summary>
 	/// <returns>string</returns>
-	virtual const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const { return epg_data["epg_data"]; }
+	virtual nlohmann::json get_epg_root(bool first, const nlohmann::json& epg_data) const { return epg_data["epg_data"]; }
 
 	/// <summary>
 	/// json epg name node

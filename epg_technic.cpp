@@ -48,7 +48,7 @@ std::wstring epg_technic::get_epg_uri_json(bool first, const std::wstring& id, t
 	return fmt::format(EPG_TEMPLATE_JSON, m_source, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
-const nlohmann::json& epg_technic::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json epg_technic::get_epg_root(bool first, const nlohmann::json& epg_data) const
 {
 	return epg_data["data"];
 }

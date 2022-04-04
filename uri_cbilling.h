@@ -19,5 +19,5 @@ public:
 	};
 
 protected:
-	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override;
+	nlohmann::json get_epg_root(bool first, const nlohmann::json& epg_data) const override;
 };

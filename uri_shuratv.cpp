@@ -69,7 +69,7 @@ std::wstring uri_shuratv::get_playlist_template(const PlaylistTemplateParams& pa
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.number);
 }
 
-const nlohmann::json& uri_shuratv::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json uri_shuratv::get_epg_root(bool first, const nlohmann::json& epg_data) const
 {
 	return first ? epg_data : uri_stream::get_epg_root(true, epg_data);
 }

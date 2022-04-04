@@ -97,7 +97,7 @@ std::wstring uri_antifriz::get_playlist_template(const PlaylistTemplateParams& p
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }
 
-const nlohmann::json& uri_antifriz::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json uri_antifriz::get_epg_root(bool first, const nlohmann::json& epg_data) const
 {
 	return epg_data;
 }

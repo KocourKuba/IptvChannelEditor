@@ -128,7 +128,7 @@ std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& p
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.device);
 }
 
-const nlohmann::json& uri_cbilling::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json uri_cbilling::get_epg_root(bool first, const nlohmann::json& epg_data) const
 {
 	return epg_data;
 }

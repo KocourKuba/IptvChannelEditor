@@ -121,7 +121,7 @@ bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<
 	return false;
 }
 
-const nlohmann::json& uri_itv::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json uri_itv::get_epg_root(bool first, const nlohmann::json& epg_data) const
 {
 	return epg_data["res"];
 }

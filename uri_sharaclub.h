@@ -13,5 +13,5 @@ public:
 	bool parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const override;
 
 protected:
-	const nlohmann::json& get_epg_root(bool first, const nlohmann::json& epg_data) const override;
+	nlohmann::json get_epg_root(bool first, const nlohmann::json& epg_data) const override;
 };
