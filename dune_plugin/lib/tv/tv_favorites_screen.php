@@ -28,10 +28,10 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserIn
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         $move_backward_favorite_action = UserInputHandlerRegistry::create_action($this, 'move_backward_favorite');
-        $move_backward_favorite_action['caption'] = 'Назад';
+        $move_backward_favorite_action['caption'] = 'Вверх';
 
         $move_forward_favorite_action = UserInputHandlerRegistry::create_action($this, 'move_forward_favorite');
-        $move_forward_favorite_action['caption'] = 'Вперед';
+        $move_forward_favorite_action['caption'] = 'Вниз';
 
         $remove_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_favorite');
         $remove_favorite_action['caption'] = 'Удалить';
