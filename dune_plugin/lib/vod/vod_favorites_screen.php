@@ -27,9 +27,13 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $actions = array();
+        $play_action = $this->plugin->vod->is_movie_page_supported() ? ActionFactory::open_folder() : ActionFactory::vod_play();
 
-        $actions[GUI_EVENT_KEY_ENTER] = $this->plugin->vod->is_movie_page_supported() ? ActionFactory::open_folder() : ActionFactory::vod_play();
+        $move_backward_favorite_action = UserInputHandlerRegistry::create_action($this, 'move_backward_favorite');
+        $move_backward_favorite_action['caption'] = 'Вверх';
+
+        $move_forward_favorite_action = UserInputHandlerRegistry::create_action($this, 'move_forward_favorite');
+        $move_forward_favorite_action['caption'] = 'Вниз';
 
         $remove_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_favorite');
         $remove_favorite_action['caption'] = 'Удалить';
@@ -40,10 +44,15 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
         $popup_menu_action = ActionFactory::show_popup_menu($menu_items);
 
-        $actions[GUI_EVENT_KEY_D_BLUE] = $remove_favorite_action;
-        $actions[GUI_EVENT_KEY_POPUP_MENU] = $popup_menu_action;
-
-        return $actions;
+        return array
+        (
+            GUI_EVENT_KEY_ENTER => $play_action,
+            GUI_EVENT_KEY_PLAY => $play_action,
+            GUI_EVENT_KEY_B_GREEN => $move_backward_favorite_action,
+            GUI_EVENT_KEY_C_YELLOW => $move_forward_favorite_action,
+            GUI_EVENT_KEY_D_BLUE => $remove_favorite_action,
+            GUI_EVENT_KEY_POPUP_MENU => $popup_menu_action,
+        );
     }
 
     public function get_handler_id()
@@ -57,27 +66,52 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
         // foreach ($user_input as $key => $value)
         //     hd_print("  $key => $value");
 
-        if ($user_input->control_id === 'remove_favorite') {
-            if (!isset($user_input->selected_media_url)) {
-                return null;
-            }
-
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            $movie_id = $media_url->movie_id;
-
-            $this->plugin->vod->remove_favorite_movie($movie_id, $plugin_cookies);
-
-            return ActionFactory::invalidate_folders(array(self::get_media_url_str()));
+        if (!isset($user_input->selected_media_url)) {
+            return null;
         }
 
-        return null;
+        switch ($user_input->control_id) {
+            case 'move_backward_favorite':
+                $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_UP;
+                $inc = -1;
+                break;
+            case 'move_forward_favorite':
+                $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_DOWN;
+                $inc = 1;
+                break;
+            case 'remove_favorite':
+                $fav_op_type = PLUGIN_FAVORITES_OP_REMOVE;
+                $inc = 0;
+                break;
+            default:
+                return  null;
+        }
+
+        $movie_id = MediaURL::decode($user_input->selected_media_url)->movie_id;
+        $this->plugin->vod->change_vod_favorites($fav_op_type, $movie_id, $plugin_cookies);
+        return $this->get_update_action($inc, $user_input, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////
 
-    /**
-     * @throws Exception
-     */
+    private function get_update_action($sel_increment, &$user_input, &$plugin_cookies)
+    {
+        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+
+        $num_favorites = count($this->plugin->vod->get_favorite_movie_ids());
+
+        $sel_ndx = $user_input->sel_ndx + $sel_increment;
+        if ($sel_ndx < 0) {
+            $sel_ndx = 0;
+        }
+        if ($sel_ndx >= $num_favorites) {
+            $sel_ndx = $num_favorites - 1;
+        }
+
+        $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
+        return ActionFactory::update_regular_folder($range, true, $sel_ndx);
+    }
+
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
@@ -100,8 +134,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
             $items[] = array
             (
-                PluginRegularFolderItem::media_url =>
-                    VodMovieScreen::get_media_url_str($movie_id),
+                PluginRegularFolderItem::media_url => VodMovieScreen::get_media_url_str($movie_id),
                 PluginRegularFolderItem::caption => $caption,
                 PluginRegularFolderItem::view_item_params => array
                 (

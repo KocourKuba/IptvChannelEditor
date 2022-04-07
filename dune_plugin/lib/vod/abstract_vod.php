@@ -264,6 +264,46 @@ abstract class AbstractVod implements Vod
         return isset($this->fav_movie_ids_set[$movie_id]);
     }
 
+    public function change_vod_favorites($fav_op_type, $channel_id, &$plugin_cookies)
+    {
+        $fav_channel_ids = $this->get_favorite_movie_ids();
+
+        switch ($fav_op_type) {
+            case PLUGIN_FAVORITES_OP_ADD:
+                $k = array_search($channel_id, $fav_channel_ids);
+                if ($k !== true) {
+                    $fav_channel_ids[] = $channel_id;
+                }
+                break;
+            case PLUGIN_FAVORITES_OP_REMOVE:
+                $k = array_search($channel_id, $fav_channel_ids);
+                if ($k !== false) {
+                    unset ($fav_channel_ids[$k]);
+                }
+                break;
+            case PLUGIN_FAVORITES_OP_MOVE_UP:
+                $k = array_search($channel_id, $fav_channel_ids);
+                if ($k !== false && $k !== 0) {
+                    $t = $fav_channel_ids[$k - 1];
+                    $fav_channel_ids[$k - 1] = $fav_channel_ids[$k];
+                    $fav_channel_ids[$k] = $t;
+                }
+                break;
+            case PLUGIN_FAVORITES_OP_MOVE_DOWN:
+                $k = array_search($channel_id, $fav_channel_ids);
+                if ($k !== false && $k !== count($fav_channel_ids) - 1) {
+                    $t = $fav_channel_ids[$k + 1];
+                    $fav_channel_ids[$k + 1] = $fav_channel_ids[$k];
+                    $fav_channel_ids[$k] = $t;
+                }
+                break;
+        }
+
+        $this->set_fav_movie_ids($fav_channel_ids);
+
+        return ActionFactory::invalidate_folders(array(VodFavoritesScreen::get_media_url_str()));
+    }
+
     ///////////////////////////////////////////////////////////////////////
     // Genres.
 
@@ -272,7 +312,8 @@ abstract class AbstractVod implements Vod
      */
     protected function load_genres(&$plugin_cookies)
     {
-        throw new Exception("Not implemented.");
+        hd_print("abstract_vod::load_genres: Not implemented.");
+        return null;
     }
 
     /**

@@ -37,7 +37,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserIn
         $remove_favorite_action['caption'] = 'Удалить';
 
         $menu_items[] = array(
-            GuiMenuItemDef::caption => 'Remove from Favorites',
+            GuiMenuItemDef::caption => 'Удалить из Избранного',
             GuiMenuItemDef::action => $remove_favorite_action);
 
         $popup_menu_action = ActionFactory::show_popup_menu($menu_items);

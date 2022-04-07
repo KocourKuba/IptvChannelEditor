@@ -34,6 +34,8 @@ interface Vod
 
     public function get_archive(MediaURL $media_url);
 
+    public function change_vod_favorites($fav_op_type, $channel_id, &$plugin_cookies);
+
     /** Hook.*/
     public function folder_entered(MediaURL $media_url, &$plugin_cookies);
 }
