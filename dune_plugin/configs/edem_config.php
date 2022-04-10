@@ -120,10 +120,11 @@ class EdemPluginConfig extends DefaultConfig
      */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
+        /*
         hd_print("Collect information from account $this->PLUGIN_SHOW_NAME");
         static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = HD::MapTvgID(self::API_URL . '/channels');
         hd_print("TVG ID Mapped: " . count(static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper']));
-
+        */
         return true;
     }
 
