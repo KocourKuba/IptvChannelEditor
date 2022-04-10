@@ -98,12 +98,13 @@ abstract class AbstractVod implements Vod
     public function ensure_movie_loaded($movie_id, &$plugin_cookies)
     {
         if (!isset($movie_id)) {
-            throw new Exception('Movie ID is not set');
+            hd_print('Movie ID is not set');
+            return;
         }
 
         if ($this->is_failed_movie_id($movie_id)) {
             hd_print("No movie with ID: $movie_id");
-            return null;
+            return;
         }
 
         $movie = $this->get_cached_movie($movie_id);
@@ -168,9 +169,7 @@ abstract class AbstractVod implements Vod
     }
 
     // This function should not fail.
-    protected function do_save_favorite_movies(&$fav_movie_ids, &$plugin_cookies)
-    { /* nop */
-    }
+    abstract protected function do_save_favorite_movies(&$fav_movie_ids, &$plugin_cookies);
 
     public function ensure_favorites_loaded(&$plugin_cookies)
     {

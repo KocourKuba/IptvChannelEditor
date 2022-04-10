@@ -53,7 +53,7 @@ class StarnetVod extends AbstractVod
 
     protected function do_save_favorite_movies(&$fav_movie_ids, &$plugin_cookies)
     {
-        $this->set_fav_movie_ids_to_cookies($plugin_cookies, $fav_movie_ids);
+        $plugin_cookies->favorite_movies = implode(',', $fav_movie_ids);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -73,11 +73,6 @@ class StarnetVod extends AbstractVod
             }
         }
         return $ids;
-    }
-
-    public function set_fav_movie_ids_to_cookies(&$plugin_cookies, &$ids)
-    {
-        $plugin_cookies->favorite_movies = implode(',', $ids);
     }
 
     public function get_search_media_url_str($pattern)
