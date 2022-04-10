@@ -31,8 +31,6 @@ interface Tv
 
     public function get_day_epg($channel_id, $day_start_ts, &$plugin_cookies);
 
-    public function change_tv_favorites($fav_op_type, $channel_id, &$plugin_cookies);
-
     public function get_archive(MediaURL $media_url);
 
     /**
@@ -45,13 +43,5 @@ interface Tv
      */
     public function add_special_groups(&$items);
 
-    /**
-     * Get id's stored in the cookie.
-     */
-    public function get_fav_channel_ids($plugin_cookies);
-
-    /**
-     * Put id's in the cookie.
-     */
-    public function set_fav_channel_ids($plugin_cookies, $ids);
+    public function is_favorites_supported();
 }

@@ -14,6 +14,17 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
         }
     }
 
+    public static function get_media_url_str($category_id, $genre_id)
+    {
+        return MediaURL::encode(
+            array
+            (
+                'screen_id' => self::ID,
+                'category_id' => $category_id,
+                'genre_id' => $genre_id,
+            ));
+    }
+
     ///////////////////////////////////////////////////////////////////////
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
@@ -26,12 +37,20 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
         $add_action['caption'] = 'Поиск';
         $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
 
+        if ($this->plugin->vod->is_favorites_supported()) {
+            $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
+            $add_favorite_action['caption'] = 'В Избранное';
+            $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
+
+            $actions[GUI_EVENT_KEY_POPUP_MENU] = UserInputHandlerRegistry::create_action($this, 'popup_menu');
+        }
+
         return $actions;
     }
 
     public function get_handler_id()
     {
-        return self::ID.'_handler';
+        return self::ID . '_handler';
     }
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
@@ -40,18 +59,19 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
         // foreach ($user_input as $key => $value)
         //     hd_print("  $key => $value");
 
-        switch ($user_input->control_id)
-        {
-            case 'search':
-                if (!isset($user_input->selected_media_url)) {
-                    return null;
-                }
+        if (!isset($user_input->selected_media_url)) {
+            return null;
+        }
 
-                $media_url = MediaURL::decode($user_input->selected_media_url);
+        $media_url = MediaURL::decode($user_input->selected_media_url);
+        $movie_id = $media_url->movie_id;
+
+        switch ($user_input->control_id) {
+            case 'search':
                 $defs = array();
                 ControlFactory::add_text_field($defs,
                     $this, null, 'new_search', '',
-                    $media_url->name, 0, 0, 1, 1, 1300,0,true);
+                    $media_url->name, 0, 0, 1, 1, 1300, 0, true);
                 ControlFactory::add_vgap($defs, 500);
                 return ActionFactory::show_dialog('Поиск', $defs, true);
 
@@ -74,6 +94,20 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
                     ActionFactory::open_folder(
                         static::get_media_url_str('search', $user_input->do_new_search),
                         "Поиск: " . $user_input->do_new_search));
+
+            case 'popup_menu':
+                $add_favorite_action = UserInputHandlerRegistry::create_action($this, 'add_favorite');
+                $caption = $this->plugin->vod->is_favorite_movie_id($movie_id) ? 'Удалить из Избранного' : 'Добавить в избранное';
+                $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_favorite_action);
+                return ActionFactory::show_popup_menu($menu_items);
+
+            case 'add_favorite':
+                $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
+                $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
+                $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
+                $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
+
+                return ActionFactory::show_title_dialog($message);
         }
 
         return null;
@@ -127,9 +161,9 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
     {
         //hd_print("get_folder_view");
         $this->plugin->config->reset_movie_counter();
-
         $this->plugin->vod->clear_movie_cache();
         $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
+        $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
 
         return parent::get_folder_view($media_url, $plugin_cookies);
     }

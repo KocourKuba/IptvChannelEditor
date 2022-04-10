@@ -266,10 +266,7 @@ abstract class AbstractTv implements Tv
         }
 
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
-
-        $k = in_array($channel_id, $fav_channel_ids);
-
-        return $k !== false;
+        return in_array($channel_id, $fav_channel_ids);
     }
 
     public function change_tv_favorites($fav_op_type, $channel_id, &$plugin_cookies)
@@ -278,8 +275,7 @@ abstract class AbstractTv implements Tv
 
         switch ($fav_op_type) {
             case PLUGIN_FAVORITES_OP_ADD:
-                $k = array_search($channel_id, $fav_channel_ids);
-                if ($k !== true) {
+                if (in_array($channel_id, $fav_channel_ids) === false) {
                     $fav_channel_ids[] = $channel_id;
                 }
                 break;
@@ -288,6 +284,9 @@ abstract class AbstractTv implements Tv
                 if ($k !== false) {
                     unset ($fav_channel_ids[$k]);
                 }
+                break;
+            case 'clear_favorites':
+                $fav_channel_ids = array();
                 break;
             case PLUGIN_FAVORITES_OP_MOVE_UP:
                 $k = array_search($channel_id, $fav_channel_ids);

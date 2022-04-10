@@ -48,9 +48,7 @@ class StarnetVod extends AbstractVod
         $this->set_fav_movie_ids($fav_movie_ids);
 
         $favorites = count($fav_movie_ids);
-        if ($favorites > 0) {
-            hd_print("The $favorites favorite movies loaded.");
-        }
+        hd_print("load_favorites: The $favorites favorite movies loaded.");
     }
 
     protected function do_save_favorite_movies(&$fav_movie_ids, &$plugin_cookies)

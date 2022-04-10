@@ -133,47 +133,47 @@ abstract class DefaultConfig
 
     public static function get_account_type()
     {
-        return self::$FEATURES[ACCOUNT_TYPE];
+        return static::$FEATURES[ACCOUNT_TYPE];
     }
 
     public static function get_tv_fav_support()
     {
-        return self::$FEATURES[TV_FAVORITES_SUPPORTED];
+        return static::$FEATURES[TV_FAVORITES_SUPPORTED];
     }
 
     public static function get_vod_fav_support()
     {
-        return self::$FEATURES[VOD_FAVORITES_SUPPORTED];
+        return static::$FEATURES[VOD_FAVORITES_SUPPORTED];
     }
 
     public static function get_vod_support()
     {
-        return self::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED];
+        return static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED];
     }
 
     public static function get_vod_portal_support()
     {
-        return self::$FEATURES[VOD_PORTAL_SUPPORTED];
+        return static::$FEATURES[VOD_PORTAL_SUPPORTED];
     }
 
     public static function get_format_opts()
     {
-        return self::$FEATURES[TS_OPTIONS];
+        return static::$FEATURES[TS_OPTIONS];
     }
 
     public static function get_balance_support()
     {
-        return self::$FEATURES[BALANCE_SUPPORTED];
+        return static::$FEATURES[BALANCE_SUPPORTED];
     }
 
     public static function get_device_support()
     {
-        return !empty(self::$FEATURES[DEVICE_OPTIONS]);
+        return !empty(static::$FEATURES[DEVICE_OPTIONS]);
     }
 
     public static function get_device_opts()
     {
-        return self::$FEATURES[DEVICE_OPTIONS];
+        return static::$FEATURES[DEVICE_OPTIONS];
     }
 
     public static function get_device($plugin_cookies)
@@ -187,7 +187,7 @@ abstract class DefaultConfig
 
     public static function get_quality_support()
     {
-        return self::$FEATURES[QUALITY_SUPPORTED];
+        return static::$FEATURES[QUALITY_SUPPORTED];
     }
 
     public static function get_quality_opts($plugin_cookies)
@@ -206,7 +206,7 @@ abstract class DefaultConfig
 
     public static function get_server_support()
     {
-        return self::$FEATURES[SERVER_SUPPORTED];
+        return static::$FEATURES[SERVER_SUPPORTED];
     }
 
     public static function get_server_opts($plugin_cookies)

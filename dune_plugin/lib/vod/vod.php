@@ -6,6 +6,10 @@ interface Vod
 
     public function is_failed_movie_id($movie_id);
 
+    public function is_movie_page_supported();
+
+    public function is_favorites_supported();
+
     public function get_cached_movie($movie_id);
 
     public function clear_movie_cache();
@@ -33,8 +37,6 @@ interface Vod
     public function get_vod_genres_folder_views();
 
     public function get_archive(MediaURL $media_url);
-
-    public function change_vod_favorites($fav_op_type, $channel_id, &$plugin_cookies);
 
     /** Hook.*/
     public function folder_entered(MediaURL $media_url, &$plugin_cookies);

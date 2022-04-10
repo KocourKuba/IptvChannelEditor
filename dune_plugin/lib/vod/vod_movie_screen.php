@@ -111,19 +111,17 @@ class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
             $movie_id = $user_input->movie_id;
 
             $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
-            if ($is_favorite) {
-                $this->plugin->vod->remove_favorite_movie($movie_id, $plugin_cookies);
-            } else {
-                $this->plugin->vod->add_favorite_movie($movie_id, $plugin_cookies);
-            }
+            $opt_type = $this->plugin->vod->is_favorite_movie_id($movie_id) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
+            $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
 
             $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
 
             return ActionFactory::show_title_dialog($message,
                 ActionFactory::invalidate_folders(array(
                     self::get_media_url_str($movie_id),
-                    VodFavoritesScreen::get_media_url_str(),
-                    )));
+                    VodFavoritesScreen::get_media_url_str())
+                )
+            );
         }
 
         return null;

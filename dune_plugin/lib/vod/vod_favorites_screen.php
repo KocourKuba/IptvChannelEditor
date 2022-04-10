@@ -38,9 +38,12 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
         $remove_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_favorite');
         $remove_favorite_action['caption'] = 'Удалить';
 
-        $menu_items[] = array(
-            GuiMenuItemDef::caption => 'Удалить из Избранного',
-            GuiMenuItemDef::action => $remove_favorite_action);
+        $remove_all_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_all_favorite');
+
+        $menu_items = array(
+            array(GuiMenuItemDef::caption => 'Удалить из Избранного', GuiMenuItemDef::action => $remove_favorite_action),
+            array(GuiMenuItemDef::caption => 'Очистить Избранное', GuiMenuItemDef::action => $remove_all_favorite_action),
+        );
 
         $popup_menu_action = ActionFactory::show_popup_menu($menu_items);
 
@@ -83,6 +86,10 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
                 $fav_op_type = PLUGIN_FAVORITES_OP_REMOVE;
                 $inc = 0;
                 break;
+            case 'remove_all_favorite':
+                $fav_op_type = 'clear_favorites';
+                $inc = 0;
+                break;
             default:
                 return  null;
         }
@@ -123,9 +130,11 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
         $items = array();
 
         foreach ($movie_ids as $movie_id) {
+            if (empty($movie_id)) continue;
+
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
             if (is_null($short_movie)) {
-                $caption = "#$movie_id";
+                $caption = "Фильм отсутствует";
                 $poster_url = "missing://";
             } else {
                 $caption = $short_movie->name;

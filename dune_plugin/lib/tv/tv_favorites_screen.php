@@ -36,9 +36,12 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserIn
         $remove_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_favorite');
         $remove_favorite_action['caption'] = 'Удалить';
 
-        $menu_items[] = array(
-            GuiMenuItemDef::caption => 'Удалить из Избранного',
-            GuiMenuItemDef::action => $remove_favorite_action);
+        $remove_all_favorite_action = UserInputHandlerRegistry::create_action($this, 'remove_all_favorite');
+
+        $menu_items = array(
+            array(GuiMenuItemDef::caption => 'Удалить из Избранного', GuiMenuItemDef::action => $remove_favorite_action),
+            array(GuiMenuItemDef::caption => 'Очистить Избранное', GuiMenuItemDef::action => $remove_all_favorite_action),
+        );
 
         $popup_menu_action = ActionFactory::show_popup_menu($menu_items);
 
@@ -99,6 +102,10 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserIn
                 $fav_op_type = PLUGIN_FAVORITES_OP_REMOVE;
                 $inc = 0;
                 break;
+            case 'remove_all_favorite':
+                $fav_op_type = 'clear_favorites';
+                $inc = 0;
+                break;
             default:
                 return  null;
         }
@@ -119,7 +126,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserIn
         $items = array();
 
         foreach ($fav_channel_ids as $channel_id) {
-            if (preg_match('/^\s*$/', $channel_id)) {
+            if (!preg_match('/\S/', $channel_id)) {
                 continue;
             }
 
