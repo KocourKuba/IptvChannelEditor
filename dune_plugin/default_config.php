@@ -733,6 +733,43 @@ abstract class DefaultConfig
 
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
+
+            array
+            (
+                PluginRegularFolderView::async_icon_loading => true,
+
+                PluginRegularFolderView::view_params => array
+                (
+                    ViewParams::num_cols => 3,
+                    ViewParams::num_rows => 10,
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
+                    ViewParams::background_order => 0,
+                    ViewParams::paint_details => false,
+                    ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
+                ),
+
+                PluginRegularFolderView::base_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::item_layout => HALIGN_LEFT,
+                    ViewItemParams::icon_valign => VALIGN_CENTER,
+                    ViewItemParams::icon_dx => 10,
+                    ViewItemParams::icon_dy => -5,
+                    ViewItemParams::icon_width => static::$FEATURES[SQUARE_ICONS] ? 60 : 84,
+                    ViewItemParams::icon_height => static::$FEATURES[SQUARE_ICONS] ? 60 : 48,
+                    ViewItemParams::item_caption_width => 485,
+                    ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
+                    ViewItemParams::item_caption_dx => 50,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                ),
+
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
+            ),
         );
     }
 
