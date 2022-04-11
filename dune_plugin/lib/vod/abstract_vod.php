@@ -63,8 +63,7 @@ abstract class AbstractVod implements Vod
 
     public function get_cached_movie($movie_id)
     {
-        return isset($this->movie_by_id[$movie_id]) ?
-            $this->movie_by_id[$movie_id] : null;
+        return isset($this->movie_by_id[$movie_id]) ? $this->movie_by_id[$movie_id] : null;
     }
 
     public function has_cached_short_movie($movie_id)
@@ -74,8 +73,7 @@ abstract class AbstractVod implements Vod
 
     public function get_cached_short_movie($movie_id)
     {
-        return isset($this->short_movie_by_id[$movie_id]) ?
-            $this->short_movie_by_id[$movie_id] : null;
+        return isset($this->short_movie_by_id[$movie_id]) ? $this->short_movie_by_id[$movie_id] : null;
     }
 
     public function clear_movie_cache()
@@ -83,6 +81,7 @@ abstract class AbstractVod implements Vod
         $this->short_movie_by_id = array();
         $this->movie_by_id = array();
         $this->failed_movie_ids = array();
+        $this->fav_movie_ids = array();
     }
 
     public function clear_genre_cache()
@@ -173,15 +172,12 @@ abstract class AbstractVod implements Vod
 
     public function ensure_favorites_loaded(&$plugin_cookies)
     {
-        if ($this->fav_movie_ids !== null) {
+        if (!empty($this->fav_movie_ids)) {
             return;
         }
 
         $this->load_favorites($plugin_cookies);
-
-        if ($this->fav_movie_ids === null) {
-            hd_print('Favorites not loaded.');
-        }
+        hd_print("Favorites loaded $this->fav_movie_ids");
     }
 
     public function get_favorite_movie_ids()
@@ -206,19 +202,19 @@ abstract class AbstractVod implements Vod
 
         switch ($fav_op_type) {
             case PLUGIN_FAVORITES_OP_ADD:
-                hd_print("Try to add movie id: $movie_id");
+                //hd_print("Try to add movie id: $movie_id");
                 if (!empty($movie_id) && in_array($movie_id, $fav_movie_ids) === false) {
-                    hd_print("Success");
+                    //hd_print("Success");
                     $fav_movie_ids[] = $movie_id;
                 }
                 break;
             case PLUGIN_FAVORITES_OP_REMOVE:
-                hd_print("Try to remove movie id: $movie_id");
+                //hd_print("Try to remove movie id: $movie_id");
                 if(empty($movie_id)) break;
 
                 $k = array_search($movie_id, $fav_movie_ids);
                 if ($k !== false) {
-                    hd_print("Success");
+                    //hd_print("Success");
                     unset ($fav_movie_ids[$k]);
                 }
                 break;

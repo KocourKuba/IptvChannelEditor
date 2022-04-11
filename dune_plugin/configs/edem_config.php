@@ -162,6 +162,7 @@ class EdemPluginConfig extends DefaultConfig
             array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset'=> 0,'limit' => 0));
 
         if ($movieData === false) {
+            hd_print("TryLoadMovie: failed to load movie: $movie_id");
             return $movie;
         }
 
@@ -185,6 +186,7 @@ class EdemPluginConfig extends DefaultConfig
 
         if ($movieData->type === 'multistream') {
             // collect series
+            hd_print("movie multistream: \"$movieData->title\"");
             foreach ($movieData->items as $item) {
                 //hd_print("episode playback_url: $item->url");
                 $movie->add_series_data($item->fid, $item->title, $item->url, true);
@@ -192,7 +194,7 @@ class EdemPluginConfig extends DefaultConfig
             return $movie;
         }
 
-        //hd_print("movie playback_url: \"$movieData->title\" $movieData->url");
+        //hd_print("movie playback_url: \"$movieData->title\"");
         $variants = (array)$movieData->variants;
         //hd_print("playback_url variants: " . count($variants));
         if (count($variants) > 1) {

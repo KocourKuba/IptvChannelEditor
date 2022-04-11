@@ -134,7 +134,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
 
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
             if (is_null($short_movie)) {
-                $caption = "Фильм отсутствует";
+                $caption = "Информация о фильме недоступна";
                 $poster_url = "missing://";
             } else {
                 $caption = $short_movie->name;
