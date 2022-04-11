@@ -734,6 +734,7 @@ abstract class DefaultConfig
                 PluginRegularFolderView::not_loaded_view_item_params => array(),
             ),
 
+            // 3x10 list view
             array
             (
                 PluginRegularFolderView::async_icon_loading => true,
@@ -767,6 +768,60 @@ abstract class DefaultConfig
                 (
                     ViewItemParams::item_paint_icon => true,
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
+            ),
+
+            // 1x10 list view with info
+            array
+            (
+                PluginRegularFolderView::async_icon_loading => true,
+                PluginRegularFolderView::view_params => array
+                (
+                    ViewParams::num_cols => 1,
+                    ViewParams::num_rows => 10,
+                    ViewParams::paint_details => true,
+                    ViewParams::paint_item_info_in_details => true,
+                    ViewParams::item_detailed_info_auto_line_break => true,
+                    ViewParams::item_detailed_info_title_color => 10,
+                    ViewParams::item_detailed_info_text_color => 15,
+                    ViewParams::background_path => $this->GET_BG_PICTURE(),
+                    ViewParams::background_order => 0,
+                    ViewParams::background_height => 1080,
+                    ViewParams::background_width => 1920,
+                    ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
+
+                    ViewParams::paint_sandwich => false,
+                    ViewParams::sandwich_base => self::SANDWICH_BASE,
+                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
+                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
+                    ViewParams::sandwich_width => static::VOD_SANDWICH_WIDTH,
+                    ViewParams::sandwich_height => static::VOD_SANDWICH_HEIGHT,
+                    ViewParams::sandwich_icon_upscale_enabled => true,
+                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
+                ),
+
+                PluginRegularFolderView::base_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    //ViewItemParams::icon_sel_scale_factor => 1.2,
+                    ViewItemParams::icon_path => self::VOD_ICON_PATH,
+                    ViewItemParams::item_layout => HALIGN_LEFT,
+                    ViewItemParams::icon_valign => VALIGN_CENTER,
+                    ViewItemParams::icon_dx => 14,
+                    ViewItemParams::icon_dy => -5,
+                    ViewItemParams::icon_width => static::$FEATURES[SQUARE_ICONS] ? 50 : 52,
+                    ViewItemParams::icon_height => static::$FEATURES[SQUARE_ICONS] ? 50 : 34,
+                    ViewItemParams::icon_sel_margin_top => 0,
+                    ViewItemParams::item_paint_caption => true,
+                    ViewItemParams::item_caption_width => 1100,
+                    ViewItemParams::item_caption_font_size => FONT_SIZE_LARGE,
+                ),
+
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
                     ViewItemParams::item_detailed_icon_path => 'missing://',
                 ),
             ),
