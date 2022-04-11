@@ -40,7 +40,6 @@ CTrayIcon::CTrayIcon()
 CTrayIcon::~CTrayIcon()
 {
 	RemoveIcon();
-	DestroyWindow();
 	RemoveAnimationIcons();
 }
 

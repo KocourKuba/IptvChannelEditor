@@ -3345,6 +3345,8 @@ void CIPTVChannelEditorDlg::OnRestore()
 void CIPTVChannelEditorDlg::OnAppExit()
 {
 	// post a message to ourself to close
+	m_wndTrayIcon.RemoveIcon();
+	m_wndTrayIcon.DestroyWindow();
 	::PostMessage(m_hWnd, WM_CLOSE, 0, 0);
 }
 
