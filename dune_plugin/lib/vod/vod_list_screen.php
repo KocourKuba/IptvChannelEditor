@@ -55,9 +55,9 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
 
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('VodListScreen: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        hd_print('VodListScreen: handle_user_input:');
+        foreach ($user_input as $key => $value)
+            hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -106,8 +106,10 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
                 $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
-
-                return ActionFactory::show_title_dialog($message);
+                $parent_url = MediaURL::decode($user_input->parent_media_url);
+                return ActionFactory::invalidate_folders(
+                    array(self::get_media_url_str($parent_url->category_id, $parent_url->genre_id)),
+                    ActionFactory::show_title_dialog($message));
         }
 
         return null;
@@ -143,7 +145,8 @@ abstract class VodListScreen extends AbstractRegularScreen implements UserInputH
                     ViewItemParams::icon_path => $movie->poster_url,
                     ViewItemParams::item_detailed_info => $movie->info,
                     ViewItemParams::item_caption_color => 15,
-                )
+                ),
+                PluginRegularFolderItem::starred => $this->plugin->vod->is_favorite_movie_id($movie->id),
             );
 
             $this->plugin->vod->set_cached_short_movie(new ShortMovie($movie->id, $movie->name, $movie->poster_url));
