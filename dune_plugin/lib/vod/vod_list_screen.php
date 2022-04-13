@@ -203,7 +203,6 @@ abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_I
         //hd_print("get_folder_view");
         $this->plugin->config->reset_movie_counter();
         $this->plugin->vod->clear_movie_cache();
-        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
         $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
 
         return parent::get_folder_view($media_url, $plugin_cookies);

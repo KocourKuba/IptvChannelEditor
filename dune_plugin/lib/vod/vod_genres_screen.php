@@ -86,8 +86,6 @@ class Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implements Use
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
-
         $this->plugin->vod->ensure_genres_loaded($plugin_cookies);
 
         $genre_ids = $this->plugin->vod->get_genre_ids();

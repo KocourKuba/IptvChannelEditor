@@ -70,11 +70,6 @@ interface Tv
     public function get_archive(MediaURL $media_url);
 
     /**
-     * Hook.
-     */
-    public function folder_entered(MediaURL $media_url, &$plugin_cookies);
-
-    /**
      * Hook for adding special group items.
      * @param &$items
      */

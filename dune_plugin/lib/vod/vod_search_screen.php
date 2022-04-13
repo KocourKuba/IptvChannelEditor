@@ -63,8 +63,6 @@ class Vod_Search_Screen extends Abstract_Controls_Screen implements User_Input_H
      */
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
-
         return $this->do_get_control_defs($plugin_cookies);
     }
 

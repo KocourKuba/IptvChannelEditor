@@ -187,8 +187,6 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->plugin->tv->folder_entered($media_url, $plugin_cookies);
-
         try {
             $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {

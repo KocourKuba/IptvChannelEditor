@@ -410,10 +410,6 @@ abstract class Abstract_Tv implements Tv
     ///////////////////////////////////////////////////////////////////////
     // Hooks.
 
-    public function folder_entered(MediaURL $media_url, &$plugin_cookies)
-    {
-    }
-
     // Hook for adding special group items.
 
     /**

@@ -437,11 +437,4 @@ abstract class Abstract_Vod implements Vod
     {
         return null;
     }
-
-    ///////////////////////////////////////////////////////////////////////
-    // Hook.
-
-    public function folder_entered(MediaURL $media_url, &$plugin_cookies)
-    {
-    }
 }

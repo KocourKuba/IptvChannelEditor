@@ -98,7 +98,4 @@ interface Vod
      * @return mixed
      */
     public function get_archive(MediaURL $media_url);
-
-    /** Hook.*/
-    public function folder_entered(MediaURL $media_url, &$plugin_cookies);
 }

@@ -126,7 +126,7 @@ class Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements 
      * @param &$plugin_cookies
      * @return array
      */
-    private function get_update_action($sel_increment, &$user_input, &$plugin_cookies)
+    private function get_update_action($sel_increment, $user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
 
@@ -151,8 +151,6 @@ class Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements 
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
-
         $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
 
         $movie_ids = $this->plugin->vod->get_favorite_movie_ids();

@@ -67,10 +67,10 @@ class Starnet_Filter_Screen extends Abstract_Preloaded_Regular_Screen implements
 
     /**
      * @param $user_input
-     * @param $plugin_cookies
+     * @param &$plugin_cookies
      * @return array
      */
-    private function get_update_action(&$user_input, &$plugin_cookies)
+    private function get_update_action($user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
         $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
@@ -211,7 +211,6 @@ class Starnet_Filter_Screen extends Abstract_Preloaded_Regular_Screen implements
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
         $items = array();
 
         $items[] = array

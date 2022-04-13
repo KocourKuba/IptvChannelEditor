@@ -78,10 +78,10 @@ class Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements U
     /**
      * @param int $sel_increment
      * @param $user_input
-     * @param $plugin_cookies
+     * @param &$plugin_cookies
      * @return array
      */
-    private function get_update_action($sel_increment, &$user_input, &$plugin_cookies)
+    private function get_update_action($sel_increment, $user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
 
@@ -149,8 +149,6 @@ class Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements U
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->plugin->tv->folder_entered($media_url, $plugin_cookies);
-
         $fav_channel_ids = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
 
         $items = array();
