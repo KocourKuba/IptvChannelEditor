@@ -1,99 +1,94 @@
 <?php
 
-class ShortMovie
-{
-    public $id;
-    public $name;
-    public $poster_url;
-    public $info;
-
-    /**
-     * @throws Exception
-     */
-    public function __construct($id, $name, $poster_url)
-    {
-        if (is_null($id)) {
-            throw new Exception("ShortMovie::id is null");
-        }
-
-        $this->id = (string)$id;
-        $this->name = (string)$name;
-        $this->poster_url = (string)$poster_url;
-    }
-}
-
-class ShortMovieRange
-{
-    public $from_ndx;
-    public $total;
-    public $short_movies;
-
-    public function __construct($from_ndx, $total, $short_movies = null)
-    {
-        $this->from_ndx = (int)$from_ndx;
-        $this->total = (int)$total;
-        $this->short_movies = $short_movies === null ? array() : $short_movies;
-    }
-}
-
-class MovieSeries
-{
-    public $id;
-
-    /**
-     * @throws Exception
-     */
-    public function __construct($id)
-    {
-        if (is_null($id)) {
-            throw new Exception("MovieSeries::id is null");
-        }
-
-        $this->id = (string)$id;
-    }
-
-    public $name = '';
-    public $playback_url = '';
-    public $playback_url_is_stream_url = true;
-}
-
-class MovieSeason
-{
-    public $id;
-    public function __construct($id)
-    {
-        if (is_null($id)) {
-            hd_print("MovieSeason::id is not set");
-        }
-        $this->id = (string)$id;
-    }
-    public $name = '';
-    public $season_url = '';
-	public $type = '';
-}
-
 class Movie
 {
+    /**
+     * @var string
+     */
     public $id;
+
+    /**
+     * @var string
+     */
     public $name = '';
+
+    /**
+     * @var string
+     */
     public $name_original = '';
+
+    /**
+     * @var string
+     */
     public $description = '';
+
+    /**
+     * @var string
+     */
     public $poster_url = '';
+
+    /**
+     * @var int
+     */
     public $length_min = -1;
+
+    /**
+     * @var int
+     */
     public $year = 0;
+
+    /**
+     * @var string
+     */
     public $directors_str = '';
+
+    /**
+     * @var string
+     */
     public $scenarios_str = '';
+
+    /**
+     * @var string
+     */
     public $actors_str = '';
+
+    /**
+     * @var string
+     */
     public $genres_str = '';
+
+    /**
+     * @var string
+     */
     public $rate_imdb = '';
+
+    /**
+     * @var string
+     */
     public $rate_kinopoisk = '';
+
+    /**
+     * @var string
+     */
     public $rate_mpaa = '';
+
+    /**
+     * @var string
+     */
     public $country = '';
+
+    /**
+     * @var string
+     */
     public $budget = '';
 
+    /**
+     * @var array
+     */
     public $series_list;
 
     /**
+     * @param string $id
      * @throws Exception
      */
     public function __construct($id)
@@ -105,11 +100,20 @@ class Movie
         $this->id = (string)$id;
     }
 
+    /**
+     * @param $v
+     * @return string
+     */
     private function to_string($v)
     {
         return $v === null ? '' : (string)$v;
     }
 
+    /**
+     * @param $v
+     * @param $default_value
+     * @return int
+     */
     private function to_int($v, $default_value)
     {
         $v = (string)$v;
@@ -120,6 +124,23 @@ class Movie
         return $v <= 0 ? $default_value : $v;
     }
 
+    /**
+     * @param string $name
+     * @param string $name_original
+     * @param string $description
+     * @param string $poster_url
+     * @param string $length_min
+     * @param int $year
+     * @param string $directors_str
+     * @param string $scenarios_str
+     * @param string $actors_str
+     * @param string $genres_str
+     * @param string $rate_imdb
+     * @param string $rate_kinopoisk
+     * @param string $rate_mpaa
+     * @param string $country
+     * @param string $budget
+     */
     public function set_data(
         $name,
         $name_original,
@@ -157,11 +178,15 @@ class Movie
     }
 
     /**
+     * @param string $id
+     * @param string $name
+     * @param string $playback_url
+     * @param string $playback_url_is_stream_url
      * @throws Exception
      */
     public function add_series_data($id, $name, $playback_url, $playback_url_is_stream_url)
     {
-        $series = new MovieSeries($id);
+        $series = new Movie_Series($id);
 
         $series->name = $this->to_string($name);
         $series->playback_url = $this->to_string($playback_url);
@@ -170,6 +195,9 @@ class Movie
         $this->series_list[] = $series;
     }
 
+    /**
+     * @return array
+     */
     public function get_movie_array()
     {
         return array(
@@ -192,6 +220,9 @@ class Movie
     }
 
     /**
+     * @param string $sel_id
+     * @param int $buffering_ms
+     * @return array
      * @throws Exception
      */
     public function get_vod_info($sel_id, $buffering_ms)

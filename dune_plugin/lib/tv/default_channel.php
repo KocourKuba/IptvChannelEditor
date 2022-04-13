@@ -1,22 +1,87 @@
 <?php
 require_once 'channel.php';
 
-class DefaultChannel implements IChannel
+class Default_Channel implements Channel
 {
+    /**
+     * @var string
+     */
     protected $_id;
+
+    /**
+     * @var string
+     */
     protected $_channel_id;
+
+    /**
+     * @var string
+     */
     protected $_title;
+
+    /**
+     * @var string
+     */
     protected $_icon_url;
+
+    /**
+     * @var string
+     */
     protected $_streaming_url;
-    protected $_groups; // Array<Group>
+
+    /**
+     * @var array|Group[]
+     */
+    protected $_groups;
+
+    /**
+     * @var int
+     */
     protected $_number;
+
+    /**
+     * @var int
+     */
     protected $_archive;
+
+    /**
+     * @var bool
+     */
     protected $_is_protected;
+
+    /**
+     * @var string first epg
+     */
     protected $_epg_id;
+
+    /**
+     * @var string secondary epg
+     */
     protected $_tvg_id;
+
+    /**
+     * @var int
+     */
     protected $_timeshift_hours;
+
+    /**
+     * @var array
+     */
     protected $_ext_params;
 
+    /**
+     * @param string $id
+     * @param string $channel_id
+     * @param string $title
+     * @param string $icon_url
+     * @param string $streaming_url
+     * @param int $_archive
+     * @param int $number
+     * @param string $epg_id
+     * @param string $tvg_id
+     * @param bool $is_protected
+     * @param int $timeshift_hours
+     * @param array $ext_params
+     */
     public function __construct($id, $channel_id, $title, $icon_url, $streaming_url, $_archive, $number, $epg_id, $tvg_id, $is_protected, $timeshift_hours, $ext_params)
     {
         $this->_id = $id;
@@ -80,7 +145,7 @@ class DefaultChannel implements IChannel
 
     /**
      * get channel number
-     * @return mixed
+     * @return int
      */
     public function get_number()
     {
@@ -107,7 +172,7 @@ class DefaultChannel implements IChannel
 
     /**
      * get timeshift
-     * @return mixed
+     * @return int
      */
     public function get_timeshift_hours()
     {
@@ -152,7 +217,7 @@ class DefaultChannel implements IChannel
 
     /**
      * how many second playback from the past
-     * @return float|int
+     * @return int
      */
     public function get_archive_past_sec()
     {
@@ -160,7 +225,7 @@ class DefaultChannel implements IChannel
     }
 
     /**
-     * @return float|int
+     * @return int
      */
     public function get_archive_delay_sec()
     {
@@ -189,9 +254,9 @@ class DefaultChannel implements IChannel
 
     /**
      * add group
-     * @param $group
+     * @param Group $group
      */
-    public function add_group($group)
+    public function add_group(Group $group)
     {
         $this->_groups[] = $group;
     }

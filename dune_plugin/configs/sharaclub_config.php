@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class SharaclubPluginConfig extends DefaultConfig
+class SharaclubPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
     const PLAYLIST_VOD_URL = 'http://list.playtv.pro/kino-full/%s-%s';
@@ -25,11 +25,11 @@ class SharaclubPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
@@ -43,6 +43,11 @@ class SharaclubPluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -65,6 +70,11 @@ class SharaclubPluginConfig extends DefaultConfig
         return '';
     }
 
+    /**
+     * @param string $url
+     * @param int $archive_ts
+     * @return string
+     */
     protected static function UpdateArchiveUrlParams($url, $archive_ts)
     {
         if ($archive_ts > 0) {
@@ -122,6 +132,10 @@ class SharaclubPluginConfig extends DefaultConfig
         return isset($account_data['status']) && $account_data['status'] === 'ok';
     }
 
+    /**
+     * @param array &$defs
+     * @param $plugin_cookies
+     */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
         $account_data = array();
@@ -132,24 +146,24 @@ class SharaclubPluginConfig extends DefaultConfig
             $text = explode('\\n', $text);
             $text = array_values($text);
 
-            ControlFactory::add_label($defs, 'Ошибка!', $text[0], -10);
-            ControlFactory::add_label($defs, 'Описание:', $text[1], 20);
+            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
+            Control_Factory::add_label($defs, 'Описание:', $text[1], 20);
             return;
         }
 
         $title = 'Пакеты: ';
 
-        ControlFactory::add_label($defs, 'Баланс:', $account_data['data']['money'] . ' руб.', -10);
-        ControlFactory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.', -10);
+        Control_Factory::add_label($defs, 'Баланс:', $account_data['data']['money'] . ' руб.', -10);
+        Control_Factory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.', -10);
         $packages = $account_data['data']['abon'];
         $str_len = strlen($packages);
         if ($str_len === 0) {
-            ControlFactory::add_label($defs, $title, 'Нет пакетов', 20);
+            Control_Factory::add_label($defs, $title, 'Нет пакетов', 20);
             return;
         }
 
         if ($str_len < 30) {
-            ControlFactory::add_label($defs, $title, $packages, 20);
+            Control_Factory::add_label($defs, $title, $packages, 20);
             return;
         }
 
@@ -164,7 +178,7 @@ class SharaclubPluginConfig extends DefaultConfig
                 continue;
             }
 
-            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected);
+            Control_Factory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected);
 
             if ($isFirstLabel) {
                 $isFirstLabel = false;
@@ -174,12 +188,19 @@ class SharaclubPluginConfig extends DefaultConfig
         }
 
         if (count($list_collected) !== 0) {
-            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
+            Control_Factory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
         }
 
-        ControlFactory::add_vgap($defs, 20);
+        Control_Factory::add_vgap($defs, 20);
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         hd_print("Fetching EPG for ID: '$id'");
@@ -195,6 +216,9 @@ class SharaclubPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $movie_id
+     * @param $plugin_cookies
+     * @return Movie
      * @throws Exception
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
@@ -272,7 +296,9 @@ class SharaclubPluginConfig extends DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param $plugin_cookies
+     * @param array &$category_list
+     * @param array &$category_index
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
@@ -290,7 +316,7 @@ class SharaclubPluginConfig extends DefaultConfig
         foreach ($categories as $movie) {
             if (!in_array($movie["category"], $categoriesFound)) {
                 $categoriesFound[] = $movie["category"];
-                $cat = new StarnetVodCategory((string)$movie["category"], (string)$movie["category"]);
+                $cat = new Starnet_Vod_Category((string)$movie["category"], (string)$movie["category"]);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
             }
@@ -302,6 +328,9 @@ class SharaclubPluginConfig extends DefaultConfig
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $keyword
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function getSearchList($keyword, $plugin_cookies)
@@ -322,6 +351,9 @@ class SharaclubPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $query_id
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function getVideoList($query_id, $plugin_cookies)
@@ -347,7 +379,8 @@ class SharaclubPluginConfig extends DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param array $mov_array
+     * @return Short_Movie
      */
     protected static function CreateMovie($mov_array)
     {
@@ -361,12 +394,16 @@ class SharaclubPluginConfig extends DefaultConfig
         $info_arr = $mov_array["info"];
         $genres = HD::ArrayToStr($info_arr["genre"]);
         $country = HD::ArrayToStr($info_arr["country"]);
-        $movie = new ShortMovie($id, $mov_array["name"], $info_arr["poster"]);
+        $movie = new Short_Movie($id, $mov_array["name"], $info_arr["poster"]);
         $movie->info = $mov_array["name"] . "|Год: " . $info_arr["year"] . "|Страна: $country|Жанр: $genres|Рейтинг: " . $info_arr["rating"];
 
-        return  $movie;
+        return $movie;
     }
 
+    /**
+     * @param string $key
+     * @param int $val
+     */
     public function add_movie_counter($key, $val)
     {
         // repeated count data

@@ -6,18 +6,23 @@ require_once 'dune_exception.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
-class DefaultDunePluginFw extends DunePluginFw
+class Default_Dune_Plugin_Fw extends DunePluginFw
 {
     public static $plugin_class_name;
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @return mixed
+     */
     public function create_plugin()
     {
         return new self::$plugin_class_name;
     }
 
     /**
+     * @param $call_ctx_json
+     * @return false|string
      * @throws Exception
      */
     public function call_plugin($call_ctx_json)
@@ -26,6 +31,8 @@ class DefaultDunePluginFw extends DunePluginFw
     }
 
     /**
+     * @param $call_ctx
+     * @return array
      * @throws Exception
      */
     protected function call_plugin_impl($call_ctx)
@@ -47,7 +54,7 @@ class DefaultDunePluginFw extends DunePluginFw
                         PluginOutputData::plugin_cookies => $call_ctx->plugin_cookies,
                         PluginOutputData::is_error => true,
                         PluginOutputData::error_action =>
-                            ActionFactory::show_error(
+                            Action_Factory::show_error(
                                 true,
                                 'System error',
                                 array(
@@ -61,7 +68,7 @@ class DefaultDunePluginFw extends DunePluginFw
 
         try {
             $out_data = $this->invoke_operation($plugin, $call_ctx);
-        } catch (DuneException $e) {
+        } catch (Dune_Exception $e) {
             hd_print("Error: DuneException caught: " . $e->getMessage());
             return
                 array
@@ -81,7 +88,7 @@ class DefaultDunePluginFw extends DunePluginFw
                     PluginOutputData::plugin_cookies => $call_ctx->plugin_cookies,
                     PluginOutputData::is_error => true,
                     PluginOutputData::error_action =>
-                        ActionFactory::show_error(
+                        Action_Factory::show_error(
                             true,
                             'System error',
                             array(
@@ -114,4 +121,4 @@ class DefaultDunePluginFw extends DunePluginFw
 
 ///////////////////////////////////////////////////////////////////////////
 
-DunePluginFw::$instance = new DefaultDunePluginFw();
+DunePluginFw::$instance = new Default_Dune_Plugin_Fw();

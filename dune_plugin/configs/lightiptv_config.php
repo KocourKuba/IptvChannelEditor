@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class LightiptvPluginConfig extends DefaultConfig
+class LightiptvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://lightiptv.cc/playlist/hls/%s.m3u';
 
@@ -20,11 +20,11 @@ class LightiptvPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
@@ -32,13 +32,13 @@ class LightiptvPluginConfig extends DefaultConfig
 
         switch ($this->get_format($plugin_cookies)) {
             case 'hls':
-                if ((int)$archive_ts > 0) {
+                if ($archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
                     $url = str_replace('video.m3u8', "video-$archive_ts-10800.m3u8", $url);
                 }
                 break;
             case 'hls2':
-                if ((int)$archive_ts > 0) {
+                if ($archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
                     $url = str_replace('video.m3u8', "video-$archive_ts-10800.m3u8", $url);
                 } else {
@@ -46,7 +46,7 @@ class LightiptvPluginConfig extends DefaultConfig
                 }
                 break;
             case 'mpeg':
-                if ((int)$archive_ts > 0) {
+                if ($archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
                     $url = str_replace('video.m3u8', "timeshift_abs-$archive_ts.ts", $url);
                 }
@@ -64,6 +64,11 @@ class LightiptvPluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -105,6 +110,11 @@ class LightiptvPluginConfig extends DefaultConfig
         return $pl_entries;
     }
 
+    /**
+     * @param string $channel_id
+     * @param array $ext_params
+     * @return array|mixed|string|string[]
+     */
     public function UpdateStreamUrlID($channel_id, $ext_params)
     {
         return str_replace('{TOKEN}', $ext_params['token'], $this->get_feature(MEDIA_URL_TEMPLATE_HLS));

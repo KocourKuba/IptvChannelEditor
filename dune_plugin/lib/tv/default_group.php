@@ -1,14 +1,33 @@
 <?php
 require_once 'group.php';
 
-class DefaultGroup implements Group
+class Default_Group implements Group
 {
+    /**
+     * @var string
+     */
     protected $_id;
+
+    /**
+     * @var string
+     */
     protected $_title;
+
+    /**
+     * @var string
+     */
     protected $_icon_url;
 
+    /**
+     * @var Hashed_Array
+     */
     protected $_channels;
 
+    /**
+     * @param string $id
+     * @param string $title
+     * @param string $icon_url
+     */
     public function __construct($id, $title, $icon_url)
     {
         if (is_null($icon_url)) {
@@ -19,41 +38,63 @@ class DefaultGroup implements Group
         $this->_title = $title;
         $this->_icon_url = $icon_url;
 
-        $this->_channels = new HashedArray();
+        $this->_channels = new Hashed_Array();
     }
 
+    /**
+     * @return string
+     */
     public function get_id()
     {
         return $this->_id;
     }
 
+    /**
+     * @return string
+     */
     public function get_title()
     {
         return $this->_title;
     }
 
+    /**
+     * @return string
+     */
     public function get_icon_url()
     {
         return $this->_icon_url;
     }
 
+    /**
+     * @return bool
+     */
     public function is_favorite_channels()
     {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function is_all_channels()
     {
         return false;
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return Hashed_Array
+     */
     public function get_channels(&$plugin_cookies)
     {
         return $this->_channels;
     }
 
-    public function add_channel($c)
+    /**
+     * @param Channel $channel
+     */
+    public function add_channel(Channel $channel)
     {
-        $this->_channels->put($c);
+        $this->_channels->put($channel);
     }
 }

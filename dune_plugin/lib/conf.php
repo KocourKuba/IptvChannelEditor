@@ -3,8 +3,14 @@
 
 class Conf
 {
+    /**
+     * @var array
+     */
     private $data;
 
+    /**
+     * @param string $conf_file_name
+     */
     public function __construct($conf_file_name)
     {
         $this->data = array();
@@ -13,6 +19,10 @@ class Conf
         $this->read_conf_file("/firmware/config/$conf_file_name");
     }
 
+    /**
+     * @param string $conf_file_path
+     * @return bool
+     */
     private function read_conf_file($conf_file_path)
     {
         hd_silence_warnings();
@@ -40,21 +50,38 @@ class Conf
         return true;
     }
 
+    /**
+     * @param string $key
+     * @return string
+     */
     public function __get($key)
     {
         return $this->data[$key];
     }
 
+    /**
+     * @param string $key
+     * @param string $value
+     */
     public function __set($key, $value)
     {
         $this->data[$key] = $value;
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     */
     public function __isset($key)
     {
         return isset($this->data[$key]);
     }
 
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
     public function set_default($key, $value)
     {
         if (!isset($this->data[$key])) {

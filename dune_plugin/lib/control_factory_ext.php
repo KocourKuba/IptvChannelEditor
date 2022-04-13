@@ -15,7 +15,7 @@ require_once 'control_factory.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class ControlFactoryExt extends ControlFactory
+class Control_Factory_Ext extends Control_Factory
 {
     ///////////////////////////////////////////////////////////////////////////
 
@@ -51,6 +51,9 @@ class ControlFactoryExt extends ControlFactory
 
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * @var Control_Factory_Ext
+     */
     private static $instance;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -81,7 +84,7 @@ class ControlFactoryExt extends ControlFactory
     public static function init()
     {
         if (is_null(self::$instance)) {
-            self::$instance = new ControlFactoryExt();
+            self::$instance = new Control_Factory_Ext();
         }
 
         clearstatcache();

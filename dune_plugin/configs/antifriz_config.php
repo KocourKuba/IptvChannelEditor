@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class AntifrizPluginConfig extends DefaultConfig
+class AntifrizPluginConfig extends Default_Config
 {
     const API_HOST = 'http://protected-api.com';
 
@@ -31,11 +31,11 @@ class AntifrizPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
 
@@ -90,6 +90,11 @@ class AntifrizPluginConfig extends DefaultConfig
         return false;
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -109,6 +114,13 @@ class AntifrizPluginConfig extends DefaultConfig
         return '';
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         $params = $this->get_epg_params($type);
@@ -122,6 +134,9 @@ class AntifrizPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $movie_id
+     * @param $plugin_cookies
+     * @return Movie
      * @throws Exception
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
@@ -179,7 +194,9 @@ class AntifrizPluginConfig extends DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param $plugin_cookies
+     * @param array &$category_list
+     * @param array &$category_index
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
@@ -193,13 +210,13 @@ class AntifrizPluginConfig extends DefaultConfig
         $category_index = array();
 
         // all movies
-        $category = new StarnetVodCategory('all', 'Все фильмы');
+        $category = new Starnet_Vod_Category('all', 'Все фильмы');
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
         foreach ($categories->data as $node) {
             $id = (string)$node->id;
-            $category = new StarnetVodCategory($id, (string)$node->name);
+            $category = new Starnet_Vod_Category($id, (string)$node->name);
 
             // fetch genres for category
             $genres = HD::LoadAndStoreJson(self::API_HOST . "/cat/$id/genres", false);
@@ -209,7 +226,7 @@ class AntifrizPluginConfig extends DefaultConfig
 
             $gen_arr = array();
             foreach ($genres->data as $genre) {
-                $gen_arr[] = new StarnetVodCategory((string)$genre->id, (string)$genre->title, $category);
+                $gen_arr[] = new Starnet_Vod_Category((string)$genre->id, (string)$genre->title, $category);
             }
 
             $category->set_sub_categories($gen_arr);
@@ -222,6 +239,9 @@ class AntifrizPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $keyword
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function getSearchList($keyword, $plugin_cookies)
@@ -233,6 +253,9 @@ class AntifrizPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $query_id
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function getVideoList($query_id, $plugin_cookies)
@@ -258,7 +281,8 @@ class AntifrizPluginConfig extends DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param $json
+     * @return array
      */
     protected function CollectSearchResult($json)
     {
@@ -273,7 +297,7 @@ class AntifrizPluginConfig extends DefaultConfig
                 }
             }
             if (isset($entry->name)) {
-                $movie = new ShortMovie($entry->id, $entry->name, $entry->poster);
+                $movie = new Short_Movie($entry->id, $entry->name, $entry->poster);
                 $genre_str = implode(", ", $genresArray);
                 $movie->info = "$entry->name|Год: $entry->year|Страна: $entry->country|Жанр: $genre_str|Рейтинг: $entry->rating";
                 $movies[] = $movie;
@@ -284,6 +308,10 @@ class AntifrizPluginConfig extends DefaultConfig
         return $movies;
     }
 
+    /**
+     * @param string $key
+     * @param int $val
+     */
     public function add_movie_counter($key, $val)
     {
         // repeated count data

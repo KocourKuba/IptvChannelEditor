@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class OnecentPluginConfig extends DefaultConfig
+class OnecentPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://only4.tv/pl/%s/102/only4tv.m3u8';
     const API_URL = 'http://technic.cf/epg-iptvxone';
@@ -26,11 +26,11 @@ class OnecentPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         //hd_print("AdjustStreamUrl: $url");
@@ -58,9 +58,15 @@ class OnecentPluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param &$plugin_cookies
+     * @param array &$account_data
+     * @param bool $force
+     * @return bool
+     */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
-        if (!parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
+        if (!parent::GetAccountInfo($plugin_cookies, $account_data, $force)) {
             return false;
         }
 
@@ -71,6 +77,13 @@ class OnecentPluginConfig extends DefaultConfig
         return true;
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         $params = $this->get_epg_params($type);
@@ -83,6 +96,11 @@ class OnecentPluginConfig extends DefaultConfig
         return null;
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");

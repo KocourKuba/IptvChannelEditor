@@ -1,9 +1,12 @@
 <?php
 
-class VodGenresScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
+class Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_genres';
 
+    /**
+     * @return false|string
+     */
     public static function get_media_url_str()
     {
         return MediaURL::encode(array('screen_id' => self::ID));
@@ -11,7 +14,10 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen implements UserInpu
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct(DefaultDunePlugin $plugin)
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_genres_folder_views());
 
@@ -20,10 +26,15 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen implements UserInpu
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         $select_genre_action =
-            UserInputHandlerRegistry::create_action($this, 'select_genre');
+            User_Input_Handler_Registry::create_action($this, 'select_genre');
 
         return array
         (
@@ -31,11 +42,19 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen implements UserInpu
         );
     }
 
+    /**
+     * @return string
+     */
     public function get_handler_id()
     {
-        return self::ID.'_handler';
+        return self::ID . '_handler';
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         // hd_print('Vod genres: handle_user_input:');
@@ -52,7 +71,7 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen implements UserInpu
             $caption = $this->plugin->vod->get_genre_caption($genre_id);
             $media_url_str = $this->plugin->vod->get_genre_media_url_str($genre_id);
 
-            return ActionFactory::open_folder($media_url_str, $caption);
+            return Action_Factory::open_folder($media_url_str, $caption);
         }
 
         return null;
@@ -61,7 +80,9 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen implements UserInpu
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @throws Exception
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
@@ -92,6 +113,10 @@ class VodGenresScreen extends AbstractPreloadedRegularScreen implements UserInpu
         return $items;
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @return null
+     */
     public function get_archive(MediaURL $media_url)
     {
         return $this->plugin->vod->get_archive($media_url);

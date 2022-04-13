@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class FoxPluginConfig extends DefaultConfig
+class FoxPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
     const PLAYLIST_VOD_URL = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
@@ -31,11 +31,11 @@ class FoxPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = $channel->get_streaming_url();
         $ext_params = $channel->get_ext_params();
@@ -54,6 +54,12 @@ class FoxPluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param $plugin_cookies
+     * @param array &$account_data
+     * @param bool $force
+     * @return bool
+     */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         if (!parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
@@ -67,6 +73,11 @@ class FoxPluginConfig extends DefaultConfig
         return true;
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -117,6 +128,13 @@ class FoxPluginConfig extends DefaultConfig
         return $pl_entries;
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         $params = $this->get_epg_params($type);
@@ -130,6 +148,9 @@ class FoxPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $movie_id
+     * @param $plugin_cookies
+     * @return Movie
      * @throws Exception
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)

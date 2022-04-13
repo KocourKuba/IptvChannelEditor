@@ -2,8 +2,12 @@
 
 require_once 'action_factory.php';
 
-class ControlFactory
+class Control_Factory
 {
+    /**
+     * @param array &$defs
+     * @param int $vgap
+     */
     public static function add_vgap(&$defs, $vgap)
     {
         $defs[] = array
@@ -13,6 +17,12 @@ class ControlFactory
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param string $title
+     * @param string $text
+     * @param bool $vgap_after
+     */
     public static function add_label(&$defs, $title, $text, $vgap_after = false)
     {
         $defs[] = array
@@ -28,9 +38,14 @@ class ControlFactory
         }
     }
 
+    /**
+     * @param array &$defs
+     * @param string $title
+     * @param string $text
+     */
     public static function add_smart_label(&$defs, $title, $text)
     {
-        $defs[] = array (
+        $defs[] = array(
             GuiControlDef::name => '',
             GuiControlDef::title => $title,
             GuiControlDef::kind => GUI_CONTROL_LABEL,
@@ -39,6 +54,12 @@ class ControlFactory
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param string $title
+     * @param string $text
+     * @param int $num_lines
+     */
     public static function add_multiline_label(&$defs, $title, $text, $num_lines = 2)
     {
         $defs[] = array(
@@ -50,10 +71,20 @@ class ControlFactory
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param User_Input_Handler $handler
+     * @param array $add_params
+     * @param string $name
+     * @param string $title
+     * @param string $caption
+     * @param int $width
+     * @param bool $caption_centered
+     */
     public static function add_button(&$defs, $handler, $add_params,
-                                      $name, $title, $caption, $width,  $caption_centered = false)
+                                      $name, $title, $caption, $width, $caption_centered = false)
     {
-        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -61,7 +92,7 @@ class ControlFactory
             GuiControlDef::name => $name,
             GuiControlDef::title => $title,
             GuiControlDef::kind => GUI_CONTROL_BUTTON,
-            GuiControlDef::params =>array('button_caption_centered' => $caption_centered),
+            GuiControlDef::params => array('button_caption_centered' => $caption_centered),
             GuiControlDef::specific_def => array
             (
                 GuiButtonDef::caption => $caption,
@@ -71,9 +102,19 @@ class ControlFactory
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param User_Input_Handler $handler
+     * @param array $add_params
+     * @param string $name
+     * @param string $title
+     * @param string $caption
+     * @param string $image
+     * @param int $width
+     */
     public static function add_image_button(&$defs, $handler, $add_params, $name, $title, $caption, $image, $width = 0)
     {
-        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -90,9 +131,14 @@ class ControlFactory
         );
 
         self::add_vgap($defs, -65);
-        self::add_smart_label($defs, null,  "<gap width=15/><icon>$image</icon><gap width=20/><text dy='-2'>$caption</text>");
+        self::add_smart_label($defs, null, "<gap width=15/><icon>$image</icon><gap width=20/><text dy='-2'>$caption</text>");
     }
 
+    /**
+     * @param array &$defs
+     * @param string $caption
+     * @param int $width
+     */
     public static function add_close_dialog_button(&$defs, $caption, $width)
     {
         $defs[] = array
@@ -104,14 +150,22 @@ class ControlFactory
             (
                 GuiButtonDef::caption => $caption,
                 GuiButtonDef::width => $width,
-                GuiButtonDef::push_action => ActionFactory::close_dialog(),
+                GuiButtonDef::push_action => Action_Factory::close_dialog(),
             ),
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param User_Input_Handler $handler
+     * @param array $add_params
+     * @param string $name
+     * @param string $caption
+     * @param int $width
+     */
     public static function add_close_dialog_and_apply_button(&$defs, $handler, $add_params, $name, $caption, $width)
     {
-        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -123,14 +177,23 @@ class ControlFactory
             (
                 GuiButtonDef::caption => $caption,
                 GuiButtonDef::width => $width,
-                GuiButtonDef::push_action => ActionFactory::close_dialog_and_run($push_action),
+                GuiButtonDef::push_action => Action_Factory::close_dialog_and_run($push_action),
             ),
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param User_Input_Handler $handler
+     * @param array $add_params
+     * @param string $name
+     * @param string $title
+     * @param string $caption
+     * @param int $width
+     */
     public static function add_close_dialog_and_apply_button_title(&$defs, $handler, $add_params, $name, $title, $caption, $width)
     {
-        $push_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -142,11 +205,18 @@ class ControlFactory
             (
                 GuiButtonDef::caption => $caption,
                 GuiButtonDef::width => $width,
-                GuiButtonDef::push_action => ActionFactory::close_dialog_and_run($push_action),
+                GuiButtonDef::push_action => Action_Factory::close_dialog_and_run($push_action),
             ),
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param string $name
+     * @param string $caption
+     * @param int $width
+     * @param array $action
+     */
     public static function add_custom_close_dialog_and_apply_buffon(&$defs, $name, $caption, $width, $action)
     {
         $defs[] = array
@@ -158,11 +228,26 @@ class ControlFactory
             (
                 GuiButtonDef::caption => $caption,
                 GuiButtonDef::width => $width,
-                GuiButtonDef::push_action => ActionFactory::close_dialog_and_run($action),
+                GuiButtonDef::push_action => Action_Factory::close_dialog_and_run($action),
             ),
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param User_Input_Handler $handler
+     * @param array $add_params
+     * @param string $name
+     * @param string $title
+     * @param string $initial_value
+     * @param bool $numeric
+     * @param bool $password
+     * @param bool $has_osk
+     * @param bool $always_active
+     * @param int $width
+     * @param bool $need_confirm
+     * @param bool $need_apply
+     */
     public static function add_text_field(&$defs,
                                           $handler, $add_params,
                                           $name, $title, $initial_value,
@@ -171,13 +256,13 @@ class ControlFactory
     {
         $apply_action = null;
         if ($need_apply) {
-            $apply_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+            $apply_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
             $apply_action['params']['action_type'] = 'apply';
         }
 
         $confirm_action = null;
         if ($need_confirm) {
-            $confirm_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+            $confirm_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
             $confirm_action['params']['action_type'] = 'confirm';
         }
 
@@ -200,6 +285,18 @@ class ControlFactory
         );
     }
 
+    /**
+     * @param array &$defs
+     * @param User_Input_Handler $handler
+     * @param array $add_params
+     * @param string $name
+     * @param string $title
+     * @param string $initial_value
+     * @param array $value_caption_pairs
+     * @param int $width
+     * @param bool $need_confirm
+     * @param bool $need_apply
+     */
     public static function add_combobox(&$defs,
                                         $handler, $add_params,
                                         $name, $title, $initial_value, $value_caption_pairs, $width,
@@ -207,13 +304,13 @@ class ControlFactory
     {
         $apply_action = null;
         if ($need_apply) {
-            $apply_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+            $apply_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
             $apply_action['params']['action_type'] = 'apply';
         }
 
         $confirm_action = null;
         if ($need_confirm) {
-            $confirm_action = UserInputHandlerRegistry::create_action($handler, $name, $add_params);
+            $confirm_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
             $confirm_action['params']['action_type'] = 'confirm';
         }
 

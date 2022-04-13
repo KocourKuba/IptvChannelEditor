@@ -1,16 +1,24 @@
 <?php
 
-interface EpgItem
+interface Epg_Item
 {
-    /** Return string.*/
+    /**
+     * @return string
+     */
     public function get_title();
 
-    /** Return string.*/
+    /**
+     * @return string
+     */
     public function get_description();
 
-    /** Return int -- UNIX time.*/
+    /**
+     * @return int UNIX time
+     */
     public function get_start_time();
 
-    /** Return int -- UNIX time.*/
+    /**
+     * @return int UNIX time
+     */
     public function get_finish_time();
 }

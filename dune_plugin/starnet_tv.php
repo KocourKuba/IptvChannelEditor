@@ -1,43 +1,48 @@
 ﻿<?php
 require_once 'lib/hashed_array.php';
 require_once 'lib/tv/abstract_tv.php';
+require_once 'lib/tv/default_channel.php';
 require_once 'lib/tv/default_epg_item.php';
 require_once 'lib/epg_xml_parser.php';
 require_once 'starnet_setup_screen.php';
-require_once 'starnet_channel.php';
 require_once 'starnet_vod_category_list_screen.php';
 
 
-class StarnetPluginTv extends AbstractTv
+class Starnet_Tv extends Abstract_Tv
 {
+    /**
+     * @var Starnet_Plugin
+     */
     protected $plugin;
 
-    public function __construct(StarnetDunePlugin $plugin)
+    /**
+     * @param Starnet_Plugin $plugin
+     */
+    public function __construct(Starnet_Plugin $plugin)
     {
         $this->plugin = $plugin;
-        parent::__construct(AbstractTv::MODE_CHANNELS_N_TO_M, false);
+        parent::__construct(Abstract_Tv::MODE_CHANNELS_N_TO_M, false);
     }
 
+    /**
+     * @return string
+     */
     public function get_fav_icon_url()
     {
-        return DefaultConfig::FAV_CHANNEL_GROUP_ICON_PATH;
+        return Default_Config::FAV_CHANNEL_GROUP_ICON_PATH;
     }
 
-    public function set_setup_screen($setup_screen)
-    {
-        $this->SettingsScreen = $setup_screen;
-    }
-
-    public function get_setup_screen()
-    {
-        return isset($this->SettingsScreen) ? $this->SettingsScreen : false;
-    }
-
+    /**
+     * @return bool
+     */
     public function is_favorites_supported()
     {
         return $this->plugin->config->get_feature(TV_FAVORITES_SUPPORTED);
     }
 
+    /**
+     * @param array &$items
+     */
     public function add_special_groups(&$items)
     {
         if ($this->plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
@@ -47,19 +52,20 @@ class StarnetPluginTv extends AbstractTv
                     MediaURL::encode(
                         array
                         (
-                            'screen_id' => StarnetVodCategoryListScreen::ID,
+                            'screen_id' => Starnet_Vod_Category_List_Screen::ID,
                             'name' => 'VOD',
                         )),
-                PluginRegularFolderItem::caption => DefaultConfig::VOD_GROUP_CAPTION,
+                PluginRegularFolderItem::caption => Default_Config::VOD_GROUP_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => DefaultConfig::VOD_GROUP_ICON
+                    ViewItemParams::icon_path => Default_Config::VOD_GROUP_ICON
                 )
             );
         }
     }
 
     /**
+     * @param $plugin_cookies
      * @throws Exception
      */
     public function load_channels(&$plugin_cookies)
@@ -134,21 +140,21 @@ class StarnetPluginTv extends AbstractTv
         }
 
         // Create channels and groups
-        $this->channels = new HashedArray();
-        $this->groups = new HashedArray();
+        $this->channels = new Hashed_Array();
+        $this->groups = new Hashed_Array();
 
         // Favorites group
         if ($this->is_favorites_supported()) {
-            $this->groups->put(new FavoritesGroup($this,
-                DefaultConfig::FAV_CHANNEL_GROUP_ID,
-                DefaultConfig::FAV_CHANNEL_GROUP_CAPTION,
-                DefaultConfig::FAV_CHANNEL_GROUP_ICON_PATH));
+            $this->groups->put(new Favorites_Group($this,
+                Default_Config::FAV_CHANNEL_GROUP_ID,
+                Default_Config::FAV_CHANNEL_GROUP_CAPTION,
+                Default_Config::FAV_CHANNEL_GROUP_ICON_PATH));
         }
 
         // All channels group
-        $this->groups->put(new AllChannelsGroup($this,
-            DefaultConfig::ALL_CHANNEL_GROUP_CAPTION,
-            DefaultConfig::ALL_CHANNEL_GROUP_ICON_PATH));
+        $this->groups->put(new All_Channels_Group($this,
+            Default_Config::ALL_CHANNEL_GROUP_CAPTION,
+            Default_Config::ALL_CHANNEL_GROUP_ICON_PATH));
 
         // read category
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
@@ -162,7 +168,7 @@ class StarnetPluginTv extends AbstractTv
                 continue;
             }
 
-            $this->groups->put(new DefaultGroup((string)$xml_tv_category->id,
+            $this->groups->put(new Default_Group((string)$xml_tv_category->id,
                 (string)$xml_tv_category->caption,
                 (string)$xml_tv_category->icon_url));
         }
@@ -221,7 +227,7 @@ class StarnetPluginTv extends AbstractTv
                 $icon_url = (string)$xml_tv_channel->icon_url;
                 $number = isset($xml_tv_channel->int_id) ? (int)$xml_tv_channel->int_id : 0;
 
-                $channel = new StarnetChannel(
+                $channel = new Default_Channel(
                     $hash,
                     $channel_id,
                     (string)$xml_tv_channel->caption,
@@ -253,11 +259,23 @@ class StarnetPluginTv extends AbstractTv
         hd_print("Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
     }
 
+    /**
+     * @param string $playback_url
+     * @param $plugin_cookies
+     * @return string
+     */
     public function get_tv_stream_url($playback_url, &$plugin_cookies)
     {
         return $playback_url;
     }
 
+    /**
+     * @param string $channel_id
+     * @param int $archive_ts
+     * @param string $protect_code
+     * @param $plugin_cookies
+     * @return string
+     */
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
     {
         try {
@@ -279,6 +297,12 @@ class StarnetPluginTv extends AbstractTv
         return $url;
     }
 
+    /**
+     * @param string $channel_id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return array|Epg_Iterator
+     */
     public function get_day_epg_iterator($channel_id, $day_start_ts, &$plugin_cookies)
     {
         try {
@@ -289,9 +313,9 @@ class StarnetPluginTv extends AbstractTv
             return array();
         }
 
-        $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : ControlSwitchDefs::switch_epg1;
+        $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
 
-        $epg_man = new EpgManager($this->plugin->config);
+        $epg_man = new Epg_Manager($this->plugin->config);
 
         try {
             $epg = $epg_man->get_epg($channel, $epg_source, $day_start_ts, $plugin_cookies);
@@ -317,9 +341,9 @@ class StarnetPluginTv extends AbstractTv
                 $start = $tm;
             }
 
-            $epg_result[] = new DefaultEpgItem($value['title'], $value['desc'], (int)$tm, $value['end']);
+            $epg_result[] = new Default_Epg_Item($value['title'], $value['desc'], (int)$tm, (int)$value['end']);
         }
 
-        return new EpgIterator($epg_result, $day_start_ts, $day_start_ts + 86400);
+        return new Epg_Iterator($epg_result, $day_start_ts, $day_start_ts + 86400);
     }
 }

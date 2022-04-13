@@ -34,6 +34,9 @@ class HD
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param int $ts
+     * @param string $fmt
+     * @return string
      * @throws Exception
      */
     public static function format_timestamp($ts, $fmt = null)
@@ -51,6 +54,10 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param string $msecs
+     * @return string
+     */
     public static function format_duration($msecs)
     {
         $n = (int)$msecs;
@@ -72,6 +79,10 @@ class HD
         return sprintf("%02d:%02d", $minutes, $seconds);
     }
 
+    /**
+     * @param int $size
+     * @return string
+     */
     public static function get_filesize_str($size)
     {
         if ($size < 1024) {
@@ -90,6 +101,11 @@ class HD
         return "$size_num $size_suf";
     }
 
+    /**
+     * @param string $path
+     * @param array|null $arg
+     * @return array|string
+     */
     public static function get_storage_size($path, $arg = null)
     {
         $d[0] = disk_free_space($path);
@@ -111,6 +127,11 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param array|string $a
+     * @param string|null $b
+     * @return string
+     */
     public static function encode_user_data($a, $b = null)
     {
         if (is_array($a) && is_null($b)) {
@@ -130,6 +151,11 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param string $media_url_str
+     * @param string $media_url
+     * @param array|null $user_data
+     */
     public static function decode_user_data($media_url_str, &$media_url, &$user_data)
     {
         $idx = strpos($media_url_str, '||');
@@ -146,6 +172,13 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param array $items
+     * @param int $from_ndx
+     * @param int $total
+     * @param bool $more_items_available
+     * @return array
+     */
     public static function create_regular_folder_range($items, $from_ndx = 0, $total = -1, $more_items_available = false)
     {
         if ($total === -1) {
@@ -172,6 +205,9 @@ class HD
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $url
+     * @param array $opts
+     * @return bool|string
      * @throws Exception
      */
     public static function http_get_document($url, $opts = null)
@@ -221,7 +257,12 @@ class HD
         return $content;
     }
 
-    public static function http_status_code_to_string($code){
+    /**
+     * @param int $code
+     * @return string
+     */
+    public static function http_status_code_to_string($code)
+    {
         // Source: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 
         switch( $code ){
@@ -299,6 +340,9 @@ class HD
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $url
+     * @param array $post_data
+     * @return bool|string
      * @throws Exception
      */
     public static function http_post_document($url, $post_data)
@@ -314,6 +358,8 @@ class HD
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $doc
+     * @return SimpleXMLElement
      * @throws Exception
      */
     public static function parse_xml_document($doc)
@@ -330,6 +376,8 @@ class HD
     }
 
     /**
+     * @param string $path
+     * @return SimpleXMLElement
      * @throws Exception
      */
     public static function parse_xml_file($path)
@@ -345,6 +393,11 @@ class HD
         return $xml;
     }
 
+    /**
+     * @param string $path
+     * @param bool $to_array
+     * @return mixed
+     */
     public static function parse_json_file($path, $to_array = true)
     {
         return json_decode(file_get_contents(
@@ -355,6 +408,11 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param string $op_name
+     * @param string $params
+     * @return array
+     */
     public static function make_json_rpc_request($op_name, $params)
     {
         static $request_id = 0;
@@ -385,6 +443,10 @@ class HD
         'December',
     );
 
+    /**
+     * @param int $tm
+     * @return string
+     */
     public static function format_date_time_date($tm)
     {
         $lt = localtime($tm);
@@ -392,6 +454,11 @@ class HD
         return sprintf("%02d %s %04d", $lt[3], $mon, $lt[5] + 1900);
     }
 
+    /**
+     * @param int $tm
+     * @param bool $with_sec
+     * @return false|string
+     */
     public static function format_date_time_time($tm, $with_sec = false)
     {
         $format = '%H:%M';
@@ -409,6 +476,10 @@ class HD
         }
     }
 
+    /**
+     * @param string $raw_string
+     * @return array|string|string[]
+     */
     public static function unescape_entity_string($raw_string)
     {
         $replace = array(
@@ -448,6 +519,10 @@ class HD
         return str_replace(array_keys($replace), $replace, $raw_string);
     }
 
+    /**
+     * @param array $arrayItems
+     * @return string
+     */
     public static function ArrayToStr($arrayItems)
     {
         $array = array();
@@ -460,28 +535,48 @@ class HD
         return implode(", ", $array);
     }
 
+    /**
+     * @param string $path
+     * @return array|mixed
+     */
     public static function get_items($path)
     {
         $full_path = get_data_path($path);
         return file_exists($full_path) ? unserialize(file_get_contents($full_path)) : array();
     }
 
+    /**
+     * @param string $path
+     * @param mixed $items
+     */
     public static function put_items($path, $items)
     {
         file_put_contents(get_data_path($path), serialize($items));
     }
 
+    /**
+     * @param string $path
+     * @return false|string
+     */
     public static function get_item($path)
     {
         $full_path = get_data_path($path);
         return file_exists($full_path) ? file_get_contents($full_path) : '';
     }
 
+    /**
+     * @param string $path
+     * @param mixed $item
+     */
     public static function put_item($path, $item)
     {
         file_put_contents(get_data_path($path), $item);
     }
 
+    /**
+     * @param string $url
+     * @return string
+     */
     public static function make_ts($url)
     {
         if (strpos($url, 'http://ts://') === false) {
@@ -491,6 +586,13 @@ class HD
         return $url;
     }
 
+    /**
+     * @param string $url
+     * @param bool $to_array
+     * @param string $path
+     * @param array|null $opts
+     * @return false|mixed
+     */
     public static function LoadAndStoreJson($url, $to_array = true, $path = null, $opts = null)
     {
         try {
@@ -513,6 +615,10 @@ class HD
         return $categories;
     }
 
+    /**
+     * @param string $url
+     * @return array
+     */
     public static function MapTvgID($url)
     {
         $mapped_ids = array();

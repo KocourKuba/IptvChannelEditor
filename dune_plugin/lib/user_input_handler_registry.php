@@ -2,9 +2,16 @@
 
 require_once('user_input_handler.php');
 
-class UserInputHandlerRegistry
+class User_Input_Handler_Registry
 {
+    /**
+     * @var User_Input_Handler_Registry
+     */
     private static $instance;
+
+    /**
+     * @var array|User_Input_Handler[]
+     */
     private $handlers;
 
     private function __construct()
@@ -12,16 +19,24 @@ class UserInputHandlerRegistry
         $this->handlers = array();
     }
 
+    /**
+     * @return User_Input_Handler_Registry
+     */
     public static function get_instance()
     {
         if (is_null(self::$instance)) {
-            self::$instance = new UserInputHandlerRegistry();
+            self::$instance = new User_Input_Handler_Registry();
         }
         return self::$instance;
     }
 
-    public static function create_action(UserInputHandler $handler,
-                                         $name, $add_params = null)
+    /**
+     * @param User_Input_Handler $handler
+     * @param string $name
+     * @param array|null $add_params
+     * @return array
+     */
+    public static function create_action(User_Input_Handler $handler, $name, $add_params = null)
     {
         $params = array(
             'handler_id' => $handler->get_handler_id(),
@@ -39,6 +54,11 @@ class UserInputHandlerRegistry
         );
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         if (!isset($user_input->handler_id)) {
@@ -50,16 +70,22 @@ class UserInputHandlerRegistry
             return null;
         }
 
-        return $this->handlers[$handler_id]->handle_user_input(
-            $user_input, $plugin_cookies);
+        return $this->handlers[$handler_id]->handle_user_input($user_input, $plugin_cookies);
     }
 
-    public function register_handler(UserInputHandler $handler)
+    /**
+     * @param User_Input_Handler $handler
+     */
+    public function register_handler(User_Input_Handler $handler)
     {
         $handler_id = $handler->get_handler_id();
         $this->handlers[$handler_id] = $handler;
     }
 
+    /**
+     * @param string $id
+     * @return User_Input_Handler|null
+     */
     public function get_registered_handler($id)
     {
         return isset($this->handlers[$id]) ? $this->handlers[$id] : null;

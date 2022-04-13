@@ -2,12 +2,15 @@
 require_once 'lib/vod/vod.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
+class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'search_screen';
     const SEARCH_ICON_PATH = 'plugin_file://icons/icon_search.png';
 
-    public function __construct(DefaultDunePlugin $plugin)
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_search_folder_views());
 
@@ -16,6 +19,10 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
         }
     }
 
+    /**
+     * @param string $category
+     * @return false|string
+     */
     public static function get_media_url_str($category = '')
     {
         return MediaURL::encode
@@ -28,43 +35,61 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
         );
     }
 
+    /**
+     * @return string
+     */
     public function get_handler_id()
     {
-        return self::ID.'_handler';
+        return self::ID . '_handler';
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         $actions = array();
         $add_params['search_actions'] = 'open';
-        $actions[GUI_EVENT_KEY_ENTER] = UserInputHandlerRegistry::create_action($this, 'search', $add_params);
+        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, 'search', $add_params);
 
         $add_params['search_actions'] = 'keyboard';
-        $actions[GUI_EVENT_KEY_PLAY] = UserInputHandlerRegistry::create_action($this, 'search', $add_params);
+        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, 'search', $add_params);
 
-        $add_action = UserInputHandlerRegistry::create_action($this, 'item_up');
+        $add_action = User_Input_Handler_Registry::create_action($this, 'item_up');
         $add_action['caption'] = 'Вверх';
         $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
 
-        $add_action = UserInputHandlerRegistry::create_action($this, 'item_down');
+        $add_action = User_Input_Handler_Registry::create_action($this, 'item_down');
         $add_action['caption'] = 'Вниз';
         $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
 
-        $add_action = UserInputHandlerRegistry::create_action($this, 'delete');
+        $add_action = User_Input_Handler_Registry::create_action($this, 'delete');
         $add_action['caption'] = 'Удалить';
         $actions[GUI_EVENT_KEY_D_BLUE] = $add_action;
 
         return $actions;
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array
+     */
     private function get_update_action(&$user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
         $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
 
-        return ActionFactory::update_regular_folder($range, true, 1);
+        return Action_Factory::update_regular_folder($range, true, 1);
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         // hd_print('StarnetSearchScreen: handle_user_input:');
@@ -79,7 +104,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 if ($media_url->genre_id !== 'search' && $user_input->search_actions !== 'keyboard') {
-                    return ActionFactory::open_folder($user_input->selected_media_url);
+                    return Action_Factory::open_folder($user_input->selected_media_url);
                 }
 
                 $defs = array();
@@ -89,17 +114,17 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                     $search_text = HD::get_item('search_item');
                 }
 
-                ControlFactory::add_text_field($defs,
+                Control_Factory::add_text_field($defs,
                     $this, null,
                     'do_new_search', '',
                     $search_text, 0, 0, 1, 1, 1300, 0, 1);
-                ControlFactory::add_vgap($defs, 500);
+                Control_Factory::add_vgap($defs, 500);
 
-                return ActionFactory::show_dialog('Поиск', $defs, true);
+                return Action_Factory::show_dialog('Поиск', $defs, true);
 
             case 'do_new_search':
-                return ActionFactory::close_dialog_and_run(
-                    UserInputHandlerRegistry::create_action($this, 'run_search'));
+                return Action_Factory::close_dialog_and_run(
+                    User_Input_Handler_Registry::create_action($this, 'run_search'));
 
             case 'run_search':
                 HD::put_item('search_item', $user_input->do_new_search);
@@ -110,11 +135,11 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 }
                 array_unshift($search_items, $user_input->do_new_search);
                 HD::put_items('search_items', $search_items);
-                $action = ActionFactory::open_folder(
-                    StarnetVodListScreen::get_media_url_str('search', $user_input->do_new_search),
+                $action = Action_Factory::open_folder(
+                    Starnet_Vod_List_Screen::get_media_url_str('search', $user_input->do_new_search),
                     "Поиск: " . $user_input->do_new_search);
 
-                return ActionFactory::invalidate_folders(array('search_screen'), $action);
+                return Action_Factory::invalidate_folders(array('search_screen'), $action);
 
             case 'item_up':
                 if (!isset($user_input->selected_media_url)) {
@@ -134,7 +159,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 $parent_media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
 
-                return ActionFactory::update_regular_folder($range, false, $user_input->sel_ndx - 1);
+                return Action_Factory::update_regular_folder($range, false, $user_input->sel_ndx - 1);
 
             case 'item_down':
                 if (!isset($user_input->selected_media_url)) {
@@ -154,7 +179,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 $parent_media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
 
-                return ActionFactory::update_regular_folder($range, false, $user_input->sel_ndx + 1);
+                return Action_Factory::update_regular_folder($range, false, $user_input->sel_ndx + 1);
 
             case 'delete':
                 if (!isset($user_input->selected_media_url)) {
@@ -166,11 +191,11 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
                 $search_items = HD::get_items('search_items');
                 $i = array_search($video_id, $search_items);
                 if ($i !== false) {
-                	unset ($search_items[$i]);
-				}
+                    unset ($search_items[$i]);
+                }
                 HD::put_items('search_items', $search_items);
 
-                return ActionFactory::invalidate_folders(array('search_screen'));
+                return Action_Factory::invalidate_folders(array('search_screen'));
 
             case 'popup_menu':
                 break;
@@ -181,6 +206,11 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
@@ -225,6 +255,10 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
         return $items;
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @return null
+     */
     public function get_archive(MediaURL $media_url)
     {
         return $this->plugin->vod->get_archive($media_url);

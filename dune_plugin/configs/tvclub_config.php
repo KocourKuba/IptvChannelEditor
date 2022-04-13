@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class TvclubPluginConfig extends DefaultConfig
+class TvclubPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://celn.shott.top/p/%s';
     const API_HOST = 'http://api.iptv.so/0.9/json/';
@@ -30,11 +30,11 @@ class TvclubPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
@@ -44,6 +44,11 @@ class TvclubPluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -60,6 +65,11 @@ class TvclubPluginConfig extends DefaultConfig
         return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->token);
     }
 
+    /**
+     * @param string $url
+     * @param int $archive_ts
+     * @return string
+     */
     protected static function UpdateArchiveUrlParams($url, $archive_ts)
     {
         if ($archive_ts > 0) {
@@ -91,6 +101,10 @@ class TvclubPluginConfig extends DefaultConfig
         return isset($account_data['account']['info']['login']);
     }
 
+    /**
+     * @param array &$defs
+     * @param $plugin_cookies
+     */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
         $account_data = array();
@@ -101,29 +115,36 @@ class TvclubPluginConfig extends DefaultConfig
             $text = explode('\\n', $text);
             $text = array_values($text);
 
-            ControlFactory::add_label($defs, 'Ошибка!', $text[0], -10);
-            ControlFactory::add_label($defs, 'Описание:', $text[1], 20);
+            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
+            Control_Factory::add_label($defs, 'Описание:', $text[1], 20);
             return;
         }
 
-        ControlFactory::add_label($defs, 'Баланс:', $account_data['account']['info']['balance'] . ' €', -10);
-        ControlFactory::add_label($defs, 'Логин:', $account_data['account']['info']['login'], -10);
-        ControlFactory::add_label($defs, 'Сервер:', $account_data['account']['settings']['server_name'], -10);
-        ControlFactory::add_label($defs, 'Часовой пояс:', $account_data['account']['settings']['tz_name'] . " {$account_data['account']['settings']['tz_gmt']}", -10);
+        Control_Factory::add_label($defs, 'Баланс:', $account_data['account']['info']['balance'] . ' €', -10);
+        Control_Factory::add_label($defs, 'Логин:', $account_data['account']['info']['login'], -10);
+        Control_Factory::add_label($defs, 'Сервер:', $account_data['account']['settings']['server_name'], -10);
+        Control_Factory::add_label($defs, 'Часовой пояс:', $account_data['account']['settings']['tz_name'] . " {$account_data['account']['settings']['tz_gmt']}", -10);
 
         $packages = $account_data['account']['services'];
         if (count($packages) === 0) {
-            ControlFactory::add_label($defs, 'Пакеты: ', 'Нет пакетов', 20);
+            Control_Factory::add_label($defs, 'Пакеты: ', 'Нет пакетов', 20);
             return;
         }
 
         foreach ($packages as $item) {
-            ControlFactory::add_label($defs, 'Пакет:', $item['name'] . ' ' . $item['type'] .' до '. date('j.m.Y', $item['expire']), -10);
+            Control_Factory::add_label($defs, 'Пакет:', $item['name'] . ' ' . $item['type'] .' до '. date('j.m.Y', $item['expire']), -10);
         }
 
-        ControlFactory::add_vgap($defs, 20);
+        Control_Factory::add_vgap($defs, 20);
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
@@ -134,11 +155,19 @@ class TvclubPluginConfig extends DefaultConfig
         return null;
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
     public function get_format($plugin_cookies)
     {
         return isset($plugin_cookies->format) ? $plugin_cookies->format : 'mpeg';
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_server_opts($plugin_cookies)
     {
         try {
@@ -156,6 +185,10 @@ class TvclubPluginConfig extends DefaultConfig
         return array();
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return mixed|null
+     */
     public function get_server($plugin_cookies)
     {
         if (self::load_settings($plugin_cookies)) {
@@ -165,11 +198,18 @@ class TvclubPluginConfig extends DefaultConfig
         return null;
     }
 
+    /**
+     * @param $plugin_cookies
+     */
     public function set_server($plugin_cookies)
     {
         self::save_settings($plugin_cookies, 'server');
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return bool
+     */
     protected static function load_settings(&$plugin_cookies)
     {
         if (!self::ensure_token_loaded($plugin_cookies)) {
@@ -188,6 +228,11 @@ class TvclubPluginConfig extends DefaultConfig
         return !empty(self::$settings);
     }
 
+    /**
+     * @param $plugin_cookies
+     * @param string $param
+     * @return bool
+     */
     protected static function save_settings(&$plugin_cookies, $param)
     {
         hd_print("save settings $param to {$plugin_cookies->$param}");
@@ -210,6 +255,10 @@ class TvclubPluginConfig extends DefaultConfig
 
     //////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param $plugin_cookies
+     * @return bool
+     */
     protected static function ensure_token_loaded(&$plugin_cookies)
     {
         if (!empty($plugin_cookies->token)) {

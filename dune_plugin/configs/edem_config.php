@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class EdemPluginConfig extends DefaultConfig
+class EdemPluginConfig extends Default_Config
 {
     const API_URL = 'http://technic.cf/epg-it999';
 
@@ -25,6 +25,12 @@ class EdemPluginConfig extends DefaultConfig
         $this->set_epg_param('date_format', 'Y.m.d');
     }
 
+    /**
+     * @param array &$defs
+     * @param Starnet_Filter_Screen $parent
+     * @param int $initial
+     * @return bool
+     */
     public function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         $filters = array("years", "genre");
@@ -54,16 +60,20 @@ class EdemPluginConfig extends DefaultConfig
                 }
             }
 
-            ControlFactory::add_combobox($defs, $parent, null, $name,
+            Control_Factory::add_combobox($defs, $parent, null, $name,
                 $filter['title'], $idx, $values, 600, true);
 
-            ControlFactory::add_vgap($defs, 30);
+            Control_Factory::add_vgap($defs, 30);
             $added = true;
         }
 
         return $added;
     }
 
+    /**
+     * @param $user_input
+     * @return string
+     */
     public function CompileSaveFilterItem($user_input)
     {
         $filters = array("years", "genre");
@@ -85,11 +95,11 @@ class EdemPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = $channel->get_streaming_url();
         // hd_print("Stream url:  " . $url);
@@ -140,6 +150,13 @@ class EdemPluginConfig extends DefaultConfig
         return array();
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         $params = $this->get_epg_params($type);
@@ -153,6 +170,9 @@ class EdemPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $movie_id
+     * @param $plugin_cookies
+     * @return Movie
      * @throws Exception
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
@@ -213,7 +233,9 @@ class EdemPluginConfig extends DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param $plugin_cookies
+     * @param array &$category_list
+     * @param array &$category_index
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
@@ -228,7 +250,7 @@ class EdemPluginConfig extends DefaultConfig
         $category_index = array();
 
         foreach ($doc['items'] as $node) {
-            $cat = new StarnetVodCategory((string)$node['request']['fid'], (string)$node['title']);
+            $cat = new Starnet_Vod_Category((string)$node['request']['fid'], (string)$node['title']);
             $category_list[] = $cat;
             $category_index[$cat->get_id()] = $cat;
         }
@@ -252,6 +274,9 @@ class EdemPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $keyword
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function getSearchList($keyword, $plugin_cookies)
@@ -264,6 +289,9 @@ class EdemPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $params
+     * @param $plugin_cookies
+     * @return array|false
      * @throws Exception
      */
     public function getFilterList($params, $plugin_cookies)
@@ -299,6 +327,9 @@ class EdemPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $query_id
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function getVideoList($query_id, $plugin_cookies)
@@ -307,13 +338,15 @@ class EdemPluginConfig extends DefaultConfig
         hd_print("getVideoList: $query_id, $val");
 
         $categories = self::make_json_request($plugin_cookies,
-            array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => (int)$val, 'limit' => 0));
+            array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $val, 'limit' => 0));
 
         return $categories === false ? array() : $this->CollectSearchResult($query_id, $categories);
     }
 
     /**
-     * @throws Exception
+     * @param string $query_id
+     * @param $json
+     * @return array
      */
     protected function CollectSearchResult($query_id, $json)
     {
@@ -328,7 +361,7 @@ class EdemPluginConfig extends DefaultConfig
             if ($entry->type === 'next') {
                 $this->get_next_page($query_id, $entry->request->offset);
             } else {
-                $movie = new ShortMovie($entry->request->fid, $entry->title, $entry->img);
+                $movie = new Short_Movie($entry->request->fid, $entry->title, $entry->img);
                 $movie->info = "$entry->title|Год: $entry->year|Рейтинг: $entry->agelimit";
                 $movies[] = $movie;
             }
@@ -341,6 +374,13 @@ class EdemPluginConfig extends DefaultConfig
         return $movies;
     }
 
+    /**
+     * @param $plugin_cookies
+     * @param array|null $params
+     * @param bool $to_array
+     * @param string|null $save_path
+     * @return false|mixed
+     */
     protected static function make_json_request($plugin_cookies, $params = null, $to_array = false, $save_path = null)
     {
         $mediateka = '';
@@ -382,6 +422,10 @@ class EdemPluginConfig extends DefaultConfig
         return HD::LoadAndStoreJson($url, $to_array, $save_path, $curl_opt);
     }
 
+    /**
+     * @param string $key
+     * @param int $val
+     */
     public function add_movie_counter($key, $val)
     {
         // repeated count data

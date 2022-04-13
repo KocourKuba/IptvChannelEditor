@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class IptvonlinePluginConfig extends DefaultConfig
+class IptvonlinePluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://iptv.online/play/%s/m3u8';
     const API_URL = 'http://technic.cf/epg-iptvxone';
@@ -26,11 +26,11 @@ class IptvonlinePluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         //hd_print("AdjustStreamUrl: $url");
@@ -61,6 +61,12 @@ class IptvonlinePluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param $plugin_cookies
+     * @param array &$account_data
+     * @param bool $force
+     * @return bool
+     */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         if (!parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
@@ -74,6 +80,11 @@ class IptvonlinePluginConfig extends DefaultConfig
         return true;
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -87,6 +98,13 @@ class IptvonlinePluginConfig extends DefaultConfig
         return sprintf(self::PLAYLIST_TV_URL, $password);
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         $params = $this->get_epg_params($type);

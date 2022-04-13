@@ -5,11 +5,19 @@ require_once 'default_config.php';
 require_once 'vod.php';
 require_once 'vod_series_list_screen.php';
 
-class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
+class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
     const ID = 'vod_movie';
 
-    public static function get_media_url_str($movie_id, $name = false, $poster_url = false, $info = false) {
+    /**
+     * @param string $movie_id
+     * @param string|false $name
+     * @param string|false $poster_url
+     * @param string|false $info
+     * @return false|string
+     */
+    public static function get_media_url_str($movie_id, $name = false, $poster_url = false, $info = false)
+    {
         $arr['screen_id'] = self::ID;
         $arr['movie_id'] = $movie_id;
         if ($name !== false) {
@@ -27,7 +35,10 @@ class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
         return MediaURL::encode($arr);
     }
 
-    public function __construct(DefaultDunePlugin $plugin)
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
     {
         parent::__construct(self::ID, $plugin);
 
@@ -36,9 +47,12 @@ class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
         }
     }
 
+    /**
+     * @return string
+     */
     public function get_handler_id()
     {
-        return self::ID.'_handler';
+        return self::ID . '_handler';
     }
 
     /**
@@ -54,7 +68,9 @@ class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @throws Exception
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array|null
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
@@ -72,7 +88,7 @@ class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
         if ($has_right_button) {
             $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
             $right_button_caption = $this->plugin->vod->is_favorite_movie_id($movie->id) ? 'Удалить из Избранного' : 'Добавить в Избранное';
-            $right_button_action = UserInputHandlerRegistry::create_action($this, 'favorites', array('movie_id' => $movie->id));
+            $right_button_action = User_Input_Handler_Registry::create_action($this, 'favorites', array('movie_id' => $movie->id));
         }
 
         $movie_folder_view = array
@@ -82,14 +98,13 @@ class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
             PluginMovieFolderView::right_button_caption => $right_button_caption,
             PluginMovieFolderView::right_button_action => $right_button_action,
             PluginMovieFolderView::has_multiple_series => (count($movie->series_list) > 1),
-            PluginMovieFolderView::series_media_url =>
-                VodSeriesListScreen::get_media_url_str($movie->id),
-                PluginMovieFolderView::params => array
-                (			               
-                    PluginFolderViewParams::paint_path_box =>false,
-                    PluginFolderViewParams::paint_content_box_background => true,
-                    PluginFolderViewParams::background_url => $this->plugin->config->GET_BG_PICTURE()
-                )
+            PluginMovieFolderView::series_media_url => Vod_Series_List_Screen::get_media_url_str($movie->id),
+            PluginMovieFolderView::params => array
+            (
+                PluginFolderViewParams::paint_path_box => false,
+                PluginFolderViewParams::paint_content_box_background => true,
+                PluginFolderViewParams::background_url => $this->plugin->config->GET_BG_PICTURE()
+            )
         );
 
         return array
@@ -101,6 +116,11 @@ class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
         );
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         // hd_print('Movie: handle_user_input:');
@@ -116,10 +136,10 @@ class VodMovieScreen extends AbstractControlsScreen implements UserInputHandler
 
             $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
 
-            return ActionFactory::show_title_dialog($message,
-                ActionFactory::invalidate_folders(array(
-                    self::get_media_url_str($movie_id),
-                    VodFavoritesScreen::get_media_url_str())
+            return Action_Factory::show_title_dialog($message,
+                Action_Factory::invalidate_folders(array(
+                        self::get_media_url_str($movie_id),
+                        Vod_Favorites_Screen::get_media_url_str())
                 )
             );
         }

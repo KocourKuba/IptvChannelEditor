@@ -18,7 +18,7 @@ const VOD_LAZY_LOAD = 'vod_lazy';
 const EXTINF_VOD_PATTERN = 'vod_pattern';
 const SQUARE_ICONS = 'square_icons';
 
-abstract class DefaultConfig
+abstract class Default_Config
 {
     /////////////////////////////////////////////////////////////////////////////
     // views constants
@@ -128,16 +128,28 @@ abstract class DefaultConfig
         return !empty($this->EPG_PATH);
     }
 
+    /**
+     * @param string $type
+     * @return mixed
+     */
     public function get_feature($type)
     {
         return $this->FEATURES[$type];
     }
 
+    /**
+     * @param string $type
+     * @param mixed $val
+     */
     public function set_feature($type, $val)
     {
-        return $this->FEATURES[$type] = $val;
+        $this->FEATURES[$type] = $val;
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return null
+     */
     public function get_device($plugin_cookies)
     {
         return null;
@@ -147,11 +159,19 @@ abstract class DefaultConfig
     {
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_quality_opts($plugin_cookies)
     {
         return array();
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return null
+     */
     public function get_quality($plugin_cookies)
     {
         return null;
@@ -161,11 +181,19 @@ abstract class DefaultConfig
     {
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_server_opts($plugin_cookies)
     {
         return array();
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return null
+     */
     public function get_server($plugin_cookies)
     {
         return null;
@@ -175,30 +203,51 @@ abstract class DefaultConfig
     {
     }
 
+    /**
+     * @return string
+     */
     public function get_channel_list()
     {
         return sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
     }
 
+    /**
+     * @param Channel $a
+     * @param Channel $b
+     * @return int
+     */
     public static function sort_channels_cb($a, $b)
     {
         // Sort by channel numbers.
         return strnatcasecmp($a->get_number(), $b->get_number());
     }
 
+    /**
+     * @param string $type
+     * @return mixed
+     */
     public function get_epg_params($type = 'first')
     {
         return $this->EPG_PARSER_PARAMS[$type];
     }
 
+    /**
+     * @param mixed $val
+     * @param string $type
+     */
     public function set_epg_params($val, $type = 'first')
     {
-        return $this->EPG_PARSER_PARAMS[$type] = $val;
+        $this->EPG_PARSER_PARAMS[$type] = $val;
     }
 
+    /**
+     * @param string $param
+     * @param mixed $val
+     * @param string $type
+     */
     public function set_epg_param($param, $val, $type = 'first')
     {
-        return $this->EPG_PARSER_PARAMS[$type][$param] = $val;
+        $this->EPG_PARSER_PARAMS[$type][$param] = $val;
     }
 
     public function try_reset_pages()
@@ -215,6 +264,10 @@ abstract class DefaultConfig
         $this->movie_counter = array();
     }
 
+    /**
+     * @param mixed $key
+     * @return integer
+     */
     public function get_movie_counter($key)
     {
         if (!array_key_exists($key, $this->movie_counter)) {
@@ -224,12 +277,21 @@ abstract class DefaultConfig
         return $this->movie_counter[$key];
     }
 
+    /**
+     * @param mixed $key
+     * @param integer $val
+     */
     public function add_movie_counter($key, $val)
     {
         // entire list available, counter is final
         $this->movie_counter[$key] = $val;
     }
 
+    /**
+     * @param string $idx
+     * @param int $increment
+     * @return int
+     */
     public function get_next_page($idx, $increment = 1)
     {
         if (!array_key_exists($idx, $this->pages)) {
@@ -241,50 +303,78 @@ abstract class DefaultConfig
         return $this->pages[$idx];
     }
 
+    /**
+     * @param string $idx
+     * @param int $value
+     */
     public function set_next_page($idx, $value)
     {
         $this->pages[$idx] = $value;
     }
 
+    /**
+     * @param string $name
+     * @return mixed|null
+     */
     public function get_filter($name)
     {
         return isset($this->filters[$name]) ? $this->filters[$name] : null;
     }
 
+    /**
+     * @param array $filters
+     */
     public function set_filters($filters)
     {
         $this->filters = $filters;
     }
 
+    /**
+     * @return string
+     */
     public function GET_BG_PICTURE()
     {
         return sprintf('plugin_file://icons/bg_%s.jpg', $this->PLUGIN_SHORT_NAME);
     }
 
+    /**
+     * @param array $defs
+     * @param Starnet_Filter_Screen $parent
+     * @param int $initial
+     * @return bool
+     */
     public function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         return false;
     }
 
+    /**
+     * @param array $user_input
+     * @return string
+     */
     public function CompileSaveFilterItem($user_input)
     {
-        return null;
+        return '';
     }
 
+    /**
+     * @param array &$defs
+     * @param $plugin_cookies
+     */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
-        ControlFactory::add_label($defs, 'Баланс:', 'Информация о балансе не поддерживается');
+        Control_Factory::add_label($defs, 'Баланс:', 'Информация о балансе не поддерживается');
     }
 
     /**
      * Update url macros {DOMAIN} and {TOKEN} by values from channel ext_params
      * Make url ts wrapped
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = $channel->get_streaming_url();
         $ext_params = $channel->get_ext_params();
@@ -305,8 +395,8 @@ abstract class DefaultConfig
 
     /**
      * Update url by channel ID (for correct hash calculation of url)
-     * @param $channel_id
-     * @param $ext_params
+     * @param string $channel_id
+     * @param array $ext_params
      * @return string
      */
     public function UpdateStreamUrlID($channel_id, $ext_params)
@@ -339,7 +429,6 @@ abstract class DefaultConfig
      * Collect information from m3u8 playlist
      * @param $plugin_cookies
      * @return array
-     * @throws Exception
      */
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
@@ -363,7 +452,9 @@ abstract class DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param string $keyword
+     * @param $plugin_cookies
+     * @return array
      */
     public function getSearchList($keyword, $plugin_cookies)
     {
@@ -382,7 +473,7 @@ abstract class DefaultConfig
 
             $search = utf8_encode(mb_strtolower($caption, 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
-                $movies[] = new ShortMovie((string)$i, $caption, $logo);
+                $movies[] = new Short_Movie((string)$i, $caption, $logo);
             }
         }
 
@@ -390,6 +481,11 @@ abstract class DefaultConfig
         return $movies;
     }
 
+    /**
+     * @param string $params
+     * @param $plugin_cookies
+     * @return array
+     */
     public function getFilterList($params, $plugin_cookies)
     {
         //hd_print("getFilterList: $params");
@@ -397,7 +493,9 @@ abstract class DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param string $query_id
+     * @param $plugin_cookies
+     * @return array
      */
     public function getVideoList($query_id, $plugin_cookies)
     {
@@ -418,7 +516,7 @@ abstract class DefaultConfig
             $arr = explode("_", $query_id);
             $category_id = ($arr === false) ? $query_id : $arr[0];
             if ($category_id === $category) {
-                $movies[] = new ShortMovie((string)$i, $caption, $logo);
+                $movies[] = new Short_Movie((string)$i, $caption, $logo);
             }
         }
 
@@ -426,16 +524,33 @@ abstract class DefaultConfig
         return $movies;
     }
 
+    /**
+     * @param string $movie_id
+     * @param $plugin_cookies
+     * @return Movie
+     */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         return null;
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
-        return null;
+        return '';
     }
 
+    /**
+     * @param string $url
+     * @param int $archive_ts
+     * @return string
+     */
     protected static function UpdateArchiveUrlParams($url, $archive_ts)
     {
         if ($archive_ts > 0) {
@@ -449,6 +564,11 @@ abstract class DefaultConfig
         return $url;
     }
 
+    /**
+     * @param string $url
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function UpdateMpegTsBuffering($url, $plugin_cookies)
     {
         if ($this->get_format($plugin_cookies) === 'mpeg') {
@@ -459,11 +579,20 @@ abstract class DefaultConfig
         return HD::make_ts($url);
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
     public function get_format($plugin_cookies)
     {
         return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
     }
 
+    /**
+     * @param $plugin_cookies
+     * @param bool $force
+     * @return array|false
+     */
     protected function FetchTvM3U($plugin_cookies, $force = false)
     {
         $tmp_file = $this->GET_TMP_STORAGE_PATH();
@@ -495,6 +624,11 @@ abstract class DefaultConfig
         return file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     }
 
+    /**
+     * @param $plugin_cookies
+     * @param bool $force
+     * @return array|false
+     */
     public function FetchVodM3U($plugin_cookies, $force = false)
     {
         $m3u_file = $this->GET_VOD_TMP_STORAGE_PATH();
@@ -518,7 +652,9 @@ abstract class DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param $plugin_cookies
+     * @param array &$category_list
+     * @param array &$category_index
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
@@ -539,7 +675,7 @@ abstract class DefaultConfig
 
             if (!in_array($category, $categoriesFound)) {
                 $categoriesFound[] = $category;
-                $cat = new StarnetVodCategory($category, $category);
+                $cat = new Starnet_Vod_Category($category, $category);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
             }
@@ -550,6 +686,11 @@ abstract class DefaultConfig
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         return '';
@@ -578,6 +719,9 @@ abstract class DefaultConfig
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 
+    /**
+     * @return array[]
+     */
     public function GET_TV_GROUP_LIST_FOLDER_VIEWS()
     {
         return array(
@@ -784,6 +928,9 @@ abstract class DefaultConfig
         );
     }
 
+    /**
+     * @return array[]
+     */
     public function GET_TV_CHANNEL_LIST_FOLDER_VIEWS()
     {
         return array(
@@ -989,6 +1136,9 @@ abstract class DefaultConfig
         );
     }
 
+    /**
+     * @return array[]
+     */
     public function GET_VOD_MOVIE_LIST_FOLDER_VIEWS()
     {
         return array(
@@ -1088,7 +1238,7 @@ abstract class DefaultConfig
                     ViewItemParams::icon_sel_margin_top => 0,
                     ViewItemParams::item_paint_caption => true,
                     ViewItemParams::item_caption_width => 1100,
-					ViewItemParams::item_caption_font_size => FONT_SIZE_LARGE,
+                    ViewItemParams::item_caption_font_size => FONT_SIZE_LARGE,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array
@@ -1101,6 +1251,9 @@ abstract class DefaultConfig
         );
     }
 
+    /**
+     * @return array[]
+     */
     public function GET_VOD_CATEGORY_LIST_FOLDER_VIEWS()
     {
         return array(
@@ -1135,6 +1288,9 @@ abstract class DefaultConfig
         );
     }
 
+    /**
+     * @return array[]
+     */
     public function GET_TEXT_ONE_COL_VIEWS()
     {
         return array(
@@ -1167,6 +1323,9 @@ abstract class DefaultConfig
         );
     }
 
+    /**
+     * @return array
+     */
     public function GET_FOLDER_VIEWS()
     {
         if (defined('ViewParams::details_box_width')) {
@@ -1237,6 +1396,9 @@ abstract class DefaultConfig
         return $view;
     }
 
+    /**
+     * @return array[]
+     */
     public function GET_VOD_SERIES_FOLDER_VIEW()
     {
         return array(

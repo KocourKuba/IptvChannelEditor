@@ -1,13 +1,34 @@
 <?php
 require_once 'epg_item.php';
 
-class DefaultEpgItem implements EpgItem
+class Default_Epg_Item implements Epg_Item
 {
+    /**
+     * @var string
+     */
     protected $_title;
+
+    /**
+     * @var string
+     */
     protected $_description;
+
+    /**
+     * @var int
+     */
     protected $_start_time;
+
+    /**
+     * @var int
+     */
     protected $_finish_time;
 
+    /**
+     * @param string $title
+     * @param string $description
+     * @param int $start_time
+     * @param int $finish_time
+     */
     public function __construct($title, $description, $start_time, $finish_time)
     {
         $this->_title = $title;
@@ -16,21 +37,33 @@ class DefaultEpgItem implements EpgItem
         $this->_finish_time = $finish_time;
     }
 
+    /**
+     * @return string
+     */
     public function get_title()
     {
         return $this->_title;
     }
 
+    /**
+     * @return string
+     */
     public function get_description()
     {
         return $this->_description;
     }
 
+    /**
+     * @return int
+     */
     public function get_start_time()
     {
         return $this->_start_time;
     }
 
+    /**
+     * @return int
+     */
     public function get_finish_time()
     {
         return $this->_finish_time;

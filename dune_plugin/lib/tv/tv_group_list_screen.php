@@ -2,30 +2,43 @@
 
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class TvGroupListScreen extends AbstractPreloadedRegularScreen
+class Tv_Group_List_Screen extends Abstract_Preloaded_Regular_Screen
 {
     const ID = 'tv_group_list';
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct(DefaultDunePlugin $plugin)
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
     {
         parent::__construct(self::ID, $plugin, $plugin->config->GET_TV_GROUP_LIST_FOLDER_VIEWS());
     }
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         return array(
-            GUI_EVENT_KEY_ENTER => ActionFactory::open_folder(),
-            GUI_EVENT_KEY_PLAY => ActionFactory::tv_play(),
-            GUI_EVENT_KEY_B_GREEN => ActionFactory::open_folder(StarnetSetupScreen::get_media_url_str(), 'Настройки плагина'),
+            GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
+            GUI_EVENT_KEY_PLAY => Action_Factory::tv_play(),
+            GUI_EVENT_KEY_B_GREEN => Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина'),
         );
     }
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->plugin->tv->folder_entered($media_url, $plugin_cookies);
@@ -40,8 +53,8 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
 
         foreach ($this->plugin->tv->get_groups() as $group) {
             $media_url_str = $group->is_favorite_channels() ?
-                TvFavoritesScreen::get_media_url_str() :
-                TvChannelListScreen::get_media_url_str($group->get_id());
+                Tv_Favorites_Screen::get_media_url_str() :
+                Tv_Channel_List_Screen::get_media_url_str($group->get_id());
 
             $items[] = array(
                 PluginRegularFolderItem::media_url => $media_url_str,
@@ -60,6 +73,10 @@ class TvGroupListScreen extends AbstractPreloadedRegularScreen
         return $items;
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @return Archive|null
+     */
     public function get_archive(MediaURL $media_url)
     {
         return $this->plugin->tv->get_archive($media_url);

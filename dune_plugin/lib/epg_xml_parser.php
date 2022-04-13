@@ -1,7 +1,7 @@
 <?php
-require_once 'utils.php';
+require_once 'hd.php';
 
-class EpgXmlParser
+class Epg_Xml_Parser
 {
     //	Source data
     private $file;
@@ -282,9 +282,9 @@ class EpgXmlParser
     }
 
     /**
+     * @return string
      * @throws Exception
      *
-     * @return string
      */
     protected function getXmlFile()
     {

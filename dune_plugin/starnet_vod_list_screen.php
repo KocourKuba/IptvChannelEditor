@@ -2,13 +2,22 @@
 
 require_once 'lib/vod/vod_list_screen.php';
 
-class StarnetVodListScreen extends VodListScreen
+class Starnet_Vod_List_Screen extends Vod_List_Screen
 {
-    public function __construct(DefaultDunePlugin $plugin)
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
     {
         parent::__construct($plugin);
     }
 
+    /**
+     * @param string $category_id
+     * @param string $genre_id
+     * @param string $name
+     * @return false|string
+     */
     public static function get_media_url_str($category_id, $genre_id, $name = false)
     {
         $arr['screen_id'] = self::ID;
@@ -22,7 +31,10 @@ class StarnetVodListScreen extends VodListScreen
     }
 
     /**
-     * @throws Exception
+     * @param MediaURL $media_url
+     * @param int $from_ndx
+     * @param $plugin_cookies
+     * @return Short_Movie_Range
      */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
@@ -46,9 +58,9 @@ class StarnetVodListScreen extends VodListScreen
         $count = count($movies);
         if ($count) {
             $this->plugin->config->add_movie_counter($key, $count);
-            return new ShortMovieRange($from_ndx, $this->plugin->config->get_movie_counter($key), $movies);
+            return new Short_Movie_Range($from_ndx, $this->plugin->config->get_movie_counter($key), $movies);
         }
 
-        return new ShortMovieRange(0, 0);
+        return new Short_Movie_Range(0, 0);
     }
 }

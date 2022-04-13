@@ -2,29 +2,42 @@
 require_once 'lib/abstract_controls_screen.php';
 require_once 'lib/user_input_handler.php';
 
-class VodSearchScreen extends AbstractControlsScreen implements UserInputHandler
+class Vod_Search_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
     const ID = 'vod_search';
 
+    /**
+     * @return false|string
+     */
     public static function get_media_url_str()
     {
         return MediaURL::encode(array('screen_id' => self::ID));
     }
 
-    public function __construct(DefaultDunePlugin $plugin)
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
     {
         parent::__construct(self::ID, $plugin);
 
         $plugin->create_screen($this);
     }
 
+    /**
+     * @return string
+     */
     public function get_handler_id()
     {
-        return self::ID.'_handler';
+        return self::ID . '_handler';
     }
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
     private function do_get_control_defs(&$plugin_cookies)
     {
         $pattern = '';
@@ -34,9 +47,9 @@ class VodSearchScreen extends AbstractControlsScreen implements UserInputHandler
 
         $defs = array();
 
-        ControlFactory::add_label($defs, null, "Enter part of movie name:");
+        Control_Factory::add_label($defs, null, "Enter part of movie name:");
 
-        ControlFactory::add_text_field($defs, $this, null, 'pattern', null,
+        Control_Factory::add_text_field($defs, $this, null, 'pattern', null,
             $pattern, false, false, true, false,
             500, true, true);
 
@@ -55,6 +68,11 @@ class VodSearchScreen extends AbstractControlsScreen implements UserInputHandler
         return $this->do_get_control_defs($plugin_cookies);
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         // hd_print('Vod search: handle_user_input:');
@@ -73,8 +91,8 @@ class VodSearchScreen extends AbstractControlsScreen implements UserInputHandler
 
                 $defs = $this->do_get_control_defs($plugin_cookies);
 
-                return ActionFactory::reset_controls($defs,
-                    ActionFactory::open_folder($this->plugin->vod->get_search_media_url_str($pattern), $pattern));
+                return Action_Factory::reset_controls($defs,
+                    Action_Factory::open_folder($this->plugin->vod->get_search_media_url_str($pattern), $pattern));
             }
         } else if ($user_input->action_type === 'confirm') {
             $control_id = $user_input->control_id;
@@ -82,7 +100,7 @@ class VodSearchScreen extends AbstractControlsScreen implements UserInputHandler
             if ($control_id === 'pattern') {
                 $pattern = $user_input->pattern;
                 if (preg_match('/^\s*$/', $pattern)) {
-                    return ActionFactory::show_error(false, 'Pattern should not be empty');
+                    return Action_Factory::show_error(false, 'Pattern should not be empty');
                 }
             }
         }

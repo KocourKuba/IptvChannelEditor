@@ -1,14 +1,37 @@
 <?php
 
-class EpgIterator implements Iterator
+class Epg_Iterator implements Iterator
 {
+    /**
+     * @var Default_Epg_Item[]
+     */
     private $_epg;
+
+    /**
+     * @var int
+     */
     private $_from;
+
+    /**
+     * @var int
+     */
     private $_till;
 
+    /**
+     * @var int
+     */
     private $_pos;
+
+    /**
+     * @var bool
+     */
     private $_depleted = false;
 
+    /**
+     * @param Default_Epg_Item[] $epg
+     * @param int $from
+     * @param int $till
+     */
     public function __construct($epg, $from, $till)
     {
         $this->_epg = $epg;
@@ -25,11 +48,17 @@ class EpgIterator implements Iterator
         $this->next();
     }
 
+    /**
+     * @return Default_Epg_Item|null
+     */
     public function current()
     {
         return $this->valid() ? $this->_epg[$this->_pos] : null;
     }
 
+    /**
+     * @return int|null
+     */
     public function key()
     {
         if (!$this->valid()) {
@@ -62,6 +91,9 @@ class EpgIterator implements Iterator
         }
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return !$this->_depleted;

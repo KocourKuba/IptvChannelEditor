@@ -2,12 +2,15 @@
 require_once 'lib/vod/vod.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
+class Starnet_Filter_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'filter_screen';
     const FILTER_ICON_PATH = 'plugin_file://icons/icon_filter.png';
 
-    public function __construct(DefaultDunePlugin $plugin)
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_search_folder_views());
 
@@ -16,55 +19,70 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
         }
     }
 
+    /**
+     * @param string $category
+     * @return false|string
+     */
     public static function get_media_url_str($category = '')
     {
-        return MediaURL::encode
-        (
-            array
-            (
-                'screen_id' => self::ID,
-                'category' => $category
-            )
-        );
+        return MediaURL::encode(array('screen_id' => self::ID, 'category' => $category));
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         $actions = array();
         $add_params['filter_actions'] = 'open';
-        $actions[GUI_EVENT_KEY_ENTER] = UserInputHandlerRegistry::create_action($this, 'filter', $add_params);
+        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, 'filter', $add_params);
 
         $add_params['filter_actions'] = 'keyboard';
-        $actions[GUI_EVENT_KEY_PLAY] = UserInputHandlerRegistry::create_action($this, 'filter', $add_params);
+        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, 'filter', $add_params);
 
-        $add_action = UserInputHandlerRegistry::create_action($this, 'item_up');
+        $add_action = User_Input_Handler_Registry::create_action($this, 'item_up');
         $add_action['caption'] = 'Вверх';
         $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
 
-        $add_action = UserInputHandlerRegistry::create_action($this, 'item_down');
+        $add_action = User_Input_Handler_Registry::create_action($this, 'item_down');
         $add_action['caption'] = 'Вниз';
         $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
 
-        $add_action = UserInputHandlerRegistry::create_action($this, 'delete');
+        $add_action = User_Input_Handler_Registry::create_action($this, 'delete');
         $add_action['caption'] = 'Удалить';
         $actions[GUI_EVENT_KEY_D_BLUE] = $add_action;
 
         return $actions;
     }
 
+    /**
+     * @return string
+     */
     public function get_handler_id()
     {
-        return self::ID.'_handler';
+        return self::ID . '_handler';
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array
+     */
     private function get_update_action(&$user_input, &$plugin_cookies)
     {
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
         $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
 
-        return ActionFactory::update_regular_folder($range, true, 1);
+        return Action_Factory::update_regular_folder($range, true, 1);
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         // hd_print('StarnetFilterScreen: handle_user_input:');
@@ -80,7 +98,7 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 if ($media_url->genre_id !== 'filter' && $user_input->filter_actions !== 'keyboard') {
-                    return ActionFactory::open_folder($user_input->selected_media_url);
+                    return Action_Factory::open_folder($user_input->selected_media_url);
                 }
 
                 if ($user_input->filter_actions === 'keyboard') {
@@ -94,11 +112,11 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
                     return null;
                 }
 
-                ControlFactory::add_close_dialog_and_apply_button($defs, $this, null, 'apply_filter', 'Ok', 300);
-                ControlFactory::add_close_dialog_button($defs, 'Отмена', 300);
-                ControlFactory::add_vgap($defs, 10);
+                Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'apply_filter', 'Ok', 300);
+                Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
+                Control_Factory::add_vgap($defs, 10);
 
-                return ActionFactory::show_dialog('Фильтр', $defs, true);
+                return Action_Factory::show_dialog('Фильтр', $defs, true);
 
             case 'apply_filter':
                 $filter_string = $this->plugin->config->CompileSaveFilterItem($user_input);
@@ -116,9 +134,9 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
                 array_unshift($filter_items, $filter_string);
                 HD::put_items('filter_items', $filter_items);
 
-                return ActionFactory::invalidate_folders(array('filter_screen'),
-                    ActionFactory::open_folder(
-                        StarnetVodListScreen::get_media_url_str('filter', $filter_string),
+                return Action_Factory::invalidate_folders(array('filter_screen'),
+                    Action_Factory::open_folder(
+                        Starnet_Vod_List_Screen::get_media_url_str('filter', $filter_string),
                         "Фильтр: " . $filter_string));
 
             case 'item_up':
@@ -139,7 +157,7 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
                 $parent_media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
 
-                return ActionFactory::update_regular_folder($range, false, $user_input->sel_ndx - 1);
+                return Action_Factory::update_regular_folder($range, false, $user_input->sel_ndx - 1);
 
             case 'item_down':
                 if (!isset($user_input->selected_media_url)) {
@@ -159,7 +177,7 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
                 $parent_media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
 
-                return ActionFactory::update_regular_folder($range, false, $user_input->sel_ndx + 1);
+                return Action_Factory::update_regular_folder($range, false, $user_input->sel_ndx + 1);
 
             case 'delete':
                 if (!isset($user_input->selected_media_url)) {
@@ -171,11 +189,11 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
                 $filter_items = HD::get_items('filter_items');
                 $i = array_search($video_id, $filter_items);
                 if ($i !== false) {
-                	unset ($filter_items[$i]);
-				}
+                    unset ($filter_items[$i]);
+                }
                 HD::put_items('filter_items', $filter_items);
 
-                return ActionFactory::invalidate_folders(array('filter_screen'));
+                return Action_Factory::invalidate_folders(array('filter_screen'));
 
             case 'popup_menu':
                 break;
@@ -186,6 +204,11 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->plugin->vod->folder_entered($media_url, $plugin_cookies);
@@ -230,6 +253,10 @@ class StarnetFilterScreen extends AbstractPreloadedRegularScreen implements User
         return $items;
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @return null
+     */
     public function get_archive(MediaURL $media_url)
     {
         return $this->plugin->vod->get_archive($media_url);

@@ -1,6 +1,6 @@
 <?php
 
-class HashedArray implements Iterator
+class Hashed_Array implements Iterator
 {
     private $seq;
     private $map;

@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class ShuratvPluginConfig extends DefaultConfig
+class ShuratvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://pl.tvshka.net/?uid=%s&srv=%d&type=halva';
 
@@ -25,11 +25,11 @@ class ShuratvPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
@@ -43,6 +43,11 @@ class ShuratvPluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -56,6 +61,11 @@ class ShuratvPluginConfig extends DefaultConfig
         return sprintf(self::PLAYLIST_TV_URL, $password, $this->get_server($plugin_cookies));
     }
 
+    /**
+     * @param string $url
+     * @param int $archive_ts
+     * @return string
+     */
     protected static function UpdateArchiveUrlParams($url, $archive_ts)
     {
         if ($archive_ts > 0) {
@@ -69,16 +79,31 @@ class ShuratvPluginConfig extends DefaultConfig
         return $url;
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return string[]
+     */
     public function get_server_opts($plugin_cookies)
     {
         return array('1', '2');
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return int|null
+     */
     public function get_server($plugin_cookies)
     {
         return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if($type === 'first') {

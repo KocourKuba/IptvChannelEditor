@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class CbillingPluginConfig extends DefaultConfig
+class CbillingPluginConfig extends Default_Config
 {
     const API_HOST = 'http://protected-api.com';
 
@@ -32,11 +32,11 @@ class CbillingPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $ext_params = $channel->get_ext_params();
@@ -122,6 +122,10 @@ class CbillingPluginConfig extends DefaultConfig
         return true;
     }
 
+    /**
+     * @param array &$defs
+     * @param $plugin_cookies
+     */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
         $account_data = array();
@@ -132,17 +136,22 @@ class CbillingPluginConfig extends DefaultConfig
             $text = explode('\\n', $text);
             $text = array_values($text);
 
-            ControlFactory::add_label($defs, 'Ошибка!', $text[0], -10);
-            ControlFactory::add_label($defs, 'Описание:', $text[1], -10);
+            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
+            Control_Factory::add_label($defs, 'Описание:', $text[1], -10);
             return;
         }
 
-        ControlFactory::add_label($defs, 'Пакеты: ', empty($account_data['data']['package']) ? 'Нет пакетов' : $account_data['data']['package'], -10);
-        ControlFactory::add_label($defs, 'Дата окончания', $account_data['data']['end_date'], -10);
-        ControlFactory::add_label($defs, 'Устройств', $account_data['data']['devices_num'], -10);
-        ControlFactory::add_label($defs, 'Сервер', $account_data['data']['server'], 20);
+        Control_Factory::add_label($defs, 'Пакеты: ', empty($account_data['data']['package']) ? 'Нет пакетов' : $account_data['data']['package'], -10);
+        Control_Factory::add_label($defs, 'Дата окончания', $account_data['data']['end_date'], -10);
+        Control_Factory::add_label($defs, 'Устройств', $account_data['data']['devices_num'], -10);
+        Control_Factory::add_label($defs, 'Сервер', $account_data['data']['server'], 20);
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -164,6 +173,13 @@ class CbillingPluginConfig extends DefaultConfig
         return '';
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         $params = $this->get_epg_params($type);
@@ -177,6 +193,9 @@ class CbillingPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $movie_id
+     * @param $plugin_cookies
+     * @return Movie
      * @throws Exception
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
@@ -234,7 +253,9 @@ class CbillingPluginConfig extends DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param $plugin_cookies
+     * @param array &$category_list
+     * @param array &$category_index
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
@@ -248,13 +269,13 @@ class CbillingPluginConfig extends DefaultConfig
         $category_index = array();
 
         // all movies
-        $category = new StarnetVodCategory('all', 'Все фильмы');
+        $category = new Starnet_Vod_Category('all', 'Все фильмы');
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
         foreach ($categories->data as $node) {
             $id = (string)$node->id;
-            $category = new StarnetVodCategory($id, (string)$node->name);
+            $category = new Starnet_Vod_Category($id, (string)$node->name);
 
             // fetch genres for category
             $genres = HD::LoadAndStoreJson(self::API_HOST . "/cat/$id/genres", false);
@@ -264,7 +285,7 @@ class CbillingPluginConfig extends DefaultConfig
 
             $gen_arr = array();
             foreach ($genres->data as $genre) {
-                $gen_arr[] = new StarnetVodCategory((string)$genre->id, (string)$genre->title, $category);
+                $gen_arr[] = new Starnet_Vod_Category((string)$genre->id, (string)$genre->title, $category);
             }
 
             $category->set_sub_categories($gen_arr);
@@ -277,6 +298,9 @@ class CbillingPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $keyword
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function getSearchList($keyword, $plugin_cookies)
@@ -288,6 +312,9 @@ class CbillingPluginConfig extends DefaultConfig
     }
 
     /**
+     * @param string $query_id
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function getVideoList($query_id, $plugin_cookies)
@@ -313,7 +340,8 @@ class CbillingPluginConfig extends DefaultConfig
     }
 
     /**
-     * @throws Exception
+     * @param $json
+     * @return array
      */
     protected function CollectSearchResult($json)
     {
@@ -328,7 +356,7 @@ class CbillingPluginConfig extends DefaultConfig
                 }
             }
             if (isset($entry->name)) {
-                $movie = new ShortMovie($entry->id, $entry->name, $entry->poster);
+                $movie = new Short_Movie($entry->id, $entry->name, $entry->poster);
                 $genre_str = implode(", ", $genresArray);
                 $movie->info = "$entry->name|Год: $entry->year|Страна: $entry->country|Жанр: $genre_str|Рейтинг: $entry->rating";
                 $movies[] = $movie;
@@ -339,6 +367,10 @@ class CbillingPluginConfig extends DefaultConfig
         return $movies;
     }
 
+    /**
+     * @param string $key
+     * @param int $val
+     */
     public function add_movie_counter($key, $val)
     {
         // repeated count data
@@ -349,6 +381,10 @@ class CbillingPluginConfig extends DefaultConfig
         $this->movie_counter[$key] += $val;
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_device($plugin_cookies)
     {
         return isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';

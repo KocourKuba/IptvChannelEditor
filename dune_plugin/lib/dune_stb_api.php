@@ -142,6 +142,16 @@ const CMD_STATUS_GREP = '" /firmware/ext_command/cgi-bin/do | grep "command_stat
 
 ///////////////////////////////////////////////////////////////////////////////
 
+class SetupControlSwitchDefs
+{
+    const switch_on  = 'yes';
+    const switch_off = 'no';
+    const switch_normal  = 'normal';
+    const switch_small = 'small';
+    const switch_epg1  = 'first';
+    const switch_epg2 = 'second';
+}
+
 # Video zoom values for media_url string (|||dune_params|||zoom:value)
 class DuneVideoZoomPresets
 {
@@ -322,6 +332,9 @@ function get_serial_number()
     return $result;
 }
 
+/**
+ * @return string
+ */
 function get_ip_address()
 {
     if (get_platform_kind() === '8670') {
@@ -338,6 +351,9 @@ function get_ip_address()
     return $ip;
 }
 
+/**
+ * @return string|null
+ */
 function get_mac_address()
 {
     static $mac_addr = null;
@@ -350,6 +366,9 @@ function get_mac_address()
     return $mac_addr;
 }
 
+/**
+ * @return int|string
+ */
 function get_local_time_zone_offset()
 {
     // return integer of offset in seconds
@@ -376,11 +395,19 @@ function get_local_time_zone_offset()
     return 0;
 }
 
+/**
+ * @param string $cmd
+ * @return string
+ */
 function get_shell_exec($cmd)
 {
     return rtrim(shell_exec($cmd), "\n");
 }
 
+/**
+ * @param $key
+ * @return false|string|null
+ */
 function send_ir_code($key)
 {
     if (isset(DuneIrControl::$key_codes[$key])) {
@@ -391,6 +418,10 @@ function send_ir_code($key)
     return '0';
 }
 
+/**
+ * @param $key
+ * @return string
+ */
 function send_ir_code_return_status($key)
 {
     # return string (command execution status)
@@ -404,6 +435,9 @@ function send_ir_code_return_status($key)
     return '0';
 }
 
+/**
+ * @return string
+ */
 function get_player_state()
 {
     # return string (PLAYER_STATE_STANDBY | PLAYER_STATE_BLACK_SCREEN | PLAYER_STATE_NAVIGATOR | PLAYER_STATE_FILE_PLAYBACK | PLAYER_STATE_DVD_PLAYBACK | PLAYER_STATE_BLURAY_PLAYBACK)
@@ -412,6 +446,9 @@ function get_player_state()
     return get_shell_exec($cmd);
 }
 
+/**
+ * @return array|false
+ */
 function get_player_state_assoc()
 {
     # return array
@@ -419,12 +456,19 @@ function get_player_state_assoc()
     return parse_ini_file('/tmp/run/ext_command.state', 0, INI_SCANNER_RAW);
 }
 
+/**
+ * @return int
+ */
 function get_standby_mode()
 {
     $cmd = 'cat /tmp/run/ext_command.state | grep -w "player_state" | sed -n "s/^.*player_state = /\1/p"';
     return (int)(get_shell_exec($cmd) === PLAYER_STATE_STANDBY);
 }
 
+/**
+ * @param $mode
+ * @return string
+ */
 function set_standby_mode($mode)
 {
     # return string (command execution status)
@@ -438,6 +482,9 @@ function set_standby_mode($mode)
 # Playback controls
 ###############################################################################
 
+/**
+ * @return string
+ */
 function get_playback_state()
 {
     # return string (PLAYBACK_STOPPED | PLAYBACK_INITIALIZING | PLAYBACK_PLAYING | PLAYBACK_PAUSED | PLAYBACK_SEEKING | PLAYBACK_BUFFERING | PLAYBACK_FINISHED | PLAYBACK_DEINITIALIZING)
@@ -446,6 +493,9 @@ function get_playback_state()
     return get_shell_exec($cmd);
 }
 
+/**
+ * @return string
+ */
 function stop()
 {
     # return string (command execution status)
@@ -454,12 +504,18 @@ function stop()
     return get_shell_exec($cmd);
 }
 
+/**
+ * @return bool
+ */
 function can_pause()
 {
     $cmd = 'cat /tmp/run/ext_command.state | grep -w "pause_is_available" | sed -n "s/^.*pause_is_available = /\1/p"';
     return get_shell_exec($cmd) === '1';
 }
 
+/**
+ * @return string
+ */
 function pause()
 {
     # return string (command execution status)
@@ -467,12 +523,18 @@ function pause()
     return set_speed(0);
 }
 
+/**
+ * @return string
+ */
 function resume()
 {
     # return string (command execution status)
     return set_speed(256);
 }
 
+/**
+ * @return string
+ */
 function get_speed()
 {
     # return string			(-8192|-4096|-2048|-1024|-512|-256| -128|  -64|  -32|   -16|    -8|    0|    8|   16|   32|  64| 128|  256|  512| 1024| 2048|  4096|  8192)
@@ -482,6 +544,10 @@ function get_speed()
     return get_shell_exec($cmd);
 }
 
+/**
+ * @param $value
+ * @return string
+ */
 function set_speed($value)
 {
     # return string (command execution status)
@@ -491,6 +557,9 @@ function set_speed($value)
     return get_shell_exec($cmd);
 }
 
+/**
+ * @return string
+ */
 function get_length_seconds()
 {
     # return string
@@ -499,6 +568,9 @@ function get_length_seconds()
     return get_shell_exec($cmd);
 }
 
+/**
+ * @return bool
+ */
 function has_length()
 {
     # return boolean (true if length of media is known)
@@ -506,6 +578,9 @@ function has_length()
     return get_length_seconds() > 0;
 }
 
+/**
+ * @return string
+ */
 function get_position_seconds()
 {
     # return string
@@ -513,6 +588,10 @@ function get_position_seconds()
     return get_shell_exec($cmd);
 }
 
+/**
+ * @param $seconds
+ * @return string
+ */
 function set_position_seconds($seconds)
 {
     # return string (command execution status)
@@ -520,6 +599,11 @@ function set_position_seconds($seconds)
     return get_shell_exec($cmd);
 }
 
+/**
+ * @param $speed
+ * @param $seconds
+ * @return string
+ */
 function set_speed_and_position_seconds($speed, $seconds)
 {
     # return string (command execution status)
@@ -528,6 +612,9 @@ function set_speed_and_position_seconds($speed, $seconds)
     return get_shell_exec($cmd);
 }
 
+/**
+ * @return bool
+ */
 function is_scrambling_detected()
 {
     # return boolean
@@ -536,6 +623,9 @@ function is_scrambling_detected()
     return get_shell_exec($cmd) === '1';
 }
 
+/**
+ * @return string
+ */
 function get_segment_length_seconds()
 {
     # return string (length of one media segment for segment-based media, for HLS returns the value of X-EXT-TARGETDURATION)
@@ -544,6 +634,9 @@ function get_segment_length_seconds()
     return get_shell_exec($cmd);
 }
 
+/**
+ * @return mixed|string
+ */
 function get_playback_url()
 {
     # return string

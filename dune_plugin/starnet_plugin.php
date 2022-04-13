@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once 'lib/default_dune_plugin.php';
-require_once 'lib/utils.php';
+require_once 'lib/hd.php';
 
 require_once 'lib/tv/tv_group_list_screen.php';
 require_once 'lib/tv/tv_channel_list_screen.php';
@@ -25,7 +25,7 @@ require_once 'starnet_main_screen.php';
 require_once 'starnet_entry_handler.php';
 require_once 'starnet_folder_screen.php';
 
-class StarnetDunePlugin extends DefaultDunePlugin
+class Starnet_Plugin extends Default_Dune_Plugin
 {
     /**
      * @throws Exception
@@ -36,7 +36,7 @@ class StarnetDunePlugin extends DefaultDunePlugin
 
         $this->plugin_path = __DIR__;
         $plugin_type = PLUGIN_TYPE;
-        if (!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'DefaultConfig')) {
+        if (!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'Default_Config')) {
             hd_print("Unknown plugin type: $plugin_type");
             throw new Exception("Unknown plugin type: $plugin_type");
         }
@@ -56,23 +56,23 @@ class StarnetDunePlugin extends DefaultDunePlugin
         hd_print("VOD fav:          " . ($config->get_feature(VOD_FAVORITES_SUPPORTED) ? "yes" : "no"));
         hd_print("----------------------------------------------------");
 
-        UserInputHandlerRegistry::get_instance()->register_handler(new StarnetEntryHandler());
+        User_Input_Handler_Registry::get_instance()->register_handler(new Starnet_Entry_Handler());
 
-        $this->tv = new StarnetPluginTv($this);
-        $this->vod = new StarnetVod($this);
+        $this->tv = new Starnet_Tv($this);
+        $this->vod = new Starnet_Vod($this);
 
-        $this->main_screen = new StarnetMainScreen($this);
-        $this->tv_channels_screen = new TvChannelListScreen($this);
-        $this->setup_screen = new StarnetSetupScreen($this);
-        $this->folder_screen = new StarnetFolderScreen($this);
-        $this->favorites_screen = new TvFavoritesScreen($this);
-        $this->search_screen = new StarnetSearchScreen($this);
-        $this->vod_favorites_screen = new VodFavoritesScreen($this);
-        $this->vod_category_list_Screen = new StarnetVodCategoryListScreen($this);
-        $this->vod_list_screen = new StarnetVodListScreen($this);
-        $this->vod_movie_screen = new VodMovieScreen($this);
-        $this->vod_series_list_screen = new VodSeriesListScreen($this);
-        $this->filter_screen = new StarnetFilterScreen($this);
+        $this->main_screen = new Starnet_Main_Screen($this);
+        $this->tv_channels_screen = new Tv_Channel_List_Screen($this);
+        $this->setup_screen = new Starnet_Setup_Screen($this);
+        $this->folder_screen = new Starnet_Folder_Screen($this);
+        $this->favorites_screen = new Tv_Favorites_Screen($this);
+        $this->search_screen = new Starnet_Search_Screen($this);
+        $this->vod_favorites_screen = new Vod_Favorites_Screen($this);
+        $this->vod_category_list_Screen = new Starnet_Vod_Category_List_Screen($this);
+        $this->vod_list_screen = new Starnet_Vod_List_Screen($this);
+        $this->vod_movie_screen = new Vod_Movie_Screen($this);
+        $this->vod_series_list_screen = new Vod_Series_List_Screen($this);
+        $this->filter_screen = new Starnet_Filter_Screen($this);
 
         hd_print("Init done.");
     }

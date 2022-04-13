@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'media_url.php';
+require_once 'mediaurl.php';
 require_once 'tv/epg_iterator.php';
 require_once 'tv/tv.php';
 require_once 'user_input_handler_registry.php';
@@ -9,76 +9,76 @@ require_once 'action_factory.php';
 require_once 'control_factory.php';
 require_once 'control_factory_ext.php';
 
-class DefaultDunePlugin implements DunePlugin
+class Default_Dune_Plugin implements DunePlugin
 {
     /**
      * @var string
      */
     public $plugin_path;
     /**
-     * @var StarnetPluginTv
+     * @var Starnet_Tv
      */
     public $tv;
     /**
-     * @var StarnetVod
+     * @var Starnet_Vod
      */
     public $vod;
     /**
-     * @var DefaultConfig
+     * @var Default_Config
      */
     public $config;
 
     /**
-     * @var StarnetMainScreen
+     * @var Starnet_Main_Screen
      */
     public $main_screen;
     /**
-     * @var TvChannelListScreen
+     * @var Tv_Channel_List_Screen
      */
     public $tv_channels_screen;
     /**
-     * @var StarnetSetupScreen
+     * @var Starnet_Setup_Screen
      */
     public $setup_screen;
     /**
-     * @var StarnetFolderScreen
+     * @var Starnet_Folder_Screen
      */
     public $folder_screen;
     /**
-     * @var TvFavoritesScreen
+     * @var Tv_Favorites_Screen
      */
     public $favorites_screen;
     /**
-     * @var StarnetSearchScreen
+     * @var Starnet_Search_Screen
      */
     public $search_screen;
     /**
-     * @var VodFavoritesScreen
+     * @var Vod_Favorites_Screen
      */
     public $vod_favorites_screen;
     /**
-     * @var StarnetVodCategoryListScreen
+     * @var Starnet_Vod_Category_List_Screen
      */
     public $vod_category_list_Screen;
     /**
-     * @var StarnetVodListScreen
+     * @var Starnet_Vod_List_Screen
      */
     public $vod_list_screen;
     /**
-     * @var VodMovieScreen
+     * @var Vod_Movie_Screen
      */
     public $vod_movie_screen;
     /**
-     * @var VodSeriesListScreen
+     * @var Vod_Series_List_Screen
      */
     public $vod_series_list_screen;
     /**
-     * @var StarnetFilterScreen
+     * @var Starnet_Filter_Screen
      */
     public $filter_screen;
 
     /**
-     * @var array
+     * @var array|Screen[]
      */
     private $screens;
 
@@ -89,12 +89,15 @@ class DefaultDunePlugin implements DunePlugin
         $this->screens = array();
     }
 
+    /**
+     * @param $object
+     */
     public function create_screen(&$object)
     {
         if (!is_null($object) && method_exists($object, 'get_id')) {
             hd_print('create_screen: ' . get_class($object));
             $this->add_screen($object);
-            UserInputHandlerRegistry::get_instance()->register_handler($object);
+            User_Input_Handler_Registry::get_instance()->register_handler($object);
         } else {
             hd_print(get_class($object) . ': Screen class is illegal. get_id method not defined!');
         }
@@ -106,7 +109,10 @@ class DefaultDunePlugin implements DunePlugin
     //
     ///////////////////////////////////////////////////////////////////////
 
-    protected function add_screen($scr)
+    /**
+     * @param Screen $scr
+     */
+    protected function add_screen(Screen $scr)
     {
         if (isset($this->screens[$scr->get_id()])) {
             hd_print("Error: screen (id: " . $scr->get_id() . ") already registered.");
@@ -118,6 +124,8 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $screen_id
+     * @return Screen
      * @throws Exception
      */
     protected function get_screen_by_id($screen_id)
@@ -134,9 +142,11 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * @param MediaURL $media_url
+     * @return Screen
      * @throws Exception
      */
-    protected function get_screen_by_url($media_url)
+    protected function get_screen_by_url(MediaURL $media_url)
     {
         $screen_id = isset($media_url->screen_id) ? $media_url->screen_id : $media_url->get_raw_string();
 
@@ -150,6 +160,9 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $media_url
+     * @param $plugin_cookies
+     * @return array|null
      * @throws Exception
      */
     public function get_folder_view($media_url, &$plugin_cookies)
@@ -162,6 +175,9 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $media_url
+     * @param $plugin_cookies
+     * @return array|null
      * @throws Exception
      */
     public function get_next_folder_view($media_url, &$plugin_cookies)
@@ -174,6 +190,10 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $media_url
+     * @param int $from_ndx
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function get_regular_folder_items($media_url, $from_ndx, &$plugin_cookies)
@@ -190,6 +210,9 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $media_url
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function get_tv_info($media_url, &$plugin_cookies)
@@ -207,6 +230,9 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $media_url
+     * @param $plugin_cookies
+     * @return string
      * @throws Exception
      */
     public function get_tv_stream_url($media_url, &$plugin_cookies)
@@ -222,6 +248,11 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $channel_id
+     * @param int $archive_tm_sec
+     * @param string $protect_code
+     * @param $plugin_cookies
+     * @return string
      * @throws Exception
      */
     public function get_tv_playback_url($channel_id, $archive_tm_sec, $protect_code, &$plugin_cookies)
@@ -237,6 +268,10 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $channel_id
+     * @param int $day_start_tm_sec
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function get_day_epg($channel_id, $day_start_tm_sec, &$plugin_cookies)
@@ -252,6 +287,10 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $op_type
+     * @param string $channel_id
+     * @param $plugin_cookies
+     * @return array
      * @throws Exception
      */
     public function change_tv_favorites($op_type, $channel_id, &$plugin_cookies)
@@ -271,6 +310,9 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @param string $media_url
+     * @param $plugin_cookies
+     * @return array|null
      * @throws Exception
      */
     public function get_vod_info($media_url, &$plugin_cookies)
@@ -288,13 +330,15 @@ class DefaultDunePlugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @throws Exception
+     * @param string $media_url
+     * @param $plugin_cookies
+     * @return string
      */
     public function get_vod_stream_url($media_url, &$plugin_cookies)
     {
         if (is_null($this->vod)) {
             hd_print('get_vod_stream_url: VOD is not supported');
-            throw new Exception('VOD is not supported');
+            return '';
         }
 
         return $this->vod->get_vod_stream_url($media_url, $plugin_cookies);
@@ -306,12 +350,20 @@ class DefaultDunePlugin implements DunePlugin
     //
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        return UserInputHandlerRegistry::get_instance()->handle_user_input(
-            $user_input, $plugin_cookies);
+        return User_Input_Handler_Registry::get_instance()->handle_user_input($user_input, $plugin_cookies);
     }
 
+    /**
+     * @param string $image
+     * @return string
+     */
     public function get_image_path($image = null)
     {
         return "$this->plugin_path/img/" . ($image === null ?: $image);

@@ -20,6 +20,10 @@ class MediaURL
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function __set($key, $value)
     {
         if (is_null($this->map)) {
@@ -29,6 +33,9 @@ class MediaURL
         $this->map->{$key} = $value;
     }
 
+    /**
+     * @param $key
+     */
     public function __unset($key)
     {
         if (is_null($this->map)) {
@@ -38,6 +45,10 @@ class MediaURL
         unset($this->map->{$key});
     }
 
+    /**
+     * @param $key
+     * @return mixed|null
+     */
     public function __get($key)
     {
         if (is_null($this->map)) {
@@ -47,6 +58,10 @@ class MediaURL
         return isset($this->map->{$key}) ? $this->map->{$key} : null;
     }
 
+    /**
+     * @param $key
+     * @return bool
+     */
     public function __isset($key)
     {
         if (is_null($this->map)) {
@@ -59,6 +74,9 @@ class MediaURL
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @return string
+     */
     public function get_raw_string()
     {
         return $this->str;
@@ -67,6 +85,10 @@ class MediaURL
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param array $m
+     * @return false|string
+     */
     public static function encode($m)
     {
         return json_encode($m);
@@ -74,6 +96,10 @@ class MediaURL
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param $s
+     * @return MediaURL
+     */
     public static function decode($s)
     {
         if (strpos($s, '{') !== 0) {

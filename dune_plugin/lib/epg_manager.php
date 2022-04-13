@@ -1,15 +1,21 @@
 <?php
-require_once 'utils.php';
+require_once 'hd.php';
 require_once 'epg_xml_parser.php';
 
-class EpgManager
+class Epg_Manager
 {
-    const EPG_CACHE_DIR_TEMPLATE  = '/tmp/%s_epg/';
+    const EPG_CACHE_DIR_TEMPLATE = '/tmp/%s_epg/';
     const EPG_CACHE_FILE_TEMPLATE = '/tmp/%s_epg/epg_channel_%s_%s';
 
+    /**
+     * @var Default_Config
+     */
     public $config;
 
-    public function __construct($config)
+    /**
+     * @param Default_Config $config
+     */
+    public function __construct(Default_Config $config)
     {
         $this->config = $config;
     }
@@ -17,17 +23,16 @@ class EpgManager
     /**
      * try to load epg from cache otherwise request it from server
      * store parsed response to the cache
-     * @param IChannel $channel
-     * @param $type
-     * @param $day_start_ts
+     * @param Channel $channel
+     * @param string $type
+     * @param int $day_start_ts
      * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function get_epg(IChannel $channel, $type, $day_start_ts, $plugin_cookies)
+    public function get_epg(Channel $channel, $type, $day_start_ts, $plugin_cookies)
     {
-        switch ($type)
-        {
+        switch ($type) {
             case 'first':
                 $epg_id = str_replace(' ', '%20', $channel->get_epg_id());
                 break;
@@ -56,7 +61,7 @@ class EpgManager
             throw new Exception("$type EPG url not defined");
         }
 
-        $cache_dir =  sprintf(self::EPG_CACHE_DIR_TEMPLATE, $this->config->PLUGIN_SHORT_NAME);
+        $cache_dir = sprintf(self::EPG_CACHE_DIR_TEMPLATE, $this->config->PLUGIN_SHORT_NAME);
         $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $this->config->PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);
 
         if (file_exists($cache_file)) {
@@ -92,9 +97,9 @@ class EpgManager
 
     /**
      * request server for epg and parse json response
-     * @param $url
-     * @param $parser_params
-     * @param $day_start_ts
+     * @param string $url
+     * @param array $parser_params
+     * @param int $day_start_ts
      * @return array
      */
     protected static function get_epg_json($url, $parser_params, $day_start_ts)
@@ -112,8 +117,7 @@ class EpgManager
                 hd_print("Empty document returned.");
                 return $epg;
             }
-        }
-        catch (Exception $ex) {
+        } catch (Exception $ex) {
             hd_print("http exception: " . $ex->getMessage());
             return $epg;
         }
@@ -151,10 +155,10 @@ class EpgManager
 
     /**
      * request server for XMLTV epg and parse xml or xml.gx response
-     * @param $url
-     * @param $day_start_ts
-     * @param $epg_id
-     * @param $cache_dir
+     * @param string $url
+     * @param int $day_start_ts
+     * @param string $epg_id
+     * @param string $cache_dir
      * @return array
      */
     protected static function get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir)
@@ -171,18 +175,18 @@ class EpgManager
             if (!file_exists($epgCacheFile)) {
                 hd_print("epg uri: $url");
                 $doc = HD::http_get_document($url);
-                if(!file_put_contents($epgCacheFile, $doc)) {
+                if (!file_put_contents($epgCacheFile, $doc)) {
                     hd_print("Writing to $epgCacheFile is not possible!");
                 }
             }
 
             // parse
-            $Parser = new EpgXmlParser();
+            $Parser = new Epg_Xml_Parser();
             $Parser->setFile($epgCacheFile);
             $Parser->setChannelfilter($epg_id);
             $Parser->parseEpg();
             $epg_data = $Parser->getEpgData();
-            if (empty($epg_data)){
+            if (empty($epg_data)) {
                 hd_print("No EPG data found");
             } else {
                 foreach ($epg_data as $channel) {
@@ -192,8 +196,7 @@ class EpgManager
                     }
                 }
             }
-        }
-        catch (Exception $ex) {
+        } catch (Exception $ex) {
             hd_print($ex->getMessage());
             return $epg;
         }

@@ -1,6 +1,6 @@
 <?php
 
-class DuneException extends Exception
+class Dune_Exception extends Exception
 {
     private $error_action;
 

@@ -1,5 +1,6 @@
 <?php
-require_once 'utils.php';
+
+require_once 'hd.php';
 
 /**
  * @author Andrii Kopyniak
@@ -454,7 +455,7 @@ class smb_tree
 
     public static function set_folder_info(&$plugin_cookies, $selected_url)
     {
-        if(!isset($selected_url->ip_path) || $selected_url->ip_path === false) {
+        if (!isset($selected_url->ip_path) || $selected_url->ip_path === false) {
             $save_folder['filepath'] = $selected_url->filepath;
         } else if ($selected_url->nfs_protocol !== false) {
             $save_folder[$selected_url->ip_path]['foldername'] = preg_replace("|^/tmp/mnt/network/\d*|", '', $selected_url->filepath);
@@ -484,7 +485,7 @@ class smb_tree
             }
         }
 
-        return (empty($select_folder)) ? get_install_path(): $select_folder;
+        return (empty($select_folder)) ? get_install_path() : $select_folder;
     }
 
     public static function get_bug_platform_kind()

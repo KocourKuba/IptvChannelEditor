@@ -1,10 +1,14 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class VodSeriesListScreen extends AbstractPreloadedRegularScreen implements UserInputHandler
+class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_series';
 
+    /**
+     * @param $movie_id
+     * @return false|string
+     */
     public static function get_media_url_str($movie_id)
     {
         return MediaURL::encode(array('screen_id' => self::ID, 'movie_id' => $movie_id));
@@ -12,7 +16,10 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen implements User
 
     ///////////////////////////////////////////////////////////////////////
 
-    public function __construct(DefaultDunePlugin $plugin)
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
     {
         parent::__construct(self::ID, $plugin, $plugin->config->GET_VOD_SERIES_FOLDER_VIEW());
 
@@ -21,30 +28,45 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen implements User
         }
     }
 
+    /**
+     * @return string
+     */
     public function get_handler_id()
     {
-        return self::ID.'_handler';
+        return self::ID . '_handler';
     }
 
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return null
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         return null;
     }
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         return array
         (
-            GUI_EVENT_KEY_ENTER => ActionFactory::vod_play(),
-            GUI_EVENT_KEY_PLAY => ActionFactory::vod_play(),
+            GUI_EVENT_KEY_ENTER => Action_Factory::vod_play(),
+            GUI_EVENT_KEY_PLAY => Action_Factory::vod_play(),
         );
     }
 
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @throws Exception
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
@@ -78,6 +100,10 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen implements User
         return $items;
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @return null
+     */
     public function get_archive(MediaURL $media_url)
     {
         return $this->plugin->vod->get_archive($media_url);

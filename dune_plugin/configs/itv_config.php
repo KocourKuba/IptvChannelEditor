@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class ItvPluginConfig extends DefaultConfig
+class ItvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://itv.ooo/p/%s/hls.m3u8';
 
@@ -25,11 +25,11 @@ class ItvPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
 
@@ -59,6 +59,11 @@ class ItvPluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -106,6 +111,10 @@ class ItvPluginConfig extends DefaultConfig
         return isset($account_data['package_info']) && !empty($account_data['package_info']);
     }
 
+    /**
+     * @param array &$defs
+     * @param $plugin_cookies
+     */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
         $account_data = array();
@@ -116,17 +125,17 @@ class ItvPluginConfig extends DefaultConfig
             $text = explode('\\n', $text);
             $text = array_values($text);
 
-            ControlFactory::add_label($defs, 'Ошибка!', $text[0], -10);
-            ControlFactory::add_label($defs, 'Описание:', $text[1], 20);
+            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
+            Control_Factory::add_label($defs, 'Описание:', $text[1], 20);
             return;
         }
 
         $title = 'Пакеты: ';
 
-        ControlFactory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' $', -10);
+        Control_Factory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' $', -10);
         $packages = $account_data['package_info'];
         if (count($packages) === 0) {
-            ControlFactory::add_label($defs, $title, 'Нет пакетов', 20);
+            Control_Factory::add_label($defs, $title, 'Нет пакетов', 20);
             return;
         }
 
@@ -145,7 +154,7 @@ class ItvPluginConfig extends DefaultConfig
                 continue;
             }
 
-            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected, -10);
+            Control_Factory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected, -10);
 
             if ($isFirstLabel) {
                 $isFirstLabel = false;
@@ -155,12 +164,19 @@ class ItvPluginConfig extends DefaultConfig
         }
 
         if (count($list_collected) !== 0) {
-            ControlFactory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
+            Control_Factory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
         }
 
-        ControlFactory::add_vgap($defs, 20);
+        Control_Factory::add_vgap($defs, 20);
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {

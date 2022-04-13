@@ -2,26 +2,35 @@
 
 require_once 'archive_cache.php';
 
-class DefaultArchive implements Archive
+class Default_Archive implements Archive
 {
     public static function clear_cache()
     {
-        ArchiveCache::clear_all();
+        Archive_Cache::clear_all();
     }
 
     public static function clear_cached_archive($id)
     {
-        ArchiveCache::clear_archive($id);
+        Archive_Cache::clear_archive($id);
     }
 
+    /**
+     * @param $id
+     * @return Archive|null
+     */
     public static function get_cached_archive($id)
     {
-        return ArchiveCache::get_archive_by_id($id);
+        return Archive_Cache::get_archive_by_id($id);
     }
 
+    /**
+     * @param string $id
+     * @param string $url_prefix
+     * @return Archive
+     */
     public static function get_archive($id, $url_prefix)
     {
-        $archive = ArchiveCache::get_archive_by_id($id);
+        $archive = Archive_Cache::get_archive_by_id($id);
         if (!is_null($archive)) {
             return $archive;
         }
@@ -57,8 +66,7 @@ class DefaultArchive implements Archive
             hd_print("Archive $id: " . count($version_by_name) . " files.");
 
             $size_url = $url_prefix . '/size.txt';
-            try
-            {
+            try {
                 $doc = HD::http_get_document($size_url);
             } catch (Exception $ex) {
                 hd_print("Failed to fetch archive size.txt from $size_url.");
@@ -69,23 +77,42 @@ class DefaultArchive implements Archive
             hd_print("Archive $id: size = $total_size");
         }
 
-        $archive = new DefaultArchive($id,
-            $url_prefix, $version_by_name, $total_size);
+        $archive = new Default_Archive($id, $url_prefix, $version_by_name, $total_size);
 
-        ArchiveCache::set_archive($archive);
+        Archive_Cache::set_archive($archive);
 
         return $archive;
     }
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @var string
+     */
     private $id;
+
+    /**
+     * @var string
+     */
     private $url_prefix;
+
+    /**
+     * @var array
+     */
     private $version_by_name;
+
+    /**
+     * @var int
+     */
     private $total_size;
 
-    public function __construct($id,
-                                $url_prefix, $version_by_name, $total_size)
+    /**
+     * @param string $id
+     * @param string $url_prefix
+     * @param array $version_by_name
+     * @param int $total_size
+     */
+    public function __construct($id, $url_prefix, $version_by_name, $total_size)
     {
         $this->id = $id;
         $this->url_prefix = $url_prefix;
@@ -93,11 +120,17 @@ class DefaultArchive implements Archive
         $this->total_size = $total_size;
     }
 
+    /**
+     * @return string
+     */
     public function get_id()
     {
         return $this->id;
     }
 
+    /**
+     * @return array
+     */
     public function get_archive_def()
     {
         $urls_with_keys = array();
@@ -123,6 +156,10 @@ class DefaultArchive implements Archive
         );
     }
 
+    /**
+     * @param string $name
+     * @return string
+     */
     public function get_archive_url($name)
     {
         if (!isset($this->version_by_name[$name])) {

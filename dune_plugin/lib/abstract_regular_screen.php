@@ -1,9 +1,9 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'regular_screen.php';
+require_once 'screen.php';
 
-abstract class AbstractRegularScreen implements RegularScreen
+abstract class Abstract_Regular_Screen implements Screen
 {
     private $id;
 
@@ -14,7 +14,7 @@ abstract class AbstractRegularScreen implements RegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected function __construct($id, DefaultDunePlugin $plugin, $folder_views)
+    protected function __construct($id, Default_Dune_Plugin $plugin, $folder_views)
     {
         $this->id = $id;
         $this->plugin = $plugin;
@@ -43,6 +43,11 @@ abstract class AbstractRegularScreen implements RegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         // hd_print("----> count: " . count($this->folder_views));
@@ -71,6 +76,12 @@ abstract class AbstractRegularScreen implements RegularScreen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array|null
+     * @throws Exception
+     */
     public function get_next_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         $idx = $this->get_folder_view_index($plugin_cookies);

@@ -3,14 +3,14 @@
 
 require_once 'screen.php';
 
-abstract class AbstractControlsScreen implements Screen
+abstract class Abstract_Controls_Screen implements Screen
 {
     private $id;
     protected $plugin;
 
     ///////////////////////////////////////////////////////////////////////
 
-    protected function __construct($id, DefaultDunePlugin $plugin)
+    protected function __construct($id, Default_Dune_Plugin $plugin)
     {
         $this->id = $id;
         $this->plugin = $plugin;
@@ -30,6 +30,11 @@ abstract class AbstractControlsScreen implements Screen
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array|null
+     */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         $defs = $this->get_control_defs($media_url, $plugin_cookies);
@@ -47,5 +52,45 @@ abstract class AbstractControlsScreen implements Screen
             PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_CONTROLS,
             PluginFolderView::data => $folder_view,
         );
+    }
+
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_action_map(MediaURL $media_url, &$plugin_cookies)
+    {
+        return array();
+    }
+
+    /**
+     * @param MediaURL $media_url
+     * @param int $from_ndx
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
+    {
+        return array();
+    }
+
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_next_folder_view(MediaURL $media_url, &$plugin_cookies)
+    {
+        return array();
+    }
+
+    /**
+     * @param MediaURL $media_url
+     * @return null
+     */
+    public function get_archive(MediaURL $media_url)
+    {
+        return null;
     }
 }

@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class TvteamPluginConfig extends DefaultConfig
+class TvteamPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://tv.team/pl/11/%s/playlist.m3u8';
 
@@ -18,11 +18,11 @@ class TvteamPluginConfig extends DefaultConfig
     /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
-     * @param $archive_ts
-     * @param IChannel $channel
+     * @param int $archive_ts
+     * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         //hd_print("AdjustStreamUrl: $url");
@@ -50,6 +50,11 @@ class TvteamPluginConfig extends DefaultConfig
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
@@ -63,6 +68,13 @@ class TvteamPluginConfig extends DefaultConfig
         return sprintf(self::PLAYLIST_TV_URL, $password);
     }
 
+    /**
+     * @param string $type
+     * @param string $id
+     * @param int $day_start_ts
+     * @param $plugin_cookies
+     * @return string|null
+     */
     public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
