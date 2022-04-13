@@ -12,21 +12,20 @@ class VidokPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
-        static::$FEATURES[BALANCE_SUPPORTED] = true;
-        static::$FEATURES[QUALITY_SUPPORTED] = true;
-        static::$FEATURES[SERVER_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/p/{TOKEN}/{ID}';
+        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
+        $this->set_feature(BALANCE_SUPPORTED, true);
+        $this->set_feature(QUALITY_SUPPORTED, true);
+        $this->set_feature(SERVER_SUPPORTED, true);
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/p/{TOKEN}/{ID}');
 
-        static::$EPG_PARSER_PARAMS['first']['config'] = $this;
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'epg';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'start';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
-        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'dmy';
+        $this->EPG_PARSER_PARAMS['first']['epg_root'] = 'epg';
+        $this->EPG_PARSER_PARAMS['first']['start'] = 'start';
+        $this->EPG_PARSER_PARAMS['first']['end'] = 'end';
+        $this->EPG_PARSER_PARAMS['first']['title'] = 'title';
+        $this->EPG_PARSER_PARAMS['first']['description'] = 'description';
+        $this->EPG_PARSER_PARAMS['first']['date_format'] = 'dmy';
     }
 
     /**
@@ -36,17 +35,17 @@ class VidokPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -133,7 +132,7 @@ class VidokPluginConfig extends DefaultConfig
         ControlFactory::add_vgap($defs, 20);
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
             hd_print("Fetching EPG for ID: '$id'");
@@ -143,7 +142,7 @@ class VidokPluginConfig extends DefaultConfig
         return null;
     }
 
-    public static function get_server_opts($plugin_cookies)
+    public function get_server_opts($plugin_cookies)
     {
         if (self::load_settings($plugin_cookies)) {
             $ops = array();
@@ -156,7 +155,7 @@ class VidokPluginConfig extends DefaultConfig
         return array();
     }
 
-    public static function get_server($plugin_cookies)
+    public function get_server($plugin_cookies)
     {
         if (self::load_settings($plugin_cookies)) {
             return self::$settings['settings']['current']['server_id'];
@@ -165,12 +164,12 @@ class VidokPluginConfig extends DefaultConfig
         return null;
     }
 
-    public static function set_server($plugin_cookies)
+    public function set_server($plugin_cookies)
     {
-        return self::save_settings($plugin_cookies, 'server');
+        self::save_settings($plugin_cookies, 'server');
     }
 
-    public static function get_quality_opts($plugin_cookies)
+    public function get_quality_opts($plugin_cookies)
     {
         if (self::load_settings($plugin_cookies)) {
             $ops = array();
@@ -183,7 +182,7 @@ class VidokPluginConfig extends DefaultConfig
         return array();
     }
 
-    public static function get_quality($plugin_cookies)
+    public function get_quality($plugin_cookies)
     {
         if (self::load_settings($plugin_cookies))
         {
@@ -192,9 +191,9 @@ class VidokPluginConfig extends DefaultConfig
         return null;
     }
 
-    public static function set_quality($plugin_cookies)
+    public function set_quality($plugin_cookies)
     {
-        return self::save_settings($plugin_cookies, 'quality');
+        self::save_settings($plugin_cookies, 'quality');
     }
 
     protected static function load_settings(&$plugin_cookies)

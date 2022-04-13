@@ -17,15 +17,15 @@ class AntifrizPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
-        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8';
-        static::$FEATURES[VOD_LAZY_LOAD] = true;
-        static::$FEATURES[EXTINF_VOD_PATTERN] = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
+        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8');
+        $this->set_feature(VOD_LAZY_LOAD, true);
+        $this->set_feature(EXTINF_VOD_PATTERN, '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|');
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
+        $this->set_epg_param('epg_root', '');
     }
 
     /**
@@ -35,12 +35,12 @@ class AntifrizPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
 
         $ext_params = $channel->get_ext_params();
-        switch (self::get_format($plugin_cookies)) {
+        switch ($this->get_format($plugin_cookies)) {
             case 'hls':
                 if ((int)$archive_ts > 0) {
                     // hls archive url completely different, make it from scratch
@@ -69,7 +69,7 @@ class AntifrizPluginConfig extends DefaultConfig
         // hd_print("Token:       " . $ext_params['token']);
         // hd_print("Archive TS:  " . $archive_ts);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     /**
@@ -90,7 +90,7 @@ class AntifrizPluginConfig extends DefaultConfig
         return false;
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -109,10 +109,11 @@ class AntifrizPluginConfig extends DefaultConfig
         return '';
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
-        $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
+        $params = $this->get_epg_params($type);
         if ($type === 'first') {
+            $epg_date = gmdate($params['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
             return sprintf('%s/epg/%s/?date=%s', self::API_HOST, $id, $epg_date); // epg_id date(Y-m-d)
         }
@@ -283,13 +284,13 @@ class AntifrizPluginConfig extends DefaultConfig
         return $movies;
     }
 
-    public static function add_movie_counter($key, $val)
+    public function add_movie_counter($key, $val)
     {
         // repeated count data
-        if (!array_key_exists($key, static::$movie_counter)) {
-            static::$movie_counter[$key] = 0;
+        if (!array_key_exists($key, $this->movie_counter)) {
+            $this->movie_counter[$key] = 0;
         }
 
-        static::$movie_counter[$key] += $val;
+        $this->movie_counter[$key] += $val;
     }
 }

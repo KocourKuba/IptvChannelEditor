@@ -9,15 +9,15 @@ class OneottPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8';
+        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'start';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'stop';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'epg';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'desc';
+        $this->set_epg_param('epg_root', '');
+        $this->set_epg_param('start', 'start');
+        $this->set_epg_param('end', 'stop');
+        $this->set_epg_param('title', 'epg');
+        $this->set_epg_param('description', 'desc');
     }
 
     /**
@@ -27,21 +27,21 @@ class OneottPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
-        if (self::get_format($plugin_cookies) === 'mpeg') {
+        if ($this->get_format($plugin_cookies) === 'mpeg') {
             $url = str_replace('/hls/pl.m3u8', '', $url);
         }
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -90,10 +90,11 @@ class OneottPluginConfig extends DefaultConfig
         return false;
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
+        $params = $this->get_epg_params($type);
         if ($type === 'first') {
-            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['second']['date_format'], $day_start_ts);
+            $epg_date = gmdate($params['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
             return sprintf('http://epg.propg.net/%s/epg2/%s', $id, $epg_date); // epg_id date(Y-m-d)
         }

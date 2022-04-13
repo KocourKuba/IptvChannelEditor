@@ -11,25 +11,76 @@ require_once 'control_factory_ext.php';
 
 class DefaultDunePlugin implements DunePlugin
 {
-    private $screens;
-
+    /**
+     * @var string
+     */
     public $plugin_path;
+    /**
+     * @var StarnetPluginTv
+     */
     public $tv;
+    /**
+     * @var StarnetVod
+     */
     public $vod;
+    /**
+     * @var DefaultConfig
+     */
     public $config;
 
+    /**
+     * @var StarnetMainScreen
+     */
     public $main_screen;
+    /**
+     * @var TvChannelListScreen
+     */
     public $tv_channels_screen;
+    /**
+     * @var StarnetSetupScreen
+     */
     public $setup_screen;
+    /**
+     * @var StarnetFolderScreen
+     */
     public $folder_screen;
+    /**
+     * @var TvFavoritesScreen
+     */
     public $favorites_screen;
+    /**
+     * @var StarnetSearchScreen
+     */
     public $search_screen;
+    /**
+     * @var VodFavoritesScreen
+     */
     public $vod_favorites_screen;
+    /**
+     * @var StarnetVodCategoryListScreen
+     */
     public $vod_category_list_Screen;
+    /**
+     * @var StarnetVodListScreen
+     */
     public $vod_list_screen;
+    /**
+     * @var VodMovieScreen
+     */
     public $vod_movie_screen;
+    /**
+     * @var VodSeriesListScreen
+     */
     public $vod_series_list_screen;
+    /**
+     * @var StarnetFilterScreen
+     */
     public $filter_screen;
+
+    /**
+     * @var array
+     */
+    private $screens;
 
     ///////////////////////////////////////////////////////////////////////
 

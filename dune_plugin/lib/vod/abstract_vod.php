@@ -11,10 +11,6 @@ abstract class AbstractVod implements Vod
     private $fav_movie_ids;
     private $genres;
 
-    private static $pages = array();
-    private static $is_entered = false;
-    private static $movie_counter = array();
-
     protected function __construct()
     {
         $this->short_movie_by_id = array();
@@ -248,34 +244,24 @@ abstract class AbstractVod implements Vod
     ///////////////////////////////////////////////////////////////////////
     // Genres.
 
-    /**
-     * @throws Exception
-     */
     protected function load_genres(&$plugin_cookies)
     {
         hd_print("AbstractVod::load_genres: Not implemented.");
         return null;
     }
 
-    /**
-     * @throws Exception
-     */
     public function get_genre_icon_url($genre_id)
     {
-        throw new Exception('Not implemented');
+        hd_print("AbstractVod::get_genre_icon_url: Not implemented.");
+        return null;
     }
 
-    /**
-     * @throws Exception
-     */
     public function get_genre_media_url_str($genre_id)
     {
-        throw new Exception('Not implemented');
+        hd_print("AbstractVod::get_genre_media_url_str: Not implemented.");
+        return null;
     }
 
-    /**
-     * @throws Exception
-     */
     public function ensure_genres_loaded(&$plugin_cookies)
     {
         if ($this->genres !== null) {
@@ -285,29 +271,25 @@ abstract class AbstractVod implements Vod
         $this->genres = $this->load_genres($plugin_cookies);
 
         if ($this->genres === null) {
-            throw new Exception('Invalid VOD genres loaded');
+            hd_print("AbstractVod::ensure_genres_loaded: Not implemented.");
         }
     }
 
-    /**
-     * @throws Exception
-     */
     public function get_genre_ids()
     {
         if ($this->genres === null) {
-            throw new Exception('VOD genres not loaded');
+            hd_print("AbstractVod::get_genre_ids: Not implemented.");
+            return null;
         }
 
         return array_keys($this->genres);
     }
 
-    /**
-     * @throws Exception
-     */
     public function get_genre_caption($genre_id)
     {
         if ($this->genres === null) {
-            throw new Exception('VOD genres not loaded');
+            hd_print("AbstractVod::get_genre_caption: Not implemented.");
+            return null;
         }
 
         return $this->genres[$genre_id];
@@ -316,42 +298,34 @@ abstract class AbstractVod implements Vod
     ///////////////////////////////////////////////////////////////////////
     // Search.
 
-    /**
-     * @throws Exception
-     */
     public function get_search_media_url_str($pattern)
     {
-        throw new Exception('Not implemented');
+        hd_print("AbstractVod::get_search_media_url_str: Not implemented.");
+        return null;
     }
 
     ///////////////////////////////////////////////////////////////////////
     // Filter.
 
-    /**
-     * @throws Exception
-     */
     public function get_filter_media_url_str($pattern)
     {
-        throw new Exception('Not implemented');
+        hd_print("AbstractVod::get_filter_media_url_str: Not implemented.");
+        return null;
     }
 
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 
-    /**
-     * @throws Exception
-     */
     public function get_vod_list_folder_views()
     {
-        throw new Exception('Not implemented');
+        hd_print("AbstractVod::get_vod_list_folder_views: Not implemented.");
+        return null;
     }
 
-    /**
-     * @throws Exception
-     */
     public function get_vod_genres_folder_views()
     {
-        throw new Exception('Not implemented');
+        hd_print("AbstractVod::get_vod_genres_folder_views: Not implemented.");
+        return null;
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -366,6 +340,6 @@ abstract class AbstractVod implements Vod
     // Hook.
 
     public function folder_entered(MediaURL $media_url, &$plugin_cookies)
-    { /* Nop */
+    {
     }
 }

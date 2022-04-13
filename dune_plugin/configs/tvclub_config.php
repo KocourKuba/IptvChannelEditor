@@ -12,20 +12,19 @@ class TvclubPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[TS_OPTIONS] = array('mpeg' => 'MPEG-TS');
-        static::$FEATURES[BALANCE_SUPPORTED] = true;
-        static::$FEATURES[SERVER_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/p/{TOKEN}/{ID}';
+        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(TS_OPTIONS, array('mpeg' => 'MPEG-TS'));
+        $this->set_feature(BALANCE_SUPPORTED, true);
+        $this->set_feature(SERVER_SUPPORTED, true);
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/p/{TOKEN}/{ID}');
 
-        static::$EPG_PARSER_PARAMS['first']['config'] = $this;
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'epg|channels|0|epg';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'start';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'text';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
-        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'dmy';
+        $this->set_epg_param('epg_root', 'epg|channels|0|epg');
+        $this->set_epg_param('start', 'start');
+        $this->set_epg_param('end', 'end');
+        $this->set_epg_param('title', 'text');
+        $this->set_epg_param('description', 'description');
+        $this->set_epg_param('date_format', 'dmy');
     }
 
     /**
@@ -35,17 +34,17 @@ class TvclubPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
         if (!self::ensure_token_loaded($plugin_cookies)) {
@@ -125,7 +124,7 @@ class TvclubPluginConfig extends DefaultConfig
         ControlFactory::add_vgap($defs, 20);
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
             hd_print("Fetching EPG for ID: '$id'");
@@ -135,12 +134,12 @@ class TvclubPluginConfig extends DefaultConfig
         return null;
     }
 
-    public static function get_format($plugin_cookies)
+    public function get_format($plugin_cookies)
     {
         return isset($plugin_cookies->format) ? $plugin_cookies->format : 'mpeg';
     }
 
-    public static function get_server_opts($plugin_cookies)
+    public function get_server_opts($plugin_cookies)
     {
         try {
             $url = self::API_HOST . "servers?token=$plugin_cookies->token";
@@ -157,7 +156,7 @@ class TvclubPluginConfig extends DefaultConfig
         return array();
     }
 
-    public static function get_server($plugin_cookies)
+    public function get_server($plugin_cookies)
     {
         if (self::load_settings($plugin_cookies)) {
             return self::$settings['account']['settings']['server_id'];
@@ -166,9 +165,9 @@ class TvclubPluginConfig extends DefaultConfig
         return null;
     }
 
-    public static function set_server($plugin_cookies)
+    public function set_server($plugin_cookies)
     {
-        return self::save_settings($plugin_cookies, 'server');
+        self::save_settings($plugin_cookies, 'server');
     }
 
     protected static function load_settings(&$plugin_cookies)

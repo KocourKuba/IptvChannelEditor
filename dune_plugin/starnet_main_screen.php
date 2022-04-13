@@ -40,7 +40,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
             $action[GUI_EVENT_KEY_ENTER] = UserInputHandlerRegistry::create_action($this, 'configure');
         }
 
-        if ($this->plugin->config->get_balance_support()) {
+        if ($this->plugin->config->get_feature(BALANCE_SUPPORTED)) {
             $add_balance = UserInputHandlerRegistry::create_action($this, 'check_balance');
             $add_balance['caption'] = 'Подписка';
             $action[GUI_EVENT_KEY_C_YELLOW] = $add_balance;
@@ -77,7 +77,7 @@ class StarnetMainScreen extends TvGroupListScreen implements UserInputHandler
 
     protected function IsSetupNeeds($plugin_cookies)
     {
-        switch ($this->plugin->config->get_account_type())
+        switch ($this->plugin->config->get_feature(ACCOUNT_TYPE))
         {
             case 'OTT_KEY':
                 $setup_needs = (empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) &&

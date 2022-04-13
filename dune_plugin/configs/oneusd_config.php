@@ -9,10 +9,10 @@ class OneusdPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}';
-        static::$FEATURES[SQUARE_ICONS] = true;
+        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}');
+        $this->set_feature(SQUARE_ICONS, true);
     }
 
     /**
@@ -22,12 +22,12 @@ class OneusdPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         //hd_print("AdjustStreamUrl: $url");
 
-        switch (self::get_format($plugin_cookies))
+        switch ($this->get_format($plugin_cookies))
         {
             case 'hls':
                 if ((int)$archive_ts > 0) {
@@ -48,10 +48,10 @@ class OneusdPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -64,7 +64,7 @@ class OneusdPluginConfig extends DefaultConfig
         return sprintf(self::PLAYLIST_TV_URL, $password);
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
             hd_print("Fetching EPG for ID: '$id'");

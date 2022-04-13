@@ -10,17 +10,17 @@ class OnecentPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}';
-        static::$FEATURES[SQUARE_ICONS] = true;
+        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}');
+        $this->set_feature(SQUARE_ICONS, true);
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'data';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'begin';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
-        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y.m.d';
+        $this->set_epg_param('epg_root', 'data');
+        $this->set_epg_param('start', 'begin');
+        $this->set_epg_param('end', 'end');
+        $this->set_epg_param('title', 'title');
+        $this->set_epg_param('description', 'description');
+        $this->set_epg_param('date_format', 'Y.m.d');
     }
 
     /**
@@ -30,12 +30,12 @@ class OnecentPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         //hd_print("AdjustStreamUrl: $url");
 
-        switch (self::get_format($plugin_cookies))
+        switch ($this->get_format($plugin_cookies))
         {
             case 'hls':
                 if ((int)$archive_ts > 0) {
@@ -55,7 +55,7 @@ class OnecentPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
@@ -64,16 +64,18 @@ class OnecentPluginConfig extends DefaultConfig
             return false;
         }
 
-        static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = HD::MapTvgID(self::API_URL . '/channels');
-        hd_print("TVG ID Mapped: " . count(static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper']));
+        $mapper = HD::MapTvgID(self::API_URL . '/channels');
+        hd_print("TVG ID Mapped: " . count($mapper));
+        $this->set_epg_param('tvg_id_mapper', $mapper);
 
         return true;
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
+        $params = $this->get_epg_params($type);
         if ($type === 'first') {
-            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            $epg_date = gmdate($params['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
             return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
         }
@@ -81,7 +83,7 @@ class OnecentPluginConfig extends DefaultConfig
         return null;
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 

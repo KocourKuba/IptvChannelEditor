@@ -10,17 +10,17 @@ class SharatvPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/{TOKEN}';
+        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/{TOKEN}');
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'data';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'begin';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
-        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y.m.d';
+        $this->set_epg_param('epg_root', 'data');
+        $this->set_epg_param('start', 'begin');
+        $this->set_epg_param('end', 'end');
+        $this->set_epg_param('title', 'title');
+        $this->set_epg_param('description', 'description');
+        $this->set_epg_param('date_format', 'Y.m.d');
     }
 
     /**
@@ -30,14 +30,14 @@ class SharatvPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
         // shara tv does not support hls, only mpeg-ts
         // hd_print("Stream url:  " . $url);
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
@@ -46,13 +46,14 @@ class SharatvPluginConfig extends DefaultConfig
             return false;
         }
 
-        static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = HD::MapTvgID(self::API_URL . '/channels');
-        hd_print("TVG ID Mapped: " . count(static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper']));
+        $mapper = HD::MapTvgID(self::API_URL . '/channels');
+        hd_print("TVG ID Mapped: " . count($mapper));
+        $this->set_epg_param('tvg_id_mapper', $mapper);
 
         return true;
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -67,10 +68,11 @@ class SharatvPluginConfig extends DefaultConfig
         return sprintf(self::PLAYLIST_TV_URL, $login, $password);
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
+        $params = $this->get_epg_params($type);
         if ($type === 'first') {
-            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            $epg_date = gmdate($params['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
             return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
         }

@@ -9,17 +9,17 @@ class ShuratvPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8';
-        static::$FEATURES[SERVER_SUPPORTED] = true;
+        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
+        $this->set_feature(SERVER_SUPPORTED, true);
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'start_time';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'duration';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'name';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'text';
-        static::$EPG_PARSER_PARAMS['first']['use_duration'] = true;
+        $this->set_epg_param('epg_root', '');
+        $this->set_epg_param('start', 'start_time');
+        $this->set_epg_param('end', 'duration');
+        $this->set_epg_param('title', 'name');
+        $this->set_epg_param('description', 'text');
+        $this->set_epg_param('use_duration', true);
     }
 
     /**
@@ -29,21 +29,21 @@ class ShuratvPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
-        if (self::get_format($plugin_cookies) === 'mpeg') {
+        if ($this->get_format($plugin_cookies) === 'mpeg') {
             $url = str_replace('/hls/pl.m3u8', '', $url);
         }
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -53,7 +53,7 @@ class ShuratvPluginConfig extends DefaultConfig
             return '';
         }
 
-        return sprintf(self::PLAYLIST_TV_URL, $password, static::get_server($plugin_cookies));
+        return sprintf(self::PLAYLIST_TV_URL, $password, $this->get_server($plugin_cookies));
     }
 
     protected static function UpdateArchiveUrlParams($url, $archive_ts)
@@ -69,22 +69,17 @@ class ShuratvPluginConfig extends DefaultConfig
         return $url;
     }
 
-    public static function get_server_opts($plugin_cookies)
+    public function get_server_opts($plugin_cookies)
     {
         return array('1', '2');
     }
 
-    public static function get_server($plugin_cookies)
+    public function get_server($plugin_cookies)
     {
         return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
     }
 
-    public static function set_server($plugin_cookies)
-    {
-        return true;
-    }
-
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if($type === 'first') {
             hd_print("Fetching EPG for ID: '$id'");

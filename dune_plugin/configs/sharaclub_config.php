@@ -10,16 +10,16 @@ class SharaclubPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
-        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
-        static::$FEATURES[BALANCE_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8';
-        static::$FEATURES[VOD_LAZY_LOAD] = true;
+        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(BALANCE_SUPPORTED, true);
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
+        $this->set_feature(VOD_LAZY_LOAD, true);
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
-        static::$EPG_PARSER_PARAMS['second']['epg_root'] = '';
+        $this->set_epg_param('epg_root', '');
+        $this->set_epg_param('epg_root', '', 'second');
     }
 
     /**
@@ -29,21 +29,21 @@ class SharaclubPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
-        if (self::get_format($plugin_cookies) === 'mpeg') {
+        if ($this->get_format($plugin_cookies) === 'mpeg') {
             $url = str_replace('/video.m3u8', '.ts', $url);
         }
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -180,7 +180,7 @@ class SharaclubPluginConfig extends DefaultConfig
         ControlFactory::add_vgap($defs, 20);
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         hd_print("Fetching EPG for ID: '$id'");
         switch($type)
@@ -253,7 +253,7 @@ class SharaclubPluginConfig extends DefaultConfig
                             $playback_url = str_replace(
                                 array('{DOMAIN}', '{TOKEN}', '{ID}'),
                                 array($matches[1], $matches[2], "vod-" . $episode['id']),
-                                static::$FEATURES[MEDIA_URL_TEMPLATE_HLS]);
+                                $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
                         }
                         hd_print("movie playback_url: $playback_url");
                         $movie->add_series_data($episode['id'], $episodeCaption, $playback_url, true);
@@ -276,7 +276,7 @@ class SharaclubPluginConfig extends DefaultConfig
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        $url = static::GetPlaylistUrl('movie', $plugin_cookies);
+        $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
         $categories = HD::LoadAndStoreJson($url, true, $this->GET_VOD_TMP_STORAGE_PATH());
         if ($categories === false)
         {
@@ -367,13 +367,13 @@ class SharaclubPluginConfig extends DefaultConfig
         return  $movie;
     }
 
-    public static function add_movie_counter($key, $val)
+    public function add_movie_counter($key, $val)
     {
         // repeated count data
-        if (!array_key_exists($key, static::$movie_counter)) {
-            static::$movie_counter[$key] = 0;
+        if (!array_key_exists($key, $this->movie_counter)) {
+            $this->movie_counter[$key] = 0;
         }
 
-        static::$movie_counter[$key] += $val;
+        $this->movie_counter[$key] += $val;
     }
 }

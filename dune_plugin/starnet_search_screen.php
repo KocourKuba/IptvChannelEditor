@@ -11,7 +11,7 @@ class StarnetSearchScreen extends AbstractPreloadedRegularScreen implements User
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_search_folder_views());
 
-        if ($plugin->config->get_vod_support()) {
+        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

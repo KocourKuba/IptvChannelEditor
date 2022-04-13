@@ -11,21 +11,21 @@ class FoxPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
-        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
-        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/{TOKEN}/index.m3u8';
-        static::$FEATURES[EXTINF_VOD_PATTERN] = '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|';
-        static::$FEATURES[SQUARE_ICONS] = true;
+        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
+        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/{TOKEN}/index.m3u8');
+        $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
+        $this->set_feature(SQUARE_ICONS, true);
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'data';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'begin';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
-        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y.m.d';
+        $this->set_epg_param('epg_root', 'data');
+        $this->set_epg_param('start', 'begin');
+        $this->set_epg_param('end', 'end');
+        $this->set_epg_param('title', 'title');
+        $this->set_epg_param('description', 'description');
+        $this->set_epg_param('date_format', 'Y.m.d');
     }
 
     /**
@@ -35,7 +35,7 @@ class FoxPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = $channel->get_streaming_url();
         $ext_params = $channel->get_ext_params();
@@ -51,7 +51,7 @@ class FoxPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
@@ -60,13 +60,14 @@ class FoxPluginConfig extends DefaultConfig
             return false;
         }
 
-        static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = HD::MapTvgID(self::API_URL . '/channels');
-        hd_print("TVG ID Mapped: " . count(static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper']));
+        $mapper = HD::MapTvgID(self::API_URL . '/channels');
+        hd_print("TVG ID Mapped: " . count($mapper));
+        $this->set_epg_param('tvg_id_mapper', $mapper);
 
         return true;
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -101,7 +102,7 @@ class FoxPluginConfig extends DefaultConfig
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
             if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)"|', $iValue, $m_id)
-                && preg_match(static::$FEATURES[M3U_STREAM_URL_PATTERN], $m3u_lines[$i + 1], $matches)) {
+                && preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $m3u_lines[$i + 1], $matches)) {
                 $pl_entries[$m_id['id']] = $matches;
             }
         }
@@ -116,10 +117,11 @@ class FoxPluginConfig extends DefaultConfig
         return $pl_entries;
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
+        $params = $this->get_epg_params($type);
         if ($type === 'first') {
-            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            $epg_date = gmdate($params['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
             return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
         }
@@ -137,13 +139,13 @@ class FoxPluginConfig extends DefaultConfig
 
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
-            if ($i !== (int)$movie_id || !preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $iValue, $match)) {
+            if ($i !== (int)$movie_id || !preg_match($this->get_feature(EXTINF_VOD_PATTERN), $iValue, $match)) {
                 continue;
             }
 
             $logo = $match['logo'];
             list($title, $title_orig) = explode('/', $match['title']);
-            $url = self::UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
+            $url = $this->UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
 
             //hd_print("Vod url: $playback_url");
             $movie->set_data(

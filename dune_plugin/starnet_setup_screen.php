@@ -83,7 +83,7 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
 
         //////////////////////////////////////
         // ott or token dialog
-        switch ($this->plugin->config->get_account_type())
+        switch ($this->plugin->config->get_feature(ACCOUNT_TYPE))
         {
             case 'OTT_KEY':
                 ControlFactory::add_image_button($defs, $this, null, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен',
@@ -101,7 +101,7 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
 
         //////////////////////////////////////
         // vportal dialog
-        if ($this->plugin->config->get_vod_portal_support()) {
+        if ($this->plugin->config->get_feature(VOD_PORTAL_SUPPORTED)) {
             ControlFactory::add_image_button($defs, $this, null, 'portal_dialog', 'Активировать VPortal:', 'Ввести ключ',
                 $this->plugin->get_image_path('text.png'));
         }
@@ -210,18 +210,17 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
         $defs = array();
         //////////////////////////////////////
         // select device number
-        if ($this->plugin->config->get_device_support()) {
+        $device_ops = $this->plugin->config->get_feature(DEVICE_OPTIONS);
+        if (!empty($device_ops)) {
             hd_print("Change device supported");
             $dev_num = $this->plugin->config->get_device($plugin_cookies);
-            $device_ops = $this->plugin->config->get_device_opts();
-            if (!empty($device_ops)) {
-                ControlFactory::add_combobox($defs, $this, null, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
-            }
+            ControlFactory::add_combobox($defs, $this, null, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
+            $this->plugin->config->set_device($plugin_cookies);
         }
 
         //////////////////////////////////////
         // select server
-        if ($this->plugin->config->get_server_support()) {
+        if ($this->plugin->config->get_feature(SERVER_SUPPORTED)) {
             hd_print("Change server supported");
             $server = $this->plugin->config->get_server($plugin_cookies);
             $server_ops = $this->plugin->config->get_server_opts($plugin_cookies);
@@ -233,7 +232,7 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
 
         //////////////////////////////////////
         // select quality
-        if ($this->plugin->config->get_quality_support()) {
+        if ($this->plugin->config->get_feature(QUALITY_SUPPORTED)) {
             hd_print("Change quality supported");
             $quality = $this->plugin->config->get_quality($plugin_cookies);
             $quality_ops = $this->plugin->config->get_quality_opts($plugin_cookies);
@@ -244,7 +243,7 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
 
         //////////////////////////////////////
         // select stream type
-        $format_ops = $this->plugin->config->get_format_opts();
+        $format_ops = $this->plugin->config->get_feature(TS_OPTIONS);
         if (count($format_ops) > 1) {
             $format = $this->plugin->config->get_format($plugin_cookies);
             ControlFactory::add_combobox($defs, $this, null, 'stream_format', 'Выбор потока:', $format, $format_ops, 0);
@@ -517,7 +516,6 @@ class StarnetSetupScreen extends AbstractControlsScreen implements UserInputHand
 
                     if (isset($user_input->devices) && $plugin_cookies->device_number !== $user_input->devices) {
                         $plugin_cookies->device_number = $user_input->devices;
-                        $this->plugin->config->set_device($plugin_cookies);
                     }
 
                     if (isset($user_input->server) && $plugin_cookies->server !== $user_input->server) {

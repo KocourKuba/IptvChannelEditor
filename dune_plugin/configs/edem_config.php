@@ -9,20 +9,20 @@ class EdemPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'OTT_KEY';
-        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS');
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8';
-        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
-        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
-        static::$FEATURES[VOD_PORTAL_SUPPORTED] = true;
-        static::$FEATURES[VOD_LAZY_LOAD] = true;
+        $this->set_feature(ACCOUNT_TYPE, 'OTT_KEY');
+        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8');
+        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(VOD_PORTAL_SUPPORTED, true);
+        $this->set_feature(VOD_LAZY_LOAD, true);
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'data';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'begin';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
-        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y.m.d';
+        $this->set_epg_param('epg_root', 'data');
+        $this->set_epg_param('start', 'begin');
+        $this->set_epg_param('end', 'end');
+        $this->set_epg_param('title', 'title');
+        $this->set_epg_param('description', 'description');
+        $this->set_epg_param('date_format', 'Y.m.d');
     }
 
     public function AddFilterUI(&$defs, $parent, $initial = -1)
@@ -31,7 +31,7 @@ class EdemPluginConfig extends DefaultConfig
         hd_print("AddFilterUI: $initial");
         $added = false;
         foreach ($filters as $name) {
-            $filter = static::get_filter($name);
+            $filter = $this->get_filter($name);
             if ($filter === null) {
                 hd_print("AddFilterUI: no filters with '$name'");
                 continue;
@@ -64,12 +64,12 @@ class EdemPluginConfig extends DefaultConfig
         return $added;
     }
 
-    public static function CompileSaveFilterItem($user_input)
+    public function CompileSaveFilterItem($user_input)
     {
         $filters = array("years", "genre");
         $compiled_string = "";
         foreach ($filters as $name) {
-            $filter = static::get_filter($name);
+            $filter = $this->get_filter($name);
             if ($filter !== null && $user_input->{$name} !== -1) {
                 if (!empty($compiled_string)) {
                     $compiled_string .= " ";
@@ -89,7 +89,7 @@ class EdemPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = $channel->get_streaming_url();
         // hd_print("Stream url:  " . $url);
@@ -108,7 +108,7 @@ class EdemPluginConfig extends DefaultConfig
 
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     /**
@@ -120,10 +120,12 @@ class EdemPluginConfig extends DefaultConfig
      */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
-        /*
         hd_print("Collect information from account $this->PLUGIN_SHOW_NAME");
-        static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = HD::MapTvgID(self::API_URL . '/channels');
-        hd_print("TVG ID Mapped: " . count(static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper']));
+
+        /*
+        $mapper = HD::MapTvgID(self::API_URL . '/channels');
+        hd_print("TVG ID Mapped: " . count($mapper));
+        $this->set_epg_param('tvg_id_mapper', $mapper);
         */
         return true;
     }
@@ -138,10 +140,11 @@ class EdemPluginConfig extends DefaultConfig
         return array();
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
+        $params = $this->get_epg_params($type);
         if ($type === 'first') {
-            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            $epg_date = gmdate($params['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
             return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
         }
@@ -242,7 +245,7 @@ class EdemPluginConfig extends DefaultConfig
             }
         }
 
-        self::set_filters($filters);
+        $this->set_filters($filters);
 
         hd_print("Categories read: " . count($category_list));
         hd_print("Filters count: " . count($filters));
@@ -270,7 +273,7 @@ class EdemPluginConfig extends DefaultConfig
         $post_params = array();
         foreach ($pairs as $pair) {
             if (preg_match("|^(.+):(.+)$|", $pair, $m)) {
-                $filter = static::get_filter($m[1]);
+                $filter = $this->get_filter($m[1]);
                 if ($filter !== null && !empty($filter['values'])) {
                     $item_idx = array_search($m[2], $filter['values']);
                     if ($item_idx !== false && $item_idx !== -1) {
@@ -379,13 +382,13 @@ class EdemPluginConfig extends DefaultConfig
         return HD::LoadAndStoreJson($url, $to_array, $save_path, $curl_opt);
     }
 
-    public static function add_movie_counter($key, $val)
+    public function add_movie_counter($key, $val)
     {
         // repeated count data
-        if (!array_key_exists($key, static::$movie_counter)) {
-            static::$movie_counter[$key] = 0;
+        if (!array_key_exists($key, $this->movie_counter)) {
+            $this->movie_counter[$key] = 0;
         }
 
-        static::$movie_counter[$key] += $val;
+        $this->movie_counter[$key] += $val;
     }
 }

@@ -138,10 +138,10 @@ class TvChannelListScreen extends AbstractPreloadedRegularScreen implements User
                 if ($q === false){
                     ControlFactory::add_multiline_label(&$defs, '', 'Ничего не найдено.',6);
                     ControlFactory::add_vgap($defs, 20);
-                    ControlFactory::add_close_dialog_and_apply_button_title($defs, $this, null, 'search_channel', '', 'Новый поиск', 300, true);
+                    ControlFactory::add_close_dialog_and_apply_button_title($defs, $this, null, 'search_channel', '', 'Новый поиск', 300);
                 }
 
-                return ActionFactory::show_dialog('Поиск', $defs, true, 0);
+                return ActionFactory::show_dialog('Поиск', $defs, true);
 
             case 'jump_to_channel':
                 $ndx = (int)$user_input->number;

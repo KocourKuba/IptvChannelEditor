@@ -9,17 +9,17 @@ class ItvPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[BALANCE_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}';
-        static::$FEATURES[SQUARE_ICONS] = true;
+        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(BALANCE_SUPPORTED, true);
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}');
+        $this->set_feature(SQUARE_ICONS, true);
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'res';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'startTime';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'stopTime';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'desc';
+        $this->set_epg_param('epg_root', 'res');
+        $this->set_epg_param('start', 'startTime');
+        $this->set_epg_param('end', 'stopTime');
+        $this->set_epg_param('title', 'title');
+        $this->set_epg_param('description', 'desc');
     }
 
     /**
@@ -29,11 +29,11 @@ class ItvPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
 
-        switch (self::get_format($plugin_cookies)) {
+        switch ($this->get_format($plugin_cookies)) {
             case 'hls':
                 if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
@@ -56,10 +56,10 @@ class ItvPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -161,7 +161,7 @@ class ItvPluginConfig extends DefaultConfig
         ControlFactory::add_vgap($defs, 20);
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
             hd_print("Fetching EPG for ID: '$id'");

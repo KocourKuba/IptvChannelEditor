@@ -9,10 +9,10 @@ class StarnetVodListScreen extends VodListScreen
         parent::__construct($plugin);
     }
 
-    public static function get_media_url_str($cat_id, $genre_id, $name = false)
+    public static function get_media_url_str($category_id, $genre_id, $name = false)
     {
         $arr['screen_id'] = self::ID;
-        $arr['category_id'] = $cat_id;
+        $arr['category_id'] = $category_id;
         $arr['genre_id'] = $genre_id;
         if ($name !== false) {
             $arr['name'] = $name;
@@ -31,7 +31,7 @@ class StarnetVodListScreen extends VodListScreen
         $key = $media_url->category_id . "_" . $media_url->genre_id;
 
         $movies = array();
-        if ($this->plugin->config->get_movie_counter($key) <= 0 || $this->plugin->config->is_lazy_load_vod()) {
+        if ($this->plugin->config->get_movie_counter($key) <= 0 || $this->plugin->config->get_feature(VOD_LAZY_LOAD)) {
             if ($media_url->category_id === 'search') {
                 $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
             } else if ($media_url->category_id === 'filter') {

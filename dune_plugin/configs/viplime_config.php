@@ -9,10 +9,10 @@ class ViplimePluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$EPG_PATH = 'viplime';
-        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8';
+        $this->EPG_PATH = 'viplime';
+        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8');
     }
 
     /**
@@ -22,7 +22,7 @@ class ViplimePluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
 
@@ -35,17 +35,17 @@ class ViplimePluginConfig extends DefaultConfig
 
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
-        if (self::get_format($plugin_cookies) === 'mpeg') {
+        if ($this->get_format($plugin_cookies) === 'mpeg') {
             // replace hls to mpegts
             $url = str_replace('.m3u8', '.mpeg', $url);
         }
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -58,11 +58,11 @@ class ViplimePluginConfig extends DefaultConfig
         return sprintf(self::PLAYLIST_TV_URL, $password);
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
             hd_print("Fetching EPG for ID: '$id'");
-            $url = sprintf('http://epg.ott-play.com/%s/epg/%s.json', static::$EPG_PATH, $id);
+            $url = sprintf('http://epg.ott-play.com/%s/epg/%s.json', $this->EPG_PATH, $id);
             if (isset($plugin_cookies->use_epg_proxy) && $plugin_cookies->use_epg_proxy === 'yes') {
                 $url = str_replace('ott-play.com', 'esalecrm.net', $url);
             }

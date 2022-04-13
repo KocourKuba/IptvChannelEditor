@@ -15,18 +15,18 @@ class CbillingPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
-        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
-        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS', 'hls2' => 'HLS2', 'mpeg' => 'MPEG-TS');
-        static::$FEATURES[DEVICE_OPTIONS] = array('1' => '1', '2' => '2', '3' => '3');
-        static::$FEATURES[BALANCE_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>[^/]+)/s/(?<token>[^/]+)/?(?<id>.+)\.m3u8$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8';
-        static::$FEATURES[VOD_LAZY_LOAD] = true;
-        static::$FEATURES[EXTINF_VOD_PATTERN] = '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|';
+        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS', 'hls2' => 'HLS2', 'mpeg' => 'MPEG-TS'));
+        $this->set_feature(DEVICE_OPTIONS, array('1' => '1', '2' => '2', '3' => '3'));
+        $this->set_feature(BALANCE_SUPPORTED, true);
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/s/(?<token>[^/]+)/?(?<id>.+)\.m3u8$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8');
+        $this->set_feature(VOD_LAZY_LOAD, true);
+        $this->set_feature(EXTINF_VOD_PATTERN, '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|');
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = '';
+        $this->set_epg_param('epg_root', '');
     }
 
     /**
@@ -36,13 +36,13 @@ class CbillingPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $ext_params = $channel->get_ext_params();
         $domain = explode(':', $ext_params['subdomain']);
 
-        if (self::get_format($plugin_cookies) !== 'hls') {
+        if ($this->get_format($plugin_cookies) !== 'hls') {
             // http://s01.iptvx.tv/pervyj-hd/video.m3u8?token=8264fb5785dc128d5d64a681a94ba78f
             $url = str_replace(
                 array('{DOMAIN}', '{ID}', '{TOKEN}'),
@@ -50,7 +50,7 @@ class CbillingPluginConfig extends DefaultConfig
                 self::MEDIA_URL_TEMPLATE_HLS2);
         }
 
-        switch (self::get_format($plugin_cookies)) {
+        switch ($this->get_format($plugin_cookies)) {
             case 'hls':
                 // http://s01.iptvx.tv:8090/s/8264fb5785dc128d5d64a681a94ba78f/pervyj-hd.m3u8
                 if ((int)$archive_ts > 0) {
@@ -80,7 +80,7 @@ class CbillingPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     /**
@@ -143,7 +143,7 @@ class CbillingPluginConfig extends DefaultConfig
         ControlFactory::add_label($defs, 'Сервер', $account_data['data']['server'], 20);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -164,10 +164,11 @@ class CbillingPluginConfig extends DefaultConfig
         return '';
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
-        $epg_date = gmdate(static::$EPG_PARSER_PARAMS[$type]['date_format'], $day_start_ts);
+        $params = $this->get_epg_params($type);
         if ($type === 'first') {
+            $epg_date = gmdate($params['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
             return sprintf('%s/epg/%s/?date=%s', self::API_HOST, $id, $epg_date); // epg_id date(Y-m-d)
         }
@@ -338,17 +339,17 @@ class CbillingPluginConfig extends DefaultConfig
         return $movies;
     }
 
-    public static function add_movie_counter($key, $val)
+    public function add_movie_counter($key, $val)
     {
         // repeated count data
-        if (!array_key_exists($key, static::$movie_counter)) {
-            static::$movie_counter[$key] = 0;
+        if (!array_key_exists($key, $this->movie_counter)) {
+            $this->movie_counter[$key] = 0;
         }
 
-        static::$movie_counter[$key] += $val;
+        $this->movie_counter[$key] += $val;
     }
 
-    public static function get_device($plugin_cookies)
+    public function get_device($plugin_cookies)
     {
         return isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';
     }

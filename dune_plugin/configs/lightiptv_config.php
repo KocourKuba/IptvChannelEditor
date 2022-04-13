@@ -9,12 +9,12 @@ class LightiptvPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$EPG_PATH = 'lightiptv';
-        static::$FEATURES[ACCOUNT_TYPE] = 'PIN';
-        static::$FEATURES[TS_OPTIONS] = array('hls' => 'HLS', 'hls2' => 'HLS2', 'mpeg' => 'MPEG-TS');
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}';
-        static::$FEATURES[SQUARE_ICONS] = true;
+        $this->EPG_PATH = 'lightiptv';
+        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS', 'hls2' => 'HLS2', 'mpeg' => 'MPEG-TS'));
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}');
+        $this->set_feature(SQUARE_ICONS, true);
     }
 
     /**
@@ -24,13 +24,13 @@ class LightiptvPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = str_replace('{PASSWORD}', $password, $url);
 
-        switch (self::get_format($plugin_cookies)) {
+        switch ($this->get_format($plugin_cookies)) {
             case 'hls':
                 if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
@@ -61,10 +61,10 @@ class LightiptvPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -90,7 +90,7 @@ class LightiptvPluginConfig extends DefaultConfig
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
             if (preg_match('|^#EXTINF:.+tvg-id="(?<id>[^"]+)"|', $iValue, $m_id)
-                && preg_match(static::$FEATURES[M3U_STREAM_URL_PATTERN], $m3u_lines[$i + 1], $matches)) {
+                && preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $m3u_lines[$i + 1], $matches)) {
                 $pl_entries[$m_id['id']] = $matches;
             }
         }
@@ -105,16 +105,16 @@ class LightiptvPluginConfig extends DefaultConfig
         return $pl_entries;
     }
 
-    public static function UpdateStreamUrlID($channel_id, $ext_params)
+    public function UpdateStreamUrlID($channel_id, $ext_params)
     {
-        return str_replace('{TOKEN}', $ext_params['token'], static::$FEATURES[MEDIA_URL_TEMPLATE_HLS]);
+        return str_replace('{TOKEN}', $ext_params['token'], $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
         if ($type === 'first') {
             hd_print("Fetching EPG for ID: '$id'");
-            $url = sprintf('http://epg.ott-play.com/%s/epg/%s.json', static::$EPG_PATH, $id);
+            $url = sprintf('http://epg.ott-play.com/%s/epg/%s.json', $this->EPG_PATH, $id);
             if (isset($plugin_cookies->use_epg_proxy) && $plugin_cookies->use_epg_proxy === 'yes') {
                 $url = str_replace('ott-play.com', 'esalecrm.net', $url);
             }

@@ -18,7 +18,7 @@ class TvFavoritesScreen extends AbstractPreloadedRegularScreen implements UserIn
     {
         parent::__construct(self::ID, $plugin, $plugin->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS());
 
-        if ($plugin->config->get_tv_fav_support()) {
+        if ($plugin->config->get_feature(TV_FAVORITES_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

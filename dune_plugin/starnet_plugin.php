@@ -41,18 +41,19 @@ class StarnetDunePlugin extends DefaultDunePlugin
             throw new Exception("Unknown plugin type: $plugin_type");
         }
 
-        $this->config = new $plugin_type;
+        $config = new $plugin_type;
+        $this->config = $config;
 
         print_sysinfo();
 
         hd_print("----------------------------------------------------");
-        hd_print("Plugin name:      " . $this->config->PLUGIN_SHOW_NAME);
-        hd_print("Plugin version:   " . $this->config->PLUGIN_VERSION);
-        hd_print("Plugin date:      " . $this->config->PLUGIN_DATE);
-        hd_print("Account type:     " . $this->config->get_account_type());
-        hd_print("TV fav:           " . ($this->config->get_tv_fav_support() ? "yes" : "no"));
-        hd_print("VOD page:         " . ($this->config->get_vod_support() ? "yes" : "no"));
-        hd_print("VOD fav:          " . ($this->config->get_vod_fav_support() ? "yes" : "no"));
+        hd_print("Plugin name:      " . $config->PLUGIN_SHOW_NAME);
+        hd_print("Plugin version:   " . $config->PLUGIN_VERSION);
+        hd_print("Plugin date:      " . $config->PLUGIN_DATE);
+        hd_print("Account type:     " . $config->get_feature(ACCOUNT_TYPE));
+        hd_print("TV fav:           " . ($config->get_feature(TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
+        hd_print("VOD page:         " . ($config->get_feature(VOD_MOVIE_PAGE_SUPPORTED) ? "yes" : "no"));
+        hd_print("VOD fav:          " . ($config->get_feature(VOD_FAVORITES_SUPPORTED) ? "yes" : "no"));
         hd_print("----------------------------------------------------");
 
         UserInputHandlerRegistry::get_instance()->register_handler(new StarnetEntryHandler());

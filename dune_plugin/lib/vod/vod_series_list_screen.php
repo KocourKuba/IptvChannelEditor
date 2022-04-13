@@ -16,7 +16,7 @@ class VodSeriesListScreen extends AbstractPreloadedRegularScreen implements User
     {
         parent::__construct(self::ID, $plugin, $plugin->config->GET_VOD_SERIES_FOLDER_VIEW());
 
-        if ($plugin->config->get_vod_support()) {
+        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

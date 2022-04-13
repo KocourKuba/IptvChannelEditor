@@ -35,12 +35,12 @@ class StarnetPluginTv extends AbstractTv
 
     public function is_favorites_supported()
     {
-        return $this->plugin->config->get_tv_fav_support();
+        return $this->plugin->config->get_feature(TV_FAVORITES_SUPPORTED);
     }
 
     public function add_special_groups(&$items)
     {
-        if ($this->plugin->config->get_vod_support()) {
+        if ($this->plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url =>

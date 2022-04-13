@@ -11,20 +11,20 @@ class GlanzPluginConfig extends DefaultConfig
     {
         parent::__construct();
 
-        static::$FEATURES[ACCOUNT_TYPE] = 'LOGIN';
-        static::$FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = true;
-        static::$FEATURES[VOD_FAVORITES_SUPPORTED] = true;
-        static::$FEATURES[M3U_STREAM_URL_PATTERN] = '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|';
-        static::$FEATURES[MEDIA_URL_TEMPLATE_HLS] = 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}';
-        static::$FEATURES[EXTINF_VOD_PATTERN] = '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|';
-        static::$FEATURES[SQUARE_ICONS] = true;
+        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
+        $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|');
+        $this->set_feature(SQUARE_ICONS, true);
 
-        static::$EPG_PARSER_PARAMS['first']['epg_root'] = 'data';
-        static::$EPG_PARSER_PARAMS['first']['start'] = 'begin';
-        static::$EPG_PARSER_PARAMS['first']['end'] = 'end';
-        static::$EPG_PARSER_PARAMS['first']['title'] = 'title';
-        static::$EPG_PARSER_PARAMS['first']['description'] = 'description';
-        static::$EPG_PARSER_PARAMS['first']['date_format'] = 'Y.m.d';
+        $this->set_epg_param('epg_root', 'data');
+        $this->set_epg_param('start', 'begin');
+        $this->set_epg_param('end', 'end');
+        $this->set_epg_param('title', 'title');
+        $this->set_epg_param('description', 'description');
+        $this->set_epg_param('date_format', 'Y.m.d');
     }
 
     /**
@@ -34,7 +34,7 @@ class GlanzPluginConfig extends DefaultConfig
      * @param IChannel $channel
      * @return string
      */
-    public static function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
+    public function TransformStreamUrl($plugin_cookies, $archive_ts, IChannel $channel)
     {
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $ext_params = $channel->get_ext_params();
@@ -53,7 +53,7 @@ class GlanzPluginConfig extends DefaultConfig
             ),
             $url);
 
-        switch (self::get_format($plugin_cookies)) {
+        switch ($this->get_format($plugin_cookies)) {
             case 'hls':
                 if ((int)$archive_ts > 0) {
                     // hd_print("Archive TS:  " . $archive_ts);
@@ -76,7 +76,7 @@ class GlanzPluginConfig extends DefaultConfig
 
         // hd_print("Stream url:  " . $url);
 
-        return self::UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
 
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
@@ -85,13 +85,14 @@ class GlanzPluginConfig extends DefaultConfig
             return false;
         }
 
-        static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper'] = HD::MapTvgID(self::API_URL . '/channels');
-        hd_print("TVG ID Mapped: " . count(static::$EPG_PARSER_PARAMS['first']['tvg_id_mapper']));
+        $mapper = HD::MapTvgID(self::API_URL . '/channels');
+        hd_print("TVG ID Mapped: " . count($mapper));
+        $this->set_epg_param('tvg_id_mapper', $mapper);
 
         return true;
     }
 
-    protected static function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -113,10 +114,11 @@ class GlanzPluginConfig extends DefaultConfig
         return '';
     }
 
-    public static function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
+    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
     {
+        $params = $this->get_epg_params($type);
         if ($type === 'first') {
-            $epg_date = gmdate(static::$EPG_PARSER_PARAMS['first']['date_format'], $day_start_ts);
+            $epg_date = gmdate($params['date_format'], $day_start_ts);
             hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
             return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
         }
@@ -133,7 +135,7 @@ class GlanzPluginConfig extends DefaultConfig
         $movie = new Movie($movie_id);
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
-            if ($i !== (int)$movie_id || !preg_match(static::$FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
+            if ($i !== (int)$movie_id || !preg_match($this->get_feature(EXTINF_VOD_PATTERN), $line, $matches)) {
                 continue;
             }
 

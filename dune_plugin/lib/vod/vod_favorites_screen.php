@@ -18,7 +18,7 @@ class VodFavoritesScreen extends AbstractPreloadedRegularScreen implements UserI
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
 
-        if ($plugin->config->get_vod_support()) {
+        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }
