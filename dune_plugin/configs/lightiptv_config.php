@@ -4,17 +4,20 @@ require_once 'default_config.php';
 class LightiptvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://lightiptv.cc/playlist/hls/%s.m3u';
+    const API_HOST = 'http://epg.ott-play.com/lightiptv';
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->EPG_PATH = 'lightiptv';
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
         $this->set_feature(TS_OPTIONS, array('hls' => 'HLS', 'hls2' => 'HLS2', 'mpeg' => 'MPEG-TS'));
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}');
         $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(PROXIED_EPG, true);
+
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}.json');
     }
 
     /**
@@ -118,20 +121,5 @@ class LightiptvPluginConfig extends Default_Config
     public function UpdateStreamUrlID($channel_id, $ext_params)
     {
         return str_replace('{TOKEN}', $ext_params['token'], $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
-    }
-
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            $url = sprintf('http://epg.ott-play.com/%s/epg/%s.json', $this->EPG_PATH, $id);
-            if (isset($plugin_cookies->use_epg_proxy) && $plugin_cookies->use_epg_proxy === 'yes') {
-                $url = str_replace('ott-play.com', 'esalecrm.net', $url);
-            }
-
-            return $url;
-        }
-
-        return null;
     }
 }

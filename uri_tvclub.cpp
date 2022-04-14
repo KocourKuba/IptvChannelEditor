@@ -54,7 +54,7 @@ std::wstring uri_tvclub::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_tvclub::get_epg_uri_json(bool /*first*/, const std::wstring& id, time_t for_time /*= 0*/) const
+std::wstring uri_tvclub::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	tm lt = {};
 	localtime_s(&lt, &for_time);
@@ -118,27 +118,27 @@ bool uri_tvclub::parse_access_info(const PlaylistTemplateParams& params, std::li
 	return false;
 }
 
-nlohmann::json uri_tvclub::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json uri_tvclub::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
 {
 	return epg_data["epg"]["channels"][0]["epg"];
 }
 
-std::string uri_tvclub::get_epg_name(bool first, const nlohmann::json& val) const
+std::string uri_tvclub::get_epg_name(int epg_idx, const nlohmann::json& val) const
 {
 	return get_json_value("text", val);
 }
 
-std::string uri_tvclub::get_epg_desc(bool first, const nlohmann::json& val) const
+std::string uri_tvclub::get_epg_desc(int epg_idx, const nlohmann::json& val) const
 {
 	return get_json_value("description", val);
 }
 
-time_t uri_tvclub::get_epg_time_start(bool first, const nlohmann::json& val) const
+time_t uri_tvclub::get_epg_time_start(int epg_idx, const nlohmann::json& val) const
 {
 	return get_json_int_value("start", val);
 }
 
-time_t uri_tvclub::get_epg_time_end(bool first, const nlohmann::json& val) const
+time_t uri_tvclub::get_epg_time_end(int epg_idx, const nlohmann::json& val) const
 {
 	return get_json_int_value("end", val);
 }

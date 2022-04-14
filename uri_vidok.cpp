@@ -61,7 +61,7 @@ std::wstring uri_vidok::get_templated_stream(StreamSubType subType, const Templa
 	return url;
 }
 
-std::wstring uri_vidok::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
+std::wstring uri_vidok::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id, token);
 }
@@ -110,27 +110,27 @@ bool uri_vidok::parse_access_info(const PlaylistTemplateParams& params, std::lis
 	return false;
 }
 
-nlohmann::json uri_vidok::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json uri_vidok::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
 {
 	return epg_data["epg"];
 }
 
-std::string uri_vidok::get_epg_name(bool first, const nlohmann::json& val) const
+std::string uri_vidok::get_epg_name(int epg_idx, const nlohmann::json& val) const
 {
 	return get_json_value("title", val);
 }
 
-std::string uri_vidok::get_epg_desc(bool first, const nlohmann::json& val) const
+std::string uri_vidok::get_epg_desc(int epg_idx, const nlohmann::json& val) const
 {
 	return get_json_value("description", val);
 }
 
-time_t uri_vidok::get_epg_time_start(bool first, const nlohmann::json& val) const
+time_t uri_vidok::get_epg_time_start(int epg_idx, const nlohmann::json& val) const
 {
 	return get_json_int_value("start", val);
 }
 
-time_t uri_vidok::get_epg_time_end(bool first, const nlohmann::json& val) const
+time_t uri_vidok::get_epg_time_end(int epg_idx, const nlohmann::json& val) const
 {
 	return get_json_int_value("end", val);
 }

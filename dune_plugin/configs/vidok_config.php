@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class VidokPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://vidok.tv/p/%s';
-    const API_HOST = 'http://sapi.ott.st/v2.4/json/';
+    const API_HOST = 'http://sapi.ott.st/v2.4/json';
 
     protected static $settings;
 
@@ -20,12 +20,13 @@ class VidokPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/p/{TOKEN}/{ID}');
 
-        $this->EPG_PARSER_PARAMS['first']['epg_root'] = 'epg';
-        $this->EPG_PARSER_PARAMS['first']['start'] = 'start';
-        $this->EPG_PARSER_PARAMS['first']['end'] = 'end';
-        $this->EPG_PARSER_PARAMS['first']['title'] = 'title';
-        $this->EPG_PARSER_PARAMS['first']['description'] = 'description';
-        $this->EPG_PARSER_PARAMS['first']['date_format'] = 'dmy';
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg2?cid={CHANNEL}&token={TOKEN}');
+        $this->set_epg_param('epg_root', 'epg');
+        $this->set_epg_param('start', 'start');
+        $this->set_epg_param('end', 'end');
+        $this->set_epg_param('title', 'title');
+        $this->set_epg_param('description', 'description');
+        $this->set_epg_param('date_format', 'dmy');
     }
 
     /**
@@ -99,7 +100,7 @@ class VidokPluginConfig extends Default_Config
         }
 
         try {
-            $url = self::API_HOST . "account?token=$plugin_cookies->token";
+            $url = self::API_HOST . "/account?token=$plugin_cookies->token";
             // provider returns token used to download playlist
             $account_data = json_decode(HD::http_get_document($url), true);
             if (isset($account_data['account']['login'])) {
@@ -144,23 +145,6 @@ class VidokPluginConfig extends Default_Config
         }
 
         Control_Factory::add_vgap($defs, 20);
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf(self::API_HOST . 'epg2?cid=%s&token=%s', $id, $plugin_cookies->token);
-        }
-
-        return null;
     }
 
     /**
@@ -247,7 +231,7 @@ class VidokPluginConfig extends Default_Config
 
         if (empty(self::$settings)) {
             try {
-                $url = self::API_HOST . "settings?token=$plugin_cookies->token";
+                $url = self::API_HOST . "/settings?token=$plugin_cookies->token";
                 // provider returns token used to download playlist
                 self::$settings = json_decode(HD::http_get_document($url), true);
             } catch (Exception $ex) {
@@ -272,7 +256,7 @@ class VidokPluginConfig extends Default_Config
         }
 
         try {
-            $url = self::API_HOST . "settings_set?$param={$plugin_cookies->$param}&token=$plugin_cookies->token";
+            $url = self::API_HOST . "/settings_set?$param={$plugin_cookies->$param}&token=$plugin_cookies->token";
             HD::http_get_document($url);
             return true;
         } catch (Exception $ex) {

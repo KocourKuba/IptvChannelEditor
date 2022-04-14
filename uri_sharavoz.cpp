@@ -51,10 +51,10 @@ std::wstring uri_sharavoz::get_templated_stream(StreamSubType subType, const Tem
 	return url;
 }
 
-std::wstring uri_sharavoz::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
+std::wstring uri_sharavoz::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(first ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+	return fmt::format(epg_idx == 0 ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::wstring uri_sharavoz::get_playlist_template(const PlaylistTemplateParams& params) const

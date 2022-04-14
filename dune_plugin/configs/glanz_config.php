@@ -5,7 +5,7 @@ class GlanzPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
     const PLAYLIST_VOD_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod';
-    const API_URL = 'http://technic.cf/epg-iptvxone';
+    const API_HOST = 'http://technic.cf/epg-iptvxone';
 
     public function __construct()
     {
@@ -19,12 +19,15 @@ class GlanzPluginConfig extends Default_Config
         $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|');
         $this->set_feature(SQUARE_ICONS, true);
 
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg_day?id={CHANNEL}&day={DATE}');
         $this->set_epg_param('epg_root', 'data');
         $this->set_epg_param('start', 'begin');
         $this->set_epg_param('end', 'end');
         $this->set_epg_param('title', 'title');
         $this->set_epg_param('description', 'description');
         $this->set_epg_param('date_format', 'Y.m.d');
+        $this->set_epg_param('use_epg_mapper', true);
+        $this->set_epg_param('epg_mapper_url', self::API_HOST . '/channels');
     }
 
     /**
@@ -80,25 +83,6 @@ class GlanzPluginConfig extends Default_Config
     }
 
     /**
-     * @param $plugin_cookies
-     * @param array &$account_data
-     * @param bool $force
-     * @return bool
-     */
-    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
-    {
-        if (!parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
-            return false;
-        }
-
-        $mapper = HD::MapTvgID(self::API_URL . '/channels');
-        hd_print("TVG ID Mapped: " . count($mapper));
-        $this->set_epg_param('tvg_id_mapper', $mapper);
-
-        return true;
-    }
-
-    /**
      * @param string $type
      * @param $plugin_cookies
      * @return string
@@ -123,25 +107,6 @@ class GlanzPluginConfig extends Default_Config
         }
 
         return '';
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        $params = $this->get_epg_params($type);
-        if ($type === 'first') {
-            $epg_date = gmdate($params['date_format'], $day_start_ts);
-            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
-        }
-
-        return null;
     }
 
     /**

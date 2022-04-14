@@ -62,7 +62,7 @@ std::wstring uri_oneott::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_oneott::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
+std::wstring uri_oneott::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	COleDateTime dt = COleDateTime::GetCurrentTime();
 	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
@@ -104,27 +104,27 @@ bool uri_oneott::parse_access_info(const PlaylistTemplateParams& params, std::li
 	return false;
 }
 
-nlohmann::json uri_oneott::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json uri_oneott::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
 {
-	return first ? epg_data : uri_stream::get_epg_root(true, epg_data);
+	return epg_idx == 0 ? epg_data : uri_stream::get_epg_root(epg_idx, epg_data);
 }
 
-std::string uri_oneott::get_epg_name(bool first, const nlohmann::json& val) const
+std::string uri_oneott::get_epg_name(int epg_idx, const nlohmann::json& val) const
 {
-	return first ? get_json_value("epg", val) : uri_stream::get_epg_name(true, val);
+	return epg_idx == 0 ? get_json_value("epg", val) : uri_stream::get_epg_name(epg_idx, val);
 }
 
-time_t uri_oneott::get_epg_time_start(bool first, const nlohmann::json& val) const
+time_t uri_oneott::get_epg_time_start(int epg_idx, const nlohmann::json& val) const
 {
-	return first ? get_json_int_value("start", val) : uri_stream::get_epg_time_start(true, val);
+	return epg_idx == 0 ? get_json_int_value("start", val) : uri_stream::get_epg_time_start(epg_idx, val);
 }
 
-time_t uri_oneott::get_epg_time_end(bool first, const nlohmann::json& val) const
+time_t uri_oneott::get_epg_time_end(int epg_idx, const nlohmann::json& val) const
 {
-	return first ? get_json_int_value("stop", val) : uri_stream::get_epg_time_end(true, val);
+	return epg_idx == 0 ? get_json_int_value("stop", val) : uri_stream::get_epg_time_end(epg_idx, val);
 }
 
-std::string uri_oneott::get_epg_desc(bool first, const nlohmann::json& val) const
+std::string uri_oneott::get_epg_desc(int epg_idx, const nlohmann::json& val) const
 {
-	return first ? get_json_value("desc", val) : uri_stream::get_epg_desc(true, val);
+	return epg_idx == 0 ? get_json_value("desc", val) : uri_stream::get_epg_desc(epg_idx, val);
 }

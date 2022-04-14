@@ -62,6 +62,8 @@ public:
 		*this = src;
 	}
 
+	virtual ~uri_stream() = default;
+
 	/// <summary>
 	/// clear uri
 	/// </summary>
@@ -200,7 +202,7 @@ public:
 	/// get epg1 json url
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::wstring get_epg_uri_json(bool first, const std::wstring& id, time_t for_time = 0) const { return L""; };
+	virtual std::wstring get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time = 0) const { return L""; };
 
 	/// <summary>
 	/// get additional get headers
@@ -281,18 +283,18 @@ public:
 		return L"";
 	}
 
-	virtual std::map<std::wstring, std::wstring> get_tvg_id_mapper() const
+	virtual std::array<std::map<std::wstring, std::wstring>, 2> get_tvg_id_mapper()
 	{
 		return {};
 	}
 
 	bool has_epg2() const { return epg2; };
 
-	bool parse_epg(bool first, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time, bool use_proxy = false)
+	bool parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time, bool use_proxy = false)
 	{
 		std::vector<BYTE> data;
-		auto& epg_uri = get_epg_uri_json(first, epg_id, for_time);
-		if (epg_proxy && use_proxy)
+		auto& epg_uri = get_epg_uri_json(epg_idx, epg_id, for_time);
+		if (epg_proxy[epg_idx] && use_proxy)
 		{
 			utils::string_replace_inplace(epg_uri, L"ott-play.com", L"esalecrm.net");
 		}
@@ -305,18 +307,18 @@ public:
 			nlohmann::json parsed_json = nlohmann::json::parse(data);
 
 			bool added = false;
-			const auto& root = get_epg_root(first, parsed_json);
+			const auto& root = get_epg_root(epg_idx, parsed_json);
 			for (const auto& item : root.items())
 			{
 				const auto& val = item.value();
 
 				EpgInfo epg_info;
-				epg_info.name = std::move(utils::entityDecrypt(get_epg_name(first, val)));
-				epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_epg_desc(first, val))));
+				epg_info.name = std::move(utils::entityDecrypt(get_epg_name(epg_idx, val)));
+				epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_epg_desc(epg_idx, val))));
 
-				epg_info.time_start = get_epg_time_start(first, val);
-				epg_info.time_end = get_epg_time_end(first, val);
-				if (first ? use_duration1 : use_duration2)
+				epg_info.time_start = get_epg_time_start(epg_idx, val);
+				epg_info.time_end = get_epg_time_end(epg_idx, val);
+				if (use_duration[epg_idx])
 				{
 					epg_info.time_end += epg_info.time_start;
 				}
@@ -346,31 +348,31 @@ protected:
 	/// json root for epg iteration
 	/// </summary>
 	/// <returns>string</returns>
-	virtual nlohmann::json get_epg_root(bool first, const nlohmann::json& epg_data) const { return epg_data["epg_data"]; }
+	virtual nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const { return epg_data["epg_data"]; }
 
 	/// <summary>
 	/// json epg name node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg_name(bool first, const nlohmann::json& val) const { return get_json_value("name", val); }
+	virtual std::string get_epg_name(int epg_idx, const nlohmann::json& val) const { return get_json_value("name", val); }
 
 	/// <summary>
 	/// json epg description node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::string get_epg_desc(bool first, const nlohmann::json& val) const { return get_json_value("descr", val); }
+	virtual std::string get_epg_desc(int epg_idx, const nlohmann::json& val) const { return get_json_value("descr", val); }
 
 	/// <summary>
 	/// json epg start time node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual time_t get_epg_time_start(bool first, const nlohmann::json& val) const { return get_json_int_value("time", val); }
+	virtual time_t get_epg_time_start(int epg_idx, const nlohmann::json& val) const { return get_json_int_value("time", val); }
 
 	/// <summary>
 	/// json epg end time node
 	/// </summary>
 	/// <returns>string</returns>
-	virtual time_t get_epg_time_end(bool first, const nlohmann::json& val) const { return get_json_int_value("time_to", val); }
+	virtual time_t get_epg_time_end(int epg_idx, const nlohmann::json& val) const { return get_json_int_value("time_to", val); }
 
 	static void put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params)
 	{
@@ -441,9 +443,8 @@ protected:
 
 protected:
 	bool epg2 = false;
-	bool epg_proxy = false;
-	bool use_duration1 = false;
-	bool use_duration2 = false;
+	std::array<bool, 2> epg_proxy = {false, false};
+	std::array<bool, 2> use_duration = { false, false };
 	std::wstring id;
 	std::wstring domain;
 	std::wstring login;

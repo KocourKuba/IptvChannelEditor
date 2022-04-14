@@ -1,5 +1,6 @@
 <?php
 require_once 'hd.php';
+require_once 'v32.php';
 require_once 'epg_xml_parser.php';
 
 class Epg_Manager
@@ -32,12 +33,19 @@ class Epg_Manager
      */
     public function get_epg(Channel $channel, $type, $day_start_ts, $plugin_cookies)
     {
+        $params = $this->config->get_epg_params($type);
+
+        if (empty($params['epg_url'])) {
+            hd_print("$type EPG url not defined");
+            throw new Exception("$type EPG url not defined");
+        }
+
         switch ($type) {
             case 'first':
-                $epg_id = str_replace(' ', '%20', $channel->get_epg_id());
+                $epg_id = $channel->get_epg_id();
                 break;
             case 'second':
-                $epg_id = str_replace(' ', '%20', $channel->get_tvg_id());
+                $epg_id = $channel->get_tvg_id();
                 break;
             default:
                 $epg_id = '';
@@ -48,18 +56,33 @@ class Epg_Manager
             throw new Exception("EPG: $epg_id not defined");
         }
 
-        $params = $this->config->get_epg_params($type);
-        $mapper = $params['tvg_id_mapper'];
-        if (!empty($mapper) && array_key_exists($epg_id, $mapper)) {
-            hd_print("EPG id replaced: $epg_id -> " . $mapper[$epg_id]);
-            $epg_id = $mapper[$epg_id];
+        if ($params['use_epg_mapper']) {
+            $mapper = $params['tvg_id_mapper'];
+            if (array_key_exists($epg_id, $mapper)) {
+                hd_print("EPG id replaced: $epg_id -> " . $mapper[$epg_id]);
+                $epg_id = $mapper[$epg_id];
+            }
+        } else if ($params['use_epg_hash']) {
+            $xx_hash = new V32();
+            $epg_id = $xx_hash->hash($epg_id);
+        } else {
+            $epg_id = str_replace(' ', '%20', $epg_id);
         }
 
-        $epg_url = $this->config->get_epg_url($type, $epg_id, $day_start_ts, $plugin_cookies);
-        if (empty($epg_url)) {
-            hd_print("$type EPG url not defined");
-            throw new Exception("$type EPG url not defined");
+        $epg_date = gmdate($params['date_format'], $day_start_ts);
+        $epg_url = str_replace(
+            array('{TOKEN}', '{CHANNEL}', '{DATE}', '{TIME}'),
+            array(isset($plugin_cookies->token) ? $plugin_cookies->token : '', $epg_id, $epg_date, $day_start_ts),
+            $params['epg_url']);
+
+        if (isset($plugin_cookies->use_epg_proxy)
+            && $plugin_cookies->use_epg_proxy === 'yes'
+            && $this->config->get_feature(PROXIED_EPG) === true) {
+
+            $epg_url = str_replace('epg.ott-play.com', 'epg.esalecrm.net', $epg_url);
         }
+
+        hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 
         $cache_dir = sprintf(self::EPG_CACHE_DIR_TEMPLATE, $this->config->PLUGIN_SHORT_NAME);
         $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $this->config->PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);

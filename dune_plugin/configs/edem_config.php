@@ -3,7 +3,7 @@ require_once 'default_config.php';
 
 class EdemPluginConfig extends Default_Config
 {
-    const API_URL = 'http://technic.cf/epg-it999';
+    const API_HOST = 'http://technic.cf/epg-it999';
 
     public function __construct()
     {
@@ -17,6 +17,7 @@ class EdemPluginConfig extends Default_Config
         $this->set_feature(VOD_PORTAL_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
 
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg_day?id={CHANNEL}&day={DATE}');
         $this->set_epg_param('epg_root', 'data');
         $this->set_epg_param('start', 'begin');
         $this->set_epg_param('end', 'end');
@@ -132,11 +133,6 @@ class EdemPluginConfig extends Default_Config
     {
         hd_print("Collect information from account $this->PLUGIN_SHOW_NAME");
 
-        /*
-        $mapper = HD::MapTvgID(self::API_URL . '/channels');
-        hd_print("TVG ID Mapped: " . count($mapper));
-        $this->set_epg_param('tvg_id_mapper', $mapper);
-        */
         return true;
     }
 
@@ -148,25 +144,6 @@ class EdemPluginConfig extends Default_Config
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
         return array();
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        $params = $this->get_epg_params($type);
-        if ($type === 'first') {
-            $epg_date = gmdate($params['date_format'], $day_start_ts);
-            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('%s/epg_day?id=%s&day=%s', self::API_URL, $id, $epg_date); // epg_id date(Y.m.d)
-        }
-
-        return null;
     }
 
     /**

@@ -10,11 +10,6 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto PLAYLIST_TEMPLATE = L"http://tvfor.pro/g/{:s}:{:s}/1/playlist.m3u";
 static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{ID}/{TOKEN}";
 
-uri_sharatv::uri_sharatv()
-{
-	m_source = L"shara-tv";
-}
-
 void uri_sharatv::parse_uri(const std::wstring& url)
 {
 	// http://messi.tvfor.pro/Perviykanal/a8dv285y29itx4ye4oj3cez5

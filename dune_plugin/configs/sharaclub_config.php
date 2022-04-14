@@ -18,7 +18,9 @@ class SharaclubPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
         $this->set_feature(VOD_LAZY_LOAD, true);
 
+        $this->set_epg_param('epg_url', 'http://api.sramtv.com/get/?type=epg&ch={CHANNEL}');
         $this->set_epg_param('epg_root', '');
+        $this->set_epg_param('epg_url', 'http://api.gazoni1.com/get/?type=epg&ch={CHANNEL}', 'second');
         $this->set_epg_param('epg_root', '', 'second');
     }
 
@@ -192,27 +194,6 @@ class SharaclubPluginConfig extends Default_Config
         }
 
         Control_Factory::add_vgap($defs, 20);
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        hd_print("Fetching EPG for ID: '$id'");
-        switch($type)
-        {
-            case 'first':
-                return sprintf('http://api.sramtv.com/get/?type=epg&ch=%s', $id);
-            case 'second':
-                return sprintf('http://api.gazoni1.com/get/?type=epg&ch=%s', $id);
-        }
-
-        return null;
     }
 
     /**

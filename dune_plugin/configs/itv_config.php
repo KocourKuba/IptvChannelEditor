@@ -4,6 +4,7 @@ require_once 'default_config.php';
 class ItvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://itv.ooo/p/%s/hls.m3u8';
+    const API_HOST = 'http://protected-api.com';
 
     public function __construct()
     {
@@ -15,6 +16,7 @@ class ItvPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}');
         $this->set_feature(SQUARE_ICONS, true);
 
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}');
         $this->set_epg_param('epg_root', 'res');
         $this->set_epg_param('start', 'startTime');
         $this->set_epg_param('end', 'stopTime');
@@ -168,22 +170,5 @@ class ItvPluginConfig extends Default_Config
         }
 
         Control_Factory::add_vgap($defs, 20);
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://api.itv.live/epg/%s', $id); // epg_id)
-        }
-
-        return null;
     }
 }

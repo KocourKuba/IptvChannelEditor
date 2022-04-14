@@ -456,12 +456,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_host.clear();
 	m_embedded_info = FALSE;
-	m_epg_mapper.clear();
-
-	for (auto& map : m_epg_cache)
-	{
-		map.clear();
-	}
 
 	m_domain = GetConfig().get_string(false, REG_DOMAIN);
 	m_token = GetConfig().get_string(false, REG_TOKEN);
@@ -492,7 +486,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	const auto& plugin = StreamContainer::get_instance(plugin_type);
 	const auto& streams = plugin->get_supported_stream_type();
-	m_epg_mapper = plugin->get_tvg_id_mapper();
+	m_epg_mapper.swap(plugin->get_tvg_id_mapper());
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();
@@ -1300,7 +1294,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	if (!info)
 		return;
 
-	BOOL first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
 
 	time_t now = time(nullptr) - (time_t)m_archiveCheckDays * 24 * 3600 - (time_t)m_archiveCheckHours * 3600;
 	if (pTreeCtl == &m_wndChannelsTree)
@@ -1308,16 +1302,17 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 		now += m_timeShiftHours;
 	}
 
-	auto& epg_id = first ? info->get_epg1_id() : info->get_epg2_id();
-	if (!m_epg_mapper.empty())
+	auto& epg_id = epg_idx == 0 ? info->get_epg1_id() : info->get_epg2_id();
+	const auto& mapper = m_epg_mapper[epg_idx];
+	if (!mapper.empty())
 	{
-		if (const auto& pair = m_epg_mapper.find(epg_id); pair != m_epg_mapper.end())
+		if (const auto& pair = mapper.find(epg_id); pair != mapper.end())
 		{
 			epg_id = pair->second;
 		}
 	}
 
-	auto& allEpgMap = m_epg_cache[first];
+	auto& allEpgMap = m_epg_cache[epg_idx];
 	auto& epgChannelMap = allEpgMap[epg_id];
 
 	UpdateExtToken(info->stream_uri.get(), m_token);
@@ -1337,7 +1332,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			}
 		}
 
-		if (need_load && !info->stream_uri->parse_epg(first, epg_id, epgChannelMap, now, GetConfig().get_int(true, REG_USE_EPG_PROXY)))
+		if (need_load && !info->stream_uri->parse_epg(epg_idx, epg_id, epgChannelMap, now, GetConfig().get_int(true, REG_USE_EPG_PROXY)))
 		{
 			need_load = false;
 		}
@@ -2610,10 +2605,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 	if (info)
 	{
 		CEpgListDlg dlg;
-		dlg.m_first = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+		dlg.m_epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
 		dlg.m_info = info;
 		dlg.m_epg_cache= &m_epg_cache;
-		dlg.m_epg_mapper = &m_epg_mapper;
+		dlg.m_epg_mapper = &m_epg_mapper[dlg.m_epg_idx];
 		dlg.DoModal();
 	}
 }

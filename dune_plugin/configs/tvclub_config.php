@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class TvclubPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://celn.shott.top/p/%s';
-    const API_HOST = 'http://api.iptv.so/0.9/json/';
+    const API_HOST = 'http://api.iptv.so/0.9/json';
 
     protected static $settings;
 
@@ -19,6 +19,7 @@ class TvclubPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/p/{TOKEN}/{ID}');
 
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg?token={TOKEN}&channels={CHANNEL}&time={TIME}&period=24');
         $this->set_epg_param('epg_root', 'epg|channels|0|epg');
         $this->set_epg_param('start', 'start');
         $this->set_epg_param('end', 'end');
@@ -139,23 +140,6 @@ class TvclubPluginConfig extends Default_Config
     }
 
     /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf(self::API_HOST . 'epg?token=%s&channels=%s&time=%d&period=24', $plugin_cookies->token, $id, $day_start_ts);
-        }
-
-        return null;
-    }
-
-    /**
      * @param $plugin_cookies
      * @return string
      */
@@ -171,7 +155,7 @@ class TvclubPluginConfig extends Default_Config
     public function get_server_opts($plugin_cookies)
     {
         try {
-            $url = self::API_HOST . "servers?token=$plugin_cookies->token";
+            $url = self::API_HOST . "/servers?token=$plugin_cookies->token";
             $servers = json_decode(HD::http_get_document($url), true);
             $ops = array();
             foreach ($servers['servers'] as $item) {
@@ -218,7 +202,7 @@ class TvclubPluginConfig extends Default_Config
         }
 
         try {
-            $url = self::API_HOST . "account?token=$plugin_cookies->token";
+            $url = self::API_HOST . "/account?token=$plugin_cookies->token";
             // provider returns token used to download playlist
             self::$settings = json_decode(HD::http_get_document($url), true);
         } catch (Exception $ex) {
@@ -242,7 +226,7 @@ class TvclubPluginConfig extends Default_Config
         }
 
         try {
-            $url = self::API_HOST . "set?token=$plugin_cookies->token&$param={$plugin_cookies->$param}";
+            $url = self::API_HOST . "/set?token=$plugin_cookies->token&$param={$plugin_cookies->$param}";
             HD::http_get_document($url);
             self::load_settings($plugin_cookies);
             return true;

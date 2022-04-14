@@ -4,6 +4,7 @@ require_once 'default_config.php';
 class TvteamPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://tv.team/pl/11/%s/playlist.m3u8';
+    const API_HOST = 'http://tv.team';
 
     public function __construct()
     {
@@ -13,6 +14,8 @@ class TvteamPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}');
         $this->set_feature(SQUARE_ICONS, true);
+
+        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}.json');
     }
 
     /**
@@ -66,22 +69,5 @@ class TvteamPluginConfig extends Default_Config
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if ($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://tv.team/%s.json', $id);
-        }
-
-        return null;
     }
 }

@@ -17,6 +17,7 @@ const MEDIA_URL_TEMPLATE_HLS = 'hls_url';
 const VOD_LAZY_LOAD = 'vod_lazy';
 const EXTINF_VOD_PATTERN = 'vod_pattern';
 const SQUARE_ICONS = 'square_icons';
+const PROXIED_EPG = 'proxied_epg';
 
 abstract class Default_Config
 {
@@ -68,11 +69,6 @@ abstract class Default_Config
     public $PLUGIN_VERSION = '0.0.0';
     public $PLUGIN_DATE = '04.01.1972';
 
-    /**
-     * @var string
-     */
-    protected $EPG_PATH = '';
-
     protected $FEATURES = array();
     protected $EPG_PARSER_PARAMS = array();
 
@@ -107,9 +103,11 @@ abstract class Default_Config
         $this->FEATURES[VOD_LAZY_LOAD] = false;
         $this->FEATURES[EXTINF_VOD_PATTERN] = '';
         $this->FEATURES[SQUARE_ICONS] = false;
+        $this->FEATURES[PROXIED_EPG] = false;
 
         $default_parser = array();
         $default_parser['parser'] = 'json';
+        $default_parser['epg_url'] = '';
         $default_parser['epg_root'] = 'epg_data';
         $default_parser['start'] = 'time';
         $default_parser['end'] = 'time_to';
@@ -117,15 +115,13 @@ abstract class Default_Config
         $default_parser['description'] = 'descr';
         $default_parser['date_format'] = 'Y-m-d';
         $default_parser['use_duration'] = false;
+        $default_parser['use_epg_hash'] = false;
+        $default_parser['use_epg_mapper'] = false;
+        $default_parser['epg_mapper_url'] = '';
         $default_parser['tvg_id_mapper'] = array();
 
         $this->set_epg_params($default_parser);
         $this->set_epg_params($default_parser, 'second');
-    }
-
-    public function is_third_party_epg()
-    {
-        return !empty($this->EPG_PATH);
     }
 
     /**
@@ -422,6 +418,12 @@ abstract class Default_Config
             }
         }
 
+        if ($this->EPG_PARSER_PARAMS['use_epg_mapper']) {
+            $mapper = HD::MapTvgID($this->EPG_PARSER_PARAMS['epg_mapper_url']);
+            hd_print("TVG ID Mapped: " . count($mapper));
+            $this->EPG_PARSER_PARAMS['tvg_id_mapper'] = $mapper;
+        }
+
         return false;
     }
 
@@ -532,18 +534,6 @@ abstract class Default_Config
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         return null;
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        return '';
     }
 
     /**

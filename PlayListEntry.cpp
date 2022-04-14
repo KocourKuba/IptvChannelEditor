@@ -64,6 +64,12 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		// special cases after parsing
 		switch (stream_type)
 		{
+		case StreamType::enEdem:
+		case StreamType::enFox:
+		case StreamType::enGlanz:
+		case StreamType::enOneCent:
+		case StreamType::enSharaTV:
+			break;
 		case StreamType::enSharavoz:
 		case StreamType::enOneOtt:
 		case StreamType::enCbilling:

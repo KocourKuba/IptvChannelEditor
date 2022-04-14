@@ -4,6 +4,7 @@ require_once 'default_config.php';
 class ShuratvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://pl.tvshka.net/?uid=%s&srv=%d&type=halva';
+    const API_HOST = 'http://s1.tvshka.net';
 
     public function __construct()
     {
@@ -14,6 +15,7 @@ class ShuratvPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
         $this->set_feature(SERVER_SUPPORTED, true);
 
+        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}/epg/range14-7.json');
         $this->set_epg_param('epg_root', '');
         $this->set_epg_param('start', 'start_time');
         $this->set_epg_param('end', 'duration');
@@ -95,22 +97,5 @@ class ShuratvPluginConfig extends Default_Config
     public function get_server($plugin_cookies)
     {
         return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        if($type === 'first') {
-            hd_print("Fetching EPG for ID: '$id'");
-            return sprintf('http://s1.tvshka.net/%s/epg/range14-7.json', $id);
-        }
-
-        return null;
     }
 }

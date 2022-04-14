@@ -67,7 +67,7 @@ std::wstring uri_tvteam::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_tvteam::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
+std::wstring uri_tvteam::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }

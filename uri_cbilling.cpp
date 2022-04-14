@@ -117,7 +117,7 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 	return false;
 }
 
-std::wstring uri_cbilling::get_epg_uri_json(bool first, const std::wstring& id, time_t for_time /*= 0*/) const
+std::wstring uri_cbilling::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
 {
 	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
 	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
@@ -128,7 +128,7 @@ std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& p
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.device);
 }
 
-nlohmann::json uri_cbilling::get_epg_root(bool first, const nlohmann::json& epg_data) const
+nlohmann::json uri_cbilling::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
 {
 	return epg_data;
 }

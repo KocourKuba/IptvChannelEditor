@@ -13,6 +13,8 @@ class SharavozPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/(?:.*)\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}');
 
+        $this->set_epg_param('epg_url', 'http://api.program.spr24.net/api/program?epg={CHANNEL}');
+        $this->set_epg_param('epg_url', 'http://epg.arlekino.tv/api/program?epg={CHANNEL}', 'second');
         $this->set_epg_param('date_format', 'Ymd', 'second');
     }
 
@@ -51,25 +53,5 @@ class SharavozPluginConfig extends Default_Config
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        hd_print("Fetching EPG for ID: '$id'");
-        switch ($type) {
-            case 'first':
-                return sprintf('http://api.program.spr24.net/api/program?epg=%s', $id);
-            case 'second':
-                return sprintf('http://epg.arlekino.tv/api/program?epg=%s', $id);
-        }
-
-        return null;
     }
 }

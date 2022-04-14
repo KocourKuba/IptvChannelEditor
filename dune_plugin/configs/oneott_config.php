@@ -4,6 +4,7 @@ require_once 'default_config.php';
 class OneottPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://list.1ott.net/api/%s/high/ottplay.m3u8';
+    const API_HOST = 'http://epg.propg.net';
 
     public function __construct()
     {
@@ -13,6 +14,7 @@ class OneottPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
 
+        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}/epg2/{DATE}');
         $this->set_epg_param('epg_root', '');
         $this->set_epg_param('start', 'start');
         $this->set_epg_param('end', 'stop');
@@ -93,24 +95,5 @@ class OneottPluginConfig extends Default_Config
         }
 
         return false;
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        $params = $this->get_epg_params($type);
-        if ($type === 'first') {
-            $epg_date = gmdate($params['date_format'], $day_start_ts);
-            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('http://epg.propg.net/%s/epg2/%s', $id, $epg_date); // epg_id date(Y-m-d)
-        }
-
-        return null;
     }
 }

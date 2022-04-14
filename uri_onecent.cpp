@@ -13,11 +13,6 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/index-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 
-uri_onecent::uri_onecent()
-{
-	m_source = L"iptvxone";
-}
-
 void uri_onecent::parse_uri(const std::wstring& url)
 {
 	// http://cdn.only4.tv/20115/index.m3u8?token=MH1LeVsHSD

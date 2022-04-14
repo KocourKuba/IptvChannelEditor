@@ -26,6 +26,7 @@ class AntifrizPluginConfig extends Default_Config
         $this->set_feature(EXTINF_VOD_PATTERN, '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|');
 
         $this->set_epg_param('epg_root', '');
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}/?date={DATE}');
     }
 
     /**
@@ -112,25 +113,6 @@ class AntifrizPluginConfig extends Default_Config
         }
 
         return '';
-    }
-
-    /**
-     * @param string $type
-     * @param string $id
-     * @param int $day_start_ts
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_epg_url($type, $id, $day_start_ts, $plugin_cookies)
-    {
-        $params = $this->get_epg_params($type);
-        if ($type === 'first') {
-            $epg_date = gmdate($params['date_format'], $day_start_ts);
-            hd_print("Fetching EPG for ID: '$id' DATE: $epg_date");
-            return sprintf('%s/epg/%s/?date=%s', self::API_HOST, $id, $epg_date); // epg_id date(Y-m-d)
-        }
-
-        return null;
     }
 
     /**
