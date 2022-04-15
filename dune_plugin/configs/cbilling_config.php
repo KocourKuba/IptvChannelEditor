@@ -27,7 +27,7 @@ class CbillingPluginConfig extends Default_Config
         $this->set_feature(EXTINF_VOD_PATTERN, '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|');
 
         $this->set_epg_param('epg_root', '');
-        $this->set_epg_param('epg_url', self::API_HOST .'/epg/{CHANNEL}/?date={DATE}');
+        $this->set_epg_param('epg_url', self::API_HOST .'/epg/{CHANNEL}/?date=');
     }
 
     /**
