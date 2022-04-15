@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class ItvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://itv.ooo/p/%s/hls.m3u8';
-    const API_HOST = 'http://protected-api.com';
+    const API_HOST = 'http://api.itv.live';
 
     public function __construct()
     {
@@ -102,7 +102,7 @@ class ItvPluginConfig extends Default_Config
         }
 
         try {
-            $url = sprintf('http://api.itv.live/data/%s', $password);
+            $url = sprintf(self::API_HOST . '/data/%s', $password);
             $content = HD::http_get_document($url);
         } catch (Exception $ex) {
             return false;
