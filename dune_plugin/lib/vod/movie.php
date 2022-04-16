@@ -1,5 +1,7 @@
 <?php
 
+require_once 'movie_series.php';
+
 class Movie
 {
     /**

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'lib/vod/vod_list_screen.php';
+require_once 'lib/vod/short_movie_range.php';
 
 class Starnet_Vod_List_Screen extends Vod_List_Screen
 {

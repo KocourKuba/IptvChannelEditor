@@ -1,5 +1,6 @@
 <?php
 require_once 'vod.php';
+require_once 'short_movie.php';
 
 abstract class Abstract_Vod implements Vod
 {
