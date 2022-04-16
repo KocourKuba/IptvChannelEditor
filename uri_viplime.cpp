@@ -13,6 +13,11 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}.
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}.mpeg";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/viplime/epg/{:s}.json";
 
+uri_viplime::uri_viplime()
+{
+	epg_proxy[0] = true;
+}
+
 void uri_viplime::parse_uri(const std::wstring& url)
 {
 	// http://cdntv.online/high/z3sf8hueit/1.m3u8

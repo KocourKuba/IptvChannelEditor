@@ -63,7 +63,12 @@ public:
 			convert_https();
 	}
 
-	void set_icon_uri(const std::wstring& val) { icon_uri.set_uri(val); }
+	void set_icon_uri(const std::wstring& val, bool make_http = true)
+	{
+		icon_uri.set_uri(val);
+		if (make_http)
+			convert_https();
+	}
 
 private:
 	uri_base icon_uri;

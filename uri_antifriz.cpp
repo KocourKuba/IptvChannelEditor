@@ -16,6 +16,11 @@ static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/archive-
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://protected-api.com/epg/{:s}/?date=";
 
+uri_antifriz::uri_antifriz()
+{
+	epg_params[0]["epg_root"] = "";
+}
+
 void uri_antifriz::parse_uri(const std::wstring& url)
 {
 	// http://tchaikovsky.antifriz.tv:1600/s/ibzsdpt2t/demo-4k/video.m3u8
@@ -95,9 +100,4 @@ std::wstring uri_antifriz::get_epg_uri_json(int epg_idx, const std::wstring& id,
 std::wstring uri_antifriz::get_playlist_template(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
-}
-
-nlohmann::json uri_antifriz::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-{
-	return epg_data;
 }

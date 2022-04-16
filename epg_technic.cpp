@@ -10,6 +10,11 @@ epg_technic::epg_technic(std::array<std::wstring, 2> sources) : m_sources(source
 {
 //	epg2 = true;
 	m_use_mapper[0] = true;
+	epg_params[0]["epg_root"] = "data";
+	epg_params[0]["epg_name"] = "title";
+	epg_params[0]["epg_desc"] = "description";
+	epg_params[0]["epg_start"] = "begin";
+	epg_params[0]["epg_end"] = "end";
 }
 
 std::array<std::map<std::wstring, std::wstring>, 2> epg_technic::get_tvg_id_mapper()
@@ -73,29 +78,4 @@ std::wstring epg_technic::get_epg_uri_json(int epg_idx, const std::wstring& id, 
 		}
 	}
 	return url;
-}
-
-nlohmann::json epg_technic::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-{
-	return epg_idx == 0 ? epg_data["data"] : uri_stream::get_epg_root(epg_idx, epg_data);
-}
-
-std::string epg_technic::get_epg_name(int epg_idx, const nlohmann::json& val) const
-{
-	return epg_idx == 0 ? get_json_value("title", val) : uri_stream::get_epg_name(epg_idx, val);
-}
-
-std::string epg_technic::get_epg_desc(int epg_idx, const nlohmann::json& val) const
-{
-	return epg_idx == 0 ? get_json_value("description", val) : uri_stream::get_epg_desc(epg_idx, val);
-}
-
-time_t epg_technic::get_epg_time_start(int epg_idx, const nlohmann::json& val) const
-{
-	return epg_idx == 0 ? get_json_int_value("begin", val) : uri_stream::get_epg_time_start(epg_idx, val);
-}
-
-time_t epg_technic::get_epg_time_end(int epg_idx, const nlohmann::json& val) const
-{
-	return epg_idx == 0 ? get_json_int_value("end", val) : uri_stream::get_epg_time_end(epg_idx, val);
 }

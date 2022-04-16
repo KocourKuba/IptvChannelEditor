@@ -17,6 +17,15 @@ static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/archive-
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.itv.live/epg/{:s}";
 
+uri_itv::uri_itv()
+{
+	epg_params[0]["epg_root"] = "res";
+	epg_params[0]["epg_name"] = "title";
+	epg_params[0]["epg_desc"] = "desc";
+	epg_params[0]["epg_start"] = "startTime";
+	epg_params[0]["epg_end"] = "stopTime";
+}
+
 void uri_itv::parse_uri(const std::wstring& url)
 {
 	// http://cloud15.05cdn.wf/ch378/video.m3u8?token=5bdbc7125f6ed805a5fd238b9f885d1a3c67a6594
@@ -119,29 +128,4 @@ bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<
 	JSON_ALL_CATCH;
 
 	return false;
-}
-
-nlohmann::json uri_itv::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-{
-	return epg_data["res"];
-}
-
-std::string uri_itv::get_epg_name(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_value("title", val);
-}
-
-std::string uri_itv::get_epg_desc(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_value("desc", val);
-}
-
-time_t uri_itv::get_epg_time_start(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_int_value("startTime", val);
-}
-
-time_t uri_itv::get_epg_time_end(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_int_value("stopTime", val);
 }

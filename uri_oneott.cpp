@@ -15,6 +15,15 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.propg.net/{:s}/epg2/{:4d}-{:02d}-{:02d}";
 
 
+uri_oneott::uri_oneott()
+{
+	epg_params[0]["epg_root"] = "";
+	epg_params[0]["epg_name"] = "epg";
+	epg_params[0]["epg_desc"] = "desc";
+	epg_params[0]["epg_start"] = "start";
+	epg_params[0]["epg_end"] = "stop";
+}
+
 void uri_oneott::parse_uri(const std::wstring& url)
 {
 	//http://rr2.1ott.net/~109dab8c798d546s8dc9c41b3c3af80d59a/35985/hls/pl.m3u8
@@ -102,29 +111,4 @@ bool uri_oneott::parse_access_info(const PlaylistTemplateParams& params, std::li
 	JSON_ALL_CATCH;
 
 	return false;
-}
-
-nlohmann::json uri_oneott::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-{
-	return epg_idx == 0 ? epg_data : uri_stream::get_epg_root(epg_idx, epg_data);
-}
-
-std::string uri_oneott::get_epg_name(int epg_idx, const nlohmann::json& val) const
-{
-	return epg_idx == 0 ? get_json_value("epg", val) : uri_stream::get_epg_name(epg_idx, val);
-}
-
-time_t uri_oneott::get_epg_time_start(int epg_idx, const nlohmann::json& val) const
-{
-	return epg_idx == 0 ? get_json_int_value("start", val) : uri_stream::get_epg_time_start(epg_idx, val);
-}
-
-time_t uri_oneott::get_epg_time_end(int epg_idx, const nlohmann::json& val) const
-{
-	return epg_idx == 0 ? get_json_int_value("stop", val) : uri_stream::get_epg_time_end(epg_idx, val);
-}
-
-std::string uri_oneott::get_epg_desc(int epg_idx, const nlohmann::json& val) const
-{
-	return epg_idx == 0 ? get_json_value("desc", val) : uri_stream::get_epg_desc(epg_idx, val);
 }

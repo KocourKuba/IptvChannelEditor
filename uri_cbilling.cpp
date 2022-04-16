@@ -18,6 +18,11 @@ static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{ID}/video.m3u8?t
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://protected-api.com/epg/{:s}/?date=";
 
+uri_cbilling::uri_cbilling()
+{
+	epg_params[0]["epg_root"] = "";
+}
+
 void uri_cbilling::parse_uri(const std::wstring& url)
 {
 	// http://s01.iptvx.tv:8090/s/82s4fb5785dcf28dgd6ga681a94ba78f/pervyj.m3u8
@@ -126,9 +131,4 @@ std::wstring uri_cbilling::get_epg_uri_json(int epg_idx, const std::wstring& id,
 std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.device);
-}
-
-nlohmann::json uri_cbilling::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-{
-	return epg_data;
 }

@@ -22,8 +22,8 @@ static constexpr auto EPG2_TEMPLATE_JSON = L"http://ott-epg.prog4food.eu.org/lig
 
 uri_lightiptv::uri_lightiptv()
 {
+	//epg2 = true;
 	epg_proxy[0] = true;
-	epg2 = true;
 }
 
 void uri_lightiptv::parse_uri(const std::wstring& url)

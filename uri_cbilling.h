@@ -4,6 +4,7 @@
 class uri_cbilling : public uri_stream
 {
 public:
+	uri_cbilling();
 	void parse_uri(const std::wstring& url) override;
 	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;
 	std::wstring get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time = 0) const override;
@@ -17,7 +18,4 @@ public:
 		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enHLS2, L"HLS2"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 		return streams;
 	};
-
-protected:
-	nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const override;
 };

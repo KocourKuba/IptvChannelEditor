@@ -14,6 +14,15 @@ static constexpr auto PLAYLIST_TEMPLATE = L"http://vidok.tv/p/{:s}";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://sapi.ott.st/v2.4/json/epg2?cid={:s}&token={:s}";
 
+uri_vidok::uri_vidok()
+{
+	epg_params[0]["epg_root"] = "epg";
+	epg_params[0]["epg_name"] = "title";
+	epg_params[0]["epg_desc"] = "description";
+	epg_params[0]["epg_start"] = "start";
+	epg_params[0]["epg_end"] = "end";
+}
+
 void uri_vidok::parse_uri(const std::wstring& url)
 {
 	// http://bddpv.hdme.top/p/7508af3ccf8194bd2339897708c06eda/1
@@ -108,29 +117,4 @@ bool uri_vidok::parse_access_info(const PlaylistTemplateParams& params, std::lis
 	JSON_ALL_CATCH;
 
 	return false;
-}
-
-nlohmann::json uri_vidok::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-{
-	return epg_data["epg"];
-}
-
-std::string uri_vidok::get_epg_name(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_value("title", val);
-}
-
-std::string uri_vidok::get_epg_desc(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_value("description", val);
-}
-
-time_t uri_vidok::get_epg_time_start(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_int_value("start", val);
-}
-
-time_t uri_vidok::get_epg_time_end(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_int_value("end", val);
 }

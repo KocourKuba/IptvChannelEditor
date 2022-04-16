@@ -15,6 +15,12 @@ static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.sramtv.com/get/?type=epg
 static constexpr auto EPG2_TEMPLATE_JSON = L"http://api.gazoni1.com/get/?type=epg&ch={:s}";
 
 
+uri_sharaclub::uri_sharaclub()
+{
+	epg2 = true;
+	epg_params[0]["epg_root"] = "";
+}
+
 void uri_sharaclub::parse_uri(const std::wstring& url)
 {
 	// http://em.gazoni1.com:80/live/s.277258.1d25esee4e77f0419432d2ed8eb0ee525/pervyHD/video.m3u8
@@ -64,7 +70,6 @@ std::wstring uri_sharaclub::get_templated_stream(StreamSubType subType, const Te
 
 std::wstring uri_sharaclub::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
 {
-	COleDateTime dt = COleDateTime::GetCurrentTime();
 	return fmt::format(epg_idx == 0 ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id);
 }
 
@@ -101,9 +106,4 @@ bool uri_sharaclub::parse_access_info(const PlaylistTemplateParams& params, std:
 	JSON_ALL_CATCH;
 
 	return false;
-}
-
-nlohmann::json uri_sharaclub::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-{
-	return epg_data;
 }

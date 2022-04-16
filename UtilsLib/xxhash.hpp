@@ -1731,10 +1731,7 @@ namespace xxh
 			v4 = seed - detail::PRIME<bit_mode>(1);
 		};
 
-		hash_state_t operator=(hash_state_t<bit_mode>& other)
-		{
-			memcpy(this, &other, sizeof(hash_state_t<bit_mode>));
-		}
+		hash_state_t operator=(hash_state_t<bit_mode>& other) = delete;
 
 		void reset(uint_t<bit_mode> seed = 0)
 		{
@@ -1910,10 +1907,7 @@ namespace xxh
 
 	public:
 
-		hash3_state_t operator=(hash3_state_t& other)
-		{
-			memcpy(this, &other, sizeof(hash3_state_t));
-		}
+		hash3_state_t operator=(hash3_state_t& other) = delete;
 
 		hash3_state_t(uint64_t seed = 0)
 		{

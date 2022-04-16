@@ -14,6 +14,14 @@ static constexpr auto PLAYLIST_TEMPLATE = L"http://celn.shott.top/p/{:s}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
 static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.iptv.so/0.9/json/epg?token={:s}&channels={:s}&time={:d}&period=24";
 
+uri_tvclub::uri_tvclub()
+{
+	epg_params[0]["epg_name"] = "text";
+	epg_params[0]["epg_desc"] = "description";
+	epg_params[0]["epg_start"] = "start";
+	epg_params[0]["epg_end"] = "end";
+}
+
 void uri_tvclub::parse_uri(const std::wstring& url)
 {
 	// http://celn.shott.top/p/8d7b03a5df9b265e7d21bg876678cc0a/1
@@ -121,26 +129,6 @@ bool uri_tvclub::parse_access_info(const PlaylistTemplateParams& params, std::li
 nlohmann::json uri_tvclub::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
 {
 	return epg_data["epg"]["channels"][0]["epg"];
-}
-
-std::string uri_tvclub::get_epg_name(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_value("text", val);
-}
-
-std::string uri_tvclub::get_epg_desc(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_value("description", val);
-}
-
-time_t uri_tvclub::get_epg_time_start(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_int_value("start", val);
-}
-
-time_t uri_tvclub::get_epg_time_end(int epg_idx, const nlohmann::json& val) const
-{
-	return get_json_int_value("end", val);
 }
 
 std::wstring& uri_tvclub::append_archive(std::wstring& url) const
