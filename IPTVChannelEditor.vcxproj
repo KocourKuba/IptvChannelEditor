@@ -383,6 +383,7 @@ goto :EOF
   </ItemGroup>
   <ItemGroup>
     <None Include="Changelog.md" />
+    <None Include="Readme.md" />
     <None Include="res\IPTVChannelEditor.rc2" />
   </ItemGroup>
   <ItemGroup>

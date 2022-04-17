@@ -406,6 +406,7 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Changelog.md" />
+    <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">
