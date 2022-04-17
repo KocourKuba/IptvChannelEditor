@@ -14,12 +14,12 @@ class OneottPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}/epg2/{DATE}');
-        $this->set_epg_param('epg_root', '');
-        $this->set_epg_param('start', 'start');
-        $this->set_epg_param('end', 'stop');
-        $this->set_epg_param('title', 'epg');
-        $this->set_epg_param('description', 'desc');
+        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}/epg2/{DATE}', 'first');
+        $this->set_epg_param('epg_root', '', 'first');
+        $this->set_epg_param('start', 'start', 'first');
+        $this->set_epg_param('end', 'stop', 'first');
+        $this->set_epg_param('title', 'epg', 'first');
+        $this->set_epg_param('description', 'desc', 'first');
     }
 
     /**

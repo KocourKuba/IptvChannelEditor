@@ -20,13 +20,13 @@ class VidokPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/p/{TOKEN}/{ID}');
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg2?cid={CHANNEL}&token={TOKEN}');
-        $this->set_epg_param('epg_root', 'epg');
-        $this->set_epg_param('start', 'start');
-        $this->set_epg_param('end', 'end');
-        $this->set_epg_param('title', 'title');
-        $this->set_epg_param('description', 'description');
-        $this->set_epg_param('date_format', 'dmy');
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg2?cid={CHANNEL}&token={TOKEN}', 'first');
+        $this->set_epg_param('epg_root', 'epg', 'first');
+        $this->set_epg_param('start', 'start', 'first');
+        $this->set_epg_param('end', 'end', 'first');
+        $this->set_epg_param('title', 'title', 'first');
+        $this->set_epg_param('description', 'description', 'first');
+        $this->set_epg_param('date_format', 'dmy', 'first');
     }
 
     /**

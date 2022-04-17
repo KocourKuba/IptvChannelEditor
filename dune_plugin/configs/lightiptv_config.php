@@ -17,7 +17,7 @@ class LightiptvPluginConfig extends Default_Config
         $this->set_feature(SQUARE_ICONS, true);
         $this->set_feature(PROXIED_EPG, true);
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}.json');
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}.json', 'first');
     }
 
     /**

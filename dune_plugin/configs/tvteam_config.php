@@ -15,7 +15,7 @@ class TvteamPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}');
         $this->set_feature(SQUARE_ICONS, true);
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}.json');
+        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}.json', 'first');
     }
 
     /**

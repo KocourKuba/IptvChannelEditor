@@ -15,7 +15,7 @@ class ViplimePluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8');
         $this->set_feature(PROXIED_EPG, true);
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}.json');
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}.json', 'first');
     }
 
     /**

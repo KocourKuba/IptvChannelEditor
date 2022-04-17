@@ -25,8 +25,8 @@ class AntifrizPluginConfig extends Default_Config
         $this->set_feature(VOD_LAZY_LOAD, true);
         $this->set_feature(EXTINF_VOD_PATTERN, '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|');
 
-        $this->set_epg_param('epg_root', '');
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}/?date=');
+        $this->set_epg_param('epg_root', '', 'first');
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}/?date=', 'first');
     }
 
     /**
@@ -82,7 +82,7 @@ class AntifrizPluginConfig extends Default_Config
      */
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
-        if (parent::GetAccountInfo($plugin_cookies, &$account_data, $force)) {
+        if (parent::GetAccountInfo($plugin_cookies, $account_data, $force)) {
             $plugin_cookies->subdomain_local = $account_data['subdomain'];
             $plugin_cookies->token = $account_data['token'];
             return true;

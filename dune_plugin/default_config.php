@@ -120,7 +120,7 @@ abstract class Default_Config
         $default_parser['epg_mapper_url'] = '';
         $default_parser['tvg_id_mapper'] = array();
 
-        $this->set_epg_params($default_parser);
+        $this->set_epg_params($default_parser, 'first');
         $this->set_epg_params($default_parser, 'second');
     }
 
@@ -222,16 +222,16 @@ abstract class Default_Config
      * @param string $type
      * @return mixed
      */
-    public function get_epg_params($type = 'first')
+    public function get_epg_params($type)
     {
         return $this->EPG_PARSER_PARAMS[$type];
     }
 
     /**
-     * @param mixed $val
+     * @param array $val
      * @param string $type
      */
-    public function set_epg_params($val, $type = 'first')
+    public function set_epg_params($val, $type)
     {
         $this->EPG_PARSER_PARAMS[$type] = $val;
     }
@@ -241,9 +241,18 @@ abstract class Default_Config
      * @param mixed $val
      * @param string $type
      */
-    public function set_epg_param($param, $val, $type = 'first')
+    public function set_epg_param($param, $val, $type)
     {
         $this->EPG_PARSER_PARAMS[$type][$param] = $val;
+    }
+
+    /**
+     * @param string $type
+     * @return mixed
+     */
+    public function get_epg_param($param, $type)
+    {
+        return $this->EPG_PARSER_PARAMS[$type][$param];
     }
 
     public function try_reset_pages()
@@ -410,18 +419,25 @@ abstract class Default_Config
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+
+        if ($this->get_epg_param('use_epg_mapper', 'first')) {
+            $mapper = HD::MapTvgID($this->get_epg_param('epg_mapper_url', 'first'));
+            hd_print("TVG ID Mapped: " . count($mapper));
+            $this->set_epg_param('tvg_id_mapper', $mapper, 'first');
+        }
+
+        if ($this->get_epg_param('use_epg_mapper', 'second')) {
+            $mapper = HD::MapTvgID($this->get_epg_param('epg_mapper_url', 'second'));
+            hd_print("TVG ID Mapped: " . count($mapper));
+            $this->set_epg_param('tvg_id_mapper', $mapper, 'second');
+        }
+
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
             if (preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $line, $matches)) {
                 $account_data = $matches;
                 return true;
             }
-        }
-
-        if ($this->EPG_PARSER_PARAMS['use_epg_mapper']) {
-            $mapper = HD::MapTvgID($this->EPG_PARSER_PARAMS['epg_mapper_url']);
-            hd_print("TVG ID Mapped: " . count($mapper));
-            $this->EPG_PARSER_PARAMS['tvg_id_mapper'] = $mapper;
         }
 
         return false;

@@ -15,15 +15,15 @@ class IptvonlinePluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8');
         $this->set_feature(SQUARE_ICONS, true);
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg_day?id={CHANNEL}&day={DATE}');
-        $this->set_epg_param('epg_root', 'data');
-        $this->set_epg_param('start', 'begin');
-        $this->set_epg_param('end', 'end');
-        $this->set_epg_param('title', 'title');
-        $this->set_epg_param('description', 'description');
-        $this->set_epg_param('date_format', 'Y.m.d');
-        $this->set_epg_param('use_epg_mapper', true);
-        $this->set_epg_param('epg_mapper_url', self::API_HOST . '/channels');
+        $this->set_epg_param('epg_url', self::API_HOST . '/epg_day?id={CHANNEL}&day={DATE}', 'first');
+        $this->set_epg_param('epg_root', 'data', 'first');
+        $this->set_epg_param('start', 'begin', 'first');
+        $this->set_epg_param('end', 'end', 'first');
+        $this->set_epg_param('title', 'title', 'first');
+        $this->set_epg_param('description', 'description', 'first');
+        $this->set_epg_param('date_format', 'Y.m.d', 'first');
+        $this->set_epg_param('use_epg_mapper', true, 'first');
+        $this->set_epg_param('epg_mapper_url', self::API_HOST . '/channels', 'first');
     }
 
     /**
