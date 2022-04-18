@@ -100,18 +100,18 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		case StreamType::enOneOtt:
 		case StreamType::enCbilling:
 		case StreamType::enShuraTV:
-			set_epg1_id(stream_uri->get_id()); // primary EPG
+			set_epg_id(0, stream_uri->get_id()); // primary EPG
 			break;
 		case StreamType::enLightIptv:
-			stream_uri->set_id(get_epg1_id());
+			stream_uri->set_id(get_epg_id(0));
 			break;
 		case StreamType::enOttclub:
-			set_epg1_id(stream_uri->get_id()); // primary EPG
+			set_epg_id(0, stream_uri->get_id()); // primary EPG
 			set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", stream_uri->get_domain(), stream_uri->get_id()));
 			break;
 		case StreamType::enIptvOnline:
-			if (get_epg1_id().front() == 'X')
-				set_epg1_id(get_epg1_id().substr(1)); // primary EPG
+			if (get_epg_id(0).front() == 'X')
+				set_epg_id(0, get_epg_id(0).substr(1)); // primary EPG
 			break;
 		case StreamType::enVidok:
 			set_icon_uri(fmt::format(L"http://ott.st/logos/{:s}.png", stream_uri->get_id()));
@@ -177,15 +177,15 @@ void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring
 	// priority -> tvg_id -> tvg_name -> title
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_id); pair != tags.end())
 	{
-		set_epg1_id(pair->second);
+		set_epg_id(0, pair->second);
 	}
 	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_name); pair != tags.end())
 	{
-		set_epg1_id(pair->second);
+		set_epg_id(0, pair->second);
 	}
 	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_directive_title); pair != tags.end())
 	{
-		set_epg1_id(pair->second);
+		set_epg_id(0, pair->second);
 	}
 }
 

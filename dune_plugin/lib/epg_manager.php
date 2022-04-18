@@ -58,6 +58,12 @@ class Epg_Manager
 
         if ($params['use_epg_mapper']) {
             $mapper = $params['tvg_id_mapper'];
+            if (empty($mapper)) {
+                $mapper = HD::MapTvgID($params('epg_mapper_url'));
+                hd_print("TVG ID Mapped: " . count($mapper));
+                $this->config->set_epg_param('tvg_id_mapper', $mapper, $type);
+            }
+
             if (array_key_exists($epg_id, $mapper)) {
                 hd_print("EPG id replaced: $epg_id -> " . $mapper[$epg_id]);
                 $epg_id = $mapper[$epg_id];

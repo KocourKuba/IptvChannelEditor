@@ -28,9 +28,6 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_lightiptv.h"
 #include "PlayListEntry.h"
 
-#include "UtilsLib\utils.h"
-#include "UtilsLib\xxhash.hpp"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -43,13 +40,13 @@ static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{TOKEN}/index.m3u
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{TOKEN}/video-{START}-7200.m3u8?token={PASSWORD}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{TOKEN}/timeshift_abs-{START}.ts?token={PASSWORD}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/lightiptv/epg/{:s}.json";
-static constexpr auto EPG2_TEMPLATE_JSON = L"http://ott-epg.prog4food.eu.org/lightiptv/epg/{:d}.json";
 
 uri_lightiptv::uri_lightiptv()
 {
-	//epg2 = true;
-	epg_proxy[0] = true;
+	auto& params = epg_params[0];
+	params.epg_use_id_hash = true;
+	params.epg_url = L"http://epg.esalecrm.net/lightiptv/epg/{ID}.json";
+//	epg_params[1].epg_url = L"http://epg.ott-play.com/lightiptv/epg/{ID}.json";
 }
 
 void uri_lightiptv::parse_uri(const std::wstring& url)
@@ -100,21 +97,6 @@ std::wstring uri_lightiptv::get_templated_stream(StreamSubType subType, const Te
 	}
 
 	replace_vars(url, params);
-	return url;
-}
-
-std::wstring uri_lightiptv::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	std::wstring url;
-	switch (epg_idx)
-	{
-		case 0:
-			url = fmt::format(EPG1_TEMPLATE_JSON, id);
-			break;
-		case 1:
-			url = fmt::format(EPG2_TEMPLATE_JSON, xxh::xxhash<32>(utils::utf16_to_utf8(id)));
-			break;
-	}
 	return url;
 }
 

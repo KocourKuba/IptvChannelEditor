@@ -40,11 +40,12 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}/vid
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://protected-api.com/epg/{:s}/?date=";
 
 uri_antifriz::uri_antifriz()
 {
-	epg_params[0]["epg_root"] = "";
+	auto& params = epg_params[0];
+	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+	params.epg_root = "";
 }
 
 void uri_antifriz::parse_uri(const std::wstring& url)
@@ -115,12 +116,6 @@ std::wstring uri_antifriz::get_templated_stream(StreamSubType subType, const Tem
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_antifriz::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
-	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::wstring uri_antifriz::get_playlist_template(const PlaylistTemplateParams& params) const

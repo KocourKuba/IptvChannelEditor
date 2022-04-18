@@ -432,5 +432,4 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
 	std::array<std::map<std::wstring, std::map<time_t, EpgInfo>>, 2> m_epg_cache;
-	std::array<std::map<std::wstring, std::wstring>, 2> m_epg_mapper;
 };

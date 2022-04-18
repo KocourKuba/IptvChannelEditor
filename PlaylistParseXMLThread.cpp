@@ -90,7 +90,7 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 				entry->set_key(channel->get_key());
 				entry->set_title(channel->get_title());
 				entry->set_icon_uri(channel->get_icon_uri());
-				entry->set_epg1_id(channel->get_epg1_id());
+				entry->set_epg_id(0, channel->get_epg_id(0));
 				entry->set_archive_days(channel->get_archive_days());
 				entry->set_adult(channel->get_adult());
 				entry->stream_uri->copy(channel->stream_uri);

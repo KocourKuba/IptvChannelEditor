@@ -28,6 +28,8 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_vidok.h"
 
 #include "UtilsLib\md5.h"
+#include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,15 +40,16 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto ACCOUNT_TEMPLATE = L"http://sapi.ott.st/v2.4/json/account?token={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://vidok.tv/p/{:s}";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://sapi.ott.st/v2.4/json/epg2?cid={:s}&token={:s}";
 
 uri_vidok::uri_vidok()
 {
-	epg_params[0]["epg_root"] = "epg";
-	epg_params[0]["epg_name"] = "title";
-	epg_params[0]["epg_desc"] = "description";
-	epg_params[0]["epg_start"] = "start";
-	epg_params[0]["epg_end"] = "end";
+	auto& params = epg_params[0];
+	params.epg_url = L"http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
+	params.epg_root = "epg";
+	params.epg_name = "title";
+	params.epg_desc = "description";
+	params.epg_start = "start";
+	params.epg_end = "end";
 }
 
 void uri_vidok::parse_uri(const std::wstring& url)
@@ -95,12 +98,6 @@ std::wstring uri_vidok::get_templated_stream(StreamSubType subType, const Templa
 
 	return url;
 }
-
-std::wstring uri_vidok::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(EPG1_TEMPLATE_JSON, id, token);
-}
-
 std::wstring uri_vidok::get_playlist_template(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));

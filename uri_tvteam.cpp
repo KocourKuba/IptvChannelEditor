@@ -40,7 +40,11 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/mono.m3u8?tok
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/index-{START}-7200.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-7200.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://tv.team/{:s}.json";
+
+uri_tvteam::uri_tvteam()
+{
+	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
+}
 
 void uri_tvteam::parse_uri(const std::wstring& url)
 {
@@ -91,11 +95,6 @@ std::wstring uri_tvteam::get_templated_stream(StreamSubType subType, const Templ
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_tvteam::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_tvteam::get_playlist_template(const PlaylistTemplateParams& params) const

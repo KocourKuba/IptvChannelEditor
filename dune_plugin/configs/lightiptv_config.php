@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class LightiptvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://lightiptv.cc/playlist/hls/%s.m3u';
-    const API_HOST = 'http://epg.ott-play.com/lightiptv';
+    const API_HOST = 'http://epg.esalecrm.net/lightiptv';
 
     public function __construct()
     {
@@ -15,9 +15,9 @@ class LightiptvPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}');
         $this->set_feature(SQUARE_ICONS, true);
-        $this->set_feature(PROXIED_EPG, true);
 
         $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}.json', 'first');
+        $this->set_epg_param('use_epg_hash', true, 'first');
     }
 
     /**

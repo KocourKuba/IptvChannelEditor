@@ -99,7 +99,6 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_DEVICE_ID,
 	REG_SHOW_URL,
 	REG_CREDENTIALS,
-	REG_USE_EPG_PROXY,
 };
 
 static std::vector<PluginDesc> all_plugins = {

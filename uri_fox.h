@@ -31,7 +31,7 @@ class uri_fox : public epg_technic
 {
 public:
 
-	uri_fox() : epg_technic({ L"fox", L"fox" }) {}
+	uri_fox();
 
 	void parse_uri(const std::wstring& url) override;
 	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;

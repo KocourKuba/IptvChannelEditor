@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_viplime.h"
-#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,11 +36,13 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto PLAYLIST_TEMPLATE = L"http://cdntv.online/high/{:s}/playlist.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}.mpeg";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.ott-play.com/viplime/epg/{:s}.json";
 
 uri_viplime::uri_viplime()
 {
-	epg_proxy[0] = true;
+	auto& params = epg_params[0];
+	params.epg_url = L"http://epg.esalecrm.net/viplime/epg/{ID}.json";
+	params.epg_use_id_hash = true;
+//	epg_params[1].epg_url = L"http://epg.ott-play.com/viplime/epg/{ID}.json";
 }
 
 void uri_viplime::parse_uri(const std::wstring& url)
@@ -93,11 +94,6 @@ std::wstring uri_viplime::get_templated_stream(StreamSubType subType, const Temp
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_viplime::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_viplime::get_playlist_template(const PlaylistTemplateParams& params) const

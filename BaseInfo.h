@@ -53,11 +53,8 @@ public:
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
 
-	std::wstring get_epg1_id() const { return epg_id1; }
-	void set_epg1_id(const std::wstring& val) { epg_id1 = val; }
-
-	std::wstring get_epg2_id() const { return epg_id2; }
-	void set_epg2_id(const std::wstring& val) { epg_id2 = val; }
+	std::wstring get_epg_id(int idx) const { return epg_id[idx]; }
+	void set_epg_id(int idx, const std::wstring& val) { epg_id[idx] = val; }
 
 	int get_adult() const { return adult; }
 	void set_adult(int val) { adult = val; }
@@ -85,8 +82,7 @@ public:
 			base_type = src.base_type;
 			title = src.title;
 			key = src.key;
-			epg_id1 = src.epg_id1;
-			epg_id2 = src.epg_id2;
+			epg_id = src.epg_id;
 			time_shift_hours = src.time_shift_hours;
 			adult = src.adult;
 			archive_days = src.archive_days;
@@ -103,8 +99,7 @@ protected:
 private:
 	std::wstring title;
 	int key = 0;
-	std::wstring epg_id1; // primary epg source ott-play epg http://epg.ott-play.com/edem/epg/%d.json
-	std::wstring epg_id2; // secondary epg source TVGuide id http://www.teleguide.info/kanal%d.html
+	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;
 	int adult = 0;
 	int archive_days = 0;

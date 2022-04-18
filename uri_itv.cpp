@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_itv.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,15 +42,16 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/video.m3u8?to
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.itv.live/epg/{:s}";
 
 uri_itv::uri_itv()
 {
-	epg_params[0]["epg_root"] = "res";
-	epg_params[0]["epg_name"] = "title";
-	epg_params[0]["epg_desc"] = "desc";
-	epg_params[0]["epg_start"] = "startTime";
-	epg_params[0]["epg_end"] = "stopTime";
+	auto& params = epg_params[0];
+	params.epg_url = L"http://api.itv.live/epg/{ID}";
+	params.epg_root = "res";
+	params.epg_name = "title";
+	params.epg_desc = "desc";
+	params.epg_start = "startTime";
+	params.epg_end = "stopTime";
 }
 
 void uri_itv::parse_uri(const std::wstring& url)
@@ -100,11 +102,6 @@ std::wstring uri_itv::get_templated_stream(StreamSubType subType, const Template
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_itv::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_itv::get_playlist_template(const PlaylistTemplateParams& params) const

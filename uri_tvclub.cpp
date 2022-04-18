@@ -28,6 +28,8 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_tvclub.h"
 
 #include "UtilsLib\md5.h"
+#include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,14 +40,15 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.iptv.so/0.9/json/account?token={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://celn.shott.top/p/{:s}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.iptv.so/0.9/json/epg?token={:s}&channels={:s}&time={:d}&period=24";
 
 uri_tvclub::uri_tvclub()
 {
-	epg_params[0]["epg_name"] = "text";
-	epg_params[0]["epg_desc"] = "description";
-	epg_params[0]["epg_start"] = "start";
-	epg_params[0]["epg_end"] = "end";
+	auto& params = epg_params[0];
+	params.epg_url = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
+	params.epg_name = "text";
+	params.epg_desc = "description";
+	params.epg_start = "start";
+	params.epg_end = "end";
 }
 
 void uri_tvclub::parse_uri(const std::wstring& url)
@@ -87,19 +90,6 @@ std::wstring uri_tvclub::get_templated_stream(StreamSubType subType, const Templ
 
 	return url;
 }
-
-std::wstring uri_tvclub::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	tm lt = {};
-	localtime_s(&lt, &for_time);
-	lt.tm_hour = 0;
-	lt.tm_min = 0;
-	lt.tm_sec = 0;
-	time_t start = mktime(&lt);
-
-	return fmt::format(EPG1_TEMPLATE_JSON, token, id, start);
-}
-
 std::wstring uri_tvclub::get_playlist_template(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));

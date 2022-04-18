@@ -26,10 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_base.h"
-#include "UtilsLib\utils.h"
-#include "UtilsLib\Crc32.h"
 #include "UtilsLib\json_wrapper.h"
-#include "UtilsLib\inet_utils.h"
 
 struct TemplateParams
 {
@@ -69,6 +66,23 @@ struct EpgInfo
 #endif // _DEBUG
 };
 
+struct EpgParameters
+{
+	bool epg_use_mapper = false;
+	bool epg_use_id_hash = false;
+	bool epg_use_duration = false;
+	std::wstring epg_url;
+	std::wstring epg_mapper_url;
+	std::wstring epg_date_format;
+	std::string epg_root;
+	std::string epg_name;
+	std::string epg_desc;
+	std::string epg_start;
+	std::string epg_end;
+	std::string epg_time_format;
+	std::map<std::wstring, std::wstring> epg_mapper;
+};
+
 /// <summary>
 /// Interface for stream
 /// </summary>
@@ -80,48 +94,26 @@ protected:
 	static constexpr auto REPL_TOKEN = L"{TOKEN}";
 	static constexpr auto REPL_START = L"{START}";
 	static constexpr auto REPL_NOW = L"{NOW}";
+	static constexpr auto REPL_DATE = L"{DATE}";
+	static constexpr auto REPL_TIME = L"{TIME}";
 
 public:
-	uri_stream()
-	{
-		std::map<std::string, std::string> params = {
-			{"epg_root",  "epg_data"},
-			{"epg_name",  "name"},
-			{"epg_desc",  "descr"},
-			{"epg_start", "time"},
-			{"epg_end",   "time_to"},
-		};
+	uri_stream();
 
-		epg_params = { params, params };
-	}
-
-	uri_stream(const uri_stream& src) : uri_stream()
-	{
-		*this = src;
-	}
+	uri_stream(const uri_stream& src);
 
 	virtual ~uri_stream() = default;
 
 	/// <summary>
 	/// clear uri
 	/// </summary>
-	void clear() override
-	{
-		uri_base::clear();
-		id.clear();
-		clear_hash();
-	}
+	void clear() override;
 
 	/// <summary>
 	/// parse uri to get id
 	/// </summary>
 	/// <param name="url"></param>
-	virtual void parse_uri(const std::wstring& url)
-	{
-		// http://rtmp.api.rt.com/hls/rtdru.m3u8
-		clear();
-		uri_base::set_uri(url);
-	}
+	virtual void parse_uri(const std::wstring& url);
 
 	/// <summary>
 	/// getter channel id
@@ -139,18 +131,7 @@ public:
 	/// getter channel hash
 	/// </summary>
 	/// <returns>int</returns>
-	const int get_hash() const
-	{
-		if (!hash)
-		{
-			// convert to utf8
-			const auto& uri = utils::utf16_to_utf8(is_template() ? id : get_uri());
-			hash = crc32_bitwise(uri.c_str(), uri.size());
-			str_hash = std::to_wstring(hash);
-		}
-
-		return hash;
-	}
+	const int get_hash() const;
 
 	/// <summary>
 	/// recalculate has variables
@@ -237,12 +218,6 @@ public:
 	virtual std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const { return L""; };
 
 	/// <summary>
-	/// get epg1 json url
-	/// </summary>
-	/// <returns>string</returns>
-	virtual std::wstring get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time = 0) const { return L""; };
-
-	/// <summary>
 	/// get additional get headers
 	/// </summary>
 	/// <returns>std::wstring</returns>
@@ -310,160 +285,35 @@ public:
 		return *this;
 	}
 
-	virtual std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const
-	{
-		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"}};
-		return streams;
-	}
+	virtual std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const;
 
-	virtual const std::wstring get_tvg_id_mapper_url() const
-	{
-		return L"";
-	}
+	const std::map<std::wstring, std::wstring>& get_epg_id_mapper(int epg_idx);
 
-	virtual std::array<std::map<std::wstring, std::wstring>, 2> get_tvg_id_mapper()
-	{
-		return {};
-	}
+	bool has_epg2() const { return !epg_params[1].epg_url.empty(); };
 
-	bool has_epg2() const { return epg2; };
+	bool parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time);
 
-	bool parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time, bool use_proxy = false)
-	{
-		std::vector<BYTE> data;
-		auto& epg_uri = get_epg_uri_json(epg_idx, epg_id, for_time);
-		if (epg_proxy[epg_idx] && use_proxy)
-		{
-			utils::string_replace_inplace(epg_uri, L"epg.ott-play.com", L"epg.esalecrm.net");
-		}
-
-		if (!utils::DownloadFile(epg_uri, data) || data.empty())
-			return false;
-
-		JSON_ALL_TRY
-		{
-			nlohmann::json parsed_json = nlohmann::json::parse(data);
-
-			bool added = false;
-			const auto& root = get_epg_root(epg_idx, parsed_json);
-			for (const auto& item : root.items())
-			{
-				const auto& val = item.value();
-
-				EpgInfo epg_info;
-				epg_info.name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_value(epg_params[epg_idx].at("epg_name"), val))));
-				epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_value(epg_params[epg_idx].at("epg_desc"), val))));
-
-				epg_info.time_start = get_json_int_value(epg_params[epg_idx].at("epg_start"), val);
-				epg_info.time_end = get_json_int_value(epg_params[epg_idx].at("epg_end"), val);
-				if (use_duration[epg_idx])
-				{
-					epg_info.time_end += epg_info.time_start;
-				}
-
-#ifdef _DEBUG
-				COleDateTime ts(epg_info.time_start);
-				COleDateTime te(epg_info.time_end);
-				epg_info.start = fmt::format(L"{:04d}-{:02d}-{:02d}", ts.GetYear(), ts.GetMonth(), ts.GetDay());
-				epg_info.end = fmt::format(L"{:04d}-{:02d}-{:02d}", te.GetYear(), te.GetMonth(), te.GetDay());
-#endif // _DEBUG
-
-				if (epg_info.time_start != 0)
-				{
-					added |= epg_map.emplace(epg_info.time_start, epg_info).second;
-				}
-			}
-
-			return added;
-		}
-		JSON_ALL_CATCH;
-
-		return false;
-	}
+	std::wstring compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time);
 
 protected:
 	/// <summary>
 	/// json root for epg iteration
 	/// </summary>
 	/// <returns>string</returns>
-	virtual nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-	{
-		const auto& root = epg_params[epg_idx].at("epg_root");
-		return root.empty() ? epg_data : epg_data[root];
-	}
+	virtual nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const;
 
-	static void put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params)
-	{
-		JSON_ALL_TRY
-		{
-			const auto& js_param = js_data[name];
+	virtual std::wstring& append_archive(std::wstring& url) const;
 
-			AccountInfo info;
-			info.name = std::move(utils::utf8_to_utf16(name));
-			if (js_param.is_number_integer())
-			{
-				info.value = std::move(std::to_wstring(js_param.get<int>()));
-			}
-			if (js_param.is_number_float())
-			{
-				info.value = std::move(std::to_wstring(js_param.get<float>()));
-			}
-			else if (js_param.is_string())
-			{
-				info.value = std::move(utils::utf8_to_utf16(js_param.get<std::string>()));
-			}
+	void replace_vars(std::wstring& url, const TemplateParams& params) const;
 
-			params.emplace_back(info);
-		}
-		JSON_ALL_CATCH;
-	}
+	static void put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params);
 
-	void replace_vars(std::wstring& url, const TemplateParams& params) const
-	{
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.domain);
-		utils::string_replace_inplace<wchar_t>(url, REPL_ID, get_id());
-		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, get_token());
-		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
-		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
-	}
+	static std::string get_json_value(const std::string& key, const nlohmann::json& val);
 
-	virtual std::wstring& append_archive(std::wstring& url) const
-	{
-		if (url.rfind('?') != std::wstring::npos)
-			url += '&';
-		else
-			url += '?';
-
-		url += L"utc={START}&lutc={NOW}";
-
-		return url;
-	}
-
-	static std::string get_json_value(const std::string& key, const nlohmann::json& val)
-	{
-		return val.contains(key) && val[key].is_string() ? val[key] : "";
-	}
-
-	static time_t get_json_int_value(const std::string& key, const nlohmann::json& val)
-	{
-		if (val[key].is_number())
-		{
-			return val.value(key, 0);
-		}
-
-		if (val[key].is_string())
-		{
-			return utils::char_to_int(val.value(key, ""));
-		}
-
-		return 0;
-	}
+	static time_t get_json_int_value(const std::string& key, const nlohmann::json& val);
 
 protected:
-	bool epg2 = false;
-	std::array<bool, 2> epg_proxy = {false, false};
-	std::array<bool, 2> use_duration = { false, false };
-	std::array <std::map<std::string, std::string>, 2> epg_params;
+	std::array <EpgParameters, 2> epg_params;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring login;

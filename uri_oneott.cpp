@@ -26,6 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_oneott.h"
+#include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,16 +40,17 @@ static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}
 static constexpr auto PLAYLIST_TEMPLATE = L"http://list.1ott.net/api/{:s}/high/ottplay.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/~{TOKEN}/{ID}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://epg.propg.net/{:s}/epg2/{:4d}-{:02d}-{:02d}";
 
 
 uri_oneott::uri_oneott()
 {
-	epg_params[0]["epg_root"] = "";
-	epg_params[0]["epg_name"] = "epg";
-	epg_params[0]["epg_desc"] = "desc";
-	epg_params[0]["epg_start"] = "start";
-	epg_params[0]["epg_end"] = "stop";
+	auto& params = epg_params[0];
+	params.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
+	params.epg_root = "";
+	params.epg_name = "epg";
+	params.epg_desc = "desc";
+	params.epg_start = "start";
+	params.epg_end = "stop";
 }
 
 void uri_oneott::parse_uri(const std::wstring& url)
@@ -95,12 +98,6 @@ std::wstring uri_oneott::get_templated_stream(StreamSubType subType, const Templ
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_oneott::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::wstring uri_oneott::get_playlist_template(const PlaylistTemplateParams& params) const

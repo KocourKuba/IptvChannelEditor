@@ -231,6 +231,9 @@
     <ClInclude Include="epg_technic.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="epg_iptvx.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -393,6 +396,12 @@
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="epg_technic.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_stream.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="epg_iptvx.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>

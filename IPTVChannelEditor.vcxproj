@@ -263,6 +263,7 @@ goto :EOF
     <ClInclude Include="Config.h" />
     <ClInclude Include="EditableListCtrl.h" />
     <ClInclude Include="EpgListDlg.h" />
+    <ClInclude Include="epg_iptvx.h" />
     <ClInclude Include="epg_technic.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
     <ClInclude Include="HistoryCombo.h" />
@@ -325,6 +326,7 @@ goto :EOF
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="EditableListCtrl.cpp" />
     <ClCompile Include="EpgListDlg.cpp" />
+    <ClCompile Include="epg_iptvx.cpp" />
     <ClCompile Include="epg_technic.cpp" />
     <ClCompile Include="GetStreamInfoThread.cpp" />
     <ClCompile Include="HistoryCombo.cpp" />
@@ -364,6 +366,7 @@ goto :EOF
     <ClCompile Include="uri_sharatv.cpp" />
     <ClCompile Include="uri_sharavoz.cpp" />
     <ClCompile Include="uri_shuratv.cpp" />
+    <ClCompile Include="uri_stream.cpp" />
     <ClCompile Include="uri_tvclub.cpp" />
     <ClCompile Include="uri_tvteam.cpp" />
     <ClCompile Include="uri_vidok.cpp" />

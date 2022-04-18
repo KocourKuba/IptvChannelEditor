@@ -37,6 +37,11 @@ static constexpr auto PLAYLIST_TEMPLATE1 = L"http://epg.it999.ru/edem_epg_ico.m3
 static constexpr auto PLAYLIST_TEMPLATE2 = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 
+uri_edem::uri_edem() : epg_technic({ L"it999", L"it999" })
+{
+	epg_params[0].epg_use_mapper = false;
+}
+
 void uri_edem::parse_uri(const std::wstring& url)
 {
 	// http://localhost/iptv/00000000000000/204/index.m3u8

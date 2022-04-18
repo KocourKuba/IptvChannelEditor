@@ -26,6 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_sharaclub.h"
+#include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,14 +39,13 @@ static constexpr auto ACCOUNT_TEMPLATE = L"http://list.playtv.pro/api/dune-api5m
 static constexpr auto PLAYLIST_TEMPLATE = L"http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.sramtv.com/get/?type=epg&ch={:s}";
-static constexpr auto EPG2_TEMPLATE_JSON = L"http://api.gazoni1.com/get/?type=epg&ch={:s}";
-
 
 uri_sharaclub::uri_sharaclub()
 {
-	epg2 = true;
-	epg_params[0]["epg_root"] = "";
+	epg_params[0].epg_root = "";
+	epg_params[0].epg_url = L"http://api.sramtv.com/get/?type=epg&ch={ID}";
+	epg_params[1].epg_root = "";
+	epg_params[1].epg_url = L"http://api.gazoni1.com/get/?type=epg&ch={ID}";
 }
 
 void uri_sharaclub::parse_uri(const std::wstring& url)
@@ -92,11 +93,6 @@ std::wstring uri_sharaclub::get_templated_stream(StreamSubType subType, const Te
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_sharaclub::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(epg_idx == 0 ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_sharaclub::get_playlist_template(const PlaylistTemplateParams& params) const

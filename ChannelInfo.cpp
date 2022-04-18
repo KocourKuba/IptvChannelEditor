@@ -62,8 +62,8 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	stream_uri->set_template(true);
 	stream_uri->set_id(rapidxml::get_value_wstring(node->first_node(utils::CHANNEL_ID)));
 	stream_uri->set_int_id(rapidxml::get_value_wstring(node->first_node(utils::INT_ID)));
-	set_epg1_id(rapidxml::get_value_wstring(node->first_node(utils::EPG1_ID)));
-	set_epg2_id(rapidxml::get_value_wstring(node->first_node(utils::EPG2_ID)));
+	set_epg_id(0, rapidxml::get_value_wstring(node->first_node(utils::EPG1_ID)));
+	set_epg_id(1, rapidxml::get_value_wstring(node->first_node(utils::EPG2_ID)));
 	set_icon_uri(rapidxml::get_value_wstring(node->first_node(ICON_URL)));
 	set_disabled(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::DISABLED))) == "true");
 	set_favorite(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::FAVORITE))) == "true");
@@ -116,15 +116,15 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	}
 
 	// <epg_id>8</epg_id>
-	if (!get_epg1_id().empty() && get_epg1_id() != L"0")
+	if (!get_epg_id(0).empty() && get_epg_id(0) != L"0")
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::EPG1_ID, utils::utf16_to_utf8(get_epg1_id()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::EPG1_ID, utils::utf16_to_utf8(get_epg_id(0)).c_str()));
 	}
 
 	// <tvg_id>1</tvg_id>
-	if (!get_epg2_id().empty() && get_epg2_id() != L"0")
+	if (!get_epg_id(1).empty() && get_epg_id(1) != L"0")
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::EPG2_ID, utils::utf16_to_utf8(get_epg2_id()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::EPG2_ID, utils::utf16_to_utf8(get_epg_id(1)).c_str()));
 	}
 
 	// <icon_url>plugin_file://icons/channels/pervyi.png</icon_url>

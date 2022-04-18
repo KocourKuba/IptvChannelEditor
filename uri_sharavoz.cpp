@@ -36,8 +36,12 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://sharavoz.tk/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://api.program.spr24.net/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
-static constexpr auto EPG2_TEMPLATE_JSON = L"http://epg.arlekino.tv/api/program?epg={:s}&date={:4d}-{:02d}-{:02d}";
+
+uri_sharavoz::uri_sharavoz()
+{
+	epg_params[0].epg_url = L"http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
+	epg_params[1].epg_url = L"http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
+}
 
 void uri_sharavoz::parse_uri(const std::wstring& url)
 {
@@ -75,12 +79,6 @@ std::wstring uri_sharavoz::get_templated_stream(StreamSubType subType, const Tem
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_sharavoz::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	COleDateTime dt = COleDateTime::GetCurrentTime();
-	return fmt::format(epg_idx == 0 ? EPG1_TEMPLATE_JSON : EPG2_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::wstring uri_sharavoz::get_playlist_template(const PlaylistTemplateParams& params) const

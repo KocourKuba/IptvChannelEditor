@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_glanz.h"
+#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,6 +44,10 @@ static constexpr auto REPL_LOGIN = L"{LOGIN}";
 static constexpr auto REPL_PASSWORD = L"{PASSWORD}";
 static constexpr auto REPL_INT_ID = L"{INT_ID}";
 static constexpr auto REPL_HOST = L"{HOST}";
+
+uri_glanz::uri_glanz() : epg_technic({ L"iptvxone", L"iptvx" })
+{
+}
 
 void uri_glanz::parse_uri(const std::wstring& url)
 {

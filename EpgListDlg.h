@@ -61,7 +61,6 @@ public:
 	int m_epg_idx = 0;
 	BaseInfo* m_info = nullptr;
 	std::array<std::map<std::wstring, std::map<time_t, EpgInfo>>, 2>* m_epg_cache = nullptr;
-	std::map<std::wstring, std::wstring>* m_epg_mapper = nullptr;
 
 protected:
 	CListCtrl m_wndEpgList;

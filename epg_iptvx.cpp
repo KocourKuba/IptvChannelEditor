@@ -24,22 +24,17 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-#pragma once
-#include "epg_technic.h"
+#include "pch.h"
+#include "epg_iptvx.h"
 
-class uri_edem : public epg_technic
+epg_iptvx::epg_iptvx()
 {
-public:
-
-	uri_edem();
-
-	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;
-	std::wstring get_playlist_template(const PlaylistTemplateParams& params) const override;
-
-	std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const override
-	{
-		static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"} };
-		return streams;
-	};
-};
+	auto& params = epg_params[0];
+	params.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
+	params.epg_root = "ch_programme";
+	params.epg_name = "title";
+	params.epg_desc = "description";
+	params.epg_start = "start";
+	params.epg_end = "";
+	params.epg_time_format = "%d-%m-%Y %H:%M";
+}

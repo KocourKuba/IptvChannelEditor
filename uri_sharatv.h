@@ -31,7 +31,7 @@ class uri_sharatv : public epg_technic
 {
 public:
 
-	uri_sharatv() : epg_technic({ L"shara-tv", L"shara-tv" }) {}
+	uri_sharatv();
 
 	void parse_uri(const std::wstring& url) override;
 	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;

@@ -508,7 +508,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	const auto& plugin = StreamContainer::get_instance(plugin_type);
 	const auto& streams = plugin->get_supported_stream_type();
-	m_epg_mapper.swap(plugin->get_tvg_id_mapper());
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();
@@ -1101,8 +1100,8 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 					const auto& entry = found->second;
 					if ((bCmpTitle && channel->get_title() != entry->get_title())
 						|| (bCmpArchive && entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
-						|| (bCmpEpg1 && !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id())
-						|| (bCmpEpg2 && !entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
+						|| (bCmpEpg1 && !entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0))
+						|| (bCmpEpg2 && !entry->get_epg_id(1).empty() && channel->get_epg_id(1) != entry->get_epg_id(1))
 						|| (bCmpIcon && !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
 						)
 					{
@@ -1156,7 +1155,7 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 				const auto& channel = pair->second;
 				if (channel->get_title() != entry->get_title()
 					|| (entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
-					|| (!entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id())
+					|| (!entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0))
 					|| (!entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
 					)
 				{
@@ -1196,8 +1195,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 	const auto& channel = FindChannel(hItem);
 	if (channel)
 	{
-		m_epgID1 = channel->get_epg1_id().c_str();
-		m_epgID2 = StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2() ? channel->get_epg2_id().c_str() : L"";
+		m_epgID1 = channel->get_epg_id(0).c_str();
+		m_epgID2 = StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2() ? channel->get_epg_id(1).c_str() : L"";
 
 		const auto& uri = channel->stream_uri;
 
@@ -1281,8 +1280,8 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
 		m_plID.Format(_T("%s"), entry->stream_uri->get_id().c_str());
 
-		if (!entry->get_epg1_id().empty())
-			m_plEPG.Format(_T("%s"), entry->get_epg1_id().c_str());
+		if (!entry->get_epg_id(0).empty())
+			m_plEPG.Format(_T("%s"), entry->get_epg_id(0).c_str());
 
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
 		m_archivePlDays = entry->get_archive_days();
@@ -1324,15 +1323,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 		now += m_timeShiftHours;
 	}
 
-	auto& epg_id = epg_idx == 0 ? info->get_epg1_id() : info->get_epg2_id();
-	const auto& mapper = m_epg_mapper[epg_idx];
-	if (!mapper.empty())
-	{
-		if (const auto& pair = mapper.find(epg_id); pair != mapper.end())
-		{
-			epg_id = pair->second;
-		}
-	}
+	auto& epg_id = info->get_epg_id(epg_idx);
 
 	auto& allEpgMap = m_epg_cache[epg_idx];
 	auto& epgChannelMap = allEpgMap[epg_id];
@@ -1354,7 +1345,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			}
 		}
 
-		if (need_load && !info->stream_uri->parse_epg(epg_idx, epg_id, epgChannelMap, now, GetConfig().get_int(true, REG_USE_EPG_PROXY)))
+		if (need_load && !info->stream_uri->parse_epg(epg_idx, epg_id, epgChannelMap, now))
 		{
 			need_load = false;
 		}
@@ -2409,21 +2400,6 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckArchive()
 	set_allow_save();
 }
 
-void CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID()
-{
-	UpdateData(TRUE);
-
-	if (m_wndChannelsTree.GetSelectedCount() == 1)
-	{
-		const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
-		if (channel)
-		{
-			channel->set_epg2_id(m_epgID2.GetString());
-			set_allow_save();
-		}
-	}
-}
-
 void CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID()
 {
 	UpdateData(TRUE);
@@ -2434,9 +2410,24 @@ void CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID()
 		const auto& channel = FindChannel(hSelected);
 		if (channel)
 		{
-			channel->set_epg1_id(m_epgID1.GetString());
+			channel->set_epg_id(0, m_epgID1.GetString());
 			UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(hSelected));
 			CheckForExistingPlaylist();
+			set_allow_save();
+		}
+	}
+}
+
+void CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID()
+{
+	UpdateData(TRUE);
+
+	if (m_wndChannelsTree.GetSelectedCount() == 1)
+	{
+		const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
+		if (channel)
+		{
+			channel->set_epg_id(1, m_epgID2.GetString());
 			set_allow_save();
 		}
 	}
@@ -2630,7 +2621,6 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
 		dlg.m_info = info;
 		dlg.m_epg_cache= &m_epg_cache;
-		dlg.m_epg_mapper = &m_epg_mapper[dlg.m_epg_idx];
 		dlg.DoModal();
 	}
 }
@@ -4405,15 +4395,15 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 	}
 
 	// is tvg_id changed?
-	if (bCmpEpg1 && !entry->get_epg1_id().empty() && channel->get_epg1_id() != entry->get_epg1_id())
+	if (bCmpEpg1 && !entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0))
 	{
-		channel->set_epg1_id(entry->get_epg1_id());
+		channel->set_epg_id(0, entry->get_epg_id(0));
 		needCheckExisting = true;
 	}
 
-	if (bCmpEpg2 && StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2() && !entry->get_epg2_id().empty() && channel->get_epg2_id() != entry->get_epg2_id())
+	if (bCmpEpg2 && StreamContainer::get_instance(GetConfig().get_plugin_type())->has_epg2() && !entry->get_epg_id(1).empty() && channel->get_epg_id(1) != entry->get_epg_id(1))
 	{
-		channel->set_epg2_id(entry->get_epg2_id());
+		channel->set_epg_id(1, entry->get_epg_id(1));
 		needCheckExisting = true;
 	}
 
@@ -4637,11 +4627,11 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 		m_toolTipText.Format(IDS_STRING_FMT_CHANNELS_TOOLTIP1,
 							 entry->get_title().c_str(),
 							 entry->stream_uri->is_template() ? ch_id.c_str() : custom.GetString(),
-							 entry->get_epg1_id().c_str());
+							 entry->get_epg_id(0).c_str());
 
-		if (!entry->get_epg2_id().empty())
+		if (!entry->get_epg_id(1).empty())
 		{
-			m_toolTipText.AppendFormat(IDS_STRING_FMT_CHANNELS_TOOLTIP2, entry->get_epg2_id().c_str());
+			m_toolTipText.AppendFormat(IDS_STRING_FMT_CHANNELS_TOOLTIP2, entry->get_epg_id(1).c_str());
 		}
 
 		CString adult;
@@ -4674,7 +4664,7 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 		m_toolTipText.Format(IDS_STRING_FMT_PLAYLIST_TOOLTIPS,
 							 entry->get_title().c_str(),
 							 entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : custom.GetString(),
-							 entry->get_epg1_id().c_str(),
+							 entry->get_epg_id(0).c_str(),
 							 entry->get_archive_days(),
 							 adult.GetString());
 

@@ -419,19 +419,6 @@ abstract class Default_Config
     public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
     {
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
-
-        if ($this->get_epg_param('use_epg_mapper', 'first')) {
-            $mapper = HD::MapTvgID($this->get_epg_param('epg_mapper_url', 'first'));
-            hd_print("TVG ID Mapped: " . count($mapper));
-            $this->set_epg_param('tvg_id_mapper', $mapper, 'first');
-        }
-
-        if ($this->get_epg_param('use_epg_mapper', 'second')) {
-            $mapper = HD::MapTvgID($this->get_epg_param('epg_mapper_url', 'second'));
-            hd_print("TVG ID Mapped: " . count($mapper));
-            $this->set_epg_param('tvg_id_mapper', $mapper, 'second');
-        }
-
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
             if (preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $line, $matches)) {

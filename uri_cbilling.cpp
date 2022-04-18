@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PlayListEntry.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -42,11 +43,12 @@ static constexpr auto PLAYLIST_TEMPLATE = L"http://247on.cc/playlist/{:s}_otp_de
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://protected-api.com/epg/{:s}/?date=";
 
 uri_cbilling::uri_cbilling()
 {
-	epg_params[0]["epg_root"] = "";
+	auto& params = epg_params[0];
+	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+	params.epg_root = "";
 }
 
 void uri_cbilling::parse_uri(const std::wstring& url)
@@ -146,12 +148,6 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 	JSON_ALL_CATCH;
 
 	return false;
-}
-
-std::wstring uri_cbilling::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
-	return fmt::format(EPG1_TEMPLATE_JSON, id, dt.GetYear(), dt.GetMonth(), dt.GetDay());
 }
 
 std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& params) const

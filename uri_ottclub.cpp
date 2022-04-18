@@ -37,7 +37,11 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://myott.top/playlist/{:s}/m3u";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/stream/{TOKEN}/{ID}.m3u8";
-static constexpr auto EPG1_TEMPLATE_JSON = L"http://myott.top/api/channel/{:s}";
+
+uri_ottclub::uri_ottclub()
+{
+	epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
+}
 
 void uri_ottclub::parse_uri(const std::wstring& url)
 {
@@ -78,11 +82,6 @@ std::wstring uri_ottclub::get_templated_stream(StreamSubType subType, const Temp
 	replace_vars(url, params);
 
 	return url;
-}
-
-std::wstring uri_ottclub::get_epg_uri_json(int epg_idx, const std::wstring& id, time_t for_time /*= 0*/) const
-{
-	return fmt::format(EPG1_TEMPLATE_JSON, id);
 }
 
 std::wstring uri_ottclub::get_playlist_template(const PlaylistTemplateParams& params) const
