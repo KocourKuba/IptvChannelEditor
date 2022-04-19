@@ -141,10 +141,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
             Control_Factory::add_image_button($defs, $this, null, 'epg_source', 'Использовать вторичный источник EPG:',
                 self::$on_off_ops[$epg_source], $this->plugin->get_image_path(self::$on_off_img[$epg_source]));
-        } else if ($this->plugin->config->get_feature(PROXIED_EPG)) {
-            $epg_proxy = isset($plugin_cookies->use_epg_proxy) ? $plugin_cookies->use_epg_proxy : SetupControlSwitchDefs::switch_off;
-            Control_Factory::add_image_button($defs, $this, null, 'epg_proxy', 'Использовать EPG Proxy:',
-                self::$on_off_ops[$epg_proxy], $this->plugin->get_image_path(self::$on_off_img[$epg_proxy]));
         }
 
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
@@ -478,16 +474,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                             : SetupControlSwitchDefs::switch_epg1;
                     } else {
                         $plugin_cookies->epg_source = SetupControlSwitchDefs::switch_epg1;
-                    }
-                    break;
-
-                case 'epg_proxy':
-                    if (isset($plugin_cookies->use_epg_proxy)) {
-                        $plugin_cookies->use_epg_proxy = ($plugin_cookies->use_epg_proxy === SetupControlSwitchDefs::switch_on)
-                            ? SetupControlSwitchDefs::switch_off
-                            : SetupControlSwitchDefs::switch_on;
-                    } else {
-                        $plugin_cookies->use_epg_proxy = SetupControlSwitchDefs::switch_on;
                     }
                     break;
 

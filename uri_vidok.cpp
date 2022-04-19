@@ -43,6 +43,8 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
 
 uri_vidok::uri_vidok()
 {
+	streams = { {StreamSubType::enHLS, L"HLS"} };
+
 	auto& params = epg_params[0];
 	params.epg_url = L"http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
 	params.epg_root = "epg";
@@ -98,7 +100,7 @@ std::wstring uri_vidok::get_templated_stream(StreamSubType subType, const Templa
 
 	return url;
 }
-std::wstring uri_vidok::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_vidok::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));
 }

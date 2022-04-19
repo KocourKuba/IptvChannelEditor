@@ -228,10 +228,10 @@
     <ClInclude Include="UrlDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="epg_technic.h">
+    <ClInclude Include="epg_iptvx.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
-    <ClInclude Include="epg_iptvx.h">
+    <ClInclude Include="epg_technic.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
   </ItemGroup>
@@ -395,13 +395,7 @@
     <ClCompile Include="UrlDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="epg_technic.cpp">
-      <Filter>Source Files\uri</Filter>
-    </ClCompile>
     <ClCompile Include="uri_stream.cpp">
-      <Filter>Source Files\uri</Filter>
-    </ClCompile>
-    <ClCompile Include="epg_iptvx.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>

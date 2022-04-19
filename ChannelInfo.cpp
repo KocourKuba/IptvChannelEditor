@@ -110,9 +110,9 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// used in glanz
 	// <int_id>1</int_id>
-	if (!stream_uri->get_int_id().empty())
+	if (!stream_uri->get_internal_id().empty())
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::INT_ID, utils::utf16_to_utf8(stream_uri->get_int_id()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::INT_ID, utils::utf16_to_utf8(stream_uri->get_internal_id()).c_str()));
 	}
 
 	// <epg_id>8</epg_id>

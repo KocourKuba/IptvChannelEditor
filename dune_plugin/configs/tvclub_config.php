@@ -19,13 +19,12 @@ class TvclubPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/p/{TOKEN}/{ID}');
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg?token={TOKEN}&channels={CHANNEL}&time={TIME}&period=24', 'first');
-        $this->set_epg_param('epg_root', 'epg|channels|0|epg', 'first');
-        $this->set_epg_param('start', 'start', 'first');
-        $this->set_epg_param('end', 'end', 'first');
-        $this->set_epg_param('title', 'text', 'first');
-        $this->set_epg_param('description', 'description', 'first');
-        $this->set_epg_param('date_format', 'dmy', 'first');
+        $this->set_epg_param('first','epg_url', self::API_HOST . '/epg?token={TOKEN}&channels={CHANNEL}&time={TIME}&period=24');
+        $this->set_epg_param('first','epg_root', 'epg|channels|0|epg');
+        $this->set_epg_param('first','epg_start', 'start');
+        $this->set_epg_param('first','epg_end', 'end');
+        $this->set_epg_param('first','epg_title', 'text');
+        $this->set_epg_param('first','epg_desc', 'description');
     }
 
     /**

@@ -33,6 +33,6 @@ public:
 	uri_itv();
 	void parse_uri(const std::wstring& url) override;
 	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;
-	std::wstring get_playlist_template(const PlaylistTemplateParams& params) const override;
+	std::wstring get_playlist_url(const PlaylistTemplateParams& params) const override;
 	bool parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const override;
 };

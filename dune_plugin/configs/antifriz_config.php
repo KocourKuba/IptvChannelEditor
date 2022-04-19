@@ -25,8 +25,8 @@ class AntifrizPluginConfig extends Default_Config
         $this->set_feature(VOD_LAZY_LOAD, true);
         $this->set_feature(EXTINF_VOD_PATTERN, '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|');
 
-        $this->set_epg_param('epg_root', '', 'first');
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}/?date=', 'first');
+        $this->set_epg_param('first','epg_root', '');
+        $this->set_epg_param('first','epg_url', self::API_HOST . '/epg/{CHANNEL}/?date=');
     }
 
     /**

@@ -16,12 +16,12 @@ class ItvPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}');
         $this->set_feature(SQUARE_ICONS, true);
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}', 'first');
-        $this->set_epg_param('epg_root', 'res', 'first');
-        $this->set_epg_param('start', 'startTime', 'first');
-        $this->set_epg_param('end', 'stopTime', 'first');
-        $this->set_epg_param('title', 'title', 'first');
-        $this->set_epg_param('description', 'desc', 'first');
+        $this->set_epg_param('first','epg_url', self::API_HOST . '/epg/{CHANNEL}');
+        $this->set_epg_param('first','epg_root', 'res');
+        $this->set_epg_param('first','epg_start', 'startTime');
+        $this->set_epg_param('first','epg_end', 'stopTime');
+        $this->set_epg_param('first','epg_title', 'title');
+        $this->set_epg_param('first','epg_desc', 'desc');
     }
 
     /**

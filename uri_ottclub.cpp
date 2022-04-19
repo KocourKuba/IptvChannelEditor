@@ -41,6 +41,7 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/stream/{TOKEN}/{ID
 uri_ottclub::uri_ottclub()
 {
 	epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
+	streams = { {StreamSubType::enHLS, L"HLS"} };
 }
 
 void uri_ottclub::parse_uri(const std::wstring& url)
@@ -84,7 +85,7 @@ std::wstring uri_ottclub::get_templated_stream(StreamSubType subType, const Temp
 	return url;
 }
 
-std::wstring uri_ottclub::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_ottclub::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

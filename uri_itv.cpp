@@ -104,7 +104,7 @@ std::wstring uri_itv::get_templated_stream(StreamSubType subType, const Template
 	return url;
 }
 
-std::wstring uri_itv::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_itv::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

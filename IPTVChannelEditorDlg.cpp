@@ -636,7 +636,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 	else
 	{
-		url = StreamContainer::get_instance(plugin_type)->get_playlist_template(params);
+		url = StreamContainer::get_instance(plugin_type)->get_playlist_url(params);
 	}
 
 	if (url.empty())
@@ -767,7 +767,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 						&& !stream->get_domain().empty()
 						&& !stream->get_login().empty()
 						&& !stream->get_password().empty()
-						&& !stream->get_int_id().empty()
+						&& !stream->get_internal_id().empty()
 						&& !stream->get_host().empty()
 						)
 					{

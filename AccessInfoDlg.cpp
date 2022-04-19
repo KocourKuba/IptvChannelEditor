@@ -467,7 +467,7 @@ void CAccessInfoDlg::GetAccountInfo()
 	params.device = m_wndDeviceID.GetCurSel() + 1;
 	params.login = m_login;
 	params.password = m_password;
-	std::wstring pl_url = uri->get_playlist_template(params);
+	std::wstring pl_url = uri->get_playlist_url(params);
 
 	std::list<AccountInfo> acc_info;
 	if (uri->parse_access_info(params, acc_info))

@@ -56,37 +56,30 @@ class Epg_Manager
             throw new Exception("EPG: $epg_id not defined");
         }
 
-        if ($params['use_epg_mapper']) {
-            $mapper = $params['tvg_id_mapper'];
+        if ($params['epg_use_mapper']) {
+            $mapper = $params['epg_id_mapper'];
             if (empty($mapper)) {
                 $mapper = HD::MapTvgID($params('epg_mapper_url'));
                 hd_print("TVG ID Mapped: " . count($mapper));
-                $this->config->set_epg_param('tvg_id_mapper', $mapper, $type);
+                $this->config->set_epg_param($type, 'epg_id_mapper', $mapper);
             }
 
             if (array_key_exists($epg_id, $mapper)) {
                 hd_print("EPG id replaced: $epg_id -> " . $mapper[$epg_id]);
                 $epg_id = $mapper[$epg_id];
             }
-        } else if ($params['use_epg_hash']) {
+        } else if ($params['epg_use_hash']) {
             $xx_hash = new V32();
             $epg_id = $xx_hash->hash($epg_id);
         } else {
             $epg_id = str_replace(' ', '%20', $epg_id);
         }
 
-        $epg_date = gmdate($params['date_format'], $day_start_ts);
+        $epg_date = gmdate($params['epg_date_format'], $day_start_ts);
         $epg_url = str_replace(
             array('{TOKEN}', '{CHANNEL}', '{DATE}', '{TIME}'),
             array(isset($plugin_cookies->token) ? $plugin_cookies->token : '', $epg_id, $epg_date, $day_start_ts),
             $params['epg_url']);
-
-        if (isset($plugin_cookies->use_epg_proxy)
-            && $plugin_cookies->use_epg_proxy === 'yes'
-            && $this->config->get_feature(PROXIED_EPG) === true) {
-
-            $epg_url = str_replace('epg.ott-play.com', 'epg.esalecrm.net', $epg_url);
-        }
 
         hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 
@@ -94,10 +87,11 @@ class Epg_Manager
         $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $this->config->PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);
 
         if (file_exists($cache_file)) {
-            hd_print("Load EPG from cache: $cache_file");
             $epg = unserialize(file_get_contents($cache_file));
+            $counts = count($epg);
+            hd_print("Loaded $counts EPG entries from cache: $cache_file");
         } else {
-            switch ($params['parser']) {
+            switch ($params['epg_parser']) {
                 case 'json':
                     $epg = self::get_epg_json($epg_url, $params, $day_start_ts);
                     break;
@@ -133,7 +127,7 @@ class Epg_Manager
      */
     protected static function get_epg_json($url, $parser_params, $day_start_ts)
     {
-        $epg = array();
+        $day_epg = array();
         // time in UTC
         $epg_date_start = strtotime('-1 hour', $day_start_ts);
         $epg_date_end = strtotime('+1 day', $day_start_ts);
@@ -144,11 +138,11 @@ class Epg_Manager
             $doc = HD::http_get_document($url);
             if (empty($doc)) {
                 hd_print("Empty document returned.");
-                return $epg;
+                return $day_epg;
             }
         } catch (Exception $ex) {
             hd_print("http exception: " . $ex->getMessage());
-            return $epg;
+            return $day_epg;
         }
 
         // stripe UTF8 BOM if exists
@@ -160,26 +154,45 @@ class Epg_Manager
             }
         }
         // hd_print("json epg root: " . $parser_params['epg_root']);
-        // hd_print("json start: " . $parser_params['start']);
-        // hd_print("json end: " . $parser_params['end']);
-        // hd_print("json title: " . $parser_params['title']);
-        // hd_print("json desc: " . $parser_params['description']);
+        // hd_print("json start: " . $parser_params['epg_start']);
+        // hd_print("json end: " . $parser_params['epg_end']);
+        // hd_print("json title: " . $parser_params['epg_title']);
+        // hd_print("json desc: " . $parser_params['epg_desc']);
 
         hd_print("total entries: " . count($ch_data));
         // collect all program that starts after day start and before day end
+        $prev_start = 0;
+        $no_end = empty($parser_params['epg_end']);
+        $no_timestamp = !empty($parser_params['epg_time_format']);
+        $use_duration = $parser_params['epg_use_duration'];
         foreach ($ch_data as $entry) {
-            $program_start = $entry[$parser_params['start']];
+            $program_start = $entry[$parser_params['epg_start']];
+            if ($no_timestamp) {
+                // time not the timestamp
+                $dt = DateTime::createFromFormat($parser_params['epg_time_format'], $program_start, new DateTimeZone($parser_params['epg_timezone']));
+                $program_start = $dt->setTimezone(new DateTimeZone('UTC'))->getTimestamp();
+            }
+
             if ($epg_date_start <= $program_start && $program_start <= $epg_date_end) {
-                if ($parser_params['use_duration']) {
-                    $epg[$program_start]['end'] = $program_start + (int)$entry[$parser_params['end']];
+                if ($use_duration) {
+                    $day_epg[$program_start]['epg_end'] = $program_start + (int)$entry[$parser_params['epg_end']];
+                } else if ($no_end) {
+                    if ($prev_start !== 0) {
+                        $day_epg[$prev_start]['epg_end'] = $program_start;
+                    }
+                    $prev_start = $program_start;
                 } else {
-                    $epg[$program_start]['end'] = $entry[$parser_params['end']];
+                    $day_epg[$program_start]['epg_end'] = (int)$entry[$parser_params['epg_end']];
                 }
-                $epg[$program_start]['title'] = HD::unescape_entity_string($entry[$parser_params['title']]);
-                $epg[$program_start]['desc'] = HD::unescape_entity_string($entry[$parser_params['description']]);
+                $day_epg[$program_start]['epg_title'] = HD::unescape_entity_string($entry[$parser_params['epg_title']]);
+                $day_epg[$program_start]['epg_desc'] = HD::unescape_entity_string($entry[$parser_params['epg_desc']]);
             }
         }
-        return $epg;
+
+        if ($no_end && $prev_start !== 0) {
+            $day_epg[$prev_start]['epg_end'] = $prev_start + 60 * 60; // fake end
+        }
+        return $day_epg;
     }
 
     /**
@@ -220,8 +233,8 @@ class Epg_Manager
             } else {
                 foreach ($epg_data as $channel) {
                     if ($channel->time >= $epg_date_start && $channel->time < $epg_date_end) {
-                        $epg[$channel->time]['title'] = HD::unescape_entity_string($channel->name);
-                        $epg[$channel->time]['desc'] = HD::unescape_entity_string($channel->descr);
+                        $epg[$channel->time]['epg_title'] = HD::unescape_entity_string($channel->name);
+                        $epg[$channel->time]['epg_desc'] = HD::unescape_entity_string($channel->descr);
                     }
                 }
             }

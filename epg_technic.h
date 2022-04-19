@@ -30,5 +30,21 @@ DEALINGS IN THE SOFTWARE.
 class epg_technic : public uri_stream
 {
 public:
-	epg_technic(std::array<std::wstring, 2> sources);
+
+	epg_technic(std::array<std::wstring, 2> sources)
+	{
+		const auto& api_url = L"http://technic.cf/epg-" + sources[0];
+		auto& params = epg_params[0];
+		params.epg_use_mapper = true;
+		params.epg_url = api_url + L"/epg_day?id={ID}&day={DATE}";
+		params.epg_mapper_url = api_url + L"/channels";
+		params.epg_date_format = L"{:04d}.{:02d}.{:02d}";
+		params.epg_root = "data";
+		params.epg_name = "title";
+		params.epg_desc = "description";
+		params.epg_start = "begin";
+		params.epg_end = "end";
+	}
+
+	virtual ~epg_technic() = default;
 };

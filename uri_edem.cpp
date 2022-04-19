@@ -40,6 +40,7 @@ static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/inde
 uri_edem::uri_edem() : epg_technic({ L"it999", L"it999" })
 {
 	epg_params[0].epg_use_mapper = false;
+	streams = { {StreamSubType::enHLS, L"HLS"} };
 }
 
 void uri_edem::parse_uri(const std::wstring& url)
@@ -74,7 +75,7 @@ std::wstring uri_edem::get_templated_stream(StreamSubType subType, const Templat
 	return url;
 }
 
-std::wstring uri_edem::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_edem::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return params.number == 0 ? PLAYLIST_TEMPLATE1 : PLAYLIST_TEMPLATE2;
 }

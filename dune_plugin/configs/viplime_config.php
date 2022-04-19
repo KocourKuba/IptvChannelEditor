@@ -4,7 +4,6 @@ require_once 'default_config.php';
 class ViplimePluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://cdntv.online/high/%s/playlist.m3u8';
-    const API_HOST = 'http://epg.esalecrm.net/viplime';
 
     public function __construct()
     {
@@ -14,8 +13,8 @@ class ViplimePluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8');
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg/{CHANNEL}.json', 'first');
-        $this->set_epg_param('use_epg_hash', true, 'first');
+        $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/viplime/epg/{CHANNEL}.json');
+        $this->set_epg_param('first','epg_use_hash', true);
     }
 
     /**

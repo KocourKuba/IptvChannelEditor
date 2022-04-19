@@ -30,5 +30,30 @@ DEALINGS IN THE SOFTWARE.
 class epg_iptvx : public uri_stream
 {
 public:
-	epg_iptvx();
+
+	epg_iptvx()
+	{
+		auto& params1 = epg_params[0];
+		params1.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
+		params1.epg_root = "ch_programme";
+		params1.epg_name = "title";
+		params1.epg_desc = "description";
+		params1.epg_start = "start";
+		params1.epg_end = "";
+		params1.epg_time_format = "%d-%m-%Y %H:%M";
+		params1.epg_tz = 60 * 60 * 3; // iptvx.one uses moscow time (GMT+3)
+
+		auto& params2 = epg_params[1];
+		params2.epg_use_mapper = true;
+		params2.epg_url = L"http://technic.cf/epg-iptvxone/epg_day?id={ID}&day={DATE}";
+		params2.epg_mapper_url = L"http://technic.cf/epg-iptvxone/channels";
+		params2.epg_date_format = L"{:04d}.{:02d}.{:02d}";
+		params2.epg_root = "data";
+		params2.epg_name = "title";
+		params2.epg_desc = "description";
+		params2.epg_start = "begin";
+		params2.epg_end = "end";
+	}
+
+	virtual ~epg_iptvx() = default;
 };

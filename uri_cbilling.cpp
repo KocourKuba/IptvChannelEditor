@@ -49,6 +49,7 @@ uri_cbilling::uri_cbilling()
 	auto& params = epg_params[0];
 	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params.epg_root = "";
+	streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enHLS2, L"HLS2"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 }
 
 void uri_cbilling::parse_uri(const std::wstring& url)
@@ -150,7 +151,7 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 	return false;
 }
 
-std::wstring uri_cbilling::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_cbilling::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.device);
 }

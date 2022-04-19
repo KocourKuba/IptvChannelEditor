@@ -326,8 +326,6 @@ goto :EOF
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="EditableListCtrl.cpp" />
     <ClCompile Include="EpgListDlg.cpp" />
-    <ClCompile Include="epg_iptvx.cpp" />
-    <ClCompile Include="epg_technic.cpp" />
     <ClCompile Include="GetStreamInfoThread.cpp" />
     <ClCompile Include="HistoryCombo.cpp" />
     <ClCompile Include="IconCache.cpp" />

@@ -19,7 +19,7 @@ uri_stream::uri_stream()
 	epg_params = { params, params };
 }
 
-uri_stream::uri_stream(const uri_stream& src) : uri_stream()
+uri_stream::uri_stream(const uri_stream& src)
 {
 	*this = src;
 }
@@ -33,7 +33,6 @@ void uri_stream::clear()
 
 void uri_stream::parse_uri(const std::wstring& url)
 {
-	// http://rtmp.api.rt.com/hls/rtdru.m3u8
 	clear();
 	uri_base::set_uri(url);
 }
@@ -49,12 +48,6 @@ const int uri_stream::get_hash() const
 	}
 
 	return hash;
-}
-
-std::vector<std::tuple<StreamSubType, std::wstring>>& uri_stream::get_supported_stream_type() const
-{
-	static std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
-	return streams;
 }
 
 const std::map<std::wstring, std::wstring>& uri_stream::get_epg_id_mapper(int epg_idx)
@@ -110,14 +103,14 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 		bool added = false;
 		const auto& root = get_epg_root(epg_idx, parsed_json);
 		const auto& params = epg_params[epg_idx];
-		std::map<time_t, EpgInfo>::iterator last = epg_map.end();
+		time_t prev_start = 0;
 		for (const auto& item : root.items())
 		{
 			const auto& val = item.value();
 
 			EpgInfo epg_info;
-			epg_info.name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_value(params.epg_name, val))));
-			epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_value(params.epg_desc, val))));
+			epg_info.name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_string_value(params.epg_name, val))));
+			epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_string_value(params.epg_desc, val))));
 
 			if (params.epg_time_format.empty())
 			{
@@ -126,18 +119,20 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 			else
 			{
 				std::tm tm = {};
-				std::stringstream ss(get_json_value(params.epg_start, val));
+				std::stringstream ss(get_json_string_value(params.epg_start, val));
 				ss >> std::get_time(&tm, params.epg_time_format.c_str());
-				epg_info.time_start = std::mktime(&tm);
+				epg_info.time_start = _mkgmtime(&tm); // parsed time assumed as GMT+00
 			}
+
+			epg_info.time_start -= params.epg_tz; // substract real epg GMT
 
 			if (params.epg_end.empty())
 			{
-				epg_info.time_end = epg_info.time_start;
-				if (last != epg_map.end())
+				if (prev_start != 0)
 				{
-					last->second.time_end = epg_info.time_start;
+					epg_map[prev_start].time_end = epg_info.time_start;
 				}
+				prev_start = epg_info.time_start;
 			}
 			else
 			{
@@ -152,16 +147,20 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 #ifdef _DEBUG
 			COleDateTime ts(epg_info.time_start);
 			COleDateTime te(epg_info.time_end);
-			epg_info.start = fmt::format(L"{:04d}-{:02d}-{:02d}", ts.GetYear(), ts.GetMonth(), ts.GetDay());
-			epg_info.end = fmt::format(L"{:04d}-{:02d}-{:02d}", te.GetYear(), te.GetMonth(), te.GetDay());
+			epg_info.start = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", ts.GetYear(), ts.GetMonth(), ts.GetDay(), ts.GetHour(), ts.GetMinute());
+			epg_info.end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
 #endif // _DEBUG
 
 			if (epg_info.time_start != 0)
 			{
 				auto it = epg_map.emplace(epg_info.time_start, epg_info);
 				added |= it.second;
-				last = it.first;
 			}
+		}
+
+		if (params.epg_end.empty() && prev_start != 0)
+		{
+			epg_map[prev_start].time_end = epg_map[prev_start].time_start + 60 * 60; // fake end
 		}
 
 		return added;
@@ -180,10 +179,8 @@ std::wstring uri_stream::compile_epg_url(int epg_idx, const std::wstring& epg_id
 		const auto& mapper = get_epg_id_mapper(epg_idx);
 		if (!mapper.empty())
 		{
-			if (const auto& pair = mapper.find(epg_id); pair != mapper.end())
-			{
-				subst_id = pair->second;
-			}
+			const auto& pair = mapper.find(epg_id);
+			subst_id = (pair != mapper.end()) ? pair->second : epg_id;
 		}
 	}
 	else if (params.epg_use_id_hash)
@@ -218,7 +215,7 @@ nlohmann::json uri_stream::get_epg_root(int epg_idx, const nlohmann::json& epg_d
 	return root.empty() ? epg_data : epg_data[root];
 }
 
-void uri_stream::put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params)
+void uri_stream::put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params) const
 {
 	JSON_ALL_TRY
 	{
@@ -265,12 +262,12 @@ std::wstring& uri_stream::append_archive(std::wstring& url) const
 	return url;
 }
 
-std::string uri_stream::get_json_value(const std::string& key, const nlohmann::json& val)
+std::string uri_stream::get_json_string_value(const std::string& key, const nlohmann::json& val) const
 {
 	return val.contains(key) && val[key].is_string() ? val[key] : "";
 }
 
-time_t uri_stream::get_json_int_value(const std::string& key, const nlohmann::json& val)
+time_t uri_stream::get_json_int_value(const std::string& key, const nlohmann::json& val) const
 {
 	if (val[key].is_number())
 	{

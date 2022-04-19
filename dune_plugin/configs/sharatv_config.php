@@ -4,7 +4,6 @@ require_once 'default_config.php';
 class SharatvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://tvfor.pro/g/%s:%s/1/playlist.m3u';
-    const API_HOST = 'http://technic.cf/epg-shara-tv';
 
     public function __construct()
     {
@@ -15,15 +14,15 @@ class SharatvPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/{TOKEN}');
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg_day?id={CHANNEL}&day={DATE}', 'first');
-        $this->set_epg_param('epg_root', 'data', 'first');
-        $this->set_epg_param('start', 'begin', 'first');
-        $this->set_epg_param('end', 'end', 'first');
-        $this->set_epg_param('title', 'title', 'first');
-        $this->set_epg_param('description', 'description', 'first');
-        $this->set_epg_param('date_format', 'Y.m.d', 'first');
-        $this->set_epg_param('use_epg_mapper', true, 'first');
-        $this->set_epg_param('epg_mapper_url', self::API_HOST . '/channels', 'first');
+        $this->set_epg_param('first','epg_url','http://technic.cf/epg-shara-tv/epg_day?id={CHANNEL}&day={DATE}');
+        $this->set_epg_param('first','epg_root', 'data');
+        $this->set_epg_param('first','epg_start', 'begin');
+        $this->set_epg_param('first','epg_end', 'end');
+        $this->set_epg_param('first','epg_title', 'title');
+        $this->set_epg_param('first','epg_desc', 'description');
+        $this->set_epg_param('first','epg_date_format', 'Y.m.d');
+        $this->set_epg_param('first','epg_use_mapper', true);
+        $this->set_epg_param('first','epg_mapper_url', 'http://technic.cf/epg-shara-tv/channels');
     }
 
     /**

@@ -71,6 +71,7 @@ struct EpgParameters
 	bool epg_use_mapper = false;
 	bool epg_use_id_hash = false;
 	bool epg_use_duration = false;
+	size_t epg_tz = 0;
 	std::wstring epg_url;
 	std::wstring epg_mapper_url;
 	std::wstring epg_date_format;
@@ -108,12 +109,6 @@ public:
 	/// clear uri
 	/// </summary>
 	void clear() override;
-
-	/// <summary>
-	/// parse uri to get id
-	/// </summary>
-	/// <param name="url"></param>
-	virtual void parse_uri(const std::wstring& url);
 
 	/// <summary>
 	/// getter channel id
@@ -185,7 +180,7 @@ public:
 	/// getter int_id
 	/// </summary>
 	/// <returns>string</returns>
-	const std::wstring& get_int_id() const { return int_id; };
+	const std::wstring& get_internal_id() const { return int_id; };
 
 	/// <summary>
 	/// setter host
@@ -208,40 +203,6 @@ public:
 	/// setter token
 	/// </summary>
 	void set_token(const std::wstring& val) { token = val; };
-
-	/// <summary>
-	/// get templated url
-	/// </summary>
-	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
-	/// <param name="params">parameters for generating url</param>
-	/// <returns>string url</returns>
-	virtual std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const { return L""; };
-
-	/// <summary>
-	/// get additional get headers
-	/// </summary>
-	/// <returns>std::wstring</returns>
-	virtual std::wstring get_access_info_header() const { return L""; }
-
-	/// <summary>
-	/// parse access info
-	/// </summary>
-	/// <returns>bool</returns>
-	virtual bool parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const { return false; }
-
-	/// <summary>
-	/// get url template to obtain account playlist
-	/// </summary>
-	/// <param name="first">number of playlist url</param>
-	/// <returns></returns>
-	virtual std::wstring get_playlist_template(const PlaylistTemplateParams& params) const { ASSERT(false); return L""; };
-
-	/// <summary>
-	/// get url template to obtain account playlist
-	/// </summary>
-	/// <param name="first">number of playlist url</param>
-	/// <returns></returns>
-	virtual std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const { return L""; };
 
 	/// <summary>
 	/// copy info
@@ -285,35 +246,119 @@ public:
 		return *this;
 	}
 
-	virtual std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const;
+	/// <summary>
+	/// supported streams HLS,MPEGTS etc.
+	/// </summary>
+	/// <returns>vector&</returns>
+	const std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const { return streams; }
 
+	/// <summary>
+	/// returns epg mapper
+	/// </summary>
+	/// <param name="epg_idx">index of epg, primary/secondary</param>
+	/// <returns>map&</returns>
 	const std::map<std::wstring, std::wstring>& get_epg_id_mapper(int epg_idx);
 
+	/// <summary>
+	/// is stream has secondary epg
+	/// </summary>
+	/// <returns>bool</returns>
 	bool has_epg2() const { return !epg_params[1].epg_url.empty(); };
 
+	/// <summary>
+	/// parse epg for channel.
+	/// </summary>
+	/// <param name="epg_idx">index of epg, primary/secondary</param>
+	/// <param name="epg_id">channel epg id</param>
+	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
+	/// <param name="for_time">date to request</param>
+	/// <returns>bool</returns>
 	bool parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time);
 
+	/// <summary>
+	/// returns compiled epg url for channel
+	/// </summary>
+	/// <param name="epg_idx">index of epg, primary/secondary</param>
+	/// <param name="epg_id">channel epg id</param>
+	/// <param name="for_time">date to request</param>
+	/// <returns>wstring</returns>
 	std::wstring compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time);
 
-protected:
+	//////////////////////////////////////////////////////////////////////////
+	// virtual methods
+
 	/// <summary>
-	/// json root for epg iteration
+	/// parse uri to get id
 	/// </summary>
-	/// <returns>string</returns>
+	/// <param name="url"></param>
+	virtual void parse_uri(const std::wstring& url);
+
+	/// <summary>
+	/// get templated url
+	/// </summary>
+	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
+	/// <param name="params">parameters for generating url</param>
+	/// <returns>string url</returns>
+	virtual std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const { return L""; };
+
+	/// <summary>
+	/// get additional get headers
+	/// </summary>
+	/// <returns>wstring</returns>
+	virtual std::wstring get_access_info_header() const { return L""; }
+
+	/// <summary>
+	/// parse access info
+	/// </summary>
+	/// <param name="params">parameters used to download access info</param>
+	/// <param name="info_list">parsed parameters list</param>
+	/// <returns>bool</returns>
+	virtual bool parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const { return false; }
+
+	/// <summary>
+	/// get url to obtain account playlist
+	/// </summary>
+	/// <param name="params">parameters used to download access info</param>
+	/// <returns>wstring</returns>
+	virtual std::wstring get_playlist_url(const PlaylistTemplateParams& params) const { ASSERT(false); return L""; };
+
+	/// <summary>
+	/// returns token from account if exist
+	/// </summary>
+	/// <param name="login">login</param>
+	/// <param name="password">password</param>
+	/// <returns>wstring</returns>
+	virtual std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const { return L""; };
+
+	/// <summary>
+	/// returns json root for epg iteration
+	/// </summary>
+	/// <param name="epg_idx">index of epg, primary/secondary</param>
+	/// <param name="epg_data">downloaded json</param>
+	/// <returns>json entry pointed to epg list</returns>
 	virtual nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const;
 
+	/// <summary>
+	/// add archive parameters to url
+	/// </summary>
+	/// <param name="url">url/secondary</param>
+	/// <returns>wstring&</returns>
 	virtual std::wstring& append_archive(std::wstring& url) const;
+
+protected:
 
 	void replace_vars(std::wstring& url, const TemplateParams& params) const;
 
-	static void put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params);
+	void put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
-	static std::string get_json_value(const std::string& key, const nlohmann::json& val);
+	std::string get_json_string_value(const std::string& key, const nlohmann::json& val) const;
 
-	static time_t get_json_int_value(const std::string& key, const nlohmann::json& val);
+	time_t get_json_int_value(const std::string& key, const nlohmann::json& val) const;
 
 protected:
 	std::array <EpgParameters, 2> epg_params;
+	std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
+
 	std::wstring id;
 	std::wstring domain;
 	std::wstring login;
@@ -321,7 +366,6 @@ protected:
 	std::wstring token;
 	std::wstring int_id;
 	std::wstring host;
-	std::wstring uri_template;
 	mutable std::wstring str_hash;
 	mutable int hash = 0;
 };

@@ -38,10 +38,6 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto PLAYLIST_TEMPLATE = L"http://iptv.online/play/{:s}/m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
 
-uri_iptvonline::uri_iptvonline() : epg_technic({ L"iptvxone", L"iptvx" })
-{
-}
-
 void uri_iptvonline::parse_uri(const std::wstring& url)
 {
 	// http://cz.iptv.monster/play/73/38798DB9DF4EA8F/video.m3u8
@@ -101,7 +97,7 @@ std::wstring uri_iptvonline::get_templated_stream(StreamSubType subType, const T
 	return url;
 }
 
-std::wstring uri_iptvonline::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_iptvonline::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

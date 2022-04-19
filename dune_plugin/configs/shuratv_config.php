@@ -15,13 +15,13 @@ class ShuratvPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
         $this->set_feature(SERVER_SUPPORTED, true);
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}/epg/range14-7.json', 'first');
-        $this->set_epg_param('epg_root', '', 'first');
-        $this->set_epg_param('start', 'start_time', 'first');
-        $this->set_epg_param('end', 'duration', 'first');
-        $this->set_epg_param('title', 'name', 'first');
-        $this->set_epg_param('description', 'text', 'first');
-        $this->set_epg_param('use_duration', true, 'first');
+        $this->set_epg_param('first','epg_url','http://s1.tvshka.net/{CHANNEL}/epg/range14-7.json');
+        $this->set_epg_param('first','epg_root', '');
+        $this->set_epg_param('first','epg_start', 'start_time');
+        $this->set_epg_param('first','epg_end', 'duration');
+        $this->set_epg_param('first','epg_title', 'name');
+        $this->set_epg_param('first','epg_desc', 'text');
+        $this->set_epg_param('first','epg_use_duration', true);
     }
 
     /**

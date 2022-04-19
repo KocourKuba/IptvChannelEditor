@@ -30,5 +30,7 @@ DEALINGS IN THE SOFTWARE.
 class uri_channels : public uri_stream
 {
 public:
+	uri_channels() = default;
+
 	void parse_uri(const std::wstring& url) override;
 };

@@ -17,7 +17,6 @@ const MEDIA_URL_TEMPLATE_HLS = 'hls_url';
 const VOD_LAZY_LOAD = 'vod_lazy';
 const EXTINF_VOD_PATTERN = 'vod_pattern';
 const SQUARE_ICONS = 'square_icons';
-const PROXIED_EPG = 'proxied_epg';
 
 abstract class Default_Config
 {
@@ -103,25 +102,26 @@ abstract class Default_Config
         $this->FEATURES[VOD_LAZY_LOAD] = false;
         $this->FEATURES[EXTINF_VOD_PATTERN] = '';
         $this->FEATURES[SQUARE_ICONS] = false;
-        $this->FEATURES[PROXIED_EPG] = false;
 
         $default_parser = array();
-        $default_parser['parser'] = 'json';
+        $default_parser['epg_parser'] = 'json';
         $default_parser['epg_url'] = '';
         $default_parser['epg_root'] = 'epg_data';
-        $default_parser['start'] = 'time';
-        $default_parser['end'] = 'time_to';
-        $default_parser['title'] = 'name';
-        $default_parser['description'] = 'descr';
-        $default_parser['date_format'] = 'Y-m-d';
-        $default_parser['use_duration'] = false;
-        $default_parser['use_epg_hash'] = false;
-        $default_parser['use_epg_mapper'] = false;
+        $default_parser['epg_start'] = 'time';
+        $default_parser['epg_end'] = 'time_to';
+        $default_parser['epg_title'] = 'name';
+        $default_parser['epg_desc'] = 'descr';
+        $default_parser['epg_date_format'] = 'Y-m-d';
+        $default_parser['epg_use_duration'] = false;
+        $default_parser['epg_use_hash'] = false;
+        $default_parser['epg_use_mapper'] = false;
         $default_parser['epg_mapper_url'] = '';
-        $default_parser['tvg_id_mapper'] = array();
+        $default_parser['epg_time_format'] = '';
+        $default_parser['epg_timezone'] = 'UTC';
+        $default_parser['epg_id_mapper'] = array();
 
-        $this->set_epg_params($default_parser, 'first');
-        $this->set_epg_params($default_parser, 'second');
+        $this->set_epg_params('first',$default_parser);
+        $this->set_epg_params('second',$default_parser);
     }
 
     /**
@@ -231,7 +231,7 @@ abstract class Default_Config
      * @param array $val
      * @param string $type
      */
-    public function set_epg_params($val, $type)
+    public function set_epg_params($type, $val)
     {
         $this->EPG_PARSER_PARAMS[$type] = $val;
     }
@@ -241,7 +241,7 @@ abstract class Default_Config
      * @param mixed $val
      * @param string $type
      */
-    public function set_epg_param($param, $val, $type)
+    public function set_epg_param($type, $param, $val)
     {
         $this->EPG_PARSER_PARAMS[$type][$param] = $val;
     }

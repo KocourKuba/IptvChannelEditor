@@ -43,6 +43,8 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
 
 uri_tvclub::uri_tvclub()
 {
+	streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
+
 	auto& params = epg_params[0];
 	params.epg_url = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
 	params.epg_name = "text";
@@ -90,7 +92,7 @@ std::wstring uri_tvclub::get_templated_stream(StreamSubType subType, const Templ
 
 	return url;
 }
-std::wstring uri_tvclub::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_tvclub::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));
 }

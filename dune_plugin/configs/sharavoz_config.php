@@ -13,8 +13,8 @@ class SharavozPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/(?:.*)\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}');
 
-        $this->set_epg_param('epg_url', 'http://api.program.spr24.net/api/program?epg={CHANNEL}', 'first');
-        $this->set_epg_param('epg_url', 'http://epg.arlekino.tv/api/program?epg={CHANNEL}', 'second');
+        $this->set_epg_param('first','epg_url', 'http://api.program.spr24.net/api/program?epg={CHANNEL}');
+        $this->set_epg_param('second','epg_url', 'http://epg.arlekino.tv/api/program?epg={CHANNEL}');
     }
 
     /**

@@ -45,10 +45,6 @@ static constexpr auto REPL_PASSWORD = L"{PASSWORD}";
 static constexpr auto REPL_INT_ID = L"{INT_ID}";
 static constexpr auto REPL_HOST = L"{HOST}";
 
-uri_glanz::uri_glanz() : epg_technic({ L"iptvxone", L"iptvx" })
-{
-}
-
 void uri_glanz::parse_uri(const std::wstring& url)
 {
 	// http://str01.ottg.cc/9195/video.m3u8?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL
@@ -103,14 +99,14 @@ std::wstring uri_glanz::get_templated_stream(StreamSubType subType, const Templa
 	// http://{SUBDOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
 	utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
 	utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
-	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, get_int_id());
+	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, get_internal_id());
 	utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);
 	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_glanz::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_glanz::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }

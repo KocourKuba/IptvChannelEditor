@@ -100,7 +100,7 @@ std::wstring uri_oneott::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_oneott::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_oneott::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.token);
 }
@@ -125,7 +125,7 @@ bool uri_oneott::parse_access_info(const PlaylistTemplateParams& params, std::li
 			PlaylistTemplateParams param;
 			param.token = token;
 
-			AccountInfo url{ L"url", get_playlist_template(param) };
+			AccountInfo url{ L"url", get_playlist_url(param) };
 			info_list.emplace_back(url);
 		}
 

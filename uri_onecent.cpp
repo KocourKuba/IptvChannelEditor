@@ -39,10 +39,6 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token
 static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{SUBDOMAIN}/{ID}/index-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 
-uri_onecent::uri_onecent() : epg_technic({ L"iptvxone", L"iptvx" })
-{
-}
-
 void uri_onecent::parse_uri(const std::wstring& url)
 {
 	// http://cdn.only4.tv/20115/index.m3u8?token=MH1LeVsHSD
@@ -92,7 +88,7 @@ std::wstring uri_onecent::get_templated_stream(StreamSubType subType, const Temp
 	return url;
 }
 
-std::wstring uri_onecent::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_onecent::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

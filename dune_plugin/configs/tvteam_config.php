@@ -4,7 +4,6 @@ require_once 'default_config.php';
 class TvteamPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://tv.team/pl/11/%s/playlist.m3u8';
-    const API_HOST = 'http://tv.team';
 
     public function __construct()
     {
@@ -15,7 +14,7 @@ class TvteamPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}');
         $this->set_feature(SQUARE_ICONS, true);
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/{CHANNEL}.json', 'first');
+        $this->set_epg_param('first','epg_url','http://tv.team/{CHANNEL}.json');
     }
 
     /**

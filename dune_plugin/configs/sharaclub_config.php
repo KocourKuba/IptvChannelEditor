@@ -18,10 +18,10 @@ class SharaclubPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
         $this->set_feature(VOD_LAZY_LOAD, true);
 
-        $this->set_epg_param('epg_url', 'http://api.sramtv.com/get/?type=epg&ch={CHANNEL}', 'first');
-        $this->set_epg_param('epg_root', '', 'first');
-        $this->set_epg_param('epg_url', 'http://api.gazoni1.com/get/?type=epg&ch={CHANNEL}', 'second');
-        $this->set_epg_param('epg_root', '', 'second');
+        $this->set_epg_param('first','epg_url', 'http://api.sramtv.com/get/?type=epg&ch={CHANNEL}');
+        $this->set_epg_param('first','epg_root', '');
+        $this->set_epg_param('second','epg_url', 'http://api.gazoni1.com/get/?type=epg&ch={CHANNEL}');
+        $this->set_epg_param('second','epg_root', '');
     }
 
     /**

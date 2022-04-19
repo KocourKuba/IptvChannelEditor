@@ -329,19 +329,12 @@ class Starnet_Tv extends Abstract_Tv
         }
 
         hd_print("Loaded " . count($epg) . " EPG entries");
-
-        $start = 0;
         // get personal time shift for channel
         $time_shift = $channel->get_timeshift_hours() * 3600;
-
         $epg_result = array();
         foreach ($epg as $time => $value) {
-            $tm = $time + $time_shift;
-            if ($start === 0) {
-                $start = $tm;
-            }
-
-            $epg_result[] = new Default_Epg_Item($value['title'], $value['desc'], (int)$tm, (int)$value['end']);
+            $time_start = $time + $time_shift;
+            $epg_result[] = new Default_Epg_Item($value['epg_title'], $value['epg_desc'], (int)$time_start, (int)$value['epg_end']);
         }
 
         return new Epg_Iterator($epg_result, $day_start_ts, $day_start_ts + 86400);

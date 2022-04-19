@@ -98,7 +98,7 @@ std::wstring uri_oneusd::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_oneusd::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_oneusd::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

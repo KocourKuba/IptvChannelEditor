@@ -95,7 +95,7 @@ std::wstring uri_shuratv::get_templated_stream(StreamSubType subType, const Temp
 	return url;
 }
 
-std::wstring uri_shuratv::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_shuratv::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.number);
 }

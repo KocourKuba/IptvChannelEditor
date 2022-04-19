@@ -92,9 +92,17 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		{
 		case StreamType::enEdem:
 		case StreamType::enFox:
+		case StreamType::enSharaTV:
+			break;
 		case StreamType::enGlanz:
 		case StreamType::enOneCent:
-		case StreamType::enSharaTV:
+		case StreamType::enIptvOnline:
+			if (get_epg_id(0).front() == 'X')
+			{
+				const auto& id = get_epg_id(0).substr(1);
+				set_epg_id(0, id); // primary EPG
+				set_epg_id(1, id); // secondary EPG
+			}
 			break;
 		case StreamType::enSharavoz:
 		case StreamType::enOneOtt:
@@ -108,10 +116,6 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		case StreamType::enOttclub:
 			set_epg_id(0, stream_uri->get_id()); // primary EPG
 			set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", stream_uri->get_domain(), stream_uri->get_id()));
-			break;
-		case StreamType::enIptvOnline:
-			if (get_epg_id(0).front() == 'X')
-				set_epg_id(0, get_epg_id(0).substr(1)); // primary EPG
 			break;
 		case StreamType::enVidok:
 			set_icon_uri(fmt::format(L"http://ott.st/logos/{:s}.png", stream_uri->get_id()));

@@ -38,7 +38,7 @@ static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{ID}/{TOKEN}";
 
 uri_sharatv::uri_sharatv() : epg_technic({ L"shara-tv", L"shara-tv" })
 {
-
+	streams = { {StreamSubType::enHLS, L"HLS"} };
 }
 
 void uri_sharatv::parse_uri(const std::wstring& url)
@@ -73,7 +73,7 @@ std::wstring uri_sharatv::get_templated_stream(StreamSubType subType, const Temp
 	return url;
 }
 
-std::wstring uri_sharatv::get_playlist_template(const PlaylistTemplateParams& params) const
+std::wstring uri_sharatv::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }

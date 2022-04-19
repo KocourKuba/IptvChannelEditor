@@ -3,8 +3,6 @@ require_once 'default_config.php';
 
 class EdemPluginConfig extends Default_Config
 {
-    const API_HOST = 'http://technic.cf/epg-it999';
-
     public function __construct()
     {
         parent::__construct();
@@ -17,13 +15,13 @@ class EdemPluginConfig extends Default_Config
         $this->set_feature(VOD_PORTAL_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
 
-        $this->set_epg_param('epg_url', self::API_HOST . '/epg_day?id={CHANNEL}&day={DATE}', 'first');
-        $this->set_epg_param('epg_root', 'data', 'first');
-        $this->set_epg_param('start', 'begin', 'first');
-        $this->set_epg_param('end', 'end', 'first');
-        $this->set_epg_param('title', 'title', 'first');
-        $this->set_epg_param('description', 'description', 'first');
-        $this->set_epg_param('date_format', 'Y.m.d', 'first');
+        $this->set_epg_param('first','epg_url','http://technic.cf/epg-it999/epg_day?id={CHANNEL}&day={DATE}');
+        $this->set_epg_param('first','epg_root', 'data');
+        $this->set_epg_param('first','epg_start', 'begin');
+        $this->set_epg_param('first','epg_end', 'end');
+        $this->set_epg_param('first','epg_title', 'title');
+        $this->set_epg_param('first','epg_desc', 'description');
+        $this->set_epg_param('first','epg_date_format', 'Y.m.d');
     }
 
     /**
