@@ -35,11 +35,6 @@ class V32
         fwrite($file, $input);
         rewind($file);
 
-        if (!isset($this)) {
-            $hash = new self();
-            return $hash->hashStream($file);
-        }
-
         return $this->hashStream($file);
     }
 
@@ -49,11 +44,6 @@ class V32
      */
     public function hashStream($input)
     {
-        if (!isset($this)) {
-            $hash = new self();
-            return $hash->hashStream($input);
-        }
-
         if (get_resource_type($input) !== 'stream') {
             throw new InvalidArgumentException();
         }
@@ -71,10 +61,7 @@ class V32
                 $lane = $this->getLane($part, ($iteration * 4));
 
                 $current = &$accumulators[$iteration];
-                $current = $this->add(
-                    $current,
-                    $this->multiply($lane, self::PRIME_2)
-                );
+                $current = $this->add($current, $this->multiply($lane, self::PRIME_2));
                 $current = $this->leftShift($current, 13);
                 $current = $this->multiply($current, self::PRIME_1);
             }

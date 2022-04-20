@@ -16,7 +16,8 @@ class LightiptvPluginConfig extends Default_Config
         $this->set_feature(SQUARE_ICONS, true);
 
         $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/lightiptv/epg/{CHANNEL}.json');
-        $this->set_epg_param('first','epg_use_hash', true);
+        //$this->set_epg_param('first','epg_url','http://epg.esalecrm.net/lightiptv/epg/{CHANNEL}.json');
+        //$this->set_epg_param('first','epg_use_hash', true);
     }
 
     /**
