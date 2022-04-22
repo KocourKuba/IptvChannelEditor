@@ -33,7 +33,7 @@ namespace utils
 {
 bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, unsigned short& port);
 
-bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, std::wstring* pHeaders = nullptr);
+bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, bool use_cache = false, std::wstring* pHeaders = nullptr);
 
 bool WriteDataToFile(const std::wstring& path, std::vector<unsigned char>& vData);
 

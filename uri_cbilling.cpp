@@ -128,7 +128,7 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 {
 	auto& header = fmt::format(ACCOUNT_HEADER_TEMPLATE, params.password);
 	std::vector<BYTE> data;
-	if (!utils::DownloadFile(ACCOUNT_TEMPLATE, data, &header) || data.empty())
+	if (!utils::DownloadFile(ACCOUNT_TEMPLATE, data, false, &header) || data.empty())
 	{
 		return false;
 	}

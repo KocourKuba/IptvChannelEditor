@@ -31,11 +31,20 @@ DEALINGS IN THE SOFTWARE.
 #include <winhttp.h>
 #include <atltrace.h>
 #include <unordered_map>
+#include <filesystem>
+#include "xxhash.hpp"
 
 #pragma comment(lib, "Winhttp.lib")
 
 namespace utils
 {
+
+template <typename T>
+std::time_t to_time_t(T tp)
+{
+	auto systp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp - T::clock::now() + std::chrono::system_clock::now());
+	return std::chrono::system_clock::to_time_t(systp);
+}
 
 bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, unsigned short& port)
 {
@@ -58,9 +67,30 @@ bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, u
 	return false;
 }
 
-bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, std::wstring* pHeaders /*= nullptr*/)
+bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, bool use_cache /*= false*/, std::wstring* pHeaders /*= nullptr*/)
 {
+	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(fmt::format(L"{:08x}", xxh::xxhash<32>(url)));
 	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
+	if (use_cache && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
+	{
+		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
+		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
+		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		int diff = int(now - file_time);
+		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
+		// cache ttl 1 day
+		if (diff < 60 * 60 * 24)
+		{
+			std::ifstream in_file(cache_file.c_str());
+			if (in_file.good())
+			{
+				vData.assign((std::istreambuf_iterator<char>(in_file)), std::istreambuf_iterator<char>());
+				ATLTRACE(L"\nloaded from cache: %d bytes\n", vData.size());
+				return !vData.empty();
+			}
+		}
+	}
+
 	std::wstring host;
 	std::wstring path;
 	WORD port = INTERNET_DEFAULT_HTTP_PORT;
@@ -153,6 +183,13 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, st
 	if (hRequest) WinHttpCloseHandle(hRequest);
 	if (hConnect) WinHttpCloseHandle(hConnect);
 	if (hSession) WinHttpCloseHandle(hSession);
+
+	if (use_cache && !vData.empty())
+	{
+		std::ofstream out_stream(cache_file, std::ios::out | std::ios::binary);
+		out_stream.write((char*)vData.data(), vData.size());
+		out_stream.close();
+	}
 
 	return !vData.empty();
 }

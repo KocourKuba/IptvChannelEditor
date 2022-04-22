@@ -30,5 +30,10 @@ DEALINGS IN THE SOFTWARE.
 
 // add headers that you want to pre-compile here
 #include "framework.h"
+#include <filesystem>
+#include <fstream>
+#include <chrono>
+
+#include <fmt/xchar.h>
 
 #endif //PCH_H
