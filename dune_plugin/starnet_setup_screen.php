@@ -98,13 +98,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         }
 
         //////////////////////////////////////
-        // vportal dialog
-        if ($this->plugin->config->get_feature(VOD_PORTAL_SUPPORTED)) {
-            Control_Factory::add_image_button($defs, $this, null, 'portal_dialog', 'Активировать VPortal:', 'Ввести ключ',
-                $this->plugin->get_image_path('text.png'));
-        }
-
-        //////////////////////////////////////
         // channels path
         $display_path = $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
         if (strlen($display_path) > 30) {
@@ -152,6 +145,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         Control_Factory::add_image_button($defs, $this, null, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль',
             $this->plugin->get_image_path('text.png'));
 
+        //////////////////////////////////////
+        // clear epg cache
+        Control_Factory::add_button($defs, $this, null, 'clear_epg_cache', 'Очистить кэш EPG:', 'Очистить', 0);
+
         Control_Factory::add_vgap($defs, 10);
 
         return $defs;
@@ -177,12 +174,16 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $defs = array();
         $ott_key = isset($plugin_cookies->ott_key) ? $plugin_cookies->ott_key : '';
         $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
+        $vportal = isset($plugin_cookies->mediateka) ? $plugin_cookies->mediateka : '';
 
         Control_Factory::add_text_field($defs, $this, null, 'subdomain', 'Введите домен:',
             $subdomain, false, false, false, true, 600);
 
         Control_Factory::add_text_field($defs, $this, null, 'ott_key', 'Введите ОТТ ключ:',
             $ott_key, false, true, false, true, 600);
+
+        Control_Factory::add_text_field($defs, $this, null, 'vportal', 'Введите VPORTAL ключ:',
+            $vportal, false, false, false, true, 600);
 
         Control_Factory::add_vgap($defs, 50);
 
@@ -397,6 +398,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 case 'ott_key_apply': // handle ott key dialog result
                     $plugin_cookies->ott_key = $user_input->ott_key;
                     $plugin_cookies->subdomain = $user_input->subdomain;
+                    $plugin_cookies->mediateka = $user_input->vportal;
+                    hd_print("portal info: $plugin_cookies->mediateka");
                     return $this->reload_channels($plugin_cookies);
 
                 case 'login_dialog': // token dialog
@@ -433,16 +436,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                     return $this->reload_channels($plugin_cookies);
 
-                case 'portal_dialog': // portal dialog
-                    $defs = $this->do_get_portal_control_defs($plugin_cookies);
-                    return Action_Factory::show_dialog('Переключение регистра кнопкой Select',
-                        $defs, true);
-
-                case 'portal_apply': // handle portal dialog result
-                    $plugin_cookies->mediateka = $user_input->url;
-                    hd_print("portal info: $plugin_cookies->mediateka");
-                    return null;
-
                 case 'change_list_path':
                     $media_url = MediaURL::encode(
                         array(
@@ -455,14 +448,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                 case 'channels_list':
                     $old_value = $plugin_cookies->channels_list;
-                    $this->plugin->tv->unload_channels();
-                    try {
-                        $plugin_cookies->channels_list = $new_value;
-                        $this->plugin->tv->load_channels($plugin_cookies);
-                    } catch (Exception $e) {
-                        hd_print("Load channel list failed: $new_value");
+                    $plugin_cookies->channels_list = $new_value;
+                    $res = $this->reload_channels($plugin_cookies);
+                    if ($res === false) {
                         $plugin_cookies->channels_list = $old_value;
-                        Action_Factory::show_title_dialog("Ошибка загрузки плейлиста! " . $e->getMessage());
+                        Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
                     }
                     $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
                     return Action_Factory::invalidate_folders(array('tv_group_list'), $post_action);
@@ -529,6 +519,16 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                         $msg = 'Пароль изменен!';
                     }
                     return Action_Factory::show_title_dialog($msg);
+                case 'clear_epg_cache': // clear epg cache
+                    $epg_path = DuneSystem::$properties['tmp_dir_path'] . "/epg";
+                    hd_print("do clear epg: $epg_path");
+                    foreach(glob($epg_path . "/*") as $file) {
+                        if(is_file($file)) {
+                            hd_print("erase: $file");
+                            unlink($file);
+                        }
+                    }
+                    return Action_Factory::show_title_dialog('Кэш EPG очищен');
             }
         }
 
@@ -536,7 +536,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     }
 
     /**
-     * @return array
+     * @return array|false
      */
     protected function reload_channels(&$plugin_cookies)
     {
@@ -546,6 +546,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             $this->plugin->tv->load_channels($plugin_cookies);
         } catch (Exception $e) {
             hd_print("Reload channel list failed: $plugin_cookies->channels_list");
+            return false;
         }
         $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
         return Action_Factory::invalidate_folders(array('tv_group_list'), $post_action);
