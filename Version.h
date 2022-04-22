@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 #include "VerGIT.h"
 
 #define MAJOR	2
-#define MINOR	6
+#define MINOR	7
 #define SPECIAL 0
 
 #define FILEVER        MAJOR,MINOR,BUILD,SPECIAL
