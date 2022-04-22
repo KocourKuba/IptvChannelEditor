@@ -73,6 +73,8 @@ class Epg_Manager
         }
 
         $epg_date = gmdate($params['epg_date_format'], $day_start_ts);
+        $full_epg = (strpos("{DATE}", $params['epg_url']) === false);
+        $full_epg |= (strpos("{TIME}", $params['epg_url']) === false);
         $epg_url = str_replace(
             array('{TOKEN}', '{CHANNEL}', '{DATE}', '{TIME}'),
             array(isset($plugin_cookies->token) ? $plugin_cookies->token : '', $epg_id, $epg_date, $day_start_ts),
@@ -81,55 +83,72 @@ class Epg_Manager
         hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 
         $cache_dir = DuneSystem::$properties['tmp_dir_path'] . "/epg";
-        $cache_file = sprintf("%s/epg_channel_%s_%s", $cache_dir, $channel->get_id(), $day_start_ts);
-
-        if (file_exists($cache_file)) {
-            $epg = unserialize(file_get_contents($cache_file));
-            $counts = count($epg);
-            hd_print("Loaded $counts EPG entries from cache: $cache_file");
+        if ($full_epg) {
+            $cache_file = sprintf("%s/epg_channel_%s", $cache_dir, $channel->get_id());
         } else {
-            switch ($params['epg_parser']) {
-                case 'json':
-                    $epg = self::get_epg_json($epg_url, $params, $day_start_ts);
-                    break;
-                case 'xml':
-                    $epg = self::get_epg_xml($epg_url, $day_start_ts, $epg_id, $cache_dir);
-                    break;
-                default:
-                    $epg = array();
-            }
+            $cache_file = sprintf("%s/epg_channel_%s_%s", $cache_dir, $channel->get_id(), $day_start_ts);
+        }
 
-            // sort epg by date
-            $counts = count($epg);
-            if ($counts > 0) {
-                hd_print("Save $counts EPG entries to cache: $cache_file");
-                if (!is_dir($cache_dir) && !mkdir($cache_dir) && !is_dir($cache_dir)) {
-                    hd_print("Directory '$cache_dir' was not created");
-                }
-
-                ksort($epg, SORT_NUMERIC);
-                file_put_contents($cache_file, serialize($epg));
+        $from_cache = false;
+        $epg = array();
+        if (file_exists($cache_file)) {
+            $now = time();
+            $cache_expired = filemtime($cache_file) + 60 * 60 * 24;
+            hd_print("Cache expired at $cache_expired now $now");
+            if ($cache_expired > time()) {
+                $epg = unserialize(file_get_contents($cache_file));
+                $from_cache = (count($epg) !== 0);
+                hd_print("Loading EPG entries from cache: $cache_file - " . ($from_cache ? "success" : "failed"));
             }
         }
 
-        return $epg;
+        if ($from_cache === false && $params['epg_parser'] === 'json') {
+            $epg = self::get_epg_json($epg_url, $params);
+        }
+
+        $out_epg = array();
+        $counts = count($epg);
+        hd_print("Total entries: $counts");
+        if ($counts !== 0) {
+            // entries present
+            if (!is_dir($cache_dir) && !(mkdir($cache_dir) && is_dir($cache_dir))) {
+                hd_print("Directory '$cache_dir' was not created");
+            } else {
+                // if not in cache save downloaded data
+                if ($from_cache === false) {
+                    // save downloaded epg
+                    self::save_cache($epg, $cache_file);
+                }
+
+                // filter out epg only for selected day
+                $epg_date_start = strtotime('-1 hour', $day_start_ts);
+                $epg_date_end = strtotime('+1 day', $day_start_ts);
+                hd_print("Fetch entries from: $epg_date_start to: $epg_date_end");
+                foreach ($epg as $time_start => $entry) {
+                    if ($epg_date_start <= $time_start && $time_start <= $epg_date_end) {
+                        $out_epg[$time_start] = $entry;
+                    }
+                }
+            }
+        }
+
+        return $out_epg;
+    }
+
+    protected static function save_cache($day_epg, $cache_file) {
+        ksort($day_epg, SORT_NUMERIC);
+        file_put_contents($cache_file, serialize($day_epg));
     }
 
     /**
      * request server for epg and parse json response
      * @param string $url
      * @param array $parser_params
-     * @param int $day_start_ts
      * @return array
      */
-    protected static function get_epg_json($url, $parser_params, $day_start_ts)
+    protected static function get_epg_json($url, $parser_params)
     {
         $day_epg = array();
-        // time in UTC
-        $epg_date_start = strtotime('-1 hour', $day_start_ts);
-        $epg_date_end = strtotime('+1 day', $day_start_ts);
-        // hd_print("epg start: $epg_date_start");
-        // hd_print("epg end: $epg_date_end");
 
         try {
             $doc = HD::http_get_document($url);
@@ -156,7 +175,6 @@ class Epg_Manager
         // hd_print("json title: " . $parser_params['epg_title']);
         // hd_print("json desc: " . $parser_params['epg_desc']);
 
-        hd_print("total entries: " . count($ch_data));
         // collect all program that starts after day start and before day end
         $prev_start = 0;
         $no_end = empty($parser_params['epg_end']);
@@ -170,20 +188,18 @@ class Epg_Manager
                 $program_start = $dt->setTimezone(new DateTimeZone('UTC'))->getTimestamp();
             }
 
-            if ($epg_date_start <= $program_start && $program_start <= $epg_date_end) {
-                if ($use_duration) {
-                    $day_epg[$program_start]['epg_end'] = $program_start + (int)$entry[$parser_params['epg_end']];
-                } else if ($no_end) {
-                    if ($prev_start !== 0) {
-                        $day_epg[$prev_start]['epg_end'] = $program_start;
-                    }
-                    $prev_start = $program_start;
-                } else {
-                    $day_epg[$program_start]['epg_end'] = (int)$entry[$parser_params['epg_end']];
+            if ($use_duration) {
+                $day_epg[$program_start]['epg_end'] = $program_start + (int)$entry[$parser_params['epg_end']];
+            } else if ($no_end) {
+                if ($prev_start !== 0) {
+                    $day_epg[$prev_start]['epg_end'] = $program_start;
                 }
-                $day_epg[$program_start]['epg_title'] = HD::unescape_entity_string($entry[$parser_params['epg_title']]);
-                $day_epg[$program_start]['epg_desc'] = HD::unescape_entity_string($entry[$parser_params['epg_desc']]);
+                $prev_start = $program_start;
+            } else {
+                $day_epg[$program_start]['epg_end'] = (int)$entry[$parser_params['epg_end']];
             }
+            $day_epg[$program_start]['epg_title'] = HD::unescape_entity_string($entry[$parser_params['epg_title']]);
+            $day_epg[$program_start]['epg_desc'] = HD::unescape_entity_string($entry[$parser_params['epg_desc']]);
         }
 
         if ($no_end && $prev_start !== 0) {

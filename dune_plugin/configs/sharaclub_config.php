@@ -83,7 +83,6 @@ class SharaclubPluginConfig extends Default_Config
             $url .= (strpos($url, '?') === false) ? '?' : '&';
             $url .= "utc=$archive_ts";
             // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
         }
 
         return $url;
