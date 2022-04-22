@@ -34,6 +34,15 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 case 'do_setup':
                     hd_print("do setup");
                     return Action_Factory::open_folder('setup', 'Настройки ' . DuneSystem::$properties['plugin_name']);
+                case 'do_clear_epg':
+                    $epg_path = DuneSystem::$properties['tmp_dir_path'] . "/epg";
+                    hd_print("do clear epg: $epg_path");
+                    foreach(glob($epg_path . "/*") as $file) {
+                        if(is_file($file)) {
+                            unlink($file);
+                        }
+                    }
+                    return Action_Factory::show_title_dialog('Кэш EPG очищен');
                 case 'plugin_entry':
                     if (isset($user_input->action_id) && $user_input->action_id === 'launch') {
                         if ((int)$user_input->mandatory_playback === 1) {

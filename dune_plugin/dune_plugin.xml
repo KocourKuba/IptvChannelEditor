@@ -48,6 +48,17 @@
                         </action>
                     </menu_item>
                     <menu_item>
+                        <caption>Очистить кэш EPG</caption>
+                        <icon_url>gui_skin://small_icons/subtitles_settings.aai</icon_url>
+                        <action>
+                            <type>plugin_handle_user_input</type>
+                            <params>
+                                <handler_id>entry_handler</handler_id>
+                                <control_id>do_clear_epg</control_id>
+                            </params>
+                        </action>
+                    </menu_item>
+                    <menu_item>
                         <caption>Перезагрузить плеер</caption>
                         <icon_url>gui_skin://small_icons/service_file.aai</icon_url>
                         <action>

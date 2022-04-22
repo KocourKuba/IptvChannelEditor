@@ -5,9 +5,6 @@ require_once 'epg_xml_parser.php';
 
 class Epg_Manager
 {
-    const EPG_CACHE_DIR_TEMPLATE = '/tmp/%s_epg/';
-    const EPG_CACHE_FILE_TEMPLATE = '/tmp/%s_epg/epg_channel_%s_%s';
-
     /**
      * @var Default_Config
      */
@@ -83,8 +80,8 @@ class Epg_Manager
 
         hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 
-        $cache_dir = sprintf(self::EPG_CACHE_DIR_TEMPLATE, $this->config->PLUGIN_SHORT_NAME);
-        $cache_file = sprintf(self::EPG_CACHE_FILE_TEMPLATE, $this->config->PLUGIN_SHORT_NAME, $channel->get_id(), $day_start_ts);
+        $cache_dir = DuneSystem::$properties['tmp_dir_path'] . "/epg";
+        $cache_file = sprintf("%s/epg_channel_%s_%s", $cache_dir, $channel->get_id(), $day_start_ts);
 
         if (file_exists($cache_file)) {
             $epg = unserialize(file_get_contents($cache_file));
@@ -213,7 +210,7 @@ class Epg_Manager
         try {
             // checks if epg already loaded
             preg_match('/^.*\/(.+)$/', $url, $match);
-            $epgCacheFile = $cache_dir . $day_start_ts . '_' . $match[1];
+            $epgCacheFile = sprintf("%s/%s_%s", $cache_dir, $match[1], $day_start_ts);
             if (!file_exists($epgCacheFile)) {
                 hd_print("epg uri: $url");
                 $doc = HD::http_get_document($url);

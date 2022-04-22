@@ -134,7 +134,7 @@ class Action_Factory
         if ($multiline !== null) {
             Control_Factory::add_multiline_label($defs, '', $multiline, 15);
         }
-        Control_Factory::add_custom_close_dialog_and_apply_buffon($defs, 'apply_subscription', 'OK', 300, $post_action);
+        Control_Factory::add_custom_close_dialog_and_apply_buffon($defs, 'close_button', 'OK', 300, $post_action);
 
         return self::show_dialog($title, $defs, false, $preferred_width);
     }
