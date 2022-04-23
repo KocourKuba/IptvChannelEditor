@@ -1316,12 +1316,19 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 		return;
 
 	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
+	int time_shift = m_timeShiftHours * 3600;
 
 	time_t now = time(nullptr) - (time_t)m_archiveCheckDays * 24 * 3600 - (time_t)m_archiveCheckHours * 3600;
 	if (pTreeCtl == &m_wndChannelsTree)
 	{
-		now += m_timeShiftHours;
+		now += time_shift;
 	}
+
+#ifdef _DEBUG
+	COleDateTime tnow(now);
+	std::wstring snow = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", tnow.GetYear(), tnow.GetMonth(), tnow.GetDay(), tnow.GetHour(), tnow.GetMinute());
+	ATLTRACE(L"\n%s\n", snow.c_str());
+#endif // _DEBUG
 
 	auto& epg_id = info->get_epg_id(epg_idx);
 
@@ -1353,8 +1360,8 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 
 	if (epg_info.time_start != 0)
 	{
-		COleDateTime time_s(epg_info.time_start);
-		COleDateTime time_e(epg_info.time_end);
+		COleDateTime time_s(epg_info.time_start - time_shift);
+		COleDateTime time_e(epg_info.time_end - time_shift);
 		CStringA text;
 		text.Format(R"({\rtf1 %ls - %ls\par\b %s\b0\par %s})",
 					time_s.Format(_T("%d.%m.%Y %H:%M:%S")).GetString(),

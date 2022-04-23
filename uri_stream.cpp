@@ -131,6 +131,10 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 				if (prev_start != 0)
 				{
 					epg_map[prev_start].time_end = epg_info.time_start;
+#ifdef _DEBUG
+					COleDateTime te(epg_info.time_start);
+					epg_map[prev_start].end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
+#endif // _DEBUG
 				}
 				prev_start = epg_info.time_start;
 			}
@@ -160,7 +164,7 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 
 		if (params.epg_end.empty() && prev_start != 0)
 		{
-			epg_map[prev_start].time_end = epg_map[prev_start].time_start + 60 * 60; // fake end
+			epg_map[prev_start].time_end = epg_map[prev_start].time_start + 3600; // fake end
 		}
 
 		return added;

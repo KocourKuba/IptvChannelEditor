@@ -29,11 +29,11 @@ class GlanzPluginConfig extends Default_Config
 
         $this->set_epg_param('second','epg_url', 'http://technic.cf/epg-iptvxone/epg_day?id={CHANNEL}&day={DATE}');
         $this->set_epg_param('second','epg_root', 'data');
-        $this->set_epg_param('second','start', 'begin');
-        $this->set_epg_param('second','end', 'end');
-        $this->set_epg_param('second','title', 'title');
-        $this->set_epg_param('second','description', 'description');
-        $this->set_epg_param('second','date_format', 'Y.m.d');
+        $this->set_epg_param('second','epg_start', 'begin');
+        $this->set_epg_param('second','epg_end', 'end');
+        $this->set_epg_param('second','epg_title', 'title');
+        $this->set_epg_param('second','epg_description', 'description');
+        $this->set_epg_param('second','epg_date_format', 'Y.m.d');
         $this->set_epg_param('second','epg_use_mapper', true);
         $this->set_epg_param('second','epg_mapper_url', 'http://technic.cf/epg-iptvxone/channels');
     }

@@ -56,7 +56,7 @@ class Epg_Manager
         if ($params['epg_use_mapper']) {
             $mapper = $params['epg_id_mapper'];
             if (empty($mapper)) {
-                $mapper = HD::MapTvgID($params('epg_mapper_url'));
+                $mapper = HD::MapTvgID($params['epg_mapper_url']);
                 hd_print("TVG ID Mapped: " . count($mapper));
                 $this->config->set_epg_param($type, 'epg_id_mapper', $mapper);
             }
@@ -73,8 +73,6 @@ class Epg_Manager
         }
 
         $epg_date = gmdate($params['epg_date_format'], $day_start_ts);
-        $full_epg = (strpos("{DATE}", $params['epg_url']) === false);
-        $full_epg |= (strpos("{TIME}", $params['epg_url']) === false);
         $epg_url = str_replace(
             array('{TOKEN}', '{CHANNEL}', '{DATE}', '{TIME}'),
             array(isset($plugin_cookies->token) ? $plugin_cookies->token : '', $epg_id, $epg_date, $day_start_ts),
@@ -83,11 +81,7 @@ class Epg_Manager
         hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 
         $cache_dir = DuneSystem::$properties['tmp_dir_path'] . "/epg";
-        if ($full_epg) {
-            $cache_file = sprintf("%s/epg_channel_%s", $cache_dir, $channel->get_id());
-        } else {
-            $cache_file = sprintf("%s/epg_channel_%s_%s", $cache_dir, $channel->get_id(), $day_start_ts);
-        }
+        $cache_file = sprintf("%s/epg_channel_%s", $cache_dir, hash('crc32', $epg_url));
 
         $from_cache = false;
         $epg = array();
@@ -182,10 +176,16 @@ class Epg_Manager
         $use_duration = $parser_params['epg_use_duration'];
         foreach ($ch_data as $entry) {
             $program_start = $entry[$parser_params['epg_start']];
+            hd_print("epg_start $program_start");
+
             if ($no_timestamp) {
-                // time not the timestamp
+                // start time not the timestamp
                 $dt = DateTime::createFromFormat($parser_params['epg_time_format'], $program_start, new DateTimeZone($parser_params['epg_timezone']));
-                $program_start = $dt->setTimezone(new DateTimeZone('UTC'))->getTimestamp();
+                $program_start = $dt->getTimestamp();
+                if (is_need_daylight_fix())
+                    $program_start += 3600;
+
+                hd_print("epg_start: $program_start");
             }
 
             if ($use_duration) {
@@ -198,6 +198,7 @@ class Epg_Manager
             } else {
                 $day_epg[$program_start]['epg_end'] = (int)$entry[$parser_params['epg_end']];
             }
+
             $day_epg[$program_start]['epg_title'] = HD::unescape_entity_string($entry[$parser_params['epg_title']]);
             $day_epg[$program_start]['epg_desc'] = HD::unescape_entity_string($entry[$parser_params['epg_desc']]);
         }

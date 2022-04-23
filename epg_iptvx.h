@@ -41,7 +41,7 @@ public:
 		params1.epg_start = "start";
 		params1.epg_end = "";
 		params1.epg_time_format = "%d-%m-%Y %H:%M";
-		params1.epg_tz = 60 * 60 * 3; // iptvx.one uses moscow time (GMT+3)
+		params1.epg_tz = 3600 * 3; // iptvx.one uses moscow time (GMT+3)
 
 		auto& params2 = epg_params[1];
 		params2.epg_use_mapper = true;

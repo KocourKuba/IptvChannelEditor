@@ -395,6 +395,14 @@ function get_local_time_zone_offset()
     return 0;
 }
 
+function is_need_daylight_fix()
+{
+    $utc = new DateTimeZone('Europe/Moscow');
+    $date = new DateTime('now', new DateTimeZone('UTC'));
+    $diff = $utc->getOffset($date);
+    return (date('I') === '1' && $diff !== 10800);
+}
+
 /**
  * @param string $cmd
  * @return string

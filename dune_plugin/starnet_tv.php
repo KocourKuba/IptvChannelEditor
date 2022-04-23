@@ -334,7 +334,7 @@ class Starnet_Tv extends Abstract_Tv
         $epg_result = array();
         foreach ($epg as $time => $value) {
             $time_start = $time + $time_shift;
-            $epg_result[] = new Default_Epg_Item($value['epg_title'], $value['epg_desc'], (int)$time_start, (int)$value['epg_end']);
+            $epg_result[] = new Default_Epg_Item($value['epg_title'], $value['epg_desc'], (int)$time_start, (int)$value['epg_end'] + $time_shift);
         }
 
         return new Epg_Iterator($epg_result, $day_start_ts, $day_start_ts + 86400);

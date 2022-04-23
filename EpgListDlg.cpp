@@ -95,9 +95,10 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		return;
 
 	m_wndEpgList.DeleteAllItems();
+	int time_shift = m_info->get_time_shift_hours() * 3600;
 
 	CTime nt(sel_time.GetYear(), sel_time.GetMonth(), sel_time.GetDay(), sel_time.GetHour(), sel_time.GetMinute(), sel_time.GetSecond());
-	time_t now = nt.GetTime();
+	time_t now = nt.GetTime() + time_shift;
 
 	CTime st(sel_time.GetYear(), sel_time.GetMonth(), sel_time.GetDay(), 0, 0, 0);
 	time_t start_time = st.GetTime();
@@ -131,10 +132,13 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	for (const auto& epg : *m_pEpgChannelMap)
 	{
-		if (epg.second.time_start < start_time || epg.second.time_start > end_time) continue;
+		time_t shifted_start = epg.first - time_shift;
+		time_t shifted_end = epg.second.time_end - time_shift;
 
-		COleDateTime start(epg.first);
-		COleDateTime end(epg.second.time_end);
+		if (shifted_start < start_time || shifted_start > end_time) continue;
+
+		COleDateTime start(shifted_start);
+		COleDateTime end(shifted_end);
 		int idx = m_wndEpgList.InsertItem(i++, start.Format(_T("%d.%m.%Y %H:%M:%S")));
 		m_wndEpgList.SetItemText(idx, 1, end.Format(_T("%d.%m.%Y %H:%M:%S")));
 		m_wndEpgList.SetItemText(idx, 2, utils::utf8_to_utf16(epg.second.name).c_str());
