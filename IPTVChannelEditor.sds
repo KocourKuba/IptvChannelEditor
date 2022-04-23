@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="93" scanned="20220420221044" built="20220331213858" lang="ru" pane="TLogPane" col="3">
+<desktop scan="94" scanned="20220423212550" built="20220331213858" lang="ru" pane="TLogPane" col="1" row="Dialogs.110.1140.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="1"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

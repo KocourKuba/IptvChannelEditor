@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220420221115" scan="93" scanned="20220420221044">
+<document created="20211012165442" version="4.0.374" date="20220423212617" scan="94" scanned="20220423212550">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220420200030" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220423192416" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -489,7 +489,7 @@
               <lang id="ru" date="20211012171525" savedtotm="1">Информация о потоке</lang>
             </row>
             <row id="X">165</row>
-            <row id="Y">230</row>
+            <row id="Y" changed="20220423212550">245</row>
           </component>
           <component class="TVisGroupBox" name="BUTTON_Channel_Info" type="button" unnamed="1">
             <row id="CX" changed="20211124211848">239</row>
@@ -611,11 +611,31 @@
             <row id="X">255</row>
             <row id="Y">111</row>
           </component>
+          <component class="TVisProgressBar" name="1138" created="20220423212550" type="msctls_progress32" position="60">
+            <row id="CX">177</row>
+            <row id="CY">9</row>
+            <row id="X">198</row>
+            <row id="Y">232</row>
+          </component>
+          <component class="TVisLabel" name="1139" created="20220423212550" type="static" autosize="0" wordwrap="1">
+            <row id="CX">30</row>
+            <row id="CY">9</row>
+            <row id="Text" locked="1">23:59:59</row>
+            <row id="X">165</row>
+            <row id="Y">232</row>
+          </component>
           <component class="TVisBasicControl" name="1100" created="20220320143227" type="RichEdit20W">
             <row id="CX">227</row>
             <row id="CY">80</row>
             <row id="X">171</row>
             <row id="Y">139</row>
+          </component>
+          <component class="TVisLabel" name="1140" created="20220423212550" type="static" autosize="0" wordwrap="1">
+            <row id="CX">21</row>
+            <row id="CY">9</row>
+            <row id="Text" locked="1">00::00</row>
+            <row id="X">380</row>
+            <row id="Y">232</row>
           </component>
           <component class="TVisLabel" name="STATIC_Day" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX" changed="20211012174121">19</row>
@@ -625,7 +645,7 @@
               <lang id="ru" date="20211012171616" savedtotm="1">День</lang>
             </row>
             <row id="X" changed="20211013140524">280</row>
-            <row id="Y">282</row>
+            <row id="Y" changed="20220423212550">297</row>
           </component>
           <component class="TVisLabel" name="STATIC_Hour" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX" changed="20211012174121">21</row>
@@ -635,7 +655,7 @@
               <lang id="ru" date="20211012171619" savedtotm="1">Час</lang>
             </row>
             <row id="X" changed="20211013140524">342</row>
-            <row id="Y">282</row>
+            <row id="Y" changed="20220423212550">297</row>
           </component>
           <component class="TVisLabel" name="1080" type="static" autosize="0" wordwrap="1">
             <row id="CX">114</row>
@@ -645,7 +665,7 @@
               <lang id="ru" date="20211012171628" savedtotm="1">Тип потока</lang>
             </row>
             <row id="X" changed="20211124211848">250</row>
-            <row id="Y">299</row>
+            <row id="Y" changed="20220423212550">314</row>
           </component>
           <component class="TVisLabel" name="1073" type="static" autosize="0" wordwrap="1">
             <row id="CX">154</row>
@@ -827,31 +847,31 @@
             <row id="CX" changed="20211124211848">228</row>
             <row id="CY">12</row>
             <row id="X" changed="20211013140524">171</row>
-            <row id="Y">241</row>
+            <row id="Y" changed="20220423212550">256</row>
           </component>
           <component class="TVisEdit" name="1044" type="edit" readonly="1">
             <row id="CX" changed="20211124211848">228</row>
             <row id="CY">12</row>
             <row id="X" changed="20211013140524">171</row>
-            <row id="Y">258</row>
+            <row id="Y" changed="20220423212550">273</row>
           </component>
           <component class="TVisEdit" name="1038" type="edit">
             <row id="CX">19</row>
             <row id="CY">12</row>
             <row id="X" changed="20211013140524">248</row>
-            <row id="Y">280</row>
+            <row id="Y" changed="20220423212550">295</row>
           </component>
           <component class="TVisEdit" name="1039" type="edit">
             <row id="CX">19</row>
             <row id="CY">12</row>
             <row id="X" changed="20211013140524">310</row>
-            <row id="Y">280</row>
+            <row id="Y" changed="20220423212550">295</row>
           </component>
           <component class="TVisComboBox" name="1087" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX" changed="20211124211848">74</row>
             <row id="CY">30</row>
             <row id="X">166</row>
-            <row id="Y">297</row>
+            <row id="Y" changed="20220423212550">312</row>
           </component>
           <component class="TVisComboBox" name="1035" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX">119</row>
@@ -937,19 +957,19 @@
               <lang id="ru" date="20211012171546" savedtotm="1">Проверить архив</lang>
             </row>
             <row id="X">165</row>
-            <row id="Y" changed="20211012172720">278</row>
+            <row id="Y" changed="20220423212550">293</row>
           </component>
           <component class="TVisUpDown" name="1062" type="msctls_updown32">
             <row id="CX">11</row>
             <row id="CY">14</row>
             <row id="X" changed="20211013140524">266</row>
-            <row id="Y">279</row>
+            <row id="Y" changed="20220423212550">294</row>
           </component>
           <component class="TVisUpDown" name="1061" type="msctls_updown32">
             <row id="CX">11</row>
             <row id="CY">14</row>
             <row id="X" changed="20211013140524">328</row>
-            <row id="Y">279</row>
+            <row id="Y" changed="20220423212550">294</row>
           </component>
           <component class="TVisButton" name="1012" type="button" wordwrap="1">
             <row id="CX">16</row>
@@ -3997,17 +4017,17 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" changed="20220420221044">2.6.796, 20 Apr 2022</row>
+        <row id="FileVersion" locked="1" changed="20220423212550">2.7.808, 23 Apr 2022</row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20220325175241">6</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" changed="20220420221044">796</row>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20220423212550">7</row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" changed="20220423212550">808</row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" changed="20220420221044">2.6.796</row>
+        <row id="ProductVersion" hidden="1" changed="20220423212550">2.7.808</row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20220325175241">6</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" changed="20220420221044">796</row>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20220423212550">7</row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" changed="20220423212550">808</row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
     </node>
