@@ -67,7 +67,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	set_icon_uri(rapidxml::get_value_wstring(node->first_node(ICON_URL)));
 	set_disabled(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::DISABLED))) == "true");
 	set_favorite(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::FAVORITE))) == "true");
-	time_shift_hours = rapidxml::get_value_int(node->first_node(utils::TIME_SHIFT_HOURS));
+	set_time_shift_hours(rapidxml::get_value_int(node->first_node(utils::TIME_SHIFT_HOURS)));
 
 	auto cnode = node->first_node(utils::TV_CATEGORIES);
 	if (cnode)
@@ -134,9 +134,9 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 		channel_node->append_node(rapidxml::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 	}
 
-	if (time_shift_hours != 0)
+	if (get_time_shift_hours() != 0)
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::TIME_SHIFT_HOURS, std::to_string(time_shift_hours).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::TIME_SHIFT_HOURS, std::to_string(get_time_shift_hours()).c_str()));
 	}
 
 	// <tv_category_id>1</tv_category_id>

@@ -64,6 +64,9 @@ public:
 	int get_archive_days() const { return archive_days; }
 	void set_archive_days(int val) { archive_days = val; }
 
+	int get_time_shift_hours() const { return time_shift_hours; }
+	void set_time_shift_hours(int val) { time_shift_hours = val; }
+
 	void swap_id(BaseInfo& src)
 	{
 		auto tmp = src.stream_uri->get_id();
@@ -86,8 +89,6 @@ public:
 			time_shift_hours = src.time_shift_hours;
 			adult = src.adult;
 			archive_days = src.archive_days;
-			disabled = src.disabled;
-			favorite = src.favorite;
 		}
 
 		return *this;
@@ -103,6 +104,4 @@ private:
 	int time_shift_hours = 0;
 	int adult = 0;
 	int archive_days = 0;
-	bool disabled = false;
-	bool favorite = false;
 };

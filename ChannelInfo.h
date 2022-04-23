@@ -63,9 +63,6 @@ public:
 
 	bool is_icon_local() const;
 
-	int get_time_shift_hours() const { return time_shift_hours; }
-	void set_time_shift_hours(int val) { time_shift_hours = val; }
-
 	// categories contains this channel. Compatibility with old channels list
 	std::set<int>& get_category_ids() { return categories; }
 
@@ -80,7 +77,6 @@ public:
 		if (this != &src)
 		{
 			BaseInfo::operator=(src);
-			time_shift_hours = src.get_time_shift_hours();
 			disabled = src.disabled;
 			favorite = src.favorite;
 			categories = src.categories;
@@ -90,7 +86,6 @@ public:
 	}
 
 private:
-	int time_shift_hours = 0;
 	bool disabled = false;
 	bool favorite = false;
 	std::set<int> categories;
