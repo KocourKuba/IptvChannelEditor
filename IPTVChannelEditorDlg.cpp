@@ -69,6 +69,8 @@ constexpr auto ID_MOVE_TO_END = ID_MOVE_TO_START + 512;
 constexpr auto ID_ADD_TO_START = ID_MOVE_TO_END + 1;
 constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 
+constexpr auto ID_UPDATE_EPG_TIMER = 1000;
+
 // Common
 constexpr auto CHANNELS_LIST_VERSION = 3;
 
@@ -130,6 +132,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
+	ON_WM_TIMER()
 
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CIPTVChannelEditorDlg::OnBnClickedButtonAbout)
 	ON_BN_CLICKED(IDC_BUTTON_CHOOSE_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings)
@@ -327,6 +330,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_UPDATE_CHANGED, m_wndUpdateChanged);
 	DDX_Control(pDX, IDC_SPLIT_BUTTON_PACK, m_wndPack);
 	DDX_Control(pDX, IDC_BUTTON_SETTINGS, m_wndSettings);
+	DDX_Control(pDX, IDC_PROGRESS_PROGRAM, m_wndProgressTime);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -606,6 +610,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	OnCbnSelchangeComboPlaylist();
 	m_lastTree = &m_wndChannelsTree;
 	m_blockChecking = false;
+
+	m_update_epg_timer = ID_UPDATE_EPG_TIMER;
+	OnTimer(ID_UPDATE_EPG_TIMER);
 }
 
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
@@ -734,6 +741,25 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	FillTreePlaylist();
 
 	pThread->ResumeThread();
+}
+
+void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent != m_update_epg_timer )
+	{
+		__super::OnTimer(nIDEvent);
+		return;
+	}
+
+	KillTimer(m_update_epg_timer);
+	m_update_epg_timer = 0;
+	COleDateTime now = COleDateTime::GetCurrentTime();
+	GetDlgItem(IDC_STATIC_CUR_TIME)->SetWindowText(now.Format(_T("%H:%M:%S")));
+	if (now.GetSecond() == 0)
+	{
+		UpdateEPG(&m_wndChannelsTree);
+	}
+	m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 1000, nullptr);
 }
 
 LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -1344,7 +1370,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	{
 		for (auto& epg_pair : epgChannelMap)
 		{
-			if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+			if (epg_pair.second.time_start <= now && now < epg_pair.second.time_end)
 			{
 				epg_info = epg_pair.second;
 				need_load = false;
@@ -1360,6 +1386,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 
 	if (epg_info.time_start != 0)
 	{
+		COleDateTime time_n(now);
 		COleDateTime time_s(epg_info.time_start - time_shift);
 		COleDateTime time_e(epg_info.time_end - time_shift);
 		CStringA text;
@@ -1369,6 +1396,11 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 					epg_info.name.c_str(),
 					epg_info.desc.c_str()
 		);
+
+		COleDateTimeSpan time_left = time_e - time_n;
+		m_wndProgressTime.SetRange32(0, int(epg_info.time_end - epg_info.time_start));
+		m_wndProgressTime.SetPos(int(now - epg_info.time_start));
+		GetDlgItem(IDC_STATIC_TIME_LEFT)->SetWindowText(time_left.Format(_T("%H:%M")));
 
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());

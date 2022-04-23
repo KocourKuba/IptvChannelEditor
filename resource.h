@@ -264,6 +264,9 @@
 #define IDC_BUTTON_NEW_FROM_URL         1135
 #define IDC_EDIT_PLAYLIST_URL           1136
 #define IDC_MFCLINK_DONATE_YOOMONEY     1137
+#define IDC_PROGRESS_PROGRAM            1138
+#define IDC_STATIC_CUR_TIME             1139
+#define IDC_STATIC_TIME_LEFT            1140
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -290,12 +293,12 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         32805
-#define _APS_NEXT_CONTROL_VALUE         1138
+#define _APS_NEXT_CONTROL_VALUE         1140
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

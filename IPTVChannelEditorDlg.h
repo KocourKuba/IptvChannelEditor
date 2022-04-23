@@ -185,6 +185,7 @@ protected:
 	afx_msg void OnMakeAll();
 	afx_msg void OnRestore();
 	afx_msg void OnAppExit();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -308,6 +309,7 @@ protected:
 	CButton m_wndUpdateChanged;
 	CButton m_wndSettings;
 	CProgressCtrl m_wndProgress;
+	CProgressCtrl m_wndProgressTime;
 	CTrayIcon m_wndTrayIcon;
 
 	CString m_search; // m_wndSearch
@@ -345,7 +347,6 @@ private:
 	CTreeCtrlEx* m_lastTree = nullptr;
 
 	CString m_toolTipText;
-
 	CString m_plFileName;
 
 	BOOL m_allow_save = FALSE;
@@ -360,6 +361,7 @@ private:
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
+	UINT_PTR m_update_epg_timer = 0;
 	std::map<std::wstring, std::shared_ptr<PlaylistEntry>> m_changedChannels;
 	std::set<std::wstring> m_unknownChannels;
 
