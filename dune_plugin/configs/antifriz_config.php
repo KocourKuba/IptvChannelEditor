@@ -163,13 +163,13 @@ class AntifrizPluginConfig extends Default_Config
                     $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $episode->files[0]->url, $plugin_cookies->token);
                     hd_print("episode playback_url: $playback_url");
                     $episode_caption = "Сезон $seasonNumber| Серия $episode->number $episode->name";
-                    $movie->add_series_data($episode->id, $episode_caption, $playback_url, true);
+                    $movie->add_series_data($episode->id, $episode_caption, $playback_url);
                 }
             }
         } else {
             $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $movieData->files[0]->url, $plugin_cookies->token);
             hd_print("movie playback_url: $playback_url");
-            $movie->add_series_data($movie_id, $movieData->name, $playback_url, true);
+            $movie->add_series_data($movie_id, $movieData->name, $playback_url);
         }
 
         return $movie;

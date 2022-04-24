@@ -183,18 +183,12 @@ class Movie
      * @param string $id
      * @param string $name
      * @param string $playback_url
-     * @param string $playback_url_is_stream_url
+     * @param bool $playback_url_is_stream_url
      * @throws Exception
      */
-    public function add_series_data($id, $name, $playback_url, $playback_url_is_stream_url)
+    public function add_series_data($id, $name, $playback_url, $playback_url_is_stream_url = true)
     {
-        $series = new Movie_Series($id);
-
-        $series->name = $this->to_string($name);
-        $series->playback_url = $this->to_string($playback_url);
-        $series->playback_url_is_stream_url = $playback_url_is_stream_url === true;
-
-        $this->series_list[] = $series;
+        $this->series_list[] = new Movie_Series($id, $name, $playback_url, $playback_url_is_stream_url);
     }
 
     /**
@@ -237,7 +231,7 @@ class Movie
         $series_array = array();
         $initial_series_ndx = -1;
         foreach ($this->series_list as $ndx => $series) {
-            if ($series->id === $sel_id && !is_null($sel_id)) {
+            if (!is_null($sel_id) && $series->id === $sel_id) {
                 $initial_series_ndx = $ndx;
             }
 

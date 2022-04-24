@@ -260,13 +260,13 @@ class SharaclubPluginConfig extends Default_Config
                                 $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
                         }
                         hd_print("movie playback_url: $playback_url");
-                        $movie->add_series_data($episode['id'], $episodeCaption, $playback_url, true);
+                        $movie->add_series_data($episode['id'], $episodeCaption, $playback_url);
                     }
                 }
             } else {
                 $playback_url = str_replace("https://", "http://", $item["video"]);
                 hd_print("movie playback_url: $playback_url");
-                $movie->add_series_data($movie_id, $item['name'], $playback_url, true);
+                $movie->add_series_data($movie_id, $item['name'], $playback_url);
             }
 
             break;

@@ -180,8 +180,7 @@ abstract class Abstract_Vod implements Vod
             return null;
         }
 
-        $sel_id = isset($media_url->series_id) ?
-            $media_url->series_id : null;
+        $sel_id = isset($media_url->series_id) ? $media_url->series_id : null;
 
         return $movie->get_vod_info($sel_id, (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000));
     }
