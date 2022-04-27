@@ -1,6 +1,6 @@
 <?php
 
-class Movie_Series
+class Movie_Variant
 {
     /**
      * @var string
@@ -15,17 +15,7 @@ class Movie_Series
     /**
      * @var string
      */
-    public $season_id = '';
-
-    /**
-     * @var string
-     */
     public $playback_url = '';
-
-    /**
-     * @var array
-     */
-    public $variants;
 
     /**
      * @var bool
@@ -36,13 +26,16 @@ class Movie_Series
      * @param $id string
      * @throws Exception
      */
-    public function __construct($id)
+    public function __construct($id, $name, $playback_url, $playback_url_is_stream_url = true)
     {
         if (is_null($id)) {
             HD::print_backtrace();
-            throw new Exception("Movie_Series::id is null");
+            throw new Exception("Movie_Variant::id is null");
         }
 
         $this->id = (string)$id;
+        $this->name = (string)$name;
+        $this->playback_url = (string)$playback_url;
+        $this->playback_url_is_stream_url = $playback_url_is_stream_url;
     }
 }

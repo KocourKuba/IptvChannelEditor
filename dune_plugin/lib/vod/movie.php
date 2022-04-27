@@ -1,6 +1,8 @@
 <?php
 
 require_once 'movie_series.php';
+require_once 'movie_season.php';
+require_once 'movie_variant.php';
 
 class Movie
 {
@@ -85,9 +87,24 @@ class Movie
     public $budget = '';
 
     /**
+     * @var string
+     */
+    public $type = 'movie';
+
+    /**
+     * @var array
+     */
+    public $season_list;
+
+    /**
      * @var array
      */
     public $series_list;
+
+    /**
+     * @var array
+     */
+    public $variants_list;
 
     /**
      * @param string $id
@@ -96,6 +113,7 @@ class Movie
     public function __construct($id)
     {
         if (is_null($id)) {
+            HD::print_backtrace();
             throw new Exception("Movie::id is null");
         }
 
@@ -175,8 +193,20 @@ class Movie
         $this->rate_mpaa = $this->to_string($rate_mpaa);
         $this->country = $this->to_string($country);
         $this->budget = $this->to_string($budget);
+    }
 
-        $this->series_list = array();
+    /**
+     * @param string $id
+     * @param string $name
+     * @param string $season_url
+     * @throws Exception
+     */
+    public function add_season_data($id, $name, $season_url)
+    {
+        $season = new Movie_Season($id);
+        $season->name = $this->to_string($name);
+        $season->season_url = $this->to_string($season_url);
+        $this->season_list[] = $season;
     }
 
     /**
@@ -186,9 +216,14 @@ class Movie
      * @param bool $playback_url_is_stream_url
      * @throws Exception
      */
-    public function add_series_data($id, $name, $playback_url, $playback_url_is_stream_url = true)
+    public function add_series_data($id, $name, $playback_url, $season_id = '', $playback_url_is_stream_url = true)
     {
-        $this->series_list[] = new Movie_Series($id, $name, $playback_url, $playback_url_is_stream_url);
+        $series = new Movie_Series($id);
+        $series->name = $this->to_string($name);
+        $series->season_id = $this->to_string($season_id);
+        $series->playback_url = $this->to_string($playback_url);
+        $series->playback_url_is_stream_url = $playback_url_is_stream_url;
+        $this->series_list[$id] = $series;
     }
 
     /**
@@ -215,30 +250,80 @@ class Movie
         );
     }
 
+    public function has_variants()
+    {
+        if (empty($this->series_list)) {
+            return false;
+        }
+
+        $values = array_values($this->series_list);
+        $val = $values[0];
+        return isset($val->variants) && count($val->variants) > 1;
+    }
+
     /**
-     * @param string $sel_id
+     * @param MediaURL $media_url
      * @param int $buffering_ms
      * @return array
      * @throws Exception
      */
-    public function get_vod_info($sel_id, $buffering_ms)
+    public function get_vod_info($media_url, $buffering_ms)
     {
-        if (!is_array($this->series_list) ||
-            count($this->series_list) === 0) {
-            throw new Exception('Invalid movie: series list is empty');
+        if (!isset($media_url->screen_id)) {
+            HD::print_backtrace();
+            throw new Exception("List screen in media url not set: " . $media_url->get_raw_string());
         }
 
+        //hd_print("selected screen: $media_url->screen_id");
+
+        switch ($media_url->screen_id) {
+            case Vod_Seasons_List_Screen::ID:
+                if (!is_array($this->season_list) || count($this->season_list) === 0) {
+                    HD::print_backtrace();
+                    throw new Exception("Invalid movie: season list is empty");
+                }
+                $list = $this->series_list;
+                break;
+            case Vod_Series_List_Screen::ID:
+                if (!is_array($this->series_list) || count($this->series_list) === 0) {
+                    HD::print_backtrace();
+                    throw new Exception("Invalid movie: series list is empty");
+                }
+                $list = $this->series_list;
+                break;
+            case Vod_Variants_List_Screen::ID:
+                if (!is_array($this->series_list) || count($this->series_list) === 0) {
+                    HD::print_backtrace();
+                    throw new Exception("Invalid movie: series list is empty");
+                }
+                hd_print(json_encode($this->series_list));
+                $list = $this->series_list[$media_url->movie_id]->variants;
+                if (!is_array($list) || count($list) === 0) {
+                    HD::print_backtrace();
+                    throw new Exception("Invalid movie: variants list is empty");
+                }
+                break;
+            case Vod_Movie_Screen::ID:
+                $list = $this->series_list;
+                break;
+            default:
+                HD::print_backtrace();
+                throw new Exception("Unknown list screen: $media_url->screen_id");
+        }
+
+        $sel_id = isset($media_url->series_id) ? $media_url->series_id : null;
+        hd_print("selected id: $sel_id");
         $series_array = array();
         $initial_series_ndx = -1;
-        foreach ($this->series_list as $ndx => $series) {
-            if (!is_null($sel_id) && $series->id === $sel_id) {
+        foreach ($list as $ndx => $item) {
+            if (!is_null($sel_id) && $item->id === $sel_id) {
                 $initial_series_ndx = $ndx;
             }
 
             $series_array[] = array(
-                PluginVodSeriesInfo::name => $series->name,
-                PluginVodSeriesInfo::playback_url => $series->playback_url,
-                PluginVodSeriesInfo::playback_url_is_stream_url => $series->playback_url_is_stream_url,
+                PluginVodSeriesInfo::name => $item->name,
+                PluginVodSeriesInfo::playback_url => $item->playback_url,
+                PluginVodSeriesInfo::playback_url_is_stream_url => $item->playback_url_is_stream_url,
             );
         }
 

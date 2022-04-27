@@ -25,8 +25,8 @@ interface DunePlugin
 
     // PluginVodInfo 
     public function get_vod_info(
-        /* [in]     String                      */  $media_url,
-        /* [inout]  Map: Key -> Value           */  &$plugin_cookies);
+        /* [in]     String                      */ $media_url_str,
+        /* [inout]  Map: Key -> Value           */ &$plugin_cookies);
 
     // String
     public function get_vod_stream_url(

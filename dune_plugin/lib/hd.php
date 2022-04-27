@@ -204,6 +204,22 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
+    private static function dump_curl_opts($opts, $ident = 0)
+    {
+        if (is_array($opts)) {
+            foreach ($opts as $k => $v) {
+                if (is_array($v)) {
+                    hd_print(str_repeat(' ', $ident) . "parameter: $k : array");
+                    self::dump_curl_opts($v, $ident + 4);
+                } else {
+                    hd_print(str_repeat(' ', $ident) . "parameter: $k : $v");
+                }
+            }
+        } else {
+            hd_print(str_repeat(' ', $ident) . "parameter: $opts");
+        }
+    }
+
     /**
      * @param string $url
      * @param array $opts
@@ -223,13 +239,14 @@ class HD
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_URL, $url);
 
+        hd_print("HTTP fetching $url");
+
         if (isset($opts)) {
+            self::dump_curl_opts($opts);
             foreach ($opts as $k => $v) {
                 curl_setopt($ch, $k, $v);
             }
         }
-
-        hd_print("HTTP fetching $url");
 
         $content = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

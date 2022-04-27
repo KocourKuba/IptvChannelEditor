@@ -11,6 +11,10 @@ class MediaURL
 
     ///////////////////////////////////////////////////////////////////////
 
+    /**
+     * @param $str string
+     * @param $map array
+     */
     private function __construct($str, $map)
     {
         $this->str = $str;
@@ -97,7 +101,7 @@ class MediaURL
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param $s
+     * @param string $s
      * @return MediaURL
      */
     public static function decode($s)

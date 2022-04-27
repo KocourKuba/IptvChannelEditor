@@ -97,8 +97,7 @@ abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_I
                 return Action_Factory::show_dialog('Поиск', $defs, true);
 
             case 'new_search':
-                return Action_Factory::close_dialog_and_run(
-                    User_Input_Handler_Registry::create_action($this, 'run_search'));
+                return Action_Factory::close_dialog_and_run(User_Input_Handler_Registry::create_action($this, 'run_search'));
 
             case 'run_search':
                 HD::put_item('search_item', $user_input->do_new_search);

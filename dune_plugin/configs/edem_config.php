@@ -164,46 +164,69 @@ class EdemPluginConfig extends Default_Config
             return $movie;
         }
 
+        if ($movieData->type === 'multistream') {
+            // collect series
+            //hd_print("movie: $movie_id \"$movieData->title\" contains " . count((array)$movieData->items) . " series");
+            foreach ($movieData->items as $item) {
+                //hd_print("Try load episode $item->fid playback_url: $item->url");
+                $episodeData = self::make_json_request($plugin_cookies,
+                    array('cmd' => "flick", 'fid' => (int)$item->fid, 'offset'=> 0,'limit' => 0));
+
+                if (!isset($episodeData->variants) || count((array)$episodeData->variants) < 2) {
+                    //hd_print("no variants for $item->fid");
+                    $movie->add_series_data($item->fid, $item->title, $item->url);
+                } else {
+                    $variants_data = (array)$episodeData->variants;
+                    //hd_print("episode $item->fid contains " . count($variants_data) . " variants");
+                    // collect quality variants for single movie
+                    $variants = array();
+                    foreach ($variants_data as $key => $url) {
+                        //hd_print("variant $key playback_url: $url");
+                        $variants[] = new Movie_Variant($item->fid . "_" . $key, "Quality: $key", $url);
+                    }
+
+                    $series = new Movie_Series($item->fid);
+                    $series->name = (string)$item->title;
+                    $series->playback_url = (string)$episodeData->url;
+                    $series->variants = $variants;
+                    $movie->series_list[$item->fid] = $series;
+                }
+            }
+        } else if (isset($movieData->variants) || count((array)$movieData->variants) < 2) {
+            $variants_data = (array)$movieData->variants;
+            //hd_print("movie $movie_id \"$movieData->title\" contains " . count($variants_data) . " variants");
+            // collect quality variants for single movie
+            $variants = array();
+            foreach ($variants_data as $key => $url) {
+                //hd_print("variant $key playback_url: $url");
+                $variants[] = new Movie_Variant($movie_id . "_" . $key, "Quality: $key", $url);
+            }
+
+            $series = new Movie_Series($movie_id);
+            $series->name = (string)$movieData->title;
+            $series->variants = $variants;
+            $movie->series_list[$movie_id] = $series;
+        } else {
+            $movie->add_series_data($movie_id, $movieData->title, $movieData->url);
+        }
+
         $movie->set_data(
             $movieData->title,// caption,
             '',// caption_original,
-            $movieData->description,// description,
-            $movieData->img,// poster_url,
-            $movieData->duration,// length,
-            $movieData->year,// year,
+            isset($movieData->description) ? $movieData->description : '',// description,
+            isset($movieData->img) ? $movieData->img : '',// poster_url,
+            isset($movieData->duration) ? $movieData->duration : '',// length,
+            isset($movieData->year) ? $movieData->year : '',// year,
             '',// director,
             '',// scenario,
             '',// actors,
             '',// genres,
             '',// rate_imdb,
             '',// rate_kinopoisk,
-            $movieData->agelimit,// rate_mpaa,
+            isset($movieData->agelimit) ? $movieData->agelimit : '',// rate_mpaa,
             '',// country,
             ''// budget
         );
-
-        if ($movieData->type === 'multistream') {
-            // collect series
-            hd_print("movie multistream: \"$movieData->title\"");
-            foreach ($movieData->items as $item) {
-                //hd_print("episode playback_url: $item->url");
-                $movie->add_series_data($item->fid, $item->title, $item->url);
-            }
-            return $movie;
-        }
-
-        //hd_print("movie playback_url: \"$movieData->title\"");
-        $variants = (array)$movieData->variants;
-        //hd_print("playback_url variants: " . count($variants));
-        if (count($variants) > 1) {
-            // collect quality variants
-            foreach ($variants as $key => $item) {
-                //hd_print("variants playback_url: $key : $item");
-                $movie->add_series_data($movie_id . "_$key", $key, $item);
-            }
-        } else {
-            $movie->add_series_data($movie_id, $movieData->title, $movieData->url, true);
-        }
 
         return $movie;
     }
@@ -215,7 +238,7 @@ class EdemPluginConfig extends Default_Config
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        hd_print("fetch_vod_categories");
+        //hd_print("fetch_vod_categories");
 
         $doc = self::make_json_request($plugin_cookies, null, true);
         if ($doc === false) {

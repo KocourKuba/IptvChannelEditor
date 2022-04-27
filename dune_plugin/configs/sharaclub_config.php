@@ -204,7 +204,7 @@ class SharaclubPluginConfig extends Default_Config
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         $movie = new Movie($movie_id);
-        $jsonItems = HD::parse_json_file($this->GET_VOD_TMP_STORAGE_PATH());
+        $jsonItems = HD::parse_json_file(DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
         foreach ($jsonItems as $item) {
 
             $id = -1;
@@ -283,7 +283,7 @@ class SharaclubPluginConfig extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
-        $categories = HD::LoadAndStoreJson($url, true, $this->GET_VOD_TMP_STORAGE_PATH());
+        $categories = HD::LoadAndStoreJson($url, true,DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
         if ($categories === false)
         {
             return;
@@ -317,7 +317,7 @@ class SharaclubPluginConfig extends Default_Config
     {
         hd_print("getSearchList: $keyword");
         $movies = array();
-        $jsonItems = HD::parse_json_file($this->GET_VOD_TMP_STORAGE_PATH());
+        $jsonItems = HD::parse_json_file(DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
         foreach ($jsonItems as $item) {
             $search  = utf8_encode(mb_strtolower($item["name"], 'UTF-8'));
@@ -339,7 +339,7 @@ class SharaclubPluginConfig extends Default_Config
     public function getVideoList($query_id, $plugin_cookies)
     {
         $movies = array();
-        $jsonItems = HD::parse_json_file($this->GET_VOD_TMP_STORAGE_PATH());
+        $jsonItems = HD::parse_json_file(DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
 
         $arr = explode("_", $query_id);
         if ($arr === false) {

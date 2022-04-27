@@ -83,6 +83,7 @@ abstract class Abstract_Tv implements Tv
 
         if (is_null($channel)) {
             hd_print("Unknown channel: $channel_id");
+            HD::print_backtrace();
             throw new Exception("Unknown channel: $channel_id");
         }
 
@@ -112,6 +113,7 @@ abstract class Abstract_Tv implements Tv
 
         if (is_null($g)) {
             hd_print("Unknown group: $group_id");
+            HD::print_backtrace();
             throw new Exception("Unknown group: $group_id");
         }
 

@@ -105,8 +105,9 @@ class LightiptvPluginConfig extends Default_Config
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
-            if (file_exists($this->GET_TMP_STORAGE_PATH())) {
-                unlink($this->GET_TMP_STORAGE_PATH());
+            $tmp_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_tv.m3u8";
+            if (file_exists($tmp_file)) {
+                unlink($tmp_file);
             }
         }
 

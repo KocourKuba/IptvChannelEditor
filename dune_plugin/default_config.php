@@ -7,6 +7,7 @@ const TV_FAVORITES_SUPPORTED = 'tv_fav';
 const VOD_MOVIE_PAGE_SUPPORTED = 'vod_support';
 const VOD_FAVORITES_SUPPORTED = 'vod_fav';
 const VOD_PORTAL_SUPPORTED = 'vod_portal';
+const VOD_LAZY_LOAD = 'vod_lazy';
 const TS_OPTIONS = 'ts_options';
 const BALANCE_SUPPORTED = 'balance_support';
 const DEVICE_OPTIONS = 'device_options';
@@ -14,7 +15,6 @@ const SERVER_SUPPORTED = 'server_support';
 const QUALITY_SUPPORTED = 'quality_support';
 const M3U_STREAM_URL_PATTERN = 'm3u8_pattern';
 const MEDIA_URL_TEMPLATE_HLS = 'hls_url';
-const VOD_LAZY_LOAD = 'vod_lazy';
 const EXTINF_VOD_PATTERN = 'vod_pattern';
 const SQUARE_ICONS = 'square_icons';
 
@@ -94,12 +94,12 @@ abstract class Default_Config
         $this->FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = false;
         $this->FEATURES[VOD_FAVORITES_SUPPORTED] = false;
         $this->FEATURES[VOD_PORTAL_SUPPORTED] = false;
+        $this->FEATURES[VOD_LAZY_LOAD] = false;
         $this->FEATURES[TS_OPTIONS] = array('hls' => 'HLS', 'mpeg' => 'MPEG-TS');
         $this->FEATURES[DEVICE_OPTIONS] = array();
         $this->FEATURES[BALANCE_SUPPORTED] = false;
         $this->FEATURES[SERVER_SUPPORTED] = false;
         $this->FEATURES[QUALITY_SUPPORTED] = false;
-        $this->FEATURES[VOD_LAZY_LOAD] = false;
         $this->FEATURES[EXTINF_VOD_PATTERN] = '';
         $this->FEATURES[SQUARE_ICONS] = false;
 
@@ -383,16 +383,16 @@ abstract class Default_Config
     {
         $url = $channel->get_streaming_url();
         $ext_params = $channel->get_ext_params();
-        if (!isset($ext_params['subdomain'])) {
-            hd_print("TransformStreamUrl: parameter 'subdomain' for {$channel->get_channel_id()} not defined!");
-        } else {
+        if (isset($ext_params['subdomain'])) {
             $url = str_replace('{DOMAIN}', $ext_params['subdomain'], $url);
+        } else {
+            hd_print("TransformStreamUrl: parameter 'subdomain' for {$channel->get_channel_id()} not defined!");
         }
 
-        if (!isset($ext_params['token'])) {
-            hd_print("TransformStreamUrl: parameter 'token' for {$channel->get_channel_id()} not defined!");
-        } else {
+        if (isset($ext_params['token'])) {
             $url = str_replace('{TOKEN}', $ext_params['token'], $url);
+        } else {
+            hd_print("TransformStreamUrl: parameter 'token' for {$channel->get_channel_id()} not defined!");
         }
 
         return $url;
@@ -448,8 +448,9 @@ abstract class Default_Config
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
-            if (file_exists($this->GET_TMP_STORAGE_PATH())) {
-                unlink($this->GET_TMP_STORAGE_PATH());
+            $tmp_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_tv.m3u8";
+            if (file_exists($tmp_file)) {
+                unlink($tmp_file);
             }
         }
 
@@ -588,7 +589,7 @@ abstract class Default_Config
      */
     protected function FetchTvM3U($plugin_cookies, $force = false)
     {
-        $tmp_file = $this->GET_TMP_STORAGE_PATH();
+        $tmp_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_tv.m3u8";
         if ($force !== false || !file_exists($tmp_file)) {
             try {
                 $url = $this->GetPlaylistUrl('tv1', $plugin_cookies);
@@ -624,7 +625,7 @@ abstract class Default_Config
      */
     public function FetchVodM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = $this->GET_VOD_TMP_STORAGE_PATH();
+        $m3u_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.m3u8";
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {
@@ -687,26 +688,6 @@ abstract class Default_Config
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         return '';
-    }
-
-    /**
-     * @return string
-     */
-    protected function GET_VOD_TMP_STORAGE_PATH()
-    {
-        return $this->GET_TMP_STORAGE_PATH('playlist_vod.m3u8');
-    }
-
-    /**
-     * @return string
-     */
-    protected function GET_TMP_STORAGE_PATH($name = null)
-    {
-        if (is_null($name)) {
-            $name = 'playlist_tv.m3u8';
-        }
-
-        return sprintf('/tmp/%s_%s', $this->PLUGIN_SHORT_NAME, $name);
     }
 
     ///////////////////////////////////////////////////////////////////////

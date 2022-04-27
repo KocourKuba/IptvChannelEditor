@@ -39,7 +39,7 @@ class Starnet_Vod_List_Screen extends Vod_List_Screen
      */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        hd_print("get_short_movie_range: '$media_url->category_id', from_idx: $from_ndx");
+        //hd_print("get_short_movie_range: '$media_url->category_id', from_idx: $from_ndx");
         $this->plugin->config->try_reset_pages();
         $key = $media_url->category_id . "_" . $media_url->genre_id;
 

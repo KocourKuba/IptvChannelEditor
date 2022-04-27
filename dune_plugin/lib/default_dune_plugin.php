@@ -69,9 +69,17 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public $vod_movie_screen;
     /**
+     * @var Vod_Seasons_List_Screen
+     */
+    public $vod_season_List_Screen;
+    /**
      * @var Vod_Series_List_Screen
      */
     public $vod_series_list_screen;
+    /**
+     * @var Vod_Variants_List_Screen
+     */
+    public $vod_variants_list_screen;
     /**
      * @var Starnet_Filter_Screen
      */
@@ -136,6 +144,7 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         hd_print("Error: no screen with id '$screen_id' found.");
+        HD::print_backtrace();
         throw new Exception('Screen not found');
     }
 
@@ -219,6 +228,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_print('get_tv_info: TV is not supported');
+            HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
 
@@ -239,6 +249,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_print('get_tv_stream_url: TV is not supported');
+            HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
 
@@ -259,6 +270,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_print('get_tv_playback_url: TV is not supported');
+            HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
 
@@ -278,6 +290,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_print('get_day_epg: TV is not supported');
+            HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
 
@@ -297,6 +310,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_print('change_tv_favorites: TV is not supported');
+            HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
 
@@ -310,21 +324,23 @@ class Default_Dune_Plugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param string $media_url
+     * @param string $media_url_str
      * @param $plugin_cookies
      * @return array|null
      * @throws Exception
      */
-    public function get_vod_info($media_url, &$plugin_cookies)
+    public function get_vod_info($media_url_str, &$plugin_cookies)
     {
         if (is_null($this->vod)) {
             hd_print('get_vod_info: VOD is not supported');
+            HD::print_backtrace();
             throw new Exception('VOD is not supported');
         }
 
-        $decoded_media_url = MediaURL::decode($media_url);
+        hd_print("Default_Dune_Plugin::get_vod_info: MediaUrl: $media_url_str");
+        $media_url = MediaURL::decode($media_url_str);
 
-        return $this->vod->get_vod_info($decoded_media_url, $plugin_cookies);
+        return $this->vod->get_vod_info($media_url, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////

@@ -41,7 +41,6 @@ static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
 static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://247on.cc/playlist/{:s}_otp_dev{:d}.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}.m3u8";
-static constexpr auto URI_TEMPLATE_HLS2 = L"http://{SUBDOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
 
 uri_cbilling::uri_cbilling()
@@ -49,7 +48,6 @@ uri_cbilling::uri_cbilling()
 	auto& params = epg_params[0];
 	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params.epg_root = "";
-	streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enHLS2, L"HLS2"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 }
 
 void uri_cbilling::parse_uri(const std::wstring& url)
@@ -90,14 +88,6 @@ std::wstring uri_cbilling::get_templated_stream(StreamSubType subType, const Tem
 				if (params.shift_back)
 				{
 					append_archive(url);
-				}
-				break;
-			case StreamSubType::enHLS2:
-				url = URI_TEMPLATE_HLS2;
-				new_params.domain = no_port;
-				if (params.shift_back)
-				{
-					utils::string_replace_inplace(url, L"video.m3u8", L"video-{START}-10800.m3u8");
 				}
 				break;
 			case StreamSubType::enMPEGTS:

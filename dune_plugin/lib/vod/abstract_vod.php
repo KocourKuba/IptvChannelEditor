@@ -5,17 +5,17 @@ require_once 'short_movie.php';
 abstract class Abstract_Vod implements Vod
 {
     /**
-     * @var array
+     * @var array|Short_Movie[]
      */
     private $short_movie_by_id = array();
 
     /**
-     * @var array
+     * @var array|Movie[]
      */
     private $movie_by_id = array();
 
     /**
-     * @var array
+     * @var array|bool[]
      */
     private $failed_movie_ids = array();
 
@@ -180,9 +180,7 @@ abstract class Abstract_Vod implements Vod
             return null;
         }
 
-        $sel_id = isset($media_url->series_id) ? $media_url->series_id : null;
-
-        return $movie->get_vod_info($sel_id, (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000));
+        return $movie->get_vod_info($media_url, (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -225,7 +223,6 @@ abstract class Abstract_Vod implements Vod
         }
 
         $this->load_favorites($plugin_cookies);
-        hd_print("Favorites loaded $this->fav_movie_ids");
     }
 
     /**

@@ -18,17 +18,19 @@ class Movie_Season
     public $season_url = '';
 
     /**
-     * @var string
+     * @var array
      */
-    public $type = '';
+    public $series;
 
     /**
      * @param string $id
+     * @throws Exception
      */
     public function __construct($id)
     {
         if (is_null($id)) {
-            hd_print("Movie_Season::id is not set");
+            HD::print_backtrace();
+            throw new Exception("Movie_Season::id is not set");
         }
         $this->id = (string)$id;
     }
