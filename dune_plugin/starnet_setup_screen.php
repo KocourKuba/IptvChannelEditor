@@ -82,18 +82,31 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // ott or token dialog
+        $text_icon = $this->plugin->get_image_path('text.png');
         switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
             case 'OTT_KEY':
-                Control_Factory::add_image_button($defs, $this, null, 'ott_key_dialog', 'Активировать просмотр:', 'Ввести ОТТ ключ и домен',
-                    $this->plugin->get_image_path('text.png'));
+                if (empty($plugin_cookies->ott_key_local) || empty($plugin_cookies->mediateka_local)) {
+                    Control_Factory::add_image_button($defs, $this, null, 'ott_key_dialog',
+                        'Активировать просмотр:', 'Ввести ОТТ ключ и домен', $text_icon);
+                } else {
+                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются данные из плейлиста');
+                }
                 break;
             case 'LOGIN':
-                Control_Factory::add_image_button($defs, $this, null, 'login_dialog', 'Активировать просмотр:', 'Введите логин и пароль',
-                    $this->plugin->get_image_path('text.png'));
+                if (empty($plugin_cookies->login_local) && empty($plugin_cookies->password_local)) {
+                    Control_Factory::add_image_button($defs, $this, null, 'login_dialog',
+                        'Активировать просмотр:', 'Введите логин и пароль', $text_icon);
+                } else {
+                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются данные из плейлиста');
+                }
                 break;
             case 'PIN':
-                Control_Factory::add_image_button($defs, $this, null, 'pin_dialog', 'Активировать просмотр:', 'Введите ключ доступа',
-                    $this->plugin->get_image_path('text.png'));
+                if (empty($plugin_cookies->login_local) && empty($plugin_cookies->password_local)) {
+                    Control_Factory::add_image_button($defs, $this, null, 'pin_dialog',
+                        'Активировать просмотр:', 'Введите ключ доступа', $text_icon);
+                } else {
+                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются данные из плейлиста');
+                }
                 break;
         }
 
@@ -103,8 +116,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (strlen($display_path) > 30) {
             $display_path = "..." . substr($display_path, -30);
         }
-        Control_Factory::add_image_button($defs, $this, null, 'change_list_path', 'Выбрать папку со списками каналов:', $display_path,
-            $this->plugin->get_image_path('folder.png'));
+        Control_Factory::add_image_button($defs, $this, null, 'change_list_path',
+            'Выбрать папку со списками каналов:', $display_path, $this->plugin->get_image_path('folder.png'));
 
         //////////////////////////////////////
         // channels lists
@@ -118,7 +131,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         }
         if (!empty($all_channels)) {
             $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->plugin->config->get_channel_list();
-            Control_Factory::add_combobox($defs, $this, null, 'channels_list', 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
+            Control_Factory::add_combobox($defs, $this, null, 'channels_list',
+                'Используемый список каналов:', $channels_list, $all_channels, 0, true);
         } else {
             Control_Factory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         }
@@ -142,8 +156,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // adult channel password
-        Control_Factory::add_image_button($defs, $this, null, 'pass_dialog', 'Пароль для взрослых каналов:', 'Изменить пароль',
-            $this->plugin->get_image_path('text.png'));
+        Control_Factory::add_image_button($defs, $this, null, 'pass_dialog',
+            'Пароль для взрослых каналов:', 'Изменить пароль', $text_icon);
 
         //////////////////////////////////////
         // clear epg cache
@@ -179,10 +193,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         Control_Factory::add_text_field($defs, $this, null, 'subdomain', 'Введите домен:',
             $subdomain, false, false, false, true, 600);
 
-        Control_Factory::add_text_field($defs, $this, null, 'ott_key', 'Введите ОТТ ключ:',
+        Control_Factory::add_text_field($defs, $this, null, 'ott_key', 'Введите ключ ОТТ:',
             $ott_key, false, true, false, true, 600);
 
-        Control_Factory::add_text_field($defs, $this, null, 'vportal', 'Введите VPORTAL ключ:',
+        Control_Factory::add_text_field($defs, $this, null, 'vportal', 'Введите ключ VPORTAL:',
             $vportal, false, false, false, true, 600);
 
         Control_Factory::add_vgap($defs, 50);
@@ -316,28 +330,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     }
 
     /**
-     * portal dialog defs
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function do_get_portal_control_defs(&$plugin_cookies)
-    {
-        $defs = array();
-
-        $url = isset($plugin_cookies->mediateka) ? $plugin_cookies->mediateka : '';
-        Control_Factory::add_text_field($defs, $this, null, 'url', 'Ссылка на VPortal:',
-            $url, false, false, false, true, 800);
-
-        Control_Factory::add_vgap($defs, 50);
-
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'portal_apply', 'Применить', 300);
-        Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
-        Control_Factory::add_vgap($defs, 10);
-
-        return $defs;
-    }
-
-    /**
      * adult pass dialog defs
      * @return array
      */
@@ -439,7 +431,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 case 'change_list_path':
                     $media_url = MediaURL::encode(
                         array(
-                            'screen_id' => 'file_list',
+                            'screen_id' => Starnet_Folder_Screen::ID,
                             'save_data' => 'ch_list_path',
                             'windowCounter' => 1,
                         )
