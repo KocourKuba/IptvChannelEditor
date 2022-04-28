@@ -51,6 +51,7 @@ uri_oneott::uri_oneott()
 	params.epg_desc = "desc";
 	params.epg_start = "start";
 	params.epg_end = "stop";
+	provider_url = L"http://1ott.net/";
 }
 
 void uri_oneott::parse_uri(const std::wstring& url)

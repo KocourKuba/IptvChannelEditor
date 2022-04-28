@@ -42,6 +42,7 @@ uri_ottclub::uri_ottclub()
 {
 	epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
 	streams = { {StreamSubType::enHLS, L"HLS"} };
+	provider_url = L"https://www.ottclub.cc/";
 }
 
 void uri_ottclub::parse_uri(const std::wstring& url)

@@ -2715,8 +2715,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	int playlist_idx = m_wndPlaylist.GetCurSel();
 	int dialogType = 0; // none
 
-	auto account = GetConfig().get_plugin_account_type();
-	if (playlist_idx == 2 || (account != AccountType::enOtt && playlist_idx == 1))
+	auto account = GetConfig().get_plugin_account_access_type();
+	if (playlist_idx == 2 || (account != AccountAccessType::enOtt && playlist_idx == 1))
 	{
 		loaded = LoadCustomPlaylist();
 	}

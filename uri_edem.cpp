@@ -41,6 +41,7 @@ uri_edem::uri_edem() : epg_technic({ L"it999", L"it999" })
 {
 	epg_params[0].epg_use_mapper = false;
 	streams = { {StreamSubType::enHLS, L"HLS"} };
+	provider_url = L"https://ilook.tv/";
 }
 
 void uri_edem::parse_uri(const std::wstring& url)

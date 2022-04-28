@@ -40,9 +40,9 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}
 uri_viplime::uri_viplime()
 {
 	auto& params = epg_params[0];
-//	params.epg_url = L"http://epg.esalecrm.net/viplime/epg/{ID}.json";
-//	params.epg_use_id_hash = true;
-	params.epg_url = L"http://epg.ott-play.com/viplime/epg/{ID}.json";
+	params.epg_url = L"http://epg.esalecrm.net/viplime/epg/{ID}.json";
+//	params.epg_url = L"http://epg.ott-play.com/viplime/epg/{ID}.json";
+	provider_url = L"http://viplime.fun/";
 }
 
 void uri_viplime::parse_uri(const std::wstring& url)

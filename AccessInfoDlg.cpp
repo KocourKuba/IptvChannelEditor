@@ -63,7 +63,7 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
-	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
+	DDX_Control(pDX, IDC_MFCLINK_PROVIDER, m_wndProviderLink);
 	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemove);
 	DDX_Control(pDX, IDC_BUTTON_NEW_FROM_URL, m_wndNewFromUrl);
@@ -71,6 +71,7 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Control(pDX, IDC_LIST_ACCOUNTS, m_wndAccounts);
 	DDX_Control(pDX, IDC_CHECK_EMBED_VP, m_wndEmbedPortal);
+	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
 	DDX_Check(pDX, IDC_CHECK_EMBED_VP, m_bEmbed_vp);
 }
 
@@ -79,7 +80,7 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	__super::OnInitDialog();
 
 	auto plugin_type = GetConfig().get_plugin_type();
-	auto account_type = GetConfig().get_plugin_account_type();
+	auto access_type = GetConfig().get_plugin_account_access_type();
 	CRect rect;
 
 	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
@@ -91,36 +92,41 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	hdi.fmt |= HDF_CHECKBOX;
 	header->SetItem(0, &hdi);
 
+	std::wstring provider_url = StreamContainer::get_instance(plugin_type)->get_provider_url();
+	m_wndProviderLink.SetURL(provider_url.c_str());
+	m_wndProviderLink.SetWindowText(provider_url.c_str());
+
 	m_wndAccounts.GetClientRect(&rect);
 	int vWidth = rect.Width() - /*GetSystemMetrics(SM_CXVSCROLL) -*/ 1 - 22;
 
 	m_wndAccounts.InsertColumn(0, L"", LVCFMT_LEFT, 22, 0);
 	CString str;
-	if (account_type == AccountType::enPin)
+	switch(access_type)
 	{
-		str.LoadString(IDS_STRING_COL_PASSWORD);
-		m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
-	}
-	else if (account_type == AccountType::enLoginPass)
-	{
-		vWidth /= 2;
-		str.LoadString(IDS_STRING_COL_LOGIN);
-		m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
-		str.LoadString(IDS_STRING_COL_PASSWORD);
-		m_wndAccounts.InsertColumn(2, str, LVCFMT_LEFT, vWidth, 0);
-	}
-	else if (account_type == AccountType::enOtt)
-	{
-		vWidth /= 3;
-		str.LoadString(IDS_STRING_COL_TOKEN);
-		m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
-		str.LoadString(IDS_STRING_COL_DOMAIN);
-		m_wndAccounts.InsertColumn(2, str, LVCFMT_LEFT, vWidth, 0);
-		str.LoadString(IDS_STRING_COL_VPORTAL);
-		m_wndAccounts.InsertColumn(3, str, LVCFMT_LEFT, vWidth, 0);
+		case AccountAccessType::enPin:
+			str.LoadString(IDS_STRING_COL_PASSWORD);
+			m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
+			break;
+		case AccountAccessType::enLoginPass:
+			vWidth /= 2;
+			str.LoadString(IDS_STRING_COL_LOGIN);
+			m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
+			str.LoadString(IDS_STRING_COL_PASSWORD);
+			m_wndAccounts.InsertColumn(2, str, LVCFMT_LEFT, vWidth, 0);
+			break;
+		case AccountAccessType::enOtt:
+			vWidth /= 3;
+			str.LoadString(IDS_STRING_COL_TOKEN);
+			m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
+			str.LoadString(IDS_STRING_COL_DOMAIN);
+			m_wndAccounts.InsertColumn(2, str, LVCFMT_LEFT, vWidth, 0);
+			str.LoadString(IDS_STRING_COL_VPORTAL);
+			m_wndAccounts.InsertColumn(3, str, LVCFMT_LEFT, vWidth, 0);
 
-		m_wndEmbedPortal.ShowWindow(SW_SHOW);
-		m_wndNewFromUrl.ShowWindow(SW_SHOW);
+			m_wndEmbedPortal.ShowWindow(SW_SHOW);
+			m_wndNewFromUrl.ShowWindow(SW_SHOW);
+			break;
+		default: break;
 	}
 
 	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES);
@@ -160,17 +166,21 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	auto& all_accounts = utils::string_split(credentials, L';');
 	if (all_accounts.empty())
 	{
-		if (account_type == AccountType::enPin)
+		switch (access_type)
 		{
-			all_accounts.emplace_back(m_password);
-		}
-		else if (account_type == AccountType::enLoginPass)
-		{
-			all_accounts.emplace_back(fmt::format(L"\"{:s}\",\"{:s}\"", m_login, m_password));
-		}
-		else if (account_type == AccountType::enOtt)
-		{
-			all_accounts.emplace_back(fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\"", m_token, m_domain, m_portal));
+			case AccountAccessType::enPin:
+				all_accounts.emplace_back(m_password);
+				break;
+
+			case AccountAccessType::enLoginPass:
+				all_accounts.emplace_back(fmt::format(L"\"{:s}\",\"{:s}\"", m_login, m_password));
+				break;
+
+			case AccountAccessType::enOtt:
+				all_accounts.emplace_back(fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\"", m_token, m_domain, m_portal));
+				break;
+
+			default: break;
 		}
 	}
 
@@ -186,38 +196,43 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		std::wstring str(creds[0]);
 		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
 		m_wndAccounts.SetItemText(idx, 1, str.c_str());
-		if (account_type == AccountType::enPin)
+		switch (access_type)
 		{
-			if (str == m_password)
-			{
-				selected = idx;
-			}
-		}
-		else if (account_type == AccountType::enLoginPass)
-		{
-			if (str == m_login)
-			{
-				selected = idx;
-			}
-			str = creds.size() > 1 ? creds[1] : L"";
-			utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-			m_wndAccounts.SetItemText(idx, 2, str.c_str());
-		}
-		else if (account_type == AccountType::enOtt)
-		{
-			if (str == m_token)
-			{
-				selected = idx;
-			}
+			case AccountAccessType::enPin:
+				if (str == m_password)
+				{
+					selected = idx;
+				}
+				break;
 
-			str = creds.size() > 1 ? creds[1] : L"";
-			utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-			m_wndAccounts.SetItemText(idx, 2, str.c_str());
+			case AccountAccessType::enLoginPass:
+				if (str == m_login)
+				{
+					selected = idx;
+				}
+				str = creds.size() > 1 ? creds[1] : L"";
+				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
+				m_wndAccounts.SetItemText(idx, 2, str.c_str());
+				break;
 
-			str = creds.size() > 2 ? creds[2] : L"";
-			utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-			m_wndAccounts.SetItemText(idx, 3, str.c_str());
+			case AccountAccessType::enOtt:
+				if (str == m_token)
+				{
+					selected = idx;
+				}
+
+				str = creds.size() > 1 ? creds[1] : L"";
+				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
+				m_wndAccounts.SetItemText(idx, 2, str.c_str());
+
+				str = creds.size() > 2 ? creds[2] : L"";
+				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
+				m_wndAccounts.SetItemText(idx, 3, str.c_str());
+				break;
+
+			default:break;
 		}
+
 		++idx;
 	}
 
@@ -235,48 +250,52 @@ void CAccessInfoDlg::OnOK()
 {
 	UpdateData(TRUE);
 
-	auto account_type = GetConfig().get_plugin_account_type();
+	auto access_type = GetConfig().get_plugin_account_access_type();
 	std::wstring credentials;
 	int sel = GetChecked();
 	int cnt = m_wndAccounts.GetItemCount();
 
 	for (int i = 0; i < cnt; i++)
 	{
-		if (account_type == AccountType::enPin)
+		switch (access_type)
 		{
-			credentials += fmt::format(L"\"{:s}\";", m_wndAccounts.GetItemText(i, 1).GetString());
-			if (i == sel)
-			{
-				m_password = m_wndAccounts.GetItemText(i, 1).GetString();
-			}
-		}
-		else if (account_type == AccountType::enLoginPass)
-		{
-			credentials += fmt::format(L"\"{:s}\",\"{:s}\";",
-									   m_wndAccounts.GetItemText(i, 1).GetString(),
-									   m_wndAccounts.GetItemText(i, 2).GetString());
-			if (i == sel)
-			{
-				m_login = m_wndAccounts.GetItemText(i, 1).GetString();
-				m_password = m_wndAccounts.GetItemText(i, 2).GetString();
-			}
-		}
-		else if (account_type == AccountType::enOtt)
-		{
-			credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\";",
-									   m_wndAccounts.GetItemText(i, 1).GetString(),
-									   m_wndAccounts.GetItemText(i, 2).GetString(),
-									   m_wndAccounts.GetItemText(i, 3).GetString());
-			if (i == sel)
-			{
-				m_token = m_wndAccounts.GetItemText(i, 1).GetString();
-				m_domain = m_wndAccounts.GetItemText(i, 2).GetString();
-				m_portal = m_wndAccounts.GetItemText(i, 3).GetString();
-			}
+			case AccountAccessType::enPin:
+				credentials += fmt::format(L"\"{:s}\";", m_wndAccounts.GetItemText(i, 1).GetString());
+				if (i == sel)
+				{
+					m_password = m_wndAccounts.GetItemText(i, 1).GetString();
+				}
+				break;
+
+			case AccountAccessType::enLoginPass:
+				credentials += fmt::format(L"\"{:s}\",\"{:s}\";",
+					m_wndAccounts.GetItemText(i, 1).GetString(),
+					m_wndAccounts.GetItemText(i, 2).GetString());
+				if (i == sel)
+				{
+					m_login = m_wndAccounts.GetItemText(i, 1).GetString();
+					m_password = m_wndAccounts.GetItemText(i, 2).GetString();
+				}
+				break;
+
+			case AccountAccessType::enOtt:
+				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\";",
+					m_wndAccounts.GetItemText(i, 1).GetString(),
+					m_wndAccounts.GetItemText(i, 2).GetString(),
+					m_wndAccounts.GetItemText(i, 3).GetString());
+				if (i == sel)
+				{
+					m_token = m_wndAccounts.GetItemText(i, 1).GetString();
+					m_domain = m_wndAccounts.GetItemText(i, 2).GetString();
+					m_portal = m_wndAccounts.GetItemText(i, 3).GetString();
+				}
+				break;
+
+			default: break;
 		}
 	}
 
-	if (account_type == AccountType::enOtt)
+	if (access_type == AccountAccessType::enOtt)
 	{
 		GetConfig().set_string(false, REG_PORTAL, m_portal);
 	}
@@ -436,21 +455,26 @@ void CAccessInfoDlg::GetAccountInfo()
 	if (checked == -1)
 		return;
 
-	auto account_type = GetConfig().get_plugin_account_type();
-	if (account_type == AccountType::enPin)
+	auto access_type = GetConfig().get_plugin_account_access_type();
+
+	switch (access_type)
 	{
-		m_password = m_wndAccounts.GetItemText(checked, 1).GetString();
-	}
-	else if (account_type == AccountType::enLoginPass)
-	{
-		m_login = m_wndAccounts.GetItemText(checked, 1).GetString();
-		m_password = m_wndAccounts.GetItemText(checked, 2).GetString();
-	}
-	else if (account_type == AccountType::enOtt)
-	{
-		m_token = m_wndAccounts.GetItemText(checked, 1).GetString();
-		m_domain = m_wndAccounts.GetItemText(checked, 2).GetString();
-		m_portal = m_wndAccounts.GetItemText(checked, 3).GetString();
+		case AccountAccessType::enPin:
+			m_password = m_wndAccounts.GetItemText(checked, 1).GetString();
+			break;
+
+		case AccountAccessType::enLoginPass:
+			m_login = m_wndAccounts.GetItemText(checked, 1).GetString();
+			m_password = m_wndAccounts.GetItemText(checked, 2).GetString();
+			break;
+
+		case AccountAccessType::enOtt:
+			m_token = m_wndAccounts.GetItemText(checked, 1).GetString();
+			m_domain = m_wndAccounts.GetItemText(checked, 2).GetString();
+			m_portal = m_wndAccounts.GetItemText(checked, 3).GetString();
+			break;
+
+		default: break;
 	}
 
 	// reset templated flag for new parse

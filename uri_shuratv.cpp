@@ -47,6 +47,7 @@ uri_shuratv::uri_shuratv()
 	params.epg_start = "start_time";
 	params.epg_end = "duration";
 	params.epg_use_duration = true;
+	provider_url = L"http://shura.tv/b/";
 }
 
 void uri_shuratv::parse_uri(const std::wstring& url)

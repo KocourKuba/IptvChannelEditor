@@ -45,8 +45,8 @@ uri_lightiptv::uri_lightiptv()
 {
 	auto& params = epg_params[0];
 	params.epg_url = L"http://epg.esalecrm.net/lightiptv/epg/{ID}.json";
-//	params.epg_use_id_hash = true;
 //	params.epg_url = L"http://epg.ott-play.com/lightiptv/epg/{ID}.json";
+	provider_url = L"https://ottbill.cc/";
 }
 
 void uri_lightiptv::parse_uri(const std::wstring& url)

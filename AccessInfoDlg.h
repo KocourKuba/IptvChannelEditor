@@ -78,5 +78,6 @@ protected:
 	CComboBox m_wndDeviceID;
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;
+	CMFCLinkCtrl m_wndProviderLink;
 };
 

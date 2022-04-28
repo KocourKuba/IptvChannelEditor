@@ -48,6 +48,7 @@ uri_cbilling::uri_cbilling()
 	auto& params = epg_params[0];
 	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params.epg_root = "";
+	provider_url = L"https://cbilling.live/";
 }
 
 void uri_cbilling::parse_uri(const std::wstring& url)

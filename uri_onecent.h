@@ -31,7 +31,7 @@ class uri_onecent : public epg_iptvx
 {
 public:
 
-	uri_onecent() = default;
+	uri_onecent();
 
 	void parse_uri(const std::wstring& url) override;
 	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;

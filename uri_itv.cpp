@@ -52,6 +52,7 @@ uri_itv::uri_itv()
 	params.epg_desc = "desc";
 	params.epg_start = "startTime";
 	params.epg_end = "stopTime";
+	provider_url = L"https://itv.live/";
 }
 
 void uri_itv::parse_uri(const std::wstring& url)

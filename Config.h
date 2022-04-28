@@ -55,7 +55,7 @@ enum class StreamType
 	enTVClub,
 };
 
-enum class AccountType
+enum class AccountAccessType
 {
 	enUnknown = -1,
 	enOtt,
@@ -189,7 +189,7 @@ public:
 	BOOL IsPortable() const { return m_bPortable; }
 	void SetPortable(BOOL val) { m_bPortable = val; }
 
-	AccountType get_plugin_account_type() const;
+	AccountAccessType get_plugin_account_access_type() const;
 
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;

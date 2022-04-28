@@ -247,6 +247,12 @@ public:
 	}
 
 	/// <summary>
+	/// returns link to provider account
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wstring& get_provider_url() const { return provider_url; }
+
+	/// <summary>
 	/// supported streams HLS,MPEGTS etc.
 	/// </summary>
 	/// <returns>vector&</returns>
@@ -359,6 +365,7 @@ protected:
 	std::array <EpgParameters, 2> epg_params;
 	std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
+	std::wstring provider_url;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring login;

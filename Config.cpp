@@ -274,12 +274,12 @@ void PluginsConfig::set_plugin_type(StreamType val)
 	m_pluginType = val;
 }
 
-AccountType PluginsConfig::get_plugin_account_type() const
+AccountAccessType PluginsConfig::get_plugin_account_access_type() const
 {
 	switch (m_pluginType)
 	{
 		case StreamType::enEdem: // subdomain/token
-			return AccountType::enOtt;
+			return AccountAccessType::enOtt;
 		case StreamType::enAntifriz: // pin
 		case StreamType::enItv:
 		case StreamType::enOneCent:
@@ -292,7 +292,7 @@ AccountType PluginsConfig::get_plugin_account_type() const
 		case StreamType::enOttclub:
 		case StreamType::enIptvOnline:
 		case StreamType::enShuraTV:
-			return AccountType::enPin;
+			return AccountAccessType::enPin;
 		case StreamType::enFox: // login/password
 		case StreamType::enGlanz:
 		case StreamType::enSharaclub:
@@ -300,12 +300,12 @@ AccountType PluginsConfig::get_plugin_account_type() const
 		case StreamType::enOneOtt:
 		case StreamType::enVidok:
 		case StreamType::enTVClub:
-			return AccountType::enLoginPass;
+			return AccountAccessType::enLoginPass;
 		default:
 			break;
 	}
 
-	return AccountType::enUnknown;
+	return AccountAccessType::enUnknown;
 }
 
 std::wstring PluginsConfig::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const

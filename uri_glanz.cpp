@@ -45,6 +45,11 @@ static constexpr auto REPL_PASSWORD = L"{PASSWORD}";
 static constexpr auto REPL_INT_ID = L"{INT_ID}";
 static constexpr auto REPL_HOST = L"{HOST}";
 
+uri_glanz::uri_glanz()
+{
+	provider_url = L"http://ottg.tv/";
+}
+
 void uri_glanz::parse_uri(const std::wstring& url)
 {
 	// http://str01.ottg.cc/9195/video.m3u8?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL

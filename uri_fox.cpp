@@ -39,6 +39,7 @@ static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{TOKEN}";
 uri_fox::uri_fox() : epg_technic({ L"fox", L"fox" })
 {
 	streams = { {StreamSubType::enHLS, L"HLS"} };
+	provider_url = L"http://info.fox-tv.fun/";
 }
 
 void uri_fox::parse_uri(const std::wstring& url)

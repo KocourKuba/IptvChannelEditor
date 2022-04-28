@@ -46,6 +46,7 @@ uri_sharaclub::uri_sharaclub()
 	epg_params[0].epg_url = L"http://api.sramtv.com/get/?type=epg&ch={ID}";
 	epg_params[1].epg_root = "";
 	epg_params[1].epg_url = L"http://api.gazoni1.com/get/?type=epg&ch={ID}";
+	provider_url = L"https://shara.club/";
 }
 
 void uri_sharaclub::parse_uri(const std::wstring& url)

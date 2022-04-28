@@ -44,6 +44,7 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive
 uri_tvteam::uri_tvteam()
 {
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
+	provider_url = L"https://tv.team/";
 }
 
 void uri_tvteam::parse_uri(const std::wstring& url)

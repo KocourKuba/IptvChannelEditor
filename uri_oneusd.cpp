@@ -44,6 +44,7 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{SUBDOMAIN}/{ID}/archive
 uri_oneusd::uri_oneusd()
 {
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
+	provider_url = L"http://1usd.tv/";
 }
 
 void uri_oneusd::parse_uri(const std::wstring& url)

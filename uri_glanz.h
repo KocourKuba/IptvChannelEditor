@@ -31,7 +31,7 @@ class uri_glanz	: public epg_iptvx
 {
 public:
 
-	uri_glanz() = default;
+	uri_glanz();
 
 	void parse_uri(const std::wstring& url) override;
 	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;

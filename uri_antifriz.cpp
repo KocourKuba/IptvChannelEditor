@@ -46,6 +46,7 @@ uri_antifriz::uri_antifriz()
 	auto& params = epg_params[0];
 	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params.epg_root = "";
+	provider_url = L"https://antifriztv.com/";
 }
 
 void uri_antifriz::parse_uri(const std::wstring& url)
