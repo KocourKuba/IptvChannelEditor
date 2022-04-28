@@ -95,7 +95,7 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
         foreach ($movie->series_list as $series) {
             if (isset($media_url->season_id) && $media_url->season_id !== $series->season_id) continue;
 
-            hd_print("movie_id: $movie->id name: $series->name series_id: $series->id");
+            //hd_print("movie_id: $movie->id name: $series->name series_id: $series->id");
             $is_movie = empty($series->variants);
             $icon = $is_movie ? 'gui_skin://small_icons/movie.aai' : 'gui_skin://small_icons/folder.aai';
             $items[] = array

@@ -75,6 +75,7 @@ class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Ha
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
+        //hd_print("Vod_Movie_Screen::get_folder_view: MediaUrl: " . $media_url->get_raw_string());
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie)) {
             hd_print("empty movie");

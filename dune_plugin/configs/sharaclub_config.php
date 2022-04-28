@@ -16,7 +16,6 @@ class SharaclubPluginConfig extends Default_Config
         $this->set_feature(BALANCE_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
-        $this->set_feature(VOD_LAZY_LOAD, true);
 
         $this->set_epg_param('first','epg_url', 'http://api.sramtv.com/get/?type=epg&ch={CHANNEL}');
         $this->set_epg_param('first','epg_root', '');
@@ -203,70 +202,68 @@ class SharaclubPluginConfig extends Default_Config
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
+        hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
         $jsonItems = HD::parse_json_file(DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
+
+        if ($jsonItems === false) {
+            hd_print("TryLoadMovie: failed to load movie: $movie_id");
+            return $movie;
+        }
+
         foreach ($jsonItems as $item) {
-
-            $id = -1;
-            if (array_key_exists("id", $item)) {
-                $id = $item["id"];
-            } else if (array_key_exists("series_id", $item)) {
-                $id = $item["series_id"] . "season";
+            $id = '-1';
+            if (isset($item->id)) {
+                $id = (string)$item->id;
+            } else if (isset($item->series_id)) {
+                $id = $item->series_id . "_serial";
             }
-
-            if ($id !== (int)$movie_id) {
+            if ($id !== $movie_id) {
                 continue;
             }
 
             $duration = "";
-            if (array_key_exists("duration_secs", $item["info"])) {
-                $duration = $item["info"]["duration_secs"] / 60;
-            } else if (array_key_exists("episode_run_time", $item["info"])) {
-                $duration = $item["info"]["episode_run_time"];
+            if (isset($item->info->duration_secs)) {
+                $duration = (int)$item->info->duration_secs / 60;
+            } else if (isset($item->info->episode_run_time)) {
+                $duration = (int)$item->info->episode_run_time;
             }
 
-            $genres = HD::ArrayToStr($item["info"]["genre"]);
-            $country = HD::ArrayToStr($item["info"]["country"]);
+            $genres = HD::ArrayToStr($item->info->genre);
+            $country = HD::ArrayToStr($item->info->country);
 
             $movie->set_data(
-                $item["name"],              // name,
-                '',             // name_original,
-                $item["info"]["plot"],      // description,
-                $item["info"]["poster"],    // poster_url,
-                $duration,                  // length_min,
-                $item["info"]["year"],      // year,
-                $item["info"]["director"],  // director_str,
-                '',               // scenario_str,
-                $item["info"]["cast"],      // actors_str,
-                $genres,                    // genres_str,
-                $item["info"]["rating"],    // rate_imdb,
-                '',             // rate_kinopoisk,
-                '',                // rate_mpaa,
-                $country,                   // country,
-                ''                   // budget
+                $item->name,            // name,
+                '',          // name_original,
+                $item->info->plot,      // description,
+                $item->info->poster,    // poster_url,
+                $duration,              // length_min,
+                $item->info->year,      // year,
+                $item->info->director,  // director_str,
+                '',           // scenario_str,
+                $item->info->cast,      // actors_str,
+                $genres,                // genres_str,
+                $item->info->rating,    // rate_imdb,
+                '',         // rate_kinopoisk,
+                '',            // rate_mpaa,
+                $country,               // country,
+                ''               // budget
             );
 
             // case for serials
-            if (array_key_exists("seasons", $item)) {
-                foreach ($item["seasons"] as $season) {
-                    $seasonNumber = $season["season"];
-                    foreach ($season["episodes"] as $episode) {
-                        $episodeCaption = "Сезон " . $seasonNumber . ":  Эпизод " . $episode['episode'];
-                        $playback_url = $episode['video'];
-                        if (preg_match('|^https?://(.+)/series/.+\.mp4(.+)$|', $playback_url, $matches)) {
-                            $playback_url = str_replace(
-                                array('{DOMAIN}', '{TOKEN}', '{ID}'),
-                                array($matches[1], $matches[2], "vod-" . $episode['id']),
-                                $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
-                        }
+            if (isset($item->seasons)) {
+                foreach ($item->seasons as $season) {
+                    $movie->add_season_data($season->season, !empty($season->info->name) ? $season->info->name : "Сезон $season->season", '');
+                    foreach ($season->episodes as $episode) {
+                        $playback_url = str_replace("https://", "http://", $episode->video);
                         hd_print("movie playback_url: $playback_url");
-                        $movie->add_series_data($episode['id'], $episodeCaption, $playback_url);
+                        $movie->add_series_data($episode->id, "Серия $episode->episode", $playback_url, $season->season);
                     }
                 }
             } else {
-                $playback_url = str_replace("https://", "http://", $item["video"]);
+                $playback_url = str_replace("https://", "http://", $item->video);
                 hd_print("movie playback_url: $playback_url");
-                $movie->add_series_data($movie_id, $item['name'], $playback_url);
+                $movie->add_series_data($movie_id, $item->name, $playback_url);
             }
 
             break;
@@ -283,7 +280,7 @@ class SharaclubPluginConfig extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
-        $categories = HD::LoadAndStoreJson($url, true,DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
+        $categories = HD::LoadAndStoreJson($url, false,DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
         if ($categories === false)
         {
             return;
@@ -294,9 +291,10 @@ class SharaclubPluginConfig extends Default_Config
         $categoriesFound = array();
 
         foreach ($categories as $movie) {
-            if (!in_array($movie["category"], $categoriesFound)) {
-                $categoriesFound[] = $movie["category"];
-                $cat = new Starnet_Vod_Category((string)$movie["category"], (string)$movie["category"]);
+            $category = (string)$movie->category;
+            if (!in_array($category, $categoriesFound)) {
+                $categoriesFound[] = $category;
+                $cat = new Starnet_Vod_Category($category, $category);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
             }
@@ -320,7 +318,7 @@ class SharaclubPluginConfig extends Default_Config
         $jsonItems = HD::parse_json_file(DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
         foreach ($jsonItems as $item) {
-            $search  = utf8_encode(mb_strtolower($item["name"], 'UTF-8'));
+            $search  = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
                 $movies[] = self::CreateMovie($item);
             }
@@ -349,33 +347,33 @@ class SharaclubPluginConfig extends Default_Config
         }
 
         foreach ($jsonItems as $item) {
-            if ($category_id === $item["category"]) {
+            if ($category_id === $item->category) {
                 $movies[] = self::CreateMovie($item);
             }
         }
 
-        hd_print("Movies read: " . count($movies));
+        hd_print("Movies read for query: $query_id - " . count($movies));
         return $movies;
     }
 
     /**
-     * @param array $mov_array
+     * @param Object $movie_obj
      * @return Short_Movie
      */
-    protected static function CreateMovie($mov_array)
+    protected static function CreateMovie($movie_obj)
     {
-        $id = -1;
-        if (array_key_exists("id", $mov_array)) {
-            $id = $mov_array["id"];
-        } else if (array_key_exists("series_id", $mov_array)) {
-            $id = $mov_array["series_id"] . "season";
+        $id = '-1';
+        if (isset($movie_obj->id)) {
+            $id = (string)$movie_obj->id;
+        } else if (isset($movie_obj->series_id)) {
+            $id = $movie_obj->series_id . "_serial";
         }
 
-        $info_arr = $mov_array["info"];
-        $genres = HD::ArrayToStr($info_arr["genre"]);
-        $country = HD::ArrayToStr($info_arr["country"]);
-        $movie = new Short_Movie($id, $mov_array["name"], $info_arr["poster"]);
-        $movie->info = $mov_array["name"] . "|Год: " . $info_arr["year"] . "|Страна: $country|Жанр: $genres|Рейтинг: " . $info_arr["rating"];
+        $info = $movie_obj->info;
+        $genres = HD::ArrayToStr($info->genre);
+        $country = HD::ArrayToStr($info->country);
+        $movie = new Short_Movie($id, (string)$movie_obj->name, (string)$info->poster);
+        $movie->info = "$movie_obj->name|Год: $info->year|Страна: $country|Жанр: $genres|Рейтинг: $info->rating";
 
         return $movie;
     }

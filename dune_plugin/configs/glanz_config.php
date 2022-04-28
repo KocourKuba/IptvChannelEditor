@@ -125,7 +125,7 @@ class GlanzPluginConfig extends Default_Config
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
-        //hd_print("Movie ID: $movie_id");
+        hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {

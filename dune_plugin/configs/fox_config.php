@@ -120,7 +120,7 @@ class FoxPluginConfig extends Default_Config
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
-        // hd_print("Movie ID: $movie_id ");
+        hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
 
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
@@ -152,7 +152,7 @@ class FoxPluginConfig extends Default_Config
                 ''// $xml->budget
             );
 
-            $movie->add_series_data($movie_id, $title, $url, true);
+            $movie->add_series_data($movie_id, $title, $url);
             // hd_print("movie_id: $movie_id");
             // hd_print("title: $title");
             hd_print("movie url: $url");

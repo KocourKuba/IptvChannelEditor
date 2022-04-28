@@ -415,7 +415,7 @@ class HD
      * @param bool $to_array
      * @return mixed
      */
-    public static function parse_json_file($path, $to_array = true)
+    public static function parse_json_file($path, $to_array = false)
     {
         return json_decode(file_get_contents(
             $path,

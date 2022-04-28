@@ -26,6 +26,7 @@ class Cbilling_Vod_Impl extends Default_Config
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
+        hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
         $json = HD::LoadAndStoreJson(self::API_HOST . "/video/$movie_id", false, DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
         if ($json === false) {
