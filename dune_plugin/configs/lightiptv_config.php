@@ -29,7 +29,7 @@ class LightiptvPluginConfig extends Default_Config
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
         $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
         $url = str_replace('{PASSWORD}', $password, $url);
 
@@ -76,7 +76,7 @@ class LightiptvPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
         if (empty($password)) {
             hd_print("Password not set");
             return '';

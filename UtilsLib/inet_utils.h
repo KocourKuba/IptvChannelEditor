@@ -59,7 +59,7 @@ public:
 	bool Decode(const char* szMessage);
 
 	// Reinterpret internal buffer to type
-	std::string GetResultString() const { return std::string(m_buf.begin(), m_buf.end()); };
+	std::string GetResultString() const { return std::string((char*)m_buf.data(), m_nSize); };
 	const unsigned char* GetResultBytes() const { return m_buf.data(); };
 
 	// size of encoded/decoded buffer

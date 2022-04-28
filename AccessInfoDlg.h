@@ -60,7 +60,6 @@ private:
 
 public:
 	BOOL m_bEmbed = FALSE;
-	BOOL m_bEmbed_vp = FALSE;
 	CString m_status;
 
 	std::wstring m_login;
@@ -74,7 +73,6 @@ protected:
 	CButton m_wndGet;
 	CButton m_wndRemove;
 	CButton m_wndNewFromUrl;
-	CButton m_wndEmbedPortal;
 	CComboBox m_wndDeviceID;
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;

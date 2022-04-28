@@ -99,8 +99,8 @@ class GlanzPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");

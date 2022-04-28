@@ -337,7 +337,7 @@ class Default_Dune_Plugin implements DunePlugin
             throw new Exception('VOD is not supported');
         }
 
-        hd_print("Default_Dune_Plugin::get_vod_info: MediaUrl: $media_url_str");
+        //hd_print("Default_Dune_Plugin::get_vod_info: MediaUrl: $media_url_str");
         $media_url = MediaURL::decode($media_url_str);
 
         return $this->vod->get_vod_info($media_url, $plugin_cookies);

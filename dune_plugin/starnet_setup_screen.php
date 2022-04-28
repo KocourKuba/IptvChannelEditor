@@ -85,27 +85,27 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $text_icon = $this->plugin->get_image_path('text.png');
         switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
             case 'OTT_KEY':
-                if (empty($plugin_cookies->ott_key_local) || empty($plugin_cookies->mediateka_local)) {
+                if ($this->plugin->config->get_embedded_account() === null) {
                     Control_Factory::add_image_button($defs, $this, null, 'ott_key_dialog',
                         'Активировать просмотр:', 'Ввести ОТТ ключ и домен', $text_icon);
                 } else {
-                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются данные из плейлиста');
+                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются встроенные данные');
                 }
                 break;
             case 'LOGIN':
-                if (empty($plugin_cookies->login_local) && empty($plugin_cookies->password_local)) {
+                if ($this->plugin->config->get_embedded_account() === null) {
                     Control_Factory::add_image_button($defs, $this, null, 'login_dialog',
                         'Активировать просмотр:', 'Введите логин и пароль', $text_icon);
                 } else {
-                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются данные из плейлиста');
+                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются встроенные данные');
                 }
                 break;
             case 'PIN':
-                if (empty($plugin_cookies->login_local) && empty($plugin_cookies->password_local)) {
+                if ($this->plugin->config->get_embedded_account() === null) {
                     Control_Factory::add_image_button($defs, $this, null, 'pin_dialog',
                         'Активировать просмотр:', 'Введите ключ доступа', $text_icon);
                 } else {
-                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются данные из плейлиста');
+                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются встроенные данные');
                 }
                 break;
         }

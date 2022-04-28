@@ -320,7 +320,7 @@ class Movie
                     HD::print_backtrace();
                     throw new Exception("Invalid movie: series list is empty");
                 }
-                hd_print(json_encode($this->series_list));
+                //hd_print(json_encode($this->series_list));
                 $list = $this->series_list[$media_url->movie_id]->variants;
                 if (!is_array($list) || count($list) === 0) {
                     HD::print_backtrace();
@@ -336,7 +336,7 @@ class Movie
         }
 
         $sel_id = isset($media_url->series_id) ? $media_url->series_id : null;
-        hd_print("selected id: $sel_id");
+        //hd_print("selected id: $sel_id");
         $series_array = array();
         $initial_series_ndx = -1;
         foreach ($list as $ndx => $item) {

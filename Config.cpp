@@ -81,7 +81,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_DOMAIN,
 	REG_ACCESS_URL,
 	REG_HOST,
-	REG_PORTAL,
+	REG_VPORTAL,
 	REG_FILTER_STRING_S,
 	REG_FILTER_STRING_H,
 	REG_FILTER_STRING_LST_S,
@@ -99,29 +99,30 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_DEVICE_ID,
 	REG_SHOW_URL,
 	REG_CREDENTIALS,
+	REG_EMBED_INFO,
 };
 
 static std::vector<PluginDesc> all_plugins = {
-	{ StreamType::enAntifriz,   _T("Antifriz TV"),     "antifriz",   "antifriz.tv",    "1.0.3" },
-	{ StreamType::enEdem,       _T("iEdem/iLook TV"),  "edem",       "iedem.tv",       "2.7.3" },
-	{ StreamType::enFox,        _T("Fox TV"),          "fox",        "fox-fun.tv",     "1.0.1" },
-	{ StreamType::enGlanz,      _T("glanz TV"),        "glanz",      "glanz.tv",       "1.0.3" },
-	{ StreamType::enItv,        _T("ITV Live TV"),     "itv",        "itv-live.tv",    "1.0.1" },
-	{ StreamType::enSharaclub,  _T("Sharaclub TV"),    "sharaclub",  "sharaclub.tv",   "1.0.2" },
-	{ StreamType::enSharavoz,   _T("Sharavoz TV"),     "sharavoz",   "sharavoz.tv",    "1.0.2" },
-	{ StreamType::enOneCent,    _T("1CENT TV"),        "onecent",    "onecent.tv",     "1.0.0" },
-	{ StreamType::enOneUsd,     _T("1USD TV"),         "oneusd",     "oneusd.tv",      "1.0.1" },
-	{ StreamType::enVipLime,    _T("VipLime TV"),      "viplime",    "viplime.fun.tv", "1.0.0" },
-	{ StreamType::enSharaTV,    _T("Shara TV"),        "sharatv",    "shara.tv",       "1.0.0" },
-	{ StreamType::enTvTeam,     _T("TV Team"),         "tvteam",     "tv.team",        "1.0.0" },
-	{ StreamType::enOneOtt,     _T("1OTT TV"),         "oneott",     "oneott.tv",      "1.0.0" },
-	{ StreamType::enLightIptv,  _T("LightIPTV"),       "lightiptv",  "lightiptv",      "1.0.0" },
-	{ StreamType::enCbilling,   _T("Cbilling TV"),     "cbilling",   "cbillingtv",     "1.0.0" },
-	{ StreamType::enOttclub,    _T("OttClub"),         "ottclub",    "ottclub",        "1.0.0" },
-	{ StreamType::enIptvOnline, _T("IPTV Online"),     "iptvonline", "iptvonline",     "1.0.0" },
-	{ StreamType::enVidok,      _T("Vidok TV"),        "vidok",      "vidok.tv",       "1.0.0" },
-	{ StreamType::enShuraTV,    _T("Shura TV"),        "shuratv",    "shura.tv",       "1.0.0" },
-	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tvclub",         "1.0.0" },
+	{ StreamType::enAntifriz,   _T("Antifriz TV"),     "antifriz",   "antifriz.tv",    "3.0.0" },
+	{ StreamType::enEdem,       _T("iEdem/iLook TV"),  "edem",       "iedem.tv",       "3.0.0" },
+	{ StreamType::enFox,        _T("Fox TV"),          "fox",        "fox-fun.tv",     "3.0.0" },
+	{ StreamType::enGlanz,      _T("glanz TV"),        "glanz",      "glanz.tv",       "3.0.0" },
+	{ StreamType::enItv,        _T("ITV Live TV"),     "itv",        "itv-live.tv",    "3.0.0" },
+	{ StreamType::enSharaclub,  _T("Sharaclub TV"),    "sharaclub",  "sharaclub.tv",   "3.0.0" },
+	{ StreamType::enSharavoz,   _T("Sharavoz TV"),     "sharavoz",   "sharavoz.tv",    "3.0.0" },
+	{ StreamType::enOneCent,    _T("1CENT TV"),        "onecent",    "onecent.tv",     "3.0.0" },
+	{ StreamType::enOneUsd,     _T("1USD TV"),         "oneusd",     "oneusd.tv",      "3.0.0" },
+	{ StreamType::enVipLime,    _T("VipLime TV"),      "viplime",    "viplime.fun.tv", "3.0.0" },
+	{ StreamType::enSharaTV,    _T("Shara TV"),        "sharatv",    "shara.tv",       "3.0.0" },
+	{ StreamType::enTvTeam,     _T("TV Team"),         "tvteam",     "tv.team",        "3.0.0" },
+	{ StreamType::enOneOtt,     _T("1OTT TV"),         "oneott",     "oneott.tv",      "3.0.0" },
+	{ StreamType::enLightIptv,  _T("LightIPTV"),       "lightiptv",  "lightiptv",      "3.0.0" },
+	{ StreamType::enCbilling,   _T("Cbilling TV"),     "cbilling",   "cbillingtv",     "3.0.0" },
+	{ StreamType::enOttclub,    _T("OttClub"),         "ottclub",    "ottclub",        "3.0.0" },
+	{ StreamType::enIptvOnline, _T("IPTV Online"),     "iptvonline", "iptvonline",     "3.0.0" },
+	{ StreamType::enVidok,      _T("Vidok TV"),        "vidok",      "vidok.tv",       "3.0.0" },
+	{ StreamType::enShuraTV,    _T("Shura TV"),        "shuratv",    "shura.tv",       "3.0.0" },
+	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tvclub",         "3.0.0" },
 };
 
 void ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -243,11 +244,11 @@ const std::vector<PluginDesc>& PluginsConfig::get_plugins_info() const
 	return all_plugins;
 }
 
-PluginDesc PluginsConfig::get_plugin_info(const StreamType plugin) const
+PluginDesc PluginsConfig::get_plugin_info() const
 {
 	for(const auto& info : all_plugins)
 	{
-		if (info.type == plugin)
+		if (info.type == m_pluginType)
 			return info;
 	}
 	return {};

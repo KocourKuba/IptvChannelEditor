@@ -70,9 +70,7 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDeviceID);
 	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Control(pDX, IDC_LIST_ACCOUNTS, m_wndAccounts);
-	DDX_Control(pDX, IDC_CHECK_EMBED_VP, m_wndEmbedPortal);
 	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
-	DDX_Check(pDX, IDC_CHECK_EMBED_VP, m_bEmbed_vp);
 }
 
 BOOL CAccessInfoDlg::OnInitDialog()
@@ -122,8 +120,6 @@ BOOL CAccessInfoDlg::OnInitDialog()
 			m_wndAccounts.InsertColumn(2, str, LVCFMT_LEFT, vWidth, 0);
 			str.LoadString(IDS_STRING_COL_VPORTAL);
 			m_wndAccounts.InsertColumn(3, str, LVCFMT_LEFT, vWidth, 0);
-
-			m_wndEmbedPortal.ShowWindow(SW_SHOW);
 			m_wndNewFromUrl.ShowWindow(SW_SHOW);
 			break;
 		default: break;
@@ -297,9 +293,10 @@ void CAccessInfoDlg::OnOK()
 
 	if (access_type == AccountAccessType::enOtt)
 	{
-		GetConfig().set_string(false, REG_PORTAL, m_portal);
+		GetConfig().set_string(false, REG_VPORTAL, m_portal);
 	}
 
+	GetConfig().set_int(false, REG_EMBED_INFO, m_bEmbed);
 	GetConfig().set_string(false, REG_DOMAIN, m_domain);
 	GetConfig().set_string(false, REG_TOKEN, m_token);
 	GetConfig().set_string(false, REG_LOGIN, m_login);

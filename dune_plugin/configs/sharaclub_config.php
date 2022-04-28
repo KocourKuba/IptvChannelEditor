@@ -53,8 +53,8 @@ class SharaclubPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
@@ -99,8 +99,8 @@ class SharaclubPluginConfig extends Default_Config
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
 
         // this account has special API to get account info
-        $login = empty($plugin_cookies->login_local) ? $plugin_cookies->login : $plugin_cookies->login_local;
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
 
         if ($force === false && !empty($login) && !empty($password)) {
             return true;
@@ -280,7 +280,7 @@ class SharaclubPluginConfig extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
-        $categories = HD::LoadAndStoreJson($url);
+        $categories = HD::DownloadAndStoreJson($url);
         if ($categories === false) {
             return;
         }
@@ -317,6 +317,11 @@ class SharaclubPluginConfig extends Default_Config
         hd_print("getSearchList: $keyword");
         $movies = array();
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
+        if ($jsonItems === false) {
+            hd_print("getSearchList: failed to load movies");
+            return $movies;
+        }
+
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
         foreach ($jsonItems as $item) {
             $search  = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
@@ -338,7 +343,12 @@ class SharaclubPluginConfig extends Default_Config
     public function getVideoList($query_id, $plugin_cookies)
     {
         $movies = array();
+
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
+        if ($jsonItems === false) {
+            hd_print("getVideoList: failed to load movies");
+            return $movies;
+        }
 
         $arr = explode("_", $query_id);
         if ($arr === false) {

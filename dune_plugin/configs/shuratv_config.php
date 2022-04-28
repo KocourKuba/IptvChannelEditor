@@ -54,7 +54,7 @@ class ShuratvPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
         if (empty($password)) {
             hd_print("User password not set");
             return '';

@@ -107,7 +107,7 @@ constexpr auto REG_TOKEN               = _T("AccessKey");
 constexpr auto REG_DOMAIN              = _T("Domain");
 constexpr auto REG_ACCESS_URL          = _T("AccessUrl");
 constexpr auto REG_HOST                = _T("Host");
-constexpr auto REG_PORTAL              = _T("VPortal");
+constexpr auto REG_VPORTAL             = _T("VPortal");
 constexpr auto REG_FILTER_STRING_S     = _T("FilterString");
 constexpr auto REG_FILTER_STRING_H     = _T("FilterStringHide");
 constexpr auto REG_FILTER_STRING_LST_S = _T("FilterStringList");
@@ -124,6 +124,7 @@ constexpr auto REG_STREAM_TYPE         = _T("StreamType");
 constexpr auto REG_CUSTOM_PLAYLIST     = _T("CustomPlaylist");
 constexpr auto REG_DEVICE_ID           = _T("DeviceID");
 constexpr auto REG_CREDENTIALS         = _T("Credentials");
+constexpr auto REG_EMBED_INFO          = _T("EmbedInfo");
 
 typedef struct
 {
@@ -176,7 +177,7 @@ public:
 	void RemovePortableSettings();
 
 	const std::vector<PluginDesc>& get_plugins_info() const;
-	PluginDesc get_plugin_info(const StreamType plugin) const;
+	PluginDesc get_plugin_info() const;
 
 	int get_plugin_idx() const;
 	void set_plugin_idx(int val);

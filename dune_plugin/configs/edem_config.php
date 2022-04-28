@@ -103,8 +103,8 @@ class EdemPluginConfig extends Default_Config
         $url = $channel->get_streaming_url();
         // hd_print("Stream url:  " . $url);
 
-        $subdomain = empty($plugin_cookies->subdomain_local) ? $plugin_cookies->subdomain : $plugin_cookies->subdomain_local;
-        $token = empty($plugin_cookies->ott_key_local) ? $plugin_cookies->ott_key : $plugin_cookies->ott_key_local;
+        $subdomain = isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain;
+        $token = isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key;
         if (empty($subdomain) || empty($token)) {
             hd_print("TransformStreamUrl: parameters for {$channel->get_channel_id()} not defined!");
         } else {
@@ -154,7 +154,7 @@ class EdemPluginConfig extends Default_Config
     {
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
-        $movieData = self::make_json_request($plugin_cookies,
+        $movieData = $this->make_json_request($plugin_cookies,
             array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset'=> 0,'limit' => 0));
 
         if ($movieData === false) {
@@ -168,7 +168,7 @@ class EdemPluginConfig extends Default_Config
             //hd_print("movie: $movie_id \"$movieData->title\" contains " . count((array)$movieData->items) . " series");
             foreach ($movieData->items as $item) {
                 //hd_print("Try load episode $item->fid playback_url: $item->url");
-                $episodeData = self::make_json_request($plugin_cookies,
+                $episodeData = $this->make_json_request($plugin_cookies,
                     array('cmd' => "flick", 'fid' => (int)$item->fid, 'offset'=> 0,'limit' => 0));
 
                 if (!isset($episodeData->variants)) {
@@ -253,7 +253,7 @@ class EdemPluginConfig extends Default_Config
     {
         //hd_print("fetch_vod_categories");
 
-        $doc = self::make_json_request($plugin_cookies);
+        $doc = $this->make_json_request($plugin_cookies);
         if ($doc === false) {
             return;
         }
@@ -295,7 +295,7 @@ class EdemPluginConfig extends Default_Config
     public function getSearchList($keyword, $plugin_cookies)
     {
         hd_print("getSearchList $keyword");
-        $searchRes = self::make_json_request($plugin_cookies,
+        $searchRes = $this->make_json_request($plugin_cookies,
             array('cmd' => "search", 'query' => $keyword));
 
         return $searchRes === false ? array() : $this->CollectSearchResult($keyword, $searchRes);
@@ -334,7 +334,7 @@ class EdemPluginConfig extends Default_Config
 
         $post_params['filter'] = 'on';
         $post_params['offset'] = $this->get_next_page($params, 0);
-        $filterRes = self::make_json_request($plugin_cookies, $post_params);
+        $filterRes = $this->make_json_request($plugin_cookies, $post_params);
 
         return $filterRes === false ? array() : $this->CollectSearchResult($params, $filterRes);
     }
@@ -350,7 +350,7 @@ class EdemPluginConfig extends Default_Config
         $val = $this->get_next_page($query_id, 0);
         hd_print("getVideoList: $query_id, $val");
 
-        $categories = self::make_json_request($plugin_cookies,
+        $categories = $this->make_json_request($plugin_cookies,
             array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $val, 'limit' => 0));
 
         return $categories === false ? array() : $this->CollectSearchResult($query_id, $categories);
@@ -393,17 +393,9 @@ class EdemPluginConfig extends Default_Config
      * @param bool $to_array
      * @return false|mixed
      */
-    protected static function make_json_request($plugin_cookies, $params = null, $to_array = false)
+    protected function make_json_request($plugin_cookies, $params = null, $to_array = false)
     {
-        $mediateka = '';
-        if (isset($plugin_cookies->mediateka_local)) {
-            $mediateka = $plugin_cookies->mediateka_local;
-        }
-
-        if (empty($mediateka) && isset($plugin_cookies->mediateka)) {
-            $mediateka = $plugin_cookies->mediateka;
-        }
-
+        $mediateka = isset($this->embedded_account->vportal) ? $this->embedded_account->vportal : $plugin_cookies->mediateka;
         if (empty($mediateka)
             || !preg_match('|^portal::\[key:([^]]+)\](.+)$|', $mediateka, $matches)) {
             hd_print("incorrect or empty VPortal key");
@@ -431,7 +423,7 @@ class EdemPluginConfig extends Default_Config
 
         // hd_print("post_data: " . json_encode($pairs));
 
-        return HD::LoadAndStoreJson($url, $to_array, $curl_opt);
+        return HD::DownloadAndStoreJson($url, $to_array, $curl_opt);
     }
 
     /**

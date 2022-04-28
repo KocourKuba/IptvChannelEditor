@@ -70,7 +70,7 @@ class ItvPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
         if (empty($password)) {
             hd_print("Password not set");
             return '';
@@ -91,7 +91,7 @@ class ItvPluginConfig extends Default_Config
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
 
         // this account has special API to get account info
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
         if ($force === false && !empty($password)) {
             return true;
         }

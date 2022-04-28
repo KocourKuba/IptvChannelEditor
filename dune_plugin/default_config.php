@@ -77,12 +77,29 @@ abstract class Default_Config
     protected $movie_counter = array();
     protected $filters = array();
 
+    protected $embedded_account;
+
     /**
      * @throws Exception
      */
     public function __construct()
     {
         $xml = HD::parse_xml_file(get_install_path('dune_plugin.xml'));
+
+        $acc_file = get_install_path('account.dat');
+        if (file_exists($acc_file)) {
+            $data = file_get_contents($acc_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            if ($data !== false) {
+                hd_print("account data: $data");
+                $account = json_decode(base64_decode(substr($data, 5)));
+                if ($account !== false) {
+                    $this->embedded_account = $account;
+                    //foreach ($this->embedded_account as $key => $item) {
+                    //    hd_print("Embedded info: $key => $item");
+                    //}
+                }
+            }
+        }
 
         $this->PLUGIN_SHOW_NAME = $xml->caption;
         $this->PLUGIN_SHORT_NAME = $xml->short_name;
@@ -120,8 +137,8 @@ abstract class Default_Config
         $default_parser['epg_timezone'] = 'UTC';
         $default_parser['epg_id_mapper'] = array();
 
-        $this->set_epg_params('first',$default_parser);
-        $this->set_epg_params('second',$default_parser);
+        $this->set_epg_params('first', $default_parser);
+        $this->set_epg_params('second', $default_parser);
     }
 
     /**
@@ -332,6 +349,14 @@ abstract class Default_Config
     public function set_filters($filters)
     {
         $this->filters = $filters;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function get_embedded_account()
+    {
+        return $this->embedded_account;
     }
 
     /**

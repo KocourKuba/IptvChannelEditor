@@ -38,9 +38,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\json_wrapper.h"
 
-constexpr auto EmbedToken = 0x1;
-constexpr auto EmbedPortal = 0x02;
-
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
 {

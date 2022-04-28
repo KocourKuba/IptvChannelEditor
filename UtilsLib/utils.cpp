@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include <regex>
 #include <chrono>
+#include <random>
 
 #include "utils.h"
 
@@ -331,4 +332,21 @@ std::vector<std::string> regex_split(const std::string& str, const std::string& 
 
 	return elems;
 }
+
+std::string generateRandomId(size_t length /*= 0*/)
+{
+	static const std::string allowed_chars{ "123456789BCDFGHJKLMNPQRSTVWXZbcdfghjklmnpqrstvwxz" };
+
+	static thread_local std::default_random_engine randomEngine(std::random_device{}());
+	static thread_local std::uniform_int_distribution<int> randomDistribution(0, allowed_chars.size() - 1);
+
+	std::string id(length ? length : 32, '\0');
+
+	for (auto& c : id) {
+		c = allowed_chars[randomDistribution(randomEngine)];
+	}
+
+	return id;
+}
+
 }

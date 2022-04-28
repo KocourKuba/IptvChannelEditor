@@ -88,55 +88,10 @@ class Starnet_Tv extends Abstract_Tv
             throw new Exception('Invalid XML document');
         }
 
-        // clear saved embedded info
-        if (isset($plugin_cookies->ott_key_local)) {
-            $plugin_cookies->ott_key_local = '';
-        }
-        if (isset($plugin_cookies->subdomain_local)) {
-            $plugin_cookies->subdomain_local = '';
-        }
-        if (isset($plugin_cookies->login_local)) {
-            $plugin_cookies->login_local = '';
-        }
-        if (isset($plugin_cookies->password_local)) {
-            $plugin_cookies->password_local = '';
-        }
-        if (isset($plugin_cookies->mediateka_local)) {
-            $plugin_cookies->mediateka_local = '';
-        }
-
         // read embedded access info
-        if (isset($xml->channels_setup)) {
-
-            if (isset($xml->channels_setup->access_key)) {
-                $plugin_cookies->ott_key_local = (string)$xml->channels_setup->access_key;
-                hd_print("access_key: $plugin_cookies->ott_key_local");
-            }
-
-            if (isset($xml->channels_setup->access_domain)) {
-                $plugin_cookies->subdomain_local = (string)$xml->channels_setup->access_domain;
-                hd_print("subdomain: $plugin_cookies->subdomain_local");
-            }
-
-            if (isset($xml->channels_setup->access_login)) {
-                $plugin_cookies->login_local = (string)$xml->channels_setup->access_login;
-                hd_print("login: $plugin_cookies->login_local");
-            }
-
-            if (isset($xml->channels_setup->access_password)) {
-                $plugin_cookies->password_local = (string)$xml->channels_setup->access_password;
-                hd_print("password: " . base64_encode($plugin_cookies->password_local));
-            }
-
-            if (isset($xml->channels_setup->has_secondary_epg)) {
-                $plugin_cookies->has_secondary_epg = $xml->channels_setup->has_secondary_epg ? 1 : 0;
-                hd_print("Channels has secondary EPG: $plugin_cookies->has_secondary_epg");
-            }
-        }
-
-        if (isset($xml->portal_setup, $xml->portal_setup->portal_key)) {
-            $plugin_cookies->mediateka_local = (string)$xml->portal_setup->portal_key;
-            hd_print("portal_key: $plugin_cookies->mediateka_local");
+        if (isset($xml->channels_setup, $xml->channels_setup->has_secondary_epg)) {
+            $plugin_cookies->has_secondary_epg = $xml->channels_setup->has_secondary_epg ? 1 : 0;
+            hd_print("Channels has secondary EPG: $plugin_cookies->has_secondary_epg");
         }
 
         // Create channels and groups

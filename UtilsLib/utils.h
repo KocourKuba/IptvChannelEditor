@@ -408,4 +408,7 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 
 	return rtf;
 }
+
+std::string generateRandomId(size_t length = 0);
+
 }

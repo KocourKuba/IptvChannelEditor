@@ -99,15 +99,13 @@ class Starnet_Main_Screen extends Tv_Group_List_Screen implements User_Input_Han
     {
         switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
             case 'OTT_KEY':
-                $setup_needs = (empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) &&
-                    (empty($plugin_cookies->ott_key_local) && empty($plugin_cookies->subdomain_local)));
+                $setup_needs = empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             case 'LOGIN':
-                $setup_needs = (empty($plugin_cookies->login) && empty($plugin_cookies->password)) &&
-                    (empty($plugin_cookies->login_local) && empty($plugin_cookies->password_local));
+                $setup_needs = empty($plugin_cookies->login) && empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             case 'PIN':
-                $setup_needs = empty($plugin_cookies->password) && empty($plugin_cookies->password_local);
+                $setup_needs = empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             default:
                 hd_print("Unknown plugin type");

@@ -176,7 +176,7 @@ class Epg_Manager
         $use_duration = $parser_params['epg_use_duration'];
         foreach ($ch_data as $entry) {
             $program_start = $entry[$parser_params['epg_start']];
-            hd_print("epg_start $program_start");
+            //hd_print("epg_start $program_start");
 
             if ($no_timestamp) {
                 // start time not the timestamp
@@ -185,7 +185,7 @@ class Epg_Manager
                 if (is_need_daylight_fix())
                     $program_start += 3600;
 
-                hd_print("epg_start: $program_start");
+                //hd_print("epg_start: $program_start");
             }
 
             if ($use_duration) {

@@ -257,12 +257,12 @@ bool CBase64Coder::Encode(const unsigned char* pData, int nSize, unsigned long d
 	m_buf.resize(m_nSize);
 
 	//Finally do the encoding
-	if (!ATL::Base64Encode(pData, nSize, (char*)m_buf.data(), &m_nSize, dwFlags)) return FALSE;
+	if (!ATL::Base64Encode(pData, nSize, (char*)m_buf.data(), &m_nSize, dwFlags)) return false;
 
 	//Null terminate the data
 	m_buf[m_nSize] = 0;
 
-	return TRUE;
+	return true;
 }
 
 bool CBase64Coder::Encode(const char* szMessage, int nSize /*= 0*/, unsigned long dwFlags /*= ATL_BASE64_FLAG_NOCRLF*/)
@@ -283,12 +283,12 @@ bool CBase64Coder::Decode(const char* pData, int nSize)
 	m_buf.resize(m_nSize);
 
 	//Finally do the encoding
-	if (!Base64Decode(pData, nSize, m_buf.data(), &m_nSize)) return FALSE;
+	if (!Base64Decode(pData, nSize, m_buf.data(), &m_nSize)) return false;
 
 	//Null terminate the data
 	m_buf[m_nSize] = 0;
 
-	return TRUE;
+	return true;
 }
 
 bool CBase64Coder::Decode(const char* szMessage)

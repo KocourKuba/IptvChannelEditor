@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\FileVersionInfo.h"
 #include "UtilsLib\inet_utils.h"
 
-#include "7zip/SevenZipWrapper.h"
+#include "7zip\SevenZipWrapper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -54,16 +54,28 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 		{
 			PluginsConfig::DEV_PATH = LR"(..\)";
 			PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
-			m_bDev = TRUE;
+			m_bDev = true;
 		}
-
-		m_bMakeAll = (_tcsicmp(szParam, _T("MakeAll")) == 0);
-		m_bPortable = (_tcsicmp(szParam, _T("MakePortable")) == 0);
-		m_bRestoreReg = (_tcsicmp(szParam, _T("RestorePortable")) == 0);
+		else if (_tcsicmp(szParam, _T("MakeAll")) == 0)
+		{
+			m_bMakeAll = true;
+		}
+		else if (_tcsicmp(szParam, _T("MakePortable")) == 0)
+		{
+			m_bPortable = true;
+		}
+		else if (_tcsicmp(szParam, _T("RestorePortable")) == 0)
+		{
+			m_bRestoreReg = true;
+		}
+		else if (_tcsicmp(szParam, _T("NoEmbed")) == 0)
+		{
+			m_bNoEmbed = true;
+		}
 	}
 
 #ifdef _DEBUG
-	m_bDev = TRUE;
+	m_bDev = true;
 #endif // _DEBUG
 
 	if (m_bDev) //-V547
@@ -184,7 +196,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		const auto& lists_path = GetConfig().get_string(true, REG_LISTS_PATH);
 		for (const auto& item : GetConfig().get_plugins_info())
 		{
-			if (!PackPlugin(item.type, output_path, lists_path, false))
+			if (!PackPlugin(item.type, output_path, lists_path, false, cmdInfo.m_bNoEmbed))
 			{
 				CString str;
 				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.title.c_str());
@@ -352,9 +364,13 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 bool PackPlugin(const StreamType plugin_type,
 				const std::wstring& output_path,
 				const std::wstring& lists_path,
-				bool showMessage)
+				bool showMessage,
+				bool noEmbed /*= false*/)
 {
-	const auto& plugin_info = GetConfig().get_plugin_info(plugin_type);
+	const auto& old_plugin_type = GetConfig().get_plugin_type();
+	GetConfig().set_plugin_type(plugin_type);
+
+	const auto& plugin_info = GetConfig().get_plugin_info();
 	const auto& short_name_w = utils::utf8_to_utf16(plugin_info.short_name);
 	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
 
@@ -368,6 +384,12 @@ bool PackPlugin(const StreamType plugin_type,
 
 	// remove config's folder
 	std::filesystem::remove_all(packFolder + L"configs", err);
+
+	// remove cbilling_vod base class
+	if (plugin_type != StreamType::enAntifriz && plugin_type != StreamType::enCbilling)
+	{
+		std::filesystem::remove(packFolder + L"cbilling_vod_impl.php", err);
+	}
 
 	// remove images for other plugins
 	std::vector<std::string> to_remove;
@@ -428,6 +450,77 @@ bool PackPlugin(const StreamType plugin_type,
 					  GetPluginName<char>(plugin_type),
 					  GetPluginName<char>(plugin_type, true));
 	os.close();
+
+	if (!noEmbed && GetConfig().get_int(false, REG_EMBED_INFO))
+	{
+		try
+		{
+			nlohmann::json node;
+			switch (plugin_type)
+			{
+				case StreamType::enEdem: // ott_key
+					node["domain"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_DOMAIN));
+					node["ott_key"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_TOKEN));
+					node["vportal"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_VPORTAL));
+					break;
+				case StreamType::enFox: // login/pass
+				case StreamType::enGlanz:
+				case StreamType::enSharaclub:
+				case StreamType::enSharaTV:
+				case StreamType::enOneOtt:
+				case StreamType::enVidok:
+				case StreamType::enTVClub:
+					node["login"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_LOGIN));
+					node["password"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
+					break;
+				case StreamType::enAntifriz: // pin
+				case StreamType::enItv:
+				case StreamType::enOneCent:
+				case StreamType::enOneUsd:
+				case StreamType::enSharavoz:
+				case StreamType::enVipLime:
+				case StreamType::enTvTeam:
+				case StreamType::enLightIptv:
+				case StreamType::enCbilling:
+				case StreamType::enOttclub:
+				case StreamType::enIptvOnline:
+				case StreamType::enShuraTV:
+					node["password"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
+					break;
+				default:
+					break;
+			}
+
+			if (!node.empty())
+			{
+				const auto& js = node.dump();
+				utils::CBase64Coder enc;
+				enc.Encode(js.c_str(), js.size(), ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
+
+				std::ofstream out_file(packFolder + L"account.dat");
+				const auto& str = utils::generateRandomId(5) + enc.GetResultString();
+				out_file.write(str.c_str(), str.size());
+				out_file.close();
+			}
+		}
+		catch (const nlohmann::json::out_of_range& ex)
+		{
+			// out of range errors may happen if provided sizes are excessive
+			TRACE("out of range error: %s\n", ex.what());
+		}
+		catch (const nlohmann::detail::type_error& ex)
+		{
+			// type error
+			TRACE("type error: %s\n", ex.what());
+		}
+		catch (...)
+		{
+			TRACE("unknown exception\n");
+		}
+	}
+
+	// revert back to previous state
+	GetConfig().set_plugin_type(old_plugin_type);
 
 	// pack folder
 	const auto& pack_dll = GetAppPath((PluginsConfig::DEV_PATH + PluginsConfig::PACK_DLL_PATH).c_str()) + PACK_DLL;

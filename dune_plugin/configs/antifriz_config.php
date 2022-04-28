@@ -77,8 +77,7 @@ class AntifrizPluginConfig extends Cbilling_Vod_Impl
             return false;
         }
 
-        $plugin_cookies->subdomain_local = $account_data['subdomain'];
-        $plugin_cookies->token = $account_data['token'];
+        $this->account_data = $account_data;
         return true;
     }
 
@@ -91,7 +90,7 @@ class AntifrizPluginConfig extends Cbilling_Vod_Impl
     {
         // hd_print("Type: $type");
 
-        $password = empty($plugin_cookies->password_local) ? $plugin_cookies->password : $plugin_cookies->password_local;
+        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
 
         if (empty($password)) {
             hd_print("Password not set");

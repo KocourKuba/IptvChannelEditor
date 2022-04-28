@@ -72,7 +72,7 @@ constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 constexpr auto ID_UPDATE_EPG_TIMER = 1000;
 
 // Common
-constexpr auto CHANNELS_LIST_VERSION = 3;
+constexpr auto CHANNELS_LIST_VERSION = 4;
 
 std::map<UINT, UINT> tooltips_info =
 {
@@ -481,12 +481,12 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_inSync = true;
 
 	m_host.clear();
-	m_embedded_info = FALSE;
 
 	m_domain = GetConfig().get_string(false, REG_DOMAIN);
 	m_token = GetConfig().get_string(false, REG_TOKEN);
 	m_login = GetConfig().get_string(false, REG_LOGIN);
 	m_password = GetConfig().get_string(false, REG_PASSWORD);
+	m_embedded_info = GetConfig().get_int(false, REG_EMBED_INFO);
 
 	m_wndPlaylist.ResetContent();
 
@@ -499,7 +499,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_wndPlaylist.AddString(str);
 		str.LoadString(IDS_STRING_EDEM_THEMATIC);
 		m_wndPlaylist.AddString(str);
-		m_portal = GetConfig().get_string(false, REG_PORTAL);
+		m_portal = GetConfig().get_string(false, REG_VPORTAL);
 		m_enableDownload = (pl_idx != 2);
 	}
 	else
@@ -1529,7 +1529,6 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		return false;
 	}
 
-	m_embedded_info = FALSE;
 	auto i_node = doc.first_node(utils::TV_INFO);
 	auto info_node = i_node->first_node(utils::VERSION_INFO);
 	if (!info_node || rapidxml::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
@@ -1543,25 +1542,25 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	{
 		if (setup_node->first_node(utils::ACCESS_TOKEN))
 		{
-			m_embedded_info |= EmbedToken;
+			m_embedded_info = TRUE;
 			m_token = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_TOKEN));
 		}
 
 		if (setup_node->first_node(utils::ACCESS_DOMAIN))
 		{
-			m_embedded_info |= EmbedToken;
+			m_embedded_info = TRUE;
 			m_domain = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN));
 		}
 
 		if (setup_node->first_node(utils::ACCESS_LOGIN))
 		{
-			m_embedded_info |= EmbedToken;
+			m_embedded_info = TRUE;
 			m_login = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_LOGIN));
 		}
 
 		if (setup_node->first_node(utils::ACCESS_PASSWORD))
 		{
-			m_embedded_info |= EmbedToken;
+			m_embedded_info = TRUE;
 			m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
 		}
 	}
@@ -1569,7 +1568,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	auto portal_node = i_node->first_node(utils::PORTAL_SETUP);
 	if (portal_node)
 	{
-		m_embedded_info |= EmbedPortal;
+		m_embedded_info = TRUE;
 		m_portal = rapidxml::get_value_wstring(portal_node->first_node(utils::PORTAL_KEY));
 	}
 
@@ -2740,7 +2739,6 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	CAccessInfoDlg dlgInfo;
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgInfo.m_bEmbed = m_embedded_info;
-	dlgInfo.m_bEmbed_vp = (m_embedded_info & EmbedPortal) ? TRUE : FALSE;
 	dlgInfo.m_token = m_token;
 	dlgInfo.m_domain = m_domain;
 	dlgInfo.m_login = m_login;
@@ -2752,23 +2750,7 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 
 	if (sheet.DoModal() == IDOK)
 	{
-		BOOL embed = ((dlgInfo.m_bEmbed ? EmbedToken : 0) | (dlgInfo.m_bEmbed_vp ? EmbedPortal : 0));
-		if (m_embedded_info != embed)
-		{
-			m_embedded_info = embed;
-			set_allow_save(TRUE);
-		}
-		else if (embed
-			&& (   dlgInfo.m_token != m_token
-				|| dlgInfo.m_domain != m_domain
-				|| dlgInfo.m_login != m_login
-				|| dlgInfo.m_password != m_password
-				|| dlgInfo.m_portal != m_portal)
-			)
-		{
-			set_allow_save(TRUE);
-		}
-
+		m_embedded_info = dlgInfo.m_bEmbed;
 		m_domain = dlgInfo.m_domain;
 		m_token = dlgInfo.m_token;
 		m_login = dlgInfo.m_login;
@@ -3026,64 +3008,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		if (m_channelsMap.begin()->second->stream_uri->has_epg2())
 		{
 			setup_node->append_node(rapidxml::alloc_node(doc, utils::HAS_SECONDARY_EPG, "true"));
-		}
-
-		if ((m_embedded_info & EmbedToken) == EmbedToken)
-		{
-			switch (GetConfig().get_plugin_type())
-			{
-				case StreamType::enEdem: // ott_key
-					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_TOKEN, utils::utf16_to_utf8(m_token).c_str()));
-					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_DOMAIN, utils::utf16_to_utf8(m_domain).c_str()));
-					break;
-				case StreamType::enFox: // login/pass
-				case StreamType::enGlanz:
-				case StreamType::enSharaclub:
-				case StreamType::enSharaTV:
-				case StreamType::enOneOtt:
-				case StreamType::enVidok:
-				case StreamType::enTVClub:
-					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_LOGIN, utils::utf16_to_utf8(m_login).c_str()));
-					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
-					break;
-				case StreamType::enAntifriz: // pin
-				case StreamType::enItv:
-				case StreamType::enOneCent:
-				case StreamType::enOneUsd:
-				case StreamType::enSharavoz:
-				case StreamType::enVipLime:
-				case StreamType::enTvTeam:
-				case StreamType::enLightIptv:
-				case StreamType::enCbilling:
-				case StreamType::enOttclub:
-				case StreamType::enIptvOnline:
-				case StreamType::enShuraTV:
-					setup_node->append_node(rapidxml::alloc_node(doc, utils::ACCESS_PASSWORD, utils::utf16_to_utf8(m_password).c_str()));
-					break;
-				default:
-					break;
-			}
-		}
-
-		if (setup_node->first_node())
-		{
 			tv_info->append_node(setup_node);
-		}
-
-		if ((m_embedded_info & EmbedPortal) == EmbedPortal)
-		{
-			// Currently only for Edem/iLook
-			auto portal_node = doc.allocate_node(rapidxml::node_element, utils::PORTAL_SETUP);
-			switch (GetConfig().get_plugin_type())
-			{
-				case StreamType::enEdem: // ott_key
-					portal_node->append_node(rapidxml::alloc_node(doc, utils::PORTAL_KEY, utils::utf16_to_utf8(m_portal).c_str()));
-					break;
-				default:
-					break;
-			}
-
-			tv_info->append_node(portal_node);
 		}
 
 		// create <tv_categories> node
@@ -3367,7 +3292,9 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 		m_wndProgressInfo.SetWindowText(str);
 		m_wndProgress.SetPos(++i);
 
-		if (!PackPlugin(item.type, GetConfig().get_string(true, REG_OUTPUT_PATH), GetConfig().get_string(true, REG_LISTS_PATH), false))
+		const auto& out_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
+		const auto& list_path = GetConfig().get_string(true, REG_LISTS_PATH);
+		if (!PackPlugin(item.type, out_path, list_path, false))
 		{
 			success = false;
 			CString str;
