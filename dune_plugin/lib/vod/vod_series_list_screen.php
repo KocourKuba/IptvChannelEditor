@@ -108,7 +108,11 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
                     'is_movie' => $is_movie,
                 )),
                 PluginRegularFolderItem::caption => $series->name,
-                PluginRegularFolderItem::view_item_params => array(ViewItemParams::icon_path => $icon),
+                PluginRegularFolderItem::view_item_params => array
+                (
+                    ViewItemParams::icon_path => $icon,
+                    ViewItemParams::item_detailed_info => $series->series_desc,
+                ),
             );
         }
 

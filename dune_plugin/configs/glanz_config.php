@@ -156,7 +156,7 @@ class GlanzPluginConfig extends Default_Config
                 ''// $xml->budget
             );
 
-            $movie->add_series_data($movie_id, $caption, $url);
+            $movie->add_series_data($movie_id, $caption, '', $url);
             hd_print("movie url: $url");
             break;
         }

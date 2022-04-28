@@ -92,17 +92,17 @@ class Movie
     public $type = 'movie';
 
     /**
-     * @var array
+     * @var array|Movie_Season[]
      */
     public $season_list;
 
     /**
-     * @var array
+     * @var array|Movie_Series[]
      */
     public $series_list;
 
     /**
-     * @var array
+     * @var array|Movie_Variant[]
      */
     public $variants_list;
 
@@ -212,14 +212,38 @@ class Movie
     /**
      * @param string $id
      * @param string $name
+     * @param string $description
      * @param string $playback_url
      * @param bool $playback_url_is_stream_url
      * @throws Exception
      */
-    public function add_series_data($id, $name, $playback_url, $season_id = '', $playback_url_is_stream_url = true)
+    public function add_series_data($id, $name, $description, $playback_url, $season_id = '', $playback_url_is_stream_url = true)
     {
         $series = new Movie_Series($id);
         $series->name = $this->to_string($name);
+        $series->series_desc = $this->to_string($description);
+        $series->season_id = $this->to_string($season_id);
+        $series->playback_url = $this->to_string($playback_url);
+        $series->playback_url_is_stream_url = $playback_url_is_stream_url;
+        $this->series_list[$id] = $series;
+    }
+
+    /**
+     * @param $id
+     * @param $name
+     * @param $description
+     * @param $playback_url
+     * @param $variants
+     * @param $season_id
+     * @param $playback_url_is_stream_url
+     * @throws Exception
+     */
+    public function add_series_variants_data($id, $name, $description, $variants, $playback_url = '', $season_id = '', $playback_url_is_stream_url = true)
+    {
+        $series = new Movie_Series($id);
+        $series->name = $this->to_string($name);
+        $series->series_desc = $this->to_string($description);
+        $series->variants = $variants;
         $series->season_id = $this->to_string($season_id);
         $series->playback_url = $this->to_string($playback_url);
         $series->playback_url_is_stream_url = $playback_url_is_stream_url;

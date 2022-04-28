@@ -162,6 +162,7 @@ class EdemPluginConfig extends Default_Config
             return $movie;
         }
 
+        $series_desc = '';
         if ($movieData->type === 'multistream') {
             // collect series
             //hd_print("movie: $movie_id \"$movieData->title\" contains " . count((array)$movieData->items) . " series");
@@ -170,47 +171,61 @@ class EdemPluginConfig extends Default_Config
                 $episodeData = self::make_json_request($plugin_cookies,
                     array('cmd' => "flick", 'fid' => (int)$item->fid, 'offset'=> 0,'limit' => 0));
 
-                if (!isset($episodeData->variants) || count((array)$episodeData->variants) < 2) {
+                if (!isset($episodeData->variants)) {
                     //hd_print("no variants for $item->fid");
-                    $movie->add_series_data($item->fid, $item->title, $item->url);
+                    $movie->add_series_data($item->fid, $item->title, '', $item->url);
+                } else if (count((array)$episodeData->variants) === 1) {
+                    //hd_print("one variant for $item->fid");
+                    $series_desc = " Качество: " . key($episodeData->variants) ."p";
+                    $movie->add_series_data($item->fid, $item->title, $series_desc, $item->url);
                 } else {
                     $variants_data = (array)$episodeData->variants;
                     //hd_print("episode $item->fid contains " . count($variants_data) . " variants");
-                    // collect quality variants for single movie
                     $variants = array();
+                    $series_desc = "Качество: ";
                     foreach ($variants_data as $key => $url) {
                         //hd_print("variant $key playback_url: $url");
-                        $variants[] = new Movie_Variant($item->fid . "_" . $key, "Quality: $key", $url);
+                        $quality = ($key === 'auto' ? $key : $key . 'p');
+                        $variants[] = new Movie_Variant($item->fid . "_" . $key, $quality, $url);
+                        if ($key !== 'auto') {
+                            $series_desc .= $quality . ", ";
+                        }
                     }
 
-                    $series = new Movie_Series($item->fid);
-                    $series->name = (string)$item->title;
-                    $series->playback_url = (string)$episodeData->url;
-                    $series->variants = $variants;
-                    $movie->series_list[$item->fid] = $series;
+                    $series_desc = rtrim($series_desc, " ,\0");
+                    $desc = str_replace(array(",", " "), array("", "\n"), $series_desc);
+                    $movie->add_series_variants_data($item->fid, $item->title, $desc, $variants);
                 }
             }
-        } else if (isset($movieData->variants) || count((array)$movieData->variants) < 2) {
+        } else if (!isset($movieData->variants)) {
+            //hd_print("no variants for $movie_id");
+            $movie->add_series_data($movie_id, $movieData->title, '', $movieData->url);
+        } else if (count((array)$movieData->variants) === 1) {
+            //hd_print("one variant for $movie_id");
+            $series_desc = " Качество: " . key($movieData->variants) ."p";
+            $movie->add_series_data($movie_id, $movieData->title, $series_desc, $movieData->url);
+        } else {
             $variants_data = (array)$movieData->variants;
             //hd_print("movie $movie_id \"$movieData->title\" contains " . count($variants_data) . " variants");
-            // collect quality variants for single movie
             $variants = array();
+            $series_desc = "Качество: ";
             foreach ($variants_data as $key => $url) {
                 //hd_print("variant $key playback_url: $url");
-                $variants[] = new Movie_Variant($movie_id . "_" . $key, "Quality: $key", $url);
+                $quality = ($key === 'auto' ? $key : $key . 'p');
+                $variants[] = new Movie_Variant($movie_id . "_" . $key, $quality, $url);
+                if ($key !== 'auto') {
+                    $series_desc .= $quality . ", ";
+                }
             }
 
-            $series = new Movie_Series($movie_id);
-            $series->name = (string)$movieData->title;
-            $series->variants = $variants;
-            $movie->series_list[$movie_id] = $series;
-        } else {
-            $movie->add_series_data($movie_id, $movieData->title, $movieData->url);
+            $series_desc = rtrim($series_desc, " ,\0");
+            $desc = str_replace(array(",", " "), array("", "\n"), $series_desc);
+            $movie->add_series_variants_data($movie_id, $movieData->title, $desc, $variants);
         }
 
         $movie->set_data(
             $movieData->title,// caption,
-            '',// caption_original,
+            $series_desc,// caption_original,
             isset($movieData->description) ? $movieData->description : '',// description,
             isset($movieData->img) ? $movieData->img : '',// poster_url,
             isset($movieData->duration) ? $movieData->duration : '',// length,
@@ -238,7 +253,7 @@ class EdemPluginConfig extends Default_Config
     {
         //hd_print("fetch_vod_categories");
 
-        $doc = self::make_json_request($plugin_cookies, null, true);
+        $doc = self::make_json_request($plugin_cookies);
         if ($doc === false) {
             return;
         }
@@ -246,28 +261,29 @@ class EdemPluginConfig extends Default_Config
         $category_list = array();
         $category_index = array();
 
-        foreach ($doc['items'] as $node) {
-            $cat = new Starnet_Vod_Category((string)$node['request']['fid'], (string)$node['title']);
-            $category_list[] = $cat;
-            $category_index[$cat->get_id()] = $cat;
-        }
-
-        $filters = array();
-        foreach ($doc['controls']['filters'] as $filter) {
-            $first = reset($filter['items']);
-            $key = key(array_diff_key($first['request'], array('filter' => 'on')));
-            $filters[$key] = array('title' => $filter['title'], 'values' => array());
-            $filters[$key]['values'][-1] = 'Нет';
-            foreach ($filter['items'] as $item) {
-                $val = $item['request'][$key];
-                $filters[$key]['values'][$val] = $item['title'];
+        if (isset($doc->items)) {
+            foreach ($doc->items as $node) {
+                $cat = new Starnet_Vod_Category((string)$node->request->fid, (string)$node->title);
+                $category_list[] = $cat;
+                $category_index[$cat->get_id()] = $cat;
             }
         }
 
-        $this->set_filters($filters);
+        $exist_filters = array();
+        foreach ($doc->controls->filters as $filter) {
+            $first = reset($filter->items);
+            $key = key(array_diff_key((array)$first->request, array('filter' => 'on')));
+            $exist_filters[$key] = array('title' => $filter->title, 'values' => array(-1 => 'Нет'));
+            foreach ($filter->items as $item) {
+                $val = $item->request->{$key};
+                $exist_filters[$key]['values'][$val] = $item->title;
+            }
+        }
+
+        $this->set_filters($exist_filters);
 
         hd_print("Categories read: " . count($category_list));
-        hd_print("Filters count: " . count($filters));
+        hd_print("Filters count: " . count($exist_filters));
     }
 
     /**
@@ -375,10 +391,9 @@ class EdemPluginConfig extends Default_Config
      * @param $plugin_cookies
      * @param array|null $params
      * @param bool $to_array
-     * @param string|null $save_path
      * @return false|mixed
      */
-    protected static function make_json_request($plugin_cookies, $params = null, $to_array = false, $save_path = null)
+    protected static function make_json_request($plugin_cookies, $params = null, $to_array = false)
     {
         $mediateka = '';
         if (isset($plugin_cookies->mediateka_local)) {
@@ -416,7 +431,7 @@ class EdemPluginConfig extends Default_Config
 
         // hd_print("post_data: " . json_encode($pairs));
 
-        return HD::LoadAndStoreJson($url, $to_array, $save_path, $curl_opt);
+        return HD::LoadAndStoreJson($url, $to_array, $curl_opt);
     }
 
     /**

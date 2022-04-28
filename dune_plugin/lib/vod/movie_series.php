@@ -15,6 +15,11 @@ class Movie_Series
     /**
      * @var string
      */
+    public $series_desc = '';
+
+    /**
+     * @var string
+     */
     public $season_id = '';
 
     /**

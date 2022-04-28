@@ -204,7 +204,7 @@ class SharaclubPluginConfig extends Default_Config
     {
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
-        $jsonItems = HD::parse_json_file(DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
+        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
 
         if ($jsonItems === false) {
             hd_print("TryLoadMovie: failed to load movie: $movie_id");
@@ -257,13 +257,13 @@ class SharaclubPluginConfig extends Default_Config
                     foreach ($season->episodes as $episode) {
                         $playback_url = str_replace("https://", "http://", $episode->video);
                         hd_print("movie playback_url: $playback_url");
-                        $movie->add_series_data($episode->id, "Серия $episode->episode", $playback_url, $season->season);
+                        $movie->add_series_data($episode->id, "Серия $episode->episode", '', $playback_url, $season->season);
                     }
                 }
             } else {
                 $playback_url = str_replace("https://", "http://", $item->video);
                 hd_print("movie playback_url: $playback_url");
-                $movie->add_series_data($movie_id, $item->name, $playback_url);
+                $movie->add_series_data($movie_id, $item->name, '', $playback_url);
             }
 
             break;
@@ -280,11 +280,12 @@ class SharaclubPluginConfig extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
-        $categories = HD::LoadAndStoreJson($url, false,DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
-        if ($categories === false)
-        {
+        $categories = HD::LoadAndStoreJson($url);
+        if ($categories === false) {
             return;
         }
+
+        HD::StoreContentToFile($categories, self::get_vod_cache_file());
 
         $category_list = array();
         $category_index = array();
@@ -315,7 +316,7 @@ class SharaclubPluginConfig extends Default_Config
     {
         hd_print("getSearchList: $keyword");
         $movies = array();
-        $jsonItems = HD::parse_json_file(DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
+        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
         foreach ($jsonItems as $item) {
             $search  = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
@@ -337,7 +338,7 @@ class SharaclubPluginConfig extends Default_Config
     public function getVideoList($query_id, $plugin_cookies)
     {
         $movies = array();
-        $jsonItems = HD::parse_json_file(DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
+        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
 
         $arr = explode("_", $query_id);
         if ($arr === false) {
@@ -376,6 +377,11 @@ class SharaclubPluginConfig extends Default_Config
         $movie->info = "$movie_obj->name|Год: $info->year|Страна: $country|Жанр: $genres|Рейтинг: $info->rating";
 
         return $movie;
+    }
+
+    protected static function get_vod_cache_file()
+    {
+        return DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json";
     }
 
     /**

@@ -606,30 +606,33 @@ class HD
     /**
      * @param string $url
      * @param bool $to_array
-     * @param string $path
      * @param array|null $opts
      * @return false|mixed
      */
-    public static function LoadAndStoreJson($url, $to_array = true, $path = null, $opts = null)
+    public static function LoadAndStoreJson($url, $to_array = false, $opts = null)
     {
         try {
             $doc = self::http_get_document($url, $opts);
-            $categories = json_decode($doc, $to_array);
-            if (empty($categories)) {
-                hd_print("empty playlist or not valid token");
+            $contents = json_decode($doc, $to_array);
+            if (empty($contents)) {
+                hd_print("empty json");
                 return false;
             }
-
-            if (!empty($path)) {
-                file_put_contents($path, json_encode($categories));
-            }
-
         } catch (Exception $ex) {
-            hd_print("Unable to load movie categories: " . $ex->getMessage());
+            hd_print("Unable to load url: " . $ex->getMessage());
             return false;
         }
 
-        return $categories;
+        return $contents;
+    }
+
+    public static function StoreContentToFile($content, $path)
+    {
+        if (empty($path)) {
+            hd_print("StoreContentToFile: Path not set");
+        } else {
+            file_put_contents($path, json_encode($content));
+        }
     }
 
     /**

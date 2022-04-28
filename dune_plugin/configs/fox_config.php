@@ -152,7 +152,7 @@ class FoxPluginConfig extends Default_Config
                 ''// $xml->budget
             );
 
-            $movie->add_series_data($movie_id, $title, $url);
+            $movie->add_series_data($movie_id, $title, '', $url);
             // hd_print("movie_id: $movie_id");
             // hd_print("title: $title");
             hd_print("movie url: $url");

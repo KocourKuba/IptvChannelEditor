@@ -28,10 +28,11 @@ class Cbilling_Vod_Impl extends Default_Config
     {
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
-        $json = HD::LoadAndStoreJson(self::API_HOST . "/video/$movie_id", false, DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
+        $json = HD::LoadAndStoreJson(self::API_HOST . "/video/$movie_id");
         if ($json === false) {
             return $movie;
         }
+        HD::StoreContentToFile($json, DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
 
         $movieData = $json->data;
 
@@ -67,13 +68,13 @@ class Cbilling_Vod_Impl extends Default_Config
                     $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $episode->files[0]->url, $plugin_cookies->token);
                     //hd_print("episode playback_url: $playback_url");
                     $name = "Серия $episode->number" . (empty($episode->name) ? "" : " $episode->name");
-                    $movie->add_series_data($episode->id, $name, $playback_url, $season->number);
+                    $movie->add_series_data($episode->id, $name, '', $playback_url, $season->number);
                 }
             }
         } else {
             $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $movieData->files[0]->url, $plugin_cookies->token);
             //hd_print("movie playback_url: $playback_url");
-            $movie->add_series_data($movie_id, $movieData->name, $playback_url);
+            $movie->add_series_data($movie_id, $movieData->name, '', $playback_url);
         }
 
         return $movie;
@@ -87,7 +88,7 @@ class Cbilling_Vod_Impl extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         //hd_print("fetch_vod_categories");
-        $categories = HD::LoadAndStoreJson(self::API_HOST, false);
+        $categories = HD::LoadAndStoreJson(self::API_HOST);
         if ($categories === false) {
             return;
         }
@@ -105,7 +106,7 @@ class Cbilling_Vod_Impl extends Default_Config
             $category = new Starnet_Vod_Category($id, (string)$node->name);
 
             // fetch genres for category
-            $genres = HD::LoadAndStoreJson(self::API_HOST . "/cat/$id/genres", false);
+            $genres = HD::LoadAndStoreJson(self::API_HOST . "/cat/$id/genres");
             if ($genres === false) {
                 continue;
             }
@@ -134,7 +135,7 @@ class Cbilling_Vod_Impl extends Default_Config
     {
         //hd_print("getSearchList");
         $url = self::API_HOST . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
-        $searchRes = HD::LoadAndStoreJson($url, false /*, "/tmp/run/sl.json"*/);
+        $searchRes = HD::LoadAndStoreJson($url);
         return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
     }
 
@@ -162,7 +163,7 @@ class Cbilling_Vod_Impl extends Default_Config
             $url = "/genres/$genre_id?page=$val";
         }
 
-        $categories = HD::LoadAndStoreJson(self::API_HOST . $url, false/*, "/tmp/run/$keyword.json"*/);
+        $categories = HD::LoadAndStoreJson(self::API_HOST . $url);
         return $categories === false ? array() : $this->CollectSearchResult($categories);
     }
 
