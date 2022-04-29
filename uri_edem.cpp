@@ -43,6 +43,7 @@ uri_edem::uri_edem()
 	params.epg_url = L"http://epg.esalecrm.net/it999/epg/{ID}.json";
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"https://ilook.tv/";
+	vod_supported = true;
 }
 
 void uri_edem::parse_uri(const std::wstring& url)

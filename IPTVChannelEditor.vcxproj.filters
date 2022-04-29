@@ -43,6 +43,12 @@
     <Filter Include="Source Files\Threads">
       <UniqueIdentifier>{78483d34-8bd5-4e6b-8f57-ebf7a940eca5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\vod">
+      <UniqueIdentifier>{0481b219-0da7-4a8e-a24e-0e7f52a1110a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vod">
+      <UniqueIdentifier>{77961e63-8fa7-41cc-81b7-0afadec59899}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">
@@ -237,6 +243,21 @@
     <ClInclude Include="uri_filmax.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="vod_movie.h">
+      <Filter>Header Files\vod</Filter>
+    </ClInclude>
+    <ClInclude Include="vod_episode.h">
+      <Filter>Header Files\vod</Filter>
+    </ClInclude>
+    <ClInclude Include="vod_season.h">
+      <Filter>Header Files\vod</Filter>
+    </ClInclude>
+    <ClInclude Include="VodViewer.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="vod_category.h">
+      <Filter>Header Files\vod</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -403,6 +424,21 @@
     </ClCompile>
     <ClCompile Include="uri_filmax.cpp">
       <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="vod_movie.cpp">
+      <Filter>Source Files\vod</Filter>
+    </ClCompile>
+    <ClCompile Include="vod_episode.cpp">
+      <Filter>Source Files\vod</Filter>
+    </ClCompile>
+    <ClCompile Include="vod_season.cpp">
+      <Filter>Source Files\vod</Filter>
+    </ClCompile>
+    <ClCompile Include="VodViewer.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="vod_category.cpp">
+      <Filter>Source Files\vod</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

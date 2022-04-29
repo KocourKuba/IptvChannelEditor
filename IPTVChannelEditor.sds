@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="102" scanned="20220504023302" built="20220504023552" lang="ru" pane="TLogPane" col="3" row="Strings.19.IDS_STRING_GLANZ_TV_P7">
+<desktop scan="104" scanned="20220508140807" built="20220508140817" lang="ru" pane="TLogPane" col="3" row="Dialogs.105.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
+    <item class="TRemoveUnusedItemsTrigger" position="3"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

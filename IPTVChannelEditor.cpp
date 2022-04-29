@@ -606,7 +606,7 @@ void SaveWindowPos(HWND hWnd, LPCTSTR name)
 	GetConfig().set_binary(true, name, (LPBYTE)&wp, sizeof(wp));
 }
 
-BOOL LoadImage(const std::wstring& fullPath, CImage& image)
+BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 {
 	HRESULT hr = E_FAIL;
 	std::wstring host;
@@ -634,7 +634,7 @@ BOOL LoadImage(const std::wstring& fullPath, CImage& image)
 	return SUCCEEDED(hr);
 }
 
-void SetImage(const CImage& image, CStatic& wnd)
+void SetImageControl(const CImage& image, CStatic& wnd)
 {
 	HBITMAP hImg = nullptr;
 	if (image)
@@ -665,7 +665,7 @@ void SetImage(const CImage& image, CStatic& wnd)
 		int Height = (int)(Factor_Y * srcHeight);
 
 		CImage resized;
-		resized.Create(rcDst.Width(), rcDst.Height(), 32);
+		resized.Create(rcDst.Width(), rcDst.Height(), 32, CImage::createAlphaChannel);
 		HDC dcImage = resized.GetDC();
 		SetStretchBltMode(dcImage, COLORONCOLOR);
 		image.StretchBlt(dcImage, x, y, Width, Height, 0, 0, srcWidth, srcHeight);

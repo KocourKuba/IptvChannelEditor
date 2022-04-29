@@ -47,6 +47,8 @@ uri_sharaclub::uri_sharaclub()
 	params.epg_url = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
 	provider_url = L"https://shara.club/";
 	provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
+	provider_vod_url = L"http://list.playtv.pro/kino-full/{:s}-{:s}";
+	vod_supported = true;
 }
 
 void uri_sharaclub::parse_uri(const std::wstring& url)
@@ -110,20 +112,20 @@ bool uri_sharaclub::parse_access_info(const PlaylistTemplateParams& params, std:
 	}
 
 	JSON_ALL_TRY;
-	nlohmann::json parsed_json = nlohmann::json::parse(data);
-	if (parsed_json.contains("status"))
-	{
-		AccountInfo info{ L"state", utils::utf8_to_utf16(parsed_json.value("status", "")) };
-		info_list.emplace_back(info);
-	}
+		nlohmann::json parsed_json = nlohmann::json::parse(data);
+		if (parsed_json.contains("status"))
+		{
+			AccountInfo info{ L"state", utils::utf8_to_utf16(parsed_json.value("status", "")) };
+			info_list.emplace_back(info);
+		}
 
-	nlohmann::json js_data = parsed_json["data"];
-	put_account_info("login", js_data, info_list);
-	put_account_info("money", js_data, info_list);
-	put_account_info("money_need", js_data, info_list);
-	put_account_info("abon", js_data, info_list);
+		nlohmann::json js_data = parsed_json["data"];
+		put_account_info("login", js_data, info_list);
+		put_account_info("money", js_data, info_list);
+		put_account_info("money_need", js_data, info_list);
+		put_account_info("abon", js_data, info_list);
 
-	return true;
+		return true;
 
 	JSON_ALL_CATCH;
 

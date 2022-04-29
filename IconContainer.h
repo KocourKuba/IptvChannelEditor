@@ -36,7 +36,7 @@ public:
 
 public:
 	IconContainer() = default;
-	IconContainer(const std::wstring& root) : root_path(root) {}
+	IconContainer(std::wstring root) : root_path(root) {}
 	IconContainer(const IconContainer& src)
 	{
 		*this = src;

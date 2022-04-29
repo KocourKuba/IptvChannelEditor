@@ -40,12 +40,16 @@ uri_fox::uri_fox() : epg_technic({ L"fox", L"fox" })
 {
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"http://info.fox-tv.fun/";
+	vod_supported = true;
+	provider_vod_url = L"http://pl.fox-tv.fun/{:s}/{:s}/vodall.m3u";
 }
 
 void uri_fox::parse_uri(const std::wstring& url)
 {
 	// http://ost.fox-tv.fun/vLm0zdTg_dG9rZW49W3N0Yl90b2tlbl0iLCJhIjoiaHR0cDovL3N0cjIuZm94LXR2LmZ1bjo5OTg1L1BlcnZpeWthbmFsL3ZpZGVvLXRpbWVzaGlmdF9hYnMtW3RpbWVfc3RhcnRdLm0zdTg_dG9rZW49W3N0Yl90b2tlbl1bY3Vycl90aW1lXSIsImwiOiI2NTgxMWQwZCIsInAiOiI2NTgxMWQwZDNjMTRjMTFlIiwiYyI6IjEiLCJ0IjoiN2FiMDJjOTk4MmY4NjI4NGU1ODhkYTliZjc0YmU4YTgiLCJkIjoiMjk2NjciLCJyIjoiMTI5NjY4In0eyJ1IjoiaHR0cDovL3N0cjIuZm94LXR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
 	// http://ost.fox-tv.fun/0cz90b2tlbj1bc3RiX3Rva2VuXSIsImEiOiJodHRwOi8vc3RyMi5mb3gtdHYuZnVuOjk5ODUvUGVydml5a2FuYWwvdGltZXNoaWZ0X2Ficy1bdGltZV9zdGFydF0udHM_dG9rZW49W3N0Yl90b2tlbl0iLCJsIjoiNjU4MTFkMGQiLCJwIjoiNjU4MTFkMGQzYzE0YzExZSIsImMiOiIxIiwidCI6IjdhYjAyYzk5ODJmODYyODRlNTg4ZGE5YmY3NGJlOGE4IiwiZCI6IjI5NjY3IiwiciI6IjEyOTY2OCJ9eyJ1IjoiaHR0cDovL3N0cjIuZm94LXR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL21wZWd
+
+	uri_stream::parse_uri(url);
 
 	static std::wregex re_url(LR"(^https?:\/\/([^\/]+)\/(.+)$)");
 	std::wsmatch m;
@@ -54,10 +58,7 @@ void uri_fox::parse_uri(const std::wstring& url)
 		templated = true;
 		domain = std::move(m[1].str());
 		token = std::move(m[2].str());
-		return;
 	}
-
-	uri_stream::parse_uri(url);
 }
 
 std::wstring uri_fox::get_templated_stream(StreamSubType subType, const TemplateParams& params) const

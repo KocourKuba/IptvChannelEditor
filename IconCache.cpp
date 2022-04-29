@@ -42,7 +42,7 @@ const CImage& CIconCache::get_icon(const std::wstring& path)
 	static CImage nullImage;
 	if (!nullImage)
 	{
-		LoadImage(GetAppPath(utils::CATEGORIES_LOGO_PATH) + L"channel_unset.png", nullImage);
+		LoadImageFromUrl(GetAppPath(utils::CATEGORIES_LOGO_PATH) + L"channel_unset.png", nullImage);
 	}
 
 	int hash = crc32_bitwise(path.c_str(), path.size() * sizeof(wchar_t));
@@ -52,7 +52,7 @@ const CImage& CIconCache::get_icon(const std::wstring& path)
 
 	// not found in cache, try to load
 	auto container = std::make_unique<ImageContainer>();
-	if (LoadImage(path, container->get_image()))
+	if (LoadImageFromUrl(path, container->get_image()))
 	{
 		m_imageMap[hash] = std::move(container);
 		return m_imageMap.at(hash)->get_image();

@@ -75,8 +75,8 @@ public:
 	bool m_bNoEmbed = false;
 };
 
-BOOL LoadImage(const std::wstring& fullPath, CImage& image);
-void SetImage(const CImage& image, CStatic& wnd);
+BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image);
+void SetImageControl(const CImage& image, CStatic& wnd);
 
 std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);
 

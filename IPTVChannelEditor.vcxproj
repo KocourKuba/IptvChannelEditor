@@ -274,6 +274,8 @@ goto :EOF
     <ClInclude Include="InPlaceEdit.h" />
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
+    <ClInclude Include="vod_category.h" />
+    <ClInclude Include="vod_movie.h" />
     <ClInclude Include="NewChannelsListDlg.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
     <ClInclude Include="PlaylistParseXMLThread.h" />
@@ -318,6 +320,9 @@ goto :EOF
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UrlDlg.h" />
     <ClInclude Include="Version.h" />
+    <ClInclude Include="VodViewer.h" />
+    <ClInclude Include="vod_episode.h" />
+    <ClInclude Include="vod_season.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
@@ -335,6 +340,8 @@ goto :EOF
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="InPlaceEdit.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
+    <ClCompile Include="vod_category.cpp" />
+    <ClCompile Include="vod_movie.cpp" />
     <ClCompile Include="NewChannelsListDlg.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
     <ClCompile Include="PlaylistParseXMLThread.cpp" />
@@ -380,6 +387,9 @@ goto :EOF
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="UrlDlg.cpp" />
+    <ClCompile Include="VodViewer.cpp" />
+    <ClCompile Include="vod_episode.cpp" />
+    <ClCompile Include="vod_season.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IPTVChannelEditor.rc" />

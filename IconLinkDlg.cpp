@@ -96,5 +96,5 @@ void CIconLinkDlg::OnBnClickedButtonGet()
 	}
 
 	const auto& img = GetIconCache().get_icon(m_url.GetString());
-	SetImage(img, m_wndIcon);
+	SetImageControl(img, m_wndIcon);
 }

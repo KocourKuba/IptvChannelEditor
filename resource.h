@@ -8,6 +8,7 @@
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104
+#define IDD_DIALOG_VOD                  105
 #define IDD_DIALOG_FILTER               106
 #define IDD_DIALOG_NEW_CHANNELS_LIST    107
 #define IDD_DIALOG_NEW_CHANNEL          108
@@ -23,6 +24,7 @@
 #define IDS_LANGUAGE                    116
 #define IDS_STRING_FILE                 117
 #define IDS_STRING_URL                  118
+#define IDD_DIALOG_URL                  119
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_ICONS_LIST           129
 #define IDD_DIALOG_ACCESS_INFO          131
@@ -117,7 +119,6 @@
 #define IDS_STRING_ERR_NOT_PORTABLE     226
 #define IDS_STRING_ERR_TRAY_ICON        227
 #define IDS_STRING_DEVICE_ID            228
-#define IDD_DIALOG_URL                  228
 #define IDS_STRING_SERVER_ID            229
 #define IDS_STRING_APP_TITLE            230
 #define IDS_STRING_APP_TITLE_PORTABLE   231
@@ -139,32 +140,33 @@
 #define IDS_STRING_COL_VPORTAL          247
 #define IDS_STRING_PAYPAL               248
 #define IDS_STRING_YOOMONEY             249
-#define IDS_STRING_FILMAX_P1            250
-#define IDS_STRING_FILMAX_P2            251
-#define IDS_STRING_FILMAX_P3            252
-#define IDS_STRING_FILMAX_P4            253
-#define IDS_STRING_FILMAX_P5            254
-#define IDS_STRING_FILMAX_P6            255
-#define IDS_STRING_FILMAX_P7            256
-#define IDS_STRING_FILMAX_P8            257
-#define IDS_STRING_FILMAX_P9            258
-#define IDS_STRING_FILMAX_P10           259
-#define IDS_STRING_FILMAX_P11           260
-#define IDS_STRING_FILMAX_P12           261
-#define IDS_STRING_SHURA_TV_P1          270
-#define IDS_STRING_SHURA_TV_P2          271
-#define IDS_STRING_CBILLING_TV_P1       280
-#define IDS_STRING_CBILLING_TV_P2       281
-#define IDS_STRING_CBILLING_TV_P3       282
-#define IDS_STRING_TV_TEAM_P1           310
-#define IDS_STRING_TV_TEAM_P2           311
-#define IDS_STRING_TV_TEAM_P3           312
-#define IDS_STRING_TV_TEAM_P4           313
-#define IDS_STRING_TV_TEAM_P5           314
-#define IDS_STRING_TV_TEAM_P6           315
-#define IDS_STRING_TV_TEAM_P7           316
-#define IDS_STRING_TV_TEAM_P8           317
-#define IDS_STRING_TV_TEAM_P9           318
+#define IDS_STRING_FMT_MOVIES_READED    250
+#define IDS_STRING_FILMAX_P1            300
+#define IDS_STRING_FILMAX_P2            301
+#define IDS_STRING_FILMAX_P3            302
+#define IDS_STRING_FILMAX_P4            303
+#define IDS_STRING_FILMAX_P5            304
+#define IDS_STRING_FILMAX_P6            305
+#define IDS_STRING_FILMAX_P7            306
+#define IDS_STRING_FILMAX_P8            307
+#define IDS_STRING_FILMAX_P9            308
+#define IDS_STRING_FILMAX_P10           309
+#define IDS_STRING_FILMAX_P11           310
+#define IDS_STRING_FILMAX_P12           311
+#define IDS_STRING_SHURA_TV_P1          320
+#define IDS_STRING_SHURA_TV_P2          321
+#define IDS_STRING_CBILLING_TV_P1       330
+#define IDS_STRING_CBILLING_TV_P2       331
+#define IDS_STRING_CBILLING_TV_P3       332
+#define IDS_STRING_TV_TEAM_P1           340
+#define IDS_STRING_TV_TEAM_P2           341
+#define IDS_STRING_TV_TEAM_P3           342
+#define IDS_STRING_TV_TEAM_P4           343
+#define IDS_STRING_TV_TEAM_P5           344
+#define IDS_STRING_TV_TEAM_P6           345
+#define IDS_STRING_TV_TEAM_P7           346
+#define IDS_STRING_TV_TEAM_P8           347
+#define IDS_STRING_TV_TEAM_P9           348
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -294,6 +296,20 @@
 #define IDC_STATIC_TIME_LEFT            1140
 #define IDC_MFCLINK1                    1140
 #define IDC_MFCLINK_PROVIDER            1140
+#define IDC_LIST_MOVIES                 1142
+#define IDC_EDIT_DESCRIPTION            1143
+#define IDC_BUTTON_SEARCH               1146
+#define IDC_EDIT_TOTAL_MOVIES           1147
+#define IDC_COMBO_FILTER_YEAR           1148
+#define IDC_COMBO_FILTER_GENRE          1149
+#define IDC_BUTTON1                     1149
+#define IDC_BUTTON_VOD                  1149
+#define IDC_BUTTON_FILTER               1150
+#define IDC_COMBO_CATEGORIES            1151
+#define IDC_COMBO_GENRES                1152
+#define IDC_STATIC_GENRES               1153
+#define IDC_STATIC_CATEGORIES           1154
+#define IDC_STATIC_GENRES2              1156
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -323,9 +339,9 @@
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        231
+#define _APS_NEXT_RESOURCE_VALUE        233
 #define _APS_NEXT_COMMAND_VALUE         32805
-#define _APS_NEXT_CONTROL_VALUE         1141
+#define _APS_NEXT_CONTROL_VALUE         1155
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

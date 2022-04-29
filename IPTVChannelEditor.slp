@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220504023532" scan="102" scanned="20220504023302">
+<document created="20211012165442" version="4.0.374" date="20220508140814" scan="104" scanned="20220508140807">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220504003252" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220508120802" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -185,6 +185,169 @@
             </row>
             <row id="X">111</row>
             <row id="Y" changed="20220215093802">42</row>
+          </component>
+        </form>
+      </node>
+      <node class="TWindowsDialogNode" name="105" state="0" created="20220508140501" resid="105" langid="1033">
+        <form class="TWindowsForm" name="105" state="0" bordericons="[biSystemMenu]" style="2160853064">
+          <row id="CX" state="0">375</row>
+          <row id="CY" state="0">349</row>
+          <row id="Font" state="0">MS Shell Dlg,8</row>
+          <row id="Text" changed="20220508140807">
+            <native>Video on Demand</native>
+            <lang id="ru" date="20220508140649">Медиатека</lang>
+          </row>
+          <row id="X" state="0">0</row>
+          <row id="Y" state="0">0</row>
+          <component class="TVisListView" name="1142" state="0" type="SysListView32">
+            <row id="CX" state="0">361</row>
+            <row id="CY" state="0">151</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">58</row>
+          </component>
+          <component class="TVisLabel" name="STATIC_Total" state="0" type="static" unnamed="1" alignment="taRightJustify" autosize="0" wordwrap="1">
+            <row id="CX" state="0">36</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Total:</native>
+              <lang id="ru" date="20220508140639">Всего:</lang>
+            </row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">44</row>
+          </component>
+          <component class="TVisBitmapPicture" name="1067" state="0" type="static" center="1" transparent="1">
+            <row id="CX" state="0">100</row>
+            <row id="CY" state="0">129</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">213</row>
+          </component>
+          <component class="TVisProgressBar" name="1060" state="0" type="msctls_progress32" position="60">
+            <row id="CX" state="0">220</row>
+            <row id="CY" state="0">13</row>
+            <row id="X" state="0">95</row>
+            <row id="Y" state="0">41</row>
+          </component>
+          <component class="TVisLabel" name="1154" state="0" type="static" alignment="taRightJustify" autosize="0" wordwrap="1">
+            <row id="CX" state="0">36</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Category</native>
+              <lang id="ru" date="20220508140633">Категория</lang>
+            </row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">9</row>
+          </component>
+          <component class="TVisLabel" name="1153" state="0" type="static" alignment="taRightJustify" autosize="0" wordwrap="1">
+            <row id="CX" state="0">36</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Genre</native>
+              <lang id="ru" date="20220508140628">Жанр</lang>
+            </row>
+            <row id="X" state="0">163</row>
+            <row id="Y" state="0">9</row>
+          </component>
+          <component class="TVisLabel" name="STATIC_Genre" state="0" type="static" unnamed="1" alignment="taRightJustify" autosize="0" wordwrap="1">
+            <row id="CX" state="0">36</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Genre</native>
+              <lang id="ru" date="20220508140629">Жанр</lang>
+            </row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">27</row>
+          </component>
+          <component class="TVisLabel" name="1156" state="0" type="static" alignment="taRightJustify" autosize="0" wordwrap="1">
+            <row id="CX" state="0">36</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Year</native>
+              <lang id="ru" date="20220508140621">Год</lang>
+            </row>
+            <row id="X" state="0">163</row>
+            <row id="Y" state="0">28</row>
+          </component>
+          <component class="TVisLabel" name="1076" state="0" type="static" autosize="0" wordwrap="1">
+            <row id="CX" state="0">47</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Progress info</native>
+              <lang id="ru" date="20220508140617">Прогресс</lang>
+            </row>
+            <row id="X" state="0">319</row>
+            <row id="Y" state="0">43</row>
+          </component>
+          <component class="TVisEdit" name="1051" state="0" type="edit">
+            <row id="CX" state="0">154</row>
+            <row id="CY" state="0">13</row>
+            <row id="X" state="0">110</row>
+            <row id="Y" state="0">213</row>
+          </component>
+          <component class="TVisEdit" name="1147" state="0" type="edit" readonly="1">
+            <row id="CX" state="0">41</row>
+            <row id="CY" state="0">12</row>
+            <row id="X" state="0">49</row>
+            <row id="Y" state="0">42</row>
+          </component>
+          <component class="TVisComboBox" name="1148" state="0" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
+            <row id="CX" state="0">109</row>
+            <row id="CY" state="0">30</row>
+            <row id="X" state="0">49</row>
+            <row id="Y" state="0">25</row>
+          </component>
+          <component class="TVisComboBox" name="1149" state="0" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
+            <row id="CX" state="0">109</row>
+            <row id="CY" state="0">30</row>
+            <row id="X" state="0">205</row>
+            <row id="Y" state="0">25</row>
+          </component>
+          <component class="TVisEdit" name="1143" state="0" type="edit" readonly="1">
+            <row id="CX" state="0">258</row>
+            <row id="CY" state="0">113</row>
+            <row id="X" state="0">110</row>
+            <row id="Y" state="0">229</row>
+          </component>
+          <component class="TVisComboBox" name="1151" state="0" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
+            <row id="CX" state="0">109</row>
+            <row id="CY" state="0">30</row>
+            <row id="X" state="0">49</row>
+            <row id="Y" state="0">7</row>
+          </component>
+          <component class="TVisComboBox" name="1152" state="0" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
+            <row id="CX" state="0">109</row>
+            <row id="CY" state="0">30</row>
+            <row id="X" state="0">205</row>
+            <row id="Y" state="0">7</row>
+          </component>
+          <component class="TVisButton" name="1146" state="0" type="button">
+            <row id="CX" state="0">46</row>
+            <row id="CY" state="0">14</row>
+            <row id="Text" state="0">
+              <native>Search</native>
+              <lang id="ru" date="20220508140643">Поиск</lang>
+            </row>
+            <row id="X" state="0">267</row>
+            <row id="Y" state="0">212</row>
+          </component>
+          <component class="TVisButton" name="1150" state="0" type="button">
+            <row id="CX" state="0">50</row>
+            <row id="CY" state="0">15</row>
+            <row id="Text" state="0">
+              <native>Filter</native>
+              <lang id="ru" date="20220508140636">Фильтр</lang>
+            </row>
+            <row id="X" state="0">318</row>
+            <row id="Y" state="0">24</row>
+          </component>
+          <component class="TVisButton" name="2" state="0" type="button">
+            <row id="CX" state="0">50</row>
+            <row id="CY" state="0">14</row>
+            <row id="Text" state="0">
+              <native>Exit</native>
+              <lang id="ru">Выход</lang>
+            </row>
+            <row id="X" state="0">318</row>
+            <row id="Y" state="0">212</row>
           </component>
         </form>
       </node>
@@ -793,7 +956,10 @@
             <row id="CX">87</row>
             <row id="CY">30</row>
             <row id="X" changed="20211124211848">241</row>
-            <row id="Y">14</row>
+            <row id="Y" state="3" changed="20220508140501">
+              <prev>14</prev>
+              <native>15</native>
+            </row>
           </component>
           <component class="TVisComboBox" name="1034" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX">137</row>
@@ -1069,6 +1235,16 @@
             <row id="X" changed="20211124211848">330</row>
             <row id="Y" changed="20220208004505">386</row>
           </component>
+          <component class="TVisButton" name="1149" state="0" created="20220508140501" type="button">
+            <row id="CX" state="0">86</row>
+            <row id="CY" state="0">18</row>
+            <row id="Text" state="0">
+              <native>View Video on Demand</native>
+              <lang id="ru" date="20220508140602">Обзор Медиатеки</lang>
+            </row>
+            <row id="X" state="0">333</row>
+            <row id="Y" state="0">13</row>
+          </component>
         </form>
       </node>
       <node class="TWindowsDialogNode" name="111" created="20211218214512" resid="111" langid="1033">
@@ -1167,6 +1343,45 @@
             <row id="Text" locked="1">OK</row>
             <row id="X">139</row>
             <row id="Y" changed="20220219170830">237</row>
+          </component>
+        </form>
+      </node>
+      <node class="TWindowsDialogNode" name="119" state="0" created="20220508140501" resid="119" langid="1033">
+        <form class="TWindowsForm" name="119" state="0" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
+          <row id="CX" state="0">241</row>
+          <row id="CY" state="0">47</row>
+          <row id="Font" state="0">MS Shell Dlg,8</row>
+          <row id="Text" state="0">
+            <native>URL</native>
+            <lang id="ru" date="20220508140546">Ссылка</lang>
+          </row>
+          <row id="X" state="0">0</row>
+          <row id="Y" state="0">0</row>
+          <component class="TVisEdit" name="1136" state="0" type="edit">
+            <row id="CX" state="0">227</row>
+            <row id="CY" state="0">13</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">7</row>
+          </component>
+          <component class="TVisButton" name="1" state="0" type="button" default="1">
+            <row id="CX" state="0">50</row>
+            <row id="CY" state="0">14</row>
+            <row id="Text" state="0">
+              <native>OK</native>
+              <lang id="ru">OK</lang>
+            </row>
+            <row id="X" state="0">68</row>
+            <row id="Y" state="0">26</row>
+          </component>
+          <component class="TVisButton" name="2" state="0" type="button">
+            <row id="CX" state="0">50</row>
+            <row id="CY" state="0">14</row>
+            <row id="Text" state="0">
+              <native>Cancel</native>
+              <lang id="ru">Отмена</lang>
+            </row>
+            <row id="X" state="0">122</row>
+            <row id="Y" state="0">26</row>
           </component>
         </form>
       </node>
@@ -3020,42 +3235,23 @@
           </component>
         </form>
       </node>
-      <node class="TWindowsDialogNode" name="228" created="20220320143227" resid="228" langid="1033">
-        <form class="TWindowsForm" name="228" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
-          <row id="CX">241</row>
-          <row id="CY">47</row>
-          <row id="Font">MS Shell Dlg,8</row>
-          <row id="Text">
+      <node class="TWindowsDialogNode" name="228" state="1" created="20220320143227" resid="228" langid="1033">
+        <form class="TWindowsForm" name="228" style="2160591048">
+          <row id="Text" state="1">
             <native>URL</native>
             <lang id="ru" date="20220320143509">Ссылка</lang>
           </row>
-          <row id="X">0</row>
-          <row id="Y">0</row>
-          <component class="TVisEdit" name="1136" created="20220331213759" type="edit">
-            <row id="CX">227</row>
-            <row id="CY">13</row>
-            <row id="X">7</row>
-            <row id="Y">7</row>
-          </component>
-          <component class="TVisButton" name="1" type="button" default="1">
-            <row id="CX">50</row>
-            <row id="CY">14</row>
-            <row id="Text">
+          <component class="TVisButton" name="1" state="1" type="button">
+            <row id="Text" state="1">
               <native>OK</native>
               <lang id="ru">OK</lang>
             </row>
-            <row id="X">68</row>
-            <row id="Y">26</row>
           </component>
-          <component class="TVisButton" name="2" type="button">
-            <row id="CX">50</row>
-            <row id="CY">14</row>
-            <row id="Text">
+          <component class="TVisButton" name="2" state="1" type="button">
+            <row id="Text" state="1">
               <native>Cancel</native>
               <lang id="ru">Отмена</lang>
             </row>
-            <row id="X">122</row>
-            <row id="Y">26</row>
           </component>
         </form>
       </node>
@@ -3922,169 +4118,249 @@
           <native>VPortal</native>
           <lang id="ru" date="20220320161534">VPortal</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P1" state="0" created="20220430230932">
+        <row id="IDS_STRING_FILMAX_P1" state="1" created="20220430230932">
           <native>Germany</native>
           <lang id="ru" date="20220430231229">Германия</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P2" state="0" created="20220430230932">
+        <row id="IDS_STRING_FILMAX_P2" state="1" created="20220430230932">
           <native>Poland</native>
           <lang id="ru" date="20220430231232">Польша</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P3" created="20220430230932" changed="20220504023048">
+        <row id="IDS_STRING_FILMAX_P3" state="1" created="20220430230932" changed="20220504023048">
           <native>Russia, Moscow</native>
           <lang id="ru" date="20220504023103">Россия, Москва</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P4" state="0" created="20220430230932">
+        <row id="IDS_STRING_FILMAX_P4" state="1" created="20220430230932">
           <native>France</native>
           <lang id="ru" date="20220430231241">Франция</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P5" created="20220430230932" changed="20220504023048">
+        <row id="IDS_STRING_FILMAX_P5" state="1" created="20220430230932" changed="20220504023048">
           <native>Russia, Saint Petersburg</native>
           <lang id="ru" date="20220504023119">Россия, Санкт-Петербург</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P6" created="20220430230932" changed="20220504023048">
+        <row id="IDS_STRING_FILMAX_P6" state="1" created="20220430230932" changed="20220504023048">
           <native>Russia, Yekaterinburg</native>
           <lang id="ru" date="20220504023124">Россия, Екатеринбург</lang>
+        </row>
+        <row id="IDS_STRING_FMT_MOVIES_READED" state="0" created="20220508140501">
+          <native>Movies %d</native>
+          <lang id="ru" date="20220508140539">Фильмы %d</lang>
         </row>
         <row id="IDS_STRING_PAYPAL" locked="1" created="20220331213759">aHR0cHM6Ly93d3cucGF5cGFsLmNvbS9jZ2ktYmluL3dlYnNjcj9jbWQ9X2RvbmF0aW9ucyZidXNpbmVzcz01RFk3UEVTWkw0RDhMJmN1cnJlbmN5X2NvZGU9VVNEJmFtb3VudD01</row>
         <row id="IDS_STRING_YOOMONEY" locked="1" created="20220331213759">aHR0cHM6Ly95b29tb25leS5ydS90by80MTAwMTkxMzM3OTAyNw</row>
       </node>
-      <node class="TWindowsStringNode" name="17" state="0" created="20220430230932" resid="17" langid="1033">
-        <row id="IDS_STRING_FILMAX_P10" state="3" changed="20220430231219">
+      <node class="TWindowsStringNode" name="17" state="1" created="20220430230932" resid="17" langid="1033">
+        <row id="IDS_STRING_FILMAX_P10" state="1" changed="20220430231219">
           <prev>Saint-Petersburg 2</prev>
           <native>Saint Petersburg 2</native>
           <lang id="ru" date="20220430231255">Санкт-Петербург 2</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P11" state="0">
+        <row id="IDS_STRING_FILMAX_P11" state="1">
           <native>Czechia</native>
           <lang id="ru" date="20220430231327">Чехия</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P12" state="0">
+        <row id="IDS_STRING_FILMAX_P12" state="1">
           <native>Tula</native>
           <lang id="ru" date="20220430231331">Тула</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P7" state="3" changed="20220430231219">
+        <row id="IDS_STRING_FILMAX_P7" state="1" changed="20220430231219">
           <prev>Kazahstan</prev>
           <native>Kazakhstan</native>
           <lang id="ru" date="20220430231322">Казахстан</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P8" state="0">
+        <row id="IDS_STRING_FILMAX_P8" state="1">
           <native>Moscow 2</native>
           <lang id="ru" date="20220430231302">Москва 2</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P9" state="0">
+        <row id="IDS_STRING_FILMAX_P9" state="1">
           <native>Moscow 3</native>
           <lang id="ru" date="20220430231306">Москва 3</lang>
         </row>
-        <row id="IDS_STRING_SHURA_TV_P1" state="0" created="20220504023048">
+        <row id="IDS_STRING_SHURA_TV_P1" state="1" created="20220504023048">
           <native>Server 1</native>
           <lang id="ru" date="20220504023132">Сервер 1</lang>
         </row>
-        <row id="IDS_STRING_SHURA_TV_P2" state="0" created="20220504023048">
+        <row id="IDS_STRING_SHURA_TV_P2" state="1" created="20220504023048">
           <native>Server 2</native>
           <lang id="ru" date="20220504023140">Сервер 2</lang>
         </row>
       </node>
-      <node class="TWindowsStringNode" name="18" state="0" created="20220504023048" resid="18" langid="1033">
-        <row id="IDS_STRING_CBILLING_TV_P1" state="0">
+      <node class="TWindowsStringNode" name="18" state="1" created="20220504023048" resid="18" langid="1033">
+        <row id="IDS_STRING_CBILLING_TV_P1" state="1">
           <native>Device 1</native>
           <lang id="ru" date="20220504023148">Устройство 1</lang>
         </row>
-        <row id="IDS_STRING_CBILLING_TV_P2" state="0">
+        <row id="IDS_STRING_CBILLING_TV_P2" state="1">
           <native>Device 2</native>
           <lang id="ru" date="20220504023150">Устройство 2</lang>
         </row>
-        <row id="IDS_STRING_CBILLING_TV_P3" changed="20220504023302">
+        <row id="IDS_STRING_CBILLING_TV_P3" state="1" changed="20220504023302">
           <native>Device 3</native>
           <lang id="ru" date="20220504023307">Устройство 3</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P1" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P1" state="1">
           <native>Austria</native>
           <lang id="ru" date="20220504023313">Австрия</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P2" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P2" state="1">
           <native>Czechia</native>
           <lang id="ru">Чехия</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P3" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P3" state="1">
           <native>England</native>
           <lang id="ru" date="20220504023321">Англия</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="19" state="0" created="20220504023048" resid="19" langid="1033">
-        <row id="IDS_STRING_GLANZ_TV_P10" state="0">
+        <row id="IDS_STRING_FILMAX_P1" state="0" created="20220508140501">
+          <native>Germany</native>
+          <lang id="ru" date="20220508140528">Германия</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P2" state="0" created="20220508140501">
+          <native>Poland</native>
+          <lang id="ru">Польша</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P3" state="0" created="20220508140501">
+          <native>Russia, Moscow</native>
+          <lang id="ru">Россия, Москва</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P4" state="0" created="20220508140501">
+          <native>France</native>
+          <lang id="ru" date="20220508140523">Франция</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P10" state="1">
           <native>Poland 1</native>
           <lang id="ru" date="20220504023357">Польша 1</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P11" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P11" state="1">
           <native>Poland 2</native>
           <lang id="ru" date="20220504023402">Польша 2</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P12" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P12" state="1">
           <native>Romania</native>
           <lang id="ru" date="20220504023405">Румыния</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P13" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P13" state="1">
           <native>Russia 1</native>
           <lang id="ru" date="20220504023408">Россия 1</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P14" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P14" state="1">
           <native>Russia 2</native>
           <lang id="ru" date="20220504023414">Россия 2</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P15" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P15" state="1">
           <native>Russia, Moscow</native>
           <lang id="ru" date="20220504023113">Россия, Москва</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P16" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P16" state="1">
           <native>Russia, Khabarovsk</native>
           <lang id="ru" date="20220504023422">Россия, Хабаровск</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P17" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P17" state="1">
           <native>Sweden</native>
           <lang id="ru" date="20220504023426">Швеция</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P18" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P18" state="1">
           <native>Ukraine 1</native>
           <lang id="ru" date="20220504023433">Украина 1</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P4" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P4" state="1">
           <native>Germany 0</native>
           <lang id="ru" date="20220504023329">Германия 0</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P5" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P5" state="1">
           <native>Germany 1</native>
           <lang id="ru" date="20220504023334">Германия 1</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P6" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P6" state="1">
           <native>Germany 2</native>
           <lang id="ru" date="20220504023337">Германия 2</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P7" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P7" state="1">
           <native>Germany 3</native>
           <lang id="ru" date="20220504023343">Германия 3</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P8" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P8" state="1">
           <native>Netherlands</native>
           <lang id="ru" date="20220504023349">Нидерланды</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P9" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P9" state="1">
           <native>Italy</native>
           <lang id="ru" date="20220504023352">Италия</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="20" state="0" created="20220504023048" resid="20" langid="1033">
-        <row id="IDS_STRING_GLANZ_TV_P19" state="0">
+        <row id="IDS_STRING_FILMAX_P10" state="0" created="20220508140501">
+          <native>Saint Petersburg 2</native>
+          <lang id="ru">Санкт-Петербург 2</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P11" state="0" created="20220508140501">
+          <native>Czechia</native>
+          <lang id="ru">Чехия</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P12" state="0" created="20220508140501">
+          <native>Tula</native>
+          <lang id="ru">Тула</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P5" state="0" created="20220508140501">
+          <native>Russia, Saint Petersburg</native>
+          <lang id="ru">Россия, Санкт-Петербург</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P6" state="0" created="20220508140501">
+          <native>Russia, Yekaterinburg</native>
+          <lang id="ru">Россия, Екатеринбург</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P7" state="0" created="20220508140501">
+          <native>Kazakhstan</native>
+          <lang id="ru">Казахстан</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P8" state="0" created="20220508140501">
+          <native>Moscow 2</native>
+          <lang id="ru">Москва 2</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P9" state="0" created="20220508140501">
+          <native>Moscow 3</native>
+          <lang id="ru">Москва 3</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P19" state="1">
           <native>Ukraine 2</native>
           <lang id="ru" date="20220504023441">Украина 2</lang>
         </row>
-        <row id="IDS_STRING_GLANZ_TV_P20" state="0">
+        <row id="IDS_STRING_GLANZ_TV_P20" state="1">
           <native>USA</native>
           <lang id="ru" date="20220504023447">США</lang>
         </row>
-        <row id="IDS_STRING_TV_TEAM_P1" state="0">
+        <row id="IDS_STRING_TV_TEAM_P1" state="1">
           <native>All (except RU, BY)</native>
           <lang id="ru" date="20220504023503">Все (кроме RU, BY)</lang>
+        </row>
+      </node>
+      <node class="TWindowsStringNode" name="21" state="0" created="20220508140501" resid="21" langid="1033">
+        <row id="IDS_STRING_CBILLING_TV_P1" state="0">
+          <native>Device 1</native>
+          <lang id="ru">Устройство 1</lang>
+        </row>
+        <row id="IDS_STRING_CBILLING_TV_P2" state="0">
+          <native>Device 2</native>
+          <lang id="ru">Устройство 2</lang>
+        </row>
+        <row id="IDS_STRING_CBILLING_TV_P3" state="0">
+          <native>Device 3</native>
+          <lang id="ru">Устройство 3</lang>
+        </row>
+        <row id="IDS_STRING_SHURA_TV_P1" state="0">
+          <native>Server 1</native>
+          <lang id="ru">Сервер 1</lang>
+        </row>
+        <row id="IDS_STRING_SHURA_TV_P2" state="0">
+          <native>Server 2</native>
+          <lang id="ru">Сервер 2</lang>
+        </row>
+      </node>
+      <node class="TWindowsStringNode" name="22" state="0" created="20220508140501" resid="22" langid="1033">
+        <row id="IDS_STRING_TV_TEAM_P1" state="0">
+          <native>All (except RU, BY)</native>
+          <lang id="ru">Все (кроме RU, BY)</lang>
         </row>
         <row id="IDS_STRING_TV_TEAM_P2" locked="1" state="0">DE, RU</row>
         <row id="IDS_STRING_TV_TEAM_P3" locked="1" state="0">DE, RU, BY, MD</row>
@@ -4259,34 +4535,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220504023048">
-          <prev>2.9.830, 2 May 2022</prev>
-          <native>2.9.831, 4 May 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220508140501">
+          <prev>2.9.831, 4 May 2022</prev>
+          <native>2.9.842, 8 May 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220502192355">
           <prev>8</prev>
           <native>9</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220504023048">
-          <prev>830</prev>
-          <native>831</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220508140501">
+          <prev>831</prev>
+          <native>842</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220504023048">
-          <prev>2.9.830</prev>
-          <native>2.9.831</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220508140501">
+          <prev>2.9.831</prev>
+          <native>2.9.842</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220502192355">
           <prev>8</prev>
           <native>9</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220504023048">
-          <prev>830</prev>
-          <native>831</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220508140501">
+          <prev>831</prev>
+          <native>842</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

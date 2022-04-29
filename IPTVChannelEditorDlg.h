@@ -184,6 +184,7 @@ protected:
 	afx_msg void OnAppExit();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 
+	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgressStream(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -258,6 +259,7 @@ protected:
 
 	CToolTipCtrl m_wndToolTipCtrl;
 	CComboBox m_wndPluginType;
+	CButton m_wndVod;
 	CTreeCtrlEx m_wndChannelsTree;
 	CComboBox m_wndPlaylist;
 	CTreeCtrlEx m_wndPlaylistTree;
@@ -432,4 +434,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
 	std::array<std::map<std::wstring, std::map<time_t, EpgInfo>>, 2> m_epg_cache;
+public:
+	afx_msg void OnBnClickedButtonVod();
 };

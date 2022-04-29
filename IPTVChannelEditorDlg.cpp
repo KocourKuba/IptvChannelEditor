@@ -47,6 +47,7 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\utils.h"
 #include "Config.h"
 #include "EpgListDlg.h"
+#include "VodViewer.h"
 
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\md5.h"
@@ -231,6 +232,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_COMMAND(ID_APP_EXIT, &CIPTVChannelEditorDlg::OnAppExit)
 
 	ON_MESSAGE_VOID(WM_KICKIDLE, OnKickIdle)
+	ON_MESSAGE(WM_INIT_PROGRESS, &CIPTVChannelEditorDlg::OnInitProgress)
 	ON_MESSAGE(WM_UPDATE_PROGRESS, &CIPTVChannelEditorDlg::OnUpdateProgress)
 	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnEndLoadPlaylist)
 	ON_MESSAGE(WM_UPDATE_PROGRESS_STREAM, &CIPTVChannelEditorDlg::OnUpdateProgressStream)
@@ -244,6 +246,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_NOT_ADDED, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_UNKNOWN, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_URL, &CIPTVChannelEditorDlg::OnBnClickedCheckShowUrl)
+	ON_BN_CLICKED(IDC_BUTTON_VOD, &CIPTVChannelEditorDlg::OnBnClickedButtonVod)
 END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -331,6 +334,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SPLIT_BUTTON_PACK, m_wndPack);
 	DDX_Control(pDX, IDC_BUTTON_SETTINGS, m_wndSettings);
 	DDX_Control(pDX, IDC_PROGRESS_PROGRAM, m_wndProgressTime);
+	DDX_Control(pDX, IDC_BUTTON_VOD, m_wndVod);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -534,6 +538,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	const auto& streams = plugin->get_supported_stream_type();
 
+	m_wndVod.ShowWindow(plugin->is_vod_supported() ? SW_SHOW : SW_HIDE);
+	m_wndVod.EnableWindow(FALSE);
+
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();
 	for (const auto& streamType : streams)
@@ -728,17 +735,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 
 	m_wndStop.EnableWindow(TRUE);
-	m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
-	m_wndProgress.SetPos(0);
-	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
-
-	ThreadConfig cfg;
-	cfg.m_parent = this;
-	cfg.m_data = data.release();
-	cfg.m_hStop = m_evtStop;
-	cfg.m_pluginType = m_plugin_type;
-	cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
 
 	auto pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
@@ -748,7 +745,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		return;
 	}
 
-	pThread->SetData(cfg);
 	m_loading = true;
 
 	m_wndPluginType.EnableWindow(FALSE);
@@ -765,6 +761,14 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	FillTreePlaylist();
 
+	ThreadConfig cfg;
+	cfg.m_parent = this;
+	cfg.m_data = data.release();
+	cfg.m_hStop = m_evtStop;
+	cfg.m_pluginType = plugin_type;
+	cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
+
+	pThread->SetData(cfg);
 	pThread->ResumeThread();
 }
 
@@ -802,6 +806,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndPlaylistTree.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 	m_wndStop.EnableWindow(FALSE);
+	m_wndVod.EnableWindow(TRUE);
 
 	const auto plugin_type = GetConfig().get_plugin_type();
 
@@ -872,6 +877,15 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndCheckArchive.EnableWindow(TRUE);
 
 	AfxGetApp()->EndWaitCursor();
+
+	return 0;
+}
+
+LRESULT CIPTVChannelEditorDlg::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+{
+	m_wndProgress.SetRange32(0, (int)wParam);
+	m_wndProgress.SetPos(0);
+	m_wndProgress.ShowWindow(lParam ? SW_SHOW : SW_HIDE);
 
 	return 0;
 }
@@ -1301,7 +1315,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 				str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
 			}
 			GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
-			SetImage(img, m_wndChannelIcon);
+			SetImageControl(img, m_wndChannelIcon);
 		}
 
 		UpdateData(FALSE);
@@ -1350,7 +1364,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 		}
 
 		const auto& img = GetIconCache().get_icon(entry->get_icon_absolute_path());
-		SetImage(img, m_wndPlIcon);
+		SetImageControl(img, m_wndPlIcon);
 
 		UpdateEPG(&m_wndPlaylistTree);
 	}
@@ -1771,9 +1785,9 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
 	CImage img;
-	if (LoadImage(channel->get_icon_absolute_path(), img))
+	if (LoadImageFromUrl(channel->get_icon_absolute_path(), img))
 	{
-		SetImage(img, m_wndChannelIcon);
+		SetImageControl(img, m_wndChannelIcon);
 	}
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -2163,7 +2177,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 						str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
 						GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
 					}
-					SetImage(img, m_wndChannelIcon);
+					SetImageControl(img, m_wndChannelIcon);
 				}
 			}
 		}
@@ -3123,9 +3137,9 @@ void CIPTVChannelEditorDlg::OnNewCategory()
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
 
 	CImage img;
-	if (LoadImage(newCategory->get_icon_absolute_path(), img))
+	if (LoadImageFromUrl(newCategory->get_icon_absolute_path(), img))
 	{
-		SetImage(img, m_wndChannelIcon);
+		SetImageControl(img, m_wndChannelIcon);
 	}
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -3231,9 +3245,9 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 				path += oFN.lpstrFileTitle;
 				CopyFile(file, path, FALSE);
 				CImage img;
-				if (LoadImage(path.GetString(), img))
+				if (LoadImageFromUrl(path.GetString(), img))
 				{
-					SetImage(img, m_wndChannelIcon);
+					SetImageControl(img, m_wndChannelIcon);
 				}
 			}
 
@@ -3282,7 +3296,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	if (save)
 	{
 		const auto& img = GetIconCache().get_icon(info->get_icon_absolute_path());
-		SetImage(img, m_wndChannelIcon);
+		SetImageControl(img, m_wndChannelIcon);
 
 		UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
 		CheckForExistingPlaylist();
@@ -3722,18 +3736,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 
 	m_evtStop.ResetEvent();
 	m_wndStop.EnableWindow(TRUE);
-	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetRange32(0, (int)container->size());
-	m_wndProgress.SetPos(0);
-
-	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
-	if (!pThread)
-	{
-		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
-		OnEndGetStreamInfo();
-		return;
-	}
 
 	m_inStreamInfo = true;
 
@@ -3752,6 +3755,14 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	if (!container->empty() && container->front()->get_server_subst_type() == ServerSubstType::enStream)
 	{
 		cfg.m_params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+	}
+
+	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+	if (!pThread)
+	{
+		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
+		OnEndGetStreamInfo();
+		return;
 	}
 
 	pThread->SetData(cfg);
@@ -4743,4 +4754,12 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 	std::ofstream os(streamInfoFile, std::istream::binary);
 	os.write(dump.data(), dump.size());
 	os.close();
+}
+
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
+{
+	CVodViewer dlg;
+	dlg.m_plugin_type = GetConfig().get_plugin_type();
+	dlg.DoModal();
 }

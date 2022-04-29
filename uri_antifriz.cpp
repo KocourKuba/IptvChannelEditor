@@ -49,6 +49,7 @@ uri_antifriz::uri_antifriz()
 	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params.epg_root = "";
 	provider_url = L"https://antifriztv.com/";
+	vod_supported = true;
 }
 
 void uri_antifriz::parse_uri(const std::wstring& url)

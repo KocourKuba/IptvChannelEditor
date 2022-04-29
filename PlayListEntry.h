@@ -33,7 +33,7 @@ class PlaylistEntry : public BaseInfo
 {
 public:
 	PlaylistEntry() = delete;
-	PlaylistEntry(StreamType streamType, const std::wstring& root_path)
+	PlaylistEntry(StreamType streamType, std::wstring root_path = L"")
 		: BaseInfo(InfoType::enPlEntry, streamType, root_path) {}
 
 	bool Parse(const std::wstring& str, const m3u_entry& entry);

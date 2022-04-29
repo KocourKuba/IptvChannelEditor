@@ -48,12 +48,16 @@ static constexpr auto REPL_HOST = L"{HOST}";
 uri_glanz::uri_glanz()
 {
 	provider_url = L"http://ottg.tv/";
+	vod_supported = true;
+	provider_vod_url = L"http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=vod";
 }
 
 void uri_glanz::parse_uri(const std::wstring& url)
 {
 	// http://str01.ottg.cc/9195/video.m3u8?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL
 	// http://str01.ottg.cc/9195/mpegts?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL
+
+	uri_stream::parse_uri(url);
 
 	static std::wregex re_url(LR"(^https?:\/\/(.+)\/(.+)\/.+\?username=(.+)&password=(.+)&token=(.+)&ch_id=(\d+)&req_host=(.+)$)");
 	std::wsmatch m;
@@ -67,10 +71,7 @@ void uri_glanz::parse_uri(const std::wstring& url)
 		token = std::move(m[5].str());
 		int_id = std::move(m[6].str());
 		host = std::move(m[7].str());
-		return;
 	}
-
-	uri_stream::parse_uri(url);
 }
 
 std::wstring uri_glanz::get_templated_stream(StreamSubType subType, const TemplateParams& params) const

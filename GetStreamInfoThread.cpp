@@ -54,6 +54,8 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 	if (m_config.m_container)
 	{
+		m_config.NotifyParent(WM_INIT_PROGRESS, (WPARAM)m_config.m_container->size(), TRUE);
+
 		ULARGE_INTEGER ul = { 0, m_config.m_container->size() };
 		m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul);
 

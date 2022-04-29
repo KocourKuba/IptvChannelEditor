@@ -268,6 +268,12 @@ public:
 	/// returns link to provider account
 	/// </summary>
 	/// <returns>wstring</returns>
+	bool is_vod_supported() const { return vod_supported; }
+
+	/// <summary>
+	/// returns link to provider account
+	/// </summary>
+	/// <returns>wstring</returns>
 	const std::wstring& get_provider_url() const { return provider_url; }
 
 	/// <summary>
@@ -287,6 +293,12 @@ public:
 	/// </summary>
 	/// <returns>ServerSubstType</returns>
 	const ServerSubstType get_server_subst_type() const { return server_subst_type; }
+
+	/// <summary>
+	/// returns link to vod download
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wstring& get_vod_url() const { return provider_vod_url; }
 
 	/// <summary>
 	/// supported streams HLS,MPEGTS etc.
@@ -404,13 +416,14 @@ protected:
 	time_t get_json_int_value(const std::string& key, const nlohmann::json& val) const;
 
 protected:
-	std::array<EpgParameters, 2> epg_params;
+	std::array <EpgParameters, 2> epg_params;
 	std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
 	ServerSubstType server_subst_type = ServerSubstType::enNone;
 	std::vector<std::wstring> servers_list;
 	std::wstring provider_url;
 	std::wstring provider_api_url;
+	std::wstring provider_vod_url;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring port;
@@ -419,6 +432,7 @@ protected:
 	std::wstring token;
 	std::wstring int_id;
 	std::wstring host;
+	bool vod_supported = false;
 	mutable std::wstring str_hash;
 	mutable int hash = 0;
 };

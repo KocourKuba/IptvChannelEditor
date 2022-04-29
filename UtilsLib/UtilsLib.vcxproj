@@ -185,6 +185,7 @@
     <ClInclude Include="rapidxml_utils.hpp" />
     <ClInclude Include="rapidxml_value.hpp" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="vectormap.h" />
     <ClInclude Include="xxhash.hpp" />
   </ItemGroup>
   <ItemGroup>

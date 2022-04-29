@@ -25,7 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include <afxdialogex.h>
 #include "resource.h"
 #include "AccessInfoDlg.h"
 #include "IPTVChannelEditor.h"
