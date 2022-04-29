@@ -14,7 +14,7 @@ class OttclubPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/stream/(?<token>.+)/(?<id>.+)\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8');
 
-        $this->set_epg_param('first','epg_url','http://my-ott.top/api/channel/{CHANNEL}');
+        $this->set_epg_param('first','epg_url','http://myott.top/api/channel/{CHANNEL}');
     }
 
     /**
