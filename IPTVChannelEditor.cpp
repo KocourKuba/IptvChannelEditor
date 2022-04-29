@@ -418,7 +418,7 @@ bool PackPlugin(const StreamType plugin_type,
 	utils::string_replace_inplace(data, "{plugin_name}", plugin_info.int_name.c_str());
 	utils::string_replace_inplace(data, "{plugin_title}", utils::utf16_to_utf8(plugin_info.title).c_str());
 	utils::string_replace_inplace(data, "{plugin_short_name}", plugin_info.short_name.c_str());
-	utils::string_replace_inplace(data, "{plugin_version}", fmt::format("{:s}.{:d}", plugin_info.version, BUILD).c_str());
+	utils::string_replace_inplace(data, "{plugin_version}", plugin_info.version.c_str());
 	utils::string_replace_inplace(data, "{plugin_release_date}", RELEASEDATE);
 
 	std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ios::out | std::ios::binary);
