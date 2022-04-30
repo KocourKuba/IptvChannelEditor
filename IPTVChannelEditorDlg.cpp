@@ -753,7 +753,8 @@ void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
 
 	KillTimer(m_update_epg_timer);
 	m_update_epg_timer = 0;
-	COleDateTime now = COleDateTime::GetCurrentTime();
+	time_t shifted = time(nullptr) - (time_t)m_archiveCheckDays * 24 * 3600 - (time_t)m_archiveCheckHours * 3600;
+	COleDateTime now(shifted);
 	GetDlgItem(IDC_STATIC_CUR_TIME)->SetWindowText(now.Format(_T("%H:%M:%S")));
 	if (now.GetSecond() == 0)
 	{
