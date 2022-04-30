@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220429002916" scan="97" scanned="20220429002914">
+<document created="20211012165442" version="4.0.374" date="20220430231338" scan="99" scanned="20220430231219">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220428222902" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220430211214" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -1274,9 +1274,9 @@
               <native>Device</native>
               <lang id="ru">Устройство</lang>
             </row>
-            <row id="X" state="3" changed="20220429002914">
-              <prev>179</prev>
-              <native>230</native>
+            <row id="X" state="3" changed="20220430230932">
+              <prev>230</prev>
+              <native>178</native>
             </row>
             <row id="Y" state="3" changed="20220429001301">
               <prev>94</prev>
@@ -1315,11 +1315,14 @@
             </row>
           </component>
           <component class="TVisComboBox" name="1122" created="20220320143227" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
-            <row id="CX">35</row>
+            <row id="CX" state="3" changed="20220430230932">
+              <prev>35</prev>
+              <native>88</native>
+            </row>
             <row id="CY">30</row>
-            <row id="X" state="3" changed="20220429002914">
-              <prev>245</prev>
-              <native>281</native>
+            <row id="X" state="3" changed="20220430230932">
+              <prev>281</prev>
+              <native>228</native>
             </row>
             <row id="Y" state="3" changed="20220429001301">
               <prev>92</prev>
@@ -3925,8 +3928,62 @@
           <native>VPortal</native>
           <lang id="ru" date="20220320161534">VPortal</lang>
         </row>
+        <row id="IDS_STRING_FILMAX_P1" state="0" created="20220430230932">
+          <native>Germany</native>
+          <lang id="ru" date="20220430231229">Германия</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P2" state="0" created="20220430230932">
+          <native>Poland</native>
+          <lang id="ru" date="20220430231232">Польша</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P3" state="0" created="20220430230932">
+          <native>Moscow</native>
+          <lang id="ru" date="20220430231237">Москва</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P4" state="0" created="20220430230932">
+          <native>France</native>
+          <lang id="ru" date="20220430231241">Франция</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P5" state="3" created="20220430230932" changed="20220430231219">
+          <prev>Saint-Petersburg</prev>
+          <native>Saint Petersburg</native>
+          <lang id="ru" date="20220430231252">Санкт-Петербург</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P6" state="3" created="20220430230932" changed="20220430231219">
+          <prev>Ekaterinburg</prev>
+          <native>Yekaterinburg</native>
+          <lang id="ru" date="20220430231313">Екатеринбург</lang>
+        </row>
         <row id="IDS_STRING_PAYPAL" locked="1" created="20220331213759">aHR0cHM6Ly93d3cucGF5cGFsLmNvbS9jZ2ktYmluL3dlYnNjcj9jbWQ9X2RvbmF0aW9ucyZidXNpbmVzcz01RFk3UEVTWkw0RDhMJmN1cnJlbmN5X2NvZGU9VVNEJmFtb3VudD01</row>
         <row id="IDS_STRING_YOOMONEY" locked="1" created="20220331213759">aHR0cHM6Ly95b29tb25leS5ydS90by80MTAwMTkxMzM3OTAyNw</row>
+      </node>
+      <node class="TWindowsStringNode" name="17" state="0" created="20220430230932" resid="17" langid="1033">
+        <row id="IDS_STRING_FILMAX_P10" state="3" changed="20220430231219">
+          <prev>Saint-Petersburg 2</prev>
+          <native>Saint Petersburg 2</native>
+          <lang id="ru" date="20220430231255">Санкт-Петербург 2</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P11" state="0">
+          <native>Czechia</native>
+          <lang id="ru" date="20220430231327">Чехия</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P12" state="0">
+          <native>Tula</native>
+          <lang id="ru" date="20220430231331">Тула</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P7" state="3" changed="20220430231219">
+          <prev>Kazahstan</prev>
+          <native>Kazakhstan</native>
+          <lang id="ru" date="20220430231322">Казахстан</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P8" state="0">
+          <native>Moscow 2</native>
+          <lang id="ru" date="20220430231302">Москва 2</lang>
+        </row>
+        <row id="IDS_STRING_FILMAX_P9" state="0">
+          <native>Moscow 3</native>
+          <lang id="ru" date="20220430231306">Москва 3</lang>
+        </row>
       </node>
       <node class="TWindowsStringNode" name="3633" locked="1" resid="3633" langid="1033">
         <row id="58112">Close Print Preview#l&amp;Close</row>
@@ -4092,28 +4149,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220429002914">
-          <prev>2.7.821, 29 Apr 2022</prev>
-          <native>2.7.820, 29 Apr 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220430230932">
+          <prev>2.7.820, 29 Apr 2022</prev>
+          <native>2.8.825, 29 Apr 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20220423212550">7</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220429002914">
-          <prev>821</prev>
-          <native>820</native>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220430230932">
+          <prev>7</prev>
+          <native>8</native>
+        </row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220430230932">
+          <prev>820</prev>
+          <native>825</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220429002914">
-          <prev>2.7.821</prev>
-          <native>2.7.820</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220430230932">
+          <prev>2.7.820</prev>
+          <native>2.8.825</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20220423212550">7</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220429002914">
-          <prev>821</prev>
-          <native>820</native>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220430230932">
+          <prev>7</prev>
+          <native>8</native>
+        </row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220430230932">
+          <prev>820</prev>
+          <native>825</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

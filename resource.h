@@ -139,6 +139,18 @@
 #define IDS_STRING_COL_VPORTAL          247
 #define IDS_STRING_PAYPAL               248
 #define IDS_STRING_YOOMONEY             249
+#define IDS_STRING_FILMAX_P1            250
+#define IDS_STRING_FILMAX_P2            251
+#define IDS_STRING_FILMAX_P3            252
+#define IDS_STRING_FILMAX_P4            253
+#define IDS_STRING_FILMAX_P5            254
+#define IDS_STRING_FILMAX_P6            255
+#define IDS_STRING_FILMAX_P7            256
+#define IDS_STRING_FILMAX_P8            257
+#define IDS_STRING_FILMAX_P9            258
+#define IDS_STRING_FILMAX_P10           259
+#define IDS_STRING_FILMAX_P11           260
+#define IDS_STRING_FILMAX_P12           261
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -294,7 +306,7 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        231

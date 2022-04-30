@@ -111,6 +111,7 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			set_epg_id(0, stream_uri->get_id()); // primary EPG
 			break;
 		case StreamType::enLightIptv:
+		case StreamType::enFilmax:
 			stream_uri->set_id(get_epg_id(0));
 			break;
 		case StreamType::enOttclub:
@@ -179,18 +180,22 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wst
 void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
 	// priority -> tvg_id -> tvg_name -> title
+	std::wstring tvg_id;
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_id); pair != tags.end())
 	{
-		set_epg_id(0, pair->second);
+		tvg_id = pair->second;
 	}
 	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_name); pair != tags.end())
 	{
-		set_epg_id(0, pair->second);
+		tvg_id = pair->second;
 	}
 	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_directive_title); pair != tags.end())
 	{
-		set_epg_id(0, pair->second);
+		tvg_id = pair->second;
 	}
+
+	tvg_id.erase(std::remove(tvg_id.begin(), tvg_id.end(), '/'), tvg_id.end());
+	set_epg_id(0, tvg_id);
 }
 
 void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::wstring>& tags)

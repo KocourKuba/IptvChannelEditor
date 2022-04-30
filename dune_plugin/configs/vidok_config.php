@@ -90,7 +90,7 @@ class VidokPluginConfig extends Default_Config
     {
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
 
-        if (!self::ensure_token_loaded($plugin_cookies)) {
+        if (!$this->ensure_token_loaded($plugin_cookies)) {
             return false;
         }
 
@@ -152,7 +152,7 @@ class VidokPluginConfig extends Default_Config
      */
     public function get_server_opts($plugin_cookies)
     {
-        if (self::load_settings($plugin_cookies)) {
+        if ($this->load_settings($plugin_cookies)) {
             $ops = array();
             foreach (self::$settings['settings']['lists']['servers'] as $item) {
                 $ops[$item['id']] = $item['name'];
@@ -169,7 +169,7 @@ class VidokPluginConfig extends Default_Config
      */
     public function get_server($plugin_cookies)
     {
-        if (self::load_settings($plugin_cookies)) {
+        if ($this->load_settings($plugin_cookies)) {
             return self::$settings['settings']['current']['server_id'];
         }
 
@@ -181,7 +181,7 @@ class VidokPluginConfig extends Default_Config
      */
     public function set_server($plugin_cookies)
     {
-        self::save_settings($plugin_cookies, 'server');
+        $this->save_settings($plugin_cookies, 'server');
     }
 
     /**
@@ -190,7 +190,7 @@ class VidokPluginConfig extends Default_Config
      */
     public function get_quality_opts($plugin_cookies)
     {
-        if (self::load_settings($plugin_cookies)) {
+        if ($this->load_settings($plugin_cookies)) {
             $ops = array();
             foreach (self::$settings['settings']['lists']['quality'] as $item) {
                 $ops[$item['id']] = $item['name'];
@@ -207,7 +207,7 @@ class VidokPluginConfig extends Default_Config
      */
     public function get_quality($plugin_cookies)
     {
-        if (self::load_settings($plugin_cookies))
+        if ($this->load_settings($plugin_cookies))
         {
             return self::$settings['settings']['current']['quality'];
         }
@@ -219,12 +219,12 @@ class VidokPluginConfig extends Default_Config
      */
     public function set_quality($plugin_cookies)
     {
-        self::save_settings($plugin_cookies, 'quality');
+        $this->save_settings($plugin_cookies, 'quality');
     }
 
-    protected static function load_settings(&$plugin_cookies)
+    protected function load_settings(&$plugin_cookies)
     {
-        if (!self::ensure_token_loaded($plugin_cookies)) {
+        if (!$this->ensure_token_loaded($plugin_cookies)) {
             return false;
         }
 
@@ -246,11 +246,11 @@ class VidokPluginConfig extends Default_Config
      * @param string $param
      * @return bool
      */
-    protected static function save_settings(&$plugin_cookies, $param)
+    protected function save_settings(&$plugin_cookies, $param)
     {
         hd_print("save settings $param to {$plugin_cookies->$param}");
 
-        if (!self::ensure_token_loaded($plugin_cookies)) {
+        if (!$this->ensure_token_loaded($plugin_cookies)) {
             return false;
         }
 

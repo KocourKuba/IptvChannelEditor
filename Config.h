@@ -53,6 +53,7 @@ enum class StreamType
 	enVidok,
 	enShuraTV,
 	enTVClub,
+	enFilmax,
 };
 
 enum class AccountAccessType

@@ -123,6 +123,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enVidok,      _T("Vidok TV"),        "vidok",      "vidok.tv",       STRPRODUCTVER },
 	{ StreamType::enShuraTV,    _T("Shura TV"),        "shuratv",    "shura.tv",       STRPRODUCTVER },
 	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tvclub",         STRPRODUCTVER },
+	{ StreamType::enFilmax,     _T("Filmax"),          "filmax",     "filmax",         STRPRODUCTVER },
 };
 
 void ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -301,6 +302,7 @@ AccountAccessType PluginsConfig::get_plugin_account_access_type() const
 		case StreamType::enOneOtt:
 		case StreamType::enVidok:
 		case StreamType::enTVClub:
+		case StreamType::enFilmax:
 			return AccountAccessType::enLoginPass;
 		default:
 			break;

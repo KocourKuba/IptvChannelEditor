@@ -52,7 +52,7 @@ class TvclubPluginConfig extends Default_Config
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         // hd_print("Type: $type");
-        if (!self::ensure_token_loaded($plugin_cookies)) {
+        if (!$this->ensure_token_loaded($plugin_cookies)) {
             hd_print("No token!");
             return '';
         }
@@ -94,7 +94,7 @@ class TvclubPluginConfig extends Default_Config
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
 
         $account_data = self::$settings;
-        if ($force !== false && self::load_settings($plugin_cookies)) {
+        if ($force !== false && $this->load_settings($plugin_cookies)) {
             $account_data = self::$settings;
         }
 
@@ -174,7 +174,7 @@ class TvclubPluginConfig extends Default_Config
      */
     public function get_server($plugin_cookies)
     {
-        if (self::load_settings($plugin_cookies)) {
+        if ($this->load_settings($plugin_cookies)) {
             return self::$settings['account']['settings']['server_id'];
         }
 
@@ -186,16 +186,16 @@ class TvclubPluginConfig extends Default_Config
      */
     public function set_server($plugin_cookies)
     {
-        self::save_settings($plugin_cookies, 'server');
+        $this->save_settings($plugin_cookies, 'server');
     }
 
     /**
      * @param $plugin_cookies
      * @return bool
      */
-    protected static function load_settings(&$plugin_cookies)
+    protected function load_settings(&$plugin_cookies)
     {
-        if (!self::ensure_token_loaded($plugin_cookies)) {
+        if (!$this->ensure_token_loaded($plugin_cookies)) {
             hd_print("No token!");
             return false;
         }
@@ -216,18 +216,18 @@ class TvclubPluginConfig extends Default_Config
      * @param string $param
      * @return bool
      */
-    protected static function save_settings(&$plugin_cookies, $param)
+    protected function save_settings(&$plugin_cookies, $param)
     {
         hd_print("save settings $param to {$plugin_cookies->$param}");
 
-        if (!self::ensure_token_loaded($plugin_cookies)) {
+        if (!$this->ensure_token_loaded($plugin_cookies)) {
             return false;
         }
 
         try {
             $url = self::API_HOST . "/set?token=$plugin_cookies->token&$param={$plugin_cookies->$param}";
             HD::http_get_document($url);
-            self::load_settings($plugin_cookies);
+            $this->load_settings($plugin_cookies);
             return true;
         } catch (Exception $ex) {
             hd_print("Settings not saved");

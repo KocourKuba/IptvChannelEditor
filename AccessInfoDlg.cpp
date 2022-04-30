@@ -136,24 +136,42 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	str.LoadString(IDS_STRING_COL_DATA);
 	m_wndInfo.InsertColumn(1, str, LVCFMT_LEFT, vWidth - nWidth, 0);
 
-	if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV)
+	if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV || plugin_type == StreamType::enFilmax)
 	{
-		int max_entry = 3;
-		CString text;
-		text.LoadString(IDS_STRING_DEVICE_ID);
+		UINT static_text = IDS_STRING_SERVER_ID;
 		if (plugin_type == StreamType::enShuraTV)
 		{
-			max_entry = 2;
-			text.LoadString(IDS_STRING_SERVER_ID);
-			GetDlgItem(IDC_STATIC_DEVICE_ID)->SetWindowText(text);
+			for (int i = 1; i <= 2; i++)
+			{
+				CString text;
+				text.Format(_T("%d"), i);
+				m_wndDeviceID.AddString(text);
+			}
+		}
+		else if (plugin_type == StreamType::enFilmax)
+		{
+			for (int i = 0; i <= 11; i++)
+			{
+				CString text;
+				text.LoadString(IDS_STRING_FILMAX_P1 + i);
+				m_wndDeviceID.AddString(text);
+			}
+		}
+		else
+		{
+			static_text = IDS_STRING_DEVICE_ID;
+			for (int i = 1; i <= 3; i++)
+			{
+				CString text;
+				text.Format(_T("%d"), i);
+				m_wndDeviceID.AddString(text);
+			}
 		}
 
+		CString text;
+		text.LoadString(static_text);
+		GetDlgItem(IDC_STATIC_DEVICE_ID)->SetWindowText(text);
 		GetDlgItem(IDC_STATIC_DEVICE_ID)->ShowWindow(SW_SHOW);
-		for (int i = 1; i <= max_entry; i++)
-		{
-			text.Format(_T("%d"), i);
-			m_wndDeviceID.AddString(text);
-		}
 		m_wndDeviceID.SetCurSel(GetConfig().get_int(false, REG_DEVICE_ID, 1) - 1);
 		m_wndDeviceID.ShowWindow(SW_SHOW);
 	}
@@ -305,7 +323,7 @@ void CAccessInfoDlg::OnOK()
 	GetConfig().set_string(false, REG_CREDENTIALS, credentials);
 
 	const auto plugin_type = GetConfig().get_plugin_type();
-	if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV)
+	if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV || plugin_type == StreamType::enFilmax)
 	{
 		GetConfig().set_int(false, REG_DEVICE_ID, m_wndDeviceID.GetCurSel() + 1);
 	}

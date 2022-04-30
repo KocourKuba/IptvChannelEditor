@@ -48,6 +48,7 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_vidok.h"
 #include "uri_shuratv.h"
 #include "uri_tvclub.h"
+#include "uri_filmax.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -129,6 +130,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enTVClub:
 			return std::make_unique<uri_tvclub>();
+
+		case StreamType::enFilmax:
+			return std::make_unique<uri_filmax>();
 
 		default:
 			ASSERT(false);

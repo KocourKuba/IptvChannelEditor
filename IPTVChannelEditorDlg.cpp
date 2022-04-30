@@ -1236,6 +1236,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 			params.login = m_login;
 			params.password = m_password;
 			params.host = m_host;
+
 			UpdateExtToken(uri.get(), m_token);
 			m_streamUrl = uri->get_templated_stream((StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()), params).c_str();
 		}
@@ -3896,7 +3897,7 @@ void CIPTVChannelEditorDlg::OnBnClickCheckArchive()
 
 	if (m_lastTree)
 	{
-		PlayItem(m_lastTree->GetSelectedItem(), m_archiveCheckDays, m_archiveCheckHours);
+		PlayItem(m_lastTree->GetSelectedItem(), m_archiveCheckHours, m_archiveCheckDays);
 	}
 }
 

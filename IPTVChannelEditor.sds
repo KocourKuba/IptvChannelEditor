@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="97" scanned="20220429002914" built="20220429002921" lang="ru" pane="TLogPane" col="4">
+<desktop scan="99" scanned="20220430231219" built="20220429002921" lang="ru" pane="TLogPane" col="2" row="Strings.17.IDS_STRING_FILMAX_P12">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="5"/>
+    <item class="TRemoveUnusedItemsTrigger" position="7"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

@@ -470,6 +470,7 @@ bool PackPlugin(const StreamType plugin_type,
 				case StreamType::enOneOtt:
 				case StreamType::enVidok:
 				case StreamType::enTVClub:
+				case StreamType::enFilmax:
 					node["login"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_LOGIN));
 					node["password"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
 					break;
