@@ -37,9 +37,10 @@ static constexpr auto PLAYLIST_TEMPLATE1 = L"http://epg.it999.ru/edem_epg_ico.m3
 static constexpr auto PLAYLIST_TEMPLATE2 = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 
-uri_edem::uri_edem() : epg_technic({ L"it999", L"it999" })
+uri_edem::uri_edem()
 {
-	epg_params[0].epg_use_mapper = false;
+	auto& params = epg_params[0];
+	params.epg_url = L"http://epg.esalecrm.net/it999/epg/{ID}.json";
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"https://ilook.tv/";
 }

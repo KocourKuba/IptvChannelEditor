@@ -15,13 +15,7 @@ class EdemPluginConfig extends Default_Config
         $this->set_feature(VOD_PORTAL_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
 
-        $this->set_epg_param('first','epg_url','http://technic.cf/epg-it999/epg_day?id={CHANNEL}&day={DATE}');
-        $this->set_epg_param('first','epg_root', 'data');
-        $this->set_epg_param('first','epg_start', 'begin');
-        $this->set_epg_param('first','epg_end', 'end');
-        $this->set_epg_param('first','epg_title', 'title');
-        $this->set_epg_param('first','epg_desc', 'description');
-        $this->set_epg_param('first','epg_date_format', 'Y.m.d');
+        $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/it999/epg/{CHANNEL}.json');
     }
 
     /**
