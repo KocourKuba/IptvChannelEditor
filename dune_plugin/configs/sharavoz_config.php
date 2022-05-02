@@ -12,6 +12,7 @@ class SharavozPluginConfig extends Default_Config
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/(?:.*)\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}');
 
         $this->set_epg_param('first','epg_url', 'http://api.program.spr24.net/api/program?epg={CHANNEL}');
         $this->set_epg_param('second','epg_url', 'http://epg.arlekino.tv/api/program?epg={CHANNEL}');
@@ -26,12 +27,29 @@ class SharavozPluginConfig extends Default_Config
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $url = $channel->get_streaming_url();
+        if (empty($url)) {
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                case 'mpeg':
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
+
+            $ext_params = $channel->get_ext_params();
+            $url = str_replace(array('{DOMAIN}', '{ID}', '{TOKEN}'),
+                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token']),
+                $template);
+        }
+
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
-        if ($this->get_format($plugin_cookies) === 'mpeg') {
-            $url = str_replace('index.m3u8', 'mpegts', $url);
-        }
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }

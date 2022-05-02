@@ -34,8 +34,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://cdntv.online/high/{:s}/playlist.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}.m3u8";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/high/{TOKEN}/{ID}.mpeg";
+static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/high/{TOKEN}/{ID}.m3u8";
+static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/high/{TOKEN}/{ID}.mpeg";
 
 uri_viplime::uri_viplime()
 {

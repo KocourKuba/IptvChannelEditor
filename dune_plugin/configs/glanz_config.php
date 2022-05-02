@@ -15,6 +15,9 @@ class GlanzPluginConfig extends Default_Config
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/video-{START}-10800.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
         $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|');
         $this->set_feature(SQUARE_ICONS, true);
 
@@ -47,45 +50,48 @@ class GlanzPluginConfig extends Default_Config
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
-        $ext_params = $channel->get_ext_params();
-        $url = str_replace(
-            array(
-                '{LOGIN}',
-                '{PASSWORD}',
-                '{INT_ID}',
-                '{HOST}'
-            ),
-            array(
-                $ext_params['login'],
-                $ext_params['password'],
-                $ext_params['int_id'],
-                $ext_params['host']
-            ),
-            $url);
+        $url = $channel->get_streaming_url();
+        if (!empty($url)) {
+            $url = ((int)$archive_ts <= 0) ?: static::UpdateArchiveUrlParams($url, $archive_ts);
+        } else {
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $url = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_HLS : MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                case 'mpeg':
+                    $url = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
 
-        switch ($this->get_format($plugin_cookies)) {
-            case 'hls':
-                if ((int)$archive_ts > 0) {
-                    // hd_print("Archive TS:  " . $archive_ts);
-                    $url = str_replace('video.m3u8', "video-$archive_ts-10800.m3u8", $url);
-                }
-                break;
-            case 'mpeg':
-                if ((int)$archive_ts > 0) {
-                    // hd_print("Archive TS:  " . $archive_ts);
-                    $url = str_replace('video.m3u8', "archive-$archive_ts-10800.ts", $url);
-                }
-                else {
-                    $url = str_replace('video.m3u8', 'mpegts', $url);
-                }
-                break;
-            default:
-                hd_print("unknown url format");
-                return "";
+            $ext_params = $channel->get_ext_params();
+            $url = str_replace(
+                array(
+                    '{DOMAIN}',
+                    '{ID}',
+                    '{LOGIN}',
+                    '{PASSWORD}',
+                    '{TOKEN}',
+                    '{INT_ID}',
+                    '{HOST}',
+                    '{START}'
+                ),
+                array(
+                    $ext_params['subdomain'],
+                    $channel->get_channel_id(),
+                    $ext_params['login'],
+                    $ext_params['password'],
+                    $ext_params['token'],
+                    $ext_params['int_id'],
+                    $ext_params['host'],
+                    $archive_ts
+                ),
+                $url);
         }
 
-        // hd_print("Stream url:  " . $url);
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }

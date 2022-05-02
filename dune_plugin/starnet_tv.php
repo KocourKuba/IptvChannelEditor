@@ -149,11 +149,12 @@ class Starnet_Tv extends Abstract_Tv
                 $channel_id = (string)$xml_tv_channel->channel_id;
                 $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
                 // update stream url by channel ID
-                $streaming_url = $this->plugin->config->UpdateStreamUrlID($channel_id, $ext_params);
-                if (empty($streaming_url)) {
+                $url = $this->plugin->config->UpdateStreamUrlID($channel_id, $ext_params);
+                if (empty($url)) {
                     continue;
                 }
-                $hash = hash("crc32", $streaming_url);
+                $streaming_url = '';
+                $hash = hash("crc32", $url);
             } else {
                 // custom url, play as is
                 $streaming_url = (string)$xml_tv_channel->streaming_url;

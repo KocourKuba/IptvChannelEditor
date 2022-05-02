@@ -14,8 +14,8 @@ class FoxPluginConfig extends Default_Config
         $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/?(?<hls>.+\.m3u8){0,1}$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/{TOKEN}/index.m3u8');
+        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>.+)$|');
+        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}');
         $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
         $this->set_feature(SQUARE_ICONS, true);
 
@@ -40,18 +40,31 @@ class FoxPluginConfig extends Default_Config
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = $channel->get_streaming_url();
-        $ext_params = $channel->get_ext_params();
-
-        if (!isset($ext_params[0])) {
-            hd_print("TransformStreamUrl: parameters for {$channel->get_channel_id()} not defined!");
+        if (!empty($url)) {
+            $url = ((int)$archive_ts <= 0) ?: static::UpdateArchiveUrlParams($url, $archive_ts);
         } else {
-            // fox does not have adjustable parameters, only token. Replace entire url from playlist
-            $url = $ext_params[0];
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                case 'mpeg':
+                    // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
+                    // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV
+                    // hls archive url completely different, make it from scratch
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
+
+            $ext_params = $channel->get_ext_params();
+
+            $url = str_replace(
+                array('{DOMAIN}', '{TOKEN}', '{START}', '{NOW}'),
+                array($ext_params['subdomain'], $ext_params['token'], $archive_ts, time()),
+                $template);
         }
 
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-
-        // hd_print("Stream url:  " . $url);
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
@@ -110,6 +123,17 @@ class FoxPluginConfig extends Default_Config
         }
 
         return $pl_entries;
+    }
+
+    /**
+     * @param string $channel_id
+     * @param array $ext_params
+     * @return array|mixed|string|string[]
+     */
+    public function UpdateStreamUrlID($channel_id, $ext_params)
+    {
+        // token used as channel id
+        return str_replace('{TOKEN}', $ext_params['token'], $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
     }
 
     /**

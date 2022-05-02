@@ -13,7 +13,7 @@ class TvclubPluginConfig extends Default_Config
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
-        $this->set_feature(TS_OPTIONS, array('mpeg' => 'MPEG-TS'));
+        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
         $this->set_feature(BALANCE_SUPPORTED, true);
         $this->set_feature(SERVER_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/p/(?<token>.+)/(?<id>.+)$|');
@@ -36,10 +36,19 @@ class TvclubPluginConfig extends Default_Config
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $url = $channel->get_streaming_url();
+        if (empty($url)) {
+            $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+            $ext_params = $channel->get_ext_params();
+            $url = str_replace(
+                array('{DOMAIN}', '{ID}', '{TOKEN}'),
+                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token']),
+                $template);
+        }
+
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
 
-        // hd_print("Stream url:  " . $url);
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
@@ -63,23 +72,6 @@ class TvclubPluginConfig extends Default_Config
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->token);
-    }
-
-    /**
-     * @param string $url
-     * @param int $archive_ts
-     * @return string
-     */
-    protected static function UpdateArchiveUrlParams($url, $archive_ts)
-    {
-        if ($archive_ts > 0) {
-            $url .= (strpos($url, '?') === false) ? '?' : '&';
-            $url .= "utc=$archive_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
-        }
-
-        return $url;
     }
 
     /**

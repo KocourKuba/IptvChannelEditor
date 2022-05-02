@@ -12,6 +12,7 @@ class OneottPluginConfig extends Default_Config
         $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
+        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/~{TOKEN}/{ID}');
 
         $this->set_epg_param('first','epg_url','http://epg.propg.net/{CHANNEL}/epg2/{DATE}');
         $this->set_epg_param('first','epg_root', '');
@@ -30,14 +31,30 @@ class OneottPluginConfig extends Default_Config
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
+        $url = $channel->get_streaming_url();
+        if (empty($url)) {
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                case 'mpeg':
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
 
-        if ($this->get_format($plugin_cookies) === 'mpeg') {
-            $url = str_replace('/hls/pl.m3u8', '', $url);
+            $ext_params = $channel->get_ext_params();
+            $url = str_replace(
+                array('{DOMAIN}', '{ID}', '{TOKEN}'),
+                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token']),
+                $template);
         }
 
-        // hd_print("Stream url:  " . $url);
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
+
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }

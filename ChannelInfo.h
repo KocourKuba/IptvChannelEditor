@@ -39,7 +39,7 @@ DEALINGS IN THE SOFTWARE.
 //     <tv_categories>
 //         <tv_category_id>1</tv_category_id>
 //     </tv_categories>
-//     <streaming_url>http://ts://{SUBDOMAIN}/iptv/{TOKEN}/127/index.m3u8</streaming_url>
+//     <streaming_url>http://ts://{DOMAIN}/iptv/{TOKEN}/127/index.m3u8</streaming_url>
 //     <archive>1</archive>
 //     <protected>1</protected>
 // /tv_channel>

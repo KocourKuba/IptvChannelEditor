@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://myott.top/playlist/{:s}/m3u";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/stream/{TOKEN}/{ID}.m3u8";
+static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
 
 uri_ottclub::uri_ottclub()
 {

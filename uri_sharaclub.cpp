@@ -37,8 +37,8 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://list.playtv.pro/api/dune-api5m.php?subscr={:s}-{:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/live/{TOKEN}/{ID}.ts";
+static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
+static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 
 uri_sharaclub::uri_sharaclub()
 {

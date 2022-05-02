@@ -144,7 +144,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(rapidxml::alloc_node(alloc, utils::TV_CATEGORY_ID, std::to_string(*categories.begin()).c_str()));
 
 	// Only if channel not templated. Otherwise template handled by plugin
-	// <streaming_url>http://ts://{SUBDOMAIN}/iptv/{TOKEN}/127/index.m3u8</streaming_url>
+	// <streaming_url>http://ts://{DOMAIN}/iptv/{TOKEN}/127/index.m3u8</streaming_url>
 	if (!stream_uri->is_template() && !stream_uri->get_uri().empty())
 	{
 		channel_node->append_node(rapidxml::alloc_node(alloc, utils::STREAMING_URL, utils::utf16_to_utf8(stream_uri->get_uri()).c_str()));

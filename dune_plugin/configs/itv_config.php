@@ -14,6 +14,9 @@ class ItvPluginConfig extends Default_Config
         $this->set_feature(BALANCE_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{ID}/mpegts');
+        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts');
         $this->set_feature(SQUARE_ICONS, true);
 
         $this->set_epg_param('first','epg_url', self::API_HOST . '/epg/{CHANNEL}');
@@ -33,30 +36,29 @@ class ItvPluginConfig extends Default_Config
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $url = $channel->get_streaming_url();
+        if (!empty($url)) {
+            $url = ((int)$archive_ts <= 0) ?: static::UpdateArchiveUrlParams($url, $archive_ts);
+        } else {
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_HLS : MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                case 'mpeg':
+                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
 
-        switch ($this->get_format($plugin_cookies)) {
-            case 'hls':
-                if ((int)$archive_ts > 0) {
-                    // hd_print("Archive TS:  " . $archive_ts);
-                    $url = str_replace('video.m3u8', "archive-$archive_ts-10800.m3u8", $url);
-                }
-                break;
-            case 'mpeg':
-                if ((int)$archive_ts > 0) {
-                    // hd_print("Archive TS:  " . $archive_ts);
-                    $url = str_replace('video.m3u8', "archive-$archive_ts-10800.ts", $url);
-                }
-                else {
-                    $url = str_replace('video.m3u8', 'mpegts', $url);
-                }
-                break;
-            default:
-                hd_print("unknown url format");
-                return "";
+            $ext_params = $channel->get_ext_params();
+            $url = str_replace(array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
+                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
+                $template);
         }
 
-        // hd_print("Stream url:  " . $url);
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }

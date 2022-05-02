@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class Cbilling_Vod_Impl extends Default_Config
+abstract class Cbilling_Vod_Impl extends Default_Config
 {
     const API_HOST = 'http://protected-api.com';
 

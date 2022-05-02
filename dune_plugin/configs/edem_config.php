@@ -25,73 +25,6 @@ class EdemPluginConfig extends Default_Config
     }
 
     /**
-     * @param array &$defs
-     * @param Starnet_Filter_Screen $parent
-     * @param int $initial
-     * @return bool
-     */
-    public function AddFilterUI(&$defs, $parent, $initial = -1)
-    {
-        $filters = array("years", "genre");
-        hd_print("AddFilterUI: $initial");
-        $added = false;
-        foreach ($filters as $name) {
-            $filter = $this->get_filter($name);
-            if ($filter === null) {
-                hd_print("AddFilterUI: no filters with '$name'");
-                continue;
-            }
-
-            $values = $filter['values'];
-            if (empty($values)) {
-                hd_print("AddFilterUI: no filters values for '$name'");
-                continue;
-            }
-
-            $idx = $initial;
-            if ($initial !== -1) {
-                $pairs = explode(" ", $initial);
-                foreach ($pairs as $pair) {
-                    if (strpos($pair, $name . ":") !== false && preg_match("|^$name:(.+)|", $pair, $m)) {
-                        $idx = array_search($m[1], $values) ?: -1;
-                        break;
-                    }
-                }
-            }
-
-            Control_Factory::add_combobox($defs, $parent, null, $name,
-                $filter['title'], $idx, $values, 600, true);
-
-            Control_Factory::add_vgap($defs, 30);
-            $added = true;
-        }
-
-        return $added;
-    }
-
-    /**
-     * @param $user_input
-     * @return string
-     */
-    public function CompileSaveFilterItem($user_input)
-    {
-        $filters = array("years", "genre");
-        $compiled_string = "";
-        foreach ($filters as $name) {
-            $filter = $this->get_filter($name);
-            if ($filter !== null && $user_input->{$name} !== -1) {
-                if (!empty($compiled_string)) {
-                    $compiled_string .= " ";
-                }
-
-                $compiled_string .= $name . ":" . $filter['values'][$user_input->{$name}];
-            }
-        }
-
-        return $compiled_string;
-    }
-
-    /**
      * Transform url based on settings or archive playback
      * @param $plugin_cookies
      * @param int $archive_ts
@@ -101,21 +34,25 @@ class EdemPluginConfig extends Default_Config
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = $channel->get_streaming_url();
-        // hd_print("Stream url:  " . $url);
+        if (empty($url)) {
+            $subdomain = isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain;
+            $token = isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key;
+            if (empty($subdomain) || empty($token)) {
+                hd_print("TransformStreamUrl: parameters for {$channel->get_channel_id()} not defined!");
+                return '';
+            }
 
-        $subdomain = isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain;
-        $token = isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key;
-        if (empty($subdomain) || empty($token)) {
-            hd_print("TransformStreamUrl: parameters for {$channel->get_channel_id()} not defined!");
-        } else {
+            $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
             // substitute subdomain token parameters
             $url = str_replace(
-                array('{DOMAIN}', '{TOKEN}'),
-                array($subdomain, $token),
-                $url);
+                array('{DOMAIN}', '{TOKEN}', '{ID}'),
+                array($subdomain, $token, $channel->get_channel_id()),
+                $template);
         }
 
         $url = static::UpdateArchiveUrlParams($url, $archive_ts);
+
+        hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
@@ -385,6 +322,73 @@ class EdemPluginConfig extends Default_Config
 
         hd_print("Movies found: " . count($movies));
         return $movies;
+    }
+
+    /**
+     * @param array &$defs
+     * @param Starnet_Filter_Screen $parent
+     * @param int $initial
+     * @return bool
+     */
+    public function AddFilterUI(&$defs, $parent, $initial = -1)
+    {
+        $filters = array("years", "genre");
+        hd_print("AddFilterUI: $initial");
+        $added = false;
+        foreach ($filters as $name) {
+            $filter = $this->get_filter($name);
+            if ($filter === null) {
+                hd_print("AddFilterUI: no filters with '$name'");
+                continue;
+            }
+
+            $values = $filter['values'];
+            if (empty($values)) {
+                hd_print("AddFilterUI: no filters values for '$name'");
+                continue;
+            }
+
+            $idx = $initial;
+            if ($initial !== -1) {
+                $pairs = explode(" ", $initial);
+                foreach ($pairs as $pair) {
+                    if (strpos($pair, $name . ":") !== false && preg_match("|^$name:(.+)|", $pair, $m)) {
+                        $idx = array_search($m[1], $values) ?: -1;
+                        break;
+                    }
+                }
+            }
+
+            Control_Factory::add_combobox($defs, $parent, null, $name,
+                $filter['title'], $idx, $values, 600, true);
+
+            Control_Factory::add_vgap($defs, 30);
+            $added = true;
+        }
+
+        return $added;
+    }
+
+    /**
+     * @param $user_input
+     * @return string
+     */
+    public function CompileSaveFilterItem($user_input)
+    {
+        $filters = array("years", "genre");
+        $compiled_string = "";
+        foreach ($filters as $name) {
+            $filter = $this->get_filter($name);
+            if ($filter !== null && $user_input->{$name} !== -1) {
+                if (!empty($compiled_string)) {
+                    $compiled_string .= " ";
+                }
+
+                $compiled_string .= $name . ":" . $filter['values'][$user_input->{$name}];
+            }
+        }
+
+        return $compiled_string;
     }
 
     /**

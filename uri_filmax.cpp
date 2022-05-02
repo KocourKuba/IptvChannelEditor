@@ -37,8 +37,8 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://lk.filmax-tv.ru/{:s}/{:s}/hls/p{:d}/playlist.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{INT_ID}/index.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCHIVE_HLS = L"http://{DOMAIN}/{INT_ID}/archive-{START}-10800.m3u8?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCHIVE_MPEG = L"http://{DOMAIN}/{INT_ID}/archive-{START}-10800.ts?token={TOKEN}";
 
 static constexpr auto REPL_INT_ID = L"{INT_ID}";

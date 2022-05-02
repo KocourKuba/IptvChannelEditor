@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.fox-tv.fun/{:s}/{:s}/tv.m3u";
-static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{TOKEN}";
+static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/{TOKEN}";
 
 uri_fox::uri_fox() : epg_technic({ L"fox", L"fox" })
 {

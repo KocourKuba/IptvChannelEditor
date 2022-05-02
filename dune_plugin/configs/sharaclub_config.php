@@ -16,6 +16,7 @@ class SharaclubPluginConfig extends Default_Config
         $this->set_feature(BALANCE_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
+        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/live/{TOKEN}/{ID}.ts');
 
         $this->set_epg_param('first','epg_url', 'http://api.sramtv.com/get/?type=epg&ch={CHANNEL}');
         $this->set_epg_param('first','epg_root', '');
@@ -32,14 +33,30 @@ class SharaclubPluginConfig extends Default_Config
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
+        $url = $channel->get_streaming_url();
+        if (empty($url)) {
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                case 'mpeg':
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
 
-        if ($this->get_format($plugin_cookies) === 'mpeg') {
-            $url = str_replace('/video.m3u8', '.ts', $url);
+            $ext_params = $channel->get_ext_params();
+            $url = str_replace(
+                array('{DOMAIN}', '{ID}', '{TOKEN}'),
+                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token']),
+                $template);
         }
 
-        // hd_print("Stream url:  " . $url);
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
+
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
@@ -69,22 +86,6 @@ class SharaclubPluginConfig extends Default_Config
         }
 
         return '';
-    }
-
-    /**
-     * @param string $url
-     * @param int $archive_ts
-     * @return string
-     */
-    protected static function UpdateArchiveUrlParams($url, $archive_ts)
-    {
-        if ($archive_ts > 0) {
-            $url .= (strpos($url, '?') === false) ? '?' : '&';
-            $url .= "utc=$archive_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-        }
-
-        return $url;
     }
 
     /**

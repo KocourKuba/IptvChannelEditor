@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://tvfor.pro/g/{:s}:{:s}/1/playlist.m3u";
-static constexpr auto URI_TEMPLATE = L"http://{SUBDOMAIN}/{ID}/{TOKEN}";
+static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/{ID}/{TOKEN}";
 
 uri_sharatv::uri_sharatv() : epg_technic({ L"shara-tv", L"shara-tv" })
 {
@@ -66,7 +66,7 @@ std::wstring uri_sharatv::get_templated_stream(StreamSubType subType, const Temp
 
 	if (params.shift_back)
 	{
-		url += L"?utc={START}";
+		append_archive(url);
 	}
 
 	replace_vars(url, params);

@@ -90,7 +90,7 @@ struct EpgParameters
 class uri_stream : public uri_base
 {
 protected:
-	static constexpr auto REPL_SUBDOMAIN = L"{SUBDOMAIN}";
+	static constexpr auto REPL_SUBDOMAIN = L"{DOMAIN}";
 	static constexpr auto REPL_ID = L"{ID}";
 	static constexpr auto REPL_TOKEN = L"{TOKEN}";
 	static constexpr auto REPL_START = L"{START}";

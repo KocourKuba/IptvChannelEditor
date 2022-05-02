@@ -39,7 +39,7 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.iptv.so/0.9/json/account?token={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://celn.shott.top/p/{:s}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 uri_tvclub::uri_tvclub()
 {

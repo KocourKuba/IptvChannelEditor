@@ -4,8 +4,6 @@ require_once 'cbilling_vod_impl.php';
 class CbillingPluginConfig extends Cbilling_Vod_Impl
 {
     const PLAYLIST_TV_URL = 'http://247on.cc/playlist/%s_otp_dev%s.m3u8';
-    const MEDIA_URL_TEMPLATE_MPEG = 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}';
-    const MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}';
 
     public function __construct()
     {
@@ -14,6 +12,9 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8');
+        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8?utc={START}&lutc={NOW}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}');
         $this->set_feature(DEVICE_OPTIONS, array('1' => '1', '2' => '2', '3' => '3'));
         $this->set_feature(BALANCE_SUPPORTED, true);
 
@@ -30,33 +31,34 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $url = $channel->get_streaming_url();
+        if (!empty($url)) {
+            $url = ((int)$archive_ts <= 0) ?: static::UpdateArchiveUrlParams($url, $archive_ts);
+        } else {
+            $ext_params = $channel->get_ext_params();
+            $domain = explode(':', $ext_params['subdomain']);
 
-        $ext_params = $channel->get_ext_params();
-        $domain = explode(':', $ext_params['subdomain']);
-        switch ($this->get_format($plugin_cookies)) {
-            case 'hls':
-                // http://s01.iptvx.tv:8090/s/8264fb5785dc128d5d64a681a94ba78f/pervyj-hd.m3u8
-                if ((int)$archive_ts > 0) {
-                    // hd_print("Archive TS:  " . $archive_ts);
-                    $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-                }
-                break;
-            case 'mpeg':
-                $url = str_replace(
-                    array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
-                    array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
-                    ((int)$archive_ts > 0) ? self::MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : self::MEDIA_URL_TEMPLATE_MPEG);
-                break;
-            default:
-                hd_print("unknown url format");
-                return "";
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_HLS : MEDIA_URL_TEMPLATE_HLS);
+                    if (((int)$archive_ts <= 0))
+                        $domain[0] = $ext_params['subdomain'];
+                    break;
+                case 'mpeg':
+                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
+
+            $url = str_replace(
+                array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}', '{NOW}'),
+                array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts, time()),
+                $template);
         }
 
-        // hd_print("Stream url:  " . $url);
-        // hd_print("Domain:      " . $subdomain);
-        // hd_print("Token:       " . $ext_params['token']);
-        // hd_print("Archive TS:  " . $archive_ts);
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }

@@ -30,27 +30,28 @@ class FilmaxPluginConfig extends Default_Config
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = $channel->get_streaming_url();
-        if (!empty($url))
-            return ((int)$archive_ts > 0) ? static::UpdateArchiveUrlParams($url, $archive_ts) : $url;
+        if (!empty($url)) {
+            $url = ((int)$archive_ts <= 0) ?: static::UpdateArchiveUrlParams($url, $archive_ts);
+        } else {
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $template = ((int)$archive_ts > 0) ? $this->get_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS) : $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                case 'mpeg':
+                    $template = ((int)$archive_ts > 0) ? $this->get_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG) : $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
 
-        switch ($this->get_format($plugin_cookies)) {
-            case 'hls':
-                $template = ((int)$archive_ts > 0) ? $this->get_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS) : $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-                break;
-            case 'mpeg':
-                $template = ((int)$archive_ts > 0) ? $this->get_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG) : $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
-                break;
-            default:
-                hd_print("unknown url format");
-                return "";
+            $ext_params = $channel->get_ext_params();
+            $url = str_replace(array('{DOMAIN}', '{TOKEN}', '{PASSWORD}', '{START}'),
+                array($ext_params['subdomain'], $ext_params['token'], $ext_params['password'], $archive_ts),
+                $template);
         }
 
-        $ext_params = $channel->get_ext_params();
-        $url = str_replace(array('{DOMAIN}', '{TOKEN}', '{PASSWORD}', '{START}'),
-                    array($ext_params['subdomain'], $ext_params['token'], $ext_params['password'], $archive_ts),
-                    $template);
-
-        // hd_print("Stream url:  " . $url);
+        hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }

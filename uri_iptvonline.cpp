@@ -36,7 +36,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://iptv.online/play/{:s}/m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
+static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
+static constexpr auto URI_TEMPLATE_ARCHIVE_HLS = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-10800.m3u8";
+static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
+static constexpr auto URI_TEMPLATE_ARCHIVE_MPEG = L"http://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-10800.ts";
 
 uri_iptvonline::uri_iptvonline()
 {
@@ -71,17 +74,10 @@ std::wstring uri_iptvonline::get_templated_stream(StreamSubType subType, const T
 		switch (subType)
 		{
 			case StreamSubType::enHLS:
-				if (params.shift_back)
-				{
-					utils::string_replace_inplace(url, L"video.m3u8", L"video-{START}-10800.m3u8");
-				}
+				url = (params.shift_back) ? URI_TEMPLATE_ARCHIVE_HLS : URI_TEMPLATE_HLS;
 				break;
 			case StreamSubType::enMPEGTS:
-				utils::string_replace_inplace(url, L"video.m3u8", L"mpegts");
-				if (params.shift_back)
-				{
-					utils::string_replace_inplace(url, L"mpegts", L"archive-{START}-10800.ts");
-				}
+				url = (params.shift_back) ? URI_TEMPLATE_ARCHIVE_MPEG : URI_TEMPLATE_MPEG;
 				break;
 			default:
 				break;
@@ -94,7 +90,6 @@ std::wstring uri_iptvonline::get_templated_stream(StreamSubType subType, const T
 		{
 			append_archive(url);
 		}
-
 	}
 
 	replace_vars(url, params);

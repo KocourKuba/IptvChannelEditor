@@ -10,9 +10,11 @@ class LightiptvPluginConfig extends Default_Config
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
-        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS', 'hls2' => 'HLS2', 'mpeg' => 'MPEG-TS'));
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>[^/]+)/video\.m3u8\?token=(?<password>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{TOKEN}/video-{START}-10800.m3u8?token={PASSWORD}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}');
+        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{TOKEN}/timeshift_abs-{START}.m3u8?token={PASSWORD}');
         $this->set_feature(SQUARE_ICONS, true);
 
         $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/lightiptv/epg/{CHANNEL}.json');
@@ -29,40 +31,30 @@ class LightiptvPluginConfig extends Default_Config
      */
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
-        $url = parent::TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
-        $url = str_replace('{PASSWORD}', $password, $url);
+        $url = $channel->get_streaming_url();
+        if (!empty($url)) {
+            $url = ((int)$archive_ts <= 0) ?: static::UpdateArchiveUrlParams($url, $archive_ts);
+        } else {
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $template = ((int)$archive_ts > 0) ? $this->get_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS) : $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                case 'mpeg':
+                    $template = ((int)$archive_ts > 0) ? $this->get_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG) : $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown url format");
+                    return "";
+            }
 
-        switch ($this->get_format($plugin_cookies)) {
-            case 'hls':
-                if ($archive_ts > 0) {
-                    // hd_print("Archive TS:  " . $archive_ts);
-                    $url = str_replace('video.m3u8', "video-$archive_ts-10800.m3u8", $url);
-                }
-                break;
-            case 'hls2':
-                if ($archive_ts > 0) {
-                    // hd_print("Archive TS:  " . $archive_ts);
-                    $url = str_replace('video.m3u8', "video-$archive_ts-10800.m3u8", $url);
-                } else {
-                    $url = str_replace('video.m3u8', "index.m3u8", $url);
-                }
-                break;
-            case 'mpeg':
-                if ($archive_ts > 0) {
-                    // hd_print("Archive TS:  " . $archive_ts);
-                    $url = str_replace('video.m3u8', "timeshift_abs-$archive_ts.ts", $url);
-                }
-                else {
-                    $url = str_replace('video.m3u8', 'mpegts', $url);
-                }
-                break;
-            default:
-                hd_print("unknown url format");
-                return "";
+            $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+            $ext_params = $channel->get_ext_params();
+            $url = str_replace(array('{DOMAIN}', '{TOKEN}', '{PASSWORD}', '{START}'),
+                array($ext_params['subdomain'], $ext_params['token'], $password, $archive_ts),
+                $template);
         }
 
-        // hd_print("Stream url:  " . $url);
+        // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }
@@ -121,6 +113,7 @@ class LightiptvPluginConfig extends Default_Config
      */
     public function UpdateStreamUrlID($channel_id, $ext_params)
     {
+        // token used as channel id
         return str_replace('{TOKEN}', $ext_params['token'], $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
     }
 }

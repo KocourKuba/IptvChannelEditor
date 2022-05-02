@@ -41,7 +41,7 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://sapi.ott.st/v2.4/json/account?token={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://vidok.tv/p/{:s}";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 uri_vidok::uri_vidok()
 {

@@ -42,8 +42,10 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
 static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://247on.cc/playlist/{:s}_otp_dev{:d}.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{SUBDOMAIN}/s/{TOKEN}/{ID}.m3u8";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{SUBDOMAIN}/{ID}/mpegts?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
+static constexpr auto URI_TEMPLATE_ARCHIVE_HLS = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8?utc={START}&lutc={NOW}";
+static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_ARCHIVE_MPEG = L"http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 
 uri_cbilling::uri_cbilling()
 {
@@ -87,25 +89,21 @@ std::wstring uri_cbilling::get_templated_stream(StreamSubType subType, const Tem
 		switch (subType)
 		{
 			case StreamSubType::enHLS:
-				url = URI_TEMPLATE_HLS;
-				if (params.shift_back)
-				{
-					append_archive(url);
-				}
+				url = params.shift_back ? URI_TEMPLATE_ARCHIVE_HLS : URI_TEMPLATE_HLS;
 				break;
 			case StreamSubType::enMPEGTS:
-				url = URI_TEMPLATE_MPEG;
+				url = params.shift_back ? URI_TEMPLATE_ARCHIVE_MPEG: URI_TEMPLATE_MPEG;
 				new_params.domain = std::move(no_port);
-				if (params.shift_back)
-				{
-					utils::string_replace_inplace(url, L"mpegts", L"archive-{START}-10800.ts");
-				}
 				break;
 		}
 	}
 	else
 	{
 		url = get_uri();
+		if (params.shift_back)
+		{
+			append_archive(url);
+		}
 	}
 
 	replace_vars(url, params);

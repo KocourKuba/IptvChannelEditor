@@ -15,6 +15,9 @@ const SERVER_SUPPORTED = 'server_support';
 const QUALITY_SUPPORTED = 'quality_support';
 const M3U_STREAM_URL_PATTERN = 'm3u8_pattern';
 const MEDIA_URL_TEMPLATE_HLS = 'hls_url';
+const MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'hls_archive_url';
+const MEDIA_URL_TEMPLATE_MPEG = 'mpeg_url';
+const MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'mpeg_archive_url';
 const EXTINF_VOD_PATTERN = 'vod_pattern';
 const SQUARE_ICONS = 'square_icons';
 
@@ -404,24 +407,7 @@ abstract class Default_Config
      * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
-    {
-        $url = $channel->get_streaming_url();
-        $ext_params = $channel->get_ext_params();
-        if (isset($ext_params['subdomain'])) {
-            $url = str_replace('{DOMAIN}', $ext_params['subdomain'], $url);
-        } else {
-            hd_print("TransformStreamUrl: parameter 'subdomain' for {$channel->get_channel_id()} not defined!");
-        }
-
-        if (isset($ext_params['token'])) {
-            $url = str_replace('{TOKEN}', $ext_params['token'], $url);
-        } else {
-            hd_print("TransformStreamUrl: parameter 'token' for {$channel->get_channel_id()} not defined!");
-        }
-
-        return $url;
-    }
+    abstract public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel);
 
     /**
      * Update url by channel ID (for correct hash calculation of url)
