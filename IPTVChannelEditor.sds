@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="100" scanned="20220502192355" built="20220429002921" lang="ru" pane="TLogPane" col="2">
+<desktop scan="102" scanned="20220504023302" built="20220504023552" lang="ru" pane="TLogPane" col="3" row="Strings.19.IDS_STRING_GLANZ_TV_P7">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

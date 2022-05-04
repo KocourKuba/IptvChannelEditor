@@ -629,7 +629,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.login = m_login;
 	params.password = m_password;
 	params.token = m_token;
-	params.device = GetConfig().get_int(false, REG_DEVICE_ID, 1);
+	params.device = GetConfig().get_int(false, REG_DEVICE_ID);
 	params.number = idx;
 
 	if (plugin_type == StreamType::enEdem && idx == 2)
@@ -1236,6 +1236,10 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 			params.login = m_login;
 			params.password = m_password;
 			params.host = m_host;
+			if (uri->get_server_subst_type() == ServerSubstType::enStream)
+			{
+				params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+			}
 
 			UpdateExtToken(uri.get(), m_token);
 			m_streamUrl = uri->get_templated_stream((StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()), params).c_str();
@@ -2697,6 +2701,10 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.login = m_login;
 		params.password = m_password;
 		params.host = m_host;
+		if (info->stream_uri->get_server_subst_type() == ServerSubstType::enStream)
+		{
+			params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+		}
 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
@@ -2704,7 +2712,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		UpdateExtToken(info->stream_uri.get(), m_token);
 		const auto& url = info->stream_uri->get_templated_stream((StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()), params);
 
-		TRACE(L"Test URL: %s\n", url.c_str());
+		TRACE(L"\nTest URL: %s\n", url.c_str());
 
 		ShellExecuteW(nullptr, L"open", GetConfig().get_string(true, REG_PLAYER).c_str(), url.c_str(), nullptr, SW_SHOWNORMAL);
 	}
@@ -3711,6 +3719,10 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_params.password = m_password;
 	cfg.m_params.host = m_host;
 	cfg.m_params.shift_back = 0;
+	if (!container->empty() && container->front()->get_server_subst_type() == ServerSubstType::enStream)
+	{
+		cfg.m_params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+	}
 
 	pThread->SetData(cfg);
 	pThread->ResumeThread();

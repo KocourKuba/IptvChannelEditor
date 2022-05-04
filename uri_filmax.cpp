@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_filmax.h"
+#include "Resource.h"
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
@@ -96,5 +97,5 @@ std::wstring uri_filmax::get_templated_stream(StreamSubType subType, const Templ
 
 std::wstring uri_filmax::get_playlist_url(const PlaylistTemplateParams& params) const
 {
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password, params.device);
+	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password, params.device + 1);
 }

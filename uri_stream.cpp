@@ -247,7 +247,7 @@ void uri_stream::put_account_info(const std::string& name, nlohmann::json& js_da
 
 void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) const
 {
-	utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.domain);
+	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, params.domain);
 	utils::string_replace_inplace<wchar_t>(url, REPL_ID, get_id());
 	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, get_token());
 	utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));

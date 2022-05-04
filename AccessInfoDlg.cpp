@@ -136,43 +136,56 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	str.LoadString(IDS_STRING_COL_DATA);
 	m_wndInfo.InsertColumn(1, str, LVCFMT_LEFT, vWidth - nWidth, 0);
 
-	if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV || plugin_type == StreamType::enFilmax)
+	UINT static_text = IDS_STRING_SERVER_ID;
+	UINT combo_text = 0;
+	int max_value = 0;
+	switch (plugin_type)
 	{
-		UINT static_text = IDS_STRING_SERVER_ID;
-		if (plugin_type == StreamType::enShuraTV)
-		{
-			for (int i = 1; i <= 2; i++)
-			{
-				CString text;
-				text.Format(_T("%d"), i);
-				m_wndDeviceID.AddString(text);
-			}
-		}
-		else if (plugin_type == StreamType::enFilmax)
-		{
-			for (int i = 0; i <= 11; i++)
-			{
-				CString text;
-				text.LoadString(IDS_STRING_FILMAX_P1 + i);
-				m_wndDeviceID.AddString(text);
-			}
-		}
-		else
-		{
+		case StreamType::enGlanz:
+			max_value = IDS_STRING_GLANZ_TV_P20 - IDS_STRING_GLANZ_TV_P1;
+			combo_text = IDS_STRING_GLANZ_TV_P1;
+			break;
+		case StreamType::enTvTeam:
+			max_value = IDS_STRING_TV_TEAM_P9 - IDS_STRING_TV_TEAM_P1;
+			combo_text = IDS_STRING_TV_TEAM_P1;
+			break;
+		case StreamType::enCbilling:
+			max_value = IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1;
 			static_text = IDS_STRING_DEVICE_ID;
-			for (int i = 1; i <= 3; i++)
-			{
-				CString text;
-				text.Format(_T("%d"), i);
-				m_wndDeviceID.AddString(text);
-			}
-		}
+			combo_text = IDS_STRING_CBILLING_TV_P1;
+			break;
+		case StreamType::enShuraTV:
+			max_value = IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1;
+			combo_text = IDS_STRING_SHURA_TV_P1;
+			break;
+		case StreamType::enFilmax:
+			max_value = IDS_STRING_FILMAX_P12 - IDS_STRING_FILMAX_P1;
+			combo_text = IDS_STRING_FILMAX_P1;
+			break;
+		case StreamType::enVidok:
+			// changed via API
+			break;
+		case StreamType::enTVClub:
+			// changed via API
+			break;
+		default:
+			break;
+	}
 
+	if (max_value)
+	{
 		CString text;
 		text.LoadString(static_text);
 		GetDlgItem(IDC_STATIC_DEVICE_ID)->SetWindowText(text);
 		GetDlgItem(IDC_STATIC_DEVICE_ID)->ShowWindow(SW_SHOW);
-		m_wndDeviceID.SetCurSel(GetConfig().get_int(false, REG_DEVICE_ID, 1) - 1);
+
+		for (int i = 0; i <= max_value; i++)
+		{
+			text.LoadString(combo_text + i);
+			m_wndDeviceID.AddString(text);
+		}
+
+		m_wndDeviceID.SetCurSel(GetConfig().get_int(false, REG_DEVICE_ID));
 		m_wndDeviceID.ShowWindow(SW_SHOW);
 	}
 
@@ -323,9 +336,9 @@ void CAccessInfoDlg::OnOK()
 	GetConfig().set_string(false, REG_CREDENTIALS, credentials);
 
 	const auto plugin_type = GetConfig().get_plugin_type();
-	if (plugin_type == StreamType::enCbilling || plugin_type == StreamType::enShuraTV || plugin_type == StreamType::enFilmax)
+	if (m_wndDeviceID.GetCount())
 	{
-		GetConfig().set_int(false, REG_DEVICE_ID, m_wndDeviceID.GetCurSel() + 1);
+		GetConfig().set_int(false, REG_DEVICE_ID, m_wndDeviceID.GetCurSel());
 	}
 
 	__super::OnOK();
@@ -503,7 +516,7 @@ void CAccessInfoDlg::GetAccountInfo()
 	uri->set_host(m_host);
 
 	PlaylistTemplateParams params;
-	params.device = m_wndDeviceID.GetCurSel() + 1;
+	params.device = m_wndDeviceID.GetCurSel();
 	params.login = m_login;
 	params.password = m_password;
 	std::wstring pl_url = uri->get_playlist_url(params);

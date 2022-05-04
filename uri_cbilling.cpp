@@ -144,5 +144,5 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 
 std::wstring uri_cbilling::get_playlist_url(const PlaylistTemplateParams& params) const
 {
-	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.device);
+	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.device + 1);
 }

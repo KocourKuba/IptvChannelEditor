@@ -48,6 +48,29 @@ static constexpr auto REPL_HOST = L"{HOST}";
 uri_glanz::uri_glanz()
 {
 	provider_url = L"http://ottg.tv/";
+	server_subst_type = ServerSubstType::enStream;
+	servers_list = {
+		L"str16.ottg.tv",	// Austria
+		L"str07.ottg.tv",	// Czechia
+		L"str13.ottg.tv",	// England
+		L"cdn.ottg.tv",		// Germany 0
+		L"str01.ottg.tv",	// Germany 1
+		L"str02.ottg.tv",	// Germany 2
+		L"str11.ottg.tv",	// Germany 3
+		L"str08.ottg.tv",	// Netherlands
+		L"str19.ottg.tv",	// Italy
+		L"str06.ottg.tv",	// Poland 1
+		L"str14.ottg.tv",	// Poland 2
+		L"str10.ottg.tv",	// Romania
+		L"str05.ottg.tv",	// Russia 1
+		L"str09.ottg.tv",	// Russia 2
+		L"str17.ottg.tv",	// Russia, Moscow
+		L"str18.ottg.tv",	// Russia, Khabarovsk
+		L"str03.ottg.tv",	// Sweden
+		L"str04.ottg.tv",	// Ukraine 1
+		L"str15.ottg.tv",	// Ukraine 2
+		L"str12.ottg.tv"	// USA
+	};
 }
 
 void uri_glanz::parse_uri(const std::wstring& url)
@@ -102,6 +125,7 @@ std::wstring uri_glanz::get_templated_stream(StreamSubType subType, const Templa
 
 	// http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
 	// http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
+	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, servers_list[params.server]);
 	utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
 	utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
 	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, get_internal_id());

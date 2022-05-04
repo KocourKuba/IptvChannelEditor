@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.tvshka.net/?uid={:s}&srv={:d}&type=halva";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.tvshka.net/?uid={:s}&srv={:s}&type=halva";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/~{TOKEN}/{ID}/";
 
@@ -48,6 +48,10 @@ uri_shuratv::uri_shuratv()
 	params.epg_end = "duration";
 	params.epg_use_duration = true;
 	provider_url = L"http://shura.tv/b/";
+	servers_list = {
+		L"1",	// Server 1
+		L"2",	// Server 2
+	};
 }
 
 void uri_shuratv::parse_uri(const std::wstring& url)
@@ -98,7 +102,11 @@ std::wstring uri_shuratv::get_templated_stream(StreamSubType subType, const Temp
 
 std::wstring uri_shuratv::get_playlist_url(const PlaylistTemplateParams& params) const
 {
-	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.number);
+	int device = params.device;
+	if (params.device >= (int)servers_list.size())
+		device = servers_list.size() - 1;
+
+	return fmt::format(PLAYLIST_TEMPLATE, params.password, servers_list[device]);
 }
 
 std::wstring& uri_shuratv::append_archive(std::wstring& url) const

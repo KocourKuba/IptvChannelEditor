@@ -6,6 +6,8 @@ class GlanzPluginConfig extends Default_Config
     const PLAYLIST_TV_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
     const PLAYLIST_VOD_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod';
 
+    protected $server_opts;
+
     public function __construct()
     {
         parent::__construct();
@@ -13,6 +15,7 @@ class GlanzPluginConfig extends Default_Config
         $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(SERVER_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
         $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/video-{START}-10800.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
@@ -39,6 +42,53 @@ class GlanzPluginConfig extends Default_Config
         $this->set_epg_param('second','epg_date_format', 'Y.m.d');
         $this->set_epg_param('second','epg_use_mapper', true);
         $this->set_epg_param('second','epg_mapper_url', 'http://technic.cf/epg-iptvxone/channels');
+
+        $this->server_opts = array(
+            array(
+                "Austria",
+                "Czechia",
+                "England",
+                "Germany 0",
+                "Germany 1",
+                "Germany 2",
+                "Germany 3",
+                "Netherlands",
+                "Italy",
+                "Poland 1",
+                "Poland 2",
+                "Romania",
+                "Russia 1",
+                "Russia 2",
+                "Russia, Moscow",
+                "Russia, Khabarovsk",
+                "Sweden",
+                "Ukraine 1",
+                "Ukraine 2",
+                "USA"
+            ),
+            array(
+                "str16.ottg.tv",	// Austria
+                "str07.ottg.tv",	// Czechia
+                "str13.ottg.tv",	// England
+                "cdn.ottg.tv",		// Germany 0
+                "str01.ottg.tv",	// Germany 1
+                "str02.ottg.tv",	// Germany 2
+                "str11.ottg.tv",	// Germany 3
+                "str08.ottg.tv",	// Netherlands
+                "str19.ottg.tv",	// Italy
+                "str06.ottg.tv",	// Poland 1
+                "str14.ottg.tv",	// Poland 2
+                "str10.ottg.tv",	// Romania
+                "str05.ottg.tv",	// Russia 1
+                "str09.ottg.tv",	// Russia 2
+                "str17.ottg.tv",	// Russia, Moscow
+                "str18.ottg.tv",	// Russia, Khabarovsk
+                "str03.ottg.tv",	// Sweden
+                "str04.ottg.tv",	// Ukraine 1
+                "str15.ottg.tv",	// Ukraine 2
+                "str12.ottg.tv" 	// USA
+            )
+        );
     }
 
     /**
@@ -79,7 +129,7 @@ class GlanzPluginConfig extends Default_Config
                     '{START}'
                 ),
                 array(
-                    $ext_params['subdomain'],
+                    $this->get_subst_server($plugin_cookies),
                     $channel->get_channel_id(),
                     $ext_params['login'],
                     $ext_params['password'],
@@ -168,5 +218,32 @@ class GlanzPluginConfig extends Default_Config
         }
 
         return $movie;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string[]
+     */
+    public function get_server_opts($plugin_cookies)
+    {
+        return $this->server_opts[0];
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return int|null
+     */
+    public function get_server($plugin_cookies)
+    {
+        return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function get_subst_server($plugin_cookies)
+    {
+        return $this->server_opts[1][$this->get_server($plugin_cookies)];
     }
 }

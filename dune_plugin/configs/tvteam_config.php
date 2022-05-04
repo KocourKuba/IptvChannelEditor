@@ -5,11 +5,14 @@ class TvteamPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://tv.team/pl/11/%s/playlist.m3u8';
 
+    protected $server_opts;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(SERVER_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}');
         $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/index-{START}-7200.m3u8?token={TOKEN}');
@@ -18,6 +21,31 @@ class TvteamPluginConfig extends Default_Config
         $this->set_feature(SQUARE_ICONS, true);
 
         $this->set_epg_param('first','epg_url','http://tv.team/{CHANNEL}.json');
+
+        $this->server_opts = array(
+            array(
+                'Все (кроме RU, BY)',
+                'DE, RU',
+                'DE, RU, BY, MD',
+                'DE, UA, BY, MD',
+                'FR, DE, RU, BY',
+                'HL',
+                'RU, BY',
+                'USA 1',
+                'USA 2'
+            ),
+            array(
+                '3.troya.tv',
+                '4.troya.tv',
+                '9.troya.tv',
+                '8.troya.tv',
+                '7.troya.tv',
+                '02.tv.team',
+                '10.troya.tv',
+                '01.tv.team',
+                '2.troya.tv'
+            )
+        );
     }
 
     /**
@@ -46,8 +74,14 @@ class TvteamPluginConfig extends Default_Config
             }
 
             $ext_params = $channel->get_ext_params();
+            $host = explode($ext_params['subdomain'], ':');
+            if (isset($host[1])) {
+                $domain = $this->get_subst_server($plugin_cookies) . ":" . $host[1];
+            } else {
+                $domain = $ext_params['subdomain'];
+            }
             $url = str_replace(array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
-                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
+                array($domain, $channel->get_channel_id(), $ext_params['token'], $archive_ts),
                 $template);
         }
 
@@ -72,5 +106,32 @@ class TvteamPluginConfig extends Default_Config
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string[]
+     */
+    public function get_server_opts($plugin_cookies)
+    {
+        return $this->server_opts[0];
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return int|null
+     */
+    public function get_server($plugin_cookies)
+    {
+        return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function get_subst_server($plugin_cookies)
+    {
+        return $this->server_opts[1][$this->get_server($plugin_cookies)];
     }
 }

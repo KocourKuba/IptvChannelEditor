@@ -151,6 +151,40 @@
 #define IDS_STRING_FILMAX_P10           259
 #define IDS_STRING_FILMAX_P11           260
 #define IDS_STRING_FILMAX_P12           261
+#define IDS_STRING_SHURA_TV_P1          270
+#define IDS_STRING_SHURA_TV_P2          271
+#define IDS_STRING_CBILLING_TV_P1       280
+#define IDS_STRING_CBILLING_TV_P2       281
+#define IDS_STRING_CBILLING_TV_P3       282
+#define IDS_STRING_GLANZ_TV_P1          285
+#define IDS_STRING_GLANZ_TV_P2          286
+#define IDS_STRING_GLANZ_TV_P3          287
+#define IDS_STRING_GLANZ_TV_P4          288
+#define IDS_STRING_GLANZ_TV_P5          289
+#define IDS_STRING_GLANZ_TV_P6          290
+#define IDS_STRING_GLANZ_TV_P7          291
+#define IDS_STRING_GLANZ_TV_P8          292
+#define IDS_STRING_GLANZ_TV_P9          293
+#define IDS_STRING_GLANZ_TV_P10         294
+#define IDS_STRING_GLANZ_TV_P11         295
+#define IDS_STRING_GLANZ_TV_P12         296
+#define IDS_STRING_GLANZ_TV_P13         297
+#define IDS_STRING_GLANZ_TV_P14         298
+#define IDS_STRING_GLANZ_TV_P15         299
+#define IDS_STRING_GLANZ_TV_P16         301
+#define IDS_STRING_GLANZ_TV_P17         302
+#define IDS_STRING_GLANZ_TV_P18         303
+#define IDS_STRING_GLANZ_TV_P19         304
+#define IDS_STRING_GLANZ_TV_P20         305
+#define IDS_STRING_TV_TEAM_P1           310
+#define IDS_STRING_TV_TEAM_P2           311
+#define IDS_STRING_TV_TEAM_P3           312
+#define IDS_STRING_TV_TEAM_P4           313
+#define IDS_STRING_TV_TEAM_P5           314
+#define IDS_STRING_TV_TEAM_P6           315
+#define IDS_STRING_TV_TEAM_P7           316
+#define IDS_STRING_TV_TEAM_P8           317
+#define IDS_STRING_TV_TEAM_P9           318
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -306,7 +340,7 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        231

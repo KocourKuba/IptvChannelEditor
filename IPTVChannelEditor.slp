@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220502192404" scan="100" scanned="20220502192355">
+<document created="20211012165442" version="4.0.374" date="20220504023532" scan="102" scanned="20220504023302">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220502172334" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220504003252" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -3930,23 +3930,21 @@
           <native>Poland</native>
           <lang id="ru" date="20220430231232">Польша</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P3" state="0" created="20220430230932">
-          <native>Moscow</native>
-          <lang id="ru" date="20220430231237">Москва</lang>
+        <row id="IDS_STRING_FILMAX_P3" created="20220430230932" changed="20220504023048">
+          <native>Russia, Moscow</native>
+          <lang id="ru" date="20220504023103">Россия, Москва</lang>
         </row>
         <row id="IDS_STRING_FILMAX_P4" state="0" created="20220430230932">
           <native>France</native>
           <lang id="ru" date="20220430231241">Франция</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P5" state="3" created="20220430230932" changed="20220430231219">
-          <prev>Saint-Petersburg</prev>
-          <native>Saint Petersburg</native>
-          <lang id="ru" date="20220430231252">Санкт-Петербург</lang>
+        <row id="IDS_STRING_FILMAX_P5" created="20220430230932" changed="20220504023048">
+          <native>Russia, Saint Petersburg</native>
+          <lang id="ru" date="20220504023119">Россия, Санкт-Петербург</lang>
         </row>
-        <row id="IDS_STRING_FILMAX_P6" state="3" created="20220430230932" changed="20220430231219">
-          <prev>Ekaterinburg</prev>
-          <native>Yekaterinburg</native>
-          <lang id="ru" date="20220430231313">Екатеринбург</lang>
+        <row id="IDS_STRING_FILMAX_P6" created="20220430230932" changed="20220504023048">
+          <native>Russia, Yekaterinburg</native>
+          <lang id="ru" date="20220504023124">Россия, Екатеринбург</lang>
         </row>
         <row id="IDS_STRING_PAYPAL" locked="1" created="20220331213759">aHR0cHM6Ly93d3cucGF5cGFsLmNvbS9jZ2ktYmluL3dlYnNjcj9jbWQ9X2RvbmF0aW9ucyZidXNpbmVzcz01RFk3UEVTWkw0RDhMJmN1cnJlbmN5X2NvZGU9VVNEJmFtb3VudD01</row>
         <row id="IDS_STRING_YOOMONEY" locked="1" created="20220331213759">aHR0cHM6Ly95b29tb25leS5ydS90by80MTAwMTkxMzM3OTAyNw</row>
@@ -3978,6 +3976,124 @@
           <native>Moscow 3</native>
           <lang id="ru" date="20220430231306">Москва 3</lang>
         </row>
+        <row id="IDS_STRING_SHURA_TV_P1" state="0" created="20220504023048">
+          <native>Server 1</native>
+          <lang id="ru" date="20220504023132">Сервер 1</lang>
+        </row>
+        <row id="IDS_STRING_SHURA_TV_P2" state="0" created="20220504023048">
+          <native>Server 2</native>
+          <lang id="ru" date="20220504023140">Сервер 2</lang>
+        </row>
+      </node>
+      <node class="TWindowsStringNode" name="18" state="0" created="20220504023048" resid="18" langid="1033">
+        <row id="IDS_STRING_CBILLING_TV_P1" state="0">
+          <native>Device 1</native>
+          <lang id="ru" date="20220504023148">Устройство 1</lang>
+        </row>
+        <row id="IDS_STRING_CBILLING_TV_P2" state="0">
+          <native>Device 2</native>
+          <lang id="ru" date="20220504023150">Устройство 2</lang>
+        </row>
+        <row id="IDS_STRING_CBILLING_TV_P3" changed="20220504023302">
+          <native>Device 3</native>
+          <lang id="ru" date="20220504023307">Устройство 3</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P1" state="0">
+          <native>Austria</native>
+          <lang id="ru" date="20220504023313">Австрия</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P2" state="0">
+          <native>Czechia</native>
+          <lang id="ru">Чехия</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P3" state="0">
+          <native>England</native>
+          <lang id="ru" date="20220504023321">Англия</lang>
+        </row>
+      </node>
+      <node class="TWindowsStringNode" name="19" state="0" created="20220504023048" resid="19" langid="1033">
+        <row id="IDS_STRING_GLANZ_TV_P10" state="0">
+          <native>Poland 1</native>
+          <lang id="ru" date="20220504023357">Польша 1</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P11" state="0">
+          <native>Poland 2</native>
+          <lang id="ru" date="20220504023402">Польша 2</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P12" state="0">
+          <native>Romania</native>
+          <lang id="ru" date="20220504023405">Румыния</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P13" state="0">
+          <native>Russia 1</native>
+          <lang id="ru" date="20220504023408">Россия 1</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P14" state="0">
+          <native>Russia 2</native>
+          <lang id="ru" date="20220504023414">Россия 2</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P15" state="0">
+          <native>Russia, Moscow</native>
+          <lang id="ru" date="20220504023113">Россия, Москва</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P16" state="0">
+          <native>Russia, Khabarovsk</native>
+          <lang id="ru" date="20220504023422">Россия, Хабаровск</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P17" state="0">
+          <native>Sweden</native>
+          <lang id="ru" date="20220504023426">Швеция</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P18" state="0">
+          <native>Ukraine 1</native>
+          <lang id="ru" date="20220504023433">Украина 1</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P4" state="0">
+          <native>Germany 0</native>
+          <lang id="ru" date="20220504023329">Германия 0</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P5" state="0">
+          <native>Germany 1</native>
+          <lang id="ru" date="20220504023334">Германия 1</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P6" state="0">
+          <native>Germany 2</native>
+          <lang id="ru" date="20220504023337">Германия 2</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P7" state="0">
+          <native>Germany 3</native>
+          <lang id="ru" date="20220504023343">Германия 3</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P8" state="0">
+          <native>Netherlands</native>
+          <lang id="ru" date="20220504023349">Нидерланды</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P9" state="0">
+          <native>Italy</native>
+          <lang id="ru" date="20220504023352">Италия</lang>
+        </row>
+      </node>
+      <node class="TWindowsStringNode" name="20" state="0" created="20220504023048" resid="20" langid="1033">
+        <row id="IDS_STRING_GLANZ_TV_P19" state="0">
+          <native>Ukraine 2</native>
+          <lang id="ru" date="20220504023441">Украина 2</lang>
+        </row>
+        <row id="IDS_STRING_GLANZ_TV_P20" state="0">
+          <native>USA</native>
+          <lang id="ru" date="20220504023447">США</lang>
+        </row>
+        <row id="IDS_STRING_TV_TEAM_P1" state="0">
+          <native>All (except RU, BY)</native>
+          <lang id="ru" date="20220504023503">Все (кроме RU, BY)</lang>
+        </row>
+        <row id="IDS_STRING_TV_TEAM_P2" locked="1" state="0">DE, RU</row>
+        <row id="IDS_STRING_TV_TEAM_P3" locked="1" state="0">DE, RU, BY, MD</row>
+        <row id="IDS_STRING_TV_TEAM_P4" locked="1" state="0">DE, UA, BY, MD</row>
+        <row id="IDS_STRING_TV_TEAM_P5" locked="1" state="0">FR, DE, RU, BY</row>
+        <row id="IDS_STRING_TV_TEAM_P6" locked="1" state="0">NL</row>
+        <row id="IDS_STRING_TV_TEAM_P7" locked="1" state="0">RU, BY</row>
+        <row id="IDS_STRING_TV_TEAM_P8" locked="1" state="0">USA 1</row>
+        <row id="IDS_STRING_TV_TEAM_P9" locked="1" state="0">USA 2</row>
       </node>
       <node class="TWindowsStringNode" name="3633" locked="1" resid="3633" langid="1033">
         <row id="58112">Close Print Preview#l&amp;Close</row>
@@ -4143,34 +4259,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220502192355">
-          <prev>2.8.825, 29 Apr 2022</prev>
-          <native>2.9.830, 2 May 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220504023048">
+          <prev>2.9.830, 2 May 2022</prev>
+          <native>2.9.831, 4 May 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220502192355">
           <prev>8</prev>
           <native>9</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220502192355">
-          <prev>825</prev>
-          <native>830</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220504023048">
+          <prev>830</prev>
+          <native>831</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220502192355">
-          <prev>2.8.825</prev>
-          <native>2.9.830</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220504023048">
+          <prev>2.9.830</prev>
+          <native>2.9.831</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1">2</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220502192355">
           <prev>8</prev>
           <native>9</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220502192355">
-          <prev>825</prev>
-          <native>830</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220504023048">
+          <prev>830</prev>
+          <native>831</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

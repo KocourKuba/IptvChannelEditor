@@ -45,6 +45,18 @@ uri_tvteam::uri_tvteam()
 {
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
 	provider_url = L"https://tv.team/";
+	server_subst_type = ServerSubstType::enStream;
+	servers_list = {
+		L"3.troya.tv",	// All (except RU, BY)
+		L"4.troya.tv",	// DE, RU
+		L"9.troya.tv",	// DE, RU, BY, MD
+		L"8.troya.tv",	// DE, UA, BY, MD
+		L"7.troya.tv",	// FR, DE, RU, BY
+		L"02.tv.team",	// NL
+		L"10.troya.tv",	// RU, BY
+		L"01.tv.team",	// USA 1
+		L"2.troya.tv",	// USA 2
+	};
 }
 
 void uri_tvteam::parse_uri(const std::wstring& url)
@@ -93,6 +105,13 @@ std::wstring uri_tvteam::get_templated_stream(StreamSubType subType, const Templ
 		}
 	}
 
+	std::wstring domain(servers_list[params.server]);
+	if (auto pos = servers_list[params.server].find(':'); pos != std::wstring::npos)
+	{
+		domain = fmt::format(L"{:s}:{:s}", servers_list[params.server], servers_list[params.server].substr(pos + 1));
+	}
+
+	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, domain);
 	replace_vars(url, params);
 
 	return url;

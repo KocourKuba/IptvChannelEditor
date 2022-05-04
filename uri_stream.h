@@ -28,6 +28,12 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_base.h"
 #include "UtilsLib\json_wrapper.h"
 
+enum class ServerSubstType {
+	enNone,
+	enStream,
+	enPlaylist
+};
+
 struct TemplateParams
 {
 	std::wstring domain;
@@ -36,6 +42,7 @@ struct TemplateParams
 	std::wstring password;
 	std::wstring host;
 	int shift_back = 0;
+	int server = 0;
 };
 
 struct PlaylistTemplateParams
@@ -90,7 +97,7 @@ struct EpgParameters
 class uri_stream : public uri_base
 {
 protected:
-	static constexpr auto REPL_SUBDOMAIN = L"{DOMAIN}";
+	static constexpr auto REPL_DOMAIN = L"{DOMAIN}";
 	static constexpr auto REPL_ID = L"{ID}";
 	static constexpr auto REPL_TOKEN = L"{TOKEN}";
 	static constexpr auto REPL_START = L"{START}";
@@ -148,6 +155,17 @@ public:
 	/// setter domain
 	/// </summary>
 	void set_domain(const std::wstring& val) { domain = val; };
+
+	/// <summary>
+	/// getter port
+	/// </summary>
+	/// <returns>string</returns>
+	const std::wstring& get_port() const { return port; };
+
+	/// <summary>
+	/// setter port
+	/// </summary>
+	void set_port(const std::wstring& val) { port = val; };
 
 	/// <summary>
 	/// getter login
@@ -251,6 +269,18 @@ public:
 	/// </summary>
 	/// <returns>wstring</returns>
 	const std::wstring& get_provider_url() const { return provider_url; }
+
+	/// <summary>
+	/// returns list of servers
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::vector<std::wstring>& get_servers_list () const { return servers_list; }
+
+	/// <summary>
+	/// returns server substitution type
+	/// </summary>
+	/// <returns>ServerSubstType</returns>
+	const ServerSubstType get_server_subst_type() const { return server_subst_type; }
 
 	/// <summary>
 	/// supported streams HLS,MPEGTS etc.
@@ -362,12 +392,15 @@ protected:
 	time_t get_json_int_value(const std::string& key, const nlohmann::json& val) const;
 
 protected:
-	std::array <EpgParameters, 2> epg_params;
+	std::array<EpgParameters, 2> epg_params;
 	std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
+	ServerSubstType server_subst_type = ServerSubstType::enNone;
+	std::vector<std::wstring> servers_list;
 	std::wstring provider_url;
 	std::wstring id;
 	std::wstring domain;
+	std::wstring port;
 	std::wstring login;
 	std::wstring password;
 	std::wstring token;

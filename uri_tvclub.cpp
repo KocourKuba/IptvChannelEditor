@@ -75,14 +75,7 @@ std::wstring uri_tvclub::get_templated_stream(StreamSubType subType, const Templ
 {
 	std::wstring url;
 
-	if (!is_template())
-	{
-		url = get_uri();
-	}
-	else
-	{
-		url = URI_TEMPLATE_MPEG;
-	}
+	url = is_template() ? get_uri() : URI_TEMPLATE_MPEG;
 
 	if (params.shift_back)
 	{
@@ -93,6 +86,7 @@ std::wstring uri_tvclub::get_templated_stream(StreamSubType subType, const Templ
 
 	return url;
 }
+
 std::wstring uri_tvclub::get_playlist_url(const PlaylistTemplateParams& params) const
 {
 	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));
