@@ -4,7 +4,6 @@ require_once 'lib/user_input_handler.php';
 require_once 'default_config.php';
 require_once 'vod.php';
 require_once 'vod_series_list_screen.php';
-require_once 'vod_variants_list_screen.php';
 
 class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
@@ -97,27 +96,18 @@ class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Ha
         }
 
         if (isset($movie->season_list)) {
-            $multiple = !empty($movie->season_list);
             $screen_media_url = Vod_Seasons_List_Screen::get_media_url_str($movie->id);
-        } else if (count($movie->series_list) > 1) {
-            $multiple = true;
-            $screen_media_url = Vod_Series_List_Screen::get_media_url_str($movie->id);
-        } else if ($movie->has_variants()) {
-            $multiple = true;
-            $screen_media_url = Vod_Variants_List_Screen::get_media_url_str($movie->id);
         } else {
-            $multiple = false;
             $screen_media_url = Vod_Series_List_Screen::get_media_url_str($movie->id);
         }
 
-        //hd_print("Vod_Movie_Screen: multiple: " . ($multiple ? "true" : "false") . " MediaUrl $screen_media_url");
         $movie_folder_view = array
         (
             PluginMovieFolderView::movie => $movie->get_movie_array(),
             PluginMovieFolderView::has_right_button => $has_right_button,
             PluginMovieFolderView::right_button_caption => $right_button_caption,
             PluginMovieFolderView::right_button_action => $right_button_action,
-            PluginMovieFolderView::has_multiple_series => $multiple,
+            PluginMovieFolderView::has_multiple_series => true,
             PluginMovieFolderView::series_media_url => $screen_media_url,
             PluginMovieFolderView::params => array
             (

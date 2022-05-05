@@ -6,6 +6,11 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
     const ID = 'vod_series';
 
     /**
+     * @var array
+     */
+    protected $variants;
+
+    /**
      * @param $movie_id
      * @return false|string
      */
@@ -37,6 +42,33 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
     }
 
     /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_action_map(MediaURL $media_url, &$plugin_cookies)
+    {
+        // hd_print("get_action_map: " . $media_url->get_raw_string());
+        $actions = array();
+        $actions[GUI_EVENT_KEY_ENTER] = Action_Factory::vod_play();
+        $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::vod_play();
+
+        if ($this->plugin->config->get_feature(VOD_PORTAL_SUPPORTED)) {
+            $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
+            $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
+            if (!is_null($movie) && isset($movie->variants_list)) {
+
+                $q_exist = (in_array($variant, $movie->variants_list) ? "": "*");
+                $quality_action = User_Input_Handler_Registry::create_action($this, 'show_quality');
+                $quality_action['caption'] = "Качество - $variant$q_exist";
+                $actions[GUI_EVENT_KEY_D_BLUE] = $quality_action;
+            }
+        }
+
+        return $actions;
+    }
+
+    /**
      * @param $user_input
      * @param $plugin_cookies
      * @return null
@@ -47,16 +79,26 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
         foreach ($user_input as $key => $value)
             hd_print("  $key => $value");
 
-        if ($user_input->control_id === 'add_actions'){
-            if (!isset($user_input->selected_media_url))
-                return null;
+        if ($user_input->control_id ===  'show_quality') {
+            $menu_items = array();
+            if (isset($this->variants) && count($this->variants) > 1) {
+                foreach ($this->variants as $key => $variant) {
+                    $add_action = User_Input_Handler_Registry::create_action($this, $key);
+                    $caption = $key;
+                    $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_action);
+                }
+                return Action_Factory::show_popup_menu($menu_items);
+            }
+        } else if (isset($this->variants)) {
+            foreach ($this->variants as $key => $variant) {
+                if ($user_input->control_id !== (string)$key) continue;
 
-            $media_url = MediaURL::decode($user_input->selected_media_url);
-            if (isset($media_url->is_movie) && $media_url->is_movie === false)
-                return Action_Factory::open_folder();
-
-            return Action_Factory::vod_play();
+                $plugin_cookies->variant = $key;
+                $parent_url = MediaURL::decode($user_input->parent_media_url);
+                return Action_Factory::change_behaviour($this->get_action_map($parent_url, $plugin_cookies));
+            }
         }
+
         return null;
     }
     ///////////////////////////////////////////////////////////////////////
@@ -66,25 +108,9 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
      * @param $plugin_cookies
      * @return array
      */
-    public function get_action_map(MediaURL $media_url, &$plugin_cookies)
-    {
-        return array
-        (
-            GUI_EVENT_KEY_ENTER => User_Input_Handler_Registry::create_action($this, 'add_actions'),
-            GUI_EVENT_KEY_PLAY => User_Input_Handler_Registry::create_action($this, 'add_actions'),
-        );
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param MediaURL $media_url
-     * @param $plugin_cookies
-     * @return array
-     */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("Vod_Series_List_Screen::get_all_folder_items: MediaUrl: " . $media_url->get_raw_string());
+        //hd_print("Vod_Series_List_Screen::get_all_folder_items: MediaUrl: " . $media_url->get_raw_string());
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie)) {
             return array();
@@ -96,21 +122,19 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
             if (isset($media_url->season_id) && $media_url->season_id !== $series->season_id) continue;
 
             //hd_print("movie_id: $movie->id name: $series->name series_id: $series->id");
-            $is_movie = empty($series->variants);
-            $icon = $is_movie ? 'gui_skin://small_icons/movie.aai' : 'gui_skin://small_icons/folder.aai';
+            $this->variants = $series->variants;
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => MediaURL::encode(array
                 (
-                    'screen_id' => $is_movie ? self::ID : Vod_Variants_List_Screen::ID,
-                    'movie_id' => $is_movie ? $movie->id : $series->id,
-                    'series_id' => $is_movie ? $series->id : null,
-                    'is_movie' => $is_movie,
+                    'screen_id' => self::ID,
+                    'movie_id' => $movie->id,
+                    'series_id' => $series->id,
                 )),
                 PluginRegularFolderItem::caption => $series->name,
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => $icon,
+                    ViewItemParams::icon_path => 'gui_skin://small_icons/movie.aai',
                     ViewItemParams::item_detailed_info => $series->series_desc,
                 ),
             );

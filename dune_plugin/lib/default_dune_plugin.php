@@ -15,14 +15,17 @@ class Default_Dune_Plugin implements DunePlugin
      * @var string
      */
     public $plugin_path;
+
     /**
      * @var Starnet_Tv
      */
     public $tv;
+
     /**
      * @var Starnet_Vod
      */
     public $vod;
+
     /**
      * @var Default_Config
      */
@@ -32,54 +35,62 @@ class Default_Dune_Plugin implements DunePlugin
      * @var Starnet_Main_Screen
      */
     public $main_screen;
+
     /**
      * @var Tv_Channel_List_Screen
      */
     public $tv_channels_screen;
+
     /**
      * @var Starnet_Setup_Screen
      */
     public $setup_screen;
+
     /**
      * @var Starnet_Folder_Screen
      */
     public $folder_screen;
+
     /**
      * @var Tv_Favorites_Screen
      */
     public $favorites_screen;
+
     /**
      * @var Starnet_Search_Screen
      */
     public $search_screen;
+
     /**
      * @var Vod_Favorites_Screen
      */
     public $vod_favorites_screen;
+
     /**
      * @var Starnet_Vod_Category_List_Screen
      */
     public $vod_category_list_Screen;
+
     /**
      * @var Starnet_Vod_List_Screen
      */
     public $vod_list_screen;
+
     /**
      * @var Vod_Movie_Screen
      */
     public $vod_movie_screen;
+
     /**
      * @var Vod_Seasons_List_Screen
      */
     public $vod_season_List_Screen;
+
     /**
      * @var Vod_Series_List_Screen
      */
     public $vod_series_list_screen;
-    /**
-     * @var Vod_Variants_List_Screen
-     */
-    public $vod_variants_list_screen;
+
     /**
      * @var Starnet_Filter_Screen
      */

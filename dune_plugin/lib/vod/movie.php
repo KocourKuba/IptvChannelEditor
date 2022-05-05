@@ -102,7 +102,7 @@ class Movie
     public $series_list;
 
     /**
-     * @var array|Movie_Variant[]
+     * @var array|string[]
      */
     public $variants_list;
 
@@ -248,6 +248,7 @@ class Movie
         $series->playback_url = $this->to_string($playback_url);
         $series->playback_url_is_stream_url = $playback_url_is_stream_url;
         $this->series_list[$id] = $series;
+        $this->variants_list = array_keys($variants);
     }
 
     /**
@@ -298,7 +299,7 @@ class Movie
             throw new Exception("List screen in media url not set: " . $media_url->get_raw_string());
         }
 
-        //hd_print("selected screen: $media_url->screen_id");
+        //hd_print("get_vod_info: selected screen: " . $media_url->get_raw_string());
 
         switch ($media_url->screen_id) {
             case Vod_Seasons_List_Screen::ID:
@@ -315,18 +316,6 @@ class Movie
                 }
                 $list = $this->series_list;
                 break;
-            case Vod_Variants_List_Screen::ID:
-                if (!is_array($this->series_list) || count($this->series_list) === 0) {
-                    HD::print_backtrace();
-                    throw new Exception("Invalid movie: series list is empty");
-                }
-                //hd_print(json_encode($this->series_list));
-                $list = $this->series_list[$media_url->movie_id]->variants;
-                if (!is_array($list) || count($list) === 0) {
-                    HD::print_backtrace();
-                    throw new Exception("Invalid movie: variants list is empty");
-                }
-                break;
             case Vod_Movie_Screen::ID:
                 $list = $this->series_list;
                 break;
@@ -339,16 +328,29 @@ class Movie
         //hd_print("selected id: $sel_id");
         $series_array = array();
         $initial_series_ndx = -1;
-        foreach ($list as $ndx => $item) {
+        $counter = 0;
+        $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
+        foreach ($list as $item) {
             if (!is_null($sel_id) && $item->id === $sel_id) {
-                $initial_series_ndx = $ndx;
+                $initial_series_ndx = $counter;
+                //hd_print("initial series idx: $initial_series_ndx");
             }
 
+            if (isset($item->variants) && array_key_exists($variant, $item->variants)) {
+                $playback_url = $item->variants[$variant]->playback_url;
+                $playback_url_is_stream_url = $item->variants[$variant]->playback_url_is_stream_url;
+            } else {
+                $playback_url = $item->playback_url;
+                $playback_url_is_stream_url = $item->playback_url_is_stream_url;
+            }
+
+            //hd_print("playback url: $playback_url");
             $series_array[] = array(
                 PluginVodSeriesInfo::name => $item->name,
-                PluginVodSeriesInfo::playback_url => $item->playback_url,
-                PluginVodSeriesInfo::playback_url_is_stream_url => $item->playback_url_is_stream_url,
+                PluginVodSeriesInfo::playback_url => $playback_url,
+                PluginVodSeriesInfo::playback_url_is_stream_url => $playback_url_is_stream_url,
             );
+            $counter++;
         }
 
         return array(
