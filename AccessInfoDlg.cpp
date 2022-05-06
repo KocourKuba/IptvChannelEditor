@@ -141,10 +141,6 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	int max_value = 0;
 	switch (plugin_type)
 	{
-		case StreamType::enGlanz:
-			max_value = IDS_STRING_GLANZ_TV_P20 - IDS_STRING_GLANZ_TV_P1;
-			combo_text = IDS_STRING_GLANZ_TV_P1;
-			break;
 		case StreamType::enTvTeam:
 			max_value = IDS_STRING_TV_TEAM_P9 - IDS_STRING_TV_TEAM_P1;
 			combo_text = IDS_STRING_TV_TEAM_P1;
