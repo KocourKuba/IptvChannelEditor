@@ -75,9 +75,9 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Vod Vod_Series_List_Screen: handle_user_input:');
-        foreach ($user_input as $key => $value)
-            hd_print("  $key => $value");
+        //hd_print('Vod Vod_Series_List_Screen: handle_user_input:');
+        //foreach ($user_input as $key => $value)
+        //    hd_print("  $key => $value");
 
         if ($user_input->control_id ===  'show_quality') {
             $menu_items = array();

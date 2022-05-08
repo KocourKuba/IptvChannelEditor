@@ -288,11 +288,11 @@ class Movie
 
     /**
      * @param MediaURL $media_url
-     * @param int $buffering_ms
+     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function get_vod_info($media_url, $buffering_ms)
+    public function get_movie_play_info($media_url, &$plugin_cookies)
     {
         if (!isset($media_url->screen_id)) {
             HD::print_backtrace();
@@ -336,15 +336,21 @@ class Movie
                 //hd_print("initial series idx: $initial_series_ndx");
             }
 
+            $var = $variant;
             if (isset($item->variants) && array_key_exists($variant, $item->variants)) {
                 $playback_url = $item->variants[$variant]->playback_url;
                 $playback_url_is_stream_url = $item->variants[$variant]->playback_url_is_stream_url;
             } else {
+                $var = 'default';
                 $playback_url = $item->playback_url;
                 $playback_url_is_stream_url = $item->playback_url_is_stream_url;
             }
 
-            //hd_print("playback url: $playback_url");
+            if ($initial_series_ndx === $counter)
+                hd_print("starting playback url ($var): $playback_url");
+            else
+                hd_print("playback url ($var): $playback_url");
+
             $series_array[] = array(
                 PluginVodSeriesInfo::name => $item->name,
                 PluginVodSeriesInfo::playback_url => $playback_url,
@@ -360,7 +366,7 @@ class Movie
             PluginVodInfo::poster_url => $this->poster_url,
             PluginVodInfo::series => $series_array,
             PluginVodInfo::initial_series_ndx => $initial_series_ndx,
-            PluginVodInfo::buffering_ms => $buffering_ms,
+            PluginVodInfo::buffering_ms => (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000),
         );
     }
 }

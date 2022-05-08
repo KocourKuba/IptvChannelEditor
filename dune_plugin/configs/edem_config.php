@@ -120,7 +120,6 @@ class EdemPluginConfig extends Default_Config
                         $variants[$key] = new Movie_Variant($item->fid . "_" . $key, $quality, $url);
                         if ($key !== 'auto') {
                             $series_desc .= $quality . ", ";
-                            $desc .= $quality . PHP_EOL;
                         }
                     }
 

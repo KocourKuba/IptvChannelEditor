@@ -180,7 +180,7 @@ abstract class Abstract_Vod implements Vod
             return null;
         }
 
-        return $movie->get_vod_info($media_url, (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000));
+        return $movie->get_movie_play_info($media_url, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////
