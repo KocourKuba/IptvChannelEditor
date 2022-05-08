@@ -41,7 +41,7 @@ CUrlDlg::CUrlDlg(CWnd* pParent /*=nullptr*/)
 
 void CUrlDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_URL, m_wndUrl);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_URL, m_url);

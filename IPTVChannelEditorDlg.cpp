@@ -571,6 +571,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
 	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", plugin_name);
 
+	m_vod_categories.clear();
 	m_all_channels_lists.clear();
 	m_unknownChannels.clear();
 	m_changedChannels.clear();
@@ -4759,7 +4760,7 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 {
-	CVodViewer dlg;
+	CVodViewer dlg(&m_vod_categories);
 	dlg.m_plugin_type = GetConfig().get_plugin_type();
 	dlg.DoModal();
 }

@@ -62,7 +62,8 @@ BOOL CIconLinkDlg::OnInitDialog()
 
 void CIconLinkDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
+
 	DDX_Text(pDX, IDC_EDIT_URL, m_url);
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndIcon);
 }

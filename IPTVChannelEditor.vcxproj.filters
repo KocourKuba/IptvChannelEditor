@@ -258,6 +258,9 @@
     <ClInclude Include="vod_category.h">
       <Filter>Header Files\vod</Filter>
     </ClInclude>
+    <ClInclude Include="PlaylistParseJsonThread.h">
+      <Filter>Header Files\Threads</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -439,6 +442,9 @@
     </ClCompile>
     <ClCompile Include="vod_category.cpp">
       <Filter>Source Files\vod</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistParseJsonThread.cpp">
+      <Filter>Source Files\Threads</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

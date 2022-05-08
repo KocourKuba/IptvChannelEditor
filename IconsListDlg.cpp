@@ -71,7 +71,7 @@ CIconsListDlg::~CIconsListDlg()
 
 void CIconsListDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_LIST_ICONS, m_wndIconsList);
 	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
@@ -81,7 +81,7 @@ void CIconsListDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CIconsListDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	RestoreWindowPos(GetSafeHwnd(), REG_ICON_WINDOW_POS);
 
@@ -324,7 +324,7 @@ void CIconsListDlg::OnBnClickedOk()
 	m_selected = m_wndIconsList.GetNextSelectedItem(pos);
 	m_evtStop.SetEvent();
 
-	CDialogEx::OnOK();
+	__super::OnOK();
 }
 
 void CIconsListDlg::OnBnClickedButtonSearchNext()

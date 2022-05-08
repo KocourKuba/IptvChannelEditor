@@ -53,7 +53,7 @@ CEpgListDlg::CEpgListDlg(CWnd* pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG_EPG_
 
 void CEpgListDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_EDIT_EPG_URL, m_csEpgUrl);
 	DDX_Control(pDX, IDC_LIST_EPG, m_wndEpgList);
@@ -63,7 +63,7 @@ void CEpgListDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CEpgListDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	RestoreWindowPos(GetSafeHwnd(), REG_EPG_WINDOW_POS);
 

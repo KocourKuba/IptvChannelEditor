@@ -33,10 +33,12 @@ DEALINGS IN THE SOFTWARE.
 #include "TreeCtrlEx.h"
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
+#include "vod_category.h"
 #include "map_serializer.h"
 #include "TrayIcon.h"
 
 #include "UtilsLib\json_wrapper.h"
+#include "UtilsLib\vectormap.h"
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -183,6 +185,7 @@ protected:
 	afx_msg void OnRestore();
 	afx_msg void OnAppExit();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnBnClickedButtonVod();
 
 	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -434,6 +437,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
 	std::array<std::map<std::wstring, std::map<time_t, EpgInfo>>, 2> m_epg_cache;
-public:
-	afx_msg void OnBnClickedButtonVod();
+
+	//////////////////////////////////////////////////////////////////////////
+	// vod
+	utils::vectormap<std::wstring, std::shared_ptr<vod_category>> m_vod_categories;
 };

@@ -24,39 +24,26 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-// pch.h: This is a precompiled header file.
-// Files listed below are compiled only once, improving build performance for future builds.
-// This also affects IntelliSense performance, including code completion and many code browsing features.
-// However, files listed here are ALL re-compiled if any one of them is updated between builds.
-// Do not add files here that you will be updating frequently as this negates the performance advantage.
+#pragma once
 
-#ifndef PCH_H
-#define PCH_H
+#include "Config.h"
 
-// add headers that you want to pre-compile here
-#include <string>
-#include <vector>
-#include <array>
-#include <map>
-#include <set>
-#include <sstream>
-#include <fstream>
-#include <regex>
-#include <filesystem>
+class CPlaylistParseJsonThread : public CWinThread
+{
+	DECLARE_DYNCREATE(CPlaylistParseJsonThread)
 
-#include <fmt/xchar.h>
-#include <fmt/chrono.h>
+protected:
+	CPlaylistParseJsonThread() { m_bAutoDelete = TRUE; }
 
-#include "Version.h"
-#include "framework.h"
+public:
+	virtual ~CPlaylistParseJsonThread() { delete m_config.m_data; }
 
-#define WM_INIT_PROGRESS (WM_USER + 301)
-#define WM_UPDATE_PROGRESS (WM_USER + 302)
-#define WM_END_LOAD_PLAYLIST (WM_USER + 303)
-#define WM_END_LOAD_JSON_PLAYLIST (WM_USER + 304)
-#define WM_UPDATE_PROGRESS_STREAM (WM_USER + 305)
-#define WM_END_GET_STREAM_INFO (WM_USER + 306)
-#define WM_NOTIFY_END_EDIT (WM_USER + 307)
+public:
+	BOOL InitInstance() override;
 
+	void SetData(const ThreadConfig& config) { m_config = config; };
 
-#endif //PCH_H
+protected:
+	ThreadConfig m_config;
+	std::wregex m_re;
+};

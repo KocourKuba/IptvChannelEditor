@@ -76,6 +76,7 @@ constexpr auto CMP_FLAG_ALL     = CMP_FLAG_TITLE | CMP_FLAG_ICON | CMP_FLAG_ARCH
 constexpr auto REG_WINDOW_POS      = _T("WindowPos");
 constexpr auto REG_ICON_WINDOW_POS = _T("IconsWindowPos");
 constexpr auto REG_EPG_WINDOW_POS  = _T("EpgWindowPos");
+constexpr auto REG_VOD_WINDOW_POS  = _T("VodWindowPos");
 
 // app
 constexpr auto REG_NEXT_UPDATE     = _T("NextUpdate");

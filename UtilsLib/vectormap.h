@@ -25,6 +25,15 @@ namespace utils
 		}
 
 		/// <summary>
+		/// clear vectormap
+		/// </summary>
+		void clear()
+		{
+			m_map.clear();
+			m_vec.clear();
+		}
+
+		/// <summary>
 		/// What is the value for a given key?
 		/// NOTE: By returning the value by, well, value
 		///       this function can stay const

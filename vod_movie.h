@@ -15,6 +15,7 @@ public:
 	std::wstring casting;
 	std::wstring description;
 	std::wstring url;
+	std::set<std::wstring> genres;
 	uri_base poster_url;
 	int length = -1; // in minutes
 
