@@ -614,8 +614,9 @@ class HD
         try {
             $doc = self::http_get_document($url, $opts);
             $contents = json_decode($doc, $to_array);
-            if (empty($contents)) {
-                hd_print("empty json");
+            if ($contents === null || $contents === false) {
+                hd_print("failed to decode json");
+                hd_print("doc: $doc");
                 return false;
             }
         } catch (Exception $ex) {

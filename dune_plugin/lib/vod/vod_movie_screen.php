@@ -71,19 +71,37 @@ class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Ha
      * @param MediaURL $media_url
      * @param $plugin_cookies
      * @return array|null
+     * @throws Exception
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         //hd_print("Vod_Movie_Screen::get_folder_view: MediaUrl: " . $media_url->get_raw_string());
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-        if (is_null($movie)) {
-            hd_print("empty movie");
-            return null;
-        }
-
-        if (empty($movie->series_list)) {
-            hd_print("empty series");
-            return null;
+        if (is_null($movie) || empty($movie->series_list)) {
+            if (is_null($movie)) {
+                $movie = new Movie($media_url->movie_id);
+            }
+            hd_print("empty movie or no series data");
+            HD::print_backtrace();
+            $movie->description = "Техническая информация о фильме содержит неправильные или отсутствующие данные.\nПоказ фильма невозможен";
+            return array
+            (
+                PluginFolderView::multiple_views_supported => false,
+                PluginFolderView::archive => null,
+                PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_MOVIE,
+                PluginFolderView::data => array(
+                    PluginMovieFolderView::movie => $movie->get_movie_array(),
+                    PluginMovieFolderView::has_right_button => false,
+                    PluginMovieFolderView::has_multiple_series => false,
+                    PluginMovieFolderView::series_media_url => null,
+                    PluginMovieFolderView::params => array
+                    (
+                        PluginFolderViewParams::paint_path_box => false,
+                        PluginFolderViewParams::paint_content_box_background => true,
+                        PluginFolderViewParams::background_url => $this->plugin->config->GET_BG_PICTURE()
+                    )
+                ),
+            );
         }
 
         $has_right_button = $this->plugin->vod->is_favorites_supported();
