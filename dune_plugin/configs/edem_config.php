@@ -279,7 +279,7 @@ class EdemPluginConfig extends Default_Config
     public function getVideoList($query_id, $plugin_cookies)
     {
         $val = $this->get_next_page($query_id, 0);
-        hd_print("getVideoList: $query_id, $val");
+        //hd_print("getVideoList: $query_id, $val");
 
         $categories = $this->make_json_request($plugin_cookies,
             array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $val, 'limit' => 0));
