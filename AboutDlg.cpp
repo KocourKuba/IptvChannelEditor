@@ -54,13 +54,13 @@ BOOL CAboutDlg::OnInitDialog()
 	CString str;
 	str.LoadString(IDS_STRING_PAYPAL);
 	std::string encoded = utils::utf16_to_utf8(str.GetString(), str.GetLength());
-	enc.Decode(encoded.c_str(), encoded.size());
+	enc.Decode(encoded.c_str(), (int)encoded.size());
 	// https://www.paypal.com/donate/?cmd=_donations&business=5DY7PESZL4D8L&currency_code=USD&amount=5
 	m_paypal.SetURL(utils::utf8_to_utf16(enc.GetResultString()).c_str());
 
 	str.LoadString(IDS_STRING_YOOMONEY);
 	encoded = utils::utf16_to_utf8(str.GetString(), str.GetLength());
-	enc.Decode(encoded.c_str(), encoded.size());
+	enc.Decode(encoded.c_str(), (int)encoded.size());
 	// https://yoomoney.ru/to/41001913379027
 	m_yoomoney.SetURL(utils::utf8_to_utf16(enc.GetResultString()).c_str());
 

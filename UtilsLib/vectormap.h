@@ -63,6 +63,11 @@ namespace utils
 			throw std::runtime_error("index out of range");
 		}
 
+		const V& operator[](size_t index) const
+		{
+			return getAt(index);
+		}
+
 		/// <summary>
 		/// How many key-value pairs are in this?
 		/// </summary>
@@ -104,6 +109,14 @@ namespace utils
 			}
 		}
 
+		void push_back(const vectormap& source)
+		{
+			for (const auto& item : source.vec())
+			{
+				set(item.first, item.second);
+			}
+		}
+
 		/// <summary>
 		/// Get a value, checking if it exists first
 		/// </summary>
@@ -128,8 +141,8 @@ namespace utils
 		{
 			std::vector<K> retVal;
 			retVal.reserve(m_vec.size());
-			for (size_t k = 0; k < m_vec.size(); ++k)
-				retVal.push_back(m_vec[k].first);
+			for (const auto& k : m_vec)
+				retVal.emplace_back(k.first);
 			return retVal;
 		}
 
@@ -140,8 +153,8 @@ namespace utils
 		{
 			std::vector<V> retVal;
 			retVal.reserve(m_vec.size());
-			for (size_t v = 0; v < m_vec.size(); ++v)
-				retVal.push_back(m_vec[v].second);
+			for (const auto& v : m_vec)
+				retVal.emplace_back(v.second);
 
 			return retVal;
 		}

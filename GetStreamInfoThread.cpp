@@ -56,12 +56,12 @@ BOOL CGetStreamInfoThread::InitInstance()
 	{
 		m_config.NotifyParent(WM_INIT_PROGRESS, (WPARAM)m_config.m_container->size(), TRUE);
 
-		ULARGE_INTEGER ul = { 0, m_config.m_container->size() };
+		ULARGE_INTEGER ul = { 0, (DWORD)m_config.m_container->size() };
 		m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul);
 
 		thread_pool pool(m_config.m_max_threads);
 		std::atomic<int> count { 0 };
-		pool.parallelize_loop(0, m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
+		pool.parallelize_loop(0, (int)m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
 							  {
 								  for (auto i = a; i < b; i++)
 								  {
@@ -273,7 +273,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(const ThreadConfig& config, std:
 
 	TRACE("GetChannelStreamInfo: Thread %d, Video: %s, Audio: %s\n", (int)count, video.c_str(), audio.c_str());
 
-	ULARGE_INTEGER ul = { (DWORD)++count, config.m_container->size() };
+	ULARGE_INTEGER ul = { (DWORD)++count, (DWORD)config.m_container->size() };
 	std::tuple<int, std::string, std::string> tuple = { uri->get_hash(), audio, video };
 
 	config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul, (LPARAM)&tuple);

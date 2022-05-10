@@ -44,6 +44,9 @@ public:
 	void SetData(const ThreadConfig& config) { m_config = config; };
 
 protected:
+	void Parse1();
+	void Parse2();
+
+protected:
 	ThreadConfig m_config;
-	std::wregex m_re;
 };

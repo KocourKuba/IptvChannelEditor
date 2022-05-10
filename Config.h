@@ -54,6 +54,7 @@ enum class StreamType
 	enShuraTV,
 	enTVClub,
 	enFilmax,
+	enLast,
 };
 
 enum class AccountAccessType
@@ -144,13 +145,17 @@ typedef struct
 class ThreadConfig
 {
 public:
-	void NotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+	void SendNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+	void PostNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 
 	std::vector<BYTE>* m_data = nullptr;
 	void* m_parent = nullptr;
 	HANDLE m_hStop = nullptr;
 	StreamType m_pluginType = StreamType::enEdem;
 	std::wstring m_rootPath;
+	std::wstring m_url;
+	bool m_use_cache = true;
+	int m_parser = 0;
 };
 
 class PluginsConfig

@@ -49,6 +49,7 @@ uri_antifriz::uri_antifriz()
 	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params.epg_root = "";
 	provider_url = L"https://antifriztv.com/";
+	provider_vod_url = L"http://protected-api.com";
 	vod_supported = true;
 }
 

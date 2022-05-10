@@ -128,11 +128,19 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enFilmax,     _T("Filmax TV"),       "filmax",     "filmax",         STRPRODUCTVER },
 };
 
-void ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+void ThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	CWnd* parent = (CWnd*)m_parent;
 	if (parent->GetSafeHwnd())
 		parent->SendMessage(message, wParam, lParam);
+
+}
+
+void ThreadConfig::PostNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+{
+	CWnd* parent = (CWnd*)m_parent;
+	if (parent->GetSafeHwnd())
+		parent->PostMessage(message, wParam, lParam);
 
 }
 

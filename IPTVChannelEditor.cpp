@@ -496,7 +496,7 @@ bool PackPlugin(const StreamType plugin_type,
 			{
 				const auto& js = node.dump();
 				utils::CBase64Coder enc;
-				enc.Encode(js.c_str(), js.size(), ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
+				enc.Encode(js.c_str(), (int)js.size(), ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
 
 				std::ofstream out_file(packFolder + L"account.dat");
 				const auto& str = utils::generateRandomId(5) + enc.GetResultString();
@@ -618,7 +618,7 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 		if (utils::DownloadFile(fullPath, data))
 		{
 			// Still not clear if this is making a copy internally
-			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), data.size()));
+			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), (unsigned int)data.size()));
 			hr = image.Load(stream);
 		}
 		else

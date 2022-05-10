@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "json.hpp"
+#include "utils.h"
 
 #define JSON_ALL_TRY try {
 #define JSON_ALL_CATCH } \
@@ -48,3 +49,29 @@ DEALINGS IN THE SOFTWARE.
 		{ \
 			TRACE("\nunknown exception\n"); \
 		}
+
+namespace utils
+{
+	inline std::wstring get_json_value(const std::string& key, const nlohmann::json& node)
+	{
+		std::wstring ret_value;
+		if (node.contains(key))
+		{
+			const auto& js = node[key];
+			if (js.is_number_integer())
+			{
+				ret_value = std::move(std::to_wstring(js.get<int>()));
+			}
+			if (js.is_number_float())
+			{
+				ret_value = std::move(std::to_wstring(js.get<float>()));
+			}
+			else if (js.is_string())
+			{
+				ret_value = std::move(utf8_to_utf16(js.get<std::string>()));
+			}
+		}
+
+		return ret_value;
+	}
+}

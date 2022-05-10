@@ -338,7 +338,7 @@ std::string generateRandomId(size_t length /*= 0*/)
 	static const std::string allowed_chars{ "123456789BCDFGHJKLMNPQRSTVWXZbcdfghjklmnpqrstvwxz" };
 
 	static thread_local std::default_random_engine randomEngine(std::random_device{}());
-	static thread_local std::uniform_int_distribution<int> randomDistribution(0, allowed_chars.size() - 1);
+	static thread_local std::uniform_int_distribution<int> randomDistribution(0, (int)allowed_chars.size() - 1);
 
 	std::string id(length ? length : 32, '\0');
 

@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IconCache.h"
 #include "IPTVChannelEditor.h"
 
-#include "UtilsLib\Crc32.h"
+#include "UtilsLib\xxhash.hpp"
 #include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
@@ -45,7 +45,7 @@ const CImage& CIconCache::get_icon(const std::wstring& path)
 		LoadImageFromUrl(GetAppPath(utils::CATEGORIES_LOGO_PATH) + L"channel_unset.png", nullImage);
 	}
 
-	int hash = crc32_bitwise(path.c_str(), path.size() * sizeof(wchar_t));
+	int hash = xxh::xxhash<32>(path);
 
 	if (auto pair = m_imageMap.find(hash); pair != m_imageMap.end())
 		return pair->second->get_image();

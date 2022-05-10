@@ -33,12 +33,11 @@ DEALINGS IN THE SOFTWARE.
 #include "TreeCtrlEx.h"
 #include "ChannelCategory.h"
 #include "ChannelInfo.h"
-#include "vod_category.h"
 #include "map_serializer.h"
 #include "TrayIcon.h"
+#include "vod_movie.h"
 
 #include "UtilsLib\json_wrapper.h"
-#include "UtilsLib\vectormap.h"
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -397,15 +396,15 @@ private:
 
 	// map of all channels for fast search
 	// Loaded from channels list
-	std::map<std::wstring, std::shared_ptr<ChannelInfo>> m_channelsMap;
+	std::unordered_map<std::wstring, std::shared_ptr<ChannelInfo>> m_channelsMap;
 
 	// map HTREE items to categories id
 	// Loaded when fill channels tree
-	std::map<HTREEITEM, int> m_categoriesTreeMap;
+	std::unordered_map<HTREEITEM, int> m_categoriesTreeMap;
 
 	// map of all channels htree items
 	// Loaded when fill channels tree
-	std::map<HTREEITEM, std::shared_ptr<ChannelInfo>> m_channelsTreeMap;
+	std::unordered_map<HTREEITEM, std::shared_ptr<ChannelInfo>> m_channelsTreeMap;
 
 	//////////////////////////////////////////////////////////////////////////
 	// playlist part
@@ -420,25 +419,25 @@ private:
 
 	// map of all playlist entries to entry id (channel id)
 	// Loaded when fill playlist tree
-	std::map<std::wstring, std::shared_ptr<PlaylistEntry>> m_playlistMap;
+	std::unordered_map<std::wstring, std::shared_ptr<PlaylistEntry>> m_playlistMap;
 
 	// map HTREE items to entry
 	// Loaded when fill playlist tree
-	std::map<HTREEITEM, std::shared_ptr<PlaylistEntry>> m_playlistTreeMap;
+	std::unordered_map<HTREEITEM, std::shared_ptr<PlaylistEntry>> m_playlistTreeMap;
 
 	// map of category and TREEITEM for fast add to tree
 	// Loaded when fill playlist tree
-	std::map<std::wstring, HTREEITEM> m_pl_categoriesTreeMap;
+	std::unordered_map<std::wstring, HTREEITEM> m_pl_categoriesTreeMap;
 
 	// map of TREEITEM and category for fast search
 	// Loaded when fill playlist tree
-	std::map<HTREEITEM, std::wstring> m_pl_categoriesMap;
+	std::unordered_map<HTREEITEM, std::wstring> m_pl_categoriesMap;
 
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
-	std::array<std::map<std::wstring, std::map<time_t, EpgInfo>>, 2> m_epg_cache;
+	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 2> m_epg_cache;
 
 	//////////////////////////////////////////////////////////////////////////
 	// vod
-	utils::vectormap<std::wstring, std::shared_ptr<vod_category>> m_vod_categories;
+	std::array<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>, (size_t)StreamType::enLast> m_vod_categories;
 };

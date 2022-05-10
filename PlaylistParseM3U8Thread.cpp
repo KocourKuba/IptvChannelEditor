@@ -49,7 +49,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 		std::wistringstream stream(wbuf);
 		if (stream.good())
 		{
-			m_config.NotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), TRUE);
+			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), TRUE);
 
 			std::wstring logo_root;
 			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
@@ -82,7 +82,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 					if (channels % 50 == 0)
 					{
-						m_config.NotifyParent(WM_UPDATE_PROGRESS, channels, step);
+						m_config.SendNotifyParent(WM_UPDATE_PROGRESS, channels, step);
 						if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
 						{
 							playlist.reset();
@@ -94,7 +94,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 		}
 	}
 
-	m_config.NotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
+	m_config.SendNotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
 
 	CoUninitialize();
 

@@ -264,7 +264,7 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 
 LRESULT CIconsListDlg::OnUpdateProgress(WPARAM wParam, LPARAM lParam /*= 0*/)
 {
-	m_wndProgress.SetPos(lParam);
+	m_wndProgress.SetPos((int)lParam);
 
 	return 0;
 }
@@ -334,10 +334,10 @@ void CIconsListDlg::OnBnClickedButtonSearchNext()
 	if (m_search.IsEmpty())
 		return;
 
-	size_t idx = m_lastFound + 1;
+	int idx = m_lastFound + 1;
 	for (;;)
 	{
-		if (idx >= m_Icons->m_entries.size())
+		if (idx >= (int)m_Icons->m_entries.size())
 			idx = 0;
 
 		if (idx == m_lastFound) break;

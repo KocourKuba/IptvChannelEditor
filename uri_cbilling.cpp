@@ -53,6 +53,7 @@ uri_cbilling::uri_cbilling()
 	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params.epg_root = "";
 	provider_url = L"https://cbilling.live/";
+	provider_vod_url = L"http://protected-api.com";
 	vod_supported = true;
 }
 

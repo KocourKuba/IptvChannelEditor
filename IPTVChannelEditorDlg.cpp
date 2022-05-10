@@ -539,7 +539,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	const auto& streams = plugin->get_supported_stream_type();
 
 	m_wndVod.ShowWindow(plugin->is_vod_supported() ? SW_SHOW : SW_HIDE);
-	m_wndVod.EnableWindow(FALSE);
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();
@@ -571,7 +570,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
 	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", plugin_name);
 
-	m_vod_categories.clear();
 	m_all_channels_lists.clear();
 	m_unknownChannels.clear();
 	m_changedChannels.clear();
@@ -807,7 +805,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndPlaylistTree.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 	m_wndStop.EnableWindow(FALSE);
-	m_wndVod.EnableWindow(TRUE);
 
 	const auto plugin_type = GetConfig().get_plugin_type();
 
@@ -885,7 +882,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 LRESULT CIPTVChannelEditorDlg::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	m_wndProgress.SetRange32(0, (int)wParam);
-	m_wndProgress.SetPos(0);
 	m_wndProgress.ShowWindow(lParam ? SW_SHOW : SW_HIDE);
 
 	return 0;
@@ -896,7 +892,7 @@ LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lP
 	CString str;
 	str.Format(IDS_STRING_FMT_CHANNELS_READED, wParam);
 	m_wndProgressInfo.SetWindowText(str);
-	m_wndProgress.SetPos(lParam);
+	m_wndProgress.SetPos((int)lParam);
 
 	return 0;
 }
@@ -1785,11 +1781,7 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 	channel->set_title(L"New Channel");
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
-	CImage img;
-	if (LoadImageFromUrl(channel->get_icon_absolute_path(), img))
-	{
-		SetImageControl(img, m_wndChannelIcon);
-	}
+	SetImageControl(GetIconCache().get_icon(channel->get_icon_absolute_path()), m_wndChannelIcon);
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
 	tvInsert.hParent = hCategory;
@@ -2033,7 +2025,7 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	}
 
 	// Меняем местами нужные ItemData для сортировки
-	int idx = m_wndChannelsTree.GetItemData(hLeft);
+	int idx = (int)m_wndChannelsTree.GetItemData(hLeft);
 	m_wndChannelsTree.SetItemData(hLeft, m_wndChannelsTree.GetItemData(hRight));
 	m_wndChannelsTree.SetItemData(hRight, idx);
 
@@ -2044,7 +2036,7 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 
 	for (HTREEITEM hItem = m_wndChannelsTree.GetChildItem(nullptr); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 	{
-		int key = m_wndChannelsTree.GetItemData(hItem);
+		int key = (int)m_wndChannelsTree.GetItemData(hItem);
 		if (key == -ID_ADD_TO_FAVORITE)
 			key = ID_ADD_TO_FAVORITE;
 		m_categoriesTreeMap[hItem] = key;
@@ -2709,7 +2701,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		CEpgListDlg dlg;
 		dlg.m_epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
 		dlg.m_info = info;
-		dlg.m_epg_cache= &m_epg_cache;
+		dlg.m_epg_cache = &m_epg_cache;
 		dlg.DoModal();
 	}
 }
@@ -3137,11 +3129,7 @@ void CIPTVChannelEditorDlg::OnNewCategory()
 	newCategory->set_title(L"New Category");
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
 
-	CImage img;
-	if (LoadImageFromUrl(newCategory->get_icon_absolute_path(), img))
-	{
-		SetImageControl(img, m_wndChannelIcon);
-	}
+	SetImageControl(GetIconCache().get_icon(newCategory->get_icon_absolute_path()), m_wndChannelIcon);
 
 	TVINSERTSTRUCTW tvInsert = { nullptr };
 	tvInsert.hParent = TVI_ROOT;
@@ -3230,8 +3218,8 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 		if (nResult == IDOK)
 		{
-			size_t len = _tcslen(oFN.lpstrFileTitle);
-			for (size_t i = 0; i < len; i++)
+			int len = (int)_tcslen(oFN.lpstrFileTitle);
+			for (int i = 0; i < len; i++)
 			{
 				if (oFN.lpstrFileTitle[i] > 127)
 				{
@@ -3245,11 +3233,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			{
 				path += oFN.lpstrFileTitle;
 				CopyFile(file, path, FALSE);
-				CImage img;
-				if (LoadImageFromUrl(path.GetString(), img))
-				{
-					SetImageControl(img, m_wndChannelIcon);
-				}
+				SetImageControl(GetIconCache().get_icon(path.GetString()), m_wndChannelIcon);
 			}
 
 			m_iconUrl = uri_base::PLUGIN_SCHEME;
@@ -4760,7 +4744,12 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 {
-	CVodViewer dlg(&m_vod_categories);
-	dlg.m_plugin_type = GetConfig().get_plugin_type();
+	const auto type = GetConfig().get_plugin_type();
+	CVodViewer dlg(&m_vod_categories[(size_t)type]);
+	dlg.m_plugin_type = type;
+	dlg.m_domain = m_domain;
+	dlg.m_login = m_login;
+	dlg.m_password = m_password;
+	dlg.m_token = m_token;
 	dlg.DoModal();
 }

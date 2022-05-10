@@ -122,7 +122,7 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, bo
 
 	if (pHeaders && !pHeaders->empty())
 	{
-		BOOL result = WinHttpAddRequestHeaders(hRequest, pHeaders->c_str(), pHeaders->size(), WINHTTP_ADDREQ_FLAG_ADD);
+		BOOL result = WinHttpAddRequestHeaders(hRequest, pHeaders->c_str(), (DWORD)pHeaders->size(), WINHTTP_ADDREQ_FLAG_ADD);
 		ATLTRACE("\nheader added: %d\n", result);
 	}
 
@@ -200,7 +200,7 @@ bool WriteDataToFile(const std::wstring& path, std::vector<unsigned char>& vData
 	if (hFile == INVALID_HANDLE_VALUE) return false;
 
 	DWORD dwWritten = 0;
-	BOOL res = ::WriteFile(hFile, vData.data(), vData.size(), &dwWritten, nullptr);;
+	BOOL res = ::WriteFile(hFile, vData.data(), (DWORD)vData.size(), &dwWritten, nullptr);;
 	::CloseHandle(hFile);
 
 	return res;

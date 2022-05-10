@@ -96,12 +96,12 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 				entry->stream_uri->copy(channel->stream_uri);
 				playlist->m_entries.emplace_back(entry);
 				ch_node = ch_node->next_sibling();
-				m_config.NotifyParent(WM_UPDATE_PROGRESS, step++, count);
+				m_config.SendNotifyParent(WM_UPDATE_PROGRESS, step++, count);
 			}
 		}
 	}
 
-	m_config.NotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
+	m_config.SendNotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
 
 	CoUninitialize();
 

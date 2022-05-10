@@ -104,7 +104,7 @@ std::wstring uri_shuratv::get_playlist_url(const PlaylistTemplateParams& params)
 {
 	int device = params.device;
 	if (params.device >= (int)servers_list.size())
-		device = servers_list.size() - 1;
+		device = (int)servers_list.size() - 1;
 
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, servers_list[device]);
 }
