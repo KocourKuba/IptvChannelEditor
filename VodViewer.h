@@ -24,6 +24,7 @@ public:
 	BOOL OnInitDialog() override;
 	void OnCancel() override;
 	BOOL DestroyWindow() override;
+	BOOL PreTranslateMessage(MSG* pMsg) override;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

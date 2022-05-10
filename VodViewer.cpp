@@ -128,6 +128,17 @@ void CVodViewer::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
 	__super::OnGetMinMaxInfo(lpMMI);
 }
 
+BOOL CVodViewer::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->wParam == VK_RETURN)
+	{
+		m_wndSearch.SendMessage(BM_CLICK, 0, 0);
+		return TRUE;
+	}
+
+	return __super::PreTranslateMessage(pMsg);
+}
+
 void CVodViewer::OnCancel()
 {
 	m_evtStop.SetEvent();
@@ -770,5 +781,30 @@ void CVodViewer::OnBnClickedButtonRefresh()
 
 void CVodViewer::OnBnClickedButtonSearch()
 {
-	// TODO: Add your control notification handler code here
+	UpdateData(TRUE);
+	if (m_vod_categories->empty()) return;
+	if (m_SearchText.IsEmpty())
+	{
+		FilterList();
+		return;
+	}
+
+	vod_movie_storage searchMovies;
+	for (const auto& category : m_vod_categories->vec())
+	{
+		for (const auto& movies : category.second->movies.vec())
+		{
+			const auto& movie = movies.second;
+			if (StrStrI(movie->title.c_str(), m_SearchText.GetString()) != nullptr)
+			{
+				searchMovies.set(movie->id, movie);
+			}
+		}
+	}
+
+	std::swap(m_filtered_movies, searchMovies);
+	m_wndTotal.SetWindowText(fmt::format(L"{:d}", m_filtered_movies.size()).c_str());
+	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
+	m_wndMoviesList.Invalidate();
+	LoadMovieInfo(0);
 }
