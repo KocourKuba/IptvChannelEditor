@@ -33,6 +33,7 @@ DEALINGS IN THE SOFTWARE.
 #include <unordered_map>
 #include <filesystem>
 #include "xxhash.hpp"
+#include "utils.h"
 
 #pragma comment(lib, "Winhttp.lib")
 
@@ -67,10 +68,23 @@ bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, u
 	return false;
 }
 
-bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, bool use_cache /*= false*/, std::wstring* pHeaders /*= nullptr*/)
+bool DownloadFile(const std::wstring& url,
+				  std::vector<unsigned char>& vData,
+				  bool use_cache /*= false*/,
+				  std::wstring* pHeaders /*= nullptr*/,
+				  const wchar_t* verb /*= L"GET"*/,
+				  const std::string* post_data /*= nullptr*/
+				  )
 {
-	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(fmt::format(L"{:08x}", xxh::xxhash<32>(url)));
+	std::wstring hash_str = url;
+	if (post_data)
+		hash_str += utf8_to_utf16(*post_data);
+
+	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
+	std::filesystem::create_directory(cache_file);
+	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
 	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
+
 	if (use_cache && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
 	{
 		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
@@ -114,7 +128,7 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, bo
 	// Create an HTTP request handle.
 	HINTERNET hRequest = nullptr;
 	if (hConnect)
-		hRequest = WinHttpOpenRequest(hConnect, L"GET", path.c_str(),
+		hRequest = WinHttpOpenRequest(hConnect, verb, path.c_str(),
 									  nullptr,
 									  WINHTTP_NO_REFERER,
 									  nullptr,
@@ -129,7 +143,13 @@ bool DownloadFile(const std::wstring& url, std::vector<unsigned char>& vData, bo
 	// Send a request.
 	BOOL bResults = FALSE;
 	if (hRequest)
-		bResults = WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+		bResults = WinHttpSendRequest(hRequest,
+									  WINHTTP_NO_ADDITIONAL_HEADERS,
+									  0,
+									  post_data ? (LPVOID)post_data->data() : WINHTTP_NO_REQUEST_DATA,
+									  post_data ? post_data->size() : 0,
+									  post_data ? post_data->size() : 0,
+									  0);
 
 	// End the request.
 	if (bResults)

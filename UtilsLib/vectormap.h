@@ -19,7 +19,7 @@ namespace utils
 		/// <summary>
 		/// Access the vector of pairs directly for index access or iteration
 		/// </summary>
-		const std::vector<std::pair<K, V>>& vec() const
+		const std::vector<std::pair<K, V>>& vec() const noexcept
 		{
 			return m_vec;
 		}
@@ -27,10 +27,15 @@ namespace utils
 		/// <summary>
 		/// clear vectormap
 		/// </summary>
-		void clear()
+		void clear() noexcept
 		{
 			m_map.clear();
 			m_vec.clear();
+		}
+
+		bool empty() const noexcept
+		{
+			return m_vec.empty();
 		}
 
 		/// <summary>
@@ -41,6 +46,14 @@ namespace utils
 		///       if they want side effects down the line.
 		/// </summary>
 		const V& get(const K& key) const
+		{
+			if (const auto& it = m_map.find(key); it != m_map.end())
+				return m_vec[it->second].second;
+
+			throw std::runtime_error("key not found");
+		}
+
+		V& get(const K& key)
 		{
 			if (const auto& it = m_map.find(key); it != m_map.end())
 				return m_vec[it->second].second;
@@ -68,20 +81,44 @@ namespace utils
 			return getAt(index);
 		}
 
-		/// <summary>
-		/// How many key-value pairs are in this?
-		/// </summary>
-		size_t size() const
+		const V& front() const
 		{
-			return m_vec.size();
+			if (!m_vec.empty())
+				return m_vec.front().second;
+
+			throw std::runtime_error("front called on empty vectormap");
+		}
+
+		V& front()
+		{
+			if (!m_vec.empty())
+				return m_vec.front().second;
+
+			throw std::runtime_error("front called on empty vectormap");
+		}
+
+		const V& back() const
+		{
+			if (!m_vec.empty())
+				return m_vec.back().second;
+
+			throw std::runtime_error("front called on empty vectormap");
+		}
+
+		V& back()
+		{
+			if (!m_vec.empty())
+				return m_vec.back().second;
+
+			throw std::runtime_error("front called on empty vectormap");
 		}
 
 		/// <summary>
-		/// is empty
+		/// How many key-value pairs are in this?
 		/// </summary>
-		bool empty() const
+		size_t size() const noexcept
 		{
-			return m_vec.empty();
+			return m_vec.size();
 		}
 
 		/// <summary>

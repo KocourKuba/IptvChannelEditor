@@ -4,13 +4,10 @@
 #include "vod_movie.h"
 #include "uri_stream.h"
 #include "PlayListEntry.h"
-#include "UtilsLib/vectormap.h"
 
 
 // CVodViewer dialog
 using vod_category_storage = utils::vectormap<std::wstring, std::shared_ptr<vod_category>>;
-using vod_movie_storage = utils::vectormap<std::wstring, std::shared_ptr<vod_movie>>;
-using vod_genre_storage = utils::vectormap<std::wstring, std::wstring>;
 
 class CVodViewer : public CDialogEx
 {
@@ -58,7 +55,8 @@ private:
 	void FillYears();
 	void LoadMovieInfo(int idx);
 	void FilterList();
-	void FetchMovie(vod_movie& movie);
+	void FetchMovieCbilling(vod_movie& movie) const;
+	void FetchMovieEdem(vod_movie& movie) const;
 
 public:
 	StreamType m_plugin_type = StreamType::enBase;
@@ -77,7 +75,6 @@ protected:
 	CListCtrl m_wndMoviesList;
 	CButton m_wndSearch;
 	CEdit m_wndTotal;
-	CStatic m_wndProgressInfo;
 	CStatic m_wndPoster;
 	CProgressCtrl m_wndProgress;
 	CRichEditCtrl m_wndDescription;
@@ -91,12 +88,17 @@ private:
 	int m_year_idx = -1;
 	int m_season_idx = -1;
 	int m_episode_idx = -1;
+	int m_quality_idx = -1;
 	vod_category_storage* m_vod_categories = nullptr;
 	vod_movie_storage m_filtered_movies;
 	vod_genre_storage m_genres;
-	std::set<std::wstring> m_years;
+	utils::vectormap<std::wstring, std::wstring> m_years;
 	std::unique_ptr<uri_stream> m_plugin;
 	// all entries loaded from playlist, filled when parse playlist
 	std::unique_ptr<Playlist> m_playlistEntries;
 	CString m_SearchText;
+public:
+	afx_msg void OnBnClickedButtonStop();
+	CButton m_wndStop;
+	CButton m_wndReload;
 };

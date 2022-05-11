@@ -882,7 +882,8 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 LRESULT CIPTVChannelEditorDlg::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	m_wndProgress.SetRange32(0, (int)wParam);
-	m_wndProgress.ShowWindow(lParam ? SW_SHOW : SW_HIDE);
+	m_wndProgress.SetPos((int)lParam);
+	m_wndProgress.ShowWindow(SW_SHOW);
 
 	return 0;
 }

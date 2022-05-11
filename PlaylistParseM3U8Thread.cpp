@@ -49,7 +49,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 		std::wistringstream stream(wbuf);
 		if (stream.good())
 		{
-			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), TRUE);
+			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
 			std::wstring logo_root;
 			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);

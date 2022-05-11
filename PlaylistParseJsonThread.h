@@ -44,8 +44,9 @@ public:
 	void SetData(const ThreadConfig& config) { m_config = config; };
 
 protected:
-	void Parse1();
-	void Parse2();
+	void ParseFox();
+	void ParseCbilling();
+	void ParseEdem();
 
 protected:
 	ThreadConfig m_config;

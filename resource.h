@@ -142,9 +142,10 @@
 #define IDS_STRING_YOOMONEY             249
 #define IDS_STRING_FMT_MOVIES_READED    250
 #define IDS_STRING_ALL                  251
-#define IDS_STRING_SEASON               252
-#define IDS_STRING_EPISODE              253
-#define IDS_STRING_VOD_DESC             254
+#define IDS_STRING_NONE                 252
+#define IDS_STRING_SEASON               253
+#define IDS_STRING_EPISODE              254
+#define IDS_STRING_VOD_DESC             255
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302
@@ -317,6 +318,7 @@
 #define IDC_STATIC_SEASON               1156
 #define IDC_COMBO_EPISODE               1157
 #define IDC_STATIC_EPISODE              1158
+#define IDC_BUTTON_SEARCH2              1159
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773

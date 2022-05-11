@@ -40,6 +40,7 @@ BEGIN_MESSAGE_MAP(CVodViewer, CDialogEx)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_MOVIES, &CVodViewer::OnNMDblclkListMovies)
 	ON_BN_CLICKED(IDC_BUTTON_REFRESH, &CVodViewer::OnBnClickedButtonRefresh)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CVodViewer::OnBnClickedButtonSearch)
+	ON_BN_CLICKED(IDC_BUTTON_STOP, &CVodViewer::OnBnClickedButtonStop)
 END_MESSAGE_MAP()
 
 CVodViewer::CVodViewer(vod_category_storage* categories, CWnd* pParent /*=nullptr*/)
@@ -71,14 +72,16 @@ void CVodViewer::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_EPISODE, m_wndEpisode);
 	DDX_CBIndex(pDX, IDC_COMBO_EPISODE, m_episode_idx);
 	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQuality);
+	DDX_CBIndex(pDX, IDC_COMBO_QUALITY, m_quality_idx);
 	DDX_Control(pDX, IDC_LIST_MOVIES, m_wndMoviesList);
 	DDX_Control(pDX, IDC_BUTTON_SEARCH, m_wndSearch);
 	DDX_Control(pDX, IDC_EDIT_TOTAL_MOVIES, m_wndTotal);
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndPoster);
 	DDX_Control(pDX, IDC_RICHEDIT_DESCRIPTION, m_wndDescription);
-	DDX_Control(pDX, IDC_STATIC_PROGRESS_INFO, m_wndProgressInfo);
 	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_SearchText);
+	DDX_Control(pDX, IDC_BUTTON_STOP, m_wndStop);
+	DDX_Control(pDX, IDC_BUTTON_REFRESH, m_wndReload);
 }
 
 // CVodViewer message handlers
@@ -156,29 +159,12 @@ BOOL CVodViewer::DestroyWindow()
 void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 {
 	m_wndCategories.EnableWindow(FALSE);
-	BOOL enableFilter = FALSE;
-	BOOL enableGenre = FALSE;
-	BOOL enableQuality = FALSE;
-
-	switch (m_plugin_type)
-	{
-		case StreamType::enAntifriz:
-		case StreamType::enCbilling:
-			enableGenre = TRUE;
-			break;
-
-		case StreamType::enEdem:
-			enableFilter = TRUE;
-			enableQuality = TRUE;
-			break;
-
-		default:
-			break;
-	}
-
-	m_wndYears.EnableWindow(enableFilter);
-	m_wndGenres.EnableWindow(enableFilter);
-	m_wndQuality.EnableWindow(enableQuality);
+	m_wndGenres.EnableWindow(FALSE);
+	m_wndYears.EnableWindow(FALSE);
+	m_wndSeason.EnableWindow(FALSE);
+	m_wndEpisode.EnableWindow(FALSE);
+	m_wndQuality.EnableWindow(FALSE);
+	m_wndReload.EnableWindow(FALSE);
 
 	switch (m_plugin_type)
 	{
@@ -231,6 +217,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 
 		case StreamType::enEdem:
 			parserType = jsonParserType::enJsonEdem;
+			url = GetConfig().get_string(false, REG_VPORTAL);
 			break;
 
 		default:
@@ -258,7 +245,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	pThread->ResumeThread();
 
 	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndProgressInfo.ShowWindow(SW_HIDE);
+	m_wndStop.ShowWindow(SW_HIDE);
 }
 
 LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -267,22 +254,18 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	m_evtFinished.SetEvent();
 
 	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndProgressInfo.ShowWindow(SW_HIDE);
+	m_wndStop.ShowWindow(SW_HIDE);
+	m_wndReload.EnableWindow(TRUE);
 
 	// make copy content not pointers!
 	std::unique_ptr<vod_category_storage> deleter((vod_category_storage*)wParam);
-	*m_vod_categories = *deleter;
-
-	for (const auto& pair : m_vod_categories->vec())
+	if (deleter != nullptr)
 	{
-		for (const auto& movie_pair : pair.second->movies.vec())
-		{
-			for (const auto& genre : movie_pair.second->genres)
-			{
-				m_genres.set(genre, genre);
-			}
-			m_years.emplace(movie_pair.second->year);
-		}
+		*m_vod_categories = *deleter;
+	}
+	else
+	{
+		m_vod_categories->clear();
 	}
 
 	FillCategories();
@@ -348,7 +331,8 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	m_evtFinished.SetEvent();
 
 	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndProgressInfo.ShowWindow(SW_HIDE);
+	m_wndStop.ShowWindow(SW_HIDE);
+	m_wndReload.EnableWindow(TRUE);
 
 	m_playlistEntries.reset((Playlist*)wParam);
 
@@ -384,19 +368,17 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 LRESULT CVodViewer::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	m_wndProgress.SetRange32(0, (int)wParam);
-	m_wndProgress.SetPos(0);
-	m_wndProgress.ShowWindow(lParam ? SW_SHOW : SW_HIDE);
-	m_wndProgressInfo.ShowWindow(lParam ? SW_SHOW : SW_HIDE);
+	m_wndProgress.SetPos((int)lParam);
+	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndStop.ShowWindow(SW_SHOW);
 
 	return 0;
 }
 
 LRESULT CVodViewer::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-	CString str;
-	str.Format(IDS_STRING_FMT_MOVIES_READED, wParam);
-	m_wndProgressInfo.SetWindowText(str);
-	m_wndProgress.SetPos((int)lParam);
+	m_wndTotal.SetWindowText(fmt::format(L"{:d}", (int)wParam).c_str());
+	m_wndProgress.SetPos((int)wParam);
 
 	return 0;
 }
@@ -418,309 +400,14 @@ void CVodViewer::OnGetDispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (0 == (lvItem.mask & LVIF_TEXT)) return; //valid text buffer?
 
-	StrCpyN(lvItem.pszText, m_filtered_movies.getAt(lvItem.iItem)->title.c_str(), lvItem.cchTextMax - 1);
+	StrCpyN(lvItem.pszText, m_filtered_movies[lvItem.iItem]->title.c_str(), lvItem.cchTextMax - 1);
 }
 
-void CVodViewer::FillCategories()
+void CVodViewer::OnBnClickedButtonStop()
 {
-	m_wndCategories.ResetContent();
-	m_category_idx = -1;
-
-	if (!m_vod_categories) return;
-
-	for (const auto& pair : m_vod_categories->vec())
-	{
-		m_wndCategories.AddString(pair.second->name.c_str());
-
-		for (const auto& movie_pair : pair.second->movies.vec())
-		{
-			for (const auto& genre : movie_pair.second->genres)
-			{
-				m_genres.set(genre, genre);
-			}
-			m_years.emplace(movie_pair.second->year);
-		}
-	}
-
-	if (!m_vod_categories->empty())
-	{
-		m_wndCategories.EnableWindow(TRUE);
-		m_category_idx = 0;
-		UpdateData(FALSE);
-	}
+	m_evtStop.SetEvent();
 }
 
-void CVodViewer::FillGenres()
-{
-	m_wndGenres.ResetContent();
-	m_genre_idx = -1;
-	for (const auto& genre : m_genres.vec())
-	{
-		m_wndGenres.AddString(genre.first.c_str());
-	}
-
-	if (m_wndGenres.GetCount())
-	{
-		CString str;
-		str.LoadString(IDS_STRING_ALL);
-		m_wndGenres.InsertString(0, str);
-		m_wndGenres.EnableWindow(TRUE);
-		m_genre_idx = 0;
-	}
-
-	UpdateData(FALSE);
-}
-
-void CVodViewer::FillYears()
-{
-	m_wndYears.ResetContent();
-	m_year_idx = -1;
-	for (const auto& year : m_years)
-	{
-		if (!year.empty())
-		{
-			m_wndYears.AddString(year.c_str());
-		}
-	}
-
-	if (m_wndYears.GetCount())
-	{
-		CString str;
-		str.LoadString(IDS_STRING_ALL);
-		m_wndYears.InsertString(0, str);
-		m_wndYears.EnableWindow(TRUE);
-		m_year_idx = 0;
-	}
-
-	UpdateData(FALSE);
-}
-
-void CVodViewer::LoadMovieInfo(int idx)
-{
-	UpdateData(TRUE);
-	m_wndDescription.SetWindowText(L"");
-	if (idx >= (int)m_filtered_movies.size()) return;
-
-	const auto& movie = m_filtered_movies.getAt(idx);
-	if (movie->url.empty() && movie->seasons.empty())
-	{
-		FetchMovie(*movie);
-	}
-
-	m_wndSeason.ResetContent();
-	m_wndEpisode.ResetContent();
-
-	BOOL enableSeason = FALSE;
-	BOOL enableEpisode = FALSE;
-	if (!movie->seasons.empty())
-	{
-		CString str;
-		str.LoadString(IDS_STRING_SEASON);
-
-		enableSeason = TRUE;
-		m_season_idx = 0;
-
-		for (const auto& season_it : movie->seasons.vec())
-		{
-			const auto& season = season_it.second;
-			if (season.title.empty())
-			{
-				m_wndSeason.AddString(fmt::format(L"{:s} {:s}", str.GetString(), season.season_id).c_str());
-			}
-			else
-			{
-				m_wndSeason.AddString(season.title.c_str());
-			}
-		}
-
-		const auto& episodes = movie->seasons[0].episodes;
-		if (!episodes.empty())
-		{
-			str.LoadString(IDS_STRING_EPISODE);
-
-			enableEpisode = TRUE;
-			m_episode_idx = 0;
-
-			for (const auto& episode_it : episodes.vec())
-			{
-				const auto& episode = episode_it.second;
-				if (episode.title.empty())
-				{
-					m_wndEpisode.AddString(fmt::format(L"{:s} {:s}", str.GetString(), episode.episode_id).c_str());
-				}
-				else
-				{
-					m_wndEpisode.AddString(episode.title.c_str());
-				}
-			}
-		}
-	}
-
-	m_wndSeason.EnableWindow(enableSeason);
-	m_wndEpisode.EnableWindow(enableEpisode);
-
-	SetImageControl(GetIconCache().get_icon(movie->poster_url.get_uri()), m_wndPoster);
-	CStringA desc;
-	desc.LoadString(IDS_STRING_VOD_DESC);
-	const auto& text = fmt::format(desc.GetString(),
-								   utils::utf16_to_utf8(movie->title),
-								   utils::utf16_to_utf8(movie->description),
-								   utils::utf16_to_utf8(movie->year),
-								   utils::utf16_to_utf8(movie->country),
-								   utils::utf16_to_utf8(movie->director),
-								   utils::utf16_to_utf8(movie->casting),
-								   utils::utf16_to_utf8(movie->age),
-								   utils::utf16_to_utf8(movie->movie_time)
-								   );
-
-	SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
-	m_wndDescription.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
-
-	UpdateData(FALSE);
-}
-
-void CVodViewer::FilterList()
-{
-	UpdateData(TRUE);
-
-	if (m_category_idx == LB_ERR || m_category_idx >= (int)m_vod_categories->size())
-	{
-		m_filtered_movies.clear();
-		m_wndMoviesList.SetItemCount(0);
-		m_wndMoviesList.Invalidate();
-		return;
-	}
-
-	vod_movie_storage filtered_movies;
-	CString selectedGenre;
-	if (m_wndGenres.IsWindowEnabled())
-		m_wndGenres.GetLBText(m_wndGenres.GetCurSel(), selectedGenre);
-
-	CString selectedYear;
-	if (m_wndYears.IsWindowEnabled())
-		m_wndYears.GetLBText(m_wndYears.GetCurSel(), selectedYear);
-
-	bool genre = false;
-	bool year = false;
-	for (const auto& movie_pair : m_vod_categories->getAt(m_category_idx)->movies.vec())
-	{
-		const auto& movie = movie_pair.second;
-		bool add = false;
-		if (!m_wndGenres.IsWindowEnabled())
-		{
-			genre = true;
-		}
-		else if (!selectedGenre.IsEmpty())
-		{
-			if (m_wndGenres.GetCurSel() == 0)
-			{
-				genre = true;
-			}
-			else
-			{
-				genre = std::find_if(movie->genres.begin(), movie->genres.end(), [&selectedGenre](const auto& genre)
-									 {
-										 return (selectedGenre.CompareNoCase(genre.c_str()) == 0);
-
-									 }) != movie->genres.end();
-			}
-		}
-
-		if (!m_wndYears.IsWindowEnabled())
-		{
-			year = true;
-		}
-		else
-		{
-			year = (m_year_idx == 0) || (!selectedYear.IsEmpty() && selectedYear.CompareNoCase(movie->year.c_str()) == 0);
-		}
-
-		if (genre && year)
-		{
-			filtered_movies.set(movie_pair.first, movie_pair.second);
-		}
-	}
-
-	std::swap(m_filtered_movies, filtered_movies);
-
-	m_wndTotal.SetWindowText(fmt::format(L"{:d}", m_filtered_movies.size()).c_str());
-	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
-	m_wndMoviesList.Invalidate();
-	LoadMovieInfo(0);
-}
-
-void CVodViewer::FetchMovie(vod_movie& movie)
-{
-	std::wstring url;
-	switch (m_plugin_type)
-	{
-		case StreamType::enAntifriz:
-		case StreamType::enCbilling:
-			url = fmt::format(L"{:s}/video/{:s}", m_plugin->get_vod_url(), movie.id);
-		break;
-
-		default:
-			break;
-	}
-
-	std::vector<BYTE> data;
-	if (url.empty() || !utils::DownloadFile(url, data, true) || data.empty())
-	{
-		return;
-	}
-
-	JSON_ALL_TRY
-	{
-		nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
-		if (parsed_json.contains("data"))
-		{
-			const auto& value = parsed_json["data"];
-
-			movie.description = utils::get_json_value("description", value);
-			movie.director = utils::get_json_value("director", value);
-			movie.casting = utils::get_json_value("actors", value);
-			movie.movie_time = utils::get_json_value("time", value);
-			const auto& adult = utils::get_json_value("adult", value);
-			if (adult == L"1")
-				movie.age += L" 18+";
-
-			if (value.contains("seasons"))
-			{
-				for (const auto& season_it : value["seasons"].items())
-				{
-					const auto& season_item = season_it.value();
-					vod_season season;
-					season.id = utils::get_json_value("id", season_item);
-					season.title = utils::get_json_value("name", season_item);
-					season.season_id = utils::get_json_value("number", season_item);
-
-					for (const auto& episode_it : season_item["series"].items())
-					{
-						const auto& episode_item = episode_it.value();
-
-						vod_episode episode;
-						episode.id = utils::get_json_value("id", episode_item);
-						episode.title = utils::get_json_value("name", episode_item);
-						episode.episode_id = utils::get_json_value("number", episode_item);
-
-						if (episode_item["files"].is_array())
-						{
-							episode.url = utils::get_json_value("url", episode_item["files"].front());
-						}
-
-						season.episodes.set(episode.id, episode);
-					}
-					movie.seasons.set(season.id, season);
-				}
-			}
-			else
-			{
-				movie.url = utils::get_json_value("url", value["files"][0]);
-			}
-		}
-	}
-	JSON_ALL_CATCH;
-}
 
 void CVodViewer::OnCbnSelchangeComboCategories()
 {
@@ -757,20 +444,45 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 	const auto& movie = m_filtered_movies[pNMItemActivate->iItem];
 
 	std::wstring url = movie->url;
-	if (m_plugin_type == StreamType::enCbilling || m_plugin_type == StreamType::enAntifriz)
+	switch (m_plugin_type)
 	{
-		if (movie->url.empty())
+		case StreamType::enAntifriz:
+		case StreamType::enCbilling:
 		{
-			if (m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
+			if (movie->url.empty() && m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
 			{
 				const auto& season = movie->seasons[m_season_idx];
 				url = season.episodes[m_episode_idx].url;
 			}
+			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_domain, url, m_token);
+			break;
 		}
-
-		url = fmt::format(L"http://{:s}{:s}?token={:s}", m_domain, url, m_token);
+		case StreamType::enEdem:
+			if (!movie->quality.empty())
+			{
+				url = movie->quality[m_quality_idx].url;
+			}
+			else if (!movie->seasons.empty())
+			{
+				const auto& episodes = movie->seasons.front().episodes;
+				if (!episodes.empty())
+				{
+					const auto& quality = episodes[m_episode_idx].quality;
+					if (quality.empty())
+						url = episodes[m_episode_idx].url;
+					else
+						url = episodes[m_episode_idx].quality[m_quality_idx].url;
+				}
+			}
+			break;
+		default:
+			break;
 	}
-	ShellExecuteW(nullptr, L"open", GetConfig().get_string(true, REG_PLAYER).c_str(), url.c_str(), nullptr, SW_SHOWNORMAL);
+
+	if (!url.empty())
+	{
+		ShellExecuteW(nullptr, L"open", GetConfig().get_string(true, REG_PLAYER).c_str(), url.c_str(), nullptr, SW_SHOWNORMAL);
+	}
 }
 
 void CVodViewer::OnBnClickedButtonRefresh()
@@ -807,4 +519,597 @@ void CVodViewer::OnBnClickedButtonSearch()
 	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
 	m_wndMoviesList.Invalidate();
 	LoadMovieInfo(0);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void CVodViewer::FillCategories()
+{
+	m_wndCategories.ResetContent();
+	m_category_idx = -1;
+
+	if (!m_vod_categories) return;
+
+	m_genres.clear();
+	m_years.clear();
+
+	for (const auto& pair : m_vod_categories->vec())
+	{
+		m_wndCategories.AddString(pair.second->name.c_str());
+		if (m_plugin_type == StreamType::enEdem)
+		{
+			for (const auto& filter : pair.second->filters.vec())
+			{
+				if (filter.first == L"genre")
+				{
+					for (const auto& filter_item : filter.second.vec())
+					{
+						vod_genre genre({ filter_item.second.id, filter_item.second.title });
+						m_genres.set(filter_item.second.id, genre);
+					}
+				}
+				else if (filter.first == L"years")
+				{
+					for (const auto& filter_item : filter.second.vec())
+					{
+						m_years.set(filter_item.second.title, filter_item.second.title);
+					}
+				}
+			}
+		}
+		else
+		{
+			for (const auto& pair : m_vod_categories->vec())
+			{
+				for (const auto& movie_pair : pair.second->movies.vec())
+				{
+					for (const auto& genre : movie_pair.second->genres.vec())
+					{
+						m_genres.set(genre.first, genre.second);
+					}
+					m_years.set(movie_pair.second->year, movie_pair.second->year);
+				}
+			}
+		}
+	}
+
+	if (!m_vod_categories->empty())
+	{
+		m_wndCategories.EnableWindow(TRUE);
+		m_category_idx = 0;
+		UpdateData(FALSE);
+	}
+}
+
+void CVodViewer::FillGenres()
+{
+	m_wndGenres.ResetContent();
+	m_genre_idx = -1;
+	for (const auto& genre : m_genres.vec())
+	{
+		m_wndGenres.AddString(genre.second.title.c_str());
+	}
+
+	if (m_wndGenres.GetCount())
+	{
+		CString str;
+		str.LoadString(m_plugin_type == StreamType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL);
+		m_wndGenres.InsertString(0, str);
+		m_wndGenres.EnableWindow(TRUE);
+		m_genre_idx = 0;
+	}
+	else
+	{
+		m_wndGenres.EnableWindow(FALSE);
+	}
+
+	UpdateData(FALSE);
+}
+
+void CVodViewer::FillYears()
+{
+	m_wndYears.ResetContent();
+	m_year_idx = -1;
+	for (const auto& year : m_years.vec())
+	{
+		if (!year.first.empty())
+		{
+			m_wndYears.AddString(year.first.c_str());
+		}
+	}
+
+	if (m_wndYears.GetCount())
+	{
+		CString str;
+		str.LoadString(m_plugin_type == StreamType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL);
+		m_wndYears.InsertString(0, str);
+		m_wndYears.EnableWindow(TRUE);
+		m_year_idx = 0;
+	}
+	else
+	{
+		m_wndYears.EnableWindow(FALSE);
+	}
+
+	UpdateData(FALSE);
+}
+
+void CVodViewer::LoadMovieInfo(int idx)
+{
+	UpdateData(TRUE);
+
+	m_wndDescription.SetWindowText(L"");
+	m_wndSeason.ResetContent();
+	m_wndEpisode.ResetContent();
+	m_wndQuality.ResetContent();
+	m_wndPoster.SetBitmap(nullptr);
+
+	if (idx >= (int)m_filtered_movies.size())
+	{
+		return;
+	}
+
+	const auto& movie = m_filtered_movies[idx];
+	if (movie->url.empty() && movie->seasons.empty())
+	{
+		switch (m_plugin_type)
+		{
+			case StreamType::enAntifriz:
+			case StreamType::enCbilling:
+				FetchMovieCbilling(*movie);
+				break;
+			case StreamType::enEdem:
+				FetchMovieEdem(*movie);
+				break;
+			default:
+				break;
+		}
+	}
+
+	BOOL enableSeason = FALSE;
+	BOOL enableEpisode = FALSE;
+	BOOL enableQuality = FALSE;
+	if (movie->seasons.empty())
+	{
+		if (!movie->quality.empty())
+		{
+			enableQuality = TRUE;
+			m_quality_idx = 0;
+			for (const auto& q_it : movie->quality.vec())
+			{
+				m_wndQuality.AddString(q_it.second.title.c_str());
+			}
+		}
+	}
+	else
+	{
+		CString str;
+		str.LoadString(IDS_STRING_SEASON);
+
+		m_season_idx = 0;
+
+		if (m_plugin_type != StreamType::enEdem)
+		{
+			enableSeason = TRUE;
+			for (const auto& season_it : movie->seasons.vec())
+			{
+				const auto& season = season_it.second;
+				if (season.title.empty())
+				{
+					m_wndSeason.AddString(fmt::format(L"{:s} {:s}", str.GetString(), season.season_id).c_str());
+				}
+				else
+				{
+					m_wndSeason.AddString(season.title.c_str());
+				}
+			}
+		}
+
+		const auto& episodes = movie->seasons.front().episodes;
+		if (!episodes.empty())
+		{
+			str.LoadString(IDS_STRING_EPISODE);
+
+			enableEpisode = TRUE;
+			m_episode_idx = 0;
+
+			for (const auto& episode_it : episodes.vec())
+			{
+				const auto& episode = episode_it.second;
+				if (episode.title.empty())
+				{
+					m_wndEpisode.AddString(fmt::format(L"{:s} {:s}", str.GetString(), episode.episode_id).c_str());
+				}
+				else
+				{
+					m_wndEpisode.AddString(episode.title.c_str());
+				}
+
+				if (enableQuality) continue;
+
+				if (!episode.quality.empty())
+				{
+					enableQuality = TRUE;
+					m_quality_idx = 0;
+					for (const auto& q_it : episode.quality.vec())
+					{
+						m_wndQuality.AddString(q_it.second.title.c_str());
+					}
+				}
+			}
+		}
+	}
+
+	m_wndSeason.EnableWindow(enableSeason);
+	m_wndEpisode.EnableWindow(enableEpisode);
+	m_wndQuality.EnableWindow(enableQuality);
+
+	SetImageControl(GetIconCache().get_icon(movie->poster_url.get_uri()), m_wndPoster);
+	CStringA desc;
+	desc.LoadString(IDS_STRING_VOD_DESC);
+	const auto& text = fmt::format(desc.GetString(),
+								   utils::utf16_to_utf8(movie->title),
+								   utils::utf16_to_utf8(movie->description),
+								   utils::utf16_to_utf8(movie->year),
+								   utils::utf16_to_utf8(movie->country),
+								   utils::utf16_to_utf8(movie->director),
+								   utils::utf16_to_utf8(movie->casting),
+								   utils::utf16_to_utf8(movie->age),
+								   utils::utf16_to_utf8(movie->movie_time)
+								   );
+
+	SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
+	m_wndDescription.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
+
+	UpdateData(FALSE);
+}
+
+void CVodViewer::FilterList()
+{
+	UpdateData(TRUE);
+
+	if (m_category_idx == LB_ERR || m_category_idx >= (int)m_vod_categories->size())
+	{
+		m_filtered_movies.clear();
+		m_wndProgress.ShowWindow(SW_HIDE);
+		m_wndStop.ShowWindow(SW_HIDE);
+		m_wndTotal.SetWindowText(fmt::format(L"{:d}", m_filtered_movies.size()).c_str());
+		m_wndMoviesList.SetItemCount(0);
+		m_wndMoviesList.Invalidate();
+		m_wndPoster.SetBitmap(nullptr);
+		return;
+	}
+
+	m_wndReload.EnableWindow(FALSE);
+
+	bool filterByGenre = false;
+	bool filterByYear = false;
+	CString selectedGenre;
+	if (m_wndGenres.IsWindowEnabled() && m_genre_idx != CB_ERR)
+	{
+		m_wndGenres.GetLBText(m_genre_idx, selectedGenre);
+		filterByGenre = !selectedGenre.IsEmpty();
+	}
+
+	CString selectedYear;
+	if (m_wndYears.IsWindowEnabled() && m_year_idx != CB_ERR)
+	{
+		m_wndYears.GetLBText(m_year_idx, selectedYear);
+		filterByYear = !selectedYear.IsEmpty();
+	}
+
+	vod_movie_storage filtered_movies;
+
+	if (m_plugin_type == StreamType::enEdem)
+	{
+		do
+		{
+			if (m_genre_idx == 0 && m_year_idx == 0)
+			{
+				for (const auto& movie_pair : m_vod_categories->getAt(m_category_idx)->movies.vec())
+				{
+					filtered_movies.set(movie_pair.first, movie_pair.second);
+				}
+
+				break;
+			}
+
+			const auto& vportal_key = GetConfig().get_string(false, REG_VPORTAL);
+			std::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
+			std::wsmatch m;
+			if (!std::regex_match(vportal_key, m, re_url)) break;
+
+			const auto& key = m[1].str();
+			const auto& url = m[2].str();
+
+			nlohmann::json json_request;
+			json_request["filter"] = "on";
+			json_request["limit"] = 300;
+			json_request["offset"] = 0;
+			json_request["key"] = utils::utf16_to_utf8(key);
+			json_request["mac"] = "000000000000";
+			json_request["app"] = "IPTV ChannelEditor";
+			if (m_genre_idx != 0)
+			{
+				int id = utils::char_to_int(m_genres[m_genre_idx - 1].id);
+				json_request["genre"] = id;
+				ATLTRACE("\ngenre id: %d\n", id);
+			}
+
+			if (m_year_idx != 0)
+			{
+				const auto& years = utils::utf16_to_utf8(m_years[m_year_idx - 1]);
+				json_request["years"] = years;
+				ATLTRACE("\nyears: %s\n", years.c_str());
+			}
+
+			std::vector<BYTE> data;
+			std::string post = json_request.dump();
+			std::wstring header = L"accept: */*\r\nContent-Type: application/json";
+			ATLTRACE("\n%s\n", post.c_str());
+			if (!utils::DownloadFile(url, data, true, &header, L"POST", &post) || data.empty()) break;
+
+			JSON_ALL_TRY;
+			nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
+			int total = utils::get_json_int("count", parsed_json);
+			OnInitProgress(total, 0);
+			ATLTRACE("\nfiltered movies: %d\n", total);
+
+			int cnt = 0;
+			int offset = 0;
+			int prev_offset = -1;
+			for (;;)
+			{
+				for (const auto& item_it : parsed_json["items"].items())
+				{
+					const auto& movie_item = item_it.value();
+
+					auto movie = std::make_shared<vod_movie>();
+
+					if (utils::get_json_string("type", movie_item) == L"next")
+					{
+						offset = utils::get_json_int("offset", movie_item["request"]);
+						continue;
+					}
+
+					movie->id = utils::get_json_string("fid", movie_item["request"]);
+					movie->title = utils::get_json_string("title", movie_item);
+					movie->description = utils::get_json_string("description", movie_item);
+					movie->poster_url.set_uri(utils::get_json_string("img", movie_item));
+					movie->poster_url.set_schema(L"http://");
+					movie->rating = utils::get_json_string("rating", movie_item);
+					movie->country = utils::get_json_string("country", movie_item);
+					movie->year = utils::get_json_string("year", movie_item);
+					movie->age = utils::get_json_string("agelimit", movie_item);
+					movie->movie_time = utils::get_json_string("duration", movie_item);
+
+					filtered_movies.set(movie->id, movie);
+					cnt++;
+
+					if (cnt % 100 == 0)
+					{
+						OnUpdateProgress(cnt);
+						if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0) break;
+					}
+				}
+
+				ATLTRACE("\nreaded: %d\n", cnt);
+
+				if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0) break;
+				if (offset == prev_offset) break;
+
+				prev_offset = offset;
+				json_request["offset"] = offset;
+				ATLTRACE("\noffset: %d\n", offset);
+
+				data.clear();
+				post = json_request.dump();
+				ATLTRACE("\n%s\n", post.c_str());
+				if (!utils::DownloadFile(url, data, true, &header, L"POST", &post) || data.empty()) break;
+
+				parsed_json = nlohmann::json::parse(data.begin(), data.end());
+			}
+			JSON_ALL_CATCH;
+		} while (false);
+
+		if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0)
+			filtered_movies.clear();
+	}
+	else
+	{
+		for (const auto& movie_pair : m_vod_categories->getAt(m_category_idx)->movies.vec())
+		{
+			bool genre = true;
+			bool year = true;
+
+			const auto& movie = movie_pair.second;
+			if (filterByGenre && m_genre_idx != 0)
+			{
+				const auto& genres = movie->genres.vec();
+				genre = std::find_if(genres.begin(), genres.end(), [&selectedGenre](const auto& pair)
+										{
+											return (selectedGenre.CompareNoCase(pair.second.title.c_str()) == 0);
+
+										}) != genres.end();
+			}
+
+			if (m_year_idx != 0)
+			{
+				year = selectedYear.CompareNoCase(movie->year.c_str()) == 0;
+			}
+
+			if (genre && year)
+			{
+				filtered_movies.set(movie_pair.first, movie_pair.second);
+			}
+		}
+	}
+
+	std::swap(m_filtered_movies, filtered_movies);
+
+	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndStop.ShowWindow(SW_HIDE);
+	m_wndReload.EnableWindow(TRUE);
+	m_wndTotal.SetWindowText(fmt::format(L"{:d}", m_filtered_movies.size()).c_str());
+	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
+	m_wndMoviesList.Invalidate();
+
+	LoadMovieInfo(0);
+}
+
+void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
+{
+	CWaitCursor cur;
+
+	const auto& url = fmt::format(L"{:s}/video/{:s}", m_plugin->get_vod_url(), movie.id);
+	std::vector<BYTE> data;
+	if (url.empty() || !utils::DownloadFile(url, data, false) || data.empty())
+	{
+		return;
+	}
+
+	JSON_ALL_TRY;
+	nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
+
+	if (parsed_json.contains("data"))
+	{
+		const auto& value = parsed_json["data"];
+
+		movie.description = utils::get_json_string("description", value);
+		movie.director = utils::get_json_string("director", value);
+		movie.casting = utils::get_json_string("actors", value);
+		movie.movie_time = utils::get_json_string("time", value);
+		const auto& adult = utils::get_json_string("adult", value);
+		if (adult == L"1")
+			movie.age += L" 18+";
+
+		if (value.contains("seasons"))
+		{
+			for (const auto& season_it : value["seasons"].items())
+			{
+				const auto& season_item = season_it.value();
+				vod_season season;
+				season.id = utils::get_json_string("id", season_item);
+				season.title = utils::get_json_string("name", season_item);
+				season.season_id = utils::get_json_string("number", season_item);
+
+				for (const auto& episode_it : season_item["series"].items())
+				{
+					const auto& episode_item = episode_it.value();
+
+					vod_episode episode;
+					episode.id = utils::get_json_string("id", episode_item);
+					episode.title = utils::get_json_string("name", episode_item);
+					episode.episode_id = utils::get_json_string("number", episode_item);
+
+					if (episode_item["files"].is_array())
+					{
+						episode.url = utils::get_json_string("url", episode_item["files"].front());
+					}
+
+					season.episodes.set(episode.id, episode);
+				}
+				movie.seasons.set(season.id, season);
+			}
+		}
+		else
+		{
+			movie.url = utils::get_json_string("url", value["files"][0]);
+		}
+	}
+	JSON_ALL_CATCH;
+}
+
+void CVodViewer::FetchMovieEdem(vod_movie& movie) const
+{
+	CWaitCursor cur;
+	do
+	{
+		const auto& vportal_key = GetConfig().get_string(false, REG_VPORTAL);
+		std::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
+		std::wsmatch m;
+		if (!std::regex_match(vportal_key, m, re_url)) break;
+
+		const auto& key = m[1].str();
+		const auto& url = m[2].str();
+
+		nlohmann::json json_request;
+		json_request["cmd"] = "flick";
+		json_request["limit"] = 300;
+		json_request["offset"] = 0;
+		json_request["key"] = utils::utf16_to_utf8(key);
+		json_request["mac"] = "000000000000";
+		json_request["app"] = "IPTV ChannelEditor";
+		json_request["fid"] = utils::char_to_int(movie.id);
+
+		std::string post = json_request.dump();
+		std::wstring header = L"accept: */*\r\nContent-Type: application/json";
+		ATLTRACE("\n%s\n", post.c_str());
+
+		std::vector<BYTE> data;
+		if (!utils::DownloadFile(url, data, false, &header, L"POST", &post) || data.empty()) break;
+
+		JSON_ALL_TRY;
+
+		nlohmann::json json_data = nlohmann::json::parse(data.begin(), data.end());
+		const auto& type = json_data["type"];
+		if (type == "multistream")
+		{
+			if (movie.seasons.empty())
+			{
+				movie.seasons.set(L"season", vod_season());
+			}
+			auto& season = movie.seasons.get(L"season");
+
+			for (const auto& items_it : json_data["items"].items())
+			{
+
+				const auto& item = items_it.value();
+				vod_episode episode;
+				episode.title = utils::get_json_string("title", item);
+				episode.url = utils::get_json_string("url", item);
+				episode.id = utils::get_json_string("fid", item);
+				if (episode.id.empty())
+				{
+					episode.id = utils::get_json_string("fid", item["request"]);
+				}
+
+				json_request["fid"] = utils::char_to_int(episode.id);
+				post = json_request.dump();
+				ATLTRACE("\n%s\n", post.c_str());
+				data.clear();
+				if (utils::DownloadFile(url, data, false, &header, L"POST", &post) && !data.empty())
+				{
+					nlohmann::json variants_data = nlohmann::json::parse(data.begin(), data.end());
+					if (variants_data.contains("variants"))
+					{
+						for (const auto& variant_it : variants_data["variants"].items())
+						{
+							const auto& title = utils::utf8_to_utf16(variant_it.key());
+							const auto& url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
+
+							episode.quality.set(title, vod_quality({ title, url }));
+						}
+					}
+				}
+
+				season.episodes.set(episode.id, episode);
+			}
+		}
+		else
+		{
+			movie.url = utils::get_json_string("url", json_data);
+			if (json_data.contains("variants"))
+			{
+				for (const auto& variant_it : json_data["variants"].items())
+				{
+					const auto& title = utils::utf8_to_utf16(variant_it.key());
+					const auto& url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
+
+					movie.quality.set(title, vod_quality({ title, url }));
+				}
+			}
+		}
+		JSON_ALL_CATCH;
+	} while (false);
 }
