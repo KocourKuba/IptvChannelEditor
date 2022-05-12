@@ -128,7 +128,7 @@ constexpr auto REG_CUSTOM_PLAYLIST     = _T("CustomPlaylist");
 constexpr auto REG_DEVICE_ID           = _T("DeviceID");
 constexpr auto REG_CREDENTIALS         = _T("Credentials");
 constexpr auto REG_EMBED_INFO          = _T("EmbedInfo");
-constexpr auto REG_API_DOMAIN          = _T("ApiDomain");
+constexpr auto REG_LIST_DOMAIN         = _T("ListDomain");
 constexpr auto REG_EPG_DOMAIN          = _T("EpgDomain");
 
 typedef struct

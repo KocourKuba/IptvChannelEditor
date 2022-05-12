@@ -212,7 +212,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 
 		case StreamType::enSharaclub:
 			parserType = jsonParserType::enJsonSharaClub;
-			url = fmt::format(m_plugin->get_vod_url(), m_login, m_password);
+			url = fmt::format(m_plugin->get_vod_url(), GetConfig().get_string(false, REG_LIST_DOMAIN),  m_login, m_password);
 			break;
 
 		case StreamType::enEdem:

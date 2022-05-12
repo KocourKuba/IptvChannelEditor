@@ -35,8 +35,10 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static constexpr auto API_URL = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 static constexpr auto ACCOUNT_TEMPLATE = L"http://{:s}/api/dune-api5m.php?subscr={:s}-{:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://{:s}/tv_live-m3u8/{:s}-{:s}";
+static constexpr auto PLAYLIST_VOD_TEMPLATE = L"http://{:s}/kino-full/{:s}-{:s}";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 
@@ -46,8 +48,8 @@ uri_sharaclub::uri_sharaclub()
 	params.epg_root = "";
 	params.epg_url = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
 	provider_url = L"https://shara.club/";
-	provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
-	provider_vod_url = L"http://list.playtv.pro/kino-full/{:s}-{:s}";
+	provider_api_url = API_URL;
+	provider_vod_url = PLAYLIST_VOD_TEMPLATE;
 	vod_supported = true;
 }
 

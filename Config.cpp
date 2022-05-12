@@ -100,7 +100,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_SHOW_URL,
 	REG_CREDENTIALS,
 	REG_EMBED_INFO,
-	REG_API_DOMAIN,
+	REG_LIST_DOMAIN,
 	REG_EPG_DOMAIN,
 };
 

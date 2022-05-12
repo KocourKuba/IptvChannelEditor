@@ -186,7 +186,7 @@ BOOL CAccessInfoDlg::OnInitDialog()
 
 	if (plugin_type == StreamType::enSharaclub)
 	{
-		m_api_domain = GetConfig().get_string(false, REG_API_DOMAIN);
+		m_api_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
 	}
 
