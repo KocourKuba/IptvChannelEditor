@@ -126,10 +126,7 @@ abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_I
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
                 $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
-                $parent_url = MediaURL::decode($user_input->parent_media_url);
-                return Action_Factory::invalidate_folders(
-                    array(self::get_media_url_str($parent_url->category_id, $parent_url->genre_id)),
-                    Action_Factory::show_title_dialog($message));
+                return Action_Factory::show_title_dialog($message);
         }
 
         return null;
