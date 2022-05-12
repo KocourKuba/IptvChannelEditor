@@ -146,6 +146,7 @@
 #define IDS_STRING_SEASON               253
 #define IDS_STRING_EPISODE              254
 #define IDS_STRING_VOD_DESC             255
+#define IDS_STRING_LOADING              256
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302

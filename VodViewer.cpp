@@ -188,6 +188,8 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 
 void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 {
+	CWaitCursor cur;
+
 	if (!m_vod_categories->empty())
 	{
 		FillCategories();
@@ -196,6 +198,10 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 		FilterList();
 		return;
 	}
+
+	CString str;
+	str.LoadString(IDS_STRING_LOADING);
+	m_wndTotal.SetWindowText(str);
 
 	m_evtStop.ResetEvent();
 	m_evtFinished.ResetEvent();
@@ -278,6 +284,8 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 
 void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 {
+	CWaitCursor cur;
+
 	m_evtStop.ResetEvent();
 	m_evtFinished.ResetEvent();
 	if (!m_vod_categories->empty())
@@ -288,6 +296,10 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 		FilterList();
 		return;
 	}
+
+	CString str;
+	str.LoadString(IDS_STRING_LOADING);
+	m_wndTotal.SetWindowText(str);
 
 	std::wstring url;
 	switch (m_plugin_type)
@@ -745,9 +757,9 @@ void CVodViewer::LoadMovieInfo(int idx)
 	m_wndQuality.EnableWindow(enableQuality);
 
 	SetImageControl(GetIconCache().get_icon(movie->poster_url.get_uri()), m_wndPoster);
-	CStringA desc;
+	CString desc;
 	desc.LoadString(IDS_STRING_VOD_DESC);
-	const auto& text = fmt::format(desc.GetString(),
+	const auto& text = fmt::format(utils::utf16_to_utf8(desc.GetString(), desc.GetLength()),
 								   utils::utf16_to_utf8(movie->title),
 								   utils::utf16_to_utf8(movie->description),
 								   utils::utf16_to_utf8(movie->year),

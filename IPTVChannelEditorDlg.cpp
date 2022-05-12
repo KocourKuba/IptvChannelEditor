@@ -509,7 +509,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	}
 	else if (m_plugin_type == StreamType::enSharaclub)
 	{
-		if (GetConfig().get_string(false, REG_LIST_DOMAIN).empty() && GetConfig().get_string(false, REG_EPG_DOMAIN).empty())
+		if (GetConfig().get_string(false, REG_LIST_DOMAIN).empty() || GetConfig().get_string(false, REG_EPG_DOMAIN).empty())
 		{
 			const auto& provider_api_url = m_plugin->get_provider_api_url();
 			std::vector<BYTE> data;
