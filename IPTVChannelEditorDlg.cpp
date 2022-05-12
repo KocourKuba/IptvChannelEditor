@@ -492,8 +492,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	CString str;
 	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
-	const auto plugin_type = GetConfig().get_plugin_type();
-	if (plugin_type == StreamType::enEdem)
+	m_plugin_type = GetConfig().get_plugin_type();
+	const auto& plugin = StreamContainer::get_instance(m_plugin_type);
+	if (m_plugin_type == StreamType::enEdem)
 	{
 		str.LoadString(IDS_STRING_EDEM_STANDARD);
 		m_wndPlaylist.AddString(str);
@@ -501,6 +502,27 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_wndPlaylist.AddString(str);
 		m_portal = GetConfig().get_string(false, REG_VPORTAL);
 		m_enableDownload = (pl_idx != 2);
+	}
+	else if (m_plugin_type == StreamType::enSharaclub)
+	{
+		if (GetConfig().get_string(false, REG_API_DOMAIN).empty() && GetConfig().get_string(false, REG_EPG_DOMAIN).empty())
+		{
+			const auto& provider_api_url = plugin->get_provider_api_url();
+			std::vector<BYTE> data;
+			if (utils::DownloadFile(provider_api_url, data) && !data.empty())
+			{
+				JSON_ALL_TRY;
+				nlohmann::json parsed_json = nlohmann::json::parse(data);
+				GetConfig().set_string(false, REG_API_DOMAIN, utils::utf8_to_utf16(parsed_json["listdomain"].get<std::string>()));
+				GetConfig().set_string(false, REG_EPG_DOMAIN, utils::utf8_to_utf16(parsed_json["jsonEpgDomain"].get<std::string>()));
+				JSON_ALL_CATCH;
+			}
+		}
+
+		m_portal.clear();
+		str.LoadString(IDS_STRING_PLAYLIST);
+		m_wndPlaylist.AddString(str);
+		m_enableDownload = (pl_idx != 1);
 	}
 	else
 	{
@@ -510,7 +532,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_enableDownload = (pl_idx != 1);
 	}
 
-	const auto& plugin = StreamContainer::get_instance(plugin_type);
 	const auto& streams = plugin->get_supported_stream_type();
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
@@ -621,7 +642,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	std::wstring url;
 	int idx = m_wndPlaylist.GetCurSel();
 	BOOL isFile = m_wndPlaylist.GetItemData(idx) != 0;
-	const auto plugin_type = GetConfig().get_plugin_type();
 
 	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetConfig().GetCurrentPluginName(true)).c_str();
 
@@ -632,18 +652,23 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.device = GetConfig().get_int(false, REG_DEVICE_ID);
 	params.number = idx;
 
-	if (plugin_type == StreamType::enEdem && idx == 2)
+	if (m_plugin_type == StreamType::enEdem && idx == 2)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 		m_plFileName.Empty();
 	}
-	else if (plugin_type != StreamType::enEdem && idx == 1)
+	else if (m_plugin_type != StreamType::enEdem && idx == 1)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 	}
+	else if (m_plugin_type == StreamType::enSharaclub)
+	{
+		params.domain = GetConfig().get_string(false, REG_API_DOMAIN);
+		url = StreamContainer::get_instance(m_plugin_type)->get_playlist_url(params);
+	}
 	else
 	{
-		url = StreamContainer::get_instance(plugin_type)->get_playlist_url(params);
+		url = StreamContainer::get_instance(m_plugin_type)->get_playlist_url(params);
 	}
 
 	if (url.empty())
@@ -712,7 +737,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	cfg.m_parent = this;
 	cfg.m_data = data.release();
 	cfg.m_hStop = m_evtStop;
-	cfg.m_pluginType = plugin_type;
+	cfg.m_pluginType = m_plugin_type;
 	cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
 
 	auto pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
@@ -1368,6 +1393,11 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	auto& epgChannelMap = allEpgMap[epg_id];
 
 	UpdateExtToken(info->stream_uri.get(), m_token);
+	if (m_plugin_type == StreamType::enSharaclub)
+	{
+		auto& url = info->stream_uri->get_epg_parameters(0).epg_url;
+		utils::string_replace_inplace<wchar_t>(url, L"{DOMAIN}", GetConfig().get_string(false, REG_EPG_DOMAIN));
+	}
 
 	// check end time
 	EpgInfo epg_info{};

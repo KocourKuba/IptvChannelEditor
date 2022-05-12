@@ -35,18 +35,18 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto ACCOUNT_TEMPLATE = L"http://list.playtv.pro/api/dune-api5m.php?subscr={:s}-{:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://list.playtv.pro/tv_live-m3u8/{:s}-{:s}";
+static constexpr auto ACCOUNT_TEMPLATE = L"http://{:s}/api/dune-api5m.php?subscr={:s}-{:s}";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://{:s}/tv_live-m3u8/{:s}-{:s}";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 
 uri_sharaclub::uri_sharaclub()
 {
-	epg_params[0].epg_root = "";
-	epg_params[0].epg_url = L"http://api.sramtv.com/get/?type=epg&ch={ID}";
-	epg_params[1].epg_root = "";
-	epg_params[1].epg_url = L"http://api.gazoni1.com/get/?type=epg&ch={ID}";
+	auto& params = epg_params[0];
+	params.epg_root = "";
+	params.epg_url = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
 	provider_url = L"https://shara.club/";
+	provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 }
 
 void uri_sharaclub::parse_uri(const std::wstring& url)
@@ -98,34 +98,33 @@ std::wstring uri_sharaclub::get_templated_stream(StreamSubType subType, const Te
 
 std::wstring uri_sharaclub::get_playlist_url(const PlaylistTemplateParams& params) const
 {
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
+	return fmt::format(PLAYLIST_TEMPLATE, params.domain, params.login, params.password);
 }
 
 bool uri_sharaclub::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
 {
 	std::vector<BYTE> data;
-	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data) || data.empty())
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.domain, params.login, params.password), data) || data.empty())
 	{
 		return false;
 	}
 
-	JSON_ALL_TRY
+	JSON_ALL_TRY;
+	nlohmann::json parsed_json = nlohmann::json::parse(data);
+	if (parsed_json.contains("status"))
 	{
-		nlohmann::json parsed_json = nlohmann::json::parse(data);
-		if (parsed_json.contains("status"))
-		{
-			AccountInfo info{ L"state", utils::utf8_to_utf16(parsed_json.value("status", "")) };
-			info_list.emplace_back(info);
-		}
-
-		nlohmann::json js_data = parsed_json["data"];
-		put_account_info("login", js_data, info_list);
-		put_account_info("money", js_data, info_list);
-		put_account_info("money_need", js_data, info_list);
-		put_account_info("abon", js_data, info_list);
-
-		return true;
+		AccountInfo info{ L"state", utils::utf8_to_utf16(parsed_json.value("status", "")) };
+		info_list.emplace_back(info);
 	}
+
+	nlohmann::json js_data = parsed_json["data"];
+	put_account_info("login", js_data, info_list);
+	put_account_info("money", js_data, info_list);
+	put_account_info("money_need", js_data, info_list);
+	put_account_info("abon", js_data, info_list);
+
+	return true;
+
 	JSON_ALL_CATCH;
 
 	return false;

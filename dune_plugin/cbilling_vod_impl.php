@@ -33,7 +33,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
     {
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
-        $json = HD::DownloadAndStoreJson(self::API_HOST . "/video/$movie_id");
+        $json = HD::DownloadJson(self::API_HOST . "/video/$movie_id");
         if ($json === false) {
             return $movie;
         }
@@ -93,7 +93,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         //hd_print("fetch_vod_categories");
-        $categories = HD::DownloadAndStoreJson(self::API_HOST);
+        $categories = HD::DownloadJson(self::API_HOST);
         if ($categories === false) {
             return;
         }
@@ -111,7 +111,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
             $category = new Starnet_Vod_Category($id, (string)$node->name);
 
             // fetch genres for category
-            $genres = HD::DownloadAndStoreJson(self::API_HOST . "/cat/$id/genres");
+            $genres = HD::DownloadJson(self::API_HOST . "/cat/$id/genres");
             if ($genres === false) {
                 continue;
             }
@@ -140,7 +140,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
     {
         //hd_print("getSearchList");
         $url = self::API_HOST . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
-        $searchRes = HD::DownloadAndStoreJson($url);
+        $searchRes = HD::DownloadJson($url);
         return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
     }
 
@@ -168,7 +168,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
             $url = "/genres/$genre_id?page=$val";
         }
 
-        $categories = HD::DownloadAndStoreJson(self::API_HOST . $url);
+        $categories = HD::DownloadJson(self::API_HOST . $url);
         return $categories === false ? array() : $this->CollectSearchResult($categories);
     }
 

@@ -421,7 +421,7 @@ class EdemPluginConfig extends Default_Config
 
         // hd_print("post_data: " . json_encode($pairs));
 
-        return HD::DownloadAndStoreJson($url, $to_array, $curl_opt);
+        return HD::DownloadJson($url, $to_array, $curl_opt);
     }
 
     /**

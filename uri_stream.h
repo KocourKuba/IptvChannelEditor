@@ -271,6 +271,12 @@ public:
 	const std::wstring& get_provider_url() const { return provider_url; }
 
 	/// <summary>
+	/// returns link to provider api url
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wstring& get_provider_api_url() const { return provider_api_url; }
+
+	/// <summary>
 	/// returns list of servers
 	/// </summary>
 	/// <returns>wstring</returns>
@@ -294,6 +300,12 @@ public:
 	/// <param name="epg_idx">index of epg, primary/secondary</param>
 	/// <returns>map&</returns>
 	const std::map<std::wstring, std::wstring>& get_epg_id_mapper(int epg_idx);
+
+	/// <summary>
+	/// return epg parameters
+	/// </summary>
+	/// <returns>EpgParameters</returns>
+	EpgParameters& get_epg_parameters(int idx) { return epg_params[idx]; };
 
 	/// <summary>
 	/// is stream has secondary epg
@@ -398,6 +410,7 @@ protected:
 	ServerSubstType server_subst_type = ServerSubstType::enNone;
 	std::vector<std::wstring> servers_list;
 	std::wstring provider_url;
+	std::wstring provider_api_url;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring port;

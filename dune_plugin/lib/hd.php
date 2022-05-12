@@ -609,7 +609,7 @@ class HD
      * @param array|null $opts
      * @return false|mixed
      */
-    public static function DownloadAndStoreJson($url, $to_array = false, $opts = null)
+    public static function DownloadJson($url, $to_array = false, $opts = null)
     {
         try {
             $doc = self::http_get_document($url, $opts);

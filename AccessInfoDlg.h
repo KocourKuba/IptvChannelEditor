@@ -68,6 +68,8 @@ public:
 	std::wstring m_domain;
 	std::wstring m_host;
 	std::wstring m_portal;
+	std::wstring m_api_domain;
+	std::wstring m_epg_domain;
 
 protected:
 	CButton m_wndGet;

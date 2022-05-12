@@ -3,8 +3,10 @@ require_once 'default_config.php';
 
 class SharaclubPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://list.playtv.pro/tv_live-m3u8/%s-%s';
-    const PLAYLIST_VOD_URL = 'http://list.playtv.pro/kino-full/%s-%s';
+    const PLAYLIST_TV_URL = 'tv_url';
+    const PLAYLIST_VOD_URL = 'vod_url';
+    const ACCOUNT_URL = 'account_url';
+    const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 
     public function __construct()
     {
@@ -18,10 +20,7 @@ class SharaclubPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
         $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/live/{TOKEN}/{ID}.ts');
 
-        $this->set_epg_param('first','epg_url', 'http://api.sramtv.com/get/?type=epg&ch={CHANNEL}');
         $this->set_epg_param('first','epg_root', '');
-        $this->set_epg_param('second','epg_url', 'http://api.gazoni1.com/get/?type=epg&ch={CHANNEL}');
-        $this->set_epg_param('second','epg_root', '');
     }
 
     /**
@@ -80,9 +79,9 @@ class SharaclubPluginConfig extends Default_Config
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::PLAYLIST_TV_URL, $login, $password);
+                return sprintf($this->get_feature(self::PLAYLIST_TV_URL), $login, $password);
             case 'movie':
-                return sprintf(self::PLAYLIST_VOD_URL, $login, $password);
+                return sprintf($this->get_feature(self::PLAYLIST_VOD_URL), $login, $password);
         }
 
         return '';
@@ -99,6 +98,12 @@ class SharaclubPluginConfig extends Default_Config
     {
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
 
+        $api = HD::DownloadJson(self::API_HOST);
+        $this->set_feature(self::PLAYLIST_TV_URL, "http://$api->listdomain/tv_live-m3u8/%s-%s");
+        $this->set_feature(self::PLAYLIST_VOD_URL, "http://$api->listdomain/kino-full/%s-%s");
+        $this->set_feature(self::ACCOUNT_URL, "http://$api->listdomain/api/dune-api5m.php?subscr=%s-%s");
+        $this->set_epg_param('first','epg_url', "http://$api->jsonEpgDomain/get/?type=epg&ch={CHANNEL}");
+
         // this account has special API to get account info
         $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
         $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
@@ -113,19 +118,10 @@ class SharaclubPluginConfig extends Default_Config
         }
 
         try {
-            $url = sprintf('http://list.playtv.pro/api/dune-api5m.php?subscr=%s-%s',
-                $plugin_cookies->login,
-                $plugin_cookies->password);
+            $url = sprintf($this->get_feature(self::ACCOUNT_URL), $plugin_cookies->login, $plugin_cookies->password);
             $content = HD::http_get_document($url);
         } catch (Exception $ex) {
-            try {
-                $url = sprintf('http://list.shara.tv/api/dune-api5m.php?subscr=%s-%s',
-                    $plugin_cookies->login,
-                    $plugin_cookies->password);
-                $content = HD::http_get_document($url);
-            } catch (Exception $ex) {
-                return false;
-            }
+            return false;
         }
 
         // stripe UTF8 BOM if exists
@@ -281,7 +277,7 @@ class SharaclubPluginConfig extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
-        $categories = HD::DownloadAndStoreJson($url);
+        $categories = HD::DownloadJson($url);
         if ($categories === false) {
             return;
         }

@@ -185,6 +185,12 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		m_wndDeviceID.ShowWindow(SW_SHOW);
 	}
 
+	if (plugin_type == StreamType::enSharaclub)
+	{
+		m_api_domain = GetConfig().get_string(false, REG_API_DOMAIN);
+		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
+	}
+
 	const auto& credentials = GetConfig().get_string(false, REG_CREDENTIALS);
 	auto& all_accounts = utils::string_split(credentials, L';');
 	if (all_accounts.empty())
@@ -331,7 +337,6 @@ void CAccessInfoDlg::OnOK()
 	GetConfig().set_string(false, REG_HOST, m_host);
 	GetConfig().set_string(false, REG_CREDENTIALS, credentials);
 
-	const auto plugin_type = GetConfig().get_plugin_type();
 	if (m_wndDeviceID.GetCount())
 	{
 		GetConfig().set_int(false, REG_DEVICE_ID, m_wndDeviceID.GetCurSel());
@@ -515,6 +520,8 @@ void CAccessInfoDlg::GetAccountInfo()
 	params.device = m_wndDeviceID.GetCurSel();
 	params.login = m_login;
 	params.password = m_password;
+	params.domain = m_api_domain;
+
 	std::wstring pl_url = uri->get_playlist_url(params);
 
 	std::list<AccountInfo> acc_info;

@@ -340,6 +340,7 @@ private:
 	std::wstring m_host;
 	std::wstring m_portal;
 
+	StreamType m_plugin_type = StreamType::enBase;
 	HACCEL m_hAccel = nullptr;
 	CTreeCtrlEx* m_lastTree = nullptr;
 
