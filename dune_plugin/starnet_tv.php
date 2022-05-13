@@ -89,7 +89,7 @@ class Starnet_Tv extends Abstract_Tv
         }
 
         // read embedded access info
-        if (isset($xml->channels_setup, $xml->channels_setup->has_secondary_epg)) {
+        if (isset($xml->channels_setup, $xml->channels_setup->has_secondary_epg) && $this->plugin->config->get_feature(SECONDARY_EPG)) {
             $plugin_cookies->has_secondary_epg = $xml->channels_setup->has_secondary_epg ? 1 : 0;
             hd_print("Channels has secondary EPG: $plugin_cookies->has_secondary_epg");
         }

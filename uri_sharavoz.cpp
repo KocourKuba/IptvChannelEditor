@@ -40,6 +40,7 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?token={T
 
 uri_sharavoz::uri_sharavoz()
 {
+	secondary_epg = true;
 	epg_params[0].epg_url = L"http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
 	epg_params[1].epg_url = L"http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
 	provider_url = L"https://www.sharavoz.tv/";

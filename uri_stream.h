@@ -323,7 +323,7 @@ public:
 	/// is stream has secondary epg
 	/// </summary>
 	/// <returns>bool</returns>
-	bool has_epg2() const { return !epg_params[1].epg_url.empty(); };
+	bool has_epg2() const { return secondary_epg; };
 
 	/// <summary>
 	/// parse epg for channel.
@@ -433,6 +433,7 @@ protected:
 	std::wstring int_id;
 	std::wstring host;
 	bool vod_supported = false;
+	bool secondary_epg = false;
 	mutable std::wstring str_hash;
 	mutable int hash = 0;
 };

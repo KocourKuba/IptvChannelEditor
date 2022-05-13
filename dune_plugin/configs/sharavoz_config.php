@@ -10,6 +10,7 @@ class SharavozPluginConfig extends Default_Config
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(SECONDARY_EPG, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/(?:.*)\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}');
         $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}');

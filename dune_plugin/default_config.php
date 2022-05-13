@@ -20,6 +20,7 @@ const MEDIA_URL_TEMPLATE_MPEG = 'mpeg_url';
 const MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'mpeg_archive_url';
 const EXTINF_VOD_PATTERN = 'vod_pattern';
 const SQUARE_ICONS = 'square_icons';
+const SECONDARY_EPG = 'secondary_epg';
 
 abstract class Default_Config
 {
@@ -110,6 +111,7 @@ abstract class Default_Config
         $this->PLUGIN_DATE = $xml->release_date;
 
         $this->FEATURES[ACCOUNT_TYPE] = 'UNKNOWN';
+        $this->FEATURES[SECONDARY_EPG] = false;
         $this->FEATURES[TV_FAVORITES_SUPPORTED] = true;
         $this->FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = false;
         $this->FEATURES[VOD_FAVORITES_SUPPORTED] = false;

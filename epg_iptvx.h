@@ -33,6 +33,8 @@ public:
 
 	epg_iptvx()
 	{
+		secondary_epg = true;
+
 		auto& params1 = epg_params[0];
 		params1.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
 		params1.epg_root = "ch_programme";

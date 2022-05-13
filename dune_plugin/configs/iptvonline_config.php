@@ -10,6 +10,7 @@ class IptvonlinePluginConfig extends Default_Config
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(SECONDARY_EPG, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/play/(?<id>[^/]+)/(?<token>[^/]+)/video\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8');
         $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-10800.m3u8');
