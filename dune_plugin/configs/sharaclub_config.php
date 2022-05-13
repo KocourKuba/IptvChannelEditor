@@ -101,7 +101,7 @@ class SharaclubPluginConfig extends Default_Config
         $api = HD::DownloadJson(self::API_HOST);
         $this->set_feature(self::PLAYLIST_TV_URL, "http://$api->listdomain/tv_live-m3u8/%s-%s");
         $this->set_feature(self::PLAYLIST_VOD_URL, "http://$api->listdomain/kino-full/%s-%s");
-        $this->set_feature(self::ACCOUNT_URL, "http://$api->listdomain/api/dune-api5m.php?subscr=%s-%s");
+        $this->set_feature(self::ACCOUNT_URL, "http://$api->listdomain/api/players.php?a=subscr_info&u=%s-%s&source=dune_editor");
         $this->set_epg_param('first','epg_url', "http://$api->jsonEpgDomain/get/?type=epg&ch={CHANNEL}");
 
         // this account has special API to get account info
