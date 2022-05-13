@@ -128,8 +128,7 @@ class Starnet_Tv extends Abstract_Tv
                 (string)$xml_tv_category->icon_url));
         }
 
-        $account_data = array();
-        $this->plugin->config->GetAccountInfo($plugin_cookies, $account_data);
+        $this->plugin->config->GetAccountInfo($plugin_cookies);
         $pl_entries = $this->plugin->config->GetPlaylistStreamInfo($plugin_cookies);
 
         // Read channels

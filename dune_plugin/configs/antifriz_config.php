@@ -64,18 +64,18 @@ class AntifrizPluginConfig extends Cbilling_Vod_Impl
     /**
      * Get information from the account
      * @param &$plugin_cookies
-     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool true if information collected and status valid
+     * @return bool | array[] information collected and status valid otherwise - false
      */
-    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        if (!parent::GetAccountInfo($plugin_cookies, $account_data, $force)) {
+        $account_data = parent::GetAccountInfo($plugin_cookies, $force);
+        if ($account_data === false) {
             return false;
         }
 
         $this->account_data = $account_data;
-        return true;
+        return $account_data;
     }
 
     /**
@@ -87,7 +87,7 @@ class AntifrizPluginConfig extends Cbilling_Vod_Impl
     {
         // hd_print("Type: $type");
 
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $password = $this->get_password($plugin_cookies);
 
         if (empty($password)) {
             hd_print("Password not set");

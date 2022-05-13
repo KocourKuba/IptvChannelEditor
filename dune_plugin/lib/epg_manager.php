@@ -145,8 +145,8 @@ class Epg_Manager
         $day_epg = array();
 
         try {
-            $doc = HD::http_get_document($url);
-            if (empty($doc)) {
+            $ch_data = HD::DownloadJson($url);
+            if (empty($ch_data)) {
                 hd_print("Empty document returned.");
                 return $day_epg;
             }
@@ -156,7 +156,6 @@ class Epg_Manager
         }
 
         // stripe UTF8 BOM if exists
-        $ch_data = json_decode(ltrim($doc, "\xEF\xBB\xBF"), true);
         if (!empty($parser_params['epg_root'])) {
             foreach (explode('|', $parser_params['epg_root']) as $level) {
                 $epg_root = $level;

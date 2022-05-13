@@ -66,22 +66,22 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
     /**
      * Get information from the account
      * @param &$plugin_cookies
-     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool true if information collected and status valid
+     * @return bool | array[] information collected and status valid otherwise - false
      */
-    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        if (!parent::GetAccountInfo($plugin_cookies, $account_data, $force)) {
+        $account_data = parent::GetAccountInfo($plugin_cookies, $force);
+        if ($account_data === false) {
             return false;
         }
 
         $this->account_data = $account_data;
 
         // this account has special API to get account info
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $password = $this->get_password($plugin_cookies);
         if ($force === false && !empty($password)) {
-            return true;
+            return $account_data;
         }
 
         if (empty($password)) {
@@ -91,14 +91,10 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
 
         try {
             $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
-            $content = HD::http_get_document(self::API_HOST . '/auth/info', $headers);
+            return HD::DownloadJson(self::API_HOST . '/auth/info', true, $headers);
         } catch (Exception $ex) {
             return false;
         }
-
-        // stripe UTF8 BOM if exists
-        $account_data = json_decode(ltrim($content, "\xEF\xBB\xBF"), true);
-        return true;
     }
 
     /**
@@ -135,7 +131,7 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
     {
         // hd_print("Type: $type");
 
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $password = $this->get_password($plugin_cookies);
 
         if (empty($password)) {
             hd_print("Password not set");
@@ -144,7 +140,7 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
 
         switch ($type) {
             case 'tv1':
-                return sprintf(self::PLAYLIST_TV_URL, $password, isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1');
+                return sprintf(self::PLAYLIST_TV_URL, $password, $this->get_device($plugin_cookies));
             case 'movie':
                 return self::API_HOST . '/genres';
         }
@@ -159,5 +155,14 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
     public function get_device($plugin_cookies)
     {
         return isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';
+    }
+
+    /**
+     * @param $device
+     * @param $plugin_cookies
+     */
+    public function set_device($device, $plugin_cookies)
+    {
+        $plugin_cookies->device_number = $device;
     }
 }

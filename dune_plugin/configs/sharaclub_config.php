@@ -6,13 +6,17 @@ class SharaclubPluginConfig extends Default_Config
     const PLAYLIST_TV_URL = 'tv_url';
     const PLAYLIST_VOD_URL = 'vod_url';
     const ACCOUNT_URL = 'account_url';
+    const SERVERS_URL = 'servers_url';
     const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
+
+    protected $servers;
 
     public function __construct()
     {
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(SERVER_SUPPORTED, true);
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(BALANCE_SUPPORTED, true);
@@ -69,8 +73,8 @@ class SharaclubPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
@@ -90,23 +94,23 @@ class SharaclubPluginConfig extends Default_Config
     /**
      * Get information from the account
      * @param &$plugin_cookies
-     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool true if information collected and status valid
+     * @return bool | array[] information collected and status valid otherwise - false
      */
-    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
 
-        $api = HD::DownloadJson(self::API_HOST);
+        $api = HD::DownloadJson(self::API_HOST, false);
         $this->set_feature(self::PLAYLIST_TV_URL, "http://$api->listdomain/tv_live-m3u8/%s-%s");
         $this->set_feature(self::PLAYLIST_VOD_URL, "http://$api->listdomain/kino-full/%s-%s");
         $this->set_feature(self::ACCOUNT_URL, "http://$api->listdomain/api/players.php?a=subscr_info&u=%s-%s&source=dune_editor");
+        $this->set_feature(self::SERVERS_URL, "http://$api->listdomain/api/players.php?a=ch_cdn&u=%s-%s&source=dune_editor");
         $this->set_epg_param('first','epg_url', "http://$api->jsonEpgDomain/get/?type=epg&ch={CHANNEL}");
 
         // this account has special API to get account info
-        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
 
         if ($force === false && !empty($login) && !empty($password)) {
             return true;
@@ -118,15 +122,15 @@ class SharaclubPluginConfig extends Default_Config
         }
 
         try {
-            $url = sprintf($this->get_feature(self::ACCOUNT_URL), $plugin_cookies->login, $plugin_cookies->password);
-            $content = HD::http_get_document($url);
+            $url = sprintf($this->get_feature(self::ACCOUNT_URL), $login, $password);
+            $account_data = HD::DownloadJson($url);
+            if ($account_data === false || !isset($account_data['status']) || $account_data['status'] !== '1')
+                return false;
         } catch (Exception $ex) {
             return false;
         }
 
-        // stripe UTF8 BOM if exists
-        $account_data = json_decode(ltrim($content, "\xEF\xBB\xBF"), true);
-        return isset($account_data['status']) && $account_data['status'] === 'ok';
+        return $account_data;
     }
 
     /**
@@ -403,5 +407,68 @@ class SharaclubPluginConfig extends Default_Config
         }
 
         $this->movie_counter[$key] += $val;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string[]
+     */
+    public function get_server_opts($plugin_cookies)
+    {
+        $servers = array(
+            'auto',
+            '1 EU',
+            '2 EU',
+            '3 EU',
+            '4 EU',
+            '5 EU',
+            '6 EU',
+        );
+
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
+
+        try {
+            $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
+            $content = HD::DownloadJson($url);
+        } catch (Exception $ex) {
+            return $servers;
+        }
+        if ($content !== false && $content['status'] === '1') {
+            $plugin_cookies->server = (int)$content['current'];
+        }
+
+        return $servers;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return int|null
+     */
+    public function get_server($plugin_cookies)
+    {
+        return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
+    }
+
+    /**
+     * @param $server
+     * @param $plugin_cookies
+     */
+    public function set_server($server, $plugin_cookies)
+    {
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
+
+        try {
+            $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
+            $content = HD::DownloadJson($url . "&num=$server");
+            if ($content !== false) {
+                hd_print("change server: {$content['msg']}");
+                if ($content['status'] === '1') {
+                    $plugin_cookies->server = $server;
+                }
+            }
+        } catch (Exception $ex) {
+        }
     }
 }

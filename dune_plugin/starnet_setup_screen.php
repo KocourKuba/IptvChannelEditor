@@ -223,16 +223,15 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (!empty($device_ops)) {
             hd_print("Change device supported");
             $dev_num = $this->plugin->config->get_device($plugin_cookies);
-            Control_Factory::add_combobox($defs, $this, null, 'devices', 'Номер устройства:', $dev_num, $device_ops, 0);
-            $this->plugin->config->set_device($plugin_cookies);
+            Control_Factory::add_combobox($defs, $this, null, 'device', 'Номер устройства:', $dev_num, $device_ops, 0);
         }
 
         //////////////////////////////////////
         // select server
         if ($this->plugin->config->get_feature(SERVER_SUPPORTED)) {
             hd_print("Change server supported");
-            $server = $this->plugin->config->get_server($plugin_cookies);
             $server_ops = $this->plugin->config->get_server_opts($plugin_cookies);
+            $server = $this->plugin->config->get_server($plugin_cookies);
             hd_print("Selected server $server");
             if (!empty($server_ops)) {
                 Control_Factory::add_combobox($defs, $this, null, 'server', 'Сервер:', $server, $server_ops, 0);
@@ -403,8 +402,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
                     $plugin_cookies->login = $user_input->login;
                     $plugin_cookies->password = $user_input->password;
-                    $account_data = array();
-                    if (!$this->plugin->config->GetAccountInfo($plugin_cookies, $account_data, true)) {
+                    $account_data = $this->plugin->config->GetAccountInfo($plugin_cookies, true);
+                    if ($account_data === false) {
                         $plugin_cookies->login = $old_login;
                         $plugin_cookies->password = $old_password;
                         return Action_Factory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
@@ -420,8 +419,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 case 'pin_apply': // handle token dialog result
                     $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
                     $plugin_cookies->password = $user_input->password;
-                    $account_data = array();
-                    if (!$this->plugin->config->GetAccountInfo($plugin_cookies, $account_data, true)) {
+                    $account_data = $this->plugin->config->GetAccountInfo($plugin_cookies, true);
+                    if ($account_data === false) {
                         $plugin_cookies->password = $old_password;
                         return Action_Factory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
                     }
@@ -480,13 +479,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                         $plugin_cookies->format = $user_input->stream_format;
                     }
 
-                    if (isset($user_input->devices) && $plugin_cookies->device_number !== $user_input->devices) {
-                        $plugin_cookies->device_number = $user_input->devices;
+                    if (isset($user_input->device) && $plugin_cookies->device_number !== $user_input->device) {
+                        $this->plugin->config->set_device($user_input->device, $plugin_cookies);
                     }
 
                     if (isset($user_input->server) && $plugin_cookies->server !== $user_input->server) {
-                        $plugin_cookies->server = $user_input->server;
-                        $this->plugin->config->set_server($plugin_cookies);
+                        $this->plugin->config->set_server($user_input->server, $plugin_cookies);
                     }
 
                     if (isset($user_input->quality) && $plugin_cookies->quality !== $user_input->quality) {

@@ -47,7 +47,7 @@ class LightiptvPluginConfig extends Default_Config
                     return "";
             }
 
-            $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+            $password = $this->get_password($plugin_cookies);
             $ext_params = $channel->get_ext_params();
             $url = str_replace(array('{DOMAIN}', '{TOKEN}', '{PASSWORD}', '{START}'),
                 array($ext_params['subdomain'], $ext_params['token'], $password, $archive_ts),
@@ -68,7 +68,7 @@ class LightiptvPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $password = $this->get_password($plugin_cookies);
         if (empty($password)) {
             hd_print("Password not set");
             return '';

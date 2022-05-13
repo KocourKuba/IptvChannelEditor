@@ -6,7 +6,7 @@ class VidokPluginConfig extends Default_Config
     const PLAYLIST_TV_URL = 'http://vidok.tv/p/%s';
     const API_HOST = 'http://sapi.ott.st/v2.4/json';
 
-    protected static $settings;
+    protected static $settings = array();
 
     public function __construct()
     {
@@ -74,11 +74,10 @@ class VidokPluginConfig extends Default_Config
     /**
      * Get information from the account
      * @param &$plugin_cookies
-     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool true if information collected and status valid
+     * @return bool | array[] information collected and status valid otherwise - false
      */
-    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
 
@@ -87,15 +86,16 @@ class VidokPluginConfig extends Default_Config
         }
 
         if ($force === false) {
-            return true;
+            return array();
         }
 
         try {
             $url = self::API_HOST . "/account?token=$plugin_cookies->token";
             // provider returns token used to download playlist
-            $account_data = json_decode(HD::http_get_document($url), true);
+            $account_data = HD::DownloadJson($url);
             if (isset($account_data['account']['login'])) {
-                return true;
+                self::$settings = $account_data;
+                return $account_data;
             }
         } catch (Exception $ex) {
             hd_print("User token not loaded");
@@ -110,9 +110,8 @@ class VidokPluginConfig extends Default_Config
      */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
-        $account_data = array();
-        $result = $this->GetAccountInfo($plugin_cookies, $account_data, true);
-        if ($result === false || empty($account_data)) {
+        $account_data = $this->GetAccountInfo($plugin_cookies,true);
+        if ($account_data === false) {
             hd_print("Can't get account status");
             $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
             $text = explode('\\n', $text);
@@ -169,10 +168,12 @@ class VidokPluginConfig extends Default_Config
     }
 
     /**
+     * @param $server
      * @param $plugin_cookies
      */
-    public function set_server($plugin_cookies)
+    public function set_server($server, $plugin_cookies)
     {
+        $plugin_cookies->server = $server;
         $this->save_settings($plugin_cookies, 'server');
     }
 
@@ -224,7 +225,7 @@ class VidokPluginConfig extends Default_Config
             try {
                 $url = self::API_HOST . "/settings?token=$plugin_cookies->token";
                 // provider returns token used to download playlist
-                self::$settings = json_decode(HD::http_get_document($url), true);
+                self::$settings = HD::DownloadJson($url);
             } catch (Exception $ex) {
                 hd_print("Settings not loaded");
             }
@@ -269,8 +270,8 @@ class VidokPluginConfig extends Default_Config
             return true;
         }
 
-        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");

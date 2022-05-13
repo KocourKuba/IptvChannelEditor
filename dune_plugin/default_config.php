@@ -171,7 +171,7 @@ abstract class Default_Config
         return null;
     }
 
-    public function set_device($plugin_cookies)
+    public function set_device($device, $plugin_cookies)
     {
     }
 
@@ -215,8 +215,22 @@ abstract class Default_Config
         return null;
     }
 
-    public function set_server($plugin_cookies)
+    /**
+     * @param $server
+     * @param $plugin_cookies
+     */
+    public function set_server($server, $plugin_cookies)
     {
+    }
+
+    public function get_login($plugin_cookies)
+    {
+        return isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
+    }
+
+    public function get_password($plugin_cookies)
+    {
+        return isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
     }
 
     /**
@@ -423,18 +437,16 @@ abstract class Default_Config
     /**
      * Get information from the account
      * @param &$plugin_cookies
-     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool true if information collected and status valid
+     * @return bool | array[] information collected and status valid otherwise - false
      */
-    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
             if (preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $line, $matches)) {
-                $account_data = $matches;
-                return true;
+                return $matches;
             }
         }
 

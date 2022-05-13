@@ -65,8 +65,8 @@ class FilmaxPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
         $server = $this->get_server($plugin_cookies) + 1;
 
         if (empty($login) || empty($password)) {

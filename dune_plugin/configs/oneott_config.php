@@ -79,11 +79,10 @@ class OneottPluginConfig extends Default_Config
     /**
      * Get information from the account
      * @param &$plugin_cookies
-     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool true if information collected and status valid
+     * @return bool | array[] information collected and status valid otherwise - false
      */
-    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
         hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
 
@@ -91,8 +90,8 @@ class OneottPluginConfig extends Default_Config
             return true;
         }
 
-        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
@@ -101,10 +100,10 @@ class OneottPluginConfig extends Default_Config
         try {
             $url = sprintf('http://list.1ott.net/PinApi/%s/%s', $login, $password);
             // provider returns token used to download playlist
-            $account_data = json_decode(HD::http_get_document($url), true);
+            $account_data = HD::DownloadJson($url);
             if (isset($account_data['token'])) {
                 $plugin_cookies->token = $account_data['token'];
-                return true;
+                return $account_data;
             }
         } catch (Exception $ex) {
             hd_print("User token not loaded");

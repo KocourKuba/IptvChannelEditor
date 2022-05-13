@@ -60,8 +60,8 @@ class SharatvPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $login = isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
-        $password = isset($plugin_cookies->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");

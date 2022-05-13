@@ -54,15 +54,14 @@ class EdemPluginConfig extends Default_Config
     /**
      * Get information from the account
      * @param &$plugin_cookies
-     * @param array &$account_data
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool true if information collected and status valid
+     * @return array[] information collected and status valid otherwise - false
      */
-    public function GetAccountInfo(&$plugin_cookies, &$account_data, $force = false)
+    public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
         hd_print("Collect information from account $this->PLUGIN_SHOW_NAME");
 
-        return true;
+        return array();
     }
 
     /**

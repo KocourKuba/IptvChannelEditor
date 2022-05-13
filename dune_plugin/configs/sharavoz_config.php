@@ -63,7 +63,7 @@ class SharavozPluginConfig extends Default_Config
     {
         // hd_print("Type: $type");
 
-        $password = isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        $password = $this->get_password($plugin_cookies);
         if (empty($password)) {
             hd_print("Password not set");
             return '';
