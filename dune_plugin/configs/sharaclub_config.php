@@ -9,7 +9,7 @@ class SharaclubPluginConfig extends Default_Config
     const SERVERS_URL = 'servers_url';
     const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 
-    protected $servers;
+    protected $servers = array();
 
     public function __construct()
     {
@@ -415,30 +415,23 @@ class SharaclubPluginConfig extends Default_Config
      */
     public function get_server_opts($plugin_cookies)
     {
-        $servers = array(
-            'auto',
-            '1 EU',
-            '2 EU',
-            '3 EU',
-            '4 EU',
-            '5 EU',
-            '6 EU',
-        );
+        if (empty($this->servers)) {
+            try {
+                $login = $this->get_login($plugin_cookies);
+                $password = $this->get_password($plugin_cookies);
+                $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
+                $content = HD::DownloadJson($url);
 
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
-
-        try {
-            $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
-            $content = HD::DownloadJson($url);
-        } catch (Exception $ex) {
-            return $servers;
+                if ($content !== false && $content['status'] === '1') {
+                    $plugin_cookies->server = (int)$content['current'];
+                    foreach ($content['allow_nums'] as $server) {
+                        $this->servers[] = $server['name'];
+                    }
+                }
+            } catch (Exception $ex) {
+            }
         }
-        if ($content !== false && $content['status'] === '1') {
-            $plugin_cookies->server = (int)$content['current'];
-        }
-
-        return $servers;
+        return $this->servers;
     }
 
     /**
