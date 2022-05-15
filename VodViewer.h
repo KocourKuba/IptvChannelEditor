@@ -42,9 +42,12 @@ protected:
 	afx_msg void OnCbnSelchangeComboCategories();
 	afx_msg void OnCbnSelchangeComboGenres();
 	afx_msg void OnCbnSelchangeComboYears();
+	afx_msg void OnCbnSelchangeComboEpisode();
+	afx_msg void OnCbnSelchangeComboQuality();
 	afx_msg void OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonRefresh();
 	afx_msg void OnBnClickedButtonSearch();
+	afx_msg void OnBnClickedButtonStop();
 
 private:
 	void LoadPlaylist(bool use_cache = true);
@@ -57,6 +60,7 @@ private:
 	void FilterList();
 	void FetchMovieCbilling(vod_movie& movie) const;
 	void FetchMovieEdem(vod_movie& movie) const;
+	void GetUrl(int idx);
 
 public:
 	StreamType m_plugin_type = StreamType::enBase;
@@ -75,9 +79,12 @@ protected:
 	CListCtrl m_wndMoviesList;
 	CButton m_wndSearch;
 	CEdit m_wndTotal;
+	CEdit m_wndStreamUrl;
 	CStatic m_wndPoster;
 	CProgressCtrl m_wndProgress;
 	CRichEditCtrl m_wndDescription;
+	CButton m_wndStop;
+	CButton m_wndReload;
 
 private:
 	// Event to signal for load playlist thread
@@ -97,8 +104,5 @@ private:
 	// all entries loaded from playlist, filled when parse playlist
 	std::unique_ptr<Playlist> m_playlistEntries;
 	CString m_SearchText;
-public:
-	afx_msg void OnBnClickedButtonStop();
-	CButton m_wndStop;
-	CButton m_wndReload;
+	CString m_streamUrl;
 };

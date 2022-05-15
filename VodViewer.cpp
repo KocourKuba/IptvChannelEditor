@@ -41,6 +41,8 @@ BEGIN_MESSAGE_MAP(CVodViewer, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_REFRESH, &CVodViewer::OnBnClickedButtonRefresh)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CVodViewer::OnBnClickedButtonSearch)
 	ON_BN_CLICKED(IDC_BUTTON_STOP, &CVodViewer::OnBnClickedButtonStop)
+	ON_CBN_SELCHANGE(IDC_COMBO_EPISODE, &CVodViewer::OnCbnSelchangeComboEpisode)
+	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CVodViewer::OnCbnSelchangeComboQuality)
 END_MESSAGE_MAP()
 
 CVodViewer::CVodViewer(vod_category_storage* categories, CWnd* pParent /*=nullptr*/)
@@ -82,6 +84,8 @@ void CVodViewer::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_SearchText);
 	DDX_Control(pDX, IDC_BUTTON_STOP, m_wndStop);
 	DDX_Control(pDX, IDC_BUTTON_REFRESH, m_wndReload);
+	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
+	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 }
 
 // CVodViewer message handlers
@@ -445,6 +449,30 @@ void CVodViewer::OnCbnSelchangeComboYears()
 	FilterList();
 }
 
+void CVodViewer::OnCbnSelchangeComboEpisode()
+{
+	UpdateData(TRUE);
+
+	auto pos = m_wndMoviesList.GetFirstSelectedItemPosition();
+	int idx = -1;
+	if (pos)
+		idx = m_wndMoviesList.GetNextSelectedItem(pos);
+
+	return GetUrl(idx);
+}
+
+void CVodViewer::OnCbnSelchangeComboQuality()
+{
+	UpdateData(TRUE);
+
+	auto pos = m_wndMoviesList.GetFirstSelectedItemPosition();
+	int idx = -1;
+	if (pos)
+		idx = m_wndMoviesList.GetNextSelectedItem(pos);
+
+	return GetUrl(idx);
+}
+
 void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
@@ -530,6 +558,8 @@ void CVodViewer::OnBnClickedButtonSearch()
 	m_wndTotal.SetWindowText(fmt::format(L"{:d}", m_filtered_movies.size()).c_str());
 	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
 	m_wndMoviesList.Invalidate();
+	m_wndMoviesList.SetItemState(-1, 0, LVIS_SELECTED);
+	m_wndMoviesList.SetItemState(0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	LoadMovieInfo(0);
 }
 
@@ -658,6 +688,8 @@ void CVodViewer::LoadMovieInfo(int idx)
 
 	if (idx >= (int)m_filtered_movies.size())
 	{
+		m_streamUrl.Empty();
+		UpdateData(FALSE);
 		return;
 	}
 
@@ -772,6 +804,8 @@ void CVodViewer::LoadMovieInfo(int idx)
 
 	SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 	m_wndDescription.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
+
+	GetUrl(idx);
 
 	UpdateData(FALSE);
 }
@@ -966,6 +1000,8 @@ void CVodViewer::FilterList()
 	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
 	m_wndMoviesList.Invalidate();
 
+	m_wndMoviesList.SetItemState(-1, 0, LVIS_SELECTED);
+	m_wndMoviesList.SetItemState(0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	LoadMovieInfo(0);
 }
 
@@ -1124,4 +1160,51 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 		}
 		JSON_ALL_CATCH;
 	} while (false);
+}
+
+void CVodViewer::GetUrl(int idx)
+{
+	if (idx == CB_ERR || idx >= (int)m_filtered_movies.size()) return;
+
+	const auto& movie = m_filtered_movies[idx];
+
+	std::wstring url = movie->url;
+	switch (m_plugin_type)
+	{
+		case StreamType::enAntifriz:
+		case StreamType::enCbilling:
+		{
+			if (movie->url.empty() && m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
+			{
+				const auto& season = movie->seasons[m_season_idx];
+				url = season.episodes[m_episode_idx].url;
+			}
+			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_domain, url, m_token);
+			break;
+		}
+		case StreamType::enEdem:
+			if (!movie->quality.empty())
+			{
+				url = movie->quality[m_quality_idx].url;
+			}
+			else if (!movie->seasons.empty())
+			{
+				const auto& episodes = movie->seasons.front().episodes;
+				if (!episodes.empty())
+				{
+					const auto& quality = episodes[m_episode_idx].quality;
+					if (quality.empty())
+						url = episodes[m_episode_idx].url;
+					else
+						url = episodes[m_episode_idx].quality[m_quality_idx].url;
+				}
+			}
+			break;
+		default:
+			break;
+	}
+
+	m_streamUrl = url.c_str();
+
+	UpdateData(FALSE);
 }
