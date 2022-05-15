@@ -29,7 +29,6 @@ DEALINGS IN THE SOFTWARE.
 enum class StreamSubType
 {
 	enHLS = 0,
-	enHLS2,
 	enMPEGTS,
 };
 

@@ -243,7 +243,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	cfg.m_parent = this;
 	cfg.m_hStop = m_evtStop;
 	cfg.m_pluginType = m_plugin_type;
-	cfg.m_url = url;
+	cfg.m_url = std::move(url);
 	cfg.m_parser = (int)parserType;
 	cfg.m_use_cache = use_cache;
 
@@ -1098,9 +1098,9 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 						for (const auto& variant_it : variants_data["variants"].items())
 						{
 							const auto& title = utils::utf8_to_utf16(variant_it.key());
-							const auto& url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
+							const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
 
-							episode.quality.set(title, vod_quality({ title, url }));
+							episode.quality.set(title, vod_quality({ title, q_url }));
 						}
 					}
 				}
@@ -1116,9 +1116,9 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 				for (const auto& variant_it : json_data["variants"].items())
 				{
 					const auto& title = utils::utf8_to_utf16(variant_it.key());
-					const auto& url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
+					const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
 
-					movie.quality.set(title, vod_quality({ title, url }));
+					movie.quality.set(title, vod_quality({ title, q_url }));
 				}
 			}
 		}

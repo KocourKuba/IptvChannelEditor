@@ -3704,6 +3704,8 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 		return;
 
 	container->erase(std::unique(container->begin(), container->end()), container->end());
+	if (container->empty())
+		return;
 
 	for (auto& item : *container)
 	{
@@ -3735,7 +3737,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_params.password = m_password;
 	cfg.m_params.host = m_host;
 	cfg.m_params.shift_back = 0;
-	if (!container->empty() && container->front()->get_server_subst_type() == ServerSubstType::enStream)
+	if (cfg.m_container->front()->get_server_subst_type() == ServerSubstType::enStream)
 	{
 		cfg.m_params.server = GetConfig().get_int(false, REG_DEVICE_ID);
 	}
