@@ -103,9 +103,8 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
      */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
-        $account_data = array();
-        $result = $this->GetAccountInfo($plugin_cookies, $account_data, true);
-        if ($result === false || empty($account_data)) {
+        $account_data = $this->GetAccountInfo($plugin_cookies, true);
+        if ($account_data === false) {
             hd_print("Can't get account status");
             $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
             $text = explode('\\n', $text);
