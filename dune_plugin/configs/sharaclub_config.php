@@ -139,9 +139,8 @@ class SharaclubPluginConfig extends Default_Config
      */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
-        $account_data = array();
-        $result = $this->GetAccountInfo($plugin_cookies, $account_data, true);
-        if ($result === false || empty($account_data)) {
+        $account_data = $this->GetAccountInfo($plugin_cookies, true);
+        if ($account_data === false) {
             hd_print("Can't get account status");
             $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
             $text = explode('\\n', $text);
@@ -157,39 +156,14 @@ class SharaclubPluginConfig extends Default_Config
         Control_Factory::add_label($defs, 'Баланс:', $account_data['data']['money'] . ' руб.', -10);
         Control_Factory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.', -10);
         $packages = $account_data['data']['abon'];
-        $str_len = strlen($packages);
-        if ($str_len === 0) {
+        if (count($packages) === 0) {
             Control_Factory::add_label($defs, $title, 'Нет пакетов', 20);
             return;
         }
 
-        if ($str_len < 30) {
-            Control_Factory::add_label($defs, $title, $packages, 20);
-            return;
-        }
-
-        $list = explode(', ', $packages);
-        $emptyTitle = str_repeat(' ', strlen($title));
-        $list_collected = array();
-        $isFirstLabel = true;
-        foreach($list as $item) {
-            $list_collected[] = $item;
-            $collected = implode(', ', $list_collected);
-            if (strlen($collected) < 30) {
-                continue;
-            }
-
-            Control_Factory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected);
-
-            if ($isFirstLabel) {
-                $isFirstLabel = false;
-            }
-
-            $list_collected = array();
-        }
-
-        if (count($list_collected) !== 0) {
-            Control_Factory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
+        foreach ($packages as $package)
+        {
+            Control_Factory::add_label($defs, $title, $package);
         }
 
         Control_Factory::add_vgap($defs, 20);
@@ -293,7 +267,7 @@ class SharaclubPluginConfig extends Default_Config
         $categoriesFound = array();
 
         foreach ($categories as $movie) {
-            $category = (string)$movie->category;
+            $category = (string)$movie['category'];
             if (!in_array($category, $categoriesFound)) {
                 $categoriesFound[] = $category;
                 $cat = new Starnet_Vod_Category($category, $category);
