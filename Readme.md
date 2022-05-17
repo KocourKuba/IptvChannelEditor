@@ -6,6 +6,7 @@
 [Cbilling (Gomelsat)](https://cbilling.live)  
 [iEdem](https://iedem.tv)/[iLook](https://ilook.tv)  
 [Fox TV](http://fox-tv.fun)  
+[Filmax](https://filmax-tv.ru/)  
 [Glanz](http://glanz.tv)  
 [IPTV Online](http://iptv.online)  
 [ITV](https://itv.live)  
