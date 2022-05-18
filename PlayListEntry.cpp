@@ -113,8 +113,8 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		case StreamType::enLightIptv:
 		case StreamType::enFilmax:
 		{
-			stream_uri->set_id(get_epg_id(0));
 			auto epg_id = get_epg_id(0);
+			stream_uri->set_id(epg_id);
 			epg_id.erase(std::remove(epg_id.begin(), epg_id.end(), '/'), epg_id.end());
 			set_epg_id(0, epg_id);
 			break;

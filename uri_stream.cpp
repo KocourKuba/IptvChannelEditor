@@ -33,7 +33,6 @@ void uri_stream::clear()
 
 void uri_stream::parse_uri(const std::wstring& url)
 {
-	clear();
 	uri_base::set_uri(url);
 }
 
