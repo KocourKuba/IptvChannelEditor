@@ -3,7 +3,8 @@ require_once 'default_config.php';
 
 class FilmaxPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://lk.filmax-tv.ru/%s/%s/hls/p%s/playlist.m3u8';
+    const PLAYLIST_TV1_URL = 'http://lk.filmax-tv.ru/%s/%s/hls/p%s/playlist.m3u8';
+    const PLAYLIST_TV2_URL = 'http://epg.esalecrm.net/%s/%s/hls/p%s/playlist.m3u8';
 
     public function __construct()
     {
@@ -74,8 +75,11 @@ class FilmaxPluginConfig extends Default_Config
             return '';
         }
 
-        if ($type === 'tv1') {
-            return sprintf(self::PLAYLIST_TV_URL, $login, $password, $server);
+        switch ($type) {
+            case 'tv1':
+                return sprintf(self::PLAYLIST_TV1_URL, $login, $password, $server);
+            case 'tv2':
+                return sprintf(self::PLAYLIST_TV2_URL, $login, $password, $server);
         }
 
         return '';
