@@ -532,6 +532,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     protected function reload_channels(&$plugin_cookies)
     {
         hd_print("reload_channels");
+        $this->plugin->config->ClearPlaylistCache();
         $this->plugin->tv->unload_channels();
         try {
             $this->plugin->tv->load_channels($plugin_cookies);

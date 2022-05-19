@@ -483,6 +483,19 @@ abstract class Default_Config
     }
 
     /**
+     * Clear downloaded playlist
+     * @return void
+     */
+    public function ClearPlaylistCache()
+    {
+        $tmp_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_tv.m3u8";
+        hd_print("Clear playlist cache: $tmp_file");
+        if (file_exists($tmp_file)) {
+            unlink($tmp_file);
+        }
+    }
+
+    /**
      * @param string $keyword
      * @param $plugin_cookies
      * @return array
