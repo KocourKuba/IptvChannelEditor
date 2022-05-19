@@ -34,15 +34,22 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://cdntv.online/high/{:s}/playlist.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/high/{TOKEN}/{ID}.m3u8";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/high/{TOKEN}/{ID}.mpeg";
+static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
+static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
 
 uri_viplime::uri_viplime()
 {
 	auto& params = epg_params[0];
+	server_subst_type = ServerSubstType::enStream;
 	params.epg_url = L"http://epg.esalecrm.net/viplime/epg/{ID}.json";
-//	params.epg_url = L"http://epg.ott-play.com/viplime/epg/{ID}.json";
 	provider_url = L"http://viplime.fun/";
+	servers_list = {
+		L"high",
+		L"middle",
+		L"low",
+		L"variant",
+		L"hls",
+	};
 }
 
 void uri_viplime::parse_uri(const std::wstring& url)
@@ -91,6 +98,7 @@ std::wstring uri_viplime::get_templated_stream(StreamSubType subType, const Temp
 		append_archive(url);
 	}
 
+	utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, servers_list[params.server]);
 	replace_vars(url, params);
 
 	return url;

@@ -195,7 +195,7 @@ abstract class Default_Config
         return null;
     }
 
-    public function set_quality($plugin_cookies)
+    public function set_quality($quality, $plugin_cookies)
     {
     }
 

@@ -147,6 +147,7 @@
 #define IDS_STRING_EPISODE              254
 #define IDS_STRING_VOD_DESC             255
 #define IDS_STRING_LOADING              256
+#define IDS_STRING_QUALITY_ID           257
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302
@@ -173,6 +174,11 @@
 #define IDS_STRING_TV_TEAM_P7           346
 #define IDS_STRING_TV_TEAM_P8           347
 #define IDS_STRING_TV_TEAM_P9           348
+#define IDS_STRING_VIPLIME_P1           360
+#define IDS_STRING_VIPLIME_P2           361
+#define IDS_STRING_VIPLIME_P3           362
+#define IDS_STRING_VIPLIME_P4           363
+#define IDS_STRING_VIPLIME_P5           364
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003

@@ -4105,6 +4105,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboStreamType()
 {
 	GetConfig().set_int(false, REG_STREAM_TYPE, (int)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()));
+	LoadChannelInfo();
 }
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()

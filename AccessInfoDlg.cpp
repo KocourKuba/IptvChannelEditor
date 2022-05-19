@@ -163,6 +163,11 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		case StreamType::enTVClub:
 			// changed via API
 			break;
+		case StreamType::enVipLime:
+			static_text = IDS_STRING_QUALITY_ID;
+			max_value = IDS_STRING_VIPLIME_P5 - IDS_STRING_VIPLIME_P1;
+			combo_text = IDS_STRING_VIPLIME_P1;
+			break;
 		default:
 			break;
 	}

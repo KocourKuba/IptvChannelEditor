@@ -10,13 +10,12 @@ class ViplimePluginConfig extends Default_Config
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(QUALITY_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8');
         $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg');
 
         $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/viplime/epg/{CHANNEL}.json');
-        //$this->set_epg_param('first','epg_url','http://epg.esalecrm.net/viplime/epg/{CHANNEL}.json');
-        //$this->set_epg_param('first','epg_use_hash', true);
     }
 
     /**
@@ -30,11 +29,22 @@ class ViplimePluginConfig extends Default_Config
     {
         $url = $channel->get_streaming_url();
         if (empty($url)) {
-            $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+            switch ($this->get_format($plugin_cookies)) {
+                case 'hls':
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
+                    break;
+                case 'mpeg':
+                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
+                    break;
+                default:
+                    hd_print("unknown play format: " . $this->get_format($plugin_cookies));
+                    return "";
+            }
+
             $ext_params = $channel->get_ext_params();
             $url = str_replace(
-                array('{DOMAIN}', '{ID}', '{TOKEN}', 'QUALITY'),
-                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token'], $ext_params['quality']),
+                array('{DOMAIN}', '{ID}', '{TOKEN}', '{QUALITY}'),
+                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token'], $this->get_quality_value($plugin_cookies)),
                 $template);
         }
 
@@ -61,5 +71,42 @@ class ViplimePluginConfig extends Default_Config
         }
 
         return sprintf(self::PLAYLIST_TV_URL, $password);
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_quality_opts($plugin_cookies)
+    {
+        return array('Высокое', 'Среднее', 'Низкое', 'Адаптивное', 'Оптимальное');
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return mixed|null
+     */
+    public function get_quality($plugin_cookies)
+    {
+        return isset($plugin_cookies->quality) ? $plugin_cookies->quality : 0;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function get_quality_value($plugin_cookies)
+    {
+        $quality = array('high', 'middle', 'low', 'variant', 'hls');
+        return $quality[$this->get_quality($plugin_cookies)];
+    }
+
+    /**
+     * @param $quality
+     * @param $plugin_cookies
+     */
+    public function set_quality($quality, $plugin_cookies)
+    {
+        $plugin_cookies->quality = $quality;
     }
 }

@@ -490,8 +490,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
 
                     if (isset($user_input->quality) && $plugin_cookies->quality !== $user_input->quality) {
-                        $plugin_cookies->quality = $user_input->quality;
-                        $this->plugin->config->set_quality($plugin_cookies);
+                        $this->plugin->config->set_quality($user_input->quality, $plugin_cookies);
                     }
                     return $this->reload_channels($plugin_cookies);
 

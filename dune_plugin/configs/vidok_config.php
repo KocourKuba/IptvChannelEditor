@@ -208,10 +208,12 @@ class VidokPluginConfig extends Default_Config
     }
 
     /**
+     * @param $quality
      * @param $plugin_cookies
      */
-    public function set_quality($plugin_cookies)
+    public function set_quality($quality, $plugin_cookies)
     {
+        $plugin_cookies->quality = $quality;
         $this->save_settings($plugin_cookies, 'quality');
     }
 
@@ -225,7 +227,8 @@ class VidokPluginConfig extends Default_Config
             try {
                 $url = self::API_HOST . "/settings?token=$plugin_cookies->token";
                 // provider returns token used to download playlist
-                self::$settings = HD::DownloadJson($url, true);
+                self::$settings = HD::DownloadJson($url);
+                hd_print(json_encode(self::$settings));
             } catch (Exception $ex) {
                 hd_print("Settings not loaded");
             }

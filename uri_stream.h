@@ -104,6 +104,7 @@ protected:
 	static constexpr auto REPL_NOW = L"{NOW}";
 	static constexpr auto REPL_DATE = L"{DATE}";
 	static constexpr auto REPL_TIME = L"{TIME}";
+	static constexpr auto REPL_QUALITY = L"{QUALITY}";
 
 public:
 	uri_stream();
