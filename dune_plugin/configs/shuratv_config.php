@@ -115,4 +115,13 @@ class ShuratvPluginConfig extends Default_Config
     {
         return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
     }
+
+    /**
+     * @param $server
+     * @param $plugin_cookies
+     */
+    public function set_server($server, $plugin_cookies)
+    {
+        $plugin_cookies->server = $server;
+    }
 }

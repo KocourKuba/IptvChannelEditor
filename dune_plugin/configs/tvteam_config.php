@@ -127,6 +127,15 @@ class TvteamPluginConfig extends Default_Config
     }
 
     /**
+     * @param $server
+     * @param $plugin_cookies
+     */
+    public function set_server($server, $plugin_cookies)
+    {
+        $plugin_cookies->server = $server;
+    }
+
+    /**
      * @param $plugin_cookies
      * @return string
      */
