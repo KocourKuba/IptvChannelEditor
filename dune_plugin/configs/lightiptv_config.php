@@ -97,10 +97,7 @@ class LightiptvPluginConfig extends Default_Config
 
         if (empty($pl_entries)) {
             hd_print('Empty provider playlist! No channels mapped.');
-            $tmp_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_tv.m3u8";
-            if (file_exists($tmp_file)) {
-                unlink($tmp_file);
-            }
+            $this->ClearPlaylistCache();
         }
 
         return $pl_entries;
