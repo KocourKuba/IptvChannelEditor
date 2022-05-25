@@ -411,6 +411,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// playlist part
 
+	std::vector<PlaylistInfo> m_playlist_info;
 	// all entries loaded from playlist, filled when parse playlist
 	std::unique_ptr<Playlist> m_playlistEntries;
 

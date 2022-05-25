@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "uri_stream.h"
+#include "resource.h"
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\Crc32.h"
@@ -17,6 +18,18 @@ uri_stream::uri_stream()
 	params.epg_end = "time_to";
 
 	epg_params = { params, params };
+
+	PlaylistInfo info;
+
+	CString str;
+	str.LoadString(IDS_STRING_PLAYLIST);
+	info.name = str.GetString();
+	playlists.emplace_back(info);
+
+	str.LoadString(IDS_STRING_CUSTOM_PLAYLIST);
+	info.name = str.GetString();
+	info.is_custom = true;
+	playlists.emplace_back(info);
 }
 
 uri_stream::uri_stream(const uri_stream& src)

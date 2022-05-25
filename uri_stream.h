@@ -45,6 +45,14 @@ struct TemplateParams
 	int server = 0;
 };
 
+struct PlaylistInfo
+{
+	std::wstring name;
+	std::wstring id;
+	bool is_default = false;
+	bool is_custom = false;
+};
+
 struct PlaylistTemplateParams
 {
 	int number = 0;
@@ -284,6 +292,12 @@ public:
 	const std::wstring& get_provider_api_url() const { return provider_api_url; }
 
 	/// <summary>
+	/// returns array of playlists
+	/// </summary>
+	/// <returns>std::vector<std::wstring>&</returns>
+	const std::vector<PlaylistInfo>& get_playlists() const { return playlists; };
+
+	/// <summary>
 	/// returns list of servers
 	/// </summary>
 	/// <returns>wstring</returns>
@@ -422,6 +436,7 @@ protected:
 
 	ServerSubstType server_subst_type = ServerSubstType::enNone;
 	std::vector<std::wstring> servers_list;
+	std::vector<PlaylistInfo> playlists;
 	std::wstring provider_url;
 	std::wstring provider_api_url;
 	std::wstring provider_vod_url;

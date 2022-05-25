@@ -494,18 +494,16 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_wndPlaylist.ResetContent();
 
+	m_portal.clear();
+
 	CString str;
 	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
+
 	if (m_plugin_type == StreamType::enEdem)
 	{
-		str.LoadString(IDS_STRING_EDEM_STANDARD);
-		m_wndPlaylist.AddString(str);
-		str.LoadString(IDS_STRING_EDEM_THEMATIC);
-		m_wndPlaylist.AddString(str);
 		m_portal = GetConfig().get_string(false, REG_VPORTAL);
-		m_enableDownload = (pl_idx != 2);
 	}
 	else if (m_plugin_type == StreamType::enSharaclub)
 	{
@@ -522,18 +520,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 				JSON_ALL_CATCH;
 			}
 		}
-
-		m_portal.clear();
-		str.LoadString(IDS_STRING_PLAYLIST);
-		m_wndPlaylist.AddString(str);
-		m_enableDownload = (pl_idx != 1);
-	}
-	else
-	{
-		m_portal.clear();
-		str.LoadString(IDS_STRING_PLAYLIST);
-		m_wndPlaylist.AddString(str);
-		m_enableDownload = (pl_idx != 1);
 	}
 
 	const auto& streams = m_plugin->get_supported_stream_type();
@@ -552,17 +538,21 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndStreamType.SetCurSel(cur_sel);
 	m_wndStreamType.EnableWindow(streams.size() > 1);
 
-	str.LoadString(IDS_STRING_CUSTOM_PLAYLIST);
-
-	m_wndPlaylist.EnableWindow(TRUE);
-	int idx = m_wndPlaylist.AddString(str);
-	m_wndPlaylist.SetItemData(idx, TRUE);
-
 	// Set selected playlist
+	m_playlist_info = m_plugin->get_playlists();
+	for (const auto& playlist : m_playlist_info)
+	{
+		int idx = m_wndPlaylist.AddString(playlist.name.c_str());
+		m_wndPlaylist.SetItemData(idx, (DWORD_PTR)&playlist);
+	}
+
 	if (pl_idx > m_wndPlaylist.GetCount() || pl_idx < 0)
 		pl_idx = 0;
 
+	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(pl_idx));
+	m_enableDownload = !pl_info->is_custom;
 	m_wndPlaylist.SetCurSel(pl_idx);
+	m_wndPlaylist.EnableWindow(TRUE);
 
 	// Load channel lists
 	const auto& plugin_name = GetConfig().GetCurrentPluginName();
@@ -612,7 +602,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		}
 	}
 
-	idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
+	int idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
 	if (idx < m_wndChannels.GetCount())
 		m_wndChannels.SetCurSel(idx);
 	else
@@ -647,7 +637,9 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_plFileName.Empty();
 	std::wstring url;
 	int idx = m_wndPlaylist.GetCurSel();
-	BOOL isFile = m_wndPlaylist.GetItemData(idx) != 0;
+	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(idx));
+
+	BOOL isFile = pl_info->is_custom;
 
 	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetConfig().GetCurrentPluginName(true)).c_str();
 
@@ -658,12 +650,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.device = GetConfig().get_int(false, REG_DEVICE_ID);
 	params.number = idx;
 
-	if (m_plugin_type == StreamType::enEdem && idx == 2)
+	if (m_plugin_type == StreamType::enEdem && isFile)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 		m_plFileName.Empty();
 	}
-	else if (m_plugin_type != StreamType::enEdem && idx == 1)
+	else if (m_plugin_type != StreamType::enEdem && isFile)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 	}

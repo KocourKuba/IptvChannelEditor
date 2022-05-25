@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_edem.h"
+#include "resource.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -44,6 +45,22 @@ uri_edem::uri_edem()
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"https://ilook.tv/";
 	vod_supported = true;
+
+	PlaylistInfo info;
+
+	CString str;
+	str.LoadString(IDS_STRING_EDEM_STANDARD);
+	info.name = str.GetString();
+	playlists.emplace_back(info);
+
+	str.LoadString(IDS_STRING_EDEM_THEMATIC);
+	info.name = str.GetString();
+	playlists.emplace_back(info);
+
+	str.LoadString(IDS_STRING_CUSTOM_PLAYLIST);
+	info.name = str.GetString();
+	info.is_custom = true;
+	playlists.emplace_back(info);
 }
 
 void uri_edem::parse_uri(const std::wstring& url)
