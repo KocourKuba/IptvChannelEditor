@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_edem.h"
-#include "resource.h"
+#include "IptvChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -48,17 +48,13 @@ uri_edem::uri_edem()
 
 	PlaylistInfo info;
 
-	CString str;
-	str.LoadString(IDS_STRING_EDEM_STANDARD);
-	info.name = str.GetString();
+	info.name = load_string_resource(IDS_STRING_EDEM_STANDARD);
 	playlists.emplace_back(info);
 
-	str.LoadString(IDS_STRING_EDEM_THEMATIC);
-	info.name = str.GetString();
+	info.name = load_string_resource(IDS_STRING_EDEM_THEMATIC);
 	playlists.emplace_back(info);
 
-	str.LoadString(IDS_STRING_CUSTOM_PLAYLIST);
-	info.name = str.GetString();
+	info.name = load_string_resource(IDS_STRING_CUSTOM_PLAYLIST);
 	info.is_custom = true;
 	playlists.emplace_back(info);
 }
@@ -81,7 +77,7 @@ void uri_edem::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_edem::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_edem::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
 
@@ -95,7 +91,7 @@ std::wstring uri_edem::get_templated_stream(StreamSubType subType, const Templat
 	return url;
 }
 
-std::wstring uri_edem::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_edem::get_playlist_url(TemplateParams& params)
 {
 	return params.number == 0 ? PLAYLIST_TEMPLATE1 : PLAYLIST_TEMPLATE2;
 }

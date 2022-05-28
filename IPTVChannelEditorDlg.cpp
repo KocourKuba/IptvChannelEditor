@@ -436,11 +436,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
 	}
 
-	CString res;
-	res.LoadString(IDS_STRING_FILE);
-	m_wndIconSource.AddString(res);
-	res.LoadString(IDS_STRING_URL);
-	m_wndIconSource.AddString(res);
+	m_wndIconSource.AddString(load_string_resource(IDS_STRING_FILE).c_str());
+	m_wndIconSource.AddString(load_string_resource(IDS_STRING_URL).c_str());
 	m_wndIconSource.AddString(_T("it999.ru"));
 
 	// Toggle controls state
@@ -474,9 +471,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 void CIPTVChannelEditorDlg::UpdateWindowTitle()
 {
-	CString text;
-	text.LoadString(GetConfig().IsPortable() ? IDS_STRING_APP_TITLE_PORTABLE : IDS_STRING_APP_TITLE);
-	SetWindowText(text);
+	SetWindowText(load_string_resource(GetConfig().IsPortable() ? IDS_STRING_APP_TITLE_PORTABLE : IDS_STRING_APP_TITLE).c_str());
 }
 
 void CIPTVChannelEditorDlg::SwitchPlugin()
@@ -591,9 +586,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	{
 		if (item == default_tv_name)
 		{
-			CString str;
-			str.LoadString(IDS_STRING_STANDARD);
-			const auto& name = item + str.GetString();
+			const auto& name = item + load_string_resource(IDS_STRING_STANDARD);
 			m_wndChannels.AddString(name.c_str());
 		}
 		else
@@ -643,11 +636,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetConfig().GetCurrentPluginName(true)).c_str();
 
-	PlaylistTemplateParams params;
+	TemplateParams params;
 	params.login = m_login;
 	params.password = m_password;
 	params.token = m_token;
-	params.device = GetConfig().get_int(false, REG_DEVICE_ID);
+	params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+	params.profile = GetConfig().get_int(false, REG_PROFILE_ID);
 	params.number = idx;
 
 	if (m_plugin_type == StreamType::enEdem && isFile)
@@ -1185,9 +1179,11 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 		}
 	}
 
-	CString fmt;
-	fmt.LoadString(IDS_STRING_FMT_CHANNELS);
-	m_wndChInfo.SetWindowText(fmt::format(fmt.GetString(), m_channelsMap.size(), m_changedChannels.size(), m_unknownChannels.size()).c_str());
+	m_wndChInfo.SetWindowText(fmt::format(load_string_resource(IDS_STRING_FMT_CHANNELS),
+										  m_channelsMap.size(),
+										  m_changedChannels.size(),
+										  m_unknownChannels.size()).c_str());
+
 	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty());
 }
 
@@ -2747,14 +2743,19 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 {
-	bool loaded = false;
-	int playlist_idx = m_wndPlaylist.GetCurSel();
-	int dialogType = 0; // none
+	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel()));
 
-	auto account = GetConfig().get_plugin_account_access_type();
-	if (playlist_idx == 2 || (account != AccountAccessType::enOtt && playlist_idx == 1))
+	bool loaded = false;
+	if (pl_info->is_custom)
 	{
-		loaded = LoadCustomPlaylist();
+		CCustomPlaylistDlg dlg;
+		dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
+
+		if (dlg.DoModal() == IDOK)
+		{
+			GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
+			loaded = true;
+		}
 	}
 	else
 	{
@@ -2796,20 +2797,6 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 		m_portal = dlgInfo.m_portal;
 
 		GetConfig().UpdatePluginSettings();
-		return true;
-	}
-
-	return false;
-}
-
-bool CIPTVChannelEditorDlg::LoadCustomPlaylist()
-{
-	CCustomPlaylistDlg dlg;
-	dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
-
-	if (dlg.DoModal() == IDOK)
-	{
-		GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
 		return true;
 	}
 
@@ -2868,16 +2855,18 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	UpdateChannelsTreeColors();
 	CheckForExistingPlaylist();
 
-	CString fmt;
 	if (m_playlistIds.size() != m_playlistMap.size())
 	{
-		fmt.LoadString(IDS_STRING_FMT_PLAYLIST_FLT);
-		m_wndPlInfo.SetWindowText(fmt::format(fmt.GetString(), m_plFileName.GetString(), m_playlistIds.size(), m_playlistMap.size()).c_str());
+		m_wndPlInfo.SetWindowText(fmt::format(load_string_resource(IDS_STRING_FMT_PLAYLIST_FLT),
+											  m_plFileName.GetString(),
+											  m_playlistIds.size(),
+											  m_playlistMap.size()).c_str());
 	}
 	else
 	{
-		fmt.LoadString(IDS_STRING_FMT_CHANNELS);
-		m_wndPlInfo.SetWindowText(fmt::format(_T("{:s}, Channels: {:d}"), m_plFileName.GetString(), m_playlistIds.size()).c_str());
+		m_wndPlInfo.SetWindowText(fmt::format(load_string_resource(IDS_STRING_FMT_CHANNELS_ALL),
+											  m_plFileName.GetString(),
+											  m_playlistIds.size()).c_str());
 	}
 
 	m_bInFillTree = false;
@@ -4605,9 +4594,6 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 {
 	LPNMTVGETINFOTIP pGetInfoTip = reinterpret_cast<LPNMTVGETINFOTIP>(pNMHDR);
 
-	CString custom;
-	custom.LoadString(IDS_STRING_CUSTOM);
-
 	auto entry = GetBaseInfo(&m_wndChannelsTree, pGetInfoTip->hItem);
 	if (entry && entry->is_type(InfoType::enChannel))
 	{
@@ -4625,7 +4611,7 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 
 		m_toolTipText.Format(IDS_STRING_FMT_CHANNELS_TOOLTIP1,
 							 entry->get_title().c_str(),
-							 entry->stream_uri->is_template() ? ch_id.c_str() : custom.GetString(),
+							 entry->stream_uri->is_template() ? ch_id.c_str() : load_string_resource(IDS_STRING_CUSTOM).c_str(),
 							 entry->get_epg_id(0).c_str());
 
 		if (!entry->get_epg_id(1).empty())
@@ -4633,12 +4619,9 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 			m_toolTipText.AppendFormat(IDS_STRING_FMT_CHANNELS_TOOLTIP2, entry->get_epg_id(1).c_str());
 		}
 
-		CString adult;
-		adult.LoadString(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO);
-
 		m_toolTipText.AppendFormat(IDS_STRING_FMT_CHANNELS_TOOLTIP3,
 								   entry->get_archive_days(),
-								   adult.GetString(),
+								   load_string_resource(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO).c_str(),
 								   categories.GetString());
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
@@ -4654,18 +4637,12 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	const auto& entry = FindEntry(pGetInfoTip->hItem);
 	if (entry)
 	{
-
-		CString custom;
-		custom.LoadString(IDS_STRING_CUSTOM);
-
-		CString adult;
-		adult.LoadString(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO);
 		m_toolTipText.Format(IDS_STRING_FMT_PLAYLIST_TOOLTIPS,
 							 entry->get_title().c_str(),
-							 entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : custom.GetString(),
+							 entry->stream_uri->is_template() ? entry->stream_uri->get_id().c_str() : load_string_resource(IDS_STRING_CUSTOM).c_str(),
 							 entry->get_epg_id(0).c_str(),
 							 entry->get_archive_days(),
-							 adult.GetString());
+							 load_string_resource(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO).c_str());
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
 	}

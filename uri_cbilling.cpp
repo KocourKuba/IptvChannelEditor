@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "uri_cbilling.h"
 #include "PlayListEntry.h"
+#include "IPTVChannelEditor.h"
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
@@ -55,6 +56,12 @@ uri_cbilling::uri_cbilling()
 	provider_url = L"https://cbilling.live/";
 	provider_vod_url = L"http://protected-api.com";
 	vod_supported = true;
+
+	for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
+	{
+		ServersInfo info({ load_string_resource(IDS_STRING_CBILLING_TV_P1 + i), fmt::format(L"{:d}", i + 1) });
+		servers_list.emplace_back(info);
+	}
 }
 
 void uri_cbilling::parse_uri(const std::wstring& url)
@@ -75,13 +82,12 @@ void uri_cbilling::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_cbilling::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_cbilling::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
 	if (is_template())
 	{
-		auto& new_params = const_cast<TemplateParams&>(params);
 		std::wstring no_port(params.domain);
 		if (auto pos = no_port.find(':'); pos != std::wstring::npos)
 		{
@@ -95,7 +101,7 @@ std::wstring uri_cbilling::get_templated_stream(StreamSubType subType, const Tem
 				break;
 			case StreamSubType::enMPEGTS:
 				url = params.shift_back ? URI_TEMPLATE_ARCHIVE_MPEG: URI_TEMPLATE_MPEG;
-				new_params.domain = std::move(no_port);
+				params.domain = std::move(no_port);
 				break;
 		}
 	}
@@ -117,7 +123,7 @@ std::wstring uri_cbilling::get_access_info_header() const
 	return ACCOUNT_HEADER_TEMPLATE;
 }
 
-bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
+bool uri_cbilling::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	auto& header = fmt::format(ACCOUNT_HEADER_TEMPLATE, params.password);
 	std::vector<BYTE> data;
@@ -128,23 +134,26 @@ bool uri_cbilling::parse_access_info(const PlaylistTemplateParams& params, std::
 
 	JSON_ALL_TRY
 	{
-		nlohmann::json parsed_json = nlohmann::json::parse(data);
-		nlohmann::json js_data = parsed_json["data"];
+		const auto& parsed_json = nlohmann::json::parse(data);
+		if (parsed_json.contains("data"))
+		{
+			const auto& js_data = parsed_json["data"];
 
-		put_account_info("package", js_data, info_list);
-		put_account_info("end_date", js_data, info_list);
-		put_account_info("devices_num", js_data, info_list);
-		put_account_info("server", js_data, info_list);
-		put_account_info("vod", js_data, info_list);
+			put_account_info("package", js_data, info_list);
+			put_account_info("end_date", js_data, info_list);
+			put_account_info("devices_num", js_data, info_list);
+			put_account_info("server", js_data, info_list);
+			put_account_info("vod", js_data, info_list);
 
-		return true;
+			return true;
+		}
 	}
 	JSON_ALL_CATCH;
 
 	return false;
 }
 
-std::wstring uri_cbilling::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_cbilling::get_playlist_url(TemplateParams& params)
 {
-	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.device + 1);
+	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.server + 1);
 }

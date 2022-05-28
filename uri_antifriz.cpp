@@ -82,7 +82,7 @@ void uri_antifriz::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_antifriz::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_antifriz::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -123,7 +123,7 @@ std::wstring uri_antifriz::get_templated_stream(StreamSubType subType, const Tem
 	return url;
 }
 
-std::wstring uri_antifriz::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_antifriz::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

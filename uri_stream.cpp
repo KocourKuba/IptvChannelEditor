@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "uri_stream.h"
-#include "resource.h"
+#include "IPTVChannelEditor.h"
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\Crc32.h"
@@ -22,12 +22,10 @@ uri_stream::uri_stream()
 	PlaylistInfo info;
 
 	CString str;
-	str.LoadString(IDS_STRING_PLAYLIST);
-	info.name = str.GetString();
+	info.name = load_string_resource(IDS_STRING_PLAYLIST);
 	playlists.emplace_back(info);
 
-	str.LoadString(IDS_STRING_CUSTOM_PLAYLIST);
-	info.name = str.GetString();
+	info.name = load_string_resource(IDS_STRING_CUSTOM_PLAYLIST);
 	info.is_custom = true;
 	playlists.emplace_back(info);
 }
@@ -105,10 +103,11 @@ const std::map<std::wstring, std::wstring>& uri_stream::get_epg_id_mapper(int ep
 bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time)
 {
 	std::vector<BYTE> data;
-	if (!utils::DownloadFile(compile_epg_url(epg_idx, epg_id, for_time), data, true) || data.empty())
+	const auto& url = compile_epg_url(epg_idx, epg_id, for_time);
+	if (!utils::DownloadFile(url, data, true) || data.empty())
 		return false;
 
-	JSON_ALL_TRY
+	JSON_ALL_TRY;
 	{
 		nlohmann::json parsed_json = nlohmann::json::parse(data);
 
@@ -231,7 +230,7 @@ nlohmann::json uri_stream::get_epg_root(int epg_idx, const nlohmann::json& epg_d
 	return root.empty() ? epg_data : epg_data[root];
 }
 
-void uri_stream::put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params) const
+void uri_stream::put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const
 {
 	JSON_ALL_TRY
 	{

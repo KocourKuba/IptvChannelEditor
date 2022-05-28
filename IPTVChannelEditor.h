@@ -90,4 +90,11 @@ void SaveWindowPos(HWND hWnd, LPCTSTR name);
 void RestoreWindowPos(HWND hWnd, LPCTSTR name);
 int RequestToUpdateServer(const std::wstring& command);
 
+std::string load_string_resourceA(unsigned int id);
+std::wstring load_string_resourceW(unsigned int id);
+#ifdef _UNICODE
+#define load_string_resource load_string_resourceW
+#else
+#define load_string_resource load_string_resourceA
+#endif // _UNICODE
 extern CIPTVChannelEditorApp theApp;

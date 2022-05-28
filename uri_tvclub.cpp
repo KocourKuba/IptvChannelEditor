@@ -37,16 +37,18 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto ACCOUNT_TEMPLATE = L"http://api.iptv.so/0.9/json/account?token={:s}";
+static constexpr auto API_COMMAND_GET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}";
+static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}&{:s}={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://celn.shott.top/p/{:s}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
+static constexpr auto EPG_TEMPLATE_URL = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
 
 uri_tvclub::uri_tvclub()
 {
 	streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
 	auto& params = epg_params[0];
-	params.epg_url = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
+	params.epg_url = EPG_TEMPLATE_URL;
 	params.epg_name = "text";
 	params.epg_desc = "description";
 	params.epg_start = "start";
@@ -71,7 +73,7 @@ void uri_tvclub::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_tvclub::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_tvclub::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -87,7 +89,7 @@ std::wstring uri_tvclub::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_tvclub::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_tvclub::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));
 }
@@ -99,40 +101,52 @@ std::wstring uri_tvclub::get_api_token(const std::wstring& login, const std::wst
 	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }
 
-bool uri_tvclub::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
+bool uri_tvclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	std::vector<BYTE> data;
-	const auto& url = fmt::format(ACCOUNT_TEMPLATE, get_api_token(params.login, params.password));
+	const auto& url = fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(params.login, params.password));
 	if (!utils::DownloadFile(url, data) || data.empty())
 	{
 		return false;
 	}
 
-	JSON_ALL_TRY
+	JSON_ALL_TRY;
 	{
-		nlohmann::json parsed_json = nlohmann::json::parse(data);
-
-		nlohmann::json js_info = parsed_json["account"]["info"];
-		put_account_info("login", js_info, info_list);
-		put_account_info("balance", js_info, info_list);
-
-		nlohmann::json js_settings = parsed_json["account"]["settings"];
-		put_account_info("server_name", js_settings, info_list);
-		put_account_info("tz_name", js_settings, info_list);
-		put_account_info("tz_gmt", js_settings, info_list);
-
-		for (auto& item : parsed_json["account"]["services"].items())
+		const auto& parsed_json = nlohmann::json::parse(data);
+		if (parsed_json.contains("account"))
 		{
-			nlohmann::json val = item.value();
-			COleDateTime dt((time_t)val.value("expire", 0));
-			const auto& value = fmt::format(L"expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
-			const auto& name = utils::utf8_to_utf16(fmt::format("{:s} {:s}", val.value("name", ""), val.value("type", "")));
+			const auto& js_account = parsed_json["account"];
+			if (js_account.contains("info"))
+			{
+				const auto& js_info = js_account["info"];
+				put_account_info("login", js_info, info_list);
+				put_account_info("balance", js_info, info_list);
+			}
 
-			AccountInfo info{ name, value };
-			info_list.emplace_back(info);
+			if (js_account.contains("settings"))
+			{
+				const auto& js_settings = js_account["settings"];
+				put_account_info("server_name", js_settings, info_list);
+				put_account_info("tz_name", js_settings, info_list);
+				put_account_info("tz_gmt", js_settings, info_list);
+			}
+
+			if (js_account.contains("services"))
+			{
+				for (auto& item : js_account["services"].items())
+				{
+					const auto& val = item.value();
+					COleDateTime dt((time_t)val.value("expire", 0));
+					const auto& value = fmt::format(L"expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
+					const auto& name = utils::utf8_to_utf16(fmt::format("{:s} {:s}", val.value("name", ""), val.value("type", "")));
+
+					AccountInfo info{ name, value };
+					info_list.emplace_back(info);
+				}
+			}
+
+			return true;
 		}
-
-		return true;
 	}
 	JSON_ALL_CATCH;
 
@@ -154,4 +168,63 @@ std::wstring& uri_tvclub::append_archive(std::wstring& url) const
 	url += L"utc={START}";
 
 	return url;
+}
+
+const std::vector<ServersInfo>& uri_tvclub::get_servers_list(TemplateParams& params)
+{
+	if (servers_list.empty())
+	{
+		const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(params.login, params.password));
+		std::vector<BYTE> data;
+		if (utils::DownloadFile(url, data) || data.empty())
+		{
+			JSON_ALL_TRY;
+			{
+				const auto& parsed_json = nlohmann::json::parse(data);
+				if (parsed_json.contains("settings"))
+				{
+					const auto& settings = parsed_json["settings"];
+					const auto& current = utils::get_json_string("id", settings["current"]["server"]);
+
+					for (const auto& item : settings["lists"]["servers"].items())
+					{
+						const auto& server = item.value();
+						ServersInfo info({ utils::get_json_string("name", server), utils::get_json_string("id", server) });
+						if (info.id == current)
+							params.server = servers_list.size();
+
+						servers_list.emplace_back(info);
+					}
+				}
+			}
+			JSON_ALL_CATCH;
+		}
+	}
+	return servers_list;
+}
+
+bool uri_tvclub::set_server(TemplateParams& params)
+{
+	const auto& servers = get_servers_list(params);
+	if (!servers.empty())
+	{
+		const auto& url = fmt::format(API_COMMAND_SET_URL,
+									  L"set",
+									  get_api_token(params.login, params.password),
+									  L"server",
+									  servers[params.server].id);
+
+		std::vector<BYTE> data;
+		if (utils::DownloadFile(url, data) || data.empty())
+		{
+			JSON_ALL_TRY;
+			{
+				const auto& parsed_json = nlohmann::json::parse(data);
+				return utils::get_json_int("updated", parsed_json["settings"]) == 1;
+			}
+			JSON_ALL_CATCH;
+		}
+	}
+
+	return false;
 }

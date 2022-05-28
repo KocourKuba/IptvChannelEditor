@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_viplime.h"
+#include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,12 +44,13 @@ uri_viplime::uri_viplime()
 	server_subst_type = ServerSubstType::enStream;
 	params.epg_url = L"http://epg.esalecrm.net/viplime/epg/{ID}.json";
 	provider_url = L"http://viplime.fun/";
+
 	servers_list = {
-		L"high",
-		L"middle",
-		L"low",
-		L"variant",
-		L"hls",
+		{ load_string_resource(IDS_STRING_VIPLIME_P1), L"high"  },
+		{ load_string_resource(IDS_STRING_VIPLIME_P2), L"middle"  },
+		{ load_string_resource(IDS_STRING_VIPLIME_P3), L"low"  },
+		{ load_string_resource(IDS_STRING_VIPLIME_P4), L"variant"  },
+		{ load_string_resource(IDS_STRING_VIPLIME_P5), L"hls"  },
 	};
 }
 
@@ -70,7 +72,7 @@ void uri_viplime::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_viplime::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_viplime::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -98,13 +100,13 @@ std::wstring uri_viplime::get_templated_stream(StreamSubType subType, const Temp
 		append_archive(url);
 	}
 
-	utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, servers_list[params.server]);
+	utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, servers_list[params.server].id);
 	replace_vars(url, params);
 
 	return url;
 }
 
-std::wstring uri_viplime::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_viplime::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

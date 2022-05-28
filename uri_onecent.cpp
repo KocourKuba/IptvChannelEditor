@@ -63,7 +63,7 @@ void uri_onecent::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_onecent::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_onecent::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url = get_uri();
 
@@ -93,7 +93,7 @@ std::wstring uri_onecent::get_templated_stream(StreamSubType subType, const Temp
 	return url;
 }
 
-std::wstring uri_onecent::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_onecent::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

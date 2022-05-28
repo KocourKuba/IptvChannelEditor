@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_shuratv.h"
+#include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -48,10 +49,12 @@ uri_shuratv::uri_shuratv()
 	params.epg_end = "duration";
 	params.epg_use_duration = true;
 	provider_url = L"http://shura.tv/b/";
-	servers_list = {
-		L"1",	// Server 1
-		L"2",	// Server 2
-	};
+
+	for (int i = 0; i <= IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1; i++)
+	{
+		ServersInfo info({ load_string_resource(IDS_STRING_SHURA_TV_P1 + i), fmt::format(L"{:d}", i + 1) });
+		servers_list.emplace_back(info);
+	}
 }
 
 void uri_shuratv::parse_uri(const std::wstring& url)
@@ -71,7 +74,7 @@ void uri_shuratv::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_shuratv::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_shuratv::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	auto& url = get_uri();
 
@@ -100,13 +103,13 @@ std::wstring uri_shuratv::get_templated_stream(StreamSubType subType, const Temp
 	return url;
 }
 
-std::wstring uri_shuratv::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_shuratv::get_playlist_url(TemplateParams& params)
 {
-	int device = params.device;
-	if (params.device >= (int)servers_list.size())
-		device = (int)servers_list.size() - 1;
+	int server = params.server;
+	if (params.server >= (int)servers_list.size())
+		server = (int)servers_list.size() - 1;
 
-	return fmt::format(PLAYLIST_TEMPLATE, params.password, servers_list[device]);
+	return fmt::format(PLAYLIST_TEMPLATE, params.password, servers_list[server].id);
 }
 
 std::wstring& uri_shuratv::append_archive(std::wstring& url) const

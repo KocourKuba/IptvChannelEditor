@@ -97,11 +97,8 @@ BOOL CIconsListDlg::OnInitDialog()
 
 	// Set up list control
 	// Nothing special here.  Just some columns for the report view.
-	CString str;
-	str.LoadString(IDS_STRING_COL_ICON);
-	m_wndIconsList.InsertColumn(0, str, LVCFMT_LEFT, 170);
-	str.LoadString(IDS_STRING_COL_CHANNEL_NAME);
-	m_wndIconsList.InsertColumn(1, str, LVCFMT_LEFT, 200);
+	m_wndIconsList.InsertColumn(0, load_string_resource(IDS_STRING_COL_ICON).c_str(), LVCFMT_LEFT, 170);
+	m_wndIconsList.InsertColumn(1, load_string_resource(IDS_STRING_COL_CHANNEL_NAME).c_str(), LVCFMT_LEFT, 200);
 	m_wndIconsList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP /*| LVS_EX_FLATSB*/);
 
 	// Short (OTTPplay.es) format

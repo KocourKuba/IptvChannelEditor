@@ -62,7 +62,7 @@ void uri_fox::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_fox::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_fox::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
 
@@ -76,7 +76,7 @@ std::wstring uri_fox::get_templated_stream(StreamSubType subType, const Template
 	return url;
 }
 
-std::wstring uri_fox::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_fox::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }

@@ -71,13 +71,9 @@ BOOL CEpgListDlg::OnInitDialog()
 
 	// Set up list control
 	// Nothing special here.  Just some columns for the report view.
-	CString str;
-	str.LoadString(IDS_STRING_COL_START);
-	m_wndEpgList.InsertColumn(0, str, LVCFMT_LEFT, 120);
-	str.LoadString(IDS_STRING_COL_END);
-	m_wndEpgList.InsertColumn(1, str, LVCFMT_LEFT, 120);
-	str.LoadString(IDS_STRING_COL_TITLE);
-	m_wndEpgList.InsertColumn(2, str, LVCFMT_LEFT, 500);
+	m_wndEpgList.InsertColumn(0, load_string_resource(IDS_STRING_COL_START).c_str(), LVCFMT_LEFT, 120);
+	m_wndEpgList.InsertColumn(1, load_string_resource(IDS_STRING_COL_END).c_str(), LVCFMT_LEFT, 120);
+	m_wndEpgList.InsertColumn(2, load_string_resource(IDS_STRING_COL_TITLE).c_str(), LVCFMT_LEFT, 500);
 
 	m_day.SetTime(COleDateTime::GetCurrentTime());
 

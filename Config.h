@@ -126,6 +126,7 @@ constexpr auto REG_PLAYLIST_TYPE       = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE         = _T("StreamType");
 constexpr auto REG_CUSTOM_PLAYLIST     = _T("CustomPlaylist");
 constexpr auto REG_DEVICE_ID           = _T("DeviceID");
+constexpr auto REG_PROFILE_ID          = _T("ProfileID");
 constexpr auto REG_CREDENTIALS         = _T("Credentials");
 constexpr auto REG_EMBED_INFO          = _T("EmbedInfo");
 constexpr auto REG_LIST_DOMAIN         = _T("ListDomain");

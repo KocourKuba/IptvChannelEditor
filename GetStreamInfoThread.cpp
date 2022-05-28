@@ -77,7 +77,7 @@ BOOL CGetStreamInfoThread::InitInstance()
 	return FALSE;
 }
 
-void CGetStreamInfoThread::GetChannelStreamInfo(const ThreadConfig& config, std::atomic<int>& count, int index)
+void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomic<int>& count, int index)
 {
 	TRACE("GetChannelStreamInfo: thread %d start\n", index);
 	auto uri = config.m_container->at(index);

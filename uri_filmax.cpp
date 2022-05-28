@@ -26,7 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_filmax.h"
-#include "Resource.h"
+#include "IPTVChannelEditor.h"
+
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
@@ -36,7 +37,7 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://lk.filmax-tv.ru/{:s}/{:s}/hls/p{:d}/playlist.m3u8";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://lk.filmax-tv.ru/{:s}/{:s}/hls/p{:s}/playlist.m3u8";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{INT_ID}/index.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_ARCHIVE_HLS = L"http://{DOMAIN}/{INT_ID}/archive-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}";
@@ -49,6 +50,12 @@ uri_filmax::uri_filmax()
 	auto& params = epg_params[0];
 	params.epg_url = L"http://epg.esalecrm.net/filmax/epg/{ID}.json";
 	provider_url = L"https://filmax-tv.ru/";
+
+	for (int i = 0; i <= IDS_STRING_FILMAX_P12 - IDS_STRING_FILMAX_P1; i++)
+	{
+		ServersInfo info({ load_string_resource(IDS_STRING_FILMAX_P1 + i), fmt::format(L"{:d}", i + 1) });
+		servers_list.emplace_back(info);
+	}
 }
 
 void uri_filmax::parse_uri(const std::wstring& url)
@@ -70,7 +77,7 @@ void uri_filmax::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_filmax::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_filmax::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	auto& url = get_uri();
 
@@ -95,7 +102,7 @@ std::wstring uri_filmax::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_filmax::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_filmax::get_playlist_url(TemplateParams& params)
 {
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password, params.device + 1);
+	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password, servers_list[params.server].id);
 }

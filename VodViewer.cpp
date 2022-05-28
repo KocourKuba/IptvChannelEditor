@@ -102,9 +102,7 @@ BOOL CVodViewer::OnInitDialog()
 	m_wndMoviesList.GetClientRect(&rect);
 	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
 
-	CString str;
-	str.LoadString(IDS_STRING_COL_INFO);
-	m_wndMoviesList.InsertColumn(0, str, LVCFMT_LEFT, vWidth, 0);
+	m_wndMoviesList.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, vWidth, 0);
 
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
@@ -203,10 +201,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 		return;
 	}
 
-	CString str;
-	str.LoadString(IDS_STRING_LOADING);
-	m_wndTotal.SetWindowText(str);
-
+	m_wndTotal.SetWindowText(load_string_resource(IDS_STRING_LOADING).c_str());
 	m_evtStop.ResetEvent();
 	m_evtFinished.ResetEvent();
 
@@ -301,9 +296,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 		return;
 	}
 
-	CString str;
-	str.LoadString(IDS_STRING_LOADING);
-	m_wndTotal.SetWindowText(str);
+	m_wndTotal.SetWindowText(load_string_resource(IDS_STRING_LOADING).c_str());
 
 	std::wstring url;
 	switch (m_plugin_type)
@@ -634,9 +627,7 @@ void CVodViewer::FillGenres()
 
 	if (m_wndGenres.GetCount())
 	{
-		CString str;
-		str.LoadString(m_plugin_type == StreamType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL);
-		m_wndGenres.InsertString(0, str);
+		m_wndGenres.InsertString(0, load_string_resource(m_plugin_type == StreamType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
 		m_wndGenres.EnableWindow(TRUE);
 		m_genre_idx = 0;
 	}
@@ -662,9 +653,7 @@ void CVodViewer::FillYears()
 
 	if (m_wndYears.GetCount())
 	{
-		CString str;
-		str.LoadString(m_plugin_type == StreamType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL);
-		m_wndYears.InsertString(0, str);
+		m_wndYears.InsertString(0, load_string_resource(m_plugin_type == StreamType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
 		m_wndYears.EnableWindow(TRUE);
 		m_year_idx = 0;
 	}
@@ -727,20 +716,19 @@ void CVodViewer::LoadMovieInfo(int idx)
 	}
 	else
 	{
-		CString str;
-		str.LoadString(IDS_STRING_SEASON);
 
 		m_season_idx = 0;
 
 		if (m_plugin_type != StreamType::enEdem)
 		{
+			const auto& str = load_string_resource(IDS_STRING_SEASON);
 			enableSeason = TRUE;
 			for (const auto& season_it : movie->seasons.vec())
 			{
 				const auto& season = season_it.second;
 				if (season.title.empty())
 				{
-					m_wndSeason.AddString(fmt::format(L"{:s} {:s}", str.GetString(), season.season_id).c_str());
+					m_wndSeason.AddString(fmt::format(L"{:s} {:s}", str, season.season_id).c_str());
 				}
 				else
 				{
@@ -752,7 +740,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 		const auto& episodes = movie->seasons.front().episodes;
 		if (!episodes.empty())
 		{
-			str.LoadString(IDS_STRING_EPISODE);
+			const auto& str = load_string_resource(IDS_STRING_EPISODE);
 
 			enableEpisode = TRUE;
 			m_episode_idx = 0;
@@ -762,7 +750,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 				const auto& episode = episode_it.second;
 				if (episode.title.empty())
 				{
-					m_wndEpisode.AddString(fmt::format(L"{:s} {:s}", str.GetString(), episode.episode_id).c_str());
+					m_wndEpisode.AddString(fmt::format(L"{:s} {:s}", str, episode.episode_id).c_str());
 				}
 				else
 				{
@@ -789,9 +777,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 	m_wndQuality.EnableWindow(enableQuality);
 
 	SetImageControl(GetIconCache().get_icon(movie->poster_url.get_uri()), m_wndPoster);
-	CString desc;
-	desc.LoadString(IDS_STRING_VOD_DESC);
-	const auto& text = fmt::format(utils::utf16_to_utf8(desc.GetString(), desc.GetLength()),
+	const auto& text = fmt::format(load_string_resourceA(IDS_STRING_VOD_DESC),
 								   utils::utf16_to_utf8(movie->title),
 								   utils::utf16_to_utf8(movie->description),
 								   utils::utf16_to_utf8(movie->year),

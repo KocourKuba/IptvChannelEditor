@@ -42,7 +42,9 @@ struct TemplateParams
 	std::wstring password;
 	std::wstring host;
 	int shift_back = 0;
+	int number = 0;
 	int server = 0;
+	int profile = 0;
 };
 
 struct PlaylistInfo
@@ -53,14 +55,16 @@ struct PlaylistInfo
 	bool is_custom = false;
 };
 
-struct PlaylistTemplateParams
+struct ServersInfo
 {
-	int number = 0;
-	int device = 1;
-	std::wstring domain;
-	std::wstring token;
-	std::wstring login;
-	std::wstring password;
+	std::wstring name;
+	std::wstring id;
+};
+
+struct ProfilesInfo
+{
+	std::wstring name;
+	std::wstring id;
 };
 
 struct AccountInfo
@@ -294,14 +298,13 @@ public:
 	/// <summary>
 	/// returns array of playlists
 	/// </summary>
-	/// <returns>std::vector<std::wstring>&</returns>
+	/// <returns>vector<PlaylistInfo>&</returns>
 	const std::vector<PlaylistInfo>& get_playlists() const { return playlists; };
 
 	/// <summary>
-	/// returns list of servers
+	/// clear profile list
 	/// </summary>
-	/// <returns>wstring</returns>
-	const std::vector<std::wstring>& get_servers_list () const { return servers_list; }
+	void clear_profiles_list() { profiles_list.clear(); }
 
 	/// <summary>
 	/// returns server substitution type
@@ -374,7 +377,7 @@ public:
 	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	virtual std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const { return L""; };
+	virtual std::wstring get_templated_stream(const StreamSubType subType, TemplateParams& params) const { return L""; };
 
 	/// <summary>
 	/// get additional get headers
@@ -388,14 +391,14 @@ public:
 	/// <param name="params">parameters used to download access info</param>
 	/// <param name="info_list">parsed parameters list</param>
 	/// <returns>bool</returns>
-	virtual bool parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const { return false; }
+	virtual bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) { return false; }
 
 	/// <summary>
 	/// get url to obtain account playlist
 	/// </summary>
 	/// <param name="params">parameters used to download access info</param>
 	/// <returns>wstring</returns>
-	virtual std::wstring get_playlist_url(const PlaylistTemplateParams& params) const { ASSERT(false); return L""; };
+	virtual std::wstring get_playlist_url(TemplateParams& params) { ASSERT(false); return L""; };
 
 	/// <summary>
 	/// returns token from account if exist
@@ -420,11 +423,37 @@ public:
 	/// <returns>wstring&</returns>
 	virtual std::wstring& append_archive(std::wstring& url) const;
 
+	/// <summary>
+	/// returns list of servers
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	/// <returns>vector<ServersInfo></returns>
+	virtual const std::vector<ServersInfo>& get_servers_list(TemplateParams& /*params*/) { return servers_list; }
+
+	/// <summary>
+	/// returns list of profiles
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	/// <returns>vector<ProfilesInfo></returns>
+	virtual const std::vector<ProfilesInfo>& get_profiles_list(TemplateParams& /*params*/) { return profiles_list; }
+
+	/// <summary>
+	/// set server
+	/// </summary>
+	/// <param name="params">Template parameters.</param>
+	virtual bool set_server(TemplateParams& /*params*/) { return true; }
+
+	/// <summary>
+	/// set profile
+	/// </summary>
+	/// <param name="params">Template parameters.</param>
+	virtual bool set_profile(TemplateParams& /*params*/) { return true; }
+
 protected:
 
 	void replace_vars(std::wstring& url, const TemplateParams& params) const;
 
-	void put_account_info(const std::string& name, nlohmann::json& js_data, std::list<AccountInfo>& params) const;
+	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
 	std::string get_json_string_value(const std::string& key, const nlohmann::json& val) const;
 
@@ -435,7 +464,8 @@ protected:
 	std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
 	ServerSubstType server_subst_type = ServerSubstType::enNone;
-	std::vector<std::wstring> servers_list;
+	std::vector<ServersInfo> servers_list;
+	std::vector<ProfilesInfo> profiles_list;
 	std::vector<PlaylistInfo> playlists;
 	std::wstring provider_url;
 	std::wstring provider_api_url;

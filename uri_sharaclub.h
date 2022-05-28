@@ -33,7 +33,11 @@ public:
 	uri_sharaclub();
 
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated_stream(StreamSubType subType, const TemplateParams& params) const override;
-	std::wstring get_playlist_url(const PlaylistTemplateParams& params) const override;
-	bool parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const override;
+	std::wstring get_templated_stream(const StreamSubType subType, TemplateParams& params) const override;
+	std::wstring get_playlist_url(TemplateParams& params) override;
+	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
+	const std::vector<ServersInfo>& get_servers_list(TemplateParams& params) override;
+	bool set_server(TemplateParams& params) override;
+	const std::vector<ProfilesInfo>& get_profiles_list(TemplateParams& params) override;
+	bool set_profile(TemplateParams& params) override;
 };

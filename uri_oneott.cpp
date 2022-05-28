@@ -72,7 +72,7 @@ void uri_oneott::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_oneott::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_oneott::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	auto& url = get_uri();
 
@@ -101,12 +101,12 @@ std::wstring uri_oneott::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_oneott::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_oneott::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.token);
 }
 
-bool uri_oneott::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
+bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	std::vector<BYTE> data;
 	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data) || data.empty())
@@ -116,14 +116,14 @@ bool uri_oneott::parse_access_info(const PlaylistTemplateParams& params, std::li
 
 	JSON_ALL_TRY
 	{
-		nlohmann::json parsed_json = nlohmann::json::parse(data);
+		const auto& parsed_json = nlohmann::json::parse(data);
 		if (parsed_json.contains("token"))
 		{
 			const auto& token = utils::utf8_to_utf16(parsed_json.value("token", ""));
 			AccountInfo info{ L"token", token };
 			info_list.emplace_back(info);
 
-			PlaylistTemplateParams param;
+			TemplateParams param;
 			param.token = token;
 
 			AccountInfo url{ L"url", get_playlist_url(param) };

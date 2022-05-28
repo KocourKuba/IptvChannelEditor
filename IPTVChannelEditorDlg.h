@@ -220,7 +220,6 @@ private:
 	void UpdateChannelsTreeColors(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
 
-	bool LoadCustomPlaylist();
 	bool SetupAccount();
 
 	std::shared_ptr<ChannelCategory> GetItemCategory(HTREEITEM hItem) const;

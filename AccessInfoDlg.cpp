@@ -25,13 +25,12 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include "resource.h"
 #include "AccessInfoDlg.h"
 #include "IPTVChannelEditor.h"
 #include "PlayListEntry.h"
+#include "UrlDlg.h"
 
 #include "UtilsLib\inet_utils.h"
-#include "UrlDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -44,8 +43,7 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNAMIC(CAccessInfoDlg, CPropertyPage)
 
 BEGIN_MESSAGE_MAP(CAccessInfoDlg, CPropertyPage)
-	ON_BN_CLICKED(IDC_BUTTON_GET, &CAccessInfoDlg::GetAccountInfo)
-	ON_BN_CLICKED(IDC_BUTTON_NEW, &CAccessInfoDlg::OnBnClickedButtonNew)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CAccessInfoDlg::OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CAccessInfoDlg::OnBnClickedButtonRemove)
 	ON_BN_CLICKED(IDC_BUTTON_NEW_FROM_URL, &CAccessInfoDlg::OnBnClickedButtonNewFromUrl)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_ACCOUNTS, &CAccessInfoDlg::OnNMDblClickList)
@@ -63,12 +61,12 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_MFCLINK_PROVIDER, m_wndProviderLink);
-	DDX_Control(pDX, IDC_BUTTON_GET, m_wndGet);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemove);
 	DDX_Control(pDX, IDC_BUTTON_NEW_FROM_URL, m_wndNewFromUrl);
 	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDeviceID);
 	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Control(pDX, IDC_LIST_ACCOUNTS, m_wndAccounts);
+	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfile);
 	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
 }
 
@@ -76,8 +74,10 @@ BOOL CAccessInfoDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	auto plugin_type = GetConfig().get_plugin_type();
-	auto access_type = GetConfig().get_plugin_account_access_type();
+	m_plugin_type = GetConfig().get_plugin_type();
+	m_access_type = GetConfig().get_plugin_account_access_type();
+	m_plugin = StreamContainer::get_instance(m_plugin_type);
+
 	CRect rect;
 
 	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
@@ -89,7 +89,7 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	hdi.fmt |= HDF_CHECKBOX;
 	header->SetItem(0, &hdi);
 
-	std::wstring provider_url = StreamContainer::get_instance(plugin_type)->get_provider_url();
+	std::wstring provider_url = m_plugin->get_provider_url();
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
 
@@ -98,27 +98,21 @@ BOOL CAccessInfoDlg::OnInitDialog()
 
 	m_wndAccounts.InsertColumn(0, L"", LVCFMT_LEFT, 22, 0);
 	CString str;
-	switch(access_type)
+	switch(m_access_type)
 	{
 		case AccountAccessType::enPin:
-			str.LoadString(IDS_STRING_COL_PASSWORD);
-			m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(1, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enLoginPass:
 			vWidth /= 2;
-			str.LoadString(IDS_STRING_COL_LOGIN);
-			m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
-			str.LoadString(IDS_STRING_COL_PASSWORD);
-			m_wndAccounts.InsertColumn(2, str, LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(1, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(2, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enOtt:
 			vWidth /= 3;
-			str.LoadString(IDS_STRING_COL_TOKEN);
-			m_wndAccounts.InsertColumn(1, str, LVCFMT_LEFT, vWidth, 0);
-			str.LoadString(IDS_STRING_COL_DOMAIN);
-			m_wndAccounts.InsertColumn(2, str, LVCFMT_LEFT, vWidth, 0);
-			str.LoadString(IDS_STRING_COL_VPORTAL);
-			m_wndAccounts.InsertColumn(3, str, LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(1, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(2, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(3, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndNewFromUrl.ShowWindow(SW_SHOW);
 			break;
 		default: break;
@@ -130,76 +124,61 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
 	int nWidth = vWidth / 4;
 
-	str.LoadString(IDS_STRING_COL_INFO);
-	m_wndInfo.InsertColumn(0, str, LVCFMT_LEFT, nWidth, 0);
-	str.LoadString(IDS_STRING_COL_DATA);
-	m_wndInfo.InsertColumn(1, str, LVCFMT_LEFT, vWidth - nWidth, 0);
+	m_wndInfo.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, nWidth, 0);
+	m_wndInfo.InsertColumn(1, load_string_resource(IDS_STRING_COL_DATA).c_str(), LVCFMT_LEFT, vWidth - nWidth, 0);
+
+	TemplateParams params;
+	params.login = m_login;
+	params.password = m_password;
+	params.domain = m_domain;
+	params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+	params.profile = GetConfig().get_int(false, REG_PROFILE_ID);
 
 	UINT static_text = IDS_STRING_SERVER_ID;
-	UINT combo_text = 0;
-	int max_value = 0;
-	switch (plugin_type)
+	switch (m_plugin_type)
 	{
-		case StreamType::enTvTeam:
-			max_value = IDS_STRING_TV_TEAM_P9 - IDS_STRING_TV_TEAM_P1;
-			combo_text = IDS_STRING_TV_TEAM_P1;
-			break;
 		case StreamType::enCbilling:
-			max_value = IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1;
 			static_text = IDS_STRING_DEVICE_ID;
-			combo_text = IDS_STRING_CBILLING_TV_P1;
 			break;
-		case StreamType::enShuraTV:
-			max_value = IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1;
-			combo_text = IDS_STRING_SHURA_TV_P1;
-			break;
-		case StreamType::enFilmax:
-			max_value = IDS_STRING_FILMAX_P12 - IDS_STRING_FILMAX_P1;
-			combo_text = IDS_STRING_FILMAX_P1;
-			break;
-		case StreamType::enVidok:
-			// changed via API
-			break;
-		case StreamType::enTVClub:
-			// changed via API
+		case StreamType::enSharaclub:
+			m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+			m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
+			params.domain = m_list_domain;
 			break;
 		case StreamType::enVipLime:
 			static_text = IDS_STRING_QUALITY_ID;
-			max_value = IDS_STRING_VIPLIME_P5 - IDS_STRING_VIPLIME_P1;
-			combo_text = IDS_STRING_VIPLIME_P1;
 			break;
 		default:
 			break;
 	}
 
-	if (max_value)
+	m_servers = m_plugin->get_servers_list(params);
+
+	auto wndStaticDevice = GetDlgItem(IDC_STATIC_DEVICE_ID);
+	wndStaticDevice->SetWindowText(load_string_resource(static_text).c_str());
+	wndStaticDevice->EnableWindow(!m_servers.empty());
+
+	for (const auto& info : m_servers)
 	{
-		CString text;
-		text.LoadString(static_text);
-		GetDlgItem(IDC_STATIC_DEVICE_ID)->SetWindowText(text);
-		GetDlgItem(IDC_STATIC_DEVICE_ID)->ShowWindow(SW_SHOW);
-
-		for (int i = 0; i <= max_value; i++)
-		{
-			text.LoadString(combo_text + i);
-			m_wndDeviceID.AddString(text);
-		}
-
-		m_wndDeviceID.SetCurSel(GetConfig().get_int(false, REG_DEVICE_ID));
-		m_wndDeviceID.ShowWindow(SW_SHOW);
+		m_wndDeviceID.AddString(info.name.c_str());
 	}
 
-	if (plugin_type == StreamType::enSharaclub)
+	m_wndDeviceID.EnableWindow(!m_servers.empty());
+	if (!m_servers.empty())
 	{
-		m_api_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
-		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
+		if (params.server >= (int)m_servers.size())
+		{
+			params.server = 0;
+		}
+
+		m_wndDeviceID.SetCurSel(params.server);
 	}
 
 	const auto& credentials = GetConfig().get_string(false, REG_CREDENTIALS);
 	auto& all_accounts = utils::string_split(credentials, L';');
 	if (all_accounts.empty())
 	{
-		switch (access_type)
+		switch (m_access_type)
 		{
 			case AccountAccessType::enPin:
 				all_accounts.emplace_back(m_password);
@@ -229,7 +208,7 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		std::wstring str(creds[0]);
 		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
 		m_wndAccounts.SetItemText(idx, 1, str.c_str());
-		switch (access_type)
+		switch (m_access_type)
 		{
 			case AccountAccessType::enPin:
 				if (str == m_password)
@@ -270,7 +249,6 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	}
 
 	m_wndAccounts.SetCheck(selected, TRUE);
-	m_wndGet.EnableWindow(selected != -1);
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
 
 	UpdateData(FALSE);
@@ -283,14 +261,13 @@ void CAccessInfoDlg::OnOK()
 {
 	UpdateData(TRUE);
 
-	auto access_type = GetConfig().get_plugin_account_access_type();
 	std::wstring credentials;
 	int sel = GetChecked();
 	int cnt = m_wndAccounts.GetItemCount();
 
 	for (int i = 0; i < cnt; i++)
 	{
-		switch (access_type)
+		switch (m_access_type)
 		{
 			case AccountAccessType::enPin:
 				credentials += fmt::format(L"\"{:s}\";", m_wndAccounts.GetItemText(i, 1).GetString());
@@ -321,6 +298,7 @@ void CAccessInfoDlg::OnOK()
 					m_token = m_wndAccounts.GetItemText(i, 1).GetString();
 					m_domain = m_wndAccounts.GetItemText(i, 2).GetString();
 					m_portal = m_wndAccounts.GetItemText(i, 3).GetString();
+					GetConfig().set_string(false, REG_VPORTAL, m_portal);
 				}
 				break;
 
@@ -328,9 +306,27 @@ void CAccessInfoDlg::OnOK()
 		}
 	}
 
-	if (access_type == AccountAccessType::enOtt)
+	TemplateParams params;
+	params.login = m_login;
+	params.password = m_password;
+	params.domain = m_domain;
+	params.server = m_wndDeviceID.GetCurSel();
+	params.profile = m_wndProfile.GetCurSel();
+	if (m_plugin_type == StreamType::enSharaclub)
 	{
-		GetConfig().set_string(false, REG_VPORTAL, m_portal);
+		params.domain = m_list_domain;
+	}
+
+	if (m_wndDeviceID.GetCount() && m_wndDeviceID.GetCurSel() != GetConfig().get_int(false, REG_DEVICE_ID))
+	{
+		m_plugin->set_server(params);
+		GetConfig().set_int(false, REG_DEVICE_ID, m_wndDeviceID.GetCurSel());
+	}
+
+	if (m_wndProfile.GetCount() && m_wndProfile.GetCurSel() != GetConfig().get_int(false, REG_PROFILE_ID))
+	{
+		m_plugin->set_profile(params);
+		GetConfig().set_int(false, REG_PROFILE_ID, m_wndProfile.GetCurSel());
 	}
 
 	GetConfig().set_int(false, REG_EMBED_INFO, m_bEmbed);
@@ -341,15 +337,10 @@ void CAccessInfoDlg::OnOK()
 	GetConfig().set_string(false, REG_HOST, m_host);
 	GetConfig().set_string(false, REG_CREDENTIALS, credentials);
 
-	if (m_wndDeviceID.GetCount())
-	{
-		GetConfig().set_int(false, REG_DEVICE_ID, m_wndDeviceID.GetCurSel());
-	}
-
 	__super::OnOK();
 }
 
-void CAccessInfoDlg::OnBnClickedButtonNew()
+void CAccessInfoDlg::OnBnClickedButtonAdd()
 {
 	m_wndAccounts.InsertItem(m_wndAccounts.GetItemCount(), L"new");
 }
@@ -431,10 +422,8 @@ LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 
 	// Persist the selected attachment details upon updating its text
 	m_wndAccounts.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
-	if (GetChecked() == dispinfo->item.iItem)
-	{
-		GetAccountInfo();
-	}
+
+	GetAccountInfo();
 
 	return 0;
 }
@@ -458,7 +447,6 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 				}
 			}
 
-			m_wndGet.EnableWindow(TRUE);
 			GetAccountInfo();
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(TRUE);
 		}
@@ -469,7 +457,6 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 			m_token.clear();
 			m_domain.clear();
 			m_portal.clear();
-			m_wndGet.EnableWindow(FALSE);
 			m_wndInfo.DeleteAllItems();
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
 		}
@@ -483,14 +470,16 @@ void CAccessInfoDlg::GetAccountInfo()
 	UpdateData(TRUE);
 
 	m_status.LoadString(IDS_STRING_STATUS_TEXT);
+	m_wndProfile.ResetContent();
+	auto wndStaticProfile = GetDlgItem(IDC_STATIC_PROFILE);
+	wndStaticProfile->EnableWindow(FALSE);
+	m_wndProfile.EnableWindow(FALSE);
 
 	int checked = GetChecked();
 	if (checked == -1)
 		return;
 
-	auto access_type = GetConfig().get_plugin_account_access_type();
-
-	switch (access_type)
+	switch (m_access_type)
 	{
 		case AccountAccessType::enPin:
 			m_password = m_wndAccounts.GetItemText(checked, 1).GetString();
@@ -520,11 +509,31 @@ void CAccessInfoDlg::GetAccountInfo()
 	uri->set_domain(m_domain);
 	uri->set_host(m_host);
 
-	PlaylistTemplateParams params;
-	params.device = m_wndDeviceID.GetCurSel();
+	TemplateParams params;
 	params.login = m_login;
 	params.password = m_password;
-	params.domain = m_api_domain;
+	params.domain = m_list_domain;
+	params.server = m_wndDeviceID.GetCurSel();
+
+	m_plugin->clear_profiles_list();
+	m_profiles = m_plugin->get_profiles_list(params);
+	for (const auto& info : m_profiles)
+	{
+		m_wndProfile.AddString(info.name.c_str());
+	}
+
+	if (!m_profiles.empty())
+	{
+		if (params.profile >= (int)m_profiles.size())
+		{
+			params.profile = 0;
+		}
+
+		m_wndProfile.SetCurSel(params.profile);
+	}
+
+	wndStaticProfile->EnableWindow(m_profiles.size() > 1);
+	m_wndProfile.EnableWindow(m_profiles.size() > 1);
 
 	std::wstring pl_url = uri->get_playlist_url(params);
 
@@ -578,10 +587,8 @@ void CAccessInfoDlg::GetAccountInfo()
 	}
 
 	int idx = 0;
-	CString txt;
-	txt.LoadString(IDS_STRING_STATUS);
 	m_wndInfo.DeleteAllItems();
-	m_wndInfo.InsertItem(idx, txt);
+	m_wndInfo.InsertItem(idx, load_string_resource(IDS_STRING_STATUS).c_str());
 	m_wndInfo.SetItemText(idx++, 1, m_status);
 	for (const auto& item : acc_info)
 	{

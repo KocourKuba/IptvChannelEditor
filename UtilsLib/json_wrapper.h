@@ -85,6 +85,16 @@ namespace utils
 			{
 				ret_value = js.get<int>();
 			}
+			else if (js.is_string())
+			{
+				try
+				{
+					ret_value = std::stoi(js.get<std::string>());
+				}
+				catch (...)
+				{
+				}
+			}
 		}
 
 		return ret_value;

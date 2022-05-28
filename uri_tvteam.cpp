@@ -26,8 +26,10 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_tvteam.h"
-#include "UtilsLib\utils.h"
 #include "PlayListEntry.h"
+#include "IPTVChannelEditor.h"
+
+#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,15 +49,15 @@ uri_tvteam::uri_tvteam()
 	provider_url = L"https://tv.team/";
 	server_subst_type = ServerSubstType::enStream;
 	servers_list = {
-		L"3.troya.tv",	// All (except RU, BY)
-		L"4.troya.tv",	// DE, RU
-		L"9.troya.tv",	// DE, RU, BY, MD
-		L"8.troya.tv",	// DE, UA, BY, MD
-		L"7.troya.tv",	// FR, DE, RU, BY
-		L"02.tv.team",	// NL
-		L"10.troya.tv",	// RU, BY
-		L"01.tv.team",	// USA 1
-		L"2.troya.tv",	// USA 2
+		{ load_string_resource(IDS_STRING_TV_TEAM_P1), L"3.troya.tv"  }, // All (except RU, BY)
+		{ load_string_resource(IDS_STRING_TV_TEAM_P2), L"4.troya.tv"  }, // DE, RU
+		{ load_string_resource(IDS_STRING_TV_TEAM_P3), L"9.troya.tv"  }, // DE, RU, BY, MD
+		{ load_string_resource(IDS_STRING_TV_TEAM_P4), L"8.troya.tv"  }, // DE, UA, BY, MD
+		{ load_string_resource(IDS_STRING_TV_TEAM_P5), L"7.troya.tv"  }, // FR, DE, RU, BY
+		{ load_string_resource(IDS_STRING_TV_TEAM_P6), L"02.tv.team"  }, // NL
+		{ load_string_resource(IDS_STRING_TV_TEAM_P7), L"10.troya.tv" }, // RU, BY
+		{ load_string_resource(IDS_STRING_TV_TEAM_P8), L"01.tv.team"  }, // USA 1
+		{ load_string_resource(IDS_STRING_TV_TEAM_P9), L"2.troya.tv"  }, // USA 2
 	};
 }
 
@@ -78,7 +80,7 @@ void uri_tvteam::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_tvteam::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_tvteam::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -105,10 +107,10 @@ std::wstring uri_tvteam::get_templated_stream(StreamSubType subType, const Templ
 		}
 	}
 
-	std::wstring domain(servers_list[params.server]);
-	if (auto pos = servers_list[params.server].find(':'); pos != std::wstring::npos)
+	std::wstring domain(servers_list[params.server].id);
+	if (auto pos = servers_list[params.server].id.find(':'); pos != std::wstring::npos)
 	{
-		domain = fmt::format(L"{:s}:{:s}", servers_list[params.server], servers_list[params.server].substr(pos + 1));
+		domain = fmt::format(L"{:s}:{:s}", servers_list[params.server].id, servers_list[params.server].id.substr(pos + 1));
 	}
 
 	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, domain);
@@ -117,7 +119,7 @@ std::wstring uri_tvteam::get_templated_stream(StreamSubType subType, const Templ
 	return url;
 }
 
-std::wstring uri_tvteam::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_tvteam::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

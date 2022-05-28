@@ -148,6 +148,7 @@
 #define IDS_STRING_VOD_DESC             255
 #define IDS_STRING_LOADING              256
 #define IDS_STRING_QUALITY_ID           257
+#define IDS_STRING_FMT_CHANNELS_ALL     358
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302
@@ -265,6 +266,7 @@
 #define IDC_STATIC_DEVICE_ID            1095
 #define IDC_CHECK_EMBED                 1096
 #define IDC_STATIC_VERSION              1097
+#define IDC_STATIC_PROFILE              1098
 #define IDC_EDIT_EPG                    1099
 #define IDC_RICHEDIT_EPG                1100
 #define IDC_RADIO_EPG1                  1101
@@ -298,7 +300,7 @@
 #define IDC_EDIT_EPG_URL                1130
 #define IDC_DATETIMEPICKER              1131
 #define IDC_LIST_ACCOUNTS               1132
-#define IDC_BUTTON_NEW                  1133
+#define IDC_BUTTON_ADD                  1133
 #define IDC_BUTTON_REMOVE               1134
 #define IDC_BUTTON_NEW_FROM_URL         1135
 #define IDC_EDIT_PLAYLIST_URL           1136
@@ -326,6 +328,7 @@
 #define IDC_COMBO_EPISODE               1157
 #define IDC_STATIC_EPISODE              1158
 #define IDC_BUTTON_SEARCH2              1159
+#define IDC_COMBO_PROFILE               1160
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -352,12 +355,12 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        233
 #define _APS_NEXT_COMMAND_VALUE         32805
-#define _APS_NEXT_CONTROL_VALUE         1156
+#define _APS_NEXT_CONTROL_VALUE         1157
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

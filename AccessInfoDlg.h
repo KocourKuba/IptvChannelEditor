@@ -26,6 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "EditableListCtrl.h"
+#include "uri_stream.h"
+#include "Config.h"
 
 class CAccessInfoDlg : public CPropertyPage
 {
@@ -49,7 +51,7 @@ protected:
 
 	afx_msg void OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedButtonNew();
+	afx_msg void OnBnClickedButtonAdd();
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonNewFromUrl();
 	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
@@ -68,16 +70,23 @@ public:
 	std::wstring m_domain;
 	std::wstring m_host;
 	std::wstring m_portal;
-	std::wstring m_api_domain;
+	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
 
 protected:
-	CButton m_wndGet;
 	CButton m_wndRemove;
 	CButton m_wndNewFromUrl;
 	CComboBox m_wndDeviceID;
+	CComboBox m_wndProfile;
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;
 	CMFCLinkCtrl m_wndProviderLink;
+
+private:
+	std::unique_ptr<uri_stream> m_plugin;
+	std::vector<ServersInfo> m_servers;
+	std::vector<ProfilesInfo> m_profiles;
+	StreamType m_plugin_type = StreamType::enBase;
+	AccountAccessType m_access_type = AccountAccessType::enUnknown;
 };
 

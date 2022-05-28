@@ -73,7 +73,7 @@ void uri_itv::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_itv::get_templated_stream(StreamSubType subType, const TemplateParams& params) const
+std::wstring uri_itv::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -105,12 +105,12 @@ std::wstring uri_itv::get_templated_stream(StreamSubType subType, const Template
 	return url;
 }
 
-std::wstring uri_itv::get_playlist_url(const PlaylistTemplateParams& params) const
+std::wstring uri_itv::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }
 
-bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<AccountInfo>& info_list) const
+bool uri_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	std::vector<BYTE> data;
 	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.password), data) || data.empty())
@@ -121,11 +121,14 @@ bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<
 	JSON_ALL_TRY
 	{
 		nlohmann::json parsed_json = nlohmann::json::parse(data);
-		nlohmann::json js_data = parsed_json["user_info"];
+		if (parsed_json.contains("user_info"))
+		{
+			const auto& js_data = parsed_json["user_info"];
 
-		put_account_info("login", js_data, info_list);
-		put_account_info("pay_system", js_data, info_list);
-		put_account_info("cash", js_data, info_list);
+			put_account_info("login", js_data, info_list);
+			put_account_info("pay_system", js_data, info_list);
+			put_account_info("cash", js_data, info_list);
+		}
 
 		std::wstring subscription;
 		if (!parsed_json.contains("package_info"))
@@ -134,7 +137,7 @@ bool uri_itv::parse_access_info(const PlaylistTemplateParams& params, std::list<
 		}
 		else
 		{
-			nlohmann::json pkg_data = parsed_json["package_info"];
+			const auto& pkg_data = parsed_json["package_info"];
 			for (const auto& item : pkg_data)
 			{
 				if (!subscription.empty())

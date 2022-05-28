@@ -748,3 +748,27 @@ int RequestToUpdateServer(const std::wstring& command)
 
 	return -1;
 }
+
+std::wstring load_string_resourceW(unsigned int id)
+{
+	wchar_t* p = nullptr;
+	int len = ::LoadStringW(AfxGetResourceHandle(), id, reinterpret_cast<LPWSTR>(&p), 0);
+	if (len > 0)
+	{
+		return std::wstring{ p, static_cast<size_t>(len) };
+	}
+	// Return empty string; optionally replace with throwing an exception.
+	return std::wstring{};
+}
+
+std::string load_string_resourceA(unsigned int id)
+{
+	char* p = nullptr;
+	int len = ::LoadStringA(AfxGetResourceHandle(), id, reinterpret_cast<LPSTR>(&p), 0);
+	if (len > 0)
+	{
+		return std::string{ p, static_cast<size_t>(len) };
+	}
+	// Return empty string; optionally replace with throwing an exception.
+	return std::string{};
+}

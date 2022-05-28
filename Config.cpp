@@ -97,6 +97,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_STREAM_TYPE,
 	REG_CUSTOM_PLAYLIST,
 	REG_DEVICE_ID,
+	REG_PROFILE_ID,
 	REG_SHOW_URL,
 	REG_CREDENTIALS,
 	REG_EMBED_INFO,
