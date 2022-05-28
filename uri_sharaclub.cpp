@@ -35,6 +35,8 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// API documentation https://list.playtv.pro/api/players.txt
+
 static constexpr auto API_URL = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 static constexpr auto API_COMMAND_GET_URL = L"http://{:s}/api/players.php?a={:s}&u={:s}-{:s}&source=dune_editor";
 static constexpr auto API_COMMAND_SET_URL = L"http://{:s}/api/players.php?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
