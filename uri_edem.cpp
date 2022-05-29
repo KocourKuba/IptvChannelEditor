@@ -46,8 +46,9 @@ uri_edem::uri_edem()
 	provider_url = L"https://ilook.tv/";
 	vod_supported = true;
 
-	PlaylistInfo info;
+	playlists.clear();
 
+	PlaylistInfo info;
 	info.name = load_string_resource(IDS_STRING_EDEM_STANDARD);
 	playlists.emplace_back(info);
 

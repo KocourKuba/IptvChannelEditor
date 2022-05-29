@@ -542,7 +542,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_wndPlaylist.SetItemData(idx, (DWORD_PTR)&playlist);
 	}
 
-	if (pl_idx > m_wndPlaylist.GetCount() || pl_idx < 0)
+	if (pl_idx >= m_wndPlaylist.GetCount() || pl_idx < 0)
 		pl_idx = 0;
 
 	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(pl_idx));
