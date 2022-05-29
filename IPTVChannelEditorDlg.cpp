@@ -78,6 +78,8 @@ constexpr auto CHANNELS_LIST_VERSION = 4;
 std::map<UINT, UINT> tooltips_info =
 {
 	{ IDC_COMBO_PLUGIN_TYPE, IDS_STRING_COMBO_PLUGIN_TYPE },
+	{ IDC_BUTTON_VOD, IDS_STRING_BUTTON_VOD },
+	{ IDC_BUTTON_ABOUT, IDS_STRING_BUTTON_ABOUT },
 	{ IDC_COMBO_CHANNELS, IDS_STRING_COMBO_CHANNELS },
 	{ IDC_COMBO_PLAYLIST, IDS_STRING_COMBO_PLAYLIST },
 	{ IDC_BUTTON_ADD_NEW_CHANNELS_LIST, IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST },
@@ -491,7 +493,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_portal.clear();
 
-	CString str;
 	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
@@ -3986,8 +3987,6 @@ void CIPTVChannelEditorDlg::OnToggleChannel()
 void CIPTVChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
-	CString text;
-	text.LoadString(IDS_STRING_ENABLE_CHANNEL);
 	if (IsSelectedChannelsOrEntries() && IsSelectedNotFavorite())
 	{
 		m_menu_enable_channel = false;
@@ -4003,7 +4002,7 @@ void CIPTVChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 
 	if (m_menu_enable_channel)
 	{
-		pCmdUI->SetText(text);
+		pCmdUI->SetText(load_string_resource(IDS_STRING_ENABLE_CHANNEL).c_str());
 	}
 
 	pCmdUI->Enable(enable);
@@ -4028,8 +4027,6 @@ void CIPTVChannelEditorDlg::OnToggleCategory()
 void CIPTVChannelEditorDlg::OnUpdateToggleCategory(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
-	CString text;
-	text.LoadString(IDS_STRING_ENABLE_CATEGORY);
 	if (IsSelectedCategory() && IsSelectedNotFavorite())
 	{
 		m_menu_enable_category = false;
@@ -4045,7 +4042,7 @@ void CIPTVChannelEditorDlg::OnUpdateToggleCategory(CCmdUI* pCmdUI)
 
 	if (m_menu_enable_category)
 	{
-		pCmdUI->SetText(text);
+		pCmdUI->SetText(load_string_resource(IDS_STRING_ENABLE_CATEGORY).c_str());
 	}
 	pCmdUI->Enable(enable);
 }

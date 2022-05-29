@@ -208,7 +208,7 @@ bool uri_vidok::set_server(TemplateParams& params)
 				for (const auto& item : parsed_json["settings"].items())
 				{
 					const auto& server = item.value();
-					return (utils::get_json_string("value", server) == servers[params.server].id);
+					return (utils::get_json_string("value", server) == servers[params.server].id); //-V612
 				}
 			}
 			JSON_ALL_CATCH;

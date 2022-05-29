@@ -148,7 +148,15 @@
 #define IDS_STRING_VOD_DESC             255
 #define IDS_STRING_LOADING              256
 #define IDS_STRING_QUALITY_ID           257
-#define IDS_STRING_FMT_CHANNELS_ALL     358
+#define IDS_STRING_FMT_CHANNELS_ALL     258
+#define IDS_STRING_BUTTON_VOD           259
+#define IDS_STRING_BUTTON_ABOUT         260
+#define IDS_STRING_BUTTON_ADD           261
+#define IDS_STRING_BUTTON_REMOVE        262
+#define IDS_STRING_BUTTON_NEW_FROM_URL  263
+#define IDS_STRING_COMBO_DEVICE_ID      264
+#define IDS_STRING_COMBO_PROFILE        265
+#define IDS_STRING_CHECK_EMBED          266
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302

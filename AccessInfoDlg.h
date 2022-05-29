@@ -45,6 +45,7 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
+	BOOL PreTranslateMessage(MSG* pMsg) override;
 	void OnOK() override;
 
 	DECLARE_MESSAGE_MAP()
@@ -81,6 +82,7 @@ protected:
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;
 	CMFCLinkCtrl m_wndProviderLink;
+	CToolTipCtrl m_wndToolTipCtrl;
 
 private:
 	std::unique_ptr<uri_stream> m_plugin;

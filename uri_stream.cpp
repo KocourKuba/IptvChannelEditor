@@ -21,7 +21,6 @@ uri_stream::uri_stream()
 
 	PlaylistInfo info;
 
-	CString str;
 	info.name = load_string_resource(IDS_STRING_PLAYLIST);
 	playlists.emplace_back(info);
 

@@ -38,6 +38,16 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+std::map<UINT, UINT> tooltips_info_account =
+{
+	{ IDC_BUTTON_ADD, IDS_STRING_BUTTON_ADD },
+	{ IDC_BUTTON_REMOVE, IDS_STRING_BUTTON_REMOVE },
+	{ IDC_BUTTON_NEW_FROM_URL, IDS_STRING_BUTTON_NEW_FROM_URL },
+	{ IDC_COMBO_DEVICE_ID, IDS_STRING_COMBO_DEVICE_ID },
+	{ IDC_COMBO_PROFILE, IDS_STRING_COMBO_PROFILE },
+	{ IDC_CHECK_EMBED, IDS_STRING_CHECK_EMBED },
+};
+
 // CAccessDlg dialog
 
 IMPLEMENT_DYNAMIC(CAccessInfoDlg, CPropertyPage)
@@ -70,9 +80,27 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
 }
 
+BOOL CAccessInfoDlg::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_LBUTTONDOWN
+		|| pMsg->message == WM_LBUTTONUP
+		|| pMsg->message == WM_MOUSEMOVE)
+	{
+		m_wndToolTipCtrl.RelayEvent(pMsg);
+	}
+
+	return __super::PreTranslateMessage(pMsg);
+}
+
 BOOL CAccessInfoDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
+
+	if (!m_wndToolTipCtrl.Create(this, TTS_ALWAYSTIP))
+	{
+		TRACE(_T("Unable To create ToolTip\n"));
+		return FALSE;
+	}
 
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_access_type = GetConfig().get_plugin_account_access_type();
@@ -89,6 +117,17 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	hdi.fmt |= HDF_CHECKBOX;
 	header->SetItem(0, &hdi);
 
+	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
+	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
+	m_wndToolTipCtrl.SetMaxTipWidth(500);
+
+	for (const auto& pair : tooltips_info_account)
+	{
+		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), pair.second);
+	}
+
+	m_wndToolTipCtrl.Activate(TRUE);
+
 	std::wstring provider_url = m_plugin->get_provider_url();
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
@@ -97,7 +136,6 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	int vWidth = rect.Width() - /*GetSystemMetrics(SM_CXVSCROLL) -*/ 1 - 22;
 
 	m_wndAccounts.InsertColumn(0, L"", LVCFMT_LEFT, 22, 0);
-	CString str;
 	switch(m_access_type)
 	{
 		case AccountAccessType::enPin:

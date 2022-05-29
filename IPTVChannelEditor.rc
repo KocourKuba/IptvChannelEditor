@@ -1077,11 +1077,20 @@ STRINGTABLE
 BEGIN
     IDS_STRING_LOADING      "Loading..."
     IDS_STRING_QUALITY_ID   "Quality"
+    IDS_STRING_FMT_CHANNELS_ALL "{:s}, Channels: {:d}"
+    IDS_STRING_BUTTON_VOD   "Browse Video on Demand"
+    IDS_STRING_BUTTON_ABOUT "About Program and donate links"
+    IDS_STRING_BUTTON_ADD   "Add new credentials"
+    IDS_STRING_BUTTON_REMOVE "Remove credentials"
+    IDS_STRING_BUTTON_NEW_FROM_URL 
+                            "Add credentials from direct link to playlist"
+    IDS_STRING_COMBO_DEVICE_ID "Available server/device/quality"
+    IDS_STRING_COMBO_PROFILE "Available profiles"
+    IDS_STRING_CHECK_EMBED  "Embed credentials into plugin to avoid enter it manually"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_STRING_FMT_CHANNELS_ALL "{:s}, Channels: {:d}"
     IDS_STRING_VIPLIME_P1   "High"
     IDS_STRING_VIPLIME_P2   "Middle"
     IDS_STRING_VIPLIME_P3   "Low"
