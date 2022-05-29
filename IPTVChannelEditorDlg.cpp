@@ -1173,6 +1173,14 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 					color = m_gray;
 				}
 
+				if (const auto& pair = m_stream_infos.find(channel->stream_uri->get_hash()); pair != m_stream_infos.end())
+				{
+					if (pair->second.second.find("HEVC") != std::string::npos)
+					{
+						m_wndChannelsTree.SetItemBackColor(hItem, m_hevc_color);
+					}
+				}
+
 				m_wndChannelsTree.SetItemColor(hItem, color);
 			}
 
