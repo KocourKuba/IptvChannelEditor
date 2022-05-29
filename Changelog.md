@@ -1,4 +1,13 @@
+## Donate (Вознаграждение автору)
+[PayPal](https://www.paypal.com/donate/?cmd=_donations&business=5DY7PESZL4D8L&currency_code=USD&amount=5)  
+[YooMoney](https://yoomoney.ru/to/41001913379027)
+
 ## История версий
+
+### Версия 3.0.886
+- *Редактор*
+    - Не показывалось описание фильма в медиатеке
+    - Не работали ссылки на донат
 
 ### Версия 3.0.884
 - *Редактор*

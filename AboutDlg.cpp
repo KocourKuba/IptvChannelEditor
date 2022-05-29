@@ -51,12 +51,12 @@ BOOL CAboutDlg::OnInitDialog()
 	m_version.Format(_T("Version %d.%d.%d"), MAJOR, MINOR, BUILD);
 
 	utils::CBase64Coder enc;
-	std::string encoded = load_string_resourceA(IDS_STRING_PAYPAL);
+	std::string encoded = utils::utf16_to_utf8(load_string_resource(IDS_STRING_PAYPAL));
 	enc.Decode(encoded.c_str(), (int)encoded.size());
 	// https://www.paypal.com/donate/?cmd=_donations&business=5DY7PESZL4D8L&currency_code=USD&amount=5
 	m_paypal.SetURL(utils::utf8_to_utf16(enc.GetResultString()).c_str());
 
-	encoded = load_string_resourceA(IDS_STRING_YOOMONEY);
+	encoded = utils::utf16_to_utf8(load_string_resource(IDS_STRING_YOOMONEY));
 	enc.Decode(encoded.c_str(), (int)encoded.size());
 	// https://yoomoney.ru/to/41001913379027
 	m_yoomoney.SetURL(utils::utf8_to_utf16(enc.GetResultString()).c_str());

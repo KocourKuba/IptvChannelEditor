@@ -777,7 +777,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 	m_wndQuality.EnableWindow(enableQuality);
 
 	SetImageControl(GetIconCache().get_icon(movie->poster_url.get_uri()), m_wndPoster);
-	const auto& text = fmt::format(load_string_resourceA(IDS_STRING_VOD_DESC),
+	const auto& text = fmt::format(utils::utf16_to_utf8(load_string_resource(IDS_STRING_VOD_DESC)),
 								   utils::utf16_to_utf8(movie->title),
 								   utils::utf16_to_utf8(movie->description),
 								   utils::utf16_to_utf8(movie->year),
