@@ -91,6 +91,8 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		return;
 
 	m_wndEpgList.DeleteAllItems();
+	m_idx_map.clear();
+
 	int time_shift = m_info->get_time_shift_hours() * 3600;
 
 	CTime nt(sel_time.GetYear(), sel_time.GetMonth(), sel_time.GetDay(), sel_time.GetHour(), sel_time.GetMinute(), sel_time.GetSecond());
@@ -192,11 +194,10 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 		auto& epg_pair = m_pEpgChannelMap->find(start_pair->second);
 		if (epg_pair == m_pEpgChannelMap->end()) break;
 
-		CStringA text;
-		text.Format(R"({\rtf1 %s})", epg_pair->second.desc.c_str());
+		const auto& text = fmt::format(R"({{\rtf1 {:s}}})", epg_pair->second.desc);
 
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
-		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
+		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
 	} while (false);
 
 	*pResult = 0;
