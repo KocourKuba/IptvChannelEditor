@@ -1342,10 +1342,10 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 	if (entry)
 	{
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
-		m_plID.Format(_T("%s"), entry->stream_uri->get_id().c_str());
+		m_plID = entry->stream_uri->get_id().c_str();
 
 		if (!entry->get_epg_id(0).empty())
-			m_plEPG.Format(_T("%s"), entry->get_epg_id(0).c_str());
+			m_plEPG = entry->get_epg_id(0).c_str();
 
 		m_wndPlArchive.SetCheck(!!entry->is_archive());
 		m_archivePlDays = entry->get_archive_days();
@@ -2161,9 +2161,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 					}
 					else
 					{
-						CString str;
-						str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
-						GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
+						GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(fmt::format(L"{:d} x {:d} px", img.GetWidth(), img.GetHeight()).c_str());
 					}
 					SetImageControl(img, m_wndChannelIcon);
 				}
@@ -3314,9 +3312,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 
 	for (const auto& item : GetConfig().get_plugins_info())
 	{
-		CString str;
-		str.Format(_T("%s"), item.title.c_str());
-		m_wndProgressInfo.SetWindowText(str);
+		m_wndProgressInfo.SetWindowText(item.title.c_str());
 		m_wndProgress.SetPos(++i);
 
 		const auto& out_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
