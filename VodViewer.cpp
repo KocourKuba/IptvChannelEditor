@@ -1003,7 +1003,7 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 	}
 
 	JSON_ALL_TRY;
-	nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
+	const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 
 	if (parsed_json.contains("data"))
 	{
@@ -1085,7 +1085,7 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 
 		JSON_ALL_TRY;
 
-		nlohmann::json json_data = nlohmann::json::parse(data.begin(), data.end());
+		const auto& json_data = nlohmann::json::parse(data.begin(), data.end());
 		const auto& type = json_data["type"];
 		if (type == "multistream")
 		{
@@ -1114,7 +1114,7 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 				data.clear();
 				if (utils::DownloadFile(url, data, false, &header, L"POST", &post) && !data.empty())
 				{
-					nlohmann::json variants_data = nlohmann::json::parse(data.begin(), data.end());
+					const auto& variants_data = nlohmann::json::parse(data.begin(), data.end());
 					if (variants_data.contains("variants"))
 					{
 						for (const auto& variant_it : variants_data["variants"].items())

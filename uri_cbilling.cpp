@@ -134,7 +134,7 @@ bool uri_cbilling::parse_access_info(TemplateParams& params, std::list<AccountIn
 
 	JSON_ALL_TRY
 	{
-		const auto& parsed_json = nlohmann::json::parse(data);
+		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 		if (parsed_json.contains("data"))
 		{
 			const auto& js_data = parsed_json["data"];

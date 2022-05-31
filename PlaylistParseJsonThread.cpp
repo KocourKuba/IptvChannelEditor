@@ -88,11 +88,12 @@ void CPlaylistParseJsonThread::ParseFox()
 		int cnt = 0;
 		for (const auto& item : parsed_json.items())
 		{
+			const auto& val = item.value();
+			if (val.empty()) continue;
+
 			std::shared_ptr<vod_category> category;
 			std::wstring category_name;
 			auto movie = std::make_shared<vod_movie>();
-			nlohmann::json val = item.value();
-			if (val.empty()) continue;
 
 			JSON_ALL_TRY;
 			category_name = utils::get_json_string("category", val);
@@ -167,7 +168,7 @@ void CPlaylistParseJsonThread::ParseCbilling()
 
 		int total = 0;
 		JSON_ALL_TRY;
-		nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 		for (const auto& item_it : parsed_json["data"].items())
 		{
 			if (item_it.value().empty()) continue;
@@ -192,7 +193,7 @@ void CPlaylistParseJsonThread::ParseCbilling()
 			const auto& cat_url = fmt::format(L"{:s}/cat/{:s}?per_page=10000", m_config.m_url, category->id);
 			if (!utils::DownloadFile(cat_url, data, m_config.m_use_cache) || data.empty()) continue;
 
-			nlohmann::json movies_json = nlohmann::json::parse(data.begin(), data.end());
+			const auto& movies_json = nlohmann::json::parse(data.begin(), data.end());
 
 			if (movies_json.empty() || !movies_json.contains("data")) continue;
 

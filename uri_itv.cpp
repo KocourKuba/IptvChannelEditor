@@ -120,7 +120,7 @@ bool uri_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& 
 
 	JSON_ALL_TRY
 	{
-		nlohmann::json parsed_json = nlohmann::json::parse(data);
+		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 		if (parsed_json.contains("user_info"))
 		{
 			const auto& js_data = parsed_json["user_info"];

@@ -510,7 +510,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			if (utils::DownloadFile(provider_api_url, data) && !data.empty())
 			{
 				JSON_ALL_TRY;
-				nlohmann::json parsed_json = nlohmann::json::parse(data);
+				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 				GetConfig().set_string(false, REG_LIST_DOMAIN, utils::utf8_to_utf16(parsed_json["listdomain"].get<std::string>()));
 				GetConfig().set_string(false, REG_EPG_DOMAIN, utils::utf8_to_utf16(parsed_json["jsonEpgDomain"].get<std::string>()));
 				JSON_ALL_CATCH;

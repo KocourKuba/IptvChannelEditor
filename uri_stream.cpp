@@ -69,7 +69,7 @@ const std::map<std::wstring, std::wstring>& uri_stream::get_epg_id_mapper(int ep
 		{
 			JSON_ALL_TRY
 			{
-				nlohmann::json parsed_json = nlohmann::json::parse(data);
+				nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
 				nlohmann::json js_data = parsed_json["data"];
 				for (const auto& item : js_data.items())
 				{
@@ -108,7 +108,7 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 
 	JSON_ALL_TRY;
 	{
-		nlohmann::json parsed_json = nlohmann::json::parse(data);
+		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 
 		bool added = false;
 		const auto& root = get_epg_root(epg_idx, parsed_json);

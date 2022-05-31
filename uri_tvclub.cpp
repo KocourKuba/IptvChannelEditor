@@ -114,7 +114,7 @@ bool uri_tvclub::parse_access_info(TemplateParams& params, std::list<AccountInfo
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = nlohmann::json::parse(data);
+		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 		if (parsed_json.contains("account"))
 		{
 			const auto& js_account = parsed_json["account"];
@@ -182,7 +182,7 @@ const std::vector<ServersInfo>& uri_tvclub::get_servers_list(TemplateParams& par
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data);
+				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 				if (parsed_json.contains("settings"))
 				{
 					const auto& settings = parsed_json["settings"];
@@ -221,7 +221,7 @@ bool uri_tvclub::set_server(TemplateParams& params)
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data);
+				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 				return utils::get_json_int("updated", parsed_json["settings"]) == 1;
 			}
 			JSON_ALL_CATCH;

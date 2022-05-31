@@ -561,7 +561,7 @@ bool PluginsConfig::ReadSettingsJson(StreamType plugin_type)
 		return false;
 
 	auto& settings = m_settings[plugin_type];
-	nlohmann::json node = m_config[j_section];
+	const auto& node = m_config[j_section];
 	for (const auto& item : node.items())
 	{
 		const auto& name = utils::utf8_to_utf16(item.key());

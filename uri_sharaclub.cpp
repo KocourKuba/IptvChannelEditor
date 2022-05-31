@@ -127,7 +127,7 @@ bool uri_sharaclub::parse_access_info(TemplateParams& params, std::list<AccountI
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = nlohmann::json::parse(data);
+		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 		if (parsed_json.contains("status"))
 		{
 			AccountInfo info{ L"state", utils::utf8_to_utf16(parsed_json.value("status", "")) };
@@ -164,7 +164,7 @@ const std::vector<ServersInfo>& uri_sharaclub::get_servers_list(TemplateParams& 
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data);
+				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 				if (utils::get_json_int("status", parsed_json) == 1)
 				{
 					params.server = utils::get_json_int("current", parsed_json);
@@ -201,7 +201,7 @@ bool uri_sharaclub::set_server(TemplateParams& params)
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data);
+				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 				return utils::get_json_string("status", parsed_json) == L"1";
 			}
 			JSON_ALL_CATCH;
@@ -225,7 +225,7 @@ const std::vector<ProfilesInfo>& uri_sharaclub::get_profiles_list(TemplateParams
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data);
+				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 				if (utils::get_json_int("status", parsed_json) == 1)
 				{
 					const auto& current = utils::get_json_string("current", parsed_json);
@@ -269,7 +269,7 @@ bool uri_sharaclub::set_profile(TemplateParams& params)
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data);
+				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 				return utils::get_json_string("status", parsed_json) == L"1";
 			}
 			JSON_ALL_CATCH;

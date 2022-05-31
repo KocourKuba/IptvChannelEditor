@@ -116,7 +116,7 @@ bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo
 
 	JSON_ALL_TRY
 	{
-		const auto& parsed_json = nlohmann::json::parse(data);
+		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 		if (parsed_json.contains("token"))
 		{
 			const auto& token = utils::utf8_to_utf16(parsed_json.value("token", ""));
