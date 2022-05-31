@@ -1268,13 +1268,14 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 			params.login = m_login;
 			params.password = m_password;
 			params.host = m_host;
+			params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 			if (uri->get_server_subst_type() == ServerSubstType::enStream)
 			{
 				params.server = GetConfig().get_int(false, REG_DEVICE_ID);
 			}
 
 			UpdateExtToken(uri.get(), m_token);
-			m_streamUrl = uri->get_templated_stream((StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()), params).c_str();
+			m_streamUrl = uri->get_templated_stream(params).c_str();
 		}
 
 		m_streamID = uri->is_template() ? uri->get_id().c_str() : L"";
@@ -2693,8 +2694,23 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 	{
 		CEpgListDlg dlg;
 		dlg.m_epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
-		dlg.m_info = info;
 		dlg.m_epg_cache = &m_epg_cache;
+		dlg.m_params.token = m_token;
+		dlg.m_params.domain = m_domain;
+		dlg.m_params.login = m_login;
+		dlg.m_params.password = m_password;
+		dlg.m_params.host = m_host;
+		dlg.m_params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
+
+		if (info->stream_uri->get_server_subst_type() == ServerSubstType::enStream)
+		{
+			dlg.m_params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+		}
+
+		UpdateExtToken(info->stream_uri.get(), m_token);
+		dlg.m_info = info;
+
+
 		dlg.DoModal();
 	}
 }
@@ -2731,6 +2747,8 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.login = m_login;
 		params.password = m_password;
 		params.host = m_host;
+		params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
+
 		if (info->stream_uri->get_server_subst_type() == ServerSubstType::enStream)
 		{
 			params.server = GetConfig().get_int(false, REG_DEVICE_ID);
@@ -2740,7 +2758,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
 		UpdateExtToken(info->stream_uri.get(), m_token);
-		const auto& url = info->stream_uri->get_templated_stream((StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()), params);
+		const auto& url = info->stream_uri->get_templated_stream(params);
 
 		TRACE(L"\nTest URL: %s\n", url.c_str());
 

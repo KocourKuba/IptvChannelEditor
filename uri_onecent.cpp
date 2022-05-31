@@ -63,13 +63,13 @@ void uri_onecent::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_onecent::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
+std::wstring uri_onecent::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url = get_uri();
 
 	if (is_template())
 	{
-		switch (subType)
+		switch (params.streamSubtype)
 		{
 			case StreamSubType::enHLS:
 				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;

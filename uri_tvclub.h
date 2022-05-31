@@ -33,7 +33,7 @@ public:
 	uri_tvclub();
 
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated_stream(const StreamSubType subType, TemplateParams& params) const override;
+	std::wstring get_templated_stream(TemplateParams& params) const override;
 	std::wstring get_playlist_url(TemplateParams& params) override;
 	std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;

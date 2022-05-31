@@ -32,6 +32,6 @@ class uri_antifriz : public uri_stream
 public:
 	uri_antifriz();;
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated_stream(const StreamSubType subType, TemplateParams& params) const override;
+	std::wstring get_templated_stream(TemplateParams& params) const override;
 	std::wstring get_playlist_url(TemplateParams& params) override;
 };

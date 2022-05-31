@@ -75,7 +75,7 @@ void uri_tvclub::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_tvclub::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
+std::wstring uri_tvclub::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url;
 

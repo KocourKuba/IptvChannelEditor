@@ -43,7 +43,6 @@ public:
 		std::wstring m_probe;
 		int m_max_threads = 1;
 		TemplateParams m_params;
-		StreamSubType m_StreamSubtype = StreamSubType::enHLS;
 	};
 
 protected:

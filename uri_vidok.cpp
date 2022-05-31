@@ -75,7 +75,7 @@ void uri_vidok::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_vidok::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
+std::wstring uri_vidok::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url;
 
@@ -85,14 +85,7 @@ std::wstring uri_vidok::get_templated_stream(const StreamSubType subType, Templa
 	}
 	else
 	{
-		switch (subType)
-		{
-			case StreamSubType::enHLS:
-				url = URI_TEMPLATE_HLS;
-				break;
-			default:
-				break;
-		}
+		url = URI_TEMPLATE_HLS;
 	}
 
 	if (params.shift_back)

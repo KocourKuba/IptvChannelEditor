@@ -63,7 +63,7 @@ void uri_ottclub::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_ottclub::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
+std::wstring uri_ottclub::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url;
 

@@ -65,11 +65,11 @@ void uri_sharavoz::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_sharavoz::get_templated_stream(const StreamSubType subType, TemplateParams& params) const
+std::wstring uri_sharavoz::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url = is_template() ? URI_TEMPLATE_HLS : get_uri();
 
-	switch (subType)
+	switch (params.streamSubtype)
 	{
 		case StreamSubType::enHLS:
 			url = URI_TEMPLATE_HLS;

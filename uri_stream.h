@@ -36,6 +36,7 @@ enum class ServerSubstType {
 
 struct TemplateParams
 {
+	StreamSubType streamSubtype = StreamSubType::enHLS;
 	std::wstring domain;
 	std::wstring token;
 	std::wstring login;
@@ -377,7 +378,7 @@ public:
 	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	virtual std::wstring get_templated_stream(const StreamSubType subType, TemplateParams& params) const { return L""; };
+	virtual std::wstring get_templated_stream(TemplateParams& params) const { return L""; };
 
 	/// <summary>
 	/// get additional get headers

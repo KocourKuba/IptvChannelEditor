@@ -56,9 +56,11 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 	afx_msg void OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDtnDatetimechangeDatetimepicker(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult);
 
 public:
 	int m_epg_idx = 0;
+	TemplateParams m_params;
 	BaseInfo* m_info = nullptr;
 	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 2>* m_epg_cache = nullptr;
 
@@ -70,5 +72,5 @@ protected:
 	CString m_csEpgUrl;
 
 	std::map<time_t, EpgInfo>* m_pEpgChannelMap = nullptr;
-	std::map<int, time_t> m_idx_map;
+	std::map<int, std::pair<time_t, time_t>> m_idx_map;
 };

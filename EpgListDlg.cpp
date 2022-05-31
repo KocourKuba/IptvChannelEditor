@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CEpgListDlg, CDialogEx)
 	ON_WM_GETMINMAXINFO()
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_EPG, &CEpgListDlg::OnItemchangedList)
 	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER, &CEpgListDlg::OnDtnDatetimechangeDatetimepicker)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_EPG, &CEpgListDlg::OnNMDblclkListEpg)
 END_MESSAGE_MAP()
 
 CEpgListDlg::CEpgListDlg(CWnd* pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG_EPG_LIST, pParent)
@@ -71,9 +72,10 @@ BOOL CEpgListDlg::OnInitDialog()
 
 	// Set up list control
 	// Nothing special here.  Just some columns for the report view.
-	m_wndEpgList.InsertColumn(0, load_string_resource(IDS_STRING_COL_START).c_str(), LVCFMT_LEFT, 120);
-	m_wndEpgList.InsertColumn(1, load_string_resource(IDS_STRING_COL_END).c_str(), LVCFMT_LEFT, 120);
-	m_wndEpgList.InsertColumn(2, load_string_resource(IDS_STRING_COL_TITLE).c_str(), LVCFMT_LEFT, 500);
+	m_wndEpgList.InsertColumn(0, L"R", LVCFMT_LEFT, 20);
+	m_wndEpgList.InsertColumn(1, load_string_resource(IDS_STRING_COL_START).c_str(), LVCFMT_LEFT, 120);
+	m_wndEpgList.InsertColumn(2, load_string_resource(IDS_STRING_COL_END).c_str(), LVCFMT_LEFT, 120);
+	m_wndEpgList.InsertColumn(3, load_string_resource(IDS_STRING_COL_TITLE).c_str(), LVCFMT_LEFT, 500);
 
 	m_day.SetTime(COleDateTime::GetCurrentTime());
 
@@ -135,12 +137,14 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 		if (shifted_start < start_time || shifted_start > end_time) continue;
 
+		bool isArchive = (_time32(nullptr) - epg.second.time_end) > 0 && epg.second.time_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
 		COleDateTime start(shifted_start);
 		COleDateTime end(shifted_end);
-		int idx = m_wndEpgList.InsertItem(i++, start.Format(_T("%d.%m.%Y %H:%M:%S")));
-		m_wndEpgList.SetItemText(idx, 1, end.Format(_T("%d.%m.%Y %H:%M:%S")));
-		m_wndEpgList.SetItemText(idx, 2, utils::utf8_to_utf16(epg.second.name).c_str());
-		m_idx_map.emplace(idx, epg.first);
+		int idx = m_wndEpgList.InsertItem(i++, isArchive ? L"R" : L"");
+		m_wndEpgList.SetItemText(idx, 1, start.Format(_T("%d.%m.%Y %H:%M:%S")));
+		m_wndEpgList.SetItemText(idx, 2, end.Format(_T("%d.%m.%Y %H:%M:%S")));
+		m_wndEpgList.SetItemText(idx, 3, utils::utf8_to_utf16(epg.second.name).c_str());
+		m_idx_map.emplace(idx, std::pair<time_t, time_t>(epg.second.time_start, epg.second.time_end));
 
 		if (now >= epg.first && now <= epg.second.time_end)
 		{
@@ -191,7 +195,7 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 		auto& start_pair = m_idx_map.find(pNMItemActivate->iItem);
 		if (start_pair == m_idx_map.end()) break;
 
-		auto& epg_pair = m_pEpgChannelMap->find(start_pair->second);
+		auto& epg_pair = m_pEpgChannelMap->find(start_pair->second.first);
 		if (epg_pair == m_pEpgChannelMap->end()) break;
 
 		const auto& text = fmt::format(R"({{\rtf1 {:s}}})", epg_pair->second.desc);
@@ -220,4 +224,25 @@ void CEpgListDlg::OnDtnDatetimechangeDatetimepicker(NMHDR* pNMHDR, LRESULT* pRes
 	}
 
 	*pResult = 0;
+}
+
+void CEpgListDlg::OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	*pResult = 0;
+
+	if (const auto& start_pair = m_idx_map.find(pNMItemActivate->iItem); start_pair != m_idx_map.end())
+	{
+		m_params.shift_back = (int)start_pair->second.first;
+		bool isArchive = (_time32(nullptr) - start_pair->second.first) > 0 && start_pair->second.second > (_time32(nullptr) - m_info->get_archive_days() * 84600);
+		if (isArchive)
+		{
+			const auto& url = m_info->stream_uri->get_templated_stream(m_params);
+
+			TRACE(L"\nTest URL: %s\n", url.c_str());
+
+			ShellExecuteW(nullptr, L"open", GetConfig().get_string(true, REG_PLAYER).c_str(), url.c_str(), nullptr, SW_SHOWNORMAL);
+		}
+	}
 }
