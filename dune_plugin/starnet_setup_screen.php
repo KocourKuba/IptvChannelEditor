@@ -234,8 +234,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             hd_print("Change server supported");
             $server_ops = $this->plugin->config->get_server_opts($plugin_cookies);
             $server = $this->plugin->config->get_server($plugin_cookies);
-            hd_print("Selected server $server");
             if (!empty($server_ops)) {
+                hd_print("Selected server " . $server_ops[$server]);
                 Control_Factory::add_combobox($defs, $this, null, 'server', 'Сервер:', $server, $server_ops, 0);
             }
         }

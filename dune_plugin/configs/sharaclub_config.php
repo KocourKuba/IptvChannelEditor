@@ -9,8 +9,6 @@ class SharaclubPluginConfig extends Default_Config
     const SERVERS_URL = 'servers_url';
     const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 
-    protected $servers = array();
-
     public function __construct()
     {
         parent::__construct();
@@ -389,23 +387,27 @@ class SharaclubPluginConfig extends Default_Config
      */
     public function get_server_opts($plugin_cookies)
     {
-        if (empty($this->servers)) {
-            try {
-                $login = $this->get_login($plugin_cookies);
-                $password = $this->get_password($plugin_cookies);
-                $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
-                $content = HD::DownloadJson($url);
+        $servers = array();
+        try {
+            $login = $this->get_login($plugin_cookies);
+            $password = $this->get_password($plugin_cookies);
+            $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
+            $content = HD::DownloadJson($url);
 
-                if ($content !== false && $content['status'] === '1') {
-                    $plugin_cookies->server = (int)$content['current'];
-                    foreach ($content['allow_nums'] as $server) {
-                        $this->servers[] = $server['name'];
-                    }
+            if ($content !== false && $content['status'] === '1') {
+                foreach ($content['allow_nums'] as $server) {
+                    $servers[(int)$server['id']] = $server['name'];
                 }
-            } catch (Exception $ex) {
+                $plugin_cookies->server = $content['current'];
+                hd_print("Current server: $plugin_cookies->server");
+            } else {
+                hd_print("Unable to download servers information");
             }
+        } catch (Exception $ex) {
+            hd_print("Error during downloading servers information");
         }
-        return $this->servers;
+
+        return $servers;
     }
 
     /**
@@ -428,14 +430,18 @@ class SharaclubPluginConfig extends Default_Config
 
         try {
             $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
+            hd_print("change server to: $server");
             $content = HD::DownloadJson($url . "&num=$server");
             if ($content !== false) {
-                hd_print("change server: {$content['msg']}");
+                hd_print("changing result: {$content['msg']}");
                 if ($content['status'] === '1') {
                     $plugin_cookies->server = $server;
                 }
+            } else {
+                hd_print("Unable to change server");
             }
         } catch (Exception $ex) {
+            hd_print("Failed to change server");
         }
     }
 }
