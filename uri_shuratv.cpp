@@ -41,13 +41,12 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/~{TOKEN}/{ID}/";
 uri_shuratv::uri_shuratv()
 {
 	auto& params = epg_params[0];
-	params.epg_url = L"http://s1.tvshka.net/{ID}/epg/range14-7.json";
+	params.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
 	params.epg_root = "";
-	params.epg_name = "name";
-	params.epg_desc = "text";
-	params.epg_start = "start_time";
-	params.epg_end = "duration";
-	params.epg_use_duration = true;
+	params.epg_name = "epg";
+	params.epg_desc = "desc";
+	params.epg_start = "start";
+	params.epg_end = "stop";
 	provider_url = L"http://shura.tv/b/";
 
 	for (int i = 0; i <= IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1; i++)
@@ -59,7 +58,7 @@ uri_shuratv::uri_shuratv()
 
 void uri_shuratv::parse_uri(const std::wstring& url)
 {
-	// http://s1.tvshka.net/~shsv45hh617fU/119/hls/pl.m3u8
+	// http://bl2.provds.pw/~shsv45hh617fU/119/hls/pl.m3u8
 	static std::wregex re_url(LR"(^https?:\/\/(.+)\/~(.+)\/(.+)\/hls\/.+\.m3u8$)");
 	std::wsmatch m;
 	if (std::regex_match(url, m, re_url))
