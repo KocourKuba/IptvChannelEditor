@@ -4,7 +4,6 @@ require_once 'default_config.php';
 class ShuratvPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://pl.tvshka.net/?uid=%s&srv=%d&type=halva';
-    const API_HOST = 'http://s1.tvshka.net';
 
     public function __construct()
     {
@@ -16,13 +15,12 @@ class ShuratvPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/~{TOKEN}/{ID}');
         $this->set_feature(SERVER_SUPPORTED, true);
 
-        $this->set_epg_param('first','epg_url','http://s1.tvshka.net/{CHANNEL}/epg/range14-7.json');
+        $this->set_epg_param('first','epg_url','http://epg.propg.net/{CHANNEL}/epg2/{DATE}');
         $this->set_epg_param('first','epg_root', '');
-        $this->set_epg_param('first','epg_start', 'start_time');
-        $this->set_epg_param('first','epg_end', 'duration');
-        $this->set_epg_param('first','epg_title', 'name');
-        $this->set_epg_param('first','epg_desc', 'text');
-        $this->set_epg_param('first','epg_use_duration', true);
+        $this->set_epg_param('first','epg_start', 'start');
+        $this->set_epg_param('first','epg_end', 'stop');
+        $this->set_epg_param('first','epg_title', 'epg');
+        $this->set_epg_param('first','epg_desc', 'desc');
     }
 
     /**
