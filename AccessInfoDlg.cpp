@@ -133,28 +133,32 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
 
 	m_wndAccounts.GetClientRect(&rect);
-	int vWidth = rect.Width() - /*GetSystemMetrics(SM_CXVSCROLL) -*/ 1 - 22;
+	int vWidth = rect.Width() - 23;
 
-	m_wndAccounts.InsertColumn(0, L"", LVCFMT_LEFT, 22, 0);
+	int last = 0;
+	m_wndAccounts.InsertColumn(last++, L"", LVCFMT_LEFT, 22, 0);
 	switch(m_access_type)
 	{
 		case AccountAccessType::enPin:
-			m_wndAccounts.InsertColumn(1, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
+			vWidth /= 2;
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enLoginPass:
-			vWidth /= 2;
-			m_wndAccounts.InsertColumn(1, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndAccounts.InsertColumn(2, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
+			vWidth /= 3;
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enOtt:
-			vWidth /= 3;
-			m_wndAccounts.InsertColumn(1, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndAccounts.InsertColumn(2, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndAccounts.InsertColumn(3, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
+			vWidth /= 4;
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndNewFromUrl.ShowWindow(SW_SHOW);
 			break;
 		default: break;
 	}
+
+	m_wndAccounts.InsertColumn(last, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
 
 	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES);
 
@@ -243,9 +247,10 @@ BOOL CAccessInfoDlg::OnInitDialog()
 
 		m_wndAccounts.InsertItem(idx, L"", 0);
 
-		std::wstring str(creds[0]);
+		size_t last = 0;
+		std::wstring str(creds[last]);
 		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-		m_wndAccounts.SetItemText(idx, 1, str.c_str());
+		m_wndAccounts.SetItemText(idx, ++last, str.c_str());
 		switch (m_access_type)
 		{
 			case AccountAccessType::enPin:
@@ -260,9 +265,9 @@ BOOL CAccessInfoDlg::OnInitDialog()
 				{
 					selected = idx;
 				}
-				str = creds.size() > 1 ? creds[1] : L"";
+				str = creds.size() > last ? creds[last] : L"";
 				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-				m_wndAccounts.SetItemText(idx, 2, str.c_str());
+				m_wndAccounts.SetItemText(idx, ++last, str.c_str());
 				break;
 
 			case AccountAccessType::enOtt:
@@ -271,17 +276,21 @@ BOOL CAccessInfoDlg::OnInitDialog()
 					selected = idx;
 				}
 
-				str = creds.size() > 1 ? creds[1] : L"";
+				str = creds.size() > last ? creds[last] : L"";
 				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-				m_wndAccounts.SetItemText(idx, 2, str.c_str());
+				m_wndAccounts.SetItemText(idx, ++last, str.c_str());
 
-				str = creds.size() > 2 ? creds[2] : L"";
+				str = creds.size() > last ? creds[last] : L"";
 				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-				m_wndAccounts.SetItemText(idx, 3, str.c_str());
+				m_wndAccounts.SetItemText(idx, ++last, str.c_str());
 				break;
 
 			default:break;
 		}
+
+		str = creds.size() > last ? creds[last] : L"";
+		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
+		m_wndAccounts.SetItemText(idx, ++last, str.c_str());
 
 		++idx;
 	}
@@ -308,7 +317,9 @@ void CAccessInfoDlg::OnOK()
 		switch (m_access_type)
 		{
 			case AccountAccessType::enPin:
-				credentials += fmt::format(L"\"{:s}\";", m_wndAccounts.GetItemText(i, 1).GetString());
+				credentials += fmt::format(L"\"{:s}\",\"{:s}\";",
+										   m_wndAccounts.GetItemText(i, 1).GetString(),
+										   m_wndAccounts.GetItemText(i, 2).GetString());
 				if (i == sel)
 				{
 					m_password = m_wndAccounts.GetItemText(i, 1).GetString();
@@ -316,9 +327,10 @@ void CAccessInfoDlg::OnOK()
 				break;
 
 			case AccountAccessType::enLoginPass:
-				credentials += fmt::format(L"\"{:s}\",\"{:s}\";",
+				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\";",
 					m_wndAccounts.GetItemText(i, 1).GetString(),
-					m_wndAccounts.GetItemText(i, 2).GetString());
+					m_wndAccounts.GetItemText(i, 2).GetString(),
+					m_wndAccounts.GetItemText(i, 3).GetString());
 				if (i == sel)
 				{
 					m_login = m_wndAccounts.GetItemText(i, 1).GetString();
@@ -327,10 +339,11 @@ void CAccessInfoDlg::OnOK()
 				break;
 
 			case AccountAccessType::enOtt:
-				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\";",
+				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\",\"{:s}\";",
 					m_wndAccounts.GetItemText(i, 1).GetString(),
 					m_wndAccounts.GetItemText(i, 2).GetString(),
-					m_wndAccounts.GetItemText(i, 3).GetString());
+					m_wndAccounts.GetItemText(i, 3).GetString(),
+					m_wndAccounts.GetItemText(i, 4).GetString());
 				if (i == sel)
 				{
 					m_token = m_wndAccounts.GetItemText(i, 1).GetString();

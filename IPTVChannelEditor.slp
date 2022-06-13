@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220529175815" scan="113" scanned="20220529175544">
+<document created="20211012165442" version="4.0.374" date="20220613223349" scan="114" scanned="20220613223337">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220529155034" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220613165136" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -4131,6 +4131,10 @@
           <native>Embed credentials into plugin to avoid enter it manually</native>
           <lang id="ru" date="20220529175809">Встроить данные аккаунта в плагин чтобы избежать ввода в плагине вручную</lang>
         </row>
+        <row id="IDS_STRING_COL_COMMENT" state="0" created="20220613223337">
+          <native>Comment</native>
+          <lang id="ru" date="20220613223345">Комментарий</lang>
+        </row>
         <row id="IDS_STRING_COMBO_DEVICE_ID" state="0" created="20220529175544">
           <native>Available server/device/quality</native>
           <lang id="ru" date="20220529175727">Доступные сервера/устройства/качество</lang>
@@ -4430,28 +4434,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220529175544">
-          <prev>3.0.882, 28 May 2022</prev>
-          <native>3.0.886, 29 May 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220613223337">
+          <prev>3.0.886, 29 May 2022</prev>
+          <native>3.1.902, 6 Jun 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20220512175419">0</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220529175544">
-          <prev>882</prev>
-          <native>886</native>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220613223337">
+          <prev>0</prev>
+          <native>1</native>
+        </row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220613223337">
+          <prev>886</prev>
+          <native>902</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220529175544">
-          <prev>3.0.882</prev>
-          <native>3.0.886</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220613223337">
+          <prev>3.0.886</prev>
+          <native>3.1.902</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20220512175419">0</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220529175544">
-          <prev>882</prev>
-          <native>886</native>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220613223337">
+          <prev>0</prev>
+          <native>1</native>
+        </row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220613223337">
+          <prev>886</prev>
+          <native>902</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
