@@ -41,8 +41,7 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
             switch ($this->get_format($plugin_cookies)) {
                 case 'hls':
                     $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_HLS : MEDIA_URL_TEMPLATE_HLS);
-                    if (((int)$archive_ts <= 0))
-                        $domain[0] = $ext_params['subdomain'];
+                    $domain[0] = $ext_params['subdomain'];
                     break;
                 case 'mpeg':
                     $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : MEDIA_URL_TEMPLATE_MPEG);
