@@ -49,7 +49,8 @@ std::wstring PluginsConfig::PACK_DLL_PATH;
 
 #define MAKEQWORD(a, b) ((QWORD)(((DWORD)(((QWORD)(a)) & 0xffffffff)) | ((QWORD)((DWORD)(((QWORD)(b)) & 0xffffffff))) << 32))
 
-constexpr auto MAX_REGVAL_SIZE = 1024; // real max size - 32767 bytes;
+constexpr auto MAX_REGNAME_SIZE = 1024; // real max size - 32767 bytes;
+constexpr auto MAX_REGVAL_SIZE = 1024 * 128; // real max size - 2 Mb;
 constexpr auto REGISTRY_APP_ROOT = LR"(SOFTWARE\Dune IPTV Channel Editor)";
 constexpr auto REGISTRY_APP_SETTINGS = LR"(SOFTWARE\Dune IPTV Channel Editor\Editor\Settings)";
 constexpr auto CONFIG_FILE = L"settings.cfg";
@@ -458,7 +459,7 @@ void PluginsConfig::ReadSettingsRegistry(StreamType plugin_type)
 		{
 			DWORD dwType = 0;
 			DWORD cbData = MAX_REGVAL_SIZE;
-			DWORD dwNameSize = MAX_REGVAL_SIZE / sizeof(wchar_t);
+			DWORD dwNameSize = MAX_REGNAME_SIZE / sizeof(wchar_t);
 
 			std::vector<wchar_t> szName(dwNameSize);
 			std::vector<BYTE> lpData(cbData);
