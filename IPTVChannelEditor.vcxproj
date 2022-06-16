@@ -275,6 +275,7 @@ goto :EOF
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="PlaylistParseJsonThread.h" />
+    <ClInclude Include="ResizedPropertySheet.h" />
     <ClInclude Include="vod_movie.h" />
     <ClInclude Include="NewChannelsListDlg.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
@@ -343,6 +344,7 @@ goto :EOF
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
     <ClCompile Include="PlaylistParseXMLThread.cpp" />
     <ClCompile Include="PathsSettingsPage.cpp" />
+    <ClCompile Include="ResizedPropertySheet.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />

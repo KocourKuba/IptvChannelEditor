@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_stream.h"
 #include "Config.h"
 
-class CAccessInfoDlg : public CPropertyPage
+class CAccessInfoDlg : public CMFCPropertyPage
 {
 	DECLARE_DYNAMIC(CAccessInfoDlg)
 
@@ -50,6 +50,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 	afx_msg void OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonAdd();

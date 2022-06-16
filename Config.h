@@ -78,6 +78,7 @@ constexpr auto REG_WINDOW_POS      = _T("WindowPos");
 constexpr auto REG_ICON_WINDOW_POS = _T("IconsWindowPos");
 constexpr auto REG_EPG_WINDOW_POS  = _T("EpgWindowPos");
 constexpr auto REG_VOD_WINDOW_POS  = _T("VodWindowPos");
+constexpr auto REG_ACC_WINDOW_POS  = _T("AccountWindowPos");
 
 // app
 constexpr auto REG_NEXT_UPDATE     = _T("NextUpdate");
@@ -131,6 +132,7 @@ constexpr auto REG_CREDENTIALS         = _T("Credentials");
 constexpr auto REG_EMBED_INFO          = _T("EmbedInfo");
 constexpr auto REG_LIST_DOMAIN         = _T("ListDomain");
 constexpr auto REG_EPG_DOMAIN          = _T("EpgDomain");
+constexpr auto REG_PLUGIN_SUFFIX       = _T("PluginSuffix");
 
 typedef struct
 {

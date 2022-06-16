@@ -50,9 +50,9 @@ std::map<UINT, UINT> tooltips_info_account =
 
 // CAccessDlg dialog
 
-IMPLEMENT_DYNAMIC(CAccessInfoDlg, CPropertyPage)
+IMPLEMENT_DYNAMIC(CAccessInfoDlg, CMFCPropertyPage)
 
-BEGIN_MESSAGE_MAP(CAccessInfoDlg, CPropertyPage)
+BEGIN_MESSAGE_MAP(CAccessInfoDlg, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CAccessInfoDlg::OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CAccessInfoDlg::OnBnClickedButtonRemove)
 	ON_BN_CLICKED(IDC_BUTTON_NEW_FROM_URL, &CAccessInfoDlg::OnBnClickedButtonNewFromUrl)
@@ -62,7 +62,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoDlg, CPropertyPage)
 END_MESSAGE_MAP()
 
 
-CAccessInfoDlg::CAccessInfoDlg() : CPropertyPage(IDD_DIALOG_ACCESS_INFO)
+CAccessInfoDlg::CAccessInfoDlg() : CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
 {
 }
 

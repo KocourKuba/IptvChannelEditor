@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
+#include "ResizedPropertySheet.h"
 #include "AboutDlg.h"
 #include "MainSettingsPage.h"
 #include "PathsSettingsPage.h"
@@ -2795,7 +2796,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 
 bool CIPTVChannelEditorDlg::SetupAccount()
 {
-	CPropertySheet sheet(IDS_STRING_ACCOUNT_SETTINGS);
+	CResizedPropertySheet sheet(IDS_STRING_ACCOUNT_SETTINGS, REG_ACC_WINDOW_POS);
 	sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	sheet.m_psh.dwFlags &= ~PSH_HASHELP;
 

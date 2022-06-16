@@ -249,6 +249,9 @@
     <ClInclude Include="NewChannelsListDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="ResizedPropertySheet.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -420,6 +423,9 @@
       <Filter>Source Files\Threads</Filter>
     </ClCompile>
     <ClCompile Include="IPTVChannelEditorDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizedPropertySheet.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>

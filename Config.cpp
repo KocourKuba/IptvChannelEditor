@@ -59,6 +59,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_WINDOW_POS,
 	REG_ICON_WINDOW_POS,
 	REG_EPG_WINDOW_POS,
+	REG_ACC_WINDOW_POS,
 	REG_PLAYER,
 	REG_FFPROBE,
 	REG_LISTS_PATH,
@@ -104,6 +105,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_EMBED_INFO,
 	REG_LIST_DOMAIN,
 	REG_EPG_DOMAIN,
+	REG_PLUGIN_SUFFIX,
 };
 
 static std::vector<PluginDesc> all_plugins = {
