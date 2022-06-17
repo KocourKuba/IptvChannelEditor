@@ -106,16 +106,9 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	m_access_type = GetConfig().get_plugin_account_access_type();
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
-	CRect rect;
-
 	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
 	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
 	header->ModifyStyle(0, HDS_CHECKBOXES);
-	HDITEM hdi = { 0 };
-	hdi.mask = HDI_FORMAT;
-	header->GetItem(0, &hdi);
-	hdi.fmt |= HDF_CHECKBOX;
-	header->SetItem(0, &hdi);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
@@ -132,24 +125,38 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
 
+	CreateAccountsList();
+	CreateAccountInfo();
+
+	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
+
+	UpdateData(FALSE);
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CAccessInfoDlg::CreateAccountsList()
+{
+	CRect rect;
 	m_wndAccounts.GetClientRect(&rect);
-	int vWidth = rect.Width() - 23;
+	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 22;
 
 	int last = 0;
 	m_wndAccounts.InsertColumn(last++, L"", LVCFMT_LEFT, 22, 0);
-	switch(m_access_type)
+	switch (m_access_type)
 	{
 		case AccountAccessType::enPin:
-			vWidth /= 2;
+			vWidth /= 3;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enLoginPass:
-			vWidth /= 3;
+			vWidth /= 4;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enOtt:
-			vWidth /= 4;
+			vWidth /= 5;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
@@ -158,63 +165,8 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		default: break;
 	}
 
-	m_wndAccounts.InsertColumn(last, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
-
-	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES);
-
-	m_wndInfo.GetClientRect(&rect);
-	vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
-	int nWidth = vWidth / 4;
-
-	m_wndInfo.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, nWidth, 0);
-	m_wndInfo.InsertColumn(1, load_string_resource(IDS_STRING_COL_DATA).c_str(), LVCFMT_LEFT, vWidth - nWidth, 0);
-
-	TemplateParams params;
-	params.login = m_login;
-	params.password = m_password;
-	params.domain = m_domain;
-	params.server = GetConfig().get_int(false, REG_DEVICE_ID);
-	params.profile = GetConfig().get_int(false, REG_PROFILE_ID);
-
-	UINT static_text = IDS_STRING_SERVER_ID;
-	switch (m_plugin_type)
-	{
-		case StreamType::enCbilling:
-			static_text = IDS_STRING_DEVICE_ID;
-			break;
-		case StreamType::enSharaclub:
-			m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
-			m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
-			params.domain = m_list_domain;
-			break;
-		case StreamType::enVipLime:
-			static_text = IDS_STRING_QUALITY_ID;
-			break;
-		default:
-			break;
-	}
-
-	m_servers = m_plugin->get_servers_list(params);
-
-	auto wndStaticDevice = GetDlgItem(IDC_STATIC_DEVICE_ID);
-	wndStaticDevice->SetWindowText(load_string_resource(static_text).c_str());
-	wndStaticDevice->EnableWindow(!m_servers.empty());
-
-	for (const auto& info : m_servers)
-	{
-		m_wndDeviceID.AddString(info.name.c_str());
-	}
-
-	m_wndDeviceID.EnableWindow(!m_servers.empty());
-	if (!m_servers.empty())
-	{
-		if (params.server >= (int)m_servers.size())
-		{
-			params.server = 0;
-		}
-
-		m_wndDeviceID.SetCurSel(params.server);
-	}
+	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
+	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_SUFFIX).c_str(), LVCFMT_LEFT, vWidth, 0);
 
 	const auto& credentials = GetConfig().get_string(false, REG_CREDENTIALS);
 	auto& all_accounts = utils::string_split(credentials, L';');
@@ -292,16 +244,74 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
 		m_wndAccounts.SetItemText(idx, ++last, str.c_str());
 
+		str = creds.size() > last ? creds[last] : L"";
+		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
+		m_wndAccounts.SetItemText(idx, ++last, str.c_str());
+
 		++idx;
 	}
 
 	m_wndAccounts.SetCheck(selected, TRUE);
-	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
+}
 
-	UpdateData(FALSE);
+void CAccessInfoDlg::CreateAccountInfo()
+{
+	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	CRect rect;
+	m_wndInfo.GetClientRect(&rect);
+	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
+	int nWidth = vWidth / 4;
+
+	m_wndInfo.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, nWidth, 0);
+	m_wndInfo.InsertColumn(1, load_string_resource(IDS_STRING_COL_DATA).c_str(), LVCFMT_LEFT, vWidth - nWidth, 0);
+
+	TemplateParams params;
+	params.login = m_login;
+	params.password = m_password;
+	params.domain = m_domain;
+	params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+	params.profile = GetConfig().get_int(false, REG_PROFILE_ID);
+
+	UINT static_text = IDS_STRING_SERVER_ID;
+	switch (m_plugin_type)
+	{
+		case StreamType::enCbilling:
+			static_text = IDS_STRING_DEVICE_ID;
+			break;
+		case StreamType::enSharaclub:
+			m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+			m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
+			params.domain = m_list_domain;
+			break;
+		case StreamType::enVipLime:
+			static_text = IDS_STRING_QUALITY_ID;
+			break;
+		default:
+			break;
+	}
+
+	m_servers = m_plugin->get_servers_list(params);
+
+	auto wndStaticDevice = GetDlgItem(IDC_STATIC_DEVICE_ID);
+	wndStaticDevice->SetWindowText(load_string_resource(static_text).c_str());
+	wndStaticDevice->EnableWindow(!m_servers.empty());
+
+	for (const auto& info : m_servers)
+	{
+		m_wndDeviceID.AddString(info.name.c_str());
+	}
+
+	m_wndDeviceID.EnableWindow(!m_servers.empty());
+	if (!m_servers.empty())
+	{
+		if (params.server >= (int)m_servers.size())
+		{
+			params.server = 0;
+		}
+
+		m_wndDeviceID.SetCurSel(params.server);
+	}
 }
 
 void CAccessInfoDlg::OnOK()
@@ -317,38 +327,44 @@ void CAccessInfoDlg::OnOK()
 		switch (m_access_type)
 		{
 			case AccountAccessType::enPin:
-				credentials += fmt::format(L"\"{:s}\",\"{:s}\";",
-										   m_wndAccounts.GetItemText(i, 1).GetString(),
-										   m_wndAccounts.GetItemText(i, 2).GetString());
+				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\";",
+										   m_wndAccounts.GetItemText(i, 1).GetString(),  // password
+										   m_wndAccounts.GetItemText(i, 2).GetString(),  // comment
+										   m_wndAccounts.GetItemText(i, 3).GetString()); // suffix
 				if (i == sel)
 				{
 					m_password = m_wndAccounts.GetItemText(i, 1).GetString();
+					m_suffix = m_wndAccounts.GetItemText(i, 3).GetString();
 				}
 				break;
 
 			case AccountAccessType::enLoginPass:
-				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\";",
-					m_wndAccounts.GetItemText(i, 1).GetString(),
-					m_wndAccounts.GetItemText(i, 2).GetString(),
-					m_wndAccounts.GetItemText(i, 3).GetString());
+				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\",\"{:s}\";",
+										   m_wndAccounts.GetItemText(i, 1).GetString(),  // login
+										   m_wndAccounts.GetItemText(i, 2).GetString(),  // password
+										   m_wndAccounts.GetItemText(i, 3).GetString(),  // comment
+										   m_wndAccounts.GetItemText(i, 4).GetString()); // suffix
 				if (i == sel)
 				{
 					m_login = m_wndAccounts.GetItemText(i, 1).GetString();
 					m_password = m_wndAccounts.GetItemText(i, 2).GetString();
+					m_suffix = m_wndAccounts.GetItemText(i, 4).GetString();
 				}
 				break;
 
 			case AccountAccessType::enOtt:
-				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\",\"{:s}\";",
-					m_wndAccounts.GetItemText(i, 1).GetString(),
-					m_wndAccounts.GetItemText(i, 2).GetString(),
-					m_wndAccounts.GetItemText(i, 3).GetString(),
-					m_wndAccounts.GetItemText(i, 4).GetString());
+				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\",\"{:s}\",\"{:s}\";",
+										   m_wndAccounts.GetItemText(i, 1).GetString(),  // ottkey
+										   m_wndAccounts.GetItemText(i, 2).GetString(),  // domain
+										   m_wndAccounts.GetItemText(i, 3).GetString(),  // vportal
+										   m_wndAccounts.GetItemText(i, 4).GetString(),  // comment
+										   m_wndAccounts.GetItemText(i, 5).GetString()); // suffix
 				if (i == sel)
 				{
 					m_token = m_wndAccounts.GetItemText(i, 1).GetString();
 					m_domain = m_wndAccounts.GetItemText(i, 2).GetString();
 					m_portal = m_wndAccounts.GetItemText(i, 3).GetString();
+					m_suffix = m_wndAccounts.GetItemText(i, 5).GetString();
 					GetConfig().set_string(false, REG_VPORTAL, m_portal);
 				}
 				break;
@@ -386,6 +402,7 @@ void CAccessInfoDlg::OnOK()
 	GetConfig().set_string(false, REG_LOGIN, m_login);
 	GetConfig().set_string(false, REG_PASSWORD, m_password);
 	GetConfig().set_string(false, REG_HOST, m_host);
+	GetConfig().set_string(false, REG_PLUGIN_SUFFIX, m_suffix);
 	GetConfig().set_string(false, REG_CREDENTIALS, credentials);
 
 	__super::OnOK();
@@ -508,6 +525,7 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 			m_token.clear();
 			m_domain.clear();
 			m_portal.clear();
+			m_suffix.clear();
 			m_wndInfo.DeleteAllItems();
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
 		}

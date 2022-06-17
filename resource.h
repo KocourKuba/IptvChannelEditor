@@ -158,6 +158,7 @@
 #define IDS_STRING_COMBO_PROFILE        265
 #define IDS_STRING_CHECK_EMBED          266
 #define IDS_STRING_COL_COMMENT          267
+#define IDS_STRING_COL_SUFFIX           268
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302

@@ -45,12 +45,16 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
+
+	void CreateAccountInfo();
+
+	void CreateAccountsList();
+
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	void OnOK() override;
 
 	DECLARE_MESSAGE_MAP()
 
-	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 	afx_msg void OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonAdd();
@@ -72,6 +76,7 @@ public:
 	std::wstring m_domain;
 	std::wstring m_host;
 	std::wstring m_portal;
+	std::wstring m_suffix;
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
 

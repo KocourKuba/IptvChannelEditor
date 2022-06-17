@@ -534,7 +534,8 @@ bool PackPlugin(const StreamType plugin_type,
 		return false;
 	}
 
-	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, short_name_w);
+	const auto& suffix = GetConfig().get_string(false, REG_PLUGIN_SUFFIX);
+	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, short_name_w, suffix.empty() ? L"mod" : suffix);
 
 	res = archiver.CreateArchive(pluginFile);
 	// remove temporary folder
