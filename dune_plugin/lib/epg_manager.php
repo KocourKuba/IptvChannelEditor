@@ -205,6 +205,8 @@ class Epg_Manager
         if ($no_end && $prev_start !== 0) {
             $day_epg[$prev_start]['epg_end'] = $prev_start + 60 * 60; // fake end
         }
+
+        ksort($day_epg);
         return $day_epg;
     }
 
