@@ -71,6 +71,9 @@ abstract class Default_Config
     public $PLUGIN_SHORT_NAME = 'starnet';
     public $PLUGIN_VERSION = '0.0.0';
     public $PLUGIN_DATE = '04.01.1972';
+    public $PLUGIN_CAPTION = '';
+    public $PLUGIN_ICON = '';
+    public $PLUGIN_BACKGROUND = '';
 
     protected $FEATURES = array();
     protected $EPG_PARSER_PARAMS = array();
@@ -107,6 +110,8 @@ abstract class Default_Config
 
         $this->PLUGIN_SHOW_NAME = $xml->caption;
         $this->PLUGIN_SHORT_NAME = $xml->short_name;
+        $this->PLUGIN_ICON = $xml->icon_url;
+        $this->PLUGIN_BACKGROUND = $xml->background;
         $this->PLUGIN_VERSION = $xml->version;
         $this->PLUGIN_DATE = $xml->release_date;
 
@@ -383,7 +388,7 @@ abstract class Default_Config
      */
     public function GET_BG_PICTURE()
     {
-        return sprintf('plugin_file://icons/bg_%s.jpg', $this->PLUGIN_SHORT_NAME);
+        return (string)$this->PLUGIN_BACKGROUND;
     }
 
     /**

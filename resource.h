@@ -339,9 +339,11 @@
 #define IDC_BUTTON_REFRESH              1155
 #define IDC_STATIC_SEASON               1156
 #define IDC_COMBO_EPISODE               1157
-#define IDC_STATIC_EPISODE              1158
-#define IDC_BUTTON_SEARCH2              1159
-#define IDC_COMBO_PROFILE               1160
+#define IDC_COMBO_PROFILE               1158
+#define IDC_STATIC_EPISODE              1159
+#define IDC_EDIT_PLUGIN_CAPTION         1160
+#define IDC_EDIT_PLUGIN_ICON            1161
+#define IDC_EDIT_PLUGIN_BACKGROUND      1162
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -368,12 +370,12 @@
 #define ID_TOGGLE_CATEGORY              32801
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        233
 #define _APS_NEXT_COMMAND_VALUE         32805
-#define _APS_NEXT_CONTROL_VALUE         1157
+#define _APS_NEXT_CONTROL_VALUE         1158
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

@@ -72,6 +72,10 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 		{
 			m_bNoEmbed = true;
 		}
+		else if (_tcsicmp(szParam, _T("NoCustom")) == 0)
+		{
+			m_bNoCustom = true;
+		}
 		else if (_tcsicmp(szParam, _T("CleanupRegistry")) == 0)
 		{
 			m_bCleanupReg = true;
@@ -519,7 +523,8 @@ bool PackPlugin(const StreamType plugin_type,
 				const std::wstring& output_path,
 				const std::wstring& lists_path,
 				bool showMessage,
-				bool noEmbed /*= false*/)
+				bool noEmbed /*= false*/,
+				bool noCustom /*= false*/)
 {
 	const auto& old_plugin_type = GetConfig().get_plugin_type();
 	GetConfig().set_plugin_type(plugin_type);
@@ -588,8 +593,13 @@ bool PackPlugin(const StreamType plugin_type,
 	{
 		if (info.short_name != plugin_info.short_name)
 		{
-			to_remove.emplace_back(fmt::format("bg_{:s}.jpg", info.short_name));
-			to_remove.emplace_back(fmt::format("logo_{:s}.jpg", info.short_name));
+			const auto& logo = fmt::format("logo_{:s}.png", info.short_name);
+			if (noCustom || cred.logo.empty() || logo != cred.logo)
+				to_remove.emplace_back(logo);
+
+			const auto& background = fmt::format("bg_{:s}.jpg", info.short_name);
+			if (noCustom || cred.background.empty() || background != cred.background)
+				to_remove.emplace_back(background);
 		}
 	}
 
@@ -606,11 +616,22 @@ bool PackPlugin(const StreamType plugin_type,
 	std::ifstream istream(plugin_root + L"dune_plugin.xml");
 	data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
 
+	const auto& caption = cred.caption.empty() ? utils::utf16_to_utf8(plugin_info.title) : cred.caption;
+	const auto& logo = noCustom || cred.logo.empty()
+		? fmt::format("plugin_file://icons/logo_{:s}.png", plugin_info.short_name)
+		: fmt::format("plugin_file://icons/{:s}", cred.logo);
+
+	const auto& background = noCustom || cred.background.empty()
+		? fmt::format("plugin_file://icons/bg_{:s}.jpg", plugin_info.short_name)
+		: fmt::format("plugin_file://icons/{:s}", cred.background);
+
 	utils::string_replace_inplace(data, "{plugin_name}", plugin_info.int_name.c_str());
-	utils::string_replace_inplace(data, "{plugin_title}", utils::utf16_to_utf8(plugin_info.title).c_str());
+	utils::string_replace_inplace(data, "{plugin_title}", caption.c_str());
 	utils::string_replace_inplace(data, "{plugin_short_name}", plugin_info.short_name.c_str());
 	utils::string_replace_inplace(data, "{plugin_version}", plugin_info.version.c_str());
 	utils::string_replace_inplace(data, "{plugin_release_date}", RELEASEDATE);
+	utils::string_replace_inplace(data, "{plugin_logo}", logo.c_str());
+	utils::string_replace_inplace(data, "{plugin_background}", background.c_str());
 
 	std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ios::out | std::ios::binary);
 	ostream << data;
@@ -628,7 +649,7 @@ bool PackPlugin(const StreamType plugin_type,
 		const auto& path = dir_entry.path();
 		if (path.extension() == L".xml")
 		{
-			if (cred.ch_list.empty() || std::find(cred.ch_list.begin(), cred.ch_list.end(), path.filename().string()) != cred.ch_list.end())
+			if (noCustom || cred.ch_list.empty() || std::find(cred.ch_list.begin(), cred.ch_list.end(), path.filename().string()) != cred.ch_list.end())
 			{
 				std::filesystem::copy_file(path, packFolder + path.filename().c_str(), std::filesystem::copy_options::overwrite_existing, err);
 				ASSERT(!err.value());

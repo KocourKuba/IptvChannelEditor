@@ -73,6 +73,7 @@ public:
 	bool m_bPortable = false;
 	bool m_bRestoreReg = false;
 	bool m_bNoEmbed = false;
+	bool m_bNoCustom = false;
 	bool m_bCleanupReg = false;
 };
 
@@ -87,7 +88,8 @@ bool PackPlugin(const StreamType plugin_type,
 				const std::wstring& output_path,
 				const std::wstring& lists_path,
 				bool showMessage,
-				bool noEmbed = false);
+				bool noEmbed = false,
+				bool noCustom = false);
 
 void SaveWindowPos(HWND hWnd, LPCTSTR name);
 void RestoreWindowPos(HWND hWnd, LPCTSTR name);

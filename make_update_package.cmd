@@ -39,7 +39,7 @@ echo ^</package^> >>%outfile%
 copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
 echo build standard archive...
-IPTVChannelEditor.exe /MakeAll /NoEmbed .
+IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom .
 7z a -xr!*.bin "%~dp0\package\dune_channel_editor_universal.7z" IPTVChannelEditor.exe IPTVChannelEditorRUS.dll Updater.exe 7za.dll ChangeLog.md %~dp0\dune_plugin %~dp0\playlists dune_plugin_*.zip >nul
 copy /Y "%~dp0\package\dune_channel_editor_universal.7z" "%~dp0\package\dune_channel_editor_universal.7z.%BUILD%" >nul
 del dune_plugin_*.zip >nul 2>&1

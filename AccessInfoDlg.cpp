@@ -68,10 +68,16 @@ BEGIN_MESSAGE_MAP(CAccessInfoDlg, CMFCPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_DEVICE_ID, &CAccessInfoDlg::OnCbnSelchangeComboDeviceId)
 	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoDlg::OnCbnSelchangeComboProfile)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoDlg::OnBnClickedCheckEmbed)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoDlg::OnEnChangeEditPluginCaption)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_ICON, &CAccessInfoDlg::OnEnChangeEditPluginIcon)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_BACKGROUND, &CAccessInfoDlg::OnEnChangeEditPluginBackground)
 END_MESSAGE_MAP()
 
 
 CAccessInfoDlg::CAccessInfoDlg() : CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
+, m_caption(_T(""))
+, m_logo(_T(""))
+, m_background(_T(""))
 {
 }
 
@@ -88,6 +94,12 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_CHANNELS, m_wndChLists);
 	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfile);
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_CAPTION, m_wndCaption);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_CAPTION, m_caption);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_ICON, m_logo);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_ICON, m_wndLogo);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_BACKGROUND, m_background);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_BACKGROUND, m_wndBackground);
 }
 
 BOOL CAccessInfoDlg::PreTranslateMessage(MSG* pMsg)
@@ -151,6 +163,9 @@ BOOL CAccessInfoDlg::OnInitDialog()
 void CAccessInfoDlg::UpdateOptionalControls()
 {
 	int selected = GetCheckedAccount();
+	if (selected == -1)
+		return;
+
 	const auto& cred = m_all_credentials[selected];
 	TemplateParams params;
 	params.login = utils::utf8_to_utf16(cred.login);
@@ -198,6 +213,12 @@ void CAccessInfoDlg::UpdateOptionalControls()
 
 		m_wndDeviceID.SetCurSel(params.server);
 	}
+
+	m_caption = cred.get_caption().c_str();
+	m_logo = cred.get_logo().c_str();
+	m_background = cred.get_background().c_str();
+
+	UpdateData(FALSE);
 }
 
 void CAccessInfoDlg::LoadAccounts()
@@ -603,6 +624,9 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 			m_wndDeviceID.EnableWindow(FALSE);
 			m_wndProfile.EnableWindow(FALSE);
 			m_wndEmbed.EnableWindow(FALSE);
+			m_wndCaption.EnableWindow(FALSE);
+			m_wndLogo.EnableWindow(FALSE);
+			m_wndBackground.EnableWindow(FALSE);
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
 		}
 	}
@@ -664,6 +688,9 @@ void CAccessInfoDlg::GetAccountInfo()
 
 	m_wndEmbed.SetCheck(cred.embed);
 	m_wndEmbed.EnableWindow(TRUE);
+	m_wndCaption.EnableWindow(TRUE);
+	m_wndLogo.EnableWindow(TRUE);
+	m_wndBackground.EnableWindow(TRUE);
 
 	std::wstring login;
 	std::wstring password;
@@ -836,5 +863,35 @@ void CAccessInfoDlg::OnBnClickedCheckEmbed()
 	if (selected != -1)
 	{
 		m_all_credentials[selected].embed = m_wndEmbed.GetCheck();
+	}
+}
+
+void CAccessInfoDlg::OnEnChangeEditPluginCaption()
+{
+	UpdateData(TRUE);
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		m_all_credentials[selected].caption = get_utf8(m_caption.GetString());
+	}
+}
+
+void CAccessInfoDlg::OnEnChangeEditPluginIcon()
+{
+	UpdateData(TRUE);
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		m_all_credentials[selected].logo = get_utf8(m_logo.GetString());
+	}
+}
+
+void CAccessInfoDlg::OnEnChangeEditPluginBackground()
+{
+	UpdateData(TRUE);
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		m_all_credentials[selected].background = get_utf8(m_background.GetString());
 	}
 }

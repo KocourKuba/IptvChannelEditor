@@ -63,6 +63,9 @@ protected:
 	afx_msg void OnBnClickedCheckEmbed();
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
+	afx_msg void OnEnChangeEditPluginCaption();
+	afx_msg void OnEnChangeEditPluginIcon();
+	afx_msg void OnEnChangeEditPluginBackground();
 	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
 
 private:
@@ -89,6 +92,9 @@ protected:
 	CButton m_wndEmbed;
 	CComboBox m_wndDeviceID;
 	CComboBox m_wndProfile;
+	CEdit m_wndCaption;
+	CEdit m_wndLogo;
+	CEdit m_wndBackground;
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;
 	CListCtrl m_wndChLists;
@@ -96,6 +102,10 @@ protected:
 	CToolTipCtrl m_wndToolTipCtrl;
 
 private:
+	CString m_caption;
+	CString m_logo;
+	CString m_background;
+
 	std::unique_ptr<uri_stream> m_plugin;
 	std::vector<ServersInfo> m_servers;
 	std::vector<ProfilesInfo> m_profiles;

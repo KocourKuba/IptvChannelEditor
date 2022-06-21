@@ -57,6 +57,8 @@ class Starnet_Plugin extends Default_Dune_Plugin
         hd_print("VOD fav:          " . ($config->get_feature(VOD_FAVORITES_SUPPORTED) ? "yes" : "no"));
         hd_print("TimeZone          " . date_default_timezone_get());
         hd_print("Daylight time     " . date('I'));
+        hd_print("Icon              " . $config->PLUGIN_ICON);
+        hd_print("Background        " . $config->PLUGIN_BACKGROUND);
         hd_print("----------------------------------------------------");
 
         User_Input_Handler_Registry::get_instance()->register_handler(new Starnet_Entry_Handler());

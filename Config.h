@@ -161,6 +161,9 @@ public:
 		portal.clear();
 		comment.clear();
 		suffix.clear();
+		caption.clear();
+		logo.clear();
+		background.clear();
 		ch_list.clear();
 		int device_id = 0;
 		int profile_id = 0;
@@ -174,6 +177,9 @@ public:
 	std::wstring get_portal() const { return utils::utf8_to_utf16(portal); }
 	std::wstring get_comment() const { return utils::utf8_to_utf16(comment); }
 	std::wstring get_suffix() const { return utils::utf8_to_utf16(suffix); }
+	std::wstring get_caption() const { return utils::utf8_to_utf16(caption); }
+	std::wstring get_logo() const { return utils::utf8_to_utf16(logo); }
+	std::wstring get_background() const { return utils::utf8_to_utf16(background); }
 
 	void set_login(const std::wstring& value) { login = utils::utf16_to_utf8(value); }
 	void set_password(const std::wstring& value) { password = utils::utf16_to_utf8(value); }
@@ -182,6 +188,9 @@ public:
 	void set_portal(const std::wstring& value) { portal = utils::utf16_to_utf8(value); }
 	void set_comment(const std::wstring& value) { comment = utils::utf16_to_utf8(value); }
 	void set_suffix(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
+	void set_caption(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
+	void set_logo(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
+	void set_background(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
 
 public:
 	std::string login;
@@ -191,12 +200,15 @@ public:
 	std::string portal;
 	std::string comment;
 	std::string suffix;
+	std::string caption;
+	std::string logo;
+	std::string background;
 	std::vector<std::string> ch_list;
 	int device_id = 0;
 	int profile_id = 0;
 	int embed = 0;
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(Credentials, login, password, token, domain, portal, comment, suffix, ch_list, device_id, profile_id, embed);
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(Credentials, login, password, token, domain, portal, comment, suffix, caption, logo, background, ch_list, device_id, profile_id, embed);
 };
 
 //////////////////////////////////////////////////////////////////////////
