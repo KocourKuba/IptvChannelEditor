@@ -73,6 +73,7 @@ public:
 	bool m_bPortable = false;
 	bool m_bRestoreReg = false;
 	bool m_bNoEmbed = false;
+	bool m_bCleanupReg = false;
 };
 
 BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image);

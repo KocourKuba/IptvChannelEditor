@@ -72,6 +72,10 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 		{
 			m_bNoEmbed = true;
 		}
+		else if (_tcsicmp(szParam, _T("CleanupRegistry")) == 0)
+		{
+			m_bCleanupReg = true;
+		}
 	}
 
 #ifdef _DEBUG
@@ -165,8 +169,27 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	if (GetConfig().get_string(true, REG_LISTS_PATH).empty())
 		GetConfig().set_string(true, REG_LISTS_PATH, L".\\playlists\\");
 
+	ConvertAccounts();
+
 	CCommandLineInfoEx cmdInfo;
 	ParseCommandLine(cmdInfo);
+
+	if (cmdInfo.m_bCleanupReg)
+	{
+		RegDeleteTree(HKEY_CURRENT_USER, _T("SOFTWARE\\Dune IPTV Channel Editor"));
+
+		if (GetConfig().IsPortable())
+		{
+			GetConfig().SaveSettingsToJson();
+		}
+		else
+		{
+			GetConfig().SaveSettingsToRegistry();
+		}
+
+		return FALSE;
+	}
+
 	if (cmdInfo.m_bPortable)
 	{
 		GetConfig().SaveSettingsToJson();
@@ -265,8 +288,6 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
 		GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
 	}
-
-	ConvertAccounts();
 
 	CIPTVChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;
