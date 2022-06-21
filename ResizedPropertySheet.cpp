@@ -31,7 +31,6 @@ BOOL CResizedPropertySheet::OnInitDialog()
 	BOOL bResult = __super::OnInitDialog();
 
 	GetWindowRect(m_min_rc);
-	//AdjustWindowRect(&m_min_rc, GetStyle(), FALSE);
 
 	SetupDynamicLayout();
 

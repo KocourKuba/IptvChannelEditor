@@ -82,7 +82,6 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_TOKEN,
 	REG_DOMAIN,
 	REG_ACCESS_URL,
-	REG_HOST,
 	REG_VPORTAL,
 	REG_FILTER_STRING_S,
 	REG_FILTER_STRING_H,
@@ -106,6 +105,9 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_LIST_DOMAIN,
 	REG_EPG_DOMAIN,
 	REG_PLUGIN_SUFFIX,
+	REG_ACCOUNT_DATA,
+	REG_ACTIVE_ACCOUNT,
+	REG_ACTIVE_CH_LIST,
 };
 
 static std::vector<PluginDesc> all_plugins = {
@@ -443,6 +445,12 @@ void PluginsConfig::set_binary(bool isApp, const std::wstring& key, const BYTE* 
 	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
 
 	settings[key] = std::move(std::vector<BYTE>(value, value + value_size));
+}
+
+void PluginsConfig::delete_setting(bool isApp, const std::wstring& key)
+{
+	auto& settings = isApp ? m_settings[StreamType::enBase] : m_settings[m_pluginType];
+	settings.erase(key);
 }
 
 void PluginsConfig::ReadSettingsRegistry(StreamType plugin_type)

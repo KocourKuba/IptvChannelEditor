@@ -64,10 +64,7 @@ private:
 
 public:
 	StreamType m_plugin_type = StreamType::enBase;
-	std::wstring m_domain;
-	std::wstring m_login;
-	std::wstring m_password;
-	std::wstring m_token;
+	Credentials m_account;
 
 protected:
 	CComboBox m_wndCategories;

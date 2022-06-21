@@ -266,6 +266,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
 	}
 
+	ConvertAccounts();
+
 	CIPTVChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
@@ -361,6 +363,137 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 	return std::filesystem::absolute(fileName.GetString());
 }
 
+std::string get_array_value(std::vector<std::wstring>& creds, size_t& last)
+{
+	std::wstring str = creds.size() > last ? creds[last] : L"";
+	last++;
+	return utils::utf16_to_utf8(utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote));
+}
+
+void ConvertAccounts()
+{
+	const auto& old_plugin_type = GetConfig().get_plugin_type();
+	for (const auto& item : GetConfig().get_plugins_info())
+	{
+		GetConfig().set_plugin_type(item.type);
+
+		bool need_convert = false;
+		auto acc_data = GetConfig().get_string(false, REG_ACCOUNT_DATA);
+		if (acc_data.empty())
+		{
+			need_convert = true;
+			acc_data = GetConfig().get_string(false, REG_CREDENTIALS);
+		}
+
+		if (need_convert)
+		{
+			const auto& access_type = GetConfig().get_plugin_account_access_type();
+			const auto& login = utils::utf16_to_utf8(GetConfig().get_string(false, REG_LOGIN));
+			const auto& password = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
+			const auto& token = utils::utf16_to_utf8(GetConfig().get_string(false, REG_TOKEN));
+			const auto& domain = utils::utf16_to_utf8(GetConfig().get_string(false, REG_DOMAIN));
+			const auto& portal = utils::utf16_to_utf8(GetConfig().get_string(false, REG_VPORTAL));
+			const auto& device_id = GetConfig().get_int(false, REG_DEVICE_ID);
+			const auto& profile_id = GetConfig().get_int(false, REG_PROFILE_ID);
+			const auto& embed = GetConfig().get_int(false, REG_EMBED_INFO);
+
+			std::vector<Credentials> all_credentials;
+			int idx = 0;
+			int selected = -1;
+			auto& all_accounts = utils::string_split(acc_data, L';');
+			for (const auto& account : all_accounts)
+			{
+				auto& creds = utils::string_split(account, L',');
+				if (creds.empty() || creds.front().empty()) continue;
+
+				size_t last = 0;
+				Credentials cred;
+				switch (access_type)
+				{
+					case AccountAccessType::enPin:
+						cred.password = get_array_value(creds, last);
+						if (cred.password == password)
+						{
+							selected = idx;
+						}
+						break;
+
+					case AccountAccessType::enLoginPass:
+						cred.login = get_array_value(creds, last);
+						cred.password = get_array_value(creds, last);
+						if (cred.login == login)
+						{
+							selected = idx;
+						}
+						break;
+
+					case AccountAccessType::enOtt:
+						cred.token = get_array_value(creds, last);
+						cred.domain = get_array_value(creds, last);
+						cred.portal = get_array_value(creds, last);
+						if (cred.token == token)
+						{
+							selected = idx;
+						}
+						break;
+
+					default:break;
+				}
+
+				cred.comment = get_array_value(creds, last);
+				cred.suffix = get_array_value(creds, last);
+				cred.device_id = device_id;
+				cred.profile_id = profile_id;
+				cred.embed = embed;
+
+				all_credentials.emplace_back(cred);
+			}
+
+			if (all_credentials.empty())
+			{
+				Credentials cred;
+				switch (access_type)
+				{
+					case AccountAccessType::enPin:
+						cred.password = password;
+						break;
+
+					case AccountAccessType::enLoginPass:
+						cred.login = login;
+						cred.password = password;
+						break;
+
+					case AccountAccessType::enOtt:
+						cred.token = token;
+						cred.domain = domain;
+						cred.portal = portal;
+						break;
+
+					default: break;
+				}
+
+				all_credentials.emplace_back(cred);
+			}
+
+			nlohmann::json j_serialize = all_credentials;
+			GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
+			GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, selected);
+		}
+
+		GetConfig().delete_setting(false, REG_LOGIN);
+		GetConfig().delete_setting(false, REG_PASSWORD);
+		GetConfig().delete_setting(false, REG_TOKEN);
+		GetConfig().delete_setting(false, REG_DOMAIN);
+		GetConfig().delete_setting(false, REG_VPORTAL);
+		GetConfig().delete_setting(false, REG_DEVICE_ID);
+		GetConfig().delete_setting(false, REG_PROFILE_ID);
+		GetConfig().delete_setting(false, REG_EMBED_INFO);
+		GetConfig().delete_setting(false, REG_CREDENTIALS);
+	}
+
+	GetConfig().set_plugin_type(old_plugin_type);
+}
+
 bool PackPlugin(const StreamType plugin_type,
 				const std::wstring& output_path,
 				const std::wstring& lists_path,
@@ -369,6 +502,43 @@ bool PackPlugin(const StreamType plugin_type,
 {
 	const auto& old_plugin_type = GetConfig().get_plugin_type();
 	GetConfig().set_plugin_type(plugin_type);
+
+	const auto& selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
+	if (selected == -1)
+	{
+		// revert back to previous state
+		GetConfig().set_plugin_type(old_plugin_type);
+		return false;
+	}
+
+	std::vector<Credentials> all_credentials;
+	nlohmann::json creds;
+	JSON_ALL_TRY;
+	{
+		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
+	}
+	JSON_ALL_CATCH;
+	for (const auto& item : creds.items())
+	{
+		const auto& val = item.value();
+		if (val.empty()) continue;
+
+		Credentials cred;
+		JSON_ALL_TRY;
+		{
+			cred = val.get<Credentials>();
+		}
+		JSON_ALL_CATCH;
+		all_credentials.emplace_back(cred);
+	}
+
+	if (selected >= (int)all_credentials.size())
+	{
+		// revert back to previous state
+		GetConfig().set_plugin_type(old_plugin_type);
+		return false;
+	}
+	const auto& cred = all_credentials[selected];
 
 	const auto& plugin_info = GetConfig().get_plugin_info();
 	const auto& short_name_w = utils::utf8_to_utf16(plugin_info.short_name);
@@ -437,8 +607,11 @@ bool PackPlugin(const StreamType plugin_type,
 		const auto& path = dir_entry.path();
 		if (path.extension() == L".xml")
 		{
-			std::filesystem::copy_file(path, packFolder + path.filename().c_str(), std::filesystem::copy_options::overwrite_existing, err);
-			ASSERT(!err.value());
+			if (cred.ch_list.empty() || std::find(cred.ch_list.begin(), cred.ch_list.end(), path.filename().string()) != cred.ch_list.end())
+			{
+				std::filesystem::copy_file(path, packFolder + path.filename().c_str(), std::filesystem::copy_options::overwrite_existing, err);
+				ASSERT(!err.value());
+			}
 		}
 	}
 
@@ -451,42 +624,24 @@ bool PackPlugin(const StreamType plugin_type,
 					  GetPluginName<char>(plugin_type, true));
 	os.close();
 
-	if (!noEmbed && GetConfig().get_int(false, REG_EMBED_INFO))
+	if (!noEmbed && cred.embed)
 	{
 		try
 		{
 			nlohmann::json node;
-			switch (plugin_type)
+			switch (GetConfig().get_plugin_account_access_type())
 			{
-				case StreamType::enEdem: // ott_key
-					node["domain"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_DOMAIN));
-					node["ott_key"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_TOKEN));
-					node["vportal"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_VPORTAL));
+				case AccountAccessType::enPin:
+					node["password"] = cred.password;
 					break;
-				case StreamType::enFox: // login/pass
-				case StreamType::enGlanz:
-				case StreamType::enSharaclub:
-				case StreamType::enSharaTV:
-				case StreamType::enOneOtt:
-				case StreamType::enVidok:
-				case StreamType::enTVClub:
-				case StreamType::enFilmax:
-					node["login"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_LOGIN));
-					node["password"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
+				case AccountAccessType::enLoginPass:
+					node["login"] = cred.login;
+					node["password"] = cred.password;
 					break;
-				case StreamType::enAntifriz: // pin
-				case StreamType::enItv:
-				case StreamType::enOneCent:
-				case StreamType::enOneUsd:
-				case StreamType::enSharavoz:
-				case StreamType::enVipLime:
-				case StreamType::enTvTeam:
-				case StreamType::enLightIptv:
-				case StreamType::enCbilling:
-				case StreamType::enOttclub:
-				case StreamType::enIptvOnline:
-				case StreamType::enShuraTV:
-					node["password"] = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
+				case AccountAccessType::enOtt:
+					node["domain"] = cred.domain;
+					node["ott_key"] = cred.token;
+					node["vportal"] = cred.portal;
 					break;
 				default:
 					break;
@@ -534,8 +689,8 @@ bool PackPlugin(const StreamType plugin_type,
 		return false;
 	}
 
-	const auto& suffix = GetConfig().get_string(false, REG_PLUGIN_SUFFIX);
-	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, short_name_w, suffix.empty() ? L"mod" : suffix);
+	const auto& suffix = utils::utf8_to_utf16(cred.suffix);
+	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, short_name_w, cred.suffix.empty() ? L"mod" : suffix);
 
 	res = archiver.CreateArchive(pluginFile);
 	// remove temporary folder

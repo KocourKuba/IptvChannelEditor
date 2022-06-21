@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include "EditableListCtrl.h"
 #include "uri_stream.h"
 #include "Config.h"
+#include "UtilsLib\json_wrapper.h"
 
 class CAccessInfoDlg : public CMFCPropertyPage
 {
@@ -46,9 +47,7 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
 
-	void CreateAccountInfo();
-
-	void CreateAccountsList();
+	void UpdateOptionalControls();
 
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	void OnOK() override;
@@ -57,36 +56,42 @@ protected:
 
 	afx_msg void OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonAdd();
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonNewFromUrl();
+	afx_msg void OnBnClickedCheckEmbed();
+	afx_msg void OnCbnSelchangeComboDeviceId();
+	afx_msg void OnCbnSelchangeComboProfile();
 	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
 
 private:
-	int GetChecked();
+	int GetCheckedAccount();
 	void GetAccountInfo();
+	void LoadAccounts();
+	void CreateAccountsList();
+	void CreateAccountInfo();
+	void CreateChannelsList();
+	void FillChannelsList();
 
 public:
-	BOOL m_bEmbed = FALSE;
 	CString m_status;
 
-	std::wstring m_login;
-	std::wstring m_password;
-	std::wstring m_token;
-	std::wstring m_domain;
+	Credentials m_initial_cred;
 	std::wstring m_host;
-	std::wstring m_portal;
-	std::wstring m_suffix;
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
+	std::vector<std::wstring> m_all_channels_lists;
 
 protected:
 	CButton m_wndRemove;
 	CButton m_wndNewFromUrl;
+	CButton m_wndEmbed;
 	CComboBox m_wndDeviceID;
 	CComboBox m_wndProfile;
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;
+	CListCtrl m_wndChLists;
 	CMFCLinkCtrl m_wndProviderLink;
 	CToolTipCtrl m_wndToolTipCtrl;
 
@@ -94,6 +99,7 @@ private:
 	std::unique_ptr<uri_stream> m_plugin;
 	std::vector<ServersInfo> m_servers;
 	std::vector<ProfilesInfo> m_profiles;
+	std::vector<Credentials> m_all_credentials;
 	StreamType m_plugin_type = StreamType::enBase;
 	AccountAccessType m_access_type = AccountAccessType::enUnknown;
 };

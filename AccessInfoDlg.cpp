@@ -48,6 +48,11 @@ std::map<UINT, UINT> tooltips_info_account =
 	{ IDC_CHECK_EMBED, IDS_STRING_CHECK_EMBED },
 };
 
+inline std::string get_utf8(const std::wstring& value)
+{
+	return utils::utf16_to_utf8(value);
+}
+
 // CAccessDlg dialog
 
 IMPLEMENT_DYNAMIC(CAccessInfoDlg, CMFCPropertyPage)
@@ -59,6 +64,10 @@ BEGIN_MESSAGE_MAP(CAccessInfoDlg, CMFCPropertyPage)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_ACCOUNTS, &CAccessInfoDlg::OnNMDblClickList)
 	ON_MESSAGE(WM_NOTIFY_END_EDIT, &CAccessInfoDlg::OnNotifyDescriptionEdited)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_ACCOUNTS, &CAccessInfoDlg::OnLvnItemchangedListAccounts)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_CHANNELS, &CAccessInfoDlg::OnLvnItemchangedListChannels)
+	ON_CBN_SELCHANGE(IDC_COMBO_DEVICE_ID, &CAccessInfoDlg::OnCbnSelchangeComboDeviceId)
+	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoDlg::OnCbnSelchangeComboProfile)
+	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoDlg::OnBnClickedCheckEmbed)
 END_MESSAGE_MAP()
 
 
@@ -74,10 +83,11 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemove);
 	DDX_Control(pDX, IDC_BUTTON_NEW_FROM_URL, m_wndNewFromUrl);
 	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDeviceID);
-	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Control(pDX, IDC_LIST_ACCOUNTS, m_wndAccounts);
+	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
+	DDX_Control(pDX, IDC_LIST_CHANNELS, m_wndChLists);
 	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfile);
-	DDX_Check(pDX, IDC_CHECK_EMBED, m_bEmbed);
+	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
 }
 
 BOOL CAccessInfoDlg::PreTranslateMessage(MSG* pMsg)
@@ -106,10 +116,6 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	m_access_type = GetConfig().get_plugin_account_access_type();
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
-	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
-	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
-	header->ModifyStyle(0, HDS_CHECKBOXES);
-
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(500);
@@ -125,8 +131,14 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
 
+	LoadAccounts();
 	CreateAccountsList();
 	CreateAccountInfo();
+	CreateChannelsList();
+
+	m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
+
+	UpdateOptionalControls();
 
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
 
@@ -136,142 +148,16 @@ BOOL CAccessInfoDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CAccessInfoDlg::CreateAccountsList()
+void CAccessInfoDlg::UpdateOptionalControls()
 {
-	CRect rect;
-	m_wndAccounts.GetClientRect(&rect);
-	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 22;
-
-	int last = 0;
-	m_wndAccounts.InsertColumn(last++, L"", LVCFMT_LEFT, 22, 0);
-	switch (m_access_type)
-	{
-		case AccountAccessType::enPin:
-			vWidth /= 3;
-			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
-			break;
-		case AccountAccessType::enLoginPass:
-			vWidth /= 4;
-			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
-			break;
-		case AccountAccessType::enOtt:
-			vWidth /= 5;
-			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndNewFromUrl.ShowWindow(SW_SHOW);
-			break;
-		default: break;
-	}
-
-	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
-	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_SUFFIX).c_str(), LVCFMT_LEFT, vWidth, 0);
-
-	const auto& credentials = GetConfig().get_string(false, REG_CREDENTIALS);
-	auto& all_accounts = utils::string_split(credentials, L';');
-	if (all_accounts.empty())
-	{
-		switch (m_access_type)
-		{
-			case AccountAccessType::enPin:
-				all_accounts.emplace_back(m_password);
-				break;
-
-			case AccountAccessType::enLoginPass:
-				all_accounts.emplace_back(fmt::format(L"\"{:s}\",\"{:s}\"", m_login, m_password));
-				break;
-
-			case AccountAccessType::enOtt:
-				all_accounts.emplace_back(fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\"", m_token, m_domain, m_portal));
-				break;
-
-			default: break;
-		}
-	}
-
-	int selected = -1;
-	int idx = 0;
-	for (const auto& account : all_accounts)
-	{
-		auto& creds = utils::string_split(account, L',');
-		if (creds.empty() || creds.front().empty()) continue;
-
-		m_wndAccounts.InsertItem(idx, L"", 0);
-
-		size_t last = 0;
-		std::wstring str(creds[last]);
-		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-		m_wndAccounts.SetItemText(idx, ++last, str.c_str());
-		switch (m_access_type)
-		{
-			case AccountAccessType::enPin:
-				if (str == m_password)
-				{
-					selected = idx;
-				}
-				break;
-
-			case AccountAccessType::enLoginPass:
-				if (str == m_login)
-				{
-					selected = idx;
-				}
-				str = creds.size() > last ? creds[last] : L"";
-				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-				m_wndAccounts.SetItemText(idx, ++last, str.c_str());
-				break;
-
-			case AccountAccessType::enOtt:
-				if (str == m_token)
-				{
-					selected = idx;
-				}
-
-				str = creds.size() > last ? creds[last] : L"";
-				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-				m_wndAccounts.SetItemText(idx, ++last, str.c_str());
-
-				str = creds.size() > last ? creds[last] : L"";
-				utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-				m_wndAccounts.SetItemText(idx, ++last, str.c_str());
-				break;
-
-			default:break;
-		}
-
-		str = creds.size() > last ? creds[last] : L"";
-		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-		m_wndAccounts.SetItemText(idx, ++last, str.c_str());
-
-		str = creds.size() > last ? creds[last] : L"";
-		utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote);
-		m_wndAccounts.SetItemText(idx, ++last, str.c_str());
-
-		++idx;
-	}
-
-	m_wndAccounts.SetCheck(selected, TRUE);
-}
-
-void CAccessInfoDlg::CreateAccountInfo()
-{
-	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES);
-
-	CRect rect;
-	m_wndInfo.GetClientRect(&rect);
-	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
-	int nWidth = vWidth / 4;
-
-	m_wndInfo.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, nWidth, 0);
-	m_wndInfo.InsertColumn(1, load_string_resource(IDS_STRING_COL_DATA).c_str(), LVCFMT_LEFT, vWidth - nWidth, 0);
-
+	int selected = GetCheckedAccount();
+	const auto& cred = m_all_credentials[selected];
 	TemplateParams params;
-	params.login = m_login;
-	params.password = m_password;
-	params.domain = m_domain;
-	params.server = GetConfig().get_int(false, REG_DEVICE_ID);
-	params.profile = GetConfig().get_int(false, REG_PROFILE_ID);
+	params.login = utils::utf8_to_utf16(cred.login);
+	params.password = utils::utf8_to_utf16(cred.password);
+	params.domain = utils::utf8_to_utf16(cred.domain);
+	params.server = cred.device_id;
+	params.profile = cred.profile_id;
 
 	UINT static_text = IDS_STRING_SERVER_ID;
 	switch (m_plugin_type)
@@ -314,96 +200,193 @@ void CAccessInfoDlg::CreateAccountInfo()
 	}
 }
 
+void CAccessInfoDlg::LoadAccounts()
+{
+	nlohmann::json creds;
+	JSON_ALL_TRY;
+	{
+		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
+	}
+	JSON_ALL_CATCH;
+	for (const auto& item : creds.items())
+	{
+		const auto& val = item.value();
+		if (val.empty()) continue;
+
+		JSON_ALL_TRY;
+		{
+			auto cred = val.get<Credentials>();
+			m_all_credentials.emplace_back(cred);
+		}
+		JSON_ALL_CATCH;
+	}
+}
+
+void CAccessInfoDlg::CreateAccountsList()
+{
+	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
+	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
+	header->ModifyStyle(0, HDS_CHECKBOXES);
+
+	CRect rect;
+	m_wndAccounts.GetClientRect(&rect);
+	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 22;
+
+	int last = 0;
+	m_wndAccounts.InsertColumn(last++, L"", LVCFMT_LEFT, 22, 0);
+	switch (m_access_type)
+	{
+		case AccountAccessType::enPin:
+			vWidth /= 3;
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
+			break;
+		case AccountAccessType::enLoginPass:
+			vWidth /= 4;
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
+			break;
+		case AccountAccessType::enOtt:
+			vWidth /= 5;
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndNewFromUrl.ShowWindow(SW_SHOW);
+			break;
+		default: break;
+	}
+
+	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
+	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_SUFFIX).c_str(), LVCFMT_LEFT, vWidth, 0);
+
+	int idx = 0;
+	for (const auto& cred : m_all_credentials)
+	{
+		m_wndAccounts.InsertItem(idx, L"", 0);
+
+		size_t sub_idx = 0;
+		switch (m_access_type)
+		{
+			case AccountAccessType::enPin:
+				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.password).c_str());
+				break;
+
+			case AccountAccessType::enLoginPass:
+				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.login).c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.password).c_str());
+				break;
+
+			case AccountAccessType::enOtt:
+				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.token).c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.domain).c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.portal).c_str());
+				break;
+
+			default:break;
+		}
+
+		m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.comment).c_str());
+		m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.suffix).c_str());
+
+		++idx;
+	}
+}
+
+void CAccessInfoDlg::CreateAccountInfo()
+{
+	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES);
+
+	CRect rect;
+	m_wndInfo.GetClientRect(&rect);
+	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
+	int nWidth = vWidth / 4;
+
+	m_wndInfo.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, nWidth);
+	m_wndInfo.InsertColumn(1, load_string_resource(IDS_STRING_COL_DATA).c_str(), LVCFMT_LEFT, vWidth - nWidth);
+}
+
+void CAccessInfoDlg::CreateChannelsList()
+{
+	m_wndChLists.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
+	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
+	header->ModifyStyle(0, HDS_CHECKBOXES);
+
+	CRect rect;
+	m_wndChLists.GetClientRect(&rect);
+	int vWidth = rect.Width() - 22;
+
+	m_wndChLists.InsertColumn(0, L"", LVCFMT_LEFT, 22, 0);
+	m_wndChLists.InsertColumn(1, load_string_resource(IDS_STRING_COL_CHANNEL_NAME).c_str(), LVCFMT_LEFT, vWidth, 0);
+	FillChannelsList();
+}
+
+void CAccessInfoDlg::FillChannelsList()
+{
+	int selected = GetCheckedAccount();
+	if (selected == -1)
+		return;
+
+	auto& cred = m_all_credentials[selected];
+
+	int idx = 0;
+	auto ch_list = cred.ch_list;
+	bool all = ch_list.empty();
+	m_wndChLists.DeleteAllItems();
+	for (const auto& channel : m_all_channels_lists)
+	{
+		bool check = all;
+		if (!check)
+		{
+			for (const auto& item : ch_list)
+			{
+				if (item == get_utf8(channel))
+				{
+					check = true;
+					break;
+				}
+			}
+		}
+		m_wndChLists.InsertItem(idx, L"", 0);
+		m_wndChLists.SetItemText(idx, 1, channel.c_str());
+		m_wndChLists.SetCheck(idx++, check);
+	}
+
+	m_wndChLists.EnableWindow(TRUE);
+}
+
 void CAccessInfoDlg::OnOK()
 {
 	UpdateData(TRUE);
 
-	std::wstring credentials;
-	int sel = GetChecked();
-	int cnt = m_wndAccounts.GetItemCount();
-
-	for (int i = 0; i < cnt; i++)
-	{
-		switch (m_access_type)
-		{
-			case AccountAccessType::enPin:
-				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\";",
-										   m_wndAccounts.GetItemText(i, 1).GetString(),  // password
-										   m_wndAccounts.GetItemText(i, 2).GetString(),  // comment
-										   m_wndAccounts.GetItemText(i, 3).GetString()); // suffix
-				if (i == sel)
-				{
-					m_password = m_wndAccounts.GetItemText(i, 1).GetString();
-					m_suffix = m_wndAccounts.GetItemText(i, 3).GetString();
-				}
-				break;
-
-			case AccountAccessType::enLoginPass:
-				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\",\"{:s}\";",
-										   m_wndAccounts.GetItemText(i, 1).GetString(),  // login
-										   m_wndAccounts.GetItemText(i, 2).GetString(),  // password
-										   m_wndAccounts.GetItemText(i, 3).GetString(),  // comment
-										   m_wndAccounts.GetItemText(i, 4).GetString()); // suffix
-				if (i == sel)
-				{
-					m_login = m_wndAccounts.GetItemText(i, 1).GetString();
-					m_password = m_wndAccounts.GetItemText(i, 2).GetString();
-					m_suffix = m_wndAccounts.GetItemText(i, 4).GetString();
-				}
-				break;
-
-			case AccountAccessType::enOtt:
-				credentials += fmt::format(L"\"{:s}\",\"{:s}\",\"{:s}\",\"{:s}\",\"{:s}\";",
-										   m_wndAccounts.GetItemText(i, 1).GetString(),  // ottkey
-										   m_wndAccounts.GetItemText(i, 2).GetString(),  // domain
-										   m_wndAccounts.GetItemText(i, 3).GetString(),  // vportal
-										   m_wndAccounts.GetItemText(i, 4).GetString(),  // comment
-										   m_wndAccounts.GetItemText(i, 5).GetString()); // suffix
-				if (i == sel)
-				{
-					m_token = m_wndAccounts.GetItemText(i, 1).GetString();
-					m_domain = m_wndAccounts.GetItemText(i, 2).GetString();
-					m_portal = m_wndAccounts.GetItemText(i, 3).GetString();
-					m_suffix = m_wndAccounts.GetItemText(i, 5).GetString();
-					GetConfig().set_string(false, REG_VPORTAL, m_portal);
-				}
-				break;
-
-			default: break;
-		}
-	}
+	int selected = GetCheckedAccount();
+	const auto& cred = m_all_credentials[selected];
 
 	TemplateParams params;
-	params.login = m_login;
-	params.password = m_password;
-	params.domain = m_domain;
-	params.server = m_wndDeviceID.GetCurSel();
-	params.profile = m_wndProfile.GetCurSel();
+	params.login = utils::utf8_to_utf16(cred.login);
+	params.password = utils::utf8_to_utf16(cred.password);
+	params.domain = utils::utf8_to_utf16(cred.domain);
+	params.server = cred.device_id;
+	params.profile = cred.profile_id;
 	if (m_plugin_type == StreamType::enSharaclub)
 	{
 		params.domain = m_list_domain;
 	}
 
-	if (m_wndDeviceID.GetCount() && m_wndDeviceID.GetCurSel() != GetConfig().get_int(false, REG_DEVICE_ID))
+	if (m_wndDeviceID.GetCount())
 	{
 		m_plugin->set_server(params);
-		GetConfig().set_int(false, REG_DEVICE_ID, m_wndDeviceID.GetCurSel());
 	}
 
-	if (m_wndProfile.GetCount() && m_wndProfile.GetCurSel() != GetConfig().get_int(false, REG_PROFILE_ID))
+	if (m_wndProfile.GetCount())
 	{
 		m_plugin->set_profile(params);
-		GetConfig().set_int(false, REG_PROFILE_ID, m_wndProfile.GetCurSel());
 	}
 
-	GetConfig().set_int(false, REG_EMBED_INFO, m_bEmbed);
-	GetConfig().set_string(false, REG_DOMAIN, m_domain);
-	GetConfig().set_string(false, REG_TOKEN, m_token);
-	GetConfig().set_string(false, REG_LOGIN, m_login);
-	GetConfig().set_string(false, REG_PASSWORD, m_password);
-	GetConfig().set_string(false, REG_HOST, m_host);
-	GetConfig().set_string(false, REG_PLUGIN_SUFFIX, m_suffix);
-	GetConfig().set_string(false, REG_CREDENTIALS, credentials);
+	GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, selected);
+
+	nlohmann::json j_serialize = m_all_credentials;
+	GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
+
+	m_initial_cred = m_all_credentials[selected];
 
 	__super::OnOK();
 }
@@ -411,13 +394,37 @@ void CAccessInfoDlg::OnOK()
 void CAccessInfoDlg::OnBnClickedButtonAdd()
 {
 	m_wndAccounts.InsertItem(m_wndAccounts.GetItemCount(), L"new");
+
+	Credentials cred;
+	static constexpr auto newVal = "new";
+	switch (m_access_type)
+	{
+		case AccountAccessType::enPin:
+			cred.password = newVal;
+			break;
+
+		case AccountAccessType::enLoginPass:
+			cred.login = newVal;
+			break;
+
+		case AccountAccessType::enOtt:
+			cred.token = newVal;
+			break;
+
+		default:break;
+	}
+
+	m_all_credentials.emplace_back(cred);
 }
 
 void CAccessInfoDlg::OnBnClickedButtonRemove()
 {
 	int idx = m_wndAccounts.GetSelectionMark();
 	if (idx != -1)
+	{
 		m_wndAccounts.DeleteItem(idx);
+		m_all_credentials.erase(m_all_credentials.begin() + idx);
+	}
 }
 
 void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
@@ -427,8 +434,6 @@ void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
 
 	if (dlg.DoModal() == IDOK)
 	{
-		m_token.clear();
-		m_domain.clear();
 		m_status.Empty();
 		std::vector<BYTE> data;
 		GetConfig().set_string(false, REG_ACCESS_URL, dlg.m_url.GetString());
@@ -442,6 +447,7 @@ void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
 		std::wistringstream stream(wbuf);
 		if (!stream.good()) return;
 
+		Credentials cred;
 		auto entry = std::make_unique<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
 		std::wstring line;
 		while (std::getline(stream, line))
@@ -455,9 +461,15 @@ void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
 			if (!access_key.empty() && !domain.empty() && access_key != L"00000000000000" && domain != L"localhost")
 			{
 				int cnt = m_wndAccounts.GetItemCount();
+
 				m_wndAccounts.InsertItem(cnt, L"", 0);
 				m_wndAccounts.SetItemText(cnt, 1, access_key.c_str());
 				m_wndAccounts.SetItemText(cnt, 2, domain.c_str());
+
+				Credentials cred;
+				cred.token = get_utf8(access_key);
+				cred.domain = get_utf8(domain);
+				m_all_credentials.emplace_back(cred);
 				break;
 			}
 		}
@@ -490,6 +502,71 @@ LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 
 	// Persist the selected attachment details upon updating its text
 	m_wndAccounts.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
+	auto& cred = m_all_credentials[dispinfo->item.iItem];
+	switch (m_access_type)
+	{
+		case AccountAccessType::enPin:
+			switch (dispinfo->item.iSubItem)
+			{
+				case 1:
+					cred.password = get_utf8(dispinfo->item.pszText);
+					break;
+				case 2:
+					cred.comment = get_utf8(dispinfo->item.pszText);
+					break;
+				case 3:
+					cred.suffix = get_utf8(dispinfo->item.pszText);
+					break;
+				default:
+					break;
+			}
+			break;
+
+		case AccountAccessType::enLoginPass:
+			switch (dispinfo->item.iSubItem)
+			{
+				case 1:
+					cred.login = get_utf8(dispinfo->item.pszText);
+					break;
+				case 2:
+					cred.password = get_utf8(dispinfo->item.pszText);
+					break;
+				case 3:
+					cred.comment = get_utf8(dispinfo->item.pszText);
+					break;
+				case 4:
+					cred.suffix = get_utf8(dispinfo->item.pszText);
+					break;
+				default:
+					break;
+			}
+			break;
+
+		case AccountAccessType::enOtt:
+			switch (dispinfo->item.iSubItem)
+			{
+				case 1:
+					cred.token = get_utf8(dispinfo->item.pszText);
+					break;
+				case 2:
+					cred.domain = get_utf8(dispinfo->item.pszText);
+					break;
+				case 3:
+					cred.portal = get_utf8(dispinfo->item.pszText);
+					break;
+				case 4:
+					cred.comment = get_utf8(dispinfo->item.pszText);
+					break;
+				case 5:
+					cred.suffix = get_utf8(dispinfo->item.pszText);
+					break;
+				default:
+					break;
+			}
+			break;
+
+		default:break;
+	}
 
 	GetAccountInfo();
 
@@ -516,18 +593,48 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 			}
 
 			GetAccountInfo();
+			FillChannelsList();
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(TRUE);
 		}
 		else if ((pNMLV->uNewState & 0x1000) && (pNMLV->uOldState & 0x2000))
 		{
-			m_login.clear();
-			m_password.clear();
-			m_token.clear();
-			m_domain.clear();
-			m_portal.clear();
-			m_suffix.clear();
 			m_wndInfo.DeleteAllItems();
+			m_wndChLists.EnableWindow(FALSE);
+			m_wndDeviceID.EnableWindow(FALSE);
+			m_wndProfile.EnableWindow(FALSE);
+			m_wndEmbed.EnableWindow(FALSE);
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
+		}
+	}
+
+	*pResult = 0;
+}
+
+void CAccessInfoDlg::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
+	if ((pNMLV->uChanged & LVIF_STATE))
+	{
+		int account_idx = GetCheckedAccount();
+		if (account_idx != -1)
+		{
+			int cnt = m_wndChLists.GetItemCount();
+			std::vector<std::string> ch_list;
+			for (int nItem = 0; nItem < cnt; nItem++)
+			{
+				if (m_wndChLists.GetCheck(nItem))
+				{
+					ch_list.emplace_back(get_utf8(m_all_channels_lists[nItem]));
+				}
+			}
+
+			if (ch_list.size() == m_all_channels_lists.size())
+			{
+				ch_list.clear();
+			}
+
+			m_all_credentials[account_idx].ch_list.swap(ch_list);
 		}
 	}
 
@@ -544,25 +651,41 @@ void CAccessInfoDlg::GetAccountInfo()
 	wndStaticProfile->EnableWindow(FALSE);
 	m_wndProfile.EnableWindow(FALSE);
 
-	int checked = GetChecked();
+	int checked = GetCheckedAccount();
 	if (checked == -1)
 		return;
+
+	auto& cred = m_all_credentials[checked];
+	if (!m_servers.empty())
+	{
+		m_wndDeviceID.EnableWindow(!m_servers.empty());
+		m_wndDeviceID.SetCurSel(cred.device_id);
+	}
+
+	m_wndEmbed.SetCheck(cred.embed);
+	m_wndEmbed.EnableWindow(TRUE);
+
+	std::wstring login;
+	std::wstring password;
+	std::wstring token;
+	std::wstring domain;
+	std::wstring portal;
 
 	switch (m_access_type)
 	{
 		case AccountAccessType::enPin:
-			m_password = m_wndAccounts.GetItemText(checked, 1).GetString();
+			password = utils::utf8_to_utf16(cred.password);
 			break;
 
 		case AccountAccessType::enLoginPass:
-			m_login = m_wndAccounts.GetItemText(checked, 1).GetString();
-			m_password = m_wndAccounts.GetItemText(checked, 2).GetString();
+			login = utils::utf8_to_utf16(cred.login);
+			password = utils::utf8_to_utf16(cred.password);
 			break;
 
 		case AccountAccessType::enOtt:
-			m_token = m_wndAccounts.GetItemText(checked, 1).GetString();
-			m_domain = m_wndAccounts.GetItemText(checked, 2).GetString();
-			m_portal = m_wndAccounts.GetItemText(checked, 3).GetString();
+			token = utils::utf8_to_utf16(cred.token);
+			domain = utils::utf8_to_utf16(cred.domain);
+			portal = utils::utf8_to_utf16(cred.portal);
 			break;
 
 		default: break;
@@ -572,17 +695,18 @@ void CAccessInfoDlg::GetAccountInfo()
 	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
 	auto& uri = entry->stream_uri;
 	uri->set_template(false);
-	uri->set_login(m_login);
-	uri->set_password(m_password);
-	uri->set_token(m_token);
-	uri->set_domain(m_domain);
+	uri->set_login(login);
+	uri->set_password(password);
+	uri->set_token(token);
+	uri->set_domain(domain);
 	uri->set_host(m_host);
 
 	TemplateParams params;
-	params.login = m_login;
-	params.password = m_password;
+	params.login = login;
+	params.password = password;
 	params.domain = m_list_domain;
-	params.server = m_wndDeviceID.GetCurSel();
+	params.server = cred.device_id;
+	params.profile = cred.profile_id;
 
 	m_plugin->clear_profiles_list();
 	m_profiles = m_plugin->get_profiles_list(params);
@@ -596,6 +720,7 @@ void CAccessInfoDlg::GetAccountInfo()
 		if (params.profile >= (int)m_profiles.size())
 		{
 			params.profile = 0;
+			cred.profile_id = 0;
 		}
 
 		m_wndProfile.SetCurSel(params.profile);
@@ -614,7 +739,7 @@ void CAccessInfoDlg::GetAccountInfo()
 			// currently supported only in sharaclub, oneott use this to obtain token
 			if (it->name == (L"token"))
 			{
-				m_token = it->value;
+				cred.token = get_utf8(it->value);
 				it = acc_info.erase(it);
 			}
 			else if (it->name == (L"url"))
@@ -645,30 +770,35 @@ void CAccessInfoDlg::GetAccountInfo()
 				m3u_entry m3uEntry(line);
 				if (entry->Parse(line, m3uEntry) && !uri->get_token().empty())
 				{
-					m_status = _T("Ok");
-					m_token = uri->get_token();
-					m_domain = uri->get_domain();
+					// do not override fake ott and domain for edem
+					if (m_access_type != AccountAccessType::enOtt)
+					{
+						cred.token = get_utf8(uri->get_token());
+						cred.domain = get_utf8(uri->get_domain());
+					}
 					m_host = uri->get_host();
+					m_status = _T("Ok");
 					break;
 				}
 			}
 		}
 	}
 
-	int idx = 0;
 	m_wndInfo.DeleteAllItems();
+
+	int idx = 0;
 	m_wndInfo.InsertItem(idx, load_string_resource(IDS_STRING_STATUS).c_str());
-	m_wndInfo.SetItemText(idx++, 1, m_status);
+	m_wndInfo.SetItemText(idx, 1, m_status);
 	for (const auto& item : acc_info)
 	{
-		m_wndInfo.InsertItem(idx, item.name.c_str());
-		m_wndInfo.SetItemText(idx++, 1, item.value.c_str());
+		m_wndInfo.InsertItem(++idx, item.name.c_str());
+		m_wndInfo.SetItemText(idx, 1, item.value.c_str());
 	}
 
 	UpdateData(FALSE);
 }
 
-int CAccessInfoDlg::GetChecked()
+int CAccessInfoDlg::GetCheckedAccount()
 {
 	int cnt = m_wndAccounts.GetItemCount();
 	for (int i = 0; i < cnt; i++)
@@ -680,4 +810,31 @@ int CAccessInfoDlg::GetChecked()
 	}
 
 	return -1;
+}
+
+void CAccessInfoDlg::OnCbnSelchangeComboDeviceId()
+{
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		m_all_credentials[selected].device_id = m_wndDeviceID.GetCurSel();
+	}
+}
+
+void CAccessInfoDlg::OnCbnSelchangeComboProfile()
+{
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		m_all_credentials[selected].profile_id = m_wndProfile.GetCurSel();
+	}
+}
+
+void CAccessInfoDlg::OnBnClickedCheckEmbed()
+{
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		m_all_credentials[selected].embed = m_wndEmbed.GetCheck();
+	}
 }

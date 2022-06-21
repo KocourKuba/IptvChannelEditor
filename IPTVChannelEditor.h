@@ -80,6 +80,8 @@ void SetImageControl(const CImage& image, CStatic& wnd);
 
 std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);
 
+void ConvertAccounts();
+
 bool PackPlugin(const StreamType plugin_type,
 				const std::wstring& output_path,
 				const std::wstring& lists_path,

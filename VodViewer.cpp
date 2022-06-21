@@ -106,9 +106,9 @@ BOOL CVodViewer::OnInitDialog()
 
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
-	if (auto pos = m_domain.find(':'); pos != std::wstring::npos)
+	if (auto pos = m_account.domain.find(':'); pos != std::string::npos)
 	{
-		m_domain = m_domain.substr(0, pos);
+		m_account.domain = m_account.domain.substr(0, pos);
 	}
 
 	LoadPlaylist();
@@ -217,12 +217,15 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 
 		case StreamType::enSharaclub:
 			parserType = jsonParserType::enJsonSharaClub;
-			url = fmt::format(m_plugin->get_vod_url(), GetConfig().get_string(false, REG_LIST_DOMAIN),  m_login, m_password);
+			url = fmt::format(m_plugin->get_vod_url(),
+							  GetConfig().get_string(false, REG_LIST_DOMAIN),
+							  m_account.get_login(),
+							  m_account.get_password());
 			break;
 
 		case StreamType::enEdem:
 			parserType = jsonParserType::enJsonEdem;
-			url = GetConfig().get_string(false, REG_VPORTAL);
+			url = m_account.get_portal();
 			break;
 
 		default:
@@ -303,7 +306,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	{
 		case StreamType::enGlanz:
 		case StreamType::enFox:
-			url = fmt::format(m_plugin->get_vod_url(), m_login, m_password);
+			url = fmt::format(m_plugin->get_vod_url(), m_account.get_login(), m_account.get_password());
 			break;
 	}
 	auto data = std::make_unique<std::vector<BYTE>>();
@@ -487,7 +490,7 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 				const auto& season = movie->seasons[m_season_idx];
 				url = season.episodes[m_episode_idx].url;
 			}
-			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_domain, url, m_token);
+			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_domain(), url, m_account.get_token());
 			break;
 		}
 		case StreamType::enEdem:
@@ -846,10 +849,10 @@ void CVodViewer::FilterList()
 				break;
 			}
 
-			const auto& vportal_key = GetConfig().get_string(false, REG_VPORTAL);
 			std::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
 			std::wsmatch m;
-			if (!std::regex_match(vportal_key, m, re_url)) break;
+			const auto& vportal = m_account.get_portal();
+			if (!std::regex_match(vportal, m, re_url)) break;
 
 			const auto& key = m[1].str();
 			const auto& url = m[2].str();
@@ -1059,10 +1062,10 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 	CWaitCursor cur;
 	do
 	{
-		const auto& vportal_key = GetConfig().get_string(false, REG_VPORTAL);
 		std::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
 		std::wsmatch m;
-		if (!std::regex_match(vportal_key, m, re_url)) break;
+		const auto& vportal = m_account.get_portal();
+		if (!std::regex_match(vportal, m, re_url)) break;
 
 		const auto& key = m[1].str();
 		const auto& url = m[2].str();
@@ -1165,7 +1168,7 @@ void CVodViewer::GetUrl(int idx)
 				const auto& season = movie->seasons[m_season_idx];
 				url = season.episodes[m_episode_idx].url;
 			}
-			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_domain, url, m_token);
+			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_domain(), url, m_account.get_token());
 			break;
 		}
 		case StreamType::enEdem:

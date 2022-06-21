@@ -484,25 +484,51 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_host.clear();
 
-	m_domain = GetConfig().get_string(false, REG_DOMAIN);
-	m_token = GetConfig().get_string(false, REG_TOKEN);
-	m_login = GetConfig().get_string(false, REG_LOGIN);
-	m_password = GetConfig().get_string(false, REG_PASSWORD);
-	m_embedded_info = GetConfig().get_int(false, REG_EMBED_INFO);
+	nlohmann::json creds;
+	JSON_ALL_TRY;
+	{
+		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
+	}
+	JSON_ALL_CATCH;
+	for (const auto& item : creds.items())
+	{
+		const auto& val = item.value();
+		if (val.empty()) continue;
+
+		Credentials cred;
+		JSON_ALL_TRY;
+		{
+			cred = val.get<Credentials>();
+		}
+		JSON_ALL_CATCH;
+		m_all_credentials.emplace_back(cred);
+	}
+
+	m_cur_account.Clear();
+
+	int selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
+	if (selected < (int)m_all_credentials.size())
+	{
+		const auto& cred = m_all_credentials[selected];
+
+		m_cur_account.domain = cred.domain;
+		m_cur_account.token = cred.token;
+		m_cur_account.login = cred.login;
+		m_cur_account.password = cred.password;
+		m_cur_account.embed = cred.embed;
+		if (m_plugin_type == StreamType::enEdem)
+		{
+			m_cur_account.portal = cred.portal;
+		}
+	}
 
 	m_wndPlaylist.ResetContent();
-
-	m_portal.clear();
 
 	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
-	if (m_plugin_type == StreamType::enEdem)
-	{
-		m_portal = GetConfig().get_string(false, REG_VPORTAL);
-	}
-	else if (m_plugin_type == StreamType::enSharaclub)
+	if (m_plugin_type == StreamType::enSharaclub)
 	{
 		if (GetConfig().get_string(false, REG_LIST_DOMAIN).empty() || GetConfig().get_string(false, REG_EPG_DOMAIN).empty())
 		{
@@ -639,11 +665,11 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetConfig().GetCurrentPluginName(true)).c_str();
 
 	TemplateParams params;
-	params.login = m_login;
-	params.password = m_password;
-	params.token = m_token;
-	params.server = GetConfig().get_int(false, REG_DEVICE_ID);
-	params.profile = GetConfig().get_int(false, REG_PROFILE_ID);
+	params.login = m_cur_account.get_login();
+	params.password = m_cur_account.get_password();
+	params.token = m_cur_account.get_token();
+	params.server = m_cur_account.device_id;
+	params.profile = m_cur_account.profile_id;
 	params.number = idx;
 
 	if (m_plugin_type == StreamType::enEdem && isFile)
@@ -812,10 +838,10 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 						&& !stream->get_host().empty()
 						)
 					{
-						m_token = stream->get_token();
-						m_domain = stream->get_domain();
-						m_login = stream->get_login();
-						m_password = stream->get_password();
+						m_cur_account.set_token(stream->get_token());
+						m_cur_account.set_domain(stream->get_domain());
+						m_cur_account.set_login(stream->get_login());
+						m_cur_account.set_password(stream->get_password());
 						m_host = stream->get_host();
 						bSet = true;
 					}
@@ -826,8 +852,8 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 					const auto& domain = stream->get_domain();
 					if (!token.empty() && token != L"00000000000000" && !domain.empty() && domain != L"localhost")
 					{
-						m_token = stream->get_token();
-						m_domain = stream->get_domain();
+						m_cur_account.set_token(stream->get_token());
+						m_cur_account.set_domain(stream->get_domain());
 						bSet = true;
 					}
 					break;
@@ -1264,18 +1290,18 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 		if (uri->is_template() && m_wndShowUrl.GetCheck())
 		{
 			TemplateParams params;
-			params.token = m_token;
-			params.domain = m_domain;
-			params.login = m_login;
-			params.password = m_password;
+			params.token = m_cur_account.get_token();
+			params.domain = m_cur_account.get_domain();
+			params.login = m_cur_account.get_login();
+			params.password = m_cur_account.get_password();
 			params.host = m_host;
 			params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 			if (uri->get_server_subst_type() == ServerSubstType::enStream)
 			{
-				params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+				params.server = m_cur_account.device_id;
 			}
 
-			UpdateExtToken(uri.get(), m_token);
+			UpdateExtToken(uri.get(), m_cur_account.get_token());
 			m_streamUrl = uri->get_templated_stream(params).c_str();
 		}
 
@@ -1401,7 +1427,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	auto& allEpgMap = m_epg_cache[epg_idx];
 	auto& epgChannelMap = allEpgMap[epg_id];
 
-	UpdateExtToken(info->stream_uri.get(), m_token);
+	UpdateExtToken(info->stream_uri.get(), m_cur_account.get_token());
 	if (m_plugin_type == StreamType::enSharaclub)
 	{
 		auto& url = info->stream_uri->get_epg_parameters(0).epg_url;
@@ -1551,7 +1577,10 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	if (lst_idx == CB_ERR)
 		return false;
 
-	const auto& channelsPath = fmt::format(L"{:s}{:s}\\{:s}", GetConfig().get_string(true, REG_LISTS_PATH), GetConfig().GetCurrentPluginName(), m_all_channels_lists[lst_idx]);
+	const auto& channelsPath = fmt::format(L"{:s}{:s}\\{:s}",
+										   GetConfig().get_string(true, REG_LISTS_PATH),
+										   GetConfig().GetCurrentPluginName(),
+										   m_all_channels_lists[lst_idx]);
 
 	std::ifstream is(channelsPath, std::istream::binary);
 	if (!is.good())
@@ -1579,41 +1608,6 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	if (!info_node || rapidxml::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
 	{
 		set_allow_save(TRUE);
-	}
-
-	auto setup_node = i_node->first_node(utils::CHANNELS_SETUP);
-	if (setup_node)
-	{
-		if (setup_node->first_node(utils::ACCESS_TOKEN))
-		{
-			m_embedded_info = TRUE;
-			m_token = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_TOKEN));
-		}
-
-		if (setup_node->first_node(utils::ACCESS_DOMAIN))
-		{
-			m_embedded_info = TRUE;
-			m_domain = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_DOMAIN));
-		}
-
-		if (setup_node->first_node(utils::ACCESS_LOGIN))
-		{
-			m_embedded_info = TRUE;
-			m_login = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_LOGIN));
-		}
-
-		if (setup_node->first_node(utils::ACCESS_PASSWORD))
-		{
-			m_embedded_info = TRUE;
-			m_password = rapidxml::get_value_wstring(setup_node->first_node(utils::ACCESS_PASSWORD));
-		}
-	}
-
-	auto portal_node = i_node->first_node(utils::PORTAL_SETUP);
-	if (portal_node)
-	{
-		m_embedded_info = TRUE;
-		m_portal = rapidxml::get_value_wstring(portal_node->first_node(utils::PORTAL_KEY));
 	}
 
 	const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
@@ -2696,19 +2690,19 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		CEpgListDlg dlg;
 		dlg.m_epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
 		dlg.m_epg_cache = &m_epg_cache;
-		dlg.m_params.token = m_token;
-		dlg.m_params.domain = m_domain;
-		dlg.m_params.login = m_login;
-		dlg.m_params.password = m_password;
+		dlg.m_params.token = m_cur_account.get_token();
+		dlg.m_params.domain = m_cur_account.get_domain();
+		dlg.m_params.login = m_cur_account.get_login();
+		dlg.m_params.password = m_cur_account.get_password();
 		dlg.m_params.host = m_host;
 		dlg.m_params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 
 		if (info->stream_uri->get_server_subst_type() == ServerSubstType::enStream)
 		{
-			dlg.m_params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+			dlg.m_params.server = m_cur_account.device_id;
 		}
 
-		UpdateExtToken(info->stream_uri.get(), m_token);
+		UpdateExtToken(info->stream_uri.get(), m_cur_account.get_token());
 		dlg.m_info = info;
 
 
@@ -2743,27 +2737,32 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 	if (auto info = GetBaseInfo(m_lastTree, hItem); info != nullptr)
 	{
 		TemplateParams params;
-		params.token = m_token;
-		params.domain = m_domain;
-		params.login = m_login;
-		params.password = m_password;
+		params.token = m_cur_account.get_token();
+		params.domain = m_cur_account.get_domain();
+		params.login = m_cur_account.get_login();
+		params.password = m_cur_account.get_password();
 		params.host = m_host;
 		params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 
 		if (info->stream_uri->get_server_subst_type() == ServerSubstType::enStream)
 		{
-			params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+			params.server = m_cur_account.device_id;
 		}
 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
-		UpdateExtToken(info->stream_uri.get(), m_token);
+		UpdateExtToken(info->stream_uri.get(), m_cur_account.get_token());
 		const auto& url = info->stream_uri->get_templated_stream(params);
 
 		TRACE(L"\nTest URL: %s\n", url.c_str());
 
-		ShellExecuteW(nullptr, L"open", GetConfig().get_string(true, REG_PLAYER).c_str(), url.c_str(), nullptr, SW_SHOWNORMAL);
+		ShellExecuteW(nullptr,
+					  L"open",
+					  GetConfig().get_string(true, REG_PLAYER).c_str(),
+					  url.c_str(),
+					  nullptr,
+					  SW_SHOWNORMAL);
 	}
 }
 
@@ -2802,25 +2801,16 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 
 	CAccessInfoDlg dlgInfo;
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgInfo.m_bEmbed = m_embedded_info;
-	dlgInfo.m_token = m_token;
-	dlgInfo.m_domain = m_domain;
-	dlgInfo.m_login = m_login;
-	dlgInfo.m_password = m_password;
+	dlgInfo.m_initial_cred = m_cur_account;
 	dlgInfo.m_host = m_host;
-	dlgInfo.m_portal = m_portal;
+	dlgInfo.m_all_channels_lists = m_all_channels_lists;
 
 	sheet.AddPage(&dlgInfo);
 
 	if (sheet.DoModal() == IDOK)
 	{
-		m_embedded_info = dlgInfo.m_bEmbed;
-		m_domain = dlgInfo.m_domain;
-		m_token = dlgInfo.m_token;
-		m_login = dlgInfo.m_login;
-		m_password = dlgInfo.m_password;
+		m_cur_account = dlgInfo.m_initial_cred;
 		m_host = dlgInfo.m_host;
-		m_portal = dlgInfo.m_portal;
 
 		GetConfig().UpdatePluginSettings();
 		return true;
@@ -3714,7 +3704,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 
 	for (auto& item : *container)
 	{
-		UpdateExtToken(item, m_token);
+		UpdateExtToken(item, m_cur_account.get_token());
 	}
 
 	m_wndPluginType.EnableWindow(FALSE);
@@ -3736,15 +3726,15 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_hStop = m_evtStop;
 	cfg.m_probe = GetConfig().get_string(true, REG_FFPROBE);
 	cfg.m_max_threads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
-	cfg.m_params.token = m_token;
-	cfg.m_params.domain = m_domain;
-	cfg.m_params.login = m_login;
-	cfg.m_params.password = m_password;
+	cfg.m_params.token = m_cur_account.get_token();
+	cfg.m_params.domain = m_cur_account.get_domain();
+	cfg.m_params.login = m_cur_account.get_login();
+	cfg.m_params.password = m_cur_account.get_password();
 	cfg.m_params.host = m_host;
 	cfg.m_params.shift_back = 0;
 	if (cfg.m_container->front()->get_server_subst_type() == ServerSubstType::enStream)
 	{
-		cfg.m_params.server = GetConfig().get_int(false, REG_DEVICE_ID);
+		cfg.m_params.server = m_cur_account.device_id;
 	}
 
 	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
@@ -4692,7 +4682,7 @@ void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& 
 	}
 	if (m_plugin_type == StreamType::enVidok || m_plugin_type == StreamType::enTVClub)
 	{
-		uri->set_token(uri->get_api_token(m_login, m_password));
+		uri->set_token(uri->get_api_token(m_cur_account.get_login(), m_cur_account.get_password()));
 		return;
 	}
 
@@ -4734,9 +4724,6 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 {
 	CVodViewer dlg(&m_vod_categories[(size_t)m_plugin_type]);
 	dlg.m_plugin_type = m_plugin_type;
-	dlg.m_domain = m_domain;
-	dlg.m_login = m_login;
-	dlg.m_password = m_password;
-	dlg.m_token = m_token;
+	dlg.m_account = m_cur_account;
 	dlg.DoModal();
 }

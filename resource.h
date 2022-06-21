@@ -159,6 +159,7 @@
 #define IDS_STRING_CHECK_EMBED          266
 #define IDS_STRING_COL_COMMENT          267
 #define IDS_STRING_COL_SUFFIX           268
+#define IDS_STRING_COL_LIST             269
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302
@@ -272,6 +273,8 @@
 #define IDC_CHECK_AUTO_SYNC_CHANNELS    1091
 #define IDC_LIST_INFO                   1092
 #define IDC_LIST_EPG                    1093
+#define IDC_LIST_INFO2                  1093
+#define IDC_LIST_CHANNELS               1093
 #define IDC_STATIC_LOGIN                1094
 #define IDC_STATIC_DEVICE_ID            1095
 #define IDC_CHECK_EMBED                 1096

@@ -335,13 +335,8 @@ protected:
 	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
 
 private:
-	BOOL m_embedded_info = FALSE;
-	std::wstring m_token;
-	std::wstring m_domain;
-	std::wstring m_login;
-	std::wstring m_password;
+	Credentials m_cur_account;
 	std::wstring m_host;
-	std::wstring m_portal;
 
 	StreamType m_plugin_type = StreamType::enBase;
 	std::unique_ptr<uri_stream> m_plugin;
@@ -384,6 +379,9 @@ private:
 	// Icons entries
 	// loaded when used icon resource list
 	std::shared_ptr<Playlist> m_Icons;
+
+	// Accounts
+	std::vector<Credentials> m_all_credentials;
 
 	//////////////////////////////////////////////////////////////////////////
 	// channels part

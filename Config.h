@@ -105,13 +105,18 @@ constexpr auto REG_HOURS_BACK      = _T("HoursBack");
 constexpr auto REG_SHOW_URL        = _T("ShowStreamUrl");
 
 // Plugin dependent
+
+// accounts data
 constexpr auto REG_LOGIN               = _T("Login");
 constexpr auto REG_PASSWORD            = _T("Password");
 constexpr auto REG_TOKEN               = _T("AccessKey");
 constexpr auto REG_DOMAIN              = _T("Domain");
-constexpr auto REG_ACCESS_URL          = _T("AccessUrl");
-constexpr auto REG_HOST                = _T("Host");
 constexpr auto REG_VPORTAL             = _T("VPortal");
+constexpr auto REG_EMBED_INFO          = _T("EmbedInfo");
+constexpr auto REG_DEVICE_ID           = _T("DeviceID");
+constexpr auto REG_PROFILE_ID          = _T("ProfileID");
+
+constexpr auto REG_ACCESS_URL          = _T("AccessUrl");
 constexpr auto REG_FILTER_STRING_S     = _T("FilterString");
 constexpr auto REG_FILTER_STRING_H     = _T("FilterStringHide");
 constexpr auto REG_FILTER_STRING_LST_S = _T("FilterStringList");
@@ -126,13 +131,13 @@ constexpr auto REG_CHANNELS_TYPE       = _T("ChannelsType");
 constexpr auto REG_PLAYLIST_TYPE       = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE         = _T("StreamType");
 constexpr auto REG_CUSTOM_PLAYLIST     = _T("CustomPlaylist");
-constexpr auto REG_DEVICE_ID           = _T("DeviceID");
-constexpr auto REG_PROFILE_ID          = _T("ProfileID");
 constexpr auto REG_CREDENTIALS         = _T("Credentials");
-constexpr auto REG_EMBED_INFO          = _T("EmbedInfo");
 constexpr auto REG_LIST_DOMAIN         = _T("ListDomain");
 constexpr auto REG_EPG_DOMAIN          = _T("EpgDomain");
 constexpr auto REG_PLUGIN_SUFFIX       = _T("PluginSuffix");
+constexpr auto REG_ACCOUNT_DATA        = _T("AccountData");
+constexpr auto REG_ACTIVE_ACCOUNT      = _T("ActiveAccount");
+constexpr auto REG_ACTIVE_CH_LIST      = _T("ActiveChannelsList");
 
 typedef struct
 {
@@ -142,6 +147,57 @@ typedef struct
 	std::string int_name;
 	std::string version;
 } PluginDesc;
+
+class Credentials
+{
+public:
+	Credentials() = default;
+	void Clear()
+	{
+		login.clear();
+		password.clear();
+		token.clear();
+		domain.clear();
+		portal.clear();
+		comment.clear();
+		suffix.clear();
+		ch_list.clear();
+		int device_id = 0;
+		int profile_id = 0;
+		int embed = 0;
+	}
+
+	std::wstring get_login() const { return utils::utf8_to_utf16(login); }
+	std::wstring get_password() const { return utils::utf8_to_utf16(password); }
+	std::wstring get_token() const { return utils::utf8_to_utf16(token); }
+	std::wstring get_domain() const { return utils::utf8_to_utf16(domain); }
+	std::wstring get_portal() const { return utils::utf8_to_utf16(portal); }
+	std::wstring get_comment() const { return utils::utf8_to_utf16(comment); }
+	std::wstring get_suffix() const { return utils::utf8_to_utf16(suffix); }
+
+	void set_login(const std::wstring& value) { login = utils::utf16_to_utf8(value); }
+	void set_password(const std::wstring& value) { password = utils::utf16_to_utf8(value); }
+	void set_token(const std::wstring& value) { token = utils::utf16_to_utf8(value); }
+	void set_domain(const std::wstring& value) { domain = utils::utf16_to_utf8(value); }
+	void set_portal(const std::wstring& value) { portal = utils::utf16_to_utf8(value); }
+	void set_comment(const std::wstring& value) { comment = utils::utf16_to_utf8(value); }
+	void set_suffix(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
+
+public:
+	std::string login;
+	std::string password;
+	std::string token;
+	std::string domain;
+	std::string portal;
+	std::string comment;
+	std::string suffix;
+	std::vector<std::string> ch_list;
+	int device_id = 0;
+	int profile_id = 0;
+	int embed = 0;
+
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(Credentials, login, password, token, domain, portal, comment, suffix, ch_list, device_id, profile_id, embed);
+};
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -219,6 +275,8 @@ public:
 
 	void set_binary(bool isApp, const std::wstring& key, const std::vector<BYTE>& value);
 	void set_binary(bool isApp, const std::wstring& key, const BYTE* value, const size_t value_size);
+
+	void delete_setting(bool isApp, const std::wstring& key);
 
 public:
 	static std::wstring DEV_PATH;
