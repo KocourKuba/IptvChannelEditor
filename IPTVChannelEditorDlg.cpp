@@ -483,6 +483,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_inSync = true;
 
 	m_host.clear();
+	m_all_credentials.clear();
 
 	nlohmann::json creds;
 	JSON_ALL_TRY;
@@ -509,17 +510,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	int selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
 	if (selected < (int)m_all_credentials.size())
 	{
-		const auto& cred = m_all_credentials[selected];
-
-		m_cur_account.domain = cred.domain;
-		m_cur_account.token = cred.token;
-		m_cur_account.login = cred.login;
-		m_cur_account.password = cred.password;
-		m_cur_account.embed = cred.embed;
-		if (m_plugin_type == StreamType::enEdem)
-		{
-			m_cur_account.portal = cred.portal;
-		}
+		m_cur_account = m_all_credentials[selected];
 	}
 
 	m_wndPlaylist.ResetContent();
