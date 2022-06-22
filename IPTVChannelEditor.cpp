@@ -424,7 +424,7 @@ void ConvertAccounts()
 
 			std::vector<Credentials> all_credentials;
 			int idx = 0;
-			int selected = -1;
+			int selected = 0;
 			auto& all_accounts = utils::string_split(acc_data, L';');
 			for (const auto& account : all_accounts)
 			{
