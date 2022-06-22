@@ -508,6 +508,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_cur_account.Clear();
 
 	int selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
+	if (selected == -1 || selected >= (int)m_all_credentials.size())
+		selected = 0;
+
 	if (selected < (int)m_all_credentials.size())
 	{
 		m_cur_account = m_all_credentials[selected];
