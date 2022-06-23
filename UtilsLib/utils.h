@@ -387,14 +387,13 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 	const auto& paragraph = any_string<T>(R"({\par})");
 
 	std::basic_string<T> rtf;
-	for (auto& it = text.begin(); it != text.end(); ++it)
+	for (auto it = text.begin(); it != text.end(); ++it)
 	{
-		if (*it == '\r') continue;;
+		if (*it == '\r') continue;
 
 		if (*it == '\n')
 		{
 			rtf.append(paragraph.begin(), paragraph.end());
-			++it;
 			continue;
 		}
 
