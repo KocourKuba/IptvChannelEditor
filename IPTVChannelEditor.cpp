@@ -632,13 +632,13 @@ bool PackPlugin(const StreamType plugin_type,
 	{
 		if (info.short_name != plugin_info.short_name)
 		{
-			const auto& logo = fmt::format("logo_{:s}.png", info.short_name);
-			if (noCustom || cred.logo.empty() || logo != cred.logo)
-				to_remove.emplace_back(logo);
+			const auto& standard_logo = fmt::format("logo_{:s}.png", info.short_name);
+			if (noCustom || (cred.logo != standard_logo && !cred.logo.empty()))
+				to_remove.emplace_back(standard_logo);
 
-			const auto& background = fmt::format("bg_{:s}.jpg", info.short_name);
-			if (noCustom || cred.background.empty() || background != cred.background)
-				to_remove.emplace_back(background);
+			const auto& standard_bg = fmt::format("bg_{:s}.jpg", info.short_name);
+			if (noCustom || (cred.background != standard_bg && !cred.background.empty()))
+				to_remove.emplace_back(standard_bg);
 		}
 	}
 

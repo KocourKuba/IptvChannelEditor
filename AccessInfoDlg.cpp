@@ -682,7 +682,7 @@ void CAccessInfoDlg::GetAccountInfo()
 	auto& cred = m_all_credentials[checked];
 	if (!m_servers.empty())
 	{
-		m_wndDeviceID.EnableWindow(!m_servers.empty());
+		m_wndDeviceID.EnableWindow(TRUE);
 		m_wndDeviceID.SetCurSel(cred.device_id);
 	}
 
@@ -729,8 +729,8 @@ void CAccessInfoDlg::GetAccountInfo()
 	uri->set_host(m_host);
 
 	TemplateParams params;
-	params.login = login;
-	params.password = password;
+	params.login = std::move(login);
+	params.password = std::move(password);
 	params.domain = m_list_domain;
 	params.server = cred.device_id;
 	params.profile = cred.profile_id;
