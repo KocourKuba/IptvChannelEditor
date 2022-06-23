@@ -25,6 +25,11 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#pragma warning(push)
+#pragma warning(disable:4091)
+#include <dbghelp.h>
+#pragma warning(pop)
+
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
 #include "IconCache.h"
@@ -33,6 +38,8 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\inet_utils.h"
 
 #include "7zip\SevenZipWrapper.h"
+
+#include "BugTrap\Source\Client\BugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,6 +52,33 @@ constexpr auto PACK_DLL = L"7za.dll";
 
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
 static HANDLE g_hAppRunningMutex = nullptr;
+
+static void SetupExceptionHandler()
+{
+	// Setup exception handler
+	// http://www.debuginfo.com/articles/effminidumps.html
+
+	// MaxiDump
+	// DWORD dwDumpType = (MiniDumpWithFullMemory | MiniDumpWithFullMemoryInfo | MiniDumpWithHandleData | MiniDumpWithThreadInfo | MiniDumpWithUnloadedModules)
+	// MidiDump
+	DWORD dwDumpType = (MiniDumpWithPrivateReadWriteMemory
+						| MiniDumpWithDataSegs
+						| MiniDumpWithHandleData
+						| MiniDumpWithFullMemoryInfo
+						| MiniDumpWithThreadInfo
+						| MiniDumpWithUnloadedModules);
+
+	BT_SetAppName(fmt::format(L"IPTVChannelEditor_v{:d}_{:d}_{:d}", MAJOR, MINOR, BUILD).c_str());
+	BT_SetFlags(BTF_DETAILEDMODE | BTF_LISTPROCESSES | BTF_ATTACHREPORT | BTF_SHOWADVANCEDUI | BTF_INTERCEPTSUEF);
+	BT_SetActivityType(BTA_SHOWUI);
+	BT_SetDumpType(dwDumpType);
+	BT_SetReportFilePath(GetAppPath().c_str());
+	BT_ExportRegistryKey(L"export.reg", L"HKCU\\SOFTWARE\\Dune IPTV Channel Editor");
+	BT_AddLogFile(L"export.reg");
+	BT_AddLogFile(L"settings.cfg");
+	// required for VS 2005 & 2008
+	BT_InstallSehFilter();
+}
 
 void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 {
@@ -164,6 +198,11 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	SetRegistryKey(_T("Dune IPTV Channel Editor"));
 
 	InitContextMenuManager();
+
+#ifndef _DEBUG
+	SetupExceptionHandler();
+	BT_SetTerminate(); // set_terminate() must be called from every thread
+#endif // _DEBUG
 
 	GetConfig().LoadSettings();
 

@@ -99,7 +99,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmtd.lib;UtilsLibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -124,12 +124,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmt.lib;UtilsLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;UtilsLib.lib;BugTrapU.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)UpdateVer.cmd</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">
     <ClCompile>
@@ -145,7 +149,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmtd.lib;UtilsLibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -166,7 +170,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmt.lib;UtilsLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

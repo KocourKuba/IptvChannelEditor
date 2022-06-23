@@ -104,8 +104,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);fmtd.lib;UtilsLibd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);fmtd.lib;UtilsLibd.lib;BugTrapUD.lib </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib;</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -136,8 +136,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);fmtd.lib;UtilsLibd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);fmtd.lib;UtilsLibd.lib;BugTrapUD-x64.lib </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib64</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -172,8 +172,8 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies);fmt.lib;UtilsLib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);fmt.lib;UtilsLib.lib;BugTrapU.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib;</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -191,30 +191,8 @@
     <PostBuildEvent>
       <Command>@echo OFF
 setlocal
-echo Build localized $(ProjectName).slp ...
-copy "$(ProjectDir)$(ProjectName).slp" "$(ProjectDir)_$(ProjectName).slp" &gt;nul 2&gt;&amp;1
-"$(MSBuildProgramFiles32)\Sisulizer 4\slmake.exe" build -lang:ru; "$(ProjectDir)_$(ProjectName).slp" -q -w &gt;nul 2&gt;&amp;1
 
-if ERRORLEVEL 2 (
-echo Builded with errors
-call :cleanup $(ProjectName)
-endlocal
-exit /B 1
-)
-
-if ERRORLEVEL 1 (
-echo Builded with warnings
-)
-
-call :cleanup $(ProjectName)
-endlocal
-exit /B 0
-
-:cleanup
-del "$(ProjectDir)_$(ProjectName).slp" &gt;nul 2&gt;&amp;1
-del "$(ProjectDir)_$(ProjectName).~slp" &gt;nul 2&gt;&amp;1
-del "$(ProjectDir)_$(ProjectName).sds" &gt;nul 2&gt;&amp;1
-goto :EOF
+call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -236,8 +214,8 @@ goto :EOF
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies);fmt.lib;UtilsLib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)lib64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);fmt.lib;UtilsLib.lib;BugTrapU-x64.lib </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib64</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

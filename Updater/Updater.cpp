@@ -28,6 +28,10 @@ DEALINGS IN THE SOFTWARE.
 #include <tchar.h>
 #include <iostream>
 #include <wtypes.h>
+#pragma warning(push)
+#pragma warning(disable:4091)
+#include <dbghelp.h>
+#pragma warning(pop)
 
 #include "CommandLine.hpp"
 
@@ -38,6 +42,8 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\FileVersionInfo.h"
 
 #include "SevenZip\7zip\SevenZipWrapper.h"
+
+#include "BugTrap\Source\Client\BugTrap.h"
 
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
 
@@ -102,6 +108,30 @@ std::wstring GetAppPath(const wchar_t* szSubFolder = nullptr)
 		fileName += szSubFolder;
 
 	return std::filesystem::absolute(fileName);
+}
+
+static void SetupExceptionHandler()
+{
+	// Setup exception handler
+	// http://www.debuginfo.com/articles/effminidumps.html
+
+	// MaxiDump
+	// DWORD dwDumpType = (MiniDumpWithFullMemory | MiniDumpWithFullMemoryInfo | MiniDumpWithHandleData | MiniDumpWithThreadInfo | MiniDumpWithUnloadedModules)
+	// MidiDump
+	DWORD dwDumpType = (MiniDumpWithPrivateReadWriteMemory
+						| MiniDumpWithDataSegs
+						| MiniDumpWithHandleData
+						| MiniDumpWithFullMemoryInfo
+						| MiniDumpWithThreadInfo
+						| MiniDumpWithUnloadedModules);
+
+	BT_SetAppName(fmt::format(L"Updater{:d}_{:d}_{:d}", MAJOR, MINOR, BUILD).c_str());
+	BT_SetFlags(BTF_DETAILEDMODE | BTF_LISTPROCESSES | BTF_ATTACHREPORT | BTF_SHOWADVANCEDUI | BTF_INTERCEPTSUEF);
+	BT_SetActivityType(BTA_SHOWUI);
+	BT_SetDumpType(dwDumpType);
+	BT_SetReportFilePath(GetAppPath().c_str());
+	// required for VS 2005 & 2008
+	BT_InstallSehFilter();
 }
 
 inline void LogProtocol(const std::string& str)
@@ -381,6 +411,11 @@ int update_app(UpdateInfo& info)
 
 int main(int argc, char* argv[])
 {
+#ifndef _DEBUG
+	SetupExceptionHandler();
+	BT_SetTerminate(); // set_terminate() must be called from every thread
+#endif // _DEBUG
+
 	// This variables can be set via the command line.
 	bool check = false;
 	bool download = false;
