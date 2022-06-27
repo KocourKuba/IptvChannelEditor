@@ -16,14 +16,6 @@
 
 // CVodViewer dialog
 
-enum class jsonParserType
-{
-	enUnknown = 0,
-	enJsonSharaClub,
-	enJsonCbilling,
-	enJsonEdem,
-};
-
 IMPLEMENT_DYNAMIC(CVodViewer, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CVodViewer, CDialogEx)
@@ -170,13 +162,13 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 
 	switch (m_plugin_type)
 	{
-		case StreamType::enGlanz:
 		case StreamType::enFox:
 			LoadM3U8Playlist(use_cache);
 			break;
 
 		case StreamType::enAntifriz:
 		case StreamType::enCbilling:
+		case StreamType::enGlanz:
 		case StreamType::enSharaclub:
 		case StreamType::enEdem:
 			LoadJsonPlaylist(use_cache);
@@ -213,6 +205,11 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 		case StreamType::enCbilling:
 			parserType = jsonParserType::enJsonCbilling;
 			url = m_plugin->get_vod_url();
+			break;
+
+		case StreamType::enGlanz:
+			parserType = jsonParserType::enJsonGlanz;
+			url = fmt::format(m_plugin->get_vod_url(), m_account.get_login(), m_account.get_password());
 			break;
 
 		case StreamType::enSharaclub:

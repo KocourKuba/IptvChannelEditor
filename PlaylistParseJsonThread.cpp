@@ -44,18 +44,22 @@ BOOL CPlaylistParseJsonThread::InitInstance()
 {
 	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-	switch (m_config.m_parser)
+	switch ((jsonParserType)m_config.m_parser)
 	{
-		case 1:
-			ParseFox();
+		case jsonParserType::enJsonSharaClub:
+			ParseSharaclub();
 			break;
 
-		case 2:
+		case jsonParserType::enJsonCbilling:
 			ParseCbilling();
 			break;
 
-		case 3:
+		case jsonParserType::enJsonEdem:
 			ParseEdem();
+			break;
+
+		case jsonParserType::enJsonGlanz:
+			ParseGlanz();
 			break;
 
 		default:
@@ -68,7 +72,7 @@ BOOL CPlaylistParseJsonThread::InitInstance()
 }
 
 
-void CPlaylistParseJsonThread::ParseFox()
+void CPlaylistParseJsonThread::ParseSharaclub()
 {
 	auto categories = std::make_unique<vod_category_storage>();
 	do
@@ -387,6 +391,90 @@ void CPlaylistParseJsonThread::ParseEdem()
 			if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0) break;
 		}
 		JSON_ALL_CATCH;
+	} while (false);
+
+	if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
+		categories.reset();
+
+	m_config.SendNotifyParent(WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
+}
+
+void CPlaylistParseJsonThread::ParseGlanz()
+{
+	auto categories = std::make_unique<vod_category_storage>();
+	do
+	{
+		std::vector<BYTE> data;
+		if (!utils::DownloadFile(m_config.m_url, data, m_config.m_use_cache) || data.empty()) break;
+
+		nlohmann::json parsed_json;
+		JSON_ALL_TRY;
+		parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		JSON_ALL_CATCH;
+
+		if (parsed_json.empty()) break;
+
+		m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)parsed_json.size(), 0);
+
+		int cnt = 0;
+		for (const auto& item : parsed_json.items())
+		{
+			const auto& val = item.value();
+			if (val.empty()) continue;
+
+			std::shared_ptr<vod_category> category;
+			std::wstring category_name;
+			auto movie = std::make_shared<vod_movie>();
+
+			JSON_ALL_TRY;
+			category_name = utils::get_json_string("category", val);
+			if (category_name.empty())
+				category_name = L"Без категории";
+
+			if (!categories->tryGet(category_name, category))
+			{
+				category = std::make_shared<vod_category>(category_name);
+				category->name = category_name;
+				categories->set(category_name, category);
+			}
+
+			movie->title = utils::get_json_string("name", val);
+			movie->id = utils::get_json_string("id", val);
+			movie->url = utils::get_json_string("url", val);
+
+			movie->poster_url.set_uri(utils::get_json_string("cover", val));
+			movie->poster_url.set_schema(L"http://");
+			movie->description = utils::get_json_string("description", val);
+			movie->rating = utils::get_json_string("rating", val);
+			movie->year = utils::get_json_string("year", val);
+			movie->director = utils::get_json_string("director", val);
+			movie->casting = utils::get_json_string("actors", val);
+			//movie->age = utils::get_json_string("censored", val);
+			movie->movie_time = val.value("duration_secs", 0);
+			movie->country = utils::get_json_string("country", val);
+
+			for (const auto& item : val["genres"].items())
+			{
+				const auto& genre_item = item.value();
+
+				const auto& id = utils::get_json_string("id", genre_item);
+				const auto& title = utils::get_json_string("title", genre_item);
+				vod_genre genre({ id, title });
+
+				movie->genres.set(title, genre);
+			}
+
+
+			category->movies.set(movie->id, movie);
+			JSON_ALL_CATCH;
+
+			cnt++;
+			if (cnt % 100 == 0)
+			{
+				m_config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt, cnt);
+				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0) break;
+			}
+		}
 	} while (false);
 
 	if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)

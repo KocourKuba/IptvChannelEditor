@@ -299,7 +299,7 @@ class SharaclubPluginConfig extends Default_Config
         foreach ($jsonItems as $item) {
             $search  = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
-                $movies[] = self::CreateMovie($item);
+                $movies[] = self::CreateShortMovie($item);
             }
         }
 
@@ -332,7 +332,7 @@ class SharaclubPluginConfig extends Default_Config
 
         foreach ($jsonItems as $item) {
             if ($category_id === $item->category) {
-                $movies[] = self::CreateMovie($item);
+                $movies[] = self::CreateShortMovie($item);
             }
         }
 
@@ -344,7 +344,7 @@ class SharaclubPluginConfig extends Default_Config
      * @param Object $movie_obj
      * @return Short_Movie
      */
-    protected static function CreateMovie($movie_obj)
+    protected static function CreateShortMovie($movie_obj)
     {
         $id = '-1';
         if (isset($movie_obj->id)) {

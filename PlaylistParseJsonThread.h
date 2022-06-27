@@ -28,6 +28,15 @@ DEALINGS IN THE SOFTWARE.
 
 #include "Config.h"
 
+enum class jsonParserType
+{
+	enUnknown = 0,
+	enJsonSharaClub,
+	enJsonCbilling,
+	enJsonEdem,
+	enJsonGlanz,
+};
+
 class CPlaylistParseJsonThread : public CWinThread
 {
 	DECLARE_DYNCREATE(CPlaylistParseJsonThread)
@@ -44,9 +53,10 @@ public:
 	void SetData(const ThreadConfig& config) { m_config = config; };
 
 protected:
-	void ParseFox();
+	void ParseSharaclub();
 	void ParseCbilling();
 	void ParseEdem();
+	void ParseGlanz();
 
 protected:
 	ThreadConfig m_config;

@@ -49,7 +49,7 @@ uri_glanz::uri_glanz()
 {
 	provider_url = L"http://ottg.tv/";
 	vod_supported = true;
-	provider_vod_url = L"http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=vod";
+	provider_vod_url = L"http://api.ottg.tv/playlist/vod?login={:s}&password={:s}";
 }
 
 void uri_glanz::parse_uri(const std::wstring& url)

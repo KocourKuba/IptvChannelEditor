@@ -4,7 +4,7 @@ require_once 'default_config.php';
 class GlanzPluginConfig extends Default_Config
 {
     const PLAYLIST_TV_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
-    const PLAYLIST_VOD_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=vod';
+    const PLAYLIST_VOD_URL = 'http://api.ottg.tv/playlist/vod?login=%s&password=%s';
 
     public function __construct()
     {
@@ -134,40 +134,203 @@ class GlanzPluginConfig extends Default_Config
     {
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
-        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
-        foreach ($m3u_lines as $i => $line) {
-            if ($i !== (int)$movie_id || !preg_match($this->get_feature(EXTINF_VOD_PATTERN), $line, $matches)) {
+        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
+
+        if ($jsonItems === false) {
+            hd_print("TryLoadMovie: failed to load movie: $movie_id");
+            return $movie;
+        }
+
+        foreach ($jsonItems as $item) {
+            if (isset($item->id)) {
+                $id = (string)$item->id;
+            } else {
+                $id = '-1';
+            }
+
+            if ($id !== $movie_id) {
                 continue;
             }
 
-            $logo = $matches['logo'];
-            $caption = $matches['title'];
+            $genres = array();
+            foreach ($item->genres as $genre) {
+                if (!empty($genre->title)) {
+                    $genres[] = $genre->title;
+                }
+            }
+            $genres_str = implode(", ", $genres);
 
-            $url = $m3u_lines[$i + 1];
-            //hd_print("Vod url: $playback_url");
             $movie->set_data(
-                $caption,// $xml->caption,
-                '',// $xml->caption_original,
-                '',// $xml->description,
-                $logo,// $xml->poster_url,
-                '',// $xml->length,
-                '',// $xml->year,
-                '',// $xml->director,
-                '',// $xml->scenario,
-                '',// $xml->actors,
-                '',// $xml->genres,
-                '',// $xml->rate_imdb,
-                '',// $xml->rate_kinopoisk,
-                '',// $xml->rate_mpaa,
-                '',// $xml->country,
-                ''// $xml->budget
+                $item->name,            // name,
+                $item->o_name,          // name_original,
+                $item->description,     // description,
+                $item->cover,           // poster_url,
+                '',           // length_min,
+                $item->year,            // year,
+                $item->director,        // director_str,
+                '',           // scenario_str,
+                $item->actors,          // actors_str,
+                $genres_str,            // genres_str,
+                '',            // rate_imdb,
+                '',         // rate_kinopoisk,
+                '',            // rate_mpaa,
+                $item->country,         // country,
+                ''               // budget
             );
 
-            $movie->add_series_data($movie_id, $caption, '', $url);
-            hd_print("movie url: $url");
+            $playback_url = str_replace("https://", "http://", $item->url);
+            hd_print("movie playback_url: $playback_url");
+            $movie->add_series_data($movie_id, $item->name, '', $playback_url);
             break;
         }
 
         return $movie;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @param array &$category_list
+     * @param array &$category_index
+     */
+    public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
+    {
+        $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
+        $categories = HD::DownloadJson($url);
+        if ($categories === false) {
+            return;
+        }
+
+        HD::StoreContentToFile($categories, self::get_vod_cache_file());
+
+        $category_list = array();
+        $category_index = array();
+        $categoriesFound = array();
+
+        foreach ($categories as $movie) {
+            $category = (string)$movie['category'];
+            if (empty($category)) {
+                $category = "Без категории";
+            }
+
+            if (!in_array($category, $categoriesFound)) {
+                $categoriesFound[] = $category;
+                $cat = new Starnet_Vod_Category($category, $category);
+                $category_list[] = $cat;
+                $category_index[$cat->get_id()] = $cat;
+            }
+        }
+
+        hd_print("Categories read: " . count($category_list));
+    }
+
+    /**
+     * @param string $keyword
+     * @param $plugin_cookies
+     * @return array
+     * @throws Exception
+     */
+    public function getSearchList($keyword, $plugin_cookies)
+    {
+        hd_print("getSearchList: $keyword");
+        $movies = array();
+        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
+        if ($jsonItems === false) {
+            hd_print("getSearchList: failed to load movies");
+            return $movies;
+        }
+
+        $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
+        foreach ($jsonItems as $item) {
+            $search  = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
+            if (strpos($search, $keyword) !== false) {
+                $movies[] = self::CreateShortMovie($item);
+            }
+        }
+
+        hd_print("Movies found: " . count($movies));
+        return $movies;
+    }
+
+    /**
+     * @param string $query_id
+     * @param $plugin_cookies
+     * @return array
+     * @throws Exception
+     */
+    public function getVideoList($query_id, $plugin_cookies)
+    {
+        $movies = array();
+
+        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
+        if ($jsonItems === false) {
+            hd_print("getVideoList: failed to load movies");
+            return $movies;
+        }
+
+        $arr = explode("_", $query_id);
+        if ($arr === false) {
+            $category_id = $query_id;
+        } else {
+            $category_id = $arr[0];
+        }
+
+        foreach ($jsonItems as $item) {
+            $category = $item->category;
+            if (empty($category)) {
+                $category = "Без категории";
+            }
+
+            if ($category_id === $category) {
+                $movies[] = self::CreateShortMovie($item);
+            }
+        }
+
+        hd_print("Movies read for query: $query_id - " . count($movies));
+        return $movies;
+    }
+
+    /**
+     * @param Object $movie_obj
+     * @return Short_Movie
+     */
+    protected static function CreateShortMovie($movie_obj)
+    {
+        if (isset($movie_obj->id)) {
+            $id = (string)$movie_obj->id;
+        } else {
+            $id = '-1';
+        }
+
+        $genres = array();
+        foreach ($movie_obj->genres as $genre) {
+            if (!empty($genre->title)) {
+                $genres[] = $genre->title;
+            }
+        }
+        $genres_str = implode(", ", $genres);
+
+        $movie = new Short_Movie($id, (string)$movie_obj->name, (string)$movie_obj->cover);
+        $movie->info = "$movie_obj->name|Год: $movie_obj->year|Страна: $movie_obj->country|Жанр: $genres_str";
+
+        return $movie;
+    }
+
+    protected static function get_vod_cache_file()
+    {
+        return DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json";
+    }
+
+    /**
+     * @param string $key
+     * @param int $val
+     */
+    public function add_movie_counter($key, $val)
+    {
+        // repeated count data
+        if (!array_key_exists($key, $this->movie_counter)) {
+            $this->movie_counter[$key] = 0;
+        }
+
+        $this->movie_counter[$key] += $val;
     }
 }
