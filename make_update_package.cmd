@@ -92,16 +92,18 @@ set dest=%~dp0\ArchivePDB\32
 
 mkdir "%dest%" >nul 2>&1
 
+echo IPTVChannelEditor
 copy "%~dp0\Release Unicode\IPTVChannelEditor.exe" "%dest%" >nul
 copy "%~dp0\Release Unicode\IPTVChannelEditor.pdb" "%dest%" >nul
 
+echo Updater
 copy "%~dp0\Release Unicode\Updater.exe" "%dest%" >nul
 copy "%~dp0\Release Unicode\Updater.pdb" "%dest%" >nul
 
 pushd "%dest%"
 dir /b /O:N *.exe *.dll *.pdb > upload.lst
 
-%SYMSRV_APP% add /o /t "IPTVChannelEditor" /v "%BUILD% (x%1)" /d Transaction.log /3 /f "@upload.lst" /s %SYMSTORE% /compress
+%SYMSRV_APP% add /o /t "IPTVChannelEditor" /v "%BUILD% (x32)" /d Transaction.log /3 /f "@upload.lst" /s %SYMSTORE% /compress
 del /q *.exe *.dll *.pdb *.lst >nul 2>&1
 popd
 

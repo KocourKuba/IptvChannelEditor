@@ -630,14 +630,23 @@ bool PackPlugin(const StreamType plugin_type,
 	std::vector<std::string> to_remove;
 	for (const auto& info : GetConfig().get_plugins_info())
 	{
+		const auto& standard_logo = fmt::format("logo_{:s}.png", info.short_name);
+		const auto& standard_bg = fmt::format("bg_{:s}.jpg", info.short_name);
+
 		if (info.short_name != plugin_info.short_name)
 		{
-			const auto& standard_logo = fmt::format("logo_{:s}.png", info.short_name);
-			if (noCustom || (cred.logo != standard_logo && !cred.logo.empty()))
+			if (noCustom || cred.logo != standard_logo)
 				to_remove.emplace_back(standard_logo);
 
-			const auto& standard_bg = fmt::format("bg_{:s}.jpg", info.short_name);
-			if (noCustom || (cred.background != standard_bg && !cred.background.empty()))
+			if (noCustom || cred.background != standard_bg)
+				to_remove.emplace_back(standard_bg);
+		}
+		else
+		{
+			if (noCustom || cred.logo.empty() || cred.logo != standard_logo)
+				to_remove.emplace_back(standard_logo);
+
+			if (noCustom || cred.background.empty() || cred.background != standard_bg)
 				to_remove.emplace_back(standard_bg);
 		}
 	}
