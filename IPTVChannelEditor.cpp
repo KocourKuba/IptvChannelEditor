@@ -262,7 +262,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		const auto& lists_path = GetConfig().get_string(true, REG_LISTS_PATH);
 		for (const auto& item : GetConfig().get_plugins_info())
 		{
-			if (!PackPlugin(item.type, output_path, lists_path, false, cmdInfo.m_bNoEmbed))
+			if (!PackPlugin(item.type, output_path, lists_path, false, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 			{
 				CString str;
 				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.title.c_str());
@@ -627,33 +627,42 @@ bool PackPlugin(const StreamType plugin_type,
 	}
 
 	// remove images for other plugins
-	std::vector<std::string> to_remove;
+	std::set<std::string> to_remove;
 	for (const auto& info : GetConfig().get_plugins_info())
 	{
-		const auto& standard_logo = fmt::format("logo_{:s}.png", info.short_name);
-		const auto& standard_bg = fmt::format("bg_{:s}.jpg", info.short_name);
-
 		if (info.short_name != plugin_info.short_name)
 		{
-			if (noCustom || cred.logo != standard_logo)
-				to_remove.emplace_back(standard_logo);
-
-			if (noCustom || cred.background != standard_bg)
-				to_remove.emplace_back(standard_bg);
+			to_remove.emplace(fmt::format("logo_{:s}.png", info.short_name));
+			to_remove.emplace(fmt::format("bg_{:s}.jpg", info.short_name));
 		}
-		else
-		{
-			if (noCustom || cred.logo.empty() || cred.logo != standard_logo)
-				to_remove.emplace_back(standard_logo);
+	}
 
-			if (noCustom || cred.background.empty() || cred.background != standard_bg)
-				to_remove.emplace_back(standard_bg);
+	if (noCustom)
+	{
+		if (!cred.logo.empty())
+			to_remove.emplace(cred.logo);
+
+		if (!cred.background.empty())
+			to_remove.emplace(cred.background);
+	}
+	else
+	{
+		if (!cred.logo.empty())
+		{
+			to_remove.erase(cred.logo);
+			to_remove.emplace(fmt::format("logo_{:s}.png", plugin_info.short_name));
+		}
+
+		if (!cred.background.empty())
+		{
+			to_remove.erase(cred.background);
+			to_remove.emplace(fmt::format("bg_{:s}.jpg", plugin_info.short_name));
 		}
 	}
 
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
 	{
-		if (std::find(to_remove.begin(), to_remove.end(), dir_entry.path().filename().string()) != to_remove.end())
+		if (to_remove.find(dir_entry.path().filename().string()) != to_remove.end())
 		{
 			std::filesystem::remove(dir_entry, err);
 		}
@@ -780,7 +789,7 @@ bool PackPlugin(const StreamType plugin_type,
 	}
 
 	const auto& suffix = utils::utf8_to_utf16(cred.suffix);
-	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, short_name_w, cred.suffix.empty() ? L"mod" : suffix);
+	const auto& pluginFile = output_path + fmt::format(utils::DUNE_PLUGIN_NAME, short_name_w, (cred.suffix.empty() || noCustom) ? L"mod" : suffix);
 
 	res = archiver.CreateArchive(pluginFile);
 	// remove temporary folder
