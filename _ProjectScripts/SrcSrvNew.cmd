@@ -1,9 +1,8 @@
 @echo off
-setlocal
-set ProgFiles=%ProgramFiles%
-if /i "%PROCESSOR_ARCHITECTURE%" == "AMD64" set ProgFiles=%ProgramFiles(x86)%
 
-set SRC_SERVER_FILES="%ProgFiles%\Windows Kits\10\Debuggers\x64\srcsrv"
+setlocal
+
+set SRC_SERVER_FILES="%ProgramFiles(x86)%\Windows Kits\10\Debuggers\x64\srcsrv"
 
 if not exist %SRC_SERVER_FILES%\pdbstr.exe goto preq
 

@@ -1,15 +1,43 @@
 @echo off
-set ProgFiles=%ProgramFiles%
-if /i "%PROCESSOR_ARCHITECTURE%" == "AMD64" set ProgFiles=%ProgramFiles(x86)%
+setlocal
 
-set SYMSRV_APP="%ProgFiles%\Windows Kits\10\Debuggers\x64\symstore.exe"
+set SYMSRV_APP="%ProgramFiles(x86)%\Windows Kits\10\Debuggers\x64\symstore.exe"
 set SYMSTORE=\\DISKSTATION2\SymbolStore\
+set DEV_ENV="%ProgramW6432%\Microsoft Visual Studio\2022\Professional\Common7\IDE\devenv.com"
 
+rem ********************************************************
+:build_project
+
+set ROOT=%~dp0
+set BUILD_TYPE=Release Unicode
+set BUILD_PLATFORM=x86
+
+del build.log >nul 2>&1
+
+call UpdateVer.cmd
+
+set BUILD_NAME=IPTVChannelEditor
+set BUILD_PATH=%ROOT%%BUILD_TYPE%
+
+echo @%DEV_ENV% %BUILD_NAME%.sln /Rebuild "%BUILD_TYPE%|%BUILD_PLATFORM%" /Project %BUILD_NAME%.vcxproj /OUT build.log >build.bat
+echo @if NOT exist "%BUILD_PATH%\%BUILD_NAME%.exe" pause >>build.bat
+echo @exit >>build.bat
+start /wait build.bat
+del build.bat
+
+if exist "%BUILD_PATH%" goto getversion
+
+set ERROR=Error %BUILD_NAME%.exe is not compiled
+endlocal & set ERROR=%ERROR%
+echo %ERROR%
+goto :EOF
+
+:getversion
 rem Get app version
-dll\GetVersion.exe "%~dp0\Release Unicode\IPTVChannelEditor.exe" \\StringFileInfo\\040904b0\\ProductVersion >AppVer.tmp
+dll\GetVersion.exe "%BUILD_PATH%\%BUILD_NAME%.exe" \\StringFileInfo\\040904b0\\ProductVersion >AppVer.tmp
 set /P BUILD=<AppVer.tmp
 del AppVer.tmp >nul 2>&1
-set outfile=%~dp0\package\update.xml
+set outfile=%ROOT%package\update.xml
 echo %BUILD%
 
 call :update_source
@@ -17,20 +45,20 @@ call :upload_pdb
 
 echo prepare package folder...
 set pkg=package\%BUILD%
-md "%~dp0\%pkg%" >nul 2>&1
-copy "%~dp0\Release Unicode\IPTVChannelEditor.exe"		"%pkg%" >nul
-copy "%~dp0\Release Unicode\IPTVChannelEditorRUS.dll"	"%pkg%" >nul
-copy "%~dp0\Release Unicode\Updater.exe"				"%pkg%" >nul
-copy "%~dp0\dll\7za.dll"								"%pkg%" >nul
-copy "%~dp0\BugTrap\bin\BugTrapU.dll"					"%pkg%" >nul
-copy "%~dp0\BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
-copy "%~dp0\Changelog.md"								"%pkg%" >nul
-copy "%~dp0\Changelog.md" "%~dp0\package\Changelog.md" >nul
-copy "%~dp0\Changelog.md" "%~dp0\package\Changelog.md.%BUILD%" >nul
+md "%ROOT%%pkg%" >nul 2>&1
+copy "%BUILD_PATH%\%BUILD_NAME%.exe"					"%pkg%" >nul
+copy "%BUILD_PATH%\%BUILD_NAME%RUS.dll"					"%pkg%" >nul
+copy "%ROOT%Updater\%BUILD_TYPE%\Updater.exe"			"%pkg%" >nul
+copy "%ROOT%dll\7za.dll"								"%pkg%" >nul
+copy "%ROOT%BugTrap\bin\BugTrapU.dll"					"%pkg%" >nul
+copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
+copy "%ROOT%Changelog.md"								"%pkg%" >nul
+copy "%ROOT%Changelog.md" "%ROOT%package\Changelog.md" >nul
+copy "%ROOT%Changelog.md" "%ROOT%package\Changelog.md.%BUILD%" >nul
 
 pushd "package\%BUILD%"
-mklink /D dune_plugin "%~dp0\dune_plugin" >nul 2>&1
-mklink /D playlists "%~dp0\playlists" >nul 2>&1
+mklink /D dune_plugin "%ROOT%dune_plugin" >nul 2>&1
+mklink /D playlists "%ROOT%playlists" >nul 2>&1
 
 echo build update package...
 
@@ -40,8 +68,8 @@ echo build update package...
 call :header > %outfile%
 
 echo ^<package^> >>%outfile%
-call :add_node IPTVChannelEditor.exe		>>%outfile%
-call :add_node IPTVChannelEditorRUS.dll		>>%outfile%
+call :add_node %BUILD_NAME%.exe				>>%outfile%
+call :add_node %BUILD_NAME%RUS.dll			>>%outfile%
 call :add_node Updater.exe					>>%outfile%
 call :add_node 7za.dll						>>%outfile%
 call :add_node BugTrapU.dll					>>%outfile%
@@ -55,19 +83,19 @@ copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 echo build standard archive...
 IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom .
 
-echo IPTVChannelEditor.exe		>packing.lst
-echo IPTVChannelEditorRUS.dll	>>packing.lst
+echo %BUILD_NAME%.exe			>packing.lst
+echo %BUILD_NAME%RUS.dll		>>packing.lst
 echo Updater.exe				>>packing.lst
 echo 7za.dll					>>packing.lst
 echo BugTrapU.dll				>>packing.lst
 echo dbghelp.dll				>>packing.lst
 echo Changelog.md				>>packing.lst
-echo %~dp0\dune_plugin			>>packing.lst
-echo %~dp0\playlists			>>packing.lst
+echo %ROOT%dune_plugin			>>packing.lst
+echo %ROOT%playlists			>>packing.lst
 echo dune_plugin_*.zip			>>packing.lst
 
-7z a -xr!*.bin "%~dp0\package\dune_channel_editor_universal.7z" @packing.lst >nul
-copy /Y "%~dp0\package\dune_channel_editor_universal.7z" "%~dp0\package\dune_channel_editor_universal.7z.%BUILD%" >nul
+7z a -xr!*.bin "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
+copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package\dune_channel_editor_universal.7z.%BUILD%" >nul
 del packing.lst >nul 2>&1
 del dune_plugin_*.zip >nul 2>&1
 rd dune_plugin /q
@@ -75,35 +103,36 @@ rd playlists /q
 popd
 
 echo done!
+endlocal & set BUILD=%BUILD%
 goto :EOF
 
 :update_source
 
-call %~dp0_ProjectScripts\SrcSrvNew.cmd %~dp0 "%~dp0Release Unicode"
-call %~dp0_ProjectScripts\SrcSrvNew.cmd %~dp0BugTrap "%~dp0BugTrap\bin"
+call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT% "%BUILD_PATH%"
+call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT%Updater "%ROOT%Updater\%BUILD_TYPE%"
+call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT%BugTrap "%ROOT%BugTrap\bin"
 goto :EOF
 
 :upload_pdb
 
 echo Upload PDB to symbol server
 
-set src_dir=%SOURCEDIR%%1
-set dest=%~dp0\ArchivePDB\32
+set dest=%ROOT%\ArchivePDB\32
 
 mkdir "%dest%" >nul 2>&1
 
 echo IPTVChannelEditor
-copy "%~dp0\Release Unicode\IPTVChannelEditor.exe" "%dest%" >nul
-copy "%~dp0\Release Unicode\IPTVChannelEditor.pdb" "%dest%" >nul
+copy "%BUILD_PATH%\%BUILD_NAME%.exe" "%dest%" >nul
+copy "%BUILD_PATH%\%BUILD_NAME%.pdb" "%dest%" >nul
 
 echo Updater
-copy "%~dp0\Release Unicode\Updater.exe" "%dest%" >nul
-copy "%~dp0\Release Unicode\Updater.pdb" "%dest%" >nul
+copy "%ROOT%Updater\%BUILD_TYPE%\Updater.exe" "%dest%" >nul
+copy "%ROOT%Updater\%BUILD_TYPE%\Updater.pdb" "%dest%" >nul
 
 pushd "%dest%"
 dir /b /O:N *.exe *.dll *.pdb > upload.lst
 
-%SYMSRV_APP% add /o /t "IPTVChannelEditor" /v "%BUILD% (x32)" /d Transaction.log /3 /f "@upload.lst" /s %SYMSTORE% /compress
+%SYMSRV_APP% add /o /t "%BUILD_NAME%" /v "%BUILD% (x32)" /d Transaction.log /3 /f "@upload.lst" /s %SYMSTORE% /compress
 del /q *.exe *.dll *.pdb *.lst >nul 2>&1
 popd
 
@@ -116,7 +145,7 @@ echo ^<update_info version="%BUILD%" /^>
 goto :EOF
 
 :add_node 
-%~dp0\dll\FileCrc.exe -d %1 > crc.tmp
+%ROOT%dll\FileCrc.exe -d %1 > crc.tmp
 Set /P CRC32=<crc.tmp
 del crc.tmp >nul 2>&1
 if [%2]==[] (
