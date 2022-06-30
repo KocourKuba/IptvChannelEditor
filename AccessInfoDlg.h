@@ -67,6 +67,7 @@ protected:
 	afx_msg void OnEnChangeEditPluginIcon();
 	afx_msg void OnEnChangeEditPluginBackground();
 	afx_msg void OnEnChangeEditPluginSuffix();
+	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
 
 private:
@@ -115,5 +116,6 @@ private:
 	std::vector<Credentials> m_all_credentials;
 	StreamType m_plugin_type = StreamType::enBase;
 	AccountAccessType m_access_type = AccountAccessType::enUnknown;
+	std::map<UINT, std::wstring> m_tooltips_info_account;
 };
 

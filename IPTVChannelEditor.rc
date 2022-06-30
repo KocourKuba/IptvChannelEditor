@@ -308,7 +308,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_PLUGIN_CAPTION,12,234,81,12,ES_AUTOHSCROLL
     LTEXT           "Plugin caption",IDC_STATIC,12,223,78,8
     EDITTEXT        IDC_EDIT_PLUGIN_ICON,101,234,81,12,ES_AUTOHSCROLL
-    LTEXT           "Plugin icon",IDC_STATIC,101,223,78,8
+    LTEXT           "Plugin logo",IDC_STATIC,101,223,78,8
     EDITTEXT        IDC_EDIT_PLUGIN_BACKGROUND,190,234,81,12,ES_AUTOHSCROLL
     LTEXT           "Plugin background",IDC_STATIC,190,223,78,8
     GROUPBOX        "Customize plugin. If values are empty default will be used",IDC_STATIC,7,211,359,40
@@ -1211,15 +1211,15 @@ BEGIN
     IDS_STRING_COL_LIST     "Channels list"
     IDS_STRING_ERR_SAME_SUFFIX 
                             "The plugin name for an account has the same suffix.\nThe plugin will be overwritten. Continue?"
-    IDS_STRING_EDIT_CAPTION "The name of the plugin is shown by Dune. If empty will use the default."
+    IDS_STRING_EDIT_CAPTION "The name of the plugin is shown by Dune.\nIf empty will use the default."
 END
 
 STRINGTABLE
 BEGIN
-    IDS_STRING_EDIT_ICON    "The icon of the plugin is shown by Dune. If empty will use the default."
+    IDS_STRING_EDIT_ICON    "The logo of the plugin.\nUp to 250x250 px in png format.\nIf empty will use the default."
     IDS_STRING_EDIT_BACKGROUND 
-                            "Background picture used by the plugin. If empty will use the default."
-    IDS_STRING_EDIT_SUFFIX  "Suffix to add to the packed plugin. If empty will use the default - 'mod'."
+                            "Background picture used by the plugin.\n1920x1080 px in jpg format.\nIf empty will use the default."
+    IDS_STRING_EDIT_SUFFIX  "Suffix to add to the packed plugin.\nIf empty will use the default - 'mod'."
 END
 
 STRINGTABLE

@@ -38,20 +38,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-std::map<UINT, UINT> tooltips_info_account =
-{
-	{ IDC_BUTTON_ADD, IDS_STRING_BUTTON_ADD },
-	{ IDC_BUTTON_REMOVE, IDS_STRING_BUTTON_REMOVE },
-	{ IDC_BUTTON_NEW_FROM_URL, IDS_STRING_BUTTON_NEW_FROM_URL },
-	{ IDC_COMBO_DEVICE_ID, IDS_STRING_COMBO_DEVICE_ID },
-	{ IDC_COMBO_PROFILE, IDS_STRING_COMBO_PROFILE },
-	{ IDC_CHECK_EMBED, IDS_STRING_CHECK_EMBED },
-	{ IDC_EDIT_PLUGIN_CAPTION, IDS_STRING_EDIT_CAPTION },
-	{ IDC_EDIT_PLUGIN_ICON, IDS_STRING_EDIT_ICON },
-	{ IDC_EDIT_PLUGIN_BACKGROUND, IDS_STRING_EDIT_BACKGROUND },
-	{ IDC_EDIT_PLUGIN_SUFFIX, IDS_STRING_EDIT_SUFFIX },
-};
-
 inline std::string get_utf8(const std::wstring& value)
 {
 	return utils::utf16_to_utf8(value);
@@ -76,6 +62,8 @@ BEGIN_MESSAGE_MAP(CAccessInfoDlg, CMFCPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_ICON, &CAccessInfoDlg::OnEnChangeEditPluginIcon)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_BACKGROUND, &CAccessInfoDlg::OnEnChangeEditPluginBackground)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoDlg::OnEnChangeEditPluginSuffix)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CAccessInfoDlg::OnToolTipText)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CAccessInfoDlg::OnToolTipText)
 END_MESSAGE_MAP()
 
 
@@ -128,17 +116,31 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		return FALSE;
 	}
 
+	m_tooltips_info_account =
+	{
+		{ IDC_BUTTON_ADD, load_string_resource(IDS_STRING_BUTTON_ADD) },
+		{ IDC_BUTTON_REMOVE, load_string_resource(IDS_STRING_BUTTON_REMOVE) },
+		{ IDC_BUTTON_NEW_FROM_URL, load_string_resource(IDS_STRING_BUTTON_NEW_FROM_URL) },
+		{ IDC_COMBO_DEVICE_ID, load_string_resource(IDS_STRING_COMBO_DEVICE_ID) },
+		{ IDC_COMBO_PROFILE, load_string_resource(IDS_STRING_COMBO_PROFILE) },
+		{ IDC_CHECK_EMBED, load_string_resource(IDS_STRING_CHECK_EMBED) },
+		{ IDC_EDIT_PLUGIN_CAPTION, load_string_resource(IDS_STRING_EDIT_CAPTION) },
+		{ IDC_EDIT_PLUGIN_ICON, load_string_resource(IDS_STRING_EDIT_ICON) },
+		{ IDC_EDIT_PLUGIN_BACKGROUND, load_string_resource(IDS_STRING_EDIT_BACKGROUND) },
+		{ IDC_EDIT_PLUGIN_SUFFIX, load_string_resource(IDS_STRING_EDIT_SUFFIX) },
+	};
+
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_access_type = GetConfig().get_plugin_account_access_type();
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
-	m_wndToolTipCtrl.SetMaxTipWidth(500);
+	m_wndToolTipCtrl.SetMaxTipWidth(300);
 
-	for (const auto& pair : tooltips_info_account)
+	for (const auto& pair : m_tooltips_info_account)
 	{
-		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), pair.second);
+		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), LPSTR_TEXTCALLBACK);
 	}
 
 	m_wndToolTipCtrl.Activate(TRUE);
@@ -159,6 +161,37 @@ BOOL CAccessInfoDlg::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+BOOL CAccessInfoDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// if there is a top level routing frame then let it handle the message
+	if (GetRoutingFrame() != nullptr)
+		return FALSE;
+
+	// to be thorough we will need to handle UNICODE versions of the message also !!
+
+	UINT nID = pNMHDR->idFrom;
+	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
+
+	if (pNMHDR->code == TTN_NEEDTEXT && (pTTT->uFlags & TTF_IDISHWND))
+	{
+		// idFrom is actually the HWND of the tool
+		nID = ::GetDlgCtrlID((HWND)nID);
+	}
+
+	if (nID != 0) // will be zero on a separator
+	{
+		auto& pair = m_tooltips_info_account.find(nID);
+		if (pair != m_tooltips_info_account.end())
+		{
+			pTTT->lpszText = pair->second.data();
+			*pResult = 0;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 void CAccessInfoDlg::UpdateOptionalControls()

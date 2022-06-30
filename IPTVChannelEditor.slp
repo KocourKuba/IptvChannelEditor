@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220630144647" scan="127" scanned="20220630144644">
+<document created="20211012165442" version="4.0.374" date="20220630163812" scan="128" scanned="20220630163542">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220630124638" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220630143518" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -1781,20 +1781,14 @@
             <row id="X" state="0">12</row>
             <row id="Y" state="0">223</row>
           </component>
-          <component class="TVisLabel" name="STATIC_Plugin_icon" state="0" created="20220621223243" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX" state="3" changed="20220630141456">
-              <prev>96</prev>
-              <native>78</native>
-            </row>
+          <component class="TVisLabel" name="STATIC_Plugin_logo" state="0" created="20220630163542" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">78</row>
             <row id="CY" state="0">8</row>
             <row id="Text" state="0">
-              <native>Plugin icon</native>
-              <lang id="ru" date="20220621223746">Иконка плагина</lang>
+              <native>Plugin logo</native>
+              <lang id="ru" date="20220630163557">Логотип плагина</lang>
             </row>
-            <row id="X" state="3" changed="20220630141456">
-              <prev>90</prev>
-              <native>101</native>
-            </row>
+            <row id="X" state="0">101</row>
             <row id="Y" state="0">223</row>
           </component>
           <component class="TVisLabel" name="STATIC_Plugin_background" state="0" created="20220621223243" type="static" unnamed="1" autosize="0" wordwrap="1">
@@ -1822,6 +1816,12 @@
             </row>
             <row id="X" state="0">279</row>
             <row id="Y" state="0">223</row>
+          </component>
+          <component class="TVisLabel" name="STATIC_Plugin_icon" state="1" created="20220621223243" type="static" unnamed="1">
+            <row id="Text" state="1">
+              <native>Plugin icon</native>
+              <lang id="ru" date="20220621223746">Иконка плагина</lang>
+            </row>
           </component>
           <component class="TVisComboBox" name="1122" created="20220320143227" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX" changed="20220528123539">117</row>
@@ -4526,9 +4526,9 @@
           <native>Available profiles</native>
           <lang id="ru" date="20220529175733">Доступные профили</lang>
         </row>
-        <row id="IDS_STRING_EDIT_CAPTION" state="0" created="20220630143536">
-          <native>The name of the plugin is shown by Dune. If empty will use the default.</native>
-          <lang id="ru" date="20220630143616">Имя плагина в Дюне. Если пустое, используется по умолчанию.</lang>
+        <row id="IDS_STRING_EDIT_CAPTION" created="20220630143536" changed="20220630163542">
+          <native>The name of the plugin is shown by Dune.#lIf empty will use the default.</native>
+          <lang id="ru" date="20220630163618">Имя плагина в Дюне.#nЕсли пустое, используется по умолчанию.</lang>
         </row>
         <row id="IDS_STRING_ERR_SAME_SUFFIX" state="0" created="20220630135242">
           <native>The plugin name for an account has the same suffix.#lThe plugin will be overwritten. Continue?</native>
@@ -4548,17 +4548,17 @@
         </row>
       </node>
       <node class="TWindowsStringNode" name="18" state="0" created="20220630143536" resid="18" langid="1033">
-        <row id="IDS_STRING_EDIT_BACKGROUND" state="0">
-          <native>Background picture used by the plugin. If empty will use the default.</native>
-          <lang id="ru" date="20220630143657">Фон плагина в Дюне. Если пустое, используется по умолчанию.</lang>
+        <row id="IDS_STRING_EDIT_BACKGROUND" changed="20220630163542">
+          <native>Background picture used by the plugin.#l1920x1080 px in jpg format.#lIf empty will use the default.</native>
+          <lang id="ru" date="20220630163720">Фон плагина в Дюне.#n1920x1080 px в формате jpg.#nЕсли пустое, используется по умолчанию.</lang>
         </row>
-        <row id="IDS_STRING_EDIT_ICON" state="0">
-          <native>The icon of the plugin is shown by Dune. If empty will use the default.</native>
-          <lang id="ru" date="20220630143637">Логотип плагина в Дюне. Если пустое, используется по умолчанию.</lang>
+        <row id="IDS_STRING_EDIT_ICON" changed="20220630163542">
+          <native>The logo of the plugin.#lUp to 250x250 px in png format.#lIf empty will use the default.</native>
+          <lang id="ru" date="20220630163716">Логотип плагина в Дюне.#nДо 250x250 px в формате png.#nЕсли пустое, используется по умолчанию.</lang>
         </row>
-        <row id="IDS_STRING_EDIT_SUFFIX" state="0">
-          <native>Suffix to add to the packed plugin. If empty will use the default - 'mod'.</native>
-          <lang id="ru" date="20220630143735">Суффикс сгенерированного плагина. Если пустое, используется по умолчанию 'mod'.</lang>
+        <row id="IDS_STRING_EDIT_SUFFIX" changed="20220630163542">
+          <native>Suffix to add to the packed plugin.#lIf empty will use the default - 'mod'.</native>
+          <lang id="ru" date="20220630163807">Суффикс добавляемый к файлу плагина.#nЕсли пустое, используется по умолчанию 'mod'.</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="19" created="20220504023048" resid="19" langid="1033">
@@ -4835,34 +4835,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220630143536">
-          <prev>3.2.937, 30 Jun 2022</prev>
-          <native>3.2.938, 30 Jun 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220630163542">
+          <prev>3.2.938, 30 Jun 2022</prev>
+          <native>3.2.940, 30 Jun 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220621223243">
           <prev>1</prev>
           <native>2</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220630143536">
-          <prev>937</prev>
-          <native>938</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220630163542">
+          <prev>938</prev>
+          <native>940</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220630143536">
-          <prev>3.2.937</prev>
-          <native>3.2.938</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220630163542">
+          <prev>3.2.938</prev>
+          <native>3.2.940</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220621223243">
           <prev>1</prev>
           <native>2</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220630143536">
-          <prev>937</prev>
-          <native>938</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220630163542">
+          <prev>938</prev>
+          <native>940</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
