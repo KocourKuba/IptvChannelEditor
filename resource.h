@@ -350,6 +350,7 @@
 #define IDC_BUTTON_CHANGED              1165
 #define IDC_BUTTON_HEVC                 1166
 #define IDC_BUTTON_RESET                1167
+#define IDC_EDIT_PLUGIN_SUFFIX          1168
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -382,7 +383,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        271
 #define _APS_NEXT_COMMAND_VALUE         32803
-#define _APS_NEXT_CONTROL_VALUE         1168
+#define _APS_NEXT_CONTROL_VALUE         1169
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

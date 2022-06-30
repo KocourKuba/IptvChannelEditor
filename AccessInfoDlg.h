@@ -66,6 +66,7 @@ protected:
 	afx_msg void OnEnChangeEditPluginCaption();
 	afx_msg void OnEnChangeEditPluginIcon();
 	afx_msg void OnEnChangeEditPluginBackground();
+	afx_msg void OnEnChangeEditPluginSuffix();
 	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
 
 private:
@@ -95,6 +96,7 @@ protected:
 	CEdit m_wndCaption;
 	CEdit m_wndLogo;
 	CEdit m_wndBackground;
+	CEdit m_wndSuffix;
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;
 	CListCtrl m_wndChLists;
@@ -105,6 +107,7 @@ private:
 	CString m_caption;
 	CString m_logo;
 	CString m_background;
+	CString m_suffix;
 
 	std::unique_ptr<uri_stream> m_plugin;
 	std::vector<ServersInfo> m_servers;

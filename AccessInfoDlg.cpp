@@ -71,13 +71,11 @@ BEGIN_MESSAGE_MAP(CAccessInfoDlg, CMFCPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoDlg::OnEnChangeEditPluginCaption)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_ICON, &CAccessInfoDlg::OnEnChangeEditPluginIcon)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_BACKGROUND, &CAccessInfoDlg::OnEnChangeEditPluginBackground)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoDlg::OnEnChangeEditPluginSuffix)
 END_MESSAGE_MAP()
 
 
 CAccessInfoDlg::CAccessInfoDlg() : CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
-, m_caption(_T(""))
-, m_logo(_T(""))
-, m_background(_T(""))
 {
 }
 
@@ -96,10 +94,12 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_CAPTION, m_wndCaption);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CAPTION, m_caption);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_ICON, m_logo);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_ICON, m_wndLogo);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_BACKGROUND, m_background);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_ICON, m_logo);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_BACKGROUND, m_wndBackground);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_BACKGROUND, m_background);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_wndSuffix);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_suffix);
 }
 
 BOOL CAccessInfoDlg::PreTranslateMessage(MSG* pMsg)
@@ -214,6 +214,7 @@ void CAccessInfoDlg::UpdateOptionalControls()
 	m_caption = cred.get_caption().c_str();
 	m_logo = cred.get_logo().c_str();
 	m_background = cred.get_background().c_str();
+	m_suffix = cred.get_suffix().c_str();
 
 	UpdateData(FALSE);
 }
@@ -255,16 +256,16 @@ void CAccessInfoDlg::CreateAccountsList()
 	switch (m_access_type)
 	{
 		case AccountAccessType::enPin:
-			vWidth /= 3;
+			vWidth /= 2;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enLoginPass:
-			vWidth /= 4;
+			vWidth /= 3;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enOtt:
-			vWidth /= 5;
+			vWidth /= 4;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
@@ -274,7 +275,6 @@ void CAccessInfoDlg::CreateAccountsList()
 	}
 
 	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
-	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_SUFFIX).c_str(), LVCFMT_LEFT, vWidth, 0);
 
 	int idx = 0;
 	for (const auto& cred : m_all_credentials)
@@ -532,9 +532,6 @@ LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 				case 2:
 					cred.comment = get_utf8(dispinfo->item.pszText);
 					break;
-				case 3:
-					cred.suffix = get_utf8(dispinfo->item.pszText);
-					break;
 				default:
 					break;
 			}
@@ -551,9 +548,6 @@ LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 					break;
 				case 3:
 					cred.comment = get_utf8(dispinfo->item.pszText);
-					break;
-				case 4:
-					cred.suffix = get_utf8(dispinfo->item.pszText);
 					break;
 				default:
 					break;
@@ -574,9 +568,6 @@ LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 					break;
 				case 4:
 					cred.comment = get_utf8(dispinfo->item.pszText);
-					break;
-				case 5:
-					cred.suffix = get_utf8(dispinfo->item.pszText);
 					break;
 				default:
 					break;
@@ -624,6 +615,7 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 			m_wndCaption.EnableWindow(FALSE);
 			m_wndLogo.EnableWindow(FALSE);
 			m_wndBackground.EnableWindow(FALSE);
+			m_wndSuffix.EnableWindow(FALSE);
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
 		}
 	}
@@ -690,6 +682,7 @@ void CAccessInfoDlg::GetAccountInfo()
 	m_wndCaption.EnableWindow(TRUE);
 	m_wndLogo.EnableWindow(TRUE);
 	m_wndBackground.EnableWindow(TRUE);
+	m_wndSuffix.EnableWindow(TRUE);
 
 	std::wstring login;
 	std::wstring password;
@@ -892,5 +885,15 @@ void CAccessInfoDlg::OnEnChangeEditPluginBackground()
 	if (selected != -1)
 	{
 		m_all_credentials[selected].background = get_utf8(m_background.GetString());
+	}
+}
+
+void CAccessInfoDlg::OnEnChangeEditPluginSuffix()
+{
+	UpdateData(TRUE);
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		m_all_credentials[selected].suffix = get_utf8(m_suffix.GetString());
 	}
 }
