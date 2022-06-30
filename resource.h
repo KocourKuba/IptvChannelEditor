@@ -161,6 +161,10 @@
 #define IDS_STRING_COL_SUFFIX           268
 #define IDS_STRING_COL_LIST             269
 #define IDS_STRING_ERR_SAME_SUFFIX      270
+#define IDS_STRING_EDIT_CAPTION         271
+#define IDS_STRING_EDIT_ICON            272
+#define IDS_STRING_EDIT_BACKGROUND      273
+#define IDS_STRING_EDIT_SUFFIX          274
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302
