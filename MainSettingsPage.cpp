@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CMainSettingsPage, CPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_THREADS, &CMainSettingsPage::OnEnChangeEditStreamThreads)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_STREAM_THREADS, &CMainSettingsPage::OnDeltaposSpinStreamThreads)
 	ON_CBN_SELCHANGE(IDC_COMBO_LANG, &CMainSettingsPage::OnCbnSelchangeComboLang)
+	ON_BN_CLICKED(IDC_BUTTON_RESET, &CMainSettingsPage::OnBnClickedButtonReset)
 END_MESSAGE_MAP()
 
 
@@ -67,6 +68,10 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_CMP_ARCHIVE, m_bCmpArchive);
 	DDX_Check(pDX, IDC_CHECK_CMP_EPG1, m_bCmpEpg1);
 	DDX_Check(pDX, IDC_CHECK_CMP_EPG2, m_bCmpEpg2);
+	DDX_Control(pDX, IDC_BUTTON_ADDED, m_wndAdded);
+	DDX_Control(pDX, IDC_BUTTON_NOT_ADDED, m_wndNotAdded);
+	DDX_Control(pDX, IDC_BUTTON_CHANGED, m_wndChanged);
+	DDX_Control(pDX, IDC_BUTTON_HEVC, m_wndHEVC);
 }
 
 BOOL CMainSettingsPage::OnInitDialog()
@@ -78,6 +83,11 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_bPortable = GetConfig().IsPortable();
 	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
+	m_wndAdded.SetColor(GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 200, 0)));
+	m_wndNotAdded.SetColor(GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0)));
+	m_wndChanged.SetColor(GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(226, 135, 67)));
+	m_wndHEVC.SetColor(GetConfig().get_int(true, REG_COLOR_HEVC, RGB(158, 255, 250)));
+
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
 
 	m_bCmpTitle   = (flags & CMP_FLAG_TITLE) ? TRUE : FALSE;
@@ -114,6 +124,10 @@ void CMainSettingsPage::OnOK()
 	GetConfig().set_int(true, REG_AUTO_HIDE, m_bAutoHide);
 	GetConfig().set_int(true, REG_MAX_THREADS, m_MaxThreads);
 	GetConfig().set_int(true, REG_LANGUAGE, m_nLang);
+	GetConfig().set_int(true, REG_COLOR_ADDED, m_wndAdded.GetColor());
+	GetConfig().set_int(true, REG_COLOR_NOT_ADDED, m_wndNotAdded.GetColor());
+	GetConfig().set_int(true, REG_COLOR_CHANGED, m_wndChanged.GetColor());
+	GetConfig().set_int(true, REG_COLOR_HEVC, m_wndHEVC.GetColor());
 
 	int flags = 0;
 	flags |= (m_bCmpTitle ? CMP_FLAG_TITLE : 0);
@@ -154,4 +168,12 @@ void CMainSettingsPage::OnCbnSelchangeComboLang()
 {
 	AfxMessageBox(IDS_STRING_INFO_RESTART_NEED, MB_OK | MB_ICONINFORMATION);
 	m_nLang = (WORD)m_wndLanguage.GetItemData(m_wndLanguage.GetCurSel());
+}
+
+void CMainSettingsPage::OnBnClickedButtonReset()
+{
+	m_wndAdded.SetColor(RGB(0, 200, 0));
+	m_wndNotAdded.SetColor(RGB(200, 0, 0));
+	m_wndChanged.SetColor(RGB(226, 135, 67));
+	m_wndHEVC.SetColor(RGB(158, 255, 250));
 }

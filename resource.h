@@ -344,6 +344,11 @@
 #define IDC_EDIT_PLUGIN_CAPTION         1160
 #define IDC_EDIT_PLUGIN_ICON            1161
 #define IDC_EDIT_PLUGIN_BACKGROUND      1162
+#define IDC_BUTTON_ADDED                1163
+#define IDC_BUTTON_NOT_ADDED            1164
+#define IDC_BUTTON_CHANGED              1165
+#define IDC_BUTTON_HEVC                 1166
+#define IDC_BUTTON_RESET                1167
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -373,9 +378,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        233
+#define _APS_NEXT_RESOURCE_VALUE        270
 #define _APS_NEXT_COMMAND_VALUE         32805
-#define _APS_NEXT_CONTROL_VALUE         1158
+#define _APS_NEXT_CONTROL_VALUE         1168
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

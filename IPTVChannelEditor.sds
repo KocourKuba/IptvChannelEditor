@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="118" scanned="20220621223243" built="20220621224214" lang="ru" pane="TLogPane" col="4" row="BUTTON_Customize_plugin.Text">
+<desktop scan="119" scanned="20220630123234" built="20220630123353" lang="ru" pane="TLogPane" col="3" row="Dialogs.109.STATIC_Added.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="2"/>
+    <item class="TRemoveUnusedItemsTrigger" position="4"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>
@@ -13,6 +13,11 @@
       <item class="TOriginalColumn" width="524"/>
       <item class="TTranslationColumn" lang="ru" width="532"/>
     </columns>
+    <filters>
+      <current>
+        <statuses>[tsNotTranslated,tsBestGuess,tsAutoTranslated,tsTranslated,tsForReview]</statuses>
+      </current>
+    </filters>
     <params>
       <findtext>Splash</findtext>
       <findtext>2009</findtext>
@@ -25,8 +30,6 @@
   <path>
     <item>All</item>
     <item>Release Unicode\IPTVChannelEditor.exe</item>
-    <item>Dialogs</item>
-    <item>131</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

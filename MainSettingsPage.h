@@ -52,11 +52,16 @@ protected:
 	afx_msg void OnEnChangeEditStreamThreads();
 	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeComboLang();
+	afx_msg void OnBnClickedButtonReset();
 
 protected:
 	CEdit m_wndMaxThreads;
 	CSpinButtonCtrl m_wndSpinMaxThreads;
 	CComboBox m_wndLanguage;
+	CMFCColorButton m_wndAdded;
+	CMFCColorButton m_wndNotAdded;
+	CMFCColorButton m_wndChanged;
+	CMFCColorButton m_wndHEVC;
 
 private:
 	BOOL m_bAutoSync = FALSE;

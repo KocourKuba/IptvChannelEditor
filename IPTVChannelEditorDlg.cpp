@@ -259,10 +259,10 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_normal = ::GetSysColor(COLOR_WINDOWTEXT);
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
-	m_red = RGB(200, 0, 0);
-	m_green = RGB(0, 200, 0);
-	m_hevc_color = RGB(158, 255, 250);
-	m_brown = RGB(226, 135, 67);
+	m_colorAdded = RGB(0, 200, 0);
+	m_colorNotAdded = RGB(200, 0, 0);
+	m_colorHEVC = RGB(158, 255, 250);
+	m_colorChanged = RGB(226, 135, 67);
 }
 
 void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
@@ -429,6 +429,11 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	m_archiveCheckDays = GetConfig().get_int(true, REG_DAYS_BACK);
 	m_archiveCheckHours = GetConfig().get_int(true, REG_HOURS_BACK);
+
+	m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 200, 0));
+	m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0));
+	m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(158, 255, 250));
+	m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC, RGB(226, 135, 67));
 
 	UpdateData(FALSE);
 
@@ -1175,12 +1180,12 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 						|| (bCmpIcon && !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
 						)
 					{
-						color = m_brown;
+						color = m_colorChanged;
 						m_changedChannels.emplace(id, entry);
 					}
 					else
 					{
-						color = m_green;
+						color = m_colorAdded;
 						m_changedChannels.erase(id);
 					}
 				}
@@ -1198,7 +1203,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 				{
 					if (pair->second.second.find("HEVC") != std::string::npos)
 					{
-						m_wndChannelsTree.SetItemBackColor(hItem, m_hevc_color);
+						m_wndChannelsTree.SetItemBackColor(hItem, m_colorHEVC);
 					}
 				}
 
@@ -1228,7 +1233,7 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 			const auto& entry = FindEntry(hItem);
 			if (!entry) continue;
 
-			COLORREF color = m_red;
+			COLORREF color = m_colorNotAdded;
 			if (const auto& pair = m_channelsMap.find(entry->stream_uri->get_id()); pair != m_channelsMap.end())
 			{
 				color = m_normal;
@@ -1239,7 +1244,7 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 					|| (!entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
 					)
 				{
-					color = m_brown;
+					color = m_colorChanged;
 				}
 			}
 
@@ -1247,7 +1252,7 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 			{
 				if (pair->second.second.find("HEVC") != std::string::npos)
 				{
-					m_wndPlaylistTree.SetItemBackColor(hItem, m_hevc_color);
+					m_wndPlaylistTree.SetItemBackColor(hItem, m_colorHEVC);
 				}
 			}
 
@@ -3508,6 +3513,13 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 		{
 			GetConfig().set_int64(true, REG_NEXT_UPDATE, 0);
 		}
+
+		m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED);
+		m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED);
+		m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED);
+		m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC);
+		UpdateChannelsTreeColors();
+		CheckForExistingPlaylist();
 	}
 }
 
