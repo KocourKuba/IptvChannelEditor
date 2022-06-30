@@ -149,9 +149,6 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	CreateChannelsList();
 
 	m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
-
-	UpdateOptionalControls();
-
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
 
 	UpdateData(FALSE);
@@ -659,6 +656,8 @@ void CAccessInfoDlg::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResul
 			}
 
 			m_all_credentials[account_idx].ch_list.swap(ch_list);
+
+			UpdateOptionalControls();
 		}
 	}
 
