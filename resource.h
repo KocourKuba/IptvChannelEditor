@@ -160,6 +160,7 @@
 #define IDS_STRING_COL_COMMENT          267
 #define IDS_STRING_COL_SUFFIX           268
 #define IDS_STRING_COL_LIST             269
+#define IDS_STRING_ERR_SAME_SUFFIX      270
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302
@@ -373,13 +374,14 @@
 #define ID_CLEAR_STREAM_INFO            32799
 #define ID_MAKE_ALL                     32800
 #define ID_TOGGLE_CATEGORY              32801
+#define ID_MAKE_ALL_ACCOUNTS            32802
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        270
-#define _APS_NEXT_COMMAND_VALUE         32805
+#define _APS_NEXT_RESOURCE_VALUE        271
+#define _APS_NEXT_COMMAND_VALUE         32803
 #define _APS_NEXT_CONTROL_VALUE         1168
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif

@@ -181,6 +181,7 @@ protected:
 	afx_msg void OnMoveTo(UINT id);
 	afx_msg void OnAddTo(UINT id);
 	afx_msg void OnMakeAll();
+	afx_msg void OnMakeAllAccounts();
 	afx_msg void OnRestore();
 	afx_msg void OnAppExit();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
@@ -247,6 +248,8 @@ private:
 	void SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight);
 
 	void SwitchPlugin();
+
+	void CollectCredentials();
 
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
 	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;

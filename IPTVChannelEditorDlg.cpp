@@ -230,6 +230,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_COMMAND(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnAddToFavorite)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnUpdateAddToFavorite)
 	ON_COMMAND(ID_MAKE_ALL, &CIPTVChannelEditorDlg::OnMakeAll)
+	ON_COMMAND(ID_MAKE_ALL_ACCOUNTS, &CIPTVChannelEditorDlg::OnMakeAllAccounts)
 
 	ON_COMMAND(ID_RESTORE, &CIPTVChannelEditorDlg::OnRestore)
 	ON_COMMAND(ID_APP_EXIT, &CIPTVChannelEditorDlg::OnAppExit)
@@ -487,29 +488,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	// Rebuild available playlist types and set current plugin parameters
 	m_inSync = true;
 
+	CollectCredentials();
+
 	m_host.clear();
-	m_all_credentials.clear();
-
-	nlohmann::json creds;
-	JSON_ALL_TRY;
-	{
-		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
-	}
-	JSON_ALL_CATCH;
-	for (const auto& item : creds.items())
-	{
-		const auto& val = item.value();
-		if (val.empty()) continue;
-
-		Credentials cred;
-		JSON_ALL_TRY;
-		{
-			cred = val.get<Credentials>();
-		}
-		JSON_ALL_CATCH;
-		m_all_credentials.emplace_back(cred);
-	}
-
 	m_cur_account.Clear();
 
 	int selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
@@ -650,6 +631,31 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_update_epg_timer = ID_UPDATE_EPG_TIMER;
 	OnTimer(ID_UPDATE_EPG_TIMER);
+}
+
+void CIPTVChannelEditorDlg::CollectCredentials()
+{
+	m_all_credentials.clear();
+
+	nlohmann::json creds;
+	JSON_ALL_TRY;
+	{
+		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
+	}
+	JSON_ALL_CATCH;
+	for (const auto& item : creds.items())
+	{
+		const auto& val = item.value();
+		if (val.empty()) continue;
+
+		Credentials cred;
+		JSON_ALL_TRY;
+		{
+			cred = val.get<Credentials>();
+		}
+		JSON_ALL_CATCH;
+		m_all_credentials.emplace_back(cred);
+	}
 }
 
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
@@ -2805,17 +2811,17 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
 
 	sheet.AddPage(&dlgInfo);
-
-	if (sheet.DoModal() == IDOK)
+	auto res = (sheet.DoModal() == IDOK);
+	if (res)
 	{
 		m_cur_account = dlgInfo.m_initial_cred;
 		m_host = dlgInfo.m_host;
 
 		GetConfig().UpdatePluginSettings();
-		return true;
+		CollectCredentials();
 	}
 
-	return false;
+	return res;
 }
 
 void CIPTVChannelEditorDlg::FillTreePlaylist()
@@ -3334,6 +3340,58 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 		}
 	}
 
+	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndProgressInfo.ShowWindow(SW_HIDE);
+
+	if (success)
+		AfxMessageBox(IDS_STRING_INFO_CREATE_ALL_SUCCESS, MB_OK);
+}
+
+void CIPTVChannelEditorDlg::OnMakeAllAccounts()
+{
+	if (!CheckForSave())
+		return;
+
+	std::set<std::string> suffixes;
+	for (const auto& cred : m_all_credentials)
+	{
+		if (!suffixes.emplace(cred.suffix).second)
+		{
+			if (IDNO == AfxMessageBox(IDS_STRING_ERR_SAME_SUFFIX, MB_ICONEXCLAMATION|MB_YESNO)) return;
+
+			break;
+		}
+	}
+
+	CWaitCursor cur;
+
+	const auto& old_selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
+
+	m_wndProgress.ShowWindow(SW_SHOW);
+	m_wndProgressInfo.ShowWindow(SW_SHOW);
+	m_wndProgress.SetRange32(0, m_all_credentials.size());
+	m_wndProgress.SetPos(0);
+	bool success = true;
+	int i = 0;
+	for (const auto& cred : m_all_credentials)
+	{
+		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, i);
+		m_wndProgress.SetPos(++i);
+		const auto& title = fmt::format(L"#{:d}", i);
+		m_wndProgressInfo.SetWindowText(title.c_str());
+
+		const auto& out_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
+		const auto& list_path = GetConfig().get_string(true, REG_LISTS_PATH);
+		if (!PackPlugin(m_plugin_type, out_path, list_path, false))
+		{
+			success = false;
+			CString str;
+			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, title.c_str());
+			if (IDNO == AfxMessageBox(str, MB_ICONEXCLAMATION|MB_YESNO)) break;
+		}
+	}
+
+	GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, old_selected);
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndProgressInfo.ShowWindow(SW_HIDE);
 
