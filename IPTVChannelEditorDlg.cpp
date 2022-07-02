@@ -1826,7 +1826,10 @@ void CIPTVChannelEditorDlg::OnRemove()
 	{
 		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 		{
-			auto category_id = GetCategory(hItem)->get_key();
+			const auto& category = GetCategory(hItem);
+			if (!category) continue;
+
+			auto category_id = category->get_key();
 			if (category_id == ID_ADD_TO_FAVORITE) continue;
 
 			for (auto hChildItem = m_wndChannelsTree.GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_wndChannelsTree.GetNextSiblingItem(hChildItem))
@@ -1992,9 +1995,16 @@ void CIPTVChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight)
 {
 	// 1 2 3 4 5 - order left to right. Left has low value then right and position in the tree upper then right
+	const auto& category_right = GetCategory(hRight);
+	const auto& category_left = GetCategory(hLeft);
+	if (!category_left || !category_right)
+	{
+		ASSERT(false);
+		return;
+	}
 
-	auto lKey = GetCategory(hLeft)->get_key();
-	auto rKey = GetCategory(hRight)->get_key();
+	const auto& lKey = GetCategory(hLeft)->get_key();
+	const auto& rKey = GetCategory(hRight)->get_key();
 
 	// swap struct in map
 
@@ -3156,6 +3166,8 @@ void CIPTVChannelEditorDlg::OnSortCategory()
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
 		const auto& category = GetCategory(hItem);
+		if (!category) continue;
+
 		category->sort_channels();
 
 		const auto& channels = category->get_channels();
