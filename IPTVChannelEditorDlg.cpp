@@ -163,6 +163,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged)
+	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED_CH, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChangedCh)
 
 	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
 	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
@@ -304,6 +305,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_PL_FILTER, m_wndFilter);
 	DDX_Control(pDX, IDC_EDIT_PL_SEARCH, m_wndPlSearch);
 	DDX_Control(pDX, IDC_CHECK_SHOW_CHANGED, m_wndShowChanged);
+	DDX_Control(pDX, IDC_CHECK_SHOW_CHANGED_CH, m_wndShowChangedCh);
 	DDX_Control(pDX, IDC_CHECK_NOT_ADDED, m_wndNotAdded);
 	DDX_Text(pDX, IDC_EDIT_PL_SEARCH, m_plSearch);
 	DDX_Text(pDX, IDC_EDIT_ICON_NAME, m_iconUrl);
@@ -1059,12 +1061,26 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 {
 	m_bInFillTree = true;
 
-	BOOL bUnknown = m_wndShowUnknown.GetCheck();
-	if (bUnknown && m_playlistMap.empty())
+	BOOL bCheckUnknown = m_wndShowUnknown.GetCheck();
+	if (bCheckUnknown && m_playlistMap.empty())
 	{
-		bUnknown = FALSE;
+		bCheckUnknown = FALSE;
 		m_wndShowUnknown.SetCheck(FALSE);
 	}
+
+	BOOL bCheckChanged = m_wndShowChangedCh.GetCheck();
+	if (bCheckChanged && m_playlistMap.empty())
+	{
+		bCheckChanged = FALSE;
+		m_wndShowChangedCh.SetCheck(FALSE);
+	}
+
+	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
+	BOOL bCmpTitle = (flags & CMP_FLAG_TITLE) ? TRUE : FALSE;
+	BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
+	BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
+	BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
+	BOOL bCmpEpg2 = ((flags & CMP_FLAG_EPG2) && m_plugin->has_epg2()) ? TRUE : FALSE;
 
 	m_wndChannelsTree.LockWindowUpdate();
 	m_wndChannelsTree.DeleteAllItems();
@@ -1089,16 +1105,37 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		int cnt = 0;
 		for (const auto& channel : pair.second.category->get_channels())
 		{
-			TVINSERTSTRUCTW tvChannel = { nullptr };
-			tvChannel.hParent = hParent;
-			tvChannel.item.pszText = (LPWSTR)channel->get_title().c_str();
-			tvChannel.item.lParam = (DWORD_PTR)InfoType::enChannel;
-			tvChannel.item.mask = TVIF_TEXT | TVIF_PARAM;
-			if (bUnknown && m_playlistMap.find(channel->stream_uri->get_id()) != m_playlistMap.end()) continue;
+			bool bUnknown = false;
+			bool bChanged = false;
 
-			HTREEITEM hItem = m_wndChannelsTree.InsertItem(&tvChannel);
-			m_channelsTreeMap.emplace(hItem, channel);
-			cnt++;
+			const auto& id = channel->stream_uri->get_id();
+			if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
+			{
+				const auto& entry = found->second;
+				bChanged = (bCmpTitle && channel->get_title() != entry->get_title()
+							|| bCmpArchive && entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days()
+							|| bCmpEpg1 && !entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0)
+							|| bCmpEpg2 && !entry->get_epg_id(1).empty() && channel->get_epg_id(1) != entry->get_epg_id(1)
+							|| (bCmpIcon && !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
+							);
+			}
+			else
+			{
+				bUnknown = true;
+			}
+
+			if (!bCheckChanged && !bCheckUnknown || bCheckChanged && bChanged || bCheckUnknown && bUnknown)
+			{
+				TVINSERTSTRUCTW tvChannel = { nullptr };
+				tvChannel.hParent = hParent;
+				tvChannel.item.pszText = (LPWSTR)channel->get_title().c_str();
+				tvChannel.item.lParam = (DWORD_PTR)InfoType::enChannel;
+				tvChannel.item.mask = TVIF_TEXT | TVIF_PARAM;
+
+				HTREEITEM hItem = m_wndChannelsTree.InsertItem(&tvChannel);
+				m_channelsTreeMap.emplace(hItem, channel);
+				cnt++;
+			}
 		}
 
 		if (!cnt)
@@ -3456,6 +3493,12 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged()
 {
 	m_wndShowChanged.SetWindowText(m_wndShowChanged.GetCheck() ? _T("\u2260") : _T("="));
 	FillTreePlaylist();
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedCheckShowChangedCh()
+{
+	m_wndShowChangedCh.SetWindowText(m_wndShowChangedCh.GetCheck() ? _T("\u2260") : _T("="));
+	FillTreeChannels();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded()

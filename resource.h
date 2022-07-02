@@ -231,6 +231,7 @@
 #define IDC_EDIT_ARCHIVE_CHECK_DAYS     1038
 #define IDC_EDIT_ARCHIVE_CHECK_HOURS    1039
 #define IDC_EDIT_CATEGORY               1040
+#define IDC_CHECK_SHOW_CHANGED_CH       1041
 #define IDC_EDIT_PASSWORD               1042
 #define IDC_EDIT_EPG1_ID                1043
 #define IDC_EDIT_INFO_AUDIO             1044
@@ -382,7 +383,7 @@
 #define ID_MAKE_ALL_ACCOUNTS            32802
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        271

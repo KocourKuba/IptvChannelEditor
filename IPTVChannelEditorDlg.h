@@ -290,6 +290,7 @@ protected:
 	CButton m_wndFilter;
 	CButton m_wndShowUnknown;
 	CButton m_wndShowChanged;
+	CButton m_wndShowChangedCh;
 	CButton m_wndNotAdded;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
@@ -443,4 +444,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// vod
 	std::array<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>, (size_t)StreamType::enLast> m_vod_categories;
+public:
+	afx_msg void OnBnClickedCheckShowChangedCh();
 };
