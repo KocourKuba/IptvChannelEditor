@@ -121,16 +121,9 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // channels lists
-        $all_channels = array();
-        $list = glob($channels_list_path . '/*.xml');
-        foreach ($list as $filename) {
-            $filename = basename($filename);
-            if ($filename !== 'dune_plugin.xml') {
-                $all_channels[$filename] = $filename;
-            }
-        }
+        $all_channels = $this->plugin->config->get_all_channel_list();
         if (!empty($all_channels)) {
-            $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : $this->plugin->config->get_channel_list();
+            $channels_list = $this->plugin->config->get_channel_list($plugin_cookies);
             Control_Factory::add_combobox($defs, $this, null, 'channels_list',
                 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
         } else {
@@ -139,7 +132,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // streaming dialog
-        Control_Factory::add_image_button($defs, $this, null, 'streaming_dialog', 'Настройки проигрывания:', 'Изменить настройки',
+        Control_Factory::add_image_button($defs,
+            $this,
+            null,
+            'streaming_dialog',
+            'Настройки проигрывания:',
+            'Изменить настройки',
             $this->plugin->get_image_path('settings.png'));
 
         //////////////////////////////////////

@@ -241,11 +241,37 @@ abstract class Default_Config
     }
 
     /**
+     * @param $plugin_cookies
      * @return string
      */
-    public function get_channel_list()
+    public function get_channel_list($plugin_cookies)
     {
-        return sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
+        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
+        $all_channels = $this->get_all_channel_list();
+        if (empty($all_channels))
+            return $channels_list;
+
+        return in_array($channels_list, $all_channels) ? $channels_list : reset($all_channels);
+    }
+
+    /**
+     * @return array
+     */
+    public function get_all_channel_list()
+    {
+        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
+
+        $all_channels = array();
+        $list = glob($channels_list_path . '/*.xml');
+        foreach ($list as $filename) {
+            $filename = basename($filename);
+            hd_print("found: $filename");
+            if ($filename !== 'dune_plugin.xml') {
+                $all_channels[$filename] = $filename;
+            }
+        }
+
+        return $all_channels;
     }
 
     /**
