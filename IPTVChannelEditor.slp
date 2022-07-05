@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220702024514" scan="130" scanned="20220702024511">
+<document created="20211012165442" version="4.0.374" date="20220705232648" scan="131" scanned="20220705232617">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220702004502" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220705202434" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -949,7 +949,7 @@
             <row id="X">4</row>
             <row id="Y">36</row>
           </component>
-          <component class="TVisCheckBox" name="1040" state="0" created="20220702022638" type="button" pushlike="1">
+          <component class="TVisCheckBox" name="1041" state="0" created="20220705232617" type="button" pushlike="1">
             <row id="CX" state="0">16</row>
             <row id="CY" state="0">15</row>
             <row id="Text" locked="1" state="0">=</row>
@@ -4615,6 +4615,10 @@
           <native>Suffix to add to the packed plugin.#lIf empty will use the default - 'mod'.</native>
           <lang id="ru" date="20220630163807">Суффикс добавляемый к файлу плагина.#nЕсли пустое, используется по умолчанию 'mod'.</lang>
         </row>
+        <row id="IDS_STRING_ERR_DLL_MISSING" state="0" created="20220705232617">
+          <native>7za.dll is missing! Please check the installation.</native>
+          <lang id="ru" date="20220705232644">7za.dll отсутствует! Проверьте правильность установки.</lang>
+        </row>
       </node>
       <node class="TWindowsStringNode" name="19" created="20220504023048" resid="19" langid="1033">
         <row id="IDS_STRING_FILMAX_P1" created="20220508140501">
@@ -4890,34 +4894,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220702022638">
-          <prev>3.2.940, 30 Jun 2022</prev>
-          <native>3.2.944, 2 Jul 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220705232617">
+          <prev>3.2.944, 2 Jul 2022</prev>
+          <native>3.2.950, 5 Jul 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220621223243">
           <prev>1</prev>
           <native>2</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220702022638">
-          <prev>940</prev>
-          <native>944</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220705232617">
+          <prev>944</prev>
+          <native>950</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220702022638">
-          <prev>3.2.940</prev>
-          <native>3.2.944</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220705232617">
+          <prev>3.2.944</prev>
+          <native>3.2.950</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220621223243">
           <prev>1</prev>
           <native>2</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220702022638">
-          <prev>940</prev>
-          <native>944</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220705232617">
+          <prev>944</prev>
+          <native>950</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
