@@ -779,6 +779,12 @@ bool PackPlugin(const StreamType plugin_type,
 
 	// pack folder
 	const auto& pack_dll = GetAppPath((PluginsConfig::DEV_PATH + PluginsConfig::PACK_DLL_PATH).c_str()) + PACK_DLL;
+	if (!std::filesystem::exists(pack_dll))
+	{
+		AfxMessageBox(IDS_STRING_ERR_DLL_MISSING, MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
 	SevenZipWrapper archiver(pack_dll);
 	archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
 	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);

@@ -165,6 +165,7 @@
 #define IDS_STRING_EDIT_ICON            272
 #define IDS_STRING_EDIT_BACKGROUND      273
 #define IDS_STRING_EDIT_SUFFIX          274
+#define IDS_STRING_ERR_DLL_MISSING      275
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302
@@ -383,7 +384,7 @@
 #define ID_MAKE_ALL_ACCOUNTS            32802
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        271

@@ -137,7 +137,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_EPG1_ID,171,123,55,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_EPG2_ID,255,123,55,12,ES_AUTOHSCROLL
     PUSHBUTTON      "View EPG",IDC_BUTTON_TEST_EPG,337,122,61,14
-    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL | WS_TABSTOP,171,139,227,80,WS_EX_STATICEDGE
+    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",WS_VSCROLL | WS_TABSTOP | 0x844,171,139,227,80,WS_EX_STATICEDGE
     LTEXT           "23:59:59",IDC_STATIC_CUR_TIME,165,232,30,9
     CONTROL         "",IDC_PROGRESS_PROGRAM,"msctls_progress32",WS_BORDER,198,232,177,9
     LTEXT           "00::00",IDC_STATIC_TIME_LEFT,380,232,21,9
@@ -1222,6 +1222,8 @@ BEGIN
     IDS_STRING_EDIT_BACKGROUND 
                             "Background picture used by the plugin.\n1920x1080 px in jpg format.\nIf empty will use the default."
     IDS_STRING_EDIT_SUFFIX  "Suffix to add to the packed plugin.\nIf empty will use the default - 'mod'."
+    IDS_STRING_ERR_DLL_MISSING 
+                            "7za.dll is missing! Please check the installation."
 END
 
 STRINGTABLE
