@@ -54,6 +54,7 @@ struct PlaylistInfo
 	std::wstring id;
 	bool is_default = false;
 	bool is_custom = false;
+	bool is_file = false;
 };
 
 struct ServersInfo

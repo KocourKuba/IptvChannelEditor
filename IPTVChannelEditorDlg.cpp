@@ -667,7 +667,8 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	int idx = m_wndPlaylist.GetCurSel();
 	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(idx));
 
-	BOOL isFile = pl_info->is_custom;
+	bool isCustom = pl_info->is_custom;
+	bool isFile = pl_info->is_file;
 
 	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetConfig().GetCurrentPluginName(true)).c_str();
 
@@ -679,12 +680,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.profile = m_cur_account.profile_id;
 	params.number = idx;
 
-	if (m_plugin_type == StreamType::enEdem && isFile)
+	if (m_plugin_type == StreamType::enEdem && isCustom)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 		m_plFileName.Empty();
 	}
-	else if (m_plugin_type != StreamType::enEdem && isFile)
+	else if (m_plugin_type != StreamType::enEdem && isCustom)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 	}
@@ -2827,10 +2828,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	{
 		CCustomPlaylistDlg dlg;
 		dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
-
+		dlg.m_isFile = !!pl_info->is_file;
 		if (dlg.DoModal() == IDOK)
 		{
 			GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
+			pl_info->is_file = !!dlg.m_isFile;
 			loaded = true;
 		}
 	}
