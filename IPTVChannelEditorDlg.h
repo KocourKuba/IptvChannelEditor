@@ -123,6 +123,7 @@ protected:
 	afx_msg void OnUpdateSyncTreeItem(CCmdUI* pCmdUI);
 
 	afx_msg void OnBnClickedButtonCreateNewChannelsList();
+	afx_msg void OnBnClickedCheckShowChangedCh();
 	afx_msg void OnBnClickedButtonPlFilter();
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonCacheIcon();
@@ -194,6 +195,7 @@ protected:
 	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnTrayIconNotify(WPARAM wParam, LPARAM lParam);
 
+	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -297,7 +299,7 @@ protected:
 	CButton m_wndCustom;
 	CButton m_wndPlArchive;
 	CButton m_wndViewEPG;
-	CButton m_wndChooseUrl;
+	CButton m_wndAccountSetting;
 	CButton m_wndDownloadUrl;
 	CButton m_wndCheckArchive;
 	CButton m_wndCacheIcon;
@@ -360,6 +362,8 @@ private:
 	bool m_blockChecking = false;
 	bool m_menu_enable_channel = false;
 	bool m_menu_enable_category = false;
+
+	std::map<UINT, std::wstring> m_tooltips_info;
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
@@ -444,6 +448,4 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// vod
 	std::array<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>, (size_t)StreamType::enLast> m_vod_categories;
-public:
-	afx_msg void OnBnClickedCheckShowChangedCh();
 };

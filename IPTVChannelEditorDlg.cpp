@@ -76,52 +76,6 @@ constexpr auto ID_UPDATE_EPG_TIMER = 1000;
 // Common
 constexpr auto CHANNELS_LIST_VERSION = 4;
 
-std::map<UINT, UINT> tooltips_info =
-{
-	{ IDC_COMBO_PLUGIN_TYPE, IDS_STRING_COMBO_PLUGIN_TYPE },
-	{ IDC_BUTTON_VOD, IDS_STRING_BUTTON_VOD },
-	{ IDC_BUTTON_ABOUT, IDS_STRING_BUTTON_ABOUT },
-	{ IDC_COMBO_CHANNELS, IDS_STRING_COMBO_CHANNELS },
-	{ IDC_COMBO_PLAYLIST, IDS_STRING_COMBO_PLAYLIST },
-	{ IDC_BUTTON_ADD_NEW_CHANNELS_LIST, IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST },
-	{ IDC_EDIT_SEARCH, IDS_STRING_EDIT_SEARCH },
-	{ IDC_BUTTON_SEARCH_NEXT, IDS_STRING_BUTTON_SEARCH_NEXT },
-	{ IDC_CHECK_SHOW_UNKNOWN, IDS_STRING_SHOW_UNKNOWN },
-	{ IDC_EDIT_URL_ID, IDS_STRING_EDIT_URL_ID },
-	{ IDC_BUTTON_TEST_EPG, IDS_STRING_BUTTON_TEST_EPG },
-	{ IDC_EDIT_EPG1_ID, IDS_STRING_EDIT_EPG1_ID },
-	{ IDC_EDIT_EPG2_ID, IDS_STRING_EDIT_EPG2_ID },
-	{ IDC_CHECK_CUSTOMIZE, IDS_STRING_CHECK_CUSTOMIZE },
-	{ IDC_CHECK_ARCHIVE, IDS_STRING_CHECK_ARCHIVE },
-	{ IDC_EDIT_ARCHIVE_DAYS, IDS_STRING_EDIT_ARCHIVE_DAYS },
-	{ IDC_CHECK_ADULT, IDS_STRING_CHECK_ADULT },
-	{ IDC_BUTTON_CACHE_ICON, IDS_STRING_BUTTON_CACHE_ICON },
-	{ IDC_BUTTON_SAVE, IDS_STRING_BUTTON_SAVE },
-	{ IDC_SPLIT_BUTTON_PACK, IDS_STRING_BUTTON_PACK },
-	{ IDC_BUTTON_SETTINGS, IDS_STRING_BUTTON_SETTINGS },
-	{ IDC_BUTTON_CHOOSE_PLAYLIST, IDS_STRING_ACCOUNT_SETTINGS },
-	{ IDC_BUTTON_DOWNLOAD_PLAYLIST, IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST },
-	{ IDC_EDIT_PL_SEARCH, IDS_STRING_EDIT_PL_SEARCH },
-	{ IDC_BUTTON_PL_SEARCH_NEXT, IDS_STRING_BUTTON_PL_SEARCH_NEXT },
-	{ IDC_BUTTON_PL_FILTER, IDS_STRING_BUTTON_PL_FILTER },
-	{ IDC_CHECK_SHOW_CHANGED, IDS_STRING_SHOW_CHANGED },
-	{ IDC_CHECK_NOT_ADDED, IDS_STRING_NOT_ADDED },
-	{ IDC_STATIC_ICON, IDS_STRING_STATIC_ICON },
-	{ IDC_EDIT_ARCHIVE_CHECK_DAYS, IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS },
-	{ IDC_SPIN_ARCHIVE_CHECK_DAYS, IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS },
-	{ IDC_EDIT_ARCHIVE_CHECK_HOURS, IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS },
-	{ IDC_SPIN_ARCHIVE_CHECK_HOURS, IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS },
-	{ IDC_EDIT_TIME_SHIFT, IDS_STRING_EDIT_TIME_SHIFT },
-	{ IDC_SPIN_TIME_SHIFT, IDS_STRING_EDIT_TIME_SHIFT },
-	{ IDC_EDIT_INFO_VIDEO, IDS_STRING_EDIT_INFO_VIDEO },
-	{ IDC_EDIT_INFO_AUDIO, IDS_STRING_EDIT_INFO_AUDIO },
-	{ IDC_COMBO_STREAM_TYPE, IDS_STRING_COMBO_STREAM_TYPE },
-	{ IDC_COMBO_ICON_SOURCE, IDS_STRING_COMBO_ICON_SOURCE },
-	{ IDC_BUTTON_STOP, IDS_STRING_BUTTON_STOP },
-	{ IDC_BUTTON_CHECK_ARCHIVE, IDS_STRING_BUTTON_CHECK_ARCHIVE },
-	{ IDC_BUTTON_UPDATE_CHANGED, IDS_STRING_BUTTON_UPDATE_CHANGED },
-};
-
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
 	return lParam1 < lParam2 ? -1 : lParam1 == lParam2 ? 0 : 1;
@@ -139,7 +93,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_WM_TIMER()
 
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CIPTVChannelEditorDlg::OnBnClickedButtonAbout)
-	ON_BN_CLICKED(IDC_BUTTON_CHOOSE_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings)
+	ON_BN_CLICKED(IDC_BUTTON_ACCOUNT_SETTINGS, &CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings)
 	ON_BN_CLICKED(IDC_BUTTON_PL_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_PL_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnUpdateButtonPlSearchNext)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonSearchNext)
@@ -252,6 +206,9 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_UNKNOWN, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_URL, &CIPTVChannelEditorDlg::OnBnClickedCheckShowUrl)
 	ON_BN_CLICKED(IDC_BUTTON_VOD, &CIPTVChannelEditorDlg::OnBnClickedButtonVod)
+
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
 END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -325,7 +282,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_STREAM_TYPE, m_wndStreamType);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylist);
 	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
-	DDX_Control(pDX, IDC_BUTTON_CHOOSE_PLAYLIST, m_wndChooseUrl);
+	DDX_Control(pDX, IDC_BUTTON_ACCOUNT_SETTINGS, m_wndAccountSetting);
 	DDX_Control(pDX, IDC_BUTTON_DOWNLOAD_PLAYLIST, m_wndDownloadUrl);
 	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
 	DDX_Control(pDX, IDC_BUTTON_CACHE_ICON, m_wndCacheIcon);
@@ -423,9 +380,55 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(500);
 
-	for (const auto& pair : tooltips_info)
+	m_tooltips_info =
 	{
-		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), pair.second);
+		{ IDC_COMBO_PLUGIN_TYPE, load_string_resource(IDS_STRING_COMBO_PLUGIN_TYPE) },
+		{ IDC_BUTTON_VOD, load_string_resource(IDS_STRING_BUTTON_VOD) },
+		{ IDC_BUTTON_ABOUT, load_string_resource(IDS_STRING_BUTTON_ABOUT) },
+		{ IDC_COMBO_CHANNELS, load_string_resource(IDS_STRING_COMBO_CHANNELS) },
+		{ IDC_COMBO_PLAYLIST, load_string_resource(IDS_STRING_COMBO_PLAYLIST) },
+		{ IDC_BUTTON_ADD_NEW_CHANNELS_LIST, load_string_resource(IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST) },
+		{ IDC_EDIT_SEARCH, load_string_resource(IDS_STRING_EDIT_SEARCH) },
+		{ IDC_BUTTON_SEARCH_NEXT, load_string_resource(IDS_STRING_BUTTON_SEARCH_NEXT) },
+		{ IDC_CHECK_SHOW_UNKNOWN, load_string_resource(IDS_STRING_SHOW_UNKNOWN) },
+		{ IDC_EDIT_URL_ID, load_string_resource(IDS_STRING_EDIT_URL_ID) },
+		{ IDC_BUTTON_TEST_EPG, load_string_resource(IDS_STRING_BUTTON_TEST_EPG) },
+		{ IDC_EDIT_EPG1_ID, load_string_resource(IDS_STRING_EDIT_EPG1_ID) },
+		{ IDC_EDIT_EPG2_ID, load_string_resource(IDS_STRING_EDIT_EPG2_ID) },
+		{ IDC_CHECK_CUSTOMIZE, load_string_resource(IDS_STRING_CHECK_CUSTOMIZE) },
+		{ IDC_CHECK_ARCHIVE, load_string_resource(IDS_STRING_CHECK_ARCHIVE) },
+		{ IDC_EDIT_ARCHIVE_DAYS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_DAYS) },
+		{ IDC_CHECK_ADULT, load_string_resource(IDS_STRING_CHECK_ADULT) },
+		{ IDC_BUTTON_CACHE_ICON, load_string_resource(IDS_STRING_BUTTON_CACHE_ICON) },
+		{ IDC_BUTTON_SAVE, load_string_resource(IDS_STRING_BUTTON_SAVE) },
+		{ IDC_SPLIT_BUTTON_PACK, load_string_resource(IDS_STRING_BUTTON_PACK) },
+		{ IDC_BUTTON_SETTINGS, load_string_resource(IDS_STRING_BUTTON_SETTINGS) },
+		{ IDC_BUTTON_ACCOUNT_SETTINGS, load_string_resource(IDS_STRING_ACCOUNT_SETTINGS) },
+		{ IDC_BUTTON_DOWNLOAD_PLAYLIST, load_string_resource(IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST) },
+		{ IDC_EDIT_PL_SEARCH, load_string_resource(IDS_STRING_EDIT_PL_SEARCH) },
+		{ IDC_BUTTON_PL_SEARCH_NEXT, load_string_resource(IDS_STRING_BUTTON_PL_SEARCH_NEXT) },
+		{ IDC_BUTTON_PL_FILTER, load_string_resource(IDS_STRING_BUTTON_PL_FILTER) },
+		{ IDC_CHECK_SHOW_CHANGED, load_string_resource(IDS_STRING_SHOW_CHANGED) },
+		{ IDC_CHECK_NOT_ADDED, load_string_resource(IDS_STRING_NOT_ADDED) },
+		{ IDC_STATIC_ICON, load_string_resource(IDS_STRING_STATIC_ICON) },
+		{ IDC_EDIT_ARCHIVE_CHECK_DAYS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS) },
+		{ IDC_SPIN_ARCHIVE_CHECK_DAYS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS) },
+		{ IDC_EDIT_ARCHIVE_CHECK_HOURS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS) },
+		{ IDC_SPIN_ARCHIVE_CHECK_HOURS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS) },
+		{ IDC_EDIT_TIME_SHIFT, load_string_resource(IDS_STRING_EDIT_TIME_SHIFT) },
+		{ IDC_SPIN_TIME_SHIFT, load_string_resource(IDS_STRING_EDIT_TIME_SHIFT) },
+		{ IDC_EDIT_INFO_VIDEO, load_string_resource(IDS_STRING_EDIT_INFO_VIDEO) },
+		{ IDC_EDIT_INFO_AUDIO, load_string_resource(IDS_STRING_EDIT_INFO_AUDIO) },
+		{ IDC_COMBO_STREAM_TYPE, load_string_resource(IDS_STRING_COMBO_STREAM_TYPE) },
+		{ IDC_COMBO_ICON_SOURCE, load_string_resource(IDS_STRING_COMBO_ICON_SOURCE) },
+		{ IDC_BUTTON_STOP, load_string_resource(IDS_STRING_BUTTON_STOP) },
+		{ IDC_BUTTON_CHECK_ARCHIVE, load_string_resource(IDS_STRING_BUTTON_CHECK_ARCHIVE) },
+		{ IDC_BUTTON_UPDATE_CHANGED, load_string_resource(IDS_STRING_BUTTON_UPDATE_CHANGED) },
+	};
+
+	for (const auto& pair : m_tooltips_info)
+	{
+		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), LPSTR_TEXTCALLBACK);
 	}
 
 	m_wndToolTipCtrl.Activate(TRUE);
@@ -478,6 +481,37 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SwitchPlugin();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+BOOL CIPTVChannelEditorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// if there is a top level routing frame then let it handle the message
+	if (GetRoutingFrame() != nullptr)
+		return FALSE;
+
+	// to be thorough we will need to handle UNICODE versions of the message also !!
+
+	UINT nID = pNMHDR->idFrom;
+	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
+
+	if (pNMHDR->code == TTN_NEEDTEXT && (pTTT->uFlags & TTF_IDISHWND))
+	{
+		// idFrom is actually the HWND of the tool
+		nID = ::GetDlgCtrlID((HWND)nID);
+	}
+
+	if (nID != 0) // will be zero on a separator
+	{
+		auto& pair = m_tooltips_info.find(nID);
+		if (pair != m_tooltips_info.end())
+		{
+			pTTT->lpszText = pair->second.data();
+			*pResult = 0;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 void CIPTVChannelEditorDlg::UpdateWindowTitle()
@@ -775,7 +809,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndChannels.EnableWindow(FALSE);
 	m_wndFilter.EnableWindow(FALSE);
 	m_wndDownloadUrl.EnableWindow(FALSE);
-	m_wndChooseUrl.EnableWindow(FALSE);
+	m_wndAccountSetting.EnableWindow(FALSE);
 	m_evtStop.ResetEvent();
 
 	std::unique_ptr<Playlist> playlistEntriesOld = std::move(m_playlistEntries);
@@ -889,7 +923,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	LoadChannelInfo();
 
 	m_loading = false;
-	m_wndChooseUrl.EnableWindow(TRUE);
+	m_wndAccountSetting.EnableWindow(TRUE);
 	m_wndDownloadUrl.EnableWindow(m_enableDownload);
 	m_wndPlaylist.EnableWindow(TRUE);
 	m_wndCheckArchive.EnableWindow(TRUE);
@@ -956,7 +990,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 	m_wndPluginType.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 	m_wndPlaylist.EnableWindow(TRUE);
-	m_wndChooseUrl.EnableWindow(TRUE);
+	m_wndAccountSetting.EnableWindow(TRUE);
 	m_wndDownloadUrl.EnableWindow(m_enableDownload);
 	m_wndSettings.EnableWindow(TRUE);
 
@@ -3831,7 +3865,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	m_wndPluginType.EnableWindow(FALSE);
 	m_wndChannels.EnableWindow(FALSE);
 	m_wndPlaylist.EnableWindow(FALSE);
-	m_wndChooseUrl.EnableWindow(FALSE);
+	m_wndAccountSetting.EnableWindow(FALSE);
 	m_wndDownloadUrl.EnableWindow(FALSE);
 	m_wndSettings.EnableWindow(FALSE);
 
@@ -4211,6 +4245,9 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 {
 	GetConfig().set_int(false, REG_PLAYLIST_TYPE, m_wndPlaylist.GetCurSel());
 
+	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel()));
+	m_tooltips_info[IDC_BUTTON_ACCOUNT_SETTINGS] = load_string_resource(pl_info->is_custom ? IDS_STRING_LOAD_CUSTOM_PLAYLIST : IDS_STRING_ACCOUNT_SETTINGS);
+	m_wndAccountSetting.SetWindowText(pl_info->is_custom ? L"\u00ab" : L"...");
 	LoadPlaylist();
 }
 
