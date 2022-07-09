@@ -198,6 +198,10 @@
 #define IDS_STRING_VIPLIME_P3           362
 #define IDS_STRING_VIPLIME_P4           363
 #define IDS_STRING_VIPLIME_P5           364
+#define IDS_STRING_KINESKOP_P1          370
+#define IDS_STRING_KINESKOP_P2          371
+#define IDS_STRING_KINESKOP_P3          372
+#define IDS_STRING_KINESKOP_P4          373
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003

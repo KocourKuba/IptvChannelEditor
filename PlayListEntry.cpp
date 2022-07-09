@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include <regex>
 #include "PlayListEntry.h"
 #include "UtilsLib\utils.h"
 #include "UtilsLib\rapidxml_value.hpp"
@@ -125,6 +126,9 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			break;
 		case StreamType::enVidok:
 			set_icon_uri(fmt::format(L"http://ott.st/logos/{:s}.png", stream_uri->get_id()));
+			break;
+		case StreamType::enKineskop:
+			set_icon_uri(std::regex_replace(get_icon_uri().get_uri(), std::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
 			break;
 		default:
 			break;

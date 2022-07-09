@@ -280,6 +280,12 @@ public:
 	}
 
 	/// <summary>
+	/// returns is uri has unique token per channel
+	/// </summary>
+	/// <returns>wstring</returns>
+	bool is_per_channel_token() const { return per_channel_token; }
+
+	/// <summary>
 	/// returns link to provider account
 	/// </summary>
 	/// <returns>wstring</returns>
@@ -482,6 +488,7 @@ protected:
 	std::wstring host;
 	bool vod_supported = false;
 	bool secondary_epg = false;
+	bool per_channel_token = false;
 	mutable std::wstring str_hash;
 	mutable int hash = 0;
 };

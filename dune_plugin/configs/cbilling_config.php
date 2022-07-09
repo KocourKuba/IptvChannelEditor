@@ -33,7 +33,7 @@ class CbillingPluginConfig extends Cbilling_Vod_Impl
     {
         $url = $channel->get_streaming_url();
         if (!empty($url)) {
-            $url = ((int)$archive_ts <= 0) ?: static::UpdateArchiveUrlParams($url, $archive_ts);
+            $url = static::UpdateArchiveUrlParams($url, $archive_ts);
         } else {
             $ext_params = $channel->get_ext_params();
             $domain = explode(':', $ext_params['subdomain']);

@@ -45,6 +45,7 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{S
 
 uri_itv::uri_itv()
 {
+	per_channel_token = true;
 	auto& params = epg_params[0];
 	params.epg_url = L"http://api.itv.live/epg/{ID}";
 	params.epg_root = "res";

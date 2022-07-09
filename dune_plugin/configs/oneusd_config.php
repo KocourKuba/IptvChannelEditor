@@ -31,7 +31,7 @@ class OneusdPluginConfig extends Default_Config
     {
         $url = $channel->get_streaming_url();
         if (!empty($url)) {
-            $url = ((int)$archive_ts <= 0) ?: static::UpdateArchiveUrlParams($url, $archive_ts);
+            $url = static::UpdateArchiveUrlParams($url, $archive_ts);
         } else {
             switch ($this->get_format($plugin_cookies)) {
                 case 'hls':

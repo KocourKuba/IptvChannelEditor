@@ -888,6 +888,9 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 						bSet = true;
 					}
 					break;
+				case StreamType::enKineskop: // login/token
+					m_host = stream->get_host();
+					break;
 				default:
 				{
 					const auto& token = stream->get_token();
@@ -4827,17 +4830,12 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& token) const
 {
-	if (   m_plugin_type != StreamType::enFox
-		&& m_plugin_type != StreamType::enItv
-		&& m_plugin_type != StreamType::enOneUsd
-		&& m_plugin_type != StreamType::enTvTeam
-		&& m_plugin_type != StreamType::enVidok
-		&& m_plugin_type != StreamType::enTVClub
-		)
+	if (!uri->is_per_channel_token())
 	{
 		uri->set_token(token);
 		return;
 	}
+
 	if (m_plugin_type == StreamType::enVidok || m_plugin_type == StreamType::enTVClub)
 	{
 		uri->set_token(uri->get_api_token(m_cur_account.get_login(), m_cur_account.get_password()));

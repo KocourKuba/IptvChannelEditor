@@ -85,7 +85,6 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_PASSWORD,
 	REG_TOKEN,
 	REG_DOMAIN,
-	REG_ACCESS_URL,
 	REG_VPORTAL,
 	REG_FILTER_STRING_S,
 	REG_FILTER_STRING_H,
@@ -136,6 +135,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enShuraTV,    _T("Shura TV"),        "shuratv",    "shura.tv",       STRPRODUCTVER },
 	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tvclub",         STRPRODUCTVER },
 	{ StreamType::enFilmax,     _T("Filmax TV"),       "filmax",     "filmax",         STRPRODUCTVER },
+	{ StreamType::enKineskop,   _T("Kineskop.Club"),   "kineskop",   "kineskop",       STRPRODUCTVER },
 };
 
 void ThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -323,6 +323,7 @@ AccountAccessType PluginsConfig::get_plugin_account_access_type() const
 		case StreamType::enVidok:
 		case StreamType::enTVClub:
 		case StreamType::enFilmax:
+		case StreamType::enKineskop:
 			return AccountAccessType::enLoginPass;
 		default:
 			break;

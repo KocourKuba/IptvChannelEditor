@@ -47,6 +47,7 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{S
 
 uri_tvteam::uri_tvteam()
 {
+	per_channel_token = true;
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
 	provider_url = L"https://tv.team/";
 	server_subst_type = ServerSubstType::enStream;

@@ -47,6 +47,7 @@ static constexpr auto EPG_TEMPLATE_URL = L"http://api.iptv.so/0.9/json/epg?token
 
 uri_tvclub::uri_tvclub()
 {
+	per_channel_token = true;
 	streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
 	auto& params = epg_params[0];

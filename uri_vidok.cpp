@@ -46,6 +46,7 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 uri_vidok::uri_vidok()
 {
+	per_channel_token = true;
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 
 	auto& params = epg_params[0];

@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include <regex>
 #include "AccessInfoDlg.h"
 #include "IPTVChannelEditor.h"
 #include "PlayListEntry.h"
@@ -232,6 +233,8 @@ void CAccessInfoDlg::UpdateOptionalControls()
 	wndStaticDevice->SetWindowText(load_string_resource(static_text).c_str());
 	wndStaticDevice->EnableWindow(!m_servers.empty());
 
+	m_wndDeviceID.ResetContent();
+
 	for (const auto& info : m_servers)
 	{
 		m_wndDeviceID.AddString(info.name.c_str());
@@ -300,6 +303,8 @@ void CAccessInfoDlg::CreateAccountsList()
 			vWidth /= 3;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
+			if (m_plugin_type == StreamType::enKineskop)
+				m_wndNewFromUrl.ShowWindow(SW_SHOW);
 			break;
 		case AccountAccessType::enOtt:
 			vWidth /= 4;
@@ -485,22 +490,41 @@ void CAccessInfoDlg::OnBnClickedButtonRemove()
 void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
 {
 	CUrlDlg dlg;
-	dlg.m_url = GetConfig().get_string(false, REG_ACCESS_URL).c_str();
 
 	if (dlg.DoModal() == IDOK)
 	{
 		m_status.Empty();
 		std::vector<BYTE> data;
-		GetConfig().set_string(false, REG_ACCESS_URL, dlg.m_url.GetString());
-		if (!utils::DownloadFile(dlg.m_url.GetString(), data))
+		std::wstring url = dlg.m_url.GetString();
+		if (!utils::DownloadFile(url, data))
 		{
-			std::ifstream instream(dlg.m_url.GetString());
+			std::ifstream instream(url);
 			data.assign((std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
 		}
 
 		const auto& wbuf = utils::utf8_to_utf16((char*)data.data(), data.size());
 		std::wistringstream stream(wbuf);
 		if (!stream.good()) return;
+
+		if (m_plugin_type == StreamType::enKineskop)
+		{
+			// http://knkp.in/2119490/6cd0ff4249f49957/de/1
+			static std::wregex re_url(LR"(^https?:\/\/[^\/]+\/([^\/]+)\/([^\/]+)\/?.*$)");
+			std::wsmatch m;
+			if (std::regex_match(url, m, re_url))
+			{
+				Credentials cred;
+				cred.login = get_utf8(m[1].str());
+				cred.password = get_utf8(m[2].str());
+				m_all_credentials.emplace_back(cred);
+
+				int cnt = m_wndAccounts.GetItemCount();
+				m_wndAccounts.InsertItem(cnt, L"", 0);
+				m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
+				m_wndAccounts.SetItemText(cnt, 2, m[2].str().c_str());
+				return;
+			}
+		}
 
 		Credentials cred;
 		auto entry = std::make_unique<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));

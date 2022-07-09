@@ -54,6 +54,7 @@ enum class StreamType
 	enShuraTV,
 	enTVClub,
 	enFilmax,
+	enKineskop,
 	enLast,
 };
 
@@ -120,7 +121,6 @@ constexpr auto REG_EMBED_INFO          = _T("EmbedInfo");
 constexpr auto REG_DEVICE_ID           = _T("DeviceID");
 constexpr auto REG_PROFILE_ID          = _T("ProfileID");
 
-constexpr auto REG_ACCESS_URL          = _T("AccessUrl");
 constexpr auto REG_FILTER_STRING_S     = _T("FilterString");
 constexpr auto REG_FILTER_STRING_H     = _T("FilterStringHide");
 constexpr auto REG_FILTER_STRING_LST_S = _T("FilterStringList");

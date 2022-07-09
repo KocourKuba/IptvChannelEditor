@@ -38,6 +38,7 @@ static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/{TOKEN}";
 
 uri_fox::uri_fox() : epg_technic({ L"fox", L"fox" })
 {
+	per_channel_token = true;
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"http://info.fox-tv.fun/";
 	vod_supported = true;
