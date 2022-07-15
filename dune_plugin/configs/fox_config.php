@@ -40,30 +40,17 @@ class FoxPluginConfig extends Default_Config
     public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $url = $channel->get_streaming_url();
-        if (!empty($url)) {
-            $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-        } else {
-            switch ($this->get_format($plugin_cookies)) {
-                case 'hls':
-                case 'mpeg':
-                    // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
-                    // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV
-                    // hls archive url completely different, make it from scratch
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-                    break;
-                default:
-                    hd_print("unknown url format");
-                    return "";
-            }
-
+        if (empty($url)) {
+            // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
+            // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV
+            // hls archive url completely different, make it from scratch
+            $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
             $ext_params = $channel->get_ext_params();
 
-            $url = str_replace(
-                array('{DOMAIN}', '{TOKEN}', '{START}', '{NOW}'),
-                array($ext_params['subdomain'], $ext_params['token'], $archive_ts, time()),
-                $template);
+            $url = str_replace(array('{DOMAIN}', '{TOKEN}'), array($ext_params['subdomain'], $ext_params['token']), $template);
         }
 
+        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
         // hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
