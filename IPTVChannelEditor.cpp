@@ -603,11 +603,11 @@ bool PackPlugin(const StreamType plugin_type,
 		GetConfig().set_plugin_type(old_plugin_type);
 		return false;
 	}
-	const auto& cred = all_credentials[selected];
 
 	const auto& plugin_info = GetConfig().get_plugin_info();
 	const auto& short_name_w = utils::utf8_to_utf16(plugin_info.short_name);
 	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
+	const auto& packFolderIcons = packFolder + LR"(icons\)";
 
 	std::error_code err;
 	// remove previous packed folder if exist
@@ -615,10 +615,19 @@ bool PackPlugin(const StreamType plugin_type,
 
 	// copy entire plugin folder
 	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
-	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::recursive, err);
 
-	// remove config's folder
-	std::filesystem::remove_all(packFolder + L"configs", err);
+	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::none, err);
+	std::filesystem::copy(plugin_root + L"lib", packFolder + L"lib", std::filesystem::copy_options::recursive, err);
+	std::filesystem::copy(plugin_root + L"img", packFolder + L"img", std::filesystem::copy_options::recursive, err);
+	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", std::filesystem::copy_options::recursive, err);
+
+	// remove if old logo and backgrounds still exists in icons folder
+	std::wregex regExpName { LR"(^(?:bg|logo)_.*\.(?:jpg|png)$)" };
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
+	{
+		if (!dir_entry.is_directory() && std::regex_match(dir_entry.path().filename().wstring(), regExpName))
+			std::filesystem::remove(dir_entry.path(), err);
+	}
 
 	// remove cbilling_vod base class
 	if (plugin_type != StreamType::enAntifriz && plugin_type != StreamType::enCbilling)
@@ -626,47 +635,31 @@ bool PackPlugin(const StreamType plugin_type,
 		std::filesystem::remove(packFolder + L"cbilling_vod_impl.php", err);
 	}
 
-	// remove images for other plugins
-	std::set<std::string> to_remove;
-	for (const auto& info : GetConfig().get_plugins_info())
-	{
-		if (info.short_name != plugin_info.short_name)
-		{
-			to_remove.emplace(fmt::format("logo_{:s}.png", info.short_name));
-			to_remove.emplace(fmt::format("bg_{:s}.jpg", info.short_name));
-		}
-	}
+	const auto& cred = all_credentials[selected];
 
-	if (noCustom)
+	std::filesystem::path plugin_logo;
+	std::filesystem::path plugin_bgnd;
+	if (!noCustom)
 	{
 		if (!cred.logo.empty())
-			to_remove.emplace(cred.logo);
+			plugin_logo = cred.logo;
 
 		if (!cred.background.empty())
-			to_remove.emplace(cred.background);
-	}
-	else
-	{
-		if (!cred.logo.empty())
-		{
-			to_remove.erase(cred.logo);
-			to_remove.emplace(fmt::format("logo_{:s}.png", plugin_info.short_name));
-		}
-
-		if (!cred.background.empty())
-		{
-			to_remove.erase(cred.background);
-			to_remove.emplace(fmt::format("bg_{:s}.jpg", plugin_info.short_name));
-		}
+			plugin_bgnd = cred.background;
 	}
 
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
-	{
-		if (to_remove.find(dir_entry.path().filename().string()) != to_remove.end())
-		{
-			std::filesystem::remove(dir_entry, err);
-		}
-	}
+	if (plugin_logo.empty())
+		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root, short_name_w);
+	else if (!plugin_logo.has_parent_path())
+		plugin_logo = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_logo.wstring());
+
+	if (plugin_bgnd.empty())
+		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.jpg)", plugin_root, short_name_w);
+	else if (!plugin_bgnd.has_parent_path())
+		plugin_bgnd = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_bgnd.wstring());
+
+	std::filesystem::copy(plugin_logo, packFolderIcons, err);
+	std::filesystem::copy(plugin_bgnd, packFolderIcons, err);
 
 	// create plugin manifest
 	std::string data;
@@ -674,13 +667,8 @@ bool PackPlugin(const StreamType plugin_type,
 	data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
 
 	const auto& caption = cred.caption.empty() ? utils::utf16_to_utf8(plugin_info.title) : cred.caption;
-	const auto& logo = noCustom || cred.logo.empty()
-		? fmt::format("plugin_file://icons/logo_{:s}.png", plugin_info.short_name)
-		: fmt::format("plugin_file://icons/{:s}", cred.logo);
-
-	const auto& background = noCustom || cred.background.empty()
-		? fmt::format("plugin_file://icons/bg_{:s}.jpg", plugin_info.short_name)
-		: fmt::format("plugin_file://icons/{:s}", cred.background);
+	const auto& logo = fmt::format("plugin_file://icons/{:s}", plugin_logo.filename().string());
+	const auto& bgnd = fmt::format("plugin_file://icons/{:s}", plugin_bgnd.filename().string());
 
 	utils::string_replace_inplace(data, "{plugin_name}", plugin_info.int_name.c_str());
 	utils::string_replace_inplace(data, "{plugin_title}", caption.c_str());
@@ -688,7 +676,7 @@ bool PackPlugin(const StreamType plugin_type,
 	utils::string_replace_inplace(data, "{plugin_version}", plugin_info.version.c_str());
 	utils::string_replace_inplace(data, "{plugin_release_date}", RELEASEDATE);
 	utils::string_replace_inplace(data, "{plugin_logo}", logo.c_str());
-	utils::string_replace_inplace(data, "{plugin_background}", background.c_str());
+	utils::string_replace_inplace(data, "{plugin_background}", bgnd.c_str());
 
 	std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ios::out | std::ios::binary);
 	ostream << data;

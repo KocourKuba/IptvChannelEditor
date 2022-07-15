@@ -3279,8 +3279,8 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	if (idx == 0)
 	{
 		CFileDialog dlg(TRUE);
-		CString path = GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
-		CString file(path);
+		CString curPath = GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
+		CString file(curPath);
 		file.Replace('/', '\\');
 
 		CString filter;
@@ -3296,7 +3296,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 		oFN.nFilterIndex = 0;
 		oFN.lpstrFile = file.GetBuffer(MAX_PATH);
 		oFN.lpstrTitle = title.GetString();
-		oFN.lpstrInitialDir = path.GetString();
+		oFN.lpstrInitialDir = curPath.GetString();
 		oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
 		oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
 
@@ -3306,22 +3306,18 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 		if (nResult == IDOK)
 		{
-			int len = (int)_tcslen(oFN.lpstrFileTitle);
-			for (int i = 0; i < len; i++)
+			if (!utils::is_ascii(oFN.lpstrFileTitle))
 			{
-				if (oFN.lpstrFileTitle[i] > 127)
-				{
-					AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
-					return;
-				}
+				AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+				return;
 			}
 
-			CString newPath = file.Left(file.GetLength() - len);
-			if (path.CompareNoCase(newPath) != 0)
+			std::filesystem::path newPath(file.GetString());
+			if (curPath.CompareNoCase(newPath.parent_path().wstring().c_str()) != 0)
 			{
-				path += oFN.lpstrFileTitle;
-				CopyFile(file, path, FALSE);
-				SetImageControl(GetIconCache().get_icon(path.GetString()), m_wndChannelIcon);
+				curPath += oFN.lpstrFileTitle;
+				CopyFile(file, curPath, FALSE);
+				SetImageControl(GetIconCache().get_icon(curPath.GetString()), m_wndChannelIcon);
 			}
 
 			m_iconUrl = uri_base::PLUGIN_SCHEME;

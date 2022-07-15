@@ -349,4 +349,18 @@ std::string generateRandomId(size_t length /*= 0*/)
 	return id;
 }
 
+bool is_ascii(const wchar_t* szFilename)
+{
+	size_t i = 0;
+	while (szFilename[i] != 0)
+	{
+		if (szFilename[i] > 127)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 }

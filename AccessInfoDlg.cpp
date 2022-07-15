@@ -60,9 +60,9 @@ BEGIN_MESSAGE_MAP(CAccessInfoDlg, CMFCPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoDlg::OnCbnSelchangeComboProfile)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoDlg::OnBnClickedCheckEmbed)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoDlg::OnEnChangeEditPluginCaption)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_ICON, &CAccessInfoDlg::OnEnChangeEditPluginIcon)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_BACKGROUND, &CAccessInfoDlg::OnEnChangeEditPluginBackground)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoDlg::OnEnChangeEditPluginSuffix)
+	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_LOGO, &CAccessInfoDlg::OnEnChangeMfceditbrowsePluginLogo)
+	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_BGND, &CAccessInfoDlg::OnEnChangeMfceditbrowsePluginBgnd)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CAccessInfoDlg::OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CAccessInfoDlg::OnToolTipText)
 END_MESSAGE_MAP()
@@ -87,12 +87,12 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_CAPTION, m_wndCaption);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CAPTION, m_caption);
-	DDX_Control(pDX, IDC_EDIT_PLUGIN_ICON, m_wndLogo);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_ICON, m_logo);
-	DDX_Control(pDX, IDC_EDIT_PLUGIN_BACKGROUND, m_wndBackground);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_BACKGROUND, m_background);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_wndSuffix);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_suffix);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_wndLogo);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_logo);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_wndBackground);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_background);
 }
 
 BOOL CAccessInfoDlg::PreTranslateMessage(MSG* pMsg)
@@ -126,8 +126,8 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		{ IDC_COMBO_PROFILE, load_string_resource(IDS_STRING_COMBO_PROFILE) },
 		{ IDC_CHECK_EMBED, load_string_resource(IDS_STRING_CHECK_EMBED) },
 		{ IDC_EDIT_PLUGIN_CAPTION, load_string_resource(IDS_STRING_EDIT_CAPTION) },
-		{ IDC_EDIT_PLUGIN_ICON, load_string_resource(IDS_STRING_EDIT_ICON) },
-		{ IDC_EDIT_PLUGIN_BACKGROUND, load_string_resource(IDS_STRING_EDIT_BACKGROUND) },
+		{ IDC_MFCEDITBROWSE_PLUGIN_LOGO, load_string_resource(IDS_STRING_EDIT_ICON) },
+		{ IDC_MFCEDITBROWSE_PLUGIN_BGND, load_string_resource(IDS_STRING_EDIT_BACKGROUND) },
 		{ IDC_EDIT_PLUGIN_SUFFIX, load_string_resource(IDS_STRING_EDIT_SUFFIX) },
 	};
 
@@ -149,6 +149,16 @@ BOOL CAccessInfoDlg::OnInitDialog()
 	std::wstring provider_url = m_plugin->get_provider_url();
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
+
+	CString logo_filter(_T("PNG file(*.png)|*.png||"));
+	m_wndLogo.EnableFileBrowseButton(nullptr,
+									 logo_filter.GetString(),
+									 OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
+
+	CString bg_filter(_T("JPG file(*.jpg)|*.jpg||"));
+	m_wndBackground.EnableFileBrowseButton(nullptr,
+										   bg_filter.GetString(),
+										   OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
 
 	LoadAccounts();
 	CreateAccountsList();
@@ -252,9 +262,16 @@ void CAccessInfoDlg::UpdateOptionalControls()
 	}
 
 	m_caption = cred.get_caption().c_str();
-	m_logo = cred.get_logo().c_str();
-	m_background = cred.get_background().c_str();
 	m_suffix = cred.get_suffix().c_str();
+	if (!cred.get_logo().empty() && std::filesystem::path(cred.get_logo()).parent_path().empty())
+		m_logo = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", cred.get_logo()).c_str();
+	else
+		m_logo = cred.get_logo().c_str();
+
+	if (!cred.get_background().empty() && std::filesystem::path(cred.get_background()).parent_path().empty())
+		m_background = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", cred.get_background()).c_str();
+	else
+		m_background = cred.get_background().c_str();
 
 	UpdateData(FALSE);
 }
@@ -929,26 +946,6 @@ void CAccessInfoDlg::OnEnChangeEditPluginCaption()
 	}
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginIcon()
-{
-	UpdateData(TRUE);
-	int selected = GetCheckedAccount();
-	if (selected != -1)
-	{
-		m_all_credentials[selected].logo = get_utf8(m_logo.GetString());
-	}
-}
-
-void CAccessInfoDlg::OnEnChangeEditPluginBackground()
-{
-	UpdateData(TRUE);
-	int selected = GetCheckedAccount();
-	if (selected != -1)
-	{
-		m_all_credentials[selected].background = get_utf8(m_background.GetString());
-	}
-}
-
 void CAccessInfoDlg::OnEnChangeEditPluginSuffix()
 {
 	UpdateData(TRUE);
@@ -956,5 +953,31 @@ void CAccessInfoDlg::OnEnChangeEditPluginSuffix()
 	if (selected != -1)
 	{
 		m_all_credentials[selected].suffix = get_utf8(m_suffix.GetString());
+	}
+}
+
+void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginLogo()
+{
+	UpdateData(TRUE);
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		if (!utils::is_ascii(std::filesystem::path(m_logo.GetString()).filename().wstring().c_str()))
+			AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+		else
+			m_all_credentials[selected].logo = utils::utf16_to_utf8(m_logo.GetString(), m_logo.GetLength());
+	}
+}
+
+void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginBgnd()
+{
+	UpdateData(TRUE);
+	int selected = GetCheckedAccount();
+	if (selected != -1)
+	{
+		if (!utils::is_ascii(std::filesystem::path(m_background.GetString()).filename().wstring().c_str()))
+			AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+		else
+			m_all_credentials[selected].background = utils::utf16_to_utf8(m_background.GetString(), m_background.GetLength());
 	}
 }

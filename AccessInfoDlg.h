@@ -28,6 +28,8 @@ DEALINGS IN THE SOFTWARE.
 #include "EditableListCtrl.h"
 #include "uri_stream.h"
 #include "Config.h"
+#include "CMFCEditBrowsCtrlEx.h"
+
 #include "UtilsLib\json_wrapper.h"
 
 class CAccessInfoDlg : public CMFCPropertyPage
@@ -64,9 +66,9 @@ protected:
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
 	afx_msg void OnEnChangeEditPluginCaption();
-	afx_msg void OnEnChangeEditPluginIcon();
-	afx_msg void OnEnChangeEditPluginBackground();
 	afx_msg void OnEnChangeEditPluginSuffix();
+	afx_msg void OnEnChangeMfceditbrowsePluginLogo();
+	afx_msg void OnEnChangeMfceditbrowsePluginBgnd();
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
 
@@ -95,9 +97,9 @@ protected:
 	CComboBox m_wndDeviceID;
 	CComboBox m_wndProfile;
 	CEdit m_wndCaption;
-	CEdit m_wndLogo;
-	CEdit m_wndBackground;
 	CEdit m_wndSuffix;
+	CMFCEditBrowseCtrlEx m_wndLogo;
+	CMFCEditBrowseCtrlEx m_wndBackground;
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;
 	CListCtrl m_wndChLists;
