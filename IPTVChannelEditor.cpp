@@ -607,7 +607,6 @@ bool PackPlugin(const StreamType plugin_type,
 	const auto& plugin_info = GetConfig().get_plugin_info();
 	const auto& short_name_w = utils::utf8_to_utf16(plugin_info.short_name);
 	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
-	const auto& packFolderIcons = packFolder + LR"(icons\)";
 
 	std::error_code err;
 	// remove previous packed folder if exist
@@ -658,6 +657,7 @@ bool PackPlugin(const StreamType plugin_type,
 	else if (!plugin_bgnd.has_parent_path())
 		plugin_bgnd = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_bgnd.wstring());
 
+	const auto& packFolderIcons = packFolder + LR"(icons\)";
 	std::filesystem::copy(plugin_logo, packFolderIcons, err);
 	std::filesystem::copy(plugin_bgnd, packFolderIcons, err);
 

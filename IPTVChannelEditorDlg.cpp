@@ -71,6 +71,9 @@ constexpr auto ID_MOVE_TO_END = ID_MOVE_TO_START + 512;
 constexpr auto ID_ADD_TO_START = ID_MOVE_TO_END + 1;
 constexpr auto ID_ADD_TO_END = ID_ADD_TO_START + 512;
 
+constexpr auto ID_ACCOUNT_TO_START = ID_ADD_TO_END + 1;
+constexpr auto ID_ACCOUNT_TO_END = ID_ACCOUNT_TO_START + 512;
+
 constexpr auto ID_UPDATE_EPG_TIMER = 1000;
 
 // Common
@@ -201,6 +204,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_COMMAND_RANGE(ID_COPY_TO_START, ID_COPY_TO_END, &CIPTVChannelEditorDlg::OnCopyTo)
 	ON_COMMAND_RANGE(ID_MOVE_TO_START, ID_MOVE_TO_END, &CIPTVChannelEditorDlg::OnMoveTo)
 	ON_COMMAND_RANGE(ID_ADD_TO_START, ID_ADD_TO_END, &CIPTVChannelEditorDlg::OnAddTo)
+	ON_COMMAND_RANGE(ID_ACCOUNT_TO_START, ID_ACCOUNT_TO_END, &CIPTVChannelEditorDlg::OnMakeAccount)
 
 	ON_BN_CLICKED(IDC_CHECK_NOT_ADDED, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_UNKNOWN, &CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded)
@@ -476,7 +480,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndEpgID2.EnableWindow(FALSE);
 	m_wndPluginType.SetCurSel(GetConfig().get_plugin_idx());
 	m_wndIconSource.SetCurSel(GetConfig().get_int(true, REG_ICON_SOURCE));
-	m_wndPack.SetDropDownMenu(IDR_MENU_SPLIT, 0);
 
 	SwitchPlugin();
 
@@ -692,6 +695,33 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 		JSON_ALL_CATCH;
 		m_all_credentials.emplace_back(cred);
 	}
+
+	CMenu* pMenu = new CMenu;
+	pMenu->CreatePopupMenu();
+	pMenu->AppendMenu(MF_STRING, ID_MAKE_ALL, load_string_resource(ID_MAKE_ALL).c_str());
+	pMenu->AppendMenu(MF_STRING, ID_MAKE_ALL_ACCOUNTS, load_string_resource(ID_MAKE_ALL_ACCOUNTS).c_str());
+
+	if (m_all_credentials.size() > 1)
+	{
+		int i = 0;
+		pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SEPARATOR);
+		for (const auto& cred : m_all_credentials)
+		{
+			std::string title;
+			if (!cred.comment.empty())
+				title = cred.comment;
+
+			if (title.empty() && !cred.login.empty())
+				title = cred.login;
+
+			if (title.empty() && !cred.token.empty())
+				title = cred.token;
+
+			pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_ACCOUNT_TO_START + i++, utils::utf8_to_utf16(title).c_str());
+		}
+	}
+
+	m_wndPack.SetDropDownMenu(pMenu);
 }
 
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
@@ -1671,11 +1701,11 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	buffer.emplace_back('\0');
 
 	// Parse the buffer using the xml file parsing library into doc
-	rapidxml::xml_document<> doc;
+	auto doc = std::make_unique<rapidxml::xml_document<>>();
 
 	try
 	{
-		doc.parse<0>(buffer.data());
+		doc->parse<0>(buffer.data());
 	}
 	catch (rapidxml::parse_error& ex)
 	{
@@ -1683,7 +1713,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		return false;
 	}
 
-	auto i_node = doc.first_node(utils::TV_INFO);
+	auto i_node = doc->first_node(utils::TV_INFO);
 	auto info_node = i_node->first_node(utils::VERSION_INFO);
 	if (!info_node || rapidxml::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
 	{
@@ -2886,9 +2916,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 
 bool CIPTVChannelEditorDlg::SetupAccount()
 {
-	CResizedPropertySheet sheet(IDS_STRING_ACCOUNT_SETTINGS, REG_ACC_WINDOW_POS);
-	sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-	sheet.m_psh.dwFlags &= ~PSH_HASHELP;
+	auto pSheet = std::make_unique<CResizedPropertySheet>(IDS_STRING_ACCOUNT_SETTINGS, REG_ACC_WINDOW_POS);
+	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
+	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 
 	CAccessInfoDlg dlgInfo;
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
@@ -2896,8 +2926,8 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	dlgInfo.m_host = m_host;
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
 
-	sheet.AddPage(&dlgInfo);
-	auto res = (sheet.DoModal() == IDOK);
+	pSheet->AddPage(&dlgInfo);
+	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
 	{
 		m_cur_account = dlgInfo.m_initial_cred;
@@ -3121,45 +3151,45 @@ void CIPTVChannelEditorDlg::OnSave()
 	try
 	{
 		// create document;
-		rapidxml::xml_document<> doc;
-		auto decl = doc.allocate_node(rapidxml::node_declaration);
+		auto doc = std::make_unique<rapidxml::xml_document<>>();
+		auto decl = doc->allocate_node(rapidxml::node_declaration);
 
 		// adding attributes at the top of our xml
-		decl->append_attribute(doc.allocate_attribute("version", "1.0"));
-		decl->append_attribute(doc.allocate_attribute("encoding", "UTF-8"));
-		doc.append_node(decl);
+		decl->append_attribute(doc->allocate_attribute("version", "1.0"));
+		decl->append_attribute(doc->allocate_attribute("encoding", "UTF-8"));
+		doc->append_node(decl);
 
 		// create <tv_info> root node
-		auto tv_info = doc.allocate_node(rapidxml::node_element, utils::TV_INFO);
+		auto tv_info = doc->allocate_node(rapidxml::node_element, utils::TV_INFO);
 
-		auto info_node = doc.allocate_node(rapidxml::node_element, utils::VERSION_INFO);
-		info_node->append_node(rapidxml::alloc_node(doc, utils::LIST_VERSION, std::to_string(CHANNELS_LIST_VERSION).c_str()));
+		auto info_node = doc->allocate_node(rapidxml::node_element, utils::VERSION_INFO);
+		info_node->append_node(rapidxml::alloc_node(*doc, utils::LIST_VERSION, std::to_string(CHANNELS_LIST_VERSION).c_str()));
 		tv_info->append_node(info_node);
 
-		auto setup_node = doc.allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
+		auto setup_node = doc->allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
 
 		if (!m_channelsMap.empty() && m_channelsMap.begin()->second->stream_uri->has_epg2())
 		{
-			setup_node->append_node(rapidxml::alloc_node(doc, utils::HAS_SECONDARY_EPG, "true"));
+			setup_node->append_node(rapidxml::alloc_node(*doc, utils::HAS_SECONDARY_EPG, "true"));
 			tv_info->append_node(setup_node);
 		}
 
 		// create <tv_categories> node
-		auto cat_node = doc.allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
+		auto cat_node = doc->allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
 
 		// append <tv_category> to <tv_categories> node
 		for (auto& category : m_categoriesMap)
 		{
 			if (category.first != ID_ADD_TO_FAVORITE && !category.second.category->get_channels().empty())
 			{
-				cat_node->append_node(category.second.category->GetNode(doc));
+				cat_node->append_node(category.second.category->GetNode(*doc));
 			}
 		}
 		// append <tv_categories> to <tv_info> node
 		tv_info->append_node(cat_node);
 
 		// create <tv_channels> node
-		auto ch_node = doc.allocate_node(rapidxml::node_element, utils::TV_CHANNELS);
+		auto ch_node = doc->allocate_node(rapidxml::node_element, utils::TV_CHANNELS);
 		// append <tv_channel> to <v_channels> node
 		for (const auto& pair : m_categoriesMap)
 		{
@@ -3169,14 +3199,14 @@ void CIPTVChannelEditorDlg::OnSave()
 			{
 				channel->get_category_ids().clear();
 				channel->get_category_ids().emplace(pair.first);
-				ch_node->append_node(channel->GetNode(doc));
+				ch_node->append_node(channel->GetNode(*doc));
 			}
 		}
 
 		// append <tv_channel> to <tv_info> node
 		tv_info->append_node(ch_node);
 
-		doc.append_node(tv_info);
+		doc->append_node(tv_info);
 		// write document
 		auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), GetConfig().GetCurrentPluginName());
 		std::error_code err;
@@ -3185,7 +3215,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		channelsPath += m_all_channels_lists[lst_idx];
 
 		std::ofstream os(channelsPath, std::istream::binary);
-		os << doc;
+		os << *doc;
 
 		set_allow_save(FALSE);
 		FillTreeChannels(old_selected);
@@ -3316,7 +3346,8 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			if (curPath.CompareNoCase(newPath.parent_path().wstring().c_str()) != 0)
 			{
 				curPath += oFN.lpstrFileTitle;
-				CopyFile(file, curPath, FALSE);
+				std::error_code err;
+				std::filesystem::copy_file(file.GetString(), curPath.GetString(), std::filesystem::copy_options::overwrite_existing, err);
 				SetImageControl(GetIconCache().get_icon(curPath.GetString()), m_wndChannelIcon);
 			}
 
@@ -3481,6 +3512,18 @@ void CIPTVChannelEditorDlg::OnMakeAllAccounts()
 
 	if (success)
 		AfxMessageBox(IDS_STRING_INFO_CREATE_ALL_SUCCESS, MB_OK);
+}
+
+void CIPTVChannelEditorDlg::OnMakeAccount(UINT id)
+{
+	if (CheckForSave())
+	{
+		const auto& old_selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
+
+		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, id - ID_ACCOUNT_TO_START);
+		PackPlugin(m_plugin_type, GetConfig().get_string(true, REG_OUTPUT_PATH), GetConfig().get_string(true, REG_LISTS_PATH), true);
+		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, old_selected);
+	}
 }
 
 void CIPTVChannelEditorDlg::OnRestore()

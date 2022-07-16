@@ -965,15 +965,6 @@ BEGIN
     END
 END
 
-IDR_MENU_SPLIT MENU
-BEGIN
-    POPUP "SplitButton"
-    BEGIN
-        MENUITEM "Make All",                    ID_MAKE_ALL
-        MENUITEM "Make All Accounts",           ID_MAKE_ALL_ACCOUNTS
-    END
-END
-
 IDR_POPUP_TRAY MENU
 BEGIN
     POPUP "TrayIcon"
@@ -1249,6 +1240,12 @@ BEGIN
     IDS_STRING_KINESKOP_P2  "PL"
     IDS_STRING_KINESKOP_P3  "US"
     IDS_STRING_KINESKOP_P4  "RU"
+END
+
+STRINGTABLE
+BEGIN
+    ID_MAKE_ALL             "Make All"
+    ID_MAKE_ALL_ACCOUNTS    "Make All Accounts"
 END
 
 #endif    // English (United States) resources

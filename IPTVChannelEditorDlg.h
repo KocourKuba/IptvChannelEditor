@@ -181,6 +181,7 @@ protected:
 	afx_msg void OnCopyTo(UINT id);
 	afx_msg void OnMoveTo(UINT id);
 	afx_msg void OnAddTo(UINT id);
+	afx_msg void OnMakeAccount(UINT id);
 	afx_msg void OnMakeAll();
 	afx_msg void OnMakeAllAccounts();
 	afx_msg void OnRestore();
