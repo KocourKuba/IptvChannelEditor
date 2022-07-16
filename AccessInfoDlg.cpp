@@ -952,7 +952,16 @@ void CAccessInfoDlg::OnEnChangeEditPluginSuffix()
 	int selected = GetCheckedAccount();
 	if (selected != -1)
 	{
-		m_all_credentials[selected].suffix = get_utf8(m_suffix.GetString());
+		if (utils::is_ascii(m_suffix.GetString()))
+		{
+			m_all_credentials[selected].suffix = get_utf8(m_suffix.GetString());
+		}
+		else
+		{
+			AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+			m_suffix.Empty();
+			UpdateData(FALSE);
+		}
 	}
 }
 
@@ -962,10 +971,16 @@ void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginLogo()
 	int selected = GetCheckedAccount();
 	if (selected != -1)
 	{
-		if (!utils::is_ascii(std::filesystem::path(m_logo.GetString()).filename().wstring().c_str()))
-			AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+		if (utils::is_ascii(std::filesystem::path(m_logo.GetString()).filename().wstring().c_str()))
+		{
+			m_all_credentials[selected].logo = get_utf8(m_logo.GetString());
+		}
 		else
-			m_all_credentials[selected].logo = utils::utf16_to_utf8(m_logo.GetString(), m_logo.GetLength());
+		{
+			AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+			m_logo.Empty();
+			UpdateData(FALSE);
+		}
 	}
 }
 
@@ -975,9 +990,15 @@ void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginBgnd()
 	int selected = GetCheckedAccount();
 	if (selected != -1)
 	{
-		if (!utils::is_ascii(std::filesystem::path(m_background.GetString()).filename().wstring().c_str()))
-			AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+		if (utils::is_ascii(std::filesystem::path(m_background.GetString()).filename().wstring().c_str()))
+		{
+			m_all_credentials[selected].background = get_utf8(m_background.GetString());
+		}
 		else
-			m_all_credentials[selected].background = utils::utf16_to_utf8(m_background.GetString(), m_background.GetLength());
+		{
+			AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+			m_background.Empty();
+			UpdateData(FALSE);
+		}
 	}
 }

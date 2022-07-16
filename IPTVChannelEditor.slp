@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220715193328" scan="133" scanned="20220715193322">
+<document created="20211012165442" version="4.0.374" date="20220716143239" scan="134" scanned="20220716143226">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220715173252" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220716122936" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -3768,9 +3768,9 @@
           <native>Delete channel(s). Are your sure?</native>
           <lang id="ru" date="20211012205815" savedtotm="1">Удалить канал(ы). Вы уверены?</lang>
         </row>
-        <row id="IDS_STRING_WRN_NON_ASCII">
-          <native>Non ASCII symbols in the icon name is not allowed!</native>
-          <lang id="ru" date="20211012205923" savedtotm="1">Только латинские символы допустимы в имени иконки!</lang>
+        <row id="IDS_STRING_WRN_NON_ASCII" changed="20220716143226">
+          <native>Non ASCII symbols in the name is not allowed!</native>
+          <lang id="ru" date="20220716143235">Только латинские символы допустимы в имени!</lang>
         </row>
         <row id="IDS_STRING_WRN_NON_ASCII_LIST">
           <native>Non ASCII symbols in the channel list name is not allowed!</native>
@@ -4688,28 +4688,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220715193322">
-          <prev>3.2.956, 8 Jul 2022</prev>
-          <native>3.2.959, 15 Jul 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220716143226">
+          <prev>3.2.959, 15 Jul 2022</prev>
+          <native>3.3.962, 15 Jul 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20220621223243">2</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220715193322">
-          <prev>956</prev>
-          <native>959</native>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220716143226">
+          <prev>2</prev>
+          <native>3</native>
+        </row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220716143226">
+          <prev>959</prev>
+          <native>962</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220715193322">
-          <prev>3.2.956</prev>
-          <native>3.2.959</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220716143226">
+          <prev>3.2.959</prev>
+          <native>3.3.962</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20220621223243">2</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220715193322">
-          <prev>956</prev>
-          <native>959</native>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220716143226">
+          <prev>2</prev>
+          <native>3</native>
+        </row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220716143226">
+          <prev>959</prev>
+          <native>962</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

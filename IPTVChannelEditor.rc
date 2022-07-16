@@ -1014,8 +1014,7 @@ BEGIN
     IDS_STRING_WRN_CHANNEL_EXIST "Channel already exist!"
     IDS_STRING_WRN_CHANNEL_ID_EXIST 
                             "Channel with this ID already exist!\nAre you sure to replace?"
-    IDS_STRING_WRN_NON_ASCII 
-                            "Non ASCII symbols in the icon name is not allowed!"
+    IDS_STRING_WRN_NON_ASCII "Non ASCII symbols in the name is not allowed!"
     IDS_STRING_WRN_NON_ASCII_LIST 
                             "Non ASCII symbols in the channel list name is not allowed!"
     IDS_STRING_INFO_CREATE_SUCCESS 
