@@ -115,12 +115,15 @@ class Epg_Manager
                 }
 
                 // filter out epg only for selected day
-                $epg_date_start = strtotime('-1 hour', $day_start_ts);
-                $epg_date_end = strtotime('+1 day', $day_start_ts);
-                hd_print("Fetch entries from: $epg_date_start to: $epg_date_end");
+                $epg_date_start = strtotime('-2 hour', $day_start_ts);
+                $epg_date_end = strtotime('+1 day 2 hour', $day_start_ts);
+                $date_start = gmdate('Y-m-d H:i:s', $epg_date_start);
+                $date_end = gmdate('Y-m-d H:i:s', $epg_date_end);
+                hd_print("Fetch entries from: $epg_date_start ($date_start) to: $epg_date_end ($date_end)");
                 foreach ($epg as $time_start => $entry) {
-                    if ($epg_date_start <= $time_start && $time_start <= $epg_date_end) {
+                    if ($time_start >= $epg_date_start && $time_start <= $epg_date_end) {
                         $out_epg[$time_start] = $entry;
+                        //hd_print("$time_start: " . $entry['epg_title']);
                     }
                 }
             }
