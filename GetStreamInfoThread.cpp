@@ -30,7 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "map_serializer.h"
 
 #include "UtilsLib\utils.h"
-#include "thread-pool\thread_pool.hpp"
+#include "thread-pool\BS_thread_pool.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -59,15 +59,15 @@ BOOL CGetStreamInfoThread::InitInstance()
 		ULARGE_INTEGER ul = { 0, (DWORD)m_config.m_container->size() };
 		m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul);
 
-		thread_pool pool(m_config.m_max_threads);
+		BS::thread_pool pool(m_config.m_max_threads);
 		std::atomic<int> count { 0 };
-		pool.parallelize_loop(0, (int)m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
-							  {
-								  for (auto i = a; i < b; i++)
-								  {
-									  GetChannelStreamInfo(m_config, count, i);
-								  }
-							  });
+		const auto& res = pool.parallelize_loop(0, (int)m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
+												{
+													for (auto i = a; i < b; i++)
+													{
+														GetChannelStreamInfo(m_config, count, i);
+													}
+												});
 	}
 
 	m_config.NotifyParent(WM_END_GET_STREAM_INFO);
