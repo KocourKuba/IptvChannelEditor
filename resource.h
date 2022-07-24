@@ -115,7 +115,7 @@
 #define IDS_STRING_STATUS               222
 #define IDS_STRING_STATUS_TEXT          223
 #define IDS_STRING_SHOW_UNKNOWN         224
-#define IDS_STRING_ERR_FILE_MISSING     225
+#define IDS_STRING_ERR_FILES_MISSING    225
 #define IDS_STRING_ERR_NOT_PORTABLE     226
 #define IDS_STRING_ERR_TRAY_ICON        227
 #define IDS_STRING_DEVICE_ID            228
@@ -167,6 +167,7 @@
 #define IDS_STRING_EDIT_SUFFIX          274
 #define IDS_STRING_ERR_DLL_MISSING      275
 #define IDS_STRING_LOAD_CUSTOM_PLAYLIST 276
+#define IDS_STRING_ERR_FILE_MISSING     277
 #define IDS_STRING_FILMAX_P1            300
 #define IDS_STRING_FILMAX_P2            301
 #define IDS_STRING_FILMAX_P3            302
@@ -389,7 +390,7 @@
 #define ID_MAKE_ALL_ACCOUNTS            32802
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        271

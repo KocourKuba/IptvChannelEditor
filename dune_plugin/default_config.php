@@ -246,12 +246,17 @@ abstract class Default_Config
      */
     public function get_channel_list($plugin_cookies)
     {
-        $channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
+        $default_channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
+        hd_print("Default used channels list name: $default_channels_list");
         $all_channels = $this->get_all_channel_list();
-        if (empty($all_channels))
-            return $channels_list;
+        if (empty($all_channels)) {
+            hd_print("No channels list found in selected location: " . smb_tree::get_folder_info($plugin_cookies, 'ch_list_path'));
+            return $default_channels_list;
+        }
 
-        return in_array($channels_list, $all_channels) ? $channels_list : reset($all_channels);
+        $used_list = in_array($default_channels_list, $all_channels) ? $default_channels_list : reset($all_channels);
+        hd_print("Used channels list: $used_list");
+        return $used_list;
     }
 
     /**
@@ -260,13 +265,13 @@ abstract class Default_Config
     public function get_all_channel_list()
     {
         $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
-
+        hd_print("Channels list path: $channels_list_path");
         $all_channels = array();
         $list = glob($channels_list_path . '/*.xml');
         foreach ($list as $filename) {
             $filename = basename($filename);
-            hd_print("found: $filename");
             if ($filename !== 'dune_plugin.xml') {
+                hd_print("Found channels list: $filename");
                 $all_channels[$filename] = $filename;
             }
         }

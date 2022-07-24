@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="135" scanned="20220717003929" built="20220709220456" lang="ru" pane="TLogPane" col="3" row="Release Unicode\IPTVChannelEditor.exe.Strings.2051.ID_MAKE_ALL">
+<desktop scan="136" scanned="20220724173729" built="20220709220456" lang="ru" pane="TLogPane" col="4" row="18.IDS_STRING_ERR_FILE_MISSING">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="1"/>
+    <item class="TRemoveUnusedItemsTrigger" position="2"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>
@@ -29,6 +29,8 @@
   <view node="TWindowsMenuNode" view="TMenuEditor"/>
   <path>
     <item>All</item>
+    <item>Release Unicode\IPTVChannelEditor.exe</item>
+    <item>Strings</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

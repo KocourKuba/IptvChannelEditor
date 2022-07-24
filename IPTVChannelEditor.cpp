@@ -661,6 +661,30 @@ bool PackPlugin(const StreamType plugin_type,
 	std::filesystem::copy(plugin_logo, packFolderIcons, err);
 	std::filesystem::copy(plugin_bgnd, packFolderIcons, err);
 
+	if (!std::filesystem::exists(packFolderIcons + plugin_logo.filename().wstring()))
+	{
+		if (showMessage)
+		{
+			CString msg;
+			msg.Format(IDS_STRING_ERR_FILE_MISSING, plugin_logo.filename().wstring().c_str());
+			AfxMessageBox(msg, MB_OK | MB_ICONSTOP);
+		}
+
+		return false;
+	}
+
+	if (!std::filesystem::exists(packFolderIcons + plugin_bgnd.filename().wstring()))
+	{
+		if (showMessage)
+		{
+			CString msg;
+			msg.Format(IDS_STRING_ERR_FILE_MISSING, plugin_bgnd.filename().wstring().c_str());
+			AfxMessageBox(msg, MB_OK | MB_ICONSTOP);
+		}
+
+		return false;
+	}
+
 	// create plugin manifest
 	std::string data;
 	std::ifstream istream(plugin_root + L"dune_plugin.xml");
@@ -778,7 +802,9 @@ bool PackPlugin(const StreamType plugin_type,
 	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
 	if (!res)
 	{
-		AfxMessageBox(IDS_STRING_ERR_FILE_MISSING, MB_OK | MB_ICONSTOP);
+		if (showMessage)
+			AfxMessageBox(IDS_STRING_ERR_FILES_MISSING, MB_OK | MB_ICONSTOP);
+
 		return false;
 	}
 
@@ -797,6 +823,7 @@ bool PackPlugin(const StreamType plugin_type,
 			msg.Format(IDS_STRING_ERR_FAILED_PACK, pluginFile.c_str());
 			AfxMessageBox(msg, MB_OK | MB_ICONSTOP);
 		}
+
 		return false;
 	}
 

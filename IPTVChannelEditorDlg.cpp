@@ -714,6 +714,9 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 			if (title.empty() && !cred.login.empty())
 				title = cred.login;
 
+			if (title.empty() && !cred.password.empty())
+				title = cred.password;
+
 			if (title.empty() && !cred.token.empty())
 				title = cred.token;
 
