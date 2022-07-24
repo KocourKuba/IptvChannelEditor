@@ -942,6 +942,7 @@ void CAccessInfoDlg::OnEnChangeEditPluginCaption()
 	int selected = GetCheckedAccount();
 	if (selected != -1)
 	{
+		m_caption.Trim();
 		m_all_credentials[selected].caption = get_utf8(m_caption.GetString());
 	}
 }
@@ -952,6 +953,7 @@ void CAccessInfoDlg::OnEnChangeEditPluginSuffix()
 	int selected = GetCheckedAccount();
 	if (selected != -1)
 	{
+		m_suffix.Trim();
 		if (utils::is_ascii(m_suffix.GetString()))
 		{
 			m_all_credentials[selected].suffix = get_utf8(m_suffix.GetString());
@@ -971,6 +973,7 @@ void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginLogo()
 	int selected = GetCheckedAccount();
 	if (selected != -1)
 	{
+		m_logo.Trim();
 		if (utils::is_ascii(std::filesystem::path(m_logo.GetString()).filename().wstring().c_str()))
 		{
 			m_all_credentials[selected].logo = get_utf8(m_logo.GetString());
@@ -990,6 +993,7 @@ void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginBgnd()
 	int selected = GetCheckedAccount();
 	if (selected != -1)
 	{
+		m_background.Trim();
 		if (utils::is_ascii(std::filesystem::path(m_background.GetString()).filename().wstring().c_str()))
 		{
 			m_all_credentials[selected].background = get_utf8(m_background.GetString());

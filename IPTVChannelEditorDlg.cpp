@@ -3237,6 +3237,116 @@ void CIPTVChannelEditorDlg::OnUpdateSave(CCmdUI* pCmdUI)
 	pCmdUI->Enable(is_allow_save());
 }
 
+void CIPTVChannelEditorDlg::OnExport()
+{
+	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
+	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
+
+	int lst_idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
+	if (lst_idx == -1 || m_all_channels_lists.empty())
+	{
+		const auto& plugin_name = GetConfig().GetCurrentPluginName();
+		const auto& list_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
+		const auto& list_path = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), plugin_name);
+		std::error_code err;
+		std::filesystem::create_directory(list_path, err);
+
+		m_all_channels_lists.emplace_back(list_name);
+		lst_idx = m_wndChannels.AddString(list_name.c_str());
+		m_wndChannels.SetCurSel(lst_idx);
+		GetConfig().set_int(false, REG_CHANNELS_TYPE, lst_idx);
+	}
+
+	// renumber categories id
+	LPCWSTR old_selected = nullptr;
+	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
+	if (channel)
+		old_selected = channel->stream_uri->get_id().c_str();
+
+	try
+	{
+		// create document;
+		auto doc = std::make_unique<rapidxml::xml_document<>>();
+		auto decl = doc->allocate_node(rapidxml::node_declaration);
+
+		// adding attributes at the top of our xml
+		decl->append_attribute(doc->allocate_attribute("version", "1.0"));
+		decl->append_attribute(doc->allocate_attribute("encoding", "UTF-8"));
+		doc->append_node(decl);
+
+		// create <tv_info> root node
+		auto tv_info = doc->allocate_node(rapidxml::node_element, utils::TV_INFO);
+
+		auto info_node = doc->allocate_node(rapidxml::node_element, utils::VERSION_INFO);
+		info_node->append_node(rapidxml::alloc_node(*doc, utils::LIST_VERSION, std::to_string(CHANNELS_LIST_VERSION).c_str()));
+		tv_info->append_node(info_node);
+
+		auto setup_node = doc->allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
+
+		if (!m_channelsMap.empty() && m_channelsMap.begin()->second->stream_uri->has_epg2())
+		{
+			setup_node->append_node(rapidxml::alloc_node(*doc, utils::HAS_SECONDARY_EPG, "true"));
+			tv_info->append_node(setup_node);
+		}
+
+		// create <tv_categories> node
+		auto cat_node = doc->allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
+
+		// append <tv_category> to <tv_categories> node
+		for (auto& category : m_categoriesMap)
+		{
+			if (category.first != ID_ADD_TO_FAVORITE && !category.second.category->get_channels().empty())
+			{
+				cat_node->append_node(category.second.category->GetNode(*doc));
+			}
+		}
+		// append <tv_categories> to <tv_info> node
+		tv_info->append_node(cat_node);
+
+		// create <tv_channels> node
+		auto ch_node = doc->allocate_node(rapidxml::node_element, utils::TV_CHANNELS);
+		// append <tv_channel> to <v_channels> node
+		for (const auto& pair : m_categoriesMap)
+		{
+			if (pair.first == ID_ADD_TO_FAVORITE) continue;
+
+			for (auto& channel : pair.second.category->get_channels())
+			{
+				channel->get_category_ids().clear();
+				channel->get_category_ids().emplace(pair.first);
+				ch_node->append_node(channel->GetNode(*doc));
+			}
+		}
+
+		// append <tv_channel> to <tv_info> node
+		tv_info->append_node(ch_node);
+
+		doc->append_node(tv_info);
+		// write document
+		auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), GetConfig().GetCurrentPluginName());
+		std::error_code err;
+		std::filesystem::create_directories(channelsPath, err);
+
+		channelsPath += m_all_channels_lists[lst_idx];
+
+		std::ofstream os(channelsPath, std::istream::binary);
+		os << *doc;
+
+		set_allow_save(FALSE);
+		FillTreeChannels(old_selected);
+	}
+	catch (const rapidxml::parse_error& ex)
+	{
+		CString error(ex.what());
+		AfxMessageBox(error, MB_OK | MB_ICONERROR);
+	}
+	catch (const std::exception& ex)
+	{
+		CString error(ex.what());
+		AfxMessageBox(error, MB_OK | MB_ICONERROR);
+	}
+}
+
 void CIPTVChannelEditorDlg::OnNewCategory()
 {
 	auto categoryId = GetNewCategoryID();
