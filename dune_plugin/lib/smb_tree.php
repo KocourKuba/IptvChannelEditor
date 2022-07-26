@@ -470,12 +470,12 @@ class smb_tree
 
     public static function get_folder_info(&$plugin_cookies, $param)
     {
+        $select_folder = get_install_path();
         if (isset($plugin_cookies->{$param}) && !empty($plugin_cookies->{$param})) {
             $settings = json_decode($plugin_cookies->{$param}, true);
             if (isset($settings['filepath'])) {
                 $select_folder = $settings['filepath'];
             } else {
-                $select_folder = '';
                 foreach ($settings as $item) {
                     if (isset($item['foldername'])) {
                         $q = isset($item['user']) ? self::get_mount_smb($settings) : self::get_mount_nfs();
@@ -485,7 +485,7 @@ class smb_tree
             }
         }
 
-        return (empty($select_folder)) ? get_install_path() : $select_folder;
+        return $select_folder;
     }
 
     public static function get_bug_platform_kind()

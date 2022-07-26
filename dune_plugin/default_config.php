@@ -242,30 +242,17 @@ abstract class Default_Config
 
     /**
      * @param $plugin_cookies
-     * @return string
+     * @param string &$used_list
+     * @return array $all_channels
      */
-    public function get_channel_list($plugin_cookies)
+    public function get_channel_list($plugin_cookies, &$used_list)
     {
-        $default_channels_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
-        hd_print("Default used channels list name: $default_channels_list");
-        $all_channels = $this->get_all_channel_list();
-        if (empty($all_channels)) {
-            hd_print("No channels list found in selected location: " . smb_tree::get_folder_info($plugin_cookies, 'ch_list_path'));
-            return $default_channels_list;
-        }
+        $used_list = isset($plugin_cookies->channels_list) ? (string)$plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
+        hd_print("Default channels list name: $used_list");
 
-        $used_list = in_array($default_channels_list, $all_channels) ? $default_channels_list : reset($all_channels);
-        hd_print("Used channels list: $used_list");
-        return $used_list;
-    }
-
-    /**
-     * @return array
-     */
-    public function get_all_channel_list()
-    {
         $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
         hd_print("Channels list path: $channels_list_path");
+
         $all_channels = array();
         $list = glob($channels_list_path . '/*.xml');
         foreach ($list as $filename) {
@@ -276,6 +263,16 @@ abstract class Default_Config
             }
         }
 
+        if (empty($all_channels)) {
+            hd_print("No channels list found in selected location: " . smb_tree::get_folder_info($plugin_cookies, 'ch_list_path'));
+            return $all_channels;
+        }
+
+        if (!in_array($used_list, $all_channels)) {
+            $used_list = (string)reset($all_channels);
+        }
+
+        hd_print("Used channels list: $used_list");
         return $all_channels;
     }
 
@@ -412,6 +409,14 @@ abstract class Default_Config
     public function get_embedded_account()
     {
         return $this->embedded_account;
+    }
+
+    /**
+     * @param object $account
+     */
+    public function set_embedded_account($account)
+    {
+        $this->embedded_account = $account;
     }
 
     /**

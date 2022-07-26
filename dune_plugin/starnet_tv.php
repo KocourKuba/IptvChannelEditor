@@ -70,7 +70,7 @@ class Starnet_Tv extends Abstract_Tv
      */
     public function load_channels(&$plugin_cookies)
     {
-        $channels_list = $this->plugin->config->get_channel_list($plugin_cookies);
+        $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
         $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . '/';
         $channels_list_path .= $channels_list;
 

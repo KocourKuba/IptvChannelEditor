@@ -83,36 +83,30 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // ott or token dialog
         $text_icon = $this->plugin->get_image_path('text.png');
-        switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
-            case 'OTT_KEY':
-                if ($this->plugin->config->get_embedded_account() === null) {
+        if ($this->plugin->config->get_embedded_account() === null) {
+            switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
+                case 'OTT_KEY':
                     Control_Factory::add_image_button($defs, $this, null, 'ott_key_dialog',
                         'Активировать просмотр:', 'Ввести ОТТ ключ и домен', $text_icon);
-                } else {
-                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются встроенные данные');
-                }
-                break;
-            case 'LOGIN':
-                if ($this->plugin->config->get_embedded_account() === null) {
+                    break;
+                case 'LOGIN':
                     Control_Factory::add_image_button($defs, $this, null, 'login_dialog',
                         'Активировать просмотр:', 'Введите логин и пароль', $text_icon);
-                } else {
-                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются встроенные данные');
-                }
-                break;
-            case 'PIN':
-                if ($this->plugin->config->get_embedded_account() === null) {
+                    break;
+                case 'PIN':
                     Control_Factory::add_image_button($defs, $this, null, 'pin_dialog',
                         'Активировать просмотр:', 'Введите ключ доступа', $text_icon);
-                } else {
-                    Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются встроенные данные');
-                }
-                break;
+                    break;
+            }
+        } else {
+            Control_Factory::add_label($defs, 'Активировать просмотр:', 'Используются встроенные данные');
+            Control_Factory::add_button($defs, $this, null, 'move_account',
+                'Встроенные данные:', 'Переместить в память Dune', 0);
         }
 
         //////////////////////////////////////
         // channels path
-        $display_path = $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
+        $display_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
         if (strlen($display_path) > 30) {
             $display_path = "..." . substr($display_path, -30);
         }
@@ -121,13 +115,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // channels lists
-        $all_channels = $this->plugin->config->get_all_channel_list();
-        if (!empty($all_channels)) {
-            $channels_list = $this->plugin->config->get_channel_list($plugin_cookies);
+        $all_channels = $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
+        if (empty($all_channels)) {
+            Control_Factory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
+        } else {
             Control_Factory::add_combobox($defs, $this, null, 'channels_list',
                 'Используемый список каналов:', $channels_list, $all_channels, 0, true);
-        } else {
-            Control_Factory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         }
 
         //////////////////////////////////////
@@ -426,6 +419,30 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
 
                     return $this->reload_channels($plugin_cookies);
+
+                case 'move_account': // handle move account
+                    $embedded_account = $this->plugin->config->get_embedded_account();
+                    if ($embedded_account !== null) {
+                        switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
+                            case 'OTT_KEY':
+                                $plugin_cookies->subdomain = $embedded_account->domain;
+                                $plugin_cookies->ott_key = $embedded_account->ott_key;
+                                $plugin_cookies->mediateka = $embedded_account->vportal;
+                                break;
+                            case 'LOGIN':
+                                $plugin_cookies->login = $embedded_account->login;
+                                $plugin_cookies->password = $embedded_account->password;
+                                break;
+                            case 'PIN':
+                                $plugin_cookies->password = $embedded_account->password;
+                                break;
+                        }
+                        exec('rm -rf ' . get_install_path('account.dat'));
+                        $this->plugin->config->set_embedded_account(null);
+                        $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
+                        return Action_Factory::show_title_dialog('Данные перенесены', $post_action);
+                    }
+                    break;
 
                 case 'change_list_path':
                     $media_url = MediaURL::encode(
