@@ -58,6 +58,7 @@ uri_edem::uri_edem()
 	info.name = load_string_resource(IDS_STRING_CUSTOM_PLAYLIST);
 	info.is_custom = true;
 	playlists.emplace_back(info);
+	access_type = AccountAccessType::enOtt;
 }
 
 void uri_edem::parse_uri(const std::wstring& url)

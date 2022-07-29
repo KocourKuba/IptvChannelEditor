@@ -74,6 +74,7 @@ abstract class Default_Config
     public $PLUGIN_CAPTION = '';
     public $PLUGIN_ICON = '';
     public $PLUGIN_BACKGROUND = '';
+    public $PLUGIN_CHANNELS_URL_PATH = '';
 
     protected $FEATURES = array();
     protected $EPG_PARSER_PARAMS = array();
@@ -112,8 +113,9 @@ abstract class Default_Config
         $this->PLUGIN_SHORT_NAME = $xml->short_name;
         $this->PLUGIN_ICON = $xml->icon_url;
         $this->PLUGIN_BACKGROUND = $xml->background;
-        $this->PLUGIN_VERSION = $xml->version;
+        $this->PLUGIN_VERSION = $xml->version . '.' . $xml->version_index;
         $this->PLUGIN_DATE = $xml->release_date;
+        $this->PLUGIN_CHANNELS_URL_PATH = $xml->channels_url_path;
 
         $this->FEATURES[ACCOUNT_TYPE] = 'UNKNOWN';
         $this->FEATURES[SECONDARY_EPG] = false;
@@ -250,11 +252,22 @@ abstract class Default_Config
         $used_list = isset($plugin_cookies->channels_list) ? (string)$plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
         hd_print("Default channels list name: $used_list");
 
-        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
-        hd_print("Channels list path: $channels_list_path");
+        $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
+        switch ($channels_source)
+        {
+            case 1: // folder
+                $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
+                break;
+            case 2: // url
+                $channels_list_path = get_install_path();
+                break;
+            default:
+                return array();
+        }
+        hd_print("Channels list search path: $channels_list_path");
 
         $all_channels = array();
-        $list = glob($channels_list_path . '/*.xml');
+        $list = glob($channels_list_path . '*.xml');
         foreach ($list as $filename) {
             $filename = basename($filename);
             if ($filename !== 'dune_plugin.xml') {
@@ -264,7 +277,7 @@ abstract class Default_Config
         }
 
         if (empty($all_channels)) {
-            hd_print("No channels list found in selected location: " . smb_tree::get_folder_info($plugin_cookies, 'ch_list_path'));
+            hd_print("No channels list found in selected location: " . $channels_list_path);
             return $all_channels;
         }
 
@@ -526,8 +539,21 @@ abstract class Default_Config
      */
     public function ClearPlaylistCache()
     {
-        $tmp_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_tv.m3u8";
+        $tmp_file = get_temp_path("playlist_tv.m3u8");
         hd_print("Clear playlist cache: $tmp_file");
+        if (file_exists($tmp_file)) {
+            unlink($tmp_file);
+        }
+    }
+
+    /**
+     * Clear downloaded playlist
+     * @return void
+     */
+    public function ClearChannelsCache($plugin_cookies)
+    {
+        $tmp_file = get_temp_path($plugin_cookies->channels_list);
+        hd_print("Clear channels cache: $tmp_file");
         if (file_exists($tmp_file)) {
             unlink($tmp_file);
         }
@@ -665,7 +691,7 @@ abstract class Default_Config
      */
     protected function FetchTvM3U($plugin_cookies, $force = false)
     {
-        $tmp_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_tv.m3u8";
+        $tmp_file = get_temp_path("playlist_tv.m3u8");
         if ($force !== false || !file_exists($tmp_file)) {
             try {
                 $url = $this->GetPlaylistUrl('tv1', $plugin_cookies);
@@ -701,7 +727,7 @@ abstract class Default_Config
      */
     public function FetchVodM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.m3u8";
+        $m3u_file = get_temp_path("playlist_vod.m3u8");
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {

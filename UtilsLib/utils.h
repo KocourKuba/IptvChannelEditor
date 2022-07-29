@@ -31,7 +31,8 @@ DEALINGS IN THE SOFTWARE.
 namespace utils
 {
 
-static constexpr auto DUNE_PLUGIN_NAME = L"dune_plugin_{:s}_{:s}.zip";
+static constexpr auto DUNE_PLUGIN_NAME = "dune_plugin_{:s}_{:s}.zip";
+static constexpr auto DUNE_UPDATE_NAME = "update_{:s}_{:s}";
 static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channel_unset.png";
 static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
@@ -410,5 +411,6 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 
 std::string generateRandomId(size_t length = 0);
 bool is_ascii(const wchar_t* szFilename);
+bool is_number(const wchar_t* szFilename);
 
 }

@@ -55,10 +55,12 @@ protected:
 	CMFCEditBrowseCtrlEx m_wndPlayer;
 	CMFCEditBrowseCtrlEx m_wndListsPath;
 	CMFCEditBrowseCtrlEx m_wndPluginsPath;
+	CMFCEditBrowseCtrlEx m_wndPluginsWebUpdatePath;
 
 private:
 	CString m_player;
 	CString m_probe;
 	CString m_lists_path;
 	CString m_plugins_path;
+	CString m_plugins_web_update_path;
 };

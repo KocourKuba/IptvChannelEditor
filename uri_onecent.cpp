@@ -42,6 +42,7 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{S
 uri_onecent::uri_onecent()
 {
 	provider_url = L"https://1cent.tv/";
+	access_type = AccountAccessType::enPin;
 }
 
 void uri_onecent::parse_uri(const std::wstring& url)

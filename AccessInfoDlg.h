@@ -71,15 +71,25 @@ protected:
 	afx_msg void OnEnChangeMfceditbrowsePluginBgnd();
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
+	afx_msg void OnEnChangeEditPluginUpdateVersion();
+	afx_msg void OnEnChangeEditPluginUpdateUrl();
+	afx_msg void OnEnChangeEditPluginUpdateName();
+	afx_msg void OnEnChangeEditPluginPackageName();
+	afx_msg void OnEnChangeEditPluginUpdateFileUrl();
+	afx_msg void OnEnChangeEditPluginChannelsWebPath();
+	afx_msg void OnBnClickedCheckAutoincrementVersion();
+	afx_msg void OnBnClickedCheckCustomUpdateName();
+	afx_msg void OnBnClickedCheckCustomPackageName();
 
 private:
-	int GetCheckedAccount();
+	Credentials& GetCheckedAccount();
+	int GetCheckedAccountIdx();
 	void GetAccountInfo();
-	void LoadAccounts();
 	void CreateAccountsList();
 	void CreateAccountInfo();
 	void CreateChannelsList();
 	void FillChannelsList();
+	void SetWebUpdate();
 
 public:
 	CString m_status;
@@ -105,19 +115,32 @@ protected:
 	CListCtrl m_wndChLists;
 	CMFCLinkCtrl m_wndProviderLink;
 	CToolTipCtrl m_wndToolTipCtrl;
+	CButton m_wndAutoIncrement;
+	CButton m_wndCustomPackageName;
+	CButton m_wndCustomUpdateName;
+	CEdit m_wndUpdateUrl;
+	CEdit m_wndUpdatePackageUrl;
+	CEdit m_wndVersionID;
+	CEdit m_wndUpdateName;
+	CEdit m_wndPackageName;
 
 private:
 	CString m_caption;
 	CString m_logo;
 	CString m_background;
 	CString m_suffix;
+	CString m_updateInfoUrl;
+	CString m_updatePackageUrl;
+	CString m_updateInfoName;
+	CString m_packageName;
+	CString m_versionIdx;
+	CString m_channelsWebPath;
 
 	std::unique_ptr<uri_stream> m_plugin;
 	std::vector<ServersInfo> m_servers;
 	std::vector<ProfilesInfo> m_profiles;
 	std::vector<Credentials> m_all_credentials;
 	StreamType m_plugin_type = StreamType::enBase;
-	AccountAccessType m_access_type = AccountAccessType::enUnknown;
 	std::map<UINT, std::wstring> m_tooltips_info_account;
 };
 

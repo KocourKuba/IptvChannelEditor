@@ -363,4 +363,18 @@ bool is_ascii(const wchar_t* szFilename)
 	return true;
 }
 
+bool is_number(const wchar_t* szFilename)
+{
+	size_t i = 0;
+	while (szFilename[i] != 0)
+	{
+		if (!std::isdigit(szFilename[i++]))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 }

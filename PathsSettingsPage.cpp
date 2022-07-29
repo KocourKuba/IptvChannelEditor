@@ -53,6 +53,8 @@ void CPathsSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_CH_LIST_PATH, m_lists_path);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGINS_PATH, m_wndPluginsPath);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGINS_PATH, m_plugins_path);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGINS_WEB_UPDATE_PATH, m_wndPluginsWebUpdatePath);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGINS_WEB_UPDATE_PATH, m_plugins_web_update_path);
 }
 
 BOOL CPathsSettingsPage::OnInitDialog()
@@ -63,6 +65,7 @@ BOOL CPathsSettingsPage::OnInitDialog()
 	m_probe = GetConfig().get_string(true, REG_FFPROBE).c_str();
 	m_lists_path = GetConfig().get_string(true, REG_LISTS_PATH).c_str();
 	m_plugins_path = GetConfig().get_string(true, REG_OUTPUT_PATH).c_str();
+	m_plugins_web_update_path = GetConfig().get_string(true, REG_WEB_UPDATE_PATH).c_str();
 
 	CString filter(_T("EXE file(*.exe)|*.exe|All Files (*.*)|*.*||"));
 	m_wndPlayer.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
@@ -90,10 +93,14 @@ void CPathsSettingsPage::OnOK()
 	if (m_plugins_path.Right(1) != '\\')
 		m_plugins_path += '\\';
 
+	if (m_plugins_web_update_path.Right(1) != '\\')
+		m_plugins_web_update_path += '\\';
+
 	GetConfig().set_string(true, REG_PLAYER, m_player.GetString());
 	GetConfig().set_string(true, REG_FFPROBE, m_probe.GetString());
 	GetConfig().set_string(true, REG_LISTS_PATH, m_lists_path.GetString());
 	GetConfig().set_string(true, REG_OUTPUT_PATH, m_plugins_path.GetString());
+	GetConfig().set_string(true, REG_WEB_UPDATE_PATH, m_plugins_web_update_path.GetString());
 
 	__super::OnOK();
 }

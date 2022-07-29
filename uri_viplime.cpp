@@ -44,6 +44,7 @@ uri_viplime::uri_viplime()
 	server_subst_type = ServerSubstType::enStream;
 	params.epg_url = L"http://epg.esalecrm.net/viplime/epg/{ID}.json";
 	provider_url = L"http://viplime.fun/";
+	access_type = AccountAccessType::enPin;
 
 	servers_list = {
 		{ load_string_resource(IDS_STRING_VIPLIME_P1), L"high"  },

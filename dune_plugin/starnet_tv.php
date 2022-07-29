@@ -70,11 +70,28 @@ class Starnet_Tv extends Abstract_Tv
      */
     public function load_channels(&$plugin_cookies)
     {
-        $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
-        $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . '/';
-        $channels_list_path .= $channels_list;
-
+        $channels_list_path = '';
         try {
+            $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
+            $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
+            switch ($source) {
+                case 1:
+                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . $channels_list;
+                    break;
+                case 2:
+                    if (isset($plugin_cookies->channels_url) && !empty($plugin_cookies->channels_url)) {
+                        $url_path = $plugin_cookies->channels_url;
+                    } else {
+                        $url_path = $this->plugin->config->PLUGIN_CHANNELS_URL_PATH;
+                    }
+
+                    $channels_list_path = get_temp_path($channels_list);
+                    if (!file_exists($channels_list_path)) {
+                        file_put_contents($channels_list_path, HD::http_get_document($url_path . $channels_list));
+                    }
+                    break;
+            }
+
             $xml = HD::parse_xml_file($channels_list_path);
         } catch (Exception $ex) {
             hd_print("Can't fetch channel_list $channels_list_path");

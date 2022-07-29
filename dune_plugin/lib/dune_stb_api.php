@@ -1077,22 +1077,19 @@ function set_video_zoom($value)
 # Storage access
 ###############################################################################
 
+function get_temp_path($path = '')
+{
+    return DuneSystem::$properties['tmp_dir_path'] . '/' . $path;
+}
+
 function get_data_path($path = '')
 {
-    if (!empty($path)) {
-        $path = '/' . $path;
-    }
-
-    return DuneSystem::$properties['data_dir_path'] . $path;
+    return DuneSystem::$properties['data_dir_path'] . '/' . $path;
 }
 
 function get_install_path($path = '')
 {
-    if (!empty($path)) {
-        $path = '/' . $path;
-    }
-
-    return DuneSystem::$properties['install_dir_path'] . $path;
+    return DuneSystem::$properties['install_dir_path'] . '/' . $path;
 }
 
 function get_local_storages_list()

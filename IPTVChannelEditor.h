@@ -85,9 +85,9 @@ std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);
 void ConvertAccounts();
 
 bool PackPlugin(const StreamType plugin_type,
-				const std::wstring& output_path,
-				const std::wstring& lists_path,
 				bool showMessage,
+				bool make_web_update = false,
+				std::wstring output_path = L"",
 				bool noEmbed = false,
 				bool noCustom = false);
 
@@ -96,5 +96,6 @@ void RestoreWindowPos(HWND hWnd, LPCTSTR name);
 int RequestToUpdateServer(const std::wstring& command);
 
 std::wstring load_string_resource(unsigned int id);
+uintmax_t calc_folder_size(const std::wstring& path);
 
 extern CIPTVChannelEditorApp theApp;

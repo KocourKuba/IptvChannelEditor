@@ -44,6 +44,7 @@ static constexpr auto URI_TEMPLATE_ARCHIVE_MPEG = L"http://{DOMAIN}/play/{ID}/{T
 uri_iptvonline::uri_iptvonline()
 {
 	provider_url = L"https://iptv.online/";
+	access_type = AccountAccessType::enPin;
 }
 
 void uri_iptvonline::parse_uri(const std::wstring& url)

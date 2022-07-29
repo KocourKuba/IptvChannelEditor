@@ -4,12 +4,18 @@
     <short_name>{plugin_short_name}</short_name>
     <icon_url>{plugin_logo}</icon_url>
     <background>{plugin_background}</background>
-    <version_index>1</version_index>
+    <version_index>{plugin_version_index}</version_index>
     <version>{plugin_version}</version>
     <release_date>{plugin_release_date}</release_date>
+    <channels_url_path></channels_url_path>
     <auto_resume>
         <enable>yes</enable>
     </auto_resume>
+    <check_update>
+        <schema>2</schema>
+        <url></url>
+        <timeout>0</timeout>
+    </check_update>
     <entry_points>
         <entry_point>
             <parent_media_url>root://tv</parent_media_url>

@@ -316,6 +316,7 @@ protected:
 	CButton m_wndEpg2;
 	CButton m_wndUpdateChanged;
 	CButton m_wndSettings;
+	CButton m_wndMakeWebUpdate;
 	CProgressCtrl m_wndProgress;
 	CProgressCtrl m_wndProgressTime;
 	CTrayIcon m_wndTrayIcon;

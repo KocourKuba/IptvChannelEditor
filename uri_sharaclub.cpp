@@ -56,6 +56,7 @@ uri_sharaclub::uri_sharaclub()
 	provider_api_url = API_URL;
 	provider_vod_url = PLAYLIST_VOD_TEMPLATE;
 	vod_supported = true;
+	access_type = AccountAccessType::enLoginPass;
 }
 
 void uri_sharaclub::parse_uri(const std::wstring& url)

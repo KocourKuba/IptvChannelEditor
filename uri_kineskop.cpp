@@ -45,6 +45,7 @@ uri_kineskop::uri_kineskop()
 	per_channel_token = true;
 	provider_url = L"http://kineskop.club/";
 	epg_params[0].epg_url = L"http://epg.esalecrm.net/kineskop/epg/{ID}.json";
+	access_type = AccountAccessType::enLoginPass;
 
 	for (int i = 0; i <= IDS_STRING_KINESKOP_P4 - IDS_STRING_KINESKOP_P1; i++)
 	{

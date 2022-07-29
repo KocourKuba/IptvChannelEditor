@@ -56,6 +56,7 @@ uri_cbilling::uri_cbilling()
 	provider_url = L"https://cbilling.live/";
 	provider_vod_url = L"http://protected-api.com";
 	vod_supported = true;
+	access_type = AccountAccessType::enPin;
 
 	for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
 	{

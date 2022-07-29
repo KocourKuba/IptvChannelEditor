@@ -46,6 +46,7 @@ uri_oneusd::uri_oneusd()
 	per_channel_token = true;
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
 	provider_url = L"http://1usd.tv/";
+	access_type = AccountAccessType::enPin;
 }
 
 void uri_oneusd::parse_uri(const std::wstring& url)

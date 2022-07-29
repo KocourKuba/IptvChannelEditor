@@ -51,6 +51,7 @@ uri_antifriz::uri_antifriz()
 	provider_url = L"https://antifriztv.com/";
 	provider_vod_url = L"http://protected-api.com";
 	vod_supported = true;
+	access_type = AccountAccessType::enPin;
 }
 
 void uri_antifriz::parse_uri(const std::wstring& url)

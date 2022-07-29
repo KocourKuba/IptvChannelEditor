@@ -57,6 +57,7 @@ uri_vidok::uri_vidok()
 	params.epg_start = "start";
 	params.epg_end = "end";
 	provider_url = L"https://vidok.tv/";
+	access_type = AccountAccessType::enLoginPass;
 }
 
 void uri_vidok::parse_uri(const std::wstring& url)

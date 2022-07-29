@@ -43,6 +43,7 @@ uri_fox::uri_fox() : epg_technic({ L"fox", L"fox" })
 	provider_url = L"http://info.fox-tv.fun/";
 	vod_supported = true;
 	provider_vod_url = L"http://pl.fox-tv.fun/{:s}/{:s}/vodall.m3u";
+	access_type = AccountAccessType::enLoginPass;
 }
 
 void uri_fox::parse_uri(const std::wstring& url)

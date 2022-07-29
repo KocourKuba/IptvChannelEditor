@@ -35,9 +35,9 @@ class Starnet_Entry_Handler implements User_Input_Handler
                     hd_print("do setup");
                     return Action_Factory::open_folder('setup', 'Настройки ' . DuneSystem::$properties['plugin_name']);
                 case 'do_clear_epg':
-                    $epg_path = DuneSystem::$properties['tmp_dir_path'] . "/epg";
+                    $epg_path = get_temp_path("epg/");
                     hd_print("do clear epg: $epg_path");
-                    foreach(glob($epg_path . "/*") as $file) {
+                    foreach(glob($epg_path . "*") as $file) {
                         if(is_file($file)) {
                             unlink($file);
                         }

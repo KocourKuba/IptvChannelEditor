@@ -420,14 +420,14 @@ void md5_finish(md5_state_t* pms, md5_byte_t digest[16])
 } // md5
 
 // some convenience c++ functions
-inline std::string md5_hash_string(const std::string& s)
+inline std::string md5_hash_string(const char* s, size_t s_sz)
 {
 	char digest[16]{};
 
 	md5::md5_state_t state;
 
 	md5::md5_init(&state);
-	md5::md5_append(&state, (md5::md5_byte_t const*)s.c_str(), (md5::md5_word_t)s.size());
+	md5::md5_append(&state, (md5::md5_byte_t const*)s, (md5::md5_word_t)s_sz);
 	md5::md5_finish(&state, (md5::md5_byte_t*)digest);
 
 	std::string ret;
@@ -437,6 +437,11 @@ inline std::string md5_hash_string(const std::string& s)
 	return ret;
 }
 
+inline std::string md5_hash_string(const std::string& s)
+{
+	return md5_hash_string(s.c_str(), s.size());
+}
+
 const char hexval[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
 inline std::string md5_hash_hex(const std::string& input)
@@ -444,6 +449,39 @@ inline std::string md5_hash_hex(const std::string& input)
 	std::string hash = md5_hash_string(input);
 	std::string hex;
 
+	for (const char& i : hash)
+	{
+		hex.push_back(hexval[((i >> 4) & 0xF)]);
+		hex.push_back(hexval[i & 0x0F]);
+	}
+
+	return hex;
+}
+
+inline std::string md5_hash_file(const std::wstring& path)
+{
+	static constexpr auto BUFFSIZE = 16384;
+	std::ifstream ifs(path, std::ifstream::binary);
+
+	char buffer[BUFFSIZE] = {};
+
+	md5::md5_state_t state;
+	md5::md5_init(&state);
+	while (ifs.good())
+	{
+		ifs.read(buffer, BUFFSIZE);
+		md5::md5_append(&state, (md5::md5_byte_t const*)buffer, (md5::md5_word_t)ifs.gcount());
+	}
+	ifs.close();
+
+	char digest[16]{};
+	md5::md5_finish(&state, (md5::md5_byte_t*)digest);
+
+	std::string hash;
+	hash.resize(16);
+	std::copy(digest, digest + 16, hash.begin());
+
+	std::string hex;
 	for (const char& i : hash)
 	{
 		hex.push_back(hexval[((i >> 4) & 0xF)]);

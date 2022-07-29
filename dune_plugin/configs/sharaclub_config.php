@@ -364,7 +364,7 @@ class SharaclubPluginConfig extends Default_Config
 
     protected static function get_vod_cache_file()
     {
-        return DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json";
+        return get_temp_path("playlist_vod.json");
     }
 
     /**

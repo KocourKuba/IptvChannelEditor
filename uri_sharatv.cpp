@@ -40,6 +40,7 @@ uri_sharatv::uri_sharatv() : epg_technic({ L"shara-tv", L"shara-tv" })
 {
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"https://shara-tv.org/";
+	access_type = AccountAccessType::enLoginPass;
 }
 
 void uri_sharatv::parse_uri(const std::wstring& url)

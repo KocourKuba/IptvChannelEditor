@@ -34,6 +34,14 @@ enum class ServerSubstType {
 	enPlaylist
 };
 
+enum class AccountAccessType
+{
+	enUnknown = -1,
+	enOtt,
+	enPin,
+	enLoginPass
+};
+
 struct TemplateParams
 {
 	StreamSubType streamSubtype = StreamSubType::enHLS;
@@ -457,6 +465,8 @@ public:
 	/// <param name="params">Template parameters.</param>
 	virtual bool set_profile(TemplateParams& /*params*/) { return true; }
 
+	AccountAccessType get_access_type() const { return access_type; }
+
 protected:
 
 	void replace_vars(std::wstring& url, const TemplateParams& params) const;
@@ -472,6 +482,7 @@ protected:
 	std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
 	ServerSubstType server_subst_type = ServerSubstType::enNone;
+	AccountAccessType access_type = AccountAccessType::enOtt;
 	std::vector<ServersInfo> servers_list;
 	std::vector<ProfilesInfo> profiles_list;
 	std::vector<PlaylistInfo> playlists;

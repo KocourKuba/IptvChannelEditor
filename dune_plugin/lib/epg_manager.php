@@ -80,8 +80,8 @@ class Epg_Manager
 
         hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
 
-        $cache_dir = DuneSystem::$properties['tmp_dir_path'] . "/epg";
-        $cache_file = sprintf("%s/epg_channel_%s", $cache_dir, hash('crc32', $epg_url));
+        $cache_dir = get_temp_path("epg/");
+        $cache_file = $cache_dir . "epg_channel_" . hash('crc32', $epg_url);
 
         $from_cache = false;
         $epg = array();

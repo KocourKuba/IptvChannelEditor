@@ -57,6 +57,7 @@ uri_tvclub::uri_tvclub()
 	params.epg_start = "start";
 	params.epg_end = "end";
 	provider_url = L"https://tvclub.cc/";
+	access_type = AccountAccessType::enLoginPass;
 }
 
 void uri_tvclub::parse_uri(const std::wstring& url)

@@ -485,6 +485,9 @@ class smb_tree
             }
         }
 
+        if (substr($select_folder, -1) !== '/')
+            $select_folder .= '/';
+
         return $select_folder;
     }
 

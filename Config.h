@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include <variant>
 #include <map>
 #include "UtilsLib\json_wrapper.h"
+#include "uri_stream.h"
 
 enum class StreamType
 {
@@ -58,14 +59,6 @@ enum class StreamType
 	enLast,
 };
 
-enum class AccountAccessType
-{
-	enUnknown = -1,
-	enOtt,
-	enPin,
-	enLoginPass
-};
-
 constexpr auto APP_SETTINGS = L"Application";
 
 constexpr auto CMP_FLAG_TITLE   = 0x01;
@@ -90,6 +83,7 @@ constexpr auto REG_PLAYER          = _T("Player");
 constexpr auto REG_FFPROBE         = _T("FFProbe");
 constexpr auto REG_LISTS_PATH      = _T("ListsPath");
 constexpr auto REG_OUTPUT_PATH     = _T("PluginsPath");
+constexpr auto REG_WEB_UPDATE_PATH = _T("PluginsWebUpdatePath");
 constexpr auto REG_AUTO_SYNC       = _T("AutoSyncChannel");
 constexpr auto REG_AUTO_HIDE       = _T("AutoHideToTray");
 constexpr auto REG_MAX_THREADS     = _T("MaxStreamThreads");
@@ -168,10 +162,20 @@ public:
 		caption.clear();
 		logo.clear();
 		background.clear();
+		update_url.clear();
+		update_package_url.clear();
+		update_name.clear();
+		package_name.clear();
+		version_id.clear();
+		ch_web_path.clear();
 		ch_list.clear();
-		int device_id = 0;
-		int profile_id = 0;
-		int embed = 0;
+		custom_increment = 0;
+		custom_update_name = 0;
+		custom_package_name = 0;
+		device_id = 0;
+		profile_id = 0;
+		embed = 0;
+		not_valid = false;
 	}
 
 	std::wstring get_login() const { return utils::utf8_to_utf16(login); }
@@ -184,6 +188,7 @@ public:
 	std::wstring get_caption() const { return utils::utf8_to_utf16(caption); }
 	std::wstring get_logo() const { return utils::utf8_to_utf16(logo); }
 	std::wstring get_background() const { return utils::utf8_to_utf16(background); }
+	std::wstring get_ch_web_path() const { return utils::utf8_to_utf16(ch_web_path); }
 
 	void set_login(const std::wstring& value) { login = utils::utf16_to_utf8(value); }
 	void set_password(const std::wstring& value) { password = utils::utf16_to_utf8(value); }
@@ -192,9 +197,9 @@ public:
 	void set_portal(const std::wstring& value) { portal = utils::utf16_to_utf8(value); }
 	void set_comment(const std::wstring& value) { comment = utils::utf16_to_utf8(value); }
 	void set_suffix(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
-	void set_caption(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
-	void set_logo(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
-	void set_background(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
+	void set_caption(const std::wstring& value) { caption = utils::utf16_to_utf8(value); }
+	void set_logo(const std::wstring& value) { logo = utils::utf16_to_utf8(value); }
+	void set_background(const std::wstring& value) { background = utils::utf16_to_utf8(value); }
 
 public:
 	std::string login;
@@ -207,13 +212,24 @@ public:
 	std::string caption;
 	std::string logo;
 	std::string background;
-	std::vector<std::string> ch_list;
+	std::string update_url;
+	std::string update_package_url;
+	std::string version_id;
+	std::string update_name;
+	std::string package_name;
+	std::string ch_web_path;
+	int custom_increment = 0;
+	int custom_update_name = 0;
+	int custom_package_name = 0;
 	int device_id = 0;
 	int profile_id = 0;
 	int embed = 0;
-
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(Credentials, login, password, token, domain, portal, comment, suffix, caption, logo, background, ch_list, device_id, profile_id, embed);
+	std::vector<std::string> ch_list;
+	bool not_valid = false;
 };
+
+void to_json(nlohmann::json& j, const Credentials& c);
+void from_json(const nlohmann::json& j, Credentials& c);
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -273,8 +289,6 @@ public:
 
 	BOOL IsPortable() const { return m_bPortable; }
 	void SetPortable(BOOL val) { m_bPortable = val; }
-
-	AccountAccessType get_plugin_account_access_type() const;
 
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;

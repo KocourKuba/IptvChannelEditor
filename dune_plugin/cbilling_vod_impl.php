@@ -37,7 +37,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
         if ($json === false) {
             return $movie;
         }
-        HD::StoreContentToFile($json, DuneSystem::$properties['tmp_dir_path'] . "/playlist_vod.json");
+        HD::StoreContentToFile($json, get_temp_path("playlist_vod.json"));
 
         $movieData = $json->data;
 

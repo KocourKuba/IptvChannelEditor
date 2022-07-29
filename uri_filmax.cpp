@@ -50,6 +50,7 @@ uri_filmax::uri_filmax()
 	auto& params = epg_params[0];
 	params.epg_url = L"http://epg.esalecrm.net/filmax/epg/{ID}.json";
 	provider_url = L"https://filmax-tv.ru/";
+	access_type = AccountAccessType::enLoginPass;
 
 	for (int i = 0; i <= IDS_STRING_FILMAX_P12 - IDS_STRING_FILMAX_P1; i++)
 	{

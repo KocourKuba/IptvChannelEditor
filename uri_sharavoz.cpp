@@ -44,6 +44,7 @@ uri_sharavoz::uri_sharavoz()
 	epg_params[0].epg_url = L"http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
 	epg_params[1].epg_url = L"http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
 	provider_url = L"https://www.sharavoz.tv/";
+	access_type = AccountAccessType::enPin;
 }
 
 void uri_sharavoz::parse_uri(const std::wstring& url)

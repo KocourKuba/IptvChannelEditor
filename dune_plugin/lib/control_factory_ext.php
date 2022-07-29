@@ -105,7 +105,7 @@ class Control_Factory_Ext extends Control_Factory
         self::$instance->sandwich_cover_manifest = parse_ini_file(str_replace('gui_skin:/', self::DUNE_BASE_SKIN_PATH, self::sandwich_cover_txt));
         self::$instance->sandwich_mask_manifest = parse_ini_file(str_replace('gui_skin:/', self::DUNE_BASE_SKIN_PATH, self::sandwich_mask_txt));
 
-        $dots_path = get_paved_path(DuneSystem::$properties['tmp_dir_path'] . '/ex_controls/dots/');
+        $dots_path = get_paved_path(get_temp_path('ex_controls/dots/'));
 
         if (isset(self::$instance->sandwich_mask_manifest['center_color'])) {
             $center_color = '0x20ffffff';

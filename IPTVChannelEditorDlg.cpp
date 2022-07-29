@@ -52,7 +52,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\md5.h"
-#include "UtilsLib\rapidxml.hpp"
 #include "UtilsLib\rapidxml_print.hpp"
 #include "UtilsLib\rapidxml_value.hpp"
 
@@ -302,6 +301,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_SETTINGS, m_wndSettings);
 	DDX_Control(pDX, IDC_PROGRESS_PROGRAM, m_wndProgressTime);
 	DDX_Control(pDX, IDC_BUTTON_VOD, m_wndVod);
+	DDX_Control(pDX, IDC_CHECK_MAKE_WEB_UPDATE, m_wndMakeWebUpdate);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -546,6 +546,11 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
+
+	BOOL showWebUpdate = (!m_cur_account.update_url.empty() && !m_cur_account.update_package_url.empty());
+	m_wndMakeWebUpdate.EnableWindow(showWebUpdate);
+	if (!showWebUpdate)
+		m_wndMakeWebUpdate.SetCheck(0);
 
 	if (m_plugin_type == StreamType::enSharaclub)
 	{
@@ -3535,7 +3540,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 {
 	if (CheckForSave())
 	{
-		PackPlugin(m_plugin_type, GetConfig().get_string(true, REG_OUTPUT_PATH), GetConfig().get_string(true, REG_LISTS_PATH), true);
+		PackPlugin(m_plugin_type, true, m_wndMakeWebUpdate.GetCheck());
 	}
 }
 
@@ -3557,9 +3562,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 		m_wndProgressInfo.SetWindowText(item.title.c_str());
 		m_wndProgress.SetPos(++i);
 
-		const auto& out_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
-		const auto& list_path = GetConfig().get_string(true, REG_LISTS_PATH);
-		if (!PackPlugin(item.type, out_path, list_path, false))
+		if (!PackPlugin(item.type, false, m_wndMakeWebUpdate.GetCheck()))
 		{
 			success = false;
 			CString str;
@@ -3608,9 +3611,7 @@ void CIPTVChannelEditorDlg::OnMakeAllAccounts()
 		const auto& title = fmt::format(L"#{:d}", i);
 		m_wndProgressInfo.SetWindowText(title.c_str());
 
-		const auto& out_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
-		const auto& list_path = GetConfig().get_string(true, REG_LISTS_PATH);
-		if (!PackPlugin(m_plugin_type, out_path, list_path, false))
+		if (!PackPlugin(m_plugin_type, false, m_wndMakeWebUpdate.GetCheck()))
 		{
 			success = false;
 			CString str;
@@ -3634,7 +3635,7 @@ void CIPTVChannelEditorDlg::OnMakeAccount(UINT id)
 		const auto& old_selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
 
 		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, id - ID_ACCOUNT_TO_START);
-		PackPlugin(m_plugin_type, GetConfig().get_string(true, REG_OUTPUT_PATH), GetConfig().get_string(true, REG_LISTS_PATH), true);
+		PackPlugin(m_plugin_type, true, m_wndMakeWebUpdate.GetCheck());
 		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, old_selected);
 	}
 }

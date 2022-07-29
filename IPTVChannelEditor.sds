@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="136" scanned="20220724173729" built="20220709220456" lang="ru" pane="TLogPane" col="4" row="18.IDS_STRING_ERR_FILE_MISSING">
+<desktop scan="142" scanned="20220730100605" built="20220709220456" lang="ru" pane="TLogPane" col="1" row="Strings.19.IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="2"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>
@@ -30,7 +29,6 @@
   <path>
     <item>All</item>
     <item>Release Unicode\IPTVChannelEditor.exe</item>
-    <item>Strings</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

@@ -51,6 +51,7 @@ uri_tvteam::uri_tvteam()
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
 	provider_url = L"https://tv.team/";
 	server_subst_type = ServerSubstType::enStream;
+	access_type = AccountAccessType::enPin;
 	servers_list = {
 		{ load_string_resource(IDS_STRING_TV_TEAM_P1), L"3.troya.tv"  }, // All (except RU, BY)
 		{ load_string_resource(IDS_STRING_TV_TEAM_P2), L"4.troya.tv"  }, // DE, RU

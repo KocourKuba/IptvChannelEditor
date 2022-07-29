@@ -48,6 +48,7 @@ uri_shuratv::uri_shuratv()
 	params.epg_start = "start";
 	params.epg_end = "stop";
 	provider_url = L"http://shura.tv/b/";
+	access_type = AccountAccessType::enPin;
 
 	for (int i = 0; i <= IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1; i++)
 	{
