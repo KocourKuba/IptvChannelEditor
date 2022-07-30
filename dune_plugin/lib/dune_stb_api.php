@@ -1226,7 +1226,7 @@ function debug_print(/*mixed $var1, $var2...*/)
         }
 
         for ($i = count($backtrace) - 4; $i > 1; $i--) {
-            if ($backtrace[$i - 1]['class'] !== 'UserInputHandlerRegistry') {
+            if ($backtrace[$i - 1]['class'] !== 'User_Input_Handler_Registry') {
                 $chain .= $backtrace[$i - 1]['class'] . '::' . $backtrace[$i - 1]['function'] . '()->';
             }
         }

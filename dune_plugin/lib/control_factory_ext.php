@@ -302,7 +302,7 @@ class Control_Factory_Ext extends Control_Factory
     # 	$viewport_width - ширина вьюпорта (или диалогового окна)
     #
     # Example:
-    #	ControlFactory::add_button($button_defs, ...);
+    #	Control_Factory::add_button($button_defs, ...);
     #	$defs[] = get_centered_button($button_defs, 1000);
     public static function get_centered_button($button_defs, $viewport_width)
     {

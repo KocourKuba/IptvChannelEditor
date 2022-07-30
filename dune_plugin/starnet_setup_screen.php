@@ -77,6 +77,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $text_icon = $this->plugin->get_image_path('text.png');
         $folder_icon = $this->plugin->get_image_path('folder.png');
         $setting_icon = $this->plugin->get_image_path('settings.png');
+        $web_icon = $this->plugin->get_image_path('web.png');
 
         //////////////////////////////////////
         // Show in main screen
@@ -103,13 +104,13 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             }
         } else {
             Control_Factory::add_image_button($defs, $this, null, 'move_account',
-                'Встроенные данные для просмотра:', 'Скопировать в память Dune', $setting_icon);
+                'Встроенные данные для просмотра:', 'Переместить в память Dune', $setting_icon);
         }
 
         //////////////////////////////////////
         // channels list source
         $source_ops[1] = 'Локальная или сетевая папки';
-        $source_ops[2] = 'Интернет ссылка';
+        $source_ops[2] = 'Интернет/Интранет ссылка';
         $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
 
         Control_Factory::add_combobox($defs, $this, null, 'channels_source',
@@ -127,7 +128,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 break;
             case 2: // internet url
                 Control_Factory::add_image_button($defs, $this, null, 'channels_url_dialog',
-                    'Задать ссылку со списками каналов:', 'Изменить ссылку', $folder_icon);
+                    'Задать ссылку со списками каналов:', 'Изменить ссылку', $web_icon);
                 break;
         }
 
@@ -152,27 +153,19 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             $setting_icon);
 
         //////////////////////////////////////
-        // font size
-        if (isset($plugin_cookies->has_secondary_epg)
-            && (int)$plugin_cookies->has_secondary_epg === 1
-            && $this->plugin->config->get_feature(SECONDARY_EPG)) {
-            $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
-            Control_Factory::add_image_button($defs, $this, null, 'epg_source', 'Использовать вторичный источник EPG:',
-                self::$on_off_ops[$epg_source], $this->plugin->get_image_path(self::$on_off_img[$epg_source]));
-        }
-
-        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
-        Control_Factory::add_image_button($defs, $this, null, 'epg_font_size', 'Мелкий шрифт EPG:',
-            self::$on_off_ops[$epg_font_size], $this->plugin->get_image_path(self::$on_off_img[$epg_font_size]));
+        // epg dialog
+        Control_Factory::add_image_button($defs,
+            $this,
+            null,
+            'epg_dialog',
+            'Настройки EPG:',
+            'Изменить настройки',
+            $setting_icon);
 
         //////////////////////////////////////
         // adult channel password
         Control_Factory::add_image_button($defs, $this, null, 'pass_dialog',
             'Пароль для взрослых каналов:', 'Изменить пароль', $text_icon);
-
-        //////////////////////////////////////
-        // clear epg cache
-        Control_Factory::add_button($defs, $this, null, 'clear_epg_cache', 'Очистить кэш EPG:', 'Очистить', 0);
 
         Control_Factory::add_vgap($defs, 10);
 
@@ -317,6 +310,40 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         return $defs;
     }
+
+    /**
+     * EPG dialog defs
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function do_get_epg_control_defs(&$plugin_cookies)
+    {
+        $defs = array();
+
+        if (isset($plugin_cookies->has_secondary_epg)
+            && (int)$plugin_cookies->has_secondary_epg === 1
+            && $this->plugin->config->get_feature(SECONDARY_EPG)) {
+            $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
+            Control_Factory::add_combobox($defs, $this, null,
+                'epg_source', 'Использовать вторичный источник EPG:', self::$on_off_ops[$epg_source], self::$on_off_ops, 0);
+        }
+
+        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
+        Control_Factory::add_combobox($defs, $this, null,
+            'epg_font_size', 'Мелкий шрифт EPG:', self::$on_off_ops[$epg_font_size], self::$on_off_ops, 0);
+
+        //////////////////////////////////////
+        // clear epg cache
+        Control_Factory::add_button($defs, $this, null, 'clear_epg_cache', 'Очистить кэш EPG:', 'Очистить', 0);
+
+        Control_Factory::add_vgap($defs, 50);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'login_apply', 'Применить', 300);
+        Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
+        Control_Factory::add_vgap($defs, 10);
+
+        return $defs;
+    }
+
 
     /**
      * login dialog defs
@@ -510,26 +537,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
                     return Action_Factory::invalidate_folders(array('tv_group_list'), $post_action);
 
-                case 'epg_source':
-                    if (isset($plugin_cookies->epg_source)) {
-                        $plugin_cookies->epg_source = ($plugin_cookies->epg_source === SetupControlSwitchDefs::switch_epg1)
-                            ? SetupControlSwitchDefs::switch_epg2
-                            : SetupControlSwitchDefs::switch_epg1;
-                    } else {
-                        $plugin_cookies->epg_source = SetupControlSwitchDefs::switch_epg1;
-                    }
-                    break;
-
-                case 'epg_font_size':
-                    if (isset($plugin_cookies->epg_font_size)) {
-                        $plugin_cookies->epg_font_size = ($plugin_cookies->epg_font_size === SetupControlSwitchDefs::switch_normal)
-                            ? SetupControlSwitchDefs::switch_small
-                            : SetupControlSwitchDefs::switch_normal;
-                    } else {
-                        $plugin_cookies->epg_font_size = SetupControlSwitchDefs::switch_small;
-                    }
-                    break;
-
                 case 'channels_source': // handle streaming settings dialog result
                     $plugin_cookies->channels_source = $user_input->channels_source;
                     return $this->reload_channels($plugin_cookies);
@@ -571,9 +578,29 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
                     return $this->reload_channels($plugin_cookies);
 
+                case 'epg_dialog': // show streaming settings dialog
+                    $defs = $this->do_get_epg_control_defs($plugin_cookies);
+                    return Action_Factory::show_dialog('Настройки EPG', $defs, true);
+
+                case 'epg_dialog_apply': // handle streaming settings dialog result
+                    $plugin_cookies->epg_source = $user_input->epg_source;
+                    $plugin_cookies->epg_font_size = $user_input->epg_font_size;
+                    break;
+
                 case 'pass_dialog': // show pass dialog
                     $defs = $this->do_get_pass_control_defs();
                     return Action_Factory::show_dialog('Родительский контроль', $defs, true);
+
+                case 'clear_epg_cache': // clear epg cache
+                    $epg_path = get_temp_path("epg/");
+                    hd_print("do clear epg: $epg_path");
+                    foreach(glob($epg_path . "*") as $file) {
+                        if(is_file($file)) {
+                            hd_print("erase: $file");
+                            unlink($file);
+                        }
+                    }
+                    return Action_Factory::show_title_dialog('Кэш EPG очищен');
 
                 case 'pass_apply': // handle pass dialog result
                     if (empty($user_input->pass1) || empty($user_input->pass2)) {
@@ -587,16 +614,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                         $msg = 'Пароль изменен!';
                     }
                     return Action_Factory::show_title_dialog($msg);
-                case 'clear_epg_cache': // clear epg cache
-                    $epg_path = get_temp_path("epg/");
-                    hd_print("do clear epg: $epg_path");
-                    foreach(glob($epg_path . "*") as $file) {
-                        if(is_file($file)) {
-                            hd_print("erase: $file");
-                            unlink($file);
-                        }
-                    }
-                    return Action_Factory::show_title_dialog('Кэш EPG очищен');
             }
         }
 

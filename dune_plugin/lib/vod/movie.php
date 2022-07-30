@@ -4,8 +4,10 @@ require_once 'movie_series.php';
 require_once 'movie_season.php';
 require_once 'movie_variant.php';
 
-class Movie
+class Movie implements User_Input_Handler
 {
+    const ID = 'smart_movie';
+
     /**
      * @var string
      */
@@ -107,6 +109,16 @@ class Movie
     public $variants_list;
 
     /**
+     * @var array|null
+     */
+    protected $playback_info;
+
+    /**
+     * @var string
+     */
+    protected $playback_series_ndx;
+
+    /**
      * @param string $id
      * @throws Exception
      */
@@ -118,6 +130,96 @@ class Movie
         }
 
         $this->id = (string)$id;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_handler_id()
+    {
+        return self::ID;
+    }
+
+    /**
+     * @param $user_input
+     * @param $plugin_cookies
+     * @return array|null
+     */
+    public function handle_user_input(&$user_input, &$plugin_cookies)
+    {
+        //hd_print('Movie: handle_user_input:');
+        //foreach ($user_input as $key => $value)
+        //    hd_print("  $key => $value");
+
+        switch ($user_input->control_id) {
+            case 'playback_stop':
+                if ($this->playback_info === null) break;
+
+                if (!empty($this->playback_series_ndx)) {
+                    $indexed_array = array_values($this->series_list);
+                    $series = $indexed_array[$this->playback_series_ndx];
+                } else {
+                    $series = $this->series_list[$user_input->plugin_vod_id];
+                }
+                //hd_print("movie: " . json_encode($this));
+                if (!empty($series->id)) {
+                    $save_folder = HD::get_items('save_folder');
+                    if (isset($save_folder[$user_input->plugin_vod_id][$series->id])) {
+                        $save_folder[$user_input->plugin_vod_id][$series->id][] = $series->playback_url;
+                        HD::put_items('save_folder', $save_folder);
+                    }
+                }
+
+                if (!preg_match("/\.(?:mp3|wav|og(?:g|a)|flac|midi?|rm|m4a|aac|wma|mka|ape|jpg|png)$/i", $series->playback_url)) {
+                    $viewed_items = HD::get_items('viewed_items');
+                    $viewed_items[$series->playback_url] = $this->playback_info;
+                    HD::put_items('viewed_items', $viewed_items);
+                }
+
+                if (isset($user_input->playback_stop_pressed)) {
+                    $history_items = HD::get_items('history_items');
+                    $history_items = array_reverse($history_items, true);
+                    $history_items[$user_input->plugin_vod_id] = array(
+                        'series' => $this->playback_series_ndx,
+                        'info' => date("d.m.Y"),
+                    );
+
+                    $history_items = array_reverse($history_items, true);
+                    if (count($history_items) === 64) {
+                        array_pop($history_items);
+                    }
+
+                    HD::put_items('history_items', $history_items);
+                    return Action_Factory::invalidate_folders(array(Vod_Series_List_Screen::get_media_url_str($user_input->plugin_vod_id)));
+                }
+                break;
+
+            case 'timer':
+                $actions = $this->get_movie_actions();
+                $ext_command = file_get_contents('/tmp/run/ext_command.state');
+                if (preg_match('/playback_position = (\d*)/', $ext_command, $m_pos)
+                    && (int)$m_pos[1] > 0
+                    && preg_match('/playback_duration = (\d*)/', $ext_command, $m_dur)
+                    && (int)$m_dur[1] > 0) {
+                    $this->playback_info = array($m_pos[1], $m_dur[1]);
+                }
+
+                $this->playback_series_ndx = $user_input->plugin_vod_series_ndx;
+                return Action_Factory::change_behaviour($actions, 5000);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    protected function get_movie_actions()
+    {
+        User_Input_Handler_Registry::get_instance()->register_handler($this);
+        $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, 'playback_stop');
+        $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, 'timer');
+        return $actions;
     }
 
     /**
@@ -299,7 +401,7 @@ class Movie
             throw new Exception("List screen in media url not set: " . $media_url->get_raw_string());
         }
 
-        //hd_print("get_vod_info: selected screen: " . $media_url->get_raw_string());
+        //hd_print("get_movie_play_info: selected screen: " . $media_url->get_raw_string());
 
         switch ($media_url->screen_id) {
             case Vod_Seasons_List_Screen::ID:
@@ -324,26 +426,27 @@ class Movie
                 throw new Exception("Unknown list screen: $media_url->screen_id");
         }
 
+        $viewed_items = HD::get_items('viewed_items');
         $sel_id = isset($media_url->series_id) ? $media_url->series_id : null;
         //hd_print("selected id: $sel_id");
         $series_array = array();
         $initial_series_ndx = -1;
         $counter = 0;
         $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
-        foreach ($list as $item) {
-            if (!is_null($sel_id) && $item->id === $sel_id) {
+        foreach ($list as $ndx => $series) {
+            if (!is_null($sel_id) && $series->id === $sel_id) {
                 $initial_series_ndx = $counter;
                 //hd_print("initial series idx: $initial_series_ndx");
             }
 
             $var = $variant;
-            if (isset($item->variants) && array_key_exists($variant, $item->variants)) {
-                $playback_url = $item->variants[$variant]->playback_url;
-                $playback_url_is_stream_url = $item->variants[$variant]->playback_url_is_stream_url;
+            if (isset($series->variants) && array_key_exists($variant, $series->variants)) {
+                $playback_url = $series->variants[$variant]->playback_url;
+                $playback_url_is_stream_url = $series->variants[$variant]->playback_url_is_stream_url;
             } else {
                 $var = 'default';
-                $playback_url = $item->playback_url;
-                $playback_url_is_stream_url = $item->playback_url_is_stream_url;
+                $playback_url = $series->playback_url;
+                $playback_url_is_stream_url = $series->playback_url_is_stream_url;
             }
 
             if ($initial_series_ndx === $counter)
@@ -351,13 +454,35 @@ class Movie
             else
                 hd_print("playback url ($var): $playback_url");
 
+            $suffix = '';
+            if (isset($viewed_items[$playback_url])) {
+                if ($viewed_items[$playback_url] === 'watched')
+                    $suffix = ' [Просмотрено]';
+                else{
+                    $suffix = ' [Просмотр ' . HD::format_duration($viewed_items[$playback_url][0]) . '/' . HD::format_duration($viewed_items[$playback_url][1]) . ']';
+                    $pos = (int)$viewed_items[$playback_url][0];
+                    if ($pos < 0)
+                        $pos = 0;
+                    if ($pos + 5 >= (int)$viewed_items[$playback_url][1])
+                        $pos = 0;
+                    $initial_position_ms[$ndx] = $pos * 1000;
+                }
+            }
+
+            if (!is_null($sel_id) && $playback_url === $sel_id)
+                $initial_series_ndx = $ndx;
+
             $series_array[] = array(
-                PluginVodSeriesInfo::name => $item->name,
+                PluginVodSeriesInfo::name => $series->name . $suffix,
                 PluginVodSeriesInfo::playback_url => $playback_url,
                 PluginVodSeriesInfo::playback_url_is_stream_url => $playback_url_is_stream_url,
             );
             $counter++;
         }
+
+        $ip_ms = 0;
+        if (isset($initial_position_ms[$initial_series_ndx]))
+            $ip_ms = $initial_position_ms[$initial_series_ndx];
 
         return array(
             PluginVodInfo::id => $this->id,
@@ -367,6 +492,9 @@ class Movie
             PluginVodInfo::series => $series_array,
             PluginVodInfo::initial_series_ndx => $initial_series_ndx,
             PluginVodInfo::buffering_ms => (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000),
+            PluginVodInfo::actions => $this->get_movie_actions(),
+            PluginVodInfo::timer => array(GuiTimerDef::delay_ms => 5000),
+            PluginVodInfo::initial_position_ms => $ip_ms,
         );
     }
 }

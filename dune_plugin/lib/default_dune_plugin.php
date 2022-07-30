@@ -92,6 +92,11 @@ class Default_Dune_Plugin implements DunePlugin
     public $vod_series_list_screen;
 
     /**
+     * @var Vod_History_Screen
+     */
+    public $vod_history_screen;
+
+    /**
      * @var Starnet_Filter_Screen
      */
     public $filter_screen;

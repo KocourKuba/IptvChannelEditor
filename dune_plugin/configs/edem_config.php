@@ -123,7 +123,7 @@ class EdemPluginConfig extends Default_Config
                     }
 
                     $series_desc = rtrim($series_desc, " ,\0");
-                    $desc = str_replace(array(",", " "), array("", "\n"), $series_desc);
+                    $desc = str_replace(array(",", " "), array("|", ""), $series_desc);
                     $movie->add_series_variants_data($item->fid, $item->title, $desc, $variants, $item->url);
                 }
             }
@@ -149,7 +149,7 @@ class EdemPluginConfig extends Default_Config
             }
 
             $series_desc = rtrim($series_desc, " ,\0");
-            $desc = str_replace(array(",", " "), array("", "\n"), $series_desc);
+            $desc = str_replace(array(",", " "), array("|", ""), $series_desc);
             $movie->add_series_variants_data($movie_id, $movieData->title, $desc, $variants, $movieData->url);
         }
 

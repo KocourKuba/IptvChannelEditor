@@ -13,6 +13,7 @@ require_once 'lib/vod/vod_movie_screen.php';
 require_once 'lib/vod/vod_seasons_list_screen.php';
 require_once 'lib/vod/vod_series_list_screen.php';
 require_once 'lib/vod/vod_favorites_screen.php';
+require_once 'lib/vod/vod_history_screen.php';
 
 require_once 'plugin_type.php';
 require_once 'starnet_tv.php';
@@ -78,6 +79,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->vod_movie_screen = new Vod_Movie_Screen($this);
         $this->vod_season_List_Screen = new Vod_Seasons_List_Screen($this);
         $this->vod_series_list_screen = new Vod_Series_List_Screen($this);
+        $this->vod_history_screen = new Vod_History_Screen($this);
         $this->filter_screen = new Starnet_Filter_Screen($this);
 
         hd_print("Init done.");

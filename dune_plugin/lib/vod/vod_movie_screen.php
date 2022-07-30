@@ -113,10 +113,13 @@ class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Ha
             $right_button_action = User_Input_Handler_Registry::create_action($this, 'favorites', array('movie_id' => $movie->id));
         }
 
-        if (isset($movie->season_list)) {
-            $screen_media_url = Vod_Seasons_List_Screen::get_media_url_str($movie->id);
-        } else {
+        $save_folder = HD::get_items('save_folder');
+        if (isset($save_folder[$movie->id]))
+            $screen_media_url = Vod_Series_List_Screen::get_media_url_str($movie->id, key($save_folder[$movie->id]));
+        else if (!isset($movie->season_list)) {
             $screen_media_url = Vod_Series_List_Screen::get_media_url_str($movie->id);
+        } else {
+            $screen_media_url = Vod_Seasons_List_Screen::get_media_url_str($movie->id);
         }
 
         $movie_folder_view = array

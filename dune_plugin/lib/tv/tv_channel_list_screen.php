@@ -43,10 +43,12 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
         //hd_print("TvChannelListScreen get_action_map: " . $media_url->get_raw_string());
 
         $actions = array();
+        $setup_screen = Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
+        $actions[GUI_EVENT_KEY_SETUP] = $setup_screen;
         $actions[GUI_EVENT_KEY_ENTER] = Action_Factory::tv_play();
         $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::tv_play();
         $actions[GUI_EVENT_KEY_INFO] = User_Input_Handler_Registry::create_action($this, 'info');
-        $actions[GUI_EVENT_KEY_B_GREEN] = Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
+        $actions[GUI_EVENT_KEY_B_GREEN] = $setup_screen;
 
         if ((string)$media_url->group_id === $this->plugin->tv->get_all_channel_group_id()) {
             $search_action = User_Input_Handler_Registry::create_action($this, 'search_channel');

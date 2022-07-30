@@ -72,7 +72,31 @@ class HD
         $minutes = $remainder / 60;
         $seconds = $remainder % 60;
 
-        if ((int)$hours > 0) {
+        if ($hours > 0) {
+            return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
+        }
+
+        return sprintf("%02d:%02d", $minutes, $seconds);
+    }
+
+    /**
+     * @param string $secs
+     * @return string
+     */
+    public static function format_duration_seconds($secs)
+    {
+        $n = (int)$secs;
+
+        if ($n <= 0 || strlen($secs) <= 0) {
+            return "--:--";
+        }
+
+        $hours = $n / 3600;
+        $remainder = $n % 3600;
+        $minutes = $remainder / 60;
+        $seconds = $remainder % 60;
+
+        if ($hours > 0) {
             return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
         }
 

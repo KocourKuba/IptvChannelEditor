@@ -46,6 +46,9 @@ abstract class Default_Config
     const FILTER_MOVIES_CATEGORY_CAPTION = 'Фильтр';
     const FILTER_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/filter_movie.png';
 
+    const HISTORY_MOVIES_CATEGORY_CAPTION = 'История просмотра';
+    const HISTORY_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/history_movie.png';
+
     const DEFAULT_CHANNEL_ICON_PATH = 'plugin_file://icons/channel_unset.png';
     const DEFAULT_MOV_ICON_PATH = 'plugin_file://icons/mov_unset.png';
 
