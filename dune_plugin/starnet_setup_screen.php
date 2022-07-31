@@ -114,7 +114,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
 
         Control_Factory::add_combobox($defs, $this, null, 'channels_source',
-            'Источник списка каналов:', $channels_source, $source_ops, 0, true);
+            'Источник списка каналов:', $channels_source, $source_ops, self::CONTROLS_WIDTH, true);
 
         switch ($channels_source)
         {
@@ -128,7 +128,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 break;
             case 2: // internet url
                 Control_Factory::add_image_button($defs, $this, null, 'channels_url_dialog',
-                    'Задать ссылку со списками каналов:', 'Изменить ссылку', $web_icon);
+                    'Задать ссылку со списками каналов:', 'Изменить ссылку', $web_icon, self::CONTROLS_WIDTH);
                 break;
         }
 
@@ -139,33 +139,23 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             Control_Factory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         } else {
             Control_Factory::add_combobox($defs, $this, null, 'channels_list',
-                'Используемый список каналов:', $channels_list, $all_channels, 0);
+                'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////
         // streaming dialog
-        Control_Factory::add_image_button($defs,
-            $this,
-            null,
-            'streaming_dialog',
-            'Настройки проигрывания:',
-            'Изменить настройки',
-            $setting_icon);
+        Control_Factory::add_image_button($defs, $this, null, 'streaming_dialog',
+            'Настройки проигрывания:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // epg dialog
-        Control_Factory::add_image_button($defs,
-            $this,
-            null,
-            'epg_dialog',
-            'Настройки EPG:',
-            'Изменить настройки',
-            $setting_icon);
+        Control_Factory::add_image_button($defs, $this, null, 'epg_dialog',
+            'Настройки EPG:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // adult channel password
         Control_Factory::add_image_button($defs, $this, null, 'pass_dialog',
-            'Пароль для взрослых каналов:', 'Изменить пароль', $text_icon);
+            'Пароль для взрослых каналов:', 'Изменить пароль', $text_icon, self::CONTROLS_WIDTH);
 
         Control_Factory::add_vgap($defs, 10);
 
@@ -323,27 +313,37 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (isset($plugin_cookies->has_secondary_epg)
             && (int)$plugin_cookies->has_secondary_epg === 1
             && $this->plugin->config->get_feature(SECONDARY_EPG)) {
+
+            $epg_source_ops = array();
+            $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
+            $epg_source_ops[SetupControlSwitchDefs::switch_epg2] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg2];
+
             $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
+
             Control_Factory::add_combobox($defs, $this, null,
-                'epg_source', 'Использовать вторичный источник EPG:', self::$on_off_ops[$epg_source], self::$on_off_ops, 0);
+                'epg_source', 'Использовать вторичный источник EPG:', $epg_source, $epg_source_ops, 0);
         }
 
+        $epg_font_ops = array();
+        $epg_font_ops[SetupControlSwitchDefs::switch_small] = self::$on_off_ops[SetupControlSwitchDefs::switch_small];
+        $epg_font_ops[SetupControlSwitchDefs::switch_normal] = self::$on_off_ops[SetupControlSwitchDefs::switch_normal];
+
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
+
         Control_Factory::add_combobox($defs, $this, null,
-            'epg_font_size', 'Мелкий шрифт EPG:', self::$on_off_ops[$epg_font_size], self::$on_off_ops, 0);
+            'epg_font_size', 'Шрифт EPG:', $epg_font_size, $epg_font_ops, 0);
 
         //////////////////////////////////////
         // clear epg cache
         Control_Factory::add_button($defs, $this, null, 'clear_epg_cache', 'Очистить кэш EPG:', 'Очистить', 0);
 
         Control_Factory::add_vgap($defs, 50);
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'login_apply', 'Применить', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'epg_dialog_apply', 'Применить', 300);
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
         Control_Factory::add_vgap($defs, 10);
 
         return $defs;
     }
-
 
     /**
      * login dialog defs
@@ -445,7 +445,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     $plugin_cookies->show_tv = ($plugin_cookies->show_tv === SetupControlSwitchDefs::switch_on)
                         ? SetupControlSwitchDefs::switch_off
                         : SetupControlSwitchDefs::switch_on;
-                    break;
+                    return null;
 
                 case 'ott_key_dialog': // show ott key dialog
                     $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
@@ -583,13 +583,13 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return Action_Factory::show_dialog('Настройки EPG', $defs, true);
 
                 case 'epg_dialog_apply': // handle streaming settings dialog result
-                    $plugin_cookies->epg_source = $user_input->epg_source;
-                    $plugin_cookies->epg_font_size = $user_input->epg_font_size;
-                    break;
-
-                case 'pass_dialog': // show pass dialog
-                    $defs = $this->do_get_pass_control_defs();
-                    return Action_Factory::show_dialog('Родительский контроль', $defs, true);
+                    if (isset($user_input->epg_source) && $plugin_cookies->epg_source !== $user_input->epg_source) {
+                        $plugin_cookies->epg_source = $user_input->epg_source;
+                    }
+                    if (isset($user_input->epg_font_size) && $plugin_cookies->epg_font_size !== $user_input->epg_font_size) {
+                        $plugin_cookies->epg_font_size = $user_input->epg_font_size;
+                    }
+                    return null;
 
                 case 'clear_epg_cache': // clear epg cache
                     $epg_path = get_temp_path("epg/");
@@ -601,6 +601,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                         }
                     }
                     return Action_Factory::show_title_dialog('Кэш EPG очищен');
+
+                case 'pass_dialog': // show pass dialog
+                    $defs = $this->do_get_pass_control_defs();
+                    return Action_Factory::show_dialog('Родительский контроль', $defs, true);
 
                 case 'pass_apply': // handle pass dialog result
                     if (empty($user_input->pass1) || empty($user_input->pass2)) {
