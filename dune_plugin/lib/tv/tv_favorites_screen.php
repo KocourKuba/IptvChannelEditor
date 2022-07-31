@@ -58,6 +58,7 @@ class Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements U
 
         return array
         (
+            GUI_EVENT_KEY_SETUP => Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина'),
             GUI_EVENT_KEY_ENTER => Action_Factory::tv_play(),
             GUI_EVENT_KEY_PLAY => Action_Factory::tv_play(),
             GUI_EVENT_KEY_B_GREEN => $move_backward_favorite_action,

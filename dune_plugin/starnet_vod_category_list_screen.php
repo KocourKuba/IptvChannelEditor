@@ -49,7 +49,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        return array(GUI_EVENT_KEY_ENTER => Action_Factory::open_folder());
+        $setup_screen = Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
+        return array(
+            GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
+            GUI_EVENT_KEY_SETUP => $setup_screen,
+            GUI_EVENT_KEY_B_GREEN => $setup_screen,
+        );
     }
 
     /**

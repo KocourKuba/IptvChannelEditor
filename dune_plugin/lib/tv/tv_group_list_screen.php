@@ -25,10 +25,12 @@ class Tv_Group_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
+        $setup_screen = Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
         return array(
             GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
             GUI_EVENT_KEY_PLAY => Action_Factory::tv_play(),
-            GUI_EVENT_KEY_B_GREEN => Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина'),
+            GUI_EVENT_KEY_SETUP => $setup_screen,
+            GUI_EVENT_KEY_B_GREEN => $setup_screen,
         );
     }
 

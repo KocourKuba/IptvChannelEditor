@@ -45,10 +45,10 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
         $actions = array();
         $setup_screen = Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
         $actions[GUI_EVENT_KEY_SETUP] = $setup_screen;
+        $actions[GUI_EVENT_KEY_B_GREEN] = $setup_screen;
         $actions[GUI_EVENT_KEY_ENTER] = Action_Factory::tv_play();
         $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::tv_play();
         $actions[GUI_EVENT_KEY_INFO] = User_Input_Handler_Registry::create_action($this, 'info');
-        $actions[GUI_EVENT_KEY_B_GREEN] = $setup_screen;
 
         if ((string)$media_url->group_id === $this->plugin->tv->get_all_channel_group_id()) {
             $search_action = User_Input_Handler_Registry::create_action($this, 'search_channel');
@@ -135,12 +135,12 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
                         $q = true;
                         hd_print("found channel: $ch_title, idx: " . $idx);
                         $add_params['number'] = $idx;
-                        Control_Factory::add_close_dialog_and_apply_button_title(&$defs, $this, $add_params, 'jump_to_channel', '', $ch_title, 900);
+                        Control_Factory::add_close_dialog_and_apply_button_title($defs, $this, $add_params, 'jump_to_channel', '', $ch_title, 900);
                     }
                 }
 
                 if ($q === false) {
-                    Control_Factory::add_multiline_label(&$defs, '', 'Ничего не найдено.', 6);
+                    Control_Factory::add_multiline_label($defs, '', 'Ничего не найдено.', 6);
                     Control_Factory::add_vgap($defs, 20);
                     Control_Factory::add_close_dialog_and_apply_button_title($defs, $this, null, 'search_channel', '', 'Новый поиск', 300);
                 }

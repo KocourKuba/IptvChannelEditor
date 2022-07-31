@@ -44,10 +44,16 @@ abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_I
     {
         $actions = array();
 
+        $add_settings = User_Input_Handler_Registry::create_action($this, 'settings');
+        $add_settings['caption'] = 'Настройки плагина';
+        $actions[GUI_EVENT_KEY_SETUP] = $add_settings;
+        $actions[GUI_EVENT_KEY_B_GREEN] = $add_settings;
+
         $actions[GUI_EVENT_KEY_ENTER] = $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play();
 
         $add_action = User_Input_Handler_Registry::create_action($this, 'search');
         $add_action['caption'] = 'Поиск';
+        $actions[GUI_EVENT_KEY_SEARCH] = $add_action;
         $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
 
         if ($this->plugin->vod->is_favorites_supported()) {

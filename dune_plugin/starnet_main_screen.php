@@ -40,6 +40,7 @@ class Starnet_Main_Screen extends Tv_Group_List_Screen implements User_Input_Han
         $add_settings['caption'] = 'Настройки плагина';
 
         $action = array(
+            GUI_EVENT_KEY_SETUP => $add_settings,
             GUI_EVENT_KEY_B_GREEN => $add_settings,
             GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
             GUI_EVENT_KEY_PLAY => Action_Factory::tv_play(),
