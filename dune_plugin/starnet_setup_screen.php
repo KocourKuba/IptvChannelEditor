@@ -139,7 +139,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             Control_Factory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         } else {
             Control_Factory::add_combobox($defs, $this, null, 'channels_list',
-                'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH);
+                'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
         }
 
         //////////////////////////////////////
