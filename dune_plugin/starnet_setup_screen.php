@@ -15,8 +15,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         SetupControlSwitchDefs::switch_off => 'Нет',
         SetupControlSwitchDefs::switch_small => 'Мелкий',
         SetupControlSwitchDefs::switch_normal => 'Обычный',
-        SetupControlSwitchDefs::switch_epg1 => 'Нет',
-        SetupControlSwitchDefs::switch_epg2 => 'Да',
+        SetupControlSwitchDefs::switch_epg1 => 'Первичный',
+        SetupControlSwitchDefs::switch_epg2 => 'Вторичный',
     );
 
     private static $on_off_img = array
@@ -321,7 +321,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
 
             Control_Factory::add_combobox($defs, $this, null,
-                'epg_source', 'Использовать вторичный источник EPG:', $epg_source, $epg_source_ops, 0);
+                'epg_source', 'Источник EPG:', $epg_source, $epg_source_ops, 0);
         }
 
         $epg_font_ops = array();
