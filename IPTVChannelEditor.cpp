@@ -586,7 +586,11 @@ bool PackPlugin(const StreamType plugin_type,
 	if (output_path.back() != '\\')
 		output_path += '\\';
 
+	std::error_code err;
+	std::filesystem::create_directory(output_path, err);
+
 	const auto& update_path = GetConfig().get_string(true, REG_WEB_UPDATE_PATH);
+	std::filesystem::create_directory(update_path, err);
 
 	const auto& old_plugin_type = GetConfig().get_plugin_type();
 	GetConfig().set_plugin_type(plugin_type);
@@ -645,7 +649,6 @@ bool PackPlugin(const StreamType plugin_type,
 
 	// collect plugin channels list;
 	std::vector<std::wstring> channels_list;
-	std::error_code err;
 	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, short_name_w);
 	std::filesystem::directory_iterator dir_iter(playlistPath, err);
 	for (auto const& dir_entry : dir_iter)
@@ -1021,7 +1024,6 @@ bool PackPlugin(const StreamType plugin_type,
 			update_info->append_node(version_info);
 			doc->append_node(update_info);
 
-			std::filesystem::create_directory(update_path, err);
 			std::ofstream os(update_path + utils::utf8_to_utf16(update_name), std::ios::out | std::ios::binary);
 			os << *doc;
 
