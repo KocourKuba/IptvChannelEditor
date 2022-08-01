@@ -142,6 +142,7 @@ class Epg_Manager
      * @param string $url
      * @param array $parser_params
      * @return array
+     * @throws Exception
      */
     protected static function get_epg_json($url, $parser_params)
     {
@@ -184,8 +185,10 @@ class Epg_Manager
                 // start time not the timestamp
                 $dt = DateTime::createFromFormat($parser_params['epg_time_format'], $program_start, new DateTimeZone($parser_params['epg_timezone']));
                 $program_start = $dt->getTimestamp();
-                if (is_need_daylight_fix())
+                if (is_need_daylight_fix()) {
+                    hd_print("apply daylight fix +1h");
                     $program_start += 3600;
+                }
 
                 //hd_print("epg_start: $program_start");
             }

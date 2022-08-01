@@ -418,7 +418,7 @@ class Action_Factory
      * @param string $text_color
      * @param bool $text_halo
      */
-    public static function add_osd_text(&$comps, $text, $x, $y, $text_font_size = PLUGIN_FONT_NORMAL, $text_color = "15", $text_halo = false)
+    public static function add_osd_text(&$comps, $text, $x, $y, $text_font_size = PLUGIN_FONT_NORMAL, $text_color = DEF_LABEL_TEXT_COLOR_WHITE, $text_halo = false)
     {
         $comps[] = array(
             PluginOsdComponent::text => $text,

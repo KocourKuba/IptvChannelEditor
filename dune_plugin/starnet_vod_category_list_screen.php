@@ -114,7 +114,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 PluginRegularFolderItem::view_item_params => array
                 (
                     ViewItemParams::icon_path => Default_Config::FAV_MOVIES_CATEGORY_ICON_PATH,
-                    ViewItemParams::item_caption_color => 6, // yellow
+                    ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GOLD, // Light yellow
                     ViewItemParams::item_detailed_icon_path => Default_Config::FAV_MOVIES_CATEGORY_ICON_PATH,
                 )
             );
@@ -128,7 +128,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             PluginRegularFolderItem::view_item_params => array
             (
                 ViewItemParams::icon_path => Default_Config::HISTORY_MOVIES_CATEGORY_ICON_PATH,
-                ViewItemParams::item_caption_color => 11, // cyan
+                ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_TURQUOISE, // Cyan
                 ViewItemParams::item_detailed_icon_path => Default_Config::HISTORY_MOVIES_CATEGORY_ICON_PATH,
             )
         );
@@ -141,7 +141,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             PluginRegularFolderItem::view_item_params => array
             (
                 ViewItemParams::icon_path => Default_Config::SEARCH_MOVIES_CATEGORY_ICON_PATH,
-                ViewItemParams::item_caption_color => 10, // light green
+                ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
                 ViewItemParams::item_detailed_icon_path => Default_Config::SEARCH_MOVIES_CATEGORY_ICON_PATH,
             )
         );
@@ -155,7 +155,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 PluginRegularFolderItem::view_item_params => array
                 (
                     ViewItemParams::icon_path => Default_Config::FILTER_MOVIES_CATEGORY_ICON_PATH,
-                    ViewItemParams::item_caption_color => 10, // light green
+                    ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
                     ViewItemParams::item_detailed_icon_path => Default_Config::FILTER_MOVIES_CATEGORY_ICON_PATH,
                 )
             );

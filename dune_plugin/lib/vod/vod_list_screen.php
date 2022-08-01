@@ -175,7 +175,7 @@ abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_I
                 (
                     ViewItemParams::icon_path => $movie->poster_url,
                     ViewItemParams::item_detailed_info => $movie->info,
-                    ViewItemParams::item_caption_color => 15,
+                    ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_WHITE,
                 ),
                 PluginRegularFolderItem::starred => $this->plugin->vod->is_favorite_movie_id($movie->id),
             );
