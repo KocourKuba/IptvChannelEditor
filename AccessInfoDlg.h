@@ -52,7 +52,7 @@ protected:
 	void UpdateOptionalControls();
 
 	BOOL PreTranslateMessage(MSG* pMsg) override;
-	void OnOK() override;
+	BOOL OnApply() override;
 
 	DECLARE_MESSAGE_MAP()
 

@@ -521,15 +521,20 @@ void CAccessInfoDlg::SetWebUpdate()
 	UpdateData(FALSE);
 }
 
-void CAccessInfoDlg::OnOK()
+BOOL CAccessInfoDlg::OnApply()
 {
 	UpdateData(TRUE);
 
 	auto& selected = GetCheckedAccount();
 	if (selected.not_valid)
 	{
-		__super::OnOK();
-		return;
+		return TRUE;
+	}
+
+	if (selected.update_url.empty() != selected.update_package_url.empty())
+	{
+		AfxMessageBox(IDS_STRING_BOTH_PATH_MUST_FILLED, MB_ICONERROR | MB_OK);
+		return FALSE;
 	}
 
 	TemplateParams params;
@@ -538,6 +543,7 @@ void CAccessInfoDlg::OnOK()
 	params.domain = utils::utf8_to_utf16(selected.domain);
 	params.server = selected.device_id;
 	params.profile = selected.profile_id;
+
 	if (m_plugin_type == StreamType::enSharaclub)
 	{
 		params.domain = m_list_domain;
@@ -581,7 +587,7 @@ void CAccessInfoDlg::OnOK()
 
 	m_initial_cred = selected;
 
-	__super::OnOK();
+	return TRUE;
 }
 
 void CAccessInfoDlg::OnBnClickedButtonAdd()
@@ -813,6 +819,7 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
 		}
 
+		UpdateOptionalControls();
 		SetWebUpdate();
 	}
 
@@ -845,8 +852,6 @@ void CAccessInfoDlg::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResul
 		}
 
 		selected.ch_list.swap(ch_list);
-
-		UpdateOptionalControls();
 	}
 
 	*pResult = 0;
@@ -1135,7 +1140,7 @@ void CAccessInfoDlg::OnEnChangeEditPluginUpdateFileUrl()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
-	selected.update_url = get_utf8(m_updatePackageUrl);
+	selected.update_package_url = get_utf8(m_updatePackageUrl);
 }
 
 void CAccessInfoDlg::OnBnClickedCheckCustomUpdateName()

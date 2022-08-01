@@ -799,7 +799,6 @@ bool PackPlugin(const StreamType plugin_type,
 		const auto& bg = fmt::format("plugin_file://icons/{:s}", plugin_bgnd.filename().string());
 
 		// change values
-		std::string s;
 		auto d_node = doc->first_node("dune_plugin");
 		d_node->first_node("name")->value(plugin_info.int_name.c_str());
 		d_node->first_node("short_name")->value(plugin_info.short_name.c_str());
@@ -915,7 +914,8 @@ bool PackPlugin(const StreamType plugin_type,
 	auto plugin_installed_size = calc_folder_size(packFolder);
 
 	SevenZipWrapper archiver(pack_dll);
-	bool res = archiver.GetCompressor().AddFiles(packFolder, _T("*.*"), true);
+	auto& compressor = archiver.GetCompressor();
+	bool res = compressor.AddFiles(packFolder, _T("*.*"), true);
 	if (!res)
 	{
 		if (showMessage)
@@ -934,16 +934,16 @@ bool PackPlugin(const StreamType plugin_type,
 		std::filesystem::remove(packed_gz, err);
 
 		packed_file = packed_tar;
-		archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Tar);
+		compressor.SetCompressionFormat(CompressionFormat::Tar);
 		res = archiver.CreateArchive(packed_file);
 		if (res)
 		{
-			archiver.GetCompressor().ClearList();
-			res = archiver.GetCompressor().AddFile(packed_file);
+			compressor.ClearList();
+			res = compressor.AddFile(packed_file);
 			if (res)
 			{
 				packed_file = packed_gz;
-				archiver.GetCompressor().SetCompressionFormat(CompressionFormat::GZip);
+				compressor.SetCompressionFormat(CompressionFormat::GZip);
 				res = archiver.CreateArchive(packed_file);
 				if (res)
 				{
@@ -955,7 +955,7 @@ bool PackPlugin(const StreamType plugin_type,
 	else
 	{
 		packed_file = output_path + utils::utf8_to_utf16(packed_plugin_name);
-		archiver.GetCompressor().SetCompressionFormat(CompressionFormat::Zip);
+		compressor.SetCompressionFormat(CompressionFormat::Zip);
 		res = archiver.CreateArchive(packed_file);
 	}
 

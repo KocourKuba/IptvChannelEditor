@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20220730100633" scan="142" scanned="20220730100605">
+<document created="20211012165442" version="4.0.374" date="20220801221052" scan="143" scanned="20220801221023">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220730080558" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20220801201016" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -4667,6 +4667,10 @@
         </row>
       </node>
       <node class="TWindowsStringNode" name="19" created="20220504023048" resid="19" langid="1033">
+        <row id="IDS_STRING_BOTH_PATH_MUST_FILLED" state="0" created="20220801221023">
+          <native>Both URL paths must be filled!</native>
+          <lang id="ru" date="20220801221049">Оба URL пути должны быть заполнены!</lang>
+        </row>
         <row id="IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME" created="20220730095459" changed="20220730100605">
           <native>Name of the update package</native>
           <lang id="ru" date="20220730095927">Имя файла обновления</lang>
@@ -4960,28 +4964,40 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20220730092432">
-          <prev>3.3.968, 24 Jul 2022</prev>
-          <native>3.3.972, 29 Jul 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20220801221023">
+          <prev>3.3.972, 29 Jul 2022</prev>
+          <native>4.0.983, 1 Aug 2022</native>
         </row>
-        <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20220716143226">3</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220730092432">
-          <prev>968</prev>
-          <native>972</native>
+        <row id="FileVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20220801221023">
+          <prev>3</prev>
+          <native>4</native>
+        </row>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220801221023">
+          <prev>3</prev>
+          <native>0</native>
+        </row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220801221023">
+          <prev>972</prev>
+          <native>983</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20220730092432">
-          <prev>3.3.968</prev>
-          <native>3.3.972</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20220801221023">
+          <prev>3.3.972</prev>
+          <native>4.0.983</native>
         </row>
-        <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20220512175419">3</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20220716143226">3</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220730092432">
-          <prev>968</prev>
-          <native>972</native>
+        <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20220801221023">
+          <prev>3</prev>
+          <native>4</native>
+        </row>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20220801221023">
+          <prev>3</prev>
+          <native>0</native>
+        </row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20220801221023">
+          <prev>972</prev>
+          <native>983</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
