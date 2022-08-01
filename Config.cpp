@@ -152,6 +152,7 @@ void to_json(nlohmann::json& j, const Credentials& c)
 		SERIALIZE_STRUCT(c, portal),
 		SERIALIZE_STRUCT(c, comment),
 		SERIALIZE_STRUCT(c, suffix),
+		SERIALIZE_STRUCT(c, caption),
 		SERIALIZE_STRUCT(c, logo),
 		SERIALIZE_STRUCT(c, background),
 		SERIALIZE_STRUCT(c, update_url),
@@ -179,6 +180,7 @@ void from_json(const nlohmann::json& j, Credentials& c)
 	DESERIALIZE_STRUCT(j, c, portal);
 	DESERIALIZE_STRUCT(j, c, comment);
 	DESERIALIZE_STRUCT(j, c, suffix);
+	DESERIALIZE_STRUCT(j, c, caption);
 	DESERIALIZE_STRUCT(j, c, logo);
 	DESERIALIZE_STRUCT(j, c, background);
 	DESERIALIZE_STRUCT(j, c, update_url);
