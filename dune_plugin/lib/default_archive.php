@@ -60,7 +60,7 @@ class Default_Archive implements Archive
                 $version = trim(substr($tok, $pos + 1));
                 $version_by_name[$name] = $version;
 
-                $tok = strtok("\n");
+                $tok = strtok($tok, "\n");
             }
 
             hd_print("Archive $id: " . count($version_by_name) . " files.");

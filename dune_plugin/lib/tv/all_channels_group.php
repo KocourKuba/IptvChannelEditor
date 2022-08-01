@@ -30,7 +30,7 @@ class All_Channels_Group extends Default_Group
 
     /**
      * @param $plugin_cookies
-     * @return Hashed_Array|Channel[]
+     * @return Hashed_Array
      */
     public function get_channels(&$plugin_cookies)
     {
