@@ -1,6 +1,5 @@
 <?php
 require_once 'hd.php';
-require_once 'v32.php';
 require_once 'epg_xml_parser.php';
 
 class Epg_Manager
@@ -65,65 +64,76 @@ class Epg_Manager
                 hd_print("EPG id replaced: $epg_id -> " . $mapper[$epg_id]);
                 $epg_id = $mapper[$epg_id];
             }
-        } else if ($params['epg_use_hash']) {
-            $xx_hash = new V32();
-            $epg_id = $xx_hash->hash($epg_id);
         } else {
             $epg_id = str_replace(' ', '%20', $epg_id);
         }
 
-        $epg_date = gmdate($params['epg_date_format'], $day_start_ts);
-        $epg_url = str_replace(
-            array('{TOKEN}', '{CHANNEL}', '{DATE}', '{TIME}'),
-            array(isset($plugin_cookies->token) ? $plugin_cookies->token : '', $epg_id, $epg_date, $day_start_ts),
-            $params['epg_url']);
-
-        hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
-
-        $cache_dir = get_temp_path("epg/");
-        $cache_file = $cache_dir . "epg_channel_" . hash('crc32', $epg_url);
-
-        $from_cache = false;
-        $epg = array();
-        if (file_exists($cache_file)) {
-            $now = time();
-            $cache_expired = filemtime($cache_file) + 60 * 60 * 24;
-            hd_print("Cache expired at $cache_expired now $now");
-            if ($cache_expired > time()) {
-                $epg = unserialize(file_get_contents($cache_file));
-                $from_cache = (count($epg) !== 0);
-                hd_print("Loading EPG entries from cache: $cache_file - " . ($from_cache ? "success" : "failed"));
+        $dates = array();
+        $dates[] = gmdate($params['epg_date_format'], $day_start_ts);
+        if (strpos($params['epg_url'], '{DATE}') !== false) {
+            $shifted_date = gmdate($params['epg_date_format'], $day_start_ts + get_local_time_zone_offset());
+            if ($dates[0] !== $shifted_date) {
+                $dates[] = $shifted_date;
             }
         }
 
-        if ($from_cache === false && $params['epg_parser'] === 'json') {
-            $epg = self::get_epg_json($epg_url, $params);
-        }
-
         $out_epg = array();
-        $counts = count($epg);
-        hd_print("Total entries: $counts");
-        if ($counts !== 0) {
-            // entries present
-            if (!is_dir($cache_dir) && !(mkdir($cache_dir) && is_dir($cache_dir))) {
-                hd_print("Directory '$cache_dir' was not created");
-            } else {
-                // if not in cache save downloaded data
-                if ($from_cache === false) {
-                    // save downloaded epg
-                    self::save_cache($epg, $cache_file);
-                }
+        foreach ($dates as $epg_date) {
+            $epg_url = str_replace(
+                array('{TOKEN}', '{CHANNEL}', '{DATE}', '{TIME}'),
+                array(isset($plugin_cookies->token) ? $plugin_cookies->token : '', $epg_id, $epg_date, $day_start_ts),
+                $params['epg_url']);
 
-                // filter out epg only for selected day
-                $epg_date_start = strtotime('-2 hour', $day_start_ts);
-                $epg_date_end = strtotime('+1 day 2 hour', $day_start_ts);
-                $date_start = gmdate('Y-m-d H:i:s', $epg_date_start);
-                $date_end = gmdate('Y-m-d H:i:s', $epg_date_end);
-                hd_print("Fetch entries from: $epg_date_start ($date_start) to: $epg_date_end ($date_end)");
-                foreach ($epg as $time_start => $entry) {
-                    if ($time_start >= $epg_date_start && $time_start <= $epg_date_end) {
-                        $out_epg[$time_start] = $entry;
-                        //hd_print("$time_start: " . $entry['epg_title']);
+            hd_print("Fetching EPG for ID: '$epg_id' DATE: $epg_date");
+
+            $cache_dir = get_temp_path("epg/");
+            $cache_file = $cache_dir . "epg_channel_" . hash('crc32', $epg_url);
+
+            $from_cache = false;
+            $epg = array();
+            if (file_exists($cache_file)) {
+                $now = time();
+                $cache_expired = filemtime($cache_file) + 60 * 60 * 24;
+                hd_print("Cache expired at $cache_expired now $now");
+                if ($cache_expired > time()) {
+                    $epg = unserialize(file_get_contents($cache_file));
+                    $from_cache = (count($epg) !== 0);
+                    hd_print("Loading EPG entries from cache: $cache_file - " . ($from_cache ? "success" : "failed"));
+                }
+            }
+
+            if ($from_cache === false && $params['epg_parser'] === 'json') {
+                $epg = self::get_epg_json($epg_url, $params);
+            }
+
+            $counts = count($epg);
+            hd_print("Total entries: $counts");
+            if ($counts !== 0) {
+                // entries present
+                if (!is_dir($cache_dir) && !(mkdir($cache_dir) && is_dir($cache_dir))) {
+                    hd_print("Directory '$cache_dir' was not created");
+                } else {
+                    // if not in cache save downloaded data
+                    if ($from_cache === false) {
+                        // save downloaded epg
+                        self::save_cache($epg, $cache_file);
+                    }
+
+                    // filter out epg only for selected day
+                    $day_end_ts = $day_start_ts + 86400;
+
+                    $date_start_l = format_datetime("Y-m-d H:i", $day_start_ts);
+                    $date_end_l = format_datetime("Y-m-d H:i", $day_end_ts);
+                    hd_print("Fetch entries for localtime from: $date_start_l to: $date_end_l");
+
+                    $date_start_gm = gmdate('Y-m-d H:i', $day_start_ts);
+                    $date_end_gm = gmdate('Y-m-d H:i', $day_end_ts);
+                    hd_print("Fetch entries as UTC from: $day_start_ts ($date_start_gm) to: $day_end_ts ($date_end_gm)");
+                    foreach ($epg as $time_start => $entry) {
+                        if ($time_start >= $day_start_ts && $time_start < $day_end_ts) {
+                            $out_epg[$time_start] = $entry;
+                            //hd_print("$time_start (" . gmdate('Y-m-d H:i', $time_start) . " / " . format_datetime('Y-m-d H:i', $time_start) . "): " . $entry['epg_title']);
+                        }
                     }
                 }
             }

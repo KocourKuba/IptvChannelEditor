@@ -288,6 +288,7 @@ class Starnet_Tv extends Abstract_Tv
         $epg_man = new Epg_Manager($this->plugin->config);
 
         try {
+            $day_start_ts -= get_local_time_zone_offset();
             $epg = $epg_man->get_epg($channel, $epg_source, $day_start_ts, $plugin_cookies);
             if (count($epg) === 0) {
                 hd_print("No data from $epg_source EPG");
