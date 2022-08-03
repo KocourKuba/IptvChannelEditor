@@ -25,9 +25,9 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "epg_iptvx.h"
+#include "uri_stream.h"
 
-class uri_iptvonline : public epg_iptvx
+class uri_iptvonline : public uri_stream
 {
 public:
 	uri_iptvonline();

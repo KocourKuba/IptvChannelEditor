@@ -10,7 +10,6 @@ class OnecentPluginConfig extends Default_Config
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
-        $this->set_feature(SECONDARY_EPG, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/index\.m3u8\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}');
         $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/index-{START}-10800.m3u8?token={TOKEN}');
@@ -26,16 +25,6 @@ class OnecentPluginConfig extends Default_Config
         $this->set_epg_param('first','epg_desc', 'description');
         $this->set_epg_param('first','epg_time_format', 'd-m-Y H:i');
         $this->set_epg_param('first','epg_timezone', 'Europe/Moscow');
-
-        $this->set_epg_param('second','epg_url', 'http://technic.cf/epg-iptvxone/epg_day?id={CHANNEL}&day={DATE}');
-        $this->set_epg_param('second','epg_root', 'data');
-        $this->set_epg_param('second','epg_start', 'begin');
-        $this->set_epg_param('second','epg_end', 'end');
-        $this->set_epg_param('second','epg_title', 'title');
-        $this->set_epg_param('second','epg_desc', 'description');
-        $this->set_epg_param('second','epg_date_format', 'Y.m.d');
-        $this->set_epg_param('second','epg_use_mapper', true);
-        $this->set_epg_param('second','epg_mapper_url', 'http://technic.cf/epg-iptvxone/channels');
     }
 
     /**

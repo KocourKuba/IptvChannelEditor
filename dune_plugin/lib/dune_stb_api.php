@@ -367,21 +367,29 @@ function get_mac_address()
 }
 
 /**
+ * get timezone string from /etc/TZ, for example GMT-01
+ * @return string
+ */
+function get_local_tz()
+{
+    exec((file_exists('/etc/TZ') ? 'TZ=`cat /etc/TZ` ' : '') . 'date +%z', $tz, $rc);
+    return (($rc !== 0) || (count($tz) !== 1) || !is_numeric($tz[0])) ? '' : $tz[0];
+}
+
+/**
  * @return int|string
  */
 function get_local_time_zone_offset()
 {
     // return integer of offset in seconds
-
-    exec((file_exists('/etc/TZ') ? 'TZ=`cat /etc/TZ` ' : '') . 'date +%z', $tz, $rc);
-    $local_tz = (($rc !== 0) || (count($tz) !== 1) || !is_numeric($tz[0])) ? '' : $tz[0];
+    $local_tz = get_local_tz();
 
     if ($local_tz !== '') {
         $sign_ch = $local_tz[0];
         if ($sign_ch === '-') {
-            $sign = +1;
-        } else if ($sign_ch === '+') {
             $sign = -1;
+        } else if ($sign_ch === '+') {
+            $sign = +1;
         } else {
             return '';
         }
@@ -393,6 +401,134 @@ function get_local_time_zone_offset()
     }
 
     return 0;
+}
+
+/**
+ * Get timezone or UTC +???? offset name
+ * @return string
+ */
+function getTimeZone()
+{
+    $tz = date('e');
+    if ($tz !== 'UTC') {
+        return $tz;
+    }
+
+    $local_tz = get_local_tz();
+
+    if ($local_tz !== '') {
+        $sign_ch = $local_tz[0];
+        $tz_hh = substr($local_tz, 1, 2);
+        $tz_mm = substr($local_tz, 3, 2);
+        return "UTC $sign_ch$tz_hh$tz_mm";
+    }
+    return "UTC";
+}
+
+/**
+ * @return bool
+ */
+function is_android()
+{
+    return is_file("/system/dunehd/init");
+}
+
+/**
+ * @param string $format
+ * @return string
+ * @throws Exception
+ */
+function getAndroidTime ($format)
+{
+    $airDate = exec('date');
+    $date = new DateTime($airDate);
+    if ($format === 'timestamp') {
+        return strtotime($date->format('Y-m-d H:i:s'));
+    }
+
+    return $date->format($format);
+}
+
+/**
+ * format timestamp
+ * @param int $ts
+ * @param string|null $fmt
+ * @return string
+ * @throws Exception
+ */
+function format_timestamp($ts, $fmt = 'Y:m:d H:i:s')
+{
+    // NOTE: for some reason, explicit timezone is required for PHP
+    // on Dune (no builtin timezone info?).
+
+    $dt = new DateTime('@' . $ts);
+    return $dt->format($fmt);
+}
+
+/**
+ * Format time using current timezone offset
+ * @param string $fmt
+ * @param int $ts
+ * @return string
+ * @throws Exception
+ */
+function format_datetime($fmt, $ts)
+{
+    $tz_str = date_default_timezone_get();
+    if ($tz_str === 'UTC') {
+        $ts += get_local_time_zone_offset();
+    }
+
+    return date($fmt, $ts);
+}
+
+/**
+ * @param string $msecs
+ * @return string
+ */
+function format_duration($msecs)
+{
+    $n = (int)$msecs;
+
+    if ($n <= 0 || strlen($msecs) <= 0) {
+        return "--:--";
+    }
+
+    $n /= 1000;
+    $hours = $n / 3600;
+    $remainder = $n % 3600;
+    $minutes = $remainder / 60;
+    $seconds = $remainder % 60;
+
+    if ($hours > 0) {
+        return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
+    }
+
+    return sprintf("%02d:%02d", $minutes, $seconds);
+}
+
+/**
+ * @param string $secs
+ * @return string
+ */
+function format_duration_seconds($secs)
+{
+    $n = (int)$secs;
+
+    if ($n <= 0 || strlen($secs) <= 0) {
+        return "--:--";
+    }
+
+    $hours = $n / 3600;
+    $remainder = $n % 3600;
+    $minutes = $remainder / 60;
+    $seconds = $remainder % 60;
+
+    if ($hours > 0) {
+        return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
+    }
+
+    return sprintf("%02d:%02d", $minutes, $seconds);
 }
 
 /**

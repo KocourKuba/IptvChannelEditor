@@ -171,7 +171,7 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
                 if ($viewed_item === 'watched')
                     $prefix = '[Просмотрено]';
                 else
-                    $prefix = '[' . HD::format_duration_seconds($viewed_item[0]) . '/' . HD::format_duration_seconds($viewed_item[1]) . ']';
+                    $prefix = '[' . format_duration_seconds($viewed_item[0]) . '/' . format_duration_seconds($viewed_item[1]) . ']';
 
                 $info = "$series->name | $prefix";
                 $color = 3;

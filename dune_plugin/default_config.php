@@ -145,7 +145,6 @@ abstract class Default_Config
         $default_parser['epg_desc'] = 'descr';
         $default_parser['epg_date_format'] = 'Y-m-d';
         $default_parser['epg_use_duration'] = false;
-        $default_parser['epg_use_hash'] = false;
         $default_parser['epg_use_mapper'] = false;
         $default_parser['epg_mapper_url'] = '';
         $default_parser['epg_time_format'] = '';

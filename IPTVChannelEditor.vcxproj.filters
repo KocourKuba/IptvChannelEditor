@@ -228,12 +228,6 @@
     <ClInclude Include="UrlDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="epg_iptvx.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="epg_technic.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="uri_filmax.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>

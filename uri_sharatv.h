@@ -25,9 +25,9 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "epg_technic.h"
+#include "uri_stream.h"
 
-class uri_sharatv : public epg_technic
+class uri_sharatv : public uri_stream
 {
 public:
 

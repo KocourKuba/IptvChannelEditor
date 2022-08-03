@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.fox-tv.fun/{:s}/{:s}/tv.m3u";
 static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/{TOKEN}";
 
-uri_fox::uri_fox() : epg_technic({ L"fox", L"fox" })
+uri_fox::uri_fox()
 {
 	per_channel_token = true;
 	streams = { {StreamSubType::enHLS, L"HLS"} };
@@ -44,6 +44,17 @@ uri_fox::uri_fox() : epg_technic({ L"fox", L"fox" })
 	vod_supported = true;
 	provider_vod_url = L"http://pl.fox-tv.fun/{:s}/{:s}/vodall.m3u";
 	access_type = AccountAccessType::enLoginPass;
+
+	auto& params = epg_params[0];
+	params.epg_use_mapper = true;
+	params.epg_url = L"http://technic.cf/epg-fox/epg_day?id={ID}&day={DATE}";
+	params.epg_mapper_url = L"http://technic.cf/epg-fox/channels";
+	params.epg_date_format = L"{:04d}.{:02d}.{:02d}";
+	params.epg_root = "data";
+	params.epg_name = "title";
+	params.epg_desc = "description";
+	params.epg_start = "begin";
+	params.epg_end = "end";
 }
 
 void uri_fox::parse_uri(const std::wstring& url)

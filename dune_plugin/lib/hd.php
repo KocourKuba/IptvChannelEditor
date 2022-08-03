@@ -26,83 +26,6 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
-    public static function starts_with($str, $pattern)
-    {
-        return strpos($str, $pattern) === 0;
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param int $ts
-     * @param string $fmt
-     * @return string
-     * @throws Exception
-     */
-    public static function format_timestamp($ts, $fmt = null)
-    {
-        // NOTE: for some reason, explicit timezone is required for PHP
-        // on Dune (no builtin timezone info?).
-
-        if (is_null($fmt)) {
-            $fmt = 'Y:m:d H:i:s';
-        }
-
-        $dt = new DateTime('@' . $ts);
-        return $dt->format($fmt);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param string $msecs
-     * @return string
-     */
-    public static function format_duration($msecs)
-    {
-        $n = (int)$msecs;
-
-        if ($n <= 0 || strlen($msecs) <= 0) {
-            return "--:--";
-        }
-
-        $n /= 1000;
-        $hours = $n / 3600;
-        $remainder = $n % 3600;
-        $minutes = $remainder / 60;
-        $seconds = $remainder % 60;
-
-        if ($hours > 0) {
-            return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
-        }
-
-        return sprintf("%02d:%02d", $minutes, $seconds);
-    }
-
-    /**
-     * @param string $secs
-     * @return string
-     */
-    public static function format_duration_seconds($secs)
-    {
-        $n = (int)$secs;
-
-        if ($n <= 0 || strlen($secs) <= 0) {
-            return "--:--";
-        }
-
-        $hours = $n / 3600;
-        $remainder = $n % 3600;
-        $minutes = $remainder / 60;
-        $seconds = $remainder % 60;
-
-        if ($hours > 0) {
-            return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
-        }
-
-        return sprintf("%02d:%02d", $minutes, $seconds);
-    }
-
     /**
      * @param int $size
      * @return string
@@ -468,46 +391,6 @@ class HD
     }
 
     ///////////////////////////////////////////////////////////////////////////
-
-    private static $MONTHS = array(
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-    );
-
-    /**
-     * @param int $tm
-     * @return string
-     */
-    public static function format_date_time_date($tm)
-    {
-        $lt = localtime($tm);
-        $mon = self::$MONTHS[$lt[4]];
-        return sprintf("%02d %s %04d", $lt[3], $mon, $lt[5] + 1900);
-    }
-
-    /**
-     * @param int $tm
-     * @param bool $with_sec
-     * @return false|string
-     */
-    public static function format_date_time_time($tm, $with_sec = false)
-    {
-        $format = '%H:%M';
-        if ($with_sec) {
-            $format .= ':%S';
-        }
-        return strftime($format, $tm);
-    }
 
     public static function print_backtrace()
     {

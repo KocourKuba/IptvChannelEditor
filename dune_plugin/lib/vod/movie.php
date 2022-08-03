@@ -459,7 +459,7 @@ class Movie implements User_Input_Handler
                 if ($viewed_items[$playback_url] === 'watched')
                     $suffix = ' [Просмотрено]';
                 else{
-                    $suffix = ' [Просмотр ' . HD::format_duration($viewed_items[$playback_url][0]) . '/' . HD::format_duration($viewed_items[$playback_url][1]) . ']';
+                    $suffix = ' [Просмотр ' . format_duration($viewed_items[$playback_url][0]) . '/' . format_duration($viewed_items[$playback_url][1]) . ']';
                     $pos = (int)$viewed_items[$playback_url][0];
                     if ($pos < 0)
                         $pos = 0;

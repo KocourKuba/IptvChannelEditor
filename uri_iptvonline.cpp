@@ -45,6 +45,16 @@ uri_iptvonline::uri_iptvonline()
 {
 	provider_url = L"https://iptv.online/";
 	access_type = AccountAccessType::enPin;
+
+	auto& params1 = epg_params[0];
+	params1.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
+	params1.epg_root = "ch_programme";
+	params1.epg_name = "title";
+	params1.epg_desc = "description";
+	params1.epg_start = "start";
+	params1.epg_end = "";
+	params1.epg_time_format = "%d-%m-%Y %H:%M";
+	params1.epg_tz = 3600 * 3; // iptvx.one uses moscow time (GMT+3)
 }
 
 void uri_iptvonline::parse_uri(const std::wstring& url)
