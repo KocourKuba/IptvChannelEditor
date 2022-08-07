@@ -21,7 +21,6 @@ VERSION HISTORY:
 #include "pch.h"
 #include "FileVersionInfo.h"
 #include <string>
-#include <fmt/xchar.h>
 
 /////////////////////////////////////////////////////////////////////////////
 #ifdef _DEBUG

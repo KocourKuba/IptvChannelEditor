@@ -620,7 +620,7 @@ bool PluginsConfig::ReadSettingsJson(StreamType plugin_type)
 			case nlohmann::detail::value_t::object:
 				if (item.value().contains("qw"))
 				{
-					auto qw = item.value()["qw"];
+					auto qw(item.value()["qw"]);
 					settings[name] = (__int64)MAKEQWORD(qw["ldw"], qw["hdw"]);
 				}
 				break;

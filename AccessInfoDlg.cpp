@@ -442,7 +442,7 @@ void CAccessInfoDlg::FillChannelsList()
 		return;
 
 	int idx = 0;
-	auto ch_list = selected.ch_list;
+	auto ch_list(selected.ch_list);
 	bool all = ch_list.empty();
 	m_wndChLists.DeleteAllItems();
 	for (const auto& channel : m_all_channels_lists)
