@@ -94,7 +94,7 @@ class Action_Factory
     }
 
     /**
-     * @param array $post_action
+     * @param array|null $post_action
      * @return array
      */
     public static function close_dialog_and_run($post_action)
