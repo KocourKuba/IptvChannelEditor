@@ -58,7 +58,7 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
         $add_action['caption'] = 'Просмотрено/Не просмотрено';
         $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
 
-        if ($this->plugin->config->get_feature(VOD_PORTAL_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(VOD_QUALITY_SUPPORTED)) {
             $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
             $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
             if (!is_null($movie) && isset($movie->variants_list)) {

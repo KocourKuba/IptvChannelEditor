@@ -147,7 +147,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         );
 
         // Filter
-        if (!isset($media_url->category_id) && $this->plugin->config->get_feature(VOD_PORTAL_SUPPORTED)) {
+        if (!isset($media_url->category_id) && $this->plugin->config->get_feature(VOD_FILTER_SUPPORTED)) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => 'filter_screen',
@@ -163,15 +163,16 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 
         if (!empty($category_list)) {
             foreach ($category_list as $category) {
-                $id = $category->get_id();
+                $category_id = $category->get_id();
                 if (!is_null($category->get_sub_categories())) {
-                    $media_url_str = self::get_media_url_str($id);
-                } else if ($id === 'all' || $id === 'search' || $id === 'filter') {
-                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($id, null);
+                    $media_url_str = self::get_media_url_str($category_id);
+                } else if ($category_id === 'all' || $category_id === 'search' || $category_id === 'filter') {
+                    // special category id's
+                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category_id, null);
                 } else if ($category->get_parent() !== null) {
-                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category->get_parent()->get_id(), $id);
+                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category->get_parent()->get_id(), $category_id);
                 } else {
-                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($id, null);
+                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category_id, null);
                 }
 
                 $items[] = array

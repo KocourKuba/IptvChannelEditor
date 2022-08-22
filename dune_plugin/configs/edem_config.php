@@ -12,7 +12,8 @@ class EdemPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8');
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
-        $this->set_feature(VOD_PORTAL_SUPPORTED, true);
+        $this->set_feature(VOD_QUALITY_SUPPORTED, true);
+        $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
 
         $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/it999/epg/{CHANNEL}.json');

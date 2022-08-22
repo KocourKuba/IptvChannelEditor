@@ -13,6 +13,7 @@ class GlanzPluginConfig extends Default_Config
         $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
         $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/video-{START}-10800.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
@@ -184,19 +185,26 @@ class GlanzPluginConfig extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
-        $categories = HD::DownloadJson($url);
-        if ($categories === false) {
+        $jsonItems = HD::DownloadJson($url, false);
+        if ($jsonItems === false) {
             return;
         }
 
-        HD::StoreContentToFile($categories, self::get_vod_cache_file());
+        HD::StoreContentToFile($jsonItems, self::get_vod_cache_file());
 
         $category_list = array();
         $category_index = array();
         $categoriesFound = array();
 
-        foreach ($categories as $movie) {
-            $category = (string)$movie['category'];
+        // all movies
+        $category = new Starnet_Vod_Category('all', 'Все фильмы');
+        $category_list[] = $category;
+        $category_index[$category->get_id()] = $category;
+
+        $genres = array();
+        $years = array();
+        foreach ($jsonItems as $movie) {
+            $category = (string)$movie->category;
             if (empty($category)) {
                 $category = "Без категории";
             }
@@ -207,7 +215,29 @@ class GlanzPluginConfig extends Default_Config
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
             }
+
+            // collect filters information
+            $year = (int)$movie->year;
+            $years[$year] = $movie->year;
+            foreach ($movie->genres as $genre) {
+                $val = (int)$genre->id;
+                $genres[$val] = $genre->title;
+            }
         }
+
+        ksort($genres);
+        krsort($years);
+
+        $filters = array();
+        $filters['genre'] = array('title' => 'Жанр', 'values' => array(-1 => 'Нет'));
+        $filters['from'] = array('title' => 'Год от', 'values' => array(-1 => 'Нет'));
+        $filters['to'] = array('title' => 'Год до', 'values' => array(-1 => 'Нет'));
+
+        $filters['genre']['values'] += $genres;
+        $filters['from']['values'] += $years;
+        $filters['to']['values'] += $years;
+
+        $this->set_filters($filters);
 
         hd_print("Categories read: " . count($category_list));
     }
@@ -257,24 +287,79 @@ class GlanzPluginConfig extends Default_Config
         }
 
         $arr = explode("_", $query_id);
-        if ($arr === false) {
-            $category_id = $query_id;
-        } else {
-            $category_id = $arr[0];
-        }
+        $category_id = ($arr === false) ? $query_id : $arr[0];
 
-        foreach ($jsonItems as $item) {
-            $category = $item->category;
+        foreach ($jsonItems as $movie) {
+            $category = $movie->category;
             if (empty($category)) {
                 $category = "Без категории";
             }
 
-            if ($category_id === $category) {
-                $movies[] = self::CreateShortMovie($item);
+            if ($category_id === 'all' || $category_id === $category) {
+                $movies[] = self::CreateShortMovie($movie);
             }
         }
 
         hd_print("Movies read for query: $query_id - " . count($movies));
+        return $movies;
+    }
+
+    /**
+     * @param string $params
+     * @param $plugin_cookies
+     * @return array
+     * @throws Exception
+     */
+    public function getFilterList($params, $plugin_cookies)
+    {
+        hd_print("getFilterList: $params");
+        $movies = array();
+
+        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
+        if ($jsonItems === false) {
+            hd_print("getFilterList: failed to load movies");
+            return $movies;
+        }
+
+        $pairs = explode(" ", $params);
+        $post_params = array();
+        foreach ($pairs as $pair) {
+            if (preg_match("|^(.+):(.+)$|", $pair, $m)) {
+                $filter = $this->get_filter($m[1]);
+                if ($filter !== null && !empty($filter['values'])) {
+                    $item_idx = array_search($m[2], $filter['values']);
+                    if ($item_idx !== false && $item_idx !== -1) {
+                        $post_params[$m[1]] = (int)$item_idx;
+                    }
+                }
+            }
+        }
+
+        foreach ($jsonItems as $movie) {
+            $match_genre = !isset($post_params['genre']);
+            if (!$match_genre) {
+                foreach ($movie->genres as $genre) {
+                    if (!isset($post_params['genre']) || (int)$genre->id === $post_params['genre']) {
+                        $match_genre = true;
+                        break;
+                    }
+                }
+            }
+
+            $match_year = false;
+            $year_from = isset($post_params['from']) ? $post_params['from'] : ~PHP_INT_MAX;
+            $year_to = isset($post_params['to']) ? $post_params['to'] : PHP_INT_MAX;
+
+            if ((int)$movie->year >= $year_from && (int)$movie->year <= $year_to) {
+                $match_year = true;
+            }
+
+            if ($match_year && $match_genre) {
+                $movies[] = self::CreateShortMovie($movie);
+            }
+        }
+
+        hd_print("Movies found: " . count($movies));
         return $movies;
     }
 
@@ -302,6 +387,73 @@ class GlanzPluginConfig extends Default_Config
         $movie->info = "$movie_obj->name|Год: $movie_obj->year|Страна: $movie_obj->country|Жанр: $genres_str";
 
         return $movie;
+    }
+
+    /**
+     * @param array &$defs
+     * @param Starnet_Filter_Screen $parent
+     * @param int $initial
+     * @return bool
+     */
+    public function AddFilterUI(&$defs, $parent, $initial = -1)
+    {
+        $filters = array("genre", "from", "to");
+        hd_print("AddFilterUI: $initial");
+        $added = false;
+        foreach ($filters as $name) {
+            $filter = $this->get_filter($name);
+            if ($filter === null) {
+                hd_print("AddFilterUI: no filters with '$name'");
+                continue;
+            }
+
+            $values = $filter['values'];
+            if (empty($values)) {
+                hd_print("AddFilterUI: no filters values for '$name'");
+                continue;
+            }
+
+            $idx = $initial;
+            if ($initial !== -1) {
+                $pairs = explode(" ", $initial);
+                foreach ($pairs as $pair) {
+                    if (strpos($pair, $name . ":") !== false && preg_match("|^$name:(.+)|", $pair, $m)) {
+                        $idx = array_search($m[1], $values) ?: -1;
+                        break;
+                    }
+                }
+            }
+
+            Control_Factory::add_combobox($defs, $parent, null, $name,
+                $filter['title'], $idx, $values, 600, true);
+
+            Control_Factory::add_vgap($defs, 30);
+            $added = true;
+        }
+
+        return $added;
+    }
+
+    /**
+     * @param $user_input
+     * @return string
+     */
+    public function CompileSaveFilterItem($user_input)
+    {
+        $filters = array("genre", "from", "to");
+        $compiled_string = "";
+        foreach ($filters as $name) {
+            $filter = $this->get_filter($name);
+            if ($filter !== null && $user_input->{$name} !== -1) {
+                if (!empty($compiled_string)) {
+                    $compiled_string .= " ";
+                }
+
+                $compiled_string .= $name . ":" . $filter['values'][$user_input->{$name}];
+            }
+        }
+
+        return $compiled_string;
     }
 
     protected static function get_vod_cache_file()
