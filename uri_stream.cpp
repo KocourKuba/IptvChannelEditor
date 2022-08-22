@@ -131,10 +131,10 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 				std::tm tm = {};
 				std::stringstream ss(get_json_string_value(params.epg_start, val));
 				ss >> std::get_time(&tm, params.epg_time_format.c_str());
-				epg_info.time_start = _mkgmtime(&tm); // parsed time assumed as GMT+00
+				epg_info.time_start = _mkgmtime(&tm); // parsed time assumed as UTC+00
 			}
 
-			epg_info.time_start -= params.epg_tz; // substract real epg GMT
+			epg_info.time_start -= params.epg_tz; // subtract real EPG timezone offset
 
 			if (params.epg_end.empty())
 			{

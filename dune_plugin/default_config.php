@@ -150,7 +150,7 @@ abstract class Default_Config
         $default_parser['epg_use_mapper'] = false;
         $default_parser['epg_mapper_url'] = '';
         $default_parser['epg_time_format'] = '';
-        $default_parser['epg_timezone'] = 'UTC';
+        $default_parser['epg_timezone'] = 0;
         $default_parser['epg_id_mapper'] = array();
 
         $this->set_epg_params('first', $default_parser);

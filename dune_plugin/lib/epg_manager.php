@@ -193,13 +193,9 @@ class Epg_Manager
 
             if ($no_timestamp) {
                 // start time not the timestamp
-                $dt = DateTime::createFromFormat($parser_params['epg_time_format'], $program_start, new DateTimeZone($parser_params['epg_timezone']));
-                $program_start = $dt->getTimestamp();
-                if (is_need_daylight_fix()) {
-                    hd_print("apply daylight fix +1h");
-                    $program_start += 3600;
-                }
-
+                // parsed time assumed as UTC+00
+                $dt = DateTime::createFromFormat($parser_params['epg_time_format'], $program_start, new DateTimeZone('UTC'));
+                $program_start = $dt->getTimestamp() - $parser_params['epg_timezone']; // subtract real EPG timezone
                 //hd_print("epg_start: $program_start");
             }
 
@@ -219,7 +215,7 @@ class Epg_Manager
         }
 
         if ($no_end && $prev_start !== 0) {
-            $day_epg[$prev_start]['epg_end'] = $prev_start + 60 * 60; // fake end
+            $day_epg[$prev_start]['epg_end'] = $prev_start + 3600; // fake end
         }
 
         ksort($day_epg);

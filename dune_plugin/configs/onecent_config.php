@@ -24,7 +24,7 @@ class OnecentPluginConfig extends Default_Config
         $this->set_epg_param('first','epg_title', 'title');
         $this->set_epg_param('first','epg_desc', 'description');
         $this->set_epg_param('first','epg_time_format', 'd-m-Y H:i');
-        $this->set_epg_param('first','epg_timezone', 'Europe/Moscow');
+        $this->set_epg_param('first','epg_timezone', 10800); // // iptvx.one uses moscow time (UTC+3)
     }
 
     /**
