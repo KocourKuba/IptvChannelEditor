@@ -124,7 +124,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 				movie->director = utils::get_json_string("director", info);
 				movie->casting = utils::get_json_string("cast", info);
 				movie->age = utils::get_json_string("adult", info);
-				movie->movie_time = info.value("duration_secs", 0);
+				movie->movie_time = std::to_wstring(info.value("duration_secs", 0) / 60);
 
 				for (const auto& genre_item : info["genre"].items())
 				{
