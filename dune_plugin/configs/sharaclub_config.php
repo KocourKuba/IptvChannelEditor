@@ -17,6 +17,7 @@ class SharaclubPluginConfig extends Default_Config
         $this->set_feature(SERVER_SUPPORTED, true);
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(BALANCE_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
@@ -253,26 +254,51 @@ class SharaclubPluginConfig extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
-        $categories = HD::DownloadJson($url);
-        if ($categories === false) {
+        $jsonItems = HD::DownloadJson($url, false);
+        if ($jsonItems === false) {
             return;
         }
 
-        HD::StoreContentToFile($categories, self::get_vod_cache_file());
+        HD::StoreContentToFile($jsonItems, self::get_vod_cache_file());
 
         $category_list = array();
         $category_index = array();
         $categoriesFound = array();
 
-        foreach ($categories as $movie) {
-            $category = (string)$movie['category'];
+        $genres = array();
+        $years = array();
+        foreach ($jsonItems as $movie) {
+            $category = (string)$movie->category;
             if (!in_array($category, $categoriesFound)) {
                 $categoriesFound[] = $category;
                 $cat = new Starnet_Vod_Category($category, $category);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
             }
+
+            // collect filters information
+            $info = $movie->info;
+            $year = (int)$info->year;
+            $years[$year] = $info->year;
+
+            foreach ($info->genre as $genre) {
+                $genres[$genre] = $genre;
+            }
         }
+
+        ksort($genres);
+        krsort($years);
+
+        $filters = array();
+        $filters['genre'] = array('title' => 'Жанр', 'values' => array(-1 => 'Нет'));
+        $filters['from'] = array('title' => 'Год от', 'values' => array(-1 => 'Нет'));
+        $filters['to'] = array('title' => 'Год до', 'values' => array(-1 => 'Нет'));
+
+        $filters['genre']['values'] += $genres;
+        $filters['from']['values'] += $years;
+        $filters['to']['values'] += $years;
+
+        $this->set_filters($filters);
 
         hd_print("Categories read: " . count($category_list));
     }
@@ -341,6 +367,68 @@ class SharaclubPluginConfig extends Default_Config
     }
 
     /**
+     * @param string $params
+     * @param $plugin_cookies
+     * @return array
+     * @throws Exception
+     */
+    public function getFilterList($params, $plugin_cookies)
+    {
+        hd_print("getFilterList: $params");
+        $movies = array();
+
+        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
+        if ($jsonItems === false) {
+            hd_print("getFilterList: failed to load movies");
+            return $movies;
+        }
+
+        $pairs = explode(",", $params);
+        $post_params = array();
+        foreach ($pairs as $pair) {
+            if (preg_match("|^(.+):(.+)$|", $pair, $m)) {
+                hd_print("Filter: $m[1] Value: $m[2]");
+                $filter = $this->get_filter($m[1]);
+                if ($filter !== null && !empty($filter['values'])) {
+                    $item_idx = array_search($m[2], $filter['values']);
+                    if ($item_idx !== false && $item_idx !== -1) {
+                        $post_params[$m[1]] = $item_idx;
+                        hd_print("Param: $item_idx");
+                    }
+                }
+            }
+        }
+
+        foreach ($jsonItems as $movie) {
+            $match_genre = !isset($post_params['genre']);
+            $info = $movie->info;
+            if (!$match_genre) {
+                foreach ($info->genre as $genre) {
+                    if (!isset($post_params['genre']) || $genre === $post_params['genre']) {
+                        $match_genre = true;
+                        break;
+                    }
+                }
+            }
+
+            $match_year = false;
+            $year_from = isset($post_params['from']) ? $post_params['from'] : ~PHP_INT_MAX;
+            $year_to = isset($post_params['to']) ? $post_params['to'] : PHP_INT_MAX;
+
+            if ((int)$info->year >= $year_from && (int)$info->year <= $year_to) {
+                $match_year = true;
+            }
+
+            if ($match_year && $match_genre) {
+                $movies[] = self::CreateShortMovie($movie);
+            }
+        }
+
+        hd_print("Movies found: " . count($movies));
+        return $movies;
+    }
+
+    /**
      * @param Object $movie_obj
      * @return Short_Movie
      */
@@ -360,6 +448,73 @@ class SharaclubPluginConfig extends Default_Config
         $movie->info = "$movie_obj->name|Год: $info->year|Страна: $country|Жанр: $genres|Рейтинг: $info->rating";
 
         return $movie;
+    }
+
+    /**
+     * @param array &$defs
+     * @param Starnet_Filter_Screen $parent
+     * @param int $initial
+     * @return bool
+     */
+    public function AddFilterUI(&$defs, $parent, $initial = -1)
+    {
+        $filters = array("genre", "from", "to");
+        hd_print("AddFilterUI: $initial");
+        $added = false;
+        foreach ($filters as $name) {
+            $filter = $this->get_filter($name);
+            if ($filter === null) {
+                hd_print("AddFilterUI: no filters with '$name'");
+                continue;
+            }
+
+            $values = $filter['values'];
+            if (empty($values)) {
+                hd_print("AddFilterUI: no filters values for '$name'");
+                continue;
+            }
+
+            $idx = $initial;
+            if ($initial !== -1) {
+                $pairs = explode(" ", $initial);
+                foreach ($pairs as $pair) {
+                    if (strpos($pair, $name . ":") !== false && preg_match("|^$name:(.+)|", $pair, $m)) {
+                        $idx = array_search($m[1], $values) ?: -1;
+                        break;
+                    }
+                }
+            }
+
+            Control_Factory::add_combobox($defs, $parent, null, $name,
+                $filter['title'], $idx, $values, 600, true);
+
+            Control_Factory::add_vgap($defs, 30);
+            $added = true;
+        }
+
+        return $added;
+    }
+
+    /**
+     * @param $user_input
+     * @return string
+     */
+    public function CompileSaveFilterItem($user_input)
+    {
+        $filters = array("genre", "from", "to");
+        $compiled_string = "";
+        foreach ($filters as $name) {
+            $filter = $this->get_filter($name);
+            if ($filter !== null && $user_input->{$name} !== -1) {
+                if (!empty($compiled_string)) {
+                    $compiled_string .= ",";
+                }
+
+                $compiled_string .= $name . ":" . $filter['values'][$user_input->{$name}];
+            }
+        }
+
+        return $compiled_string;
     }
 
     protected static function get_vod_cache_file()
