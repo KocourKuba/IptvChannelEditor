@@ -44,15 +44,19 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/~{TOKEN}/{ID}";
 
 uri_oneott::uri_oneott()
 {
-	auto& params = epg_params[0];
-	params.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
-	params.epg_root = "";
-	params.epg_name = "epg";
-	params.epg_desc = "desc";
-	params.epg_start = "start";
-	params.epg_end = "stop";
 	provider_url = L"http://1ott.net/";
 	access_type = AccountAccessType::enLoginPass;
+
+	auto& params1 = epg_params[0];
+	params1.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
+	params1.epg_root = "";
+	params1.epg_name = "epg";
+	params1.epg_desc = "desc";
+	params1.epg_start = "start";
+	params1.epg_end = "stop";
+
+	secondary_epg = true;
+	epg_params[1].epg_url = L"http://epg.drm-play.ml/1ott/epg/{ID}.json";
 }
 
 void uri_oneott::parse_uri(const std::wstring& url)

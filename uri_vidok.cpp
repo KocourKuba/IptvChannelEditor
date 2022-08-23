@@ -47,6 +47,9 @@ static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 uri_vidok::uri_vidok()
 {
 	per_channel_token = true;
+	provider_url = L"https://vidok.tv/";
+	access_type = AccountAccessType::enLoginPass;
+
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 
 	auto& params = epg_params[0];
@@ -56,8 +59,6 @@ uri_vidok::uri_vidok()
 	params.epg_desc = "description";
 	params.epg_start = "start";
 	params.epg_end = "end";
-	provider_url = L"https://vidok.tv/";
-	access_type = AccountAccessType::enLoginPass;
 }
 
 void uri_vidok::parse_uri(const std::wstring& url)

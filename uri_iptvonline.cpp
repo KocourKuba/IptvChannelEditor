@@ -54,7 +54,10 @@ uri_iptvonline::uri_iptvonline()
 	params1.epg_start = "start";
 	params1.epg_end = "";
 	params1.epg_time_format = "%d-%m-%Y %H:%M";
-	params1.epg_tz = 3600 * 3; // iptvx.one uses moscow time (GMT+3)
+	params1.epg_tz = 3600 * 3; // iptvx.one uses moscow time (UTC+3)
+
+	secondary_epg = true;
+	epg_params[1].epg_url = L"http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
 }
 
 void uri_iptvonline::parse_uri(const std::wstring& url)

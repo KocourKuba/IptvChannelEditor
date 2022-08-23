@@ -16,8 +16,10 @@ class LightiptvPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}');
         $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{TOKEN}/timeshift_abs-{START}.m3u8?token={PASSWORD}');
         $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(SECONDARY_EPG, true);
 
-        $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/lightiptv/epg/{CHANNEL}.json');
+        $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/lightiptv/epg/{CHANNEL}.json');
+        $this->set_epg_param('second','epg_url','http://epg.ott-play.com/lightiptv/epg/{CHANNEL}.json');
     }
 
     /**

@@ -40,9 +40,8 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{I
 
 uri_viplime::uri_viplime()
 {
-	auto& params = epg_params[0];
 	server_subst_type = ServerSubstType::enStream;
-	params.epg_url = L"http://epg.esalecrm.net/viplime/epg/{ID}.json";
+	epg_params[0].epg_url = L"http://epg.drm-play.ml/viplime/epg/{ID}.json";
 	provider_url = L"http://viplime.fun/";
 	access_type = AccountAccessType::enPin;
 

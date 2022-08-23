@@ -102,7 +102,6 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			{
 				const auto& id = get_epg_id(0).substr(1);
 				set_epg_id(0, id); // primary EPG
-				set_epg_id(1, id); // secondary EPG
 			}
 			break;
 		case StreamType::enSharavoz:
@@ -133,6 +132,9 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		default:
 			break;
 		}
+
+		if (stream_uri->has_epg2())
+			set_epg_id(1, get_epg_id(0));
 	}
 
 	return result;

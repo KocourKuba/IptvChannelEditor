@@ -1548,7 +1548,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	UpdateExtToken(info->stream_uri.get(), m_cur_account.get_token());
 	if (m_plugin_type == StreamType::enSharaclub)
 	{
-		auto& url = info->stream_uri->get_epg_parameters(0).epg_url;
+		auto& url = info->stream_uri->get_epg_parameters(epg_idx).epg_url;
 		utils::string_replace_inplace<wchar_t>(url, L"{DOMAIN}", GetConfig().get_string(false, REG_EPG_DOMAIN));
 	}
 
@@ -2214,7 +2214,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomize()
 
 				const auto& str_id = std::to_wstring(id);
 				channel->stream_uri->set_id(str_id);
-				m_streamID = CString(str_id.c_str());
+				m_streamID = str_id.c_str();
 			}
 
 			// recalculate hash

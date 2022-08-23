@@ -387,14 +387,21 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 
 	const auto& paragraph = any_string<T>(R"({\par})");
 
+	// remove html tag
+	const auto& search = any_string<T>("<br>");
+	const auto& replace = any_string<T>("\n");
+	const auto& html_fixed = utils::string_replace(text,
+												   std::basic_string<T>((const T*)search.data()),
+												   std::basic_string<T>((const T*)replace.data()));
+
 	std::basic_string<T> rtf;
-	for (auto it = text.begin(); it != text.end(); ++it)
+	for (auto it = html_fixed.begin(); it != html_fixed.end(); ++it)
 	{
 		if (*it == '\r') continue;
 
 		if (*it == '\n')
 		{
-			rtf.append(paragraph.begin(), paragraph.end());
+			rtf += (const T*)paragraph.data();
 			continue;
 		}
 

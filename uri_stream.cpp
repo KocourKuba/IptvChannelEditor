@@ -119,8 +119,6 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 			const auto& val = item.value();
 
 			EpgInfo epg_info;
-			epg_info.name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_string_value(params.epg_name, val))));
-			epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_string_value(params.epg_desc, val))));
 
 			if (params.epg_time_format.empty())
 			{
@@ -135,6 +133,9 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 			}
 
 			epg_info.time_start -= params.epg_tz; // subtract real EPG timezone offset
+
+			// Not valid time start or already added. Skip processing
+			if (epg_info.time_start == 0 || epg_map.find(epg_info.time_start) != epg_map.end()) continue;
 
 			if (params.epg_end.empty())
 			{
@@ -165,11 +166,11 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 			epg_info.end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
 #endif // _DEBUG
 
-			if (epg_info.time_start != 0)
-			{
-				auto it = epg_map.emplace(epg_info.time_start, epg_info);
-				added |= it.second;
-			}
+			epg_info.name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_string_value(params.epg_name, val))));
+			epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_string_value(params.epg_desc, val))));
+
+			epg_map.emplace(epg_info.time_start, epg_info);
+			added = true;
 		}
 
 		if (params.epg_end.empty() && prev_start != 0)
@@ -226,7 +227,7 @@ std::wstring uri_stream::compile_epg_url(int epg_idx, const std::wstring& epg_id
 nlohmann::json uri_stream::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
 {
 	const auto& root = epg_params[epg_idx].epg_root;
-	return root.empty() ? epg_data : epg_data[root];
+	return root.empty() ? epg_data : (epg_data.contains(root) ? epg_data[root] : nlohmann::json());
 }
 
 void uri_stream::put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const

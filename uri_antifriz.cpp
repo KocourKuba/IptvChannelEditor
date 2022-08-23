@@ -45,13 +45,14 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{S
 
 uri_antifriz::uri_antifriz()
 {
-	auto& params = epg_params[0];
-	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
-	params.epg_root = "";
 	provider_url = L"https://antifriztv.com/";
 	provider_vod_url = L"http://protected-api.com";
 	vod_supported = true;
 	access_type = AccountAccessType::enPin;
+
+	auto& params1 = epg_params[0];
+	params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+	params1.epg_root = "";
 }
 
 void uri_antifriz::parse_uri(const std::wstring& url)

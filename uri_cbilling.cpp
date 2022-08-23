@@ -50,13 +50,14 @@ static constexpr auto URI_TEMPLATE_ARCHIVE_MPEG = L"http://{DOMAIN}/{ID}/archive
 
 uri_cbilling::uri_cbilling()
 {
-	auto& params = epg_params[0];
-	params.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
-	params.epg_root = "";
 	provider_url = L"https://cbilling.live/";
 	provider_vod_url = L"http://protected-api.com";
 	vod_supported = true;
 	access_type = AccountAccessType::enPin;
+
+	auto& params1 = epg_params[0];
+	params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+	params1.epg_root = "";
 
 	for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
 	{

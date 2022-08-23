@@ -40,15 +40,16 @@ static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/~{TOKEN}/{ID}/";
 
 uri_shuratv::uri_shuratv()
 {
-	auto& params = epg_params[0];
-	params.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
-	params.epg_root = "";
-	params.epg_name = "epg";
-	params.epg_desc = "desc";
-	params.epg_start = "start";
-	params.epg_end = "stop";
 	provider_url = L"http://shura.tv/b/";
 	access_type = AccountAccessType::enPin;
+
+	auto& params1 = epg_params[0];
+	params1.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
+	params1.epg_root = "";
+	params1.epg_name = "epg";
+	params1.epg_desc = "desc";
+	params1.epg_start = "start";
+	params1.epg_end = "stop";
 
 	for (int i = 0; i <= IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1; i++)
 	{

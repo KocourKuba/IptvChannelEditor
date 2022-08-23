@@ -15,7 +15,7 @@ class ViplimePluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8');
         $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg');
 
-        $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/viplime/epg/{CHANNEL}.json');
+        $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/viplime/epg/{CHANNEL}.json');
     }
 
     /**

@@ -48,10 +48,12 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{S
 uri_tvteam::uri_tvteam()
 {
 	per_channel_token = true;
-	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
 	provider_url = L"https://tv.team/";
 	server_subst_type = ServerSubstType::enStream;
 	access_type = AccountAccessType::enPin;
+
+	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
+
 	servers_list = {
 		{ load_string_resource(IDS_STRING_TV_TEAM_P1), L"3.troya.tv"  }, // All (except RU, BY)
 		{ load_string_resource(IDS_STRING_TV_TEAM_P2), L"4.troya.tv"  }, // DE, RU

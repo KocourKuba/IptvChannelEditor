@@ -42,11 +42,13 @@ static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{TOKEN}/timeshi
 
 uri_lightiptv::uri_lightiptv()
 {
-	auto& params = epg_params[0];
-//	params.epg_url = L"http://epg.esalecrm.net/lightiptv/epg/{ID}.json";
-	params.epg_url = L"http://epg.ott-play.com/lightiptv/epg/{ID}.json";
 	provider_url = L"https://ottbill.cc/";
 	access_type = AccountAccessType::enPin;
+
+	epg_params[0].epg_url = L"http://epg.drm-play.ml/lightiptv/epg/{ID}.json";
+
+	secondary_epg = true;
+	epg_params[1].epg_url = L"http://epg.ott-play.com/lightiptv/epg/{ID}.json";
 }
 
 void uri_lightiptv::parse_uri(const std::wstring& url)

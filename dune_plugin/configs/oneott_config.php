@@ -13,6 +13,7 @@ class OneottPluginConfig extends Default_Config
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
         $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/~{TOKEN}/{ID}');
+        $this->set_feature(SECONDARY_EPG, true);
 
         $this->set_epg_param('first','epg_url','http://epg.propg.net/{CHANNEL}/epg2/{DATE}');
         $this->set_epg_param('first','epg_root', '');
@@ -20,6 +21,8 @@ class OneottPluginConfig extends Default_Config
         $this->set_epg_param('first','epg_end', 'stop');
         $this->set_epg_param('first','epg_title', 'epg');
         $this->set_epg_param('first','epg_desc', 'desc');
+
+        $this->set_epg_param('second','epg_url','http://epg.drm-play.ml/1ott/epg/{CHANNEL}.json');
     }
 
     /**

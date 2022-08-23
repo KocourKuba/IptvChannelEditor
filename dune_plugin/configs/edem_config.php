@@ -16,7 +16,7 @@ class EdemPluginConfig extends Default_Config
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
 
-        $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/it999/epg/{CHANNEL}.json');
+        $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/edem/epg/{CHANNEL}.json');
     }
 
     /**

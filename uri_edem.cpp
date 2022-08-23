@@ -40,11 +40,12 @@ static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m
 
 uri_edem::uri_edem()
 {
-	auto& params = epg_params[0];
-	params.epg_url = L"http://epg.esalecrm.net/it999/epg/{ID}.json";
 	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"https://ilook.tv/";
 	vod_supported = true;
+
+	auto& params = epg_params[0];
+	params.epg_url = L"http://epg.drm-play.ml/edem/epg/{ID}.json";
 
 	playlists.clear();
 

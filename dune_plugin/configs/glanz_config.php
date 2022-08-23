@@ -21,6 +21,7 @@ class GlanzPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
         $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF.+group-title="(?<category>.*)".+tvg-logo="(?<logo>.*)"\s*,\s*(?<title>.*)$|');
         $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(SECONDARY_EPG, true);
 
         $this->set_epg_param('first','epg_url', 'http://epg.iptvx.one/api/id/{CHANNEL}.json');
         $this->set_epg_param('first','epg_root', 'ch_programme');
@@ -30,6 +31,8 @@ class GlanzPluginConfig extends Default_Config
         $this->set_epg_param('first','epg_desc', 'description');
         $this->set_epg_param('first','epg_time_format', 'd-m-Y H:i');
         $this->set_epg_param('first','epg_timezone', 10800); // // iptvx.one uses moscow time (UTC+3)
+
+        $this->set_epg_param('second','epg_url','http://epg.drm-play.ml/iptvx.one/epg/{ID}.json');
     }
 
     /**
