@@ -107,8 +107,6 @@ class Starnet_Tv extends Abstract_Tv
         $this->channels = new Hashed_Array();
         $this->groups = new Hashed_Array();
 
-        $has_epg2 = $this->plugin->config->get_feature(SECONDARY_EPG);
-
         // Favorites group
         if ($this->is_favorites_supported()) {
             $this->groups->put(new Favorites_Group($this,

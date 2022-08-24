@@ -20,7 +20,6 @@ abstract class Cbilling_Vod_Impl extends Default_Config
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
-        $this->set_feature(EXTINF_VOD_PATTERN, '^#EXTINF.+genres="([^"]*)"\s+rating="([^"]*)"\s+year="([^"]*)"\s+country="([^"]*)"\s+director="([^"]*)".*group-title="([^"]*)"\s*,\s*(.*)$|');
     }
 
     /**
@@ -93,8 +92,8 @@ abstract class Cbilling_Vod_Impl extends Default_Config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         //hd_print("fetch_vod_categories");
-        $categories = HD::DownloadJson(self::API_HOST, false);
-        if ($categories === false) {
+        $jsonItems = HD::DownloadJson(self::API_HOST, false);
+        if ($jsonItems === false) {
             return;
         }
 
@@ -106,7 +105,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
-        foreach ($categories->data as $node) {
+        foreach ($jsonItems->data as $node) {
             $id = (string)$node->id;
             $category = new Starnet_Vod_Category($id, (string)$node->name);
 

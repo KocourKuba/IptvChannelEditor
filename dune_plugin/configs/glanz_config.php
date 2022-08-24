@@ -324,7 +324,7 @@ class GlanzPluginConfig extends Default_Config
             return $movies;
         }
 
-        $pairs = explode(" ", $params);
+        $pairs = explode(",", $params);
         $post_params = array();
         foreach ($pairs as $pair) {
             if (preg_match("|^(.+):(.+)$|", $pair, $m)) {
@@ -449,7 +449,7 @@ class GlanzPluginConfig extends Default_Config
             $filter = $this->get_filter($name);
             if ($filter !== null && $user_input->{$name} !== -1) {
                 if (!empty($compiled_string)) {
-                    $compiled_string .= " ";
+                    $compiled_string .= ",";
                 }
 
                 $compiled_string .= $name . ":" . $filter['values'][$user_input->{$name}];
