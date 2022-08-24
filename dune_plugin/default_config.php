@@ -429,7 +429,7 @@ abstract class Default_Config
     }
 
     /**
-     * @param object $account
+     * @param object|null $account
      */
     public function set_embedded_account($account)
     {

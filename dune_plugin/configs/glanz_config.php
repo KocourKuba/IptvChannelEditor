@@ -32,7 +32,7 @@ class GlanzPluginConfig extends Default_Config
         $this->set_epg_param('first','epg_time_format', 'd-m-Y H:i');
         $this->set_epg_param('first','epg_timezone', 10800); // // iptvx.one uses moscow time (UTC+3)
 
-        $this->set_epg_param('second','epg_url','http://epg.drm-play.ml/iptvx.one/epg/{ID}.json');
+        $this->set_epg_param('second','epg_url','http://epg.drm-play.ml/iptvx.one/epg/{CHANNEL}.json');
     }
 
     /**

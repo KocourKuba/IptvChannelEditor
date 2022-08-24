@@ -103,15 +103,11 @@ class Starnet_Tv extends Abstract_Tv
             throw new Exception('Invalid XML document');
         }
 
-        // read embedded access info
-        if (isset($xml->channels_setup, $xml->channels_setup->has_secondary_epg) && $this->plugin->config->get_feature(SECONDARY_EPG)) {
-            $plugin_cookies->has_secondary_epg = $xml->channels_setup->has_secondary_epg ? 1 : 0;
-            hd_print("Channels has secondary EPG: $plugin_cookies->has_secondary_epg");
-        }
-
         // Create channels and groups
         $this->channels = new Hashed_Array();
         $this->groups = new Hashed_Array();
+
+        $has_epg2 = $this->plugin->config->get_feature(SECONDARY_EPG);
 
         // Favorites group
         if ($this->is_favorites_supported()) {
@@ -197,6 +193,9 @@ class Starnet_Tv extends Abstract_Tv
                 $icon_url = (string)$xml_tv_channel->icon_url;
                 $number = isset($xml_tv_channel->int_id) ? (int)$xml_tv_channel->int_id : 0;
 
+                $epg1 = (string)$xml_tv_channel->epg_id;
+                $epg2 = (empty($xml_tv_channel->tvg_id)) ? $epg1 : (string)$xml_tv_channel->tvg_id;
+
                 $channel = new Default_Channel(
                     $hash,
                     $channel_id,
@@ -205,8 +204,8 @@ class Starnet_Tv extends Abstract_Tv
                     $streaming_url,
                     (int)$xml_tv_channel->archive,
                     $number,
-                    (string)$xml_tv_channel->epg_id,
-                    (string)$xml_tv_channel->tvg_id,
+                    $epg1,
+                    $epg2,
                     (int)$xml_tv_channel->protected,
                     (int)$xml_tv_channel->timeshift_hours,
                     $ext_params

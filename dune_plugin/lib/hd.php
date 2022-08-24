@@ -438,6 +438,7 @@ class HD
             '&#291;' => 'ģ',
             '&#311;' => 'ķ',
             '&#316;' => 'ļ',
+            '<br>'   => PHP_EOL,
         );
 
         return str_replace(array_keys($replace), $replace, $raw_string);

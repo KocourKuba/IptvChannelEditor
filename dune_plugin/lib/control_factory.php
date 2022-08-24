@@ -74,7 +74,7 @@ class Control_Factory
     /**
      * @param array &$defs
      * @param User_Input_Handler $handler
-     * @param array $add_params
+     * @param array|null $add_params
      * @param string $name
      * @param string $title
      * @param string $caption
@@ -125,7 +125,7 @@ class Control_Factory
     /**
      * @param array &$defs
      * @param User_Input_Handler $handler
-     * @param array $add_params
+     * @param array|null $add_params
      * @param string $name
      * @param string $title
      * @param string $caption

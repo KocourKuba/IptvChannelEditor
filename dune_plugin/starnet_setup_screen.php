@@ -310,10 +310,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     {
         $defs = array();
 
-        if (isset($plugin_cookies->has_secondary_epg)
-            && (int)$plugin_cookies->has_secondary_epg === 1
-            && $this->plugin->config->get_feature(SECONDARY_EPG)) {
-
+        if ($this->plugin->config->get_feature(SECONDARY_EPG)) {
             $epg_source_ops = array();
             $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
             $epg_source_ops[SetupControlSwitchDefs::switch_epg2] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg2];

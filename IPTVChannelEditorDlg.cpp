@@ -3176,12 +3176,6 @@ void CIPTVChannelEditorDlg::OnSave()
 
 		auto setup_node = doc->allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
 
-		if (!m_channelsMap.empty() && m_channelsMap.begin()->second->stream_uri->has_epg2())
-		{
-			setup_node->append_node(rapidxml::alloc_node(*doc, utils::HAS_SECONDARY_EPG, "true"));
-			tv_info->append_node(setup_node);
-		}
-
 		// create <tv_categories> node
 		auto cat_node = doc->allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
 
@@ -3290,12 +3284,6 @@ void CIPTVChannelEditorDlg::OnExport()
 		tv_info->append_node(info_node);
 
 		auto setup_node = doc->allocate_node(rapidxml::node_element, utils::CHANNELS_SETUP);
-
-		if (!m_channelsMap.empty() && m_channelsMap.begin()->second->stream_uri->has_epg2())
-		{
-			setup_node->append_node(rapidxml::alloc_node(*doc, utils::HAS_SECONDARY_EPG, "true"));
-			tv_info->append_node(setup_node);
-		}
 
 		// create <tv_categories> node
 		auto cat_node = doc->allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);

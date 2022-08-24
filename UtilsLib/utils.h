@@ -45,7 +45,6 @@ static constexpr auto ACCESS_DOMAIN = "access_domain";
 static constexpr auto ACCESS_LOGIN = "access_login";
 static constexpr auto ACCESS_PASSWORD = "access_password";
 static constexpr auto PORTAL_KEY = "portal_key";
-static constexpr auto HAS_SECONDARY_EPG = "has_secondary_epg";
 
 static constexpr auto TV_INFO = "tv_info";
 static constexpr auto TV_CATEGORIES = "tv_categories";
