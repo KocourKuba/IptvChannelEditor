@@ -24,25 +24,25 @@ class TvteamPluginConfig extends Default_Config
 
         $this->server_opts = array(
             array(
-                'Все (кроме RU, BY)',
-                'DE, RU',
+                'Все',
+                'DE, PL, CZ',
                 'DE, RU, BY, MD',
-                'DE, UA, BY, MD',
-                'FR, DE, RU, BY',
-                'HL',
+                'DE, UA, BY, MD, ARM',
+                'FR, DE, UA, RU, BY, UZB',
+                'NL',
                 'RU, BY',
-                'USA 1',
-                'USA 2'
+                'DE',
+                'USA'
             ),
             array(
                 '3.troya.tv',
-                '4.troya.tv',
+                'de.troya.tv',
                 '9.troya.tv',
                 '8.troya.tv',
                 '7.troya.tv',
                 '02.tv.team',
                 '10.troya.tv',
-                '01.tv.team',
+                '1.tv.team',
                 '2.troya.tv'
             )
         );

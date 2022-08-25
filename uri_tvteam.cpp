@@ -55,15 +55,15 @@ uri_tvteam::uri_tvteam()
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
 
 	servers_list = {
-		{ load_string_resource(IDS_STRING_TV_TEAM_P1), L"3.troya.tv"  }, // All (except RU, BY)
-		{ load_string_resource(IDS_STRING_TV_TEAM_P2), L"4.troya.tv"  }, // DE, RU
-		{ load_string_resource(IDS_STRING_TV_TEAM_P3), L"9.troya.tv"  }, // DE, RU, BY, MD
-		{ load_string_resource(IDS_STRING_TV_TEAM_P4), L"8.troya.tv"  }, // DE, UA, BY, MD
-		{ load_string_resource(IDS_STRING_TV_TEAM_P5), L"7.troya.tv"  }, // FR, DE, RU, BY
-		{ load_string_resource(IDS_STRING_TV_TEAM_P6), L"02.tv.team"  }, // NL
-		{ load_string_resource(IDS_STRING_TV_TEAM_P7), L"10.troya.tv" }, // RU, BY
-		{ load_string_resource(IDS_STRING_TV_TEAM_P8), L"01.tv.team"  }, // USA 1
-		{ load_string_resource(IDS_STRING_TV_TEAM_P9), L"2.troya.tv"  }, // USA 2
+		{ L"3.troya.tv",  L"All"                     },
+		{ L"de.troya.tv", L"DE, PL, CZ"              },
+		{ L"9.troya.tv",  L"DE, RU, BY, MD"          },
+		{ L"8.troya.tv",  L"DE, UA, BY, MD, ARM"     },
+		{ L"7.troya.tv",  L"FR, DE, UA, RU, BY, UZB" },
+		{ L"02.tv.team",  L"NL"                      },
+		{ L"10.troya.tv", L"RU, BY"                  },
+		{ L"1.tv.team",   L"DE"                      },
+		{ L"2.troya.tv",  L"USA"                     },
 	};
 }
 

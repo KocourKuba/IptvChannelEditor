@@ -67,8 +67,8 @@ struct PlaylistInfo
 
 struct ServersInfo
 {
-	std::wstring name;
 	std::wstring id;
+	std::wstring name;
 };
 
 struct ProfilesInfo

@@ -197,15 +197,6 @@
 #define IDS_STRING_CBILLING_TV_P1       430
 #define IDS_STRING_CBILLING_TV_P2       431
 #define IDS_STRING_CBILLING_TV_P3       432
-#define IDS_STRING_TV_TEAM_P1           440
-#define IDS_STRING_TV_TEAM_P2           441
-#define IDS_STRING_TV_TEAM_P3           442
-#define IDS_STRING_TV_TEAM_P4           443
-#define IDS_STRING_TV_TEAM_P5           444
-#define IDS_STRING_TV_TEAM_P6           445
-#define IDS_STRING_TV_TEAM_P7           446
-#define IDS_STRING_TV_TEAM_P8           447
-#define IDS_STRING_TV_TEAM_P9           448
 #define IDS_STRING_VIPLIME_P1           460
 #define IDS_STRING_VIPLIME_P2           461
 #define IDS_STRING_VIPLIME_P3           462

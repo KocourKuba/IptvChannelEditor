@@ -46,11 +46,11 @@ uri_viplime::uri_viplime()
 	access_type = AccountAccessType::enPin;
 
 	servers_list = {
-		{ load_string_resource(IDS_STRING_VIPLIME_P1), L"high"  },
-		{ load_string_resource(IDS_STRING_VIPLIME_P2), L"middle"  },
-		{ load_string_resource(IDS_STRING_VIPLIME_P3), L"low"  },
-		{ load_string_resource(IDS_STRING_VIPLIME_P4), L"variant"  },
-		{ load_string_resource(IDS_STRING_VIPLIME_P5), L"hls"  },
+		{ L"high",   load_string_resource(IDS_STRING_VIPLIME_P1) },
+		{ L"middle", load_string_resource(IDS_STRING_VIPLIME_P2) },
+		{ L"low",    load_string_resource(IDS_STRING_VIPLIME_P3) },
+		{ L"variant",load_string_resource(IDS_STRING_VIPLIME_P4) },
+		{ L"hls",    load_string_resource(IDS_STRING_VIPLIME_P5) },
 	};
 }
 
