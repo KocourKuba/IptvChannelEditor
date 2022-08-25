@@ -56,6 +56,7 @@ enum class StreamType
 	enTVClub,
 	enFilmax,
 	enKineskop,
+	enMymagic,
 	enLast,
 };
 
@@ -114,6 +115,7 @@ constexpr auto REG_VPORTAL             = _T("VPortal");
 constexpr auto REG_EMBED_INFO          = _T("EmbedInfo");
 constexpr auto REG_DEVICE_ID           = _T("DeviceID");
 constexpr auto REG_PROFILE_ID          = _T("ProfileID");
+constexpr auto REG_QUALITY_ID          = _T("QualityID");
 
 constexpr auto REG_FILTER_STRING_S     = _T("FilterString");
 constexpr auto REG_FILTER_STRING_H     = _T("FilterStringHide");
@@ -223,6 +225,7 @@ public:
 	int custom_package_name = 0;
 	int device_id = 0;
 	int profile_id = 0;
+	int quality_id = 0;
 	int embed = 0;
 	std::vector<std::string> ch_list;
 	bool not_valid = false;

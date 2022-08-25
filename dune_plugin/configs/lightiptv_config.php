@@ -88,10 +88,16 @@ class LightiptvPluginConfig extends Default_Config
         hd_print("Get playlist information for: $this->PLUGIN_SHOW_NAME");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
+        $skip_next = false;
         foreach ($m3u_lines as $i => $iValue) {
+            if ($skip_next) {
+                $skip_next = false;
+                continue;
+            }
             if (preg_match('|^#EXTINF:.+tvg-id="(?<id>[^"]+)"|', $iValue, $m_id)
                 && preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $m3u_lines[$i + 1], $matches)) {
                 $pl_entries[$m_id['id']] = $matches;
+                $skip_next = true;
             }
         }
 

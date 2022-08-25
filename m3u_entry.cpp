@@ -55,6 +55,8 @@ static std::map<std::wstring_view, m3u_entry::info_tags> s_tags = {
 	{ L"tvg-name",       m3u_entry::info_tags::tag_tvg_name       },
 	{ L"tvg-shift",      m3u_entry::info_tags::tag_tvg_shift      },
 	{ L"timeshift",      m3u_entry::info_tags::tag_timeshift      },
+	{ L"arc-timeshift",  m3u_entry::info_tags::tag_arc_timeshift  },
+	{ L"arc-time",       m3u_entry::info_tags::tag_arc_time       },
 	{ L"catchup",        m3u_entry::info_tags::tag_catchup        },
 	{ L"catchup-days",   m3u_entry::info_tags::tag_catchup_days   },
 	{ L"catchup-time",   m3u_entry::info_tags::tag_catchup_time   },
@@ -67,7 +69,7 @@ using wsvmatch = std::match_results<std::wstring_view::const_iterator>;
 std::wstring_view wmatch_view(const wsvmatch::value_type& sm)
 {
 	if (sm.first == sm.second)
-		return std::wstring_view();
+		return {};
 
 	return sm.matched ? std::wstring_view(std::addressof(*sm.first), std::distance(sm.first, sm.second)) : std::wstring_view();
 }

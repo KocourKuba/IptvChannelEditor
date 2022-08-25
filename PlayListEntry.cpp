@@ -79,7 +79,7 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			search_archive(tags);
 			search_epg(tags);
 			search_logo(tags);
-
+			search_catchup(tags);
 			break;
 		}
 		default:
@@ -94,6 +94,7 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		case StreamType::enEdem:
 		case StreamType::enFox:
 		case StreamType::enSharaTV:
+		case StreamType::enMymagic:
 			break;
 		case StreamType::enGlanz:
 		case StreamType::enOneCent:
@@ -174,15 +175,23 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wst
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_days); pair != tags.end())
+	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_days); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_time); pair != tags.end())
+	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_time); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second) / 86400);
 	}
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_timeshift); pair != tags.end())
+	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_timeshift); pair != tags.end())
+	{
+		set_archive_days(utils::char_to_int(pair->second));
+	}
+	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_arc_timeshift); pair != tags.end())
+	{
+		set_archive_days(utils::char_to_int(pair->second));
+	}
+	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_arc_time); pair != tags.end())
 	{
 		set_archive_days(utils::char_to_int(pair->second));
 	}
@@ -216,6 +225,14 @@ void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::wstrin
 			set_icon_uri(utils::string_replace<wchar_t>(pair->second, L"//epg.it999.ru/img/", L"//epg.it999.ru/img2/"));
 		else
 			set_icon_uri(logo_root + pair->second);
+	}
+}
+
+void PlaylistEntry::search_catchup(const std::map<m3u_entry::info_tags, std::wstring>& tags)
+{
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup); pair != tags.end())
+	{
+		set_catchup(pair->second);
 	}
 }
 

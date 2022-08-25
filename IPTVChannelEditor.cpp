@@ -462,6 +462,7 @@ void ConvertAccounts()
 			const auto& portal = utils::utf16_to_utf8(GetConfig().get_string(false, REG_VPORTAL));
 			const auto& device_id = GetConfig().get_int(false, REG_DEVICE_ID);
 			const auto& profile_id = GetConfig().get_int(false, REG_PROFILE_ID);
+			const auto& quality_id = GetConfig().get_int(false, REG_QUALITY_ID);
 			const auto& embed = GetConfig().get_int(false, REG_EMBED_INFO);
 
 			std::vector<Credentials> all_credentials;
@@ -511,6 +512,7 @@ void ConvertAccounts()
 				cred.suffix = get_array_value(creds, last);
 				cred.device_id = device_id;
 				cred.profile_id = profile_id;
+				cred.quality_id = quality_id;
 				cred.embed = embed;
 
 				all_credentials.emplace_back(cred);

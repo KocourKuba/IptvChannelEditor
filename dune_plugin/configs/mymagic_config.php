@@ -1,10 +1,9 @@
 ﻿<?php
 require_once 'default_config.php';
 
-class FoxPluginConfig extends Default_Config
+class MymagicPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
-    const PLAYLIST_VOD_URL = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
+    const PLAYLIST_TV_URL = 'http://pl.mymagic.tv/srv/%s/%s/%s/%s/tv.m3u';
 
     public function __construct()
     {
@@ -12,25 +11,15 @@ class FoxPluginConfig extends Default_Config
 
         $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
         $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
-        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
-        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}');
-        $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
         $this->set_feature(SQUARE_ICONS, true);
         $this->set_feature(SECONDARY_EPG, true);
+        $this->set_feature(SERVER_SUPPORTED, true);
+        $this->set_feature(QUALITY_SUPPORTED, true);
 
-        $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/fox-tv/epg/{CHANNEL}.json');
-
-        $this->set_epg_param('second','epg_url','http://technic.cf/epg-fox/epg_day?id={CHANNEL}&day={DATE}');
-        $this->set_epg_param('second','epg_root', 'data');
-        $this->set_epg_param('second','epg_start', 'begin');
-        $this->set_epg_param('second','epg_end', 'end');
-        $this->set_epg_param('second','epg_title', 'title');
-        $this->set_epg_param('second','epg_desc', 'description');
-        $this->set_epg_param('second','epg_date_format', 'Y.m.d');
-        $this->set_epg_param('second','epg_use_mapper', true);
-        $this->set_epg_param('second','epg_mapper_url','http://technic.cf/epg-fox/channels');
+        $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/magic/epg/{CHANNEL}.json');
+        $this->set_epg_param('second','epg_url','http://epg.esalecrm.net/magic/epg/{CHANNEL}.json');
     }
 
     /**
@@ -44,8 +33,8 @@ class FoxPluginConfig extends Default_Config
     {
         $url = $channel->get_streaming_url();
         if (empty($url)) {
-            // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
-            // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV
+            // http://ost.mymagic.tv/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
+            // http://ost.mymagic.tv/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV
             // hls archive url completely different, make it from scratch
             $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
             $ext_params = $channel->get_ext_params();
@@ -70,20 +59,15 @@ class FoxPluginConfig extends Default_Config
 
         $login = $this->get_login($plugin_cookies);
         $password = $this->get_password($plugin_cookies);
+        $server = $this->get_server($plugin_cookies);
+        $quality = $this->get_quality($plugin_cookies);
 
         if (empty($login) || empty($password)) {
             hd_print("Login or password not set");
             return '';
         }
 
-        switch ($type) {
-            case 'tv1':
-                return sprintf(self::PLAYLIST_TV_URL, $login, $password);
-            case 'movie':
-                return sprintf(self::PLAYLIST_VOD_URL, $login, $password);
-        }
-
-        return '';
+        return sprintf(self::PLAYLIST_TV_URL, $server, $quality, $login, $password);
     }
 
     /**
@@ -131,52 +115,74 @@ class FoxPluginConfig extends Default_Config
     }
 
     /**
-     * @param string $movie_id
      * @param $plugin_cookies
-     * @return Movie
-     * @throws Exception
+     * @return string[]
      */
-    public function TryLoadMovie($movie_id, $plugin_cookies)
+    public function get_server_opts($plugin_cookies)
     {
-        hd_print("TryLoadMovie: $movie_id");
-        $movie = new Movie($movie_id);
+        return array(
+            'По умолчанию',
+            'Германия 1',
+            'Чехия',
+            'Германия 2',
+            'Испания',
+            'Нидерланды',
+            'Франция',
+        );
+    }
 
-        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
-        foreach ($m3u_lines as $i => $iValue) {
-            if ($i !== (int)$movie_id || !preg_match($this->get_feature(EXTINF_VOD_PATTERN), $iValue, $match)) {
-                continue;
-            }
+    /**
+     * @param $plugin_cookies
+     * @return int|null
+     */
+    public function get_server($plugin_cookies)
+    {
+        return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
+    }
 
-            $logo = $match['logo'];
-            list($title, $title_orig) = explode('/', $match['title']);
-            $url = $this->UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
+    /**
+     * @param $server
+     * @param $plugin_cookies
+     */
+    public function set_server($server, $plugin_cookies)
+    {
+        $plugin_cookies->server = $server;
+    }
 
-            //hd_print("Vod url: $playback_url");
-            $movie->set_data(
-                $title,// $xml->caption,
-                $title_orig,// $xml->caption_original,
-                '',// $xml->description,
-                $logo,// $xml->poster_url,
-                '',// $xml->length,
-                '',// $xml->year,
-                '',// $xml->director,
-                '',// $xml->scenario,
-                '',// $xml->actors,
-                '',// $xml->genres,
-                '',// $xml->rate_imdb,
-                '',// $xml->rate_kinopoisk,
-                '',// $xml->rate_mpaa,
-                '',// $xml->country,
-                ''// $xml->budget
-            );
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_quality_opts($plugin_cookies)
+    {
+        return array('Среднее', 'Высокое');
+    }
 
-            $movie->add_series_data($movie_id, $title, '', $url);
-            // hd_print("movie_id: $movie_id");
-            // hd_print("title: $title");
-            hd_print("movie url: $url");
-            break;
-        }
+    /**
+     * @param $plugin_cookies
+     * @return mixed|null
+     */
+    public function get_quality($plugin_cookies)
+    {
+        return isset($plugin_cookies->quality) ? $plugin_cookies->quality : 0;
+    }
 
-        return $movie;
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function get_quality_value($plugin_cookies)
+    {
+        $quality = array('0', '1');
+        return $quality[$this->get_quality($plugin_cookies)];
+    }
+
+    /**
+     * @param $quality
+     * @param $plugin_cookies
+     */
+    public function set_quality($quality, $plugin_cookies)
+    {
+        $plugin_cookies->quality = $quality;
     }
 }

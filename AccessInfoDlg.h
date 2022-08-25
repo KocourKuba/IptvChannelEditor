@@ -65,6 +65,7 @@ protected:
 	afx_msg void OnBnClickedCheckEmbed();
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
+	afx_msg void OnCbnSelchangeComboQuality();
 	afx_msg void OnEnChangeEditPluginCaption();
 	afx_msg void OnEnChangeEditPluginSuffix();
 	afx_msg void OnEnChangeMfceditbrowsePluginLogo();
@@ -106,6 +107,7 @@ protected:
 	CButton m_wndEmbed;
 	CComboBox m_wndDeviceID;
 	CComboBox m_wndProfile;
+	CComboBox m_wndQuality;
 	CEdit m_wndCaption;
 	CEdit m_wndSuffix;
 	CMFCEditBrowseCtrlEx m_wndLogo;
@@ -139,6 +141,7 @@ private:
 	std::unique_ptr<uri_stream> m_plugin;
 	std::vector<ServersInfo> m_servers;
 	std::vector<ProfilesInfo> m_profiles;
+	std::vector<QualityInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
 	StreamType m_plugin_type = StreamType::enBase;
 	std::map<UINT, std::wstring> m_tooltips_info_account;

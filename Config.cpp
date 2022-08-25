@@ -140,6 +140,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tvclub",         STRPRODUCTVER },
 	{ StreamType::enFilmax,     _T("Filmax TV"),       "filmax",     "filmax",         STRPRODUCTVER },
 	{ StreamType::enKineskop,   _T("Kineskop.Club"),   "kineskop",   "kineskop",       STRPRODUCTVER },
+	{ StreamType::enMymagic,    _T("MyMagic TV"),      "mymagic",    "mymagic",        STRPRODUCTVER },
 };
 
 void to_json(nlohmann::json& j, const Credentials& c)
@@ -166,6 +167,7 @@ void to_json(nlohmann::json& j, const Credentials& c)
 		SERIALIZE_STRUCT(c, custom_package_name),
 		SERIALIZE_STRUCT(c, device_id),
 		SERIALIZE_STRUCT(c, profile_id),
+		SERIALIZE_STRUCT(c, quality_id),
 		SERIALIZE_STRUCT(c, embed),
 		SERIALIZE_STRUCT(c, ch_list),
 	};
@@ -194,6 +196,7 @@ void from_json(const nlohmann::json& j, Credentials& c)
 	DESERIALIZE_STRUCT(j, c, custom_package_name);
 	DESERIALIZE_STRUCT(j, c, device_id);
 	DESERIALIZE_STRUCT(j, c, profile_id);
+	DESERIALIZE_STRUCT(j, c, quality_id);
 	DESERIALIZE_STRUCT(j, c, embed);
 	DESERIALIZE_STRUCT(j, c, ch_list);
 }

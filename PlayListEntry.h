@@ -50,6 +50,7 @@ protected:
 	void search_archive(const std::map<m3u_entry::info_tags, std::wstring>& tags);
 	void search_epg(const std::map<m3u_entry::info_tags, std::wstring>& tags);
 	void search_logo(const std::map<m3u_entry::info_tags, std::wstring>& tags);
+	void search_catchup(const std::map<m3u_entry::info_tags, std::wstring>& tags);
 	void check_adult(const std::wstring& category);
 
 protected:

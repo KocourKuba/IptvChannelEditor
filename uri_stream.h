@@ -54,6 +54,7 @@ struct TemplateParams
 	int number = 0;
 	int server = 0;
 	int profile = 0;
+	int quality = 0;
 };
 
 struct PlaylistInfo
@@ -65,17 +66,15 @@ struct PlaylistInfo
 	bool is_file = false;
 };
 
-struct ServersInfo
+struct ServerParamsInfo
 {
 	std::wstring id;
 	std::wstring name;
 };
 
-struct ProfilesInfo
-{
-	std::wstring name;
-	std::wstring id;
-};
+using ServersInfo = ServerParamsInfo;
+using ProfilesInfo = ServerParamsInfo;
+using QualityInfo = ServerParamsInfo;
 
 struct AccountInfo
 {
@@ -454,6 +453,13 @@ public:
 	virtual const std::vector<ProfilesInfo>& get_profiles_list(TemplateParams& /*params*/) { return profiles_list; }
 
 	/// <summary>
+	/// returns list of quality variants
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	/// <returns>vector<ServersInfo></returns>
+	virtual const std::vector<QualityInfo>& get_quality_list(TemplateParams& /*params*/) { return quality_list; }
+
+	/// <summary>
 	/// set server
 	/// </summary>
 	/// <param name="params">Template parameters.</param>
@@ -485,6 +491,7 @@ protected:
 	AccountAccessType access_type = AccountAccessType::enOtt;
 	std::vector<ServersInfo> servers_list;
 	std::vector<ProfilesInfo> profiles_list;
+	std::vector<QualityInfo> quality_list;
 	std::vector<PlaylistInfo> playlists;
 	std::wstring provider_url;
 	std::wstring provider_api_url;

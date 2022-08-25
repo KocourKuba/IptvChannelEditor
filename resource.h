@@ -180,6 +180,7 @@
 #define IDS_STRING_CHECK_CUSTOM_PACKAGE_NAME 287
 #define IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME 288
 #define IDS_STRING_BOTH_PATH_MUST_FILLED 289
+#define IDS_STRING_COMBO_QUALITY        290
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -206,6 +207,15 @@
 #define IDS_STRING_KINESKOP_P2          471
 #define IDS_STRING_KINESKOP_P3          472
 #define IDS_STRING_KINESKOP_P4          473
+#define IDS_STRING_MYMAGIC_Q1           480
+#define IDS_STRING_MYMAGIC_Q2           481
+#define IDS_STRING_MYMAGIC_P0           485
+#define IDS_STRING_MYMAGIC_P1           486
+#define IDS_STRING_MYMAGIC_P2           487
+#define IDS_STRING_MYMAGIC_P3           488
+#define IDS_STRING_MYMAGIC_P4           489
+#define IDS_STRING_MYMAGIC_P5           490
+#define IDS_STRING_MYMAGIC_P6           491
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003

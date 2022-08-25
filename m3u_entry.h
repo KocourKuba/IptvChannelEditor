@@ -53,6 +53,8 @@ public:
 		tag_tvg_name,
 		tag_tvg_shift,
 		tag_timeshift,
+		tag_arc_timeshift,
+		tag_arc_time,
 		tag_catchup,
 		tag_catchup_days,
 		tag_catchup_time,

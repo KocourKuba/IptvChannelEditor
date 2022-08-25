@@ -750,6 +750,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.token = m_cur_account.get_token();
 	params.server = m_cur_account.device_id;
 	params.profile = m_cur_account.profile_id;
+	params.quality = m_cur_account.quality_id;
 	params.number = idx;
 
 	if (m_plugin_type == StreamType::enEdem && isCustom)

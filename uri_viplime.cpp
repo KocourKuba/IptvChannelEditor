@@ -45,7 +45,7 @@ uri_viplime::uri_viplime()
 	provider_url = L"http://viplime.fun/";
 	access_type = AccountAccessType::enPin;
 
-	servers_list = {
+	quality_list = {
 		{ L"high",   load_string_resource(IDS_STRING_VIPLIME_P1) },
 		{ L"middle", load_string_resource(IDS_STRING_VIPLIME_P2) },
 		{ L"low",    load_string_resource(IDS_STRING_VIPLIME_P3) },
@@ -100,7 +100,7 @@ std::wstring uri_viplime::get_templated_stream(TemplateParams& params) const
 		append_archive(url);
 	}
 
-	utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, servers_list[params.server].id);
+	utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[params.quality].id);
 	replace_vars(url, params);
 
 	return url;

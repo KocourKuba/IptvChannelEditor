@@ -163,6 +163,7 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 	switch (m_plugin_type)
 	{
 		case StreamType::enFox:
+		case StreamType::enMymagic:
 			LoadM3U8Playlist(use_cache);
 			break;
 

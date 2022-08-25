@@ -184,6 +184,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $subdomain = isset($plugin_cookies->subdomain) ? $plugin_cookies->subdomain : '';
         $vportal = isset($plugin_cookies->mediateka) ? $plugin_cookies->mediateka : '';
 
+        Control_Factory::add_vgap($defs, 20);
         Control_Factory::add_text_field($defs, $this, null, 'subdomain', 'Введите домен:',
             $subdomain, false, false, false, true, 600);
 
@@ -218,6 +219,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             $url_path = $this->plugin->config->PLUGIN_CHANNELS_URL_PATH;
         }
 
+        Control_Factory::add_vgap($defs, 20);
         Control_Factory::add_text_field($defs, $this, null, 'channels_url_path', '',
             $url_path, false, false, false, true, 800);
 
@@ -238,6 +240,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     {
         hd_print("do_get_channels_control_defs");
         $defs = array();
+        Control_Factory::add_vgap($defs, 20);
+
         //////////////////////////////////////
         // select device number
         $device_ops = $this->plugin->config->get_feature(DEVICE_OPTIONS);
@@ -310,6 +314,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     {
         $defs = array();
 
+        Control_Factory::add_vgap($defs, 20);
         if ($this->plugin->config->get_feature(SECONDARY_EPG)) {
             $epg_source_ops = array();
             $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
@@ -352,6 +357,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $defs = array();
 
         $login = isset($plugin_cookies->login) ? $plugin_cookies->login : '';
+
+        Control_Factory::add_vgap($defs, 20);
         Control_Factory::add_text_field($defs, $this, null, 'login', 'Логин:',
             $login, false, false, false, true, 600);
 
@@ -378,6 +385,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $defs = array();
 
         $password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
+
+        Control_Factory::add_vgap($defs, 20);
         Control_Factory::add_text_field($defs, $this, null, 'password', 'Ключ доступа:',
             $password, false, true, false, true, 600);
 
@@ -400,6 +409,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         $pass1 = '';
         $pass2 = '';
+
+        Control_Factory::add_vgap($defs, 20);
 
         Control_Factory::add_text_field($defs, $this, null, 'pass1', 'Старый пароль:',
             $pass1, 1, true, 0, 1, 500, 0);

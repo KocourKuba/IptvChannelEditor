@@ -67,6 +67,9 @@ public:
 	int get_time_shift_hours() const { return time_shift_hours; }
 	void set_time_shift_hours(int val) { time_shift_hours = val; }
 
+	const std::wstring& get_catchup() const { return catchup; }
+	void set_catchup(const std::wstring& val) { catchup = val; }
+
 	void swap_id(BaseInfo& src)
 	{
 		auto tmp = src.stream_uri->get_id();
@@ -99,6 +102,7 @@ protected:
 
 private:
 	std::wstring title;
+	std::wstring catchup;
 	int key = 0;
 	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;

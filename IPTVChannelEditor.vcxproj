@@ -253,6 +253,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="PlaylistParseJsonThread.h" />
     <ClInclude Include="ResizedPropertySheet.h" />
     <ClInclude Include="uri_kineskop.h" />
+    <ClInclude Include="uri_mymagic.h" />
     <ClInclude Include="vod_movie.h" />
     <ClInclude Include="NewChannelsListDlg.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
@@ -342,6 +343,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="uri_itv.cpp" />
     <ClCompile Include="uri_kineskop.cpp" />
     <ClCompile Include="uri_lightiptv.cpp" />
+    <ClCompile Include="uri_mymagic.cpp" />
     <ClCompile Include="uri_onecent.cpp" />
     <ClCompile Include="uri_oneott.cpp" />
     <ClCompile Include="uri_oneusd.cpp" />

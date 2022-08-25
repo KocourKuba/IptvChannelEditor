@@ -68,6 +68,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoDlg, CMFCPropertyPage)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_CHANNELS, &CAccessInfoDlg::OnLvnItemchangedListChannels)
 	ON_CBN_SELCHANGE(IDC_COMBO_DEVICE_ID, &CAccessInfoDlg::OnCbnSelchangeComboDeviceId)
 	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoDlg::OnCbnSelchangeComboProfile)
+	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CAccessInfoDlg::OnCbnSelchangeComboQuality)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoDlg::OnBnClickedCheckEmbed)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoDlg::OnEnChangeEditPluginCaption)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoDlg::OnEnChangeEditPluginSuffix)
@@ -99,11 +100,12 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MFCLINK_PROVIDER, m_wndProviderLink);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemove);
 	DDX_Control(pDX, IDC_BUTTON_NEW_FROM_URL, m_wndNewFromUrl);
-	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDeviceID);
 	DDX_Control(pDX, IDC_LIST_ACCOUNTS, m_wndAccounts);
 	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Control(pDX, IDC_LIST_CHANNELS, m_wndChLists);
+	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDeviceID);
 	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfile);
+	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQuality);
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_CAPTION, m_wndCaption);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CAPTION, m_caption);
@@ -158,6 +160,7 @@ BOOL CAccessInfoDlg::OnInitDialog()
 		{ IDC_BUTTON_NEW_FROM_URL, load_string_resource(IDS_STRING_BUTTON_NEW_FROM_URL) },
 		{ IDC_COMBO_DEVICE_ID, load_string_resource(IDS_STRING_COMBO_DEVICE_ID) },
 		{ IDC_COMBO_PROFILE, load_string_resource(IDS_STRING_COMBO_PROFILE) },
+		{ IDC_COMBO_QUALITY, load_string_resource(IDS_STRING_QUALITY_ID) },
 		{ IDC_CHECK_EMBED, load_string_resource(IDS_STRING_CHECK_EMBED) },
 		{ IDC_EDIT_PLUGIN_CAPTION, load_string_resource(IDS_STRING_EDIT_CAPTION) },
 		{ IDC_MFCEDITBROWSE_PLUGIN_LOGO, load_string_resource(IDS_STRING_EDIT_ICON) },
@@ -277,6 +280,7 @@ void CAccessInfoDlg::UpdateOptionalControls()
 	params.domain = utils::utf8_to_utf16(selected.domain);
 	params.server = selected.device_id;
 	params.profile = selected.profile_id;
+	params.quality = selected.quality_id;
 
 	UINT static_text = IDS_STRING_SERVER_ID;
 	switch (m_plugin_type)
@@ -289,19 +293,13 @@ void CAccessInfoDlg::UpdateOptionalControls()
 			m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
 			params.domain = m_list_domain;
 			break;
-		case StreamType::enVipLime:
-			static_text = IDS_STRING_QUALITY_ID;
-			break;
 		default:
 			break;
 	}
 
+	GetDlgItem(IDC_STATIC_DEVICE_ID)->SetWindowText(load_string_resource(static_text).c_str());
+
 	m_servers = m_plugin->get_servers_list(params);
-
-	auto wndStaticDevice = GetDlgItem(IDC_STATIC_DEVICE_ID);
-	wndStaticDevice->SetWindowText(load_string_resource(static_text).c_str());
-	wndStaticDevice->EnableWindow(!m_servers.empty());
-
 	m_wndDeviceID.ResetContent();
 
 	for (const auto& info : m_servers)
@@ -318,6 +316,27 @@ void CAccessInfoDlg::UpdateOptionalControls()
 		}
 
 		m_wndDeviceID.SetCurSel(params.server);
+	}
+
+	m_qualities = m_plugin->get_quality_list(params);
+
+	m_wndQuality.EnableWindow(!m_qualities.empty());
+
+	m_wndQuality.ResetContent();
+
+	for (const auto& info : m_qualities)
+	{
+		m_wndQuality.AddString(info.name.c_str());
+	}
+
+	if (!m_qualities.empty())
+	{
+		if (params.quality >= (int)m_qualities.size())
+		{
+			params.quality = 0;
+		}
+
+		m_wndQuality.SetCurSel(params.quality);
 	}
 
 	m_caption = selected.get_caption().c_str();
@@ -543,6 +562,7 @@ BOOL CAccessInfoDlg::OnApply()
 	params.domain = utils::utf8_to_utf16(selected.domain);
 	params.server = selected.device_id;
 	params.profile = selected.profile_id;
+	params.quality = selected.quality_id;
 
 	if (m_plugin_type == StreamType::enSharaclub)
 	{
@@ -863,8 +883,6 @@ void CAccessInfoDlg::GetAccountInfo()
 
 	m_status.LoadString(IDS_STRING_STATUS_TEXT);
 	m_wndProfile.ResetContent();
-	auto wndStaticProfile = GetDlgItem(IDC_STATIC_PROFILE);
-	wndStaticProfile->EnableWindow(FALSE);
 	m_wndProfile.EnableWindow(FALSE);
 
 	auto& selected = GetCheckedAccount();
@@ -926,6 +944,7 @@ void CAccessInfoDlg::GetAccountInfo()
 	params.domain = m_list_domain;
 	params.server = selected.device_id;
 	params.profile = selected.profile_id;
+	params.quality = selected.quality_id;
 
 	m_plugin->clear_profiles_list();
 	m_profiles = m_plugin->get_profiles_list(params);
@@ -945,7 +964,6 @@ void CAccessInfoDlg::GetAccountInfo()
 		m_wndProfile.SetCurSel(params.profile);
 	}
 
-	wndStaticProfile->EnableWindow(m_profiles.size() > 1);
 	m_wndProfile.EnableWindow(m_profiles.size() > 1);
 
 	std::wstring pl_url = uri->get_playlist_url(params);
@@ -1050,6 +1068,12 @@ void CAccessInfoDlg::OnCbnSelchangeComboProfile()
 {
 	auto& selected = GetCheckedAccount();
 	selected.profile_id = m_wndProfile.GetCurSel();
+}
+
+void CAccessInfoDlg::OnCbnSelchangeComboQuality()
+{
+	auto& selected = GetCheckedAccount();
+	selected.quality_id = m_wndQuality.GetCurSel();
 }
 
 void CAccessInfoDlg::OnBnClickedCheckEmbed()

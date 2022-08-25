@@ -254,9 +254,16 @@ abstract class Default_Config
     public function get_channel_list($plugin_cookies, &$used_list)
     {
         $used_list = isset($plugin_cookies->channels_list) ? (string)$plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
-        hd_print("Default channels list name: $used_list");
+        if (!isset($plugin_cookies->channels_list))
+            $plugin_cookies->channels_list = $used_list;
 
         $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
+        if (!isset($plugin_cookies->channels_source))
+            $plugin_cookies->channels_source = $channels_source;
+
+        hd_print("Channels list name: $used_list");
+        hd_print("Channels source: $channels_source");
+
         switch ($channels_source)
         {
             case 1: // folder
@@ -268,6 +275,7 @@ abstract class Default_Config
             default:
                 return array();
         }
+
         hd_print("Channels list search path: $channels_list_path");
 
         $all_channels = array();
