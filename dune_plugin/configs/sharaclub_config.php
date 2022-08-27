@@ -461,6 +461,7 @@ class SharaclubPluginConfig extends Default_Config
         $filters = array("genre", "from", "to");
         hd_print("AddFilterUI: $initial");
         $added = false;
+        Control_Factory::add_vgap($defs, 20);
         foreach ($filters as $name) {
             $filter = $this->get_filter($name);
             if ($filter === null) {

@@ -402,6 +402,7 @@ class GlanzPluginConfig extends Default_Config
     {
         $filters = array("genre", "from", "to");
         hd_print("AddFilterUI: $initial");
+        Control_Factory::add_vgap($defs, 20);
         $added = false;
         foreach ($filters as $name) {
             $filter = $this->get_filter($name);
