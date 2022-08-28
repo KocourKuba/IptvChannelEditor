@@ -55,11 +55,11 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 			buffer.emplace_back('\0');
 
 			// Parse the buffer using the xml file parsing library into doc
-			rapidxml::xml_document<> doc;
+			auto doc = std::make_unique<rapidxml::xml_document<>>();
 
 			try
 			{
-				doc.parse<0>(buffer.data());
+				doc->parse<0>(buffer.data());
 			}
 			catch (rapidxml::parse_error& ex)
 			{
@@ -68,7 +68,7 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 			}
 
 			const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
-			auto cat_node = doc.first_node(utils::TV_CATEGORIES)->first_node(utils::TV_CATEGORY);
+			auto cat_node = doc->first_node(utils::TV_CATEGORIES)->first_node(utils::TV_CATEGORY);
 			// Iterate <tv_category> nodes
 			while (cat_node)
 			{
@@ -77,7 +77,7 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 				cat_node = cat_node->next_sibling();
 			}
 
-			auto ch_node = doc.first_node(utils::TV_CHANNELS)->first_node(utils::TV_CHANNEL);
+			auto ch_node = doc->first_node(utils::TV_CHANNELS)->first_node(utils::TV_CHANNEL);
 			// Iterate <tv_channel> nodes
 			int step = 0;
 			int count = 0;
