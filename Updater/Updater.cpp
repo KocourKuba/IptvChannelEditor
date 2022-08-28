@@ -139,7 +139,9 @@ inline void LogProtocol(const std::string& str)
 	SYSTEMTIME sTime;
 	GetLocalTime(&sTime);
 
-	const auto& csTimeStamp = fmt::format("[{:02d}:{:02d}:{:02d}.{:03d}]", sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
+	const auto& csTimeStamp = fmt::format("[{:04d}:{:02d}:{:02d}][{:02d}:{:02d}:{:02d}.{:03d}]",
+										  sTime.wYear, sTime.wMonth, sTime.wDay,
+										  sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
 
 	std::stringstream out;
 	std::stringstream ss(str);
@@ -162,7 +164,9 @@ inline void LogProtocol(std::wstring& str)
 	SYSTEMTIME sTime;
 	GetLocalTime(&sTime);
 
-	const auto& csTimeStamp = fmt::format("[{:02d}:{:02d}:{:02d}.{:03d}]", sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
+	const auto& csTimeStamp = fmt::format("[{:04d}:{:02d}:{:02d}][{:02d}:{:02d}:{:02d}.{:03d}]",
+										  sTime.wYear, sTime.wMonth, sTime.wDay,
+										  sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
 
 	std::stringstream out;
 	std::stringstream ss(utils::utf16_to_utf8(str));
@@ -184,27 +188,27 @@ inline void LogProtocol(std::wstring& str)
 int parse_info(UpdateInfo& info)
 {
 	// Parse the buffer using the xml file parsing library into doc
-	rapidxml::xml_document<> doc;
+	auto doc = std::make_unique<rapidxml::xml_document<>>();
 
 	try
 	{
-		doc.parse<0>((char*)info.update_info.data());
+		doc->parse<0>((char*)info.update_info.data());
 	}
 	catch (rapidxml::parse_error&)
 	{
 		return err_parse; // Incorrect update info!
 	}
 
-	auto info_node = doc.first_node("update_info");
+	auto info_node = doc->first_node("update_info");
 	if (!info_node)
 	{
 		return err_parse; // Incorrect update info!
 	}
 
 	info.version = rapidxml::get_value_wstring(info_node->first_attribute("version"));
-	LogProtocol(fmt::format(L"Version: {:s}", info.version));
+	LogProtocol(fmt::format(L"Version on server: {:s}", info.version));
 
-	auto pkg_node = doc.first_node("package");
+	auto pkg_node = doc->first_node("package");
 	if (!pkg_node)
 	{
 		return err_parse; // Incorrect update info!
