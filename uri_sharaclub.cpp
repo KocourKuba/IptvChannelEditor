@@ -173,7 +173,7 @@ const std::vector<ServersInfo>& uri_sharaclub::get_servers_list(TemplateParams& 
 					for (const auto& item : js_data.items())
 					{
 						const auto& server = item.value();
-						ServersInfo info({ utils::get_json_string("name", server), utils::get_json_string("id", server) });
+						ServersInfo info({ utils::get_json_string("id", server), utils::get_json_string("name", server) });
 						servers_list.emplace_back(info);
 					}
 				}
@@ -230,14 +230,14 @@ const std::vector<ProfilesInfo>& uri_sharaclub::get_profiles_list(TemplateParams
 				if (utils::get_json_int("status", parsed_json) == 1)
 				{
 					const auto& current = utils::get_json_string("current", parsed_json);
-					ProfilesInfo none_info({ L"None", L"0"});
+					ProfilesInfo none_info({ L"0", L"None" });
 					profiles_list.emplace_back(none_info);
 					if (parsed_json.contains("profiles"))
 					{
 						for (const auto& item : parsed_json["profiles"].items())
 						{
 							const auto& profile = item.value();
-							ProfilesInfo info({ utils::get_json_string("name", profile), utils::get_json_string("id", profile) });
+							ProfilesInfo info({ utils::get_json_string("id", profile), utils::get_json_string("name", profile) });
 							if (info.id == current)
 								params.profile = profiles_list.size();
 

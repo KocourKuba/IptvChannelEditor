@@ -53,7 +53,7 @@ uri_shuratv::uri_shuratv()
 
 	for (int i = 0; i <= IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1; i++)
 	{
-		ServersInfo info({ load_string_resource(IDS_STRING_SHURA_TV_P1 + i), fmt::format(L"{:d}", i + 1) });
+		ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_SHURA_TV_P1 + i) });
 		servers_list.emplace_back(info);
 	}
 }

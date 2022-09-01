@@ -170,7 +170,7 @@ const std::vector<ServersInfo>& uri_vidok::get_servers_list(TemplateParams& para
 					for (const auto& item : settings["lists"]["servers"].items())
 					{
 						const auto& server = item.value();
-						ServersInfo info({ utils::get_json_string("name", server), utils::get_json_string("id", server) });
+						ServersInfo info({ utils::get_json_string("id", server), utils::get_json_string("name", server) });
 						if (info.id == current)
 							params.server = servers_list.size();
 

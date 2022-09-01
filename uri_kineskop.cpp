@@ -50,7 +50,7 @@ uri_kineskop::uri_kineskop()
 	for (int i = 0; i <= IDS_STRING_KINESKOP_P4 - IDS_STRING_KINESKOP_P1; i++)
 	{
 		auto str = id = load_string_resource(IDS_STRING_KINESKOP_P1 + i);
-		ServersInfo info({ str, utils::wstring_tolower(id) });
+		ServersInfo info({ utils::wstring_tolower(id), str });
 		servers_list.emplace_back(info);
 	}
 }

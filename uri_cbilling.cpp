@@ -61,7 +61,7 @@ uri_cbilling::uri_cbilling()
 
 	for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
 	{
-		ServersInfo info({ load_string_resource(IDS_STRING_CBILLING_TV_P1 + i), fmt::format(L"{:d}", i + 1) });
+		ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_CBILLING_TV_P1 + i) });
 		servers_list.emplace_back(info);
 	}
 }
