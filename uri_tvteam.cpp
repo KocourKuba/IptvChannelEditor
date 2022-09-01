@@ -53,18 +53,6 @@ uri_tvteam::uri_tvteam()
 	access_type = AccountAccessType::enPin;
 
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
-
-	servers_list = {
-		{ L"3.troya.tv",  L"All"                     },
-		{ L"de.troya.tv", L"DE, PL, CZ"              },
-		{ L"9.troya.tv",  L"DE, RU, BY, MD"          },
-		{ L"8.troya.tv",  L"DE, UA, BY, MD, ARM"     },
-		{ L"7.troya.tv",  L"FR, DE, UA, RU, BY, UZB" },
-		{ L"02.tv.team",  L"NL"                      },
-		{ L"10.troya.tv", L"RU, BY"                  },
-		{ L"1.tv.team",   L"DE"                      },
-		{ L"2.troya.tv",  L"USA"                     },
-	};
 }
 
 void uri_tvteam::parse_uri(const std::wstring& url)
@@ -113,13 +101,6 @@ std::wstring uri_tvteam::get_templated_stream(TemplateParams& params) const
 		}
 	}
 
-	std::wstring domain(servers_list[params.server].id);
-	if (auto pos = servers_list[params.server].id.find(':'); pos != std::wstring::npos)
-	{
-		domain = fmt::format(L"{:s}:{:s}", servers_list[params.server].id, servers_list[params.server].id.substr(pos + 1));
-	}
-
-	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, domain);
 	replace_vars(url, params);
 
 	return url;

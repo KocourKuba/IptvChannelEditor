@@ -12,7 +12,6 @@ class TvteamPluginConfig extends Default_Config
         parent::__construct();
 
         $this->set_feature(ACCOUNT_TYPE, 'PIN');
-        $this->set_feature(SERVER_SUPPORTED, true);
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}');
         $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/index-{START}-7200.m3u8?token={TOKEN}');
@@ -21,31 +20,6 @@ class TvteamPluginConfig extends Default_Config
         $this->set_feature(SQUARE_ICONS, true);
 
         $this->set_epg_param('first','epg_url','http://tv.team/{CHANNEL}.json');
-
-        $this->server_opts = array(
-            array(
-                'Все',
-                'DE, PL, CZ',
-                'DE, RU, BY, MD',
-                'DE, UA, BY, MD, ARM',
-                'FR, DE, UA, RU, BY, UZB',
-                'NL',
-                'RU, BY',
-                'DE',
-                'USA'
-            ),
-            array(
-                '3.troya.tv',
-                'de.troya.tv',
-                '9.troya.tv',
-                '8.troya.tv',
-                '7.troya.tv',
-                '02.tv.team',
-                '10.troya.tv',
-                '1.tv.team',
-                '2.troya.tv'
-            )
-        );
     }
 
     /**
@@ -74,14 +48,8 @@ class TvteamPluginConfig extends Default_Config
             }
 
             $ext_params = $channel->get_ext_params();
-            $host = explode($ext_params['subdomain'], ':');
-            if (isset($host[1])) {
-                $domain = $this->get_subst_server($plugin_cookies) . ":" . $host[1];
-            } else {
-                $domain = $ext_params['subdomain'];
-            }
             $url = str_replace(array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
-                array($domain, $channel->get_channel_id(), $ext_params['token'], $archive_ts),
+                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
                 $template);
         }
 
