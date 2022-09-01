@@ -42,7 +42,7 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}&{:s}={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://celn.shott.top/p/{:s}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
+static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 static constexpr auto EPG_TEMPLATE_URL = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
 
 uri_tvclub::uri_tvclub()
@@ -81,7 +81,7 @@ std::wstring uri_tvclub::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url;
 
-	url = is_template() ? get_uri() : URI_TEMPLATE_MPEG;
+	url = is_template() ? URI_TEMPLATE_HLS : get_uri();
 
 	if (params.shift_back)
 	{
