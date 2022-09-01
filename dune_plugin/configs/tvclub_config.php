@@ -251,7 +251,7 @@ class TvclubPluginConfig extends Default_Config
             return false;
         }
 
-        $plugin_cookies->token = md5(strtolower($login) . md5($password));
+        $plugin_cookies->token = md5($login . md5($password));
 
         return !empty($plugin_cookies->token);
     }

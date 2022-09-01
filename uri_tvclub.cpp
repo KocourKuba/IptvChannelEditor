@@ -100,7 +100,7 @@ std::wstring uri_tvclub::get_playlist_url(TemplateParams& params)
 
 std::wstring uri_tvclub::get_api_token(const std::wstring& login, const std::wstring& password) const
 {
-	std::string login_a = utils::string_tolower(utils::utf16_to_utf8(login));
+	std::string login_a = utils::utf16_to_utf8(login);
 	std::string password_a = utils::utf16_to_utf8(password);
 	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }
