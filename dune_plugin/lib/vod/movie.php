@@ -191,7 +191,7 @@ class Movie implements User_Input_Handler
                     }
 
                     HD::put_items(self::HISTORY_LIST, $history_items);
-                    return Action_Factory::invalidate_folders(array(Vod_Series_List_Screen::get_media_url_str($user_input->plugin_vod_id)));
+                    return Action_Factory::invalidate_folders(array(Starnet_Vod_Series_List_Screen::get_media_url_str($user_input->plugin_vod_id)));
                 }
                 break;
 
@@ -405,21 +405,21 @@ class Movie implements User_Input_Handler
         //hd_print("get_movie_play_info: selected screen: " . $media_url->get_raw_string());
 
         switch ($media_url->screen_id) {
-            case Vod_Seasons_List_Screen::ID:
+            case Starnet_Vod_Seasons_List_Screen::ID:
                 if (!is_array($this->season_list) || count($this->season_list) === 0) {
                     HD::print_backtrace();
                     throw new Exception("Invalid movie: season list is empty");
                 }
                 $list = $this->series_list;
                 break;
-            case Vod_Series_List_Screen::ID:
+            case Starnet_Vod_Series_List_Screen::ID:
                 if (!is_array($this->series_list) || count($this->series_list) === 0) {
                     HD::print_backtrace();
                     throw new Exception("Invalid movie: series list is empty");
                 }
                 $list = $this->series_list;
                 break;
-            case Vod_Movie_Screen::ID:
+            case Starnet_Vod_Movie_Screen::ID:
                 $list = $this->series_list;
                 break;
             default:

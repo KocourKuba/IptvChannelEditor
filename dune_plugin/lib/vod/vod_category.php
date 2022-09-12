@@ -1,6 +1,6 @@
 <?php
 
-class Starnet_Vod_Category
+class Vod_Category
 {
     const DEFAULT_ICON = 'plugin_file://icons/movie_folder.png';
 
@@ -29,7 +29,7 @@ class Starnet_Vod_Category
     private $sub_categories;
 
     /**
-     * @var Starnet_Vod_Category|null
+     * @var Vod_Category|null
      */
     private $parent;
 
@@ -41,7 +41,7 @@ class Starnet_Vod_Category
     /**
      * @param string $id
      * @param string $caption
-     * @param Starnet_Vod_Category|null $parent
+     * @param Vod_Category|null $parent
      * @param string|null $url
      */
     public function __construct($id, $caption, $parent = null, $url = null)
@@ -94,7 +94,7 @@ class Starnet_Vod_Category
     }
 
     /**
-     * @return Starnet_Vod_Category|null
+     * @return Vod_Category|null
      */
     public function get_parent()
     {

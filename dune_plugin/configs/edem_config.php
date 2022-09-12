@@ -194,7 +194,7 @@ class EdemPluginConfig extends Default_Config
 
         if (isset($doc->items)) {
             foreach ($doc->items as $node) {
-                $cat = new Starnet_Vod_Category((string)$node->request->fid, (string)$node->title);
+                $cat = new Vod_Category((string)$node->request->fid, (string)$node->title);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
             }
@@ -320,7 +320,7 @@ class EdemPluginConfig extends Default_Config
 
     /**
      * @param array &$defs
-     * @param Starnet_Filter_Screen $parent
+     * @param Starnet_Vod_Filter_Screen $parent
      * @param int $initial
      * @return bool
      */

@@ -200,7 +200,7 @@ class GlanzPluginConfig extends Default_Config
         $categoriesFound = array();
 
         // all movies
-        $category = new Starnet_Vod_Category(Starnet_Vod_Category::PATTERN_ALL, 'Все фильмы');
+        $category = new Vod_Category(Vod_Category::PATTERN_ALL, 'Все фильмы');
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
@@ -214,7 +214,7 @@ class GlanzPluginConfig extends Default_Config
 
             if (!in_array($category, $categoriesFound)) {
                 $categoriesFound[] = $category;
-                $cat = new Starnet_Vod_Category($category, $category);
+                $cat = new Vod_Category($category, $category);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
             }
@@ -298,7 +298,7 @@ class GlanzPluginConfig extends Default_Config
                 $category = "Без категории";
             }
 
-            if ($category_id === Starnet_Vod_Category::PATTERN_ALL || $category_id === $category) {
+            if ($category_id === Vod_Category::PATTERN_ALL || $category_id === $category) {
                 $movies[] = self::CreateShortMovie($movie);
             }
         }
@@ -394,7 +394,7 @@ class GlanzPluginConfig extends Default_Config
 
     /**
      * @param array &$defs
-     * @param Starnet_Filter_Screen $parent
+     * @param Starnet_Vod_Filter_Screen $parent
      * @param int $initial
      * @return bool
      */

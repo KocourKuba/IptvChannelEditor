@@ -1,7 +1,7 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_series';
 

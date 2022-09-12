@@ -1,7 +1,7 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_seasons';
 
@@ -84,7 +84,7 @@ class Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen implemen
             (
                 PluginRegularFolderItem::media_url => MediaURL::encode(array
                 (
-                    'screen_id' => Vod_Series_List_Screen::ID,
+                    'screen_id' => Starnet_Vod_Series_List_Screen::ID,
                     'movie_id' => $movie->id,
                     'season_id' => $season->id,
                 )),

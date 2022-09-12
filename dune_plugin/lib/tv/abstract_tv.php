@@ -365,7 +365,7 @@ abstract class Abstract_Tv implements Tv
 
         $this->set_fav_channel_ids($plugin_cookies, $fav_channel_ids);
 
-        return Action_Factory::invalidate_folders(array(Tv_Favorites_Screen::get_media_url_str()));
+        return Action_Factory::invalidate_folders(array(Starnet_Tv_Favorites_Screen::get_media_url_str()));
     }
 
     ///////////////////////////////////////////////////////////////////////

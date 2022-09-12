@@ -101,13 +101,13 @@ abstract class Cbilling_Vod_Impl extends Default_Config
         $category_index = array();
 
         // all movies
-        $category = new Starnet_Vod_Category(Starnet_Vod_Category::PATTERN_ALL, 'Все фильмы');
+        $category = new Vod_Category(Vod_Category::PATTERN_ALL, 'Все фильмы');
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
         foreach ($jsonItems->data as $node) {
             $id = (string)$node->id;
-            $category = new Starnet_Vod_Category($id, (string)$node->name);
+            $category = new Vod_Category($id, (string)$node->name);
 
             // fetch genres for category
             $genres = HD::DownloadJson(self::API_HOST . "/cat/$id/genres", false);
@@ -117,7 +117,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
 
             $gen_arr = array();
             foreach ($genres->data as $genre) {
-                $gen_arr[] = new Starnet_Vod_Category((string)$genre->id, (string)$genre->title, $category);
+                $gen_arr[] = new Vod_Category((string)$genre->id, (string)$genre->title, $category);
             }
 
             $category->set_sub_categories($gen_arr);
@@ -154,7 +154,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
         hd_print("getVideoList: $query_id");
         $val = $this->get_next_page($query_id);
 
-        if ($query_id === Starnet_Vod_Category::PATTERN_ALL) {
+        if ($query_id === Vod_Category::PATTERN_ALL) {
             $url = "/filter/new?page=$val";
         } else {
             $arr = explode("_", $query_id);

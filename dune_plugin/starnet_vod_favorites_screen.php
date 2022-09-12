@@ -3,7 +3,7 @@
 require_once 'lib/abstract_preloaded_regular_screen.php';
 require_once 'lib/vod/vod.php';
 
-class Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_favorites';
 
@@ -175,7 +175,7 @@ class Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements 
 
             $items[] = array
             (
-                PluginRegularFolderItem::media_url => Vod_Movie_Screen::get_media_url_str($movie_id),
+                PluginRegularFolderItem::media_url => Starnet_Vod_Movie_Screen::get_media_url_str($movie_id),
                 PluginRegularFolderItem::caption => $caption,
                 PluginRegularFolderItem::view_item_params => array
                 (

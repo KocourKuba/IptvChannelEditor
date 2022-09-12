@@ -454,7 +454,7 @@ abstract class Default_Config
 
     /**
      * @param array $defs
-     * @param Starnet_Filter_Screen $parent
+     * @param Starnet_Vod_Filter_Screen $parent
      * @param int $initial
      * @return bool
      */
@@ -783,7 +783,7 @@ abstract class Default_Config
 
             if (!in_array($category, $categoriesFound)) {
                 $categoriesFound[] = $category;
-                $cat = new Starnet_Vod_Category($category, $category);
+                $cat = new Vod_Category($category, $category);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
             }

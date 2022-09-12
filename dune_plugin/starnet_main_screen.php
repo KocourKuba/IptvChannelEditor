@@ -114,8 +114,8 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
 
         foreach ($this->plugin->tv->get_groups() as $group) {
             $media_url_str = $group->is_favorite_channels() ?
-                Tv_Favorites_Screen::get_media_url_str() :
-                Tv_Channel_List_Screen::get_media_url_str($group->get_id());
+                Starnet_Tv_Favorites_Screen::get_media_url_str() :
+                Starnet_Tv_Channel_List_Screen::get_media_url_str($group->get_id());
 
             $items[] = array(
                 PluginRegularFolderItem::media_url => $media_url_str,

@@ -3,9 +3,9 @@ require_once 'lib/abstract_controls_screen.php';
 require_once 'lib/user_input_handler.php';
 require_once 'lib/vod/vod.php';
 require_once 'default_config.php';
-require_once 'vod_series_list_screen.php';
+require_once 'starnet_vod_series_list_screen.php';
 
-class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Handler
+class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
     const ID = 'vod_movie';
 
@@ -115,11 +115,11 @@ class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Ha
 
         $save_folder = HD::get_items('save_folder');
         if (isset($save_folder[$movie->id]))
-            $screen_media_url = Vod_Series_List_Screen::get_media_url_str($movie->id, key($save_folder[$movie->id]));
+            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_str($movie->id, key($save_folder[$movie->id]));
         else if (!isset($movie->season_list)) {
-            $screen_media_url = Vod_Series_List_Screen::get_media_url_str($movie->id);
+            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_str($movie->id);
         } else {
-            $screen_media_url = Vod_Seasons_List_Screen::get_media_url_str($movie->id);
+            $screen_media_url = Starnet_Vod_Seasons_List_Screen::get_media_url_str($movie->id);
         }
 
         $movie_folder_view = array
@@ -169,7 +169,7 @@ class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Ha
             return Action_Factory::show_title_dialog($message,
                 Action_Factory::invalidate_folders(array(
                         self::get_media_url_str($movie_id),
-                        Vod_Favorites_Screen::get_media_url_str())
+                        Starnet_Vod_Favorites_Screen::get_media_url_str())
                 )
             );
         }

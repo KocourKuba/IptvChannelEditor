@@ -300,7 +300,7 @@ abstract class Abstract_Vod implements Vod
         $this->set_fav_movie_ids($fav_movie_ids);
         $this->do_save_favorite_movies($fav_movie_ids, $plugin_cookies);
 
-        return Action_Factory::invalidate_folders(array(Vod_Favorites_Screen::get_media_url_str()));
+        return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::get_media_url_str()));
     }
 
     ///////////////////////////////////////////////////////////////////////

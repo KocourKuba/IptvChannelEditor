@@ -2,20 +2,19 @@
 require_once 'lib/abstract_preloaded_regular_screen.php';
 require_once 'lib/vod/vod.php';
 
-class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
-    const ID = 'search_screen';
-    const SEARCH_ICON_PATH = 'plugin_file://icons/icon_search.png';
+    const ID = 'filter_screen';
+    const FILTER_ICON_PATH = 'plugin_file://icons/icon_filter.png';
 
-    const ACTION_CREATE_SEARCH = 'create_search';
-    const ACTION_NEW_SEARCH = 'new_search';
-    const ACTION_RUN_SEARCH = 'run_search';
+    const ACTION_CREATE_FILTER = 'create_filter';
+    const ACTION_RUN_FILTER = 'run_filter';
     const ACTION_ITEM_UP = 'item_up';
     const ACTION_ITEM_DOWN = 'item_down';
     const ACTION_ITEM_DELETE = 'item_delete';
 
-    const SEARCH_LIST = 'search_items';
-    const SEARCH_ITEM = 'search_item';
+    const FILTER_LIST = 'filter_items';
+    const FILTER_ITEM = 'filter_item';
 
     /**
      * @param Default_Dune_Plugin $plugin
@@ -24,7 +23,7 @@ class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_search_folder_views());
 
-        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
+        if ($plugin->config->get_feature(VOD_FILTER_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }
@@ -54,11 +53,11 @@ class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         $actions = array();
-        $add_params['search_actions'] = 'open';
-        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_SEARCH, $add_params);
+        $add_params['filter_actions'] = 'open';
+        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_FILTER, $add_params);
 
-        $add_params['search_actions'] = 'keyboard';
-        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_SEARCH, $add_params);
+        $add_params['filter_actions'] = 'keyboard';
+        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_FILTER, $add_params);
 
         $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_UP);
         $add_action['caption'] = 'Вверх';
@@ -96,66 +95,65 @@ class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('StarnetSearchScreen::handle_user_input:');
+        hd_print('StarnetFilterScreen::handle_user_input:');
         foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
-            case self::ACTION_CREATE_SEARCH:
+            case self::ACTION_CREATE_FILTER:
                 if (!isset($user_input->parent_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
-                if ($media_url->genre_id !== Starnet_Vod_Category::PATTERN_SEARCH && $user_input->search_actions !== 'keyboard') {
+                if ($media_url->genre_id !== Vod_Category::PATTERN_FILTER && $user_input->filter_actions !== 'keyboard') {
                     return Action_Factory::open_folder($user_input->selected_media_url);
                 }
 
-                if ($user_input->search_actions === 'keyboard') {
-                    $search_string = $media_url->genre_id;
+                if ($user_input->filter_actions === 'keyboard') {
+                    $filter_string = $media_url->genre_id;
                 } else {
-                    $search_string = HD::get_item(self::SEARCH_ITEM);
+                    $filter_string = HD::get_item(self::FILTER_ITEM);
                 }
 
                 $defs = array();
-                Control_Factory::add_text_field($defs,
-                    $this, null, self::ACTION_NEW_SEARCH, '',
-                    $search_string, false, false, true, true, 1300, false, true);
-                Control_Factory::add_vgap($defs, 500);
+                if (false === $this->plugin->config->AddFilterUI($defs, $this, $filter_string)) break;
 
-                return Action_Factory::show_dialog('Поиск', $defs, true);
+                Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_RUN_FILTER, 'Ok', 300);
+                Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
+                Control_Factory::add_vgap($defs, 10);
 
-            case self::ACTION_NEW_SEARCH:
-                return Action_Factory::close_dialog_and_run(
-                    User_Input_Handler_Registry::create_action($this, self::ACTION_RUN_SEARCH));
+                return Action_Factory::show_dialog('Фильтр', $defs, true);
 
-            case self::ACTION_RUN_SEARCH:
-                $search_string = $user_input->{self::ACTION_NEW_SEARCH};
-                hd_print("search string: $search_string");
-                HD::put_item(self::SEARCH_ITEM, $search_string);
-                $search_items = HD::get_items(self::SEARCH_LIST);
-                $i = array_search($search_string, $search_items);
+            case self::ACTION_RUN_FILTER:
+                $filter_string = $this->plugin->config->CompileSaveFilterItem($user_input);
+                if (empty($filter_string)) break;
+
+                hd_print("filter_screen filter string: $filter_string");
+                HD::put_item(self::FILTER_ITEM, $filter_string);
+                $filter_items = HD::get_items(self::FILTER_LIST);
+                $i = array_search($filter_string, $filter_items);
                 if ($i !== false) {
-                    unset ($search_items [$i]);
+                    unset ($filter_items [$i]);
                 }
-                array_unshift($search_items, $search_string);
-                HD::put_items(self::SEARCH_LIST, $search_items);
-                $action = Action_Factory::open_folder(
-                    Starnet_Vod_List_Screen::get_media_url_str(Starnet_Vod_Category::PATTERN_SEARCH, $search_string),
-                    "Поиск: " . $search_string);
+                array_unshift($filter_items, $filter_string);
+                HD::put_items(self::FILTER_LIST, $filter_items);
 
-                return Action_Factory::invalidate_folders(array(self::ID), $action);
+                return Action_Factory::invalidate_folders(array(self::ID),
+                    Action_Factory::open_folder(
+                        Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_FILTER, $filter_string),
+                        "Фильтр: " . $filter_string));
 
             case self::ACTION_ITEM_UP:
                 if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $search_items = HD::get_items(self::SEARCH_LIST);
-                $i = array_search($video_id, $search_items);
-                if ($i === false || $i === 0)  break;
+                $filter_items = HD::get_items(self::FILTER_LIST);
+                $i = array_search($video_id, $filter_items);
+                if ($i === false || $i === 0) break;
 
-                $t = $search_items[$i - 1];
-                $search_items[$i - 1] = $search_items[$i];
-                $search_items[$i] = $t;
-                HD::put_items(self::SEARCH_LIST, $search_items);
+                $t = $filter_items[$i - 1];
+                $filter_items[$i - 1] = $filter_items[$i];
+                $filter_items[$i] = $t;
+                HD::put_items(self::FILTER_LIST, $filter_items);
 
                 return $this->get_update_action($user_input, -1, $plugin_cookies);
 
@@ -164,14 +162,14 @@ class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $search_items = HD::get_items(self::SEARCH_LIST);
-                $i = array_search($video_id, $search_items);
-                if ($i === false || $i === count($search_items) - 1) break;
+                $filter_items = HD::get_items(self::FILTER_LIST);
+                $i = array_search($video_id, $filter_items);
+                if ($i === false || $i === count($filter_items) - 1) break;
 
-                $t = $search_items[$i + 1];
-                $search_items[$i + 1] = $search_items[$i];
-                $search_items[$i] = $t;
-                HD::put_items(self::SEARCH_LIST, $search_items);
+                $t = $filter_items[$i + 1];
+                $filter_items[$i + 1] = $filter_items[$i];
+                $filter_items[$i] = $t;
+                HD::put_items(self::FILTER_LIST, $filter_items);
 
                 return $this->get_update_action($user_input, 1, $plugin_cookies);
 
@@ -180,12 +178,12 @@ class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $search_items = HD::get_items(self::SEARCH_LIST);
-                $i = array_search($video_id, $search_items);
+                $filter_items = HD::get_items(self::FILTER_LIST);
+                $i = array_search($video_id, $filter_items);
                 if ($i !== false) {
-                    unset ($search_items[$i]);
+                    unset ($filter_items[$i]);
                 }
-                HD::put_items(self::SEARCH_LIST, $search_items);
+                HD::put_items(self::FILTER_LIST, $filter_items);
 
                 return Action_Factory::invalidate_folders(array(self::ID));
         }
@@ -202,15 +200,15 @@ class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("Starnet_Search_Screen::get_all_folder_items");
+        hd_print("Starnet_Filter_Screen::get_all_folder_items");
         $items = array();
 
         $items[] = array
         (
-            PluginRegularFolderItem::caption => '[Новый поиск]',
+            PluginRegularFolderItem::caption => '[Новый фильтр]',
             PluginRegularFolderItem::view_item_params => array
             (
-                ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
+                ViewItemParams::icon_path => self::FILTER_ICON_PATH,
                 ViewItemParams::item_layout => HALIGN_LEFT,
                 ViewItemParams::icon_valign => VALIGN_CENTER,
                 ViewItemParams::icon_dx => 20,
@@ -218,18 +216,18 @@ class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements
                 ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                 ViewItemParams::item_caption_width => 1100
             ),
-            PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Starnet_Vod_Category::PATTERN_SEARCH, Starnet_Vod_Category::PATTERN_SEARCH)
+            PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_FILTER, Vod_Category::PATTERN_FILTER)
         );
 
-        $search_items = HD::get_items(self::SEARCH_LIST);
-        foreach ($search_items as $item) {
+        $filter_items = HD::get_items(self::FILTER_LIST);
+        foreach ($filter_items as $item) {
             if (!empty($item)) {
                 $items[] = array
                 (
-                    PluginRegularFolderItem::caption => "Поиск: $item",
+                    PluginRegularFolderItem::caption => "Фильтр: $item",
                     PluginRegularFolderItem::view_item_params => array
                     (
-                        ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
+                        ViewItemParams::icon_path => self::FILTER_ICON_PATH,
                         ViewItemParams::item_layout => HALIGN_LEFT,
                         ViewItemParams::icon_valign => VALIGN_CENTER,
                         ViewItemParams::icon_dx => 20,
@@ -237,7 +235,7 @@ class Starnet_Search_Screen extends Abstract_Preloaded_Regular_Screen implements
                         ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                         ViewItemParams::item_caption_width => 1100
                     ),
-                    PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Starnet_Vod_Category::PATTERN_SEARCH, $item)
+                    PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_FILTER, $item)
                 );
             }
         }

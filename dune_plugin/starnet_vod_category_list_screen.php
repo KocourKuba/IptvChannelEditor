@@ -1,6 +1,6 @@
 ﻿<?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
-require_once 'lib/vod/starnet_vod_category.php';
+require_once 'lib/vod/vod_category.php';
 require_once 'starnet_vod_list_screen.php';
 
 class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
@@ -109,7 +109,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         if (!isset($media_url->category_id) && $this->plugin->config->get_feature(VOD_FAVORITES_SUPPORTED)) {
             $items[] = array
             (
-                PluginRegularFolderItem::media_url => Vod_Favorites_Screen::get_media_url_str(),
+                PluginRegularFolderItem::media_url => Starnet_Vod_Favorites_Screen::get_media_url_str(),
                 PluginRegularFolderItem::caption => Default_Config::FAV_MOVIES_CATEGORY_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
@@ -123,7 +123,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         // History
         $items[] = array
         (
-            PluginRegularFolderItem::media_url => Vod_History_Screen::get_media_url_str(),
+            PluginRegularFolderItem::media_url => Starnet_Vod_History_Screen::get_media_url_str(),
             PluginRegularFolderItem::caption => Default_Config::HISTORY_MOVIES_CATEGORY_CAPTION,
             PluginRegularFolderItem::view_item_params => array
             (
@@ -136,7 +136,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         // Search
         $items[] = array
         (
-            PluginRegularFolderItem::media_url => Starnet_Search_Screen::get_media_url_str(),
+            PluginRegularFolderItem::media_url => Starnet_Vod_Search_Screen::get_media_url_str(),
             PluginRegularFolderItem::caption => Default_Config::SEARCH_MOVIES_CATEGORY_CAPTION,
             PluginRegularFolderItem::view_item_params => array
             (
@@ -166,9 +166,9 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 $category_id = $category->get_id();
                 if (!is_null($category->get_sub_categories())) {
                     $media_url_str = self::get_media_url_str($category_id);
-                } else if ($category_id === Starnet_Vod_Category::PATTERN_ALL
-                    || $category_id === Starnet_Vod_Category::PATTERN_SEARCH
-                    || $category_id === Starnet_Vod_Category::PATTERN_FILTER) {
+                } else if ($category_id === Vod_Category::PATTERN_ALL
+                    || $category_id === Vod_Category::PATTERN_SEARCH
+                    || $category_id === Vod_Category::PATTERN_FILTER) {
                     // special category id's
                     $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category_id, null);
                 } else if ($category->get_parent() !== null) {
