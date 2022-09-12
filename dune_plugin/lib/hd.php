@@ -467,7 +467,7 @@ class HD
     public static function get_items($path)
     {
         $full_path = get_data_path($path);
-        return file_exists($full_path) ? unserialize(file_get_contents($full_path)) : array();
+        return file_exists($full_path) ? array_values(unserialize(file_get_contents($full_path))) : array();
     }
 
     /**
@@ -476,7 +476,7 @@ class HD
      */
     public static function put_items($path, $items)
     {
-        file_put_contents(get_data_path($path), serialize($items));
+        file_put_contents(get_data_path($path), serialize(array_values($items)));
     }
 
     /**
