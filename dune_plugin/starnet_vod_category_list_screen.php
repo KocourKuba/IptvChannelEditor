@@ -109,7 +109,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         if (!isset($media_url->category_id) && $this->plugin->config->get_feature(VOD_FAVORITES_SUPPORTED)) {
             $items[] = array
             (
-                PluginRegularFolderItem::media_url => Starnet_Vod_Favorites_Screen::get_media_url_str(),
+                PluginRegularFolderItem::media_url => Starnet_Vod_Favorites_Screen::ID,
                 PluginRegularFolderItem::caption => Default_Config::FAV_MOVIES_CATEGORY_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
@@ -123,7 +123,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         // History
         $items[] = array
         (
-            PluginRegularFolderItem::media_url => Starnet_Vod_History_Screen::get_media_url_str(),
+            PluginRegularFolderItem::media_url => Starnet_Vod_History_Screen::ID,
             PluginRegularFolderItem::caption => Default_Config::HISTORY_MOVIES_CATEGORY_CAPTION,
             PluginRegularFolderItem::view_item_params => array
             (
@@ -136,7 +136,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         // Search
         $items[] = array
         (
-            PluginRegularFolderItem::media_url => Starnet_Vod_Search_Screen::get_media_url_str(),
+            PluginRegularFolderItem::media_url => Starnet_Vod_Search_Screen::ID,
             PluginRegularFolderItem::caption => Default_Config::SEARCH_MOVIES_CATEGORY_CAPTION,
             PluginRegularFolderItem::view_item_params => array
             (
@@ -150,7 +150,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         if (!isset($media_url->category_id) && $this->plugin->config->get_feature(VOD_FILTER_SUPPORTED)) {
             $items[] = array
             (
-                PluginRegularFolderItem::media_url => 'filter_screen',
+                PluginRegularFolderItem::media_url => Starnet_Vod_Filter_Screen::ID,
                 PluginRegularFolderItem::caption => Default_Config::FILTER_MOVIES_CATEGORY_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
