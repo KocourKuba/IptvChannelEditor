@@ -51,6 +51,7 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_filmax.h"
 #include "uri_kineskop.h"
 #include "uri_mymagic.h"
+#include "uri_russkoetv.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -141,6 +142,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enMymagic:
 			return std::make_unique<uri_mymagic>();
+
+		case StreamType::enRusskoeTV:
+			return std::make_unique<uri_russkoetv>();
 
 		default:
 			ASSERT(false);

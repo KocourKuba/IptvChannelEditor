@@ -91,11 +91,6 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		// special cases after parsing
 		switch (stream_type)
 		{
-		case StreamType::enEdem:
-		case StreamType::enFox:
-		case StreamType::enSharaTV:
-		case StreamType::enMymagic:
-			break;
 		case StreamType::enGlanz:
 		case StreamType::enOneCent:
 		case StreamType::enIptvOnline:
@@ -130,6 +125,11 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		case StreamType::enKineskop:
 			set_icon_uri(std::regex_replace(get_icon_uri().get_uri(), std::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
 			break;
+		case StreamType::enEdem:
+		case StreamType::enFox:
+		case StreamType::enSharaTV:
+		case StreamType::enMymagic:
+		case StreamType::enRusskoeTV:
 		default:
 			break;
 		}

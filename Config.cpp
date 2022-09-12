@@ -141,6 +141,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enFilmax,     _T("Filmax TV"),       "filmax",     "filmax",         STRPRODUCTVER },
 	{ StreamType::enKineskop,   _T("Kineskop.Club"),   "kineskop",   "kineskop",       STRPRODUCTVER },
 	{ StreamType::enMymagic,    _T("MyMagic TV"),      "mymagic",    "mymagic",        STRPRODUCTVER },
+	{ StreamType::enRusskoeTV,  _T("Russkoe TV"),      "russkoetv",  "russkoetv",      STRPRODUCTVER },
 };
 
 void to_json(nlohmann::json& j, const Credentials& c)

@@ -252,6 +252,9 @@
     <ClInclude Include="uri_mymagic.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="uri_russkoetv.h">
+      <Filter>Header Files\uri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -432,6 +435,9 @@
       <Filter>Source Files\uri</Filter>
     </ClCompile>
     <ClCompile Include="uri_mymagic.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_russkoetv.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
   </ItemGroup>

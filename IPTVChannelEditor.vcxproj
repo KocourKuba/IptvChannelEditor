@@ -254,6 +254,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="ResizedPropertySheet.h" />
     <ClInclude Include="uri_kineskop.h" />
     <ClInclude Include="uri_mymagic.h" />
+    <ClInclude Include="uri_russkoetv.h" />
     <ClInclude Include="vod_movie.h" />
     <ClInclude Include="NewChannelsListDlg.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
@@ -348,6 +349,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="uri_oneott.cpp" />
     <ClCompile Include="uri_oneusd.cpp" />
     <ClCompile Include="uri_ottclub.cpp" />
+    <ClCompile Include="uri_russkoetv.cpp" />
     <ClCompile Include="uri_sharaclub.cpp" />
     <ClCompile Include="uri_sharatv.cpp" />
     <ClCompile Include="uri_sharavoz.cpp" />
