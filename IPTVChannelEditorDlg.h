@@ -91,7 +91,6 @@ protected:
 
 	afx_msg void OnSave();
 	afx_msg void OnUpdateSave(CCmdUI* pCmdUI);
-	afx_msg void OnExport();
 	afx_msg void OnNewChannel();
 	afx_msg void OnUpdateNewChannel(CCmdUI* pCmdUI);
 	afx_msg void OnAddUpdateChannel();

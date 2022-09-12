@@ -38,7 +38,7 @@ static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
 static constexpr auto VERSION_INFO = "version_info";
 static constexpr auto LIST_VERSION = "list_version";
-static constexpr auto CHANNELS_SETUP = "channels_setup";
+static constexpr auto FAVORITES = "favorites";
 static constexpr auto PORTAL_SETUP = "portal_setup";
 static constexpr auto ACCESS_TOKEN = "access_key";
 static constexpr auto ACCESS_DOMAIN = "access_domain";
