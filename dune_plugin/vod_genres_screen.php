@@ -1,4 +1,5 @@
 <?php
+require_once 'lib/abstract_preloaded_regular_screen.php';
 
 class Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
@@ -57,9 +58,8 @@ class Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implements Use
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('Vod genres: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        //hd_print('Vod genres: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if ($user_input->control_id === 'select_genre') {
             if (!isset($user_input->selected_media_url)) {

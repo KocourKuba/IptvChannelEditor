@@ -5,6 +5,12 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
 {
     const ID = 'vod_series';
 
+    const ACTION_WATCHED = 'watched';
+    const ACTION_QUALITY = 'quality';
+    const ACTION_REFRESH = 'refresh';
+
+    const VIEWED_LIST = 'viewed_items';
+
     /**
      * @var array
      */
@@ -54,7 +60,7 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
         $actions[GUI_EVENT_KEY_ENTER] = Action_Factory::vod_play();
         $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::vod_play();
 
-        $add_action = User_Input_Handler_Registry::create_action($this, 'watched');
+        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_WATCHED);
         $add_action['caption'] = 'Просмотрено/Не просмотрено';
         $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
 
@@ -64,7 +70,7 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
             if (!is_null($movie) && isset($movie->variants_list)) {
 
                 $q_exist = (in_array($variant, $movie->variants_list) ? "" : "*");
-                $quality_action = User_Input_Handler_Registry::create_action($this, 'show_quality');
+                $quality_action = User_Input_Handler_Registry::create_action($this, self::ACTION_QUALITY);
                 $quality_action['caption'] = "Качество - $variant$q_exist";
                 $actions[GUI_EVENT_KEY_D_BLUE] = $quality_action;
             }
@@ -81,11 +87,10 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         //hd_print('Vod Vod_Series_List_Screen: handle_user_input:');
-        //foreach ($user_input as $key => $value)
-        //    hd_print("  $key => $value");
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
-            case 'show_quality':
+            case self::ACTION_QUALITY:
                 $menu_items = array();
                 if (!isset($this->variants) || count($this->variants) < 2) break;
 
@@ -95,12 +100,12 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
                 }
                 return Action_Factory::show_popup_menu($menu_items);
 
-            case 'watched':
+            case self::ACTION_WATCHED:
                 if (!isset($user_input->selected_media_url))
                     return null;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
-                $viewed_items = HD::get_items('viewed_items');
+                $viewed_items = HD::get_items(self::VIEWED_LIST);
 
                 $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
                 if (is_null($movie)) {
@@ -114,12 +119,12 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
                 } else {
                     $viewed_items[$playback_url] = 'watched';
                 }
-                HD::put_items('viewed_items', $viewed_items);
+                HD::put_items(self::VIEWED_LIST, $viewed_items);
 
-                $perform_new_action = User_Input_Handler_Registry::create_action($this, 'refresh_folder');
-                return Action_Factory::invalidate_folders(array('vod_series'), $perform_new_action);
+                $perform_new_action = User_Input_Handler_Registry::create_action($this, self::ACTION_REFRESH);
+                return Action_Factory::invalidate_folders(array(self::ID), $perform_new_action);
 
-            case 'refresh_folder':
+            case self::ACTION_REFRESH:
                 if (!isset($user_input->parent_media_url))
                     return null;
 
@@ -161,7 +166,7 @@ class Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen implement
 
         $items = array();
 
-        $viewed_items = HD::get_items('viewed_items');
+        $viewed_items = HD::get_items(self::VIEWED_LIST);
         foreach ($movie->series_list as $series) {
             if (isset($media_url->season_id) && $media_url->season_id !== $series->season_id) continue;
 

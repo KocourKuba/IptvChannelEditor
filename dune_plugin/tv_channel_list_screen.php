@@ -5,6 +5,14 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
 {
     const ID = 'tv_channel_list';
 
+    const ACTION_INFO = 'info';
+    const ACTION_ADD_FAV = 'add_favorite';
+    const ACTION_POPUP_MENU = 'popup_menu';
+    const ACTION_JUMP_TO_CHANNEL = 'jump_to_channel';
+    const ACTION_CREATE_SEARCH = 'create_search';
+    const ACTION_NEW_SEARCH = 'new_search';
+    const ACTION_RUN_SEARCH = 'run_search';
+
     /**
      * @param string $group_id
      * @return false|string
@@ -48,21 +56,21 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
         $actions[GUI_EVENT_KEY_B_GREEN] = $setup_screen;
         $actions[GUI_EVENT_KEY_ENTER] = Action_Factory::tv_play();
         $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::tv_play();
-        $actions[GUI_EVENT_KEY_INFO] = User_Input_Handler_Registry::create_action($this, 'info');
+        $actions[GUI_EVENT_KEY_INFO] = User_Input_Handler_Registry::create_action($this, self::ACTION_INFO);
 
         if ((string)$media_url->group_id === $this->plugin->tv->get_all_channel_group_id()) {
-            $search_action = User_Input_Handler_Registry::create_action($this, 'search_channel');
+            $search_action = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_SEARCH);
             $search_action['caption'] = 'Поиск';
             $actions[GUI_EVENT_KEY_C_YELLOW] = $search_action;
             $actions[GUI_EVENT_KEY_SEARCH] = $search_action;
         }
 
         if ($this->plugin->tv->is_favorites_supported()) {
-            $add_favorite_action = User_Input_Handler_Registry::create_action($this, 'add_favorite');
+            $add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
             $add_favorite_action['caption'] = 'В избранное';
             $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
 
-            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, 'popup_menu');
+            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
         }
 
         return $actions;
@@ -84,9 +92,8 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('Tv favorites: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        //hd_print('Tv favorites: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -97,35 +104,35 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
         $channel = $this->plugin->tv->get_channels()->get($channel_id);
 
         switch ($user_input->control_id) {
-            case 'info':
+            case self::ACTION_INFO:
                 $id = $channel->get_id();
                 $title = $channel->get_title();
                 return Action_Factory::show_title_dialog("Канал '$title' (id=$id)");
 
-            case 'popup_menu':
-                $add_favorite_action = User_Input_Handler_Registry::create_action($this, 'add_favorite');
+            case self::ACTION_POPUP_MENU:
+                $add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
                 $caption = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? 'Удалить из Избранного' : 'Добавить в избранное';
                 $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_favorite_action);
                 return Action_Factory::show_popup_menu($menu_items);
 
-            case 'add_favorite':
+            case self::ACTION_ADD_FAV:
                 $opt_type = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $this->plugin->tv->change_tv_favorites($opt_type, $channel_id, $plugin_cookies);
                 return Action_Factory::invalidate_folders(array(self::get_media_url_str($media_url->group_id)));
 
-            case 'search_channel':
+            case self::ACTION_CREATE_SEARCH:
                 $defs = array();
-                Control_Factory::add_text_field($defs, $this, null, 'new_search', '',
+                Control_Factory::add_text_field($defs, $this, null, self::ACTION_NEW_SEARCH, '',
                     $channel->get_title(), false, false, true, true, 1300, false, true);
                 Control_Factory::add_vgap($defs, 500);
                 return Action_Factory::show_dialog('Введите название или часть названия канала для поиска', $defs, true, 1300);
 
-            case 'new_search':
-                return Action_Factory::close_dialog_and_run(User_Input_Handler_Registry::create_action($this, 'run_search'));
+            case self::ACTION_NEW_SEARCH:
+                return Action_Factory::close_dialog_and_run(User_Input_Handler_Registry::create_action($this, self::ACTION_RUN_SEARCH));
 
-            case 'run_search':
+            case self::ACTION_RUN_SEARCH:
                 $defs = array();
-                $find_text = $user_input->new_search;
+                $find_text = $user_input->{self::ACTION_NEW_SEARCH};
                 $q = false;
                 $group = $this->plugin->tv->get_group($media_url->group_id);
                 foreach ($group->get_channels($plugin_cookies) as $idx => $tv_channel) {
@@ -135,19 +142,21 @@ class Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implement
                         $q = true;
                         hd_print("found channel: $ch_title, idx: " . $idx);
                         $add_params['number'] = $idx;
-                        Control_Factory::add_close_dialog_and_apply_button_title($defs, $this, $add_params, 'jump_to_channel', '', $ch_title, 900);
+                        Control_Factory::add_close_dialog_and_apply_button_title($defs, $this, $add_params,
+                            self::ACTION_JUMP_TO_CHANNEL, '', $ch_title, 900);
                     }
                 }
 
                 if ($q === false) {
                     Control_Factory::add_multiline_label($defs, '', 'Ничего не найдено.', 6);
                     Control_Factory::add_vgap($defs, 20);
-                    Control_Factory::add_close_dialog_and_apply_button_title($defs, $this, null, 'search_channel', '', 'Новый поиск', 300);
+                    Control_Factory::add_close_dialog_and_apply_button_title($defs, $this, null,
+                        self::ACTION_CREATE_SEARCH, '', 'Новый поиск', 300);
                 }
 
                 return Action_Factory::show_dialog('Поиск', $defs, true);
 
-            case 'jump_to_channel':
+            case self::ACTION_JUMP_TO_CHANNEL:
                 $ndx = (int)$user_input->number;
                 $parent_media_url = MediaURL::decode($user_input->parent_media_url);
                 $parent_media_url->group_id = $media_url->group_id;

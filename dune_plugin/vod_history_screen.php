@@ -1,11 +1,14 @@
 <?php
-
-require_once 'lib/vod/vod.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
+require_once 'lib/vod/vod.php';
 
 class Vod_History_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_history';
+
+    const ACTION_ADD_FAV = 'add_favorite';
+    const ACTION_POPUP_MENU = 'popup_menu';
+    const ACTION_ITEM_DELETE = 'item_delete';
 
     /**
      * @return false|string
@@ -41,16 +44,16 @@ class Vod_History_Screen extends Abstract_Preloaded_Regular_Screen implements Us
         $actions[GUI_EVENT_KEY_ENTER] = $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play();
         $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::vod_play();
 
-        $add_action = User_Input_Handler_Registry::create_action($this, 'del_item');
+        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DELETE);
         $add_action['caption'] = 'Удалить';
         $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
 
         if ($this->plugin->vod->is_favorites_supported()) {
-            $add_favorite_action = User_Input_Handler_Registry::create_action($this, 'add_favorite');
+            $add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
             $add_favorite_action['caption'] = 'В Избранное';
             $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
 
-            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, 'popup_menu');
+            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
         }
 
         return $actions;
@@ -71,9 +74,8 @@ class Vod_History_Screen extends Abstract_Preloaded_Regular_Screen implements Us
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('Vod_History_Screen: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        //hd_print('Vod_History_Screen: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -84,11 +86,11 @@ class Vod_History_Screen extends Abstract_Preloaded_Regular_Screen implements Us
 
         switch ($user_input->control_id)
 		{
-			case 'del_item':
+			case self::ACTION_ITEM_DELETE:
 				$media_url = MediaURL::decode($user_input->selected_media_url);
-				$history_items = HD::get_items('history_items');
+				$history_items = HD::get_items(Movie::HISTORY_LIST);
 				unset ($history_items[$media_url->movie_id]);
-				HD::put_items('history_items', $history_items);
+				HD::put_items(Movie::HISTORY_LIST, $history_items);
 				$parent_media_url = MediaURL::decode($user_input->parent_media_url);
 				$sel_ndx = $user_input->sel_ndx + 1;
 				if ($sel_ndx < 0)
@@ -96,13 +98,13 @@ class Vod_History_Screen extends Abstract_Preloaded_Regular_Screen implements Us
 				$range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
 				return Action_Factory::update_regular_folder($range, true, $sel_ndx);
 
-			case 'popup_menu':
-				$add_favorite_action = User_Input_Handler_Registry::create_action($this, 'add_favorite');
+			case self::ACTION_POPUP_MENU:
+				$add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
 				$caption = $this->plugin->vod->is_favorite_movie_id($movie_id) ? 'Удалить из Избранного' : 'Добавить в избранное';
 				$menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_favorite_action);
 				return Action_Factory::show_popup_menu($menu_items);
 
-			case 'add_favorite':
+			case self::ACTION_ADD_FAV:
 				$is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
 				$opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
 				$message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
@@ -122,7 +124,7 @@ class Vod_History_Screen extends Abstract_Preloaded_Regular_Screen implements Us
     {
         $items = array();
 
-        $history_items = HD::get_items('history_items');
+        $history_items = HD::get_items(Movie::HISTORY_LIST);
         foreach ($history_items as $movie_id => $item) {
             if (empty($item)) continue;
 

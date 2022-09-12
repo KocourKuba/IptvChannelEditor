@@ -8,6 +8,8 @@ class Movie implements User_Input_Handler
 {
     const ID = 'smart_movie';
 
+    const HISTORY_LIST = 'history_items';
+
     /**
      * @var string
      */
@@ -148,8 +150,7 @@ class Movie implements User_Input_Handler
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         //hd_print('Movie: handle_user_input:');
-        //foreach ($user_input as $key => $value)
-        //    hd_print("  $key => $value");
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
             case 'playback_stop':
@@ -177,7 +178,7 @@ class Movie implements User_Input_Handler
                 }
 
                 if (isset($user_input->playback_stop_pressed)) {
-                    $history_items = HD::get_items('history_items');
+                    $history_items = HD::get_items(self::HISTORY_LIST);
                     $history_items = array_reverse($history_items, true);
                     $history_items[$user_input->plugin_vod_id] = array(
                         'series' => $this->playback_series_ndx,
@@ -189,7 +190,7 @@ class Movie implements User_Input_Handler
                         array_pop($history_items);
                     }
 
-                    HD::put_items('history_items', $history_items);
+                    HD::put_items(self::HISTORY_LIST, $history_items);
                     return Action_Factory::invalidate_folders(array(Vod_Series_List_Screen::get_media_url_str($user_input->plugin_vod_id)));
                 }
                 break;

@@ -101,7 +101,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
         $category_index = array();
 
         // all movies
-        $category = new Starnet_Vod_Category('all', 'Все фильмы');
+        $category = new Starnet_Vod_Category(Starnet_Vod_Category::PATTERN_ALL, 'Все фильмы');
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
@@ -154,7 +154,7 @@ abstract class Cbilling_Vod_Impl extends Default_Config
         hd_print("getVideoList: $query_id");
         $val = $this->get_next_page($query_id);
 
-        if ($query_id === 'all') {
+        if ($query_id === Starnet_Vod_Category::PATTERN_ALL) {
             $url = "/filter/new?page=$val";
         } else {
             $arr = explode("_", $query_id);

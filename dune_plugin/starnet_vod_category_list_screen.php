@@ -1,5 +1,6 @@
 ﻿<?php
-require_once 'starnet_vod_category.php';
+require_once 'lib/abstract_preloaded_regular_screen.php';
+require_once 'lib/vod/starnet_vod_category.php';
 require_once 'starnet_vod_list_screen.php';
 
 class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
@@ -72,9 +73,8 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('Vod favorites: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        //hd_print('Vod favorites: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         return null;
     }
@@ -166,7 +166,9 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 $category_id = $category->get_id();
                 if (!is_null($category->get_sub_categories())) {
                     $media_url_str = self::get_media_url_str($category_id);
-                } else if ($category_id === 'all' || $category_id === 'search' || $category_id === 'filter') {
+                } else if ($category_id === Starnet_Vod_Category::PATTERN_ALL
+                    || $category_id === Starnet_Vod_Category::PATTERN_SEARCH
+                    || $category_id === Starnet_Vod_Category::PATTERN_FILTER) {
                     // special category id's
                     $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category_id, null);
                 } else if ($category->get_parent() !== null) {

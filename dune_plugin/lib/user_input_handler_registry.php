@@ -1,6 +1,6 @@
 <?php
 
-require_once('user_input_handler.php');
+require_once 'user_input_handler.php';
 
 class User_Input_Handler_Registry
 {

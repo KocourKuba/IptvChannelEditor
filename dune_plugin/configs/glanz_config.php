@@ -200,7 +200,7 @@ class GlanzPluginConfig extends Default_Config
         $categoriesFound = array();
 
         // all movies
-        $category = new Starnet_Vod_Category('all', 'Все фильмы');
+        $category = new Starnet_Vod_Category(Starnet_Vod_Category::PATTERN_ALL, 'Все фильмы');
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
@@ -298,7 +298,7 @@ class GlanzPluginConfig extends Default_Config
                 $category = "Без категории";
             }
 
-            if ($category_id === 'all' || $category_id === $category) {
+            if ($category_id === Starnet_Vod_Category::PATTERN_ALL || $category_id === $category) {
                 $movies[] = self::CreateShortMovie($movie);
             }
         }

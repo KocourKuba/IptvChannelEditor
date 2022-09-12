@@ -1,7 +1,7 @@
 <?php
 
-require_once 'lib/vod/vod_list_screen.php';
 require_once 'lib/vod/short_movie_range.php';
+require_once 'vod_list_screen.php';
 
 class Starnet_Vod_List_Screen extends Vod_List_Screen
 {
@@ -45,11 +45,11 @@ class Starnet_Vod_List_Screen extends Vod_List_Screen
 
         $movies = array();
         if ($this->plugin->config->get_movie_counter($key) <= 0 || $this->plugin->config->get_feature(VOD_LAZY_LOAD)) {
-            if ($media_url->category_id === 'search') {
+            if ($media_url->category_id === Starnet_Vod_Category::PATTERN_SEARCH) {
                 $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
-            } else if ($media_url->category_id === 'filter') {
+            } else if ($media_url->category_id === Starnet_Vod_Category::PATTERN_FILTER) {
                 $movies = $this->plugin->config->getFilterList($media_url->genre_id, $plugin_cookies);
-            } else if ($media_url->category_id === 'all' || empty($media_url->genre_id)) {
+            } else if ($media_url->category_id === Starnet_Vod_Category::PATTERN_ALL || empty($media_url->genre_id)) {
                 $movies = $this->plugin->config->getVideoList($media_url->category_id, $plugin_cookies);
             } else {
                 $movies = $this->plugin->config->getVideoList($key, $plugin_cookies);

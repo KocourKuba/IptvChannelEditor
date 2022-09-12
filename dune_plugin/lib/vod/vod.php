@@ -72,18 +72,6 @@ interface Vod
     public function clear_genre_cache();
 
     /**
-     * @param string $pattern
-     * @return false|string|null
-     */
-    public function get_search_media_url_str($pattern);
-
-    /**
-     * @param string $pattern
-     * @return false|string|null
-     */
-    public function get_filter_media_url_str($pattern);
-
-    /**
      * @return array|null
      */
     public function get_vod_list_folder_views();

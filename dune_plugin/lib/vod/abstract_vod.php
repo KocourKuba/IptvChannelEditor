@@ -379,28 +379,8 @@ abstract class Abstract_Vod implements Vod
     ///////////////////////////////////////////////////////////////////////
     // Search.
 
-    /**
-     * @param string $pattern
-     * @return string|null
-     */
-    public function get_search_media_url_str($pattern)
-    {
-        hd_print("AbstractVod::get_search_media_url_str: Not implemented.");
-        return null;
-    }
-
     ///////////////////////////////////////////////////////////////////////
     // Filter.
-
-    /**
-     * @param string $pattern
-     * @return string|null
-     */
-    public function get_filter_media_url_str($pattern)
-    {
-        hd_print("AbstractVod::get_filter_media_url_str: Not implemented.");
-        return null;
-    }
 
     ///////////////////////////////////////////////////////////////////////
     // Folder views.

@@ -1,8 +1,8 @@
 <?php
 require_once 'lib/abstract_controls_screen.php';
 require_once 'lib/user_input_handler.php';
+require_once 'lib/vod/vod.php';
 require_once 'default_config.php';
-require_once 'vod.php';
 require_once 'vod_series_list_screen.php';
 
 class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Handler
@@ -154,9 +154,8 @@ class Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Ha
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('Movie: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        //hd_print('Movie: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if ($user_input->control_id === 'favorites') {
             $movie_id = $user_input->movie_id;

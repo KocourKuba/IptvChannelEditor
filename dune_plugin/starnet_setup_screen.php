@@ -1,5 +1,5 @@
 ﻿<?php
-require_once 'lib/screen.php';
+require_once 'lib/abstract_controls_screen.php';
 require_once 'lib/user_input_handler.php';
 
 ///////////////////////////////////////////////////////////////////////////
@@ -8,6 +8,27 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 {
     const ID = 'setup';
     const CONTROLS_WIDTH = 800;
+
+    const ACTION_SHOW_TV = 'show_tv';
+    const ACTION_OTTKEY_DLG = 'ott_key_dialog';
+    const ACTION_OTTKEY_APPLY = 'ott_key_apply';
+    const ACTION_LOGIN_DLG = 'login_dialog';
+    const ACTION_LOGIN_APPLY = 'login_apply';
+    const ACTION_PIN_DLG = 'pin_dialog';
+    const ACTION_PIN_APPLY = 'pin_apply';
+    const ACTION_MOVE_ACCOUNT = 'move_account';
+    const ACTION_CHANGE_LIST_PATH = 'change_list_path';
+    const ACTION_CHANGE_LIST = 'channels_list';
+    const ACTION_CHANNELS_SOURCE = 'channels_source';
+    const ACTION_CHANNELS_URL_DLG = 'channels_url_dialog';
+    const ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
+    const ACTION_STREAMING_DLG = 'streaming_dialog';
+    const ACTION_STREAMING_APPLY = 'streaming_apply';
+    const ACTION_EPG_DLG = 'epg_dialog';
+    const ACTION_EPG_APPLY = 'epg_dialog_apply';
+    const ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
+    const ACTION_PASS_DLG = 'pass_dialog';
+    const ACTION_PASS_APPLY = 'pass_apply';
 
     private static $on_off_ops = array
     (
@@ -82,7 +103,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // Show in main screen
         $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-        Control_Factory::add_image_button($defs, $this, null, 'show_tv', 'Показывать в главном меню:',
+        Control_Factory::add_image_button($defs, $this, null, self::ACTION_SHOW_TV, 'Показывать в главном меню:',
             self::$on_off_ops[$show_tv], $this->plugin->get_image_path(self::$on_off_img[$show_tv]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
@@ -90,20 +111,20 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if ($this->plugin->config->get_embedded_account() === null) {
             switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
                 case 'OTT_KEY':
-                    Control_Factory::add_image_button($defs, $this, null, 'ott_key_dialog',
+                    Control_Factory::add_image_button($defs, $this, null, self::ACTION_OTTKEY_DLG,
                         'Данные для просмотра:', 'Ввести ОТТ ключ и домен', $text_icon);
                     break;
                 case 'LOGIN':
-                    Control_Factory::add_image_button($defs, $this, null, 'login_dialog',
+                    Control_Factory::add_image_button($defs, $this, null, self::ACTION_LOGIN_DLG,
                         'Данные для просмотра:', 'Введите логин и пароль', $text_icon);
                     break;
                 case 'PIN':
-                    Control_Factory::add_image_button($defs, $this, null, 'pin_dialog',
+                    Control_Factory::add_image_button($defs, $this, null, self::ACTION_PIN_DLG,
                         'Данные для просмотра:', 'Введите ключ доступа', $text_icon);
                     break;
             }
         } else {
-            Control_Factory::add_image_button($defs, $this, null, 'move_account',
+            Control_Factory::add_image_button($defs, $this, null, self::ACTION_MOVE_ACCOUNT,
                 'Встроенные данные для просмотра:', 'Переместить в память Dune', $setting_icon);
         }
 
@@ -113,7 +134,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $source_ops[2] = 'Интернет/Интранет ссылка';
         $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
 
-        Control_Factory::add_combobox($defs, $this, null, 'channels_source',
+        Control_Factory::add_combobox($defs, $this, null, self::ACTION_CHANNELS_SOURCE,
             'Источник списка каналов:', $channels_source, $source_ops, self::CONTROLS_WIDTH, true);
 
         switch ($channels_source)
@@ -123,11 +144,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 if (strlen($display_path) > 30) {
                     $display_path = "..." . substr($display_path, -30);
                 }
-                Control_Factory::add_image_button($defs, $this, null, 'change_list_path',
+                Control_Factory::add_image_button($defs, $this, null, self::ACTION_CHANGE_LIST_PATH,
                     'Задать папку со списками каналов: ', $display_path, $folder_icon);
                 break;
             case 2: // internet url
-                Control_Factory::add_image_button($defs, $this, null, 'channels_url_dialog',
+                Control_Factory::add_image_button($defs, $this, null, self::ACTION_CHANNELS_URL_DLG,
                     'Задать ссылку со списками каналов:', 'Изменить ссылку', $web_icon, self::CONTROLS_WIDTH);
                 break;
         }
@@ -138,23 +159,23 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (empty($all_channels)) {
             Control_Factory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         } else {
-            Control_Factory::add_combobox($defs, $this, null, 'channels_list',
+            Control_Factory::add_combobox($defs, $this, null, self::ACTION_CHANGE_LIST,
                 'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
         }
 
         //////////////////////////////////////
         // streaming dialog
-        Control_Factory::add_image_button($defs, $this, null, 'streaming_dialog',
+        Control_Factory::add_image_button($defs, $this, null, self::ACTION_STREAMING_DLG,
             'Настройки проигрывания:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // epg dialog
-        Control_Factory::add_image_button($defs, $this, null, 'epg_dialog',
+        Control_Factory::add_image_button($defs, $this, null, self::ACTION_EPG_DLG,
             'Настройки EPG:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // adult channel password
-        Control_Factory::add_image_button($defs, $this, null, 'pass_dialog',
+        Control_Factory::add_image_button($defs, $this, null, self::ACTION_PASS_DLG,
             'Пароль для взрослых каналов:', 'Изменить пароль', $text_icon, self::CONTROLS_WIDTH);
 
         Control_Factory::add_vgap($defs, 10);
@@ -196,7 +217,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'ott_key_apply', 'ОК', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_OTTKEY_APPLY, 'ОК', 300);
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -225,7 +246,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'channels_url_apply', 'ОК', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_CHANNELS_URL_APPLY, 'ОК', 300);
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -298,7 +319,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'streaming_apply', 'ОК', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_STREAMING_APPLY, 'ОК', 300);
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -337,10 +358,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // clear epg cache
-        Control_Factory::add_button($defs, $this, null, 'clear_epg_cache', 'Очистить кэш EPG:', 'Очистить', 0);
+        Control_Factory::add_button($defs, $this, null, self::ACTION_CLEAR_EPG_CACHE, 'Очистить кэш EPG:', 'Очистить', 0);
 
         Control_Factory::add_vgap($defs, 50);
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'epg_dialog_apply', 'Применить', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_EPG_APPLY, 'Применить', 300);
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -368,7 +389,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'login_apply', 'Применить', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_LOGIN_APPLY, 'Применить', 300);
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -392,7 +413,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'pin_apply', 'Применить', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_PIN_APPLY, 'Применить', 300);
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -419,7 +440,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, 'pass_apply', 'ОК', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_PASS_APPLY, 'ОК', 300);
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -435,9 +456,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         //hd_print('Setup: handle_user_input:');
-        //foreach ($user_input as $key => $value) {
-        //    hd_print("$key => $value");
-        //}
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $control_id = $user_input->control_id;
@@ -449,28 +468,28 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
             switch ($control_id) {
 
-                case 'show_tv':
+                case self::ACTION_SHOW_TV:
                     $plugin_cookies->show_tv = ($plugin_cookies->show_tv === SetupControlSwitchDefs::switch_on)
                         ? SetupControlSwitchDefs::switch_off
                         : SetupControlSwitchDefs::switch_on;
                     return null;
 
-                case 'ott_key_dialog': // show ott key dialog
+                case self::ACTION_OTTKEY_DLG: // show ott key dialog
                     $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
                     return Action_Factory::show_dialog('Ключ чувствителен к регистру. Переключение регистра кнопкой Select', $defs, true);
 
-                case 'ott_key_apply': // handle ott key dialog result
+                case self::ACTION_OTTKEY_APPLY: // handle ott key dialog result
                     $plugin_cookies->ott_key = $user_input->ott_key;
                     $plugin_cookies->subdomain = $user_input->subdomain;
                     $plugin_cookies->mediateka = $user_input->vportal;
                     hd_print("portal info: $plugin_cookies->mediateka");
                     return $this->reload_channels($plugin_cookies);
 
-                case 'login_dialog': // token dialog
+                case self::ACTION_LOGIN_DLG: // token dialog
                     $defs = $this->do_get_login_control_defs($plugin_cookies);
                     return Action_Factory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select', $defs, true);
 
-                case 'login_apply': // handle token dialog result
+                case self::ACTION_LOGIN_APPLY: // handle token dialog result
                     $old_login = isset($plugin_cookies->login) ? $plugin_cookies->login : '';
                     $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
                     $plugin_cookies->login = $user_input->login;
@@ -484,12 +503,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                     return $this->reload_channels($plugin_cookies);
 
-                case 'pin_dialog': // token dialog
+                case self::ACTION_PIN_DLG: // token dialog
                     $defs = $this->do_get_pin_control_defs($plugin_cookies);
                     return Action_Factory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select',
                         $defs, true);
 
-                case 'pin_apply': // handle token dialog result
+                case self::ACTION_PIN_APPLY: // handle token dialog result
                     $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
                     $plugin_cookies->password = $user_input->password;
                     $account_data = $this->plugin->config->GetAccountInfo($plugin_cookies, true);
@@ -500,7 +519,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                     return $this->reload_channels($plugin_cookies);
 
-                case 'move_account': // handle move account
+                case self::ACTION_MOVE_ACCOUNT: // handle move account
                     $embedded_account = $this->plugin->config->get_embedded_account();
                     if ($embedded_account !== null) {
                         switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
@@ -524,7 +543,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
                     break;
 
-                case 'change_list_path':
+                case self::ACTION_CHANGE_LIST_PATH:
                     $media_url = MediaURL::encode(
                         array(
                             'screen_id' => Starnet_Folder_Screen::ID,
@@ -534,7 +553,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     );
                     return Action_Factory::open_folder($media_url, 'Папка со списком каналов');
 
-                case 'channels_list':
+                case self::ACTION_CHANGE_LIST:
                     $old_value = $plugin_cookies->channels_list;
                     $plugin_cookies->channels_list = $new_value;
                     $res = $this->reload_channels($plugin_cookies);
@@ -543,17 +562,17 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                         Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
                     }
                     $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
-                    return Action_Factory::invalidate_folders(array('tv_group_list'), $post_action);
+                    return Action_Factory::invalidate_folders(array('main_screen'), $post_action);
 
-                case 'channels_source': // handle streaming settings dialog result
+                case self::ACTION_CHANNELS_SOURCE: // handle streaming settings dialog result
                     $plugin_cookies->channels_source = $user_input->channels_source;
                     return $this->reload_channels($plugin_cookies);
 
-                case 'channels_url_dialog':
+                case self::ACTION_CHANNELS_URL_DLG:
                     $defs = $this->do_get_channels_url_control_defs($plugin_cookies);
                     return Action_Factory::show_dialog('Ссылка на списки каналов', $defs, true);
 
-                case 'channels_url_apply': // handle streaming settings dialog result
+                case self::ACTION_CHANNELS_URL_APPLY: // handle streaming settings dialog result
                     if (isset($user_input->channels_url_path)) {
                         if (substr($user_input->channels_url_path, -1) !== '/')
                             $plugin_cookies->channels_url = $user_input->channels_url_path . '/';
@@ -562,11 +581,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
                     return $this->reload_channels($plugin_cookies);
 
-                case 'streaming_dialog': // show streaming settings dialog
+                case self::ACTION_STREAMING_DLG: // show streaming settings dialog
                     $defs = $this->do_get_streaming_control_defs($plugin_cookies);
                     return Action_Factory::show_dialog('Настройки воспроизведения', $defs, true);
 
-                case 'streaming_apply': // handle streaming settings dialog result
+                case self::ACTION_STREAMING_APPLY: // handle streaming settings dialog result
                     $plugin_cookies->buf_time = $user_input->buf_time;
 
                     if (isset($user_input->stream_format)) {
@@ -586,11 +605,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
                     return $this->reload_channels($plugin_cookies);
 
-                case 'epg_dialog': // show streaming settings dialog
+                case self::ACTION_EPG_DLG: // show streaming settings dialog
                     $defs = $this->do_get_epg_control_defs($plugin_cookies);
                     return Action_Factory::show_dialog('Настройки EPG', $defs, true);
 
-                case 'epg_dialog_apply': // handle streaming settings dialog result
+                case self::ACTION_EPG_APPLY: // handle streaming settings dialog result
                     if (isset($user_input->epg_source) && $plugin_cookies->epg_source !== $user_input->epg_source) {
                         $plugin_cookies->epg_source = $user_input->epg_source;
                     }
@@ -599,7 +618,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
                     return null;
 
-                case 'clear_epg_cache': // clear epg cache
+                case self::ACTION_CLEAR_EPG_CACHE: // clear epg cache
                     $epg_path = get_temp_path("epg/");
                     hd_print("do clear epg: $epg_path");
                     foreach(glob($epg_path . "*") as $file) {
@@ -610,11 +629,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
                     return Action_Factory::show_title_dialog('Кэш EPG очищен');
 
-                case 'pass_dialog': // show pass dialog
+                case self::ACTION_PASS_DLG: // show pass dialog
                     $defs = $this->do_get_pass_control_defs();
                     return Action_Factory::show_dialog('Родительский контроль', $defs, true);
 
-                case 'pass_apply': // handle pass dialog result
+                case self::ACTION_PASS_APPLY: // handle pass dialog result
                     if (empty($user_input->pass1) || empty($user_input->pass2)) {
                         return null;
                     }
@@ -648,6 +667,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             return false;
         }
         $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
-        return Action_Factory::invalidate_folders(array('tv_group_list'), $post_action);
+        return Action_Factory::invalidate_folders(array('main_screen'), $post_action);
     }
 }

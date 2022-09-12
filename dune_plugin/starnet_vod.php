@@ -90,24 +90,6 @@ class Starnet_Vod extends Abstract_Vod
         return $ids;
     }
 
-    /**
-     * @param string $pattern
-     * @return false|string|null
-     */
-    public function get_search_media_url_str($pattern)
-    {
-        return Starnet_Vod_List_Screen::get_media_url_str('search', $pattern);
-    }
-
-    /**
-     * @param string $pattern
-     * @return false|string|null
-     */
-    public function get_filter_media_url_str($pattern)
-    {
-        return Starnet_Vod_List_Screen::get_media_url_str('filter', $pattern);
-    }
-
     ///////////////////////////////////////////////////////////////////////
     // Folder views.
 

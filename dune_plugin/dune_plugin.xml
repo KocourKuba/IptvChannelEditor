@@ -19,7 +19,7 @@
     <entry_points>
         <entry_point>
             <parent_media_url>root://tv</parent_media_url>
-            <media_url>tv_group_list</media_url>
+            <media_url>main_screen</media_url>
             <caption>{plugin_title}</caption>
             <icon_url>{plugin_logo}</icon_url>
             <actions>

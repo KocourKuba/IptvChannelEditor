@@ -1,11 +1,16 @@
 <?php
 
-require_once 'vod.php';
 require_once 'lib/abstract_preloaded_regular_screen.php';
+require_once 'lib/vod/vod.php';
 
 class Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_favorites';
+
+    const ACTION_ITEM_UP = 'item_up';
+    const ACTION_ITEM_DOWN = 'item_down';
+    const ACTION_ITEM_DELETE = 'item_delete';
+    const ACTION_ITEMS_CLEAR = 'items_clear';
 
     /**
      * @return false|string
@@ -40,16 +45,16 @@ class Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements 
     {
         $play_action = $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play();
 
-        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, 'move_backward_favorite');
+        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_UP);
         $move_backward_favorite_action['caption'] = 'Вверх';
 
-        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, 'move_forward_favorite');
+        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DOWN);
         $move_forward_favorite_action['caption'] = 'Вниз';
 
-        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, 'remove_favorite');
+        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DELETE);
         $remove_favorite_action['caption'] = 'Удалить';
 
-        $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, 'remove_all_favorite');
+        $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEMS_CLEAR);
 
         $menu_items = array(
             array(GuiMenuItemDef::caption => 'Удалить из Избранного', GuiMenuItemDef::action => $remove_favorite_action),
@@ -84,28 +89,27 @@ class Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements 
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('Vod favorites: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        //hd_print('Vod favorites: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
             return null;
         }
 
         switch ($user_input->control_id) {
-            case 'move_backward_favorite':
+            case self::ACTION_ITEM_UP:
                 $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_UP;
                 $inc = -1;
                 break;
-            case 'move_forward_favorite':
+            case self::ACTION_ITEM_DOWN:
                 $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_DOWN;
                 $inc = 1;
                 break;
-            case 'remove_favorite':
+            case self::ACTION_ITEM_DELETE:
                 $fav_op_type = PLUGIN_FAVORITES_OP_REMOVE;
                 $inc = 0;
                 break;
-            case 'remove_all_favorite':
+            case self::ACTION_ITEMS_CLEAR:
                 $fav_op_type = 'clear_favorites';
                 $inc = 0;
                 break;

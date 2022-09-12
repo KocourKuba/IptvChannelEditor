@@ -1,9 +1,17 @@
 <?php
 require_once 'lib/abstract_regular_screen.php';
+require_once 'starnet_search_screen.php';
 
 abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_list';
+
+    const ACTION_SETTINGS = 'settings';
+    const ACTION_ADD_FAV = 'add_favorite';
+    const ACTION_POPUP_MENU = 'popup_menu';
+    const ACTION_CREATE_SEARCH = 'create_search';
+    const ACTION_NEW_SEARCH = 'new_search';
+    const ACTION_RUN_SEARCH = 'run_search';
 
     /**
      * @param Default_Dune_Plugin $plugin
@@ -44,24 +52,24 @@ abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_I
     {
         $actions = array();
 
-        $add_settings = User_Input_Handler_Registry::create_action($this, 'settings');
+        $add_settings = User_Input_Handler_Registry::create_action($this, self::ACTION_SETTINGS);
         $add_settings['caption'] = 'Настройки плагина';
         $actions[GUI_EVENT_KEY_SETUP] = $add_settings;
         $actions[GUI_EVENT_KEY_B_GREEN] = $add_settings;
 
         $actions[GUI_EVENT_KEY_ENTER] = $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play();
 
-        $add_action = User_Input_Handler_Registry::create_action($this, 'search');
+        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_SEARCH);
         $add_action['caption'] = 'Поиск';
         $actions[GUI_EVENT_KEY_SEARCH] = $add_action;
         $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
 
         if ($this->plugin->vod->is_favorites_supported()) {
-            $add_favorite_action = User_Input_Handler_Registry::create_action($this, 'add_favorite');
+            $add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
             $add_favorite_action['caption'] = 'В Избранное';
             $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
 
-            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, 'popup_menu');
+            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
         }
 
         return $actions;
@@ -82,9 +90,8 @@ abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_I
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // hd_print('VodListScreen: handle_user_input:');
-        // foreach ($user_input as $key => $value)
-        //     hd_print("  $key => $value");
+        //hd_print('VodListScreen: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -94,40 +101,41 @@ abstract class Vod_List_Screen extends Abstract_Regular_Screen implements User_I
         $movie_id = $media_url->movie_id;
 
         switch ($user_input->control_id) {
-            case 'search':
+            case self::ACTION_CREATE_SEARCH:
                 $defs = array();
                 Control_Factory::add_text_field($defs,
-                    $this, null, 'new_search', '',
-                    $media_url->name, 0, 0, 1, 1, 1300, 0, true);
+                    $this, null, self::ACTION_NEW_SEARCH, '',
+                    $media_url->name, false, false, true, true, 1300, false, true);
                 Control_Factory::add_vgap($defs, 500);
                 return Action_Factory::show_dialog('Поиск', $defs, true);
 
-            case 'new_search':
-                return Action_Factory::close_dialog_and_run(User_Input_Handler_Registry::create_action($this, 'run_search'));
+            case self::ACTION_NEW_SEARCH:
+                return Action_Factory::close_dialog_and_run(User_Input_Handler_Registry::create_action($this, self::ACTION_RUN_SEARCH));
 
-            case 'run_search':
-                HD::put_item('search_item', $user_input->do_new_search);
-                $search_items = HD::get_items('search_items');
-                $k = array_search($user_input->do_new_search, $search_items);
+            case self::ACTION_RUN_SEARCH:
+                $search_string = $user_input->{self::ACTION_NEW_SEARCH};
+                HD::put_item(Starnet_Search_Screen::SEARCH_ITEM, $search_string);
+                $search_items = HD::get_items(Starnet_Search_Screen::SEARCH_LIST);
+                $k = array_search($search_string, $search_items);
                 if ($k !== false) {
                     unset ($search_items [$k]);
                 }
 
-                array_unshift($search_items, $user_input->do_new_search);
-                HD::put_items('search_items', $search_items);
+                array_unshift($search_items, $search_string);
+                HD::put_items(Starnet_Search_Screen::SEARCH_LIST, $search_items);
                 return Action_Factory::invalidate_folders(
-                    array('search_screen'),
+                    array(Starnet_Search_Screen::ID),
                     Action_Factory::open_folder(
-                        static::get_media_url_str('search', $user_input->do_new_search),
-                        "Поиск: " . $user_input->do_new_search));
+                        static::get_media_url_str(Starnet_Vod_Category::PATTERN_SEARCH, $search_string),
+                        "Поиск: " . $search_string));
 
-            case 'popup_menu':
-                $add_favorite_action = User_Input_Handler_Registry::create_action($this, 'add_favorite');
+            case self::ACTION_POPUP_MENU:
+                $add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
                 $caption = $this->plugin->vod->is_favorite_movie_id($movie_id) ? 'Удалить из Избранного' : 'Добавить в избранное';
                 $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_favorite_action);
                 return Action_Factory::show_popup_menu($menu_items);
 
-            case 'add_favorite':
+            case self::ACTION_ADD_FAV:
                 $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
