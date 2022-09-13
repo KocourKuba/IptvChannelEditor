@@ -34,9 +34,11 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://sharavoz.tk/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
+static constexpr auto PLAYLIST_TEMPLATE = L"http://www.spr24.net/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
 static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
 static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 
 uri_sharavoz::uri_sharavoz()
 {
@@ -68,23 +70,29 @@ void uri_sharavoz::parse_uri(const std::wstring& url)
 
 std::wstring uri_sharavoz::get_templated_stream(TemplateParams& params) const
 {
-	std::wstring url = is_template() ? URI_TEMPLATE_HLS : get_uri();
+	std::wstring url;
 
-	switch (params.streamSubtype)
+	if (is_template())
 	{
-		case StreamSubType::enHLS:
-			url = URI_TEMPLATE_HLS;
-			break;
-		case StreamSubType::enMPEGTS:
-			url = URI_TEMPLATE_MPEG;
-			break;
-		default:
-			break;
+		switch (params.streamSubtype)
+		{
+			case StreamSubType::enHLS: // hls
+				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
+				break;
+			case StreamSubType::enMPEGTS: // mpeg-ts
+				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
+				break;
+			default:
+				break;
+		}
 	}
-
-	if (params.shift_back)
+	else
 	{
-		append_archive(url);
+		url = get_uri();
+		if (params.shift_back)
+		{
+			append_archive(url);
+		}
 	}
 
 	replace_vars(url, params);
