@@ -32,6 +32,8 @@ class uri_viplime : public uri_stream
 public:
 	uri_viplime();
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated_stream(TemplateParams& params) const override;
 	std::wstring get_playlist_url(TemplateParams& params) override;
+
+protected:
+	void replace_vars(std::wstring& url, const TemplateParams& params) const override;
 };

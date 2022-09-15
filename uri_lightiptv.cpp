@@ -35,15 +35,17 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://lightiptv.cc/playlist/hls/{:s}.m3u";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
-static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{DOMAIN}/{TOKEN}/video-{START}-7200.m3u8?token={PASSWORD}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
-static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{TOKEN}/timeshift_abs-{START}.ts?token={PASSWORD}";
 
 uri_lightiptv::uri_lightiptv()
 {
 	provider_url = L"https://ottbill.cc/";
 	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+
+	uri_hls_template = L"http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
+	uri_hls_arc_template = L"http://{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}";
+	uri_mpeg_template = L"http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
+	uri_mpeg_arc_template = L"http://{DOMAIN}/{TOKEN}/timeshift_abs-{START}.ts?token={PASSWORD}";
 
 	epg_params[0].epg_url = L"http://epg.drm-play.ml/lightiptv/epg/{ID}.json";
 
@@ -68,35 +70,6 @@ void uri_lightiptv::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_lightiptv::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				break;
-		}
-	}
-	else
-	{
-		url = get_uri();
-		if (params.shift_back)
-		{
-			append_archive(url);
-		}
-	}
-
-	replace_vars(url, params);
-	return url;
 }
 
 std::wstring uri_lightiptv::get_playlist_url(TemplateParams& params)

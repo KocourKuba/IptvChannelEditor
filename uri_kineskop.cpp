@@ -37,15 +37,17 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://knkp.in/{:s}/{:s}/{:s}/1";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
-static constexpr auto REPL_HOST = L"{HOST}";
 
 uri_kineskop::uri_kineskop()
 {
-	per_channel_token = true;
 	provider_url = L"http://kineskop.club/";
 	epg_params[0].epg_url = L"http://epg.esalecrm.net/kineskop/epg/{ID}.json";
 	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_flussonic };
+	support_streams = { {StreamSubType::enHLS, L"HLS"} };
+	per_channel_token = true;
+
+	uri_hls_template = L"http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
 
 	for (int i = 0; i <= IDS_STRING_KINESKOP_P4 - IDS_STRING_KINESKOP_P1; i++)
 	{
@@ -72,30 +74,6 @@ void uri_kineskop::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_kineskop::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		url = URI_TEMPLATE_HLS;
-	}
-	else
-	{
-		url = get_uri();
-	}
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_kineskop::get_playlist_url(TemplateParams& params)

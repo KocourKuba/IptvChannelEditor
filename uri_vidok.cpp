@@ -42,15 +42,16 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?token={:s}&{:s}={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://vidok.tv/p/{:s}";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 uri_vidok::uri_vidok()
 {
-	per_channel_token = true;
 	provider_url = L"https://vidok.tv/";
 	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_append, CatchupType::cu_none };
+	support_streams = { {StreamSubType::enHLS, L"HLS"} };
+	per_channel_token = true;
 
-	streams = { {StreamSubType::enHLS, L"HLS"} };
+	uri_hls_template = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 	auto& params = epg_params[0];
 	params.epg_url = L"http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
@@ -78,28 +79,6 @@ void uri_vidok::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_vidok::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (!is_template())
-	{
-		url = get_uri();
-	}
-	else
-	{
-		url = URI_TEMPLATE_HLS;
-	}
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
-}
 std::wstring uri_vidok::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));

@@ -277,7 +277,7 @@ void CAccessInfoDlg::UpdateOptionalControls()
 	TemplateParams params;
 	params.login = utils::utf8_to_utf16(selected.login);
 	params.password = utils::utf8_to_utf16(selected.password);
-	params.domain = utils::utf8_to_utf16(selected.domain);
+	params.subdomain = utils::utf8_to_utf16(selected.domain);
 	params.server = selected.device_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
@@ -291,7 +291,7 @@ void CAccessInfoDlg::UpdateOptionalControls()
 		case StreamType::enSharaclub:
 			m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 			m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
-			params.domain = m_list_domain;
+			params.subdomain = m_list_domain;
 			break;
 		default:
 			break;
@@ -559,14 +559,14 @@ BOOL CAccessInfoDlg::OnApply()
 	TemplateParams params;
 	params.login = utils::utf8_to_utf16(selected.login);
 	params.password = utils::utf8_to_utf16(selected.password);
-	params.domain = utils::utf8_to_utf16(selected.domain);
+	params.subdomain = utils::utf8_to_utf16(selected.domain);
 	params.server = selected.device_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
 
 	if (m_plugin_type == StreamType::enSharaclub)
 	{
-		params.domain = m_list_domain;
+		params.subdomain = m_list_domain;
 	}
 
 	if (m_wndDeviceID.GetCount())
@@ -935,13 +935,13 @@ void CAccessInfoDlg::GetAccountInfo()
 	uri->set_login(login);
 	uri->set_password(password);
 	uri->set_token(token);
-	uri->set_domain(domain);
+	uri->set_subdomain(domain);
 	uri->set_host(m_host);
 
 	TemplateParams params;
 	params.login = std::move(login);
 	params.password = std::move(password);
-	params.domain = m_list_domain;
+	params.subdomain = m_list_domain;
 	params.server = selected.device_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;

@@ -35,23 +35,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
-static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{DOMAIN}/{ID}/video-{START}-10800.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
-static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{START}-10800.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
-
-static constexpr auto REPL_LOGIN = L"{LOGIN}";
-static constexpr auto REPL_PASSWORD = L"{PASSWORD}";
-static constexpr auto REPL_INT_ID = L"{INT_ID}";
-static constexpr auto REPL_HOST = L"{HOST}";
 
 uri_glanz::uri_glanz()
 {
-	vod_supported = true;
-
 	provider_url = L"http://ottg.tv/";
 	provider_vod_url = L"http://api.ottg.tv/playlist/vod?login={:s}&password={:s}";
 	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+	vod_supported = true;
+
+	uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+	uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
@@ -88,44 +84,6 @@ void uri_glanz::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_glanz::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS: // hls
-				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS: // mpeg-ts
-				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				break;
-			default:
-				break;
-		}
-	}
-	else
-	{
-		url = get_uri();
-		if (params.shift_back)
-		{
-			append_archive(url);
-		}
-	}
-
-	// http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
-	// http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}
-	utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
-	utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
-	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, get_internal_id());
-	utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_glanz::get_playlist_url(TemplateParams& params)

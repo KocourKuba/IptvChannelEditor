@@ -19,6 +19,8 @@ uri_stream::uri_stream()
 
 	epg_params = { params, params };
 
+	catchup_type = { CatchupType::cu_default, CatchupType::cu_none };
+
 	PlaylistInfo info;
 
 	info.name = load_string_resource(IDS_STRING_PLAYLIST);
@@ -44,6 +46,62 @@ void uri_stream::clear()
 void uri_stream::parse_uri(const std::wstring& url)
 {
 	uri_base::set_uri(url);
+}
+
+std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
+{
+	std::wstring url;
+
+	if (!is_template())
+	{
+		url = shift_archive(params, get_uri());
+	}
+	else
+	{
+		switch (params.streamSubtype)
+		{
+			case StreamSubType::enHLS:
+				switch (catchup_type[0])
+				{
+					case CatchupType::cu_shift:
+						url = shift_archive(params, uri_hls_template);
+						break;
+					case CatchupType::cu_append:
+						url = append_archive(params, uri_hls_template);
+						break;
+					case CatchupType::cu_flussonic:
+						url = params.shift_back ? uri_hls_arc_template : uri_hls_template;
+						break;
+					default:
+						ASSERT(false);
+						break;
+				}
+				break;
+			case StreamSubType::enMPEGTS:
+				switch (catchup_type[1])
+				{
+					case CatchupType::cu_shift:
+						url = shift_archive(params, uri_mpeg_template);
+						break;
+					case CatchupType::cu_append:
+						url = append_archive(params, uri_mpeg_template);
+						break;
+					case CatchupType::cu_flussonic:
+						url = params.shift_back ? uri_mpeg_arc_template : uri_mpeg_template;
+						break;
+					case CatchupType::cu_none:
+						break;
+					default:
+						ASSERT(false);
+						break;
+				}
+				break;
+		}
+	}
+
+	replace_vars(url, params);
+
+	return url;
 }
 
 const int uri_stream::get_hash() const
@@ -258,23 +316,70 @@ void uri_stream::put_account_info(const std::string& name, const nlohmann::json&
 
 void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) const
 {
-	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, params.domain);
-	utils::string_replace_inplace<wchar_t>(url, REPL_ID, get_id());
-	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, get_token());
-	utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
+	if (!get_domain().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, get_domain());
+
+	if (!params.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+
+	if (!get_port().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, get_port());
+
+	if (!get_id().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_ID, get_id());
+
+	if (!get_token().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, get_token());
+
+	if (params.shift_back)
+		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
+
 	utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
+	utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(catchup_duration));
+
+	if (!params.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+
+	if (!params.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+	if (!get_int_id().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, get_int_id());
+
+	if (!params.host.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);
 }
 
-std::wstring& uri_stream::append_archive(std::wstring& url) const
+std::wstring uri_stream::append_archive(const TemplateParams& params, const std::wstring& url) const
 {
-	if (url.rfind('?') != std::wstring::npos)
-		url += '&';
-	else
-		url += '?';
+	std::wstring result(url);
+	if (params.shift_back)
+	{
+		if (url.rfind('?') != std::wstring::npos)
+			result += '&';
+		else
+			result += '?';
 
-	url += L"utc={START}&lutc={NOW}";
+		result += L"utc={START}";
+	}
 
-	return url;
+	return result;
+}
+
+std::wstring uri_stream::shift_archive(const TemplateParams& params, const std::wstring& url) const
+{
+	std::wstring result(url);
+	if (params.shift_back)
+	{
+		if (url.rfind('?') != std::wstring::npos)
+			result += '&';
+		else
+			result += '?';
+
+		result += L"utc={START}&lutc={NOW}";
+	}
+
+	return result;
 }
 
 std::string uri_stream::get_json_string_value(const std::string& key, const nlohmann::json& val) const

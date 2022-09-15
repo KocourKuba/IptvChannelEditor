@@ -43,17 +43,20 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
 static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://247on.cc/playlist/{:s}_otp_dev{:d}.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
-static constexpr auto URI_TEMPLATE_ARCHIVE_HLS = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8?utc={START}&lutc={NOW}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCHIVE_MPEG = L"http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
+
 
 uri_cbilling::uri_cbilling()
 {
-	provider_url = L"https://cbilling.live/";
+	provider_url = L"https://cbilling.eu/";
 	provider_vod_url = L"http://protected-api.com";
-	vod_supported = true;
 	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_flussonic };
+	vod_supported = true;
+
+	uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
+	uri_hls_arc_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8?utc={START}&lutc={NOW}";
+	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
@@ -69,55 +72,20 @@ uri_cbilling::uri_cbilling()
 void uri_cbilling::parse_uri(const std::wstring& url)
 {
 	// http://s01.iptvx.tv:8090/s/82s4fb5785dcf28dgd6ga681a94ba78f/pervyj.m3u8
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/s\/(.+)\/(.+)\.m3u8$)");
+	static std::wregex re_url_hls(LR"(^https?:\/\/(.+):(.+)\/s\/(.+)\/(.+)\.m3u8$)");
 
 	std::wsmatch m;
 	if (std::regex_match(url, m, re_url_hls))
 	{
 		templated = true;
 		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
+		port = std::move(m[2].str());
+		token = std::move(m[3].str());
+		id = std::move(m[4].str());
 		return;
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_cbilling::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		std::wstring no_port(params.domain);
-		if (auto pos = no_port.find(':'); pos != std::wstring::npos)
-		{
-			no_port = no_port.substr(0, pos);
-		}
-
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = params.shift_back ? URI_TEMPLATE_ARCHIVE_HLS : URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = params.shift_back ? URI_TEMPLATE_ARCHIVE_MPEG: URI_TEMPLATE_MPEG;
-				params.domain = std::move(no_port);
-				break;
-		}
-	}
-	else
-	{
-		url = get_uri();
-		if (params.shift_back)
-		{
-			append_archive(url);
-		}
-	}
-
-	replace_vars(url, params);
-	return url;
 }
 
 std::wstring uri_cbilling::get_access_info_header() const

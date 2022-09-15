@@ -34,16 +34,18 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.fox-tv.fun/{:s}/{:s}/tv.m3u";
-static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/{TOKEN}";
 
 uri_fox::uri_fox()
 {
-	per_channel_token = true;
-	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"http://info.fox-tv.fun/";
-	vod_supported = true;
 	provider_vod_url = L"http://pl.fox-tv.fun/{:s}/{:s}/vodall.m3u";
 	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+	support_streams = { {StreamSubType::enHLS, L"HLS"} };
+	per_channel_token = true;
+	vod_supported = true;
+
+	uri_hls_template = L"http://{DOMAIN}/{TOKEN}";
 
 	epg_params[0].epg_url = L"http://epg.drm-play.ml/fox-tv/epg/{ID}.json";
 
@@ -76,20 +78,6 @@ void uri_fox::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_fox::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_fox::get_playlist_url(TemplateParams& params)

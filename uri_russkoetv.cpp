@@ -36,19 +36,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://russkoetv.tv/play/{:s}.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
 
 uri_russkoetv::uri_russkoetv()
 {
-	//epg_params[0].epg_url = L"http://epg.drm-play.ml/cbilling/epg/{ID}.json";
+	provider_url = L"https://russkoetv.tv/";
+	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+	support_streams = { {StreamSubType::enHLS, L"HLS"} };
+
+	uri_hls_template = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
+
 	auto& params1 = epg_params[0];
 	params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params1.epg_root = "";
-
-
-	streams = { {StreamSubType::enHLS, L"HLS"} };
-	provider_url = L"https://russkoetv.tv/";
-	access_type = AccountAccessType::enPin;
 }
 
 void uri_russkoetv::parse_uri(const std::wstring& url)
@@ -67,29 +67,6 @@ void uri_russkoetv::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_russkoetv::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		url = URI_TEMPLATE_HLS;
-	}
-	else
-	{
-		url = get_uri();
-	}
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_russkoetv::get_playlist_url(TemplateParams& params)

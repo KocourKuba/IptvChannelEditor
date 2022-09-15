@@ -38,14 +38,19 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://itv.ooo/p/{:s}/hls.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 
 uri_itv::uri_itv()
 {
+	provider_url = L"https://itv.live/";
+	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 	per_channel_token = true;
+
+	uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
+	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
+	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
+
 	auto& params = epg_params[0];
 	params.epg_url = L"http://api.itv.live/epg/{ID}";
 	params.epg_root = "res";
@@ -53,8 +58,6 @@ uri_itv::uri_itv()
 	params.epg_desc = "desc";
 	params.epg_start = "startTime";
 	params.epg_end = "stopTime";
-	provider_url = L"https://itv.live/";
-	access_type = AccountAccessType::enPin;
 }
 
 void uri_itv::parse_uri(const std::wstring& url)
@@ -73,38 +76,6 @@ void uri_itv::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_itv::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				break;
-			default:
-				break;
-		}
-	}
-	else
-	{
-		url = get_uri();
-		if (params.shift_back)
-		{
-			append_archive(url);
-		}
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_itv::get_playlist_url(TemplateParams& params)

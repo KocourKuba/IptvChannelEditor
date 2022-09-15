@@ -35,14 +35,16 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.mymagic.tv/srv/{:d}/{:d}/{:s}/{:s}/tv.m3u";
-static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/{TOKEN}";
 
 uri_mymagic::uri_mymagic()
 {
-	per_channel_token = true;
-	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"http://mymagic.tv/";
 	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+	support_streams = { {StreamSubType::enHLS, L"HLS"} };
+	per_channel_token = true;
+
+	uri_hls_template = L"http://{DOMAIN}/{TOKEN}";
 
 	epg_params[0].epg_url = L"http://epg.drm-play.ml/magic/epg/{ID}.json";
 
@@ -81,20 +83,6 @@ void uri_mymagic::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_mymagic::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_mymagic::get_playlist_url(TemplateParams& params)

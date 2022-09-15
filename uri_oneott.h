@@ -32,7 +32,6 @@ class uri_oneott : public uri_stream
 public:
 	uri_oneott();
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated_stream(TemplateParams& params) const override;
 	std::wstring get_playlist_url(TemplateParams& params) override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 };

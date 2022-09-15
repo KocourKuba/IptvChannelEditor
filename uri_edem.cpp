@@ -36,13 +36,16 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto PLAYLIST_TEMPLATE1 = L"http://epg.it999.ru/edem_epg_ico.m3u8";
 static constexpr auto PLAYLIST_TEMPLATE2 = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
-static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 
 uri_edem::uri_edem()
 {
-	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"https://ilook.tv/";
+	access_type = AccountAccessType::enOtt;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 	vod_supported = true;
+
+	uri_hls_template = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 
 	auto& params = epg_params[0];
 	params.epg_url = L"http://epg.drm-play.ml/edem/epg/{ID}.json";
@@ -59,7 +62,6 @@ uri_edem::uri_edem()
 	info.name = load_string_resource(IDS_STRING_CUSTOM_PLAYLIST);
 	info.is_custom = true;
 	playlists.emplace_back(info);
-	access_type = AccountAccessType::enOtt;
 }
 
 void uri_edem::parse_uri(const std::wstring& url)
@@ -78,20 +80,6 @@ void uri_edem::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_edem::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_edem::get_playlist_url(TemplateParams& params)

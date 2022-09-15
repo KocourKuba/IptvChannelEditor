@@ -32,7 +32,6 @@ class uri_cbilling : public uri_stream
 public:
 	uri_cbilling();
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_templated_stream(TemplateParams& params) const override;
 	std::wstring get_playlist_url(TemplateParams& params) override;
 
 	std::wstring get_access_info_header() const override;

@@ -38,14 +38,15 @@ static char THIS_FILE[] = __FILE__;
 // http://{DOMAIN}/PinApi/{LOGIN}/{PASSWORD}
 static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://list.1ott.net/api/{:s}/high/ottplay.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/~{TOKEN}/{ID}";
-
 
 uri_oneott::uri_oneott()
 {
 	provider_url = L"http://1ott.net/";
 	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
+
+	uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+	uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
@@ -75,35 +76,6 @@ void uri_oneott::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_oneott::get_templated_stream(TemplateParams& params) const
-{
-	auto& url = get_uri();
-
-	if (is_template())
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = URI_TEMPLATE_MPEG;
-				break;
-			default:
-				break;
-		}
-	}
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_oneott::get_playlist_url(TemplateParams& params)

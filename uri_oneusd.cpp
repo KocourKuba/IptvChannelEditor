@@ -36,16 +36,18 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://1usd.tv/pl-{:s}-hls";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{DOMAIN}/{ID}/index-{START}-7200.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{START}-7200.ts?token={TOKEN}";
 
 uri_oneusd::uri_oneusd()
 {
-	per_channel_token = true;
 	provider_url = L"http://1usd.tv/";
 	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+	per_channel_token = true;
+
+	uri_hls_template = L"http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
+	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
+	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	epg_params[0].epg_url = L"http://tv.team/{ID}.json";
 }
@@ -69,37 +71,6 @@ void uri_oneusd::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_oneusd::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				break;
-			default:
-				break;
-		}
-	}
-	else
-	{
-		url = get_uri();
-		if (params.shift_back)
-		{
-			append_archive(url);
-		}
-	}
-
-	replace_vars(url, params);
-	return url;
 }
 
 std::wstring uri_oneusd::get_playlist_url(TemplateParams& params)

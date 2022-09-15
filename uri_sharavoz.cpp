@@ -35,18 +35,21 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://www.spr24.net/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 
 uri_sharavoz::uri_sharavoz()
 {
-	secondary_epg = true;
-	epg_params[0].epg_url = L"http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
-	epg_params[1].epg_url = L"http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
 	provider_url = L"https://www.sharavoz.tv/";
 	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+	secondary_epg = true;
+
+	uri_hls_template = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
+	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
+
+	epg_params[0].epg_url = L"http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
+	epg_params[1].epg_url = L"http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
 }
 
 void uri_sharavoz::parse_uri(const std::wstring& url)
@@ -66,38 +69,6 @@ void uri_sharavoz::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_sharavoz::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS: // hls
-				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS: // mpeg-ts
-				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				break;
-			default:
-				break;
-		}
-	}
-	else
-	{
-		url = get_uri();
-		if (params.shift_back)
-		{
-			append_archive(url);
-		}
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_sharavoz::get_playlist_url(TemplateParams& params)

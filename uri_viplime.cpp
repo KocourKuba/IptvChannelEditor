@@ -35,15 +35,18 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://cdntv.online/high/{:s}/playlist.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
 
 uri_viplime::uri_viplime()
 {
-	server_subst_type = ServerSubstType::enStream;
-	epg_params[0].epg_url = L"http://epg.drm-play.ml/viplime/epg/{ID}.json";
 	provider_url = L"http://viplime.fun/";
 	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
+	server_subst_type = ServerSubstType::enStream;
+
+	uri_hls_template = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
+	uri_mpeg_template = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
+
+	epg_params[0].epg_url = L"http://epg.drm-play.ml/viplime/epg/{ID}.json";
 
 	quality_list = {
 		{ L"high",   load_string_resource(IDS_STRING_VIPLIME_P1) },
@@ -72,41 +75,13 @@ void uri_viplime::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_viplime::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (!is_template())
-	{
-		url = get_uri();
-	}
-	else
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = URI_TEMPLATE_MPEG;
-				break;
-			default:
-				break;
-		}
-	}
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[params.quality].id);
-	replace_vars(url, params);
-
-	return url;
-}
-
 std::wstring uri_viplime::get_playlist_url(TemplateParams& params)
 {
 	return fmt::format(PLAYLIST_TEMPLATE, params.password);
+}
+
+void uri_viplime::replace_vars(std::wstring& url, const TemplateParams& params) const
+{
+	utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[params.quality].id);
+	uri_stream::replace_vars(url, params);
 }

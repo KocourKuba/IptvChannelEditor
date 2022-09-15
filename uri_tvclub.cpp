@@ -42,22 +42,23 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}&{:s}={:s}";
 static constexpr auto PLAYLIST_TEMPLATE = L"http://celn.shott.top/p/{:s}";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
-static constexpr auto EPG_TEMPLATE_URL = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
 
 uri_tvclub::uri_tvclub()
 {
+	provider_url = L"https://tvclub.cc/";
+	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_append, CatchupType::cu_none };
+	support_streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 	per_channel_token = true;
-	streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
+
+	uri_hls_template = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 	auto& params = epg_params[0];
-	params.epg_url = EPG_TEMPLATE_URL;
+	params.epg_url = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
 	params.epg_name = "text";
 	params.epg_desc = "description";
 	params.epg_start = "start";
 	params.epg_end = "end";
-	provider_url = L"https://tvclub.cc/";
-	access_type = AccountAccessType::enLoginPass;
 }
 
 void uri_tvclub::parse_uri(const std::wstring& url)
@@ -75,22 +76,6 @@ void uri_tvclub::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_tvclub::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	url = is_template() ? URI_TEMPLATE_HLS : get_uri();
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_tvclub::get_playlist_url(TemplateParams& params)
@@ -160,18 +145,6 @@ bool uri_tvclub::parse_access_info(TemplateParams& params, std::list<AccountInfo
 nlohmann::json uri_tvclub::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
 {
 	return epg_data["epg"]["channels"][0]["epg"];
-}
-
-std::wstring& uri_tvclub::append_archive(std::wstring& url) const
-{
-	if (url.rfind('?') != std::wstring::npos)
-		url += '&';
-	else
-		url += '?';
-
-	url += L"utc={START}";
-
-	return url;
 }
 
 const std::vector<ServersInfo>& uri_tvclub::get_servers_list(TemplateParams& params)

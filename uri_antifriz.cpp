@@ -38,17 +38,19 @@ static char THIS_FILE[] = __FILE__;
 // API documentation http://protected-api.com/api/documentation
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://antifriz.tv/playlist/{:s}.m3u8";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8";
-static constexpr auto URI_TEMPLATE_ARCH_HLS = L"http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-static constexpr auto URI_TEMPLATE_ARCH_MPEG = L"http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}";
 
 uri_antifriz::uri_antifriz()
 {
 	provider_url = L"https://antifriztv.com/";
 	provider_vod_url = L"http://protected-api.com";
-	vod_supported = true;
 	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+	vod_supported = true;
+
+	uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
+	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
+	uri_mpeg_template = L"http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
+	uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
@@ -60,15 +62,16 @@ void uri_antifriz::parse_uri(const std::wstring& url)
 	// http://tchaikovsky.antifriz.tv:1600/s/ibzsdpt2t/demo-4k/video.m3u8
 	// http://tchaikovsky.antifriz.tv:80/demo-4k/mpegts?token=ibzsdpt2t
 
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/s\/(.+)\/(.+)\/video\.m3u8$)");
-	static std::wregex re_url_mpeg(LR"(^https?:\/\/(.+)\/(.+)\/mpegts\?token=(.+)$)");
+	static std::wregex re_url_hls(LR"(^https?:\/\/(.+):(.+)\/s\/(.+)\/(.+)\/video\.m3u8$)");
+	static std::wregex re_url_mpeg(LR"(^https?:\/\/(.+):(.+)\/(.+)\/mpegts\?token=(.+)$)");
 	std::wsmatch m;
 	if (std::regex_match(url, m, re_url_hls))
 	{
 		templated = true;
 		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
+		port = std::move(m[2].str());
+		token = std::move(m[3].str());
+		id = std::move(m[4].str());
 		return;
 	}
 
@@ -76,53 +79,13 @@ void uri_antifriz::parse_uri(const std::wstring& url)
 	{
 		templated = true;
 		domain = std::move(m[1].str());
-		id = std::move(m[2].str());
-		token = std::move(m[3].str());
+		port = std::move(m[2].str());
+		id = std::move(m[3].str());
+		token = std::move(m[4].str());
 		return;
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_antifriz::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		auto& new_params = const_cast<TemplateParams&>(params);
-		std::wstring no_port(params.domain);
-		if (auto pos = no_port.find(':'); pos != std::wstring::npos)
-		{
-			no_port = no_port.substr(0, pos);
-		}
-
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = params.shift_back ? URI_TEMPLATE_ARCH_HLS : URI_TEMPLATE_HLS;
-				new_params.domain = params.shift_back ? no_port : params.domain;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = params.shift_back ? URI_TEMPLATE_ARCH_MPEG : URI_TEMPLATE_MPEG;
-				new_params.domain = std::move(no_port);
-				break;
-			default:
-				break;
-		}
-	}
-	else
-	{
-		url = get_uri();
-		if (params.shift_back)
-		{
-			append_archive(url);
-		}
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_antifriz::get_playlist_url(TemplateParams& params)

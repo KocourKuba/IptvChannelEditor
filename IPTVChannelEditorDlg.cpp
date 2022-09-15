@@ -764,7 +764,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 	else if (m_plugin_type == StreamType::enSharaclub)
 	{
-		params.domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 		url = m_plugin->get_playlist_url(params);
 	}
 	else
@@ -910,27 +910,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			const auto& stream = entry->get_uri_stream();
 			switch (m_plugin_type)
 			{
-				case StreamType::enGlanz: // login/token
-					if (!stream->get_token().empty()
-						&& !stream->get_domain().empty()
-						&& !stream->get_login().empty()
-						&& !stream->get_password().empty()
-						&& !stream->get_internal_id().empty()
-						&& !stream->get_host().empty()
-						)
-					{
-						m_cur_account.set_token(stream->get_token());
-						m_cur_account.set_domain(stream->get_domain());
-						m_cur_account.set_login(stream->get_login());
-						m_cur_account.set_password(stream->get_password());
-						m_host = stream->get_host();
-						bSet = true;
-					}
-					break;
-				case StreamType::enKineskop: // login/token
-					m_host = stream->get_host();
-					break;
-				default:
+				case StreamType::enEdem: // domain/token
 				{
 					const auto& token = stream->get_token();
 					const auto& domain = stream->get_domain();
@@ -940,6 +920,31 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 						m_cur_account.set_domain(stream->get_domain());
 						bSet = true;
 					}
+					break;
+				}
+				case StreamType::enGlanz: // login/token
+					if (!stream->get_token().empty()
+						&& !stream->get_login().empty()
+						&& !stream->get_password().empty()
+						&& !stream->get_int_id().empty()
+						&& !stream->get_host().empty()
+						)
+					{
+						m_cur_account.set_token(stream->get_token());
+						m_cur_account.set_login(stream->get_login());
+						m_cur_account.set_password(stream->get_password());
+						m_host = stream->get_host();
+						bSet = true;
+					}
+					break;
+				case StreamType::enKineskop: // login/token
+					m_host = stream->get_host();
+					bSet = true;
+					break;
+				default:
+				{
+					m_cur_account.set_token(stream->get_token());
+					bSet = true;
 					break;
 				}
 			}
@@ -1293,6 +1298,20 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 				if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
 				{
 					const auto& entry = found->second;
+					if (channel->stream_uri->get_domain().empty()
+						&& !entry->stream_uri->get_domain().empty()
+						&& channel->stream_uri->get_domain() != entry->stream_uri->get_domain())
+					{
+						channel->stream_uri->set_domain(entry->stream_uri->get_domain());
+					}
+
+					if (channel->stream_uri->get_port().empty()
+						&& !entry->stream_uri->get_port().empty()
+						&& channel->stream_uri->get_port() != entry->stream_uri->get_port())
+					{
+						channel->stream_uri->set_port(entry->stream_uri->get_port());
+					}
+
 					if ((bCmpTitle && channel->get_title() != entry->get_title())
 						|| (bCmpArchive && entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
 						|| (bCmpEpg1 && !entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0))
@@ -1409,8 +1428,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 		if (uri->is_template() && m_wndShowUrl.GetCheck())
 		{
 			TemplateParams params;
+			params.subdomain = m_cur_account.get_domain();
 			params.token = m_cur_account.get_token();
-			params.domain = m_cur_account.get_domain();
 			params.login = m_cur_account.get_login();
 			params.password = m_cur_account.get_password();
 			params.host = m_host;
@@ -2819,8 +2838,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		CEpgListDlg dlg;
 		dlg.m_epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
 		dlg.m_epg_cache = &m_epg_cache;
+		dlg.m_params.subdomain = m_cur_account.get_domain();
 		dlg.m_params.token = m_cur_account.get_token();
-		dlg.m_params.domain = m_cur_account.get_domain();
 		dlg.m_params.login = m_cur_account.get_login();
 		dlg.m_params.password = m_cur_account.get_password();
 		dlg.m_params.host = m_host;
@@ -2866,8 +2885,8 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 	if (auto info = GetBaseInfo(m_lastTree, hItem); info != nullptr)
 	{
 		TemplateParams params;
+		params.subdomain = m_cur_account.get_domain();
 		params.token = m_cur_account.get_token();
-		params.domain = m_cur_account.get_domain();
 		params.login = m_cur_account.get_login();
 		params.password = m_cur_account.get_password();
 		params.host = m_host;
@@ -3916,8 +3935,8 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_hStop = m_evtStop;
 	cfg.m_probe = GetConfig().get_string(true, REG_FFPROBE);
 	cfg.m_max_threads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
+	cfg.m_params.subdomain = m_cur_account.get_domain();
 	cfg.m_params.token = m_cur_account.get_token();
-	cfg.m_params.domain = m_cur_account.get_domain();
 	cfg.m_params.login = m_cur_account.get_login();
 	cfg.m_params.password = m_cur_account.get_password();
 	cfg.m_params.host = m_host;

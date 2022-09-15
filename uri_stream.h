@@ -28,6 +28,15 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_base.h"
 #include "UtilsLib\json_wrapper.h"
 
+enum class CatchupType {
+	cu_none,
+	cu_default,
+	cu_append,
+	cu_shift,
+	cu_flussonic,
+	cu_fs
+};
+
 enum class ServerSubstType {
 	enNone,
 	enStream,
@@ -45,11 +54,14 @@ enum class AccountAccessType
 struct TemplateParams
 {
 	StreamSubType streamSubtype = StreamSubType::enHLS;
-	std::wstring domain;
+	std::wstring subdomain;
+	std::wstring port;
 	std::wstring token;
 	std::wstring login;
 	std::wstring password;
 	std::wstring host;
+	std::wstring catchup_source;
+	std::wstring catchup_template;
 	int shift_back = 0;
 	int number = 0;
 	int server = 0;
@@ -118,14 +130,22 @@ struct EpgParameters
 class uri_stream : public uri_base
 {
 protected:
-	static constexpr auto REPL_DOMAIN = L"{DOMAIN}";
-	static constexpr auto REPL_ID = L"{ID}";
-	static constexpr auto REPL_TOKEN = L"{TOKEN}";
-	static constexpr auto REPL_START = L"{START}";
-	static constexpr auto REPL_NOW = L"{NOW}";
-	static constexpr auto REPL_DATE = L"{DATE}";
-	static constexpr auto REPL_TIME = L"{TIME}";
-	static constexpr auto REPL_QUALITY = L"{QUALITY}";
+	static constexpr auto REPL_DOMAIN    = L"{DOMAIN}";
+	static constexpr auto REPL_PORT      = L"{PORT}";
+	static constexpr auto REPL_ID        = L"{ID}";
+	static constexpr auto REPL_SUBDOMAIN = L"{SUBDOMAIN}";
+	static constexpr auto REPL_TOKEN     = L"{TOKEN}";
+	static constexpr auto REPL_START     = L"{START}";
+	static constexpr auto REPL_DURATION  = L"{DURATION}";
+	static constexpr auto REPL_NOW       = L"{NOW}";
+	static constexpr auto REPL_DATE      = L"{DATE}";
+	static constexpr auto REPL_TIME      = L"{TIME}";
+	static constexpr auto REPL_QUALITY   = L"{QUALITY}";
+	static constexpr auto REPL_LOGIN     = L"{LOGIN}";
+	static constexpr auto REPL_PASSWORD  = L"{PASSWORD}";
+	static constexpr auto REPL_INT_ID    = L"{INT_ID}";
+	static constexpr auto REPL_HOST      = L"{HOST}";
+
 
 public:
 	uri_stream();
@@ -220,7 +240,7 @@ public:
 	/// getter int_id
 	/// </summary>
 	/// <returns>string</returns>
-	const std::wstring& get_internal_id() const { return int_id; };
+	const std::wstring& get_int_id() const { return int_id; };
 
 	/// <summary>
 	/// setter host
@@ -232,6 +252,17 @@ public:
 	/// </summary>
 	/// <returns>string</returns>
 	const std::wstring& get_host() const { return host; };
+
+	/// <summary>
+	/// getter subdomain
+	/// </summary>
+	/// <returns>string</returns>
+	const std::wstring& get_subdomain() const { return subdomain; };
+
+	/// <summary>
+	/// setter subdomain
+	/// </summary>
+	void set_subdomain(const std::wstring& val) { subdomain = val; };
 
 	/// <summary>
 	/// getter token
@@ -337,7 +368,7 @@ public:
 	/// supported streams HLS,MPEGTS etc.
 	/// </summary>
 	/// <returns>vector&</returns>
-	const std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const { return streams; }
+	const std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const { return support_streams; }
 
 	/// <summary>
 	/// returns epg mapper
@@ -377,6 +408,14 @@ public:
 	/// <returns>wstring</returns>
 	std::wstring compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time);
 
+	/// <summary>
+	/// get templated url
+	/// </summary>
+	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
+	/// <param name="params">parameters for generating url</param>
+	/// <returns>string url</returns>
+	std::wstring get_templated_stream(TemplateParams& params) const;
+
 	//////////////////////////////////////////////////////////////////////////
 	// virtual methods
 
@@ -385,14 +424,6 @@ public:
 	/// </summary>
 	/// <param name="url"></param>
 	virtual void parse_uri(const std::wstring& url);
-
-	/// <summary>
-	/// get templated url
-	/// </summary>
-	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
-	/// <param name="params">parameters for generating url</param>
-	/// <returns>string url</returns>
-	virtual std::wstring get_templated_stream(TemplateParams& params) const { return L""; };
 
 	/// <summary>
 	/// get additional get headers
@@ -436,7 +467,14 @@ public:
 	/// </summary>
 	/// <param name="url">url/secondary</param>
 	/// <returns>wstring&</returns>
-	virtual std::wstring& append_archive(std::wstring& url) const;
+	virtual std::wstring append_archive(const TemplateParams& params, const std::wstring& url) const;
+
+	/// <summary>
+	/// add archive parameters to url
+	/// </summary>
+	/// <param name="url">url/secondary</param>
+	/// <returns>wstring&</returns>
+	virtual std::wstring shift_archive(const TemplateParams& params, const std::wstring& url) const;
 
 	/// <summary>
 	/// returns list of servers
@@ -475,7 +513,7 @@ public:
 
 protected:
 
-	void replace_vars(std::wstring& url, const TemplateParams& params) const;
+	virtual void replace_vars(std::wstring& url, const TemplateParams& params) const;
 
 	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
@@ -485,28 +523,40 @@ protected:
 
 protected:
 	std::array <EpgParameters, 2> epg_params;
-	std::vector<std::tuple<StreamSubType, std::wstring>> streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
+	std::vector<std::tuple<StreamSubType, std::wstring>> support_streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
 	ServerSubstType server_subst_type = ServerSubstType::enNone;
 	AccountAccessType access_type = AccountAccessType::enOtt;
+	std::array<CatchupType, 2> catchup_type;
+
 	std::vector<ServersInfo> servers_list;
 	std::vector<ProfilesInfo> profiles_list;
 	std::vector<QualityInfo> quality_list;
 	std::vector<PlaylistInfo> playlists;
+
+	std::wstring catchup_source;
 	std::wstring provider_url;
 	std::wstring provider_api_url;
 	std::wstring provider_vod_url;
+	std::wstring uri_hls_template;
+	std::wstring uri_hls_arc_template;
+	std::wstring uri_mpeg_template;
+	std::wstring uri_mpeg_arc_template;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring port;
 	std::wstring login;
 	std::wstring password;
+	std::wstring subdomain;
 	std::wstring token;
 	std::wstring int_id;
 	std::wstring host;
+
+	int catchup_duration = 10800;
 	bool vod_supported = false;
 	bool secondary_epg = false;
 	bool per_channel_token = false;
+
 	mutable std::wstring str_hash;
 	mutable int hash = 0;
 };

@@ -35,13 +35,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.tvshka.net/?uid={:s}&srv={:s}&type=halva";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/~{TOKEN}/{ID}/";
 
 uri_shuratv::uri_shuratv()
 {
 	provider_url = L"http://shura.tv/b/";
 	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+
+	uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+	uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
@@ -75,35 +77,6 @@ void uri_shuratv::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_shuratv::get_templated_stream(TemplateParams& params) const
-{
-	auto& url = get_uri();
-
-	if (is_template())
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = URI_TEMPLATE_MPEG;
-				break;
-			default:
-				break;
-		}
-	}
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
-}
-
 std::wstring uri_shuratv::get_playlist_url(TemplateParams& params)
 {
 	int server = params.server;
@@ -113,14 +86,18 @@ std::wstring uri_shuratv::get_playlist_url(TemplateParams& params)
 	return fmt::format(PLAYLIST_TEMPLATE, params.password, servers_list[server].id);
 }
 
-std::wstring& uri_shuratv::append_archive(std::wstring& url) const
+std::wstring uri_shuratv::append_archive(const TemplateParams& params, const std::wstring& url) const
 {
-	if (url.rfind('?') != std::wstring::npos)
-		url += '&';
-	else
-		url += '?';
+	std::wstring result(url);
+	if (params.shift_back)
+	{
+		if (url.rfind('?') != std::wstring::npos)
+			result += '&';
+		else
+			result += '?';
 
-	url += L"archive={START}&lutc={NOW}";
+		result += L"archive={START}&lutc={NOW}";
+	}
 
-	return url;
+	return result;
 }

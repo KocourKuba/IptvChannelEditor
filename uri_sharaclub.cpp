@@ -44,19 +44,22 @@ static constexpr auto ACCOUNT_TEMPLATE = L"http://{:s}/api/dune-api5m.php?subscr
 static constexpr auto PLAYLIST_TEMPLATE = L"http://{:s}/tv_live-m3u8/{:s}-{:s}";
 static constexpr auto PLAYLIST_VOD_TEMPLATE = L"http://{:s}/kino-full/{:s}-{:s}";
 static constexpr auto EPG_TEMPLATE_URL = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
-static constexpr auto URI_TEMPLATE_MPEG = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 
 uri_sharaclub::uri_sharaclub()
 {
+	provider_url = L"https://shara.club/";
+	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
+
+	uri_hls_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
+	uri_mpeg_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
+
 	auto& params = epg_params[0];
 	params.epg_root = "";
 	params.epg_url = EPG_TEMPLATE_URL;
-	provider_url = L"https://shara.club/";
 	provider_api_url = API_URL;
 	provider_vod_url = PLAYLIST_VOD_TEMPLATE;
 	vod_supported = true;
-	access_type = AccountAccessType::enLoginPass;
 }
 
 void uri_sharaclub::parse_uri(const std::wstring& url)
@@ -77,38 +80,9 @@ void uri_sharaclub::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_sharaclub::get_templated_stream(TemplateParams& params) const
-{
-	auto& url = get_uri();
-
-	if (is_template())
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				url = URI_TEMPLATE_HLS;
-				break;
-			case StreamSubType::enMPEGTS:
-				url = URI_TEMPLATE_MPEG;
-				break;
-			default:
-				break;
-		}
-	}
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
-}
-
 std::wstring uri_sharaclub::get_playlist_url(TemplateParams& params)
 {
-	auto& url = fmt::format(PLAYLIST_TEMPLATE, params.domain, params.login, params.password);
+	auto& url = fmt::format(PLAYLIST_TEMPLATE, params.subdomain, params.login, params.password);
 	if (params.profile != 0)
 	{
 		const auto& profiles = get_profiles_list(params);
@@ -121,7 +95,7 @@ std::wstring uri_sharaclub::get_playlist_url(TemplateParams& params)
 bool uri_sharaclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	std::vector<BYTE> data;
-	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.domain, params.login, params.password), data) || data.empty())
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.subdomain, params.login, params.password), data) || data.empty())
 	{
 		return false;
 	}
@@ -156,7 +130,7 @@ const std::vector<ServersInfo>& uri_sharaclub::get_servers_list(TemplateParams& 
 	if (servers_list.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_GET_URL,
-									  params.domain,
+									  params.subdomain,
 									  L"ch_cdn",
 									  params.login,
 									  params.password);
@@ -190,7 +164,7 @@ bool uri_sharaclub::set_server(TemplateParams& params)
 	if (!servers.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
-									  params.domain,
+									  params.subdomain,
 									  L"ch_cdn",
 									  L"num",
 									  servers[params.server].id,
@@ -217,7 +191,7 @@ const std::vector<ProfilesInfo>& uri_sharaclub::get_profiles_list(TemplateParams
 	if (profiles_list.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_GET_URL,
-									  params.domain,
+									  params.subdomain,
 									  L"list_profiles",
 									  params.login,
 									  params.password);
@@ -258,7 +232,7 @@ bool uri_sharaclub::set_profile(TemplateParams& params)
 	if (!profiles.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
-									  params.domain,
+									  params.subdomain,
 									  L"list_profiles",
 									  L"num",
 									  profiles[params.profile].id,

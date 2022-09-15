@@ -34,13 +34,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://tvfor.pro/g/{:s}:{:s}/1/playlist.m3u";
-static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/{ID}/{TOKEN}";
 
 uri_sharatv::uri_sharatv()
 {
-	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"https://shara-tv.org/";
 	access_type = AccountAccessType::enLoginPass;
+	catchup_type = { CatchupType::cu_append, CatchupType::cu_none };
+	support_streams = { {StreamSubType::enHLS, L"HLS"} };
+
+	uri_hls_template = L"http://{DOMAIN}/{ID}/{TOKEN}";
 
 	epg_params[0].epg_url = L"http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
 
@@ -73,20 +75,6 @@ void uri_sharatv::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_sharatv::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_sharatv::get_playlist_url(TemplateParams& params)

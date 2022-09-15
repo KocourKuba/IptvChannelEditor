@@ -36,14 +36,17 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto PLAYLIST_TEMPLATE = L"http://myott.top/playlist/{:s}/m3u";
-static constexpr auto URI_TEMPLATE_HLS = L"http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
 
 uri_ottclub::uri_ottclub()
 {
-	epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
-	streams = { {StreamSubType::enHLS, L"HLS"} };
 	provider_url = L"https://www.ottclub.cc/";
 	access_type = AccountAccessType::enPin;
+	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+	support_streams = { {StreamSubType::enHLS, L"HLS"} };
+
+	uri_hls_template = L"http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
+
+	epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
 }
 
 void uri_ottclub::parse_uri(const std::wstring& url)
@@ -62,29 +65,6 @@ void uri_ottclub::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_ottclub::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url;
-
-	if (is_template())
-	{
-		url = URI_TEMPLATE_HLS;
-	}
-	else
-	{
-		url = get_uri();
-	}
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
 }
 
 std::wstring uri_ottclub::get_playlist_url(TemplateParams& params)
