@@ -178,7 +178,7 @@ class Movie implements User_Input_Handler
                 }
 
                 if (isset($user_input->playback_stop_pressed)) {
-                    $history_items = HD::get_items(self::HISTORY_LIST);
+                    $history_items = HD::get_items(self::HISTORY_LIST, true);
                     $history_items = array_reverse($history_items, true);
                     $history_items[$user_input->plugin_vod_id] = array(
                         'series' => $this->playback_series_ndx,

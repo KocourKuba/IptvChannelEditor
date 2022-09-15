@@ -88,7 +88,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 		{
 			case self::ACTION_ITEM_DELETE:
 				$media_url = MediaURL::decode($user_input->selected_media_url);
-				$history_items = HD::get_items(Movie::HISTORY_LIST);
+				$history_items = HD::get_items(Movie::HISTORY_LIST, true);
 				unset ($history_items[$media_url->movie_id]);
 				HD::put_items(Movie::HISTORY_LIST, $history_items);
 				$parent_media_url = MediaURL::decode($user_input->parent_media_url);
@@ -124,7 +124,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
     {
         $items = array();
 
-        $history_items = HD::get_items(Movie::HISTORY_LIST);
+        $history_items = HD::get_items(Movie::HISTORY_LIST, true);
         foreach ($history_items as $movie_id => $item) {
             if (empty($item)) continue;
 
