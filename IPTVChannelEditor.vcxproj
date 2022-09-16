@@ -250,6 +250,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="InPlaceEdit.h" />
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
+    <ClInclude Include="MySplitButton.h" />
     <ClInclude Include="PlaylistParseJsonThread.h" />
     <ClInclude Include="ResizedPropertySheet.h" />
     <ClInclude Include="uri_kineskop.h" />
@@ -319,6 +320,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="InPlaceEdit.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
+    <ClCompile Include="MySplitButton.cpp" />
     <ClCompile Include="PlaylistParseJsonThread.cpp" />
     <ClCompile Include="NewChannelsListDlg.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />

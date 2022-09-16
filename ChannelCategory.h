@@ -58,7 +58,7 @@ public:
 
 	bool add_channel(const std::shared_ptr<ChannelInfo>& channel);
 
-	void remove_channel(const std::wstring& ch_id);
+	bool remove_channel(const std::wstring& ch_id);
 
 	void sort_channels();
 

@@ -117,7 +117,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CACHE_ICON, &CIPTVChannelEditorDlg::OnUpdateButtonCacheIcon)
 	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
-	ON_BN_CLICKED(IDC_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
+	ON_BN_CLICKED(IDC_SPLIT_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED_CH, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChangedCh)
 
@@ -146,6 +146,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMRclickTreeChannel)
 	ON_NOTIFY(NM_SETFOCUS, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMSetfocusTree)
 	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip)
+	ON_NOTIFY(BCN_DROPDOWN, IDC_SPLIT_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnDropDownSplitButtonUpdateChanged)
 
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnNMDblclkTreePaylist)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnTvnSelchangedTreePaylist)
@@ -188,6 +189,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnUpdateAddToFavorite)
 	ON_COMMAND(ID_MAKE_ALL, &CIPTVChannelEditorDlg::OnMakeAll)
 	ON_COMMAND(ID_MAKE_ALL_ACCOUNTS, &CIPTVChannelEditorDlg::OnMakeAllAccounts)
+	ON_COMMAND(ID_REMOVE_UNKNOWN, &CIPTVChannelEditorDlg::OnRemoveUnknownChannels)
 
 	ON_COMMAND(ID_RESTORE, &CIPTVChannelEditorDlg::OnRestore)
 	ON_COMMAND(ID_APP_EXIT, &CIPTVChannelEditorDlg::OnAppExit)
@@ -296,7 +298,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RICHEDIT_EPG, m_wndEpg);
 	DDX_Control(pDX, IDC_RADIO_EPG1, m_wndEpg1);
 	DDX_Control(pDX, IDC_RADIO_EPG2, m_wndEpg2);
-	DDX_Control(pDX, IDC_BUTTON_UPDATE_CHANGED, m_wndUpdateChanged);
+	DDX_Control(pDX, IDC_SPLIT_BUTTON_UPDATE_CHANGED, m_wndUpdateChanged);
 	DDX_Control(pDX, IDC_SPLIT_BUTTON_PACK, m_wndPack);
 	DDX_Control(pDX, IDC_BUTTON_SETTINGS, m_wndSettings);
 	DDX_Control(pDX, IDC_PROGRESS_PROGRAM, m_wndProgressTime);
@@ -427,7 +429,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		{ IDC_COMBO_ICON_SOURCE, load_string_resource(IDS_STRING_COMBO_ICON_SOURCE) },
 		{ IDC_BUTTON_STOP, load_string_resource(IDS_STRING_BUTTON_STOP) },
 		{ IDC_BUTTON_CHECK_ARCHIVE, load_string_resource(IDS_STRING_BUTTON_CHECK_ARCHIVE) },
-		{ IDC_BUTTON_UPDATE_CHANGED, load_string_resource(IDS_STRING_BUTTON_UPDATE_CHANGED) },
+		{ IDC_SPLIT_BUTTON_UPDATE_CHANGED, load_string_resource(IDS_STRING_BUTTON_UPDATE_CHANGED) },
 	};
 
 	for (const auto& pair : m_tooltips_info)
@@ -1358,7 +1360,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 										  m_changedChannels.size(),
 										  m_unknownChannels.size()).c_str());
 
-	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty());
+	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty() || !m_unknownChannels.empty());
 }
 
 void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
@@ -2878,6 +2880,52 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
 	UpdateChannelsTreeColors();
 	FillTreePlaylist();
 	set_allow_save(changed);
+}
+
+void CIPTVChannelEditorDlg::OnBnDropDownSplitButtonUpdateChanged(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMBCDROPDOWN pDropDown = reinterpret_cast<LPNMBCDROPDOWN>(pNMHDR);
+
+	CMenu menu;
+	VERIFY(menu.LoadMenu(IDR_MENU_CHANGED));
+
+	CMenu* pMenu = menu.GetSubMenu(0);
+	if (!pMenu)
+		return;
+
+	pMenu->EnableMenuItem(ID_REMOVE_UNKNOWN, m_unknownChannels.empty() ? MF_DISABLED : MF_ENABLED);
+
+	CRect rectButton;
+	m_wndUpdateChanged.GetWindowRect(&rectButton);
+
+	TPMPARAMS tpmParams{};
+	tpmParams.cbSize = sizeof(TPMPARAMS);
+	tpmParams.rcExclude = rectButton;
+
+	pMenu->TrackPopupMenuEx(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON, rectButton.left, rectButton.bottom, this, &tpmParams);
+
+	*pResult = 0;
+}
+
+void CIPTVChannelEditorDlg::OnRemoveUnknownChannels()
+{
+	CWaitCursor cur;
+
+	bool changed = false;
+	for (const auto& item : m_unknownChannels)
+	{
+		for (const auto& pair : m_categoriesMap)
+		{
+			changed |= pair.second.category->remove_channel(item);
+		}
+	}
+
+	if (changed)
+	{
+		RemoveOrphanChannels();
+		FillTreeChannels();
+		set_allow_save();
+	}
 }
 
 void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/) const

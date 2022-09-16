@@ -115,13 +115,16 @@ bool ChannelCategory::add_channel(const std::shared_ptr<ChannelInfo>& channel)
 	return false;
 }
 
-void ChannelCategory::remove_channel(const std::wstring& ch_id)
+bool ChannelCategory::remove_channel(const std::wstring& ch_id)
 {
 	if (auto pair = channels_map.find(ch_id); pair != channels_map.end())
 	{
 		channels.erase(std::find(channels.begin(), channels.end(), pair->second));
 		channels_map.erase(pair);
+		return true;
 	}
+
+	return false;
 }
 
 void ChannelCategory::sort_channels()

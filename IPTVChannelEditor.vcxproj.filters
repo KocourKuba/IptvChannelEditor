@@ -264,6 +264,9 @@
     <ClInclude Include="uri_smile.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="MySplitButton.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPTVChannelEditor.cpp">
@@ -451,6 +454,9 @@
     </ClCompile>
     <ClCompile Include="uri_smile.cpp">
       <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="MySplitButton.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

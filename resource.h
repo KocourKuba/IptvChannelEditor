@@ -4,6 +4,7 @@
 //
 #define IDM_ABOUTBOX                    16
 #define IDR_POPUP_TRAY                  17
+#define IDR_MENU_CHANGED                18
 #define IDB_PNG_QR                      101
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
@@ -232,7 +233,7 @@
 #define IDC_BUTTON_SETTINGS             1019
 #define IDC_BUTTON_STOP                 1020
 #define IDC_BUTTON_TEST_EPG             1021
-#define IDC_BUTTON_UPDATE_CHANGED       1022
+#define IDC_SPLIT_BUTTON_UPDATE_CHANGED 1022
 #define IDC_BUTTON_CHECK_ARCHIVE        1024
 #define IDC_CHECK_ADULT                 1025
 #define IDC_CHECK_ARCHIVE               1026
@@ -414,13 +415,14 @@
 #define ID_MAKE_ALL                     32800
 #define ID_TOGGLE_CATEGORY              32801
 #define ID_MAKE_ALL_ACCOUNTS            32802
+#define ID_REMOVE_UNKNOWN               32803
 
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        271
-#define _APS_NEXT_COMMAND_VALUE         32803
+#define _APS_NEXT_COMMAND_VALUE         32804
 #define _APS_NEXT_CONTROL_VALUE         1178
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif

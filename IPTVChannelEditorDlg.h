@@ -35,6 +35,7 @@ DEALINGS IN THE SOFTWARE.
 #include "ChannelInfo.h"
 #include "map_serializer.h"
 #include "TrayIcon.h"
+#include "MySplitButton.h"
 #include "vod_movie.h"
 
 #include "UtilsLib\json_wrapper.h"
@@ -184,10 +185,12 @@ protected:
 	afx_msg void OnMakeAccount(UINT id);
 	afx_msg void OnMakeAll();
 	afx_msg void OnMakeAllAccounts();
+	afx_msg void OnRemoveUnknownChannels();
 	afx_msg void OnRestore();
 	afx_msg void OnAppExit();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonVod();
+	afx_msg void OnBnDropDownSplitButtonUpdateChanged(NMHDR* pNMHDR, LRESULT* pResult);
 
 	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -274,6 +277,7 @@ protected:
 	CComboBox m_wndIconSource;
 	CComboBox m_wndStreamType;
 	CRichEditCtrl m_wndEpg;
+	CMySplitButton m_wndUpdateChanged;
 	CSplitButton m_wndPack;
 
 	CEdit m_wndStreamID;
@@ -313,7 +317,6 @@ protected:
 	CStatic m_wndProgressInfo;
 	CButton m_wndEpg1;
 	CButton m_wndEpg2;
-	CButton m_wndUpdateChanged;
 	CButton m_wndSettings;
 	CButton m_wndMakeWebUpdate;
 	CProgressCtrl m_wndProgress;
