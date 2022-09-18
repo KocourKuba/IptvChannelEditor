@@ -147,7 +147,6 @@ typedef struct
 	std::wstring title;
 	std::string short_name;
 	std::string int_name;
-	std::string version;
 } PluginDesc;
 
 class Credentials

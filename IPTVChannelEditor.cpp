@@ -806,7 +806,7 @@ bool PackPlugin(const StreamType plugin_type,
 		d_node->first_node("short_name")->value(plugin_info.short_name.c_str());
 		d_node->first_node("background")->value(bg.c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
-		d_node->first_node("version")->value(plugin_info.version.c_str());
+		d_node->first_node("version")->value(STRPRODUCTVER);
 		d_node->first_node("release_date")->value(RELEASEDATE);
 		if (!noCustom)
 			d_node->first_node("channels_url_path")->value(cred.ch_web_path.c_str());
@@ -1014,7 +1014,7 @@ bool PackPlugin(const StreamType plugin_type,
 
 			auto version_info = doc->allocate_node(rapidxml::node_element, "plugin_version_descriptor");
 			version_info->append_node(rapidxml::alloc_node(*doc, "version_index", version_index.c_str()));
-			version_info->append_node(rapidxml::alloc_node(*doc, "version", plugin_info.version.c_str()));
+			version_info->append_node(rapidxml::alloc_node(*doc, "version", STRPRODUCTVER));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "url",
