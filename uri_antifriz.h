@@ -31,5 +31,4 @@ class uri_antifriz : public uri_stream
 {
 public:
 	uri_antifriz();;
-	void parse_uri(const std::wstring& url) override;
 };

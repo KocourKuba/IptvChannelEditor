@@ -41,6 +41,7 @@ uri_sharatv::uri_sharatv()
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 
 	playlist_template = L"http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/{TOKEN}";
 
 	epg_params[0].epg_url = L"http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
@@ -56,22 +57,4 @@ uri_sharatv::uri_sharatv()
 	params2.epg_desc = "description";
 	params2.epg_start = "begin";
 	params2.epg_end = "end";
-}
-
-void uri_sharatv::parse_uri(const std::wstring& url)
-{
-	// http://messi.tvfor.pro/Perviykanal/a8dv285y29itx4ye4oj3cez5
-
-	static std::wregex re_url(LR"(^https?:\/\/(.+)\/(.+)\/(.+)$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		id = std::move(m[2].str());
-		token = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

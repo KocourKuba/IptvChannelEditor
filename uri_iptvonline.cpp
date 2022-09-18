@@ -42,6 +42,7 @@ uri_iptvonline::uri_iptvonline()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 
 	playlist_template = L"http://iptv.online/play/{PASSWORD}/m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
 	uri_hls_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8";
 	uri_mpeg_arc_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
@@ -59,22 +60,4 @@ uri_iptvonline::uri_iptvonline()
 
 	secondary_epg = true;
 	epg_params[1].epg_url = L"http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
-}
-
-void uri_iptvonline::parse_uri(const std::wstring& url)
-{
-	// http://cz.iptv.monster/play/73/38798DB9DF4EA8F/video.m3u8
-
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/play\/(.+)\/(.+)\/video\.m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		id = std::move(m[2].str());
-		token = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

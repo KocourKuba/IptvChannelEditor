@@ -31,6 +31,4 @@ class uri_ottclub : public uri_stream
 {
 public:
 	uri_ottclub();
-
-	void parse_uri(const std::wstring& url) override;
 };

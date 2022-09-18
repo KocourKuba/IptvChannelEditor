@@ -31,5 +31,4 @@ class uri_tvteam : public uri_stream
 {
 public:
 	uri_tvteam();
-	void parse_uri(const std::wstring& url) override;
 };

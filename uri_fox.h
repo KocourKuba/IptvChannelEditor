@@ -32,6 +32,4 @@ class uri_fox : public uri_stream
 public:
 
 	uri_fox();
-
-	void parse_uri(const std::wstring& url) override;
 };

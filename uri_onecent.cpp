@@ -41,6 +41,7 @@ uri_onecent::uri_onecent()
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 
 	playlist_template = L"http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
@@ -55,23 +56,4 @@ uri_onecent::uri_onecent()
 
 	secondary_epg = true;
 	epg_params[1].epg_url = L"http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
-}
-
-void uri_onecent::parse_uri(const std::wstring& url)
-{
-	// http://cdn.only4.tv/20115/index.m3u8?token=MH1LeVsHSD
-
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/(.+)\/index\.m3u8\?token=(.+)$)");
-
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		id = std::move(m[2].str());
-		token = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

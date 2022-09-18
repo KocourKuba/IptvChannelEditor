@@ -32,6 +32,4 @@ class uri_glanz	: public uri_stream
 public:
 
 	uri_glanz();
-
-	void parse_uri(const std::wstring& url) override;
 };

@@ -31,5 +31,4 @@ class uri_oneusd : public uri_stream
 {
 public:
 	uri_oneusd();
-	void parse_uri(const std::wstring& url) override;
 };

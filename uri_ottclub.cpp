@@ -43,25 +43,8 @@ uri_ottclub::uri_ottclub()
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 
 	playlist_template = L"http://myott.top/playlist/{PASSWORD}/m3u";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
 
 	epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
-}
-
-void uri_ottclub::parse_uri(const std::wstring& url)
-{
-	// http://myott.top/stream/S7NTAAORW5/131.m3u8
-
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/stream\/(.+)\/(.+)\.m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

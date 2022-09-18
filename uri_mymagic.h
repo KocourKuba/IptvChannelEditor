@@ -32,6 +32,4 @@ class uri_mymagic : public uri_stream
 public:
 
 	uri_mymagic();
-
-	void parse_uri(const std::wstring& url) override;
 };

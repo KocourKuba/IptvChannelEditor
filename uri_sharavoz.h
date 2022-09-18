@@ -31,6 +31,4 @@ class uri_sharavoz : public uri_stream
 {
 public:
 	uri_sharavoz();
-
-	void parse_uri(const std::wstring& url) override;
 };

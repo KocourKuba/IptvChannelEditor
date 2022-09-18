@@ -200,36 +200,17 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	m_evtFinished.ResetEvent();
 
 	std::wstring url;
-	jsonParserType parserType = jsonParserType::enUnknown;
-	switch (m_plugin_type)
+	if (m_plugin_type == StreamType::enEdem)
 	{
-		case StreamType::enAntifriz:
-		case StreamType::enCbilling:
-			parserType = jsonParserType::enJsonCbilling;
-			url = m_plugin->get_vod_url();
-			break;
-
-		case StreamType::enGlanz:
-			parserType = jsonParserType::enJsonGlanz;
-			url = fmt::format(m_plugin->get_vod_url(), m_account.get_login(), m_account.get_password());
-			break;
-
-		case StreamType::enSharaclub:
-			parserType = jsonParserType::enJsonSharaClub;
-			url = fmt::format(m_plugin->get_vod_url(),
-							  GetConfig().get_string(false, REG_LIST_DOMAIN),
-							  m_account.get_login(),
-							  m_account.get_password());
-			break;
-
-		case StreamType::enEdem:
-			parserType = jsonParserType::enJsonEdem;
-			url = m_account.get_portal();
-			break;
-
-		default:
-			ASSERT(false);
-			break;
+		url = m_account.get_portal();
+	}
+	else
+	{
+		TemplateParams params;
+		params.login = m_account.get_login();
+		params.password = m_account.get_password();
+		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+		url = m_plugin->get_vod_url(params);
 	}
 
 	auto pThread = (CPlaylistParseJsonThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseJsonThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
@@ -245,7 +226,6 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	cfg.m_hStop = m_evtStop;
 	cfg.m_pluginType = m_plugin_type;
 	cfg.m_url = std::move(url);
-	cfg.m_parser = (int)parserType;
 	cfg.m_use_cache = use_cache;
 
 	pThread->SetData(cfg);
@@ -300,15 +280,11 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 	m_wndTotal.SetWindowText(load_string_resource(IDS_STRING_LOADING).c_str());
 
-	std::wstring url;
-	switch (m_plugin_type)
-	{
-		case StreamType::enGlanz:
-		case StreamType::enFox:
-		case StreamType::enSmile:
-			url = fmt::format(m_plugin->get_vod_url(), m_account.get_login(), m_account.get_password());
-			break;
-	}
+	TemplateParams params;
+	params.login = m_account.get_login();
+	params.password = m_account.get_password();
+	const auto& url = m_plugin->get_vod_url(params);
+
 	auto data = std::make_unique<std::vector<BYTE>>();
 
 	if (!utils::DownloadFile(url, *data) || data->empty())
@@ -998,7 +974,8 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 {
 	CWaitCursor cur;
 
-	const auto& url = fmt::format(L"{:s}/video/{:s}", m_plugin->get_vod_url(), movie.id);
+	TemplateParams params;
+	const auto& url = fmt::format(L"{:s}/video/{:s}", m_plugin->get_vod_url(params), movie.id);
 	std::vector<BYTE> data;
 	if (url.empty() || !utils::DownloadFile(url, data, false) || data.empty())
 	{

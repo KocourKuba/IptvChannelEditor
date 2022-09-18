@@ -41,6 +41,7 @@ uri_shuratv::uri_shuratv()
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
 
 	playlist_template = L"http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 	uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/";
 
@@ -57,23 +58,6 @@ uri_shuratv::uri_shuratv()
 		ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_SHURA_TV_P1 + i) });
 		servers_list.emplace_back(info);
 	}
-}
-
-void uri_shuratv::parse_uri(const std::wstring& url)
-{
-	// http://bl2.provds.pw/~shsv45hh617fU/119/hls/pl.m3u8
-	static std::wregex re_url(LR"(^https?:\/\/(.+)\/~(.+)\/(.+)\/hls\/.+\.m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }
 
 std::wstring uri_shuratv::append_archive(const TemplateParams& params, const std::wstring& url) const

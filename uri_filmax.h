@@ -31,6 +31,4 @@ class uri_filmax : public uri_stream
 {
 public:
 	uri_filmax();
-
-	void parse_uri(const std::wstring& url) override;
 };

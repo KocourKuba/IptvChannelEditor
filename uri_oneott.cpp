@@ -44,6 +44,7 @@ uri_oneott::uri_oneott()
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
 
 	playlist_template = L"http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 	uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}";
 
@@ -57,24 +58,6 @@ uri_oneott::uri_oneott()
 
 	secondary_epg = true;
 	epg_params[1].epg_url = L"http://epg.drm-play.ml/1ott/epg/{ID}.json";
-}
-
-void uri_oneott::parse_uri(const std::wstring& url)
-{
-	//http://rr2.1ott.net/~109dab8c798d546s8dc9c41b3c3af80d59a/35985/hls/pl.m3u8
-
-	static std::wregex re_url(LR"(^https?:\/\/(.+)\/~(.+)\/(.+)\/hls\/.+\.m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }
 
 bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

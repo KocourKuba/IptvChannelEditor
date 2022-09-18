@@ -46,6 +46,7 @@ uri_kineskop::uri_kineskop()
 	per_channel_token = true;
 
 	playlist_template = L"http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER_ID}/1";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
 
 	for (int i = 0; i <= IDS_STRING_KINESKOP_P4 - IDS_STRING_KINESKOP_P1; i++)
@@ -54,23 +55,4 @@ uri_kineskop::uri_kineskop()
 		ServersInfo info({ utils::wstring_tolower(id), str });
 		servers_list.emplace_back(info);
 	}
-}
-
-void uri_kineskop::parse_uri(const std::wstring& url)
-{
-	// http://de.kineskop.tv/site2/119/1113391_541b6bc57cc71771_0_0_fs2.m3u8
-
-	static std::wregex re_url(LR"(^https?:\/\/(.+)\/(.+)\/(.+)\/(.+)\.m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		host = std::move(m[2].str());
-		id = std::move(m[3].str());
-		token = std::move(m[4].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

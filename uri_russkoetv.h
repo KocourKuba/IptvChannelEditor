@@ -31,6 +31,4 @@ class uri_russkoetv : public uri_stream
 {
 public:
 	uri_russkoetv();
-
-	void parse_uri(const std::wstring& url) override;
 };

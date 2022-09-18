@@ -130,22 +130,23 @@ struct EpgParameters
 class uri_stream : public uri_base
 {
 protected:
-	static constexpr auto REPL_DOMAIN    = L"{DOMAIN}";
-	static constexpr auto REPL_PORT      = L"{PORT}";
-	static constexpr auto REPL_ID        = L"{ID}";
-	static constexpr auto REPL_SUBDOMAIN = L"{SUBDOMAIN}";
-	static constexpr auto REPL_TOKEN     = L"{TOKEN}";
-	static constexpr auto REPL_START     = L"{START}";
-	static constexpr auto REPL_DURATION  = L"{DURATION}";
-	static constexpr auto REPL_NOW       = L"{NOW}";
-	static constexpr auto REPL_DATE      = L"{DATE}";
-	static constexpr auto REPL_TIME      = L"{TIME}";
-	static constexpr auto REPL_QUALITY   = L"{QUALITY}";
-	static constexpr auto REPL_LOGIN     = L"{LOGIN}";
-	static constexpr auto REPL_PASSWORD  = L"{PASSWORD}";
-	static constexpr auto REPL_INT_ID    = L"{INT_ID}";
-	static constexpr auto REPL_HOST      = L"{HOST}";
-	static constexpr auto REPL_SERVER_ID = L"{SERVER_ID}";
+	static constexpr auto REPL_DOMAIN    = L"{DOMAIN}";    // stream url domain (set from playlist)
+	static constexpr auto REPL_PORT      = L"{PORT}";      // stream url port (set from playlist)
+	static constexpr auto REPL_ID        = L"{ID}";        // id (set from playlist)
+	static constexpr auto REPL_SUBDOMAIN = L"{SUBDOMAIN}"; // domain (set from settings or set by provider)
+	static constexpr auto REPL_TOKEN     = L"{TOKEN}";     // token (set from playlist or set by provider)
+	static constexpr auto REPL_QUALITY   = L"{QUALITY}";   // quality (set from settings)
+	static constexpr auto REPL_LOGIN     = L"{LOGIN}";     // login (set from settings)
+	static constexpr auto REPL_PASSWORD  = L"{PASSWORD}";  // password (set from settings)
+	static constexpr auto REPL_INT_ID    = L"{INT_ID}";    // internal id (reads from playlist)
+	static constexpr auto REPL_HOST      = L"{HOST}";      // host (reads from playlist)
+	static constexpr auto REPL_SERVER_ID = L"{SERVER_ID}"; // server id (read from settings)
+
+	static constexpr auto REPL_START     = L"{START}";     // EPG archive start time (unix timestamp)
+	static constexpr auto REPL_DURATION  = L"{DURATION}";  // EPG archive duration (in second)
+	static constexpr auto REPL_NOW       = L"{NOW}";       // EPG archive current time (unix timestamp)
+	static constexpr auto REPL_DATE      = L"{DATE}";      // EPG date (set by format)
+	static constexpr auto REPL_TIME      = L"{TIME}";      // EPG time (set by format)
 
 
 public:
@@ -362,8 +363,9 @@ public:
 	/// <summary>
 	/// returns link to vod download
 	/// </summary>
+	/// <param name="params">parameters for generating url</param>
 	/// <returns>wstring</returns>
-	const std::wstring& get_vod_url() const { return provider_vod_url; }
+	const std::wstring& get_vod_url(TemplateParams& params) const;
 
 	/// <summary>
 	/// supported streams HLS,MPEGTS etc.
@@ -412,7 +414,6 @@ public:
 	/// <summary>
 	/// get templated url
 	/// </summary>
-	/// <param name="subType">stream subtype HLS/MPEG_TS</param>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
 	std::wstring get_templated_stream(TemplateParams& params) const;
@@ -533,11 +534,12 @@ protected:
 	std::wstring provider_url;
 	std::wstring provider_api_url;
 	std::wstring provider_vod_url;
+	std::wstring playlist_template;
+	std::wstring uri_parse_template;
 	std::wstring uri_hls_template;
 	std::wstring uri_hls_arc_template;
 	std::wstring uri_mpeg_template;
 	std::wstring uri_mpeg_arc_template;
-	std::wstring playlist_template;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring port;

@@ -46,6 +46,7 @@ uri_itv::uri_itv()
 	per_channel_token = true;
 
 	playlist_template = L"http://itv.ooo/p/{PASSWORD}/hls.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -58,24 +59,6 @@ uri_itv::uri_itv()
 	params.epg_desc = "desc";
 	params.epg_start = "startTime";
 	params.epg_end = "stopTime";
-}
-
-void uri_itv::parse_uri(const std::wstring& url)
-{
-	// http://cloud15.05cdn.wf/ch378/video.m3u8?token=5bdbc7125f6ed805a5fd238b9f885d1a3c67a6594
-	// http://cloud15.05cdn.wf/ch378/mpegts?token=5bdbc7125f6ed805a5fd238b9f885d1a3c67a6594
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/(.+)\/[^\?]+\?token=(.+)$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		id = std::move(m[2].str());
-		token = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }
 
 bool uri_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

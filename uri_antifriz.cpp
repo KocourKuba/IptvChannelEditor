@@ -46,6 +46,7 @@ uri_antifriz::uri_antifriz()
 	vod_supported = true;
 
 	playlist_template = L"http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
@@ -54,35 +55,4 @@ uri_antifriz::uri_antifriz()
 	auto& params1 = epg_params[0];
 	params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params1.epg_root = "";
-}
-
-void uri_antifriz::parse_uri(const std::wstring& url)
-{
-	// http://tchaikovsky.antifriz.tv:1600/s/ibzsdpt2t/demo-4k/video.m3u8
-	// http://tchaikovsky.antifriz.tv:80/demo-4k/mpegts?token=ibzsdpt2t
-
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+):(.+)\/s\/(.+)\/(.+)\/video\.m3u8$)");
-	static std::wregex re_url_mpeg(LR"(^https?:\/\/(.+):(.+)\/(.+)\/mpegts\?token=(.+)$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		port = std::move(m[2].str());
-		token = std::move(m[3].str());
-		id = std::move(m[4].str());
-		return;
-	}
-
-	if (std::regex_match(url, m, re_url_mpeg))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		port = std::move(m[2].str());
-		id = std::move(m[3].str());
-		token = std::move(m[4].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

@@ -41,6 +41,7 @@ uri_lightiptv::uri_lightiptv()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 
 	playlist_template = L"http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 	uri_hls_template = L"http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}";
 	uri_mpeg_template = L"http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
@@ -50,23 +51,4 @@ uri_lightiptv::uri_lightiptv()
 
 	secondary_epg = true;
 	epg_params[1].epg_url = L"http://epg.ott-play.com/lightiptv/epg/{ID}.json";
-}
-
-void uri_lightiptv::parse_uri(const std::wstring& url)
-{
-	// http://de1light.pp.ru:8080/6e9751628dd0dbbdd6adf4232c135d83/video.m3u8?token=ds9fsahrrk
-
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/(.+)\/video\.m3u8\?token=(.+)$)");
-
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		password = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

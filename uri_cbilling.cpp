@@ -49,6 +49,7 @@ uri_cbilling::uri_cbilling()
 	vod_supported = true;
 
 	playlist_template = L"http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
 	uri_hls_arc_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8?utc={START}&lutc={NOW}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -63,25 +64,6 @@ uri_cbilling::uri_cbilling()
 		ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_CBILLING_TV_P1 + i) });
 		servers_list.emplace_back(info);
 	}
-}
-
-void uri_cbilling::parse_uri(const std::wstring& url)
-{
-	// http://s01.iptvx.tv:8090/s/82s4fb5785dcf28dgd6ga681a94ba78f/pervyj.m3u8
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+):(.+)\/s\/(.+)\/(.+)\.m3u8$)");
-
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		port = std::move(m[2].str());
-		token = std::move(m[3].str());
-		id = std::move(m[4].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }
 
 bool uri_cbilling::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

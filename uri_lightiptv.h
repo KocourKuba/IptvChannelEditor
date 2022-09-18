@@ -31,6 +31,4 @@ class uri_lightiptv : public uri_stream
 {
 public:
 	uri_lightiptv();
-
-	void parse_uri(const std::wstring& url) override;
 };

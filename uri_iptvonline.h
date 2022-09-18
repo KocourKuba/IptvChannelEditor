@@ -31,6 +31,4 @@ class uri_iptvonline : public uri_stream
 {
 public:
 	uri_iptvonline();
-
-	void parse_uri(const std::wstring& url) override;
 };

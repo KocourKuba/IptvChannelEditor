@@ -31,5 +31,4 @@ class uri_viplime : public uri_stream
 {
 public:
 	uri_viplime();
-	void parse_uri(const std::wstring& url) override;
 };

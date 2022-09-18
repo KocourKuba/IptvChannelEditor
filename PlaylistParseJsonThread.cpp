@@ -44,21 +44,22 @@ BOOL CPlaylistParseJsonThread::InitInstance()
 {
 	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-	switch ((jsonParserType)m_config.m_parser)
+	switch (m_config.m_pluginType)
 	{
-		case jsonParserType::enJsonSharaClub:
+		case StreamType::enSharaclub:
 			ParseSharaclub();
 			break;
 
-		case jsonParserType::enJsonCbilling:
+		case StreamType::enAntifriz:
+		case StreamType::enCbilling:
 			ParseCbilling();
 			break;
 
-		case jsonParserType::enJsonEdem:
+		case StreamType::enEdem:
 			ParseEdem();
 			break;
 
-		case jsonParserType::enJsonGlanz:
+		case StreamType::enGlanz:
 			ParseGlanz();
 			break;
 

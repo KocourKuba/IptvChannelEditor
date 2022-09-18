@@ -51,6 +51,7 @@ uri_vidok::uri_vidok()
 	per_channel_token = true;
 
 	playlist_template = L"http://vidok.tv/p/{TOKEN}";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	uri_hls_template = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 	auto& params = epg_params[0];
@@ -60,23 +61,6 @@ uri_vidok::uri_vidok()
 	params.epg_desc = "description";
 	params.epg_start = "start";
 	params.epg_end = "end";
-}
-
-void uri_vidok::parse_uri(const std::wstring& url)
-{
-	// http://bddpv.hdme.top/p/7508af3ccf8194bd2339897708c06eda/1
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/p\/(.+)\/(.+)$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }
 
 std::wstring uri_vidok::get_api_token(const std::wstring& login, const std::wstring& password) const

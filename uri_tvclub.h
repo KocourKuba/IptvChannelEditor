@@ -32,7 +32,6 @@ class uri_tvclub : public uri_stream
 public:
 	uri_tvclub();
 
-	void parse_uri(const std::wstring& url) override;
 	std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 	nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const override;

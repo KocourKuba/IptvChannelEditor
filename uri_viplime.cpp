@@ -42,6 +42,7 @@ uri_viplime::uri_viplime()
 	server_subst_type = ServerSubstType::enStream;
 
 	playlist_template = L"http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
 	uri_mpeg_template = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
 
@@ -54,22 +55,4 @@ uri_viplime::uri_viplime()
 		{ L"variant",load_string_resource(IDS_STRING_VIPLIME_P4) },
 		{ L"hls",    load_string_resource(IDS_STRING_VIPLIME_P5) },
 	};
-}
-
-void uri_viplime::parse_uri(const std::wstring& url)
-{
-	// http://cdntv.online/high/z3sf8hueit/1.m3u8
-	// http://cdntv.online/high/z3sf8hueit/1.mpeg
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/(.+)\/(.+)\/(.+).m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[3].str());
-		id = std::move(m[4].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

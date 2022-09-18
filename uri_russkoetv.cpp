@@ -43,27 +43,10 @@ uri_russkoetv::uri_russkoetv()
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 
 	playlist_template = L"http://russkoetv.tv/play/{PASSWORD}.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
 	params1.epg_root = "";
-}
-
-void uri_russkoetv::parse_uri(const std::wstring& url)
-{
-	// http://myott.top/stream/S7NTAAORW5/131.m3u8
-
-	static std::wregex re_url_hls(LR"(^https?:\/\/(.+)\/s\/(.+)\/(.+)\.m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url_hls))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

@@ -32,6 +32,4 @@ class uri_onecent : public uri_stream
 public:
 
 	uri_onecent();
-
-	void parse_uri(const std::wstring& url) override;
 };

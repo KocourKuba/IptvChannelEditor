@@ -31,6 +31,5 @@ class uri_cbilling : public uri_stream
 {
 public:
 	uri_cbilling();
-	void parse_uri(const std::wstring& url) override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 };

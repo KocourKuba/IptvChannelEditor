@@ -32,7 +32,6 @@ class uri_sharaclub : public uri_stream
 public:
 	uri_sharaclub();
 
-	void parse_uri(const std::wstring& url) override;
 	void get_playlist_url(std::wstring& url, TemplateParams& params) override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 	const std::vector<ServersInfo>& get_servers_list(TemplateParams& params) override;

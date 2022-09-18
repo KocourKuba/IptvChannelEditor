@@ -44,6 +44,7 @@ uri_filmax::uri_filmax()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 
 	playlist_template = L"http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 	uri_hls_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/index.m3u8?token={TOKEN}";
 	uri_hls_arc_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
@@ -57,24 +58,4 @@ uri_filmax::uri_filmax()
 		ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_FILMAX_P1 + i) });
 		servers_list.emplace_back(info);
 	}
-}
-
-void uri_filmax::parse_uri(const std::wstring& url)
-{
-	// http://eu1-filmax.pp.ru:8080/a841f5cc3252dac06a7964c3069b4483/index.m3u8?token=42hfcmtdNzs8fGfsbgRSVGs1VGxaeE1qaFY=
-	// http://eu1-filmax.pp.ru:8080/a841f5cc3252dac06a7964c3069b4483/mpegts?token=42hfcmtdNzs8fGfsbgRSVGs1VGxaeE1qaFY=
-
-	static std::wregex re_url(LR"(^https?:\/\/(.+):(.+)\/(.+)\/index\.m3u8\?token=(.+)$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		port = std::move(m[2].str());
-		int_id = std::move(m[3].str());
-		token = std::move(m[4].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

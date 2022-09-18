@@ -42,7 +42,8 @@ uri_glanz::uri_glanz()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 	vod_supported = true;
 
-	playlist_template = L"http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
+	playlist_template = L"http://pl.ottglanz.tv/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$)";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
@@ -60,27 +61,4 @@ uri_glanz::uri_glanz()
 
 	secondary_epg = true;
 	epg_params[1].epg_url = L"http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
-}
-
-void uri_glanz::parse_uri(const std::wstring& url)
-{
-	// http://str01.ottg.cc/9195/video.m3u8?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL
-	// http://str01.ottg.cc/9195/mpegts?username=sharky72&password=F8D58856LWX&token=f5afea07cef148278ae074acaf67a547&ch_id=70&req_host=pkSx3BL
-
-	static std::wregex re_url(LR"(^https?:\/\/(.+)\/(.+)\/.+\?username=(.+)&password=(.+)&token=(.+)&ch_id=(\d+)&req_host=(.+)$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		id = std::move(m[2].str());
-		login = std::move(m[3].str());
-		password = std::move(m[4].str());
-		token = std::move(m[5].str());
-		int_id = std::move(m[6].str());
-		host = std::move(m[7].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }

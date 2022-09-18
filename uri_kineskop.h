@@ -32,6 +32,4 @@ class uri_kineskop : public uri_stream
 public:
 
 	uri_kineskop();
-
-	void parse_uri(const std::wstring& url) override;
 };

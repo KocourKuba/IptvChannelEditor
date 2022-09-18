@@ -250,7 +250,6 @@ public:
 	std::wstring m_rootPath;
 	std::wstring m_url;
 	bool m_use_cache = true;
-	int m_parser = 0;
 };
 
 class PluginsConfig

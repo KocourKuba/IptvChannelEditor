@@ -43,6 +43,7 @@ uri_edem::uri_edem()
 	vod_supported = true;
 
 	uri_hls_template = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";
 
 	auto& params = epg_params[0];
 	params.epg_url = L"http://epg.drm-play.ml/edem/epg/{ID}.json";
@@ -59,24 +60,6 @@ uri_edem::uri_edem()
 	info.name = load_string_resource(IDS_STRING_CUSTOM_PLAYLIST);
 	info.is_custom = true;
 	playlists.emplace_back(info);
-}
-
-void uri_edem::parse_uri(const std::wstring& url)
-{
-	// http://localhost/iptv/00000000000000/204/index.m3u8
-
-	static std::wregex re_url(LR"(^https?:\/\/(.+)\/iptv\/(.+)\/(\d+)\/.*\.m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }
 
 void uri_edem::get_playlist_url(std::wstring& url, TemplateParams& params)

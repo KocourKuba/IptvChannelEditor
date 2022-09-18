@@ -45,7 +45,71 @@ void uri_stream::clear()
 
 void uri_stream::parse_uri(const std::wstring& url)
 {
-	uri_base::set_uri(url);
+	std::vector<std::wstring> groups;
+	std::wstring pre_re(uri_parse_template);
+	std::wregex re_group(L"(\\?<([^>]+)>)");
+	std::match_results<std::wstring::const_iterator> ms;
+	while (std::regex_search(pre_re, ms, re_group))
+	{
+		groups.emplace_back(ms[2]);
+		pre_re.erase(ms.position(), ms.length());
+	}
+
+	std::wregex re_url(pre_re);
+	std::wsmatch m;
+	if (!std::regex_match(url, m, re_url))
+	{
+		uri_base::set_uri(url);
+		return;
+	}
+
+	templated = true;
+	size_t pos = 0;
+	for (const auto& group : groups)
+	{
+		pos++;
+		if (group == L"domain")
+		{
+			domain = std::move(m[pos].str());
+		}
+		else if (group == L"id")
+		{
+			id = std::move(m[pos].str());
+		}
+		else if (group == L"login")
+		{
+			login = std::move(m[pos].str());
+		}
+		else if (group == L"password")
+		{
+			password = std::move(m[pos].str());
+		}
+		else if (group == L"token")
+		{
+			token = std::move(m[pos].str());
+		}
+		else if (group == L"int_id")
+		{
+			int_id = std::move(m[pos].str());
+		}
+		else if (group == L"host")
+		{
+			host = std::move(m[pos].str());
+		}
+		else if (group == L"port")
+		{
+			port = std::move(m[pos].str());
+		}
+		else if (group == L"quality")
+		{
+			// just skip
+		}
+		else
+		{
+			// unknown group. fix parser!
+			assert(false);
+		}
+	}
 }
 
 void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
@@ -67,13 +131,13 @@ void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
 
 	if (!servers_list.empty())
 	{
-		int server = (params.server >= servers_list.size()) ? servers_list.size() - 1 : params.server;
+		int server = (params.server >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server;
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].id);
 	}
 
 	if (!quality_list.empty())
 	{
-		int quality = (params.quality >= quality_list.size()) ? quality_list.size() - 1 : params.quality;
+		int quality = (params.quality >= (int)quality_list.size()) ? quality_list.size() - 1 : params.quality;
 		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[quality].id);
 	}
 }
@@ -145,6 +209,19 @@ const int uri_stream::get_hash() const
 	}
 
 	return hash;
+}
+
+const std::wstring& uri_stream::get_vod_url(TemplateParams& params) const
+{
+	std::wstring url(provider_vod_url);
+	if (!params.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+
+	if (!params.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+
+	return url;
 }
 
 const std::map<std::wstring, std::wstring>& uri_stream::get_epg_id_mapper(int epg_idx)

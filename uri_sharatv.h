@@ -32,6 +32,4 @@ class uri_sharatv : public uri_stream
 public:
 
 	uri_sharatv();
-
-	void parse_uri(const std::wstring& url) override;
 };

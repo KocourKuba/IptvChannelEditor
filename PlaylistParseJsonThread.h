@@ -28,15 +28,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "Config.h"
 
-enum class jsonParserType
-{
-	enUnknown = 0,
-	enJsonSharaClub,
-	enJsonCbilling,
-	enJsonEdem,
-	enJsonGlanz,
-};
-
 class CPlaylistParseJsonThread : public CWinThread
 {
 	DECLARE_DYNCREATE(CPlaylistParseJsonThread)

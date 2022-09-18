@@ -49,6 +49,7 @@ uri_sharaclub::uri_sharaclub()
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
 
 	playlist_template = L"http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
+	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 	uri_hls_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 	uri_mpeg_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 
@@ -56,26 +57,8 @@ uri_sharaclub::uri_sharaclub()
 	params.epg_root = "";
 	params.epg_url = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
 	provider_api_url = API_URL;
-	provider_vod_url = L"http://{:s}/kino-full/{:s}-{:s}";
+	provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
 	vod_supported = true;
-}
-
-void uri_sharaclub::parse_uri(const std::wstring& url)
-{
-	// http://em.gazoni1.com:80/live/s.277258.1d25esee4e77f0419432d2ed8eb0ee525/pervyHD/video.m3u8
-
-	static std::wregex re_url(LR"(^https?:\/\/(.+)\/live\/(.+)\/(.+)\/.+\.m3u8$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		id = std::move(m[3].str());
-		return;
-	}
-
-	uri_stream::parse_uri(url);
 }
 
 void uri_sharaclub::get_playlist_url(std::wstring& url, TemplateParams& params)
