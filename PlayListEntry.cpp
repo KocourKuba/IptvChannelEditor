@@ -104,23 +104,23 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		case StreamType::enOneOtt:
 		case StreamType::enCbilling:
 		case StreamType::enShuraTV:
-			set_epg_id(0, stream_uri->get_id()); // primary EPG
+			set_epg_id(0, stream_uri->get_parser().id); // primary EPG
 			break;
 		case StreamType::enLightIptv:
 		case StreamType::enFilmax:
 		{
 			auto epg_id = get_epg_id(0);
-			stream_uri->set_id(epg_id);
+			stream_uri->get_parser().id = epg_id;
 			epg_id.erase(std::remove(epg_id.begin(), epg_id.end(), '/'), epg_id.end());
 			set_epg_id(0, epg_id);
 			break;
 		}
 		case StreamType::enOttclub:
-			set_epg_id(0, stream_uri->get_id()); // primary EPG
-			set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", stream_uri->get_domain(), stream_uri->get_id()));
+			set_epg_id(0, stream_uri->get_parser().id); // primary EPG
+			set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", stream_uri->get_parser().domain, stream_uri->get_parser().id));
 			break;
 		case StreamType::enVidok:
-			set_icon_uri(fmt::format(L"http://ott.st/logos/{:s}.png", stream_uri->get_id()));
+			set_icon_uri(fmt::format(L"http://ott.st/logos/{:s}.png", stream_uri->get_parser().id));
 			break;
 		case StreamType::enKineskop:
 			set_icon_uri(std::regex_replace(get_icon_uri().get_uri(), std::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
@@ -140,11 +140,11 @@ void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::wstring>
 {
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_channel_id); pair != tags.end())
 	{
-		stream_uri->set_id(pair->second);
+		stream_uri->get_parser().id = pair->second;
 	}
 	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_cuid); pair != tags.end())
 	{
-		stream_uri->set_id(pair->second);
+		stream_uri->get_parser().id = pair->second;
 	}
 }
 

@@ -694,8 +694,8 @@ void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
 			m3u_entry m3uEntry(line);
 			if (!entry->Parse(line, m3uEntry)) continue;
 
-			const auto& access_key = entry->get_uri_stream()->get_token();
-			const auto& domain = entry->get_uri_stream()->get_domain();
+			const auto& access_key = entry->get_uri_stream()->get_parser().token;
+			const auto& domain = entry->get_uri_stream()->get_parser().domain;
 			if (!access_key.empty() && !domain.empty() && access_key != L"00000000000000" && domain != L"localhost")
 			{
 				int cnt = m_wndAccounts.GetItemCount();
@@ -932,11 +932,11 @@ void CAccessInfoDlg::GetAccountInfo()
 	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
 	auto& uri = entry->stream_uri;
 	uri->set_template(false);
-	uri->set_login(login);
-	uri->set_password(password);
-	uri->set_token(token);
-	uri->set_subdomain(domain);
-	uri->set_host(m_host);
+	uri->get_parser().login = login;
+	uri->get_parser().password = password;
+	uri->get_parser().token = token;
+	uri->get_parser().subdomain = domain;
+	uri->get_parser().host = m_host;
 
 	TemplateParams params;
 	params.login = std::move(login);
@@ -1011,15 +1011,15 @@ void CAccessInfoDlg::GetAccountInfo()
 			{
 				utils::string_rtrim(line, L"\r");
 				m3u_entry m3uEntry(line);
-				if (entry->Parse(line, m3uEntry) && !uri->get_token().empty())
+				if (entry->Parse(line, m3uEntry) && !uri->get_parser().token.empty())
 				{
 					// do not override fake ott and domain for edem
 					if (m_plugin->get_access_type() != AccountAccessType::enOtt)
 					{
-						selected.token = get_utf8(uri->get_token());
-						selected.domain = get_utf8(uri->get_domain());
+						selected.token = get_utf8(uri->get_parser().token);
+						selected.domain = get_utf8(uri->get_parser().domain);
 					}
-					m_host = uri->get_host();
+					m_host = uri->get_parser().host;
 					m_status = _T("Ok");
 					break;
 				}

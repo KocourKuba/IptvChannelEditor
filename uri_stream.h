@@ -125,6 +125,23 @@ struct EpgParameters
 };
 
 /// <summary>
+/// Parsed variable groups for generate playing stream
+/// </summary>
+struct ParsingGroups
+{
+	std::wstring id;
+	std::wstring domain;
+	std::wstring port;
+	std::wstring login;
+	std::wstring password;
+	std::wstring subdomain;
+	std::wstring token;
+	std::wstring int_id;
+	std::wstring quality;
+	std::wstring host;
+};
+
+/// <summary>
 /// Interface for stream
 /// </summary>
 class uri_stream : public uri_base
@@ -162,16 +179,15 @@ public:
 	void clear() override;
 
 	/// <summary>
-	/// getter channel id
+	/// returns parser parameters
 	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_id() const { return templated ? id : str_hash; }
+	const ParsingGroups& get_parser() const noexcept{ return parser; }
+	ParsingGroups& get_parser() noexcept { return parser; }
 
 	/// <summary>
-	/// setter channel id
+	/// set parser parameters
 	/// </summary>
-	/// <param name="val"></param>
-	void set_id(const std::wstring& val) { id = val; }
+	void set_parser(const ParsingGroups& src) { parser = src; }
 
 	/// <summary>
 	/// getter channel hash
@@ -188,94 +204,6 @@ public:
 	/// clear hash variables
 	/// </summary>
 	void clear_hash() { hash = 0; str_hash.clear(); }
-
-	/// <summary>
-	/// getter domain
-	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_domain() const { return domain; };
-
-	/// <summary>
-	/// setter domain
-	/// </summary>
-	void set_domain(const std::wstring& val) { domain = val; };
-
-	/// <summary>
-	/// getter port
-	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_port() const { return port; };
-
-	/// <summary>
-	/// setter port
-	/// </summary>
-	void set_port(const std::wstring& val) { port = val; };
-
-	/// <summary>
-	/// getter login
-	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_login() const { return login; };
-
-	/// <summary>
-	/// setter login
-	/// </summary>
-	void set_login(const std::wstring& val) { login = val; };
-
-	/// <summary>
-	/// setter password
-	/// </summary>
-	void set_password(const std::wstring& val) { password = val; };
-
-	/// <summary>
-	/// getter password
-	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_password() const { return password; };
-
-	/// <summary>
-	/// setter int_id
-	/// </summary>
-	void set_int_id(const std::wstring& val) { int_id = val; };
-
-	/// <summary>
-	/// getter int_id
-	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_int_id() const { return int_id; };
-
-	/// <summary>
-	/// setter host
-	/// </summary>
-	void set_host(const std::wstring& val) { host = val; };
-
-	/// <summary>
-	/// getter host
-	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_host() const { return host; };
-
-	/// <summary>
-	/// getter subdomain
-	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_subdomain() const { return subdomain; };
-
-	/// <summary>
-	/// setter subdomain
-	/// </summary>
-	void set_subdomain(const std::wstring& val) { subdomain = val; };
-
-	/// <summary>
-	/// getter token
-	/// </summary>
-	/// <returns>string</returns>
-	const std::wstring& get_token() const { return token; };
-
-	/// <summary>
-	/// setter token
-	/// </summary>
-	void set_token(const std::wstring& val) { token = val; };
 
 	/// <summary>
 	/// copy info
@@ -305,13 +233,7 @@ public:
 			set_schema(src.get_schema());
 			set_path(src.get_path());
 			set_template(src.is_template());
-			id = src.id;
-			domain = src.domain;
-			login = src.login;
-			password = src.password;
-			token = src.token;
-			int_id = src.int_id;
-			host = src.host;
+			set_parser(src.get_parser());
 			str_hash = src.str_hash;
 			hash = src.hash;
 		}
@@ -365,7 +287,7 @@ public:
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>wstring</returns>
-	const std::wstring& get_vod_url(TemplateParams& params) const;
+	std::wstring get_vod_url(TemplateParams& params) const;
 
 	/// <summary>
 	/// supported streams HLS,MPEGTS etc.
@@ -518,11 +440,12 @@ protected:
 	time_t get_json_int_value(const std::string& key, const nlohmann::json& val) const;
 
 protected:
+	ServerSubstType server_subst_type = ServerSubstType::enNone;
+	AccountAccessType access_type = AccountAccessType::enOtt;
+
 	std::array <EpgParameters, 2> epg_params;
 	std::vector<std::tuple<StreamSubType, std::wstring>> support_streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
-	ServerSubstType server_subst_type = ServerSubstType::enNone;
-	AccountAccessType access_type = AccountAccessType::enOtt;
 	std::array<CatchupType, 2> catchup_type;
 
 	std::vector<ServersInfo> servers_list;
@@ -540,15 +463,8 @@ protected:
 	std::wstring uri_hls_arc_template;
 	std::wstring uri_mpeg_template;
 	std::wstring uri_mpeg_arc_template;
-	std::wstring id;
-	std::wstring domain;
-	std::wstring port;
-	std::wstring login;
-	std::wstring password;
-	std::wstring subdomain;
-	std::wstring token;
-	std::wstring int_id;
-	std::wstring host;
+
+	ParsingGroups parser;
 
 	int catchup_duration = 10800;
 	bool vod_supported = false;

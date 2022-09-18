@@ -39,7 +39,7 @@ uri_stream::uri_stream(const uri_stream& src)
 void uri_stream::clear()
 {
 	uri_base::clear();
-	id.clear();
+	parser.id.clear();
 	clear_hash();
 }
 
@@ -70,39 +70,39 @@ void uri_stream::parse_uri(const std::wstring& url)
 		pos++;
 		if (group == L"domain")
 		{
-			domain = std::move(m[pos].str());
+			parser.domain = std::move(m[pos].str());
 		}
 		else if (group == L"id")
 		{
-			id = std::move(m[pos].str());
+			parser.id = std::move(m[pos].str());
 		}
 		else if (group == L"login")
 		{
-			login = std::move(m[pos].str());
+			parser.login = std::move(m[pos].str());
 		}
 		else if (group == L"password")
 		{
-			password = std::move(m[pos].str());
+			parser.password = std::move(m[pos].str());
 		}
 		else if (group == L"token")
 		{
-			token = std::move(m[pos].str());
+			parser.token = std::move(m[pos].str());
 		}
 		else if (group == L"int_id")
 		{
-			int_id = std::move(m[pos].str());
+			parser.int_id = std::move(m[pos].str());
 		}
 		else if (group == L"host")
 		{
-			host = std::move(m[pos].str());
+			parser.host = std::move(m[pos].str());
 		}
 		else if (group == L"port")
 		{
-			port = std::move(m[pos].str());
+			parser.port = std::move(m[pos].str());
 		}
 		else if (group == L"quality")
 		{
-			// just skip
+			parser.quality = std::move(m[pos].str());
 		}
 		else
 		{
@@ -203,7 +203,7 @@ const int uri_stream::get_hash() const
 	if (!hash)
 	{
 		// convert to utf8
-		const auto& uri = utils::utf16_to_utf8(is_template() ? id : get_uri());
+		const auto& uri = utils::utf16_to_utf8(is_template() ? parser.id : get_uri());
 		hash = crc32_bitwise(uri.c_str(), uri.size());
 		str_hash = std::to_wstring(hash);
 	}
@@ -211,7 +211,7 @@ const int uri_stream::get_hash() const
 	return hash;
 }
 
-const std::wstring& uri_stream::get_vod_url(TemplateParams& params) const
+std::wstring uri_stream::get_vod_url(TemplateParams& params) const
 {
 	std::wstring url(provider_vod_url);
 	if (!params.login.empty())
@@ -219,7 +219,6 @@ const std::wstring& uri_stream::get_vod_url(TemplateParams& params) const
 
 	if (!params.password.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
-
 
 	return url;
 }
@@ -365,7 +364,7 @@ std::wstring uri_stream::compile_epg_url(int epg_idx, const std::wstring& epg_id
 	}
 	else if (params.epg_use_id_hash)
 	{
-		subst_id = fmt::format(L"{:d}", xxh::xxhash<32>(utils::utf16_to_utf8(id)));
+		subst_id = fmt::format(L"{:d}", xxh::xxhash<32>(utils::utf16_to_utf8(parser.id)));
 	}
 	else
 	{
@@ -384,7 +383,7 @@ std::wstring uri_stream::compile_epg_url(int epg_idx, const std::wstring& epg_id
 	lt.tm_sec = 0;
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TIME, fmt::format(L"{:d}", std::mktime(&lt)));
 
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, token);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, parser.token);
 
 	return epg_template;
 }
@@ -423,20 +422,20 @@ void uri_stream::put_account_info(const std::string& name, const nlohmann::json&
 
 void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) const
 {
-	if (!get_domain().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, get_domain());
+	if (!parser.domain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, parser.domain);
 
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
-	if (!get_port().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, get_port());
+	if (!parser.port.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, parser.port);
 
-	if (!get_id().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_ID, get_id());
+	if (!parser.id.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_ID, parser.id);
 
-	if (!get_token().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, get_token());
+	if (!parser.token.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, parser.token);
 
 	if (params.shift_back)
 		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
@@ -450,8 +449,8 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (!params.password.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
 
-	if (!get_int_id().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, get_int_id());
+	if (!parser.int_id.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, parser.int_id);
 
 	if (!params.host.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);

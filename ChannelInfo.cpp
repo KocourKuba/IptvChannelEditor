@@ -60,8 +60,8 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 
 	set_title(rapidxml::get_value_wstring(node->first_node(utils::CAPTION)));
 	stream_uri->set_template(true);
-	stream_uri->set_id(rapidxml::get_value_wstring(node->first_node(utils::CHANNEL_ID)));
-	stream_uri->set_int_id(rapidxml::get_value_wstring(node->first_node(utils::INT_ID)));
+	stream_uri->get_parser().id = rapidxml::get_value_wstring(node->first_node(utils::CHANNEL_ID));
+	stream_uri->get_parser().int_id = rapidxml::get_value_wstring(node->first_node(utils::INT_ID));
 	set_epg_id(0, rapidxml::get_value_wstring(node->first_node(utils::EPG1_ID)));
 	set_epg_id(1, rapidxml::get_value_wstring(node->first_node(utils::EPG2_ID)));
 	set_icon_uri(rapidxml::get_value_wstring(node->first_node(ICON_URL)));
@@ -85,7 +85,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		categories.emplace(rapidxml::get_value_int(node->first_node(utils::TV_CATEGORY_ID)));
 	}
 
-	if (stream_uri->get_id().empty())
+	if (stream_uri->get_parser().id.empty())
 	{
 		stream_uri->set_template(false);
 		stream_uri->parse_uri(rapidxml::get_value_wstring(node->first_node(utils::STREAMING_URL)));
@@ -106,13 +106,13 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// <channel_id>1</channel_id> or <channel_id>tv3</channel_id>
 	if (stream_uri->is_template())
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CHANNEL_ID, utils::utf16_to_utf8(stream_uri->get_id()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CHANNEL_ID, utils::utf16_to_utf8(stream_uri->get_parser().id).c_str()));
 
 	// used in glanz
 	// <int_id>1</int_id>
-	if (!stream_uri->get_int_id().empty())
+	if (!stream_uri->get_parser().int_id.empty())
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::INT_ID, utils::utf16_to_utf8(stream_uri->get_int_id()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::INT_ID, utils::utf16_to_utf8(stream_uri->get_parser().int_id).c_str()));
 	}
 
 	// <epg_id>8</epg_id>

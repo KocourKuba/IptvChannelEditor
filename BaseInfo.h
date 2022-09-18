@@ -72,9 +72,9 @@ public:
 
 	void swap_id(BaseInfo& src)
 	{
-		auto tmp = src.stream_uri->get_id();
-		src.stream_uri->set_id(stream_uri->get_id());
-		src.stream_uri->set_id(tmp);
+		auto tmp = src.stream_uri->get_parser().id;
+		src.stream_uri->get_parser().id = stream_uri->get_parser().id;
+		src.stream_uri->get_parser().id = tmp;
 	}
 
 	bool is_type(InfoType type) const { return base_type == type; }
