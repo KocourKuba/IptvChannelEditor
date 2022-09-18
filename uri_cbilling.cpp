@@ -27,9 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "uri_cbilling.h"
 #include "PlayListEntry.h"
-#include "IPTVChannelEditor.h"
 
-#include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
@@ -37,34 +35,6 @@ DEALINGS IN THE SOFTWARE.
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-// API documentation http://protected-api.com/api/documentation
-
-uri_cbilling::uri_cbilling()
-{
-	provider_url = L"https://cbilling.eu/";
-	provider_vod_url = L"http://protected-api.com";
-	access_type = AccountAccessType::enPin;
-	catchup_type = { CatchupType::cu_shift, CatchupType::cu_flussonic };
-	vod_supported = true;
-
-	playlist_template = L"http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8";
-	uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
-	uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
-	uri_hls_arc_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8?utc={START}&lutc={NOW}";
-	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
-
-	auto& params1 = epg_params[0];
-	params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
-	params1.epg_root = "";
-
-	for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
-	{
-		ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_CBILLING_TV_P1 + i) });
-		servers_list.emplace_back(info);
-	}
-}
 
 bool uri_cbilling::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {

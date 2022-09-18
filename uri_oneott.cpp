@@ -35,31 +35,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// http://{DOMAIN}/PinApi/{LOGIN}/{PASSWORD}
-
-uri_oneott::uri_oneott()
-{
-	provider_url = L"http://1ott.net/";
-	access_type = AccountAccessType::enLoginPass;
-	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
-
-	playlist_template = L"http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
-	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
-	uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-	uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}";
-
-	auto& params1 = epg_params[0];
-	params1.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
-	params1.epg_root = "";
-	params1.epg_name = "epg";
-	params1.epg_desc = "desc";
-	params1.epg_start = "start";
-	params1.epg_end = "stop";
-
-	secondary_epg = true;
-	epg_params[1].epg_url = L"http://epg.drm-play.ml/1ott/epg/{ID}.json";
-}
-
 bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";

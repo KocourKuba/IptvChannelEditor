@@ -27,8 +27,32 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "uri_stream.h"
 
+// API documentation http://protected-api.com/api/documentation
+
 class uri_antifriz : public uri_stream
 {
 public:
-	uri_antifriz();;
+
+	uri_antifriz()
+	{
+		provider_url = L"https://antifriztv.com/";
+		access_type = AccountAccessType::enPin;
+		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+
+		playlist_template = L"http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
+
+		catchup.uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
+		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{ID}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
+
+		catchup.uri_mpeg_template = L"http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
+		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+
+		auto& params1 = epg_params[0];
+		params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+		params1.epg_root = "";
+
+		provider_vod_url = L"http://protected-api.com";
+		vod_supported = true;
+	}
 };

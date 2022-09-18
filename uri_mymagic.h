@@ -26,10 +26,43 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
+#include "IptvChannelEditor.h"
 
 class uri_mymagic : public uri_stream
 {
 public:
 
-	uri_mymagic();
+	uri_mymagic()
+	{
+		provider_url = L"http://mymagic.tv/";
+		access_type = AccountAccessType::enLoginPass;
+		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+		support_streams = { {StreamSubType::enHLS, L"HLS"} };
+		parser.per_channel_token = true;
+
+		playlist_template = L"http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
+		catchup.uri_hls_template = L"http://{DOMAIN}/{TOKEN}";
+
+		epg_params[0].epg_url = L"http://epg.drm-play.ml/magic/epg/{ID}.json";
+
+		secondary_epg = true;
+		epg_params[1].epg_url = L"http://epg.esalecrm.net/magic/epg/{ID}.json";
+
+		servers_list = {
+			{ L"0", load_string_resource(IDS_STRING_MYMAGIC_P0) },
+			{ L"1", load_string_resource(IDS_STRING_MYMAGIC_P1) },
+			{ L"2", load_string_resource(IDS_STRING_MYMAGIC_P2) },
+			{ L"3", load_string_resource(IDS_STRING_MYMAGIC_P3) },
+			{ L"4", load_string_resource(IDS_STRING_MYMAGIC_P4) },
+			{ L"5", load_string_resource(IDS_STRING_MYMAGIC_P5) },
+			{ L"6", load_string_resource(IDS_STRING_MYMAGIC_P6) },
+		};
+
+		quality_list = {
+			{ L"0", load_string_resource(IDS_STRING_MYMAGIC_Q1) },
+			{ L"1", load_string_resource(IDS_STRING_MYMAGIC_Q2) },
+		};
+	}
+
 };

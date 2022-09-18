@@ -30,11 +30,9 @@ DEALINGS IN THE SOFTWARE.
 
 enum class CatchupType {
 	cu_none,
-	cu_default,
-	cu_append,
 	cu_shift,
+	cu_append,
 	cu_flussonic,
-	cu_fs
 };
 
 enum class ServerSubstType {
@@ -138,6 +136,26 @@ struct ParsingGroups
 	std::wstring int_id;
 	std::wstring quality;
 	std::wstring host;
+	bool per_channel_token = false;
+};
+
+struct CatchupParameters
+{
+	std::array<CatchupType, 2> catchup_type;
+
+	std::wstring uri_hls_template;
+	std::wstring uri_mpeg_template;
+
+	std::wstring uri_mpeg_arc_template;
+
+	std::wstring shift_hls_replace = L"utc";
+	std::wstring flussonic_hls_replace = L"archive";
+
+	std::wstring uri_hls_arc_template;
+	std::wstring shift_mpeg_replace = L"utc";
+	std::wstring flussonic_mpeg_replace = L"archive";
+
+	int catchup_duration = 10800;
 };
 
 /// <summary>
@@ -164,6 +182,8 @@ protected:
 	static constexpr auto REPL_DATE      = L"{DATE}";      // EPG date (set by format)
 	static constexpr auto REPL_TIME      = L"{TIME}";      // EPG time (set by format)
 
+	static constexpr auto REPL_MPEG_FLUSSONIC = L"{HLS_FLUSSONIC}";
+	static constexpr auto REPL_HLS_FLUSSONIC  = L"{MPEG_FLUSSONIC}";
 
 public:
 	uri_stream();
@@ -239,12 +259,6 @@ public:
 
 		return *this;
 	}
-
-	/// <summary>
-	/// returns is uri has unique token per channel
-	/// </summary>
-	/// <returns>wstring</returns>
-	bool is_per_channel_token() const { return per_channel_token; }
 
 	/// <summary>
 	/// returns link to provider account
@@ -384,13 +398,6 @@ public:
 	/// </summary>
 	/// <param name="url">url/secondary</param>
 	/// <returns>wstring&</returns>
-	virtual std::wstring append_archive(const TemplateParams& params, const std::wstring& url) const;
-
-	/// <summary>
-	/// add archive parameters to url
-	/// </summary>
-	/// <param name="url">url/secondary</param>
-	/// <returns>wstring&</returns>
 	virtual std::wstring shift_archive(const TemplateParams& params, const std::wstring& url) const;
 
 	/// <summary>
@@ -434,10 +441,6 @@ protected:
 
 	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
-	std::string get_json_string_value(const std::string& key, const nlohmann::json& val) const;
-
-	time_t get_json_int_value(const std::string& key, const nlohmann::json& val) const;
-
 protected:
 	ServerSubstType server_subst_type = ServerSubstType::enNone;
 	AccountAccessType access_type = AccountAccessType::enOtt;
@@ -445,30 +448,22 @@ protected:
 	std::array <EpgParameters, 2> epg_params;
 	std::vector<std::tuple<StreamSubType, std::wstring>> support_streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 
-	std::array<CatchupType, 2> catchup_type;
-
 	std::vector<ServersInfo> servers_list;
 	std::vector<ProfilesInfo> profiles_list;
 	std::vector<QualityInfo> quality_list;
 	std::vector<PlaylistInfo> playlists;
 
-	std::wstring catchup_source;
 	std::wstring provider_url;
 	std::wstring provider_api_url;
 	std::wstring provider_vod_url;
 	std::wstring playlist_template;
 	std::wstring uri_parse_template;
-	std::wstring uri_hls_template;
-	std::wstring uri_hls_arc_template;
-	std::wstring uri_mpeg_template;
-	std::wstring uri_mpeg_arc_template;
 
+	CatchupParameters catchup;
 	ParsingGroups parser;
 
-	int catchup_duration = 10800;
 	bool vod_supported = false;
 	bool secondary_epg = false;
-	bool per_channel_token = false;
 
 	mutable std::wstring str_hash;
 	mutable int hash = 0;

@@ -26,10 +26,30 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
+#include "IptvChannelEditor.h"
 
 class uri_kineskop : public uri_stream
 {
 public:
 
-	uri_kineskop();
+	uri_kineskop()
+	{
+		provider_url = L"http://kineskop.club/";
+		epg_params[0].epg_url = L"http://epg.esalecrm.net/kineskop/epg/{ID}.json";
+		access_type = AccountAccessType::enLoginPass;
+		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_flussonic };
+		support_streams = { {StreamSubType::enHLS, L"HLS"} };
+		parser.per_channel_token = true;
+
+		playlist_template = L"http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER_ID}/1";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
+		catchup.uri_hls_template = L"http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
+
+		for (int i = 0; i <= IDS_STRING_KINESKOP_P4 - IDS_STRING_KINESKOP_P1; i++)
+		{
+			parser.id = load_string_resource(IDS_STRING_KINESKOP_P1 + i);
+			ServersInfo info({ utils::wstring_tolower(parser.id), parser.id });
+			servers_list.emplace_back(info);
+		}
+	}
 };

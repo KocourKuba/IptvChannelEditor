@@ -34,30 +34,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-uri_edem::uri_edem()
-{
-	provider_url = L"https://ilook.tv/";
-	access_type = AccountAccessType::enOtt;
-	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
-	support_streams = { {StreamSubType::enHLS, L"HLS"} };
-	vod_supported = true;
-
-	uri_hls_template = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
-	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";
-
-	auto& params = epg_params[0];
-	params.epg_url = L"http://epg.drm-play.ml/edem/epg/{ID}.json";
-
-	playlists.clear();
-
-	PlaylistInfo info;
-	info.name = load_string_resource(IDS_STRING_EDEM_STANDARD);
-	playlists.emplace_back(info);
-
-	info.name = load_string_resource(IDS_STRING_EDEM_THEMATIC);
-	playlists.emplace_back(info);
-}
-
 void uri_edem::get_playlist_url(std::wstring& url, TemplateParams& params)
 {
 	static constexpr auto PLAYLIST_TEMPLATE1 = L"http://epg.it999.ru/edem_epg_ico.m3u8";

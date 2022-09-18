@@ -26,9 +26,32 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
+#include "IPTVChannelEditor.h"
 
 class uri_viplime : public uri_stream
 {
 public:
-	uri_viplime();
+
+	uri_viplime()
+	{
+		provider_url = L"http://viplime.fun/";
+		access_type = AccountAccessType::enPin;
+		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
+		server_subst_type = ServerSubstType::enStream;
+
+		playlist_template = L"http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
+		catchup.uri_hls_template = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
+		catchup.uri_mpeg_template = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
+
+		epg_params[0].epg_url = L"http://epg.drm-play.ml/viplime/epg/{ID}.json";
+
+		quality_list = {
+			{ L"high",   load_string_resource(IDS_STRING_VIPLIME_P1) },
+			{ L"middle", load_string_resource(IDS_STRING_VIPLIME_P2) },
+			{ L"low",    load_string_resource(IDS_STRING_VIPLIME_P3) },
+			{ L"variant",load_string_resource(IDS_STRING_VIPLIME_P4) },
+			{ L"hls",    load_string_resource(IDS_STRING_VIPLIME_P5) },
+		};
+	}
 };

@@ -52,6 +52,12 @@
     <Filter Include="Source Files\uri\shift">
       <UniqueIdentifier>{42e4379f-0045-4f1e-8a9a-1b2ca0cb592c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\uri\flussionic">
+      <UniqueIdentifier>{88dd3ef1-3863-49cc-8ca9-82cca5c1e3ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\uri\shift">
+      <UniqueIdentifier>{75e47631-0131-4961-a097-51e60dda0fe6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">
@@ -102,13 +108,7 @@
     <ClInclude Include="BaseInfo.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="uri_edem.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="uri_base.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_sharavoz.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
     <ClInclude Include="uri_channels.h">
@@ -126,47 +126,17 @@
     <ClInclude Include="ImageContainer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="uri_sharaclub.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="IconsListDlg.h">
       <Filter>Header Files\Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_glanz.h">
-      <Filter>Header Files\uri</Filter>
     </ClInclude>
     <ClInclude Include="map_serializer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="uri_antifriz.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="AccessInfoDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="uri_oneusd.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_fox.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="GetStreamInfoThread.h">
       <Filter>Header Files\Threads</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_itv.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_onecent.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_sharatv.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_viplime.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_tvteam.h">
-      <Filter>Header Files\uri</Filter>
     </ClInclude>
     <ClInclude Include="TrayIcon.h">
       <Filter>Header Files\Controls</Filter>
@@ -179,9 +149,6 @@
     </ClInclude>
     <ClInclude Include="PlaylistParseXMLThread.h">
       <Filter>Header Files\Threads</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_oneott.h">
-      <Filter>Header Files\uri</Filter>
     </ClInclude>
     <ClInclude Include="IconLinkDlg.h">
       <Filter>Header Files\Dialogs</Filter>
@@ -201,29 +168,8 @@
     <ClInclude Include="UpdateSettingsPage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="uri_lightiptv.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_cbilling.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_ottclub.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_iptvonline.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_vidok.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_shuratv.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="EpgListDlg.h">
       <Filter>Header Files\Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_tvclub.h">
-      <Filter>Header Files\uri</Filter>
     </ClInclude>
     <ClInclude Include="EditableListCtrl.h">
       <Filter>Header Files\Controls</Filter>
@@ -233,9 +179,6 @@
     </ClInclude>
     <ClInclude Include="UrlDlg.h">
       <Filter>Header Files\Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_filmax.h">
-      <Filter>Header Files\uri</Filter>
     </ClInclude>
     <ClInclude Include="vod_movie.h">
       <Filter>Header Files\vod</Filter>
@@ -252,20 +195,80 @@
     <ClInclude Include="ResizedPropertySheet.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="uri_kineskop.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_mymagic.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_russkoetv.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_smile.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="MySplitButton.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_antifriz.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_cbilling.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_edem.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_filmax.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_fox.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_glanz.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_iptvonline.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_itv.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_kineskop.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_lightiptv.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_mymagic.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_onecent.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_oneott.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_oneusd.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_ottclub.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_russkoetv.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_sharaclub.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_sharavoz.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_shuratv.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_tvteam.h">
+      <Filter>Header Files\uri\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_viplime.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_sharatv.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_tvclub.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_vidok.h">
+      <Filter>Header Files\uri\shift</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -380,19 +383,7 @@
     <ClCompile Include="ResizedPropertySheet.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="uri_antifriz.cpp">
-      <Filter>Source Files\uri\flussonic</Filter>
-    </ClCompile>
     <ClCompile Include="uri_cbilling.cpp">
-      <Filter>Source Files\uri\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_filmax.cpp">
-      <Filter>Source Files\uri\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_glanz.cpp">
-      <Filter>Source Files\uri\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_iptvonline.cpp">
       <Filter>Source Files\uri\flussonic</Filter>
     </ClCompile>
     <ClCompile Include="uri_itv.cpp">
@@ -401,55 +392,16 @@
     <ClCompile Include="uri_edem.cpp">
       <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
-    <ClCompile Include="uri_fox.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_kineskop.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_lightiptv.cpp">
-      <Filter>Source Files\uri\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_mymagic.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_onecent.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
     <ClCompile Include="uri_oneott.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_oneusd.cpp">
-      <Filter>Source Files\uri\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_ottclub.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_russkoetv.cpp">
       <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
     <ClCompile Include="uri_sharaclub.cpp">
       <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
-    <ClCompile Include="uri_sharatv.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_sharavoz.cpp">
-      <Filter>Source Files\uri\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_shuratv.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
     <ClCompile Include="uri_tvclub.cpp">
       <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
-    <ClCompile Include="uri_tvteam.cpp">
-      <Filter>Source Files\uri\flussonic</Filter>
-    </ClCompile>
     <ClCompile Include="uri_vidok.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_viplime.cpp">
       <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
     <ClCompile Include="uri_smile.cpp">

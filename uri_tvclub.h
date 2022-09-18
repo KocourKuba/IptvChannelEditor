@@ -27,10 +27,31 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "uri_stream.h"
 
+// API documentation http://wiki.tvclub.cc/index.php?title=API_v0.9
+
 class uri_tvclub : public uri_stream
 {
 public:
-	uri_tvclub();
+
+	uri_tvclub()
+	{
+		provider_url = L"https://tvclub.cc/";
+		access_type = AccountAccessType::enLoginPass;
+		catchup.catchup_type = { CatchupType::cu_none, CatchupType::cu_shift};
+		support_streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
+		parser.per_channel_token = true;
+
+		playlist_template = L"http://celn.shott.top/p/{TOKEN}";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+		catchup.uri_mpeg_template = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+
+		auto& params = epg_params[0];
+		params.epg_url = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
+		params.epg_name = "text";
+		params.epg_desc = "description";
+		params.epg_start = "start";
+		params.epg_end = "end";
+	}
 
 	std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;

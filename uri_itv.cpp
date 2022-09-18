@@ -38,29 +38,6 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 
-uri_itv::uri_itv()
-{
-	provider_url = L"https://itv.live/";
-	access_type = AccountAccessType::enPin;
-	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
-	per_channel_token = true;
-
-	playlist_template = L"http://itv.ooo/p/{PASSWORD}/hls.m3u8";
-	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
-	uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
-	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
-	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
-
-	auto& params = epg_params[0];
-	params.epg_url = L"http://api.itv.live/epg/{ID}";
-	params.epg_root = "res";
-	params.epg_name = "title";
-	params.epg_desc = "desc";
-	params.epg_start = "startTime";
-	params.epg_end = "stopTime";
-}
-
 bool uri_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	std::vector<BYTE> data;

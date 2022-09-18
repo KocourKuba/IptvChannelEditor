@@ -30,5 +30,35 @@ DEALINGS IN THE SOFTWARE.
 class uri_iptvonline : public uri_stream
 {
 public:
-	uri_iptvonline();
+
+	uri_iptvonline()
+	{
+		provider_url = L"https://iptv.online/";
+		access_type = AccountAccessType::enPin;
+		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+
+		playlist_template = L"http://iptv.online/play/{PASSWORD}/m3u8";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
+
+		catchup.uri_hls_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
+		catchup.uri_hls_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8";
+		catchup.flussonic_hls_replace = L"video";
+
+		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
+		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts";
+
+		auto& params1 = epg_params[0];
+		params1.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
+		params1.epg_root = "ch_programme";
+		params1.epg_name = "title";
+		params1.epg_desc = "description";
+		params1.epg_start = "start";
+		params1.epg_end = "";
+		params1.epg_time_format = "%d-%m-%Y %H:%M";
+		params1.epg_tz = 3600 * 3; // iptvx.one uses moscow time (UTC+3)
+
+		secondary_epg = true;
+		epg_params[1].epg_url = L"http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
+	}
+
 };

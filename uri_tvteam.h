@@ -30,5 +30,26 @@ DEALINGS IN THE SOFTWARE.
 class uri_tvteam : public uri_stream
 {
 public:
-	uri_tvteam();
+
+	uri_tvteam()
+	{
+		provider_url = L"https://tv.team/";
+		server_subst_type = ServerSubstType::enStream;
+		access_type = AccountAccessType::enPin;
+		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+		parser.per_channel_token = true;
+
+		playlist_template = L"http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
+
+		catchup.uri_hls_template = L"http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
+		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
+		catchup.flussonic_hls_replace = L"index";
+
+		catchup.uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+
+		epg_params[0].epg_url = L"http://tv.team/{ID}.json";
+	}
+
 };

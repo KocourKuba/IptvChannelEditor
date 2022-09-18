@@ -19,7 +19,7 @@ uri_stream::uri_stream()
 
 	epg_params = { params, params };
 
-	catchup_type = { CatchupType::cu_default, CatchupType::cu_none };
+	catchup.catchup_type = { CatchupType::cu_none, CatchupType::cu_none };
 
 	PlaylistInfo info;
 
@@ -151,16 +151,14 @@ std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
 		switch (params.streamSubtype)
 		{
 			case StreamSubType::enHLS:
-				switch (catchup_type[0])
+				switch (catchup.catchup_type[0])
 				{
 					case CatchupType::cu_shift:
-						url = shift_archive(params, uri_hls_template);
-						break;
 					case CatchupType::cu_append:
-						url = append_archive(params, uri_hls_template);
+						url = shift_archive(params, catchup.uri_hls_template);
 						break;
 					case CatchupType::cu_flussonic:
-						url = params.shift_back ? uri_hls_arc_template : uri_hls_template;
+						url = params.shift_back ? catchup.uri_hls_arc_template : catchup.uri_hls_template;
 						break;
 					default:
 						ASSERT(false);
@@ -168,16 +166,14 @@ std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
 				}
 				break;
 			case StreamSubType::enMPEGTS:
-				switch (catchup_type[1])
+				switch (catchup.catchup_type[1])
 				{
 					case CatchupType::cu_shift:
-						url = shift_archive(params, uri_mpeg_template);
-						break;
 					case CatchupType::cu_append:
-						url = append_archive(params, uri_mpeg_template);
+						url = shift_archive(params, catchup.uri_mpeg_template);
 						break;
 					case CatchupType::cu_flussonic:
-						url = params.shift_back ? uri_mpeg_arc_template : uri_mpeg_template;
+						url = params.shift_back ? catchup.uri_mpeg_arc_template : catchup.uri_mpeg_template;
 						break;
 					case CatchupType::cu_none:
 						break;
@@ -282,12 +278,12 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 
 			if (params.epg_time_format.empty())
 			{
-				epg_info.time_start = get_json_int_value(params.epg_start, val);
+				epg_info.time_start = utils::get_json_int_value(params.epg_start, val);
 			}
 			else
 			{
 				std::tm tm = {};
-				std::stringstream ss(get_json_string_value(params.epg_start, val));
+				std::stringstream ss(utils::get_json_string_value(params.epg_start, val));
 				ss >> std::get_time(&tm, params.epg_time_format.c_str());
 				epg_info.time_start = _mkgmtime(&tm); // parsed time assumed as UTC+00
 			}
@@ -311,7 +307,7 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 			}
 			else
 			{
-				epg_info.time_end = get_json_int_value(params.epg_end, val);
+				epg_info.time_end = utils::get_json_int_value(params.epg_end, val);
 			}
 
 			if (params.epg_use_duration)
@@ -326,8 +322,8 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 			epg_info.end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
 #endif // _DEBUG
 
-			epg_info.name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_string_value(params.epg_name, val))));
-			epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(get_json_string_value(params.epg_desc, val))));
+			epg_info.name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string_value(params.epg_name, val))));
+			epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string_value(params.epg_desc, val))));
 
 			epg_map.emplace(epg_info.time_start, epg_info);
 			added = true;
@@ -418,11 +414,13 @@ void uri_stream::put_account_info(const std::string& name, const nlohmann::json&
 
 void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) const
 {
+	utils::string_replace_inplace<wchar_t>(url, REPL_HLS_FLUSSONIC, catchup.flussonic_hls_replace);
+	utils::string_replace_inplace<wchar_t>(url, REPL_MPEG_FLUSSONIC, catchup.flussonic_mpeg_replace);
+	utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
+	utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(catchup.catchup_duration));
+
 	if (!parser.domain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, parser.domain);
-
-	if (!params.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
 	if (!parser.port.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, parser.port);
@@ -433,11 +431,14 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (!parser.token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, parser.token);
 
+	if (!parser.int_id.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, parser.int_id);
+
+	if (!params.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+
 	if (params.shift_back)
 		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
-
-	utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
-	utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(catchup_duration));
 
 	if (!params.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
@@ -445,30 +446,12 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (!params.password.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
 
-	if (!parser.int_id.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, parser.int_id);
-
 	if (!params.host.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);
 
 	if (!quality_list.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[params.quality].id);
-}
 
-std::wstring uri_stream::append_archive(const TemplateParams& params, const std::wstring& url) const
-{
-	std::wstring result(url);
-	if (params.shift_back)
-	{
-		if (url.rfind('?') != std::wstring::npos)
-			result += '&';
-		else
-			result += '?';
-
-		result += L"utc={START}";
-	}
-
-	return result;
 }
 
 std::wstring uri_stream::shift_archive(const TemplateParams& params, const std::wstring& url) const
@@ -481,28 +464,8 @@ std::wstring uri_stream::shift_archive(const TemplateParams& params, const std::
 		else
 			result += '?';
 
-		result += L"utc={START}&lutc={NOW}";
+		result += catchup.shift_hls_replace + L"={START}";
 	}
 
 	return result;
-}
-
-std::string uri_stream::get_json_string_value(const std::string& key, const nlohmann::json& val) const
-{
-	return val.contains(key) && val[key].is_string() ? val[key] : "";
-}
-
-time_t uri_stream::get_json_int_value(const std::string& key, const nlohmann::json& val) const
-{
-	if (val[key].is_number())
-	{
-		return val.value(key, 0);
-	}
-
-	if (val[key].is_string())
-	{
-		return utils::char_to_int(val.value(key, ""));
-	}
-
-	return 0;
 }

@@ -31,5 +31,37 @@ class uri_glanz	: public uri_stream
 {
 public:
 
-	uri_glanz();
+	uri_glanz()
+	{
+		provider_url = L"http://ottg.tv/";
+		access_type = AccountAccessType::enLoginPass;
+		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+
+		playlist_template = L"http://pl.ottglanz.tv/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$)";
+
+		catchup.uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{ID}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+		catchup.flussonic_hls_replace = L"video";
+
+		catchup.uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
+
+		auto& params1 = epg_params[0];
+		params1.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
+		params1.epg_root = "ch_programme";
+		params1.epg_name = "title";
+		params1.epg_desc = "description";
+		params1.epg_start = "start";
+		params1.epg_end = "";
+		params1.epg_time_format = "%d-%m-%Y %H:%M";
+		params1.epg_tz = 3600 * 3; // iptvx.one uses moscow time (UTC+3)
+
+		secondary_epg = true;
+		epg_params[1].epg_url = L"http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
+
+		provider_vod_url = L"http://api.ottg.tv/playlist/vod?login={LOGIN}&password={PASSWORD}";
+		vod_supported = true;
+	}
+
 };

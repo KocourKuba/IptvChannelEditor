@@ -37,30 +37,8 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// API documentation http://wiki.tvclub.cc/index.php?title=API_v0.9
-
 static constexpr auto API_COMMAND_GET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}&{:s}={:s}";
-
-uri_tvclub::uri_tvclub()
-{
-	provider_url = L"https://tvclub.cc/";
-	access_type = AccountAccessType::enLoginPass;
-	catchup_type = { CatchupType::cu_none, CatchupType::cu_append };
-	support_streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
-	per_channel_token = true;
-
-	playlist_template = L"http://celn.shott.top/p/{TOKEN}";
-	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
-	uri_mpeg_template = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
-
-	auto& params = epg_params[0];
-	params.epg_url = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
-	params.epg_name = "text";
-	params.epg_desc = "description";
-	params.epg_start = "start";
-	params.epg_end = "end";
-}
 
 std::wstring uri_tvclub::get_api_token(const std::wstring& login, const std::wstring& password) const
 {

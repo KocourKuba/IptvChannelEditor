@@ -26,12 +26,36 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
+#include "IptvChannelEditor.h"
 
 class uri_edem : public uri_stream
 {
 public:
 
-	uri_edem();
+	uri_edem()
+	{
+		provider_url = L"https://ilook.tv/";
+		access_type = AccountAccessType::enOtt;
+		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+		support_streams = { {StreamSubType::enHLS, L"HLS"} };
+
+		catchup.uri_hls_template = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";
+
+		auto& params = epg_params[0];
+		params.epg_url = L"http://epg.drm-play.ml/edem/epg/{ID}.json";
+
+		playlists.clear();
+
+		PlaylistInfo info;
+		info.name = load_string_resource(IDS_STRING_EDEM_STANDARD);
+		playlists.emplace_back(info);
+
+		info.name = load_string_resource(IDS_STRING_EDEM_THEMATIC);
+		playlists.emplace_back(info);
+
+		vod_supported = true;
+	}
 
 	void get_playlist_url(std::wstring& url, TemplateParams& params) override;
 };

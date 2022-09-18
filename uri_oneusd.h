@@ -30,5 +30,25 @@ DEALINGS IN THE SOFTWARE.
 class uri_oneusd : public uri_stream
 {
 public:
-	uri_oneusd();
+
+	uri_oneusd()
+	{
+		provider_url = L"http://1usd.tv/";
+		access_type = AccountAccessType::enPin;
+		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+		parser.per_channel_token = true;
+
+		playlist_template = L"http://1usd.tv/pl-{PASSWORD}-hls";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
+
+		catchup.uri_hls_template = L"http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
+		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{ID}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
+		catchup.flussonic_hls_replace = L"index";
+
+		catchup.uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+
+		epg_params[0].epg_url = L"http://tv.team/{ID}.json";
+	}
+
 };

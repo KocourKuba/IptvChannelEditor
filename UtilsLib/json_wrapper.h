@@ -99,4 +99,25 @@ namespace utils
 
 		return ret_value;
 	}
+
+
+	inline std::string get_json_string_value(const std::string& key, const nlohmann::json& val)
+	{
+		return val.contains(key) && val[key].is_string() ? val[key] : "";
+	}
+
+	inline time_t get_json_int_value(const std::string& key, const nlohmann::json& val)
+	{
+		if (val[key].is_number())
+		{
+			return val.value(key, 0);
+		}
+
+		if (val[key].is_string())
+		{
+			return utils::char_to_int(val.value(key, ""));
+		}
+
+		return 0;
+	}
 }

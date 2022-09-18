@@ -30,5 +30,19 @@ DEALINGS IN THE SOFTWARE.
 class uri_ottclub : public uri_stream
 {
 public:
-	uri_ottclub();
+
+	uri_ottclub()
+	{
+		provider_url = L"https://www.ottclub.cc/";
+		access_type = AccountAccessType::enPin;
+		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
+		support_streams = { {StreamSubType::enHLS, L"HLS"} };
+
+		playlist_template = L"http://myott.top/playlist/{PASSWORD}/m3u";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+		catchup.uri_hls_template = L"http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
+
+		epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
+	}
+
 };

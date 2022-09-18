@@ -4898,7 +4898,7 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri, const std::wstring& token) const
 {
-	if (!uri->is_per_channel_token())
+	if (!uri->get_parser().per_channel_token)
 	{
 		uri->get_parser().token = token;
 		return;

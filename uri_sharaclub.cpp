@@ -37,29 +37,8 @@ static char THIS_FILE[] = __FILE__;
 
 // API documentation https://list.playtv.pro/api/players.txt
 
-static constexpr auto API_URL = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 static constexpr auto API_COMMAND_GET_URL = L"http://{:s}/api/players.php?a={:s}&u={:s}-{:s}&source=dune_editor";
 static constexpr auto API_COMMAND_SET_URL = L"http://{:s}/api/players.php?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
-static constexpr auto ACCOUNT_TEMPLATE = L"http://{:s}/api/dune-api5m.php?subscr={:s}-{:s}";
-
-uri_sharaclub::uri_sharaclub()
-{
-	provider_url = L"https://shara.club/";
-	access_type = AccountAccessType::enLoginPass;
-	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
-
-	playlist_template = L"http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
-	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
-	uri_hls_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
-	uri_mpeg_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
-
-	auto& params = epg_params[0];
-	params.epg_root = "";
-	params.epg_url = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
-	provider_api_url = API_URL;
-	provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
-	vod_supported = true;
-}
 
 void uri_sharaclub::get_playlist_url(std::wstring& url, TemplateParams& params)
 {
@@ -75,6 +54,7 @@ void uri_sharaclub::get_playlist_url(std::wstring& url, TemplateParams& params)
 
 bool uri_sharaclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
+	static constexpr auto ACCOUNT_TEMPLATE = L"http://{:s}/api/dune-api5m.php?subscr={:s}-{:s}";
 	std::vector<BYTE> data;
 	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.subdomain, params.login, params.password), data) || data.empty())
 	{

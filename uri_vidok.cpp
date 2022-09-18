@@ -37,31 +37,8 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// API documentation http://wiki.vidok.tv/index.php?title=SAPI
-
 static constexpr auto API_COMMAND_GET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?token={:s}&{:s}={:s}";
-
-uri_vidok::uri_vidok()
-{
-	provider_url = L"https://vidok.tv/";
-	access_type = AccountAccessType::enLoginPass;
-	catchup_type = { CatchupType::cu_append, CatchupType::cu_none };
-	support_streams = { {StreamSubType::enHLS, L"HLS"} };
-	per_channel_token = true;
-
-	playlist_template = L"http://vidok.tv/p/{TOKEN}";
-	uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
-	uri_hls_template = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
-
-	auto& params = epg_params[0];
-	params.epg_url = L"http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
-	params.epg_root = "epg";
-	params.epg_name = "title";
-	params.epg_desc = "description";
-	params.epg_start = "start";
-	params.epg_end = "end";
-}
 
 std::wstring uri_vidok::get_api_token(const std::wstring& login, const std::wstring& password) const
 {
