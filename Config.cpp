@@ -137,7 +137,7 @@ static std::vector<PluginDesc> all_plugins = {
 	{ StreamType::enIptvOnline, _T("IPTV Online"),     "iptvonline", "iptvonline",     STRPRODUCTVER },
 	{ StreamType::enVidok,      _T("Vidok TV"),        "vidok",      "vidok.tv",       STRPRODUCTVER },
 	{ StreamType::enShuraTV,    _T("Shura TV"),        "shuratv",    "shura.tv",       STRPRODUCTVER },
-	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tvclub",         STRPRODUCTVER },
+	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tv_club",        STRPRODUCTVER },
 	{ StreamType::enFilmax,     _T("Filmax TV"),       "filmax",     "filmax",         STRPRODUCTVER },
 	{ StreamType::enKineskop,   _T("Kineskop.Club"),   "kineskop",   "kineskop",       STRPRODUCTVER },
 	{ StreamType::enMymagic,    _T("MyMagic TV"),      "mymagic",    "mymagic",        STRPRODUCTVER },
