@@ -359,7 +359,6 @@ private:
 	CString m_plFileName;
 
 	BOOL m_allow_save = FALSE;
-	BOOL m_enableDownload = TRUE;
 	bool m_loading = false;
 	bool m_inStreamInfo = false;
 	bool m_inSync = false;

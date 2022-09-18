@@ -56,10 +56,6 @@ uri_edem::uri_edem()
 
 	info.name = load_string_resource(IDS_STRING_EDEM_THEMATIC);
 	playlists.emplace_back(info);
-
-	info.name = load_string_resource(IDS_STRING_CUSTOM_PLAYLIST);
-	info.is_custom = true;
-	playlists.emplace_back(info);
 }
 
 void uri_edem::get_playlist_url(std::wstring& url, TemplateParams& params)

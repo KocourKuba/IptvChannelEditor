@@ -1173,7 +1173,6 @@ BEGIN
     IDS_STRING_APP_TITLE    "IPTV Channel Editor"
     IDS_STRING_APP_TITLE_PORTABLE "IPTV Channel Editor (Portable)"
     IDS_STRING_PLAYLIST     "Playlist"
-    IDS_STRING_CUSTOM_PLAYLIST "Custom Playlist"
     IDS_STRING_EDEM_STANDARD "Standard"
     IDS_STRING_EDEM_THEMATIC "Thematic"
     IDS_STRING_COL_INFO     "Info"
@@ -1269,7 +1268,6 @@ BEGIN
     IDS_STRING_EDIT_SUFFIX  "Suffix to add to the packed plugin.\nIf empty will use the default - 'mod'."
     IDS_STRING_ERR_DLL_MISSING 
                             "7za.dll is missing! Please check the installation."
-    IDS_STRING_LOAD_CUSTOM_PLAYLIST "Load Custom playlist"
     IDS_STRING_ERR_FILE_MISSING "File %s is missing!"
     IDS_STRING_ERR_SETTINGS_MISSING "Settings missed!"
     IDS_STRING_INFO_W_CREATE_SUCCESS 

@@ -25,10 +25,6 @@ uri_stream::uri_stream()
 
 	info.name = load_string_resource(IDS_STRING_PLAYLIST);
 	playlists.emplace_back(info);
-
-	info.name = load_string_resource(IDS_STRING_CUSTOM_PLAYLIST);
-	info.is_custom = true;
-	playlists.emplace_back(info);
 }
 
 uri_stream::uri_stream(const uri_stream& src)

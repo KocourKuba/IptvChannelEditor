@@ -599,7 +599,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		pl_idx = 0;
 
 	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(pl_idx));
-	m_enableDownload = !pl_info->is_custom;
 	m_wndPlaylist.SetCurSel(pl_idx);
 	m_wndPlaylist.EnableWindow(TRUE);
 
@@ -741,7 +740,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	int idx = m_wndPlaylist.GetCurSel();
 	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(idx));
 
-	bool isCustom = pl_info->is_custom;
 	bool isFile = pl_info->is_file;
 
 	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetConfig().GetCurrentPluginName(true)).c_str();
@@ -755,26 +753,15 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.quality = m_cur_account.quality_id;
 	params.number = idx;
 
-	if (isCustom)
+	if (m_plugin_type == StreamType::enSharaclub)
 	{
-		if (m_plugin_type == StreamType::enEdem)
-		{
-			m_plFileName.Empty();
-		}
-		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
+		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 	}
-	else
+	if (m_plugin_type == StreamType::enTVClub || m_plugin_type == StreamType::enVidok)
 	{
-		if (m_plugin_type == StreamType::enSharaclub)
-		{
-			params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
-		}
-		if (m_plugin_type == StreamType::enTVClub || m_plugin_type == StreamType::enVidok)
-		{
-			params.token = m_plugin->get_api_token(params.login, params.password);
-		}
-		m_plugin->get_playlist_url(url, params);
+		params.token = m_plugin->get_api_token(params.login, params.password);
 	}
+	m_plugin->get_playlist_url(url, params);
 
 	if (url.empty())
 	{
@@ -975,7 +962,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 
 	m_loading = false;
 	m_wndAccountSetting.EnableWindow(TRUE);
-	m_wndDownloadUrl.EnableWindow(m_enableDownload);
+	m_wndDownloadUrl.EnableWindow(TRUE);
 	m_wndPlaylist.EnableWindow(TRUE);
 	m_wndCheckArchive.EnableWindow(TRUE);
 
@@ -1042,7 +1029,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 	m_wndPlaylist.EnableWindow(TRUE);
 	m_wndAccountSetting.EnableWindow(TRUE);
-	m_wndDownloadUrl.EnableWindow(m_enableDownload);
+	m_wndDownloadUrl.EnableWindow(TRUE);
 	m_wndSettings.EnableWindow(TRUE);
 
 	LoadChannelInfo();
@@ -2968,25 +2955,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 {
 	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel()));
 
-	bool loaded = false;
-	if (pl_info->is_custom)
-	{
-		CCustomPlaylistDlg dlg;
-		dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
-		dlg.m_isFile = !!pl_info->is_file;
-		if (dlg.DoModal() == IDOK)
-		{
-			GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
-			pl_info->is_file = !!dlg.m_isFile;
-			loaded = true;
-		}
-	}
-	else
-	{
-		loaded = SetupAccount();
-	}
-
-	if (loaded)
+	if (SetupAccount())
 	{
 		LoadPlaylist();
 	}
@@ -4350,8 +4319,6 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 	GetConfig().set_int(false, REG_PLAYLIST_TYPE, m_wndPlaylist.GetCurSel());
 
 	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel()));
-	m_tooltips_info[IDC_BUTTON_ACCOUNT_SETTINGS] = load_string_resource(pl_info->is_custom ? IDS_STRING_LOAD_CUSTOM_PLAYLIST : IDS_STRING_ACCOUNT_SETTINGS);
-	m_wndAccountSetting.SetWindowText(pl_info->is_custom ? L"\u00ab" : L"...");
 	LoadPlaylist();
 }
 
