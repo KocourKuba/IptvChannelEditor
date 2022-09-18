@@ -33,5 +33,4 @@ public:
 	uri_russkoetv();
 
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_playlist_url(TemplateParams& params) override;
 };

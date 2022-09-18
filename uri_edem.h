@@ -34,5 +34,5 @@ public:
 	uri_edem();
 
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_playlist_url(TemplateParams& params) override;
+	void get_playlist_url(std::wstring& url, TemplateParams& params) override;
 };

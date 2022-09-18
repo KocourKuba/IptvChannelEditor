@@ -40,11 +40,6 @@ static char THIS_FILE[] = __FILE__;
 
 // API documentation http://protected-api.com/api/documentation
 
-static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
-static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://247on.cc/playlist/{:s}_otp_dev{:d}.m3u8";
-
-
 uri_cbilling::uri_cbilling()
 {
 	provider_url = L"https://cbilling.eu/";
@@ -53,6 +48,7 @@ uri_cbilling::uri_cbilling()
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_flussonic };
 	vod_supported = true;
 
+	playlist_template = L"http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8";
 	uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
 	uri_hls_arc_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8?utc={START}&lutc={NOW}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -88,13 +84,11 @@ void uri_cbilling::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_cbilling::get_access_info_header() const
-{
-	return ACCOUNT_HEADER_TEMPLATE;
-}
-
 bool uri_cbilling::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
+	static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
+	static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
+
 	auto& header = fmt::format(ACCOUNT_HEADER_TEMPLATE, params.password);
 	std::vector<BYTE> data;
 	if (!utils::DownloadFile(ACCOUNT_TEMPLATE, data, false, &header) || data.empty())
@@ -121,9 +115,4 @@ bool uri_cbilling::parse_access_info(TemplateParams& params, std::list<AccountIn
 	JSON_ALL_CATCH;
 
 	return false;
-}
-
-std::wstring uri_cbilling::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password, params.server + 1);
 }

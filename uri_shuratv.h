@@ -32,6 +32,5 @@ class uri_shuratv : public uri_stream
 public:
 	uri_shuratv();
 	void parse_uri(const std::wstring& url) override;
-	std::wstring get_playlist_url(TemplateParams& params) override;
 	std::wstring append_archive(const TemplateParams& params, const std::wstring& url) const override;
 };

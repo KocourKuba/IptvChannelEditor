@@ -36,8 +36,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 // http://{DOMAIN}/PinApi/{LOGIN}/{PASSWORD}
-static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://list.1ott.net/api/{:s}/high/ottplay.m3u8";
 
 uri_oneott::uri_oneott()
 {
@@ -45,6 +43,7 @@ uri_oneott::uri_oneott()
 	access_type = AccountAccessType::enLoginPass;
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
 
+	playlist_template = L"http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
 	uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 	uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}";
 
@@ -78,13 +77,10 @@ void uri_oneott::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_oneott::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.token);
-}
-
 bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
+	static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";
+
 	std::vector<BYTE> data;
 	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data) || data.empty())
 	{
@@ -97,14 +93,16 @@ bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo
 		if (parsed_json.contains("token"))
 		{
 			const auto& token = utils::utf8_to_utf16(parsed_json.value("token", ""));
-			AccountInfo info{ L"token", token };
-			info_list.emplace_back(info);
+			AccountInfo info_token{ L"token", token };
+			info_list.emplace_back(info_token);
 
 			TemplateParams param;
 			param.token = token;
 
-			AccountInfo url{ L"url", get_playlist_url(param) };
-			info_list.emplace_back(url);
+			std::wstring url;
+			get_playlist_url(url, param);
+			AccountInfo info_url{ L"url", url };
+			info_list.emplace_back(info_url);
 		}
 
 		return true;

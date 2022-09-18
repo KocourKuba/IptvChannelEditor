@@ -39,8 +39,6 @@ static char THIS_FILE[] = __FILE__;
 
 // API documentation https://tv.team/api/manual.php
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://tv.team/pl/11/{:s}/playlist.m3u8";
-
 uri_tvteam::uri_tvteam()
 {
 	provider_url = L"https://tv.team/";
@@ -49,6 +47,7 @@ uri_tvteam::uri_tvteam()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 	per_channel_token = true;
 
+	playlist_template = L"http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -74,9 +73,4 @@ void uri_tvteam::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_tvteam::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

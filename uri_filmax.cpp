@@ -37,14 +37,13 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://lk.filmax-tv.ru/{:s}/{:s}/hls/p{:s}/playlist.m3u8";
-
 uri_filmax::uri_filmax()
 {
 	provider_url = L"https://filmax-tv.ru/";
 	access_type = AccountAccessType::enLoginPass;
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 
+	playlist_template = L"http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
 	uri_hls_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/index.m3u8?token={TOKEN}";
 	uri_hls_arc_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
@@ -78,9 +77,4 @@ void uri_filmax::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_filmax::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password, servers_list[params.server].id);
 }

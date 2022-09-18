@@ -33,18 +33,17 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.fox-tv.fun/{:s}/{:s}/tv.m3u";
-
 uri_fox::uri_fox()
 {
 	provider_url = L"http://info.fox-tv.fun/";
-	provider_vod_url = L"http://pl.fox-tv.fun/{:s}/{:s}/vodall.m3u";
+	provider_vod_url = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u";
 	access_type = AccountAccessType::enLoginPass;
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 	per_channel_token = true;
 	vod_supported = true;
 
+	playlist_template = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u";
 	uri_hls_template = L"http://{DOMAIN}/{TOKEN}";
 
 	epg_params[0].epg_url = L"http://epg.drm-play.ml/fox-tv/epg/{ID}.json";
@@ -78,9 +77,4 @@ void uri_fox::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_fox::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }

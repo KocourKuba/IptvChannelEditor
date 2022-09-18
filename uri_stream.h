@@ -145,6 +145,7 @@ protected:
 	static constexpr auto REPL_PASSWORD  = L"{PASSWORD}";
 	static constexpr auto REPL_INT_ID    = L"{INT_ID}";
 	static constexpr auto REPL_HOST      = L"{HOST}";
+	static constexpr auto REPL_SERVER_ID = L"{SERVER_ID}";
 
 
 public:
@@ -426,12 +427,6 @@ public:
 	virtual void parse_uri(const std::wstring& url);
 
 	/// <summary>
-	/// get additional get headers
-	/// </summary>
-	/// <returns>wstring</returns>
-	virtual std::wstring get_access_info_header() const { return L""; }
-
-	/// <summary>
 	/// parse access info
 	/// </summary>
 	/// <param name="params">parameters used to download access info</param>
@@ -444,7 +439,7 @@ public:
 	/// </summary>
 	/// <param name="params">parameters used to download access info</param>
 	/// <returns>wstring</returns>
-	virtual std::wstring get_playlist_url(TemplateParams& params) { ASSERT(false); return L""; };
+	virtual void get_playlist_url(std::wstring& url, TemplateParams& params);;
 
 	/// <summary>
 	/// returns token from account if exist
@@ -542,6 +537,7 @@ protected:
 	std::wstring uri_hls_arc_template;
 	std::wstring uri_mpeg_template;
 	std::wstring uri_mpeg_arc_template;
+	std::wstring playlist_template;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring port;

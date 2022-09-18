@@ -34,16 +34,15 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
-
 uri_glanz::uri_glanz()
 {
 	provider_url = L"http://ottg.tv/";
-	provider_vod_url = L"http://api.ottg.tv/playlist/vod?login={:s}&password={:s}";
+	provider_vod_url = L"http://api.ottg.tv/playlist/vod?login={LOGIN}&password={PASSWORD}";
 	access_type = AccountAccessType::enLoginPass;
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 	vod_supported = true;
 
+	playlist_template = L"http://pl.ottglanz.tv/get.php?username={:s}&password={:s}&type=m3u&output=hls";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
@@ -84,9 +83,4 @@ void uri_glanz::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_glanz::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }

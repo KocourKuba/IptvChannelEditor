@@ -34,8 +34,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://www.spr24.net/iptv/p/{:s}/Sharavoz.Tv.navigator-ott.m3u";
-
 uri_sharavoz::uri_sharavoz()
 {
 	provider_url = L"https://www.sharavoz.tv/";
@@ -43,6 +41,7 @@ uri_sharavoz::uri_sharavoz()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 	secondary_epg = true;
 
+	playlist_template = L"http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -69,9 +68,4 @@ void uri_sharavoz::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_sharavoz::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

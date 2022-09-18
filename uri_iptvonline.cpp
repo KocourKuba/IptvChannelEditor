@@ -35,14 +35,13 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://iptv.online/play/{:s}/m3u8";
-
 uri_iptvonline::uri_iptvonline()
 {
 	provider_url = L"https://iptv.online/";
 	access_type = AccountAccessType::enPin;
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 
+	playlist_template = L"http://iptv.online/play/{PASSWORD}/m3u8";
 	uri_hls_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
 	uri_hls_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8";
 	uri_mpeg_arc_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
@@ -78,9 +77,4 @@ void uri_iptvonline::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_iptvonline::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

@@ -37,7 +37,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://itv.ooo/p/{:s}/hls.m3u8";
 
 uri_itv::uri_itv()
 {
@@ -46,6 +45,7 @@ uri_itv::uri_itv()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 	per_channel_token = true;
 
+	playlist_template = L"http://itv.ooo/p/{PASSWORD}/hls.m3u8";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -76,11 +76,6 @@ void uri_itv::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_itv::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }
 
 bool uri_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

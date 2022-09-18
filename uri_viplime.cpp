@@ -34,8 +34,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://cdntv.online/high/{:s}/playlist.m3u8";
-
 uri_viplime::uri_viplime()
 {
 	provider_url = L"http://viplime.fun/";
@@ -43,6 +41,7 @@ uri_viplime::uri_viplime()
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
 	server_subst_type = ServerSubstType::enStream;
 
+	playlist_template = L"http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
 	uri_hls_template = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
 	uri_mpeg_template = L"http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
 
@@ -73,15 +72,4 @@ void uri_viplime::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_viplime::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
-}
-
-void uri_viplime::replace_vars(std::wstring& url, const TemplateParams& params) const
-{
-	utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[params.quality].id);
-	uri_stream::replace_vars(url, params);
 }

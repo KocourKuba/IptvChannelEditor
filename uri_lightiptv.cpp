@@ -34,14 +34,13 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://lightiptv.cc/playlist/hls/{:s}.m3u";
-
 uri_lightiptv::uri_lightiptv()
 {
 	provider_url = L"https://ottbill.cc/";
 	access_type = AccountAccessType::enPin;
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 
+	playlist_template = L"http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
 	uri_hls_template = L"http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}";
 	uri_mpeg_template = L"http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
@@ -70,9 +69,4 @@ void uri_lightiptv::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_lightiptv::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

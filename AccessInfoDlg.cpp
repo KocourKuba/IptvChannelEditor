@@ -946,6 +946,11 @@ void CAccessInfoDlg::GetAccountInfo()
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
 
+	if (m_plugin_type == StreamType::enTVClub || m_plugin_type == StreamType::enVidok)
+	{
+		params.token = m_plugin->get_api_token(params.login, params.password);
+	}
+
 	m_plugin->clear_profiles_list();
 	m_profiles = m_plugin->get_profiles_list(params);
 	for (const auto& info : m_profiles)
@@ -966,7 +971,8 @@ void CAccessInfoDlg::GetAccountInfo()
 
 	m_wndProfile.EnableWindow(m_profiles.size() > 1);
 
-	std::wstring pl_url = uri->get_playlist_url(params);
+	std::wstring pl_url;
+	uri->get_playlist_url(pl_url, params);
 
 	std::list<AccountInfo> acc_info;
 	if (uri->parse_access_info(params, acc_info))

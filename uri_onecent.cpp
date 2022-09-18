@@ -33,8 +33,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://only4.tv/pl/{:s}/102/only4tv.m3u8";
-
 uri_onecent::uri_onecent()
 {
 	provider_url = L"https://1cent.tv/";
@@ -42,6 +40,7 @@ uri_onecent::uri_onecent()
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 
+	playlist_template = L"http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
@@ -75,9 +74,4 @@ void uri_onecent::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_onecent::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

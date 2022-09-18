@@ -34,8 +34,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.mymagic.tv/srv/{:d}/{:d}/{:s}/{:s}/tv.m3u";
-
 uri_mymagic::uri_mymagic()
 {
 	provider_url = L"http://mymagic.tv/";
@@ -44,6 +42,7 @@ uri_mymagic::uri_mymagic()
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 	per_channel_token = true;
 
+	playlist_template = L"http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u";
 	uri_hls_template = L"http://{DOMAIN}/{TOKEN}";
 
 	epg_params[0].epg_url = L"http://epg.drm-play.ml/magic/epg/{ID}.json";
@@ -83,9 +82,4 @@ void uri_mymagic::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_mymagic::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.server, params.quality, params.login, params.password);
 }

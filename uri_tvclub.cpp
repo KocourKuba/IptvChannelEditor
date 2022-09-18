@@ -41,7 +41,6 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto API_COMMAND_GET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}&{:s}={:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://celn.shott.top/p/{:s}";
 
 uri_tvclub::uri_tvclub()
 {
@@ -51,6 +50,7 @@ uri_tvclub::uri_tvclub()
 	support_streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
 	per_channel_token = true;
 
+	playlist_template = L"http://celn.shott.top/p/{TOKEN}";
 	uri_hls_template = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 	auto& params = epg_params[0];
@@ -76,11 +76,6 @@ void uri_tvclub::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_tvclub::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, get_api_token(params.login, params.password));
 }
 
 std::wstring uri_tvclub::get_api_token(const std::wstring& login, const std::wstring& password) const

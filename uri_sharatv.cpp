@@ -33,8 +33,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://tvfor.pro/g/{:s}:{:s}/1/playlist.m3u";
-
 uri_sharatv::uri_sharatv()
 {
 	provider_url = L"https://shara-tv.org/";
@@ -42,6 +40,7 @@ uri_sharatv::uri_sharatv()
 	catchup_type = { CatchupType::cu_append, CatchupType::cu_none };
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 
+	playlist_template = L"http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/{TOKEN}";
 
 	epg_params[0].epg_url = L"http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
@@ -75,9 +74,4 @@ void uri_sharatv::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_sharatv::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
 }

@@ -35,8 +35,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://myott.top/playlist/{:s}/m3u";
-
 uri_ottclub::uri_ottclub()
 {
 	provider_url = L"https://www.ottclub.cc/";
@@ -44,6 +42,7 @@ uri_ottclub::uri_ottclub()
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 
+	playlist_template = L"http://myott.top/playlist/{PASSWORD}/m3u";
 	uri_hls_template = L"http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
 
 	epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
@@ -65,9 +64,4 @@ void uri_ottclub::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_ottclub::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

@@ -35,8 +35,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://1usd.tv/pl-{:s}-hls";
-
 uri_oneusd::uri_oneusd()
 {
 	provider_url = L"http://1usd.tv/";
@@ -44,6 +42,7 @@ uri_oneusd::uri_oneusd()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 	per_channel_token = true;
 
+	playlist_template = L"http://1usd.tv/pl-{PASSWORD}-hls";
 	uri_hls_template = L"http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
@@ -71,9 +70,4 @@ void uri_oneusd::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_oneusd::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

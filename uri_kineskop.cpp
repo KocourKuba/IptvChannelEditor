@@ -36,8 +36,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://knkp.in/{:s}/{:s}/{:s}/1";
-
 uri_kineskop::uri_kineskop()
 {
 	provider_url = L"http://kineskop.club/";
@@ -47,6 +45,7 @@ uri_kineskop::uri_kineskop()
 	support_streams = { {StreamSubType::enHLS, L"HLS"} };
 	per_channel_token = true;
 
+	playlist_template = L"http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER_ID}/1";
 	uri_hls_template = L"http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
 
 	for (int i = 0; i <= IDS_STRING_KINESKOP_P4 - IDS_STRING_KINESKOP_P1; i++)
@@ -74,9 +73,4 @@ void uri_kineskop::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_kineskop::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password, servers_list[params.server].id);
 }

@@ -34,14 +34,13 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.tvshka.net/?uid={:s}&srv={:s}&type=halva";
-
 uri_shuratv::uri_shuratv()
 {
 	provider_url = L"http://shura.tv/b/";
 	access_type = AccountAccessType::enPin;
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
 
+	playlist_template = L"http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
 	uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 	uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/";
 
@@ -75,15 +74,6 @@ void uri_shuratv::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_shuratv::get_playlist_url(TemplateParams& params)
-{
-	int server = params.server;
-	if (params.server >= (int)servers_list.size())
-		server = (int)servers_list.size() - 1;
-
-	return fmt::format(PLAYLIST_TEMPLATE, params.password, servers_list[server].id);
 }
 
 std::wstring uri_shuratv::append_archive(const TemplateParams& params, const std::wstring& url) const

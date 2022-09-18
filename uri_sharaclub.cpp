@@ -41,9 +41,6 @@ static constexpr auto API_URL = L"http://conf.playtv.pro/api/con8fig.php?source=
 static constexpr auto API_COMMAND_GET_URL = L"http://{:s}/api/players.php?a={:s}&u={:s}-{:s}&source=dune_editor";
 static constexpr auto API_COMMAND_SET_URL = L"http://{:s}/api/players.php?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
 static constexpr auto ACCOUNT_TEMPLATE = L"http://{:s}/api/dune-api5m.php?subscr={:s}-{:s}";
-static constexpr auto PLAYLIST_TEMPLATE = L"http://{:s}/tv_live-m3u8/{:s}-{:s}";
-static constexpr auto PLAYLIST_VOD_TEMPLATE = L"http://{:s}/kino-full/{:s}-{:s}";
-static constexpr auto EPG_TEMPLATE_URL = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
 
 uri_sharaclub::uri_sharaclub()
 {
@@ -51,14 +48,15 @@ uri_sharaclub::uri_sharaclub()
 	access_type = AccountAccessType::enLoginPass;
 	catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
 
+	playlist_template = L"http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
 	uri_hls_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 	uri_mpeg_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 
 	auto& params = epg_params[0];
 	params.epg_root = "";
-	params.epg_url = EPG_TEMPLATE_URL;
+	params.epg_url = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
 	provider_api_url = API_URL;
-	provider_vod_url = PLAYLIST_VOD_TEMPLATE;
+	provider_vod_url = L"http://{:s}/kino-full/{:s}-{:s}";
 	vod_supported = true;
 }
 
@@ -80,16 +78,16 @@ void uri_sharaclub::parse_uri(const std::wstring& url)
 	uri_stream::parse_uri(url);
 }
 
-std::wstring uri_sharaclub::get_playlist_url(TemplateParams& params)
+void uri_sharaclub::get_playlist_url(std::wstring& url, TemplateParams& params)
 {
-	auto& url = fmt::format(PLAYLIST_TEMPLATE, params.subdomain, params.login, params.password);
+	url = playlist_template;
 	if (params.profile != 0)
 	{
 		const auto& profiles = get_profiles_list(params);
 		url += L"/" + profiles[params.profile].id;
 	}
 
-	return url;
+	uri_stream::get_playlist_url(url, params);
 }
 
 bool uri_sharaclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

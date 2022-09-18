@@ -755,23 +755,25 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.quality = m_cur_account.quality_id;
 	params.number = idx;
 
-	if (m_plugin_type == StreamType::enEdem && isCustom)
+	if (isCustom)
 	{
+		if (m_plugin_type == StreamType::enEdem)
+		{
+			m_plFileName.Empty();
+		}
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
-		m_plFileName.Empty();
-	}
-	else if (m_plugin_type != StreamType::enEdem && isCustom)
-	{
-		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
-	}
-	else if (m_plugin_type == StreamType::enSharaclub)
-	{
-		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
-		url = m_plugin->get_playlist_url(params);
 	}
 	else
 	{
-		url = m_plugin->get_playlist_url(params);
+		if (m_plugin_type == StreamType::enSharaclub)
+		{
+			params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+		}
+		if (m_plugin_type == StreamType::enTVClub || m_plugin_type == StreamType::enVidok)
+		{
+			params.token = m_plugin->get_api_token(params.login, params.password);
+		}
+		m_plugin->get_playlist_url(url, params);
 	}
 
 	if (url.empty())

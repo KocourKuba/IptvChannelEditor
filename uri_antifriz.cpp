@@ -37,8 +37,6 @@ static char THIS_FILE[] = __FILE__;
 
 // API documentation http://protected-api.com/api/documentation
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://antifriz.tv/playlist/{:s}.m3u8";
-
 uri_antifriz::uri_antifriz()
 {
 	provider_url = L"https://antifriztv.com/";
@@ -47,6 +45,7 @@ uri_antifriz::uri_antifriz()
 	catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
 	vod_supported = true;
 
+	playlist_template = L"http://antifriz.tv/playlist/{PASSWORD}.m3u8";
 	uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
 	uri_hls_arc_template = L"http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 	uri_mpeg_template = L"http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
@@ -86,9 +85,4 @@ void uri_antifriz::parse_uri(const std::wstring& url)
 	}
 
 	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_antifriz::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.password);
 }

@@ -48,6 +48,36 @@ void uri_stream::parse_uri(const std::wstring& url)
 	uri_base::set_uri(url);
 }
 
+void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
+{
+	if (url.empty())
+		url = playlist_template;
+
+	if (!params.token.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
+
+	if (!params.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+
+	if (!params.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+	if (!params.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+
+	if (!servers_list.empty())
+	{
+		int server = (params.server >= servers_list.size()) ? servers_list.size() - 1 : params.server;
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].id);
+	}
+
+	if (!quality_list.empty())
+	{
+		int quality = (params.quality >= quality_list.size()) ? quality_list.size() - 1 : params.quality;
+		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[quality].id);
+	}
+}
+
 std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url;
@@ -348,6 +378,9 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 
 	if (!params.host.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);
+
+	if (!quality_list.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[params.quality].id);
 }
 
 std::wstring uri_stream::append_archive(const TemplateParams& params, const std::wstring& url) const
