@@ -378,8 +378,6 @@ void CAccessInfoDlg::CreateAccountsList()
 			vWidth /= 3;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
-			if (m_plugin_type == StreamType::enKineskop)
-				m_wndNewFromUrl.ShowWindow(SW_SHOW);
 			break;
 		case AccountAccessType::enOtt:
 			vWidth /= 4;
