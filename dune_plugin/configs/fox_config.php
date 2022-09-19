@@ -18,19 +18,8 @@ class FoxPluginConfig extends Default_Config
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}');
         $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
         $this->set_feature(SQUARE_ICONS, true);
-        $this->set_feature(SECONDARY_EPG, true);
 
         $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/fox-tv/epg/{CHANNEL}.json');
-
-        $this->set_epg_param('second','epg_url','http://technic.cf/epg-fox/epg_day?id={CHANNEL}&day={DATE}');
-        $this->set_epg_param('second','epg_root', 'data');
-        $this->set_epg_param('second','epg_start', 'begin');
-        $this->set_epg_param('second','epg_end', 'end');
-        $this->set_epg_param('second','epg_title', 'title');
-        $this->set_epg_param('second','epg_desc', 'description');
-        $this->set_epg_param('second','epg_date_format', 'Y.m.d');
-        $this->set_epg_param('second','epg_use_mapper', true);
-        $this->set_epg_param('second','epg_mapper_url','http://technic.cf/epg-fox/channels');
     }
 
     /**

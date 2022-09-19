@@ -13,19 +13,8 @@ class SharatvPluginConfig extends Default_Config
         $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
         $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/(?<token>.+)$|');
         $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/{TOKEN}');
-        $this->set_feature(SECONDARY_EPG, true);
 
         $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/shara-tv/epg/{CHANNEL}.json');
-
-        $this->set_epg_param('second','epg_url','http://technic.cf/epg-shara-tv/epg_day?id={CHANNEL}&day={DATE}');
-        $this->set_epg_param('second','epg_root', 'data');
-        $this->set_epg_param('second','epg_start', 'begin');
-        $this->set_epg_param('second','epg_end', 'end');
-        $this->set_epg_param('second','epg_title', 'title');
-        $this->set_epg_param('second','epg_desc', 'description');
-        $this->set_epg_param('second','epg_date_format', 'Y.m.d');
-        $this->set_epg_param('second','epg_use_mapper', true);
-        $this->set_epg_param('second','epg_mapper_url', 'http://technic.cf/epg-shara-tv/channels');
     }
 
     /**
