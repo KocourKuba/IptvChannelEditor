@@ -974,8 +974,7 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 {
 	CWaitCursor cur;
 
-	TemplateParams params;
-	const auto& url = m_plugin->get_vod_url(params) + L"/video/" + movie.id;
+	const auto& url = m_plugin->get_vod_template() + L"/video/" + movie.id;
 	std::vector<BYTE> data;
 	if (url.empty() || !utils::DownloadFile(url, data, false) || data.empty())
 	{

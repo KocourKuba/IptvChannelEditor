@@ -459,7 +459,12 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	// Fill available plugins
 	for (const auto& item : GetConfig().get_plugins_info())
 	{
-		int idx = m_wndPluginType.AddString(item.title.c_str());
+		const auto& plugin = StreamContainer::get_instance(item.type);
+		std::wstring title(item.title);
+		if (!plugin->get_vod_template().empty())
+			title += L" (VOD)";
+
+		int idx = m_wndPluginType.AddString(title.c_str());
 		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
 	}
 
@@ -579,8 +584,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	const auto& streams = m_plugin->get_supported_streams();
 
-	TemplateParams params;
-	m_wndVod.ShowWindow(m_plugin->get_vod_url(params).empty() ? SW_HIDE : SW_SHOW);
+	m_wndVod.ShowWindow(m_plugin->get_vod_template().empty() ? SW_HIDE : SW_SHOW);
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();

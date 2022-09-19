@@ -297,6 +297,12 @@ public:
 	const ServerSubstType get_server_subst_type() const { return server_subst_type; }
 
 	/// <summary>
+	/// returns vod url template
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wstring& get_vod_template() const { return provider_vod_url; };
+
+	/// <summary>
 	/// returns link to vod download
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
