@@ -35,12 +35,13 @@ public:
 	{
 		provider_url = L"https://1cent.tv/";
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
-		support_streams = { {StreamSubType::enHLS, L"HLS"} };
-
 		playlist_template = L"http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
+
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_shift;
+		streams_config[0].uri_template = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 
 		auto& params1 = epg_params[0];
 		params1.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
@@ -52,8 +53,6 @@ public:
 		params1.epg_time_format = "%d-%m-%Y %H:%M";
 		params1.epg_tz = 3600 * 3; // iptvx.one uses moscow time (UTC+3)
 
-		secondary_epg = true;
 		epg_params[1].epg_url = L"http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
 	}
-
 };

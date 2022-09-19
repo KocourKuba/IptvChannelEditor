@@ -37,13 +37,13 @@ public:
 	{
 		provider_url = L"https://vidok.tv/";
 		access_type = AccountAccessType::enLoginPass;
-		catchup.catchup_type = { CatchupType::cu_append, CatchupType::cu_none };
-		support_streams = { {StreamSubType::enHLS, L"HLS"} };
-		parser.per_channel_token = true;
-
 		playlist_template = L"http://vidok.tv/p/{TOKEN}";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_append;
+		streams_config[0].uri_template = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
 
 		auto& params = epg_params[0];
 		params.epg_url = L"http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
@@ -54,7 +54,7 @@ public:
 		params.epg_end = "end";
 	}
 
-	std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const override;
+	std::wstring get_api_token(const Credentials& creds) const override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 	const std::vector<ServersInfo>& get_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;

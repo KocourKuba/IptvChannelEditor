@@ -33,16 +33,16 @@ class uri_sharatv : public uri_stream
 	{
 		provider_url = L"https://shara-tv.org/";
 		access_type = AccountAccessType::enLoginPass;
-		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
-		support_streams = { {StreamSubType::enHLS, L"HLS"} };
-
 		playlist_template = L"http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/{ID}/{TOKEN}";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
+
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_shift;
+		streams_config[0].uri_template = L"http://{DOMAIN}/{ID}/{TOKEN}";
 
 		epg_params[0].epg_url = L"http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
 
-		secondary_epg = true;
 		auto& params2 = epg_params[1];
 		params2.epg_use_mapper = true;
 		params2.epg_url = L"http://technic.cf/epg-shara-tv/epg_day?id={ID}&day={DATE}";
@@ -54,5 +54,4 @@ class uri_sharatv : public uri_stream
 		params2.epg_start = "begin";
 		params2.epg_end = "end";
 	}
-
 };

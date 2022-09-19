@@ -35,12 +35,17 @@ public:
 	{
 		provider_url = L"http://1ott.net/";
 		access_type = AccountAccessType::enLoginPass;
-		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_shift };
-
 		playlist_template = L"http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-		catchup.uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
+
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_shift;
+		streams_config[0].uri_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+
+		streams_config[1].catchup_type = CatchupType::cu_shift;
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].uri_template = L"http://{DOMAIN}/~{TOKEN}/{ID}";
 
 		auto& params1 = epg_params[0];
 		params1.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
@@ -50,7 +55,6 @@ public:
 		params1.epg_start = "start";
 		params1.epg_end = "stop";
 
-		secondary_epg = true;
 		epg_params[1].epg_url = L"http://epg.drm-play.ml/1ott/epg/{ID}.json";
 	}
 

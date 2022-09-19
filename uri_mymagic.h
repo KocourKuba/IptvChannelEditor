@@ -36,17 +36,16 @@ public:
 	{
 		provider_url = L"http://mymagic.tv/";
 		access_type = AccountAccessType::enLoginPass;
-		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
-		support_streams = { {StreamSubType::enHLS, L"HLS"} };
+		playlist_template = L"http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 		parser.per_channel_token = true;
 
-		playlist_template = L"http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/{TOKEN}";
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_shift;
+		streams_config[0].uri_template = L"http://{DOMAIN}/{TOKEN}";
 
 		epg_params[0].epg_url = L"http://epg.drm-play.ml/magic/epg/{ID}.json";
-
-		secondary_epg = true;
 		epg_params[1].epg_url = L"http://epg.esalecrm.net/magic/epg/{ID}.json";
 
 		servers_list = {
@@ -64,5 +63,4 @@ public:
 			{ L"1", load_string_resource(IDS_STRING_MYMAGIC_Q2) },
 		};
 	}
-
 };

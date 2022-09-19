@@ -36,13 +36,14 @@ public:
 	{
 		provider_url = L"http://shura.tv/b/";
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
-
 		playlist_template = L"http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-		catchup.uri_mpeg_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/";
-		catchup.shift_hls_replace = L"archive";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
+
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_shift;
+		streams_config[0].uri_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+		streams_config[0].shift_replace = L"archive";
 
 		auto& params1 = epg_params[0];
 		params1.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";

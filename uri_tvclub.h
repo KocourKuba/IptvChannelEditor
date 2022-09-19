@@ -37,13 +37,13 @@ public:
 	{
 		provider_url = L"https://tvclub.cc/";
 		access_type = AccountAccessType::enLoginPass;
-		catchup.catchup_type = { CatchupType::cu_none, CatchupType::cu_shift};
-		support_streams = { {StreamSubType::enMPEGTS, L"MPEG-TS"} };
-		parser.per_channel_token = true;
-
 		playlist_template = L"http://celn.shott.top/p/{TOKEN}";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
-		catchup.uri_mpeg_template = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_shift;
+		streams_config[1].uri_template = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
 
 		auto& params = epg_params[0];
 		params.epg_url = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
@@ -53,7 +53,7 @@ public:
 		params.epg_end = "end";
 	}
 
-	std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const override;
+	std::wstring get_api_token(const Credentials& creds) const override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 	nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const override;
 	const std::vector<ServersInfo>& get_servers_list(TemplateParams& params) override;

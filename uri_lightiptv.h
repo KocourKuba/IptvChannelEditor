@@ -35,23 +35,23 @@ public:
 	{
 		provider_url = L"https://ottbill.cc/";
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
-
 		playlist_template = L"http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 
-		catchup.uri_hls_template = L"http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
-		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{TOKEN}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8?token={PASSWORD}";
-		catchup.flussonic_hls_replace = L"video";
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 
-		catchup.uri_mpeg_template = L"http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
-		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{TOKEN}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={PASSWORD}";
-		catchup.flussonic_mpeg_replace = L"timeshift_abs";
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_flussonic;
+		streams_config[0].uri_template = L"http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
+		streams_config[0].uri_arc_template = L"http://{DOMAIN}/{TOKEN}/{FLUSSONIC}-{START}-{DURATION}.m3u8?token={PASSWORD}";
+		streams_config[0].flussonic_replace = L"video";
+
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_flussonic;
+		streams_config[1].uri_template = L"http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
+		streams_config[1].uri_arc_template = L"http://{DOMAIN}/{TOKEN}/{FLUSSONIC}-{START}-{DURATION}.ts?token={PASSWORD}";
+		streams_config[1].flussonic_replace = L"timeshift_abs";
 
 		epg_params[0].epg_url = L"http://epg.drm-play.ml/lightiptv/epg/{ID}.json";
-
-		secondary_epg = true;
 		epg_params[1].epg_url = L"http://epg.ott-play.com/lightiptv/epg/{ID}.json";
 	}
-
 };

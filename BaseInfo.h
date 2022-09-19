@@ -72,9 +72,7 @@ public:
 
 	void swap_id(BaseInfo& src)
 	{
-		auto tmp = src.stream_uri->get_parser().id;
-		src.stream_uri->get_parser().id = stream_uri->get_parser().id;
-		src.stream_uri->get_parser().id = tmp;
+		std::swap(stream_uri->get_parser().id, src.stream_uri->get_parser().id);
 	}
 
 	bool is_type(InfoType type) const { return base_type == type; }

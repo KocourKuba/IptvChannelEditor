@@ -199,19 +199,19 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	m_evtStop.ResetEvent();
 	m_evtFinished.ResetEvent();
 
-	std::wstring url;
+	TemplateParams params;
 	if (m_plugin_type == StreamType::enEdem)
 	{
-		url = m_account.get_portal();
+		params.subdomain = m_account.get_portal();
 	}
 	else
 	{
-		TemplateParams params;
 		params.login = m_account.get_login();
 		params.password = m_account.get_password();
 		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
-		url = m_plugin->get_vod_url(params);
 	}
+
+	const auto& url = m_plugin->get_vod_url(params);
 
 	auto pThread = (CPlaylistParseJsonThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseJsonThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
@@ -975,7 +975,7 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 	CWaitCursor cur;
 
 	TemplateParams params;
-	const auto& url = fmt::format(L"{:s}/video/{:s}", m_plugin->get_vod_url(params), movie.id);
+	const auto& url = m_plugin->get_vod_url(params) + L"/video/" + movie.id;
 	std::vector<BYTE> data;
 	if (url.empty() || !utils::DownloadFile(url, data, false) || data.empty())
 	{

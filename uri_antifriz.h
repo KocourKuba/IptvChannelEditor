@@ -37,22 +37,22 @@ public:
 	{
 		provider_url = L"https://antifriztv.com/";
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
-
-		playlist_template = L"http://antifriz.tv/playlist/{PASSWORD}.m3u8";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
-
-		catchup.uri_hls_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
-		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{ID}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
-
-		catchup.uri_mpeg_template = L"http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
-		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
-
-		auto& params1 = epg_params[0];
-		params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
-		params1.epg_root = "";
-
 		provider_vod_url = L"http://protected-api.com";
-		vod_supported = true;
+		playlist_template = L"http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
+
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_flussonic;
+		streams_config[0].uri_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
+		streams_config[0].uri_arc_template = L"http://{DOMAIN}/{ID}/{FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
+
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_flussonic;
+		streams_config[1].uri_template = L"http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
+		streams_config[1].uri_arc_template = L"http://{DOMAIN}/{ID}/{FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+
+		epg_params[0].epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+		epg_params[0].epg_root = "";
 	}
 };

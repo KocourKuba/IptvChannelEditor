@@ -121,14 +121,13 @@ const std::vector<ServersInfo>& uri_sharaclub::get_servers_list(TemplateParams& 
 
 bool uri_sharaclub::set_server(TemplateParams& params)
 {
-	const auto& servers = get_servers_list(params);
-	if (!servers.empty())
+	if (!servers_list.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
 									  params.subdomain,
 									  L"ch_cdn",
 									  L"num",
-									  servers[params.server].id,
+									  servers_list[params.server].id,
 									  params.login,
 									  params.password);
 
@@ -189,14 +188,13 @@ const std::vector<ProfilesInfo>& uri_sharaclub::get_profiles_list(TemplateParams
 
 bool uri_sharaclub::set_profile(TemplateParams& params)
 {
-	const auto& profiles = get_profiles_list(params);
-	if (!profiles.empty())
+	if (!profiles_list.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
 									  params.subdomain,
 									  L"list_profiles",
 									  L"num",
-									  profiles[params.profile].id,
+									  profiles_list[params.profile].id,
 									  params.login,
 									  params.password);
 

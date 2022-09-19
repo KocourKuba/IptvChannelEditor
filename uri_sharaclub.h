@@ -35,20 +35,23 @@ public:
 	{
 		provider_url = L"https://shara.club/";
 		access_type = AccountAccessType::enLoginPass;
-		catchup.catchup_type = { CatchupType::cu_append, CatchupType::cu_shift };
-
+		provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";;
+		provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
 		playlist_template = L"http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
-		catchup.uri_mpeg_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
+
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_append;
+		streams_config[0].uri_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
+
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_shift;
+		streams_config[1].uri_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 
 		auto& params = epg_params[0];
 		params.epg_root = "";
 		params.epg_url = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
-		provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";;
-
-		provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
-		vod_supported = true;
 	}
 
 	void get_playlist_url(std::wstring& url, TemplateParams& params) override;

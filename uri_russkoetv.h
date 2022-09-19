@@ -35,16 +35,15 @@ public:
 	{
 		provider_url = L"https://russkoetv.tv/";
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_none };
-		support_streams = { {StreamSubType::enHLS, L"HLS"} };
-
 		playlist_template = L"http://russkoetv.tv/play/{PASSWORD}.m3u8";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
 
-		auto& params1 = epg_params[0];
-		params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
-		params1.epg_root = "";
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_shift;
+		streams_config[0].uri_template = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
+
+		epg_params[0].epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+		epg_params[0].epg_root = "";
 	}
-
 };

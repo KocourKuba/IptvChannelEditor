@@ -35,17 +35,20 @@ public:
 	{
 		provider_url = L"https://itv.live/";
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+		playlist_template = L"http://itv.ooo/p/{PASSWORD}/hls.m3u8";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
 		parser.per_channel_token = true;
 
-		playlist_template = L"http://itv.ooo/p/{PASSWORD}/hls.m3u8";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_flussonic;
+		streams_config[0].uri_template = L"http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = L"http://{DOMAIN}/{ID}/{FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-		catchup.uri_hls_template = L"http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
-		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{ID}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
-
-		catchup.uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_flussonic;
+		streams_config[1].uri_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+		streams_config[1].uri_arc_template = L"http://{DOMAIN}/{ID}/{FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
 
 		auto& params = epg_params[0];
 		params.epg_url = L"http://api.itv.live/epg/{ID}";

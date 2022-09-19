@@ -258,7 +258,7 @@ private:
 	void CollectCredentials();
 
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
-	void UpdateExtToken(uri_stream* uri, const std::wstring& token) const;
+	void UpdateExtToken(uri_stream* uri) const;
 	bool CheckForSave();
 	void SaveStreamInfo();
 	void UpdateWindowTitle();
@@ -347,7 +347,6 @@ protected:
 
 private:
 	Credentials m_cur_account;
-	std::wstring m_host;
 
 	StreamType m_plugin_type = StreamType::enBase;
 	std::unique_ptr<uri_stream> m_plugin;

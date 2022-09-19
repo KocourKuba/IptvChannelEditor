@@ -3,7 +3,7 @@ require_once 'default_config.php';
 
 class GlanzPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://pl.ottglanz.tv/get.php?username=%s&password=%s&type=m3u&output=hls';
+    const PLAYLIST_TV_URL = 'http://pl.ottg.cc/get.php?username=%s&password=%s&type=m3u&output=hls';
     const PLAYLIST_VOD_URL = 'http://api.ottg.tv/playlist/vod?login=%s&password=%s';
 
     public function __construct()

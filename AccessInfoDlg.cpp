@@ -808,6 +808,8 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 	{
 		m_wndRemove.EnableWindow(pNMLV->uNewState & LVIS_SELECTED);
 
+		UpdateOptionalControls();
+
 		if ((pNMLV->uNewState & 0x2000) && (pNMLV->uOldState & 0x1000))
 		{
 			int cnt = m_wndAccounts.GetItemCount();
@@ -837,7 +839,6 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
 		}
 
-		UpdateOptionalControls();
 		SetWebUpdate();
 	}
 
@@ -883,17 +884,17 @@ void CAccessInfoDlg::GetAccountInfo()
 	m_wndProfile.ResetContent();
 	m_wndProfile.EnableWindow(FALSE);
 
-	auto& selected = GetCheckedAccount();
-	if (selected.not_valid)
+	auto& selected_cred = GetCheckedAccount();
+	if (selected_cred.not_valid)
 		return;
 
 	if (!m_servers.empty())
 	{
 		m_wndDeviceID.EnableWindow(TRUE);
-		m_wndDeviceID.SetCurSel(selected.device_id);
+		m_wndDeviceID.SetCurSel(selected_cred.device_id);
 	}
 
-	m_wndEmbed.SetCheck(selected.embed);
+	m_wndEmbed.SetCheck(selected_cred.embed);
 	m_wndEmbed.EnableWindow(TRUE);
 	m_wndCaption.EnableWindow(TRUE);
 	m_wndLogo.EnableWindow(TRUE);
@@ -909,18 +910,18 @@ void CAccessInfoDlg::GetAccountInfo()
 	switch (m_plugin->get_access_type())
 	{
 		case AccountAccessType::enPin:
-			password = utils::utf8_to_utf16(selected.password);
+			password = utils::utf8_to_utf16(selected_cred.password);
 			break;
 
 		case AccountAccessType::enLoginPass:
-			login = utils::utf8_to_utf16(selected.login);
-			password = utils::utf8_to_utf16(selected.password);
+			login = utils::utf8_to_utf16(selected_cred.login);
+			password = utils::utf8_to_utf16(selected_cred.password);
 			break;
 
 		case AccountAccessType::enOtt:
-			token = utils::utf8_to_utf16(selected.token);
-			domain = utils::utf8_to_utf16(selected.domain);
-			portal = utils::utf8_to_utf16(selected.portal);
+			token = utils::utf8_to_utf16(selected_cred.token);
+			domain = utils::utf8_to_utf16(selected_cred.domain);
+			portal = utils::utf8_to_utf16(selected_cred.portal);
 			break;
 
 		default: break;
@@ -930,23 +931,18 @@ void CAccessInfoDlg::GetAccountInfo()
 	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
 	auto& uri = entry->stream_uri;
 	uri->set_template(false);
-	uri->get_parser().login = login;
-	uri->get_parser().password = password;
-	uri->get_parser().token = token;
-	uri->get_parser().subdomain = domain;
-	uri->get_parser().host = m_host;
 
 	TemplateParams params;
 	params.login = std::move(login);
 	params.password = std::move(password);
 	params.subdomain = m_list_domain;
-	params.server = selected.device_id;
-	params.profile = selected.profile_id;
-	params.quality = selected.quality_id;
+	params.server = selected_cred.device_id;
+	params.profile = selected_cred.profile_id;
+	params.quality = selected_cred.quality_id;
 
 	if (m_plugin_type == StreamType::enTVClub || m_plugin_type == StreamType::enVidok)
 	{
-		params.token = m_plugin->get_api_token(params.login, params.password);
+		params.token = m_plugin->get_api_token(selected_cred);
 	}
 
 	m_plugin->clear_profiles_list();
@@ -961,7 +957,7 @@ void CAccessInfoDlg::GetAccountInfo()
 		if (params.profile >= (int)m_profiles.size())
 		{
 			params.profile = 0;
-			selected.profile_id = 0;
+			selected_cred.profile_id = 0;
 		}
 
 		m_wndProfile.SetCurSel(params.profile);
@@ -980,7 +976,7 @@ void CAccessInfoDlg::GetAccountInfo()
 			// currently supported only in sharaclub, oneott use this to obtain token
 			if (it->name == (L"token"))
 			{
-				selected.token = get_utf8(it->value);
+				selected_cred.token = get_utf8(it->value);
 				it = acc_info.erase(it);
 			}
 			else if (it->name == (L"url"))
@@ -1014,10 +1010,9 @@ void CAccessInfoDlg::GetAccountInfo()
 					// do not override fake ott and domain for edem
 					if (m_plugin->get_access_type() != AccountAccessType::enOtt)
 					{
-						selected.token = get_utf8(uri->get_parser().token);
-						selected.domain = get_utf8(uri->get_parser().domain);
+						selected_cred.token = get_utf8(uri->get_parser().token);
+						selected_cred.domain = get_utf8(uri->get_parser().domain);
 					}
-					m_host = uri->get_parser().host;
 					m_status = _T("Ok");
 					break;
 				}

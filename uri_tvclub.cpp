@@ -40,17 +40,21 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}&{:s}={:s}";
 
-std::wstring uri_tvclub::get_api_token(const std::wstring& login, const std::wstring& password) const
+std::wstring uri_tvclub::get_api_token(const Credentials& creds) const
 {
-	std::string login_a = utils::utf16_to_utf8(login);
-	std::string password_a = utils::utf16_to_utf8(password);
+	std::string login_a = utils::utf16_to_utf8(creds.get_login());
+	std::string password_a = utils::utf16_to_utf8(creds.get_password());
 	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }
 
 bool uri_tvclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
+	Credentials creds;
+	creds.set_login(params.login);
+	creds.set_password(params.password);
+
 	std::vector<BYTE> data;
-	const auto& url = fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(params.login, params.password));
+	const auto& url = fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds));
 	if (!utils::DownloadFile(url, data) || data.empty())
 	{
 		return false;
@@ -108,7 +112,11 @@ const std::vector<ServersInfo>& uri_tvclub::get_servers_list(TemplateParams& par
 {
 	if (servers_list.empty())
 	{
-		const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(params.login, params.password));
+		Credentials creds;
+		creds.set_login(params.login);
+		creds.set_password(params.password);
+
+		const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
 		std::vector<BYTE> data;
 		if (utils::DownloadFile(url, data) || data.empty())
 		{
@@ -142,9 +150,13 @@ bool uri_tvclub::set_server(TemplateParams& params)
 	const auto& servers = get_servers_list(params);
 	if (!servers.empty())
 	{
+		Credentials creds;
+		creds.set_login(params.login);
+		creds.set_password(params.password);
+
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
 									  L"set",
-									  get_api_token(params.login, params.password),
+									  get_api_token(creds),
 									  L"server",
 									  servers[params.server].id);
 

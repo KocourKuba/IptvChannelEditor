@@ -96,7 +96,6 @@ public:
 	CString m_status;
 
 	Credentials m_initial_cred;
-	std::wstring m_host;
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
 	std::vector<std::wstring> m_all_channels_lists;

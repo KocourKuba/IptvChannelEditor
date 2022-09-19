@@ -26,7 +26,10 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_base.h"
+#include "Config.h"
 #include "UtilsLib\json_wrapper.h"
+
+class Credentials;
 
 enum class CatchupType {
 	cu_none,
@@ -60,6 +63,10 @@ struct TemplateParams
 	std::wstring host;
 	std::wstring catchup_source;
 	std::wstring catchup_template;
+	std::wstring server_id;
+	std::wstring profile_id;
+	std::wstring command;
+	std::wstring command_param;
 	int shift_back = 0;
 	int number = 0;
 	int server = 0;
@@ -75,6 +82,12 @@ struct PlaylistInfo
 	bool is_file = false;
 };
 
+struct AccountInfo
+{
+	std::wstring name;
+	std::wstring value;
+};
+
 struct ServerParamsInfo
 {
 	std::wstring id;
@@ -84,12 +97,6 @@ struct ServerParamsInfo
 using ServersInfo = ServerParamsInfo;
 using ProfilesInfo = ServerParamsInfo;
 using QualityInfo = ServerParamsInfo;
-
-struct AccountInfo
-{
-	std::wstring name;
-	std::wstring value;
-};
 
 struct EpgInfo
 {
@@ -103,10 +110,12 @@ struct EpgInfo
 #endif // _DEBUG
 };
 
+/// <summary>
+/// Parameters to parse EPG
+/// </summary>
 struct EpgParameters
 {
 	bool epg_use_mapper = false;
-	bool epg_use_id_hash = false;
 	bool epg_use_duration = false;
 	size_t epg_tz = 0;
 	std::wstring epg_url;
@@ -126,6 +135,7 @@ struct EpgParameters
 /// </summary>
 struct ParsingGroups
 {
+	std::wstring uri_parse_template;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring port;
@@ -139,21 +149,18 @@ struct ParsingGroups
 	bool per_channel_token = false;
 };
 
-struct CatchupParameters
+/// <summary>
+/// Catchup parameters to generate online and archive streams
+/// </summary>
+struct StreamParameters
 {
-	std::array<CatchupType, 2> catchup_type;
+	StreamSubType stream_type = StreamSubType::enNone;
+	CatchupType catchup_type = CatchupType::cu_none;
 
-	std::wstring uri_hls_template;
-	std::wstring uri_mpeg_template;
-
-	std::wstring uri_mpeg_arc_template;
-
-	std::wstring shift_hls_replace = L"utc";
-	std::wstring flussonic_hls_replace = L"archive";
-
-	std::wstring uri_hls_arc_template;
-	std::wstring shift_mpeg_replace = L"utc";
-	std::wstring flussonic_mpeg_replace = L"archive";
+	std::wstring uri_template;
+	std::wstring uri_arc_template;
+	std::wstring shift_replace = L"utc";
+	std::wstring flussonic_replace = L"archive";
 
 	int catchup_duration = 10800;
 };
@@ -164,26 +171,26 @@ struct CatchupParameters
 class uri_stream : public uri_base
 {
 protected:
-	static constexpr auto REPL_DOMAIN    = L"{DOMAIN}";    // stream url domain (set from playlist)
-	static constexpr auto REPL_PORT      = L"{PORT}";      // stream url port (set from playlist)
-	static constexpr auto REPL_ID        = L"{ID}";        // id (set from playlist)
-	static constexpr auto REPL_SUBDOMAIN = L"{SUBDOMAIN}"; // domain (set from settings or set by provider)
-	static constexpr auto REPL_TOKEN     = L"{TOKEN}";     // token (set from playlist or set by provider)
-	static constexpr auto REPL_QUALITY   = L"{QUALITY}";   // quality (set from settings)
-	static constexpr auto REPL_LOGIN     = L"{LOGIN}";     // login (set from settings)
-	static constexpr auto REPL_PASSWORD  = L"{PASSWORD}";  // password (set from settings)
-	static constexpr auto REPL_INT_ID    = L"{INT_ID}";    // internal id (reads from playlist)
-	static constexpr auto REPL_HOST      = L"{HOST}";      // host (reads from playlist)
-	static constexpr auto REPL_SERVER_ID = L"{SERVER_ID}"; // server id (read from settings)
+	static constexpr auto REPL_DOMAIN     = L"{DOMAIN}";     // stream url domain (set from playlist)
+	static constexpr auto REPL_PORT       = L"{PORT}";       // stream url port (set from playlist)
+	static constexpr auto REPL_ID         = L"{ID}";         // id (set from playlist)
+	static constexpr auto REPL_SUBDOMAIN  = L"{SUBDOMAIN}";  // domain (set from settings or set by provider)
+	static constexpr auto REPL_TOKEN      = L"{TOKEN}";      // token (set from playlist or set by provider)
+	static constexpr auto REPL_QUALITY    = L"{QUALITY}";    // quality (set from settings)
+	static constexpr auto REPL_LOGIN      = L"{LOGIN}";      // login (set from settings)
+	static constexpr auto REPL_PASSWORD   = L"{PASSWORD}";   // password (set from settings)
+	static constexpr auto REPL_INT_ID     = L"{INT_ID}";     // internal id (reads from playlist)
+	static constexpr auto REPL_HOST       = L"{HOST}";       // host (reads from playlist)
+	static constexpr auto REPL_SERVER_ID  = L"{SERVER_ID}";  // server id (read from settings)
+	static constexpr auto REPL_PROFILE_ID = L"{PROFILE_ID}"; // profile id (read from settings)
 
-	static constexpr auto REPL_START     = L"{START}";     // EPG archive start time (unix timestamp)
-	static constexpr auto REPL_DURATION  = L"{DURATION}";  // EPG archive duration (in second)
-	static constexpr auto REPL_NOW       = L"{NOW}";       // EPG archive current time (unix timestamp)
-	static constexpr auto REPL_DATE      = L"{DATE}";      // EPG date (set by format)
-	static constexpr auto REPL_TIME      = L"{TIME}";      // EPG time (set by format)
+	static constexpr auto REPL_START      = L"{START}";      // EPG archive start time (unix timestamp)
+	static constexpr auto REPL_DURATION   = L"{DURATION}";   // EPG archive duration (in second)
+	static constexpr auto REPL_NOW        = L"{NOW}";        // EPG archive current time (unix timestamp)
+	static constexpr auto REPL_DATE       = L"{DATE}";       // EPG date (set by format)
+	static constexpr auto REPL_TIME       = L"{TIME}";       // EPG time (set by format)
 
-	static constexpr auto REPL_MPEG_FLUSSONIC = L"{HLS_FLUSSONIC}";
-	static constexpr auto REPL_HLS_FLUSSONIC  = L"{MPEG_FLUSSONIC}";
+	static constexpr auto REPL_FLUSSONIC  = L"{FLUSSONIC}";  // archive/index/video or other word used in flussonic template
 
 public:
 	uri_stream();
@@ -264,12 +271,6 @@ public:
 	/// returns link to provider account
 	/// </summary>
 	/// <returns>wstring</returns>
-	bool is_vod_supported() const { return vod_supported; }
-
-	/// <summary>
-	/// returns link to provider account
-	/// </summary>
-	/// <returns>wstring</returns>
 	const std::wstring& get_provider_url() const { return provider_url; }
 
 	/// <summary>
@@ -306,7 +307,7 @@ public:
 	/// supported streams HLS,MPEGTS etc.
 	/// </summary>
 	/// <returns>vector&</returns>
-	const std::vector<std::tuple<StreamSubType, std::wstring>>& get_supported_stream_type() const { return support_streams; }
+	const std::array<StreamParameters, 2>& get_supported_streams() const { return streams_config; }
 
 	/// <summary>
 	/// returns epg mapper
@@ -320,12 +321,7 @@ public:
 	/// </summary>
 	/// <returns>EpgParameters</returns>
 	EpgParameters& get_epg_parameters(int idx) { return epg_params[idx]; };
-
-	/// <summary>
-	/// is stream has secondary epg
-	/// </summary>
-	/// <returns>bool</returns>
-	bool has_epg2() const { return secondary_epg; };
+	const EpgParameters& get_epg_parameters(int idx) const { return epg_params[idx]; };
 
 	/// <summary>
 	/// parse epg for channel.
@@ -375,7 +371,7 @@ public:
 	/// </summary>
 	/// <param name="params">parameters used to download access info</param>
 	/// <returns>wstring</returns>
-	virtual void get_playlist_url(std::wstring& url, TemplateParams& params);;
+	virtual void get_playlist_url(std::wstring& url, TemplateParams& params);
 
 	/// <summary>
 	/// returns token from account if exist
@@ -383,7 +379,7 @@ public:
 	/// <param name="login">login</param>
 	/// <param name="password">password</param>
 	/// <returns>wstring</returns>
-	virtual std::wstring get_api_token(const std::wstring& login, const std::wstring& password) const { return L""; };
+	virtual std::wstring get_api_token(const Credentials& creds) const { return L""; };
 
 	/// <summary>
 	/// returns json root for epg iteration
@@ -392,13 +388,6 @@ public:
 	/// <param name="epg_data">downloaded json</param>
 	/// <returns>json entry pointed to epg list</returns>
 	virtual nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const;
-
-	/// <summary>
-	/// add archive parameters to url
-	/// </summary>
-	/// <param name="url">url/secondary</param>
-	/// <returns>wstring&</returns>
-	virtual std::wstring shift_archive(const TemplateParams& params, const std::wstring& url) const;
 
 	/// <summary>
 	/// returns list of servers
@@ -445,8 +434,8 @@ protected:
 	ServerSubstType server_subst_type = ServerSubstType::enNone;
 	AccountAccessType access_type = AccountAccessType::enOtt;
 
-	std::array <EpgParameters, 2> epg_params;
-	std::vector<std::tuple<StreamSubType, std::wstring>> support_streams = { {StreamSubType::enHLS, L"HLS"}, {StreamSubType::enMPEGTS, L"MPEG-TS"} };
+	std::array<StreamParameters, 2> streams_config;
+	std::array<EpgParameters, 2> epg_params;
 
 	std::vector<ServersInfo> servers_list;
 	std::vector<ProfilesInfo> profiles_list;
@@ -457,13 +446,8 @@ protected:
 	std::wstring provider_api_url;
 	std::wstring provider_vod_url;
 	std::wstring playlist_template;
-	std::wstring uri_parse_template;
 
-	CatchupParameters catchup;
 	ParsingGroups parser;
-
-	bool vod_supported = false;
-	bool secondary_epg = false;
 
 	mutable std::wstring str_hash;
 	mutable int hash = 0;

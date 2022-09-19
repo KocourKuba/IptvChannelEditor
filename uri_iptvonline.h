@@ -35,17 +35,20 @@ public:
 	{
 		provider_url = L"https://iptv.online/";
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
-
 		playlist_template = L"http://iptv.online/play/{PASSWORD}/m3u8";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 
-		catchup.uri_hls_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
-		catchup.uri_hls_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8";
-		catchup.flussonic_hls_replace = L"video";
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 
-		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
-		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts";
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_flussonic;
+		streams_config[0].uri_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
+		streams_config[0].uri_arc_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/{FLUSSONIC}-{START}-{DURATION}.m3u8";
+		streams_config[0].flussonic_replace = L"video";
+
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_flussonic;
+		streams_config[1].uri_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
+		streams_config[1].uri_arc_template = L"http://{DOMAIN}/play/{ID}/{TOKEN}/{FLUSSONIC}-{START}-{DURATION}.ts";
 
 		auto& params1 = epg_params[0];
 		params1.epg_url = L"http://epg.iptvx.one/api/id/{ID}.json";
@@ -57,8 +60,6 @@ public:
 		params1.epg_time_format = "%d-%m-%Y %H:%M";
 		params1.epg_tz = 3600 * 3; // iptvx.one uses moscow time (UTC+3)
 
-		secondary_epg = true;
 		epg_params[1].epg_url = L"http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
 	}
-
 };

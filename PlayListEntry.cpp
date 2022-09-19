@@ -129,7 +129,7 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			break;
 		}
 
-		if (stream_uri->has_epg2())
+		if (!stream_uri->get_epg_parameters(1).epg_url.empty())
 			set_epg_id(1, get_epg_id(0));
 	}
 

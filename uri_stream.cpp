@@ -19,8 +19,6 @@ uri_stream::uri_stream()
 
 	epg_params = { params, params };
 
-	catchup.catchup_type = { CatchupType::cu_none, CatchupType::cu_none };
-
 	PlaylistInfo info;
 
 	info.name = load_string_resource(IDS_STRING_PLAYLIST);
@@ -41,8 +39,9 @@ void uri_stream::clear()
 
 void uri_stream::parse_uri(const std::wstring& url)
 {
+	std::wstring pre_re(parser.uri_parse_template);
+
 	std::vector<std::wstring> groups;
-	std::wstring pre_re(uri_parse_template);
 	std::wregex re_group(L"(\\?<([^>]+)>)");
 	std::match_results<std::wstring::const_iterator> ms;
 	while (std::regex_search(pre_re, ms, re_group))
@@ -141,48 +140,37 @@ void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
 std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url;
+	size_t subtype = (size_t)params.streamSubtype;
+	switch (streams_config[subtype].catchup_type)
+	{
+		case CatchupType::cu_shift:
+		case CatchupType::cu_append:
+			url = is_template() ? streams_config[subtype].uri_template : get_uri();
+			if (params.shift_back)
+			{
+				if (url.rfind('?') != std::wstring::npos)
+					url += '&';
+				else
+					url += '?';
 
-	if (!is_template())
-	{
-		url = shift_archive(params, get_uri());
-	}
-	else
-	{
-		switch (params.streamSubtype)
-		{
-			case StreamSubType::enHLS:
-				switch (catchup.catchup_type[0])
+				url += streams_config[subtype].shift_replace + L"={START}";
+				if (streams_config[subtype].catchup_type == CatchupType::cu_shift)
 				{
-					case CatchupType::cu_shift:
-					case CatchupType::cu_append:
-						url = shift_archive(params, catchup.uri_hls_template);
-						break;
-					case CatchupType::cu_flussonic:
-						url = params.shift_back ? catchup.uri_hls_arc_template : catchup.uri_hls_template;
-						break;
-					default:
-						ASSERT(false);
-						break;
+					url += L"&lutc={NOW}";
 				}
-				break;
-			case StreamSubType::enMPEGTS:
-				switch (catchup.catchup_type[1])
-				{
-					case CatchupType::cu_shift:
-					case CatchupType::cu_append:
-						url = shift_archive(params, catchup.uri_mpeg_template);
-						break;
-					case CatchupType::cu_flussonic:
-						url = params.shift_back ? catchup.uri_mpeg_arc_template : catchup.uri_mpeg_template;
-						break;
-					case CatchupType::cu_none:
-						break;
-					default:
-						ASSERT(false);
-						break;
-				}
-				break;
-		}
+			}
+			break;
+
+		case CatchupType::cu_flussonic:
+			url = params.shift_back ? streams_config[subtype].uri_arc_template : streams_config[subtype].uri_template;
+			break;
+
+		case CatchupType::cu_none:
+			break;
+
+		default:
+			ASSERT(false);
+			break;
 	}
 
 	replace_vars(url, params);
@@ -211,6 +199,9 @@ std::wstring uri_stream::get_vod_url(TemplateParams& params) const
 
 	if (!params.password.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+	if (!params.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
 	return url;
 }
@@ -354,10 +345,6 @@ std::wstring uri_stream::compile_epg_url(int epg_idx, const std::wstring& epg_id
 			subst_id = (pair != mapper.end()) ? pair->second : epg_id;
 		}
 	}
-	else if (params.epg_use_id_hash)
-	{
-		subst_id = fmt::format(L"{:d}", xxh::xxhash<32>(utils::utf16_to_utf8(parser.id)));
-	}
 	else
 	{
 		subst_id = epg_id;
@@ -414,10 +401,11 @@ void uri_stream::put_account_info(const std::string& name, const nlohmann::json&
 
 void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) const
 {
-	utils::string_replace_inplace<wchar_t>(url, REPL_HLS_FLUSSONIC, catchup.flussonic_hls_replace);
-	utils::string_replace_inplace<wchar_t>(url, REPL_MPEG_FLUSSONIC, catchup.flussonic_mpeg_replace);
+	size_t subtype = (size_t)params.streamSubtype;
+
+	utils::string_replace_inplace<wchar_t>(url, REPL_FLUSSONIC, streams_config[subtype].flussonic_replace);
+	utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].catchup_duration));
 	utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
-	utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(catchup.catchup_duration));
 
 	if (!parser.domain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, parser.domain);
@@ -434,6 +422,9 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (!parser.int_id.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, parser.int_id);
 
+	if (!parser.host.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, parser.host);
+
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
@@ -446,26 +437,12 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (!params.password.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
 
-	if (!params.host.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, params.host);
+	if (!servers_list.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[params.server].id);
+
+	if (!profiles_list.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.profile].id);
 
 	if (!quality_list.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[params.quality].id);
-
-}
-
-std::wstring uri_stream::shift_archive(const TemplateParams& params, const std::wstring& url) const
-{
-	std::wstring result(url);
-	if (params.shift_back)
-	{
-		if (url.rfind('?') != std::wstring::npos)
-			result += '&';
-		else
-			result += '?';
-
-		result += catchup.shift_hls_replace + L"={START}";
-	}
-
-	return result;
 }

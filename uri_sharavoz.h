@@ -35,21 +35,22 @@ public:
 	{
 		provider_url = L"https://www.sharavoz.tv/";
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
-		secondary_epg = true;
-
 		playlist_template = L"http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>\d+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 
-		catchup.uri_hls_template = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{ID}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
-		catchup.flussonic_hls_replace = L"index";
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>\d+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 
-		catchup.uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_flussonic;
+		streams_config[0].uri_template = L"http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = L"http://{DOMAIN}/{ID}/{FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
+		streams_config[0].flussonic_replace = L"index";
+
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_flussonic;
+		streams_config[1].uri_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+		streams_config[1].uri_arc_template = L"http://{DOMAIN}/{ID}/{FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
 
 		epg_params[0].epg_url = L"http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
 		epg_params[1].epg_url = L"http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
 	}
-
 };

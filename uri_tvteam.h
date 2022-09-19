@@ -36,20 +36,22 @@ public:
 		provider_url = L"https://tv.team/";
 		server_subst_type = ServerSubstType::enStream;
 		access_type = AccountAccessType::enPin;
-		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
+		playlist_template = L"http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
 		parser.per_channel_token = true;
 
-		playlist_template = L"http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_flussonic;
+		streams_config[0].uri_template = L"http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = L"http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
+		streams_config[0].flussonic_replace = L"index";
 
-		catchup.uri_hls_template = L"http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
-		catchup.uri_hls_arc_template = L"http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
-		catchup.flussonic_hls_replace = L"index";
-
-		catchup.uri_mpeg_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}/{ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_flussonic;
+		streams_config[1].uri_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+		streams_config[1].uri_arc_template = L"http://{DOMAIN}/{ID}/{FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
 
 		epg_params[0].epg_url = L"http://tv.team/{ID}.json";
 	}
-
 };

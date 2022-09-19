@@ -30,6 +30,7 @@ enum class StreamSubType
 {
 	enHLS = 0,
 	enMPEGTS,
+	enNone,
 };
 
 

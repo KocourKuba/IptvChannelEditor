@@ -35,15 +35,17 @@ public:
 	uri_kineskop()
 	{
 		provider_url = L"http://kineskop.club/";
-		epg_params[0].epg_url = L"http://epg.esalecrm.net/kineskop/epg/{ID}.json";
 		access_type = AccountAccessType::enLoginPass;
-		catchup.catchup_type = { CatchupType::cu_shift, CatchupType::cu_flussonic };
-		support_streams = { {StreamSubType::enHLS, L"HLS"} };
+		playlist_template = L"http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER_ID}/1";
+
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
 		parser.per_channel_token = true;
 
-		playlist_template = L"http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER_ID}/1";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
-		catchup.uri_hls_template = L"http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_shift;
+		streams_config[0].uri_template = L"http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
+
+		epg_params[0].epg_url = L"http://epg.esalecrm.net/kineskop/epg/{ID}.json";
 
 		for (int i = 0; i <= IDS_STRING_KINESKOP_P4 - IDS_STRING_KINESKOP_P1; i++)
 		{

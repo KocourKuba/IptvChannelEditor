@@ -36,19 +36,21 @@ public:
 	{
 		provider_url = L"https://filmax-tv.ru/";
 		access_type = AccountAccessType::enLoginPass;
-		catchup.catchup_type = { CatchupType::cu_flussonic, CatchupType::cu_flussonic };
-
 		playlist_template = L"http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 
-		catchup.uri_hls_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/index.m3u8?token={TOKEN}";
-		catchup.uri_hls_arc_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/{HLS_FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
+		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 
-		catchup.uri_mpeg_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
-		catchup.uri_mpeg_arc_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/{MPEG_FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].catchup_type = CatchupType::cu_flussonic;
+		streams_config[0].uri_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/index.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/{FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-		auto& params = epg_params[0];
-		params.epg_url = L"http://epg.esalecrm.net/filmax/epg/{ID}.json";
+		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_flussonic;
+		streams_config[1].uri_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
+		streams_config[1].uri_arc_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/{FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+
+		epg_params[0].epg_url = L"http://epg.esalecrm.net/filmax/epg/{ID}.json";
 
 		for (int i = 0; i <= IDS_STRING_FILMAX_P12 - IDS_STRING_FILMAX_P1; i++)
 		{
@@ -56,5 +58,4 @@ public:
 			servers_list.emplace_back(info);
 		}
 	}
-
 };
