@@ -75,6 +75,12 @@ constexpr auto ID_ACCOUNT_TO_END = ID_ACCOUNT_TO_START + 512;
 
 constexpr auto ID_UPDATE_EPG_TIMER = 1000;
 
+constexpr auto MOD_TITLE   = 0x01;
+constexpr auto MOD_ARCHIVE = 0x02;
+constexpr auto MOD_EPG1    = 0x04;
+constexpr auto MOD_EPG2    = 0x08;
+constexpr auto MOD_ICON    = 0x10;
+
 // Common
 constexpr auto CHANNELS_LIST_VERSION = 4;
 
@@ -270,6 +276,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_SHOW_CHANGED_CH, m_wndShowChangedCh);
 	DDX_Control(pDX, IDC_CHECK_NOT_ADDED, m_wndNotAdded);
 	DDX_Text(pDX, IDC_EDIT_PL_SEARCH, m_plSearch);
+	DDX_Control(pDX, IDC_EDIT_ICON_NAME, m_wndIconUrl);
 	DDX_Text(pDX, IDC_EDIT_ICON_NAME, m_iconUrl);
 	DDX_Control(pDX, IDC_STATIC_PL_ICON, m_wndPlIcon);
 	DDX_Text(pDX, IDC_EDIT_PL_ICON_NAME, m_plIconName);
@@ -976,7 +983,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 
 	UpdateChannelsTreeColors();
 	FillTreePlaylist();
-	LoadChannelInfo();
+	UpdateControlsForItem();
 
 	m_loading = false;
 	m_wndAccountSetting.EnableWindow(TRUE);
@@ -1050,7 +1057,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 	m_wndDownloadUrl.EnableWindow(TRUE);
 	m_wndSettings.EnableWindow(TRUE);
 
-	LoadChannelInfo();
+	UpdateControlsForItem();
 	LoadPlayListInfo();
 
 	return 0;
@@ -1330,15 +1337,17 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 						ch_parser.host = entry_parser.host;
 					}
 
-					if ((bCmpTitle && channel->get_title() != entry->get_title())
-						|| (bCmpArchive && entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
-						|| (bCmpEpg1 && !entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0))
-						|| (bCmpEpg2 && !entry->get_epg_id(1).empty() && channel->get_epg_id(1) != entry->get_epg_id(1))
-						|| (bCmpIcon && !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
-						)
+					int changed_flag = 0;
+					changed_flag |= (bCmpTitle && channel->get_title() != entry->get_title() ? MOD_TITLE : 0);
+					changed_flag |= (bCmpArchive && entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days() ? MOD_ARCHIVE : 0);
+					changed_flag |= (bCmpEpg1 && !entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0) ? MOD_EPG1 : 0);
+					changed_flag |= (bCmpEpg2 && !entry->get_epg_id(1).empty() && channel->get_epg_id(1) != entry->get_epg_id(1) ? MOD_EPG2 : 0);
+					changed_flag |= (bCmpIcon && !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false) ? MOD_ICON : 0);
+
+					if (changed_flag)
 					{
 						color = m_colorChanged;
-						m_changedChannels.emplace(id, entry);
+						m_changedChannels.emplace(id, changed_flag);
 					}
 					else
 					{
@@ -2276,8 +2285,22 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		return;
 
 	HTREEITEM hSelected = reinterpret_cast<LPNMTREEVIEW>(pNMHDR)->itemNew.hItem;
+	UpdateControlsForItem(hSelected);
+
+	OnSyncTreeItem();
+
+	if (pResult)
+		*pResult = 0;
+}
+
+void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullptr*/)
+{
+	if (hSelected == nullptr)
+		hSelected = m_wndChannelsTree.GetSelectedItem();
+
 	int state = 0; // none selected
 	bool bSameType = IsSelectedTheSameType(&m_wndChannelsTree);
+	int changed_flag = 0;
 	if (bSameType)
 	{
 		const auto& channel = FindChannel(hSelected);
@@ -2297,6 +2320,8 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 					m_streamID.Empty();
 
 				m_wndChannelIcon.EnableWindow(TRUE);
+				if (auto& pair = m_changedChannels.find(channel->stream_uri->get_parser().id); pair != m_changedChannels.end())
+					changed_flag = pair->second;
 			}
 			else if (IsCategory(hSelected))
 			{
@@ -2340,15 +2365,23 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	m_wndAdult.EnableWindow(state != 0);
 	m_wndViewEPG.EnableWindow(single && (firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty()));
 	m_wndStreamID.EnableWindow(single && !m_streamID.IsEmpty());
-	m_wndArchiveDays.EnableWindow((state != 0) && (m_isArchive != 0));
 	m_wndCheckArchive.EnableWindow(single && hasProbe && !m_loading);
 	m_wndTimeShift.EnableWindow(state);
 	m_wndSpinTimeShift.EnableWindow(state);
 	m_wndSearch.EnableWindow(TRUE);
 	m_wndEpg1.EnableWindow(single);
 	m_wndEpg2.EnableWindow(single && !m_plugin->get_epg_parameters(1).epg_url.empty());
+
+	m_wndArchiveDays.EnableWindow((state != 0) && (m_isArchive != 0));
+	m_wndArchiveDays.SetTextColor(single && (changed_flag & MOD_ARCHIVE) ? m_colorChanged : m_normal);
+
+	m_wndEpgID1.SetTextColor(single && (changed_flag & MOD_EPG1) ? m_colorChanged : m_normal);
 	m_wndEpgID1.EnableWindow(single);
+
+	m_wndEpgID2.SetTextColor(single && (changed_flag & MOD_EPG2) ? m_colorChanged : m_normal);
 	m_wndEpgID2.EnableWindow(single && !m_plugin->get_epg_parameters(1).epg_url.empty());
+
+	m_wndIconUrl.SetTextColor(single && (changed_flag & MOD_ICON) ? m_colorChanged : m_normal);
 
 	if (state == 2)
 	{
@@ -2365,13 +2398,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 		bEnable = bEnable && bSameType;
 	}
 
-	if (GetConfig().get_int(true, REG_AUTO_SYNC))
-		OnSyncTreeItem();
-
 	UpdateData(FALSE);
-
-	if (pResult)
-		*pResult = 0;
 }
 
 void CIPTVChannelEditorDlg::OnTvnEndlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult)
@@ -2888,11 +2915,16 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
 	bool changed = false;
 	for (const auto& item : m_changedChannels)
 	{
-		changed |= AddChannel(item.second);
+		changed |= AddChannel(m_playlistMap[item.first]);
 	}
 
-	UpdateChannelsTreeColors();
-	FillTreePlaylist();
+	if (changed)
+	{
+		UpdateChannelsTreeColors();
+		FillTreePlaylist();
+		UpdateControlsForItem();
+	}
+
 	set_allow_save(changed);
 }
 
@@ -3122,7 +3154,7 @@ std::vector<std::wstring> CIPTVChannelEditorDlg::FilterPlaylist()
 			entries.reserve(m_changedChannels.size());
 			for (const auto& entry : m_changedChannels)
 			{
-				entries.emplace_back(entry.second);
+				entries.emplace_back(m_playlistMap[entry.first]);
 			}
 		}
 		else
@@ -3688,7 +3720,6 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 			params.select = false;
 			needCheckExisting |= AddChannel(FindEntry(SelectTreeItem(&m_wndPlaylistTree, params)));
 		}
-		LoadChannelInfo();
 	}
 
 	OnSyncTreeItem();
@@ -3697,6 +3728,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 	{
 		UpdateChannelsTreeColors();
 		CheckForExistingPlaylist();
+		UpdateControlsForItem();
 	}
 
 	set_allow_save();
@@ -3830,8 +3862,7 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 
 	LoadPlayListInfo(pNMTreeView->itemNew.hItem);
 
-	if (GetConfig().get_int(true, REG_AUTO_SYNC))
-		OnSyncTreeItem();
+	OnSyncTreeItem();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
@@ -4185,7 +4216,7 @@ void CIPTVChannelEditorDlg::OnBnClickCheckArchive()
 
 void CIPTVChannelEditorDlg::OnSyncTreeItem()
 {
-	if (m_loading || !m_lastTree || m_inSync)
+	if (m_loading || !m_lastTree || m_inSync || !GetConfig().get_int(true, REG_AUTO_SYNC))
 		return;
 
 	m_inSync = true;

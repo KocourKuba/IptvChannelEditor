@@ -36,6 +36,7 @@ DEALINGS IN THE SOFTWARE.
 #include "map_serializer.h"
 #include "TrayIcon.h"
 #include "MySplitButton.h"
+#include "ColorEdit.h"
 #include "vod_movie.h"
 
 #include "UtilsLib\json_wrapper.h"
@@ -259,6 +260,7 @@ private:
 
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
 	void UpdateExtToken(uri_stream* uri) const;
+	void UpdateControlsForItem(HTREEITEM hSelected = nullptr);
 	bool CheckForSave();
 	void SaveStreamInfo();
 	void UpdateWindowTitle();
@@ -282,9 +284,10 @@ protected:
 
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
-	CEdit m_wndEpgID1;
-	CEdit m_wndEpgID2;
-	CEdit m_wndArchiveDays;
+	CColorEdit m_wndEpgID1;
+	CColorEdit m_wndEpgID2;
+	CColorEdit m_wndArchiveDays;
+	CColorEdit m_wndIconUrl;
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
@@ -371,7 +374,7 @@ private:
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
 	UINT_PTR m_update_epg_timer = 0;
-	std::map<std::wstring, std::shared_ptr<PlaylistEntry>> m_changedChannels;
+	std::map<std::wstring, int> m_changedChannels;
 	std::set<std::wstring> m_unknownChannels;
 
 	// Event to signal for load playlist thread
