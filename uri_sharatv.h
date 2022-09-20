@@ -39,12 +39,15 @@ class uri_sharatv : public uri_stream
 
 		playlist_template = L"http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].uri_template = L"http://{DOMAIN}/{ID}/{TOKEN}";
+		streams_config[0].shift_replace = "utc";
+		streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{TOKEN}?{SHIFT_SUBST}={START}&lutc={NOW}";
 
-		epg_params[0].epg_url = L"http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
+		epg_params[0].epg_url = "http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
 	}
 };

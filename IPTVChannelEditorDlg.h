@@ -454,4 +454,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// vod
 	std::array<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>, (size_t)StreamType::enLast> m_vod_categories;
+public:
+	afx_msg void OnBnClickedButtonEditConfig();
 };

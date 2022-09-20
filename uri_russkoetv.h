@@ -41,13 +41,16 @@ public:
 
 		playlist_template = L"http://russkoetv.tv/play/{PASSWORD}.m3u8";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].uri_template = L"http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
+		streams_config[0].shift_replace = "utc";
+		streams_config[0].uri_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
 
-		epg_params[0].epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+		epg_params[0].epg_url = "http://protected-api.com/epg/{ID}/?date=";
 		epg_params[0].epg_root = "";
 	}
 };

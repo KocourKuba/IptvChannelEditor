@@ -98,9 +98,9 @@ BOOL CVodViewer::OnInitDialog()
 
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
-	if (auto pos = m_account.domain.find(':'); pos != std::string::npos)
+	if (auto pos = m_account.subdomain.find(':'); pos != std::string::npos)
 	{
-		m_account.domain = m_account.domain.substr(0, pos);
+		m_account.subdomain = m_account.subdomain.substr(0, pos);
 	}
 
 	LoadPlaylist();
@@ -466,7 +466,7 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 				const auto& season = movie->seasons[m_season_idx];
 				url = season.episodes[m_episode_idx].url;
 			}
-			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_domain(), url, m_account.get_token());
+			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_token());
 			break;
 		}
 		case StreamType::enEdem:
@@ -1144,7 +1144,7 @@ void CVodViewer::GetUrl(int idx)
 				const auto& season = movie->seasons[m_season_idx];
 				url = season.episodes[m_episode_idx].url;
 			}
-			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_domain(), url, m_account.get_token());
+			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_token());
 			break;
 		}
 		case StreamType::enEdem:

@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include <regex>
-#include "AccessInfoDlg.h"
+#include "AccessInfoPage.h"
 #include "IPTVChannelEditor.h"
 #include "PlayListEntry.h"
 #include "UrlDlg.h"
@@ -56,44 +56,44 @@ inline std::string get_utf8(const wchar_t* value)
 
 // CAccessDlg dialog
 
-IMPLEMENT_DYNAMIC(CAccessInfoDlg, CMFCPropertyPage)
+IMPLEMENT_DYNAMIC(CAccessInfoPage, CMFCPropertyPage)
 
-BEGIN_MESSAGE_MAP(CAccessInfoDlg, CMFCPropertyPage)
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &CAccessInfoDlg::OnBnClickedButtonAdd)
-	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CAccessInfoDlg::OnBnClickedButtonRemove)
-	ON_BN_CLICKED(IDC_BUTTON_NEW_FROM_URL, &CAccessInfoDlg::OnBnClickedButtonNewFromUrl)
-	ON_NOTIFY(NM_DBLCLK, IDC_LIST_ACCOUNTS, &CAccessInfoDlg::OnNMDblClickList)
-	ON_MESSAGE(WM_NOTIFY_END_EDIT, &CAccessInfoDlg::OnNotifyDescriptionEdited)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_ACCOUNTS, &CAccessInfoDlg::OnLvnItemchangedListAccounts)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_CHANNELS, &CAccessInfoDlg::OnLvnItemchangedListChannels)
-	ON_CBN_SELCHANGE(IDC_COMBO_DEVICE_ID, &CAccessInfoDlg::OnCbnSelchangeComboDeviceId)
-	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoDlg::OnCbnSelchangeComboProfile)
-	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CAccessInfoDlg::OnCbnSelchangeComboQuality)
-	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoDlg::OnBnClickedCheckEmbed)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoDlg::OnEnChangeEditPluginCaption)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoDlg::OnEnChangeEditPluginSuffix)
-	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_LOGO, &CAccessInfoDlg::OnEnChangeMfceditbrowsePluginLogo)
-	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_BGND, &CAccessInfoDlg::OnEnChangeMfceditbrowsePluginBgnd)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CAccessInfoDlg::OnToolTipText)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CAccessInfoDlg::OnToolTipText)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_VERSION, &CAccessInfoDlg::OnEnChangeEditPluginUpdateVersion)
-	ON_BN_CLICKED(IDC_CHECK_AUTOINCREMENT_VERSION, &CAccessInfoDlg::OnBnClickedCheckAutoincrementVersion)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_URL, &CAccessInfoDlg::OnEnChangeEditPluginUpdateUrl)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_FILE_URL, &CAccessInfoDlg::OnEnChangeEditPluginUpdateFileUrl)
-	ON_BN_CLICKED(IDC_CHECK_CUSTOM_UPDATE_NAME, &CAccessInfoDlg::OnBnClickedCheckCustomUpdateName)
-	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PACKAGE_NAME, &CAccessInfoDlg::OnBnClickedCheckCustomPackageName)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_NAME, &CAccessInfoDlg::OnEnChangeEditPluginUpdateName)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_PACKAGE_NAME, &CAccessInfoDlg::OnEnChangeEditPluginPackageName)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, &CAccessInfoDlg::OnEnChangeEditPluginChannelsWebPath)
+BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CAccessInfoPage::OnBnClickedButtonAdd)
+	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CAccessInfoPage::OnBnClickedButtonRemove)
+	ON_BN_CLICKED(IDC_BUTTON_NEW_FROM_URL, &CAccessInfoPage::OnBnClickedButtonNewFromUrl)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_ACCOUNTS, &CAccessInfoPage::OnNMDblClickList)
+	ON_MESSAGE(WM_NOTIFY_END_EDIT, &CAccessInfoPage::OnNotifyDescriptionEdited)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_ACCOUNTS, &CAccessInfoPage::OnLvnItemchangedListAccounts)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_CHANNELS, &CAccessInfoPage::OnLvnItemchangedListChannels)
+	ON_CBN_SELCHANGE(IDC_COMBO_DEVICE_ID, &CAccessInfoPage::OnCbnSelchangeComboDeviceId)
+	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoPage::OnCbnSelchangeComboProfile)
+	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CAccessInfoPage::OnCbnSelchangeComboQuality)
+	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoPage::OnBnClickedCheckEmbed)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoPage::OnEnChangeEditPluginCaption)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoPage::OnEnChangeEditPluginSuffix)
+	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_LOGO, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo)
+	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_BGND, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginBgnd)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CAccessInfoPage::OnToolTipText)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CAccessInfoPage::OnToolTipText)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_VERSION, &CAccessInfoPage::OnEnChangeEditPluginUpdateVersion)
+	ON_BN_CLICKED(IDC_CHECK_AUTOINCREMENT_VERSION, &CAccessInfoPage::OnBnClickedCheckAutoincrementVersion)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_URL, &CAccessInfoPage::OnEnChangeEditPluginUpdateUrl)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_FILE_URL, &CAccessInfoPage::OnEnChangeEditPluginUpdateFileUrl)
+	ON_BN_CLICKED(IDC_CHECK_CUSTOM_UPDATE_NAME, &CAccessInfoPage::OnBnClickedCheckCustomUpdateName)
+	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PACKAGE_NAME, &CAccessInfoPage::OnBnClickedCheckCustomPackageName)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_NAME, &CAccessInfoPage::OnEnChangeEditPluginUpdateName)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_PACKAGE_NAME, &CAccessInfoPage::OnEnChangeEditPluginPackageName)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, &CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath)
 END_MESSAGE_MAP()
 
 
-CAccessInfoDlg::CAccessInfoDlg() : CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
+CAccessInfoPage::CAccessInfoPage() : CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
 , m_channelsWebPath(_T(""))
 {
 }
 
-void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
+void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
@@ -131,7 +131,7 @@ void CAccessInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_packageName);
 }
 
-BOOL CAccessInfoDlg::PreTranslateMessage(MSG* pMsg)
+BOOL CAccessInfoPage::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_LBUTTONDOWN
 		|| pMsg->message == WM_LBUTTONUP
@@ -143,7 +143,7 @@ BOOL CAccessInfoDlg::PreTranslateMessage(MSG* pMsg)
 	return __super::PreTranslateMessage(pMsg);
 }
 
-BOOL CAccessInfoDlg::OnInitDialog()
+BOOL CAccessInfoPage::OnInitDialog()
 {
 	__super::OnInitDialog();
 
@@ -237,7 +237,7 @@ BOOL CAccessInfoDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-BOOL CAccessInfoDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+BOOL CAccessInfoPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// if there is a top level routing frame then let it handle the message
 	if (GetRoutingFrame() != nullptr)
@@ -268,16 +268,16 @@ BOOL CAccessInfoDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 	return FALSE;
 }
 
-void CAccessInfoDlg::UpdateOptionalControls()
+void CAccessInfoPage::UpdateOptionalControls()
 {
 	auto& selected = GetCheckedAccount();
 	if (selected.not_valid)
 		return;
 
 	TemplateParams params;
-	params.login = utils::utf8_to_utf16(selected.login);
-	params.password = utils::utf8_to_utf16(selected.password);
-	params.subdomain = utils::utf8_to_utf16(selected.domain);
+	params.login = selected.get_login();
+	params.password = selected.get_password();
+	params.subdomain = selected.get_subdomain();
 	params.server = selected.server_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
@@ -356,7 +356,7 @@ void CAccessInfoDlg::UpdateOptionalControls()
 	UpdateData(FALSE);
 }
 
-void CAccessInfoDlg::CreateAccountsList()
+void CAccessInfoPage::CreateAccountsList()
 {
 	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
 	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
@@ -400,31 +400,31 @@ void CAccessInfoDlg::CreateAccountsList()
 		switch (m_plugin->get_access_type())
 		{
 			case AccountAccessType::enPin:
-				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.password).c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_password().c_str());
 				break;
 
 			case AccountAccessType::enLoginPass:
-				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.login).c_str());
-				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.password).c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_login().c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_password().c_str());
 				break;
 
 			case AccountAccessType::enOtt:
-				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.token).c_str());
-				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.domain).c_str());
-				m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.portal).c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_token().c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_subdomain().c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_portal().c_str());
 				break;
 
 			default:break;
 		}
 
-		m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.comment).c_str());
-		m_wndAccounts.SetItemText(idx, ++sub_idx, utils::utf8_to_utf16(cred.suffix).c_str());
+		m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_comment().c_str());
+		m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_suffix().c_str());
 
 		++idx;
 	}
 }
 
-void CAccessInfoDlg::CreateAccountInfo()
+void CAccessInfoPage::CreateAccountInfo()
 {
 	m_wndInfo.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP | LVS_EX_GRIDLINES);
 
@@ -437,7 +437,7 @@ void CAccessInfoDlg::CreateAccountInfo()
 	m_wndInfo.InsertColumn(1, load_string_resource(IDS_STRING_COL_DATA).c_str(), LVCFMT_LEFT, vWidth - nWidth);
 }
 
-void CAccessInfoDlg::CreateChannelsList()
+void CAccessInfoPage::CreateChannelsList()
 {
 	m_wndChLists.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
 	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
@@ -452,7 +452,7 @@ void CAccessInfoDlg::CreateChannelsList()
 	FillChannelsList();
 }
 
-void CAccessInfoDlg::FillChannelsList()
+void CAccessInfoPage::FillChannelsList()
 {
 	auto& selected = GetCheckedAccount();
 	if (selected.not_valid)
@@ -484,7 +484,7 @@ void CAccessInfoDlg::FillChannelsList()
 	m_wndChLists.EnableWindow(TRUE);
 }
 
-void CAccessInfoDlg::SetWebUpdate()
+void CAccessInfoPage::SetWebUpdate()
 {
 	UpdateData(TRUE);
 
@@ -537,7 +537,7 @@ void CAccessInfoDlg::SetWebUpdate()
 	UpdateData(FALSE);
 }
 
-BOOL CAccessInfoDlg::OnApply()
+BOOL CAccessInfoPage::OnApply()
 {
 	UpdateData(TRUE);
 
@@ -556,7 +556,7 @@ BOOL CAccessInfoDlg::OnApply()
 	TemplateParams params;
 	params.login = utils::utf8_to_utf16(selected.login);
 	params.password = utils::utf8_to_utf16(selected.password);
-	params.subdomain = utils::utf8_to_utf16(selected.domain);
+	params.subdomain = utils::utf8_to_utf16(selected.subdomain);
 	params.server = selected.server_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
@@ -607,7 +607,7 @@ BOOL CAccessInfoDlg::OnApply()
 	return TRUE;
 }
 
-void CAccessInfoDlg::OnBnClickedButtonAdd()
+void CAccessInfoPage::OnBnClickedButtonAdd()
 {
 	m_wndAccounts.InsertItem(m_wndAccounts.GetItemCount(), L"new");
 
@@ -633,7 +633,7 @@ void CAccessInfoDlg::OnBnClickedButtonAdd()
 	m_all_credentials.emplace_back(cred);
 }
 
-void CAccessInfoDlg::OnBnClickedButtonRemove()
+void CAccessInfoPage::OnBnClickedButtonRemove()
 {
 	int idx = m_wndAccounts.GetSelectionMark();
 	if (idx != -1)
@@ -643,7 +643,7 @@ void CAccessInfoDlg::OnBnClickedButtonRemove()
 	}
 }
 
-void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
+void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 {
 	CUrlDlg dlg;
 
@@ -703,7 +703,7 @@ void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
 
 				Credentials cred;
 				cred.token = get_utf8(access_key);
-				cred.domain = get_utf8(domain);
+				cred.subdomain = get_utf8(domain);
 				m_all_credentials.emplace_back(cred);
 				break;
 			}
@@ -711,7 +711,7 @@ void CAccessInfoDlg::OnBnClickedButtonNewFromUrl()
 	}
 }
 
-void CAccessInfoDlg::OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult)
+void CAccessInfoPage::OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	DWORD pos = GetMessagePos();
 	CPoint pt(LOWORD(pos), HIWORD(pos));
@@ -730,7 +730,7 @@ void CAccessInfoDlg::OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 // OnNotifyDescriptionEdited()
-LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
+LRESULT CAccessInfoPage::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 {
 	// Get the changed Description field text via the callback
 	NMLVDISPINFO* dispinfo = reinterpret_cast<NMLVDISPINFO*>(lParam);
@@ -778,7 +778,7 @@ LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 					cred.token = get_utf8(dispinfo->item.pszText);
 					break;
 				case 2:
-					cred.domain = get_utf8(dispinfo->item.pszText);
+					cred.subdomain = get_utf8(dispinfo->item.pszText);
 					break;
 				case 3:
 					cred.portal = get_utf8(dispinfo->item.pszText);
@@ -799,7 +799,7 @@ LRESULT CAccessInfoDlg::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResult)
+void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
@@ -844,7 +844,7 @@ void CAccessInfoDlg::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResul
 	*pResult = 0;
 }
 
-void CAccessInfoDlg::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResult)
+void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
@@ -875,7 +875,7 @@ void CAccessInfoDlg::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResul
 	*pResult = 0;
 }
 
-void CAccessInfoDlg::GetAccountInfo()
+void CAccessInfoPage::GetAccountInfo()
 {
 	UpdateData(TRUE);
 
@@ -919,7 +919,7 @@ void CAccessInfoDlg::GetAccountInfo()
 
 		case AccountAccessType::enOtt:
 			token = utils::utf8_to_utf16(selected_cred.token);
-			domain = utils::utf8_to_utf16(selected_cred.domain);
+			domain = utils::utf8_to_utf16(selected_cred.subdomain);
 			portal = utils::utf8_to_utf16(selected_cred.portal);
 			break;
 
@@ -1010,7 +1010,7 @@ void CAccessInfoDlg::GetAccountInfo()
 					if (m_plugin->get_access_type() != AccountAccessType::enOtt)
 					{
 						selected_cred.token = get_utf8(uri->get_parser().token);
-						selected_cred.domain = get_utf8(uri->get_parser().domain);
+						selected_cred.subdomain = get_utf8(uri->get_parser().domain);
 					}
 					m_status = _T("Ok");
 					break;
@@ -1033,7 +1033,7 @@ void CAccessInfoDlg::GetAccountInfo()
 	UpdateData(FALSE);
 }
 
-Credentials& CAccessInfoDlg::GetCheckedAccount()
+Credentials& CAccessInfoPage::GetCheckedAccount()
 {
 	static Credentials empty;
 	empty.not_valid = true;
@@ -1042,7 +1042,7 @@ Credentials& CAccessInfoDlg::GetCheckedAccount()
 	return selected != -1 ? m_all_credentials[selected] : empty;
 }
 
-int CAccessInfoDlg::GetCheckedAccountIdx()
+int CAccessInfoPage::GetCheckedAccountIdx()
 {
 	int cnt = m_wndAccounts.GetItemCount();
 	for (int i = 0; i < cnt; i++)
@@ -1056,31 +1056,31 @@ int CAccessInfoDlg::GetCheckedAccountIdx()
 	return -1;
 }
 
-void CAccessInfoDlg::OnCbnSelchangeComboDeviceId()
+void CAccessInfoPage::OnCbnSelchangeComboDeviceId()
 {
 	auto& selected = GetCheckedAccount();
 	selected.server_id = m_wndDeviceID.GetCurSel();
 }
 
-void CAccessInfoDlg::OnCbnSelchangeComboProfile()
+void CAccessInfoPage::OnCbnSelchangeComboProfile()
 {
 	auto& selected = GetCheckedAccount();
 	selected.profile_id = m_wndProfile.GetCurSel();
 }
 
-void CAccessInfoDlg::OnCbnSelchangeComboQuality()
+void CAccessInfoPage::OnCbnSelchangeComboQuality()
 {
 	auto& selected = GetCheckedAccount();
 	selected.quality_id = m_wndQuality.GetCurSel();
 }
 
-void CAccessInfoDlg::OnBnClickedCheckEmbed()
+void CAccessInfoPage::OnBnClickedCheckEmbed()
 {
 	auto& selected = GetCheckedAccount();
 	selected.embed = m_wndEmbed.GetCheck();
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginCaption()
+void CAccessInfoPage::OnEnChangeEditPluginCaption()
 {
 	UpdateData(TRUE);
 	m_caption.Trim();
@@ -1088,7 +1088,7 @@ void CAccessInfoDlg::OnEnChangeEditPluginCaption()
 	selected.caption = get_utf8(m_caption);
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginSuffix()
+void CAccessInfoPage::OnEnChangeEditPluginSuffix()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
@@ -1105,7 +1105,7 @@ void CAccessInfoDlg::OnEnChangeEditPluginSuffix()
 	}
 }
 
-void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginLogo()
+void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
@@ -1122,7 +1122,7 @@ void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginLogo()
 	}
 }
 
-void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginBgnd()
+void CAccessInfoPage::OnEnChangeMfceditbrowsePluginBgnd()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
@@ -1139,43 +1139,43 @@ void CAccessInfoDlg::OnEnChangeMfceditbrowsePluginBgnd()
 	}
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginUpdateVersion()
+void CAccessInfoPage::OnEnChangeEditPluginUpdateVersion()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
 	selected.version_id = get_utf8(m_versionIdx);
 }
 
-void CAccessInfoDlg::OnBnClickedCheckAutoincrementVersion()
+void CAccessInfoPage::OnBnClickedCheckAutoincrementVersion()
 {
 	m_wndVersionID.EnableWindow(m_wndAutoIncrement.GetCheck());
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginUpdateUrl()
+void CAccessInfoPage::OnEnChangeEditPluginUpdateUrl()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
 	selected.update_url = get_utf8(m_updateInfoUrl);
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginUpdateFileUrl()
+void CAccessInfoPage::OnEnChangeEditPluginUpdateFileUrl()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
 	selected.update_package_url = get_utf8(m_updatePackageUrl);
 }
 
-void CAccessInfoDlg::OnBnClickedCheckCustomUpdateName()
+void CAccessInfoPage::OnBnClickedCheckCustomUpdateName()
 {
 	m_wndUpdateName.EnableWindow(m_wndCustomUpdateName.GetCheck());
 }
 
-void CAccessInfoDlg::OnBnClickedCheckCustomPackageName()
+void CAccessInfoPage::OnBnClickedCheckCustomPackageName()
 {
 	m_wndPackageName.EnableWindow(m_wndCustomPackageName.GetCheck());
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginUpdateName()
+void CAccessInfoPage::OnEnChangeEditPluginUpdateName()
 {
 	UpdateData(TRUE);
 	if (!utils::is_ascii(m_updateInfoName.GetString()))
@@ -1184,7 +1184,7 @@ void CAccessInfoDlg::OnEnChangeEditPluginUpdateName()
 	}
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginPackageName()
+void CAccessInfoPage::OnEnChangeEditPluginPackageName()
 {
 	UpdateData(TRUE);
 	if (!utils::is_ascii(m_packageName.GetString()))
@@ -1193,7 +1193,7 @@ void CAccessInfoDlg::OnEnChangeEditPluginPackageName()
 	}
 }
 
-void CAccessInfoDlg::OnEnChangeEditPluginChannelsWebPath()
+void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 {
 	UpdateData(TRUE);
 

@@ -132,7 +132,7 @@
     <ClInclude Include="map_serializer.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="AccessInfoDlg.h">
+    <ClInclude Include="AccessInfoPage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="GetStreamInfoThread.h">
@@ -273,11 +273,11 @@
     <ClInclude Include="ColorEdit.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="PluginConfigDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IPTVChannelEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -320,7 +320,7 @@
     <ClCompile Include="IconsListDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="AccessInfoDlg.cpp">
+    <ClCompile Include="AccessInfoPage.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="GetStreamInfoThread.cpp">
@@ -415,6 +415,12 @@
     </ClCompile>
     <ClCompile Include="ColorEdit.cpp">
       <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="IPTVChannelEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginConfigDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

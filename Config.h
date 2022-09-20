@@ -31,6 +31,7 @@ DEALINGS IN THE SOFTWARE.
 
 enum class StreamType
 {
+	enCustom = -3,
 	enBase = -2,
 	enChannels = -1,
 	enAntifriz,
@@ -69,11 +70,12 @@ constexpr auto CMP_FLAG_EPG1    = 0x08;
 constexpr auto CMP_FLAG_EPG2    = 0x10;
 constexpr auto CMP_FLAG_ALL     = CMP_FLAG_TITLE | CMP_FLAG_ICON | CMP_FLAG_ARCHIVE | CMP_FLAG_EPG1 | CMP_FLAG_EPG2;
 
-constexpr auto REG_WINDOW_POS      = _T("WindowPos");
-constexpr auto REG_ICON_WINDOW_POS = _T("IconsWindowPos");
-constexpr auto REG_EPG_WINDOW_POS  = _T("EpgWindowPos");
-constexpr auto REG_VOD_WINDOW_POS  = _T("VodWindowPos");
-constexpr auto REG_ACC_WINDOW_POS  = _T("AccountWindowPos");
+constexpr auto REG_WINDOW_POS        = _T("WindowPos");
+constexpr auto REG_ICON_WINDOW_POS   = _T("IconsWindowPos");
+constexpr auto REG_EPG_WINDOW_POS    = _T("EpgWindowPos");
+constexpr auto REG_VOD_WINDOW_POS    = _T("VodWindowPos");
+constexpr auto REG_ACC_WINDOW_POS    = _T("AccountWindowPos");
+constexpr auto REG_CONFIG_WINDOW_POS = _T("ConfigWindowPos");
 
 // app
 constexpr auto REG_NEXT_UPDATE     = _T("NextUpdate");
@@ -156,7 +158,7 @@ public:
 		login.clear();
 		password.clear();
 		token.clear();
-		domain.clear();
+		subdomain.clear();
 		portal.clear();
 		comment.clear();
 		suffix.clear();
@@ -182,7 +184,7 @@ public:
 	std::wstring get_login() const { return utils::utf8_to_utf16(login); }
 	std::wstring get_password() const { return utils::utf8_to_utf16(password); }
 	std::wstring get_token() const { return utils::utf8_to_utf16(token); }
-	std::wstring get_domain() const { return utils::utf8_to_utf16(domain); }
+	std::wstring get_subdomain() const { return utils::utf8_to_utf16(subdomain); }
 	std::wstring get_portal() const { return utils::utf8_to_utf16(portal); }
 	std::wstring get_comment() const { return utils::utf8_to_utf16(comment); }
 	std::wstring get_suffix() const { return utils::utf8_to_utf16(suffix); }
@@ -194,7 +196,7 @@ public:
 	void set_login(const std::wstring& value) { login = utils::utf16_to_utf8(value); }
 	void set_password(const std::wstring& value) { password = utils::utf16_to_utf8(value); }
 	void set_token(const std::wstring& value) { token = utils::utf16_to_utf8(value); }
-	void set_domain(const std::wstring& value) { domain = utils::utf16_to_utf8(value); }
+	void set_subdomain(const std::wstring& value) { subdomain = utils::utf16_to_utf8(value); }
 	void set_portal(const std::wstring& value) { portal = utils::utf16_to_utf8(value); }
 	void set_comment(const std::wstring& value) { comment = utils::utf16_to_utf8(value); }
 	void set_suffix(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
@@ -202,11 +204,67 @@ public:
 	void set_logo(const std::wstring& value) { logo = utils::utf16_to_utf8(value); }
 	void set_background(const std::wstring& value) { background = utils::utf16_to_utf8(value); }
 
+	friend void to_json(nlohmann::json& j, const Credentials& c)
+	{
+		SERIALIZE_STRUCT(j, c, login);
+		SERIALIZE_STRUCT(j, c, password);
+		SERIALIZE_STRUCT(j, c, token);
+		SERIALIZE_STRUCT2(j, c, subdomain, domain);
+		SERIALIZE_STRUCT(j, c, portal);
+		SERIALIZE_STRUCT(j, c, comment);
+		SERIALIZE_STRUCT(j, c, suffix);
+		SERIALIZE_STRUCT(j, c, caption);
+		SERIALIZE_STRUCT(j, c, logo);
+		SERIALIZE_STRUCT(j, c, background);
+		SERIALIZE_STRUCT(j, c, update_url);
+		SERIALIZE_STRUCT(j, c, update_package_url);
+		SERIALIZE_STRUCT(j, c, version_id);
+		SERIALIZE_STRUCT(j, c, update_name);
+		SERIALIZE_STRUCT(j, c, package_name);
+		SERIALIZE_STRUCT(j, c, ch_web_path);
+		SERIALIZE_STRUCT(j, c, custom_increment);
+		SERIALIZE_STRUCT(j, c, custom_update_name);
+		SERIALIZE_STRUCT(j, c, custom_package_name);
+		SERIALIZE_STRUCT2(j, c, server_id, device_id);
+		SERIALIZE_STRUCT(j, c, profile_id);
+		SERIALIZE_STRUCT(j, c, quality_id);
+		SERIALIZE_STRUCT(j, c, embed);
+		SERIALIZE_STRUCT(j, c, ch_list);
+	}
+
+	friend void from_json(const nlohmann::json& j, Credentials& c)
+	{
+		DESERIALIZE_STRUCT(j, c, login);
+		DESERIALIZE_STRUCT(j, c, password);
+		DESERIALIZE_STRUCT(j, c, token);
+		DESERIALIZE_STRUCT2(j, c, subdomain, domain);
+		DESERIALIZE_STRUCT(j, c, portal);
+		DESERIALIZE_STRUCT(j, c, comment);
+		DESERIALIZE_STRUCT(j, c, suffix);
+		DESERIALIZE_STRUCT(j, c, caption);
+		DESERIALIZE_STRUCT(j, c, logo);
+		DESERIALIZE_STRUCT(j, c, background);
+		DESERIALIZE_STRUCT(j, c, update_url);
+		DESERIALIZE_STRUCT(j, c, update_package_url);
+		DESERIALIZE_STRUCT(j, c, version_id);
+		DESERIALIZE_STRUCT(j, c, update_name);
+		DESERIALIZE_STRUCT(j, c, package_name);
+		DESERIALIZE_STRUCT(j, c, ch_web_path);
+		DESERIALIZE_STRUCT(j, c, custom_increment);
+		DESERIALIZE_STRUCT(j, c, custom_update_name);
+		DESERIALIZE_STRUCT(j, c, custom_package_name);
+		DESERIALIZE_STRUCT2(j, c, server_id, device_id);
+		DESERIALIZE_STRUCT(j, c, profile_id);
+		DESERIALIZE_STRUCT(j, c, quality_id);
+		DESERIALIZE_STRUCT(j, c, embed);
+		DESERIALIZE_STRUCT(j, c, ch_list);
+	}
+
 public:
 	std::string login;
 	std::string password;
 	std::string token;
-	std::string domain;
+	std::string subdomain;
 	std::string portal;
 	std::string comment;
 	std::string suffix;
@@ -229,9 +287,6 @@ public:
 	std::vector<std::string> ch_list;
 	bool not_valid = false;
 };
-
-void to_json(nlohmann::json& j, const Credentials& c);
-void from_json(const nlohmann::json& j, Credentials& c);
 
 //////////////////////////////////////////////////////////////////////////
 

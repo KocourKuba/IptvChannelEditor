@@ -43,14 +43,17 @@ public:
 
 		playlist_template = L"http://vidok.tv/p/{TOKEN}";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_append;
-		streams_config[0].uri_template = L"http://{DOMAIN}/p/{TOKEN}/{ID}";
+		streams_config[0].shift_replace = "utc";
+		streams_config[0].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/p/{TOKEN}/{ID}?{SHIFT_SUBST}={START}";
 
 		auto& params = epg_params[0];
-		params.epg_url = L"http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
+		params.epg_url = "http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
 		params.epg_root = "epg";
 		params.epg_name = "title";
 		params.epg_desc = "description";

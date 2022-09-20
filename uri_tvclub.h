@@ -43,14 +43,17 @@ public:
 
 		playlist_template = L"http://celn.shott.top/p/{TOKEN}";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 
-		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].enabled = true;
+		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
 		streams_config[1].catchup_type = CatchupType::cu_shift;
-		streams_config[1].uri_template = L"http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+		streams_config[1].shift_replace = "utc";
+		streams_config[1].uri_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+		streams_config[1].uri_arc_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}?{SHIFT_SUBST}={START}&lutc={NOW}";
 
 		auto& params = epg_params[0];
-		params.epg_url = L"http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIME}&period=24";
+		params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIMESTAMP}&period=24";
 		params.epg_name = "text";
 		params.epg_desc = "description";
 		params.epg_start = "start";

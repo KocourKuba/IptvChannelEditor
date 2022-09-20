@@ -31,6 +31,7 @@
 #define IDD_DIALOG_ACCESS_INFO          131
 #define IDD_DIALOG_ICON_LINK            132
 #define IDD_PATHS_SETTINGS_PAGE         133
+#define IDD_DIALOG_PLUGIN_CONFIG        134
 #define IDS_STRING_ERR_SOURCE_NOT_SET   140
 #define IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST 141
 #define IDS_STRING_ERR_EMPTY_PLAYLIST   142
@@ -259,14 +260,25 @@
 #define IDC_EDIT_PL_SEARCH              1048
 #define IDC_EDIT_NAME                   1050
 #define IDC_EDIT_SEARCH                 1051
+#define IDC_EDIT_EPG_ROOT               1051
 #define IDC_EDIT_STREAM_URL             1052
+#define IDC_EDIT_EPG_NAME               1052
+#define IDC_EDIT_EPG_DESC               1053
 #define IDC_EDIT_EPG2_ID                1054
+#define IDC_EDIT_EPG_START              1054
 #define IDC_EDIT_URL_ID                 1055
+#define IDC_EDIT_EPG_END                1055
 #define IDC_EDIT_URL                    1056
+#define IDC_EDIT_EPG_FMT_DATE           1056
 #define IDC_MFCEDITBROWSE_PLAYER        1057
+#define IDC_EDIT_EPG_FMT_TIME           1057
 #define IDC_MFCEDITBROWSE_PROBE         1058
+#define IDC_EDIT_EPG_TZ                 1058
 #define IDC_MFCLINK_DONATE              1059
+#define IDC_EDIT_SET_ID                 1059
 #define IDC_PROGRESS_LOAD               1060
+#define IDC_EDIT_SET_ID2                1060
+#define IDC_EDIT_SET_TOKEN              1060
 #define IDC_SPIN_ARCHIVE_CHECK_HOURS    1061
 #define IDC_SPIN_ARCHIVE_CHECK_DAYS     1062
 #define IDC_STATIC_APP_TITLE            1064
@@ -291,14 +303,10 @@
 #define IDC_COMBO_PLUGIN_TYPE           1084
 #define IDC_COMBO_ICON_SOURCE           1085
 #define IDC_LIST_ICONS                  1086
-#define IDC_COMBO_STREAM_TYPE           1087
-#define IDC_STATIC_SEARCH               1088
 #define IDC_EDIT_ARCHIVE_DAYS           1089
-#define IDC_COMBO_TYPE                  1090
+#define IDC_LIST_EPG                    1090
 #define IDC_CHECK_AUTO_SYNC_CHANNELS    1091
 #define IDC_LIST_INFO                   1092
-#define IDC_LIST_EPG                    1093
-#define IDC_LIST_INFO2                  1093
 #define IDC_LIST_CHANNELS               1093
 #define IDC_STATIC_LOGIN                1094
 #define IDC_STATIC_DEVICE_ID            1095
@@ -385,9 +393,30 @@
 #define IDC_EDIT_PLUGIN_PACKAGE_NAME    1174
 #define IDC_CHECK_CUSTOM_UPDATE_NAME    1175
 #define IDC_CHECK_MAKE_WEB_UPDATE       1176
-#define IDC_EDIT_PLUGIN_SUFFIX2         1176
-#define IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH 1176
 #define IDC_CHECK_CUSTOM_PACKAGE_NAME   1177
+#define IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH 1178
+#define IDC_BUTTON_SAVE_CONFIG          1179
+#define IDC_BUTTON_LOAD_CONFIG          1180
+#define IDC_EDIT_TITLE                  1181
+#define IDC_COMBO_ACCESS_TYPE           1182
+#define IDC_EDIT_SHORT_NAME             1183
+#define IDC_BUTTON_EDIT_CONFIG          1184
+#define IDC_EDIT_PROVIDER_URL           1185
+#define IDC_EDIT_PARSE_TEMPLATE         1186
+#define IDC_EDIT_STREAM_TEMPLATE        1187
+#define IDC_EDIT_STREAM_ARC_TEMPLATE    1188
+#define IDC_EDIT_SHIFT_SUBST            1189
+#define IDC_CHECK_STREAM_ENABLED        1190
+#define IDC_EDIT_DURATION               1191
+#define IDC_STATIC_SUBST                1192
+#define IDC_STATIC_DURATION             1193
+#define IDC_CHECK_USE_DURATION          1194
+#define IDC_COMBO_STREAM_TYPE           1195
+#define IDC_COMBO_CATCHUP_TYPE          1196
+#define IDC_COMBO_EPG_TYPE              1197
+#define IDC_BUTTON_EPG_SHOW             1198
+#define IDC_EDIT_PLUGIN_NAME            1199
+#define IDC_DATETIMEPICKER_DATE         1200
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -419,9 +448,9 @@
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        271
+#define _APS_NEXT_RESOURCE_VALUE        274
 #define _APS_NEXT_COMMAND_VALUE         32804
-#define _APS_NEXT_CONTROL_VALUE         1178
+#define _APS_NEXT_CONTROL_VALUE         1201
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

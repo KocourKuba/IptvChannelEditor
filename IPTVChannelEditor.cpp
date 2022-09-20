@@ -502,7 +502,7 @@ void ConvertAccounts()
 
 						case AccountAccessType::enOtt:
 							cred.token = get_array_value(creds, last);
-							cred.domain = get_array_value(creds, last);
+							cred.subdomain = get_array_value(creds, last);
 							cred.portal = get_array_value(creds, last);
 							if (cred.token == token)
 							{
@@ -539,7 +539,7 @@ void ConvertAccounts()
 
 						case AccountAccessType::enOtt:
 							cred.token = token;
-							cred.domain = domain;
+							cred.subdomain = domain;
 							cred.portal = portal;
 							break;
 
@@ -878,7 +878,7 @@ bool PackPlugin(const StreamType plugin_type,
 					node["password"] = cred.password;
 					break;
 				case AccountAccessType::enOtt:
-					node["domain"] = cred.domain;
+					node["domain"] = cred.subdomain;
 					node["ott_key"] = cred.token;
 					node["vportal"] = cred.portal;
 					break;

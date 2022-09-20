@@ -42,13 +42,16 @@ public:
 
 		provider_vod_url = L"{SUBDOMAIN}";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";
+		uri_parse_template = LR"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].uri_template = L"http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
+		streams_config[0].shift_replace = "utc";
+		streams_config[0].uri_template = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
+		streams_config[0].uri_arc_template = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
 
-		epg_params[0].epg_url = L"http://epg.drm-play.ml/edem/epg/{ID}.json";
+		epg_params[0].epg_url = "http://epg.drm-play.ml/edem/epg/{ID}.json";
 
 		playlists.clear();
 

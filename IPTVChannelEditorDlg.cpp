@@ -35,7 +35,8 @@ DEALINGS IN THE SOFTWARE.
 #include "MainSettingsPage.h"
 #include "PathsSettingsPage.h"
 #include "UpdateSettingsPage.h"
-#include "AccessInfoDlg.h"
+#include "AccessInfoPage.h"
+#include "PluginConfigDlg.h"
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
 #include "NewChannelsListDlg.h"
@@ -220,7 +221,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
-END_MESSAGE_MAP()
+		ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig)
+		END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -592,8 +594,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndStreamType.ResetContent();
 	for (const auto& stream : streams)
 	{
+		if (!stream.enabled) continue;
+
 		std::wstring name;
-		switch (stream.stream_type)
+		switch (stream.stream_sub_type)
 		{
 			case StreamSubType::enHLS:
 				name = L"HLS";
@@ -601,14 +605,12 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			case StreamSubType::enMPEGTS:
 				name = L"MPEG-TS";
 				break;
-			default:
-				break;
 		}
 
 		if (!name.empty())
 		{
 			int idx = m_wndStreamType.AddString(name.c_str());
-			m_wndStreamType.SetItemData(idx, (DWORD_PTR)stream.stream_type);
+			m_wndStreamType.SetItemData(idx, (DWORD_PTR)stream.stream_sub_type);
 		}
 	}
 
@@ -942,7 +944,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 					if (!token.empty() && token != L"00000000000000" && !domain.empty() && domain != L"localhost")
 					{
 						m_cur_account.set_token(parser.token);
-						m_cur_account.set_domain(parser.domain);
+						m_cur_account.set_subdomain(parser.domain);
 						bSet = true;
 					}
 					break;
@@ -1461,7 +1463,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 		if (uri->is_template() && m_wndShowUrl.GetCheck())
 		{
 			TemplateParams params;
-			params.subdomain = m_cur_account.get_domain();
+			params.subdomain = m_cur_account.get_subdomain();
 			params.token = m_cur_account.get_token();
 			params.login = m_cur_account.get_login();
 			params.password = m_cur_account.get_password();
@@ -1597,7 +1599,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	UpdateExtToken(info->stream_uri.get());
 	if (m_plugin_type == StreamType::enSharaclub)
 	{
-		auto& url = info->stream_uri->get_epg_parameters(epg_idx).epg_url;
+		auto& url = info->stream_uri->get_epg_parameters(epg_idx).get_epg_url();
 		utils::string_replace_inplace<wchar_t>(url, L"{DOMAIN}", GetConfig().get_string(false, REG_EPG_DOMAIN));
 	}
 
@@ -2885,7 +2887,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		CEpgListDlg dlg;
 		dlg.m_epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
 		dlg.m_epg_cache = &m_epg_cache;
-		dlg.m_params.subdomain = m_cur_account.get_domain();
+		dlg.m_params.subdomain = m_cur_account.get_subdomain();
 		dlg.m_params.token = m_cur_account.get_token();
 		dlg.m_params.login = m_cur_account.get_login();
 		dlg.m_params.password = m_cur_account.get_password();
@@ -2978,7 +2980,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 	if (auto info = GetBaseInfo(m_lastTree, hItem); info != nullptr)
 	{
 		TemplateParams params;
-		params.subdomain = m_cur_account.get_domain();
+		params.subdomain = m_cur_account.get_subdomain();
 		params.token = m_cur_account.get_token();
 		params.login = m_cur_account.get_login();
 		params.password = m_cur_account.get_password();
@@ -3018,7 +3020,7 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 
-	CAccessInfoDlg dlgInfo;
+	CAccessInfoPage dlgInfo;
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgInfo.m_initial_cred = m_cur_account;
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
@@ -4005,7 +4007,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_hStop = m_evtStop;
 	cfg.m_probe = GetConfig().get_string(true, REG_FFPROBE);
 	cfg.m_max_threads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
-	cfg.m_params.subdomain = m_cur_account.get_domain();
+	cfg.m_params.subdomain = m_cur_account.get_subdomain();
 	cfg.m_params.token = m_cur_account.get_token();
 	cfg.m_params.login = m_cur_account.get_login();
 	cfg.m_params.password = m_cur_account.get_password();
@@ -4946,7 +4948,7 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri) const
 {
 	auto& parser = uri->get_parser();
-	if (!parser.per_channel_token)
+	if (!uri->get_per_channel_token())
 	{
 		if (m_plugin_type == StreamType::enVidok || m_plugin_type == StreamType::enTVClub)
 		{
@@ -5001,5 +5003,13 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 	CVodViewer dlg(&m_vod_categories[(size_t)m_plugin_type]);
 	dlg.m_plugin_type = m_plugin_type;
 	dlg.m_account = m_cur_account;
+	dlg.DoModal();
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
+{
+	CPluginConfigDlg dlg;
+	dlg.m_plugin_type = m_plugin_type;
+
 	dlg.DoModal();
 }

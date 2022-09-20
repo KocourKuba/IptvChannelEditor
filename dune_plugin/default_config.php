@@ -145,7 +145,7 @@ abstract class Default_Config
         $default_parser['epg_end'] = 'time_to';
         $default_parser['epg_title'] = 'name';
         $default_parser['epg_desc'] = 'descr';
-        $default_parser['epg_date_format'] = 'Y-m-d';
+        $default_parser['epg_date_format'] = '';
         $default_parser['epg_use_duration'] = false;
         $default_parser['epg_use_mapper'] = false;
         $default_parser['epg_mapper_url'] = '';

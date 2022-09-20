@@ -45,20 +45,24 @@ public:
 		provider_vod_url = L"http://protected-api.com";
 		playlist_template = L"http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].uri_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
-		streams_config[0].uri_arc_template = L"http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8?utc={START}&lutc={NOW}";
+		streams_config[0].shift_replace = "utc";
+		streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
 
-		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].enabled = true;
+		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
 		streams_config[1].catchup_type = CatchupType::cu_flussonic;
-		streams_config[1].uri_template = L"http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = L"http://{DOMAIN}/{ID}/{FLUSSONIC}.ts?token={TOKEN}";
+		streams_config[0].shift_replace = "utc";
+		streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 		auto& params1 = epg_params[0];
-		params1.epg_url = L"http://protected-api.com/epg/{ID}/?date=";
+		params1.epg_url = "http://protected-api.com/epg/{ID}/?date=";
 		params1.epg_root = "";
 
 		for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)

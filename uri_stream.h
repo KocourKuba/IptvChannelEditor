@@ -115,27 +115,34 @@ struct EpgInfo
 /// </summary>
 struct EpgParameters
 {
-	bool epg_use_mapper = false;
-	bool epg_use_duration = false;
 	size_t epg_tz = 0;
-	std::wstring epg_url;
-	std::wstring epg_mapper_url;
-	std::wstring epg_date_format;
+	std::string epg_url;
 	std::string epg_root;
 	std::string epg_name;
 	std::string epg_desc;
 	std::string epg_start;
 	std::string epg_end;
+	std::string epg_date_format;
 	std::string epg_time_format;
+	bool epg_use_duration = false;
+
+	// not saved to the config!
+	bool epg_use_mapper = false;
+	std::wstring epg_mapper_url;
 	std::map<std::wstring, std::wstring> epg_mapper;
+
+	std::wstring get_epg_url() const { return utils::utf8_to_utf16(epg_url); }
+	std::wstring get_epg_date_format() const { return utils::utf8_to_utf16(epg_date_format); }
+
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_use_duration, epg_tz, epg_url, epg_date_format, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_time_format);
 };
+
 
 /// <summary>
 /// Parsed variable groups for generate playing stream
 /// </summary>
 struct ParsingGroups
 {
-	std::wstring uri_parse_template;
 	std::wstring id;
 	std::wstring domain;
 	std::wstring port;
@@ -146,7 +153,6 @@ struct ParsingGroups
 	std::wstring int_id;
 	std::wstring quality;
 	std::wstring host;
-	bool per_channel_token = false;
 };
 
 /// <summary>
@@ -154,23 +160,53 @@ struct ParsingGroups
 /// </summary>
 struct StreamParameters
 {
-	StreamSubType stream_type = StreamSubType::enNone;
+	StreamSubType stream_sub_type = StreamSubType::enHLS;
 	CatchupType catchup_type = CatchupType::cu_none;
-
-	std::wstring uri_template;
-	std::wstring uri_arc_template;
-	std::wstring shift_replace = L"utc";
-	std::wstring flussonic_replace = L"archive";
-
+	bool enabled = false;
 	int catchup_duration = 10800;
+
+	std::string uri_template;
+	std::string uri_arc_template;
+	std::string shift_replace;
+
+	std::wstring get_uri_template() const { return utils::utf8_to_utf16(uri_template); }
+	std::wstring get_uri_arc_template() const { return utils::utf8_to_utf16(uri_arc_template); }
+	std::wstring get_shift_replace() const { return utils::utf8_to_utf16(shift_replace); }
+
+	void set_uri_template(const std::wstring& value) { uri_template = utils::utf16_to_utf8(value); }
+	void set_uri_arc_template(const std::wstring& value) { uri_arc_template = utils::utf16_to_utf8(value); }
+	void set_shift_replace(const std::wstring& value) { shift_replace = utils::utf16_to_utf8(value); }
+
+	friend void to_json(nlohmann::json& j, const StreamParameters& s)
+	{
+		SERIALIZE_STRUCT(j, s, enabled);
+		SERIALIZE_STRUCT(j, s, stream_sub_type);
+		SERIALIZE_STRUCT(j, s, catchup_type);
+		SERIALIZE_STRUCT(j, s, catchup_duration);
+		SERIALIZE_STRUCT(j, s, uri_template);
+		SERIALIZE_STRUCT(j, s, uri_arc_template);
+		SERIALIZE_STRUCT(j, s, shift_replace);
+	}
+
+	friend void from_json(const nlohmann::json& j, StreamParameters& s)
+	{
+		DESERIALIZE_STRUCT(j, s, enabled);
+		DESERIALIZE_STRUCT(j, s, stream_sub_type);
+		DESERIALIZE_STRUCT(j, s, catchup_type);
+		DESERIALIZE_STRUCT(j, s, catchup_duration);
+		DESERIALIZE_STRUCT(j, s, uri_template);
+		DESERIALIZE_STRUCT(j, s, uri_arc_template);
+		DESERIALIZE_STRUCT(j, s, shift_replace);
+	}
 };
+
 
 /// <summary>
 /// Interface for stream
 /// </summary>
 class uri_stream : public uri_base
 {
-protected:
+public:
 	static constexpr auto REPL_DOMAIN     = L"{DOMAIN}";     // stream url domain (set from playlist)
 	static constexpr auto REPL_PORT       = L"{PORT}";       // stream url port (set from playlist)
 	static constexpr auto REPL_ID         = L"{ID}";         // id (set from playlist)
@@ -185,12 +221,13 @@ protected:
 	static constexpr auto REPL_PROFILE_ID = L"{PROFILE_ID}"; // profile id (read from settings)
 
 	static constexpr auto REPL_START      = L"{START}";      // EPG archive start time (unix timestamp)
-	static constexpr auto REPL_DURATION   = L"{DURATION}";   // EPG archive duration (in second)
 	static constexpr auto REPL_NOW        = L"{NOW}";        // EPG archive current time (unix timestamp)
 	static constexpr auto REPL_DATE       = L"{DATE}";       // EPG date (set by format)
-	static constexpr auto REPL_TIME       = L"{TIME}";       // EPG time (set by format)
+	static constexpr auto REPL_TIMESTAMP  = L"{TIMESTAMP}";       // EPG time, unix timestamp (set by format)
 
-	static constexpr auto REPL_FLUSSONIC  = L"{FLUSSONIC}";  // archive/index/video or other word used in flussonic template
+	static constexpr auto REPL_DURATION   = L"{DURATION}";   // archive duration (in second) in flussonic archive
+	static constexpr auto REPL_FLUSSONIC  = L"{SHIFT_SUBST}";   // archive/index/video or other word used in flussonic archive template
+	static constexpr auto REPL_SHIFT      = L"{SHIFT_SUBST}";// archive/utc word used in shift/append type archive template
 
 public:
 	uri_stream();
@@ -203,6 +240,16 @@ public:
 	/// clear uri
 	/// </summary>
 	void clear() override;
+
+	/// <summary>
+	/// save plugin parameters to file
+	/// </summary>
+	bool save_plugin_parameters(const std::wstring& filename);
+
+	/// <summary>
+	/// load plugin parameters from file
+	/// </summary>
+	bool load_plugin_parameters(const std::wstring& filename);
 
 	/// <summary>
 	/// returns plugin title
@@ -231,6 +278,12 @@ public:
 	const std::wstring& get_provider_url() const { return provider_url; }
 
 	/// <summary>
+	/// returns link to provider account
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wstring& get_uri_parse_template() const { return uri_parse_template; }
+
+	/// <summary>
 	/// returns parser parameters
 	/// </summary>
 	const ParsingGroups& get_parser() const noexcept{ return parser; }
@@ -240,6 +293,12 @@ public:
 	/// set parser parameters
 	/// </summary>
 	void set_parser(const ParsingGroups& src) { parser = src; }
+
+	/// <summary>
+	/// is token used per channel, not the global
+	/// </summary>
+	/// <returns>bool</returns>
+	bool get_per_channel_token() const { return per_channel_token; }
 
 	/// <summary>
 	/// getter channel hash
@@ -328,6 +387,12 @@ public:
 	/// </summary>
 	/// <returns>vector&</returns>
 	const std::array<StreamParameters, 2>& get_supported_streams() const { return streams_config; }
+
+	/// <summary>
+	/// return supported stream
+	/// </summary>
+	/// <returns>const StreamParameters&</returns>
+	const StreamParameters& get_supported_stream(size_t idx) const { return streams_config[idx]; }
 
 	/// <summary>
 	/// returns epg mapper
@@ -451,11 +516,14 @@ protected:
 protected:
 
 	std::wstring title;
-	std::string short_name;
 	std::string name;
+	std::string short_name;
 	std::wstring provider_url;
 
 	AccountAccessType access_type = AccountAccessType::enOtt;
+
+	std::wstring uri_parse_template;
+	bool per_channel_token = false;
 
 	std::array<StreamParameters, 2> streams_config;
 	std::array<EpgParameters, 2> epg_params;

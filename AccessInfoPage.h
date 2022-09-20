@@ -32,13 +32,13 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\json_wrapper.h"
 
-class CAccessInfoDlg : public CMFCPropertyPage
+class CAccessInfoPage : public CMFCPropertyPage
 {
-	DECLARE_DYNAMIC(CAccessInfoDlg)
+	DECLARE_DYNAMIC(CAccessInfoPage)
 
 public:
-	CAccessInfoDlg();   // standard constructor
-	virtual ~CAccessInfoDlg() = default;
+	CAccessInfoPage();   // standard constructor
+	virtual ~CAccessInfoPage() = default;
 
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME

@@ -214,7 +214,6 @@ BOOL CEpgListDlg::DestroyWindow()
 	return __super::DestroyWindow();
 }
 
-
 void CEpgListDlg::OnDtnDatetimechangeDatetimepicker(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMDATETIMECHANGE pDTChange = reinterpret_cast<LPNMDATETIMECHANGE>(pNMHDR);

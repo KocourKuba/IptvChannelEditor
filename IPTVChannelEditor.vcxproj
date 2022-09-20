@@ -233,7 +233,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
-    <ClInclude Include="AccessInfoDlg.h" />
+    <ClInclude Include="AccessInfoPage.h" />
     <ClInclude Include="BaseInfo.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
@@ -253,6 +253,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="MySplitButton.h" />
     <ClInclude Include="PlaylistParseJsonThread.h" />
+    <ClInclude Include="PluginConfigDlg.h" />
     <ClInclude Include="ResizedPropertySheet.h" />
     <ClInclude Include="uri_kineskop.h" />
     <ClInclude Include="uri_mymagic.h" />
@@ -307,7 +308,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
-    <ClCompile Include="AccessInfoDlg.cpp" />
+    <ClCompile Include="AccessInfoPage.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="ColorEdit.cpp" />
@@ -328,6 +329,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
     <ClCompile Include="PlaylistParseXMLThread.cpp" />
     <ClCompile Include="PathsSettingsPage.cpp" />
+    <ClCompile Include="PluginConfigDlg.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
     <ClCompile Include="TrayIcon.cpp" />

@@ -42,15 +42,18 @@ public:
 
 		playlist_template = L"http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].uri_template = L"http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-		streams_config[0].shift_replace = L"archive";
+		streams_config[0].shift_replace = "archive";
+		streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
 
 		auto& params1 = epg_params[0];
-		params1.epg_url = L"http://epg.propg.net/{ID}/epg2/{DATE}";
+		params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";
+		params1.epg_date_format = "%Y-%m-%d";
 		params1.epg_root = "";
 		params1.epg_name = "epg";
 		params1.epg_desc = "desc";

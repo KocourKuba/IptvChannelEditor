@@ -41,12 +41,15 @@ public:
 
 		playlist_template = L"http://myott.top/playlist/{PASSWORD}/m3u";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].uri_template = L"http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
+		streams_config[0].shift_replace = "utc";
+		streams_config[0].uri_template = "http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
 
-		epg_params[0].epg_url = L"http://myott.top/api/channel/{ID}";
+		epg_params[0].epg_url = "http://myott.top/api/channel/{ID}";
 	}
 };

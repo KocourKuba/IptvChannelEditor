@@ -16,6 +16,7 @@ class ShuratvPluginConfig extends Default_Config
         $this->set_feature(SERVER_SUPPORTED, true);
 
         $this->set_epg_param('first','epg_url','http://epg.propg.net/{CHANNEL}/epg2/{DATE}');
+        $this->set_epg_param('first','epg_date_format', 'Y-m-d');
         $this->set_epg_param('first','epg_root', '');
         $this->set_epg_param('first','epg_start', 'start');
         $this->set_epg_param('first','epg_end', 'stop');

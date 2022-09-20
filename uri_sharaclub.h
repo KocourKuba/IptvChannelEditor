@@ -43,19 +43,25 @@ public:
 		provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
 		playlist_template = L"http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_append;
-		streams_config[0].uri_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
+		streams_config[0].shift_replace = "utc";
+		streams_config[0].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8?{SHIFT_SUBST}={START}";
 
-		streams_config[1].stream_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_shift;
-		streams_config[1].uri_template = L"http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
+		streams_config[1].enabled = true;
+		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
+		streams_config[1].catchup_type = CatchupType::cu_append;
+		streams_config[1].shift_replace = "utc";
+		streams_config[1].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts?{SHIFT_SUBST}={START}";
 
 		auto& params = epg_params[0];
 		params.epg_root = "";
-		params.epg_url = L"http://{DOMAIN}/get/?type=epg&ch={ID}";
+		params.epg_url = "http://{DOMAIN}/get/?type=epg&ch={ID}";
 	}
 
 	void get_playlist_url(std::wstring& url, TemplateParams& params) override;

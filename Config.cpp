@@ -38,11 +38,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-#define SERIALIZE_STRUCT(c, s) {""#s"", c.s}
-#define SERIALIZE_STRUCT2(c, s, f) {""#f"", c.s}
-#define DESERIALIZE_STRUCT(j, c, s) if (j.contains(""#s"")) j.at(""#s"").get_to(c.s)
-#define DESERIALIZE_STRUCT2(j, c, s, f) if (j.contains(""#f"")) j.at(""#f"").get_to(c.s)
-
 #ifdef _DEBUG
 // special case for run under debugger from VS
 std::wstring PluginsConfig::DEV_PATH = L"..\\";
@@ -145,64 +140,6 @@ static std::vector<StreamType> all_plugins = {
 	{ StreamType::enVidok,      },
 	{ StreamType::enVipLime,    },
 };
-
-void to_json(nlohmann::json& j, const Credentials& c)
-{
-	j = nlohmann::json{
-		SERIALIZE_STRUCT(c, login),
-		SERIALIZE_STRUCT(c, password),
-		SERIALIZE_STRUCT(c, token),
-		SERIALIZE_STRUCT(c, domain),
-		SERIALIZE_STRUCT(c, portal),
-		SERIALIZE_STRUCT(c, comment),
-		SERIALIZE_STRUCT(c, suffix),
-		SERIALIZE_STRUCT(c, caption),
-		SERIALIZE_STRUCT(c, logo),
-		SERIALIZE_STRUCT(c, background),
-		SERIALIZE_STRUCT(c, update_url),
-		SERIALIZE_STRUCT(c, update_package_url),
-		SERIALIZE_STRUCT(c, version_id),
-		SERIALIZE_STRUCT(c, update_name),
-		SERIALIZE_STRUCT(c, package_name),
-		SERIALIZE_STRUCT(c, ch_web_path),
-		SERIALIZE_STRUCT(c, custom_increment),
-		SERIALIZE_STRUCT(c, custom_update_name),
-		SERIALIZE_STRUCT(c, custom_package_name),
-		SERIALIZE_STRUCT2(c, server_id, device_id),
-		SERIALIZE_STRUCT(c, profile_id),
-		SERIALIZE_STRUCT(c, quality_id),
-		SERIALIZE_STRUCT(c, embed),
-		SERIALIZE_STRUCT(c, ch_list),
-	};
-}
-
-void from_json(const nlohmann::json& j, Credentials& c)
-{
-	DESERIALIZE_STRUCT(j, c, login);
-	DESERIALIZE_STRUCT(j, c, password);
-	DESERIALIZE_STRUCT(j, c, token);
-	DESERIALIZE_STRUCT(j, c, domain);
-	DESERIALIZE_STRUCT(j, c, portal);
-	DESERIALIZE_STRUCT(j, c, comment);
-	DESERIALIZE_STRUCT(j, c, suffix);
-	DESERIALIZE_STRUCT(j, c, caption);
-	DESERIALIZE_STRUCT(j, c, logo);
-	DESERIALIZE_STRUCT(j, c, background);
-	DESERIALIZE_STRUCT(j, c, update_url);
-	DESERIALIZE_STRUCT(j, c, update_package_url);
-	DESERIALIZE_STRUCT(j, c, version_id);
-	DESERIALIZE_STRUCT(j, c, update_name);
-	DESERIALIZE_STRUCT(j, c, package_name);
-	DESERIALIZE_STRUCT(j, c, ch_web_path);
-	DESERIALIZE_STRUCT(j, c, custom_increment);
-	DESERIALIZE_STRUCT(j, c, custom_update_name);
-	DESERIALIZE_STRUCT(j, c, custom_package_name);
-	DESERIALIZE_STRUCT2(j, c, server_id, device_id);
-	DESERIALIZE_STRUCT(j, c, profile_id);
-	DESERIALIZE_STRUCT(j, c, quality_id);
-	DESERIALIZE_STRUCT(j, c, embed);
-	DESERIALIZE_STRUCT(j, c, ch_list);
-}
 
 void ThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {

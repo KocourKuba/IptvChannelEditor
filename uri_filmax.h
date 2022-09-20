@@ -42,19 +42,23 @@ public:
 
 		playlist_template = L"http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
 
-		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
+		uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 
-		streams_config[0].stream_type = StreamSubType::enHLS;
+		streams_config[0].enabled = true;
+		streams_config[0].stream_sub_type = StreamSubType::enHLS;
 		streams_config[0].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].uri_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/index.m3u8?token={TOKEN}";
-		streams_config[0].uri_arc_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/{FLUSSONIC}-{START}-{DURATION}.m3u8?token={TOKEN}";
+		streams_config[0].shift_replace = "archive";
+		streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/index.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{SHIFT_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-		streams_config[1].stream_type = StreamSubType::enMPEGTS;
+		streams_config[1].enabled = true;
+		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
 		streams_config[1].catchup_type = CatchupType::cu_flussonic;
-		streams_config[1].uri_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = L"http://{DOMAIN}:{PORT}/{INT_ID}/{FLUSSONIC}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[1].shift_replace = "archive";
+		streams_config[1].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{SHIFT_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
-		epg_params[0].epg_url = L"http://epg.esalecrm.net/filmax/epg/{ID}.json";
+		epg_params[0].epg_url = "http://epg.esalecrm.net/filmax/epg/{ID}.json";
 
 		for (int i = 0; i <= IDS_STRING_FILMAX_P12 - IDS_STRING_FILMAX_P1; i++)
 		{
