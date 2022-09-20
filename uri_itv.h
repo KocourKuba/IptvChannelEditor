@@ -33,8 +33,12 @@ public:
 
 	uri_itv()
 	{
+		title = L"ITV Live TV";
+		short_name = "itv";
+		name = "itv-live.tv";
 		provider_url = L"https://itv.live/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://itv.ooo/p/{PASSWORD}/hls.m3u8";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";

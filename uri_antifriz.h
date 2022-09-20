@@ -35,8 +35,12 @@ public:
 
 	uri_antifriz()
 	{
+		title = L"Antifriz TV";
+		short_name = "antifriz";
+		name = "antifriz.tv";
 		provider_url = L"https://antifriztv.com/";
 		access_type = AccountAccessType::enPin;
+
 		provider_vod_url = L"http://protected-api.com";
 		playlist_template = L"http://antifriz.tv/playlist/{PASSWORD}.m3u8";
 

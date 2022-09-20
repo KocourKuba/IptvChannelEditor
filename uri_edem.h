@@ -34,8 +34,12 @@ public:
 
 	uri_edem()
 	{
+		title = L"iEdem/iLook TV";
+		short_name = "edem";
+		name = "iedem.tv";
 		provider_url = L"https://ilook.tv/";
 		access_type = AccountAccessType::enOtt;
+
 		provider_vod_url = L"{SUBDOMAIN}";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";

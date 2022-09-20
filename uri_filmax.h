@@ -34,8 +34,12 @@ public:
 
 	uri_filmax()
 	{
+		title = L"Filmax TV";
+		short_name = "filmax";
+		name = "filmax";
 		provider_url = L"https://filmax-tv.ru/";
 		access_type = AccountAccessType::enLoginPass;
+
 		playlist_template = L"http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";

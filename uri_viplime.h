@@ -34,9 +34,12 @@ public:
 
 	uri_viplime()
 	{
+		title = L"VipLime TV";
+		short_name = "viplime";
+		name = "viplime.fun.tv";
 		provider_url = L"http://viplime.fun/";
 		access_type = AccountAccessType::enPin;
-		server_subst_type = ServerSubstType::enStream;
+
 		playlist_template = L"http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";

@@ -457,15 +457,17 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	UpdateData(FALSE);
 
 	// Fill available plugins
-	for (const auto& item : GetConfig().get_plugins_info())
+	for (const auto& item : GetConfig().get_all_plugins())
 	{
-		const auto& plugin = StreamContainer::get_instance(item.type);
-		std::wstring title(item.title);
+		const auto& plugin = StreamContainer::get_instance(item);
+		if (!plugin) continue;
+
+		std::wstring title(plugin->get_title());
 		if (!plugin->get_vod_template().empty())
 			title += L" (VOD)";
 
 		int idx = m_wndPluginType.AddString(title.c_str());
-		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item.type);
+		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item);
 	}
 
 	m_wndIconSource.AddString(load_string_resource(IDS_STRING_FILE).c_str());
@@ -635,7 +637,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndPlaylist.EnableWindow(TRUE);
 
 	// Load channel lists
-	const auto& plugin_name = GetConfig().GetCurrentPluginName();
+	const auto& plugin_name = GetPluginShortNameW(m_plugin_type);
 	const auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), plugin_name);
 	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
 	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", plugin_name);
@@ -774,13 +776,13 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	bool isFile = pl_info->is_file;
 
-	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetConfig().GetCurrentPluginName(true)).c_str();
+	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginShortNameW(m_plugin_type, true)).c_str();
 
 	TemplateParams params;
 	params.login = m_cur_account.get_login();
 	params.password = m_cur_account.get_password();
 	params.token = m_cur_account.get_token();
-	params.server = m_cur_account.device_id;
+	params.server = m_cur_account.server_id;
 	params.profile = m_cur_account.profile_id;
 	params.quality = m_cur_account.quality_id;
 	params.number = idx;
@@ -1464,10 +1466,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 			params.login = m_cur_account.get_login();
 			params.password = m_cur_account.get_password();
 			params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-			if (uri->get_server_subst_type() == ServerSubstType::enStream)
-			{
-				params.server = m_cur_account.device_id;
-			}
+			params.server = m_cur_account.server_id;
 
 			UpdateExtToken(uri.get());
 			m_streamUrl = uri->get_templated_stream(params).c_str();
@@ -1747,7 +1746,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 
 	const auto& channelsPath = fmt::format(L"{:s}{:s}\\{:s}",
 										   GetConfig().get_string(true, REG_LISTS_PATH),
-										   GetConfig().GetCurrentPluginName(),
+										   GetPluginShortNameW(m_plugin_type),
 										   m_all_channels_lists[lst_idx]);
 
 	std::ifstream is(channelsPath, std::istream::binary);
@@ -2891,11 +2890,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_params.login = m_cur_account.get_login();
 		dlg.m_params.password = m_cur_account.get_password();
 		dlg.m_params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-
-		if (info->stream_uri->get_server_subst_type() == ServerSubstType::enStream)
-		{
-			dlg.m_params.server = m_cur_account.device_id;
-		}
+		dlg.m_params.server = m_cur_account.server_id;
 
 		UpdateExtToken(info->stream_uri.get());
 		dlg.m_info = info;
@@ -2988,11 +2983,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.login = m_cur_account.get_login();
 		params.password = m_cur_account.get_password();
 		params.streamSubtype = (StreamSubType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-
-		if (info->stream_uri->get_server_subst_type() == ServerSubstType::enStream)
-		{
-			params.server = m_cur_account.device_id;
-		}
+		params.server = m_cur_account.server_id;
 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
@@ -3235,7 +3226,7 @@ void CIPTVChannelEditorDlg::OnSave()
 	int lst_idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
 	if (lst_idx == -1 || m_all_channels_lists.empty())
 	{
-		const auto& plugin_name = GetConfig().GetCurrentPluginName();
+		const auto& plugin_name = GetPluginShortNameW(m_plugin_type);
 		const auto& list_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
 		const auto& list_path = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), plugin_name);
 		std::error_code err;
@@ -3301,7 +3292,7 @@ void CIPTVChannelEditorDlg::OnSave()
 
 		doc->append_node(tv_info);
 		// write document
-		auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), GetConfig().GetCurrentPluginName());
+		auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), GetPluginShortNameW(m_plugin_type));
 		std::error_code err;
 		std::filesystem::create_directories(channelsPath, err);
 
@@ -3529,19 +3520,22 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 	int i = 0;
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetRange32(0, (int)GetConfig().get_plugins_info().size());
+	m_wndProgress.SetRange32(0, (int)GetConfig().get_all_plugins().size());
 	m_wndProgress.SetPos(i);
 
-	for (const auto& item : GetConfig().get_plugins_info())
+	for (const auto& item : GetConfig().get_all_plugins())
 	{
-		m_wndProgressInfo.SetWindowText(item.title.c_str());
+		const auto& plugin = StreamContainer::get_instance(item);
+		if (!plugin) continue;
+
+		m_wndProgressInfo.SetWindowText(plugin->get_title().c_str());
 		m_wndProgress.SetPos(++i);
 
-		if (!PackPlugin(item.type, false, m_wndMakeWebUpdate.GetCheck()))
+		if (!PackPlugin(item, false, m_wndMakeWebUpdate.GetCheck()))
 		{
 			success = false;
 			CString str;
-			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.title.c_str());
+			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, plugin->get_title().c_str());
 			if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
 		}
 	}
@@ -3874,7 +3868,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
 	if (!CheckForSave())
 		return;
 
-	const auto& pluginName = GetConfig().GetCurrentPluginName();
+	const auto& pluginName = GetPluginShortNameW(m_plugin_type);
 	int cnt = 2;
 	std::wstring newListName;
 	for(;;)
@@ -4016,10 +4010,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_params.login = m_cur_account.get_login();
 	cfg.m_params.password = m_cur_account.get_password();
 	cfg.m_params.shift_back = 0;
-	if (cfg.m_container->front()->get_server_subst_type() == ServerSubstType::enStream)
-	{
-		cfg.m_params.server = m_cur_account.device_id;
-	}
+	cfg.m_params.server = m_cur_account.server_id;
 
 	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
@@ -4998,7 +4989,7 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 {
 	const auto& dump = m_stream_infos.serialize();
 	// write document
-	const auto& streamInfoFile = fmt::format(L"{:s}{:s}\\stream_info.bin", GetConfig().get_string(true, REG_LISTS_PATH), GetConfig().GetCurrentPluginName());
+	const auto& streamInfoFile = fmt::format(L"{:s}{:s}\\stream_info.bin", GetConfig().get_string(true, REG_LISTS_PATH), GetPluginShortNameW(m_plugin_type));
 	std::ofstream os(streamInfoFile, std::istream::binary);
 	os.write(dump.data(), dump.size());
 	os.close();

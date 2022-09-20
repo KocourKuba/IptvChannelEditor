@@ -34,8 +34,12 @@ public:
 
 	uri_mymagic()
 	{
+		title = L"MyMagic TV";
+		short_name = "mymagic";
+		name = "mymagic";
 		provider_url = L"http://mymagic.tv/";
 		access_type = AccountAccessType::enLoginPass;
+
 		playlist_template = L"http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";

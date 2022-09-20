@@ -33,8 +33,12 @@ public:
 
 	uri_russkoetv()
 	{
+		title = L"Russkoe TV";
+		short_name = "russkoetv";
+		name = "russkoetv";
 		provider_url = L"https://russkoetv.tv/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://russkoetv.tv/play/{PASSWORD}.m3u8";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";

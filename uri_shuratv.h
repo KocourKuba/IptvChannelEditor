@@ -34,8 +34,12 @@ public:
 
 	uri_shuratv()
 	{
+		title = L"Shura TV";
+		short_name = "shuratv";
+		name = "shura.tv";
 		provider_url = L"http://shura.tv/b/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";

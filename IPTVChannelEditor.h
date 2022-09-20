@@ -98,4 +98,7 @@ int RequestToUpdateServer(const std::wstring& command);
 std::wstring load_string_resource(unsigned int id);
 uintmax_t calc_folder_size(const std::wstring& path);
 
+std::wstring GetPluginShortNameW(const StreamType plugin_type, bool bCamel = false);
+std::string  GetPluginShortNameA(const StreamType plugin_type, bool bCamel = false);
+
 extern CIPTVChannelEditorApp theApp;

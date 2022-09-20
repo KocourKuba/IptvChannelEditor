@@ -35,8 +35,12 @@ public:
 
 	uri_tvclub()
 	{
+		title = L"TV Club";
+		short_name = "tvclub";
+		name = "tv_club";
 		provider_url = L"https://tvclub.cc/";
 		access_type = AccountAccessType::enLoginPass;
+
 		playlist_template = L"http://celn.shott.top/p/{TOKEN}";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";

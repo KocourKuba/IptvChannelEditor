@@ -33,8 +33,12 @@ public:
 
 	uri_ottclub()
 	{
+		title = L"OttClub";
+		short_name = "ottclub";
+		name = "ottclub";
 		provider_url = L"https://www.ottclub.cc/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://myott.top/playlist/{PASSWORD}/m3u";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";

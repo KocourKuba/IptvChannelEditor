@@ -205,6 +205,32 @@ public:
 	void clear() override;
 
 	/// <summary>
+	/// returns plugin title
+	/// </summary>
+	const std::wstring& get_title() const { return title; }
+
+	/// <summary>
+	/// returns plugin name
+	/// </summary>
+	const std::string& get_name() const { return name; }
+
+	/// <summary>
+	/// returns plugin short name
+	/// </summary>
+	const std::string& get_short_name() const { return short_name; }
+
+	/// <summary>
+	/// returns plugin access type
+	/// </summary>
+	const AccountAccessType get_access_type() const { return access_type; }
+
+	/// <summary>
+	/// returns link to provider account
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wstring& get_provider_url() const { return provider_url; }
+
+	/// <summary>
 	/// returns parser parameters
 	/// </summary>
 	const ParsingGroups& get_parser() const noexcept{ return parser; }
@@ -268,12 +294,6 @@ public:
 	}
 
 	/// <summary>
-	/// returns link to provider account
-	/// </summary>
-	/// <returns>wstring</returns>
-	const std::wstring& get_provider_url() const { return provider_url; }
-
-	/// <summary>
 	/// returns link to provider api url
 	/// </summary>
 	/// <returns>wstring</returns>
@@ -289,12 +309,6 @@ public:
 	/// clear profile list
 	/// </summary>
 	void clear_profiles_list() { profiles_list.clear(); }
-
-	/// <summary>
-	/// returns server substitution type
-	/// </summary>
-	/// <returns>ServerSubstType</returns>
-	const ServerSubstType get_server_subst_type() const { return server_subst_type; }
 
 	/// <summary>
 	/// returns vod url template
@@ -428,8 +442,6 @@ public:
 	/// <param name="params">Template parameters.</param>
 	virtual bool set_profile(TemplateParams& /*params*/) { return true; }
 
-	AccountAccessType get_access_type() const { return access_type; }
-
 protected:
 
 	virtual void replace_vars(std::wstring& url, const TemplateParams& params) const;
@@ -437,7 +449,12 @@ protected:
 	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
 protected:
-	ServerSubstType server_subst_type = ServerSubstType::enNone;
+
+	std::wstring title;
+	std::string short_name;
+	std::string name;
+	std::wstring provider_url;
+
 	AccountAccessType access_type = AccountAccessType::enOtt;
 
 	std::array<StreamParameters, 2> streams_config;
@@ -448,7 +465,6 @@ protected:
 	std::vector<QualityInfo> quality_list;
 	std::vector<PlaylistInfo> playlists;
 
-	std::wstring provider_url;
 	std::wstring provider_api_url;
 	std::wstring provider_vod_url;
 	std::wstring playlist_template;

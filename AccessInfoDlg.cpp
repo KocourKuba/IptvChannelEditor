@@ -278,7 +278,7 @@ void CAccessInfoDlg::UpdateOptionalControls()
 	params.login = utils::utf8_to_utf16(selected.login);
 	params.password = utils::utf8_to_utf16(selected.password);
 	params.subdomain = utils::utf8_to_utf16(selected.domain);
-	params.server = selected.device_id;
+	params.server = selected.server_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
 
@@ -498,8 +498,7 @@ void CAccessInfoDlg::SetWebUpdate()
 	m_wndUpdateName.EnableWindow(selected.custom_update_name);
 	m_wndPackageName.EnableWindow(selected.custom_package_name);
 
-	const auto& plugin_info = GetConfig().get_plugin_info();
-	const auto& short_name_w = utils::utf8_to_utf16(plugin_info.short_name);
+	const auto& short_name_w = utils::utf8_to_utf16(m_plugin->get_short_name());
 	const auto& suffix = utils::utf8_to_utf16(selected.suffix);
 
 	if (selected.custom_update_name)
@@ -508,7 +507,7 @@ void CAccessInfoDlg::SetWebUpdate()
 	}
 	else
 	{
-		m_updateInfoName = fmt::format(utils::DUNE_UPDATE_NAME, plugin_info.short_name, (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
+		m_updateInfoName = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
 		m_updateInfoName += L".txt";
 	}
 
@@ -518,7 +517,7 @@ void CAccessInfoDlg::SetWebUpdate()
 	}
 	else
 	{
-		m_packageName = fmt::format(utils::DUNE_UPDATE_NAME, plugin_info.short_name, (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
+		m_packageName = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
 		m_packageName += L".tar.gz";
 	}
 
@@ -558,7 +557,7 @@ BOOL CAccessInfoDlg::OnApply()
 	params.login = utils::utf8_to_utf16(selected.login);
 	params.password = utils::utf8_to_utf16(selected.password);
 	params.subdomain = utils::utf8_to_utf16(selected.domain);
-	params.server = selected.device_id;
+	params.server = selected.server_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
 
@@ -891,7 +890,7 @@ void CAccessInfoDlg::GetAccountInfo()
 	if (!m_servers.empty())
 	{
 		m_wndDeviceID.EnableWindow(TRUE);
-		m_wndDeviceID.SetCurSel(selected_cred.device_id);
+		m_wndDeviceID.SetCurSel(selected_cred.server_id);
 	}
 
 	m_wndEmbed.SetCheck(selected_cred.embed);
@@ -936,7 +935,7 @@ void CAccessInfoDlg::GetAccountInfo()
 	params.login = std::move(login);
 	params.password = std::move(password);
 	params.subdomain = m_list_domain;
-	params.server = selected_cred.device_id;
+	params.server = selected_cred.server_id;
 	params.profile = selected_cred.profile_id;
 	params.quality = selected_cred.quality_id;
 
@@ -1060,7 +1059,7 @@ int CAccessInfoDlg::GetCheckedAccountIdx()
 void CAccessInfoDlg::OnCbnSelchangeComboDeviceId()
 {
 	auto& selected = GetCheckedAccount();
-	selected.device_id = m_wndDeviceID.GetCurSel();
+	selected.server_id = m_wndDeviceID.GetCurSel();
 }
 
 void CAccessInfoDlg::OnCbnSelchangeComboProfile()

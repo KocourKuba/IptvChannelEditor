@@ -151,7 +151,6 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 			return std::make_unique<uri_smile>();
 
 		default:
-			ASSERT(false);
 			return nullptr;
 	}
 }

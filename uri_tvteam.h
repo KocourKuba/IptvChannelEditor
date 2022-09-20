@@ -33,9 +33,12 @@ public:
 
 	uri_tvteam()
 	{
+		title = L"TV Team";
+		short_name = "tvteam";
+		name = "tv.team";
 		provider_url = L"https://tv.team/";
-		server_subst_type = ServerSubstType::enStream;
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";

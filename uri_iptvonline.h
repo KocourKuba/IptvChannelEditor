@@ -33,8 +33,12 @@ public:
 
 	uri_iptvonline()
 	{
+		title = L"IPTV Online";
+		short_name = "iptvonline";
+		name = "iptvonline";
 		provider_url = L"https://iptv.online/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://iptv.online/play/{PASSWORD}/m3u8";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";

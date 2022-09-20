@@ -33,8 +33,12 @@ public:
 
 	uri_glanz()
 	{
+		title = L"glanz TV";
+		short_name = "glanz";
+		name = "glanz.tv";
 		provider_url = L"http://ottg.cc/";
 		access_type = AccountAccessType::enLoginPass;
+
 		playlist_template = L"http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
 		provider_vod_url = L"http://api.ottg.cc/playlist/vod?login={LOGIN}&password={PASSWORD}";
 

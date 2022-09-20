@@ -33,8 +33,12 @@ public:
 
 	uri_lightiptv()
 	{
+		title = L"LightIPTV";
+		short_name = "lightiptv";
+		name = "lightiptv";
 		provider_url = L"https://ottbill.cc/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";

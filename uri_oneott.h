@@ -33,8 +33,12 @@ public:
 
 	uri_oneott()
 	{
+		title = L"1OTT TV";
+		short_name = "oneott";
+		name = "oneott.tv";
 		provider_url = L"http://1ott.net/";
 		access_type = AccountAccessType::enLoginPass;
+
 		playlist_template = L"http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";

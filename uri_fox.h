@@ -33,8 +33,12 @@ public:
 
 	uri_fox()
 	{
+		title = L"Fox TV";
+		short_name = "fox";
+		name = "fox-fun.tv";
 		provider_url = L"http://info.fox-tv.fun/";
 		access_type = AccountAccessType::enLoginPass;
+
 		provider_vod_url = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u";
 		playlist_template = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u";
 

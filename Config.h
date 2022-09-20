@@ -28,7 +28,6 @@ DEALINGS IN THE SOFTWARE.
 #include <variant>
 #include <map>
 #include "UtilsLib\json_wrapper.h"
-#include "uri_stream.h"
 
 enum class StreamType
 {
@@ -174,7 +173,7 @@ public:
 		custom_increment = 0;
 		custom_update_name = 0;
 		custom_package_name = 0;
-		device_id = 0;
+		server_id = 0;
 		profile_id = 0;
 		embed = 0;
 		not_valid = false;
@@ -223,7 +222,7 @@ public:
 	int custom_increment = 0;
 	int custom_update_name = 0;
 	int custom_package_name = 0;
-	int device_id = 0;
+	int server_id = 0;
 	int profile_id = 0;
 	int quality_id = 0;
 	int embed = 0;
@@ -278,16 +277,13 @@ public:
 
 	void RemovePortableSettings();
 
-	const std::vector<PluginDesc>& get_plugins_info() const;
-	PluginDesc get_plugin_info() const;
+	const std::vector<StreamType>& get_all_plugins() const;
 
 	int get_plugin_idx() const;
 	void set_plugin_idx(int val);
 
 	StreamType get_plugin_type() const;
 	void set_plugin_type(StreamType val);
-
-	std::wstring GetCurrentPluginName(bool bCamel = false) const;
 
 	BOOL IsPortable() const { return m_bPortable; }
 	void SetPortable(BOOL val) { m_bPortable = val; }
@@ -329,20 +325,3 @@ private:
 };
 
 inline PluginsConfig& GetConfig() { return PluginsConfig::Instance(); }
-
-template<typename T>
-static std::basic_string<T> GetPluginName(const StreamType plugin_type, bool bCamel = false)
-{
-	for (const auto& item : GetConfig().get_plugins_info())
-	{
-		if (item.type != plugin_type) continue;
-
-		std::basic_string<T> plugin_name(item.short_name.begin(), item.short_name.end());
-		if (bCamel)
-			plugin_name[0] = std::toupper(plugin_name[0]);
-
-		return plugin_name;
-	}
-
-	return std::basic_string<T>();
-}

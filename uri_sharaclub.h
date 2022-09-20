@@ -33,8 +33,12 @@ public:
 
 	uri_sharaclub()
 	{
+		title = L"Sharaclub TV";
+		short_name = "sharaclub";
+		name = "sharaclub.tv";
 		provider_url = L"https://shara.club/";
 		access_type = AccountAccessType::enLoginPass;
+
 		provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";;
 		provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
 		playlist_template = L"http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";

@@ -34,8 +34,12 @@ public:
 
 	uri_kineskop()
 	{
+		title = L"Kineskop.Club";
+		short_name = "kineskop";
+		name = "kineskop";
 		provider_url = L"http://kineskop.club/";
 		access_type = AccountAccessType::enLoginPass;
+
 		playlist_template = L"http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER_ID}/1";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";

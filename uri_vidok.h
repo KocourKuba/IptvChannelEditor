@@ -35,8 +35,12 @@ public:
 
 	uri_vidok()
 	{
+		title = L"Vidok TV";
+		short_name = "vidok";
+		name = "vidok.tv";
 		provider_url = L"https://vidok.tv/";
 		access_type = AccountAccessType::enLoginPass;
+
 		playlist_template = L"http://vidok.tv/p/{TOKEN}";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";

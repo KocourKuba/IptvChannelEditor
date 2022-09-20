@@ -33,8 +33,12 @@ public:
 
 	uri_sharavoz()
 	{
+		title = L"Sharavoz TV";
+		short_name = "sharavoz";
+		name = "sharavoz.tv";
 		provider_url = L"https://www.sharavoz.tv/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>\d+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";

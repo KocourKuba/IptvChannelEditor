@@ -27,8 +27,8 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include <iomanip>
 
-#include "Config.h"
 #include "IPTVChannelEditor.h"
+#include "StreamContainer.h"
 
 #include "UtilsLib\utils.h"
 
@@ -39,7 +39,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #define SERIALIZE_STRUCT(c, s) {""#s"", c.s}
+#define SERIALIZE_STRUCT2(c, s, f) {""#f"", c.s}
 #define DESERIALIZE_STRUCT(j, c, s) if (j.contains(""#s"")) j.at(""#s"").get_to(c.s)
+#define DESERIALIZE_STRUCT2(j, c, s, f) if (j.contains(""#f"")) j.at(""#f"").get_to(c.s)
 
 #ifdef _DEBUG
 // special case for run under debugger from VS
@@ -117,31 +119,31 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_ACTIVE_CH_LIST,
 };
 
-static std::vector<PluginDesc> all_plugins = {
-	{ StreamType::enAntifriz,   _T("Antifriz TV"),     "antifriz",   "antifriz.tv"     },
-	{ StreamType::enCbilling,   _T("Cbilling TV"),     "cbilling",   "cbillingtv",     },
-	{ StreamType::enEdem,       _T("iEdem/iLook TV"),  "edem",       "iedem.tv"        },
-	{ StreamType::enFilmax,     _T("Filmax TV"),       "filmax",     "filmax",         },
-	{ StreamType::enFox,        _T("Fox TV"),          "fox",        "fox-fun.tv"      },
-	{ StreamType::enGlanz,      _T("glanz TV"),        "glanz",      "glanz.tv",       },
-	{ StreamType::enIptvOnline, _T("IPTV Online"),     "iptvonline", "iptvonline",     },
-	{ StreamType::enItv,        _T("ITV Live TV"),     "itv",        "itv-live.tv",    },
-	{ StreamType::enKineskop,   _T("Kineskop.Club"),   "kineskop",   "kineskop",       },
-	{ StreamType::enLightIptv,  _T("LightIPTV"),       "lightiptv",  "lightiptv",      },
-	{ StreamType::enMymagic,    _T("MyMagic TV"),      "mymagic",    "mymagic",        },
-	{ StreamType::enOneCent,    _T("1CENT TV"),        "onecent",    "onecent.tv",     },
-	{ StreamType::enOneOtt,     _T("1OTT TV"),         "oneott",     "oneott.tv",      },
-	{ StreamType::enOneUsd,     _T("1USD TV"),         "oneusd",     "oneusd.tv",      },
-	{ StreamType::enOttclub,    _T("OttClub"),         "ottclub",    "ottclub",        },
-	{ StreamType::enRusskoeTV,  _T("Russkoe TV"),      "russkoetv",  "russkoetv",      },
-	{ StreamType::enSharaTV,    _T("Shara TV"),        "sharatv",    "shara.tv",       },
-	{ StreamType::enSharaclub,  _T("Sharaclub TV"),    "sharaclub",  "sharaclub.tv",   },
-	{ StreamType::enSharavoz,   _T("Sharavoz TV"),     "sharavoz",   "sharavoz.tv",    },
-	{ StreamType::enShuraTV,    _T("Shura TV"),        "shuratv",    "shura.tv",       },
-	{ StreamType::enTVClub,     _T("TV Club"),         "tvclub",     "tv_club",        },
-	{ StreamType::enTvTeam,     _T("TV Team"),         "tvteam",     "tv.team",        },
-	{ StreamType::enVidok,      _T("Vidok TV"),        "vidok",      "vidok.tv",       },
-	{ StreamType::enVipLime,    _T("VipLime TV"),      "viplime",    "viplime.fun.tv", },
+static std::vector<StreamType> all_plugins = {
+	{ StreamType::enAntifriz,   },
+	{ StreamType::enCbilling,   },
+	{ StreamType::enEdem,       },
+	{ StreamType::enFilmax,     },
+	{ StreamType::enFox,        },
+	{ StreamType::enGlanz,      },
+	{ StreamType::enIptvOnline, },
+	{ StreamType::enItv,        },
+	{ StreamType::enKineskop,   },
+	{ StreamType::enLightIptv,  },
+	{ StreamType::enMymagic,    },
+	{ StreamType::enOneCent,    },
+	{ StreamType::enOneOtt,     },
+	{ StreamType::enOneUsd,     },
+	{ StreamType::enOttclub,    },
+	{ StreamType::enRusskoeTV,  },
+	{ StreamType::enSharaTV,    },
+	{ StreamType::enSharaclub,  },
+	{ StreamType::enSharavoz,   },
+	{ StreamType::enShuraTV,    },
+	{ StreamType::enTVClub,     },
+	{ StreamType::enTvTeam,     },
+	{ StreamType::enVidok,      },
+	{ StreamType::enVipLime,    },
 };
 
 void to_json(nlohmann::json& j, const Credentials& c)
@@ -166,7 +168,7 @@ void to_json(nlohmann::json& j, const Credentials& c)
 		SERIALIZE_STRUCT(c, custom_increment),
 		SERIALIZE_STRUCT(c, custom_update_name),
 		SERIALIZE_STRUCT(c, custom_package_name),
-		SERIALIZE_STRUCT(c, device_id),
+		SERIALIZE_STRUCT2(c, server_id, device_id),
 		SERIALIZE_STRUCT(c, profile_id),
 		SERIALIZE_STRUCT(c, quality_id),
 		SERIALIZE_STRUCT(c, embed),
@@ -195,7 +197,7 @@ void from_json(const nlohmann::json& j, Credentials& c)
 	DESERIALIZE_STRUCT(j, c, custom_increment);
 	DESERIALIZE_STRUCT(j, c, custom_update_name);
 	DESERIALIZE_STRUCT(j, c, custom_package_name);
-	DESERIALIZE_STRUCT(j, c, device_id);
+	DESERIALIZE_STRUCT2(j, c, server_id, device_id);
 	DESERIALIZE_STRUCT(j, c, profile_id);
 	DESERIALIZE_STRUCT(j, c, quality_id);
 	DESERIALIZE_STRUCT(j, c, embed);
@@ -256,10 +258,10 @@ void PluginsConfig::LoadSettings()
 
 		if (!m_config.empty())
 		{
-			bool res = ReadSettingsJson(StreamType::enBase);
+			ReadSettingsJson(StreamType::enBase);
 			for (const auto& plugin : all_plugins)
 			{
-				ReadSettingsJson(plugin.type);
+				ReadSettingsJson(plugin);
 			}
 
 			m_bPortable = TRUE;
@@ -273,13 +275,13 @@ void PluginsConfig::LoadSettings()
 		ReadSettingsRegistry(StreamType::enBase);
 		for (const auto& plugin : all_plugins)
 		{
-			m_pluginType = plugin.type;
-			ReadSettingsRegistry(plugin.type);
+			m_pluginType = plugin;
+			ReadSettingsRegistry(m_pluginType);
 		}
 	}
 
 	int idx = get_plugin_idx();
-	m_pluginType = (idx >= 0 && idx < (int)all_plugins.size()) ? all_plugins[idx].type : StreamType::enEdem;
+	m_pluginType = (idx >= 0 && idx < (int)all_plugins.size()) ? all_plugins[idx] : StreamType::enEdem;
 }
 
 void PluginsConfig::SaveSettingsToJson()
@@ -288,7 +290,7 @@ void PluginsConfig::SaveSettingsToJson()
 
 	for (const auto& plugin : all_plugins)
 	{
-		UpdateSettingsJson(plugin.type);
+		UpdateSettingsJson(plugin);
 	}
 
 	std::ofstream out_file(GetAppPath() + CONFIG_FILE);
@@ -301,7 +303,7 @@ void PluginsConfig::SaveSettingsToRegistry()
 
 	for (const auto& plugin : all_plugins)
 	{
-		SaveSectionRegistry(plugin.type);
+		SaveSectionRegistry(plugin);
 	}
 }
 
@@ -319,24 +321,9 @@ void PluginsConfig::RemovePortableSettings()
 	std::filesystem::remove(GetAppPath() + CONFIG_FILE, ec);
 }
 
-std::wstring PluginsConfig::GetCurrentPluginName(bool bCamel /*= false*/) const
-{
-	return GetPluginName<wchar_t>(m_pluginType, bCamel);
-}
-
-const std::vector<PluginDesc>& PluginsConfig::get_plugins_info() const
+const std::vector<StreamType>& PluginsConfig::get_all_plugins() const
 {
 	return all_plugins;
-}
-
-PluginDesc PluginsConfig::get_plugin_info() const
-{
-	for(const auto& info : all_plugins)
-	{
-		if (info.type == m_pluginType)
-			return info;
-	}
-	return {};
 }
 
 int PluginsConfig::get_plugin_idx() const
@@ -347,7 +334,7 @@ int PluginsConfig::get_plugin_idx() const
 void PluginsConfig::set_plugin_idx(int val)
 {
 	set_int(true, REG_PLUGIN, val);
-	m_pluginType = val < (int)all_plugins.size() ? all_plugins[val].type : StreamType::enEdem;
+	m_pluginType = val < (int)all_plugins.size() ? all_plugins[val] : StreamType::enEdem;
 }
 
 StreamType PluginsConfig::get_plugin_type() const
@@ -492,7 +479,7 @@ void PluginsConfig::ReadSettingsRegistry(StreamType plugin_type)
 	if (::RegOpenCurrentUser(KEY_READ, &hkHive) != ERROR_SUCCESS)
 		return;
 
-	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginName<wchar_t>(plugin_type, false));
+	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginShortNameW(plugin_type, false));
 	HKEY hKey = nullptr;
 	if (::RegOpenKeyExW(hkHive, reg_key.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
 	{
@@ -548,7 +535,7 @@ void PluginsConfig::SaveSectionRegistry(StreamType plugin_type)
 	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
 		return;
 
-	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginName<wchar_t>(plugin_type, false));
+	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginShortNameW(plugin_type, false));
 	HKEY hKey = nullptr;
 	DWORD dwDesp;
 
@@ -599,7 +586,7 @@ bool PluginsConfig::ReadSettingsJson(StreamType plugin_type)
 	if (plugin_type == StreamType::enBase)
 		j_section = utils::utf16_to_utf8(std::wstring_view(APP_SETTINGS));
 	else
-		j_section = GetPluginName<char>(plugin_type, false);
+		j_section = GetPluginShortNameA(plugin_type, false);
 
 	if (!m_config.contains(j_section))
 		return false;
@@ -698,5 +685,5 @@ void PluginsConfig::UpdateSettingsJson(StreamType plugin_type)
 	if (plugin_type == StreamType::enBase)
 		m_config[utils::utf16_to_utf8(std::wstring_view(APP_SETTINGS))] = node;
 	else
-		m_config[GetPluginName<char>(plugin_type, false)] = node;
+		m_config[GetPluginShortNameA(plugin_type, false)] = node;
 }

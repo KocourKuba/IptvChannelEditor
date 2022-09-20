@@ -33,8 +33,12 @@ public:
 
 	uri_oneusd()
 	{
+		title = L"1USD TV";
+		short_name = "oneusd";
+		name = "oneusd.tv";
 		provider_url = L"http://1usd.tv/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://1usd.tv/pl-{PASSWORD}-hls";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";

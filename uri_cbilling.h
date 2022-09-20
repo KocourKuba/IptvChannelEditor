@@ -36,8 +36,12 @@ public:
 
 	uri_cbilling()
 	{
+		title = L"Cbilling TV";
+		short_name = "cbilling";
+		name = "cbillingtv";
 		provider_url = L"https://cbilling.eu/";
 		access_type = AccountAccessType::enPin;
+
 		provider_vod_url = L"http://protected-api.com";
 		playlist_template = L"http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8";
 

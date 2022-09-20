@@ -31,8 +31,12 @@ class uri_sharatv : public uri_stream
 {
 	public:uri_sharatv()
 	{
+		title = L"Shara TV";
+		short_name = "sharatv";
+		name = "shara.tv";
 		provider_url = L"https://shara-tv.org/";
 		access_type = AccountAccessType::enLoginPass;
+
 		playlist_template = L"http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";

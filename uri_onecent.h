@@ -33,8 +33,12 @@ public:
 
 	uri_onecent()
 	{
+		title = L"1CENT TV";
+		short_name = "onecent";
+		name = "onecent.tv";
 		provider_url = L"https://1cent.tv/";
 		access_type = AccountAccessType::enPin;
+
 		playlist_template = L"http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
 
 		parser.uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";

@@ -261,13 +261,17 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		else
 			output_path = cmdInfo.m_strFileName.GetString();
 
-		for (const auto& item : GetConfig().get_plugins_info())
+		for (const auto& item : GetConfig().get_all_plugins())
 		{
-			if (!PackPlugin(item.type, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
+			if (!PackPlugin(item, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 			{
-				CString str;
-				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, item.title.c_str());
-				if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
+				const auto& plugin = StreamContainer::get_instance(item);
+				if (plugin)
+				{
+					CString str;
+					str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, plugin->get_title().c_str());
+					if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
+				}
 			}
 		}
 
@@ -438,9 +442,9 @@ std::string get_array_value(std::vector<std::wstring>& creds, size_t& last)
 void ConvertAccounts()
 {
 	const auto& old_plugin_type = GetConfig().get_plugin_type();
-	for (const auto& item : GetConfig().get_plugins_info())
+	for (const auto& item : GetConfig().get_all_plugins())
 	{
-		GetConfig().set_plugin_type(item.type);
+		GetConfig().set_plugin_type(item);
 
 		bool need_convert = false;
 		auto acc_data = GetConfig().get_string(false, REG_ACCOUNT_DATA);
@@ -452,101 +456,103 @@ void ConvertAccounts()
 
 		if (need_convert)
 		{
-			auto plugin = StreamContainer::get_instance(item.type);
-
-			const auto& access_type = plugin->get_access_type();
-			const auto& login = utils::utf16_to_utf8(GetConfig().get_string(false, REG_LOGIN));
-			const auto& password = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
-			const auto& token = utils::utf16_to_utf8(GetConfig().get_string(false, REG_TOKEN));
-			const auto& domain = utils::utf16_to_utf8(GetConfig().get_string(false, REG_DOMAIN));
-			const auto& portal = utils::utf16_to_utf8(GetConfig().get_string(false, REG_VPORTAL));
-			const auto& device_id = GetConfig().get_int(false, REG_DEVICE_ID);
-			const auto& profile_id = GetConfig().get_int(false, REG_PROFILE_ID);
-			const auto& quality_id = GetConfig().get_int(false, REG_QUALITY_ID);
-			const auto& embed = GetConfig().get_int(false, REG_EMBED_INFO);
-
-			std::vector<Credentials> all_credentials;
-			int idx = 0;
-			int selected = 0;
-			auto& all_accounts = utils::string_split(acc_data, L';');
-			for (const auto& account : all_accounts)
+			const auto& plugin = StreamContainer::get_instance(item);
+			if (plugin)
 			{
-				auto& creds = utils::string_split(account, L',');
-				if (creds.empty() || creds.front().empty()) continue;
+				const auto& access_type = plugin->get_access_type();
+				const auto& login = utils::utf16_to_utf8(GetConfig().get_string(false, REG_LOGIN));
+				const auto& password = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
+				const auto& token = utils::utf16_to_utf8(GetConfig().get_string(false, REG_TOKEN));
+				const auto& domain = utils::utf16_to_utf8(GetConfig().get_string(false, REG_DOMAIN));
+				const auto& portal = utils::utf16_to_utf8(GetConfig().get_string(false, REG_VPORTAL));
+				const auto& device_id = GetConfig().get_int(false, REG_DEVICE_ID);
+				const auto& profile_id = GetConfig().get_int(false, REG_PROFILE_ID);
+				const auto& quality_id = GetConfig().get_int(false, REG_QUALITY_ID);
+				const auto& embed = GetConfig().get_int(false, REG_EMBED_INFO);
 
-				size_t last = 0;
-				Credentials cred;
-				switch (access_type)
+				std::vector<Credentials> all_credentials;
+				int idx = 0;
+				int selected = 0;
+				auto& all_accounts = utils::string_split(acc_data, L';');
+				for (const auto& account : all_accounts)
 				{
-					case AccountAccessType::enPin:
-						cred.password = get_array_value(creds, last);
-						if (cred.password == password)
-						{
-							selected = idx;
-						}
-						break;
+					auto& creds = utils::string_split(account, L',');
+					if (creds.empty() || creds.front().empty()) continue;
 
-					case AccountAccessType::enLoginPass:
-						cred.login = get_array_value(creds, last);
-						cred.password = get_array_value(creds, last);
-						if (cred.login == login)
-						{
-							selected = idx;
-						}
-						break;
+					size_t last = 0;
+					Credentials cred;
+					switch (access_type)
+					{
+						case AccountAccessType::enPin:
+							cred.password = get_array_value(creds, last);
+							if (cred.password == password)
+							{
+								selected = idx;
+							}
+							break;
 
-					case AccountAccessType::enOtt:
-						cred.token = get_array_value(creds, last);
-						cred.domain = get_array_value(creds, last);
-						cred.portal = get_array_value(creds, last);
-						if (cred.token == token)
-						{
-							selected = idx;
-						}
-						break;
+						case AccountAccessType::enLoginPass:
+							cred.login = get_array_value(creds, last);
+							cred.password = get_array_value(creds, last);
+							if (cred.login == login)
+							{
+								selected = idx;
+							}
+							break;
 
-					default:break;
+						case AccountAccessType::enOtt:
+							cred.token = get_array_value(creds, last);
+							cred.domain = get_array_value(creds, last);
+							cred.portal = get_array_value(creds, last);
+							if (cred.token == token)
+							{
+								selected = idx;
+							}
+							break;
+
+						default:break;
+					}
+
+					cred.comment = get_array_value(creds, last);
+					cred.suffix = get_array_value(creds, last);
+					cred.server_id = device_id;
+					cred.profile_id = profile_id;
+					cred.quality_id = quality_id;
+					cred.embed = embed;
+
+					all_credentials.emplace_back(cred);
 				}
 
-				cred.comment = get_array_value(creds, last);
-				cred.suffix = get_array_value(creds, last);
-				cred.device_id = device_id;
-				cred.profile_id = profile_id;
-				cred.quality_id = quality_id;
-				cred.embed = embed;
-
-				all_credentials.emplace_back(cred);
-			}
-
-			if (all_credentials.empty())
-			{
-				Credentials cred;
-				switch (access_type)
+				if (all_credentials.empty())
 				{
-					case AccountAccessType::enPin:
-						cred.password = password;
-						break;
+					Credentials cred;
+					switch (access_type)
+					{
+						case AccountAccessType::enPin:
+							cred.password = password;
+							break;
 
-					case AccountAccessType::enLoginPass:
-						cred.login = login;
-						cred.password = password;
-						break;
+						case AccountAccessType::enLoginPass:
+							cred.login = login;
+							cred.password = password;
+							break;
 
-					case AccountAccessType::enOtt:
-						cred.token = token;
-						cred.domain = domain;
-						cred.portal = portal;
-						break;
+						case AccountAccessType::enOtt:
+							cred.token = token;
+							cred.domain = domain;
+							cred.portal = portal;
+							break;
 
-					default: break;
+						default: break;
+					}
+
+					all_credentials.emplace_back(cred);
 				}
 
-				all_credentials.emplace_back(cred);
+				nlohmann::json j_serialize = all_credentials;
+				GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
+				GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, selected);
 			}
-
-			nlohmann::json j_serialize = all_credentials;
-			GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
-			GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, selected);
 		}
 
 		GetConfig().delete_setting(false, REG_LOGIN);
@@ -635,10 +641,9 @@ bool PackPlugin(const StreamType plugin_type,
 	}
 
 	const auto& cred = all_credentials[selected];
-	const auto& plugin_info = GetConfig().get_plugin_info();
-	const auto& short_name_w = utils::utf8_to_utf16(plugin_info.short_name);
+	const auto& short_name_w = utils::utf8_to_utf16(plugin->get_short_name());
 	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
-	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin_info.short_name, (cred.suffix.empty() || noCustom) ? "mod" : cred.suffix);
+	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), (cred.suffix.empty() || noCustom) ? "mod" : cred.suffix);
 
 	if (make_web_update && (cred.update_url.empty() || cred.update_package_url.empty()))
 	{
@@ -757,7 +762,7 @@ bool PackPlugin(const StreamType plugin_type,
 	}
 	else
 	{
-		update_name = fmt::format(utils::DUNE_UPDATE_NAME, plugin_info.short_name, (cred.suffix.empty()) ? "mod" : cred.suffix) + ".xml";
+		update_name = fmt::format(utils::DUNE_UPDATE_NAME, plugin->get_short_name(), (cred.suffix.empty()) ? "mod" : cred.suffix) + ".xml";
 	}
 
 	std::string package_plugin_name;
@@ -767,14 +772,14 @@ bool PackPlugin(const StreamType plugin_type,
 	}
 	else
 	{
-		package_plugin_name = fmt::format(utils::DUNE_UPDATE_NAME, plugin_info.short_name, (cred.suffix.empty()) ? "mod" : cred.suffix);
+		package_plugin_name = fmt::format(utils::DUNE_UPDATE_NAME, plugin->get_short_name(), (cred.suffix.empty()) ? "mod" : cred.suffix);
 	}
 
 	// create plugin manifest
 	std::string config_data;
 	std::ifstream istream(plugin_root + L"dune_plugin.xml");
 	config_data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
-	const auto& plugin_caption = cred.caption.empty() ? utils::utf16_to_utf8(plugin_info.title) : cred.caption;
+	const auto& plugin_caption = cred.caption.empty() ? utils::utf16_to_utf8(plugin->get_title()) : cred.caption;
 
 	// preprocess common values
 	utils::string_replace_inplace(config_data, "{plugin_title}", plugin_caption.c_str());
@@ -802,8 +807,8 @@ bool PackPlugin(const StreamType plugin_type,
 
 		// change values
 		auto d_node = doc->first_node("dune_plugin");
-		d_node->first_node("name")->value(plugin_info.int_name.c_str());
-		d_node->first_node("short_name")->value(plugin_info.short_name.c_str());
+		d_node->first_node("name")->value(plugin->get_name().c_str());
+		d_node->first_node("short_name")->value(plugin->get_short_name().c_str());
 		d_node->first_node("background")->value(bg.c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
 		d_node->first_node("version")->value(STRPRODUCTVER);
@@ -853,8 +858,8 @@ bool PackPlugin(const StreamType plugin_type,
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
 	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n",
-					  GetPluginName<char>(plugin_type),
-					  GetPluginName<char>(plugin_type, true));
+					  GetPluginShortNameA(plugin_type),
+					  GetPluginShortNameA(plugin_type, true));
 	os.close();
 
 	// copy embedded info
@@ -1009,7 +1014,7 @@ bool PackPlugin(const StreamType plugin_type,
 			auto update_info = doc->allocate_node(rapidxml::node_element, "dune_plugin_update_info");
 
 			update_info->append_node(rapidxml::alloc_node(*doc, "schema", "2"));
-			update_info->append_node(rapidxml::alloc_node(*doc, "name", plugin_info.int_name.c_str()));
+			update_info->append_node(rapidxml::alloc_node(*doc, "name", plugin->get_name().c_str()));
 			update_info->append_node(rapidxml::alloc_node(*doc, "caption", plugin_caption.c_str()));
 
 			auto version_info = doc->allocate_node(rapidxml::node_element, "plugin_version_descriptor");
@@ -1271,4 +1276,39 @@ uintmax_t calc_folder_size(const std::wstring& path)
 			total_size += dir_entry.file_size();
 	}
 	return total_size;
+}
+
+std::wstring GetPluginShortNameW(const StreamType plugin_type, bool bCamel /*= false*/)
+{
+	std::wstring plugin_name;
+	const auto& plugin = StreamContainer::get_instance(plugin_type);
+	if (plugin != nullptr)
+	{
+		const auto& short_name = plugin->get_short_name();
+		// convert to wstring or string
+		plugin_name.assign(short_name.begin(), short_name.end());
+		if (bCamel)
+		{
+			plugin_name[0] = std::toupper(plugin_name[0]);
+		}
+	}
+
+	return plugin_name;
+}
+
+std::string GetPluginShortNameA(const StreamType plugin_type, bool bCamel /*= false*/)
+{
+	std::string plugin_name;
+	const auto& plugin = StreamContainer::get_instance(plugin_type);
+	if (plugin != nullptr)
+	{
+		// convert to wstring or string
+		plugin_name = plugin->get_short_name();
+		if (bCamel)
+		{
+			plugin_name[0] = std::toupper(plugin_name[0]);
+		}
+	}
+
+	return plugin_name;
 }
