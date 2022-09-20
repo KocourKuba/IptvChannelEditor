@@ -25,8 +25,13 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "json.hpp"
+#include "nlohmann\json.hpp"
 #include "utils.h"
+
+#define SERIALIZE_STRUCT(j, c, s) j[""#s""] = c.s;
+#define SERIALIZE_STRUCT2(j, c, s, f) j[""#f""] = c.s;
+#define DESERIALIZE_STRUCT(j, c, s) if (j.contains(""#s"")) j.at(""#s"").get_to(c.s);
+#define DESERIALIZE_STRUCT2(j, c, s, f) if (j.contains(""#f"")) j.at(""#f"").get_to(c.s);
 
 #define JSON_ALL_TRY try {
 #define JSON_ALL_CATCH } \

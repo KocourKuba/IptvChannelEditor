@@ -13,3 +13,6 @@
 [submodule "BugTrap"]
 	path = BugTrap
 	url = https://github.com/KocourKuba/BugTrap.git
+[submodule "json"]
+	path = json
+	url = https://github.com/nlohmann/json.git
