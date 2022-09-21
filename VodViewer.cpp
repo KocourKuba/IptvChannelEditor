@@ -162,17 +162,16 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 
 	switch (m_plugin_type)
 	{
-		case StreamType::enFox:
-		case StreamType::enMymagic:
-		case StreamType::enSmile:
+		case PluginType::enFox:
+		case PluginType::enMymagic:
 			LoadM3U8Playlist(use_cache);
 			break;
 
-		case StreamType::enAntifriz:
-		case StreamType::enCbilling:
-		case StreamType::enGlanz:
-		case StreamType::enSharaclub:
-		case StreamType::enEdem:
+		case PluginType::enAntifriz:
+		case PluginType::enCbilling:
+		case PluginType::enGlanz:
+		case PluginType::enSharaclub:
+		case PluginType::enEdem:
 			LoadJsonPlaylist(use_cache);
 			break;
 
@@ -200,7 +199,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	m_evtFinished.ResetEvent();
 
 	TemplateParams params;
-	if (m_plugin_type == StreamType::enEdem)
+	if (m_plugin_type == PluginType::enEdem)
 	{
 		params.subdomain = m_account.get_portal();
 	}
@@ -458,8 +457,8 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 	std::wstring url = movie->url;
 	switch (m_plugin_type)
 	{
-		case StreamType::enAntifriz:
-		case StreamType::enCbilling:
+		case PluginType::enAntifriz:
+		case PluginType::enCbilling:
 		{
 			if (movie->url.empty() && m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
 			{
@@ -469,7 +468,7 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_token());
 			break;
 		}
-		case StreamType::enEdem:
+		case PluginType::enEdem:
 			if (!movie->quality.empty())
 			{
 				url = movie->quality[m_quality_idx].url;
@@ -550,7 +549,7 @@ void CVodViewer::FillCategories()
 	for (const auto& pair : m_vod_categories->vec())
 	{
 		m_wndCategories.AddString(pair.second->name.c_str());
-		if (m_plugin_type == StreamType::enEdem)
+		if (m_plugin_type == PluginType::enEdem)
 		{
 			for (const auto& filter : pair.second->filters.vec())
 			{
@@ -606,7 +605,7 @@ void CVodViewer::FillGenres()
 
 	if (m_wndGenres.GetCount())
 	{
-		m_wndGenres.InsertString(0, load_string_resource(m_plugin_type == StreamType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
+		m_wndGenres.InsertString(0, load_string_resource(m_plugin_type == PluginType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
 		m_wndGenres.EnableWindow(TRUE);
 		m_genre_idx = 0;
 	}
@@ -632,7 +631,7 @@ void CVodViewer::FillYears()
 
 	if (m_wndYears.GetCount())
 	{
-		m_wndYears.InsertString(0, load_string_resource(m_plugin_type == StreamType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
+		m_wndYears.InsertString(0, load_string_resource(m_plugin_type == PluginType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
 		m_wndYears.EnableWindow(TRUE);
 		m_year_idx = 0;
 	}
@@ -666,11 +665,11 @@ void CVodViewer::LoadMovieInfo(int idx)
 	{
 		switch (m_plugin_type)
 		{
-			case StreamType::enAntifriz:
-			case StreamType::enCbilling:
+			case PluginType::enAntifriz:
+			case PluginType::enCbilling:
 				FetchMovieCbilling(*movie);
 				break;
-			case StreamType::enEdem:
+			case PluginType::enEdem:
 				FetchMovieEdem(*movie);
 				break;
 			default:
@@ -698,7 +697,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 
 		m_season_idx = 0;
 
-		if (m_plugin_type != StreamType::enEdem)
+		if (m_plugin_type != PluginType::enEdem)
 		{
 			const auto& str = load_string_resource(IDS_STRING_SEASON);
 			enableSeason = TRUE;
@@ -811,7 +810,7 @@ void CVodViewer::FilterList()
 
 	vod_movie_storage filtered_movies;
 
-	if (m_plugin_type == StreamType::enEdem)
+	if (m_plugin_type == PluginType::enEdem)
 	{
 		do
 		{
@@ -1136,8 +1135,8 @@ void CVodViewer::GetUrl(int idx)
 	std::wstring url = movie->url;
 	switch (m_plugin_type)
 	{
-		case StreamType::enAntifriz:
-		case StreamType::enCbilling:
+		case PluginType::enAntifriz:
+		case PluginType::enCbilling:
 		{
 			if (movie->url.empty() && m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
 			{
@@ -1147,7 +1146,7 @@ void CVodViewer::GetUrl(int idx)
 			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_token());
 			break;
 		}
-		case StreamType::enEdem:
+		case PluginType::enEdem:
 			if (!movie->quality.empty())
 			{
 				url = movie->quality[m_quality_idx].url;

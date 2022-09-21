@@ -33,30 +33,28 @@ public:
 
 	uri_itv()
 	{
-		title = L"ITV Live TV";
 		short_name = "itv";
+	}
+
+	void load_default() override
+	{
+		title = "ITV Live TV";
 		name = "itv-live.tv";
-		provider_url = L"https://itv.live/";
 		access_type = AccountAccessType::enPin;
 
-		playlist_template = L"http://itv.ooo/p/{PASSWORD}/hls.m3u8";
+		provider_url = "https://itv.live/";
+		playlist_template = "http://itv.ooo/p/{PASSWORD}/hls.m3u8";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
 		per_channel_token = true;
 
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "archive";
+		streams_config[0].cu_type = CatchupType::cu_flussonic;
+		streams_config[0].cu_subst = "archive";
 		streams_config[0].uri_template = "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-		streams_config[1].enabled = true;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "archive";
 		streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 		auto& params = epg_params[0];
 		params.epg_url = "http://api.itv.live/epg/{ID}";

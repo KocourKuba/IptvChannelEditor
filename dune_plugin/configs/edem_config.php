@@ -3,20 +3,20 @@ require_once 'default_config.php';
 
 class EdemPluginConfig extends Default_Config
 {
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'OTT_KEY');
-        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8');
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_OTT_KEY);
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_QUALITY_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
 
-        $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/edem/epg/{CHANNEL}.json');
+        $this->set_stream_param(HLS, URL_TEMPLATE, 'http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8');
+
+        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.drm-play.ml/edem/epg/{ID}.json');
     }
 
     /**
@@ -26,30 +26,14 @@ class EdemPluginConfig extends Default_Config
      * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
+    public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = $channel->get_streaming_url();
-        if (empty($url)) {
-            $subdomain = isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain;
-            $token = isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key;
-            if (empty($subdomain) || empty($token)) {
-                hd_print("TransformStreamUrl: parameters for {$channel->get_channel_id()} not defined!");
-                return '';
-            }
+        $ext_params = $channel->get_ext_params();
+        $ext_params[M_SUBDOMAIN] = isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain;
+        $ext_params[M_TOKEN] = isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key;
+        $channel->set_ext_params($ext_params);
 
-            $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-            // substitute subdomain token parameters
-            $url = str_replace(
-                array('{DOMAIN}', '{TOKEN}', '{ID}'),
-                array($subdomain, $token, $channel->get_channel_id()),
-                $template);
-        }
-
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-
-        hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
+        return parent::GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
     }
 
     /**
@@ -60,7 +44,7 @@ class EdemPluginConfig extends Default_Config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account $this->PLUGIN_SHOW_NAME");
+        hd_print("Collect information from account");
 
         return array();
     }

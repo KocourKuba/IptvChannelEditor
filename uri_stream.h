@@ -32,7 +32,6 @@ DEALINGS IN THE SOFTWARE.
 class Credentials;
 
 enum class CatchupType {
-	cu_none,
 	cu_shift,
 	cu_append,
 	cu_flussonic,
@@ -54,7 +53,7 @@ enum class AccountAccessType
 
 struct TemplateParams
 {
-	StreamSubType streamSubtype = StreamSubType::enHLS;
+	StreamType streamSubtype = StreamType::enHLS;
 	std::wstring subdomain;
 	std::wstring port;
 	std::wstring token;
@@ -115,7 +114,6 @@ struct EpgInfo
 /// </summary>
 struct EpgParameters
 {
-	size_t epg_tz = 0;
 	std::string epg_url;
 	std::string epg_root;
 	std::string epg_name;
@@ -124,17 +122,18 @@ struct EpgParameters
 	std::string epg_end;
 	std::string epg_date_format;
 	std::string epg_time_format;
-	bool epg_use_duration = false;
+	size_t epg_timezone = 0;
 
 	// not saved to the config!
 	bool epg_use_mapper = false;
+	bool epg_use_duration = false;
 	std::wstring epg_mapper_url;
 	std::map<std::wstring, std::wstring> epg_mapper;
 
 	std::wstring get_epg_url() const { return utils::utf8_to_utf16(epg_url); }
 	std::wstring get_epg_date_format() const { return utils::utf8_to_utf16(epg_date_format); }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_use_duration, epg_tz, epg_url, epg_date_format, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_time_format);
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_url, epg_date_format, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_time_format, epg_timezone);
 };
 
 
@@ -160,43 +159,40 @@ struct ParsingGroups
 /// </summary>
 struct StreamParameters
 {
-	StreamSubType stream_sub_type = StreamSubType::enHLS;
-	CatchupType catchup_type = CatchupType::cu_none;
-	bool enabled = false;
-	int catchup_duration = 10800;
+	StreamType stream_type = StreamType::enHLS;
+	CatchupType cu_type = CatchupType::cu_shift;
+	int cu_duration = 10800;
 
 	std::string uri_template;
 	std::string uri_arc_template;
-	std::string shift_replace;
+	std::string cu_subst;
 
 	std::wstring get_uri_template() const { return utils::utf8_to_utf16(uri_template); }
 	std::wstring get_uri_arc_template() const { return utils::utf8_to_utf16(uri_arc_template); }
-	std::wstring get_shift_replace() const { return utils::utf8_to_utf16(shift_replace); }
+	std::wstring get_shift_replace() const { return utils::utf8_to_utf16(cu_subst); }
 
 	void set_uri_template(const std::wstring& value) { uri_template = utils::utf16_to_utf8(value); }
 	void set_uri_arc_template(const std::wstring& value) { uri_arc_template = utils::utf16_to_utf8(value); }
-	void set_shift_replace(const std::wstring& value) { shift_replace = utils::utf16_to_utf8(value); }
+	void set_shift_replace(const std::wstring& value) { cu_subst = utils::utf16_to_utf8(value); }
 
 	friend void to_json(nlohmann::json& j, const StreamParameters& s)
 	{
-		SERIALIZE_STRUCT(j, s, enabled);
-		SERIALIZE_STRUCT(j, s, stream_sub_type);
-		SERIALIZE_STRUCT(j, s, catchup_type);
-		SERIALIZE_STRUCT(j, s, catchup_duration);
+		SERIALIZE_STRUCT(j, s, stream_type);
 		SERIALIZE_STRUCT(j, s, uri_template);
 		SERIALIZE_STRUCT(j, s, uri_arc_template);
-		SERIALIZE_STRUCT(j, s, shift_replace);
+		SERIALIZE_STRUCT(j, s, cu_type);
+		SERIALIZE_STRUCT(j, s, cu_subst);
+		SERIALIZE_STRUCT(j, s, cu_duration);
 	}
 
 	friend void from_json(const nlohmann::json& j, StreamParameters& s)
 	{
-		DESERIALIZE_STRUCT(j, s, enabled);
-		DESERIALIZE_STRUCT(j, s, stream_sub_type);
-		DESERIALIZE_STRUCT(j, s, catchup_type);
-		DESERIALIZE_STRUCT(j, s, catchup_duration);
+		DESERIALIZE_STRUCT(j, s, stream_type);
 		DESERIALIZE_STRUCT(j, s, uri_template);
 		DESERIALIZE_STRUCT(j, s, uri_arc_template);
-		DESERIALIZE_STRUCT(j, s, shift_replace);
+		DESERIALIZE_STRUCT(j, s, cu_type);
+		DESERIALIZE_STRUCT(j, s, cu_subst);
+		DESERIALIZE_STRUCT(j, s, cu_duration);
 	}
 };
 
@@ -217,17 +213,23 @@ public:
 	static constexpr auto REPL_PASSWORD   = L"{PASSWORD}";   // password (set from settings)
 	static constexpr auto REPL_INT_ID     = L"{INT_ID}";     // internal id (reads from playlist)
 	static constexpr auto REPL_HOST       = L"{HOST}";       // host (reads from playlist)
+	static constexpr auto REPL_SERVER     = L"{SERVER}";     // server name (read from settings)
 	static constexpr auto REPL_SERVER_ID  = L"{SERVER_ID}";  // server id (read from settings)
 	static constexpr auto REPL_PROFILE_ID = L"{PROFILE_ID}"; // profile id (read from settings)
 
 	static constexpr auto REPL_START      = L"{START}";      // EPG archive start time (unix timestamp)
 	static constexpr auto REPL_NOW        = L"{NOW}";        // EPG archive current time (unix timestamp)
 	static constexpr auto REPL_DATE       = L"{DATE}";       // EPG date (set by format)
-	static constexpr auto REPL_TIMESTAMP  = L"{TIMESTAMP}";       // EPG time, unix timestamp (set by format)
+	static constexpr auto REPL_TIMESTAMP  = L"{TIMESTAMP}";  // EPG time, unix timestamp (set by format)
 
 	static constexpr auto REPL_DURATION   = L"{DURATION}";   // archive duration (in second) in flussonic archive
-	static constexpr auto REPL_FLUSSONIC  = L"{SHIFT_SUBST}";   // archive/index/video or other word used in flussonic archive template
-	static constexpr auto REPL_SHIFT      = L"{SHIFT_SUBST}";// archive/utc word used in shift/append type archive template
+	static constexpr auto REPL_SHIFT      = L"{CU_SUBST}";   // archive/utc word used in shift/append/flussonic type archive template
+
+	static constexpr auto REPL_YEAR       = "{YEAR}";  // Year subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_MONTH      = "{MONTH}"; // Month subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_DAY        = "{DAY}";   // Day subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_HOUR       = "{HOUR}";  // Hour subst template, uset in epg_time_format
+	static constexpr auto REPL_MIN        = "{MIN}";   // Minute subst template, uset in epg_time_format
 
 public:
 	uri_stream();
@@ -241,25 +243,32 @@ public:
 	/// </summary>
 	void clear() override;
 
-	/// <summary>
-	/// save plugin parameters to file
-	/// </summary>
-	bool save_plugin_parameters(const std::wstring& filename);
+	bool save_plugin_parameters(const wchar_t* filename = nullptr);
 
 	/// <summary>
-	/// load plugin parameters from file
+	/// load plugin parameters to file
 	/// </summary>
-	bool load_plugin_parameters(const std::wstring& filename);
+	bool load_plugin_parameters(const wchar_t* filename = nullptr);
 
 	/// <summary>
 	/// returns plugin title
 	/// </summary>
-	const std::wstring& get_title() const { return title; }
+	std::wstring get_title() const { return utils::utf8_to_utf16(title); }
+
+	/// <summary>
+	/// set plugin title
+	/// </summary>
+	void set_title(const std::wstring& val) { title = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// returns plugin name
 	/// </summary>
 	const std::string& get_name() const { return name; }
+
+	/// <summary>
+	/// set plugin name
+	/// </summary>
+	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// returns plugin short name
@@ -275,13 +284,44 @@ public:
 	/// returns link to provider account
 	/// </summary>
 	/// <returns>wstring</returns>
-	const std::wstring& get_provider_url() const { return provider_url; }
+	std::wstring get_provider_url() const { return utils::utf8_to_utf16(provider_url); }
 
 	/// <summary>
-	/// returns link to provider account
+	/// set link to provider account
 	/// </summary>
 	/// <returns>wstring</returns>
-	const std::wstring& get_uri_parse_template() const { return uri_parse_template; }
+	void set_provider_url(const std::wstring& val) { provider_url = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// get playlist template
+	/// </summary>
+	/// <returns>wstring</returns>
+	std::wstring get_playlist_template() const { return utils::utf8_to_utf16(playlist_template); }
+
+	/// <summary>
+	/// set playlist template
+	/// </summary>
+	/// <returns>wstring</returns>
+	void set_playlist_template(const std::wstring& val) { playlist_template = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// returns uri parse template
+	/// </summary>
+	/// <returns>wstring</returns>
+	std::wstring get_uri_parse_template() const { return utils::utf8_to_utf16(uri_parse_template); }
+
+	/// <summary>
+	/// returns regex of uri parse template
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wregex& get_uri_regex_parse_template();
+
+	/// <summary>
+	/// set uri parse template.
+	/// regex string can contain named groups that will be extracted
+	/// </summary>
+	/// <returns>wstring</returns>
+	void set_uri_parse_template(const std::wstring& val);
 
 	/// <summary>
 	/// returns parser parameters
@@ -438,6 +478,12 @@ public:
 	// virtual methods
 
 	/// <summary>
+	/// load default settings
+	/// </summary>
+	/// <param name="url"></param>
+	virtual void load_default() {}
+
+	/// <summary>
 	/// parse uri to get id
 	/// </summary>
 	/// <param name="url"></param>
@@ -507,6 +553,8 @@ public:
 	/// <param name="params">Template parameters.</param>
 	virtual bool set_profile(TemplateParams& /*params*/) { return true; }
 
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, title, name, provider_url, playlist_template, uri_parse_template, use_token_as_id, streams_config, epg_params);
+
 protected:
 
 	virtual void replace_vars(std::wstring& url, const TemplateParams& params) const;
@@ -515,18 +563,32 @@ protected:
 
 protected:
 
-	std::wstring title;
-	std::string name;
-	std::string short_name;
-	std::wstring provider_url;
+	// configurable parameters
 
+	// plugin access type
 	AccountAccessType access_type = AccountAccessType::enOtt;
+	// plugin title
+	std::string title;
+	// plugin internal name (used by Dune)
+	std::string name;
+	// url to provider account
+	std::string provider_url;
+	// template url to load playlist
+	std::string playlist_template;
+	// original uri parse template
+	std::string uri_parse_template;
 
-	std::wstring uri_parse_template;
+	// use token from uri instead of account settings
 	bool per_channel_token = false;
-
+	// flag for php plugin if uri does not contains parsed 'id' for channel
+	bool use_token_as_id = false;
+	// setting for parsing uri streams
 	std::array<StreamParameters, 2> streams_config;
+	// setting for parsing json EPG
 	std::array<EpgParameters, 2> epg_params;
+
+	// non configurable parameters
+	std::string short_name;
 
 	std::vector<ServersInfo> servers_list;
 	std::vector<ProfilesInfo> profiles_list;
@@ -535,9 +597,10 @@ protected:
 
 	std::wstring provider_api_url;
 	std::wstring provider_vod_url;
-	std::wstring playlist_template;
 
 	ParsingGroups parser;
+	std::wregex uri_parse_regex_template; // compiled regex for uri parse template
+	std::vector<std::wstring> regex_named_groups; // extracted named groups from uri parse template
 
 	mutable std::wstring str_hash;
 	mutable int hash = 0;

@@ -72,7 +72,7 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 			// Iterate <tv_category> nodes
 			while (cat_node)
 			{
-				auto category = std::make_shared<ChannelCategory>(cat_node, StreamType::enBase, root_path);
+				auto category = std::make_shared<ChannelCategory>(cat_node, PluginType::enBase, root_path);
 				playlist->categories.emplace(category->get_key(), category);
 				cat_node = cat_node->next_sibling();
 			}
@@ -83,7 +83,7 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 			int count = 0;
 			while (ch_node)
 			{
-				auto channel = std::make_shared<ChannelInfo>(ch_node, StreamType::enChannels, root_path);
+				auto channel = std::make_shared<ChannelInfo>(ch_node, PluginType::enChannels, root_path);
 				count++;
 
 				auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);

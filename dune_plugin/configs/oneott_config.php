@@ -3,81 +3,28 @@ require_once 'default_config.php';
 
 class OneottPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://list.1ott.net/api/%s/high/ottplay.m3u8';
-
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
-        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/~{TOKEN}/{ID}');
-        $this->set_feature(SECONDARY_EPG, true);
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8');
+        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
 
-        $this->set_epg_param('first','epg_url','http://epg.propg.net/{CHANNEL}/epg2/{DATE}');
-        $this->set_epg_param('first','epg_date_format', 'Y-m-d');
-        $this->set_epg_param('first','epg_root', '');
-        $this->set_epg_param('first','epg_start', 'start');
-        $this->set_epg_param('first','epg_end', 'stop');
-        $this->set_epg_param('first','epg_title', 'epg');
-        $this->set_epg_param('first','epg_desc', 'desc');
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
 
-        $this->set_epg_param('second','epg_url','http://epg.drm-play.ml/1ott/epg/{CHANNEL}.json');
-    }
+        $this->set_stream_param(MPEG,CU_TYPE, 'shift');
+        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/~{TOKEN}/{ID}');
 
-    /**
-     * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
-     * @param Channel $channel
-     * @return string
-     */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
-    {
-        $url = $channel->get_streaming_url();
-        if (empty($url)) {
-            switch ($this->get_format($plugin_cookies)) {
-                case 'hls':
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-                    break;
-                case 'mpeg':
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
-                    break;
-                default:
-                    hd_print("unknown url format");
-                    return "";
-            }
+        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.propg.net/{ID}/epg2/{DATE}');
+        $this->set_epg_param(EPG_FIRST,EPG_DATE_FORMAT, '{YEAR}-{MONTH}-{DAY}');
+        $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
+        $this->set_epg_param(EPG_FIRST,EPG_START, 'start');
+        $this->set_epg_param(EPG_FIRST,EPG_END, 'stop');
+        $this->set_epg_param(EPG_FIRST,EPG_NAME, 'epg');
+        $this->set_epg_param(EPG_FIRST,EPG_DESC, 'desc');
 
-            $ext_params = $channel->get_ext_params();
-            $url = str_replace(
-                array('{DOMAIN}', '{ID}', '{TOKEN}'),
-                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token']),
-                $template);
-        }
-
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
-    }
-
-    /**
-     * @param string $type
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        if (empty($plugin_cookies->token)) {
-            hd_print("User token not set");
-            return '';
-        }
-
-        return sprintf(self::PLAYLIST_TV_URL, $plugin_cookies->token);
+        $this->set_epg_param(EPG_SECOND,EPG_URL,'http://epg.drm-play.ml/1ott/epg/{ID}.json');
     }
 
     /**
@@ -88,7 +35,7 @@ class OneottPluginConfig extends Default_Config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+        hd_print("Collect information from account");
 
         if ($force === false && !empty($plugin_cookies->token)) {
             return true;

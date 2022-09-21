@@ -38,7 +38,6 @@ BEGIN_MESSAGE_MAP(CPluginConfigDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CPluginConfigDlg::OnBnClickedButtonEditConfig)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_CONFIG, &CPluginConfigDlg::OnBnClickedButtonLoadConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_CONFIG, &CPluginConfigDlg::OnBnClickedButtonSaveConfig)
-	ON_BN_CLICKED(IDC_CHECK_STREAM_ENABLED, &CPluginConfigDlg::OnBnClickedCheckStreamEnabled)
 	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigDlg::OnCbnSelchangeComboStreamSubType)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigDlg::OnCbnSelchangeComboEpgType)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigDlg::OnBnClickedButtonEpgTest)
@@ -47,7 +46,6 @@ END_MESSAGE_MAP()
 
 CPluginConfigDlg::CPluginConfigDlg(CWnd* pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG_PLUGIN_CONFIG, pParent)
 , m_Date(COleDateTime::GetCurrentTime())
-, m_Time(COleDateTime::GetCurrentTime())
 {
 }
 
@@ -67,7 +65,6 @@ void CPluginConfigDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PARSE_TEMPLATE, m_ParseTemplate);
 	DDX_Control(pDX, IDC_EDIT_SHIFT_SUBST, m_wndSubst);
 	DDX_Text(pDX, IDC_EDIT_SHIFT_SUBST, m_Subst);
-	DDX_Control(pDX, IDC_STATIC_SUBST, m_wndSubstCaption);
 	DDX_Control(pDX, IDC_EDIT_DURATION, m_wndDuration);
 	DDX_Text(pDX, IDC_EDIT_DURATION, m_Duration);
 	DDX_Control(pDX, IDC_STATIC_DURATION, m_wndDurationCaption);
@@ -97,8 +94,6 @@ void CPluginConfigDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_STREAM_TYPE, m_wndStreamSubType);
 	DDX_Control(pDX, IDC_COMBO_CATCHUP_TYPE, m_wndCatchupType);
 	DDX_Control(pDX, IDC_COMBO_EPG_TYPE, m_wndEpgType);
-	DDX_Control(pDX, IDC_CHECK_STREAM_ENABLED, m_wndStreamEnabled);
-	DDX_Control(pDX, IDC_CHECK_USE_DURATION, m_wndUseDuration);
 	DDX_Control(pDX, IDC_BUTTON_LOAD_CONFIG, m_wndLoadConf);
 	DDX_Control(pDX, IDC_BUTTON_EPG_SHOW, m_wndTest);
 	DDX_Control(pDX, IDC_EDIT_SET_ID, m_wndSetID);
@@ -106,6 +101,8 @@ void CPluginConfigDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
 	DDX_Text(pDX, IDC_EDIT_SET_TOKEN, m_Token);
 	DDX_DateTimeCtrl(pDX, IDC_DATETIMEPICKER_DATE, m_Date);
+	DDX_Control(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_wndPlaylistTemplate);
+	DDX_Text(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_PlaylistTemplate);
 }
 
 BOOL CPluginConfigDlg::OnInitDialog()
@@ -115,7 +112,7 @@ BOOL CPluginConfigDlg::OnInitDialog()
 	RestoreWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);
 
 	// Fill available plugins
-	ASSERT(m_plugin_type != StreamType::enCustom);
+	ASSERT(m_plugin_type != PluginType::enCustom);
 
 	int sel_idx = 0;
 	for (const auto& item : GetConfig().get_all_plugins())
@@ -144,6 +141,7 @@ void CPluginConfigDlg::EnableControls(BOOL enable)
 	m_wndTitle.EnableWindow(enable);
 	m_wndShortName.EnableWindow(enable);
 	m_wndProviderUrl.EnableWindow(enable);
+	m_wndPlaylistTemplate.EnableWindow(enable);
 	m_wndParseTemplate.EnableWindow(enable);
 	m_wndSubst.EnableWindow(enable);
 	m_wndDuration.EnableWindow(enable);
@@ -160,8 +158,6 @@ void CPluginConfigDlg::EnableControls(BOOL enable)
 	m_wndEpgTimezone.EnableWindow(enable);
 	m_wndAccessType.EnableWindow(enable);
 	m_wndCatchupType.EnableWindow(enable);
-	m_wndStreamEnabled.EnableWindow(enable);
-	m_wndUseDuration.EnableWindow(enable);
 	m_wndLoadConf.EnableWindow(enable);
 }
 
@@ -170,11 +166,16 @@ void CPluginConfigDlg::FillControlsCommon()
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 	if (!m_plugin) return;
 
+#ifdef _DEBUG
+	//m_plugin->save_plugin_parameters();
+#endif // _DEBUG
+
 	m_wndAccessType.SetCurSel((int)m_plugin->get_access_type());
 	m_Name = m_plugin->get_name().c_str();
 	m_Title = m_plugin->get_title().c_str();
 	m_ShortName = m_plugin->get_short_name().c_str();
 	m_ProviderUrl = m_plugin->get_provider_url().c_str();
+	m_PlaylistTemplate = m_plugin->get_playlist_template().c_str();
 	m_ParseTemplate = m_plugin->get_uri_parse_template().c_str();
 
 	UpdateData(FALSE);
@@ -192,30 +193,15 @@ void CPluginConfigDlg::FillControlsStream()
 
 	const auto& stream = m_plugin->get_supported_stream(m_wndStreamSubType.GetCurSel());
 
-	m_wndStreamEnabled.SetCheck(stream.enabled != false);
-	m_wndCatchupType.SetCurSel((int)stream.catchup_type);
-	BOOL enableSubst = TRUE;
-	BOOL enableDuration = TRUE;
-	switch (stream.catchup_type)
+	BOOL enableDuration = (stream.cu_type == CatchupType::cu_flussonic);
+	if (enableDuration)
 	{
-		case CatchupType::cu_shift:
-		case CatchupType::cu_append:
-			enableDuration = FALSE;
-			m_Subst = stream.shift_replace.c_str();
-			break;
-		case CatchupType::cu_flussonic:
-			m_Subst = stream.shift_replace.c_str();
-			m_Duration = stream.catchup_duration;
-			break;
-		case CatchupType::cu_none:
-			enableSubst = FALSE;
-			enableDuration = FALSE;
-			m_Subst.Empty();
-			break;
+		m_Duration = stream.cu_duration;
 	}
 
-	m_wndSubst.ShowWindow(enableSubst);
-	m_wndSubstCaption.ShowWindow(enableSubst);
+	m_Subst = stream.cu_subst.c_str();
+
+	m_wndCatchupType.SetCurSel((int)stream.cu_type);
 	m_wndDuration.ShowWindow(enableDuration);
 	m_wndDurationCaption.ShowWindow(enableDuration);
 
@@ -239,9 +225,8 @@ void CPluginConfigDlg::FillControlsEpg()
 	m_EpgEnd = epg.epg_end.c_str();
 	m_EpgDateFormat = epg.epg_date_format.c_str();
 	m_EpgTimeFormat = epg.epg_time_format.c_str();
-	m_EpgTimezone = epg.epg_tz;
+	m_EpgTimezone = epg.epg_timezone;
 
-	m_wndUseDuration.SetCheck(epg.epg_use_duration != false);
 	m_wndTest.EnableWindow(!m_EpgUrl.IsEmpty());
 
 	UpdateData(FALSE);
@@ -283,12 +268,7 @@ void CPluginConfigDlg::OnBnClickedButtonLoadConfig()
 
 void CPluginConfigDlg::OnBnClickedButtonSaveConfig()
 {
-	// TODO: Add your control notification handler code here
-}
-
-void CPluginConfigDlg::OnBnClickedCheckStreamEnabled()
-{
-	// TODO: Add your control notification handler code here
+	m_plugin->save_plugin_parameters();
 }
 
 void CPluginConfigDlg::OnCbnSelchangeComboStreamSubType()
@@ -330,7 +310,7 @@ void CPluginConfigDlg::OnCbnSelchangeComboPluginType()
 {
 	EnableControls(FALSE);
 
-	m_plugin_type = (StreamType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
+	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
 
 	FillControlsCommon();
 }

@@ -34,31 +34,7 @@ public:
 
 	uri_viplime()
 	{
-		title = L"VipLime TV";
 		short_name = "viplime";
-		name = "viplime.fun.tv";
-		provider_url = L"http://viplime.fun/";
-		access_type = AccountAccessType::enPin;
-
-		playlist_template = L"http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
-
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "utc";
-		streams_config[0].uri_template = "http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
-
-		streams_config[1].enabled = true;
-		streams_config[1].catchup_type = CatchupType::cu_shift;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].shift_replace = "utc";
-		streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg?{SHIFT_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{ID}.json";
 
 		quality_list = {
 			{ L"high",   load_string_resource(IDS_STRING_VIPLIME_P1) },
@@ -67,5 +43,26 @@ public:
 			{ L"variant",load_string_resource(IDS_STRING_VIPLIME_P4) },
 			{ L"hls",    load_string_resource(IDS_STRING_VIPLIME_P5) },
 		};
+	}
+
+	void load_default() override
+	{
+		title = "VipLime TV";
+		name = "viplime.fun.tv";
+		access_type = AccountAccessType::enPin;
+
+		provider_url = "http://viplime.fun/";
+		playlist_template = "http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
+
+		streams_config[0].uri_template = "http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+		streams_config[1].cu_type = CatchupType::cu_shift;
+		streams_config[1].cu_subst = "utc";
+		streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
+		streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+		epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{ID}.json";
 	}
 };

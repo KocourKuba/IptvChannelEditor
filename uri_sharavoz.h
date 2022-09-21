@@ -33,29 +33,26 @@ public:
 
 	uri_sharavoz()
 	{
-		title = L"Sharavoz TV";
 		short_name = "sharavoz";
+	}
+
+	void load_default() override
+	{
+		title = "Sharavoz TV";
 		name = "sharavoz.tv";
-		provider_url = L"https://www.sharavoz.tv/";
 		access_type = AccountAccessType::enPin;
 
-		playlist_template = L"http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
+		provider_url = "https://www.sharavoz.tv/";
+		playlist_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>\d+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>\d+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "index";
+		streams_config[0].cu_type = CatchupType::cu_flussonic;
+		streams_config[0].cu_subst = "index";
 		streams_config[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-		streams_config[1].enabled = true;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "archive";
 		streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 		epg_params[0].epg_url = "http://api.program.spr24.net/api/program?epg={ID}";
 		epg_params[1].epg_url = "http://epg.arlekino.tv/api/program?epg={ID}";

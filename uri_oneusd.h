@@ -33,30 +33,28 @@ public:
 
 	uri_oneusd()
 	{
-		title = L"1USD TV";
 		short_name = "oneusd";
+	}
+
+	void load_default() override
+	{
+		title = "1USD TV";
 		name = "oneusd.tv";
-		provider_url = L"http://1usd.tv/";
 		access_type = AccountAccessType::enPin;
 
-		playlist_template = L"http://1usd.tv/pl-{PASSWORD}-hls";
+		provider_url = "http://1usd.tv/";
+		playlist_template = "http://1usd.tv/pl-{PASSWORD}-hls";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
 		per_channel_token = true;
 
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "index";
+		streams_config[0].cu_type = CatchupType::cu_flussonic;
+		streams_config[0].cu_subst = "index";
 		streams_config[0].uri_template = "http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-		streams_config[1].enabled = true;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "archive";
 		streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 		epg_params[0].epg_url = "http://tv.team/{ID}.json";
 	}

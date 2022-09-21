@@ -31,22 +31,21 @@ class uri_sharatv : public uri_stream
 {
 	public:uri_sharatv()
 	{
-		title = L"Shara TV";
 		short_name = "sharatv";
+	}
+
+	void load_default() override
+	{
+		title = "Shara TV";
 		name = "shara.tv";
-		provider_url = L"https://shara-tv.org/";
 		access_type = AccountAccessType::enLoginPass;
 
-		playlist_template = L"http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
+		provider_url = "https://shara-tv.org/";
+		playlist_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "utc";
 		streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{TOKEN}?{SHIFT_SUBST}={START}&lutc={NOW}";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 		epg_params[0].epg_url = "http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
 	}

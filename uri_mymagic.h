@@ -34,27 +34,7 @@ public:
 
 	uri_mymagic()
 	{
-		title = L"MyMagic TV";
 		short_name = "mymagic";
-		name = "mymagic";
-		provider_url = L"http://mymagic.tv/";
-		access_type = AccountAccessType::enLoginPass;
-
-		playlist_template = L"http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u";
-
-		uri_parse_template = LR"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
-		per_channel_token = true;
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "utc";
-		streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{TOKEN}?{SHIFT_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://epg.drm-play.ml/magic/epg/{ID}.json";
-		epg_params[1].epg_url = "http://epg.esalecrm.net/magic/epg/{ID}.json";
-
 		servers_list = {
 			{ L"0", load_string_resource(IDS_STRING_MYMAGIC_P0) },
 			{ L"1", load_string_resource(IDS_STRING_MYMAGIC_P1) },
@@ -69,5 +49,25 @@ public:
 			{ L"0", load_string_resource(IDS_STRING_MYMAGIC_Q1) },
 			{ L"1", load_string_resource(IDS_STRING_MYMAGIC_Q2) },
 		};
+	}
+
+	void load_default() override
+	{
+		title = "MyMagic TV";
+		name = "mymagic";
+		access_type = AccountAccessType::enLoginPass;
+
+		provider_url = "http://mymagic.tv/";
+		playlist_template = "http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u";
+		uri_parse_template = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
+
+		use_token_as_id = true;
+		per_channel_token = true;
+
+		streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+		epg_params[0].epg_url = "http://epg.drm-play.ml/magic/epg/{ID}.json";
+		epg_params[1].epg_url = "http://epg.esalecrm.net/magic/epg/{ID}.json";
 	}
 };

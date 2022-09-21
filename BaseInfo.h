@@ -41,7 +41,7 @@ public:
 		*this = src;
 	}
 
-	BaseInfo(InfoType type, StreamType streamType, std::wstring root_path)
+	BaseInfo(InfoType type, PluginType streamType, std::wstring root_path)
 		: StreamContainer(streamType)
 		, IconContainer(root_path)
 		, base_type(type) {};

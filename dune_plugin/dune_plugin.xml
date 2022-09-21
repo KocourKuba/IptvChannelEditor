@@ -2,6 +2,7 @@
     <name>{plugin_name}</name>
     <caption>{plugin_title}</caption>
     <short_name>{plugin_short_name}</short_name>
+    <class_name>{plugin_class_name}</class_name>
     <icon_url>{plugin_logo}</icon_url>
     <background>{plugin_background}</background>
     <version_index>{plugin_version_index}</version_index>

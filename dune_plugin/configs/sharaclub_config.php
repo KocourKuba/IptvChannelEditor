@@ -3,72 +3,38 @@ require_once 'default_config.php';
 
 class SharaclubPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'tv_url';
     const PLAYLIST_VOD_URL = 'vod_url';
     const ACCOUNT_URL = 'account_url';
     const SERVERS_URL = 'servers_url';
     const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
         $this->set_feature(SERVER_SUPPORTED, true);
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(BALANCE_SUPPORTED, true);
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
-        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/live/{TOKEN}/{ID}.ts');
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}');
+        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|');
 
-        $this->set_epg_param('first','epg_root', '');
+        $this->set_stream_param(HLS,CU_TYPE, 'append');
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
+
+        $this->set_stream_param(MPEG,CU_TYPE, 'append');
+        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/live/{TOKEN}/{ID}.ts');
+
+        $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
     }
 
     /**
-     * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
-     * @param Channel $channel
-     * @return string
-     */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
-    {
-        $url = $channel->get_streaming_url();
-        if (empty($url)) {
-            switch ($this->get_format($plugin_cookies)) {
-                case 'hls':
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-                    break;
-                case 'mpeg':
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
-                    break;
-                default:
-                    hd_print("unknown url format");
-                    return "";
-            }
-
-            $ext_params = $channel->get_ext_params();
-            $url = str_replace(
-                array('{DOMAIN}', '{ID}', '{TOKEN}'),
-                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token']),
-                $template);
-        }
-
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
-    }
-
-    /**
-     * @param string $type
      * @param $plugin_cookies
      * @return string
      */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetVodListUrl($plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -80,14 +46,7 @@ class SharaclubPluginConfig extends Default_Config
             return '';
         }
 
-        switch ($type) {
-            case 'tv1':
-                return sprintf($this->get_feature(self::PLAYLIST_TV_URL), $login, $password);
-            case 'movie':
-                return sprintf($this->get_feature(self::PLAYLIST_VOD_URL), $login, $password);
-        }
-
-        return '';
+        return sprintf($this->get_feature(self::PLAYLIST_VOD_URL), $login, $password);
     }
 
     /**
@@ -98,14 +57,15 @@ class SharaclubPluginConfig extends Default_Config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+        hd_print("Collect information from account");
 
         $api = HD::DownloadJson(self::API_HOST, false);
-        $this->set_feature(self::PLAYLIST_TV_URL, "http://$api->listdomain/tv_live-m3u8/%s-%s");
+
+        $plugin_cookies->subdomain = $api->listdomain;
         $this->set_feature(self::PLAYLIST_VOD_URL, "http://$api->listdomain/kino-full/%s-%s");
         $this->set_feature(self::ACCOUNT_URL, "http://$api->listdomain/api/players.php?a=subscr_info&u=%s-%s&source=dune_editor");
         $this->set_feature(self::SERVERS_URL, "http://$api->listdomain/api/players.php?a=ch_cdn&u=%s-%s&source=dune_editor");
-        $this->set_epg_param('first','epg_url', "http://$api->jsonEpgDomain/get/?type=epg&ch={CHANNEL}");
+        $this->set_epg_param(EPG_FIRST,EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={ID}");
 
         // this account has special API to get account info
         $login = $this->get_login($plugin_cookies);
@@ -253,7 +213,7 @@ class SharaclubPluginConfig extends Default_Config
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
+        $url = $this->GetVodListUrl($plugin_cookies);
         $jsonItems = HD::DownloadJson($url, false);
         if ($jsonItems === false) {
             return;
@@ -570,7 +530,7 @@ class SharaclubPluginConfig extends Default_Config
      * @param $plugin_cookies
      * @return int|null
      */
-    public function get_server($plugin_cookies)
+    public function get_server_id($plugin_cookies)
     {
         return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
     }
@@ -579,7 +539,7 @@ class SharaclubPluginConfig extends Default_Config
      * @param $server
      * @param $plugin_cookies
      */
-    public function set_server($server, $plugin_cookies)
+    public function set_server_id($server, $plugin_cookies)
     {
         $login = $this->get_login($plugin_cookies);
         $password = $this->get_password($plugin_cookies);

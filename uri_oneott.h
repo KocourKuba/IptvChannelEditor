@@ -33,29 +33,26 @@ public:
 
 	uri_oneott()
 	{
-		title = L"1OTT TV";
 		short_name = "oneott";
+	}
+
+	void load_default() override
+	{
+		title = "1OTT TV";
 		name = "oneott.tv";
-		provider_url = L"http://1ott.net/";
 		access_type = AccountAccessType::enLoginPass;
 
-		playlist_template = L"http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
+		provider_url = "http://1ott.net/";
+		playlist_template = "http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "utc";
 		streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-		streams_config[1].enabled = true;
-		streams_config[1].catchup_type = CatchupType::cu_shift;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].shift_replace = "utc";
+		streams_config[1].cu_type = CatchupType::cu_shift;
+		streams_config[1].cu_subst = "utc";
 		streams_config[1].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/~{TOKEN}/{ID}?{SHIFT_SUBST}={START}&lutc={NOW}";
+		streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 		auto& params1 = epg_params[0];
 		params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";

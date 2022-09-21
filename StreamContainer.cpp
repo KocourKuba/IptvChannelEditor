@@ -60,102 +60,134 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-StreamContainer::StreamContainer(StreamType type) : stream_type(type)
+StreamContainer::StreamContainer(PluginType type) : stream_type(type)
 {
 	stream_uri = get_instance(type);
 }
 
-std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
+std::unique_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
 {
+	std::unique_ptr<uri_stream> plugin;
 	switch (type)
 	{
-		case StreamType::enBase: // ChannelsCategory
+		case PluginType::enBase: // ChannelsCategory
 			return std::make_unique<uri_stream>();
 
-		case StreamType::enChannels: // Channels list
+		case PluginType::enChannels: // Channels list
 			return std::make_unique<uri_channels>();
 
-		case StreamType::enAntifriz:
-			return std::make_unique<uri_antifriz>();
+		case PluginType::enAntifriz:
+			plugin = std::make_unique<uri_antifriz>();
+			break;
 
-		case StreamType::enEdem:
-			return std::make_unique<uri_edem>();
+		case PluginType::enEdem:
+			plugin = std::make_unique<uri_edem>();
+			break;
 
-		case StreamType::enFox:
-			return std::make_unique<uri_fox>();
+		case PluginType::enFox:
+			plugin = std::make_unique<uri_fox>();
+			break;
 
-		case StreamType::enGlanz:
-			return std::make_unique<uri_glanz>();
+		case PluginType::enGlanz:
+			plugin = std::make_unique<uri_glanz>();
+			break;
 
-		case StreamType::enItv:
-			return std::make_unique<uri_itv>();
+		case PluginType::enItv:
+			plugin = std::make_unique<uri_itv>();
+			break;
 
-		case StreamType::enOneCent:
-			return std::make_unique<uri_onecent>();
+		case PluginType::enOneCent:
+			plugin = std::make_unique<uri_onecent>();
+			break;
 
-		case StreamType::enOneUsd:
-			return std::make_unique<uri_oneusd>();
+		case PluginType::enOneUsd:
+			plugin = std::make_unique<uri_oneusd>();
+			break;
 
-		case StreamType::enSharaclub:
-			return std::make_unique<uri_sharaclub>();
+		case PluginType::enSharaclub:
+			plugin = std::make_unique<uri_sharaclub>();
+			break;
 
-		case StreamType::enSharavoz:
-			return std::make_unique<uri_sharavoz>();
+		case PluginType::enSharavoz:
+			plugin = std::make_unique<uri_sharavoz>();
+			break;
 
-		case StreamType::enVipLime:
-			return std::make_unique<uri_viplime>();
+		case PluginType::enVipLime:
+			plugin = std::make_unique<uri_viplime>();
+			break;
 
-		case StreamType::enSharaTV:
-			return std::make_unique<uri_sharatv>();
+		case PluginType::enSharaTV:
+			plugin = std::make_unique<uri_sharatv>();
+			break;
 
-		case StreamType::enTvTeam:
-			return std::make_unique<uri_tvteam>();
+		case PluginType::enTvTeam:
+			plugin = std::make_unique<uri_tvteam>();
+			break;
 
-		case StreamType::enOneOtt:
-			return std::make_unique<uri_oneott>();
+		case PluginType::enOneOtt:
+			plugin = std::make_unique<uri_oneott>();
+			break;
 
-		case StreamType::enLightIptv:
-			return std::make_unique<uri_lightiptv>();
+		case PluginType::enLightIptv:
+			plugin = std::make_unique<uri_lightiptv>();
+			break;
 
-		case StreamType::enCbilling:
-			return std::make_unique<uri_cbilling>();
+		case PluginType::enCbilling:
+			plugin = std::make_unique<uri_cbilling>();
+			break;
 
-		case StreamType::enOttclub:
-			return std::make_unique<uri_ottclub>();
+		case PluginType::enOttclub:
+			plugin = std::make_unique<uri_ottclub>();
+			break;
 
-		case StreamType::enIptvOnline:
-			return std::make_unique<uri_iptvonline>();
+		case PluginType::enIptvOnline:
+			plugin = std::make_unique<uri_iptvonline>();
+			break;
 
-		case StreamType::enVidok:
-			return std::make_unique<uri_vidok>();
+		case PluginType::enVidok:
+			plugin = std::make_unique<uri_vidok>();
+			break;
 
-		case StreamType::enShuraTV:
-			return std::make_unique<uri_shuratv>();
+		case PluginType::enShuraTV:
+			plugin = std::make_unique<uri_shuratv>();
+			break;
 
-		case StreamType::enTVClub:
-			return std::make_unique<uri_tvclub>();
+		case PluginType::enTVClub:
+			plugin = std::make_unique<uri_tvclub>();
+			break;
 
-		case StreamType::enFilmax:
-			return std::make_unique<uri_filmax>();
+		case PluginType::enFilmax:
+			plugin = std::make_unique<uri_filmax>();
+			break;
 
-		case StreamType::enKineskop:
-			return std::make_unique<uri_kineskop>();
+		case PluginType::enKineskop:
+			plugin = std::make_unique<uri_kineskop>();
+			break;
 
-		case StreamType::enMymagic:
-			return std::make_unique<uri_mymagic>();
+		case PluginType::enMymagic:
+			plugin = std::make_unique<uri_mymagic>();
+			break;
 
-		case StreamType::enRusskoeTV:
-			return std::make_unique<uri_russkoetv>();
+		case PluginType::enRusskoeTV:
+			plugin = std::make_unique<uri_russkoetv>();
+			break;
 
 		case StreamType::enSmile:
 			return std::make_unique<uri_smile>();
 
 		default:
-			return nullptr;
+			break;
 	}
+
+	if (plugin)
+	{
+		plugin->load_plugin_parameters();
+	}
+
+	return plugin;
 }
 
-void StreamContainer::set_type(StreamType type)
+void StreamContainer::set_type(PluginType type)
 {
 	if (stream_type != type)
 	{

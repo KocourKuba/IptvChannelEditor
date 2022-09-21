@@ -33,22 +33,21 @@ public:
 
 	uri_russkoetv()
 	{
-		title = L"Russkoe TV";
 		short_name = "russkoetv";
+	}
+
+	void load_default() override
+	{
+		title = "Russkoe TV";
 		name = "russkoetv";
-		provider_url = L"https://russkoetv.tv/";
 		access_type = AccountAccessType::enPin;
 
-		playlist_template = L"http://russkoetv.tv/play/{PASSWORD}.m3u8";
+		provider_url = "https://russkoetv.tv/";
+		playlist_template = "http://russkoetv.tv/play/{PASSWORD}.m3u8";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "utc";
 		streams_config[0].uri_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 		epg_params[0].epg_url = "http://protected-api.com/epg/{ID}/?date=";
 		epg_params[0].epg_root = "";

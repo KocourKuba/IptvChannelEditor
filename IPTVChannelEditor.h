@@ -84,7 +84,7 @@ std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);
 
 void ConvertAccounts();
 
-bool PackPlugin(const StreamType plugin_type,
+bool PackPlugin(const PluginType plugin_type,
 				bool showMessage,
 				bool make_web_update = false,
 				std::wstring output_path = L"",
@@ -98,7 +98,7 @@ int RequestToUpdateServer(const std::wstring& command);
 std::wstring load_string_resource(unsigned int id);
 uintmax_t calc_folder_size(const std::wstring& path);
 
-std::wstring GetPluginShortNameW(const StreamType plugin_type, bool bCamel = false);
-std::string  GetPluginShortNameA(const StreamType plugin_type, bool bCamel = false);
+std::wstring GetPluginShortNameW(const PluginType plugin_type, bool bCamel = false);
+std::string  GetPluginShortNameA(const PluginType plugin_type, bool bCamel = false);
 
 extern CIPTVChannelEditorApp theApp;

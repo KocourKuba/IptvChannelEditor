@@ -3,62 +3,25 @@ require_once 'default_config.php';
 
 class ShuratvPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://pl.tvshka.net/?uid=%s&srv=%d&type=halva';
-
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'PIN');
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
-        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/~{TOKEN}/{ID}');
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
         $this->set_feature(SERVER_SUPPORTED, true);
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva');
+        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
 
-        $this->set_epg_param('first','epg_url','http://epg.propg.net/{CHANNEL}/epg2/{DATE}');
-        $this->set_epg_param('first','epg_date_format', 'Y-m-d');
-        $this->set_epg_param('first','epg_root', '');
-        $this->set_epg_param('first','epg_start', 'start');
-        $this->set_epg_param('first','epg_end', 'stop');
-        $this->set_epg_param('first','epg_title', 'epg');
-        $this->set_epg_param('first','epg_desc', 'desc');
-    }
+        $this->set_stream_param(HLS,CU_SUBST, 'archive');
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
 
-    /**
-     * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
-     * @param Channel $channel
-     * @return string
-     */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
-    {
-        $url = $channel->get_streaming_url();
-        if (empty($url)) {
-            switch ($this->get_format($plugin_cookies)) {
-                case 'hls':
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-                    break;
-                case 'mpeg':
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
-                    break;
-                default:
-                    hd_print("unknown url format");
-                    return "";
-            }
-
-            $ext_params = $channel->get_ext_params();
-            $url = str_replace(
-                array('{DOMAIN}', '{ID}', '{TOKEN}'),
-                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token']),
-                $template);
-        }
-
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
+        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.propg.net/{ID}/epg2/{DATE}');
+        $this->set_epg_param(EPG_FIRST,EPG_DATE_FORMAT, '{YEAR}-{MONTH}-{DAY}');
+        $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
+        $this->set_epg_param(EPG_FIRST,EPG_START, 'start');
+        $this->set_epg_param(EPG_FIRST,EPG_END, 'stop');
+        $this->set_epg_param(EPG_FIRST,EPG_NAME, 'epg');
+        $this->set_epg_param(EPG_FIRST,EPG_DESC, 'desc');
     }
 
     /**
@@ -80,24 +43,6 @@ class ShuratvPluginConfig extends Default_Config
     }
 
     /**
-     * @param string $type
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $password = $this->get_password($plugin_cookies);
-        if (empty($password)) {
-            hd_print("User password not set");
-            return '';
-        }
-
-        return sprintf(self::PLAYLIST_TV_URL, $password, $this->get_server($plugin_cookies));
-    }
-
-    /**
      * @param $plugin_cookies
      * @return string[]
      */
@@ -110,7 +55,7 @@ class ShuratvPluginConfig extends Default_Config
      * @param $plugin_cookies
      * @return int|null
      */
-    public function get_server($plugin_cookies)
+    public function get_server_id($plugin_cookies)
     {
         return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
     }
@@ -119,7 +64,7 @@ class ShuratvPluginConfig extends Default_Config
      * @param $server
      * @param $plugin_cookies
      */
-    public function set_server($server, $plugin_cookies)
+    public function set_server_id($server, $plugin_cookies)
     {
         $plugin_cookies->server = $server;
     }

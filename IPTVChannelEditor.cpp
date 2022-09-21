@@ -425,7 +425,8 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 			fileName.Truncate(pos + 1);
 	}
 
-	//fileName += PluginsConfig::DEV_PATH.c_str();
+	fileName += PluginsConfig::DEV_PATH.c_str();
+
 	if (szSubFolder)
 		fileName += szSubFolder;
 
@@ -569,7 +570,7 @@ void ConvertAccounts()
 	GetConfig().set_plugin_type(old_plugin_type);
 }
 
-bool PackPlugin(const StreamType plugin_type,
+bool PackPlugin(const PluginType plugin_type,
 				bool showMessage,
 				bool make_web_update /*= false*/,
 				std::wstring output_path /*= L""*/,
@@ -690,7 +691,7 @@ bool PackPlugin(const StreamType plugin_type,
 	}
 
 	// remove cbilling_vod base class
-	if (plugin_type != StreamType::enAntifriz && plugin_type != StreamType::enCbilling)
+	if (plugin_type != PluginType::enAntifriz && plugin_type != PluginType::enCbilling)
 	{
 		std::filesystem::remove(packFolder + L"cbilling_vod_impl.php", err);
 	}
@@ -809,6 +810,7 @@ bool PackPlugin(const StreamType plugin_type,
 		auto d_node = doc->first_node("dune_plugin");
 		d_node->first_node("name")->value(plugin->get_name().c_str());
 		d_node->first_node("short_name")->value(plugin->get_short_name().c_str());
+		d_node->first_node("class_name")->value(fmt::format("{:s}PluginConfig", GetPluginShortNameA(plugin_type, true)).c_str());
 		d_node->first_node("background")->value(bg.c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
 		d_node->first_node("version")->value(STRPRODUCTVER);
@@ -857,9 +859,7 @@ bool PackPlugin(const StreamType plugin_type,
 	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n\nconst PLUGIN_TYPE = '{:s}PluginConfig';\n",
-					  GetPluginShortNameA(plugin_type),
-					  GetPluginShortNameA(plugin_type, true));
+	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n", GetPluginShortNameA(plugin_type));
 	os.close();
 
 	// copy embedded info
@@ -1278,7 +1278,7 @@ uintmax_t calc_folder_size(const std::wstring& path)
 	return total_size;
 }
 
-std::wstring GetPluginShortNameW(const StreamType plugin_type, bool bCamel /*= false*/)
+std::wstring GetPluginShortNameW(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::wstring plugin_name;
 	const auto& plugin = StreamContainer::get_instance(plugin_type);
@@ -1296,7 +1296,7 @@ std::wstring GetPluginShortNameW(const StreamType plugin_type, bool bCamel /*= f
 	return plugin_name;
 }
 
-std::string GetPluginShortNameA(const StreamType plugin_type, bool bCamel /*= false*/)
+std::string GetPluginShortNameA(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::string plugin_name;
 	const auto& plugin = StreamContainer::get_instance(plugin_type);

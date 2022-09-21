@@ -29,7 +29,7 @@ class Starnet_Tv extends Abstract_Tv
      */
     public function get_fav_icon_url()
     {
-        return Default_Config::FAV_CHANNEL_GROUP_ICON_PATH;
+        return Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH;
     }
 
     /**
@@ -55,10 +55,10 @@ class Starnet_Tv extends Abstract_Tv
                             'screen_id' => Starnet_Vod_Category_List_Screen::ID,
                             'name' => 'VOD',
                         )),
-                PluginRegularFolderItem::caption => Default_Config::VOD_GROUP_CAPTION,
+                PluginRegularFolderItem::caption => Default_Dune_Plugin::VOD_GROUP_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => Default_Config::VOD_GROUP_ICON
+                    ViewItemParams::icon_path => Default_Dune_Plugin::VOD_GROUP_ICON
                 )
             );
         }
@@ -82,7 +82,7 @@ class Starnet_Tv extends Abstract_Tv
                     if (isset($plugin_cookies->channels_url) && !empty($plugin_cookies->channels_url)) {
                         $url_path = $plugin_cookies->channels_url;
                     } else {
-                        $url_path = $this->plugin->config->PLUGIN_CHANNELS_URL_PATH;
+                        $url_path = $this->plugin->PLUGIN_CHANNELS_URL_PATH;
                     }
 
                     $channels_list_path = get_temp_path($channels_list);
@@ -110,15 +110,15 @@ class Starnet_Tv extends Abstract_Tv
         // Favorites group
         if ($this->is_favorites_supported()) {
             $this->groups->put(new Favorites_Group($this,
-                Default_Config::FAV_CHANNEL_GROUP_ID,
-                Default_Config::FAV_CHANNEL_GROUP_CAPTION,
-                Default_Config::FAV_CHANNEL_GROUP_ICON_PATH));
+                Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID,
+                Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
+                Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH));
         }
 
         // All channels group
         $this->groups->put(new All_Channels_Group($this,
-            Default_Config::ALL_CHANNEL_GROUP_CAPTION,
-            Default_Config::ALL_CHANNEL_GROUP_ICON_PATH));
+            Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
+            Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH));
 
         // read category
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
@@ -157,12 +157,8 @@ class Starnet_Tv extends Abstract_Tv
                 $channel_id = (string)$xml_tv_channel->channel_id;
                 $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
                 // update stream url by channel ID
-                $url = $this->plugin->config->UpdateStreamUrlID($channel_id, $ext_params);
-                if (empty($url)) {
-                    continue;
-                }
+                $hash = $this->plugin->config->GetUrlHash($channel_id, $ext_params);
                 $streaming_url = '';
-                $hash = hash("crc32", $url);
             } else {
                 // custom url, play as is
                 $streaming_url = (string)$xml_tv_channel->streaming_url;
@@ -259,7 +255,7 @@ class Starnet_Tv extends Abstract_Tv
         }
 
         // update url if play archive or different type of the stream
-        $url = $this->plugin->config->TransformStreamUrl($plugin_cookies, $archive_ts, $channel);
+        $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
         hd_print("get_tv_playback_url: $url");
         return $url;
     }
@@ -302,7 +298,7 @@ class Starnet_Tv extends Abstract_Tv
         $epg_result = array();
         foreach ($epg as $time => $value) {
             $time_start = $time + $time_shift;
-            $epg_result[] = new Default_Epg_Item($value['epg_title'], $value['epg_desc'], (int)$time_start, (int)$value['epg_end'] + $time_shift);
+            $epg_result[] = new Default_Epg_Item($value[EPG_NAME], $value[EPG_DESC], (int)$time_start, (int)$value[EPG_END] + $time_shift);
         }
 
         return new Epg_Iterator($epg_result, $day_start_ts, $day_start_ts + 86400);

@@ -2,85 +2,13 @@
 require_once 'lib/epg_manager.php';
 require_once 'lib/tv/channel.php';
 
-const ACCOUNT_TYPE = 'account';
-const TV_FAVORITES_SUPPORTED = 'tv_fav';
-const VOD_MOVIE_PAGE_SUPPORTED = 'vod_support';
-const VOD_FAVORITES_SUPPORTED = 'vod_fav';
-const VOD_QUALITY_SUPPORTED = 'vod_quality';
-const VOD_FILTER_SUPPORTED = 'vod_filter';
-const VOD_LAZY_LOAD = 'vod_lazy';
-const TS_OPTIONS = 'ts_options';
-const BALANCE_SUPPORTED = 'balance_support';
-const DEVICE_OPTIONS = 'device_options';
-const SERVER_SUPPORTED = 'server_support';
-const QUALITY_SUPPORTED = 'quality_support';
-const M3U_STREAM_URL_PATTERN = 'm3u8_pattern';
-const MEDIA_URL_TEMPLATE_HLS = 'hls_url';
-const MEDIA_URL_TEMPLATE_ARCHIVE_HLS = 'hls_archive_url';
-const MEDIA_URL_TEMPLATE_MPEG = 'mpeg_url';
-const MEDIA_URL_TEMPLATE_ARCHIVE_MPEG = 'mpeg_archive_url';
-const EXTINF_VOD_PATTERN = 'vod_pattern';
-const SQUARE_ICONS = 'square_icons';
-const SECONDARY_EPG = 'secondary_epg';
-
-abstract class Default_Config
+class Default_Config
 {
-    /////////////////////////////////////////////////////////////////////////////
-    // views constants
-    const ALL_CHANNEL_GROUP_CAPTION = 'Все каналы';
-    const ALL_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/all.png';
-
-    const FAV_CHANNEL_GROUP_ID = '__favorites';
-    const FAV_CHANNEL_GROUP_CAPTION = 'Избранное';
-    const FAV_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/fav.png';
-
-    const FAV_MOVIES_CATEGORY_CAPTION = 'Избранное';
-    const FAV_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/fav_movie.png';
-
-    const VOD_GROUP_CAPTION = 'Медиатека';
-    const VOD_GROUP_ICON = "plugin_file://icons/vod.png";
-    const VOD_ICON_PATH = 'gui_skin://small_icons/movie.aai';
-
-    const SEARCH_MOVIES_CATEGORY_CAPTION = 'Поиск';
-    const SEARCH_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/search_movie.png';
-
-    const FILTER_MOVIES_CATEGORY_CAPTION = 'Фильтр';
-    const FILTER_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/filter_movie.png';
-
-    const HISTORY_MOVIES_CATEGORY_CAPTION = 'История просмотра';
-    const HISTORY_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/history_movie.png';
-
-    const DEFAULT_CHANNEL_ICON_PATH = 'plugin_file://icons/channel_unset.png';
-    const DEFAULT_MOV_ICON_PATH = 'plugin_file://icons/mov_unset.png';
-
-    const SANDWICH_BASE = 'gui_skin://special_icons/sandwich_base.aai';
-    const SANDWICH_MASK = 'cut_icon://{name=sandwich_mask}';
-    const SANDWICH_COVER = 'cut_icon://{name=sandwich_cover}';
-
-    /////////////////////////////////////////////////////////////////////////////
-    // views variables
-    const TV_SANDWICH_WIDTH = 245;
-    const TV_SANDWICH_HEIGHT = 140;
-
-    const VOD_SANDWICH_WIDTH = 190;
-    const VOD_SANDWICH_HEIGHT = 290;
-
-    const VOD_CHANNEL_ICON_WIDTH = 190;
-    const VOD_CHANNEL_ICON_HEIGHT = 290;
+    protected $PluginShortName;
 
     // features constants
-
-    // info
-    public $PLUGIN_SHOW_NAME = 'StarNet';
-    public $PLUGIN_SHORT_NAME = 'starnet';
-    public $PLUGIN_VERSION = '0.0.0';
-    public $PLUGIN_DATE = '04.01.1972';
-    public $PLUGIN_CAPTION = '';
-    public $PLUGIN_ICON = '';
-    public $PLUGIN_BACKGROUND = '';
-    public $PLUGIN_CHANNELS_URL_PATH = '';
-
     protected $FEATURES = array();
+    protected $STREAMS = array();
     protected $EPG_PARSER_PARAMS = array();
 
     // page counter for some plugins
@@ -91,70 +19,78 @@ abstract class Default_Config
 
     protected $embedded_account;
 
-    /**
-     * @throws Exception
-     */
-    public function __construct()
+    public function __construct($short_name)
     {
-        $xml = HD::parse_xml_file(get_install_path('dune_plugin.xml'));
+        $this->PluginShortName = $short_name;
 
-        $acc_file = get_install_path('account.dat');
-        if (file_exists($acc_file)) {
-            $data = file_get_contents($acc_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            if ($data !== false) {
-                hd_print("account data: $data");
-                $account = json_decode(base64_decode(substr($data, 5)));
-                if ($account !== false) {
-                    $this->embedded_account = $account;
-                    //foreach ($this->embedded_account as $key => $item) {
-                    //    hd_print("Embedded info: $key => $item");
-                    //}
-                }
-            }
-        }
-
-        $this->PLUGIN_SHOW_NAME = $xml->caption;
-        $this->PLUGIN_SHORT_NAME = $xml->short_name;
-        $this->PLUGIN_ICON = $xml->icon_url;
-        $this->PLUGIN_BACKGROUND = $xml->background;
-        $this->PLUGIN_VERSION = $xml->version . '.' . $xml->version_index;
-        $this->PLUGIN_DATE = $xml->release_date;
-        $this->PLUGIN_CHANNELS_URL_PATH = $xml->channels_url_path;
-
-        $this->FEATURES[ACCOUNT_TYPE] = 'UNKNOWN';
-        $this->FEATURES[SECONDARY_EPG] = false;
+        $this->FEATURES[ACCOUNT_TYPE] = -1;
         $this->FEATURES[TV_FAVORITES_SUPPORTED] = true;
         $this->FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = false;
         $this->FEATURES[VOD_FAVORITES_SUPPORTED] = false;
         $this->FEATURES[VOD_QUALITY_SUPPORTED] = false;
         $this->FEATURES[VOD_FILTER_SUPPORTED] = false;
         $this->FEATURES[VOD_LAZY_LOAD] = false;
-        $this->FEATURES[TS_OPTIONS] = array('hls' => 'HLS', 'mpeg' => 'MPEG-TS');
         $this->FEATURES[DEVICE_OPTIONS] = array();
         $this->FEATURES[BALANCE_SUPPORTED] = false;
         $this->FEATURES[SERVER_SUPPORTED] = false;
         $this->FEATURES[QUALITY_SUPPORTED] = false;
         $this->FEATURES[EXTINF_VOD_PATTERN] = '';
         $this->FEATURES[SQUARE_ICONS] = false;
+        $this->FEATURES[USE_TOKEN_AS_ID] = false;
+    }
+
+    /**
+     * load configuration
+     * @return void
+     */
+    public function load_config()
+    {
+        $default_streams = array();
+        $default_streams[CU_TYPE] = 'shift';
+        $default_streams[URL_TEMPLATE] = '';
+        $default_streams[URL_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
+        $default_streams[CU_SUBST] = 'utc';
+        $this->set_streams(HLS, $default_streams);
+
+        $default_streams[CU_TYPE] = 'flussonic';
+        $default_streams[CU_SUBST] = 'archive';
+        $default_streams[URL_ARC_TEMPLATE] = '';
+        $this->set_streams(MPEG, $default_streams);
 
         $default_parser = array();
-        $default_parser['epg_parser'] = 'json';
-        $default_parser['epg_url'] = '';
-        $default_parser['epg_root'] = 'epg_data';
-        $default_parser['epg_start'] = 'time';
-        $default_parser['epg_end'] = 'time_to';
-        $default_parser['epg_title'] = 'name';
-        $default_parser['epg_desc'] = 'descr';
-        $default_parser['epg_date_format'] = '';
-        $default_parser['epg_use_duration'] = false;
-        $default_parser['epg_use_mapper'] = false;
-        $default_parser['epg_mapper_url'] = '';
-        $default_parser['epg_time_format'] = '';
-        $default_parser['epg_timezone'] = 0;
-        $default_parser['epg_id_mapper'] = array();
+        $default_parser[EPG_PARSER] = 'json';
+        $default_parser[EPG_URL] = '';
+        $default_parser[EPG_ROOT] = 'epg_data';
+        $default_parser[EPG_START] = 'time';
+        $default_parser[EPG_END] = 'time_to';
+        $default_parser[EPG_NAME] = 'name';
+        $default_parser[EPG_DESC] = 'descr';
+        $default_parser[EPG_DATE_FORMAT] = '';
+        $default_parser[EPG_USE_DURATION] = false;
+        $default_parser[EPG_USE_MAPPER] = false;
+        $default_parser[EPG_MAPPER_URL] = '';
+        $default_parser[EPG_TIME_FORMAT] = '';
+        $default_parser[EPG_TIMEZONE] = 0;
+        $default_parser[EPG_ID_MAPPER] = array();
 
-        $this->set_epg_params('first', $default_parser);
-        $this->set_epg_params('second', $default_parser);
+        $this->set_epg_params(EPG_FIRST, $default_parser);
+        $this->set_epg_params(EPG_SECOND, $default_parser);
+    }
+
+    /**
+     * @return Object|null
+     */
+    public function get_embedded_account()
+    {
+        return $this->embedded_account;
+    }
+
+    /**
+     * @param Object $val
+     */
+    public function set_embedded_account($val)
+    {
+        $this->embedded_account = $val;
     }
 
     /**
@@ -201,12 +137,12 @@ abstract class Default_Config
      * @param $plugin_cookies
      * @return null
      */
-    public function get_quality($plugin_cookies)
+    public function get_quality_id($plugin_cookies)
     {
         return null;
     }
 
-    public function set_quality($quality, $plugin_cookies)
+    public function set_quality_id($quality, $plugin_cookies)
     {
     }
 
@@ -223,7 +159,7 @@ abstract class Default_Config
      * @param $plugin_cookies
      * @return null
      */
-    public function get_server($plugin_cookies)
+    public function get_server_id($plugin_cookies)
     {
         return null;
     }
@@ -232,8 +168,26 @@ abstract class Default_Config
      * @param $server
      * @param $plugin_cookies
      */
-    public function set_server($server, $plugin_cookies)
+    public function set_server_id($server, $plugin_cookies)
     {
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return null
+     */
+    public function get_server($plugin_cookies)
+    {
+        return null;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return null
+     */
+    public function set_server($plugin_cookies)
+    {
+        return null;
     }
 
     public function get_login($plugin_cookies)
@@ -253,7 +207,7 @@ abstract class Default_Config
      */
     public function get_channel_list($plugin_cookies, &$used_list)
     {
-        $used_list = isset($plugin_cookies->channels_list) ? (string)$plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PLUGIN_SHORT_NAME);
+        $used_list = isset($plugin_cookies->channels_list) ? (string)$plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PluginShortName);
         if (!isset($plugin_cookies->channels_list))
             $plugin_cookies->channels_list = $used_list;
 
@@ -264,8 +218,7 @@ abstract class Default_Config
         hd_print("Channels list name: $used_list");
         hd_print("Channels source: $channels_source");
 
-        switch ($channels_source)
-        {
+        switch ($channels_source) {
             case 1: // folder
                 $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
                 break;
@@ -316,14 +269,52 @@ abstract class Default_Config
      * @param string $type
      * @return mixed
      */
+    public function get_streams($type)
+    {
+        return $this->STREAMS[$type];
+    }
+
+    /**
+     * @param string $type
+     * @param array $val
+     */
+    public function set_streams($type, $val)
+    {
+        $this->STREAMS[$type] = $val;
+    }
+
+    /**
+     * @param string $type
+     * @param string $param
+     * @return mixed
+     */
+    public function get_stream_param($type, $param)
+    {
+        return $this->STREAMS[$type][$param];
+    }
+
+    /**
+     * @param string $type
+     * @param string $param
+     * @param mixed $val
+     */
+    public function set_stream_param($type, $param, $val)
+    {
+        $this->STREAMS[$type][$param] = $val;
+    }
+
+    /**
+     * @param string $type
+     * @return mixed
+     */
     public function get_epg_params($type)
     {
         return $this->EPG_PARSER_PARAMS[$type];
     }
 
     /**
-     * @param array $val
      * @param string $type
+     * @param array $val
      */
     public function set_epg_params($type, $val)
     {
@@ -331,9 +322,9 @@ abstract class Default_Config
     }
 
     /**
+     * @param string $type
      * @param string $param
      * @param mixed $val
-     * @param string $type
      */
     public function set_epg_param($type, $param, $val)
     {
@@ -342,9 +333,10 @@ abstract class Default_Config
 
     /**
      * @param string $type
+     * @param string $param
      * @return mixed
      */
-    public function get_epg_param($param, $type)
+    public function get_epg_param($type, $param)
     {
         return $this->EPG_PARSER_PARAMS[$type][$param];
     }
@@ -429,30 +421,6 @@ abstract class Default_Config
     }
 
     /**
-     * @return mixed|null
-     */
-    public function get_embedded_account()
-    {
-        return $this->embedded_account;
-    }
-
-    /**
-     * @param object|null $account
-     */
-    public function set_embedded_account($account)
-    {
-        $this->embedded_account = $account;
-    }
-
-    /**
-     * @return string
-     */
-    public function GET_BG_PICTURE()
-    {
-        return (string)$this->PLUGIN_BACKGROUND;
-    }
-
-    /**
      * @param array $defs
      * @param Starnet_Vod_Filter_Screen $parent
      * @param int $initial
@@ -482,14 +450,65 @@ abstract class Default_Config
     }
 
     /**
-     * Update url macros {DOMAIN} and {TOKEN} by values from channel ext_params
+     * Generate url from template with macros substitution
      * Make url ts wrapped
      * @param $plugin_cookies
      * @param int $archive_ts
      * @param Channel $channel
      * @return string
      */
-    abstract public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel);
+    public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
+    {
+        $url = $channel->get_streaming_url();
+        if (empty($url)) {
+            $is_archive = (int)$archive_ts > 0;
+            $stream_type = $this->get_format($plugin_cookies);
+            switch ($this->get_stream_param($stream_type, CU_TYPE)) {
+                case 'append':
+                case 'shift':
+                    $url = $this->get_stream_param($stream_type, URL_TEMPLATE);
+                    if ($is_archive) {
+                        $url .= (strrpos($url, '?', -1) === false) ? '?' : '&';
+                        $url .= $this->get_stream_param($stream_type, URL_ARC_TEMPLATE);
+                    }
+                    $url = str_replace(array('{START}', '{NOW}'), array($archive_ts, time()), $url);
+                    break;
+                case 'flussonic':
+                    $url = $this->get_stream_param($stream_type, $is_archive ? URL_ARC_TEMPLATE : URL_TEMPLATE);
+                    $url = str_replace(array('{START}', '{DURATION}'), array($archive_ts, time()), $url);
+                    break;
+            }
+
+            $url = str_replace(
+                array('{ID}', '{CU_SUBST}'),
+                array($channel->get_channel_id(), $this->get_stream_param($stream_type, CU_SUBST)),
+                $url);
+
+            $ext_params = $channel->get_ext_params();
+            $replaces = array(
+                M_SUBDOMAIN => '{SUBDOMAIN}',
+                M_DOMAIN    => '{DOMAIN}',
+                M_PORT      => '{PORT}',
+                M_LOGIN     => '{LOGIN}',
+                M_PASSWORD  => '{PASSWORD}',
+                M_TOKEN     => '{TOKEN}',
+                M_INT_ID    => '{INT_ID}',
+                M_HOST      => '{HOST}',
+                M_QUALITY   => '{QUALITY}',
+            );
+
+            foreach ($replaces as $key => $value)
+            {
+                if (isset($ext_params[$key]) && !empty($ext_params[$key])) {
+                    $url = str_replace($value, $ext_params[$key], $url);
+                }
+            }
+        }
+
+        // hd_print("Stream url:  $url");
+
+        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
+    }
 
     /**
      * Update url by channel ID (for correct hash calculation of url)
@@ -497,9 +516,22 @@ abstract class Default_Config
      * @param array $ext_params
      * @return string
      */
-    public function UpdateStreamUrlID($channel_id, $ext_params)
+    public function GetUrlHash($channel_id, $ext_params)
     {
-        return str_replace('{ID}', $channel_id, $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
+        if ($this->get_stream_param(HLS, URL_TEMPLATE) !== '')
+            $url = $this->get_stream_param(HLS, URL_TEMPLATE);
+        else if ($this->get_stream_param(MPEG, URL_TEMPLATE) !== '')
+            $url = $this->get_stream_param(MPEG, URL_TEMPLATE);
+        else {
+            hd_print("No url template defined!");
+            return 0;
+        }
+        if ($this->get_feature(USE_TOKEN_AS_ID))
+            $url = str_replace('{TOKEN}', $ext_params[M_TOKEN], $url);
+        else
+            $url = str_replace('{ID}', $channel_id, $url);
+
+        return hash("crc32", $url);
     }
 
     /**
@@ -510,10 +542,10 @@ abstract class Default_Config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+        hd_print("Collect information from account");
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
-            if (preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $line, $matches)) {
+            if (preg_match($this->get_feature(URI_PARSE_TEMPLATE), $line, $matches)) {
                 return $matches;
             }
         }
@@ -528,12 +560,12 @@ abstract class Default_Config
      */
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
-        hd_print("Get playlist information for: $this->PLUGIN_SHOW_NAME");
+        hd_print("Get playlist information");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
-            if (preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $line, $matches)) {
-                $pl_entries[$matches['id']] = $matches;
+            if (preg_match($this->get_feature(URI_PARSE_TEMPLATE), $line, $matches)) {
+                $pl_entries[$matches[M_ID]] = $matches;
             }
         }
 
@@ -679,7 +711,7 @@ abstract class Default_Config
      */
     protected function UpdateMpegTsBuffering($url, $plugin_cookies)
     {
-        if ($this->get_format($plugin_cookies) === 'mpeg') {
+        if ($this->get_format($plugin_cookies) === MPEG) {
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
             $url .= "|||dune_params|||buffering_ms:$buf_time";
         }
@@ -743,7 +775,7 @@ abstract class Default_Config
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {
-                $url = $this->GetPlaylistUrl('movie', $plugin_cookies);
+                $url = $this->GetVodlistUrl($plugin_cookies);
                 if (empty($url)) {
                     hd_print('Vod playlist not defined');
                     throw new Exception('Vod playlist not defined');
@@ -801,733 +833,75 @@ abstract class Default_Config
      */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
+        // hd_print("Type: $type");
+        if ($type === 'tv1') {
+            $url = $this->get_feature(PLAYLIST_TEMPLATE);
+        } else {
+            $url = $this->get_feature(PLAYLIST_TEMPLATE2);
+        }
+
+        $login = $this->get_login($plugin_cookies);
+        if (strpos($url, '{LOGIN}') !== false) {
+            if (empty($login))
+                hd_print("Login not set");
+            else
+                $url = str_replace('{LOGIN}', $login, $url);
+        }
+
+        $password = $this->get_password($plugin_cookies);
+        if (strpos($url, '{PASSWORD}') !== false) {
+            if (empty($password))
+                hd_print("Password not set");
+            else
+                $url = str_replace('{PASSWORD}', $password, $url);
+        }
+
+        $this->ensure_token_loaded($plugin_cookies);
+        if (strpos($url, '{TOKEN}') !== false) {
+            if (empty($plugin_cookies->token))
+                hd_print("Token not set");
+            else
+                $url = str_replace('{TOKEN}', $plugin_cookies->token, $url);
+        }
+
+        if (strpos($url, '{SUBDOMAIN}') !== false) {
+            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
+        }
+
+        if (strpos($url, '{SERVER_ID}') !== false) {
+            $url = str_replace('{SERVER_ID}', $this->get_server_id($plugin_cookies), $url);
+        }
+
+        if (strpos($url, '{SERVER}') !== false) {
+            $url = str_replace('{SERVER}', $this->get_server($plugin_cookies), $url);
+        }
+
+        if (strpos($url, '{QUALITY}') !== false) {
+            $url = str_replace('{QUALITY}', $this->get_quality_id($plugin_cookies), $url);
+        }
+
+        if (strpos($url, '{DEVICE}') !== false) {
+            $url = str_replace('{DEVICE}', $this->get_device($plugin_cookies), $url);
+        }
+
+        return $url;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function GetVodListUrl($plugin_cookies)
+    {
         return '';
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    // Folder views.
-
     /**
-     * @return array[]
+     * @param $plugin_cookies
+     * @return bool
      */
-    public function GET_TV_GROUP_LIST_FOLDER_VIEWS()
+    protected function ensure_token_loaded(&$plugin_cookies)
     {
-        return array(
-
-            // small no caption
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => false,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 5,
-                    ViewParams::num_rows => 4,
-                    ViewParams::paint_details => false,
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_CENTER,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::item_paint_caption => false,
-                    ViewItemParams::icon_scale_factor => 1.0,
-                    ViewItemParams::icon_sel_scale_factor => 1.2,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
-            ),
-
-            // small with caption
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => false,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 5,
-                    ViewParams::num_rows => 3,
-                    ViewParams::paint_details => false,
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => false,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_CENTER,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::item_paint_caption => true,
-                    ViewItemParams::icon_scale_factor => 1.2,
-                    ViewItemParams::icon_sel_scale_factor => 1.2,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
-            ),
-
-            // large, no caption
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => false,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 4,
-                    ViewParams::num_rows => 3,
-                    ViewParams::paint_details => false,
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => false,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_CENTER,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::item_paint_caption => false,
-                    ViewItemParams::icon_scale_factor => 1.25,
-                    ViewItemParams::icon_sel_scale_factor => 1.5,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
-            ),
-
-            // 3x10 list view
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 3,
-                    ViewParams::num_rows => 10,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::paint_details => false,
-                    ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 10,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => $this->FEATURES[SQUARE_ICONS] ? 60 : 84,
-                    ViewItemParams::icon_height => $this->FEATURES[SQUARE_ICONS] ? 60 : 48,
-                    ViewItemParams::item_caption_width => 485,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
-                    ViewItemParams::item_caption_dx => 50,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-
-            // 1x10 list view with info
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 1,
-                    ViewParams::num_rows => 10,
-                    ViewParams::paint_details => true,
-                    ViewParams::paint_item_info_in_details => true,
-                    ViewParams::item_detailed_info_auto_line_break => true,
-                    ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
-                    ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::background_height => 1080,
-                    ViewParams::background_width => 1920,
-                    ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
-
-                    ViewParams::paint_sandwich => false,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => static::VOD_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => static::VOD_SANDWICH_HEIGHT,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    //ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => self::VOD_ICON_PATH,
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 14,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => $this->FEATURES[SQUARE_ICONS] ? 50 : 52,
-                    ViewItemParams::icon_height => $this->FEATURES[SQUARE_ICONS] ? 50 : 34,
-                    ViewItemParams::icon_sel_margin_top => 0,
-                    ViewItemParams::item_paint_caption => true,
-                    ViewItemParams::item_caption_width => 1100,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_LARGE,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-        );
-    }
-
-    /**
-     * @return array[]
-     */
-    public function GET_TV_CHANNEL_LIST_FOLDER_VIEWS()
-    {
-        return array(
-            // 4x3 with title
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 4,
-                    ViewParams::num_rows => 3,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::paint_details => false,
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_CENTER,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::item_paint_caption => true,
-                    ViewItemParams::icon_scale_factor => 1.25,
-                    ViewItemParams::icon_sel_scale_factor => 1.5,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-
-            // 3x3 without title
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 3,
-                    ViewParams::num_rows => 3,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::paint_details => false,
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_CENTER,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::item_paint_caption => true,
-                    ViewItemParams::icon_scale_factor => 1.25,
-                    ViewItemParams::icon_sel_scale_factor => 1.5,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-
-            // 4x4 without title
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 4,
-                    ViewParams::num_rows => 4,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::paint_details => false,
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_CENTER,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::item_paint_caption => false,
-                    ViewItemParams::icon_scale_factor => 1.0,
-                    ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-
-            // 5x4 without title
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 5,
-                    ViewParams::num_rows => 4,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::paint_details => false,
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_CENTER,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::item_paint_caption => false,
-                    ViewItemParams::icon_scale_factor => 1.0,
-                    ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-
-            // 2x10 list view with title
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 2,
-                    ViewParams::num_rows => 10,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::paint_details => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 10,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => $this->FEATURES[SQUARE_ICONS] ? 60 : 84,
-                    ViewItemParams::icon_height => $this->FEATURES[SQUARE_ICONS] ? 60 : 48,
-                    ViewItemParams::item_caption_width => 485,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-        );
-    }
-
-    /**
-     * @return array[]
-     */
-    public function GET_VOD_MOVIE_LIST_FOLDER_VIEWS()
-    {
-        return array(
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 5,
-                    ViewParams::num_rows => 2,
-                    ViewParams::paint_details => true,
-                    ViewParams::paint_item_info_in_details => true,
-                    ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
-
-                    ViewParams::paint_sandwich => true,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => self::VOD_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => self::VOD_SANDWICH_HEIGHT,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                    ViewParams::item_detailed_info_auto_line_break => true,
-                    ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
-                    ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::background_height => 1080,
-                    ViewParams::background_width => 1920,
-                    ViewParams::optimize_full_screen_background => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => self::VOD_ICON_PATH,
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 10,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => self::VOD_CHANNEL_ICON_WIDTH,
-                    ViewItemParams::icon_height => self::VOD_CHANNEL_ICON_HEIGHT,
-                    ViewItemParams::icon_sel_margin_top => 0,
-                    ViewItemParams::item_paint_caption => false,
-                    ViewItemParams::item_caption_width => 1100
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 1,
-                    ViewParams::num_rows => 10,
-                    ViewParams::paint_details => true,
-                    ViewParams::paint_item_info_in_details => true,
-                    ViewParams::item_detailed_info_auto_line_break => true,
-                    ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
-                    ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::background_height => 1080,
-                    ViewParams::background_width => 1920,
-                    ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
-
-                    ViewParams::paint_sandwich => false,
-                    ViewParams::sandwich_base => self::SANDWICH_BASE,
-                    ViewParams::sandwich_mask => self::SANDWICH_MASK,
-                    ViewParams::sandwich_cover => self::SANDWICH_COVER,
-                    ViewParams::sandwich_width => static::VOD_SANDWICH_WIDTH,
-                    ViewParams::sandwich_height => static::VOD_SANDWICH_HEIGHT,
-                    ViewParams::sandwich_icon_upscale_enabled => true,
-                    ViewParams::sandwich_icon_keep_aspect_ratio => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_sel_scale_factor => 1.2,
-                    ViewItemParams::icon_path => self::VOD_ICON_PATH,
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 12,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => 50,
-                    ViewItemParams::icon_height => 50,
-                    ViewItemParams::icon_sel_margin_top => 0,
-                    ViewItemParams::item_paint_caption => true,
-                    ViewItemParams::item_caption_width => 1100,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_LARGE,
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-        );
-    }
-
-    /**
-     * @return array[]
-     */
-    public function GET_VOD_CATEGORY_LIST_FOLDER_VIEWS()
-    {
-        return array(
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => false,
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 1,
-                    ViewParams::num_rows => 12,
-                    ViewParams::paint_details => true,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::background_height => 1080,
-                    ViewParams::background_width => 1920,
-                    ViewParams::optimize_full_screen_background => true,
-                ),
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 20,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => 50,
-                    ViewItemParams::icon_height => 55,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
-                    ViewItemParams::item_caption_width => 1100
-                ),
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
-            ),
-        );
-    }
-
-    /**
-     * @return array[]
-     */
-    public function GET_TEXT_ONE_COL_VIEWS()
-    {
-        return array(
-            array(
-                PluginRegularFolderView::async_icon_loading => false,
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 1,
-                    ViewParams::num_rows => 12,
-                    ViewParams::paint_details => true,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::background_height => 1080,
-                    ViewParams::background_width => 1920,
-                    ViewParams::optimize_full_screen_background => true,
-                ),
-                PluginRegularFolderView::base_view_item_params =>
-                    array
-                    (
-                        ViewItemParams::icon_path => 'missing://',
-                        ViewItemParams::item_layout => HALIGN_LEFT,
-                        ViewItemParams::icon_valign => VALIGN_CENTER,
-                        ViewItemParams::icon_dx => 20,
-                        ViewItemParams::icon_dy => -5,
-                        ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
-                        ViewItemParams::item_caption_width => 1550
-                    ),
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
-            ),
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function GET_FOLDER_VIEWS()
-    {
-        if (defined('ViewParams::details_box_width')) {
-            $view[] = array(
-                PluginRegularFolderView::async_icon_loading => false,
-                PluginRegularFolderView::view_params => array(
-                    ViewParams::num_cols => 1,
-                    ViewParams::num_rows => 12,
-                    ViewParams::paint_content_box_background => false,
-                    ViewParams::paint_icon_selection_box => true,
-                    ViewParams::paint_details_box_background => false,
-                    ViewParams::icon_selection_box_width => 770,
-                    ViewParams::paint_path_box_background => false,
-                    ViewParams::paint_widget_background => false,
-                    ViewParams::paint_details => true,
-                    ViewParams::paint_item_info_in_details => true,
-                    ViewParams::details_box_width => 900,
-                    ViewParams::paint_scrollbar => false,
-                    ViewParams::content_box_padding_right => 500,
-                    ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
-                    ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                ),
-                PluginRegularFolderView::base_view_item_params => array(
-                    ViewItemParams::item_layout => 0,
-                    ViewItemParams::icon_width => 30,
-                    ViewItemParams::icon_height => 50,
-                    ViewItemParams::item_caption_dx => 55,
-                    ViewItemParams::icon_dx => 5,
-                    ViewItemParams::icon_sel_scale_factor => 1.01,
-                    ViewItemParams::icon_keep_aspect_ratio => true,
-                    ViewItemParams::icon_sel_dx => 6,
-                    ViewItemParams::item_paint_caption => true,
-                    ViewItemParams::icon_valign => 1,
-                ),
-                PluginRegularFolderView::not_loaded_view_item_params => array(),
-            );
-        }
-
-        $view[] = array(
-            PluginRegularFolderView::view_params => array(
-                ViewParams::num_cols => 1,
-                ViewParams::num_rows => 10,
-                ViewParams::paint_details => true,
-                ViewParams::paint_item_info_in_details => true,
-                ViewParams::detailed_icon_scale_factor => 0.5,
-                ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
-                ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                ViewParams::item_detailed_info_auto_line_break => true
-            ),
-            PluginRegularFolderView::base_view_item_params => array(
-                ViewItemParams::item_paint_icon => true,
-                ViewItemParams::icon_sel_scale_factor => 1.2,
-                ViewItemParams::item_layout => HALIGN_LEFT,
-                ViewItemParams::icon_valign => VALIGN_CENTER,
-                ViewItemParams::icon_dx => 10,
-                ViewItemParams::icon_dy => -5,
-                ViewItemParams::icon_width => 50,
-                ViewItemParams::icon_height => 50,
-                ViewItemParams::icon_sel_margin_top => 0,
-                ViewItemParams::item_paint_caption => true,
-                ViewItemParams::item_caption_width => 1100,
-                ViewItemParams::item_detailed_icon_path => 'missing://'
-            ),
-            PluginRegularFolderView::not_loaded_view_item_params => array(),
-            PluginRegularFolderView::async_icon_loading => false,
-            PluginRegularFolderView::timer => array(GuiTimerDef::delay_ms => 5000),
-        );
-        return $view;
-    }
-
-    /**
-     * @return array[]
-     */
-    public function GET_VOD_SERIES_FOLDER_VIEW()
-    {
-        return array(
-            array
-            (
-                PluginRegularFolderView::async_icon_loading => true,
-                PluginRegularFolderView::view_params => array
-                (
-                    ViewParams::num_cols => 1,
-                    ViewParams::num_rows => 12,
-                    ViewParams::paint_path_box => true,
-                    ViewParams::paint_details => true,
-                    ViewParams::paint_item_info_in_details => true,
-                    ViewParams::item_detailed_info_auto_line_break => true,
-                    ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
-                    ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                    ViewParams::background_path => $this->GET_BG_PICTURE(),
-                    ViewParams::background_order => 0,
-                    ViewParams::background_height => 1080,
-                    ViewParams::background_width => 1920,
-                    ViewParams::optimize_full_screen_background => true,
-                ),
-
-                PluginRegularFolderView::base_view_item_params => array
-                (
-                    ViewItemParams::item_layout => HALIGN_LEFT,
-                    ViewItemParams::icon_valign => VALIGN_CENTER,
-                    ViewItemParams::icon_dx => 10,
-                    ViewItemParams::icon_dy => -5,
-                    ViewItemParams::item_caption_dx => 60,
-                    ViewItemParams::icon_path => 'gui_skin://small_icons/movie.aai',
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-
-                PluginRegularFolderView::not_loaded_view_item_params => array
-                (
-                    ViewItemParams::item_paint_icon => true,
-                    ViewItemParams::icon_path => self::DEFAULT_MOV_ICON_PATH,
-                    ViewItemParams::item_detailed_icon_path => 'missing://',
-                ),
-            ),
-        );
+        return true;
     }
 }

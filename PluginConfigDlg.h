@@ -50,10 +50,12 @@ protected:
 	afx_msg void OnBnClickedButtonEditConfig();
 	afx_msg void OnBnClickedButtonLoadConfig();
 	afx_msg void OnBnClickedButtonSaveConfig();
-	afx_msg void OnBnClickedCheckStreamEnabled();
+	afx_msg void OnBnClickedButtonEpgTest();
+
 	afx_msg void OnCbnSelchangeComboStreamSubType();
 	afx_msg void OnCbnSelchangeComboEpgType();
-	afx_msg void OnBnClickedButtonEpgTest();
+	afx_msg void OnCbnSelchangeComboPluginType();
+
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
 private:
@@ -63,18 +65,19 @@ private:
 	void FillControlsEpg();
 
 public:
-	StreamType m_plugin_type = StreamType::enCustom;
+	PluginType m_plugin_type = PluginType::enCustom;
 
 protected:
+	CStatic m_wndDurationCaption;
+
 	CEdit m_wndName;
 	CEdit m_wndTitle;
 	CEdit m_wndShortName;
 	CEdit m_wndProviderUrl;
+	CEdit m_wndPlaylistTemplate;
 	CEdit m_wndParseTemplate;
 	CEdit m_wndSubst;
-	CStatic m_wndSubstCaption;
 	CEdit m_wndDuration;
-	CStatic m_wndDurationCaption;
 	CEdit m_wndStreamTemplate;
 	CEdit m_wndStreamArchiveTemplate;
 	CEdit m_wndEpgUrl;
@@ -86,20 +89,22 @@ protected:
 	CEdit m_wndDateFormat;
 	CEdit m_wndEpgTimeFormat;
 	CEdit m_wndEpgTimezone;
+	CEdit m_wndSetID;
+
 	CComboBox m_wndAccessType;
 	CComboBox m_wndStreamSubType;
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
-	CButton m_wndStreamEnabled;
-	CButton m_wndUseDuration;
+	CComboBox m_wndPluginType;
+
 	CButton m_wndLoadConf;
 	CButton m_wndTest;
-	CEdit m_wndSetID;
 
 	CString m_Name;
 	CString m_Title;
 	CString m_ShortName;
 	CString m_ProviderUrl;
+	CString m_PlaylistTemplate;
 	CString m_ParseTemplate;
 	CString m_Subst;
 	CString m_StreamTemplate;
@@ -113,6 +118,9 @@ protected:
 	CString m_EpgDateFormat;
 	CString m_EpgTimeFormat;
 	CString m_SetID;
+	CString m_Token;
+
+	COleDateTime m_Date;
 
 	int m_Duration = 0;
 	int m_EpgTimezone = 0;
@@ -120,10 +128,4 @@ protected:
 private:
 	std::unique_ptr<uri_stream> m_plugin;
 	BOOL allowEdit = FALSE;
-public:
-	CComboBox m_wndPluginType;
-	afx_msg void OnCbnSelchangeComboPluginType();
-	CString m_Token;
-	COleDateTime m_Date;
-	COleDateTime m_Time;
 };

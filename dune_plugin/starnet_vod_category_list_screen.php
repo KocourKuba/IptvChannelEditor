@@ -22,7 +22,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function __construct(Default_Dune_Plugin $plugin)
     {
-        parent::__construct(self::ID, $plugin, $plugin->config->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS());
+        parent::__construct(self::ID, $plugin, $plugin->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS());
 
         if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
             $plugin->create_screen($this);
@@ -110,12 +110,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => Starnet_Vod_Favorites_Screen::ID,
-                PluginRegularFolderItem::caption => Default_Config::FAV_MOVIES_CATEGORY_CAPTION,
+                PluginRegularFolderItem::caption => Default_Dune_Plugin::FAV_MOVIES_CATEGORY_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => Default_Config::FAV_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::icon_path => Default_Dune_Plugin::FAV_MOVIES_CATEGORY_ICON_PATH,
                     ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GOLD, // Light yellow
-                    ViewItemParams::item_detailed_icon_path => Default_Config::FAV_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => Default_Dune_Plugin::FAV_MOVIES_CATEGORY_ICON_PATH,
                 )
             );
         }
@@ -124,12 +124,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         $items[] = array
         (
             PluginRegularFolderItem::media_url => Starnet_Vod_History_Screen::ID,
-            PluginRegularFolderItem::caption => Default_Config::HISTORY_MOVIES_CATEGORY_CAPTION,
+            PluginRegularFolderItem::caption => Default_Dune_Plugin::HISTORY_MOVIES_CATEGORY_CAPTION,
             PluginRegularFolderItem::view_item_params => array
             (
-                ViewItemParams::icon_path => Default_Config::HISTORY_MOVIES_CATEGORY_ICON_PATH,
+                ViewItemParams::icon_path => Default_Dune_Plugin::HISTORY_MOVIES_CATEGORY_ICON_PATH,
                 ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_TURQUOISE, // Cyan
-                ViewItemParams::item_detailed_icon_path => Default_Config::HISTORY_MOVIES_CATEGORY_ICON_PATH,
+                ViewItemParams::item_detailed_icon_path => Default_Dune_Plugin::HISTORY_MOVIES_CATEGORY_ICON_PATH,
             )
         );
 
@@ -137,12 +137,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         $items[] = array
         (
             PluginRegularFolderItem::media_url => Starnet_Vod_Search_Screen::ID,
-            PluginRegularFolderItem::caption => Default_Config::SEARCH_MOVIES_CATEGORY_CAPTION,
+            PluginRegularFolderItem::caption => Default_Dune_Plugin::SEARCH_MOVIES_CATEGORY_CAPTION,
             PluginRegularFolderItem::view_item_params => array
             (
-                ViewItemParams::icon_path => Default_Config::SEARCH_MOVIES_CATEGORY_ICON_PATH,
+                ViewItemParams::icon_path => Default_Dune_Plugin::SEARCH_MOVIES_CATEGORY_ICON_PATH,
                 ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
-                ViewItemParams::item_detailed_icon_path => Default_Config::SEARCH_MOVIES_CATEGORY_ICON_PATH,
+                ViewItemParams::item_detailed_icon_path => Default_Dune_Plugin::SEARCH_MOVIES_CATEGORY_ICON_PATH,
             )
         );
 
@@ -151,12 +151,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => Starnet_Vod_Filter_Screen::ID,
-                PluginRegularFolderItem::caption => Default_Config::FILTER_MOVIES_CATEGORY_CAPTION,
+                PluginRegularFolderItem::caption => Default_Dune_Plugin::FILTER_MOVIES_CATEGORY_CAPTION,
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => Default_Config::FILTER_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::icon_path => Default_Dune_Plugin::FILTER_MOVIES_CATEGORY_ICON_PATH,
                     ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
-                    ViewItemParams::item_detailed_icon_path => Default_Config::FILTER_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => Default_Dune_Plugin::FILTER_MOVIES_CATEGORY_ICON_PATH,
                 )
             );
         }

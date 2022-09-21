@@ -3,19 +3,21 @@ require_once 'default_config.php';
 
 class ViplimePluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://cdntv.online/high/%s/playlist.m3u8';
-
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
         $this->set_feature(QUALITY_SUPPORTED, true);
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8');
-        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg');
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://cdntv.online/high/{PASSWORD}/playlist.m3u8');
+        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|');
 
-        $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/viplime/epg/{CHANNEL}.json');
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8');
+
+        $this->set_stream_param(MPEG,CU_TYPE, 'shift');
+        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg');
+
+        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.drm-play.ml/viplime/epg/{ID}.json');
     }
 
     /**
@@ -25,52 +27,13 @@ class ViplimePluginConfig extends Default_Config
      * @param Channel $channel
      * @return string
      */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
+    public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $url = $channel->get_streaming_url();
-        if (empty($url)) {
-            switch ($this->get_format($plugin_cookies)) {
-                case 'hls':
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-                    break;
-                case 'mpeg':
-                    $template = $this->get_feature(MEDIA_URL_TEMPLATE_MPEG);
-                    break;
-                default:
-                    hd_print("unknown play format: " . $this->get_format($plugin_cookies));
-                    return "";
-            }
+        $ext_params = $channel->get_ext_params();
+        $ext_params[M_QUALITY] = $this->get_quality($plugin_cookies);
+        $channel->set_ext_params($ext_params);
 
-            $ext_params = $channel->get_ext_params();
-            $url = str_replace(
-                array('{DOMAIN}', '{ID}', '{TOKEN}', '{QUALITY}'),
-                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token'], $this->get_quality_value($plugin_cookies)),
-                $template);
-        }
-
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
-    }
-
-    /**
-     * @param string $type
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $password = $this->get_password($plugin_cookies);
-        if (empty($password)) {
-            hd_print("Password not set");
-            return '';
-        }
-
-        return sprintf(self::PLAYLIST_TV_URL, $password);
+        return parent::GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
     }
 
     /**
@@ -86,7 +49,7 @@ class ViplimePluginConfig extends Default_Config
      * @param $plugin_cookies
      * @return mixed|null
      */
-    public function get_quality($plugin_cookies)
+    public function get_quality_id($plugin_cookies)
     {
         return isset($plugin_cookies->quality) ? $plugin_cookies->quality : 0;
     }
@@ -95,17 +58,17 @@ class ViplimePluginConfig extends Default_Config
      * @param $plugin_cookies
      * @return string
      */
-    protected function get_quality_value($plugin_cookies)
+    protected function get_quality($plugin_cookies)
     {
         $quality = array('high', 'middle', 'low', 'variant', 'hls');
-        return $quality[$this->get_quality($plugin_cookies)];
+        return $quality[$this->get_quality_id($plugin_cookies)];
     }
 
     /**
      * @param $quality
      * @param $plugin_cookies
      */
-    public function set_quality($quality, $plugin_cookies)
+    public function set_quality_id($quality, $plugin_cookies)
     {
         $plugin_cookies->quality = $quality;
     }

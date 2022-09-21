@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-enum class StreamSubType
+enum class StreamType
 {
 	enHLS = 0,
 	enMPEGTS,

@@ -13,15 +13,6 @@ abstract class Cbilling_Vod_Impl extends Default_Config
      */
     protected $account_data = array();
 
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
-        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
-        $this->set_feature(VOD_LAZY_LOAD, true);
-    }
-
     /**
      * @param string $movie_id
      * @param $plugin_cookies

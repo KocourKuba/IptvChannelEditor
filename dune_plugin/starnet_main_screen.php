@@ -17,7 +17,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
      */
     public function __construct(Default_Dune_Plugin $plugin)
     {
-        parent::__construct(self::ID, $plugin, $plugin->config->GET_TV_GROUP_LIST_FOLDER_VIEWS());
+        parent::__construct(self::ID, $plugin, $plugin->GET_TV_GROUP_LIST_FOLDER_VIEWS());
 
         $plugin->create_screen($this);
     }
@@ -150,13 +150,13 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
     protected function IsSetupNeeds($plugin_cookies)
     {
         switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
-            case 'OTT_KEY':
+            case ACCOUNT_OTT_KEY:
                 $setup_needs = empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) && ($this->plugin->config->get_embedded_account() === null);
                 break;
-            case 'LOGIN':
+            case ACCOUNT_LOGIN:
                 $setup_needs = empty($plugin_cookies->login) && empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
-            case 'PIN':
+            case ACCOUNT_PIN:
                 $setup_needs = empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             default:

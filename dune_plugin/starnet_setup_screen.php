@@ -92,7 +92,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // Plugin name
         Control_Factory::add_vgap($defs, -10);
-        $title = ' v.' . $this->plugin->config->PLUGIN_VERSION . ' [' . $this->plugin->config->PLUGIN_DATE . ']';
+        $title = ' v.' . $this->plugin->PLUGIN_VERSION . ' [' . $this->plugin->PLUGIN_DATE . ']';
         Control_Factory::add_label($defs, "IPTV Channel Editor by sharky72", $title);
 
         $text_icon = $this->plugin->get_image_path('text.png');
@@ -108,17 +108,17 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // ott or token dialog
-        if ($this->plugin->config->get_embedded_account() === null) {
+        if ($this->plugin->EMBEDDED_ACCOUNT === null) {
             switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
-                case 'OTT_KEY':
+                case ACCOUNT_OTT_KEY:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_OTTKEY_DLG,
                         'Данные для просмотра:', 'Ввести ОТТ ключ и домен', $text_icon);
                     break;
-                case 'LOGIN':
+                case ACCOUNT_LOGIN:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_LOGIN_DLG,
                         'Данные для просмотра:', 'Введите логин и пароль', $text_icon);
                     break;
-                case 'PIN':
+                case ACCOUNT_PIN:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_PIN_DLG,
                         'Данные для просмотра:', 'Введите ключ доступа', $text_icon);
                     break;
@@ -237,7 +237,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (isset($plugin_cookies->channels_url) && !empty($plugin_cookies->channels_url)) {
             $url_path = $plugin_cookies->channels_url;
         } else {
-            $url_path = $this->plugin->config->PLUGIN_CHANNELS_URL_PATH;
+            $url_path = $this->plugin->PLUGIN_CHANNELS_URL_PATH;
         }
 
         Control_Factory::add_vgap($defs, 20);
@@ -277,7 +277,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if ($this->plugin->config->get_feature(SERVER_SUPPORTED)) {
             hd_print("Change server supported");
             $server_ops = $this->plugin->config->get_server_opts($plugin_cookies);
-            $server = $this->plugin->config->get_server($plugin_cookies);
+            $server = $this->plugin->config->get_server_id($plugin_cookies);
             if (!empty($server_ops)) {
                 hd_print("Selected server " . $server_ops[$server]);
                 Control_Factory::add_combobox($defs, $this, null, 'server', 'Сервер:', $server, $server_ops, 0);
@@ -288,7 +288,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         // select quality
         if ($this->plugin->config->get_feature(QUALITY_SUPPORTED)) {
             hd_print("Change quality supported");
-            $quality = $this->plugin->config->get_quality($plugin_cookies);
+            $quality = $this->plugin->config->get_quality_id($plugin_cookies);
             $quality_ops = $this->plugin->config->get_quality_opts($plugin_cookies);
             if (!empty($quality_ops)) {
                 Control_Factory::add_combobox($defs, $this, null, 'quality', 'Качество:', $quality, $quality_ops, 0);
@@ -297,7 +297,15 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // select stream type
-        $format_ops = $this->plugin->config->get_feature(TS_OPTIONS);
+        $format_ops = array();
+        if ($this->plugin->config->get_stream_param(HLS, URL_TEMPLATE) !== '') {
+            $format_ops[] = array(HLS => 'HLS');
+        }
+
+        if ($this->plugin->config->get_stream_param(MPEG, URL_TEMPLATE) !== '') {
+            $format_ops[] = array(MPEG => 'MPEG-TS');
+        }
+
         if (count($format_ops) > 1) {
             $format = $this->plugin->config->get_format($plugin_cookies);
             Control_Factory::add_combobox($defs, $this, null, 'stream_format', 'Выбор потока:', $format, $format_ops, 0);
@@ -336,7 +344,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $defs = array();
 
         Control_Factory::add_vgap($defs, 20);
-        if ($this->plugin->config->get_feature(SECONDARY_EPG)) {
+        $epg_params = $this->plugin->config->get_epg_params(EPG_SECOND);
+        if (!empty($epg_params[EPG_URL])) {
             $epg_source_ops = array();
             $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
             $epg_source_ops[SetupControlSwitchDefs::switch_epg2] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg2];
@@ -520,24 +529,24 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return $this->reload_channels($plugin_cookies);
 
                 case self::ACTION_MOVE_ACCOUNT: // handle move account
-                    $embedded_account = $this->plugin->config->get_embedded_account();
+                    $embedded_account = $this->plugin->EMBEDDED_ACCOUNT;
                     if ($embedded_account !== null) {
                         switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
-                            case 'OTT_KEY':
+                            case ACCOUNT_OTT_KEY:
                                 $plugin_cookies->subdomain = $embedded_account->domain;
                                 $plugin_cookies->ott_key = $embedded_account->ott_key;
                                 $plugin_cookies->mediateka = $embedded_account->vportal;
                                 break;
-                            case 'LOGIN':
+                            case ACCOUNT_LOGIN:
                                 $plugin_cookies->login = $embedded_account->login;
                                 $plugin_cookies->password = $embedded_account->password;
                                 break;
-                            case 'PIN':
+                            case ACCOUNT_PIN:
                                 $plugin_cookies->password = $embedded_account->password;
                                 break;
                         }
                         exec('rm -rf ' . get_install_path('account.dat'));
-                        $this->plugin->config->set_embedded_account(null);
+                        $this->plugin->EMBEDDED_ACCOUNT = null;
                         $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
                         return Action_Factory::show_title_dialog('Данные перенесены', $post_action);
                     }
@@ -597,11 +606,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
 
                     if (isset($user_input->server) && $plugin_cookies->server !== $user_input->server) {
-                        $this->plugin->config->set_server($user_input->server, $plugin_cookies);
+                        $this->plugin->config->set_server_id($user_input->server, $plugin_cookies);
                     }
 
                     if (isset($user_input->quality) && $plugin_cookies->quality !== $user_input->quality) {
-                        $this->plugin->config->set_quality($user_input->quality, $plugin_cookies);
+                        $this->plugin->config->set_quality_id($user_input->quality, $plugin_cookies);
                     }
                     return $this->reload_channels($plugin_cookies);
 

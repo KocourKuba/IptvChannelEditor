@@ -33,24 +33,25 @@ public:
 
 	uri_fox()
 	{
-		title = L"Fox TV";
 		short_name = "fox";
+		provider_vod_url = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u";
+	}
+
+	void load_default() override
+	{
+		title = "Fox TV";
 		name = "fox-fun.tv";
-		provider_url = L"http://info.fox-tv.fun/";
 		access_type = AccountAccessType::enLoginPass;
 
-		provider_vod_url = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u";
-		playlist_template = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u";
+		provider_url = "http://info.fox-tv.fun/";
+		playlist_template = "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u";
+		uri_parse_template = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
+		use_token_as_id = true;
 		per_channel_token = true;
 
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "utc";
 		streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{TOKEN}?{SHIFT_SUBST}={START}&lutc={NOW}";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 		epg_params[0].epg_url = "http://epg.drm-play.ml/fox-tv/epg/{ID}.json";
 	}

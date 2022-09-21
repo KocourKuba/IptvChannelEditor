@@ -15,7 +15,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public function __construct(Default_Dune_Plugin $plugin)
     {
-        parent::__construct(self::ID, $plugin, $plugin->config->GET_FOLDER_VIEWS());
+        parent::__construct(self::ID, $plugin, $plugin->GET_FOLDER_VIEWS());
 
         $plugin->create_screen($this);
     }

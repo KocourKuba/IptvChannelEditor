@@ -34,22 +34,27 @@ public:
 
 	uri_shuratv()
 	{
-		title = L"Shura TV";
 		short_name = "shuratv";
+		for (int i = 0; i <= IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1; i++)
+		{
+			ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_SHURA_TV_P1 + i) });
+			servers_list.emplace_back(info);
+		}
+	}
+
+	void load_default() override
+	{
+		title = "Shura TV";
 		name = "shura.tv";
-		provider_url = L"http://shura.tv/b/";
 		access_type = AccountAccessType::enPin;
 
-		playlist_template = L"http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
+		provider_url = "http://shura.tv/b/";
+		playlist_template = "http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "archive";
+		streams_config[0].cu_subst = "archive";
 		streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 		auto& params1 = epg_params[0];
 		params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";
@@ -59,11 +64,5 @@ public:
 		params1.epg_desc = "desc";
 		params1.epg_start = "start";
 		params1.epg_end = "stop";
-
-		for (int i = 0; i <= IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1; i++)
-		{
-			ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_SHURA_TV_P1 + i) });
-			servers_list.emplace_back(info);
-		}
 	}
 };

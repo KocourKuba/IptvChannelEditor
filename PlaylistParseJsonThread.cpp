@@ -46,20 +46,20 @@ BOOL CPlaylistParseJsonThread::InitInstance()
 
 	switch (m_config.m_pluginType)
 	{
-		case StreamType::enSharaclub:
+		case PluginType::enSharaclub:
 			ParseSharaclub();
 			break;
 
-		case StreamType::enAntifriz:
-		case StreamType::enCbilling:
+		case PluginType::enAntifriz:
+		case PluginType::enCbilling:
 			ParseCbilling();
 			break;
 
-		case StreamType::enEdem:
+		case PluginType::enEdem:
 			ParseEdem();
 			break;
 
-		case StreamType::enGlanz:
+		case PluginType::enGlanz:
 			ParseGlanz();
 			break;
 

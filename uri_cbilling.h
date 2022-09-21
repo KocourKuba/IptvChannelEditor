@@ -36,40 +36,35 @@ public:
 
 	uri_cbilling()
 	{
-		title = L"Cbilling TV";
 		short_name = "cbilling";
-		name = "cbillingtv";
-		provider_url = L"https://cbilling.eu/";
-		access_type = AccountAccessType::enPin;
-
 		provider_vod_url = L"http://protected-api.com";
-		playlist_template = L"http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8";
-
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "utc";
-		streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
-
-		streams_config[1].enabled = true;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "utc";
-		streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
-
-		auto& params1 = epg_params[0];
-		params1.epg_url = "http://protected-api.com/epg/{ID}/?date=";
-		params1.epg_root = "";
 
 		for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
 		{
 			ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_CBILLING_TV_P1 + i) });
 			servers_list.emplace_back(info);
 		}
+	}
+
+	void load_default() override
+	{
+		title = "Cbilling TV";
+		name = "cbillingtv";
+		access_type = AccountAccessType::enPin;
+
+		provider_url = "https://cbilling.eu/";
+		playlist_template = "http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+
+		streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+		streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+
+		auto& params1 = epg_params[0];
+		params1.epg_url = "http://protected-api.com/epg/{ID}/?date=";
+		params1.epg_root = "";
 	}
 
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;

@@ -3,62 +3,26 @@ require_once 'cbilling_vod_impl.php';
 
 class AntifrizPluginConfig extends Cbilling_Vod_Impl
 {
-    const PLAYLIST_TV_URL = 'http://af-play.com/playlist/%s.m3u8';
-
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'PIN');
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/s/(?<token>.+)/(?<id>.+)/.*$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/s/{TOKEN}/{ID}/video.m3u8');
-        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}');
-        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}');
-        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts?token={TOKEN}');
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
+        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(VOD_LAZY_LOAD, true);
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://antifriz.tv/playlist/{PASSWORD}.m3u8');
+        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+):(?<port>.+)/s/(?<token>.+)/(?<id>.+)/.*$|');
 
-        $this->set_epg_param('first','epg_root', '');
-        $this->set_epg_param('first','epg_url', self::API_HOST .'/epg/{CHANNEL}/?date=');
-    }
+        $this->set_stream_param(HLS,CU_TYPE, 'flussonic');
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8');
+        $this->set_stream_param(HLS,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}');
 
-    /**
-     * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
-     * @param Channel $channel
-     * @return string
-     */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
-    {
-        $url = $channel->get_streaming_url();
-        if (!empty($url)) {
-            $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-        } else {
-            $ext_params = $channel->get_ext_params();
-            $domain = explode(':', $ext_params['subdomain']);
+        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}');
+        $this->set_stream_param(MPEG,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}');
 
-            switch ($this->get_format($plugin_cookies)) {
-                case 'hls':
-                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_HLS : MEDIA_URL_TEMPLATE_HLS);
-                    if (((int)$archive_ts <= 0))
-                        $domain[0] = $ext_params['subdomain'];
-                    break;
-                case 'mpeg':
-                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : MEDIA_URL_TEMPLATE_MPEG);
-                    break;
-                default:
-                    hd_print("unknown url format");
-                    return "";
-            }
-
-            $url = str_replace(
-                array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}', '{NOW}'),
-                array($domain[0], $channel->get_channel_id(), $ext_params['token'], $archive_ts, time()),
-                $template);
-        }
-
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
+        $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
+        $this->set_epg_param(EPG_FIRST,EPG_URL, self::API_HOST .'/epg/{ID}/?date=');
     }
 
     /**
@@ -79,11 +43,10 @@ class AntifrizPluginConfig extends Cbilling_Vod_Impl
     }
 
     /**
-     * @param string $type
      * @param $plugin_cookies
      * @return string
      */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetVodListUrl($plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -94,13 +57,6 @@ class AntifrizPluginConfig extends Cbilling_Vod_Impl
             return '';
         }
 
-        switch ($type) {
-            case 'tv1':
-                return sprintf(self::PLAYLIST_TV_URL, $password);
-            case 'movie':
-                return self::API_HOST . '/genres';
-        }
-
-        return '';
+        return self::API_HOST . '/genres';
     }
 }

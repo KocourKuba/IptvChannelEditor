@@ -3,75 +3,23 @@ require_once 'default_config.php';
 
 class OneusdPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://1usd.tv/pl-%s-hls';
-
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'PIN');
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}');
-        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/index-{START}-7200.m3u8?token={TOKEN}');
-        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}');
-        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{ID}/archive-{START}-7200.m3u8?token={TOKEN}');
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
         $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://1usd.tv/pl-{PASSWORD}-hls');
+        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|');
 
-        $this->set_epg_param('first','epg_url','http://tv.team/{CHANNEL}.json');
-    }
+        $this->set_stream_param(HLS,CU_TYPE, 'flussonic');
+        $this->set_stream_param(HLS,CU_SUBST, 'index');
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}');
+        $this->set_stream_param(HLS,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}');
 
-    /**
-     * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
-     * @param Channel $channel
-     * @return string
-     */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
-    {
-        $url = $channel->get_streaming_url();
-        if (!empty($url)) {
-            $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-        } else {
-            switch ($this->get_format($plugin_cookies)) {
-                case 'hls':
-                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_HLS : MEDIA_URL_TEMPLATE_HLS);
-                    break;
-                case 'mpeg':
-                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : MEDIA_URL_TEMPLATE_MPEG);
-                    break;
-                default:
-                    hd_print("unknown url format");
-                    return "";
-            }
+        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}');
+        $this->set_stream_param(MPEG,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}');
 
-            $ext_params = $channel->get_ext_params();
-            $url = str_replace(
-                array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}', '{NOW}'),
-                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token'], $archive_ts, time()),
-                $template);
-        }
-
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
-    }
-
-    /**
-     * @param string $type
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $password = $this->get_password($plugin_cookies);
-        if (empty($password)) {
-            hd_print("Password not set");
-            return '';
-        }
-
-        return sprintf(self::PLAYLIST_TV_URL, $password);
+        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://tv.team/{ID}.json');
     }
 }

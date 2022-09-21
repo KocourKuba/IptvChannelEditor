@@ -142,7 +142,7 @@ private:
 	std::vector<ProfilesInfo> m_profiles;
 	std::vector<QualityInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
-	StreamType m_plugin_type = StreamType::enBase;
+	PluginType m_plugin_type = PluginType::enBase;
 	std::map<UINT, std::wstring> m_tooltips_info_account;
 };
 

@@ -98,7 +98,7 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function get_vod_list_folder_views()
     {
-        return $this->plugin->config->GET_VOD_MOVIE_LIST_FOLDER_VIEWS();
+        return $this->plugin->GET_VOD_MOVIE_LIST_FOLDER_VIEWS();
     }
 
     /**
@@ -106,7 +106,7 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function get_vod_search_folder_views()
     {
-        return $this->plugin->config->GET_TEXT_ONE_COL_VIEWS();
+        return $this->plugin->GET_TEXT_ONE_COL_VIEWS();
     }
 
     /**

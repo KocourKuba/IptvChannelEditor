@@ -35,22 +35,22 @@ public:
 
 	uri_vidok()
 	{
-		title = L"Vidok TV";
 		short_name = "vidok";
+	}
+
+	void load_default() override
+	{
+		title = "Vidok TV";
 		name = "vidok.tv";
-		provider_url = L"https://vidok.tv/";
 		access_type = AccountAccessType::enLoginPass;
 
-		playlist_template = L"http://vidok.tv/p/{TOKEN}";
+		provider_url = "https://vidok.tv/";
+		playlist_template = "http://vidok.tv/p/{TOKEN}";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_append;
-		streams_config[0].shift_replace = "utc";
+		streams_config[0].cu_type = CatchupType::cu_append;
 		streams_config[0].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/p/{TOKEN}/{ID}?{SHIFT_SUBST}={START}";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}";
 
 		auto& params = epg_params[0];
 		params.epg_url = "http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";

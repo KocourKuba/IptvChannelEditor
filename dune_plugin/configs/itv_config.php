@@ -3,82 +3,31 @@ require_once 'default_config.php';
 
 class ItvPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://itv.ooo/p/%s/hls.m3u8';
     const API_HOST = 'http://api.itv.live';
 
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'PIN');
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
         $this->set_feature(BALANCE_SUPPORTED, true);
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}');
-        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_HLS, 'http://{DOMAIN}/{ID}/archive-{START}-10800.m3u8?token={TOKEN}');
-        $this->set_feature(MEDIA_URL_TEMPLATE_MPEG, 'http://{DOMAIN}/{ID}/mpegts');
-        $this->set_feature(MEDIA_URL_TEMPLATE_ARCHIVE_MPEG, 'http://{DOMAIN}/{ID}/archive-{START}-10800.ts');
         $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://itv.ooo/p/{PASSWORD}/hls.m3u8');
+        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|');
 
-        $this->set_epg_param('first','epg_url', self::API_HOST . '/epg/{CHANNEL}');
-        $this->set_epg_param('first','epg_root', 'res');
-        $this->set_epg_param('first','epg_start', 'startTime');
-        $this->set_epg_param('first','epg_end', 'stopTime');
-        $this->set_epg_param('first','epg_title', 'title');
-        $this->set_epg_param('first','epg_desc', 'desc');
-    }
+        $this->set_stream_param(HLS,CU_TYPE, 'flussonic');
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}');
+        $this->set_stream_param(HLS,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}');
 
-    /**
-     * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
-     * @param Channel $channel
-     * @return string
-     */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
-    {
-        $url = $channel->get_streaming_url();
-        if (!empty($url)) {
-            $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-        } else {
-            switch ($this->get_format($plugin_cookies)) {
-                case 'hls':
-                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_HLS : MEDIA_URL_TEMPLATE_HLS);
-                    break;
-                case 'mpeg':
-                    $template = $this->get_feature(((int)$archive_ts > 0) ? MEDIA_URL_TEMPLATE_ARCHIVE_MPEG : MEDIA_URL_TEMPLATE_MPEG);
-                    break;
-                default:
-                    hd_print("unknown url format");
-                    return "";
-            }
+        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/mpegts');
+        $this->set_stream_param(MPEG,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts');
 
-            $ext_params = $channel->get_ext_params();
-            $url = str_replace(array('{DOMAIN}', '{ID}', '{TOKEN}', '{START}'),
-                array($ext_params['subdomain'], $channel->get_channel_id(), $ext_params['token'], $archive_ts),
-                $template);
-        }
-
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
-    }
-
-    /**
-     * @param string $type
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $password = $this->get_password($plugin_cookies);
-        if (empty($password)) {
-            hd_print("Password not set");
-            return '';
-        }
-
-        return sprintf(self::PLAYLIST_TV_URL, $password);
+        $this->set_epg_param(EPG_FIRST,EPG_URL, self::API_HOST . '/epg/{ID}');
+        $this->set_epg_param(EPG_FIRST,EPG_ROOT, 'res');
+        $this->set_epg_param(EPG_FIRST,EPG_START, 'startTime');
+        $this->set_epg_param(EPG_FIRST,EPG_END, 'stopTime');
+        $this->set_epg_param(EPG_FIRST,EPG_NAME, 'title');
+        $this->set_epg_param(EPG_FIRST,EPG_DESC, 'desc');
     }
 
     /**
@@ -89,7 +38,7 @@ class ItvPluginConfig extends Default_Config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account " . $this->PLUGIN_SHOW_NAME);
+        hd_print("Collect information from account");
 
         // this account has special API to get account info
         $password = $this->get_password($plugin_cookies);

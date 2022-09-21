@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include <map>
 #include "UtilsLib\json_wrapper.h"
 
-enum class StreamType
+enum class PluginType
 {
 	enCustom = -3,
 	enBase = -2,
@@ -143,7 +143,7 @@ constexpr auto REG_ACTIVE_CH_LIST      = _T("ActiveChannelsList");
 
 typedef struct
 {
-	StreamType type;
+	PluginType type;
 	std::wstring title;
 	std::string short_name;
 	std::string int_name;
@@ -299,7 +299,7 @@ public:
 	std::vector<BYTE>* m_data = nullptr;
 	void* m_parent = nullptr;
 	HANDLE m_hStop = nullptr;
-	StreamType m_pluginType = StreamType::enEdem;
+	PluginType m_pluginType = PluginType::enEdem;
 	std::wstring m_rootPath;
 	std::wstring m_url;
 	bool m_use_cache = true;
@@ -332,13 +332,13 @@ public:
 
 	void RemovePortableSettings();
 
-	const std::vector<StreamType>& get_all_plugins() const;
+	const std::vector<PluginType>& get_all_plugins() const;
 
 	int get_plugin_idx() const;
 	void set_plugin_idx(int val);
 
-	StreamType get_plugin_type() const;
-	void set_plugin_type(StreamType val);
+	PluginType get_plugin_type() const;
+	void set_plugin_type(PluginType val);
 
 	BOOL IsPortable() const { return m_bPortable; }
 	void SetPortable(BOOL val) { m_bPortable = val; }
@@ -366,15 +366,15 @@ public:
 	static std::wstring PACK_DLL_PATH;
 
 protected:
-	void ReadSettingsRegistry(StreamType plugin_type);
-	void SaveSectionRegistry(StreamType plugin_type);
+	void ReadSettingsRegistry(PluginType plugin_type);
+	void SaveSectionRegistry(PluginType plugin_type);
 
-	bool ReadSettingsJson(StreamType plugin_type);
-	void UpdateSettingsJson(StreamType plugin_type);
+	bool ReadSettingsJson(PluginType plugin_type);
+	void UpdateSettingsJson(PluginType plugin_type);
 
 private:
-	std::map<StreamType, map_variant> m_settings;
-	StreamType m_pluginType = StreamType::enEdem;
+	std::map<PluginType, map_variant> m_settings;
+	PluginType m_pluginType = PluginType::enEdem;
 	nlohmann::json m_config;
 	BOOL m_bPortable = FALSE;
 };

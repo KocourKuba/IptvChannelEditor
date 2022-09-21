@@ -58,6 +58,9 @@
     <Filter Include="Header Files\uri\shift">
       <UniqueIdentifier>{75e47631-0131-4961-a097-51e60dda0fe6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\uri\append">
+      <UniqueIdentifier>{8cab0207-cf68-4225-ade1-bad908ac5bef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">
@@ -246,9 +249,6 @@
     <ClInclude Include="uri_russkoetv.h">
       <Filter>Header Files\uri\shift</Filter>
     </ClInclude>
-    <ClInclude Include="uri_sharaclub.h">
-      <Filter>Header Files\uri\shift</Filter>
-    </ClInclude>
     <ClInclude Include="uri_sharavoz.h">
       <Filter>Header Files\uri\flussionic</Filter>
     </ClInclude>
@@ -264,17 +264,20 @@
     <ClInclude Include="uri_sharatv.h">
       <Filter>Header Files\uri\shift</Filter>
     </ClInclude>
-    <ClInclude Include="uri_tvclub.h">
-      <Filter>Header Files\uri\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_vidok.h">
-      <Filter>Header Files\uri\shift</Filter>
-    </ClInclude>
     <ClInclude Include="ColorEdit.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="PluginConfigDlg.h">
       <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_sharaclub.h">
+      <Filter>Header Files\uri\append</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_vidok.h">
+      <Filter>Header Files\uri\append</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_tvclub.h">
+      <Filter>Header Files\uri\append</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,15 @@
 
 uri_stream::uri_stream()
 {
+	streams_config[0].stream_type = StreamType::enHLS;
+	streams_config[0].cu_type = CatchupType::cu_shift;
+	streams_config[0].cu_subst = "utc";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+	streams_config[1].stream_type = StreamType::enMPEGTS;
+	streams_config[1].cu_type = CatchupType::cu_flussonic;
+	streams_config[1].cu_subst = "archive";
+
 	EpgParameters params;
 	params.epg_root = "epg_data";
 	params.epg_name = "name";
@@ -19,10 +28,6 @@ uri_stream::uri_stream()
 	epg_params = { params, params };
 
 	PlaylistInfo info;
-
-	streams_config[0].shift_replace = "utc";
-	streams_config[1].shift_replace = "archive";
-
 	info.name = load_string_resource(IDS_STRING_PLAYLIST);
 	playlists.emplace_back(info);
 }
@@ -39,26 +44,26 @@ void uri_stream::clear()
 	clear_hash();
 }
 
-bool uri_stream::save_plugin_parameters(const std::wstring& filename)
+bool uri_stream::save_plugin_parameters(const wchar_t* filename /*= nullptr*/)
 {
+	std::wstring out_file;
+	if (filename == nullptr)
+	{
+		out_file = utils::utf8_to_utf16(get_short_name() + "_config.json");
+	}
+	else
+	{
+		out_file = filename;
+	}
+
 	bool res = false;
 	try
 	{
-		nlohmann::json node;
-		node["access_type"] = (int)access_type;
-		node["title"] = utils::utf16_to_utf8(title);
-		node["name"] = name;
-		node["short_name"] = short_name;
-		node["provider_url"] = utils::utf16_to_utf8(provider_url);
-		node["uri_parse_template"] = utils::utf16_to_utf8(uri_parse_template);
-		node["per_channel_token"] = per_channel_token ? 1 : 0;
-
-		node["streams_config"] = streams_config;
-		node["epg_params"] = epg_params;
+		nlohmann::json node = *this;
 
 		const auto& str = node.dump(2);
-		std::ofstream out_file(filename);
-		out_file << str << std::endl;
+		std::ofstream out_stream(out_file);
+		out_stream << str << std::endl;
 		res = true;
 	}
 	catch (const nlohmann::json::out_of_range& ex)
@@ -79,36 +84,62 @@ bool uri_stream::save_plugin_parameters(const std::wstring& filename)
 	return res;
 }
 
-bool uri_stream::load_plugin_parameters(const std::wstring& filename)
+bool uri_stream::load_plugin_parameters(const wchar_t* filename /*= nullptr*/)
 {
+	std::wstring in_file;
+	if (filename == nullptr)
+	{
+		in_file = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_SETTINGS), utils::utf8_to_utf16(short_name + "_config.json"));
+	}
+	else
+	{
+		in_file = filename;
+	}
 
-	return true;
+	bool res = false;
+	try
+	{
+		nlohmann::json node;
+		std::ifstream in_stream(in_file);
+		if (in_stream.good())
+		{
+			in_stream >> node;
+			from_json(node, *this);
+			res = true;
+		}
+	}
+	catch (const nlohmann::json::out_of_range& ex)
+	{
+		// out of range errors may happen if provided sizes are excessive
+		TRACE("out of range error: %s\n", ex.what());
+	}
+	catch (const nlohmann::detail::type_error& ex)
+	{
+		// type error
+		TRACE("type error: %s\n", ex.what());
+	}
+	catch (...)
+	{
+		TRACE("unknown exception\n");
+	}
+
+	return res;
 }
 
 void uri_stream::parse_uri(const std::wstring& url)
 {
-	std::wstring pre_re(uri_parse_template);
-
-	std::vector<std::wstring> groups;
-	std::wregex re_group(L"(\\?<([^>]+)>)");
-	std::match_results<std::wstring::const_iterator> ms;
-	while (std::regex_search(pre_re, ms, re_group))
-	{
-		groups.emplace_back(ms[2]);
-		pre_re.erase(ms.position(), ms.length());
-	}
-
-	std::wregex re_url(pre_re);
 	std::wsmatch m;
-	if (!std::regex_match(url, m, re_url))
+	if (!std::regex_match(url, m, get_uri_regex_parse_template()))
 	{
 		uri_base::set_uri(url);
 		return;
 	}
 
 	templated = true;
+
+	// map groups to parser members
 	size_t pos = 0;
-	for (const auto& group : groups)
+	for (const auto& group : regex_named_groups)
 	{
 		pos++;
 		if (group == L"subdomain")
@@ -154,7 +185,7 @@ void uri_stream::parse_uri(const std::wstring& url)
 		else
 		{
 			// unknown group. fix parser!
-			assert(false);
+			ASSERT(false);
 		}
 	}
 }
@@ -162,7 +193,7 @@ void uri_stream::parse_uri(const std::wstring& url)
 void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
 {
 	if (url.empty())
-		url = playlist_template;
+		url = get_playlist_template();
 
 	if (!params.token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
@@ -179,6 +210,7 @@ void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
 	if (!servers_list.empty())
 	{
 		int server = (params.server >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server;
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].name));
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].id);
 	}
 
@@ -192,29 +224,73 @@ void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
 std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url;
-	size_t subtype = (size_t)params.streamSubtype;
-	switch (streams_config[subtype].catchup_type)
+	if (!is_template())
 	{
-		case CatchupType::cu_shift:
-		case CatchupType::cu_append:
-		case CatchupType::cu_flussonic:
-			if (is_template())
+		url = get_uri();
+	}
+	else
+	{
+		size_t subtype = (size_t)params.streamSubtype;
+		switch (streams_config[subtype].cu_type)
+		{
+			case CatchupType::cu_shift:
+			case CatchupType::cu_append:
+				url = streams_config[subtype].get_uri_template();
+				if (params.shift_back)
+				{
+					url += (url.rfind('?') != std::wstring::npos) ? '&' : '?';
+					url += streams_config[subtype].get_uri_arc_template();
+				}
+				break;
+
+			case CatchupType::cu_flussonic:
 				url = params.shift_back ? streams_config[subtype].get_uri_arc_template() : streams_config[subtype].get_uri_template();
-			else
-				url = get_uri();
-			break;
-
-		case CatchupType::cu_none:
-			break;
-
-		default:
-			ASSERT(false);
-			break;
+				break;
+		}
 	}
 
 	replace_vars(url, params);
 
 	return url;
+}
+
+const std::wregex& uri_stream::get_uri_regex_parse_template()
+{
+	// to speed up parsing process and avoid multiple conversions
+	if (uri_parse_regex_template._Empty())
+	{
+		set_uri_parse_template(utils::utf8_to_utf16(uri_parse_template));
+	}
+
+	return uri_parse_regex_template;
+}
+
+void uri_stream::set_uri_parse_template(const std::wstring& val)
+{
+	try
+	{
+		// store original template
+		uri_parse_template = utils::utf16_to_utf8(val);
+
+		// clear named group
+		regex_named_groups.clear();
+
+		std::wstring ecmascript_re(val);
+		std::wregex re_group(L"(\\?<([^>]+)>)");
+		std::match_results<std::wstring::const_iterator> ms;
+		while (std::regex_search(ecmascript_re, ms, re_group))
+		{
+			regex_named_groups.emplace_back(ms[2]);
+			ecmascript_re.erase(ms.position(), ms.length());
+		}
+
+		// store regex without named groups
+		uri_parse_regex_template = ecmascript_re;
+	}
+	catch (...)
+	{
+
+	}
 }
 
 const int uri_stream::get_hash() const
@@ -292,21 +368,32 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 	if (!utils::DownloadFile(url, data, true) || data.empty())
 		return false;
 
+	const auto& params = epg_params[epg_idx];
+	std::string time_format = params.epg_time_format;
+	// replace to "%d-%m-%Y %H:%M"
+	if (!time_format.empty())
+	{
+		utils::string_replace_inplace<char>(time_format, REPL_YEAR, "%Y");
+		utils::string_replace_inplace<char>(time_format, REPL_MONTH, "%m");
+		utils::string_replace_inplace<char>(time_format, REPL_DAY, "%d");
+		utils::string_replace_inplace<char>(time_format, REPL_HOUR, "%H");
+		utils::string_replace_inplace<char>(time_format, REPL_MIN, "%M");
+	}
+
 	JSON_ALL_TRY;
 	{
 		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 
 		bool added = false;
-		const auto& root = get_epg_root(epg_idx, parsed_json);
-		const auto& params = epg_params[epg_idx];
 		time_t prev_start = 0;
+		const auto& root = get_epg_root(epg_idx, parsed_json);
 		for (const auto& item : root.items())
 		{
 			const auto& val = item.value();
 
 			EpgInfo epg_info;
 
-			if (params.epg_time_format.empty())
+			if (time_format.empty())
 			{
 				epg_info.time_start = utils::get_json_int_value(params.epg_start, val);
 			}
@@ -314,11 +401,11 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 			{
 				std::tm tm = {};
 				std::stringstream ss(utils::get_json_string_value(params.epg_start, val));
-				ss >> std::get_time(&tm, params.epg_time_format.c_str());
+				ss >> std::get_time(&tm, time_format.c_str());
 				epg_info.time_start = _mkgmtime(&tm); // parsed time assumed as UTC+00
 			}
 
-			epg_info.time_start -= 3600 * params.epg_tz; // subtract real EPG timezone offset
+			epg_info.time_start -= 3600 * params.epg_timezone; // subtract real EPG timezone offset
 
 			// Not valid time start or already added. Skip processing
 			if (epg_info.time_start == 0 || epg_map.find(epg_info.time_start) != epg_map.end()) continue;
@@ -468,7 +555,7 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	{
 		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
 		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_config[subtype].get_shift_replace());
-		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].catchup_duration));
+		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].cu_duration));
 	}
 
 	if (params.shift_back)

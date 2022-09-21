@@ -351,7 +351,7 @@ protected:
 private:
 	Credentials m_cur_account;
 
-	StreamType m_plugin_type = StreamType::enBase;
+	PluginType m_plugin_type = PluginType::enBase;
 	std::unique_ptr<uri_stream> m_plugin;
 
 	HACCEL m_hAccel = nullptr;
@@ -453,7 +453,7 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// vod
-	std::array<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>, (size_t)StreamType::enLast> m_vod_categories;
+	std::array<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>, (size_t)PluginType::enLast> m_vod_categories;
 public:
 	afx_msg void OnBnClickedButtonEditConfig();
 };

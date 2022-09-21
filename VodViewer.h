@@ -63,7 +63,7 @@ private:
 	void GetUrl(int idx);
 
 public:
-	StreamType m_plugin_type = StreamType::enBase;
+	PluginType m_plugin_type = PluginType::enBase;
 	Credentials m_account;
 
 protected:

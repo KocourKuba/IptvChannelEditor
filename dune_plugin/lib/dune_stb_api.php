@@ -148,8 +148,8 @@ class SetupControlSwitchDefs
     const switch_off = 'no';
     const switch_normal  = 'normal';
     const switch_small = 'small';
-    const switch_epg1  = 'first';
-    const switch_epg2 = 'second';
+    const switch_epg1  = EPG_FIRST;
+    const switch_epg2 = EPG_SECOND;
 }
 
 # Video zoom values for media_url string (|||dune_params|||zoom:value)

@@ -35,22 +35,23 @@ public:
 
 	uri_tvclub()
 	{
-		title = L"TV Club";
 		short_name = "tvclub";
+	}
+
+	void load_default() override
+	{
+		title = "TV Club";
 		name = "tv_club";
-		provider_url = L"https://tvclub.cc/";
 		access_type = AccountAccessType::enLoginPass;
 
-		playlist_template = L"http://celn.shott.top/p/{TOKEN}";
+		provider_url = "https://tvclub.cc/";
+		playlist_template = "http://celn.shott.top/p/{TOKEN}";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
-
-		streams_config[1].enabled = true;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_shift;
-		streams_config[1].shift_replace = "utc";
+		streams_config[1].cu_type = CatchupType::cu_append;
+		streams_config[1].cu_subst = "utc";
 		streams_config[1].uri_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
-		streams_config[1].uri_arc_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}?{SHIFT_SUBST}={START}&lutc={NOW}";
+		streams_config[1].uri_arc_template = "{CU_SUBST}={START}";
 
 		auto& params = epg_params[0];
 		params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIMESTAMP}&period=24";

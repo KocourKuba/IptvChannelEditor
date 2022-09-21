@@ -21,7 +21,7 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
      */
     public function __construct(Default_Dune_Plugin $plugin)
     {
-        parent::__construct(self::ID, $plugin, $plugin->config->GET_VOD_SERIES_FOLDER_VIEW());
+        parent::__construct(self::ID, $plugin, $plugin->GET_VOD_SERIES_FOLDER_VIEW());
 
         if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
             $plugin->create_screen($this);

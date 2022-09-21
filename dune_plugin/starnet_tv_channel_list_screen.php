@@ -34,7 +34,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function __construct(Default_Dune_Plugin $plugin)
     {
-        parent::__construct(self::ID, $plugin, $plugin->config->GET_TV_CHANNEL_LIST_FOLDER_VIEWS());
+        parent::__construct(self::ID, $plugin, $plugin->GET_TV_CHANNEL_LIST_FOLDER_VIEWS());
 
         $plugin->create_screen($this);
     }

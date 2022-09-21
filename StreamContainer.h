@@ -35,12 +35,12 @@ class StreamContainer
 {
 public:
 	StreamContainer() = delete;
-	StreamContainer(StreamType type);
+	StreamContainer(PluginType type);
 	~StreamContainer() = default;
 
-	static std::unique_ptr<uri_stream> get_instance(StreamType type);
+	static std::unique_ptr<uri_stream> get_instance(PluginType type);
 
-	void set_type(StreamType type);
+	void set_type(PluginType type);
 
 	const StreamContainer& operator=(const StreamContainer& src)
 	{
@@ -54,5 +54,5 @@ public:
 	}
 
 	std::unique_ptr<uri_stream> stream_uri;
-	StreamType stream_type;
+	PluginType stream_type;
 };

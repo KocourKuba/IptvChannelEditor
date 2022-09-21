@@ -33,31 +33,29 @@ public:
 
 	uri_sharaclub()
 	{
-		title = L"Sharaclub TV";
 		short_name = "sharaclub";
-		name = "sharaclub.tv";
-		provider_url = L"https://shara.club/";
-		access_type = AccountAccessType::enLoginPass;
-
 		provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";;
 		provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
-		playlist_template = L"http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
+	}
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
+	void load_default() override
+	{
+		title = "Sharaclub TV";
+		name = "sharaclub.tv";
+		access_type = AccountAccessType::enLoginPass;
 
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_append;
-		streams_config[0].shift_replace = "utc";
+		provider_url = "https://shara.club/";
+		playlist_template = "http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
+
+		streams_config[0].cu_type = CatchupType::cu_append;
 		streams_config[0].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8?{SHIFT_SUBST}={START}";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}";
 
-		streams_config[1].enabled = true;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_append;
-		streams_config[1].shift_replace = "utc";
+		streams_config[1].cu_type = CatchupType::cu_append;
+		streams_config[1].cu_subst = "utc";
 		streams_config[1].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts?{SHIFT_SUBST}={START}";
+		streams_config[1].uri_arc_template = "{CU_SUBST}={START}";
 
 		auto& params = epg_params[0];
 		params.epg_root = "";

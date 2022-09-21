@@ -35,13 +35,13 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-ChannelCategory::ChannelCategory(StreamType streamType, const std::wstring& root_path)
+ChannelCategory::ChannelCategory(PluginType streamType, const std::wstring& root_path)
 	: BaseInfo(InfoType::enCategory, streamType, root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
 }
 
-ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node, StreamType streamType, const std::wstring& root_path)
+ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node, PluginType streamType, const std::wstring& root_path)
 	: BaseInfo(InfoType::enCategory, streamType, root_path)
 {
 	ParseNode(node);

@@ -34,31 +34,29 @@ public:
 
 	uri_kineskop()
 	{
-		title = L"Kineskop.Club";
 		short_name = "kineskop";
-		name = "kineskop";
-		provider_url = L"http://kineskop.club/";
-		access_type = AccountAccessType::enLoginPass;
-
-		playlist_template = L"http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER_ID}/1";
-
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
-		per_channel_token = true;
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_shift;
-		streams_config[0].shift_replace = "utc";
-		streams_config[0].uri_template = "http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8?{SHIFT_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://epg.esalecrm.net/kineskop/epg/{ID}.json";
-
 		for (int i = 0; i <= IDS_STRING_KINESKOP_P4 - IDS_STRING_KINESKOP_P1; i++)
 		{
-			parser.id = load_string_resource(IDS_STRING_KINESKOP_P1 + i);
-			ServersInfo info({ utils::wstring_tolower(parser.id), parser.id });
+			ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_KINESKOP_P1 + i) });
 			servers_list.emplace_back(info);
 		}
+	}
+
+	void load_default() override
+	{
+		title = "Kineskop.Club";
+		name = "kineskop";
+		access_type = AccountAccessType::enLoginPass;
+
+		provider_url = "http://kineskop.club/";
+		playlist_template = "http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER}/1";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
+
+		per_channel_token = true;
+
+		streams_config[0].uri_template = "http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
+		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+		epg_params[0].epg_url = "http://epg.esalecrm.net/kineskop/epg/{ID}.json";
 	}
 };

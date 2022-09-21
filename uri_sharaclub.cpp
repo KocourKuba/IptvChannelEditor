@@ -42,7 +42,7 @@ static constexpr auto API_COMMAND_SET_URL = L"http://{:s}/api/players.php?a={:s}
 
 void uri_sharaclub::get_playlist_url(std::wstring& url, TemplateParams& params)
 {
-	url = playlist_template;
+	url = get_playlist_template();
 	if (params.profile != 0)
 	{
 		const auto& profiles = get_profiles_list(params);

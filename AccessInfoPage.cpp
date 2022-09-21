@@ -285,10 +285,10 @@ void CAccessInfoPage::UpdateOptionalControls()
 	UINT static_text = IDS_STRING_SERVER_ID;
 	switch (m_plugin_type)
 	{
-		case StreamType::enCbilling:
+		case PluginType::enCbilling:
 			static_text = IDS_STRING_DEVICE_ID;
 			break;
-		case StreamType::enSharaclub:
+		case PluginType::enSharaclub:
 			m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 			m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
 			params.subdomain = m_list_domain;
@@ -561,7 +561,7 @@ BOOL CAccessInfoPage::OnApply()
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
 
-	if (m_plugin_type == StreamType::enSharaclub)
+	if (m_plugin_type == PluginType::enSharaclub)
 	{
 		params.subdomain = m_list_domain;
 	}
@@ -662,7 +662,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		std::wistringstream stream(wbuf);
 		if (!stream.good()) return;
 
-		if (m_plugin_type == StreamType::enKineskop)
+		if (m_plugin_type == PluginType::enKineskop)
 		{
 			// http://knkp.in/2119490/6cd0ff4249f49957/de/1
 			static std::wregex re_url(LR"(^https?:\/\/[^\/]+\/([^\/]+)\/([^\/]+)\/?.*$)");
@@ -939,7 +939,7 @@ void CAccessInfoPage::GetAccountInfo()
 	params.profile = selected_cred.profile_id;
 	params.quality = selected_cred.quality_id;
 
-	if (m_plugin_type == StreamType::enTVClub || m_plugin_type == StreamType::enVidok)
+	if (m_plugin_type == PluginType::enTVClub || m_plugin_type == PluginType::enVidok)
 	{
 		params.token = m_plugin->get_api_token(selected_cred);
 	}

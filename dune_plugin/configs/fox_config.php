@@ -3,57 +3,31 @@ require_once 'default_config.php';
 
 class FoxPluginConfig extends Default_Config
 {
-    const PLAYLIST_TV_URL = 'http://pl.fox-tv.fun/%s/%s/tv.m3u';
     const PLAYLIST_VOD_URL = 'http://pl.fox-tv.fun/%s/%s/vodall.m3u';
 
-    public function __construct()
+    public function load_config()
     {
-        parent::__construct();
+        parent::load_config();
 
-        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
-        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
+        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
         $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>.+)$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}');
-        $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
         $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(USE_TOKEN_AS_ID, true);
+        $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u');
+        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>[^/]+)/(?<token>.+)$|');
 
-        $this->set_epg_param('first','epg_url','http://epg.drm-play.ml/fox-tv/epg/{CHANNEL}.json');
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{TOKEN}');
+
+        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.drm-play.ml/fox-tv/epg/{ID}.json');
     }
 
     /**
-     * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
-     * @param Channel $channel
-     * @return string
-     */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
-    {
-        $url = $channel->get_streaming_url();
-        if (empty($url)) {
-            // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
-            // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV
-            // hls archive url completely different, make it from scratch
-            $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-            $ext_params = $channel->get_ext_params();
-
-            $url = str_replace(array('{DOMAIN}', '{TOKEN}'), array($ext_params['subdomain'], $ext_params['token']), $template);
-        }
-
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
-    }
-
-    /**
-     * @param string $type
      * @param $plugin_cookies
      * @return string
      */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetVodListUrl($plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -65,14 +39,7 @@ class FoxPluginConfig extends Default_Config
             return '';
         }
 
-        switch ($type) {
-            case 'tv1':
-                return sprintf(self::PLAYLIST_TV_URL, $login, $password);
-            case 'movie':
-                return sprintf(self::PLAYLIST_VOD_URL, $login, $password);
-        }
-
-        return '';
+        return sprintf(self::PLAYLIST_VOD_URL, $login, $password);
     }
 
     /**
@@ -83,7 +50,7 @@ class FoxPluginConfig extends Default_Config
      */
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
-        hd_print("Get playlist information for: $this->PLUGIN_SHOW_NAME");
+        hd_print("Get playlist information");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         $skip_next = false;
@@ -94,8 +61,8 @@ class FoxPluginConfig extends Default_Config
             }
 
             if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)"|', $iValue, $m_id)
-                && preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $m3u_lines[$i + 1], $matches)) {
-                $pl_entries[$m_id['id']] = $matches;
+                && preg_match($this->get_feature(URI_PARSE_TEMPLATE), $m3u_lines[$i + 1], $matches)) {
+                $pl_entries[$m_id[M_ID]] = $matches;
                 $skip_next = true;
             }
         }
@@ -106,17 +73,6 @@ class FoxPluginConfig extends Default_Config
         }
 
         return $pl_entries;
-    }
-
-    /**
-     * @param string $channel_id
-     * @param array $ext_params
-     * @return array|mixed|string|string[]
-     */
-    public function UpdateStreamUrlID($channel_id, $ext_params)
-    {
-        // token used as channel id
-        return str_replace('{TOKEN}', $ext_params['token'], $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
     }
 
     /**

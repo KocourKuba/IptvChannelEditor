@@ -33,29 +33,26 @@ public:
 
 	uri_iptvonline()
 	{
-		title = L"IPTV Online";
 		short_name = "iptvonline";
+	}
+
+	void load_default() override
+	{
+		title = "IPTV Online";
 		name = "iptvonline";
-		provider_url = L"https://iptv.online/";
 		access_type = AccountAccessType::enPin;
 
-		playlist_template = L"http://iptv.online/play/{PASSWORD}/m3u8";
+		provider_url = "https://iptv.online/";
+		playlist_template = "http://iptv.online/play/{PASSWORD}/m3u8";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "video";
+		streams_config[0].cu_type = CatchupType::cu_flussonic;
+		streams_config[0].cu_subst = "video";
 		streams_config[0].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{SHIFT_SUBST}-{START}-{DURATION}.m3u8";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.m3u8";
 
-		streams_config[1].enabled = true;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_flussonic;
-		streams_config[1].shift_replace = "archive";
 		streams_config[1].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{SHIFT_SUBST}-{START}-{DURATION}.ts";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts";
 
 		auto& params1 = epg_params[0];
 		params1.epg_url = "http://epg.iptvx.one/api/id/{ID}.json";
@@ -64,8 +61,8 @@ public:
 		params1.epg_desc = "description";
 		params1.epg_start = "start";
 		params1.epg_end = "";
-		params1.epg_time_format = "%d-%m-%Y %H:%M";
-		params1.epg_tz = 3; // iptvx.one uses moscow time (UTC+3)
+		params1.epg_time_format = "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}"; // "%d-%m-%Y %H:%M";
+		params1.epg_timezone = 3; // iptvx.one uses moscow time (UTC+3)
 
 		epg_params[1].epg_url = "http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
 	}

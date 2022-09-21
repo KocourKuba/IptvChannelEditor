@@ -1,8 +1,8 @@
 ﻿<?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'lib/default_dune_plugin.php';
 require_once 'lib/hd.php';
+require_once 'lib/default_dune_plugin.php';
 
 require_once 'plugin_type.php';
 require_once 'starnet_entry_handler.php';
@@ -23,7 +23,6 @@ require_once 'starnet_vod_series_list_screen.php';
 require_once 'starnet_vod_favorites_screen.php';
 require_once 'starnet_vod_history_screen.php';
 
-
 class Starnet_Plugin extends Default_Dune_Plugin
 {
     /**
@@ -33,32 +32,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
     {
         parent::__construct();
 
-        $this->plugin_path = __DIR__;
-        $plugin_type = PLUGIN_TYPE;
-        if (!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'Default_Config')) {
-            hd_print("Unknown plugin type: $plugin_type");
-            throw new Exception("Unknown plugin type: $plugin_type");
-        }
-
-        $config = new $plugin_type;
-        $this->config = $config;
-
-        print_sysinfo();
-
-        hd_print("----------------------------------------------------");
-        hd_print("Plugin name:      " . $config->PLUGIN_SHOW_NAME);
-        hd_print("Plugin version:   " . $config->PLUGIN_VERSION);
-        hd_print("Plugin date:      " . $config->PLUGIN_DATE);
-        hd_print("Account type:     " . $config->get_feature(ACCOUNT_TYPE));
-        hd_print("TV fav:           " . ($config->get_feature(TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
-        hd_print("VOD page:         " . ($config->get_feature(VOD_MOVIE_PAGE_SUPPORTED) ? "yes" : "no"));
-        hd_print("VOD fav:          " . ($config->get_feature(VOD_FAVORITES_SUPPORTED) ? "yes" : "no"));
-        hd_print("LocalTime         " . format_datetime('Y-m-d H:i', time()));
-        hd_print("TimeZone          " . getTimeZone());
-        hd_print("Daylight          " . date('I'));
-        hd_print("Icon              " . $config->PLUGIN_ICON);
-        hd_print("Background        " . $config->PLUGIN_BACKGROUND);
-        hd_print("----------------------------------------------------");
+        $this->plugin_setup();
 
         User_Input_Handler_Registry::get_instance()->register_handler(new Starnet_Entry_Handler());
 

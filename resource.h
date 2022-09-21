@@ -406,17 +406,16 @@
 #define IDC_EDIT_STREAM_TEMPLATE        1187
 #define IDC_EDIT_STREAM_ARC_TEMPLATE    1188
 #define IDC_EDIT_SHIFT_SUBST            1189
-#define IDC_CHECK_STREAM_ENABLED        1190
+#define IDC_EDIT_PLAYLIST_TEMPLATE      1190
 #define IDC_EDIT_DURATION               1191
 #define IDC_STATIC_SUBST                1192
 #define IDC_STATIC_DURATION             1193
-#define IDC_CHECK_USE_DURATION          1194
-#define IDC_COMBO_STREAM_TYPE           1195
-#define IDC_COMBO_CATCHUP_TYPE          1196
-#define IDC_COMBO_EPG_TYPE              1197
-#define IDC_BUTTON_EPG_SHOW             1198
-#define IDC_EDIT_PLUGIN_NAME            1199
-#define IDC_DATETIMEPICKER_DATE         1200
+#define IDC_COMBO_STREAM_TYPE           1194
+#define IDC_COMBO_CATCHUP_TYPE          1195
+#define IDC_COMBO_EPG_TYPE              1196
+#define IDC_BUTTON_EPG_SHOW             1197
+#define IDC_EDIT_PLUGIN_NAME            1198
+#define IDC_DATETIMEPICKER_DATE         1199
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -450,7 +449,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        274
 #define _APS_NEXT_COMMAND_VALUE         32804
-#define _APS_NEXT_CONTROL_VALUE         1201
+#define _APS_NEXT_CONTROL_VALUE         1200
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

@@ -35,30 +35,28 @@ public:
 
 	uri_antifriz()
 	{
-		title = L"Antifriz TV";
 		short_name = "antifriz";
+		provider_vod_url = L"http://protected-api.com";
+	}
+
+	void load_default() override
+	{
+		title = "Antifriz TV";
 		name = "antifriz.tv";
-		provider_url = L"https://antifriztv.com/";
 		access_type = AccountAccessType::enPin;
 
-		provider_vod_url = L"http://protected-api.com";
-		playlist_template = L"http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+		provider_url = "https://antifriztv.com/";
+		playlist_template = "http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+		uri_parse_template = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 
-		uri_parse_template = LR"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
-
-		streams_config[0].enabled = true;
-		streams_config[0].stream_sub_type = StreamSubType::enHLS;
-		streams_config[0].catchup_type = CatchupType::cu_flussonic;
-		streams_config[0].shift_replace = "archive";
+		streams_config[0].cu_type = CatchupType::cu_flussonic;
+		streams_config[0].cu_subst = "archive";
 		streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-		streams_config[1].enabled = true;
-		streams_config[1].stream_sub_type = StreamSubType::enMPEGTS;
-		streams_config[1].catchup_type = CatchupType::cu_flussonic;
-		streams_config[1].shift_replace = "archive";
+		streams_config[1].cu_type = CatchupType::cu_flussonic;
 		streams_config[1].uri_template = "http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{SHIFT_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 		epg_params[0].epg_url = "http://protected-api.com/epg/{ID}/?date=";
 		epg_params[0].epg_root = "";
