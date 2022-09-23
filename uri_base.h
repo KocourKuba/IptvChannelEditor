@@ -26,13 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-enum class StreamType
-{
-	enHLS = 0,
-	enMPEGTS,
-};
-
-
 /// <summary>
 /// Base uri class
 /// </summary>

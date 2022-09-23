@@ -33,37 +33,11 @@ class uri_tvclub : public uri_stream
 {
 public:
 
-	uri_tvclub()
-	{
-		short_name = "tvclub";
-	}
+	uri_tvclub();
 
-	void load_default() override
-	{
-		title = "TV Club";
-		name = "tv_club";
-		access_type = AccountAccessType::enLoginPass;
-
-		provider_url = "https://tvclub.cc/";
-		playlist_template = "http://celn.shott.top/p/{TOKEN}";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
-
-		streams_config[1].cu_type = CatchupType::cu_append;
-		streams_config[1].cu_subst = "utc";
-		streams_config[1].uri_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
-		streams_config[1].uri_arc_template = "{CU_SUBST}={START}";
-
-		auto& params = epg_params[0];
-		params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIMESTAMP}&period=24";
-		params.epg_name = "text";
-		params.epg_desc = "description";
-		params.epg_start = "start";
-		params.epg_end = "end";
-	}
-
+	void load_default() override;
 	std::wstring get_api_token(const Credentials& creds) const override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
-	nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const override;
-	const std::vector<ServersInfo>& get_servers_list(TemplateParams& params) override;
+	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
 };

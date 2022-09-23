@@ -32,34 +32,8 @@ class uri_edem : public uri_stream
 {
 public:
 
-	uri_edem()
-	{
-		short_name = "edem";
-	}
+	uri_edem();
 
-	void load_default() override
-	{
-		playlists.clear();
-		PlaylistInfo info;
-		info.name = load_string_resource(IDS_STRING_EDEM_STANDARD);
-		playlists.emplace_back(info);
-
-		info.name = load_string_resource(IDS_STRING_EDEM_THEMATIC);
-		playlists.emplace_back(info);
-
-		title = "iEdem/iLook TV";
-		name = "iedem.tv";
-		access_type = AccountAccessType::enOtt;
-
-		provider_url = "https://ilook.tv/";
-		provider_vod_url = L"{SUBDOMAIN}";
-		uri_parse_template = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";
-
-		streams_config[0].uri_template = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://epg.drm-play.ml/edem/epg/{ID}.json";
-	}
-
-	void get_playlist_url(std::wstring& url, TemplateParams& params) override;
+	void load_default() override;
+	std::wstring get_playlist_url(TemplateParams& params, std::wstring url = L"") override;
 };

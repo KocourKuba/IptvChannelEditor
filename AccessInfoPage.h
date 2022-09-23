@@ -63,6 +63,7 @@ protected:
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonNewFromUrl();
 	afx_msg void OnBnClickedCheckEmbed();
+	afx_msg void OnCbnSelchangeComboServerId();
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
 	afx_msg void OnCbnSelchangeComboQuality();
@@ -70,8 +71,6 @@ protected:
 	afx_msg void OnEnChangeEditPluginSuffix();
 	afx_msg void OnEnChangeMfceditbrowsePluginLogo();
 	afx_msg void OnEnChangeMfceditbrowsePluginBgnd();
-	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
 	afx_msg void OnEnChangeEditPluginUpdateVersion();
 	afx_msg void OnEnChangeEditPluginUpdateUrl();
 	afx_msg void OnEnChangeEditPluginUpdateName();
@@ -81,6 +80,8 @@ protected:
 	afx_msg void OnBnClickedCheckAutoincrementVersion();
 	afx_msg void OnBnClickedCheckCustomUpdateName();
 	afx_msg void OnBnClickedCheckCustomPackageName();
+	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
 
 private:
 	Credentials& GetCheckedAccount();
@@ -104,9 +105,10 @@ protected:
 	CButton m_wndRemove;
 	CButton m_wndNewFromUrl;
 	CButton m_wndEmbed;
-	CComboBox m_wndDeviceID;
-	CComboBox m_wndProfile;
-	CComboBox m_wndQuality;
+	CComboBox m_wndServers;
+	CComboBox m_wndDevices;
+	CComboBox m_wndQualities;
+	CComboBox m_wndProfiles;
 	CEdit m_wndCaption;
 	CEdit m_wndSuffix;
 	CMFCEditBrowseCtrlEx m_wndLogo;
@@ -138,11 +140,13 @@ private:
 	CString m_channelsWebPath;
 
 	std::unique_ptr<uri_stream> m_plugin;
-	std::vector<ServersInfo> m_servers;
-	std::vector<ProfilesInfo> m_profiles;
-	std::vector<QualityInfo> m_qualities;
+	std::vector<DynamicParamsInfo> m_servers;
+	std::vector<DynamicParamsInfo> m_devices;
+	std::vector<DynamicParamsInfo> m_profiles;
+	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
 	PluginType m_plugin_type = PluginType::enBase;
+
 	std::map<UINT, std::wstring> m_tooltips_info_account;
 };
 

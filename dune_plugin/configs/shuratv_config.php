@@ -20,50 +20,7 @@ class shuratv_config extends default_config
         $this->set_epg_param(EPG_FIRST,EPG_END, 'stop');
         $this->set_epg_param(EPG_FIRST,EPG_NAME, 'epg');
         $this->set_epg_param(EPG_FIRST,EPG_DESC, 'desc');
-    }
 
-    /**
-     * @param string $url
-     * @param int $archive_ts
-     * @return string
-     */
-    protected static function UpdateArchiveUrlParams($url, $archive_ts)
-    {
-        if ($archive_ts > 0) {
-            $now_ts = time();
-            $url .= (strpos($url, '?') === false) ? '?' : '&';
-            $url .= "archive=$archive_ts&lutc=$now_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
-        }
-
-        return $url;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string[]
-     */
-    public function get_server_opts($plugin_cookies)
-    {
-        return array('1', '2');
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return int|null
-     */
-    public function get_server_id($plugin_cookies)
-    {
-        return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
-    }
-
-    /**
-     * @param $server
-     * @param $plugin_cookies
-     */
-    public function set_server_id($server, $plugin_cookies)
-    {
-        $plugin_cookies->server = $server;
+        $this->set_servers(array('1', '2'));
     }
 }

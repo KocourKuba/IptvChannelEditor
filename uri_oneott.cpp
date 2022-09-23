@@ -35,6 +35,41 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+uri_oneott::uri_oneott()
+{
+	short_name = "oneott";
+}
+
+void uri_oneott::load_default()
+{
+	title = "1OTT TV";
+	name = "oneott.tv";
+	access_type = AccountAccessType::enLoginPass;
+
+	provider_url = "http://1ott.net/";
+	playlist_template = "http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
+	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
+
+	streams_list[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+	streams_list[1].cu_type = CatchupType::cu_shift;
+	streams_list[1].cu_subst = "utc";
+	streams_list[1].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}";
+	streams_list[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+	auto& params1 = epg_params[0];
+	params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";
+	params1.epg_date_format = "%Y-%m-%d";
+	params1.epg_root = "";
+	params1.epg_name = "epg";
+	params1.epg_desc = "desc";
+	params1.epg_start = "start";
+	params1.epg_end = "stop";
+
+	epg_params[1].epg_url = "http://epg.drm-play.ml/1ott/epg/{ID}.json";
+}
+
 bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";
@@ -57,9 +92,7 @@ bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo
 			TemplateParams param;
 			param.token = token;
 
-			std::wstring url;
-			get_playlist_url(url, param);
-			AccountInfo info_url{ L"url", url };
+			AccountInfo info_url{ L"url", get_playlist_url(param) };
 			info_list.emplace_back(info_url);
 		}
 

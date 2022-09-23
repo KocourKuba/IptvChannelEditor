@@ -40,6 +40,36 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}&{:s}={:s}";
 
+uri_tvclub::uri_tvclub()
+{
+	short_name = "tvclub";
+	requested_token = true;
+}
+
+void uri_tvclub::load_default()
+{
+	title = "TV Club";
+	name = "tv_club";
+	access_type = AccountAccessType::enLoginPass;
+
+	provider_url = "https://tvclub.cc/";
+	playlist_template = "http://celn.shott.top/p/{TOKEN}";
+	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+
+	streams_list[1].cu_type = CatchupType::cu_append;
+	streams_list[1].cu_subst = "utc";
+	streams_list[1].uri_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+	streams_list[1].uri_arc_template = "{CU_SUBST}={START}";
+
+	auto& params = epg_params[0];
+	params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIMESTAMP}&period=24";
+	params.epg_root = "epg|channels|[0]|epg";
+	params.epg_name = "text";
+	params.epg_desc = "description";
+	params.epg_start = "start";
+	params.epg_end = "end";
+}
+
 std::wstring uri_tvclub::get_api_token(const Credentials& creds) const
 {
 	std::string login_a = utils::utf16_to_utf8(creds.get_login());
@@ -103,52 +133,54 @@ bool uri_tvclub::parse_access_info(TemplateParams& params, std::list<AccountInfo
 	return false;
 }
 
-nlohmann::json uri_tvclub::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
+void uri_tvclub::fill_servers_list(TemplateParams& params)
 {
-	return epg_data["epg"]["channels"][0]["epg"];
-}
+	if (params.login.empty() || params.password.empty() || !get_servers_list().empty())
+		return;
 
-const std::vector<ServersInfo>& uri_tvclub::get_servers_list(TemplateParams& params)
-{
-	if (servers_list.empty())
+	std::vector<DynamicParamsInfo> servers;
+
+	Credentials creds;
+	creds.set_login(params.login);
+	creds.set_password(params.password);
+
+	const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
+	std::vector<BYTE> data;
+	if (utils::DownloadFile(url, data) || data.empty())
 	{
-		Credentials creds;
-		creds.set_login(params.login);
-		creds.set_password(params.password);
-
-		const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(url, data) || data.empty())
+		JSON_ALL_TRY;
 		{
-			JSON_ALL_TRY;
+			const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+			if (parsed_json.contains("settings"))
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
-				if (parsed_json.contains("settings"))
+				const auto& settings = parsed_json["settings"];
+				const auto& current = utils::get_json_wstring("id", settings["current"]["server"]);
+
+				for (const auto& item : settings["lists"]["servers"].items())
 				{
-					const auto& settings = parsed_json["settings"];
-					const auto& current = utils::get_json_string("id", settings["current"]["server"]);
+					const auto& server = item.value();
+					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("name", server) };
+					if (info.get_id() == current)
+						params.server = servers.size();
 
-					for (const auto& item : settings["lists"]["servers"].items())
-					{
-						const auto& server = item.value();
-						ServersInfo info({ utils::get_json_string("id", server), utils::get_json_string("name", server) });
-						if (info.id == current)
-							params.server = servers_list.size();
-
-						servers_list.emplace_back(info);
-					}
+					servers.emplace_back(info);
 				}
 			}
-			JSON_ALL_CATCH;
 		}
+		JSON_ALL_CATCH;
 	}
-	return servers_list;
+
+	set_servers_list(servers);
 }
 
 bool uri_tvclub::set_server(TemplateParams& params)
 {
-	const auto& servers = get_servers_list(params);
-	if (!servers.empty())
+	if (servers_list.empty())
+	{
+		fill_servers_list(params);
+	}
+
+	if (!servers_list.empty())
 	{
 		Credentials creds;
 		creds.set_login(params.login);
@@ -158,7 +190,7 @@ bool uri_tvclub::set_server(TemplateParams& params)
 									  L"set",
 									  get_api_token(creds),
 									  L"server",
-									  servers[params.server].id);
+									  servers_list[params.server].get_id());
 
 		std::vector<BYTE> data;
 		if (utils::DownloadFile(url, data) || data.empty())

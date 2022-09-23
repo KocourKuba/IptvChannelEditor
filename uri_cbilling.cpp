@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "uri_cbilling.h"
 #include "PlayListEntry.h"
+#include "IPTVChannelEditor.h"
 
 #include "UtilsLib\inet_utils.h"
 
@@ -35,6 +36,52 @@ DEALINGS IN THE SOFTWARE.
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+uri_cbilling::uri_cbilling()
+{
+	short_name = "cbilling";
+	provider_vod_url = L"http://protected-api.com";
+}
+
+void uri_cbilling::load_default()
+{
+	title = "Cbilling TV";
+	name = "cbillingtv";
+	access_type = AccountAccessType::enPin;
+
+	provider_url = "https://cbilling.eu/";
+	playlist_template = "http://247on.cc/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
+	uri_parse_template = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+
+	streams_list[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
+	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+	streams_list[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	streams_list[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+
+	auto& params1 = epg_params[0];
+	params1.epg_url = "http://protected-api.com/epg/{ID}/?date=";
+	params1.epg_root = "";
+
+	fill_device_list(TemplateParams());
+}
+
+void uri_cbilling::fill_device_list(TemplateParams& /*params*/)
+{
+	if (!get_device_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> devices;
+	for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
+	{
+		DynamicParamsInfo info;
+		info.set_id(fmt::format(L"{:d}", i + 1));
+		info.set_name(load_string_resource(1049, IDS_STRING_CBILLING_TV_P1 + i));
+		devices.emplace_back(info);
+	}
+
+	set_device_list(devices);
+}
 
 bool uri_cbilling::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {

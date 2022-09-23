@@ -36,7 +36,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PathsSettingsPage.h"
 #include "UpdateSettingsPage.h"
 #include "AccessInfoPage.h"
-#include "PluginConfigDlg.h"
+#include "PluginConfigPage.h"
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
 #include "NewChannelsListDlg.h"
@@ -221,8 +221,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
-		ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig)
-		END_MESSAGE_MAP()
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig)
+END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -241,6 +241,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndEditConfig);
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
 	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_isArchive);
 	DDX_Control(pDX, IDC_CHECK_ARCHIVE, m_wndArchive);
@@ -447,6 +448,10 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	}
 
 	m_wndToolTipCtrl.Activate(TRUE);
+
+#ifdef _DEBUG
+	m_wndEditConfig.ShowWindow(SW_SHOW);
+#endif // _DEBUG
 
 	m_archiveCheckDays = GetConfig().get_int(true, REG_DAYS_BACK);
 	m_archiveCheckHours = GetConfig().get_int(true, REG_HOURS_BACK);
@@ -772,7 +777,6 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 {
 	m_plFileName.Empty();
-	std::wstring url;
 	int idx = m_wndPlaylist.GetCurSel();
 	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(idx));
 
@@ -793,11 +797,13 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	{
 		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 	}
-	if (m_plugin_type == PluginType::enTVClub || m_plugin_type == PluginType::enVidok)
+
+	if (m_plugin->is_requested_token())
 	{
 		params.token = m_plugin->get_api_token(m_cur_account);
 	}
-	m_plugin->get_playlist_url(url, params);
+
+	const auto& url = m_plugin->get_playlist_url(params);
 
 	if (url.empty())
 	{
@@ -935,45 +941,21 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		for (const auto& entry : m_playlistEntries->m_entries)
 		{
 			const auto& parser = entry->get_uri_stream()->get_parser();
-			switch (m_plugin_type)
+			if (m_plugin_type == PluginType::enEdem)
 			{
-				case PluginType::enEdem: // domain/token
-				{
-					const auto& token = parser.token;
-					const auto& domain = parser.domain;
-					if (!token.empty() && token != L"00000000000000" && !domain.empty() && domain != L"localhost")
-					{
-						m_cur_account.set_token(parser.token);
-						m_cur_account.set_subdomain(parser.domain);
-						bSet = true;
-					}
-					break;
-				}
-				case PluginType::enGlanz: // login/token
-					if (!parser.token.empty()
-						&& !parser.login.empty()
-						&& !parser.password.empty()
-						&& !parser.int_id.empty()
-						)
-					{
-						m_cur_account.set_token(parser.token);
-						m_cur_account.set_login(parser.login);
-						m_cur_account.set_password(parser.password);
-						bSet = true;
-					}
-					break;
-				case PluginType::enKineskop: // login/token
-					bSet = true;
-					break;
-				default:
+				const auto& token = parser.token;
+				const auto& domain = parser.domain;
+				if (!token.empty() && token != L"00000000000000" && !domain.empty() && domain != L"localhost")
 				{
 					m_cur_account.set_token(parser.token);
-					bSet = true;
-					break;
+					m_cur_account.set_subdomain(parser.domain);
 				}
 			}
-
-			if (bSet) break;
+			else if (!entry->get_uri_stream()->is_per_channel_token())
+			{
+				m_cur_account.set_token(parser.token);
+			}
+			break;
 		}
 
 		for (auto& entry : m_playlistEntries->m_entries)
@@ -3026,6 +3008,15 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
 
 	pSheet->AddPage(&dlgInfo);
+
+#ifdef _DEBUG
+	CPluginConfigPage dlgCfg;
+	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
+	dlgCfg.m_plugin_type = m_plugin_type;
+
+	pSheet->AddPage(&dlgCfg);
+#endif // _DEBUG
+
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
 	{
@@ -4948,17 +4939,9 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri) const
 {
 	auto& parser = uri->get_parser();
-	if (!uri->get_per_channel_token())
+	if (!uri->is_per_channel_token())
 	{
-		if (m_plugin_type == PluginType::enVidok || m_plugin_type == PluginType::enTVClub)
-		{
-			parser.token = uri->get_api_token(m_cur_account);
-		}
-		else
-		{
-			parser.token = m_cur_account.get_token();
-		}
-
+		parser.token = uri->is_requested_token() ? uri->get_api_token(m_cur_account) : m_cur_account.get_token();
 		return;
 	}
 
@@ -5008,8 +4991,15 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 {
-	CPluginConfigDlg dlg;
-	dlg.m_plugin_type = m_plugin_type;
+	auto pSheet = std::make_unique<CResizedPropertySheet>(IDS_STRING_ACCOUNT_SETTINGS, REG_CONFIG_WINDOW_POS);
+	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
+	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 
-	dlg.DoModal();
+	CPluginConfigPage dlgCfg;
+	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
+	dlgCfg.m_plugin_type = m_plugin_type;
+	dlgCfg.m_single = TRUE;
+
+	pSheet->AddPage(&dlgCfg);
+	pSheet->DoModal();
 }

@@ -31,28 +31,7 @@ class uri_fox : public uri_stream
 {
 public:
 
-	uri_fox()
-	{
-		short_name = "fox";
-		provider_vod_url = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u";
-	}
+	uri_fox();
 
-	void load_default() override
-	{
-		title = "Fox TV";
-		name = "fox-fun.tv";
-		access_type = AccountAccessType::enLoginPass;
-
-		provider_url = "http://info.fox-tv.fun/";
-		playlist_template = "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u";
-		uri_parse_template = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
-
-		use_token_as_id = true;
-		per_channel_token = true;
-
-		streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://epg.drm-play.ml/fox-tv/epg/{ID}.json";
-	}
+	void load_default() override;
 };

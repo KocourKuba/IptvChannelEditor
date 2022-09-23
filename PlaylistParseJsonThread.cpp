@@ -101,7 +101,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 			auto movie = std::make_shared<vod_movie>();
 
 			JSON_ALL_TRY;
-			category_name = utils::get_json_string("category", val);
+			category_name = utils::get_json_wstring("category", val);
 
 			if (!categories->tryGet(category_name, category))
 			{
@@ -110,21 +110,21 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 				categories->set(category_name, category);
 			}
 
-			movie->title = utils::get_json_string("name", val);
-			movie->id = utils::get_json_string("id", val);
-			movie->url = utils::get_json_string("video", val);
+			movie->title = utils::get_json_wstring("name", val);
+			movie->id = utils::get_json_wstring("id", val);
+			movie->url = utils::get_json_wstring("video", val);
 
 			const auto& info = val["info"];
 			if (!info.empty())
 			{
-				movie->poster_url.set_uri(utils::get_json_string("poster", info));
+				movie->poster_url.set_uri(utils::get_json_wstring("poster", info));
 				movie->poster_url.set_schema(L"http://");
-				movie->description = utils::get_json_string("plot", info);
-				movie->rating = utils::get_json_string("rating", info);
-				movie->year = utils::get_json_string("year", info);
-				movie->director = utils::get_json_string("director", info);
-				movie->casting = utils::get_json_string("cast", info);
-				movie->age = utils::get_json_string("adult", info);
+				movie->description = utils::get_json_wstring("plot", info);
+				movie->rating = utils::get_json_wstring("rating", info);
+				movie->year = utils::get_json_wstring("year", info);
+				movie->director = utils::get_json_wstring("director", info);
+				movie->casting = utils::get_json_wstring("cast", info);
+				movie->age = utils::get_json_wstring("adult", info);
 				movie->movie_time = std::to_wstring(info.value("duration_secs", 0) / 60);
 
 				for (const auto& genre_item : info["genre"].items())
@@ -180,8 +180,8 @@ void CPlaylistParseJsonThread::ParseCbilling()
 			const auto& item = item_it.value();
 
 			auto category = std::make_shared<vod_category>();
-			category->id = utils::get_json_string("id", item);
-			category->name = utils::get_json_string("name", item);
+			category->id = utils::get_json_wstring("id", item);
+			category->name = utils::get_json_wstring("name", item);
 			total += item["count"].get<int>();
 			categories->set(category->id, category);
 		}
@@ -209,17 +209,17 @@ void CPlaylistParseJsonThread::ParseCbilling()
 				JSON_ALL_TRY
 				auto movie = std::make_shared<vod_movie>();
 
-				movie->id = utils::get_json_string("id", movie_item);
-				movie->title = utils::get_json_string("name", movie_item);
-				movie->poster_url.set_uri(utils::get_json_string("poster", movie_item));
+				movie->id = utils::get_json_wstring("id", movie_item);
+				movie->title = utils::get_json_wstring("name", movie_item);
+				movie->poster_url.set_uri(utils::get_json_wstring("poster", movie_item));
 				movie->poster_url.set_schema(L"http://");
-				movie->rating = utils::get_json_string("rating", movie_item);
-				movie->country = utils::get_json_string("country", movie_item);
-				movie->year = utils::get_json_string("year", movie_item);
+				movie->rating = utils::get_json_wstring("rating", movie_item);
+				movie->country = utils::get_json_wstring("country", movie_item);
+				movie->year = utils::get_json_wstring("year", movie_item);
 
 				for (const auto& genre_item : movie_item["genres"].items())
 				{
-					const auto& title = utils::get_json_string("title", genre_item.value());
+					const auto& title = utils::get_json_wstring("title", genre_item.value());
 					vod_genre genre({ title, title });
 					movie->genres.set(title, genre);
 				}
@@ -277,15 +277,15 @@ void CPlaylistParseJsonThread::ParseEdem()
 			const auto& item = item_it.value();
 
 			auto category = std::make_shared<vod_category>();
-			category->id = utils::get_json_string("fid", item["request"]);
-			category->name = utils::get_json_string("title", item);
+			category->id = utils::get_json_wstring("fid", item["request"]);
+			category->name = utils::get_json_wstring("title", item);
 			categories->set(category->id, category);
 		}
 
 		for (const auto& filter_it : parsed_json["controls"]["filters"].items())
 		{
 			const auto& filter = filter_it.value();
-			const auto& filter_name = utils::get_json_string("title", filter);
+			const auto& filter_name = utils::get_json_wstring("title", filter);
 			std::string id_tag;
 			if (filter_name == L"Жанр")
 			{
@@ -305,8 +305,8 @@ void CPlaylistParseJsonThread::ParseEdem()
 			for (const auto& filter_sub_it : filter["items"].items())
 			{
 				const auto& filter_sub = filter_sub_it.value();
-				const auto& id = utils::get_json_string(id_tag, filter_sub["request"]);
-				const auto& title = utils::get_json_string("title", filter_sub);
+				const auto& id = utils::get_json_wstring(id_tag, filter_sub["request"]);
+				const auto& title = utils::get_json_wstring("title", filter_sub);
 				vod_filter filter({ id, title });
 				filters.set(id, filter);
 			}
@@ -346,22 +346,22 @@ void CPlaylistParseJsonThread::ParseEdem()
 
 					auto movie = std::make_shared<vod_movie>();
 
-					if (utils::get_json_string("type", movie_item) == L"next")
+					if (utils::get_json_wstring("type", movie_item) == L"next")
 					{
 						offset = utils::get_json_int("offset", movie_item["request"]);
 						continue;
 					}
 
-					movie->id = utils::get_json_string("fid", movie_item["request"]);
-					movie->title = utils::get_json_string("title", movie_item);
-					movie->description = utils::get_json_string("description", movie_item);
-					movie->poster_url.set_uri(utils::get_json_string("img", movie_item));
+					movie->id = utils::get_json_wstring("fid", movie_item["request"]);
+					movie->title = utils::get_json_wstring("title", movie_item);
+					movie->description = utils::get_json_wstring("description", movie_item);
+					movie->poster_url.set_uri(utils::get_json_wstring("img", movie_item));
 					movie->poster_url.set_schema(L"http://");
-					movie->rating = utils::get_json_string("rating", movie_item);
-					movie->country = utils::get_json_string("country", movie_item);
-					movie->year = utils::get_json_string("year", movie_item);
-					movie->age = utils::get_json_string("agelimit", movie_item);
-					movie->movie_time = utils::get_json_string("duration", movie_item);
+					movie->rating = utils::get_json_wstring("rating", movie_item);
+					movie->country = utils::get_json_wstring("country", movie_item);
+					movie->year = utils::get_json_wstring("year", movie_item);
+					movie->age = utils::get_json_wstring("agelimit", movie_item);
+					movie->movie_time = utils::get_json_wstring("duration", movie_item);
 
 					category.second->movies.set(movie->id, movie);
 
@@ -428,7 +428,7 @@ void CPlaylistParseJsonThread::ParseGlanz()
 			auto movie = std::make_shared<vod_movie>();
 
 			JSON_ALL_TRY;
-			category_name = utils::get_json_string("category", val);
+			category_name = utils::get_json_wstring("category", val);
 			if (category_name.empty())
 				category_name = L"Без категории";
 
@@ -439,27 +439,27 @@ void CPlaylistParseJsonThread::ParseGlanz()
 				categories->set(category_name, category);
 			}
 
-			movie->title = utils::get_json_string("name", val);
-			movie->id = utils::get_json_string("id", val);
-			movie->url = utils::get_json_string("url", val);
+			movie->title = utils::get_json_wstring("name", val);
+			movie->id = utils::get_json_wstring("id", val);
+			movie->url = utils::get_json_wstring("url", val);
 
-			movie->poster_url.set_uri(utils::get_json_string("cover", val));
+			movie->poster_url.set_uri(utils::get_json_wstring("cover", val));
 			movie->poster_url.set_schema(L"http://");
-			movie->description = utils::get_json_string("description", val);
-			movie->rating = utils::get_json_string("rating", val);
-			movie->year = utils::get_json_string("year", val);
-			movie->director = utils::get_json_string("director", val);
-			movie->casting = utils::get_json_string("actors", val);
+			movie->description = utils::get_json_wstring("description", val);
+			movie->rating = utils::get_json_wstring("rating", val);
+			movie->year = utils::get_json_wstring("year", val);
+			movie->director = utils::get_json_wstring("director", val);
+			movie->casting = utils::get_json_wstring("actors", val);
 			//movie->age = utils::get_json_string("censored", val);
 			movie->movie_time = val.value("duration_secs", 0);
-			movie->country = utils::get_json_string("country", val);
+			movie->country = utils::get_json_wstring("country", val);
 
 			for (const auto& item : val["genres"].items())
 			{
 				const auto& genre_item = item.value();
 
-				const auto& id = utils::get_json_string("id", genre_item);
-				const auto& title = utils::get_json_string("title", genre_item);
+				const auto& id = utils::get_json_wstring("id", genre_item);
+				const auto& title = utils::get_json_wstring("title", genre_item);
 				vod_genre genre({ id, title });
 
 				movie->genres.set(title, genre);

@@ -31,79 +31,17 @@ class default_config extends dynamic_config
 
     /**
      * @param $plugin_cookies
-     * @return null
+     * @return string
      */
-    public function get_device($plugin_cookies)
-    {
-        return null;
-    }
-
-    public function set_device($device, $plugin_cookies)
-    {
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_quality_opts($plugin_cookies)
-    {
-        return array();
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return null
-     */
-    public function get_quality_id($plugin_cookies)
-    {
-        return null;
-    }
-
-    public function set_quality_id($quality, $plugin_cookies)
-    {
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_server_opts($plugin_cookies)
-    {
-        return array();
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return null
-     */
-    public function get_server_id($plugin_cookies)
-    {
-        return null;
-    }
-
-    /**
-     * @param $server
-     * @param $plugin_cookies
-     */
-    public function set_server_id($server, $plugin_cookies)
-    {
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return null
-     */
-    public function get_server($plugin_cookies)
-    {
-        return null;
-    }
-
     public function get_login($plugin_cookies)
     {
         return isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
     public function get_password($plugin_cookies)
     {
         return isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
@@ -327,7 +265,7 @@ class default_config extends dynamic_config
                 M_TOKEN     => '{TOKEN}',
                 M_INT_ID    => '{INT_ID}',
                 M_HOST      => '{HOST}',
-                M_QUALITY   => '{QUALITY}',
+                M_QUALITY   => '{QUALITY_ID}',
             );
 
             foreach ($replaces as $key => $value)
@@ -523,24 +461,6 @@ class default_config extends dynamic_config
 
     /**
      * @param string $url
-     * @param int $archive_ts
-     * @return string
-     */
-    protected static function UpdateArchiveUrlParams($url, $archive_ts)
-    {
-        if ($archive_ts > 0) {
-            $now_ts = time();
-            $url .= (strpos($url, '?') === false) ? '?' : '&';
-            $url .= "utc=$archive_ts&lutc=$now_ts";
-            // hd_print("Archive TS:  " . $archive_ts);
-            // hd_print("Now       :  " . $now_ts);
-        }
-
-        return $url;
-    }
-
-    /**
-     * @param string $url
      * @param $plugin_cookies
      * @return string
      */
@@ -704,22 +624,24 @@ class default_config extends dynamic_config
             $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
         }
 
+        if (strpos($url, '{SERVER}') !== false) {
+            $servers = $this->get_servers($plugin_cookies);
+            $url = str_replace('{SERVER}', $servers[$this->get_server_id($plugin_cookies)], $url);
+        }
+
         if (strpos($url, '{SERVER_ID}') !== false) {
             $url = str_replace('{SERVER_ID}', $this->get_server_id($plugin_cookies), $url);
         }
 
-        if (strpos($url, '{SERVER}') !== false) {
-            $url = str_replace('{SERVER}', $this->get_server($plugin_cookies), $url);
+        if (strpos($url, '{QUALITY_ID}') !== false) {
+            $quality = $this->get_qualities($plugin_cookies);
+            $url = str_replace('{QUALITY_ID}', $quality[$this->get_quality_id($plugin_cookies)], $url);
         }
 
-        if (strpos($url, '{QUALITY}') !== false) {
-            $url = str_replace('{QUALITY}', $this->get_quality_id($plugin_cookies), $url);
+        if (strpos($url, '{DEVICE_ID}') !== false) {
+            $quality = $this->get_devices($plugin_cookies);
+            $url = str_replace('{DEVICE_ID}', $quality[$this->get_device_id($plugin_cookies)], $url);
         }
-
-        if (strpos($url, '{DEVICE}') !== false) {
-            $url = str_replace('{DEVICE}', $this->get_device($plugin_cookies), $url);
-        }
-
         return $url;
     }
 

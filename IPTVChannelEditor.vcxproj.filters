@@ -267,7 +267,7 @@
     <ClInclude Include="ColorEdit.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="PluginConfigDlg.h">
+    <ClInclude Include="PluginConfigPage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="uri_sharaclub.h">
@@ -278,6 +278,9 @@
     </ClInclude>
     <ClInclude Include="uri_tvclub.h">
       <Filter>Header Files\uri\append</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_config.h">
+      <Filter>Header Files\uri</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -422,8 +425,62 @@
     <ClCompile Include="IPTVChannelEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PluginConfigDlg.cpp">
+    <ClCompile Include="PluginConfigPage.cpp">
       <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_config.cpp">
+      <Filter>Source Files\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_filmax.cpp">
+      <Filter>Source Files\uri\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_kineskop.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_mymagic.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_antifriz.cpp">
+      <Filter>Source Files\uri\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_glanz.cpp">
+      <Filter>Source Files\uri\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_iptvonline.cpp">
+      <Filter>Source Files\uri\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_lightiptv.cpp">
+      <Filter>Source Files\uri\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_oneusd.cpp">
+      <Filter>Source Files\uri\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_sharavoz.cpp">
+      <Filter>Source Files\uri\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_tvteam.cpp">
+      <Filter>Source Files\uri\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_fox.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_onecent.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_ottclub.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_russkoetv.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_sharatv.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_shuratv.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_viplime.cpp">
+      <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

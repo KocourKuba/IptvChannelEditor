@@ -10,13 +10,24 @@ class mymagic_config extends default_config
         $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(QUALITY_OPTIONS, true);
         $this->set_feature(USE_TOKEN_AS_ID, true);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u');
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u');
         $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>[^/]+)/(?<token>.+)$|');
 
         $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{TOKEN}');
 
         $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.drm-play.ml/magic/epg/{ID}.json');
-        $this->set_epg_param(EPG_SECOND,EPG_URL,'http://epg.esalecrm.net/magic/epg/{ID}.json');
+
+        $servers = array(
+            'По умолчанию',
+            'Германия 1',
+            'Чехия',
+            'Германия 2',
+            'Испания',
+            'Нидерланды',
+            'Франция',
+        );
+
+        $this->set_servers($servers);
     }
 
     /**
@@ -50,77 +61,5 @@ class mymagic_config extends default_config
         }
 
         return $pl_entries;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string[]
-     */
-    public function get_server_opts($plugin_cookies)
-    {
-        return array(
-            'По умолчанию',
-            'Германия 1',
-            'Чехия',
-            'Германия 2',
-            'Испания',
-            'Нидерланды',
-            'Франция',
-        );
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return int|null
-     */
-    public function get_server_id($plugin_cookies)
-    {
-        return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
-    }
-
-    /**
-     * @param $server
-     * @param $plugin_cookies
-     */
-    public function set_server_id($server, $plugin_cookies)
-    {
-        $plugin_cookies->server = $server;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_quality_opts($plugin_cookies)
-    {
-        return array('Среднее', 'Высокое');
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return mixed|null
-     */
-    public function get_quality_id($plugin_cookies)
-    {
-        return isset($plugin_cookies->quality) ? $plugin_cookies->quality : 0;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function get_quality_value($plugin_cookies)
-    {
-        $quality = array('0', '1');
-        return $quality[$this->get_quality_id($plugin_cookies)];
-    }
-
-    /**
-     * @param $quality
-     * @param $plugin_cookies
-     */
-    public function set_quality_id($quality, $plugin_cookies)
-    {
-        $plugin_cookies->quality = $quality;
     }
 }

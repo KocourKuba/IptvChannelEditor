@@ -5,7 +5,8 @@ class sharaclub_config extends default_config
 {
     const PLAYLIST_VOD_URL = 'vod_url';
     const ACCOUNT_URL = 'account_url';
-    const SERVERS_URL = 'servers_url';
+    const SERVERS_URL = "http://{SUBDOMAIN}/api/players.php?a=ch_cdn&u={LOGIN}-{PASSWORD}&source=dune_editor";
+    const PROFILES_URL = "http://{SUBDOMAIN}/api/players.php?a=list_profiles&u={LOGIN}-{PASSWORD}&source=dune_editor";
     const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 
     public function load_default()
@@ -26,6 +27,109 @@ class sharaclub_config extends default_config
         $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/live/{TOKEN}/{ID}.ts');
 
         $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string[]
+     */
+    public function get_servers($plugin_cookies)
+    {
+        $servers = parent::get_servers($plugin_cookies);
+        if (empty($servers)) {
+            $servers = array();
+            try {
+                $url = str_replace(
+                    array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}'),
+                    array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies)),
+                    self::SERVERS_URL);
+                $content = HD::DownloadJson($url);
+
+                if ($content !== false && $content['status'] === '1') {
+                    foreach ($content['allow_nums'] as $server) {
+                        $servers[$server['id']] = $server['name'];
+                    }
+                    $plugin_cookies->server = $content['current'];
+                    hd_print("Current server: $plugin_cookies->server");
+                    $this->set_servers($servers);
+                } else {
+                    hd_print("Unable to download servers information");
+                }
+            } catch (Exception $ex) {
+                hd_print("Error during downloading servers information");
+            }
+        }
+
+        return $servers;
+    }
+
+    /**
+     * @param $server
+     * @param $plugin_cookies
+     */
+    public function set_server_id($server, $plugin_cookies)
+    {
+        try {
+            $url = str_replace(
+                array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}'),
+                array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies)),
+                self::SERVERS_URL);
+
+            hd_print("change server to: $server");
+            $content = HD::DownloadJson($url . "&num=$server");
+            if ($content !== false) {
+                hd_print("changing result: {$content['msg']}");
+                if ($content['status'] === '1') {
+                    parent::set_server_id($server, $plugin_cookies);
+                }
+            } else {
+                hd_print("Unable to change server");
+            }
+        } catch (Exception $ex) {
+            hd_print("Failed to change server");
+        }
+    }
+
+    public function get_profiles($plugin_cookies)
+    {
+        $profiles = parent::get_profiles($plugin_cookies);
+        if (empty($profiles)) {
+            $profiles = array();
+            try {
+                $url = str_replace(
+                    array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}'),
+                    array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies)),
+                    self::SERVERS_URL);
+                $content = HD::DownloadJson($url);
+
+                if ($content !== false && isset($content['profiles'])) {
+                    foreach ($content['profiles'] as $profile) {
+                        $profiles[$profile['id']] = $profile['name'];
+                    }
+                    $plugin_cookies->profile = $content['current'];
+                    hd_print("Current server: $plugin_cookies->server");
+                    $this->set_profiles($profiles);
+                } else {
+                    hd_print("Unable to download profiles information");
+                }
+            } catch (Exception $ex) {
+                hd_print("Error during downloading profiles information");
+            }
+        }
+
+        return $profiles;
+    }
+
+    protected function GetPlaylistUrl($type, $plugin_cookies)
+    {
+        $url = parent::GetPlaylistUrl($type, $plugin_cookies);
+        $profiles = $this->get_profiles($plugin_cookies);
+        if (!empty($profiles)) {
+            $id = $this->get_profile_id($plugin_cookies);
+		    $url .= "/" . $profiles[$id];
+	    }
+
+        return $url;
     }
 
     /**
@@ -493,69 +597,5 @@ class sharaclub_config extends default_config
         }
 
         $this->movie_counter[$key] += $val;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string[]
-     */
-    public function get_server_opts($plugin_cookies)
-    {
-        $servers = array();
-        try {
-            $login = $this->get_login($plugin_cookies);
-            $password = $this->get_password($plugin_cookies);
-            $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
-            $content = HD::DownloadJson($url);
-
-            if ($content !== false && $content['status'] === '1') {
-                foreach ($content['allow_nums'] as $server) {
-                    $servers[(int)$server['id']] = $server['name'];
-                }
-                $plugin_cookies->server = $content['current'];
-                hd_print("Current server: $plugin_cookies->server");
-            } else {
-                hd_print("Unable to download servers information");
-            }
-        } catch (Exception $ex) {
-            hd_print("Error during downloading servers information");
-        }
-
-        return $servers;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return int|null
-     */
-    public function get_server_id($plugin_cookies)
-    {
-        return isset($plugin_cookies->server) ? $plugin_cookies->server : 0;
-    }
-
-    /**
-     * @param $server
-     * @param $plugin_cookies
-     */
-    public function set_server_id($server, $plugin_cookies)
-    {
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
-
-        try {
-            $url = sprintf($this->get_feature(self::SERVERS_URL), $login, $password);
-            hd_print("change server to: $server");
-            $content = HD::DownloadJson($url . "&num=$server");
-            if ($content !== false) {
-                hd_print("changing result: {$content['msg']}");
-                if ($content['status'] === '1') {
-                    $plugin_cookies->server = $server;
-                }
-            } else {
-                hd_print("Unable to change server");
-            }
-        } catch (Exception $ex) {
-            hd_print("Failed to change server");
-        }
     }
 }

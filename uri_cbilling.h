@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
-#include "IPTVChannelEditor.h"
 
 // API documentation http://protected-api.com/api/documentation
 
@@ -34,38 +33,9 @@ class uri_cbilling : public uri_stream
 {
 public:
 
-	uri_cbilling()
-	{
-		short_name = "cbilling";
-		provider_vod_url = L"http://protected-api.com";
+	uri_cbilling();
 
-		for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
-		{
-			ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_CBILLING_TV_P1 + i) });
-			servers_list.emplace_back(info);
-		}
-	}
-
-	void load_default() override
-	{
-		title = "Cbilling TV";
-		name = "cbillingtv";
-		access_type = AccountAccessType::enPin;
-
-		provider_url = "https://cbilling.eu/";
-		playlist_template = "http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
-
-		streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
-
-		auto& params1 = epg_params[0];
-		params1.epg_url = "http://protected-api.com/epg/{ID}/?date=";
-		params1.epg_root = "";
-	}
-
+	void load_default() override;
+	void fill_device_list(TemplateParams& /*params*/) override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 };

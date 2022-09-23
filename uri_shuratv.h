@@ -26,43 +26,13 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
-#include "IPTVChannelEditor.h"
 
 class uri_shuratv : public uri_stream
 {
 public:
 
-	uri_shuratv()
-	{
-		short_name = "shuratv";
-		for (int i = 0; i <= IDS_STRING_SHURA_TV_P2 - IDS_STRING_SHURA_TV_P1; i++)
-		{
-			ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_SHURA_TV_P1 + i) });
-			servers_list.emplace_back(info);
-		}
-	}
+	uri_shuratv();
 
-	void load_default() override
-	{
-		title = "Shura TV";
-		name = "shura.tv";
-		access_type = AccountAccessType::enPin;
-
-		provider_url = "http://shura.tv/b/";
-		playlist_template = "http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
-
-		streams_config[0].cu_subst = "archive";
-		streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		auto& params1 = epg_params[0];
-		params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";
-		params1.epg_date_format = "%Y-%m-%d";
-		params1.epg_root = "";
-		params1.epg_name = "epg";
-		params1.epg_desc = "desc";
-		params1.epg_start = "start";
-		params1.epg_end = "stop";
-	}
+	void fill_servers_list(TemplateParams& /*params*/) override;
+	void load_default() override;
 };

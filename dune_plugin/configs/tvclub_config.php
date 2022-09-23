@@ -27,6 +27,48 @@ class tvclub_config extends default_config
     }
 
     /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    public function get_format($plugin_cookies)
+    {
+        return isset($plugin_cookies->format) ? $plugin_cookies->format : MPEG;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_servers($plugin_cookies)
+    {
+        $servers = parent::get_servers($plugin_cookies);
+        if (empty($servers)) {
+            try {
+                $json = HD::DownloadJson(self::API_HOST . "/servers?token=$plugin_cookies->token");
+                $servers = array();
+                foreach ($json['servers'] as $item) {
+                    $servers[$item['id']] = $item['name'];
+                }
+                $this->set_servers($servers);
+            } catch (Exception $ex) {
+                hd_print("Servers not loaded");
+            }
+        }
+
+        return $servers;
+    }
+
+    /**
+     * @param $server
+     * @param $plugin_cookies
+     */
+    public function set_server_id($server, $plugin_cookies)
+    {
+        $this->save_settings($plugin_cookies, 'server');
+        parent::set_server_id($server, $plugin_cookies);
+    }
+
+    /**
      * Get information from the account
      * @param &$plugin_cookies
      * @param bool $force default false, force downloading playlist even it already cached
@@ -81,59 +123,6 @@ class tvclub_config extends default_config
         }
 
         Control_Factory::add_vgap($defs, 20);
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string
-     */
-    public function get_format($plugin_cookies)
-    {
-        return isset($plugin_cookies->format) ? $plugin_cookies->format : MPEG;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_server_opts($plugin_cookies)
-    {
-        try {
-            $url = self::API_HOST . "/servers?token=$plugin_cookies->token";
-            $servers = HD::DownloadJson($url);
-            $ops = array();
-            foreach ($servers['servers'] as $item) {
-                $ops[$item['id']] = $item['name'];
-            }
-            return $ops;
-        } catch (Exception $ex) {
-            hd_print("Servers not loaded");
-        }
-
-        return array();
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return mixed|null
-     */
-    public function get_server_id($plugin_cookies)
-    {
-        if ($this->load_settings($plugin_cookies)) {
-            return self::$settings['account']['settings']['server_id'];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $server
-     * @param $plugin_cookies
-     */
-    public function set_server_id($server, $plugin_cookies)
-    {
-        $plugin_cookies->server = $server;
-        $this->save_settings($plugin_cookies, 'server');
     }
 
     /**

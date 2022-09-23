@@ -27,13 +27,13 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "uri_stream.h"
 
-class CPluginConfigDlg : public CDialogEx
+class CPluginConfigPage : public CMFCPropertyPage
 {
-	DECLARE_DYNAMIC(CPluginConfigDlg)
+	DECLARE_DYNAMIC(CPluginConfigPage)
 
 public:
-	CPluginConfigDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CPluginConfigDlg() = default;
+	CPluginConfigPage();   // standard constructor
+	virtual ~CPluginConfigPage() = default;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -41,9 +41,10 @@ public:
 #endif
 
 protected:
-	BOOL OnInitDialog() override;
-	BOOL DestroyWindow() override;
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	BOOL OnInitDialog() override;
+	BOOL PreTranslateMessage(MSG* pMsg) override;
+	BOOL OnApply() override;
 
 	DECLARE_MESSAGE_MAP()
 
@@ -56,7 +57,7 @@ protected:
 	afx_msg void OnCbnSelchangeComboEpgType();
 	afx_msg void OnCbnSelchangeComboPluginType();
 
-	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
+	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
 	void EnableControls(BOOL enable);
@@ -66,8 +67,10 @@ private:
 
 public:
 	PluginType m_plugin_type = PluginType::enCustom;
+	BOOL m_single = FALSE;
 
 protected:
+	CToolTipCtrl m_wndToolTipCtrl;
 	CStatic m_wndDurationCaption;
 
 	CEdit m_wndName;
@@ -128,5 +131,6 @@ protected:
 
 private:
 	std::unique_ptr<uri_stream> m_plugin;
+	std::map<UINT, std::wstring> m_tooltips_info_account;
 	BOOL allowEdit = FALSE;
 };

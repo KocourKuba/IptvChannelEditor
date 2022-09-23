@@ -9,9 +9,8 @@ class cbilling_config extends Cbilling_Vod_Impl
         $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
-        $this->set_feature(DEVICE_OPTIONS, array('1' => '1', '2' => '2', '3' => '3'));
         $this->set_feature(BALANCE_SUPPORTED, true);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://247on.cc/playlist/{PASSWORD}_otp_dev{SERVER_ID}.m3u8');
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://247on.cc/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8');
         $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/s/(?<token>.+)/(?<id>.+)\.m3u8$|');
 
         $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8');
@@ -21,6 +20,7 @@ class cbilling_config extends Cbilling_Vod_Impl
 
         $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
         $this->set_epg_param(EPG_FIRST,EPG_URL, self::API_HOST .'/epg/{ID}/?date=');
+        $this->set_devices(array('1', '2', '3'));
     }
 
     /**
@@ -97,23 +97,5 @@ class cbilling_config extends Cbilling_Vod_Impl
         }
 
         return self::API_HOST . '/genres';
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string|null
-     */
-    public function get_device($plugin_cookies)
-    {
-        return isset($plugin_cookies->device_number) ? $plugin_cookies->device_number : '1';
-    }
-
-    /**
-     * @param $device
-     * @param $plugin_cookies
-     */
-    public function set_device($device, $plugin_cookies)
-    {
-        $plugin_cookies->device_number = $device;
     }
 }

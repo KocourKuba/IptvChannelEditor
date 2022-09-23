@@ -251,12 +251,22 @@ class Default_Channel implements Channel
     }
 
     /**
-     * get additional parameters (filled from provider m3u8)
+     * set additional parameters (filled from provider m3u8)
      * @param array $ext_params
      */
     public function set_ext_params($ext_params)
     {
         $this->_ext_params = $ext_params;
+    }
+
+    /**
+     * set additional parameters (filled from provider m3u8)
+     * @param $param
+     * @param $value
+     */
+    public function set_ext_param($param, $value)
+    {
+        $this->_ext_params[$param] = $value;
     }
 
     ///////////////////////////////////////////////////////////////////////

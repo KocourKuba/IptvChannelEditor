@@ -26,42 +26,13 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
-#include "IPTVChannelEditor.h"
 
 class uri_filmax : public uri_stream
 {
 public:
 
-	uri_filmax()
-	{
-		short_name = "filmax";
-		for (int i = 0; i <= IDS_STRING_FILMAX_P12 - IDS_STRING_FILMAX_P1; i++)
-		{
-			ServersInfo info({ fmt::format(L"{:d}", i + 1), load_string_resource(IDS_STRING_FILMAX_P1 + i) });
-			servers_list.emplace_back(info);
-		}
-	}
+	uri_filmax();
 
-	void load_default() override
-	{
-		title = "Filmax TV";
-		name = "filmax";
-		access_type = AccountAccessType::enLoginPass;
-
-		provider_url = "https://filmax-tv.ru/";
-		playlist_template = "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
-
-		use_token_as_id = true;
-
-		streams_config[0].cu_type = CatchupType::cu_flussonic;
-		streams_config[0].cu_subst = "archive";
-		streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/index.m3u8?token={TOKEN}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
-
-		streams_config[1].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
-
-		epg_params[0].epg_url = "http://epg.esalecrm.net/filmax/epg/{ID}.json";
-	}
+	void load_default() override;
+	void fill_servers_list(TemplateParams& /*params*/) override;
 };

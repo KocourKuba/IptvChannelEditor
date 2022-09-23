@@ -26,10 +26,8 @@ class edem_config extends default_config
      */
     public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $ext_params = $channel->get_ext_params();
-        $ext_params[M_SUBDOMAIN] = isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain;
-        $ext_params[M_TOKEN] = isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key;
-        $channel->set_ext_params($ext_params);
+        $channel->set_ext_param(M_SUBDOMAIN, isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain);
+        $channel->set_ext_param(M_TOKEN, isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key);
 
         return parent::GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
     }

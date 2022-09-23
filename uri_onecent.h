@@ -31,34 +31,7 @@ class uri_onecent : public uri_stream
 {
 public:
 
-	uri_onecent()
-	{
-		short_name = "onecent";
-	}
+	uri_onecent();
 
-	void load_default() override
-	{
-		title = "1CENT TV";
-		name = "onecent.tv";
-		access_type = AccountAccessType::enPin;
-
-		provider_url = "https://1cent.tv/";
-		playlist_template = "http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
-
-		streams_config[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		auto& params1 = epg_params[0];
-		params1.epg_url = "http://epg.iptvx.one/api/id/{ID}.json";
-		params1.epg_root = "ch_programme";
-		params1.epg_name = "title";
-		params1.epg_desc = "description";
-		params1.epg_start = "start";
-		params1.epg_end = "";
-		params1.epg_time_format = "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}"; // "%d-%m-%Y %H:%M";
-		params1.epg_timezone = 3; // iptvx.one uses moscow time (UTC+3)
-
-		epg_params[1].epg_url = "http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
-	}
+	void load_default() override;
 };

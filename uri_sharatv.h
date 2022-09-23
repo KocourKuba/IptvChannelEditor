@@ -29,24 +29,8 @@ DEALINGS IN THE SOFTWARE.
 
 class uri_sharatv : public uri_stream
 {
-	public:uri_sharatv()
-	{
-		short_name = "sharatv";
-	}
+public:
+	uri_sharatv();
 
-	void load_default() override
-	{
-		title = "Shara TV";
-		name = "shara.tv";
-		access_type = AccountAccessType::enLoginPass;
-
-		provider_url = "https://shara-tv.org/";
-		playlist_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
-
-		streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
-	}
+	void load_default() override;
 };

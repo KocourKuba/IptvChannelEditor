@@ -26,44 +26,14 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
-#include "IptvChannelEditor.h"
 
 class uri_mymagic : public uri_stream
 {
 public:
 
-	uri_mymagic()
-	{
-		short_name = "mymagic";
-		for (int i = 0; i <= IDS_STRING_MYMAGIC_P6 - IDS_STRING_MYMAGIC_P0; i++)
-		{
-			ServersInfo info({ fmt::format(L"{:d}", i), load_string_resource(IDS_STRING_MYMAGIC_P0 + i) });
-			servers_list.emplace_back(info);
-		}
+	uri_mymagic();
 
-		quality_list = {
-			{ L"0", load_string_resource(IDS_STRING_MYMAGIC_Q1) },
-			{ L"1", load_string_resource(IDS_STRING_MYMAGIC_Q2) },
-		};
-	}
-
-	void load_default() override
-	{
-		title = "MyMagic TV";
-		name = "mymagic";
-		access_type = AccountAccessType::enLoginPass;
-
-		provider_url = "http://mymagic.tv/";
-		playlist_template = "http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u";
-		uri_parse_template = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
-
-		use_token_as_id = true;
-		per_channel_token = true;
-
-		streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://epg.drm-play.ml/magic/epg/{ID}.json";
-		epg_params[1].epg_url = "http://epg.esalecrm.net/magic/epg/{ID}.json";
-	}
+	void fill_servers_list(TemplateParams& /*params*/) override;
+	void fill_quality_list(TemplateParams& /*params*/) override;
+	void load_default() override;
 };

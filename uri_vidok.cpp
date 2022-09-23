@@ -40,6 +40,35 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?token={:s}&{:s}={:s}";
 
+uri_vidok::uri_vidok()
+{
+	short_name = "vidok";
+	requested_token = true;
+}
+
+void uri_vidok::load_default()
+{
+	title = "Vidok TV";
+	name = "vidok.tv";
+	access_type = AccountAccessType::enLoginPass;
+
+	provider_url = "https://vidok.tv/";
+	playlist_template = "http://vidok.tv/p/{TOKEN}";
+	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+
+	streams_list[0].cu_type = CatchupType::cu_append;
+	streams_list[0].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
+	streams_list[0].uri_arc_template = "{CU_SUBST}={START}";
+
+	auto& params = epg_params[0];
+	params.epg_url = "http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
+	params.epg_root = "epg";
+	params.epg_name = "title";
+	params.epg_desc = "description";
+	params.epg_start = "start";
+	params.epg_end = "end";
+}
+
 std::wstring uri_vidok::get_api_token(const Credentials& creds) const
 {
 	std::string login_a = utils::string_tolower(utils::utf16_to_utf8(creds.get_login()));
@@ -89,48 +118,55 @@ bool uri_vidok::parse_access_info(TemplateParams& params, std::list<AccountInfo>
 	return false;
 }
 
-const std::vector<ServersInfo>& uri_vidok::get_servers_list(TemplateParams& params)
+void uri_vidok::fill_servers_list(TemplateParams& params)
 {
-	if (servers_list.empty())
+	if (params.login.empty() || params.password.empty() || !get_servers_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> servers;
+
+	Credentials creds;
+	creds.set_login(params.login);
+	creds.set_password(params.password);
+
+	const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
+	std::vector<BYTE> data;
+	if (utils::DownloadFile(url, data) || data.empty())
 	{
-		Credentials creds;
-		creds.set_login(params.login);
-		creds.set_password(params.password);
-
-		const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(url, data) || data.empty())
+		JSON_ALL_TRY;
 		{
-			JSON_ALL_TRY;
+			const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+			if (parsed_json.contains("settings"))
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
-				if (parsed_json.contains("settings"))
+				const auto& settings = parsed_json["settings"];
+
+				const auto& current = utils::get_json_wstring("id", settings["current"]["server"]);
+
+				for (const auto& item : settings["lists"]["servers"].items())
 				{
-					const auto& settings = parsed_json["settings"];
+					const auto& server = item.value();
+					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("name", server) };
+					if (info.get_id() == current)
+						params.server = servers.size();
 
-					const auto& current = utils::get_json_string("id", settings["current"]["server"]);
-
-					for (const auto& item : settings["lists"]["servers"].items())
-					{
-						const auto& server = item.value();
-						ServersInfo info({ utils::get_json_string("id", server), utils::get_json_string("name", server) });
-						if (info.id == current)
-							params.server = servers_list.size();
-
-						servers_list.emplace_back(info);
-					}
+					servers.emplace_back(info);
 				}
 			}
-			JSON_ALL_CATCH;
 		}
+		JSON_ALL_CATCH;
 	}
-	return servers_list;
+
+	set_servers_list(servers);
 }
 
 bool uri_vidok::set_server(TemplateParams& params)
 {
-	const auto& servers = get_servers_list(params);
-	if (!servers.empty())
+	if (servers_list.empty())
+	{
+		fill_servers_list(params);
+	}
+
+	if (!servers_list.empty())
 	{
 		Credentials creds;
 		creds.set_login(params.login);
@@ -140,7 +176,7 @@ bool uri_vidok::set_server(TemplateParams& params)
 									  L"settings_set",
 									  get_api_token(creds),
 									  L"server",
-									  servers[params.server].id);
+									  servers_list[params.server].get_id());
 
 		std::vector<BYTE> data;
 		if (utils::DownloadFile(url, data) || data.empty())
@@ -151,7 +187,7 @@ bool uri_vidok::set_server(TemplateParams& params)
 				for (const auto& item : parsed_json["settings"].items())
 				{
 					const auto& server = item.value();
-					return (utils::get_json_string("value", server) == servers[params.server].id); //-V612
+					return (utils::get_json_wstring("value", server) == servers_list[params.server].get_id()); //-V612
 				}
 			}
 			JSON_ALL_CATCH;

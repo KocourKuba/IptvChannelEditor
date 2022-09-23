@@ -51,6 +51,24 @@ const CU_TYPE          = 'cu_type';
 const CU_SUBST         = 'cu_subst';
 const CU_DURATION      = 'cu_duration';
 
+// epg parameters
+const EPG_PARAMS       = 'epg_params';
+
+// server parameters
+const SERVER_LIST      = 'servers_list';
+
+// device parameters
+const DEVICE_LIST     = 'device_list';
+
+// quality parameters
+const QUALITY_LIST     = 'quality_list';
+
+// profile parameters
+const PROFILE_LIST     = 'profile_list';
+
+const LIST_ID          = 'id';
+const LIST_NAME        = 'name';
+
 // epg parameters keys
 const EPG_URL          = 'epg_url';
 const EPG_ROOT         = 'epg_root';
@@ -66,7 +84,6 @@ const EPG_TIMEZONE     = 'epg_timezone';
 // not used in config
 const EPG_FIRST      = 'first';
 const EPG_SECOND     = 'second';
-const EPG_PARAMS     = 'epg_params';
 const EPG_PARSER     = 'epg_parser';
 const EPG_USE_MAPPER = 'epg_use_mapper';
 const EPG_MAPPER_URL = 'epg_mapper_url';

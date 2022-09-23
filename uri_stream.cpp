@@ -9,26 +9,6 @@
 
 uri_stream::uri_stream()
 {
-	streams_config[0].stream_type = StreamType::enHLS;
-	streams_config[0].cu_type = CatchupType::cu_shift;
-	streams_config[0].cu_subst = "utc";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-	streams_config[1].stream_type = StreamType::enMPEGTS;
-	streams_config[1].cu_type = CatchupType::cu_flussonic;
-	streams_config[1].cu_subst = "archive";
-
-	EpgParameters params;
-	params.epg_root = "epg_data";
-	params.epg_name = "name";
-	params.epg_desc = "descr";
-	params.epg_start = "time";
-	params.epg_end = "time_to";
-
-	epg_params = { params, params };
-	epg_params[0].epg_param = "first";
-	epg_params[1].epg_param = "second";
-
 	PlaylistInfo info;
 	info.name = load_string_resource(IDS_STRING_PLAYLIST);
 	playlists.emplace_back(info);
@@ -51,7 +31,8 @@ bool uri_stream::save_plugin_parameters(const wchar_t* filename /*= nullptr*/)
 	std::wstring out_file;
 	if (filename == nullptr)
 	{
-		out_file = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_SETTINGS), utils::utf8_to_utf16(short_name + "_config.json"));
+		std::filesystem::create_directory(L"settings");
+		out_file = fmt::format(LR"(settings\{:s}_config.json)", utils::utf8_to_utf16(short_name));
 	}
 	else
 	{
@@ -192,7 +173,7 @@ void uri_stream::parse_uri(const std::wstring& url)
 	}
 }
 
-void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
+std::wstring uri_stream::get_playlist_url(TemplateParams& params, std::wstring url /*= L""*/)
 {
 	if (url.empty())
 		url = get_playlist_template();
@@ -209,18 +190,22 @@ void uri_stream::get_playlist_url(std::wstring& url, TemplateParams& params)
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
+	fill_servers_list(params);
 	if (!servers_list.empty())
 	{
 		int server = (params.server >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server;
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].name));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].id);
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].get_id());
 	}
 
-	if (!quality_list.empty())
+	fill_quality_list(params);
+	if (!qualities_list.empty())
 	{
-		int quality = (params.quality >= (int)quality_list.size()) ? quality_list.size() - 1 : params.quality;
-		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[quality].id);
+		int quality = (params.quality >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.quality;
+		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[quality].get_id());
 	}
+
+	return url;
 }
 
 std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
@@ -233,20 +218,20 @@ std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
 	else
 	{
 		size_t subtype = (size_t)params.streamSubtype;
-		switch (streams_config[subtype].cu_type)
+		switch (streams_list[subtype].cu_type)
 		{
 			case CatchupType::cu_shift:
 			case CatchupType::cu_append:
-				url = streams_config[subtype].get_uri_template();
+				url = streams_list[subtype].get_uri_template();
 				if (params.shift_back)
 				{
 					url += (url.rfind('?') != std::wstring::npos) ? '&' : '?';
-					url += streams_config[subtype].get_uri_arc_template();
+					url += streams_list[subtype].get_uri_arc_template();
 				}
 				break;
 
 			case CatchupType::cu_flussonic:
-				url = params.shift_back ? streams_config[subtype].get_uri_arc_template() : streams_config[subtype].get_uri_template();
+				url = params.shift_back ? streams_list[subtype].get_uri_arc_template() : streams_list[subtype].get_uri_template();
 				break;
 		}
 	}
@@ -261,22 +246,22 @@ const std::wregex& uri_stream::get_uri_regex_parse_template()
 	// to speed up parsing process and avoid multiple conversions
 	if (uri_parse_regex_template._Empty())
 	{
-		set_uri_parse_template(utils::utf8_to_utf16(uri_parse_template));
+		set_uri_regex_parse_template(utils::utf8_to_utf16(uri_parse_template));
 	}
 
 	return uri_parse_regex_template;
 }
 
-void uri_stream::set_uri_parse_template(const std::wstring& val)
+void uri_stream::set_uri_regex_parse_template(const std::wstring& val)
 {
+	// store original template
+	set_uri_parse_template(val);
+
+	// clear named group
+	regex_named_groups.clear();
+
 	try
 	{
-		// store original template
-		uri_parse_template = utils::utf16_to_utf8(val);
-
-		// clear named group
-		regex_named_groups.clear();
-
 		std::wstring ecmascript_re(val);
 		std::wregex re_group(L"(\\?<([^>]+)>)");
 		std::match_results<std::wstring::const_iterator> ms;
@@ -496,12 +481,6 @@ std::wstring uri_stream::compile_epg_url(int epg_idx, const std::wstring& epg_id
 	return epg_template;
 }
 
-nlohmann::json uri_stream::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const
-{
-	const auto& root = epg_params[epg_idx].epg_root;
-	return root.empty() ? epg_data : (epg_data.contains(root) ? epg_data[root] : nlohmann::json());
-}
-
 void uri_stream::put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const
 {
 	JSON_ALL_TRY
@@ -556,8 +535,8 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (params.shift_back)
 	{
 		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_config[subtype].get_shift_replace());
-		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].cu_duration));
+		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_list[subtype].get_shift_replace());
+		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_list[subtype].cu_duration));
 	}
 
 	if (params.shift_back)
@@ -570,11 +549,11 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
 
 	if (!servers_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[params.server].id);
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[params.server].get_id());
 
 	if (!profiles_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.profile].id);
+		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.profile].get_id());
 
-	if (!quality_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY, quality_list[params.quality].id);
+	if (!qualities_list.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[params.quality].get_id());
 }

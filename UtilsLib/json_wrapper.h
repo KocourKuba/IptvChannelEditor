@@ -57,7 +57,7 @@ DEALINGS IN THE SOFTWARE.
 
 namespace utils
 {
-	inline std::wstring get_json_string(const std::string& key, const nlohmann::json& node)
+	inline std::wstring get_json_wstring(const std::string& key, const nlohmann::json& node)
 	{
 		std::wstring ret_value;
 		if (node.contains(key))
@@ -74,6 +74,29 @@ namespace utils
 			else if (js.is_string())
 			{
 				ret_value = std::move(utf8_to_utf16(js.get<std::string>()));
+			}
+		}
+
+		return ret_value;
+	}
+
+	inline std::string get_json_string(const std::string& key, const nlohmann::json& node)
+	{
+		std::string ret_value;
+		if (node.contains(key))
+		{
+			const auto& js = node[key];
+			if (js.is_number_integer())
+			{
+				ret_value = std::move(std::to_string(js.get<int>()));
+			}
+			if (js.is_number_float())
+			{
+				ret_value = std::move(std::to_string(js.get<float>()));
+			}
+			else if (js.is_string())
+			{
+				ret_value = js.get<std::string>();
 			}
 		}
 

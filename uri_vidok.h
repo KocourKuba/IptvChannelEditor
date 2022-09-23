@@ -33,36 +33,11 @@ class uri_vidok : public uri_stream
 {
 public:
 
-	uri_vidok()
-	{
-		short_name = "vidok";
-	}
+	uri_vidok();
 
-	void load_default() override
-	{
-		title = "Vidok TV";
-		name = "vidok.tv";
-		access_type = AccountAccessType::enLoginPass;
-
-		provider_url = "https://vidok.tv/";
-		playlist_template = "http://vidok.tv/p/{TOKEN}";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
-
-		streams_config[0].cu_type = CatchupType::cu_append;
-		streams_config[0].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}";
-
-		auto& params = epg_params[0];
-		params.epg_url = "http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
-		params.epg_root = "epg";
-		params.epg_name = "title";
-		params.epg_desc = "description";
-		params.epg_start = "start";
-		params.epg_end = "end";
-	}
-
+	void load_default() override;
 	std::wstring get_api_token(const Credentials& creds) const override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
-	const std::vector<ServersInfo>& get_servers_list(TemplateParams& params) override;
+	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
 };

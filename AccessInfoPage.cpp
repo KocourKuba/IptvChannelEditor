@@ -67,6 +67,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_ACCOUNTS, &CAccessInfoPage::OnLvnItemchangedListAccounts)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_CHANNELS, &CAccessInfoPage::OnLvnItemchangedListChannels)
 	ON_CBN_SELCHANGE(IDC_COMBO_DEVICE_ID, &CAccessInfoPage::OnCbnSelchangeComboDeviceId)
+	ON_CBN_SELCHANGE(IDC_COMBO_SERVER_ID, &CAccessInfoPage::OnCbnSelchangeComboServerId)
 	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoPage::OnCbnSelchangeComboProfile)
 	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CAccessInfoPage::OnCbnSelchangeComboQuality)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoPage::OnBnClickedCheckEmbed)
@@ -89,7 +90,6 @@ END_MESSAGE_MAP()
 
 
 CAccessInfoPage::CAccessInfoPage() : CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
-, m_channelsWebPath(_T(""))
 {
 }
 
@@ -103,9 +103,10 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_ACCOUNTS, m_wndAccounts);
 	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Control(pDX, IDC_LIST_CHANNELS, m_wndChLists);
-	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDeviceID);
-	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfile);
-	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQuality);
+	DDX_Control(pDX, IDC_COMBO_SERVER_ID, m_wndServers);
+	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndServers);
+	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfiles);
+	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQualities);
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_CAPTION, m_wndCaption);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CAPTION, m_caption);
@@ -158,6 +159,7 @@ BOOL CAccessInfoPage::OnInitDialog()
 		{ IDC_BUTTON_ADD, load_string_resource(IDS_STRING_BUTTON_ADD) },
 		{ IDC_BUTTON_REMOVE, load_string_resource(IDS_STRING_BUTTON_REMOVE) },
 		{ IDC_BUTTON_NEW_FROM_URL, load_string_resource(IDS_STRING_BUTTON_NEW_FROM_URL) },
+		{ IDC_COMBO_SERVER_ID, load_string_resource(IDS_STRING_COMBO_SERVER_ID) },
 		{ IDC_COMBO_DEVICE_ID, load_string_resource(IDS_STRING_COMBO_DEVICE_ID) },
 		{ IDC_COMBO_PROFILE, load_string_resource(IDS_STRING_COMBO_PROFILE) },
 		{ IDC_COMBO_QUALITY, load_string_resource(IDS_STRING_QUALITY_ID) },
@@ -279,64 +281,93 @@ void CAccessInfoPage::UpdateOptionalControls()
 	params.password = selected.get_password();
 	params.subdomain = selected.get_subdomain();
 	params.server = selected.server_id;
+	params.device = selected.device_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
 
-	UINT static_text = IDS_STRING_SERVER_ID;
-	switch (m_plugin_type)
+	if (m_plugin_type == PluginType::enSharaclub)
 	{
-		case PluginType::enCbilling:
-			static_text = IDS_STRING_DEVICE_ID;
-			break;
-		case PluginType::enSharaclub:
-			m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
-			m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
-			params.subdomain = m_list_domain;
-			break;
-		default:
-			break;
+		m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
+		params.subdomain = m_list_domain;
 	}
 
-	GetDlgItem(IDC_STATIC_DEVICE_ID)->SetWindowText(load_string_resource(static_text).c_str());
+	m_plugin->fill_servers_list(params);
+	m_servers = m_plugin->get_servers_list();
+	m_wndServers.ResetContent();
+	m_wndServers.EnableWindow(!m_servers.empty());
 
-	m_servers = m_plugin->get_servers_list(params);
-	m_wndDeviceID.ResetContent();
-
-	for (const auto& info : m_servers)
-	{
-		m_wndDeviceID.AddString(info.name.c_str());
-	}
-
-	m_wndDeviceID.EnableWindow(!m_servers.empty());
 	if (!m_servers.empty())
 	{
+		for (const auto& info : m_servers)
+		{
+			m_wndServers.AddString(info.get_name().c_str());
+		}
+
 		if (params.server >= (int)m_servers.size())
 		{
 			params.server = 0;
 		}
 
-		m_wndDeviceID.SetCurSel(params.server);
+		m_wndServers.SetCurSel(params.server);
 	}
 
-	m_qualities = m_plugin->get_quality_list(params);
-
-	m_wndQuality.EnableWindow(!m_qualities.empty());
-
-	m_wndQuality.ResetContent();
-
-	for (const auto& info : m_qualities)
+	m_plugin->fill_device_list(params);
+	m_devices = m_plugin->get_device_list();
+	m_wndDevices.EnableWindow(!m_devices.empty());
+	m_wndDevices.ResetContent();
+	if (!m_devices.empty())
 	{
-		m_wndQuality.AddString(info.name.c_str());
-	}
-
-	if (!m_qualities.empty())
-	{
-		if (params.quality >= (int)m_qualities.size())
+		for (const auto& info : m_devices)
 		{
-			params.quality = 0;
+			m_wndDevices.AddString(info.get_name().c_str());
 		}
 
-		m_wndQuality.SetCurSel(params.quality);
+		if (params.device >= (int)m_devices.size())
+		{
+			params.device = 0;
+		}
+
+		m_wndDevices.SetCurSel(params.device);
+	}
+
+	m_plugin->fill_quality_list(params);
+	m_profiles = m_plugin->get_device_list();
+	m_wndProfiles.EnableWindow(!m_profiles.empty());
+	m_wndProfiles.ResetContent();
+	if (!m_profiles.empty())
+	{
+		for (const auto& info : m_profiles)
+		{
+			m_wndProfiles.AddString(info.get_name().c_str());
+		}
+
+		if (params.profile >= (int)m_devices.size())
+		{
+			params.profile = 0;
+		}
+
+		m_wndProfiles.SetCurSel(params.profile);
+	}
+
+	m_plugin->fill_profiles_list(params);
+	m_profiles = m_plugin->get_profiles_list();
+	m_wndProfiles.EnableWindow(!m_qualities.empty());
+	m_wndProfiles.ResetContent();
+
+	if (!m_profiles.empty())
+	{
+		for (const auto& info : m_profiles)
+		{
+			m_wndProfiles.AddString(info.get_name().c_str());
+		}
+
+		if (params.profile >= (int)m_profiles.size())
+		{
+			params.profile = 0;
+		}
+
+		m_wndProfiles.SetCurSel(params.profile);
 	}
 
 	m_caption = selected.get_caption().c_str();
@@ -558,6 +589,7 @@ BOOL CAccessInfoPage::OnApply()
 	params.password = utils::utf8_to_utf16(selected.password);
 	params.subdomain = utils::utf8_to_utf16(selected.subdomain);
 	params.server = selected.server_id;
+	params.device = selected.device_id;
 	params.profile = selected.profile_id;
 	params.quality = selected.quality_id;
 
@@ -566,12 +598,17 @@ BOOL CAccessInfoPage::OnApply()
 		params.subdomain = m_list_domain;
 	}
 
-	if (m_wndDeviceID.GetCount())
+	if (m_wndServers.GetCount())
 	{
 		m_plugin->set_server(params);
 	}
 
-	if (m_wndProfile.GetCount())
+	if (m_wndQualities.GetCount())
+	{
+		m_plugin->set_quality(params);
+	}
+
+	if (m_wndProfiles.GetCount())
 	{
 		m_plugin->set_profile(params);
 	}
@@ -828,8 +865,8 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 		{
 			m_wndInfo.DeleteAllItems();
 			m_wndChLists.EnableWindow(FALSE);
-			m_wndDeviceID.EnableWindow(FALSE);
-			m_wndProfile.EnableWindow(FALSE);
+			m_wndServers.EnableWindow(FALSE);
+			m_wndProfiles.EnableWindow(FALSE);
 			m_wndEmbed.EnableWindow(FALSE);
 			m_wndCaption.EnableWindow(FALSE);
 			m_wndLogo.EnableWindow(FALSE);
@@ -880,8 +917,8 @@ void CAccessInfoPage::GetAccountInfo()
 	UpdateData(TRUE);
 
 	m_status.LoadString(IDS_STRING_STATUS_TEXT);
-	m_wndProfile.ResetContent();
-	m_wndProfile.EnableWindow(FALSE);
+	m_wndProfiles.ResetContent();
+	m_wndProfiles.EnableWindow(FALSE);
 
 	auto& selected_cred = GetCheckedAccount();
 	if (selected_cred.not_valid)
@@ -889,8 +926,8 @@ void CAccessInfoPage::GetAccountInfo()
 
 	if (!m_servers.empty())
 	{
-		m_wndDeviceID.EnableWindow(TRUE);
-		m_wndDeviceID.SetCurSel(selected_cred.server_id);
+		m_wndServers.EnableWindow(TRUE);
+		m_wndServers.SetCurSel(selected_cred.server_id);
 	}
 
 	m_wndEmbed.SetCheck(selected_cred.embed);
@@ -945,10 +982,10 @@ void CAccessInfoPage::GetAccountInfo()
 	}
 
 	m_plugin->clear_profiles_list();
-	m_profiles = m_plugin->get_profiles_list(params);
+	m_profiles = m_plugin->get_profiles_list();
 	for (const auto& info : m_profiles)
 	{
-		m_wndProfile.AddString(info.name.c_str());
+		m_wndProfiles.AddString(info.get_name().c_str());
 	}
 
 	if (!m_profiles.empty())
@@ -959,13 +996,12 @@ void CAccessInfoPage::GetAccountInfo()
 			selected_cred.profile_id = 0;
 		}
 
-		m_wndProfile.SetCurSel(params.profile);
+		m_wndProfiles.SetCurSel(params.profile);
 	}
 
-	m_wndProfile.EnableWindow(m_profiles.size() > 1);
+	m_wndProfiles.EnableWindow(m_profiles.size() > 1);
 
-	std::wstring pl_url;
-	uri->get_playlist_url(pl_url, params);
+	auto& pl_url = uri->get_playlist_url(params);
 
 	std::list<AccountInfo> acc_info;
 	if (uri->parse_access_info(params, acc_info))
@@ -1056,22 +1092,28 @@ int CAccessInfoPage::GetCheckedAccountIdx()
 	return -1;
 }
 
+void CAccessInfoPage::OnCbnSelchangeComboServerId()
+{
+	auto& selected = GetCheckedAccount();
+	selected.server_id = m_wndServers.GetCurSel();
+}
+
 void CAccessInfoPage::OnCbnSelchangeComboDeviceId()
 {
 	auto& selected = GetCheckedAccount();
-	selected.server_id = m_wndDeviceID.GetCurSel();
+	selected.device_id = m_wndDevices.GetCurSel();
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboProfile()
 {
 	auto& selected = GetCheckedAccount();
-	selected.profile_id = m_wndProfile.GetCurSel();
+	selected.profile_id = m_wndProfiles.GetCurSel();
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboQuality()
 {
 	auto& selected = GetCheckedAccount();
-	selected.quality_id = m_wndQuality.GetCurSel();
+	selected.quality_id = m_wndQualities.GetCurSel();
 }
 
 void CAccessInfoPage::OnBnClickedCheckEmbed()

@@ -26,43 +26,13 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
-#include "IPTVChannelEditor.h"
 
 class uri_viplime : public uri_stream
 {
 public:
 
-	uri_viplime()
-	{
-		short_name = "viplime";
+	uri_viplime();
 
-		quality_list = {
-			{ L"high",   load_string_resource(IDS_STRING_VIPLIME_P1) },
-			{ L"middle", load_string_resource(IDS_STRING_VIPLIME_P2) },
-			{ L"low",    load_string_resource(IDS_STRING_VIPLIME_P3) },
-			{ L"variant",load_string_resource(IDS_STRING_VIPLIME_P4) },
-			{ L"hls",    load_string_resource(IDS_STRING_VIPLIME_P5) },
-		};
-	}
-
-	void load_default() override
-	{
-		title = "VipLime TV";
-		name = "viplime.fun.tv";
-		access_type = AccountAccessType::enPin;
-
-		provider_url = "http://viplime.fun/";
-		playlist_template = "http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
-
-		streams_config[0].uri_template = "http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.m3u8";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		streams_config[1].cu_type = CatchupType::cu_shift;
-		streams_config[1].cu_subst = "utc";
-		streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY}/{TOKEN}/{ID}.mpeg";
-		streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{ID}.json";
-	}
+	void fill_quality_list(TemplateParams& /*params*/) override;
+	void load_default() override;
 };

@@ -28,6 +28,99 @@ class vidok_config extends default_config
     }
 
     /**
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_servers($plugin_cookies)
+    {
+        $servers = parent::get_servers($plugin_cookies);
+        if (empty($servers) && $this->load_settings($plugin_cookies)) {
+            $servers = array();
+            foreach (self::$settings['settings']['lists']['servers'] as $item) {
+                $servers[$item['id']] = $item['name'];
+            }
+        }
+
+        return $servers;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return mixed|null
+     */
+    public function get_server_id($plugin_cookies)
+    {
+        if ($this->load_settings($plugin_cookies)) {
+            $server = self::$settings['settings']['current']['server']['id'];
+        } else {
+            $server = parent::get_server_id($plugin_cookies);
+        }
+
+        return $server;
+    }
+
+    /**
+     * @param $server
+     * @param $plugin_cookies
+     */
+    public function set_server_id($server, $plugin_cookies)
+    {
+        $this->save_settings($plugin_cookies, 'server');
+        parent::set_server_id($server, $plugin_cookies);
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_qualities($plugin_cookies)
+    {
+        $quality = parent::get_qualities($plugin_cookies);
+        if (empty($quality) && $this->load_settings($plugin_cookies)) {
+            $quality = array();
+            foreach (self::$settings['settings']['lists']['quality'] as $item) {
+                $quality[$item['id']] = $item['name'];
+            }
+        }
+
+        return $quality;
+    }
+
+    /**
+     * @param $quality
+     * @param $plugin_cookies
+     */
+    public function set_quality_id($quality, $plugin_cookies)
+    {
+        $this->save_settings($plugin_cookies, 'quality');
+        parent::set_quality_id($quality, $plugin_cookies);
+    }
+
+    /**
+     * @param $plugin_cookies
+     * return bool
+     */
+    protected function load_settings(&$plugin_cookies)
+    {
+        if (!$this->ensure_token_loaded($plugin_cookies)) {
+            return false;
+        }
+
+        if (empty(self::$settings)) {
+            try {
+                $url = self::API_HOST . "/settings?token=$plugin_cookies->token";
+                // provider returns token used to download playlist
+                self::$settings = HD::DownloadJson($url);
+                hd_print(json_encode(self::$settings));
+            } catch (Exception $ex) {
+                hd_print("Settings not loaded");
+            }
+        }
+
+        return !empty(self::$settings);
+    }
+
+    /**
      * Get information from the account
      * @param &$plugin_cookies
      * @param bool $force default false, force downloading playlist even it already cached
@@ -91,106 +184,6 @@ class vidok_config extends default_config
         }
 
         Control_Factory::add_vgap($defs, 20);
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_server_opts($plugin_cookies)
-    {
-        if ($this->load_settings($plugin_cookies)) {
-            $ops = array();
-            foreach (self::$settings['settings']['lists']['servers'] as $item) {
-                $ops[$item['id']] = $item['name'];
-            }
-            return $ops;
-        }
-
-        return array();
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return mixed|null
-     */
-    public function get_server_id($plugin_cookies)
-    {
-        if ($this->load_settings($plugin_cookies)) {
-            return self::$settings['settings']['current']['server']['id'];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $server
-     * @param $plugin_cookies
-     */
-    public function set_server_id($server, $plugin_cookies)
-    {
-        $plugin_cookies->server = $server;
-        $this->save_settings($plugin_cookies, 'server');
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_quality_opts($plugin_cookies)
-    {
-        if ($this->load_settings($plugin_cookies)) {
-            $ops = array();
-            foreach (self::$settings['settings']['lists']['quality'] as $item) {
-                $ops[$item['id']] = $item['name'];
-            }
-            return $ops;
-        }
-
-        return array();
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return mixed|null
-     */
-    public function get_quality_id($plugin_cookies)
-    {
-        if ($this->load_settings($plugin_cookies))
-        {
-            return self::$settings['settings']['current']['quality']['id'];
-        }
-        return null;
-    }
-
-    /**
-     * @param $quality
-     * @param $plugin_cookies
-     */
-    public function set_quality_id($quality, $plugin_cookies)
-    {
-        $plugin_cookies->quality = $quality;
-        $this->save_settings($plugin_cookies, 'quality');
-    }
-
-    protected function load_settings(&$plugin_cookies)
-    {
-        if (!$this->ensure_token_loaded($plugin_cookies)) {
-            return false;
-        }
-
-        if (empty(self::$settings)) {
-            try {
-                $url = self::API_HOST . "/settings?token=$plugin_cookies->token";
-                // provider returns token used to download playlist
-                self::$settings = HD::DownloadJson($url);
-                hd_print(json_encode(self::$settings));
-            } catch (Exception $ex) {
-                hd_print("Settings not loaded");
-            }
-        }
-
-        return !empty(self::$settings);
     }
 
     /**

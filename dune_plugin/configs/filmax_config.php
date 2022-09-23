@@ -22,6 +22,21 @@ class filmax_config extends default_config
         $this->set_stream_param(MPEG,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts?token={PASSWORD}');
 
         $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.esalecrm.net/filmax/epg/{ID}.json');
+        $servers = array(
+            'Германия',
+            'Польша',
+            'Москва',
+            'Франция',
+            'Санкт-Петербург',
+            'Екатеринбург',
+            'Казахстан',
+            'Москва 2',
+            'Москва 3',
+            'Санкт-Петербург 2',
+            'Чехия',
+            'Тула'
+        );
+        $this->set_servers($servers);
     }
 
     /**
@@ -51,45 +66,5 @@ class filmax_config extends default_config
         }
 
         return $pl_entries;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string[]
-     */
-    public function get_server_opts($plugin_cookies)
-    {
-        return array(
-            1 => 'Германия',
-            2 => 'Польша',
-            3 => 'Москва',
-            4 => 'Франция',
-            5 => 'Санкт-Петербург',
-            6 => 'Екатеринбург',
-            7 => 'Казахстан',
-            8 => 'Москва 2',
-            9 => 'Москва 3',
-            10 => 'Санкт-Петербург 2',
-            11 => 'Чехия',
-            12 => 'Тула'
-        );
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return int|null
-     */
-    public function get_server_id($plugin_cookies)
-    {
-        return isset($plugin_cookies->server) ? $plugin_cookies->server : 1;
-    }
-
-    /**
-     * @param $server
-     * @param $plugin_cookies
-     */
-    public function set_server_id($server, $plugin_cookies)
-    {
-        $plugin_cookies->server = $server;
     }
 }

@@ -281,6 +281,7 @@ public:
 	int custom_update_name = 0;
 	int custom_package_name = 0;
 	int server_id = 0;
+	int device_id = 0;
 	int profile_id = 0;
 	int quality_id = 0;
 	int embed = 0;

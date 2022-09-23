@@ -33,9 +33,7 @@ class lightiptv_config extends default_config
      */
     public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $ext_params = $channel->get_ext_params();
-        $ext_params[M_PASSWORD] = $this->get_password($plugin_cookies);
-        $channel->set_ext_params($ext_params);
+        $channel->set_ext_param(M_PASSWORD, $this->get_password($plugin_cookies));
         return parent::GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
     }
 

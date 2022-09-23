@@ -172,7 +172,6 @@ class Epg_Manager
             return $day_epg;
         }
 
-        // stripe UTF8 BOM if exists
         if (!empty($parser_params[EPG_ROOT])) {
             foreach (explode('|', $parser_params[EPG_ROOT]) as $level) {
                 $epg_root = $level;

@@ -31,30 +31,7 @@ class uri_tvteam : public uri_stream
 {
 public:
 
-	uri_tvteam()
-	{
-		short_name = "tvteam";
-	}
+	uri_tvteam();
 
-	void load_default() override
-	{
-		title = "TV Team";
-		name = "tv.team";
-		access_type = AccountAccessType::enPin;
-		provider_url = "https://tv.team/";
-		playlist_template = "http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
-
-		per_channel_token = true;
-
-		streams_config[0].cu_type = CatchupType::cu_flussonic;
-		streams_config[0].cu_subst = "index";
-		streams_config[0].uri_template = "http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
-		streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
-
-		streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-		streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
-
-		epg_params[0].epg_url = "http://tv.team/{ID}.json";
-	}
+	void load_default() override;
 };

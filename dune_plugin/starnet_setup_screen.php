@@ -264,37 +264,41 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         Control_Factory::add_vgap($defs, 20);
 
         //////////////////////////////////////
-        // select device number
-        $device_ops = $this->plugin->config->get_feature(DEVICE_OPTIONS);
-        if (!empty($device_ops)) {
-            hd_print("Change device supported");
-            $dev_num = $this->plugin->config->get_device($plugin_cookies);
-            Control_Factory::add_combobox($defs, $this, null, 'device', 'Номер устройства:', $dev_num, $device_ops, 0);
+        // select server
+        $servers = $this->plugin->config->get_servers($plugin_cookies);
+        if (!empty($servers)) {
+            hd_print("Change server supported");
+            $server_id = $this->plugin->config->get_server_id($plugin_cookies);
+            hd_print("Selected server " . $servers[$server_id]);
+            Control_Factory::add_combobox($defs, $this, null, 'server', 'Сервер:', $server_id, $servers, 0);
         }
 
         //////////////////////////////////////
-        // select server
-        if ($this->plugin->config->get_feature(SERVER_OPTIONS)) {
-            hd_print("Change server supported");
-            $server_ops = $this->plugin->config->get_server_opts($plugin_cookies);
-            $server = $this->plugin->config->get_server_id($plugin_cookies);
-            if (!empty($server_ops)) {
-                hd_print("Selected server " . $server_ops[$server]);
-                Control_Factory::add_combobox($defs, $this, null, 'server', 'Сервер:', $server, $server_ops, 0);
-            }
+        // select device number
+        $devices = $this->plugin->config->get_devices($plugin_cookies);
+        if (!empty($devices)) {
+            hd_print("Change device supported");
+            $device_id = $this->plugin->config->get_device_id($plugin_cookies);
+            Control_Factory::add_combobox($defs, $this, null, 'device', 'Номер устройства:', $device_id, $devices, 0);
         }
 
         //////////////////////////////////////
         // select quality
-        if ($this->plugin->config->get_feature(QUALITY_OPTIONS)) {
+        $qualities = $this->plugin->config->get_qualities($plugin_cookies);
+        if (!empty($qualities)) {
             hd_print("Change quality supported");
-            $quality = $this->plugin->config->get_quality_id($plugin_cookies);
-            $quality_ops = $this->plugin->config->get_quality_opts($plugin_cookies);
-            if (!empty($quality_ops)) {
-                Control_Factory::add_combobox($defs, $this, null, 'quality', 'Качество:', $quality, $quality_ops, 0);
-            }
+            $quality_id = $this->plugin->config->get_quality_id($plugin_cookies);
+            Control_Factory::add_combobox($defs, $this, null, 'quality', 'Качество:', $quality_id, $qualities, 0);
         }
 
+        //////////////////////////////////////
+        // select quality
+        $profiles = $this->plugin->config->get_profiles($plugin_cookies);
+        if (!empty($profiles)) {
+            hd_print("Change profile supported");
+            $profile_id = $this->plugin->config->get_profile_id($plugin_cookies);
+            Control_Factory::add_combobox($defs, $this, null, 'profile', 'Профиль:', $profile_id, $profiles, 0);
+        }
         //////////////////////////////////////
         // select stream type
         $format_ops = array();

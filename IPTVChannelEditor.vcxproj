@@ -253,8 +253,9 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="map_serializer.h" />
     <ClInclude Include="MySplitButton.h" />
     <ClInclude Include="PlaylistParseJsonThread.h" />
-    <ClInclude Include="PluginConfigDlg.h" />
+    <ClInclude Include="PluginConfigPage.h" />
     <ClInclude Include="ResizedPropertySheet.h" />
+    <ClInclude Include="uri_config.h" />
     <ClInclude Include="uri_kineskop.h" />
     <ClInclude Include="uri_mymagic.h" />
     <ClInclude Include="uri_russkoetv.h" />
@@ -329,7 +330,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
     <ClCompile Include="PlaylistParseXMLThread.cpp" />
     <ClCompile Include="PathsSettingsPage.cpp" />
-    <ClCompile Include="PluginConfigDlg.cpp" />
+    <ClCompile Include="PluginConfigPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
@@ -339,16 +340,32 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PlayListEntry.cpp" />
     <ClCompile Include="MainSettingsPage.cpp" />
     <ClCompile Include="UpdateSettingsPage.cpp" />
+    <ClCompile Include="uri_antifriz.cpp" />
     <ClCompile Include="uri_cbilling.cpp" />
     <ClCompile Include="uri_channels.cpp" />
+    <ClCompile Include="uri_config.cpp" />
     <ClCompile Include="uri_edem.cpp" />
     <ClCompile Include="uri_base.cpp" />
+    <ClCompile Include="uri_filmax.cpp" />
+    <ClCompile Include="uri_fox.cpp" />
+    <ClCompile Include="uri_glanz.cpp" />
+    <ClCompile Include="uri_iptvonline.cpp" />
     <ClCompile Include="uri_itv.cpp" />
+    <ClCompile Include="uri_kineskop.cpp" />
+    <ClCompile Include="uri_lightiptv.cpp" />
+    <ClCompile Include="uri_mymagic.cpp" />
+    <ClCompile Include="uri_onecent.cpp" />
     <ClCompile Include="uri_oneott.cpp" />
+    <ClCompile Include="uri_oneusd.cpp" />
+    <ClCompile Include="uri_ottclub.cpp" />
+    <ClCompile Include="uri_russkoetv.cpp" />
     <ClCompile Include="uri_sharaclub.cpp" />
-    <ClCompile Include="uri_smile.cpp" />
+    <ClCompile Include="uri_sharatv.cpp" />
+    <ClCompile Include="uri_sharavoz.cpp" />
+    <ClCompile Include="uri_shuratv.cpp" />
     <ClCompile Include="uri_stream.cpp" />
     <ClCompile Include="uri_tvclub.cpp" />
+    <ClCompile Include="uri_tvteam.cpp" />
     <ClCompile Include="uri_vidok.cpp" />
     <ClCompile Include="IPTVChannelEditor.cpp" />
     <ClCompile Include="IPTVChannelEditorDlg.cpp" />
@@ -358,6 +375,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="uri_viplime.cpp" />
     <ClCompile Include="UrlDlg.cpp" />
     <ClCompile Include="VodViewer.cpp" />
   </ItemGroup>

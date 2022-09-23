@@ -26,30 +26,31 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "IPTVChannelEditor.h"
-#include "PluginConfigDlg.h"
+#include "PluginConfigPage.h"
 #include "StreamContainer.h"
 
 // CPluginConfigPage dialog
 
-IMPLEMENT_DYNAMIC(CPluginConfigDlg, CDialogEx)
+IMPLEMENT_DYNAMIC(CPluginConfigPage, CMFCPropertyPage)
 
-BEGIN_MESSAGE_MAP(CPluginConfigDlg, CDialogEx)
-	ON_WM_GETMINMAXINFO()
-	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CPluginConfigDlg::OnBnClickedButtonEditConfig)
-	ON_BN_CLICKED(IDC_BUTTON_LOAD_CONFIG, &CPluginConfigDlg::OnBnClickedButtonLoadConfig)
-	ON_BN_CLICKED(IDC_BUTTON_SAVE_CONFIG, &CPluginConfigDlg::OnBnClickedButtonSaveConfig)
-	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigDlg::OnCbnSelchangeComboStreamSubType)
-	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigDlg::OnCbnSelchangeComboEpgType)
-	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigDlg::OnBnClickedButtonEpgTest)
-	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CPluginConfigDlg::OnCbnSelchangeComboPluginType)
+BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CPluginConfigPage::OnToolTipText)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CPluginConfigPage::OnToolTipText)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CPluginConfigPage::OnBnClickedButtonEditConfig)
+	ON_BN_CLICKED(IDC_BUTTON_LOAD_CONFIG, &CPluginConfigPage::OnBnClickedButtonLoadConfig)
+	ON_BN_CLICKED(IDC_BUTTON_SAVE_CONFIG, &CPluginConfigPage::OnBnClickedButtonSaveConfig)
+	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigPage::OnCbnSelchangeComboStreamSubType)
+	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigPage::OnCbnSelchangeComboEpgType)
+	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPage::OnBnClickedButtonEpgTest)
+	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CPluginConfigPage::OnCbnSelchangeComboPluginType)
 END_MESSAGE_MAP()
 
-CPluginConfigDlg::CPluginConfigDlg(CWnd* pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG_PLUGIN_CONFIG, pParent)
+CPluginConfigPage::CPluginConfigPage() : CMFCPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
 , m_Date(COleDateTime::GetCurrentTime())
 {
 }
 
-void CPluginConfigDlg::DoDataExchange(CDataExchange* pDX)
+void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
@@ -106,9 +107,27 @@ void CPluginConfigDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_PlaylistTemplate);
 }
 
-BOOL CPluginConfigDlg::OnInitDialog()
+BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_LBUTTONDOWN
+		|| pMsg->message == WM_LBUTTONUP
+		|| pMsg->message == WM_MOUSEMOVE)
+	{
+		m_wndToolTipCtrl.RelayEvent(pMsg);
+	}
+
+	return __super::PreTranslateMessage(pMsg);
+}
+
+BOOL CPluginConfigPage::OnInitDialog()
 {
 	__super::OnInitDialog();
+
+	if (!m_wndToolTipCtrl.Create(this, TTS_ALWAYSTIP))
+	{
+		TRACE(_T("Unable To create ToolTip\n"));
+		return FALSE;
+	}
 
 	RestoreWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);
 
@@ -130,13 +149,51 @@ BOOL CPluginConfigDlg::OnInitDialog()
 	}
 
 	m_wndPluginType.SetCurSel(sel_idx);
+	m_wndPluginType.EnableWindow(m_single);
+
 	OnCbnSelchangeComboPluginType();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CPluginConfigDlg::EnableControls(BOOL enable)
+BOOL CPluginConfigPage::OnApply()
+{
+	return TRUE;
+}
+
+BOOL CPluginConfigPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// if there is a top level routing frame then let it handle the message
+	if (GetRoutingFrame() != nullptr)
+		return FALSE;
+
+	// to be thorough we will need to handle UNICODE versions of the message also !!
+
+	UINT nID = pNMHDR->idFrom;
+	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
+
+	if (pNMHDR->code == TTN_NEEDTEXT && (pTTT->uFlags & TTF_IDISHWND))
+	{
+		// idFrom is actually the HWND of the tool
+		nID = ::GetDlgCtrlID((HWND)nID);
+	}
+
+	if (nID != 0) // will be zero on a separator
+	{
+		auto& pair = m_tooltips_info_account.find(nID);
+		if (pair != m_tooltips_info_account.end())
+		{
+			pTTT->lpszText = pair->second.data();
+			*pResult = 0;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+void CPluginConfigPage::EnableControls(BOOL enable)
 {
 	m_wndName.EnableWindow(enable);
 	m_wndTitle.EnableWindow(enable);
@@ -163,12 +220,12 @@ void CPluginConfigDlg::EnableControls(BOOL enable)
 	m_wndLoadConf.EnableWindow(enable);
 }
 
-void CPluginConfigDlg::FillControlsCommon()
+void CPluginConfigPage::FillControlsCommon()
 {
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 	if (!m_plugin) return;
 
-	// m_plugin->save_plugin_parameters();
+	m_plugin->save_plugin_parameters();
 
 	m_wndAccessType.SetCurSel((int)m_plugin->get_access_type());
 	m_Name = m_plugin->get_name().c_str();
@@ -187,7 +244,7 @@ void CPluginConfigDlg::FillControlsCommon()
 	FillControlsEpg();
 }
 
-void CPluginConfigDlg::FillControlsStream()
+void CPluginConfigPage::FillControlsStream()
 {
 	if (!m_plugin) return;
 
@@ -211,7 +268,7 @@ void CPluginConfigDlg::FillControlsStream()
 	UpdateData(FALSE);
 }
 
-void CPluginConfigDlg::FillControlsEpg()
+void CPluginConfigPage::FillControlsEpg()
 {
 	if (!m_plugin) return;
 
@@ -232,56 +289,33 @@ void CPluginConfigDlg::FillControlsEpg()
 	UpdateData(FALSE);
 }
 
-void CPluginConfigDlg::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
-{
-	CMFCDynamicLayout* layout = GetDynamicLayout();
-
-	if (layout)
-	{
-		CSize size = layout->GetMinSize();
-		CRect rect(0, 0, size.cx, size.cy);
-		AdjustWindowRect(&rect, GetStyle(), FALSE);
-		lpMMI->ptMinTrackSize.x = rect.Width();
-		lpMMI->ptMinTrackSize.y = rect.Height();
-	}
-
-	__super::OnGetMinMaxInfo(lpMMI);
-}
-
-BOOL CPluginConfigDlg::DestroyWindow()
-{
-	SaveWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);
-
-	return __super::DestroyWindow();
-}
-
-void CPluginConfigDlg::OnBnClickedButtonEditConfig()
+void CPluginConfigPage::OnBnClickedButtonEditConfig()
 {
 	allowEdit = ~allowEdit;
 	EnableControls(allowEdit);
 }
 
-void CPluginConfigDlg::OnBnClickedButtonLoadConfig()
+void CPluginConfigPage::OnBnClickedButtonLoadConfig()
 {
 	// TODO: Add your control notification handler code here
 }
 
-void CPluginConfigDlg::OnBnClickedButtonSaveConfig()
+void CPluginConfigPage::OnBnClickedButtonSaveConfig()
 {
 	m_plugin->save_plugin_parameters();
 }
 
-void CPluginConfigDlg::OnCbnSelchangeComboStreamSubType()
+void CPluginConfigPage::OnCbnSelchangeComboStreamSubType()
 {
 	FillControlsStream();
 }
 
-void CPluginConfigDlg::OnCbnSelchangeComboEpgType()
+void CPluginConfigPage::OnCbnSelchangeComboEpgType()
 {
 	FillControlsEpg();
 }
 
-void CPluginConfigDlg::OnBnClickedButtonEpgTest()
+void CPluginConfigPage::OnBnClickedButtonEpgTest()
 {
 	UpdateData(TRUE);
 
@@ -306,7 +340,7 @@ void CPluginConfigDlg::OnBnClickedButtonEpgTest()
 	ShellExecute(nullptr, _T("open"), url, nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
-void CPluginConfigDlg::OnCbnSelchangeComboPluginType()
+void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 {
 	allowEdit = FALSE;
 	EnableControls(allowEdit);

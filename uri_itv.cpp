@@ -38,6 +38,40 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 
+uri_itv::uri_itv()
+{
+	short_name = "itv";
+}
+
+void uri_itv::load_default()
+{
+	title = "ITV Live TV";
+	name = "itv-live.tv";
+	access_type = AccountAccessType::enPin;
+
+	provider_url = "https://itv.live/";
+	playlist_template = "http://itv.ooo/p/{PASSWORD}/hls.m3u8";
+	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
+
+	per_channel_token = true;
+
+	streams_list[0].cu_type = CatchupType::cu_flussonic;
+	streams_list[0].cu_subst = "archive";
+	streams_list[0].uri_template = "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
+	streams_list[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+
+	streams_list[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	streams_list[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+
+	auto& params = epg_params[0];
+	params.epg_url = "http://api.itv.live/epg/{ID}";
+	params.epg_root = "res";
+	params.epg_name = "title";
+	params.epg_desc = "desc";
+	params.epg_start = "startTime";
+	params.epg_end = "stopTime";
+}
+
 bool uri_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	std::vector<BYTE> data;

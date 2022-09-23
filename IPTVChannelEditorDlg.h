@@ -272,6 +272,7 @@ protected:
 	CToolTipCtrl m_wndToolTipCtrl;
 	CComboBox m_wndPluginType;
 	CButton m_wndVod;
+	CButton m_wndEditConfig;
 	CTreeCtrlEx m_wndChannelsTree;
 	CComboBox m_wndPlaylist;
 	CTreeCtrlEx m_wndPlaylistTree;

@@ -155,8 +155,6 @@
 #define IDS_STRING_BUTTON_ADD           261
 #define IDS_STRING_BUTTON_REMOVE        262
 #define IDS_STRING_BUTTON_NEW_FROM_URL  263
-#define IDS_STRING_COMBO_DEVICE_ID      264
-#define IDS_STRING_COMBO_PROFILE        265
 #define IDS_STRING_CHECK_EMBED          266
 #define IDS_STRING_COL_COMMENT          267
 #define IDS_STRING_COL_SUFFIX           268
@@ -181,6 +179,10 @@
 #define IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME 288
 #define IDS_STRING_BOTH_PATH_MUST_FILLED 289
 #define IDS_STRING_COMBO_QUALITY        290
+#define IDS_STRING_COMBO_SERVER_ID      291
+#define IDS_STRING_COMBO_DEVICE_ID      292
+#define IDS_STRING_COMBO_PROFILE        293
+#define IDS_STRING_COMBO_QUALITY_ID     294
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -312,6 +314,7 @@
 #define IDC_STATIC_DEVICE_ID            1095
 #define IDC_CHECK_EMBED                 1096
 #define IDC_STATIC_VERSION              1097
+#define IDC_STATIC_SERVER_ID            1097
 #define IDC_STATIC_PROFILE              1098
 #define IDC_EDIT_EPG                    1099
 #define IDC_RICHEDIT_EPG                1100
@@ -340,6 +343,8 @@
 #define IDC_SPIN_CHECK_UPDATE           1121
 #define IDC_COMBO_DEVICE_ID             1122
 #define IDC_SPLIT_BUTTON_UPDATE         1123
+#define IDC_COMBO_DEVICE_ID2            1123
+#define IDC_COMBO_SERVER_ID             1123
 #define IDC_EDIT_UPDATE_FREQ            1124
 #define IDC_CHECK_CHANNELS              1125
 #define IDC_STATIC_VPORTAL              1126

@@ -34,10 +34,38 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-void uri_edem::get_playlist_url(std::wstring& url, TemplateParams& params)
+uri_edem::uri_edem()
 {
-	static constexpr auto PLAYLIST_TEMPLATE1 = L"http://epg.it999.ru/edem_epg_ico.m3u8";
-	static constexpr auto PLAYLIST_TEMPLATE2 = L"http://epg.it999.ru/edem_epg_ico2.m3u8";
+	short_name = "edem";
+}
 
-	url = params.number == 0 ? PLAYLIST_TEMPLATE1 : PLAYLIST_TEMPLATE2;
+void uri_edem::load_default()
+{
+	provider_vod_url = L"{SUBDOMAIN}";
+
+	playlists.clear();
+	PlaylistInfo info;
+	info.name = load_string_resource(IDS_STRING_EDEM_STANDARD);
+	playlists.emplace_back(info);
+
+	info.name = load_string_resource(IDS_STRING_EDEM_THEMATIC);
+	playlists.emplace_back(info);
+
+	title = "iEdem/iLook TV";
+	name = "iedem.tv";
+	access_type = AccountAccessType::enOtt;
+
+	provider_url = "https://ilook.tv/";
+	playlist_template = "http://epg.it999.ru/edem_epg_ico.m3u8";
+	uri_parse_template = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";
+
+	streams_list[0].uri_template = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
+	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+	epg_params[0].epg_url = "http://epg.drm-play.ml/edem/epg/{ID}.json";
+}
+
+std::wstring uri_edem::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)
+{
+	return (params.number == 0) ? L"http://epg.it999.ru/edem_epg_ico.m3u8" : L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 }

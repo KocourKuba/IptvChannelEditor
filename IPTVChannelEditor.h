@@ -41,9 +41,8 @@ class CIPTVChannelEditorApp : public CWinAppEx
 {
 	typedef struct
 	{
+		HMODULE hLib;
 		CString csLang;
-		CString csPath;
-		CString csSuffix;
 	} LangStruct;
 
 public:
@@ -97,6 +96,7 @@ void RestoreWindowPos(HWND hWnd, LPCTSTR name);
 int RequestToUpdateServer(const std::wstring& command);
 
 std::wstring load_string_resource(unsigned int id);
+std::wstring load_string_resource(unsigned int cp, unsigned int id);
 uintmax_t calc_folder_size(const std::wstring& path);
 
 std::wstring GetPluginShortNameW(const PluginType plugin_type, bool bCamel = false);

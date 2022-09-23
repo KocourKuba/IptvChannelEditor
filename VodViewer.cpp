@@ -876,22 +876,22 @@ void CVodViewer::FilterList()
 
 					auto movie = std::make_shared<vod_movie>();
 
-					if (utils::get_json_string("type", movie_item) == L"next")
+					if (utils::get_json_wstring("type", movie_item) == L"next")
 					{
 						offset = utils::get_json_int("offset", movie_item["request"]);
 						continue;
 					}
 
-					movie->id = utils::get_json_string("fid", movie_item["request"]);
-					movie->title = utils::get_json_string("title", movie_item);
-					movie->description = utils::get_json_string("description", movie_item);
-					movie->poster_url.set_uri(utils::get_json_string("img", movie_item));
+					movie->id = utils::get_json_wstring("fid", movie_item["request"]);
+					movie->title = utils::get_json_wstring("title", movie_item);
+					movie->description = utils::get_json_wstring("description", movie_item);
+					movie->poster_url.set_uri(utils::get_json_wstring("img", movie_item));
 					movie->poster_url.set_schema(L"http://");
-					movie->rating = utils::get_json_string("rating", movie_item);
-					movie->country = utils::get_json_string("country", movie_item);
-					movie->year = utils::get_json_string("year", movie_item);
-					movie->age = utils::get_json_string("agelimit", movie_item);
-					movie->movie_time = utils::get_json_string("duration", movie_item);
+					movie->rating = utils::get_json_wstring("rating", movie_item);
+					movie->country = utils::get_json_wstring("country", movie_item);
+					movie->year = utils::get_json_wstring("year", movie_item);
+					movie->age = utils::get_json_wstring("agelimit", movie_item);
+					movie->movie_time = utils::get_json_wstring("duration", movie_item);
 
 					filtered_movies.set(movie->id, movie);
 					cnt++;
@@ -987,11 +987,11 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 	{
 		const auto& value = parsed_json["data"];
 
-		movie.description = utils::get_json_string("description", value);
-		movie.director = utils::get_json_string("director", value);
-		movie.casting = utils::get_json_string("actors", value);
-		movie.movie_time = utils::get_json_string("time", value);
-		const auto& adult = utils::get_json_string("adult", value);
+		movie.description = utils::get_json_wstring("description", value);
+		movie.director = utils::get_json_wstring("director", value);
+		movie.casting = utils::get_json_wstring("actors", value);
+		movie.movie_time = utils::get_json_wstring("time", value);
+		const auto& adult = utils::get_json_wstring("adult", value);
 		if (adult == L"1")
 			movie.age += L" 18+";
 
@@ -1001,22 +1001,22 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 			{
 				const auto& season_item = season_it.value();
 				vod_season season;
-				season.id = utils::get_json_string("id", season_item);
-				season.title = utils::get_json_string("name", season_item);
-				season.season_id = utils::get_json_string("number", season_item);
+				season.id = utils::get_json_wstring("id", season_item);
+				season.title = utils::get_json_wstring("name", season_item);
+				season.season_id = utils::get_json_wstring("number", season_item);
 
 				for (const auto& episode_it : season_item["series"].items())
 				{
 					const auto& episode_item = episode_it.value();
 
 					vod_episode episode;
-					episode.id = utils::get_json_string("id", episode_item);
-					episode.title = utils::get_json_string("name", episode_item);
-					episode.episode_id = utils::get_json_string("number", episode_item);
+					episode.id = utils::get_json_wstring("id", episode_item);
+					episode.title = utils::get_json_wstring("name", episode_item);
+					episode.episode_id = utils::get_json_wstring("number", episode_item);
 
 					if (episode_item["files"].is_array())
 					{
-						episode.url = utils::get_json_string("url", episode_item["files"].front());
+						episode.url = utils::get_json_wstring("url", episode_item["files"].front());
 					}
 
 					season.episodes.set(episode.id, episode);
@@ -1026,7 +1026,7 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 		}
 		else
 		{
-			movie.url = utils::get_json_string("url", value["files"][0]);
+			movie.url = utils::get_json_wstring("url", value["files"][0]);
 		}
 	}
 	JSON_ALL_CATCH;
@@ -1078,12 +1078,12 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 
 				const auto& item = items_it.value();
 				vod_episode episode;
-				episode.title = utils::get_json_string("title", item);
-				episode.url = utils::get_json_string("url", item);
-				episode.id = utils::get_json_string("fid", item);
+				episode.title = utils::get_json_wstring("title", item);
+				episode.url = utils::get_json_wstring("url", item);
+				episode.id = utils::get_json_wstring("fid", item);
 				if (episode.id.empty())
 				{
-					episode.id = utils::get_json_string("fid", item["request"]);
+					episode.id = utils::get_json_wstring("fid", item["request"]);
 				}
 
 				json_request["fid"] = utils::char_to_int(episode.id);
@@ -1110,7 +1110,7 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 		}
 		else
 		{
-			movie.url = utils::get_json_string("url", json_data);
+			movie.url = utils::get_json_wstring("url", json_data);
 			if (json_data.contains("variants"))
 			{
 				for (const auto& variant_it : json_data["variants"].items())

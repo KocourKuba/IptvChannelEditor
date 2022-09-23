@@ -311,11 +311,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	AfxSetResourceHandle(AfxGetInstanceHandle());
 	if (auto pair = m_LangMap.find(nLangCurrent); pair != m_LangMap.cend())
 	{
-		if (nLangCurrent != 1033)
+		if (nLangCurrent != 1033 && pair->second.hLib != nullptr)
 		{
-			HMODULE hLib = LoadLibrary(pair->second.csPath);
-			if (hLib != nullptr)
-				AfxSetResourceHandle(hLib);
+			AfxSetResourceHandle(pair->second.hLib);
 		}
 	}
 
@@ -373,6 +371,11 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		TRACE(traceAppMsg, 0, "Warning: if you are using MFC controls on the dialog, you cannot #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS.\n");
 	}
 
+	for (auto& lang : m_LangMap)
+	{
+		::FreeLibrary(lang.second.hLib);
+	}
+
 	// Delete the shell manager created above.
 	//delete pShellManager;
 
@@ -404,8 +407,8 @@ void CIPTVChannelEditorApp::FillLangMap()
 	cVer.Close();
 
 	LangStruct sLang;
+	sLang.hLib = nullptr;
 	sLang.csLang = _T("English");
-	sLang.csSuffix = _T("ENG");
 	m_LangMap.emplace(nExeTrans, sLang);
 
 	std::filesystem::path cFile(fileName.GetString());
@@ -426,15 +429,9 @@ void CIPTVChannelEditorApp::FillLangMap()
 		HMODULE hRes = LoadLibrary(file);
 		if (!hRes) continue;
 
+		sLang.hLib = hRes;
 		sLang.csLang.LoadString(hRes, IDS_LANGUAGE);
-		sLang.csPath = file;
-		sLang.csSuffix = cFind.GetFileTitle().Right(3);
 		m_LangMap.emplace(nLibTrans, sLang);
-
-		if (hRes != AfxGetResourceHandle())
-		{
-			::FreeLibrary(hRes);
-		}
 	}
 }
 
@@ -1303,6 +1300,25 @@ std::wstring load_string_resource(unsigned int id)
 	{
 		return std::wstring{ p, static_cast<size_t>(len) };
 	}
+	// Return empty string; optionally replace with throwing an exception.
+	return std::wstring{};
+}
+
+std::wstring load_string_resource(unsigned int cp, unsigned int id)
+{
+	HMODULE hRes = nullptr;
+	if (auto pair = theApp.m_LangMap.find(cp); pair != theApp.m_LangMap.end())
+	{
+		hRes = pair->second.hLib;
+	}
+
+	wchar_t* p = nullptr;
+	int len = ::LoadStringW(hRes, id, reinterpret_cast<LPWSTR>(&p), 0);
+	if (len > 0)
+	{
+		return std::wstring{ p, static_cast<size_t>(len) };
+	}
+
 	// Return empty string; optionally replace with throwing an exception.
 	return std::wstring{};
 }

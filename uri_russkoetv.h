@@ -31,25 +31,7 @@ class uri_russkoetv : public uri_stream
 {
 public:
 
-	uri_russkoetv()
-	{
-		short_name = "russkoetv";
-	}
+	uri_russkoetv();
 
-	void load_default() override
-	{
-		title = "Russkoe TV";
-		name = "russkoetv";
-		access_type = AccountAccessType::enPin;
-
-		provider_url = "https://russkoetv.tv/";
-		playlist_template = "http://russkoetv.tv/play/{PASSWORD}.m3u8";
-		uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
-
-		streams_config[0].uri_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
-		streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-		epg_params[0].epg_url = "http://protected-api.com/epg/{ID}/?date=";
-		epg_params[0].epg_root = "";
-	}
+	void load_default() override;
 };
