@@ -35,15 +35,11 @@ public:
 	uri_mymagic()
 	{
 		short_name = "mymagic";
-		servers_list = {
-			{ L"0", load_string_resource(IDS_STRING_MYMAGIC_P0) },
-			{ L"1", load_string_resource(IDS_STRING_MYMAGIC_P1) },
-			{ L"2", load_string_resource(IDS_STRING_MYMAGIC_P2) },
-			{ L"3", load_string_resource(IDS_STRING_MYMAGIC_P3) },
-			{ L"4", load_string_resource(IDS_STRING_MYMAGIC_P4) },
-			{ L"5", load_string_resource(IDS_STRING_MYMAGIC_P5) },
-			{ L"6", load_string_resource(IDS_STRING_MYMAGIC_P6) },
-		};
+		for (int i = 0; i <= IDS_STRING_MYMAGIC_P6 - IDS_STRING_MYMAGIC_P0; i++)
+		{
+			ServersInfo info({ fmt::format(L"{:d}", i), load_string_resource(IDS_STRING_MYMAGIC_P0 + i) });
+			servers_list.emplace_back(info);
+		}
 
 		quality_list = {
 			{ L"0", load_string_resource(IDS_STRING_MYMAGIC_Q1) },

@@ -181,7 +181,8 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
 
 	if (plugin)
 	{
-		plugin->load_plugin_parameters();
+		//plugin->load_plugin_parameters();
+		plugin->load_default();
 	}
 
 	return plugin;

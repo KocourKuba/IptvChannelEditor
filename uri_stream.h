@@ -114,6 +114,7 @@ struct EpgInfo
 /// </summary>
 struct EpgParameters
 {
+	std::string epg_param;
 	std::string epg_url;
 	std::string epg_root;
 	std::string epg_name;
@@ -133,7 +134,7 @@ struct EpgParameters
 	std::wstring get_epg_url() const { return utils::utf8_to_utf16(epg_url); }
 	std::wstring get_epg_date_format() const { return utils::utf8_to_utf16(epg_date_format); }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_url, epg_date_format, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_time_format, epg_timezone);
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_param, epg_url, epg_date_format, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_time_format, epg_timezone);
 };
 
 

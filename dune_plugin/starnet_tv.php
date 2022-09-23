@@ -45,7 +45,7 @@ class Starnet_Tv extends Abstract_Tv
      */
     public function add_special_groups(&$items)
     {
-        if ($this->plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(VOD_SUPPORTED)) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url =>

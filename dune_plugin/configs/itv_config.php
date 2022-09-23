@@ -1,14 +1,12 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class ItvPluginConfig extends Default_Config
+class itv_config extends default_config
 {
     const API_HOST = 'http://api.itv.live';
 
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
         $this->set_feature(BALANCE_SUPPORTED, true);
         $this->set_feature(SQUARE_ICONS, true);

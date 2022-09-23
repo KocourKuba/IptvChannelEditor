@@ -27,7 +27,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
 
-        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
+        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

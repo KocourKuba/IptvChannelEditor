@@ -58,14 +58,12 @@ class Default_Dune_Plugin implements DunePlugin
     // info
     public $PLUGIN_SHOW_NAME = 'StarNet';
     public $PLUGIN_SHORT_NAME = 'starnet';
-    public $PLUGIN_CLASS_NAME = 'Undefined';
     public $PLUGIN_VERSION = '0.0.0';
     public $PLUGIN_DATE = '04.01.1972';
     public $PLUGIN_CAPTION = '';
     public $PLUGIN_ICON = '';
     public $PLUGIN_BACKGROUND = '';
     public $PLUGIN_CHANNELS_URL_PATH = '';
-    public $EMBEDDED_ACCOUNT = '';
 
     /**
      * set base plugin info from dune_plugin.xml
@@ -74,7 +72,26 @@ class Default_Dune_Plugin implements DunePlugin
     public function plugin_setup()
     {
         $xml = HD::parse_xml_file(get_install_path('dune_plugin.xml'));
+        $this->PLUGIN_SHORT_NAME = (string)$xml->short_name;
+        $this->PLUGIN_SHOW_NAME = (string)$xml->caption;
+        $this->PLUGIN_ICON = (string)$xml->icon_url;
+        $this->PLUGIN_BACKGROUND = (string)$xml->background;
+        $this->PLUGIN_VERSION = $xml->version . '.' . $xml->version_index;
+        $this->PLUGIN_DATE = (string)$xml->release_date;
+        $this->PLUGIN_CHANNELS_URL_PATH = (string)$xml->channels_url_path;
+        $plugin_config_class = (string)$xml->class_name;
 
+        if (empty($plugin_config_class)) {
+            $plugin_config_class = $this->PLUGIN_SHORT_NAME . "_config";
+        }
+        if (!class_exists($plugin_config_class) || !is_subclass_of($plugin_config_class, 'default_config')) {
+            hd_print("Unknown plugin type: $plugin_config_class");
+            throw new Exception("Unknown plugin type: $plugin_config_class");
+        }
+
+        hd_print("Instantiate class: $plugin_config_class");
+        $this->config = new $plugin_config_class;
+        $this->config->init_defaults($this->PLUGIN_SHORT_NAME);
         $acc_file = get_install_path('account.dat');
         if (file_exists($acc_file)) {
             $data = file_get_contents($acc_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -82,43 +99,22 @@ class Default_Dune_Plugin implements DunePlugin
                 hd_print("account data: $data");
                 $account = json_decode(base64_decode(substr($data, 5)));
                 if ($account !== false) {
-                    $this->EMBEDDED_ACCOUNT = $account;
-                    //foreach ($this->embedded_account as $key => $item) {
-                    //    hd_print("Embedded info: $key => $item");
-                    //}
+                    $this->config->set_embedded_account($account);
+                    //foreach ($this->embedded_account as $key => $item) hd_print("Embedded info: $key => $item");
                 }
             }
         }
 
-        $this->PLUGIN_SHOW_NAME = (string)$xml->caption;
-        $this->PLUGIN_SHORT_NAME = (string)$xml->short_name;
-        $this->PLUGIN_CLASS_NAME = (string)$xml->class_name;
-        $this->PLUGIN_ICON = (string)$xml->icon_url;
-        $this->PLUGIN_BACKGROUND = (string)$xml->background;
-        $this->PLUGIN_VERSION = $xml->version . '.' . $xml->version_index;
-        $this->PLUGIN_DATE = (string)$xml->release_date;
-        $this->PLUGIN_CHANNELS_URL_PATH = (string)$xml->channels_url_path;
-
-        $this->plugin_path = __DIR__;
-        $plugin_type = $this->PLUGIN_CLASS_NAME;
-        if (!class_exists($plugin_type) || !is_subclass_of($plugin_type, 'Default_Config')) {
-            hd_print("Unknown plugin type: $plugin_type");
-            throw new Exception("Unknown plugin type: $plugin_type");
-        }
-
-        $this->config = new $plugin_type;
-        $this->config->set_embedded_account($this->EMBEDDED_ACCOUNT);
-        $this->config->load_config();
-
         print_sysinfo();
 
         hd_print("----------------------------------------------------");
+        hd_print("Plugin ID:        " . $this->PLUGIN_SHORT_NAME);
         hd_print("Plugin name:      " . $this->PLUGIN_SHOW_NAME);
         hd_print("Plugin version:   " . $this->PLUGIN_VERSION);
         hd_print("Plugin date:      " . $this->PLUGIN_DATE);
         hd_print("Account type:     " . $this->config->get_feature(ACCOUNT_TYPE));
         hd_print("TV fav:           " . ($this->config->get_feature(TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
-        hd_print("VOD page:         " . ($this->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED) ? "yes" : "no"));
+        hd_print("VOD page:         " . ($this->config->get_feature(VOD_SUPPORTED) ? "yes" : "no"));
         hd_print("VOD fav:          " . ($this->config->get_feature(VOD_FAVORITES_SUPPORTED) ? "yes" : "no"));
         hd_print("LocalTime         " . format_datetime('Y-m-d H:i', time()));
         hd_print("TimeZone          " . getTimeZone());
@@ -127,11 +123,6 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("Background        " . $this->PLUGIN_BACKGROUND);
         hd_print("----------------------------------------------------");
     }
-
-    /**
-     * @var string
-     */
-    public $plugin_path;
 
     /**
      * @var Starnet_Tv
@@ -144,7 +135,7 @@ class Default_Dune_Plugin implements DunePlugin
     public $vod;
 
     /**
-     * @var Default_Config
+     * @var default_config
      */
     public $config;
 
@@ -515,7 +506,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_image_path($image = null)
     {
-        return "$this->plugin_path/img/" . ($image === null ?: $image);
+        return get_install_path("/img/" . ($image === null ?: $image));
     }
 
     ///////////////////////////////////////////////////////////////////////

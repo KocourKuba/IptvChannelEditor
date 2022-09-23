@@ -98,6 +98,7 @@ protected:
 	CComboBox m_wndPluginType;
 
 	CButton m_wndLoadConf;
+	CButton m_wndSaveConf;
 	CButton m_wndTest;
 
 	CString m_Name;

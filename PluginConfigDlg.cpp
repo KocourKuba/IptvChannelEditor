@@ -95,6 +95,7 @@ void CPluginConfigDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_CATCHUP_TYPE, m_wndCatchupType);
 	DDX_Control(pDX, IDC_COMBO_EPG_TYPE, m_wndEpgType);
 	DDX_Control(pDX, IDC_BUTTON_LOAD_CONFIG, m_wndLoadConf);
+	DDX_Control(pDX, IDC_BUTTON_SAVE_CONFIG, m_wndSaveConf);
 	DDX_Control(pDX, IDC_BUTTON_EPG_SHOW, m_wndTest);
 	DDX_Control(pDX, IDC_EDIT_SET_ID, m_wndSetID);
 	DDX_Text(pDX, IDC_EDIT_SET_ID, m_SetID);
@@ -158,6 +159,7 @@ void CPluginConfigDlg::EnableControls(BOOL enable)
 	m_wndEpgTimezone.EnableWindow(enable);
 	m_wndAccessType.EnableWindow(enable);
 	m_wndCatchupType.EnableWindow(enable);
+	m_wndSaveConf.EnableWindow(enable);
 	m_wndLoadConf.EnableWindow(enable);
 }
 
@@ -166,9 +168,7 @@ void CPluginConfigDlg::FillControlsCommon()
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 	if (!m_plugin) return;
 
-#ifdef _DEBUG
-	//m_plugin->save_plugin_parameters();
-#endif // _DEBUG
+	// m_plugin->save_plugin_parameters();
 
 	m_wndAccessType.SetCurSel((int)m_plugin->get_access_type());
 	m_Name = m_plugin->get_name().c_str();
@@ -308,7 +308,8 @@ void CPluginConfigDlg::OnBnClickedButtonEpgTest()
 
 void CPluginConfigDlg::OnCbnSelchangeComboPluginType()
 {
-	EnableControls(FALSE);
+	allowEdit = FALSE;
+	EnableControls(allowEdit);
 
 	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
 

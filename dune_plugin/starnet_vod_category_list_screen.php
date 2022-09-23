@@ -24,7 +24,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
     {
         parent::__construct(self::ID, $plugin, $plugin->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS());
 
-        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
+        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

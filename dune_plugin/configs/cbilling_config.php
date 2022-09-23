@@ -1,14 +1,12 @@
 ﻿<?php
 require_once 'cbilling_vod_impl.php';
 
-class CbillingPluginConfig extends Cbilling_Vod_Impl
+class cbilling_config extends Cbilling_Vod_Impl
 {
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
-        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
         $this->set_feature(DEVICE_OPTIONS, array('1' => '1', '2' => '2', '3' => '3'));

@@ -93,6 +93,10 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 			PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
 			m_bDev = true;
 		}
+		else if (_tcsicmp(szParam, _T("Make")) == 0)
+		{
+			m_bMake = true;
+		}
 		else if (_tcsicmp(szParam, _T("MakeAll")) == 0)
 		{
 			m_bMakeAll = true;
@@ -251,6 +255,29 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 			GetConfig().SaveSettingsToRegistry();
 		else
 			AfxMessageBox(IDS_STRING_ERR_NOT_PORTABLE, MB_ICONERROR | MB_OK);
+	}
+
+	if (cmdInfo.m_bMake)
+	{
+		std::wstring output_path;
+		if (cmdInfo.m_strFileName.IsEmpty())
+			output_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
+		else
+			output_path = cmdInfo.m_strFileName.GetString();
+
+		auto plugin_type = GetConfig().get_plugin_type();
+		if (!PackPlugin(plugin_type, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
+		{
+			const auto& plugin = StreamContainer::get_instance(plugin_type);
+			if (plugin)
+			{
+				CString str;
+				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, plugin->get_title().c_str());
+				AfxMessageBox(str, MB_YESNO);
+			}
+		}
+
+		return FALSE;
 	}
 
 	if (cmdInfo.m_bMakeAll)
@@ -807,10 +834,20 @@ bool PackPlugin(const PluginType plugin_type,
 		const auto& bg = fmt::format("plugin_file://icons/{:s}", plugin_bgnd.filename().string());
 
 		// change values
+
 		auto d_node = doc->first_node("dune_plugin");
+		if (plugin_type != PluginType::enCustom)
+		{
+			d_node->remove_node(d_node->first_node("class_name"));
+		}
+		else
+		{
+			const auto& class_name = fmt::format("{:s}_config", plugin->get_short_name());
+			d_node->first_node("class_name")->value(class_name.c_str());
+		}
+
 		d_node->first_node("name")->value(plugin->get_name().c_str());
 		d_node->first_node("short_name")->value(plugin->get_short_name().c_str());
-		d_node->first_node("class_name")->value(fmt::format("{:s}PluginConfig", GetPluginShortNameA(plugin_type, true)).c_str());
 		d_node->first_node("background")->value(bg.c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
 		d_node->first_node("version")->value(STRPRODUCTVER);
@@ -844,10 +881,13 @@ bool PackPlugin(const PluginType plugin_type,
 		return false;
 	}
 
-	// copy plugin program config
+	// copy plugin config class
 	std::filesystem::copy_file(fmt::format(LR"({:s}configs\{:s}_config.php)", plugin_root, short_name_w),
 							   fmt::format(L"{:s}{:s}_config.php", packFolder, short_name_w),
 							   std::filesystem::copy_options::overwrite_existing, err);
+
+	// copy plugin settings
+	plugin->save_plugin_parameters(fmt::format(L"{:s}{:s}_config.json", packFolder, short_name_w).c_str());
 
 	// copy channel lists
 	for(const auto& item : channels_list)
@@ -859,7 +899,7 @@ bool PackPlugin(const PluginType plugin_type,
 	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
 	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
 	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n", GetPluginShortNameA(plugin_type));
+	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n", plugin->get_short_name());
 	os.close();
 
 	// copy embedded info

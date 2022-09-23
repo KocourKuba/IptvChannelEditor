@@ -22,7 +22,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
 
-        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
+        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

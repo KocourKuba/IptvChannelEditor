@@ -69,6 +69,7 @@ public:
 
 public:
 	bool m_bDev = false;
+	bool m_bMake = false;
 	bool m_bMakeAll = false;
 	bool m_bPortable = false;
 	bool m_bRestoreReg = false;

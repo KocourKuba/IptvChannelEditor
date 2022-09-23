@@ -26,6 +26,8 @@ uri_stream::uri_stream()
 	params.epg_end = "time_to";
 
 	epg_params = { params, params };
+	epg_params[0].epg_param = "first";
+	epg_params[1].epg_param = "second";
 
 	PlaylistInfo info;
 	info.name = load_string_resource(IDS_STRING_PLAYLIST);
@@ -49,7 +51,7 @@ bool uri_stream::save_plugin_parameters(const wchar_t* filename /*= nullptr*/)
 	std::wstring out_file;
 	if (filename == nullptr)
 	{
-		out_file = utils::utf8_to_utf16(get_short_name() + "_config.json");
+		out_file = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_SETTINGS), utils::utf8_to_utf16(short_name + "_config.json"));
 	}
 	else
 	{

@@ -23,7 +23,7 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
     {
         parent::__construct(self::ID, $plugin, $plugin->GET_VOD_SERIES_FOLDER_VIEW());
 
-        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
+        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

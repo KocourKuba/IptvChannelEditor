@@ -1,16 +1,10 @@
 ﻿<?php
-require_once 'lib/epg_manager.php';
-require_once 'lib/tv/channel.php';
+require_once 'dynamic_config.php';
+require_once 'epg_manager.php';
+require_once 'tv/channel.php';
 
-class Default_Config
+class default_config extends dynamic_config
 {
-    protected $PluginShortName;
-
-    // features constants
-    protected $FEATURES = array();
-    protected $STREAMS = array();
-    protected $EPG_PARSER_PARAMS = array();
-
     // page counter for some plugins
     protected $pages = array();
     protected $is_entered = false;
@@ -18,64 +12,6 @@ class Default_Config
     protected $filters = array();
 
     protected $embedded_account;
-
-    public function __construct($short_name)
-    {
-        $this->PluginShortName = $short_name;
-
-        $this->FEATURES[ACCOUNT_TYPE] = -1;
-        $this->FEATURES[TV_FAVORITES_SUPPORTED] = true;
-        $this->FEATURES[VOD_MOVIE_PAGE_SUPPORTED] = false;
-        $this->FEATURES[VOD_FAVORITES_SUPPORTED] = false;
-        $this->FEATURES[VOD_QUALITY_SUPPORTED] = false;
-        $this->FEATURES[VOD_FILTER_SUPPORTED] = false;
-        $this->FEATURES[VOD_LAZY_LOAD] = false;
-        $this->FEATURES[DEVICE_OPTIONS] = array();
-        $this->FEATURES[BALANCE_SUPPORTED] = false;
-        $this->FEATURES[SERVER_SUPPORTED] = false;
-        $this->FEATURES[QUALITY_SUPPORTED] = false;
-        $this->FEATURES[EXTINF_VOD_PATTERN] = '';
-        $this->FEATURES[SQUARE_ICONS] = false;
-        $this->FEATURES[USE_TOKEN_AS_ID] = false;
-    }
-
-    /**
-     * load configuration
-     * @return void
-     */
-    public function load_config()
-    {
-        $default_streams = array();
-        $default_streams[CU_TYPE] = 'shift';
-        $default_streams[URL_TEMPLATE] = '';
-        $default_streams[URL_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
-        $default_streams[CU_SUBST] = 'utc';
-        $this->set_streams(HLS, $default_streams);
-
-        $default_streams[CU_TYPE] = 'flussonic';
-        $default_streams[CU_SUBST] = 'archive';
-        $default_streams[URL_ARC_TEMPLATE] = '';
-        $this->set_streams(MPEG, $default_streams);
-
-        $default_parser = array();
-        $default_parser[EPG_PARSER] = 'json';
-        $default_parser[EPG_URL] = '';
-        $default_parser[EPG_ROOT] = 'epg_data';
-        $default_parser[EPG_START] = 'time';
-        $default_parser[EPG_END] = 'time_to';
-        $default_parser[EPG_NAME] = 'name';
-        $default_parser[EPG_DESC] = 'descr';
-        $default_parser[EPG_DATE_FORMAT] = '';
-        $default_parser[EPG_USE_DURATION] = false;
-        $default_parser[EPG_USE_MAPPER] = false;
-        $default_parser[EPG_MAPPER_URL] = '';
-        $default_parser[EPG_TIME_FORMAT] = '';
-        $default_parser[EPG_TIMEZONE] = 0;
-        $default_parser[EPG_ID_MAPPER] = array();
-
-        $this->set_epg_params(EPG_FIRST, $default_parser);
-        $this->set_epg_params(EPG_SECOND, $default_parser);
-    }
 
     /**
      * @return Object|null
@@ -91,24 +27,6 @@ class Default_Config
     public function set_embedded_account($val)
     {
         $this->embedded_account = $val;
-    }
-
-    /**
-     * @param string $type
-     * @return mixed
-     */
-    public function get_feature($type)
-    {
-        return $this->FEATURES[$type];
-    }
-
-    /**
-     * @param string $type
-     * @param mixed $val
-     */
-    public function set_feature($type, $val)
-    {
-        $this->FEATURES[$type] = $val;
     }
 
     /**
@@ -177,15 +95,6 @@ class Default_Config
      * @return null
      */
     public function get_server($plugin_cookies)
-    {
-        return null;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return null
-     */
-    public function set_server($plugin_cookies)
     {
         return null;
     }
@@ -263,82 +172,6 @@ class Default_Config
     {
         // Sort by channel numbers.
         return strnatcasecmp($a->get_number(), $b->get_number());
-    }
-
-    /**
-     * @param string $type
-     * @return mixed
-     */
-    public function get_streams($type)
-    {
-        return $this->STREAMS[$type];
-    }
-
-    /**
-     * @param string $type
-     * @param array $val
-     */
-    public function set_streams($type, $val)
-    {
-        $this->STREAMS[$type] = $val;
-    }
-
-    /**
-     * @param string $type
-     * @param string $param
-     * @return mixed
-     */
-    public function get_stream_param($type, $param)
-    {
-        return $this->STREAMS[$type][$param];
-    }
-
-    /**
-     * @param string $type
-     * @param string $param
-     * @param mixed $val
-     */
-    public function set_stream_param($type, $param, $val)
-    {
-        $this->STREAMS[$type][$param] = $val;
-    }
-
-    /**
-     * @param string $type
-     * @return mixed
-     */
-    public function get_epg_params($type)
-    {
-        return $this->EPG_PARSER_PARAMS[$type];
-    }
-
-    /**
-     * @param string $type
-     * @param array $val
-     */
-    public function set_epg_params($type, $val)
-    {
-        $this->EPG_PARSER_PARAMS[$type] = $val;
-    }
-
-    /**
-     * @param string $type
-     * @param string $param
-     * @param mixed $val
-     */
-    public function set_epg_param($type, $param, $val)
-    {
-        $this->EPG_PARSER_PARAMS[$type][$param] = $val;
-    }
-
-    /**
-     * @param string $type
-     * @param string $param
-     * @return mixed
-     */
-    public function get_epg_param($type, $param)
-    {
-        return $this->EPG_PARSER_PARAMS[$type][$param];
     }
 
     public function try_reset_pages()
@@ -614,9 +447,10 @@ class Default_Config
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
+        $vod_pattern = $this->get_feature(VOD_PATTERN);
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
-            if (!preg_match($this->FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
+            if (!preg_match($vod_pattern, $line, $matches)) {
                 continue;
             }
 
@@ -652,9 +486,10 @@ class Default_Config
     public function getVideoList($query_id, $plugin_cookies)
     {
         $movies = array();
+        $vod_pattern = $this->get_feature(VOD_PATTERN);
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
-            if (!preg_match($this->FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
+            if (!preg_match($vod_pattern, $line, $matches)) {
                 continue;
             }
 
@@ -802,9 +637,10 @@ class Default_Config
         $category_index = array();
         $categoriesFound = array();
 
+        $vod_pattern = $this->get_feature(VOD_PATTERN);
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
-            if (!preg_match($this->FEATURES[EXTINF_VOD_PATTERN], $line, $matches)) {
+            if (!preg_match($vod_pattern, $line, $matches)) {
                 continue;
             }
 

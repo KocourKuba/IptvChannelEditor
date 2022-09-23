@@ -5,14 +5,14 @@ require_once 'epg_xml_parser.php';
 class Epg_Manager
 {
     /**
-     * @var Default_Config
+     * @var default_config
      */
     public $config;
 
     /**
-     * @param Default_Config $config
+     * @param default_config $config
      */
-    public function __construct(Default_Config $config)
+    public function __construct(default_config $config)
     {
         $this->config = $config;
     }

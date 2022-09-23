@@ -1,16 +1,14 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class MymagicPluginConfig extends Default_Config
+class mymagic_config extends default_config
 {
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
         $this->set_feature(SQUARE_ICONS, true);
-        $this->set_feature(SERVER_SUPPORTED, true);
-        $this->set_feature(QUALITY_SUPPORTED, true);
+        $this->set_feature(SERVER_OPTIONS, true);
+        $this->set_feature(QUALITY_OPTIONS, true);
         $this->set_feature(USE_TOKEN_AS_ID, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY}/{LOGIN}/{PASSWORD}/tv.m3u');
         $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>[^/]+)/(?<token>.+)$|');

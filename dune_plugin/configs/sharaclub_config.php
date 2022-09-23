@@ -1,20 +1,18 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class SharaclubPluginConfig extends Default_Config
+class sharaclub_config extends default_config
 {
     const PLAYLIST_VOD_URL = 'vod_url';
     const ACCOUNT_URL = 'account_url';
     const SERVERS_URL = 'servers_url';
     const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(SERVER_SUPPORTED, true);
-        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(SERVER_OPTIONS, true);
+        $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(BALANCE_SUPPORTED, true);

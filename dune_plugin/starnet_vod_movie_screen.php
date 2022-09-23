@@ -2,7 +2,7 @@
 require_once 'lib/abstract_controls_screen.php';
 require_once 'lib/user_input_handler.php';
 require_once 'lib/vod/vod.php';
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 require_once 'starnet_vod_series_list_screen.php';
 
 class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_Input_Handler
@@ -42,7 +42,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
     {
         parent::__construct(self::ID, $plugin);
 
-        if ($plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED)) {
+        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

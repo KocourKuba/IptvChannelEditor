@@ -1,14 +1,12 @@
 ﻿<?php
 require_once 'cbilling_vod_impl.php';
 
-class AntifrizPluginConfig extends Cbilling_Vod_Impl
+class antifriz_config extends Cbilling_Vod_Impl
 {
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
-        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://antifriz.tv/playlist/{PASSWORD}.m3u8');

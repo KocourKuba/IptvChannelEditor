@@ -1,14 +1,12 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class ViplimePluginConfig extends Default_Config
+class viplime_config extends default_config
 {
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
-        $this->set_feature(QUALITY_SUPPORTED, true);
+        $this->set_feature(QUALITY_OPTIONS, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://cdntv.online/high/{PASSWORD}/playlist.m3u8');
         $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/(?<quality>.+)/(?<token>.+)/(?<id>.+)\.m3u8$|');
 

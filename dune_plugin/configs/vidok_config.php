@@ -1,20 +1,18 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class VidokPluginConfig extends Default_Config
+class vidok_config extends default_config
 {
     const API_HOST = 'http://sapi.ott.st/v2.4/json';
 
     protected static $settings = array();
 
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
         $this->set_feature(BALANCE_SUPPORTED, true);
-        $this->set_feature(QUALITY_SUPPORTED, true);
-        $this->set_feature(SERVER_SUPPORTED, true);
+        $this->set_feature(QUALITY_OPTIONS, true);
+        $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://vidok.tv/p/{TOKEN}');
         $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/p/(?<token>.+)/(?<id>.+)$|');
 

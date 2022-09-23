@@ -1,14 +1,12 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class ShuratvPluginConfig extends Default_Config
+class shuratv_config extends default_config
 {
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
-        $this->set_feature(SERVER_SUPPORTED, true);
+        $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva');
         $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$|');
 

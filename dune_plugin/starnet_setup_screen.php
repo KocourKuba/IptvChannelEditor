@@ -108,7 +108,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // ott or token dialog
-        if ($this->plugin->EMBEDDED_ACCOUNT === null) {
+        if ($this->plugin->config->get_embedded_account() === null) {
             switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
                 case ACCOUNT_OTT_KEY:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_OTTKEY_DLG,
@@ -274,7 +274,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // select server
-        if ($this->plugin->config->get_feature(SERVER_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(SERVER_OPTIONS)) {
             hd_print("Change server supported");
             $server_ops = $this->plugin->config->get_server_opts($plugin_cookies);
             $server = $this->plugin->config->get_server_id($plugin_cookies);
@@ -286,7 +286,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // select quality
-        if ($this->plugin->config->get_feature(QUALITY_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(QUALITY_OPTIONS)) {
             hd_print("Change quality supported");
             $quality = $this->plugin->config->get_quality_id($plugin_cookies);
             $quality_ops = $this->plugin->config->get_quality_opts($plugin_cookies);
@@ -529,7 +529,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return $this->reload_channels($plugin_cookies);
 
                 case self::ACTION_MOVE_ACCOUNT: // handle move account
-                    $embedded_account = $this->plugin->EMBEDDED_ACCOUNT;
+                    $embedded_account = $this->plugin->config->get_embedded_account();
                     if ($embedded_account !== null) {
                         switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
                             case ACCOUNT_OTT_KEY:
@@ -546,7 +546,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                                 break;
                         }
                         exec('rm -rf ' . get_install_path('account.dat'));
-                        $this->plugin->EMBEDDED_ACCOUNT = null;
+                        $this->plugin->config->set_embedded_account(null);
                         $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
                         return Action_Factory::show_title_dialog('Данные перенесены', $post_action);
                     }

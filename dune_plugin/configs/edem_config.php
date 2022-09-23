@@ -1,14 +1,12 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class EdemPluginConfig extends Default_Config
+class edem_config extends default_config
 {
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_OTT_KEY);
-        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_QUALITY_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);

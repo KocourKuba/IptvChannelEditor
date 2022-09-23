@@ -1,12 +1,10 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class OneusdPluginConfig extends Default_Config
+class oneusd_config extends default_config
 {
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
         $this->set_feature(SQUARE_ICONS, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://1usd.tv/pl-{PASSWORD}-hls');

@@ -1,14 +1,12 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class FilmaxPluginConfig extends Default_Config
+class filmax_config extends default_config
 {
-    public function load_config()
+    public function load_default()
     {
-        parent::load_config();
-
         $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(SERVER_SUPPORTED, true);
+        $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(USE_TOKEN_AS_ID, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8');
         $this->set_feature(PLAYLIST_TEMPLATE2, 'http://epg.esalecrm.net/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8');
@@ -83,7 +81,7 @@ class FilmaxPluginConfig extends Default_Config
      */
     public function get_server_id($plugin_cookies)
     {
-        return isset($plugin_cookies->server) && $plugin_cookies->server !== 0 ? $plugin_cookies->server : 1;
+        return isset($plugin_cookies->server) ? $plugin_cookies->server : 1;
     }
 
     /**

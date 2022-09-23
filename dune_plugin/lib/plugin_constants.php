@@ -9,16 +9,16 @@ const MPEG = 'mpeg';
 
 // Non configurable parameters by external config
 const TV_FAVORITES_SUPPORTED   = 'tv_fav';
-const VOD_MOVIE_PAGE_SUPPORTED = 'vod_support';
+const VOD_SUPPORTED            = 'vod_support';
 const VOD_FAVORITES_SUPPORTED  = 'vod_fav';
 const VOD_QUALITY_SUPPORTED    = 'vod_quality';
 const VOD_FILTER_SUPPORTED     = 'vod_filter';
 const VOD_LAZY_LOAD            = 'vod_lazy';
-const EXTINF_VOD_PATTERN       = 'vod_parse_pattern';
+const VOD_PATTERN              = 'vod_parse_pattern';
 const BALANCE_SUPPORTED        = 'balance_support';
 const DEVICE_OPTIONS           = 'device_options';
-const SERVER_SUPPORTED         = 'server_support';
-const QUALITY_SUPPORTED        = 'quality_support';
+const SERVER_OPTIONS           = 'server_support';
+const QUALITY_OPTIONS          = 'quality_support';
 const SQUARE_ICONS             = 'square_icons';
 
 // ext parameters keys
@@ -43,6 +43,8 @@ const PLAYLIST_TEMPLATE2 = 'playlist_template2';
 const URI_PARSE_TEMPLATE = 'uri_parse_template';
 
 // streams parameters
+const STREAMS_CONFIG   = 'streams_config';
+const STREAM_TYPE      = 'stream_type';
 const URL_TEMPLATE     = 'uri_template';
 const URL_ARC_TEMPLATE = 'uri_arc_template';
 const CU_TYPE          = 'cu_type';
@@ -62,8 +64,9 @@ const EPG_USE_DURATION = 'epg_use_duration';
 const EPG_TIMEZONE     = 'epg_timezone';
 
 // not used in config
-const EPG_FIRST      = 0;
-const EPG_SECOND     = 1;
+const EPG_FIRST      = 'first';
+const EPG_SECOND     = 'second';
+const EPG_PARAMS     = 'epg_params';
 const EPG_PARSER     = 'epg_parser';
 const EPG_USE_MAPPER = 'epg_use_mapper';
 const EPG_MAPPER_URL = 'epg_mapper_url';

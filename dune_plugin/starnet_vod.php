@@ -122,6 +122,6 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function is_movie_page_supported()
     {
-        return $this->plugin->config->get_feature(VOD_MOVIE_PAGE_SUPPORTED);
+        return $this->plugin->config->get_feature(VOD_SUPPORTED);
     }
 }
