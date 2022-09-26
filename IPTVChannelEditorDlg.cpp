@@ -1592,7 +1592,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	{
 		for (auto& epg_pair : epgChannelMap)
 		{
-			if (epg_pair.second.time_start <= now && now < epg_pair.second.time_end)
+			if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
 			{
 				epg_info = epg_pair.second;
 				need_load = false;
