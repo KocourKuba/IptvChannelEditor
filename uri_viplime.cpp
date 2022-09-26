@@ -79,15 +79,15 @@ void uri_viplime::load_default()
 
 	provider_url = "http://viplime.fun/";
 	playlist_template = "http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
 
-	streams_list[0].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	streams_list[1].cu_type = CatchupType::cu_shift;
-	streams_list[1].cu_subst = "utc";
-	streams_list[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
-	streams_list[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[1].cu_type = CatchupType::cu_shift;
+	streams_config[1].cu_subst = "utc";
+	streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
+	streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{ID}.json";
 }

@@ -218,20 +218,20 @@ std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
 	else
 	{
 		size_t subtype = (size_t)params.streamSubtype;
-		switch (streams_list[subtype].cu_type)
+		switch (streams_config[subtype].cu_type)
 		{
 			case CatchupType::cu_shift:
 			case CatchupType::cu_append:
-				url = streams_list[subtype].get_uri_template();
+				url = streams_config[subtype].get_uri_template();
 				if (params.shift_back)
 				{
 					url += (url.rfind('?') != std::wstring::npos) ? '&' : '?';
-					url += streams_list[subtype].get_uri_arc_template();
+					url += streams_config[subtype].get_uri_arc_template();
 				}
 				break;
 
 			case CatchupType::cu_flussonic:
-				url = params.shift_back ? streams_list[subtype].get_uri_arc_template() : streams_list[subtype].get_uri_template();
+				url = params.shift_back ? streams_config[subtype].get_uri_arc_template() : streams_config[subtype].get_uri_template();
 				break;
 		}
 	}
@@ -246,7 +246,7 @@ const std::wregex& uri_stream::get_uri_regex_parse_template()
 	// to speed up parsing process and avoid multiple conversions
 	if (uri_parse_regex_template._Empty())
 	{
-		set_uri_regex_parse_template(utils::utf8_to_utf16(uri_parse_template));
+		set_uri_regex_parse_template(utils::utf8_to_utf16(uri_parse_pattern));
 	}
 
 	return uri_parse_regex_template;
@@ -535,8 +535,8 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (params.shift_back)
 	{
 		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_list[subtype].get_shift_replace());
-		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_list[subtype].cu_duration));
+		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_config[subtype].get_shift_replace());
+		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].cu_duration));
 	}
 
 	if (params.shift_back)

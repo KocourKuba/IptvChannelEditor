@@ -38,6 +38,7 @@ uri_mymagic::uri_mymagic()
 {
 	short_name = "mymagic";
 }
+
 void uri_mymagic::load_default()
 {
 	title = "MyMagic TV";
@@ -46,13 +47,15 @@ void uri_mymagic::load_default()
 
 	provider_url = "http://mymagic.tv/";
 	playlist_template = "http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u";
-	uri_parse_template = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
+	uri_id_parse_pattern = R"(^#EXTINF:.+CUID=\"(?<id>\d+)\")";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 
+	square_icons = true;
 	use_token_as_id = true;
 	per_channel_token = true;
 
-	streams_list[0].uri_template = "http://{DOMAIN}/{TOKEN}";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/magic/epg/{ID}.json";
 	epg_params[1].epg_url = "http://epg.esalecrm.net/magic/epg/{ID}.json";

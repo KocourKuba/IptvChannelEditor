@@ -56,16 +56,16 @@ void uri_sharaclub::load_default()
 
 	provider_url = "https://shara.club/";
 	playlist_template = "http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 
-	streams_list[0].cu_type = CatchupType::cu_append;
-	streams_list[0].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}";
+	streams_config[0].cu_type = CatchupType::cu_append;
+	streams_config[0].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}";
 
-	streams_list[1].cu_type = CatchupType::cu_append;
-	streams_list[1].cu_subst = "utc";
-	streams_list[1].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
-	streams_list[1].uri_arc_template = "{CU_SUBST}={START}";
+	streams_config[1].cu_type = CatchupType::cu_append;
+	streams_config[1].cu_subst = "utc";
+	streams_config[1].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
+	streams_config[1].uri_arc_template = "{CU_SUBST}={START}";
 
 	auto& params = epg_params[0];
 	params.epg_root = "";

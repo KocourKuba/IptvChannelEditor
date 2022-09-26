@@ -54,12 +54,12 @@ void uri_tvclub::load_default()
 
 	provider_url = "https://tvclub.cc/";
 	playlist_template = "http://celn.shott.top/p/{TOKEN}";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 
-	streams_list[1].cu_type = CatchupType::cu_append;
-	streams_list[1].cu_subst = "utc";
-	streams_list[1].uri_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
-	streams_list[1].uri_arc_template = "{CU_SUBST}={START}";
+	streams_config[1].cu_type = CatchupType::cu_append;
+	streams_config[1].cu_subst = "utc";
+	streams_config[1].uri_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+	streams_config[1].uri_arc_template = "{CU_SUBST}={START}";
 
 	auto& params = epg_params[0];
 	params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIMESTAMP}&period=24";

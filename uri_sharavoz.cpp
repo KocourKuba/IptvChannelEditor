@@ -46,15 +46,15 @@ void uri_sharavoz::load_default()
 
 	provider_url = "https://www.sharavoz.tv/";
 	playlist_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>\d+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>\d+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 
-	streams_list[0].cu_type = CatchupType::cu_flussonic;
-	streams_list[0].cu_subst = "index";
-	streams_list[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-	streams_list[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].cu_type = CatchupType::cu_flussonic;
+	streams_config[0].cu_subst = "index";
+	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-	streams_list[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_list[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 	epg_params[0].epg_url = "http://api.program.spr24.net/api/program?epg={ID}";
 	epg_params[1].epg_url = "http://epg.arlekino.tv/api/program?epg={ID}";

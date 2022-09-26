@@ -3,14 +3,14 @@
 
 uri_config::uri_config()
 {
-	streams_list[0].stream_type = StreamType::enHLS;
-	streams_list[0].cu_type = CatchupType::cu_shift;
-	streams_list[0].cu_subst = "utc";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].stream_type = StreamType::enHLS;
+	streams_config[0].cu_type = CatchupType::cu_shift;
+	streams_config[0].cu_subst = "utc";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	streams_list[1].stream_type = StreamType::enMPEGTS;
-	streams_list[1].cu_type = CatchupType::cu_flussonic;
-	streams_list[1].cu_subst = "archive";
+	streams_config[1].stream_type = StreamType::enMPEGTS;
+	streams_config[1].cu_type = CatchupType::cu_flussonic;
+	streams_config[1].cu_subst = "archive";
 
 	EpgParameters params;
 	params.epg_root = "epg_data";

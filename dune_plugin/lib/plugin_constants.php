@@ -14,7 +14,8 @@ const VOD_FAVORITES_SUPPORTED  = 'vod_fav';
 const VOD_QUALITY_SUPPORTED    = 'vod_quality';
 const VOD_FILTER_SUPPORTED     = 'vod_filter';
 const VOD_LAZY_LOAD            = 'vod_lazy';
-const VOD_PATTERN              = 'vod_parse_pattern';
+const VOD_PARSE_PATTERN        = 'vod_parse_pattern';
+const VOD_PLAYLIST_URL         = 'vod_playlist_url';
 const BALANCE_SUPPORTED        = 'balance_support';
 const DEVICE_OPTIONS           = 'device_options';
 const SERVER_OPTIONS           = 'server_support';
@@ -36,11 +37,12 @@ const M_QUALITY   = 'quality';
 // parameters loaded from external config
 
 // common
-const ACCOUNT_TYPE       = 'access_type';
-const USE_TOKEN_AS_ID    = 'use_token_as_id';
-const PLAYLIST_TEMPLATE  = 'playlist_template';
-const PLAYLIST_TEMPLATE2 = 'playlist_template2';
-const URI_PARSE_TEMPLATE = 'uri_parse_template';
+const ACCESS_TYPE          = 'access_type';
+const USE_TOKEN_AS_ID      = 'use_token_as_id';
+const PLAYLIST_TEMPLATE    = 'playlist_template';
+const PLAYLIST_TEMPLATE2   = 'playlist_template2';
+const URI_ID_PARSE_PATTERN = 'uri_id_parse_pattern';
+const URI_PARSE_PATTERN    = 'uri_parse_pattern';
 
 // streams parameters
 const STREAMS_CONFIG   = 'streams_config';
@@ -55,16 +57,16 @@ const CU_DURATION      = 'cu_duration';
 const EPG_PARAMS       = 'epg_params';
 
 // server parameters
-const SERVER_LIST      = 'servers_list';
+const SERVERS_LIST     = 'servers_list';
 
 // device parameters
-const DEVICE_LIST     = 'device_list';
+const DEVICES_LIST     = 'device_list';
 
 // quality parameters
-const QUALITY_LIST     = 'quality_list';
+const QUALITIES_LIST   = 'qualities_list';
 
 // profile parameters
-const PROFILE_LIST     = 'profile_list';
+const PROFILES_LIST    = 'profiles_list';
 
 const LIST_ID          = 'id';
 const LIST_NAME        = 'name';
@@ -82,9 +84,9 @@ const EPG_USE_DURATION = 'epg_use_duration';
 const EPG_TIMEZONE     = 'epg_timezone';
 
 // not used in config
-const EPG_FIRST      = 'first';
-const EPG_SECOND     = 'second';
-const EPG_PARSER     = 'epg_parser';
-const EPG_USE_MAPPER = 'epg_use_mapper';
-const EPG_MAPPER_URL = 'epg_mapper_url';
-const EPG_ID_MAPPER  = 'epg_id_mapper';
+const EPG_FIRST        = 'first';
+const EPG_SECOND       = 'second';
+const EPG_PARSER       = 'epg_parser';
+const EPG_USE_MAPPER   = 'epg_use_mapper';
+const EPG_MAPPER_URL   = 'epg_mapper_url';
+const EPG_ID_MAPPER    = 'epg_id_mapper';

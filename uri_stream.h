@@ -235,6 +235,12 @@ public:
 	void clear_profiles_list() { profiles_list.clear(); }
 
 	/// <summary>
+	/// returns is vod m3u based
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_vod_m3u() const { return vod_m3u; }
+
+	/// <summary>
 	/// returns vod url template
 	/// </summary>
 	/// <returns>wstring</returns>
@@ -318,8 +324,10 @@ public:
 	/// <returns>wstring</returns>
 	virtual std::wstring get_api_token(const Credentials& creds) const { return L""; };
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, title, name, provider_url, playlist_template, uri_parse_template,
-								   use_token_as_id, epg_params, servers_list, qualities_list, devices_list, profiles_list, streams_list);
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, title, name, provider_url,
+								   playlist_template, uri_id_parse_pattern, uri_parse_pattern,
+								   square_icons, requested_token, use_token_as_id,
+								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
 
 protected:
 
@@ -336,6 +344,7 @@ protected:
 
 	std::wstring provider_api_url;
 	std::wstring provider_vod_url;
+	bool vod_m3u = false;
 
 	ParsingGroups parser;
 	std::wregex uri_parse_regex_template; // compiled regex for uri parse template

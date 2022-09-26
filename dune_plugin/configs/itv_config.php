@@ -5,13 +5,19 @@ class itv_config extends default_config
 {
     const API_HOST = 'http://api.itv.live';
 
+    public function init_defaults($short_name)
+    {
+        parent::init_defaults($short_name);
+
+        $this->set_feature(BALANCE_SUPPORTED, true);
+    }
+
     public function load_default()
     {
-        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
-        $this->set_feature(BALANCE_SUPPORTED, true);
         $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(ACCESS_TYPE, ACCOUNT_PIN);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://itv.ooo/p/{PASSWORD}/hls.m3u8');
-        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$|');
+        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$');
 
         $this->set_stream_param(HLS,CU_TYPE, 'flussonic');
         $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}');

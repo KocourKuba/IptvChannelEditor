@@ -47,11 +47,11 @@ void uri_shuratv::load_default()
 
 	provider_url = "http://shura.tv/b/";
 	playlist_template = "http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 
-	streams_list[0].cu_subst = "archive";
-	streams_list[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].cu_subst = "archive";
+	streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";

@@ -174,7 +174,7 @@ class Epg_Manager
 
         if (!empty($parser_params[EPG_ROOT])) {
             foreach (explode('|', $parser_params[EPG_ROOT]) as $level) {
-                $epg_root = $level;
+                $epg_root = trim($level, "[]");
                 $ch_data = $ch_data[$epg_root];
             }
         }

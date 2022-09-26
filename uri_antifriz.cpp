@@ -47,16 +47,16 @@ void uri_antifriz::load_default()
 
 	provider_url = "https://antifriztv.com/";
 	playlist_template = "http://antifriz.tv/playlist/{PASSWORD}.m3u8";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 
-	streams_list[0].cu_type = CatchupType::cu_flussonic;
-	streams_list[0].cu_subst = "archive";
-	streams_list[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
-	streams_list[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].cu_type = CatchupType::cu_flussonic;
+	streams_config[0].cu_subst = "archive";
+	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-	streams_list[1].cu_type = CatchupType::cu_flussonic;
-	streams_list[1].uri_template = "http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
-	streams_list[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].cu_type = CatchupType::cu_flussonic;
+	streams_config[1].uri_template = "http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 	epg_params[0].epg_url = "http://protected-api.com/epg/{ID}/?date=";
 	epg_params[0].epg_root = "";

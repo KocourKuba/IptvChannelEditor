@@ -46,10 +46,10 @@ void uri_sharatv::load_default()
 
 	provider_url = "https://shara-tv.org/";
 	playlist_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 
-	streams_list[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
 }

@@ -149,7 +149,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
      */
     protected function IsSetupNeeds($plugin_cookies)
     {
-        switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
+        switch ($this->plugin->config->get_feature(ACCESS_TYPE)) {
             case ACCOUNT_OTT_KEY:
                 $setup_needs = empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) && ($this->plugin->config->get_embedded_account() === null);
                 break;

@@ -3,14 +3,20 @@ require_once 'lib/default_config.php';
 
 class edem_config extends default_config
 {
-    public function load_default()
+    public function init_defaults($short_name)
     {
-        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_OTT_KEY);
+        parent::init_defaults($short_name);
+
         $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_QUALITY_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
+    }
+
+    public function load_default()
+    {
+        $this->set_feature(ACCESS_TYPE, ACCOUNT_OTT_KEY);
 
         $this->set_stream_param(HLS, URL_TEMPLATE, 'http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8');
 
@@ -42,16 +48,6 @@ class edem_config extends default_config
     {
         hd_print("Collect information from account");
 
-        return array();
-    }
-
-    /**
-     * Collect information from m3u8 playlist
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function GetPlaylistStreamInfo($plugin_cookies)
-    {
         return array();
     }
 

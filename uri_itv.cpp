@@ -51,17 +51,18 @@ void uri_itv::load_default()
 
 	provider_url = "https://itv.live/";
 	playlist_template = "http://itv.ooo/p/{PASSWORD}/hls.m3u8";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
 
+	square_icons = true;
 	per_channel_token = true;
 
-	streams_list[0].cu_type = CatchupType::cu_flussonic;
-	streams_list[0].cu_subst = "archive";
-	streams_list[0].uri_template = "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
-	streams_list[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].cu_type = CatchupType::cu_flussonic;
+	streams_config[0].cu_subst = "archive";
+	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-	streams_list[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_list[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params = epg_params[0];
 	params.epg_url = "http://api.itv.live/epg/{ID}";

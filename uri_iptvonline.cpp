@@ -46,15 +46,17 @@ void uri_iptvonline::load_default()
 
 	provider_url = "https://iptv.online/";
 	playlist_template = "http://iptv.online/play/{PASSWORD}/m3u8";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 
-	streams_list[0].cu_type = CatchupType::cu_flussonic;
-	streams_list[0].cu_subst = "video";
-	streams_list[0].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
-	streams_list[0].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.m3u8";
+	square_icons = true;
 
-	streams_list[1].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
-	streams_list[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts";
+	streams_config[0].cu_type = CatchupType::cu_flussonic;
+	streams_config[0].cu_subst = "video";
+	streams_config[0].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.m3u8";
+
+	streams_config[1].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://epg.iptvx.one/api/id/{ID}.json";

@@ -46,10 +46,12 @@ void uri_onecent::load_default()
 
 	provider_url = "https://1cent.tv/";
 	playlist_template = "http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 
-	streams_list[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	square_icons = true;
+
+	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://epg.iptvx.one/api/id/{ID}.json";

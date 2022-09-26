@@ -42,7 +42,6 @@ CVodViewer::CVodViewer(vod_category_storage* categories, CWnd* pParent /*=nullpt
 	, m_vod_categories(categories)
 	, m_evtStop(FALSE, TRUE)
 	, m_evtFinished(TRUE, TRUE)
-	, m_SearchText(_T(""))
 {
 	ASSERT(m_vod_categories);
 }
@@ -160,25 +159,10 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 	m_wndQuality.EnableWindow(FALSE);
 	m_wndReload.EnableWindow(FALSE);
 
-	switch (m_plugin_type)
-	{
-		case PluginType::enFox:
-		case PluginType::enMymagic:
-			LoadM3U8Playlist(use_cache);
-			break;
-
-		case PluginType::enAntifriz:
-		case PluginType::enCbilling:
-		case PluginType::enGlanz:
-		case PluginType::enSharaclub:
-		case PluginType::enEdem:
-			LoadJsonPlaylist(use_cache);
-			break;
-
-		default:
-			ASSERT(false);
-			break;
-	}
+	if (m_plugin->is_vod_m3u())
+		LoadM3U8Playlist(use_cache);
+	else
+		LoadJsonPlaylist(use_cache);
 }
 
 void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
@@ -210,7 +194,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 	}
 
-	const auto& url = m_plugin->get_vod_url(params);
+	auto& url = m_plugin->get_vod_url(params);
 
 	auto pThread = (CPlaylistParseJsonThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseJsonThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)

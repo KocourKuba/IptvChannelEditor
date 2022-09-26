@@ -176,14 +176,14 @@ public:
 	/// returns uri parse template
 	/// </summary>
 	/// <returns>wstring</returns>
-	std::wstring get_uri_parse_template() const { return utils::utf8_to_utf16(uri_parse_template); }
+	std::wstring get_uri_parse_template() const { return utils::utf8_to_utf16(uri_parse_pattern); }
 
 	/// <summary>
 	/// set uri parse template.
 	/// returns uri parse template
 	/// </summary>
 	/// <returns>wstring</returns>
-	void set_uri_parse_template(const std::wstring& val) { uri_parse_template = utils::utf16_to_utf8(val); }
+	void set_uri_parse_template(const std::wstring& val) { uri_parse_pattern = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// is token used per channel, not the global
@@ -201,13 +201,13 @@ public:
 	/// supported streams HLS,MPEGTS etc.
 	/// </summary>
 	/// <returns>vector&</returns>
-	const std::array<StreamParameters, 2>& get_supported_streams() const { return streams_list; }
+	const std::array<StreamParameters, 2>& get_supported_streams() const { return streams_config; }
 
 	/// <summary>
 	/// return supported stream
 	/// </summary>
 	/// <returns>const StreamParameters&</returns>
-	const StreamParameters& get_supported_stream(size_t idx) const { return streams_list[idx]; }
+	const StreamParameters& get_supported_stream(size_t idx) const { return streams_config[idx]; }
 
 	/// <summary>
 	/// return epg parameters
@@ -340,9 +340,13 @@ protected:
 	std::string provider_url;
 	// template url to load playlist
 	std::string playlist_template;
+	// original uri id parse template
+	std::string uri_id_parse_pattern;
 	// original uri parse template
-	std::string uri_parse_template;
+	std::string uri_parse_pattern;
 
+	// use channels logo are squared, plugin UI settings
+	bool square_icons = false;
 	// use token from uri instead of account settings
 	bool per_channel_token = false;
 	// use token generated or received from provider
@@ -350,7 +354,7 @@ protected:
 	// flag for php plugin if uri does not contains parsed 'id' for channel
 	bool use_token_as_id = false;
 	// setting for parsing uri streams
-	std::array<StreamParameters, 2> streams_list;
+	std::array<StreamParameters, 2> streams_config;
 	// setting for parsing json EPG
 	std::array<EpgParameters, 2> epg_params;
 

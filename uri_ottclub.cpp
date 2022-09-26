@@ -46,10 +46,10 @@ void uri_ottclub::load_default()
 
 	provider_url = "https://www.ottclub.cc/";
 	playlist_template = "http://myott.top/playlist/{PASSWORD}/m3u";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 
-	streams_list[0].uri_template = "http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_template = "http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://myott.top/api/channel/{ID}";
 }

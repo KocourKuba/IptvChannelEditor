@@ -5,13 +5,9 @@ class cbilling_config extends Cbilling_Vod_Impl
 {
     public function load_default()
     {
-        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
-        $this->set_feature(VOD_SUPPORTED, true);
-        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
-        $this->set_feature(VOD_LAZY_LOAD, true);
-        $this->set_feature(BALANCE_SUPPORTED, true);
+        $this->set_feature(ACCESS_TYPE, ACCOUNT_PIN);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://247on.cc/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8');
-        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/s/(?<token>.+)/(?<id>.+)\.m3u8$|');
+        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/s/(?<token>.+)/(?<id>.+)\.m3u8$');
 
         $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8');
 

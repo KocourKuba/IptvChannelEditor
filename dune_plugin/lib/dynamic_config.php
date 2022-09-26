@@ -22,7 +22,7 @@ class dynamic_config
     {
         $this->PluginShortName = $short_name;
 
-        $this->features[ACCOUNT_TYPE] = -1;
+        $this->features[ACCESS_TYPE] = -1;
         $this->features[SQUARE_ICONS] = false;
         $this->features[TV_FAVORITES_SUPPORTED] = true;
         $this->features[BALANCE_SUPPORTED] = false;
@@ -31,7 +31,7 @@ class dynamic_config
         $this->features[VOD_FAVORITES_SUPPORTED] = false;
         $this->features[VOD_QUALITY_SUPPORTED] = false;
         $this->features[VOD_FILTER_SUPPORTED] = false;
-        $this->features[VOD_PATTERN] = '';
+        $this->features[VOD_PARSE_PATTERN] = '';
         $this->features[DEVICE_OPTIONS] = array();
         $this->features[SERVER_OPTIONS] = false;
         $this->features[QUALITY_OPTIONS] = false;
@@ -81,9 +81,17 @@ class dynamic_config
         $settings = HD::parse_json_file(get_install_path($path), true);
         hd_print("Load plugin settings: $path");
 
-        $this->set_feature(ACCOUNT_TYPE, $settings[ACCOUNT_TYPE]);
+        // NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, title, name, provider_url,
+        //     playlist_template, uri_id_parse_pattern, uri_parse_pattern,
+        //     square_icons, requested_token, use_token_as_id,
+        //     streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
+
+
+        $this->set_feature(ACCESS_TYPE, $settings[ACCESS_TYPE]);
         $this->set_feature(PLAYLIST_TEMPLATE, $settings[PLAYLIST_TEMPLATE]);
-        $this->set_feature(URI_PARSE_TEMPLATE, $settings[URI_PARSE_TEMPLATE]);
+        $this->set_feature(URI_ID_PARSE_PATTERN, $settings[URI_ID_PARSE_PATTERN]);
+        $this->set_feature(URI_PARSE_PATTERN, $settings[URI_PARSE_PATTERN]);
+        $this->set_feature(SQUARE_ICONS, $settings[SQUARE_ICONS]);
         $this->set_feature(USE_TOKEN_AS_ID, $settings[USE_TOKEN_AS_ID]);
 
         foreach ($settings[STREAMS_CONFIG] as $config)
@@ -105,34 +113,30 @@ class dynamic_config
         }
 
         $servers = array();
-        foreach ($settings[SERVER_LIST] as $server)
+        foreach ($settings[SERVERS_LIST] as $server)
         {
             $servers[] = array($server[LIST_ID] => $server[LIST_NAME]);
-            //hd_print("$param: $key => $item");
         }
         $this->set_servers($servers);
 
         $devices = array();
-        foreach ($settings[DEVICE_LIST] as $device)
+        foreach ($settings[DEVICES_LIST] as $device)
         {
             $devices[] = array($device[LIST_ID] => $device[LIST_NAME]);
-            //hd_print("$param: $key => $item");
         }
         $this->set_devices($devices);
 
         $qualities = array();
-        foreach ($settings[QUALITY_LIST] as $quality)
+        foreach ($settings[QUALITIES_LIST] as $quality)
         {
             $qualities[] = array($quality[LIST_ID] => $quality[LIST_NAME]);
-            //hd_print("$param: $key => $item");
         }
         $this->set_qualities($qualities);
 
         $profiles = array();
-        foreach ($settings[PROFILE_LIST] as $profile)
+        foreach ($settings[PROFILES_LIST] as $profile)
         {
             $profiles[] = array($profile[LIST_ID] => $profile[LIST_NAME]);
-            //hd_print("$param: $key => $item");
         }
         $this->set_profiles($profiles);
     }

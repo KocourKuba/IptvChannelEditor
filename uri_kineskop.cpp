@@ -47,12 +47,12 @@ void uri_kineskop::load_default()
 
 	provider_url = "http://kineskop.club/";
 	playlist_template = "http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER}/1";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
 
 	per_channel_token = true;
 
-	streams_list[0].uri_template = "http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_template = "http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.esalecrm.net/kineskop/epg/{ID}.json";
 

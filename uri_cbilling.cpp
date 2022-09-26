@@ -51,13 +51,13 @@ void uri_cbilling::load_default()
 
 	provider_url = "https://cbilling.eu/";
 	playlist_template = "http://247on.cc/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 
-	streams_list[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	streams_list[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_list[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://protected-api.com/epg/{ID}/?date=";

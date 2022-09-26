@@ -46,18 +46,20 @@ void uri_lightiptv::load_default()
 
 	provider_url = "https://ottbill.cc/";
 	playlist_template = "http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
+	uri_id_parse_pattern = R"(^#EXTINF:.+tvg-id=\"(?<id>[^"]+)\")";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 
+	square_icons = true;
 	use_token_as_id = true;
 
-	streams_list[0].cu_type = CatchupType::cu_flussonic;
-	streams_list[0].cu_subst = "video";
-	streams_list[0].uri_template = "http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
-	streams_list[0].uri_arc_template = "http://{DOMAIN}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={PASSWORD}";
+	streams_config[0].cu_type = CatchupType::cu_flussonic;
+	streams_config[0].cu_subst = "video";
+	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={PASSWORD}";
 
-	streams_list[1].cu_subst = "timeshift_abs";
-	streams_list[1].uri_template = "http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
-	streams_list[1].uri_arc_template = "http://{DOMAIN}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts?token={PASSWORD}";
+	streams_config[1].cu_subst = "timeshift_abs";
+	streams_config[1].uri_template = "http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts?token={PASSWORD}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/lightiptv/epg/{ID}.json";
 	epg_params[1].epg_url = "http://epg.ott-play.com/lightiptv/epg/{ID}.json";

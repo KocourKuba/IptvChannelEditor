@@ -5,13 +5,21 @@ abstract class Cbilling_Vod_Impl extends default_config
 {
     const API_HOST = 'http://protected-api.com';
 
-    // vod
-    const MOVIE_URL_TEMPLATE = 'http://%s%s?token=%s';
-
     /**
      * @var array
      */
     protected $account_data = array();
+
+    public function init_defaults($short_name)
+    {
+        parent::init_defaults($short_name);
+
+        $this->set_feature(VOD_SUPPORTED, true);
+        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
+        $this->set_feature(VOD_LAZY_LOAD, true);
+        $this->set_feature(VOD_PLAYLIST_URL, 'http://%s%s?token=%s');
+        $this->set_feature(BALANCE_SUPPORTED, true);
+    }
 
     /**
      * @param string $movie_id
@@ -56,18 +64,19 @@ abstract class Cbilling_Vod_Impl extends default_config
 
         $domain = explode(':', $this->account_data['subdomain']);
 
+        $vod_url = $this->get_feature(VOD_PLAYLIST_URL);
         if (isset($movieData->seasons)) {
             foreach ($movieData->seasons as $season) {
                 $movie->add_season_data($season->number, !empty($season->name) ? $season->name : "Сезон $season->number", '');
                 foreach ($season->series as $episode) {
-                    $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $episode->files[0]->url, $this->account_data['token']);
+                    $playback_url = sprintf($vod_url, $domain[0], $episode->files[0]->url, $this->account_data['token']);
                     //hd_print("episode playback_url: $playback_url");
                     $name = "Серия $episode->number" . (empty($episode->name) ? "" : " $episode->name");
                     $movie->add_series_data($episode->id, $name, '', $playback_url, $season->number);
                 }
             }
         } else {
-            $playback_url = sprintf(self::MOVIE_URL_TEMPLATE, $domain[0], $movieData->files[0]->url, $this->account_data['token']);
+            $playback_url = sprintf($vod_url, $domain[0], $movieData->files[0]->url, $this->account_data['token']);
             //hd_print("movie playback_url: $playback_url");
             $movie->add_series_data($movie_id, $movieData->name, '', $playback_url);
         }

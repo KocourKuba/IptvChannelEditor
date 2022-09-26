@@ -46,10 +46,10 @@ void uri_russkoetv::load_default()
 
 	provider_url = "https://russkoetv.tv/";
 	playlist_template = "http://russkoetv.tv/play/{PASSWORD}.m3u8";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 
-	streams_list[0].uri_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://protected-api.com/epg/{ID}/?date=";
 	epg_params[0].epg_root = "";

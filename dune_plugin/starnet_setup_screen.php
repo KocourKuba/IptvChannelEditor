@@ -109,7 +109,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // ott or token dialog
         if ($this->plugin->config->get_embedded_account() === null) {
-            switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
+            switch ($this->plugin->config->get_feature(ACCESS_TYPE)) {
                 case ACCOUNT_OTT_KEY:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_OTTKEY_DLG,
                         'Данные для просмотра:', 'Ввести ОТТ ключ и домен', $text_icon);
@@ -535,7 +535,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 case self::ACTION_MOVE_ACCOUNT: // handle move account
                     $embedded_account = $this->plugin->config->get_embedded_account();
                     if ($embedded_account !== null) {
-                        switch ($this->plugin->config->get_feature(ACCOUNT_TYPE)) {
+                        switch ($this->plugin->config->get_feature(ACCESS_TYPE)) {
                             case ACCOUNT_OTT_KEY:
                                 $plugin_cookies->subdomain = $embedded_account->domain;
                                 $plugin_cookies->ott_key = $embedded_account->ott_key;

@@ -9,12 +9,12 @@ class vidok_config extends default_config
 
     public function load_default()
     {
-        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
+        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
         $this->set_feature(BALANCE_SUPPORTED, true);
         $this->set_feature(QUALITY_OPTIONS, true);
         $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://vidok.tv/p/{TOKEN}');
-        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/p/(?<token>.+)/(?<id>.+)$|');
+        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/p/(?<token>.+)/(?<id>.+)$');
 
         $this->set_stream_param(HLS,CU_TYPE, 'append');
         $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/p/{TOKEN}/{ID}');

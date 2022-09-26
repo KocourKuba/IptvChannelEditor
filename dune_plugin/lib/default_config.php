@@ -316,7 +316,7 @@ class default_config extends dynamic_config
         hd_print("Collect information from account");
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         foreach ($m3u_lines as $line) {
-            if (preg_match($this->get_feature(URI_PARSE_TEMPLATE), $line, $matches)) {
+            if (preg_match($this->get_feature(URI_PARSE_PATTERN), $line, $matches)) {
                 return $matches;
             }
         }
@@ -331,12 +331,37 @@ class default_config extends dynamic_config
      */
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
-        hd_print("Get playlist information");
+        hd_print("Get playlist information for");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
-        foreach ($m3u_lines as $line) {
-            if (preg_match($this->get_feature(URI_PARSE_TEMPLATE), $line, $matches)) {
-                $pl_entries[$matches[M_ID]] = $matches;
+        $id_pattern = $this->get_feature(URI_ID_PARSE_PATTERN);
+        $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
+
+        if (!empty($parse_pattern)) {
+            $uri_parse_regex = "|" . $parse_pattern . "|";
+
+            if (empty($id_pattern)) {
+                foreach ($m3u_lines as $line) {
+                    if (preg_match($uri_parse_regex, $line, $matches)) {
+                        $pl_entries[$matches[M_ID]] = $matches;
+                    }
+                }
+            } else {
+                $skip_next = false;
+                $uri_id_parse_regex = "|" . $id_pattern . "|";
+
+                foreach ($m3u_lines as $i => $iValue) {
+                    if ($skip_next) {
+                        $skip_next = false;
+                        continue;
+                    }
+
+                    if (preg_match($uri_id_parse_regex, $iValue, $m_id)
+                        && preg_match($uri_parse_regex, $m3u_lines[$i + 1], $matches)) {
+                        $pl_entries[$m_id[M_ID]] = $matches;
+                        $skip_next = true;
+                    }
+                }
             }
         }
 
@@ -385,7 +410,7 @@ class default_config extends dynamic_config
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
-        $vod_pattern = $this->get_feature(VOD_PATTERN);
+        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
             if (!preg_match($vod_pattern, $line, $matches)) {
@@ -424,7 +449,7 @@ class default_config extends dynamic_config
     public function getVideoList($query_id, $plugin_cookies)
     {
         $movies = array();
-        $vod_pattern = $this->get_feature(VOD_PATTERN);
+        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
             if (!preg_match($vod_pattern, $line, $matches)) {
@@ -557,7 +582,7 @@ class default_config extends dynamic_config
         $category_index = array();
         $categoriesFound = array();
 
-        $vod_pattern = $this->get_feature(VOD_PATTERN);
+        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
             if (!preg_match($vod_pattern, $line, $matches)) {
@@ -596,51 +621,53 @@ class default_config extends dynamic_config
             $url = $this->get_feature(PLAYLIST_TEMPLATE2);
         }
 
-        $login = $this->get_login($plugin_cookies);
-        if (strpos($url, '{LOGIN}') !== false) {
-            if (empty($login))
-                hd_print("Login not set");
-            else
-                $url = str_replace('{LOGIN}', $login, $url);
-        }
+        if (!empty($url)) {
+            $login = $this->get_login($plugin_cookies);
+            if (strpos($url, '{LOGIN}') !== false) {
+                if (empty($login))
+                    hd_print("Login not set");
+                else
+                    $url = str_replace('{LOGIN}', $login, $url);
+            }
 
-        $password = $this->get_password($plugin_cookies);
-        if (strpos($url, '{PASSWORD}') !== false) {
-            if (empty($password))
-                hd_print("Password not set");
-            else
-                $url = str_replace('{PASSWORD}', $password, $url);
-        }
+            $password = $this->get_password($plugin_cookies);
+            if (strpos($url, '{PASSWORD}') !== false) {
+                if (empty($password))
+                    hd_print("Password not set");
+                else
+                    $url = str_replace('{PASSWORD}', $password, $url);
+            }
 
-        $this->ensure_token_loaded($plugin_cookies);
-        if (strpos($url, '{TOKEN}') !== false) {
-            if (empty($plugin_cookies->token))
-                hd_print("Token not set");
-            else
-                $url = str_replace('{TOKEN}', $plugin_cookies->token, $url);
-        }
+            $this->ensure_token_loaded($plugin_cookies);
+            if (strpos($url, '{TOKEN}') !== false) {
+                if (empty($plugin_cookies->token))
+                    hd_print("Token not set");
+                else
+                    $url = str_replace('{TOKEN}', $plugin_cookies->token, $url);
+            }
 
-        if (strpos($url, '{SUBDOMAIN}') !== false) {
-            $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
-        }
+            if (strpos($url, '{SUBDOMAIN}') !== false) {
+                $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
+            }
 
-        if (strpos($url, '{SERVER}') !== false) {
-            $servers = $this->get_servers($plugin_cookies);
-            $url = str_replace('{SERVER}', $servers[$this->get_server_id($plugin_cookies)], $url);
-        }
+            if (strpos($url, '{SERVER}') !== false) {
+                $servers = $this->get_servers($plugin_cookies);
+                $url = str_replace('{SERVER}', $servers[$this->get_server_id($plugin_cookies)], $url);
+            }
 
-        if (strpos($url, '{SERVER_ID}') !== false) {
-            $url = str_replace('{SERVER_ID}', $this->get_server_id($plugin_cookies), $url);
-        }
+            if (strpos($url, '{SERVER_ID}') !== false) {
+                $url = str_replace('{SERVER_ID}', $this->get_server_id($plugin_cookies), $url);
+            }
 
-        if (strpos($url, '{QUALITY_ID}') !== false) {
-            $quality = $this->get_qualities($plugin_cookies);
-            $url = str_replace('{QUALITY_ID}', $quality[$this->get_quality_id($plugin_cookies)], $url);
-        }
+            if (strpos($url, '{QUALITY_ID}') !== false) {
+                $quality = $this->get_qualities($plugin_cookies);
+                $url = str_replace('{QUALITY_ID}', $quality[$this->get_quality_id($plugin_cookies)], $url);
+            }
 
-        if (strpos($url, '{DEVICE_ID}') !== false) {
-            $quality = $this->get_devices($plugin_cookies);
-            $url = str_replace('{DEVICE_ID}', $quality[$this->get_device_id($plugin_cookies)], $url);
+            if (strpos($url, '{DEVICE_ID}') !== false) {
+                $quality = $this->get_devices($plugin_cookies);
+                $url = str_replace('{DEVICE_ID}', $quality[$this->get_device_id($plugin_cookies)], $url);
+            }
         }
         return $url;
     }

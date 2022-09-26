@@ -3,14 +3,12 @@ require_once 'lib/default_config.php';
 
 class tvteam_config extends default_config
 {
-    protected $server_opts;
-
     public function load_default()
     {
-        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_PIN);
         $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(ACCESS_TYPE, ACCOUNT_PIN);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://tv.team/pl/11/{PASSWORD}/playlist.m3u8');
-        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$|');
+        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/(?<id>.+)/mono\.m3u8\?token=(?<token>.+)$');
 
         $this->set_stream_param(HLS,CU_TYPE, 'flussonic');
         $this->set_stream_param(HLS,CU_SUBST, 'index');

@@ -9,16 +9,22 @@ class sharaclub_config extends default_config
     const PROFILES_URL = "http://{SUBDOMAIN}/api/players.php?a=list_profiles&u={LOGIN}-{PASSWORD}&source=dune_editor";
     const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 
-    public function load_default()
+    public function init_defaults($short_name)
     {
-        $this->set_feature(ACCOUNT_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(SERVER_OPTIONS, true);
+        parent::init_defaults($short_name);
+
         $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(BALANCE_SUPPORTED, true);
+    }
+
+    public function load_default()
+    {
+        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
+        $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}');
-        $this->set_feature(URI_PARSE_TEMPLATE, '|^https?://(?<domain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$|');
+        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$');
 
         $this->set_stream_param(HLS,CU_TYPE, 'append');
         $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');

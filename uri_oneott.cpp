@@ -48,15 +48,15 @@ void uri_oneott::load_default()
 
 	provider_url = "http://1ott.net/";
 	playlist_template = "http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
-	uri_parse_template = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 
-	streams_list[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-	streams_list[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	streams_list[1].cu_type = CatchupType::cu_shift;
-	streams_list[1].cu_subst = "utc";
-	streams_list[1].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}";
-	streams_list[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[1].cu_type = CatchupType::cu_shift;
+	streams_config[1].cu_subst = "utc";
+	streams_config[1].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}";
+	streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";

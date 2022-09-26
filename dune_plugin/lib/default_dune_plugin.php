@@ -112,7 +112,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("Plugin name:      " . $this->PLUGIN_SHOW_NAME);
         hd_print("Plugin version:   " . $this->PLUGIN_VERSION);
         hd_print("Plugin date:      " . $this->PLUGIN_DATE);
-        hd_print("Account type:     " . $this->config->get_feature(ACCOUNT_TYPE));
+        hd_print("Account type:     " . $this->config->get_feature(ACCESS_TYPE));
         hd_print("TV fav:           " . ($this->config->get_feature(TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
         hd_print("VOD page:         " . ($this->config->get_feature(VOD_SUPPORTED) ? "yes" : "no"));
         hd_print("VOD fav:          " . ($this->config->get_feature(VOD_FAVORITES_SUPPORTED) ? "yes" : "no"));
