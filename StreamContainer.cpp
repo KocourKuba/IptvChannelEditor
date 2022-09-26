@@ -172,8 +172,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
 			plugin = std::make_unique<uri_russkoetv>();
 			break;
 
-		case StreamType::enSmile:
-			return std::make_unique<uri_smile>();
+		case PluginType::enSmile:
+			plugin = std::make_unique<uri_smile>();
+			break;
 
 		default:
 			break;

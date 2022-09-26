@@ -54,6 +54,7 @@ enum class PluginType
 	enSharaclub,
 	enSharavoz,
 	enShuraTV,
+	enSmile,
 	enTVClub,
 	enTvTeam,
 	enVidok,

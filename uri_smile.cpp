@@ -33,53 +33,30 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto PLAYLIST_TEMPLATE = L"http://pl.smile-tv.live/{:s}/{:s}/tv.m3u";
-static constexpr auto URI_TEMPLATE = L"http://{DOMAIN}/{TOKEN}";
-
 uri_smile::uri_smile()
 {
-	per_channel_token = true;
-	streams = { {StreamSubType::enHLS, L"HLS"} };
-	provider_url = L"http://smile-tv.live/";
-	vod_supported = true;
-	provider_vod_url = L"http://pl.smile-tv.live/{:s}/{:s}/vodall.m3u";
+	short_name = "smile";
+	provider_vod_url = L"http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vodall.m3u";
+	vod_m3u = true;
+}
+
+void uri_smile::load_default()
+{
+	title = "Smile TV";
+	name = "smiletv";
 	access_type = AccountAccessType::enLoginPass;
 
-	epg_params[0].epg_url = L"http://epg.esalecrm.net/smile/epg/{ID}.json";
-}
+	provider_url = "http://smile-tv.live/";
+	playlist_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/tv.m3u";
+	uri_id_parse_pattern = R"(^#EXTINF:.+CUID=\"(?<id>\d+)\")";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 
-void uri_smile::parse_uri(const std::wstring& url)
-{
-	// http://ost.smile-tv.live/vLm0zdTg_dG9rZW49W3N0Yl90b2tlbl0iLCJhIjoiaHR0cDovL3N0cjIuZm94LXR2LmZ1bjo5OTg1L1BlcnZpeWthbmFsL3ZpZGVvLXRpbWVzaGlmdF9hYnMtW3RpbWVfc3RhcnRdLm0zdTg_dG9rZW49W3N0Yl90b2tlbl1bY3Vycl90aW1lXSIsImwiOiI2NTgxMWQwZCIsInAiOiI2NTgxMWQwZDNjMTRjMTFlIiwiYyI6IjEiLCJ0IjoiN2FiMDJjOTk4MmY4NjI4NGU1ODhkYTliZjc0YmU4YTgiLCJkIjoiMjk2NjciLCJyIjoiMTI5NjY4In0eyJ1IjoiaHR0cDovL3N0cjIuZm94LXR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
+	square_icons = true;
+	use_token_as_id = true;
+	per_channel_token = true;
 
-	static std::wregex re_url(LR"(^https?:\/\/([^\/]+)\/(.+)$)");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re_url))
-	{
-		templated = true;
-		domain = std::move(m[1].str());
-		token = std::move(m[2].str());
-		return;
-	}
+	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	uri_stream::parse_uri(url);
-}
-
-std::wstring uri_smile::get_templated_stream(TemplateParams& params) const
-{
-	std::wstring url = is_template() ? URI_TEMPLATE : get_uri();
-
-	if (params.shift_back)
-	{
-		append_archive(url);
-	}
-
-	replace_vars(url, params);
-
-	return url;
-}
-
-std::wstring uri_smile::get_playlist_url(TemplateParams& params)
-{
-	return fmt::format(PLAYLIST_TEMPLATE, params.login, params.password);
+	epg_params[0].epg_url = "http://epg.esalecrm.net/smile/epg/{ID}.json";
 }

@@ -1,60 +1,37 @@
 ﻿<?php
-require_once 'default_config.php';
+require_once 'lib/default_config.php';
 
-class SmilePluginConfig extends Default_Config
+class smile_config extends default_config
 {
-    const PLAYLIST_TV_URL = 'http://pl.smile-tv.live/%s/%s/tv.m3u';
-    const PLAYLIST_VOD_URL = 'http://pl.smile-tv.live/%s/%s/vodall.m3u';
-
-    public function __construct()
+    public function init_defaults($short_name)
     {
-        parent::__construct();
+        parent::init_defaults($short_name);
 
-        $this->set_feature(ACCOUNT_TYPE, 'LOGIN');
-        $this->set_feature(TS_OPTIONS, array('hls' => 'HLS'));
-        $this->set_feature(VOD_MOVIE_PAGE_SUPPORTED, true);
+        $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
-        $this->set_feature(M3U_STREAM_URL_PATTERN, '|^https?://(?<subdomain>[^/]+)/(?<token>.+)$|');
-        $this->set_feature(MEDIA_URL_TEMPLATE_HLS, 'http://{DOMAIN}/{TOKEN}');
-        $this->set_feature(EXTINF_VOD_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$|');
-        $this->set_feature(SQUARE_ICONS, true);
-        $this->set_feature(SECONDARY_EPG, true);
-
-        $this->set_epg_param('first','epg_url','http://epg.esalecrm.net/smile/epg/{ID}.json');
+        $this->set_feature(VOD_PLAYLIST_URL, 'http://pl.smile-tv.live/%s/%s/vodall.m3u');
+        $this->set_feature(VOD_PARSE_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
     }
 
-    /**
-     * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
-     * @param Channel $channel
-     * @return string
-     */
-    public function TransformStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
+    public function load_default()
     {
-        $url = $channel->get_streaming_url();
-        if (empty($url)) {
-            // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV/video.m3u8
-            // http://ost.fox-tv.fun/vLm0zdTg_XR2LmZ1bjo5OTg2L1BlcnZpeWthbmFsL3ZpZGV
-            // hls archive url completely different, make it from scratch
-            $template = $this->get_feature(MEDIA_URL_TEMPLATE_HLS);
-            $ext_params = $channel->get_ext_params();
+        $this->set_feature(SQUARE_ICONS, true);
+        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
+        $this->set_feature(USE_TOKEN_AS_ID, true);
+        $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/tv.m3u');
+        $this->set_feature(URI_ID_PARSE_PATTERN, '^#EXTINF:.+CUID="(?<id>\d+)"');
+        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>[^/]+)/(?<token>.+)$');
 
-            $url = str_replace(array('{DOMAIN}', '{TOKEN}'), array($ext_params['subdomain'], $ext_params['token']), $template);
-        }
+        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{TOKEN}');
 
-        $url = static::UpdateArchiveUrlParams($url, $archive_ts);
-        // hd_print("Stream url:  $url");
-
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
+        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.esalecrm.net/smile/epg/{ID}.json');
     }
 
     /**
-     * @param string $type
      * @param $plugin_cookies
      * @return string
      */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetVodListUrl($plugin_cookies)
     {
         // hd_print("Type: $type");
 
@@ -66,58 +43,7 @@ class SmilePluginConfig extends Default_Config
             return '';
         }
 
-        switch ($type) {
-            case 'tv1':
-                return sprintf(self::PLAYLIST_TV_URL, $login, $password);
-            case 'movie':
-                return sprintf(self::PLAYLIST_VOD_URL, $login, $password);
-        }
-
-        return '';
-    }
-
-    /**
-     * Collect information from m3u8 playlist
-     * @param $plugin_cookies
-     * @return array
-     * @throws Exception
-     */
-    public function GetPlaylistStreamInfo($plugin_cookies)
-    {
-        hd_print("Get playlist information for: $this->PLUGIN_SHOW_NAME");
-        $pl_entries = array();
-        $m3u_lines = $this->FetchTvM3U($plugin_cookies);
-        $skip_next = false;
-        foreach ($m3u_lines as $i => $iValue) {
-            if ($skip_next) {
-                $skip_next = false;
-                continue;
-            }
-
-            if (preg_match('|^#EXTINF:.+CUID="(?<id>\d+)"|', $iValue, $m_id)
-                && preg_match($this->get_feature(M3U_STREAM_URL_PATTERN), $m3u_lines[$i + 1], $matches)) {
-                $pl_entries[$m_id['id']] = $matches;
-                $skip_next = true;
-            }
-        }
-
-        if (empty($pl_entries)) {
-            hd_print('Empty provider playlist! No channels mapped.');
-            $this->ClearPlaylistCache();
-        }
-
-        return $pl_entries;
-    }
-
-    /**
-     * @param string $channel_id
-     * @param array $ext_params
-     * @return array|mixed|string|string[]
-     */
-    public function UpdateStreamUrlID($channel_id, $ext_params)
-    {
-        // token used as channel id
-        return str_replace('{TOKEN}', $ext_params['token'], $this->get_feature(MEDIA_URL_TEMPLATE_HLS));
+        return sprintf($this->get_feature(VOD_PLAYLIST_URL), $login, $password);
     }
 
     /**
@@ -126,31 +52,29 @@ class SmilePluginConfig extends Default_Config
      * @return Movie
      * @throws Exception
      */
-   public function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
 
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
-            if ($i !== (int)$movie_id || !preg_match($this->get_feature(EXTINF_VOD_PATTERN), $iValue, $match)) {
+            if ($i !== (int)$movie_id || !preg_match($this->get_feature(VOD_PARSE_PATTERN), $iValue, $match)) {
                 continue;
             }
 
             $logo = $match['logo'];
-            $title = $match['title'];
-            $country = $match['country'];
-            $year = $match['year'];
+            list($title, $title_orig) = explode('/', $match['title']);
             $url = $this->UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
 
             //hd_print("Vod url: $playback_url");
             $movie->set_data(
                 $title,// $xml->caption,
-                '',// $xml->caption_original,
+                $title_orig,// $xml->caption_original,
                 '',// $xml->description,
                 $logo,// $xml->poster_url,
                 '',// $xml->length,
-                $year,// $xml->year,
+                '',// $xml->year,
                 '',// $xml->director,
                 '',// $xml->scenario,
                 '',// $xml->actors,
@@ -158,7 +82,7 @@ class SmilePluginConfig extends Default_Config
                 '',// $xml->rate_imdb,
                 '',// $xml->rate_kinopoisk,
                 '',// $xml->rate_mpaa,
-                $country,// $xml->country,
+                '',// $xml->country,
                 ''// $xml->budget
             );
 

@@ -135,6 +135,7 @@ static std::vector<PluginType> all_plugins = {
 	{ PluginType::enSharaclub,  },
 	{ PluginType::enSharavoz,   },
 	{ PluginType::enShuraTV,    },
+	{ PluginType::enSmile,    },
 	{ PluginType::enTVClub,     },
 	{ PluginType::enTvTeam,     },
 	{ PluginType::enVidok,      },

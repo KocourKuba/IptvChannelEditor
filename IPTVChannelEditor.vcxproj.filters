@@ -282,6 +282,9 @@
     <ClInclude Include="uri_config.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
+    <ClInclude Include="uri_smile.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -480,6 +483,9 @@
       <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
     <ClCompile Include="uri_viplime.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_smile.cpp">
       <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
   </ItemGroup>
