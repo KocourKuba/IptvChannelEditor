@@ -147,7 +147,7 @@ void uri_vidok::fill_servers_list(TemplateParams& params)
 					const auto& server = item.value();
 					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("name", server) };
 					if (info.get_id() == current)
-						params.server = servers.size();
+						params.server_idx = servers.size();
 
 					servers.emplace_back(info);
 				}
@@ -176,7 +176,7 @@ bool uri_vidok::set_server(TemplateParams& params)
 									  L"settings_set",
 									  get_api_token(creds),
 									  L"server",
-									  servers_list[params.server].get_id());
+									  servers_list[params.server_idx].get_id());
 
 		std::vector<BYTE> data;
 		if (utils::DownloadFile(url, data) || data.empty())
@@ -187,7 +187,7 @@ bool uri_vidok::set_server(TemplateParams& params)
 				for (const auto& item : parsed_json["settings"].items())
 				{
 					const auto& server = item.value();
-					return (utils::get_json_wstring("value", server) == servers_list[params.server].get_id()); //-V612
+					return (utils::get_json_wstring("value", server) == servers_list[params.server_idx].get_id()); //-V612
 				}
 			}
 			JSON_ALL_CATCH;

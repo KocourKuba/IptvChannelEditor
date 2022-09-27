@@ -66,10 +66,10 @@ struct TemplateParams
 	std::wstring command_param;
 	int shift_back = 0;
 	int number = 0;
-	int server = 0;
-	int device = 0;
-	int profile = 0;
-	int quality = 0;
+	int server_idx = 0;
+	int device_idx = 0;
+	int profile_idx = 0;
+	int quality_idx = 0;
 };
 
 struct DynamicParamsInfo

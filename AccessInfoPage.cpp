@@ -104,7 +104,7 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_INFO, m_wndInfo);
 	DDX_Control(pDX, IDC_LIST_CHANNELS, m_wndChLists);
 	DDX_Control(pDX, IDC_COMBO_SERVER_ID, m_wndServers);
-	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndServers);
+	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDevices);
 	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfiles);
 	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQualities);
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
@@ -280,10 +280,10 @@ void CAccessInfoPage::UpdateOptionalControls()
 	params.login = selected.get_login();
 	params.password = selected.get_password();
 	params.subdomain = selected.get_subdomain();
-	params.server = selected.server_id;
-	params.device = selected.device_id;
-	params.profile = selected.profile_id;
-	params.quality = selected.quality_id;
+	params.server_idx = selected.server_id;
+	params.device_idx = selected.device_id;
+	params.profile_idx = selected.profile_id;
+	params.quality_idx = selected.quality_id;
 
 	if (m_plugin_type == PluginType::enSharaclub)
 	{
@@ -304,12 +304,12 @@ void CAccessInfoPage::UpdateOptionalControls()
 			m_wndServers.AddString(info.get_name().c_str());
 		}
 
-		if (params.server >= (int)m_servers.size())
+		if (params.server_idx >= (int)m_servers.size())
 		{
-			params.server = 0;
+			params.server_idx = 0;
 		}
 
-		m_wndServers.SetCurSel(params.server);
+		m_wndServers.SetCurSel(params.server_idx);
 	}
 
 	m_plugin->fill_device_list(params);
@@ -323,31 +323,31 @@ void CAccessInfoPage::UpdateOptionalControls()
 			m_wndDevices.AddString(info.get_name().c_str());
 		}
 
-		if (params.device >= (int)m_devices.size())
+		if (params.device_idx >= (int)m_devices.size())
 		{
-			params.device = 0;
+			params.device_idx = 0;
 		}
 
-		m_wndDevices.SetCurSel(params.device);
+		m_wndDevices.SetCurSel(params.device_idx);
 	}
 
 	m_plugin->fill_quality_list(params);
-	m_profiles = m_plugin->get_device_list();
-	m_wndProfiles.EnableWindow(!m_profiles.empty());
-	m_wndProfiles.ResetContent();
-	if (!m_profiles.empty())
+	m_qualities = m_plugin->get_quality_list();
+	m_wndQualities.EnableWindow(!m_qualities.empty());
+	m_wndQualities.ResetContent();
+	if (!m_qualities.empty())
 	{
-		for (const auto& info : m_profiles)
+		for (const auto& info : m_qualities)
 		{
-			m_wndProfiles.AddString(info.get_name().c_str());
+			m_wndQualities.AddString(info.get_name().c_str());
 		}
 
-		if (params.profile >= (int)m_devices.size())
+		if (params.quality_idx >= (int)m_qualities.size())
 		{
-			params.profile = 0;
+			params.quality_idx = 0;
 		}
 
-		m_wndProfiles.SetCurSel(params.profile);
+		m_wndQualities.SetCurSel(params.quality_idx);
 	}
 
 	m_plugin->fill_profiles_list(params);
@@ -362,12 +362,12 @@ void CAccessInfoPage::UpdateOptionalControls()
 			m_wndProfiles.AddString(info.get_name().c_str());
 		}
 
-		if (params.profile >= (int)m_profiles.size())
+		if (params.profile_idx >= (int)m_profiles.size())
 		{
-			params.profile = 0;
+			params.profile_idx = 0;
 		}
 
-		m_wndProfiles.SetCurSel(params.profile);
+		m_wndProfiles.SetCurSel(params.profile_idx);
 	}
 
 	m_caption = selected.get_caption().c_str();
@@ -588,10 +588,10 @@ BOOL CAccessInfoPage::OnApply()
 	params.login = utils::utf8_to_utf16(selected.login);
 	params.password = utils::utf8_to_utf16(selected.password);
 	params.subdomain = utils::utf8_to_utf16(selected.subdomain);
-	params.server = selected.server_id;
-	params.device = selected.device_id;
-	params.profile = selected.profile_id;
-	params.quality = selected.quality_id;
+	params.server_idx = selected.server_id;
+	params.device_idx = selected.device_id;
+	params.profile_idx = selected.profile_id;
+	params.quality_idx = selected.quality_id;
 
 	if (m_plugin_type == PluginType::enSharaclub)
 	{
@@ -924,12 +924,6 @@ void CAccessInfoPage::GetAccountInfo()
 	if (selected_cred.not_valid)
 		return;
 
-	if (!m_servers.empty())
-	{
-		m_wndServers.EnableWindow(TRUE);
-		m_wndServers.SetCurSel(selected_cred.server_id);
-	}
-
 	m_wndEmbed.SetCheck(selected_cred.embed);
 	m_wndEmbed.EnableWindow(TRUE);
 	m_wndCaption.EnableWindow(TRUE);
@@ -972,37 +966,17 @@ void CAccessInfoPage::GetAccountInfo()
 	params.login = std::move(login);
 	params.password = std::move(password);
 	params.subdomain = m_list_domain;
-	params.server = selected_cred.server_id;
-	params.profile = selected_cred.profile_id;
-	params.quality = selected_cred.quality_id;
+	params.server_idx = selected_cred.server_id;
+	params.device_idx = selected_cred.device_id;
+	params.profile_idx = selected_cred.profile_id;
+	params.quality_idx = selected_cred.quality_id;
 
 	if (m_plugin_type == PluginType::enTVClub || m_plugin_type == PluginType::enVidok)
 	{
 		params.token = m_plugin->get_api_token(selected_cred);
 	}
 
-	m_plugin->clear_profiles_list();
-	m_profiles = m_plugin->get_profiles_list();
-	for (const auto& info : m_profiles)
-	{
-		m_wndProfiles.AddString(info.get_name().c_str());
-	}
-
-	if (!m_profiles.empty())
-	{
-		if (params.profile >= (int)m_profiles.size())
-		{
-			params.profile = 0;
-			selected_cred.profile_id = 0;
-		}
-
-		m_wndProfiles.SetCurSel(params.profile);
-	}
-
-	m_wndProfiles.EnableWindow(m_profiles.size() > 1);
-
 	auto& pl_url = uri->get_playlist_url(params);
-
 	std::list<AccountInfo> acc_info;
 	if (uri->parse_access_info(params, acc_info))
 	{

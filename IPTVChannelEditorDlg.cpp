@@ -788,9 +788,9 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.login = m_cur_account.get_login();
 	params.password = m_cur_account.get_password();
 	params.token = m_cur_account.get_token();
-	params.server = m_cur_account.server_id;
-	params.profile = m_cur_account.profile_id;
-	params.quality = m_cur_account.quality_id;
+	params.server_idx = m_cur_account.server_id;
+	params.profile_idx = m_cur_account.profile_id;
+	params.quality_idx = m_cur_account.quality_id;
 	params.number = idx;
 
 	if (m_plugin_type == PluginType::enSharaclub)
@@ -1450,7 +1450,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 			params.login = m_cur_account.get_login();
 			params.password = m_cur_account.get_password();
 			params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-			params.server = m_cur_account.server_id;
+			params.server_idx = m_cur_account.server_id;
 
 			UpdateExtToken(uri.get());
 			m_streamUrl = uri->get_templated_stream(params).c_str();
@@ -2877,7 +2877,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_params.login = m_cur_account.get_login();
 		dlg.m_params.password = m_cur_account.get_password();
 		dlg.m_params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-		dlg.m_params.server = m_cur_account.server_id;
+		dlg.m_params.server_idx = m_cur_account.server_id;
 
 		UpdateExtToken(info->stream_uri.get());
 		dlg.m_info = info;
@@ -2970,7 +2970,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.login = m_cur_account.get_login();
 		params.password = m_cur_account.get_password();
 		params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-		params.server = m_cur_account.server_id;
+		params.server_idx = m_cur_account.server_id;
 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
@@ -4006,7 +4006,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_params.login = m_cur_account.get_login();
 	cfg.m_params.password = m_cur_account.get_password();
 	cfg.m_params.shift_back = 0;
-	cfg.m_params.server = m_cur_account.server_id;
+	cfg.m_params.server_idx = m_cur_account.server_id;
 
 	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)

@@ -75,11 +75,11 @@ void uri_sharaclub::load_default()
 std::wstring uri_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)
 {
 	auto& url = get_playlist_template();
-	if (params.profile != 0)
+	if (params.profile_idx != 0)
 	{
 		fill_profiles_list(params);
 		const auto& profiles = get_profiles_list();
-		url += L"/" + profiles[params.profile].get_id();
+		url += L"/" + profiles[params.profile_idx].get_id();
 	}
 
 	return uri_stream::get_playlist_url(params, url);
@@ -139,7 +139,7 @@ void uri_sharaclub::fill_servers_list(TemplateParams& params)
 			const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
 			if (utils::get_json_int("status", parsed_json) == 1)
 			{
-				params.server = utils::get_json_int("current", parsed_json);
+				params.server_idx = utils::get_json_int("current", parsed_json);
 				const auto& js_data = parsed_json["allow_nums"];
 				for (const auto& item : js_data.items())
 				{
@@ -168,7 +168,7 @@ bool uri_sharaclub::set_server(TemplateParams& params)
 									  params.subdomain,
 									  L"ch_cdn",
 									  L"num",
-									  servers_list[params.server].get_id(),
+									  servers_list[params.server_idx].get_id(),
 									  params.login,
 									  params.password);
 
@@ -219,7 +219,7 @@ void uri_sharaclub::fill_profiles_list(TemplateParams& params)
 					info.set_id(utils::get_json_wstring("id", profile));
 					info.set_name(utils::get_json_wstring("name", profile));
 					if (info.get_id() == current)
-						params.profile = profiles.size();
+						params.profile_idx = profiles.size();
 
 					profiles.emplace_back(info);
 				}
@@ -238,7 +238,7 @@ bool uri_sharaclub::set_profile(TemplateParams& params)
 									  params.subdomain,
 									  L"list_profiles",
 									  L"num",
-									  profiles_list[params.profile].get_id(),
+									  profiles_list[params.profile_idx].get_id(),
 									  params.login,
 									  params.password);
 
