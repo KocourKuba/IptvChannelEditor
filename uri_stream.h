@@ -30,12 +30,6 @@ DEALINGS IN THE SOFTWARE.
 
 class Credentials;
 
-enum class ServerSubstType {
-	enNone,
-	enStream,
-	enPlaylist
-};
-
 struct PlaylistInfo
 {
 	std::wstring name;
@@ -324,14 +318,14 @@ public:
 	/// <returns>wstring</returns>
 	virtual std::wstring get_api_token(const Credentials& creds) const { return L""; };
 
+protected:
+
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, title, name, provider_url,
 								   playlist_template, uri_id_parse_pattern, uri_parse_pattern,
 								   square_icons, requested_token, use_token_as_id,
 								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
 
-protected:
-
-	virtual void replace_vars(std::wstring& url, const TemplateParams& params) const;
+	void replace_vars(std::wstring& url, const TemplateParams& params) const;
 
 	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 

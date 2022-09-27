@@ -949,13 +949,16 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 				{
 					m_cur_account.set_token(parser.token);
 					m_cur_account.set_subdomain(parser.domain);
+					bSet = true;
 				}
 			}
 			else if (!entry->get_uri_stream()->is_per_channel_token())
 			{
 				m_cur_account.set_token(parser.token);
+				bSet = true;
 			}
-			break;
+
+			if (bSet) break;
 		}
 
 		for (auto& entry : m_playlistEntries->m_entries)

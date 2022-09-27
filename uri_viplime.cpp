@@ -37,7 +37,6 @@ static char THIS_FILE[] = __FILE__;
 uri_viplime::uri_viplime()
 {
 	short_name = "viplime";
-	fill_quality_list(TemplateParams());
 }
 
 void uri_viplime::fill_quality_list(TemplateParams& /*params*/)
@@ -50,8 +49,10 @@ void uri_viplime::fill_quality_list(TemplateParams& /*params*/)
 		std::wstring id;
 		UINT res;
 	};
-	std::vector<Info> infos;
-	infos = {
+
+	//-V826
+	std::vector<Info> infos =
+	{
 		{ L"high",   IDS_STRING_VIPLIME_P1 },
 		{ L"middle", IDS_STRING_VIPLIME_P2 },
 		{ L"low",    IDS_STRING_VIPLIME_P3 },

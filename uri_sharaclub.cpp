@@ -45,7 +45,6 @@ uri_sharaclub::uri_sharaclub()
 	short_name = "sharaclub";
 	provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";;
 	provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
-	fill_profiles_list(TemplateParams());
 }
 
 void uri_sharaclub::load_default()

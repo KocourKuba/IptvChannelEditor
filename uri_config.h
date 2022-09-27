@@ -79,7 +79,7 @@ public:
 	DynamicParamsInfo(const std::string& _id, const std::string& _name) : id(_id), name(_name) {}
 
 	std::wstring get_id() const { return utils::utf8_to_utf16(id); }
-	void set_id(const std::wstring val) { id = utils::utf16_to_utf8(val); }
+	void set_id(const std::wstring& val) { id = utils::utf16_to_utf8(val); }
 
 	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
 	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
