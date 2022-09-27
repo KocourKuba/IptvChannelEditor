@@ -2274,7 +2274,10 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 	HTREEITEM hSelected = reinterpret_cast<LPNMTREEVIEW>(pNMHDR)->itemNew.hItem;
 	UpdateControlsForItem(hSelected);
 
-	OnSyncTreeItem();
+	if (GetConfig().get_int(true, REG_AUTO_SYNC))
+	{
+		OnSyncTreeItem();
+	}
 
 	if (pResult)
 		*pResult = 0;
@@ -4204,7 +4207,7 @@ void CIPTVChannelEditorDlg::OnBnClickCheckArchive()
 
 void CIPTVChannelEditorDlg::OnSyncTreeItem()
 {
-	if (m_loading || !m_lastTree || m_inSync || !GetConfig().get_int(true, REG_AUTO_SYNC))
+	if (m_loading || !m_lastTree || m_inSync)
 		return;
 
 	m_inSync = true;
