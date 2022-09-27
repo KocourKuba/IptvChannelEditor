@@ -11,8 +11,6 @@ class vidok_config extends default_config
     {
         $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
         $this->set_feature(BALANCE_SUPPORTED, true);
-        $this->set_feature(QUALITY_OPTIONS, true);
-        $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://vidok.tv/p/{TOKEN}');
         $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/p/(?<token>.+)/(?<id>.+)$');
 

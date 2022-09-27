@@ -36,22 +36,4 @@ class antifriz_config extends Cbilling_Vod_Impl
         $this->account_data = $account_data;
         return $account_data;
     }
-
-    /**
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetVodListUrl($plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $password = $this->get_password($plugin_cookies);
-
-        if (empty($password)) {
-            hd_print("Password not set");
-            return '';
-        }
-
-        return self::API_HOST . '/genres';
-    }
 }

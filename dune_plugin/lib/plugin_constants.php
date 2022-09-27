@@ -10,16 +10,12 @@ const MPEG = 'mpeg';
 // Non configurable parameters by external config
 const TV_FAVORITES_SUPPORTED   = 'tv_fav';
 const VOD_SUPPORTED            = 'vod_support';
-const VOD_FAVORITES_SUPPORTED  = 'vod_fav';
 const VOD_QUALITY_SUPPORTED    = 'vod_quality';
 const VOD_FILTER_SUPPORTED     = 'vod_filter';
 const VOD_LAZY_LOAD            = 'vod_lazy';
-const VOD_PARSE_PATTERN        = 'vod_parse_pattern';
 const VOD_PLAYLIST_URL         = 'vod_playlist_url';
+const VOD_PARSE_PATTERN        = 'vod_parse_pattern';
 const BALANCE_SUPPORTED        = 'balance_support';
-const DEVICE_OPTIONS           = 'device_options';
-const SERVER_OPTIONS           = 'server_support';
-const QUALITY_OPTIONS          = 'quality_support';
 const SQUARE_ICONS             = 'square_icons';
 
 // ext parameters keys
@@ -60,7 +56,7 @@ const EPG_PARAMS       = 'epg_params';
 const SERVERS_LIST     = 'servers_list';
 
 // device parameters
-const DEVICES_LIST     = 'device_list';
+const DEVICES_LIST     = 'devices_list';
 
 // quality parameters
 const QUALITIES_LIST   = 'qualities_list';

@@ -8,8 +8,7 @@ class smile_config extends default_config
         parent::init_defaults($short_name);
 
         $this->set_feature(VOD_SUPPORTED, true);
-        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
-        $this->set_feature(VOD_PLAYLIST_URL, 'http://pl.smile-tv.live/%s/%s/vodall.m3u');
+        $this->set_feature(VOD_PLAYLIST_URL, 'http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vodall.m3u');
         $this->set_feature(VOD_PARSE_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
     }
 
@@ -25,25 +24,6 @@ class smile_config extends default_config
         $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{TOKEN}');
 
         $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.esalecrm.net/smile/epg/{ID}.json');
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetVodListUrl($plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
-
-        if (empty($login) || empty($password)) {
-            hd_print("Login or password not set");
-            return '';
-        }
-
-        return sprintf($this->get_feature(VOD_PLAYLIST_URL), $login, $password);
     }
 
     /**

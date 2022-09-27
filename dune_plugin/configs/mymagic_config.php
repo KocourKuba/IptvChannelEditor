@@ -7,8 +7,6 @@ class mymagic_config extends default_config
     {
         $this->set_feature(SQUARE_ICONS, true);
         $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(SERVER_OPTIONS, true);
-        $this->set_feature(QUALITY_OPTIONS, true);
         $this->set_feature(USE_TOKEN_AS_ID, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u');
         $this->set_feature(URI_ID_PARSE_PATTERN, '^#EXTINF:.+CUID="(?<id>\d+)"');

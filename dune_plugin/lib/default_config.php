@@ -35,7 +35,7 @@ class default_config extends dynamic_config
      */
     public function get_login($plugin_cookies)
     {
-        return isset($this->embedded_account->login) ? $this->embedded_account->login : $plugin_cookies->login;
+        return isset($this->embedded_account->login) ? $this->embedded_account->login : (isset($plugin_cookies->login) ? $plugin_cookies->login : '');
     }
 
     /**
@@ -44,7 +44,7 @@ class default_config extends dynamic_config
      */
     public function get_password($plugin_cookies)
     {
-        return isset($this->embedded_account->password) ? $this->embedded_account->password : $plugin_cookies->password;
+        return isset($this->embedded_account->password) ? $this->embedded_account->password : (isset($plugin_cookies->password) ? $plugin_cookies->password : '');
     }
 
     /**
@@ -315,8 +315,9 @@ class default_config extends dynamic_config
     {
         hd_print("Collect information from account");
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
+        $parse_pattern = "|" . $this->get_feature(URI_PARSE_PATTERN) . "|";
         foreach ($m3u_lines as $line) {
-            if (preg_match($this->get_feature(URI_PARSE_PATTERN), $line, $matches)) {
+            if (preg_match($parse_pattern, $line, $matches)) {
                 return $matches;
             }
         }
@@ -331,7 +332,7 @@ class default_config extends dynamic_config
      */
     public function GetPlaylistStreamInfo($plugin_cookies)
     {
-        hd_print("Get playlist information for");
+        hd_print("Get playlist information");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
         $id_pattern = $this->get_feature(URI_ID_PARSE_PATTERN);
@@ -555,7 +556,7 @@ class default_config extends dynamic_config
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {
-                $url = $this->GetVodlistUrl($plugin_cookies);
+                $url = $this->GetVodListUrl($plugin_cookies);
                 if (empty($url)) {
                     hd_print('Vod playlist not defined');
                     throw new Exception('Vod playlist not defined');
@@ -621,25 +622,44 @@ class default_config extends dynamic_config
             $url = $this->get_feature(PLAYLIST_TEMPLATE2);
         }
 
+        return $this->replace_subs_vars($url, $plugin_cookies);
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function GetVodListUrl($plugin_cookies)
+    {
+        return $this->replace_subs_vars($this->get_feature(VOD_PLAYLIST_URL), $plugin_cookies);
+    }
+
+    /**
+     * @param string $url
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function replace_subs_vars($url, $plugin_cookies)
+    {
         if (!empty($url)) {
-            $login = $this->get_login($plugin_cookies);
             if (strpos($url, '{LOGIN}') !== false) {
+                $login = $this->get_login($plugin_cookies);
                 if (empty($login))
                     hd_print("Login not set");
                 else
                     $url = str_replace('{LOGIN}', $login, $url);
             }
 
-            $password = $this->get_password($plugin_cookies);
             if (strpos($url, '{PASSWORD}') !== false) {
+                $password = $this->get_password($plugin_cookies);
                 if (empty($password))
                     hd_print("Password not set");
                 else
                     $url = str_replace('{PASSWORD}', $password, $url);
             }
 
-            $this->ensure_token_loaded($plugin_cookies);
             if (strpos($url, '{TOKEN}') !== false) {
+                $this->ensure_token_loaded($plugin_cookies);
                 if (empty($plugin_cookies->token))
                     hd_print("Token not set");
                 else
@@ -673,15 +693,7 @@ class default_config extends dynamic_config
     }
 
     /**
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetVodListUrl($plugin_cookies)
-    {
-        return '';
-    }
 
-    /**
      * @param $plugin_cookies
      * @return bool
      */

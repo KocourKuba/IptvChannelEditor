@@ -15,7 +15,6 @@ abstract class Cbilling_Vod_Impl extends default_config
         parent::init_defaults($short_name);
 
         $this->set_feature(VOD_SUPPORTED, true);
-        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
         $this->set_feature(VOD_PLAYLIST_URL, 'http://%s%s?token=%s');
         $this->set_feature(BALANCE_SUPPORTED, true);
@@ -82,6 +81,24 @@ abstract class Cbilling_Vod_Impl extends default_config
         }
 
         return $movie;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function GetVodListUrl($plugin_cookies)
+    {
+        // hd_print("Type: $type");
+
+        $password = $this->get_password($plugin_cookies);
+
+        if (empty($password)) {
+            hd_print("Password not set");
+            return '';
+        }
+
+        return self::API_HOST . '/genres';
     }
 
     /**

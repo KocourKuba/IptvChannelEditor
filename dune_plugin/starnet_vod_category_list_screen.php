@@ -106,7 +106,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         $items = array();
 
         // Favorites
-        if (!isset($media_url->category_id) && $this->plugin->config->get_feature(VOD_FAVORITES_SUPPORTED)) {
+        if (!isset($media_url->category_id)) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => Starnet_Vod_Favorites_Screen::ID,

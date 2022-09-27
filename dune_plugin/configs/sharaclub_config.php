@@ -14,7 +14,6 @@ class sharaclub_config extends default_config
         parent::init_defaults($short_name);
 
         $this->set_feature(VOD_SUPPORTED, true);
-        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(BALANCE_SUPPORTED, true);
     }
@@ -22,7 +21,6 @@ class sharaclub_config extends default_config
     public function load_default()
     {
         $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}');
         $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$');
 
@@ -136,25 +134,6 @@ class sharaclub_config extends default_config
 	    }
 
         return $url;
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetVodListUrl($plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
-
-        if (empty($login) || empty($password)) {
-            hd_print("Login or password not set");
-            return '';
-        }
-
-        return sprintf($this->get_feature(self::PLAYLIST_VOD_URL), $login, $password);
     }
 
     /**
@@ -321,8 +300,7 @@ class sharaclub_config extends default_config
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        $url = $this->GetVodListUrl($plugin_cookies);
-        $jsonItems = HD::DownloadJson($url, false);
+        $jsonItems = HD::DownloadJson($this->GetVodListUrl($plugin_cookies), false);
         if ($jsonItems === false) {
             return;
         }

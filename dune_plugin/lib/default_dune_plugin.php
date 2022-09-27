@@ -115,7 +115,6 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("Account type:     " . $this->config->get_feature(ACCESS_TYPE));
         hd_print("TV fav:           " . ($this->config->get_feature(TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
         hd_print("VOD page:         " . ($this->config->get_feature(VOD_SUPPORTED) ? "yes" : "no"));
-        hd_print("VOD fav:          " . ($this->config->get_feature(VOD_FAVORITES_SUPPORTED) ? "yes" : "no"));
         hd_print("LocalTime         " . format_datetime('Y-m-d H:i', time()));
         hd_print("TimeZone          " . getTimeZone());
         hd_print("Daylight          " . date('I'));

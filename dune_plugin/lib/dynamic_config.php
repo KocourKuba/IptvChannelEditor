@@ -28,13 +28,9 @@ class dynamic_config
         $this->features[BALANCE_SUPPORTED] = false;
         $this->features[VOD_SUPPORTED] = false;
         $this->features[VOD_LAZY_LOAD] = false;
-        $this->features[VOD_FAVORITES_SUPPORTED] = false;
         $this->features[VOD_QUALITY_SUPPORTED] = false;
         $this->features[VOD_FILTER_SUPPORTED] = false;
         $this->features[VOD_PARSE_PATTERN] = '';
-        $this->features[DEVICE_OPTIONS] = array();
-        $this->features[SERVER_OPTIONS] = false;
-        $this->features[QUALITY_OPTIONS] = false;
         $this->features[USE_TOKEN_AS_ID] = false;
 
         // load defaults

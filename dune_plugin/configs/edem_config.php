@@ -8,7 +8,6 @@ class edem_config extends default_config
         parent::init_defaults($short_name);
 
         $this->set_feature(VOD_SUPPORTED, true);
-        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_QUALITY_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);

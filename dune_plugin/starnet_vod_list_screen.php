@@ -74,13 +74,11 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
         $actions[GUI_EVENT_KEY_SEARCH] = $add_action;
         $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
 
-        if ($this->plugin->vod->is_favorites_supported()) {
-            $add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
-            $add_favorite_action['caption'] = 'В Избранное';
-            $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
+        $add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
+        $add_favorite_action['caption'] = 'В Избранное';
+        $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
 
-            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
-        }
+        $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
 
         return $actions;
     }

@@ -76,22 +76,4 @@ class cbilling_config extends Cbilling_Vod_Impl
         Control_Factory::add_label($defs, 'Устройств', $account_data['data']['devices_num'], -10);
         Control_Factory::add_label($defs, 'Сервер', $account_data['data']['server'], 20);
     }
-
-    /**
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetVodListUrl($plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $password = $this->get_password($plugin_cookies);
-
-        if (empty($password)) {
-            hd_print("Password not set");
-            return '';
-        }
-
-        return self::API_HOST . '/genres';
-    }
 }

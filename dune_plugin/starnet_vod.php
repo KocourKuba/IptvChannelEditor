@@ -114,7 +114,7 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function is_favorites_supported()
     {
-        return $this->plugin->config->get_feature(VOD_FAVORITES_SUPPORTED);
+        return $this->plugin->config->get_feature(VOD_SUPPORTED);
     }
 
     /**

@@ -8,9 +8,8 @@ class glanz_config extends default_config
         parent::init_defaults($short_name);
 
         $this->set_feature(VOD_SUPPORTED, true);
-        $this->set_feature(VOD_FAVORITES_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
-        $this->set_feature(VOD_PLAYLIST_URL, 'http://api.ottg.tv/playlist/vod?login=%s&password=%s');
+        $this->set_feature(VOD_PLAYLIST_URL, 'http://api.ottg.tv/playlist/vod?login={LOGIN}&password={PASSWORD}');
     }
 
     public function load_default()
@@ -38,25 +37,6 @@ class glanz_config extends default_config
         $this->set_epg_param(EPG_FIRST,EPG_TIMEZONE,3); // // iptvx.one uses moscow time (UTC+3)
 
         $this->set_epg_param(EPG_SECOND,EPG_URL,'http://epg.drm-play.ml/iptvx.one/epg/{ID}.json');
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetVodListUrl($plugin_cookies)
-    {
-        // hd_print("Type: $type");
-
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
-
-        if (empty($login) || empty($password)) {
-            hd_print("Login or password not set");
-            return '';
-        }
-
-        return sprintf($this->get_feature(VOD_PLAYLIST_URL), $login, $password);
     }
 
     /**
@@ -129,8 +109,7 @@ class glanz_config extends default_config
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
-        $url = $this->GetVodListUrl($plugin_cookies);
-        $jsonItems = HD::DownloadJson($url, false);
+        $jsonItems = HD::DownloadJson($this->GetVodListUrl($plugin_cookies), false);
         if ($jsonItems === false) {
             return;
         }

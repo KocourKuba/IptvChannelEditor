@@ -6,7 +6,6 @@ class filmax_config extends default_config
     public function load_default()
     {
         $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(SERVER_OPTIONS, true);
         $this->set_feature(USE_TOKEN_AS_ID, true);
         $this->set_feature(PLAYLIST_TEMPLATE, 'http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8');
         $this->set_feature(PLAYLIST_TEMPLATE2, 'http://epg.esalecrm.net/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8');
