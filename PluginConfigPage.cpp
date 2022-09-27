@@ -62,8 +62,10 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SHORT_NAME, m_ShortName);
 	DDX_Control(pDX, IDC_EDIT_PROVIDER_URL, m_wndProviderUrl);
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_URL, m_ProviderUrl);
-	DDX_Control(pDX, IDC_EDIT_PARSE_TEMPLATE, m_wndParseTemplate);
-	DDX_Text(pDX, IDC_EDIT_PARSE_TEMPLATE, m_ParseTemplate);
+	DDX_Control(pDX, IDC_EDIT_PARSE_PATTERN, m_wndParseStream);
+	DDX_Text(pDX, IDC_EDIT_PARSE_PATTERN, m_ParseStream);
+	DDX_Control(pDX, IDC_EDIT_ID_PARSE_PATTERN, m_wndParseStreamID);
+	DDX_Text(pDX, IDC_EDIT_ID_PARSE_PATTERN, m_ParseStreamID);
 	DDX_Control(pDX, IDC_EDIT_SHIFT_SUBST, m_wndSubst);
 	DDX_Text(pDX, IDC_EDIT_SHIFT_SUBST, m_Subst);
 	DDX_Control(pDX, IDC_EDIT_DURATION, m_wndDuration);
@@ -105,6 +107,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_DateTimeCtrl(pDX, IDC_DATETIMEPICKER_DATE, m_Date);
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_wndPlaylistTemplate);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_PlaylistTemplate);
+	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndSquareIcons);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -199,8 +202,10 @@ void CPluginConfigPage::EnableControls(BOOL enable)
 	m_wndTitle.EnableWindow(enable);
 	m_wndShortName.EnableWindow(enable);
 	m_wndProviderUrl.EnableWindow(enable);
+	m_wndSquareIcons.EnableWindow(enable);
 	m_wndPlaylistTemplate.EnableWindow(enable);
-	m_wndParseTemplate.EnableWindow(enable);
+	m_wndParseStream.EnableWindow(enable);
+	m_wndParseStreamID.EnableWindow(enable);
 	m_wndSubst.EnableWindow(enable);
 	m_wndDuration.EnableWindow(enable);
 	m_wndStreamTemplate.EnableWindow(enable);
@@ -228,12 +233,15 @@ void CPluginConfigPage::FillControlsCommon()
 	m_plugin->save_plugin_parameters();
 
 	m_wndAccessType.SetCurSel((int)m_plugin->get_access_type());
+	m_wndSquareIcons.SetCheck(m_plugin->is_square_icons() != false);
+
 	m_Name = m_plugin->get_name().c_str();
 	m_Title = m_plugin->get_title().c_str();
 	m_ShortName = m_plugin->get_short_name().c_str();
 	m_ProviderUrl = m_plugin->get_provider_url().c_str();
 	m_PlaylistTemplate = m_plugin->get_playlist_template().c_str();
-	m_ParseTemplate = m_plugin->get_uri_parse_template().c_str();
+	m_ParseStream = m_plugin->get_uri_parse_pattern().c_str();
+	m_ParseStreamID = m_plugin->get_uri_id_parse_pattern().c_str();
 
 	UpdateData(FALSE);
 

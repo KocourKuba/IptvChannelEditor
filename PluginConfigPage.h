@@ -78,7 +78,8 @@ protected:
 	CEdit m_wndShortName;
 	CEdit m_wndProviderUrl;
 	CEdit m_wndPlaylistTemplate;
-	CEdit m_wndParseTemplate;
+	CEdit m_wndParseStream;
+	CEdit m_wndParseStreamID;
 	CEdit m_wndSubst;
 	CEdit m_wndDuration;
 	CEdit m_wndStreamTemplate;
@@ -102,6 +103,7 @@ protected:
 
 	CButton m_wndLoadConf;
 	CButton m_wndSaveConf;
+	CButton m_wndSquareIcons;
 	CButton m_wndTest;
 
 	CString m_Name;
@@ -109,7 +111,8 @@ protected:
 	CString m_ShortName;
 	CString m_ProviderUrl;
 	CString m_PlaylistTemplate;
-	CString m_ParseTemplate;
+	CString m_ParseStream;
+	CString m_ParseStreamID;
 	CString m_Subst;
 	CString m_StreamTemplate;
 	CString m_StreamArchiveTemplate;
