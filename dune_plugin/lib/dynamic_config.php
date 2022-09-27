@@ -22,7 +22,7 @@ class dynamic_config
     {
         $this->PluginShortName = $short_name;
 
-        $this->features[ACCESS_TYPE] = -1;
+        $this->features[ACCESS_TYPE] = ACCOUNT_UNKNOWN;
         $this->features[SQUARE_ICONS] = false;
         $this->features[TV_FAVORITES_SUPPORTED] = true;
         $this->features[BALANCE_SUPPORTED] = false;
@@ -77,12 +77,6 @@ class dynamic_config
         $settings = HD::parse_json_file(get_install_path($path), true);
         hd_print("Load plugin settings: $path");
 
-        // NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, title, name, provider_url,
-        //     playlist_template, uri_id_parse_pattern, uri_parse_pattern,
-        //     square_icons, requested_token, use_token_as_id,
-        //     streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
-
-
         $this->set_feature(ACCESS_TYPE, $settings[ACCESS_TYPE]);
         $this->set_feature(PLAYLIST_TEMPLATE, $settings[PLAYLIST_TEMPLATE]);
         $this->set_feature(URI_ID_PARSE_PATTERN, $settings[URI_ID_PARSE_PATTERN]);
@@ -92,20 +86,16 @@ class dynamic_config
 
         foreach ($settings[STREAMS_CONFIG] as $config)
         {
-            $param = $config[STREAM_TYPE] ? MPEG : HLS;
-            foreach ($config as $key => $item) {
-                //hd_print("$param: $key => $item");
-                $this->set_stream_param($param, $key, $item);
-            }
+            $param_idx = $config[STREAM_TYPE];
+            $params = $this->get_stream_params($param_idx);
+            $this->set_stream_params($param_idx, array_merge($params, $config));
         }
 
-        foreach ($settings[EPG_PARAMS] as $idx => $epg)
+        foreach ($settings[EPG_PARAMS] as $epg)
         {
-            $param = $idx ? EPG_SECOND : EPG_FIRST;
-            foreach ($epg as $key => $item) {
-                //hd_print("$param: $key => $item");
-                $this->set_epg_param($param, $key, $item);
-            }
+            $param_idx = $epg[EPG_PARAM];
+            $params = $this->get_epg_params($param_idx);
+            $this->set_epg_params($param_idx, array_merge($params, $epg));
         }
 
         $servers = array();

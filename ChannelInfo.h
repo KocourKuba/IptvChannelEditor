@@ -51,8 +51,8 @@ class ChannelInfo : public BaseInfo
 public:
 	ChannelInfo() = delete;
 	ChannelInfo(const ChannelInfo& src);
-	ChannelInfo(PluginType streamType, const std::wstring& root_path);
-	ChannelInfo(rapidxml::xml_node<>* node, PluginType streamType, const std::wstring& root_path);
+	ChannelInfo(const std::wstring& root_path);
+	ChannelInfo(rapidxml::xml_node<>* node, const std::wstring& root_path);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);

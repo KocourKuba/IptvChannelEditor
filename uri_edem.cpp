@@ -57,7 +57,7 @@ void uri_edem::load_default()
 
 	provider_url = "https://ilook.tv/";
 	playlist_template = "http://epg.it999.ru/edem_epg_ico.m3u8";
-	uri_parse_pattern = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>\d+)\/.*\.m3u8$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>.+)\/.*\.m3u8$)";
 
 	streams_config[0].uri_template = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";

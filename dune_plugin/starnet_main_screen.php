@@ -160,7 +160,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
                 $setup_needs = empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             default:
-                hd_print("Unknown plugin type");
+                hd_print("Unknown access type");
                 $setup_needs = false;
         }
 

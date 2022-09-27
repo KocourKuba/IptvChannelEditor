@@ -27,7 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "StreamContainer.h"
 #include "Config.h"
-#include "uri_channels.h"
 #include "uri_antifriz.h"
 #include "uri_edem.h"
 #include "uri_fox.h"
@@ -72,9 +71,6 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
 	{
 		case PluginType::enBase: // ChannelsCategory
 			return std::make_unique<uri_stream>();
-
-		case PluginType::enChannels: // Channels list
-			return std::make_unique<uri_channels>();
 
 		case PluginType::enAntifriz:
 			plugin = std::make_unique<uri_antifriz>();

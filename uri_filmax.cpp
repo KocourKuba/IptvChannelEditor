@@ -47,7 +47,7 @@ void uri_filmax::load_default()
 
 	provider_url = "https://filmax-tv.ru/";
 	playlist_template = "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
-	uri_id_parse_pattern = R"(^#EXTINF:.+tvg-name=\"(?<id>[^"]+)\")";
+	uri_id_parse_pattern = "^#EXTINF:.+tvg-name=\"(?<id>[^\"]+)\"";
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 
 	use_token_as_id = true;

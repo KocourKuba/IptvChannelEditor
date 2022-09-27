@@ -36,14 +36,14 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-ChannelInfo::ChannelInfo(PluginType streamType, const std::wstring& root_path)
-	: BaseInfo(InfoType::enChannel, streamType, root_path)
+ChannelInfo::ChannelInfo(const std::wstring& root_path)
+	: BaseInfo(InfoType::enChannel, PluginType::enBase, root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
 }
 
-ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node, PluginType streamType, const std::wstring& root_path)
-	: BaseInfo(InfoType::enChannel, streamType, root_path)
+ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node, const std::wstring& root_path)
+	: BaseInfo(InfoType::enChannel, PluginType::enBase, root_path)
 {
 	ParseNode(node);
 }

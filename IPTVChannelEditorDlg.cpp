@@ -1766,13 +1766,13 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	// Iterate <tv_category> nodes
 	while (cat_node)
 	{
-		auto category = std::make_shared<ChannelCategory>(cat_node, PluginType::enBase, root_path);
+		auto category = std::make_shared<ChannelCategory>(cat_node, root_path);
 		CategoryInfo info = { nullptr, category };
 		m_categoriesMap.emplace(category->get_key(), info);
 		cat_node = cat_node->next_sibling();
 	}
 
-	auto fav_category = std::make_shared<ChannelCategory>(PluginType::enBase, root_path);
+	auto fav_category = std::make_shared<ChannelCategory>(root_path);
 	fav_category->set_icon_uri(L"plugin_file://icons/fav.png");
 	fav_category->set_title(L"Favorites");
 	fav_category->set_key(ID_ADD_TO_FAVORITE);
@@ -1783,7 +1783,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	// Iterate <tv_channel> nodes
 	while (ch_node)
 	{
-		auto channel = std::make_shared<ChannelInfo>(ch_node, PluginType::enChannels, root_path);
+		auto channel = std::make_shared<ChannelInfo>(ch_node, root_path);
 		ASSERT(!channel->stream_uri->get_parser().id.empty());
 
 		auto ch_pair = m_channelsMap.find(channel->stream_uri->get_parser().id);
@@ -1919,7 +1919,7 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 	if (!category)
 		return;
 
-	auto channel = std::make_shared<ChannelInfo>(m_plugin_type, GetAppPath(utils::PLUGIN_ROOT));
+	auto channel = std::make_shared<ChannelInfo>(GetAppPath(utils::PLUGIN_ROOT));
 	channel->set_title(L"New Channel");
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
@@ -3320,7 +3320,7 @@ void CIPTVChannelEditorDlg::OnUpdateSave(CCmdUI* pCmdUI)
 void CIPTVChannelEditorDlg::OnNewCategory()
 {
 	auto categoryId = GetNewCategoryID();
-	auto newCategory = std::make_shared<ChannelCategory>(PluginType::enBase, GetAppPath(utils::PLUGIN_ROOT));
+	auto newCategory = std::make_shared<ChannelCategory>(GetAppPath(utils::PLUGIN_ROOT));
 	newCategory->set_key(categoryId);
 	newCategory->set_title(L"New Category");
 	newCategory->set_icon_uri(utils::ICON_TEMPLATE);
@@ -4578,7 +4578,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 	{
 		// Create new channel
 		add = true;
-		auto newChannel = std::make_shared<ChannelInfo>(m_plugin_type, root_path);
+		auto newChannel = std::make_shared<ChannelInfo>(root_path);
 		newChannel->stream_uri->copy(entry->stream_uri);
 		// Add to channel array
 		pair = m_channelsMap.emplace(newChannel->stream_uri->get_parser().id, newChannel).first;
@@ -4606,7 +4606,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 	else
 	{
 		// Category not exist, create new
-		auto category = std::make_shared<ChannelCategory>(PluginType::enBase, root_path);
+		auto category = std::make_shared<ChannelCategory>(root_path);
 		categoryId = GetNewCategoryID();
 		category->set_key(categoryId);
 		category->set_title(entry->get_category());
@@ -4877,7 +4877,7 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	LPNMTVGETINFOTIP pGetInfoTip = reinterpret_cast<LPNMTVGETINFOTIP>(pNMHDR);
 
 	auto entry = GetBaseInfo(&m_wndChannelsTree, pGetInfoTip->hItem);
-	if (entry && entry->is_type(InfoType::enChannel))
+	if (entry && entry->get_type() == InfoType::enChannel)
 	{
 		const std::wstring ch_id = entry->stream_uri->get_parser().id;
 		CString categories;

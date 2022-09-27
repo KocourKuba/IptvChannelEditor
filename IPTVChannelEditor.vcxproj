@@ -276,7 +276,6 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="UpdateSettingsPage.h" />
     <ClInclude Include="uri_antifriz.h" />
     <ClInclude Include="uri_cbilling.h" />
-    <ClInclude Include="uri_channels.h" />
     <ClInclude Include="uri_edem.h" />
     <ClInclude Include="uri_base.h" />
     <ClInclude Include="uri_filmax.h" />
@@ -342,7 +341,6 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="UpdateSettingsPage.cpp" />
     <ClCompile Include="uri_antifriz.cpp" />
     <ClCompile Include="uri_cbilling.cpp" />
-    <ClCompile Include="uri_channels.cpp" />
     <ClCompile Include="uri_config.cpp" />
     <ClCompile Include="uri_edem.cpp" />
     <ClCompile Include="uri_base.cpp" />

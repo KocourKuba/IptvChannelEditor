@@ -46,7 +46,7 @@ void uri_lightiptv::load_default()
 
 	provider_url = "https://ottbill.cc/";
 	playlist_template = "http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
-	uri_id_parse_pattern = R"(^#EXTINF:.+tvg-id=\"(?<id>[^"]+)\")";
+	uri_id_parse_pattern = "^#EXTINF:.+tvg-id=\"(?<id>[^\"]+)\"";
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 
 	square_icons = true;

@@ -255,7 +255,7 @@ const std::wregex& uri_stream::get_uri_regex_parse_template()
 void uri_stream::set_uri_regex_parse_template(const std::wstring& val)
 {
 	// store original template
-	set_uri_parse_template(val);
+	set_uri_parse_pattern(val);
 
 	// clear named group
 	regex_named_groups.clear();

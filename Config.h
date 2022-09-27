@@ -31,9 +31,8 @@ DEALINGS IN THE SOFTWARE.
 
 enum class PluginType
 {
-	enCustom = -3,
-	enBase = -2,
-	enChannels = -1,
+	enCustom = -1000,
+	enBase = -1,
 	enAntifriz,
 	enCbilling,
 	enEdem,

@@ -75,7 +75,7 @@ public:
 		std::swap(stream_uri->get_parser().id, src.stream_uri->get_parser().id);
 	}
 
-	bool is_type(InfoType type) const { return base_type == type; }
+	InfoType get_type() const { return base_type; }
 
 	const BaseInfo& operator=(const BaseInfo& src)
 	{

@@ -43,8 +43,8 @@ public:
 
 public:
 	ChannelCategory() = delete;
-	ChannelCategory(PluginType streamType, const std::wstring& root_path);
-	ChannelCategory(rapidxml::xml_node<>* node, PluginType streamType, const std::wstring& root_path);
+	ChannelCategory(const std::wstring& root_path);
+	ChannelCategory(rapidxml::xml_node<>* node, const std::wstring& root_path);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);

@@ -235,8 +235,8 @@ class default_config extends dynamic_config
             $is_archive = (int)$archive_ts > 0;
             $stream_type = $this->get_format($plugin_cookies);
             switch ($this->get_stream_param($stream_type, CU_TYPE)) {
-                case 'append':
                 case 'shift':
+                case 'append':
                     $url = $this->get_stream_param($stream_type, URL_TEMPLATE);
                     if ($is_archive) {
                         $url .= (strrpos($url, '?', -1) === false) ? '?' : '&';

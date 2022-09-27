@@ -114,9 +114,6 @@
     <ClInclude Include="uri_base.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
-    <ClInclude Include="uri_channels.h">
-      <Filter>Header Files\uri</Filter>
-    </ClInclude>
     <ClInclude Include="uri_stream.h">
       <Filter>Header Files\uri</Filter>
     </ClInclude>
@@ -315,9 +312,6 @@
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
     <ClCompile Include="uri_base.cpp">
-      <Filter>Source Files\uri</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_channels.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
     <ClCompile Include="m3u_entry.cpp">

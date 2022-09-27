@@ -46,7 +46,7 @@ void uri_sharavoz::load_default()
 
 	provider_url = "https://www.sharavoz.tv/";
 	playlist_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
-	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>\d+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].cu_subst = "index";

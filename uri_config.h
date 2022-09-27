@@ -2,17 +2,32 @@
 #include "Config.h"
 #include "UtilsLib\json_wrapper.h"
 
+namespace s_enum
+{
 enum class StreamType
 {
 	enHLS = 0,
 	enMPEGTS,
 };
 
+NLOHMANN_JSON_SERIALIZE_ENUM(StreamType,
+{
+	{ StreamType::enHLS, "hls" },
+	{ StreamType::enMPEGTS, "mpeg" }
+})
+
 enum class CatchupType {
 	cu_shift,
 	cu_append,
 	cu_flussonic,
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM(CatchupType,
+{
+	{ CatchupType::cu_shift, "shift" },
+	{ CatchupType::cu_append, "append" },
+	{ CatchupType::cu_flussonic, "flussonic" }
+})
 
 enum class AccountAccessType
 {
@@ -21,6 +36,17 @@ enum class AccountAccessType
 	enPin,
 	enLoginPass
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM(AccountAccessType,
+{
+	{ AccountAccessType::enUnknown, "unknown" },
+	{ AccountAccessType::enOtt, "ottkey" },
+	{ AccountAccessType::enPin, "pin" },
+	{ AccountAccessType::enLoginPass, "login" }
+})
+
+}
+using namespace s_enum;
 
 struct TemplateParams
 {
@@ -176,14 +202,33 @@ public:
 	/// returns uri parse template
 	/// </summary>
 	/// <returns>wstring</returns>
-	std::wstring get_uri_parse_template() const { return utils::utf8_to_utf16(uri_parse_pattern); }
+	std::wstring get_uri_parse_pattern() const { return utils::utf8_to_utf16(uri_parse_pattern); }
 
 	/// <summary>
 	/// set uri parse template.
 	/// returns uri parse template
 	/// </summary>
 	/// <returns>wstring</returns>
-	void set_uri_parse_template(const std::wstring& val) { uri_parse_pattern = utils::utf16_to_utf8(val); }
+	void set_uri_parse_pattern(const std::wstring& val) { uri_parse_pattern = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// returns uri id parse template
+	/// </summary>
+	/// <returns>wstring</returns>
+	std::wstring get_uri_id_parse_pattern() const { return utils::utf8_to_utf16(uri_id_parse_pattern); }
+
+	/// <summary>
+	/// set uri parse template.
+	/// returns uri id parse template
+	/// </summary>
+	/// <returns>wstring</returns>
+	void set_uri_id_parse_pattern(const std::wstring& val) { uri_id_parse_pattern = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// is icons square, php GUI setting
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_square_icons() const { return square_icons; }
 
 	/// <summary>
 	/// is token used per channel, not the global

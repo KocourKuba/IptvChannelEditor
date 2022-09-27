@@ -48,7 +48,7 @@ void uri_smile::load_default()
 
 	provider_url = "http://smile-tv.live/";
 	playlist_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/tv.m3u";
-	uri_id_parse_pattern = R"(^#EXTINF:.+CUID=\"(?<id>\d+)\")";
+	uri_id_parse_pattern = "^#EXTINF:.+CUID=\"(?<id>[^\"]+)\"";
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 
 	square_icons = true;

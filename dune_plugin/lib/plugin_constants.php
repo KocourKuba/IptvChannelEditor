@@ -1,8 +1,9 @@
 <?php
 
-const ACCOUNT_OTT_KEY = 0;
-const ACCOUNT_PIN     = 1;
-const ACCOUNT_LOGIN   = 2;
+const ACCOUNT_UNKNOWN = 'unknown';
+const ACCOUNT_OTT_KEY = 'ottkey';
+const ACCOUNT_PIN     = 'pin';
+const ACCOUNT_LOGIN   = 'login';
 
 const HLS  = 'hls';
 const MPEG = 'mpeg';
@@ -68,6 +69,7 @@ const LIST_ID          = 'id';
 const LIST_NAME        = 'name';
 
 // epg parameters keys
+const EPG_PARAM        = 'epg_param';
 const EPG_URL          = 'epg_url';
 const EPG_ROOT         = 'epg_root';
 const EPG_START        = 'epg_start';
