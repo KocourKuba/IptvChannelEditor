@@ -117,7 +117,7 @@ bool DownloadFile(const std::wstring& url,
 									 WINHTTP_NO_PROXY_NAME,
 									 WINHTTP_NO_PROXY_BYPASS, 0);
 
-	WinHttpSetTimeouts(hSession, 0, 10000, 10000, 10000);
+	WinHttpSetTimeouts(hSession, 0, 10000, 10000, 60000);
 
 	// Specify an HTTP server.
 	HINTERNET hConnect = nullptr;
