@@ -307,6 +307,13 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 
 	m_playlistEntries.reset((Playlist*)wParam);
 
+	std::wregex re;
+	if (m_plugin_type == PluginType::enSmile)
+		re = LR"(([^\(]+)\(([^\d]+)\s(\d+)\)$)";
+
+	if (m_plugin_type == PluginType::enFox)
+		re = LR"(([^\/]+)\/(.+)\s(\d+)$)";
+
 	if (m_playlistEntries)
 	{
 		for (const auto& entry : m_playlistEntries->m_entries)
@@ -324,6 +331,22 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 			movie->title = entry->get_title();
 			movie->poster_url = entry->get_icon_uri();
 			movie->url = entry->get_uri_stream()->get_uri();
+
+			if (!re._Empty())
+			{
+				std::wsmatch m;
+				if (std::regex_match(entry->get_title(), m, re))
+				{
+					movie->title = m[1];
+					movie->year = m[3];
+
+					if (m_plugin_type == PluginType::enSmile)
+						movie->country = m[2];
+					if (m_plugin_type == PluginType::enFox)
+						movie->title_orig = m[2];
+				}
+			}
+
 			category->movies.set(movie->id, movie);
 		}
 	}
@@ -605,12 +628,18 @@ void CVodViewer::FillYears()
 {
 	m_wndYears.ResetContent();
 	m_year_idx = -1;
+
+	std::vector<std::wstring> sortedYears;
 	for (const auto& year : m_years.vec())
 	{
 		if (!year.first.empty())
-		{
-			m_wndYears.AddString(year.first.c_str());
-		}
+			sortedYears.emplace_back(year.first);
+	}
+	std::sort(sortedYears.rbegin(), sortedYears.rend());
+
+	for (const auto& year : sortedYears)
+	{
+		m_wndYears.AddString(year.c_str());
 	}
 
 	if (m_wndYears.GetCount())
@@ -921,10 +950,9 @@ void CVodViewer::FilterList()
 			{
 				const auto& genres = movie->genres.vec();
 				genre = std::find_if(genres.begin(), genres.end(), [&selectedGenre](const auto& pair)
-										{
-											return (selectedGenre.CompareNoCase(pair.second.title.c_str()) == 0);
-
-										}) != genres.end();
+									 {
+										 return (selectedGenre.CompareNoCase(pair.second.title.c_str()) == 0);
+									 }) != genres.end();
 			}
 
 			if (m_year_idx != 0)

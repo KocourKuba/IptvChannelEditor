@@ -3,27 +3,13 @@ require_once 'lib/default_config.php';
 
 class fox_config extends default_config
 {
-    public function init_defaults($short_name)
+    public function init_defaults()
     {
-        parent::init_defaults($short_name);
+        parent::init_defaults();
 
         $this->set_feature(VOD_SUPPORTED, true);
-        $this->set_feature(VOD_PARSE_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
+        $this->set_feature(VOD_PARSE_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$|');
         $this->set_feature(VOD_PLAYLIST_URL, 'http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u');
-    }
-
-    public function load_default()
-    {
-        $this->set_feature(SQUARE_ICONS, true);
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(USE_TOKEN_AS_ID, true);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u');
-        $this->set_feature(URI_ID_PARSE_PATTERN, '^#EXTINF:.+CUID="(?<id>\d+)"');
-        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>[^/]+)/(?<token>.+)$');
-
-        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{TOKEN}');
-
-        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.drm-play.ml/fox-tv/epg/{ID}.json');
     }
 
     /**
@@ -44,7 +30,9 @@ class fox_config extends default_config
             }
 
             $logo = $match['logo'];
-            list($title, $title_orig) = explode('/', $match['title']);
+            $title = $match['title'];
+            $title_orig = $match['title_orig'];
+            $year = $match['year'];
             $url = $this->UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
 
             //hd_print("Vod url: $playback_url");
@@ -54,7 +42,7 @@ class fox_config extends default_config
                 '',// $xml->description,
                 $logo,// $xml->poster_url,
                 '',// $xml->length,
-                '',// $xml->year,
+                $year,// $xml->year,
                 '',// $xml->director,
                 '',// $xml->scenario,
                 '',// $xml->actors,

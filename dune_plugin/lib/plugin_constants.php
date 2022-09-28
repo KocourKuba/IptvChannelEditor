@@ -9,6 +9,7 @@ const HLS  = 'hls';
 const MPEG = 'mpeg';
 
 // Non configurable parameters by external config
+const API_REQUEST_URL          = 'api_request_url';
 const TV_FAVORITES_SUPPORTED   = 'tv_fav';
 const VOD_SUPPORTED            = 'vod_support';
 const VOD_QUALITY_SUPPORTED    = 'vod_quality';
@@ -35,6 +36,7 @@ const M_QUALITY   = 'quality';
 
 // common
 const ACCESS_TYPE          = 'access_type';
+const SHORT_NAME           = 'short_name';
 const USE_TOKEN_AS_ID      = 'use_token_as_id';
 const PLAYLIST_TEMPLATE    = 'playlist_template';
 const PLAYLIST_TEMPLATE2   = 'playlist_template2';

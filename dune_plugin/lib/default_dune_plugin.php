@@ -9,6 +9,7 @@ require_once 'action_factory.php';
 require_once 'control_factory.php';
 require_once 'control_factory_ext.php';
 require_once 'plugin_constants.php';
+//require_once 'default_config.php';
 
 class Default_Dune_Plugin implements DunePlugin
 {
@@ -81,29 +82,21 @@ class Default_Dune_Plugin implements DunePlugin
         $this->PLUGIN_CHANNELS_URL_PATH = (string)$xml->channels_url_path;
         $plugin_config_class = (string)$xml->class_name;
 
-        if (empty($plugin_config_class)) {
-            $plugin_config_class = $this->PLUGIN_SHORT_NAME . "_config";
-        }
-        if (!class_exists($plugin_config_class) || !is_subclass_of($plugin_config_class, 'default_config')) {
-            hd_print("Unknown plugin type: $plugin_config_class");
+        if (!class_exists($plugin_config_class)) {
+            hd_print("Unknown plugin: $plugin_config_class");
             throw new Exception("Unknown plugin type: $plugin_config_class");
+        }
+
+        if (!is_subclass_of($plugin_config_class, 'dynamic_config')) {
+            hd_print("plugin: $plugin_config_class not a subclass of 'dynamic_config'");
+            throw new Exception("Wrong subclass: $plugin_config_class");
         }
 
         hd_print("Instantiate class: $plugin_config_class");
         $this->config = new $plugin_config_class;
-        $this->config->init_defaults($this->PLUGIN_SHORT_NAME);
-        $acc_file = get_install_path('account.dat');
-        if (file_exists($acc_file)) {
-            $data = file_get_contents($acc_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            if ($data !== false) {
-                hd_print("account data: $data");
-                $account = json_decode(base64_decode(substr($data, 5)));
-                if ($account !== false) {
-                    $this->config->set_embedded_account($account);
-                    //foreach ($this->embedded_account as $key => $item) hd_print("Embedded info: $key => $item");
-                }
-            }
-        }
+        $this->config->init_defaults();
+        $this->config->load_config();
+        $this->config->load_embedded_account();
 
         print_sysinfo();
 

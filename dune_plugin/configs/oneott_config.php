@@ -3,28 +3,6 @@ require_once 'lib/default_config.php';
 
 class oneott_config extends default_config
 {
-    public function load_default()
-    {
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8');
-        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/~(?<token>.+)/(?<id>.+)/hls/pl\.m3u8$');
-
-        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8');
-
-        $this->set_stream_param(MPEG,CU_TYPE, 'shift');
-        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/~{TOKEN}/{ID}');
-
-        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.propg.net/{ID}/epg2/{DATE}');
-        $this->set_epg_param(EPG_FIRST,EPG_DATE_FORMAT, '{YEAR}-{MONTH}-{DAY}');
-        $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
-        $this->set_epg_param(EPG_FIRST,EPG_START, 'start');
-        $this->set_epg_param(EPG_FIRST,EPG_END, 'stop');
-        $this->set_epg_param(EPG_FIRST,EPG_NAME, 'epg');
-        $this->set_epg_param(EPG_FIRST,EPG_DESC, 'desc');
-
-        $this->set_epg_param(EPG_SECOND,EPG_URL,'http://epg.drm-play.ml/1ott/epg/{ID}.json');
-    }
-
     /**
      * Get information from the account
      * @param &$plugin_cookies

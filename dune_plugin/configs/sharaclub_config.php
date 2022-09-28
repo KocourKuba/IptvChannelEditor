@@ -3,34 +3,30 @@ require_once 'lib/default_config.php';
 
 class sharaclub_config extends default_config
 {
-    const PLAYLIST_VOD_URL = 'vod_url';
-    const ACCOUNT_URL = 'account_url';
-    const SERVERS_URL = "http://{SUBDOMAIN}/api/players.php?a=ch_cdn&u={LOGIN}-{PASSWORD}&source=dune_editor";
-    const PROFILES_URL = "http://{SUBDOMAIN}/api/players.php?a=list_profiles&u={LOGIN}-{PASSWORD}&source=dune_editor";
     const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
 
-    public function init_defaults($short_name)
+    public function init_defaults()
     {
-        parent::init_defaults($short_name);
+        parent::init_defaults();
 
         $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(BALANCE_SUPPORTED, true);
+        $this->set_feature(VOD_PLAYLIST_URL, "http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}");
+        $this->set_feature(API_REQUEST_URL, "http://{SUBDOMAIN}/api/players.php?a={COMMAND}&u={LOGIN}-{PASSWORD}&source=dune_editor");
     }
 
-    public function load_default()
+    /**
+     * @param $command
+     * @param $plugin_cookies
+     * @return string
+     */
+    private function replace_api_command($command, $plugin_cookies)
     {
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}');
-        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/live/(?<token>.+)/(?<id>.+)/.+\.m3u8$');
-
-        $this->set_stream_param(HLS,CU_TYPE, 'append');
-        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8');
-
-        $this->set_stream_param(MPEG,CU_TYPE, 'append');
-        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/live/{TOKEN}/{ID}.ts');
-
-        $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
+        return str_replace(
+            array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}', '{COMMAND}'),
+            array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies), $command),
+            $this->get_feature(API_REQUEST_URL));
     }
 
     /**
@@ -43,10 +39,7 @@ class sharaclub_config extends default_config
         if (empty($servers)) {
             $servers = array();
             try {
-                $url = str_replace(
-                    array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}'),
-                    array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies)),
-                    self::SERVERS_URL);
+                $url = $this->replace_api_command('ch_cdn', $plugin_cookies);
                 $content = HD::DownloadJson($url);
 
                 if ($content !== false && $content['status'] === '1') {
@@ -74,13 +67,9 @@ class sharaclub_config extends default_config
     public function set_server_id($server, $plugin_cookies)
     {
         try {
-            $url = str_replace(
-                array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}'),
-                array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies)),
-                self::SERVERS_URL);
-
+            $url = $this->replace_api_command('ch_cdn', $plugin_cookies) . "&num=$server";
             hd_print("change server to: $server");
-            $content = HD::DownloadJson($url . "&num=$server");
+            $content = HD::DownloadJson($url);
             if ($content !== false) {
                 hd_print("changing result: {$content['msg']}");
                 if ($content['status'] === '1') {
@@ -100,10 +89,7 @@ class sharaclub_config extends default_config
         if (empty($profiles)) {
             $profiles = array();
             try {
-                $url = str_replace(
-                    array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}'),
-                    array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies)),
-                    self::SERVERS_URL);
+                $url = $this->replace_api_command('list_profiles', $plugin_cookies);
                 $content = HD::DownloadJson($url);
 
                 if ($content !== false && isset($content['profiles'])) {
@@ -122,6 +108,29 @@ class sharaclub_config extends default_config
         }
 
         return $profiles;
+    }
+
+    /**
+     * @param $profile
+     * @param $plugin_cookies
+     */
+    public function set_profile_id($profile, $plugin_cookies)
+    {
+        try {
+            $url = $this->replace_api_command('list_profiles', $plugin_cookies) . "&num=$profile";
+            hd_print("change profile to: $profile");
+            $content = HD::DownloadJson($url);
+            if ($content !== false) {
+                hd_print("changing result: {$content['msg']}");
+                if ($content['status'] === '1') {
+                    parent::set_profile_id($profile, $plugin_cookies);
+                }
+            } else {
+                hd_print("Unable to change profile");
+            }
+        } catch (Exception $ex) {
+            hd_print("Failed to change profile");
+        }
     }
 
     protected function GetPlaylistUrl($type, $plugin_cookies)
@@ -149,9 +158,6 @@ class sharaclub_config extends default_config
         $api = HD::DownloadJson(self::API_HOST, false);
 
         $plugin_cookies->subdomain = $api->listdomain;
-        $this->set_feature(self::PLAYLIST_VOD_URL, "http://$api->listdomain/kino-full/%s-%s");
-        $this->set_feature(self::ACCOUNT_URL, "http://$api->listdomain/api/players.php?a=subscr_info&u=%s-%s&source=dune_editor");
-        $this->set_feature(self::SERVERS_URL, "http://$api->listdomain/api/players.php?a=ch_cdn&u=%s-%s&source=dune_editor");
         $this->set_epg_param(EPG_FIRST,EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={ID}");
 
         // this account has special API to get account info
@@ -168,7 +174,7 @@ class sharaclub_config extends default_config
         }
 
         try {
-            $url = sprintf($this->get_feature(self::ACCOUNT_URL), $login, $password);
+            $url = $this->replace_api_command('subscr_info', $plugin_cookies);
             $account_data = HD::DownloadJson($url);
             if ($account_data === false || !isset($account_data['status']) || $account_data['status'] !== '1')
                 return false;

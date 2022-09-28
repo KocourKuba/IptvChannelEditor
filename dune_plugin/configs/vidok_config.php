@@ -7,24 +7,6 @@ class vidok_config extends default_config
 
     protected static $settings = array();
 
-    public function load_default()
-    {
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(BALANCE_SUPPORTED, true);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://vidok.tv/p/{TOKEN}');
-        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/p/(?<token>.+)/(?<id>.+)$');
-
-        $this->set_stream_param(HLS,CU_TYPE, 'append');
-        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/p/{TOKEN}/{ID}');
-
-        $this->set_epg_param(EPG_FIRST,EPG_URL, self::API_HOST . '/epg2?cid={ID}&token={TOKEN}');
-        $this->set_epg_param(EPG_FIRST,EPG_ROOT, 'epg');
-        $this->set_epg_param(EPG_FIRST,EPG_START, 'tart');
-        $this->set_epg_param(EPG_FIRST,EPG_END, 'end');
-        $this->set_epg_param(EPG_FIRST,EPG_NAME, 'title');
-        $this->set_epg_param(EPG_FIRST,EPG_DESC, 'description');
-    }
-
     /**
      * @param $plugin_cookies
      * @return array

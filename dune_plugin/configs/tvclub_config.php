@@ -7,28 +7,11 @@ class tvclub_config extends default_config
 
     protected static $settings = array();
 
-    public function init_defaults($short_name)
+    public function init_defaults()
     {
-        parent::init_defaults($short_name);
+        parent::init_defaults();
 
         $this->set_feature(BALANCE_SUPPORTED, true);
-    }
-
-    public function load_default()
-    {
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://celn.shott.top/p/{TOKEN}');
-        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/p/(?<token>.+)/(?<id>.+)$');
-
-        $this->set_stream_param(HLS,CU_TYPE, 'append');
-        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/p/{TOKEN}/{ID}');
-
-        $this->set_epg_param(EPG_FIRST,EPG_URL, self::API_HOST . '/epg?token={TOKEN}&channels={ID}&time={TIMESTAMP}&period=24');
-        $this->set_epg_param(EPG_FIRST,EPG_ROOT, 'epg|channels|[0]|epg');
-        $this->set_epg_param(EPG_FIRST,EPG_START, 'start');
-        $this->set_epg_param(EPG_FIRST,EPG_END, 'end');
-        $this->set_epg_param(EPG_FIRST,EPG_NAME, 'text');
-        $this->set_epg_param(EPG_FIRST,EPG_DESC, 'description');
     }
 
     /**

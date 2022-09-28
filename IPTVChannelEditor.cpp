@@ -747,27 +747,16 @@ bool PackPlugin(const PluginType plugin_type,
 
 	if (!std::filesystem::exists(packFolderIcons + plugin_logo.filename().wstring()))
 	{
-		if (showMessage)
-		{
-			CString msg;
-			msg.Format(IDS_STRING_ERR_FILE_MISSING, plugin_logo.filename().wstring().c_str());
-			AfxMessageBox(msg, MB_OK | MB_ICONSTOP);
-		}
-
-		return false;
+		plugin_logo = "default_logo.png";
 	}
 
 	if (!std::filesystem::exists(packFolderIcons + plugin_bgnd.filename().wstring()))
 	{
-		if (showMessage)
-		{
-			CString msg;
-			msg.Format(IDS_STRING_ERR_FILE_MISSING, plugin_bgnd.filename().wstring().c_str());
-			AfxMessageBox(msg, MB_OK | MB_ICONSTOP);
-		}
-
-		return false;
+		plugin_bgnd = "default_bg.jpg";
 	}
+
+	const auto& logo_subst = fmt::format("plugin_file://icons/{:s}", plugin_logo.filename().string());
+	const auto& bg_subst = fmt::format("plugin_file://icons/{:s}", plugin_bgnd.filename().string());
 
 	std::string version_index;
 	if (cred.custom_increment && !cred.version_id.empty())
@@ -808,44 +797,52 @@ bool PackPlugin(const PluginType plugin_type,
 
 	// preprocess common values
 	utils::string_replace_inplace(config_data, "{plugin_title}", plugin_caption.c_str());
-	utils::string_replace_inplace(config_data, "{plugin_logo}", fmt::format("plugin_file://icons/{:s}", plugin_logo.filename().string()).c_str());
+	utils::string_replace_inplace(config_data, "{plugin_logo}", logo_subst.c_str());
+	utils::string_replace_inplace(config_data, "{plugin_bg}", bg_subst.c_str());
+
+	// copy plugin config class if they exist
+	std::string class_name = fmt::format("{:s}_config", plugin->get_short_name());
+	const auto& src_config = short_name_w + L"_config.php";
+	const auto& src_path = fmt::format(LR"({:s}configs\{:s})", plugin_root, src_config);
+	if (std::filesystem::exists(src_path))
+	{
+		std::filesystem::copy_file(src_path, packFolder + src_config, std::filesystem::copy_options::overwrite_existing, err);
+	}
+	else
+	{
+		class_name = "default_config";
+	}
+
+	// copy plugin settings
+	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder).c_str());
 
 	// rewrite xml nodes
 	try
 	{
+		std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ios::out | std::ios::binary);
+
+		auto doc = std::make_unique<rapidxml::xml_document<>>();
+		doc->parse<rapidxml::parse_no_data_nodes>(config_data.data());
+
+		// change values
+
 		// <dune_plugin>
 		//    <name>{plugin_name}</name>
 		//    <caption>{plugin_title}</caption>
 		//    <short_name>{plugin_short_name}</short_name>
+		//    <class_name>{plugin_class_name}</class_name>
 		//    <icon_url>{plugin_logo}</icon_url>
 		//    <background>{plugin_background}</background>
 		//    <version_index>{plugin_version_index}</version_index>
 		//    <version>{plugin_version}</version>
 		//    <release_date>{plugin_release_date}</release_date>
 		//    <channels_url_path>{plugin_channels_url_path}</channels_url_path>
-		std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ios::out | std::ios::binary);
-
-		auto doc = std::make_unique<rapidxml::xml_document<>>();
-		doc->parse<rapidxml::parse_no_data_nodes>(config_data.data());
-
-		const auto& bg = fmt::format("plugin_file://icons/{:s}", plugin_bgnd.filename().string());
-
-		// change values
 
 		auto d_node = doc->first_node("dune_plugin");
-		if (plugin_type != PluginType::enCustom)
-		{
-			d_node->remove_node(d_node->first_node("class_name"));
-		}
-		else
-		{
-			const auto& class_name = fmt::format("{:s}_config", plugin->get_short_name());
-			d_node->first_node("class_name")->value(class_name.c_str());
-		}
 
 		d_node->first_node("name")->value(plugin->get_name().c_str());
+		d_node->first_node("class_name")->value(class_name.c_str());
 		d_node->first_node("short_name")->value(plugin->get_short_name().c_str());
-		d_node->first_node("background")->value(bg.c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
 		d_node->first_node("version")->value(STRPRODUCTVER);
 		d_node->first_node("release_date")->value(RELEASEDATE);
@@ -878,26 +875,11 @@ bool PackPlugin(const PluginType plugin_type,
 		return false;
 	}
 
-	// copy plugin config class
-	std::filesystem::copy_file(fmt::format(LR"({:s}configs\{:s}_config.php)", plugin_root, short_name_w),
-							   fmt::format(L"{:s}{:s}_config.php", packFolder, short_name_w),
-							   std::filesystem::copy_options::overwrite_existing, err);
-
-	// copy plugin settings
-	plugin->save_plugin_parameters(fmt::format(L"{:s}{:s}_config.json", packFolder, short_name_w).c_str());
-
 	// copy channel lists
 	for(const auto& item : channels_list)
 	{
 		std::filesystem::copy_file(playlistPath + item, packFolder + item, std::filesystem::copy_options::overwrite_existing, err);
 	}
-
-	// write setup file
-	unsigned char smarker[3] = { 0xEF, 0xBB, 0xBF }; // UTF8 BOM
-	std::ofstream os(packFolder + _T("plugin_type.php"), std::ios::out | std::ios::binary);
-	os.write((const char*)smarker, sizeof(smarker));
-	os << fmt::format("<?php\nrequire_once '{:s}_config.php';\n", plugin->get_short_name());
-	os.close();
 
 	// copy embedded info
 	if (!noEmbed && cred.embed && !make_web_update)

@@ -15,13 +15,11 @@ class dynamic_config
 
     /**
      * load configuration
-     * @param string $short_name
      * @return void
      */
-    public function init_defaults($short_name)
+    public function init_defaults()
     {
-        $this->PluginShortName = $short_name;
-
+        hd_print("Init defaults");
         $this->features[ACCESS_TYPE] = ACCOUNT_UNKNOWN;
         $this->features[SQUARE_ICONS] = false;
         $this->features[TV_FAVORITES_SUPPORTED] = true;
@@ -64,8 +62,6 @@ class dynamic_config
 
         $this->set_epg_params(EPG_FIRST, $default_parser);
         $this->set_epg_params(EPG_SECOND, $default_parser);
-
-        $this->load_config();
     }
     /**
      * load configuration
@@ -73,10 +69,10 @@ class dynamic_config
      */
     public function load_config()
     {
-        $path = $this->PluginShortName . '_config.json';
-        $settings = HD::parse_json_file(get_install_path($path), true);
-        hd_print("Load plugin settings: $path");
+        $settings = HD::parse_json_file(get_install_path('config.json'), true);
+        hd_print("Load plugin settings");
 
+        $this->PluginShortName = $settings[SHORT_NAME];
         $this->set_feature(ACCESS_TYPE, $settings[ACCESS_TYPE]);
         $this->set_feature(PLAYLIST_TEMPLATE, $settings[PLAYLIST_TEMPLATE]);
         $this->set_feature(URI_ID_PARSE_PATTERN, $settings[URI_ID_PARSE_PATTERN]);
@@ -99,30 +95,30 @@ class dynamic_config
         }
 
         $servers = array();
-        foreach ($settings[SERVERS_LIST] as $server)
+        foreach ($settings[SERVERS_LIST] as $pair)
         {
-            $servers[] = array($server[LIST_ID] => $server[LIST_NAME]);
+            $servers[$pair[LIST_ID]] = $pair[LIST_NAME];
         }
         $this->set_servers($servers);
 
         $devices = array();
-        foreach ($settings[DEVICES_LIST] as $device)
+        foreach ($settings[DEVICES_LIST] as $pair)
         {
-            $devices[] = array($device[LIST_ID] => $device[LIST_NAME]);
+            $devices[$pair[LIST_ID]] = $pair[LIST_NAME];
         }
         $this->set_devices($devices);
 
         $qualities = array();
-        foreach ($settings[QUALITIES_LIST] as $quality)
+        foreach ($settings[QUALITIES_LIST] as $pair)
         {
-            $qualities[] = array($quality[LIST_ID] => $quality[LIST_NAME]);
+            $qualities[$pair[LIST_ID]] = $pair[LIST_NAME];
         }
         $this->set_qualities($qualities);
 
         $profiles = array();
-        foreach ($settings[PROFILES_LIST] as $profile)
+        foreach ($settings[PROFILES_LIST] as $pair)
         {
-            $profiles[] = array($profile[LIST_ID] => $profile[LIST_NAME]);
+            $profiles[$pair[LIST_ID]] = $pair[LIST_NAME];
         }
         $this->set_profiles($profiles);
     }
@@ -238,6 +234,15 @@ class dynamic_config
     }
 
     /**
+     * @return string
+     */
+    public function get_server_name($plugin_cookies)
+    {
+        $servers = $this->get_servers($plugin_cookies);
+        return $servers[$this->get_server_id($plugin_cookies)];
+    }
+
+    /**
      * @param $plugin_cookies
      * @return int|null
      */
@@ -246,7 +251,7 @@ class dynamic_config
         $servers = $this->get_servers($plugin_cookies);
         reset($servers);
         $first = key($servers);
-        return isset($plugin_cookies->server, $quality[$plugin_cookies->server]) ? $plugin_cookies->server : $first;
+        return isset($plugin_cookies->server, $servers[$plugin_cookies->server]) ? $plugin_cookies->server : $first;
     }
 
     /**
@@ -275,6 +280,15 @@ class dynamic_config
     }
 
     /**
+     * @return string
+     */
+    public function get_device_name($plugin_cookies)
+    {
+        $devices = $this->get_devices($plugin_cookies);
+        return $devices[$this->get_device_id($plugin_cookies)];
+    }
+
+    /**
      * @param $plugin_cookies
      * @return int|null
      */
@@ -283,7 +297,7 @@ class dynamic_config
         $devices = $this->get_devices($plugin_cookies);
         reset($devices);
         $first = key($devices);
-        return isset($plugin_cookies->device, $quality[$plugin_cookies->device]) ? $plugin_cookies->device : $first;
+        return isset($plugin_cookies->device, $devices[$plugin_cookies->device]) ? $plugin_cookies->device : $first;
     }
 
     /**
@@ -309,6 +323,15 @@ class dynamic_config
     public function set_qualities($val)
     {
         $this->qualities = $val;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_quality_name($plugin_cookies)
+    {
+        $qualities = $this->get_qualities($plugin_cookies);
+        return $qualities[$this->get_quality_id($plugin_cookies)];
     }
 
     /**
@@ -345,6 +368,15 @@ class dynamic_config
     public function set_profiles($val)
     {
         $this->profiles = $val;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_profile_name($plugin_cookies)
+    {
+        $profiles = $this->get_profiles($plugin_cookies);
+        return $profiles[$this->get_profile_id($plugin_cookies)];
     }
 
     /**

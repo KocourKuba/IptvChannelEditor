@@ -3,22 +3,6 @@ require_once 'cbilling_vod_impl.php';
 
 class cbilling_config extends Cbilling_Vod_Impl
 {
-    public function load_default()
-    {
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_PIN);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://247on.cc/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8');
-        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/s/(?<token>.+)/(?<id>.+)\.m3u8$');
-
-        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8');
-
-        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/mpegts?token={TOKEN}');
-        $this->set_stream_param(MPEG,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{CU_DURATION}.ts?token={TOKEN}');
-
-        $this->set_epg_param(EPG_FIRST,EPG_ROOT, '');
-        $this->set_epg_param(EPG_FIRST,EPG_URL, self::API_HOST .'/epg/{ID}/?date=');
-        $this->set_devices(array('1', '2', '3'));
-    }
-
     /**
      * Get information from the account
      * @param &$plugin_cookies
@@ -27,30 +11,44 @@ class cbilling_config extends Cbilling_Vod_Impl
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        $account_data = parent::GetAccountInfo($plugin_cookies, $force);
-        if ($account_data === false) {
-            return false;
-        }
-
-        $this->account_data = $account_data;
-
+        hd_print("Get account info: $force");
         // this account has special API to get account info
-        $password = $this->get_password($plugin_cookies);
-        if ($force === false && !empty($password)) {
-            return $account_data;
-        }
+        // {
+        //    "data": {
+        //        "public_token": "2f5b87bd565ca1234e2sba3fd3919bac",
+        //        "private_token": "5acf87d3206a905b83419224703bf666",
+        //        "end_time": 1705697968,
+        //        "end_date": "2024-01-19 23:59",
+        //        "devices_num": 1,
+        //        "package": "IPTV HD+SD (позапросный тариф)",
+        //        "server": "s01.wsbof.com",
+        //        "server_country": "Германия",
+        //        "vod": 1,
+        //        "ssl": 0,
+        //        "disable_adult": 0
+        //    }
+        // }
 
+        $password = $this->get_password($plugin_cookies);
         if (empty($password)) {
             hd_print("Password not set");
             return false;
         }
 
+        if ($force === false && !empty($this->account_data)) {
+            return $this->account_data;
+        }
+
         try {
             $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
-            return HD::DownloadJson(self::API_HOST . '/auth/info', true, $headers);
+            $json = HD::DownloadJson(self::API_HOST . '/auth/info', true, $headers);
+            $this->account_data = $json['data'];
         } catch (Exception $ex) {
             return false;
         }
+
+        //foreach($this->account_data as $key => $value) hd_print("  $key => $value");
+        return $this->account_data;
     }
 
     /**
@@ -71,9 +69,10 @@ class cbilling_config extends Cbilling_Vod_Impl
             return;
         }
 
-        Control_Factory::add_label($defs, 'Пакеты: ', empty($account_data['data']['package']) ? 'Нет пакетов' : $account_data['data']['package'], -10);
-        Control_Factory::add_label($defs, 'Дата окончания', $account_data['data']['end_date'], -10);
-        Control_Factory::add_label($defs, 'Устройств', $account_data['data']['devices_num'], -10);
-        Control_Factory::add_label($defs, 'Сервер', $account_data['data']['server'], 20);
+        Control_Factory::add_label($defs, 'Пакеты: ', empty($account_data['package']) ? 'Нет пакетов' : $account_data['package'], -10);
+        Control_Factory::add_label($defs, 'Дата окончания', $account_data['end_date'], -10);
+        Control_Factory::add_label($defs, 'Устройств', $account_data['devices_num'], -10);
+        Control_Factory::add_label($defs, 'Сервер', $account_data['server_country'], -10);
+        Control_Factory::add_label($defs, 'Адрес сервера', $account_data['server'], 20);
     }
 }

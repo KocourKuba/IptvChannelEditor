@@ -4,7 +4,6 @@
 require_once 'lib/hd.php';
 require_once 'lib/default_dune_plugin.php';
 
-require_once 'plugin_type.php';
 require_once 'starnet_entry_handler.php';
 require_once 'starnet_main_screen.php';
 require_once 'starnet_setup_screen.php';

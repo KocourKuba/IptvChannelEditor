@@ -3,40 +3,13 @@ require_once 'lib/default_config.php';
 
 class glanz_config extends default_config
 {
-    public function init_defaults($short_name)
+    public function init_defaults()
     {
-        parent::init_defaults($short_name);
+        parent::init_defaults();
 
         $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(VOD_PLAYLIST_URL, 'http://api.ottg.tv/playlist/vod?login={LOGIN}&password={PASSWORD}');
-    }
-
-    public function load_default()
-    {
-        $this->set_feature(SQUARE_ICONS,true);
-        $this->set_feature(ACCESS_TYPE,ACCOUNT_LOGIN);
-        $this->set_feature(PLAYLIST_TEMPLATE,'http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls');
-        $this->set_feature(URI_PARSE_PATTERN,'^https?://(?<domain>.+)/(?<id>\d+)/.+\.m3u8\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>\d+)&req_host=(?<host>.+)$');
-
-        $this->set_stream_param(HLS,CU_TYPE,'flussonic');
-        $this->set_stream_param(HLS,CU_SUBST,'video');
-        $this->set_stream_param(HLS,URL_TEMPLATE,'http://{DOMAIN}/{ID}/video.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
-        $this->set_stream_param(HLS,URL_ARC_TEMPLATE,'http://{DOMAIN}/{ID}/video-{CU_SUBST}-{DURATION}.m3u8?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
-
-        $this->set_stream_param(MPEG,URL_TEMPLATE,'http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
-        $this->set_stream_param(MPEG,URL_ARC_TEMPLATE,'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}');
-
-        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.iptvx.one/api/id/{ID}.json');
-        $this->set_epg_param(EPG_FIRST,EPG_ROOT,'ch_programme');
-        $this->set_epg_param(EPG_FIRST,EPG_START,'start');
-        $this->set_epg_param(EPG_FIRST,EPG_END,'');
-        $this->set_epg_param(EPG_FIRST,EPG_NAME,'title');
-        $this->set_epg_param(EPG_FIRST,EPG_DESC,'description');
-        $this->set_epg_param(EPG_FIRST,EPG_TIME_FORMAT,'{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}'); // 'd-m-Y H:i'
-        $this->set_epg_param(EPG_FIRST,EPG_TIMEZONE,3); // // iptvx.one uses moscow time (UTC+3)
-
-        $this->set_epg_param(EPG_SECOND,EPG_URL,'http://epg.drm-play.ml/iptvx.one/epg/{ID}.json');
     }
 
     /**

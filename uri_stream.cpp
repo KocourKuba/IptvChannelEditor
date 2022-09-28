@@ -111,65 +111,20 @@ bool uri_stream::load_plugin_parameters(const wchar_t* filename /*= nullptr*/)
 
 void uri_stream::parse_uri(const std::wstring& url)
 {
+	uri_base::set_uri(url);
+
 	std::wsmatch m;
 	if (!std::regex_match(url, m, get_uri_regex_parse_template()))
 	{
-		uri_base::set_uri(url);
 		return;
 	}
 
 	templated = true;
 
 	// map groups to parser members
-	size_t pos = 0;
-	for (const auto& group : regex_named_groups)
+	for (size_t pos = 0; pos < parser.regex_named_groups.size(); pos++)
 	{
-		pos++;
-		if (group == L"subdomain")
-		{
-			parser.subdomain = std::move(m[pos].str());
-		}
-		else if (group == L"domain")
-		{
-			parser.domain = std::move(m[pos].str());
-		}
-		else if (group == L"id")
-		{
-			parser.id = std::move(m[pos].str());
-		}
-		else if (group == L"login")
-		{
-			parser.login = std::move(m[pos].str());
-		}
-		else if (group == L"password")
-		{
-			parser.password = std::move(m[pos].str());
-		}
-		else if (group == L"token")
-		{
-			parser.token = std::move(m[pos].str());
-		}
-		else if (group == L"int_id")
-		{
-			parser.int_id = std::move(m[pos].str());
-		}
-		else if (group == L"host")
-		{
-			parser.host = std::move(m[pos].str());
-		}
-		else if (group == L"port")
-		{
-			parser.port = std::move(m[pos].str());
-		}
-		else if (group == L"quality")
-		{
-			parser.quality = std::move(m[pos].str());
-		}
-		else
-		{
-			// unknown group. fix parser!
-			ASSERT(false);
-		}
+		parser.*parser_mapper[parser.regex_named_groups[pos]] = std::move(m[pos].str());
 	}
 }
 
@@ -272,7 +227,7 @@ void uri_stream::set_uri_regex_parse_template(const std::wstring& val)
 	set_uri_parse_pattern(val);
 
 	// clear named group
-	regex_named_groups.clear();
+	parser.regex_named_groups.clear();
 
 	try
 	{
@@ -281,7 +236,11 @@ void uri_stream::set_uri_regex_parse_template(const std::wstring& val)
 		std::match_results<std::wstring::const_iterator> ms;
 		while (std::regex_search(ecmascript_re, ms, re_group))
 		{
-			regex_named_groups.emplace_back(ms[2]);
+			if (parser_mapper.find(ms[2]) != parser_mapper.end())
+			{
+				// add only known group!
+				parser.regex_named_groups.emplace_back(ms[2]);
+			}
 			ecmascript_re.erase(ms.position(), ms.length());
 		}
 
@@ -523,8 +482,6 @@ void uri_stream::put_account_info(const std::string& name, const nlohmann::json&
 
 void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) const
 {
-	size_t subtype = (size_t)params.streamSubtype;
-
 	if (!parser.domain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, parser.domain);
 
@@ -546,19 +503,20 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
-	if (params.shift_back)
-	{
-		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
-		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_config[subtype].get_shift_replace());
-		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].cu_duration));
-	}
-
 	if (!params.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
 
 	if (!params.password.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+	if (params.shift_back)
+	{
+		size_t subtype = (size_t)params.streamSubtype;
+		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
+		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
+		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_config[subtype].get_shift_replace());
+		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].cu_duration));
+	}
 
 	if (!servers_list.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[params.server_idx].get_id());

@@ -57,6 +57,7 @@ class vod_movie
 public:
 	std::wstring id;
 	std::wstring title;
+	std::wstring title_orig;
 	std::wstring year;
 	std::wstring rating;
 	std::wstring age;

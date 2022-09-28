@@ -1,10 +1,10 @@
 ﻿<dune_plugin>
-    <name>{plugin_name}</name>
+    <name>Custom</name>
     <caption>{plugin_title}</caption>
-    <short_name>{plugin_short_name}</short_name>
-    <class_name>{plugin_class_name}</class_name>
+    <class_name>default</class_name>
+    <short_name>default</short_name>
     <icon_url>{plugin_logo}</icon_url>
-    <background>{plugin_background}</background>
+    <background>{plugin_bg}</background>
     <version_index>{plugin_version_index}</version_index>
     <version>{plugin_version}</version>
     <release_date>{plugin_release_date}</release_date>

@@ -269,7 +269,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (!empty($servers)) {
             hd_print("Change server supported");
             $server_id = $this->plugin->config->get_server_id($plugin_cookies);
-            hd_print("Selected server " . $servers[$server_id]);
+            hd_print("Selected server: id: $server_id name: '$servers[$server_id]'");
             Control_Factory::add_combobox($defs, $this, null, 'server', 'Сервер:', $server_id, $servers, 0);
         }
 
@@ -279,6 +279,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (!empty($devices)) {
             hd_print("Change device supported");
             $device_id = $this->plugin->config->get_device_id($plugin_cookies);
+            hd_print("Selected device: id: $device_id name: '$devices[$device_id]'");
             Control_Factory::add_combobox($defs, $this, null, 'device', 'Номер устройства:', $device_id, $devices, 0);
         }
 
@@ -288,31 +289,35 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (!empty($qualities)) {
             hd_print("Change quality supported");
             $quality_id = $this->plugin->config->get_quality_id($plugin_cookies);
+            hd_print("Selected quality: id: $quality_id name: '$qualities[$quality_id]'");
             Control_Factory::add_combobox($defs, $this, null, 'quality', 'Качество:', $quality_id, $qualities, 0);
         }
 
         //////////////////////////////////////
-        // select quality
+        // select profile
         $profiles = $this->plugin->config->get_profiles($plugin_cookies);
         if (!empty($profiles)) {
             hd_print("Change profile supported");
             $profile_id = $this->plugin->config->get_profile_id($plugin_cookies);
+            hd_print("Selected profile: id: $profile_id name: '$profiles[$profile_id]'");
             Control_Factory::add_combobox($defs, $this, null, 'profile', 'Профиль:', $profile_id, $profiles, 0);
         }
         //////////////////////////////////////
         // select stream type
         $format_ops = array();
         if ($this->plugin->config->get_stream_param(HLS, URL_TEMPLATE) !== '') {
-            $format_ops[] = array(HLS => 'HLS');
+            $format_ops[HLS] = 'HLS';
         }
 
         if ($this->plugin->config->get_stream_param(MPEG, URL_TEMPLATE) !== '') {
-            $format_ops[] = array(MPEG => 'MPEG-TS');
+            $format_ops[MPEG] = 'MPEG-TS';
         }
 
         if (count($format_ops) > 1) {
-            $format = $this->plugin->config->get_format($plugin_cookies);
-            Control_Factory::add_combobox($defs, $this, null, 'stream_format', 'Выбор потока:', $format, $format_ops, 0);
+            hd_print("Change stream type supported");
+            $format_id = $this->plugin->config->get_format($plugin_cookies);
+            hd_print("Selected stream type: id: $format_id name: '$format_ops[$format_id]'");
+            Control_Factory::add_combobox($defs, $this, null, 'stream_format', 'Выбор потока:', $format_id, $format_ops, 0);
         }
 
         //////////////////////////////////////
@@ -579,6 +584,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                 case self::ACTION_CHANNELS_SOURCE: // handle streaming settings dialog result
                     $plugin_cookies->channels_source = $user_input->channels_source;
+                    hd_print("Selected channels source: $plugin_cookies->channels_source");
                     return $this->reload_channels($plugin_cookies);
 
                 case self::ACTION_CHANNELS_URL_DLG:
@@ -591,6 +597,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                             $plugin_cookies->channels_url = $user_input->channels_url_path . '/';
                         else
                             $plugin_cookies->channels_url = $user_input->channels_url_path;
+
+                        hd_print("Selected channels path: $plugin_cookies->channels_url");
                     }
                     return $this->reload_channels($plugin_cookies);
 
@@ -603,18 +611,27 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                     if (isset($user_input->stream_format)) {
                         $plugin_cookies->format = $user_input->stream_format;
+                        hd_print("selected stream type: $plugin_cookies->format");
                     }
 
-                    if (isset($user_input->device) && $plugin_cookies->device_number !== $user_input->device) {
-                        $this->plugin->config->set_device($user_input->device, $plugin_cookies);
-                    }
-
-                    if (isset($user_input->server) && $plugin_cookies->server !== $user_input->server) {
+                    if (isset($user_input->server) && $this->plugin->config->get_server_id($plugin_cookies) !== $user_input->server) {
                         $this->plugin->config->set_server_id($user_input->server, $plugin_cookies);
+                        hd_print("Selected server: id: $user_input->server name: '" . $this->plugin->config->get_server_name($plugin_cookies) . "'");
                     }
 
-                    if (isset($user_input->quality) && $plugin_cookies->quality !== $user_input->quality) {
+                    if (isset($user_input->quality) && $this->plugin->config->get_quality_id($plugin_cookies) !== $user_input->quality) {
                         $this->plugin->config->set_quality_id($user_input->quality, $plugin_cookies);
+                        hd_print("Selected quality: id: $user_input->quality name: '" . $this->plugin->config->get_quality_name($plugin_cookies) . "'");
+                    }
+
+                    if (isset($user_input->device) && $this->plugin->config->get_device_id($plugin_cookies) !== $user_input->device) {
+                        $this->plugin->config->set_device_id($user_input->device, $plugin_cookies);
+                        hd_print("Selected device: id: $user_input->device name: '" . $this->plugin->config->get_device_name($plugin_cookies) . "'");
+                    }
+
+                    if (isset($user_input->profile) && $this->plugin->config->get_profile_id($plugin_cookies) !== $user_input->profile) {
+                        $this->plugin->config->set_profile_id($user_input->profile, $plugin_cookies);
+                        hd_print("Selected profile: id: $user_input->profile name: '" . $this->plugin->config->get_profile_name($plugin_cookies) . "'");
                     }
                     return $this->reload_channels($plugin_cookies);
 
@@ -623,12 +640,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return Action_Factory::show_dialog('Настройки EPG', $defs, true);
 
                 case self::ACTION_EPG_APPLY: // handle streaming settings dialog result
-                    if (isset($user_input->epg_source) && $plugin_cookies->epg_source !== $user_input->epg_source) {
+                    if (isset($user_input->epg_source)) {
                         $plugin_cookies->epg_source = $user_input->epg_source;
+                        hd_print("Selected epg source: $user_input->epg_source");
                     }
-                    if (isset($user_input->epg_font_size) && $plugin_cookies->epg_font_size !== $user_input->epg_font_size) {
-                        $plugin_cookies->epg_font_size = $user_input->epg_font_size;
-                    }
+                    $plugin_cookies->epg_font_size = $user_input->epg_font_size;
+                    hd_print("Selected epg font size: $user_input->epg_font_size");
                     return null;
 
                 case self::ACTION_CLEAR_EPG_CACHE: // clear epg cache

@@ -71,6 +71,8 @@ struct ParsingGroups
 	std::wstring int_id;
 	std::wstring quality;
 	std::wstring host;
+
+	std::vector<std::wstring> regex_named_groups; // extracted named groups from uri parse template
 };
 
 /// <summary>
@@ -320,7 +322,7 @@ public:
 
 protected:
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, title, name, provider_url,
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, short_name, title, name, provider_url,
 								   playlist_template, uri_id_parse_pattern, uri_parse_pattern,
 								   square_icons, requested_token, use_token_as_id,
 								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
@@ -341,8 +343,20 @@ protected:
 	bool vod_m3u = false;
 
 	ParsingGroups parser;
+	std::map<std::wstring, std::wstring ParsingGroups::*> parser_mapper = {
+		{L"id"       , &ParsingGroups::id},
+		{L"domain"   , &ParsingGroups::domain},
+		{L"port"     , &ParsingGroups::port},
+		{L"login"    , &ParsingGroups::login},
+		{L"password" , &ParsingGroups::password},
+		{L"subdomain", &ParsingGroups::subdomain},
+		{L"token"    , &ParsingGroups::token},
+		{L"int_id"   , &ParsingGroups::int_id},
+		{L"quality"  , &ParsingGroups::quality},
+		{L"host"     , &ParsingGroups::host},
+	};
+
 	std::wregex uri_parse_regex_template; // compiled regex for uri parse template
-	std::vector<std::wstring> regex_named_groups; // extracted named groups from uri parse template
 
 	mutable std::wstring str_hash;
 	mutable int hash = 0;

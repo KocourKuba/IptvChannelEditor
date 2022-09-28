@@ -5,33 +5,11 @@ class itv_config extends default_config
 {
     const API_HOST = 'http://api.itv.live';
 
-    public function init_defaults($short_name)
+    public function init_defaults()
     {
-        parent::init_defaults($short_name);
+        parent::init_defaults();
 
         $this->set_feature(BALANCE_SUPPORTED, true);
-    }
-
-    public function load_default()
-    {
-        $this->set_feature(SQUARE_ICONS, true);
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_PIN);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://itv.ooo/p/{PASSWORD}/hls.m3u8');
-        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>.+)/(?<id>.+)/[^\?]+\?token=(?<token>.+)$');
-
-        $this->set_stream_param(HLS,CU_TYPE, 'flussonic');
-        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}');
-        $this->set_stream_param(HLS,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}');
-
-        $this->set_stream_param(MPEG,URL_TEMPLATE, 'http://{DOMAIN}/{ID}/mpegts');
-        $this->set_stream_param(MPEG,URL_ARC_TEMPLATE, 'http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts');
-
-        $this->set_epg_param(EPG_FIRST,EPG_URL, self::API_HOST . '/epg/{ID}');
-        $this->set_epg_param(EPG_FIRST,EPG_ROOT, 'res');
-        $this->set_epg_param(EPG_FIRST,EPG_START, 'startTime');
-        $this->set_epg_param(EPG_FIRST,EPG_END, 'stopTime');
-        $this->set_epg_param(EPG_FIRST,EPG_NAME, 'title');
-        $this->set_epg_param(EPG_FIRST,EPG_DESC, 'desc');
     }
 
     /**

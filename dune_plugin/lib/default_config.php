@@ -13,6 +13,22 @@ class default_config extends dynamic_config
 
     protected $embedded_account;
 
+    public function load_embedded_account()
+    {
+        $acc_file = get_install_path('account.dat');
+        if (file_exists($acc_file)) {
+            $data = file_get_contents($acc_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            if ($data !== false) {
+                hd_print("account data: $data");
+                $account = json_decode(base64_decode(substr($data, 5)));
+                if ($account !== false) {
+                    $this->embedded_account = $account;
+                    //foreach ($this->embedded_account as $key => $item) hd_print("Embedded info: $key => $item");
+                }
+            }
+        }
+    }
+
     /**
      * @return Object|null
      */
@@ -22,7 +38,7 @@ class default_config extends dynamic_config
     }
 
     /**
-     * @param Object $val
+     * @param Object|null $val
      */
     public function set_embedded_account($val)
     {
@@ -54,22 +70,22 @@ class default_config extends dynamic_config
      */
     public function get_channel_list($plugin_cookies, &$used_list)
     {
-        $used_list = isset($plugin_cookies->channels_list) ? (string)$plugin_cookies->channels_list : sprintf('%s_channel_list.xml', $this->PluginShortName);
-        if (!isset($plugin_cookies->channels_list))
-            $plugin_cookies->channels_list = $used_list;
+        if (empty($plugin_cookies->channels_list)) {
+            $plugin_cookies->channels_list = sprintf('%s_channel_list.xml', $this->PluginShortName);
+        }
+        $used_list = $plugin_cookies->channels_list;
 
-        $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
-        if (!isset($plugin_cookies->channels_source))
-            $plugin_cookies->channels_source = $channels_source;
+        if (!isset($plugin_cookies->channels_source)) {
+            $plugin_cookies->channels_source = 1;
+        }
 
-        hd_print("Channels list name: $used_list");
-        hd_print("Channels source: $channels_source");
-
-        switch ($channels_source) {
+        switch ($plugin_cookies->channels_source) {
             case 1: // folder
+                hd_print("Channels source: folder");
                 $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
                 break;
             case 2: // url
+                hd_print("Channels source: url");
                 $channels_list_path = get_install_path();
                 break;
             default:
@@ -335,32 +351,38 @@ class default_config extends dynamic_config
         hd_print("Get playlist information");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
-        $id_pattern = $this->get_feature(URI_ID_PARSE_PATTERN);
+        $parse_id_pattern = $this->get_feature(URI_ID_PARSE_PATTERN);
         $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
 
         if (!empty($parse_pattern)) {
             $uri_parse_regex = "|" . $parse_pattern . "|";
 
-            if (empty($id_pattern)) {
+            if (empty($parse_id_pattern)) {
+                // No need to parse #EXTINF tags
+                // http://some_domain/play/CHANNEL_ID/some_token/video.m3u8
+
                 foreach ($m3u_lines as $line) {
-                    if (preg_match($uri_parse_regex, $line, $matches)) {
+                    if (preg_match($uri_parse_regex, $line, $matches) && !empty($matches[M_ID])) {
                         $pl_entries[$matches[M_ID]] = $matches;
                     }
                 }
             } else {
-                $skip_next = false;
-                $uri_id_parse_regex = "|" . $id_pattern . "|";
+                $uri_id_parse_regex = "|" . $parse_id_pattern . "|";
 
+                // Need to extract channel id from EXTINF tags
                 foreach ($m3u_lines as $i => $iValue) {
-                    if ($skip_next) {
-                        $skip_next = false;
-                        continue;
-                    }
 
-                    if (preg_match($uri_id_parse_regex, $iValue, $m_id)
-                        && preg_match($uri_parse_regex, $m3u_lines[$i + 1], $matches)) {
+                    // #EXTINF:0 CUID="1" tvg-name="1:458" tvg-id="1:458" group-title="Общие",Первый канал
+                    if (!preg_match($uri_id_parse_regex, $iValue, $m_id) || (empty($m_id[M_ID]))) continue;
+
+                    $i++;
+                    // #EXTGRP:Общие - may not exist!
+                    if (preg_match('|^#EXTGRP|', $m3u_lines[$i])) {
+                        $i++;
+                    }
+                    // http://some_domain/some_token/index.m3u8
+                    if (preg_match($uri_parse_regex, $m3u_lines[$i], $matches)) {
                         $pl_entries[$m_id[M_ID]] = $matches;
-                        $skip_next = true;
                     }
                 }
             }
@@ -671,8 +693,7 @@ class default_config extends dynamic_config
             }
 
             if (strpos($url, '{SERVER}') !== false) {
-                $servers = $this->get_servers($plugin_cookies);
-                $url = str_replace('{SERVER}', $servers[$this->get_server_id($plugin_cookies)], $url);
+                $url = str_replace('{SERVER}', $this->get_server_name($plugin_cookies), $url);
             }
 
             if (strpos($url, '{SERVER_ID}') !== false) {
@@ -680,13 +701,11 @@ class default_config extends dynamic_config
             }
 
             if (strpos($url, '{QUALITY_ID}') !== false) {
-                $quality = $this->get_qualities($plugin_cookies);
-                $url = str_replace('{QUALITY_ID}', $quality[$this->get_quality_id($plugin_cookies)], $url);
+                $url = str_replace('{QUALITY_ID}', $this->get_quality_id($plugin_cookies), $url);
             }
 
             if (strpos($url, '{DEVICE_ID}') !== false) {
-                $quality = $this->get_devices($plugin_cookies);
-                $url = str_replace('{DEVICE_ID}', $quality[$this->get_device_id($plugin_cookies)], $url);
+                $url = str_replace('{DEVICE_ID}', $this->get_device_id($plugin_cookies), $url);
             }
         }
         return $url;

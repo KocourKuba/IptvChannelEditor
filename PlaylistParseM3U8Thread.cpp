@@ -80,7 +80,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
 					channels++;
 
-					if (channels % 50 == 0)
+					if (channels % 100 == 0)
 					{
 						m_config.SendNotifyParent(WM_UPDATE_PROGRESS, channels, step);
 						if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)

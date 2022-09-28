@@ -3,27 +3,13 @@ require_once 'lib/default_config.php';
 
 class smile_config extends default_config
 {
-    public function init_defaults($short_name)
+    public function init_defaults()
     {
-        parent::init_defaults($short_name);
+        parent::init_defaults();
 
         $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_PLAYLIST_URL, 'http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vodall.m3u');
-        $this->set_feature(VOD_PARSE_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>.*)$|');
-    }
-
-    public function load_default()
-    {
-        $this->set_feature(SQUARE_ICONS, true);
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_LOGIN);
-        $this->set_feature(USE_TOKEN_AS_ID, true);
-        $this->set_feature(PLAYLIST_TEMPLATE, 'http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/tv.m3u');
-        $this->set_feature(URI_ID_PARSE_PATTERN, '^#EXTINF:.+CUID="(?<id>\d+)"');
-        $this->set_feature(URI_PARSE_PATTERN, '^https?://(?<domain>[^/]+)/(?<token>.+)$');
-
-        $this->set_stream_param(HLS,URL_TEMPLATE, 'http://{DOMAIN}/{TOKEN}');
-
-        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.esalecrm.net/smile/epg/{ID}.json');
+        $this->set_feature(VOD_PARSE_PATTERN, '|^#EXTINF:.+tvg-logo="(?<logo>[^"]+)".+group-title="(?<category>[^"]+)".*,\s*(?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$|');
     }
 
     /**
@@ -44,17 +30,19 @@ class smile_config extends default_config
             }
 
             $logo = $match['logo'];
-            list($title, $title_orig) = explode('/', $match['title']);
+            $title = $match['title'];
+            $country = $match['country'];
+            $year = $match['year'];
             $url = $this->UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
 
             //hd_print("Vod url: $playback_url");
             $movie->set_data(
                 $title,// $xml->caption,
-                $title_orig,// $xml->caption_original,
+                '',// $xml->caption_original,
                 '',// $xml->description,
                 $logo,// $xml->poster_url,
                 '',// $xml->length,
-                '',// $xml->year,
+                $year,// $xml->year,
                 '',// $xml->director,
                 '',// $xml->scenario,
                 '',// $xml->actors,
@@ -62,7 +50,7 @@ class smile_config extends default_config
                 '',// $xml->rate_imdb,
                 '',// $xml->rate_kinopoisk,
                 '',// $xml->rate_mpaa,
-                '',// $xml->country,
+                $country,// $xml->country,
                 ''// $xml->budget
             );
 

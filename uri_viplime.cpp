@@ -50,7 +50,6 @@ void uri_viplime::fill_quality_list(TemplateParams& /*params*/)
 		UINT res;
 	};
 
-	//-V826
 	std::vector<Info> infos =
 	{
 		{ L"high",   IDS_STRING_VIPLIME_P1 },
@@ -58,7 +57,7 @@ void uri_viplime::fill_quality_list(TemplateParams& /*params*/)
 		{ L"low",    IDS_STRING_VIPLIME_P3 },
 		{ L"variant",IDS_STRING_VIPLIME_P4 },
 		{ L"hls",    IDS_STRING_VIPLIME_P5 },
-	};
+	}; //-V826
 
 	std::vector<DynamicParamsInfo> quality;
 	for (const auto& item : infos)

@@ -3,23 +3,14 @@ require_once 'lib/default_config.php';
 
 class edem_config extends default_config
 {
-    public function init_defaults($short_name)
+    public function init_defaults()
     {
-        parent::init_defaults($short_name);
+        parent::init_defaults();
 
         $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_QUALITY_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
-    }
-
-    public function load_default()
-    {
-        $this->set_feature(ACCESS_TYPE, ACCOUNT_OTT_KEY);
-
-        $this->set_stream_param(HLS, URL_TEMPLATE, 'http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8');
-
-        $this->set_epg_param(EPG_FIRST,EPG_URL,'http://epg.drm-play.ml/edem/epg/{ID}.json');
     }
 
     /**
