@@ -52,6 +52,7 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_kineskop.h"
 #include "uri_mymagic.h"
 #include "uri_russkoetv.h"
+#include "uri_smile.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -145,6 +146,9 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(StreamType type)
 
 		case StreamType::enRusskoeTV:
 			return std::make_unique<uri_russkoetv>();
+
+		case StreamType::enSmile:
+			return std::make_unique<uri_smile>();
 
 		default:
 			ASSERT(false);

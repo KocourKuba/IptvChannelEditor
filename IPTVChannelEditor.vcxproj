@@ -255,6 +255,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="uri_kineskop.h" />
     <ClInclude Include="uri_mymagic.h" />
     <ClInclude Include="uri_russkoetv.h" />
+    <ClInclude Include="uri_smile.h" />
     <ClInclude Include="vod_movie.h" />
     <ClInclude Include="NewChannelsListDlg.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
@@ -354,6 +355,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="uri_sharatv.cpp" />
     <ClCompile Include="uri_sharavoz.cpp" />
     <ClCompile Include="uri_shuratv.cpp" />
+    <ClCompile Include="uri_smile.cpp" />
     <ClCompile Include="uri_stream.cpp" />
     <ClCompile Include="uri_tvclub.cpp" />
     <ClCompile Include="uri_tvteam.cpp" />

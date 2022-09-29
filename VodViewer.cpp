@@ -164,6 +164,7 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 	{
 		case StreamType::enFox:
 		case StreamType::enMymagic:
+		case StreamType::enSmile:
 			LoadM3U8Playlist(use_cache);
 			break;
 
@@ -304,6 +305,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	{
 		case StreamType::enGlanz:
 		case StreamType::enFox:
+		case StreamType::enSmile:
 			url = fmt::format(m_plugin->get_vod_url(), m_account.get_login(), m_account.get_password());
 			break;
 	}

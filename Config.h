@@ -58,6 +58,7 @@ enum class StreamType
 	enKineskop,
 	enMymagic,
 	enRusskoeTV,
+	enSmile,
 	enLast,
 };
 
