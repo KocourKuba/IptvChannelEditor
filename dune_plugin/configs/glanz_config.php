@@ -3,13 +3,15 @@ require_once 'lib/default_config.php';
 
 class glanz_config extends default_config
 {
+    const API_HOST = 'http://api.ottg.tv';
+
     public function init_defaults()
     {
         parent::init_defaults();
 
         $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
-        $this->set_feature(VOD_PLAYLIST_URL, 'http://api.ottg.tv/playlist/vod?login={LOGIN}&password={PASSWORD}');
+        $this->set_feature(VOD_PLAYLIST_URL, self::API_HOST . '/playlist/vod?login={LOGIN}&password={PASSWORD}');
     }
 
     /**

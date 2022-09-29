@@ -36,8 +36,6 @@ static char THIS_FILE[] = __FILE__;
 
 void uri_base::set_uri(const std::wstring& url)
 {
-	clear();
-
 	// https, udp, http, file, plugin_file
 	static std::wregex re(LR"((https?:\/\/|plugin_file:\/\/)(.*))");
 	std::wsmatch m;

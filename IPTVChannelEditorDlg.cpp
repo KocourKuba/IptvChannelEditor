@@ -957,6 +957,10 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 				m_cur_account.set_token(parser.token);
 				bSet = true;
 			}
+			else
+			{
+				bSet = true;
+			}
 
 			if (bSet) break;
 		}

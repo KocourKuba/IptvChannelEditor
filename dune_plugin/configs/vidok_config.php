@@ -5,8 +5,6 @@ class vidok_config extends default_config
 {
     const API_HOST = 'http://sapi.ott.st/v2.4/json';
 
-    protected static $settings = array();
-
     /**
      * @param $plugin_cookies
      * @return array
@@ -16,7 +14,7 @@ class vidok_config extends default_config
         $servers = parent::get_servers($plugin_cookies);
         if (empty($servers) && $this->load_settings($plugin_cookies)) {
             $servers = array();
-            foreach (self::$settings['settings']['lists']['servers'] as $item) {
+            foreach ($this->account_data['settings']['lists']['servers'] as $item) {
                 $servers[$item['id']] = $item['name'];
             }
         }
@@ -31,7 +29,7 @@ class vidok_config extends default_config
     public function get_server_id($plugin_cookies)
     {
         if ($this->load_settings($plugin_cookies)) {
-            $server = self::$settings['settings']['current']['server']['id'];
+            $server = $this->account_data['settings']['current']['server']['id'];
         } else {
             $server = parent::get_server_id($plugin_cookies);
         }
@@ -58,7 +56,7 @@ class vidok_config extends default_config
         $quality = parent::get_qualities($plugin_cookies);
         if (empty($quality) && $this->load_settings($plugin_cookies)) {
             $quality = array();
-            foreach (self::$settings['settings']['lists']['quality'] as $item) {
+            foreach ($this->account_data['settings']['lists']['quality'] as $item) {
                 $quality[$item['id']] = $item['name'];
             }
         }
@@ -82,22 +80,23 @@ class vidok_config extends default_config
      */
     protected function load_settings(&$plugin_cookies)
     {
-        if (!$this->ensure_token_loaded($plugin_cookies)) {
+        try {
+            if (!$this->ensure_token_loaded($plugin_cookies)) {
+                throw new Exception("Token not loaded");
+            }
+
+            if (empty($this->account_data)) {
+                $url = self::API_HOST . "/settings?token=$plugin_cookies->token";
+                // provider returns token used to download playlist
+                $this->account_data = HD::DownloadJson($url);
+                //hd_print(json_encode(self::$settings));
+            }
+        } catch (Exception $ex) {
+            hd_print($ex->getMessage());
             return false;
         }
 
-        if (empty(self::$settings)) {
-            try {
-                $url = self::API_HOST . "/settings?token=$plugin_cookies->token";
-                // provider returns token used to download playlist
-                self::$settings = HD::DownloadJson($url);
-                hd_print(json_encode(self::$settings));
-            } catch (Exception $ex) {
-                hd_print("Settings not loaded");
-            }
-        }
-
-        return !empty(self::$settings);
+        return !empty($this->account_data);
     }
 
     /**
@@ -108,29 +107,26 @@ class vidok_config extends default_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account");
-
-        if (!$this->ensure_token_loaded($plugin_cookies)) {
-            return false;
-        }
-
-        if ($force === false) {
-            return array();
-        }
+        hd_print("Collect information from account: $force");
 
         try {
-            $url = self::API_HOST . "/account?token=$plugin_cookies->token";
-            // provider returns token used to download playlist
-            $account_data = HD::DownloadJson($url);
-            if (isset($account_data['account']['login'])) {
-                self::$settings = $account_data;
-                return $account_data;
+            if (!$this->ensure_token_loaded($plugin_cookies)) {
+                throw new Exception("User token not loaded");
+            }
+
+            if ($force !== false || empty($this->account_data)) {
+                $url = self::API_HOST . "/account?token=$plugin_cookies->token";
+                // provider returns token used to download playlist
+                $this->account_data = HD::DownloadJson($url);
+                if (!isset($this->account_data['account']['login'])) {
+                    throw new Exception("Account info invalid");
+                }
             }
         } catch (Exception $ex) {
-            hd_print("User token not loaded");
+            hd_print($ex->getMessage());
+            return false;
         }
-
-        return false;
+        return $this->account_data;
     }
 
     /**
@@ -139,7 +135,7 @@ class vidok_config extends default_config
      */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
-        $account_data = $this->GetAccountInfo($plugin_cookies,true);
+        $account_data = $this->GetAccountInfo($plugin_cookies, true);
         if ($account_data === false) {
             hd_print("Can't get account status");
             $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
@@ -175,16 +171,19 @@ class vidok_config extends default_config
     {
         hd_print("save settings $param to {$plugin_cookies->$param}");
 
-        if (!$this->ensure_token_loaded($plugin_cookies)) {
-            return false;
-        }
-
         try {
+            if (!$this->ensure_token_loaded($plugin_cookies)) {
+                throw new Exception("User token not loaded");
+            }
+
             $url = self::API_HOST . "/settings_set?$param={$plugin_cookies->$param}&token=$plugin_cookies->token";
-            HD::http_get_document($url);
+            $json = HD::DownloadJson($url);
+            if (isset($json['error'])) {
+                throw new Exception($json['error']['msg']);
+            }
             return true;
         } catch (Exception $ex) {
-            hd_print("Settings not saved");
+            hd_print($ex->getMessage());
         }
 
         return false;
@@ -198,20 +197,17 @@ class vidok_config extends default_config
      */
     protected function ensure_token_loaded(&$plugin_cookies)
     {
-        if (!empty($plugin_cookies->token)) {
-            return true;
+        if (empty($plugin_cookies->token)) {
+            $login = $this->get_login($plugin_cookies);
+            $password = $this->get_password($plugin_cookies);
+
+            if (empty($login) || empty($password)) {
+                hd_print("Login or password not set");
+                return false;
+            }
+
+            $plugin_cookies->token = md5(strtolower($login) . md5($password));
         }
-
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
-
-        if (empty($login) || empty($password)) {
-            hd_print("Login or password not set");
-            return false;
-        }
-
-        $plugin_cookies->token = md5(strtolower($login) . md5($password));
-
-        return !empty($plugin_cookies->token);
+        return true;
     }
 }

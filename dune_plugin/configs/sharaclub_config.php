@@ -3,7 +3,7 @@ require_once 'lib/default_config.php';
 
 class sharaclub_config extends default_config
 {
-    const API_HOST = "http://conf.playtv.pro/api/con8fig.php?source=dune_editor";
+    const API_HOST = "http://conf.playtv.pro/api";
 
     public function init_defaults()
     {
@@ -153,36 +153,36 @@ class sharaclub_config extends default_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account");
-
-        $api = HD::DownloadJson(self::API_HOST, false);
-
-        $plugin_cookies->subdomain = $api->listdomain;
-        $this->set_epg_param(EPG_FIRST,EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={ID}");
+        hd_print("Collect information from account: $force");
 
         // this account has special API to get account info
         $login = $this->get_login($plugin_cookies);
         $password = $this->get_password($plugin_cookies);
 
-        if ($force === false && !empty($login) && !empty($password)) {
-            return true;
-        }
-
-        if (empty($login) || empty($password)) {
-            hd_print("Login or password not set");
-            return false;
-        }
-
         try {
-            $url = $this->replace_api_command('subscr_info', $plugin_cookies);
-            $account_data = HD::DownloadJson($url);
-            if ($account_data === false || !isset($account_data['status']) || $account_data['status'] !== '1')
-                return false;
+            if (empty($login) || empty($password)) {
+                throw new Exception("Login or password not set");
+            }
+
+            if ($force !== false || empty($this->account_data)) {
+                $api = HD::DownloadJson(self::API_HOST . '/con8fig.php?source=dune_editor', false);
+
+                $plugin_cookies->subdomain = $api->listdomain;
+                $this->set_epg_param(EPG_FIRST,EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={ID}");
+
+                $url = $this->replace_api_command('subscr_info', $plugin_cookies);
+                $json = HD::DownloadJson($url);
+                if ($json === false || !isset($json['status']) || $json['status'] !== '1') {
+                    throw new Exception("Account status unknown");
+                }
+                $this->account_data = $json;
+            }
         } catch (Exception $ex) {
+            hd_print($ex->getMessage());
             return false;
         }
 
-        return $account_data;
+        return $this->account_data;
     }
 
     /**

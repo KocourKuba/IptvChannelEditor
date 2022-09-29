@@ -122,9 +122,10 @@ void uri_stream::parse_uri(const std::wstring& url)
 	templated = true;
 
 	// map groups to parser members
-	for (size_t pos = 0; pos < parser.regex_named_groups.size(); pos++)
+	size_t pos = 1;
+	for (const auto& group : parser.regex_named_groups)
 	{
-		parser.*parser_mapper[parser.regex_named_groups[pos]] = std::move(m[pos].str());
+		parser.*parser_mapper[group] = std::move(m[pos++].str());
 	}
 }
 

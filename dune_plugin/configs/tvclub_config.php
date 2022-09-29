@@ -5,8 +5,6 @@ class tvclub_config extends default_config
 {
     const API_HOST = 'http://api.iptv.so/0.9/json';
 
-    protected static $settings = array();
-
     public function init_defaults()
     {
         parent::init_defaults();
@@ -64,17 +62,15 @@ class tvclub_config extends default_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account");
+        hd_print("Collect information from account: $force");
 
-        $account_data = self::$settings;
-        if ($force !== false && $this->load_settings($plugin_cookies)) {
-            $account_data = self::$settings;
+        if ($force !== false || empty($this->account_data)) {
+            if (!$this->load_settings($plugin_cookies)) {
+                return false;
+            }
         }
 
-        if (!isset($account_data['account']['info']['login'])) {
-            return false;
-        }
-        return $account_data;
+        return $this->account_data;
     }
 
     /**
@@ -83,8 +79,7 @@ class tvclub_config extends default_config
      */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
-        $account_data = $this->GetAccountInfo($plugin_cookies, true);
-        if ($account_data === false) {
+        if ($this->GetAccountInfo($plugin_cookies, true) === false) {
             hd_print("Can't get account status");
             $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
             $text = explode('\\n', $text);
@@ -95,12 +90,14 @@ class tvclub_config extends default_config
             return;
         }
 
-        Control_Factory::add_label($defs, 'Баланс:', $account_data['account']['info']['balance'] . ' €', -10);
-        Control_Factory::add_label($defs, 'Логин:', $account_data['account']['info']['login'], -10);
-        Control_Factory::add_label($defs, 'Сервер:', $account_data['account']['settings']['server_name'], -10);
-        Control_Factory::add_label($defs, 'Часовой пояс:', $account_data['account']['settings']['tz_name'] . " {$account_data['account']['settings']['tz_gmt']}", -10);
+        $info = $this->account_data['account']['info'];
+        $settings = $this->account_data['account']['settings'];
+        Control_Factory::add_label($defs, 'Баланс:', $info['balance'] . ' €', -10);
+        Control_Factory::add_label($defs, 'Логин:', $info['login'], -10);
+        Control_Factory::add_label($defs, 'Сервер:', $settings['server_name'], -10);
+        Control_Factory::add_label($defs, 'Часовой пояс:', $settings['tz_name'] . " {$settings['tz_gmt']}", -10);
 
-        $packages = $account_data['account']['services'];
+        $packages = $this->account_data['account']['services'];
         if (count($packages) === 0) {
             Control_Factory::add_label($defs, 'Пакеты: ', 'Нет пакетов', 20);
             return;
@@ -119,20 +116,24 @@ class tvclub_config extends default_config
      */
     protected function load_settings(&$plugin_cookies)
     {
-        if (!$this->ensure_token_loaded($plugin_cookies)) {
-            hd_print("No token!");
+        try {
+            if (!$this->ensure_token_loaded($plugin_cookies)) {
+                throw new Exception("Token not loaded");
+            }
+
+            $url = self::API_HOST . "/account?token=$plugin_cookies->token";
+            // provider returns token used to download playlist
+            $json = HD::DownloadJson($url);
+            if (!isset($account_data['account']['info']['login'])) {
+                throw new Exception("Account status unknown");
+            }
+            $this->account_data = $json;
+        } catch (Exception $ex) {
+            hd_print($ex->getMessage());
             return false;
         }
 
-        try {
-            $url = self::API_HOST . "/account?token=$plugin_cookies->token";
-            // provider returns token used to download playlist
-            self::$settings = HD::DownloadJson($url);
-        } catch (Exception $ex) {
-            hd_print("Settings not loaded");
-        }
-
-        return !empty(self::$settings);
+        return !empty($this->account_data);
     }
 
     /**
@@ -168,20 +169,18 @@ class tvclub_config extends default_config
      */
     protected function ensure_token_loaded(&$plugin_cookies)
     {
-        if (!empty($plugin_cookies->token)) {
-            return true;
+        if (empty($plugin_cookies->token)) {
+            $login = $this->get_login($plugin_cookies);
+            $password = $this->get_password($plugin_cookies);
+
+            if (empty($login) || empty($password)) {
+                hd_print("Login or password not set");
+                return false;
+            }
+
+            $plugin_cookies->token = md5($login . md5($password));
         }
 
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
-
-        if (empty($login) || empty($password)) {
-            hd_print("Login or password not set");
-            return false;
-        }
-
-        $plugin_cookies->token = md5($login . md5($password));
-
-        return !empty($plugin_cookies->token);
+        return true;
     }
 }

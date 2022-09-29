@@ -20,30 +20,30 @@ class itv_config extends default_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account");
+        hd_print("Collect information from account: $force");
 
         // this account has special API to get account info
         $password = $this->get_password($plugin_cookies);
-        if ($force === false && !empty($password)) {
-            return array();
-        }
-
-        if (empty($password)) {
-            hd_print("Password not set");
-            return false;
-        }
-
         try {
-            $url = sprintf(self::API_HOST . '/data/%s', $password);
-            $account_data = HD::DownloadJson($url);
-            if (empty($account_data['package_info'])) {
-                return false;
+            if (empty($password)) {
+                throw new Exception("Password not set");
             }
+
+            if ($force !== false || empty($this->account_data)) {
+                $url = sprintf(self::API_HOST . '/data/%s', $password);
+                $json = HD::DownloadJson($url);
+                if (empty($json['package_info'])) {
+                    throw new Exception("Account status unknown");
+                }
+                $this->account_data = $json;
+            }
+
         } catch (Exception $ex) {
+            hd_print($ex->getMessage());
             return false;
         }
 
-        return $account_data;
+        return $this->account_data;
     }
 
     /**

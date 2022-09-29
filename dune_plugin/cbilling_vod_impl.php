@@ -5,11 +5,6 @@ abstract class Cbilling_Vod_Impl extends default_config
 {
     const API_HOST = 'http://protected-api.com';
 
-    /**
-     * @var array
-     */
-    protected $account_data = array();
-
     public function init_defaults()
     {
         parent::init_defaults();

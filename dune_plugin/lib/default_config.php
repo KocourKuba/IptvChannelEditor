@@ -12,6 +12,7 @@ class default_config extends dynamic_config
     protected $filters = array();
 
     protected $embedded_account;
+    protected $account_data = array();
 
     public function load_embedded_account()
     {
@@ -329,12 +330,14 @@ class default_config extends dynamic_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account");
+        hd_print("Collect information from account: $force");
+
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         $parse_pattern = "|" . $this->get_feature(URI_PARSE_PATTERN) . "|";
         foreach ($m3u_lines as $line) {
             if (preg_match($parse_pattern, $line, $matches)) {
-                return $matches;
+                $this->account_data = $matches;
+                return $this->account_data;
             }
         }
 

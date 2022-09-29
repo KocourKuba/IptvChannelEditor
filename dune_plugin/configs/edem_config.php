@@ -29,19 +29,6 @@ class edem_config extends default_config
     }
 
     /**
-     * Get information from the account
-     * @param &$plugin_cookies
-     * @param bool $force default false, force downloading playlist even it already cached
-     * @return array[] information collected and status valid otherwise - false
-     */
-    public function GetAccountInfo(&$plugin_cookies, $force = false)
-    {
-        hd_print("Collect information from account");
-
-        return array();
-    }
-
-    /**
      * @param string $movie_id
      * @param $plugin_cookies
      * @return Movie

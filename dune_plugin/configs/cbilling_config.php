@@ -11,7 +11,7 @@ class cbilling_config extends Cbilling_Vod_Impl
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Get account info: $force");
+        hd_print("Collect information from account: $force");
         // this account has special API to get account info
         // {
         //    "data": {
@@ -30,20 +30,21 @@ class cbilling_config extends Cbilling_Vod_Impl
         // }
 
         $password = $this->get_password($plugin_cookies);
-        if (empty($password)) {
-            hd_print("Password not set");
-            return false;
-        }
-
-        if ($force === false && !empty($this->account_data)) {
-            return $this->account_data;
-        }
-
         try {
-            $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
-            $json = HD::DownloadJson(self::API_HOST . '/auth/info', true, $headers);
-            $this->account_data = $json['data'];
+            if (empty($password)) {
+                throw new Exception("Password not set");
+            }
+
+            if ($force !== false || empty($this->account_data)) {
+                $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
+                $json = HD::DownloadJson(self::API_HOST . '/auth/info', true, $headers);
+                if (!isset($json['data'])) {
+                    throw new Exception("Account info not loaded");
+                }
+                $this->account_data = $json['data'];
+            }
         } catch (Exception $ex) {
+            hd_print($ex->getMessage());
             return false;
         }
 
