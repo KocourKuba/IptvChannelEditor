@@ -65,7 +65,7 @@ void uri_itv::load_default()
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params = epg_params[0];
-	params.epg_url = "http://api.itv.live/epg/{ID}";
+	params.epg_url = "http://api.itv.live/epg/{EPG_ID}";
 	params.epg_root = "res";
 	params.epg_name = "title";
 	params.epg_desc = "desc";

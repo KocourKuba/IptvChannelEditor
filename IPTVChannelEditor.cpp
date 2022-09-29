@@ -601,7 +601,7 @@ bool PackPlugin(const PluginType plugin_type,
 				bool noEmbed /*= false*/,
 				bool noCustom /*= false*/)
 {
-	const auto& pack_dll = GetAppPath((PluginsConfig::DEV_PATH + PluginsConfig::PACK_DLL_PATH).c_str()) + PACK_DLL;
+	const auto& pack_dll = GetAppPath((PluginsConfig::PACK_DLL_PATH).c_str()) + PACK_DLL;
 	if (!std::filesystem::exists(pack_dll))
 	{
 		if (showMessage)

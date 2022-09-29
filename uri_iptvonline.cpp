@@ -59,7 +59,7 @@ void uri_iptvonline::load_default()
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts";
 
 	auto& params1 = epg_params[0];
-	params1.epg_url = "http://epg.iptvx.one/api/id/{ID}.json";
+	params1.epg_url = "http://epg.iptvx.one/api/id/{EPG_ID}.json";
 	params1.epg_root = "ch_programme";
 	params1.epg_name = "title";
 	params1.epg_desc = "description";
@@ -68,5 +68,5 @@ void uri_iptvonline::load_default()
 	params1.epg_time_format = "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}"; // "%d-%m-%Y %H:%M";
 	params1.epg_timezone = 3; // iptvx.one uses moscow time (UTC+3)
 
-	epg_params[1].epg_url = "http://epg.drm-play.ml/iptvx.one/epg/{ID}.json";
+	epg_params[1].epg_url = "http://epg.drm-play.ml/iptvx.one/epg/{EPG_ID}.json";
 }

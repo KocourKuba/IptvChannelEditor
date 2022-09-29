@@ -69,7 +69,7 @@ class Epg_Manager
         }
 
         hd_print("Fetching EPG for ID: '$epg_id'");
-        $epg_url = str_replace('{ID}', $epg_id, $params[EPG_URL]);
+        $epg_url = str_replace('{EPG_ID}', $epg_id, $params[EPG_URL]);
         if (strpos($epg_url, '{DATE}') !== false) {
             $date_format = str_replace(
                 array('{YEAR}', '{MONTH}', '{DAY}'),

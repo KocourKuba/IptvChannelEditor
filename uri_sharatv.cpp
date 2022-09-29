@@ -51,5 +51,5 @@ void uri_sharatv::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/shara-tv/epg/{ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.ml/shara-tv/epg/{EPG_ID}.json";
 }

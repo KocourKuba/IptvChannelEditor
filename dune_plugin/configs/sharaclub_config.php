@@ -168,7 +168,7 @@ class sharaclub_config extends default_config
                 $api = HD::DownloadJson(self::API_HOST . '/con8fig.php?source=dune_editor', false);
 
                 $plugin_cookies->subdomain = $api->listdomain;
-                $this->set_epg_param(EPG_FIRST,EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={ID}");
+                $this->set_epg_param(EPG_FIRST,EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={EPG_ID}");
 
                 $url = $this->replace_api_command('subscr_info', $plugin_cookies);
                 $json = HD::DownloadJson($url);

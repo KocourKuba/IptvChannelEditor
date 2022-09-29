@@ -62,7 +62,7 @@ void uri_tvclub::load_default()
 	streams_config[1].uri_arc_template = "{CU_SUBST}={START}";
 
 	auto& params = epg_params[0];
-	params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={ID}&time={TIMESTAMP}&period=24";
+	params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";
 	params.epg_root = "epg|channels|[0]|epg";
 	params.epg_name = "text";
 	params.epg_desc = "description";

@@ -60,7 +60,7 @@ void uri_filmax::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://epg.esalecrm.net/filmax/epg/{ID}.json";
+	epg_params[0].epg_url = "http://epg.esalecrm.net/filmax/epg/{EPG_ID}.json";
 
 	fill_servers_list(TemplateParams());
 }

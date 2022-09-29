@@ -68,7 +68,7 @@ void uri_sharaclub::load_default()
 
 	auto& params = epg_params[0];
 	params.epg_root = "";
-	params.epg_url = "http://{DOMAIN}/get/?type=epg&ch={ID}";
+	params.epg_url = "http://{DOMAIN}/get/?type=epg&ch={EPG_ID}";
 }
 
 std::wstring uri_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)

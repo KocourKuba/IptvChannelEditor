@@ -61,7 +61,7 @@ void uri_vidok::load_default()
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}";
 
 	auto& params = epg_params[0];
-	params.epg_url = "http://sapi.ott.st/v2.4/json/epg2?cid={ID}&token={TOKEN}";
+	params.epg_url = "http://sapi.ott.st/v2.4/json/epg2?cid={EPG_ID}&token={TOKEN}";
 	params.epg_root = "epg";
 	params.epg_name = "title";
 	params.epg_desc = "description";

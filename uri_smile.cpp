@@ -58,5 +58,5 @@ void uri_smile::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.esalecrm.net/smile/epg/{ID}.json";
+	epg_params[0].epg_url = "http://epg.esalecrm.net/smile/epg/{EPG_ID}.json";
 }

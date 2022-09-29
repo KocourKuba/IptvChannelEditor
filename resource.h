@@ -421,8 +421,11 @@
 #define IDC_BUTTON_EPG_SHOW             1197
 #define IDC_EDIT_PLUGIN_NAME            1198
 #define IDC_DATETIMEPICKER_DATE         1199
-#define IDC_EDIT_ID_PARSE_PATTERN       1200
+#define IDC_EDIT_PARSE_PATTERN_ID       1200
 #define IDC_CHECK_SQUARE_ICONS          1201
+#define IDC_BUTTON_PLAYLIST_SHOW        1202
+#define IDC_BUTTON_STREAM_PARSE         1203
+#define IDC_BUTTON_STREAM_ID_PARSE      1204
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -451,12 +454,12 @@
 #define ID_REMOVE_UNKNOWN               32803
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        274
 #define _APS_NEXT_COMMAND_VALUE         32804
-#define _APS_NEXT_CONTROL_VALUE         1202
+#define _APS_NEXT_CONTROL_VALUE         1205
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

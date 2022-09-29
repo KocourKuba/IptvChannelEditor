@@ -61,6 +61,6 @@ void uri_lightiptv::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts?token={PASSWORD}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/lightiptv/epg/{ID}.json";
-	epg_params[1].epg_url = "http://epg.ott-play.com/lightiptv/epg/{ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.ml/lightiptv/epg/{EPG_ID}.json";
+	epg_params[1].epg_url = "http://epg.ott-play.com/lightiptv/epg/{EPG_ID}.json";
 }

@@ -59,5 +59,5 @@ void uri_oneusd::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://tv.team/{ID}.json";
+	epg_params[0].epg_url = "http://tv.team/{EPG_ID}.json";
 }

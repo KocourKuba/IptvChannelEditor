@@ -51,6 +51,6 @@ void uri_russkoetv::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://protected-api.com/epg/{ID}/?date=";
+	epg_params[0].epg_url = "http://protected-api.com/epg/{EPG_ID}/?date=";
 	epg_params[0].epg_root = "";
 }

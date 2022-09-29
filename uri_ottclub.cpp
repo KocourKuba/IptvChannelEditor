@@ -51,5 +51,5 @@ void uri_ottclub::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://myott.top/api/channel/{ID}";
+	epg_params[0].epg_url = "http://myott.top/api/channel/{EPG_ID}";
 }

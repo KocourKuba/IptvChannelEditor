@@ -437,7 +437,7 @@ std::wstring uri_stream::compile_epg_url(int epg_idx, const std::wstring& epg_id
 		subst_id = epg_id;
 	}
 
-	auto epg_template = utils::string_replace<wchar_t>(epg_params[epg_idx].get_epg_url(), REPL_ID, subst_id);
+	auto epg_template = utils::string_replace<wchar_t>(epg_params[epg_idx].get_epg_url(), REPL_EPG_ID, subst_id);
 
 	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
 

@@ -89,5 +89,5 @@ void uri_viplime::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
 	streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{EPG_ID}.json";
 }

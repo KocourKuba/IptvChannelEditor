@@ -59,7 +59,7 @@ void uri_oneott::load_default()
 	streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	auto& params1 = epg_params[0];
-	params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";
+	params1.epg_url = "http://epg.propg.net/{EPG_ID}/epg2/{DATE}";
 	params1.epg_date_format = "%Y-%m-%d";
 	params1.epg_root = "";
 	params1.epg_name = "epg";
@@ -67,7 +67,7 @@ void uri_oneott::load_default()
 	params1.epg_start = "start";
 	params1.epg_end = "stop";
 
-	epg_params[1].epg_url = "http://epg.drm-play.ml/1ott/epg/{ID}.json";
+	epg_params[1].epg_url = "http://epg.drm-play.ml/1ott/epg/{EPG_ID}.json";
 }
 
 bool uri_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

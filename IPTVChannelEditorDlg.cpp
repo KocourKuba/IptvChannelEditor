@@ -3023,6 +3023,7 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgCfg.m_plugin_type = m_plugin_type;
+	dlgCfg.m_single = TRUE;
 
 	pSheet->AddPage(&dlgCfg);
 #endif // _DEBUG
@@ -5008,7 +5009,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgCfg.m_plugin_type = m_plugin_type;
-	dlgCfg.m_single = TRUE;
+	dlgCfg.m_single = FALSE;
 
 	pSheet->AddPage(&dlgCfg);
 	pSheet->DoModal();

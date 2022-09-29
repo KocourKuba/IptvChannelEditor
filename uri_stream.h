@@ -96,6 +96,7 @@ public:
 	static constexpr auto REPL_QUALITY_ID = L"{QUALITY_ID}"; // quality id (set from settings)
 	static constexpr auto REPL_PROFILE_ID = L"{PROFILE_ID}"; // profile id (read from settings)
 
+	static constexpr auto REPL_EPG_ID     = L"{EPG_ID}";     // epg id (set from playlist)
 	static constexpr auto REPL_START      = L"{START}";      // EPG archive start time (unix timestamp)
 	static constexpr auto REPL_NOW        = L"{NOW}";        // EPG archive current time (unix timestamp)
 	static constexpr auto REPL_DATE       = L"{DATE}";       // EPG date (set by format)

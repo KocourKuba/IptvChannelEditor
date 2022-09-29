@@ -52,10 +52,16 @@ protected:
 	afx_msg void OnBnClickedButtonLoadConfig();
 	afx_msg void OnBnClickedButtonSaveConfig();
 	afx_msg void OnBnClickedButtonEpgTest();
+	afx_msg void OnBnClickedButtonPlaylistShow();
+	afx_msg void OnBnClickedButtonStreamParse();
+	afx_msg void OnBnClickedButtonStreamIdParse();
 
 	afx_msg void OnCbnSelchangeComboStreamSubType();
 	afx_msg void OnCbnSelchangeComboEpgType();
 	afx_msg void OnCbnSelchangeComboPluginType();
+
+	afx_msg void OnEnChangeEditParsePattern();
+	afx_msg void OnEnChangeEditParsePatternID();
 
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -101,10 +107,14 @@ protected:
 	CComboBox m_wndEpgType;
 	CComboBox m_wndPluginType;
 
+	CButton m_wndToggleEdit;
 	CButton m_wndLoadConf;
 	CButton m_wndSaveConf;
 	CButton m_wndSquareIcons;
-	CButton m_wndTest;
+	CButton m_wndEpgTest;
+	CButton m_wndPlaylistShow;
+	CButton m_wndBtnStreamParse;
+	CButton m_wndBtnStreamParseID;
 
 	CString m_Name;
 	CString m_Title;

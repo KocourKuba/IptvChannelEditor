@@ -57,8 +57,8 @@ void uri_mymagic::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/magic/epg/{ID}.json";
-	epg_params[1].epg_url = "http://epg.esalecrm.net/magic/epg/{ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.ml/magic/epg/{EPG_ID}.json";
+	epg_params[1].epg_url = "http://epg.esalecrm.net/magic/epg/{EPG_ID}.json";
 
 	fill_servers_list(TemplateParams());
 	fill_quality_list(TemplateParams());

@@ -58,6 +58,6 @@ void uri_antifriz::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}:{PORT}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://protected-api.com/epg/{ID}/?date=";
+	epg_params[0].epg_url = "http://protected-api.com/epg/{EPG_ID}/?date=";
 	epg_params[0].epg_root = "";
 }

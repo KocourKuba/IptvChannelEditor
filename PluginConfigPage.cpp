@@ -28,6 +28,8 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPage.h"
 #include "StreamContainer.h"
+#include "UtilsLib/inet_utils.h"
+#include <iosfwd>
 
 // CPluginConfigPage dialog
 
@@ -43,6 +45,11 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigPage::OnCbnSelchangeComboEpgType)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPage::OnBnClickedButtonEpgTest)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CPluginConfigPage::OnCbnSelchangeComboPluginType)
+	ON_BN_CLICKED(IDC_BUTTON_PLAYLIST_SHOW, &CPluginConfigPage::OnBnClickedButtonPlaylistShow)
+	ON_BN_CLICKED(IDC_BUTTON_STREAM_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamParse)
+	ON_BN_CLICKED(IDC_BUTTON_STREAM_ID_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamIdParse)
+	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN, &CPluginConfigPage::OnEnChangeEditParsePattern)
+	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN_ID, &CPluginConfigPage::OnEnChangeEditParsePatternID)
 END_MESSAGE_MAP()
 
 CPluginConfigPage::CPluginConfigPage() : CMFCPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
@@ -54,6 +61,9 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndToggleEdit);
+	DDX_Control(pDX, IDC_BUTTON_LOAD_CONFIG, m_wndLoadConf);
+	DDX_Control(pDX, IDC_BUTTON_SAVE_CONFIG, m_wndSaveConf);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_NAME, m_wndName);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_NAME, m_Name);
 	DDX_Control(pDX, IDC_EDIT_TITLE, m_wndTitle);
@@ -64,8 +74,8 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_URL, m_ProviderUrl);
 	DDX_Control(pDX, IDC_EDIT_PARSE_PATTERN, m_wndParseStream);
 	DDX_Text(pDX, IDC_EDIT_PARSE_PATTERN, m_ParseStream);
-	DDX_Control(pDX, IDC_EDIT_ID_PARSE_PATTERN, m_wndParseStreamID);
-	DDX_Text(pDX, IDC_EDIT_ID_PARSE_PATTERN, m_ParseStreamID);
+	DDX_Control(pDX, IDC_EDIT_PARSE_PATTERN_ID, m_wndParseStreamID);
+	DDX_Text(pDX, IDC_EDIT_PARSE_PATTERN_ID, m_ParseStreamID);
 	DDX_Control(pDX, IDC_EDIT_SHIFT_SUBST, m_wndSubst);
 	DDX_Text(pDX, IDC_EDIT_SHIFT_SUBST, m_Subst);
 	DDX_Control(pDX, IDC_EDIT_DURATION, m_wndDuration);
@@ -97,9 +107,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_STREAM_TYPE, m_wndStreamSubType);
 	DDX_Control(pDX, IDC_COMBO_CATCHUP_TYPE, m_wndCatchupType);
 	DDX_Control(pDX, IDC_COMBO_EPG_TYPE, m_wndEpgType);
-	DDX_Control(pDX, IDC_BUTTON_LOAD_CONFIG, m_wndLoadConf);
-	DDX_Control(pDX, IDC_BUTTON_SAVE_CONFIG, m_wndSaveConf);
-	DDX_Control(pDX, IDC_BUTTON_EPG_SHOW, m_wndTest);
+	DDX_Control(pDX, IDC_BUTTON_EPG_SHOW, m_wndEpgTest);
 	DDX_Control(pDX, IDC_EDIT_SET_ID, m_wndSetID);
 	DDX_Text(pDX, IDC_EDIT_SET_ID, m_SetID);
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
@@ -108,6 +116,9 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_wndPlaylistTemplate);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_PlaylistTemplate);
 	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndSquareIcons);
+	DDX_Control(pDX, IDC_BUTTON_PLAYLIST_SHOW, m_wndPlaylistShow);
+	DDX_Control(pDX, IDC_BUTTON_STREAM_PARSE, m_wndBtnStreamParse);
+	DDX_Control(pDX, IDC_BUTTON_STREAM_ID_PARSE, m_wndBtnStreamParseID);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -151,9 +162,11 @@ BOOL CPluginConfigPage::OnInitDialog()
 		}
 	}
 
+	m_wndToggleEdit.EnableWindow(m_single);
 	m_wndPluginType.SetCurSel(sel_idx);
 	m_wndPluginType.EnableWindow(m_single);
-
+	m_wndLoadConf.EnableWindow(m_single);
+	EnableControls(FALSE);
 	OnCbnSelchangeComboPluginType();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -198,6 +211,8 @@ BOOL CPluginConfigPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 
 void CPluginConfigPage::EnableControls(BOOL enable)
 {
+	UpdateData(TRUE);
+
 	m_wndName.EnableWindow(enable);
 	m_wndTitle.EnableWindow(enable);
 	m_wndShortName.EnableWindow(enable);
@@ -221,8 +236,10 @@ void CPluginConfigPage::EnableControls(BOOL enable)
 	m_wndEpgTimezone.EnableWindow(enable);
 	m_wndAccessType.EnableWindow(enable);
 	m_wndCatchupType.EnableWindow(enable);
-	m_wndSaveConf.EnableWindow(enable);
 	m_wndLoadConf.EnableWindow(enable);
+	m_wndPlaylistShow.EnableWindow(enable);
+	m_wndBtnStreamParse.EnableWindow(enable != FALSE && !m_ParseStream.IsEmpty());
+	m_wndBtnStreamParseID.EnableWindow(enable != FALSE && !m_ParseStreamID.IsEmpty());
 }
 
 void CPluginConfigPage::FillControlsCommon()
@@ -292,14 +309,14 @@ void CPluginConfigPage::FillControlsEpg()
 	m_EpgTimeFormat = epg.epg_time_format.c_str();
 	m_EpgTimezone = epg.epg_timezone;
 
-	m_wndTest.EnableWindow(!m_EpgUrl.IsEmpty());
+	m_wndEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
 
 	UpdateData(FALSE);
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditConfig()
 {
-	allowEdit = ~allowEdit;
+	allowEdit = !allowEdit;
 	EnableControls(allowEdit);
 }
 
@@ -327,10 +344,10 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 {
 	UpdateData(TRUE);
 
-	CString url(m_EpgUrl);
-	url.Replace(uri_stream::REPL_ID, m_SetID);
-	url.Replace(uri_stream::REPL_TOKEN, m_Token);
-	url.Replace(uri_stream::REPL_DATE, m_Date.Format(m_EpgDateFormat));
+	std::wstring url(m_EpgUrl.GetString());
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_EPG_ID, m_SetID.GetString());
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_TOKEN, m_Token.GetString());
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_DATE, m_Date.Format(m_EpgDateFormat).GetString());
 
 	// set to begin of the day
 	CTime nt(m_Date.GetYear(), m_Date.GetMonth(), m_Date.GetDay(), m_Date.GetHour(), m_Date.GetMinute(), m_Date.GetSecond());
@@ -343,9 +360,33 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 	lt.tm_sec = 0;
 	time_t dayTime = std::mktime(&lt);
 
-	url.Replace(uri_stream::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
 
-	ShellExecute(nullptr, _T("open"), url, nullptr, nullptr, SW_SHOWDEFAULT);
+	std::vector<BYTE> data;
+	if (utils::DownloadFile(url, data) && !data.empty())
+	{
+		nlohmann::json parsed_json;
+		JSON_ALL_TRY;
+		parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		JSON_ALL_CATCH;
+
+		const auto& json_str = parsed_json.dump(2);
+
+		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.json";
+
+		std::ofstream out_stream(out_file);
+		out_stream << json_str << std::endl;
+		out_stream.close();
+
+		STARTUPINFO			si;
+		PROCESS_INFORMATION pi;
+		GetStartupInfo(&si);
+		CString csCmd;
+		csCmd.Format(_T("\"notepad.exe\" \"%s\""), out_file.c_str());
+		CreateProcess(nullptr, csCmd.GetBuffer(0), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+	}
 }
 
 void CPluginConfigPage::OnCbnSelchangeComboPluginType()
@@ -356,4 +397,34 @@ void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
 
 	FillControlsCommon();
+}
+
+
+void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
+{
+	ShellExecute(nullptr, _T("open"), L"https://regexr.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+}
+
+void CPluginConfigPage::OnBnClickedButtonStreamParse()
+{
+	if (!m_ParseStream.IsEmpty())
+		ShellExecute(nullptr, _T("open"), L"https://regexr.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+}
+
+void CPluginConfigPage::OnBnClickedButtonStreamIdParse()
+{
+	if (!m_ParseStreamID.IsEmpty())
+		ShellExecute(nullptr, _T("open"), L"https://regexr.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+}
+
+void CPluginConfigPage::OnEnChangeEditParsePattern()
+{
+	UpdateData(TRUE);
+	m_wndBtnStreamParse.EnableWindow(!m_ParseStream.IsEmpty());
+}
+
+void CPluginConfigPage::OnEnChangeEditParsePatternID()
+{
+	UpdateData(TRUE);
+	m_wndBtnStreamParseID.EnableWindow(!m_ParseStreamID.IsEmpty());
 }

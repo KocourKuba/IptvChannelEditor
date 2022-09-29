@@ -60,7 +60,7 @@ void uri_cbilling::load_default()
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
-	params1.epg_url = "http://protected-api.com/epg/{ID}/?date=";
+	params1.epg_url = "http://protected-api.com/epg/{EPG_ID}/?date=";
 	params1.epg_root = "";
 
 	fill_device_list(TemplateParams());
