@@ -678,15 +678,17 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	for (const auto& item : m_all_channels_lists)
 	{
+		int idx = 0;
 		if (item == default_tv_name)
 		{
 			const auto& name = item + load_string_resource(IDS_STRING_STANDARD);
-			m_wndChannels.AddString(name.c_str());
+			idx = m_wndChannels.AddString(name.c_str());
 		}
 		else
 		{
-			m_wndChannels.AddString(item.c_str());
+			idx = m_wndChannels.AddString(item.c_str());
 		}
+		m_wndChannels.SetItemData(idx, (DWORD_PTR)item.c_str());
 	}
 
 	int idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
@@ -3909,8 +3911,12 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
 		idx++;
 	}
 
-	auto& newList = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), pluginName);
-	std::filesystem::create_directory(newList);
+	auto& newListPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), pluginName);
+	std::filesystem::create_directory(newListPath);
+	const auto& curList = newListPath + (LPCWSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel());
+	const auto& newList = newListPath + dlg.m_name.GetString();
+	std::error_code err;
+	std::filesystem::copy_file(curList, newList, err);
 
 	m_channelsMap.clear();
 	m_categoriesMap.clear();
@@ -3921,7 +3927,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
 	GetConfig().set_int(false, REG_CHANNELS_TYPE, idx);
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 
-	OnSave();
+	OnCbnSelchangeComboChannels();
 	FillTreeChannels();
 }
 
