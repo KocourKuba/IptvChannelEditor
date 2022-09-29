@@ -162,10 +162,10 @@ BOOL CPluginConfigPage::OnInitDialog()
 		}
 	}
 
-	m_wndToggleEdit.EnableWindow(m_single);
+	m_wndToggleEdit.EnableWindow(m_single && !m_readonly);
 	m_wndPluginType.SetCurSel(sel_idx);
-	m_wndPluginType.EnableWindow(m_single);
-	m_wndLoadConf.EnableWindow(m_single);
+	m_wndPluginType.EnableWindow(m_single && !m_readonly);
+	m_wndLoadConf.EnableWindow(m_single && !m_readonly);
 	EnableControls(FALSE);
 	OnCbnSelchangeComboPluginType();
 
@@ -212,6 +212,8 @@ BOOL CPluginConfigPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 void CPluginConfigPage::EnableControls(BOOL enable)
 {
 	UpdateData(TRUE);
+	if (m_readonly)
+		enable = FALSE;
 
 	m_wndName.EnableWindow(enable);
 	m_wndTitle.EnableWindow(enable);

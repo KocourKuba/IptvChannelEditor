@@ -74,6 +74,7 @@ private:
 public:
 	PluginType m_plugin_type = PluginType::enCustom;
 	BOOL m_single = FALSE;
+	BOOL m_readonly = TRUE;
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;

@@ -3021,14 +3021,15 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 
 	pSheet->AddPage(&dlgInfo);
 
-#ifdef _DEBUG
 	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgCfg.m_plugin_type = m_plugin_type;
+	dlgCfg.m_plugin_type = m_plugin_type;;
 	dlgCfg.m_single = TRUE;
+#ifdef _DEBUG
+	dlgCfg.m_readonly = FALSE;
+#endif // _DEBUG
 
 	pSheet->AddPage(&dlgCfg);
-#endif // _DEBUG
 
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
