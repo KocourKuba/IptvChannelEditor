@@ -2875,7 +2875,7 @@ void CIPTVChannelEditorDlg::OnDeltaposSpinArchiveCheckHour(NMHDR* pNMHDR, LRESUL
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 {
-	auto info = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
+	auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 	if (info)
 	{
 		CEpgListDlg dlg;
