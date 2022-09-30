@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
+#include "AccessInfoPage.h"
 
 class CPluginConfigPage : public CMFCPropertyPage
 {
@@ -75,6 +76,8 @@ public:
 	PluginType m_plugin_type = PluginType::enCustom;
 	BOOL m_single = FALSE;
 	BOOL m_readonly = TRUE;
+	CString m_SetID;
+	CAccessInfoPage* m_pAccessPage = nullptr;
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;
@@ -135,7 +138,6 @@ protected:
 	CString m_EpgEnd;
 	CString m_EpgDateFormat;
 	CString m_EpgTimeFormat;
-	CString m_SetID;
 	CString m_Token;
 
 	COleDateTime m_Date;

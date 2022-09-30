@@ -40,6 +40,8 @@ public:
 	CAccessInfoPage();   // standard constructor
 	virtual ~CAccessInfoPage() = default;
 
+	Credentials& GetCheckedAccount();
+
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_ACCESS_INFO };
@@ -84,7 +86,6 @@ protected:
 	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
 
 private:
-	Credentials& GetCheckedAccount();
 	int GetCheckedAccountIdx();
 	void GetAccountInfo();
 	void CreateAccountsList();

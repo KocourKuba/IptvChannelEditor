@@ -162,11 +162,18 @@ BOOL CPluginConfigPage::OnInitDialog()
 		}
 	}
 
-	m_wndToggleEdit.EnableWindow(m_single && !m_readonly);
+	m_wndToggleEdit.EnableWindow(!m_single && !m_readonly);
 	m_wndPluginType.SetCurSel(sel_idx);
-	m_wndPluginType.EnableWindow(m_single && !m_readonly);
-	m_wndLoadConf.EnableWindow(m_single && !m_readonly);
-	EnableControls(FALSE);
+	m_wndPluginType.EnableWindow(m_single);
+	m_wndLoadConf.EnableWindow(!m_single && !m_readonly);
+
+	if (m_pAccessPage)
+	{
+		m_Token = m_pAccessPage->GetCheckedAccount().get_token().c_str();
+	}
+
+	UpdateData(FALSE);
+
 	OnCbnSelchangeComboPluginType();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -220,14 +227,14 @@ void CPluginConfigPage::EnableControls(BOOL enable)
 	m_wndShortName.EnableWindow(enable);
 	m_wndProviderUrl.EnableWindow(enable);
 	m_wndSquareIcons.EnableWindow(enable);
-	m_wndPlaylistTemplate.EnableWindow(enable);
-	m_wndParseStream.EnableWindow(enable);
-	m_wndParseStreamID.EnableWindow(enable);
+	m_wndPlaylistTemplate.SetReadOnly(!enable);
+	m_wndParseStream.SetReadOnly(!enable);
+	m_wndParseStreamID.SetReadOnly(!enable);
 	m_wndSubst.EnableWindow(enable);
 	m_wndDuration.EnableWindow(enable);
 	m_wndStreamTemplate.EnableWindow(enable);
 	m_wndStreamArchiveTemplate.EnableWindow(enable);
-	m_wndEpgUrl.EnableWindow(enable);
+	m_wndEpgUrl.SetReadOnly(!enable);
 	m_wndEpgRoot.EnableWindow(enable);
 	m_wndEpgName.EnableWindow(enable);
 	m_wndEpgDesc.EnableWindow(enable);
@@ -239,9 +246,9 @@ void CPluginConfigPage::EnableControls(BOOL enable)
 	m_wndAccessType.EnableWindow(enable);
 	m_wndCatchupType.EnableWindow(enable);
 	m_wndLoadConf.EnableWindow(enable);
-	m_wndPlaylistShow.EnableWindow(enable);
-	m_wndBtnStreamParse.EnableWindow(enable != FALSE && !m_ParseStream.IsEmpty());
-	m_wndBtnStreamParseID.EnableWindow(enable != FALSE && !m_ParseStreamID.IsEmpty());
+	m_wndPlaylistShow.EnableWindow(!m_single && m_pAccessPage != nullptr);
+	m_wndBtnStreamParse.EnableWindow(!m_single && !m_ParseStream.IsEmpty());
+	m_wndBtnStreamParseID.EnableWindow(!m_single && !m_ParseStreamID.IsEmpty());
 }
 
 void CPluginConfigPage::FillControlsCommon()
@@ -394,17 +401,44 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 {
 	allowEdit = FALSE;
-	EnableControls(allowEdit);
-
 	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
-
 	FillControlsCommon();
+	EnableControls(allowEdit);
 }
 
 
 void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 {
-	ShellExecute(nullptr, _T("open"), L"https://regexr.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+	const auto& selected = m_pAccessPage->GetCheckedAccount();
+	TemplateParams params;
+	params.token = selected.get_token();
+	params.login = selected.get_login();
+	params.password = selected.get_password();
+	params.subdomain = selected.get_subdomain();
+	params.server_idx = selected.server_id;
+	params.device_idx = selected.device_id;
+	params.profile_idx = selected.profile_id;
+	params.quality_idx = selected.quality_id;
+
+	const auto& url = m_plugin->get_playlist_url(params);
+	std::vector<BYTE> data;
+	if (utils::DownloadFile(url, data) && !data.empty())
+	{
+		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
+
+		std::ofstream out_stream(out_file);
+		out_stream.write((const char*)data.data(), data.size());
+		out_stream.close();
+
+		STARTUPINFO			si;
+		PROCESS_INFORMATION pi;
+		GetStartupInfo(&si);
+		CString csCmd;
+		csCmd.Format(_T("\"notepad.exe\" \"%s\""), out_file.c_str());
+		CreateProcess(nullptr, csCmd.GetBuffer(0), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonStreamParse()

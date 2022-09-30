@@ -3010,6 +3010,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 
 bool CIPTVChannelEditorDlg::SetupAccount()
 {
+
 	auto pSheet = std::make_unique<CResizedPropertySheet>(IDS_STRING_ACCOUNT_SETTINGS, REG_ACC_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
@@ -3024,7 +3025,13 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgCfg.m_plugin_type = m_plugin_type;;
-	dlgCfg.m_single = TRUE;
+	dlgCfg.m_single = FALSE;
+	dlgCfg.m_pAccessPage = &dlgInfo;
+
+	const auto info = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
+	if (info)
+		dlgCfg.m_SetID = info->get_epg_id(GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1).c_str();
+
 #ifdef _DEBUG
 	dlgCfg.m_readonly = FALSE;
 #endif // _DEBUG
@@ -5019,7 +5026,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgCfg.m_plugin_type = m_plugin_type;
-	dlgCfg.m_single = FALSE;
+	dlgCfg.m_single = TRUE;
 
 	pSheet->AddPage(&dlgCfg);
 	pSheet->DoModal();

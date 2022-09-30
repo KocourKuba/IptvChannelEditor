@@ -207,6 +207,10 @@ BOOL CAccessInfoPage::OnInitDialog()
 										   bg_filter.GetString(),
 										   OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
 
+	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
+	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
+	header->ModifyStyle(0, HDS_CHECKBOXES);
+
 	nlohmann::json creds;
 	JSON_ALL_TRY;
 	{
@@ -389,9 +393,9 @@ void CAccessInfoPage::UpdateOptionalControls()
 
 void CAccessInfoPage::CreateAccountsList()
 {
-	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
-	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
-	header->ModifyStyle(0, HDS_CHECKBOXES);
+	m_wndAccounts.DeleteAllItems();
+	for (int i = 0; i < m_wndAccounts.GetHeaderCtrl()->GetItemCount(); i++)
+		m_wndAccounts.DeleteColumn(i);
 
 	CRect rect;
 	m_wndAccounts.GetClientRect(&rect);
