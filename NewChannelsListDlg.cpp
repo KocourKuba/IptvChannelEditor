@@ -47,6 +47,7 @@ void CNewChannelsListDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_EDIT_NAME, m_name);
+	DDX_Check(pDX, IDC_CHECK_MAKE_COPY, m_MakeCopy);
 }
 
 void CNewChannelsListDlg::OnOK()

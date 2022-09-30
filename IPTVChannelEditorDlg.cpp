@@ -3914,10 +3914,13 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
 
 	auto& newListPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), pluginName);
 	std::filesystem::create_directory(newListPath);
-	const auto& curList = newListPath + (LPCWSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel());
-	const auto& newList = newListPath + dlg.m_name.GetString();
-	std::error_code err;
-	std::filesystem::copy_file(curList, newList, err);
+	if (dlg.m_MakeCopy)
+	{
+		const auto& newList = newListPath + dlg.m_name.GetString();
+		const auto& curList = newListPath + (LPCWSTR)m_wndChannels.GetItemData(m_wndChannels.GetCurSel());
+		std::error_code err;
+		std::filesystem::copy_file(curList, newList, err);
+	}
 
 	m_channelsMap.clear();
 	m_categoriesMap.clear();

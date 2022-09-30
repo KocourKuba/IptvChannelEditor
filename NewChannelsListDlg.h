@@ -49,4 +49,5 @@ protected:
 
 public:
 	CString m_name;
+	BOOL m_MakeCopy = FALSE;
 };
