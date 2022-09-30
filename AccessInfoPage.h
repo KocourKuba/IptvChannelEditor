@@ -101,6 +101,8 @@ public:
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
 	std::vector<std::wstring> m_all_channels_lists;
+	std::shared_ptr<uri_stream> m_plugin;
+	PluginType m_plugin_type = PluginType::enBase;
 
 protected:
 	CButton m_wndRemove;
@@ -140,13 +142,11 @@ private:
 	CString m_versionIdx;
 	CString m_channelsWebPath;
 
-	std::unique_ptr<uri_stream> m_plugin;
 	std::vector<DynamicParamsInfo> m_servers;
 	std::vector<DynamicParamsInfo> m_devices;
 	std::vector<DynamicParamsInfo> m_profiles;
 	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
-	PluginType m_plugin_type = PluginType::enBase;
 
 	std::map<UINT, std::wstring> m_tooltips_info_account;
 };

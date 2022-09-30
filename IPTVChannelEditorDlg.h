@@ -353,7 +353,7 @@ private:
 	Credentials m_cur_account;
 
 	PluginType m_plugin_type = PluginType::enBase;
-	std::unique_ptr<uri_stream> m_plugin;
+	std::shared_ptr<uri_stream> m_plugin;
 
 	HACCEL m_hAccel = nullptr;
 	CTreeCtrlEx* m_lastTree = nullptr;

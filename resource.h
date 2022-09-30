@@ -164,6 +164,7 @@
 #define IDS_STRING_EDIT_ICON            272
 #define IDS_STRING_EDIT_BACKGROUND      273
 #define IDS_STRING_EDIT_SUFFIX          274
+#define IDD_DIALOG_FILL_PARAMS          274
 #define IDS_STRING_ERR_DLL_MISSING      275
 #define IDS_STRING_ERR_FILE_MISSING     277
 #define IDS_STRING_ERR_SETTINGS_MISSING 278
@@ -355,6 +356,7 @@
 #define IDC_LIST_ACCOUNTS               1132
 #define IDC_BUTTON_ADD                  1133
 #define IDC_BUTTON_REMOVE               1134
+#define IDC_BUTTON_ADD2                 1134
 #define IDC_BUTTON_NEW_FROM_URL         1135
 #define IDC_EDIT_PLAYLIST_URL           1136
 #define IDC_MFCLINK_DONATE_YOOMONEY     1137
@@ -427,6 +429,14 @@
 #define IDC_BUTTON_STREAM_PARSE         1203
 #define IDC_BUTTON_STREAM_ID_PARSE      1204
 #define IDC_CHECK_MAKE_COPY             1205
+#define IDC_BUTTON_EDIT_SERVERS         1206
+#define IDC_BUTTON_EDIT_DEVICES         1207
+#define IDC_BUTTON_EDIT_QUALITY         1208
+#define IDC_BUTTON_EDIT_PROFILES        1209
+#define IDC_CHECK_STATIC_SERVERS        1210
+#define IDC_CHECK_STATIC_DEVICES        1211
+#define IDC_CHECK_STATIC_QUALITIES      1212
+#define IDC_CHECK_STATIC_PROFILES       1213
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -458,9 +468,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        274
+#define _APS_NEXT_RESOURCE_VALUE        276
 #define _APS_NEXT_COMMAND_VALUE         32804
-#define _APS_NEXT_CONTROL_VALUE         1206
+#define _APS_NEXT_CONTROL_VALUE         1212
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

@@ -242,6 +242,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="Config.h" />
     <ClInclude Include="EditableListCtrl.h" />
     <ClInclude Include="EpgListDlg.h" />
+    <ClInclude Include="FillParamsInfo.h" />
     <ClInclude Include="GetStreamInfoThread.h" />
     <ClInclude Include="HistoryCombo.h" />
     <ClInclude Include="IconCache.h" />
@@ -315,6 +316,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="EditableListCtrl.cpp" />
     <ClCompile Include="EpgListDlg.cpp" />
+    <ClCompile Include="FillParamsInfo.cpp" />
     <ClCompile Include="GetStreamInfoThread.cpp" />
     <ClCompile Include="HistoryCombo.cpp" />
     <ClCompile Include="IconCache.cpp" />

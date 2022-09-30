@@ -56,6 +56,10 @@ protected:
 	afx_msg void OnBnClickedButtonPlaylistShow();
 	afx_msg void OnBnClickedButtonStreamParse();
 	afx_msg void OnBnClickedButtonStreamIdParse();
+	afx_msg void OnBnClickedButtonEditServers();
+	afx_msg void OnBnClickedButtonEditDevices();
+	afx_msg void OnBnClickedButtonEditQuality();
+	afx_msg void OnBnClickedButtonEditProfiles();
 
 	afx_msg void OnCbnSelchangeComboStreamSubType();
 	afx_msg void OnCbnSelchangeComboEpgType();
@@ -67,17 +71,18 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
-	void EnableControls(BOOL enable);
+	void EnableControls(bool enable);
 	void FillControlsCommon();
 	void FillControlsStream();
 	void FillControlsEpg();
 
 public:
 	PluginType m_plugin_type = PluginType::enCustom;
-	BOOL m_single = FALSE;
-	BOOL m_readonly = TRUE;
+	bool m_single = false;
+	bool m_readonly = true;
 	CString m_SetID;
 	CAccessInfoPage* m_pAccessPage = nullptr;
+	std::shared_ptr<uri_stream> m_plugin;
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;
@@ -111,8 +116,16 @@ protected:
 	CComboBox m_wndEpgType;
 	CComboBox m_wndPluginType;
 
+	CButton m_wndChkStaticServers;
+	CButton m_wndBtnServers;
+	CButton m_wndChkStaticDevices;
+	CButton m_wndBtnDevices;
+	CButton m_wndChkStaticQualities;
+	CButton m_wndBtnQualities;
+	CButton m_wndChkStaticProfiles;
+	CButton m_wndBtnProfiles;
 	CButton m_wndToggleEdit;
-	CButton m_wndLoadConf;
+	CButton m_wndBtnLoadConf;
 	CButton m_wndSaveConf;
 	CButton m_wndSquareIcons;
 	CButton m_wndEpgTest;
@@ -146,7 +159,6 @@ protected:
 	int m_EpgTimezone = 0;
 
 private:
-	std::unique_ptr<uri_stream> m_plugin;
 	std::map<UINT, std::wstring> m_tooltips_info_account;
-	BOOL allowEdit = FALSE;
+	bool allowEdit = false;
 };

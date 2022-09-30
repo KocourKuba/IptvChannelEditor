@@ -268,7 +268,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		auto plugin_type = GetConfig().get_plugin_type();
 		if (!PackPlugin(plugin_type, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 		{
-			const auto& plugin = StreamContainer::get_instance(plugin_type);
+			auto plugin = StreamContainer::get_instance(plugin_type);
 			if (plugin)
 			{
 				CString str;
@@ -292,7 +292,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		{
 			if (!PackPlugin(item, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 			{
-				const auto& plugin = StreamContainer::get_instance(item);
+				auto plugin = StreamContainer::get_instance(item);
 				if (plugin)
 				{
 					CString str;
@@ -481,7 +481,7 @@ void ConvertAccounts()
 
 		if (need_convert)
 		{
-			const auto& plugin = StreamContainer::get_instance(item);
+			auto plugin = StreamContainer::get_instance(item);
 			if (plugin)
 			{
 				const auto& access_type = plugin->get_access_type();
@@ -1319,7 +1319,7 @@ uintmax_t calc_folder_size(const std::wstring& path)
 std::wstring GetPluginShortNameW(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::wstring plugin_name;
-	const auto& plugin = StreamContainer::get_instance(plugin_type);
+	auto plugin = StreamContainer::get_instance(plugin_type);
 	if (plugin != nullptr)
 	{
 		const auto& short_name = plugin->get_short_name();
@@ -1337,7 +1337,7 @@ std::wstring GetPluginShortNameW(const PluginType plugin_type, bool bCamel /*= f
 std::string GetPluginShortNameA(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::string plugin_name;
-	const auto& plugin = StreamContainer::get_instance(plugin_type);
+	auto plugin = StreamContainer::get_instance(plugin_type);
 	if (plugin != nullptr)
 	{
 		// convert to wstring or string

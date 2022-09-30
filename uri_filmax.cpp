@@ -62,6 +62,7 @@ void uri_filmax::load_default()
 
 	epg_params[0].epg_url = "http://epg.esalecrm.net/filmax/epg/{EPG_ID}.json";
 
+	static_servers = true;
 	fill_servers_list(TemplateParams());
 }
 

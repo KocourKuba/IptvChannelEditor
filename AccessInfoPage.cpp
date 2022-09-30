@@ -179,9 +179,6 @@ BOOL CAccessInfoPage::OnInitDialog()
 		{ IDC_EDIT_PLUGIN_PACKAGE_NAME, load_string_resource(IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME) },
 	};
 
-	m_plugin_type = GetConfig().get_plugin_type();
-	m_plugin = StreamContainer::get_instance(m_plugin_type);
-
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(300);
@@ -316,8 +313,8 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndServers.SetCurSel(params.server_idx);
 	}
 
-	m_plugin->fill_device_list(params);
-	m_devices = m_plugin->get_device_list();
+	m_plugin->fill_devices_list(params);
+	m_devices = m_plugin->get_devices_list();
 	m_wndDevices.EnableWindow(!m_devices.empty());
 	m_wndDevices.ResetContent();
 	if (!m_devices.empty())
@@ -335,8 +332,8 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndDevices.SetCurSel(params.device_idx);
 	}
 
-	m_plugin->fill_quality_list(params);
-	m_qualities = m_plugin->get_quality_list();
+	m_plugin->fill_qualities_list(params);
+	m_qualities = m_plugin->get_qualities_list();
 	m_wndQualities.EnableWindow(!m_qualities.empty());
 	m_wndQualities.ResetContent();
 	if (!m_qualities.empty())

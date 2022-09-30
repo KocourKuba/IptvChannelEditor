@@ -62,6 +62,7 @@ void uri_shuratv::load_default()
 	params1.epg_start = "start";
 	params1.epg_end = "stop";
 
+	static_servers = true;
 	fill_servers_list(TemplateParams());
 }
 

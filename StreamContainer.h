@@ -38,7 +38,7 @@ public:
 	StreamContainer(PluginType type);
 	~StreamContainer() = default;
 
-	static std::unique_ptr<uri_stream> get_instance(PluginType type);
+	static std::shared_ptr<uri_stream> get_instance(PluginType type);
 
 	void set_type(PluginType type);
 
@@ -53,6 +53,6 @@ public:
 		return *this;
 	}
 
-	std::unique_ptr<uri_stream> stream_uri;
+	std::shared_ptr<uri_stream> stream_uri;
 	PluginType stream_type;
 };

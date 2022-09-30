@@ -64,112 +64,112 @@ StreamContainer::StreamContainer(PluginType type) : stream_type(type)
 	stream_uri = get_instance(type);
 }
 
-std::unique_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
+std::shared_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
 {
-	std::unique_ptr<uri_stream> plugin;
+	std::shared_ptr<uri_stream> plugin;
 	switch (type)
 	{
 		case PluginType::enBase: // ChannelsCategory
-			return std::make_unique<uri_stream>();
+			return std::make_shared<uri_stream>();
 
 		case PluginType::enAntifriz:
-			plugin = std::make_unique<uri_antifriz>();
+			plugin = std::make_shared<uri_antifriz>();
 			break;
 
 		case PluginType::enEdem:
-			plugin = std::make_unique<uri_edem>();
+			plugin = std::make_shared<uri_edem>();
 			break;
 
 		case PluginType::enFox:
-			plugin = std::make_unique<uri_fox>();
+			plugin = std::make_shared<uri_fox>();
 			break;
 
 		case PluginType::enGlanz:
-			plugin = std::make_unique<uri_glanz>();
+			plugin = std::make_shared<uri_glanz>();
 			break;
 
 		case PluginType::enItv:
-			plugin = std::make_unique<uri_itv>();
+			plugin = std::make_shared<uri_itv>();
 			break;
 
 		case PluginType::enOneCent:
-			plugin = std::make_unique<uri_onecent>();
+			plugin = std::make_shared<uri_onecent>();
 			break;
 
 		case PluginType::enOneUsd:
-			plugin = std::make_unique<uri_oneusd>();
+			plugin = std::make_shared<uri_oneusd>();
 			break;
 
 		case PluginType::enSharaclub:
-			plugin = std::make_unique<uri_sharaclub>();
+			plugin = std::make_shared<uri_sharaclub>();
 			break;
 
 		case PluginType::enSharavoz:
-			plugin = std::make_unique<uri_sharavoz>();
+			plugin = std::make_shared<uri_sharavoz>();
 			break;
 
 		case PluginType::enVipLime:
-			plugin = std::make_unique<uri_viplime>();
+			plugin = std::make_shared<uri_viplime>();
 			break;
 
 		case PluginType::enSharaTV:
-			plugin = std::make_unique<uri_sharatv>();
+			plugin = std::make_shared<uri_sharatv>();
 			break;
 
 		case PluginType::enTvTeam:
-			plugin = std::make_unique<uri_tvteam>();
+			plugin = std::make_shared<uri_tvteam>();
 			break;
 
 		case PluginType::enOneOtt:
-			plugin = std::make_unique<uri_oneott>();
+			plugin = std::make_shared<uri_oneott>();
 			break;
 
 		case PluginType::enLightIptv:
-			plugin = std::make_unique<uri_lightiptv>();
+			plugin = std::make_shared<uri_lightiptv>();
 			break;
 
 		case PluginType::enCbilling:
-			plugin = std::make_unique<uri_cbilling>();
+			plugin = std::make_shared<uri_cbilling>();
 			break;
 
 		case PluginType::enOttclub:
-			plugin = std::make_unique<uri_ottclub>();
+			plugin = std::make_shared<uri_ottclub>();
 			break;
 
 		case PluginType::enIptvOnline:
-			plugin = std::make_unique<uri_iptvonline>();
+			plugin = std::make_shared<uri_iptvonline>();
 			break;
 
 		case PluginType::enVidok:
-			plugin = std::make_unique<uri_vidok>();
+			plugin = std::make_shared<uri_vidok>();
 			break;
 
 		case PluginType::enShuraTV:
-			plugin = std::make_unique<uri_shuratv>();
+			plugin = std::make_shared<uri_shuratv>();
 			break;
 
 		case PluginType::enTVClub:
-			plugin = std::make_unique<uri_tvclub>();
+			plugin = std::make_shared<uri_tvclub>();
 			break;
 
 		case PluginType::enFilmax:
-			plugin = std::make_unique<uri_filmax>();
+			plugin = std::make_shared<uri_filmax>();
 			break;
 
 		case PluginType::enKineskop:
-			plugin = std::make_unique<uri_kineskop>();
+			plugin = std::make_shared<uri_kineskop>();
 			break;
 
 		case PluginType::enMymagic:
-			plugin = std::make_unique<uri_mymagic>();
+			plugin = std::make_shared<uri_mymagic>();
 			break;
 
 		case PluginType::enRusskoeTV:
-			plugin = std::make_unique<uri_russkoetv>();
+			plugin = std::make_shared<uri_russkoetv>();
 			break;
 
 		case PluginType::enSmile:
-			plugin = std::make_unique<uri_smile>();
+			plugin = std::make_shared<uri_smile>();
 			break;
 
 		default:
@@ -178,7 +178,6 @@ std::unique_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
 
 	if (plugin)
 	{
-		//plugin->load_plugin_parameters();
 		plugin->load_default();
 	}
 
@@ -190,7 +189,7 @@ void StreamContainer::set_type(PluginType type)
 	if (stream_type != type)
 	{
 		auto newStream = get_instance(type);
-		newStream->copy(stream_uri);
+		newStream->copy(stream_uri.get());
 		stream_uri = std::move(newStream);
 		stream_type = type;
 	}

@@ -36,6 +36,6 @@ public:
 	uri_cbilling();
 
 	void load_default() override;
-	void fill_device_list(TemplateParams& /*params*/) override;
+	void fill_devices_list(TemplateParams& /*params*/) override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 };

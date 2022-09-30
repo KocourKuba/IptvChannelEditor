@@ -34,6 +34,6 @@ public:
 	uri_mymagic();
 
 	void fill_servers_list(TemplateParams& /*params*/) override;
-	void fill_quality_list(TemplateParams& /*params*/) override;
+	void fill_qualities_list(TemplateParams& /*params*/) override;
 	void load_default() override;
 };

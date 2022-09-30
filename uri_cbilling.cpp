@@ -63,12 +63,13 @@ void uri_cbilling::load_default()
 	params1.epg_url = "http://protected-api.com/epg/{EPG_ID}/?date=";
 	params1.epg_root = "";
 
-	fill_device_list(TemplateParams());
+	static_devices = true;
+	fill_devices_list(TemplateParams());
 }
 
-void uri_cbilling::fill_device_list(TemplateParams& /*params*/)
+void uri_cbilling::fill_devices_list(TemplateParams& /*params*/)
 {
-	if (!get_device_list().empty())
+	if (!get_devices_list().empty())
 		return;
 
 	std::vector<DynamicParamsInfo> devices;
@@ -80,7 +81,7 @@ void uri_cbilling::fill_device_list(TemplateParams& /*params*/)
 		devices.emplace_back(info);
 	}
 
-	set_device_list(devices);
+	set_devices_list(devices);
 }
 
 bool uri_cbilling::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

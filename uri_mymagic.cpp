@@ -60,8 +60,10 @@ void uri_mymagic::load_default()
 	epg_params[0].epg_url = "http://epg.drm-play.ml/magic/epg/{EPG_ID}.json";
 	epg_params[1].epg_url = "http://epg.esalecrm.net/magic/epg/{EPG_ID}.json";
 
+	static_servers = true;
+	static_qualities = true;
 	fill_servers_list(TemplateParams());
-	fill_quality_list(TemplateParams());
+	fill_qualities_list(TemplateParams());
 }
 
 void uri_mymagic::fill_servers_list(TemplateParams& /*params*/)
@@ -81,9 +83,9 @@ void uri_mymagic::fill_servers_list(TemplateParams& /*params*/)
 	set_servers_list(servers);
 }
 
-void uri_mymagic::fill_quality_list(TemplateParams& /*params*/)
+void uri_mymagic::fill_qualities_list(TemplateParams& /*params*/)
 {
-	if (!get_quality_list().empty())
+	if (!get_qualities_list().empty())
 		return;
 
 	std::vector<DynamicParamsInfo> quality;
@@ -92,7 +94,8 @@ void uri_mymagic::fill_quality_list(TemplateParams& /*params*/)
 		DynamicParamsInfo info;
 		info.set_id(std::to_wstring(i));
 		info.set_name(load_string_resource(1049, IDS_STRING_MYMAGIC_Q1 + i));
+		quality.emplace_back(info);
 	}
 
-	set_quality_list(quality);
+	set_qualities_list(quality);
 }

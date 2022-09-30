@@ -154,14 +154,14 @@ std::wstring uri_stream::get_playlist_url(TemplateParams& params, std::wstring u
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].get_id());
 	}
 
-	fill_device_list(params);
+	fill_devices_list(params);
 	if (!devices_list.empty())
 	{
 		int device = (params.device_idx >= (int)devices_list.size()) ? devices_list.size() - 1 : params.device_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[device].get_id());
 	}
 
-	fill_quality_list(params);
+	fill_qualities_list(params);
 	if (!qualities_list.empty())
 	{
 		int quality = (params.quality_idx >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.quality_idx;

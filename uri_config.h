@@ -270,6 +270,30 @@ public:
 	nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const;
 
 	/// <summary>
+	/// is servers list static, not loaded from provider settings
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_static_servers() const { return static_servers; }
+
+	/// <summary>
+	/// is devices list static, not loaded from provider settings
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_static_devices() const { return static_devices; }
+
+	/// <summary>
+	/// is qualities list static, not loaded from provider settings
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_static_qualities() const { return static_qualities; }
+
+	/// <summary>
+	/// is profiles list static, not loaded from provider settings
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_static_profiles() const { return static_profiles; }
+
+	/// <summary>
 	/// returns list of servers
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
@@ -301,42 +325,42 @@ public:
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_device_list(TemplateParams& /*params*/) {}
+	virtual void fill_devices_list(TemplateParams& /*params*/) {}
 
 	/// <summary>
 	/// returns list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<ServersInfo></returns>
-	virtual const std::vector<DynamicParamsInfo>& get_device_list() { return devices_list; }
+	virtual const std::vector<DynamicParamsInfo>& get_devices_list() { return devices_list; }
 
 	/// <summary>
 	/// set list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
-	virtual void set_device_list(const std::vector<DynamicParamsInfo>& info) { devices_list = info; }
+	virtual void set_devices_list(const std::vector<DynamicParamsInfo>& info) { devices_list = info; }
 
 	/// <summary>
 	/// returns list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_quality_list(TemplateParams& /*params*/) {}
+	virtual void fill_qualities_list(TemplateParams& /*params*/) {}
 
 	/// <summary>
 	/// returns list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<ServersInfo></returns>
-	virtual const std::vector<DynamicParamsInfo>& get_quality_list() { return qualities_list; }
+	virtual const std::vector<DynamicParamsInfo>& get_qualities_list() { return qualities_list; }
 
 	/// <summary>
 	/// set list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
-	virtual void set_quality_list(const std::vector<DynamicParamsInfo>& info) { qualities_list = info; }
+	virtual void set_qualities_list(const std::vector<DynamicParamsInfo>& info) { qualities_list = info; }
 
 	/// <summary>
 	/// set quality
@@ -398,11 +422,14 @@ protected:
 	bool requested_token = false;
 	// flag for php plugin if uri does not contains parsed 'id' for channel
 	bool use_token_as_id = false;
+	bool static_servers = false;
+	bool static_qualities = false;
+	bool static_devices = false;
+	bool static_profiles = false;
 	// setting for parsing uri streams
 	std::array<StreamParameters, 2> streams_config;
 	// setting for parsing json EPG
 	std::array<EpgParameters, 2> epg_params;
-
 	std::vector<DynamicParamsInfo> servers_list;
 	std::vector<DynamicParamsInfo> qualities_list;
 	std::vector<DynamicParamsInfo> devices_list;

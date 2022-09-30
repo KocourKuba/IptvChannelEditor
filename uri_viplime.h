@@ -33,6 +33,6 @@ public:
 
 	uri_viplime();
 
-	void fill_quality_list(TemplateParams& /*params*/) override;
+	void fill_qualities_list(TemplateParams& /*params*/) override;
 	void load_default() override;
 };

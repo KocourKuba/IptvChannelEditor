@@ -181,7 +181,7 @@ public:
 	/// <summary>
 	/// copy info
 	/// </summary>
-	void copy(const std::unique_ptr<uri_stream>& src)
+	void copy(const uri_stream* src)
 	{
 		*this = *src;
 	}
@@ -190,7 +190,7 @@ public:
 	/// compare uri streams
 	/// </summary>
 	/// <returns>bool</returns>
-	bool compare(const std::unique_ptr<uri_stream>& src)
+	bool compare(const uri_stream* src)
 	{
 		return *this == *src;
 	}
@@ -326,6 +326,7 @@ protected:
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, short_name, title, name, provider_url,
 								   playlist_template, uri_id_parse_pattern, uri_parse_pattern,
 								   square_icons, requested_token, use_token_as_id,
+								   static_servers, static_qualities, static_devices, static_profiles,
 								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
 
 	void replace_vars(std::wstring& url, const TemplateParams& params) const;

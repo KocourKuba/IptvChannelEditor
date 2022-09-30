@@ -39,9 +39,33 @@ uri_viplime::uri_viplime()
 	short_name = "viplime";
 }
 
-void uri_viplime::fill_quality_list(TemplateParams& /*params*/)
+void uri_viplime::load_default()
 {
-	if (!get_quality_list().empty())
+	title = "VipLime TV";
+	name = "viplime.fun.tv";
+	access_type = AccountAccessType::enPin;
+
+	provider_url = "http://viplime.fun/";
+	playlist_template = "http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
+	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
+
+	streams_config[0].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+	streams_config[1].cu_type = CatchupType::cu_shift;
+	streams_config[1].cu_subst = "utc";
+	streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
+	streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+	epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{EPG_ID}.json";
+
+	static_qualities = true;
+	fill_qualities_list(TemplateParams());
+}
+
+void uri_viplime::fill_qualities_list(TemplateParams& /*params*/)
+{
+	if (!get_qualities_list().empty())
 		return;
 
 	struct Info
@@ -68,26 +92,5 @@ void uri_viplime::fill_quality_list(TemplateParams& /*params*/)
 		quality.emplace_back(info);
 	}
 
-	set_quality_list(quality);
-}
-
-void uri_viplime::load_default()
-{
-	title = "VipLime TV";
-	name = "viplime.fun.tv";
-	access_type = AccountAccessType::enPin;
-
-	provider_url = "http://viplime.fun/";
-	playlist_template = "http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
-	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
-
-	streams_config[0].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-	streams_config[1].cu_type = CatchupType::cu_shift;
-	streams_config[1].cu_subst = "utc";
-	streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
-	streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-
-	epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{EPG_ID}.json";
+	set_qualities_list(quality);
 }

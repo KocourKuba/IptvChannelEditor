@@ -466,7 +466,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	// Fill available plugins
 	for (const auto& item : GetConfig().get_all_plugins())
 	{
-		const auto& plugin = StreamContainer::get_instance(item);
+		auto plugin = StreamContainer::get_instance(item);
 		if (!plugin) continue;
 
 		std::wstring title(plugin->get_title());
@@ -3019,13 +3019,16 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgInfo.m_initial_cred = m_cur_account;
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
+	dlgInfo.m_plugin_type = m_plugin_type;
+	dlgInfo.m_plugin = m_plugin;
 
 	pSheet->AddPage(&dlgInfo);
 
 	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgCfg.m_plugin_type = m_plugin_type;;
-	dlgCfg.m_single = FALSE;
+	dlgCfg.m_plugin_type = m_plugin_type;
+	dlgCfg.m_plugin = m_plugin;
+	dlgCfg.m_single = false;
 	dlgCfg.m_pAccessPage = &dlgInfo;
 
 	const auto info = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
@@ -3033,7 +3036,7 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 		dlgCfg.m_SetID = info->get_epg_id(GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1).c_str();
 
 #ifdef _DEBUG
-	dlgCfg.m_readonly = FALSE;
+	dlgCfg.m_readonly = false;
 #endif // _DEBUG
 
 	pSheet->AddPage(&dlgCfg);
@@ -3539,7 +3542,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 
 	for (const auto& item : GetConfig().get_all_plugins())
 	{
-		const auto& plugin = StreamContainer::get_instance(item);
+		auto plugin = StreamContainer::get_instance(item);
 		if (!plugin) continue;
 
 		m_wndProgressInfo.SetWindowText(plugin->get_title().c_str());
@@ -4604,7 +4607,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		// Create new channel
 		add = true;
 		auto newChannel = std::make_shared<ChannelInfo>(root_path);
-		newChannel->stream_uri->copy(entry->stream_uri);
+		newChannel->stream_uri->copy(entry->stream_uri.get());
 		// Add to channel array
 		pair = m_channelsMap.emplace(newChannel->stream_uri->get_parser().id, newChannel).first;
 
@@ -4708,9 +4711,9 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		needCheckExisting = true;
 	}
 
-	if (!channel->stream_uri->compare(entry->stream_uri))
+	if (!channel->stream_uri->compare(entry->stream_uri.get()))
 	{
-		channel->stream_uri->copy(entry->stream_uri);
+		channel->stream_uri->copy(entry->stream_uri.get());
 		needCheckExisting = true;
 	}
 

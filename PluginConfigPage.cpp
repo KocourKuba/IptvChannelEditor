@@ -25,11 +25,12 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include <iosfwd>
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPage.h"
 #include "StreamContainer.h"
+#include "FillParamsInfo.h"
 #include "UtilsLib/inet_utils.h"
-#include <iosfwd>
 
 // CPluginConfigPage dialog
 
@@ -50,6 +51,10 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_STREAM_ID_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamIdParse)
 	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN, &CPluginConfigPage::OnEnChangeEditParsePattern)
 	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN_ID, &CPluginConfigPage::OnEnChangeEditParsePatternID)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_SERVERS, &CPluginConfigPage::OnBnClickedButtonEditServers)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_DEVICES, &CPluginConfigPage::OnBnClickedButtonEditDevices)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_QUALITY, &CPluginConfigPage::OnBnClickedButtonEditQuality)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_PROFILES, &CPluginConfigPage::OnBnClickedButtonEditProfiles)
 END_MESSAGE_MAP()
 
 CPluginConfigPage::CPluginConfigPage() : CMFCPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
@@ -62,7 +67,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndToggleEdit);
-	DDX_Control(pDX, IDC_BUTTON_LOAD_CONFIG, m_wndLoadConf);
+	DDX_Control(pDX, IDC_BUTTON_LOAD_CONFIG, m_wndBtnLoadConf);
 	DDX_Control(pDX, IDC_BUTTON_SAVE_CONFIG, m_wndSaveConf);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_NAME, m_wndName);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_NAME, m_Name);
@@ -119,6 +124,14 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_PLAYLIST_SHOW, m_wndPlaylistShow);
 	DDX_Control(pDX, IDC_BUTTON_STREAM_PARSE, m_wndBtnStreamParse);
 	DDX_Control(pDX, IDC_BUTTON_STREAM_ID_PARSE, m_wndBtnStreamParseID);
+	DDX_Control(pDX, IDC_CHECK_STATIC_SERVERS, m_wndChkStaticServers);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_SERVERS, m_wndBtnServers);
+	DDX_Control(pDX, IDC_CHECK_STATIC_DEVICES, m_wndChkStaticDevices);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_DEVICES, m_wndBtnDevices);
+	DDX_Control(pDX, IDC_CHECK_STATIC_QUALITIES, m_wndChkStaticQualities);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_QUALITY, m_wndBtnQualities);
+	DDX_Control(pDX, IDC_CHECK_STATIC_PROFILES, m_wndChkStaticProfiles);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_PROFILES, m_wndBtnProfiles);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -151,7 +164,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	int sel_idx = 0;
 	for (const auto& item : GetConfig().get_all_plugins())
 	{
-		auto& plugin = StreamContainer::get_instance(item);
+		auto plugin = StreamContainer::get_instance(item);
 		if (!plugin) continue;
 
 		int idx = m_wndPluginType.AddString(plugin->get_title().c_str());
@@ -165,7 +178,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	m_wndToggleEdit.EnableWindow(!m_single && !m_readonly);
 	m_wndPluginType.SetCurSel(sel_idx);
 	m_wndPluginType.EnableWindow(m_single);
-	m_wndLoadConf.EnableWindow(!m_single && !m_readonly);
+	m_wndBtnLoadConf.EnableWindow(!m_single && !m_readonly);
 
 	if (m_pAccessPage)
 	{
@@ -174,7 +187,15 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	UpdateData(FALSE);
 
-	OnCbnSelchangeComboPluginType();
+	if (m_single)
+	{
+		OnCbnSelchangeComboPluginType();
+	}
+	else
+	{
+		FillControlsCommon();
+		EnableControls(allowEdit);
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -216,11 +237,12 @@ BOOL CPluginConfigPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 	return FALSE;
 }
 
-void CPluginConfigPage::EnableControls(BOOL enable)
+void CPluginConfigPage::EnableControls(bool enable)
 {
 	UpdateData(TRUE);
+
 	if (m_readonly)
-		enable = FALSE;
+		enable = false;
 
 	m_wndName.EnableWindow(enable);
 	m_wndTitle.EnableWindow(enable);
@@ -245,7 +267,20 @@ void CPluginConfigPage::EnableControls(BOOL enable)
 	m_wndEpgTimezone.EnableWindow(enable);
 	m_wndAccessType.EnableWindow(enable);
 	m_wndCatchupType.EnableWindow(enable);
-	m_wndLoadConf.EnableWindow(enable);
+	m_wndBtnLoadConf.EnableWindow(enable);
+	m_wndChkStaticServers.SetCheck(m_plugin->is_static_servers());
+	m_wndChkStaticServers.EnableWindow(enable);
+	m_wndBtnServers.EnableWindow(m_plugin->is_static_servers());
+	m_wndChkStaticDevices.SetCheck(m_plugin->is_static_devices());
+	m_wndChkStaticDevices.EnableWindow(enable);
+	m_wndBtnDevices.EnableWindow(m_plugin->is_static_devices());
+	m_wndChkStaticQualities.SetCheck(m_plugin->is_static_qualities());
+	m_wndChkStaticQualities.EnableWindow(enable);
+	m_wndBtnQualities.EnableWindow(m_plugin->is_static_qualities());
+	m_wndChkStaticProfiles.SetCheck(m_plugin->is_static_profiles());
+	m_wndChkStaticProfiles.EnableWindow(enable);
+	m_wndBtnProfiles.EnableWindow(m_plugin->is_static_profiles());
+
 	m_wndPlaylistShow.EnableWindow(!m_single && m_pAccessPage != nullptr);
 	m_wndBtnStreamParse.EnableWindow(!m_single && !m_ParseStream.IsEmpty());
 	m_wndBtnStreamParseID.EnableWindow(!m_single && !m_ParseStreamID.IsEmpty());
@@ -253,10 +288,9 @@ void CPluginConfigPage::EnableControls(BOOL enable)
 
 void CPluginConfigPage::FillControlsCommon()
 {
-	m_plugin = StreamContainer::get_instance(m_plugin_type);
 	if (!m_plugin) return;
 
-	m_plugin->save_plugin_parameters();
+	//m_plugin->save_plugin_parameters();
 
 	m_wndAccessType.SetCurSel((int)m_plugin->get_access_type());
 	m_wndSquareIcons.SetCheck(m_plugin->is_square_icons() != false);
@@ -400,12 +434,12 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 
 void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 {
-	allowEdit = FALSE;
+	allowEdit = false;
 	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
+	m_plugin = StreamContainer::get_instance(m_plugin_type);
 	FillControlsCommon();
 	EnableControls(allowEdit);
 }
-
 
 void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 {
@@ -444,13 +478,13 @@ void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 void CPluginConfigPage::OnBnClickedButtonStreamParse()
 {
 	if (!m_ParseStream.IsEmpty())
-		ShellExecute(nullptr, _T("open"), L"https://regexr.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+		ShellExecute(nullptr, _T("open"), L"https://regex101.com/", nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
 void CPluginConfigPage::OnBnClickedButtonStreamIdParse()
 {
 	if (!m_ParseStreamID.IsEmpty())
-		ShellExecute(nullptr, _T("open"), L"https://regexr.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+		ShellExecute(nullptr, _T("open"), L"https://regex101.com/", nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
 void CPluginConfigPage::OnEnChangeEditParsePattern()
@@ -463,4 +497,48 @@ void CPluginConfigPage::OnEnChangeEditParsePatternID()
 {
 	UpdateData(TRUE);
 	m_wndBtnStreamParseID.EnableWindow(!m_ParseStreamID.IsEmpty());
+}
+
+void CPluginConfigPage::OnBnClickedButtonEditServers()
+{
+	CFillParamsInfo dlg;
+	dlg.m_type = 0;
+	dlg.m_paramsList = m_plugin->get_servers_list();
+	dlg.m_readonly = m_readonly;
+
+	if (dlg.DoModal() == IDOK)
+		m_plugin->set_servers_list(dlg.m_paramsList);
+}
+
+void CPluginConfigPage::OnBnClickedButtonEditDevices()
+{
+	CFillParamsInfo dlg;
+	dlg.m_type = 1;
+	dlg.m_paramsList = m_plugin->get_devices_list();
+	dlg.m_readonly = m_readonly;
+
+	if (dlg.DoModal() == IDOK)
+		m_plugin->set_devices_list(dlg.m_paramsList);
+}
+
+void CPluginConfigPage::OnBnClickedButtonEditQuality()
+{
+	CFillParamsInfo dlg;
+	dlg.m_type = 2;
+	dlg.m_paramsList = m_plugin->get_qualities_list();
+	dlg.m_readonly = m_readonly;
+
+	if (dlg.DoModal() == IDOK)
+		m_plugin->set_qualities_list(dlg.m_paramsList);
+}
+
+void CPluginConfigPage::OnBnClickedButtonEditProfiles()
+{
+	CFillParamsInfo dlg;
+	dlg.m_type = 3;
+	dlg.m_paramsList = m_plugin->get_profiles_list();
+	dlg.m_readonly = m_readonly;
+
+	if (dlg.DoModal() == IDOK)
+		m_plugin->set_profiles_list(dlg.m_paramsList);
 }
