@@ -136,14 +136,17 @@ namespace utils
 
 	inline time_t get_json_int_value(const std::string& key, const nlohmann::json& val)
 	{
-		if (val[key].is_number())
+		if (val.contains(key))
 		{
-			return val.value(key, 0);
-		}
+			if (val[key].is_number())
+			{
+				return val.value(key, 0);
+			}
 
-		if (val[key].is_string())
-		{
-			return utils::char_to_int(val.value(key, ""));
+			if (val[key].is_string())
+			{
+				return utils::char_to_int(val.value(key, ""));
+			}
 		}
 
 		return 0;
