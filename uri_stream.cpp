@@ -323,6 +323,9 @@ const std::map<std::wstring, std::wstring>& uri_stream::get_epg_id_mapper(int ep
 
 bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time)
 {
+	if (epg_id.empty())
+		return false;
+
 	std::vector<BYTE> data;
 	const auto& url = compile_epg_url(epg_idx, epg_id, for_time);
 	if (!utils::DownloadFile(url, data, true) || data.empty())
