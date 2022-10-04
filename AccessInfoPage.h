@@ -83,7 +83,7 @@ protected:
 	afx_msg void OnBnClickedCheckCustomUpdateName();
 	afx_msg void OnBnClickedCheckCustomPackageName();
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg LRESULT OnNotifyDescriptionEdited(WPARAM, LPARAM);
+	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
 
 private:
 	int GetCheckedAccountIdx();

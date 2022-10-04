@@ -63,7 +63,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CAccessInfoPage::OnBnClickedButtonRemove)
 	ON_BN_CLICKED(IDC_BUTTON_NEW_FROM_URL, &CAccessInfoPage::OnBnClickedButtonNewFromUrl)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_ACCOUNTS, &CAccessInfoPage::OnNMDblClickList)
-	ON_MESSAGE(WM_NOTIFY_END_EDIT, &CAccessInfoPage::OnNotifyDescriptionEdited)
+	ON_MESSAGE(WM_NOTIFY_END_EDIT, &CAccessInfoPage::OnNotifyEndEdit)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_ACCOUNTS, &CAccessInfoPage::OnLvnItemchangedListAccounts)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_CHANNELS, &CAccessInfoPage::OnLvnItemchangedListChannels)
 	ON_CBN_SELCHANGE(IDC_COMBO_DEVICE_ID, &CAccessInfoPage::OnCbnSelchangeComboDeviceId)
@@ -767,8 +767,7 @@ void CAccessInfoPage::OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-// OnNotifyDescriptionEdited()
-LRESULT CAccessInfoPage::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
+LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 {
 	// Get the changed Description field text via the callback
 	NMLVDISPINFO* dispinfo = reinterpret_cast<NMLVDISPINFO*>(lParam);
@@ -832,7 +831,10 @@ LRESULT CAccessInfoPage::OnNotifyDescriptionEdited(WPARAM wParam, LPARAM lParam)
 		default:break;
 	}
 
-	GetAccountInfo();
+	if (dispinfo->item.iItem == GetCheckedAccountIdx())
+	{
+		GetAccountInfo();
+	}
 
 	return 0;
 }

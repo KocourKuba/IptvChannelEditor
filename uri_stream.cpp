@@ -5,7 +5,6 @@
 #include "UtilsLib\utils.h"
 #include "UtilsLib\Crc32.h"
 #include "UtilsLib\inet_utils.h"
-#include "UtilsLib\xxhash.hpp"
 
 uri_stream::uri_stream()
 {
