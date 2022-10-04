@@ -177,7 +177,10 @@ class tvclub_config extends default_config
             return false;
         }
 
-        $plugin_cookies->token = md5($login . md5($password));
+        $token = md5($login . md5($password));
+        if (!isset($plugin_cookies->token) || $plugin_cookies->token !== $token) {
+            $plugin_cookies->token = $token;
+        }
 
         return true;
     }
