@@ -124,7 +124,7 @@ class tvclub_config extends default_config
             $url = self::API_HOST . "/account?token=$plugin_cookies->token";
             // provider returns token used to download playlist
             $json = HD::DownloadJson($url);
-            if (!isset($account_data['account']['info']['login'])) {
+            if (!isset($json['account']['info']['login'])) {
                 throw new Exception("Account status unknown");
             }
             $this->account_data = $json;

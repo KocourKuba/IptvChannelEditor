@@ -58,7 +58,7 @@ void uri_tvclub::load_default()
 
 	streams_config[1].cu_type = CatchupType::cu_append;
 	streams_config[1].cu_subst = "utc";
-	streams_config[1].uri_template = "http://{SUBDOMAIN}/p/{TOKEN}/{ID}";
+	streams_config[1].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
 	streams_config[1].uri_arc_template = "{CU_SUBST}={START}";
 
 	auto& params = epg_params[0];
