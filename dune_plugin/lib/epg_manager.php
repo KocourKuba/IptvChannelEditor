@@ -205,6 +205,11 @@ class Epg_Manager
                 $program_start = $dt->getTimestamp() - $parser_params[EPG_TIMEZONE] * 3600; // subtract real EPG timezone
             }
 
+            // prefill data to avoid undefined index notice
+            $day_epg[$program_start][EPG_END] = 0;
+            $day_epg[$program_start][EPG_NAME] = '';
+            $day_epg[$program_start][EPG_DESC] = '';
+
             if ($use_duration) {
                 $day_epg[$program_start][EPG_END] = $program_start + (int)$entry[$parser_params[EPG_END]];
             } else if ($no_end) {
@@ -216,8 +221,12 @@ class Epg_Manager
                 $day_epg[$program_start][EPG_END] = (int)$entry[$parser_params[EPG_END]];
             }
 
-            $day_epg[$program_start][EPG_NAME] = HD::unescape_entity_string($entry[$parser_params[EPG_NAME]]);
-            $day_epg[$program_start][EPG_DESC] = HD::unescape_entity_string($entry[$parser_params[EPG_DESC]]);
+            if (isset($entry[$parser_params[EPG_NAME]])) {
+                $day_epg[$program_start][EPG_NAME] = HD::unescape_entity_string($entry[$parser_params[EPG_NAME]]);
+            }
+            if (isset($entry[$parser_params[EPG_DESC]])) {
+                $day_epg[$program_start][EPG_DESC] = HD::unescape_entity_string($entry[$parser_params[EPG_DESC]]);
+            }
         }
 
         if ($no_end && $prev_start !== 0) {
