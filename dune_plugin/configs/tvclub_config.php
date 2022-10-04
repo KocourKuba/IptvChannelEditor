@@ -169,17 +169,15 @@ class tvclub_config extends default_config
      */
     protected function ensure_token_loaded(&$plugin_cookies)
     {
-        if (empty($plugin_cookies->token)) {
-            $login = $this->get_login($plugin_cookies);
-            $password = $this->get_password($plugin_cookies);
+        $login = $this->get_login($plugin_cookies);
+        $password = $this->get_password($plugin_cookies);
 
-            if (empty($login) || empty($password)) {
-                hd_print("Login or password not set");
-                return false;
-            }
-
-            $plugin_cookies->token = md5($login . md5($password));
+        if (empty($login) || empty($password)) {
+            hd_print("Login or password not set");
+            return false;
         }
+
+        $plugin_cookies->token = md5($login . md5($password));
 
         return true;
     }
