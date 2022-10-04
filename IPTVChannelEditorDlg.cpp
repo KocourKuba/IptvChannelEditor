@@ -3283,7 +3283,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		auto cat_node = doc->allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
 		for (auto& category : m_categoriesMap)
 		{
-			if (!category.second.category->get_channels().empty())
+			if (category.first != ID_ADD_TO_FAVORITE && !category.second.category->get_channels().empty())
 			{
 				cat_node->append_node(category.second.category->GetNode(*doc));
 			}
