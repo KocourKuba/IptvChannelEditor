@@ -1245,7 +1245,6 @@ int RequestToUpdateServer(const std::wstring& command)
 		int nErrorCount = 0;
 		DWORD dwExitCode = STILL_ACTIVE;
 		uint64_t dwStart = utils::ChronoGetTickCount();
-		BOOL bTimeout = FALSE;
 		for (;;)
 		{
 			if (dwExitCode != STILL_ACTIVE)
@@ -1255,8 +1254,8 @@ int RequestToUpdateServer(const std::wstring& command)
 
 			if (utils::CheckForTimeOut(dwStart, 60 * 1000))
 			{
-				bTimeout = TRUE;
 				::TerminateProcess(pi.hProcess, 0);
+				dwExitCode = STATUS_TIMEOUT;
 				break;
 			}
 

@@ -238,6 +238,7 @@ int parse_info(UpdateInfo& info)
 
 int check_for_update(UpdateInfo& info)
 {
+	LogProtocol("Try to download update info...");
 	if (!utils::DownloadFile(L"http://igores.ru/sharky72/update.xml", info.update_info))
 	{
 		return err_download_info; // Unable to download update info!
@@ -302,8 +303,13 @@ int update_app(UpdateInfo& info)
 	if (hAppRunningMutex)
 	{
 		CloseHandle(hAppRunningMutex);
+		LogProtocol("Try to close app...");
 		HWND hwnd = ::FindWindow(nullptr, L"IPTV Channel Editor");
-		if (hwnd)
+		if (!hwnd)
+		{
+			LogProtocol("App window not found.");
+		}
+		else
 		{
 			::PostMessage(hwnd, WM_CLOSE, 0, 0);
 			Sleep(500);
@@ -326,8 +332,12 @@ int update_app(UpdateInfo& info)
 	}
 
 	if (i != 0)
+	{
+		LogProtocol("Unable to close IPTV Channel Editor. Aborting update.");
 		return err_no_updates;
+	}
 
+	LogProtocol("Unpack and replace files...");
 	const auto& pack_dll = GetAppPath((DEV_PATH + PACK_DLL_PATH).c_str()) + PACK_DLL;
 
 	const auto& target_path = GetAppPath();
@@ -355,7 +365,10 @@ int update_app(UpdateInfo& info)
 			folder = true;
 			LogProtocol(fmt::format(L"unpacking: {:s}", src.filename().wstring()));
 			if (!archiver.GetExtractor().ExtractArchive(info.update_path))
+			{
+				LogProtocol("Error unpacking archive. Aborting.");
 				return err_open_pkg;
+			}
 
 			source_file = info.update_path + src.stem().wstring();
 			target_file = target_path + src.stem().wstring();
@@ -383,11 +396,14 @@ int update_app(UpdateInfo& info)
 
 			LogProtocol(fmt::format(L"rename: {:s} to {:s}", target_file, bak_file));
 			if (std::filesystem::exists(bak_file))
+			{
 				std::filesystem::remove_all(bak_file, err);
+			}
 
 			std::filesystem::rename(target_file, bak_file, err);
 			if (err.value() != 0)
 			{
+				LogProtocol(fmt::format(L"Unable to rename {:s}", target_file));
 				success = false;
 				continue;
 			}
@@ -410,6 +426,7 @@ int update_app(UpdateInfo& info)
 		}
 	}
 
+	LogProtocol("Replace files done.");
 	return no_error;
 }
 
@@ -428,7 +445,7 @@ int main(int argc, char* argv[])
 	bool printHelp = false;
 
 	// First configure all possible command line options.
-	CommandLine args("IPTV Channel Editor Updater 1.1\n(c) Pavel Abakanov (aka sharky72 at forum.hdtv.ru)\n");
+	CommandLine args("IPTV Channel Editor Updater 1.2\n(c) Pavel Abakanov (aka sharky72 at forum.hdtv.ru)\n");
 
 	args.addArgument({ "check" }, &check, "Check for update");
 	args.addArgument({ "download" }, &download, "Download update");
@@ -436,8 +453,10 @@ int main(int argc, char* argv[])
 	args.addArgument({ "-o", "--optional" }, &playlists, "Download or Update optional packages (playlists)");
 	args.addArgument({ "-h", "--help" }, &printHelp, "Show parameters info");
 
+	LogProtocol(fmt::format("Updater version: {:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
+
 	std::error_code err;
-	std::filesystem::remove(GetAppPath() + L"updater.log", err);
+	// std::filesystem::remove(GetAppPath() + L"updater.log", err);
 	// Then do the actual parsing.
 	try
 	{
