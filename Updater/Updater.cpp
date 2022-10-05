@@ -202,6 +202,7 @@ int parse_info(UpdateInfo& info)
 	auto info_node = doc->first_node("update_info");
 	if (!info_node)
 	{
+		LogProtocol("Incorrect update info: update_info node missing");
 		return err_parse; // Incorrect update info!
 	}
 
@@ -211,6 +212,7 @@ int parse_info(UpdateInfo& info)
 	auto pkg_node = doc->first_node("package");
 	if (!pkg_node)
 	{
+		LogProtocol("Incorrect update info: package node missing");
 		return err_parse; // Incorrect update info!
 	}
 
@@ -225,13 +227,15 @@ int parse_info(UpdateInfo& info)
 		info.update_files.emplace_back(std::move(node));
 	}
 
-
 	CFileVersionInfo cVer;
 	const auto& editor = GetAppPath() + L"IPTVChannelEditor.exe";
 	cVer.Open(editor.c_str());
 	const auto& cur_ver = fmt::format(L"{:d}.{:d}.{:d}", cVer.GetFileVersionMajor(), cVer.GetFileVersionMinor(), cVer.GetFileVersionBuild());
 	if (cur_ver >= info.version)
+	{
+		LogProtocol("No updates. Current versionis up to date or newer");
 		return err_no_updates;
+	}
 
 	return no_error;
 }
@@ -453,7 +457,13 @@ int main(int argc, char* argv[])
 	args.addArgument({ "-o", "--optional" }, &playlists, "Download or Update optional packages (playlists)");
 	args.addArgument({ "-h", "--help" }, &printHelp, "Show parameters info");
 
+	CFileVersionInfo cVer;
+	const auto& editor = GetAppPath() + L"IPTVChannelEditor.exe";
+	cVer.Open(editor.c_str());
+	const auto& cur_ver = fmt::format(L"{:d}.{:d}.{:d}", cVer.GetFileVersionMajor(), cVer.GetFileVersionMinor(), cVer.GetFileVersionBuild());
+
 	LogProtocol(fmt::format("Updater version: {:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
+	LogProtocol(fmt::format(L"Current app version: {:s}", cur_ver));
 
 	std::error_code err;
 	// std::filesystem::remove(GetAppPath() + L"updater.log", err);
