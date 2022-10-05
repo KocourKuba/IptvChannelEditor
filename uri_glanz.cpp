@@ -69,6 +69,4 @@ void uri_glanz::load_default()
 	params1.epg_end = "";
 	params1.epg_time_format = "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}"; // "%d-%m-%Y %H:%M";
 	params1.epg_timezone = 3; // iptvx.one uses moscow time (UTC+3)
-
-	epg_params[1].epg_url = "http://epg.drm-play.ml/iptvx.one/epg/{EPG_ID}.json";
 }
