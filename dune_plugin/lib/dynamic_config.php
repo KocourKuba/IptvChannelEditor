@@ -37,10 +37,12 @@ class dynamic_config
         $default_streams[URL_TEMPLATE] = '';
         $default_streams[URL_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
         $default_streams[CU_SUBST] = 'utc';
+        $default_streams[CU_DURATION] = 10800;
         $this->set_stream_params(HLS, $default_streams);
 
         $default_streams[CU_TYPE] = 'flussonic';
         $default_streams[CU_SUBST] = 'archive';
+        $default_streams[CU_DURATION] = 10800;
         $default_streams[URL_ARC_TEMPLATE] = '';
         $this->set_stream_params(MPEG, $default_streams);
 
