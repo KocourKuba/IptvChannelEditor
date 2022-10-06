@@ -700,26 +700,6 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		std::wistringstream stream(wbuf);
 		if (!stream.good()) return;
 
-		if (m_plugin_type == PluginType::enKineskop)
-		{
-			// http://knkp.in/2119490/6cd0ff4249f49957/de/1
-			static std::wregex re_url(LR"(^https?:\/\/[^\/]+\/([^\/]+)\/([^\/]+)\/?.*$)");
-			std::wsmatch m;
-			if (std::regex_match(url, m, re_url))
-			{
-				Credentials cred;
-				cred.login = get_utf8(m[1].str());
-				cred.password = get_utf8(m[2].str());
-				m_all_credentials.emplace_back(cred);
-
-				int cnt = m_wndAccounts.GetItemCount();
-				m_wndAccounts.InsertItem(cnt, L"", 0);
-				m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
-				m_wndAccounts.SetItemText(cnt, 2, m[2].str().c_str());
-				return;
-			}
-		}
-
 		Credentials cred;
 		auto entry = std::make_unique<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
 		std::wstring line;
@@ -730,18 +710,18 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			if (!entry->Parse(line, m3uEntry)) continue;
 
 			const auto& access_key = entry->get_uri_stream()->get_parser().token;
-			const auto& domain = entry->get_uri_stream()->get_parser().domain;
-			if (!access_key.empty() && !domain.empty() && access_key != L"00000000000000" && domain != L"localhost")
+			const auto& subdomain = entry->get_uri_stream()->get_parser().subdomain;
+			if (!access_key.empty() && !subdomain.empty() && access_key != L"00000000000000" && subdomain != L"localhost")
 			{
 				int cnt = m_wndAccounts.GetItemCount();
 
 				m_wndAccounts.InsertItem(cnt, L"", 0);
 				m_wndAccounts.SetItemText(cnt, 1, access_key.c_str());
-				m_wndAccounts.SetItemText(cnt, 2, domain.c_str());
+				m_wndAccounts.SetItemText(cnt, 2, subdomain.c_str());
 
 				Credentials cred;
 				cred.token = get_utf8(access_key);
-				cred.subdomain = get_utf8(domain);
+				cred.subdomain = get_utf8(subdomain);
 				m_all_credentials.emplace_back(cred);
 				break;
 			}
