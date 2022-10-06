@@ -44,12 +44,15 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
+
+	void UpdateStaticTtitle();
+
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	BOOL OnApply() override;
 
 	DECLARE_MESSAGE_MAP()
 
-	afx_msg void OnBnClickedButtonEditConfig();
+	afx_msg void OnBnClickedButtonToggleEditConfig();
 	afx_msg void OnBnClickedButtonLoadConfig();
 	afx_msg void OnBnClickedButtonSaveConfig();
 	afx_msg void OnBnClickedButtonEpgTest();
@@ -60,10 +63,14 @@ protected:
 	afx_msg void OnBnClickedButtonEditDevices();
 	afx_msg void OnBnClickedButtonEditQuality();
 	afx_msg void OnBnClickedButtonEditProfiles();
+	afx_msg void OnBnClickedButtonActive();
+	afx_msg void OnBnClickedButtonDefault();
 
-	afx_msg void OnCbnSelchangeComboStreamSubType();
-	afx_msg void OnCbnSelchangeComboEpgType();
 	afx_msg void OnCbnSelchangeComboPluginType();
+	afx_msg void OnCbnSelchangeComboStreamType();
+	afx_msg void OnCbnDropdownComboStreamType();
+	afx_msg void OnCbnSelchangeComboEpgType();
+	afx_msg void OnCbnDropdownComboEpgType();
 
 	afx_msg void OnEnChangeEditParsePattern();
 	afx_msg void OnEnChangeEditParsePatternID();
@@ -71,22 +78,27 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
-	void EnableControls(bool enable);
+	void EnableControls();
 	void FillControlsCommon();
+	void SaveControlsCommon();
 	void FillControlsStream();
+	void SaveControlsStream();
 	void FillControlsEpg();
+	void SaveControlsEpg();
 
 public:
 	PluginType m_plugin_type = PluginType::enCustom;
 	bool m_single = false;
-	bool m_readonly = true;
 	CString m_SetID;
 	CAccessInfoPage* m_pAccessPage = nullptr;
 	std::shared_ptr<uri_stream> m_plugin;
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;
+	CStatic m_wndStaticTitle;
 	CStatic m_wndDurationCaption;
+
+	CDateTimeCtrl m_wndDate;
 
 	CEdit m_wndName;
 	CEdit m_wndTitle;
@@ -109,9 +121,10 @@ protected:
 	CEdit m_wndEpgTimeFormat;
 	CEdit m_wndEpgTimezone;
 	CEdit m_wndSetID;
+	CEdit m_wndToken;
 
 	CComboBox m_wndAccessType;
-	CComboBox m_wndStreamSubType;
+	CComboBox m_wndStreamType;
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
 	CComboBox m_wndPluginType;
@@ -121,17 +134,19 @@ protected:
 	CButton m_wndChkStaticDevices;
 	CButton m_wndBtnDevices;
 	CButton m_wndChkStaticQualities;
-	CButton m_wndBtnQualities;
 	CButton m_wndChkStaticProfiles;
+	CButton m_wndBtnQualities;
+	CButton m_wndChkSquareIcons;
 	CButton m_wndBtnProfiles;
-	CButton m_wndToggleEdit;
+	CButton m_wndBtnToggleEdit;
 	CButton m_wndBtnLoadConf;
-	CButton m_wndSaveConf;
-	CButton m_wndSquareIcons;
-	CButton m_wndEpgTest;
-	CButton m_wndPlaylistShow;
-	CButton m_wndBtnStreamParse;
-	CButton m_wndBtnStreamParseID;
+	CButton m_wndBtnSaveConf;
+	CButton m_wndBtnActivate;
+	CButton m_wndBtnDefault;
+	CButton m_wndBtnEpgTest;
+	CButton m_wndBtnPlaylistTest;
+	CButton m_wndBtnStreamParseTest;
+	CButton m_wndBtnStreamParseIdTest;
 
 	CString m_Name;
 	CString m_Title;
@@ -160,5 +175,9 @@ protected:
 
 private:
 	std::map<UINT, std::wstring> m_tooltips_info_account;
-	bool allowEdit = false;
+	bool m_allow_edit = false;
+	std::wstring m_loaded_config;
+	std::wstring m_active_config;
+	std::array<StreamParameters, 2> m_supported_streams;
+	std::array<EpgParameters, 2> m_epg_parameters;
 };

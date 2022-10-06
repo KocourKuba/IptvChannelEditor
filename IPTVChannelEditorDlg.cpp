@@ -800,7 +800,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 	}
 
-	if (m_plugin->is_requested_token())
+	if (m_plugin->get_requested_token())
 	{
 		params.token = m_plugin->get_api_token(m_cur_account);
 	}
@@ -954,7 +954,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 					bSet = true;
 				}
 			}
-			else if (!entry->get_uri_stream()->is_per_channel_token())
+			else if (!entry->get_uri_stream()->get_per_channel_token())
 			{
 				m_cur_account.set_token(parser.token);
 				bSet = true;
@@ -1177,7 +1177,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 	BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
 	BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
 	BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
-	BOOL bCmpEpg2 = ((flags & CMP_FLAG_EPG2) && m_plugin->get_epg_parameters(1).epg_url.empty()) ? FALSE : TRUE;
+	BOOL bCmpEpg2 = ((flags & CMP_FLAG_EPG2) && m_plugin->get_epg_parameter(1).epg_url.empty()) ? FALSE : TRUE;
 
 	m_wndChannelsTree.LockWindowUpdate();
 	m_wndChannelsTree.DeleteAllItems();
@@ -1298,7 +1298,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 		BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
 		BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
 		BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
-		BOOL bCmpEpg2 = ((flags & CMP_FLAG_EPG2) && m_plugin->get_epg_parameters(1).epg_url.empty()) ? FALSE : TRUE;
+		BOOL bCmpEpg2 = ((flags & CMP_FLAG_EPG2) && m_plugin->get_epg_parameter(1).epg_url.empty()) ? FALSE : TRUE;
 
 		while (root != nullptr && !m_playlistMap.empty())
 		{
@@ -1446,7 +1446,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 	if (channel)
 	{
 		m_epgID1 = channel->get_epg_id(0).c_str();
-		m_epgID2 = m_plugin->get_epg_parameters(1).epg_url.empty() ? L"" : channel->get_epg_id(1).c_str();
+		m_epgID2 = m_plugin->get_epg_parameter(1).epg_url.empty() ? L"" : channel->get_epg_id(1).c_str();
 
 		const auto& uri = channel->stream_uri;
 
@@ -1590,7 +1590,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	UpdateExtToken(info->stream_uri.get());
 	if (m_plugin_type == PluginType::enSharaclub)
 	{
-		auto& url = info->stream_uri->get_epg_parameters(epg_idx).get_epg_url();
+		auto& url = info->stream_uri->get_epg_parameter(epg_idx).get_epg_url();
 		utils::string_replace_inplace<wchar_t>(url, L"{DOMAIN}", GetConfig().get_string(false, REG_EPG_DOMAIN));
 	}
 
@@ -2369,7 +2369,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 	m_wndSpinTimeShift.EnableWindow(state);
 	m_wndSearch.EnableWindow(TRUE);
 	m_wndEpg1.EnableWindow(single);
-	m_wndEpg2.EnableWindow(single && !m_plugin->get_epg_parameters(1).epg_url.empty());
+	m_wndEpg2.EnableWindow(single && !m_plugin->get_epg_parameter(1).epg_url.empty());
 
 	m_wndArchiveDays.EnableWindow((state != 0) && (m_isArchive != 0));
 	m_wndArchiveDays.SetTextColor(single && (changed_flag & MOD_ARCHIVE) ? m_colorChanged : m_normal);
@@ -2378,7 +2378,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 	m_wndEpgID1.EnableWindow(single);
 
 	m_wndEpgID2.SetTextColor(single && (changed_flag & MOD_EPG2) ? m_colorChanged : m_normal);
-	m_wndEpgID2.EnableWindow(single && !m_plugin->get_epg_parameters(1).epg_url.empty());
+	m_wndEpgID2.EnableWindow(single && !m_plugin->get_epg_parameter(1).epg_url.empty());
 
 	m_wndIconUrl.SetTextColor(single && (changed_flag & MOD_ICON) ? m_colorChanged : m_normal);
 
@@ -3034,10 +3034,6 @@ bool CIPTVChannelEditorDlg::SetupAccount()
 	const auto info = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 	if (info)
 		dlgCfg.m_SetID = info->get_epg_id(GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1).c_str();
-
-#ifdef _DEBUG
-	dlgCfg.m_readonly = false;
-#endif // _DEBUG
 
 	pSheet->AddPage(&dlgCfg);
 
@@ -4699,7 +4695,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		needCheckExisting = true;
 	}
 
-	if (bCmpEpg2 && !m_plugin->get_epg_parameters(1).epg_url.empty() && !entry->get_epg_id(1).empty() && channel->get_epg_id(1) != entry->get_epg_id(1))
+	if (bCmpEpg2 && !m_plugin->get_epg_parameter(1).epg_url.empty() && !entry->get_epg_id(1).empty() && channel->get_epg_id(1) != entry->get_epg_id(1))
 	{
 		channel->set_epg_id(1, entry->get_epg_id(1));
 		needCheckExisting = true;
@@ -4970,9 +4966,9 @@ BOOL CIPTVChannelEditorDlg::DestroyWindow()
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri) const
 {
 	auto& parser = uri->get_parser();
-	if (!uri->is_per_channel_token())
+	if (!uri->get_per_channel_token())
 	{
-		parser.token = uri->is_requested_token() ? uri->get_api_token(m_cur_account) : m_cur_account.get_token();
+		parser.token = uri->get_requested_token() ? uri->get_api_token(m_cur_account) : m_cur_account.get_token();
 		return;
 	}
 
@@ -5029,7 +5025,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgCfg.m_plugin_type = m_plugin_type;
-	dlgCfg.m_single = TRUE;
+	dlgCfg.m_single = true;
 
 	pSheet->AddPage(&dlgCfg);
 	pSheet->DoModal();

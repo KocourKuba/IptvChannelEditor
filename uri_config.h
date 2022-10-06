@@ -96,7 +96,7 @@ protected:
 /// </summary>
 struct EpgParameters
 {
-	std::string epg_param;
+	std::string epg_param; // not changed! hardcoded
 	std::string epg_url;
 	std::string epg_root;
 	std::string epg_name;
@@ -114,9 +114,30 @@ struct EpgParameters
 	std::map<std::wstring, std::wstring> epg_mapper;
 
 	std::wstring get_epg_url() const { return utils::utf8_to_utf16(epg_url); }
-	std::wstring get_epg_date_format() const { return utils::utf8_to_utf16(epg_date_format); }
+	void set_epg_url(const std::wstring& val) { epg_url = utils::utf16_to_utf8(val); }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_param, epg_url, epg_date_format, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_time_format, epg_timezone);
+	std::wstring get_epg_root() const { return utils::utf8_to_utf16(epg_root); }
+	void set_epg_root(const std::wstring& val) { epg_root = utils::utf16_to_utf8(val); }
+
+	std::wstring get_epg_name() const { return utils::utf8_to_utf16(epg_name); }
+	void set_epg_name(const std::wstring& val) { epg_name = utils::utf16_to_utf8(val); }
+
+	std::wstring get_epg_desc() const { return utils::utf8_to_utf16(epg_desc); }
+	void set_epg_desc(const std::wstring& val) { epg_desc = utils::utf16_to_utf8(val); }
+
+	std::wstring get_epg_start() const { return utils::utf8_to_utf16(epg_start); }
+	void set_epg_start(const std::wstring& val) { epg_start = utils::utf16_to_utf8(val); }
+
+	std::wstring get_epg_end() const { return utils::utf8_to_utf16(epg_end); }
+	void set_epg_end(const std::wstring& val) { epg_end = utils::utf16_to_utf8(val); }
+
+	std::wstring get_epg_date_format() const { return utils::utf8_to_utf16(epg_date_format); }
+	void set_epg_date_format(const std::wstring& val) { epg_date_format = utils::utf16_to_utf8(val); }
+
+	std::wstring get_epg_time_format() const { return utils::utf8_to_utf16(epg_time_format); }
+	void set_epg_time_format(const std::wstring& val) { epg_time_format = utils::utf16_to_utf8(val); }
+
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_param, epg_url, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_date_format, epg_time_format, epg_timezone);
 };
 
 /// <summary>
@@ -150,116 +171,97 @@ public:
 
 public:
 	/// <summary>
-	/// returns plugin title
+	/// property plugin title
 	/// </summary>
 	std::wstring get_title() const { return utils::utf8_to_utf16(title); }
-
-	/// <summary>
-	/// set plugin title
-	/// </summary>
 	void set_title(const std::wstring& val) { title = utils::utf16_to_utf8(val); }
 
 	/// <summary>
-	/// returns plugin name
+	/// property plugin name
 	/// </summary>
 	const std::string& get_name() const { return name; }
-
-	/// <summary>
-	/// set plugin name
-	/// </summary>
 	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
 
 	/// <summary>
-	/// returns plugin access type
+	/// property plugin access type
 	/// </summary>
 	const AccountAccessType get_access_type() const { return access_type; }
+	void set_access_type(AccountAccessType val) { access_type = val; }
 
 	/// <summary>
-	/// returns link to provider account
+	/// property link to provider account
 	/// </summary>
 	/// <returns>wstring</returns>
 	std::wstring get_provider_url() const { return utils::utf8_to_utf16(provider_url); }
-
-	/// <summary>
-	/// set link to provider account
-	/// </summary>
-	/// <returns>wstring</returns>
 	void set_provider_url(const std::wstring& val) { provider_url = utils::utf16_to_utf8(val); }
 
 	/// <summary>
-	/// get playlist template
+	/// property playlist template
 	/// </summary>
 	/// <returns>wstring</returns>
 	std::wstring get_playlist_template() const { return utils::utf8_to_utf16(playlist_template); }
-
-	/// <summary>
-	/// set playlist template
-	/// </summary>
-	/// <returns>wstring</returns>
 	void set_playlist_template(const std::wstring& val) { playlist_template = utils::utf16_to_utf8(val); }
 
 	/// <summary>
-	/// returns uri parse template
+	/// property uri parse template
 	/// </summary>
 	/// <returns>wstring</returns>
 	std::wstring get_uri_parse_pattern() const { return utils::utf8_to_utf16(uri_parse_pattern); }
-
-	/// <summary>
-	/// set uri parse template.
-	/// returns uri parse template
-	/// </summary>
-	/// <returns>wstring</returns>
 	void set_uri_parse_pattern(const std::wstring& val) { uri_parse_pattern = utils::utf16_to_utf8(val); }
 
 	/// <summary>
-	/// returns uri id parse template
+	/// property uri id parse template
 	/// </summary>
 	/// <returns>wstring</returns>
 	std::wstring get_uri_id_parse_pattern() const { return utils::utf8_to_utf16(uri_id_parse_pattern); }
-
-	/// <summary>
-	/// set uri parse template.
-	/// returns uri id parse template
-	/// </summary>
-	/// <returns>wstring</returns>
 	void set_uri_id_parse_pattern(const std::wstring& val) { uri_id_parse_pattern = utils::utf16_to_utf8(val); }
 
 	/// <summary>
-	/// is icons square, php GUI setting
+	/// property square icons, php GUI setting
 	/// </summary>
 	/// <returns>bool</returns>
-	bool is_square_icons() const { return square_icons; }
+	bool get_square_icons() const { return square_icons; }
+	void set_square_icons(bool val) { square_icons = val; }
 
 	/// <summary>
-	/// is token used per channel, not the global
+	/// property token used per channel, not the global
 	/// </summary>
 	/// <returns>bool</returns>
-	bool is_per_channel_token() const { return per_channel_token; }
+	bool get_per_channel_token() const { return per_channel_token; }
+	void set_per_channel_token(bool val) { per_channel_token = val; }
 
 	/// <summary>
-	/// is token used per channel, not the global
+	/// property token used per channel, not the global
 	/// </summary>
 	/// <returns>bool</returns>
-	bool is_requested_token() const { return per_channel_token; }
+	bool get_requested_token() const { return requested_token; }
+	void set_requested_token(bool val) { requested_token = val; }
 
 	/// <summary>
-	/// supported streams HLS,MPEGTS etc.
+	/// property supported streams HLS,MPEGTS etc.
 	/// </summary>
 	/// <returns>vector&</returns>
 	const std::array<StreamParameters, 2>& get_supported_streams() const { return streams_config; }
 
 	/// <summary>
-	/// return supported stream
+	/// property index of supported stream
 	/// </summary>
 	/// <returns>const StreamParameters&</returns>
 	const StreamParameters& get_supported_stream(size_t idx) const { return streams_config[idx]; }
+	void set_supported_stream(size_t idx, const StreamParameters& val) { streams_config[idx] = val; }
 
 	/// <summary>
-	/// return epg parameters
+	/// return supported stream
+	/// </summary>
+	/// <returns>const StreamParameters&</returns>
+	const std::array<EpgParameters, 2>& get_epg_parameters() const { return epg_params; }
+
+	/// <summary>
+	/// property index pf epg parameters
 	/// </summary>
 	/// <returns>EpgParameters</returns>
-	EpgParameters& get_epg_parameters(int idx) { return epg_params[idx]; };
-	const EpgParameters& get_epg_parameters(int idx) const { return epg_params[idx]; };
+	const EpgParameters& get_epg_parameter(int idx) const { return epg_params[idx]; };
+	void set_epg_parameter(int idx, const EpgParameters& val) { epg_params[idx] = val; };
 
 	/// <summary>
 	/// returns json root for epg iteration
@@ -270,28 +272,32 @@ public:
 	nlohmann::json get_epg_root(int epg_idx, const nlohmann::json& epg_data) const;
 
 	/// <summary>
-	/// is servers list static, not loaded from provider settings
+	/// property servers list static, not loaded from provider settings
 	/// </summary>
 	/// <returns>bool</returns>
-	bool is_static_servers() const { return static_servers; }
+	bool get_static_servers() const { return static_servers; }
+	void set_static_servers(bool val) { static_servers = val; }
 
 	/// <summary>
-	/// is devices list static, not loaded from provider settings
+	/// property devices list static, not loaded from provider settings
 	/// </summary>
 	/// <returns>bool</returns>
-	bool is_static_devices() const { return static_devices; }
+	bool get_static_devices() const { return static_devices; }
+	void set_static_devices(bool val) { static_devices = val; }
 
 	/// <summary>
 	/// is qualities list static, not loaded from provider settings
 	/// </summary>
 	/// <returns>bool</returns>
-	bool is_static_qualities() const { return static_qualities; }
+	bool get_static_qualities() const { return static_qualities; }
+	void set_static_qualities(bool val) { static_qualities = val; }
 
 	/// <summary>
-	/// is profiles list static, not loaded from provider settings
+	/// property profiles list static, not loaded from provider settings
 	/// </summary>
 	/// <returns>bool</returns>
-	bool is_static_profiles() const { return static_profiles; }
+	bool get_static_profiles() const { return static_profiles; }
+	void set_static_profiles(bool val) { static_profiles = val; }
 
 	/// <summary>
 	/// returns list of servers
@@ -301,24 +307,18 @@ public:
 	virtual void fill_servers_list(TemplateParams& /*params*/) {}
 
 	/// <summary>
-	/// returns list of servers
-	/// </summary>
-	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ServersInfo></returns>
-	virtual const std::vector<DynamicParamsInfo>& get_servers_list() { return servers_list; }
-
-	/// <summary>
-	/// set list of servers
-	/// </summary>
-	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ServersInfo></returns>
-	virtual void set_servers_list(const std::vector<DynamicParamsInfo>& info) { servers_list = info; }
-
-	/// <summary>
 	/// set server
 	/// </summary>
 	/// <param name="params">Template parameters.</param>
 	virtual bool set_server(TemplateParams& /*params*/) { return true; }
+
+	/// <summary>
+	/// property list of servers
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	/// <returns>vector<ServersInfo></returns>
+	virtual const std::vector<DynamicParamsInfo>& get_servers_list() { return servers_list; }
+	virtual void set_servers_list(const std::vector<DynamicParamsInfo>& info) { servers_list = info; }
 
 	/// <summary>
 	/// returns list of device variants
@@ -328,17 +328,17 @@ public:
 	virtual void fill_devices_list(TemplateParams& /*params*/) {}
 
 	/// <summary>
-	/// returns list of quality variants
+	/// set device
+	/// </summary>
+	/// <param name="params">Template parameters.</param>
+	virtual bool set_device(TemplateParams& /*params*/) { return true; }
+
+	/// <summary>
+	/// property list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<ServersInfo></returns>
 	virtual const std::vector<DynamicParamsInfo>& get_devices_list() { return devices_list; }
-
-	/// <summary>
-	/// set list of quality variants
-	/// </summary>
-	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<QualityInfo></returns>
 	virtual void set_devices_list(const std::vector<DynamicParamsInfo>& info) { devices_list = info; }
 
 	/// <summary>
@@ -349,24 +349,18 @@ public:
 	virtual void fill_qualities_list(TemplateParams& /*params*/) {}
 
 	/// <summary>
-	/// returns list of quality variants
-	/// </summary>
-	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ServersInfo></returns>
-	virtual const std::vector<DynamicParamsInfo>& get_qualities_list() { return qualities_list; }
-
-	/// <summary>
-	/// set list of quality variants
-	/// </summary>
-	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<QualityInfo></returns>
-	virtual void set_qualities_list(const std::vector<DynamicParamsInfo>& info) { qualities_list = info; }
-
-	/// <summary>
 	/// set quality
 	/// </summary>
 	/// <param name="params">Template parameters.</param>
 	virtual bool set_quality(TemplateParams& /*params*/) { return true; }
+
+	/// <summary>
+	/// property list of quality variants
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	/// <returns>vector<ServersInfo></returns>
+	virtual const std::vector<DynamicParamsInfo>& get_qualities_list() { return qualities_list; }
+	virtual void set_qualities_list(const std::vector<DynamicParamsInfo>& info) { qualities_list = info; }
 
 	/// <summary>
 	/// returns list of profiles variants
@@ -376,24 +370,18 @@ public:
 	virtual void fill_profiles_list(TemplateParams& /*params*/) {}
 
 	/// <summary>
-	/// returns list of profiles
-	/// </summary>
-	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ProfilesInfo></returns>
-	virtual const std::vector<DynamicParamsInfo>& get_profiles_list() { return profiles_list; }
-
-	/// <summary>
-	/// set list of profiles variants
-	/// </summary>
-	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<QualityInfo></returns>
-	virtual void set_profiles_list(const std::vector<DynamicParamsInfo>& info) { profiles_list = info; }
-
-	/// <summary>
 	/// set profile
 	/// </summary>
 	/// <param name="params">Template parameters.</param>
 	virtual bool set_profile(TemplateParams& /*params*/) { return true; }
+
+	/// <summary>
+	/// property list of profiles
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	/// <returns>vector<ProfilesInfo></returns>
+	virtual const std::vector<DynamicParamsInfo>& get_profiles_list() { return profiles_list; }
+	virtual void set_profiles_list(const std::vector<DynamicParamsInfo>& info) { profiles_list = info; }
 
 protected:
 

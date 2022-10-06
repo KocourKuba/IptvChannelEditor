@@ -222,6 +222,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	if (GetConfig().get_string(true, REG_WEB_UPDATE_PATH).empty())
 		GetConfig().set_string(true, REG_WEB_UPDATE_PATH, GetAppPath(L"WebUpdate\\"));
 
+	if (GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH).empty())
+		GetConfig().set_string(true, REG_SAVE_SETTINGS_PATH, GetAppPath(L"Settings\\"));
+
 	ConvertAccounts();
 
 	CCommandLineInfoEx cmdInfo;
@@ -666,7 +669,7 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	const auto& cred = all_credentials[selected];
-	const auto& short_name_w = utils::utf8_to_utf16(plugin->get_short_name());
+	const auto& short_name_w = plugin->get_short_name_w();
 	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
 	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), (cred.suffix.empty() || noCustom) ? "mod" : cred.suffix);
 
@@ -814,7 +817,13 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	// copy plugin settings
-	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder).c_str());
+	const auto& active_config = GetConfig().get_string(false, REG_ACTIVE_SETTINGS);
+	if (!active_config.empty() && !plugin->load_plugin_parameters(active_config))
+	{
+		plugin->load_default();
+	}
+
+	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder));
 
 	// rewrite xml nodes
 	try

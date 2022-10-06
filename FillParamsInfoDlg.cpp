@@ -3,27 +3,27 @@
 
 #include "pch.h"
 #include "IPTVChannelEditor.h"
-#include "FillParamsInfo.h"
+#include "FillParamsInfoDlg.h"
 
 // CFillParamsInfo dialog
 
-IMPLEMENT_DYNAMIC(CFillParamsInfo, CDialogEx)
+IMPLEMENT_DYNAMIC(CFillParamsInfoDlg, CDialogEx)
 
-BEGIN_MESSAGE_MAP(CFillParamsInfo, CDialogEx)
-	ON_NOTIFY(NM_DBLCLK, IDC_LIST_INFO, &CFillParamsInfo::OnNMDblclkListInfo)
-	ON_MESSAGE(WM_NOTIFY_END_EDIT, &CFillParamsInfo::OnNotifyEndEdit)
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &CFillParamsInfo::OnBnClickedButtonAdd)
-	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CFillParamsInfo::OnBnClickedButtonRemove)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_INFO, &CFillParamsInfo::OnLvnItemchangedListInfo)
+BEGIN_MESSAGE_MAP(CFillParamsInfoDlg, CDialogEx)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_INFO, &CFillParamsInfoDlg::OnNMDblclkListInfo)
+	ON_MESSAGE(WM_NOTIFY_END_EDIT, &CFillParamsInfoDlg::OnNotifyEndEdit)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CFillParamsInfoDlg::OnBnClickedButtonAdd)
+	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CFillParamsInfoDlg::OnBnClickedButtonRemove)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_INFO, &CFillParamsInfoDlg::OnLvnItemchangedListInfo)
 END_MESSAGE_MAP()
 
 
-CFillParamsInfo::CFillParamsInfo(CWnd* pParent /*=nullptr*/)
+CFillParamsInfoDlg::CFillParamsInfoDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_FILL_PARAMS, pParent)
 {
 }
 
-void CFillParamsInfo::DoDataExchange(CDataExchange* pDX)
+void CFillParamsInfoDlg::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
@@ -34,7 +34,7 @@ void CFillParamsInfo::DoDataExchange(CDataExchange* pDX)
 
 // FillParamsInfo message handlers
 
-BOOL CFillParamsInfo::OnInitDialog()
+BOOL CFillParamsInfoDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
 
@@ -88,7 +88,7 @@ BOOL CFillParamsInfo::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CFillParamsInfo::OnNMDblclkListInfo(NMHDR* pNMHDR, LRESULT* pResult)
+void CFillParamsInfoDlg::OnNMDblclkListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	//LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 
@@ -108,7 +108,7 @@ void CFillParamsInfo::OnNMDblclkListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-LRESULT CFillParamsInfo::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
+LRESULT CFillParamsInfoDlg::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 {
 	// Get the changed field text via the callback
 	NMLVDISPINFO* dispinfo = reinterpret_cast<NMLVDISPINFO*>(lParam);
@@ -120,14 +120,14 @@ LRESULT CFillParamsInfo::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-void CFillParamsInfo::OnBnClickedButtonAdd()
+void CFillParamsInfoDlg::OnBnClickedButtonAdd()
 {
 	int cnt = m_wndListParams.GetItemCount();
-	m_wndListParams.InsertItem(cnt, std::to_wstring(cnt).c_str(), 0);
-	m_wndListParams.SetItemText(cnt, 1, fmt::format(L"param{:d}", cnt).c_str());
+	m_wndListParams.InsertItem(cnt, std::to_wstring(cnt + 1).c_str(), 0);
+	m_wndListParams.SetItemText(cnt, 1, fmt::format(L"param{:d}", cnt + 1).c_str());
 }
 
-void CFillParamsInfo::OnBnClickedButtonRemove()
+void CFillParamsInfoDlg::OnBnClickedButtonRemove()
 {
 	POSITION pos = m_wndListParams.GetFirstSelectedItemPosition();
 	if (pos != nullptr)
@@ -136,7 +136,7 @@ void CFillParamsInfo::OnBnClickedButtonRemove()
 	}
 }
 
-void CFillParamsInfo::OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResult)
+void CFillParamsInfoDlg::OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	if ((pNMLV->uChanged & LVIF_STATE))
@@ -147,7 +147,7 @@ void CFillParamsInfo::OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CFillParamsInfo::OnOK()
+void CFillParamsInfoDlg::OnOK()
 {
 	int cnt = m_wndListParams.GetItemCount();
 	m_paramsList.clear();

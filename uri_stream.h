@@ -126,17 +126,21 @@ public:
 	/// <summary>
 	/// save plugin parameters to file
 	/// </summary>
-	bool save_plugin_parameters(const wchar_t* filename = nullptr);
+	bool save_plugin_parameters(const std::wstring& filename);
 
 	/// <summary>
 	/// load plugin parameters to file
 	/// </summary>
-	bool load_plugin_parameters(const wchar_t* filename = nullptr);
+	bool load_plugin_parameters(const std::wstring& filename);
 
 	/// <summary>
 	/// returns plugin short name
 	/// </summary>
 	const std::string& get_short_name() const { return short_name; }
+	std::wstring get_short_name_w() const { return utils::utf8_to_utf16(short_name); }
+
+	void set_short_name(const std::string& val) { short_name = val; }
+	void set_short_name_w(const std::wstring& val) { short_name = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// returns regex of uri parse template

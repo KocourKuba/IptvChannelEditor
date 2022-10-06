@@ -6,13 +6,13 @@
 
 // CFillParamsInfo dialog
 
-class CFillParamsInfo : public CDialogEx
+class CFillParamsInfoDlg : public CDialogEx
 {
-	DECLARE_DYNAMIC(CFillParamsInfo)
+	DECLARE_DYNAMIC(CFillParamsInfoDlg)
 
 public:
-	CFillParamsInfo(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CFillParamsInfo() = default;
+	CFillParamsInfoDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CFillParamsInfoDlg() = default;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

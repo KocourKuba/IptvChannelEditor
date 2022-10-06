@@ -25,26 +25,15 @@ void uri_stream::clear()
 	clear_hash();
 }
 
-bool uri_stream::save_plugin_parameters(const wchar_t* filename /*= nullptr*/)
+bool uri_stream::save_plugin_parameters(const std::wstring& filename)
 {
-	std::wstring out_file;
-	if (filename == nullptr)
-	{
-		std::filesystem::create_directory(L"settings");
-		out_file = fmt::format(LR"(settings\{:s}_config.json)", utils::utf8_to_utf16(short_name));
-	}
-	else
-	{
-		out_file = filename;
-	}
-
 	bool res = false;
 	try
 	{
 		nlohmann::json node = *this;
 
 		const auto& str = node.dump(2);
-		std::ofstream out_stream(out_file);
+		std::ofstream out_stream(filename);
 		out_stream << str << std::endl;
 		res = true;
 	}
@@ -66,23 +55,13 @@ bool uri_stream::save_plugin_parameters(const wchar_t* filename /*= nullptr*/)
 	return res;
 }
 
-bool uri_stream::load_plugin_parameters(const wchar_t* filename /*= nullptr*/)
+bool uri_stream::load_plugin_parameters(const std::wstring& filename)
 {
-	std::wstring in_file;
-	if (filename == nullptr)
-	{
-		in_file = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_SETTINGS), utils::utf8_to_utf16(short_name + "_config.json"));
-	}
-	else
-	{
-		in_file = filename;
-	}
-
 	bool res = false;
 	try
 	{
 		nlohmann::json node;
-		std::ifstream in_stream(in_file);
+		std::ifstream in_stream(filename);
 		if (in_stream.good())
 		{
 			in_stream >> node;

@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPage.h"
 #include "StreamContainer.h"
-#include "FillParamsInfo.h"
+#include "FillParamsInfoDlg.h"
 #include "UtilsLib/inet_utils.h"
 
 // CPluginConfigPage dialog
@@ -39,13 +39,15 @@ IMPLEMENT_DYNAMIC(CPluginConfigPage, CMFCPropertyPage)
 BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CPluginConfigPage::OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CPluginConfigPage::OnToolTipText)
-	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CPluginConfigPage::OnBnClickedButtonEditConfig)
+	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CPluginConfigPage::OnCbnSelchangeComboPluginType)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CPluginConfigPage::OnBnClickedButtonToggleEditConfig)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_CONFIG, &CPluginConfigPage::OnBnClickedButtonLoadConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_CONFIG, &CPluginConfigPage::OnBnClickedButtonSaveConfig)
-	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigPage::OnCbnSelchangeComboStreamSubType)
+	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigPage::OnCbnSelchangeComboStreamType)
+	ON_CBN_DROPDOWN(IDC_COMBO_STREAM_TYPE, &CPluginConfigPage::OnCbnDropdownComboStreamType)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigPage::OnCbnSelchangeComboEpgType)
+	ON_CBN_DROPDOWN(IDC_COMBO_EPG_TYPE, &CPluginConfigPage::OnCbnDropdownComboEpgType)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPage::OnBnClickedButtonEpgTest)
-	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CPluginConfigPage::OnCbnSelchangeComboPluginType)
 	ON_BN_CLICKED(IDC_BUTTON_PLAYLIST_SHOW, &CPluginConfigPage::OnBnClickedButtonPlaylistShow)
 	ON_BN_CLICKED(IDC_BUTTON_STREAM_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamParse)
 	ON_BN_CLICKED(IDC_BUTTON_STREAM_ID_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamIdParse)
@@ -55,6 +57,8 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_DEVICES, &CPluginConfigPage::OnBnClickedButtonEditDevices)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_QUALITY, &CPluginConfigPage::OnBnClickedButtonEditQuality)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_PROFILES, &CPluginConfigPage::OnBnClickedButtonEditProfiles)
+	ON_BN_CLICKED(IDC_BUTTON_ACTIVE, &CPluginConfigPage::OnBnClickedButtonActive)
+	ON_BN_CLICKED(IDC_BUTTON_DEFAULT, &CPluginConfigPage::OnBnClickedButtonDefault)
 END_MESSAGE_MAP()
 
 CPluginConfigPage::CPluginConfigPage() : CMFCPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
@@ -66,9 +70,10 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
-	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndToggleEdit);
+	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndBtnToggleEdit);
 	DDX_Control(pDX, IDC_BUTTON_LOAD_CONFIG, m_wndBtnLoadConf);
-	DDX_Control(pDX, IDC_BUTTON_SAVE_CONFIG, m_wndSaveConf);
+	DDX_Control(pDX, IDC_BUTTON_SAVE_CONFIG, m_wndBtnSaveConf);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_NAME, m_wndName);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_NAME, m_Name);
 	DDX_Control(pDX, IDC_EDIT_TITLE, m_wndTitle);
@@ -109,21 +114,22 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_EPG_TZ, m_wndEpgTimezone);
 	DDX_Text(pDX, IDC_EDIT_EPG_TZ, m_EpgTimezone);
 	DDX_Control(pDX, IDC_COMBO_ACCESS_TYPE, m_wndAccessType);
-	DDX_Control(pDX, IDC_COMBO_STREAM_TYPE, m_wndStreamSubType);
+	DDX_Control(pDX, IDC_COMBO_STREAM_TYPE, m_wndStreamType);
 	DDX_Control(pDX, IDC_COMBO_CATCHUP_TYPE, m_wndCatchupType);
 	DDX_Control(pDX, IDC_COMBO_EPG_TYPE, m_wndEpgType);
-	DDX_Control(pDX, IDC_BUTTON_EPG_SHOW, m_wndEpgTest);
+	DDX_Control(pDX, IDC_BUTTON_EPG_SHOW, m_wndBtnEpgTest);
 	DDX_Control(pDX, IDC_EDIT_SET_ID, m_wndSetID);
 	DDX_Text(pDX, IDC_EDIT_SET_ID, m_SetID);
-	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
+	DDX_Control(pDX, IDC_EDIT_SET_TOKEN, m_wndToken);
 	DDX_Text(pDX, IDC_EDIT_SET_TOKEN, m_Token);
+	DDX_Control(pDX, IDC_DATETIMEPICKER_DATE, m_wndDate);
 	DDX_DateTimeCtrl(pDX, IDC_DATETIMEPICKER_DATE, m_Date);
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_wndPlaylistTemplate);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_PlaylistTemplate);
-	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndSquareIcons);
-	DDX_Control(pDX, IDC_BUTTON_PLAYLIST_SHOW, m_wndPlaylistShow);
-	DDX_Control(pDX, IDC_BUTTON_STREAM_PARSE, m_wndBtnStreamParse);
-	DDX_Control(pDX, IDC_BUTTON_STREAM_ID_PARSE, m_wndBtnStreamParseID);
+	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndChkSquareIcons);
+	DDX_Control(pDX, IDC_BUTTON_PLAYLIST_SHOW, m_wndBtnPlaylistTest);
+	DDX_Control(pDX, IDC_BUTTON_STREAM_PARSE, m_wndBtnStreamParseTest);
+	DDX_Control(pDX, IDC_BUTTON_STREAM_ID_PARSE, m_wndBtnStreamParseIdTest);
 	DDX_Control(pDX, IDC_CHECK_STATIC_SERVERS, m_wndChkStaticServers);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_SERVERS, m_wndBtnServers);
 	DDX_Control(pDX, IDC_CHECK_STATIC_DEVICES, m_wndChkStaticDevices);
@@ -132,6 +138,9 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EDIT_QUALITY, m_wndBtnQualities);
 	DDX_Control(pDX, IDC_CHECK_STATIC_PROFILES, m_wndChkStaticProfiles);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_PROFILES, m_wndBtnProfiles);
+	DDX_Control(pDX, IDC_BUTTON_ACTIVE, m_wndBtnActivate);
+	DDX_Control(pDX, IDC_BUTTON_DEFAULT, m_wndBtnDefault);
+	DDX_Control(pDX, IDC_STATIC_TITLE, m_wndStaticTitle);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -159,7 +168,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	RestoreWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);
 
 	// Fill available plugins
-	ASSERT(m_plugin_type != PluginType::enCustom);
+	//ASSERT(m_plugin_type != PluginType::enCustom);
 
 	int sel_idx = 0;
 	for (const auto& item : GetConfig().get_all_plugins())
@@ -175,10 +184,13 @@ BOOL CPluginConfigPage::OnInitDialog()
 		}
 	}
 
-	m_wndToggleEdit.EnableWindow(!m_single && !m_readonly);
+	m_loaded_config = m_active_config = GetConfig().get_string(false, REG_ACTIVE_SETTINGS);
+
+	UpdateStaticTtitle();
+
+	m_wndBtnToggleEdit.EnableWindow(!m_single);
 	m_wndPluginType.SetCurSel(sel_idx);
 	m_wndPluginType.EnableWindow(m_single);
-	m_wndBtnLoadConf.EnableWindow(!m_single && !m_readonly);
 
 	if (m_pAccessPage)
 	{
@@ -194,11 +206,26 @@ BOOL CPluginConfigPage::OnInitDialog()
 	else
 	{
 		FillControlsCommon();
-		EnableControls(allowEdit);
 	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CPluginConfigPage::UpdateStaticTtitle()
+{
+	std::wstring title_addin;
+	if (m_active_config.empty())
+	{
+		title_addin = load_string_resource(IDS_STRING_STR_DEFAULT);
+	}
+	else
+	{
+		std::filesystem::path config_name = m_active_config;
+		title_addin = config_name.filename().wstring();
+	}
+
+	m_wndStaticTitle.SetWindowText(fmt::format(L"{:s} ({:s})", load_string_resource(IDS_STRING_STATIC_TITLE), title_addin).c_str());
 }
 
 BOOL CPluginConfigPage::OnApply()
@@ -237,26 +264,47 @@ BOOL CPluginConfigPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 	return FALSE;
 }
 
-void CPluginConfigPage::EnableControls(bool enable)
+void CPluginConfigPage::EnableControls()
 {
 	UpdateData(TRUE);
 
-	if (m_readonly)
+	bool enable = m_allow_edit;
+	if (m_single)
 		enable = false;
 
+	// buttons
+	m_wndBtnSaveConf.EnableWindow(enable);
+	m_wndBtnLoadConf.EnableWindow(enable);
+	m_wndBtnActivate.EnableWindow(enable && !m_loaded_config.empty() && m_loaded_config != m_active_config);
+	m_wndBtnDefault.EnableWindow(enable && !m_active_config.empty());
+
+	// common
 	m_wndName.EnableWindow(enable);
 	m_wndTitle.EnableWindow(enable);
 	m_wndShortName.EnableWindow(enable);
 	m_wndProviderUrl.EnableWindow(enable);
-	m_wndSquareIcons.EnableWindow(enable);
-	m_wndPlaylistTemplate.SetReadOnly(!enable);
-	m_wndParseStream.SetReadOnly(!enable);
-	m_wndParseStreamID.SetReadOnly(!enable);
+	m_wndChkSquareIcons.EnableWindow(enable);
+	m_wndAccessType.EnableWindow(enable);
+	m_wndPlaylistTemplate.EnableWindow(enable);
+	m_wndParseStream.EnableWindow(enable);
+	m_wndParseStreamID.EnableWindow(enable);
+
+	// test
+	m_wndBtnPlaylistTest.EnableWindow(enable && m_pAccessPage != nullptr);
+	m_wndBtnStreamParseTest.EnableWindow(enable && !m_ParseStream.IsEmpty());
+	m_wndBtnStreamParseIdTest.EnableWindow(enable && !m_ParseStreamID.IsEmpty());
+
+	// streams
+	m_wndStreamType.EnableWindow(enable);
+	m_wndCatchupType.EnableWindow(enable);
 	m_wndSubst.EnableWindow(enable);
 	m_wndDuration.EnableWindow(enable);
 	m_wndStreamTemplate.EnableWindow(enable);
 	m_wndStreamArchiveTemplate.EnableWindow(enable);
-	m_wndEpgUrl.SetReadOnly(!enable);
+
+	// epg
+	m_wndEpgType.EnableWindow(enable);
+	m_wndEpgUrl.EnableWindow(enable);
 	m_wndEpgRoot.EnableWindow(enable);
 	m_wndEpgName.EnableWindow(enable);
 	m_wndEpgDesc.EnableWindow(enable);
@@ -265,39 +313,44 @@ void CPluginConfigPage::EnableControls(bool enable)
 	m_wndDateFormat.EnableWindow(enable);
 	m_wndEpgTimeFormat.EnableWindow(enable);
 	m_wndEpgTimezone.EnableWindow(enable);
-	m_wndAccessType.EnableWindow(enable);
-	m_wndCatchupType.EnableWindow(enable);
-	m_wndBtnLoadConf.EnableWindow(enable);
-	m_wndChkStaticServers.SetCheck(m_plugin->is_static_servers());
-	m_wndChkStaticServers.EnableWindow(enable);
-	m_wndBtnServers.EnableWindow(m_plugin->is_static_servers());
-	m_wndChkStaticDevices.SetCheck(m_plugin->is_static_devices());
-	m_wndChkStaticDevices.EnableWindow(enable);
-	m_wndBtnDevices.EnableWindow(m_plugin->is_static_devices());
-	m_wndChkStaticQualities.SetCheck(m_plugin->is_static_qualities());
-	m_wndChkStaticQualities.EnableWindow(enable);
-	m_wndBtnQualities.EnableWindow(m_plugin->is_static_qualities());
-	m_wndChkStaticProfiles.SetCheck(m_plugin->is_static_profiles());
-	m_wndChkStaticProfiles.EnableWindow(enable);
-	m_wndBtnProfiles.EnableWindow(m_plugin->is_static_profiles());
 
-	m_wndPlaylistShow.EnableWindow(!m_single && m_pAccessPage != nullptr);
-	m_wndBtnStreamParse.EnableWindow(!m_single && !m_ParseStream.IsEmpty());
-	m_wndBtnStreamParseID.EnableWindow(!m_single && !m_ParseStreamID.IsEmpty());
+	// servers
+	m_wndChkStaticServers.SetCheck(m_plugin->get_static_servers());
+	m_wndChkStaticServers.EnableWindow(enable);
+	m_wndBtnServers.EnableWindow(enable && m_plugin->get_static_servers());
+
+	// devices
+	m_wndChkStaticDevices.SetCheck(m_plugin->get_static_devices());
+	m_wndChkStaticDevices.EnableWindow(enable);
+	m_wndBtnDevices.EnableWindow(enable && m_plugin->get_static_devices());
+
+	// qualities
+	m_wndChkStaticQualities.SetCheck(m_plugin->get_static_qualities());
+	m_wndChkStaticQualities.EnableWindow(enable);
+	m_wndBtnQualities.EnableWindow(enable && m_plugin->get_static_qualities());
+
+	// profiles
+	m_wndChkStaticProfiles.SetCheck(m_plugin->get_static_profiles());
+	m_wndChkStaticProfiles.EnableWindow(enable);
+	m_wndBtnProfiles.EnableWindow(enable && m_plugin->get_static_profiles());
+
+	// epg test
+	m_wndSetID.EnableWindow(enable);
+	m_wndToken.EnableWindow(enable);
+	m_wndDate.EnableWindow(enable);
+	m_wndBtnEpgTest.EnableWindow(enable && !m_EpgUrl.IsEmpty());
 }
 
 void CPluginConfigPage::FillControlsCommon()
 {
 	if (!m_plugin) return;
 
-	//m_plugin->save_plugin_parameters();
-
 	m_wndAccessType.SetCurSel((int)m_plugin->get_access_type());
-	m_wndSquareIcons.SetCheck(m_plugin->is_square_icons() != false);
+	m_wndChkSquareIcons.SetCheck(m_plugin->get_square_icons() != false);
 
 	m_Name = m_plugin->get_name().c_str();
 	m_Title = m_plugin->get_title().c_str();
-	m_ShortName = m_plugin->get_short_name().c_str();
+	m_ShortName = m_plugin->get_short_name_w().c_str();
 	m_ProviderUrl = m_plugin->get_provider_url().c_str();
 	m_PlaylistTemplate = m_plugin->get_playlist_template().c_str();
 	m_ParseStream = m_plugin->get_uri_parse_pattern().c_str();
@@ -305,18 +358,54 @@ void CPluginConfigPage::FillControlsCommon()
 
 	UpdateData(FALSE);
 
-	m_wndStreamSubType.SetCurSel(0);
+	m_supported_streams = m_plugin->get_supported_streams();
+	m_epg_parameters = m_plugin->get_epg_parameters();
+
+	m_wndStreamType.SetCurSel(0);
 	m_wndEpgType.SetCurSel(0);
 
 	FillControlsStream();
 	FillControlsEpg();
+	EnableControls();
+}
+
+void CPluginConfigPage::SaveControlsCommon()
+{
+	if (!m_plugin) return;
+
+	UpdateData(TRUE);
+
+	m_plugin->set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
+
+	m_plugin->set_name(m_Name.GetString());
+	m_plugin->set_title(m_Title.GetString());
+	m_plugin->set_short_name_w(m_ShortName.GetString());
+	m_plugin->set_provider_url(m_ProviderUrl.GetString());
+	m_plugin->set_playlist_template(m_PlaylistTemplate.GetString());
+	m_plugin->set_uri_parse_pattern(m_ParseStream.GetString());
+	m_plugin->set_uri_id_parse_pattern(m_ParseStreamID.GetString());
+
+	SaveControlsStream();
+	SaveControlsEpg();
+
+	int i = 0;
+	for (const auto& stream : m_supported_streams)
+	{
+		m_plugin->set_supported_stream(i++, stream);
+	}
+
+	i = 0;
+	for (const auto& epg : m_epg_parameters)
+	{
+		m_plugin->set_epg_parameter(i++, epg);
+	}
 }
 
 void CPluginConfigPage::FillControlsStream()
 {
 	if (!m_plugin) return;
 
-	const auto& stream = m_plugin->get_supported_stream(m_wndStreamSubType.GetCurSel());
+	const auto& stream = m_supported_streams[m_wndStreamType.GetCurSel()];
 
 	BOOL enableDuration = (stream.cu_type == CatchupType::cu_flussonic);
 	if (enableDuration)
@@ -336,11 +425,26 @@ void CPluginConfigPage::FillControlsStream()
 	UpdateData(FALSE);
 }
 
+void CPluginConfigPage::SaveControlsStream()
+{
+	if (!m_plugin) return;
+
+	UpdateData(TRUE);
+
+	auto& cur_stream = m_supported_streams[m_wndStreamType.GetCurSel()];
+
+	cur_stream.cu_type = (CatchupType)m_wndCatchupType.GetCurSel();
+	cur_stream.cu_duration = m_Duration;
+	cur_stream.set_shift_replace(m_Subst.GetString());
+	cur_stream.set_uri_template(m_StreamTemplate.GetString());
+	cur_stream.set_uri_arc_template(m_StreamArchiveTemplate.GetString());
+}
+
 void CPluginConfigPage::FillControlsEpg()
 {
 	if (!m_plugin) return;
 
-	const auto& epg = m_plugin->get_epg_parameters(m_wndEpgType.GetCurSel());
+	const auto& epg = m_epg_parameters[m_wndEpgType.GetCurSel()];
 
 	m_EpgUrl = epg.epg_url.c_str();
 	m_EpgRoot = epg.epg_root.c_str();
@@ -352,35 +456,119 @@ void CPluginConfigPage::FillControlsEpg()
 	m_EpgTimeFormat = epg.epg_time_format.c_str();
 	m_EpgTimezone = epg.epg_timezone;
 
-	m_wndEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
-
 	UpdateData(FALSE);
 }
 
-void CPluginConfigPage::OnBnClickedButtonEditConfig()
+void CPluginConfigPage::SaveControlsEpg()
 {
-	allowEdit = !allowEdit;
-	EnableControls(allowEdit);
+	if (!m_plugin) return;
+
+	UpdateData(TRUE);
+
+	auto& epg = m_epg_parameters[m_wndEpgType.GetCurSel()];
+
+	epg.set_epg_url(m_EpgUrl.GetString());
+	epg.set_epg_root(m_EpgRoot.GetString());
+	epg.set_epg_name(m_EpgName.GetString());
+	epg.set_epg_desc(m_EpgDesc.GetString());
+	epg.set_epg_start(m_EpgStart.GetString());
+	epg.set_epg_end(m_EpgEnd.GetString());
+	epg.set_epg_date_format(m_EpgDateFormat.GetString());
+	epg.set_epg_time_format(m_EpgTimeFormat.GetString());
+	epg.epg_timezone = m_EpgTimezone;
+}
+
+void CPluginConfigPage::OnCbnSelchangeComboPluginType()
+{
+	m_allow_edit = false;
+	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
+	m_plugin = StreamContainer::get_instance(m_plugin_type);
+	FillControlsCommon();
+
+	if (m_single)
+	{
+		const auto& in_file = fmt::format(LR"({:s}{:s}_config.json)",
+										  GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH),
+										  m_plugin->get_short_name_w());
+		m_plugin->save_plugin_parameters(in_file);
+	}
+}
+
+void CPluginConfigPage::OnBnClickedButtonToggleEditConfig()
+{
+	m_allow_edit = !m_allow_edit;
+	EnableControls();
 }
 
 void CPluginConfigPage::OnBnClickedButtonLoadConfig()
 {
-	// TODO: Add your control notification handler code here
+	const auto& in_file = fmt::format(LR"({:s}{:s}_config.json)",
+									  GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH),
+									  m_plugin->get_short_name_w());
+
+	if (m_plugin->load_plugin_parameters(in_file))
+	{
+		m_loaded_config = in_file;
+		FillControlsCommon();
+	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonSaveConfig()
 {
-	m_plugin->save_plugin_parameters();
+	SaveControlsCommon();
+
+	std::wstring out_file = m_loaded_config;
+	if (out_file.empty())
+	{
+		const auto& path = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH);
+		std::filesystem::create_directory(path);
+		out_file = fmt::format(LR"({:s}{:s}_config.json)", path, m_plugin->get_short_name_w());
+	}
+
+	if (m_plugin->save_plugin_parameters(out_file))
+	{
+		m_loaded_config = out_file;
+		FillControlsCommon();
+	}
 }
 
-void CPluginConfigPage::OnCbnSelchangeComboStreamSubType()
+void CPluginConfigPage::OnBnClickedButtonActive()
+{
+	m_active_config = m_loaded_config;
+	GetConfig().set_string(false, REG_ACTIVE_SETTINGS, m_active_config);
+
+	UpdateStaticTtitle();
+	FillControlsCommon();
+}
+
+void CPluginConfigPage::OnBnClickedButtonDefault()
+{
+	m_active_config.clear();
+	m_plugin->load_default();
+	GetConfig().set_string(false, REG_ACTIVE_SETTINGS, m_active_config);
+
+	UpdateStaticTtitle();
+	FillControlsCommon();
+}
+
+void CPluginConfigPage::OnCbnSelchangeComboStreamType()
 {
 	FillControlsStream();
+}
+
+void CPluginConfigPage::OnCbnDropdownComboStreamType()
+{
+	SaveControlsStream();
 }
 
 void CPluginConfigPage::OnCbnSelchangeComboEpgType()
 {
 	FillControlsEpg();
+}
+
+void CPluginConfigPage::OnCbnDropdownComboEpgType()
+{
+	SaveControlsEpg();
 }
 
 void CPluginConfigPage::OnBnClickedButtonEpgTest()
@@ -432,15 +620,6 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 	}
 }
 
-void CPluginConfigPage::OnCbnSelchangeComboPluginType()
-{
-	allowEdit = false;
-	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
-	m_plugin = StreamContainer::get_instance(m_plugin_type);
-	FillControlsCommon();
-	EnableControls(allowEdit);
-}
-
 void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 {
 	const auto& selected = m_pAccessPage->GetCheckedAccount();
@@ -490,21 +669,21 @@ void CPluginConfigPage::OnBnClickedButtonStreamIdParse()
 void CPluginConfigPage::OnEnChangeEditParsePattern()
 {
 	UpdateData(TRUE);
-	m_wndBtnStreamParse.EnableWindow(!m_ParseStream.IsEmpty());
+	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
 }
 
 void CPluginConfigPage::OnEnChangeEditParsePatternID()
 {
 	UpdateData(TRUE);
-	m_wndBtnStreamParseID.EnableWindow(!m_ParseStreamID.IsEmpty());
+	m_wndBtnStreamParseIdTest.EnableWindow(!m_ParseStreamID.IsEmpty());
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditServers()
 {
-	CFillParamsInfo dlg;
+	CFillParamsInfoDlg dlg;
 	dlg.m_type = 0;
 	dlg.m_paramsList = m_plugin->get_servers_list();
-	dlg.m_readonly = m_readonly;
+	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
 		m_plugin->set_servers_list(dlg.m_paramsList);
@@ -512,10 +691,10 @@ void CPluginConfigPage::OnBnClickedButtonEditServers()
 
 void CPluginConfigPage::OnBnClickedButtonEditDevices()
 {
-	CFillParamsInfo dlg;
+	CFillParamsInfoDlg dlg;
 	dlg.m_type = 1;
 	dlg.m_paramsList = m_plugin->get_devices_list();
-	dlg.m_readonly = m_readonly;
+	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
 		m_plugin->set_devices_list(dlg.m_paramsList);
@@ -523,10 +702,10 @@ void CPluginConfigPage::OnBnClickedButtonEditDevices()
 
 void CPluginConfigPage::OnBnClickedButtonEditQuality()
 {
-	CFillParamsInfo dlg;
+	CFillParamsInfoDlg dlg;
 	dlg.m_type = 2;
 	dlg.m_paramsList = m_plugin->get_qualities_list();
-	dlg.m_readonly = m_readonly;
+	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
 		m_plugin->set_qualities_list(dlg.m_paramsList);
@@ -534,10 +713,10 @@ void CPluginConfigPage::OnBnClickedButtonEditQuality()
 
 void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 {
-	CFillParamsInfo dlg;
+	CFillParamsInfoDlg dlg;
 	dlg.m_type = 3;
 	dlg.m_paramsList = m_plugin->get_profiles_list();
-	dlg.m_readonly = m_readonly;
+	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
 		m_plugin->set_profiles_list(dlg.m_paramsList);
