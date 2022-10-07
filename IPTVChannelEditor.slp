@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20221007003649" scan="152" scanned="20221007003640">
+<document created="20211012165442" version="4.0.374" date="20221007004155" scan="152" scanned="20221007003640">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221006223620" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221006223746" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -762,7 +762,7 @@
             <row id="CY">14</row>
             <row id="Text">
               <native>Reset</native>
-              <lang id="ru" date="20220630123344" savedtotm="1">Сброс</lang>
+              <lang id="ru" date="20221007004044">Сбросить</lang>
             </row>
             <row id="X" changed="20220702022638">255</row>
             <row id="Y" changed="20220630144434">92</row>
@@ -2793,7 +2793,7 @@
             <row id="CY">16</row>
             <row id="Text" changed="20221006235039">
               <native>Set</native>
-              <lang id="ru" date="20221006235108">Задать</lang>
+              <lang id="ru" date="20221007004018">Установить</lang>
             </row>
             <row id="X" changed="20221006235039">284</row>
             <row id="Y">63</row>
@@ -2803,7 +2803,7 @@
             <row id="CY">16</row>
             <row id="Text" changed="20221006235039">
               <native>Reset</native>
-              <lang id="ru" date="20221006235102">Сброс</lang>
+              <lang id="ru" date="20221007004042">Сбросить</lang>
             </row>
             <row id="X" changed="20221006235039">339</row>
             <row id="Y">63</row>

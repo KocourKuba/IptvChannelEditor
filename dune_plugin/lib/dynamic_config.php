@@ -29,7 +29,6 @@ class dynamic_config
         $this->features[VOD_QUALITY_SUPPORTED] = false;
         $this->features[VOD_FILTER_SUPPORTED] = false;
         $this->features[VOD_PARSE_PATTERN] = '';
-        $this->features[USE_TOKEN_AS_ID] = false;
 
         // load defaults
         $default_streams = array();
@@ -80,7 +79,6 @@ class dynamic_config
         $this->set_feature(URI_ID_PARSE_PATTERN, $settings[URI_ID_PARSE_PATTERN]);
         $this->set_feature(URI_PARSE_PATTERN, $settings[URI_PARSE_PATTERN]);
         $this->set_feature(SQUARE_ICONS, $settings[SQUARE_ICONS]);
-        $this->set_feature(USE_TOKEN_AS_ID, $settings[USE_TOKEN_AS_ID]);
 
         foreach ($settings[STREAMS_CONFIG] as $config)
         {

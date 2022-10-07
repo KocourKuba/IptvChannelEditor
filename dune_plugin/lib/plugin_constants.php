@@ -37,7 +37,6 @@ const M_QUALITY   = 'quality';
 // common
 const ACCESS_TYPE          = 'access_type';
 const SHORT_NAME           = 'short_name';
-const USE_TOKEN_AS_ID      = 'use_token_as_id';
 const PLAYLIST_TEMPLATE    = 'playlist_template';
 const PLAYLIST_TEMPLATE2   = 'playlist_template2';
 const URI_ID_PARSE_PATTERN = 'uri_id_parse_pattern';

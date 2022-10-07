@@ -50,7 +50,6 @@ void uri_lightiptv::load_default()
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 
 	square_icons = true;
-	use_token_as_id = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].cu_subst = "video";

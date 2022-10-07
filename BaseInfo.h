@@ -47,6 +47,15 @@ public:
 		, base_type(type) {};
 
 public:
+
+	// parser wrappers
+	std::wstring& get_id() const { return stream_uri->get_parser().id; }
+	std::wstring& get_int_id() const { return stream_uri->get_parser().int_id; }
+	std::wstring& get_token() const { return stream_uri->get_parser().token; }
+	std::wstring& get_domain() const { return stream_uri->get_parser().domain; }
+	std::wstring& get_port() const { return stream_uri->get_parser().port; }
+	std::wstring& get_host() const { return stream_uri->get_parser().host; }
+
 	const int get_key() const { return key; }
 	void set_key(const int val) { key = val; }
 
@@ -72,7 +81,7 @@ public:
 
 	void swap_id(BaseInfo& src)
 	{
-		std::swap(stream_uri->get_parser().id, src.stream_uri->get_parser().id);
+		std::swap(get_id(), src.get_id());
 	}
 
 	InfoType get_type() const { return base_type; }

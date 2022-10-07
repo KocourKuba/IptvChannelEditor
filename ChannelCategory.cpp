@@ -53,13 +53,15 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 		return;
 
 	// <id>1</id>
-	set_key(rapidxml::get_value_int(node->first_node(ID)));
+	set_key(rapidxml::get_value_int(node->first_node(utils::ID)));
 	// <caption>Общие</caption>
-	set_title(rapidxml::get_value_wstring(node->first_node(CAPTION)));
+	set_title(rapidxml::get_value_wstring(node->first_node(utils::CAPTION)));
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	set_icon_uri(rapidxml::get_value_wstring(node->first_node(ICON_URL)));
+	set_icon_uri(rapidxml::get_value_wstring(node->first_node(utils::ICON_URL)));
 	// <disabled>true</disabled>
 	set_disabled(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::DISABLED))) == "true");
+	// <favorite>true</favorite>
+	set_favorite(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::FAVORITE))) == "true");
 }
 
 rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) const
@@ -68,14 +70,21 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 	auto category_node = rapidxml::alloc_node(alloc, utils::TV_CATEGORY);
 
 	// <id>1</id>
-	category_node->append_node(rapidxml::alloc_node(alloc, ID, std::to_string(get_key()).c_str()));
+	category_node->append_node(rapidxml::alloc_node(alloc, utils::ID, std::to_string(get_key()).c_str()));
 
 	// <caption>Общие</caption>
-	category_node->append_node(rapidxml::alloc_node(alloc, CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
+	category_node->append_node(rapidxml::alloc_node(alloc, utils::CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <icon_url>plugin_file://icons/1.png</icon_url>
-	category_node->append_node(rapidxml::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
+	category_node->append_node(rapidxml::alloc_node(alloc, utils::ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 
+	// <favorite>true</favorite>
+	if (is_favorite())
+	{
+		category_node->append_node(rapidxml::alloc_node(alloc, utils::FAVORITE, "true"));
+	}
+
+	// <disabled>true</disabled>
 	if (is_disabled())
 	{
 		category_node->append_node(rapidxml::alloc_node(alloc, utils::DISABLED, "true"));
@@ -105,9 +114,9 @@ void ChannelCategory::move_channels(const std::shared_ptr<ChannelInfo>& range_st
 
 bool ChannelCategory::add_channel(const std::shared_ptr<ChannelInfo>& channel)
 {
-	if (channels_map.find(channel->stream_uri->get_parser().id) == channels_map.end())
+	if (channels_map.find(channel->get_id()) == channels_map.end())
 	{
-		channels_map.emplace(channel->stream_uri->get_parser().id, channel);
+		channels_map.emplace(channel->get_id(), channel);
 		channels.emplace_back(channel);
 		return true;
 	}

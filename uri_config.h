@@ -409,7 +409,6 @@ protected:
 	// use token generated or received from provider
 	bool requested_token = false;
 	// flag for php plugin if uri does not contains parsed 'id' for channel
-	bool use_token_as_id = false;
 	bool static_servers = false;
 	bool static_qualities = false;
 	bool static_devices = false;

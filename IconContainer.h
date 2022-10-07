@@ -32,9 +32,6 @@ DEALINGS IN THE SOFTWARE.
 class IconContainer
 {
 public:
-	static constexpr auto ICON_URL = "icon_url";
-
-public:
 	IconContainer() = default;
 	IconContainer(std::wstring root) : root_path(root) {}
 	IconContainer(const IconContainer& src)

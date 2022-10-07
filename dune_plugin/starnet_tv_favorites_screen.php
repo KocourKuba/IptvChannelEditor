@@ -166,7 +166,8 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
             try {
                 $c = $this->plugin->tv->get_channel($channel_id);
             } catch (Exception $e) {
-                hd_print("Warning: channel '$channel_id' not found.");
+                hd_print($e->getMessage());
+                $this->plugin->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_REMOVE, $channel_id, $plugin_cookies);
                 continue;
             }
 

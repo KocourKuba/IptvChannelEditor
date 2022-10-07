@@ -113,6 +113,8 @@ class Starnet_Tv extends Abstract_Tv
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID,
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH));
+            $fav_ids = $this->get_fav_channel_ids($plugin_cookies);
+            hd_print("Favorites loaded from settings: " . count($fav_ids));
         }
 
         // All channels group
@@ -121,6 +123,7 @@ class Starnet_Tv extends Abstract_Tv
             Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH));
 
         // read category
+        $fav_category_id = Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID;
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
             if ($xml_tv_category->getName() !== 'tv_category') {
                 $error_string = "Error: unexpected node '{$xml_tv_category->getName()}'. Expected: 'tv_category'";
@@ -132,9 +135,15 @@ class Starnet_Tv extends Abstract_Tv
                 continue;
             }
 
-            $this->groups->put(new Default_Group((string)$xml_tv_category->id,
-                (string)$xml_tv_category->caption,
-                (string)$xml_tv_category->icon_url));
+            if (!isset($xml_tv_category->favorite)) {
+                $this->groups->put(new Default_Group((string)$xml_tv_category->id,
+                    (string)$xml_tv_category->caption,
+                    (string)$xml_tv_category->icon_url));
+                hd_print("Added category: $xml_tv_category->caption");
+            } else if ($xml_tv_category->favorite == "true" ) {
+                $fav_category_id = (int)$xml_tv_category->id;
+                hd_print("Embedded Favorites category: $xml_tv_category->caption ($fav_category_id)");
+            }
         }
 
         $this->plugin->config->GetAccountInfo($plugin_cookies);
@@ -147,17 +156,12 @@ class Starnet_Tv extends Abstract_Tv
                 continue;
             }
 
-            // ignore disabled channel
-            if (isset($xml_tv_channel->disabled)) {
-                continue;
-            }
-
             // update play stream url and calculate unique id from url hash
             if (isset($xml_tv_channel->channel_id)) {
                 $channel_id = (string)$xml_tv_channel->channel_id;
                 $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
                 // update stream url by channel ID
-                $hash = $this->plugin->config->GetUrlHash($channel_id, $ext_params);
+                $hash = $channel_id;
                 $streaming_url = '';
             } else {
                 // custom url, play as is
@@ -165,7 +169,12 @@ class Starnet_Tv extends Abstract_Tv
                 $hash = $channel_id = hash("crc32", $streaming_url);
                 $ext_params = array();
             }
-            // hd_print("load_channels: $streaming_url");
+
+            // ignore disabled channel
+            if (isset($xml_tv_channel->disabled)) {
+                hd_print("Channel $xml_tv_channel->caption ($channel_id) is disabled");
+                continue;
+            }
 
             // Read category id from channel
             if (!isset($xml_tv_channel->tv_category_id)) {
@@ -174,13 +183,13 @@ class Starnet_Tv extends Abstract_Tv
             }
 
             $tv_category_id = (int)$xml_tv_channel->tv_category_id;
-            if (!$this->groups->has($tv_category_id)) {
-                // Category disabled or some went wrong
-                continue;
-            }
 
             if ($this->channels->has($hash)) {
                 $channel = $this->channels->get($hash);
+                if ($tv_category_id !== $fav_category_id) {
+                    hd_print("$tv_category_id !== $fav_category_id");
+                    hd_print("Channel $xml_tv_channel->caption ($channel_id) already exist. Duplicate channel");
+                }
             } else {
                 // https not supported for old players
                 // $icon_url = str_replace("https://", "http://", (string)$xml_tv_channel->icon_url);
@@ -208,14 +217,18 @@ class Starnet_Tv extends Abstract_Tv
             }
 
             // Link group and channel.
-            $group = $this->groups->get($tv_category_id);
-            $channel->add_group($group);
-            $group->add_channel($channel);
-
-            // only new format support favorites
-            if ($xml_tv_channel->favorite && $this->is_favorites_supported()) {
-                hd_print("Add to favorite $hash ($xml_tv_channel->caption)");
+            if (($tv_category_id === $fav_category_id || $xml_tv_channel->favorite) && $this->is_favorites_supported()) {
+                // favorites category
+                hd_print("Added from channels list to favorites channel $hash ($xml_tv_channel->caption)");
                 $this->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $hash, $plugin_cookies);
+            }
+            else if (!$this->groups->has($tv_category_id)) {
+                // Category disabled or unknown
+                hd_print("Unknown category $tv_category_id");
+            } else {
+                $group = $this->groups->get($tv_category_id);
+                $channel->add_group($group);
+                $group->add_channel($channel);
             }
         }
 

@@ -38,10 +38,6 @@ DEALINGS IN THE SOFTWARE.
 class ChannelCategory : public BaseInfo
 {
 public:
-	static constexpr auto ID = "id";
-	static constexpr auto CAPTION = "caption";
-
-public:
 	ChannelCategory() = delete;
 	ChannelCategory(const std::wstring& root_path);
 	ChannelCategory(rapidxml::xml_node<>* node, const std::wstring& root_path);
@@ -51,6 +47,9 @@ public:
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& alloc) const;
 
 	bool is_empty() const { return channels_map.empty(); }
+
+	bool is_favorite() const { return favorite; }
+	void set_favorite(bool val) { favorite = val; }
 
 	const std::vector<std::shared_ptr<ChannelInfo>>& get_channels() const { return channels; }
 
@@ -71,5 +70,6 @@ private:
 	std::vector<std::shared_ptr<ChannelInfo>> channels;
 	std::map<std::wstring, std::shared_ptr<ChannelInfo>> channels_map;
 	bool disabled = false;
+	bool favorite = false;
 };
 

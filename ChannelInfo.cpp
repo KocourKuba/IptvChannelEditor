@@ -60,11 +60,11 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 
 	set_title(rapidxml::get_value_wstring(node->first_node(utils::CAPTION)));
 	stream_uri->set_template(true);
-	stream_uri->get_parser().id = rapidxml::get_value_wstring(node->first_node(utils::CHANNEL_ID));
-	stream_uri->get_parser().int_id = rapidxml::get_value_wstring(node->first_node(utils::INT_ID));
+	get_id().assign(rapidxml::get_value_wstring(node->first_node(utils::CHANNEL_ID)));
+	get_int_id().assign(rapidxml::get_value_wstring(node->first_node(utils::INT_ID)));
 	set_epg_id(0, rapidxml::get_value_wstring(node->first_node(utils::EPG1_ID)));
 	set_epg_id(1, rapidxml::get_value_wstring(node->first_node(utils::EPG2_ID)));
-	set_icon_uri(rapidxml::get_value_wstring(node->first_node(ICON_URL)));
+	set_icon_uri(rapidxml::get_value_wstring(node->first_node(utils::ICON_URL)));
 	set_disabled(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::DISABLED))) == "true");
 	set_favorite(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::FAVORITE))) == "true");
 	set_time_shift_hours(rapidxml::get_value_int(node->first_node(utils::TIME_SHIFT_HOURS)));
@@ -85,7 +85,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		categories.emplace(rapidxml::get_value_int(node->first_node(utils::TV_CATEGORY_ID)));
 	}
 
-	if (stream_uri->get_parser().id.empty())
+	if (get_id().empty())
 	{
 		stream_uri->set_template(false);
 		stream_uri->parse_uri(rapidxml::get_value_wstring(node->first_node(utils::STREAMING_URL)));
@@ -106,13 +106,13 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// <channel_id>1</channel_id> or <channel_id>tv3</channel_id>
 	if (stream_uri->is_template())
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CHANNEL_ID, utils::utf16_to_utf8(stream_uri->get_parser().id).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CHANNEL_ID, utils::utf16_to_utf8(get_id()).c_str()));
 
 	// used in glanz
 	// <int_id>1</int_id>
-	if (!stream_uri->get_parser().int_id.empty())
+	if (!get_int_id().empty())
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::INT_ID, utils::utf16_to_utf8(stream_uri->get_parser().int_id).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::INT_ID, utils::utf16_to_utf8(get_int_id()).c_str()));
 	}
 
 	// <epg_id>8</epg_id>
@@ -131,7 +131,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	// <icon_url>http://epg.it999.ru/img/146.png</icon_url>
 	if (!get_icon_uri().get_uri().empty())
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 	}
 
 	if (get_time_shift_hours() != 0)
@@ -165,11 +165,6 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	if (is_disabled())
 	{
 		channel_node->append_node(rapidxml::alloc_node(alloc, utils::DISABLED, "true"));
-	}
-
-	if (is_favorite())
-	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::FAVORITE, "true"));
 	}
 
 	return channel_node;

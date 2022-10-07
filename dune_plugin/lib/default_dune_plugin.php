@@ -426,7 +426,6 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_print('change_tv_favorites: TV is not supported');
-            HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
 

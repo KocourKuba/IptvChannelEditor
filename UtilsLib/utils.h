@@ -38,7 +38,7 @@ static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
 static constexpr auto VERSION_INFO = "version_info";
 static constexpr auto LIST_VERSION = "list_version";
-static constexpr auto FAVORITES = "favorites";
+static constexpr auto FAVORITES = L"__favorites";
 static constexpr auto PORTAL_SETUP = "portal_setup";
 static constexpr auto ACCESS_TOKEN = "access_key";
 static constexpr auto ACCESS_DOMAIN = "access_domain";
@@ -61,10 +61,12 @@ static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
 static constexpr auto TV_CATEGORY_ID = "tv_category_id";
 static constexpr auto INT_ID = "int_id";
 static constexpr auto STREAMING_URL = "streaming_url";
+static constexpr auto ID = "id";
 static constexpr auto ARCHIVE = "archive";
 static constexpr auto PROTECTED = "protected";
 static constexpr auto DISABLED = "disabled";
 static constexpr auto FAVORITE = "favorite";
+static constexpr auto ICON_URL = "icon_url";
 
 static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
 static constexpr auto CATEGORIES_LOGO_URL = L"icons/";

@@ -329,7 +329,7 @@ protected:
 
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE(uri_stream, access_type, short_name, title, name, provider_url, //-V601
 								   playlist_template, uri_id_parse_pattern, uri_parse_pattern,
-								   square_icons, requested_token, use_token_as_id,
+								   square_icons, requested_token,
 								   static_servers, static_qualities, static_devices, static_profiles,
 								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
 

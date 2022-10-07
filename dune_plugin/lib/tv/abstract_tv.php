@@ -82,8 +82,6 @@ abstract class Abstract_Tv implements Tv
         $channel = $this->channels->get($channel_id);
 
         if (is_null($channel)) {
-            hd_print("Unknown channel: $channel_id");
-            HD::print_backtrace();
             throw new Exception("Unknown channel: $channel_id");
         }
 
@@ -380,7 +378,7 @@ abstract class Abstract_Tv implements Tv
 
         $favorites = $this->get_fav_cookie($plugin_cookies);
         if (isset($plugin_cookies->{$favorites})) {
-            $fav_channel_ids = explode(",", $plugin_cookies->{$favorites});
+            $fav_channel_ids = array_filter(explode(",", $plugin_cookies->{$favorites}));
         }
 
         return array_unique($fav_channel_ids);

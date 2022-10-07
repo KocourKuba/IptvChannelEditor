@@ -300,30 +300,6 @@ class default_config extends dynamic_config
     }
 
     /**
-     * Update url by channel ID (for correct hash calculation of url)
-     * @param string $channel_id
-     * @param array $ext_params
-     * @return string
-     */
-    public function GetUrlHash($channel_id, $ext_params)
-    {
-        if ($this->get_stream_param(HLS, URL_TEMPLATE) !== '')
-            $url = $this->get_stream_param(HLS, URL_TEMPLATE);
-        else if ($this->get_stream_param(MPEG, URL_TEMPLATE) !== '')
-            $url = $this->get_stream_param(MPEG, URL_TEMPLATE);
-        else {
-            hd_print("No url template defined!");
-            return 0;
-        }
-        if ($this->get_feature(USE_TOKEN_AS_ID))
-            $url = str_replace('{TOKEN}', $ext_params[M_TOKEN], $url);
-        else
-            $url = str_replace('{ID}', $channel_id, $url);
-
-        return hash("crc32", $url);
-    }
-
-    /**
      * Get information from the account
      * @param &$plugin_cookies
      * @param bool $force default false, force downloading playlist even it already cached

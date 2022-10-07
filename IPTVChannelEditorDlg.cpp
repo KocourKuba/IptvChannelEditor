@@ -83,7 +83,7 @@ constexpr auto MOD_EPG2    = 0x08;
 constexpr auto MOD_ICON    = 0x10;
 
 // Common
-constexpr auto CHANNELS_LIST_VERSION = 4;
+constexpr auto CHANNELS_LIST_VERSION = 5;
 
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
@@ -969,12 +969,12 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 
 		for (auto& entry : m_playlistEntries->m_entries)
 		{
-			auto res = m_playlistMap.emplace(entry->stream_uri->get_parser().id, entry);
+			auto res = m_playlistMap.emplace(entry->get_id(), entry);
 			if (!res.second)
 			{
 				TRACE(L"Duplicate channel: %s (%s)\n",
 					  res.first->second->get_title().c_str(),
-					  res.first->second->stream_uri->get_parser().id.c_str());
+					  res.first->second->get_id().c_str());
 				continue;
 			}
 		}
@@ -1192,7 +1192,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		tvCategory.item.pszText = (LPWSTR)pair.second.category->get_title().c_str();
 		tvCategory.item.mask = TVIF_TEXT | TVIF_PARAM;
 		tvCategory.item.lParam = (DWORD_PTR)InfoType::enCategory;
-		tvCategory.hInsertAfter = (pair.first == ID_ADD_TO_FAVORITE) ? TVI_FIRST : nullptr;
+		tvCategory.hInsertAfter = (pair.second.category->is_favorite()) ? TVI_FIRST : nullptr;
 		auto hParent = m_wndChannelsTree.InsertItem(&tvCategory);
 		m_wndChannelsTree.SetItemColor(hParent, pair.second.category->is_disabled() ? m_gray : m_normal);
 
@@ -1205,7 +1205,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 			bool bUnknown = false;
 			bool bChanged = false;
 
-			const auto& id = channel->stream_uri->get_parser().id;
+			const auto& id = channel->get_id();
 			if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
 			{
 				const auto& entry = found->second;
@@ -1235,7 +1235,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 			}
 		}
 
-		if (!cnt && pair.first != ID_ADD_TO_FAVORITE)
+		if (!cnt && !pair.second.category->is_favorite())
 		{
 			m_wndChannelsTree.DeleteItem(hParent);
 			m_categoriesTreeMap.erase(hParent);
@@ -1251,7 +1251,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 	if (!m_channelsMap.empty())
 	{
 		SearchParams params;
-		params.id = select ? select : m_categoriesMap.begin()->second.category->get_channels().front()->stream_uri->get_parser().id;
+		params.id = select ? select : m_categoriesMap.begin()->second.category->get_channels().front()->get_id();
 		SelectTreeItem(&m_wndChannelsTree, params);
 	}
 }
@@ -1261,24 +1261,44 @@ void CIPTVChannelEditorDlg::RemoveOrphanChannels()
 	std::set<std::wstring> ids;
 	for (const auto& pair : m_categoriesMap)
 	{
-		if (pair.first == ID_ADD_TO_FAVORITE) continue;
+		if (pair.second.category->is_favorite()) continue;
 
 		for (const auto& ch : pair.second.category->get_channels())
 		{
-			ids.emplace(ch->stream_uri->get_parser().id);
+			ids.emplace(ch->get_id());
 		}
 	}
 
-	for (auto it = m_channelsMap.begin(); it != m_channelsMap.end(); )
+	std::set<std::wstring> toDeleteIDs;
+	for (const auto& item : m_channelsMap)
 	{
-		if (ids.find(it->first) == ids.end())
+		if (ids.find(item.first) == ids.end())
 		{
-			m_channelsMap.erase(it++);
+			toDeleteIDs.emplace(item.first);
 		}
-		else
+	}
+
+	std::set<HTREEITEM> toDeleteHTree;
+	if (auto& pair = m_categoriesMap.find(ID_ADD_TO_FAVORITE); pair != m_categoriesMap.end())
+	{
+		for (auto hItem = m_wndChannelsTree.GetChildItem(pair->second.hItem); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 		{
-			++it;
+			const auto& channel = FindChannel(hItem);
+			if (channel && toDeleteIDs.find(channel->get_id()) != toDeleteIDs.end())
+			{
+				toDeleteHTree.emplace(hItem);
+			}
 		}
+	}
+
+	for (const auto& id : toDeleteIDs)
+	{
+		m_channelsMap.erase(id);
+	}
+
+	for (const auto& hItem : toDeleteHTree)
+	{
+		m_wndChannelsTree.DeleteItem(hItem);
 	}
 }
 
@@ -1309,31 +1329,30 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 				if (!channel) continue;
 
 				COLORREF color = m_normal;
-				auto& ch_parser = channel->stream_uri->get_parser();
-				const auto& id = ch_parser.id;
+				const auto& id = channel->get_id();
 				if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
 				{
 					const auto& entry = found->second;
 					const auto& entry_parser = entry->stream_uri->get_parser();
-					if (ch_parser.domain.empty()
+					if (channel->get_domain().empty()
 						&& !entry_parser.domain.empty()
-						&& ch_parser.domain != entry_parser.domain)
+						&& channel->get_domain() != entry_parser.domain)
 					{
-						ch_parser.domain = entry_parser.domain;
+						channel->get_domain() = entry_parser.domain;
 					}
 
-					if (ch_parser.port.empty()
+					if (channel->get_port().empty()
 						&& !entry_parser.port.empty()
-						&& ch_parser.port != entry_parser.port)
+						&& channel->get_port() != entry_parser.port)
 					{
-						ch_parser.port = entry_parser.port;
+						channel->get_port() = entry_parser.port;
 					}
 
-					if (ch_parser.host.empty()
+					if (channel->get_host().empty()
 						&& !entry_parser.host.empty()
-						&& ch_parser.host != entry_parser.host)
+						&& channel->get_host() != entry_parser.host)
 					{
-						ch_parser.host = entry_parser.host;
+						channel->get_host() = entry_parser.host;
 					}
 
 					int changed_flag = 0;
@@ -1399,7 +1418,7 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 			if (!entry) continue;
 
 			COLORREF color = m_colorNotAdded;
-			if (const auto& pair = m_channelsMap.find(entry->stream_uri->get_parser().id); pair != m_channelsMap.end())
+			if (const auto& pair = m_channelsMap.find(entry->get_id()); pair != m_channelsMap.end())
 			{
 				color = m_normal;
 				const auto& channel = pair->second;
@@ -1465,7 +1484,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 			m_streamUrl = uri->get_templated_stream(params).c_str();
 		}
 
-		m_streamID = uri->is_template() ? uri->get_parser().id.c_str() : L"";
+		m_streamID = uri->is_template() ? channel->get_id().c_str() : L"";
 		auto hash = uri->get_hash();
 		if (auto pair = m_stream_infos.find(hash); pair != m_stream_infos.end())
 		{
@@ -1530,7 +1549,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 	if (entry)
 	{
 		m_plIconName = entry->get_icon_uri().get_uri().c_str();
-		m_plID = entry->stream_uri->get_parser().id.c_str();
+		m_plID = entry->get_id().c_str();
 
 		if (!entry->get_epg_id(0).empty())
 			m_plEPG = entry->get_epg_id(0).c_str();
@@ -1785,6 +1804,8 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	fav_category->set_icon_uri(L"plugin_file://icons/fav.png");
 	fav_category->set_title(L"Favorites");
 	fav_category->set_key(ID_ADD_TO_FAVORITE);
+	fav_category->set_favorite(true);
+
 	CategoryInfo info = { nullptr, fav_category };
 	m_categoriesMap.emplace(ID_ADD_TO_FAVORITE, info);
 
@@ -1793,9 +1814,9 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	while (ch_node)
 	{
 		auto channel = std::make_shared<ChannelInfo>(ch_node, root_path);
-		ASSERT(!channel->stream_uri->get_parser().id.empty());
+		ASSERT(!channel->get_id().empty());
 
-		auto ch_pair = m_channelsMap.find(channel->stream_uri->get_parser().id);
+		auto ch_pair = m_channelsMap.find(channel->get_id());
 		if (ch_pair != m_channelsMap.end())
 		{
 			// Only one unique channel must used!
@@ -1807,7 +1828,8 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		else
 		{
 			channel->set_type(m_plugin_type);
-			ch_pair = m_channelsMap.emplace(channel->stream_uri->get_parser().id, channel).first;
+			ch_pair = m_channelsMap.emplace(channel->get_id(), channel).first;
+			// compatibility with channel list version < 5
 			if (channel->is_favorite())
 				fav_category->add_channel(channel);
 
@@ -1950,10 +1972,10 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 
 	const auto& str_id = std::to_wstring(id);
 	channel->stream_uri->set_template(true);
-	channel->stream_uri->get_parser().id = str_id;
+	channel->get_id().assign(str_id);
 
 	category->add_channel(channel);
-	m_channelsMap.emplace(channel->stream_uri->get_parser().id, channel);
+	m_channelsMap.emplace(channel->get_id(), channel);
 	m_channelsTreeMap.emplace(hNewItem, channel);
 
 	m_wndChannelsTree.SelectItem(hNewItem);
@@ -1984,14 +2006,13 @@ void CIPTVChannelEditorDlg::OnRemove()
 			const auto& category = GetCategory(hItem);
 			if (!category) continue;
 
-			auto category_id = category->get_key();
-			if (category_id == ID_ADD_TO_FAVORITE) continue;
+			if (category->is_favorite()) continue;
 
 			for (auto hChildItem = m_wndChannelsTree.GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_wndChannelsTree.GetNextSiblingItem(hChildItem))
 			{
 				m_channelsTreeMap.erase(hChildItem);
 			}
-			m_categoriesMap.erase(category_id);
+			m_categoriesMap.erase(category->get_key());
 			m_categoriesTreeMap.erase(hItem);
 
 			m_wndChannelsTree.DeleteItem(hItem);
@@ -2005,11 +2026,8 @@ void CIPTVChannelEditorDlg::OnRemove()
 			const auto& channel = FindChannel(hItem);
 			if (channel == nullptr) continue;
 
-			if (category->get_key() == ID_ADD_TO_FAVORITE)
-				channel->set_favorite(false);
-
 			toDelete.emplace_back(hItem);
-			category->remove_channel(channel->stream_uri->get_parser().id);
+			category->remove_channel(channel->get_id());
 		}
 
 		for (const auto& hItem : toDelete)
@@ -2055,14 +2073,13 @@ void CIPTVChannelEditorDlg::OnUpdateChannelUp(CCmdUI* pCmdUI)
 	{
 		enable = IsChannelSelectionConsistent()
 			&& IsSelectedInTheSameCategory()
-			&& IsSelectedNotInFavorite()
 			&& hPrev != nullptr;
 	}
 	else if (IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
 		auto prevCat = FindCategory(hPrev);
 
-		enable = IsSelectedNotFavorite() && prevCat != nullptr && prevCat->get_key() != ID_ADD_TO_FAVORITE;
+		enable = IsSelectedNotFavorite() && prevCat != nullptr && !prevCat->is_favorite();
 	}
 
 	pCmdUI->Enable(enable);
@@ -2075,10 +2092,12 @@ void CIPTVChannelEditorDlg::OnChannelDown()
 
 	if (IsChannel(m_wndChannelsTree.GetNextSiblingItem(hBottom)))
 	{
+		// move channel
 		MoveChannels(hTop, hBottom, true);
 	}
 	else if (IsCategory(hTop) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
+		// move category
 		SwapCategories(m_wndChannelsTree.GetNextSiblingItem(hTop), hTop);
 	}
 }
@@ -2090,13 +2109,14 @@ void CIPTVChannelEditorDlg::OnUpdateChannelDown(CCmdUI* pCmdUI)
 
 	if (IsChannel(hCur))
 	{
+		// move channel
 		enable = IsChannelSelectionConsistent()
 			&& IsSelectedInTheSameCategory()
-			&& IsSelectedNotInFavorite()
 			&& m_wndChannelsTree.GetNextSiblingItem(m_wndChannelsTree.GetLastSelectedItem()) != nullptr;
 	}
 	else if (IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
+		// move category
 		enable = IsSelectedNotFavorite()
 			&& m_wndChannelsTree.GetNextSiblingItem(m_wndChannelsTree.GetLastSelectedItem()) != nullptr;
 	}
@@ -2236,16 +2256,16 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomize()
 		if (channel)
 		{
 			const auto& category = GetItemCategory(hItem);
-			const std::wstring old_id = channel->stream_uri->get_parser().id;
+			const std::wstring old_id = channel->get_id();
 
 			channel->stream_uri->set_template(not_checked);
 			if (!not_checked)
 			{
 				// custom url. clear id
-				channel->stream_uri->get_parser().id.clear();
+				channel->get_id().clear();
 				m_streamID.Empty();
 			}
-			else if (channel->stream_uri->get_parser().id.empty())
+			else if (channel->get_id().empty())
 			{
 				// templated url. set to -1 if empty
 				int id = -1;
@@ -2255,7 +2275,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomize()
 				}
 
 				const auto& str_id = std::to_wstring(id);
-				channel->stream_uri->get_parser().id = str_id;
+				channel->get_id().assign(str_id);
 				m_streamID = str_id.c_str();
 			}
 
@@ -2265,7 +2285,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomize()
 			category->remove_channel(old_id);
 			m_channelsMap.erase(old_id);
 
-			m_channelsMap.emplace(channel->stream_uri->get_parser().id, channel);
+			m_channelsMap.emplace(channel->get_id(), channel);
 			category->add_channel(channel);
 
 			UpdateData(FALSE);
@@ -2319,7 +2339,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 					m_streamID.Empty();
 
 				m_wndChannelIcon.EnableWindow(TRUE);
-				if (auto& pair = m_changedChannels.find(channel->stream_uri->get_parser().id); pair != m_changedChannels.end())
+				if (auto& pair = m_changedChannels.find(channel->get_id()); pair != m_changedChannels.end())
 					changed_flag = pair->second;
 			}
 			else if (IsCategory(hSelected))
@@ -2483,11 +2503,11 @@ void CIPTVChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResul
 		subMenuMove.CreatePopupMenu();
 
 		const auto& itemCategory = GetItemCategory(m_wndChannelsTree.GetFirstSelectedItem());
-		if (itemCategory != nullptr && itemCategory->get_key() != ID_ADD_TO_FAVORITE)
+		if (itemCategory != nullptr && !itemCategory->is_favorite())
 		{
 			for (const auto& category : m_categoriesMap)
 			{
-				if (ID_ADD_TO_FAVORITE == category.first || itemCategory->get_key() == category.first) continue;
+				if (category.second.category->is_favorite() || itemCategory->get_key() == category.first) continue;
 
 				subMenuCopy.AppendMenu(MF_STRING | MF_ENABLED, ID_COPY_TO_START + category.first, category.second.category->get_title().c_str());
 				subMenuMove.AppendMenu(MF_STRING | MF_ENABLED, ID_MOVE_TO_START + category.first, category.second.category->get_title().c_str());
@@ -2586,7 +2606,7 @@ void CIPTVChannelEditorDlg::OnUpdateAddToFavorite(CCmdUI* pCmdUI)
 {
 	const auto& itemCategory = GetItemCategory(m_wndChannelsTree.GetFirstSelectedItem());
 
-	pCmdUI->Enable(itemCategory != nullptr && itemCategory->get_key() != ID_ADD_TO_FAVORITE);
+	pCmdUI->Enable(itemCategory != nullptr && !itemCategory->is_favorite());
 }
 
 void CIPTVChannelEditorDlg::OnCopyTo(UINT id)
@@ -2707,13 +2727,13 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 		return;
 
 	const auto& category = GetItemCategory(hItem);
-	const std::wstring old_id = channel->stream_uri->get_parser().id;
+	const std::wstring old_id = channel->get_id();
 
 	auto newChannel = std::make_shared<ChannelInfo>(*channel);
 	newChannel->stream_uri->set_uri(m_streamUrl.GetString());
 	newChannel->stream_uri->recalc_hash();
 
-	if (m_channelsMap.find(newChannel->stream_uri->get_parser().id) != m_channelsMap.end())
+	if (m_channelsMap.find(newChannel->get_id()) != m_channelsMap.end())
 	{
 		AfxMessageBox(IDS_STRING_WRN_CHANNEL_EXIST, MB_OK | MB_ICONWARNING);
 		return;
@@ -2723,7 +2743,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 	m_channelsMap.erase(old_id);
 
 	category->add_channel(newChannel);
-	m_channelsMap.emplace(newChannel->stream_uri->get_parser().id, newChannel);
+	m_channelsMap.emplace(newChannel->get_id(), newChannel);
 	m_channelsTreeMap[hItem] = newChannel;
 
 	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(hItem));
@@ -2759,7 +2779,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
 	auto hItem = m_wndChannelsTree.GetSelectedItem();
 	const auto& channel = FindChannel(hItem);
 	std::wstring new_id = m_streamID.GetString();
-	if (!channel || channel->stream_uri->get_parser().id == new_id)
+	if (!channel || channel->get_id() == new_id)
 		return;
 
 	if (m_channelsMap.find(new_id) != m_channelsMap.end())
@@ -2770,9 +2790,9 @@ void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
 	}
 
 	const auto& category = GetItemCategory(hItem);
-	const std::wstring old_id = channel->stream_uri->get_parser().id;
+	std::wstring old_id = channel->get_id();
 
-	channel->stream_uri->get_parser().id = new_id;
+	channel->get_id().assign(new_id);
 
 	// recalculate hash
 	channel->stream_uri->recalc_hash();
@@ -2781,7 +2801,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
 	category->remove_channel(old_id);
 	m_channelsMap.erase(old_id);
 
-	m_channelsMap.emplace(channel->stream_uri->get_parser().id, channel);
+	m_channelsMap.emplace(channel->get_id(), channel);
 	category->add_channel(channel);
 
 	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
@@ -3213,12 +3233,12 @@ std::vector<std::wstring> CIPTVChannelEditorDlg::FilterPlaylist()
 			bool show = matched[0] && matched[1];
 			if (bNotAdded)
 			{
-				show &= m_channelsMap.find(entry->stream_uri->get_parser().id) == m_channelsMap.end();
+				show &= m_channelsMap.find(entry->get_id()) == m_channelsMap.end();
 			}
 
 			if (!show) continue;
 
-			m_playlistIds.emplace_back(entry->stream_uri->get_parser().id);
+			m_playlistIds.emplace_back(entry->get_id());
 			const auto& category = entry->get_category();
 			if (categories.find(category) == categories.end())
 			{
@@ -3255,7 +3275,7 @@ void CIPTVChannelEditorDlg::OnSave()
 	LPCWSTR old_selected = nullptr;
 	const auto& channel = FindChannel(m_wndChannelsTree.GetSelectedItem());
 	if (channel)
-		old_selected = channel->stream_uri->get_parser().id.c_str();
+		old_selected = channel->get_id().c_str();
 
 	try
 	{
@@ -3279,7 +3299,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		auto cat_node = doc->allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
 		for (auto& category : m_categoriesMap)
 		{
-			if (category.first != ID_ADD_TO_FAVORITE && !category.second.category->get_channels().empty())
+			if (!category.second.category->get_channels().empty())
 			{
 				cat_node->append_node(category.second.category->GetNode(*doc));
 			}
@@ -3726,7 +3746,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 			if (!info) continue;
 
 			SearchParams params;
-			params.id = info->stream_uri->get_parser().id;
+			params.id = info->get_id();
 			params.type = InfoType::enPlEntry;
 			params.select = false;
 			needCheckExisting |= AddChannel(FindEntry(SelectTreeItem(&m_wndPlaylistTree, params)));
@@ -4242,7 +4262,7 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 	auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 	if (info)
 	{
-		params.id = info->stream_uri->get_parser().id;
+		params.id = info->get_id();
 		params.next = true;
 		if (m_lastTree == &m_wndPlaylistTree && m_channelsMap.find(params.id) != m_channelsMap.end() ||
 			m_lastTree == &m_wndChannelsTree && m_playlistMap.find(params.id) != m_playlistMap.end())
@@ -4473,7 +4493,7 @@ HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx* pTreeCtl, const Sea
 
 		if (!searchParams.id.empty())
 		{
-			if (entry->stream_uri->get_parser().id == searchParams.id)
+			if (entry->get_id() == searchParams.id)
 			{
 				bFound = true;
 				break;
@@ -4580,7 +4600,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 	const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
 
 	HTREEITEM hFoundItem = nullptr;
-	auto pair = m_channelsMap.find(entry->stream_uri->get_parser().id);
+	auto pair = m_channelsMap.find(entry->get_id());
 	if (pair != m_channelsMap.end())
 	{
 		// Channel already exist
@@ -4590,7 +4610,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		{
 			for (const auto& pair : m_categoriesMap)
 			{
-				if (pair.second.category->find_channel(entry->stream_uri->get_parser().id) != nullptr)
+				if (pair.second.category->find_channel(entry->get_id()) != nullptr)
 				{
 					categoryId = pair.second.category->get_key();
 					break;
@@ -4605,7 +4625,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		auto newChannel = std::make_shared<ChannelInfo>(root_path);
 		newChannel->stream_uri->copy(entry->stream_uri.get());
 		// Add to channel array
-		pair = m_channelsMap.emplace(newChannel->stream_uri->get_parser().id, newChannel).first;
+		pair = m_channelsMap.emplace(newChannel->get_id(), newChannel).first;
 
 		// is add to category?
 		if (categoryId == -1)
@@ -4650,7 +4670,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 
 	auto& channel = pair->second;
 	// is channel in this category?
-	if (info.category->find_channel(channel->stream_uri->get_parser().id) == nullptr)
+	if (info.category->find_channel(channel->get_id()) == nullptr)
 	{
 		// add channel to category tree leaf
 		TVINSERTSTRUCTW tvChannel = { nullptr };
@@ -4683,7 +4703,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		// Search and update tree items present in other leafs
 		for (const auto& pair : m_channelsTreeMap)
 		{
-			if (channel->stream_uri->get_parser().id == pair.second->stream_uri->get_parser().id)
+			if (channel->get_id() == pair.second->get_id())
 				m_wndChannelsTree.SetItemText(pair.first, channel->get_title().c_str());
 		}
 	}
@@ -4747,15 +4767,10 @@ void CIPTVChannelEditorDlg::CopyMoveChannelTo(int category_id, bool move)
 		if (!pair->second.category->add_channel(channel))
 			continue;
 
-		if (move)
+		if (move && !pair->second.category->is_favorite())
 		{
-			category->remove_channel(channel->stream_uri->get_parser().id);
+			category->remove_channel(channel->get_id());
 			m_wndChannelsTree.DeleteItem(hItem);
-		}
-
-		if (pair->first == ID_ADD_TO_FAVORITE)
-		{
-			channel->set_favorite(true);
 		}
 
 		TVINSERTSTRUCTW tvInsert = { nullptr };
@@ -4832,7 +4847,7 @@ bool CIPTVChannelEditorDlg::IsSelectedNotFavorite() const
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
 		const auto& category = GetCategory(hItem);
-		if (category && category->get_key() == ID_ADD_TO_FAVORITE)
+		if (category && category->is_favorite())
 			return false;
 	}
 
@@ -4844,7 +4859,7 @@ bool CIPTVChannelEditorDlg::IsSelectedNotInFavorite() const
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
 		const auto& category = GetItemCategory(hItem);
-		if (category && category->get_key() == ID_ADD_TO_FAVORITE)
+		if (category && category->is_favorite())
 			return false;
 	}
 
@@ -4903,7 +4918,7 @@ void CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	auto entry = GetBaseInfo(&m_wndChannelsTree, pGetInfoTip->hItem);
 	if (entry && entry->get_type() == InfoType::enChannel)
 	{
-		const std::wstring ch_id = entry->stream_uri->get_parser().id;
+		std::wstring ch_id = entry->get_id();
 		CString categories;
 		for (const auto& pair : m_categoriesMap)
 		{
@@ -4945,7 +4960,7 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	{
 		m_toolTipText.Format(IDS_STRING_FMT_PLAYLIST_TOOLTIPS,
 							 entry->get_title().c_str(),
-							 entry->stream_uri->is_template() ? entry->stream_uri->get_parser().id.c_str() : load_string_resource(IDS_STRING_CUSTOM).c_str(),
+							 entry->stream_uri->is_template() ? entry->get_id().c_str() : load_string_resource(IDS_STRING_CUSTOM).c_str(),
 							 entry->get_epg_id(0).c_str(),
 							 entry->get_archive_days(),
 							 load_string_resource(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO).c_str());

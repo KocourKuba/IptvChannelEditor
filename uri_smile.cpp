@@ -52,7 +52,6 @@ void uri_smile::load_default()
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 
 	square_icons = true;
-	use_token_as_id = true;
 	per_channel_token = true;
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";

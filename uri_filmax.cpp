@@ -50,8 +50,6 @@ void uri_filmax::load_default()
 	uri_id_parse_pattern = "^#EXTINF:.+tvg-name=\"(?<id>[^\"]+)\"";
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 
-	use_token_as_id = true;
-
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].cu_subst = "archive";
 	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/index.m3u8?token={TOKEN}";
