@@ -74,7 +74,7 @@ void uri_viplime::fill_qualities_list(TemplateParams& /*params*/)
 		UINT res;
 	};
 
-	std::vector<Info> infos =
+	std::vector<Info> infos = //-V826
 	{
 		{ L"high",   IDS_STRING_VIPLIME_P1 },
 		{ L"middle", IDS_STRING_VIPLIME_P2 },

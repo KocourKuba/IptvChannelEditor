@@ -527,7 +527,7 @@ void CPluginConfigPage::OnBnClickedButtonSaveConfig()
 
 	if (m_plugin->save_plugin_parameters(out_file))
 	{
-		m_loaded_config = out_file;
+		m_loaded_config = std::move(out_file);
 		FillControlsCommon();
 	}
 }
