@@ -233,7 +233,7 @@ int parse_info(UpdateInfo& info)
 	const auto& cur_ver = fmt::format(L"{:d}.{:d}.{:d}", cVer.GetFileVersionMajor(), cVer.GetFileVersionMinor(), cVer.GetFileVersionBuild());
 	if (cur_ver >= info.version)
 	{
-		LogProtocol("No updates. Current versionis up to date or newer");
+		LogProtocol("No updates. Current version is up to date or newer");
 		return err_no_updates;
 	}
 
