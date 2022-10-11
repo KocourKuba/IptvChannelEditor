@@ -61,6 +61,9 @@
     <Filter Include="Header Files\uri\append">
       <UniqueIdentifier>{8cab0207-cf68-4225-ade1-bad908ac5bef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\uri\append">
+      <UniqueIdentifier>{9ce6849e-987a-4495-b303-9423b8a6628b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">
@@ -285,6 +288,9 @@
     <ClInclude Include="FillParamsInfoDlg.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="uri_ping.h">
+      <Filter>Header Files\uri\shift</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -404,15 +410,6 @@
     <ClCompile Include="uri_oneott.cpp">
       <Filter>Source Files\uri\shift</Filter>
     </ClCompile>
-    <ClCompile Include="uri_sharaclub.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_tvclub.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_vidok.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
     <ClCompile Include="uri_smile.cpp">
       <Filter>Source Files\uri</Filter>
     </ClCompile>
@@ -487,6 +484,18 @@
     </ClCompile>
     <ClCompile Include="FillParamsInfoDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_ping.cpp">
+      <Filter>Source Files\uri\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_tvclub.cpp">
+      <Filter>Source Files\uri\append</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_vidok.cpp">
+      <Filter>Source Files\uri\append</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_sharaclub.cpp">
+      <Filter>Source Files\uri\append</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -259,6 +259,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="uri_config.h" />
     <ClInclude Include="uri_kineskop.h" />
     <ClInclude Include="uri_mymagic.h" />
+    <ClInclude Include="uri_ping.h" />
     <ClInclude Include="uri_russkoetv.h" />
     <ClInclude Include="uri_smile.h" />
     <ClInclude Include="vod_movie.h" />
@@ -358,6 +359,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="uri_oneott.cpp" />
     <ClCompile Include="uri_oneusd.cpp" />
     <ClCompile Include="uri_ottclub.cpp" />
+    <ClCompile Include="uri_ping.cpp" />
     <ClCompile Include="uri_russkoetv.cpp" />
     <ClCompile Include="uri_sharaclub.cpp" />
     <ClCompile Include="uri_sharatv.cpp" />

@@ -308,11 +308,18 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	m_playlistEntries.reset((Playlist*)wParam);
 
 	std::wregex re;
-	if (m_plugin_type == PluginType::enSmile)
-		re = LR"(([^\(]+)\(([^\d]+)\s(\d+)\)$)";
-
-	if (m_plugin_type == PluginType::enFox)
-		re = LR"(([^\/]+)\/(.+)\s(\d+)$)";
+	switch (m_plugin_type)
+	{
+		case PluginType::enFox:
+		case PluginType::enPing:
+			re = LR"(([^\/]+)\/(.+)\s(\d+)$)";
+			break;
+		case PluginType::enSmile:
+			re = LR"(([^\(]+)\(([^\d]+)\s(\d+)\)$)";
+			break;
+		default:
+			break;
+	}
 
 	if (m_playlistEntries)
 	{
@@ -340,10 +347,18 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 					movie->title = m[1];
 					movie->year = m[3];
 
-					if (m_plugin_type == PluginType::enSmile)
-						movie->country = m[2];
-					if (m_plugin_type == PluginType::enFox)
-						movie->title_orig = m[2];
+					switch (m_plugin_type)
+					{
+						case PluginType::enFox:
+						case PluginType::enPing:
+							movie->title_orig = m[2];
+							break;
+						case PluginType::enSmile:
+							movie->country = m[2];
+							break;
+						default:
+							break;
+					}
 				}
 			}
 

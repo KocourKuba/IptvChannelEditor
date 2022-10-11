@@ -52,6 +52,7 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_mymagic.h"
 #include "uri_russkoetv.h"
 #include "uri_smile.h"
+#include "uri_ping.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -170,6 +171,10 @@ std::shared_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
 
 		case PluginType::enSmile:
 			plugin = std::make_shared<uri_smile>();
+			break;
+
+		case PluginType::enPing:
+			plugin = std::make_shared<uri_ping>();
 			break;
 
 		default:

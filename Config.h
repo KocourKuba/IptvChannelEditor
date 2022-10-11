@@ -48,6 +48,7 @@ enum class PluginType
 	enOneOtt,
 	enOneUsd,
 	enOttclub,
+	enPing,
 	enRusskoeTV,
 	enSharaTV,
 	enSharaclub,
