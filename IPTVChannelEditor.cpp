@@ -640,6 +640,7 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	auto plugin = StreamContainer::get_instance(plugin_type);
+
 	std::vector<Credentials> all_credentials;
 	nlohmann::json creds;
 	JSON_ALL_TRY;
@@ -666,6 +667,13 @@ bool PackPlugin(const PluginType plugin_type,
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);
 		return false;
+	}
+
+	// load plugin settings
+	const auto& active_config = GetConfig().get_string(false, REG_ACTIVE_SETTINGS);
+	if (!active_config.empty() && !plugin->load_plugin_parameters(active_config))
+	{
+		plugin->load_default();
 	}
 
 	const auto& cred = all_credentials[selected];
@@ -792,6 +800,9 @@ bool PackPlugin(const PluginType plugin_type,
 		package_plugin_name = fmt::format(utils::DUNE_UPDATE_NAME, plugin->get_short_name(), (cred.suffix.empty()) ? "mod" : cred.suffix);
 	}
 
+	// save config
+	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder));
+
 	// create plugin manifest
 	std::string config_data;
 	std::ifstream istream(plugin_root + L"dune_plugin.xml");
@@ -815,15 +826,6 @@ bool PackPlugin(const PluginType plugin_type,
 	{
 		class_name = "default_config";
 	}
-
-	// copy plugin settings
-	const auto& active_config = GetConfig().get_string(false, REG_ACTIVE_SETTINGS);
-	if (!active_config.empty() && !plugin->load_plugin_parameters(active_config))
-	{
-		plugin->load_default();
-	}
-
-	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder));
 
 	// rewrite xml nodes
 	try

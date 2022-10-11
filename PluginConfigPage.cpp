@@ -185,6 +185,10 @@ BOOL CPluginConfigPage::OnInitDialog()
 	}
 
 	m_loaded_config = m_active_config = GetConfig().get_string(false, REG_ACTIVE_SETTINGS);
+	if (!m_loaded_config.empty())
+	{
+		m_plugin->load_plugin_parameters(m_loaded_config);
+	}
 
 	UpdateStaticTtitle();
 
@@ -281,7 +285,7 @@ void CPluginConfigPage::EnableControls()
 	// common
 	m_wndName.EnableWindow(enable);
 	m_wndTitle.EnableWindow(enable);
-	m_wndShortName.EnableWindow(enable);
+	m_wndShortName.EnableWindow(FALSE);
 	m_wndProviderUrl.EnableWindow(enable);
 	m_wndChkSquareIcons.EnableWindow(enable);
 	m_wndAccessType.EnableWindow(enable);
