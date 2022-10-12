@@ -345,6 +345,13 @@ void CPluginConfigPage::EnableControls()
 	m_wndBtnEpgTest.EnableWindow(enable && !m_EpgUrl.IsEmpty());
 }
 
+std::wstring CPluginConfigPage::GetDefaultConfigName()
+{
+	return fmt::format(LR"({:s}{:s}\config.json)",
+					   GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH),
+					   m_plugin->get_short_name_w());
+}
+
 void CPluginConfigPage::FillControlsCommon()
 {
 	if (!m_plugin) return;
@@ -491,10 +498,7 @@ void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 
 	if (m_single)
 	{
-		const auto& in_file = fmt::format(LR"({:s}{:s}_config.json)",
-										  GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH),
-										  m_plugin->get_short_name_w());
-		m_plugin->save_plugin_parameters(in_file);
+		m_plugin->save_plugin_parameters(GetDefaultConfigName());
 	}
 }
 
@@ -506,9 +510,7 @@ void CPluginConfigPage::OnBnClickedButtonToggleEditConfig()
 
 void CPluginConfigPage::OnBnClickedButtonLoadConfig()
 {
-	const auto& in_file = fmt::format(LR"({:s}{:s}_config.json)",
-									  GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH),
-									  m_plugin->get_short_name_w());
+	const auto& in_file = GetDefaultConfigName();
 
 	if (m_plugin->load_plugin_parameters(in_file))
 	{
@@ -524,9 +526,7 @@ void CPluginConfigPage::OnBnClickedButtonSaveConfig()
 	std::wstring out_file = m_loaded_config;
 	if (out_file.empty())
 	{
-		const auto& path = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH);
-		std::filesystem::create_directory(path);
-		out_file = fmt::format(LR"({:s}{:s}_config.json)", path, m_plugin->get_short_name_w());
+		out_file = GetDefaultConfigName();
 	}
 
 	if (m_plugin->save_plugin_parameters(out_file))

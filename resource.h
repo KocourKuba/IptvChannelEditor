@@ -383,7 +383,6 @@
 #define IDC_COMBO_EPISODE               1157
 #define IDC_COMBO_PROFILE               1158
 #define IDC_STATIC_EPISODE              1159
-#define IDC_EDIT_PLUGIN_CAPTION         1160
 #define IDC_MFCEDITBROWSE_PLUGIN_LOGO   1161
 #define IDC_MFCEDITBROWSE_PLUGIN_BGND   1162
 #define IDC_BUTTON_ADDED                1163
@@ -436,6 +435,8 @@
 #define IDC_CHECK_STATIC_SERVERS        1210
 #define IDC_CHECK_STATIC_DEVICES        1211
 #define IDC_CHECK_STATIC_QUALITIES      1212
+#define IDC_COMBO1                      1212
+#define IDC_COMBO_CONFIGS               1212
 #define IDC_CHECK_STATIC_PROFILES       1213
 #define IDC_BUTTON_ACTIVE               1214
 #define IDC_BUTTON_DEFAULT              1215
@@ -474,7 +475,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        276
 #define _APS_NEXT_COMMAND_VALUE         32804
-#define _APS_NEXT_CONTROL_VALUE         1212
+#define _APS_NEXT_CONTROL_VALUE         1213
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

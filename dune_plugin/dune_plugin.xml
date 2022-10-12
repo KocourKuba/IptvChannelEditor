@@ -1,6 +1,6 @@
 ﻿<dune_plugin>
     <name>Custom</name>
-    <caption>{plugin_title}</caption>
+    <caption>{plugin_caption}</caption>
     <class_name>default</class_name>
     <short_name>default</short_name>
     <icon_url>{plugin_logo}</icon_url>

@@ -69,7 +69,6 @@ protected:
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
 	afx_msg void OnCbnSelchangeComboQuality();
-	afx_msg void OnEnChangeEditPluginCaption();
 	afx_msg void OnEnChangeEditPluginSuffix();
 	afx_msg void OnEnChangeMfceditbrowsePluginLogo();
 	afx_msg void OnEnChangeMfceditbrowsePluginBgnd();
@@ -84,6 +83,9 @@ protected:
 	afx_msg void OnBnClickedCheckCustomPackageName();
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
+
+public:
+	void UpdateConfigs();
 
 private:
 	int GetCheckedAccountIdx();
@@ -112,7 +114,7 @@ protected:
 	CComboBox m_wndDevices;
 	CComboBox m_wndQualities;
 	CComboBox m_wndProfiles;
-	CEdit m_wndCaption;
+	CComboBox m_wndConfigs;
 	CEdit m_wndSuffix;
 	CMFCEditBrowseCtrlEx m_wndLogo;
 	CMFCEditBrowseCtrlEx m_wndBackground;
@@ -131,7 +133,6 @@ protected:
 	CEdit m_wndPackageName;
 
 private:
-	CString m_caption;
 	CString m_logo;
 	CString m_background;
 	CString m_suffix;
@@ -147,6 +148,7 @@ private:
 	std::vector<DynamicParamsInfo> m_profiles;
 	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
+	std::vector<std::wstring> m_configs;
 
 	std::map<UINT, std::wstring> m_tooltips_info_account;
 };

@@ -78,6 +78,7 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
+	std::wstring GetDefaultConfigName();
 	void EnableControls();
 	void FillControlsCommon();
 	void SaveControlsCommon();

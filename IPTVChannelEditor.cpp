@@ -214,16 +214,30 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	GetConfig().LoadSettings();
 
 	if (GetConfig().get_string(true, REG_OUTPUT_PATH).empty())
+	{
 		GetConfig().set_string(true, REG_OUTPUT_PATH, GetAppPath());
+	}
 
 	if (GetConfig().get_string(true, REG_LISTS_PATH).empty())
-		GetConfig().set_string(true, REG_LISTS_PATH, GetAppPath(L"playlists\\"));
+	{
+		const auto& playlist_dir = GetAppPath(L"playlists\\");
+		GetConfig().set_string(true, REG_LISTS_PATH, playlist_dir);
+		std::filesystem::create_directory(playlist_dir);
+	}
 
 	if (GetConfig().get_string(true, REG_WEB_UPDATE_PATH).empty())
-		GetConfig().set_string(true, REG_WEB_UPDATE_PATH, GetAppPath(L"WebUpdate\\"));
+	{
+		const auto& update_dir = GetAppPath(L"WebUpdate\\");
+		GetConfig().set_string(true, REG_WEB_UPDATE_PATH, update_dir);
+		std::filesystem::create_directory(update_dir);
+	}
 
 	if (GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH).empty())
-		GetConfig().set_string(true, REG_SAVE_SETTINGS_PATH, GetAppPath(L"Settings\\"));
+	{
+		const auto& settings_dir = GetAppPath(L"Settings\\");
+		GetConfig().set_string(true, REG_SAVE_SETTINGS_PATH, settings_dir);
+		std::filesystem::create_directory(settings_dir);
+	}
 
 	ConvertAccounts();
 
@@ -669,6 +683,10 @@ bool PackPlugin(const PluginType plugin_type,
 		return false;
 	}
 
+	const auto& cred = all_credentials[selected];
+	const auto& short_name_w = plugin->get_short_name_w();
+	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
+
 	// load plugin settings
 	const auto& active_config = GetConfig().get_string(false, REG_ACTIVE_SETTINGS);
 	if (!active_config.empty() && !plugin->load_plugin_parameters(active_config))
@@ -676,9 +694,6 @@ bool PackPlugin(const PluginType plugin_type,
 		plugin->load_default();
 	}
 
-	const auto& cred = all_credentials[selected];
-	const auto& short_name_w = plugin->get_short_name_w();
-	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
 	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), (cred.suffix.empty() || noCustom) ? "mod" : cred.suffix);
 
 	if (make_web_update && (cred.update_url.empty() || cred.update_package_url.empty()))
@@ -807,10 +822,10 @@ bool PackPlugin(const PluginType plugin_type,
 	std::string config_data;
 	std::ifstream istream(plugin_root + L"dune_plugin.xml");
 	config_data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
-	const auto& plugin_caption = cred.caption.empty() ? utils::utf16_to_utf8(plugin->get_title()) : cred.caption;
+	const auto& plugin_caption = utils::utf16_to_utf8(plugin->get_title());
 
 	// preprocess common values
-	utils::string_replace_inplace(config_data, "{plugin_title}", plugin_caption.c_str());
+	utils::string_replace_inplace(config_data, "{plugin_caption}", plugin_caption.c_str());
 	utils::string_replace_inplace(config_data, "{plugin_logo}", logo_subst.c_str());
 	utils::string_replace_inplace(config_data, "{plugin_bg}", bg_subst.c_str());
 

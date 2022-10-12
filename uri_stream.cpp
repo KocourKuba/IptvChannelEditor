@@ -28,6 +28,8 @@ void uri_stream::clear()
 
 bool uri_stream::save_plugin_parameters(const std::wstring& filename)
 {
+	std::filesystem::create_directory(std::filesystem::path(filename).parent_path());
+
 	bool res = false;
 	try
 	{
