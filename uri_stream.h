@@ -59,8 +59,67 @@ struct EpgInfo
 /// <summary>
 /// Parsed variable groups for generate playing stream
 /// </summary>
-struct ParsingGroups
+class ParsingGroups
 {
+	friend class uri_stream;
+
+public:
+	const std::wstring& get_id() const { return is_template ? id : str_hash; }
+	void set_id(const std::wstring& val) { id = val; }
+
+	const std::wstring& get_domain() const { return domain; }
+	void set_domain(const std::wstring& val) { domain = val; }
+
+	const std::wstring& get_port() const { return port; }
+	void set_port(const std::wstring& val) { port = val; }
+
+	const std::wstring& get_login() const { return login; }
+	void set_login(const std::wstring& val) { login = val; }
+
+	const std::wstring& get_password() const { return password; }
+	void set_password(const std::wstring& val) { password = val; }
+
+	const std::wstring& get_subdomain() const { return subdomain; }
+	void set_subdomain(const std::wstring& val) { subdomain = val; }
+
+	const std::wstring& get_token() const { return token; }
+	void set_token(const std::wstring& val) { token = val; }
+
+	const std::wstring& get_int_id() const { return int_id; }
+	void set_int_id(const std::wstring& val) { int_id = val; }
+
+	const std::wstring& get_quality() const { return quality; }
+	void set_quality(const std::wstring& val) { quality = val; }
+
+	const std::wstring& get_host() const { return host; }
+	void set_host(const std::wstring& val) { host = val; }
+
+	/// <summary>
+	/// is uri template
+	/// </summary>
+	void set_template(bool val) { is_template = val; }
+	bool get_template() const { return is_template; }
+
+	/// <summary>
+	/// clear hash variables
+	/// </summary>
+	void clear_hash() { hash = 0; str_hash.clear(); }
+
+	/// <summary>
+	/// uri hash. crc32 of id for template uri or crc32 of uri
+	/// </summary>
+	int get_hash() const { return hash; }
+	void set_hash(const int val) { hash = val; str_hash = hash ? std::to_wstring(hash) : L""; }
+
+	/// <summary>
+	/// string representation of the hash
+	/// </summary>
+	const std::wstring& get_str_hash() const { return str_hash; }
+	void set_str_hash(const std::wstring& val) { str_hash = val; }
+
+protected:
+	bool is_template = false;
+
 	std::wstring id;
 	std::wstring domain;
 	std::wstring port;
@@ -72,7 +131,11 @@ struct ParsingGroups
 	std::wstring quality;
 	std::wstring host;
 
-	std::vector<std::wstring> regex_named_groups; // extracted named groups from uri parse template
+	// extracted named groups from uri parse template
+	std::vector<std::wstring> regex_named_groups;
+
+	int hash = 0;
+	std::wstring str_hash;
 };
 
 /// <summary>
@@ -123,6 +186,8 @@ public:
 	/// </summary>
 	void clear() override;
 
+	bool is_valid() const override { return parser.get_template() ? true : uri_base::is_valid(); }
+
 	/// <summary>
 	/// save plugin parameters to file
 	/// </summary>
@@ -134,53 +199,41 @@ public:
 	bool load_plugin_parameters(const std::wstring& filename);
 
 	/// <summary>
-	/// returns plugin short name
+	/// plugin short name
 	/// </summary>
 	const std::string& get_short_name() const { return short_name; }
-	std::wstring get_short_name_w() const { return utils::utf8_to_utf16(short_name); }
-
 	void set_short_name(const std::string& val) { short_name = val; }
+
+	/// <summary>
+	/// plugin short name wide char
+	/// </summary>
+	std::wstring get_short_name_w() const { return utils::utf8_to_utf16(short_name); }
 	void set_short_name_w(const std::wstring& val) { short_name = utils::utf16_to_utf8(val); }
 
 	/// <summary>
-	/// returns regex of uri parse template
-	/// </summary>
-	/// <returns>wstring</returns>
-	const std::wregex& get_uri_regex_parse_template();
-
-	/// <summary>
-	/// set regex of uri parse template
+	/// regex of uri parse template
 	/// regex string can contain named groups that will be extracted
 	/// </summary>
-	/// <returns>wstring</returns>
+	const std::wregex& get_uri_regex_parse_template();
 	void set_uri_regex_parse_template(const std::wstring& val);
 
 	/// <summary>
-	/// returns parser parameters
-	/// </summary>
-	const ParsingGroups& get_parser() const noexcept{ return parser; }
-	ParsingGroups& get_parser() noexcept { return parser; }
-
-	/// <summary>
-	/// set parser parameters
+	/// parser parameters
 	/// </summary>
 	void set_parser(const ParsingGroups& src) { parser = src; }
+	const ParsingGroups& get_parser() const noexcept{ return parser; }
+	ParsingGroups& get_parser() noexcept { return parser; }
 
 	/// <summary>
 	/// getter channel hash
 	/// </summary>
 	/// <returns>int</returns>
-	const int get_hash() const;
+	const int get_hash();
 
 	/// <summary>
 	/// recalculate has variables
 	/// </summary>
-	int recalc_hash() { clear_hash(); return get_hash(); }
-
-	/// <summary>
-	/// clear hash variables
-	/// </summary>
-	void clear_hash() { hash = 0; str_hash.clear(); }
+	int recalc_hash() { parser.clear_hash(); return get_hash(); }
 
 	/// <summary>
 	/// copy info
@@ -209,10 +262,7 @@ public:
 		{
 			set_schema(src.get_schema());
 			set_path(src.get_path());
-			set_template(src.is_template());
 			set_parser(src.get_parser());
-			str_hash = src.str_hash;
-			hash = src.hash;
 		}
 
 		return *this;
@@ -362,8 +412,6 @@ protected:
 		{L"host"     , &ParsingGroups::host},
 	};
 
-	std::wregex uri_parse_regex_template; // compiled regex for uri parse template
-
-	mutable std::wstring str_hash;
-	mutable int hash = 0;
+	// compiled regex for uri parse template
+	std::wregex uri_parse_regex_template;
 };

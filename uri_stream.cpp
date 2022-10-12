@@ -21,8 +21,9 @@ uri_stream::uri_stream(const uri_stream& src)
 void uri_stream::clear()
 {
 	uri_base::clear();
-	parser.id.clear();
-	clear_hash();
+	parser.set_id(L"");
+	parser.set_template(false);
+	parser.clear_hash();
 }
 
 bool uri_stream::save_plugin_parameters(const std::wstring& filename)
@@ -97,7 +98,7 @@ void uri_stream::parse_uri(const std::wstring& url)
 		return;
 	}
 
-	templated = true;
+	parser.set_template(true);
 
 	// map groups to parser members
 	size_t pos = 1;
@@ -159,7 +160,7 @@ std::wstring uri_stream::get_playlist_url(TemplateParams& params, std::wstring u
 std::wstring uri_stream::get_templated_stream(TemplateParams& params) const
 {
 	std::wstring url;
-	if (!is_template())
+	if (!parser.get_template())
 	{
 		url = get_uri();
 	}
@@ -232,17 +233,16 @@ void uri_stream::set_uri_regex_parse_template(const std::wstring& val)
 	}
 }
 
-const int uri_stream::get_hash() const
+const int uri_stream::get_hash()
 {
-	if (!hash)
+	if (!parser.get_hash())
 	{
 		// convert to utf8
-		const auto& uri = utils::utf16_to_utf8(is_template() ? parser.id : get_uri());
-		hash = crc32_bitwise(uri.c_str(), uri.size());
-		str_hash = std::to_wstring(hash);
+		const auto& uri = utils::utf16_to_utf8(parser.get_template() ? parser.get_id() : get_uri());
+		parser.set_hash(crc32_bitwise(uri.c_str(), uri.size()));
 	}
 
-	return hash;
+	return parser.get_hash();
 }
 
 std::wstring uri_stream::get_vod_url(TemplateParams& params) const
@@ -470,8 +470,8 @@ void uri_stream::replace_vars(std::wstring& url, const TemplateParams& params) c
 	if (!parser.port.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, parser.port);
 
-	if (!parser.id.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_ID, parser.id);
+	if (!parser.get_id().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_ID, parser.get_id());
 
 	if (!parser.token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, parser.token);

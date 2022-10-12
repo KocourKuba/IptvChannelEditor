@@ -709,8 +709,9 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			m3u_entry m3uEntry(line);
 			if (!entry->Parse(line, m3uEntry)) continue;
 
-			const auto& access_key = entry->get_uri_stream()->get_parser().token;
-			const auto& subdomain = entry->get_uri_stream()->get_parser().subdomain;
+			const auto& parser = entry->get_uri_stream()->get_parser();
+			const auto& access_key = parser.get_token();
+			const auto& subdomain = parser.get_subdomain();
 			if (!access_key.empty() && !subdomain.empty() && access_key != L"00000000000000" && subdomain != L"localhost")
 			{
 				int cnt = m_wndAccounts.GetItemCount();
@@ -943,7 +944,8 @@ void CAccessInfoPage::GetAccountInfo()
 	// reset templated flag for new parse
 	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
 	auto& uri = entry->stream_uri;
-	uri->set_template(false);
+	auto& parser = entry->stream_uri->get_parser();
+	parser.set_template(false);
 
 	TemplateParams params;
 	params.login = std::move(login);
@@ -997,13 +999,13 @@ void CAccessInfoPage::GetAccountInfo()
 			{
 				utils::string_rtrim(line, L"\r");
 				m3u_entry m3uEntry(line);
-				if (entry->Parse(line, m3uEntry) && !uri->get_parser().token.empty())
+				if (entry->Parse(line, m3uEntry) && !parser.get_token().empty())
 				{
 					// do not override fake ott and domain for edem
 					if (m_plugin->get_access_type() != AccountAccessType::enOtt)
 					{
-						selected_cred.token = get_utf8(uri->get_parser().token);
-						selected_cred.subdomain = get_utf8(uri->get_parser().domain);
+						selected_cred.token = get_utf8(parser.get_token());
+						selected_cred.subdomain = get_utf8(parser.get_domain());
 					}
 					m_status = _T("Ok");
 					break;
