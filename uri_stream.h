@@ -168,11 +168,17 @@ public:
 	static constexpr auto REPL_DURATION   = L"{DURATION}";   // archive duration (in second) in flussonic archive
 	static constexpr auto REPL_SHIFT      = L"{CU_SUBST}";   // archive/utc word used in shift/append/flussonic type archive template
 
-	static constexpr auto REPL_YEAR       = "{YEAR}";  // Year subst template, uset in epg_date_format, epg_time_format
-	static constexpr auto REPL_MONTH      = "{MONTH}"; // Month subst template, uset in epg_date_format, epg_time_format
-	static constexpr auto REPL_DAY        = "{DAY}";   // Day subst template, uset in epg_date_format, epg_time_format
-	static constexpr auto REPL_HOUR       = "{HOUR}";  // Hour subst template, uset in epg_time_format
-	static constexpr auto REPL_MIN        = "{MIN}";   // Minute subst template, uset in epg_time_format
+	static constexpr auto REPL_YEAR       = L"{YEAR}";       // Year subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_MONTH      = L"{MONTH}";      // Month subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_DAY        = L"{DAY}";        // Day subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_HOUR       = L"{HOUR}";       // Hour subst template, uset in epg_time_format
+	static constexpr auto REPL_MIN        = L"{MIN}";        // Minute subst template, uset in epg_time_format
+
+	static constexpr auto REPL_YEAR_N     = "{YEAR}";       // Year subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_MONTH_N    = "{MONTH}";      // Month subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_DAY_N      = "{DAY}";        // Day subst template, uset in epg_date_format, epg_time_format
+	static constexpr auto REPL_HOUR_N     = "{HOUR}";       // Hour subst template, uset in epg_time_format
+	static constexpr auto REPL_MIN_N      = "{MIN}";        // Minute subst template, uset in epg_time_format
 
 public:
 	uri_stream();
@@ -191,7 +197,7 @@ public:
 	/// <summary>
 	/// save plugin parameters to file
 	/// </summary>
-	bool save_plugin_parameters(const std::wstring& filename);
+	bool save_plugin_parameters(const std::wstring& filename, bool use_full_path = false);
 
 	/// <summary>
 	/// load plugin parameters to file

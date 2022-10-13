@@ -55,7 +55,7 @@ void uri_shuratv::load_default()
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://epg.propg.net/{EPG_ID}/epg2/{DATE}";
-	params1.epg_date_format = "%Y-%m-%d";
+	params1.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 	params1.epg_root = "";
 	params1.epg_name = "epg";
 	params1.epg_desc = "desc";

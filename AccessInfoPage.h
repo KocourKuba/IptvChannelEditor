@@ -37,7 +37,7 @@ class CAccessInfoPage : public CMFCPropertyPage
 	DECLARE_DYNAMIC(CAccessInfoPage)
 
 public:
-	CAccessInfoPage();   // standard constructor
+	CAccessInfoPage(std::vector<std::wstring>& configs);   // standard constructor
 	virtual ~CAccessInfoPage() = default;
 
 	Credentials& GetCheckedAccount();
@@ -65,6 +65,7 @@ protected:
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonNewFromUrl();
 	afx_msg void OnBnClickedCheckEmbed();
+	afx_msg void OnCbnSelchangeComboConfigs();
 	afx_msg void OnCbnSelchangeComboServerId();
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
@@ -84,9 +85,6 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
 
-public:
-	void UpdateConfigs();
-
 private:
 	int GetCheckedAccountIdx();
 	void GetAccountInfo();
@@ -94,6 +92,7 @@ private:
 	void CreateAccountInfo();
 	void CreateChannelsList();
 	void FillChannelsList();
+	void FillConfigs();
 	void SetWebUpdate();
 
 public:
@@ -148,7 +147,7 @@ private:
 	std::vector<DynamicParamsInfo> m_profiles;
 	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
-	std::vector<std::wstring> m_configs;
+	std::vector<std::wstring>& m_configs;
 
 	std::map<UINT, std::wstring> m_tooltips_info_account;
 };

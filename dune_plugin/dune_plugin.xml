@@ -21,7 +21,7 @@
         <entry_point>
             <parent_media_url>root://tv</parent_media_url>
             <media_url>main_screen</media_url>
-            <caption>{plugin_title}</caption>
+            <caption>{plugin_caption}</caption>
             <icon_url>{plugin_logo}</icon_url>
             <actions>
                 <key_enter>
@@ -46,7 +46,7 @@
             <popup_menu>
                 <menu_items>
                     <menu_item>
-                        <caption>Настройки {plugin_title}</caption>
+                        <caption>Настройки {plugin_caption}</caption>
                         <icon_url>gui_skin://small_icons/setup.aai</icon_url>
                         <action>
                             <type>plugin_handle_user_input</type>
@@ -98,7 +98,7 @@
         <entry_point>
             <parent_media_url>setup://applications</parent_media_url>
             <media_url>setup</media_url>
-            <caption>{plugin_title}</caption>
+            <caption>{plugin_caption}</caption>
             <icon_url>{plugin_logo}</icon_url>
             <actions>
                 <key_enter>

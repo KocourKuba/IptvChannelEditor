@@ -83,6 +83,32 @@ IDR_MAINFRAME           ICON                    "res\\IPTVChannelEditor.ico"
 
 IDB_PNG_QR              PNG                     "res\\QR Code.png"
 
+IDB_PNG_SAVE            PNG                     "res\\Save.png"
+
+IDB_PNG_SAVE_AS         PNG                     "res\\SaveAs.png"
+
+IDB_PNG_EDIT            PNG                     "res\\Edit.png"
+
+IDB_PNG_NEW             PNG                     "res\\New.png"
+
+IDB_PNG_ACCOUNT         PNG                     "res\\Account.png"
+
+IDB_PNG_ADDED           PNG                     "res\\Added.png"
+
+IDB_PNG_NOT_ADDED       PNG                     "res\\NotAdded.png"
+
+IDB_PNG_CHANGED         PNG                     "res\\Changed.png"
+
+IDB_PNG_NOT_CHANGED     PNG                     "res\\NotChanged.png"
+
+IDB_PNG_DOWNLOAD        PNG                     "res\\Download.png"
+
+IDB_PNG_FILTER          PNG                     "res\\Filter.png"
+
+IDB_PNG_FIND_NEXT       PNG                     "res\\FindNext.png"
+
+IDB_PNG_SETTINGS        PNG                     "res\\Settings.png"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -116,10 +142,10 @@ BEGIN
     PUSHBUTTON      "Donate to author",IDC_BUTTON_ABOUT,467,12,97,18
     LTEXT           "Channels:",IDC_STATIC_CHANNELS,4,36,161,8
     COMBOBOX        IDC_COMBO_CHANNELS,4,48,137,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "+",IDC_BUTTON_ADD_NEW_CHANNELS_LIST,144,47,16,15,BS_MULTILINE
+    PUSHBUTTON      "+",IDC_BUTTON_ADD_NEW_CHANNELS_LIST,144,47,16,15,BS_ICON | BS_MULTILINE
     EDITTEXT        IDC_EDIT_SEARCH,4,66,106,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "»",IDC_BUTTON_SEARCH_NEXT,112,64,16,15
-    CONTROL         "=",IDC_CHECK_SHOW_CHANGED_CH,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,128,64,16,15
+    PUSHBUTTON      "»",IDC_BUTTON_SEARCH_NEXT,112,64,16,15,BS_ICON
+    CONTROL         "=",IDC_CHECK_SHOW_CHANGED_CH,"Button",BS_AUTOCHECKBOX | BS_ICON | BS_PUSHLIKE | WS_TABSTOP,128,64,16,15
     CONTROL         "?",IDC_CHECK_SHOW_UNKNOWN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,144,64,16,15
     GROUPBOX        "Channel Info",IDC_STATIC,165,44,239,171
     LTEXT           "Channel ID",IDC_STATIC,172,55,62,8
@@ -155,13 +181,13 @@ BEGIN
     LTEXT           "Play Stream Type",IDC_STATIC_STREAM_TYPE,166,299,114,8
     LTEXT           "Playlist:",IDC_STATIC_PLAYLIST,410,36,154,8,SS_WORDELLIPSIS
     COMBOBOX        IDC_COMBO_PLAYLIST,409,48,119,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "...",IDC_BUTTON_ACCOUNT_SETTINGS,532,47,16,15,BS_MULTILINE
-    PUSHBUTTON      "↓",IDC_BUTTON_DOWNLOAD_PLAYLIST,548,47,16,15,BS_MULTILINE
+    PUSHBUTTON      "...",IDC_BUTTON_ACCOUNT_SETTINGS,532,47,16,15,BS_ICON | BS_MULTILINE
+    PUSHBUTTON      "↓",IDC_BUTTON_DOWNLOAD_PLAYLIST,548,47,16,15,BS_ICON | BS_MULTILINE
     EDITTEXT        IDC_EDIT_PL_SEARCH,409,66,88,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "»",IDC_BUTTON_PL_SEARCH_NEXT,500,64,16,15
-    CONTROL         "=",IDC_CHECK_SHOW_CHANGED,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,516,64,16,15
-    CONTROL         "√",IDC_CHECK_NOT_ADDED,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,532,64,16,15
-    PUSHBUTTON      ".*",IDC_BUTTON_PL_FILTER,548,64,16,15
+    PUSHBUTTON      "»",IDC_BUTTON_PL_SEARCH_NEXT,500,64,16,15,BS_ICON
+    CONTROL         "=",IDC_CHECK_SHOW_CHANGED,"Button",BS_AUTOCHECKBOX | BS_ICON | BS_PUSHLIKE | WS_TABSTOP,516,64,16,15
+    CONTROL         "√",IDC_CHECK_NOT_ADDED,"Button",BS_AUTOCHECKBOX | BS_ICON | BS_PUSHLIKE | WS_TABSTOP,532,64,16,15
+    PUSHBUTTON      ".*",IDC_BUTTON_PL_FILTER,548,64,16,15,BS_ICON
     CONTROL         "",IDC_TREE_PLAYLIST,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | TVS_INFOTIP | WS_BORDER | WS_HSCROLL | WS_TABSTOP,409,82,155,228
     EDITTEXT        IDC_EDIT_ICON_NAME,4,313,156,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,WS_EX_CLIENTEDGE
     CONTROL         "",IDC_STATIC_ICON,"Static",SS_BITMAP | SS_NOTIFY | SS_CENTERIMAGE | SS_SUNKEN,4,329,85,75
@@ -200,6 +226,16 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,28,40,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,88,40,50,14
     CONTROL         "Copy from the current",IDC_CHECK_MAKE_COPY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,23,151,10
+END
+
+IDD_DIALOG_NEW_CONFIG DIALOGEX 0, 0, 165, 46
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "New Config"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_NAME,7,7,151,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,28,25,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,88,25,50,14
 END
 
 IDD_MAIN_SETTINGS_PAGE DIALOGEX 0, 0, 315, 180
@@ -424,93 +460,91 @@ BEGIN
     PUSHBUTTON      "Stop",IDC_BUTTON_STOP,366,346,50,15,NOT WS_VISIBLE
 END
 
-IDD_DIALOG_PLUGIN_CONFIG DIALOGEX 0, 0, 397, 410
+IDD_DIALOG_PLUGIN_CONFIG DIALOGEX 0, 0, 397, 412
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_TOOLWINDOW
 CAPTION "Plugin Configuration"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "Common",IDC_STATIC_TITLE,7,7,270,8
-    COMBOBOX        IDC_COMBO_PLUGIN_TYPE,284,4,106,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Toggle Edit",IDC_BUTTON_EDIT_CONFIG,284,25,106,16
-    PUSHBUTTON      "Save",IDC_BUTTON_SAVE_CONFIG,284,44,51,16
-    PUSHBUTTON      "Load",IDC_BUTTON_LOAD_CONFIG,339,44,51,16
-    LTEXT           "Name",IDC_STATIC,7,17,82,8
-    EDITTEXT        IDC_EDIT_PLUGIN_NAME,7,28,87,12,ES_AUTOHSCROLL
-    LTEXT           "Title",IDC_STATIC,99,17,82,8
-    EDITTEXT        IDC_EDIT_TITLE,99,28,87,12,ES_AUTOHSCROLL
-    LTEXT           "Short Name",IDC_STATIC,192,17,82,8
-    EDITTEXT        IDC_EDIT_SHORT_NAME,192,28,87,12,ES_AUTOHSCROLL
-    LTEXT           "Access Type",IDC_STATIC,7,44,83,8
-    COMBOBOX        IDC_COMBO_ACCESS_TYPE,7,56,84,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Provider URL",IDC_STATIC,97,44,156,8
-    EDITTEXT        IDC_EDIT_PROVIDER_URL,97,56,182,12,ES_AUTOHSCROLL
-    LTEXT           "Playlist Template",IDC_STATIC,7,72,87,8
-    EDITTEXT        IDC_EDIT_PLAYLIST_TEMPLATE,7,83,347,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Test",IDC_BUTTON_PLAYLIST_SHOW,358,81,32,16
-    PUSHBUTTON      "Test",IDC_BUTTON_STREAM_PARSE,358,108,32,16
-    LTEXT           "Stream Parse Regex",IDC_STATIC,7,99,127,8
-    EDITTEXT        IDC_EDIT_PARSE_PATTERN,7,110,347,12,ES_AUTOHSCROLL
-    LTEXT           "Stream ID Parse Regex",IDC_STATIC,7,125,127,8
-    EDITTEXT        IDC_EDIT_PARSE_PATTERN_ID,7,136,347,12,ES_AUTOHSCROLL
-    LTEXT           "Streams",IDC_STATIC,7,183,35,8
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,45,188,343,1
-    LTEXT           "Stream Type",IDC_STATIC,7,194,60,8
-    COMBOBOX        IDC_COMBO_STREAM_TYPE,7,204,58,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Catchup Type",IDC_STATIC,71,194,60,8
-    COMBOBOX        IDC_COMBO_CATCHUP_TYPE,71,204,58,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "{SHIFT_SUBST}",IDC_STATIC_SUBST,137,194,62,8
-    EDITTEXT        IDC_EDIT_SHIFT_SUBST,137,205,64,12,ES_AUTOHSCROLL
-    LTEXT           "{DURATION}",IDC_STATIC_DURATION,207,194,62,8
-    EDITTEXT        IDC_EDIT_DURATION,207,205,32,12,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "Stream Template",IDC_STATIC,7,221,175,8
-    EDITTEXT        IDC_EDIT_STREAM_TEMPLATE,7,232,383,12,ES_AUTOHSCROLL
-    LTEXT           "Stream Archive Template",IDC_STATIC,7,248,175,8
-    EDITTEXT        IDC_EDIT_STREAM_ARC_TEMPLATE,7,261,383,12,ES_AUTOHSCROLL
-    LTEXT           "EPG",IDC_STATIC,7,277,20,8
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,30,282,358,1
-    LTEXT           "EPG Type",IDC_STATIC,7,288,60,8
-    COMBOBOX        IDC_COMBO_EPG_TYPE,7,298,63,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "EPG URL",IDC_STATIC,77,288,175,8
-    EDITTEXT        IDC_EDIT_EPG_URL,77,299,233,12,ES_AUTOHSCROLL
-    LTEXT           "Format {DATE}",IDC_STATIC,315,288,67,8
-    EDITTEXT        IDC_EDIT_EPG_FMT_DATE,315,299,75,12,ES_AUTOHSCROLL
-    LTEXT           "JSON Parse",IDC_STATIC,7,344,42,8
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,53,349,335,1
-    LTEXT           "EPG Root",IDC_STATIC,7,355,77,8
-    EDITTEXT        IDC_EDIT_EPG_ROOT,7,365,77,12,ES_AUTOHSCROLL
-    LTEXT           "EPG Name",IDC_STATIC,90,355,57,8
-    EDITTEXT        IDC_EDIT_EPG_NAME,90,365,61,12,ES_AUTOHSCROLL
-    LTEXT           "EPG Description",IDC_STATIC,90,380,61,8
-    EDITTEXT        IDC_EDIT_EPG_DESC,90,391,61,12,ES_AUTOHSCROLL
-    LTEXT           "EPG Start",IDC_STATIC,157,355,57,8
-    EDITTEXT        IDC_EDIT_EPG_START,157,365,61,12,ES_AUTOHSCROLL
-    LTEXT           "EPG Start Format",IDC_STATIC,157,380,99,8
-    EDITTEXT        IDC_EDIT_EPG_FMT_TIME,157,391,102,12,ES_AUTOHSCROLL
-    LTEXT           "EPG End",IDC_STATIC,224,355,57,8
-    EDITTEXT        IDC_EDIT_EPG_END,224,365,61,12,ES_AUTOHSCROLL
-    LTEXT           "EPG Timezone (UTC+)",IDC_STATIC,291,355,99,8
-    EDITTEXT        IDC_EDIT_EPG_TZ,291,365,22,12,ES_AUTOHSCROLL
-    LTEXT           "{EPG_ID}",IDC_STATIC,7,315,39,8
-    EDITTEXT        IDC_EDIT_SET_ID,7,328,47,12,ES_AUTOHSCROLL
-    LTEXT           "{TOKEN}",IDC_STATIC,61,315,35,8
-    EDITTEXT        IDC_EDIT_SET_TOKEN,61,328,80,12,ES_AUTOHSCROLL
-    LTEXT           "{DATE}/{TIMESTAMP}",IDC_STATIC,147,315,78,8
-    CONTROL         "",IDC_DATETIMEPICKER_DATE,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP,147,326,66,15
-    PUSHBUTTON      "Test",IDC_BUTTON_EPG_SHOW,346,325,44,16
-    CONTROL         "Square Icons",IDC_CHECK_SQUARE_ICONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,71,108,10
-    PUSHBUTTON      "Test",IDC_BUTTON_STREAM_ID_PARSE,358,134,32,16
-    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_SERVERS,7,166,44,14
-    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_DEVICES,103,166,44,14
-    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_QUALITY,198,166,44,14
-    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_PROFILES,295,166,44,14
-    CONTROL         "Static Servers List",IDC_CHECK_STATIC_SERVERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,153,92,10
-    CONTROL         "Static Devices List",IDC_CHECK_STATIC_DEVICES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,153,92,10
+    COMBOBOX        IDC_COMBO_PLUGIN_TYPE,7,7,115,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_PLUGIN_CONFIG,126,7,115,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_CONFIG,250,7,19,14,BS_ICON
+    PUSHBUTTON      "Save",IDC_BUTTON_SAVE_CONFIG,272,7,19,14,BS_ICON
+    PUSHBUTTON      "Save As",IDC_BUTTON_SAVE_AS_CONFIG,294,7,19,14,BS_ICON
+    LTEXT           "Name",IDC_STATIC,7,23,82,8
+    EDITTEXT        IDC_EDIT_PLUGIN_NAME,7,33,87,12,ES_AUTOHSCROLL
+    LTEXT           "Title",IDC_STATIC,99,23,82,8
+    EDITTEXT        IDC_EDIT_TITLE,99,33,87,12,ES_AUTOHSCROLL
+    LTEXT           "Short Name",IDC_STATIC,192,23,82,8
+    EDITTEXT        IDC_EDIT_SHORT_NAME,192,33,87,12,ES_AUTOHSCROLL
+    LTEXT           "Access Type",IDC_STATIC,7,49,83,8
+    COMBOBOX        IDC_COMBO_ACCESS_TYPE,7,60,84,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Provider URL",IDC_STATIC,97,49,156,8
+    EDITTEXT        IDC_EDIT_PROVIDER_URL,97,60,110,12,ES_AUTOHSCROLL
+    CONTROL         "Square Icons",IDC_CHECK_SQUARE_ICONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,210,61,110,10
+    LTEXT           "Playlist Template",IDC_STATIC,7,76,87,8
+    EDITTEXT        IDC_EDIT_PLAYLIST_TEMPLATE,7,87,347,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Test",IDC_BUTTON_PLAYLIST_SHOW,358,85,32,16
+    LTEXT           "Stream Parse Regex",IDC_STATIC,7,103,127,8
+    EDITTEXT        IDC_EDIT_PARSE_PATTERN,7,114,347,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Test",IDC_BUTTON_STREAM_PARSE,358,112,32,16
+    LTEXT           "Stream ID Parse Regex",IDC_STATIC,7,129,127,8
+    EDITTEXT        IDC_EDIT_PARSE_PATTERN_ID,7,140,347,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Test",IDC_BUTTON_STREAM_ID_PARSE,358,138,32,16
+    CONTROL         "Static Servers List",IDC_CHECK_STATIC_SERVERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,156,92,10
+    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_SERVERS,7,169,44,14
+    CONTROL         "Static Devices List",IDC_CHECK_STATIC_DEVICES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,156,92,10
+    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_DEVICES,103,169,44,14
     CONTROL         "Static Qualities List",IDC_CHECK_STATIC_QUALITIES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,198,153,93,10
-    CONTROL         "Static Profiles List",IDC_CHECK_STATIC_PROFILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,295,153,91,10
-    PUSHBUTTON      "Set",IDC_BUTTON_ACTIVE,284,63,51,16
-    PUSHBUTTON      "Reset",IDC_BUTTON_DEFAULT,339,63,51,16
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,198,156,93,10
+    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_QUALITY,198,169,44,14
+    CONTROL         "Static Profiles List",IDC_CHECK_STATIC_PROFILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,295,156,91,10
+    PUSHBUTTON      "Edit",IDC_BUTTON_EDIT_PROFILES,295,169,44,14
+    LTEXT           "Streams",IDC_STATIC,7,186,35,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,45,190,343,1
+    LTEXT           "Stream Type",IDC_STATIC,7,196,60,8
+    COMBOBOX        IDC_COMBO_STREAM_TYPE,7,206,58,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Catchup Type",IDC_STATIC,71,196,60,8
+    COMBOBOX        IDC_COMBO_CATCHUP_TYPE,71,206,58,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "{SHIFT_SUBST}",IDC_STATIC_SUBST,137,196,62,8
+    EDITTEXT        IDC_EDIT_SHIFT_SUBST,137,207,64,12,ES_AUTOHSCROLL
+    LTEXT           "{DURATION}",IDC_STATIC_DURATION,207,196,62,8
+    EDITTEXT        IDC_EDIT_DURATION,207,207,32,12,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Stream Template",IDC_STATIC,7,223,175,8
+    EDITTEXT        IDC_EDIT_STREAM_TEMPLATE,7,234,383,12,ES_AUTOHSCROLL
+    LTEXT           "Stream Archive Template",IDC_STATIC,7,250,175,8
+    EDITTEXT        IDC_EDIT_STREAM_ARC_TEMPLATE,7,263,383,12,ES_AUTOHSCROLL
+    LTEXT           "EPG",IDC_STATIC,7,279,20,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,30,284,358,1
+    LTEXT           "EPG Type",IDC_STATIC,7,290,60,8
+    COMBOBOX        IDC_COMBO_EPG_TYPE,7,300,63,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "EPG URL",IDC_STATIC,77,290,175,8
+    EDITTEXT        IDC_EDIT_EPG_URL,77,301,211,12,ES_AUTOHSCROLL
+    LTEXT           "Format {DATE}",IDC_STATIC,292,290,67,8
+    EDITTEXT        IDC_EDIT_EPG_FMT_DATE,292,301,98,12,ES_AUTOHSCROLL
+    LTEXT           "{EPG_ID}",IDC_STATIC,7,317,39,8
+    EDITTEXT        IDC_EDIT_SET_ID,7,330,47,12,ES_AUTOHSCROLL
+    LTEXT           "{TOKEN}",IDC_STATIC,61,317,35,8
+    EDITTEXT        IDC_EDIT_SET_TOKEN,61,330,80,12,ES_AUTOHSCROLL
+    LTEXT           "{DATE}/{TIMESTAMP}",IDC_STATIC,147,317,78,8
+    CONTROL         "",IDC_DATETIMEPICKER_DATE,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP,147,328,66,15
+    PUSHBUTTON      "Test",IDC_BUTTON_EPG_SHOW,346,327,44,16
+    LTEXT           "JSON Parse",IDC_STATIC,7,346,42,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,53,351,335,1
+    LTEXT           "EPG Root",IDC_STATIC,7,357,77,8
+    EDITTEXT        IDC_EDIT_EPG_ROOT,7,367,77,12,ES_AUTOHSCROLL
+    LTEXT           "EPG Name",IDC_STATIC,90,357,57,8
+    EDITTEXT        IDC_EDIT_EPG_NAME,90,367,61,12,ES_AUTOHSCROLL
+    LTEXT           "EPG Start",IDC_STATIC,157,357,57,8
+    EDITTEXT        IDC_EDIT_EPG_START,157,367,61,12,ES_AUTOHSCROLL
+    LTEXT           "EPG End",IDC_STATIC,224,357,57,8
+    EDITTEXT        IDC_EDIT_EPG_END,224,367,61,12,ES_AUTOHSCROLL
+    LTEXT           "EPG Timezone (UTC+)",IDC_STATIC,291,357,99,8
+    EDITTEXT        IDC_EDIT_EPG_TZ,291,367,22,12,ES_AUTOHSCROLL
+    LTEXT           "EPG Description",IDC_STATIC,90,382,61,8
+    EDITTEXT        IDC_EDIT_EPG_DESC,90,393,61,12,ES_AUTOHSCROLL
+    LTEXT           "EPG Start Format",IDC_STATIC,157,382,99,8
+    EDITTEXT        IDC_EDIT_EPG_FMT_TIME,157,393,156,12,ES_AUTOHSCROLL
 END
 
 IDD_DIALOG_FILL_PARAMS DIALOGEX 0, 0, 191, 143
@@ -556,6 +590,14 @@ BEGIN
         RIGHTMARGIN, 158
         TOPMARGIN, 7
         BOTTOMMARGIN, 54
+    END
+
+    IDD_DIALOG_NEW_CONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 158
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 39
     END
 
     IDD_MAIN_SETTINGS_PAGE, DIALOG
@@ -651,7 +693,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 390
         TOPMARGIN, 7
-        BOTTOMMARGIN, 403
+        BOTTOMMARGIN, 405
     END
 
     IDD_DIALOG_FILL_PARAMS, DIALOG
@@ -927,11 +969,6 @@ END
 IDD_DIALOG_PLUGIN_CONFIG AFX_DIALOG_LAYOUT
 BEGIN
     0,
-    0, 0, 100, 0,
-    100, 0, 0, 0,
-    100, 0, 0, 0,
-    100, 0, 0, 0,
-    100, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -943,35 +980,28 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
-    0, 0, 100, 0,
-    100, 0, 0, 0,
-    100, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 100, 0,
-    0, 0, 0, 0,
-    0, 0, 100, 0,
-    0, 0, 0, 0,
-    0, 0, 100, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 100, 0,
-    0, 0, 0, 0,
-    0, 0, 100, 0,
-    0, 0, 0, 0,
-    0, 0, 100, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
     100, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
     100, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
+    100, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
     0, 0, 0, 0,
@@ -983,19 +1013,16 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
+    0, 0, 100, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
+    0, 0, 100, 0,
+    100, 0, 0, 0,
     100, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -1005,8 +1032,21 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
-    100, 0, 0, 0,
-    100, 0, 0, 0
+    0, 0, 100, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0
 END
 
 IDD_DIALOG_FILL_PARAMS AFX_DIALOG_LAYOUT
@@ -1017,6 +1057,11 @@ BEGIN
     0, 0, 100, 50,
     0, 0, 0, 0,
     0, 0, 0, 0
+END
+
+IDD_DIALOG_NEW_CONFIG AFX_DIALOG_LAYOUT
+BEGIN
+    0
 END
 
 
@@ -1281,6 +1326,21 @@ BEGIN
     END
 END
 
+IDR_MENU_TEMPLATE MENU
+BEGIN
+    POPUP "PopupEdit"
+    BEGIN
+        MENUITEM "&Undo",                       199
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t",                        768
+        MENUITEM "&Copy",                       769
+        MENUITEM "&Paste",                      770
+        MENUITEM "&Delete",                     771
+        MENUITEM SEPARATOR
+        MENUITEM "Select &All",                 ID_SELECT_ALL
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1522,6 +1582,16 @@ BEGIN
     IDS_STRING_COMBO_DEVICE_ID "Available device"
     IDS_STRING_COMBO_PROFILE "Available profiles"
     IDS_STRING_COMBO_QUALITY_ID "Available quality"
+    IDS_STRING_ERR_SAVE_CONFIG "Can't save config!"
+    IDS_STRING_COMBO_CONFIG "Selected plugin configuration."
+    IDS_STRING_BUTTON_EDIT_CONFIG "Toggle edit plugin configuration."
+    IDS_STRING_BUTTON_SAVE_CONFIG "Save configuration."
+    IDS_STRING_BUTTON_SAVE_AS_CONFIG "Save configuration to new file."
+    IDS_STRING_EDIT_PLUGIN_NAME 
+                            "Internal plugin name for Dune. Change it if conflicts with other plugins."
+    IDS_STRING_EDIT_TITLE   "Plugin title. It shows in the Dune Main Screen."
+    IDS_STRING_EDIT_SHORT_NAME 
+                            "Short plugin name. Used internally in Editor. Can be changed only for Custom plugin."
 END
 
 STRINGTABLE
@@ -1530,6 +1600,7 @@ BEGIN
     IDS_STRING_EDIT_BACKGROUND 
                             "Background picture used by the plugin.\n1920x1080 px in jpg format.\nIf empty will use the default."
     IDS_STRING_EDIT_SUFFIX  "Suffix to add to the packed plugin.\nIf empty will use the default - 'mod'."
+    IDS_STRING_INSERT_VARS  "Insert Variable"
     IDS_STRING_ERR_DLL_MISSING 
                             "7za.dll is missing! Please check the installation."
     IDS_STRING_ERR_FILE_MISSING "File %s is missing!"
@@ -1578,6 +1649,34 @@ STRINGTABLE
 BEGIN
     ID_MAKE_ALL             "Make All"
     ID_MAKE_ALL_ACCOUNTS    "Make All Accounts"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_EDIT_PROVIDER_URL 
+                            "Link to the Provider main site. Optional. Shows in the Account info."
+    IDS_STRING_EDIT_PARSE_PATTERN 
+                            "Regular expression for parsing channel url from the playlist. Capture groups mapped to the templates replaceble values. If url does not match the pattern it will be threat as Custom Url. User defined regex capture groups not supported!"
+    IDS_STRING_EDIT_PARSE_PATTERN_ID 
+                            "Regular expression to extract channel ID from #EXTINF tag from the playlist channel entry. Used if channel url doesn't contains channel ID"
+    IDS_STRING_EDIT_SHIFT_SUBST 
+                            "Value to substitute parameter in the archive url that point to the begin of the archive playing time . Depends on type of archive template: shift or flussonic, or provider settings. Can be found in the playlist tags."
+    IDS_STRING_EDIT_DURATION 
+                            "Duration value in seconds used in the flussonic archive template. Set length of the requested archive frame. Typically 3 hours."
+    IDS_STRING_EDIT_STREAM_TEMPLATE 
+                            "Template to assemble stream url. All macroses available in the context menu called by right mouse button."
+    IDS_STRING_EDIT_STREAM_ARC_TEMPLATE 
+                            "Template to assemble the archive stream url. All macroses available in the context menu called by right mouse button."
+    IDS_STRING_EDIT_EPG_URL "Template to assemble the url to request the channel EPG. All macroses available in the context menu called by right mouse button."
+    IDS_STRING_EDIT_EPG_ROOT 
+                            "Name of the JSON node that points to the array of the EPG entries. Can be empty. Or lays inside other nodes. In this case each node separated by '|' symbol. If node name is number use [] brackets to identify it."
+    IDS_STRING_EDIT_EPG_NAME 
+                            "JSON value name that identify EPG title for the TV program"
+    IDS_STRING_EDIT_EPG_DESC 
+                            "JSON value name that identify EPG description for the TV program"
+    IDS_STRING_EDIT_EPG_START 
+                            "JSON value name that identify EPG start time for the TV program"
+    IDS_STRING_EDIT_EPG_END "JSON value name that identify EPG end time for the TV program"
 END
 
 #endif    // English (United States) resources

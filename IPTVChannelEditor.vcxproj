@@ -252,7 +252,9 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="InPlaceEdit.h" />
     <ClInclude Include="m3u_entry.h" />
     <ClInclude Include="map_serializer.h" />
+    <ClInclude Include="MenuEdit.h" />
     <ClInclude Include="MySplitButton.h" />
+    <ClInclude Include="NewConfigDlg.h" />
     <ClInclude Include="PlaylistParseJsonThread.h" />
     <ClInclude Include="PluginConfigPage.h" />
     <ClInclude Include="ResizedPropertySheet.h" />
@@ -326,7 +328,9 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="InPlaceEdit.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
+    <ClCompile Include="MenuEdit.cpp" />
     <ClCompile Include="MySplitButton.cpp" />
+    <ClCompile Include="NewConfigDlg.cpp" />
     <ClCompile Include="PlaylistParseJsonThread.cpp" />
     <ClCompile Include="NewChannelsListDlg.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
@@ -391,8 +395,22 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <None Include="res\IPTVChannelEditor.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\Account.png" />
+    <Image Include="res\Added.png" />
+    <Image Include="res\AddedOnly.png" />
+    <Image Include="res\Changed.png" />
+    <Image Include="res\Download.png" />
+    <Image Include="res\Edit.png" />
+    <Image Include="res\Filter.png" />
+    <Image Include="res\FindNext.png" />
     <Image Include="res\IPTVChannelEditor.ico" />
+    <Image Include="res\New.png" />
+    <Image Include="res\NotAdded.png" />
+    <Image Include="res\NotChanged.png" />
     <Image Include="res\QR Code.png" />
+    <Image Include="res\Save.png" />
+    <Image Include="res\SaveAs.png" />
+    <Image Include="res\Settings.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -59,6 +59,8 @@ inline std::string get_utf8(const wchar_t* value)
 IMPLEMENT_DYNAMIC(CAccessInfoPage, CMFCPropertyPage)
 
 BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CAccessInfoPage::OnToolTipText)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CAccessInfoPage::OnToolTipText)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CAccessInfoPage::OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CAccessInfoPage::OnBnClickedButtonRemove)
 	ON_BN_CLICKED(IDC_BUTTON_NEW_FROM_URL, &CAccessInfoPage::OnBnClickedButtonNewFromUrl)
@@ -70,12 +72,11 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_SERVER_ID, &CAccessInfoPage::OnCbnSelchangeComboServerId)
 	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoPage::OnCbnSelchangeComboProfile)
 	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CAccessInfoPage::OnCbnSelchangeComboQuality)
+	ON_CBN_SELCHANGE(IDC_COMBO_CONFIGS, &CAccessInfoPage::OnCbnSelchangeComboConfigs)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoPage::OnBnClickedCheckEmbed)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoPage::OnEnChangeEditPluginSuffix)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_LOGO, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_BGND, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginBgnd)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CAccessInfoPage::OnToolTipText)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CAccessInfoPage::OnToolTipText)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_VERSION, &CAccessInfoPage::OnEnChangeEditPluginUpdateVersion)
 	ON_BN_CLICKED(IDC_CHECK_AUTOINCREMENT_VERSION, &CAccessInfoPage::OnBnClickedCheckAutoincrementVersion)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_URL, &CAccessInfoPage::OnEnChangeEditPluginUpdateUrl)
@@ -88,7 +89,9 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
 END_MESSAGE_MAP()
 
 
-CAccessInfoPage::CAccessInfoPage() : CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
+CAccessInfoPage::CAccessInfoPage(std::vector<std::wstring>& configs)
+	: CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
+	, m_configs(configs)
 {
 }
 
@@ -107,6 +110,7 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfiles);
 	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQualities);
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
+	DDX_Control(pDX, IDC_COMBO_CONFIGS, m_wndConfigs);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_wndSuffix);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_suffix);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_wndLogo);
@@ -127,7 +131,6 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_CUSTOM_PACKAGE_NAME, m_wndCustomPackageName);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_wndPackageName);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_packageName);
-	DDX_Control(pDX, IDC_COMBO_CONFIGS, m_wndConfigs);
 }
 
 BOOL CAccessInfoPage::PreTranslateMessage(MSG* pMsg)
@@ -224,10 +227,10 @@ BOOL CAccessInfoPage::OnInitDialog()
 		JSON_ALL_CATCH;
 	}
 
-	UpdateConfigs();
 	CreateAccountsList();
 	CreateAccountInfo();
 	CreateChannelsList();
+	FillConfigs();
 
 	m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
@@ -369,6 +372,12 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndProfiles.SetCurSel(params.profile_idx);
 	}
 
+	auto it = std::find(m_configs.begin(), m_configs.end(), selected.get_config());
+	int sel_idx = 0;
+	if (it != m_configs.end())
+		sel_idx = std::distance(m_configs.begin(), it);
+	m_wndConfigs.SetCurSel(sel_idx);
+
 	m_suffix = selected.get_suffix().c_str();
 	if (!selected.get_logo().empty() && std::filesystem::path(selected.get_logo()).parent_path().empty())
 		m_logo = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_logo()).c_str();
@@ -481,23 +490,9 @@ void CAccessInfoPage::CreateChannelsList()
 	FillChannelsList();
 }
 
-void CAccessInfoPage::UpdateConfigs()
+void CAccessInfoPage::FillConfigs()
 {
-	m_configs.clear();
-	m_configs.emplace_back(L"Default");
-
-	std::filesystem::path config_dir = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + m_plugin->get_short_name_w();
-	std::error_code err;
-	std::filesystem::directory_iterator dir_iter(config_dir, err);
-	for (auto const& dir_entry : dir_iter)
-	{
-		const auto& path = dir_entry.path();
-		if (path.extension() == _T(".json"))
-		{
-			m_configs.emplace_back(path.filename().wstring());
-		}
-	}
-
+	m_wndConfigs.ResetContent();
 	for (const auto& entry : m_configs)
 	{
 		m_wndConfigs.AddString(entry.c_str());
@@ -1068,6 +1063,22 @@ int CAccessInfoPage::GetCheckedAccountIdx()
 	}
 
 	return -1;
+}
+
+void CAccessInfoPage::OnCbnSelchangeComboConfigs()
+{
+	auto& selected = GetCheckedAccount();
+	int idx = m_wndConfigs.GetCurSel();
+	if (idx < 1)
+	{
+		selected.config.clear();
+	}
+	else
+	{
+		CString value;
+		m_wndConfigs.GetLBText(idx, value);
+		selected.set_config(value.GetString());
+	}
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboServerId()

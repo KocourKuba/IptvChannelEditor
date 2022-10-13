@@ -92,6 +92,9 @@ bool PackPlugin(const PluginType plugin_type,
 				bool noCustom = false);
 
 void SaveWindowPos(HWND hWnd, LPCTSTR name);
+bool LoadPngImage(UINT id, CImage& img);
+void SetButtonImage(UINT imgId, CButton& btn);
+void SetButtonImage(UINT imgId, CButton* btn);
 void RestoreWindowPos(HWND hWnd, LPCTSTR name);
 int RequestToUpdateServer(const std::wstring& command);
 

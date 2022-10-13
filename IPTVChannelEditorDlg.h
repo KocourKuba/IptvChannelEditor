@@ -71,6 +71,7 @@ public:
 	};
 
 	HTREEITEM SelectTreeItem(CTreeCtrlEx* ctl, const SearchParams& searchParams);
+	void ReloadConfigs();
 
 	// Implementation
 protected:
@@ -124,6 +125,7 @@ protected:
 	afx_msg void OnSyncTreeItem();
 	afx_msg void OnUpdateSyncTreeItem(CCmdUI* pCmdUI);
 
+	afx_msg void OnBnClickedButtonEditConfig();
 	afx_msg void OnBnClickedButtonCreateNewChannelsList();
 	afx_msg void OnBnClickedCheckShowChangedCh();
 	afx_msg void OnBnClickedButtonPlFilter();
@@ -228,8 +230,6 @@ private:
 	void UpdateChannelsTreeColors(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
 
-	bool SetupAccount();
-
 	std::shared_ptr<ChannelCategory> GetItemCategory(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelCategory> GetCategory(HTREEITEM hItem) const;
 
@@ -255,7 +255,6 @@ private:
 	void SwapCategories(const HTREEITEM hLeft, const HTREEITEM hRight);
 
 	void SwitchPlugin();
-
 	void CollectCredentials();
 
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
@@ -271,8 +270,8 @@ protected:
 
 	CToolTipCtrl m_wndToolTipCtrl;
 	CComboBox m_wndPluginType;
-	CButton m_wndVod;
-	CButton m_wndEditConfig;
+	CButton m_wndBtnVod;
+	CButton m_wndBtnEditConfig;
 	CTreeCtrlEx m_wndChannelsTree;
 	CComboBox m_wndPlaylist;
 	CTreeCtrlEx m_wndPlaylistTree;
@@ -298,7 +297,7 @@ protected:
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
 	CButton m_wndShowUrl;
-	CButton m_wndFilter;
+	CButton m_wndBtnFilter;
 	CButton m_wndShowUnknown;
 	CButton m_wndShowChanged;
 	CButton m_wndShowChangedCh;
@@ -307,13 +306,13 @@ protected:
 	CButton m_wndAdult;
 	CButton m_wndCustom;
 	CButton m_wndPlArchive;
-	CButton m_wndViewEPG;
-	CButton m_wndAccountSetting;
-	CButton m_wndDownloadUrl;
+	CButton m_wndBtnViewEPG;
+	CButton m_wndBtnAccountSetting;
+	CButton m_wndBtnDownloadPlaylist;
 	CButton m_wndCheckArchive;
-	CButton m_wndCacheIcon;
-	CButton m_wndSave;
-	CButton m_wndStop;
+	CButton m_wndBtnCacheIcon;
+	CButton m_wndBtnSave;
+	CButton m_wndBtnStop;
 	CStatic m_wndChannelIcon;
 	CStatic m_wndPlIcon;
 	CStatic m_wndChInfo;
@@ -321,7 +320,7 @@ protected:
 	CStatic m_wndProgressInfo;
 	CButton m_wndEpg1;
 	CButton m_wndEpg2;
-	CButton m_wndSettings;
+	CButton m_wndBtnSettings;
 	CButton m_wndMakeWebUpdate;
 	CProgressCtrl m_wndProgress;
 	CProgressCtrl m_wndProgressTime;
@@ -404,6 +403,9 @@ private:
 	// list of all channel lists, filled when switch plugin. Reads from \playlists\plugin-name\*.xml
 	std::vector<std::wstring> m_all_channels_lists;
 
+	// list of all configs
+	std::vector<std::wstring> m_all_configs_lists;
+
 	// map of all categories for fast search to category key (id)
 	// Loaded from channels list
 	std::map<int, CategoryInfo> m_categoriesMap;
@@ -455,6 +457,4 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// vod
 	std::array<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>, (size_t)PluginType::enLast> m_vod_categories;
-public:
-	afx_msg void OnBnClickedButtonEditConfig();
 };

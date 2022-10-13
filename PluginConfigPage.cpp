@@ -30,6 +30,8 @@ DEALINGS IN THE SOFTWARE.
 #include "PluginConfigPage.h"
 #include "StreamContainer.h"
 #include "FillParamsInfoDlg.h"
+#include "NewConfigDlg.h"
+
 #include "UtilsLib/inet_utils.h"
 
 // CPluginConfigPage dialog
@@ -41,7 +43,6 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CPluginConfigPage::OnToolTipText)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CPluginConfigPage::OnCbnSelchangeComboPluginType)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CPluginConfigPage::OnBnClickedButtonToggleEditConfig)
-	ON_BN_CLICKED(IDC_BUTTON_LOAD_CONFIG, &CPluginConfigPage::OnBnClickedButtonLoadConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_CONFIG, &CPluginConfigPage::OnBnClickedButtonSaveConfig)
 	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigPage::OnCbnSelchangeComboStreamType)
 	ON_CBN_DROPDOWN(IDC_COMBO_STREAM_TYPE, &CPluginConfigPage::OnCbnDropdownComboStreamType)
@@ -57,12 +58,14 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_DEVICES, &CPluginConfigPage::OnBnClickedButtonEditDevices)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_QUALITY, &CPluginConfigPage::OnBnClickedButtonEditQuality)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_PROFILES, &CPluginConfigPage::OnBnClickedButtonEditProfiles)
-	ON_BN_CLICKED(IDC_BUTTON_ACTIVE, &CPluginConfigPage::OnBnClickedButtonActive)
-	ON_BN_CLICKED(IDC_BUTTON_DEFAULT, &CPluginConfigPage::OnBnClickedButtonDefault)
+	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_CONFIG, &CPluginConfigPage::OnCbnSelchangeComboPluginConfig)
+	ON_BN_CLICKED(IDC_BUTTON_SAVE_AS_CONFIG, &CPluginConfigPage::OnBnClickedButtonSaveAsConfig)
 END_MESSAGE_MAP()
 
-CPluginConfigPage::CPluginConfigPage() : CMFCPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
-, m_Date(COleDateTime::GetCurrentTime())
+CPluginConfigPage::CPluginConfigPage(std::vector<std::wstring>& configs)
+	: CMFCPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
+	, m_Date(COleDateTime::GetCurrentTime())
+	, m_configs(configs)
 {
 }
 
@@ -71,9 +74,10 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
+	DDX_Control(pDX, IDC_COMBO_PLUGIN_CONFIG, m_wndPluginConfigs);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndBtnToggleEdit);
-	DDX_Control(pDX, IDC_BUTTON_LOAD_CONFIG, m_wndBtnLoadConf);
 	DDX_Control(pDX, IDC_BUTTON_SAVE_CONFIG, m_wndBtnSaveConf);
+	DDX_Control(pDX, IDC_BUTTON_SAVE_AS_CONFIG, m_wndBtnSaveAsConf);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_NAME, m_wndName);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_NAME, m_Name);
 	DDX_Control(pDX, IDC_EDIT_TITLE, m_wndTitle);
@@ -109,7 +113,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_EPG_END, m_EpgEnd);
 	DDX_Control(pDX, IDC_EDIT_EPG_FMT_DATE, m_wndDateFormat);
 	DDX_Text(pDX, IDC_EDIT_EPG_FMT_DATE, m_EpgDateFormat);
-	DDX_Control(pDX, IDC_EDIT_EPG_FMT_TIME, m_wndEpgTimeFormat);
+	DDX_Control(pDX, IDC_EDIT_EPG_FMT_TIME, m_wndEpgStartFormat);
 	DDX_Text(pDX, IDC_EDIT_EPG_FMT_TIME, m_EpgTimeFormat);
 	DDX_Control(pDX, IDC_EDIT_EPG_TZ, m_wndEpgTimezone);
 	DDX_Text(pDX, IDC_EDIT_EPG_TZ, m_EpgTimezone);
@@ -138,9 +142,6 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EDIT_QUALITY, m_wndBtnQualities);
 	DDX_Control(pDX, IDC_CHECK_STATIC_PROFILES, m_wndChkStaticProfiles);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_PROFILES, m_wndBtnProfiles);
-	DDX_Control(pDX, IDC_BUTTON_ACTIVE, m_wndBtnActivate);
-	DDX_Control(pDX, IDC_BUTTON_DEFAULT, m_wndBtnDefault);
-	DDX_Control(pDX, IDC_STATIC_TITLE, m_wndStaticTitle);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -165,11 +166,50 @@ BOOL CPluginConfigPage::OnInitDialog()
 		return FALSE;
 	}
 
+	m_tooltips_info_account =
+	{
+		{ IDC_COMBO_PLUGIN_CONFIG, load_string_resource(IDS_STRING_COMBO_CONFIG) },
+		{ IDC_BUTTON_EDIT_CONFIG, load_string_resource(IDS_STRING_BUTTON_EDIT_CONFIG) },
+		{ IDC_BUTTON_SAVE_CONFIG, load_string_resource(IDS_STRING_BUTTON_SAVE_CONFIG) },
+		{ IDC_BUTTON_SAVE_AS_CONFIG, load_string_resource(IDS_STRING_BUTTON_SAVE_AS_CONFIG) },
+		{ IDC_EDIT_PLUGIN_NAME, load_string_resource(IDS_STRING_EDIT_PLUGIN_NAME) },
+		{ IDC_EDIT_TITLE, load_string_resource(IDS_STRING_EDIT_TITLE) },
+		{ IDC_EDIT_SHORT_NAME, load_string_resource(IDS_STRING_EDIT_SHORT_NAME) },
+		{ IDC_EDIT_PROVIDER_URL, load_string_resource(IDS_STRING_EDIT_PROVIDER_URL) },
+		{ IDC_EDIT_PARSE_PATTERN, load_string_resource(IDS_STRING_EDIT_PARSE_PATTERN) },
+		{ IDC_EDIT_PARSE_PATTERN_ID, load_string_resource(IDS_STRING_EDIT_PARSE_PATTERN_ID) },
+		{ IDC_EDIT_SHIFT_SUBST, load_string_resource(IDS_STRING_EDIT_SHIFT_SUBST) },
+		{ IDC_EDIT_DURATION, load_string_resource(IDS_STRING_EDIT_DURATION) },
+		{ IDC_EDIT_STREAM_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_TEMPLATE) },
+		{ IDC_EDIT_STREAM_ARC_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_ARC_TEMPLATE) },
+		{ IDC_EDIT_EPG_URL, load_string_resource(IDS_STRING_EDIT_EPG_URL) },
+		{ IDC_EDIT_EPG_ROOT, load_string_resource(IDS_STRING_EDIT_EPG_ROOT) },
+		{ IDC_EDIT_EPG_NAME, load_string_resource(IDS_STRING_EDIT_EPG_NAME) },
+		{ IDC_EDIT_EPG_DESC, load_string_resource(IDS_STRING_EDIT_EPG_DESC) },
+		{ IDC_EDIT_EPG_START, load_string_resource(IDS_STRING_EDIT_EPG_START) },
+		{ IDC_EDIT_EPG_END, load_string_resource(IDS_STRING_EDIT_EPG_END) },
+	};
+
+	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
+	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
+	m_wndToolTipCtrl.SetMaxTipWidth(300);
+
+	for (const auto& pair : m_tooltips_info_account)
+	{
+		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), LPSTR_TEXTCALLBACK);
+	}
+
+	m_wndToolTipCtrl.Activate(TRUE);
+
 	RestoreWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);
 
-	// Fill available plugins
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnToggleEdit);
+	SetButtonImage(IDB_PNG_SAVE, m_wndBtnSaveConf);
+	SetButtonImage(IDB_PNG_SAVE_AS, m_wndBtnSaveAsConf);
+
 	//ASSERT(m_plugin_type != PluginType::enCustom);
 
+	// Fill available plugins
 	int sel_idx = 0;
 	for (const auto& item : GetConfig().get_all_plugins())
 	{
@@ -183,14 +223,82 @@ BOOL CPluginConfigPage::OnInitDialog()
 			sel_idx = idx;
 		}
 	}
-
-	m_loaded_config = m_active_config = GetConfig().get_string(false, REG_ACTIVE_SETTINGS);
-	if (!m_loaded_config.empty())
+	std::vector<std::wstring> pl_params =
 	{
-		m_plugin->load_plugin_parameters(m_loaded_config);
-	}
+				L"{SUBDOMAIN}",
+				L"{LOGIN}",
+				L"{PASSWORD}",
+				L"{TOKEN}",
+				L"{SERVER_ID}",
+				L"{DEVICE_ID}",
+				L"{QUALITY_ID}",
+	};
 
-	UpdateStaticTtitle();
+	m_wndPlaylistTemplate.SetTemplateParams(pl_params);
+
+	std::vector<std::wstring> strm_params(pl_params);
+	strm_params.insert(strm_params.end(),
+	{
+				L"{DOMAIN}",
+				L"{PORT}",
+				L"{ID}",
+				L"{INT_ID}",
+				L"{HOST}",
+	});
+
+	m_wndStreamTemplate.SetTemplateParams(strm_params);
+
+	std::vector<std::wstring> arc_params(strm_params);
+	arc_params.insert(arc_params.end(),
+	{
+				L"{CU_SUBST}",
+				L"{START}",
+				L"{NOW}",
+				L"{DURATION}",
+				L"{OFFSET}",
+	});
+
+	m_wndStreamArchiveTemplate.SetTemplateParams(arc_params);
+
+	std::vector<std::wstring> epg_params =
+	{
+				L"{DOMAIN}",
+				L"{EPG_ID}",
+				L"{TOKEN}",
+				L"{TIMESTAMP}",
+				L"{DATE}",
+	};
+	m_wndEpgUrl.SetTemplateParams(epg_params);
+
+	std::vector<std::wstring> date_fmt_params =
+	{
+				L"{YEAR}",
+				L"{MONTH}",
+				L"{DAY}",
+	};
+	m_wndDateFormat.SetTemplateParams(date_fmt_params);
+
+	std::vector<std::wstring> epg_start_time_params =
+	{
+				L"{YEAR}",
+				L"{MONTH}",
+				L"{DAY}",
+				L"{HOUR}",
+				L"{MINUTE}",
+				L"{TIMESTAMP}",
+	};
+	m_wndEpgStartFormat.SetTemplateParams(epg_start_time_params);
+
+	FillConfigs();
+
+	if (m_initial_cred.config.empty())
+	{
+		m_wndPluginConfigs.SetCurSel(0);
+	}
+	else
+	{
+		m_wndPluginConfigs.SelectString(0, utils::utf8_to_utf16(m_initial_cred.config).c_str());
+	}
 
 	m_wndBtnToggleEdit.EnableWindow(!m_single);
 	m_wndPluginType.SetCurSel(sel_idx);
@@ -216,20 +324,14 @@ BOOL CPluginConfigPage::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CPluginConfigPage::UpdateStaticTtitle()
+void CPluginConfigPage::FillConfigs()
 {
-	std::wstring title_addin;
-	if (m_active_config.empty())
+	m_wndPluginConfigs.ResetContent();
+	for (const auto& entry : m_configs)
 	{
-		title_addin = load_string_resource(IDS_STRING_STR_DEFAULT);
+		m_wndPluginConfigs.AddString(entry.c_str());
 	}
-	else
-	{
-		std::filesystem::path config_name = m_active_config;
-		title_addin = config_name.filename().wstring();
-	}
-
-	m_wndStaticTitle.SetWindowText(fmt::format(L"{:s} ({:s})", load_string_resource(IDS_STRING_STATIC_TITLE), title_addin).c_str());
+	m_wndPluginConfigs.SetCurSel(0);
 }
 
 BOOL CPluginConfigPage::OnApply()
@@ -268,6 +370,16 @@ BOOL CPluginConfigPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 	return FALSE;
 }
 
+std::wstring CPluginConfigPage::GetSelectedConfig()
+{
+	int idx = m_wndPluginConfigs.GetCurSel();
+	if (idx < 1) return L"";
+
+	CString name;
+	m_wndPluginConfigs.GetLBText(idx, name);
+	return name.GetString();
+}
+
 void CPluginConfigPage::EnableControls()
 {
 	UpdateData(TRUE);
@@ -276,11 +388,11 @@ void CPluginConfigPage::EnableControls()
 	if (m_single)
 		enable = false;
 
+	m_wndPluginConfigs.EnableWindow(!enable);
+
 	// buttons
-	m_wndBtnSaveConf.EnableWindow(enable);
-	m_wndBtnLoadConf.EnableWindow(enable);
-	m_wndBtnActivate.EnableWindow(enable && !m_loaded_config.empty() && m_loaded_config != m_active_config);
-	m_wndBtnDefault.EnableWindow(enable && !m_active_config.empty());
+	m_wndBtnSaveConf.EnableWindow(enable && !GetSelectedConfig().empty());
+	m_wndBtnSaveAsConf.EnableWindow(enable);
 
 	// common
 	m_wndName.EnableWindow(enable);
@@ -315,7 +427,7 @@ void CPluginConfigPage::EnableControls()
 	m_wndEpgStart.EnableWindow(enable);
 	m_wndEpgEnd.EnableWindow(enable);
 	m_wndDateFormat.EnableWindow(enable);
-	m_wndEpgTimeFormat.EnableWindow(enable);
+	m_wndEpgStartFormat.EnableWindow(enable);
 	m_wndEpgTimezone.EnableWindow(enable);
 
 	// servers
@@ -343,13 +455,6 @@ void CPluginConfigPage::EnableControls()
 	m_wndToken.EnableWindow(enable);
 	m_wndDate.EnableWindow(enable);
 	m_wndBtnEpgTest.EnableWindow(enable && !m_EpgUrl.IsEmpty());
-}
-
-std::wstring CPluginConfigPage::GetDefaultConfigName()
-{
-	return fmt::format(LR"({:s}{:s}\config.json)",
-					   GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH),
-					   m_plugin->get_short_name_w());
 }
 
 void CPluginConfigPage::FillControlsCommon()
@@ -498,7 +603,7 @@ void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 
 	if (m_single)
 	{
-		m_plugin->save_plugin_parameters(GetDefaultConfigName());
+		m_plugin->save_plugin_parameters(L"config.json");
 	}
 }
 
@@ -508,51 +613,40 @@ void CPluginConfigPage::OnBnClickedButtonToggleEditConfig()
 	EnableControls();
 }
 
-void CPluginConfigPage::OnBnClickedButtonLoadConfig()
-{
-	const auto& in_file = GetDefaultConfigName();
-
-	if (m_plugin->load_plugin_parameters(in_file))
-	{
-		m_loaded_config = in_file;
-		FillControlsCommon();
-	}
-}
-
 void CPluginConfigPage::OnBnClickedButtonSaveConfig()
 {
 	SaveControlsCommon();
 
-	std::wstring out_file = m_loaded_config;
-	if (out_file.empty())
-	{
-		out_file = GetDefaultConfigName();
-	}
+	auto name = GetSelectedConfig();
+	if (name.empty()) return;
 
-	if (m_plugin->save_plugin_parameters(out_file))
+	if (!m_plugin->save_plugin_parameters(name))
 	{
-		m_loaded_config = std::move(out_file);
-		FillControlsCommon();
+		AfxMessageBox(IDS_STRING_ERR_SAVE_CONFIG, MB_ICONERROR | MB_OK);
 	}
 }
 
-void CPluginConfigPage::OnBnClickedButtonActive()
+void CPluginConfigPage::OnBnClickedButtonSaveAsConfig()
 {
-	m_active_config = m_loaded_config;
-	GetConfig().set_string(false, REG_ACTIVE_SETTINGS, m_active_config);
+	CNewConfigDlg dlg;
+	if (dlg.DoModal() != IDOK || dlg.m_name.IsEmpty())
+		return;
 
-	UpdateStaticTtitle();
-	FillControlsCommon();
-}
+	std::filesystem::path new_conf = dlg.m_name.GetString();
+	if (new_conf.extension().empty())
+		new_conf += (L".json");
 
-void CPluginConfigPage::OnBnClickedButtonDefault()
-{
-	m_active_config.clear();
-	m_plugin->load_default();
-	GetConfig().set_string(false, REG_ACTIVE_SETTINGS, m_active_config);
-
-	UpdateStaticTtitle();
-	FillControlsCommon();
+	if (!m_plugin->save_plugin_parameters(new_conf))
+	{
+		AfxMessageBox(IDS_STRING_ERR_SAVE_CONFIG, MB_ICONERROR | MB_OK);
+	}
+	else
+	{
+		m_configs.emplace_back(new_conf);
+		FillConfigs();
+		m_wndPluginConfigs.SetCurSel((int)m_configs.size() - 1);
+		UpdateData(FALSE);
+	}
 }
 
 void CPluginConfigPage::OnCbnSelchangeComboStreamType()
@@ -580,10 +674,6 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 	UpdateData(TRUE);
 
 	std::wstring url(m_EpgUrl.GetString());
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_EPG_ID, m_SetID.GetString());
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_TOKEN, m_Token.GetString());
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_DATE, m_Date.Format(m_EpgDateFormat).GetString());
-
 	// set to begin of the day
 	CTime nt(m_Date.GetYear(), m_Date.GetMonth(), m_Date.GetDay(), m_Date.GetHour(), m_Date.GetMinute(), m_Date.GetSecond());
 
@@ -595,6 +685,12 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 	lt.tm_sec = 0;
 	time_t dayTime = std::mktime(&lt);
 
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_EPG_ID, m_SetID.GetString());
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_TOKEN, m_Token.GetString());
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_DATE, m_EpgDateFormat.GetString());
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_YEAR, std::to_wstring(m_Date.GetYear()));
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_MONTH, std::to_wstring(m_Date.GetMonth()));
+	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_DAY, std::to_wstring(m_Date.GetDay()));
 	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
 
 	std::vector<BYTE> data;
@@ -724,4 +820,13 @@ void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 
 	if (dlg.DoModal() == IDOK)
 		m_plugin->set_profiles_list(dlg.m_paramsList);
+}
+
+void CPluginConfigPage::OnCbnSelchangeComboPluginConfig()
+{
+	const auto& config_name = GetSelectedConfig();
+	if (config_name.empty() || !m_plugin->load_plugin_parameters(config_name))
+		m_plugin->load_default();
+
+	FillControlsCommon();
 }

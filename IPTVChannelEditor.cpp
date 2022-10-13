@@ -688,10 +688,10 @@ bool PackPlugin(const PluginType plugin_type,
 	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
 
 	// load plugin settings
-	const auto& active_config = GetConfig().get_string(false, REG_ACTIVE_SETTINGS);
-	if (!active_config.empty() && !plugin->load_plugin_parameters(active_config))
+	if (!cred.config.empty())
 	{
-		plugin->load_default();
+		if (!plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config)))
+			plugin->load_default();
 	}
 
 	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), (cred.suffix.empty() || noCustom) ? "mod" : cred.suffix);
@@ -816,7 +816,7 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	// save config
-	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder));
+	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder), true);
 
 	// create plugin manifest
 	std::string config_data;
@@ -1112,6 +1112,31 @@ bool PackPlugin(const PluginType plugin_type,
 	return true;
 }
 
+void SetButtonImage(UINT imgId, CButton& btn)
+{
+	CImage img;
+	if (LoadPngImage(imgId, img))
+	{
+		HBITMAP hOld = btn.SetBitmap(img.Detach());
+		if (hOld != nullptr)
+			::DeleteObject(hOld);
+	}
+}
+
+void SetButtonImage(UINT imgId, CButton* pBtn)
+{
+	if (!pBtn)
+		return;
+
+	CImage img;
+	if (LoadPngImage(imgId, img))
+	{
+		HBITMAP hOld = pBtn->SetBitmap(img.Detach());
+		if (hOld != nullptr)
+			::DeleteObject(hOld);
+	}
+}
+
 void RestoreWindowPos(HWND hWnd, LPCTSTR name)
 {
 	const auto& bin = GetConfig().get_binary(true, name);
@@ -1155,6 +1180,46 @@ void SaveWindowPos(HWND hWnd, LPCTSTR name)
 	GetWindowPlacement(hWnd, &wp);
 	// Save the info
 	GetConfig().set_binary(true, name, (LPBYTE)&wp, sizeof(wp));
+}
+
+bool LoadPngImage(UINT id, CImage& img)
+{
+	HGLOBAL hgblResourceData = nullptr;
+	bool res = false;
+	do
+	{
+		HRSRC hrsrc = FindResource(nullptr, MAKEINTRESOURCE(id), _T("PNG"));
+		if (hrsrc == nullptr) break;
+
+		DWORD dwResourceSize = SizeofResource(nullptr, hrsrc);
+		HGLOBAL hglbImage = LoadResource(nullptr, hrsrc);
+		if (hglbImage == nullptr) break;
+
+		LPVOID pvSourceResourceData = LockResource(hglbImage);
+		if (pvSourceResourceData == nullptr) break;
+
+		hgblResourceData = GlobalAlloc(GMEM_MOVEABLE, dwResourceSize);
+		if (hgblResourceData == nullptr) break;
+
+		LPVOID pvResourceData = GlobalLock(hgblResourceData);
+
+		if (pvResourceData == nullptr) break;
+
+		CopyMemory(pvResourceData, pvSourceResourceData, dwResourceSize);
+		GlobalUnlock(hgblResourceData);
+		IStream* pStream = nullptr;
+		if (FAILED(CreateStreamOnHGlobal(hgblResourceData, TRUE, &pStream)) || !pStream) break;
+
+		img.Load(pStream);
+		img.SetHasAlphaChannel(true);
+		pStream->Release();
+		res = true;
+	} while (false);
+
+	if (hgblResourceData == nullptr)
+		::GlobalFree(hgblResourceData);
+
+	return res;
 }
 
 BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)

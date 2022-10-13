@@ -142,7 +142,6 @@ constexpr auto REG_PLUGIN_SUFFIX        = _T("PluginSuffix");
 constexpr auto REG_ACCOUNT_DATA         = _T("AccountData");
 constexpr auto REG_ACTIVE_ACCOUNT       = _T("ActiveAccount");
 constexpr auto REG_ACTIVE_CH_LIST       = _T("ActiveChannelsList");
-constexpr auto REG_ACTIVE_SETTINGS      = _T("ActivePluginSettings");
 
 typedef struct
 {

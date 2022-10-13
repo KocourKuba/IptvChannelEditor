@@ -26,9 +26,19 @@ void uri_stream::clear()
 	parser.clear_hash();
 }
 
-bool uri_stream::save_plugin_parameters(const std::wstring& filename)
+bool uri_stream::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
 {
-	std::filesystem::create_directory(std::filesystem::path(filename).parent_path());
+	std::filesystem::path full_path;
+	if (use_full_path)
+	{
+		full_path = filename;
+	}
+	else
+	{
+		std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_short_name_w());
+		std::filesystem::create_directory(config_dir);
+		full_path = config_dir.append(filename);
+	}
 
 	bool res = false;
 	try
@@ -36,7 +46,7 @@ bool uri_stream::save_plugin_parameters(const std::wstring& filename)
 		nlohmann::json node = *this;
 
 		const auto& str = node.dump(2);
-		std::ofstream out_stream(filename);
+		std::ofstream out_stream(full_path);
 		out_stream << str << std::endl;
 		res = true;
 	}
@@ -61,10 +71,13 @@ bool uri_stream::save_plugin_parameters(const std::wstring& filename)
 bool uri_stream::load_plugin_parameters(const std::wstring& filename)
 {
 	bool res = false;
+	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_short_name_w());
+	const auto& full_path = config_dir.append(filename);
+
 	try
 	{
 		nlohmann::json node;
-		std::ifstream in_stream(filename);
+		std::ifstream in_stream(full_path);
 		if (in_stream.good())
 		{
 			in_stream >> node;
@@ -317,11 +330,11 @@ bool uri_stream::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<tim
 	// replace to "%d-%m-%Y %H:%M"
 	if (!time_format.empty())
 	{
-		utils::string_replace_inplace<char>(time_format, REPL_YEAR, "%Y");
-		utils::string_replace_inplace<char>(time_format, REPL_MONTH, "%m");
-		utils::string_replace_inplace<char>(time_format, REPL_DAY, "%d");
-		utils::string_replace_inplace<char>(time_format, REPL_HOUR, "%H");
-		utils::string_replace_inplace<char>(time_format, REPL_MIN, "%M");
+		utils::string_replace_inplace<char>(time_format, REPL_YEAR_N, "%Y");
+		utils::string_replace_inplace<char>(time_format, REPL_MONTH_N, "%m");
+		utils::string_replace_inplace<char>(time_format, REPL_DAY_N, "%d");
+		utils::string_replace_inplace<char>(time_format, REPL_HOUR_N, "%H");
+		utils::string_replace_inplace<char>(time_format, REPL_MIN_N, "%M");
 	}
 
 	JSON_ALL_TRY;
@@ -420,20 +433,23 @@ std::wstring uri_stream::compile_epg_url(int epg_idx, const std::wstring& epg_id
 		subst_id = epg_id;
 	}
 
-	auto epg_template = utils::string_replace<wchar_t>(epg_params[epg_idx].get_epg_url(), REPL_EPG_ID, subst_id);
 
 	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
-
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, dt.Format(params.get_epg_date_format().c_str()));
-
 	// set to begin of the day
 	std::tm lt =  fmt::localtime(for_time);
 	lt.tm_hour = 0;
 	lt.tm_min = 0;
 	lt.tm_sec = 0;
+
+	auto epg_template = epg_params[epg_idx].get_epg_url();
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, subst_id);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, parser.token);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, params.get_epg_date_format());
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_YEAR, std::to_wstring(dt.GetYear()));
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_MONTH, std::to_wstring(dt.GetMonth()));
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DAY, std::to_wstring(dt.GetDay()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TIMESTAMP, fmt::format(L"{:d}", std::mktime(&lt)));
 
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, parser.token);
 
 	return epg_template;
 }

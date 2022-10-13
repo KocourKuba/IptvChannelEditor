@@ -291,6 +291,12 @@
     <ClInclude Include="uri_ping.h">
       <Filter>Header Files\uri\shift</Filter>
     </ClInclude>
+    <ClInclude Include="NewConfigDlg.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuEdit.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -497,6 +503,12 @@
     <ClCompile Include="uri_sharaclub.cpp">
       <Filter>Source Files\uri\append</Filter>
     </ClCompile>
+    <ClCompile Include="NewConfigDlg.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuEdit.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IPTVChannelEditor.rc">
@@ -515,6 +527,48 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\QR Code.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Save.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\SaveAs.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Edit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\New.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Account.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\AddedOnly.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Changed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\NotChanged.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Download.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Filter.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\FindNext.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Added.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\NotAdded.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Settings.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

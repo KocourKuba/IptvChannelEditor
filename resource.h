@@ -5,7 +5,20 @@
 #define IDM_ABOUTBOX                    16
 #define IDR_POPUP_TRAY                  17
 #define IDR_MENU_CHANGED                18
-#define IDB_PNG_QR                      101
+#define IDB_PNG_QR                      50
+#define IDB_PNG_SAVE                    51
+#define IDB_PNG_SAVE_AS                 52
+#define IDB_PNG_EDIT                    53
+#define IDB_PNG_NEW                     54
+#define IDB_PNG_ACCOUNT                 55
+#define IDB_PNG_ADDED                   56
+#define IDB_PNG_NOT_ADDED               57
+#define IDB_PNG_CHANGED                 58
+#define IDB_PNG_NOT_CHANGED             59
+#define IDB_PNG_DOWNLOAD                60
+#define IDB_PNG_FILTER                  61
+#define IDB_PNG_FIND_NEXT               62
+#define IDB_PNG_SETTINGS                63
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104
@@ -20,18 +33,21 @@
 #define IDD_DIALOG_EPG_LIST             112
 #define IDR_ACCELERATOR_TABLE           112
 #define IDR_MENU_CHANNEL                113
+#define IDD_DIALOG_NEW_CONFIG           113
 #define IDR_MENU_PLAYLIST               114
 #define IDS_ABOUTBOX                    115
 #define IDS_LANGUAGE                    116
 #define IDS_STRING_FILE                 117
 #define IDS_STRING_URL                  118
 #define IDD_DIALOG_URL                  119
+#define IDR_MENU_TEMPLATE               120
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_ICONS_LIST           129
 #define IDD_DIALOG_ACCESS_INFO          131
 #define IDD_DIALOG_ICON_LINK            132
 #define IDD_PATHS_SETTINGS_PAGE         133
 #define IDD_DIALOG_PLUGIN_CONFIG        134
+#define IDD_DIALOG_FILL_PARAMS          135
 #define IDS_STRING_ERR_SOURCE_NOT_SET   140
 #define IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST 141
 #define IDS_STRING_ERR_EMPTY_PLAYLIST   142
@@ -166,8 +182,8 @@
 #define IDS_STRING_EDIT_ICON            272
 #define IDS_STRING_EDIT_BACKGROUND      273
 #define IDS_STRING_EDIT_SUFFIX          274
-#define IDD_DIALOG_FILL_PARAMS          274
-#define IDS_STRING_ERR_DLL_MISSING      275
+#define IDS_STRING_INSERT_VARS          275
+#define IDS_STRING_ERR_DLL_MISSING      276
 #define IDS_STRING_ERR_FILE_MISSING     277
 #define IDS_STRING_ERR_SETTINGS_MISSING 278
 #define IDS_STRING_INFO_W_CREATE_SUCCESS 279
@@ -186,6 +202,27 @@
 #define IDS_STRING_COMBO_DEVICE_ID      292
 #define IDS_STRING_COMBO_PROFILE        293
 #define IDS_STRING_COMBO_QUALITY_ID     294
+#define IDS_STRING_ERR_SAVE_CONFIG      295
+#define IDS_STRING_COMBO_CONFIG         296
+#define IDS_STRING_BUTTON_EDIT_CONFIG   298
+#define IDS_STRING_BUTTON_SAVE_CONFIG   299
+#define IDS_STRING_BUTTON_SAVE_AS_CONFIG 300
+#define IDS_STRING_EDIT_PLUGIN_NAME     301
+#define IDS_STRING_EDIT_TITLE           302
+#define IDS_STRING_EDIT_SHORT_NAME      303
+#define IDS_STRING_EDIT_PROVIDER_URL    304
+#define IDS_STRING_EDIT_PARSE_PATTERN   305
+#define IDS_STRING_EDIT_PARSE_PATTERN_ID 306
+#define IDS_STRING_EDIT_SHIFT_SUBST     307
+#define IDS_STRING_EDIT_DURATION        308
+#define IDS_STRING_EDIT_STREAM_TEMPLATE 309
+#define IDS_STRING_EDIT_STREAM_ARC_TEMPLATE 310
+#define IDS_STRING_EDIT_EPG_URL         311
+#define IDS_STRING_EDIT_EPG_ROOT        312
+#define IDS_STRING_EDIT_EPG_NAME        313
+#define IDS_STRING_EDIT_EPG_DESC        314
+#define IDS_STRING_EDIT_EPG_START       315
+#define IDS_STRING_EDIT_EPG_END         316
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -402,7 +439,7 @@
 #define IDC_CHECK_CUSTOM_PACKAGE_NAME   1177
 #define IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH 1178
 #define IDC_BUTTON_SAVE_CONFIG          1179
-#define IDC_BUTTON_LOAD_CONFIG          1180
+#define IDC_COMBO_PLUGIN_CONFIG         1180
 #define IDC_EDIT_TITLE                  1181
 #define IDC_COMBO_ACCESS_TYPE           1182
 #define IDC_EDIT_SHORT_NAME             1183
@@ -435,13 +472,11 @@
 #define IDC_CHECK_STATIC_SERVERS        1210
 #define IDC_CHECK_STATIC_DEVICES        1211
 #define IDC_CHECK_STATIC_QUALITIES      1212
-#define IDC_COMBO1                      1212
-#define IDC_COMBO_CONFIGS               1212
 #define IDC_CHECK_STATIC_PROFILES       1213
-#define IDC_BUTTON_ACTIVE               1214
-#define IDC_BUTTON_DEFAULT              1215
-#define IDC_MFCEDITBROWSE_PLUGINS_WEB_UPDATE_PATH 1216
-#define IDC_MFCEDITBROWSE_PLUGINS_SETTINGS_PATH 1217
+#define IDC_COMBO_CONFIGS               1214
+#define IDC_MFCEDITBROWSE_PLUGINS_WEB_UPDATE_PATH 1215
+#define IDC_MFCEDITBROWSE_PLUGINS_SETTINGS_PATH 1216
+#define IDC_BUTTON_SAVE_AS_CONFIG       1217
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -466,16 +501,18 @@
 #define ID_CLEAR_STREAM_INFO            32799
 #define ID_MAKE_ALL                     32800
 #define ID_TOGGLE_CATEGORY              32801
-#define ID_MAKE_ALL_ACCOUNTS            32802
+#define ID_MAKE_ALL_ACCOUNTS            32801
 #define ID_REMOVE_UNKNOWN               32803
+#define ID_INSERT_TEMPLATE              32804
+#define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        276
-#define _APS_NEXT_COMMAND_VALUE         32804
-#define _APS_NEXT_CONTROL_VALUE         1213
+#define _APS_NEXT_RESOURCE_VALUE        279
+#define _APS_NEXT_COMMAND_VALUE         32806
+#define _APS_NEXT_CONTROL_VALUE         1217
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

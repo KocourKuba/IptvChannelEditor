@@ -27,13 +27,14 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "uri_stream.h"
 #include "AccessInfoPage.h"
+#include "MenuEdit.h"
 
 class CPluginConfigPage : public CMFCPropertyPage
 {
 	DECLARE_DYNAMIC(CPluginConfigPage)
 
 public:
-	CPluginConfigPage();   // standard constructor
+	CPluginConfigPage(std::vector<std::wstring>& configs);   // standard constructor
 	virtual ~CPluginConfigPage() = default;
 
 // Dialog Data
@@ -44,17 +45,14 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
-
-	void UpdateStaticTtitle();
-
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	BOOL OnApply() override;
 
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnBnClickedButtonToggleEditConfig();
-	afx_msg void OnBnClickedButtonLoadConfig();
 	afx_msg void OnBnClickedButtonSaveConfig();
+	afx_msg void OnBnClickedButtonSaveAsConfig();
 	afx_msg void OnBnClickedButtonEpgTest();
 	afx_msg void OnBnClickedButtonPlaylistShow();
 	afx_msg void OnBnClickedButtonStreamParse();
@@ -63,10 +61,10 @@ protected:
 	afx_msg void OnBnClickedButtonEditDevices();
 	afx_msg void OnBnClickedButtonEditQuality();
 	afx_msg void OnBnClickedButtonEditProfiles();
-	afx_msg void OnBnClickedButtonActive();
-	afx_msg void OnBnClickedButtonDefault();
 
 	afx_msg void OnCbnSelchangeComboPluginType();
+	afx_msg void OnCbnSelchangeComboPluginConfig();
+
 	afx_msg void OnCbnSelchangeComboStreamType();
 	afx_msg void OnCbnDropdownComboStreamType();
 	afx_msg void OnCbnSelchangeComboEpgType();
@@ -78,25 +76,26 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
-	std::wstring GetDefaultConfigName();
 	void EnableControls();
+	void FillConfigs();
 	void FillControlsCommon();
 	void SaveControlsCommon();
 	void FillControlsStream();
 	void SaveControlsStream();
 	void FillControlsEpg();
 	void SaveControlsEpg();
+	std::wstring GetSelectedConfig();
 
 public:
 	PluginType m_plugin_type = PluginType::enCustom;
 	bool m_single = false;
+	Credentials m_initial_cred;
 	CString m_SetID;
 	CAccessInfoPage* m_pAccessPage = nullptr;
 	std::shared_ptr<uri_stream> m_plugin;
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;
-	CStatic m_wndStaticTitle;
 	CStatic m_wndDurationCaption;
 
 	CDateTimeCtrl m_wndDate;
@@ -105,21 +104,21 @@ protected:
 	CEdit m_wndTitle;
 	CEdit m_wndShortName;
 	CEdit m_wndProviderUrl;
-	CEdit m_wndPlaylistTemplate;
+	CMenuEdit m_wndPlaylistTemplate;
 	CEdit m_wndParseStream;
 	CEdit m_wndParseStreamID;
 	CEdit m_wndSubst;
 	CEdit m_wndDuration;
-	CEdit m_wndStreamTemplate;
-	CEdit m_wndStreamArchiveTemplate;
-	CEdit m_wndEpgUrl;
+	CMenuEdit m_wndStreamTemplate;
+	CMenuEdit m_wndStreamArchiveTemplate;
+	CMenuEdit m_wndEpgUrl;
 	CEdit m_wndEpgRoot;
 	CEdit m_wndEpgName;
 	CEdit m_wndEpgDesc;
 	CEdit m_wndEpgStart;
 	CEdit m_wndEpgEnd;
-	CEdit m_wndDateFormat;
-	CEdit m_wndEpgTimeFormat;
+	CMenuEdit m_wndDateFormat;
+	CMenuEdit m_wndEpgStartFormat;
 	CEdit m_wndEpgTimezone;
 	CEdit m_wndSetID;
 	CEdit m_wndToken;
@@ -129,7 +128,10 @@ protected:
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
 	CComboBox m_wndPluginType;
+	CComboBox m_wndPluginConfigs;
 
+	CButton m_wndBtnSaveConf;
+	CButton m_wndBtnSaveAsConf;
 	CButton m_wndChkStaticServers;
 	CButton m_wndBtnServers;
 	CButton m_wndChkStaticDevices;
@@ -140,10 +142,6 @@ protected:
 	CButton m_wndChkSquareIcons;
 	CButton m_wndBtnProfiles;
 	CButton m_wndBtnToggleEdit;
-	CButton m_wndBtnLoadConf;
-	CButton m_wndBtnSaveConf;
-	CButton m_wndBtnActivate;
-	CButton m_wndBtnDefault;
 	CButton m_wndBtnEpgTest;
 	CButton m_wndBtnPlaylistTest;
 	CButton m_wndBtnStreamParseTest;
@@ -177,8 +175,7 @@ protected:
 private:
 	std::map<UINT, std::wstring> m_tooltips_info_account;
 	bool m_allow_edit = false;
-	std::wstring m_loaded_config;
-	std::wstring m_active_config;
+	std::vector<std::wstring>& m_configs;
 	std::array<StreamParameters, 2> m_supported_streams;
 	std::array<EpgParameters, 2> m_epg_parameters;
 };
