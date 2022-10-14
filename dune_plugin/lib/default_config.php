@@ -259,7 +259,7 @@ class default_config extends dynamic_config
                         $url .= (strrpos($url, '?', -1) === false) ? '?' : '&';
                         $url .= $this->get_stream_param($stream_type, URL_ARC_TEMPLATE);
                     }
-                    $url = str_replace(array('{START}', '{NOW}'), array($archive_ts, time()), $url);
+                    $url = str_replace(array('{START}', '{NOW}', '{OFFSET}'), array($archive_ts, time(), time() - $archive_ts), $url);
                     break;
                 case 'flussonic':
                     $url = $this->get_stream_param($stream_type, $is_archive ? URL_ARC_TEMPLATE : URL_TEMPLATE);
