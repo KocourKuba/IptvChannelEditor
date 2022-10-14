@@ -164,6 +164,7 @@ public:
 		portal.clear();
 		comment.clear();
 		suffix.clear();
+		caption.clear();
 		config.clear();
 		logo.clear();
 		background.clear();
@@ -189,8 +190,9 @@ public:
 	std::wstring get_subdomain() const { return utils::utf8_to_utf16(subdomain); }
 	std::wstring get_portal() const { return utils::utf8_to_utf16(portal); }
 	std::wstring get_comment() const { return utils::utf8_to_utf16(comment); }
-	std::wstring get_suffix() const { return utils::utf8_to_utf16(suffix); }
 	std::wstring get_config() const { return utils::utf8_to_utf16(config); }
+	std::wstring get_suffix() const { return utils::utf8_to_utf16(suffix); }
+	std::wstring get_caption() const { return utils::utf8_to_utf16(caption); }
 	std::wstring get_logo() const { return utils::utf8_to_utf16(logo); }
 	std::wstring get_background() const { return utils::utf8_to_utf16(background); }
 	std::wstring get_ch_web_path() const { return utils::utf8_to_utf16(ch_web_path); }
@@ -201,8 +203,9 @@ public:
 	void set_subdomain(const std::wstring& value) { subdomain = utils::utf16_to_utf8(value); }
 	void set_portal(const std::wstring& value) { portal = utils::utf16_to_utf8(value); }
 	void set_comment(const std::wstring& value) { comment = utils::utf16_to_utf8(value); }
-	void set_suffix(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
 	void set_config(const std::wstring& value) { config = utils::utf16_to_utf8(value); }
+	void set_suffix(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
+	void set_caption(const std::wstring& value) { caption = utils::utf16_to_utf8(value); }
 	void set_logo(const std::wstring& value) { logo = utils::utf16_to_utf8(value); }
 	void set_background(const std::wstring& value) { background = utils::utf16_to_utf8(value); }
 
@@ -214,8 +217,9 @@ public:
 		SERIALIZE_STRUCT2(j, c, subdomain, domain);
 		SERIALIZE_STRUCT(j, c, portal);
 		SERIALIZE_STRUCT(j, c, comment);
-		SERIALIZE_STRUCT(j, c, suffix);
 		SERIALIZE_STRUCT(j, c, config);
+		SERIALIZE_STRUCT(j, c, suffix);
+		SERIALIZE_STRUCT(j, c, caption);
 		SERIALIZE_STRUCT(j, c, logo);
 		SERIALIZE_STRUCT(j, c, background);
 		SERIALIZE_STRUCT(j, c, update_url);
@@ -242,8 +246,9 @@ public:
 		DESERIALIZE_STRUCT2(j, c, subdomain, domain);
 		DESERIALIZE_STRUCT(j, c, portal);
 		DESERIALIZE_STRUCT(j, c, comment);
-		DESERIALIZE_STRUCT(j, c, suffix);
 		DESERIALIZE_STRUCT(j, c, config);
+		DESERIALIZE_STRUCT(j, c, suffix);
+		DESERIALIZE_STRUCT(j, c, caption);
 		DESERIALIZE_STRUCT(j, c, logo);
 		DESERIALIZE_STRUCT(j, c, background);
 		DESERIALIZE_STRUCT(j, c, update_url);
@@ -269,8 +274,9 @@ public:
 	std::string subdomain;
 	std::string portal;
 	std::string comment;
-	std::string suffix;
 	std::string config;
+	std::string suffix;
+	std::string caption;
 	std::string logo;
 	std::string background;
 	std::string update_url;

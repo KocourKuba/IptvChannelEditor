@@ -75,6 +75,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_CONFIGS, &CAccessInfoPage::OnCbnSelchangeComboConfigs)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoPage::OnBnClickedCheckEmbed)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoPage::OnEnChangeEditPluginSuffix)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoPage::OnEnChangeEditPluginCaption)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_LOGO, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_BGND, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginBgnd)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_VERSION, &CAccessInfoPage::OnEnChangeEditPluginUpdateVersion)
@@ -113,6 +114,8 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_CONFIGS, m_wndConfigs);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_wndSuffix);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_suffix);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_CAPTION, m_wndCaption);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_CAPTION, m_caption);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_wndLogo);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_logo);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_wndBackground);
@@ -168,6 +171,7 @@ BOOL CAccessInfoPage::OnInitDialog()
 		{ IDC_MFCEDITBROWSE_PLUGIN_LOGO, load_string_resource(IDS_STRING_EDIT_ICON) },
 		{ IDC_MFCEDITBROWSE_PLUGIN_BGND, load_string_resource(IDS_STRING_EDIT_BACKGROUND) },
 		{ IDC_EDIT_PLUGIN_SUFFIX, load_string_resource(IDS_STRING_EDIT_SUFFIX) },
+		{ IDC_EDIT_PLUGIN_CAPTION, load_string_resource(IDS_STRING_EDIT_CAPTION) },
 		{ IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, load_string_resource(IDS_STRING_EDIT_PLUGIN_CHANNELS_WEB_PATH) },
 		{ IDC_EDIT_PLUGIN_UPDATE_URL, load_string_resource(IDS_STRING_EDIT_PLUGIN_UPDATE_URL) },
 		{ IDC_EDIT_PLUGIN_UPDATE_FILE_URL, load_string_resource(IDS_STRING_EDIT_PLUGIN_UPDATE_FILE_URL) },
@@ -379,6 +383,8 @@ void CAccessInfoPage::UpdateOptionalControls()
 	m_wndConfigs.SetCurSel(sel_idx);
 
 	m_suffix = selected.get_suffix().c_str();
+	m_caption = selected.get_caption().c_str();
+
 	if (!selected.get_logo().empty() && std::filesystem::path(selected.get_logo()).parent_path().empty())
 		m_logo = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_logo()).c_str();
 	else
@@ -871,6 +877,7 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 			m_wndLogo.EnableWindow(FALSE);
 			m_wndBackground.EnableWindow(FALSE);
 			m_wndSuffix.EnableWindow(FALSE);
+			m_wndCaption.EnableWindow(FALSE);
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
 		}
 
@@ -928,6 +935,7 @@ void CAccessInfoPage::GetAccountInfo()
 	m_wndLogo.EnableWindow(TRUE);
 	m_wndBackground.EnableWindow(TRUE);
 	m_wndSuffix.EnableWindow(TRUE);
+	m_wndCaption.EnableWindow(TRUE);
 
 	std::wstring login;
 	std::wstring password;
@@ -1126,6 +1134,14 @@ void CAccessInfoPage::OnEnChangeEditPluginSuffix()
 		m_suffix.Empty();
 		UpdateData(FALSE);
 	}
+}
+
+void CAccessInfoPage::OnEnChangeEditPluginCaption()
+{
+	UpdateData(TRUE);
+	m_caption.Trim();
+	auto& selected = GetCheckedAccount();
+	selected.caption = get_utf8(m_caption);
 }
 
 void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()

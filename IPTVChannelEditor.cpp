@@ -822,7 +822,7 @@ bool PackPlugin(const PluginType plugin_type,
 	std::string config_data;
 	std::ifstream istream(plugin_root + L"dune_plugin.xml");
 	config_data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
-	const auto& plugin_caption = utils::utf16_to_utf8(plugin->get_title());
+	const auto& plugin_caption = cred.caption.empty() ? utils::utf16_to_utf8(plugin->get_title()) : cred.caption;
 
 	// preprocess common values
 	utils::string_replace_inplace(config_data, "{plugin_caption}", plugin_caption.c_str());

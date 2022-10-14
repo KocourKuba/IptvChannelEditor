@@ -487,10 +487,11 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SetButtonImage(IDB_PNG_FIND_NEXT, (CButton*)GetDlgItem(IDC_BUTTON_SEARCH_NEXT));
 	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChangedCh);
 	SetButtonImage(IDB_PNG_FIND_NEXT, (CButton*)GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT));
+	SetButtonImage(IDB_PNG_SETTINGS, m_wndBtnSettings);
 	SetButtonImage(IDB_PNG_ACCOUNT, m_wndBtnAccountSetting);
 	SetButtonImage(IDB_PNG_DOWNLOAD, m_wndBtnDownloadPlaylist);
 	SetButtonImage(IDB_PNG_FILTER, m_wndBtnFilter);
-	SetButtonImage(IDB_PNG_SETTINGS, m_wndBtnSettings);
+	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChangedCh);
 
 	// Toggle controls state
 	m_wndSearch.EnableWindow(FALSE);

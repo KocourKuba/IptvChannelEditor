@@ -499,6 +499,7 @@
 #define IDC_MFCEDITBROWSE_PLUGINS_WEB_UPDATE_PATH 1215
 #define IDC_MFCEDITBROWSE_PLUGINS_SETTINGS_PATH 1216
 #define IDC_BUTTON_SAVE_AS_CONFIG       1217
+#define IDC_EDIT_PLUGIN_CAPTION         1218
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -529,7 +530,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        279

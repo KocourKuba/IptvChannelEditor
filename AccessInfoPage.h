@@ -70,6 +70,7 @@ protected:
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
 	afx_msg void OnCbnSelchangeComboQuality();
+	afx_msg void OnEnChangeEditPluginCaption();
 	afx_msg void OnEnChangeEditPluginSuffix();
 	afx_msg void OnEnChangeMfceditbrowsePluginLogo();
 	afx_msg void OnEnChangeMfceditbrowsePluginBgnd();
@@ -115,6 +116,7 @@ protected:
 	CComboBox m_wndProfiles;
 	CComboBox m_wndConfigs;
 	CEdit m_wndSuffix;
+	CEdit m_wndCaption;
 	CMFCEditBrowseCtrlEx m_wndLogo;
 	CMFCEditBrowseCtrlEx m_wndBackground;
 	CEditableListCtrl m_wndAccounts;
@@ -135,6 +137,7 @@ private:
 	CString m_logo;
 	CString m_background;
 	CString m_suffix;
+	CString m_caption;
 	CString m_updateInfoUrl;
 	CString m_updatePackageUrl;
 	CString m_updateInfoName;
