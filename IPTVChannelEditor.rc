@@ -1438,7 +1438,7 @@ BEGIN
     IDS_STRING_EDIT_TIME_SHIFT "EPG Time shift for channel, hours"
     IDS_STRING_EDIT_INFO_VIDEO "Video stream info"
     IDS_STRING_EDIT_INFO_AUDIO "Audio stream info"
-    IDS_STRING_COMBO_STREAM_TYPE "Stream type used to test play stream"
+    IDS_STRING_COMBO_STREAM_TYPE "Stream type used to play stream"
     IDS_STRING_COMBO_ICON_SOURCE 
                             "Source type for loaded icon. Local file or internet link"
     IDS_STRING_BUTTON_STOP  "Stop process"
@@ -1588,8 +1588,8 @@ BEGIN
     IDS_STRING_BUTTON_SAVE_CONFIG "Save configuration."
     IDS_STRING_BUTTON_SAVE_AS_CONFIG "Save configuration to new file."
     IDS_STRING_EDIT_PLUGIN_NAME 
-                            "Internal plugin name for Dune. Change it if conflicts with other plugins."
-    IDS_STRING_EDIT_TITLE   "Plugin title. It shows in the Dune Main Screen."
+                            "Internal plugin name for Dune. Change if it conflicts with other plugins."
+    IDS_STRING_EDIT_TITLE   "Plugin title. Shows on the Dune Main Screen."
     IDS_STRING_EDIT_SHORT_NAME 
                             "Short plugin name. Used internally in Editor. Can be changed only for Custom plugin."
 END
@@ -1600,7 +1600,7 @@ BEGIN
     IDS_STRING_EDIT_BACKGROUND 
                             "Background picture used by the plugin.\n1920x1080 px in jpg format.\nIf empty will use the default."
     IDS_STRING_EDIT_SUFFIX  "Suffix to add to the packed plugin.\nIf empty will use the default - 'mod'."
-    IDS_STRING_INSERT_VARS  "Insert Variable"
+    IDS_STRING_INSERT_VARS  "Insert Macros"
     IDS_STRING_ERR_DLL_MISSING 
                             "7za.dll is missing! Please check the installation."
     IDS_STRING_ERR_FILE_MISSING "File %s is missing!"
@@ -1677,6 +1677,47 @@ BEGIN
     IDS_STRING_EDIT_EPG_START 
                             "JSON value name that identify EPG start time for the TV program"
     IDS_STRING_EDIT_EPG_END "JSON value name that identify EPG end time for the TV program"
+    IDS_STRING_EDIT_EPG_FMT_DATE "Date Format used in EPG template url"
+    IDS_STRING_EDIT_EPG_FMT_TIME 
+                            "Time Format used to parse EPG program start time."
+    IDS_STRING_EDIT_EPG_TZ  "Shift timezone in hours if EPG program not uses UTC time. For example IPTV Online"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_COMBO_ACCESS_TYPE 
+                            "Type of authorization used to download provider playlist or access to user account.\nOTTKey - iEdem/iLook, Login/Password or only Token."
+    IDS_STRING_COMBO_CATCHUP_TYPE "Type of archive url. shift or flussonic."
+    IDS_STRING_EPG_TYPE     "Type of the EPG source. Primary or Secondary."
+    IDS_STRING_BUTTON_EPG_SHOW 
+                            "Load EPG from EPG url template with filled macroses. For test purposes."
+    IDS_STRING_EDIT_SET_ID  "Set value for {EPG_ID} macros to test EPG template url."
+    IDS_STRING_EDIT_SET_TOKEN 
+                            "Set value for {TOKEN} macros to test EPG template url."
+    IDS_STRING_DATETIMEPICKER_DATE "Set date to test EPG template url."
+    IDS_STRING_EDIT_PLAYLIST_TEMPLATE 
+                            "Playlist url template. Used to download provider playlist. All macroses available in the context menu called by right mouse button."
+    IDS_STRING_CHECK_SQUARE_ICONS 
+                            "Parameter for plugin. Check if channels picons are square."
+    IDS_STRING_BUTTON_PLAYLIST_SHOW 
+                            "Try to download provider playlist using Playlist url template with filled macroses."
+    IDS_STRING_BUTTON_STREAM_PARSE "Open site to test Regular expression."
+    IDS_STRING_CHECK_STATIC_SERVERS 
+                            "Servers list are static, not requested from provider and can be set manually."
+    IDS_STRING_BUTTON_EDIT_SERVERS "Edit static Servers list"
+    IDS_STRING_CHECK_STATIC_DEVICES 
+                            "Device list are static, not requested from provider and can be set manually."
+    IDS_STRING_BUTTON_EDIT_DEVICES "Edit static Device list"
+    IDS_STRING_CHECK_STATIC_QUALITIES 
+                            "Qualities list are static, not requested from provider and can be set manually."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_BUTTON_EDIT_QUALITY "Edit static Qualities list"
+    IDS_STRING_CHECK_STATIC_PROFILES 
+                            "Profiles list are static, not requested from provider and can be set manually."
+    IDS_STRING_BUTTON_EDIT_PROFILES "Edit static Profiles list"
 END
 
 #endif    // English (United States) resources

@@ -191,49 +191,42 @@ public:
 	/// <summary>
 	/// property link to provider account
 	/// </summary>
-	/// <returns>wstring</returns>
 	std::wstring get_provider_url() const { return utils::utf8_to_utf16(provider_url); }
 	void set_provider_url(const std::wstring& val) { provider_url = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// property playlist template
 	/// </summary>
-	/// <returns>wstring</returns>
 	std::wstring get_playlist_template() const { return utils::utf8_to_utf16(playlist_template); }
 	void set_playlist_template(const std::wstring& val) { playlist_template = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// property uri parse template
 	/// </summary>
-	/// <returns>wstring</returns>
 	std::wstring get_uri_parse_pattern() const { return utils::utf8_to_utf16(uri_parse_pattern); }
 	void set_uri_parse_pattern(const std::wstring& val) { uri_parse_pattern = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// property uri id parse template
 	/// </summary>
-	/// <returns>wstring</returns>
 	std::wstring get_uri_id_parse_pattern() const { return utils::utf8_to_utf16(uri_id_parse_pattern); }
 	void set_uri_id_parse_pattern(const std::wstring& val) { uri_id_parse_pattern = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// property square icons, php GUI setting
 	/// </summary>
-	/// <returns>bool</returns>
 	bool get_square_icons() const { return square_icons; }
 	void set_square_icons(bool val) { square_icons = val; }
 
 	/// <summary>
 	/// property token used per channel, not the global
 	/// </summary>
-	/// <returns>bool</returns>
 	bool get_per_channel_token() const { return per_channel_token; }
 	void set_per_channel_token(bool val) { per_channel_token = val; }
 
 	/// <summary>
 	/// property token used per channel, not the global
 	/// </summary>
-	/// <returns>bool</returns>
 	bool get_requested_token() const { return requested_token; }
 	void set_requested_token(bool val) { requested_token = val; }
 
@@ -246,7 +239,6 @@ public:
 	/// <summary>
 	/// property index of supported stream
 	/// </summary>
-	/// <returns>const StreamParameters&</returns>
 	const StreamParameters& get_supported_stream(size_t idx) const { return streams_config[idx]; }
 	void set_supported_stream(size_t idx, const StreamParameters& val) { streams_config[idx] = val; }
 
@@ -259,7 +251,6 @@ public:
 	/// <summary>
 	/// property index pf epg parameters
 	/// </summary>
-	/// <returns>EpgParameters</returns>
 	const EpgParameters& get_epg_parameter(int idx) const { return epg_params[idx]; };
 	void set_epg_parameter(int idx, const EpgParameters& val) { epg_params[idx] = val; };
 
@@ -274,28 +265,24 @@ public:
 	/// <summary>
 	/// property servers list static, not loaded from provider settings
 	/// </summary>
-	/// <returns>bool</returns>
 	bool get_static_servers() const { return static_servers; }
 	void set_static_servers(bool val) { static_servers = val; }
 
 	/// <summary>
 	/// property devices list static, not loaded from provider settings
 	/// </summary>
-	/// <returns>bool</returns>
 	bool get_static_devices() const { return static_devices; }
 	void set_static_devices(bool val) { static_devices = val; }
 
 	/// <summary>
 	/// is qualities list static, not loaded from provider settings
 	/// </summary>
-	/// <returns>bool</returns>
 	bool get_static_qualities() const { return static_qualities; }
 	void set_static_qualities(bool val) { static_qualities = val; }
 
 	/// <summary>
 	/// property profiles list static, not loaded from provider settings
 	/// </summary>
-	/// <returns>bool</returns>
 	bool get_static_profiles() const { return static_profiles; }
 	void set_static_profiles(bool val) { static_profiles = val; }
 
@@ -316,7 +303,6 @@ public:
 	/// property list of servers
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ServersInfo></returns>
 	virtual const std::vector<DynamicParamsInfo>& get_servers_list() { return servers_list; }
 	virtual void set_servers_list(const std::vector<DynamicParamsInfo>& info) { servers_list = info; }
 
@@ -337,7 +323,6 @@ public:
 	/// property list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ServersInfo></returns>
 	virtual const std::vector<DynamicParamsInfo>& get_devices_list() { return devices_list; }
 	virtual void set_devices_list(const std::vector<DynamicParamsInfo>& info) { devices_list = info; }
 
@@ -358,7 +343,6 @@ public:
 	/// property list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ServersInfo></returns>
 	virtual const std::vector<DynamicParamsInfo>& get_qualities_list() { return qualities_list; }
 	virtual void set_qualities_list(const std::vector<DynamicParamsInfo>& info) { qualities_list = info; }
 
@@ -379,7 +363,6 @@ public:
 	/// property list of profiles
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ProfilesInfo></returns>
 	virtual const std::vector<DynamicParamsInfo>& get_profiles_list() { return profiles_list; }
 	virtual void set_profiles_list(const std::vector<DynamicParamsInfo>& info) { profiles_list = info; }
 

@@ -176,8 +176,21 @@ BOOL CPluginConfigPage::OnInitDialog()
 		{ IDC_EDIT_TITLE, load_string_resource(IDS_STRING_EDIT_TITLE) },
 		{ IDC_EDIT_SHORT_NAME, load_string_resource(IDS_STRING_EDIT_SHORT_NAME) },
 		{ IDC_EDIT_PROVIDER_URL, load_string_resource(IDS_STRING_EDIT_PROVIDER_URL) },
+		{ IDC_CHECK_SQUARE_ICONS, load_string_resource(IDS_STRING_CHECK_SQUARE_ICONS) },
+		{ IDC_EDIT_PLAYLIST_TEMPLATE, load_string_resource(IDS_STRING_EDIT_PLAYLIST_TEMPLATE) },
 		{ IDC_EDIT_PARSE_PATTERN, load_string_resource(IDS_STRING_EDIT_PARSE_PATTERN) },
 		{ IDC_EDIT_PARSE_PATTERN_ID, load_string_resource(IDS_STRING_EDIT_PARSE_PATTERN_ID) },
+		{ IDC_BUTTON_PLAYLIST_SHOW, load_string_resource(IDS_STRING_BUTTON_PLAYLIST_SHOW) },
+		{ IDC_BUTTON_STREAM_PARSE, load_string_resource(IDS_STRING_BUTTON_STREAM_PARSE) },
+		{ IDC_BUTTON_STREAM_ID_PARSE, load_string_resource(IDS_STRING_BUTTON_STREAM_PARSE) },
+		{ IDC_CHECK_STATIC_SERVERS, load_string_resource(IDS_STRING_CHECK_STATIC_SERVERS) },
+		{ IDC_BUTTON_EDIT_SERVERS, load_string_resource(IDS_STRING_BUTTON_EDIT_SERVERS) },
+		{ IDC_CHECK_STATIC_DEVICES, load_string_resource(IDS_STRING_CHECK_STATIC_DEVICES) },
+		{ IDC_BUTTON_EDIT_DEVICES, load_string_resource(IDS_STRING_BUTTON_EDIT_DEVICES) },
+		{ IDC_CHECK_STATIC_QUALITIES, load_string_resource(IDS_STRING_CHECK_STATIC_QUALITIES) },
+		{ IDC_BUTTON_EDIT_QUALITY, load_string_resource(IDS_STRING_BUTTON_EDIT_QUALITY) },
+		{ IDC_CHECK_STATIC_PROFILES, load_string_resource(IDS_STRING_CHECK_STATIC_PROFILES) },
+		{ IDC_BUTTON_EDIT_PROFILES, load_string_resource(IDS_STRING_BUTTON_EDIT_PROFILES) },
 		{ IDC_EDIT_SHIFT_SUBST, load_string_resource(IDS_STRING_EDIT_SHIFT_SUBST) },
 		{ IDC_EDIT_DURATION, load_string_resource(IDS_STRING_EDIT_DURATION) },
 		{ IDC_EDIT_STREAM_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_TEMPLATE) },
@@ -188,6 +201,17 @@ BOOL CPluginConfigPage::OnInitDialog()
 		{ IDC_EDIT_EPG_DESC, load_string_resource(IDS_STRING_EDIT_EPG_DESC) },
 		{ IDC_EDIT_EPG_START, load_string_resource(IDS_STRING_EDIT_EPG_START) },
 		{ IDC_EDIT_EPG_END, load_string_resource(IDS_STRING_EDIT_EPG_END) },
+		{ IDC_EDIT_EPG_FMT_DATE, load_string_resource(IDS_STRING_EDIT_EPG_FMT_DATE) },
+		{ IDC_EDIT_EPG_FMT_TIME, load_string_resource(IDS_STRING_EDIT_EPG_FMT_TIME) },
+		{ IDC_EDIT_EPG_TZ, load_string_resource(IDS_STRING_EDIT_EPG_TZ) },
+		{ IDC_COMBO_ACCESS_TYPE, load_string_resource(IDS_STRING_COMBO_ACCESS_TYPE) },
+		{ IDC_COMBO_STREAM_TYPE, load_string_resource(IDS_STRING_COMBO_STREAM_TYPE) },
+		{ IDC_COMBO_CATCHUP_TYPE, load_string_resource(IDS_STRING_COMBO_CATCHUP_TYPE) },
+		{ IDC_COMBO_EPG_TYPE, load_string_resource(IDS_STRING_EPG_TYPE) },
+		{ IDC_BUTTON_EPG_SHOW, load_string_resource(IDS_STRING_BUTTON_EPG_SHOW) },
+		{ IDC_EDIT_SET_ID, load_string_resource(IDS_STRING_EDIT_SET_ID) },
+		{ IDC_EDIT_SET_TOKEN, load_string_resource(IDS_STRING_EDIT_SET_TOKEN) },
+		{ IDC_DATETIMEPICKER_DATE, load_string_resource(IDS_STRING_DATETIMEPICKER_DATE) },
 	};
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
@@ -302,7 +326,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	m_wndBtnToggleEdit.EnableWindow(!m_single);
 	m_wndPluginType.SetCurSel(sel_idx);
-	m_wndPluginType.EnableWindow(m_single);
+	m_wndPluginType.ShowWindow(m_single ? SW_SHOW : SW_HIDE);
 
 	if (m_pAccessPage)
 	{
