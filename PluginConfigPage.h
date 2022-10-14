@@ -62,6 +62,11 @@ protected:
 	afx_msg void OnBnClickedButtonEditQuality();
 	afx_msg void OnBnClickedButtonEditProfiles();
 
+	afx_msg void OnBnClickedCheckStaticServers();
+	afx_msg void OnBnClickedCheckStaticDevices();
+	afx_msg void OnBnClickedCheckStaticQualities();
+	afx_msg void OnBnClickedCheckStaticProfiles();
+
 	afx_msg void OnCbnSelchangeComboPluginType();
 	afx_msg void OnCbnSelchangeComboPluginConfig();
 

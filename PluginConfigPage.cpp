@@ -54,6 +54,10 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_STREAM_ID_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamIdParse)
 	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN, &CPluginConfigPage::OnEnChangeEditParsePattern)
 	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN_ID, &CPluginConfigPage::OnEnChangeEditParsePatternID)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_SERVERS, &CPluginConfigPage::OnBnClickedCheckStaticServers)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_DEVICES, &CPluginConfigPage::OnBnClickedCheckStaticDevices)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_QUALITIES, &CPluginConfigPage::OnBnClickedCheckStaticQualities)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_PROFILES, &CPluginConfigPage::OnBnClickedCheckStaticProfiles)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_SERVERS, &CPluginConfigPage::OnBnClickedButtonEditServers)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_DEVICES, &CPluginConfigPage::OnBnClickedButtonEditDevices)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_QUALITY, &CPluginConfigPage::OnBnClickedButtonEditQuality)
@@ -853,4 +857,28 @@ void CPluginConfigPage::OnCbnSelchangeComboPluginConfig()
 		m_plugin->load_default();
 
 	FillControlsCommon();
+}
+
+
+void CPluginConfigPage::OnBnClickedCheckStaticServers()
+{
+	GetDlgItem(IDC_BUTTON_EDIT_SERVERS)->EnableWindow(m_wndChkStaticServers.GetCheck());
+}
+
+
+void CPluginConfigPage::OnBnClickedCheckStaticDevices()
+{
+	GetDlgItem(IDC_BUTTON_EDIT_DEVICES)->EnableWindow(m_wndChkStaticDevices.GetCheck());
+}
+
+
+void CPluginConfigPage::OnBnClickedCheckStaticQualities()
+{
+	GetDlgItem(IDC_BUTTON_EDIT_QUALITY)->EnableWindow(m_wndChkStaticQualities.GetCheck());
+}
+
+
+void CPluginConfigPage::OnBnClickedCheckStaticProfiles()
+{
+	GetDlgItem(IDC_BUTTON_EDIT_PROFILES)->EnableWindow(m_wndChkStaticProfiles.GetCheck());
 }
