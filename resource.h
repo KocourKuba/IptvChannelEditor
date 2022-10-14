@@ -19,6 +19,8 @@
 #define IDB_PNG_FILTER                  61
 #define IDB_PNG_FIND_NEXT               62
 #define IDB_PNG_SETTINGS                63
+#define IDB_PNG_UNKNOWN                 64
+#define IDB_PNG_KNOWN                   65
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104

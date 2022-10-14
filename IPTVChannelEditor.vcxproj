@@ -404,6 +404,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\Filter.png" />
     <Image Include="res\FindNext.png" />
     <Image Include="res\IPTVChannelEditor.ico" />
+    <Image Include="res\Known.png" />
     <Image Include="res\New.png" />
     <Image Include="res\NotAdded.png" />
     <Image Include="res\NotChanged.png" />
@@ -411,6 +412,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\Save.png" />
     <Image Include="res\SaveAs.png" />
     <Image Include="res\Settings.png" />
+    <Image Include="res\Unknown.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

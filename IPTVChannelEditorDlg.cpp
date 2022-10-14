@@ -486,12 +486,14 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SetButtonImage(IDB_PNG_NEW, (CButton*)GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST));
 	SetButtonImage(IDB_PNG_FIND_NEXT, (CButton*)GetDlgItem(IDC_BUTTON_SEARCH_NEXT));
 	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChangedCh);
+	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChanged);
+	SetButtonImage(IDB_PNG_ADDED, m_wndNotAdded);
+	SetButtonImage(IDB_PNG_UNKNOWN, m_wndShowUnknown);
 	SetButtonImage(IDB_PNG_FIND_NEXT, (CButton*)GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT));
 	SetButtonImage(IDB_PNG_SETTINGS, m_wndBtnSettings);
 	SetButtonImage(IDB_PNG_ACCOUNT, m_wndBtnAccountSetting);
 	SetButtonImage(IDB_PNG_DOWNLOAD, m_wndBtnDownloadPlaylist);
 	SetButtonImage(IDB_PNG_FILTER, m_wndBtnFilter);
-	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChangedCh);
 
 	// Toggle controls state
 	m_wndSearch.EnableWindow(FALSE);
@@ -3713,24 +3715,25 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext()
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged()
 {
-	m_wndShowChanged.SetWindowText(m_wndShowChanged.GetCheck() ? _T("\u2260") : _T("="));
+	SetButtonImage(m_wndShowChanged.GetCheck() ? IDB_PNG_NOT_CHANGED : IDB_PNG_CHANGED, m_wndShowChanged);
 	FillTreePlaylist();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckShowChangedCh()
 {
-	m_wndShowChangedCh.SetWindowText(m_wndShowChangedCh.GetCheck() ? _T("\u2260") : _T("="));
+	SetButtonImage(m_wndShowChangedCh.GetCheck() ? IDB_PNG_NOT_CHANGED : IDB_PNG_CHANGED, m_wndShowChangedCh);
 	FillTreeChannels();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded()
 {
-	m_wndNotAdded.SetWindowText(m_wndNotAdded.GetCheck() ? _T("\u2179") : _T("\u221A"));
+	SetButtonImage(m_wndNotAdded.GetCheck() ? IDB_PNG_NOT_ADDED: IDB_PNG_ADDED, m_wndNotAdded);
 	FillTreePlaylist();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckShowUnknown()
 {
+	SetButtonImage(m_wndShowUnknown.GetCheck() ? IDB_PNG_KNOWN : IDB_PNG_UNKNOWN, m_wndShowUnknown);
 	FillTreeChannels();
 }
 

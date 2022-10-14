@@ -571,5 +571,11 @@
     <Image Include="res\Settings.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\Unknown.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Known.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
