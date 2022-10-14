@@ -1528,6 +1528,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(HTREEITEM hItem /*= nullptr*/)
 		}
 
 		m_wndCustom.SetCheck(!uri->get_parser().get_template());
+		m_wndShowUrl.EnableWindow(uri->get_parser().get_template());
 		m_timeShiftHours = channel->get_time_shift_hours();
 		m_isArchive = !!channel->is_archive();
 		m_wndArchiveDays.EnableWindow(m_isArchive);
@@ -2284,6 +2285,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomize()
 	BOOL not_checked = m_wndCustom.GetCheck() ? FALSE : TRUE;
 	m_wndStreamUrl.SetReadOnly(not_checked);
 	m_wndStreamID.EnableWindow(not_checked);
+	m_wndShowUrl.EnableWindow(not_checked);
 
 	if (m_wndChannelsTree.GetSelectedCount() == 1)
 	{
