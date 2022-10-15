@@ -29,6 +29,11 @@ class Default_Channel implements Channel
     protected $_streaming_url;
 
     /**
+     * @var string
+     */
+    protected $_custom_arc_template;
+
+    /**
      * @var array|Group[]
      */
     protected $_groups;
@@ -74,7 +79,8 @@ class Default_Channel implements Channel
      * @param string $title
      * @param string $icon_url
      * @param string $streaming_url
-     * @param int $_archive
+     * @param string $custom_arc_template
+     * @param int $archive
      * @param int $number
      * @param string $epg_id
      * @param string $tvg_id
@@ -82,15 +88,19 @@ class Default_Channel implements Channel
      * @param int $timeshift_hours
      * @param array $ext_params
      */
-    public function __construct($id, $channel_id, $title, $icon_url, $streaming_url, $_archive, $number, $epg_id, $tvg_id, $is_protected, $timeshift_hours, $ext_params)
+    public function __construct($id, $channel_id, $title, $icon_url,
+                                $streaming_url, $custom_arc_template,
+                                $archive, $number, $epg_id, $tvg_id,
+                                $is_protected, $timeshift_hours, $ext_params)
     {
         $this->_id = $id;
         $this->_channel_id = $channel_id;
         $this->_title = $title;
         $this->_icon_url = $icon_url;
         $this->_streaming_url = $streaming_url;
+        $this->_custom_arc_template = $custom_arc_template;
         $this->_groups = array();
-        $this->_archive = ($_archive > 0) ? $_archive : 0;
+        $this->_archive = ($archive > 0) ? $archive : 0;
         $this->_number = $number;
         $this->_epg_id = $epg_id;
         $this->_tvg_id = $tvg_id;
@@ -239,6 +249,15 @@ class Default_Channel implements Channel
     public function get_streaming_url()
     {
         return $this->_streaming_url;
+    }
+
+    /**
+     * custom streaming url archive template
+     * @return string
+     */
+    public function get_custom_arc_template()
+    {
+        return $this->_custom_arc_template;
     }
 
     /**

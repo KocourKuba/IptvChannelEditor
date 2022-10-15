@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "EditableListCtrl.h"
-#include "uri_stream.h"
+#include "base_plugin.h"
 #include "Config.h"
 #include "CMFCEditBrowsCtrlEx.h"
 
@@ -103,7 +103,7 @@ public:
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
 	std::vector<std::wstring> m_all_channels_lists;
-	std::shared_ptr<uri_stream> m_plugin;
+	std::shared_ptr<base_plugin> m_plugin;
 	PluginType m_plugin_type = PluginType::enBase;
 
 protected:

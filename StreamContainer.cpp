@@ -27,32 +27,32 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "StreamContainer.h"
 #include "Config.h"
-#include "uri_antifriz.h"
-#include "uri_edem.h"
-#include "uri_fox.h"
-#include "uri_glanz.h"
-#include "uri_itv.h"
-#include "uri_onecent.h"
-#include "uri_oneott.h"
-#include "uri_oneusd.h"
-#include "uri_sharaclub.h"
-#include "uri_sharatv.h"
-#include "uri_sharavoz.h"
-#include "uri_tvteam.h"
-#include "uri_viplime.h"
-#include "uri_lightiptv.h"
-#include "uri_cbilling.h"
-#include "uri_ottclub.h"
-#include "uri_iptvonline.h"
-#include "uri_vidok.h"
-#include "uri_shuratv.h"
-#include "uri_tvclub.h"
-#include "uri_filmax.h"
-#include "uri_kineskop.h"
-#include "uri_mymagic.h"
-#include "uri_russkoetv.h"
-#include "uri_smile.h"
-#include "uri_ping.h"
+#include "plugin_antifriz.h"
+#include "plugin_edem.h"
+#include "plugin_fox.h"
+#include "plugin_glanz.h"
+#include "plugin_itv.h"
+#include "plugin_onecent.h"
+#include "plugin_oneott.h"
+#include "plugin_oneusd.h"
+#include "plugin_sharaclub.h"
+#include "plugin_sharatv.h"
+#include "plugin_sharavoz.h"
+#include "plugin_tvteam.h"
+#include "plugin_viplime.h"
+#include "plugin_lightiptv.h"
+#include "plugin_cbilling.h"
+#include "plugin_ottclub.h"
+#include "plugin_iptvonline.h"
+#include "plugin_vidok.h"
+#include "plugin_shuratv.h"
+#include "plugin_tvclub.h"
+#include "plugin_filmax.h"
+#include "plugin_kineskop.h"
+#include "plugin_mymagic.h"
+#include "plugin_russkoetv.h"
+#include "plugin_smile.h"
+#include "plugin_ping.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,119 +62,119 @@ static char THIS_FILE[] = __FILE__;
 
 StreamContainer::StreamContainer(PluginType type) : stream_type(type)
 {
-	stream_uri = get_instance(type);
+	plugin = get_instance(type);
 }
 
-std::shared_ptr<uri_stream> StreamContainer::get_instance(PluginType type)
+std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 {
-	std::shared_ptr<uri_stream> plugin;
+	std::shared_ptr<base_plugin> plugin;
 	switch (type)
 	{
 		case PluginType::enBase: // ChannelsCategory
-			return std::make_shared<uri_stream>();
+			return std::make_shared<base_plugin>();
 
 		case PluginType::enAntifriz:
-			plugin = std::make_shared<uri_antifriz>();
+			plugin = std::make_shared<plugin_antifriz>();
 			break;
 
 		case PluginType::enEdem:
-			plugin = std::make_shared<uri_edem>();
+			plugin = std::make_shared<plugin_edem>();
 			break;
 
 		case PluginType::enFox:
-			plugin = std::make_shared<uri_fox>();
+			plugin = std::make_shared<plugin_fox>();
 			break;
 
 		case PluginType::enGlanz:
-			plugin = std::make_shared<uri_glanz>();
+			plugin = std::make_shared<plugin_glanz>();
 			break;
 
 		case PluginType::enItv:
-			plugin = std::make_shared<uri_itv>();
+			plugin = std::make_shared<plugin_itv>();
 			break;
 
 		case PluginType::enOneCent:
-			plugin = std::make_shared<uri_onecent>();
+			plugin = std::make_shared<plugin_onecent>();
 			break;
 
 		case PluginType::enOneUsd:
-			plugin = std::make_shared<uri_oneusd>();
+			plugin = std::make_shared<plugin_oneusd>();
 			break;
 
 		case PluginType::enSharaclub:
-			plugin = std::make_shared<uri_sharaclub>();
+			plugin = std::make_shared<plugin_sharaclub>();
 			break;
 
 		case PluginType::enSharavoz:
-			plugin = std::make_shared<uri_sharavoz>();
+			plugin = std::make_shared<plugin_sharavoz>();
 			break;
 
 		case PluginType::enVipLime:
-			plugin = std::make_shared<uri_viplime>();
+			plugin = std::make_shared<plugin_viplime>();
 			break;
 
 		case PluginType::enSharaTV:
-			plugin = std::make_shared<uri_sharatv>();
+			plugin = std::make_shared<plugin_sharatv>();
 			break;
 
 		case PluginType::enTvTeam:
-			plugin = std::make_shared<uri_tvteam>();
+			plugin = std::make_shared<plugin_tvteam>();
 			break;
 
 		case PluginType::enOneOtt:
-			plugin = std::make_shared<uri_oneott>();
+			plugin = std::make_shared<plugin_oneott>();
 			break;
 
 		case PluginType::enLightIptv:
-			plugin = std::make_shared<uri_lightiptv>();
+			plugin = std::make_shared<plugin_lightiptv>();
 			break;
 
 		case PluginType::enCbilling:
-			plugin = std::make_shared<uri_cbilling>();
+			plugin = std::make_shared<plugin_cbilling>();
 			break;
 
 		case PluginType::enOttclub:
-			plugin = std::make_shared<uri_ottclub>();
+			plugin = std::make_shared<plugin_ottclub>();
 			break;
 
 		case PluginType::enIptvOnline:
-			plugin = std::make_shared<uri_iptvonline>();
+			plugin = std::make_shared<plugin_iptvonline>();
 			break;
 
 		case PluginType::enVidok:
-			plugin = std::make_shared<uri_vidok>();
+			plugin = std::make_shared<plugin_vidok>();
 			break;
 
 		case PluginType::enShuraTV:
-			plugin = std::make_shared<uri_shuratv>();
+			plugin = std::make_shared<plugin_shuratv>();
 			break;
 
 		case PluginType::enTVClub:
-			plugin = std::make_shared<uri_tvclub>();
+			plugin = std::make_shared<plugin_tvclub>();
 			break;
 
 		case PluginType::enFilmax:
-			plugin = std::make_shared<uri_filmax>();
+			plugin = std::make_shared<plugin_filmax>();
 			break;
 
 		case PluginType::enKineskop:
-			plugin = std::make_shared<uri_kineskop>();
+			plugin = std::make_shared<plugin_kineskop>();
 			break;
 
 		case PluginType::enMymagic:
-			plugin = std::make_shared<uri_mymagic>();
+			plugin = std::make_shared<plugin_mymagic>();
 			break;
 
 		case PluginType::enRusskoeTV:
-			plugin = std::make_shared<uri_russkoetv>();
+			plugin = std::make_shared<plugin_russkoetv>();
 			break;
 
 		case PluginType::enSmile:
-			plugin = std::make_shared<uri_smile>();
+			plugin = std::make_shared<plugin_smile>();
 			break;
 
 		case PluginType::enPing:
-			plugin = std::make_shared<uri_ping>();
+			plugin = std::make_shared<plugin_ping>();
 			break;
 
 		default:
@@ -194,8 +194,8 @@ void StreamContainer::set_type(PluginType type)
 	if (stream_type != type)
 	{
 		auto newStream = get_instance(type);
-		newStream->copy(stream_uri.get());
-		stream_uri = std::move(newStream);
+		newStream->copy(plugin.get());
+		plugin = std::move(newStream);
 		stream_type = type;
 	}
 }

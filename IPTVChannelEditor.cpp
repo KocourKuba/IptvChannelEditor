@@ -688,11 +688,7 @@ bool PackPlugin(const PluginType plugin_type,
 	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
 
 	// load plugin settings
-	if (!cred.config.empty())
-	{
-		if (!plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config)))
-			plugin->load_default();
-	}
+	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config));
 
 	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), (cred.suffix.empty() || noCustom) ? "mod" : cred.suffix);
 

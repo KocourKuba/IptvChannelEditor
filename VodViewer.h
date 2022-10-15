@@ -2,7 +2,7 @@
 #include "afxdialogex.h"
 #include "Config.h"
 #include "vod_movie.h"
-#include "uri_stream.h"
+#include "base_plugin.h"
 #include "PlayListEntry.h"
 
 
@@ -97,7 +97,7 @@ private:
 	vod_movie_storage m_filtered_movies;
 	vod_genre_storage m_genres;
 	utils::vectormap<std::wstring, std::wstring> m_years;
-	std::shared_ptr<uri_stream> m_plugin;
+	std::shared_ptr<base_plugin> m_plugin;
 	// all entries loaded from playlist, filled when parse playlist
 	std::unique_ptr<Playlist> m_playlistEntries;
 	CString m_SearchText;

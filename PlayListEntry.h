@@ -40,7 +40,7 @@ public:
 
 	int get_channel_length() const { return channel_len; }
 	const auto& get_category() const { return category; }
-	const auto& get_uri_stream() { return stream_uri; }
+	const auto& get_plugin() { return plugin; }
 	void set_logo_root(const std::wstring& val) { logo_root = val; }
 	std::wstring get_logo_root() { return logo_root; }
 

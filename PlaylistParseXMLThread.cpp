@@ -93,7 +93,7 @@ BOOL CPlaylistParseXMLThread::InitInstance()
 				entry->set_epg_id(0, channel->get_epg_id(0));
 				entry->set_archive_days(channel->get_archive_days());
 				entry->set_adult(channel->get_adult());
-				entry->stream_uri->copy(channel->stream_uri.get());
+				entry->plugin->copy(channel->plugin.get());
 				playlist->m_entries.emplace_back(entry);
 				ch_node = ch_node->next_sibling();
 				m_config.SendNotifyParent(WM_UPDATE_PROGRESS, step++, count);

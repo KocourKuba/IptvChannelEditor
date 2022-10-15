@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "uri_stream.h"
+#include "base_plugin.h"
 #include "Config.h"
 
 /// <summary>
@@ -38,7 +38,7 @@ public:
 	StreamContainer(PluginType type);
 	~StreamContainer() = default;
 
-	static std::shared_ptr<uri_stream> get_instance(PluginType type);
+	static std::shared_ptr<base_plugin> get_instance(PluginType type);
 
 	void set_type(PluginType type);
 
@@ -46,13 +46,13 @@ public:
 	{
 		if (this != &src)
 		{
-			*stream_uri = *src.stream_uri;
+			*plugin = *src.plugin;
 			stream_type = src.stream_type;
 		}
 
 		return *this;
 	}
 
-	std::shared_ptr<uri_stream> stream_uri;
+	std::shared_ptr<base_plugin> plugin;
 	PluginType stream_type;
 };

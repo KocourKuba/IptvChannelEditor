@@ -1,6 +1,6 @@
 #pragma once
 #include "afxdialogex.h"
-#include "uri_config.h"
+#include "plugin_config.h"
 #include "EditableListCtrl.h"
 
 

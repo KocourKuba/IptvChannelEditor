@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include "uri_stream.h"
+#include "base_plugin.h"
 
 class CGetStreamInfoThread : public CWinThread
 {
@@ -37,7 +37,7 @@ public:
 	public:
 		void NotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0) const;
 
-		std::vector<uri_stream*>* m_container = nullptr;
+		std::vector<base_plugin*>* m_container = nullptr;
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
 		std::wstring m_probe;

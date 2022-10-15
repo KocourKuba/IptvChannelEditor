@@ -152,6 +152,7 @@ protected:
 	afx_msg void OnEnChangeEditEpg2ID();
 	afx_msg void OnEnChangeEditEpg1ID();
 	afx_msg void OnEnChangeEditStreamUrl();
+	afx_msg void OnEnChangeEditStreamArchiveUrl();
 	afx_msg void OnEnChangeEditArchiveDays();
 	afx_msg void OnEnChangeEditUrlID();
 	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
@@ -219,7 +220,7 @@ private:
 	void FillTreePlaylist();
 	std::vector<std::wstring> FilterPlaylist();
 
-	void LoadChannelInfo(HTREEITEM hItem = nullptr);
+	void LoadChannelInfo(std::shared_ptr<ChannelInfo> channel = nullptr, HTREEITEM hItem = nullptr);
 	void LoadPlayListInfo(HTREEITEM hItem = nullptr);
 
 	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0) const;
@@ -258,7 +259,7 @@ private:
 	void CollectCredentials();
 
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
-	void UpdateExtToken(uri_stream* uri) const;
+	void UpdateExtToken(base_plugin* uri) const;
 	void UpdateControlsForItem(HTREEITEM hSelected = nullptr);
 	bool CheckForSave();
 	void SaveStreamInfo();
@@ -284,6 +285,7 @@ protected:
 
 	CEdit m_wndStreamID;
 	CEdit m_wndStreamUrl;
+	CEdit m_wndCustomArchiveUrl;
 	CColorEdit m_wndEpgID1;
 	CColorEdit m_wndEpgID2;
 	CColorEdit m_wndArchiveDays;
@@ -328,6 +330,7 @@ protected:
 
 	CString m_search; // m_wndSearch
 	CString m_streamUrl; // m_wndStreamUrl
+	CString m_streamArchiveUrl; // m_wndStreamArchiveUrl
 	CString m_iconUrl;
 
 	CString m_plSearch; // m_wndPlSearch
@@ -352,7 +355,7 @@ private:
 	Credentials m_cur_account;
 
 	PluginType m_plugin_type = PluginType::enBase;
-	std::shared_ptr<uri_stream> m_plugin;
+	std::shared_ptr<base_plugin> m_plugin;
 
 	HACCEL m_hAccel = nullptr;
 	CTreeCtrlEx* m_lastTree = nullptr;

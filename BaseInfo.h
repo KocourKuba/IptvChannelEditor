@@ -71,11 +71,14 @@ public:
 	const std::wstring& get_catchup() const { return catchup; }
 	void set_catchup(const std::wstring& val) { catchup = val; }
 
+	const std::wstring& get_catchup_template() const { return catchup_template; }
+	void set_catchup_template(const std::wstring& val) { catchup_template = val; }
+
 	void swap_id(BaseInfo& src)
 	{
-		auto id = stream_uri->get_parser().get_id();
-		stream_uri->get_parser().set_id(src.stream_uri->get_parser().get_id());
-		src.stream_uri->get_parser().set_id(id);
+		auto id = plugin->get_parser().get_id();
+		plugin->get_parser().set_id(src.plugin->get_parser().get_id());
+		src.plugin->get_parser().set_id(id);
 	}
 
 	InfoType get_type() const { return base_type; }
@@ -88,6 +91,8 @@ public:
 			IconContainer::operator=(src);
 			base_type = src.base_type;
 			title = src.title;
+			catchup = src.catchup;
+			catchup_template = src.catchup_template;
 			key = src.key;
 			epg_id = src.epg_id;
 			time_shift_hours = src.time_shift_hours;
@@ -104,6 +109,7 @@ protected:
 private:
 	std::wstring title;
 	std::wstring catchup;
+	std::wstring catchup_template;
 	int key = 0;
 	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;

@@ -308,6 +308,8 @@
 #define IDC_CHECK_SHOW_URL              1029
 #define IDC_CHECK_PL_ARCHIVE            1030
 #define IDC_CHECK_REGEX_SHOW            1031
+#define IDC_CHECK_CUSTOMIZE2            1031
+#define IDC_CHECK_CUSTOMIZE_ARCHIVE     1031
 #define IDC_CHECK_NOT_ADDED             1032
 #define IDC_CHECK_SHOW_CHANGED          1033
 #define IDC_COMBO_CHANNELS              1034
@@ -330,6 +332,7 @@
 #define IDC_EDIT_STREAM_URL             1052
 #define IDC_EDIT_EPG_NAME               1052
 #define IDC_EDIT_EPG_DESC               1053
+#define IDC_EDIT_STREAM_ARCHIVE_URL     1053
 #define IDC_EDIT_EPG2_ID                1054
 #define IDC_EDIT_EPG_START              1054
 #define IDC_EDIT_URL_ID                 1055
@@ -489,6 +492,8 @@
 #define IDC_BUTTON_STREAM_PARSE         1203
 #define IDC_BUTTON_STREAM_ID_PARSE      1204
 #define IDC_CHECK_MAKE_COPY             1205
+#define IDC_EDIT_STREAM_ARC_TEMPLATE2   1205
+#define IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE 1205
 #define IDC_BUTTON_EDIT_SERVERS         1206
 #define IDC_BUTTON_EDIT_DEVICES         1207
 #define IDC_BUTTON_EDIT_QUALITY         1208

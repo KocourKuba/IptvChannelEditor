@@ -199,12 +199,15 @@ class Starnet_Tv extends Abstract_Tv
                 $epg1 = (string)$xml_tv_channel->epg_id;
                 $epg2 = (empty($xml_tv_channel->tvg_id)) ? $epg1 : (string)$xml_tv_channel->tvg_id;
 
+                $custom_arc_template = !isset($xml_tv_channel->catchup_url_template) ?: $xml_tv_channel->catchup_url_template;
+
                 $channel = new Default_Channel(
                     $hash,
                     $channel_id,
                     (string)$xml_tv_channel->caption,
                     $icon_url,
                     $streaming_url,
+                    $custom_arc_template,
                     (int)$xml_tv_channel->archive,
                     $number,
                     $epg1,

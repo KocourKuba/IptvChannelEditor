@@ -35,6 +35,7 @@ const M_QUALITY   = 'quality';
 // parameters loaded from external config
 
 // common
+const CHANNEL_ID           = 'id';
 const ACCESS_TYPE          = 'access_type';
 const SHORT_NAME           = 'short_name';
 const PLAYLIST_TEMPLATE    = 'playlist_template';
@@ -43,13 +44,17 @@ const URI_ID_PARSE_PATTERN = 'uri_id_parse_pattern';
 const URI_PARSE_PATTERN    = 'uri_parse_pattern';
 
 // streams parameters
-const STREAMS_CONFIG   = 'streams_config';
-const STREAM_TYPE      = 'stream_type';
-const URL_TEMPLATE     = 'uri_template';
-const URL_ARC_TEMPLATE = 'uri_arc_template';
-const CU_TYPE          = 'cu_type';
-const CU_SUBST         = 'cu_subst';
-const CU_DURATION      = 'cu_duration';
+const STREAMS_CONFIG          = 'streams_config';
+const STREAM_TYPE             = 'stream_type';
+const URL_TEMPLATE            = 'uri_template';
+const URL_ARC_TEMPLATE        = 'uri_arc_template';
+const URL_CUSTOM_ARC_TEMPLATE = 'uri_custom_arc_template';
+const CU_NOW                  = 'cu_now';
+const CU_START                = 'cu_start';
+const CU_TYPE                 = 'cu_type';
+const CU_SUBST                = 'cu_subst';
+const CU_DURATION             = 'cu_duration';
+const CU_OFFSET               = 'cu_offset';
 
 // epg parameters
 const EPG_PARAMS       = 'epg_params';

@@ -247,10 +247,35 @@ class default_config extends dynamic_config
      */
     public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
+        $now = time();
         $url = $channel->get_streaming_url();
+        $is_archive = (int)$archive_ts > 0;
+        $stream_type = $this->get_format($plugin_cookies);
+        $ext_params = $channel->get_ext_params();
+        $ext_params[CHANNEL_ID] = $channel->get_channel_id();
+        $ext_params[CU_START] = $archive_ts;
+        $ext_params[CU_NOW] = $now;
+        $ext_params[CU_OFFSET] = $now - $archive_ts;
+
+        $replaces = array(
+            CHANNEL_ID  => '{ID}',
+            CU_START    => '{START}',
+            CU_NOW      => '{NOW}',
+            CU_DURATION => '{DURATION}',
+            CU_OFFSET   => '{OFFSET}',
+            CU_SUBST    => '{CU_SUBST}',
+            M_SUBDOMAIN => '{SUBDOMAIN}',
+            M_DOMAIN    => '{DOMAIN}',
+            M_PORT      => '{PORT}',
+            M_LOGIN     => '{LOGIN}',
+            M_PASSWORD  => '{PASSWORD}',
+            M_TOKEN     => '{TOKEN}',
+            M_INT_ID    => '{INT_ID}',
+            M_HOST      => '{HOST}',
+            M_QUALITY   => '{QUALITY_ID}',
+        );
+
         if (empty($url)) {
-            $is_archive = (int)$archive_ts > 0;
-            $stream_type = $this->get_format($plugin_cookies);
             switch ($this->get_stream_param($stream_type, CU_TYPE)) {
                 case 'shift':
                 case 'append':
@@ -259,38 +284,25 @@ class default_config extends dynamic_config
                         $url .= (strrpos($url, '?', -1) === false) ? '?' : '&';
                         $url .= $this->get_stream_param($stream_type, URL_ARC_TEMPLATE);
                     }
-                    $url = str_replace(array('{START}', '{NOW}', '{OFFSET}'), array($archive_ts, time(), time() - $archive_ts), $url);
                     break;
                 case 'flussonic':
                     $url = $this->get_stream_param($stream_type, $is_archive ? URL_ARC_TEMPLATE : URL_TEMPLATE);
-                    $duration = $this->get_stream_param($stream_type, CU_DURATION);
-                    $url = str_replace(array('{START}', '{DURATION}'), array($archive_ts, $duration), $url);
+                    $ext_params[CU_DURATION] = $this->get_stream_param($stream_type, CU_DURATION);
                     break;
             }
 
-            $url = str_replace(
-                array('{ID}', '{CU_SUBST}'),
-                array($channel->get_channel_id(), $this->get_stream_param($stream_type, CU_SUBST)),
-                $url);
+            $ext_params[CU_SUBST] = $this->get_stream_param($stream_type, CU_SUBST);
 
-            $ext_params = $channel->get_ext_params();
-            $replaces = array(
-                M_SUBDOMAIN => '{SUBDOMAIN}',
-                M_DOMAIN    => '{DOMAIN}',
-                M_PORT      => '{PORT}',
-                M_LOGIN     => '{LOGIN}',
-                M_PASSWORD  => '{PASSWORD}',
-                M_TOKEN     => '{TOKEN}',
-                M_INT_ID    => '{INT_ID}',
-                M_HOST      => '{HOST}',
-                M_QUALITY   => '{QUALITY_ID}',
-            );
+        } else if ($is_archive) {
+            $url .= (strrpos($url, '?', -1) === false) ? '?' : '&';
+            $catchup_template = $channel->get_custom_arc_template();
+            $url .= empty($catchup_template) ?  $this->get_stream_param($stream_type, URL_CUSTOM_ARC_TEMPLATE) : $catchup_template;
+        }
 
-            foreach ($replaces as $key => $value)
-            {
-                if (isset($ext_params[$key]) && !empty($ext_params[$key])) {
-                    $url = str_replace($value, $ext_params[$key], $url);
-                }
+        foreach ($replaces as $key => $value)
+        {
+            if (isset($ext_params[$key]) && !empty($ext_params[$key])) {
+                $url = str_replace($value, $ext_params[$key], $url);
             }
         }
 

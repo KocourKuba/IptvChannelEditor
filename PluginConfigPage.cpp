@@ -103,6 +103,8 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_STREAM_TEMPLATE, m_StreamTemplate);
 	DDX_Control(pDX, IDC_EDIT_STREAM_ARC_TEMPLATE, m_wndStreamArchiveTemplate);
 	DDX_Text(pDX, IDC_EDIT_STREAM_ARC_TEMPLATE, m_StreamArchiveTemplate);
+	DDX_Control(pDX, IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, m_wndCustomStreamArchiveTemplate);
+	DDX_Text(pDX, IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, m_CustomStreamArchiveTemplate);
 	DDX_Control(pDX, IDC_EDIT_EPG_URL, m_wndEpgUrl);
 	DDX_Text(pDX, IDC_EDIT_EPG_URL, m_EpgUrl);
 	DDX_Control(pDX, IDC_EDIT_EPG_ROOT, m_wndEpgRoot);
@@ -199,6 +201,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 		{ IDC_EDIT_DURATION, load_string_resource(IDS_STRING_EDIT_DURATION) },
 		{ IDC_EDIT_STREAM_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_TEMPLATE) },
 		{ IDC_EDIT_STREAM_ARC_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_ARC_TEMPLATE) },
+		{ IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_ARC_TEMPLATE) },
 		{ IDC_EDIT_EPG_URL, load_string_resource(IDS_STRING_EDIT_EPG_URL) },
 		{ IDC_EDIT_EPG_ROOT, load_string_resource(IDS_STRING_EDIT_EPG_ROOT) },
 		{ IDC_EDIT_EPG_NAME, load_string_resource(IDS_STRING_EDIT_EPG_NAME) },
@@ -287,6 +290,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	});
 
 	m_wndStreamArchiveTemplate.SetTemplateParams(arc_params);
+	m_wndCustomStreamArchiveTemplate.SetTemplateParams(arc_params);
 
 	std::vector<std::wstring> epg_params =
 	{
@@ -337,7 +341,6 @@ BOOL CPluginConfigPage::OnInitDialog()
 		m_Token = m_pAccessPage->GetCheckedAccount().get_token().c_str();
 	}
 
-	UpdateData(FALSE);
 
 	if (m_single)
 	{
@@ -345,6 +348,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	}
 	else
 	{
+		m_plugin->load_plugin_parameters(m_initial_cred.get_config());
 		FillControlsCommon();
 	}
 
@@ -445,6 +449,7 @@ void CPluginConfigPage::EnableControls()
 	m_wndDuration.EnableWindow(enable);
 	m_wndStreamTemplate.EnableWindow(enable);
 	m_wndStreamArchiveTemplate.EnableWindow(enable);
+	m_wndCustomStreamArchiveTemplate.EnableWindow(enable);
 
 	// epg
 	m_wndEpgType.EnableWindow(enable);
@@ -500,14 +505,13 @@ void CPluginConfigPage::FillControlsCommon()
 	m_ParseStream = m_plugin->get_uri_parse_pattern().c_str();
 	m_ParseStreamID = m_plugin->get_uri_id_parse_pattern().c_str();
 
-	UpdateData(FALSE);
-
 	m_supported_streams = m_plugin->get_supported_streams();
 	m_epg_parameters = m_plugin->get_epg_parameters();
 
 	m_wndStreamType.SetCurSel(0);
 	m_wndEpgType.SetCurSel(0);
 
+	UpdateData(FALSE);
 	FillControlsStream();
 	FillControlsEpg();
 	EnableControls();
@@ -565,6 +569,7 @@ void CPluginConfigPage::FillControlsStream()
 
 	m_StreamTemplate = stream.uri_template.c_str();
 	m_StreamArchiveTemplate = stream.uri_arc_template.c_str();
+	m_CustomStreamArchiveTemplate = stream.uri_custom_arc_template.c_str();
 
 	UpdateData(FALSE);
 }
@@ -582,6 +587,7 @@ void CPluginConfigPage::SaveControlsStream()
 	cur_stream.set_shift_replace(m_Subst.GetString());
 	cur_stream.set_uri_template(m_StreamTemplate.GetString());
 	cur_stream.set_uri_arc_template(m_StreamArchiveTemplate.GetString());
+	cur_stream.set_uri_custom_arc_template(m_CustomStreamArchiveTemplate.GetString());
 }
 
 void CPluginConfigPage::FillControlsEpg()
@@ -627,12 +633,8 @@ void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 	m_allow_edit = false;
 	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
+	m_plugin->load_plugin_parameters(m_initial_cred.get_config());
 	FillControlsCommon();
-
-	if (m_single)
-	{
-		m_plugin->save_plugin_parameters(L"config.json");
-	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonToggleEditConfig()
@@ -713,13 +715,13 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 	lt.tm_sec = 0;
 	time_t dayTime = std::mktime(&lt);
 
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_EPG_ID, m_SetID.GetString());
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_TOKEN, m_Token.GetString());
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_DATE, m_EpgDateFormat.GetString());
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_YEAR, std::to_wstring(m_Date.GetYear()));
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_MONTH, std::to_wstring(m_Date.GetMonth()));
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_DAY, std::to_wstring(m_Date.GetDay()));
-	utils::string_replace_inplace<wchar_t>(url, uri_stream::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
+	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_EPG_ID, m_SetID.GetString());
+	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_TOKEN, m_Token.GetString());
+	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_DATE, m_EpgDateFormat.GetString());
+	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_YEAR, std::to_wstring(m_Date.GetYear()));
+	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_MONTH, std::to_wstring(m_Date.GetMonth()));
+	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_DAY, std::to_wstring(m_Date.GetDay()));
+	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
 
 	std::vector<BYTE> data;
 	if (utils::DownloadFile(url, data) && !data.empty())
@@ -852,10 +854,7 @@ void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 
 void CPluginConfigPage::OnCbnSelchangeComboPluginConfig()
 {
-	const auto& config_name = GetSelectedConfig();
-	if (config_name.empty() || !m_plugin->load_plugin_parameters(config_name))
-		m_plugin->load_default();
-
+	m_plugin->load_plugin_parameters(GetSelectedConfig());
 	FillControlsCommon();
 }
 

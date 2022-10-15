@@ -61,6 +61,7 @@ static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
 static constexpr auto TV_CATEGORY_ID = "tv_category_id";
 static constexpr auto INT_ID = "int_id";
 static constexpr auto STREAMING_URL = "streaming_url";
+static constexpr auto CATCHUP_URL_TEMPLATE = "catchup_url_template";
 static constexpr auto ID = "id";
 static constexpr auto ARCHIVE = "archive";
 static constexpr auto PROTECTED = "protected";

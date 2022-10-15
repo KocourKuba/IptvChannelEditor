@@ -337,7 +337,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 			movie->id = entry->get_epg_id();
 			movie->title = entry->get_title();
 			movie->poster_url = entry->get_icon_uri();
-			movie->url = entry->get_uri_stream()->get_uri();
+			movie->url = entry->get_plugin()->get_uri();
 
 			if (!re._Empty())
 			{

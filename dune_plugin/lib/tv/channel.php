@@ -88,6 +88,12 @@ interface Channel
     public function get_streaming_url();
 
     /**
+     * custom streaming url archive template
+     * @return string
+     */
+    public function get_custom_arc_template();
+
+    /**
      * additional parameters
      * @return array
      */

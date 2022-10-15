@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "uri_stream.h"
+#include "base_plugin.h"
 #include "AccessInfoPage.h"
 #include "MenuEdit.h"
 
@@ -97,7 +97,7 @@ public:
 	Credentials m_initial_cred;
 	CString m_SetID;
 	CAccessInfoPage* m_pAccessPage = nullptr;
-	std::shared_ptr<uri_stream> m_plugin;
+	std::shared_ptr<base_plugin> m_plugin;
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;
@@ -116,6 +116,7 @@ protected:
 	CEdit m_wndDuration;
 	CMenuEdit m_wndStreamTemplate;
 	CMenuEdit m_wndStreamArchiveTemplate;
+	CMenuEdit m_wndCustomStreamArchiveTemplate;
 	CMenuEdit m_wndEpgUrl;
 	CEdit m_wndEpgRoot;
 	CEdit m_wndEpgName;
@@ -162,6 +163,7 @@ protected:
 	CString m_Subst;
 	CString m_StreamTemplate;
 	CString m_StreamArchiveTemplate;
+	CString m_CustomStreamArchiveTemplate;
 	CString m_EpgUrl;
 	CString m_EpgRoot;
 	CString m_EpgName;

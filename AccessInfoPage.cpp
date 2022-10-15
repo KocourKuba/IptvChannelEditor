@@ -731,7 +731,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			m3u_entry m3uEntry(line);
 			if (!entry->Parse(line, m3uEntry)) continue;
 
-			const auto& parser = entry->get_uri_stream()->get_parser();
+			const auto& parser = entry->get_plugin()->get_parser();
 			const auto& access_key = parser.get_token();
 			const auto& subdomain = parser.get_subdomain();
 			if (!access_key.empty() && !subdomain.empty() && access_key != L"00000000000000" && subdomain != L"localhost")
@@ -965,9 +965,9 @@ void CAccessInfoPage::GetAccountInfo()
 
 	// reset templated flag for new parse
 	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
-	auto& uri = entry->stream_uri;
-	auto& parser = entry->stream_uri->get_parser();
-	parser.set_template(false);
+	auto& plugin = entry->plugin;
+	auto& parser = plugin->get_parser();
+	parser.set_is_template(false);
 
 	TemplateParams params;
 	params.login = std::move(login);
@@ -983,9 +983,9 @@ void CAccessInfoPage::GetAccountInfo()
 		params.token = m_plugin->get_api_token(selected_cred);
 	}
 
-	auto& pl_url = uri->get_playlist_url(params);
+	auto& pl_url = plugin->get_playlist_url(params);
 	std::list<AccountInfo> acc_info;
-	if (uri->parse_access_info(params, acc_info))
+	if (plugin->parse_access_info(params, acc_info))
 	{
 		for (auto it = acc_info.begin(); it != acc_info.end(); )
 		{

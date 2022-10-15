@@ -110,7 +110,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 	int current_idx = -1;
 	const auto& epg_id = m_info->get_epg_id(m_epg_idx);
 	m_pEpgChannelMap = &((*m_epg_cache)[m_epg_idx][epg_id]);
-	m_csEpgUrl = m_info->stream_uri->compile_epg_url(m_epg_idx, epg_id, start_time).c_str();
+	m_csEpgUrl = m_info->plugin->compile_epg_url(m_epg_idx, epg_id, start_time).c_str();
 
 	bool need_load = true;
 	while (need_load)
@@ -124,7 +124,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			}
 		}
 
-		if (need_load && !m_info->stream_uri->parse_epg(m_epg_idx, epg_id, *m_pEpgChannelMap, now))
+		if (need_load && !m_info->plugin->parse_epg(m_epg_idx, epg_id, *m_pEpgChannelMap, now))
 		{
 			need_load = false;
 		}
@@ -236,7 +236,7 @@ void CEpgListDlg::OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult)
 		bool isArchive = (_time32(nullptr) - start_pair->second.first) > 0 && start_pair->second.second > (_time32(nullptr) - m_info->get_archive_days() * 84600);
 		if (isArchive)
 		{
-			const auto& url = m_info->stream_uri->get_templated_stream(m_params);
+			const auto& url = m_info->plugin->get_templated_stream(m_params);
 
 			TRACE(L"\nTest URL: %s\n", url.c_str());
 
