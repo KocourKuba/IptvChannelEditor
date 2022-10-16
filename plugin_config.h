@@ -11,7 +11,7 @@ enum class StreamType
 
 NLOHMANN_JSON_SERIALIZE_ENUM(StreamType,
 {
-	{ StreamType::enHLS, "hls" },
+	{ StreamType::enHLS,    "hls"  },
 	{ StreamType::enMPEGTS, "mpeg" }
 })
 
@@ -23,8 +23,8 @@ enum class CatchupType {
 
 NLOHMANN_JSON_SERIALIZE_ENUM(CatchupType,
 {
-	{ CatchupType::cu_shift, "shift" },
-	{ CatchupType::cu_append, "append" },
+	{ CatchupType::cu_shift,     "shift"     },
+	{ CatchupType::cu_append,    "append"    },
 	{ CatchupType::cu_flussonic, "flussonic" }
 })
 
@@ -33,15 +33,17 @@ enum class AccountAccessType
 	enUnknown = -1,
 	enOtt,
 	enPin,
-	enLoginPass
+	enLoginPass,
+	enNone,
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(AccountAccessType,
 {
-	{ AccountAccessType::enUnknown, "unknown" },
-	{ AccountAccessType::enOtt, "ottkey" },
-	{ AccountAccessType::enPin, "pin" },
-	{ AccountAccessType::enLoginPass, "login" }
+	{ AccountAccessType::enUnknown,   "unknown" },
+	{ AccountAccessType::enOtt,       "ottkey"  },
+	{ AccountAccessType::enPin,       "pin"     },
+	{ AccountAccessType::enLoginPass, "login"   },
+	{ AccountAccessType::enNone,      "none"    }
 })
 
 }
@@ -373,7 +375,7 @@ protected:
 	// configurable parameters
 
 	// plugin access type
-	AccountAccessType access_type = AccountAccessType::enOtt;
+	AccountAccessType access_type = AccountAccessType::enNone;
 	// plugin title
 	std::string title;
 	// plugin internal name (used by Dune)

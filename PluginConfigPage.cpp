@@ -46,6 +46,8 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CPluginConfigPage::OnCbnSelchangeComboPluginType)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CPluginConfigPage::OnBnClickedButtonToggleEditConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_CONFIG, &CPluginConfigPage::OnBnClickedButtonSaveConfig)
+	ON_CBN_SELCHANGE(IDC_COMBO_ACCESS_TYPE, &CPluginConfigPage::OnCbnSelchangeComboAccessType)
+	ON_CBN_DROPDOWN(IDC_COMBO_ACCESS_TYPE, &CPluginConfigPage::OnCbnDropdownComboAccessType)
 	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigPage::OnCbnSelchangeComboStreamType)
 	ON_CBN_DROPDOWN(IDC_COMBO_STREAM_TYPE, &CPluginConfigPage::OnCbnDropdownComboStreamType)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigPage::OnCbnSelchangeComboEpgType)
@@ -434,7 +436,7 @@ void CPluginConfigPage::EnableControls()
 	m_wndShortName.EnableWindow(FALSE);
 	m_wndProviderUrl.EnableWindow(enable);
 	m_wndChkSquareIcons.EnableWindow(enable);
-	m_wndAccessType.EnableWindow(enable);
+	m_wndAccessType.EnableWindow(m_plugin->get_plugin_type() == PluginType::enCustom);
 	m_wndPlaylistTemplate.EnableWindow(enable);
 	m_wndParseStream.EnableWindow(enable);
 	m_wndParseStreamID.EnableWindow(enable);
@@ -525,6 +527,7 @@ void CPluginConfigPage::SaveControlsCommon()
 
 	UpdateData(TRUE);
 
+	m_plugin->set_access_type((AccountAccessType)m_wndAccessType.GetCurSel());
 	m_plugin->set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
 
 	m_plugin->set_name(m_Name.GetString());
@@ -678,6 +681,17 @@ void CPluginConfigPage::OnBnClickedButtonSaveAsConfig()
 		m_wndPluginConfigs.SetCurSel((int)m_configs.size() - 1);
 		UpdateData(FALSE);
 	}
+}
+
+void CPluginConfigPage::OnCbnSelchangeComboAccessType()
+{
+	m_plugin->set_access_type((AccountAccessType)m_wndAccessType.GetCurSel());
+	FillControlsCommon();
+}
+
+void CPluginConfigPage::OnCbnDropdownComboAccessType()
+{
+	SaveControlsCommon();
 }
 
 void CPluginConfigPage::OnCbnSelchangeComboStreamType()

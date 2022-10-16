@@ -67,11 +67,15 @@ protected:
 	afx_msg void OnBnClickedCheckStaticQualities();
 	afx_msg void OnBnClickedCheckStaticProfiles();
 
+	afx_msg void OnCbnSelchangeComboAccessType();
+	afx_msg void OnCbnDropdownComboAccessType();
+
 	afx_msg void OnCbnSelchangeComboPluginType();
 	afx_msg void OnCbnSelchangeComboPluginConfig();
 
 	afx_msg void OnCbnSelchangeComboStreamType();
 	afx_msg void OnCbnDropdownComboStreamType();
+
 	afx_msg void OnCbnSelchangeComboEpgType();
 	afx_msg void OnCbnDropdownComboEpgType();
 

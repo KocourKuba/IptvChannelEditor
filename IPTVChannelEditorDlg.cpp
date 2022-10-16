@@ -223,8 +223,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig)
-		ON_EN_CHANGE(IDC_EDIT_STREAM_ARCHIVE_URL, &CIPTVChannelEditorDlg::OnEnChangeEditStreamArchiveUrl)
-		END_MESSAGE_MAP()
+	ON_EN_CHANGE(IDC_EDIT_STREAM_ARCHIVE_URL, &CIPTVChannelEditorDlg::OnEnChangeEditStreamArchiveUrl)
+END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -1849,7 +1849,7 @@ int CIPTVChannelEditorDlg::GetNewCategoryID() const
 
 bool CIPTVChannelEditorDlg::LoadChannels()
 {
-	set_allow_save(FALSE);
+	set_allow_save(false);
 
 	int lst_idx = m_wndChannels.GetCurSel();
 	if (lst_idx == CB_ERR)
@@ -1885,7 +1885,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	auto info_node = i_node->first_node(utils::VERSION_INFO);
 	if (!info_node || rapidxml::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
 	{
-		set_allow_save(TRUE);
+		set_allow_save(true);
 	}
 
 	const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
@@ -3410,7 +3410,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		std::ofstream os(channelsPath, std::istream::binary);
 		os << *doc;
 
-		set_allow_save(FALSE);
+		set_allow_save(false);
 		FillTreeChannels(old_selected);
 	}
 	catch (const rapidxml::parse_error& ex)
@@ -4476,7 +4476,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 
 	GetConfig().set_plugin_idx(m_wndPluginType.GetCurSel());
 
-	set_allow_save(FALSE);
+	set_allow_save(false);
 	SwitchPlugin();
 }
 
@@ -4502,6 +4502,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 		return;
 	}
 
+	m_wndCustom.SetCheck(FALSE);
 	m_categoriesMap.clear();
 	m_channelsMap.clear();
 	int idx = m_wndChannels.GetCurSel();
@@ -4805,7 +4806,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		needCheckExisting = true;
 	}
 
-	if (!channel->is_equal(*entry.get()))
+	if (!channel->is_equal(*entry))
 	{
 		channel->set_uri(entry->get_uri());
 		needCheckExisting = true;
