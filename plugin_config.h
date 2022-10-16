@@ -1,5 +1,4 @@
 #pragma once
-#include "Config.h"
 #include "UtilsLib\json_wrapper.h"
 
 namespace s_enum

@@ -30,6 +30,8 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "IconCache.h"
+#include "ThreadConfig.h"
+#include "Constants.h"
 
 #include "UtilsLib\inet_utils.h"
 
@@ -135,6 +137,7 @@ BOOL CIconsListDlg::OnInitDialog()
 				cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
 
 				pThread->SetData(cfg);
+				pThread->SetPlugin(m_parent_plugin);
 				pThread->ResumeThread();
 			}
 		}

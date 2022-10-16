@@ -25,9 +25,9 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include <afxdialogex.h>
 #include "IPTVChannelEditor.h"
 #include "UrlDlg.h"
-#include "afxdialogex.h"
 
 
 // CUrlDlg dialog

@@ -92,7 +92,6 @@ private:
 	std::wstring GetSelectedConfig();
 
 public:
-	PluginType m_plugin_type = PluginType::enCustom;
 	bool m_single = false;
 	Credentials m_initial_cred;
 	CString m_SetID;

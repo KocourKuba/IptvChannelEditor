@@ -37,11 +37,12 @@ public:
 	public:
 		void NotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0) const;
 
-		std::vector<base_plugin*>* m_container = nullptr;
+		std::vector<uri_stream*>* m_container = nullptr;
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
 		std::wstring m_probe;
 		int m_max_threads = 1;
+		std::shared_ptr<base_plugin> m_plugin;
 		TemplateParams m_params;
 	};
 

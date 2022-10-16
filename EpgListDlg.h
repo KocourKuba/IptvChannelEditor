@@ -61,7 +61,8 @@ protected:
 public:
 	int m_epg_idx = 0;
 	TemplateParams m_params;
-	BaseInfo* m_info = nullptr;
+	uri_stream* m_info = nullptr;
+	std::shared_ptr<base_plugin> m_plugin;
 	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 2>* m_epg_cache = nullptr;
 
 protected:

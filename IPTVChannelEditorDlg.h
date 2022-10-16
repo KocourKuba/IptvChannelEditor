@@ -208,8 +208,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	BOOL is_allow_save() const { return m_allow_save; }
-	void set_allow_save(BOOL val = TRUE);
+	bool is_allow_save() const { return m_allow_save; }
+	void set_allow_save(bool val = true);
 
 	bool LoadChannels();
 	void LoadPlaylist(bool saveToFile = false);
@@ -237,7 +237,7 @@ private:
 	std::shared_ptr<ChannelInfo> FindChannel(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelCategory> FindCategory(HTREEITEM hItem) const;
 	std::shared_ptr<PlaylistEntry> FindEntry(HTREEITEM item) const;
-	BaseInfo* GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM item) const;
+	uri_stream* GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM item) const;
 
 	bool IsSelectedTheSameType(const CTreeCtrlEx* pTreeCtl) const;
 	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
@@ -259,7 +259,7 @@ private:
 	void CollectCredentials();
 
 	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
-	void UpdateExtToken(base_plugin* uri) const;
+	void UpdateExtToken(uri_stream* uri) const;
 	void UpdateControlsForItem(HTREEITEM hSelected = nullptr);
 	bool CheckForSave();
 	void SaveStreamInfo();
@@ -354,7 +354,7 @@ protected:
 private:
 	Credentials m_cur_account;
 
-	PluginType m_plugin_type = PluginType::enBase;
+	PluginType m_plugin_type = PluginType::enCustom;
 	std::shared_ptr<base_plugin> m_plugin;
 
 	HACCEL m_hAccel = nullptr;
@@ -363,7 +363,7 @@ private:
 	CString m_toolTipText;
 	CString m_plFileName;
 
-	BOOL m_allow_save = FALSE;
+	bool m_allow_save = false;
 	bool m_loading = false;
 	bool m_inStreamInfo = false;
 	bool m_inSync = false;

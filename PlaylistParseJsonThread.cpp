@@ -44,7 +44,7 @@ BOOL CPlaylistParseJsonThread::InitInstance()
 {
 	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-	switch (m_config.m_pluginType)
+	switch (m_parent_plugin->get_plugin_type())
 	{
 		case PluginType::enSharaclub:
 			ParseSharaclub();

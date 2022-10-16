@@ -26,11 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "EditableListCtrl.h"
-#include "base_plugin.h"
-#include "Config.h"
 #include "CMFCEditBrowsCtrlEx.h"
-
-#include "UtilsLib\json_wrapper.h"
+#include "base_plugin.h"
 
 class CAccessInfoPage : public CMFCPropertyPage
 {
@@ -104,7 +101,6 @@ public:
 	std::wstring m_epg_domain;
 	std::vector<std::wstring> m_all_channels_lists;
 	std::shared_ptr<base_plugin> m_plugin;
-	PluginType m_plugin_type = PluginType::enBase;
 
 protected:
 	CButton m_wndRemove;
@@ -154,4 +150,3 @@ private:
 
 	std::map<UINT, std::wstring> m_tooltips_info_account;
 };
-

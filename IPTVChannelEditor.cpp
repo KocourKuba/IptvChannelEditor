@@ -32,7 +32,10 @@ DEALINGS IN THE SOFTWARE.
 
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
+#include "StreamContainer.h"
 #include "IconCache.h"
+#include "AccountSettings.h"
+#include "Constants.h"
 
 #include "UtilsLib\FileVersionInfo.h"
 #include "UtilsLib\inet_utils.h"
@@ -89,8 +92,8 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 	{
 		if (_tcsicmp(szParam, _T("Dev")) == 0)
 		{
-			PluginsConfig::DEV_PATH = LR"(..\)";
-			PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
+			AccountSettings::DEV_PATH = LR"(..\)";
+			AccountSettings::PACK_DLL_PATH = LR"(dll\)";
 			m_bDev = true;
 		}
 		else if (_tcsicmp(szParam, _T("Make")) == 0)
@@ -129,8 +132,8 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 
 	if (m_bDev) //-V547
 	{
-		PluginsConfig::DEV_PATH = LR"(..\)";
-		PluginsConfig::PACK_DLL_PATH = LR"(dll\)";
+		AccountSettings::DEV_PATH = LR"(..\)";
+		AccountSettings::PACK_DLL_PATH = LR"(dll\)";
 	}
 
 	CCommandLineInfo::ParseParam(szParam, bFlag, bLast);
@@ -466,7 +469,7 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 			fileName.Truncate(pos + 1);
 	}
 
-	fileName += PluginsConfig::DEV_PATH.c_str();
+	fileName += AccountSettings::DEV_PATH.c_str();
 
 	if (szSubFolder)
 		fileName += szSubFolder;
@@ -618,7 +621,7 @@ bool PackPlugin(const PluginType plugin_type,
 				bool noEmbed /*= false*/,
 				bool noCustom /*= false*/)
 {
-	const auto& pack_dll = GetAppPath((PluginsConfig::PACK_DLL_PATH).c_str()) + PACK_DLL;
+	const auto& pack_dll = GetAppPath((AccountSettings::PACK_DLL_PATH).c_str()) + PACK_DLL;
 	if (!std::filesystem::exists(pack_dll))
 	{
 		if (showMessage)

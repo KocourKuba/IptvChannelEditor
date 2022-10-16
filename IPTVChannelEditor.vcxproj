@@ -234,12 +234,16 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="AccessInfoPage.h" />
-    <ClInclude Include="BaseInfo.h" />
+    <ClInclude Include="AccountSettings.h" />
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="Credentials.h" />
+    <ClInclude Include="PluginDefines.h" />
+    <ClInclude Include="ThreadConfig.h" />
+    <ClInclude Include="uri_stream.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
     <ClInclude Include="CMFCEditBrowsCtrlEx.h" />
     <ClInclude Include="ColorEdit.h" />
-    <ClInclude Include="Config.h" />
     <ClInclude Include="EditableListCtrl.h" />
     <ClInclude Include="EpgListDlg.h" />
     <ClInclude Include="FillParamsInfoDlg.h" />
@@ -267,7 +271,6 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="vod_movie.h" />
     <ClInclude Include="NewChannelsListDlg.h" />
     <ClInclude Include="PlaylistParseM3U8Thread.h" />
-    <ClInclude Include="PlaylistParseXMLThread.h" />
     <ClInclude Include="PathsSettingsPage.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TreeCtrlEx.h" />
@@ -313,10 +316,11 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="AccessInfoPage.cpp" />
+    <ClCompile Include="AccountSettings.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="ColorEdit.cpp" />
-    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="Credentials.cpp" />
     <ClCompile Include="EditableListCtrl.cpp" />
     <ClCompile Include="EpgListDlg.cpp" />
     <ClCompile Include="FillParamsInfoDlg.cpp" />
@@ -334,11 +338,11 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PlaylistParseJsonThread.cpp" />
     <ClCompile Include="NewChannelsListDlg.cpp" />
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
-    <ClCompile Include="PlaylistParseXMLThread.cpp" />
     <ClCompile Include="PathsSettingsPage.cpp" />
     <ClCompile Include="PluginConfigPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
+    <ClCompile Include="ThreadConfig.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
     <ClCompile Include="CustomPlaylistDlg.cpp" />
@@ -383,6 +387,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="plugin_viplime.cpp" />
+    <ClCompile Include="uri_stream.cpp" />
     <ClCompile Include="UrlDlg.cpp" />
     <ClCompile Include="VodViewer.cpp" />
   </ItemGroup>

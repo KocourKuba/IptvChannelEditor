@@ -1,36 +1,7 @@
-/*
-IPTV Channel Editor
-
-The MIT License (MIT)
-
-Author and copyright (2021-2022): sharky72 (https://github.com/KocourKuba)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-*/
-
 #include "pch.h"
-#include <iomanip>
-
+#include "AccountSettings.h"
+#include "Constants.h"
 #include "IPTVChannelEditor.h"
-#include "StreamContainer.h"
-
-#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -40,11 +11,11 @@ static char THIS_FILE[] = __FILE__;
 
 #ifdef _DEBUG
 // special case for run under debugger from VS
-std::wstring PluginsConfig::DEV_PATH = L"..\\";
-std::wstring PluginsConfig::PACK_DLL_PATH = L"dll\\";
+std::wstring AccountSettings::DEV_PATH = L"..\\";
+std::wstring AccountSettings::PACK_DLL_PATH = L"dll\\";
 #else
-std::wstring PluginsConfig::DEV_PATH;
-std::wstring PluginsConfig::PACK_DLL_PATH;
+std::wstring AccountSettings::DEV_PATH;
+std::wstring AccountSettings::PACK_DLL_PATH;
 #endif // _DEBUG
 
 #define MAKEQWORD(a, b) ((QWORD)(((DWORD)(((QWORD)(a)) & 0xffffffff)) | ((QWORD)((DWORD)(((QWORD)(b)) & 0xffffffff))) << 32))
@@ -144,25 +115,7 @@ static std::vector<PluginType> all_plugins = {
 	{ PluginType::enVipLime,    },
 };
 
-void ThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
-{
-	CWnd* parent = (CWnd*)m_parent;
-	if (parent->GetSafeHwnd())
-		parent->SendMessage(message, wParam, lParam);
-
-}
-
-void ThreadConfig::PostNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
-{
-	CWnd* parent = (CWnd*)m_parent;
-	if (parent->GetSafeHwnd())
-		parent->PostMessage(message, wParam, lParam);
-
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void PluginsConfig::SaveSettings()
+void AccountSettings::SaveSettings()
 {
 	if (m_bPortable)
 		SaveSettingsToJson();
@@ -170,7 +123,7 @@ void PluginsConfig::SaveSettings()
 		SaveSettingsToRegistry();
 }
 
-void PluginsConfig::LoadSettings()
+void AccountSettings::LoadSettings()
 {
 	m_settings.clear();
 
@@ -224,7 +177,7 @@ void PluginsConfig::LoadSettings()
 	m_pluginType = (idx >= 0 && idx < (int)all_plugins.size()) ? all_plugins[idx] : PluginType::enEdem;
 }
 
-void PluginsConfig::SaveSettingsToJson()
+void AccountSettings::SaveSettingsToJson()
 {
 	UpdateSettingsJson(PluginType::enBase);
 
@@ -237,7 +190,7 @@ void PluginsConfig::SaveSettingsToJson()
 	out_file << m_config << std::endl;
 }
 
-void PluginsConfig::SaveSettingsToRegistry()
+void AccountSettings::SaveSettingsToRegistry()
 {
 	SaveSectionRegistry(PluginType::enBase);
 
@@ -247,7 +200,7 @@ void PluginsConfig::SaveSettingsToRegistry()
 	}
 }
 
-void PluginsConfig::UpdatePluginSettings()
+void AccountSettings::UpdatePluginSettings()
 {
 	if (m_bPortable)
 		UpdateSettingsJson(m_pluginType);
@@ -255,39 +208,39 @@ void PluginsConfig::UpdatePluginSettings()
 		SaveSectionRegistry(m_pluginType);
 }
 
-void PluginsConfig::RemovePortableSettings()
+void AccountSettings::RemovePortableSettings()
 {
 	std::error_code ec;
 	std::filesystem::remove(GetAppPath() + CONFIG_FILE, ec);
 }
 
-const std::vector<PluginType>& PluginsConfig::get_all_plugins() const
+const std::vector<PluginType>& AccountSettings::get_all_plugins() const
 {
 	return all_plugins;
 }
 
-int PluginsConfig::get_plugin_idx() const
+int AccountSettings::get_plugin_idx() const
 {
 	return get_int(true, REG_PLUGIN);
 }
 
-void PluginsConfig::set_plugin_idx(int val)
+void AccountSettings::set_plugin_idx(int val)
 {
 	set_int(true, REG_PLUGIN, val);
 	m_pluginType = val < (int)all_plugins.size() ? all_plugins[val] : PluginType::enEdem;
 }
 
-PluginType PluginsConfig::get_plugin_type() const
+PluginType AccountSettings::get_plugin_type() const
 {
 	return m_pluginType;
 }
 
-void PluginsConfig::set_plugin_type(PluginType val)
+void AccountSettings::set_plugin_type(PluginType val)
 {
 	m_pluginType = val;
 }
 
-std::wstring PluginsConfig::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const
+std::wstring AccountSettings::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const
 {
 	const auto& section = isApp ? PluginType::enBase : m_pluginType;
 
@@ -304,14 +257,14 @@ std::wstring PluginsConfig::get_string(bool isApp, const std::wstring& key, cons
 	return def;
 }
 
-void PluginsConfig::set_string(bool isApp, const std::wstring& key, const std::wstring& value)
+void AccountSettings::set_string(bool isApp, const std::wstring& key, const std::wstring& value)
 {
 	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
-int PluginsConfig::get_int(bool isApp, const std::wstring& key, const int def /*= 0*/) const
+int AccountSettings::get_int(bool isApp, const std::wstring& key, const int def /*= 0*/) const
 {
 	const auto& section = isApp ? PluginType::enBase : m_pluginType;
 	if (m_settings.find(section) == m_settings.end())
@@ -327,14 +280,14 @@ int PluginsConfig::get_int(bool isApp, const std::wstring& key, const int def /*
 	return def;
 }
 
-void PluginsConfig::set_int(bool isApp, const std::wstring& key, const int value)
+void AccountSettings::set_int(bool isApp, const std::wstring& key, const int value)
 {
 	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
-__int64 PluginsConfig::get_int64(bool isApp, const std::wstring& key, const __int64 def /*= 0*/) const
+__int64 AccountSettings::get_int64(bool isApp, const std::wstring& key, const __int64 def /*= 0*/) const
 {
 	const auto& section = isApp ? PluginType::enBase : m_pluginType;
 	if (m_settings.find(section) == m_settings.end())
@@ -350,14 +303,14 @@ __int64 PluginsConfig::get_int64(bool isApp, const std::wstring& key, const __in
 	return def;
 }
 
-void PluginsConfig::set_int64(bool isApp, const std::wstring& key, const __int64 value)
+void AccountSettings::set_int64(bool isApp, const std::wstring& key, const __int64 value)
 {
 	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
-std::vector<BYTE> PluginsConfig::get_binary(bool isApp, const std::wstring& key) const
+std::vector<BYTE> AccountSettings::get_binary(bool isApp, const std::wstring& key) const
 {
 	const auto& section = isApp ? PluginType::enBase : m_pluginType;
 	if (m_settings.find(section) != m_settings.end())
@@ -373,7 +326,7 @@ std::vector<BYTE> PluginsConfig::get_binary(bool isApp, const std::wstring& key)
 	return {};
 }
 
-bool PluginsConfig::get_binary(bool isApp, const std::wstring& key, LPBYTE* pbData, size_t& dwSize) const
+bool AccountSettings::get_binary(bool isApp, const std::wstring& key, LPBYTE* pbData, size_t& dwSize) const
 {
 	const auto& section = isApp ? PluginType::enBase : m_pluginType;
 	if (m_settings.find(section) == m_settings.end())
@@ -393,27 +346,27 @@ bool PluginsConfig::get_binary(bool isApp, const std::wstring& key, LPBYTE* pbDa
 	return false;
 }
 
-void PluginsConfig::set_binary(bool isApp, const std::wstring & key, const std::vector<BYTE>& value)
+void AccountSettings::set_binary(bool isApp, const std::wstring& key, const std::vector<BYTE>& value)
 {
 	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
-void PluginsConfig::set_binary(bool isApp, const std::wstring& key, const BYTE* value, const size_t value_size)
+void AccountSettings::set_binary(bool isApp, const std::wstring& key, const BYTE* value, const size_t value_size)
 {
 	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
 
 	settings[key] = std::move(std::vector<BYTE>(value, value + value_size));
 }
 
-void PluginsConfig::delete_setting(bool isApp, const std::wstring& key)
+void AccountSettings::delete_setting(bool isApp, const std::wstring& key)
 {
 	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
 	settings.erase(key);
 }
 
-void PluginsConfig::ReadSettingsRegistry(PluginType plugin_type)
+void AccountSettings::ReadSettingsRegistry(PluginType plugin_type)
 {
 	HKEY hkHive = nullptr;
 	if (::RegOpenCurrentUser(KEY_READ, &hkHive) != ERROR_SUCCESS)
@@ -469,7 +422,7 @@ void PluginsConfig::ReadSettingsRegistry(PluginType plugin_type)
 	::RegCloseKey(hkHive);
 }
 
-void PluginsConfig::SaveSectionRegistry(PluginType plugin_type)
+void AccountSettings::SaveSectionRegistry(PluginType plugin_type)
 {
 	HKEY hkHive = nullptr;
 	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
@@ -520,7 +473,7 @@ void PluginsConfig::SaveSectionRegistry(PluginType plugin_type)
 	::RegCloseKey(hkHive);
 }
 
-bool PluginsConfig::ReadSettingsJson(PluginType plugin_type)
+bool AccountSettings::ReadSettingsJson(PluginType plugin_type)
 {
 	std::string j_section;
 	if (plugin_type == PluginType::enBase)
@@ -570,7 +523,7 @@ bool PluginsConfig::ReadSettingsJson(PluginType plugin_type)
 	return true;
 }
 
-void PluginsConfig::UpdateSettingsJson(PluginType plugin_type)
+void AccountSettings::UpdateSettingsJson(PluginType plugin_type)
 {
 	auto& settings = m_settings[plugin_type];
 	nlohmann::json node;

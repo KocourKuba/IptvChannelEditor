@@ -25,22 +25,22 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "BaseInfo.h"
+#include "uri_stream.h"
 #include "m3u_entry.h"
 #include "ChannelCategory.h"
 
-class PlaylistEntry : public BaseInfo
+class PlaylistEntry : public uri_stream
 {
 public:
 	PlaylistEntry() = delete;
-	PlaylistEntry(PluginType streamType, std::wstring root_path = L"")
-		: BaseInfo(InfoType::enPlEntry, streamType, root_path) {}
+	PlaylistEntry(std::shared_ptr<base_plugin>& plugin, std::wstring root_path = L"")
+		: uri_stream(InfoType::enPlEntry, plugin, root_path)
+	{}
 
 	bool Parse(const std::wstring& str, const m3u_entry& entry);
 
 	int get_channel_length() const { return channel_len; }
 	const auto& get_category() const { return category; }
-	const auto& get_plugin() { return plugin; }
 	void set_logo_root(const std::wstring& val) { logo_root = val; }
 	std::wstring get_logo_root() { return logo_root; }
 

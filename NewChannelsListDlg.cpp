@@ -25,9 +25,9 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include <afxdialogex.h>
 #include "resource.h"
 #include "NewChannelsListDlg.h"
-#include "afxdialogex.h"
 
 
 // CNewChannelsListDlg dialog

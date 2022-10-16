@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "base_plugin.h"
-#include "Config.h"
 
 /// <summary>
 /// Container for stream interface
@@ -34,25 +33,5 @@ DEALINGS IN THE SOFTWARE.
 class StreamContainer
 {
 public:
-	StreamContainer() = delete;
-	StreamContainer(PluginType type);
-	~StreamContainer() = default;
-
 	static std::shared_ptr<base_plugin> get_instance(PluginType type);
-
-	void set_type(PluginType type);
-
-	const StreamContainer& operator=(const StreamContainer& src)
-	{
-		if (this != &src)
-		{
-			*plugin = *src.plugin;
-			stream_type = src.stream_type;
-		}
-
-		return *this;
-	}
-
-	std::shared_ptr<base_plugin> plugin;
-	PluginType stream_type;
 };

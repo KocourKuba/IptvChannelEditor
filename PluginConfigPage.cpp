@@ -31,6 +31,8 @@ DEALINGS IN THE SOFTWARE.
 #include "StreamContainer.h"
 #include "FillParamsInfoDlg.h"
 #include "NewConfigDlg.h"
+#include "AccountSettings.h"
+#include "Constants.h"
 
 #include "UtilsLib/inet_utils.h"
 
@@ -249,7 +251,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 		int idx = m_wndPluginType.AddString(plugin->get_title().c_str());
 		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item);
-		if (item == m_plugin_type)
+		if (item == m_plugin->get_plugin_type())
 		{
 			sel_idx = idx;
 		}
@@ -267,7 +269,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	m_wndPlaylistTemplate.SetTemplateParams(pl_params);
 
-	std::vector<std::wstring> strm_params(pl_params);
+	std::vector<std::wstring> strm_params(std::move(pl_params));
 	strm_params.insert(strm_params.end(),
 	{
 				L"{DOMAIN}",
@@ -279,7 +281,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	m_wndStreamTemplate.SetTemplateParams(strm_params);
 
-	std::vector<std::wstring> arc_params(strm_params);
+	std::vector<std::wstring> arc_params(std::move(strm_params));
 	arc_params.insert(arc_params.end(),
 	{
 				L"{CU_SUBST}",
@@ -631,8 +633,7 @@ void CPluginConfigPage::SaveControlsEpg()
 void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 {
 	m_allow_edit = false;
-	m_plugin_type = (PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel());
-	m_plugin = StreamContainer::get_instance(m_plugin_type);
+	m_plugin = StreamContainer::get_instance((PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()));
 	m_plugin->load_plugin_parameters(m_initial_cred.get_config());
 	FillControlsCommon();
 }

@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "ChannelInfo.h"
 #include "ChannelCategory.h"
+#include "StreamContainer.h"
 
 #include "UtilsLib\rapidxml_value.hpp"
 
@@ -36,19 +37,13 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-ChannelInfo::ChannelInfo(const std::wstring& root_path)
-	: BaseInfo(InfoType::enChannel, PluginType::enBase, root_path)
+ChannelInfo::ChannelInfo(std::shared_ptr<base_plugin>& plugin, const std::wstring& root_path)
+	: uri_stream(InfoType::enChannel, plugin, root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
 }
 
-ChannelInfo::ChannelInfo(rapidxml::xml_node<>* node, const std::wstring& root_path)
-	: BaseInfo(InfoType::enChannel, PluginType::enBase, root_path)
-{
-	ParseNode(node);
-}
-
-ChannelInfo::ChannelInfo(const ChannelInfo& src) : BaseInfo(src)
+ChannelInfo::ChannelInfo(const ChannelInfo& src) : uri_stream(src)
 {
 	*this = src;
 }
@@ -58,9 +53,9 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	if (!node)
 		return;
 
-	plugin->get_parser().set_is_template(true);
-	plugin->get_parser().set_id(rapidxml::get_value_wstring(node->first_node(utils::CHANNEL_ID)));
-	plugin->get_parser().set_int_id(rapidxml::get_value_wstring(node->first_node(utils::INT_ID)));
+	set_is_template(true);
+	set_id(rapidxml::get_value_wstring(node->first_node(utils::CHANNEL_ID)));
+	set_int_id(rapidxml::get_value_wstring(node->first_node(utils::INT_ID)));
 
 	set_title(rapidxml::get_value_wstring(node->first_node(utils::CAPTION)));
 	set_epg_id(0, rapidxml::get_value_wstring(node->first_node(utils::EPG1_ID)));
@@ -86,11 +81,11 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		categories.emplace(rapidxml::get_value_int(node->first_node(utils::TV_CATEGORY_ID)));
 	}
 
-	if (plugin->get_parser().get_id().empty())
+	if (get_id().empty())
 	{
-		plugin->get_parser().set_is_template(false);
-		plugin->parse_stream_uri(rapidxml::get_value_wstring(node->first_node(utils::STREAMING_URL)));
-		plugin->get_hash();
+		set_is_template(false);
+		parent_plugin->parse_stream_uri(rapidxml::get_value_wstring(node->first_node(utils::STREAMING_URL)), this);
+		get_hash();
 		set_catchup_template(rapidxml::get_value_wstring(node->first_node(utils::CATCHUP_URL_TEMPLATE)));
 	}
 
@@ -107,14 +102,14 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(rapidxml::alloc_node(alloc, utils::CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <channel_id>1</channel_id> or <channel_id>tv3</channel_id>
-	if (plugin->get_parser().get_is_template())
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CHANNEL_ID, utils::utf16_to_utf8(plugin->get_parser().get_id()).c_str()));
+	if (get_is_template())
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CHANNEL_ID, utils::utf16_to_utf8(get_id()).c_str()));
 
 	// used in glanz
 	// <int_id>1</int_id>
-	if (!plugin->get_parser().get_int_id().empty())
+	if (!get_int_id().empty())
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::INT_ID, utils::utf16_to_utf8(plugin->get_parser().get_int_id()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::INT_ID, utils::utf16_to_utf8(get_int_id()).c_str()));
 	}
 
 	// <epg_id>8</epg_id>
@@ -147,9 +142,9 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 	// Only if channel not templated. Otherwise template handled by plugin
 	// <streaming_url>http://ts://{DOMAIN}/iptv/{TOKEN}/127/index.m3u8</streaming_url>
-	if (!plugin->get_parser().get_is_template() && !plugin->get_uri().empty())
+	if (!get_is_template() && !get_uri().empty())
 	{
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::STREAMING_URL, utils::utf16_to_utf8(plugin->get_uri()).c_str()));
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::STREAMING_URL, utils::utf16_to_utf8(get_uri()).c_str()));
 		if (!get_catchup_template().empty())
 		{
 			channel_node->append_node(rapidxml::alloc_node(alloc, utils::CATCHUP_URL_TEMPLATE, utils::utf16_to_utf8(get_catchup_template()).c_str()));

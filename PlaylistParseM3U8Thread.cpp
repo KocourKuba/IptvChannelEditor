@@ -52,7 +52,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
 			std::wstring logo_root;
-			auto entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
+			auto entry = std::make_shared<PlaylistEntry>(m_parent_plugin, m_config.m_rootPath);
 
 			int channels = 0;
 			int step = 0;
@@ -77,7 +77,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				if (entry->Parse(line, m3uEntry))
 				{
 					playlist->m_entries.emplace_back(entry);
-					entry = std::make_shared<PlaylistEntry>(m_config.m_pluginType, m_config.m_rootPath);
+					entry = std::make_shared<PlaylistEntry>(m_parent_plugin, m_config.m_rootPath);
 					channels++;
 
 					if (channels % 100 == 0)

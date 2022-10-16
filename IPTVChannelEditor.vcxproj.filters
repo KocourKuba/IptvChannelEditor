@@ -64,6 +64,9 @@
     <Filter Include="Source Files\plugin\append">
       <UniqueIdentifier>{9ce6849e-987a-4495-b303-9423b8a6628b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\PNG">
+      <UniqueIdentifier>{35e70383-4749-424d-af38-4efd108f437e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">
@@ -111,7 +114,7 @@
     <ClInclude Include="TreeCtrlEx.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="BaseInfo.h">
+    <ClInclude Include="uri_stream.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
     <ClInclude Include="uri_base.h">
@@ -144,13 +147,7 @@
     <ClInclude Include="TrayIcon.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PlaylistParseM3U8Thread.h">
-      <Filter>Header Files\Threads</Filter>
-    </ClInclude>
-    <ClInclude Include="PlaylistParseXMLThread.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
     <ClInclude Include="IconLinkDlg.h">
@@ -297,6 +294,21 @@
     <ClInclude Include="MenuEdit.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="Credentials.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadConfig.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -353,13 +365,7 @@
     <ClCompile Include="TrayIcon.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PlaylistParseM3U8Thread.cpp">
-      <Filter>Source Files\Threads</Filter>
-    </ClCompile>
-    <ClCompile Include="PlaylistParseXMLThread.cpp">
       <Filter>Source Files\Threads</Filter>
     </ClCompile>
     <ClCompile Include="IconLinkDlg.cpp">
@@ -485,9 +491,6 @@
     <ClCompile Include="plugin_viplime.cpp">
       <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
-    <ClCompile Include="uri_smile.cpp">
-      <Filter>Source Files\uri\shift</Filter>
-    </ClCompile>
     <ClCompile Include="FillParamsInfoDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
@@ -509,6 +512,18 @@
     <ClCompile Include="MenuEdit.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="uri_stream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AccountSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Credentials.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadConfig.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IPTVChannelEditor.rc">
@@ -526,56 +541,56 @@
     <Image Include="res\IPTVChannelEditor.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\QR Code.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Save.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\SaveAs.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Edit.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\New.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\Account.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\AddedOnly.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Changed.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\NotChanged.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Download.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Filter.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\FindNext.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\PNG</Filter>
     </Image>
     <Image Include="res\Added.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\PNG</Filter>
     </Image>
-    <Image Include="res\NotAdded.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\AddedOnly.png">
+      <Filter>Resource Files\PNG</Filter>
     </Image>
-    <Image Include="res\Settings.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Changed.png">
+      <Filter>Resource Files\PNG</Filter>
     </Image>
-    <Image Include="res\Unknown.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Download.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\Edit.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\Filter.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\FindNext.png">
+      <Filter>Resource Files\PNG</Filter>
     </Image>
     <Image Include="res\Known.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\New.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\NotAdded.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\NotChanged.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\QR Code.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\Save.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\SaveAs.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\Settings.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\Unknown.png">
+      <Filter>Resource Files\PNG</Filter>
     </Image>
   </ItemGroup>
 </Project>

@@ -134,6 +134,21 @@ public:
 		return src.get_schema() != schema || src.get_path() != path;
 	}
 
+	/// <summary>
+	/// copy info
+	/// </summary>
+	/// <returns>uri_stream&</returns>
+	const uri_base& operator=(const uri_base& src)
+	{
+		if (&src != this)
+		{
+			set_schema(src.get_schema());
+			set_path(src.get_path());
+		}
+
+		return *this;
+	}
+
 protected:
 	std::wstring schema;
 	std::wstring path;

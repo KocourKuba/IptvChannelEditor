@@ -35,16 +35,18 @@ DEALINGS IN THE SOFTWARE.
 //   <icon_url>plugin_file://icons/1.png</icon_url>
 // </tv_category>
 
-class ChannelCategory : public BaseInfo
+class ChannelCategory : public uri_stream
 {
 public:
 	ChannelCategory() = delete;
 	ChannelCategory(const std::wstring& root_path);
-	ChannelCategory(rapidxml::xml_node<>* node, const std::wstring& root_path);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);
 	rapidxml::xml_node<>* GetNode(rapidxml::memory_pool<>& alloc) const;
+
+	const int get_key() const { return key; }
+	void set_key(const int val) { key = val; }
 
 	bool is_empty() const { return channels_map.empty(); }
 
@@ -69,6 +71,7 @@ public:
 private:
 	std::vector<std::shared_ptr<ChannelInfo>> channels;
 	std::map<std::wstring, std::shared_ptr<ChannelInfo>> channels_map;
+	int key = 0;
 	bool disabled = false;
 	bool favorite = false;
 };

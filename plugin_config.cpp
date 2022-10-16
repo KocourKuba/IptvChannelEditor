@@ -16,7 +16,6 @@ plugin_config::plugin_config()
 	EpgParameters params;
 	params.epg_root = "epg_data";
 	params.epg_name = "name";
-	params.epg_name = "name";
 	params.epg_desc = "descr";
 	params.epg_start = "time";
 	params.epg_end = "time_to";

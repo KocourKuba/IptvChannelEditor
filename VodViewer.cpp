@@ -5,14 +5,16 @@
 #include <afxdialogex.h>
 #include "resource.h"
 #include "VodViewer.h"
+#include "IPTVChannelEditor.h"
 #include "StreamContainer.h"
-
-#include "UtilsLib\inet_utils.h"
 #include "PlayListEntry.h"
 #include "PlaylistParseM3U8Thread.h"
-#include "IPTVChannelEditor.h"
 #include "PlaylistParseJsonThread.h"
 #include "IconCache.h"
+#include "AccountSettings.h"
+#include "Constants.h"
+
+#include "UtilsLib\inet_utils.h"
 
 // CVodViewer dialog
 
@@ -94,8 +96,6 @@ BOOL CVodViewer::OnInitDialog()
 	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 1;
 
 	m_wndMoviesList.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, vWidth, 0);
-
-	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
 	if (auto pos = m_account.subdomain.find(':'); pos != std::string::npos)
 	{
@@ -183,7 +183,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	m_evtFinished.ResetEvent();
 
 	TemplateParams params;
-	if (m_plugin_type == PluginType::enEdem)
+	if (m_plugin->get_plugin_type() == PluginType::enEdem)
 	{
 		params.subdomain = m_account.get_portal();
 	}
@@ -207,11 +207,11 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	ThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_hStop = m_evtStop;
-	cfg.m_pluginType = m_plugin_type;
 	cfg.m_url = std::move(url);
 	cfg.m_use_cache = use_cache;
 
 	pThread->SetData(cfg);
+	pThread->SetPlugin(m_plugin);
 	pThread->ResumeThread();
 
 	m_wndProgress.ShowWindow(SW_HIDE);
@@ -289,10 +289,10 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	cfg.m_parent = this;
 	cfg.m_data = data.release();
 	cfg.m_hStop = m_evtStop;
-	cfg.m_pluginType = m_plugin_type;
 	cfg.m_use_cache = use_cache;
 
 	pThread->SetData(cfg);
+	pThread->SetPlugin(m_plugin);
 	pThread->ResumeThread();
 }
 
@@ -308,7 +308,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	m_playlistEntries.reset((Playlist*)wParam);
 
 	std::wregex re;
-	switch (m_plugin_type)
+	switch (m_plugin->get_plugin_type())
 	{
 		case PluginType::enFox:
 		case PluginType::enPing:
@@ -337,7 +337,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 			movie->id = entry->get_epg_id();
 			movie->title = entry->get_title();
 			movie->poster_url = entry->get_icon_uri();
-			movie->url = entry->get_plugin()->get_uri();
+			movie->url = entry->get_uri();
 
 			if (!re._Empty())
 			{
@@ -347,7 +347,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 					movie->title = m[1];
 					movie->year = m[3];
 
-					switch (m_plugin_type)
+					switch (m_plugin->get_plugin_type())
 					{
 						case PluginType::enFox:
 						case PluginType::enPing:
@@ -477,7 +477,7 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 	const auto& movie = m_filtered_movies[pNMItemActivate->iItem];
 
 	std::wstring url = movie->url;
-	switch (m_plugin_type)
+	switch (m_plugin->get_plugin_type())
 	{
 		case PluginType::enAntifriz:
 		case PluginType::enCbilling:
@@ -571,7 +571,7 @@ void CVodViewer::FillCategories()
 	for (const auto& pair : m_vod_categories->vec())
 	{
 		m_wndCategories.AddString(pair.second->name.c_str());
-		if (m_plugin_type == PluginType::enEdem)
+		if (m_plugin->get_plugin_type() == PluginType::enEdem)
 		{
 			for (const auto& filter : pair.second->filters.vec())
 			{
@@ -627,7 +627,7 @@ void CVodViewer::FillGenres()
 
 	if (m_wndGenres.GetCount())
 	{
-		m_wndGenres.InsertString(0, load_string_resource(m_plugin_type == PluginType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
+		m_wndGenres.InsertString(0, load_string_resource(m_plugin->get_plugin_type() == PluginType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
 		m_wndGenres.EnableWindow(TRUE);
 		m_genre_idx = 0;
 	}
@@ -659,7 +659,7 @@ void CVodViewer::FillYears()
 
 	if (m_wndYears.GetCount())
 	{
-		m_wndYears.InsertString(0, load_string_resource(m_plugin_type == PluginType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
+		m_wndYears.InsertString(0, load_string_resource(m_plugin->get_plugin_type() == PluginType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
 		m_wndYears.EnableWindow(TRUE);
 		m_year_idx = 0;
 	}
@@ -691,7 +691,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 	const auto& movie = m_filtered_movies[idx];
 	if (movie->url.empty() && movie->seasons.empty())
 	{
-		switch (m_plugin_type)
+		switch (m_plugin->get_plugin_type())
 		{
 			case PluginType::enAntifriz:
 			case PluginType::enCbilling:
@@ -725,7 +725,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 
 		m_season_idx = 0;
 
-		if (m_plugin_type != PluginType::enEdem)
+		if (m_plugin->get_plugin_type() != PluginType::enEdem)
 		{
 			const auto& str = load_string_resource(IDS_STRING_SEASON);
 			enableSeason = TRUE;
@@ -838,7 +838,7 @@ void CVodViewer::FilterList()
 
 	vod_movie_storage filtered_movies;
 
-	if (m_plugin_type == PluginType::enEdem)
+	if (m_plugin->get_plugin_type() == PluginType::enEdem)
 	{
 		do
 		{
@@ -1160,7 +1160,7 @@ void CVodViewer::GetUrl(int idx)
 	const auto& movie = m_filtered_movies[idx];
 
 	std::wstring url = movie->url;
-	switch (m_plugin_type)
+	switch (m_plugin->get_plugin_type())
 	{
 		case PluginType::enAntifriz:
 		case PluginType::enCbilling:

@@ -25,7 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "Config.h"
 
 // CUpdateSettingsPage dialog
 

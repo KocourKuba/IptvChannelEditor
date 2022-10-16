@@ -25,10 +25,12 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "uri_base.h"
+#include "PluginDefines.h"
 #include "plugin_config.h"
+#include "uri_stream.h"
+#include "Credentials.h"
 
-class Credentials;
+class uri_stream;
 
 struct PlaylistInfo
 {
@@ -57,91 +59,9 @@ struct EpgInfo
 };
 
 /// <summary>
-/// Parsed variable groups for generate playing stream
-/// </summary>
-class ParsingGroups
-{
-	friend class base_plugin;
-
-public:
-	const std::wstring& get_id() const { return is_template ? id : str_hash; }
-	void set_id(const std::wstring& val) { id = val; }
-
-	const std::wstring& get_domain() const { return domain; }
-	void set_domain(const std::wstring& val) { domain = val; }
-
-	const std::wstring& get_port() const { return port; }
-	void set_port(const std::wstring& val) { port = val; }
-
-	const std::wstring& get_login() const { return login; }
-	void set_login(const std::wstring& val) { login = val; }
-
-	const std::wstring& get_password() const { return password; }
-	void set_password(const std::wstring& val) { password = val; }
-
-	const std::wstring& get_subdomain() const { return subdomain; }
-	void set_subdomain(const std::wstring& val) { subdomain = val; }
-
-	const std::wstring& get_token() const { return token; }
-	void set_token(const std::wstring& val) { token = val; }
-
-	const std::wstring& get_int_id() const { return int_id; }
-	void set_int_id(const std::wstring& val) { int_id = val; }
-
-	const std::wstring& get_quality() const { return quality; }
-	void set_quality(const std::wstring& val) { quality = val; }
-
-	const std::wstring& get_host() const { return host; }
-	void set_host(const std::wstring& val) { host = val; }
-
-	/// <summary>
-	/// is uri template
-	/// </summary>
-	void set_is_template(bool val) { is_template = val; }
-	bool get_is_template() const { return is_template; }
-
-	/// <summary>
-	/// clear hash variables
-	/// </summary>
-	void clear_hash() { hash = 0; str_hash.clear(); }
-
-	/// <summary>
-	/// uri hash. crc32 of id for template uri or crc32 of uri
-	/// </summary>
-	int get_hash() const { return hash; }
-	void set_hash(const int val) { hash = val; str_hash = hash ? std::to_wstring(hash) : L""; }
-
-	/// <summary>
-	/// string representation of the hash
-	/// </summary>
-	const std::wstring& get_str_hash() const { return str_hash; }
-	void set_str_hash(const std::wstring& val) { str_hash = val; }
-
-protected:
-	bool is_template = false;
-
-	std::wstring id;
-	std::wstring domain;
-	std::wstring port;
-	std::wstring login;
-	std::wstring password;
-	std::wstring subdomain;
-	std::wstring token;
-	std::wstring int_id;
-	std::wstring quality;
-	std::wstring host;
-
-	// extracted named groups from uri parse template
-	std::vector<std::wstring> regex_named_groups;
-
-	int hash = 0;
-	std::wstring str_hash;
-};
-
-/// <summary>
 /// Interface for stream
 /// </summary>
-class base_plugin : public uri_base, public plugin_config
+class base_plugin : public plugin_config
 {
 public:
 	static constexpr auto REPL_DOMAIN     = L"{DOMAIN}";     // stream url domain (set from playlist)
@@ -183,17 +103,11 @@ public:
 
 public:
 	base_plugin();
-
 	base_plugin(const base_plugin& src);
-
 	virtual ~base_plugin() = default;
 
-	/// <summary>
-	/// clear uri
-	/// </summary>
-	void clear() override;
-
-	bool is_valid() const override { return parser.get_is_template() ? true : uri_base::is_valid(); }
+	void set_plugin_type(PluginType pluginType) { plugin_type = pluginType; }
+	PluginType get_plugin_type() const { return plugin_type; }
 
 	/// <summary>
 	/// save plugin parameters to file
@@ -225,54 +139,11 @@ public:
 	void set_stream_regex_parse_template(const std::wstring& val);
 
 	/// <summary>
-	/// parser parameters
-	/// </summary>
-	void set_parser(const ParsingGroups& src) { parser = src; }
-	const ParsingGroups& get_parser() const noexcept{ return parser; }
-	ParsingGroups& get_parser() noexcept { return parser; }
-
-	/// <summary>
-	/// getter channel hash
-	/// </summary>
-	/// <returns>int</returns>
-	const int get_hash();
-
-	/// <summary>
-	/// recalculate has variables
-	/// </summary>
-	int recalc_hash() { parser.clear_hash(); return get_hash(); }
-
-	/// <summary>
 	/// copy info
 	/// </summary>
 	void copy(const base_plugin* src)
 	{
 		*this = *src;
-	}
-
-	/// <summary>
-	/// compare uri streams
-	/// </summary>
-	/// <returns>bool</returns>
-	bool compare(const base_plugin* src)
-	{
-		return *this == *src;
-	}
-
-	/// <summary>
-	/// copy info
-	/// </summary>
-	/// <returns>uri_stream&</returns>
-	const base_plugin& operator=(const base_plugin& src)
-	{
-		if (&src != this)
-		{
-			set_schema(src.get_schema());
-			set_path(src.get_path());
-			set_parser(src.get_parser());
-		}
-
-		return *this;
 	}
 
 	/// <summary>
@@ -326,7 +197,7 @@ public:
 	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
 	/// <param name="for_time">date to request</param>
 	/// <returns>bool</returns>
-	bool parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time);
+	bool parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time, const uri_stream* info);
 
 	/// <summary>
 	/// returns compiled epg url for channel
@@ -335,21 +206,21 @@ public:
 	/// <param name="epg_id">channel epg id</param>
 	/// <param name="for_time">date to request</param>
 	/// <returns>wstring</returns>
-	std::wstring compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time);
+	std::wstring compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time, const uri_stream* info);
 
 	/// <summary>
 	/// get templated url
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	std::wstring get_templated_stream(TemplateParams& params) const;
+	std::wstring get_templated_stream(const TemplateParams& params, uri_stream* info) const;
 
 	/// <summary>
 	/// get templated url
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	std::wstring get_archive_template(TemplateParams& params) const;
+	std::wstring get_archive_template(const TemplateParams& params, const uri_stream* info) const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// virtual methods
@@ -364,7 +235,7 @@ public:
 	/// parse uri to get id
 	/// </summary>
 	/// <param name="url"></param>
-	virtual void parse_stream_uri(const std::wstring& url);
+	virtual void parse_stream_uri(const std::wstring& url, uri_stream* info);
 
 	/// <summary>
 	/// parse access info
@@ -397,13 +268,14 @@ protected:
 								   static_servers, static_qualities, static_devices, static_profiles,
 								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
 
-	void replace_vars(std::wstring& url, const TemplateParams& params) const;
+	void replace_vars(std::wstring& url, const TemplateParams& params, const uri_stream* info) const;
 
 	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
 protected:
 
 	// non configurable parameters
+	PluginType plugin_type = PluginType::enCustom;
 	std::string short_name;
 
 	std::vector<PlaylistInfo> playlists;
@@ -412,20 +284,9 @@ protected:
 	std::wstring provider_vod_url;
 	bool vod_m3u = false;
 
-	ParsingGroups parser;
-	std::map<std::wstring, std::wstring ParsingGroups::*> parser_mapper = {
-		{L"id"       , &ParsingGroups::id},
-		{L"domain"   , &ParsingGroups::domain},
-		{L"port"     , &ParsingGroups::port},
-		{L"login"    , &ParsingGroups::login},
-		{L"password" , &ParsingGroups::password},
-		{L"subdomain", &ParsingGroups::subdomain},
-		{L"token"    , &ParsingGroups::token},
-		{L"int_id"   , &ParsingGroups::int_id},
-		{L"quality"  , &ParsingGroups::quality},
-		{L"host"     , &ParsingGroups::host},
-	};
-
 	// compiled regex for uri parse template
 	std::wregex uri_parse_regex_template;
+
+	// extracted named groups from uri parse template
+	std::vector<std::wstring> regex_named_groups;
 };

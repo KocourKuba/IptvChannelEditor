@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "base_plugin.h"
 #include "IPTVChannelEditor.h"
+#include "AccountSettings.h"
+#include "Constants.h"
 
 #include "UtilsLib\utils.h"
-#include "UtilsLib\Crc32.h"
 #include "UtilsLib\inet_utils.h"
 
 base_plugin::base_plugin()
@@ -16,14 +17,6 @@ base_plugin::base_plugin()
 base_plugin::base_plugin(const base_plugin& src)
 {
 	*this = src;
-}
-
-void base_plugin::clear()
-{
-	uri_base::clear();
-	parser.set_id(L"");
-	parser.set_is_template(false);
-	parser.clear_hash();
 }
 
 bool base_plugin::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
@@ -110,9 +103,9 @@ void base_plugin::load_plugin_parameters(const std::wstring& filename)
 		load_default();
 }
 
-void base_plugin::parse_stream_uri(const std::wstring& url)
+void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 {
-	uri_base::set_uri(url);
+	info->set_uri(url);
 
 	std::wsmatch m;
 	if (!std::regex_match(url, m, get_stream_regex_parse_template()))
@@ -120,13 +113,13 @@ void base_plugin::parse_stream_uri(const std::wstring& url)
 		return;
 	}
 
-	parser.set_is_template(true);
+	info->set_is_template(true);
 
 	// map groups to parser members
 	size_t pos = 1;
-	for (const auto& group : parser.regex_named_groups)
+	for (const auto& group : regex_named_groups)
 	{
-		parser.*parser_mapper[group] = std::move(m[pos++].str());
+		*info->parser_mapper[group] = std::move(m[pos++].str());
 	}
 }
 
@@ -179,12 +172,12 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	return url;
 }
 
-std::wstring base_plugin::get_templated_stream(TemplateParams& params) const
+std::wstring base_plugin::get_templated_stream(const TemplateParams& params, uri_stream* info) const
 {
 	std::wstring url;
-	if (!parser.get_is_template())
+	if (!info->get_is_template())
 	{
-		url = get_uri();
+		url = info->get_uri();
 	}
 	else
 	{
@@ -207,16 +200,16 @@ std::wstring base_plugin::get_templated_stream(TemplateParams& params) const
 		}
 	}
 
-	replace_vars(url, params);
+	replace_vars(url, params, info);
 
 	return url;
 }
 
-std::wstring base_plugin::get_archive_template(TemplateParams& params) const
+std::wstring base_plugin::get_archive_template(const TemplateParams& params, const uri_stream* info) const
 {
 	std::wstring url;
 	size_t subtype = (size_t)params.streamSubtype;
-	if (parser.get_is_template())
+	if (info->get_is_template())
 	{
 		url = streams_config[subtype].get_stream_arc_template();
 	}
@@ -241,11 +234,13 @@ const std::wregex& base_plugin::get_stream_regex_parse_template()
 
 void base_plugin::set_stream_regex_parse_template(const std::wstring& val)
 {
+	static std::set<std::wstring> groups_mapper = { L"id", L"domain", L"port", L"login", L"password", L"subdomain", L"token", L"int_id", L"quality", L"host", };
+
 	// store original template
 	set_uri_parse_pattern(val);
 
 	// clear named group
-	parser.regex_named_groups.clear();
+	regex_named_groups.clear();
 
 	try
 	{
@@ -254,10 +249,10 @@ void base_plugin::set_stream_regex_parse_template(const std::wstring& val)
 		std::match_results<std::wstring::const_iterator> ms;
 		while (std::regex_search(ecmascript_re, ms, re_group))
 		{
-			if (parser_mapper.find(ms[2]) != parser_mapper.end())
+			if (groups_mapper.find(ms[2]) != groups_mapper.end())
 			{
 				// add only known group!
-				parser.regex_named_groups.emplace_back(ms[2]);
+				regex_named_groups.emplace_back(ms[2]);
 			}
 			ecmascript_re.erase(ms.position(), ms.length());
 		}
@@ -269,18 +264,6 @@ void base_plugin::set_stream_regex_parse_template(const std::wstring& val)
 	{
 
 	}
-}
-
-const int base_plugin::get_hash()
-{
-	if (!parser.get_hash())
-	{
-		// convert to utf8
-		const auto& uri = utils::utf16_to_utf8(parser.get_is_template() ? parser.get_id() : get_uri());
-		parser.set_hash(crc32_bitwise(uri.c_str(), uri.size()));
-	}
-
-	return parser.get_hash();
 }
 
 std::wstring base_plugin::get_vod_url(TemplateParams& params) const
@@ -338,13 +321,13 @@ const std::map<std::wstring, std::wstring>& base_plugin::get_epg_id_mapper(int e
 	return params.epg_mapper;
 }
 
-bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time)
+bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time, const uri_stream* info)
 {
 	if (epg_id.empty())
 		return false;
 
 	std::vector<BYTE> data;
-	const auto& url = compile_epg_url(epg_idx, epg_id, for_time);
+	const auto& url = compile_epg_url(epg_idx, epg_id, for_time, info);
 	if (!utils::DownloadFile(url, data, true) || data.empty())
 		return false;
 
@@ -438,7 +421,7 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 	return false;
 }
 
-std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time)
+std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time, const uri_stream* info)
 {
 	const auto& params = epg_params[epg_idx];
 	std::wstring subst_id;
@@ -466,7 +449,7 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 
 	auto epg_template = epg_params[epg_idx].get_epg_url();
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, subst_id);
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, parser.token);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->token);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, params.get_epg_date_format());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_YEAR, std::to_wstring(dt.GetYear()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_MONTH, std::to_wstring(dt.GetMonth()));
@@ -503,25 +486,25 @@ void base_plugin::put_account_info(const std::string& name, const nlohmann::json
 	JSON_ALL_CATCH;
 }
 
-void base_plugin::replace_vars(std::wstring& url, const TemplateParams& params) const
+void base_plugin::replace_vars(std::wstring& url, const TemplateParams& params, const uri_stream* info) const
 {
-	if (!parser.domain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, parser.domain);
+	if (!info->domain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, info->domain);
 
-	if (!parser.port.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, parser.port);
+	if (!info->port.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, info->port);
 
-	if (!parser.get_id().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_ID, parser.get_id());
+	if (!info->get_id().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_ID, info->get_id());
 
-	if (!parser.token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, parser.token);
+	if (!info->token.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, info->token);
 
-	if (!parser.int_id.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, parser.int_id);
+	if (!info->int_id.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, info->int_id);
 
-	if (!parser.host.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, parser.host);
+	if (!info->host.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->host);
 
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);

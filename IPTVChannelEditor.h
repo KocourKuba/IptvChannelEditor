@@ -31,7 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #endif
 
 #include "resource.h"		// main symbols
-#include "Config.h"
+#include "PluginDefines.h"
 
 // CEdemChannelEditorApp:
 // See EdemChannelEditor.cpp for the implementation of this class

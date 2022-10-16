@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "StreamContainer.h"
-#include "Config.h"
 #include "plugin_antifriz.h"
 #include "plugin_edem.h"
 #include "plugin_fox.h"
@@ -60,17 +59,12 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-StreamContainer::StreamContainer(PluginType type) : stream_type(type)
-{
-	plugin = get_instance(type);
-}
-
 std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 {
 	std::shared_ptr<base_plugin> plugin;
 	switch (type)
 	{
-		case PluginType::enBase: // ChannelsCategory
+		case PluginType::enCustom:
 			return std::make_shared<base_plugin>();
 
 		case PluginType::enAntifriz:
@@ -183,19 +177,9 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 	if (plugin)
 	{
+		plugin->set_plugin_type(type);
 		plugin->load_default();
 	}
 
 	return plugin;
-}
-
-void StreamContainer::set_type(PluginType type)
-{
-	if (stream_type != type)
-	{
-		auto newStream = get_instance(type);
-		newStream->copy(plugin.get());
-		plugin = std::move(newStream);
-		stream_type = type;
-	}
 }

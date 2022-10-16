@@ -1,6 +1,5 @@
 #pragma once
-#include "afxdialogex.h"
-#include "Config.h"
+#include <afxdialogex.h>
 #include "vod_movie.h"
 #include "base_plugin.h"
 #include "PlayListEntry.h"
@@ -63,8 +62,8 @@ private:
 	void GetUrl(int idx);
 
 public:
-	PluginType m_plugin_type = PluginType::enBase;
 	Credentials m_account;
+	std::shared_ptr<base_plugin> m_plugin;
 
 protected:
 	CComboBox m_wndCategories;
@@ -97,7 +96,6 @@ private:
 	vod_movie_storage m_filtered_movies;
 	vod_genre_storage m_genres;
 	utils::vectormap<std::wstring, std::wstring> m_years;
-	std::shared_ptr<base_plugin> m_plugin;
 	// all entries loaded from playlist, filled when parse playlist
 	std::unique_ptr<Playlist> m_playlistEntries;
 	CString m_SearchText;

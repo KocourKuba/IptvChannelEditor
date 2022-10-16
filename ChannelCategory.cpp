@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "ChannelCategory.h"
+#include "StreamContainer.h"
 
 #include "UtilsLib\rapidxml_value.hpp"
 
@@ -36,15 +37,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 ChannelCategory::ChannelCategory(const std::wstring& root_path)
-	: BaseInfo(InfoType::enCategory, PluginType::enBase, root_path)
+	: uri_stream(InfoType::enCategory, nullptr, root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
-}
-
-ChannelCategory::ChannelCategory(rapidxml::xml_node<>* node, const std::wstring& root_path)
-	: BaseInfo(InfoType::enCategory, PluginType::enBase, root_path)
-{
-	ParseNode(node);
 }
 
 void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
@@ -114,9 +109,9 @@ void ChannelCategory::move_channels(const std::shared_ptr<ChannelInfo>& range_st
 
 bool ChannelCategory::add_channel(const std::shared_ptr<ChannelInfo>& channel)
 {
-	if (channels_map.find(channel->plugin->get_parser().get_id()) == channels_map.end())
+	if (channels_map.find(channel->get_id()) == channels_map.end())
 	{
-		channels_map.emplace(channel->plugin->get_parser().get_id(), channel);
+		channels_map.emplace(channel->get_id(), channel);
 		channels.emplace_back(channel);
 		return true;
 	}

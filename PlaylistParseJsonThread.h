@@ -26,7 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include "Config.h"
+#include "base_plugin.h"
+#include "ThreadConfig.h"
 
 class CPlaylistParseJsonThread : public CWinThread
 {
@@ -42,6 +43,7 @@ public:
 	BOOL InitInstance() override;
 
 	void SetData(const ThreadConfig& config) { m_config = config; };
+	void SetPlugin(std::shared_ptr<base_plugin>& parent_plugin) { m_parent_plugin = parent_plugin; };
 
 protected:
 	void ParseSharaclub();
@@ -51,4 +53,5 @@ protected:
 
 protected:
 	ThreadConfig m_config;
+	std::shared_ptr<base_plugin> m_parent_plugin;
 };

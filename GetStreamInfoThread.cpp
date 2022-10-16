@@ -81,7 +81,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 {
 	TRACE("GetChannelStreamInfo: thread %d start\n", index);
 	auto uri = config.m_container->at(index);
-	const auto& url = uri->get_templated_stream(config.m_params);
+	const auto& url = config.m_plugin->get_templated_stream(config.m_params, uri);
 
 	if (url.empty() || ::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
 		return;

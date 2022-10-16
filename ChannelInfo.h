@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "BaseInfo.h"
+#include "uri_stream.h"
 
 #include "UtilsLib\rapidxml.hpp"
 
@@ -46,13 +46,12 @@ DEALINGS IN THE SOFTWARE.
 
 class ChannelCategory;
 
-class ChannelInfo : public BaseInfo
+class ChannelInfo : public uri_stream
 {
 public:
 	ChannelInfo() = delete;
 	ChannelInfo(const ChannelInfo& src);
-	ChannelInfo(const std::wstring& root_path);
-	ChannelInfo(rapidxml::xml_node<>* node, const std::wstring& root_path);
+	ChannelInfo(std::shared_ptr<base_plugin>& plugin, const std::wstring& root_path);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);
@@ -76,7 +75,7 @@ public:
 	{
 		if (this != &src)
 		{
-			BaseInfo::operator=(src);
+			uri_stream::operator=(src);
 			disabled = src.disabled;
 			favorite = src.favorite;
 			categories = src.categories;

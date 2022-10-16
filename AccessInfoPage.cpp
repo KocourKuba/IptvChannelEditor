@@ -28,8 +28,10 @@ DEALINGS IN THE SOFTWARE.
 #include <regex>
 #include "AccessInfoPage.h"
 #include "IPTVChannelEditor.h"
+#include "AccountSettings.h"
 #include "PlayListEntry.h"
 #include "UrlDlg.h"
+#include "Constants.h"
 
 #include "UtilsLib\inet_utils.h"
 
@@ -291,7 +293,7 @@ void CAccessInfoPage::UpdateOptionalControls()
 	params.profile_idx = selected.profile_id;
 	params.quality_idx = selected.quality_id;
 
-	if (m_plugin_type == PluginType::enSharaclub)
+	if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
 	{
 		m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
@@ -616,7 +618,7 @@ BOOL CAccessInfoPage::OnApply()
 	params.profile_idx = selected.profile_id;
 	params.quality_idx = selected.quality_id;
 
-	if (m_plugin_type == PluginType::enSharaclub)
+	if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
 	{
 		params.subdomain = m_list_domain;
 	}
@@ -723,7 +725,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		if (!stream.good()) return;
 
 		Credentials cred;
-		auto entry = std::make_unique<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
+		auto entry = std::make_unique<PlaylistEntry>(m_plugin, GetAppPath(utils::PLUGIN_ROOT));
 		std::wstring line;
 		while (std::getline(stream, line))
 		{
@@ -731,9 +733,8 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			m3u_entry m3uEntry(line);
 			if (!entry->Parse(line, m3uEntry)) continue;
 
-			const auto& parser = entry->get_plugin()->get_parser();
-			const auto& access_key = parser.get_token();
-			const auto& subdomain = parser.get_subdomain();
+			const auto& access_key = entry->get_token();
+			const auto& subdomain = entry->get_subdomain();
 			if (!access_key.empty() && !subdomain.empty() && access_key != L"00000000000000" && subdomain != L"localhost")
 			{
 				int cnt = m_wndAccounts.GetItemCount();
@@ -964,10 +965,8 @@ void CAccessInfoPage::GetAccountInfo()
 	}
 
 	// reset templated flag for new parse
-	auto entry = std::make_shared<PlaylistEntry>(GetConfig().get_plugin_type(), GetAppPath(utils::PLUGIN_ROOT));
-	auto& plugin = entry->plugin;
-	auto& parser = plugin->get_parser();
-	parser.set_is_template(false);
+	auto entry = std::make_shared<PlaylistEntry>(m_plugin, GetAppPath(utils::PLUGIN_ROOT));
+	entry->set_is_template(false);
 
 	TemplateParams params;
 	params.login = std::move(login);
@@ -978,14 +977,14 @@ void CAccessInfoPage::GetAccountInfo()
 	params.profile_idx = selected_cred.profile_id;
 	params.quality_idx = selected_cred.quality_id;
 
-	if (m_plugin_type == PluginType::enTVClub || m_plugin_type == PluginType::enVidok)
+	if (m_plugin->get_plugin_type() == PluginType::enTVClub || m_plugin->get_plugin_type() == PluginType::enVidok)
 	{
 		params.token = m_plugin->get_api_token(selected_cred);
 	}
 
-	auto& pl_url = plugin->get_playlist_url(params);
+	auto& pl_url = m_plugin->get_playlist_url(params);
 	std::list<AccountInfo> acc_info;
-	if (plugin->parse_access_info(params, acc_info))
+	if (m_plugin->parse_access_info(params, acc_info))
 	{
 		for (auto it = acc_info.begin(); it != acc_info.end(); )
 		{
@@ -1021,13 +1020,13 @@ void CAccessInfoPage::GetAccountInfo()
 			{
 				utils::string_rtrim(line, L"\r");
 				m3u_entry m3uEntry(line);
-				if (entry->Parse(line, m3uEntry) && !parser.get_token().empty())
+				if (entry->Parse(line, m3uEntry) && !entry->get_token().empty())
 				{
 					// do not override fake ott and domain for edem
 					if (m_plugin->get_access_type() != AccountAccessType::enOtt)
 					{
-						selected_cred.token = get_utf8(parser.get_token());
-						selected_cred.subdomain = get_utf8(parser.get_domain());
+						selected_cred.token = get_utf8(entry->get_token());
+						selected_cred.subdomain = get_utf8(entry->get_domain());
 					}
 					m_status = _T("Ok");
 					break;

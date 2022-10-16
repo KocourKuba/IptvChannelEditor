@@ -70,6 +70,7 @@ public:
 	int m_selected = 0;
 	int m_lastFound = 0;
 	CString m_search; // m_wndSearch
+	std::shared_ptr<base_plugin> m_parent_plugin;
 
 protected:
 	std::wstring m_iconSource;
