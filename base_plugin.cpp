@@ -175,13 +175,17 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 std::wstring base_plugin::get_templated_stream(const TemplateParams& params, uri_stream* info) const
 {
 	std::wstring url;
+	size_t subtype = (size_t)params.streamSubtype;
 	if (!info->get_is_template())
 	{
 		url = info->get_uri();
+		if (params.shift_back)
+		{
+			url += streams_config[subtype].get_stream_arc_template();
+		}
 	}
 	else
 	{
-		size_t subtype = (size_t)params.streamSubtype;
 		switch (streams_config[subtype].cu_type)
 		{
 			case CatchupType::cu_shift:

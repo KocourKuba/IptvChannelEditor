@@ -422,9 +422,6 @@
     <ClCompile Include="plugin_oneott.cpp">
       <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_smile.cpp">
-      <Filter>Source Files\plugin</Filter>
-    </ClCompile>
     <ClCompile Include="MySplitButton.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
@@ -523,6 +520,9 @@
     </ClCompile>
     <ClCompile Include="ThreadConfig.cpp">
       <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_smile.cpp">
+      <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
