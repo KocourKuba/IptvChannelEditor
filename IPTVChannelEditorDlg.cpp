@@ -125,6 +125,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CACHE_ICON, &CIPTVChannelEditorDlg::OnUpdateButtonCacheIcon)
 	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
+	ON_BN_CLICKED(IDC_CHECK_SHOW_EPG, &CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg)
 	ON_BN_CLICKED(IDC_SPLIT_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED_CH, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChangedCh)
@@ -318,6 +319,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PROGRESS_PROGRAM, m_wndProgressTime);
 	DDX_Control(pDX, IDC_BUTTON_VOD, m_wndBtnVod);
 	DDX_Control(pDX, IDC_CHECK_MAKE_WEB_UPDATE, m_wndMakeWebUpdate);
+	DDX_Control(pDX, IDC_CHECK_SHOW_EPG, m_wndShowEPG);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -517,6 +519,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndEpg1.SetCheck(TRUE);
 	m_wndEpg1.EnableWindow(FALSE);
 	m_wndEpg2.EnableWindow(FALSE);
+	m_wndShowEPG.SetCheck(GetConfig().get_int(true, REG_SHOW_EPG, 1));
 	m_wndEpgID1.EnableWindow(FALSE);
 	m_wndEpgID2.EnableWindow(FALSE);
 	m_wndPluginType.SetCurSel(GetConfig().get_plugin_idx());
@@ -1678,7 +1681,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 {
 	m_wndEpg.SetWindowText(L"");
-	if (!pTreeCtl)
+	if (!pTreeCtl || !m_wndShowEPG.GetCheck())
 		return;
 
 	const auto info = GetBaseInfo(pTreeCtl, pTreeCtl->GetSelectedItem());
@@ -5121,4 +5124,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 
 	pSheet->AddPage(&dlgCfg);
 	pSheet->DoModal();
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg()
+{
+	GetConfig().set_int(true, REG_SHOW_EPG, m_wndShowEPG.GetCheck());
+	UpdateEPG(nullptr);
 }

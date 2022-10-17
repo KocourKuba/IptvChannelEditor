@@ -45,6 +45,7 @@ constexpr auto REG_ICON_SOURCE         = _T("IconSource");
 constexpr auto REG_DAYS_BACK           = _T("DaysBack");
 constexpr auto REG_HOURS_BACK          = _T("HoursBack");
 constexpr auto REG_SHOW_URL            = _T("ShowStreamUrl");
+constexpr auto REG_SHOW_EPG            = _T("ShowEPG");
 
 // Plugin dependent
 

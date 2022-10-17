@@ -195,6 +195,7 @@ protected:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonVod();
 	afx_msg void OnBnDropDownSplitButtonUpdateChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedCheckShowEpg();
 
 	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -320,6 +321,7 @@ protected:
 	CStatic m_wndChInfo;
 	CStatic m_wndPlInfo;
 	CStatic m_wndProgressInfo;
+	CButton m_wndShowEPG;
 	CButton m_wndEpg1;
 	CButton m_wndEpg2;
 	CButton m_wndBtnSettings;

@@ -76,6 +76,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_DEVICE_ID,
 	REG_PROFILE_ID,
 	REG_SHOW_URL,
+	REG_SHOW_EPG,
 	REG_CREDENTIALS,
 	REG_EMBED_INFO,
 	REG_LIST_DOMAIN,
