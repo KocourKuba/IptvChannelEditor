@@ -1,10 +1,15 @@
 #include "pch.h"
 #include "plugin_config.h"
 
+plugin_config::plugin_config()
+{
+	clear();
+}
+
 void plugin_config::clear()
 {
-	title.clear();
-	name.clear();
+	title = "Custom";
+	name = "custom";
 	provider_url.clear();
 	playlist_template.clear();
 	uri_id_parse_pattern.clear();

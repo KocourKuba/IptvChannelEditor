@@ -3118,23 +3118,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	dlgInfo.m_initial_cred = m_cur_account;
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
 	dlgInfo.m_plugin = m_plugin;
+	dlgInfo.m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 
 	pSheet->AddPage(&dlgInfo);
-
-	CPluginConfigPage dlgCfg(m_all_configs_lists);
-	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgCfg.m_plugin = m_plugin;
-	dlgCfg.m_single = false;
-	dlgCfg.m_initial_cred = m_cur_account;
-	dlgCfg.m_pAccessPage = &dlgInfo;
-
-	const auto info = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
-	if (info)
-	{
-		dlgCfg.m_SetID = info->get_epg_id(GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1).c_str();
-	}
-
-	pSheet->AddPage(&dlgCfg);
 
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
@@ -5120,6 +5106,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	CPluginConfigPage dlgCfg(m_all_configs_lists);
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgCfg.m_plugin = m_plugin;
+	dlgCfg.m_initial_cred = m_cur_account;
 	dlgCfg.m_single = true;
 
 	pSheet->AddPage(&dlgCfg);

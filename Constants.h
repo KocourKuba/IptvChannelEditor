@@ -9,12 +9,13 @@ constexpr auto CMP_FLAG_EPG1           = 0x08;
 constexpr auto CMP_FLAG_EPG2           = 0x10;
 constexpr auto CMP_FLAG_ALL            = CMP_FLAG_TITLE | CMP_FLAG_ICON | CMP_FLAG_ARCHIVE | CMP_FLAG_EPG1 | CMP_FLAG_EPG2;
 
-constexpr auto REG_WINDOW_POS		   = _T("WindowPos");
-constexpr auto REG_ICON_WINDOW_POS	   = _T("IconsWindowPos");
-constexpr auto REG_EPG_WINDOW_POS	   = _T("EpgWindowPos");
-constexpr auto REG_VOD_WINDOW_POS	   = _T("VodWindowPos");
-constexpr auto REG_ACC_WINDOW_POS	   = _T("AccountWindowPos");
-constexpr auto REG_CONFIG_WINDOW_POS   = _T("ConfigWindowPos");
+constexpr auto REG_WINDOW_POS		     = _T("WindowPos");
+constexpr auto REG_ICON_WINDOW_POS	     = _T("IconsWindowPos");
+constexpr auto REG_EPG_WINDOW_POS	     = _T("EpgWindowPos");
+constexpr auto REG_VOD_WINDOW_POS	     = _T("VodWindowPos");
+constexpr auto REG_ACC_WINDOW_POS	     = _T("AccountWindowPos");
+constexpr auto REG_PLUGIN_CFG_WINDOW_POS = _T("PluginConfigWindowPos");
+constexpr auto REG_CONFIG_WINDOW_POS     = _T("ConfigWindowPos");
 
 // app
 constexpr auto REG_NEXT_UPDATE         = _T("NextUpdate");

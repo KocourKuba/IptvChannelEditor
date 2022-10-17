@@ -80,6 +80,7 @@ protected:
 	afx_msg void OnBnClickedCheckAutoincrementVersion();
 	afx_msg void OnBnClickedCheckCustomUpdateName();
 	afx_msg void OnBnClickedCheckCustomPackageName();
+	afx_msg void OnBnClickedButtonEditConfig();
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
 
@@ -101,6 +102,7 @@ public:
 	Credentials m_initial_cred;
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
+	uri_stream* m_CurrentStream = nullptr;
 	std::vector<std::wstring> m_all_channels_lists;
 	std::shared_ptr<base_plugin> m_plugin;
 
@@ -108,6 +110,7 @@ protected:
 	CButton m_wndRemove;
 	CButton m_wndNewFromUrl;
 	CButton m_wndEmbed;
+	CButton m_wndEditConfig;
 	CComboBox m_wndServers;
 	CComboBox m_wndDevices;
 	CComboBox m_wndQualities;

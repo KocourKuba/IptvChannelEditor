@@ -65,7 +65,8 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 	switch (type)
 	{
 		case PluginType::enCustom:
-			return std::make_shared<base_plugin>();
+			plugin = std::make_shared<base_plugin>();
+			break;
 
 		case PluginType::enAntifriz:
 			plugin = std::make_shared<plugin_antifriz>();

@@ -34,6 +34,8 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 
 #include "UtilsLib\inet_utils.h"
+#include "ResizedPropertySheet.h"
+#include "PluginConfigPage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -89,6 +91,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_NAME, &CAccessInfoPage::OnEnChangeEditPluginUpdateName)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_PACKAGE_NAME, &CAccessInfoPage::OnEnChangeEditPluginPackageName)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, &CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CAccessInfoPage::OnBnClickedButtonEditConfig)
 END_MESSAGE_MAP()
 
 
@@ -136,6 +139,7 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_CUSTOM_PACKAGE_NAME, m_wndCustomPackageName);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_wndPackageName);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_packageName);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndEditConfig);
 }
 
 BOOL CAccessInfoPage::PreTranslateMessage(MSG* pMsg)
@@ -183,11 +187,14 @@ BOOL CAccessInfoPage::OnInitDialog()
 		{ IDC_EDIT_PLUGIN_UPDATE_NAME, load_string_resource(IDS_STRING_EDIT_PLUGIN_UPDATE_NAME) },
 		{ IDC_CHECK_CUSTOM_PACKAGE_NAME, load_string_resource(IDS_STRING_CHECK_CUSTOM_PACKAGE_NAME) },
 		{ IDC_EDIT_PLUGIN_PACKAGE_NAME, load_string_resource(IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME) },
+		{ IDC_BUTTON_EDIT_CONFIG, load_string_resource(IDS_STRING_BUTTON_EDIT_CONFIG) },
 	};
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(300);
+
+	SetButtonImage(IDB_PNG_EDIT, m_wndEditConfig);
 
 	for (const auto& pair : m_tooltips_info_account)
 	{
@@ -405,13 +412,14 @@ void CAccessInfoPage::UpdateOptionalControls()
 void CAccessInfoPage::CreateAccountsList()
 {
 	m_wndAccounts.DeleteAllItems();
-	for (int i = 0; i < m_wndAccounts.GetHeaderCtrl()->GetItemCount(); i++)
+	for (int i = m_wndAccounts.GetHeaderCtrl()->GetItemCount() - 1; i >=0; i--)
 		m_wndAccounts.DeleteColumn(i);
 
 	CRect rect;
 	m_wndAccounts.GetClientRect(&rect);
 	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 22;
 
+	m_wndNewFromUrl.EnableWindow(FALSE);
 	int last = 0;
 	m_wndAccounts.InsertColumn(last++, L"", LVCFMT_LEFT, 22, 0);
 	switch (m_plugin->get_access_type())
@@ -430,7 +438,7 @@ void CAccessInfoPage::CreateAccountsList()
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndNewFromUrl.ShowWindow(SW_SHOW);
+			m_wndNewFromUrl.EnableWindow(TRUE);
 			break;
 		default: break;
 	}
@@ -1238,4 +1246,27 @@ void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 
 	auto& selected = GetCheckedAccount();
 	selected.ch_web_path = get_utf8(m_channelsWebPath);
+}
+
+void CAccessInfoPage::OnBnClickedButtonEditConfig()
+{
+	auto pSheet = std::make_unique<CResizedPropertySheet>(IDS_STRING_PLUGIN_CONFIG, REG_PLUGIN_CFG_WINDOW_POS);
+	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
+	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
+
+	CPluginConfigPage dlgCfg(m_configs);
+	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
+	dlgCfg.m_plugin = m_plugin;
+	dlgCfg.m_single = false;
+	dlgCfg.m_CurrentStream = m_CurrentStream;
+	dlgCfg.m_initial_cred = m_initial_cred;
+
+	pSheet->AddPage(&dlgCfg);
+
+	auto res = (pSheet->DoModal() == IDOK);
+	if (res)
+	{
+		m_plugin->load_plugin_parameters(m_initial_cred.get_config());
+		CreateAccountsList();
+	}
 }

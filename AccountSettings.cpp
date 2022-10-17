@@ -31,6 +31,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_ICON_WINDOW_POS,
 	REG_EPG_WINDOW_POS,
 	REG_ACC_WINDOW_POS,
+	REG_PLUGIN_CFG_WINDOW_POS,
 	REG_PLAYER,
 	REG_FFPROBE,
 	REG_LISTS_PATH,
@@ -114,6 +115,7 @@ static std::vector<PluginType> all_plugins = {
 	{ PluginType::enTvTeam,     },
 	{ PluginType::enVidok,      },
 	{ PluginType::enVipLime,    },
+	{ PluginType::enCustom,     },
 };
 
 void AccountSettings::SaveSettings()

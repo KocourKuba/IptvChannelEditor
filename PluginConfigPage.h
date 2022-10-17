@@ -82,9 +82,14 @@ protected:
 	afx_msg void OnEnChangeEditParsePattern();
 	afx_msg void OnEnChangeEditParsePatternID();
 
+	afx_msg void OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditUtc();
+	afx_msg void OnChanges();
+
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
+	void AllowSave(bool val = true);
 	void EnableControls();
 	void FillConfigs();
 	void FillControlsCommon();
@@ -98,8 +103,7 @@ private:
 public:
 	bool m_single = false;
 	Credentials m_initial_cred;
-	CString m_SetID;
-	CAccessInfoPage* m_pAccessPage = nullptr;
+	uri_stream* m_CurrentStream = nullptr;
 	std::shared_ptr<base_plugin> m_plugin;
 
 protected:
@@ -176,15 +180,18 @@ protected:
 	CString m_EpgDateFormat;
 	CString m_EpgTimeFormat;
 	CString m_Token;
+	CString m_SetID;
 
 	COleDateTime m_Date;
 
+	time_t m_UTC = 0;
 	int m_Duration = 0;
 	int m_EpgTimezone = 0;
 
 private:
-	std::map<UINT, std::wstring> m_tooltips_info_account;
+	bool m_allow_save = false;
 	bool m_allow_edit = false;
+	std::map<UINT, std::wstring> m_tooltips_info_account;
 	std::vector<std::wstring>& m_configs;
 	std::array<StreamParameters, 2> m_supported_streams;
 	std::array<EpgParameters, 2> m_epg_parameters;

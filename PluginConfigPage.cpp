@@ -68,6 +68,29 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_PROFILES, &CPluginConfigPage::OnBnClickedButtonEditProfiles)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_CONFIG, &CPluginConfigPage::OnCbnSelchangeComboPluginConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_AS_CONFIG, &CPluginConfigPage::OnBnClickedButtonSaveAsConfig)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_PROVIDER_URL, &CPluginConfigPage::OnChanges)
+	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_TEMPLATE, &CPluginConfigPage::OnChanges)
+	ON_CBN_SELCHANGE(IDC_COMBO_CATCHUP_TYPE, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_SHIFT_SUBST, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_DURATION, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_STREAM_TEMPLATE, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_STREAM_ARC_TEMPLATE, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_URL, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_FMT_DATE, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_ROOT, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_NAME, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_START, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_END, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_TZ, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_DESC, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_EPG_FMT_TIME, &CPluginConfigPage::OnChanges)
+	ON_EN_CHANGE(IDC_EDIT_UTC, &CPluginConfigPage::OnEnChangeEditUtc)
+	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER_DATE, &CPluginConfigPage::OnDtnDatetimechangeDatetimepickerDate)
+	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER_DATE, &CPluginConfigPage::OnDtnDatetimechangeDatetimepickerDate)
 END_MESSAGE_MAP()
 
 CPluginConfigPage::CPluginConfigPage(std::vector<std::wstring>& configs)
@@ -152,6 +175,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EDIT_QUALITY, m_wndBtnQualities);
 	DDX_Control(pDX, IDC_CHECK_STATIC_PROFILES, m_wndChkStaticProfiles);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_PROFILES, m_wndBtnProfiles);
+	DDX_Text(pDX, IDC_EDIT_UTC, m_UTC);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -223,6 +247,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 		{ IDC_EDIT_SET_ID, load_string_resource(IDS_STRING_EDIT_SET_ID) },
 		{ IDC_EDIT_SET_TOKEN, load_string_resource(IDS_STRING_EDIT_SET_TOKEN) },
 		{ IDC_DATETIMEPICKER_DATE, load_string_resource(IDS_STRING_DATETIMEPICKER_DATE) },
+		{ IDC_EDIT_UTC, load_string_resource(IDS_STRING_DATETIMEPICKER_DATE) },
 	};
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
@@ -241,6 +266,8 @@ BOOL CPluginConfigPage::OnInitDialog()
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnToggleEdit);
 	SetButtonImage(IDB_PNG_SAVE, m_wndBtnSaveConf);
 	SetButtonImage(IDB_PNG_SAVE_AS, m_wndBtnSaveAsConf);
+
+	OnDtnDatetimechangeDatetimepickerDate(nullptr, nullptr);
 
 	//ASSERT(m_plugin_type != PluginType::enCustom);
 
@@ -340,11 +367,13 @@ BOOL CPluginConfigPage::OnInitDialog()
 	m_wndPluginType.SetCurSel(sel_idx);
 	m_wndPluginType.ShowWindow(m_single ? SW_SHOW : SW_HIDE);
 
-	if (m_pAccessPage)
-	{
-		m_Token = m_pAccessPage->GetCheckedAccount().get_token().c_str();
-	}
+	AllowSave(false);
 
+	m_Token = m_initial_cred.get_token().c_str();
+	if (m_CurrentStream)
+	{
+		m_SetID = m_CurrentStream->get_epg_id(0).c_str();
+	}
 
 	if (m_single)
 	{
@@ -416,10 +445,24 @@ std::wstring CPluginConfigPage::GetSelectedConfig()
 	return name.GetString();
 }
 
+void CPluginConfigPage::AllowSave(bool val /*= true*/)
+{
+	m_allow_save = val;
+	m_wndBtnSaveConf.EnableWindow(m_allow_save);
+
+	CPropertySheet* psheet = (CPropertySheet*)GetParent();
+	//get the button and disable it modifying it's style
+	//psheet->GetDlgItem(IDOK)->ModifyStyle(0, WS_DISABLED);
+	//force the window (button) to be redrawn
+	psheet->GetDlgItem(IDOK)->EnableWindow(!m_allow_save);
+
+}
+
 void CPluginConfigPage::EnableControls()
 {
 	UpdateData(TRUE);
 
+	bool custom = m_plugin->get_plugin_type() == PluginType::enCustom;
 	bool enable = m_allow_edit;
 	if (m_single)
 		enable = false;
@@ -427,7 +470,7 @@ void CPluginConfigPage::EnableControls()
 	m_wndPluginConfigs.EnableWindow(!enable);
 
 	// buttons
-	m_wndBtnSaveConf.EnableWindow(enable && !GetSelectedConfig().empty());
+	m_wndBtnSaveConf.EnableWindow(enable && m_allow_save && !GetSelectedConfig().empty());
 	m_wndBtnSaveAsConf.EnableWindow(enable);
 
 	// common
@@ -436,15 +479,14 @@ void CPluginConfigPage::EnableControls()
 	m_wndShortName.EnableWindow(FALSE);
 	m_wndProviderUrl.EnableWindow(enable);
 	m_wndChkSquareIcons.EnableWindow(enable);
-	m_wndAccessType.EnableWindow(m_plugin->get_plugin_type() == PluginType::enCustom);
+	m_wndAccessType.EnableWindow(enable && custom);
 	m_wndPlaylistTemplate.EnableWindow(enable);
 	m_wndParseStream.EnableWindow(enable);
 	m_wndParseStreamID.EnableWindow(enable);
 
 	// test
-	m_wndBtnPlaylistTest.EnableWindow(enable && m_pAccessPage != nullptr);
-	m_wndBtnStreamParseTest.EnableWindow(enable && !m_ParseStream.IsEmpty());
-	m_wndBtnStreamParseIdTest.EnableWindow(enable && !m_ParseStreamID.IsEmpty());
+	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
+	m_wndBtnStreamParseIdTest.EnableWindow(!m_ParseStreamID.IsEmpty());
 
 	// streams
 	m_wndStreamType.EnableWindow(enable);
@@ -488,10 +530,7 @@ void CPluginConfigPage::EnableControls()
 	m_wndBtnProfiles.EnableWindow(enable && m_plugin->get_static_profiles());
 
 	// epg test
-	m_wndSetID.EnableWindow(enable);
-	m_wndToken.EnableWindow(enable);
-	m_wndDate.EnableWindow(enable);
-	m_wndBtnEpgTest.EnableWindow(enable && !m_EpgUrl.IsEmpty());
+	m_wndBtnEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
 }
 
 void CPluginConfigPage::FillControlsCommon()
@@ -643,7 +682,16 @@ void CPluginConfigPage::OnCbnSelchangeComboPluginType()
 
 void CPluginConfigPage::OnBnClickedButtonToggleEditConfig()
 {
+	if (m_allow_edit && m_allow_save)
+	{
+		if (IDNO == AfxMessageBox(L"Changes not saved. Continue?", MB_ICONWARNING | MB_YESNO))
+			return;
+
+		AllowSave(false);
+	}
+
 	m_allow_edit = !m_allow_edit;
+	AllowSave(false);
 	EnableControls();
 }
 
@@ -654,7 +702,11 @@ void CPluginConfigPage::OnBnClickedButtonSaveConfig()
 	auto name = GetSelectedConfig();
 	if (name.empty()) return;
 
-	if (!m_plugin->save_plugin_parameters(name))
+	if (m_plugin->save_plugin_parameters(name))
+	{
+		AllowSave(false);
+	}
+	else
 	{
 		AfxMessageBox(IDS_STRING_ERR_SAVE_CONFIG, MB_ICONERROR | MB_OK);
 	}
@@ -666,6 +718,7 @@ void CPluginConfigPage::OnBnClickedButtonSaveAsConfig()
 	if (dlg.DoModal() != IDOK || dlg.m_name.IsEmpty())
 		return;
 
+	SaveControlsCommon();
 	std::filesystem::path new_conf = dlg.m_name.GetString();
 	if (new_conf.extension().empty())
 		new_conf += (L".json");
@@ -676,6 +729,7 @@ void CPluginConfigPage::OnBnClickedButtonSaveAsConfig()
 	}
 	else
 	{
+		AllowSave(false);
 		m_configs.emplace_back(new_conf);
 		FillConfigs();
 		m_wndPluginConfigs.SetCurSel((int)m_configs.size() - 1);
@@ -686,8 +740,8 @@ void CPluginConfigPage::OnBnClickedButtonSaveAsConfig()
 void CPluginConfigPage::OnCbnSelchangeComboAccessType()
 {
 	m_plugin->set_access_type((AccountAccessType)m_wndAccessType.GetCurSel());
+	OnChanges();
 	FillControlsCommon();
-	m_pAccessPage->CreateAccountsList();
 }
 
 void CPluginConfigPage::OnCbnDropdownComboAccessType()
@@ -697,21 +751,25 @@ void CPluginConfigPage::OnCbnDropdownComboAccessType()
 
 void CPluginConfigPage::OnCbnSelchangeComboStreamType()
 {
+	OnChanges();
 	FillControlsStream();
 }
 
 void CPluginConfigPage::OnCbnDropdownComboStreamType()
 {
+	OnChanges();
 	SaveControlsStream();
 }
 
 void CPluginConfigPage::OnCbnSelchangeComboEpgType()
 {
+	OnChanges();
 	FillControlsEpg();
 }
 
 void CPluginConfigPage::OnCbnDropdownComboEpgType()
 {
+	OnChanges();
 	SaveControlsEpg();
 }
 
@@ -768,16 +826,15 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 
 void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 {
-	const auto& selected = m_pAccessPage->GetCheckedAccount();
 	TemplateParams params;
-	params.token = selected.get_token();
-	params.login = selected.get_login();
-	params.password = selected.get_password();
-	params.subdomain = selected.get_subdomain();
-	params.server_idx = selected.server_id;
-	params.device_idx = selected.device_id;
-	params.profile_idx = selected.profile_id;
-	params.quality_idx = selected.quality_id;
+	params.token = m_initial_cred.get_token();
+	params.login = m_initial_cred.get_login();
+	params.password = m_initial_cred.get_password();
+	params.subdomain = m_initial_cred.get_subdomain();
+	params.server_idx = m_initial_cred.server_id;
+	params.device_idx = m_initial_cred.device_id;
+	params.profile_idx = m_initial_cred.profile_id;
+	params.quality_idx = m_initial_cred.quality_id;
 
 	const auto& url = m_plugin->get_playlist_url(params);
 	std::vector<BYTE> data;
@@ -814,12 +871,14 @@ void CPluginConfigPage::OnBnClickedButtonStreamIdParse()
 
 void CPluginConfigPage::OnEnChangeEditParsePattern()
 {
+	OnChanges();
 	UpdateData(TRUE);
 	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
 }
 
 void CPluginConfigPage::OnEnChangeEditParsePatternID()
 {
+	OnChanges();
 	UpdateData(TRUE);
 	m_wndBtnStreamParseIdTest.EnableWindow(!m_ParseStreamID.IsEmpty());
 }
@@ -832,7 +891,10 @@ void CPluginConfigPage::OnBnClickedButtonEditServers()
 	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
+	{
+		OnChanges();
 		m_plugin->set_servers_list(dlg.m_paramsList);
+	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditDevices()
@@ -843,7 +905,10 @@ void CPluginConfigPage::OnBnClickedButtonEditDevices()
 	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
+	{
+		OnChanges();
 		m_plugin->set_devices_list(dlg.m_paramsList);
+	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditQuality()
@@ -854,7 +919,10 @@ void CPluginConfigPage::OnBnClickedButtonEditQuality()
 	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
+	{
+		OnChanges();
 		m_plugin->set_qualities_list(dlg.m_paramsList);
+	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditProfiles()
@@ -865,35 +933,76 @@ void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
+	{
+		OnChanges();
 		m_plugin->set_profiles_list(dlg.m_paramsList);
+	}
 }
 
 void CPluginConfigPage::OnCbnSelchangeComboPluginConfig()
 {
+	AllowSave(false);
 	m_plugin->load_plugin_parameters(GetSelectedConfig());
 	FillControlsCommon();
 }
 
-
 void CPluginConfigPage::OnBnClickedCheckStaticServers()
 {
-	GetDlgItem(IDC_BUTTON_EDIT_SERVERS)->EnableWindow(m_wndChkStaticServers.GetCheck());
+	OnChanges();
+	m_wndBtnServers.EnableWindow(m_wndChkStaticServers.GetCheck());
 }
 
 
 void CPluginConfigPage::OnBnClickedCheckStaticDevices()
 {
-	GetDlgItem(IDC_BUTTON_EDIT_DEVICES)->EnableWindow(m_wndChkStaticDevices.GetCheck());
+	OnChanges();
+	m_wndBtnDevices.EnableWindow(m_wndChkStaticDevices.GetCheck());
 }
 
 
 void CPluginConfigPage::OnBnClickedCheckStaticQualities()
 {
-	GetDlgItem(IDC_BUTTON_EDIT_QUALITY)->EnableWindow(m_wndChkStaticQualities.GetCheck());
+	OnChanges();
+	m_wndBtnQualities.EnableWindow(m_wndChkStaticQualities.GetCheck());
 }
 
 
 void CPluginConfigPage::OnBnClickedCheckStaticProfiles()
 {
-	GetDlgItem(IDC_BUTTON_EDIT_PROFILES)->EnableWindow(m_wndChkStaticProfiles.GetCheck());
+	OnChanges();
+	m_wndBtnProfiles.EnableWindow(m_wndChkStaticProfiles.GetCheck());
+}
+
+void CPluginConfigPage::OnChanges()
+{
+	AllowSave();
+}
+
+void CPluginConfigPage::OnEnChangeEditUtc()
+{
+	UpdateData(TRUE);
+	std::tm lt = fmt::localtime(m_UTC);
+	m_Date.SetDate(lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday);
+	UpdateData(FALSE);
+}
+
+void CPluginConfigPage::OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	UpdateData(TRUE);
+
+	CTime nt(m_Date.GetYear(), m_Date.GetMonth(), m_Date.GetDay(), m_Date.GetHour(), m_Date.GetMinute(), m_Date.GetSecond());
+
+	time_t selTime = nt.GetTime();
+	std::tm lt{};
+	localtime_s(&lt, &selTime);
+	lt.tm_hour = 0;
+	lt.tm_min = 0;
+	lt.tm_sec = 0;
+	time_t dayTime = std::mktime(&lt);
+	m_UTC = dayTime;
+
+	if (pResult)
+		*pResult = 0;
+
+	UpdateData(FALSE);
 }

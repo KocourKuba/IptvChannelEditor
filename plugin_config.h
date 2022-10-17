@@ -171,7 +171,7 @@ struct StreamParameters
 class plugin_config
 {
 public:
-	plugin_config() = default;
+	plugin_config();
 
 public:
 	/// <summary>

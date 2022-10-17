@@ -12,6 +12,7 @@ base_plugin::base_plugin()
 	PlaylistInfo info;
 	info.name = load_string_resource(IDS_STRING_PLAYLIST);
 	playlists.emplace_back(info);
+	short_name = "custom";
 }
 
 base_plugin::base_plugin(const base_plugin& src)
