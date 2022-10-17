@@ -687,6 +687,7 @@ void CPluginConfigPage::OnCbnSelchangeComboAccessType()
 {
 	m_plugin->set_access_type((AccountAccessType)m_wndAccessType.GetCurSel());
 	FillControlsCommon();
+	m_pAccessPage->CreateAccountsList();
 }
 
 void CPluginConfigPage::OnCbnDropdownComboAccessType()

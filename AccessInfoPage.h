@@ -83,10 +83,12 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
 
+public:
+	void CreateAccountsList();
+
 private:
 	int GetCheckedAccountIdx();
 	void GetAccountInfo();
-	void CreateAccountsList();
 	void CreateAccountInfo();
 	void CreateChannelsList();
 	void FillChannelsList();

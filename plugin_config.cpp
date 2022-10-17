@@ -1,17 +1,39 @@
 #include "pch.h"
 #include "plugin_config.h"
 
-plugin_config::plugin_config()
+void plugin_config::clear()
 {
-	streams_config[0].stream_type = StreamType::enHLS;
-	streams_config[0].cu_type = CatchupType::cu_shift;
-	streams_config[0].cu_subst = "utc";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
-	streams_config[0].uri_custom_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	title.clear();
+	name.clear();
+	provider_url.clear();
+	playlist_template.clear();
+	uri_id_parse_pattern.clear();
+	uri_parse_pattern.clear();
+	servers_list.clear();
+	qualities_list.clear();
+	devices_list.clear();
+	profiles_list.clear();
+	square_icons = false;
+	per_channel_token = false;
+	requested_token = false;
+	static_servers = false;
+	static_qualities = false;
+	static_devices = false;
+	static_profiles = false;
 
-	streams_config[1].stream_type = StreamType::enMPEGTS;
-	streams_config[1].cu_type = CatchupType::cu_flussonic;
-	streams_config[1].cu_subst = "archive";
+	StreamParameters hls;
+	hls.stream_type = StreamType::enHLS;
+	hls.cu_type = CatchupType::cu_shift;
+	hls.cu_subst = "utc";
+	hls.uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	hls.uri_custom_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+
+	StreamParameters mpeg;
+	mpeg.stream_type = StreamType::enMPEGTS;
+	mpeg.cu_type = CatchupType::cu_flussonic;
+	mpeg.cu_subst = "archive";
+
+	streams_config = { hls, mpeg };
 
 	EpgParameters params;
 	params.epg_root = "epg_data";

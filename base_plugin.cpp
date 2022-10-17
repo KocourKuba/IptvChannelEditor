@@ -63,6 +63,7 @@ bool base_plugin::save_plugin_parameters(const std::wstring& filename, bool use_
 
 void base_plugin::load_plugin_parameters(const std::wstring& filename)
 {
+	clear();
 	if (filename.empty())
 	{
 		load_default();

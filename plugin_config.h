@@ -171,9 +171,14 @@ struct StreamParameters
 class plugin_config
 {
 public:
-	plugin_config();
+	plugin_config() = default;
 
 public:
+	/// <summary>
+	/// clear all parameters
+	/// </summary>
+	void clear();
+
 	/// <summary>
 	/// property plugin title
 	/// </summary>

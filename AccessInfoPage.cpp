@@ -926,6 +926,7 @@ void CAccessInfoPage::GetAccountInfo()
 	m_status.LoadString(IDS_STRING_STATUS_TEXT);
 	m_wndProfiles.ResetContent();
 	m_wndProfiles.EnableWindow(FALSE);
+	m_wndInfo.DeleteAllItems();
 
 	auto& selected_cred = GetCheckedAccount();
 	if (selected_cred.not_valid)
@@ -961,10 +962,12 @@ void CAccessInfoPage::GetAccountInfo()
 			portal = utils::utf8_to_utf16(selected_cred.portal);
 			break;
 
+		case AccountAccessType::enNone:
+			return;
 		default: break;
 	}
 
-	// reset templated flag for new parse
+	// reset template flag for new parse
 	auto entry = std::make_shared<PlaylistEntry>(m_plugin, GetAppPath(utils::PLUGIN_ROOT));
 	entry->set_is_template(false);
 
@@ -1034,8 +1037,6 @@ void CAccessInfoPage::GetAccountInfo()
 			}
 		}
 	}
-
-	m_wndInfo.DeleteAllItems();
 
 	int idx = 0;
 	m_wndInfo.InsertItem(idx, load_string_resource(IDS_STRING_STATUS).c_str());
