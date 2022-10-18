@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_sharatv.h"
+#include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,7 +46,12 @@ void plugin_sharatv::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "https://shara-tv.org/";
-	playlist_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";

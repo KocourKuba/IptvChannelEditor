@@ -26,6 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_oneott.h"
+#include "IPTVChannelEditor.h"
+
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
@@ -47,7 +49,12 @@ void plugin_oneott::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "http://1ott.net/";
-	playlist_template = "http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 
 	streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";

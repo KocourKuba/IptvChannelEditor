@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_tvteam.h"
+#include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,8 +44,14 @@ void plugin_tvteam::load_default()
 	title = "TV Team";
 	name = "tv.team";
 	access_type = AccountAccessType::enPin;
+
 	provider_url = "https://tv.team/";
-	playlist_template = "http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
 
 	square_icons = true;

@@ -64,6 +64,10 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 			csID = L"{PROFILE_ID}";
 			csName = L"{PROFILE}";
 			break;
+		case 4:
+			csID.LoadString(IDS_STRING_NAME);
+			csName.LoadString(IDS_STRING_TEMPLATE);
+			break;
 		default:
 			break;
 	}

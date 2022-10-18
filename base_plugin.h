@@ -25,20 +25,11 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "PluginDefines.h"
 #include "plugin_config.h"
 #include "uri_stream.h"
 #include "Credentials.h"
 
 class uri_stream;
-
-struct PlaylistInfo
-{
-	std::wstring name;
-	std::wstring id;
-	bool is_default = false;
-	bool is_file = false;
-};
 
 struct AccountInfo
 {
@@ -106,37 +97,31 @@ public:
 	base_plugin(const base_plugin& src);
 	virtual ~base_plugin() = default;
 
-	void set_plugin_type(PluginType pluginType) { plugin_type = pluginType; }
-	PluginType get_plugin_type() const { return plugin_type; }
+	void clear() override;
+
+	/// <summary>
+	/// load default settings
+	/// </summary>
+	/// <param name="url"></param>
+	void load_default() override;
 
 	/// <summary>
 	/// save plugin parameters to file
 	/// </summary>
-	bool save_plugin_parameters(const std::wstring& filename, bool use_full_path = false);
+	bool save_plugin_parameters(const std::wstring& filename, bool use_full_path = false) override;
 
 	/// <summary>
 	/// load plugin parameters to file
 	/// </summary>
-	void load_plugin_parameters(const std::wstring& filename);
-
-	/// <summary>
-	/// plugin short name
-	/// </summary>
-	const std::string& get_short_name() const { return short_name; }
-	void set_short_name(const std::string& val) { short_name = val; }
-
-	/// <summary>
-	/// plugin short name wide char
-	/// </summary>
-	std::wstring get_short_name_w() const { return utils::utf8_to_utf16(short_name); }
-	void set_short_name_w(const std::wstring& val) { short_name = utils::utf16_to_utf8(val); }
+	void load_plugin_parameters(const std::wstring& filename) override;
 
 	/// <summary>
 	/// regex of uri parse template
 	/// regex string can contain named groups that will be extracted
 	/// </summary>
-	const std::wregex& get_stream_regex_parse_template();
-	void set_stream_regex_parse_template(const std::wstring& val);
+
+	const std::wregex& get_regex_parse_stream_template() const { return regex_uri_template; }
+	void set_regex_parse_stream(const std::wstring& val);
 
 	/// <summary>
 	/// copy info
@@ -147,33 +132,15 @@ public:
 	}
 
 	/// <summary>
-	/// returns link to provider api url
-	/// </summary>
-	/// <returns>wstring</returns>
-	const std::wstring& get_provider_api_url() const { return provider_api_url; }
-
-	/// <summary>
 	/// returns array of playlists
 	/// </summary>
 	/// <returns>vector<PlaylistInfo>&</returns>
-	const std::vector<PlaylistInfo>& get_playlists() const { return playlists; };
+	//const std::vector<PlaylistInfo>& get_playlists() const { return playlists; };
 
 	/// <summary>
 	/// clear profile list
 	/// </summary>
 	void clear_profiles_list() { profiles_list.clear(); }
-
-	/// <summary>
-	/// returns is vod m3u based
-	/// </summary>
-	/// <returns>bool</returns>
-	bool is_vod_m3u() const { return vod_m3u; }
-
-	/// <summary>
-	/// returns vod url template
-	/// </summary>
-	/// <returns>wstring</returns>
-	const std::wstring& get_vod_template() const { return provider_vod_url; };
 
 	/// <summary>
 	/// returns link to vod download
@@ -226,12 +193,6 @@ public:
 	// virtual methods
 
 	/// <summary>
-	/// load default settings
-	/// </summary>
-	/// <param name="url"></param>
-	virtual void load_default() {}
-
-	/// <summary>
 	/// parse uri to get id
 	/// </summary>
 	/// <param name="url"></param>
@@ -262,30 +223,13 @@ public:
 
 protected:
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(base_plugin, access_type, short_name, title, name, provider_url, //-V601
-								   playlist_template, uri_id_parse_pattern, uri_parse_pattern,
-								   square_icons, requested_token,
-								   static_servers, static_qualities, static_devices, static_profiles,
-								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
-
 	void replace_vars(std::wstring& url, const TemplateParams& params, const uri_stream* info) const;
-
 	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
 protected:
 
-	// non configurable parameters
-	PluginType plugin_type = PluginType::enCustom;
-	std::string short_name;
-
-	std::vector<PlaylistInfo> playlists;
-
-	std::wstring provider_api_url;
-	std::wstring provider_vod_url;
-	bool vod_m3u = false;
-
 	// compiled regex for uri parse template
-	std::wregex uri_parse_regex_template;
+	std::wregex regex_uri_template;
 
 	// extracted named groups from uri parse template
 	std::vector<std::wstring> regex_named_groups;

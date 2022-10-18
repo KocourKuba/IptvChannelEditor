@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_lightiptv.h"
+#include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,9 +46,14 @@ void plugin_lightiptv::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://ottbill.cc/";
-	playlist_template = "http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
-	uri_id_parse_pattern = "^#EXTINF:.+tvg-id=\"(?<id>[^\"]+)\"";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
+	uri_id_parse_pattern = "^#EXTINF:.+tvg-id=\"(?<id>[^\"]+)\"";
 
 	square_icons = true;
 

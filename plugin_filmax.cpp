@@ -46,9 +46,14 @@ void plugin_filmax::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "https://filmax-tv.ru/";
-	playlist_template = "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
-	uri_id_parse_pattern = "^#EXTINF:.+tvg-name=\"(?<id>[^\"]+)\"";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
+	uri_id_parse_pattern = "^#EXTINF:.+tvg-name=\"(?<id>[^\"]+)\"";
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].cu_subst = "archive";

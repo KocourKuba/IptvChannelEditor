@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_ping.h"
+#include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,9 +48,14 @@ void plugin_ping::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "http://ping-tv.com/";
-	playlist_template = "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/tv.m3u";
-	uri_id_parse_pattern = "^#EXTINF:.+CUID=\"(?<id>[^\"]+)\"";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/tv.m3u";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
+	uri_id_parse_pattern = "^#EXTINF:.+CUID=\"(?<id>[^\"]+)\"";
 
 	square_icons = true;
 	per_channel_token = true;

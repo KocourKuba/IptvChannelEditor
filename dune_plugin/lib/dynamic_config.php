@@ -85,6 +85,8 @@ class dynamic_config
             $param_idx = $config[STREAM_TYPE];
             $params = $this->get_stream_params($param_idx);
             $this->set_stream_params($param_idx, array_merge($params, $config));
+            //hd_print("stream_config: $param_idx");
+            //foreach($this->get_stream_params($param_idx) as $key=>$value) hd_print("$key: $value");
         }
 
         foreach ($settings[EPG_PARAMS] as $epg)
@@ -92,6 +94,8 @@ class dynamic_config
             $param_idx = $epg[EPG_PARAM];
             $params = $this->get_epg_params($param_idx);
             $this->set_epg_params($param_idx, array_merge($params, $epg));
+            //hd_print("epg_param: $param_idx");
+            //foreach($epg as $key=>$value) hd_print("$key: $value");
         }
 
         $servers = array();

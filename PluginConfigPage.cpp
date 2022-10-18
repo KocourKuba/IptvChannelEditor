@@ -43,7 +43,6 @@ IMPLEMENT_DYNAMIC(CPluginConfigPage, CMFCPropertyPage)
 BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CPluginConfigPage::OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CPluginConfigPage::OnToolTipText)
-	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CPluginConfigPage::OnCbnSelchangeComboPluginType)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CPluginConfigPage::OnBnClickedButtonToggleEditConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_CONFIG, &CPluginConfigPage::OnBnClickedButtonSaveConfig)
 	ON_CBN_SELCHANGE(IDC_COMBO_ACCESS_TYPE, &CPluginConfigPage::OnCbnSelchangeComboAccessType)
@@ -68,6 +67,9 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_PROFILES, &CPluginConfigPage::OnBnClickedButtonEditProfiles)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_CONFIG, &CPluginConfigPage::OnCbnSelchangeComboPluginConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_AS_CONFIG, &CPluginConfigPage::OnBnClickedButtonSaveAsConfig)
+	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPage::OnCbnSelchangeComboPlaylistTemplate)
+	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPage::OnCbnDropdownComboPlaylistTemplate)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_TEMPLATES, &CPluginConfigPage::OnBnClickedButtonEditTemplates)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::OnChanges)
 	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::OnChanges)
 	ON_EN_CHANGE(IDC_EDIT_PROVIDER_URL, &CPluginConfigPage::OnChanges)
@@ -104,7 +106,6 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
-	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_CONFIG, m_wndPluginConfigs);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndBtnToggleEdit);
 	DDX_Control(pDX, IDC_BUTTON_SAVE_CONFIG, m_wndBtnSaveConf);
@@ -161,6 +162,8 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SET_TOKEN, m_Token);
 	DDX_Control(pDX, IDC_DATETIMEPICKER_DATE, m_wndDate);
 	DDX_DateTimeCtrl(pDX, IDC_DATETIMEPICKER_DATE, m_Date);
+	DDX_Control(pDX, IDC_COMBO_PLAYLIST_TEMPLATE, m_wndPlaylistTemplates);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_TEMPLATES, m_wndBtnEditTemplates);
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_wndPlaylistTemplate);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_PlaylistTemplate);
 	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndChkSquareIcons);
@@ -261,30 +264,40 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	m_wndToolTipCtrl.Activate(TRUE);
 
-	RestoreWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);
-
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnToggleEdit);
 	SetButtonImage(IDB_PNG_SAVE, m_wndBtnSaveConf);
 	SetButtonImage(IDB_PNG_SAVE_AS, m_wndBtnSaveAsConf);
 
-	OnDtnDatetimechangeDatetimepickerDate(nullptr, nullptr);
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnEditTemplates);
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnServers);
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnDevices);
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnQualities);
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnProfiles);
 
-	//ASSERT(m_plugin_type != PluginType::enCustom);
+	m_wndBtnToggleEdit.EnableWindow(TRUE);
+	m_plugin->load_plugin_parameters(m_initial_cred.get_config());
 
-	// Fill available plugins
-	int sel_idx = 0;
-	for (const auto& item : GetConfig().get_all_plugins())
+	AssignMacros();
+	FillConfigs();
+
+	UpdateDateTimestamp(true);
+	m_Token = m_initial_cred.get_token().c_str();
+	if (m_CurrentStream)
 	{
-		auto plugin = StreamContainer::get_instance(item);
-		if (!plugin) continue;
-
-		int idx = m_wndPluginType.AddString(plugin->get_title().c_str());
-		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item);
-		if (item == m_plugin->get_plugin_type())
-		{
-			sel_idx = idx;
-		}
+		m_SetID = m_CurrentStream->get_epg_id(0).c_str();
 	}
+
+	FillControlsCommon();
+
+	RestoreWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);
+	AllowSave(false);
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CPluginConfigPage::AssignMacros()
+{
 	std::vector<std::wstring> pl_params =
 	{
 				L"{SUBDOMAIN}",
@@ -300,25 +313,25 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	std::vector<std::wstring> strm_params(std::move(pl_params));
 	strm_params.insert(strm_params.end(),
-	{
-				L"{DOMAIN}",
-				L"{PORT}",
-				L"{ID}",
-				L"{INT_ID}",
-				L"{HOST}",
-	});
+					   {
+								   L"{DOMAIN}",
+								   L"{PORT}",
+								   L"{ID}",
+								   L"{INT_ID}",
+								   L"{HOST}",
+					   });
 
 	m_wndStreamTemplate.SetTemplateParams(strm_params);
 
 	std::vector<std::wstring> arc_params(std::move(strm_params));
 	arc_params.insert(arc_params.end(),
-	{
-				L"{CU_SUBST}",
-				L"{START}",
-				L"{NOW}",
-				L"{DURATION}",
-				L"{OFFSET}",
-	});
+					  {
+								  L"{CU_SUBST}",
+								  L"{START}",
+								  L"{NOW}",
+								  L"{DURATION}",
+								  L"{OFFSET}",
+					  });
 
 	m_wndStreamArchiveTemplate.SetTemplateParams(arc_params);
 	m_wndCustomStreamArchiveTemplate.SetTemplateParams(arc_params);
@@ -351,52 +364,32 @@ BOOL CPluginConfigPage::OnInitDialog()
 				L"{TIMESTAMP}",
 	};
 	m_wndEpgStartFormat.SetTemplateParams(epg_start_time_params);
-
-	FillConfigs();
-
-	if (m_initial_cred.config.empty())
-	{
-		m_wndPluginConfigs.SetCurSel(0);
-	}
-	else
-	{
-		m_wndPluginConfigs.SelectString(0, utils::utf8_to_utf16(m_initial_cred.config).c_str());
-	}
-
-	m_wndBtnToggleEdit.EnableWindow(!m_single);
-	m_wndPluginType.SetCurSel(sel_idx);
-	m_wndPluginType.ShowWindow(m_single ? SW_SHOW : SW_HIDE);
-
-	AllowSave(false);
-
-	m_Token = m_initial_cred.get_token().c_str();
-	if (m_CurrentStream)
-	{
-		m_SetID = m_CurrentStream->get_epg_id(0).c_str();
-	}
-
-	if (m_single)
-	{
-		OnCbnSelchangeComboPluginType();
-	}
-	else
-	{
-		m_plugin->load_plugin_parameters(m_initial_cred.get_config());
-		FillControlsCommon();
-	}
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CPluginConfigPage::FillConfigs()
 {
 	m_wndPluginConfigs.ResetContent();
+	int cur_idx = 0;
 	for (const auto& entry : m_configs)
 	{
-		m_wndPluginConfigs.AddString(entry.c_str());
+		int idx = m_wndPluginConfigs.AddString(entry.c_str());
+		if (!m_initial_cred.config.empty() && entry == m_initial_cred.get_config())
+			cur_idx = idx;
 	}
-	m_wndPluginConfigs.SetCurSel(0);
+
+	m_wndPluginConfigs.SetCurSel(cur_idx);
+}
+
+void CPluginConfigPage::FillPlaylistTemplates()
+{
+	m_wndPlaylistTemplates.ResetContent();
+	for (const auto& entry : m_plugin->get_playlist_templates())
+	{
+		m_wndPlaylistTemplates.AddString(entry.get_name().c_str());
+	}
+
+	m_wndPlaylistTemplates.SetCurSel(m_plugin->get_playlist_template_idx());
+	m_PlaylistTemplate = m_plugin->get_playlist_template(m_plugin->get_playlist_template_idx()).c_str();
 }
 
 BOOL CPluginConfigPage::OnApply()
@@ -448,7 +441,7 @@ std::wstring CPluginConfigPage::GetSelectedConfig()
 void CPluginConfigPage::AllowSave(bool val /*= true*/)
 {
 	m_allow_save = val;
-	m_wndBtnSaveConf.EnableWindow(m_allow_save);
+	m_wndBtnSaveConf.EnableWindow(m_allow_save && !GetSelectedConfig().empty());
 
 	CPropertySheet* psheet = (CPropertySheet*)GetParent();
 	//get the button and disable it modifying it's style
@@ -464,14 +457,11 @@ void CPluginConfigPage::EnableControls()
 
 	bool custom = m_plugin->get_plugin_type() == PluginType::enCustom;
 	bool enable = m_allow_edit;
-	if (m_single)
-		enable = false;
 
 	m_wndPluginConfigs.EnableWindow(!enable);
 
 	// buttons
 	m_wndBtnSaveConf.EnableWindow(enable && m_allow_save && !GetSelectedConfig().empty());
-	m_wndBtnSaveAsConf.EnableWindow(enable);
 
 	// common
 	m_wndName.EnableWindow(enable);
@@ -480,6 +470,8 @@ void CPluginConfigPage::EnableControls()
 	m_wndProviderUrl.EnableWindow(enable);
 	m_wndChkSquareIcons.EnableWindow(enable);
 	m_wndAccessType.EnableWindow(enable && custom);
+	m_wndPlaylistTemplates.EnableWindow(enable);
+	m_wndBtnEditTemplates.EnableWindow(enable);
 	m_wndPlaylistTemplate.EnableWindow(enable);
 	m_wndParseStream.EnableWindow(enable);
 	m_wndParseStreamID.EnableWindow(enable);
@@ -544,7 +536,6 @@ void CPluginConfigPage::FillControlsCommon()
 	m_Title = m_plugin->get_title().c_str();
 	m_ShortName = m_plugin->get_short_name_w().c_str();
 	m_ProviderUrl = m_plugin->get_provider_url().c_str();
-	m_PlaylistTemplate = m_plugin->get_playlist_template().c_str();
 	m_ParseStream = m_plugin->get_uri_parse_pattern().c_str();
 	m_ParseStreamID = m_plugin->get_uri_id_parse_pattern().c_str();
 
@@ -554,7 +545,7 @@ void CPluginConfigPage::FillControlsCommon()
 	m_wndStreamType.SetCurSel(0);
 	m_wndEpgType.SetCurSel(0);
 
-	UpdateData(FALSE);
+	FillPlaylistTemplates();
 	FillControlsStream();
 	FillControlsEpg();
 	EnableControls();
@@ -573,7 +564,7 @@ void CPluginConfigPage::SaveControlsCommon()
 	m_plugin->set_title(m_Title.GetString());
 	m_plugin->set_short_name_w(m_ShortName.GetString());
 	m_plugin->set_provider_url(m_ProviderUrl.GetString());
-	m_plugin->set_playlist_template(m_PlaylistTemplate.GetString());
+	m_plugin->set_playlist_template(m_plugin->get_playlist_template_idx(), m_PlaylistTemplate.GetString());
 	m_plugin->set_uri_parse_pattern(m_ParseStream.GetString());
 	m_plugin->set_uri_id_parse_pattern(m_ParseStreamID.GetString());
 
@@ -672,12 +663,29 @@ void CPluginConfigPage::SaveControlsEpg()
 	epg.epg_timezone = m_EpgTimezone;
 }
 
-void CPluginConfigPage::OnCbnSelchangeComboPluginType()
+void CPluginConfigPage::UpdateDateTimestamp(bool dateToUtc)
 {
-	m_allow_edit = false;
-	m_plugin = StreamContainer::get_instance((PluginType)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()));
-	m_plugin->load_plugin_parameters(m_initial_cred.get_config());
-	FillControlsCommon();
+	UpdateData(TRUE);
+	if (dateToUtc)
+	{
+		CTime nt(m_Date.GetYear(), m_Date.GetMonth(), m_Date.GetDay(), m_Date.GetHour(), m_Date.GetMinute(), m_Date.GetSecond());
+
+		time_t selTime = nt.GetTime();
+		std::tm lt{};
+		localtime_s(&lt, &selTime);
+		lt.tm_hour = 0;
+		lt.tm_min = 0;
+		lt.tm_sec = 0;
+		time_t dayTime = std::mktime(&lt);
+		m_UTC = dayTime;
+	}
+	else
+	{
+		std::tm lt = fmt::localtime(m_UTC);
+		m_Date.SetDate(lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday);
+	}
+
+	UpdateData(FALSE);
 }
 
 void CPluginConfigPage::OnBnClickedButtonToggleEditConfig()
@@ -980,29 +988,54 @@ void CPluginConfigPage::OnChanges()
 
 void CPluginConfigPage::OnEnChangeEditUtc()
 {
-	UpdateData(TRUE);
-	std::tm lt = fmt::localtime(m_UTC);
-	m_Date.SetDate(lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday);
-	UpdateData(FALSE);
+	UpdateDateTimestamp(false);
 }
 
 void CPluginConfigPage::OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	UpdateDateTimestamp(true);
+	*pResult = 0;
+}
+
+void CPluginConfigPage::OnCbnSelchangeComboPlaylistTemplate()
+{
+	int idx = m_wndPlaylistTemplates.GetCurSel();
+	m_plugin->set_playlist_template_idx(idx);
+	m_PlaylistTemplate = m_plugin->get_playlist_template(idx).c_str();
+	UpdateData(FALSE);
+}
+
+void CPluginConfigPage::OnCbnDropdownComboPlaylistTemplate()
+{
 	UpdateData(TRUE);
 
-	CTime nt(m_Date.GetYear(), m_Date.GetMonth(), m_Date.GetDay(), m_Date.GetHour(), m_Date.GetMinute(), m_Date.GetSecond());
+	m_plugin->set_playlist_template(m_wndPlaylistTemplates.GetCurSel(), m_PlaylistTemplate.GetString());
+}
 
-	time_t selTime = nt.GetTime();
-	std::tm lt{};
-	localtime_s(&lt, &selTime);
-	lt.tm_hour = 0;
-	lt.tm_min = 0;
-	lt.tm_sec = 0;
-	time_t dayTime = std::mktime(&lt);
-	m_UTC = dayTime;
+void CPluginConfigPage::OnBnClickedButtonEditTemplates()
+{
+	std::vector<DynamicParamsInfo> info;
+	for (const auto& item : m_plugin->get_playlist_templates())
+	{
+		info.emplace_back(item.name, item.pl_template);
+	}
 
-	if (pResult)
-		*pResult = 0;
+	CFillParamsInfoDlg dlg;
+	dlg.m_type = 4;
+	dlg.m_paramsList = info;
+	dlg.m_readonly = !m_allow_edit;
 
-	UpdateData(FALSE);
+	if (dlg.DoModal() == IDOK)
+	{
+		OnChanges();
+
+		std::vector<PlaylistTemplateInfo> playlists;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			playlists.emplace_back(item.id, item.name);
+		}
+		m_plugin->set_playlist_templates(playlists);
+
+		FillControlsCommon();
+	}
 }

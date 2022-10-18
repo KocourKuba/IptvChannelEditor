@@ -1,4 +1,5 @@
 #pragma once
+#include "PluginDefines.h"
 #include "UtilsLib\json_wrapper.h"
 
 namespace s_enum
@@ -66,7 +67,7 @@ struct TemplateParams
 	std::wstring command;
 	std::wstring command_param;
 	int shift_back = 0;
-	int number = 0;
+	int playlist_idx = 0;
 	int server_idx = 0;
 	int device_idx = 0;
 	int profile_idx = 0;
@@ -87,9 +88,30 @@ public:
 
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE(DynamicParamsInfo, id, name);
 
-protected:
 	std::string id;
 	std::string name;
+};
+
+/// <summary>
+/// Playlist template parameter
+/// </summary>
+class PlaylistTemplateInfo
+{
+public:
+	PlaylistTemplateInfo() = default;
+	PlaylistTemplateInfo(const std::string& _name, const std::string& _pl_template) : name(_name), pl_template(_pl_template) {}
+
+	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
+	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
+
+	std::wstring get_template() const { return utils::utf8_to_utf16(pl_template); }
+	void set_template(const std::wstring& val) { pl_template = utils::utf16_to_utf8(val); }
+
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlaylistTemplateInfo, name, pl_template);
+
+	std::string name;
+	std::string pl_template;
+	bool is_file = false;
 };
 
 /// <summary>
@@ -171,13 +193,61 @@ struct StreamParameters
 class plugin_config
 {
 public:
-	plugin_config();
+	plugin_config() = default;
 
 public:
 	/// <summary>
 	/// clear all parameters
 	/// </summary>
-	void clear();
+	virtual void clear();
+
+	/// <summary>
+	/// save plugin parameters to file
+	/// </summary>
+	virtual bool save_plugin_parameters(const std::wstring& filename, bool use_full_path = false);
+
+	/// <summary>
+	/// load plugin parameters to file
+	/// </summary>
+	virtual void load_plugin_parameters(const std::wstring& filename);
+
+	/// <summary>
+	/// plugin type
+	/// </summary>
+	void set_plugin_type(PluginType pluginType) { plugin_type = pluginType; }
+	PluginType get_plugin_type() const { return plugin_type; }
+
+	/// <summary>
+	/// plugin short name
+	/// </summary>
+	const std::string& get_short_name() const { return short_name; }
+	void set_short_name(const std::string& val) { short_name = val; }
+
+	/// <summary>
+	/// plugin short name wide char
+	/// </summary>
+	std::wstring get_short_name_w() const { return utils::utf8_to_utf16(short_name); }
+	void set_short_name_w(const std::wstring& val) { short_name = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// returns link to provider api url
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wstring& get_provider_api_url() const { return provider_api_url; }
+
+	/// <summary>
+	/// returns is vod m3u based
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_vod_m3u() const { return vod_m3u; }
+
+	/// <summary>
+	/// returns vod url template
+	/// </summary>
+	/// <returns>wstring</returns>
+	const std::wstring& get_vod_template() const { return provider_vod_url; };
+
+	//////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
 	/// property plugin title
@@ -203,11 +273,20 @@ public:
 	std::wstring get_provider_url() const { return utils::utf8_to_utf16(provider_url); }
 	void set_provider_url(const std::wstring& val) { provider_url = utils::utf16_to_utf8(val); }
 
+	size_t get_playlist_template_idx() const { return playlist_template_index; }
+	void set_playlist_template_idx(size_t idx) { playlist_template_index = idx; }
+
 	/// <summary>
 	/// property playlist template
 	/// </summary>
-	std::wstring get_playlist_template() const { return utils::utf8_to_utf16(playlist_template); }
-	void set_playlist_template(const std::wstring& val) { playlist_template = utils::utf16_to_utf8(val); }
+	std::wstring get_playlist_template(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_template() : L""; }
+	void set_playlist_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_template(val); }
+
+	/// <summary>
+	/// property playlist templates
+	/// </summary>
+	std::vector <PlaylistTemplateInfo> get_playlist_templates() const { return playlist_templates; }
+	void set_playlist_templates(const std::vector<PlaylistTemplateInfo>& val) { playlist_templates = val; }
 
 	/// <summary>
 	/// property uri parse template
@@ -296,6 +375,12 @@ public:
 	void set_static_profiles(bool val) { static_profiles = val; }
 
 	/// <summary>
+	/// load default settings
+	/// </summary>
+	/// <param name="url"></param>
+	virtual void load_default() { clear(); }
+
+	/// <summary>
 	/// returns list of servers
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
@@ -375,7 +460,21 @@ public:
 	virtual const std::vector<DynamicParamsInfo>& get_profiles_list() { return profiles_list; }
 	virtual void set_profiles_list(const std::vector<DynamicParamsInfo>& info) { profiles_list = info; }
 
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(plugin_config, access_type, short_name, title, name, provider_url, //-V601
+								   playlist_templates, playlist_template_index, playlist_template,
+								   uri_id_parse_pattern, uri_parse_pattern, square_icons, requested_token,
+								   static_servers, static_qualities, static_devices, static_profiles,
+								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
+
 protected:
+
+	// non configurable parameters
+	PluginType plugin_type = PluginType::enCustom;
+	std::string short_name;
+
+	std::wstring provider_api_url;
+	std::wstring provider_vod_url;
+	bool vod_m3u = false;
 
 	// configurable parameters
 
@@ -405,6 +504,10 @@ protected:
 	bool static_qualities = false;
 	bool static_devices = false;
 	bool static_profiles = false;
+	// selected playlist template
+	size_t playlist_template_index = 0;
+	// available playlist templates
+	std::vector<PlaylistTemplateInfo> playlist_templates;
 	// setting for parsing uri streams
 	std::array<StreamParameters, 2> streams_config;
 	// setting for parsing json EPG

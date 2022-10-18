@@ -225,6 +225,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_ARCHIVE_URL, &CIPTVChannelEditorDlg::OnEnChangeEditStreamArchiveUrl)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist)
+
 END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
@@ -244,6 +246,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_BUTTON_ADD_NEW_CHANNELS_LIST, m_wndBtnAddNewChannelsList);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndBtnEditConfig);
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
 	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_isArchive);
@@ -320,6 +323,9 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_VOD, m_wndBtnVod);
 	DDX_Control(pDX, IDC_CHECK_MAKE_WEB_UPDATE, m_wndMakeWebUpdate);
 	DDX_Control(pDX, IDC_CHECK_SHOW_EPG, m_wndShowEPG);
+	DDX_Control(pDX, IDC_BUTTON_ADD_PLAYLIST, m_wndBtnAddPlaylist);
+	DDX_Control(pDX, IDC_BUTTON_SEARCH_NEXT, m_wndBtnSearchNext);
+	DDX_Control(pDX, IDC_BUTTON_PL_SEARCH_NEXT, m_wndBtnPlSearchNext);
 }
 
 // CEdemChannelEditorDlg message handlers
@@ -426,6 +432,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		{ IDC_SPLIT_BUTTON_PACK, load_string_resource(IDS_STRING_BUTTON_PACK) },
 		{ IDC_BUTTON_SETTINGS, load_string_resource(IDS_STRING_BUTTON_SETTINGS) },
 		{ IDC_BUTTON_ACCOUNT_SETTINGS, load_string_resource(IDS_STRING_ACCOUNT_SETTINGS) },
+		{ IDC_BUTTON_EDIT_CONFIG, load_string_resource(IDS_STRING_BUTTON_EDIT_CONFIG) },
 		{ IDC_BUTTON_DOWNLOAD_PLAYLIST, load_string_resource(IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST) },
 		{ IDC_EDIT_PL_SEARCH, load_string_resource(IDS_STRING_EDIT_PL_SEARCH) },
 		{ IDC_BUTTON_PL_SEARCH_NEXT, load_string_resource(IDS_STRING_BUTTON_PL_SEARCH_NEXT) },
@@ -447,6 +454,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		{ IDC_BUTTON_STOP, load_string_resource(IDS_STRING_BUTTON_STOP) },
 		{ IDC_BUTTON_CHECK_ARCHIVE, load_string_resource(IDS_STRING_BUTTON_CHECK_ARCHIVE) },
 		{ IDC_SPLIT_BUTTON_UPDATE_CHANGED, load_string_resource(IDS_STRING_BUTTON_UPDATE_CHANGED) },
+		{ IDC_BUTTON_ADD_PLAYLIST, load_string_resource(IDS_STRING_BUTTON_ADD_PLAYLIST) },
 	};
 
 	for (const auto& pair : m_tooltips_info)
@@ -489,21 +497,24 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndIconSource.AddString(_T("it999.ru"));
 
 	// load button images;
-	SetButtonImage(IDB_PNG_NEW, (CButton*)GetDlgItem(IDC_BUTTON_ADD_NEW_CHANNELS_LIST));
-	SetButtonImage(IDB_PNG_FIND_NEXT, (CButton*)GetDlgItem(IDC_BUTTON_SEARCH_NEXT));
+	SetButtonImage(IDB_PNG_NEW, m_wndBtnAddNewChannelsList);
+	SetButtonImage(IDB_PNG_FIND_NEXT, m_wndBtnSearchNext);
 	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChangedCh);
 	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChanged);
 	SetButtonImage(IDB_PNG_ADDED, m_wndNotAdded);
 	SetButtonImage(IDB_PNG_UNKNOWN, m_wndShowUnknown);
-	SetButtonImage(IDB_PNG_FIND_NEXT, (CButton*)GetDlgItem(IDC_BUTTON_PL_SEARCH_NEXT));
-	SetButtonImage(IDB_PNG_SETTINGS, m_wndBtnSettings);
+	SetButtonImage(IDB_PNG_FIND_NEXT, m_wndBtnPlSearchNext);
 	SetButtonImage(IDB_PNG_ACCOUNT, m_wndBtnAccountSetting);
+	SetButtonImage(IDB_PNG_CONFIG, m_wndBtnEditConfig);
+	SetButtonImage(IDB_PNG_VOD, m_wndBtnVod);
+	SetButtonImage(IDB_PNG_OPEN, m_wndBtnAddPlaylist);
 	SetButtonImage(IDB_PNG_DOWNLOAD, m_wndBtnDownloadPlaylist);
 	SetButtonImage(IDB_PNG_FILTER, m_wndBtnFilter);
 
 	// Toggle controls state
 	m_wndSearch.EnableWindow(FALSE);
 	m_wndPlSearch.EnableWindow(FALSE);
+	m_wndBtnAddPlaylist.EnableWindow(FALSE);
 	m_wndCustom.EnableWindow(FALSE);
 	m_wndShowUrl.SetCheck(GetConfig().get_int(true, REG_SHOW_URL));
 	m_wndArchive.EnableWindow(FALSE);
@@ -623,8 +634,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndStreamType.ResetContent();
 	for (const auto& stream : streams)
 	{
-		if (stream.uri_template.empty()) continue;
-
 		std::wstring name;
 		switch (stream.stream_type)
 		{
@@ -653,17 +662,25 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndStreamType.EnableWindow(m_wndStreamType.GetCount() > 1);
 
 	// Set selected playlist
-	m_playlist_info = m_plugin->get_playlists();
+	m_playlist_info = m_plugin->get_playlist_templates();
+	if (m_plugin->get_plugin_type() == PluginType::enCustom)
+	{
+		PlaylistTemplateInfo info;
+		info.set_name(load_string_resource(IDS_STRING_CUSTOM_PLAYLIST));
+		info.is_file = true;
+		m_playlist_info.emplace_back(info);
+	}
+
 	for (const auto& playlist : m_playlist_info)
 	{
-		int idx = m_wndPlaylist.AddString(playlist.name.c_str());
+		int idx = m_wndPlaylist.AddString(playlist.get_name().c_str());
 		m_wndPlaylist.SetItemData(idx, (DWORD_PTR)&playlist);
 	}
 
 	if (pl_idx >= m_wndPlaylist.GetCount() || pl_idx < 0)
 		pl_idx = 0;
 
-	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(pl_idx));
+	const auto& pl_info = ((PlaylistTemplateInfo*)m_wndPlaylist.GetItemData(pl_idx));
 	m_wndPlaylist.SetCurSel(pl_idx);
 	m_wndPlaylist.EnableWindow(TRUE);
 
@@ -820,13 +837,7 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 {
-	m_plFileName.Empty();
 	int idx = m_wndPlaylist.GetCurSel();
-	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(idx));
-
-	bool isFile = pl_info->is_file;
-
-	m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginShortNameW(m_plugin_type, true)).c_str();
 
 	TemplateParams params;
 	params.login = m_cur_account.get_login();
@@ -835,7 +846,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.server_idx = m_cur_account.server_id;
 	params.profile_idx = m_cur_account.profile_id;
 	params.quality_idx = m_cur_account.quality_id;
-	params.number = idx;
+	params.playlist_idx = idx;
 
 	if (m_plugin_type == PluginType::enSharaclub)
 	{
@@ -847,7 +858,19 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		params.token = m_plugin->get_api_token(m_cur_account);
 	}
 
-	const auto& url = m_plugin->get_playlist_url(params);
+	const auto& pl_info = ((PlaylistTemplateInfo*)m_wndPlaylist.GetItemData(idx));
+
+	std::wstring url;
+	m_plFileName.Empty();
+	if (pl_info->is_file)
+	{
+		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
+	}
+	else
+	{
+		url = m_plugin->get_playlist_url(params);
+		m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginShortNameW(m_plugin_type, true)).c_str();
+	}
 
 	if (url.empty())
 	{
@@ -875,7 +898,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	std::wstring host;
 	std::wstring path;
 	WORD port = 0;
-	if (isFile)
+	if (pl_info->is_file)
 	{
 		std::ifstream stream(url);
 		data->assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
@@ -3107,8 +3130,6 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 {
-	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel()));
-
 	auto pSheet = std::make_unique<CResizedPropertySheet>(IDS_STRING_ACCOUNT_SETTINGS, REG_ACC_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
@@ -4471,9 +4492,14 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 {
-	GetConfig().set_int(false, REG_PLAYLIST_TYPE, m_wndPlaylist.GetCurSel());
+	int idx = m_wndPlaylist.GetCurSel();
+	if (idx == CB_ERR)
+		return;
 
-	const auto& pl_info = ((PlaylistInfo*)m_wndPlaylist.GetItemData(m_wndPlaylist.GetCurSel()));
+	GetConfig().set_int(false, REG_PLAYLIST_TYPE, idx);
+
+	const auto& pl_info = ((PlaylistTemplateInfo*)m_wndPlaylist.GetItemData(idx));
+	m_wndBtnAddPlaylist.EnableWindow(pl_info->is_file);
 	LoadPlaylist();
 }
 
@@ -5107,14 +5133,33 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgCfg.m_plugin = m_plugin;
 	dlgCfg.m_initial_cred = m_cur_account;
-	dlgCfg.m_single = true;
+	dlgCfg.m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 
 	pSheet->AddPage(&dlgCfg);
-	pSheet->DoModal();
+	if (IDOK == pSheet->DoModal())
+	{
+		m_plugin->load_plugin_parameters(m_cur_account.get_config());
+
+		GetConfig().UpdatePluginSettings();
+		CollectCredentials();
+		LoadPlaylist();
+	}
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg()
 {
 	GetConfig().set_int(true, REG_SHOW_EPG, m_wndShowEPG.GetCheck());
 	UpdateEPG(nullptr);
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist()
+{
+	CCustomPlaylistDlg dlg;
+	dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
+	dlg.m_isFile = true;
+	if (dlg.DoModal() == IDOK)
+	{
+		GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
+		LoadPlaylist();
+	}
 }

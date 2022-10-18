@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_tvclub.h"
+#include "IPTVChannelEditor.h"
 
 #include "UtilsLib\md5.h"
 #include "UtilsLib\utils.h"
@@ -53,7 +54,12 @@ void plugin_tvclub::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "https://tvclub.cc/";
-	playlist_template = "http://celn.shott.top/p/{TOKEN}";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://celn.shott.top/p/{TOKEN}";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 
 	streams_config[1].cu_type = CatchupType::cu_append;

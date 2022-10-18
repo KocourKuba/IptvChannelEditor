@@ -46,7 +46,12 @@ void plugin_kineskop::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "http://kineskop.club/";
-	playlist_template = "http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER}/1";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER}/1";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
 
 	per_channel_token = true;

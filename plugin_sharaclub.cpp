@@ -26,6 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_sharaclub.h"
+#include "IPTVChannelEditor.h"
+
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
@@ -54,7 +56,12 @@ void plugin_sharaclub::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "https://shara.club/";
-	playlist_template = "http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 
 	streams_config[0].cu_type = CatchupType::cu_append;
@@ -73,7 +80,7 @@ void plugin_sharaclub::load_default()
 
 std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)
 {
-	auto& url = get_playlist_template();
+	auto& url = get_playlist_template(params.playlist_idx);
 	if (params.profile_idx != 0)
 	{
 		fill_profiles_list(params);

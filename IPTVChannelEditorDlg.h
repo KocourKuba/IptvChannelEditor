@@ -129,6 +129,7 @@ protected:
 	afx_msg void OnBnClickedButtonCreateNewChannelsList();
 	afx_msg void OnBnClickedCheckShowChangedCh();
 	afx_msg void OnBnClickedButtonPlFilter();
+	afx_msg void OnBnClickedButtonAddPlaylist();
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);
@@ -299,11 +300,15 @@ protected:
 	CEdit m_wndSearch;
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
+	CButton m_wndBtnSearchNext;
+	CButton m_wndBtnPlSearchNext;
+	CButton m_wndBtnAddNewChannelsList;
 	CButton m_wndShowUrl;
 	CButton m_wndBtnFilter;
 	CButton m_wndShowUnknown;
 	CButton m_wndShowChanged;
 	CButton m_wndShowChangedCh;
+	CButton m_wndBtnAddPlaylist;
 	CButton m_wndNotAdded;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
@@ -430,7 +435,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// playlist part
 
-	std::vector<PlaylistInfo> m_playlist_info;
+	std::vector<PlaylistTemplateInfo> m_playlist_info;
 	// all entries loaded from playlist, filled when parse playlist
 	std::unique_ptr<Playlist> m_playlistEntries;
 

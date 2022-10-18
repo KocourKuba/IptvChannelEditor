@@ -292,7 +292,6 @@ class default_config extends dynamic_config
             }
 
             $ext_params[CU_SUBST] = $this->get_stream_param($stream_type, CU_SUBST);
-
         } else if ($is_archive) {
             $catchup_template = $channel->get_custom_arc_template();
             $url .= empty($catchup_template) ?  $this->get_stream_param($stream_type, URL_CUSTOM_ARC_TEMPLATE) : $catchup_template;
@@ -305,7 +304,7 @@ class default_config extends dynamic_config
             }
         }
 
-        // hd_print("Stream url:  $url");
+        //hd_print("Stream url:  $url");
 
         return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
     }

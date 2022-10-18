@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_edem.h"
-#include "IptvChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,29 +42,24 @@ void plugin_edem::load_default()
 {
 	provider_vod_url = L"{SUBDOMAIN}";
 
-	playlists.clear();
-	PlaylistInfo info;
-	info.name = load_string_resource(IDS_STRING_EDEM_STANDARD);
-	playlists.emplace_back(info);
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://epg.it999.ru/edem_epg_ico.m3u8";
+	playlist_templates.emplace_back(info);
 
-	info.name = load_string_resource(IDS_STRING_EDEM_THEMATIC);
-	playlists.emplace_back(info);
+	info.set_name(load_string_resource(IDS_STRING_EDEM_THEMATIC));
+	info.pl_template = "http://epg.it999.ru/edem_epg_ico2.m3u8";
+	playlist_templates.emplace_back(info);
 
 	title = "iEdem/iLook TV";
 	name = "iedem.tv";
 	access_type = AccountAccessType::enOtt;
 
 	provider_url = "https://ilook.tv/";
-	playlist_template = "http://epg.it999.ru/edem_epg_ico.m3u8";
 	uri_parse_pattern = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>.+)\/.*\.m3u8$)";
 
 	streams_config[0].uri_template = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/edem%2Fepg%2F{EPG_ID}.json";
-}
-
-std::wstring plugin_edem::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)
-{
-	return (params.number == 0) ? L"http://epg.it999.ru/edem_epg_ico.m3u8" : L"http://epg.it999.ru/edem_epg_ico2.m3u8";
 }

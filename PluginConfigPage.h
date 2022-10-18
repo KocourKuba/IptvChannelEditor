@@ -45,6 +45,9 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
+
+	void AssignMacros();
+
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	BOOL OnApply() override;
 
@@ -54,6 +57,9 @@ protected:
 	afx_msg void OnBnClickedButtonSaveConfig();
 	afx_msg void OnBnClickedButtonSaveAsConfig();
 	afx_msg void OnBnClickedButtonEpgTest();
+	afx_msg void OnBnClickedButtonEditTemplates();
+	afx_msg void OnCbnSelchangeComboPlaylistTemplate();
+	afx_msg void OnCbnDropdownComboPlaylistTemplate();
 	afx_msg void OnBnClickedButtonPlaylistShow();
 	afx_msg void OnBnClickedButtonStreamParse();
 	afx_msg void OnBnClickedButtonStreamIdParse();
@@ -70,7 +76,6 @@ protected:
 	afx_msg void OnCbnSelchangeComboAccessType();
 	afx_msg void OnCbnDropdownComboAccessType();
 
-	afx_msg void OnCbnSelchangeComboPluginType();
 	afx_msg void OnCbnSelchangeComboPluginConfig();
 
 	afx_msg void OnCbnSelchangeComboStreamType();
@@ -92,6 +97,7 @@ private:
 	void AllowSave(bool val = true);
 	void EnableControls();
 	void FillConfigs();
+	void FillPlaylistTemplates();
 	void FillControlsCommon();
 	void SaveControlsCommon();
 	void FillControlsStream();
@@ -99,9 +105,9 @@ private:
 	void FillControlsEpg();
 	void SaveControlsEpg();
 	std::wstring GetSelectedConfig();
+	void UpdateDateTimestamp(bool dateToUtc);
 
 public:
-	bool m_single = false;
 	Credentials m_initial_cred;
 	uri_stream* m_CurrentStream = nullptr;
 	std::shared_ptr<base_plugin> m_plugin;
@@ -137,14 +143,15 @@ protected:
 	CEdit m_wndToken;
 
 	CComboBox m_wndAccessType;
+	CComboBox m_wndPlaylistTemplates;
 	CComboBox m_wndStreamType;
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
-	CComboBox m_wndPluginType;
 	CComboBox m_wndPluginConfigs;
 
 	CButton m_wndBtnSaveConf;
 	CButton m_wndBtnSaveAsConf;
+	CButton m_wndBtnEditTemplates;
 	CButton m_wndChkStaticServers;
 	CButton m_wndBtnServers;
 	CButton m_wndChkStaticDevices;

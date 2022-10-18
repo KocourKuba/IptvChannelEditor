@@ -18,9 +18,11 @@
 #define IDB_PNG_DOWNLOAD                60
 #define IDB_PNG_FILTER                  61
 #define IDB_PNG_FIND_NEXT               62
-#define IDB_PNG_SETTINGS                63
+#define IDB_PNG_CONFIG                  63
 #define IDB_PNG_UNKNOWN                 64
 #define IDB_PNG_KNOWN                   65
+#define IDB_PNG_OPEN                    66
+#define IDB_PNG_VOD                     67
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104
@@ -176,6 +178,7 @@
 #define IDS_STRING_BUTTON_REMOVE        262
 #define IDS_STRING_BUTTON_NEW_FROM_URL  263
 #define IDS_STRING_STR_DEFAULT          264
+#define IDS_STRING_CUSTOM_PLAYLIST      265
 #define IDS_STRING_CHECK_EMBED          266
 #define IDS_STRING_COL_COMMENT          267
 #define IDS_STRING_COL_SUFFIX           268
@@ -249,6 +252,10 @@
 #define IDS_STRING_CHECK_STATIC_PROFILES 337
 #define IDS_STRING_BUTTON_EDIT_PROFILES 338
 #define IDS_STRING_EDIT_UTC             339
+#define IDS_STRING_NAME                 340
+#define IDS_STRING_TEMPLATE             341
+#define IDS_STRING_BUTTON_ADD_PLAYLIST  342
+#define IDS_STRING_COMBO_CONFIGS        343
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -290,6 +297,7 @@
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
 #define IDC_BUTTON_GET                  1007
+#define IDC_BUTTON_ADD_PLAYLIST         1007
 #define IDC_BUTTON_IMPORT               1010
 #define IDC_BUTTON_ADD_NEW_CHANNELS_LIST 1011
 #define IDC_BUTTON_ACCOUNT_SETTINGS     1012
@@ -509,8 +517,10 @@
 #define IDC_MFCEDITBROWSE_PLUGINS_WEB_UPDATE_PATH 1215
 #define IDC_MFCEDITBROWSE_PLUGINS_SETTINGS_PATH 1216
 #define IDC_BUTTON_SAVE_AS_CONFIG       1217
-#define IDC_CHECK_SHOW_EPG              1217
 #define IDC_EDIT_PLUGIN_CAPTION         1218
+#define IDC_CHECK_SHOW_EPG              1219
+#define IDC_COMBO_PLAYLIST_TEMPLATE     1220
+#define IDC_BUTTON_EDIT_TEMPLATES       1221
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -546,7 +556,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        279
 #define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1218
+#define _APS_NEXT_CONTROL_VALUE         1222
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

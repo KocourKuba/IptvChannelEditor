@@ -404,6 +404,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\Added.png" />
     <Image Include="res\AddedOnly.png" />
     <Image Include="res\Changed.png" />
+    <Image Include="res\Config.png" />
     <Image Include="res\Download.png" />
     <Image Include="res\Edit.png" />
     <Image Include="res\Filter.png" />
@@ -413,11 +414,13 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\New.png" />
     <Image Include="res\NotAdded.png" />
     <Image Include="res\NotChanged.png" />
+    <Image Include="res\Open.png" />
     <Image Include="res\QR Code.png" />
     <Image Include="res\Save.png" />
     <Image Include="res\SaveAs.png" />
     <Image Include="res\Settings.png" />
     <Image Include="res\Unknown.png" />
+    <Image Include="res\Vod.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

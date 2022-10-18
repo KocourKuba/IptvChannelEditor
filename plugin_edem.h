@@ -35,5 +35,4 @@ public:
 	plugin_edem();
 
 	void load_default() override;
-	std::wstring get_playlist_url(TemplateParams& params, std::wstring url = L"") override;
 };

@@ -9,9 +9,6 @@
 
 base_plugin::base_plugin()
 {
-	PlaylistInfo info;
-	info.name = load_string_resource(IDS_STRING_PLAYLIST);
-	playlists.emplace_back(info);
 	short_name = "custom";
 }
 
@@ -20,89 +17,34 @@ base_plugin::base_plugin(const base_plugin& src)
 	*this = src;
 }
 
-bool base_plugin::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
+void base_plugin::clear()
 {
-	std::filesystem::path full_path;
-	if (use_full_path)
-	{
-		full_path = filename;
-	}
-	else
-	{
-		std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_short_name_w());
-		std::filesystem::create_directory(config_dir);
-		full_path = config_dir.append(filename);
-	}
+	plugin_config::clear();
+	regex_uri_template = L"";
+}
 
-	bool res = false;
-	try
-	{
-		nlohmann::json node = *this;
+void base_plugin::load_default()
+{
+	title = "Custom";
+	name = "custom.iptv";
+	provider_url = "http://dune-hd.com/";
+	access_type = AccountAccessType::enNone;
 
-		const auto& str = node.dump(2);
-		std::ofstream out_stream(full_path);
-		out_stream << str << std::endl;
-		res = true;
-	}
-	catch (const nlohmann::json::out_of_range& ex)
-	{
-		// out of range errors may happen if provided sizes are excessive
-		TRACE("out of range error: %s\n", ex.what());
-	}
-	catch (const nlohmann::detail::type_error& ex)
-	{
-		// type error
-		TRACE("type error: %s\n", ex.what());
-	}
-	catch (...)
-	{
-		TRACE("unknown exception\n");
-	}
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	playlist_templates.emplace_back(info);
+}
 
-	return res;
+bool base_plugin::save_plugin_parameters(const std::wstring& filename, bool use_full_path /*= false*/)
+{
+	return plugin_config::save_plugin_parameters(filename, use_full_path);
 }
 
 void base_plugin::load_plugin_parameters(const std::wstring& filename)
 {
-	clear();
-	if (filename.empty())
-	{
-		load_default();
-		return;
-	}
+	plugin_config::load_plugin_parameters(filename);
 
-	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_short_name_w());
-	const auto& full_path = config_dir.append(filename);
-
-	bool res = false;
-	try
-	{
-		nlohmann::json node;
-		std::ifstream in_stream(full_path);
-		if (in_stream.good())
-		{
-			in_stream >> node;
-			from_json(node, *this);
-			res = true;
-		}
-	}
-	catch (const nlohmann::json::out_of_range& ex)
-	{
-		// out of range errors may happen if provided sizes are excessive
-		TRACE("out of range error: %s\n", ex.what());
-	}
-	catch (const nlohmann::detail::type_error& ex)
-	{
-		// type error
-		TRACE("type error: %s\n", ex.what());
-	}
-	catch (...)
-	{
-		TRACE("unknown exception\n");
-	}
-
-	if (!res)
-		load_default();
+	set_regex_parse_stream(get_uri_parse_pattern());
 }
 
 void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
@@ -110,7 +52,7 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 	info->set_uri(url);
 
 	std::wsmatch m;
-	if (!std::regex_match(url, m, get_stream_regex_parse_template()))
+	if (!std::regex_match(url, m, get_regex_parse_stream_template()))
 	{
 		return;
 	}
@@ -128,7 +70,7 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring url /*= L""*/)
 {
 	if (url.empty())
-		url = get_playlist_template();
+		url = get_playlist_template(params.playlist_idx);
 
 	if (!params.token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
@@ -227,23 +169,9 @@ std::wstring base_plugin::get_archive_template(const TemplateParams& params, con
 	return url;
 }
 
-const std::wregex& base_plugin::get_stream_regex_parse_template()
-{
-	// to speed up parsing process and avoid multiple conversions
-	if (uri_parse_regex_template._Empty())
-	{
-		set_stream_regex_parse_template(utils::utf8_to_utf16(uri_parse_pattern));
-	}
-
-	return uri_parse_regex_template;
-}
-
-void base_plugin::set_stream_regex_parse_template(const std::wstring& val)
+void base_plugin::set_regex_parse_stream(const std::wstring& val)
 {
 	static std::set<std::wstring> groups_mapper = { L"id", L"domain", L"port", L"login", L"password", L"subdomain", L"token", L"int_id", L"quality", L"host", };
-
-	// store original template
-	set_uri_parse_pattern(val);
 
 	// clear named group
 	regex_named_groups.clear();
@@ -264,7 +192,7 @@ void base_plugin::set_stream_regex_parse_template(const std::wstring& val)
 		}
 
 		// store regex without named groups
-		uri_parse_regex_template = ecmascript_re;
+		regex_uri_template = ecmascript_re;
 	}
 	catch (...)
 	{
@@ -274,7 +202,8 @@ void base_plugin::set_stream_regex_parse_template(const std::wstring& val)
 
 std::wstring base_plugin::get_vod_url(TemplateParams& params) const
 {
-	std::wstring url(provider_vod_url);
+	std::wstring url = get_vod_template();
+
 	if (!params.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
 

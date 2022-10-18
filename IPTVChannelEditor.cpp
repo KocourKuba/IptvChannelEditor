@@ -225,21 +225,21 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	{
 		const auto& playlist_dir = GetAppPath(L"playlists\\");
 		GetConfig().set_string(true, REG_LISTS_PATH, playlist_dir);
-		std::filesystem::create_directory(playlist_dir);
+		std::filesystem::create_directories(playlist_dir);
 	}
 
 	if (GetConfig().get_string(true, REG_WEB_UPDATE_PATH).empty())
 	{
 		const auto& update_dir = GetAppPath(L"WebUpdate\\");
 		GetConfig().set_string(true, REG_WEB_UPDATE_PATH, update_dir);
-		std::filesystem::create_directory(update_dir);
+		std::filesystem::create_directories(update_dir);
 	}
 
 	if (GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH).empty())
 	{
 		const auto& settings_dir = GetAppPath(L"Settings\\");
 		GetConfig().set_string(true, REG_SAVE_SETTINGS_PATH, settings_dir);
-		std::filesystem::create_directory(settings_dir);
+		std::filesystem::create_directories(settings_dir);
 	}
 
 	ConvertAccounts();

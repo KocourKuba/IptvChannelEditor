@@ -592,5 +592,14 @@
     <Image Include="res\Unknown.png">
       <Filter>Resource Files\PNG</Filter>
     </Image>
+    <Image Include="res\Open.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\Vod.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\Config.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
   </ItemGroup>
 </Project>

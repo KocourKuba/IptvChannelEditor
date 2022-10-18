@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_antifriz.h"
+#include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -46,7 +47,12 @@ void plugin_antifriz::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://antifriztv.com/";
-	playlist_template = "http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+
+	PlaylistTemplateInfo info;
+	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	info.pl_template = "http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+	playlist_templates.emplace_back(info);
+
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
