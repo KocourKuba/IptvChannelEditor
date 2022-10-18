@@ -1251,7 +1251,7 @@ void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 
 void CAccessInfoPage::OnBnClickedButtonEditConfig()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(IDS_STRING_PLUGIN_CONFIG, REG_PLUGIN_CFG_WINDOW_POS);
+	auto pSheet = std::make_unique<CResizedPropertySheet>(L"", REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 

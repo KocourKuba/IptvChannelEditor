@@ -3130,7 +3130,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(IDS_STRING_ACCOUNT_SETTINGS, REG_ACC_WINDOW_POS);
+	auto pSheet = std::make_unique<CResizedPropertySheet>(L"", REG_ACC_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 
@@ -5125,7 +5125,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(IDS_STRING_ACCOUNT_SETTINGS, REG_CONFIG_WINDOW_POS);
+	auto pSheet = std::make_unique<CResizedPropertySheet>(L"", REG_CONFIG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 
