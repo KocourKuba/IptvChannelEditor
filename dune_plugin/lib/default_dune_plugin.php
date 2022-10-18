@@ -882,7 +882,7 @@ class Default_Dune_Plugin implements DunePlugin
                 ),
             ),
 
-            // 2x10 list view with title
+            // 2x10 title list view with right side icon
             array
             (
                 PluginRegularFolderView::async_icon_loading => true,
@@ -907,6 +907,52 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewItemParams::icon_height => $this->config->get_feature(SQUARE_ICONS) ? 60 : 48,
                     ViewItemParams::item_caption_width => 485,
                     ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                ),
+
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
+            ),
+
+            // 1x10 title list view with right side icon
+            array
+            (
+                PluginRegularFolderView::async_icon_loading => true,
+
+                PluginRegularFolderView::view_params => array
+                (
+                    ViewParams::num_cols => 1,
+                    ViewParams::num_rows => 10,
+                    ViewParams::paint_icon_selection_box=> true,
+                    ViewParams::paint_details => true,
+                    ViewParams::paint_details_box_background => true,
+                    ViewParams::paint_content_box_background => true,
+                    ViewParams::paint_scrollbar => true,
+                    ViewParams::paint_widget => true,
+                    ViewParams::paint_help_line => true,
+                    ViewParams::item_detailed_info_font_size => FONT_SIZE_SMALL,
+                    ViewParams::background_path=> $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_order => 0,
+                    ViewParams::item_detailed_info_text_color => 11,
+                    ViewParams::item_detailed_info_auto_line_break => true,
+                    ViewParams::optimize_full_screen_background => true,
+                    ViewParams::zoom_detailed_icon => true,
+                ),
+
+                PluginRegularFolderView::base_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::item_layout => HALIGN_LEFT,
+                    ViewItemParams::icon_valign => VALIGN_CENTER,
+                    ViewItemParams::icon_width => 50,
+                    ViewItemParams::icon_height => 50,
+                    ViewItemParams::icon_dx => 26,
+                    ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
+                    ViewItemParams::item_caption_width => 1060,
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
                 ),
 
