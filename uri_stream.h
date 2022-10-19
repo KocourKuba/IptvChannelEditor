@@ -144,7 +144,12 @@ public:
 
 	InfoType get_type() const { return base_type; }
 
-	const uri_stream& operator=(const uri_stream& src);
+	void copy_data(const uri_stream& src)
+	{
+		*this = src;
+	}
+
+	uri_stream& operator=(const uri_stream& src);
 
 protected:
 	std::shared_ptr<base_plugin> parent_plugin;

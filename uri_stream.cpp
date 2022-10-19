@@ -34,7 +34,7 @@ int uri_stream::get_hash()
 	return hash;
 }
 
-const uri_stream& uri_stream::operator=(const uri_stream& src)
+uri_stream& uri_stream::operator=(const uri_stream& src)
 {
 	if (this != &src)
 	{
@@ -43,6 +43,7 @@ const uri_stream& uri_stream::operator=(const uri_stream& src)
 		parent_plugin = src.parent_plugin;
 
 		is_template = src.is_template;
+		id = src.id;
 		domain = src.domain;
 		port = src.port;
 		login = src.login;
@@ -60,6 +61,8 @@ const uri_stream& uri_stream::operator=(const uri_stream& src)
 		time_shift_hours = src.time_shift_hours;
 		adult = src.adult;
 		archive_days = src.archive_days;
+		hash = src.hash;
+		str_hash = src.str_hash;
 	}
 
 	return *this;

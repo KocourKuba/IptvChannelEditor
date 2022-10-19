@@ -60,7 +60,7 @@ public:
 	{
 		if (this != &src)
 		{
-			icon_uri = std::move(src.icon_uri);
+			icon_uri = src.icon_uri;
 			root_path = std::move(src.root_path);
 		}
 		return *this;

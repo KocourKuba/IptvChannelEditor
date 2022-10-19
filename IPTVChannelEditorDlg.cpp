@@ -1179,7 +1179,7 @@ BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
 		pt.x = LOWORD(pMsg->lParam);  // horizontal position of cursor
 		pt.y = HIWORD(pMsg->lParam);  // vertical position of cursor
 
-		for (CWnd* wnd = GetWindow(GW_CHILD); wnd != NULL; wnd = wnd->GetWindow(GW_HWNDNEXT))
+		for (CWnd* wnd = GetWindow(GW_CHILD); wnd != nullptr; wnd = wnd->GetWindow(GW_HWNDNEXT))
 		{
 			CRect rect;
 			wnd->GetWindowRect(&rect);
@@ -4745,6 +4745,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		// Create new channel
 		add = true;
 		auto newChannel = std::make_shared<ChannelInfo>(m_plugin, root_path);
+		newChannel->copy_data(*entry);
 		// Add to channel array
 		pair = m_channelsMap.emplace(newChannel->get_id(), newChannel).first;
 

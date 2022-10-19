@@ -46,33 +46,33 @@ public:
 	}
 
 public:
-	ImageContainer* operator=(const ImageContainer& src)
+	ImageContainer& operator=(const ImageContainer& src)
 	{
 		if (this != &src)
 		{
 			set_image(src.get_image());
 		}
 
-		return this;
+		return *this;
 	}
 
-	ImageContainer* operator=(const ImageContainer* src)
+	ImageContainer& operator=(const ImageContainer* src)
 	{
 		if (this != src)
 		{
 			set_image(src->get_image());
 		}
 
-		return this;
+		return *this;
 	}
 
-	ImageContainer* operator=(ImageContainer&& src) noexcept
+	ImageContainer& operator=(ImageContainer&& src) noexcept
 	{
 		if (this != &src)
 		{
 			set_image(src.get_image());
 		}
-		return this;
+		return *this;
 	}
 
 	const CImage& get_image() const { return icon; }
