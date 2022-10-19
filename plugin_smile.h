@@ -33,5 +33,6 @@ public:
 
 	plugin_smile();
 
+protected:
 	void load_default() override;
 };

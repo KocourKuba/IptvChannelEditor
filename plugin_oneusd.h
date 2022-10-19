@@ -33,5 +33,6 @@ public:
 
 	plugin_oneusd();
 
+protected:
 	void load_default() override;
 };

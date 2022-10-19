@@ -300,14 +300,14 @@
     <ClInclude Include="Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AccountSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ThreadConfig.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
     <ClInclude Include="PluginDefines.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountSettings.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -512,9 +512,6 @@
     <ClCompile Include="uri_stream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AccountSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Credentials.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
@@ -523,6 +520,9 @@
     </ClCompile>
     <ClCompile Include="plugin_smile.cpp">
       <Filter>Source Files\plugin\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="AccountSettings.cpp">
+      <Filter>Source Files\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

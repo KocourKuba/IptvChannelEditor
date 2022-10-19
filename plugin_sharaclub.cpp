@@ -46,7 +46,6 @@ plugin_sharaclub::plugin_sharaclub()
 {
 	short_name = "sharaclub";
 	provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";;
-	provider_vod_url = L"http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
 }
 
 void plugin_sharaclub::load_default()
@@ -56,6 +55,13 @@ void plugin_sharaclub::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "https://shara.club/";
+
+	PlaylistTemplateInfo vod_info;
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	vod_info.pl_template = "http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
+	vod_templates.emplace_back(vod_info);
+
+	vod_support = true;
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
@@ -80,7 +86,7 @@ void plugin_sharaclub::load_default()
 
 std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)
 {
-	auto& url = get_playlist_template(params.playlist_idx);
+	auto& url = get_current_playlist_template();
 	if (params.profile_idx != 0)
 	{
 		fill_profiles_list(params);

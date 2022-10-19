@@ -33,5 +33,6 @@ public:
 
 	plugin_iptvonline();
 
+protected:
 	void load_default() override;
 };

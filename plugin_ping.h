@@ -33,5 +33,6 @@ public:
 
 	plugin_ping();
 
+protected:
 	void load_default() override;
 };

@@ -33,5 +33,6 @@ public:
 
 	plugin_ottclub();
 
+protected:
 	void load_default() override;
 };

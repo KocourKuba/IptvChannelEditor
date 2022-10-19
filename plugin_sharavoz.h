@@ -33,5 +33,6 @@ public:
 
 	plugin_sharavoz();
 
+protected:
 	void load_default() override;
 };

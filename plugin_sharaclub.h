@@ -33,11 +33,13 @@ public:
 
 	plugin_sharaclub();
 
-	void load_default() override;
 	std::wstring get_playlist_url(TemplateParams& params, std::wstring url = L"") override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
 	void fill_profiles_list(TemplateParams& params) override;
 	bool set_profile(TemplateParams& params) override;
+
+protected:
+	void load_default() override;
 };

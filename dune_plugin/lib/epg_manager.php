@@ -47,29 +47,15 @@ class Epg_Manager
                 $epg_id = '';
         }
 
-        if (empty($epg_id)) {
+        if (empty($epg_id) && strpos($params[EPG_URL], '{ID}') === false) {
             hd_print("EPG: $epg_id not defined");
             throw new Exception("EPG: $epg_id not defined");
         }
 
-        if ($params[EPG_USE_MAPPER]) {
-            $mapper = $params[EPG_ID_MAPPER];
-            if (empty($mapper)) {
-                $mapper = HD::MapTvgID($params[EPG_MAPPER_URL]);
-                hd_print("TVG ID Mapped: " . count($mapper));
-                $this->config->set_epg_param($type, EPG_ID_MAPPER, $mapper);
-            }
-
-            if (array_key_exists($epg_id, $mapper)) {
-                hd_print("EPG id replaced: $epg_id -> " . $mapper[$epg_id]);
-                $epg_id = $mapper[$epg_id];
-            }
-        } else {
-            $epg_id = str_replace(' ', '%20', $epg_id);
-        }
+        $epg_id = str_replace(' ', '%20', $epg_id);
 
         hd_print("Fetching EPG for ID: '$epg_id'");
-        $epg_url = str_replace('{EPG_ID}', $epg_id, $params[EPG_URL]);
+        $epg_url = str_replace(array('{EPG_ID}', '{ID}'), array($epg_id, $channel->get_id()), $params[EPG_URL]);
         if (strpos($epg_url, '{DATE}') !== false) {
             $date_format = str_replace(
                 array('{YEAR}', '{MONTH}', '{DAY}'),

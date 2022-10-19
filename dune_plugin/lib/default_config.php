@@ -421,6 +421,10 @@ class default_config extends dynamic_config
     {
         hd_print("getSearchList: $keyword");
         $movies = array();
+        if (!$this->get_feature(VOD_M3U)) {
+            return $movies;
+        }
+
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
@@ -491,10 +495,53 @@ class default_config extends dynamic_config
      * @param string $movie_id
      * @param $plugin_cookies
      * @return Movie
+     * @throws Exception
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
-        return null;
+        hd_print("TryLoadMovie: $movie_id");
+        $movie = new Movie($movie_id);
+
+        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
+        foreach ($m3u_lines as $i => $iValue) {
+            if ($i !== (int)$movie_id || !preg_match($this->get_feature(VOD_PARSE_PATTERN), $iValue, $match)) {
+                continue;
+            }
+
+            $logo = isset($match['logo']) ? $match['logo'] : "";
+            $title = isset($match['title']) ? $match['title'] : "";
+            $title_orig = isset($match['title_orig']) ? $match['title_orig'] : "";
+            $country = isset($match['country']) ? $match['country'] : "";
+            $year = isset($match['year']) ? $match['year'] : "";
+            $url = $this->UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
+
+            //hd_print("Vod url: $playback_url");
+            $movie->set_data(
+                $title,// $xml->caption,
+                $title_orig,// $xml->caption_original,
+                '',// $xml->description,
+                $logo,// $xml->poster_url,
+                '',// $xml->length,
+                $year,// $xml->year,
+                '',// $xml->director,
+                '',// $xml->scenario,
+                '',// $xml->actors,
+                '',// $xml->genres,
+                '',// $xml->rate_imdb,
+                '',// $xml->rate_kinopoisk,
+                '',// $xml->rate_mpaa,
+                $country,// $xml->country,
+                ''// $xml->budget
+            );
+
+            $movie->add_series_data($movie_id, $title, '', $url);
+            // hd_print("movie_id: $movie_id");
+            // hd_print("title: $title");
+            hd_print("movie url: $url");
+            break;
+        }
+
+        return $movie;
     }
 
     /**

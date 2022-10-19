@@ -33,5 +33,6 @@ public:
 
 	plugin_lightiptv();
 
+protected:
 	void load_default() override;
 };

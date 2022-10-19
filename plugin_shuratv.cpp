@@ -59,7 +59,7 @@ void plugin_shuratv::load_default()
 	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
 
 	auto& params1 = epg_params[0];
-	params1.epg_url = "http://epg.propg.net/{EPG_ID}/epg2/{DATE}";
+	params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";
 	params1.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 	params1.epg_root = "";
 	params1.epg_name = "epg";

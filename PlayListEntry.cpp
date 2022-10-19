@@ -91,41 +91,35 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		// special cases after parsing
 		switch (parent_plugin->get_plugin_type())
 		{
-		case PluginType::enGlanz:
-		case PluginType::enOneCent:
 		case PluginType::enIptvOnline:
 			if (get_epg_id(0).front() == 'X')
 			{
-				set_epg_id(0, get_epg_id(0).substr(1)); // primary EPG
+				set_epg_id(0, get_epg_id(0).substr(1));
 			}
 			break;
 		case PluginType::enSharavoz:
 		case PluginType::enOneOtt:
-		case PluginType::enCbilling:
-		case PluginType::enShuraTV:
-			set_epg_id(0, get_id()); // primary EPG
+		case PluginType::enOttclub:
+			set_epg_id(0, get_id());
 			break;
 		case PluginType::enLightIptv:
 		case PluginType::enFilmax:
-		{
-			auto epg_id = get_epg_id(0);
-			set_id(epg_id);
-			epg_id.erase(std::remove(epg_id.begin(), epg_id.end(), '/'), epg_id.end());
-			set_epg_id(0, epg_id);
-			break;
-		}
-		case PluginType::enOttclub:
-			set_epg_id(0, get_id()); // primary EPG
-			set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", get_domain(), get_id()));
-			break;
-		case PluginType::enVidok:
-			set_icon_uri(fmt::format(L"http://ott.st/logos/{:s}.png", get_id()));
-			break;
-		case PluginType::enKineskop:
-			set_icon_uri(std::regex_replace(get_icon_uri().get_uri(), std::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
+			set_id(get_epg_id(0));
 			break;
 		default:
 			break;
+		}
+
+		switch (parent_plugin->get_plugin_type())
+		{
+			case PluginType::enOttclub:
+				set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", get_domain(), get_id()));
+				break;
+			case PluginType::enKineskop:
+				set_icon_uri(std::regex_replace(get_icon_uri().get_uri(), std::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
+				break;
+			default:
+				break;
 		}
 
 		if (!parent_plugin->get_epg_parameter(1).epg_url.empty())

@@ -35,5 +35,6 @@ public:
 
 	plugin_antifriz();
 
+protected:
 	void load_default() override;
 };

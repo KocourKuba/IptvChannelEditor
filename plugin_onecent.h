@@ -33,5 +33,6 @@ public:
 
 	plugin_onecent();
 
+protected:
 	void load_default() override;
 };

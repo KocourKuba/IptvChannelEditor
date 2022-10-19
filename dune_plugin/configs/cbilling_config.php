@@ -3,6 +3,13 @@ require_once 'cbilling_vod_impl.php';
 
 class cbilling_config extends Cbilling_Vod_Impl
 {
+    public function init_defaults()
+    {
+        parent::init_defaults();
+
+        $this->set_feature(BALANCE_SUPPORTED, true);
+    }
+
     /**
      * Get information from the account
      * @param &$plugin_cookies

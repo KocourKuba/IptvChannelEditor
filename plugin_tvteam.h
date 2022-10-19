@@ -33,5 +33,6 @@ public:
 
 	plugin_tvteam();
 
+protected:
 	void load_default() override;
 };

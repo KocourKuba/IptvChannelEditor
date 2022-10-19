@@ -62,8 +62,13 @@ protected:
 	afx_msg void OnCbnSelchangeComboPlaylistTemplate();
 	afx_msg void OnCbnDropdownComboPlaylistTemplate();
 	afx_msg void OnBnClickedButtonPlaylistShow();
-	afx_msg void OnBnClickedButtonStreamParse();
-	afx_msg void OnBnClickedButtonStreamIdParse();
+	afx_msg void OnBnClickedButtonStreamRegexTest();
+	afx_msg void OnCbnSelchangeComboVodTemplate();
+	afx_msg void OnCbnDropdownComboVodTemplate();
+	afx_msg void OnBnClickedButtonEditVodTemplates();
+	afx_msg void OnBnClickedButtonVodTemplate();
+	afx_msg void OnEnChangeEditProviderVodUrl();
+	afx_msg void OnEnChangeEditVodRegex();
 	afx_msg void OnBnClickedButtonEditServers();
 	afx_msg void OnBnClickedButtonEditDevices();
 	afx_msg void OnBnClickedButtonEditQuality();
@@ -98,7 +103,6 @@ private:
 	void AllowSave(bool val = true);
 	void EnableControls();
 	void FillConfigs();
-	void FillPlaylistTemplates();
 	void FillControlsCommon();
 	void SaveControlsCommon();
 	void FillControlsStream();
@@ -115,7 +119,6 @@ public:
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;
-	CStatic m_wndDurationCaption;
 
 	CDateTimeCtrl m_wndDate;
 
@@ -142,9 +145,12 @@ protected:
 	CEdit m_wndEpgTimezone;
 	CEdit m_wndSetID;
 	CEdit m_wndToken;
+	CMenuEdit m_wndVodUrlTemplate;
+	CEdit m_wndVodRegex;
 
 	CComboBox m_wndAccessType;
 	CComboBox m_wndPlaylistTemplates;
+	CComboBox m_wndVodTemplates;
 	CComboBox m_wndStreamType;
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
@@ -167,6 +173,10 @@ protected:
 	CButton m_wndBtnPlaylistTest;
 	CButton m_wndBtnStreamParseTest;
 	CButton m_wndBtnStreamParseIdTest;
+	CButton m_wndChkEnableVOD;
+	CButton m_wndChkVodM3U;
+	CButton m_wndBtnVodParseTest;
+	CButton m_wndBtnVodTemplateTest;
 
 	CString m_Name;
 	CString m_Title;
@@ -189,6 +199,8 @@ protected:
 	CString m_EpgTimeFormat;
 	CString m_Token;
 	CString m_SetID;
+	CString m_VodPlaylistTemplate;
+	CString m_VodParseRegex;
 
 	COleDateTime m_Date;
 

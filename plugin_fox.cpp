@@ -37,8 +37,6 @@ static char THIS_FILE[] = __FILE__;
 plugin_fox::plugin_fox()
 {
 	short_name = "fox";
-	provider_vod_url = L"http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u";
-	vod_m3u = true;
 }
 
 void plugin_fox::load_default()
@@ -48,6 +46,20 @@ void plugin_fox::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "http://info.fox-tv.fun/";
+
+	PlaylistTemplateInfo vod_info;
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	vod_info.pl_template = "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u";
+	vod_templates.emplace_back(vod_info);
+
+	vod_info.set_name(load_string_resource(IDS_STRING_NO_ADULT));
+	vod_info.pl_template = "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vod.m3u";
+	vod_templates.emplace_back(vod_info);
+
+	vod_parse_pattern = R"(^#EXTINF:.+tvg-logo=\"(?<logo>[^\"]+)\".+group-title="(?<category>[^\"]+)\".*,\s*(?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$)";
+
+	vod_support = true;
+	vod_m3u = true;
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));

@@ -33,6 +33,8 @@ public:
 
 	plugin_oneott();
 
-	void load_default() override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
+
+protected:
+	void load_default() override;
 };

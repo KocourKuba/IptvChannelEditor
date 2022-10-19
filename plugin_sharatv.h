@@ -32,5 +32,6 @@ class plugin_sharatv : public base_plugin
 public:
 	plugin_sharatv();
 
+protected:
 	void load_default() override;
 };

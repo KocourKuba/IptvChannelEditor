@@ -40,7 +40,6 @@ static char THIS_FILE[] = __FILE__;
 plugin_cbilling::plugin_cbilling()
 {
 	short_name = "cbilling";
-	provider_vod_url = L"http://protected-api.com";
 }
 
 void plugin_cbilling::load_default()
@@ -50,6 +49,12 @@ void plugin_cbilling::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://cbilling.eu/";
+
+	PlaylistTemplateInfo vod_info;
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	vod_info.pl_template = "http://protected-api.com";
+	vod_templates.emplace_back(vod_info);
+	vod_support = true;
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));

@@ -37,7 +37,6 @@ static char THIS_FILE[] = __FILE__;
 plugin_glanz::plugin_glanz()
 {
 	short_name = "glanz";
-	provider_vod_url = L"http://api.ottg.cc/playlist/vod?login={LOGIN}&password={PASSWORD}";
 }
 
 void plugin_glanz::load_default()
@@ -47,6 +46,12 @@ void plugin_glanz::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "http://ottg.cc/";
+
+	PlaylistTemplateInfo vod_info;
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	vod_info.pl_template = "http://api.ottg.cc/playlist/vod?login={LOGIN}&password={PASSWORD}";
+	vod_templates.emplace_back(vod_info);
+	vod_support = true;
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));

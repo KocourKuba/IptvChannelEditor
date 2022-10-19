@@ -195,6 +195,12 @@ class plugin_config
 public:
 	plugin_config() = default;
 
+protected:
+	/// <summary>
+	/// load default settings
+	/// </summary>
+	virtual void load_default() {}
+
 public:
 	/// <summary>
 	/// clear all parameters
@@ -212,9 +218,13 @@ public:
 	virtual void load_plugin_parameters(const std::wstring& filename);
 
 	/// <summary>
+	/// load default plugin parameters and set default values for templates
+	/// </summary>
+	void set_plugin_defaults(PluginType val);
+
+	/// <summary>
 	/// plugin type
 	/// </summary>
-	void set_plugin_type(PluginType pluginType) { plugin_type = pluginType; }
 	PluginType get_plugin_type() const { return plugin_type; }
 
 	/// <summary>
@@ -234,20 +244,6 @@ public:
 	/// </summary>
 	/// <returns>wstring</returns>
 	const std::wstring& get_provider_api_url() const { return provider_api_url; }
-
-	/// <summary>
-	/// returns is vod m3u based
-	/// </summary>
-	/// <returns>bool</returns>
-	bool is_vod_m3u() const { return vod_m3u; }
-
-	/// <summary>
-	/// returns vod url template
-	/// </summary>
-	/// <returns>wstring</returns>
-	const std::wstring& get_vod_template() const { return provider_vod_url; };
-
-	//////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
 	/// property plugin title
@@ -273,6 +269,15 @@ public:
 	std::wstring get_provider_url() const { return utils::utf8_to_utf16(provider_url); }
 	void set_provider_url(const std::wstring& val) { provider_url = utils::utf16_to_utf8(val); }
 
+	/// <summary>
+	/// active vod template
+	/// </summary>
+	std::wstring get_current_playlist_template() const { return utils::utf8_to_utf16(playlist_template); }
+	void set_current_playlist_template(const std::wstring& val) { playlist_template = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// selected playlist template index
+	/// </summary>
 	size_t get_playlist_template_idx() const { return playlist_template_index; }
 	void set_playlist_template_idx(size_t idx) { playlist_template_index = idx; }
 
@@ -285,7 +290,7 @@ public:
 	/// <summary>
 	/// property playlist templates
 	/// </summary>
-	std::vector <PlaylistTemplateInfo> get_playlist_templates() const { return playlist_templates; }
+	const std::vector <PlaylistTemplateInfo>& get_playlist_templates() const { return playlist_templates; }
 	void set_playlist_templates(const std::vector<PlaylistTemplateInfo>& val) { playlist_templates = val; }
 
 	/// <summary>
@@ -299,6 +304,52 @@ public:
 	/// </summary>
 	std::wstring get_uri_id_parse_pattern() const { return utils::utf8_to_utf16(uri_id_parse_pattern); }
 	void set_uri_id_parse_pattern(const std::wstring& val) { uri_id_parse_pattern = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// plugin supports vod
+	/// </summary>
+	/// <returns>bool</returns>
+	bool get_vod_support() const { return vod_support; }
+	void set_vod_support(bool val) { vod_support = val; }
+
+	/// <summary>
+	/// vod m3u based
+	/// </summary>
+	/// <returns>bool</returns>
+	bool get_vod_m3u() const { return vod_m3u; }
+	void set_vod_m3u(bool val) { vod_m3u = val; }
+
+	/// <summary>
+	/// active vod template
+	/// </summary>
+	std::wstring get_current_vod_template() const { return utils::utf8_to_utf16(provider_vod_url); }
+	void set_current_vod_template(const std::wstring& val) { provider_vod_url = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// property vod templates
+	/// </summary>
+	const std::vector <PlaylistTemplateInfo>& get_vod_templates() const { return vod_templates; }
+	void set_vod_templates(const std::vector<PlaylistTemplateInfo>& val) { vod_templates = val; }
+
+	/// <summary>
+	/// selected vod template index
+	/// </summary>
+	size_t get_vod_template_idx() const { return vod_template_index; }
+	void set_vod_template_idx(size_t idx) { vod_template_index = idx; }
+
+	/// <summary>
+	/// vod url template
+	/// </summary>
+	/// <returns>wstring</returns>
+	std::wstring get_vod_template(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_template() : L""; }
+	void set_vod_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_template(val); }
+
+	/// <summary>
+	/// regex for parsing title
+	/// </summary>
+	/// <returns>wstring</returns>
+	std::wstring get_vod_parse_pattern() const { return utils::utf8_to_utf16(vod_parse_pattern); };
+	void set_vod_parse_regex(const std::wstring& val) { vod_parse_pattern = utils::utf16_to_utf8(val); };
 
 	/// <summary>
 	/// property square icons, php GUI setting
@@ -375,16 +426,9 @@ public:
 	void set_static_profiles(bool val) { static_profiles = val; }
 
 	/// <summary>
-	/// load default settings
-	/// </summary>
-	/// <param name="url"></param>
-	virtual void load_default() { clear(); }
-
-	/// <summary>
 	/// returns list of servers
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<ServersInfo></returns>
 	virtual void fill_servers_list(TemplateParams& /*params*/) {}
 
 	/// <summary>
@@ -462,7 +506,9 @@ public:
 
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE(plugin_config, access_type, short_name, title, name, provider_url, //-V601
 								   playlist_templates, playlist_template_index, playlist_template,
-								   uri_id_parse_pattern, uri_parse_pattern, square_icons, requested_token,
+								   uri_id_parse_pattern, uri_parse_pattern, vod_support, vod_m3u,
+								   vod_templates, vod_template_index, provider_vod_url, vod_parse_pattern,
+								   square_icons, requested_token,
 								   static_servers, static_qualities, static_devices, static_profiles,
 								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
 
@@ -473,8 +519,6 @@ protected:
 	std::string short_name;
 
 	std::wstring provider_api_url;
-	std::wstring provider_vod_url;
-	bool vod_m3u = false;
 
 	// configurable parameters
 
@@ -493,6 +537,15 @@ protected:
 	// original uri parse template
 	std::string uri_parse_pattern;
 
+	// enable vod
+	bool vod_support = false;
+	// vod based on m3u8 playlist
+	bool vod_m3u = false;
+	// url to vod playlist
+	std::string provider_vod_url;
+	// vod title parse regex
+	std::string vod_parse_pattern;
+
 	// use channels logo are squared, plugin UI settings
 	bool square_icons = false;
 	// use token from uri instead of account settings
@@ -508,6 +561,10 @@ protected:
 	size_t playlist_template_index = 0;
 	// available playlist templates
 	std::vector<PlaylistTemplateInfo> playlist_templates;
+	// selected vod template
+	size_t vod_template_index = 0;
+	// available vod templates
+	std::vector<PlaylistTemplateInfo> vod_templates;
 	// setting for parsing uri streams
 	std::array<StreamParameters, 2> streams_config;
 	// setting for parsing json EPG

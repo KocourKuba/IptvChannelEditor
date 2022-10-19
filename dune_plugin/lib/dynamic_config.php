@@ -20,14 +20,20 @@ class dynamic_config
     public function init_defaults()
     {
         hd_print("Init defaults");
+        $this->features[TV_FAVORITES_SUPPORTED] = true; // always true
+        $this->features[BALANCE_SUPPORTED] = false; // account support account info requests
+        $this->features[VOD_LAZY_LOAD] = false; // all movies loaded as one file or require delayed request to collect movies
+        $this->features[VOD_QUALITY_SUPPORTED] = false; // currently supported only in edem
+        $this->features[VOD_FILTER_SUPPORTED] = false; // filter list screen
+
         $this->features[ACCESS_TYPE] = ACCOUNT_UNKNOWN;
         $this->features[SQUARE_ICONS] = false;
-        $this->features[TV_FAVORITES_SUPPORTED] = true;
-        $this->features[BALANCE_SUPPORTED] = false;
+        $this->features[PLAYLIST_TEMPLATE] = '';
+        $this->features[URI_ID_PARSE_PATTERN] = '';
+        $this->features[URI_PARSE_PATTERN] = '';
         $this->features[VOD_SUPPORTED] = false;
-        $this->features[VOD_LAZY_LOAD] = false;
-        $this->features[VOD_QUALITY_SUPPORTED] = false;
-        $this->features[VOD_FILTER_SUPPORTED] = false;
+        $this->features[VOD_M3U] = false;
+        $this->features[VOD_PLAYLIST_URL] = '';
         $this->features[VOD_PARSE_PATTERN] = '';
 
         // load defaults
@@ -55,8 +61,6 @@ class dynamic_config
         $default_parser[EPG_DESC] = 'descr';
         $default_parser[EPG_DATE_FORMAT] = '';
         $default_parser[EPG_USE_DURATION] = false;
-        $default_parser[EPG_USE_MAPPER] = false;
-        $default_parser[EPG_MAPPER_URL] = '';
         $default_parser[EPG_TIME_FORMAT] = '';
         $default_parser[EPG_TIMEZONE] = 0;
         $default_parser[EPG_ID_MAPPER] = array();
@@ -75,10 +79,14 @@ class dynamic_config
 
         $this->PluginShortName = $settings[SHORT_NAME];
         $this->set_feature(ACCESS_TYPE, $settings[ACCESS_TYPE]);
+        $this->set_feature(SQUARE_ICONS, $settings[SQUARE_ICONS]);
         $this->set_feature(PLAYLIST_TEMPLATE, $settings[PLAYLIST_TEMPLATE]);
         $this->set_feature(URI_ID_PARSE_PATTERN, $settings[URI_ID_PARSE_PATTERN]);
         $this->set_feature(URI_PARSE_PATTERN, $settings[URI_PARSE_PATTERN]);
-        $this->set_feature(SQUARE_ICONS, $settings[SQUARE_ICONS]);
+        $this->set_feature(VOD_SUPPORTED, $settings[VOD_SUPPORTED]);
+        $this->set_feature(VOD_M3U, $settings[VOD_M3U]);
+        $this->set_feature(VOD_PLAYLIST_URL, $settings[VOD_PLAYLIST_URL]);
+        $this->set_feature(VOD_PARSE_PATTERN, $settings[VOD_PARSE_PATTERN]);
 
         foreach ($settings[STREAMS_CONFIG] as $config)
         {

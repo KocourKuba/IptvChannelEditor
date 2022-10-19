@@ -9,10 +9,7 @@ abstract class Cbilling_Vod_Impl extends default_config
     {
         parent::init_defaults();
 
-        $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_LAZY_LOAD, true);
-        $this->set_feature(VOD_PLAYLIST_URL, 'http://%s%s?token=%s');
-        $this->set_feature(BALANCE_SUPPORTED, true);
     }
 
     /**
@@ -58,7 +55,7 @@ abstract class Cbilling_Vod_Impl extends default_config
 
         $domain = $this->account_data['server'];
 
-        $vod_url = $this->get_feature(VOD_PLAYLIST_URL);
+        $vod_url = 'http://%s%s?token=%s';
         if (isset($movieData->seasons)) {
             foreach ($movieData->seasons as $season) {
                 $movie->add_season_data($season->number, !empty($season->name) ? $season->name : "Сезон $season->number", '');
@@ -104,7 +101,7 @@ abstract class Cbilling_Vod_Impl extends default_config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         //hd_print("fetch_vod_categories");
-        $jsonItems = HD::DownloadJson(self::API_HOST, false);
+        $jsonItems = HD::DownloadJson($this->get_feature(VOD_PLAYLIST_URL), false);
         if ($jsonItems === false) {
             return;
         }

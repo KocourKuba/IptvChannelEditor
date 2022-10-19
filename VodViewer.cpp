@@ -159,7 +159,7 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 	m_wndQuality.EnableWindow(FALSE);
 	m_wndReload.EnableWindow(FALSE);
 
-	if (m_plugin->is_vod_m3u())
+	if (m_plugin->get_vod_m3u())
 		LoadM3U8Playlist(use_cache);
 	else
 		LoadJsonPlaylist(use_cache);
@@ -298,6 +298,8 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
+	static std::set<std::wstring> groups_mapper = { L"logo", L"category", L"title", L"title_orig", L"year", L"country",};
+
 	m_evtStop.ResetEvent();
 	m_evtFinished.SetEvent();
 
@@ -307,20 +309,37 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 
 	m_playlistEntries.reset((Playlist*)wParam);
 
+	// clear named group
+	std::vector<std::wstring> regex_named_groups;
+
 	std::wregex re;
-	switch (m_plugin->get_plugin_type())
+	if (!m_plugin->get_vod_parse_pattern().empty())
 	{
-		case PluginType::enFox:
-		case PluginType::enPing:
-			re = LR"(([^\/]+)\/(.+)\s(\d+)$)";
-			break;
-		case PluginType::enSmile:
-			re = LR"(([^\(]+)\(([^\d]+)\s(\d+)\)$)";
-			break;
-		default:
-			break;
+		try
+		{
+			std::wstring ecmascript_re(m_plugin->get_vod_parse_pattern());
+			std::wregex re_group(L"(\\?<([^>]+)>)");
+			std::match_results<std::wstring::const_iterator> ms;
+			while (std::regex_search(ecmascript_re, ms, re_group))
+			{
+				if (groups_mapper.find(ms[2]) != groups_mapper.end())
+				{
+					// add only known group!
+					regex_named_groups.emplace_back(ms[2]);
+				}
+				ecmascript_re.erase(ms.position(), ms.length());
+			}
+
+			// store regex without named groups
+			re = ecmascript_re;
+		}
+		catch (...)
+		{
+
+		}
 	}
 
+	bool parseTitle = !re._Empty();
 	if (m_playlistEntries)
 	{
 		for (const auto& entry : m_playlistEntries->m_entries)
@@ -339,25 +358,16 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 			movie->poster_url = entry->get_icon_uri();
 			movie->url = entry->get_uri();
 
-			if (!re._Empty())
+			if (parseTitle)
 			{
 				std::wsmatch m;
 				if (std::regex_match(entry->get_title(), m, re))
 				{
-					movie->title = m[1];
-					movie->year = m[3];
-
-					switch (m_plugin->get_plugin_type())
+					// map groups to parser members
+					size_t pos = 1;
+					for (const auto& group : regex_named_groups)
 					{
-						case PluginType::enFox:
-						case PluginType::enPing:
-							movie->title_orig = m[2];
-							break;
-						case PluginType::enSmile:
-							movie->country = m[2];
-							break;
-						default:
-							break;
+						*movie->parser_mapper[group] = std::move(m[pos++].str());
 					}
 				}
 			}
@@ -1000,7 +1010,7 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 {
 	CWaitCursor cur;
 
-	const auto& url = m_plugin->get_vod_template() + L"/video/" + movie.id;
+	const auto& url = m_plugin->get_current_vod_template() + L"/video/" + movie.id;
 	std::vector<BYTE> data;
 	if (url.empty() || !utils::DownloadFile(url, data, false) || data.empty())
 	{

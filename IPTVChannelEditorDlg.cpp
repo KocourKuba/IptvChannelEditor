@@ -529,7 +529,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		if (!plugin) continue;
 
 		std::wstring title(plugin->get_title());
-		if (!plugin->get_vod_template().empty())
+		if (!plugin->get_vod_templates().empty())
 			title += L" (VOD)";
 
 		int idx = m_wndPluginType.AddString(title.c_str());
@@ -663,26 +663,24 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	if (!showWebUpdate)
 		m_wndMakeWebUpdate.SetCheck(0);
 
-	if (m_plugin_type == PluginType::enSharaclub)
+	const auto& provider_api_url = m_plugin->get_provider_api_url();
+	if (!provider_api_url.empty()
+		&& (GetConfig().get_string(false, REG_LIST_DOMAIN).empty() || GetConfig().get_string(false, REG_EPG_DOMAIN).empty()))
 	{
-		if (GetConfig().get_string(false, REG_LIST_DOMAIN).empty() || GetConfig().get_string(false, REG_EPG_DOMAIN).empty())
+		std::vector<BYTE> data;
+		if (utils::DownloadFile(provider_api_url, data) && !data.empty())
 		{
-			const auto& provider_api_url = m_plugin->get_provider_api_url();
-			std::vector<BYTE> data;
-			if (utils::DownloadFile(provider_api_url, data) && !data.empty())
-			{
-				JSON_ALL_TRY;
-				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
-				GetConfig().set_string(false, REG_LIST_DOMAIN, utils::utf8_to_utf16(parsed_json["listdomain"].get<std::string>()));
-				GetConfig().set_string(false, REG_EPG_DOMAIN, utils::utf8_to_utf16(parsed_json["jsonEpgDomain"].get<std::string>()));
-				JSON_ALL_CATCH;
-			}
+			JSON_ALL_TRY;
+			const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+			GetConfig().set_string(false, REG_LIST_DOMAIN, utils::utf8_to_utf16(parsed_json["listdomain"].get<std::string>()));
+			GetConfig().set_string(false, REG_EPG_DOMAIN, utils::utf8_to_utf16(parsed_json["jsonEpgDomain"].get<std::string>()));
+			JSON_ALL_CATCH;
 		}
 	}
 
 	const auto& streams = m_plugin->get_supported_streams();
 
-	m_wndBtnVod.ShowWindow(m_plugin->get_vod_template().empty() ? SW_HIDE : SW_SHOW);
+	m_wndBtnVod.ShowWindow(m_plugin->get_vod_templates().empty() ? SW_HIDE : SW_SHOW);
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();

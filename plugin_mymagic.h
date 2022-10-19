@@ -35,5 +35,7 @@ public:
 
 	void fill_servers_list(TemplateParams& /*params*/) override;
 	void fill_qualities_list(TemplateParams& /*params*/) override;
+
+protected:
 	void load_default() override;
 };

@@ -33,5 +33,6 @@ public:
 
 	plugin_russkoetv();
 
+protected:
 	void load_default() override;
 };

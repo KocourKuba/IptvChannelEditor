@@ -33,5 +33,6 @@ public:
 
 	plugin_fox();
 
+protected:
 	void load_default() override;
 };

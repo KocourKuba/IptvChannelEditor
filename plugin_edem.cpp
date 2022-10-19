@@ -40,7 +40,7 @@ plugin_edem::plugin_edem()
 
 void plugin_edem::load_default()
 {
-	provider_vod_url = L"{SUBDOMAIN}";
+	vod_support = true;
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));

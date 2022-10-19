@@ -9,10 +9,8 @@ class sharaclub_config extends default_config
     {
         parent::init_defaults();
 
-        $this->set_feature(VOD_SUPPORTED, true);
         $this->set_feature(VOD_FILTER_SUPPORTED, true);
         $this->set_feature(BALANCE_SUPPORTED, true);
-        $this->set_feature(VOD_PLAYLIST_URL, "http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}");
         $this->set_feature(API_REQUEST_URL, "http://{SUBDOMAIN}/api/players.php?a={COMMAND}&u={LOGIN}-{PASSWORD}&source=dune_editor");
     }
 

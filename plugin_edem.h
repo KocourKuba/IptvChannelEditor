@@ -34,5 +34,6 @@ public:
 
 	plugin_edem();
 
+protected:
 	void load_default() override;
 };

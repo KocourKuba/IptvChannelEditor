@@ -67,10 +67,51 @@ public:
 	std::wstring description;
 	std::wstring url;
 	std::wstring movie_time; // in minutes
+	std::wstring category;
 	vod_genre_storage genres;
 	uri_base poster_url;
 	vod_season_storage seasons;
 	vod_quality_storage quality;
+
+	vod_movie& operator=(const vod_movie& src)
+	{
+		if (this != &src)
+		{
+			id = src.id;
+			title = src.title;
+			title_orig = src.title_orig;
+			year = src.year;
+			rating = src.rating;
+			age = src.age;
+			country = src.country;
+			director = src.director;
+			casting = src.casting;
+			description = src.description;
+			url = src.url;
+			movie_time = src.movie_time;
+			category = src.category;
+			genres = src.genres;
+			poster_url = src.poster_url;
+			seasons = src.seasons;
+			quality = src.quality;
+		}
+
+		return *this;
+	}
+
+	std::map<std::wstring, std::wstring*> parser_mapper = {
+		{L"id"          , &id},
+		{L"title"       , &title},
+		{L"title_orig"  , &title_orig},
+		{L"year"        , &year},
+		{L"rating"      , &rating},
+		{L"age"         , &age},
+		{L"country"     , &country},
+		{L"director"    , &director},
+		{L"casting"     , &casting},
+		{L"description" , &description},
+		{L"category"    , &category},
+	};
 };
 
 using vod_movie_storage = utils::vectormap<std::wstring, std::shared_ptr<vod_movie>>;

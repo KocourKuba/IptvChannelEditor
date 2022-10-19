@@ -33,5 +33,6 @@ public:
 
 	plugin_glanz();
 
+protected:
 	void load_default() override;
 };

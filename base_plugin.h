@@ -97,13 +97,16 @@ public:
 	base_plugin(const base_plugin& src);
 	virtual ~base_plugin() = default;
 
-	void clear() override;
 
+protected:
 	/// <summary>
 	/// load default settings
 	/// </summary>
 	/// <param name="url"></param>
 	void load_default() override;
+
+public:
+	void clear() override;
 
 	/// <summary>
 	/// save plugin parameters to file

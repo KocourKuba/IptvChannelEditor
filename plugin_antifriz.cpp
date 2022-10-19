@@ -37,7 +37,6 @@ static char THIS_FILE[] = __FILE__;
 plugin_antifriz::plugin_antifriz()
 {
 	short_name = "antifriz";
-	provider_vod_url = L"http://protected-api.com";
 }
 
 void plugin_antifriz::load_default()
@@ -47,6 +46,12 @@ void plugin_antifriz::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://antifriztv.com/";
+
+	PlaylistTemplateInfo vod_info;
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	vod_info.pl_template = "http://protected-api.com";
+	vod_templates.emplace_back(vod_info);
+	vod_support = true;
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));

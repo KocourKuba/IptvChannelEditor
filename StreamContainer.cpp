@@ -178,8 +178,7 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 	if (plugin)
 	{
-		plugin->set_plugin_type(type);
-		plugin->load_default();
+		plugin->set_plugin_defaults(type);
 	}
 
 	return plugin;

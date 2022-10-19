@@ -70,7 +70,7 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring url /*= L""*/)
 {
 	if (url.empty())
-		url = get_playlist_template(params.playlist_idx);
+		url = get_current_playlist_template();
 
 	if (!params.token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
@@ -202,7 +202,7 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 
 std::wstring base_plugin::get_vod_url(TemplateParams& params) const
 {
-	std::wstring url = get_vod_template();
+	std::wstring url = get_current_vod_template();
 
 	if (!params.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
@@ -383,6 +383,7 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	lt.tm_sec = 0;
 
 	auto epg_template = epg_params[epg_idx].get_epg_url();
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, subst_id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->token);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, params.get_epg_date_format());

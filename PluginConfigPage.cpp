@@ -53,10 +53,17 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_CBN_DROPDOWN(IDC_COMBO_EPG_TYPE, &CPluginConfigPage::OnCbnDropdownComboEpgType)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPage::OnBnClickedButtonEpgTest)
 	ON_BN_CLICKED(IDC_BUTTON_PLAYLIST_SHOW, &CPluginConfigPage::OnBnClickedButtonPlaylistShow)
-	ON_BN_CLICKED(IDC_BUTTON_STREAM_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamParse)
-	ON_BN_CLICKED(IDC_BUTTON_STREAM_ID_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamIdParse)
+	ON_BN_CLICKED(IDC_BUTTON_STREAM_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamRegexTest)
+	ON_BN_CLICKED(IDC_BUTTON_STREAM_ID_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamRegexTest)
+	ON_BN_CLICKED(IDC_BUTTON_VOD_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamRegexTest)
 	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN, &CPluginConfigPage::OnEnChangeEditParsePattern)
 	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN_ID, &CPluginConfigPage::OnEnChangeEditParsePatternID)
+	ON_CBN_SELCHANGE(IDC_COMBO_VOD_TEMPLATE, &CPluginConfigPage::OnCbnSelchangeComboVodTemplate)
+	ON_CBN_DROPDOWN(IDC_COMBO_VOD_TEMPLATE, &CPluginConfigPage::OnCbnDropdownComboVodTemplate)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_VOD_TEMPLATES, &CPluginConfigPage::OnBnClickedButtonEditVodTemplates)
+	ON_EN_CHANGE(IDC_EDIT_PROVIDER_VOD_URL, &CPluginConfigPage::OnEnChangeEditProviderVodUrl)
+	ON_BN_CLICKED(IDC_BUTTON_VOD_TEMPLATE, &CPluginConfigPage::OnBnClickedButtonVodTemplate)
+	ON_EN_CHANGE(IDC_EDIT_VOD_REGEX, &CPluginConfigPage::OnEnChangeEditVodRegex)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_SERVERS, &CPluginConfigPage::OnBnClickedCheckStaticServers)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_DEVICES, &CPluginConfigPage::OnBnClickedCheckStaticDevices)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_QUALITIES, &CPluginConfigPage::OnBnClickedCheckStaticQualities)
@@ -99,6 +106,8 @@ CPluginConfigPage::CPluginConfigPage(std::vector<std::wstring>& configs)
 	: CMFCPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
 	, m_Date(COleDateTime::GetCurrentTime())
 	, m_configs(configs)
+	, m_VodPlaylistTemplate(_T(""))
+	, m_VodParseRegex(_T(""))
 {
 }
 
@@ -126,7 +135,6 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SHIFT_SUBST, m_Subst);
 	DDX_Control(pDX, IDC_EDIT_DURATION, m_wndDuration);
 	DDX_Text(pDX, IDC_EDIT_DURATION, m_Duration);
-	DDX_Control(pDX, IDC_STATIC_DURATION, m_wndDurationCaption);
 	DDX_Control(pDX, IDC_EDIT_STREAM_TEMPLATE, m_wndStreamTemplate);
 	DDX_Text(pDX, IDC_EDIT_STREAM_TEMPLATE, m_StreamTemplate);
 	DDX_Control(pDX, IDC_EDIT_STREAM_ARC_TEMPLATE, m_wndStreamArchiveTemplate);
@@ -179,6 +187,15 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_STATIC_PROFILES, m_wndChkStaticProfiles);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_PROFILES, m_wndBtnProfiles);
 	DDX_Text(pDX, IDC_EDIT_UTC, m_UTC);
+	DDX_Control(pDX, IDC_CHECK_VOD_SUPPORT, m_wndChkEnableVOD);
+	DDX_Control(pDX, IDC_CHECK_VOD_M3U, m_wndChkVodM3U);
+	DDX_Control(pDX, IDC_COMBO_VOD_TEMPLATE, m_wndVodTemplates);
+	DDX_Control(pDX, IDC_EDIT_PROVIDER_VOD_URL, m_wndVodUrlTemplate);
+	DDX_Control(pDX, IDC_EDIT_VOD_REGEX, m_wndVodRegex);
+	DDX_Text(pDX, IDC_EDIT_PROVIDER_VOD_URL, m_VodPlaylistTemplate);
+	DDX_Text(pDX, IDC_EDIT_VOD_REGEX, m_VodParseRegex);
+	DDX_Control(pDX, IDC_BUTTON_VOD_PARSE, m_wndBtnVodParseTest);
+	DDX_Control(pDX, IDC_BUTTON_VOD_TEMPLATE, m_wndBtnVodTemplateTest);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -336,6 +353,7 @@ void CPluginConfigPage::AssignMacros()
 	};
 
 	m_wndPlaylistTemplate.SetTemplateParams(pl_params);
+	m_wndVodUrlTemplate.SetTemplateParams(pl_params);
 
 	std::vector<std::wstring> strm_params(std::move(pl_params));
 	strm_params.insert(strm_params.end(),
@@ -364,6 +382,7 @@ void CPluginConfigPage::AssignMacros()
 
 	std::vector<std::wstring> epg_params =
 	{
+				L"{ID}",
 				L"{DOMAIN}",
 				L"{EPG_ID}",
 				L"{TOKEN}",
@@ -404,18 +423,6 @@ void CPluginConfigPage::FillConfigs()
 	}
 
 	m_wndPluginConfigs.SetCurSel(cur_idx);
-}
-
-void CPluginConfigPage::FillPlaylistTemplates()
-{
-	m_wndPlaylistTemplates.ResetContent();
-	for (const auto& entry : m_plugin->get_playlist_templates())
-	{
-		m_wndPlaylistTemplates.AddString(entry.get_name().c_str());
-	}
-
-	m_wndPlaylistTemplates.SetCurSel(m_plugin->get_playlist_template_idx());
-	m_PlaylistTemplate = m_plugin->get_playlist_template(m_plugin->get_playlist_template_idx()).c_str();
 }
 
 BOOL CPluginConfigPage::OnApply()
@@ -505,6 +512,10 @@ void CPluginConfigPage::EnableControls()
 	m_wndPlaylistTemplate.EnableWindow(enable);
 	m_wndParseStream.EnableWindow(enable);
 	m_wndParseStreamID.EnableWindow(enable);
+	m_wndChkEnableVOD.EnableWindow(enable);
+	m_wndChkVodM3U.EnableWindow(enable);
+	m_wndVodUrlTemplate.EnableWindow(enable);
+	m_wndVodRegex.EnableWindow(enable);
 
 	// test
 	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
@@ -561,13 +572,38 @@ void CPluginConfigPage::FillControlsCommon()
 
 	m_wndAccessType.SetCurSel((int)m_plugin->get_access_type());
 	m_wndChkSquareIcons.SetCheck(m_plugin->get_square_icons() != false);
+	m_wndChkEnableVOD.SetCheck(m_plugin->get_vod_support() != false);
+	m_wndChkVodM3U.SetCheck(m_plugin->get_vod_m3u() != false);
 
 	m_Name = m_plugin->get_name().c_str();
 	m_Title = m_plugin->get_title().c_str();
 	m_ShortName = m_plugin->get_short_name_w().c_str();
 	m_ProviderUrl = m_plugin->get_provider_url().c_str();
+
+	m_wndPlaylistTemplates.ResetContent();
+	for (const auto& entry : m_plugin->get_playlist_templates())
+	{
+		m_wndPlaylistTemplates.AddString(entry.get_name().c_str());
+	}
+
+	int pl_idx = m_plugin->get_playlist_template_idx();
+	m_wndPlaylistTemplates.SetCurSel(pl_idx);
+	m_PlaylistTemplate = m_plugin->get_playlist_template(pl_idx).c_str();
+
 	m_ParseStream = m_plugin->get_uri_parse_pattern().c_str();
 	m_ParseStreamID = m_plugin->get_uri_id_parse_pattern().c_str();
+
+	m_wndVodTemplates.ResetContent();
+	for (const auto& entry : m_plugin->get_vod_templates())
+	{
+		m_wndVodTemplates.AddString(entry.get_name().c_str());
+	}
+
+	int vod_idx = m_plugin->get_vod_template_idx();
+	m_wndVodTemplates.SetCurSel(vod_idx);
+	m_VodPlaylistTemplate = m_plugin->get_vod_template(vod_idx).c_str();
+
+	m_VodParseRegex = m_plugin->get_vod_parse_pattern().c_str();
 
 	m_supported_streams = m_plugin->get_supported_streams();
 	m_epg_parameters = m_plugin->get_epg_parameters();
@@ -575,7 +611,6 @@ void CPluginConfigPage::FillControlsCommon()
 	m_wndStreamType.SetCurSel(0);
 	m_wndEpgType.SetCurSel(0);
 
-	FillPlaylistTemplates();
 	FillControlsStream();
 	FillControlsEpg();
 	EnableControls();
@@ -589,6 +624,8 @@ void CPluginConfigPage::SaveControlsCommon()
 
 	m_plugin->set_access_type((AccountAccessType)m_wndAccessType.GetCurSel());
 	m_plugin->set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
+	m_plugin->set_vod_support(m_wndChkEnableVOD.GetCheck() != 0);
+	m_plugin->set_vod_m3u(m_wndChkVodM3U.GetCheck() != 0);
 
 	m_plugin->set_name(m_Name.GetString());
 	m_plugin->set_title(m_Title.GetString());
@@ -597,6 +634,8 @@ void CPluginConfigPage::SaveControlsCommon()
 	m_plugin->set_playlist_template(m_plugin->get_playlist_template_idx(), m_PlaylistTemplate.GetString());
 	m_plugin->set_uri_parse_pattern(m_ParseStream.GetString());
 	m_plugin->set_uri_id_parse_pattern(m_ParseStreamID.GetString());
+	m_plugin->set_vod_template(m_plugin->get_vod_template_idx(), m_VodPlaylistTemplate.GetString());
+	m_plugin->set_vod_parse_regex(m_VodParseRegex.GetString());
 
 	SaveControlsStream();
 	SaveControlsEpg();
@@ -630,7 +669,6 @@ void CPluginConfigPage::FillControlsStream()
 
 	m_wndCatchupType.SetCurSel((int)stream.cu_type);
 	m_wndDuration.ShowWindow(enableDuration);
-	m_wndDurationCaption.ShowWindow(enableDuration);
 
 	m_StreamTemplate = stream.uri_template.c_str();
 	m_StreamArchiveTemplate = stream.uri_arc_template.c_str();
@@ -873,6 +911,7 @@ void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 	params.device_idx = m_initial_cred.device_id;
 	params.profile_idx = m_initial_cred.profile_id;
 	params.quality_idx = m_initial_cred.quality_id;
+	params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
 
 	const auto& url = m_plugin->get_playlist_url(params);
 	std::vector<BYTE> data;
@@ -895,16 +934,43 @@ void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 	}
 }
 
-void CPluginConfigPage::OnBnClickedButtonStreamParse()
+void CPluginConfigPage::OnBnClickedButtonVodTemplate()
 {
-	if (!m_ParseStream.IsEmpty())
-		ShellExecute(nullptr, _T("open"), L"https://regex101.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+	TemplateParams params;
+	params.token = m_initial_cred.get_token();
+	params.login = m_initial_cred.get_login();
+	params.password = m_initial_cred.get_password();
+	params.subdomain = m_initial_cred.get_subdomain();
+	params.server_idx = m_initial_cred.server_id;
+	params.device_idx = m_initial_cred.device_id;
+	params.profile_idx = m_initial_cred.profile_id;
+	params.quality_idx = m_initial_cred.quality_id;
+	params.playlist_idx = m_wndVodTemplates.GetCurSel();
+
+	const auto& url = m_plugin->get_vod_url(params);
+	std::vector<BYTE> data;
+	if (utils::DownloadFile(url, data) && !data.empty())
+	{
+		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
+
+		std::ofstream out_stream(out_file);
+		out_stream.write((const char*)data.data(), data.size());
+		out_stream.close();
+
+		STARTUPINFO			si;
+		PROCESS_INFORMATION pi;
+		GetStartupInfo(&si);
+		CString csCmd;
+		csCmd.Format(_T("\"notepad.exe\" \"%s\""), out_file.c_str());
+		CreateProcess(nullptr, csCmd.GetBuffer(0), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+	}
 }
 
-void CPluginConfigPage::OnBnClickedButtonStreamIdParse()
+void CPluginConfigPage::OnBnClickedButtonStreamRegexTest()
 {
-	if (!m_ParseStreamID.IsEmpty())
-		ShellExecute(nullptr, _T("open"), L"https://regex101.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+	ShellExecute(nullptr, _T("open"), L"https://regex101.com/", nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
 void CPluginConfigPage::OnEnChangeEditParsePattern()
@@ -919,6 +985,20 @@ void CPluginConfigPage::OnEnChangeEditParsePatternID()
 	OnChanges();
 	UpdateData(TRUE);
 	m_wndBtnStreamParseIdTest.EnableWindow(!m_ParseStreamID.IsEmpty());
+}
+
+void CPluginConfigPage::OnEnChangeEditProviderVodUrl()
+{
+	OnChanges();
+	UpdateData(TRUE);
+	m_wndBtnVodTemplateTest.EnableWindow(!m_VodPlaylistTemplate.IsEmpty());
+}
+
+void CPluginConfigPage::OnEnChangeEditVodRegex()
+{
+	OnChanges();
+	UpdateData(TRUE);
+	m_wndBtnVodParseTest.EnableWindow(!m_VodParseRegex.IsEmpty());
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditServers()
@@ -1052,7 +1132,7 @@ void CPluginConfigPage::OnBnClickedButtonEditTemplates()
 
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = 4;
-	dlg.m_paramsList = info;
+	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = !m_allow_edit;
 
 	if (dlg.DoModal() == IDOK)
@@ -1065,6 +1145,49 @@ void CPluginConfigPage::OnBnClickedButtonEditTemplates()
 			playlists.emplace_back(item.id, item.name);
 		}
 		m_plugin->set_playlist_templates(playlists);
+
+		FillControlsCommon();
+	}
+}
+
+void CPluginConfigPage::OnCbnSelchangeComboVodTemplate()
+{
+	int idx = m_wndVodTemplates.GetCurSel();
+	m_plugin->set_vod_template_idx(idx);
+	m_VodPlaylistTemplate = m_plugin->get_vod_template(idx).c_str();
+	UpdateData(FALSE);
+}
+
+void CPluginConfigPage::OnCbnDropdownComboVodTemplate()
+{
+	UpdateData(TRUE);
+
+	m_plugin->set_vod_template(m_wndVodTemplates.GetCurSel(), m_VodPlaylistTemplate.GetString());
+}
+
+void CPluginConfigPage::OnBnClickedButtonEditVodTemplates()
+{
+	std::vector<DynamicParamsInfo> info;
+	for (const auto& item : m_plugin->get_vod_templates())
+	{
+		info.emplace_back(item.name, item.pl_template);
+	}
+
+	CFillParamsInfoDlg dlg;
+	dlg.m_type = 4;
+	dlg.m_paramsList = std::move(info);
+	dlg.m_readonly = !m_allow_edit;
+
+	if (dlg.DoModal() == IDOK)
+	{
+		OnChanges();
+
+		std::vector<PlaylistTemplateInfo> playlists;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			playlists.emplace_back(item.id, item.name);
+		}
+		m_plugin->set_vod_templates(playlists);
 
 		FillControlsCommon();
 	}

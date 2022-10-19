@@ -34,5 +34,7 @@ public:
 	plugin_kineskop();
 
 	void fill_servers_list(TemplateParams& /*params*/) override;
+
+protected:
 	void load_default() override;
 };
