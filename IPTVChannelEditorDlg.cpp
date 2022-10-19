@@ -1172,7 +1172,34 @@ BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
 		|| pMsg->message == WM_LBUTTONUP
 		|| pMsg->message == WM_MOUSEMOVE)
 	{
+		HWND hWnd = pMsg->hwnd;
+		LPARAM lParam = pMsg->lParam;
+
+		POINT pt{};
+		pt.x = LOWORD(pMsg->lParam);  // horizontal position of cursor
+		pt.y = HIWORD(pMsg->lParam);  // vertical position of cursor
+
+		for (CWnd* wnd = GetWindow(GW_CHILD); wnd != NULL; wnd = wnd->GetWindow(GW_HWNDNEXT))
+		{
+			CRect rect;
+			wnd->GetWindowRect(&rect);
+			ScreenToClient(&rect);
+
+			if (rect.PtInRect(pt)) {
+				pMsg->hwnd = wnd->m_hWnd;
+
+				ClientToScreen(&pt);
+				wnd->ScreenToClient(&pt);
+				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
+				break;
+			}
+		}
+
 		m_wndToolTipCtrl.RelayEvent(pMsg);
+		m_wndToolTipCtrl.Activate(TRUE);
+
+		pMsg->hwnd = hWnd;
+		pMsg->lParam = lParam;
 	}
 
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE)
