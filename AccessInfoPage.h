@@ -48,6 +48,7 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
 
+	void AddTooltip(UINT ctrlID, UINT textID);
 	void UpdateOptionalControls();
 
 	BOOL PreTranslateMessage(MSG* pMsg) override;
@@ -153,5 +154,5 @@ private:
 	std::vector<Credentials> m_all_credentials;
 	std::vector<std::wstring>& m_configs;
 
-	std::map<UINT, std::wstring> m_tooltips_info_account;
+	std::map<CWnd*, std::wstring> m_tooltips_info;
 };

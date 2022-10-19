@@ -155,13 +155,15 @@ BOOL CAccessInfoPage::PreTranslateMessage(MSG* pMsg)
 		pt.x = LOWORD(pMsg->lParam);  // horizontal position of cursor
 		pt.y = HIWORD(pMsg->lParam);  // vertical position of cursor
 
-		for (CWnd* wnd = GetWindow(GW_CHILD); wnd != NULL; wnd = wnd->GetWindow(GW_HWNDNEXT))
+		for (auto& pair : m_tooltips_info)
 		{
+			auto& wnd = pair.first;
 			CRect rect;
 			wnd->GetWindowRect(&rect);
 			ScreenToClient(&rect);
 
-			if (rect.PtInRect(pt)) {
+			if (rect.PtInRect(pt))
+			{
 				pMsg->hwnd = wnd->m_hWnd;
 
 				ClientToScreen(&pt);
@@ -191,45 +193,36 @@ BOOL CAccessInfoPage::OnInitDialog()
 		return FALSE;
 	}
 
-	m_tooltips_info_account =
-	{
-		{ IDC_BUTTON_ADD, load_string_resource(IDS_STRING_BUTTON_ADD) },
-		{ IDC_BUTTON_REMOVE, load_string_resource(IDS_STRING_BUTTON_REMOVE) },
-		{ IDC_BUTTON_NEW_FROM_URL, load_string_resource(IDS_STRING_BUTTON_NEW_FROM_URL) },
-		{ IDC_COMBO_SERVER_ID, load_string_resource(IDS_STRING_COMBO_SERVER_ID) },
-		{ IDC_COMBO_DEVICE_ID, load_string_resource(IDS_STRING_COMBO_DEVICE_ID) },
-		{ IDC_COMBO_PROFILE, load_string_resource(IDS_STRING_COMBO_PROFILE) },
-		{ IDC_COMBO_QUALITY, load_string_resource(IDS_STRING_QUALITY_ID) },
-		{ IDC_CHECK_EMBED, load_string_resource(IDS_STRING_CHECK_EMBED) },
-		{ IDC_MFCEDITBROWSE_PLUGIN_LOGO, load_string_resource(IDS_STRING_EDIT_ICON) },
-		{ IDC_MFCEDITBROWSE_PLUGIN_BGND, load_string_resource(IDS_STRING_EDIT_BACKGROUND) },
-		{ IDC_EDIT_PLUGIN_SUFFIX, load_string_resource(IDS_STRING_EDIT_SUFFIX) },
-		{ IDC_EDIT_PLUGIN_CAPTION, load_string_resource(IDS_STRING_EDIT_CAPTION) },
-		{ IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, load_string_resource(IDS_STRING_EDIT_PLUGIN_CHANNELS_WEB_PATH) },
-		{ IDC_EDIT_PLUGIN_UPDATE_URL, load_string_resource(IDS_STRING_EDIT_PLUGIN_UPDATE_URL) },
-		{ IDC_EDIT_PLUGIN_UPDATE_FILE_URL, load_string_resource(IDS_STRING_EDIT_PLUGIN_UPDATE_FILE_URL) },
-		{ IDC_CHECK_AUTOINCREMENT_VERSION, load_string_resource(IDS_STRING_CHECK_AUTOINCREMENT_VERSION) },
-		{ IDC_EDIT_PLUGIN_UPDATE_VERSION, load_string_resource(IDS_STRING_EDIT_PLUGIN_UPDATE_VERSION) },
-		{ IDC_CHECK_CUSTOM_UPDATE_NAME, load_string_resource(IDS_STRING_CHECK_CUSTOM_UPDATE_NAME) },
-		{ IDC_EDIT_PLUGIN_UPDATE_NAME, load_string_resource(IDS_STRING_EDIT_PLUGIN_UPDATE_NAME) },
-		{ IDC_CHECK_CUSTOM_PACKAGE_NAME, load_string_resource(IDS_STRING_CHECK_CUSTOM_PACKAGE_NAME) },
-		{ IDC_EDIT_PLUGIN_PACKAGE_NAME, load_string_resource(IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME) },
-		{ IDC_BUTTON_EDIT_CONFIG, load_string_resource(IDS_STRING_BUTTON_EDIT_CONFIG) },
-		{ IDC_COMBO_CONFIGS, load_string_resource(IDS_STRING_COMBO_CONFIGS) },
-	};
+	AddTooltip(IDC_BUTTON_ADD, IDS_STRING_BUTTON_ADD);
+	AddTooltip(IDC_BUTTON_REMOVE, IDS_STRING_BUTTON_REMOVE);
+	AddTooltip(IDC_BUTTON_NEW_FROM_URL, IDS_STRING_BUTTON_NEW_FROM_URL);
+	AddTooltip(IDC_COMBO_SERVER_ID, IDS_STRING_COMBO_SERVER_ID);
+	AddTooltip(IDC_COMBO_DEVICE_ID, IDS_STRING_COMBO_DEVICE_ID);
+	AddTooltip(IDC_COMBO_PROFILE, IDS_STRING_COMBO_PROFILE);
+	AddTooltip(IDC_COMBO_QUALITY, IDS_STRING_QUALITY_ID);
+	AddTooltip(IDC_CHECK_EMBED, IDS_STRING_CHECK_EMBED);
+	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_LOGO, IDS_STRING_EDIT_ICON);
+	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_BGND, IDS_STRING_EDIT_BACKGROUND);
+	AddTooltip(IDC_EDIT_PLUGIN_SUFFIX, IDS_STRING_EDIT_SUFFIX);
+	AddTooltip(IDC_EDIT_PLUGIN_CAPTION, IDS_STRING_EDIT_CAPTION);
+	AddTooltip(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, IDS_STRING_EDIT_PLUGIN_CHANNELS_WEB_PATH);
+	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_URL, IDS_STRING_EDIT_PLUGIN_UPDATE_URL);
+	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_FILE_URL, IDS_STRING_EDIT_PLUGIN_UPDATE_FILE_URL);
+	AddTooltip(IDC_CHECK_AUTOINCREMENT_VERSION, IDS_STRING_CHECK_AUTOINCREMENT_VERSION);
+	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_VERSION, IDS_STRING_EDIT_PLUGIN_UPDATE_VERSION);
+	AddTooltip(IDC_CHECK_CUSTOM_UPDATE_NAME, IDS_STRING_CHECK_CUSTOM_UPDATE_NAME);
+	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_NAME, IDS_STRING_EDIT_PLUGIN_UPDATE_NAME);
+	AddTooltip(IDC_CHECK_CUSTOM_PACKAGE_NAME, IDS_STRING_CHECK_CUSTOM_PACKAGE_NAME);
+	AddTooltip(IDC_EDIT_PLUGIN_PACKAGE_NAME, IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME);
+	AddTooltip(IDC_BUTTON_EDIT_CONFIG, IDS_STRING_BUTTON_EDIT_CONFIG);
+	AddTooltip(IDC_COMBO_CONFIGS, IDS_STRING_COMBO_CONFIGS);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(300);
+	m_wndToolTipCtrl.Activate(TRUE);
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndEditConfig);
-
-	for (const auto& pair : m_tooltips_info_account)
-	{
-		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), LPSTR_TEXTCALLBACK);
-	}
-
-	m_wndToolTipCtrl.Activate(TRUE);
 
 	std::wstring provider_url = m_plugin->get_provider_url();
 	m_wndProviderLink.SetURL(provider_url.c_str());
@@ -282,6 +275,13 @@ BOOL CAccessInfoPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+void CAccessInfoPage::AddTooltip(UINT ctrlID, UINT textID)
+{
+	CWnd* wnd = GetDlgItem(ctrlID);
+	m_tooltips_info.emplace(wnd, load_string_resource(textID));
+	m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
+}
+
 BOOL CAccessInfoPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// if there is a top level routing frame then let it handle the message
@@ -301,8 +301,12 @@ BOOL CAccessInfoPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (nID != 0) // will be zero on a separator
 	{
-		auto& pair = m_tooltips_info_account.find(nID);
-		if (pair != m_tooltips_info_account.end())
+		const auto& pair = std::find_if(m_tooltips_info.begin(), m_tooltips_info.end(), [nID](auto& pair)
+										{
+											return pair.first->GetDlgCtrlID() == nID;
+										});
+
+		if (pair != m_tooltips_info.end())
 		{
 			pTTT->lpszText = pair->second.data();
 			*pResult = 0;

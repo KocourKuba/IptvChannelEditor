@@ -46,6 +46,7 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
 
+	void AddTooltip(UINT ctrlID, UINT textID);
 	void AssignMacros();
 
 	BOOL PreTranslateMessage(MSG* pMsg) override;
@@ -198,7 +199,8 @@ protected:
 private:
 	bool m_allow_save = false;
 	bool m_allow_edit = false;
-	std::map<UINT, std::wstring> m_tooltips_info_account;
+	std::map<CWnd*, std::wstring> m_tooltips_info;
+
 	std::vector<std::wstring>& m_configs;
 	std::array<StreamParameters, 2> m_supported_streams;
 	std::array<EpgParameters, 2> m_epg_parameters;

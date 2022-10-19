@@ -194,8 +194,9 @@ BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
 		pt.x = LOWORD(pMsg->lParam);  // horizontal position of cursor
 		pt.y = HIWORD(pMsg->lParam);  // vertical position of cursor
 
-		for (CWnd* wnd = GetWindow(GW_CHILD); wnd != NULL; wnd = wnd->GetWindow(GW_HWNDNEXT))
+		for (auto& pair : m_tooltips_info)
 		{
+			auto& wnd = pair.first;
 			CRect rect;
 			wnd->GetWindowRect(&rect);
 			ScreenToClient(&rect);
@@ -230,65 +231,56 @@ BOOL CPluginConfigPage::OnInitDialog()
 		return FALSE;
 	}
 
-	m_tooltips_info_account =
-	{
-		{ IDC_COMBO_PLUGIN_CONFIG, load_string_resource(IDS_STRING_COMBO_CONFIG) },
-		{ IDC_BUTTON_EDIT_CONFIG, load_string_resource(IDS_STRING_BUTTON_EDIT_CONFIG) },
-		{ IDC_BUTTON_SAVE_CONFIG, load_string_resource(IDS_STRING_BUTTON_SAVE_CONFIG) },
-		{ IDC_BUTTON_SAVE_AS_CONFIG, load_string_resource(IDS_STRING_BUTTON_SAVE_AS_CONFIG) },
-		{ IDC_EDIT_PLUGIN_NAME, load_string_resource(IDS_STRING_EDIT_PLUGIN_NAME) },
-		{ IDC_EDIT_TITLE, load_string_resource(IDS_STRING_EDIT_TITLE) },
-		{ IDC_EDIT_SHORT_NAME, load_string_resource(IDS_STRING_EDIT_SHORT_NAME) },
-		{ IDC_EDIT_PROVIDER_URL, load_string_resource(IDS_STRING_EDIT_PROVIDER_URL) },
-		{ IDC_CHECK_SQUARE_ICONS, load_string_resource(IDS_STRING_CHECK_SQUARE_ICONS) },
-		{ IDC_EDIT_PLAYLIST_TEMPLATE, load_string_resource(IDS_STRING_EDIT_PLAYLIST_TEMPLATE) },
-		{ IDC_EDIT_PARSE_PATTERN, load_string_resource(IDS_STRING_EDIT_PARSE_PATTERN) },
-		{ IDC_EDIT_PARSE_PATTERN_ID, load_string_resource(IDS_STRING_EDIT_PARSE_PATTERN_ID) },
-		{ IDC_BUTTON_PLAYLIST_SHOW, load_string_resource(IDS_STRING_BUTTON_PLAYLIST_SHOW) },
-		{ IDC_BUTTON_STREAM_PARSE, load_string_resource(IDS_STRING_BUTTON_STREAM_PARSE) },
-		{ IDC_BUTTON_STREAM_ID_PARSE, load_string_resource(IDS_STRING_BUTTON_STREAM_PARSE) },
-		{ IDC_CHECK_STATIC_SERVERS, load_string_resource(IDS_STRING_CHECK_STATIC_SERVERS) },
-		{ IDC_BUTTON_EDIT_SERVERS, load_string_resource(IDS_STRING_BUTTON_EDIT_SERVERS) },
-		{ IDC_CHECK_STATIC_DEVICES, load_string_resource(IDS_STRING_CHECK_STATIC_DEVICES) },
-		{ IDC_BUTTON_EDIT_DEVICES, load_string_resource(IDS_STRING_BUTTON_EDIT_DEVICES) },
-		{ IDC_CHECK_STATIC_QUALITIES, load_string_resource(IDS_STRING_CHECK_STATIC_QUALITIES) },
-		{ IDC_BUTTON_EDIT_QUALITY, load_string_resource(IDS_STRING_BUTTON_EDIT_QUALITY) },
-		{ IDC_CHECK_STATIC_PROFILES, load_string_resource(IDS_STRING_CHECK_STATIC_PROFILES) },
-		{ IDC_BUTTON_EDIT_PROFILES, load_string_resource(IDS_STRING_BUTTON_EDIT_PROFILES) },
-		{ IDC_EDIT_SHIFT_SUBST, load_string_resource(IDS_STRING_EDIT_SHIFT_SUBST) },
-		{ IDC_EDIT_DURATION, load_string_resource(IDS_STRING_EDIT_DURATION) },
-		{ IDC_EDIT_STREAM_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_TEMPLATE) },
-		{ IDC_EDIT_STREAM_ARC_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_ARC_TEMPLATE) },
-		{ IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, load_string_resource(IDS_STRING_EDIT_STREAM_ARC_TEMPLATE) },
-		{ IDC_EDIT_EPG_URL, load_string_resource(IDS_STRING_EDIT_EPG_URL) },
-		{ IDC_EDIT_EPG_ROOT, load_string_resource(IDS_STRING_EDIT_EPG_ROOT) },
-		{ IDC_EDIT_EPG_NAME, load_string_resource(IDS_STRING_EDIT_EPG_NAME) },
-		{ IDC_EDIT_EPG_DESC, load_string_resource(IDS_STRING_EDIT_EPG_DESC) },
-		{ IDC_EDIT_EPG_START, load_string_resource(IDS_STRING_EDIT_EPG_START) },
-		{ IDC_EDIT_EPG_END, load_string_resource(IDS_STRING_EDIT_EPG_END) },
-		{ IDC_EDIT_EPG_FMT_DATE, load_string_resource(IDS_STRING_EDIT_EPG_FMT_DATE) },
-		{ IDC_EDIT_EPG_FMT_TIME, load_string_resource(IDS_STRING_EDIT_EPG_FMT_TIME) },
-		{ IDC_EDIT_EPG_TZ, load_string_resource(IDS_STRING_EDIT_EPG_TZ) },
-		{ IDC_COMBO_ACCESS_TYPE, load_string_resource(IDS_STRING_COMBO_ACCESS_TYPE) },
-		{ IDC_COMBO_STREAM_TYPE, load_string_resource(IDS_STRING_COMBO_STREAM_TYPE) },
-		{ IDC_COMBO_CATCHUP_TYPE, load_string_resource(IDS_STRING_COMBO_CATCHUP_TYPE) },
-		{ IDC_COMBO_EPG_TYPE, load_string_resource(IDS_STRING_EPG_TYPE) },
-		{ IDC_BUTTON_EPG_SHOW, load_string_resource(IDS_STRING_BUTTON_EPG_SHOW) },
-		{ IDC_EDIT_SET_ID, load_string_resource(IDS_STRING_EDIT_SET_ID) },
-		{ IDC_EDIT_SET_TOKEN, load_string_resource(IDS_STRING_EDIT_SET_TOKEN) },
-		{ IDC_DATETIMEPICKER_DATE, load_string_resource(IDS_STRING_DATETIMEPICKER_DATE) },
-		{ IDC_EDIT_UTC, load_string_resource(IDS_STRING_DATETIMEPICKER_DATE) },
-	};
+	AddTooltip(IDC_COMBO_PLUGIN_CONFIG, IDS_STRING_COMBO_CONFIG);
+	AddTooltip(IDC_BUTTON_EDIT_CONFIG, IDS_STRING_BUTTON_EDIT_CONFIG);
+	AddTooltip(IDC_BUTTON_SAVE_CONFIG, IDS_STRING_BUTTON_SAVE_CONFIG);
+	AddTooltip(IDC_BUTTON_SAVE_AS_CONFIG, IDS_STRING_BUTTON_SAVE_AS_CONFIG);
+	AddTooltip(IDC_EDIT_PLUGIN_NAME, IDS_STRING_EDIT_PLUGIN_NAME);
+	AddTooltip(IDC_EDIT_TITLE, IDS_STRING_EDIT_TITLE);
+	AddTooltip(IDC_EDIT_SHORT_NAME, IDS_STRING_EDIT_SHORT_NAME);
+	AddTooltip(IDC_EDIT_PROVIDER_URL, IDS_STRING_EDIT_PROVIDER_URL);
+	AddTooltip(IDC_CHECK_SQUARE_ICONS, IDS_STRING_CHECK_SQUARE_ICONS);
+	AddTooltip(IDC_EDIT_PLAYLIST_TEMPLATE, IDS_STRING_EDIT_PLAYLIST_TEMPLATE);
+	AddTooltip(IDC_EDIT_PARSE_PATTERN, IDS_STRING_EDIT_PARSE_PATTERN);
+	AddTooltip(IDC_EDIT_PARSE_PATTERN_ID, IDS_STRING_EDIT_PARSE_PATTERN_ID);
+	AddTooltip(IDC_BUTTON_PLAYLIST_SHOW, IDS_STRING_BUTTON_PLAYLIST_SHOW);
+	AddTooltip(IDC_BUTTON_STREAM_PARSE, IDS_STRING_BUTTON_STREAM_PARSE);
+	AddTooltip(IDC_BUTTON_STREAM_ID_PARSE, IDS_STRING_BUTTON_STREAM_PARSE);
+	AddTooltip(IDC_CHECK_STATIC_SERVERS, IDS_STRING_CHECK_STATIC_SERVERS);
+	AddTooltip(IDC_BUTTON_EDIT_SERVERS, IDS_STRING_BUTTON_EDIT_SERVERS);
+	AddTooltip(IDC_CHECK_STATIC_DEVICES, IDS_STRING_CHECK_STATIC_DEVICES);
+	AddTooltip(IDC_BUTTON_EDIT_DEVICES, IDS_STRING_BUTTON_EDIT_DEVICES);
+	AddTooltip(IDC_CHECK_STATIC_QUALITIES, IDS_STRING_CHECK_STATIC_QUALITIES);
+	AddTooltip(IDC_BUTTON_EDIT_QUALITY, IDS_STRING_BUTTON_EDIT_QUALITY);
+	AddTooltip(IDC_CHECK_STATIC_PROFILES, IDS_STRING_CHECK_STATIC_PROFILES);
+	AddTooltip(IDC_BUTTON_EDIT_PROFILES, IDS_STRING_BUTTON_EDIT_PROFILES);
+	AddTooltip(IDC_EDIT_SHIFT_SUBST, IDS_STRING_EDIT_SHIFT_SUBST);
+	AddTooltip(IDC_EDIT_DURATION, IDS_STRING_EDIT_DURATION);
+	AddTooltip(IDC_EDIT_STREAM_TEMPLATE, IDS_STRING_EDIT_STREAM_TEMPLATE);
+	AddTooltip(IDC_EDIT_STREAM_ARC_TEMPLATE, IDS_STRING_EDIT_STREAM_ARC_TEMPLATE);
+	AddTooltip(IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, IDS_STRING_EDIT_STREAM_ARC_TEMPLATE);
+	AddTooltip(IDC_EDIT_EPG_URL, IDS_STRING_EDIT_EPG_URL);
+	AddTooltip(IDC_EDIT_EPG_ROOT, IDS_STRING_EDIT_EPG_ROOT);
+	AddTooltip(IDC_EDIT_EPG_NAME, IDS_STRING_EDIT_EPG_NAME);
+	AddTooltip(IDC_EDIT_EPG_DESC, IDS_STRING_EDIT_EPG_DESC);
+	AddTooltip(IDC_EDIT_EPG_START, IDS_STRING_EDIT_EPG_START);
+	AddTooltip(IDC_EDIT_EPG_END, IDS_STRING_EDIT_EPG_END);
+	AddTooltip(IDC_EDIT_EPG_FMT_DATE, IDS_STRING_EDIT_EPG_FMT_DATE);
+	AddTooltip(IDC_EDIT_EPG_FMT_TIME, IDS_STRING_EDIT_EPG_FMT_TIME);
+	AddTooltip(IDC_EDIT_EPG_TZ, IDS_STRING_EDIT_EPG_TZ);
+	AddTooltip(IDC_COMBO_ACCESS_TYPE, IDS_STRING_COMBO_ACCESS_TYPE);
+	AddTooltip(IDC_COMBO_STREAM_TYPE, IDS_STRING_COMBO_STREAM_TYPE);
+	AddTooltip(IDC_COMBO_CATCHUP_TYPE, IDS_STRING_COMBO_CATCHUP_TYPE);
+	AddTooltip(IDC_COMBO_EPG_TYPE, IDS_STRING_EPG_TYPE);
+	AddTooltip(IDC_BUTTON_EPG_SHOW, IDS_STRING_BUTTON_EPG_SHOW);
+	AddTooltip(IDC_EDIT_SET_ID, IDS_STRING_EDIT_SET_ID);
+	AddTooltip(IDC_EDIT_SET_TOKEN, IDS_STRING_EDIT_SET_TOKEN);
+	AddTooltip(IDC_DATETIMEPICKER_DATE, IDS_STRING_DATETIMEPICKER_DATE);
+	AddTooltip(IDC_EDIT_UTC, IDS_STRING_DATETIMEPICKER_DATE);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(300);
-
-	for (const auto& pair : m_tooltips_info_account)
-	{
-		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), LPSTR_TEXTCALLBACK);
-	}
-
 	m_wndToolTipCtrl.Activate(TRUE);
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnToggleEdit);
@@ -321,6 +313,13 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CPluginConfigPage::AddTooltip(UINT ctrlID, UINT textID)
+{
+	CWnd* wnd = GetDlgItem(ctrlID);
+	m_tooltips_info.emplace(wnd, load_string_resource(textID));
+	m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
 }
 
 void CPluginConfigPage::AssignMacros()
@@ -443,8 +442,12 @@ BOOL CPluginConfigPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (nID != 0) // will be zero on a separator
 	{
-		auto& pair = m_tooltips_info_account.find(nID);
-		if (pair != m_tooltips_info_account.end())
+		const auto& pair = std::find_if(m_tooltips_info.begin(), m_tooltips_info.end(), [nID](auto& pair)
+										{
+											return pair.first->GetDlgCtrlID() == nID;
+										});
+
+		if (pair != m_tooltips_info.end())
 		{
 			pTTT->lpszText = pair->second.data();
 			*pResult = 0;

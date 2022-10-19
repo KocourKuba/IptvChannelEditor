@@ -85,6 +85,8 @@ protected:
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	BOOL DestroyWindow() override;
 
+	void AddTooltip(UINT ctrlID, UINT textID);
+
 	afx_msg void OnKickIdle();
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
@@ -379,7 +381,7 @@ private:
 	bool m_menu_enable_channel = false;
 	bool m_menu_enable_category = false;
 
-	std::map<UINT, std::wstring> m_tooltips_info;
+	std::map<CWnd*, std::wstring> m_tooltips_info;
 
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;

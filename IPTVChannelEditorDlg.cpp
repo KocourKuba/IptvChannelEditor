@@ -328,6 +328,59 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_PL_SEARCH_NEXT, m_wndBtnPlSearchNext);
 }
 
+BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
+{
+	if (m_hAccel && ::TranslateAccelerator(m_hWnd, m_hAccel, pMsg))
+		return(TRUE);
+
+	if (pMsg->message == WM_LBUTTONDOWN
+		|| pMsg->message == WM_LBUTTONUP
+		|| pMsg->message == WM_MOUSEMOVE)
+	{
+		HWND hWnd = pMsg->hwnd;
+		LPARAM lParam = pMsg->lParam;
+
+		POINT pt{};
+		pt.x = LOWORD(pMsg->lParam);  // horizontal position of cursor
+		pt.y = HIWORD(pMsg->lParam);  // vertical position of cursor
+
+		for (auto& pair : m_tooltips_info)
+		{
+			auto& wnd = pair.first;
+			CRect rect;
+			wnd->GetWindowRect(&rect);
+			ScreenToClient(&rect);
+
+			if (rect.PtInRect(pt)) {
+				pMsg->hwnd = wnd->m_hWnd;
+
+				ClientToScreen(&pt);
+				wnd->ScreenToClient(&pt);
+				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
+				break;
+			}
+		}
+
+		m_wndToolTipCtrl.RelayEvent(pMsg);
+		m_wndToolTipCtrl.Activate(TRUE);
+
+		pMsg->hwnd = hWnd;
+		pMsg->lParam = lParam;
+	}
+
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE)
+	{
+		CEdit* edit = m_wndChannelsTree.GetEditControl();
+		if (edit)
+		{
+			edit->SendMessage(WM_KEYDOWN, pMsg->wParam, pMsg->lParam);
+			return TRUE;
+		}
+	}
+
+	return __super::PreTranslateMessage(pMsg);
+}
+
 // CEdemChannelEditorDlg message handlers
 
 BOOL CIPTVChannelEditorDlg::OnInitDialog()
@@ -404,64 +457,55 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndPlaylistTree.GetToolTips()->SetDelayTime(TTDT_INITIAL, 500);
 	m_wndPlaylistTree.GetToolTips()->SetMaxTipWidth(100);
 
+	AddTooltip(IDC_COMBO_PLUGIN_TYPE, IDS_STRING_COMBO_PLUGIN_TYPE);
+	AddTooltip(IDC_BUTTON_VOD, IDS_STRING_BUTTON_VOD);
+	AddTooltip(IDC_BUTTON_ABOUT, IDS_STRING_BUTTON_ABOUT);
+	AddTooltip(IDC_COMBO_CHANNELS, IDS_STRING_COMBO_CHANNELS);
+	AddTooltip(IDC_COMBO_PLAYLIST, IDS_STRING_COMBO_PLAYLIST);
+	AddTooltip(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST);
+	AddTooltip(IDC_EDIT_SEARCH, IDS_STRING_EDIT_SEARCH);
+	AddTooltip(IDC_BUTTON_SEARCH_NEXT, IDS_STRING_BUTTON_SEARCH_NEXT);
+	AddTooltip(IDC_CHECK_SHOW_UNKNOWN, IDS_STRING_SHOW_UNKNOWN);
+	AddTooltip(IDC_EDIT_URL_ID, IDS_STRING_EDIT_URL_ID);
+	AddTooltip(IDC_BUTTON_TEST_EPG, IDS_STRING_BUTTON_TEST_EPG);
+	AddTooltip(IDC_EDIT_EPG1_ID, IDS_STRING_EDIT_EPG1_ID);
+	AddTooltip(IDC_EDIT_EPG2_ID, IDS_STRING_EDIT_EPG2_ID);
+	AddTooltip(IDC_CHECK_CUSTOMIZE, IDS_STRING_CHECK_CUSTOMIZE);
+	AddTooltip(IDC_CHECK_ARCHIVE, IDS_STRING_CHECK_ARCHIVE);
+	AddTooltip(IDC_EDIT_ARCHIVE_DAYS, IDS_STRING_EDIT_ARCHIVE_DAYS);
+	AddTooltip(IDC_CHECK_ADULT, IDS_STRING_CHECK_ADULT);
+	AddTooltip(IDC_BUTTON_CACHE_ICON, IDS_STRING_BUTTON_CACHE_ICON);
+	AddTooltip(IDC_BUTTON_SAVE, IDS_STRING_BUTTON_SAVE);
+	AddTooltip(IDC_SPLIT_BUTTON_PACK, IDS_STRING_BUTTON_PACK);
+	AddTooltip(IDC_BUTTON_SETTINGS, IDS_STRING_BUTTON_SETTINGS);
+	AddTooltip(IDC_BUTTON_ACCOUNT_SETTINGS, IDS_STRING_ACCOUNT_SETTINGS);
+	AddTooltip(IDC_BUTTON_EDIT_CONFIG, IDS_STRING_BUTTON_EDIT_CONFIG);
+	AddTooltip(IDC_BUTTON_DOWNLOAD_PLAYLIST, IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST);
+	AddTooltip(IDC_EDIT_PL_SEARCH, IDS_STRING_EDIT_PL_SEARCH);
+	AddTooltip(IDC_BUTTON_PL_SEARCH_NEXT, IDS_STRING_BUTTON_PL_SEARCH_NEXT);
+	AddTooltip(IDC_BUTTON_PL_FILTER, IDS_STRING_BUTTON_PL_FILTER);
+	AddTooltip(IDC_CHECK_SHOW_CHANGED_CH, IDS_STRING_SHOW_CHANGED);
+	AddTooltip(IDC_CHECK_SHOW_CHANGED, IDS_STRING_SHOW_CHANGED);
+	AddTooltip(IDC_CHECK_NOT_ADDED, IDS_STRING_NOT_ADDED);
+	AddTooltip(IDC_STATIC_ICON, IDS_STRING_STATIC_ICON);
+	AddTooltip(IDC_EDIT_ARCHIVE_CHECK_DAYS, IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS);
+	AddTooltip(IDC_SPIN_ARCHIVE_CHECK_DAYS, IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS);
+	AddTooltip(IDC_EDIT_ARCHIVE_CHECK_HOURS, IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS);
+	AddTooltip(IDC_SPIN_ARCHIVE_CHECK_HOURS, IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS);
+	AddTooltip(IDC_EDIT_TIME_SHIFT, IDS_STRING_EDIT_TIME_SHIFT);
+	AddTooltip(IDC_SPIN_TIME_SHIFT, IDS_STRING_EDIT_TIME_SHIFT);
+	AddTooltip(IDC_EDIT_INFO_VIDEO, IDS_STRING_EDIT_INFO_VIDEO);
+	AddTooltip(IDC_EDIT_INFO_AUDIO, IDS_STRING_EDIT_INFO_AUDIO);
+	AddTooltip(IDC_COMBO_STREAM_TYPE, IDS_STRING_COMBO_STREAM_TYPE);
+	AddTooltip(IDC_COMBO_ICON_SOURCE, IDS_STRING_COMBO_ICON_SOURCE);
+	AddTooltip(IDC_BUTTON_STOP, IDS_STRING_BUTTON_STOP);
+	AddTooltip(IDC_BUTTON_CHECK_ARCHIVE, IDS_STRING_BUTTON_CHECK_ARCHIVE);
+	AddTooltip(IDC_SPLIT_BUTTON_UPDATE_CHANGED, IDS_STRING_BUTTON_UPDATE_CHANGED);
+	AddTooltip(IDC_BUTTON_ADD_PLAYLIST, IDS_STRING_BUTTON_ADD_PLAYLIST);
+
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(500);
-
-	m_tooltips_info =
-	{
-		{ IDC_COMBO_PLUGIN_TYPE, load_string_resource(IDS_STRING_COMBO_PLUGIN_TYPE) },
-		{ IDC_BUTTON_VOD, load_string_resource(IDS_STRING_BUTTON_VOD) },
-		{ IDC_BUTTON_ABOUT, load_string_resource(IDS_STRING_BUTTON_ABOUT) },
-		{ IDC_COMBO_CHANNELS, load_string_resource(IDS_STRING_COMBO_CHANNELS) },
-		{ IDC_COMBO_PLAYLIST, load_string_resource(IDS_STRING_COMBO_PLAYLIST) },
-		{ IDC_BUTTON_ADD_NEW_CHANNELS_LIST, load_string_resource(IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST) },
-		{ IDC_EDIT_SEARCH, load_string_resource(IDS_STRING_EDIT_SEARCH) },
-		{ IDC_BUTTON_SEARCH_NEXT, load_string_resource(IDS_STRING_BUTTON_SEARCH_NEXT) },
-		{ IDC_CHECK_SHOW_UNKNOWN, load_string_resource(IDS_STRING_SHOW_UNKNOWN) },
-		{ IDC_EDIT_URL_ID, load_string_resource(IDS_STRING_EDIT_URL_ID) },
-		{ IDC_BUTTON_TEST_EPG, load_string_resource(IDS_STRING_BUTTON_TEST_EPG) },
-		{ IDC_EDIT_EPG1_ID, load_string_resource(IDS_STRING_EDIT_EPG1_ID) },
-		{ IDC_EDIT_EPG2_ID, load_string_resource(IDS_STRING_EDIT_EPG2_ID) },
-		{ IDC_CHECK_CUSTOMIZE, load_string_resource(IDS_STRING_CHECK_CUSTOMIZE) },
-		{ IDC_CHECK_ARCHIVE, load_string_resource(IDS_STRING_CHECK_ARCHIVE) },
-		{ IDC_EDIT_ARCHIVE_DAYS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_DAYS) },
-		{ IDC_CHECK_ADULT, load_string_resource(IDS_STRING_CHECK_ADULT) },
-		{ IDC_BUTTON_CACHE_ICON, load_string_resource(IDS_STRING_BUTTON_CACHE_ICON) },
-		{ IDC_BUTTON_SAVE, load_string_resource(IDS_STRING_BUTTON_SAVE) },
-		{ IDC_SPLIT_BUTTON_PACK, load_string_resource(IDS_STRING_BUTTON_PACK) },
-		{ IDC_BUTTON_SETTINGS, load_string_resource(IDS_STRING_BUTTON_SETTINGS) },
-		{ IDC_BUTTON_ACCOUNT_SETTINGS, load_string_resource(IDS_STRING_ACCOUNT_SETTINGS) },
-		{ IDC_BUTTON_EDIT_CONFIG, load_string_resource(IDS_STRING_BUTTON_EDIT_CONFIG) },
-		{ IDC_BUTTON_DOWNLOAD_PLAYLIST, load_string_resource(IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST) },
-		{ IDC_EDIT_PL_SEARCH, load_string_resource(IDS_STRING_EDIT_PL_SEARCH) },
-		{ IDC_BUTTON_PL_SEARCH_NEXT, load_string_resource(IDS_STRING_BUTTON_PL_SEARCH_NEXT) },
-		{ IDC_BUTTON_PL_FILTER, load_string_resource(IDS_STRING_BUTTON_PL_FILTER) },
-		{ IDC_CHECK_SHOW_CHANGED_CH, load_string_resource(IDS_STRING_SHOW_CHANGED) },
-		{ IDC_CHECK_SHOW_CHANGED, load_string_resource(IDS_STRING_SHOW_CHANGED) },
-		{ IDC_CHECK_NOT_ADDED, load_string_resource(IDS_STRING_NOT_ADDED) },
-		{ IDC_STATIC_ICON, load_string_resource(IDS_STRING_STATIC_ICON) },
-		{ IDC_EDIT_ARCHIVE_CHECK_DAYS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS) },
-		{ IDC_SPIN_ARCHIVE_CHECK_DAYS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_CHECK_DAYS) },
-		{ IDC_EDIT_ARCHIVE_CHECK_HOURS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS) },
-		{ IDC_SPIN_ARCHIVE_CHECK_HOURS, load_string_resource(IDS_STRING_EDIT_ARCHIVE_CHECK_HOURS) },
-		{ IDC_EDIT_TIME_SHIFT, load_string_resource(IDS_STRING_EDIT_TIME_SHIFT) },
-		{ IDC_SPIN_TIME_SHIFT, load_string_resource(IDS_STRING_EDIT_TIME_SHIFT) },
-		{ IDC_EDIT_INFO_VIDEO, load_string_resource(IDS_STRING_EDIT_INFO_VIDEO) },
-		{ IDC_EDIT_INFO_AUDIO, load_string_resource(IDS_STRING_EDIT_INFO_AUDIO) },
-		{ IDC_COMBO_STREAM_TYPE, load_string_resource(IDS_STRING_COMBO_STREAM_TYPE) },
-		{ IDC_COMBO_ICON_SOURCE, load_string_resource(IDS_STRING_COMBO_ICON_SOURCE) },
-		{ IDC_BUTTON_STOP, load_string_resource(IDS_STRING_BUTTON_STOP) },
-		{ IDC_BUTTON_CHECK_ARCHIVE, load_string_resource(IDS_STRING_BUTTON_CHECK_ARCHIVE) },
-		{ IDC_SPLIT_BUTTON_UPDATE_CHANGED, load_string_resource(IDS_STRING_BUTTON_UPDATE_CHANGED) },
-		{ IDC_BUTTON_ADD_PLAYLIST, load_string_resource(IDS_STRING_BUTTON_ADD_PLAYLIST) },
-	};
-
-	for (const auto& pair : m_tooltips_info)
-	{
-		m_wndToolTipCtrl.AddTool(GetDlgItem(pair.first), LPSTR_TEXTCALLBACK);
-	}
-
 	m_wndToolTipCtrl.Activate(TRUE);
 
 #ifdef _DEBUG
@@ -541,6 +585,13 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
+void CIPTVChannelEditorDlg::AddTooltip(UINT ctrlID, UINT textID)
+{
+	CWnd* wnd = GetDlgItem(ctrlID);
+	m_tooltips_info.emplace(wnd, load_string_resource(textID));
+	m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
+}
+
 BOOL CIPTVChannelEditorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// if there is a top level routing frame then let it handle the message
@@ -560,7 +611,10 @@ BOOL CIPTVChannelEditorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (nID != 0) // will be zero on a separator
 	{
-		auto& pair = m_tooltips_info.find(nID);
+		const auto& pair = std::find_if(m_tooltips_info.begin(), m_tooltips_info.end(), [nID](auto& pair)
+										{
+											return pair.first->GetDlgCtrlID() == nID;
+										});
 		if (pair != m_tooltips_info.end())
 		{
 			pTTT->lpszText = pair->second.data();
@@ -1161,58 +1215,6 @@ void CIPTVChannelEditorDlg::OnCancel()
 	GetConfig().SaveSettings();
 
 	EndDialog(IDCANCEL);
-}
-
-BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
-{
-	if (m_hAccel && ::TranslateAccelerator(m_hWnd, m_hAccel, pMsg))
-		return(TRUE);
-
-	if (pMsg->message == WM_LBUTTONDOWN
-		|| pMsg->message == WM_LBUTTONUP
-		|| pMsg->message == WM_MOUSEMOVE)
-	{
-		HWND hWnd = pMsg->hwnd;
-		LPARAM lParam = pMsg->lParam;
-
-		POINT pt{};
-		pt.x = LOWORD(pMsg->lParam);  // horizontal position of cursor
-		pt.y = HIWORD(pMsg->lParam);  // vertical position of cursor
-
-		for (CWnd* wnd = GetWindow(GW_CHILD); wnd != nullptr; wnd = wnd->GetWindow(GW_HWNDNEXT))
-		{
-			CRect rect;
-			wnd->GetWindowRect(&rect);
-			ScreenToClient(&rect);
-
-			if (rect.PtInRect(pt)) {
-				pMsg->hwnd = wnd->m_hWnd;
-
-				ClientToScreen(&pt);
-				wnd->ScreenToClient(&pt);
-				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
-				break;
-			}
-		}
-
-		m_wndToolTipCtrl.RelayEvent(pMsg);
-		m_wndToolTipCtrl.Activate(TRUE);
-
-		pMsg->hwnd = hWnd;
-		pMsg->lParam = lParam;
-	}
-
-	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE)
-	{
-		CEdit* edit = m_wndChannelsTree.GetEditControl();
-		if (edit)
-		{
-			edit->SendMessage(WM_KEYDOWN, pMsg->wParam, pMsg->lParam);
-			return TRUE;
-		}
-	}
-
-	return __super::PreTranslateMessage(pMsg);
 }
 
 void CIPTVChannelEditorDlg::OnDestroy()
