@@ -545,7 +545,7 @@
 #define ID_CLEAR_STREAM_INFO            32799
 #define ID_MAKE_ALL                     32800
 #define ID_TOGGLE_CATEGORY              32801
-#define ID_MAKE_ALL_ACCOUNTS            32801
+#define ID_MAKE_ALL_ACCOUNTS            32802
 #define ID_REMOVE_UNKNOWN               32803
 #define ID_INSERT_TEMPLATE              32804
 #define ID_SELECT_ALL                   32805
