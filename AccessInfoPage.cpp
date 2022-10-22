@@ -752,15 +752,15 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 	if (dlg.DoModal() == IDOK)
 	{
 		m_status.Empty();
-		std::vector<BYTE> data;
+		std::stringstream data;
 		std::wstring url = dlg.m_url.GetString();
-		if (!utils::DownloadFile(url, data))
+		if (!utils::CurlDownload(url, data))
 		{
 			std::ifstream instream(url);
-			data.assign((std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
+			data << instream.rdbuf();
 		}
 
-		const auto& wbuf = utils::utf8_to_utf16((char*)data.data(), data.size());
+		const auto& wbuf = utils::utf8_to_utf16(data.str());
 		std::wistringstream stream(wbuf);
 		if (!stream.good()) return;
 
@@ -1049,10 +1049,10 @@ void CAccessInfoPage::GetAccountInfo()
 		}
 	}
 
-	std::vector<BYTE> data;
-	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
+	std::stringstream data;
+	if (!pl_url.empty() && utils::CurlDownload(pl_url, data))
 	{
-		const auto& wbuf = utils::utf8_to_utf16((char*)data.data(), data.size());
+		const auto& wbuf = utils::utf8_to_utf16(data.str());
 		std::wistringstream stream(wbuf);
 
 		if (stream.good())

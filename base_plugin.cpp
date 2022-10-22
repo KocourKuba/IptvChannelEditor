@@ -221,12 +221,12 @@ const std::map<std::wstring, std::wstring>& base_plugin::get_epg_id_mapper(int e
 	auto& params = epg_params[epg_idx];
 	if (params.epg_use_mapper && params.epg_mapper.empty())
 	{
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(params.epg_mapper_url, data) && !data.empty())
+		std::stringstream data;
+		if (utils::CurlDownload(params.epg_mapper_url, data))
 		{
 			JSON_ALL_TRY
 			{
-				nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
+				nlohmann::json parsed_json = nlohmann::json::parse(data.str());
 				nlohmann::json js_data = parsed_json["data"];
 				for (const auto& item : js_data.items())
 				{
@@ -261,9 +261,9 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 	if (epg_id.empty())
 		return false;
 
-	std::vector<BYTE> data;
+	std::stringstream data;
 	const auto& url = compile_epg_url(epg_idx, epg_id, for_time, info);
-	if (!utils::DownloadFile(url, data, true) || data.empty())
+	if (!utils::CurlDownload(url, data, true))
 		return false;
 
 	const auto& params = epg_params[epg_idx];
@@ -280,7 +280,7 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		const auto& parsed_json = nlohmann::json::parse(data.str());
 
 		bool added = false;
 		time_t prev_start = 0;

@@ -344,6 +344,7 @@
 #define IDC_EDIT_EPG_NAME               1052
 #define IDC_EDIT_EPG_DESC               1053
 #define IDC_EDIT_STREAM_ARCHIVE_URL     1053
+#define IDC_EDIT_ICON_URL               1053
 #define IDC_EDIT_EPG2_ID                1054
 #define IDC_EDIT_EPG_START              1054
 #define IDC_EDIT_URL_ID                 1055
@@ -559,7 +560,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        279

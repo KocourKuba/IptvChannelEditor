@@ -79,6 +79,8 @@ void CVodViewer::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_REFRESH, m_wndReload);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
+	DDX_Control(pDX, IDC_EDIT_ICON_URL, m_wndSIconUrl);
+	DDX_Text(pDX, IDC_EDIT_ICON_URL, m_iconUrl);
 }
 
 // CVodViewer message handlers
@@ -268,9 +270,8 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	params.password = m_account.get_password();
 	const auto& url = m_plugin->get_vod_url(params);
 
-	auto data = std::make_unique<std::vector<BYTE>>();
-
-	if (!utils::DownloadFile(url, *data) || data->empty())
+	std::stringstream data;
+	if (!utils::CurlDownload(url, data))
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 		OnEndLoadM3U8Playlist(0);
@@ -287,7 +288,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 	ThreadConfig cfg;
 	cfg.m_parent = this;
-	cfg.m_data = data.release();
+	cfg.m_data = std::move(data);
 	cfg.m_hStop = m_evtStop;
 	cfg.m_use_cache = use_cache;
 
@@ -397,7 +398,7 @@ LRESULT CVodViewer::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 LRESULT CVodViewer::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
 	m_wndTotal.SetWindowText(fmt::format(L"{:d}", (int)wParam).c_str());
-	m_wndProgress.SetPos((int)wParam);
+	m_wndProgress.SetPos((int)lParam);
 
 	return 0;
 }
@@ -694,6 +695,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 	if (idx >= (int)m_filtered_movies.size())
 	{
 		m_streamUrl.Empty();
+		m_iconUrl.Empty();
 		UpdateData(FALSE);
 		return;
 	}
@@ -891,14 +893,18 @@ void CVodViewer::FilterList()
 				ATLTRACE("\nyears: %s\n", years.c_str());
 			}
 
-			std::vector<BYTE> data;
-			std::string post = json_request.dump();
-			std::wstring header = L"accept: */*\r\nContent-Type: application/json";
+			std::vector<std::string> headers;
+			headers.emplace_back("accept: */*");
+			headers.emplace_back("Content-Type: application/json");
+
+			const auto& post = json_request.dump();
 			ATLTRACE("\n%s\n", post.c_str());
-			if (!utils::DownloadFile(url, data, true, &header, L"POST", &post) || data.empty()) break;
+
+			std::stringstream data;
+			if (!utils::CurlDownload(url, data, true, &headers, true, post.c_str())) break;
 
 			JSON_ALL_TRY;
-			nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
+			nlohmann::json parsed_json = nlohmann::json::parse(data.str());
 			int total = utils::get_json_int("count", parsed_json);
 			OnInitProgress(total, 0);
 			ATLTRACE("\nfiltered movies: %d\n", total);
@@ -950,12 +956,12 @@ void CVodViewer::FilterList()
 				json_request["offset"] = offset;
 				ATLTRACE("\noffset: %d\n", offset);
 
-				data.clear();
-				post = json_request.dump();
+				std::stringstream next_data;
+				const auto& next_post = json_request.dump();
 				ATLTRACE("\n%s\n", post.c_str());
-				if (!utils::DownloadFile(url, data, true, &header, L"POST", &post) || data.empty()) break;
+				if (!utils::CurlDownload(url, next_data, true, &headers,true, next_post.c_str())) break;
 
-				parsed_json = nlohmann::json::parse(data.begin(), data.end());
+				parsed_json = nlohmann::json::parse(data.str());
 			}
 			JSON_ALL_CATCH;
 		} while (false);
@@ -1011,14 +1017,14 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 	CWaitCursor cur;
 
 	const auto& url = m_plugin->get_current_vod_template() + L"/video/" + movie.id;
-	std::vector<BYTE> data;
-	if (url.empty() || !utils::DownloadFile(url, data, false) || data.empty())
+	std::stringstream data;
+	if (url.empty() || !utils::CurlDownload(url, data, false))
 	{
 		return;
 	}
 
 	JSON_ALL_TRY;
-	const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+	const auto& parsed_json = nlohmann::json::parse(data.str());
 
 	if (parsed_json.contains("data"))
 	{
@@ -1091,16 +1097,19 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 		json_request["app"] = "IPTV ChannelEditor";
 		json_request["fid"] = utils::char_to_int(movie.id);
 
-		std::string post = json_request.dump();
-		std::wstring header = L"accept: */*\r\nContent-Type: application/json";
+		const auto& post = json_request.dump();
 		ATLTRACE("\n%s\n", post.c_str());
 
-		std::vector<BYTE> data;
-		if (!utils::DownloadFile(url, data, false, &header, L"POST", &post) || data.empty()) break;
+		std::vector<std::string> headers;
+		headers.emplace_back("accept: */*");
+		headers.emplace_back("Content-Type: application/json");
+
+		std::stringstream data;
+		if (!utils::CurlDownload(url, data, false, &headers, true, post.c_str())) break;
 
 		JSON_ALL_TRY;
 
-		const auto& json_data = nlohmann::json::parse(data.begin(), data.end());
+		const auto& json_data = nlohmann::json::parse(data.str());
 		const auto& type = json_data["type"];
 		if (type == "multistream")
 		{
@@ -1124,12 +1133,13 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 				}
 
 				json_request["fid"] = utils::char_to_int(episode.id);
-				post = json_request.dump();
+				const auto& item_post = json_request.dump();
 				ATLTRACE("\n%s\n", post.c_str());
-				data.clear();
-				if (utils::DownloadFile(url, data, false, &header, L"POST", &post) && !data.empty())
+
+				std::stringstream var_data;
+				if (utils::CurlDownload(url, var_data, false, &headers, true, item_post.c_str()))
 				{
-					const auto& variants_data = nlohmann::json::parse(data.begin(), data.end());
+					const auto& variants_data = nlohmann::json::parse(var_data.str());
 					if (variants_data.contains("variants"))
 					{
 						for (const auto& variant_it : variants_data["variants"].items())
@@ -1206,6 +1216,6 @@ void CVodViewer::GetUrl(int idx)
 	}
 
 	m_streamUrl = url.c_str();
-
+	m_iconUrl = movie->poster_url.get_uri().c_str();
 	UpdateData(FALSE);
 }

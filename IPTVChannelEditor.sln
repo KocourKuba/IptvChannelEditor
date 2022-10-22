@@ -24,6 +24,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fmt", "fmt.vcxproj", "{701BFD08-893D-43FC-B265-F88782EB8C9F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UtilsLib", "UtilsLib\UtilsLib.vcxproj", "{6CD735D7-4F0F-40DA-BDD6-05FD34B39083}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AB80716B-E65A-3389-92EE-10B8B101E875} = {AB80716B-E65A-3389-92EE-10B8B101E875}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BugTrap", "BugTrap\source\Client\BugTrap.vs2022.vcxproj", "{E8CF1ADA-264A-4127-86C2-FD7057D3792C}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -31,6 +34,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BugTrap", "BugTrap\source\C
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "BugTrap\source\zlib\zlib.vs2022.vcxproj", "{B5919129-6716-499D-9516-04EC34C86CDF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "curlcpp", "curlcpp\curlcpp.vcxproj", "{AB80716B-E65A-3389-92EE-10B8B101E875}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +101,13 @@ Global
 		{B5919129-6716-499D-9516-04EC34C86CDF}.Release Unicode|x64.Build.0 = Release|x64
 		{B5919129-6716-499D-9516-04EC34C86CDF}.Release Unicode|x86.ActiveCfg = Release|Win32
 		{B5919129-6716-499D-9516-04EC34C86CDF}.Release Unicode|x86.Build.0 = Release|Win32
+		{AB80716B-E65A-3389-92EE-10B8B101E875}.Debug Unicode|x64.ActiveCfg = Debug|Win32
+		{AB80716B-E65A-3389-92EE-10B8B101E875}.Debug Unicode|x64.Build.0 = Debug|Win32
+		{AB80716B-E65A-3389-92EE-10B8B101E875}.Debug Unicode|x86.ActiveCfg = Debug|Win32
+		{AB80716B-E65A-3389-92EE-10B8B101E875}.Debug Unicode|x86.Build.0 = Debug|Win32
+		{AB80716B-E65A-3389-92EE-10B8B101E875}.Release Unicode|x64.ActiveCfg = Release|Win32
+		{AB80716B-E65A-3389-92EE-10B8B101E875}.Release Unicode|x86.ActiveCfg = Release|Win32
+		{AB80716B-E65A-3389-92EE-10B8B101E875}.Release Unicode|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1229,11 +1229,12 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 	WORD port = 0;
 	if (utils::CrackUrl(fullPath, host, path, port))
 	{
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(fullPath, data))
+		std::stringstream data;
+		if (utils::CurlDownload(fullPath, data))
 		{
 			// Still not clear if this is making a copy internally
-			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)data.data(), (unsigned int)data.size()));
+			auto view = data.rdbuf()->_Get_buffer_view();
+			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)view._Ptr, (unsigned int)view._Size));
 			hr = image.Load(stream);
 		}
 		else

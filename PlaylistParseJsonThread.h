@@ -37,12 +37,12 @@ protected:
 	CPlaylistParseJsonThread() { m_bAutoDelete = TRUE; }
 
 public:
-	virtual ~CPlaylistParseJsonThread() { delete m_config.m_data; }
+	virtual ~CPlaylistParseJsonThread() = default;
 
 public:
 	BOOL InitInstance() override;
 
-	void SetData(const ThreadConfig& config) { m_config = config; };
+	void SetData(ThreadConfig& config) { m_config = std::move(config); };
 	void SetPlugin(std::shared_ptr<base_plugin>& parent_plugin) { m_parent_plugin = parent_plugin; };
 
 protected:

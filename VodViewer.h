@@ -76,6 +76,7 @@ protected:
 	CButton m_wndSearch;
 	CEdit m_wndTotal;
 	CEdit m_wndStreamUrl;
+	CEdit m_wndSIconUrl;
 	CStatic m_wndPoster;
 	CProgressCtrl m_wndProgress;
 	CRichEditCtrl m_wndDescription;
@@ -100,4 +101,5 @@ private:
 	std::unique_ptr<Playlist> m_playlistEntries;
 	CString m_SearchText;
 	CString m_streamUrl;
+	CString m_iconUrl;
 };

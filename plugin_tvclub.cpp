@@ -89,16 +89,16 @@ bool plugin_tvclub::parse_access_info(TemplateParams& params, std::list<AccountI
 	creds.set_login(params.login);
 	creds.set_password(params.password);
 
-	std::vector<BYTE> data;
+	std::stringstream data;
 	const auto& url = fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds));
-	if (!utils::DownloadFile(url, data) || data.empty())
+	if (!utils::CurlDownload(url, data))
 	{
 		return false;
 	}
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		const auto& parsed_json = nlohmann::json::parse(data.str());
 		if (parsed_json.contains("account"))
 		{
 			const auto& js_account = parsed_json["account"];
@@ -151,12 +151,12 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 	creds.set_password(params.password);
 
 	const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
-	std::vector<BYTE> data;
-	if (utils::DownloadFile(url, data) || data.empty())
+	std::stringstream data;
+	if (utils::CurlDownload(url, data))
 	{
 		JSON_ALL_TRY;
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+			const auto& parsed_json = nlohmann::json::parse(data.str());
 			if (parsed_json.contains("settings"))
 			{
 				const auto& settings = parsed_json["settings"];
@@ -198,12 +198,12 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 									  L"server",
 									  servers_list[params.server_idx].get_id());
 
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(url, data) || data.empty())
+		std::stringstream data;
+		if (utils::CurlDownload(url, data))
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+				const auto& parsed_json = nlohmann::json::parse(data.str());
 				return utils::get_json_int("updated", parsed_json["settings"]) == 1;
 			}
 			JSON_ALL_CATCH;

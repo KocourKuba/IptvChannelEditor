@@ -45,7 +45,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 	auto playlist = std::make_unique<Playlist>();
 	if (m_config.m_data)
 	{
-		const auto& wbuf = utils::utf8_to_utf16((char*)m_config.m_data->data(), m_config.m_data->size());
+		const auto& wbuf = utils::utf8_to_utf16(m_config.m_data.str());
 		std::wistringstream stream(wbuf);
 		if (stream.good())
 		{

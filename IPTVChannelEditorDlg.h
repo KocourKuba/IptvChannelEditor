@@ -468,5 +468,5 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// vod
-	std::array<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>, (size_t)PluginType::enLast> m_vod_categories;
+	std::map<PluginType, utils::vectormap<std::wstring, std::shared_ptr<vod_category>>> m_vod_categories;
 };

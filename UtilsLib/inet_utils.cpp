@@ -34,6 +34,11 @@ DEALINGS IN THE SOFTWARE.
 #include <filesystem>
 #include "xxhash.hpp"
 #include "utils.h"
+#include "curl_easy.h"
+#include "curl_form.h"
+#include "curl_ios.h"
+#include "curl_exception.h"
+#include "curl_header.h"
 
 #pragma comment(lib, "Winhttp.lib")
 
@@ -45,6 +50,111 @@ std::time_t to_time_t(T tp)
 {
 	auto systp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp - T::clock::now() + std::chrono::system_clock::now());
 	return std::chrono::system_clock::to_time_t(systp);
+}
+
+// Модифицированный алгоритм unescape поддерживающий utf8.
+HRESULT SHUrlUnescapeW(const std::wstring& src, std::wstring& result, DWORD dwFlags)
+{
+	if (src.empty())
+		return E_INVALIDARG;
+
+	result = src;
+	wchar_t* pchSrc = result.data();
+	wchar_t* pchDst = result.data();
+
+	wchar_t ch;
+	int more = -1;
+	int symb = 0;
+	while (0 != (ch = *pchSrc++))
+	{
+		if ((ch == '#' || ch == '?') && (dwFlags & URL_DONT_ESCAPE_EXTRA_INFO))
+		{
+			StrCpyW(pchDst, --pchSrc);
+			pchDst += wcslen(pchDst);
+			break;
+		}
+
+		/* Get next byte b from URL segment wszUrl */
+		int b;
+		switch (ch)
+		{
+			case '%':
+			{
+				ch = *pchSrc++;
+				if (ch == '\0')
+				{
+					pchSrc--;
+					continue;
+				}
+				int hb = (iswdigit(ch) ? ch - '0' : 10 + towlower(ch) - 'a') & 0xF;
+				ch = *pchSrc++;
+				if (ch == '\0')
+				{
+					pchSrc--;
+					continue;
+				}
+				int lb = (iswdigit(ch) ? ch - '0' : 10 + towlower(ch) - 'a') & 0xF;
+				b = (hb << 4) | lb;
+			}
+			break;
+			case '+':
+				*pchDst++ = L' ';
+				continue;
+			default:
+				*pchDst++ = ch;
+				continue;
+		}
+
+		/* Decode byte b as UTF-8, symb collects incomplete chars */
+		if ((b & 0xC0) == 0x80)
+		{			// 10xxxxxx (continuation byte)
+			symb = (symb << 6) | (b & 0x3f);	// Add 6 bits to symb
+			if (--more == 0)
+			{
+				*pchDst++ = (wchar_t)symb;
+			}
+		}
+		else if ((b & 0x80) == 0x00)
+		{		// 0xxxxxxx (yields 7 bits)
+			*pchDst++ = (wchar_t)b;
+		}
+		else if ((b & 0xE0) == 0xC0)
+		{	// 110xxxxx (yields 5 bits)
+			symb = b & 0x1F;
+			more = 1;				// Expect 1 more byte
+		}
+		else if ((b & 0xF0) == 0xE0)
+		{	// 1110xxxx (yields 4 bits)
+			symb = b & 0x0F;
+			more = 2;				// Expect 2 more bytes
+		}
+		else if ((b & 0xF8) == 0xF0)
+		{	// 11110xxx (yields 3 bits)
+			symb = b & 0x07;
+			more = 3;				// Expect 3 more bytes
+		}
+		else if ((b & 0xFC) == 0xF8)
+		{	// 111110xx (yields 2 bits)
+			symb = b & 0x03;
+			more = 4;				// Expect 4 more bytes
+		}
+		else /*if((b & 0xFE) == 0xFC)*/
+		{	// 1111110x (yields 1 bit)
+			symb = b & 0x01;
+			more = 5;				// Expect 5 more bytes
+		}
+		/* No need to test if the UTF-8 encoding is well-formed */
+	}
+
+	*pchDst = '\0';
+	int sz = pchDst - result.c_str();
+	if (sz >= 0)
+	{
+		result.resize(sz);
+		return S_OK;
+	}
+
+	return E_FAIL;
 }
 
 bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, unsigned short& port)
@@ -66,6 +176,97 @@ bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, u
 	}
 
 	return false;
+}
+
+bool CurlDownload(const std::wstring& url,
+				  std::stringstream& vData,
+				  bool use_cache /*= false*/,
+				  std::vector<std::string>* pHeaders /*= nullptr*/,
+				  bool verb_post /*= false*/,
+				  const char* post_data /*= nullptr*/
+)
+{
+	const auto& url_narrow = utils::utf16_to_utf8(url);
+	std::string hash_str = url_narrow;
+	if (post_data)
+		hash_str += post_data;
+
+	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
+	std::filesystem::create_directory(cache_file);
+	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
+	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
+
+	if (use_cache && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
+	{
+		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
+		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
+		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		int diff = int(now - file_time);
+		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
+		// cache ttl 1 day
+		if (diff < 60 * 60 * 24)
+		{
+			std::ifstream in_file(cache_file.c_str());
+			if (in_file.good())
+			{
+				vData << in_file.rdbuf();
+				in_file.close();
+				return vData.tellp() != std::streampos(0);
+			}
+		}
+	}
+
+	try
+	{
+		curl::curl_ios<std::stringstream> writer(vData);
+		curl::curl_easy easy(writer);
+
+		easy.add<CURLOPT_URL>(utils::utf16_to_utf8(url).c_str());
+		easy.add<CURLOPT_FOLLOWLOCATION>(1L);
+		easy.add<CURLOPT_HTTPAUTH>(CURLAUTH_ANY);
+		easy.add<CURLOPT_SSL_VERIFYPEER>(0);
+		easy.add<CURLOPT_SSL_VERIFYHOST>(0);
+		easy.add<CURLOPT_CONNECTTIMEOUT>(30);
+		easy.add<CURLOPT_TIMEOUT>(60);
+		easy.add<CURLOPT_USERAGENT>("DuneHD/1.0");
+
+		curl::curl_header headers;
+		if (pHeaders)
+		{
+			for (const auto& hdr : *pHeaders)
+			{
+				headers.add(hdr);
+			}
+
+			easy.add<CURLOPT_HTTPHEADER>(headers.get());
+		}
+
+		if (verb_post && post_data)
+		{
+			easy.add<CURLOPT_POST>(1L);
+			easy.add<CURLOPT_POSTFIELDS>(post_data);
+		}
+
+		easy.perform();
+
+		if (use_cache && vData.tellp() != std::streampos(0))
+		{
+			std::ofstream out_stream(cache_file, std::ios::out | std::ios::binary);
+			out_stream << vData.rdbuf();
+		}
+	}
+	catch (curl::curl_easy_exception const& error)
+	{
+		ATLTRACE("\n%d (%s)\n", error.get_code(), error.what());
+		auto errors = error.get_traceback();
+		for (const auto& err : errors)
+		{
+			ATLTRACE("\nERROR: %s ::::: FUNCTION: %s\n", err.first, err.second);
+		}
+		return false;
+	}
+
+	return vData.tellp() != std::streampos(0);
 }
 
 bool DownloadFile(const std::wstring& url,
@@ -213,18 +414,6 @@ bool DownloadFile(const std::wstring& url,
 	}
 
 	return !vData.empty();
-}
-
-bool WriteDataToFile(const std::wstring& path, std::vector<unsigned char>& vData)
-{
-	HANDLE hFile = ::CreateFileW(path.c_str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-	if (hFile == INVALID_HANDLE_VALUE) return false;
-
-	DWORD dwWritten = 0;
-	BOOL res = ::WriteFile(hFile, vData.data(), (DWORD)vData.size(), &dwWritten, nullptr);;
-	::CloseHandle(hFile);
-
-	return res;
 }
 
 std::string entityDecrypt(const std::string& text)

@@ -81,7 +81,7 @@ struct update_node
 struct UpdateInfo
 {
 	std::wstring info_file; // name of the update.xml or other file
-	std::vector<BYTE> update_info; // content of update_file
+	std::stringstream update_info; // content of update_file
 	std::wstring update_path; // folder where is downloaded files stored
 	std::wstring version; // version of the update
 	std::vector<update_node> update_files; // all files to be replaced
@@ -192,7 +192,7 @@ int parse_info(UpdateInfo& info)
 
 	try
 	{
-		doc->parse<0>((char*)info.update_info.data());
+		doc->parse<0>(info.update_info.str().data());
 	}
 	catch (rapidxml::parse_error&)
 	{
@@ -243,12 +243,10 @@ int parse_info(UpdateInfo& info)
 int check_for_update(UpdateInfo& info)
 {
 	LogProtocol("Try to download update info...");
-	if (!utils::DownloadFile(L"http://igores.ru/sharky72/update.xml", info.update_info))
+	if (!utils::CurlDownload(L"http://igores.ru/sharky72/update.xml", info.update_info))
 	{
 		return err_download_info; // Unable to download update info!
 	}
-
-	info.update_info.emplace_back('\0');
 
 	return parse_info(info);
 }
@@ -276,16 +274,18 @@ int download_update(UpdateInfo& info)
 				if (item.crc == crc) continue;
 			}
 
-			std::vector<unsigned char> file_data;
+			std::stringstream file_data;
 			const auto& url = fmt::format(L"http://igores.ru/sharky72/{:s}/{:s}", info.version, item.name);
 			LogProtocol(fmt::format(L"download: {:s}", url));
-			if (!utils::DownloadFile(url, file_data))
+			if (!utils::CurlDownload(url, file_data))
 			{
 				ret = err_download_pkg; // Unable to download update package!
 				break;
 			}
 
-			if (!utils::WriteDataToFile(loaded_file, file_data))
+			std::ofstream os(loaded_file);
+			os << file_data.rdbuf();
+			if (os.bad())
 			{
 				ret = err_save_pkg; // Unable to save update package!
 				break;

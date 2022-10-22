@@ -78,12 +78,12 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 	auto categories = std::make_unique<vod_category_storage>();
 	do
 	{
-		std::vector<BYTE> data;
-		if (!utils::DownloadFile(m_config.m_url, data, m_config.m_use_cache) || data.empty()) break;
+		std::stringstream data;
+		if (!utils::CurlDownload(m_config.m_url, data, m_config.m_use_cache)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
-		parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		parsed_json = nlohmann::json::parse(data.str());
 		JSON_ALL_CATCH;
 
 		if (parsed_json.empty()) break;
@@ -168,12 +168,12 @@ void CPlaylistParseJsonThread::ParseCbilling()
 	auto categories = std::make_unique<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>>();
 	do
 	{
-		std::vector<BYTE> data;
-		if (!utils::DownloadFile(m_config.m_url, data, m_config.m_use_cache) || data.empty()) break;
+		std::stringstream info;
+		if (!utils::CurlDownload(m_config.m_url, info, m_config.m_use_cache)) break;
 
 		int total = 0;
 		JSON_ALL_TRY;
-		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		const auto& parsed_json = nlohmann::json::parse(info.str());
 		for (const auto& item_it : parsed_json["data"].items())
 		{
 			if (item_it.value().empty()) continue;
@@ -200,13 +200,11 @@ void CPlaylistParseJsonThread::ParseCbilling()
 			{
 				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0) break;
 
-				data.clear();
+				std::stringstream data;
 				const auto& cat_url = fmt::format(L"{:s}/cat/{:s}?page={:d}&per_page=500", m_config.m_url, category->id, page);
-				if (!utils::DownloadFile(cat_url, data, m_config.m_use_cache) && retry++ > 2) break;
+				if (!utils::CurlDownload(cat_url, data, m_config.m_use_cache) && retry++ > 2) break;
 
-				if (data.empty()) break;
-
-				const auto& movies_json = nlohmann::json::parse(data.begin(), data.end());
+				const auto& movies_json = nlohmann::json::parse(data.str());
 
 				if (movies_json.empty() || !movies_json.contains("data")) continue;
 
@@ -271,19 +269,21 @@ void CPlaylistParseJsonThread::ParseEdem()
 		const auto& key = m[1].str();
 		const auto& url = m[2].str();
 
-		std::wstring header = L"accept: */*\r\nContent-Type: application/json";
+		std::vector<std::string> headers;
+		headers.emplace_back("accept: */*");
+		headers.emplace_back("Content-Type: application/json");
 
 		nlohmann::json json_request;
 		json_request["key"] = utils::utf16_to_utf8(key);
 		json_request["mac"] = "000000000000";
 		json_request["app"] = "IPTV ChannelEditor";
-		std::string post = json_request.dump();
+		const auto& post = json_request.dump();
 
-		std::vector<BYTE> data;
-		if (!utils::DownloadFile(url, data, m_config.m_use_cache, &header, L"POST", &post) || data.empty()) break;
+		std::stringstream data;
+		if (!utils::CurlDownload(url, data, m_config.m_use_cache, &headers, true, post.c_str())) break;
 
 		JSON_ALL_TRY;
-		nlohmann::json parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		nlohmann::json parsed_json = nlohmann::json::parse(data.str());
 		for (const auto& item_it : parsed_json["items"].items())
 		{
 			if (item_it.value().empty()) continue;
@@ -336,13 +336,14 @@ void CPlaylistParseJsonThread::ParseEdem()
 		{
 			json_request["fid"] = utils::char_to_int(category.second->id);
 			json_request["offset"] = 0;
+			const auto& cat_post = json_request.dump();
 
-			data.clear();
-			post = json_request.dump();
-			if (!utils::DownloadFile(url, data, m_config.m_use_cache, &header, L"POST", &post) || data.empty()) break;
+			std::stringstream cat_data;
+			if (!utils::CurlDownload(url, cat_data, m_config.m_use_cache, &headers, true, cat_post.c_str())) break;
 
-			parsed_json = nlohmann::json::parse(data.begin(), data.end());
-			total += utils::get_json_int("count", parsed_json);
+			const auto& data_str = cat_data.str();
+			nlohmann::json movie_json = nlohmann::json::parse(data_str);
+			total += utils::get_json_int("count", movie_json);
 			m_config.SendNotifyParent(WM_INIT_PROGRESS, total, cnt);
 			ATLTRACE("\ntotal movies: %d\n", total);
 
@@ -353,7 +354,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 			for(;;)
 			{
 				//std::string dump(data.begin(), data.end());
-				for (const auto& item_it : parsed_json["items"].items())
+				for (const auto& item_it : movie_json["items"].items())
 				{
 					const auto& movie_item = item_it.value();
 
@@ -382,7 +383,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 					cnt++;
 					if (cnt % 100 == 0)
 					{
-						m_config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt);
+						m_config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt, cnt);
 						if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0) break;
 					}
 				}
@@ -395,11 +396,10 @@ void CPlaylistParseJsonThread::ParseEdem()
 				json_request["offset"] = offset;
 				ATLTRACE("\noffset: %d\n", offset);
 
-				data.clear();
-				post = json_request.dump();
-				if (!utils::DownloadFile(url, data, m_config.m_use_cache, &header, L"POST", &post) || data.empty()) break;
+				std::stringstream mov_data;
+				if (!utils::CurlDownload(url, mov_data, m_config.m_use_cache, &headers, true, json_request.dump().c_str())) break;
 
-				parsed_json = nlohmann::json::parse(data.begin(), data.end());
+				movie_json = nlohmann::json::parse(mov_data.str());
 			}
 
 			if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0) break;
@@ -418,12 +418,12 @@ void CPlaylistParseJsonThread::ParseGlanz()
 	auto categories = std::make_unique<vod_category_storage>();
 	do
 	{
-		std::vector<BYTE> data;
-		if (!utils::DownloadFile(m_config.m_url, data, m_config.m_use_cache) || data.empty()) break;
+		std::stringstream data;
+		if (!utils::CurlDownload(m_config.m_url, data, m_config.m_use_cache)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
-		parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		parsed_json = nlohmann::json::parse(data.str());
 		JSON_ALL_CATCH;
 
 		if (parsed_json.empty()) break;

@@ -667,11 +667,11 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	if (!provider_api_url.empty()
 		&& (GetConfig().get_string(false, REG_LIST_DOMAIN).empty() || GetConfig().get_string(false, REG_EPG_DOMAIN).empty()))
 	{
-		std::vector<BYTE> data;
-		if (utils::DownloadFile(provider_api_url, data) && !data.empty())
+		std::stringstream data;
+		if (utils::CurlDownload(provider_api_url, data))
 		{
 			JSON_ALL_TRY;
-			const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+			const auto& parsed_json = nlohmann::json::parse(data.str());
 			GetConfig().set_string(false, REG_LIST_DOMAIN, utils::utf8_to_utf16(parsed_json["listdomain"].get<std::string>()));
 			GetConfig().set_string(false, REG_EPG_DOMAIN, utils::utf8_to_utf16(parsed_json["jsonEpgDomain"].get<std::string>()));
 			JSON_ALL_CATCH;
@@ -680,7 +680,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	const auto& streams = m_plugin->get_supported_streams();
 
-	m_wndBtnVod.ShowWindow(m_plugin->get_vod_templates().empty() ? SW_HIDE : SW_SHOW);
+	m_wndBtnVod.ShowWindow(m_plugin->get_vod_support() ? SW_SHOW : SW_HIDE);
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();
@@ -946,18 +946,18 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		}
 	}
 
-	auto data = std::make_unique<std::vector<BYTE>>();
+	std::stringstream data;
 	std::wstring host;
 	std::wstring path;
 	WORD port = 0;
 	if (pl_info->is_file)
 	{
 		std::ifstream stream(url);
-		data->assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
+		data << stream.rdbuf();
 	}
 	else if (utils::CrackUrl(url, host, path, port))
 	{
-		if (!utils::DownloadFile(url, *data))
+		if (!utils::CurlDownload(url, data))
 		{
 			AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);
@@ -967,13 +967,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		if (saveToFile)
 		{
 			std::ofstream os(m_plFileName);
-			os.write((char*)data->data(), data->size());
-			os.close();
+			os << data.rdbuf();
 			return;
 		}
 	}
 
-	if (data->empty())
+	if (data.tellp() == std::streampos(0))
 	{
 		AfxMessageBox(IDS_STRING_ERR_EMPTY_PLAYLIST, MB_OK | MB_ICONERROR);
 		OnEndLoadPlaylist(0);
@@ -1009,7 +1008,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	ThreadConfig cfg;
 	cfg.m_parent = this;
-	cfg.m_data = data.release();
+	cfg.m_data = std::move(data);
 	cfg.m_hStop = m_evtStop;
 	cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
 
@@ -3964,15 +3963,14 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		icon_uri.set_uri(utils::ICON_TEMPLATE);
 		icon_uri.set_path(path);
 
-		std::vector<BYTE> image;
-		if (!utils::DownloadFile(channel->get_icon_uri().get_uri(), image)) continue;
+		std::stringstream image;
+		if (!utils::CurlDownload(channel->get_icon_uri().get_uri(), image)) continue;
 
 		channel->set_icon_uri(icon_uri.get_uri());
 
 		const auto& fullPath = icon_uri.get_filesystem_path(GetAppPath(utils::PLUGIN_ROOT));
 		std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
-		os.write((char*)&image[0], image.size());
-		os.close();
+		os << image.rdbuf();
 
 		LoadChannelInfo(FindChannel(hItem));
 		set_allow_save();
@@ -5145,7 +5143,7 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 {
-	CVodViewer dlg(&m_vod_categories[(size_t)m_plugin_type]);
+	CVodViewer dlg(&m_vod_categories[m_plugin_type]);
 	dlg.m_plugin = m_plugin;
 	dlg.m_account = m_cur_account;
 	dlg.DoModal();

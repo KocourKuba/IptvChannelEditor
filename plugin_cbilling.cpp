@@ -96,19 +96,21 @@ void plugin_cbilling::fill_devices_list(TemplateParams& /*params*/)
 
 bool plugin_cbilling::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
-	static constexpr auto ACCOUNT_HEADER_TEMPLATE = L"accept: */*\r\nx-public-key: {:s}";
+	static constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
 
-	auto& header = fmt::format(ACCOUNT_HEADER_TEMPLATE, params.password);
-	std::vector<BYTE> data;
-	if (!utils::DownloadFile(ACCOUNT_TEMPLATE, data, false, &header) || data.empty())
+	std::vector<std::string> headers;
+	headers.emplace_back("accept: */*");
+	headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, utils::utf16_to_utf8(params.password)));
+	std::stringstream data;
+	if (!utils::CurlDownload(ACCOUNT_TEMPLATE, data, false, &headers))
 	{
 		return false;
 	}
 
 	JSON_ALL_TRY
 	{
-		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		const auto& parsed_json = nlohmann::json::parse(data.str());
 		if (parsed_json.contains("data"))
 		{
 			const auto& js_data = parsed_json["data"];

@@ -33,14 +33,19 @@ namespace utils
 {
 bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, unsigned short& port);
 
+bool CurlDownload(const std::wstring& url,
+				  std::stringstream& vData,
+				  bool use_cache = false,
+				  std::vector<std::string>* pHeaders = nullptr,
+				  bool verb_post = false,
+				  const char* post_data = nullptr);
+
 bool DownloadFile(const std::wstring& url,
 				  std::vector<unsigned char>& vData,
 				  bool use_cache = false,
 				  std::wstring* pHeaders = nullptr,
 				  const wchar_t* verb = L"GET",
 				  const std::string* post_data = nullptr);
-
-bool WriteDataToFile(const std::wstring& path, std::vector<unsigned char>& vData);
 
 std::string entityDecrypt(const std::string& text);
 

@@ -37,12 +37,12 @@ protected:
 	CPlaylistParseM3U8Thread() { m_bAutoDelete = TRUE; }
 
 public:
-	virtual ~CPlaylistParseM3U8Thread() { delete m_config.m_data; }
+	virtual ~CPlaylistParseM3U8Thread() = default;
 
 public:
 	BOOL InitInstance() override;
 
-	void SetData(const ThreadConfig& config) { m_config = config; };
+	void SetData(ThreadConfig& config) { m_config = std::move(config); };
 	void SetPlugin(std::shared_ptr<base_plugin>& parent_plugin) { m_parent_plugin = parent_plugin; };
 
 protected:

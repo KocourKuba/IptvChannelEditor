@@ -81,15 +81,15 @@ void plugin_itv::load_default()
 
 bool plugin_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
-	std::vector<BYTE> data;
-	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.password), data) || data.empty())
+	std::stringstream data;
+	if (!utils::CurlDownload(fmt::format(ACCOUNT_TEMPLATE, params.password), data))
 	{
 		return false;
 	}
 
 	JSON_ALL_TRY
 	{
-		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		const auto& parsed_json = nlohmann::json::parse(data.str());
 		if (parsed_json.contains("user_info"))
 		{
 			const auto& js_data = parsed_json["user_info"];

@@ -114,9 +114,9 @@ BOOL CIconsListDlg::OnInitDialog()
 	}
 	else
 	{
-		auto data = std::make_unique<std::vector<BYTE>>();
 		std::unique_ptr<std::istream> pl_stream;
-		if (utils::DownloadFile(m_iconSource, *data))
+		std::stringstream data;
+		if (utils::CurlDownload(m_iconSource, data))
 		{
 			auto* pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 			if (pThread)
@@ -126,13 +126,14 @@ BOOL CIconsListDlg::OnInitDialog()
 				GetDlgItem(IDOK)->EnableWindow(FALSE);
 				GetDlgItem(IDC_EDIT_SEARCH)->ShowWindow(SW_HIDE);
 				GetDlgItem(IDC_BUTTON_SEARCH_NEXT)->ShowWindow(SW_HIDE);
-				m_wndProgress.SetRange32(0, (int)std::count(data->begin(), data->end(), '\n'));
+				const auto& str = data.str();
+				m_wndProgress.SetRange32(0, (int)std::count(str.begin(), str.end(), '\n') / 2);
 				m_wndProgress.SetPos(0);
 				m_wndProgress.ShowWindow(SW_SHOW);
 
 				ThreadConfig cfg;
 				cfg.m_parent = this;
-				cfg.m_data = data.release();
+				cfg.m_data = std::move(data);
 				cfg.m_hStop = m_evtStop;
 				cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
 

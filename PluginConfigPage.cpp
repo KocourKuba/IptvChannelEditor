@@ -873,12 +873,12 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_DAY, std::to_wstring(m_Date.GetDay()));
 	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
 
-	std::vector<BYTE> data;
-	if (utils::DownloadFile(url, data) && !data.empty())
+	std::stringstream data;
+	if (utils::CurlDownload(url, data))
 	{
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
-		parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		parsed_json = nlohmann::json::parse(data.str());
 		JSON_ALL_CATCH;
 
 		const auto& json_str = parsed_json.dump(2);
@@ -914,13 +914,13 @@ void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 	params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
 
 	const auto& url = m_plugin->get_playlist_url(params);
-	std::vector<BYTE> data;
-	if (utils::DownloadFile(url, data) && !data.empty())
+	std::stringstream data;
+	if (utils::CurlDownload(url, data))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
 
 		std::ofstream out_stream(out_file);
-		out_stream.write((const char*)data.data(), data.size());
+		out_stream << data.rdbuf();
 		out_stream.close();
 
 		STARTUPINFO			si;
@@ -948,13 +948,13 @@ void CPluginConfigPage::OnBnClickedButtonVodTemplate()
 	params.playlist_idx = m_wndVodTemplates.GetCurSel();
 
 	const auto& url = m_plugin->get_vod_url(params);
-	std::vector<BYTE> data;
-	if (utils::DownloadFile(url, data) && !data.empty())
+	std::stringstream data;
+	if (utils::CurlDownload(url, data))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
 
 		std::ofstream out_stream(out_file);
-		out_stream.write((const char*)data.data(), data.size());
+		out_stream << data.rdbuf();
 		out_stream.close();
 
 		STARTUPINFO			si;

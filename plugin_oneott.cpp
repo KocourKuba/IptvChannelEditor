@@ -81,15 +81,15 @@ bool plugin_oneott::parse_access_info(TemplateParams& params, std::list<AccountI
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";
 
-	std::vector<BYTE> data;
-	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data) || data.empty())
+	std::stringstream data;
+	if (!utils::CurlDownload(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data))
 	{
 		return false;
 	}
 
 	JSON_ALL_TRY
 	{
-		const auto& parsed_json = nlohmann::json::parse(data.begin(), data.end());
+		const auto& parsed_json = nlohmann::json::parse(data.str());
 		if (parsed_json.contains("token"))
 		{
 			const auto& token = utils::utf8_to_utf16(parsed_json.value("token", ""));

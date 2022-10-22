@@ -6,7 +6,7 @@ public:
 	void SendNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	void PostNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 
-	std::vector<BYTE>* m_data = nullptr;
+	std::stringstream m_data;
 	void* m_parent = nullptr;
 	HANDLE m_hStop = nullptr;
 	std::wstring m_rootPath;
