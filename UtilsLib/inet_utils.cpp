@@ -227,7 +227,7 @@ bool CurlDownload(const std::wstring& url,
 		easy.add<CURLOPT_SSL_VERIFYPEER>(0);
 		easy.add<CURLOPT_SSL_VERIFYHOST>(0);
 		easy.add<CURLOPT_CONNECTTIMEOUT>(30);
-		easy.add<CURLOPT_TIMEOUT>(60);
+		easy.add<CURLOPT_TIMEOUT>(30);
 		easy.add<CURLOPT_USERAGENT>("DuneHD/1.0");
 
 		curl::curl_header headers;
@@ -257,12 +257,7 @@ bool CurlDownload(const std::wstring& url,
 	}
 	catch (curl::curl_easy_exception const& error)
 	{
-		ATLTRACE("\n%d (%s)\n", error.get_code(), error.what());
-		auto errors = error.get_traceback();
-		for (const auto& err : errors)
-		{
-			ATLTRACE("\nERROR: %s ::::: FUNCTION: %s\n", err.first, err.second);
-		}
+		ATLTRACE("\nERROR: %d (%s)\n", error.get_code(), error.what());
 		return false;
 	}
 
