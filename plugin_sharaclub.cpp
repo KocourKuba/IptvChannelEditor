@@ -86,7 +86,7 @@ void plugin_sharaclub::load_default()
 
 std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)
 {
-	auto& url = get_current_playlist_template();
+	auto& url = get_playlist_template(params.playlist_idx);
 	if (params.profile_idx != 0)
 	{
 		fill_profiles_list(params);

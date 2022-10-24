@@ -60,8 +60,13 @@ void plugin_config::set_plugin_defaults(PluginType val)
 	plugin_type = val;
 	clear();
 	load_default();
-	set_current_playlist_template(get_playlist_template(get_playlist_template_idx()));
-	set_current_vod_template(get_vod_template(get_vod_template_idx()));
+	set_current_pl_vod_template();
+}
+
+void plugin_config::set_current_pl_vod_template()
+{
+	playlist_template = (playlist_template_index != -1 && playlist_template_index < playlist_templates.size()) ? playlist_templates[playlist_template_index].pl_template : "";
+	provider_vod_url = (vod_template_index != -1 && vod_template_index < vod_templates.size()) ? vod_templates[vod_template_index].pl_template : "";
 }
 
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
@@ -81,8 +86,7 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 	bool res = false;
 	try
 	{
-		set_current_playlist_template(get_playlist_template(get_playlist_template_idx()));
-		set_current_vod_template(get_vod_template(get_vod_template_idx()));
+		set_current_pl_vod_template();
 
 		nlohmann::json node = *this;
 
@@ -115,8 +119,7 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 	if (filename.empty())
 	{
 		load_default();
-		set_current_playlist_template(get_playlist_template(get_playlist_template_idx()));
-		set_current_vod_template(get_vod_template(get_vod_template_idx()));
+		set_current_pl_vod_template();
 		return;
 	}
 
@@ -133,8 +136,7 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 			in_stream >> node;
 			from_json(node, *this);
 
-			set_current_playlist_template(get_playlist_template(get_playlist_template_idx()));
-			set_current_vod_template(get_vod_template(get_vod_template_idx()));
+			set_current_pl_vod_template();
 			res = true;
 		}
 	}
@@ -156,8 +158,7 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 	if (!res)
 	{
 		load_default();
-		set_current_playlist_template(get_playlist_template(get_playlist_template_idx()));
-		set_current_vod_template(get_vod_template(get_vod_template_idx()));
+		set_current_pl_vod_template();
 	}
 }
 

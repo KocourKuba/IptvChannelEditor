@@ -272,8 +272,7 @@ public:
 	/// <summary>
 	/// active vod template
 	/// </summary>
-	std::wstring get_current_playlist_template() const { return utils::utf8_to_utf16(playlist_template); }
-	void set_current_playlist_template(const std::wstring& val) { playlist_template = utils::utf16_to_utf8(val); }
+	void set_current_pl_vod_template();
 
 	/// <summary>
 	/// selected playlist template index
@@ -323,7 +322,6 @@ public:
 	/// active vod template
 	/// </summary>
 	std::wstring get_current_vod_template() const { return utils::utf8_to_utf16(provider_vod_url); }
-	void set_current_vod_template(const std::wstring& val) { provider_vod_url = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// property vod templates
