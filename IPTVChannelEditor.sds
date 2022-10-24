@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="158" scanned="20221018234512" built="20221018234533" lang="ru" pane="TLogPane" col="4">
+<desktop scan="159" scanned="20221024100559" built="20221024101114" lang="ru" pane="TLogPane" col="4" row="Dialogs.102.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
+    <item class="TRemoveUnusedItemsTrigger" position="3"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>
@@ -12,11 +13,6 @@
       <item class="TOriginalColumn" width="524"/>
       <item class="TTranslationColumn" lang="ru" width="532"/>
     </columns>
-    <filters>
-      <current>
-        <statuses>[tsNotTranslated,tsBestGuess,tsAutoTranslated,tsTranslated,tsForReview]</statuses>
-      </current>
-    </filters>
     <params>
       <findtext>Splash</findtext>
       <findtext>2009</findtext>
