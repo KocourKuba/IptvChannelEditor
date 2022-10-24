@@ -36,6 +36,30 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static std::array<m3u_entry::info_tags, 3> id_search_tags =
+{
+	m3u_entry::info_tags::tag_channel_id,
+	m3u_entry::info_tags::tag_cuid,
+	m3u_entry::info_tags::tag_tvg_chno,
+};
+
+static std::array<m3u_entry::info_tags, 3> epg_search_tags =
+{
+	m3u_entry::info_tags::tag_tvg_id,
+	m3u_entry::info_tags::tag_tvg_name,
+	m3u_entry::info_tags::tag_directive_title,
+};
+
+static std::array<m3u_entry::info_tags, 6> archive_search_tags =
+{
+	m3u_entry::info_tags::tag_tvg_rec,
+	m3u_entry::info_tags::tag_catchup_days,
+	m3u_entry::info_tags::tag_timeshift,
+	m3u_entry::info_tags::tag_arc_timeshift,
+	m3u_entry::info_tags::tag_arc_time,
+	m3u_entry::info_tags::tag_catchup_time,
+};
+
 bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 {
 	if (str.empty()) return false;
@@ -102,12 +126,13 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 		case PluginType::enOttclub:
 			set_epg_id(0, get_id());
 			break;
-		case PluginType::enLightIptv:
-		case PluginType::enFilmax:
-			set_id(get_epg_id(0));
-			break;
 		default:
 			break;
+		}
+
+		if (get_id().empty())
+		{
+			set_id(get_epg_id(0));
 		}
 
 		switch (parent_plugin->get_plugin_type())
@@ -133,13 +158,13 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 
 void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_channel_id); pair != tags.end())
+	for (const auto& tag : id_search_tags)
 	{
-		set_id(pair->second);
-	}
-	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_cuid); pair != tags.end())
-	{
-		set_id(pair->second);
+		if (const auto& pair = tags.find(tag); pair != tags.end())
+		{
+			set_id(pair->second);
+			break;
+		}
 	}
 }
 
@@ -161,50 +186,30 @@ void PlaylistEntry::search_group(const std::map<m3u_entry::info_tags, std::wstri
 
 void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_rec); pair != tags.end())
+	for (const auto& tag : archive_search_tags)
 	{
-		set_archive_days(utils::char_to_int(pair->second));
-	}
-	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_days); pair != tags.end())
-	{
-		set_archive_days(utils::char_to_int(pair->second));
-	}
-	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_time); pair != tags.end())
-	{
-		set_archive_days(utils::char_to_int(pair->second) / 86400);
-	}
-	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_timeshift); pair != tags.end())
-	{
-		set_archive_days(utils::char_to_int(pair->second));
-	}
-	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_arc_timeshift); pair != tags.end())
-	{
-		set_archive_days(utils::char_to_int(pair->second));
-	}
-	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_arc_time); pair != tags.end())
-	{
-		set_archive_days(utils::char_to_int(pair->second));
+		if (const auto& pair = tags.find(tag); pair != tags.end())
+		{
+			int day = utils::char_to_int(pair->second);
+			if (tag == m3u_entry::info_tags::tag_catchup_time)
+				day /= 86400;
+			set_archive_days(day);
+			break;
+		}
 	}
 }
 
 void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring>& tags)
 {
 	// priority -> tvg_id -> tvg_name -> title
-	std::wstring tvg_id;
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_id); pair != tags.end())
+	for (const auto& tag : epg_search_tags)
 	{
-		tvg_id = pair->second;
+		if (const auto& pair = tags.find(tag); pair != tags.end())
+		{
+			set_epg_id(0, pair->second);
+			break;
+		}
 	}
-	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_name); pair != tags.end())
-	{
-		tvg_id = pair->second;
-	}
-	else if (const auto& pair = tags.find(m3u_entry::info_tags::tag_directive_title); pair != tags.end())
-	{
-		tvg_id = pair->second;
-	}
-
-	set_epg_id(0, tvg_id);
 }
 
 void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::wstring>& tags)

@@ -48,6 +48,7 @@ public:
 		tag_cuid,
 		tag_group_title,
 		tag_tvg_id,
+		tag_tvg_chno,
 		tag_tvg_logo,
 		tag_tvg_rec,
 		tag_tvg_name,

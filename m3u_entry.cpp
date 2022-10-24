@@ -50,6 +50,7 @@ static std::map<std::wstring_view, m3u_entry::info_tags> s_tags = {
 	{ L"CUID",           m3u_entry::info_tags::tag_cuid           },
 	{ L"group-title",    m3u_entry::info_tags::tag_group_title    },
 	{ L"tvg-id",         m3u_entry::info_tags::tag_tvg_id         },
+	{ L"tvg-chno",       m3u_entry::info_tags::tag_tvg_chno       },
 	{ L"tvg-logo",       m3u_entry::info_tags::tag_tvg_logo       },
 	{ L"tvg-rec",        m3u_entry::info_tags::tag_tvg_rec        },
 	{ L"tvg-name",       m3u_entry::info_tags::tag_tvg_name       },
