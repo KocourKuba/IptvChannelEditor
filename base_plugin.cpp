@@ -70,7 +70,7 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring url /*= L""*/)
 {
 	if (url.empty())
-		url = get_current_playlist_template();
+		url = get_playlist_template(params.playlist_idx);
 
 	if (!params.token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
