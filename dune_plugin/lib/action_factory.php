@@ -3,27 +3,66 @@
 class Action_Factory
 {
     /**
-     * @param string|null $media_url
+     * @param null $media_url_str
      * @param string|null $caption
+     * @param null $id
+     * @param null $sel_id
+     * @param null $post_action
+     * @param bool $keep_osd_context
      * @return array
      */
-    public static function open_folder($media_url = null, $caption = null)
+    public static function open_folder($media_url_str = null, $caption = null, $id = null, $sel_id = null, $post_action = null, $keep_osd_context = false)
     {
-        return array(
-            GuiAction::handler_string_id => PLUGIN_OPEN_FOLDER_ACTION_ID,
-            GuiAction::data => array(
-                PluginOpenFolderActionData::media_url => $media_url,
-                PluginOpenFolderActionData::caption => $caption,
-            ),
-        );
+        $action =
+            array
+            (
+                GuiAction::handler_string_id => PLUGIN_OPEN_FOLDER_ACTION_ID,
+                GuiAction::data => array
+                    (
+                        PluginOpenFolderActionData::media_url => $media_url_str,
+                        PluginOpenFolderActionData::caption => $caption,
+                    )
+            );
+
+        if (!is_null($id) && defined('PluginOpenFolderActionData::id'))
+            $action[GuiAction::data][PluginOpenFolderActionData::id] = $id;
+
+        if (!is_null($sel_id) && defined('PluginOpenFolderActionData::sel_id'))
+            $action[GuiAction::data][PluginOpenFolderActionData::sel_id] = $sel_id;
+
+        if (!is_null($post_action) && defined('PluginOpenFolderActionData::post_action'))
+            $action[GuiAction::data][PluginOpenFolderActionData::post_action] = $post_action;
+
+        if ($keep_osd_context && defined('PluginOpenFolderActionData::keep_osd_context'))
+            $action[GuiAction::data][PluginOpenFolderActionData::keep_osd_context] = $keep_osd_context;
+
+        return $action;
     }
 
     /**
+     * @param $media_url
      * @return array
      */
-    public static function tv_play()
+    public static function tv_play($media_url = null)
     {
-        return array(GuiAction::handler_string_id => PLUGIN_TV_PLAY_ACTION_ID);
+        $action = array(GuiAction::handler_string_id => PLUGIN_TV_PLAY_ACTION_ID);
+
+        if (is_null($media_url))
+            return $action;
+
+        if (is_string($media_url)) {
+            $action[GuiAction::params] = array('selected_media_url' => $media_url);
+        } else if (is_object($media_url)) {
+            $action[GuiAction::data] = array
+                (
+                    PluginTvPlayActionData::initial_group_id => isset($media_url->group_id)? $media_url->group_id : null,
+                    PluginTvPlayActionData::initial_channel_id => isset($media_url->channel_id)? $media_url->channel_id : null,
+                    PluginTvPlayActionData::initial_is_favorite => isset($media_url->is_favorite) && $media_url->is_favorite,
+                    PluginTvPlayActionData::initial_archive_tm => isset($media_url->archive_tm)? (integer) $media_url->archive_tm : -1,
+                );
+        }
+
+        return $action;
     }
 
     /**
@@ -493,5 +532,28 @@ class Action_Factory
 
         exec('killall shell');
         return array();
+    }
+
+    public static function update_rows_info($folder_key, $item_id, $info_defs,
+        $bg_url = null, $nl_bg_url = null, $mask_url = null, $playback_urls = null, $post_action = null)
+    {
+        $info = array(
+            PluginRowsInfo::folder_key => $folder_key,
+            PluginRowsInfo::item_id => $item_id,
+            PluginRowsInfo::info_defs => $info_defs,
+            PluginRowsInfo::bg_url => $bg_url,
+            PluginRowsInfo::nl_bg_url => $nl_bg_url,
+            PluginRowsInfo::mask_url => $mask_url,
+            PluginRowsInfo::playback_urls => $playback_urls,
+        );
+
+        return array
+        (
+            GuiAction::handler_string_id => PLUGIN_UPDATE_ROWS_INFO_ACTION_ID,
+            GuiAction::data => array(
+                    PluginUpdateRowsInfoActionData::info => $info,
+                    PluginUpdateRowsInfoActionData::post_action => $post_action,
+                ),
+        );
     }
 }

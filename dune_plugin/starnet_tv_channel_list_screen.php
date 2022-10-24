@@ -58,7 +58,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::tv_play();
         $actions[GUI_EVENT_KEY_INFO] = User_Input_Handler_Registry::create_action($this, self::ACTION_INFO);
 
-        if ((string)$media_url->group_id === $this->plugin->tv->get_all_channel_group_id()) {
+        if ((string)$media_url->group_id === Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID) {
             $search_action = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_SEARCH);
             $search_action['caption'] = 'Поиск';
             $actions[GUI_EVENT_KEY_C_YELLOW] = $search_action;
@@ -72,6 +72,9 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
             $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
         }
+
+        if (NEWGUI_FEAUTURES_AVAILABLE)
+            $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
 
         return $actions;
     }
@@ -135,7 +138,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $find_text = $user_input->{self::ACTION_NEW_SEARCH};
                 $q = false;
                 $group = $this->plugin->tv->get_group($media_url->group_id);
-                foreach ($group->get_channels($plugin_cookies) as $idx => $tv_channel) {
+                foreach ($group->get_group_channels() as $idx => $tv_channel) {
                     $ch_title = $tv_channel->get_title();
                     $s = mb_stripos($ch_title, $find_text, 0, "UTF-8");
                     if ($s !== false) {
@@ -162,6 +165,16 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $parent_media_url->group_id = $media_url->group_id;
                 $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true, $ndx);
+
+            case GUI_EVENT_PLAYBACK_STOP:
+                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
+                    if (NEWGUI_FEAUTURES_AVAILABLE) {
+                        Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+                        return Starnet_Epfs_Handler::invalidate_folders();
+                    }
+
+                    return null;
+                }
         }
 
         return null;
@@ -209,19 +222,10 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $items = array();
 
-        foreach ($group->get_channels($plugin_cookies) as $c) {
+        foreach ($group->get_group_channels() as $c) {
             $items[] = $this->get_regular_folder_item($group, $c, $plugin_cookies);
         }
 
         return $items;
-    }
-
-    /**
-     * @param MediaURL $media_url
-     * @return Archive|null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return $this->plugin->tv->get_archive($media_url);
     }
 }

@@ -153,7 +153,7 @@ class Movie implements User_Input_Handler
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
-            case 'playback_stop':
+            case GUI_EVENT_PLAYBACK_STOP:
                 if ($this->playback_info === null) break;
 
                 //hd_print("movie: " . json_encode($this));
@@ -195,7 +195,7 @@ class Movie implements User_Input_Handler
                 }
                 break;
 
-            case 'timer':
+            case GUI_EVENT_TIMER:
                 $actions = $this->get_movie_actions();
                 $ext_command = file_get_contents('/tmp/run/ext_command.state');
                 if (preg_match('/playback_position = (\d*)/', $ext_command, $m_pos)
@@ -218,8 +218,8 @@ class Movie implements User_Input_Handler
     protected function get_movie_actions()
     {
         User_Input_Handler_Registry::get_instance()->register_handler($this);
-        $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, 'playback_stop');
-        $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, 'timer');
+        $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
+        $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER);
         return $actions;
     }
 

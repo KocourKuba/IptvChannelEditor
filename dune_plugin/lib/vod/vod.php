@@ -80,10 +80,4 @@ interface Vod
      * @return array|null
      */
     public function get_vod_genres_folder_views();
-
-    /**
-     * @param MediaURL $media_url
-     * @return mixed
-     */
-    public function get_archive(MediaURL $media_url);
 }

@@ -62,13 +62,10 @@ abstract class Abstract_Regular_Screen implements Screen
 
         $folder_view[PluginRegularFolderView::initial_range] = $this->get_folder_range($media_url, 0, $plugin_cookies);
 
-        $archive = $this->get_archive($media_url);
-        $archive_def = is_null($archive) ? null : $archive->get_archive_def();
-
         return array
         (
             PluginFolderView::multiple_views_supported => (count($this->folder_views) > 1 ? 1 : 0),
-            PluginFolderView::archive => $archive_def,
+            PluginFolderView::archive => null,
             PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_REGULAR,
             PluginFolderView::data => $folder_view
         );
@@ -116,12 +113,5 @@ abstract class Abstract_Regular_Screen implements Screen
         }
 
         return $idx;
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    public function get_archive(MediaURL $media_url)
-    {
-        return null;
     }
 }

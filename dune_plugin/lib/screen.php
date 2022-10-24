@@ -35,10 +35,4 @@ interface Screen
      * @return array|null
      */
     public function get_next_folder_view(MediaURL $media_url, &$plugin_cookies);
-
-    /**
-     * @param MediaURL $media_url
-     * @return Archive|null
-     */
-    public function get_archive(MediaURL $media_url);
 }

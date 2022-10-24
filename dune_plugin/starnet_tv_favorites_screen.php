@@ -89,8 +89,6 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
      */
     private function get_update_action($sel_increment, $user_input, &$plugin_cookies)
     {
-        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
-
         $num_favorites = count($this->plugin->tv->get_fav_channel_ids($plugin_cookies));
 
         $sel_ndx = $user_input->sel_ndx + $sel_increment;
@@ -101,8 +99,26 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
             $sel_ndx = $num_favorites - 1;
         }
 
-        $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
-        return Action_Factory::update_regular_folder($range, true, $sel_ndx);
+        $post_action = Action_Factory::close_and_run(
+            Action_Factory::open_folder(
+                $user_input->parent_media_url,
+                null,
+                null,
+                null,
+                Action_Factory::update_regular_folder(
+                    HD::create_regular_folder_range($this->get_all_folder_items(MediaURL::decode($user_input->parent_media_url), $plugin_cookies)),
+                    true,
+                    $sel_ndx)
+            )
+        );
+
+        if (NEWGUI_FEAUTURES_AVAILABLE)
+        {
+            Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+            return Starnet_Epfs_Handler::invalidate_folders(array($user_input->parent_media_url), $post_action);
+        }
+
+        return Action_Factory::invalidate_folders(array(Starnet_Main_Screen::get_media_url_str()), $post_action);
     }
 
     /**
@@ -163,10 +179,9 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 continue;
             }
 
-            try {
-                $c = $this->plugin->tv->get_channel($channel_id);
-            } catch (Exception $e) {
-                hd_print($e->getMessage());
+            $channel = $this->plugin->tv->get_channel($channel_id);
+            if (is_null($channel)) {
+                hd_print("Unknown channel $channel_id");
                 $this->plugin->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_REMOVE, $channel_id, $plugin_cookies);
                 continue;
             }
@@ -174,27 +189,18 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => MediaURL::encode(array(
-                        'channel_id' => $c->get_id(),
+                        'channel_id' => $channel->get_id(),
                         'group_id' => '__favorites')
                 ),
-                PluginRegularFolderItem::caption => $c->get_title(),
+                PluginRegularFolderItem::caption => $channel->get_title(),
                 PluginRegularFolderItem::view_item_params => array(
-                    ViewItemParams::icon_path => $c->get_icon_url(),
-                    ViewItemParams::item_detailed_icon_path => $c->get_icon_url(),
+                    ViewItemParams::icon_path => $channel->get_icon_url(),
+                    ViewItemParams::item_detailed_icon_path => $channel->get_icon_url(),
                 ),
                 PluginRegularFolderItem::starred => false,
             );
         }
 
         return $items;
-    }
-
-    /**
-     * @param MediaURL $media_url
-     * @return Archive|null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return $this->plugin->tv->get_archive($media_url);
     }
 }

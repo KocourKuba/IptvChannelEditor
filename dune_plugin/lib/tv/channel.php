@@ -15,6 +15,18 @@ interface Channel
     public function get_title();
 
     /**
+     * channel description
+     * @return string
+     */
+    public function get_desc();
+
+    /**
+     * channel set description
+     * @param string $desc
+     */
+    public function set_desc($desc);
+
+    /**
      * icon uri
      * @return string
      */
@@ -110,4 +122,20 @@ interface Channel
      * @return array
      */
     public function get_ext_params();
+
+    /**
+     * get cached epg
+     * @param $source
+     * @param $day_start_ts
+     * @return array|false
+     */
+    public function get_day_epg_items($source, $day_start_ts);
+
+    /**
+     * set cached epg
+     * @param $source
+     * @param $day_start_ts
+     * @param array $epg
+     */
+    public function set_day_epg_items($source, $day_start_ts, $epg);
 }

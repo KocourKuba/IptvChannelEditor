@@ -4,6 +4,7 @@ require_once 'tv.php';
 require_once 'default_group.php';
 require_once 'favorites_group.php';
 require_once 'all_channels_group.php';
+require_once 'lib/default_dune_plugin.php';
 
 abstract class Abstract_Tv implements Tv
 {
@@ -19,12 +20,14 @@ abstract class Abstract_Tv implements Tv
     private $playback_url_is_stream_url;
 
     /**
-     * @var Hashed_Array
+     * @template Channel
+     * @var Hashed_Array<Channel>
      */
     protected $channels;
 
     /**
-     * @var Hashed_Array
+     * @template Group
+     * @var Hashed_Array<Group>
      */
     protected $groups;
 
@@ -34,13 +37,6 @@ abstract class Abstract_Tv implements Tv
     {
         $this->mode = $mode;
         $this->playback_url_is_stream_url = $playback_url_is_stream_url;
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    public function get_all_channel_group_id()
-    {
-        return '__all_channels';
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -63,7 +59,7 @@ abstract class Abstract_Tv implements Tv
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @return Hashed_Array
+     * @return Hashed_Array<Channel>
      */
     public function get_channels()
     {
@@ -75,23 +71,31 @@ abstract class Abstract_Tv implements Tv
     /**
      * @param string $channel_id
      * @return Channel|mixed
-     * @throws Exception
      */
     public function get_channel($channel_id)
     {
         $channel = $this->channels->get($channel_id);
 
         if (is_null($channel)) {
-            throw new Exception("Unknown channel: $channel_id");
+            hd_print("Unknown channel: $channel_id");
         }
 
         return $channel;
     }
 
+    /**
+     * @param Channel $channel
+     */
+    public function set_channel(Channel $channel)
+    {
+        $this->channels->set($channel);
+    }
+
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @return Hashed_Array
+     * @template Group
+     * @return  Hashed_Array<Group>
      */
     public function get_groups()
     {
@@ -130,42 +134,44 @@ abstract class Abstract_Tv implements Tv
     {
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
 
+        $t = microtime(1);
+
         $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
 
         $channels = array();
 
-        foreach ($this->get_channels() as $c) {
+        foreach ($this->get_channels() as $channel) {
             $group_id_arr = array();
 
             if ($this->mode === self::MODE_CHANNELS_N_TO_M) {
-                $group_id_arr[] = $this->get_all_channel_group_id();
+                $group_id_arr[] = Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID;
             }
 
-            foreach ($c->get_groups() as $g) {
+            foreach ($channel->get_groups() as $g) {
                 $group_id_arr[] = $g->get_id();
             }
 
             $channels[] = array
             (
-                PluginTvChannel::id => $c->get_id(),
-                PluginTvChannel::caption => $c->get_title(),
+                PluginTvChannel::id => $channel->get_id(),
+                PluginTvChannel::caption => $channel->get_title(),
                 PluginTvChannel::group_ids => $group_id_arr,
-                PluginTvChannel::icon_url => $c->get_icon_url(),
-                PluginTvChannel::number => $c->get_number(),
+                PluginTvChannel::icon_url => $channel->get_icon_url(),
+                PluginTvChannel::number => $channel->get_number(),
 
-                PluginTvChannel::have_archive => $c->has_archive(),
-                PluginTvChannel::is_protected => $c->is_protected(),
+                PluginTvChannel::have_archive => $channel->has_archive(),
+                PluginTvChannel::is_protected => $channel->is_protected(),
 
                 // set default epg range
-                PluginTvChannel::past_epg_days => (int)$c->get_past_epg_days(),
-                PluginTvChannel::future_epg_days => (int)$c->get_future_epg_days(),
+                PluginTvChannel::past_epg_days => (int)$channel->get_past_epg_days(),
+                PluginTvChannel::future_epg_days => (int)$channel->get_future_epg_days(),
 
-                PluginTvChannel::archive_past_sec => (int)$c->get_archive_past_sec(),
-                PluginTvChannel::archive_delay_sec => (int)$c->get_archive_delay_sec(),
+                PluginTvChannel::archive_past_sec => (int)$channel->get_archive_past_sec(),
+                PluginTvChannel::archive_delay_sec => (int)$channel->get_archive_delay_sec(),
 
                 // Buffering time
                 PluginTvChannel::buffering_ms => (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000),
-                PluginTvChannel::timeshift_hours => (int)$c->get_timeshift_hours(),
+                PluginTvChannel::timeshift_hours => (int)$channel->get_timeshift_hours(),
 
                 PluginTvChannel::playback_url_is_stream_url => $this->playback_url_is_stream_url,
             );
@@ -174,7 +180,7 @@ abstract class Abstract_Tv implements Tv
         $groups = array();
 
         foreach ($this->get_groups() as $g) {
-            if ($g->is_favorite_channels()) {
+            if ($g->is_favorite_group()) {
                 continue;
             }
 
@@ -200,7 +206,7 @@ abstract class Abstract_Tv implements Tv
         }
 
         if ($this->mode === self::MODE_CHANNELS_1_TO_N &&
-            $initial_group_id === $this->get_all_channel_group_id()) {
+            $initial_group_id === Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID) {
             $initial_group_id = null;
         }
 
@@ -209,8 +215,9 @@ abstract class Abstract_Tv implements Tv
             $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
         }
 
-        $archive = $this->get_archive($media_url);
-        $archive_def = is_null($archive) ? null : $archive->get_archive_def();
+        Playback_Points::init();
+
+        hd_print('Channels loaded at ' . (microtime(1) - $t) . ' secs');
 
         return array
         (
@@ -220,7 +227,7 @@ abstract class Abstract_Tv implements Tv
             PluginTvInfo::channels => $channels,
 
             PluginTvInfo::favorites_supported => $this->is_favorites_supported(),
-            PluginTvInfo::favorites_icon_url => $this->get_fav_icon_url(),
+            PluginTvInfo::favorites_icon_url => Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH,
 
             PluginTvInfo::initial_channel_id => (string)$media_url->channel_id,
             PluginTvInfo::initial_group_id => $initial_group_id,
@@ -228,7 +235,7 @@ abstract class Abstract_Tv implements Tv
             PluginTvInfo::initial_is_favorite => $initial_is_favorite,
             PluginTvInfo::favorite_channel_ids => $fav_channel_ids,
 
-            PluginTvInfo::archive => $archive_def,
+            PluginTvInfo::archive => null,
 
             PluginTvInfo::epg_font_size => $epg_font_size,
         );
@@ -270,35 +277,11 @@ abstract class Abstract_Tv implements Tv
      * @param string $channel_id
      * @param integer $day_start_ts
      * @param $plugin_cookies
-     * @return mixed
-     */
-    abstract protected function get_day_epg_iterator($channel_id, $day_start_ts, &$plugin_cookies);
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param string $channel_id
-     * @param integer $day_start_ts
-     * @param $plugin_cookies
      * @return array
      */
-    public function get_day_epg($channel_id, $day_start_ts, &$plugin_cookies)
-    {
-        $epg = array();
+    //abstract public function get_day_epg($channel_id, $day_start_ts, &$plugin_cookies);
 
-        foreach ($this->get_day_epg_iterator($channel_id, $day_start_ts, $plugin_cookies) as $e) {
-            $epg[] =
-                array
-                (
-                    PluginTvEpgProgram::start_tm_sec => $e->get_start_time(),
-                    PluginTvEpgProgram::end_tm_sec => $e->get_finish_time(),
-                    PluginTvEpgProgram::name => $e->get_title(),
-                    PluginTvEpgProgram::description => $e->get_description()
-                );
-        }
-
-        return $epg;
-    }
+    ///////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
@@ -363,7 +346,16 @@ abstract class Abstract_Tv implements Tv
 
         $this->set_fav_channel_ids($plugin_cookies, $fav_channel_ids);
 
-        return Action_Factory::invalidate_folders(array(Starnet_Tv_Favorites_Screen::get_media_url_str()));
+        $media_urls = array(Starnet_Tv_Favorites_Screen::get_media_url_str(), Starnet_Tv_Channel_List_Screen::get_media_url_str(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID));
+
+        if (NEWGUI_FEAUTURES_AVAILABLE)
+        {
+            Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+
+            return Starnet_Epfs_Handler::invalidate_folders($media_urls);
+        }
+
+        return Action_Factory::invalidate_folders($media_urls);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -393,18 +385,6 @@ abstract class Abstract_Tv implements Tv
     public function set_fav_channel_ids($plugin_cookies, $ids)
     {
         $plugin_cookies->{$this->get_fav_cookie($plugin_cookies)} = implode(',', array_unique($ids));
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    // Archive.
-
-    /**
-     * @param MediaURL $media_url
-     * @return null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return null;
     }
 
     ///////////////////////////////////////////////////////////////////////

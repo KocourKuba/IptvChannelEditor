@@ -155,7 +155,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 $actions[GUI_EVENT_KEY_RIGHT] = $save_folder;
             }
 
-            $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, 'timer');
+            $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER);
         }
         //hd_print("actions: " . json_encode($actions));
         return $actions;

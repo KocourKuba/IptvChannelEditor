@@ -220,15 +220,6 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
 
     /**
      * @param MediaURL $media_url
-     * @return null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return $this->plugin->vod->get_archive($media_url);
-    }
-
-    /**
-     * @param MediaURL $media_url
      * @param $plugin_cookies
      * @return array|null
      */

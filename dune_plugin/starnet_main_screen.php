@@ -31,6 +31,14 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
     }
 
     /**
+     * @return false|string
+     */
+    public static function get_media_url_str()
+    {
+        return MediaURL::encode(array('screen_id' => self::ID));
+    }
+
+    /**
      * @param MediaURL $media_url
      * @param $plugin_cookies
      * @return array
@@ -43,7 +51,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
         $add_settings = User_Input_Handler_Registry::create_action($this, self::ACTION_SETTINGS);
         $add_settings['caption'] = 'Настройки плагина';
 
-        $action = array(
+        $actions = array(
             GUI_EVENT_KEY_SETUP => $add_settings,
             GUI_EVENT_KEY_B_GREEN => $add_settings,
             GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
@@ -53,17 +61,17 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
         if ($this->IsSetupNeeds($plugin_cookies) !== false) {
             hd_print("Create setup action");
             $configure = User_Input_Handler_Registry::create_action($this, self::ACTION_CONFIGURE);
-            $action[GUI_EVENT_KEY_PLAY] = $configure;
-            $action[GUI_EVENT_KEY_ENTER] = $configure;
+            $actions[GUI_EVENT_KEY_PLAY] = $configure;
+            $actions[GUI_EVENT_KEY_ENTER] = $configure;
         }
 
         if ($this->plugin->config->get_feature(Plugin_Constants::BALANCE_SUPPORTED)) {
             $add_balance = User_Input_Handler_Registry::create_action($this, self::ACTION_BALANCE);
             $add_balance['caption'] = 'Подписка';
-            $action[GUI_EVENT_KEY_C_YELLOW] = $add_balance;
+            $actions[GUI_EVENT_KEY_C_YELLOW] = $add_balance;
         }
 
-        return $action;
+        return $actions;
     }
 
     /**
@@ -73,7 +81,8 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('main_screen_user_input: ' . json_encode($user_input));
+        //hd_print('Starnet_Main_Screen: handle_user_input:');
+        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
             case self::ACTION_CONFIGURE:
@@ -92,6 +101,14 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
                 $this->plugin->config->AddSubscriptionUI($defs, $plugin_cookies);
                 Control_Factory::add_close_dialog_button($defs, 'OK', 150);
                 return Action_Factory::show_dialog('Подписка', $defs);
+
+            case GUI_EVENT_KEY_RETURN:
+                if (NEWGUI_FEAUTURES_AVAILABLE) {
+                    Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                    return Starnet_Epfs_Handler::invalidate_folders(null, Action_Factory::close_and_run());
+                }
+
+                return Action_Factory::close_and_run();
         }
 
         return null;
@@ -113,7 +130,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
         $items = array();
 
         foreach ($this->plugin->tv->get_groups() as $group) {
-            $media_url_str = $group->is_favorite_channels() ?
+            $media_url_str = $group->is_favorite_group() ?
                 Starnet_Tv_Favorites_Screen::get_media_url_str() :
                 Starnet_Tv_Channel_List_Screen::get_media_url_str($group->get_id());
 
@@ -132,15 +149,6 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
 
         // hd_print("Loaded items " . count($items));
         return $items;
-    }
-
-    /**
-     * @param MediaURL $media_url
-     * @return Archive|null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return $this->plugin->tv->get_archive($media_url);
     }
 
     /**

@@ -21,6 +21,11 @@ class Default_Channel implements Channel
     /**
      * @var string
      */
+    protected $_desc;
+
+    /**
+     * @var string
+     */
     protected $_icon_url;
 
     /**
@@ -82,6 +87,11 @@ class Default_Channel implements Channel
      * @var array
      */
     protected $_ext_params;
+
+    /**
+     * @var array
+     */
+    protected $_epg = array();
 
     /**
      * @param string $id
@@ -149,6 +159,24 @@ class Default_Channel implements Channel
     public function get_title()
     {
         return $this->_title;
+    }
+
+    /**
+     * get channel desc
+     * @return string
+     */
+    public function get_desc()
+    {
+        return $this->_desc;
+    }
+
+    /**
+     * set channel desc
+     * @param string $desc
+     */
+    public function set_desc($desc)
+    {
+        $this->_desc = $desc;
     }
 
     /**
@@ -318,6 +346,29 @@ class Default_Channel implements Channel
     public function set_ext_param($param, $value)
     {
         $this->_ext_params[$param] = $value;
+    }
+
+    /**
+     * get cached epg
+     * @param $source
+     * @param $day_start_ts
+     * @return array|false
+     */
+    public function get_day_epg_items($source, $day_start_ts)
+    {
+        $epg_source = isset($this->_epg[$source]) ? $this->_epg[$source] : array();
+        return isset($epg_source[$day_start_ts]) ? $epg_source[$day_start_ts] : false;
+    }
+
+    /**
+     * set epg (cached epg_iterator)
+     * @param $source
+     * @param $day_start_ts
+     * @param array $epg
+     */
+    public function set_day_epg_items($source, $day_start_ts, $epg)
+    {
+        $this->_epg[$source][$day_start_ts] = $epg;
     }
 
     ///////////////////////////////////////////////////////////////////////

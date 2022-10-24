@@ -241,14 +241,4 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
         }
         return $items;
     }
-
-    /**
-     * @param MediaURL $media_url
-     * @return null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return $this->plugin->vod->get_archive($media_url);
-    }
 }
-

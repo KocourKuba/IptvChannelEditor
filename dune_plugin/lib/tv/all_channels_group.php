@@ -15,7 +15,7 @@ class All_Channels_Group extends Default_Group
      */
     public function __construct(Tv $tv, $title, $icon_url)
     {
-        parent::__construct($tv->get_all_channel_group_id(), $title, $icon_url);
+        parent::__construct(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID, $title, $icon_url);
 
         $this->tv = $tv;
     }
@@ -23,16 +23,15 @@ class All_Channels_Group extends Default_Group
     /**
      * @return bool
      */
-    public function is_all_channels()
+    public function is_all_channels_group()
     {
         return true;
     }
 
     /**
-     * @param $plugin_cookies
-     * @return Hashed_Array
+     * @return Hashed_Array<Channel>
      */
-    public function get_channels(&$plugin_cookies)
+    public function get_group_channels()
     {
         return $this->tv->get_channels();
     }

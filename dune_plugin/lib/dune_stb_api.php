@@ -1231,6 +1231,10 @@ function get_install_path($path = '')
     return DuneSystem::$properties['install_dir_path'] . '/' . $path;
 }
 
+function get_plugin_name()
+{
+    return DuneSystem::$properties['plugin_name'];
+}
 /**
  * @throws Exception
  */

@@ -1,9 +1,8 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'mediaurl.php';
-require_once 'tv/epg_iterator.php';
 require_once 'tv/tv.php';
+require_once 'mediaurl.php';
 require_once 'user_input_handler_registry.php';
 require_once 'action_factory.php';
 require_once 'control_factory.php';
@@ -18,6 +17,7 @@ class Default_Dune_Plugin implements DunePlugin
 
     /////////////////////////////////////////////////////////////////////////////
     // views constants
+    const ALL_CHANNEL_GROUP_ID = '__all_channels';
     const ALL_CHANNEL_GROUP_CAPTION = 'Все каналы';
     const ALL_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/all.png';
 
@@ -413,6 +413,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_print('change_tv_favorites: TV is not supported');
+            HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
 
@@ -426,12 +427,12 @@ class Default_Dune_Plugin implements DunePlugin
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param string $media_url_str
+     * @param string $media_url
      * @param $plugin_cookies
      * @return array|null
      * @throws Exception
      */
-    public function get_vod_info($media_url_str, &$plugin_cookies)
+    public function get_vod_info($media_url, &$plugin_cookies)
     {
         if (is_null($this->vod)) {
             hd_print('get_vod_info: VOD is not supported');
@@ -440,9 +441,9 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         //hd_print("Default_Dune_Plugin::get_vod_info: MediaUrl: $media_url_str");
-        $media_url = MediaURL::decode($media_url_str);
+        $mu = MediaURL::decode($media_url);
 
-        return $this->vod->get_vod_info($media_url, $plugin_cookies);
+        return $this->vod->get_vod_info($mu, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -475,6 +476,11 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
+        //if ($user_input->control_id !== 'timer' && $user_input->control_id !== 'plugin_rows_info_update') {
+        //    hd_print('Default_Dune_Plugin: handle_user_input:');
+        //    foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        //}
+
         return User_Input_Handler_Registry::get_instance()->handle_user_input($user_input, $plugin_cookies);
     }
 

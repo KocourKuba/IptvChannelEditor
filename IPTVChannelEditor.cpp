@@ -827,6 +827,8 @@ bool PackPlugin(const PluginType plugin_type,
 	const auto& plugin_caption = cred.caption.empty() ? utils::utf16_to_utf8(plugin->get_title()) : cred.caption;
 
 	// preprocess common values
+	utils::string_replace_inplace(config_data, "{name}", plugin->get_name().c_str());
+	utils::string_replace_inplace(config_data, "{short_name}", plugin->get_short_name().c_str());
 	utils::string_replace_inplace(config_data, "{plugin_caption}", plugin_caption.c_str());
 	utils::string_replace_inplace(config_data, "{plugin_logo}", logo_subst.c_str());
 	utils::string_replace_inplace(config_data, "{plugin_bg}", bg_subst.c_str());
@@ -868,9 +870,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 		auto d_node = doc->first_node("dune_plugin");
 
-		d_node->first_node("name")->value(plugin->get_name().c_str());
 		d_node->first_node("class_name")->value(class_name.c_str());
-		d_node->first_node("short_name")->value(plugin->get_short_name().c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
 		d_node->first_node("version")->value(STRPRODUCTVER);
 		d_node->first_node("release_date")->value(RELEASEDATE);

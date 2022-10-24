@@ -1,46 +1,82 @@
 <?php
 
+/**
+ * @template TValue
+ * @template TKey
+ * @implements Iterator<TKey, TValue>
+ */
 class Hashed_Array implements Iterator
 {
-    private $seq;
-    private $map;
+    /**
+     * @var integer[]
+     */
+    private $seq = array();
+    /**
+     * @var TValue[]
+     */
+    private $map = array();
 
-    private $pos;
+    /**
+     * @var integer
+     */
+    private $pos = 0;
 
-    public function __construct()
-    {
-        $this->seq = array();
-        $this->map = array();
-
-        $this->pos = 0;
-    }
-
+    /**
+     * @return integer
+     */
     public function size()
     {
         return count($this->seq);
     }
 
+    /**
+     * @param integer $ndx
+     * @return TValue|null
+     */
     public function get_by_ndx($ndx)
     {
-        return $this->seq[$ndx];
+        return $this->get($this->seq[$ndx]);
     }
 
-    public function put($o)
+    /**
+     * @param TValue $item
+     */
+    public function put($item)
     {
-        $id = $o->get_id();
-        if ($this->has($o->get_id())) {
+        $id = $item->get_id();
+        if ($this->has($item->get_id())) {
             hd_print("dup: $id");
         } else {
-            $this->seq[] = $o;
-            $this->map[$id] = $o;
+            $this->seq[] = $id;
+            $this->map[$id] = $item;
         }
     }
 
+    /**
+     * @param mixed $key
+     * @return TValue|null
+     */
     public function get($key)
     {
-        return HD::get_map_element($this->map, $key);
+        return isset($this->map[$key]) ? $this->map[$key] : null;
     }
 
+    /**
+     * @param TValue $item
+     */
+    public function set($item)
+    {
+        $id = $item->get_id();
+        if (!$this->has($item->get_id())) {
+            $this->seq[] = $id;
+        }
+        $this->map[$id] = $item;
+    }
+
+    /**
+     * @param mixed $key
+     * @return bool
+     */
     public function has($key)
     {
         return isset($this->map[$key]);
@@ -56,11 +92,17 @@ class Hashed_Array implements Iterator
         $this->pos = 0;
     }
 
+    /**
+     * @return TValue
+     */
     public function current()
     {
-        return $this->seq[$this->pos];
+        return $this->get($this->seq[$this->pos]);
     }
 
+    /**
+     * @return integer
+     */
     public function key()
     {
         return $this->pos;
@@ -71,6 +113,9 @@ class Hashed_Array implements Iterator
         ++$this->pos;
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return $this->pos < count($this->seq);

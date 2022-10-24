@@ -23,16 +23,6 @@ interface Tv
     public function ensure_channels_loaded(&$plugin_cookies);
 
     /**
-     * @return string
-     */
-    public function get_all_channel_group_id();
-
-    /**
-     * @return string
-     */
-    public function get_fav_icon_url();
-
-    /**
      * @param MediaURL $media_url
      * @param $plugin_cookies
      * @return array
@@ -62,12 +52,6 @@ interface Tv
      * @return array
      */
     public function get_day_epg($channel_id, $day_start_ts, &$plugin_cookies);
-
-    /**
-     * @param MediaURL $media_url
-     * @return mixed
-     */
-    public function get_archive(MediaURL $media_url);
 
     /**
      * Hook for adding special group items.

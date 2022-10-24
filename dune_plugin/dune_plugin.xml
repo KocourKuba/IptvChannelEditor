@@ -1,8 +1,8 @@
 ﻿<dune_plugin>
-    <name>Custom</name>
+    <name>{name}</name>
     <caption>{plugin_caption}</caption>
     <class_name>default</class_name>
-    <short_name>default</short_name>
+    <short_name>{short_name}</short_name>
     <icon_url>{plugin_logo}</icon_url>
     <background>{plugin_bg}</background>
     <version_index>{plugin_version_index}</version_index>
@@ -17,6 +17,23 @@
         <url></url>
         <timeout>0</timeout>
     </check_update>
+    <embeddable_plugin_folders>
+        <enabled>yes</enabled>
+        <update_action>
+            <type>plugin_handle_user_input</type>
+            <data>
+                <show_dialog_delay>10000</show_dialog_delay>
+            </data>
+            <params>
+                <handler_id>entry_handler</handler_id>
+                <control_id>plugin_entry</control_id>
+                <action_id>update_epfs</action_id>
+            </params>
+        </update_action>
+        <mapping>
+            <tv>{name}</tv>
+        </mapping>
+    </embeddable_plugin_folders>
     <entry_points>
         <entry_point>
             <parent_media_url>root://tv</parent_media_url>

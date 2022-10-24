@@ -149,13 +149,4 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 
         return $items;
     }
-
-    /**
-     * @param MediaURL $media_url
-     * @return null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return $this->plugin->vod->get_archive($media_url);
-    }
 }

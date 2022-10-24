@@ -402,16 +402,4 @@ abstract class Abstract_Vod implements Vod
         hd_print("AbstractVod::get_vod_genres_folder_views: Not implemented.");
         return null;
     }
-
-    ///////////////////////////////////////////////////////////////////////
-    // Archive.
-
-    /**
-     * @param MediaURL $media_url
-     * @return null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return null;
-    }
 }

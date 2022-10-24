@@ -104,7 +104,7 @@ class MediaURL
      * @param string $s
      * @return MediaURL
      */
-    public static function decode($s)
+    public static function decode($s = '')
     {
         if (strpos($s, '{') !== 0) {
             return new MediaURL($s, null);

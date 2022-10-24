@@ -21,6 +21,7 @@ require_once 'starnet_vod_seasons_list_screen.php';
 require_once 'starnet_vod_series_list_screen.php';
 require_once 'starnet_vod_favorites_screen.php';
 require_once 'starnet_vod_history_screen.php';
+require_once 'starnet_epfs_handler.php';
 
 class Starnet_Plugin extends Default_Dune_Plugin
 {
@@ -30,6 +31,8 @@ class Starnet_Plugin extends Default_Dune_Plugin
     public function __construct()
     {
         parent::__construct();
+
+        define('NEWGUI_FEAUTURES_AVAILABLE',	class_exists("PluginRowsFolderView"));
 
         $this->plugin_setup();
 
@@ -52,6 +55,10 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->vod_search_screen = new Starnet_Vod_Search_Screen($this);
         $this->vod_filter_screen = new Starnet_Vod_Filter_Screen($this);
         $this->vod_history_screen = new Starnet_Vod_History_Screen($this);
+
+        if (NEWGUI_FEAUTURES_AVAILABLE) {
+            Starnet_Epfs_Handler::init($this);
+        }
 
         hd_print("Init done.");
     }

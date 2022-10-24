@@ -26,9 +26,46 @@ define('USE_TZ_GMT',      0);
 define('USE_TZ_LOCAL',    1);
 define('USE_TZ_NONE',     2);
 
+define('CHANGE_OP_ADD',                         0);
+define('CHANGE_OP_DELETE',                      1);
+define('CHANGE_OP_DELETE_ANDROID_APPS_EXCEPT',  2);
+
+define('EPG_START_OVER_ENABLED',    4);
+define('EPG_START_OVER_DISABLED',   8);
+define('EPG_TRICK_PLAY_ENABLED',    16);
+
+define ('GCOMP_OPT_APPEAR_WITH_FADE', 0x100);
+define ('GCOMP_OPT_BG_PICTURE', 0x8);
+define ('GCOMP_OPT_DIM_FOCUS', 0x200000);
+define ('GCOMP_OPT_EMPTY_WITH_VIDEO', 0x20);
+define ('GCOMP_OPT_FOCUS', 0x100000);
+define ('GCOMP_OPT_IMG_CHECK_EFF_URL', 0x200000);
+define ('GCOMP_OPT_NO_CLIP', 0x4);
+define ('GCOMP_OPT_NO_PREPAINT', 0x2);
+define ('GCOMP_OPT_PREPAINT', 0x1);
+define ('GCOMP_OPT_TRANSPARENT_WITH_VIDEO', 0x10);
+define ('GCOMP_OPT_TTF_COMPACT_HEIGHT', 0x2000);
+define ('GCOMP_OPT_TTF_LAYOUT_FIX', 0x1000);
+
 # enum DialogFrameStyle
 define ('DIALOG_FRAME_STYLE_DEFAULT',                    'default');
 define ('DIALOG_FRAME_STYLE_GLASS',                      'glass');
+define ('DIALOG_FRAME_STYLE_TRANSPARENT',                'transparent');
+
+# enum GCompFocusType
+define ('GCOMP_FOCUS_NONE',                              'none');
+define ('GCOMP_FOCUS_SYSTEM',                            'system');
+define ('GCOMP_FOCUS_DEFAULT_CUT_IMAGE',                 'default_cut_image');
+define ('GCOMP_FOCUS_INACTIVE_CUT_IMAGE',                'inactive_cut_image');
+define ('GCOMP_FOCUS_DEFAULT_RECT',                      'default_rect');
+define ('GCOMP_FOCUS_RECT2',                             'rect2');
+define ('GCOMP_FOCUS_RECT3',                             'rect3');
+
+# enum GCompItemType
+define ('GCOMP_ITEM_REGULAR',                            'regular');
+define ('GCOMP_ITEM_LABEL',                              'label');
+define ('GCOMP_ITEM_BUTTON',                             'button');
+define ('GCOMP_ITEM_TEXT_FIELD',                         'text_field');
 
 # enum GCompLayoutRole
 define ('GCOMP_LAYOUT_UNSET',                            'unset');
@@ -38,8 +75,14 @@ define ('GCOMP_LAYOUT_LEFT',                             'left');
 define ('GCOMP_LAYOUT_RIGHT',                            'right');
 define ('GCOMP_LAYOUT_CENTER',                           'center');
 
+# enum GCompTextFit
+define ('GCOMP_TEXT_FIT_CROP',                           'crop');
+define ('GCOMP_TEXT_FIT_INSERT_ELLIPSIS',                'insert_ellipsis');
+define ('GCOMP_TEXT_FIT_APPEND_ELLIPSIS',                'append_ellipsis');
+
 # enum GCompTransition
 define ('GCOMP_TRANSITION_NONE',                         'none');
+define ('GCOMP_TRANSITION_LAST_STEP',                    'last_step');
 define ('GCOMP_TRANSITION_DEFAULT',                      'default');
 define ('GCOMP_TRANSITION_FADE',                         'fade');
 
@@ -51,13 +94,20 @@ define ('GCOMPONENT_IMAGE',                              'image');
 define ('GCOMPONENT_CUT_IMAGE',                          'cut_image');
 define ('GCOMPONENT_SANDWICH',                           'sandwich');
 define ('GCOMPONENT_BUTTON',                             'button');
+define ('GCOMPONENT_TEXT_FIELD',                         'text_field');
 define ('GCOMPONENT_PANEL',                              'panel');
 define ('GCOMPONENT_SCROLL_PANE',                        'scroll_pane');
 define ('GCOMPONENT_PREPAINT_PANE',                      'prepaint_pane');
 define ('GCOMPONENT_SCROLLBAR',                          'scrollbar');
 
+# enum GCompsFlipEffect
+define ('GCOMPS_FLIP_EFFECT_NONE',                       'none');
+define ('GCOMPS_FLIP_EFFECT_FADE',                       'fade');
+define ('GCOMPS_FLIP_EFFECT_FADE_OUT_SCALED',            'fade_out_scaled');
+
 # enum GuiControlKind
 define ('GUI_CONTROL_LABEL',                             'label');
+define ('GUI_CONTROL_PROGRESS_BAR',                      'progress_bar');
 define ('GUI_CONTROL_COMBOBOX',                          'combobox');
 define ('GUI_CONTROL_TEXT_FIELD',                        'text_field');
 define ('GUI_CONTROL_BUTTON',                            'button');
@@ -119,7 +169,12 @@ define ('GUI_EVENT_KEY_6',                               'key_6');
 define ('GUI_EVENT_KEY_7',                               'key_7');
 define ('GUI_EVENT_KEY_8',                               'key_8');
 define ('GUI_EVENT_KEY_9',                               'key_9');
+define ('GUI_EVENT_UI_ACTION',                           'ui_action');
 define ('GUI_EVENT_TIMER',                               'timer');
+define ('GUI_EVENT_PLUGIN_ROWS_INFO_UPDATE',             'plugin_rows_info_update');
+define ('GUI_EVENT_FOLDER_LEAVE',                        'folder_leave');
+define ('GUI_EVENT_FOLDER_ENTER',                        'folder_enter');
+define ('GUI_EVENT_FOLDER_RETURN_BACK',                  'folder_return_back');
 define ('GUI_EVENT_PLAYBACK_STOP',                       'playback_stop');
 define ('GUI_EVENT_PLAYBACK_GOING_TO_SWITCH',            'playback_going_to_switch');
 define ('GUI_EVENT_PLAYBACK_SWITCHED',                   'playback_switched');
@@ -127,6 +182,7 @@ define ('GUI_EVENT_PLAYBACK_USER_ACTION',                'playback_user_action')
 define ('GUI_EVENT_MENU_PLAYBACK_OSD_CLOSED',            'menu_playback_osd_closed');
 define ('GUI_EVENT_MENU_PLAYBACK_OSD_GOING_TO_OPEN',     'menu_playback_osd_going_to_open');
 define ('GUI_EVENT_MENU_PLAYBACK_FINISH',                'menu_playback_finish');
+define ('GUI_EVENT_MENU_EXT_APP_FINISH',                 'menu_ext_app_finish');
 define ('GUI_EVENT_WEB_BROWSER_FINISH',                  'web_browser_finish');
 define ('GUI_EVENT_BOOT',                                'boot');
 define ('GUI_EVENT_BOOT_END',                            'boot_end');
@@ -136,15 +192,19 @@ define ('GUI_EVENT_UNINSTALL',                           'uninstall');
 define ('GUI_EVENT_GOING_TO_UPDATE',                     'going_to_update');
 define ('GUI_EVENT_GOING_TO_STOP',                       'going_to_stop');
 define ('GUI_EVENT_GUI_START',                           'gui_start');
+define ('GUI_EVENT_EARLY_GUI_START',                     'early_gui_start');
 define ('GUI_EVENT_STORAGE_DETECTED_MENU',               'storage_detected_menu');
 define ('GUI_EVENT_FILE_POPUP_MENU',                     'file_popup_menu');
+define ('GUI_EVENT_TOPMENU_POPUP_MENU',                  'topmenu_popup_menu');
 define ('GUI_EVENT_GOING_TO_RELOAD_ALL_FOLDERS',         'going_to_reload_all_folders');
 define ('GUI_EVENT_FAVORITES_UPDATED',                   'favorites_updated');
+define ('GUI_EVENT_SHUTDOWN',                            'shutdown');
 
 # enum PluginEpgMode
 define ('PLUGIN_EPG_DISABLED',                           'disabled');
 define ('PLUGIN_EPG_USE_DAY_REQUEST',                    'use_day_request');
 define ('PLUGIN_EPG_GET_FROM_STREAM',                    'get_from_stream');
+define ('PLUGIN_EPG_USE_DVB_PROVIDER',                   'use_dvb_provider');
 
 # enum PluginFavoritesOpType
 define ('PLUGIN_FAVORITES_OP_ADD',                       'add');
@@ -157,6 +217,7 @@ define ('PLUGIN_FOLDER_VIEW_REGULAR',                    'view_regular');
 define ('PLUGIN_FOLDER_VIEW_CONTROLS',                   'view_controls');
 define ('PLUGIN_FOLDER_VIEW_MOVIE',                      'view_movie');
 define ('PLUGIN_FOLDER_VIEW_GCOMPS',                     'view_gcomps');
+define ('PLUGIN_FOLDER_VIEW_ROWS',                       'view_rows');
 
 # enum PluginFontSize
 define ('PLUGIN_FONT_NORMAL',                            'normal');
@@ -184,21 +245,36 @@ define ('PLUGIN_OUT_DATA_PLUGIN_TV_EPG_PROGRAM_LIST',    'plugin_tv_epg_program_
 define ('PLUGIN_OUT_DATA_URL',                           'url');
 define ('PLUGIN_OUT_DATA_PLUGIN_VOD_INFO',               'plugin_vod_info');
 
+# enum PluginRowType
+define ('PLUGIN_ROW_TYPE_VGAP',                          'row_vgap');
+define ('PLUGIN_ROW_TYPE_GCOMPS',                        'row_gcomps');
+define ('PLUGIN_ROW_TYPE_REGULAR',                       'row_regular');
+define ('PLUGIN_ROW_TYPE_TITLE',                         'row_title');
+
 # GUI-action ids.
 define ('ADD_MENU_ITEMS_ACTION_ID',                      'add_menu_items');
 define ('ADD_TO_FAVORITES_ACTION_ID',                    'add_to_favorites');
 define ('BLURAY_PLAY_ACTION_ID',                         'bluray_play');
+define ('BT_COMMAND_ACTION_ID',                          'bt_command');
 define ('CHANGE_BEHAVIOUR_ACTION_ID',                    'change_behaviour');
 define ('CHANGE_GCOMPS_ACTION_ID',                       'change_gcomps');
 define ('CHANGE_SETTINGS_ACTION_ID',                     'change_settings');
+define ('CHECK_RESTRICTED_ACTION_ID',                    'check_restricted');
 define ('CHECK_SYSTEM_STORAGE_ACTION_ID',                'check_system_storage');
 define ('CLEAR_WATCH_HISTORY_ACTION_ID',                 'clear_watch_history');
 define ('CLOSE_AND_RUN_ACTION_ID',                       'close_and_run');
 define ('CLOSE_DIALOG_AND_RUN_ACTION_ID',                'close_dialog_and_run');
+define ('COMPOSITE_ACTION_ID',                           'composite');
 define ('CONFIRM_LOCATION_ACTION_ID',                    'confirm_location');
+define ('DETECT_SERIES_ACTION_ID',                       'detect_series');
+define ('DOWNLOAD_AND_INSTALL_APK_ACTION_ID',            'download_and_install_apk');
+define ('DVB_COMMAND_ACTION_ID',                         'dvb_command');
 define ('DVD_PLAY_ACTION_ID',                            'dvd_play');
+define ('EDIT_MAIN_SCREEN_ACTION_ID',                    'edit_main_screen');
 define ('FILE_PLAY_ACTION_ID',                           'file_play');
 define ('INIT_PERSISTFS_ACTION_ID',                      'init_persistfs');
+define ('INVALIDATE_FILES_ASSOCIATIONS_ACTION_ID',       'invalidate_files_associations');
+define ('LAUNCH_EXT_APP_ACTION_ID',                      'launch_ext_app');
 define ('LAUNCH_MEDIA_URL_ACTION_ID',                    'launch_media_url');
 define ('OPEN_FOLDER_ACTION_ID',                         'open_folder');
 define ('PLAYLIST_PLAY_ACTION_ID',                       'playlist_play');
@@ -206,15 +282,20 @@ define ('PLUGIN_CLEAR_ARCHIVE_CACHE_ACTION_ID',          'plugin_clear_archive_c
 define ('PLUGIN_HANDLE_USER_INPUT_ACTION_ID',            'plugin_handle_user_input');
 define ('PLUGIN_INVALIDATE_FOLDERS_ACTION_ID',           'plugin_invalidate_folders');
 define ('PLUGIN_OPEN_FOLDER_ACTION_ID',                  'plugin_open_folder');
+define ('PLUGIN_REFRESH_ENTRY_POINTS_ACTION_ID',         'plugin_refresh_entry_points');
 define ('PLUGIN_REPLACE_PATH_ACTION_ID',                 'plugin_replace_path');
 define ('PLUGIN_RUN_NATIVE_CODE_ACTION_ID',              'plugin_run_native_code');
 define ('PLUGIN_SHOW_ERROR_ACTION_ID',                   'plugin_show_error');
 define ('PLUGIN_SYSTEM_ACTION_ID',                       'plugin_system');
 define ('PLUGIN_TV_PLAY_ACTION_ID',                      'plugin_tv_play');
+define ('PLUGIN_TV_SELECT_CHANNEL_ACTION_ID',            'plugin_tv_select_channel');
+define ('PLUGIN_UPDATE_ARCHIVE_CACHE_ACTION_ID',         'plugin_update_archive_cache');
+define ('PLUGIN_UPDATE_EPF_MAPPING_ACTION_ID',           'plugin_update_epf_mapping');
 define ('PLUGIN_UPDATE_EPG_ACTION_ID',                   'plugin_update_epg');
 define ('PLUGIN_UPDATE_FOLDER_ACTION_ID',                'plugin_update_folder');
 define ('PLUGIN_UPDATE_INFO_BLOCK_ACTION_ID',            'plugin_update_info_block');
 define ('PLUGIN_UPDATE_OSD_ACTION_ID',                   'plugin_update_osd');
+define ('PLUGIN_UPDATE_ROWS_INFO_ACTION_ID',             'plugin_update_rows_info');
 define ('PLUGIN_UPDATE_STICKER_ACTION_ID',               'plugin_update_sticker');
 define ('PLUGIN_VOD_PLAY_ACTION_ID',                     'plugin_vod_play');
 define ('REMOVE_FROM_FAVORITES_ACTION_ID',               'remove_from_favorites');
@@ -223,15 +304,21 @@ define ('RESET_CONTROLS_ACTION_ID',                      'reset_controls');
 define ('RESTART_ACTION_ID',                             'restart');
 define ('RUN_BUILTIN_ACTION_ID',                         'run_builtin');
 define ('RUN_DEFAULT_ACTION_ID',                         'run_default');
+define ('SET_RESTRICTED_ACTION_ID',                      'set_restricted');
 define ('SET_TIME_ZONE_ACTION_ID',                       'set_time_zone');
 define ('SHOW_BLACK_SCREEN_ACTION_ID',                   'show_black_screen');
 define ('SHOW_DIALOG_ACTION_ID',                         'show_dialog');
+define ('SHOW_GCOMPS_DIALOG_ACTION_ID',                  'show_gcomps');
 define ('SHOW_MAIN_SCREEN_ACTION_ID',                    'show_main_screen');
 define ('SHOW_POPUP_MENU_ACTION_ID',                     'show_popup_menu');
+define ('SLEEP_ACTION_ID',                               'sleep');
+define ('START_SERVICE_ACTION_ID',                       'start_service');
 define ('STATUS_ACTION_ID',                              'status');
 define ('STOP_PLAYBACK_ACTION_ID',                       'stop_playback');
 define ('SWITCH_OSD_MODE_ACTION_ID',                     'switch_osd_mode');
+define ('UPDATE_DVB_CHANNELS_ACTION_ID',                 'update_dvb_channels');
 define ('UPDATE_IMAGES_ACTION_ID',                       'update_images');
+define ('WAIT_EXT_APP_START_ACTION_ID',                  'wait_ext_app_start');
 define ('WAIT_FOR_IP_ADDRESS_ACTION_ID',                 'wait_for_ip_address');
 define ('WGET_ACTION_ID',                                'wget');
 
@@ -245,6 +332,9 @@ class AddToFavoritesActionData
     const /* (char *)                         */ media_url                        = 'media_url';
     const /* (char *)                         */ caption                          = 'caption';
     const /* (char *)                         */ icon_url                         = 'icon_url';
+    const /* int                              */ icon_width                       = 'icon_width';
+    const /* int                              */ icon_height                      = 'icon_height';
+    const /* (char *)                         */ badge_url                        = 'badge_url';
     const /* bool                             */ skip_interactions                = 'skip_interactions';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
@@ -252,6 +342,13 @@ class AddToFavoritesActionData
 class BlurayPlayActionData
 {
     const /* (char *)                         */ url                              = 'url';
+}
+
+class BtCommandActionData
+{
+    const /* (char *)                         */ name                             = 'name';
+    const /* (MY_Properties *)                */ params                           = 'params';
+    const /* (GuiAction *)                    */ callback_action                  = 'callback_action';
 }
 
 class ChangeBehaviourActionData
@@ -268,6 +365,7 @@ class ChangeGCompDef
     const /* (GCompGeometryDef *)             */ geom_def                         = 'geom_def';
     const /* (MY_Properties *)                */ props                            = 'props';
     const /* (GCompViewPositionDef *)         */ view_position                    = 'view_position';
+    const /* (MY_Properties *)                */ custom_props                     = 'custom_props';
     const /* bool                             */ selected                         = 'selected';
     const /* (GComponentDefList *)            */ children                         = 'children';
     const /* bool                             */ children_merge_mode              = 'children_merge_mode';
@@ -287,8 +385,11 @@ class ChangeGCompsActionData
     const /* (ChangeGCompWindowDef *)         */ window_change                    = 'window_change';
     const /* bool                             */ interrupt_disabled               = 'interrupt_disabled';
     const /* int                              */ num_steps                        = 'num_steps';
+    const /* GCompsFlipEffect                 */ flip_effect                      = 'flip_effect';
+    const /* double                           */ duration_multiplier              = 'duration_multiplier';
     const /* (char *)                         */ small_state_text                 = 'small_state_text';
     const /* (char *)                         */ sel_state                        = 'sel_state';
+    const /* (GCompUiStateDef *)              */ ui_state                         = 'ui_state';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
@@ -297,6 +398,12 @@ class ChangeSettingsActionData
     const /* (MY_Properties *)                */ settings                         = 'settings';
     const /* MY_Bool                          */ reboot                           = 'reboot';
     const /* MY_Bool                          */ restart_gui                      = 'restart_gui';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class CheckRestrictedActionData
+{
+    const /* (char *)                         */ id                               = 'id';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
@@ -325,14 +432,64 @@ class CloseDialogAndRunActionData
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
+class CompositeActionData
+{
+    const /* (GuiActionList *)                */ actions                          = 'actions';
+}
+
 class ConfirmLocationActionData
 {
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
+class DetectSeriesActionData
+{
+    const /* (char *)                         */ base_path                        = 'base_path';
+    const /* (MY_StringArray *)               */ rel_paths                        = 'rel_paths';
+    const /* (char *)                         */ result_path                      = 'result_path';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class DownloadAndInstallApkActionData
+{
+    const /* (char *)                         */ caption                          = 'caption';
+    const /* (char *)                         */ package                          = 'package';
+    const /* (MY_StringArray *)               */ urls                             = 'urls';
+    const /* bool                             */ indirect                         = 'indirect';
+    const /* (MY_StringArray *)               */ intro_dialog_urls                = 'intro_dialog_urls';
+    const /* (char *)                         */ username                         = 'username';
+    const /* (char *)                         */ password                         = 'password';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class DvbCommandActionData
+{
+    const /* (char *)                         */ name                             = 'name';
+    const /* (MY_Properties *)                */ params                           = 'params';
+    const /* (GuiAction *)                    */ callback_action                  = 'callback_action';
+}
+
 class DvdPlayActionData
 {
     const /* (char *)                         */ url                              = 'url';
+}
+
+class EditMainScreenActionData
+{
+    const /* int                              */ change_op                        = 'change_op';
+    const /* (MY_StringArray *)               */ ids                              = 'ids';
+    const /* (char *)                         */ caption                          = 'caption';
+    const /* (char *)                         */ icon_url                         = 'icon_url';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class FileMovieInfo
+{
+    const /* (char *)                         */ movie_id                         = 'movie_id';
+    const /* (char *)                         */ title                            = 'title';
+    const /* (char *)                         */ icon_url                         = 'icon_url';
+    const /* int                              */ s                                = 's';
+    const /* int                              */ e                                = 'e';
 }
 
 class FilePlayActionData
@@ -365,6 +522,20 @@ class GCompButtonDef
 class GCompCutImageDef
 {
     const /* (char *)                         */ url                              = 'url';
+    const /* int                              */ alpha                            = 'alpha';
+}
+
+class GCompFocusDef
+{
+    const /* GCompFocusType                   */ type                             = 'type';
+    const /* GCompFocusType                   */ type2                            = 'type2';
+}
+
+class GCompFocusableDef
+{
+    const /* (GCompMarginsDef *)              */ sel_margins                      = 'sel_margins';
+    const /* (char *)                         */ background_color                 = 'background_color';
+    const /* (char *)                         */ background_url                   = 'background_url';
 }
 
 class GCompGeometryDef
@@ -378,11 +549,23 @@ class GCompGeometryDef
 class GCompImageDef
 {
     const /* (char *)                         */ url                              = 'url';
+    const /* int                              */ alpha                            = 'alpha';
+    const /* int                              */ mix_alpha                        = 'mix_alpha';
+    const /* (char *)                         */ mix_color                        = 'mix_color';
     const /* bool                             */ keep_aspect_ratio                = 'keep_aspect_ratio';
     const /* bool                             */ upscale_enabled                  = 'upscale_enabled';
     const /* (char *)                         */ not_loaded_url                   = 'not_loaded_url';
     const /* (char *)                         */ load_failed_url                  = 'load_failed_url';
     const /* (char *)                         */ low_quality_url                  = 'low_quality_url';
+}
+
+class GCompItemDef
+{
+    const /* GCompItemType                    */ type                             = 'type';
+    const /* (char *)                         */ id                               = 'id';
+    const /* (char *)                         */ left_caption                     = 'left_caption';
+    const /* (char *)                         */ caption                          = 'caption';
+    const /* (char *)                         */ icon_url                         = 'icon_url';
 }
 
 class GCompLabelDef
@@ -405,6 +588,10 @@ class GCompMarginsDef
 class GCompPanelDef
 {
     const /* (GComponentDefList *)            */ children                         = 'children';
+    const /* int                              */ alpha                            = 'alpha';
+    const /* int                              */ mix_alpha                        = 'mix_alpha';
+    const /* (char *)                         */ mix_color                        = 'mix_color';
+    const /* (GCompPrepaintParams *)          */ prepaint_params                  = 'prepaint_params';
 }
 
 class GCompPrepaintPaneDef
@@ -412,6 +599,12 @@ class GCompPrepaintPaneDef
     const /* (GCompPanelDef *)                */ panel                            = 'panel';
     const /* int                              */ native_width                     = 'native_width';
     const /* int                              */ native_height                    = 'native_height';
+}
+
+class GCompPrepaintParams
+{
+    const /* int                              */ width                            = 'width';
+    const /* int                              */ height                           = 'height';
 }
 
 class GCompRectDef
@@ -435,15 +628,42 @@ class GCompScrollbarDef
     const /* bool                             */ vertical                         = 'vertical';
 }
 
+class GCompTextFieldDef
+{
+    const /* (GuiTextFieldDef *)              */ def                              = 'def';
+    const /* (MY_Properties *)                */ params                           = 'params';
+}
+
 class GCompTtfLabelDef
 {
     const /* (char *)                         */ text                             = 'text';
     const /* int                              */ font_size                        = 'font_size';
+    const /* (char *)                         */ font_face                        = 'font_face';
     const /* (char *)                         */ text_color                       = 'text_color';
     const /* int                              */ max_num_lines                    = 'max_num_lines';
     const /* int                              */ line_spacing                     = 'line_spacing';
     const /* MY_HAlign                        */ halign                           = 'halign';
+    const /* MY_VAlign                        */ valign                           = 'valign';
     const /* int                              */ base_font_size                   = 'base_font_size';
+    const /* int                              */ min_font_size                    = 'min_font_size';
+    const /* GCompTextFit                     */ fit                              = 'fit';
+}
+
+class GCompUiStateDef
+{
+    const /* (char *)                         */ title                            = 'title';
+    const /* (GCompItemDefList *)             */ items                            = 'items';
+    const /* (char *)                         */ bg_url                           = 'bg_url';
+    const /* (char *)                         */ poster_url                       = 'poster_url';
+    const /* (MY_Properties *)                */ view_params                      = 'view_params';
+}
+
+class GCompVariantDef
+{
+    const /* (char *)                         */ ref_id                           = 'ref_id';
+    const /* (GCompGeometryDef *)             */ geom_def                         = 'geom_def';
+    const /* (MY_Properties *)                */ props                            = 'props';
+    const /* int                              */ transition_modifier              = 'transition_modifier';
 }
 
 class GCompViewPositionDef
@@ -451,6 +671,10 @@ class GCompViewPositionDef
     const /* (char *)                         */ id                               = 'id';
     const /* int                              */ x                                = 'x';
     const /* int                              */ y                                = 'y';
+    const /* float                            */ freedom_factor                   = 'freedom_factor';
+    const /* float                            */ gravity                          = 'gravity';
+    const /* int                              */ end_min_offset                   = 'end_min_offset';
+    const /* (char *)                         */ outside_id                       = 'outside_id';
 }
 
 class GCompWindowDef
@@ -464,6 +688,9 @@ class GCompWindowDef
     const /* (char *)                         */ small_state_text                 = 'small_state_text';
     const /* bool                             */ opaque_background                = 'opaque_background';
     const /* (GComponentDefList *)            */ comp_defs                        = 'comp_defs';
+    const /* (GCompFocusDef *)                */ focus                            = 'focus';
+    const /* (GComponentDef *)                */ bg_def                           = 'bg_def';
+    const /* (GCompUiStateDef *)              */ ui_state                         = 'ui_state';
 }
 
 class GComponentDef
@@ -471,6 +698,10 @@ class GComponentDef
     const /* (char *)                         */ id                               = 'id';
     const /* (GCompGeometryDef *)             */ geom_def                         = 'geom_def';
     const /* (GCompMarginsDef *)              */ margins_def                      = 'margins_def';
+    const /* (GCompFocusableDef *)            */ focusable_def                    = 'focusable_def';
+    const /* (GCompVariantDef *)              */ focused_variant_def              = 'focused_variant_def';
+    const /* (GCompVariantDefList *)          */ extra_variant_defs               = 'extra_variant_defs';
+    const /* int                              */ options                          = 'options';
     const /* GComponentKind                   */ kind                             = 'kind';
     const /* (void *)                         */ specific_def                     = 'specific_def';
 }
@@ -510,6 +741,11 @@ class GuiControlDef
     const /* (MY_Properties *)                */ params                           = 'params';
 }
 
+class GuiExtraChoice
+{
+    const /* (char *)                         */ caption                          = 'caption';
+}
+
 class GuiLabelDef
 {
     const /* (char *)                         */ caption                          = 'caption';
@@ -522,6 +758,12 @@ class GuiMenuItemDef
     const /* (char *)                         */ icon_url                         = 'icon_url';
     const /* (GuiAction *)                    */ action                           = 'action';
     const /* (GuiAction *)                    */ is_shown_action                  = 'is_shown_action';
+}
+
+class GuiProgressBarDef
+{
+    const /* double                           */ progress                         = 'progress';
+    const /* int                              */ width                            = 'width';
 }
 
 class GuiTextFieldDef
@@ -561,12 +803,38 @@ class InitPersistfsActionData
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
+class InvalidateFilesAssociationsActionData
+{
+    const /* bool                             */ all                              = 'all';
+    const /* (MY_StringArray *)               */ hashes                           = 'hashes';
+    const /* (MY_StringArray *)               */ paths                            = 'paths';
+    const /* (char *)                         */ folder_url                       = 'folder_url';
+    const /* (char *)                         */ base_dir_path                    = 'base_dir_path';
+    const /* (char *)                         */ base_cache_dpath                 = 'base_cache_dpath';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class LaunchExtAppActionData
+{
+    const /* (char *)                         */ cmd                              = 'cmd';
+    const /* bool                             */ ensure_playback_stopped          = 'ensure_playback_stopped';
+    const /* int                              */ delay                            = 'delay';
+    const /* (char *)                         */ package                          = 'package';
+    const /* (char *)                         */ version                          = 'version';
+    const /* (char *)                         */ msg_toast                        = 'msg_toast';
+    const /* (MY_Properties *)                */ params                           = 'params';
+    const /* (GuiAction *)                    */ error_action                     = 'error_action';
+}
+
 class LaunchMediaUrlActionData
 {
     const /* (char *)                         */ url                              = 'url';
     const /* (char *)                         */ caption                          = 'caption';
     const /* bool                             */ play_in_background               = 'play_in_background';
     const /* int                              */ start_index                      = 'start_index';
+    const /* bool                             */ internal_player_only             = 'internal_player_only';
+    const /* (GuiExtraChoiceList *)           */ resume_extra_choices             = 'resume_extra_choices';
+    const /* (char *)                         */ resume_ext_text                  = 'resume_ext_text';
     const /* (MY_Properties *)                */ params                           = 'params';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
@@ -611,6 +879,7 @@ class PluginFolderView
     const /* (void *)                         */ data                             = 'data';
     const /* MY_Bool                          */ multiple_views_supported         = 'multiple_views_supported';
     const /* (PluginArchiveDef *)             */ archive                          = 'archive';
+    const /* (char *)                         */ folder_type                      = 'folder_type';
     const /* (MY_Properties *)                */ params                           = 'params';
 }
 
@@ -626,6 +895,7 @@ class PluginFolderViewParams
     const /* MY_Bool                          */ paint_path_box_background        = 'paint_path_box_background';
     const /* MY_Bool                          */ paint_content_box_background     = 'paint_content_box_background';
     const /* (char *)                         */ background_url                   = 'background_url';
+    const /* bool                             */ popup_dialogs_enabled            = 'popup_dialogs_enabled';
 }
 
 class PluginGCompsFolderView
@@ -634,6 +904,14 @@ class PluginGCompsFolderView
     const /* (char *)                         */ sel_state                        = 'sel_state';
     const /* (GuiActionMap *)                 */ actions                          = 'actions';
     const /* (GuiTimerDef *)                  */ timer                            = 'timer';
+}
+
+class PluginGCompsRow
+{
+    const /* (GComponentDefList *)            */ defs                             = 'defs';
+    const /* int                              */ width                            = 'width';
+    const /* int                              */ options                          = 'options';
+    const /* (GCompUiStateDef *)              */ ui_state                         = 'ui_state';
 }
 
 class PluginHandleUserInputActionData
@@ -648,6 +926,14 @@ class PluginInvalidateFoldersActionData
     const /* (MY_StringArray *)               */ media_urls                       = 'media_urls';
     const /* bool                             */ all_except                       = 'all_except';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class PluginMargins
+{
+    const /* int                              */ left                             = 'left';
+    const /* int                              */ top                              = 'top';
+    const /* int                              */ right                            = 'right';
+    const /* int                              */ bottom                           = 'bottom';
 }
 
 class PluginMovie
@@ -725,11 +1011,17 @@ class PluginPathElement
     const /* (char *)                         */ caption                          = 'caption';
 }
 
+class PluginRefreshEntryPointsActionData
+{
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
 class PluginRegularFolderItem
 {
     const /* (char *)                         */ media_url                        = 'media_url';
     const /* (char *)                         */ caption                          = 'caption';
-    const /* MY_Bool                          */ starred                          = 'starred';
+    const /* bool                             */ starred                          = 'starred';
+    const /* bool                             */ locked                           = 'locked';
     const /* (ViewItemParams *)               */ view_item_params                 = 'view_item_params';
 }
 
@@ -757,11 +1049,135 @@ class PluginRegularFolderView
     const /* (PluginRegularFolderRange *)     */ initial_range                    = 'initial_range';
 }
 
+class PluginRegularItem
+{
+    const /* (char *)                         */ icon_url                         = 'icon_url';
+    const /* (MY_StringArray *)               */ sticker_urls                     = 'sticker_urls';
+    const /* (PluginRegularStickerList *)     */ stickers                         = 'stickers';
+    const /* (char *)                         */ caption                          = 'caption';
+    const /* (char *)                         */ id                               = 'id';
+    const /* (char *)                         */ params_template_id               = 'params_template_id';
+}
+
+class PluginRegularItemParams
+{
+    const /* (PluginRegularItemVariableParams *) */ def                              = 'def';
+    const /* (PluginRegularItemVariableParams *) */ sel                              = 'sel';
+    const /* (PluginRegularItemVariableParams *) */ inactive                         = 'inactive';
+    const /* (char *)                         */ loading_url                      = 'loading_url';
+    const /* (char *)                         */ load_failed_url                  = 'load_failed_url';
+    const /* MY_Bool                          */ hide_captions                    = 'hide_captions';
+    const /* int                              */ caption_max_num_lines            = 'caption_max_num_lines';
+    const /* int                              */ caption_line_spacing             = 'caption_line_spacing';
+    const /* int                              */ sticker_text_size                = 'sticker_text_size';
+    const /* (char *)                         */ sticker_text_color               = 'sticker_text_color';
+    const /* (PluginMargins *)                */ sel_margins                      = 'sel_margins';
+}
+
+class PluginRegularItemVariableParams
+{
+    const /* int                              */ width                            = 'width';
+    const /* int                              */ height                           = 'height';
+    const /* int                              */ dx                               = 'dx';
+    const /* int                              */ icon_width                       = 'icon_width';
+    const /* int                              */ icon_height                      = 'icon_height';
+    const /* int                              */ icon_dy                          = 'icon_dy';
+    const /* int                              */ caption_dy                       = 'caption_dy';
+    const /* (char *)                         */ caption_color                    = 'caption_color';
+    const /* int                              */ caption_font_size                = 'caption_font_size';
+    const /* int                              */ sticker_width                    = 'sticker_width';
+    const /* int                              */ sticker_height                   = 'sticker_height';
+}
+
+class PluginRegularRow
+{
+    const /* bool                             */ hide_captions                    = 'hide_captions';
+    const /* bool                             */ hide_icons                       = 'hide_icons';
+    const /* int                              */ left_padding                     = 'left_padding';
+    const /* int                              */ inactive_left_padding            = 'inactive_left_padding';
+    const /* int                              */ right_padding                    = 'right_padding';
+    const /* int                              */ width                            = 'width';
+    const /* bool                             */ fade_enabled                     = 'fade_enabled';
+    const /* (char *)                         */ fade_icon_mix_color              = 'fade_icon_mix_color';
+    const /* int                              */ fade_icon_mix_alpha              = 'fade_icon_mix_alpha';
+    const /* int                              */ lite_fade_icon_mix_alpha         = 'lite_fade_icon_mix_alpha';
+    const /* (char *)                         */ fade_caption_color               = 'fade_caption_color';
+    const /* (char *)                         */ item_params_template_id          = 'item_params_template_id';
+    const /* (PluginRegularItemParams *)      */ item_params                      = 'item_params';
+    const /* (PluginRegularItemList *)        */ items                            = 'items';
+}
+
+class PluginRegularSticker
+{
+    const /* MY_Rect                          */ r                                = 'r';
+    const /* (char *)                         */ icon_url                         = 'icon_url';
+    const /* (char *)                         */ text                             = 'text';
+    const /* (char *)                         */ color                            = 'color';
+}
+
 class PluginReplacePathActionData
 {
     const /* int                              */ erase_count                      = 'erase_count';
     const /* (PluginPathElementList *)        */ elements                         = 'elements';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class PluginRow
+{
+    const /* PluginRowType                    */ type                             = 'type';
+    const /* (void *)                         */ data                             = 'data';
+    const /* (char *)                         */ id                               = 'id';
+    const /* int                              */ ui_level                         = 'ui_level';
+    const /* (char *)                         */ group_id                         = 'group_id';
+    const /* (char *)                         */ title                            = 'title';
+    const /* MY_Bool                          */ focusable                        = 'focusable';
+    const /* int                              */ height                           = 'height';
+    const /* int                              */ inactive_height                  = 'inactive_height';
+    const /* (GuiAction *)                    */ show_all_action                  = 'show_all_action';
+}
+
+class PluginRowsFolderView
+{
+    const /* (PluginRowsPane *)               */ pane                             = 'pane';
+    const /* (char *)                         */ sel_state                        = 'sel_state';
+    const /* (GuiActionMap *)                 */ actions                          = 'actions';
+    const /* (GuiTimerDef *)                  */ timer                            = 'timer';
+}
+
+class PluginRowsInfo
+{
+    const /* (char *)                         */ folder_key                       = 'folder_key';
+    const /* (char *)                         */ item_id                          = 'item_id';
+    const /* (GComponentDefList *)            */ info_defs                        = 'info_defs';
+    const /* (char *)                         */ bg_url                           = 'bg_url';
+    const /* (char *)                         */ nl_bg_url                        = 'nl_bg_url';
+    const /* (char *)                         */ mask_url                         = 'mask_url';
+    const /* bool                             */ bg_poster_mode                   = 'bg_poster_mode';
+    const /* (MY_StringArray *)               */ playback_urls                    = 'playback_urls';
+}
+
+class PluginRowsPane
+{
+    const /* (PluginRowList *)                */ rows                             = 'rows';
+    const /* (GCompFocusDef *)                */ focus                            = 'focus';
+    const /* (GComponentDef *)                */ bg                               = 'bg';
+    const /* MY_Rect                          */ screen_r                         = 'screen_r';
+    const /* int                              */ screen_y2                        = 'screen_y2';
+    const /* int                              */ min_row_index_for_y2             = 'min_row_index_for_y2';
+    const /* MY_Rect                          */ info_r                           = 'info_r';
+    const /* MY_Rect                          */ vod_r                            = 'vod_r';
+    const /* bool                             */ header_enabled                   = 'header_enabled';
+    const /* bool                             */ single_list_navigation           = 'single_list_navigation';
+    const /* MY_Bool                          */ initial_focus_header             = 'initial_focus_header';
+    const /* (char *)                         */ initial_focus_item_id            = 'initial_focus_item_id';
+    const /* (char *)                         */ initial_focus_row_id             = 'initial_focus_row_id';
+    const /* float                            */ horizontal_focus_freedom_factor  = 'horizontal_focus_freedom_factor';
+    const /* int                              */ horizontal_focus_end_min_offset  = 'horizontal_focus_end_min_offset';
+    const /* float                            */ vertical_focus_freedom_factor    = 'vertical_focus_freedom_factor';
+    const /* float                            */ vertical_focus_gravity           = 'vertical_focus_gravity';
+    const /* int                              */ vertical_focus_end_min_offset    = 'vertical_focus_end_min_offset';
+    const /* int                              */ up_arrow_dy                      = 'up_arrow_dy';
+    const /* (PluginRegularItemParamsMap *)   */ regular_item_params_templates    = 'regular_item_params_templates';
 }
 
 class PluginShowErrorActionData
@@ -771,6 +1187,7 @@ class PluginShowErrorActionData
     const /* (MY_StringArray *)               */ msg_lines                        = 'msg_lines';
     const /* MY_Bool                          */ stop_playback                    = 'stop_playback';
     const /* int                              */ retry_delay_ms                   = 'retry_delay_ms';
+    const /* (MY_Properties *)                */ options                          = 'options';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
@@ -780,10 +1197,25 @@ class PluginSystemActionData
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
+class PluginTitleRow
+{
+    const /* (char *)                         */ caption                          = 'caption';
+    const /* (char *)                         */ color                            = 'color';
+    const /* int                              */ font_size                        = 'font_size';
+    const /* int                              */ left                             = 'left';
+    const /* int                              */ dy                               = 'dy';
+    const /* int                              */ active_dy                        = 'active_dy';
+    const /* int                              */ width                            = 'width';
+    const /* bool                             */ fade_enabled                     = 'fade_enabled';
+    const /* (char *)                         */ fade_color                       = 'fade_color';
+    const /* (char *)                         */ lite_fade_color                  = 'lite_fade_color';
+}
+
 class PluginTvChannel
 {
     const /* (char *)                         */ id                               = 'id';
     const /* (char *)                         */ caption                          = 'caption';
+    const /* (char *)                         */ extra_caption                    = 'extra_caption';
     const /* (MY_StringArray *)               */ group_ids                        = 'group_ids';
     const /* (char *)                         */ icon_url                         = 'icon_url';
     const /* int                              */ number                           = 'number';
@@ -792,9 +1224,11 @@ class PluginTvChannel
     const /* MY_Bool                          */ recording_enabled                = 'recording_enabled';
     const /* bool                             */ ext_epg_enabled                  = 'ext_epg_enabled';
     const /* bool                             */ vod_archive_enabled              = 'vod_archive_enabled';
-    const /* bool                             */ start_over_seek_enabled          = 'start_over_seek_enabled';
+    const /* MY_Bool                          */ start_over_enabled               = 'start_over_enabled';
+    const /* MY_Bool                          */ trick_play_enabled               = 'trick_play_enabled';
     const /* int                              */ buffering_ms                     = 'buffering_ms';
     const /* int                              */ timeshift_hours                  = 'timeshift_hours';
+    const /* PluginEpgMode                    */ epg_mode                         = 'epg_mode';
     const /* int                              */ past_epg_days                    = 'past_epg_days';
     const /* int                              */ future_epg_days                  = 'future_epg_days';
     const /* (char *)                         */ ext_epg_id                       = 'ext_epg_id';
@@ -803,6 +1237,8 @@ class PluginTvChannel
     const /* int                              */ epg_icon_height                  = 'epg_icon_height';
     const /* int                              */ epg_icon_x_offset                = 'epg_icon_x_offset';
     const /* int                              */ epg_icon_y_offset                = 'epg_icon_y_offset';
+    const /* bool                             */ epg_icon_hide_without_archive    = 'epg_icon_hide_without_archive';
+    const /* MY_Bool                          */ use_program_have_archive_flags   = 'use_program_have_archive_flags';
     const /* int                              */ archive_past_sec                 = 'archive_past_sec';
     const /* int                              */ archive_delay_sec                = 'archive_delay_sec';
     const /* MY_Bool                          */ playback_url_is_stream_url       = 'playback_url_is_stream_url';
@@ -815,6 +1251,7 @@ class PluginTvEpgProgram
     const /* (char *)                         */ name                             = 'name';
     const /* (char *)                         */ description                      = 'description';
     const /* bool                             */ have_archive                     = 'have_archive';
+    const /* int                              */ flags                            = 'flags';
     const /* (char *)                         */ icon_url                         = 'icon_url';
     const /* (char *)                         */ ext_id                           = 'ext_id';
 }
@@ -840,6 +1277,8 @@ class PluginTvInfo
     const /* (char *)                         */ initial_channel_id               = 'initial_channel_id';
     const /* MY_Bool                          */ initial_is_favorite              = 'initial_is_favorite';
     const /* int                              */ initial_archive_tm               = 'initial_archive_tm';
+    const /* MY_Bool                          */ initial_trick_play               = 'initial_trick_play';
+    const /* int                              */ initial_trick_play_duration      = 'initial_trick_play_duration';
     const /* (PluginTvEpgProgram *)           */ initial_archive_program          = 'initial_archive_program';
     const /* (GuiActionMap *)                 */ actions                          = 'actions';
     const /* (GuiTimerDef *)                  */ timer                            = 'timer';
@@ -858,6 +1297,8 @@ class PluginTvInfo
     const /* MY_Bool                          */ keep_playing_on_reload           = 'keep_playing_on_reload';
     const /* MY_Bool                          */ keep_playing_on_reenter          = 'keep_playing_on_reenter';
     const /* bool                             */ icon_auto_reducing_disabled      = 'icon_auto_reducing_disabled';
+    const /* MY_Bool                          */ disable_connecting_status_osd    = 'disable_connecting_status_osd';
+    const /* MY_Bool                          */ show_prev_next_scrolling_hint    = 'show_prev_next_scrolling_hint';
     const /* (PluginArchiveDef *)             */ archive                          = 'archive';
 }
 
@@ -867,7 +1308,31 @@ class PluginTvPlayActionData
     const /* (char *)                         */ initial_channel_id               = 'initial_channel_id';
     const /* MY_Bool                          */ initial_is_favorite              = 'initial_is_favorite';
     const /* int                              */ initial_archive_tm               = 'initial_archive_tm';
+    const /* MY_Bool                          */ initial_trick_play               = 'initial_trick_play';
+    const /* int                              */ initial_trick_play_duration      = 'initial_trick_play_duration';
     const /* (PluginTvEpgProgram *)           */ initial_archive_program          = 'initial_archive_program';
+}
+
+class PluginTvSelectChannelActionData
+{
+    const /* (char *)                         */ group_id                         = 'group_id';
+    const /* (char *)                         */ channel_id                       = 'channel_id';
+    const /* MY_Bool                          */ is_favorite                      = 'is_favorite';
+}
+
+class PluginUpdateArchiveCacheActionData
+{
+    const /* (PluginArchiveDef *)             */ archive                          = 'archive';
+    const /* bool                             */ reread_archive_dir               = 'reread_archive_dir';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class PluginUpdateEpfMappingActionData
+{
+    const /* (char *)                         */ epf_id                           = 'epf_id';
+    const /* (char *)                         */ mapped_plugin_name               = 'mapped_plugin_name';
+    const /* bool                             */ sync_epfs                        = 'sync_epfs';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
 class PluginUpdateEpgActionData
@@ -901,6 +1366,14 @@ class PluginUpdateOsdActionData
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
+class PluginUpdateRowsInfoActionData
+{
+    const /* bool                             */ clear_cache                      = 'clear_cache';
+    const /* bool                             */ invalidate_cache                 = 'invalidate_cache';
+    const /* (PluginRowsInfo *)               */ info                             = 'info';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
 class PluginUpdateStickerActionData
 {
     const /* (char *)                         */ sticker                          = 'sticker';
@@ -926,6 +1399,11 @@ class PluginVodInfo
     const /* MY_Bool                          */ subtitles_osd_enabled            = 'subtitles_osd_enabled';
     const /* MY_Bool                          */ keep_playing_on_reload           = 'keep_playing_on_reload';
     const /* MY_Bool                          */ keep_playing_on_reenter          = 'keep_playing_on_reenter';
+    const /* (char *)                         */ recent_plugin                    = 'recent_plugin';
+    const /* (MY_Properties *)                */ recent_action_params             = 'recent_action_params';
+    const /* (char *)                         */ recent_group_by                  = 'recent_group_by';
+    const /* (MY_StringArray *)               */ recent_tags                      = 'recent_tags';
+    const /* (MY_Properties *)                */ params                           = 'params';
 }
 
 class PluginVodPlayActionData
@@ -938,6 +1416,9 @@ class PluginVodSeriesInfo
     const /* (char *)                         */ name                             = 'name';
     const /* (char *)                         */ playback_url                     = 'playback_url';
     const /* MY_Bool                          */ playback_url_is_stream_url       = 'playback_url_is_stream_url';
+    const /* (char *)                         */ content_id                       = 'content_id';
+    const /* (char *)                         */ recent_uid                       = 'recent_uid';
+    const /* (FileMovieInfo *)                */ mdb_info                         = 'mdb_info';
 }
 
 class RemoveFromFavoritesActionData
@@ -956,6 +1437,7 @@ class ResetControlsActionData
 {
     const /* (GuiControlDefList *)            */ defs                             = 'defs';
     const /* int                              */ initial_sel_ndx                  = 'initial_sel_ndx';
+    const /* bool                             */ keep_inner_state                 = 'keep_inner_state';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
@@ -975,6 +1457,13 @@ class RunBuiltinActionData
 class RunDefaultActionData
 {
     const /* GuiEventKind                     */ event                            = 'event';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class SetRestrictedActionData
+{
+    const /* (char *)                         */ id                               = 'id';
+    const /* bool                             */ restricted                       = 'restricted';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
@@ -1007,6 +1496,18 @@ class ShowDialogActionData
     const /* (MY_Properties *)                */ params                           = 'params';
 }
 
+class ShowGCompsDialogActionData
+{
+    const /* (GCompGeometryDef *)             */ geom_def                         = 'geom_def';
+    const /* (GComponentDefList *)            */ comp_defs                        = 'comp_defs';
+    const /* (GCompFocusDef *)                */ focus                            = 'focus';
+    const /* (GCompUiStateDef *)              */ ui_state                         = 'ui_state';
+    const /* (char *)                         */ sel_state                        = 'sel_state';
+    const /* (GuiActionMap *)                 */ actions                          = 'actions';
+    const /* (GuiTimerDef *)                  */ timer                            = 'timer';
+    const /* (MY_Properties *)                */ params                           = 'params';
+}
+
 class ShowMainScreenActionData
 {
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
@@ -1016,6 +1517,21 @@ class ShowPopupMenuActionData
 {
     const /* (GuiMenuItemDefList *)           */ menu_items                       = 'menu_items';
     const /* int                              */ selected_menu_item_index         = 'selected_menu_item_index';
+}
+
+class SleepActionData
+{
+    const /* int                              */ delay_ms                         = 'delay_ms';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class StartServiceActionData
+{
+    const /* (char *)                         */ class_name                       = 'class_name';
+    const /* (char *)                         */ package_name                     = 'package_name';
+    const /* (MY_Properties *)                */ params                           = 'params';
+    const /* int                              */ delay_ms                         = 'delay_ms';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
 class StatusActionData
@@ -1035,6 +1551,11 @@ class SwitchOsdModeActionData
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
+class UpdateDvbChannelsActionData
+{
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
 class UpdateImagesActionData
 {
     const /* (char *)                         */ url_prefix                       = 'url_prefix';
@@ -1049,6 +1570,7 @@ class ViewItemParams
     const /* MY_Bool                          */ predefined                       = 'predefined';
     const /* MY_Bool                          */ item_paint_icon                  = 'item_paint_icon';
     const /* MY_Bool                          */ item_paint_caption               = 'item_paint_caption';
+    const /* MY_Bool                          */ item_ui_state_paint_caption      = 'item_ui_state_paint_caption';
     const /* MY_Bool                          */ item_paint_unselected_caption    = 'item_paint_unselected_caption';
     const /* MY_FontSize                      */ item_caption_font_size           = 'item_caption_font_size';
     const /* MY_Bool                          */ item_paint_caption_within_icon   = 'item_paint_caption_within_icon';
@@ -1105,6 +1627,7 @@ class ViewParams
     const /* PositiveInt                      */ item_height                      = 'item_height';
     const /* MY_Bool                          */ animation_enabled                = 'animation_enabled';
     const /* MY_Bool                          */ scroll_animation_enabled         = 'scroll_animation_enabled';
+    const /* MY_Bool                          */ popup_dialogs_enabled            = 'popup_dialogs_enabled';
     const /* ViewOrientation                  */ orientation                      = 'orientation';
     const /* MY_Bool                          */ cycle_mode_enabled               = 'cycle_mode_enabled';
     const /* MY_AutoYesNoChoice               */ cycle_mode_gap                   = 'cycle_mode_gap';
@@ -1190,6 +1713,13 @@ class ViewParams
     const /* NonNegativeInt                   */ max_icon_height                  = 'max_icon_height';
 }
 
+class WaitExtAppStartActionData
+{
+    const /* int                              */ delay                            = 'delay';
+    const /* (char *)                         */ package                          = 'package';
+    const /* (GuiAction *)                    */ error_action                     = 'error_action';
+}
+
 class WaitForIpAddressActionData
 {
     const /* int                              */ timeout_sec                      = 'timeout_sec';
@@ -1198,9 +1728,11 @@ class WaitForIpAddressActionData
 
 class WgetActionData
 {
+    const /* (char *)                         */ id                               = 'id';
     const /* (char *)                         */ url                              = 'url';
     const /* (char *)                         */ post_data                        = 'post_data';
     const /* (MY_Properties *)                */ curl_opts                        = 'curl_opts';
+    const /* (char *)                         */ target_path                      = 'target_path';
     const /* (char *)                         */ result_key_prefix                = 'result_key_prefix';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }

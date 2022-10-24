@@ -84,13 +84,4 @@ abstract class Abstract_Controls_Screen implements Screen
     {
         return array();
     }
-
-    /**
-     * @param MediaURL $media_url
-     * @return null
-     */
-    public function get_archive(MediaURL $media_url)
-    {
-        return null;
-    }
 }

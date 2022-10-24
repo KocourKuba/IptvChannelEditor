@@ -20,16 +20,15 @@ interface Group
     /**
      * @return bool
      */
-    public function is_favorite_channels();
+    public function is_favorite_group();
 
     /**
      * @return bool
      */
-    public function is_all_channels();
+    public function is_all_channels_group();
 
     /**
-     * @param $plugin_cookies
      * @return Hashed_Array
      */
-    public function get_channels(&$plugin_cookies);
+    public function get_group_channels();
 }

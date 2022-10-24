@@ -68,7 +68,7 @@ class Default_Group implements Group
     /**
      * @return bool
      */
-    public function is_favorite_channels()
+    public function is_favorite_group()
     {
         return false;
     }
@@ -76,16 +76,15 @@ class Default_Group implements Group
     /**
      * @return bool
      */
-    public function is_all_channels()
+    public function is_all_channels_group()
     {
         return false;
     }
 
     /**
-     * @param $plugin_cookies
      * @return Hashed_Array
      */
-    public function get_channels(&$plugin_cookies)
+    public function get_group_channels()
     {
         return $this->_channels;
     }

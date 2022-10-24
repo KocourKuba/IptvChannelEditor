@@ -21,6 +21,13 @@ abstract class DunePluginFw
 
     public function invoke_operation($plugin, $call_ctx)
     {
+        if (method_exists($plugin, "set_internet_status"))
+        {
+            $internet_status = isset($call_ctx->internet_status) ?
+                intval($call_ctx->internet_status) : -2;
+            $plugin->set_internet_status($internet_status);
+        }
+
         if ($call_ctx->op_type_code === PLUGIN_OP_GET_FOLDER_VIEW ||
             $call_ctx->op_type_code === PLUGIN_OP_GET_NEXT_FOLDER_VIEW ||
             $call_ctx->op_type_code === PLUGIN_OP_GET_TV_INFO ||

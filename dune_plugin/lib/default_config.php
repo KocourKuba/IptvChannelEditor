@@ -363,8 +363,6 @@ class default_config extends dynamic_config
             }
         }
 
-        //hd_print("Stream url:  $url");
-
         $url = $this->UpdateMpegTsBuffering($play_template_url, $plugin_cookies, $custom_stream_type);
 
         return HD::make_ts($url);
