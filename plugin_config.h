@@ -129,10 +129,10 @@ struct EpgParameters
 	std::string epg_date_format;
 	std::string epg_time_format;
 	size_t epg_timezone = 0;
+	bool epg_use_duration = false;
 
 	// not saved to the config!
 	bool epg_use_mapper = false;
-	bool epg_use_duration = false;
 	std::wstring epg_mapper_url;
 	std::map<std::wstring, std::wstring> epg_mapper;
 
@@ -160,7 +160,7 @@ struct EpgParameters
 	std::wstring get_epg_time_format() const { return utils::utf8_to_utf16(epg_time_format); }
 	void set_epg_time_format(const std::wstring& val) { epg_time_format = utils::utf16_to_utf8(val); }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_param, epg_url, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_date_format, epg_time_format, epg_timezone);
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_param, epg_url, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_date_format, epg_time_format, epg_timezone, epg_use_duration);
 };
 
 /// <summary>

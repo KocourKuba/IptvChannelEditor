@@ -196,6 +196,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_VOD_REGEX, m_VodParseRegex);
 	DDX_Control(pDX, IDC_BUTTON_VOD_PARSE, m_wndBtnVodParseTest);
 	DDX_Control(pDX, IDC_BUTTON_VOD_TEMPLATE, m_wndBtnVodTemplateTest);
+	DDX_Control(pDX, IDC_CHECK_USE_DURATION, m_wndChkUseDuration);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -294,6 +295,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	AddTooltip(IDC_EDIT_SET_TOKEN, IDS_STRING_EDIT_SET_TOKEN);
 	AddTooltip(IDC_DATETIMEPICKER_DATE, IDS_STRING_DATETIMEPICKER_DATE);
 	AddTooltip(IDC_EDIT_UTC, IDS_STRING_DATETIMEPICKER_DATE);
+	AddTooltip(IDC_CHECK_USE_DURATION, IDS_STRING_CHECK_USE_DURATION);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
@@ -541,6 +543,7 @@ void CPluginConfigPage::EnableControls()
 	m_wndDateFormat.EnableWindow(enable);
 	m_wndEpgStartFormat.EnableWindow(enable);
 	m_wndEpgTimezone.EnableWindow(enable);
+	m_wndChkUseDuration.EnableWindow(enable);
 
 	// servers
 	m_wndChkStaticServers.SetCheck(m_plugin->get_static_servers());
@@ -668,7 +671,7 @@ void CPluginConfigPage::FillControlsStream()
 	m_Subst = stream.cu_subst.c_str();
 
 	m_wndCatchupType.SetCurSel((int)stream.cu_type);
-	m_wndDuration.ShowWindow(enableDuration);
+	m_wndDuration.EnableWindow(enableDuration);
 
 	m_StreamTemplate = stream.uri_template.c_str();
 	m_StreamArchiveTemplate = stream.uri_arc_template.c_str();
@@ -708,6 +711,7 @@ void CPluginConfigPage::FillControlsEpg()
 	m_EpgDateFormat = epg.epg_date_format.c_str();
 	m_EpgTimeFormat = epg.epg_time_format.c_str();
 	m_EpgTimezone = epg.epg_timezone;
+	m_wndChkUseDuration.SetCheck(epg.epg_use_duration != false);
 
 	UpdateData(FALSE);
 }
@@ -729,6 +733,7 @@ void CPluginConfigPage::SaveControlsEpg()
 	epg.set_epg_date_format(m_EpgDateFormat.GetString());
 	epg.set_epg_time_format(m_EpgTimeFormat.GetString());
 	epg.epg_timezone = m_EpgTimezone;
+	epg.epg_use_duration = m_wndChkUseDuration.GetCheck() != 0;
 }
 
 void CPluginConfigPage::UpdateDateTimestamp(bool dateToUtc)

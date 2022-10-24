@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20221024101111" scan="159" scanned="20221024100559">
+<document created="20211012165442" version="4.0.374" date="20221024211720" scan="161" scanned="20221024211542">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221023212850" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221024191536" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -2477,7 +2477,7 @@
             <row id="CY" state="0">8</row>
             <row id="Text" state="0">
               <native>VOD Parse Regex</native>
-              <lang id="ru" date="20221024101106" status="3">Парсер разбора VOD</lang>
+              <lang id="ru" date="20221024101106">Парсер разбора VOD</lang>
             </row>
             <row id="X" state="0">7</row>
             <row id="Y" state="0">211</row>
@@ -2704,38 +2704,6 @@
               <native>404</native>
             </row>
           </component>
-          <component class="TVisLabel" name="STATIC_EPG_Start" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX">57</row>
-            <row id="CY">8</row>
-            <row id="Text">
-              <native>EPG Start</native>
-              <lang id="ru" date="20221001010304">EPG начало</lang>
-            </row>
-            <row id="X" state="3" changed="20221024100559">
-              <prev>157</prev>
-              <native>256</native>
-            </row>
-            <row id="Y" state="3" changed="20221024100559">
-              <prev>357</prev>
-              <native>404</native>
-            </row>
-          </component>
-          <component class="TVisLabel" name="STATIC_EPG_End" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX">57</row>
-            <row id="CY">8</row>
-            <row id="Text">
-              <native>EPG End</native>
-              <lang id="ru" date="20221001010325">EPG конец</lang>
-            </row>
-            <row id="X" state="3" changed="20221024100559">
-              <prev>224</prev>
-              <native>339</native>
-            </row>
-            <row id="Y" state="3" changed="20221024100559">
-              <prev>357</prev>
-              <native>404</native>
-            </row>
-          </component>
           <component class="TVisLabel" name="STATIC_EPG_Description" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX" changed="20221001011502">61</row>
             <row id="CY">8</row>
@@ -2749,6 +2717,22 @@
             </row>
             <row id="Y" state="3" changed="20221024100559">
               <prev>382</prev>
+              <native>404</native>
+            </row>
+          </component>
+          <component class="TVisLabel" name="STATIC_EPG_Start" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX">57</row>
+            <row id="CY">8</row>
+            <row id="Text">
+              <native>EPG Start</native>
+              <lang id="ru" date="20221001010304">EPG начало</lang>
+            </row>
+            <row id="X" state="3" changed="20221024100559">
+              <prev>157</prev>
+              <native>256</native>
+            </row>
+            <row id="Y" state="3" changed="20221024100559">
+              <prev>357</prev>
               <native>404</native>
             </row>
           </component>
@@ -2783,6 +2767,32 @@
               <prev>383</prev>
               <native>431</native>
             </row>
+          </component>
+          <component class="TVisLabel" name="STATIC_EPG_End" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX">57</row>
+            <row id="CY">8</row>
+            <row id="Text">
+              <native>EPG End</native>
+              <lang id="ru" date="20221001010325">EPG конец</lang>
+            </row>
+            <row id="X" state="3" changed="20221024211028">
+              <prev>339</prev>
+              <native>256</native>
+            </row>
+            <row id="Y" state="3" changed="20221024211028">
+              <prev>404</prev>
+              <native>430</native>
+            </row>
+          </component>
+          <component class="TVisCheckBox" name="1219" state="0" created="20221024211028" type="button">
+            <row id="CX" state="0">76</row>
+            <row id="CY" state="0">10</row>
+            <row id="Text" state="0">
+              <native>Use duration</native>
+              <lang id="ru" date="20221024211135">Исп. длительность</lang>
+            </row>
+            <row id="X" state="0">340</row>
+            <row id="Y" state="0">443</row>
           </component>
           <component class="TVisLabel" name="STATIC_TIMESTAMP" created="20221018224522" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX">59</row>
@@ -3043,6 +3053,18 @@
               <native>415</native>
             </row>
           </component>
+          <component class="TVisEdit" name="1053" type="edit">
+            <row id="CX" changed="20221018234003">77</row>
+            <row id="CY">12</row>
+            <row id="X" state="3" changed="20221024100559">
+              <prev>7</prev>
+              <native>173</native>
+            </row>
+            <row id="Y" state="3" changed="20221024100559">
+              <prev>393</prev>
+              <native>415</native>
+            </row>
+          </component>
           <component class="TVisEdit" name="1054" type="edit">
             <row id="CX" state="3" changed="20221024100559">
               <prev>61</prev>
@@ -3055,33 +3077,6 @@
             </row>
             <row id="Y" state="3" changed="20221024100559">
               <prev>367</prev>
-              <native>415</native>
-            </row>
-          </component>
-          <component class="TVisEdit" name="1055" type="edit">
-            <row id="CX" state="3" changed="20221024100559">
-              <prev>61</prev>
-              <native>77</native>
-            </row>
-            <row id="CY">12</row>
-            <row id="X" state="3" changed="20221024100559">
-              <prev>224</prev>
-              <native>339</native>
-            </row>
-            <row id="Y" state="3" changed="20221024100559">
-              <prev>367</prev>
-              <native>415</native>
-            </row>
-          </component>
-          <component class="TVisEdit" name="1053" type="edit">
-            <row id="CX" changed="20221018234003">77</row>
-            <row id="CY">12</row>
-            <row id="X" state="3" changed="20221024100559">
-              <prev>7</prev>
-              <native>173</native>
-            </row>
-            <row id="Y" state="3" changed="20221024100559">
-              <prev>393</prev>
               <native>415</native>
             </row>
           </component>
@@ -3106,6 +3101,21 @@
             </row>
             <row id="Y" state="3" changed="20221024100559">
               <prev>393</prev>
+              <native>441</native>
+            </row>
+          </component>
+          <component class="TVisEdit" name="1055" type="edit">
+            <row id="CX" state="3" changed="20221024100559">
+              <prev>61</prev>
+              <native>77</native>
+            </row>
+            <row id="CY">12</row>
+            <row id="X" state="3" changed="20221024211028">
+              <prev>339</prev>
+              <native>256</native>
+            </row>
+            <row id="Y" state="3" changed="20221024211028">
+              <prev>415</prev>
               <native>441</native>
             </row>
           </component>
@@ -4352,6 +4362,10 @@
           <native>Profiles list are static, not requested from provider and can be set manually.</native>
           <lang id="ru" date="20221018230048">Список Профилей статичный, не запрашивается у провайдера и может быть задан вручную.</lang>
         </row>
+        <row id="IDS_STRING_CHECK_USE_DURATION" state="0" created="20221024211542">
+          <native>Use duration as EPG end. Calculate EPG end time by adding duration value to the EPG start time.</native>
+          <lang id="ru" date="20221024211714">Использовать длительность для вычисления конца передачи. Поле "конец EPG" содержит параметр который будет использован для расчета конца передачи. Начало EPG + Длительность.</lang>
+        </row>
         <row id="IDS_STRING_COMBO_CONFIGS">
           <native>Choose the plugin config for selected account</native>
           <lang id="ru" date="20221018230243">Выбрать конфигурацию плагина для выбранного аккаунта</lang>
@@ -4554,34 +4568,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20221024100559">
-          <prev>5.2.1127, 18 Oct 2022</prev>
-          <native>5.3.1142, 23 Oct 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20221024211028">
+          <prev>5.3.1142, 23 Oct 2022</prev>
+          <native>5.3.1146, 24 Oct 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221001005006">5</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20221024100559">
           <prev>2</prev>
           <native>3</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221024100559">
-          <prev>1127</prev>
-          <native>1142</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221024211028">
+          <prev>1142</prev>
+          <native>1146</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20221024100559">
-          <prev>5.2.1127</prev>
-          <native>5.3.1142</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20221024211028">
+          <prev>5.3.1142</prev>
+          <native>5.3.1146</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221001005006">5</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20221024100559">
           <prev>2</prev>
           <native>3</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221024100559">
-          <prev>1127</prev>
-          <native>1142</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221024211028">
+          <prev>1142</prev>
+          <native>1146</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

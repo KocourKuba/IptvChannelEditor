@@ -177,6 +177,7 @@ protected:
 	CButton m_wndChkVodM3U;
 	CButton m_wndBtnVodParseTest;
 	CButton m_wndBtnVodTemplateTest;
+	CButton m_wndChkUseDuration;
 
 	CString m_Name;
 	CString m_Title;
