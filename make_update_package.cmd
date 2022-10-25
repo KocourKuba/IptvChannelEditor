@@ -63,7 +63,7 @@ mklink /D playlists "%ROOT%playlists" >nul 2>&1
 echo build update package...
 
 7z a -xr!*.bin dune_plugin.7z dune_plugin >nul
-7z a -xr!*.bin playlists.7z playlists >nul
+7z a -xr!*.bin -xr!custom playlists.7z playlists >nul
 
 call :header > %outfile%
 
@@ -94,7 +94,7 @@ echo %ROOT%dune_plugin			>>packing.lst
 echo %ROOT%playlists			>>packing.lst
 echo dune_plugin_*.zip			>>packing.lst
 
-7z a -xr!*.bin "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
+7z a -xr!*.bin -xr!custom "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
 copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package\dune_channel_editor_universal.7z.%BUILD%" >nul
 del packing.lst >nul 2>&1
 del dune_plugin_*.zip >nul 2>&1

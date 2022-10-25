@@ -310,6 +310,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 		for (const auto& item : GetConfig().get_all_plugins())
 		{
+			if (item == PluginType::enCustom) continue;
+
 			if (!PackPlugin(item, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 			{
 				auto plugin = StreamContainer::get_instance(item);
