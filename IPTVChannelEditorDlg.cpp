@@ -661,9 +661,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_cur_account = m_all_credentials[selected];
 	}
 
-	m_wndPlaylist.ResetContent();
-
-	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_plugin = StreamContainer::get_instance(m_plugin_type);
 
@@ -735,12 +732,14 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_playlist_info.emplace_back(info);
 	}
 
+	m_wndPlaylist.ResetContent();
 	for (const auto& playlist : m_playlist_info)
 	{
 		int idx = m_wndPlaylist.AddString(playlist.get_name().c_str());
 		m_wndPlaylist.SetItemData(idx, (DWORD_PTR)&playlist);
 	}
 
+	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	if (pl_idx >= m_wndPlaylist.GetCount() || pl_idx < 0)
 		pl_idx = 0;
 
