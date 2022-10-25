@@ -539,6 +539,36 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SetButtonImage(IDB_PNG_DOWNLOAD, m_wndBtnDownloadPlaylist);
 	SetButtonImage(IDB_PNG_FILTER, m_wndBtnFilter);
 
+	std::vector<std::wstring> strm_params;
+	strm_params.insert(strm_params.end(),
+					   {
+						  L"{SUBDOMAIN}",
+						  L"{LOGIN}",
+						  L"{PASSWORD}",
+						  L"{TOKEN}",
+						  L"{SERVER_ID}",
+						  L"{DEVICE_ID}",
+						  L"{QUALITY_ID}",
+						  L"{DOMAIN}",
+						  L"{PORT}",
+						  L"{ID}",
+						  L"{INT_ID}",
+					   });
+	m_wndStreamUrl.SetTemplateParams(strm_params);
+
+	std::vector<std::wstring> arc_params(std::move(strm_params));
+	arc_params.insert(arc_params.end(),
+					  {
+						  L"{LIVE_URL}",
+						  L"{HOST}",
+						  L"{CU_SUBST}",
+						  L"{START}",
+						  L"{NOW}",
+						  L"{DURATION}",
+						  L"{OFFSET}",
+					  });
+	m_wndCustomArchiveUrl.SetTemplateParams(arc_params);
+
 	// Toggle controls state
 	m_wndSearch.EnableWindow(FALSE);
 	m_wndPlSearch.EnableWindow(FALSE);
@@ -1569,6 +1599,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_streamArchiveUrl = m_plugin->get_archive_template(stream_idx, channel.get()).c_str();
 	m_wndCustomArchiveUrl.EnableWindow(custom_archive);
 	m_wndBtnCustomArchiveUrl.SetCheck(custom_archive);
+	m_wndBtnCustomArchiveUrl.SetWindowText(load_string_resource(custom_archive ? IDS_STRING_CUSTOM_ARCHIVE_URL : IDS_STRING_ARCHIVE_URL).c_str());
 
 	// update stream info
 	auto hash = channel->get_hash();

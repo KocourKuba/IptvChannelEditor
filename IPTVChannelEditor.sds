@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="162" scanned="20221025190229" built="20221025190352" lang="ru" pane="TLogPane" col="1" row="Dialogs.110.STATIC_Archive_Url.Text">
+<desktop scan="165" scanned="20221026004612" built="20221026005020" lang="ru" pane="TLogPane" col="4" row="Strings.12.IDS_STRING_CUSTOM_URL">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="7"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

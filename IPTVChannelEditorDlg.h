@@ -37,6 +37,7 @@ DEALINGS IN THE SOFTWARE.
 #include "TrayIcon.h"
 #include "MySplitButton.h"
 #include "ColorEdit.h"
+#include "MenuEdit.h"
 #include "vod_movie.h"
 
 #include "UtilsLib\json_wrapper.h"
@@ -284,8 +285,8 @@ protected:
 	CSplitButton m_wndPack;
 
 	CEdit m_wndStreamID;
-	CEdit m_wndStreamUrl;
-	CEdit m_wndCustomArchiveUrl;
+	CMenuEdit m_wndStreamUrl;
+	CMenuEdit m_wndCustomArchiveUrl;
 	CColorEdit m_wndEpgID1;
 	CColorEdit m_wndEpgID2;
 	CColorEdit m_wndArchiveDays;
