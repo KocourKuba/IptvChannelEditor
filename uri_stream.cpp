@@ -27,7 +27,7 @@ int uri_stream::get_hash()
 	if (!hash)
 	{
 		// convert to utf8
-		const auto& uri = utils::utf16_to_utf8(get_is_template() ? get_id() : get_uri());
+		const auto& uri = utils::utf16_to_utf8(get_id().empty() ? get_uri() : get_id());
 		set_hash(crc32_bitwise(uri.c_str(), uri.size()));
 	}
 
@@ -55,8 +55,8 @@ uri_stream& uri_stream::operator=(const uri_stream& src)
 		host = src.host;
 
 		title = src.title;
-		catchup = src.catchup;
-		catchup_template = src.catchup_template;
+		catchup_id = src.catchup_id;
+		custom_archive_url = src.custom_archive_url;
 		epg_id = src.epg_id;
 		time_shift_hours = src.time_shift_hours;
 		adult = src.adult;

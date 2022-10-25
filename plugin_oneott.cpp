@@ -58,12 +58,12 @@ void plugin_oneott::load_default()
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 
 	streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
 
 	streams_config[1].cu_type = CatchupType::cu_shift;
 	streams_config[1].cu_subst = "utc";
 	streams_config[1].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}";
-	streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[1].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://epg.propg.net/{EPG_ID}/epg2/{DATE}";

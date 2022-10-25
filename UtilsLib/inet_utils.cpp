@@ -226,7 +226,7 @@ bool CurlDownload(const std::wstring& url,
 		easy.add<CURLOPT_HTTPAUTH>(CURLAUTH_ANY);
 		easy.add<CURLOPT_SSL_VERIFYPEER>(0);
 		easy.add<CURLOPT_SSL_VERIFYHOST>(0);
-		easy.add<CURLOPT_CONNECTTIMEOUT>(30);
+		easy.add<CURLOPT_CONNECTTIMEOUT>(10);
 		easy.add<CURLOPT_TIMEOUT>(30);
 		easy.add<CURLOPT_USERAGENT>("DuneHD/1.0");
 

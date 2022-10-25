@@ -248,7 +248,6 @@ class default_config extends dynamic_config
     public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
         $now = time();
-        $url = $channel->get_streaming_url();
         $is_archive = (int)$archive_ts > 0;
         $stream_type = $this->get_format($plugin_cookies);
         $ext_params = $channel->get_ext_params();
@@ -256,6 +255,8 @@ class default_config extends dynamic_config
         $ext_params[CU_START] = $archive_ts;
         $ext_params[CU_NOW] = $now;
         $ext_params[CU_OFFSET] = $now - $archive_ts;
+        $ext_params[CU_SUBST] = $this->get_stream_param($stream_type, CU_SUBST);
+        $ext_params[CU_DURATION] = $this->get_stream_param($stream_type, CU_DURATION);
 
         $replaces = array(
             CHANNEL_ID  => '{ID}',
@@ -275,38 +276,50 @@ class default_config extends dynamic_config
             M_QUALITY   => '{QUALITY_ID}',
         );
 
-        if (empty($url)) {
-            switch ($this->get_stream_param($stream_type, CU_TYPE)) {
-                case 'shift':
-                case 'append':
-                    $url = $this->get_stream_param($stream_type, URL_TEMPLATE);
-                    if ($is_archive) {
-                        $url .= (strrpos($url, '?', -1) === false) ? '?' : '&';
-                        $url .= $this->get_stream_param($stream_type, URL_ARC_TEMPLATE);
-                    }
-                    break;
-                case 'flussonic':
-                    $url = $this->get_stream_param($stream_type, $is_archive ? URL_ARC_TEMPLATE : URL_TEMPLATE);
-                    $ext_params[CU_DURATION] = $this->get_stream_param($stream_type, CU_DURATION);
-                    break;
-            }
+        $custom_url = $channel->get_streaming_url();
+        $custom_arc_template = $channel->get_custom_arc_template();
+        if (empty($custom_url)) {
+            // url template, live or archive
+            $live_url = $this->get_stream_param($stream_type, URL_TEMPLATE);
 
-            $ext_params[CU_SUBST] = $this->get_stream_param($stream_type, CU_SUBST);
-        } else if ($is_archive) {
-            $catchup_template = $channel->get_custom_arc_template();
-            $url .= empty($catchup_template) ?  $this->get_stream_param($stream_type, URL_CUSTOM_ARC_TEMPLATE) : $catchup_template;
+            if (empty($custom_arc_template)) {
+                // global url archive template
+                $archive_url = $this->get_stream_param($stream_type, URL_ARC_TEMPLATE);
+            } else {
+                // custom archive url template
+                $archive_url = $custom_arc_template;
+            }
+        } else {
+            // custom url
+            $live_url = $custom_url;
+
+            if (empty($custom_arc_template)) {
+                // global custom url archive template
+                $archive_url = $this->get_stream_param($stream_type, URL_CUSTOM_ARC_TEMPLATE);
+            } else {
+                // custom url archive or template
+                $archive_url = $custom_arc_template;
+            }
         }
 
+        if ($is_archive) {
+            // replace macros for live url
+            $play_template_url = str_replace('{LIVE_URL}', $live_url, $archive_url);
+        } else {
+            $play_template_url = $custom_url;
+        }
+
+        // replace all macros
         foreach ($replaces as $key => $value)
         {
             if (isset($ext_params[$key]) && !empty($ext_params[$key])) {
-                $url = str_replace($value, $ext_params[$key], $url);
+                $play_template_url = str_replace($value, $ext_params[$key], $play_template_url);
             }
         }
 
         //hd_print("Stream url:  $url");
 
-        return $this->UpdateMpegTsBuffering($url, $plugin_cookies);
+        return $this->UpdateMpegTsBuffering($play_template_url, $plugin_cookies);
     }
 
     /**

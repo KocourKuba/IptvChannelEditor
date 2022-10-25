@@ -52,6 +52,7 @@ static constexpr auto TV_CATEGORY = "tv_category";
 static constexpr auto TV_CHANNELS = "tv_channels";
 static constexpr auto TV_CHANNEL = "tv_channel";
 static constexpr auto CHANNEL_ID = "channel_id";
+static constexpr auto CUSTOM_URL = "custom_url";
 static constexpr auto EPG1_ID = "epg_id";
 static constexpr auto EPG2_ID = "tvg_id";
 static constexpr auto CAPTION = "caption";

@@ -55,6 +55,7 @@ struct EpgInfo
 class base_plugin : public plugin_config
 {
 public:
+	static constexpr auto REPL_LIVE_URL   = L"{LIVE_URL}";   // live url, used in archive template substitution
 	static constexpr auto REPL_DOMAIN     = L"{DOMAIN}";     // stream url domain (set from playlist)
 	static constexpr auto REPL_PORT       = L"{PORT}";       // stream url port (set from playlist)
 	static constexpr auto REPL_ID         = L"{ID}";         // id (set from playlist)
@@ -179,18 +180,32 @@ public:
 	std::wstring compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time, const uri_stream* info);
 
 	/// <summary>
-	/// get templated url
+	/// get playable url
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	std::wstring get_templated_stream(const TemplateParams& params, uri_stream* info) const;
+	std::wstring get_play_stream(const TemplateParams& params, uri_stream* info) const;
 
 	/// <summary>
-	/// get templated url
+	/// get template live url
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	std::wstring get_archive_template(const TemplateParams& params, const uri_stream* info) const;
+	std::wstring get_live_template(size_t stream_idx, const uri_stream* info) const;
+
+	/// <summary>
+	/// get archive template url
+	/// </summary>
+	/// <param name="params">parameters for generating url</param>
+	/// <returns>string url</returns>
+	std::wstring get_archive_template(size_t stream_idx, const uri_stream* info) const;
+
+	/// <summary>
+	/// is custom archive template url
+	/// </summary>
+	/// <param name="params">parameters for generating url</param>
+	/// <returns>string url</returns>
+	bool is_custom_archive_template(bool is_template, size_t stream_idx, const std::wstring& url) const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// virtual methods

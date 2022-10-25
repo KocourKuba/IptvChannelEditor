@@ -81,14 +81,14 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 		categories.emplace(rapidxml::get_value_int(node->first_node(utils::TV_CATEGORY_ID)));
 	}
 
-	if (get_id().empty())
+	const auto& stream_url = rapidxml::get_value_wstring(node->first_node(utils::STREAMING_URL));
+	if (!stream_url.empty())
 	{
-		set_is_template(false);
-		parent_plugin->parse_stream_uri(rapidxml::get_value_wstring(node->first_node(utils::STREAMING_URL)), this);
-		get_hash();
-		set_catchup_template(rapidxml::get_value_wstring(node->first_node(utils::CATCHUP_URL_TEMPLATE)));
+		parent_plugin->parse_stream_uri(stream_url, this);
 	}
+	get_hash();
 
+	set_custom_archive_url(rapidxml::get_value_wstring(node->first_node(utils::CATCHUP_URL_TEMPLATE)));
 	set_archive_days(rapidxml::get_value_int(node->first_node(utils::ARCHIVE)));
 	set_adult(rapidxml::get_value_int(node->first_node(utils::PROTECTED)));
 }
@@ -102,8 +102,7 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	channel_node->append_node(rapidxml::alloc_node(alloc, utils::CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <channel_id>1</channel_id> or <channel_id>tv3</channel_id>
-	if (get_is_template())
-		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CHANNEL_ID, utils::utf16_to_utf8(get_id()).c_str()));
+	channel_node->append_node(rapidxml::alloc_node(alloc, utils::CHANNEL_ID, utils::utf16_to_utf8(get_id()).c_str()));
 
 	// used in glanz
 	// <int_id>1</int_id>
@@ -145,9 +144,9 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	if (!get_is_template() && !get_uri().empty())
 	{
 		channel_node->append_node(rapidxml::alloc_node(alloc, utils::STREAMING_URL, utils::utf16_to_utf8(get_uri()).c_str()));
-		if (!get_catchup_template().empty())
+		if (!get_custom_archive_url().empty())
 		{
-			channel_node->append_node(rapidxml::alloc_node(alloc, utils::CATCHUP_URL_TEMPLATE, utils::utf16_to_utf8(get_catchup_template()).c_str()));
+			channel_node->append_node(rapidxml::alloc_node(alloc, utils::CATCHUP_URL_TEMPLATE, utils::utf16_to_utf8(get_custom_archive_url()).c_str()));
 		}
 	}
 

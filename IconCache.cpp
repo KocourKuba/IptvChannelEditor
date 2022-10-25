@@ -39,12 +39,6 @@ static char THIS_FILE[] = __FILE__;
 
 const CImage& CIconCache::get_icon(const std::wstring& path)
 {
-	static CImage nullImage;
-	if (!nullImage)
-	{
-		LoadImageFromUrl(GetAppPath(utils::CATEGORIES_LOGO_PATH) + L"channel_unset.png", nullImage);
-	}
-
 	int hash = xxh::xxhash<32>(path);
 
 	if (auto pair = m_imageMap.find(hash); pair != m_imageMap.end())
@@ -52,11 +46,14 @@ const CImage& CIconCache::get_icon(const std::wstring& path)
 
 	// not found in cache, try to load
 	auto container = std::make_unique<ImageContainer>();
-	if (LoadImageFromUrl(path, container->get_image()))
+	if (!LoadImageFromUrl(path, container->get_image()))
 	{
-		m_imageMap[hash] = std::move(container);
-		return m_imageMap.at(hash)->get_image();
+		CImage nullImage;
+		LoadImageFromUrl(GetAppPath(utils::CATEGORIES_LOGO_PATH) + L"channel_unset.png", nullImage);
+		container->set_image(nullImage);
 	}
 
-	return nullImage;
+	m_imageMap[hash] = std::move(container);
+
+	return m_imageMap.at(hash)->get_image();
 }

@@ -73,7 +73,7 @@ void plugin_fox::load_default()
 	per_channel_token = true;
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/fox-tv/epg/{EPG_ID}.json";
 }

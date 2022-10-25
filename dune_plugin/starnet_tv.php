@@ -156,39 +156,41 @@ class Starnet_Tv extends Abstract_Tv
                 continue;
             }
 
-            // update play stream url and calculate unique id from url hash
-            if (isset($xml_tv_channel->channel_id)) {
-                $channel_id = (string)$xml_tv_channel->channel_id;
-                $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
-                // update stream url by channel ID
-                $hash = $channel_id;
-                $streaming_url = '';
-            } else {
-                // custom url, play as is
-                $streaming_url = (string)$xml_tv_channel->streaming_url;
-                $hash = $channel_id = hash("crc32", $streaming_url);
-                $ext_params = array();
-            }
-
             // ignore disabled channel
             if (isset($xml_tv_channel->disabled)) {
-                hd_print("Channel $xml_tv_channel->caption ($channel_id) is disabled");
+                hd_print("Channel $xml_tv_channel->caption is disabled");
                 continue;
             }
 
             // Read category id from channel
             if (!isset($xml_tv_channel->tv_category_id)) {
-                hd_print("Error: Category undefined for channel $hash ($xml_tv_channel->caption) !");
+                hd_print("Error: Category undefined for channel $xml_tv_channel->caption !");
                 continue;
             }
 
-            $tv_category_id = (int)$xml_tv_channel->tv_category_id;
+            // read channel id and custom url if exist
+            if (isset($xml_tv_channel->channel_id)) {
+                $channel_id = (string)$xml_tv_channel->channel_id;
+                $ext_params = isset($pl_entries[$channel_id]) ? $pl_entries[$channel_id] : array();
+                // update stream url by channel ID
+                $hash = $channel_id;
+                $streaming_url = isset($xml_tv_channel->streaming_url) ? (string)$xml_tv_channel->streaming_url : '';
+            } else {
+                // custom url, no id, play as is set channel id as url hash
+                $streaming_url = (string)$xml_tv_channel->streaming_url;
+                $hash = $channel_id = hash('crc32', $streaming_url);
+                $ext_params = array();
+            }
 
+            // custom archive url or template
+            $custom_archive_url = isset($xml_tv_channel->catchup_url_template) ? $xml_tv_channel->catchup_url_template : '';
+
+            $tv_category_id = (int)$xml_tv_channel->tv_category_id;
             if ($this->channels->has($hash)) {
                 $channel = $this->channels->get($hash);
                 if ($tv_category_id !== $fav_category_id) {
                     hd_print("$tv_category_id !== $fav_category_id");
-                    hd_print("Channel $xml_tv_channel->caption ($channel_id) already exist. Duplicate channel");
+                    hd_print("Channel $xml_tv_channel->caption ($channel_id) already exist in category $tv_category_id");
                 }
             } else {
                 // https not supported for old players
@@ -199,15 +201,13 @@ class Starnet_Tv extends Abstract_Tv
                 $epg1 = (string)$xml_tv_channel->epg_id;
                 $epg2 = (empty($xml_tv_channel->tvg_id)) ? $epg1 : (string)$xml_tv_channel->tvg_id;
 
-                $custom_arc_template = isset($xml_tv_channel->catchup_url_template) ? $xml_tv_channel->catchup_url_template : "";
-
                 $channel = new Default_Channel(
                     $hash,
                     $channel_id,
                     (string)$xml_tv_channel->caption,
                     $icon_url,
                     $streaming_url,
-                    $custom_arc_template,
+                    $custom_archive_url,
                     (int)$xml_tv_channel->archive,
                     $number,
                     $epg1,

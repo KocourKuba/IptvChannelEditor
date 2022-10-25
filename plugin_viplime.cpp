@@ -55,12 +55,12 @@ void plugin_viplime::load_default()
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
 
 	streams_config[1].cu_type = CatchupType::cu_shift;
 	streams_config[1].cu_subst = "utc";
 	streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
-	streams_config[1].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[1].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{EPG_ID}.json";
 

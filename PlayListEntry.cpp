@@ -160,7 +160,8 @@ void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::wstring>
 {
 	for (const auto& tag : id_search_tags)
 	{
-		if (const auto& pair = tags.find(tag); pair != tags.end())
+		const auto& pair = tags.find(tag);
+		if (pair != tags.end() && !pair->second.empty())
 		{
 			set_id(pair->second);
 			break;
@@ -188,7 +189,8 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wst
 {
 	for (const auto& tag : archive_search_tags)
 	{
-		if (const auto& pair = tags.find(tag); pair != tags.end())
+		const auto& pair = tags.find(tag);
+		if (pair != tags.end() && !pair->second.empty())
 		{
 			int day = utils::char_to_int(pair->second);
 			if (tag == m3u_entry::info_tags::tag_catchup_time)
@@ -204,7 +206,8 @@ void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring
 	// priority -> tvg_id -> tvg_name -> title
 	for (const auto& tag : epg_search_tags)
 	{
-		if (const auto& pair = tags.find(tag); pair != tags.end())
+		const auto& pair = tags.find(tag);
+		if (pair != tags.end() && !pair->second.empty())
 		{
 			set_epg_id(0, pair->second);
 			break;
@@ -227,7 +230,7 @@ void PlaylistEntry::search_catchup(const std::map<m3u_entry::info_tags, std::wst
 {
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup); pair != tags.end())
 	{
-		set_catchup(pair->second);
+		set_catchup_id(pair->second);
 	}
 }
 

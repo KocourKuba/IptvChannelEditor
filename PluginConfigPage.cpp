@@ -345,13 +345,13 @@ void CPluginConfigPage::AssignMacros()
 {
 	std::vector<std::wstring> pl_params =
 	{
-				L"{SUBDOMAIN}",
-				L"{LOGIN}",
-				L"{PASSWORD}",
-				L"{TOKEN}",
-				L"{SERVER_ID}",
-				L"{DEVICE_ID}",
-				L"{QUALITY_ID}",
+		L"{SUBDOMAIN}",
+		L"{LOGIN}",
+		L"{PASSWORD}",
+		L"{TOKEN}",
+		L"{SERVER_ID}",
+		L"{DEVICE_ID}",
+		L"{QUALITY_ID}",
 	};
 
 	m_wndPlaylistTemplate.SetTemplateParams(pl_params);
@@ -360,11 +360,11 @@ void CPluginConfigPage::AssignMacros()
 	std::vector<std::wstring> strm_params(std::move(pl_params));
 	strm_params.insert(strm_params.end(),
 					   {
-								   L"{DOMAIN}",
-								   L"{PORT}",
-								   L"{ID}",
-								   L"{INT_ID}",
-								   L"{HOST}",
+							L"{DOMAIN}",
+							L"{PORT}",
+							L"{ID}",
+							L"{INT_ID}",
+							L"{HOST}",
 					   });
 
 	m_wndStreamTemplate.SetTemplateParams(strm_params);
@@ -372,11 +372,12 @@ void CPluginConfigPage::AssignMacros()
 	std::vector<std::wstring> arc_params(std::move(strm_params));
 	arc_params.insert(arc_params.end(),
 					  {
-								  L"{CU_SUBST}",
-								  L"{START}",
-								  L"{NOW}",
-								  L"{DURATION}",
-								  L"{OFFSET}",
+						  L"{LIVE_URL}",
+						  L"{CU_SUBST}",
+						  L"{START}",
+						  L"{NOW}",
+						  L"{DURATION}",
+						  L"{OFFSET}",
 					  });
 
 	m_wndStreamArchiveTemplate.SetTemplateParams(arc_params);
@@ -384,31 +385,31 @@ void CPluginConfigPage::AssignMacros()
 
 	std::vector<std::wstring> epg_params =
 	{
-				L"{ID}",
-				L"{DOMAIN}",
-				L"{EPG_ID}",
-				L"{TOKEN}",
-				L"{TIMESTAMP}",
-				L"{DATE}",
+		L"{ID}",
+		L"{DOMAIN}",
+		L"{EPG_ID}",
+		L"{TOKEN}",
+		L"{TIMESTAMP}",
+		L"{DATE}",
 	};
 	m_wndEpgUrl.SetTemplateParams(epg_params);
 
 	std::vector<std::wstring> date_fmt_params =
 	{
-				L"{YEAR}",
-				L"{MONTH}",
-				L"{DAY}",
+		L"{YEAR}",
+		L"{MONTH}",
+		L"{DAY}",
 	};
 	m_wndDateFormat.SetTemplateParams(date_fmt_params);
 
 	std::vector<std::wstring> epg_start_time_params =
 	{
-				L"{YEAR}",
-				L"{MONTH}",
-				L"{DAY}",
-				L"{HOUR}",
-				L"{MINUTE}",
-				L"{TIMESTAMP}",
+		L"{YEAR}",
+		L"{MONTH}",
+		L"{DAY}",
+		L"{HOUR}",
+		L"{MINUTE}",
+		L"{TIMESTAMP}",
 	};
 	m_wndEpgStartFormat.SetTemplateParams(epg_start_time_params);
 }

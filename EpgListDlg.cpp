@@ -238,7 +238,7 @@ void CEpgListDlg::OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult)
 		bool isArchive = (_time32(nullptr) - start_pair->second.first) > 0 && start_pair->second.second > (_time32(nullptr) - m_info->get_archive_days() * 84600);
 		if (isArchive)
 		{
-			const auto& url = m_plugin->get_templated_stream(m_params, m_info);
+			const auto& url = m_plugin->get_play_stream(m_params, m_info);
 
 			TRACE(L"\nTest URL: %s\n", url.c_str());
 

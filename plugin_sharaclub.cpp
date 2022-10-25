@@ -72,12 +72,12 @@ void plugin_sharaclub::load_default()
 
 	streams_config[0].cu_type = CatchupType::cu_append;
 	streams_config[0].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}";
 
 	streams_config[1].cu_type = CatchupType::cu_append;
 	streams_config[1].cu_subst = "utc";
 	streams_config[1].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
-	streams_config[1].uri_arc_template = "{CU_SUBST}={START}";
+	streams_config[1].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}";
 
 	auto& params = epg_params[0];
 	params.epg_root = "";

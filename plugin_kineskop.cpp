@@ -57,7 +57,7 @@ void plugin_kineskop::load_default()
 	per_channel_token = true;
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.esalecrm.net/kineskop/epg/{EPG_ID}.json";
 

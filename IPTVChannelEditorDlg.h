@@ -123,7 +123,6 @@ protected:
 	afx_msg void OnUpdateGetStreamInfo(CCmdUI* pCmdUI);
 	afx_msg void OnPlayStream();
 	afx_msg void OnUpdatePlayStream(CCmdUI* pCmdUI);
-	afx_msg void OnBnClickCheckArchive();
 	afx_msg void OnSyncTreeItem();
 	afx_msg void OnUpdateSyncTreeItem(CCmdUI* pCmdUI);
 
@@ -149,7 +148,8 @@ protected:
 	afx_msg void OnBnClickedCheckShowUnknown();
 	afx_msg void OnBnClickedCheckShowUrl();
 
-	afx_msg void OnBnClickedCheckCustomize();
+	afx_msg void OnBnClickedCheckCustomUrl();
+	afx_msg void OnBnClickedCheckCustomArchive();
 	afx_msg void OnBnClickedCheckAdult();
 	afx_msg void OnBnClickedCheckArchive();
 	afx_msg void OnEnChangeEditEpg2ID();
@@ -159,11 +159,7 @@ protected:
 	afx_msg void OnEnChangeEditArchiveDays();
 	afx_msg void OnEnChangeEditUrlID();
 	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinArchiveCheckDay(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinArchiveCheckHour(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditTimeShiftHours();
-	afx_msg void OnEnChangeEditArchiveCheckDays();
-	afx_msg void OnEnChangeEditArchiveCheckHours();
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResult);
@@ -224,7 +220,7 @@ private:
 	void FillTreePlaylist();
 	std::vector<std::wstring> FilterPlaylist();
 
-	void LoadChannelInfo(std::shared_ptr<ChannelInfo> channel = nullptr, HTREEITEM hItem = nullptr);
+	void LoadChannelInfo(std::shared_ptr<ChannelInfo> channel = nullptr);
 	void LoadPlayListInfo(HTREEITEM hItem = nullptr);
 
 	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0) const;
@@ -297,8 +293,6 @@ protected:
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
-	CEdit m_wndArchiveCheckDays;
-	CEdit m_wndArchiveCheckHours;
 	CEdit m_wndSearch;
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
@@ -314,12 +308,12 @@ protected:
 	CButton m_wndNotAdded;
 	CButton m_wndArchive;
 	CButton m_wndAdult;
-	CButton m_wndCustom;
+	CButton m_wndBtnCustomUrl;
+	CButton m_wndBtnCustomArchiveUrl;
 	CButton m_wndPlArchive;
 	CButton m_wndBtnViewEPG;
 	CButton m_wndBtnAccountSetting;
 	CButton m_wndBtnDownloadPlaylist;
-	CButton m_wndCheckArchive;
 	CButton m_wndBtnCacheIcon;
 	CButton m_wndBtnSave;
 	CButton m_wndBtnStop;
@@ -357,8 +351,6 @@ protected:
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
 	int m_archivePlDays = 0; // always read only field
-	int m_archiveCheckDays = 0; // m_wndArchiveCheckays
-	int m_archiveCheckHours = 0; // m_wndArchiveCheckHours
 
 private:
 	Credentials m_cur_account;

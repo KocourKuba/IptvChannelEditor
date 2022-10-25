@@ -54,6 +54,7 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 	std::wsmatch m;
 	if (!std::regex_match(url, m, get_regex_parse_stream_template()))
 	{
+		info->set_is_template(false);
 		return;
 	}
 
@@ -116,57 +117,69 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	return url;
 }
 
-std::wstring base_plugin::get_templated_stream(const TemplateParams& params, uri_stream* info) const
+std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stream* info) const
 {
-	std::wstring url;
 	size_t subtype = (size_t)params.streamSubtype;
-	if (!info->get_is_template())
-	{
-		url = info->get_uri();
-		if (params.shift_back)
-		{
-			url += streams_config[subtype].get_stream_arc_template();
-		}
-	}
-	else
-	{
-		switch (streams_config[subtype].cu_type)
-		{
-			case CatchupType::cu_shift:
-			case CatchupType::cu_append:
-				url = streams_config[subtype].get_stream_template();
-				if (params.shift_back)
-				{
-					url += (url.rfind('?') != std::wstring::npos) ? '&' : '?';
-					url += streams_config[subtype].get_stream_arc_template();
-				}
-				break;
 
-			case CatchupType::cu_flussonic:
-				url = params.shift_back ? streams_config[subtype].get_stream_arc_template() : streams_config[subtype].get_stream_template();
-				break;
-		}
-	}
+	std::wstring url = params.shift_back ? get_archive_template(subtype, info) : get_live_template(subtype, info);
 
 	replace_vars(url, params, info);
 
 	return url;
 }
 
-std::wstring base_plugin::get_archive_template(const TemplateParams& params, const uri_stream* info) const
+std::wstring base_plugin::get_live_template(size_t stream_idx, const uri_stream* info) const
+{
+	return (info->get_is_template()) ? streams_config[stream_idx].get_stream_template() : info->get_uri();
+}
+
+std::wstring base_plugin::get_archive_template(size_t stream_idx, const uri_stream* info) const
 {
 	std::wstring url;
-	size_t subtype = (size_t)params.streamSubtype;
 	if (info->get_is_template())
 	{
-		url = streams_config[subtype].get_stream_arc_template();
+		if (info->get_custom_archive_url().empty())
+		{
+			url = streams_config[stream_idx].get_stream_arc_template();
+		}
+		else
+		{
+			url = info->get_custom_archive_url();
+		}
 	}
 	else
 	{
-		url = streams_config[subtype].get_custom_stream_arc_template();
+		if (info->get_custom_archive_url().empty())
+		{
+			url = streams_config[stream_idx].get_custom_stream_arc_template();
+		}
+		else
+		{
+			url = info->get_custom_archive_url();
+		}
 	}
 
 	return url;
+}
+
+bool base_plugin::is_custom_archive_template(bool is_template, size_t stream_idx, const std::wstring& url) const
+{
+	bool custom = false;
+
+	if (url.empty())
+		return custom;
+
+	const auto& stream_info = streams_config[stream_idx];
+	if (is_template)
+	{
+		custom = (url != stream_info.get_stream_arc_template());
+	}
+	else
+	{
+		custom = (url != stream_info.get_custom_stream_arc_template());
+	}
+
+	return custom;
 }
 
 void base_plugin::set_regex_parse_stream(const std::wstring& val)

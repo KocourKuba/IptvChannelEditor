@@ -55,7 +55,7 @@ void plugin_sharatv::load_default()
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/shara-tv/epg/{EPG_ID}.json";
 }

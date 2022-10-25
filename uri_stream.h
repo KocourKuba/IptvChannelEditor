@@ -60,7 +60,7 @@ public:
 
 	bool is_valid() const override { return get_is_template() ? true : uri_base::is_valid(); }
 
-	const std::wstring& get_id() const { return is_template ? id : str_hash; }
+	const std::wstring& get_id() const { return is_template ? id : (id.empty() ? str_hash : id); }
 	void set_id(const std::wstring& val) { id = val; }
 
 	const std::wstring& get_domain() const { return domain; }
@@ -136,11 +136,11 @@ public:
 	int get_time_shift_hours() const { return time_shift_hours; }
 	void set_time_shift_hours(int val) { time_shift_hours = val; }
 
-	const std::wstring& get_catchup() const { return catchup; }
-	void set_catchup(const std::wstring& val) { catchup = val; }
+	const std::wstring& get_catchup_id() const { return catchup_id; }
+	void set_catchup_id(const std::wstring& val) { catchup_id = val; }
 
-	const std::wstring& get_catchup_template() const { return catchup_template; }
-	void set_catchup_template(const std::wstring& val) { catchup_template = val; }
+	const std::wstring& get_custom_archive_url() const { return custom_archive_url; }
+	void set_custom_archive_url(const std::wstring& val) { custom_archive_url = val; }
 
 	InfoType get_type() const { return base_type; }
 
@@ -172,8 +172,8 @@ private:
 
 	// parsed #EXTINF variables
 	std::wstring title;
-	std::wstring catchup;
-	std::wstring catchup_template;
+	std::wstring catchup_id;
+	std::wstring custom_archive_url;
 	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;
 	int adult = 0;

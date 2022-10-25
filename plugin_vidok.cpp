@@ -64,7 +64,7 @@ void plugin_vidok::load_default()
 
 	streams_config[0].cu_type = CatchupType::cu_append;
 	streams_config[0].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
-	streams_config[0].uri_arc_template = "{CU_SUBST}={START}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}";
 
 	auto& params = epg_params[0];
 	params.epg_url = "http://sapi.ott.st/v2.4/json/epg2?cid={EPG_ID}&token={TOKEN}";
