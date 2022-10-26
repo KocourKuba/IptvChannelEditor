@@ -243,7 +243,7 @@ int parse_info(UpdateInfo& info)
 int check_for_update(UpdateInfo& info)
 {
 	LogProtocol("Try to download update info...");
-	if (!utils::CurlDownload(L"http://igores.ru/sharky72/update.xml", info.update_info))
+	if (!utils::DownloadFile(L"http://igores.ru/sharky72/update.xml", info.update_info))
 	{
 		return err_download_info; // Unable to download update info!
 	}
@@ -277,7 +277,7 @@ int download_update(UpdateInfo& info)
 			std::stringstream file_data;
 			const auto& url = fmt::format(L"http://igores.ru/sharky72/{:s}/{:s}", info.version, item.name);
 			LogProtocol(fmt::format(L"download: {:s}", url));
-			if (!utils::CurlDownload(url, file_data))
+			if (!utils::DownloadFile(url, file_data))
 			{
 				ret = err_download_pkg; // Unable to download update package!
 				break;

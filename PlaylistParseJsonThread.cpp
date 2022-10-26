@@ -79,7 +79,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 	do
 	{
 		std::stringstream data;
-		if (!utils::CurlDownload(m_config.m_url, data, m_config.m_use_cache)) break;
+		if (!utils::DownloadFile(m_config.m_url, data, m_config.m_use_cache)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
@@ -169,7 +169,7 @@ void CPlaylistParseJsonThread::ParseCbilling()
 	do
 	{
 		std::stringstream info;
-		if (!utils::CurlDownload(m_config.m_url, info, m_config.m_use_cache)) break;
+		if (!utils::DownloadFile(m_config.m_url, info, m_config.m_use_cache)) break;
 
 		int total = 0;
 		JSON_ALL_TRY;
@@ -202,7 +202,7 @@ void CPlaylistParseJsonThread::ParseCbilling()
 
 				std::stringstream data;
 				const auto& cat_url = fmt::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", m_config.m_url, category->id, page);
-				if (!utils::CurlDownload(cat_url, data, m_config.m_use_cache) || data.bad())
+				if (!utils::DownloadFile(cat_url, data, m_config.m_use_cache) || data.bad())
 				{
 					retry++;
 					continue;
@@ -301,7 +301,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 		const auto& post = json_request.dump();
 
 		std::stringstream data;
-		if (!utils::CurlDownload(url, data, m_config.m_use_cache, &headers, true, post.c_str())) break;
+		if (!utils::DownloadFile(url, data, m_config.m_use_cache, &headers, true, post.c_str())) break;
 
 		JSON_ALL_TRY;
 		nlohmann::json parsed_json = nlohmann::json::parse(data.str());
@@ -360,7 +360,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 			const auto& cat_post = json_request.dump();
 
 			std::stringstream cat_data;
-			if (!utils::CurlDownload(url, cat_data, m_config.m_use_cache, &headers, true, cat_post.c_str())) break;
+			if (!utils::DownloadFile(url, cat_data, m_config.m_use_cache, &headers, true, cat_post.c_str())) break;
 
 			const auto& data_str = cat_data.str();
 			nlohmann::json movie_json = nlohmann::json::parse(data_str);
@@ -418,7 +418,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 				ATLTRACE("\noffset: %d\n", offset);
 
 				std::stringstream mov_data;
-				if (!utils::CurlDownload(url, mov_data, m_config.m_use_cache, &headers, true, json_request.dump().c_str())) break;
+				if (!utils::DownloadFile(url, mov_data, m_config.m_use_cache, &headers, true, json_request.dump().c_str())) break;
 
 				movie_json = nlohmann::json::parse(mov_data.str());
 			}
@@ -440,7 +440,7 @@ void CPlaylistParseJsonThread::ParseGlanz()
 	do
 	{
 		std::stringstream data;
-		if (!utils::CurlDownload(m_config.m_url, data, m_config.m_use_cache)) break;
+		if (!utils::DownloadFile(m_config.m_url, data, m_config.m_use_cache)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;

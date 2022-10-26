@@ -82,7 +82,7 @@ bool plugin_oneott::parse_access_info(TemplateParams& params, std::list<AccountI
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";
 
 	std::stringstream data;
-	if (!utils::CurlDownload(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data))
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data))
 	{
 		return false;
 	}

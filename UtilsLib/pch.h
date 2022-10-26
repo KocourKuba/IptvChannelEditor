@@ -33,6 +33,7 @@ DEALINGS IN THE SOFTWARE.
 #include <filesystem>
 #include <fstream>
 #include <chrono>
+#include <optional>
 
 #include <fmt/xchar.h>
 

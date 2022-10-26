@@ -271,7 +271,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	const auto& url = m_plugin->get_vod_url(params);
 
 	std::stringstream data;
-	if (!utils::CurlDownload(url, data))
+	if (!utils::DownloadFile(url, data))
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 		OnEndLoadM3U8Playlist(0);
@@ -901,7 +901,7 @@ void CVodViewer::FilterList()
 			ATLTRACE("\n%s\n", post.c_str());
 
 			std::stringstream data;
-			if (!utils::CurlDownload(url, data, true, &headers, true, post.c_str())) break;
+			if (!utils::DownloadFile(url, data, true, &headers, true, post.c_str())) break;
 
 			JSON_ALL_TRY;
 			nlohmann::json parsed_json = nlohmann::json::parse(data.str());
@@ -959,7 +959,7 @@ void CVodViewer::FilterList()
 				std::stringstream next_data;
 				const auto& next_post = json_request.dump();
 				ATLTRACE("\n%s\n", post.c_str());
-				if (!utils::CurlDownload(url, next_data, true, &headers,true, next_post.c_str())) break;
+				if (!utils::DownloadFile(url, next_data, true, &headers,true, next_post.c_str())) break;
 
 				parsed_json = nlohmann::json::parse(data.str());
 			}
@@ -1018,7 +1018,7 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 
 	const auto& url = m_plugin->get_current_vod_template() + L"/video/" + movie.id;
 	std::stringstream data;
-	if (url.empty() || !utils::CurlDownload(url, data, false))
+	if (url.empty() || !utils::DownloadFile(url, data, false))
 	{
 		return;
 	}
@@ -1105,7 +1105,7 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 		headers.emplace_back("Content-Type: application/json");
 
 		std::stringstream data;
-		if (!utils::CurlDownload(url, data, false, &headers, true, post.c_str())) break;
+		if (!utils::DownloadFile(url, data, false, &headers, true, post.c_str())) break;
 
 		JSON_ALL_TRY;
 
@@ -1137,7 +1137,7 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 				ATLTRACE("\n%s\n", post.c_str());
 
 				std::stringstream var_data;
-				if (utils::CurlDownload(url, var_data, false, &headers, true, item_post.c_str()))
+				if (utils::DownloadFile(url, var_data, false, &headers, true, item_post.c_str()))
 				{
 					const auto& variants_data = nlohmann::json::parse(var_data.str());
 					if (variants_data.contains("variants"))

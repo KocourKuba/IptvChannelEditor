@@ -82,7 +82,7 @@ void plugin_itv::load_default()
 bool plugin_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	std::stringstream data;
-	if (!utils::CurlDownload(fmt::format(ACCOUNT_TEMPLATE, params.password), data))
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.password), data))
 	{
 		return false;
 	}

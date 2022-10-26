@@ -116,7 +116,7 @@ BOOL CIconsListDlg::OnInitDialog()
 	{
 		std::unique_ptr<std::istream> pl_stream;
 		std::stringstream data;
-		if (utils::CurlDownload(m_iconSource, data))
+		if (utils::DownloadFile(m_iconSource, data))
 		{
 			auto* pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 			if (pThread)

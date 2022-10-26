@@ -28,24 +28,29 @@ DEALINGS IN THE SOFTWARE.
 #include <string>
 #include <vector>
 #include <atlenc.h>
+#include <sstream>
 
 namespace utils
 {
-bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, unsigned short& port);
+struct CrackedUrl
+{
+	std::wstring scheme;
+	std::wstring user;
+	std::wstring password;
+	std::wstring host;
+	std::wstring path;
+	std::wstring extra_info;
+	unsigned short port = 80;
+};
 
-bool CurlDownload(const std::wstring& url,
+bool CrackUrl(const std::wstring& url, CrackedUrl& cracked);
+
+bool DownloadFile(const std::wstring& url,
 				  std::stringstream& vData,
 				  bool use_cache = false,
 				  std::vector<std::string>* pHeaders = nullptr,
 				  bool verb_post = false,
 				  const char* post_data = nullptr);
-
-bool DownloadFile(const std::wstring& url,
-				  std::vector<unsigned char>& vData,
-				  bool use_cache = false,
-				  std::wstring* pHeaders = nullptr,
-				  const wchar_t* verb = L"GET",
-				  const std::string* post_data = nullptr);
 
 std::string entityDecrypt(const std::string& text);
 

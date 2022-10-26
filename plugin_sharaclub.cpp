@@ -101,7 +101,7 @@ bool plugin_sharaclub::parse_access_info(TemplateParams& params, std::list<Accou
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://{:s}/api/dune-api5m.php?subscr={:s}-{:s}";
 	std::stringstream data;
-	if (!utils::CurlDownload(fmt::format(ACCOUNT_TEMPLATE, params.subdomain, params.login, params.password), data))
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.subdomain, params.login, params.password), data))
 	{
 		return false;
 	}
@@ -144,7 +144,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 									params.login,
 									params.password);
 	std::stringstream data;
-	if (utils::CurlDownload(url, data))
+	if (utils::DownloadFile(url, data))
 	{
 		JSON_ALL_TRY;
 		{
@@ -185,7 +185,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 									  params.password);
 
 		std::stringstream data;
-		if (utils::CurlDownload(url, data))
+		if (utils::DownloadFile(url, data))
 		{
 			JSON_ALL_TRY;
 			{
@@ -210,7 +210,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 									params.login,
 									params.password);
 	std::stringstream data;
-	if (!utils::CurlDownload(url, data))
+	if (!utils::DownloadFile(url, data))
 		return;
 
 	JSON_ALL_TRY;
@@ -255,7 +255,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 									  params.password);
 
 		std::stringstream data;
-		if (utils::CurlDownload(url, data))
+		if (utils::DownloadFile(url, data))
 		{
 			JSON_ALL_TRY;
 			{

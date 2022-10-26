@@ -103,7 +103,7 @@ bool plugin_cbilling::parse_access_info(TemplateParams& params, std::list<Accoun
 	headers.emplace_back("accept: */*");
 	headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, utils::utf16_to_utf8(params.password)));
 	std::stringstream data;
-	if (!utils::CurlDownload(ACCOUNT_TEMPLATE, data, false, &headers))
+	if (!utils::DownloadFile(ACCOUNT_TEMPLATE, data, false, &headers))
 	{
 		return false;
 	}

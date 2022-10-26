@@ -1226,13 +1226,11 @@ bool LoadPngImage(UINT id, CImage& img)
 BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 {
 	HRESULT hr = E_FAIL;
-	std::wstring host;
-	std::wstring path;
-	WORD port = 0;
-	if (utils::CrackUrl(fullPath, host, path, port))
+	utils::CrackedUrl cracked;
+	if (utils::CrackUrl(fullPath, cracked))
 	{
 		std::stringstream data;
-		if (utils::CurlDownload(fullPath, data))
+		if (utils::DownloadFile(fullPath, data))
 		{
 			// Still not clear if this is making a copy internally
 			auto view = data.rdbuf()->_Get_buffer_view();

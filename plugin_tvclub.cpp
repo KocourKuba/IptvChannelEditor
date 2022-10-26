@@ -91,7 +91,7 @@ bool plugin_tvclub::parse_access_info(TemplateParams& params, std::list<AccountI
 
 	std::stringstream data;
 	const auto& url = fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds));
-	if (!utils::CurlDownload(url, data))
+	if (!utils::DownloadFile(url, data))
 	{
 		return false;
 	}
@@ -152,7 +152,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 
 	const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
 	std::stringstream data;
-	if (utils::CurlDownload(url, data))
+	if (utils::DownloadFile(url, data))
 	{
 		JSON_ALL_TRY;
 		{
@@ -199,7 +199,7 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 									  servers_list[params.server_idx].get_id());
 
 		std::stringstream data;
-		if (utils::CurlDownload(url, data))
+		if (utils::DownloadFile(url, data))
 		{
 			JSON_ALL_TRY;
 			{

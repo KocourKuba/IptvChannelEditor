@@ -190,6 +190,7 @@
     <ClInclude Include="rapidxml_print.hpp" />
     <ClInclude Include="rapidxml_utils.hpp" />
     <ClInclude Include="rapidxml_value.hpp" />
+    <ClInclude Include="SmartHandle.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="vectormap.h" />
     <ClInclude Include="xxhash.hpp" />

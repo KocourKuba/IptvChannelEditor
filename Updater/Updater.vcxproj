@@ -100,7 +100,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib;$(SolutionDir)curl\lib32;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmtd.lib;UtilsLibd.lib;BugTrapUD.lib;libcurld.lib;curlcppd.lib;Crypt32.lib;ws2_32.lib;winmm.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmtd.lib;UtilsLibd.lib;BugTrapUD.lib;Crypt32.lib;ws2_32.lib;winmm.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>if NOT EXIST $(SolutionDir)VerGit.h call $(SolutionDir)UpdateVer.cmd</Command>
@@ -126,7 +126,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)SevenZip\Lib;$(SolutionDir)BugTrap\bin;$(SolutionDir)lib;$(SolutionDir)curl\lib32;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmt.lib;UtilsLib.lib;BugTrapU.lib;libcurl.lib;curlcpp.lib;Crypt32.lib;ws2_32.lib;winmm.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmt.lib;UtilsLib.lib;BugTrapU.lib;Crypt32.lib;ws2_32.lib;winmm.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)UpdateVer.cmd</Command>

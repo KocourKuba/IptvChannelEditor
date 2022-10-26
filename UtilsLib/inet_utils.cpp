@@ -27,23 +27,33 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "inet_utils.h"
 
-#include <wtypes.h>
 #include <winhttp.h>
 #include <atltrace.h>
 #include <unordered_map>
 #include <filesystem>
+#include <fstream>
 #include "xxhash.hpp"
 #include "utils.h"
-#include "curl_easy.h"
-#include "curl_form.h"
-#include "curl_ios.h"
-#include "curl_exception.h"
-#include "curl_header.h"
+#include "SmartHandle.h"
 
 #pragma comment(lib, "Winhttp.lib")
 
 namespace utils
 {
+
+template <typename T>
+class CCloseHInternet
+{
+public:
+	~CCloseHInternet() = default;
+
+	static bool Close(T handle)
+	{
+		return FALSE != ::WinHttpCloseHandle(handle);
+	}
+};
+
+using CAutoHinternet = CSmartHandle<HINTERNET, CCloseHInternet>;
 
 template <typename T>
 std::time_t to_time_t(T tp)
@@ -157,39 +167,53 @@ HRESULT SHUrlUnescapeW(const std::wstring& src, std::wstring& result, DWORD dwFl
 	return E_FAIL;
 }
 
-bool CrackUrl(const std::wstring& url, std::wstring& host, std::wstring& path, unsigned short& port)
+bool CrackUrl(const std::wstring& url, CrackedUrl& cracked)
 {
 	URL_COMPONENTS urlComp{};
 	SecureZeroMemory(&urlComp, sizeof(urlComp));
 	urlComp.dwStructSize = sizeof(urlComp);
 
 	// Set required component lengths to non-zero so that they are cracked.
+	urlComp.dwSchemeLength = (DWORD)-1;
+	urlComp.dwUserNameLength = (DWORD)-1;
+	urlComp.dwPasswordLength = (DWORD)-1;
 	urlComp.dwHostNameLength = (DWORD)-1;
 	urlComp.dwUrlPathLength = (DWORD)-1;
+	urlComp.dwExtraInfoLength = (DWORD)-1;
 
 	if (WinHttpCrackUrl(url.c_str(), (DWORD)url.size(), 0, &urlComp))
 	{
-		host = std::wstring(urlComp.lpszHostName, urlComp.dwHostNameLength);
-		path = std::wstring(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
-		port = urlComp.nPort;
+		if (urlComp.dwSchemeLength)
+			cracked.host.assign(urlComp.lpszScheme, urlComp.dwSchemeLength);
+		if (urlComp.dwUserNameLength)
+			cracked.user.assign(urlComp.lpszUserName, urlComp.dwUserNameLength);
+		if (urlComp.dwPasswordLength)
+			cracked.password.assign(urlComp.lpszPassword, urlComp.dwPasswordLength);
+		if (urlComp.dwHostNameLength)
+			cracked.host.assign(urlComp.lpszHostName, urlComp.dwHostNameLength);
+		if (urlComp.dwUrlPathLength)
+			cracked.path.assign(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
+		if (urlComp.dwExtraInfoLength)
+			cracked.path.assign(urlComp.lpszExtraInfo, urlComp.dwExtraInfoLength);
+
+		cracked.port = urlComp.nPort;
+
 		return true;
 	}
 
 	return false;
 }
 
-bool CurlDownload(const std::wstring& url,
+bool DownloadFile(const std::wstring& url,
 				  std::stringstream& vData,
 				  bool use_cache /*= false*/,
 				  std::vector<std::string>* pHeaders /*= nullptr*/,
 				  bool verb_post /*= false*/,
-				  const char* post_data /*= nullptr*/
-)
+				  const char* post_data /*= nullptr*/)
 {
-	const auto& url_narrow = utils::utf16_to_utf8(url);
-	std::string hash_str = url_narrow;
+	std::wstring hash_str = url;
 	if (post_data)
-		hash_str += post_data;
+		hash_str += utf8_to_utf16(std::string(post_data));
 
 	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
 	std::filesystem::create_directory(cache_file);
@@ -211,204 +235,208 @@ bool CurlDownload(const std::wstring& url,
 			{
 				vData << in_file.rdbuf();
 				in_file.close();
+				ATLTRACE(L"\nloaded from cache: %d bytes\n", vData.rdbuf()->_Get_buffer_view()._Size);
 				return vData.tellp() != std::streampos(0);
 			}
 		}
 	}
 
-	try
+	do
 	{
-		curl::curl_ios<std::stringstream> writer(vData);
-		curl::curl_easy easy(writer);
-
-		easy.add<CURLOPT_URL>(utils::utf16_to_utf8(url).c_str());
-		easy.add<CURLOPT_FOLLOWLOCATION>(1L);
-		easy.add<CURLOPT_HTTPAUTH>(CURLAUTH_ANY);
-		easy.add<CURLOPT_SSL_VERIFYPEER>(0);
-		easy.add<CURLOPT_SSL_VERIFYHOST>(0);
-		easy.add<CURLOPT_CONNECTTIMEOUT>(10);
-		easy.add<CURLOPT_TIMEOUT>(30);
-		easy.add<CURLOPT_USERAGENT>("DuneHD/1.0");
-
-		curl::curl_header headers;
-		if (pHeaders)
+		CrackedUrl cracked;
+		if (!CrackUrl(url, cracked))
 		{
-			for (const auto& hdr : *pHeaders)
+			ATLTRACE(L"\nError: Failed to crack url\n");
+			break;
+		}
+
+		// Use WinHttpOpen to obtain a session handle.
+		CAutoHinternet hSession = WinHttpOpen(L"DuneHD/1.0",
+											  /*L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"*/
+											  WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+											  WINHTTP_NO_PROXY_NAME,
+											  WINHTTP_NO_PROXY_BYPASS, 0);
+
+		if (hSession.IsNotValid())
+		{
+			ATLTRACE(L"\nError: Failed to open connection\n");
+			break;
+		}
+
+		WinHttpSetTimeouts(hSession, 0, 10000, 10000, 60000);
+
+		// Specify an HTTP server.
+		CAutoHinternet hConnect = WinHttpConnect(hSession, cracked.host.c_str(), cracked.port, 0);
+		if (hConnect.IsNotValid())
+		{
+			ATLTRACE(L"\nError: Failed to connect\n");
+			break;
+		}
+
+		// Create an HTTP request handle.
+		CAutoHinternet hRequest = WinHttpOpenRequest(hConnect, verb_post ? L"POST" : L"GET", cracked.path.c_str(),
+													 nullptr,
+													 WINHTTP_NO_REFERER,
+													 nullptr,
+													 NULL);
+
+		if (hRequest.IsNotValid())
+		{
+			ATLTRACE(L"\nError: Failed to open request\n");
+			break;
+		}
+
+		if (pHeaders && !pHeaders->empty())
+		{
+			std::wstring all_headers;
+			for (const auto& str : *pHeaders)
 			{
-				headers.add(hdr);
+				all_headers += utils::utf8_to_utf16(str) + L"\n";
 			}
 
-			easy.add<CURLOPT_HTTPHEADER>(headers.get());
+			BOOL result = WinHttpAddRequestHeaders(hRequest, all_headers.c_str(), (DWORD)all_headers.size(), WINHTTP_ADDREQ_FLAG_ADD);
+			ATLTRACE("\nheader added: %d\n", result);
 		}
 
-		if (verb_post && post_data)
+
+		// Send a request.
+		bool bResults = false;
+		bool bRepeat = false;
+		for (;;)
 		{
-			easy.add<CURLOPT_POST>(1L);
-			easy.add<CURLOPT_POSTFIELDS>(post_data);
+			DWORD post_size = post_data ? strlen(post_data) : 0;
+			if (!WinHttpSendRequest(hRequest,
+								   WINHTTP_NO_ADDITIONAL_HEADERS,
+								   0,
+								   post_data ? (LPVOID)post_data : WINHTTP_NO_REQUEST_DATA,
+								   post_size,
+								   post_size,
+								   0))
+			{
+				ATLTRACE(L"\nError: Failed to send request\n");
+				break;
+			}
+
+
+			// End the request.
+			if (!WinHttpReceiveResponse(hRequest, nullptr))
+			{
+				ATLTRACE(L"\nError: Failed to receive response\n");
+				break;
+			}
+
+			DWORD dwStatusCode = 0;
+			DWORD dwSize = sizeof(dwStatusCode);
+
+			if (!WinHttpQueryHeaders(hRequest,
+									 WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+									 WINHTTP_HEADER_NAME_BY_INDEX,
+									 &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
+			{
+				ATLTRACE(L"\nError: Failed to query headers\n");
+				break;
+			}
+
+			switch (dwStatusCode)
+			{
+				case 401:
+				{
+					DWORD dwSupportedSchemes = 0;
+					DWORD dwFirstScheme = 0;
+					DWORD dwAuthTarget = 0;
+
+					if (!WinHttpQueryAuthSchemes(hRequest, &dwSupportedSchemes, &dwFirstScheme, &dwAuthTarget))
+					{
+						ATLTRACE(L"\nError: Failed to query auth schemes\n");
+						break;
+					}
+
+					//This default implementation will allow any authentication scheme support
+					//and will pick in order of "decreasing strength"
+					DWORD dwAuthScheme = 0;
+
+					if (dwSupportedSchemes & WINHTTP_AUTH_SCHEME_NEGOTIATE)
+						dwAuthScheme = WINHTTP_AUTH_SCHEME_NEGOTIATE;
+					else if (dwSupportedSchemes & WINHTTP_AUTH_SCHEME_NTLM)
+						dwAuthScheme = WINHTTP_AUTH_SCHEME_NTLM;
+					else if (dwSupportedSchemes & WINHTTP_AUTH_SCHEME_PASSPORT)
+						dwAuthScheme = WINHTTP_AUTH_SCHEME_PASSPORT;
+					else if (dwSupportedSchemes & WINHTTP_AUTH_SCHEME_DIGEST)
+						dwAuthScheme = WINHTTP_AUTH_SCHEME_DIGEST;
+					else if (dwSupportedSchemes & WINHTTP_AUTH_SCHEME_BASIC)
+						dwAuthScheme = WINHTTP_AUTH_SCHEME_BASIC;
+
+					if (!WinHttpSetCredentials(hRequest,
+											   WINHTTP_AUTH_TARGET_SERVER,
+											   dwAuthScheme,
+											   cracked.user.empty() ? nullptr : cracked.user.c_str(),
+											   cracked.password.c_str(),
+											   nullptr))
+					{
+						ATLTRACE(L"\nError: Failed to set credentials\n");
+						break;
+					}
+
+					bResults = true;
+					bRepeat = true;
+					break;
+				}
+
+				case 200:
+					bResults = true;
+					bRepeat = false;
+					break;
+
+				default:
+					ATLTRACE("\nresponse returns error code: %d\n", dwStatusCode);
+					break;
+			}
+
+			if (!bResults || !bRepeat) break;
 		}
 
-		easy.perform();
 
-		if (use_cache && vData.tellp() != std::streampos(0))
+		DWORD dwSize = 0;
+		for (;;)
+		{
+			if (!bResults)
+			{
+				ATLTRACE("\nError %d has occurred.\n", GetLastError());
+				break;
+			}
+			// Check for available data.
+			if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
+			{
+				ATLTRACE("\nError %u in WinHttpQueryDataAvailable.\n", GetLastError());
+				break;
+			}
+
+			// Allocate space for the buffer.
+			if (!dwSize) break;
+			std::vector<BYTE> chunk(dwSize);
+
+			DWORD dwDownloaded = 0;
+			if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
+			{
+				vData.write((const char*)chunk.data(), dwDownloaded);
+			}
+			else
+			{
+				ATLTRACE("\nError %u in WinHttpReadData.\n", GetLastError());
+				break;
+			}
+		}
+
+		if (use_cache && vData.good())
 		{
 			std::ofstream out_stream(cache_file, std::ios::out | std::ios::binary);
 			out_stream << vData.rdbuf();
 		}
-	}
-	catch (curl::curl_easy_exception const& error)
-	{
-		ATLTRACE("\nERROR: %d (%s)\n", error.get_code(), error.what());
-		return false;
-	}
 
-	return vData.tellp() != std::streampos(0);
-}
+		return vData.tellp() != std::streampos(0);
+	} while (false);
 
-bool DownloadFile(const std::wstring& url,
-				  std::vector<unsigned char>& vData,
-				  bool use_cache /*= false*/,
-				  std::wstring* pHeaders /*= nullptr*/,
-				  const wchar_t* verb /*= L"GET"*/,
-				  const std::string* post_data /*= nullptr*/
-				  )
-{
-	std::wstring hash_str = url;
-	if (post_data)
-		hash_str += utf8_to_utf16(*post_data);
-
-	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
-	std::filesystem::create_directory(cache_file);
-	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
-	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
-
-	if (use_cache && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
-	{
-		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
-		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
-		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-		int diff = int(now - file_time);
-		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
-		// cache ttl 1 day
-		if (diff < 60 * 60 * 24)
-		{
-			std::ifstream in_file(cache_file.c_str());
-			if (in_file.good())
-			{
-				vData.assign((std::istreambuf_iterator<char>(in_file)), std::istreambuf_iterator<char>());
-				ATLTRACE(L"\nloaded from cache: %d bytes\n", vData.size());
-				return !vData.empty();
-			}
-		}
-	}
-
-	std::wstring host;
-	std::wstring path;
-	WORD port = INTERNET_DEFAULT_HTTP_PORT;
-	if (!CrackUrl(url, host, path, port))
-		return false;
-
-	// Use WinHttpOpen to obtain a session handle.
-	HINTERNET hSession = WinHttpOpen(L"DuneHD/1.0",
-									 /*L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"*/
-									 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-									 WINHTTP_NO_PROXY_NAME,
-									 WINHTTP_NO_PROXY_BYPASS, 0);
-
-	WinHttpSetTimeouts(hSession, 0, 10000, 10000, 60000);
-
-	// Specify an HTTP server.
-	HINTERNET hConnect = nullptr;
-	if (hSession)
-		hConnect = WinHttpConnect(hSession, host.c_str(), port, 0);
-
-
-	// Create an HTTP request handle.
-	HINTERNET hRequest = nullptr;
-	if (hConnect)
-		hRequest = WinHttpOpenRequest(hConnect, verb, path.c_str(),
-									  nullptr,
-									  WINHTTP_NO_REFERER,
-									  nullptr,
-									  NULL);
-
-	if (pHeaders && !pHeaders->empty())
-	{
-		BOOL result = WinHttpAddRequestHeaders(hRequest, pHeaders->c_str(), (DWORD)pHeaders->size(), WINHTTP_ADDREQ_FLAG_ADD);
-		ATLTRACE("\nheader added: %d\n", result);
-	}
-
-	// Send a request.
-	BOOL bResults = FALSE;
-	if (hRequest)
-		bResults = WinHttpSendRequest(hRequest,
-									  WINHTTP_NO_ADDITIONAL_HEADERS,
-									  0,
-									  post_data ? (LPVOID)post_data->data() : WINHTTP_NO_REQUEST_DATA,
-									  post_data ? post_data->size() : 0,
-									  post_data ? post_data->size() : 0,
-									  0);
-
-	// End the request.
-	if (bResults)
-		bResults = WinHttpReceiveResponse(hRequest, nullptr);
-
-	DWORD dwStatusCode = 0;
-	DWORD dwSize = sizeof(dwStatusCode);
-
-	if (WinHttpQueryHeaders(hRequest,
-							WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-							WINHTTP_HEADER_NAME_BY_INDEX,
-							&dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX) && dwStatusCode != 200)
-	{
-		ATLTRACE("\nrequested url %ls not found. error code: %d\n", url.c_str(), dwStatusCode);
-		return false;
-	}
-
-	dwSize = 0;
-	for (;;)
-	{
-		if (!bResults)
-		{
-			ATLTRACE("\nError %d has occurred.\n", GetLastError());
-			break;
-		}
-		// Check for available data.
-		if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
-		{
-			ATLTRACE("\nError %u in WinHttpQueryDataAvailable.\n", GetLastError());
-			break;
-		}
-
-		// Allocate space for the buffer.
-		if (!dwSize) break;
-		std::vector<BYTE> chunk(dwSize);
-
-		DWORD dwDownloaded = 0;
-		if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
-		{
-			chunk.resize(dwSize);
-			vData.insert(vData.end(), chunk.begin(), chunk.begin() + dwDownloaded);
-		}
-		else
-		{
-			ATLTRACE("\nError %u in WinHttpReadData.\n", GetLastError());
-			break;
-		}
-	}
-
-	// Close any open handles.
-	if (hRequest) WinHttpCloseHandle(hRequest);
-	if (hConnect) WinHttpCloseHandle(hConnect);
-	if (hSession) WinHttpCloseHandle(hSession);
-
-	if (use_cache && !vData.empty())
-	{
-		std::ofstream out_stream(cache_file, std::ios::out | std::ios::binary);
-		out_stream.write((char*)vData.data(), vData.size());
-		out_stream.close();
-	}
-
-	return !vData.empty();
+	return false;
 }
 
 std::string entityDecrypt(const std::string& text)

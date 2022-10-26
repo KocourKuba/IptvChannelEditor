@@ -896,7 +896,7 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
 
 	std::stringstream data;
-	if (utils::CurlDownload(url, data))
+	if (utils::DownloadFile(url, data))
 	{
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
@@ -937,7 +937,7 @@ void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 
 	const auto& url = m_plugin->get_playlist_url(params);
 	std::stringstream data;
-	if (utils::CurlDownload(url, data))
+	if (utils::DownloadFile(url, data))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
 
@@ -971,7 +971,7 @@ void CPluginConfigPage::OnBnClickedButtonVodTemplate()
 
 	const auto& url = m_plugin->get_vod_url(params);
 	std::stringstream data;
-	if (utils::CurlDownload(url, data))
+	if (utils::DownloadFile(url, data))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
 

@@ -754,7 +754,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		m_status.Empty();
 		std::stringstream data;
 		std::wstring url = dlg.m_url.GetString();
-		if (!utils::CurlDownload(url, data))
+		if (!utils::DownloadFile(url, data))
 		{
 			std::ifstream instream(url);
 			data << instream.rdbuf();
@@ -1050,7 +1050,7 @@ void CAccessInfoPage::GetAccountInfo()
 	}
 
 	std::stringstream data;
-	if (!pl_url.empty() && utils::CurlDownload(pl_url, data))
+	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
 	{
 		const auto& wbuf = utils::utf8_to_utf16(data.str());
 		std::wistringstream stream(wbuf);
