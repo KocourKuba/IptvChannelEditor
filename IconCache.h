@@ -43,7 +43,7 @@ public:
 	}
 #endif // _DEBUG
 
-	const CImage& get_icon(const std::wstring& path);
+	const CImage& get_icon(const std::wstring& path, bool force = false);
 
 protected:
 	CIconCache() = default;

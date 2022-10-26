@@ -37,12 +37,15 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const CImage& CIconCache::get_icon(const std::wstring& path)
+const CImage& CIconCache::get_icon(const std::wstring& path, bool force /*= false*/)
 {
 	int hash = xxh::xxhash<32>(path);
 
-	if (auto pair = m_imageMap.find(hash); pair != m_imageMap.end())
-		return pair->second->get_image();
+	if(!force)
+	{
+		if (auto pair = m_imageMap.find(hash); pair != m_imageMap.end())
+			return pair->second->get_image();
+	}
 
 	// not found in cache, try to load
 	auto container = std::make_unique<ImageContainer>();

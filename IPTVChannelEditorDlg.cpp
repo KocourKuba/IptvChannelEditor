@@ -223,7 +223,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist)
 
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomArchive)
-END_MESSAGE_MAP()
+		ON_BN_CLICKED(IDC_BUTTON_RELOAD_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon)
+		END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -5092,5 +5093,35 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist()
 	{
 		GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
 		LoadPlaylist();
+	}
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
+{
+	HTREEITEM hItem = m_wndChannelsTree.GetSelectedItem();
+	std::wstring url;
+	if (IsCategory(hItem))
+	{
+		if (const auto& category = FindCategory(hItem); category != nullptr)
+			url = category->get_icon_absolute_path();
+	}
+	else if (IsChannel(hItem))
+	{
+		if (auto channel = FindChannel(hItem); channel != nullptr)
+		{
+			url = channel->get_icon_absolute_path();
+		}
+	}
+
+	if (!url.empty())
+	{
+		const auto& img = GetIconCache().get_icon(url, true);
+		CString str;
+		if (img != nullptr)
+		{
+			str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
+		}
+		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
+		SetImageControl(img, m_wndChannelIcon);
 	}
 }
