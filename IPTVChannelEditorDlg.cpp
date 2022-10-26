@@ -143,6 +143,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST, &CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist)
 	ON_CBN_SELCHANGE(IDC_COMBO_ICON_SOURCE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboIconSource)
 	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboStreamType)
+	ON_CBN_SELCHANGE(IDC_COMBO_CUSTOM_STREAM_TYPE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomStreamType)
+	ON_CBN_SELCHANGE(IDC_COMBO_CUSTOM_ARC_STREAM_TYPE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomArcStreamType)
 
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels)
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMDblclkTreeChannels)
@@ -223,8 +225,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist)
 
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomArchive)
-		ON_BN_CLICKED(IDC_BUTTON_RELOAD_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon)
-		END_MESSAGE_MAP()
+	ON_BN_CLICKED(IDC_BUTTON_RELOAD_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon)
+END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -319,6 +321,8 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_ADD_PLAYLIST, m_wndBtnAddPlaylist);
 	DDX_Control(pDX, IDC_BUTTON_SEARCH_NEXT, m_wndBtnSearchNext);
 	DDX_Control(pDX, IDC_BUTTON_PL_SEARCH_NEXT, m_wndBtnPlSearchNext);
+	DDX_Control(pDX, IDC_COMBO_CUSTOM_STREAM_TYPE, m_wndCustomStreamType);
+	DDX_Control(pDX, IDC_COMBO_CUSTOM_ARC_STREAM_TYPE, m_wndCustomArcStreamType);
 }
 
 BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
@@ -703,7 +707,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 				name = L"HLS";
 				break;
 			case StreamType::enMPEGTS:
-				name = L"MPEG-TS";
+				name = L"MPEG";
 				break;
 		}
 
@@ -1607,6 +1611,11 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_wndBtnCustomArchiveUrl.SetCheck(custom_archive);
 	m_wndBtnCustomArchiveUrl.SetWindowText(load_string_resource(custom_archive ? IDS_STRING_CUSTOM_ARCHIVE_URL : IDS_STRING_ARCHIVE_URL).c_str());
 
+	m_wndCustomStreamType.EnableWindow(custom);
+	m_wndCustomStreamType.SetCurSel(channel->get_custom_url_type());
+	m_wndCustomArcStreamType.EnableWindow(custom_archive);
+	m_wndCustomArcStreamType.SetCurSel(channel->get_custom_archive_url_type());
+
 	// update stream info
 	auto hash = channel->get_hash();
 	if (auto pair = m_stream_infos.find(hash); pair != m_stream_infos.end())
@@ -2370,6 +2379,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomUrl()
 	{
 		channel->set_is_template(m_wndBtnCustomUrl.GetCheck() == 0);
 		LoadChannelInfo(channel);
+		set_allow_save();
 	}
 }
 
@@ -2381,6 +2391,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomArchive()
 	{
 		channel->set_is_custom_archive(m_wndBtnCustomArchiveUrl.GetCheck() != 0);
 		LoadChannelInfo(channel);
+		set_allow_save();
 	}
 }
 
@@ -5119,5 +5130,23 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
 		}
 		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
 		SetImageControl(img, m_wndChannelIcon);
+	}
+}
+
+void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomStreamType()
+{
+	if (auto channel = FindChannel(m_wndChannelsTree.GetSelectedItem()); channel != nullptr)
+	{
+		channel->set_custom_url_type(m_wndCustomStreamType.GetCurSel());
+		set_allow_save();
+	}
+}
+
+void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomArcStreamType()
+{
+	if (auto channel = FindChannel(m_wndChannelsTree.GetSelectedItem()); channel != nullptr)
+	{
+		channel->set_custom_archive_url_type(m_wndCustomArcStreamType.GetCurSel());
+		set_allow_save();
 	}
 }

@@ -151,6 +151,18 @@ public:
 	const std::wstring& get_custom_archive_url() const { return custom_archive_url; }
 	void set_custom_archive_url(const std::wstring& val) { custom_archive_url = val; }
 
+	int get_custom_url_type() const { return custom_url_type; }
+	void set_custom_url_type(int val) { custom_url_type = val; }
+
+	std::string get_custom_url_type_str() const { return stream_type_to_str(custom_url_type); }
+	void set_custom_url_type_str(const std::string& val) { custom_url_type = str_to_stream_type(val); }
+
+	int get_custom_archive_url_type() const { return custom_arc_url_type; }
+	void set_custom_archive_url_type(int val) { custom_arc_url_type = val; }
+
+	std::string get_custom_archive_url_type_str() const { return stream_type_to_str(custom_arc_url_type); }
+	void set_custom_archive_url_type_str(const std::string& val) { custom_arc_url_type = str_to_stream_type(val); }
+
 	InfoType get_type() const { return base_type; }
 
 	void copy_data(const uri_stream& src)
@@ -174,11 +186,17 @@ public:
 	};
 
 protected:
+	static std::string uri_stream::stream_type_to_str(int type);
+	static int uri_stream::str_to_stream_type(const std::string& str_type);
+
 	std::shared_ptr<base_plugin> parent_plugin;
 	InfoType base_type = InfoType::enUndefined;
 
 	bool is_template = false;
 	bool is_custom_archive = false;
+	int custom_url_type = 0;
+	int custom_arc_url_type = 0;
+	std::wstring custom_archive_url;
 
 	// parsing url variables
 	std::wstring id;
@@ -195,7 +213,6 @@ protected:
 	// parsed #EXTINF variables
 	std::wstring title;
 	std::wstring catchup_id;
-	std::wstring custom_archive_url;
 	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;
 	int adult = 0;

@@ -85,6 +85,7 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	if (!stream_url.empty())
 	{
 		parent_plugin->parse_stream_uri(stream_url, this);
+		set_custom_url_type_str(rapidxml::get_value_string(node->first_node(utils::CUSTOM_URL_TYPE)));
 	}
 	get_hash();
 
@@ -93,7 +94,9 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	{
 		set_is_custom_archive(true);
 		set_custom_archive_url(custom_archive_url);
+		set_custom_archive_url_type_str(rapidxml::get_value_string(node->first_node(utils::CUSTOM_ARC_URL_TYPE)));
 	}
+
 	set_archive_days(rapidxml::get_value_int(node->first_node(utils::ARCHIVE)));
 	set_adult(rapidxml::get_value_int(node->first_node(utils::PROTECTED)));
 }
@@ -149,11 +152,19 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	if (!get_is_template() && !get_uri().empty())
 	{
 		channel_node->append_node(rapidxml::alloc_node(alloc, utils::STREAMING_URL, utils::utf16_to_utf8(get_uri()).c_str()));
+		if (get_custom_url_type() > 0)
+		{
+			channel_node->append_node(rapidxml::alloc_node(alloc, utils::CUSTOM_URL_TYPE, get_custom_url_type_str().c_str()));
+		}
 	}
 
 	if (get_is_custom_archive() && !get_custom_archive_url().empty())
 	{
 		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CATCHUP_URL_TEMPLATE, utils::utf16_to_utf8(get_custom_archive_url()).c_str()));
+		if (get_custom_archive_url_type() > 0)
+		{
+			channel_node->append_node(rapidxml::alloc_node(alloc, utils::CUSTOM_ARC_URL_TYPE, get_custom_archive_url_type_str().c_str()));
+		}
 	}
 
 	// <archive>1</archive>

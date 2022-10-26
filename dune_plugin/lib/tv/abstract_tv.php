@@ -261,7 +261,7 @@ abstract class Abstract_Tv implements Tv
     {
         $this->ensure_channels_loaded($plugin_cookies);
 
-        return $this->get_channel($channel_id)->get_streaming_url();
+        return $this->get_channel($channel_id)->get_custom_url();
     }
 
     ///////////////////////////////////////////////////////////////////////

@@ -181,6 +181,8 @@ protected:
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
 	afx_msg void OnCbnSelchangeComboStreamType();
+	afx_msg void OnCbnSelchangeComboCustomStreamType();
+	afx_msg void OnCbnSelchangeComboCustomArcStreamType();
 	afx_msg void OnAddToFavorite();
 	afx_msg void OnUpdateAddToFavorite(CCmdUI* pCmdUI);
 	afx_msg void OnCopyTo(UINT id);
@@ -281,6 +283,8 @@ protected:
 	CComboBox m_wndChannels;
 	CComboBox m_wndIconSource;
 	CComboBox m_wndStreamType;
+	CComboBox m_wndCustomStreamType;
+	CComboBox m_wndCustomArcStreamType;
 	CRichEditCtrl m_wndEpg;
 	CMySplitButton m_wndUpdateChanged;
 	CSplitButton m_wndPack;

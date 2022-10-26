@@ -34,6 +34,32 @@ int uri_stream::get_hash()
 	return hash;
 }
 
+std::string uri_stream::stream_type_to_str(int type)
+{
+	switch (type)
+	{
+		case 1:
+			return "hls";
+		case 2:
+			return "mpeg";
+		default:
+			break;
+	}
+
+	return "";
+}
+
+int uri_stream::str_to_stream_type(const std::string& str_type)
+{
+	if (str_type == "hls")
+		return 1;
+
+	if (str_type == "mpeg")
+		return 2;
+
+	return 0;
+}
+
 uri_stream& uri_stream::operator=(const uri_stream& src)
 {
 	if (this != &src)

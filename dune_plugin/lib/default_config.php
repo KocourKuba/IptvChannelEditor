@@ -276,37 +276,39 @@ class default_config extends dynamic_config
             M_QUALITY   => '{QUALITY_ID}',
         );
 
-        $custom_url = $channel->get_streaming_url();
-        $custom_arc_template = $channel->get_custom_arc_template();
-        if (empty($custom_url)) {
+        $channel_custom_url = $channel->get_custom_url();
+        $channel_custom_arc_url = $channel->get_custom_archive_template();
+        if (empty($channel_custom_url)) {
             // url template, live or archive
             $live_url = $this->get_stream_param($stream_type, URL_TEMPLATE);
 
-            if (empty($custom_arc_template)) {
+            if (empty($channel_custom_arc_url)) {
                 // global url archive template
                 $archive_url = $this->get_stream_param($stream_type, URL_ARC_TEMPLATE);
             } else {
                 // custom archive url template
-                $archive_url = $custom_arc_template;
+                $archive_url = $channel_custom_arc_url;
             }
         } else {
             // custom url
-            $live_url = $custom_url;
+            $live_url = $channel_custom_url;
 
-            if (empty($custom_arc_template)) {
+            if (empty($channel_custom_arc_url)) {
                 // global custom url archive template
                 $archive_url = $this->get_stream_param($stream_type, URL_CUSTOM_ARC_TEMPLATE);
             } else {
                 // custom url archive or template
-                $archive_url = $custom_arc_template;
+                $archive_url = $channel_custom_arc_url;
             }
         }
 
         if ($is_archive) {
-            // replace macros for live url
+            // replace macros to live url
             $play_template_url = str_replace('{LIVE_URL}', $live_url, $archive_url);
+            $custom_stream_type = $channel->get_custom_archive_url_type();
         } else {
-            $play_template_url = $custom_url;
+            $play_template_url = $channel_custom_url;
+            $custom_stream_type = $channel->get_custom_url_type();
         }
 
         // replace all macros
@@ -319,7 +321,9 @@ class default_config extends dynamic_config
 
         //hd_print("Stream url:  $url");
 
-        return $this->UpdateMpegTsBuffering($play_template_url, $plugin_cookies);
+        $url = $this->UpdateMpegTsBuffering($play_template_url, $plugin_cookies, $custom_stream_type);
+
+        return HD::make_ts($url);
     }
 
     /**
@@ -333,7 +337,10 @@ class default_config extends dynamic_config
         hd_print("Collect information from account: $force");
 
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
-        $parse_pattern = "|" . $this->get_feature(URI_PARSE_PATTERN) . "|";
+        $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
+        if (empty($parse_pattern))
+            $parse_pattern = "|$parse_pattern|";
+
         foreach ($m3u_lines as $line) {
             if (preg_match($parse_pattern, $line, $matches)) {
                 $this->account_data = $matches;
@@ -358,7 +365,7 @@ class default_config extends dynamic_config
         $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
 
         if (!empty($parse_pattern)) {
-            $uri_parse_regex = "|" . $parse_pattern . "|";
+            $uri_parse_regex = "|$parse_pattern|";
 
             if (empty($parse_id_pattern)) {
                 // No need to parse #EXTINF tags
@@ -370,11 +377,10 @@ class default_config extends dynamic_config
                     }
                 }
             } else {
-                $uri_id_parse_regex = "|" . $parse_id_pattern . "|";
+                $uri_id_parse_regex = "|$parse_id_pattern|";
 
                 // Need to extract channel id from EXTINF tags
                 foreach ($m3u_lines as $i => $iValue) {
-
                     // #EXTINF:0 CUID="1" tvg-name="1:458" tvg-id="1:458" group-title="Общие",Первый канал
                     if (!preg_match($uri_id_parse_regex, $iValue, $m_id) || (empty($m_id[M_ID]))) continue;
 
@@ -441,6 +447,9 @@ class default_config extends dynamic_config
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
+        if (!empty($vod_pattern))
+            $vod_pattern = "|$vod_pattern|";
+
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
             if (!preg_match($vod_pattern, $line, $matches)) {
@@ -480,6 +489,9 @@ class default_config extends dynamic_config
     {
         $movies = array();
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
+        if (!empty($vod_pattern))
+            $vod_pattern = "|$vod_pattern|";
+
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
             if (!preg_match($vod_pattern, $line, $matches)) {
@@ -515,9 +527,13 @@ class default_config extends dynamic_config
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
 
+        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
+        if (!empty($vod_pattern))
+            $vod_pattern = "|$vod_pattern|";
+
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
-            if ($i !== (int)$movie_id || !preg_match($this->get_feature(VOD_PARSE_PATTERN), $iValue, $match)) {
+            if ($i !== (int)$movie_id || !preg_match($vod_pattern, $iValue, $match)) {
                 continue;
             }
 
@@ -560,16 +576,18 @@ class default_config extends dynamic_config
     /**
      * @param string $url
      * @param $plugin_cookies
+     * @param int $custom_type
      * @return string
      */
-    protected function UpdateMpegTsBuffering($url, $plugin_cookies)
+    protected function UpdateMpegTsBuffering($url, $plugin_cookies, $custom_type = '')
     {
-        if ($this->get_format($plugin_cookies) === MPEG) {
-            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : '1000';
+        $type = empty($custom_type) ? $this->get_format($plugin_cookies) : $custom_type;
+        if ($type === MPEG) {
+            $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
             $url .= "|||dune_params|||buffering_ms:$buf_time";
         }
 
-        return HD::make_ts($url);
+        return $url;
     }
 
     /**
@@ -656,6 +674,10 @@ class default_config extends dynamic_config
         $categoriesFound = array();
 
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
+        if (!empty($vod_pattern))
+            $vod_pattern = "|$vod_pattern|";
+
+        hd_print("vod parse pattern: $vod_pattern");
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $line) {
             if (!preg_match($vod_pattern, $line, $matches)) {

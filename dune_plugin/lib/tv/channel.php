@@ -82,16 +82,28 @@ interface Channel
     public function get_timeshift_hours();
 
     /**
-     * streaming url
+     * custom streaming url
      * @return string
      */
-    public function get_streaming_url();
+    public function get_custom_url();
 
     /**
      * custom streaming url archive template
      * @return string
      */
-    public function get_custom_arc_template();
+    public function get_custom_archive_template();
+
+    /**
+     * streaming url yype
+     * @return string
+     */
+    public function get_custom_url_type();
+
+    /**
+     * custom streaming url archive url type
+     * @return string
+     */
+    public function get_custom_archive_url_type();
 
     /**
      * additional parameters

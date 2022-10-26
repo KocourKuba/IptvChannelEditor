@@ -182,8 +182,11 @@ class Starnet_Tv extends Abstract_Tv
                 $ext_params = array();
             }
 
+            $streaming_url_type = (!empty($streaming_url) && isset($xml_tv_channel->custom_url_type)) ? $xml_tv_channel->custom_url_type : '';
+
             // custom archive url or template
             $custom_archive_url = isset($xml_tv_channel->catchup_url_template) ? $xml_tv_channel->catchup_url_template : '';
+            $custom_arc_url_type = isset($xml_tv_channel->custom_arc_url_type) ? $xml_tv_channel->custom_arc_url_type : '';
 
             $tv_category_id = (int)$xml_tv_channel->tv_category_id;
             if ($this->channels->has($hash)) {
@@ -208,6 +211,8 @@ class Starnet_Tv extends Abstract_Tv
                     $icon_url,
                     $streaming_url,
                     $custom_archive_url,
+                    $streaming_url_type,
+                    $custom_arc_url_type,
                     (int)$xml_tv_channel->archive,
                     $number,
                     $epg1,

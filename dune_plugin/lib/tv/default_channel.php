@@ -34,6 +34,16 @@ class Default_Channel implements Channel
     protected $_custom_arc_template;
 
     /**
+     * @var string
+     */
+    protected $_streaming_url_type;
+
+    /**
+     * @var string
+     */
+    protected $_custom_arc_url_type;
+
+    /**
      * @var array|Group[]
      */
     protected $_groups;
@@ -80,6 +90,8 @@ class Default_Channel implements Channel
      * @param string $icon_url
      * @param string $streaming_url
      * @param string $custom_arc_template
+     * @param string $streaming_url_type
+     * @param string $custom_arc_url_type
      * @param int $archive
      * @param int $number
      * @param string $epg_id
@@ -90,6 +102,7 @@ class Default_Channel implements Channel
      */
     public function __construct($id, $channel_id, $title, $icon_url,
                                 $streaming_url, $custom_arc_template,
+                                $streaming_url_type, $custom_arc_url_type,
                                 $archive, $number, $epg_id, $tvg_id,
                                 $is_protected, $timeshift_hours, $ext_params)
     {
@@ -99,6 +112,8 @@ class Default_Channel implements Channel
         $this->_icon_url = $icon_url;
         $this->_streaming_url = $streaming_url;
         $this->_custom_arc_template = $custom_arc_template;
+        $this->_streaming_url_type = $streaming_url_type;
+        $this->_custom_arc_url_type = $custom_arc_url_type;
         $this->_groups = array();
         $this->_archive = ($archive > 0) ? $archive : 0;
         $this->_number = $number;
@@ -243,21 +258,38 @@ class Default_Channel implements Channel
     }
 
     /**
-     * get playback url
+     * get custom stream url
      * @return string
      */
-    public function get_streaming_url()
+    public function get_custom_url()
     {
         return $this->_streaming_url;
     }
 
     /**
-     * custom streaming url archive template
+     * custom archive stream url template
      * @return string
      */
-    public function get_custom_arc_template()
+    public function get_custom_archive_template()
     {
         return $this->_custom_arc_template;
+    }
+
+    /**
+     * custom channel streaming url type
+     * @return string
+     */
+    public function get_custom_url_type()
+    {
+        return $this->_streaming_url_type;
+    }
+    /**
+     * custom channel archive streaming url type
+     * @return string
+     */
+    public function get_custom_archive_url_type()
+    {
+        return $this->_custom_arc_url_type;
     }
 
     /**

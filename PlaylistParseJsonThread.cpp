@@ -198,21 +198,35 @@ void CPlaylistParseJsonThread::ParseCbilling()
 			int retry = 0;
 			for(;;)
 			{
-				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0) break;
+				if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0 || retry > 2) break;
 
 				std::stringstream data;
-				const auto& cat_url = fmt::format(L"{:s}/cat/{:s}?page={:d}&per_page=500", m_config.m_url, category->id, page);
-				if (!utils::CurlDownload(cat_url, data, m_config.m_use_cache) && retry++ > 2) break;
+				const auto& cat_url = fmt::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", m_config.m_url, category->id, page);
+				if (!utils::CurlDownload(cat_url, data, m_config.m_use_cache) || data.bad())
+				{
+					retry++;
+					continue;
+				}
 
-				const auto& movies_json = nlohmann::json::parse(data.str());
+				nlohmann::json movies_json;
+				JSON_ALL_TRY;
+				{
+					movies_json = nlohmann::json::parse(data.str());
+				}
+				JSON_ALL_CATCH;
 
-				if (movies_json.empty() || !movies_json.contains("data")) continue;
+				if (movies_json.empty() || !movies_json.contains("data"))
+				{
+					retry++;
+					continue;
+				}
 
 				for (const auto& movie_it : movies_json["data"].items())
 				{
 					const auto& movie_item = movie_it.value();
 
 					JSON_ALL_TRY;
+					{
 						auto movie = std::make_shared<vod_movie>();
 
 						movie->id = utils::get_json_wstring("id", movie_item);
@@ -231,6 +245,7 @@ void CPlaylistParseJsonThread::ParseCbilling()
 						}
 
 						category->movies.set(movie->id, movie);
+					}
 					JSON_ALL_CATCH;
 
 					cnt++;
@@ -241,10 +256,16 @@ void CPlaylistParseJsonThread::ParseCbilling()
 					}
 				}
 
-				const auto& meta = movies_json["meta"];
-				int last = utils::get_json_int("last_page", meta);
-				if (page >= last) break;
+				nlohmann::json meta;
+				int last = 0;
+				JSON_ALL_TRY;
+				{
+					meta = movies_json["meta"];
+					last = utils::get_json_int("last_page", meta);
+				}
+				JSON_ALL_CATCH;
 
+				if (page >= last) break;
 				page++;
 			}
 		}
