@@ -100,6 +100,12 @@ public:
 	bool get_is_template() const { return is_template; }
 
 	/// <summary>
+	/// is custom archive uri template
+	/// </summary>
+	void set_is_custom_archive(bool val) { is_custom_archive = val; }
+	bool get_is_custom_archive() const { return is_custom_archive; }
+
+	/// <summary>
 	/// clear hash variables
 	/// </summary>
 	void clear_hash() { hash = 0; str_hash.clear(); }
@@ -171,8 +177,8 @@ protected:
 	std::shared_ptr<base_plugin> parent_plugin;
 	InfoType base_type = InfoType::enUndefined;
 
-private:
 	bool is_template = false;
+	bool is_custom_archive = false;
 
 	// parsing url variables
 	std::wstring id;

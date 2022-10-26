@@ -1595,7 +1595,13 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_streamUrl = show ? m_plugin->get_play_stream(params, channel.get()).c_str() : m_plugin->get_live_template(stream_idx, channel.get()).c_str();
 	m_wndStreamUrl.EnableWindow(custom);
 
-	bool custom_archive = !channel->get_custom_archive_url().empty();
+	bool custom_archive = channel->get_is_custom_archive();
+	if (custom_archive && channel->get_custom_archive_url().empty())
+	{
+		size_t idx = (size_t)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
+		channel->set_custom_archive_url(m_plugin->get_archive_template(idx, channel.get()));
+	}
+
 	m_streamArchiveUrl = m_plugin->get_archive_template(stream_idx, channel.get()).c_str();
 	m_wndCustomArchiveUrl.EnableWindow(custom_archive);
 	m_wndBtnCustomArchiveUrl.SetCheck(custom_archive);
@@ -2373,17 +2379,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckCustomArchive()
 	auto channel = FindChannel(hItem);
 	if (channel)
 	{
-		bool custom = m_wndBtnCustomArchiveUrl.GetCheck() != 0;
-		if (!custom)
-		{
-			channel->set_custom_archive_url(L"");
-		}
-		else
-		{
-			size_t idx = (size_t)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-			channel->set_custom_archive_url(m_plugin->get_archive_template(idx, channel.get()));
-		}
-
+		channel->set_is_custom_archive(m_wndBtnCustomArchiveUrl.GetCheck() != 0);
 		LoadChannelInfo(channel);
 	}
 }

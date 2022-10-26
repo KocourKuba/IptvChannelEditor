@@ -88,7 +88,12 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	}
 	get_hash();
 
-	set_custom_archive_url(rapidxml::get_value_wstring(node->first_node(utils::CATCHUP_URL_TEMPLATE)));
+	const auto& custom_archive_url = rapidxml::get_value_wstring(node->first_node(utils::CATCHUP_URL_TEMPLATE));
+	if (!custom_archive_url.empty())
+	{
+		set_is_custom_archive(true);
+		set_custom_archive_url(custom_archive_url);
+	}
 	set_archive_days(rapidxml::get_value_int(node->first_node(utils::ARCHIVE)));
 	set_adult(rapidxml::get_value_int(node->first_node(utils::PROTECTED)));
 }
@@ -144,10 +149,11 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 	if (!get_is_template() && !get_uri().empty())
 	{
 		channel_node->append_node(rapidxml::alloc_node(alloc, utils::STREAMING_URL, utils::utf16_to_utf8(get_uri()).c_str()));
-		if (!get_custom_archive_url().empty())
-		{
-			channel_node->append_node(rapidxml::alloc_node(alloc, utils::CATCHUP_URL_TEMPLATE, utils::utf16_to_utf8(get_custom_archive_url()).c_str()));
-		}
+	}
+
+	if (get_is_custom_archive() && !get_custom_archive_url().empty())
+	{
+		channel_node->append_node(rapidxml::alloc_node(alloc, utils::CATCHUP_URL_TEMPLATE, utils::utf16_to_utf8(get_custom_archive_url()).c_str()));
 	}
 
 	// <archive>1</archive>
