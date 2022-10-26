@@ -64,7 +64,8 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 	size_t pos = 1;
 	for (const auto& group : regex_named_groups)
 	{
-		*info->parser_mapper[group] = std::move(m[pos++].str());
+		auto setter = info->parser_mapper[group];
+		(info->*setter)(m[pos++].str());
 	}
 }
 
@@ -184,7 +185,7 @@ bool base_plugin::is_custom_archive_template(bool is_template, size_t stream_idx
 
 void base_plugin::set_regex_parse_stream(const std::wstring& val)
 {
-	static std::set<std::wstring> groups_mapper = { L"id", L"domain", L"port", L"login", L"password", L"subdomain", L"token", L"int_id", L"quality", L"host", };
+	static::uri_stream uri;
 
 	// clear named group
 	regex_named_groups.clear();
@@ -196,7 +197,7 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 		std::match_results<std::wstring::const_iterator> ms;
 		while (std::regex_search(ecmascript_re, ms, re_group))
 		{
-			if (groups_mapper.find(ms[2]) != groups_mapper.end())
+			if (uri.parser_mapper.find(ms[2]) != uri.parser_mapper.end())
 			{
 				// add only known group!
 				regex_named_groups.emplace_back(ms[2]);

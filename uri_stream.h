@@ -34,12 +34,15 @@ enum class InfoType { enUndefined, enChannel, enCategory, enPlEntry, enPlCategor
 
 class uri_stream;
 
+typedef const std::wstring& (uri_stream::*pointer_to_getter)();
+typedef void (uri_stream::*pointer_to_setter)(const std::wstring&);
+
 class uri_stream : public uri_base, public IconContainer
 {
 	friend class base_plugin;
 
 public:
-	uri_stream() = delete;
+	uri_stream() = default;
 	uri_stream(const uri_stream& src)
 	{
 		*this = src;
@@ -151,6 +154,19 @@ public:
 
 	uri_stream& operator=(const uri_stream& src);
 
+	std::map<std::wstring, pointer_to_setter> parser_mapper = {
+		{L"id"       , &uri_stream::set_id},
+		{L"domain"   , &uri_stream::set_domain},
+		{L"port"     , &uri_stream::set_port},
+		{L"login"    , &uri_stream::set_login},
+		{L"password" , &uri_stream::set_password},
+		{L"subdomain", &uri_stream::set_subdomain},
+		{L"token"    , &uri_stream::set_token},
+		{L"int_id"   , &uri_stream::set_int_id},
+		{L"quality"  , &uri_stream::set_quality},
+		{L"host"     , &uri_stream::set_host},
+	};
+
 protected:
 	std::shared_ptr<base_plugin> parent_plugin;
 	InfoType base_type = InfoType::enUndefined;
@@ -181,17 +197,4 @@ private:
 
 	int hash = 0;
 	std::wstring str_hash;
-
-	std::map<std::wstring, std::wstring*> parser_mapper = {
-		{L"id"       , &id},
-		{L"domain"   , &domain},
-		{L"port"     , &port},
-		{L"login"    , &login},
-		{L"password" , &password},
-		{L"subdomain", &subdomain},
-		{L"token"    , &token},
-		{L"int_id"   , &int_id},
-		{L"quality"  , &quality},
-		{L"host"     , &host},
-	};
 };

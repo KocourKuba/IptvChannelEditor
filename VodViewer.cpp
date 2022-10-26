@@ -299,7 +299,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-	static std::set<std::wstring> groups_mapper = { L"logo", L"category", L"title", L"title_orig", L"year", L"country",};
+	static vod_movie default_vod;
 
 	m_evtStop.ResetEvent();
 	m_evtFinished.SetEvent();
@@ -323,7 +323,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 			std::match_results<std::wstring::const_iterator> ms;
 			while (std::regex_search(ecmascript_re, ms, re_group))
 			{
-				if (groups_mapper.find(ms[2]) != groups_mapper.end())
+				if (default_vod.parser_mapper.find(ms[2]) != default_vod.parser_mapper.end())
 				{
 					// add only known group!
 					regex_named_groups.emplace_back(ms[2]);

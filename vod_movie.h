@@ -65,9 +65,9 @@ public:
 	std::wstring director;
 	std::wstring casting;
 	std::wstring description;
+	std::wstring category;
 	std::wstring url;
 	std::wstring movie_time; // in minutes
-	std::wstring category;
 	vod_genre_storage genres;
 	uri_base poster_url;
 	vod_season_storage seasons;
@@ -87,9 +87,9 @@ public:
 			director = src.director;
 			casting = src.casting;
 			description = src.description;
+			category = src.category;
 			url = src.url;
 			movie_time = src.movie_time;
-			category = src.category;
 			genres = src.genres;
 			poster_url = src.poster_url;
 			seasons = src.seasons;

@@ -343,6 +343,22 @@ void CPluginConfigPage::AddTooltip(UINT ctrlID, UINT textID)
 
 void CPluginConfigPage::AssignMacros()
 {
+	std::vector<std::wstring> stream_params =
+	{
+		L"(?<id>)",
+		L"(?<epg_id>)",
+		L"(?<domain>)",
+		L"(?<port>)",
+		L"(?<login>)",
+		L"(?<password>)",
+		L"(?<subdomain>)",
+		L"(?<token>)",
+		L"(?<int_id>)",
+		L"(?<quality>)",
+		L"(?<host>)"
+	};
+	m_wndParseStream.SetTemplateParams(stream_params);
+
 	std::vector<std::wstring> pl_params =
 	{
 		L"{SUBDOMAIN}",

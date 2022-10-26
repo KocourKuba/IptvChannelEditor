@@ -127,8 +127,8 @@ protected:
 	CEdit m_wndShortName;
 	CEdit m_wndProviderUrl;
 	CMenuEdit m_wndPlaylistTemplate;
-	CEdit m_wndParseStream;
-	CEdit m_wndParseStreamID;
+	CMenuEdit m_wndParseStream;
+	CMenuEdit m_wndParseStreamID;
 	CEdit m_wndSubst;
 	CEdit m_wndDuration;
 	CMenuEdit m_wndStreamTemplate;
