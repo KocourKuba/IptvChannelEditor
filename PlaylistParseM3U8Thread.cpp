@@ -76,6 +76,11 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				entry->set_logo_root(logo_root);
 				if (entry->Parse(line, m3uEntry))
 				{
+					if (entry->get_id().empty())
+					{
+						entry->set_id(entry->get_epg_id(0));
+					}
+
 					playlist->m_entries.emplace_back(entry);
 					entry = std::make_shared<PlaylistEntry>(m_parent_plugin, m_config.m_rootPath);
 					channels++;

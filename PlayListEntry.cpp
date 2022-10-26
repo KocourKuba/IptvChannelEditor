@@ -130,11 +130,6 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			break;
 		}
 
-		if (get_id().empty())
-		{
-			set_id(get_epg_id(0));
-		}
-
 		switch (parent_plugin->get_plugin_type())
 		{
 			case PluginType::enOttclub:
