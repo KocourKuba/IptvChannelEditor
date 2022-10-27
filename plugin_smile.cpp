@@ -67,7 +67,7 @@ void plugin_smile::load_default()
 	playlist_templates.emplace_back(info);
 
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
-	uri_id_parse_pattern = "^#EXTINF:.+CUID=\"(?<id>[^\"]+)\"";
+	tag_id_match = "CUID";
 
 	square_icons = true;
 	per_channel_token = true;

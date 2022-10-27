@@ -235,6 +235,7 @@ const std::map<std::wstring, std::wstring>& base_plugin::get_epg_id_mapper(int e
 	auto& params = epg_params[epg_idx];
 	if (params.epg_use_mapper && params.epg_mapper.empty())
 	{
+		CWaitCursor cur;
 		std::stringstream data;
 		if (utils::DownloadFile(params.epg_mapper_url, data))
 		{
@@ -275,6 +276,7 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 	if (epg_id.empty())
 		return false;
 
+	CWaitCursor cur;
 	std::stringstream data;
 	const auto& url = compile_epg_url(epg_idx, epg_id, for_time, info);
 	if (!utils::DownloadFile(url, data, true))

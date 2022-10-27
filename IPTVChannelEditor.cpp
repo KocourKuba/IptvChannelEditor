@@ -1229,6 +1229,7 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 	utils::CrackedUrl cracked;
 	if (utils::CrackUrl(fullPath, cracked))
 	{
+		CWaitCursor cur;
 		std::stringstream data;
 		if (utils::DownloadFile(fullPath, data))
 		{

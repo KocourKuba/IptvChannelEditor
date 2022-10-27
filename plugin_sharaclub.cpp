@@ -100,6 +100,8 @@ std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wst
 bool plugin_sharaclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://{:s}/api/dune-api5m.php?subscr={:s}-{:s}";
+
+	CWaitCursor cur;
 	std::stringstream data;
 	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.subdomain, params.login, params.password), data))
 	{
@@ -143,6 +145,8 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 									L"ch_cdn",
 									params.login,
 									params.password);
+
+	CWaitCursor cur;
 	std::stringstream data;
 	if (utils::DownloadFile(url, data))
 	{
@@ -184,6 +188,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 									  params.login,
 									  params.password);
 
+		CWaitCursor cur;
 		std::stringstream data;
 		if (utils::DownloadFile(url, data))
 		{
@@ -209,6 +214,8 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 									L"list_profiles",
 									params.login,
 									params.password);
+
+	CWaitCursor cur;
 	std::stringstream data;
 	if (!utils::DownloadFile(url, data))
 		return;
@@ -254,6 +261,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 									  params.login,
 									  params.password);
 
+		CWaitCursor cur;
 		std::stringstream data;
 		if (utils::DownloadFile(url, data))
 		{

@@ -301,8 +301,8 @@ public:
 	/// <summary>
 	/// property uri id parse template
 	/// </summary>
-	std::wstring get_uri_id_parse_pattern() const { return utils::utf8_to_utf16(uri_id_parse_pattern); }
-	void set_uri_id_parse_pattern(const std::wstring& val) { uri_id_parse_pattern = utils::utf16_to_utf8(val); }
+	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
+	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// plugin supports vod
@@ -504,7 +504,7 @@ public:
 
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE(plugin_config, access_type, short_name, title, name, provider_url, //-V601
 								   playlist_templates, playlist_template_index, playlist_template,
-								   uri_id_parse_pattern, uri_parse_pattern, vod_support, vod_m3u,
+								   tag_id_match, uri_parse_pattern, vod_support, vod_m3u,
 								   vod_templates, vod_template_index, provider_vod_url, vod_parse_pattern,
 								   square_icons, requested_token,
 								   static_servers, static_qualities, static_devices, static_profiles,
@@ -530,8 +530,8 @@ protected:
 	std::string provider_url;
 	// template url to load playlist
 	std::string playlist_template;
-	// original uri id parse template
-	std::string uri_id_parse_pattern;
+	// tag to match to detect id
+	std::string tag_id_match;
 	// original uri parse template
 	std::string uri_parse_pattern;
 

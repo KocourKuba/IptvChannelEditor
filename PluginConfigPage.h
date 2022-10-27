@@ -73,6 +73,7 @@ protected:
 	afx_msg void OnBnClickedButtonEditDevices();
 	afx_msg void OnBnClickedButtonEditQuality();
 	afx_msg void OnBnClickedButtonEditProfiles();
+	afx_msg void OnBnClickedCheckMapTagToId();
 
 	afx_msg void OnBnClickedCheckStaticServers();
 	afx_msg void OnBnClickedCheckStaticDevices();
@@ -91,7 +92,6 @@ protected:
 	afx_msg void OnCbnDropdownComboEpgType();
 
 	afx_msg void OnEnChangeEditParsePattern();
-	afx_msg void OnEnChangeEditParsePatternID();
 
 	afx_msg void OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditUtc();
@@ -128,7 +128,6 @@ protected:
 	CEdit m_wndProviderUrl;
 	CMenuEdit m_wndPlaylistTemplate;
 	CMenuEdit m_wndParseStream;
-	CMenuEdit m_wndParseStreamID;
 	CEdit m_wndSubst;
 	CEdit m_wndDuration;
 	CMenuEdit m_wndStreamTemplate;
@@ -155,6 +154,7 @@ protected:
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
 	CComboBox m_wndPluginConfigs;
+	CComboBox m_wndTags;
 
 	CButton m_wndBtnSaveConf;
 	CButton m_wndBtnSaveAsConf;
@@ -172,12 +172,12 @@ protected:
 	CButton m_wndBtnEpgTest;
 	CButton m_wndBtnPlaylistTest;
 	CButton m_wndBtnStreamParseTest;
-	CButton m_wndBtnStreamParseIdTest;
 	CButton m_wndChkEnableVOD;
 	CButton m_wndChkVodM3U;
 	CButton m_wndBtnVodParseTest;
 	CButton m_wndBtnVodTemplateTest;
 	CButton m_wndChkUseDuration;
+	CButton m_wndCheckMapTags;
 
 	CString m_Name;
 	CString m_Title;
@@ -185,7 +185,6 @@ protected:
 	CString m_ProviderUrl;
 	CString m_PlaylistTemplate;
 	CString m_ParseStream;
-	CString m_ParseStreamID;
 	CString m_Subst;
 	CString m_StreamTemplate;
 	CString m_StreamArchiveTemplate;

@@ -114,6 +114,7 @@ BOOL CIconsListDlg::OnInitDialog()
 	}
 	else
 	{
+		CWaitCursor cur;
 		std::unique_ptr<std::istream> pl_stream;
 		std::stringstream data;
 		if (utils::DownloadFile(m_iconSource, data))

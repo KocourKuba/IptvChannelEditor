@@ -663,6 +663,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	if (!provider_api_url.empty()
 		&& (GetConfig().get_string(false, REG_LIST_DOMAIN).empty() || GetConfig().get_string(false, REG_EPG_DOMAIN).empty()))
 	{
+		CWaitCursor cur;
 		std::stringstream data;
 		if (utils::DownloadFile(provider_api_url, data))
 		{
@@ -957,6 +958,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 	else if (utils::CrackUrl(url, cracked))
 	{
+		CWaitCursor cur;
 		if (!utils::DownloadFile(url, data))
 		{
 			AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
@@ -974,7 +976,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	if (data.tellp() == std::streampos(0))
 	{
-		AfxMessageBox(IDS_STRING_ERR_EMPTY_PLAYLIST, MB_OK | MB_ICONERROR);
 		OnEndLoadPlaylist(0);
 		return;
 	}
@@ -1094,6 +1095,11 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 					  res.first->second->get_id().c_str());
 				continue;
 			}
+		}
+
+		if (m_playlistMap.empty())
+		{
+			AfxMessageBox(IDS_STRING_ERR_EMPTY_PLAYLIST, MB_OK | MB_ICONERROR);
 		}
 	}
 
@@ -3108,7 +3114,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	{
 		m_cur_account = dlgInfo.m_initial_cred;
 		GetConfig().UpdatePluginSettings();
-		SwitchPlugin();
+		PostMessage(WM_SWITCH_PLUGIN);
 	}
 }
 
@@ -3894,6 +3900,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		icon_uri.set_uri(utils::ICON_TEMPLATE);
 		icon_uri.set_path(path);
 
+		CWaitCursor cur;
 		std::stringstream image;
 		if (!utils::DownloadFile(channel->get_icon_uri().get_uri(), image)) continue;
 
@@ -4436,7 +4443,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 	GetConfig().set_plugin_idx(m_wndPluginType.GetCurSel());
 
 	set_allow_save(false);
-	SwitchPlugin();
+	PostMessage(WM_SWITCH_PLUGIN);
 }
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
@@ -5089,7 +5096,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	if (IDOK == pSheet->DoModal())
 	{
 		GetConfig().UpdatePluginSettings();
-		SwitchPlugin();
+		PostMessage(WM_SWITCH_PLUGIN);
 	}
 }
 

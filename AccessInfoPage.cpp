@@ -751,6 +751,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 
 	if (dlg.DoModal() == IDOK)
 	{
+		CWaitCursor cur;
 		m_status.Empty();
 		std::stringstream data;
 		std::wstring url = dlg.m_url.GetString();
@@ -770,8 +771,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		while (std::getline(stream, line))
 		{
 			utils::string_rtrim(line, L"\r");
-			m3u_entry m3uEntry(line);
-			if (!entry->Parse(line, m3uEntry)) continue;
+			if (!entry->Parse(line)) continue;
 
 			const auto& access_key = entry->get_token();
 			const auto& subdomain = entry->get_subdomain();
@@ -1049,6 +1049,7 @@ void CAccessInfoPage::GetAccountInfo()
 		}
 	}
 
+	CWaitCursor cur;
 	std::stringstream data;
 	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
 	{
@@ -1062,8 +1063,7 @@ void CAccessInfoPage::GetAccountInfo()
 			while (std::getline(stream, line))
 			{
 				utils::string_rtrim(line, L"\r");
-				m3u_entry m3uEntry(line);
-				if (entry->Parse(line, m3uEntry) && !entry->get_token().empty())
+				if (entry->Parse(line) && !entry->get_token().empty())
 				{
 					// do not override fake ott and domain for edem
 					if (m_plugin->get_access_type() != AccountAccessType::enOtt)

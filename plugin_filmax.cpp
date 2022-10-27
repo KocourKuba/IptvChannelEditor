@@ -53,7 +53,7 @@ void plugin_filmax::load_default()
 	playlist_templates.emplace_back(info);
 
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
-	uri_id_parse_pattern = "^#EXTINF:.+tvg-name=\"(?<id>[^\"]+)\"";
+	tag_id_match = "tvg-name";
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].cu_subst = "archive";

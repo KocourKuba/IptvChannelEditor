@@ -88,6 +88,7 @@ bool plugin_vidok::parse_access_info(TemplateParams& params, std::list<AccountIn
 	creds.set_login(params.login);
 	creds.set_password(params.password);
 
+	CWaitCursor cur;
 	std::stringstream data;
 	if (!utils::DownloadFile(fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds)), data))
 	{
@@ -136,6 +137,8 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 	creds.set_password(params.password);
 
 	const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
+
+	CWaitCursor cur;
 	std::stringstream data;
 	if (utils::DownloadFile(url, data))
 	{
@@ -184,6 +187,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 									  L"server",
 									  servers_list[params.server_idx].get_id());
 
+		CWaitCursor cur;
 		std::stringstream data;
 		if (utils::DownloadFile(url, data))
 		{

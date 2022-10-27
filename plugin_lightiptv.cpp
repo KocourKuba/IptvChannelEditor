@@ -53,7 +53,7 @@ void plugin_lightiptv::load_default()
 	playlist_templates.emplace_back(info);
 
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
-	uri_id_parse_pattern = "^#EXTINF:.+tvg-id=\"(?<id>[^\"]+)\"";
+	tag_id_match = "tvg-id";
 
 	square_icons = true;
 

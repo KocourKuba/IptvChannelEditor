@@ -99,6 +99,7 @@ bool plugin_cbilling::parse_access_info(TemplateParams& params, std::list<Accoun
 	static constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
 
+	CWaitCursor cur;
 	std::vector<std::string> headers;
 	headers.emplace_back("accept: */*");
 	headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, utils::utf16_to_utf8(params.password)));

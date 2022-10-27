@@ -817,6 +817,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 void CVodViewer::FilterList()
 {
 	UpdateData(TRUE);
+	CWaitCursor cur;
 
 	if (m_category_idx == LB_ERR || m_category_idx >= (int)m_vod_categories->size())
 	{

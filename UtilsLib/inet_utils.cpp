@@ -184,7 +184,7 @@ bool CrackUrl(const std::wstring& url, CrackedUrl& cracked)
 	if (WinHttpCrackUrl(url.c_str(), (DWORD)url.size(), 0, &urlComp))
 	{
 		if (urlComp.dwSchemeLength)
-			cracked.host.assign(urlComp.lpszScheme, urlComp.dwSchemeLength);
+			cracked.scheme.assign(urlComp.lpszScheme, urlComp.dwSchemeLength);
 		if (urlComp.dwUserNameLength)
 			cracked.user.assign(urlComp.lpszUserName, urlComp.dwUserNameLength);
 		if (urlComp.dwPasswordLength)
@@ -194,7 +194,7 @@ bool CrackUrl(const std::wstring& url, CrackedUrl& cracked)
 		if (urlComp.dwUrlPathLength)
 			cracked.path.assign(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
 		if (urlComp.dwExtraInfoLength)
-			cracked.path.assign(urlComp.lpszExtraInfo, urlComp.dwExtraInfoLength);
+			cracked.extra_info.assign(urlComp.lpszExtraInfo, urlComp.dwExtraInfoLength);
 
 		cracked.port = urlComp.nPort;
 
@@ -274,7 +274,7 @@ bool DownloadFile(const std::wstring& url,
 		}
 
 		// Create an HTTP request handle.
-		CAutoHinternet hRequest = WinHttpOpenRequest(hConnect, verb_post ? L"POST" : L"GET", cracked.path.c_str(),
+		CAutoHinternet hRequest = WinHttpOpenRequest(hConnect, verb_post ? L"POST" : L"GET", (cracked.path + cracked.extra_info).c_str(),
 													 nullptr,
 													 WINHTTP_NO_REFERER,
 													 nullptr,

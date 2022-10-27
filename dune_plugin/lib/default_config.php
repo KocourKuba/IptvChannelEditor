@@ -307,7 +307,7 @@ class default_config extends dynamic_config
             $play_template_url = str_replace('{LIVE_URL}', $live_url, $archive_url);
             $custom_stream_type = $channel->get_custom_archive_url_type();
         } else {
-            $play_template_url = $channel_custom_url;
+            $play_template_url = $live_url;
             $custom_stream_type = $channel->get_custom_url_type();
         }
 
@@ -338,8 +338,8 @@ class default_config extends dynamic_config
 
         $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
-        if (empty($parse_pattern))
-            $parse_pattern = "|$parse_pattern|";
+        if (!empty($parse_pattern))
+            $parse_pattern = "/$parse_pattern/";
 
         foreach ($m3u_lines as $line) {
             if (preg_match($parse_pattern, $line, $matches)) {
@@ -361,39 +361,49 @@ class default_config extends dynamic_config
         hd_print("Get playlist information");
         $pl_entries = array();
         $m3u_lines = $this->FetchTvM3U($plugin_cookies);
-        $parse_id_pattern = $this->get_feature(URI_ID_PARSE_PATTERN);
+
         $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
+        $tag_id = $this->get_feature(TAG_ID_MATCH);
+        if (empty($parse_pattern)) {
+            hd_print('Empty parse pattern. Unable to map channels');
+            $this->ClearPlaylistCache();
+            return $pl_entries;
+        }
 
-        if (!empty($parse_pattern)) {
-            $uri_parse_regex = "|$parse_pattern|";
+        $parse_pattern = "/$parse_pattern/";
 
-            if (empty($parse_id_pattern)) {
-                // No need to parse #EXTINF tags
-                // http://some_domain/play/CHANNEL_ID/some_token/video.m3u8
+        foreach ($m3u_lines as $i => $iValue) {
+            if (strpos($iValue, '#EXTINF') !== 0) continue;
 
-                foreach ($m3u_lines as $line) {
-                    if (preg_match($uri_parse_regex, $line, $matches) && !empty($matches[M_ID])) {
-                        $pl_entries[$matches[M_ID]] = $matches;
+            if (!empty($tag_id)) {
+                // need to parse #EXTINF to find ID
+                // #EXTINF:0 CUID="1" tvg-name="1:458" tvg-id="1:458" group-title="Общие",Первый канал
+                if ($tag_id === 'name') {
+                    // special case for name
+                    preg_match('/#EXTINF:.*,(?<name>.+)$/', $iValue, $m_name);
+
+                    $id = empty($m_name['name']) ? '' : $m_name['name'];
+                } else {
+                    // take ID from selected tag
+                    preg_match_all('/(?<tags>[^=" ]+)="(?<values>(?:[^"])*)"/', $m3u_lines[$i++], $m_tags);
+                    if (($key = array_search($tag_id, $m_tags['tags'])) !== false) {
+                        $id = $m_tags['values'][$key];
                     }
                 }
-            } else {
-                $uri_id_parse_regex = "|$parse_id_pattern|";
 
-                // Need to extract channel id from EXTINF tags
-                foreach ($m3u_lines as $i => $iValue) {
-                    // #EXTINF:0 CUID="1" tvg-name="1:458" tvg-id="1:458" group-title="Общие",Первый канал
-                    if (!preg_match($uri_id_parse_regex, $iValue, $m_id) || (empty($m_id[M_ID]))) continue;
+                if (empty($id)) continue;
+            }
 
-                    $i++;
-                    // #EXTGRP:Общие - may not exist!
-                    if (preg_match('|^#EXTGRP|', $m3u_lines[$i])) {
-                        $i++;
-                    }
-                    // http://some_domain/some_token/index.m3u8
-                    if (preg_match($uri_parse_regex, $m3u_lines[$i], $matches)) {
-                        $pl_entries[$m_id[M_ID]] = $matches;
-                    }
+            // skip all comments and ext tags
+            while(strpos($m3u_lines[$i], '#') === 0) {  $i++; }
+
+            // http://some_domain/some_token/index.m3u8
+            if (preg_match($parse_pattern, $m3u_lines[$i], $matches)) {
+                if (empty($tag_id)) {
+                    $id = $matches['id'];
                 }
+
+                $pl_entries[$id] = $matches;
             }
         }
 
@@ -448,7 +458,7 @@ class default_config extends dynamic_config
 
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
         if (!empty($vod_pattern))
-            $vod_pattern = "|$vod_pattern|";
+            $vod_pattern = "/$vod_pattern/";
 
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
@@ -490,7 +500,7 @@ class default_config extends dynamic_config
         $movies = array();
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
         if (!empty($vod_pattern))
-            $vod_pattern = "|$vod_pattern|";
+            $vod_pattern = "/$vod_pattern/";
 
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $line) {
@@ -529,7 +539,7 @@ class default_config extends dynamic_config
 
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
         if (!empty($vod_pattern))
-            $vod_pattern = "|$vod_pattern|";
+            $vod_pattern = "/$vod_pattern/";
 
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);
         foreach ($m3u_lines as $i => $iValue) {
@@ -675,7 +685,7 @@ class default_config extends dynamic_config
 
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
         if (!empty($vod_pattern))
-            $vod_pattern = "|$vod_pattern|";
+            $vod_pattern = "/$vod_pattern/";
 
         hd_print("vod parse pattern: $vod_pattern");
         $m3u_lines = $this->FetchVodM3U($plugin_cookies);

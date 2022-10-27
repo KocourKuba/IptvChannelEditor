@@ -36,11 +36,13 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static std::array<m3u_entry::info_tags, 3> id_search_tags =
-{
-	m3u_entry::info_tags::tag_channel_id,
-	m3u_entry::info_tags::tag_cuid,
-	m3u_entry::info_tags::tag_tvg_chno,
+static std::map<std::wstring, m3u_entry::info_tags> id_tags = {
+	{ L"channel-id",     m3u_entry::info_tags::tag_channel_id     },
+	{ L"CUID",           m3u_entry::info_tags::tag_cuid           },
+	{ L"tvg-chno",       m3u_entry::info_tags::tag_tvg_chno       },
+	{ L"tvg-id",         m3u_entry::info_tags::tag_tvg_id         },
+	{ L"tvg-name",       m3u_entry::info_tags::tag_tvg_name       },
+	{ L"name",           m3u_entry::info_tags::tag_directive_title },
 };
 
 static std::array<m3u_entry::info_tags, 3> epg_search_tags =
@@ -60,9 +62,11 @@ static std::array<m3u_entry::info_tags, 6> archive_search_tags =
 	m3u_entry::info_tags::tag_catchup_time,
 };
 
-bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
+bool PlaylistEntry::Parse(const std::wstring& str)
 {
 	if (str.empty()) return false;
+
+	m3uEntry.parse(str);
 
 	bool result = false;
 	switch (m3uEntry.get_directive())
@@ -73,6 +77,12 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 			result = is_valid();
 			if (result && category.empty())
 				category = L"Unset";
+
+			const auto& tags = m3uEntry.get_tags();
+			if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_logo); pair != tags.end())
+			{
+				set_logo_root(pair->second);
+			}
 			break;
 		}
 		case m3u_entry::directives::ext_group:
@@ -98,7 +108,6 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 				set_title(m3uEntry.get_dir_title());
 			}
 
-			search_id(tags);
 			search_group(tags);
 			search_archive(tags);
 			search_epg(tags);
@@ -151,20 +160,20 @@ bool PlaylistEntry::Parse(const std::wstring& str, const m3u_entry& m3uEntry)
 	return result;
 }
 
-void PlaylistEntry::search_id(const std::map<m3u_entry::info_tags, std::wstring>& tags)
+void PlaylistEntry::search_id(const std::wstring& search_tag)
 {
-	for (const auto& tag : id_search_tags)
+	const m3u_tags& tags = m3uEntry.get_tags();
+	if (const auto& pair = id_tags.find(search_tag); pair != id_tags.end())
 	{
-		const auto& pair = tags.find(tag);
-		if (pair != tags.end() && !pair->second.empty())
+		if (const auto& tag_pair = tags.find(pair->second); tag_pair != tags.end())
 		{
-			set_id(pair->second);
-			break;
+			if (!tag_pair->second.empty())
+				set_id(tag_pair->second);
 		}
 	}
 }
 
-void PlaylistEntry::search_group(const std::map<m3u_entry::info_tags, std::wstring>& tags)
+void PlaylistEntry::search_group(const m3u_tags& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_group_title); pair != tags.end())
 	{
@@ -180,7 +189,7 @@ void PlaylistEntry::search_group(const std::map<m3u_entry::info_tags, std::wstri
 	}
 }
 
-void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wstring>& tags)
+void PlaylistEntry::search_archive(const m3u_tags& tags)
 {
 	for (const auto& tag : archive_search_tags)
 	{
@@ -196,7 +205,7 @@ void PlaylistEntry::search_archive(const std::map<m3u_entry::info_tags, std::wst
 	}
 }
 
-void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring>& tags)
+void PlaylistEntry::search_epg(const m3u_tags& tags)
 {
 	// priority -> tvg_id -> tvg_name -> title
 	for (const auto& tag : epg_search_tags)
@@ -210,7 +219,7 @@ void PlaylistEntry::search_epg(const std::map<m3u_entry::info_tags, std::wstring
 	}
 }
 
-void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::wstring>& tags)
+void PlaylistEntry::search_logo(const m3u_tags& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_logo); pair != tags.end())
 	{
@@ -221,7 +230,7 @@ void PlaylistEntry::search_logo(const std::map<m3u_entry::info_tags, std::wstrin
 	}
 }
 
-void PlaylistEntry::search_catchup(const std::map<m3u_entry::info_tags, std::wstring>& tags)
+void PlaylistEntry::search_catchup(const m3u_tags& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup); pair != tags.end())
 	{

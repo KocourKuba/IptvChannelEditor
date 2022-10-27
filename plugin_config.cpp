@@ -12,7 +12,7 @@ void plugin_config::clear()
 	provider_url.clear();
 	playlist_template.clear();
 	playlist_templates.clear();
-	uri_id_parse_pattern.clear();
+	tag_id_match.clear();
 	uri_parse_pattern.clear();
 	provider_vod_url.clear();
 	vod_templates.clear();
