@@ -101,6 +101,9 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 	m_config.SendNotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
 
+	::SetEvent(m_config.m_hExit);
+	ATLTRACE("\nThread exit\n");
+
 	CoUninitialize();
 
 	return FALSE;

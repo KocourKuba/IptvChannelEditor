@@ -72,6 +72,9 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 	m_config.NotifyParent(WM_END_GET_STREAM_INFO);
 
+	::SetEvent(m_config.m_hExit);
+	ATLTRACE("\nThread exit\n");
+
 	CoUninitialize();
 
 	return FALSE;
@@ -80,10 +83,13 @@ BOOL CGetStreamInfoThread::InitInstance()
 void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomic<int>& count, int index)
 {
 	TRACE("GetChannelStreamInfo: thread %d start\n", index);
+	if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
+		return;
+
 	auto uri = config.m_container->at(index);
 	const auto& url = config.m_plugin->get_play_stream(config.m_params, uri);
 
-	if (url.empty() || ::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
+	if (url.empty())
 		return;
 
 	SECURITY_ATTRIBUTES sa{};
@@ -141,7 +147,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 	{
 		::ResumeThread(pi.hThread);
 
-		long nTimeout = 60;
+		long nTimeout = 20;
 
 		int nErrorCount = 0;
 		DWORD dwExitCode = STILL_ACTIVE;

@@ -509,9 +509,6 @@
     <ClCompile Include="MenuEdit.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="uri_stream.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Credentials.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
@@ -522,6 +519,9 @@
       <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
     <ClCompile Include="AccountSettings.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_stream.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
   </ItemGroup>

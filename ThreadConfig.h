@@ -9,6 +9,7 @@ public:
 	std::stringstream m_data;
 	void* m_parent = nullptr;
 	HANDLE m_hStop = nullptr;
+	HANDLE m_hExit = nullptr;
 	std::wstring m_rootPath;
 	std::wstring m_url;
 	bool m_use_cache = true;

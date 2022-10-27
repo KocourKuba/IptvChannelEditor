@@ -40,6 +40,7 @@ public:
 		std::vector<uri_stream*>* m_container = nullptr;
 		CWnd* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
+		HANDLE m_hExit = nullptr;
 		std::wstring m_probe;
 		int m_max_threads = 1;
 		std::shared_ptr<base_plugin> m_plugin;

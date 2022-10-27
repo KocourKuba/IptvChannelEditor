@@ -201,11 +201,13 @@ protected:
 	afx_msg void OnBnClickedButtonReloadIcon();
 
 	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnSwitchPlugin(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgressStream(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnTrayIconNotify(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnExit(WPARAM wParam, LPARAM lParam);
 
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -389,6 +391,7 @@ private:
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
+	CEvent m_evtThreadExit;
 
 	COLORREF m_normal; // channel not present in the current playlist
 	COLORREF m_gray; // channel disabled
