@@ -141,7 +141,7 @@ class dynamic_config
      */
     public function get_feature($type)
     {
-        return $this->features[$type];
+        return empty($this->features[$type]) ? null : $this->features[$type];
     }
 
     /**
@@ -155,11 +155,11 @@ class dynamic_config
 
     /**
      * @param string $type
-     * @return mixed
+     * @return array
      */
     public function get_stream_params($type)
     {
-        return $this->stream_params[$type];
+        return empty($this->stream_params[$type]) ? array() : $this->stream_params[$type];
     }
 
     /**
