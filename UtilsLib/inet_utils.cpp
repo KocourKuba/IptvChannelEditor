@@ -429,7 +429,7 @@ bool DownloadFile(const std::wstring& url,
 
 		if (use_cache && vData.good())
 		{
-			std::ofstream out_stream(cache_file, std::ios::out | std::ios::binary);
+			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			out_stream << vData.rdbuf();
 		}
 

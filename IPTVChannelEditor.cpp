@@ -846,7 +846,7 @@ bool PackPlugin(const PluginType plugin_type,
 	// rewrite xml nodes
 	try
 	{
-		std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ios::out | std::ios::binary);
+		std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ofstream::binary);
 
 		auto doc = std::make_unique<rapidxml::xml_document<>>();
 		doc->parse<rapidxml::parse_no_data_nodes>(config_data.data());
@@ -938,7 +938,7 @@ bool PackPlugin(const PluginType plugin_type,
 				utils::CBase64Coder enc;
 				enc.Encode(js.c_str(), (int)js.size(), ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
 
-				std::ofstream out_file(packFolder + L"account.dat");
+				std::ofstream out_file(packFolder + L"account.dat", std::ofstream::binary);
 				const auto& str = utils::generateRandomId(5) + enc.GetResultString();
 				out_file.write(str.c_str(), str.size());
 				out_file.close();
@@ -1077,7 +1077,7 @@ bool PackPlugin(const PluginType plugin_type,
 			update_info->append_node(version_info);
 			doc->append_node(update_info);
 
-			std::ofstream os(update_path + utils::utf8_to_utf16(update_name), std::ios::out | std::ios::binary);
+			std::ofstream os(update_path + utils::utf8_to_utf16(update_name), std::ofstream::binary);
 			os << *doc;
 
 		}

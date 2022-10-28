@@ -190,9 +190,10 @@ int parse_info(UpdateInfo& info)
 	// Parse the buffer using the xml file parsing library into doc
 	auto doc = std::make_unique<rapidxml::xml_document<>>();
 
+	auto& xml = info.update_info.str();
 	try
 	{
-		doc->parse<0>(info.update_info.str().data());
+		doc->parse<0>(xml.data());
 	}
 	catch (rapidxml::parse_error&)
 	{
@@ -283,7 +284,7 @@ int download_update(UpdateInfo& info)
 				break;
 			}
 
-			std::ofstream os(loaded_file);
+			std::ofstream os(loaded_file, std::ofstream::binary);
 			os << file_data.rdbuf();
 			if (os.bad())
 			{

@@ -931,7 +931,7 @@ void CPluginConfigPage::OnBnClickedButtonEpgTest()
 
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.json";
 
-		std::ofstream out_stream(out_file);
+		std::ofstream out_stream(out_file, std::ofstream::binary);
 		out_stream << json_str << std::endl;
 		out_stream.close();
 
@@ -966,7 +966,7 @@ void CPluginConfigPage::OnBnClickedButtonPlaylistShow()
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
 
-		std::ofstream out_stream(out_file);
+		std::ofstream out_stream(out_file, std::ofstream::binary);
 		out_stream << data.rdbuf();
 		out_stream.close();
 
@@ -1001,7 +1001,7 @@ void CPluginConfigPage::OnBnClickedButtonVodTemplate()
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
 
-		std::ofstream out_stream(out_file);
+		std::ofstream out_stream(out_file, std::ofstream::binary);
 		out_stream << data.rdbuf();
 		out_stream.close();
 

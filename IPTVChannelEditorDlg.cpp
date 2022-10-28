@@ -968,7 +968,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 		if (saveToFile)
 		{
-			std::ofstream os(m_plFileName);
+			std::ofstream os(m_plFileName, std::ofstream::binary);
 			os << data.rdbuf();
 			return;
 		}

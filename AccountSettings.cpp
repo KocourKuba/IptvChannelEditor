@@ -189,7 +189,7 @@ void AccountSettings::SaveSettingsToJson()
 		UpdateSettingsJson(plugin);
 	}
 
-	std::ofstream out_file(GetAppPath() + CONFIG_FILE);
+	std::ofstream out_file(GetAppPath() + CONFIG_FILE, std::ofstream::binary);
 	out_file << m_config << std::endl;
 }
 

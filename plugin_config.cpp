@@ -91,7 +91,7 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 		nlohmann::json node = *this;
 
 		const auto& str = node.dump(2);
-		std::ofstream out_stream(full_path);
+		std::ofstream out_stream(full_path, std::ofstream::binary);
 		out_stream << str << std::endl;
 		res = true;
 	}
