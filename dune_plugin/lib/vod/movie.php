@@ -118,7 +118,7 @@ class Movie implements User_Input_Handler
     /**
      * @var string
      */
-    protected $playback_series_ndx;
+    protected $playback_series_ndx = -1;
 
     /**
      * @param string $id
@@ -156,13 +156,13 @@ class Movie implements User_Input_Handler
             case 'playback_stop':
                 if ($this->playback_info === null) break;
 
-                if (!empty($this->playback_series_ndx)) {
+                //hd_print("movie: " . json_encode($this));
+                if ($this->playback_series_ndx !== -1) {
                     $indexed_array = array_values($this->series_list);
                     $series = $indexed_array[$this->playback_series_ndx];
                 } else {
                     $series = $this->series_list[$user_input->plugin_vod_id];
                 }
-                //hd_print("movie: " . json_encode($this));
                 if (!empty($series->id)) {
                     $save_folder = HD::get_items('save_folder');
                     if (isset($save_folder[$user_input->plugin_vod_id][$series->id])) {
