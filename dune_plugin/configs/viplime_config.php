@@ -12,7 +12,7 @@ class viplime_config extends default_config
      */
     public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $channel->set_ext_param(M_QUALITY, $this->get_qualities($plugin_cookies));
+        $channel->set_ext_param(M_QUALITY, $this->get_quality_id($plugin_cookies));
 
         return parent::GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
     }
