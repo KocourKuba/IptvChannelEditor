@@ -56,7 +56,7 @@ void plugin_smile::load_default()
 	vod_info.pl_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vod.m3u";
 	vod_templates.emplace_back(vod_info);
 
-	vod_parse_pattern = R"(^#EXTINF:.+tvg-logo=\"(?<logo>[^\"]+)\".+group-title=\"(?<category>[^\"]+)\".*,\s*(?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
+	vod_parse_pattern = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
 
 	vod_support = true;
 	vod_m3u = true;
