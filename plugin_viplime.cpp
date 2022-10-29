@@ -47,8 +47,7 @@ void plugin_viplime::load_default()
 
 	provider_url = "http://viplime.fun/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
 	playlist_templates.emplace_back(info);
 

@@ -30,8 +30,7 @@ void base_plugin::load_default()
 	provider_url = "http://dune-hd.com/";
 	access_type = AccountAccessType::enNone;
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	playlist_templates.emplace_back(info);
 }
 

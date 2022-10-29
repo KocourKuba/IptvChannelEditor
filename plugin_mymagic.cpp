@@ -47,8 +47,7 @@ void plugin_mymagic::load_default()
 
 	provider_url = "http://mymagic.tv/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u";
 	playlist_templates.emplace_back(info);
 

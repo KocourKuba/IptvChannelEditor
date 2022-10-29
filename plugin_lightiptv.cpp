@@ -47,8 +47,7 @@ void plugin_lightiptv::load_default()
 
 	provider_url = "https://ottbill.cc/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
 	playlist_templates.emplace_back(info);
 

@@ -47,8 +47,7 @@ void plugin_sharatv::load_default()
 
 	provider_url = "https://shara-tv.org/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
 	playlist_templates.emplace_back(info);
 

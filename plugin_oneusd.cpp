@@ -47,8 +47,7 @@ void plugin_oneusd::load_default()
 
 	provider_url = "http://1usd.tv/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://1usd.tv/pl-{PASSWORD}-hls";
 	playlist_templates.emplace_back(info);
 

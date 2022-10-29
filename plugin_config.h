@@ -1,5 +1,6 @@
 #pragma once
 #include "PluginDefines.h"
+#include "IPTVChannelEditor.h"
 #include "UtilsLib\json_wrapper.h"
 
 namespace s_enum
@@ -99,10 +100,21 @@ class PlaylistTemplateInfo
 {
 public:
 	PlaylistTemplateInfo() = default;
+	PlaylistTemplateInfo(UINT ID)
+	{
+		set_name(load_string_resource(ID));
+	}
+
+	PlaylistTemplateInfo(UINT ID, const std::string& _pl_template) : pl_template(_pl_template)
+	{
+		set_name(load_string_resource(ID));
+	}
+
 	PlaylistTemplateInfo(const std::string& _name, const std::string& _pl_template) : name(_name), pl_template(_pl_template) {}
 
 	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
 	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
+	void set_name(UINT ID) { name = utils::utf16_to_utf8(load_string_resource(ID)); }
 
 	std::wstring get_template() const { return utils::utf8_to_utf16(pl_template); }
 	void set_template(const std::wstring& val) { pl_template = utils::utf16_to_utf8(val); }

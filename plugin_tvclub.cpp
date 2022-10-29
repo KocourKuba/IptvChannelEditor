@@ -55,8 +55,7 @@ void plugin_tvclub::load_default()
 
 	provider_url = "https://tvclub.cc/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://celn.shott.top/p/{TOKEN}";
 	playlist_templates.emplace_back(info);
 

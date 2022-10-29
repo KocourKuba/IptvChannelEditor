@@ -47,8 +47,7 @@ void plugin_sharavoz::load_default()
 
 	provider_url = "https://www.sharavoz.tv/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
 	playlist_templates.emplace_back(info);
 

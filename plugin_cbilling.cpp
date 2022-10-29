@@ -50,14 +50,12 @@ void plugin_cbilling::load_default()
 
 	provider_url = "https://cbilling.eu/";
 
-	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "http://protected-api.com";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://247on.cc/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
 	playlist_templates.emplace_back(info);
 

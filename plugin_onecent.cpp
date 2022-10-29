@@ -47,8 +47,7 @@ void plugin_onecent::load_default()
 
 	provider_url = "https://1cent.tv/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
 	playlist_templates.emplace_back(info);
 

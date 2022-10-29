@@ -714,10 +714,17 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_playlist_info = m_plugin->get_playlist_templates();
 	if (m_plugin->get_plugin_type() == PluginType::enCustom)
 	{
-		PlaylistTemplateInfo info;
-		info.set_name(load_string_resource(IDS_STRING_CUSTOM_PLAYLIST));
-		info.is_file = true;
-		m_playlist_info.emplace_back(info);
+		UINT ID = IDS_STRING_CUSTOM_PLAYLIST;
+		if (std::find_if(m_playlist_info.begin(), m_playlist_info.end(), [ID](const auto& val)
+						 {
+							 const auto& name = val.get_name();
+							 return name == load_string_resource(ID) || name == load_string_resource(0, ID);
+						 }) == m_playlist_info.end())
+		{
+			PlaylistTemplateInfo info(ID);
+			info.is_file = true;
+			m_playlist_info.emplace_back(info);
+		}
 	}
 
 	m_wndPlaylist.ResetContent();

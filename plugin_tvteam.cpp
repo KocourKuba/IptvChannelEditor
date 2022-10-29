@@ -47,8 +47,7 @@ void plugin_tvteam::load_default()
 
 	provider_url = "https://tv.team/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
 	playlist_templates.emplace_back(info);
 

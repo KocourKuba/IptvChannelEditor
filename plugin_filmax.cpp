@@ -47,8 +47,7 @@ void plugin_filmax::load_default()
 
 	provider_url = "https://filmax-tv.ru/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
 	playlist_templates.emplace_back(info);
 

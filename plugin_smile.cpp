@@ -47,12 +47,11 @@ void plugin_smile::load_default()
 
 	provider_url = "http://smile-tv.live/";
 
-	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vodall.m3u";
 	vod_templates.emplace_back(vod_info);
 
-	vod_info.set_name(load_string_resource(IDS_STRING_NO_ADULT));
+	vod_info.set_name(IDS_STRING_NO_ADULT);
 	vod_info.pl_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vod.m3u";
 	vod_templates.emplace_back(vod_info);
 
@@ -61,8 +60,7 @@ void plugin_smile::load_default()
 	vod_support = true;
 	vod_m3u = true;
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/tv.m3u";
 	playlist_templates.emplace_back(info);
 

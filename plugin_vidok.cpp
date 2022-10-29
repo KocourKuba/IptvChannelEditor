@@ -55,8 +55,7 @@ void plugin_vidok::load_default()
 
 	provider_url = "https://vidok.tv/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://vidok.tv/p/{TOKEN}";
 	playlist_templates.emplace_back(info);
 
