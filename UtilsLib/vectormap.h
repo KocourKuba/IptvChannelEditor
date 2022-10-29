@@ -16,6 +16,32 @@ namespace utils
 	class vectormap
 	{
 	public:
+		vectormap() = default;
+		vectormap(const vectormap<K, V>& src)
+		{
+			*this = src;
+		}
+
+		const vectormap<K, V>& operator=(const vectormap<K, V>& src)
+		{
+			if (this != &src)
+			{
+				m_vec = src.m_vec;
+				m_map = src.m_map;
+			}
+			return *this;
+		}
+
+		vectormap<K, V>& operator=(vectormap<K, V>&& src) noexcept
+		{
+			if (this != &src)
+			{
+				m_vec = std::move(src.m_vec);
+				m_map = std::move(src.m_map);
+			}
+			return *this;
+		}
+
 		/// <summary>
 		/// Access the vector of pairs directly for index access or iteration
 		/// </summary>
@@ -70,15 +96,23 @@ namespace utils
 		/// </summary>
 		const V& getAt(size_t index) const
 		{
+			return operator[](index);
+		}
+
+		const V& operator[](size_t index) const
+		{
 			if (index < m_vec.size())
 				return m_vec[index].second;
 
 			throw std::runtime_error("index out of range");
 		}
 
-		const V& operator[](size_t index) const
+		V& operator[](size_t index)
 		{
-			return getAt(index);
+			if (index < m_vec.size())
+				return m_vec[index].second;
+
+			throw std::runtime_error("index out of range");
 		}
 
 		const V& front() const
