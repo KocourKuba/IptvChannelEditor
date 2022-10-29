@@ -42,7 +42,6 @@ const SHORT_NAME           = 'short_name';
 const PLAYLIST_TEMPLATE    = 'playlist_template';
 const PLAYLIST_TEMPLATE2   = 'playlist_template2';
 const URI_PARSE_PATTERN    = 'uri_parse_pattern';
-const URI_ID_PARSE_PATTERN = 'uri_id_parse_pattern';
 const TAG_ID_MATCH         = 'tag_id_match';
 
 // streams parameters

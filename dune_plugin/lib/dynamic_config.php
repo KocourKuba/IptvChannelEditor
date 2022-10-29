@@ -81,8 +81,8 @@ class dynamic_config
         $this->set_feature(ACCESS_TYPE, $settings[ACCESS_TYPE]);
         $this->set_feature(SQUARE_ICONS, $settings[SQUARE_ICONS]);
         $this->set_feature(PLAYLIST_TEMPLATE, $settings[PLAYLIST_TEMPLATE]);
-        $this->set_feature(URI_ID_PARSE_PATTERN, $settings[URI_ID_PARSE_PATTERN]);
         $this->set_feature(URI_PARSE_PATTERN, $settings[URI_PARSE_PATTERN]);
+        $this->set_feature(TAG_ID_MATCH, $settings[TAG_ID_MATCH]);
         $this->set_feature(VOD_SUPPORTED, $settings[VOD_SUPPORTED]);
         $this->set_feature(VOD_M3U, $settings[VOD_M3U]);
         $this->set_feature(VOD_PLAYLIST_URL, $settings[VOD_PLAYLIST_URL]);
