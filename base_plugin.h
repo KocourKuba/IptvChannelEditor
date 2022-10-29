@@ -124,7 +124,7 @@ public:
 	/// regex string can contain named groups that will be extracted
 	/// </summary>
 
-	const std::wregex& get_regex_parse_stream_template() const { return regex_uri_template; }
+	const boost::wregex& get_regex_parse_stream_template() const { return regex_uri_template; }
 	void set_regex_parse_stream(const std::wstring& val);
 
 	/// <summary>
@@ -247,7 +247,7 @@ protected:
 protected:
 
 	// compiled regex for uri parse template
-	std::wregex regex_uri_template;
+	boost::wregex regex_uri_template;
 
 	// extracted named groups from uri parse template
 	std::vector<std::wstring> regex_named_groups;

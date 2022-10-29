@@ -37,9 +37,9 @@ static char THIS_FILE[] = __FILE__;
 void uri_base::set_uri(const std::wstring& url)
 {
 	// https, udp, http, file, plugin_file
-	static std::wregex re(LR"((https?:\/\/|plugin_file:\/\/)(.*))");
-	std::wsmatch m;
-	if (std::regex_match(url, m, re))
+	static boost::wregex re(LR"((https?:\/\/|plugin_file:\/\/)(.*))");
+	boost::wsmatch m;
+	if (boost::regex_match(url, m, re))
 	{
 		schema = m[1].str();
 		path = m[2].str();

@@ -95,7 +95,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>fmt\include;SevenZip;json\single_include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>fmt\include;SevenZip;json\single_include;$(SolutionDir)..\boost;</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
@@ -162,7 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>fmt\include;SevenZip;json\single_include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>fmt\include;SevenZip;json\single_include;$(SolutionDir)..\boost;</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

@@ -283,9 +283,9 @@ void CPlaylistParseJsonThread::ParseEdem()
 	auto categories = std::make_unique<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>>();
 	do
 	{
-		std::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
-		std::wsmatch m;
-		if (!std::regex_match(m_config.m_url, m, re_url)) break;
+		boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
+		boost::wsmatch m;
+		if (!boost::regex_match(m_config.m_url, m, re_url)) break;
 
 		const auto& key = m[1].str();
 		const auto& url = m[2].str();

@@ -502,13 +502,69 @@ public:
 	virtual const std::vector<DynamicParamsInfo>& get_profiles_list() { return profiles_list; }
 	virtual void set_profiles_list(const std::vector<DynamicParamsInfo>& info) { profiles_list = info; }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(plugin_config, access_type, short_name, title, name, provider_url, //-V601
-								   playlist_templates, playlist_template_index, playlist_template,
-								   tag_id_match, uri_parse_pattern, vod_support, vod_m3u,
-								   vod_templates, vod_template_index, provider_vod_url, vod_parse_pattern,
-								   square_icons, requested_token,
-								   static_servers, static_qualities, static_devices, static_profiles,
-								   streams_config, epg_params, servers_list, qualities_list, devices_list, profiles_list);
+	friend void to_json(nlohmann::json& j, const plugin_config& c)
+	{
+		SERIALIZE_STRUCT(j, c, access_type);
+		SERIALIZE_STRUCT(j, c, short_name);
+		SERIALIZE_STRUCT(j, c, title);
+		SERIALIZE_STRUCT(j, c, name);
+		SERIALIZE_STRUCT(j, c, provider_url);
+		SERIALIZE_STRUCT(j, c, playlist_templates);
+		SERIALIZE_STRUCT(j, c, playlist_template_index);
+		SERIALIZE_STRUCT(j, c, playlist_template);
+		SERIALIZE_STRUCT(j, c, tag_id_match);
+		SERIALIZE_STRUCT(j, c, uri_parse_pattern);
+		SERIALIZE_STRUCT(j, c, vod_support);
+		SERIALIZE_STRUCT(j, c, vod_m3u);
+		SERIALIZE_STRUCT(j, c, vod_templates);
+		SERIALIZE_STRUCT(j, c, vod_template_index);
+		SERIALIZE_STRUCT(j, c, provider_vod_url);
+		SERIALIZE_STRUCT(j, c, vod_parse_pattern);
+		SERIALIZE_STRUCT(j, c, square_icons);
+		SERIALIZE_STRUCT(j, c, requested_token);
+		SERIALIZE_STRUCT(j, c, static_servers);
+		SERIALIZE_STRUCT(j, c, static_qualities);
+		SERIALIZE_STRUCT(j, c, static_devices);
+		SERIALIZE_STRUCT(j, c, static_profiles);
+		SERIALIZE_STRUCT(j, c, streams_config);
+		SERIALIZE_STRUCT(j, c, epg_params);
+		SERIALIZE_STRUCT(j, c, servers_list);
+		SERIALIZE_STRUCT(j, c, qualities_list);
+		SERIALIZE_STRUCT(j, c, devices_list);
+		SERIALIZE_STRUCT(j, c, profiles_list);
+	}
+
+	friend void from_json(const nlohmann::json& j, plugin_config& c)
+	{
+		DESERIALIZE_STRUCT(j, c, access_type);
+		DESERIALIZE_STRUCT(j, c, short_name);
+		DESERIALIZE_STRUCT(j, c, title);
+		DESERIALIZE_STRUCT(j, c, name);
+		DESERIALIZE_STRUCT(j, c, provider_url);
+		DESERIALIZE_STRUCT(j, c, playlist_templates);
+		DESERIALIZE_STRUCT(j, c, playlist_template_index);
+		DESERIALIZE_STRUCT(j, c, playlist_template);
+		DESERIALIZE_STRUCT(j, c, tag_id_match);
+		DESERIALIZE_STRUCT(j, c, uri_parse_pattern);
+		DESERIALIZE_STRUCT(j, c, vod_support);
+		DESERIALIZE_STRUCT(j, c, vod_m3u);
+		DESERIALIZE_STRUCT(j, c, vod_templates);
+		DESERIALIZE_STRUCT(j, c, vod_template_index);
+		DESERIALIZE_STRUCT(j, c, provider_vod_url);
+		DESERIALIZE_STRUCT(j, c, vod_parse_pattern);
+		DESERIALIZE_STRUCT(j, c, square_icons);
+		DESERIALIZE_STRUCT(j, c, requested_token);
+		DESERIALIZE_STRUCT(j, c, static_servers);
+		DESERIALIZE_STRUCT(j, c, static_qualities);
+		DESERIALIZE_STRUCT(j, c, static_devices);
+		DESERIALIZE_STRUCT(j, c, static_profiles);
+		DESERIALIZE_STRUCT(j, c, streams_config);
+		DESERIALIZE_STRUCT(j, c, epg_params);
+		DESERIALIZE_STRUCT(j, c, servers_list);
+		DESERIALIZE_STRUCT(j, c, qualities_list);
+		DESERIALIZE_STRUCT(j, c, devices_list);
+		DESERIALIZE_STRUCT(j, c, profiles_list);
+	}
 
 protected:
 

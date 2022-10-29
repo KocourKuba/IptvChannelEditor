@@ -63,5 +63,5 @@ protected:
 
 protected:
 	ThreadConfig m_config;
-	std::wregex m_re;
+	boost::wregex m_re;
 };

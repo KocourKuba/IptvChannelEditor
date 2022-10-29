@@ -45,8 +45,8 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 	auto playlist = std::make_unique<Playlist>();
 	if (m_config.m_data)
 	{
-		const auto& wbuf = utils::utf8_to_utf16(m_config.m_data.str());
-		std::wistringstream stream(wbuf);
+		const auto& wbuf = m_config.m_data.str();
+		std::istringstream stream(wbuf);
 		if (stream.good())
 		{
 			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
@@ -56,10 +56,10 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 			int channels = 0;
 			int step = 0;
 
-			std::wstring line;
+			std::string line;
 			while (std::getline(stream, line))
 			{
-				utils::string_rtrim(line, L"\r");
+				utils::string_rtrim(line, "\r");
 				step++;
 
 				if (entry->Parse(line))

@@ -734,10 +734,10 @@ bool PackPlugin(const PluginType plugin_type,
 	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", std::filesystem::copy_options::recursive, err);
 
 	// remove if old logo and backgrounds still exists in icons folder
-	std::wregex regExpName { LR"(^(?:bg|logo)_.*\.(?:jpg|png)$)" };
+	boost::wregex regExpName { LR"(^(?:bg|logo)_.*\.(?:jpg|png)$)" };
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
 	{
-		if (!dir_entry.is_directory() && std::regex_match(dir_entry.path().filename().wstring(), regExpName))
+		if (!dir_entry.is_directory() && boost::regex_match(dir_entry.path().filename().wstring(), regExpName))
 			std::filesystem::remove(dir_entry.path(), err);
 	}
 

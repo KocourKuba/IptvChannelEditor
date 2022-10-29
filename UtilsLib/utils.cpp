@@ -25,11 +25,12 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include <regex>
 #include <chrono>
 #include <random>
 
 #include "utils.h"
+
+#include "boost\regex.hpp"
 
 namespace utils
 {
@@ -320,9 +321,9 @@ std::vector<std::string> regex_split(const std::string& str, const std::string& 
 {
 	std::vector<std::string> elems;
 
-	std::regex rgx(token);
-	std::sregex_token_iterator iter(str.begin(), str.end(), rgx, -1);
-	std::sregex_token_iterator end;
+	boost::regex rgx(token);
+	boost::sregex_token_iterator iter(str.begin(), str.end(), rgx, -1);
+	boost::sregex_token_iterator end;
 
 	while (iter != end)
 	{

@@ -313,44 +313,49 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	// clear named group
 	std::vector<std::wstring> regex_named_groups;
 
-	std::wregex re;
-	if (!m_plugin->get_vod_parse_pattern().empty())
+	boost::wregex re;
+	try
 	{
-		try
+		const auto& pattern = m_plugin->get_vod_parse_pattern();
+		if (!pattern.empty())
 		{
-			std::wstring ecmascript_re(m_plugin->get_vod_parse_pattern());
-			std::wregex re_group(L"(\\?<([^>]+)>)");
-			std::match_results<std::wstring::const_iterator> ms;
-			while (std::regex_search(ecmascript_re, ms, re_group))
+			re = pattern;
+
+			boost::wregex re_group(L"(\\?<([^>]+)>)");
+			boost::match_results<std::wstring::const_iterator> what;
+			std::wstring::const_iterator start = pattern.begin();
+			std::wstring::const_iterator end = pattern.end();
+			auto flags = boost::match_default;
+			while (boost::regex_search(start, end, what, re_group, flags))
 			{
-				if (default_vod.parser_mapper.find(ms[2]) != default_vod.parser_mapper.end())
+				if (default_vod.parser_mapper.find(what[2]) != default_vod.parser_mapper.end())
 				{
 					// add only known group!
-					regex_named_groups.emplace_back(ms[2]);
+					regex_named_groups.emplace_back(what[2]);
 				}
-				ecmascript_re.erase(ms.position(), ms.length());
+				start = what[0].second;
+				flags |= boost::match_prev_avail;
+				flags |= boost::match_not_bob;
 			}
-
-			// store regex without named groups
-			re = ecmascript_re;
-		}
-		catch (...)
-		{
-
 		}
 	}
+	catch (...)
+	{
 
-	bool parseTitle = !re._Empty();
+	}
+
+	bool parseTitle = !re.empty();
 	if (m_playlistEntries)
 	{
 		for (const auto& entry : m_playlistEntries->m_entries)
 		{
 			std::shared_ptr<vod_category> category;
-			if (!m_vod_categories->tryGet(entry->get_category(), category))
+			const auto& category_name = entry->get_category_w();
+			if (!m_vod_categories->tryGet(category_name, category))
 			{
-				category = std::make_shared<vod_category>(entry->get_category());
-				category->name = entry->get_category();
-				m_vod_categories->set(entry->get_category(), category);
+				category = std::make_shared<vod_category>(category_name);
+				category->name = category_name;
+				m_vod_categories->set(category_name, category);
 			}
 
 			auto movie = std::make_shared<vod_movie>();
@@ -361,8 +366,8 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 
 			if (parseTitle)
 			{
-				std::wsmatch m;
-				if (std::regex_match(entry->get_title(), m, re))
+				boost::wsmatch m;
+				if (boost::regex_match(entry->get_title(), m, re))
 				{
 					// map groups to parser members
 					size_t pos = 1;
@@ -865,10 +870,10 @@ void CVodViewer::FilterList()
 				break;
 			}
 
-			std::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
-			std::wsmatch m;
+			boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
+			boost::wsmatch m;
 			const auto& vportal = m_account.get_portal();
-			if (!std::regex_match(vportal, m, re_url)) break;
+			if (!boost::regex_match(vportal, m, re_url)) break;
 
 			const auto& key = m[1].str();
 			const auto& url = m[2].str();
@@ -1081,10 +1086,10 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 	CWaitCursor cur;
 	do
 	{
-		std::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
-		std::wsmatch m;
+		boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
+		boost::wsmatch m;
 		const auto& vportal = m_account.get_portal();
-		if (!std::regex_match(vportal, m, re_url)) break;
+		if (!boost::regex_match(vportal, m, re_url)) break;
 
 		const auto& key = m[1].str();
 		const auto& url = m[2].str();

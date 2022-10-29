@@ -112,11 +112,11 @@ void CFilterDialog::OnOK()
 			// Check expression
 			if (m_filterRegex[i])
 			{
-				std::wregex re(filterString[i].GetString());
+				boost::wregex re(filterString[i].GetString());
 				UNUSED_ALWAYS(re);
 			}
 		}
-		catch (std::regex_error& ex)
+		catch (boost::regex_error& ex)
 		{
 			CString error;
 			error.Format(IDS_STRING_ERR_REGEX, ex.what());

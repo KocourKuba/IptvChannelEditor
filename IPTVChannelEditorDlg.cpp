@@ -3153,7 +3153,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 			if (pair == m_playlistMap.end()) continue;
 
 			const auto& plEntry = pair->second;
-			auto found = m_pl_categoriesTreeMap.find(plEntry->get_category());
+			auto found = m_pl_categoriesTreeMap.find(plEntry->get_category_w());
 			ASSERT(found != m_pl_categoriesTreeMap.end());
 			if (found == m_pl_categoriesTreeMap.end()) continue;
 
@@ -3200,7 +3200,7 @@ std::vector<std::wstring> CIPTVChannelEditorDlg::FilterPlaylist()
 	std::array<BOOL, 2> bCase          = { GetConfig().get_int(false, REG_FILTER_CASE_S), GetConfig().get_int(false, REG_FILTER_CASE_H) };
 	std::array<std::wstring, 2> filter = { GetConfig().get_string(false, REG_FILTER_STRING_S), GetConfig().get_string(false, REG_FILTER_STRING_H) };
 
-	std::array<std::wregex, 2> re;
+	std::array<boost::wregex, 2> re;
 	for (int i = 0; i < 2; i++)
 	{
 		if (!bRegex[i]) continue;
@@ -3209,7 +3209,7 @@ std::vector<std::wstring> CIPTVChannelEditorDlg::FilterPlaylist()
 		{
 			re[i] = filter[i];
 		}
-		catch (std::regex_error& ex)
+		catch (boost::regex_error& ex)
 		{
 			ex;
 			bRegex[i] = FALSE;
@@ -3250,9 +3250,9 @@ std::vector<std::wstring> CIPTVChannelEditorDlg::FilterPlaylist()
 				{
 					try
 					{
-						matched[i] = std::regex_search(entry->get_title(), re[i]);
+						matched[i] = boost::regex_search(entry->get_title(), re[i]);
 					}
-					catch (std::regex_error& ex)
+					catch (boost::regex_error& ex)
 					{
 						ex;
 						matched[i] = true;
@@ -3288,7 +3288,7 @@ std::vector<std::wstring> CIPTVChannelEditorDlg::FilterPlaylist()
 			if (!show) continue;
 
 			m_playlistIds.emplace_back(entry->get_id());
-			const auto& category = entry->get_category();
+			const auto& category = entry->get_category_w();
 			if (categories.find(category) == categories.end())
 			{
 				pl_categories.emplace_back(category);
@@ -4055,7 +4055,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 				for (auto hChildItem = m_lastTree->GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_lastTree->GetNextSiblingItem(hChildItem))
 				{
 					const auto& pairEntry = m_playlistTreeMap.find(hChildItem);
-					if (pairEntry == m_playlistTreeMap.end() || category != pairEntry->second->get_category()) continue;
+					if (pairEntry == m_playlistTreeMap.end() || category != pairEntry->second->get_category_w()) continue;
 
 					auto info = dynamic_cast<uri_stream*>(pairEntry->second.get());
 					if (info)
@@ -4180,7 +4180,7 @@ void CIPTVChannelEditorDlg::OnClearStreamInfo()
 			for (auto hChildItem = m_lastTree->GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_lastTree->GetNextSiblingItem(hChildItem))
 			{
 				const auto& pairEntry = m_playlistTreeMap.find(hChildItem);
-				if (pairEntry == m_playlistTreeMap.end() || category != pairEntry->second->get_category()) continue;
+				if (pairEntry == m_playlistTreeMap.end() || category != pairEntry->second->get_category_w()) continue;
 
 				if (auto info = dynamic_cast<uri_stream*>(pairEntry->second.get()); info != nullptr)
 				{
@@ -4684,7 +4684,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 			// Search for existing category
 			for (const auto& category : m_categoriesMap)
 			{
-				if (category.second.category->get_title() == entry->get_category())
+				if (category.second.category->get_title() == entry->get_category_w())
 				{
 					categoryId = category.first;
 					break;
@@ -4704,7 +4704,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 		auto category = std::make_shared<ChannelCategory>(root_path);
 		categoryId = GetNewCategoryID();
 		category->set_key(categoryId);
-		category->set_title(entry->get_category());
+		category->set_title(entry->get_category_w());
 
 		TVINSERTSTRUCTW tvCategory = { nullptr };
 		tvCategory.hParent = TVI_ROOT;

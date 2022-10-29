@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "m3u_entry.h"
 #include "ChannelCategory.h"
 
-using m3u_tags = std::map<m3u_entry::info_tags, std::wstring>;
+using m3u_tags = std::map<m3u_entry::info_tags, std::string>;
 
 class PlaylistEntry : public uri_stream
 {
@@ -39,13 +39,18 @@ public:
 		: uri_stream(InfoType::enPlEntry, plugin, root_path)
 	{}
 
-	bool Parse(const std::wstring& str);
+	bool Parse(const std::string& str);
 
 	int get_channel_length() const { return channel_len; }
+
 	const auto& get_category() const { return category; }
-	void set_logo_root(const std::wstring& val) { logo_root = val; }
-	std::wstring get_logo_root() { return logo_root; }
+	auto get_category_w() const { return utils::utf8_to_utf16(category); }
+
+	void set_logo_root(const std::string& val) { logo_root = val; }
+	const auto& get_logo_root() const { return logo_root; }
+
 	void search_id(const std::wstring& search_tag);
+
 	m3u_entry& get_m3u_entry() { return m3uEntry; }
 	const m3u_entry& get_m3u_entry() const { return m3uEntry; }
 
@@ -55,12 +60,12 @@ protected:
 	void search_epg(const m3u_tags& tags);
 	void search_logo(const m3u_tags& tags);
 	void search_catchup(const m3u_tags& tags);
-	void check_adult(const std::wstring& category);
+	void check_adult(const std::string& category);
 
 protected:
 	int channel_len = 0;
-	std::wstring category;
-	std::wstring logo_root;
+	std::string category;
+	std::string logo_root;
 	m3u_entry m3uEntry;
 };
 

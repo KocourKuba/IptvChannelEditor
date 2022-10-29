@@ -41,11 +41,12 @@ DEALINGS IN THE SOFTWARE.
 #include <set>
 #include <sstream>
 #include <fstream>
-#include <regex>
 #include <filesystem>
 
 #include <fmt/xchar.h>
 #include <fmt/chrono.h>
+
+#include "boost\regex.hpp"
 
 #include "Version.h"
 #include "framework.h"

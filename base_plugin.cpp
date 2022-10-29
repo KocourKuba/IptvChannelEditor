@@ -51,8 +51,8 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 {
 	info->set_uri(url);
 
-	std::wsmatch m;
-	if (!std::regex_match(url, m, get_regex_parse_stream_template()))
+	boost::wsmatch m;
+	if (!boost::regex_match(url, m, get_regex_parse_stream_template()))
 	{
 		info->set_is_template(false);
 		return;
@@ -192,21 +192,24 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 
 	try
 	{
-		std::wstring ecmascript_re(val);
-		std::wregex re_group(L"(\\?<([^>]+)>)");
-		std::match_results<std::wstring::const_iterator> ms;
-		while (std::regex_search(ecmascript_re, ms, re_group))
+		regex_uri_template = val;
+		boost::wregex re_group(L"(\\?<([^>]+)>)");
+		boost::match_results<std::wstring::const_iterator> what;
+		std::wstring::const_iterator start = val.begin();
+		std::wstring::const_iterator end = val.end();
+		auto flags = boost::match_default;
+
+		while (boost::regex_search(start, end, what, re_group, flags))
 		{
-			if (uri.parser_mapper.find(ms[2]) != uri.parser_mapper.end())
+			if (uri.parser_mapper.find(what[2]) != uri.parser_mapper.end())
 			{
 				// add only known group!
-				regex_named_groups.emplace_back(ms[2]);
+				regex_named_groups.emplace_back(what[2]);
 			}
-			ecmascript_re.erase(ms.position(), ms.length());
+			start = what[0].second;
+			flags |= boost::match_prev_avail;
+			flags |= boost::match_not_bob;
 		}
-
-		// store regex without named groups
-		regex_uri_template = ecmascript_re;
 	}
 	catch (...)
 	{

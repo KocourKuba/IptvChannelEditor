@@ -62,7 +62,7 @@ static std::array<m3u_entry::info_tags, 6> archive_search_tags =
 	m3u_entry::info_tags::tag_catchup_time,
 };
 
-bool PlaylistEntry::Parse(const std::wstring& str)
+bool PlaylistEntry::Parse(const std::string& str)
 {
 	if (str.empty()) return false;
 
@@ -73,10 +73,10 @@ bool PlaylistEntry::Parse(const std::wstring& str)
 	{
 	case m3u_entry::directives::ext_pathname:
 		{
-			parent_plugin->parse_stream_uri(str, this);
+			parent_plugin->parse_stream_uri(utils::utf8_to_utf16(str), this);
 			result = is_valid();
 			if (result && category.empty())
-				category = L"Unset";
+				category = "Unset";
 
 			const auto& tags = m3uEntry.get_tags();
 			if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_logo); pair != tags.end())
@@ -105,7 +105,7 @@ bool PlaylistEntry::Parse(const std::wstring& str)
 
 			if (!m3uEntry.get_dir_title().empty())
 			{
-				set_title(m3uEntry.get_dir_title());
+				set_title(utils::utf8_to_utf16(m3uEntry.get_dir_title()));
 			}
 
 			search_group(tags);
@@ -145,7 +145,7 @@ bool PlaylistEntry::Parse(const std::wstring& str)
 				set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", get_domain(), get_id()));
 				break;
 			case PluginType::enKineskop:
-				set_icon_uri(std::regex_replace(get_icon_uri().get_uri(), std::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
+				set_icon_uri(boost::regex_replace(get_icon_uri().get_uri(), boost::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
 				break;
 			default:
 				break;
@@ -168,7 +168,7 @@ void PlaylistEntry::search_id(const std::wstring& search_tag)
 		if (const auto& tag_pair = tags.find(pair->second); tag_pair != tags.end())
 		{
 			if (!tag_pair->second.empty())
-				set_id(tag_pair->second);
+				set_id(utils::utf8_to_utf16(tag_pair->second));
 		}
 	}
 }
@@ -180,7 +180,7 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 		category = pair->second;
 		if (category.empty())
 		{
-			category = L"Unset";
+			category = "Unset";
 		}
 		else
 		{
@@ -213,7 +213,7 @@ void PlaylistEntry::search_epg(const m3u_tags& tags)
 		const auto& pair = tags.find(tag);
 		if (pair != tags.end() && !pair->second.empty())
 		{
-			set_epg_id(0, pair->second);
+			set_epg_id(0, utils::utf8_to_utf16(pair->second));
 			break;
 		}
 	}
@@ -223,10 +223,13 @@ void PlaylistEntry::search_logo(const m3u_tags& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_logo); pair != tags.end())
 	{
+		std::string icon_uri;
 		if (logo_root.empty())
-			set_icon_uri(utils::string_replace<wchar_t>(pair->second, L"//epg.it999.ru/img/", L"//epg.it999.ru/img2/"));
+			icon_uri = utils::string_replace<char>(pair->second, "//epg.it999.ru/img/", "//epg.it999.ru/img2/");
 		else
-			set_icon_uri(logo_root + pair->second);
+			icon_uri = logo_root + pair->second;
+
+		set_icon_uri(utils::utf8_to_utf16(icon_uri));
 	}
 }
 
@@ -234,13 +237,13 @@ void PlaylistEntry::search_catchup(const m3u_tags& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup); pair != tags.end())
 	{
-		set_catchup_id(pair->second);
+		set_catchup_id(utils::utf8_to_utf16(pair->second));
 	}
 }
 
-void PlaylistEntry::check_adult(const std::wstring& category)
+void PlaylistEntry::check_adult(const std::string& category)
 {
-	std::wstring lowcase(category);
+	std::wstring lowcase(utils::utf8_to_utf16(category));
 	utils::wstring_tolower(lowcase);
 	if (lowcase.find(L"зрослы") != std::wstring::npos
 		|| lowcase.find(L"adult") != std::wstring::npos

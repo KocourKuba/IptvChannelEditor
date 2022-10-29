@@ -761,16 +761,15 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			data << instream.rdbuf();
 		}
 
-		const auto& wbuf = utils::utf8_to_utf16(data.str());
-		std::wistringstream stream(wbuf);
+		std::istringstream stream(data.str());
 		if (!stream.good()) return;
 
 		Credentials cred;
 		auto entry = std::make_unique<PlaylistEntry>(m_plugin, GetAppPath(utils::PLUGIN_ROOT));
-		std::wstring line;
+		std::string line;
 		while (std::getline(stream, line))
 		{
-			utils::string_rtrim(line, L"\r");
+			utils::string_rtrim(line, "\r");
 			if (!entry->Parse(line)) continue;
 
 			const auto& access_key = entry->get_token();
@@ -1053,16 +1052,15 @@ void CAccessInfoPage::GetAccountInfo()
 	std::stringstream data;
 	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
 	{
-		const auto& wbuf = utils::utf8_to_utf16(data.str());
-		std::wistringstream stream(wbuf);
+		std::istringstream stream(data.str());
 
 		if (stream.good())
 		{
 			int step = 0;
-			std::wstring line;
+			std::string line;
 			while (std::getline(stream, line))
 			{
-				utils::string_rtrim(line, L"\r");
+				utils::string_rtrim(line, "\r");
 				if (entry->Parse(line) && !entry->get_token().empty())
 				{
 					// do not override fake ott and domain for edem

@@ -48,5 +48,5 @@ public:
 protected:
 	ThreadConfig m_config;
 	std::shared_ptr<base_plugin> m_parent_plugin{};
-	std::wregex m_re;
+	boost::wregex m_re;
 };
