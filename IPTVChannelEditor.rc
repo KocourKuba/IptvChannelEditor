@@ -1604,7 +1604,7 @@ BEGIN
     IDS_STRING_FILMAX_P3    "Russia, Moscow"
     IDS_STRING_FILMAX_P4    "France"
     IDS_STRING_FILMAX_P5    "Russia, Saint Petersburg"
-    IDS_STRING_FILMAX_P6    "Russia, Yekaterinburg"
+    IDS_STRING_FILMAX_P6    "Moscow 4"
     IDS_STRING_FILMAX_P7    "Kazakhstan"
     IDS_STRING_FILMAX_P8    "Moscow 2"
     IDS_STRING_FILMAX_P9    "Moscow 3"

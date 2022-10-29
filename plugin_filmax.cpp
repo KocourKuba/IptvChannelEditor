@@ -77,7 +77,7 @@ void plugin_filmax::fill_servers_list(TemplateParams& /*params*/)
 	for (int i = 0; i <= IDS_STRING_FILMAX_P12 - IDS_STRING_FILMAX_P1; i++)
 	{
 		DynamicParamsInfo info;
-		info.set_id(fmt::format(L"{:d}", i));
+		info.set_id(fmt::format(L"{:d}", i + 1));
 		info.set_name(load_string_resource(1049, IDS_STRING_FILMAX_P1 + i));
 		servers.emplace_back(info);
 	}
