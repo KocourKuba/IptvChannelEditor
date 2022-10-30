@@ -21,6 +21,16 @@ class Entry
     private $path;
 
     /**
+     * @var string
+     */
+    private $group_title;
+
+    /**
+     * @var string
+     */
+    private $parsed_title;
+
+    /**
      * @return ExtInf|null
      */
     public function getExtInf()
@@ -85,14 +95,30 @@ class Entry
     /**
      * @return string
      */
+    public function getEntryTitle()
+    {
+        return $this->parsed_title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setEntryTitle($title)
+    {
+        $this->parsed_title = $title;
+    }
+    /**
+     * @return string
+     */
     public function getGroupTitle()
     {
-        $group_title = $this->extGrp !== null ? $this->extGrp->getGroup() : '';
-        if (empty($group_title)) {
-            $group_title = $this->findAttribute('group-title');
+        if (empty($this->group_title)) {
+            $group_title = $this->extGrp !== null ? $this->extGrp->getGroup() : '';
+            if (empty($group_title)) {
+                $this->group_title = $this->findAttribute('group-title');
+            }
         }
-
-        return $group_title;
+        return $this->group_title;
     }
 
     /**

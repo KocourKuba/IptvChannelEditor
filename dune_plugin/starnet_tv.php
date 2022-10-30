@@ -147,7 +147,7 @@ class Starnet_Tv extends Abstract_Tv
         }
 
         $this->plugin->config->GetAccountInfo($plugin_cookies);
-        $pl_entries = $this->plugin->config->GetPlaylistStreamInfo($plugin_cookies);
+        $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo($plugin_cookies);
 
         // Read channels
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {

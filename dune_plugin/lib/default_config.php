@@ -399,7 +399,7 @@ class default_config extends dynamic_config
      * @param $plugin_cookies
      * @return array
      */
-    public function GetPlaylistStreamInfo($plugin_cookies)
+    public function GetPlaylistStreamsInfo($plugin_cookies)
     {
         hd_print("Get playlist information");
         $pl_entries = array();
@@ -478,20 +478,12 @@ class default_config extends dynamic_config
 
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
-        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
-        if (!empty($vod_pattern))
-            $vod_pattern = "/$vod_pattern/";
-
         foreach ($this->get_vod_m3u_entries($plugin_cookies) as $i => $entry) {
             $title = $entry->getTitle();
             $search_in = utf8_encode(mb_strtolower($title, 'UTF-8'));
             if (strpos($search_in, $keyword) === false) continue;
 
-            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match) && isset($match['title'])) {
-                $title = $match['title'];
-            }
-
-            $movies[] = new Short_Movie((string)$i, $title, $entry->findAttribute('tvg-logo'));
+            $movies[] = new Short_Movie((string)$i, $entry->getEntryTitle(), $entry->findAttribute('tvg-logo'));
         }
 
         hd_print("Movies found: " . count($movies));
@@ -518,9 +510,6 @@ class default_config extends dynamic_config
     {
         hd_print("getVideoList: $query_id");
         $movies = array();
-        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
-        if (!empty($vod_pattern))
-            $vod_pattern = "/$vod_pattern/";
 
         $arr = explode("_", $query_id);
         $category_id = ($arr === false) ? $query_id : $arr[0];
@@ -531,14 +520,9 @@ class default_config extends dynamic_config
                 $category = 'Без категории';
             }
 
-            if ($category_id !== $category) continue;
-
-            $title = $entry->getTitle();
-            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match) && isset($match['title'])) {
-                $title = $match['title'];
+            if ($category_id === $category) {
+                $movies[] = new Short_Movie((string)$i, $entry->getEntryTitle(), $entry->findAttribute('tvg-logo'));
             }
-
-            $movies[] = new Short_Movie((string)$i, $title, $entry->findAttribute('tvg-logo'));
         }
 
         hd_print("Movies read: " . count($movies));
@@ -673,7 +657,7 @@ class default_config extends dynamic_config
      * @param bool $force
      * @return array|false
      */
-    public function FetchVodM3U($plugin_cookies, $force = false)
+    protected function FetchVodM3U($plugin_cookies, $force = false)
     {
         $m3u_file = get_temp_path($this->PluginShortName . "_playlist_vod.m3u8");
 
@@ -707,10 +691,23 @@ class default_config extends dynamic_config
         $category_index = array();
         $categoriesFound = array();
 
+        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
+        if (!empty($vod_pattern))
+            $vod_pattern = "/$vod_pattern/";
+
         foreach ($this->get_vod_m3u_entries($plugin_cookies) as $entry) {
             $category = $entry->getGroupTitle();
             if (empty($category)) {
                 $category = 'Без категории';
+            }
+
+            $entry_title = $entry->getEntryTitle();
+            if (empty($entry_title)) {
+                $title = $entry->getTitle();
+                if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match) && isset($match['title'])) {
+                    $title = $match['title'];
+                }
+                $entry->setEntryTitle($title);
             }
 
             if (!in_array($category, $categoriesFound)) {
