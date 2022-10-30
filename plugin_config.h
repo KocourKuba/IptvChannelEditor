@@ -172,7 +172,7 @@ struct EpgParameters
 	std::wstring get_epg_time_format() const { return utils::utf8_to_utf16(epg_time_format); }
 	void set_epg_time_format(const std::wstring& val) { epg_time_format = utils::utf16_to_utf8(val); }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_param, epg_url, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_date_format, epg_time_format, epg_timezone, epg_use_duration);
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_param, epg_url, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_date_format, epg_time_format, epg_timezone, epg_use_duration); //-V601
 };
 
 /// <summary>
@@ -526,18 +526,18 @@ public:
 		SERIALIZE_STRUCT(j, c, playlist_template);
 		SERIALIZE_STRUCT(j, c, tag_id_match);
 		SERIALIZE_STRUCT(j, c, uri_parse_pattern);
-		SERIALIZE_STRUCT(j, c, vod_support);
-		SERIALIZE_STRUCT(j, c, vod_m3u);
+		SERIALIZE_STRUCT(j, c, vod_support); //-V601
+		SERIALIZE_STRUCT(j, c, vod_m3u); //-V601
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
 		SERIALIZE_STRUCT(j, c, provider_vod_url);
 		SERIALIZE_STRUCT(j, c, vod_parse_pattern);
-		SERIALIZE_STRUCT(j, c, square_icons);
-		SERIALIZE_STRUCT(j, c, requested_token);
-		SERIALIZE_STRUCT(j, c, static_servers);
-		SERIALIZE_STRUCT(j, c, static_qualities);
-		SERIALIZE_STRUCT(j, c, static_devices);
-		SERIALIZE_STRUCT(j, c, static_profiles);
+		SERIALIZE_STRUCT(j, c, square_icons); //-V601
+		SERIALIZE_STRUCT(j, c, requested_token); //-V601
+		SERIALIZE_STRUCT(j, c, static_servers); //-V601
+		SERIALIZE_STRUCT(j, c, static_qualities); //-V601
+		SERIALIZE_STRUCT(j, c, static_devices); //-V601
+		SERIALIZE_STRUCT(j, c, static_profiles); //-V601
 		SERIALIZE_STRUCT(j, c, streams_config);
 		SERIALIZE_STRUCT(j, c, epg_params);
 		SERIALIZE_STRUCT(j, c, servers_list);

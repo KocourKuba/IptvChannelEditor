@@ -715,7 +715,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	if (m_plugin->get_plugin_type() == PluginType::enCustom)
 	{
 		UINT ID = IDS_STRING_CUSTOM_PLAYLIST;
-		if (std::find_if(m_playlist_info.begin(), m_playlist_info.end(), [ID](const auto& val)
+		if (std::find_if(m_playlist_info.begin(), m_playlist_info.end(), [&ID](const auto& val)
 						 {
 							 const auto& name = val.get_name();
 							 return name == load_string_resource(ID) || name == load_string_resource(0, ID);
