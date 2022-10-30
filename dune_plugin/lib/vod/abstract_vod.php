@@ -218,7 +218,7 @@ abstract class Abstract_Vod implements Vod
 
     public function ensure_favorites_loaded(&$plugin_cookies)
     {
-        if (!empty($this->fav_movie_ids)) {
+        if (empty($this->fav_movie_ids)) {
             return;
         }
 

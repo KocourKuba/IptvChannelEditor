@@ -2,6 +2,7 @@
 require_once 'dynamic_config.php';
 require_once 'epg_manager.php';
 require_once 'tv/channel.php';
+require_once 'm3u/M3uParser.php';
 
 class default_config extends dynamic_config
 {
@@ -10,9 +11,17 @@ class default_config extends dynamic_config
     protected $is_entered = false;
     protected $movie_counter = array();
     protected $filters = array();
-
     protected $embedded_account;
     protected $account_data = array();
+
+    /**
+     * @var Entry
+     */
+    protected $tv_m3u_entries;
+    /**
+     * @var Entry
+     */
+    protected $vod_m3u_entries;
 
     public function load_embedded_account()
     {
@@ -28,6 +37,38 @@ class default_config extends dynamic_config
                 }
             }
         }
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return Entry[]
+     */
+    public function get_vod_m3u_entries($plugin_cookies)
+    {
+        if (empty($this->vod_m3u_entries)) {
+            $m3u_lines = $this->FetchVodM3U($plugin_cookies);
+            $parser = new M3uParser();
+            $this->vod_m3u_entries = $parser->parseArray($m3u_lines);
+            hd_print("Total entries loaded from VOD m3u file:" . count($this->vod_m3u_entries));
+        }
+
+        return $this->vod_m3u_entries;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return Entry[]
+     */
+    public function get_tv_m3u_entries($plugin_cookies)
+    {
+        if (empty($this->tv_m3u_entries)) {
+            $m3u_lines = $this->FetchTvM3U($plugin_cookies);
+            $parser = new M3uParser();
+            $this->tv_m3u_entries = $parser->parseArray($m3u_lines);
+            hd_print("Total entries loaded from playlist m3u file:" . count($this->tv_m3u_entries));
+        }
+
+        return $this->tv_m3u_entries;
     }
 
     /**
@@ -311,6 +352,9 @@ class default_config extends dynamic_config
             $custom_stream_type = $channel->get_custom_url_type();
         }
 
+        // hd_print("play template: $play_template_url");
+        // foreach($ext_params as $key => $value) {hd_print("ext_params: key: $key, value: $value");}
+
         // replace all macros
         foreach ($replaces as $key => $value)
         {
@@ -336,13 +380,12 @@ class default_config extends dynamic_config
     {
         hd_print("Collect information from account: $force");
 
-        $m3u_lines = $this->FetchTvM3U($plugin_cookies, $force);
         $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
         if (!empty($parse_pattern))
             $parse_pattern = "/$parse_pattern/";
 
-        foreach ($m3u_lines as $line) {
-            if (preg_match($parse_pattern, $line, $matches)) {
+        foreach ($this->get_tv_m3u_entries($plugin_cookies) as $entry) {
+            if (preg_match($parse_pattern, $entry->getPath(), $matches)) {
                 $this->account_data = $matches;
                 return $this->account_data;
             }
@@ -360,55 +403,34 @@ class default_config extends dynamic_config
     {
         hd_print("Get playlist information");
         $pl_entries = array();
-        $m3u_lines = $this->FetchTvM3U($plugin_cookies);
-
         $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
-        $tag_id = $this->get_feature(TAG_ID_MATCH);
         if (empty($parse_pattern)) {
-            hd_print('Empty parse pattern. Unable to map channels');
+            hd_print('Empty parse pattern. Unable to parse playlist');
             $this->ClearPlaylistCache();
             return $pl_entries;
         }
-
         $parse_pattern = "/$parse_pattern/";
 
-        foreach ($m3u_lines as $i => $iValue) {
-            if (strpos($iValue, '#EXTINF') !== 0) continue;
-
+        $tag_id = $this->get_feature(TAG_ID_MATCH);
+        foreach ($this->get_tv_m3u_entries($plugin_cookies) as $entry) {
             if (!empty($tag_id)) {
-                // need to parse #EXTINF to find ID
-                // #EXTINF:0 CUID="1" tvg-name="1:458" tvg-id="1:458" group-title="Общие",Первый канал
-                if ($tag_id === 'name') {
-                    // special case for name
-                    preg_match('/#EXTINF:.*,(?<name>.+)$/', $iValue, $m_name);
-
-                    $id = empty($m_name['name']) ? '' : $m_name['name'];
-                } else {
-                    // take ID from selected tag
-                    preg_match_all('/(?<tags>[^=" ]+)="(?<values>(?:[^"])*)"/', $m3u_lines[$i++], $m_tags);
-                    if (($key = array_search($tag_id, $m_tags['tags'])) !== false) {
-                        $id = $m_tags['values'][$key];
-                    }
+                // special case for name, otherwise take ID from selected tag
+                $id = ($tag_id === 'name') ? $entry->getTitle() : $entry->findAttribute($tag_id);
+                if (empty($id)) {
+                    hd_print("Unable to map ID by $tag_id for entry with url: " . $entry->getPath());
+                    continue;
                 }
-
-                if (empty($id)) continue;
             }
 
-            // skip all comments and ext tags
-            while(strpos($m3u_lines[$i], '#') === 0) {  $i++; }
-
             // http://some_domain/some_token/index.m3u8
-            if (preg_match($parse_pattern, $m3u_lines[$i], $matches)) {
-                if (empty($tag_id)) {
-                    $id = $matches['id'];
-                }
-
+            if (preg_match($parse_pattern, $entry->getPath(), $matches)) {
+                $id = !empty($tag_id) ? $id : $matches['id'];
                 $pl_entries[$id] = $matches;
             }
         }
 
         if (empty($pl_entries)) {
-            hd_print('Empty provider playlist! No channels mapped.');
+            hd_print('No channels mapped. Empty provider playlist or no channels mapped to playlist entries');
             $this->ClearPlaylistCache();
         }
 
@@ -421,7 +443,7 @@ class default_config extends dynamic_config
      */
     public function ClearPlaylistCache()
     {
-        $tmp_file = get_temp_path("playlist_tv.m3u8");
+        $tmp_file = get_temp_path($this->PluginShortName . "_playlist_tv.m3u8");
         hd_print("Clear playlist cache: $tmp_file");
         if (file_exists($tmp_file)) {
             unlink($tmp_file);
@@ -460,19 +482,16 @@ class default_config extends dynamic_config
         if (!empty($vod_pattern))
             $vod_pattern = "/$vod_pattern/";
 
-        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
-        foreach ($m3u_lines as $i => $line) {
-            if (!preg_match($vod_pattern, $line, $matches)) {
-                continue;
+        foreach ($this->get_vod_m3u_entries($plugin_cookies) as $i => $entry) {
+            $title = $entry->getTitle();
+            $search_in = utf8_encode(mb_strtolower($title, 'UTF-8'));
+            if (strpos($search_in, $keyword) === false) continue;
+
+            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match) && isset($match['title'])) {
+                $title = $match['title'];
             }
 
-            $logo = $matches['logo'];
-            $caption = $matches['title'];
-
-            $search = utf8_encode(mb_strtolower($caption, 'UTF-8'));
-            if (strpos($search, $keyword) !== false) {
-                $movies[] = new Short_Movie((string)$i, $caption, $logo);
-            }
+            $movies[] = new Short_Movie((string)$i, $title, $entry->findAttribute('tvg-logo'));
         }
 
         hd_print("Movies found: " . count($movies));
@@ -497,29 +516,29 @@ class default_config extends dynamic_config
      */
     public function getVideoList($query_id, $plugin_cookies)
     {
+        hd_print("getVideoList: $query_id");
         $movies = array();
         $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
         if (!empty($vod_pattern))
             $vod_pattern = "/$vod_pattern/";
 
-        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
-        foreach ($m3u_lines as $i => $line) {
-            if (!preg_match($vod_pattern, $line, $matches)) {
-                continue;
-            }
+        $arr = explode("_", $query_id);
+        $category_id = ($arr === false) ? $query_id : $arr[0];
 
-            $category = $matches['category'];
-            $logo = $matches['logo'];
-            $caption = $matches['title'];
+        foreach ($this->get_vod_m3u_entries($plugin_cookies) as $i => $entry) {
+            $category = $entry->getGroupTitle();
             if (empty($category)) {
                 $category = 'Без категории';
             }
 
-            $arr = explode("_", $query_id);
-            $category_id = ($arr === false) ? $query_id : $arr[0];
-            if ($category_id === $category) {
-                $movies[] = new Short_Movie((string)$i, $caption, $logo);
+            if ($category_id !== $category) continue;
+
+            $title = $entry->getTitle();
+            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match) && isset($match['title'])) {
+                $title = $match['title'];
             }
+
+            $movies[] = new Short_Movie((string)$i, $title, $entry->findAttribute('tvg-logo'));
         }
 
         hd_print("Movies read: " . count($movies));
@@ -541,18 +560,23 @@ class default_config extends dynamic_config
         if (!empty($vod_pattern))
             $vod_pattern = "/$vod_pattern/";
 
-        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
-        foreach ($m3u_lines as $i => $iValue) {
-            if ($i !== (int)$movie_id || !preg_match($vod_pattern, $iValue, $match)) {
-                continue;
+        $entries = $this->get_vod_m3u_entries($plugin_cookies);
+        if (isset($entries[$movie_id])) {
+            $entry = $entries[$movie_id];
+            $logo = $entry->findAttribute('tvg-logo');
+            $title = $entry->getTitle();
+            $title_orig = '';
+            $country = '';
+            $year = '';
+
+            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match)) {
+                $title = isset($match['title']) ? $match['title'] : $title;
+                $title_orig = isset($match['title_orig']) ? $match['title_orig'] : $title_orig;
+                $country = isset($match['country']) ? $match['country'] : $country;
+                $year = isset($match['year']) ? $match['year'] : $year;
             }
 
-            $logo = isset($match['logo']) ? $match['logo'] : "";
-            $title = isset($match['title']) ? $match['title'] : "";
-            $title_orig = isset($match['title_orig']) ? $match['title_orig'] : "";
-            $country = isset($match['country']) ? $match['country'] : "";
-            $year = isset($match['year']) ? $match['year'] : "";
-            $url = $this->UpdateMpegTsBuffering($m3u_lines[$i + 1], $plugin_cookies);
+            $url = $this->UpdateMpegTsBuffering($entry->getPath(), $plugin_cookies);
 
             //hd_print("Vod url: $playback_url");
             $movie->set_data(
@@ -577,7 +601,6 @@ class default_config extends dynamic_config
             // hd_print("movie_id: $movie_id");
             // hd_print("title: $title");
             hd_print("movie url: $url");
-            break;
         }
 
         return $movie;
@@ -616,7 +639,7 @@ class default_config extends dynamic_config
      */
     protected function FetchTvM3U($plugin_cookies, $force = false)
     {
-        $tmp_file = get_temp_path("playlist_tv.m3u8");
+        $tmp_file = get_temp_path($this->PluginShortName . "_playlist_tv.m3u8");
         if ($force !== false || !file_exists($tmp_file)) {
             try {
                 $url = $this->GetPlaylistUrl('tv1', $plugin_cookies);
@@ -652,7 +675,7 @@ class default_config extends dynamic_config
      */
     public function FetchVodM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = get_temp_path("playlist_vod.m3u8");
+        $m3u_file = get_temp_path($this->PluginShortName . "_playlist_vod.m3u8");
 
         if ($force !== false || !file_exists($m3u_file)) {
             try {
@@ -679,27 +702,19 @@ class default_config extends dynamic_config
      */
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
+        hd_print("fetch_vod_categories");
         $category_list = array();
         $category_index = array();
         $categoriesFound = array();
 
-        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
-        if (!empty($vod_pattern))
-            $vod_pattern = "/$vod_pattern/";
-
-        hd_print("vod parse pattern: $vod_pattern");
-        $m3u_lines = $this->FetchVodM3U($plugin_cookies);
-        foreach ($m3u_lines as $line) {
-            if (!preg_match($vod_pattern, $line, $matches)) {
-                continue;
-            }
-
-            $category = $matches['category'];
+        foreach ($this->get_vod_m3u_entries($plugin_cookies) as $entry) {
+            $category = $entry->getGroupTitle();
             if (empty($category)) {
                 $category = 'Без категории';
             }
 
             if (!in_array($category, $categoriesFound)) {
+                hd_print("Found VOD category: $category");
                 $categoriesFound[] = $category;
                 $cat = new Vod_Category($category, $category);
                 $category_list[] = $cat;
