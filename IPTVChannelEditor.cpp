@@ -1105,8 +1105,7 @@ bool PackPlugin(const PluginType plugin_type,
 	if (showMessage)
 	{
 		CString msg;
-		msg.Format(make_web_update ?IDS_STRING_INFO_W_CREATE_SUCCESS : IDS_STRING_INFO_CREATE_SUCCESS,
-				   make_web_update ? update_path.c_str() : output_path.c_str());
+		msg.Format(make_web_update ?IDS_STRING_INFO_W_CREATE_SUCCESS : IDS_STRING_INFO_CREATE_SUCCESS, packed_file.c_str());
 		AfxMessageBox(msg, MB_OK);
 	}
 
