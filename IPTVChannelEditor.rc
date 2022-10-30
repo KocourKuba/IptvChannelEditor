@@ -1807,6 +1807,7 @@ BEGIN
     IDS_STRING_COMBO_CONFIGS "Choose the plugin config for selected account"
     IDS_STRING_CHECK_USE_DURATION 
                             "Use duration as EPG end. Calculate EPG end time by adding duration value to the EPG start time."
+    IDS_STRING_UNSET        "Unset"
 END
 
 #endif    // English (United States) resources

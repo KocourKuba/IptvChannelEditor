@@ -258,6 +258,7 @@
 #define IDS_STRING_BUTTON_ADD_PLAYLIST  342
 #define IDS_STRING_COMBO_CONFIGS        343
 #define IDS_STRING_CHECK_USE_DURATION   344
+#define IDS_STRING_UNSET                345
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -560,7 +561,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

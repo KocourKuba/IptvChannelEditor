@@ -25,7 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include <regex>
 #include "AccessInfoPage.h"
 #include "IPTVChannelEditor.h"
 #include "AccountSettings.h"

@@ -38,7 +38,6 @@ DEALINGS IN THE SOFTWARE.
 #include <vector>
 #include <array>
 #include <map>
-#include <regex>
 #include <sstream>
 #include <fstream>
 #include <filesystem>

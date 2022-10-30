@@ -25,7 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include <regex>
 #include "PlayListEntry.h"
 #include "UtilsLib\utils.h"
 #include "UtilsLib\rapidxml_value.hpp"
@@ -76,7 +75,9 @@ bool PlaylistEntry::Parse(const std::string& str)
 			parent_plugin->parse_stream_uri(utils::utf8_to_utf16(str), this);
 			result = is_valid();
 			if (result && category.empty())
-				category = "Unset";
+			{
+				set_category(load_string_resource(IDS_STRING_UNSET));
+			}
 
 			const auto& tags = m3uEntry.get_tags();
 			if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_logo); pair != tags.end())
@@ -180,7 +181,7 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 		category = pair->second;
 		if (category.empty())
 		{
-			category = "Unset";
+			set_category(load_string_resource(IDS_STRING_UNSET));
 		}
 		else
 		{
