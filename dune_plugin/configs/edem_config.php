@@ -196,7 +196,7 @@ class edem_config extends default_config
         $pairs = explode(" ", $params);
         $post_params = array();
         foreach ($pairs as $pair) {
-            if (preg_match("|^(.+):(.+)$|", $pair, $m)) {
+            if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
                 $filter = $this->get_filter($m[1]);
                 if ($filter !== null && !empty($filter['values'])) {
                     $item_idx = array_search($m[2], $filter['values']);
@@ -246,7 +246,7 @@ class edem_config extends default_config
      */
     protected function CollectSearchResult($query_id, $json)
     {
-        // hd_print("CollectSearchResult: $query_id");
+        hd_print("CollectSearchResult: $query_id");
         $movies = array();
 
         $current_offset = $this->get_next_page($query_id, 0);
@@ -298,7 +298,7 @@ class edem_config extends default_config
             if ($initial !== -1) {
                 $pairs = explode(" ", $initial);
                 foreach ($pairs as $pair) {
-                    if (strpos($pair, $name . ":") !== false && preg_match("|^$name:(.+)|", $pair, $m)) {
+                    if (strpos($pair, $name . ":") !== false && preg_match("/^$name:(.+)/", $pair, $m)) {
                         $idx = array_search($m[1], $values) ?: -1;
                         break;
                     }
@@ -347,7 +347,7 @@ class edem_config extends default_config
     {
         $mediateka = isset($this->embedded_account->vportal) ? $this->embedded_account->vportal : $plugin_cookies->mediateka;
         if (empty($mediateka)
-            || !preg_match('|^portal::\[key:([^]]+)\](.+)$|', $mediateka, $matches)) {
+            || !preg_match('/^portal::\[key:([^]]+)\](.+)$/', $mediateka, $matches)) {
             hd_print("incorrect or empty VPortal key");
             return false;
         }

@@ -297,7 +297,7 @@ class Epg_Xml_Parser
         }
 
         $xml_file = '';
-        preg_match('|^.*\/.*(\..+)$|', $this->file, $match);
+        preg_match('/^.*\/.*(\..+)$/', $this->file, $match);
         if ($match[1] === '.gz') {
             $xml_file = 'compress.zlib://';
         }

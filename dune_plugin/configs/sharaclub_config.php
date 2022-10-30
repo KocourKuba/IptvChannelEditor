@@ -436,7 +436,7 @@ class sharaclub_config extends default_config
         $pairs = explode(",", $params);
         $post_params = array();
         foreach ($pairs as $pair) {
-            if (preg_match("|^(.+):(.+)$|", $pair, $m)) {
+            if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
                 hd_print("Filter: $m[1] Value: $m[2]");
                 $filter = $this->get_filter($m[1]);
                 if ($filter !== null && !empty($filter['values'])) {
@@ -529,7 +529,7 @@ class sharaclub_config extends default_config
             if ($initial !== -1) {
                 $pairs = explode(" ", $initial);
                 foreach ($pairs as $pair) {
-                    if (strpos($pair, $name . ":") !== false && preg_match("|^$name:(.+)|", $pair, $m)) {
+                    if (strpos($pair, $name . ":") !== false && preg_match("/^$name:(.+)/", $pair, $m)) {
                         $idx = array_search($m[1], $values) ?: -1;
                         break;
                     }

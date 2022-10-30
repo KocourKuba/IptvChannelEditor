@@ -221,7 +221,7 @@ class glanz_config extends default_config
         $pairs = explode(",", $params);
         $post_params = array();
         foreach ($pairs as $pair) {
-            if (preg_match("|^(.+):(.+)$|", $pair, $m)) {
+            if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
                 $filter = $this->get_filter($m[1]);
                 if ($filter !== null && !empty($filter['values'])) {
                     $item_idx = array_search($m[2], $filter['values']);
@@ -315,7 +315,7 @@ class glanz_config extends default_config
             if ($initial !== -1) {
                 $pairs = explode(" ", $initial);
                 foreach ($pairs as $pair) {
-                    if (strpos($pair, $name . ":") !== false && preg_match("|^$name:(.+)|", $pair, $m)) {
+                    if (strpos($pair, $name . ":") !== false && preg_match("/^$name:(.+)/", $pair, $m)) {
                         $idx = array_search($m[1], $values) ?: -1;
                         break;
                     }

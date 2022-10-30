@@ -130,7 +130,7 @@ class smb_tree
         $network = parse_ini_file('/config/network_folders.properties', true);
         $network_folder = array();
         foreach ($network as $k => $v) {
-            if (preg_match("|(.*)\.(.*)|", $k, $match)) {
+            if (preg_match("/(.*)\.(.*)/", $k, $match)) {
                 $network_folder[$match[2]][$match[1]] = $v;
             }
         }
@@ -170,7 +170,7 @@ class smb_tree
         $d = array();
         $network_folder_smb = self::get_network_folder_smb();
         foreach ($network_folder_smb as $k => $v) {
-            if (!preg_match('@((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)@', $k)) {
+            if (!preg_match('/((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)/', $k)) {
                 $out = shell_exec('export LD_LIBRARY_PATH=/firmware/lib:$LD_LIBRARY_PATH&&/firmware/bin/nmblookup "' . $k . '" -S');
                 if (preg_match('/(.*) (.*)<00>/', $out, $matches)) {
                     $ip = '//' . $matches[1] . '/';
@@ -376,7 +376,7 @@ class smb_tree
         $nfs = array();
         $network = parse_ini_file('/config/network_folders.properties', true);
         foreach ($network as $k => $v) {
-            if (preg_match("|(.*)\.(.*)|", $k, $match)) {
+            if (preg_match("/(.*)\.(.*)/", $k, $match)) {
                 $network_folder[$match[2]][$match[1]] = $v;
             }
         }

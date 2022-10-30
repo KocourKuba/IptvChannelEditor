@@ -358,7 +358,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 Control_Factory::add_multiline_label($defs, 'Error mount:', $selected_url->err, 4);
                 Control_Factory::add_label($defs, 'SMB folder:', $selected_url->caption);
                 Control_Factory::add_label($defs, 'SMB IP:', $selected_url->ip_path);
-                if (preg_match("|Permission denied|", $selected_url->err)) {
+                if (strpos("Permission denied", $selected_url->err) !== false) {
                     $user = isset($selected_url->user) ? $selected_url->user : '';
                     $password = isset($selected_url->password) ? $selected_url->password : '';
                     $this->GetSMBAccessDefs($defs, $user, $password);
@@ -565,7 +565,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         Control_Factory::add_multiline_label($defs, 'Error mount:', $err, 4);
         Control_Factory::add_label($defs, 'SMB folder:', $caption);
         Control_Factory::add_label($defs, 'SMB IP:', $ip_path);
-        if (preg_match("|Permission denied|", $err)) {
+        if (strpos("Permission denied", $err) !== false) {
             $this->GetSMBAccessDefs($defs, $user, $password);
         } else {
             Control_Factory::add_label($defs, '', '');
