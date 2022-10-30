@@ -6,6 +6,7 @@ require_once 'starnet_vod_list_screen.php';
 class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_category_list';
+    const ACTION_RELOAD = 'reload';
 
     /**
      * @var array
@@ -27,6 +28,14 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         if ($plugin->config->get_feature(VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function get_handler_id()
+    {
+        return self::ID . '_handler';
     }
 
     /**
@@ -55,27 +64,34 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
             GUI_EVENT_KEY_SETUP => $setup_screen,
             GUI_EVENT_KEY_B_GREEN => $setup_screen,
+            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, self::ACTION_RELOAD),
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
     }
 
     /**
      * @param $user_input
      * @param $plugin_cookies
      * @return null
+     * @throws Exception
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         //hd_print('Vod favorites: handle_user_input:');
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
+        if (!isset($user_input->selected_media_url)) {
+            return null;
+        }
+
+        $media_url = MediaURL::decode($user_input->parent_media_url);
+        if ($user_input->control_id === self::ACTION_RELOAD) {
+            hd_print("reload categories");
+            $this->category_list = null;
+            $this->category_index = null;
+            $this->plugin->config->ClearVodCache();
+            $this->get_all_folder_items($media_url, $plugin_cookies);
+            return Action_Factory::invalidate_folders(array(self::ID));
+        }
         return null;
     }
 
@@ -87,6 +103,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
+        hd_print("get_all_folder_items");
         if (is_null($this->category_index) || is_null($this->category_list)) {
             $this->plugin->config->fetch_vod_categories($plugin_cookies, $this->category_list, $this->category_index);
         }

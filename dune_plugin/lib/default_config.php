@@ -454,6 +454,19 @@ class default_config extends dynamic_config
      * Clear downloaded playlist
      * @return void
      */
+    public function ClearVodCache()
+    {
+        $tmp_file = get_temp_path($this->PluginShortName . "_playlist_vod.m3u8");
+        hd_print("Clear VOD cache: $tmp_file");
+        if (file_exists($tmp_file)) {
+            unlink($tmp_file);
+        }
+    }
+
+    /**
+     * Clear downloaded playlist
+     * @return void
+     */
     public function ClearChannelsCache($plugin_cookies)
     {
         $tmp_file = get_temp_path($plugin_cookies->channels_list);
