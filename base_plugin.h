@@ -241,7 +241,6 @@ public:
 
 protected:
 
-	void replace_vars(std::wstring& url, const TemplateParams& params, const uri_stream* info) const;
 	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
 protected:

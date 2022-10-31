@@ -121,9 +121,57 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 {
 	size_t subtype = (size_t)params.streamSubtype;
 
-	std::wstring url = params.shift_back ? get_archive_template(subtype, info) : get_live_template(subtype, info);
+	const auto& live_url = get_live_template(subtype, info);
+	std::wstring url = params.shift_back ? get_archive_template(subtype, info) : live_url;
 
-	replace_vars(url, params, info);
+	if (params.shift_back)
+		utils::string_replace_inplace<wchar_t>(url, REPL_LIVE_URL, live_url);
+
+	if (!info->domain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, info->domain);
+
+	if (!info->port.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, info->port);
+
+	if (!info->get_id().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_ID, info->get_id());
+
+	if (!info->token.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, info->token);
+
+	if (!info->int_id.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, info->int_id);
+
+	if (!info->host.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->host);
+
+	if (!params.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+
+	if (!params.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+
+	if (!params.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+	if (params.shift_back)
+	{
+		size_t subtype = (size_t)params.streamSubtype;
+		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
+		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
+		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_config[subtype].get_shift_replace());
+		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].cu_duration));
+		utils::string_replace_inplace<wchar_t>(url, REPL_OFFSET, std::to_wstring(_time32(nullptr) - params.shift_back));
+	}
+
+	if (!servers_list.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[params.server_idx].get_id());
+
+	if (!profiles_list.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.profile_idx].get_id());
+
+	if (!qualities_list.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[params.quality_idx].get_id());
 
 	return url;
 }
@@ -438,53 +486,4 @@ void base_plugin::put_account_info(const std::string& name, const nlohmann::json
 		params.emplace_back(info);
 	}
 	JSON_ALL_CATCH;
-}
-
-void base_plugin::replace_vars(std::wstring& url, const TemplateParams& params, const uri_stream* info) const
-{
-	if (!info->domain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, info->domain);
-
-	if (!info->port.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, info->port);
-
-	if (!info->get_id().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_ID, info->get_id());
-
-	if (!info->token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, info->token);
-
-	if (!info->int_id.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, info->int_id);
-
-	if (!info->host.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->host);
-
-	if (!params.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
-
-	if (!params.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
-
-	if (!params.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
-
-	if (params.shift_back)
-	{
-		size_t subtype = (size_t)params.streamSubtype;
-		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
-		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SHIFT, streams_config[subtype].get_shift_replace());
-		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].cu_duration));
-		utils::string_replace_inplace<wchar_t>(url, REPL_OFFSET, std::to_wstring(_time32(nullptr) - params.shift_back));
-	}
-
-	if (!servers_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[params.server_idx].get_id());
-
-	if (!profiles_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.profile_idx].get_id());
-
-	if (!qualities_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[params.quality_idx].get_id());
 }
