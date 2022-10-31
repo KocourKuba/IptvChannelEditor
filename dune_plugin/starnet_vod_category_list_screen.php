@@ -59,13 +59,17 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
+        $actions = array();
         $setup_screen = Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
-        return array(
-            GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
-            GUI_EVENT_KEY_SETUP => $setup_screen,
-            GUI_EVENT_KEY_B_GREEN => $setup_screen,
-            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, self::ACTION_RELOAD),
-        );
+        $setup_screen['caption'] = 'Настройки плагина';
+        $actions[GUI_EVENT_KEY_ENTER] = Action_Factory::open_folder();
+        $actions[GUI_EVENT_KEY_SETUP] = $setup_screen;
+        $actions[GUI_EVENT_KEY_B_GREEN] = $setup_screen;
+        $reload = User_Input_Handler_Registry::create_action($this, self::ACTION_RELOAD);
+        $reload['caption'] = 'Перечитать плейлист';
+        $actions[GUI_EVENT_KEY_C_YELLOW] = $reload;
+
+        return $actions;
     }
 
     /**
@@ -83,14 +87,14 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             return null;
         }
 
-        $media_url = MediaURL::decode($user_input->parent_media_url);
         if ($user_input->control_id === self::ACTION_RELOAD) {
             hd_print("reload categories");
             $this->category_list = null;
             $this->category_index = null;
             $this->plugin->config->ClearVodCache();
-            $this->get_all_folder_items($media_url, $plugin_cookies);
-            return Action_Factory::invalidate_folders(array(self::ID));
+            $media_url = MediaURL::decode($user_input->parent_media_url);
+            $range = $this->get_folder_range($media_url, 0, $plugin_cookies);
+            return Action_Factory::update_regular_folder($range, true, -1);
         }
         return null;
     }
