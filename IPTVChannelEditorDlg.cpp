@@ -576,6 +576,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndShowEPG.SetCheck(GetConfig().get_int(true, REG_SHOW_EPG, 1));
 	m_wndPluginType.SetCurSel(GetConfig().get_plugin_idx());
 	m_wndIconSource.SetCurSel(GetConfig().get_int(true, REG_ICON_SOURCE));
+	m_wndEpg1.SetCheck(TRUE);
 
 	PostMessage(WM_SWITCH_PLUGIN);
 
@@ -1737,6 +1738,9 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 		return;
 
 	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
+	if (epg_idx < 0 || epg_idx >1)
+		epg_idx = 0;
+
 	int time_shift = m_timeShiftHours * 3600;
 
 	time_t now = time(nullptr);
@@ -2980,9 +2984,13 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 	auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 	if (info)
 	{
+		int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
+		if (epg_idx < 0 || epg_idx >1)
+			epg_idx = 0;
+
 		CEpgListDlg dlg;
 		dlg.m_plugin = m_plugin;
-		dlg.m_epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
+		dlg.m_epg_idx = epg_idx;
 		dlg.m_epg_cache = &m_epg_cache;
 		dlg.m_params.subdomain = m_cur_account.get_subdomain();
 		dlg.m_params.token = m_cur_account.get_token();
