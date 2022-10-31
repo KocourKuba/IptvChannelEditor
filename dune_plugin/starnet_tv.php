@@ -82,7 +82,7 @@ class Starnet_Tv extends Abstract_Tv
                     if (isset($plugin_cookies->channels_url) && !empty($plugin_cookies->channels_url)) {
                         $url_path = $plugin_cookies->channels_url;
                     } else {
-                        $url_path = $this->plugin->PLUGIN_CHANNELS_URL_PATH;
+                        $url_path = $this->plugin->plugin_info['app_channels_url_path'];
                     }
 
                     $channels_list_path = get_temp_path($channels_list);

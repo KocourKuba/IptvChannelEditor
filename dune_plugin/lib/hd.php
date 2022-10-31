@@ -349,7 +349,7 @@ class HD
         $xml = simplexml_load_string(file_get_contents($path));
 
         if ($xml === false) {
-            hd_print("Error: can not parse XML document.");
+            hd_print("Error: can't parse XML document.");
             hd_print("path to XML: $path");
             throw new Exception('Illegal XML document');
         }

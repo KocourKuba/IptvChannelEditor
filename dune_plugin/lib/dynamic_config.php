@@ -29,7 +29,6 @@ class dynamic_config
         $this->features[ACCESS_TYPE] = ACCOUNT_UNKNOWN;
         $this->features[SQUARE_ICONS] = false;
         $this->features[PLAYLIST_TEMPLATE] = '';
-        $this->features[URI_ID_PARSE_PATTERN] = '';
         $this->features[URI_PARSE_PATTERN] = '';
         $this->features[VOD_SUPPORTED] = false;
         $this->features[VOD_M3U] = false;

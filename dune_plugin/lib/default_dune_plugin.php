@@ -9,7 +9,6 @@ require_once 'action_factory.php';
 require_once 'control_factory.php';
 require_once 'control_factory_ext.php';
 require_once 'plugin_constants.php';
-//require_once 'default_config.php';
 
 class Default_Dune_Plugin implements DunePlugin
 {
@@ -57,14 +56,7 @@ class Default_Dune_Plugin implements DunePlugin
     const VOD_ICON_PATH = 'gui_skin://small_icons/movie.aai';
 
     // info
-    public $PLUGIN_SHOW_NAME = 'StarNet';
-    public $PLUGIN_SHORT_NAME = 'starnet';
-    public $PLUGIN_VERSION = '0.0.0';
-    public $PLUGIN_DATE = '04.01.1972';
-    public $PLUGIN_CAPTION = '';
-    public $PLUGIN_ICON = '';
-    public $PLUGIN_BACKGROUND = '';
-    public $PLUGIN_CHANNELS_URL_PATH = '';
+    public $plugin_info;
 
     /**
      * set base plugin info from dune_plugin.xml
@@ -72,15 +64,9 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function plugin_setup()
     {
-        $xml = HD::parse_xml_file(get_install_path('dune_plugin.xml'));
-        $this->PLUGIN_SHORT_NAME = (string)$xml->short_name;
-        $this->PLUGIN_SHOW_NAME = (string)$xml->caption;
-        $this->PLUGIN_ICON = (string)$xml->icon_url;
-        $this->PLUGIN_BACKGROUND = (string)$xml->background;
-        $this->PLUGIN_VERSION = $xml->version . '.' . $xml->version_index;
-        $this->PLUGIN_DATE = (string)$xml->release_date;
-        $this->PLUGIN_CHANNELS_URL_PATH = (string)$xml->channels_url_path;
-        $plugin_config_class = (string)$xml->class_name;
+        $this->plugin_info = get_plugin_manifest_info();
+
+        $plugin_config_class = $this->plugin_info['app_class_name'];
 
         if (!class_exists($plugin_config_class)) {
             hd_print("Unknown plugin: $plugin_config_class");
@@ -101,18 +87,19 @@ class Default_Dune_Plugin implements DunePlugin
         print_sysinfo();
 
         hd_print("----------------------------------------------------");
-        hd_print("Plugin ID:        " . $this->PLUGIN_SHORT_NAME);
-        hd_print("Plugin name:      " . $this->PLUGIN_SHOW_NAME);
-        hd_print("Plugin version:   " . $this->PLUGIN_VERSION);
-        hd_print("Plugin date:      " . $this->PLUGIN_DATE);
+        hd_print("Plugin ID:        " . $this->plugin_info['app_short_name']);
+        hd_print("Plugin name:      " . $this->plugin_info['app_caption']);
+        hd_print("Plugin version:   " . $this->plugin_info['app_version'] . '.' . $this->plugin_info['app_version_idx']);
+        hd_print("Plugin date:      " . $this->plugin_info['app_release_date']);
         hd_print("Account type:     " . $this->config->get_feature(ACCESS_TYPE));
         hd_print("TV fav:           " . ($this->config->get_feature(TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
         hd_print("VOD page:         " . ($this->config->get_feature(VOD_SUPPORTED) ? "yes" : "no"));
         hd_print("LocalTime         " . format_datetime('Y-m-d H:i', time()));
         hd_print("TimeZone          " . getTimeZone());
-        hd_print("Daylight          " . date('I'));
-        hd_print("Icon              " . $this->PLUGIN_ICON);
-        hd_print("Background        " . $this->PLUGIN_BACKGROUND);
+        hd_print("Daylight          " . date('I') ? 'yes' : 'no');
+        hd_print("Icon              " . $this->plugin_info['app_logo']);
+        hd_print("Background        " . $this->plugin_info['app_background']);
+        hd_print("Channels path     " . $this->plugin_info['app_channels_url_path']);
         hd_print("----------------------------------------------------");
     }
 
@@ -527,7 +514,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => true,
@@ -563,7 +550,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => false,
@@ -599,7 +586,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::sandwich_width => self::TV_SANDWICH_WIDTH,
                     ViewParams::sandwich_height => self::TV_SANDWICH_HEIGHT,
                     ViewParams::content_box_padding_left => 70,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::sandwich_icon_upscale_enabled => true,
                     ViewParams::sandwich_icon_keep_aspect_ratio => false,
@@ -627,7 +614,7 @@ class Default_Dune_Plugin implements DunePlugin
                 (
                     ViewParams::num_cols => 3,
                     ViewParams::num_rows => 10,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::item_detailed_info_font_size => FONT_SIZE_NORMAL,
@@ -669,7 +656,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::item_detailed_info_auto_line_break => true,
                     ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
                     ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -727,7 +714,7 @@ class Default_Dune_Plugin implements DunePlugin
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path => (string)$this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -768,7 +755,7 @@ class Default_Dune_Plugin implements DunePlugin
                 (
                     ViewParams::num_cols => 3,
                     ViewParams::num_rows => 3,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -809,7 +796,7 @@ class Default_Dune_Plugin implements DunePlugin
                 (
                     ViewParams::num_cols => 4,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -850,7 +837,7 @@ class Default_Dune_Plugin implements DunePlugin
                 (
                     ViewParams::num_cols => 5,
                     ViewParams::num_rows => 4,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => false,
                     ViewParams::paint_sandwich => true,
@@ -891,7 +878,7 @@ class Default_Dune_Plugin implements DunePlugin
                 (
                     ViewParams::num_cols => 2,
                     ViewParams::num_rows => 10,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::paint_details => true,
                 ),
@@ -935,7 +922,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::paint_widget => true,
                     ViewParams::paint_help_line => true,
                     ViewParams::item_detailed_info_font_size => FONT_SIZE_SMALL,
-                    ViewParams::background_path=> $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path=> $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::item_detailed_info_text_color => 11,
                     ViewParams::item_detailed_info_auto_line_break => true,
@@ -995,7 +982,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::item_detailed_info_auto_line_break => true,
                     ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
                     ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -1038,7 +1025,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::item_detailed_info_auto_line_break => true,
                     ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
                     ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -1095,7 +1082,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::num_cols => 1,
                     ViewParams::num_rows => 12,
                     ViewParams::paint_details => true,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -1131,7 +1118,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::num_cols => 1,
                     ViewParams::num_rows => 12,
                     ViewParams::paint_details => true,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,
@@ -1245,7 +1232,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::item_detailed_info_auto_line_break => true,
                     ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
                     ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
-                    ViewParams::background_path => $this->PLUGIN_BACKGROUND,
+                    ViewParams::background_path => $this->plugin_info['app_background'],
                     ViewParams::background_order => 0,
                     ViewParams::background_height => 1080,
                     ViewParams::background_width => 1920,

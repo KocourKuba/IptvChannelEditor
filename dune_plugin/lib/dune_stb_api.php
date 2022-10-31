@@ -326,7 +326,7 @@ function get_serial_number()
     static $result = null;
 
     if (is_null($result)) {
-        $result = trim(shell_exec('grep "serial_number:" /tmp/sysinfo.txt | sed "s/^.*: *//"'));
+        $result = trim(shell_exec('grep "^serial_number:" /tmp/sysinfo.txt | sed "s/^.*: *//"'));
     }
 
     return $result;
@@ -1229,6 +1229,43 @@ function get_data_path($path = '')
 function get_install_path($path = '')
 {
     return DuneSystem::$properties['install_dir_path'] . '/' . $path;
+}
+
+/**
+ * @throws Exception
+ */
+function get_plugin_manifest_info()
+{
+    $plugin_path = get_install_path("dune_plugin.xml");
+    if (!file_exists($plugin_path)) {
+        hd_print("Plugin manifest not found!");
+        throw new Exception("Plugin manifest not found!");
+    }
+
+    $xml = HD::parse_xml_file($plugin_path);
+    if ($xml === null) {
+        hd_print("Empty plugin manifest!");
+        throw new Exception("Empty plugin manifest!");
+    }
+
+    $result = array(
+        'app_name' => (string)$xml->name,
+        'app_caption' => (string)$xml->caption,
+        'app_class_name' => (string)$xml->class_name,
+        'app_short_name' => (string)$xml->short_name,
+        'app_version' => (string)$xml->version,
+        'app_version_idx' => isset($xml->version_index) ? (string)$xml->version_index : '0',
+        'app_release_date' => (string)$xml->release_date,
+        'app_logo' => (string)$xml->icon_url,
+        'app_background' => (string)$xml->background,
+        'app_channels_url_path' => (string)$xml->channels_url_path
+    );
+
+    foreach(func_get_args() as $node_name) {
+        $result[$node_name] = json_decode(json_encode($xml->xpath("//$node_name")), true);
+    }
+
+    return $result;
 }
 
 function get_local_storages_list()
