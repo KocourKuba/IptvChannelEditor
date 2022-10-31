@@ -365,10 +365,13 @@ int update_app(UpdateInfo& info)
 		{
 			SevenZip::SevenZipWrapper archiver(pack_dll);
 			if (!archiver.OpenArchive(source_file))
+			{
+				LogProtocol("Error open archive. Aborting.");
 				return err_open_pkg;
+			}
 
 			folder = true;
-			LogProtocol(fmt::format(L"unpacking: {:s}", src.filename().wstring()));
+			LogProtocol(fmt::format(L"unpacking: {:s} to {:s}", src.wstring(), info.update_path));
 			if (!archiver.GetExtractor().ExtractArchive(info.update_path))
 			{
 				LogProtocol("Error unpacking archive. Aborting.");
