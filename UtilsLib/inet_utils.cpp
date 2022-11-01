@@ -450,6 +450,7 @@ std::string entityDecrypt(const std::string& text)
 			{ "&gt;",    ">"  },
 			{ "&lt;",    "<"  },
 			{ "&frasl;", "/"  },
+			{ "<br>",   "\n" },
 		});
 
 	std::string res;

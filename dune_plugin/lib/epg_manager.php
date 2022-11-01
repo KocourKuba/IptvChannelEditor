@@ -211,7 +211,9 @@ class Epg_Manager
                 $day_epg[$program_start][EPG_NAME] = HD::unescape_entity_string($entry[$parser_params[EPG_NAME]]);
             }
             if (isset($entry[$parser_params[EPG_DESC]])) {
-                $day_epg[$program_start][EPG_DESC] = HD::unescape_entity_string($entry[$parser_params[EPG_DESC]]);
+                $desc = HD::unescape_entity_string($entry[$parser_params[EPG_DESC]]);
+                $desc = str_replace('<br>', PHP_EOL, $desc);
+                $day_epg[$program_start][EPG_DESC] = $desc;
             }
         }
 
