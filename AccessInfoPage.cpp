@@ -764,7 +764,8 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		if (!stream.good()) return;
 
 		Credentials cred;
-		auto entry = std::make_unique<PlaylistEntry>(m_plugin, GetAppPath(utils::PLUGIN_ROOT));
+		auto playlist = std::make_unique<Playlist>();
+		auto entry = std::make_unique<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
 		std::string line;
 		while (std::getline(stream, line))
 		{
@@ -1006,7 +1007,8 @@ void CAccessInfoPage::GetAccountInfo()
 	}
 
 	// reset template flag for new parse
-	auto entry = std::make_shared<PlaylistEntry>(m_plugin, GetAppPath(utils::PLUGIN_ROOT));
+	auto playlist = std::make_unique<Playlist>();
+	auto entry = std::make_shared<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
 	entry->set_is_template(false);
 
 	TemplateParams params;

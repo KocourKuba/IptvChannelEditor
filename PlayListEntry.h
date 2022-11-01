@@ -49,10 +49,6 @@ public:
 		: uri_stream(InfoType::enPlEntry, plugin, root_path), playlist(m3u_playlist)
 	{}
 
-	PlaylistEntry(std::shared_ptr<base_plugin>& plugin, std::wstring root_path = L"")
-		: uri_stream(InfoType::enPlEntry, plugin, root_path), playlist(std::make_unique<Playlist>())
-	{}
-
 	bool Parse(const std::string& str);
 
 	int get_channel_length() const { return channel_len; }
