@@ -35,7 +35,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
     {
         parent::__construct(self::ID, $plugin, $plugin->GET_VOD_SERIES_FOLDER_VIEW());
 
-        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
+        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }
@@ -64,7 +64,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
         $add_action['caption'] = 'Просмотрено/Не просмотрено';
         $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
 
-        if ($this->plugin->config->get_feature(VOD_QUALITY_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED)) {
             $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
             $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
             if (!is_null($movie) && isset($movie->variants_list)) {

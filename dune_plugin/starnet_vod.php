@@ -28,6 +28,7 @@ class Starnet_Vod extends Abstract_Vod
     /**
      * @param string $movie_id
      * @param $plugin_cookies
+     * @throws Exception
      */
     public function try_load_movie($movie_id, &$plugin_cookies)
     {
@@ -114,7 +115,7 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function is_favorites_supported()
     {
-        return $this->plugin->config->get_feature(VOD_SUPPORTED);
+        return $this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED);
     }
 
     /**
@@ -122,6 +123,6 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function is_movie_page_supported()
     {
-        return $this->plugin->config->get_feature(VOD_SUPPORTED);
+        return $this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED);
     }
 }

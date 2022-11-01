@@ -9,7 +9,7 @@ abstract class Cbilling_Vod_Impl extends default_config
     {
         parent::init_defaults();
 
-        $this->set_feature(VOD_LAZY_LOAD, true);
+        $this->set_feature(Plugin_Constants::VOD_LAZY_LOAD, true);
     }
 
     /**
@@ -100,7 +100,7 @@ abstract class Cbilling_Vod_Impl extends default_config
     public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
     {
         hd_print("fetch_vod_categories");
-        $jsonItems = HD::DownloadJson($this->get_feature(VOD_PLAYLIST_URL), false);
+        $jsonItems = HD::DownloadJson($this->get_feature(Plugin_Constants::VOD_PLAYLIST_URL), false);
         if ($jsonItems === false) {
             return;
         }

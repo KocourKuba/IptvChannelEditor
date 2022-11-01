@@ -42,7 +42,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
     {
         parent::__construct(self::ID, $plugin);
 
-        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
+        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

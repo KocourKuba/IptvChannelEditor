@@ -23,7 +23,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_search_folder_views());
 
-        if ($plugin->config->get_feature(VOD_FILTER_SUPPORTED)) {
+        if ($plugin->config->get_feature(Plugin_Constants::VOD_FILTER_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }

@@ -7,7 +7,7 @@ class cbilling_config extends Cbilling_Vod_Impl
     {
         parent::init_defaults();
 
-        $this->set_feature(BALANCE_SUPPORTED, true);
+        $this->set_feature(Plugin_Constants::BALANCE_SUPPORTED, true);
     }
 
     /**

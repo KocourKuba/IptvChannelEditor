@@ -7,9 +7,9 @@ class edem_config extends default_config
     {
         parent::init_defaults();
 
-        $this->set_feature(VOD_QUALITY_SUPPORTED, true);
-        $this->set_feature(VOD_FILTER_SUPPORTED, true);
-        $this->set_feature(VOD_LAZY_LOAD, true);
+        $this->set_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED, true);
+        $this->set_feature(Plugin_Constants::VOD_FILTER_SUPPORTED, true);
+        $this->set_feature(Plugin_Constants::VOD_LAZY_LOAD, true);
     }
 
     /**
@@ -21,8 +21,8 @@ class edem_config extends default_config
      */
     public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
-        $channel->set_ext_param(M_SUBDOMAIN, isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain);
-        $channel->set_ext_param(M_TOKEN, isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key);
+        $channel->set_ext_param(Ext_Params::M_SUBDOMAIN, isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain);
+        $channel->set_ext_param(Ext_Params::M_TOKEN, isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key);
 
         return parent::GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
     }

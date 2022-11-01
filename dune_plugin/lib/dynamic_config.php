@@ -20,52 +20,52 @@ class dynamic_config
     public function init_defaults()
     {
         hd_print("Init defaults");
-        $this->features[TV_FAVORITES_SUPPORTED] = true; // always true
-        $this->features[BALANCE_SUPPORTED] = false; // account support account info requests
-        $this->features[VOD_LAZY_LOAD] = false; // all movies loaded as one file or require delayed request to collect movies
-        $this->features[VOD_QUALITY_SUPPORTED] = false; // currently supported only in edem
-        $this->features[VOD_FILTER_SUPPORTED] = false; // filter list screen
+        $this->features[Plugin_Constants::TV_FAVORITES_SUPPORTED] = true; // always true
+        $this->features[Plugin_Constants::BALANCE_SUPPORTED] = false; // account support account info requests
+        $this->features[Plugin_Constants::VOD_LAZY_LOAD] = false; // all movies loaded as one file or require delayed request to collect movies
+        $this->features[Plugin_Constants::VOD_QUALITY_SUPPORTED] = false; // currently supported only in edem
+        $this->features[Plugin_Constants::VOD_FILTER_SUPPORTED] = false; // filter list screen
 
-        $this->features[ACCESS_TYPE] = ACCOUNT_UNKNOWN;
-        $this->features[SQUARE_ICONS] = false;
-        $this->features[PLAYLIST_TEMPLATE] = '';
-        $this->features[URI_PARSE_PATTERN] = '';
-        $this->features[VOD_SUPPORTED] = false;
-        $this->features[VOD_M3U] = false;
-        $this->features[VOD_PLAYLIST_URL] = '';
-        $this->features[VOD_PARSE_PATTERN] = '';
+        $this->features[Plugin_Constants::ACCESS_TYPE] = Plugin_Constants::ACCOUNT_UNKNOWN;
+        $this->features[Plugin_Constants::SQUARE_ICONS] = false;
+        $this->features[Plugin_Constants::PLAYLIST_TEMPLATE] = '';
+        $this->features[Plugin_Constants::URI_PARSE_PATTERN] = '';
+        $this->features[Plugin_Constants::VOD_SUPPORTED] = false;
+        $this->features[Plugin_Constants::VOD_M3U] = false;
+        $this->features[Plugin_Constants::VOD_PLAYLIST_URL] = '';
+        $this->features[Plugin_Constants::VOD_PARSE_PATTERN] = '';
 
         // load defaults
         $default_streams = array();
-        $default_streams[CU_TYPE] = 'shift';
-        $default_streams[URL_TEMPLATE] = '';
-        $default_streams[URL_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
-        $default_streams[URL_CUSTOM_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
-        $default_streams[CU_SUBST] = 'utc';
-        $default_streams[CU_DURATION] = 10800;
+        $default_streams[Stream_Params::CU_TYPE] = 'shift';
+        $default_streams[Stream_Params::URL_TEMPLATE] = '';
+        $default_streams[Stream_Params::URL_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
+        $default_streams[Stream_Params::URL_CUSTOM_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
+        $default_streams[Stream_Params::CU_SUBST] = 'utc';
+        $default_streams[Stream_Params::CU_DURATION] = 10800;
         $this->set_stream_params(HLS, $default_streams);
 
-        $default_streams[CU_TYPE] = 'flussonic';
-        $default_streams[CU_SUBST] = 'archive';
-        $default_streams[URL_ARC_TEMPLATE] = '';
+        $default_streams[Stream_Params::CU_TYPE] = 'flussonic';
+        $default_streams[Stream_Params::CU_SUBST] = 'archive';
+        $default_streams[Stream_Params::URL_ARC_TEMPLATE] = '';
         $this->set_stream_params(MPEG, $default_streams);
 
         $default_parser = array();
-        $default_parser[EPG_PARSER] = 'json';
-        $default_parser[EPG_URL] = '';
-        $default_parser[EPG_ROOT] = 'epg_data';
-        $default_parser[EPG_START] = 'time';
-        $default_parser[EPG_END] = 'time_to';
-        $default_parser[EPG_NAME] = 'name';
-        $default_parser[EPG_DESC] = 'descr';
-        $default_parser[EPG_DATE_FORMAT] = '';
-        $default_parser[EPG_USE_DURATION] = false;
-        $default_parser[EPG_TIME_FORMAT] = '';
-        $default_parser[EPG_TIMEZONE] = 0;
-        $default_parser[EPG_ID_MAPPER] = array();
+        $default_parser[Plugin_Constants::EPG_PARSER] = 'json';
+        $default_parser[Epg_Params::EPG_URL] = '';
+        $default_parser[Epg_Params::EPG_ROOT] = 'epg_data';
+        $default_parser[Epg_Params::EPG_START] = 'time';
+        $default_parser[Epg_Params::EPG_END] = 'time_to';
+        $default_parser[Epg_Params::EPG_NAME] = 'name';
+        $default_parser[Epg_Params::EPG_DESC] = 'descr';
+        $default_parser[Epg_Params::EPG_DATE_FORMAT] = '';
+        $default_parser[Epg_Params::EPG_USE_DURATION] = false;
+        $default_parser[Epg_Params::EPG_TIME_FORMAT] = '';
+        $default_parser[Epg_Params::EPG_TIMEZONE] = 0;
+        $default_parser[Plugin_Constants::EPG_ID_MAPPER] = array();
 
-        $this->set_epg_params(EPG_FIRST, $default_parser);
-        $this->set_epg_params(EPG_SECOND, $default_parser);
+        $this->set_epg_params(Plugin_Constants::EPG_FIRST, $default_parser);
+        $this->set_epg_params(Plugin_Constants::EPG_SECOND, $default_parser);
     }
     /**
      * load configuration
@@ -76,29 +76,29 @@ class dynamic_config
         $settings = HD::parse_json_file(get_install_path('config.json'), true);
         hd_print("Load plugin settings");
 
-        $this->PluginShortName = $settings[SHORT_NAME];
-        $this->set_feature(ACCESS_TYPE, $settings[ACCESS_TYPE]);
-        $this->set_feature(SQUARE_ICONS, $settings[SQUARE_ICONS]);
-        $this->set_feature(PLAYLIST_TEMPLATE, $settings[PLAYLIST_TEMPLATE]);
-        $this->set_feature(URI_PARSE_PATTERN, $settings[URI_PARSE_PATTERN]);
-        $this->set_feature(TAG_ID_MATCH, $settings[TAG_ID_MATCH]);
-        $this->set_feature(VOD_SUPPORTED, $settings[VOD_SUPPORTED]);
-        $this->set_feature(VOD_M3U, $settings[VOD_M3U]);
-        $this->set_feature(VOD_PLAYLIST_URL, $settings[VOD_PLAYLIST_URL]);
-        $this->set_feature(VOD_PARSE_PATTERN, $settings[VOD_PARSE_PATTERN]);
+        $this->PluginShortName = $settings[Plugin_Constants::SHORT_NAME];
+        $this->set_feature(Plugin_Constants::ACCESS_TYPE, $settings[Plugin_Constants::ACCESS_TYPE]);
+        $this->set_feature(Plugin_Constants::SQUARE_ICONS, $settings[Plugin_Constants::SQUARE_ICONS]);
+        $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATE, $settings[Plugin_Constants::PLAYLIST_TEMPLATE]);
+        $this->set_feature(Plugin_Constants::URI_PARSE_PATTERN, $settings[Plugin_Constants::URI_PARSE_PATTERN]);
+        $this->set_feature(Plugin_Constants::TAG_ID_MATCH, $settings[Plugin_Constants::TAG_ID_MATCH]);
+        $this->set_feature(Plugin_Constants::VOD_SUPPORTED, $settings[Plugin_Constants::VOD_SUPPORTED]);
+        $this->set_feature(Plugin_Constants::VOD_M3U, $settings[Plugin_Constants::VOD_M3U]);
+        $this->set_feature(Plugin_Constants::VOD_PLAYLIST_URL, $settings[Plugin_Constants::VOD_PLAYLIST_URL]);
+        $this->set_feature(Plugin_Constants::VOD_PARSE_PATTERN, $settings[Plugin_Constants::VOD_PARSE_PATTERN]);
 
-        foreach ($settings[STREAMS_CONFIG] as $config)
+        foreach ($settings[Plugin_Constants::STREAMS_CONFIG] as $config)
         {
-            $param_idx = $config[STREAM_TYPE];
+            $param_idx = $config[Stream_Params::STREAM_TYPE];
             $params = $this->get_stream_params($param_idx);
             $this->set_stream_params($param_idx, array_merge($params, $config));
             //hd_print("stream_config: $param_idx");
             //foreach($this->get_stream_params($param_idx) as $key=>$value) hd_print("$key: $value");
         }
 
-        foreach ($settings[EPG_PARAMS] as $epg)
+        foreach ($settings[Plugin_Constants::EPG_PARAMS] as $epg)
         {
-            $param_idx = $epg[EPG_PARAM];
+            $param_idx = $epg[Epg_Params::EPG_PARAM];
             $params = $this->get_epg_params($param_idx);
             $this->set_epg_params($param_idx, array_merge($params, $epg));
             //hd_print("epg_param: $param_idx");
@@ -106,30 +106,30 @@ class dynamic_config
         }
 
         $servers = array();
-        foreach ($settings[SERVERS_LIST] as $pair)
+        foreach ($settings[Plugin_Constants::SERVERS_LIST] as $pair)
         {
-            $servers[$pair[LIST_ID]] = $pair[LIST_NAME];
+            $servers[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_servers($servers);
 
         $devices = array();
-        foreach ($settings[DEVICES_LIST] as $pair)
+        foreach ($settings[Plugin_Constants::DEVICES_LIST] as $pair)
         {
-            $devices[$pair[LIST_ID]] = $pair[LIST_NAME];
+            $devices[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_devices($devices);
 
         $qualities = array();
-        foreach ($settings[QUALITIES_LIST] as $pair)
+        foreach ($settings[Plugin_Constants::QUALITIES_LIST] as $pair)
         {
-            $qualities[$pair[LIST_ID]] = $pair[LIST_NAME];
+            $qualities[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_qualities($qualities);
 
         $profiles = array();
-        foreach ($settings[PROFILES_LIST] as $pair)
+        foreach ($settings[Plugin_Constants::PROFILES_LIST] as $pair)
         {
-            $profiles[$pair[LIST_ID]] = $pair[LIST_NAME];
+            $profiles[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_profiles($profiles);
     }

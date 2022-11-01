@@ -57,7 +57,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
             $action[GUI_EVENT_KEY_ENTER] = $configure;
         }
 
-        if ($this->plugin->config->get_feature(BALANCE_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(Plugin_Constants::BALANCE_SUPPORTED)) {
             $add_balance = User_Input_Handler_Registry::create_action($this, self::ACTION_BALANCE);
             $add_balance['caption'] = 'Подписка';
             $action[GUI_EVENT_KEY_C_YELLOW] = $add_balance;
@@ -149,14 +149,14 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
      */
     protected function IsSetupNeeds($plugin_cookies)
     {
-        switch ($this->plugin->config->get_feature(ACCESS_TYPE)) {
-            case ACCOUNT_OTT_KEY:
+        switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
+            case Plugin_Constants::ACCOUNT_OTT_KEY:
                 $setup_needs = empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) && ($this->plugin->config->get_embedded_account() === null);
                 break;
-            case ACCOUNT_LOGIN:
+            case Plugin_Constants::ACCOUNT_LOGIN:
                 $setup_needs = empty($plugin_cookies->login) && empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
-            case ACCOUNT_PIN:
+            case Plugin_Constants::ACCOUNT_PIN:
                 $setup_needs = empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             default:

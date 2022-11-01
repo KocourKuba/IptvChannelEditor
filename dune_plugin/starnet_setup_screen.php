@@ -109,16 +109,16 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // ott or token dialog
         if ($this->plugin->config->get_embedded_account() === null) {
-            switch ($this->plugin->config->get_feature(ACCESS_TYPE)) {
-                case ACCOUNT_OTT_KEY:
+            switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
+                case Plugin_Constants::ACCOUNT_OTT_KEY:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_OTTKEY_DLG,
                         'Данные для просмотра:', 'Ввести ОТТ ключ и домен', $text_icon);
                     break;
-                case ACCOUNT_LOGIN:
+                case Plugin_Constants::ACCOUNT_LOGIN:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_LOGIN_DLG,
                         'Данные для просмотра:', 'Введите логин и пароль', $text_icon);
                     break;
-                case ACCOUNT_PIN:
+                case Plugin_Constants::ACCOUNT_PIN:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_PIN_DLG,
                         'Данные для просмотра:', 'Введите ключ доступа', $text_icon);
                     break;
@@ -305,11 +305,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // select stream type
         $format_ops = array();
-        if ($this->plugin->config->get_stream_param(HLS, URL_TEMPLATE) !== '') {
+        if ($this->plugin->config->get_stream_param(HLS, Stream_Params::URL_TEMPLATE) !== '') {
             $format_ops[HLS] = 'HLS';
         }
 
-        if ($this->plugin->config->get_stream_param(MPEG, URL_TEMPLATE) !== '') {
+        if ($this->plugin->config->get_stream_param(MPEG, Stream_Params::URL_TEMPLATE) !== '') {
             $format_ops[MPEG] = 'MPEG-TS';
         }
 
@@ -353,8 +353,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $defs = array();
 
         Control_Factory::add_vgap($defs, 20);
-        $epg_params = $this->plugin->config->get_epg_params(EPG_SECOND);
-        if (!empty($epg_params[EPG_URL])) {
+        $epg_params = $this->plugin->config->get_epg_params(Plugin_Constants::EPG_SECOND);
+        if (!empty($epg_params[Epg_Params::EPG_URL])) {
             $epg_source_ops = array();
             $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
             $epg_source_ops[SetupControlSwitchDefs::switch_epg2] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg2];
@@ -540,17 +540,17 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 case self::ACTION_MOVE_ACCOUNT: // handle move account
                     $embedded_account = $this->plugin->config->get_embedded_account();
                     if ($embedded_account !== null) {
-                        switch ($this->plugin->config->get_feature(ACCESS_TYPE)) {
-                            case ACCOUNT_OTT_KEY:
+                        switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
+                            case Plugin_Constants::ACCOUNT_OTT_KEY:
                                 $plugin_cookies->subdomain = $embedded_account->domain;
                                 $plugin_cookies->ott_key = $embedded_account->ott_key;
                                 $plugin_cookies->mediateka = $embedded_account->vportal;
                                 break;
-                            case ACCOUNT_LOGIN:
+                            case Plugin_Constants::ACCOUNT_LOGIN:
                                 $plugin_cookies->login = $embedded_account->login;
                                 $plugin_cookies->password = $embedded_account->password;
                                 break;
-                            case ACCOUNT_PIN:
+                            case Plugin_Constants::ACCOUNT_PIN:
                                 $plugin_cookies->password = $embedded_account->password;
                                 break;
                         }

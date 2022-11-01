@@ -37,7 +37,7 @@ class Starnet_Tv extends Abstract_Tv
      */
     public function is_favorites_supported()
     {
-        return $this->plugin->config->get_feature(TV_FAVORITES_SUPPORTED);
+        return $this->plugin->config->get_feature(Plugin_Constants::TV_FAVORITES_SUPPORTED);
     }
 
     /**
@@ -45,7 +45,7 @@ class Starnet_Tv extends Abstract_Tv
      */
     public function add_special_groups(&$items)
     {
-        if ($this->plugin->config->get_feature(VOD_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url =>
@@ -319,7 +319,9 @@ class Starnet_Tv extends Abstract_Tv
         $epg_result = array();
         foreach ($epg as $time => $value) {
             $time_start = $time + $time_shift;
-            $epg_result[] = new Default_Epg_Item($value[EPG_NAME], $value[EPG_DESC], (int)$time_start, (int)$value[EPG_END] + $time_shift);
+            $epg_result[] = new Default_Epg_Item($value[Epg_Params::EPG_NAME],
+                $value[Epg_Params::EPG_DESC],
+                (int)$time_start, (int)$value[Epg_Params::EPG_END] + $time_shift);
         }
 
         return new Epg_Iterator($epg_result, $day_start_ts, $day_start_ts + 86400);

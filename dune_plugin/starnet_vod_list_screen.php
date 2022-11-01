@@ -22,7 +22,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     {
         parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
 
-        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
+        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }
@@ -159,7 +159,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
         $key = $media_url->category_id . "_" . $media_url->genre_id;
 
         $movies = array();
-        if ($this->plugin->config->get_movie_counter($key) <= 0 || $this->plugin->config->get_feature(VOD_LAZY_LOAD)) {
+        if ($this->plugin->config->get_movie_counter($key) <= 0 || $this->plugin->config->get_feature(Plugin_Constants::VOD_LAZY_LOAD)) {
             if ($media_url->category_id === Vod_Category::PATTERN_SEARCH) {
                 $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
             } else if ($media_url->category_id === Vod_Category::PATTERN_FILTER) {

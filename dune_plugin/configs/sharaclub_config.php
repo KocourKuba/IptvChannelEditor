@@ -9,9 +9,9 @@ class sharaclub_config extends default_config
     {
         parent::init_defaults();
 
-        $this->set_feature(VOD_FILTER_SUPPORTED, true);
-        $this->set_feature(BALANCE_SUPPORTED, true);
-        $this->set_feature(API_REQUEST_URL, "http://{SUBDOMAIN}/api/players.php?a={COMMAND}&u={LOGIN}-{PASSWORD}&source=dune_editor");
+        $this->set_feature(Plugin_Constants::VOD_FILTER_SUPPORTED, true);
+        $this->set_feature(Plugin_Constants::BALANCE_SUPPORTED, true);
+        $this->set_feature(Plugin_Constants::API_REQUEST_URL, "http://{SUBDOMAIN}/api/players.php?a={COMMAND}&u={LOGIN}-{PASSWORD}&source=dune_editor");
     }
 
     /**
@@ -24,7 +24,7 @@ class sharaclub_config extends default_config
         return str_replace(
             array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}', '{COMMAND}'),
             array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies), $command),
-            $this->get_feature(API_REQUEST_URL));
+            $this->get_feature(Plugin_Constants::API_REQUEST_URL));
     }
 
     /**
@@ -166,7 +166,7 @@ class sharaclub_config extends default_config
                 $api = HD::DownloadJson(self::API_HOST . '/con8fig.php?source=dune_editor', false);
 
                 $plugin_cookies->subdomain = $api->listdomain;
-                $this->set_epg_param(EPG_FIRST,EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={EPG_ID}");
+                $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={EPG_ID}");
 
                 $url = $this->replace_api_command('subscr_info', $plugin_cookies);
                 $json = HD::DownloadJson($url);

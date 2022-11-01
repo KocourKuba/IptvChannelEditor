@@ -25,7 +25,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
     {
         parent::__construct(self::ID, $plugin, $plugin->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS());
 
-        if ($plugin->config->get_feature(VOD_SUPPORTED)) {
+        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
             $plugin->create_screen($this);
         }
     }
@@ -168,7 +168,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         );
 
         // Filter
-        if (!isset($media_url->category_id) && $this->plugin->config->get_feature(VOD_FILTER_SUPPORTED)) {
+        if (!isset($media_url->category_id) && $this->plugin->config->get_feature(Plugin_Constants::VOD_FILTER_SUPPORTED)) {
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => Starnet_Vod_Filter_Screen::ID,

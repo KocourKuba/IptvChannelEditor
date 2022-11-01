@@ -91,9 +91,9 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("Plugin name:      " . $this->plugin_info['app_caption']);
         hd_print("Plugin version:   " . $this->plugin_info['app_version'] . '.' . $this->plugin_info['app_version_idx']);
         hd_print("Plugin date:      " . $this->plugin_info['app_release_date']);
-        hd_print("Account type:     " . $this->config->get_feature(ACCESS_TYPE));
-        hd_print("TV fav:           " . ($this->config->get_feature(TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
-        hd_print("VOD page:         " . ($this->config->get_feature(VOD_SUPPORTED) ? "yes" : "no"));
+        hd_print("Account type:     " . $this->config->get_feature(Plugin_Constants::ACCESS_TYPE));
+        hd_print("TV fav:           " . ($this->config->get_feature(Plugin_Constants::TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
+        hd_print("VOD page:         " . ($this->config->get_feature(Plugin_Constants::VOD_SUPPORTED) ? "yes" : "no"));
         hd_print("LocalTime         " . format_datetime('Y-m-d H:i', time()));
         hd_print("TimeZone          " . getTimeZone());
         hd_print("Daylight          " . date('I') ? 'yes' : 'no');
@@ -627,8 +627,8 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 10,
                     ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => $this->config->get_feature(SQUARE_ICONS) ? 60 : 84,
-                    ViewItemParams::icon_height => $this->config->get_feature(SQUARE_ICONS) ? 60 : 48,
+                    ViewItemParams::icon_width => $this->config->get_feature(Plugin_Constants::SQUARE_ICONS) ? 60 : 84,
+                    ViewItemParams::icon_height => $this->config->get_feature(Plugin_Constants::SQUARE_ICONS) ? 60 : 48,
                     ViewItemParams::item_caption_width => 485,
                     ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
                     ViewItemParams::item_caption_dx => 50,
@@ -681,8 +681,8 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 14,
                     ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => $this->config->get_feature(SQUARE_ICONS) ? 50 : 52,
-                    ViewItemParams::icon_height => $this->config->get_feature(SQUARE_ICONS) ? 50 : 34,
+                    ViewItemParams::icon_width => $this->config->get_feature(Plugin_Constants::SQUARE_ICONS) ? 50 : 52,
+                    ViewItemParams::icon_height => $this->config->get_feature(Plugin_Constants::SQUARE_ICONS) ? 50 : 34,
                     ViewItemParams::icon_sel_margin_top => 0,
                     ViewItemParams::item_paint_caption => true,
                     ViewItemParams::item_caption_width => 1100,
@@ -890,8 +890,8 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewItemParams::icon_valign => VALIGN_CENTER,
                     ViewItemParams::icon_dx => 10,
                     ViewItemParams::icon_dy => -5,
-                    ViewItemParams::icon_width => $this->config->get_feature(SQUARE_ICONS) ? 60 : 84,
-                    ViewItemParams::icon_height => $this->config->get_feature(SQUARE_ICONS) ? 60 : 48,
+                    ViewItemParams::icon_width => $this->config->get_feature(Plugin_Constants::SQUARE_ICONS) ? 60 : 84,
+                    ViewItemParams::icon_height => $this->config->get_feature(Plugin_Constants::SQUARE_ICONS) ? 60 : 48,
                     ViewItemParams::item_caption_width => 485,
                     ViewItemParams::item_caption_font_size => FONT_SIZE_SMALL,
                     ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,

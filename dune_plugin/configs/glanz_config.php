@@ -9,7 +9,7 @@ class glanz_config extends default_config
     {
         parent::init_defaults();
 
-        $this->set_feature(VOD_FILTER_SUPPORTED, true);
+        $this->set_feature(Plugin_Constants::VOD_FILTER_SUPPORTED, true);
     }
 
     /**

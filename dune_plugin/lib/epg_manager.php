@@ -31,23 +31,23 @@ class Epg_Manager
     {
         $params = $this->config->get_epg_params($type);
 
-        if (empty($params[EPG_URL])) {
+        if (empty($params[Epg_Params::EPG_URL])) {
             hd_print("$type EPG url not defined");
             throw new Exception("$type EPG url not defined");
         }
 
         switch ($type) {
-            case EPG_FIRST:
+            case Plugin_Constants::EPG_FIRST:
                 $epg_id = $channel->get_epg_id();
                 break;
-            case EPG_SECOND:
+            case Plugin_Constants::EPG_SECOND:
                 $epg_id = $channel->get_tvg_id();
                 break;
             default:
                 $epg_id = '';
         }
 
-        if (empty($epg_id) && strpos($params[EPG_URL], '{ID}') === false) {
+        if (empty($epg_id) && strpos($params[Epg_Params::EPG_URL], '{ID}') === false) {
             hd_print("EPG: $epg_id not defined");
             throw new Exception("EPG: $epg_id not defined");
         }
@@ -55,12 +55,12 @@ class Epg_Manager
         $epg_id = str_replace(' ', '%20', $epg_id);
 
         hd_print("Fetching EPG for ID: '$epg_id'");
-        $epg_url = str_replace(array('{EPG_ID}', '{ID}'), array($epg_id, $channel->get_id()), $params[EPG_URL]);
+        $epg_url = str_replace(array('{EPG_ID}', '{ID}'), array($epg_id, $channel->get_id()), $params[Epg_Params::EPG_URL]);
         if (strpos($epg_url, '{DATE}') !== false) {
             $date_format = str_replace(
                 array('{YEAR}', '{MONTH}', '{DAY}'),
                 array('Y', 'm', 'd'),
-                $params[EPG_DATE_FORMAT]);
+                $params[Epg_Params::EPG_DATE_FORMAT]);
             $epg_date = gmdate($date_format, $day_start_ts + get_local_time_zone_offset());
             $epg_url = str_replace('{DATE}', $epg_date, $epg_url);
             hd_print("From DATE: $epg_date");
@@ -92,7 +92,7 @@ class Epg_Manager
             }
         }
 
-        if ($from_cache === false && $params[EPG_PARSER] === 'json') {
+        if ($from_cache === false && $params[Plugin_Constants::EPG_PARSER] === 'json') {
             $epg = self::get_epg_json($epg_url, $params);
         }
 
@@ -158,8 +158,8 @@ class Epg_Manager
             return $day_epg;
         }
 
-        if (!empty($parser_params[EPG_ROOT])) {
-            foreach (explode('|', $parser_params[EPG_ROOT]) as $level) {
+        if (!empty($parser_params[Epg_Params::EPG_ROOT])) {
+            foreach (explode('|', $parser_params[Epg_Params::EPG_ROOT]) as $level) {
                 $epg_root = trim($level, "[]");
                 $ch_data = $ch_data[$epg_root];
             }
@@ -172,11 +172,11 @@ class Epg_Manager
 
         // collect all program that starts after day start and before day end
         $prev_start = 0;
-        $no_end = empty($parser_params[EPG_END]);
-        $no_timestamp = !empty($parser_params[EPG_TIME_FORMAT]);
-        $use_duration = $parser_params[EPG_USE_DURATION];
+        $no_end = empty($parser_params[Epg_Params::EPG_END]);
+        $no_timestamp = !empty($parser_params[Epg_Params::EPG_TIME_FORMAT]);
+        $use_duration = $parser_params[Epg_Params::EPG_USE_DURATION];
         foreach ($ch_data as $entry) {
-            $program_start = $entry[$parser_params[EPG_START]];
+            $program_start = $entry[$parser_params[Epg_Params::EPG_START]];
             //hd_print("epg_start $program_start");
 
             if ($no_timestamp) {
@@ -186,39 +186,39 @@ class Epg_Manager
                 $time_format = str_replace(
                     array('{YEAR}', '{MONTH}', '{DAY}', '{HOUR}', '{MIN}'),
                     array('Y', 'm', 'd', 'H', 'i'),
-                    $parser_params[EPG_TIME_FORMAT]);
+                    $parser_params[Epg_Params::EPG_TIME_FORMAT]);
                 $dt = DateTime::createFromFormat($time_format, $program_start, new DateTimeZone('UTC'));
-                $program_start = $dt->getTimestamp() - $parser_params[EPG_TIMEZONE] * 3600; // subtract real EPG timezone
+                $program_start = $dt->getTimestamp() - $parser_params[Epg_Params::EPG_TIMEZONE] * 3600; // subtract real EPG timezone
             }
 
             // prefill data to avoid undefined index notice
-            $day_epg[$program_start][EPG_END] = 0;
-            $day_epg[$program_start][EPG_NAME] = '';
-            $day_epg[$program_start][EPG_DESC] = '';
+            $day_epg[$program_start][Epg_Params::EPG_END] = 0;
+            $day_epg[$program_start][Epg_Params::EPG_NAME] = '';
+            $day_epg[$program_start][Epg_Params::EPG_DESC] = '';
 
             if ($use_duration) {
-                $day_epg[$program_start][EPG_END] = $program_start + (int)$entry[$parser_params[EPG_END]];
+                $day_epg[$program_start][Epg_Params::EPG_END] = $program_start + (int)$entry[$parser_params[Epg_Params::EPG_END]];
             } else if ($no_end) {
                 if ($prev_start !== 0) {
-                    $day_epg[$prev_start][EPG_END] = $program_start;
+                    $day_epg[$prev_start][Epg_Params::EPG_END] = $program_start;
                 }
                 $prev_start = $program_start;
             } else {
-                $day_epg[$program_start][EPG_END] = (int)$entry[$parser_params[EPG_END]];
+                $day_epg[$program_start][Epg_Params::EPG_END] = (int)$entry[$parser_params[Epg_Params::EPG_END]];
             }
 
-            if (isset($entry[$parser_params[EPG_NAME]])) {
-                $day_epg[$program_start][EPG_NAME] = HD::unescape_entity_string($entry[$parser_params[EPG_NAME]]);
+            if (isset($entry[$parser_params[Epg_Params::EPG_NAME]])) {
+                $day_epg[$program_start][Epg_Params::EPG_NAME] = HD::unescape_entity_string($entry[$parser_params[Epg_Params::EPG_NAME]]);
             }
-            if (isset($entry[$parser_params[EPG_DESC]])) {
-                $desc = HD::unescape_entity_string($entry[$parser_params[EPG_DESC]]);
+            if (isset($entry[$parser_params[Epg_Params::EPG_DESC]])) {
+                $desc = HD::unescape_entity_string($entry[$parser_params[Epg_Params::EPG_DESC]]);
                 $desc = str_replace('<br>', PHP_EOL, $desc);
-                $day_epg[$program_start][EPG_DESC] = $desc;
+                $day_epg[$program_start][Epg_Params::EPG_DESC] = $desc;
             }
         }
 
         if ($no_end && $prev_start !== 0) {
-            $day_epg[$prev_start][EPG_END] = $prev_start + 3600; // fake end
+            $day_epg[$prev_start][Epg_Params::EPG_END] = $prev_start + 3600; // fake end
         }
 
         ksort($day_epg);
@@ -263,8 +263,8 @@ class Epg_Manager
             } else {
                 foreach ($epg_data as $channel) {
                     if ($channel->time >= $epg_date_start && $channel->time < $epg_date_end) {
-                        $epg[$channel->time][EPG_NAME] = HD::unescape_entity_string($channel->name);
-                        $epg[$channel->time][EPG_DESC] = HD::unescape_entity_string($channel->descr);
+                        $epg[$channel->time][Epg_Params::EPG_NAME] = HD::unescape_entity_string($channel->name);
+                        $epg[$channel->time][Epg_Params::EPG_DESC] = HD::unescape_entity_string($channel->descr);
                     }
                 }
             }

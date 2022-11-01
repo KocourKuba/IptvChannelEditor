@@ -292,40 +292,40 @@ class default_config extends dynamic_config
         $is_archive = (int)$archive_ts > 0;
         $stream_type = $this->get_format($plugin_cookies);
         $ext_params = $channel->get_ext_params();
-        $ext_params[CHANNEL_ID] = $channel->get_channel_id();
-        $ext_params[CU_START] = $archive_ts;
-        $ext_params[CU_NOW] = $now;
-        $ext_params[CU_OFFSET] = $now - $archive_ts;
-        $ext_params[CU_SUBST] = $this->get_stream_param($stream_type, CU_SUBST);
-        $ext_params[CU_DURATION] = $this->get_stream_param($stream_type, CU_DURATION);
+        $ext_params[Plugin_Constants::CHANNEL_ID] = $channel->get_channel_id();
+        $ext_params[Stream_Params::CU_START] = $archive_ts;
+        $ext_params[Stream_Params::CU_NOW] = $now;
+        $ext_params[Stream_Params::CU_OFFSET] = $now - $archive_ts;
+        $ext_params[Stream_Params::CU_SUBST] = $this->get_stream_param($stream_type, Stream_Params::CU_SUBST);
+        $ext_params[Stream_Params::CU_DURATION] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
 
         $replaces = array(
-            CHANNEL_ID  => '{ID}',
-            CU_START    => '{START}',
-            CU_NOW      => '{NOW}',
-            CU_DURATION => '{DURATION}',
-            CU_OFFSET   => '{OFFSET}',
-            CU_SUBST    => '{CU_SUBST}',
-            M_SUBDOMAIN => '{SUBDOMAIN}',
-            M_DOMAIN    => '{DOMAIN}',
-            M_PORT      => '{PORT}',
-            M_LOGIN     => '{LOGIN}',
-            M_PASSWORD  => '{PASSWORD}',
-            M_TOKEN     => '{TOKEN}',
-            M_INT_ID    => '{INT_ID}',
-            M_HOST      => '{HOST}',
-            M_QUALITY   => '{QUALITY_ID}',
+            Plugin_Constants::CHANNEL_ID  => '{ID}',
+            Stream_Params::CU_START    => '{START}',
+            Stream_Params::CU_NOW      => '{NOW}',
+            Stream_Params::CU_DURATION => '{DURATION}',
+            Stream_Params::CU_OFFSET   => '{OFFSET}',
+            Stream_Params::CU_SUBST    => '{CU_SUBST}',
+            Ext_Params::M_SUBDOMAIN    => '{SUBDOMAIN}',
+            Ext_Params::M_DOMAIN       => '{DOMAIN}',
+            Ext_Params::M_PORT         => '{PORT}',
+            Ext_Params::M_LOGIN        => '{LOGIN}',
+            Ext_Params::M_PASSWORD     => '{PASSWORD}',
+            Ext_Params::M_TOKEN        => '{TOKEN}',
+            Ext_Params::M_INT_ID       => '{INT_ID}',
+            Ext_Params::M_HOST         => '{HOST}',
+            Ext_Params::M_QUALITY      => '{QUALITY_ID}',
         );
 
         $channel_custom_url = $channel->get_custom_url();
         $channel_custom_arc_url = $channel->get_custom_archive_template();
         if (empty($channel_custom_url)) {
             // url template, live or archive
-            $live_url = $this->get_stream_param($stream_type, URL_TEMPLATE);
+            $live_url = $this->get_stream_param($stream_type, Stream_Params::URL_TEMPLATE);
 
             if (empty($channel_custom_arc_url)) {
                 // global url archive template
-                $archive_url = $this->get_stream_param($stream_type, URL_ARC_TEMPLATE);
+                $archive_url = $this->get_stream_param($stream_type, Stream_Params::URL_ARC_TEMPLATE);
             } else {
                 // custom archive url template
                 $archive_url = $channel_custom_arc_url;
@@ -336,7 +336,7 @@ class default_config extends dynamic_config
 
             if (empty($channel_custom_arc_url)) {
                 // global custom url archive template
-                $archive_url = $this->get_stream_param($stream_type, URL_CUSTOM_ARC_TEMPLATE);
+                $archive_url = $this->get_stream_param($stream_type, Stream_Params::URL_CUSTOM_ARC_TEMPLATE);
             } else {
                 // custom url archive or template
                 $archive_url = $channel_custom_arc_url;
@@ -380,7 +380,7 @@ class default_config extends dynamic_config
     {
         hd_print("Collect information from account: $force");
 
-        $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
+        $parse_pattern = $this->get_feature(Plugin_Constants::URI_PARSE_PATTERN);
         if (!empty($parse_pattern))
             $parse_pattern = "/$parse_pattern/";
 
@@ -403,7 +403,7 @@ class default_config extends dynamic_config
     {
         hd_print("Get playlist information");
         $pl_entries = array();
-        $parse_pattern = $this->get_feature(URI_PARSE_PATTERN);
+        $parse_pattern = $this->get_feature(Plugin_Constants::URI_PARSE_PATTERN);
         if (empty($parse_pattern)) {
             hd_print('Empty parse pattern. Unable to parse playlist');
             $this->ClearPlaylistCache();
@@ -411,7 +411,7 @@ class default_config extends dynamic_config
         }
         $parse_pattern = "/$parse_pattern/";
 
-        $tag_id = $this->get_feature(TAG_ID_MATCH);
+        $tag_id = $this->get_feature(Plugin_Constants::TAG_ID_MATCH);
         foreach ($this->get_tv_m3u_entries($plugin_cookies) as $entry) {
             if (!empty($tag_id)) {
                 // special case for name, otherwise take ID from selected tag
@@ -485,7 +485,7 @@ class default_config extends dynamic_config
     {
         hd_print("getSearchList: $keyword");
         $movies = array();
-        if (!$this->get_feature(VOD_M3U)) {
+        if (!$this->get_feature(Plugin_Constants::VOD_M3U)) {
             return $movies;
         }
 
@@ -553,7 +553,7 @@ class default_config extends dynamic_config
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
 
-        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
+        $vod_pattern = $this->get_feature(Plugin_Constants::VOD_PARSE_PATTERN);
         if (!empty($vod_pattern))
             $vod_pattern = "/$vod_pattern/";
 
@@ -704,7 +704,7 @@ class default_config extends dynamic_config
         $category_index = array();
         $categoriesFound = array();
 
-        $vod_pattern = $this->get_feature(VOD_PARSE_PATTERN);
+        $vod_pattern = $this->get_feature(Plugin_Constants::VOD_PARSE_PATTERN);
         if (!empty($vod_pattern))
             $vod_pattern = "/$vod_pattern/";
 
@@ -746,9 +746,9 @@ class default_config extends dynamic_config
     {
         // hd_print("Type: $type");
         if ($type === 'tv1') {
-            $url = $this->get_feature(PLAYLIST_TEMPLATE);
+            $url = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE);
         } else {
-            $url = $this->get_feature(PLAYLIST_TEMPLATE2);
+            $url = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE2);
         }
 
         return $this->replace_subs_vars($url, $plugin_cookies);
@@ -760,7 +760,7 @@ class default_config extends dynamic_config
      */
     protected function GetVodListUrl($plugin_cookies)
     {
-        return $this->replace_subs_vars($this->get_feature(VOD_PLAYLIST_URL), $plugin_cookies);
+        return $this->replace_subs_vars($this->get_feature(Plugin_Constants::VOD_PLAYLIST_URL), $plugin_cookies);
     }
 
     /**
