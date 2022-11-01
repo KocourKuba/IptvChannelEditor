@@ -70,19 +70,23 @@ bool PlaylistEntry::Parse(const std::string& str)
 	bool result = false;
 	switch (m3uEntry.get_directive())
 	{
-	case m3u_entry::directives::ext_pathname:
+		case m3u_entry::directives::ext_header:
+		{
+			const auto& tags = m3uEntry.get_tags();
+			if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_logo); pair != tags.end())
+			{
+				if (playlist)
+					playlist->logo_root = pair->second;
+			}
+			break;
+		}
+		case m3u_entry::directives::ext_pathname:
 		{
 			parent_plugin->parse_stream_uri(utils::utf8_to_utf16(str), this);
 			result = is_valid();
 			if (result && category.empty())
 			{
 				set_category(load_string_resource(IDS_STRING_UNSET));
-			}
-
-			const auto& tags = m3uEntry.get_tags();
-			if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_logo); pair != tags.end())
-			{
-				set_logo_root(pair->second);
 			}
 			break;
 		}
@@ -225,10 +229,14 @@ void PlaylistEntry::search_logo(const m3u_tags& tags)
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_logo); pair != tags.end())
 	{
 		std::string icon_uri;
-		if (logo_root.empty())
-			icon_uri = utils::string_replace<char>(pair->second, "//epg.it999.ru/img/", "//epg.it999.ru/img2/");
-		else
-			icon_uri = logo_root + pair->second;
+
+		if (playlist)
+		{
+			if (playlist->logo_root.empty())
+				icon_uri = utils::string_replace<char>(pair->second, "//epg.it999.ru/img/", "//epg.it999.ru/img2/");
+			else
+				icon_uri = playlist->logo_root + pair->second;
+		}
 
 		set_icon_uri(utils::utf8_to_utf16(icon_uri));
 	}

@@ -51,7 +51,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 		{
 			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
-			auto entry = std::make_shared<PlaylistEntry>(m_parent_plugin, m_config.m_rootPath);
+			auto entry = std::make_shared<PlaylistEntry>(m_parent_plugin, playlist, m_config.m_rootPath);
 
 			int channels = 0;
 			int step = 0;
@@ -74,9 +74,9 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					}
 
 					playlist->m_entries.emplace_back(entry);
-					entry = std::make_shared<PlaylistEntry>(m_parent_plugin, m_config.m_rootPath);
-					channels++;
+					entry = std::make_shared<PlaylistEntry>(m_parent_plugin, playlist, m_config.m_rootPath);
 
+					channels++;
 					if (channels % 100 == 0)
 					{
 						m_config.SendNotifyParent(WM_UPDATE_PROGRESS, channels, step);

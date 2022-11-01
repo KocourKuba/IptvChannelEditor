@@ -31,12 +31,26 @@ DEALINGS IN THE SOFTWARE.
 
 using m3u_tags = std::map<m3u_entry::info_tags, std::string>;
 
+class PlaylistEntry;
+
+class Playlist
+{
+public:
+	std::string logo_root;
+	std::map<int, std::shared_ptr<ChannelCategory>> categories;
+	std::vector<std::shared_ptr<PlaylistEntry>> m_entries;
+};
+
 class PlaylistEntry : public uri_stream
 {
 public:
 	PlaylistEntry() = delete;
+	PlaylistEntry(std::shared_ptr<base_plugin>& plugin, std::unique_ptr<Playlist>& m3u_playlist, std::wstring root_path = L"")
+		: uri_stream(InfoType::enPlEntry, plugin, root_path), playlist(m3u_playlist)
+	{}
+
 	PlaylistEntry(std::shared_ptr<base_plugin>& plugin, std::wstring root_path = L"")
-		: uri_stream(InfoType::enPlEntry, plugin, root_path)
+		: uri_stream(InfoType::enPlEntry, plugin, root_path), playlist(std::make_unique<Playlist>())
 	{}
 
 	bool Parse(const std::string& str);
@@ -46,9 +60,6 @@ public:
 	void set_category(const std::wstring& val) { category = utils::utf16_to_utf8(val); }
 	const auto& get_category() const { return category; }
 	auto get_category_w() const { return utils::utf8_to_utf16(category); }
-
-	void set_logo_root(const std::string& val) { logo_root = val; }
-	const auto& get_logo_root() const { return logo_root; }
 
 	void search_id(const std::wstring& search_tag);
 
@@ -66,13 +77,6 @@ protected:
 protected:
 	int channel_len = 0;
 	std::string category;
-	std::string logo_root;
 	m3u_entry m3uEntry;
-};
-
-class Playlist
-{
-public:
-	std::map<int, std::shared_ptr<ChannelCategory>> categories;
-	std::vector<std::shared_ptr<PlaylistEntry>> m_entries;
+	std::unique_ptr<Playlist>& playlist;
 };
