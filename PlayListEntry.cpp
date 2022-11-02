@@ -36,12 +36,12 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static std::map<std::wstring, m3u_entry::info_tags> id_tags = {
-	{ L"channel-id",     m3u_entry::info_tags::tag_channel_id     },
-	{ L"CUID",           m3u_entry::info_tags::tag_cuid           },
-	{ L"tvg-chno",       m3u_entry::info_tags::tag_tvg_chno       },
-	{ L"tvg-id",         m3u_entry::info_tags::tag_tvg_id         },
-	{ L"tvg-name",       m3u_entry::info_tags::tag_tvg_name       },
-	{ L"name",           m3u_entry::info_tags::tag_directive_title },
+	{ L"channel-id", m3u_entry::info_tags::tag_channel_id      },
+	{ L"CUID",       m3u_entry::info_tags::tag_cuid            },
+	{ L"tvg-chno",   m3u_entry::info_tags::tag_tvg_chno        },
+	{ L"tvg-id",     m3u_entry::info_tags::tag_tvg_id          },
+	{ L"tvg-name",   m3u_entry::info_tags::tag_tvg_name        },
+	{ L"name",       m3u_entry::info_tags::tag_directive_title },
 };
 
 static std::array<m3u_entry::info_tags, 3> epg_search_tags =
@@ -55,10 +55,10 @@ static std::array<m3u_entry::info_tags, 6> archive_search_tags =
 {
 	m3u_entry::info_tags::tag_catchup_days,
 	m3u_entry::info_tags::tag_catchup_time,
-	m3u_entry::info_tags::tag_tvg_rec,
 	m3u_entry::info_tags::tag_timeshift,
 	m3u_entry::info_tags::tag_arc_timeshift,
 	m3u_entry::info_tags::tag_arc_time,
+	m3u_entry::info_tags::tag_tvg_rec,
 };
 
 bool PlaylistEntry::Parse(const std::string& str)
@@ -199,6 +199,7 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 
 void PlaylistEntry::search_archive(const m3u_tags& tags)
 {
+	// priority -> catchup_days -> catchup_time -> tag_timeshift ... -> tvg_rec
 	for (const auto& tag : archive_search_tags)
 	{
 		const auto& pair = tags.find(tag);

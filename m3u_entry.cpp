@@ -172,27 +172,26 @@ void m3u_entry::parse(const std::string_view& str)
 
 void m3u_entry::parse_directive_tags(std::string_view str)
 {
-	static boost::regex re(R"((?:[^\s\"]+|\"[^\"]*\")+)");
-	static boost::regex re_pair(R"(([^=" ]+)=("(?:\\\"|[^"])*"|(?:\\\"|[^=" ])+))");
+	static boost::regex re(R"(([^=" ]+)=("(?:\\\"|[^"])*"|(?:\\\"|[^=" ])+))");
 
-	boost::cmatch pair;
-	while(boost::regex_search(str._Unchecked_begin(), str._Unchecked_end(), pair, re_pair))
+	boost::cmatch m;
+	while(boost::regex_search(str._Unchecked_begin(), str._Unchecked_end(), m, re))
 	{
-		auto tag = match_view(pair[1]);
+		auto tag = match_view(m[1]);
 		if (!tag.empty())
 		{
-			auto value = match_view(pair[2]);
+			auto value = match_view(m[2]);
 			utils::string_trim(value, " \"\'");
 			if (!value.empty())
 			{
-				const auto& t_pair = s_tags.find(tag);
-				if (t_pair != s_tags.end())
+				const auto& pair = s_tags.find(tag);
+				if (pair != s_tags.end())
 				{
-					ext_tags.emplace(t_pair->second, value);
+					ext_tags.emplace(pair->second, value);
 				}
 			}
 		}
 
-		str.remove_prefix(pair.position() + pair.length());
+		str.remove_prefix(m.position() + m.length());
 	}
 }
