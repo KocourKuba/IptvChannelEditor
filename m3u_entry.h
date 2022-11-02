@@ -37,6 +37,7 @@ public:
 		ext_group,
 		ext_playlist,
 		ext_info,
+		ext_vlcopt,
 	};
 
 	enum class info_tags
@@ -61,6 +62,7 @@ public:
 		tag_catchup_time,
 		tag_catchup_type,
 		tag_catchup_source,
+		tag_http_user_agent,
 	};
 
 public:

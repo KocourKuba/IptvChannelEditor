@@ -37,32 +37,34 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static std::map<std::string_view, m3u_entry::directives> s_ext_directives = {
-	{ "#EXTM3U"   , m3u_entry::directives::ext_header   },
-	{ "#EXTINF"   , m3u_entry::directives::ext_info     },
-	{ "#EXTGRP"   , m3u_entry::directives::ext_group    },
-	{ "#PLAYLIST" , m3u_entry::directives::ext_playlist },
+	{ "#EXTM3U"    , m3u_entry::directives::ext_header   },
+	{ "#EXTINF"    , m3u_entry::directives::ext_info     },
+	{ "#EXTGRP"    , m3u_entry::directives::ext_group    },
+	{ "#PLAYLIST"  , m3u_entry::directives::ext_playlist },
+	{ "#EXTVLCOPT" , m3u_entry::directives::ext_vlcopt   },
 };
 
 static std::map<std::string_view, m3u_entry::info_tags> s_tags = {
-	{ "url-tvg",        m3u_entry::info_tags::tag_url_tvg        },
-	{ "url-logo",       m3u_entry::info_tags::tag_url_logo       },
-	{ "channel-id",     m3u_entry::info_tags::tag_channel_id     },
-	{ "CUID",           m3u_entry::info_tags::tag_cuid           },
-	{ "group-title",    m3u_entry::info_tags::tag_group_title    },
-	{ "tvg-id",         m3u_entry::info_tags::tag_tvg_id         },
-	{ "tvg-chno",       m3u_entry::info_tags::tag_tvg_chno       },
-	{ "tvg-logo",       m3u_entry::info_tags::tag_tvg_logo       },
-	{ "tvg-rec",        m3u_entry::info_tags::tag_tvg_rec        },
-	{ "tvg-name",       m3u_entry::info_tags::tag_tvg_name       },
-	{ "tvg-shift",      m3u_entry::info_tags::tag_tvg_shift      },
-	{ "timeshift",      m3u_entry::info_tags::tag_timeshift      },
-	{ "arc-timeshift",  m3u_entry::info_tags::tag_arc_timeshift  },
-	{ "arc-time",       m3u_entry::info_tags::tag_arc_time       },
-	{ "catchup",        m3u_entry::info_tags::tag_catchup        },
-	{ "catchup-days",   m3u_entry::info_tags::tag_catchup_days   },
-	{ "catchup-time",   m3u_entry::info_tags::tag_catchup_time   },
-	{ "catchup-type",   m3u_entry::info_tags::tag_catchup_type   },
-	{ "catchup-source", m3u_entry::info_tags::tag_catchup_source },
+	{ "url-tvg",         m3u_entry::info_tags::tag_url_tvg         },
+	{ "url-logo",        m3u_entry::info_tags::tag_url_logo        },
+	{ "channel-id",      m3u_entry::info_tags::tag_channel_id      },
+	{ "CUID",            m3u_entry::info_tags::tag_cuid            },
+	{ "group-title",     m3u_entry::info_tags::tag_group_title     },
+	{ "tvg-id",          m3u_entry::info_tags::tag_tvg_id          },
+	{ "tvg-chno",        m3u_entry::info_tags::tag_tvg_chno        },
+	{ "tvg-logo",        m3u_entry::info_tags::tag_tvg_logo        },
+	{ "tvg-rec",         m3u_entry::info_tags::tag_tvg_rec         },
+	{ "tvg-name",        m3u_entry::info_tags::tag_tvg_name        },
+	{ "tvg-shift",       m3u_entry::info_tags::tag_tvg_shift       },
+	{ "timeshift",       m3u_entry::info_tags::tag_timeshift       },
+	{ "arc-timeshift",   m3u_entry::info_tags::tag_arc_timeshift   },
+	{ "arc-time",        m3u_entry::info_tags::tag_arc_time        },
+	{ "catchup",         m3u_entry::info_tags::tag_catchup         },
+	{ "catchup-days",    m3u_entry::info_tags::tag_catchup_days    },
+	{ "catchup-time",    m3u_entry::info_tags::tag_catchup_time    },
+	{ "catchup-type",    m3u_entry::info_tags::tag_catchup_type    },
+	{ "catchup-source",  m3u_entry::info_tags::tag_catchup_source  },
+	{ "http-user-agent", m3u_entry::info_tags::tag_http_user_agent },
 };
 
 std::string_view match_view(const boost::cmatch::value_type& sm)
@@ -151,6 +153,13 @@ void m3u_entry::parse(const std::string_view& str)
 			}
 			break;
 		}
+		case directives::ext_vlcopt:
+		{
+			auto hdr = match_view(m_dir[2]);
+			if (!hdr.empty())
+				parse_directive_tags(hdr);
+			break;
+		}
 		default:
 		{
 			// carray[0] = #EXTINF, carray[1] = <EXT_VALUE>
@@ -164,7 +173,7 @@ void m3u_entry::parse(const std::string_view& str)
 void m3u_entry::parse_directive_tags(std::string_view str)
 {
 	static boost::regex re(R"((?:[^\s\"]+|\"[^\"]*\")+)");
-	static boost::regex re_pair(R"((.*)=(?=[\"\'])(.+))");
+	static boost::regex re_pair(R"(([^=" ]+)=("(?:\\\"|[^"])*"|(?:\\\"|[^=" ])+))");
 
 	boost::cmatch m;
 	while(boost::regex_search(str._Unchecked_begin(), str._Unchecked_end(), m, re))

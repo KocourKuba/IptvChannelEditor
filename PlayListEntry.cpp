@@ -120,6 +120,9 @@ bool PlaylistEntry::Parse(const std::string& str)
 			search_catchup(tags);
 			break;
 		}
+		case m3u_entry::directives::ext_vlcopt:
+			break;
+
 		default:
 			break;
 	}
