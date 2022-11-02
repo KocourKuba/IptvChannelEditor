@@ -492,12 +492,10 @@ BOOL CPluginConfigPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 
 std::wstring CPluginConfigPage::GetSelectedConfig()
 {
-	int idx = m_wndPluginConfigs.GetCurSel();
-	if (idx < 1) return L"";
+	size_t idx = (size_t)m_wndPluginConfigs.GetCurSel();
+	if (idx < 1 || idx >= m_configs.size()) return L"";
 
-	CString name;
-	m_wndPluginConfigs.GetLBText(idx, name);
-	return name.GetString();
+	return m_configs[idx];
 }
 
 void CPluginConfigPage::AllowSave(bool val /*= true*/)
