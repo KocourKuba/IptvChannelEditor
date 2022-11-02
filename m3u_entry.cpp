@@ -175,32 +175,24 @@ void m3u_entry::parse_directive_tags(std::string_view str)
 	static boost::regex re(R"((?:[^\s\"]+|\"[^\"]*\")+)");
 	static boost::regex re_pair(R"(([^=" ]+)=("(?:\\\"|[^"])*"|(?:\\\"|[^=" ])+))");
 
-	boost::cmatch m;
-	while(boost::regex_search(str._Unchecked_begin(), str._Unchecked_end(), m, re))
+	boost::cmatch pair;
+	while(boost::regex_search(str._Unchecked_begin(), str._Unchecked_end(), pair, re_pair))
 	{
-		auto pair = match_view(m[0]);
-		if (pair.empty())
-			continue;
-
-		boost::cmatch m_pair;
-		if (boost::regex_match(pair._Unchecked_begin(), pair._Unchecked_end(), m_pair, re_pair))
+		auto tag = match_view(pair[1]);
+		if (!tag.empty())
 		{
-			auto tag = match_view(m_pair[1]);
-			utils::string_trim(tag, " ");
-			if (!tag.empty())
+			auto value = match_view(pair[2]);
+			utils::string_trim(value, " \"\'");
+			if (!value.empty())
 			{
-				auto value = match_view(m_pair[2]);
-				utils::string_trim(value, " \"\'");
-				if (!value.empty())
+				const auto& t_pair = s_tags.find(tag);
+				if (t_pair != s_tags.end())
 				{
-					const auto& pair = s_tags.find(tag);
-					if (pair != s_tags.end())
-					{
-						ext_tags.emplace(pair->second, value);
-					}
+					ext_tags.emplace(t_pair->second, value);
 				}
 			}
 		}
-		str.remove_prefix(m.position() + m.length());
+
+		str.remove_prefix(pair.position() + pair.length());
 	}
 }
