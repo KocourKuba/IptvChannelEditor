@@ -723,7 +723,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 						 }) == m_playlist_info.end())
 		{
 			PlaylistTemplateInfo info(ID);
-			info.is_file = true;
+			info.is_custom = true;
 			m_playlist_info.emplace_back(info);
 		}
 	}
@@ -923,10 +923,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	const auto& pl_info = ((PlaylistTemplateInfo*)m_wndPlaylist.GetItemData(idx));
 
 	std::wstring url;
+	BOOL is_file = FALSE;
 	m_plFileName.Empty();
-	if (pl_info->is_file)
+	if (pl_info->is_custom)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
+		is_file = GetConfig().get_int(false, REG_CUSTOM_PL_FILE);
 	}
 	else
 	{
@@ -954,12 +956,17 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		{
 			m_plFileName = slashed;
 		}
+
+		m_plFileName.Remove('?');
+		m_plFileName.Replace('&', '_');
+		m_plFileName.Replace(':', '_');
+		m_plFileName.Replace('/', '_');
 	}
 
 	std::stringstream data;
 	utils::CrackedUrl cracked;
 	WORD port = 0;
-	if (pl_info->is_file)
+	if (is_file)
 	{
 		std::ifstream stream(url);
 		data << stream.rdbuf();
@@ -967,7 +974,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	else if (utils::CrackUrl(url, cracked))
 	{
 		CWaitCursor cur;
-		if (!utils::DownloadFile(url, data))
+		if (!utils::DownloadFile(url, data, true))
 		{
 			AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);
@@ -4470,7 +4477,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 	GetConfig().set_int(false, REG_PLAYLIST_TYPE, idx);
 
 	const auto& pl_info = ((PlaylistTemplateInfo*)m_wndPlaylist.GetItemData(idx));
-	m_wndBtnAddPlaylist.EnableWindow(pl_info->is_file);
+	m_wndBtnAddPlaylist.EnableWindow(pl_info->is_custom);
 	LoadPlaylist();
 }
 
@@ -5125,10 +5132,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist()
 {
 	CCustomPlaylistDlg dlg;
 	dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
-	dlg.m_isFile = true;
+	dlg.m_isFile = GetConfig().get_int(false, REG_CUSTOM_PL_FILE);
 	if (dlg.DoModal() == IDOK)
 	{
 		GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
+		GetConfig().set_int(false, REG_CUSTOM_PL_FILE, dlg.m_isFile);
 		LoadPlaylist();
 	}
 }

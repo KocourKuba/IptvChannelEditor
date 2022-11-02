@@ -75,6 +75,7 @@ constexpr auto REG_CHANNELS_TYPE       = _T("ChannelsType");
 constexpr auto REG_PLAYLIST_TYPE       = _T("PlaylistType");
 constexpr auto REG_STREAM_TYPE         = _T("StreamType");
 constexpr auto REG_CUSTOM_PLAYLIST     = _T("CustomPlaylist");
+constexpr auto REG_CUSTOM_PL_FILE      = _T("CustomPlaylistFile");
 constexpr auto REG_CREDENTIALS         = _T("Credentials");
 constexpr auto REG_LIST_DOMAIN         = _T("ListDomain");
 constexpr auto REG_EPG_DOMAIN          = _T("EpgDomain");

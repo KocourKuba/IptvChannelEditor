@@ -123,7 +123,7 @@ public:
 
 	std::string name;
 	std::string pl_template;
-	bool is_file = false;
+	bool is_custom = false;
 };
 
 /// <summary>
