@@ -61,6 +61,11 @@ void plugin_sharavoz::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://api.program.spr24.net/api/program?epg={EPG_ID}";
-	epg_params[1].epg_url = "http://epg.arlekino.tv/api/program?epg={EPG_ID}";
+	auto& params1 = epg_params[0];
+	params1.epg_url = "http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
+	params1.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
+
+	auto& params2 = epg_params[1];
+	params2.epg_url = "http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
+	params2.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 }
