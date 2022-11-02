@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(CMainSettingsPage, CPropertyPage)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_STREAM_THREADS, &CMainSettingsPage::OnDeltaposSpinStreamThreads)
 	ON_CBN_SELCHANGE(IDC_COMBO_LANG, &CMainSettingsPage::OnCbnSelchangeComboLang)
 	ON_BN_CLICKED(IDC_BUTTON_RESET, &CMainSettingsPage::OnBnClickedButtonReset)
+	ON_BN_CLICKED(IDC_BUTTON_CLEAR_CACHE, &CMainSettingsPage::OnBnClickedButtonClearCache)
 END_MESSAGE_MAP()
 
 
@@ -74,6 +75,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_NOT_ADDED, m_wndNotAdded);
 	DDX_Control(pDX, IDC_BUTTON_CHANGED, m_wndChanged);
 	DDX_Control(pDX, IDC_BUTTON_HEVC, m_wndHEVC);
+	DDX_Control(pDX, IDC_BUTTON_CLEAR_CACHE, m_wndClearCache);
 }
 
 BOOL CMainSettingsPage::OnInitDialog()
@@ -111,6 +113,8 @@ BOOL CMainSettingsPage::OnInitDialog()
 	{
 		m_wndLanguage.SetCurSel(nCurrent);
 	}
+
+	m_wndClearCache.EnableWindow(std::filesystem::exists(std::filesystem::temp_directory_path().append(L"iptv_cache")));
 
 	UpdateData(FALSE);
 
@@ -178,4 +182,12 @@ void CMainSettingsPage::OnBnClickedButtonReset()
 	m_wndNotAdded.SetColor(RGB(200, 0, 0));
 	m_wndChanged.SetColor(RGB(226, 135, 67));
 	m_wndHEVC.SetColor(RGB(158, 255, 250));
+}
+
+void CMainSettingsPage::OnBnClickedButtonClearCache()
+{
+	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
+	std::error_code err;
+	std::filesystem::remove_all(cache_file, err);
+	m_wndClearCache.EnableWindow(FALSE);
 }

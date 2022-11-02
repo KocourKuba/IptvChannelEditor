@@ -61,6 +61,7 @@ protected:
 	CMFCColorButton m_wndNotAdded;
 	CMFCColorButton m_wndChanged;
 	CMFCColorButton m_wndHEVC;
+	CButton m_wndClearCache;
 
 private:
 	BOOL m_bAutoSync = FALSE;
@@ -74,4 +75,6 @@ private:
 	BOOL m_bCmpEpg2 = TRUE;
 	int m_MaxThreads = 1;
 	WORD m_nLang = 0;
+public:
+	afx_msg void OnBnClickedButtonClearCache();
 };

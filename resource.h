@@ -458,6 +458,7 @@
 #define IDC_COMBO_EPISODE               1157
 #define IDC_COMBO_PROFILE               1158
 #define IDC_STATIC_EPISODE              1159
+#define IDC_BUTTON_CLEAR_CACHE          1160
 #define IDC_MFCEDITBROWSE_PLUGIN_LOGO   1161
 #define IDC_MFCEDITBROWSE_PLUGIN_BGND   1162
 #define IDC_BUTTON_ADDED                1163
