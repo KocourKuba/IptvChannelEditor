@@ -4019,7 +4019,10 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreePaylist(NMHDR* pNMHDR, LRESULT* p
 
 	LoadPlayListInfo(pNMTreeView->itemNew.hItem);
 
-	OnSyncTreeItem();
+	if (GetConfig().get_int(true, REG_AUTO_SYNC))
+	{
+		OnSyncTreeItem();
+	}
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
