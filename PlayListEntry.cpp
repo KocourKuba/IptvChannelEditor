@@ -53,12 +53,12 @@ static std::array<m3u_entry::info_tags, 3> epg_search_tags =
 
 static std::array<m3u_entry::info_tags, 6> archive_search_tags =
 {
-	m3u_entry::info_tags::tag_tvg_rec,
 	m3u_entry::info_tags::tag_catchup_days,
+	m3u_entry::info_tags::tag_catchup_time,
+	m3u_entry::info_tags::tag_tvg_rec,
 	m3u_entry::info_tags::tag_timeshift,
 	m3u_entry::info_tags::tag_arc_timeshift,
 	m3u_entry::info_tags::tag_arc_time,
-	m3u_entry::info_tags::tag_catchup_time,
 };
 
 bool PlaylistEntry::Parse(const std::string& str)
