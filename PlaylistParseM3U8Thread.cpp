@@ -70,6 +70,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 						if (entry->get_id().empty())
 						{
 							entry->set_is_template(false);
+							entry->recalc_hash();
 						}
 					}
 
