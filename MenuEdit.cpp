@@ -29,7 +29,10 @@ void CMenuEdit::OnContextMenu(CWnd* pWnd, CPoint point)
 	if (!pMenu)
 		return;
 
-	if (!m_items.empty())
+	bool bReadOnly = IsReadOnly();
+	bool bTextSelected = IsTextSelected();
+
+	if (!bReadOnly && !m_items.empty())
 	{
 		CMenu subMenu;
 		subMenu.CreatePopupMenu();
@@ -42,10 +45,7 @@ void CMenuEdit::OnContextMenu(CWnd* pWnd, CPoint point)
 		pMenu->InsertMenu(1, MF_BYPOSITION | MF_SEPARATOR);
 	}
 
-	bool bReadOnly = IsReadOnly();
-	bool bTextSelected = IsTextSelected();
-
-	DWORD flag = bReadOnly || !CanUndo() ? MF_GRAYED : 0;
+	DWORD flag = !bReadOnly && CanUndo() ? 0 : MF_GRAYED;
 	pMenu->EnableMenuItem(EM_UNDO, MF_BYCOMMAND | flag);
 
 	DWORD sel = GetSel();
@@ -56,7 +56,8 @@ void CMenuEdit::OnContextMenu(CWnd* pWnd, CPoint point)
 	pMenu->EnableMenuItem(WM_CUT, MF_BYCOMMAND | flag);
 	pMenu->EnableMenuItem(WM_CLEAR, MF_BYCOMMAND | flag);
 
-	pMenu->EnableMenuItem(WM_PASTE, IsClipboardFormatAvailable(CF_TEXT) && !bReadOnly);
+	flag = IsClipboardFormatAvailable(CF_TEXT) && !bReadOnly ? 0 : MF_GRAYED;
+	pMenu->EnableMenuItem(WM_PASTE, flag);
 
 	int len = GetWindowTextLength();
 	flag = (!len || (LOWORD(sel) == 0 && HIWORD(sel) == len)) ? MF_GRAYED : 0;

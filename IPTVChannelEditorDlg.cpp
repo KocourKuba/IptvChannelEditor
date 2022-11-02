@@ -1640,7 +1640,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_streamID = channel->get_id().c_str();
 
 	m_streamUrl = show ? m_plugin->get_play_stream(params, channel.get()).c_str() : m_plugin->get_live_template(stream_idx, channel.get()).c_str();
-	m_wndStreamUrl.EnableWindow(custom);
+	m_wndStreamUrl.SetReadOnly(!custom);
 
 	bool custom_archive = channel->get_is_custom_archive();
 	if (custom_archive && channel->get_custom_archive_url().empty())
@@ -1650,7 +1650,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	}
 
 	m_streamArchiveUrl = m_plugin->get_archive_template(stream_idx, channel.get()).c_str();
-	m_wndCustomArchiveUrl.EnableWindow(custom_archive);
+	m_wndCustomArchiveUrl.SetReadOnly(!custom_archive);
 	m_wndBtnCustomArchiveUrl.SetCheck(custom_archive);
 	m_wndBtnCustomArchiveUrl.SetWindowText(load_string_resource(custom_archive ? IDS_STRING_CUSTOM_ARCHIVE_URL : IDS_STRING_ARCHIVE_URL).c_str());
 
