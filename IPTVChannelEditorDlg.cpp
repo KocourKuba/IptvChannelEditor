@@ -76,6 +76,7 @@ constexpr auto ID_ACCOUNT_TO_START = ID_ADD_TO_END + 1;
 constexpr auto ID_ACCOUNT_TO_END = ID_ACCOUNT_TO_START + 512;
 
 constexpr auto ID_UPDATE_EPG_TIMER = 1000;
+constexpr auto ID_SWITCH_PLUGIN_TIMER = 1001;
 
 constexpr auto MOD_TITLE   = 0x01;
 constexpr auto MOD_ARCHIVE = 0x02;
@@ -578,7 +579,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndIconSource.SetCurSel(GetConfig().get_int(true, REG_ICON_SOURCE));
 	m_wndEpg1.SetCheck(TRUE);
 
-	PostMessage(WM_SWITCH_PLUGIN);
+	m_switch_plugin_timer = SetTimer(ID_SWITCH_PLUGIN_TIMER, 500, nullptr);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -819,7 +820,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_blockChecking = false;
 
 	m_update_epg_timer = ID_UPDATE_EPG_TIMER;
-	OnTimer(ID_UPDATE_EPG_TIMER);
+	m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 100, nullptr);
 
 	UnlockWindowUpdate();
 }
@@ -1037,21 +1038,31 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	if (nIDEvent != m_update_epg_timer )
+	if (nIDEvent == m_update_epg_timer)
 	{
-		__super::OnTimer(nIDEvent);
+		KillTimer(m_update_epg_timer);
+		m_update_epg_timer = 0;
+		COleDateTime now = COleDateTime::GetCurrentTime();
+		GetDlgItem(IDC_STATIC_CUR_TIME)->SetWindowText(now.Format(_T("%H:%M:%S")));
+		if (now.GetSecond() == 0)
+		{
+			UpdateEPG(&m_wndChannelsTree);
+		}
+		m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 1000, nullptr);
 		return;
 	}
 
-	KillTimer(m_update_epg_timer);
-	m_update_epg_timer = 0;
-	COleDateTime now = COleDateTime::GetCurrentTime();
-	GetDlgItem(IDC_STATIC_CUR_TIME)->SetWindowText(now.Format(_T("%H:%M:%S")));
-	if (now.GetSecond() == 0)
+	if (nIDEvent == m_switch_plugin_timer)
 	{
-		UpdateEPG(&m_wndChannelsTree);
+		KillTimer(m_switch_plugin_timer);
+		m_switch_plugin_timer = 0;
+		SwitchPlugin();
+		return;
 	}
-	m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 1000, nullptr);
+
+	__super::OnTimer(nIDEvent);
+	return;
+
 }
 
 LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)

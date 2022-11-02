@@ -386,6 +386,7 @@ private:
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
 	UINT_PTR m_update_epg_timer = 0;
+	UINT_PTR m_switch_plugin_timer = 0;
 	std::map<std::wstring, int> m_changedChannels;
 	std::set<std::wstring> m_unknownChannels;
 
