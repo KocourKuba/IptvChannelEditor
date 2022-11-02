@@ -373,7 +373,7 @@ private:
 	CTreeCtrlEx* m_lastTree = nullptr;
 
 	CString m_toolTipText;
-	CString m_plFileName;
+	std::wstring m_plFileName;
 
 	bool m_allow_save = false;
 	bool m_loading = false;

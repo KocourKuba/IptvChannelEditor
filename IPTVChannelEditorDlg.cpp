@@ -932,7 +932,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	std::wstring url;
 	BOOL is_file = FALSE;
-	m_plFileName.Empty();
+	m_plFileName.clear();
 	if (pl_info->is_custom)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
@@ -941,7 +941,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	else
 	{
 		url = m_plugin->get_playlist_url(params);
-		m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginShortNameW(m_plugin_type, true)).c_str();
+		m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginShortNameW(m_plugin_type, true));
 	}
 
 	if (url.empty())
@@ -951,24 +951,30 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		return;
 	}
 
-	if (m_plFileName.IsEmpty())
+	if (m_plFileName.empty())
 	{
-		CString slashed(url.c_str());
-		slashed.Replace('\\', '/');
-		auto pos = slashed.ReverseFind('/');
-		if (pos != -1)
+		std::wstring slashed(url);
+		std::replace(slashed.begin(), slashed.end(), '\\', '/');
+		auto pos = slashed.rfind('/');
+		if (pos != std::wstring::npos)
 		{
-			m_plFileName = slashed.Mid(++pos);
+			m_plFileName = slashed.substr(++pos);
 		}
 		else
 		{
 			m_plFileName = slashed;
 		}
 
-		m_plFileName.Remove('?');
-		m_plFileName.Replace('&', '_');
-		m_plFileName.Replace(':', '_');
-		m_plFileName.Replace('/', '_');
+		std::vector<wchar_t> bad_chars = { '?', '&', ':' };
+		auto it = std::find_first_of(m_plFileName.begin(), m_plFileName.end(), bad_chars.begin(), bad_chars.end());
+		if (it != m_plFileName.end())
+		{
+			m_plFileName.erase(it, m_plFileName.end());
+			if (m_plFileName.empty())
+				m_plFileName = L"Custom_playlist.m3u8";
+			else
+				m_plFileName += L".m3u8";
+		}
 	}
 
 	std::stringstream data;
@@ -3248,14 +3254,14 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	if (m_playlistIds.size() != m_playlistMap.size())
 	{
 		m_wndPlInfo.SetWindowText(fmt::format(load_string_resource(IDS_STRING_FMT_PLAYLIST_FLT),
-											  m_plFileName.GetString(),
+											  m_plFileName,
 											  m_playlistIds.size(),
 											  m_playlistMap.size()).c_str());
 	}
 	else
 	{
 		m_wndPlInfo.SetWindowText(fmt::format(load_string_resource(IDS_STRING_FMT_CHANNELS_ALL),
-											  m_plFileName.GetString(),
+											  m_plFileName,
 											  m_playlistIds.size()).c_str());
 	}
 
