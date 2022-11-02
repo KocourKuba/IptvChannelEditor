@@ -76,7 +76,8 @@ constexpr auto ID_ACCOUNT_TO_START = ID_ADD_TO_END + 1;
 constexpr auto ID_ACCOUNT_TO_END = ID_ACCOUNT_TO_START + 512;
 
 constexpr auto ID_UPDATE_EPG_TIMER = 1000;
-constexpr auto ID_SWITCH_PLUGIN_TIMER = 1001;
+constexpr auto ID_LOAD_EPG_TIMER = 1001;
+constexpr auto ID_SWITCH_PLUGIN_TIMER = 1002;
 
 constexpr auto MOD_TITLE   = 0x01;
 constexpr auto MOD_ARCHIVE = 0x02;
@@ -210,6 +211,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_MESSAGE(WM_UPDATE_PROGRESS_STREAM, &CIPTVChannelEditorDlg::OnUpdateProgressStream)
 	ON_MESSAGE(WM_END_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnEndGetStreamInfo)
 	ON_MESSAGE(WM_TRAYICON_NOTIFY, &CIPTVChannelEditorDlg::OnTrayIconNotify)
+	ON_MESSAGE(WM_LOAD_CHANNEL_IMAGE, &CIPTVChannelEditorDlg::OnLoadChannelImage)
+	ON_MESSAGE(WM_LOAD_PLAYLIST_IMAGE, &CIPTVChannelEditorDlg::OnLoadPlaylistImage)
 
 	ON_COMMAND_RANGE(ID_COPY_TO_START, ID_COPY_TO_END, &CIPTVChannelEditorDlg::OnCopyTo)
 	ON_COMMAND_RANGE(ID_MOVE_TO_START, ID_MOVE_TO_END, &CIPTVChannelEditorDlg::OnMoveTo)
@@ -819,7 +822,6 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_lastTree = &m_wndChannelsTree;
 	m_blockChecking = false;
 
-	m_update_epg_timer = ID_UPDATE_EPG_TIMER;
 	m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 100, nullptr);
 
 	UnlockWindowUpdate();
@@ -896,6 +898,11 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 	}
 
 	m_wndPack.SetDropDownMenu(pMenu);
+}
+
+void CIPTVChannelEditorDlg::LoadTimerEPG()
+{
+	m_load_epg_timer = SetTimer(ID_LOAD_EPG_TIMER, 50, nullptr);
 }
 
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
@@ -1046,9 +1053,17 @@ void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
 		GetDlgItem(IDC_STATIC_CUR_TIME)->SetWindowText(now.Format(_T("%H:%M:%S")));
 		if (now.GetSecond() == 0)
 		{
-			UpdateEPG(&m_wndChannelsTree);
+			FillEPG();
 		}
 		m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 1000, nullptr);
+		return;
+	}
+
+	if (nIDEvent == m_load_epg_timer)
+	{
+		KillTimer(m_load_epg_timer);
+		m_load_epg_timer = 0;
+		FillEPG();
 		return;
 	}
 
@@ -1169,6 +1184,36 @@ LRESULT CIPTVChannelEditorDlg::OnExit(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0
 	{
 		PostMessage(WM_ON_EXIT);
 	}
+
+	return 0;
+}
+
+LRESULT CIPTVChannelEditorDlg::OnLoadChannelImage(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+{
+	auto channel = (ChannelInfo*)wParam;
+	if (!channel)
+		return 0;
+
+	const auto& img = GetIconCache().get_icon(channel->get_icon_absolute_path());
+	CString str;
+	if (img != nullptr)
+	{
+		str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
+	}
+	GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
+	SetImageControl(img, m_wndChannelIcon);
+
+	return 0;
+}
+
+LRESULT CIPTVChannelEditorDlg::OnLoadPlaylistImage(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+{
+	auto entry = (PlaylistEntry*)wParam;
+	if (!entry)
+		return 0;
+
+	const auto& img = GetIconCache().get_icon(entry->get_icon_absolute_path());
+	SetImageControl(img, m_wndPlIcon);
 
 	return 0;
 }
@@ -1684,18 +1729,12 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	else
 	{
 		m_iconUrl = channel->get_icon_uri().get_uri().c_str();
-		const auto& img = GetIconCache().get_icon(channel->get_icon_absolute_path());
-		CString str;
-		if (img != nullptr)
-		{
-			str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
-		}
-		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
-		SetImageControl(img, m_wndChannelIcon);
+		PostMessage(WM_LOAD_CHANNEL_IMAGE, (WPARAM)channel.get());
 	}
 
 	UpdateData(FALSE);
-	UpdateEPG(&m_wndChannelsTree);
+
+	LoadTimerEPG();
 }
 
 void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
@@ -1732,10 +1771,8 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 			m_infoVideo = pair->second.second.c_str();
 		}
 
-		const auto& img = GetIconCache().get_icon(entry->get_icon_absolute_path());
-		SetImageControl(img, m_wndPlIcon);
-
-		UpdateEPG(&m_wndPlaylistTree);
+		PostMessage(WM_LOAD_PLAYLIST_IMAGE, (WPARAM)entry.get());
+		LoadTimerEPG();
 	}
 	else
 	{
@@ -1745,13 +1782,13 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 	UpdateData(FALSE);
 }
 
-void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
+void CIPTVChannelEditorDlg::FillEPG()
 {
 	m_wndEpg.SetWindowText(L"");
-	if (!pTreeCtl || !m_wndShowEPG.GetCheck())
+	if (!m_lastTree || !m_wndShowEPG.GetCheck())
 		return;
 
-	const auto info = GetBaseInfo(pTreeCtl, pTreeCtl->GetSelectedItem());
+	const auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 	if (!info)
 		return;
 
@@ -1762,7 +1799,7 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 	int time_shift = m_timeShiftHours * 3600;
 
 	time_t now = time(nullptr);
-	if (pTreeCtl == &m_wndChannelsTree)
+	if (m_lastTree == &m_wndChannelsTree)
 	{
 		now += time_shift;
 	}
@@ -1785,6 +1822,8 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 		utils::string_replace_inplace<wchar_t>(url, L"{DOMAIN}", GetConfig().get_string(false, REG_EPG_DOMAIN));
 	}
 
+	DWORD dwStart = GetTickCount();
+
 	// check end time
 	EpgInfo epg_info{};
 	bool need_load = true;
@@ -1805,6 +1844,8 @@ void CIPTVChannelEditorDlg::UpdateEPG(const CTreeCtrlEx* pTreeCtl)
 			need_load = false;
 		}
 	}
+
+	TRACE("\nLoad time %d\n", GetTickCount() - dwStart);
 
 	if (epg_info.time_start != 0)
 	{
@@ -2984,8 +3025,9 @@ void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours()
 		}
 	}
 
-	UpdateEPG(m_lastTree);
 	set_allow_save();
+
+	LoadTimerEPG();
 }
 
 void CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult)
@@ -3027,9 +3069,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
 {
-	UpdateEPG(m_lastTree);
 	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
 	m_wndBtnViewEPG.EnableWindow(firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty());
+	LoadTimerEPG();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
@@ -5136,7 +5178,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 void CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg()
 {
 	GetConfig().set_int(true, REG_SHOW_EPG, m_wndShowEPG.GetCheck());
-	UpdateEPG(nullptr);
+	LoadTimerEPG();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist()

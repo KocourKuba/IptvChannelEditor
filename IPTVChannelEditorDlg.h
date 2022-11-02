@@ -208,6 +208,8 @@ protected:
 	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnTrayIconNotify(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnExit(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnLoadChannelImage(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnLoadPlaylistImage(WPARAM wParam, LPARAM lParam);
 
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -264,7 +266,8 @@ private:
 	void SwitchPlugin();
 	void CollectCredentials();
 
-	void UpdateEPG(const CTreeCtrlEx* pTreeCtl);
+	void LoadTimerEPG();
+	void FillEPG();
 	void UpdateExtToken(uri_stream* uri) const;
 	void UpdateControlsForItem(HTREEITEM hSelected = nullptr);
 	bool CheckForSave();
@@ -386,6 +389,7 @@ private:
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
 	UINT_PTR m_update_epg_timer = 0;
+	UINT_PTR m_load_epg_timer = 0;
 	UINT_PTR m_switch_plugin_timer = 0;
 	std::map<std::wstring, int> m_changedChannels;
 	std::set<std::wstring> m_unknownChannels;
