@@ -79,9 +79,10 @@ static void SetupExceptionHandler()
 	BT_SetActivityType(BTA_SHOWUI);
 	BT_SetDumpType(dwDumpType);
 	BT_SetReportFilePath(GetAppPath().c_str());
-	BT_ExportRegistryKey(L"export.reg", L"HKCU\\SOFTWARE\\Dune IPTV Channel Editor");
-	BT_AddLogFile(L"export.reg");
-	BT_AddLogFile(L"settings.cfg");
+	const auto& export_path = std::filesystem::temp_directory_path().wstring() + L"\\export.reg";
+	BT_ExportRegistryKey(export_path.c_str(), L"HKCU\\SOFTWARE\\Dune IPTV Channel Editor");
+	BT_AddLogFile(export_path.c_str());
+	BT_AddLogFile(GetAppPath(L"settings.cfg").c_str());
 	// required for VS 2005 & 2008
 	BT_InstallSehFilter();
 }
