@@ -359,9 +359,9 @@
 #define IDC_MFCLINK_DONATE              1059
 #define IDC_EDIT_SET_ID                 1059
 #define IDC_PROGRESS_LOAD               1060
-#define IDC_EDIT_SET_ID2                1060
 #define IDC_EDIT_SET_TOKEN              1060
 #define IDC_EDIT_UTC                    1061
+#define IDC_EDIT_ARCHIVE_URL            1062
 #define IDC_STATIC_APP_TITLE            1064
 #define IDC_STATIC_CHANNELS             1066
 #define IDC_STATIC_ICON                 1067
@@ -431,7 +431,6 @@
 #define IDC_LIST_ACCOUNTS               1132
 #define IDC_BUTTON_ADD                  1133
 #define IDC_BUTTON_REMOVE               1134
-#define IDC_BUTTON_ADD2                 1134
 #define IDC_BUTTON_NEW_FROM_URL         1135
 #define IDC_EDIT_PLAYLIST_URL           1136
 #define IDC_MFCLINK_DONATE_YOOMONEY     1137

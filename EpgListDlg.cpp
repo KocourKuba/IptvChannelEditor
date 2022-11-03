@@ -59,6 +59,7 @@ void CEpgListDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_EDIT_EPG_URL, m_csEpgUrl);
+	DDX_Text(pDX, IDC_EDIT_ARCHIVE_URL, m_csArchiveUrl);
 	DDX_Control(pDX, IDC_LIST_EPG, m_wndEpgList);
 	DDX_Control(pDX, IDC_RICHEDIT_EPG, m_wndEpg);
 	DDX_Control(pDX, IDC_DATETIMEPICKER, m_day);
@@ -204,6 +205,10 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
+
+		m_params.shift_back = (int)start_pair->second.first;
+		m_csArchiveUrl = m_plugin->get_play_stream(m_params, m_info).c_str();
+		UpdateData(FALSE);
 	} while (false);
 
 	*pResult = 0;
