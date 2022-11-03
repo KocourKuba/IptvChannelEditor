@@ -1119,6 +1119,10 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 					bSet = true;
 				}
 			}
+			else if (m_plugin_type == PluginType::enCustom)
+			{
+
+			}
 			else if (!m_plugin->get_per_channel_token())
 			{
 				m_cur_account.set_token(entry->get_token());

@@ -374,7 +374,7 @@ public:
 	void set_per_channel_token(bool val) { per_channel_token = val; }
 
 	/// <summary>
-	/// property token used per channel, not the global
+	/// property token requested from provider
 	/// </summary>
 	bool get_requested_token() const { return requested_token; }
 	void set_requested_token(bool val) { requested_token = val; }
@@ -533,6 +533,7 @@ public:
 		SERIALIZE_STRUCT(j, c, provider_vod_url);
 		SERIALIZE_STRUCT(j, c, vod_parse_pattern);
 		SERIALIZE_STRUCT(j, c, square_icons); //-V601
+		SERIALIZE_STRUCT(j, c, per_channel_token); //-V601
 		SERIALIZE_STRUCT(j, c, requested_token); //-V601
 		SERIALIZE_STRUCT(j, c, static_servers); //-V601
 		SERIALIZE_STRUCT(j, c, static_qualities); //-V601
@@ -565,6 +566,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, provider_vod_url);
 		DESERIALIZE_STRUCT(j, c, vod_parse_pattern);
 		DESERIALIZE_STRUCT(j, c, square_icons);
+		DESERIALIZE_STRUCT(j, c, per_channel_token);
 		DESERIALIZE_STRUCT(j, c, requested_token);
 		DESERIALIZE_STRUCT(j, c, static_servers);
 		DESERIALIZE_STRUCT(j, c, static_qualities);

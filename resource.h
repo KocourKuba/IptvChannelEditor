@@ -528,6 +528,7 @@
 #define IDC_EDIT_PROVIDER_VOD_URL       1222
 #define IDC_EDIT_VOD_REGEX              1223
 #define IDC_CHECK_MAKE_COPY             1224
+#define IDC_CHECK_PER_CHANNEL_TOKEN     1224
 #define IDC_BUTTON_EDIT_VOD_TEMPLATES   1225
 #define IDC_COMBO_TAGS                  1226
 #define IDC_CHECK_MAP_TAG_TO_ID         1227

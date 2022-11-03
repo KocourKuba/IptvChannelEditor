@@ -55,6 +55,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_PLAYLIST_SHOW, &CPluginConfigPage::OnBnClickedButtonPlaylistShow)
 	ON_BN_CLICKED(IDC_BUTTON_STREAM_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamRegexTest)
 	ON_BN_CLICKED(IDC_BUTTON_VOD_PARSE, &CPluginConfigPage::OnBnClickedButtonStreamRegexTest)
+	ON_BN_CLICKED(IDC_CHECK_PER_CHANNEL_TOKEN, &CPluginConfigPage::OnBnClickedCheckPerChannelToken)
 	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN, &CPluginConfigPage::OnEnChangeEditParsePattern)
 	ON_BN_CLICKED(IDC_CHECK_MAP_TAG_TO_ID, &CPluginConfigPage::OnBnClickedCheckMapTagToId)
 	ON_CBN_SELCHANGE(IDC_COMBO_VOD_TEMPLATE, &CPluginConfigPage::OnCbnSelchangeComboVodTemplate)
@@ -198,6 +199,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_USE_DURATION, m_wndChkUseDuration);
 	DDX_Control(pDX, IDC_COMBO_TAGS, m_wndTags);
 	DDX_Control(pDX, IDC_CHECK_MAP_TAG_TO_ID, m_wndCheckMapTags);
+	DDX_Control(pDX, IDC_CHECK_PER_CHANNEL_TOKEN, m_wndChkPerChannelToken);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -533,6 +535,7 @@ void CPluginConfigPage::EnableControls()
 	m_wndPlaylistTemplates.EnableWindow(enable);
 	m_wndBtnEditTemplates.EnableWindow(enable);
 	m_wndPlaylistTemplate.EnableWindow(enable);
+	m_wndChkPerChannelToken.EnableWindow(enable);
 	m_wndParseStream.EnableWindow(enable);
 	m_wndCheckMapTags.EnableWindow(enable);
 	m_wndTags.EnableWindow(enable && m_wndCheckMapTags.GetCheck() != 0);
@@ -598,6 +601,7 @@ void CPluginConfigPage::FillControlsCommon()
 	m_wndChkSquareIcons.SetCheck(m_plugin->get_square_icons() != false);
 	m_wndChkEnableVOD.SetCheck(m_plugin->get_vod_support() != false);
 	m_wndChkVodM3U.SetCheck(m_plugin->get_vod_m3u() != false);
+	m_wndChkPerChannelToken.SetCheck(m_plugin->get_per_channel_token() != false);
 
 	m_Name = m_plugin->get_name().c_str();
 	m_Title = m_plugin->get_title().c_str();
@@ -669,6 +673,7 @@ void CPluginConfigPage::SaveControlsCommon()
 	m_plugin->set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
 	m_plugin->set_vod_support(m_wndChkEnableVOD.GetCheck() != 0);
 	m_plugin->set_vod_m3u(m_wndChkVodM3U.GetCheck() != 0);
+	m_plugin->set_per_channel_token(m_wndChkPerChannelToken.GetCheck() != 0);
 
 	m_plugin->set_name(m_Name.GetString());
 	m_plugin->set_title(m_Title.GetString());
@@ -1242,5 +1247,10 @@ void CPluginConfigPage::OnBnClickedButtonEditVodTemplates()
 void CPluginConfigPage::OnBnClickedCheckMapTagToId()
 {
 	m_wndTags.EnableWindow(m_wndCheckMapTags.GetCheck() != 0);
+	OnChanges();
+}
+
+void CPluginConfigPage::OnBnClickedCheckPerChannelToken()
+{
 	OnChanges();
 }

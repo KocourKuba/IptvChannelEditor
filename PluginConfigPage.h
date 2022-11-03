@@ -74,6 +74,7 @@ protected:
 	afx_msg void OnBnClickedButtonEditQuality();
 	afx_msg void OnBnClickedButtonEditProfiles();
 	afx_msg void OnBnClickedCheckMapTagToId();
+	afx_msg void OnBnClickedCheckPerChannelToken();
 
 	afx_msg void OnBnClickedCheckStaticServers();
 	afx_msg void OnBnClickedCheckStaticDevices();
@@ -159,6 +160,7 @@ protected:
 	CButton m_wndBtnSaveConf;
 	CButton m_wndBtnSaveAsConf;
 	CButton m_wndBtnEditTemplates;
+	CButton m_wndChkPerChannelToken;
 	CButton m_wndChkStaticServers;
 	CButton m_wndBtnServers;
 	CButton m_wndChkStaticDevices;
