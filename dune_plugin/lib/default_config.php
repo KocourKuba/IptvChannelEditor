@@ -636,8 +636,16 @@ class default_config extends dynamic_config
      */
     protected function FetchTvM3U($plugin_cookies, $force = false)
     {
-        $tmp_file = get_temp_path($this->PluginShortName . "_playlist_tv.m3u8");
-        if ($force !== false || !file_exists($tmp_file)) {
+        $m3u_file = get_temp_path($this->PluginShortName . "_playlist_tv.m3u8");
+        if ($force === false && file_exists($m3u_file)) {
+            $mtime = filemtime($m3u_file);
+            if (time() - $mtime > 3600) {
+                hd_print("Playlist cache expired. Forcing reload");
+                $force = true;
+            }
+        }
+
+        if ($force !== false) {
             try {
                 $url = $this->GetPlaylistUrl('tv1', $plugin_cookies);
                 //hd_print("tv1 m3u8 playlist: " . $url);
@@ -645,7 +653,7 @@ class default_config extends dynamic_config
                     hd_print("Tv1 playlist not defined");
                     throw new Exception('Tv1 playlist not defined');
                 }
-                file_put_contents($tmp_file, HD::http_get_document($url));
+                file_put_contents($m3u_file, HD::http_get_document($url));
             } catch (Exception $ex) {
                 try {
                     $url = $this->GetPlaylistUrl('tv2', $plugin_cookies);
@@ -654,7 +662,7 @@ class default_config extends dynamic_config
                         throw new Exception("Tv2 playlist not defined");
                     }
 
-                    file_put_contents($tmp_file, HD::http_get_document($url));
+                    file_put_contents($m3u_file, HD::http_get_document($url));
                 } catch (Exception $ex) {
                     hd_print("Unable to load secondary tv playlist: " . $ex->getMessage());
                     return array();
@@ -662,7 +670,7 @@ class default_config extends dynamic_config
             }
         }
 
-        return file($tmp_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        return file($m3u_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     }
 
     /**
@@ -673,8 +681,15 @@ class default_config extends dynamic_config
     protected function FetchVodM3U($plugin_cookies, $force = false)
     {
         $m3u_file = get_temp_path($this->PluginShortName . "_playlist_vod.m3u8");
+        if ($force === false && file_exists($m3u_file)) {
+            $mtime = filemtime($m3u_file);
+            if (time() - $mtime > 3600) {
+                hd_print("VOD playlist cache expired. Forcing reload");
+                $force = true;
+            }
+        }
 
-        if ($force !== false || !file_exists($m3u_file)) {
+        if ($force !== false) {
             try {
                 $url = $this->GetVodListUrl($plugin_cookies);
                 if (empty($url)) {
