@@ -637,10 +637,14 @@ class default_config extends dynamic_config
     protected function FetchTvM3U($plugin_cookies, $force = false)
     {
         $m3u_file = get_temp_path($this->PluginShortName . "_playlist_tv.m3u8");
-        if ($force === false && file_exists($m3u_file)) {
-            $mtime = filemtime($m3u_file);
-            if (time() - $mtime > 3600) {
-                hd_print("Playlist cache expired. Forcing reload");
+        if ($force === false) {
+            if (file_exists($m3u_file)) {
+                $mtime = filemtime($m3u_file);
+                if (time() - $mtime > 3600) {
+                    hd_print("Playlist cache expired. Forcing reload");
+                    $force = true;
+                }
+            } else {
                 $force = true;
             }
         }
@@ -681,10 +685,14 @@ class default_config extends dynamic_config
     protected function FetchVodM3U($plugin_cookies, $force = false)
     {
         $m3u_file = get_temp_path($this->PluginShortName . "_playlist_vod.m3u8");
-        if ($force === false && file_exists($m3u_file)) {
-            $mtime = filemtime($m3u_file);
-            if (time() - $mtime > 3600) {
-                hd_print("VOD playlist cache expired. Forcing reload");
+        if ($force === false) {
+            if (file_exists($m3u_file)) {
+                $mtime = filemtime($m3u_file);
+                if (time() - $mtime > 3600) {
+                    hd_print("VOD playlist cache expired. Forcing reload");
+                    $force = true;
+                }
+            } else {
                 $force = true;
             }
         }
