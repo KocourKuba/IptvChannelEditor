@@ -424,7 +424,7 @@ CAPTION "EPG List"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_LIST_EPG,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,21,315,135
-    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL | WS_TABSTOP,7,172,315,59,WS_EX_STATICEDGE
+    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",WS_VSCROLL | WS_TABSTOP | 0x844,7,172,315,59,WS_EX_STATICEDGE
     CONTROL         "",IDC_DATETIMEPICKER,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP,7,236,59,15
     EDITTEXT        IDC_EDIT_EPG_URL,7,7,315,12,ES_AUTOHSCROLL | ES_READONLY
     DEFPUSHBUTTON   "OK",IDOK,139,237,50,14
@@ -1814,6 +1814,27 @@ BEGIN
     IDS_STRING_CHECK_USE_DURATION 
                             "Use duration as EPG end. Calculate EPG end time by adding duration value to the EPG start time."
     IDS_STRING_UNSET        "Unset"
+    IDS_STRING_BUTTON_EDIT_TEMPLATES 
+                            "Edit playlist templates. You can add additional playlist urls or template to use in the config"
+    IDS_STRING_CHECK_VOD_SUPPORT "Enable or disable VOD support for plugin"
+    IDS_STRING_CHECK_VOD_M3U "VOD is a M3U playlist"
+    IDS_STRING_COMBO_VOD_TEMPLATE "Select VOD template to use in this config."
+    IDS_STRING_BUTTON_EDIT_VOD_TEMPLATES "Edit VOD templates or url list."
+    IDS_STRING_EDIT_VOD_REGEX 
+                            "Edit regular expression to parse movie title if it contains additional information like country or year."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_CHECK_PER_CHANNEL_TOKEN 
+                            "If url contains token it can be global for entire playlist or can be different for each channel. Choose type of the using token"
+    IDS_STRING_COMBO_TAGS   "Choose the attribute in the #EXTINF tag that will be threated as Channel ID. Special case for ""Name"". This is not a attribute it is a name of the channel."
+    IDS_CHECK_MAP_TAG_TO_ID "If url does not contain Channel ID, use this option to choose what attribute in the #EXTINF tag will be used as ID."
+    IDS_STRING_EDIT_PROVIDER_VOD_URL "Edit current VOD template or url."
+    IDS_STRING_BUTTON_VOD_PARSE "Test VOD parse regular expression."
+    IDS_STRING_BUTTON_VOD_TEMPLATE "Try to download and show VOD playlist."
+    IDS_STRING_COMBO_PLAYLIST_TEMPLATE 
+                            "Select playlist template that will be used in plugin config."
 END
 
 #endif    // English (United States) resources

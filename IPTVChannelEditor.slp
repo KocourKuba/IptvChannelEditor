@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20221103224952" scan="173" scanned="20221103224932">
+<document created="20211012165442" version="4.0.374" date="20221104151304" scan="174" scanned="20221104145733">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221103214902" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221104133628" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -4322,6 +4322,14 @@
           <native>Edit static Qualities list</native>
           <lang id="ru" date="20221018230113">Редактировать список Качества</lang>
         </row>
+        <row id="IDS_STRING_BUTTON_EDIT_TEMPLATES" state="0" created="20221104145733">
+          <native>Edit playlist templates. You can add additional playlist urls or template to use in the config</native>
+          <lang id="ru" date="20221104150337">Редактировать шаблон плейлиста. Вы можете добавить дополнительные ссылки или шаблоны плейлиста для использования в конфигурации плагина</lang>
+        </row>
+        <row id="IDS_STRING_BUTTON_EDIT_VOD_TEMPLATES" state="0" created="20221104145733">
+          <native>Edit VOD templates or url list.</native>
+          <lang id="ru" date="20221104150525">Редактировать VOD шаблон или ссылку.</lang>
+        </row>
         <row id="IDS_STRING_CHECK_STATIC_PROFILES">
           <native>Profiles list are static, not requested from provider and can be set manually.</native>
           <lang id="ru" date="20221018230048">Список Профилей статичный, не запрашивается у провайдера и может быть задан вручную.</lang>
@@ -4330,13 +4338,29 @@
           <native>Use duration as EPG end. Calculate EPG end time by adding duration value to the EPG start time.</native>
           <lang id="ru" date="20221024211714">Использовать длительность для вычисления конца передачи. Поле "конец EPG" содержит параметр который будет использован для расчета конца передачи. Начало EPG + Длительность.</lang>
         </row>
+        <row id="IDS_STRING_CHECK_VOD_M3U" state="0" created="20221104145733">
+          <native>VOD is a M3U playlist</native>
+          <lang id="ru" date="20221104150425">Медиатека (VOD) является плейлистом M3U</lang>
+        </row>
+        <row id="IDS_STRING_CHECK_VOD_SUPPORT" state="0" created="20221104145733">
+          <native>Enable or disable VOD support for plugin</native>
+          <lang id="ru" date="20221104150401">Включить или выключить медиатеку (VOD) для плагина</lang>
+        </row>
         <row id="IDS_STRING_COMBO_CONFIGS">
           <native>Choose the plugin config for selected account</native>
           <lang id="ru" date="20221018230243">Выбрать конфигурацию плагина для выбранного аккаунта</lang>
         </row>
+        <row id="IDS_STRING_COMBO_VOD_TEMPLATE" state="0" created="20221104145733">
+          <native>Select VOD template to use in this config.</native>
+          <lang id="ru" date="20221104150528">Выбрать текущий шаблон VOD для использования в конфигурации плагина.</lang>
+        </row>
         <row id="IDS_STRING_EDIT_UTC">
           <native>UTC timestamp</native>
           <lang id="ru" date="20221018230300">Временная метка UTC</lang>
+        </row>
+        <row id="IDS_STRING_EDIT_VOD_REGEX" state="0" created="20221104145733">
+          <native>Edit regular expression to parse movie title if it contains additional information like country or year.</native>
+          <lang id="ru" date="20221104150624">Редактировать регулярное выражение для парсинга заголовка фильма если он содержит дополнительную информацию типа страны или года.</lang>
         </row>
         <row id="IDS_STRING_NAME">
           <native>Name</native>
@@ -4349,6 +4373,36 @@
         <row id="IDS_STRING_UNSET" state="0" created="20221030032256">
           <native>Unset</native>
           <lang id="ru" date="20221030032320">Без категории</lang>
+        </row>
+      </node>
+      <node class="TWindowsStringNode" name="23" state="0" created="20221104145733" resid="23" langid="1033">
+        <row id="IDS_CHECK_MAP_TAG_TO_ID" state="0">
+          <native>If url does not contain Channel ID, use this option to choose what attribute in the ##EXTINF tag will be used as ID.</native>
+          <lang id="ru" date="20221104151034">Если ссылка не содержит идентификатор (ID) канала, то использовать возможность выбрать один из атрибутов тэга ##EXTINF в качестве идентификатора.</lang>
+        </row>
+        <row id="IDS_STRING_BUTTON_VOD_PARSE" state="0">
+          <native>Test VOD parse regular expression.</native>
+          <lang id="ru" date="20221104151141">Открыть сайт для тестирования регулярного выражения для парсинга заголовка фильма.</lang>
+        </row>
+        <row id="IDS_STRING_BUTTON_VOD_TEMPLATE" state="0">
+          <native>Try to download and show VOD playlist.</native>
+          <lang id="ru" date="20221104151219">Попробовать скачать и показать ссылку на плейлист медиатеки (VOD).</lang>
+        </row>
+        <row id="IDS_STRING_CHECK_PER_CHANNEL_TOKEN" state="0">
+          <native>If url contains token it can be global for entire playlist or can be different for each channel. Choose type of the using token</native>
+          <lang id="ru" date="20221104150733">Если ссылка содержит макрос token то он может быть либо глобальным для всего плейлиста или уникальным для каждого канала. Выберите тип токена.</lang>
+        </row>
+        <row id="IDS_STRING_COMBO_PLAYLIST_TEMPLATE" state="0">
+          <native>Select playlist template that will be used in plugin config.</native>
+          <lang id="ru" date="20221104151259">Выбрать текущий шаблон или ссылку на плейлист для использования в конфигурации плагина.</lang>
+        </row>
+        <row id="IDS_STRING_COMBO_TAGS" state="0">
+          <native>Choose the attribute in the ##EXTINF tag that will be threated as Channel ID. Special case for "Name". This is not a attribute it is a name of the channel.</native>
+          <lang id="ru" date="20221104150923">Выбор атрибута из тэга ##EXTINF который будет использоваться в качестве идентификатора (ID) канала. Атрибут "Name" - специальный случай для использования имени канала в качестве его ID.</lang>
+        </row>
+        <row id="IDS_STRING_EDIT_PROVIDER_VOD_URL" state="0">
+          <native>Edit current VOD template or url.</native>
+          <lang id="ru" date="20221104151059">Редактировать текущий шаблон или ссылку на медиатеку (VOD)</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="26" created="20220730092432" resid="26" langid="1033">
@@ -4536,28 +4590,28 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20221103224932">
-          <prev>5.3.1197, 2 Nov 2022</prev>
-          <native>5.3.1214, 3 Nov 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20221104145733">
+          <prev>5.3.1214, 3 Nov 2022</prev>
+          <native>5.3.1217, 4 Nov 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221001005006">5</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20221024100559">3</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221103224932">
-          <prev>1197</prev>
-          <native>1214</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221104145733">
+          <prev>1214</prev>
+          <native>1217</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20221103224932">
-          <prev>5.3.1197</prev>
-          <native>5.3.1214</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20221104145733">
+          <prev>5.3.1214</prev>
+          <native>5.3.1217</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221001005006">5</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20221024100559">3</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221103224932">
-          <prev>1197</prev>
-          <native>1214</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221104145733">
+          <prev>1214</prev>
+          <native>1217</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

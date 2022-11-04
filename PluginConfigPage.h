@@ -180,6 +180,7 @@ protected:
 	CButton m_wndBtnVodTemplateTest;
 	CButton m_wndChkUseDuration;
 	CButton m_wndCheckMapTags;
+	CButton m_wndBtnVodTemplates;
 
 	CString m_Name;
 	CString m_Title;
