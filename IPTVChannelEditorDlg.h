@@ -84,7 +84,6 @@ protected:
 	void OnOK() override;
 	void OnCancel() override;
 	BOOL PreTranslateMessage(MSG* pMsg) override;
-	BOOL DestroyWindow() override;
 
 	void AddTooltip(UINT ctrlID, UINT textID);
 

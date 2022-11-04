@@ -1317,6 +1317,7 @@ void CIPTVChannelEditorDlg::OnCancel()
 		return;
 	}
 
+	SaveWindowPos(GetSafeHwnd(), REG_WINDOW_POS);
 	GetConfig().UpdatePluginSettings();
 	GetConfig().SaveSettings();
 
@@ -5108,13 +5109,6 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	}
 
 	*pResult = 0;
-}
-
-BOOL CIPTVChannelEditorDlg::DestroyWindow()
-{
-	SaveWindowPos(GetSafeHwnd(), REG_WINDOW_POS);
-
-	return __super::DestroyWindow();
 }
 
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri) const
