@@ -8,8 +8,10 @@ require_once 'starnet_setup_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 
 
-class Starnet_Tv extends Abstract_Tv
+class Starnet_Tv extends Abstract_Tv implements User_Input_Handler
 {
+    const ID = 'tv_handler';
+
     /**
      * @var Starnet_Plugin
      */
@@ -22,14 +24,13 @@ class Starnet_Tv extends Abstract_Tv
     {
         $this->plugin = $plugin;
         parent::__construct(Abstract_Tv::MODE_CHANNELS_N_TO_M, false);
+
+        User_Input_Handler_Registry::get_instance()->register_handler($this);
     }
 
-    /**
-     * @return string
-     */
-    public function get_fav_icon_url()
+    public function get_handler_id()
     {
-        return Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH;
+        return self::ID;
     }
 
     /**
@@ -109,7 +110,7 @@ class Starnet_Tv extends Abstract_Tv
 
         // Favorites group
         if ($this->is_favorites_supported()) {
-            $this->groups->put(new Favorites_Group($this,
+            $this->groups->put(new Favorites_Group(
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID,
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH));
@@ -118,7 +119,8 @@ class Starnet_Tv extends Abstract_Tv
         }
 
         // All channels group
-        $this->groups->put(new All_Channels_Group($this,
+        $this->groups->put(new All_Channels_Group(
+            $this,
             Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
             Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH));
 
@@ -140,7 +142,7 @@ class Starnet_Tv extends Abstract_Tv
                     (string)$xml_tv_category->caption,
                     (string)$xml_tv_category->icon_url));
                 hd_print("Added category: $xml_tv_category->caption");
-            } else if ($xml_tv_category->favorite == "true" ) {
+            } else if ($xml_tv_category->favorite == "true") {
                 $fav_category_id = (int)$xml_tv_category->id;
                 hd_print("Embedded Favorites category: $xml_tv_category->caption ($fav_category_id)");
             }
@@ -149,7 +151,10 @@ class Starnet_Tv extends Abstract_Tv
         $this->plugin->config->GetAccountInfo($plugin_cookies);
         $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo($plugin_cookies);
 
+        $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
+
         // Read channels
+        $num = 0;
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {
                 hd_print("Error: unexpected node '{$xml_tv_channel->getName()}'. Expected: 'tv_channel'");
@@ -188,6 +193,7 @@ class Starnet_Tv extends Abstract_Tv
             $custom_archive_url = isset($xml_tv_channel->catchup_url_template) ? $xml_tv_channel->catchup_url_template : '';
             $custom_arc_url_type = isset($xml_tv_channel->custom_arc_url_type) ? $xml_tv_channel->custom_arc_url_type : '';
 
+            $num++;
             $tv_category_id = (int)$xml_tv_channel->tv_category_id;
             if ($this->channels->has($hash)) {
                 $channel = $this->channels->get($hash);
@@ -199,7 +205,7 @@ class Starnet_Tv extends Abstract_Tv
                 // https not supported for old players
                 // $icon_url = str_replace("https://", "http://", (string)$xml_tv_channel->icon_url);
                 $icon_url = (string)$xml_tv_channel->icon_url;
-                $number = isset($xml_tv_channel->int_id) ? (int)$xml_tv_channel->int_id : 0;
+                $number = isset($xml_tv_channel->int_id) ? (int)$xml_tv_channel->int_id : $num;
 
                 $epg1 = (string)$xml_tv_channel->epg_id;
                 $epg2 = (empty($xml_tv_channel->tvg_id)) ? $epg1 : (string)$xml_tv_channel->tvg_id;
@@ -227,18 +233,23 @@ class Starnet_Tv extends Abstract_Tv
             // Link group and channel.
             if (($tv_category_id === $fav_category_id || $xml_tv_channel->favorite) && $this->is_favorites_supported()) {
                 // favorites category
-                hd_print("Added from channels list to favorites channel $hash ($xml_tv_channel->caption)");
-                $this->change_tv_favorites(PLUGIN_FAVORITES_OP_ADD, $hash, $plugin_cookies);
-            }
-            else if (!$this->groups->has($tv_category_id)) {
+                if (in_array($channel_id, $fav_channel_ids) === false) {
+                    hd_print("Added from channels list to favorites channel $hash ($xml_tv_channel->caption)");
+                    $fav_channel_ids[] = $channel_id;
+                }
+            } else if (!$this->groups->has($tv_category_id)) {
                 // Category disabled or unknown
                 hd_print("Unknown category $tv_category_id");
             } else {
                 $group = $this->groups->get($tv_category_id);
+                if (is_null($group))
+                    hd_print("unknown group: $tv_category_id");
                 $channel->add_group($group);
                 $group->add_channel($channel);
             }
         }
+
+        $this->set_fav_channel_ids($plugin_cookies, $fav_channel_ids);
 
         hd_print("Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
     }
@@ -262,6 +273,8 @@ class Starnet_Tv extends Abstract_Tv
      */
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
     {
+        Playback_Points::update();
+
         try {
             $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
             // get channel by hash
@@ -275,6 +288,10 @@ class Starnet_Tv extends Abstract_Tv
             return '';
         }
 
+        if (empty($protect_code)) {
+            Playback_Points::push($channel_id, $archive_ts);
+        }
+
         // update url if play archive or different type of the stream
         $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
         hd_print("get_tv_playback_url: $url");
@@ -283,11 +300,11 @@ class Starnet_Tv extends Abstract_Tv
 
     /**
      * @param string $channel_id
-     * @param int $day_start_ts
+     * @param integer $day_start_ts
      * @param $plugin_cookies
-     * @return array|Epg_Iterator
+     * @return array
      */
-    public function get_day_epg_iterator($channel_id, $day_start_ts, &$plugin_cookies)
+    public function get_day_epg($channel_id, $day_start_ts, &$plugin_cookies)
     {
         try {
             // get channel by hash
@@ -298,6 +315,10 @@ class Starnet_Tv extends Abstract_Tv
         }
 
         $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
+        $day_epg = $channel->get_day_epg_items($epg_source, $day_start_ts);
+        if ($day_epg !== false)
+            return $day_epg;
+
 
         $epg_man = new Epg_Manager($this->plugin->config);
 
@@ -316,14 +337,73 @@ class Starnet_Tv extends Abstract_Tv
         hd_print("Loaded " . count($epg) . " EPG entries");
         // get personal time shift for channel
         $time_shift = $channel->get_timeshift_hours() * 3600;
-        $epg_result = array();
+        $day_epg = array();
         foreach ($epg as $time => $value) {
-            $time_start = $time + $time_shift;
-            $epg_result[] = new Default_Epg_Item($value[Epg_Params::EPG_NAME],
-                $value[Epg_Params::EPG_DESC],
-                (int)$time_start, (int)$value[Epg_Params::EPG_END] + $time_shift);
+            $day_epg[] = array
+            (
+                PluginTvEpgProgram::start_tm_sec => (int)$time + $time_shift,
+                PluginTvEpgProgram::end_tm_sec => (int)$value[Epg_Params::EPG_END] + $time_shift,
+                PluginTvEpgProgram::name => $value[Epg_Params::EPG_NAME],
+                PluginTvEpgProgram::description => $value[Epg_Params::EPG_DESC],
+                PluginTvEpgProgram::icon_url => '',
+                Ext_Epg_Program::year => '',
+                Ext_Epg_Program::main_category => '',
+            );
         }
 
-        return new Epg_Iterator($epg_result, $day_start_ts, $day_start_ts + 86400);
+        $channel->set_day_epg_items($epg_source, $day_start_ts, $day_epg);
+        $this->set_channel($channel);
+
+        return $day_epg;
+    }
+
+    public function get_program_info($channel_id, $program_ts, $plugin_cookies)
+    {
+        $day_ts = strtotime(date('d-M-Y', (isset($program_ts) ? $program_ts : time())));
+        $day_epg = $this->get_day_epg($channel_id, $day_ts, $plugin_cookies);
+        foreach ($day_epg as $item) {
+            if ($program_ts >= $item[PluginTvEpgProgram::start_tm_sec] && $program_ts < $item[PluginTvEpgProgram::end_tm_sec]) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    public function get_action_map()
+    {
+        User_Input_Handler_Registry::get_instance()->register_handler($this);
+        $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER);
+        if (NEWGUI_FEAUTURES_AVAILABLE) {
+            $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
+        }
+
+        return $actions;
+    }
+
+    public function handle_user_input(&$user_input, &$plugin_cookies)
+    {
+        hd_print('Starnet_Tv: handle_user_input:');
+        foreach ($user_input as $key => $value) hd_print("  $key => $value");
+
+        switch ($user_input->control_id) {
+            case GUI_EVENT_PLAYBACK_STOP:
+                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
+                    if (NEWGUI_FEAUTURES_AVAILABLE) {
+                        Playback_Points::update();
+                        Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+
+                        return Starnet_Epfs_Handler::invalidate_folders();
+                    }
+                }
+
+                return null;
+
+            case GUI_EVENT_TIMER:
+                $actions = $this->get_action_map();
+                return Action_Factory::change_behaviour($actions, 5000);
+        }
+
+        return null;
     }
 }

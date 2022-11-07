@@ -574,18 +574,21 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 case self::ACTION_CHANGE_LIST:
                     $old_value = $plugin_cookies->channels_list;
                     $plugin_cookies->channels_list = $new_value;
-                    $res = $this->reload_channels($plugin_cookies);
-                    if ($res === false) {
+                    $action = $this->reload_channels($plugin_cookies);
+                    if ($action === null) {
                         $plugin_cookies->channels_list = $old_value;
                         Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
                     }
-                    $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
-                    return Action_Factory::invalidate_folders(array('main_screen'), $post_action);
+                    return $action;
 
                 case self::ACTION_CHANNELS_SOURCE: // handle streaming settings dialog result
                     $plugin_cookies->channels_source = $user_input->channels_source;
                     hd_print("Selected channels source: $plugin_cookies->channels_source");
-                    return $this->reload_channels($plugin_cookies);
+                    $action = $this->reload_channels($plugin_cookies);
+                    if ($action === null) {
+                        Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
+                    }
+                    return $action;
 
                 case self::ACTION_CHANNELS_URL_DLG:
                     $defs = $this->do_get_channels_url_control_defs($plugin_cookies);
@@ -682,7 +685,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     }
 
     /**
-     * @return array|false
+     * @return array
      */
     protected function reload_channels(&$plugin_cookies)
     {
@@ -694,9 +697,16 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             $this->plugin->tv->load_channels($plugin_cookies);
         } catch (Exception $e) {
             hd_print("Reload channel list failed: $plugin_cookies->channels_list");
-            return false;
+            return null;
         }
+
         $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
+
+        if (NEWGUI_FEAUTURES_AVAILABLE) {
+            Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+            $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
+        }
+
         return Action_Factory::invalidate_folders(array('main_screen'), $post_action);
     }
 }

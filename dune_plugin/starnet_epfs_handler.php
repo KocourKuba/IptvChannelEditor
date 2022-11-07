@@ -12,11 +12,27 @@ require_once "lib/epfs/dummy_epfs_screen.php";
 
 class Starnet_Epfs_Handler extends Abstract_Epfs_Handler
 {
+    /**
+     * @var string
+     */
     protected static $epf_id;
-    protected static $tv_rows_screen;
-    protected static $dummy_epf_screen;
-    protected static $no_internet_epfs_created = false;
+
+    /**
+     * @var string
+     */
     protected static $no_internet_epfs;
+
+    /**
+     * @var Starnet_Tv_Rows_Screen
+     */
+    protected static $tv_rows_screen;
+
+    /**
+     * @var Dummy_Epfs_Screen
+     */
+    protected static $dummy_epf_screen;
+
+    protected static $no_internet_epfs_created = false;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -93,7 +109,7 @@ class Starnet_Epfs_Handler extends Abstract_Epfs_Handler
      */
     public static function refresh_tv_epfs(&$plugin_cookies)
     {
-        self::update_all_epfs(0, $plugin_cookies);
+        self::update_all_epfs(false, $plugin_cookies);
     }
 
     /**
