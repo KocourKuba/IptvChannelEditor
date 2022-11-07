@@ -350,16 +350,18 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             foreach (Playback_Points::get_all() as $point) {
                 $channel_id = $point->channel_id;
 
-                hd_print("Playback_Point: for channel $channel_id");
                 if (is_null($channel = $this->plugin->tv->get_channel($channel_id)) || $channel->is_protected())
                     continue;
 
-                $channel_ts = ($point->archive_tm > 0) ? $point->archive_tm + $point->position : ($channel->has_archive() ? $point->time : 0);
+                $channel_ts = ($point->archive_tm > 0) ?
+                    $point->archive_tm + $point->position : // archive
+                    ($channel->has_archive() ? $point->time : 0); // if can be archived current position
 
                 if (isset($watched[(string)$channel_id]))
                     continue;
 
                 if ($channel_ts === 0) {
+                    // only live stream
                     $watched[(string)$channel_id] = array
                     (
                         'channel_id' => $channel_id,
@@ -368,7 +370,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                         'program_title' => $channel->get_title(),
                         'program_icon_url' => '',
                     );
-                } else if (!is_null($prog_info = $this->plugin->tv->get_program_info($channel_id, $channel_ts, false))) {
+                } else if (!is_null($prog_info = $this->plugin->tv->get_program_info($channel_id, $channel_ts, $plugin_cookies))) {
+                    // program epg available
                     $start_tm = $prog_info[PluginTvEpgProgram::start_tm_sec];
                     $end_tm = $prog_info[PluginTvEpgProgram::end_tm_sec];
                     $subtitle = isset($prog_info[Ext_Epg_Program::sub_title]) ? $prog_info[Ext_Epg_Program::sub_title] : '';
@@ -379,7 +382,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                         'archive_tm' => $channel_ts,
                         'view_progress' => max(0.01, min(1, 1 - round(($end_tm - $channel_ts) / ($end_tm - $start_tm), 2))),
                         'program_title' => $prog_info[PluginTvEpgProgram::name] . (empty($subtitle) ? '' : '. ' . $subtitle),
-                        'program_icon_url' => $prog_info[PluginTvEpgProgram::icon_url],
+                        'program_icon_url' => isset($prog_info[Ext_Epg_Program::main_icon]) ? $prog_info[Ext_Epg_Program::main_icon] : '',
                     );
                 } else {
                     $watched[(string)$channel_id] = array
@@ -411,22 +414,25 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
                     $stickers = null;
 
-                    if (!empty($item['view_progress']) && !empty($item['program_icon_url'])) {
-                        $rect = Rows_Factory::r(229 - 100, 0, 100, 64);
-                        Rows_Factory::add_regular_sticker_rect($stickers, "#FFFFFFFF", $rect);
-                        Rows_Factory::add_regular_sticker_image($stickers, $channel->get_icon_url(), $rect);
-                    }
-
                     if ($item['view_progress'] > 0) {
-                        Rows_Factory::add_regular_sticker_rect($stickers, "#CF6A6A6A", Rows_Factory::r(0, 142 - 8, 229, 8));
-                        Rows_Factory::add_regular_sticker_rect($stickers, "#FFEFAA16", Rows_Factory::r(0, 142 - 8, round(229 * $item['view_progress']), 8));
+                        // item size 229x142
+                        if (!empty($item['program_icon_url'])) {
+                            // add small channel logo
+                            $rect = Rows_Factory::r(129, 0, 100, 64);
+                            Rows_Factory::add_regular_sticker_rect($stickers, "#FFFFFFFF", $rect);
+                            Rows_Factory::add_regular_sticker_image($stickers, $channel->get_icon_url(), $rect);
+                        }
+
+                        // add progress indicator
+                        Rows_Factory::add_regular_sticker_rect($stickers, "#CF6A6A6A", Rows_Factory::r(0, 134, 229, 8));
+                        Rows_Factory::add_regular_sticker_rect($stickers, "#FFEFAA16", Rows_Factory::r(0, 134, round(229 * $item['view_progress']), 8));
                     }
 
                     Rows_Factory::add_regular_item(
                         $items,
                         $id,
-                        empty($stickers) ? $channel->get_icon_url() : $item['program_icon_url'],
-                        empty($stickers) ? $channel->get_title() : $item['program_title'],
+                        empty($item['program_icon_url']) ? $channel->get_icon_url() : $item['program_icon_url'],
+                        empty($item['program_title']) ? $channel->get_title() : $item['program_title'],
                         $stickers);
                 }
             }
@@ -688,8 +694,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Starnet_Tv_Rows_Screen: handle_user_input');
-        foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        //hd_print('Starnet_Tv_Rows_Screen: handle_user_input');
+        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         if (isset($user_input->item_id)) {
             $media_url_str = $user_input->item_id;

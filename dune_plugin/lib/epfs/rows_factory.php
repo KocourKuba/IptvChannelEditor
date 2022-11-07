@@ -159,6 +159,13 @@ class Rows_Factory
         return $arr;
     }
 
+    /**
+     * @param $items
+     * @param string $id
+     * @param string $icon_url
+     * @param string $caption
+     * @param array $stickers
+     */
     public static function add_regular_item(&$items, $id, $icon_url, $caption = null, $stickers = null)
     {
         $arr = array(

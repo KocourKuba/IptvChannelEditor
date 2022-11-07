@@ -41,7 +41,7 @@ class Playback_Points
 
     private function __construct()
     {
-        $this->tmp_path = get_temp_path('/watch_history.tmp');
+        $this->tmp_path = get_temp_path('/watch_history');
     }
 
     /**
@@ -49,24 +49,24 @@ class Playback_Points
      */
     private function update_curr_point()
     {
-        hd_print("Playback_Points::update_curr_point");
-
         if (!isset($this->curr_point->channel_id) || !class_exists("PluginRowsFolderView"))
             return;
 
         $time = time();
-        $this->curr_point->time = $time;
 
-        if (isset($this->curr_point->archive_tm) && ($this->curr_point->archive_tm > 0)) {
+        // if channel does not have archive do not update current point
+        if ($this->curr_point->archive_tm !== -1) {
             $player_state = get_player_state_assoc();
-            $time_position = max($time - $this->curr_point->time, 0);
 
             if (isset($player_state['playback_state']) && ($player_state['playback_state'] === PLAYBACK_PLAYING)) {
-                $playback_position = empty($player_state['playback_position']) ? $this->curr_point->position + $time_position : $player_state['playback_position'];
+                $playback_position = empty($player_state['playback_position']) ? max($time - $this->curr_point->time, 0) : $player_state['playback_position'];
+                hd_print("Playback_Points::update_curr_point: playing position: $playback_position");
                 $this->curr_point->position = max($playback_position, 0);
             }
         }
 
+        $this->curr_point->time = $time;
+        hd_print("Playback_Points::update_curr_point: channel: {$this->curr_point->channel_id} position: {$this->curr_point->position}");
         $this->points[$this->curr_point->channel_id] = $this->curr_point;
         file_put_contents($this->tmp_path, serialize($this->points));
     }
@@ -148,8 +148,11 @@ class Playback_Points
 
         $player_state = get_player_state_assoc();
 
-        if (!isset($player_state['last_playback_event']) || ($player_state['last_playback_event'] !== PLAYBACK_PCR_DISCONTINUITY))
-            self::$instance->push_point($channel_id, $archive_ts);
+        if (isset($player_state['player_state']) && $player_state['player_state'] !== 'navigator') {
+            if (!isset($player_state['last_playback_event']) || ($player_state['last_playback_event'] !== PLAYBACK_PCR_DISCONTINUITY)) {
+                self::$instance->push_point($channel_id, $archive_ts);
+            }
+        }
     }
 
     /**

@@ -12,7 +12,7 @@ require_once 'starnet_vod_category_list_screen.php';
 
 class Starnet_Tv implements Tv, User_Input_Handler
 {
-    const ID = 'tv_handler';
+    const ID = 'tv';
 
     const MODE_CHANNELS_1_TO_N = false;
     const MODE_CHANNELS_N_TO_M = true;
@@ -23,6 +23,11 @@ class Starnet_Tv implements Tv, User_Input_Handler
      * @var Starnet_Plugin
      */
     protected $plugin;
+
+    /**
+     * @var Epg_Manager
+     */
+    protected $epg_man;
 
     /**
      * @var bool
@@ -61,11 +66,14 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $this->plugin = $plugin;
         $this->mode = self::MODE_CHANNELS_N_TO_M;
         $this->playback_url_is_stream_url = false;
+        $this->epg_man = new Epg_Manager($plugin->config);
+
+        User_Input_Handler_Registry::get_instance()->register_handler($this);
     }
 
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID . '_handler';
     }
 
     /**
@@ -511,7 +519,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         }
 
         if (empty($protect_code)) {
-            Playback_Points::push($channel_id, $archive_ts);
+            Playback_Points::push($channel_id, $channel->has_archive() ? 0 : $archive_ts);
         }
 
         // update url if play archive or different type of the stream
@@ -541,12 +549,9 @@ class Starnet_Tv implements Tv, User_Input_Handler
         if ($day_epg !== false)
             return $day_epg;
 
-
-        $epg_man = new Epg_Manager($this->plugin->config);
-
         try {
             $day_start_ts -= get_local_time_zone_offset();
-            $epg = $epg_man->get_epg($channel, $epg_source, $day_start_ts, $plugin_cookies);
+            $epg = $this->epg_man->get_epg($channel, $epg_source, $day_start_ts, $plugin_cookies);
             if (count($epg) === 0) {
                 hd_print("No data from $epg_source EPG");
                 return array();
@@ -685,12 +690,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
         }
 
         Playback_Points::init();
-        $actions = $this->get_action_map();
-        $do_cache_osd_images_action = User_Input_Handler_Registry::create_action($this, 'do_cache_osd_images');
-        $actions[GUI_EVENT_TIMER] = $do_cache_osd_images_action;
-        $actions[GUI_EVENT_KEY_SELECT] = $do_cache_osd_images_action;
-        $actions[GUI_EVENT_KEY_INFO] = $do_cache_osd_images_action;
-        $actions[GUI_EVENT_KEY_TOP_MENU] = $do_cache_osd_images_action;
 
         hd_print('TV Info loaded at ' . (microtime(1) - $t) . ' secs');
 
@@ -709,11 +708,11 @@ class Starnet_Tv implements Tv, User_Input_Handler
             PluginTvInfo::initial_is_favorite => $initial_is_favorite,
             PluginTvInfo::favorite_channel_ids => $fav_channel_ids,
 
-            PluginTvInfo::initial_archive_tm => isset($media_url->archive_tm)? (int)$media_url->archive_tm : -1,
+            PluginTvInfo::initial_archive_tm => isset($media_url->archive_tm) ? (int)$media_url->archive_tm : -1,
 
             PluginTvInfo::epg_font_size => $epg_font_size,
 
-            PluginTvInfo::actions => $actions,
+            PluginTvInfo::actions => $this->get_action_map(),
             PluginTvInfo::timer => Action_Factory::timer(1000),
         );
     }
@@ -733,66 +732,22 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        static $caching_osd_images = false;
-        $time = time();
+        //hd_print('Starnet_Tv: handle_user_input');
+        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
-        hd_print('Starnet_Tv: handle_user_input');
-        foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        Playback_Points::update();
 
         switch ($user_input->control_id) {
             case GUI_EVENT_TIMER:
-                if ($caching_osd_images) {
-                    $caching_osd_images = false;
-                    $action = Action_Factory::change_behaviour($this->get_action_map(), 1500);
-                    return preg_match('/87../', get_platform_kind()) ? // Фикс зависания на скине "Holography" для соло и дуо4к
-                        $action :
-                        OSD_Component_Factory::get_caching_osd_images_action(
-                            $action,
-                            get_install_path('clock.png'),
-                            get_install_path('alert.png'));
-                }
-
-                //Playback_Points::update();
-                $comps = array();
-                return Action_Factory::update_osd($comps, Action_Factory::change_behaviour($this->get_action_map(), 1000));
-
-            case GUI_EVENT_PLAYBACK_SWITCHED:
-                if (($time - $this->playback_runtime) < 3) {
-                    $actions = $this->get_action_map();
-                    $do_cache_osd_images_action = User_Input_Handler_Registry::create_action($this, 'do_cache_osd_images');
-                    $actions[GUI_EVENT_TIMER] = $do_cache_osd_images_action;
-//                    $actions[GUI_EVENT_KEY_SELECT] = $do_cache_osd_images_action;
-//                    $actions[GUI_EVENT_KEY_INFO] = $do_cache_osd_images_action;
-//                    $actions[GUI_EVENT_KEY_TOP_MENU] = $do_cache_osd_images_action;
-
-                    return Action_Factory::change_behaviour($actions, 100);
-                }
-                return null;
+                break;
+                //return Action_Factory::change_behaviour($this->get_action_map(), 5000);
 
             case GUI_EVENT_PLAYBACK_STOP:
                 if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
-                    Playback_Points::update();
                     Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
                     return Starnet_Epfs_Handler::invalidate_folders();
                 }
                 return null;
-
-            case 'do_cache_osd_images':
-                $caching_osd_images = true;
-                $actions = $this->get_action_map();
-
-                if (($time - $this->playback_runtime) < 3) {
-                    if ($this->playback_runtime === PHP_INT_MAX && get_playback_state() === PLAYBACK_PLAYING)
-                        $this->playback_runtime = $time;
-
-                    $do_cache_osd_images_action = User_Input_Handler_Registry::create_action($this, 'do_cache_osd_images', null);
-                    $actions[GUI_EVENT_TIMER] = $do_cache_osd_images_action;
-                    $actions[GUI_EVENT_KEY_SELECT] = $do_cache_osd_images_action;
-                    $actions[GUI_EVENT_KEY_INFO] = $do_cache_osd_images_action;
-                    $actions[GUI_EVENT_KEY_TOP_MENU] = $do_cache_osd_images_action;
-                }
-
-                return Action_Factory::change_behaviour($actions, 500);
         }
 
         return null;
