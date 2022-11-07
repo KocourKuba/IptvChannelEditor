@@ -196,16 +196,17 @@ class Movie implements User_Input_Handler
                 break;
 
             case GUI_EVENT_TIMER:
+                // rising after start play + 5000ms
                 $actions = $this->get_movie_actions();
-                $ext_command = file_get_contents('/tmp/run/ext_command.state');
-                if (preg_match('/playback_position = (\d*)/', $ext_command, $m_pos)
-                    && (int)$m_pos[1] > 0
-                    && preg_match('/playback_duration = (\d*)/', $ext_command, $m_dur)
-                    && (int)$m_dur[1] > 0) {
-                    $this->playback_info = array($m_pos[1], $m_dur[1]);
+                $player_state = get_player_state_assoc();
+                if (isset($player_state['playback_state']) && ($player_state['playback_state'] === PLAYBACK_PLAYING)) {
+                    $playback_position = isset($player_state['playback_position']) && $player_state['playback_position'] > 0 ? $player_state['playback_position'] : 0;
+                    $playback_duration = isset($player_state['playback_duration']) && $player_state['playback_duration'] > 0 ? $player_state['playback_duration'] : 0;
+                    $this->playback_info = array($playback_position, $playback_duration);
                 }
 
                 $this->playback_series_ndx = $user_input->plugin_vod_series_ndx;
+                // set timer again
                 return Action_Factory::change_behaviour($actions, 5000);
         }
 
