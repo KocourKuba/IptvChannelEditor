@@ -117,7 +117,7 @@ class Starnet_Epfs_Handler extends Abstract_Epfs_Handler
      */
     public static function update_tv_epfs(&$plugin_cookies)
     {
-        self::update_all_epfs(0, $plugin_cookies);
+        self::update_all_epfs(false, $plugin_cookies);
     }
 
     /**

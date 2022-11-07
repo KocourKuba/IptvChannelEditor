@@ -120,7 +120,8 @@ class Rows_Factory
                                        $group_id = null, $width = null, $height = null, $inactive_height = null,
                                        $left_padding = null, $inactive_left_padding = null, $right_padding = null,
                                        $hide_captions = null, $hide_icons = null,
-                                       $fade_enabled = null, $focusable = null, $show_all_action = null,
+                                       $fade_enabled = null, $focusable = null,
+                                       $show_all_action = null,
                                        $fade_icon_mix_color = null,
                                        $fade_icon_mix_alpha = null,
                                        $lite_fade_icon_mix_alpha = null,
@@ -128,49 +129,32 @@ class Rows_Factory
     {
         $data = array(PluginRegularRow::items => $items);
 
-        if (isset($params_template_id))
-            $data[PluginRegularRow::item_params_template_id] = $params_template_id;
-        if (isset($params))
-            $data[PluginRegularRow::item_params] = $params;
-        if (isset($width))
-            $data[PluginRegularRow::width] = $width;
-        if (isset($left_padding))
-            $data[PluginRegularRow::left_padding] = $left_padding;
-        if (isset($inactive_left_padding))
-            $data[PluginRegularRow::inactive_left_padding] = $inactive_left_padding;
-        if (isset($right_padding))
-            $data[PluginRegularRow::right_padding] = $right_padding;
-        if (isset($hide_captions))
-            $data[PluginRegularRow::hide_captions] = $hide_captions;
-        if (isset($hide_icons))
-            $data[PluginRegularRow::hide_icons] = $hide_icons;
-        if (isset($fade_enabled))
-            $data[PluginRegularRow::fade_enabled] = $fade_enabled;
-        if (isset($fade_icon_mix_color))
-            $data[PluginRegularRow::fade_icon_mix_color] = $fade_icon_mix_color;
-        if (isset($fade_icon_mix_alpha))
-            $data[PluginRegularRow::fade_icon_mix_alpha] = $fade_icon_mix_alpha;
-        if (isset($lite_fade_icon_mix_alpha))
-            $data[PluginRegularRow::lite_fade_icon_mix_alpha] = $lite_fade_icon_mix_alpha;
-        if (isset($fade_caption_color))
-            $data[PluginRegularRow::fade_caption_color] = $fade_caption_color;
+        $data[PluginRegularRow::item_params_template_id] = isset($params_template_id) ? $params_template_id : null;
+        $data[PluginRegularRow::item_params] = isset($params) ? $params : null;
+        $data[PluginRegularRow::width] = isset($width) ? $width : null;
+        $data[PluginRegularRow::left_padding] = isset($left_padding) ? $left_padding : null;
+        $data[PluginRegularRow::inactive_left_padding] = isset($inactive_left_padding) ? $inactive_left_padding : null;
+        $data[PluginRegularRow::right_padding] = isset($right_padding) ? $right_padding : null;
+        $data[PluginRegularRow::hide_captions] = isset($hide_captions) ? $hide_captions : null;
+        $data[PluginRegularRow::hide_icons] = isset($hide_icons) ? $hide_icons : null;
+        $data[PluginRegularRow::fade_enabled] = isset($fade_enabled) ? $fade_enabled : null;
+        $data[PluginRegularRow::fade_icon_mix_color] = isset($fade_icon_mix_color) ? $fade_icon_mix_color : null;
+        $data[PluginRegularRow::fade_icon_mix_alpha] = isset($fade_icon_mix_alpha) ? $fade_icon_mix_alpha : null;
+        $data[PluginRegularRow::lite_fade_icon_mix_alpha] = isset($lite_fade_icon_mix_alpha) ? $lite_fade_icon_mix_alpha : null;
+        $data[PluginRegularRow::fade_caption_color] = isset($fade_caption_color) ? $fade_caption_color : null;
 
         $arr = array(
             PluginRow::type => PLUGIN_ROW_TYPE_REGULAR,
             PluginRow::id => $id,
-            PluginRow::data => $data);
-        if (isset($title))
-            $arr[PluginRow::title] = $title;
-        if (isset($group_id))
-            $arr[PluginRow::group_id] = $group_id;
-        if (isset($height))
-            $arr[PluginRow::height] = $height;
-        if (isset($inactive_height))
-            $arr[PluginRow::inactive_height] = $inactive_height;
-        if (isset($focusable))
-            $arr[PluginRow::focusable] = $focusable;
-        if ($show_all_action)
-            $arr[PluginRow::show_all_action] = $show_all_action;
+            PluginRow::data => $data
+        );
+
+        $arr[PluginRow::title] = isset($title) ? $title : null;
+        $arr[PluginRow::group_id] = isset($group_id) ? $group_id : null;
+        $arr[PluginRow::height] = isset($height) ? $height : null;
+        $arr[PluginRow::inactive_height] = isset($inactive_height) ? $inactive_height : null;
+        $arr[PluginRow::focusable] = isset($focusable) ? $focusable : null;
+        $arr[PluginRow::show_all_action] = $show_all_action;
 
         return $arr;
     }

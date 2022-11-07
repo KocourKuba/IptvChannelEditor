@@ -1214,7 +1214,7 @@ class Default_Dune_Plugin implements DunePlugin
             ),
             PluginRegularFolderView::not_loaded_view_item_params => array(),
             PluginRegularFolderView::async_icon_loading => false,
-            PluginRegularFolderView::timer => array(GuiTimerDef::delay_ms => 5000),
+            PluginRegularFolderView::timer => Action_Factory::timer(5000),
         );
         return $view;
     }

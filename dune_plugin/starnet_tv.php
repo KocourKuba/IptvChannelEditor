@@ -1,6 +1,8 @@
 ﻿<?php
-require_once 'lib/tv/abstract_tv.php';
+require_once 'lib/tv/tv.php';
 require_once 'lib/tv/default_channel.php';
+require_once 'lib/tv/all_channels_group.php';
+require_once 'lib/tv/favorites_group.php';
 require_once 'lib/tv/default_epg_item.php';
 require_once 'lib/hashed_array.php';
 require_once 'lib/epg_xml_parser.php';
@@ -8,9 +10,14 @@ require_once 'starnet_setup_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 
 
-class Starnet_Tv extends Abstract_Tv implements User_Input_Handler
+class Starnet_Tv implements Tv, User_Input_Handler
 {
     const ID = 'tv_handler';
+
+    const MODE_CHANNELS_1_TO_N = false;
+    const MODE_CHANNELS_N_TO_M = true;
+
+    ///////////////////////////////////////////////////////////////////////
 
     /**
      * @var Starnet_Plugin
@@ -18,14 +25,42 @@ class Starnet_Tv extends Abstract_Tv implements User_Input_Handler
     protected $plugin;
 
     /**
+     * @var bool
+     */
+    protected $mode;
+
+    /**
+     * @var int
+     */
+    protected $playback_runtime;
+
+    /**
+     * @var string
+     */
+    protected $playback_url_is_stream_url;
+
+    /**
+     * @template Channel
+     * @var Hashed_Array<Channel>
+     */
+    protected $channels;
+
+    /**
+     * @template Group
+     * @var Hashed_Array<Group>
+     */
+    protected $groups;
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
      * @param Starnet_Plugin $plugin
      */
     public function __construct(Starnet_Plugin $plugin)
     {
         $this->plugin = $plugin;
-        parent::__construct(Abstract_Tv::MODE_CHANNELS_N_TO_M, false);
-
-        User_Input_Handler_Registry::get_instance()->register_handler($this);
+        $this->mode = self::MODE_CHANNELS_N_TO_M;
+        $this->playback_url_is_stream_url = false;
     }
 
     public function get_handler_id()
@@ -41,27 +76,213 @@ class Starnet_Tv extends Abstract_Tv implements User_Input_Handler
         return $this->plugin->config->get_feature(Plugin_Constants::TV_FAVORITES_SUPPORTED);
     }
 
+    public function unload_channels()
+    {
+        $this->channels = null;
+        $this->groups = null;
+    }
+
+    /**
+     * @return Hashed_Array<Channel>
+     */
+    public function get_channels()
+    {
+        return $this->channels;
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @param string $channel_id
+     * @return Channel|mixed
+     */
+    public function get_channel($channel_id)
+    {
+        $channel = $this->channels->get($channel_id);
+
+        if (is_null($channel)) {
+            hd_print("Unknown channel: $channel_id");
+        }
+
+        return $channel;
+    }
+
+    /**
+     * @param Channel $channel
+     */
+    public function set_channel(Channel $channel)
+    {
+        $this->channels->set($channel);
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @template Group
+     * @return  Hashed_Array<Group>
+     */
+    public function get_groups()
+    {
+        return $this->groups;
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @param string $group_id
+     * @return Group|mixed
+     * @throws Exception
+     */
+    public function get_group($group_id)
+    {
+        $g = $this->groups->get($group_id);
+
+        if (is_null($g)) {
+            hd_print("Unknown group: $group_id");
+            HD::print_backtrace();
+            throw new Exception("Unknown group: $group_id");
+        }
+
+        return $g;
+    }
+
     /**
      * @param array &$items
      */
     public function add_special_groups(&$items)
     {
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $items[] = array
-            (
-                PluginRegularFolderItem::media_url =>
-                    MediaURL::encode(
-                        array
-                        (
-                            'screen_id' => Starnet_Vod_Category_List_Screen::ID,
-                            'name' => 'VOD',
-                        )),
+            $items[] = array(
+                PluginRegularFolderItem::media_url => MediaURL::encode(
+                    array(
+                        'screen_id' => Starnet_Vod_Category_List_Screen::ID,
+                        'name' => 'VOD',
+                    )
+                ),
                 PluginRegularFolderItem::caption => Default_Dune_Plugin::VOD_GROUP_CAPTION,
-                PluginRegularFolderItem::view_item_params => array
-                (
+                PluginRegularFolderItem::view_item_params => array(
                     ViewItemParams::icon_path => Default_Dune_Plugin::VOD_GROUP_ICON
                 )
             );
+        }
+    }
+
+    /**
+     * @param string $channel_id
+     * @param $plugin_cookies
+     * @return bool
+     */
+    public function is_favorite_channel_id($channel_id, $plugin_cookies)
+    {
+        if (!$this->is_favorites_supported()) {
+            return false;
+        }
+
+        $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
+        return in_array($channel_id, $fav_channel_ids);
+    }
+
+    /**
+     * @param string $fav_op_type
+     * @param string $channel_id
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function change_tv_favorites($fav_op_type, $channel_id, &$plugin_cookies)
+    {
+        $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
+
+        switch ($fav_op_type) {
+            case PLUGIN_FAVORITES_OP_ADD:
+                if (in_array($channel_id, $fav_channel_ids) === false) {
+                    $fav_channel_ids[] = $channel_id;
+                }
+                break;
+            case PLUGIN_FAVORITES_OP_REMOVE:
+                $k = array_search($channel_id, $fav_channel_ids);
+                if ($k !== false) {
+                    unset ($fav_channel_ids[$k]);
+                }
+                break;
+            case 'clear_favorites':
+                $fav_channel_ids = array();
+                break;
+            case PLUGIN_FAVORITES_OP_MOVE_UP:
+                $k = array_search($channel_id, $fav_channel_ids);
+                if ($k !== false && $k !== 0) {
+                    $t = $fav_channel_ids[$k - 1];
+                    $fav_channel_ids[$k - 1] = $fav_channel_ids[$k];
+                    $fav_channel_ids[$k] = $t;
+                }
+                break;
+            case PLUGIN_FAVORITES_OP_MOVE_DOWN:
+                $k = array_search($channel_id, $fav_channel_ids);
+                if ($k !== false && $k !== count($fav_channel_ids) - 1) {
+                    $t = $fav_channel_ids[$k + 1];
+                    $fav_channel_ids[$k + 1] = $fav_channel_ids[$k];
+                    $fav_channel_ids[$k] = $t;
+                }
+                break;
+        }
+
+        $this->set_fav_channel_ids($plugin_cookies, $fav_channel_ids);
+
+        $media_urls = array(Starnet_Tv_Favorites_Screen::get_media_url_str(), Starnet_Tv_Channel_List_Screen::get_media_url_str(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID));
+
+        if (NEWGUI_FEAUTURES_AVAILABLE) {
+            Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+
+            return Starnet_Epfs_Handler::invalidate_folders($media_urls);
+        }
+
+        return Action_Factory::invalidate_folders($media_urls);
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_fav_channel_ids($plugin_cookies)
+    {
+        $fav_channel_ids = array();
+
+        $favorites = $this->get_fav_cookie($plugin_cookies);
+        if (isset($plugin_cookies->{$favorites})) {
+            $fav_channel_ids = array_filter(explode(",", $plugin_cookies->{$favorites}));
+        }
+
+        return array_unique($fav_channel_ids);
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @param $plugin_cookies
+     * @param array $ids
+     */
+    public function set_fav_channel_ids($plugin_cookies, $ids)
+    {
+        $plugin_cookies->{$this->get_fav_cookie($plugin_cookies)} = implode(',', array_unique($ids));
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    public function get_fav_cookie($plugin_cookies)
+    {
+        $channel_list = isset($plugin_cookies->channels_list) ? $plugin_cookies->channels_list : 'default';
+        return 'favorite_channels_' . hash('crc32', $channel_list);
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @throws Exception
+     */
+    public function ensure_channels_loaded(&$plugin_cookies)
+    {
+        if (!isset($this->channels)) {
+            $this->load_channels($plugin_cookies);
         }
     }
 
@@ -270,10 +491,11 @@ class Starnet_Tv extends Abstract_Tv implements User_Input_Handler
      * @param string $protect_code
      * @param $plugin_cookies
      * @return string
+     * @throws Exception
      */
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
     {
-        Playback_Points::update();
+        $this->ensure_channels_loaded($plugin_cookies);
 
         try {
             $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
@@ -370,9 +592,134 @@ class Starnet_Tv extends Abstract_Tv implements User_Input_Handler
         return null;
     }
 
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     * @throws Exception
+     */
+    public function get_tv_info(MediaURL $media_url, &$plugin_cookies)
+    {
+        hd_print('Starnet_Tv: get_tv_info');
+        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
+
+        $t = microtime(1);
+
+        $this->ensure_channels_loaded($plugin_cookies);
+        $this->playback_runtime = PHP_INT_MAX;
+
+        $channels = array();
+
+        foreach ($this->get_channels() as $channel) {
+            $group_id_arr = array();
+
+            if ($this->mode === self::MODE_CHANNELS_N_TO_M) {
+                $group_id_arr[] = Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID;
+            }
+
+            foreach ($channel->get_groups() as $g) {
+                $group_id_arr[] = $g->get_id();
+            }
+
+            $channels[] = array(
+                PluginTvChannel::id => $channel->get_id(),
+                PluginTvChannel::caption => $channel->get_title(),
+                PluginTvChannel::group_ids => $group_id_arr,
+                PluginTvChannel::icon_url => $channel->get_icon_url(),
+                PluginTvChannel::number => $channel->get_number(),
+
+                PluginTvChannel::have_archive => $channel->has_archive(),
+                PluginTvChannel::is_protected => $channel->is_protected(),
+
+                // set default epg range
+                PluginTvChannel::past_epg_days => $channel->get_past_epg_days(),
+                PluginTvChannel::future_epg_days => $channel->get_future_epg_days(),
+
+                PluginTvChannel::archive_past_sec => $channel->get_archive_past_sec(),
+                PluginTvChannel::archive_delay_sec => $channel->get_archive_delay_sec(),
+
+                // Buffering time
+                PluginTvChannel::buffering_ms => (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000),
+                PluginTvChannel::timeshift_hours => $channel->get_timeshift_hours(),
+
+                PluginTvChannel::playback_url_is_stream_url => $this->playback_url_is_stream_url,
+            );
+        }
+
+        $groups = array();
+
+        foreach ($this->get_groups() as $g) {
+            if ($g->is_favorite_group()) {
+                continue;
+            }
+
+            if ($this->mode === self::MODE_CHANNELS_1_TO_N && $g->is_all_channels()) {
+                continue;
+            }
+
+            $groups[] = array
+            (
+                PluginTvGroup::id => $g->get_id(),
+                PluginTvGroup::caption => $g->get_title(),
+                PluginTvGroup::icon_url => $g->get_icon_url()
+            );
+        }
+
+        $is_favorite_group = isset($media_url->is_favorites);
+        $initial_group_id = (string)$media_url->group_id;
+        $initial_is_favorite = 0;
+
+        if ($is_favorite_group) {
+            $initial_group_id = null;
+            $initial_is_favorite = 1;
+        }
+
+        if ($this->mode === self::MODE_CHANNELS_1_TO_N &&
+            $initial_group_id === Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID) {
+            $initial_group_id = null;
+        }
+
+        $fav_channel_ids = null;
+        if ($this->is_favorites_supported()) {
+            $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
+        }
+
+        Playback_Points::init();
+        $actions = $this->get_action_map();
+        $do_cache_osd_images_action = User_Input_Handler_Registry::create_action($this, 'do_cache_osd_images');
+        $actions[GUI_EVENT_TIMER] = $do_cache_osd_images_action;
+        $actions[GUI_EVENT_KEY_SELECT] = $do_cache_osd_images_action;
+        $actions[GUI_EVENT_KEY_INFO] = $do_cache_osd_images_action;
+        $actions[GUI_EVENT_KEY_TOP_MENU] = $do_cache_osd_images_action;
+
+        hd_print('TV Info loaded at ' . (microtime(1) - $t) . ' secs');
+
+        return array(
+            PluginTvInfo::show_group_channels_only => $this->mode,
+
+            PluginTvInfo::groups => $groups,
+            PluginTvInfo::channels => $channels,
+
+            PluginTvInfo::favorites_supported => $this->is_favorites_supported(),
+            PluginTvInfo::favorites_icon_url => Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH,
+
+            PluginTvInfo::initial_channel_id => (string)$media_url->channel_id,
+            PluginTvInfo::initial_group_id => $initial_group_id,
+
+            PluginTvInfo::initial_is_favorite => $initial_is_favorite,
+            PluginTvInfo::favorite_channel_ids => $fav_channel_ids,
+
+            PluginTvInfo::initial_archive_tm => isset($media_url->archive_tm)? (int)$media_url->archive_tm : -1,
+
+            PluginTvInfo::epg_font_size => $epg_font_size,
+
+            PluginTvInfo::actions => $actions,
+            PluginTvInfo::timer => Action_Factory::timer(1000),
+        );
+    }
+
     public function get_action_map()
     {
-        User_Input_Handler_Registry::get_instance()->register_handler($this);
         $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER);
         if (NEWGUI_FEAUTURES_AVAILABLE) {
             $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
@@ -381,27 +728,71 @@ class Starnet_Tv extends Abstract_Tv implements User_Input_Handler
         return $actions;
     }
 
+    /**
+     * @throws Exception
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Starnet_Tv: handle_user_input:');
+        static $caching_osd_images = false;
+        $time = time();
+
+        hd_print('Starnet_Tv: handle_user_input');
         foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
-            case GUI_EVENT_PLAYBACK_STOP:
-                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
-                    if (NEWGUI_FEAUTURES_AVAILABLE) {
-                        Playback_Points::update();
-                        Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
-
-                        return Starnet_Epfs_Handler::invalidate_folders();
-                    }
+            case GUI_EVENT_TIMER:
+                if ($caching_osd_images) {
+                    $caching_osd_images = false;
+                    $action = Action_Factory::change_behaviour($this->get_action_map(), 1500);
+                    return preg_match('/87../', get_platform_kind()) ? // Фикс зависания на скине "Holography" для соло и дуо4к
+                        $action :
+                        OSD_Component_Factory::get_caching_osd_images_action(
+                            $action,
+                            get_install_path('clock.png'),
+                            get_install_path('alert.png'));
                 }
 
+                //Playback_Points::update();
+                $comps = array();
+                return Action_Factory::update_osd($comps, Action_Factory::change_behaviour($this->get_action_map(), 1000));
+
+            case GUI_EVENT_PLAYBACK_SWITCHED:
+                if (($time - $this->playback_runtime) < 3) {
+                    $actions = $this->get_action_map();
+                    $do_cache_osd_images_action = User_Input_Handler_Registry::create_action($this, 'do_cache_osd_images');
+                    $actions[GUI_EVENT_TIMER] = $do_cache_osd_images_action;
+//                    $actions[GUI_EVENT_KEY_SELECT] = $do_cache_osd_images_action;
+//                    $actions[GUI_EVENT_KEY_INFO] = $do_cache_osd_images_action;
+//                    $actions[GUI_EVENT_KEY_TOP_MENU] = $do_cache_osd_images_action;
+
+                    return Action_Factory::change_behaviour($actions, 100);
+                }
                 return null;
 
-            case GUI_EVENT_TIMER:
+            case GUI_EVENT_PLAYBACK_STOP:
+                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
+                    Playback_Points::update();
+                    Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                    return Starnet_Epfs_Handler::invalidate_folders();
+                }
+                return null;
+
+            case 'do_cache_osd_images':
+                $caching_osd_images = true;
                 $actions = $this->get_action_map();
-                return Action_Factory::change_behaviour($actions, 5000);
+
+                if (($time - $this->playback_runtime) < 3) {
+                    if ($this->playback_runtime === PHP_INT_MAX && get_playback_state() === PLAYBACK_PLAYING)
+                        $this->playback_runtime = $time;
+
+                    $do_cache_osd_images_action = User_Input_Handler_Registry::create_action($this, 'do_cache_osd_images', null);
+                    $actions[GUI_EVENT_TIMER] = $do_cache_osd_images_action;
+                    $actions[GUI_EVENT_KEY_SELECT] = $do_cache_osd_images_action;
+                    $actions[GUI_EVENT_KEY_INFO] = $do_cache_osd_images_action;
+                    $actions[GUI_EVENT_KEY_TOP_MENU] = $do_cache_osd_images_action;
+                }
+
+                return Action_Factory::change_behaviour($actions, 500);
         }
 
         return null;

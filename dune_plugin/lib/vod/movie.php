@@ -494,7 +494,7 @@ class Movie implements User_Input_Handler
             PluginVodInfo::initial_series_ndx => $initial_series_ndx,
             PluginVodInfo::buffering_ms => (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000),
             PluginVodInfo::actions => $this->get_movie_actions(),
-            PluginVodInfo::timer => array(GuiTimerDef::delay_ms => 5000),
+            PluginVodInfo::timer => Action_Factory::timer(5000),
             PluginVodInfo::initial_position_ms => $ip_ms,
         );
     }
