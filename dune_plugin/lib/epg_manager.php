@@ -10,11 +10,16 @@ class Epg_Manager
     public $config;
 
     /**
+     * @var string
+     */
+    protected $cache_dir;
+    /**
      * @param default_config $config
      */
     public function __construct(default_config $config)
     {
         $this->config = $config;
+        $this->cache_dir = get_temp_path("epg/");
     }
 
     /**
@@ -29,7 +34,6 @@ class Epg_Manager
      */
     public function get_epg(Channel $channel, $type, $day_start_ts, $plugin_cookies)
     {
-        $cache_dir = get_temp_path("epg/");
         $params = $this->config->get_epg_params($type);
 
         if (empty($params[Epg_Params::EPG_URL])) {
@@ -37,9 +41,9 @@ class Epg_Manager
             throw new Exception("$type EPG url not defined");
         }
 
-        if (!is_dir($cache_dir) && !(mkdir($cache_dir) && is_dir($cache_dir))) {
-            hd_print("Unable to create directory '$cache_dir'!!!");
-            throw new Exception("Unable to create directory '$cache_dir'!!!");
+        if (!is_dir($this->cache_dir) && !(mkdir($this->cache_dir) && is_dir($this->cache_dir))) {
+            hd_print("Unable to create directory '$this->cache_dir'!!!");
+            throw new Exception("Unable to create directory '$this->cache_dir'!!!");
         }
 
         switch ($type) {
@@ -59,8 +63,6 @@ class Epg_Manager
         }
 
         $epg_id = str_replace(' ', '%20', $epg_id);
-
-        hd_print("Fetching EPG for ID: '$epg_id'");
         $epg_url = str_replace(array('{EPG_ID}', '{ID}'), array($epg_id, $channel->get_id()), $params[Epg_Params::EPG_URL]);
         if (strpos($epg_url, '{DATE}') !== false) {
             $date_format = str_replace(
@@ -81,38 +83,36 @@ class Epg_Manager
             $epg_url = str_replace('{TOKEN}', isset($plugin_cookies->token) ? $plugin_cookies->token : '', $epg_url);
         }
 
-        $day_epg_cache = $cache_dir . "epg_channel_" . hash('crc32', $epg_url) . "_{$day_start_ts}";
+        $day_epg_cache = $this->cache_dir . "epg_channel_" . hash('crc32', $epg_url) . "_{$day_start_ts}";
         if (file_exists($day_epg_cache)) {
+            hd_print("Loading day EPG entries for '$epg_id' from cache: $day_epg_cache");
             return self::load_cache($day_epg_cache);
         }
 
-        $epg_cache_file = $cache_dir . "epg_channel_" . hash('crc32', $epg_url);
+        $epg_cache_file = $this->cache_dir . "epg_channel_" . hash('crc32', $epg_url);
         $from_cache = false;
         $program_epg = array();
         if (file_exists($epg_cache_file)) {
             $now = time();
             $cache_expired = filemtime($epg_cache_file) + 60 * 60 * 4;
-            hd_print("Cache expired at $cache_expired now $now");
             if ($cache_expired > time()) {
                 $program_epg = self::load_cache($epg_cache_file);
-                $from_cache = (count($program_epg) !== 0);
-                hd_print("Loading EPG entries from cache: $epg_cache_file - " . ($from_cache ? "success" : "failed"));
+                $from_cache = true;
+                hd_print("Loading all EPG entries for '$epg_id' from cache: $epg_cache_file");
+            } else {
+                hd_print("Cache expired at $cache_expired now $now");
             }
         }
 
         if ($from_cache === false && $params[Plugin_Constants::EPG_PARSER] === 'json') {
+            hd_print("Fetching EPG for ID: '$epg_id'");
             $program_epg = self::get_epg_json($epg_url, $params);
-        }
-
-        $counts = count($program_epg);
-        hd_print("Total entries: $counts");
-
-        // if not in cache save downloaded data
-        if ($from_cache === false) {
-            // save downloaded epg
+            // save downloaded data
             self::save_cache($program_epg, $epg_cache_file);
         }
 
+        $counts = count($program_epg);
+        //hd_print("Total entries: $counts");
         if ($counts === 0) {
             return array();
         }

@@ -86,6 +86,14 @@ class MediaURL
         return $this->str;
     }
 
+    /**
+     * @return string
+     */
+    public function get_media_url_str()
+    {
+        return MediaUrl::encode($this->map);
+    }
+
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 

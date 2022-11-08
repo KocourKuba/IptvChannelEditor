@@ -169,7 +169,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             case GUI_EVENT_PLAYBACK_STOP:
                 if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
                     if (NEWGUI_FEAUTURES_AVAILABLE) {
-                        Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+                        Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
                         return Starnet_Epfs_Handler::invalidate_folders();
                     }
 

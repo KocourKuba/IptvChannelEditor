@@ -326,7 +326,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     public function get_rows_pane(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("Starnet_Tv_Rows_Screen::get_rows_pane");
         $pane = $this->create_rows_pane($plugin_cookies);
         if (is_null($pane)) {
             hd_print("no panes");
@@ -357,10 +356,10 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     $point->archive_tm + $point->position : // archive
                     ($channel->has_archive() ? $point->time : 0); // if can be archived current position
 
-                if (isset($watched[(string)$channel_id]))
+                if (isset($watched[$channel_id]))
                     continue;
 
-                if ($channel_ts === 0) {
+                if ($channel_ts < 0) {
                     // only live stream
                     $watched[(string)$channel_id] = array
                     (
@@ -408,7 +407,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     if (isset($this->removed_playback_point))
                         if ($this->removed_playback_point === $id) {
                             $this->removed_playback_point = null;
-                            Playback_Points::clear();
+                            Playback_Points::clear($id);
                             continue;
                         }
 
@@ -457,7 +456,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
                             if (isset($this->removed_playback_point) && $this->removed_playback_point === $item->id) {
                                 $this->removed_playback_point = null;
-                                Playback_Points::clear();
+                                Playback_Points::clear($item->id);
                                 continue;
                             }
 
@@ -531,7 +530,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     private function create_rows_pane(&$plugin_cookies)
     {
-        hd_print("Starnet_Tv_Rows_Screen::create_rows_pane");
         $groups = $this->plugin->tv->get_groups();
         if (is_null($groups))
             return null;
@@ -634,35 +632,62 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             null, true, true, -1, null, null,
             1.0, 0.0, -0.5, 250);
 
-        Rows_Factory::pane_set_geometry($pane,
-            PaneParams::width, PaneParams::height, PaneParams::dx, PaneParams::dy,
-            PaneParams::info_height, 1,//$min_row_index_for_y2,
+        Rows_Factory::pane_set_geometry(
+            $pane,
+            PaneParams::width,
+            PaneParams::height,
+            PaneParams::dx,
+            PaneParams::dy,
+            PaneParams::info_height,
+            1,
             PaneParams::width - PaneParams::info_dx,
             PaneParams::info_height - PaneParams::info_dy,
             PaneParams::info_dx, PaneParams::info_dy,
-            PaneParams::vod_width, PaneParams::vod_height);
+            PaneParams::vod_width, PaneParams::vod_height
+        );
 
         $def_params = Rows_Factory::variable_params(
-            RowsItemsParams::width, RowsItemsParams::height, 0,
-            RowsItemsParams::icon_width, RowsItemsParams::icon_height, 5,
-            RowsItemsParams::caption_dy, RowsItemsParams::def_caption_color, RowsItemsParams::caption_font_size);
+            RowsItemsParams::width,
+            RowsItemsParams::height,
+            0,
+            RowsItemsParams::icon_width,
+            RowsItemsParams::icon_height,
+            5,
+            RowsItemsParams::caption_dy,
+            RowsItemsParams::def_caption_color,
+            RowsItemsParams::caption_font_size
+        );
 
         $icon_dx = RowsItemsParams::icon_width / RowsItemsParams::icon_height;
         $icon_width = RowsItemsParams::icon_width + 12;
         $sel_params = Rows_Factory::variable_params(
-            RowsItemsParams::width, RowsItemsParams::height, 5,
-            $icon_width, round($icon_width / $icon_dx), 0,
-            RowsItemsParams::caption_dy + 10, RowsItemsParams::sel_caption_color, RowsItemsParams::caption_font_size);
+            RowsItemsParams::width,
+            RowsItemsParams::height,
+            5,
+            $icon_width,
+            round($icon_width / $icon_dx),
+            0,
+            RowsItemsParams::caption_dy + 10,
+            RowsItemsParams::sel_caption_color,
+            RowsItemsParams::caption_font_size
+        );
 
         $width = round((RowsItemsParams::width * 7 - 350) / 7);
         $icon_width = round((RowsItemsParams::icon_width * 7 - 350) / 7) + round((RowsItemsParams::width - RowsItemsParams::icon_width) / $icon_dx);
         $inactive_params = Rows_Factory::variable_params(
             $width, round($width / (RowsItemsParams::width / RowsItemsParams::height)), 0,
-            $icon_width, round($icon_width / $icon_dx), 0,
-            RowsItemsParams::caption_dy, RowsItemsParams::inactive_caption_color, RowsItemsParams::caption_font_size);
+            $icon_width,
+            round($icon_width / $icon_dx),
+            0,
+            RowsItemsParams::caption_dy,
+            RowsItemsParams::inactive_caption_color,
+            RowsItemsParams::caption_font_size
+        );
 
         $params = Rows_Factory::item_params(
-            $def_params, $sel_params, $inactive_params,
+            $def_params,
+            $sel_params,
+            $inactive_params,
             $this->images_path . RowsItemsParams::icon_loading_url,
             $this->images_path . RowsItemsParams::icon_loading_failed_url,
             RowsItemsParams::caption_max_num_lines,
@@ -677,7 +702,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("Starnet_Tv_Rows_Screen::get_action_map");
         return array(
             GUI_EVENT_KEY_ENTER => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER),
             GUI_EVENT_KEY_B_GREEN => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_MOVE_UP),
@@ -733,7 +757,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 if (!isset($user_input->item_id, $user_input->folder_key))
                     return null;
 
-                $info_children = $this->do_get_info_children($media_url, $plugin_cookies);
+                $info_children = $this->do_get_info_children(MediaURL::decode($media_url_str), $plugin_cookies);
 
                 return Action_Factory::update_rows_info(
                     $user_input->folder_key,
@@ -742,7 +766,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     empty($info_children['fanart_url']) ? $this->images_path . PaneParams::vod_bg_url : $info_children['fanart_url'],
                     $this->images_path . PaneParams::vod_bg_url,
                     $this->images_path . PaneParams::vod_mask_url,
-                    array("plugin_tv://" . get_plugin_name() . "/$media_url_str")
+                    array("plugin_tv://" . get_plugin_name() . "/$user_input->item_id")
                 );
 
             case GUI_EVENT_KEY_POPUP_MENU:
@@ -775,35 +799,34 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             case PLUGIN_FAVORITES_OP_REMOVE:
             case PLUGIN_FAVORITES_OP_MOVE_UP:
             case PLUGIN_FAVORITES_OP_MOVE_DOWN:
-                if ($media_url->group_id === self::PLAYBACK_HISTORY_GROUP_ID
-                    || $media_url->group_id !== Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID)
+                if (!isset($media_url->group_id)
+                    || $media_url->group_id === self::PLAYBACK_HISTORY_GROUP_ID
+                    || $media_url->group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID)
                     return null;
 
                 $fav_channel_ids = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
-                $was_favorite = in_array($media_url->channel_id, $fav_channel_ids);
+                $is_in_favorites = in_array($media_url->channel_id, $fav_channel_ids);
 
-                if ($control_id === PLUGIN_FAVORITES_OP_ADD)
-                    $control_id = $was_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
+                if ($control_id === PLUGIN_FAVORITES_OP_ADD) {
+                    $control_id = $is_in_favorites ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
+                }
 
-                $this->plugin->tv->change_tv_favorites($control_id, $media_url->channel_id, $plugin_cookies);
-                Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
-
-                return Starnet_Epfs_Handler::invalidate_folders();
+                return $this->plugin->tv->change_tv_favorites($control_id, $media_url->channel_id, $plugin_cookies);
 
             case 'refresh_screen':
                 Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+
                 return Starnet_Epfs_Handler::invalidate_folders();
 
             case 'remove_playback_point':
                 $this->removed_playback_point = $media_url->get_raw_string();
-                $this->clear_playback_points = empty($this->removed_playback_point);
-                Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+                Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
 
                 return Starnet_Epfs_Handler::invalidate_folders();
 
             case 'clear_playback_points':
-                $this->clear_playback_points = empty($this->removed_playback_point);
-                Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+                $this->clear_playback_points = true;
+                Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
 
                 return Starnet_Epfs_Handler::invalidate_folders();
         }

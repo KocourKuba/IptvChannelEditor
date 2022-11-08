@@ -203,21 +203,25 @@ class Starnet_Tv implements Tv, User_Input_Handler
         switch ($fav_op_type) {
             case PLUGIN_FAVORITES_OP_ADD:
                 if (in_array($channel_id, $fav_channel_ids) === false) {
+                    hd_print("Add channel $channel_id to favorites");
                     $fav_channel_ids[] = $channel_id;
                 }
                 break;
             case PLUGIN_FAVORITES_OP_REMOVE:
                 $k = array_search($channel_id, $fav_channel_ids);
                 if ($k !== false) {
+                    hd_print("Remove channel $channel_id from favorites");
                     unset ($fav_channel_ids[$k]);
                 }
                 break;
             case 'clear_favorites':
+                hd_print("Clear favorites");
                 $fav_channel_ids = array();
                 break;
             case PLUGIN_FAVORITES_OP_MOVE_UP:
                 $k = array_search($channel_id, $fav_channel_ids);
                 if ($k !== false && $k !== 0) {
+                    hd_print("Move channel $channel_id up");
                     $t = $fav_channel_ids[$k - 1];
                     $fav_channel_ids[$k - 1] = $fav_channel_ids[$k];
                     $fav_channel_ids[$k] = $t;
@@ -226,6 +230,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             case PLUGIN_FAVORITES_OP_MOVE_DOWN:
                 $k = array_search($channel_id, $fav_channel_ids);
                 if ($k !== false && $k !== count($fav_channel_ids) - 1) {
+                    hd_print("Move channel $channel_id down");
                     $t = $fav_channel_ids[$k + 1];
                     $fav_channel_ids[$k + 1] = $fav_channel_ids[$k];
                     $fav_channel_ids[$k] = $t;
@@ -238,7 +243,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $media_urls = array(Starnet_Tv_Favorites_Screen::get_media_url_str(), Starnet_Tv_Channel_List_Screen::get_media_url_str(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID));
 
         if (NEWGUI_FEAUTURES_AVAILABLE) {
-            Starnet_Epfs_Handler::refresh_tv_epfs($plugin_cookies);
+            Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
 
             return Starnet_Epfs_Handler::invalidate_folders($media_urls);
         }
@@ -344,7 +349,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH));
             $fav_ids = $this->get_fav_channel_ids($plugin_cookies);
-            hd_print("Favorites loaded from settings: " . count($fav_ids));
+            hd_print("Local Favorites: " . count($fav_ids));
         }
 
         // All channels group
@@ -373,7 +378,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 hd_print("Added category: $xml_tv_category->caption");
             } else if ($xml_tv_category->favorite == "true") {
                 $fav_category_id = (int)$xml_tv_category->id;
-                hd_print("Embedded Favorites category: $xml_tv_category->caption ($fav_category_id)");
+                //hd_print("Embedded Favorites category: $xml_tv_category->caption ($fav_category_id)");
             }
         }
 
@@ -519,7 +524,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         }
 
         if (empty($protect_code)) {
-            Playback_Points::push($channel_id, $channel->has_archive() ? 0 : $archive_ts);
+            Playback_Points::push($channel_id, $channel->has_archive() ? ($archive_ts !== -1 ? $archive_ts : 0) : $archive_ts);
         }
 
         // update url if play archive or different type of the stream
@@ -553,7 +558,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             $day_start_ts -= get_local_time_zone_offset();
             $epg = $this->epg_man->get_epg($channel, $epg_source, $day_start_ts, $plugin_cookies);
             if (count($epg) === 0) {
-                hd_print("No data from $epg_source EPG");
+                hd_print("No data from $epg_source EPG for $channel_id");
                 return array();
             }
         } catch (Exception $ex) {
@@ -586,7 +591,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
     public function get_program_info($channel_id, $program_ts, $plugin_cookies)
     {
-        $day_ts = strtotime(date('d-M-Y', (isset($program_ts) ? $program_ts : time())));
+        $day_ts = strtotime(date('d-M-Y', ($program_ts > 0 ? $program_ts : time())));
         $day_epg = $this->get_day_epg($channel_id, $day_ts, $plugin_cookies);
         foreach ($day_epg as $item) {
             if ($program_ts >= $item[PluginTvEpgProgram::start_tm_sec] && $program_ts < $item[PluginTvEpgProgram::end_tm_sec]) {
@@ -605,7 +610,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function get_tv_info(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print('Starnet_Tv: get_tv_info');
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
 
         $t = microtime(1);
@@ -735,14 +739,14 @@ class Starnet_Tv implements Tv, User_Input_Handler
         //hd_print('Starnet_Tv: handle_user_input');
         //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
-        Playback_Points::update();
 
         switch ($user_input->control_id) {
             case GUI_EVENT_TIMER:
-                break;
                 //return Action_Factory::change_behaviour($this->get_action_map(), 5000);
+                break;
 
             case GUI_EVENT_PLAYBACK_STOP:
+                Playback_Points::update($user_input->plugin_tv_channel_id);
                 if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
                     Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
                     return Starnet_Epfs_Handler::invalidate_folders();
