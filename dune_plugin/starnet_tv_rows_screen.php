@@ -297,6 +297,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             'fanart_url' => empty($fanart_url) ? '' : $fanart_url,
         );
     }
+
     /**
      * @throws Exception
      */
@@ -797,12 +798,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             case PLUGIN_FAVORITES_OP_ADD:
             case PLUGIN_FAVORITES_OP_REMOVE:
-            case PLUGIN_FAVORITES_OP_MOVE_UP:
-            case PLUGIN_FAVORITES_OP_MOVE_DOWN:
-                if (!isset($media_url->group_id)
-                    || $media_url->group_id === self::PLAYBACK_HISTORY_GROUP_ID
-                    || $media_url->group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID)
-                    return null;
+                if (!isset($media_url->group_id) || $media_url->group_id === self::PLAYBACK_HISTORY_GROUP_ID)
+                    break;
 
                 $fav_channel_ids = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
                 $is_in_favorites = in_array($media_url->channel_id, $fav_channel_ids);
@@ -810,6 +807,13 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 if ($control_id === PLUGIN_FAVORITES_OP_ADD) {
                     $control_id = $is_in_favorites ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 }
+
+                return $this->plugin->tv->change_tv_favorites($control_id, $media_url->channel_id, $plugin_cookies);
+
+            case PLUGIN_FAVORITES_OP_MOVE_UP:
+            case PLUGIN_FAVORITES_OP_MOVE_DOWN:
+                if (!isset($media_url->group_id) || $media_url->group_id !== Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID)
+                    break;
 
                 return $this->plugin->tv->change_tv_favorites($control_id, $media_url->channel_id, $plugin_cookies);
 
