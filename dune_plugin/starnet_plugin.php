@@ -32,8 +32,6 @@ class Starnet_Plugin extends Default_Dune_Plugin
     {
         parent::__construct();
 
-        define('NEWGUI_FEAUTURES_AVAILABLE',	class_exists("PluginRowsFolderView"));
-
         $this->plugin_setup();
 
         User_Input_Handler_Registry::get_instance()->register_handler(new Starnet_Entry_Handler());
@@ -56,7 +54,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->vod_filter_screen = new Starnet_Vod_Filter_Screen($this);
         $this->vod_history_screen = new Starnet_Vod_History_Screen($this);
 
-        if (NEWGUI_FEAUTURES_AVAILABLE) {
+        if (HD::rows_api_support()) {
             Starnet_Epfs_Handler::init($this);
         }
 

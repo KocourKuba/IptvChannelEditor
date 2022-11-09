@@ -65,7 +65,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         return Action_Factory::open_folder();
                     case 'update_epfs':
                         hd_print("action: update_epfs");
-                        if (NEWGUI_FEAUTURES_AVAILABLE) {
+                        if (HD::rows_api_support()) {
                             return Starnet_Epfs_Handler::update_all_epfs(isset($user_input->first_run_after_boot) || isset($user_input->restore_from_sleep), $plugin_cookies);
                         }
                         break;

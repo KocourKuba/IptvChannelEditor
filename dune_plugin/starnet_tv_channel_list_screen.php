@@ -73,7 +73,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
         }
 
-        if (NEWGUI_FEAUTURES_AVAILABLE)
+        if (HD::rows_api_support())
             $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
 
         return $actions;
@@ -168,7 +168,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
             case GUI_EVENT_PLAYBACK_STOP:
                 if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
-                    if (NEWGUI_FEAUTURES_AVAILABLE) {
+                    if (HD::rows_api_support()) {
                         Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
                         return Starnet_Epfs_Handler::invalidate_folders();
                     }

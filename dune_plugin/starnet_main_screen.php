@@ -103,7 +103,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
                 return Action_Factory::show_dialog('Подписка', $defs);
 
             case GUI_EVENT_KEY_RETURN:
-                if (NEWGUI_FEAUTURES_AVAILABLE) {
+                if (HD::rows_api_support()) {
                     Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
                     return Starnet_Epfs_Handler::invalidate_folders(null, Action_Factory::close_and_run());
                 }

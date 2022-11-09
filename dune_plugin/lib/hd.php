@@ -3,26 +3,15 @@ require_once 'dune_stb_api.php';
 
 class HD
 {
-    public static function is_map($a)
-    {
-        return is_array($a) &&
-            array_diff_key($a, array_keys(array_keys($a)));
-    }
+    /**
+     * @var bool
+     */
+    private static $with_rows_api;
 
-    ///////////////////////////////////////////////////////////////////////
-
-    public static function has_attribute($obj, $n)
-    {
-        $arr = (array)$obj;
-        return isset($arr[$n]);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    public static function get_map_element($map, $key)
-    {
-        return isset($map[$key]) ? $map[$key] : null;
-    }
+    /**
+     * @var string
+     */
+    private static $user_agent;
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -49,6 +38,17 @@ class HD
     }
 
     /**
+     * @return bool
+     */
+    public static function rows_api_support()
+    {
+        if (!isset(self::$with_rows_api))
+            self::$with_rows_api = class_exists("PluginRowsFolderView");
+
+        return self::$with_rows_api;
+    }
+
+    /**
      * @param string $path
      * @param array|null $arg
      * @return array|string
@@ -70,51 +70,6 @@ class HD
             return $arr;
         }
         return $size[0] . '/' . $size[1];
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param array|string $a
-     * @param string|null $b
-     * @return string
-     */
-    public static function encode_user_data($a, $b = null)
-    {
-        if (is_array($a) && is_null($b)) {
-            $media_url = '';
-            $user_data = $a;
-        } else {
-            $media_url = $a;
-            $user_data = $b;
-        }
-
-        if (!is_null($user_data)) {
-            $media_url .= '||' . json_encode($user_data);
-        }
-
-        return $media_url;
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param string $media_url_str
-     * @param string $media_url
-     * @param array|null $user_data
-     */
-    public static function decode_user_data($media_url_str, &$media_url, &$user_data)
-    {
-        $idx = strpos($media_url_str, '||');
-
-        if ($idx === false) {
-            $media_url = $media_url_str;
-            $user_data = null;
-            return;
-        }
-
-        $media_url = substr($media_url_str, 0, $idx);
-        $user_data = json_decode(substr($media_url_str, $idx + 2), true);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -167,6 +122,43 @@ class HD
         }
     }
 
+    public static function http_init()
+    {
+        if (!empty(self::$user_agent))
+            return;
+
+        $extra_useragent = "";
+
+        $sysinfo = file("/tmp/sysinfo.txt", FILE_IGNORE_NEW_LINES);
+        if ($sysinfo !== false) {
+            foreach ($sysinfo as $line) {
+                if (preg_match("/product_id:/", $line) ||
+                    preg_match("/firmware_version:/", $line)) {
+                    if (empty($extra_useragent))
+                        $extra_useragent = " (";
+                    else
+                        $extra_useragent .= "; ";
+
+                    $extra_useragent .= $line;
+                }
+            }
+
+            if (!empty($extra_useragent))
+                $extra_useragent .= ")";
+        }
+
+        self::$user_agent = "DuneHD/1.0" . $extra_useragent;
+        hd_print("HTTP UserAgent: " . self::$user_agent);
+    }
+
+    public static function get_dune_user_agent()
+    {
+        if (!isset(self::$user_agent))
+            self::http_init();
+
+        return self::$user_agent;
+    }
+
     /**
      * @param string $url
      * @param array $opts
@@ -182,11 +174,9 @@ class HD
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_USERAGENT, "DuneHD/1.0");
+        curl_setopt($ch, CURLOPT_USERAGENT, self::get_dune_user_agent());
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_URL, $url);
-
-        hd_print("HTTP fetching $url");
 
         if (isset($opts)) {
             //self::dump_curl_opts($opts);
@@ -194,6 +184,8 @@ class HD
                 curl_setopt($ch, $k, $v);
             }
         }
+
+        hd_print("HTTP fetching $url");
 
         $content = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -544,27 +536,5 @@ class HD
         } else {
             file_put_contents($path, json_encode($content));
         }
-    }
-
-    /**
-     * @param string $url
-     * @return array
-     */
-    public static function MapTvgID($url)
-    {
-        $mapped_ids = array();
-        try {
-            $json_data = json_decode(self::http_get_document($url), true);
-            foreach ($json_data['data'] as $key => $value)
-            {
-                if ((string)$key !== (string)$value) {
-                    $mapped_ids[$key] = $value;
-                }
-            }
-        } catch (Exception $ex) {
-            hd_print("Error mapping tvg id's: " . $ex->getMessage());
-        }
-
-        return $mapped_ids;
     }
 }

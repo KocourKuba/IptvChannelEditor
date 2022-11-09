@@ -242,7 +242,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         $media_urls = array(Starnet_Tv_Favorites_Screen::get_media_url_str(), Starnet_Tv_Channel_List_Screen::get_media_url_str(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID));
 
-        if (NEWGUI_FEAUTURES_AVAILABLE) {
+        if (HD::rows_api_support()) {
             Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
 
             return Starnet_Epfs_Handler::invalidate_folders($media_urls);
@@ -724,7 +724,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
     public function get_action_map()
     {
         $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER);
-        if (NEWGUI_FEAUTURES_AVAILABLE) {
+        if (HD::rows_api_support()) {
             $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
         }
 
