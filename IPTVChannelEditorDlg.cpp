@@ -2923,6 +2923,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 
 	auto newChannel = std::make_shared<ChannelInfo>(*channel);
 	newChannel->set_uri(m_streamUrl.GetString());
+	newChannel->set_id(L"");
 	newChannel->recalc_hash();
 
 	if (m_channelsMap.find(newChannel->get_id()) != m_channelsMap.end())
