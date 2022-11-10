@@ -56,11 +56,9 @@ class M3uParser
     {
         $data = array();
         for ($i = 0, $total = count($lines); $i < $total; ++$i) {
-            $lineStr = trim($lines[$i]);
-            if (self::isComment($lineStr)) {
-                continue;
+            if (!self::isComment($lines[$i])) {
+                $data[] = $this->parseLine($i, $lines);
             }
-            $data[] = $this->parseLine($i, $lines);
         }
 
         return $data;
@@ -79,7 +77,9 @@ class M3uParser
 
         for ($total = count($lines); $i < $total; $i++) {
             $nextLine = trim($lines[$i]);
-            if (empty($nextLine) || self::isExtM3u($nextLine) || self::isComment($nextLine)) continue;
+            if (empty($nextLine) || self::isExtM3u($nextLine) || self::isComment($nextLine)) {
+                continue;
+            }
 
             if (self::isExtInf($nextLine)) {
                 $entry->setExtInf(new ExtInf($nextLine));

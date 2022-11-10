@@ -55,6 +55,11 @@ class default_config extends dynamic_config
         return $this->vod_m3u_entries;
     }
 
+    public function clear_vod_m3u_entries()
+    {
+        unset($this->vod_m3u_entries);
+    }
+
     /**
      * @param $plugin_cookies
      * @return Entry[]
@@ -69,6 +74,11 @@ class default_config extends dynamic_config
         }
 
         return $this->tv_m3u_entries;
+    }
+
+    public function clear_tv_m3u_entries()
+    {
+        unset($this->tv_m3u_entries);
     }
 
     /**
@@ -378,6 +388,9 @@ class default_config extends dynamic_config
     {
         hd_print("Collect information from account: $force");
 
+        if (isset($this->account_data) && !$force)
+            return $this->account_data;
+
         $parse_pattern = $this->get_feature(Plugin_Constants::URI_PARSE_PATTERN);
         if (!empty($parse_pattern))
             $parse_pattern = "/$parse_pattern/";
@@ -432,6 +445,7 @@ class default_config extends dynamic_config
             $this->ClearPlaylistCache();
         }
 
+        $this->clear_tv_m3u_entries();
         return $pl_entries;
     }
 
