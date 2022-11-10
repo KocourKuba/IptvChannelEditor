@@ -389,6 +389,16 @@ void CPluginConfigPage::AssignMacros()
 	m_wndPlaylistTemplate.SetTemplateParams(pl_params);
 	m_wndVodUrlTemplate.SetTemplateParams(pl_params);
 
+	std::vector<std::wstring> re_params =
+	{
+		L"(?<title>)",
+		L"(?<title_orig>)",
+		L"(?<country>)",
+		L"(?<year>)",
+		L"(?<movie_time>)",
+	};
+	m_wndVodRegex.SetTemplateParams(re_params);
+
 	std::vector<std::wstring> strm_params(std::move(pl_params));
 	strm_params.insert(strm_params.end(),
 					   {
