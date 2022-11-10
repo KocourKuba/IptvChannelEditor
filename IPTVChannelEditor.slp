@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20221104151304" scan="174" scanned="20221104145733">
+<document created="20211012165442" version="4.0.374" date="20221110222707" scan="178" scanned="20221110222651">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221104133628" usebom="1" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221110212634" usebom="1" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -3970,7 +3970,7 @@
           <native>Season</native>
           <lang id="ru" date="20220512175440">Сезон</lang>
         </row>
-        <row id="IDS_STRING_VOD_DESC" created="20220512175419">
+        <row id="IDS_STRING_VOD_DESC" state="1" created="20220512175419">
           <native>{{\rtf1 \b {:s}\b0\par {:s}\par\par \b Year: \b0 {:s}\par \b Country: \b0 {:s}\par \b Director: \b0 {:s}\par \b Actors: \b0 {:s}\par \b Age: \b0 {:s}\par \b Time: \b0 {:s} min}}</native>
           <lang id="ru" date="20220512175640" savedtotm="1">{{\rtf1 \b {:s}\b0\par {:s}\par\par \b Год: \b0 {:s}\par \b Страна: \b0 {:s}\par \b Режиссер: \b0 {:s}\par \b Актеры: \b0 {:s}\par \b Возраст: \b0 {:s}\par \b Длительность: \b0 {:s} минут}}</lang>
         </row>
@@ -4404,6 +4404,38 @@
           <native>Edit current VOD template or url.</native>
           <lang id="ru" date="20221104151059">Редактировать текущий шаблон или ссылку на медиатеку (VOD)</lang>
         </row>
+        <row id="IDS_STRING_VOD_ACTORS" state="0" created="20221110221253">
+          <native>\b Actors: \b0 {:s}\par </native>
+          <lang id="ru" date="20221110221326">\b Актеры: \b0 {:s}\par </lang>
+        </row>
+        <row id="IDS_STRING_VOD_AGE" state="0" created="20221110221253">
+          <native>\b Age: \b0 {:s}\par </native>
+          <lang id="ru" date="20221110221333">\b Возраст: \b0 {:s}\par </lang>
+        </row>
+        <row id="IDS_STRING_VOD_COUNTRY" state="0" created="20221110221253">
+          <native>\b Country: \b0 {:s}\par </native>
+          <lang id="ru" date="20221110221310">\b Страна: \b0 {:s}\par </lang>
+        </row>
+        <row id="IDS_STRING_VOD_DIRECTOR" state="0" created="20221110221253">
+          <native>\b Director: \b0 {:s}\par </native>
+          <lang id="ru" date="20221110221318">\b Режиссер: \b0 {:s}\par </lang>
+        </row>
+        <row id="IDS_STRING_VOD_HOUR_MIN" created="20221110222456" changed="20221110222651">
+          <native>\b Time: \b0 {:d} hour(s) {:d} min</native>
+          <lang id="ru" date="20221110222543">\b Длительность: \b0 {:d} час(а) {:d} минут</lang>
+        </row>
+        <row id="IDS_STRING_VOD_MIN" state="0" created="20221110222456">
+          <native>\b Time: \b0 {:d} min</native>
+          <lang id="ru" date="20221110222529">\b Длительность: \b0 {:d} минут</lang>
+        </row>
+        <row id="IDS_STRING_VOD_TIME" state="1" created="20221110221253">
+          <native>\b Time: \b0 {:s} min</native>
+          <lang id="ru" date="20221110221340">\b Время: \b0 {:s} min</lang>
+        </row>
+        <row id="IDS_STRING_VOD_YEAR" state="0" created="20221110221253">
+          <native>\b Year: \b0 {:s}\par </native>
+          <lang id="ru" date="20221110221304">\b Год: \b0 {:s}\par </lang>
+        </row>
       </node>
       <node class="TWindowsStringNode" name="26" created="20220730092432" resid="26" langid="1033">
         <row id="IDS_STRING_FILMAX_P1">
@@ -4590,28 +4622,40 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20221104145733">
-          <prev>5.3.1214, 3 Nov 2022</prev>
-          <native>5.3.1217, 4 Nov 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20221110221253">
+          <prev>5.3.1217, 4 Nov 2022</prev>
+          <native>6.0.1232, 9 Nov 2022</native>
         </row>
-        <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221001005006">5</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20221024100559">3</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221104145733">
-          <prev>1214</prev>
-          <native>1217</native>
+        <row id="FileVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20221110221253">
+          <prev>5</prev>
+          <native>6</native>
+        </row>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20221110221253">
+          <prev>3</prev>
+          <native>0</native>
+        </row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221110221253">
+          <prev>1217</prev>
+          <native>1232</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20221104145733">
-          <prev>5.3.1214</prev>
-          <native>5.3.1217</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20221110221253">
+          <prev>5.3.1217</prev>
+          <native>6.0.1232</native>
         </row>
-        <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221001005006">5</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20221024100559">3</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221104145733">
-          <prev>1214</prev>
-          <native>1217</native>
+        <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20221110221253">
+          <prev>5</prev>
+          <native>6</native>
+        </row>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20221110221253">
+          <prev>3</prev>
+          <native>0</native>
+        </row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221110221253">
+          <prev>1217</prev>
+          <native>1232</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

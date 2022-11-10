@@ -1396,6 +1396,16 @@ std::wstring load_string_resource(unsigned int cp, unsigned int id)
 	return std::wstring{};
 }
 
+std::string load_string_resource_a(unsigned int id)
+{
+	return utils::utf16_to_utf8(load_string_resource(id));
+}
+
+std::string load_string_resource_a(unsigned int cp, unsigned int id)
+{
+	return utils::utf16_to_utf8(load_string_resource(cp, id));
+}
+
 uintmax_t calc_folder_size(const std::wstring& path)
 {
 	uintmax_t total_size = 0;

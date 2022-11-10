@@ -168,7 +168,6 @@
 #define IDS_STRING_NONE                 252
 #define IDS_STRING_SEASON               253
 #define IDS_STRING_EPISODE              254
-#define IDS_STRING_VOD_DESC             255
 #define IDS_STRING_LOADING              256
 #define IDS_STRING_QUALITY_ID           257
 #define IDS_STRING_FMT_CHANNELS_ALL     258
@@ -272,6 +271,13 @@
 #define IDS_STRING_BUTTON_VOD_PARSE     356
 #define IDS_STRING_BUTTON_VOD_TEMPLATE  357
 #define IDS_STRING_COMBO_PLAYLIST_TEMPLATE 358
+#define IDS_STRING_VOD_YEAR             359
+#define IDS_STRING_VOD_COUNTRY          360
+#define IDS_STRING_VOD_DIRECTOR         361
+#define IDS_STRING_VOD_ACTORS           362
+#define IDS_STRING_VOD_AGE              363
+#define IDS_STRING_VOD_MIN              364
+#define IDS_STRING_VOD_HOUR_MIN         365
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -575,7 +581,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

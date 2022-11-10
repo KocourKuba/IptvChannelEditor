@@ -92,13 +92,13 @@ public:
 	static constexpr char* crlf = "\r\n";
 	static constexpr char* whitespace = " \t";
 	static constexpr char* empty = "";
-	static constexpr char colon = ':';
-	static constexpr char cr = '\r';
-	static constexpr char lf = '\n';
-	static constexpr char space = ' ';
-	static constexpr char tab = '\t';
-	static constexpr char quote = '\"';
-	static constexpr char nil = '\0';
+	static constexpr char* colon = ":";
+	static constexpr char* cr = "\r";
+	static constexpr char* lf = "\n";
+	static constexpr char* space = " ";
+	static constexpr char* tab = "\t";
+	static constexpr char* quote = "\"";
+	static constexpr char* nil = "\0";
 };
 
 template <> class EMSLiterals<wchar_t>
@@ -107,13 +107,13 @@ public:
 	static constexpr wchar_t* crlf = L"\r\n";
 	static constexpr wchar_t* whitespace = L" \t";
 	static constexpr wchar_t* empty = L"";
-	static constexpr wchar_t colon = ':';
-	static constexpr wchar_t cr = L'\r';
-	static constexpr wchar_t lf = L'\n';
-	static constexpr wchar_t space = L' ';
-	static constexpr wchar_t tab = '\t';
-	static constexpr wchar_t quote = '\"';
-	static constexpr wchar_t nil = '\0';
+	static constexpr wchar_t* colon = L":";
+	static constexpr wchar_t* cr = L"\r";
+	static constexpr wchar_t* lf = L"\n";
+	static constexpr wchar_t* space = L" ";
+	static constexpr wchar_t* tab = L"\t";
+	static constexpr wchar_t* quote = L"\"";
+	static constexpr wchar_t* nil = L"\0";
 };
 
 inline std::string& string_tolower(std::string& s)
@@ -172,8 +172,8 @@ __int64 char_to_int64(const std::basic_string<T>& str, int base = 10)
 /// <param name="str">string to be trimmed by left side</param>
 /// <param name="chars">chars that will be removed</param>
 /// <returns>trimmed string</returns>
-template<class T, typename _Elem>
-T& string_ltrim(T& str, const _Elem chr = EMSLiterals<_Elem>::whitespace)
+template<class T, typename _Elem = T::value_type>
+T& string_ltrim(T& str, const _Elem* chr = EMSLiterals<_Elem>::whitespace)
 {
 	if constexpr (std::is_pointer_v<_Elem>)
 	{
@@ -221,8 +221,8 @@ T& string_ltrim(T& str, const _Elem chr = EMSLiterals<_Elem>::whitespace)
 /// <param name="str">string to be trimmed by right side</param>
 /// <param name="chars">chars that will be removed</param>
 /// <returns>trimmed string</returns>
-template<class T, typename _Elem>
-T& string_rtrim(T& str, const _Elem chr = EMSLiterals<_Elem>::whitespace)
+template<class T, typename _Elem = T::value_type>
+T& string_rtrim(T& str, const _Elem* chr = EMSLiterals<_Elem>::whitespace)
 {
 	using __Elem = std::remove_cv_t<std::remove_pointer_t<_Elem>>;
 	if constexpr (std::is_pointer_v<_Elem>)
@@ -262,8 +262,8 @@ T& string_rtrim(T& str, const _Elem chr = EMSLiterals<_Elem>::whitespace)
 /// <param name="s">string to be trimmed by right and left side</param>
 /// <param name="chars">chars that will be removed</param>
 /// <returns>trimmed string</returns>
-template<class T, typename _Elem>
-T& string_trim(T& s, const _Elem chars = EMSLiterals<_Elem>::whitespace)
+template<class T, typename _Elem = T::value_type>
+T& string_trim(T& s, const _Elem* chars = EMSLiterals<_Elem>::whitespace)
 {
 	return string_ltrim(string_rtrim(s, chars), chars);
 }

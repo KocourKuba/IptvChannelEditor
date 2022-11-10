@@ -1600,7 +1600,6 @@ BEGIN
     IDS_STRING_NONE         "None"
     IDS_STRING_SEASON       "Season"
     IDS_STRING_EPISODE      "Episode"
-    IDS_STRING_VOD_DESC     "{{\\rtf1 \\b {:s}\\b0\\par {:s}\\par\\par \\b Year: \\b0 {:s}\\par \\b Country: \\b0 {:s}\\par \\b Director: \\b0 {:s}\\par \\b Actors: \\b0 {:s}\\par \\b Age: \\b0 {:s}\\par \\b Time: \\b0 {:s} min}}"
 END
 
 STRINGTABLE
@@ -1835,6 +1834,13 @@ BEGIN
     IDS_STRING_BUTTON_VOD_TEMPLATE "Try to download and show VOD playlist."
     IDS_STRING_COMBO_PLAYLIST_TEMPLATE 
                             "Select playlist template that will be used in plugin config."
+    IDS_STRING_VOD_YEAR     "\\b Year: \\b0 {:s}\\par "
+    IDS_STRING_VOD_COUNTRY  "\\b Country: \\b0 {:s}\\par "
+    IDS_STRING_VOD_DIRECTOR "\\b Director: \\b0 {:s}\\par "
+    IDS_STRING_VOD_ACTORS   "\\b Actors: \\b0 {:s}\\par "
+    IDS_STRING_VOD_AGE      "\\b Age: \\b0 {:s}\\par "
+    IDS_STRING_VOD_MIN      "\\b Time: \\b0 {:d} min"
+    IDS_STRING_VOD_HOUR_MIN "\\b Time: \\b0 {:d} hour(s) {:d} min"
 END
 
 #endif    // English (United States) resources

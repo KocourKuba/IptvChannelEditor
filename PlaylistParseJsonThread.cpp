@@ -125,7 +125,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 				movie->director = utils::get_json_wstring("director", info);
 				movie->casting = utils::get_json_wstring("cast", info);
 				movie->age = utils::get_json_wstring("adult", info);
-				movie->movie_time = std::to_wstring(info.value("duration_secs", 0) / 60);
+				movie->movie_time = info.value("duration_secs", 0) / 60;
 
 				for (const auto& genre_item : info["genre"].items())
 				{
@@ -396,7 +396,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 					movie->country = utils::get_json_wstring("country", movie_item);
 					movie->year = utils::get_json_wstring("year", movie_item);
 					movie->age = utils::get_json_wstring("agelimit", movie_item);
-					movie->movie_time = utils::get_json_wstring("duration", movie_item);
+					movie->movie_time = utils::get_json_int("duration", movie_item);
 
 					category.second->movies.set(movie->id, movie);
 

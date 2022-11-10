@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="174" scanned="20221104145733" built="20221028013920" lang="ru" pane="TLogPane" col="4" row="Strings.22.IDS_STRING_BUTTON_EDIT_TEMPLATES">
+<desktop scan="178" scanned="20221110222651" built="20221028013920" lang="ru" pane="TLogPane" col="1" row="Strings.23.IDS_STRING_VOD_HOUR_MIN">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="2"/>
+    <item class="TRemoveUnusedItemsTrigger" position="6"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

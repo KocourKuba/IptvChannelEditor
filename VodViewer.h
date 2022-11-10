@@ -93,6 +93,7 @@ private:
 	int m_season_idx = -1;
 	int m_episode_idx = -1;
 	int m_quality_idx = -1;
+	int m_total = 0;
 	vod_category_storage* m_vod_categories = nullptr;
 	vod_movie_storage m_filtered_movies;
 	vod_genre_storage m_genres;
