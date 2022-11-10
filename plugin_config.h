@@ -347,6 +347,12 @@ public:
 	void set_vod_m3u(bool val) { vod_m3u = val; }
 
 	/// <summary>
+	/// property vod filter
+	/// </summary>
+	bool get_vod_filter() const { return vod_filter; }
+	void set_vod_filter(bool val) { vod_filter = val; }
+
+	/// <summary>
 	/// active vod template
 	/// </summary>
 	std::wstring get_current_pl_vod_template() const { return utils::utf8_to_utf16(provider_vod_url); }
@@ -554,6 +560,7 @@ public:
 		SERIALIZE_STRUCT(j, c, uri_parse_pattern);
 		SERIALIZE_STRUCT(j, c, vod_support); //-V601
 		SERIALIZE_STRUCT(j, c, vod_m3u); //-V601
+		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
 		SERIALIZE_STRUCT(j, c, provider_vod_url);
@@ -587,6 +594,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, uri_parse_pattern);
 		DESERIALIZE_STRUCT(j, c, vod_support);
 		DESERIALIZE_STRUCT(j, c, vod_m3u);
+		DESERIALIZE_STRUCT(j, c, vod_filter);
 		DESERIALIZE_STRUCT(j, c, vod_templates);
 		DESERIALIZE_STRUCT(j, c, vod_template_index);
 		DESERIALIZE_STRUCT(j, c, provider_vod_url);
@@ -642,6 +650,8 @@ protected:
 
 	// use channels logo are squared, plugin UI settings
 	bool square_icons = false;
+	// use channels logo are squared, plugin UI settings
+	bool vod_filter = false;
 	// use token from uri instead of account settings
 	bool per_channel_token = false;
 	// use token generated or received from provider

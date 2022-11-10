@@ -62,6 +62,7 @@ void plugin_sharaclub::load_default()
 	vod_templates.emplace_back(vod_info);
 
 	vod_support = true;
+	vod_filter = true;
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));

@@ -41,6 +41,7 @@ plugin_edem::plugin_edem()
 void plugin_edem::load_default()
 {
 	vod_support = true;
+	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://epg.it999.ru/edem_epg_ico.m3u8";

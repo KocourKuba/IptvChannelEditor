@@ -551,6 +551,7 @@
 #define IDC_BUTTON_EDIT_VOD_TEMPLATES   1225
 #define IDC_COMBO_TAGS                  1226
 #define IDC_CHECK_MAP_TAG_TO_ID         1227
+#define IDC_CHECK_VOD_FILTER            1228
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -581,7 +582,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

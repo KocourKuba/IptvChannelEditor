@@ -52,6 +52,7 @@ void plugin_glanz::load_default()
 	//vod_info.pl_template = "http://epg.esalecrm.net/playlist/vod?login={LOGIN}&password={PASSWORD}";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
+	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";

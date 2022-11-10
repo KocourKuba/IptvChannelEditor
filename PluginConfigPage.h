@@ -171,6 +171,7 @@ protected:
 	CButton m_wndChkStaticProfiles;
 	CButton m_wndBtnQualities;
 	CButton m_wndChkSquareIcons;
+	CButton m_wndChkFilterSupport;
 	CButton m_wndBtnProfiles;
 	CButton m_wndBtnToggleEdit;
 	CButton m_wndBtnEpgTest;
