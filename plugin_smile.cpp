@@ -53,9 +53,10 @@ void plugin_smile::load_default()
 
 	vod_info.set_name(IDS_STRING_NO_ADULT);
 	vod_info.pl_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vod.m3u";
+	vod_info.parse_regex = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
 	vod_templates.emplace_back(vod_info);
 
-	vod_parse_pattern = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
+	vod_parse_pattern = vod_info.parse_regex;
 
 	vod_support = true;
 	vod_m3u = true;

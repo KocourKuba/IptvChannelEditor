@@ -556,6 +556,8 @@ void CPluginConfigPage::EnableControls()
 	m_wndTags.EnableWindow(enable && m_wndCheckMapTags.GetCheck() != 0);
 	m_wndChkEnableVOD.EnableWindow(enable);
 	m_wndChkVodM3U.EnableWindow(enable);
+	m_wndVodTemplates.EnableWindow(enable);
+	m_wndBtnVodTemplates.EnableWindow(enable);
 	m_wndVodUrlTemplate.EnableWindow(enable);
 	m_wndVodRegex.EnableWindow(enable);
 
@@ -665,7 +667,7 @@ void CPluginConfigPage::FillControlsCommon()
 	m_wndVodTemplates.SetCurSel(vod_idx);
 	m_VodPlaylistTemplate = m_plugin->get_vod_template(vod_idx).c_str();
 
-	m_VodParseRegex = m_plugin->get_vod_parse_pattern().c_str();
+	m_VodParseRegex = m_plugin->get_vod_parse_regex(vod_idx).c_str();
 
 	m_supported_streams = m_plugin->get_supported_streams();
 	m_epg_parameters = m_plugin->get_epg_parameters();
@@ -703,7 +705,7 @@ void CPluginConfigPage::SaveControlsCommon()
 	}
 	m_plugin->set_tag_id_match(tag.GetString());
 	m_plugin->set_vod_template(m_plugin->get_vod_template_idx(), m_VodPlaylistTemplate.GetString());
-	m_plugin->set_vod_parse_regex(m_VodParseRegex.GetString());
+	m_plugin->set_vod_parse_regex(m_plugin->get_vod_template_idx(), m_VodParseRegex.GetString());
 
 	SaveControlsStream();
 	SaveControlsEpg();
@@ -1221,6 +1223,9 @@ void CPluginConfigPage::OnCbnSelchangeComboVodTemplate()
 	int idx = m_wndVodTemplates.GetCurSel();
 	m_plugin->set_vod_template_idx(idx);
 	m_VodPlaylistTemplate = m_plugin->get_vod_template(idx).c_str();
+	m_VodParseRegex = m_plugin->get_vod_parse_regex(idx).c_str();
+
+	OnChanges();
 	UpdateData(FALSE);
 }
 
@@ -1229,6 +1234,7 @@ void CPluginConfigPage::OnCbnDropdownComboVodTemplate()
 	UpdateData(TRUE);
 
 	m_plugin->set_vod_template(m_wndVodTemplates.GetCurSel(), m_VodPlaylistTemplate.GetString());
+	m_plugin->set_vod_parse_regex(m_wndVodTemplates.GetCurSel(), m_VodPlaylistTemplate.GetString());
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditVodTemplates()

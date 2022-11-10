@@ -266,7 +266,7 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 
 std::wstring base_plugin::get_vod_url(TemplateParams& params) const
 {
-	std::wstring url = get_current_vod_template();
+	std::wstring url = get_current_pl_vod_template();
 
 	if (!params.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);

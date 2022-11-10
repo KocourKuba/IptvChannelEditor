@@ -119,10 +119,26 @@ public:
 	std::wstring get_template() const { return utils::utf8_to_utf16(pl_template); }
 	void set_template(const std::wstring& val) { pl_template = utils::utf16_to_utf8(val); }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlaylistTemplateInfo, name, pl_template);
+	std::wstring get_parse_regex() const { return utils::utf8_to_utf16(parse_regex); }
+	void set_parse_regex(const std::wstring& val) { parse_regex = utils::utf16_to_utf8(val); }
+
+	friend void to_json(nlohmann::json& j, const PlaylistTemplateInfo& c)
+	{
+		SERIALIZE_STRUCT(j, c, name);
+		SERIALIZE_STRUCT(j, c, pl_template);
+		SERIALIZE_STRUCT(j, c, parse_regex);
+	}
+
+	friend void from_json(const nlohmann::json& j, PlaylistTemplateInfo& c)
+	{
+		DESERIALIZE_STRUCT(j, c, name);
+		DESERIALIZE_STRUCT(j, c, pl_template);
+		DESERIALIZE_STRUCT(j, c, parse_regex);
+	}
 
 	std::string name;
 	std::string pl_template;
+	std::string parse_regex;
 	bool is_custom = false;
 };
 
@@ -276,15 +292,15 @@ public:
 	void set_access_type(AccountAccessType val) { access_type = val; }
 
 	/// <summary>
+	/// active playlist template
+	/// </summary>
+	void set_current_pl_template();
+
+	/// <summary>
 	/// property link to provider account
 	/// </summary>
 	std::wstring get_provider_url() const { return utils::utf8_to_utf16(provider_url); }
 	void set_provider_url(const std::wstring& val) { provider_url = utils::utf16_to_utf8(val); }
-
-	/// <summary>
-	/// active vod template
-	/// </summary>
-	void set_current_pl_vod_template();
 
 	/// <summary>
 	/// selected playlist template index
@@ -333,7 +349,12 @@ public:
 	/// <summary>
 	/// active vod template
 	/// </summary>
-	std::wstring get_current_vod_template() const { return utils::utf8_to_utf16(provider_vod_url); }
+	std::wstring get_current_pl_vod_template() const { return utils::utf8_to_utf16(provider_vod_url); }
+
+	/// <summary>
+	/// active vod template
+	/// </summary>
+	void set_current_pl_vod_template();
 
 	/// <summary>
 	/// property vod templates
@@ -355,11 +376,16 @@ public:
 	void set_vod_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_template(val); }
 
 	/// <summary>
+	/// active vod template
+	/// </summary>
+	std::wstring get_current_vod_parse_regex() const { return utils::utf8_to_utf16(vod_parse_pattern); }
+
+	/// <summary>
 	/// regex for parsing title
 	/// </summary>
 	/// <returns>wstring</returns>
-	std::wstring get_vod_parse_pattern() const { return utils::utf8_to_utf16(vod_parse_pattern); };
-	void set_vod_parse_regex(const std::wstring& val) { vod_parse_pattern = utils::utf16_to_utf8(val); };
+	std::wstring get_vod_parse_regex(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_parse_regex() : L""; }
+	void set_vod_parse_regex(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_parse_regex(val); }
 
 	/// <summary>
 	/// property square icons, php GUI setting
