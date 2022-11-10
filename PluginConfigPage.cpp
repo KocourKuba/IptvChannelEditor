@@ -77,8 +77,8 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CMFCPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPage::OnCbnSelchangeComboPlaylistTemplate)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPage::OnCbnDropdownComboPlaylistTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_TEMPLATES, &CPluginConfigPage::OnBnClickedButtonEditTemplates)
-	ON_BN_CLICKED(IDC_CHECK_VOD_SUPPORT, &CPluginConfigPage::OnChanges)
-	ON_BN_CLICKED(IDC_CHECK_VOD_M3U, &CPluginConfigPage::OnChanges)
+	ON_BN_CLICKED(IDC_CHECK_VOD_SUPPORT, &CPluginConfigPage::OnBnClickedCheckVodSupport)
+	ON_BN_CLICKED(IDC_CHECK_VOD_M3U, &CPluginConfigPage::OnBnClickedCheckVodM3U)
 	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPage::OnChanges)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::OnChanges)
 	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::OnChanges)
@@ -190,7 +190,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_VOD_SUPPORT, m_wndChkEnableVOD);
 	DDX_Control(pDX, IDC_CHECK_VOD_M3U, m_wndChkVodM3U);
 	DDX_Control(pDX, IDC_COMBO_VOD_TEMPLATE, m_wndVodTemplates);
-	DDX_Control(pDX, IDC_BUTTON_EDIT_VOD_TEMPLATES, m_wndBtnVodTemplates);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_VOD_TEMPLATES, m_wndBtnEditVodTemplates);
 	DDX_Control(pDX, IDC_EDIT_PROVIDER_VOD_URL, m_wndVodUrlTemplate);
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_VOD_URL, m_VodPlaylistTemplate);
 	DDX_Control(pDX, IDC_EDIT_VOD_REGEX, m_wndVodRegex);
@@ -322,7 +322,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	SetButtonImage(IDB_PNG_SAVE_AS, m_wndBtnSaveAsConf);
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnEditTemplates);
-	SetButtonImage(IDB_PNG_EDIT, m_wndBtnVodTemplates);
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnEditVodTemplates);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnServers);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnDevices);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnQualities);
@@ -554,12 +554,16 @@ void CPluginConfigPage::EnableControls()
 	m_wndParseStream.EnableWindow(enable);
 	m_wndCheckMapTags.EnableWindow(enable);
 	m_wndTags.EnableWindow(enable && m_wndCheckMapTags.GetCheck() != 0);
+
+	bool enableVod = m_wndChkEnableVOD.GetCheck() != 0;
+	bool enableM3U = m_wndChkVodM3U.GetCheck() != 0;
+
 	m_wndChkEnableVOD.EnableWindow(enable);
-	m_wndChkVodM3U.EnableWindow(enable);
-	m_wndVodTemplates.EnableWindow(enable);
-	m_wndBtnVodTemplates.EnableWindow(enable);
-	m_wndVodUrlTemplate.EnableWindow(enable);
-	m_wndVodRegex.EnableWindow(enable);
+	m_wndChkVodM3U.EnableWindow(enable && enableVod);
+	m_wndVodTemplates.EnableWindow(enable && enableVod);
+	m_wndBtnEditVodTemplates.EnableWindow(enable && enableVod);
+	m_wndVodUrlTemplate.EnableWindow(enable && enableVod);
+	m_wndVodRegex.EnableWindow(enable && enableVod && enableM3U);
 
 	// test
 	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
@@ -1167,6 +1171,32 @@ void CPluginConfigPage::OnChanges()
 void CPluginConfigPage::OnEnChangeEditUtc()
 {
 	UpdateDateTimestamp(false);
+}
+
+void CPluginConfigPage::OnBnClickedCheckVodSupport()
+{
+	bool enableVod = m_wndChkEnableVOD.GetCheck() != 0;
+	bool enableM3U = m_wndChkVodM3U.GetCheck() != 0;
+
+	m_wndVodRegex.EnableWindow(enableVod);
+	m_wndChkVodM3U.EnableWindow(enableVod);
+
+	m_wndVodTemplates.EnableWindow(enableVod);
+	m_wndBtnEditVodTemplates.EnableWindow(enableVod);
+	m_wndVodUrlTemplate.EnableWindow(enableVod);
+
+	m_wndVodRegex.EnableWindow(enableVod && enableM3U);
+
+	AllowSave();
+}
+
+void CPluginConfigPage::OnBnClickedCheckVodM3U()
+{
+	bool enableM3U = m_wndChkVodM3U.GetCheck() != 0;
+
+	m_wndVodRegex.EnableWindow(enableM3U);
+
+	AllowSave();
 }
 
 void CPluginConfigPage::OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult)

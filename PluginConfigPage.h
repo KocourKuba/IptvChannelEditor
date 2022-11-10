@@ -69,6 +69,8 @@ protected:
 	afx_msg void OnBnClickedButtonVodTemplate();
 	afx_msg void OnEnChangeEditProviderVodUrl();
 	afx_msg void OnEnChangeEditVodRegex();
+	afx_msg void OnBnClickedCheckVodSupport();
+	afx_msg void OnBnClickedCheckVodM3U();
 	afx_msg void OnBnClickedButtonEditServers();
 	afx_msg void OnBnClickedButtonEditDevices();
 	afx_msg void OnBnClickedButtonEditQuality();
@@ -146,7 +148,7 @@ protected:
 	CEdit m_wndSetID;
 	CEdit m_wndToken;
 	CMenuEdit m_wndVodUrlTemplate;
-	CEdit m_wndVodRegex;
+	CMenuEdit m_wndVodRegex;
 
 	CComboBox m_wndAccessType;
 	CComboBox m_wndPlaylistTemplates;
@@ -180,7 +182,7 @@ protected:
 	CButton m_wndBtnVodTemplateTest;
 	CButton m_wndChkUseDuration;
 	CButton m_wndCheckMapTags;
-	CButton m_wndBtnVodTemplates;
+	CButton m_wndBtnEditVodTemplates;
 
 	CString m_Name;
 	CString m_Title;
