@@ -95,27 +95,31 @@ class Entry
     /**
      * @return string
      */
-    public function getEntryTitle()
+    public function getParsedTitle()
     {
-        return $this->parsed_title;
+        return empty($this->parsed_title) ? $this->getTitle() : $this->parsed_title;
     }
 
     /**
      * @param string $title
      */
-    public function setEntryTitle($title)
+    public function setParsedTitle($title)
     {
         $this->parsed_title = $title;
     }
+
     /**
      * @return string
      */
     public function getGroupTitle()
     {
         if (empty($this->group_title)) {
-            $group_title = $this->extGrp !== null ? $this->extGrp->getGroup() : '';
+            $group_title = ($this->extGrp !== null) ? $this->extGrp->getGroup() : '';
             if (empty($group_title)) {
                 $this->group_title = $this->findAttribute('group-title');
+                if (empty($this->group_title) || $this->group_title === "null") {
+                    $this->group_title = "Без категории";
+                }
             }
         }
         return $this->group_title;

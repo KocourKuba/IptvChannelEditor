@@ -63,6 +63,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
                         hd_print("action: launch open");
                         return Action_Factory::open_folder();
+
                     case 'update_epfs':
                         hd_print("action: update_epfs");
                         if (HD::rows_api_support()) {
