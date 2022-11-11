@@ -1277,7 +1277,7 @@ void CPluginConfigPage::OnCbnDropdownComboVodTemplate()
 	UpdateData(TRUE);
 
 	m_plugin->set_vod_template(m_wndVodTemplates.GetCurSel(), m_VodPlaylistTemplate.GetString());
-	m_plugin->set_vod_parse_regex(m_wndVodTemplates.GetCurSel(), m_VodPlaylistTemplate.GetString());
+	m_plugin->set_vod_parse_regex(m_wndVodTemplates.GetCurSel(), m_VodParseRegex.GetString());
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditVodTemplates()

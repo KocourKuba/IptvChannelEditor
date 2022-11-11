@@ -294,7 +294,7 @@ public:
 	/// <summary>
 	/// active playlist template
 	/// </summary>
-	void set_current_pl_template();
+	void set_current_playlist_info();
 
 	/// <summary>
 	/// property link to provider account
@@ -355,12 +355,12 @@ public:
 	/// <summary>
 	/// active vod template
 	/// </summary>
-	std::wstring get_current_pl_vod_template() const { return utils::utf8_to_utf16(provider_vod_url); }
+	std::wstring get_current_vod_template() const { return utils::utf8_to_utf16(provider_vod_url); }
 
 	/// <summary>
-	/// active vod template
+	/// active vod
 	/// </summary>
-	void set_current_pl_vod_template();
+	void set_current_vod_info();
 
 	/// <summary>
 	/// property vod templates
