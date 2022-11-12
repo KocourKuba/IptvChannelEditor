@@ -36,10 +36,10 @@ class TagAttributes
 
     /**
      * @param string $name
-     * @return string|null
+     * @return string
      */
     public function getAttribute($name)
     {
-        return isset($this->attributes[$name]) ? $this->attributes[$name] : null;
+        return isset($this->attributes[$name]) ? $this->attributes[$name] : '';
     }
 }

@@ -302,7 +302,7 @@ class sharaclub_config extends default_config
      * @param array &$category_list
      * @param array &$category_index
      */
-    public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
+    public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
     {
         $jsonItems = HD::DownloadJson($this->GetVodListUrl($plugin_cookies), false);
         if ($jsonItems === false) {
@@ -389,7 +389,7 @@ class sharaclub_config extends default_config
      * @return array
      * @throws Exception
      */
-    public function getVideoList($query_id, $plugin_cookies)
+    public function getMovieList($query_id, $plugin_cookies)
     {
         $movies = array();
 
@@ -573,17 +573,4 @@ class sharaclub_config extends default_config
         return get_temp_path("playlist_vod.json");
     }
 
-    /**
-     * @param string $key
-     * @param int $val
-     */
-    public function add_movie_counter($key, $val)
-    {
-        // repeated count data
-        if (!array_key_exists($key, $this->movie_counter)) {
-            $this->movie_counter[$key] = 0;
-        }
-
-        $this->movie_counter[$key] += $val;
-    }
 }

@@ -40,12 +40,10 @@ class Entry
 
     /**
      * @param ExtInf $extInf
-     * @return Entry
      */
     public function setExtInf(ExtInf $extInf)
     {
         $this->extInf = $extInf;
-        return $this;
     }
 
     /**
@@ -58,12 +56,10 @@ class Entry
 
     /**
      * @param ExtGrp $extGrp
-     * @return Entry
      */
     public function setExtGrp(ExtGrp $extGrp)
     {
         $this->extGrp = $extGrp;
-        return $this;
     }
 
     /**
@@ -76,12 +72,10 @@ class Entry
 
     /**
      * @param string $path
-     * @return Entry
      */
     public function setPath($path)
     {
         $this->path = $path;
-        return $this;
     }
 
     /**
@@ -116,7 +110,7 @@ class Entry
         if (empty($this->group_title)) {
             $group_title = ($this->extGrp !== null) ? $this->extGrp->getGroup() : '';
             if (empty($group_title)) {
-                $this->group_title = $this->findAttribute('group-title');
+                $this->group_title = $this->getAttribute('group-title');
                 if (empty($this->group_title) || $this->group_title === "null") {
                     $this->group_title = "Без категории";
                 }
@@ -129,13 +123,11 @@ class Entry
      * @param $attr
      * @return string
      */
-    public function findAttribute($attr)
+    public function getAttribute($attr)
     {
         if ($this->extInf === null)
             return '';
 
-        $attributes = $this->extInf->getAttributes();
-
-        return $attributes !== null ? $attributes->getAttribute($attr) : '';
+        return $this->extInf->getAttribute($attr);
     }
 }

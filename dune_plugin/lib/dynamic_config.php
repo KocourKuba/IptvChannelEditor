@@ -22,7 +22,6 @@ class dynamic_config
         hd_print("Init defaults");
         $this->features[Plugin_Constants::TV_FAVORITES_SUPPORTED] = true; // always true
         $this->features[Plugin_Constants::BALANCE_SUPPORTED] = false; // account support account info requests
-        $this->features[Plugin_Constants::VOD_LAZY_LOAD] = false; // all movies loaded as one file or require delayed request to collect movies
         $this->features[Plugin_Constants::VOD_QUALITY_SUPPORTED] = false; // currently supported only in edem
         $this->features[Plugin_Constants::VOD_FILTER_SUPPORTED] = false; // filter list screen
 

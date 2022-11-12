@@ -537,4 +537,9 @@ class HD
             file_put_contents($path, json_encode($content));
         }
     }
+
+    public static function ShowMemoryUsage()
+    {
+        hd_print("Memory usage: " . round(memory_get_usage(true) / 1024) . "kb / " . ini_get('memory_limit'));
+    }
 }

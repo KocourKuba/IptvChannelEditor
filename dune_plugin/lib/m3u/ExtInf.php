@@ -18,7 +18,7 @@ class ExtInf
      */
     public function __construct($line)
     {
-        $this->makeData($line);
+        $this->parseData($line);
     }
 
     /**
@@ -29,12 +29,12 @@ class ExtInf
      *
      * @param string $line
      */
-    protected function makeData($line)
+    protected function parseData($line)
     {
         $tmp = substr($line, 8); // #EXTINF:
         $split = explode(',', $tmp, 2);
         $this->setTitle(trim($split[1]));
-        $this->setAttributes(new TagAttributes($split[0]));
+        $this->attributes = new TagAttributes($split[0]);
     }
 
     /**
@@ -54,18 +54,19 @@ class ExtInf
     }
 
     /**
-     * @param TagAttributes $attributes
-     */
-    public function setAttributes($attributes)
-    {
-        $this->attributes = $attributes;
-    }
-
-    /**
      * @return TagAttributes
      */
     public function getAttributes()
     {
         return $this->attributes;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getAttribute($name)
+    {
+        return empty($this->attributes) ? '' : $this->attributes->getAttribute($name);
     }
 }

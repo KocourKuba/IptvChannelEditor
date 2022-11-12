@@ -9,7 +9,6 @@ class edem_config extends default_config
 
         $this->set_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED, true);
         $this->set_feature(Plugin_Constants::VOD_FILTER_SUPPORTED, true);
-        $this->set_feature(Plugin_Constants::VOD_LAZY_LOAD, true);
     }
 
     /**
@@ -132,7 +131,7 @@ class edem_config extends default_config
      * @param array &$category_list
      * @param array &$category_index
      */
-    public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
+    public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
     {
         //hd_print("fetch_vod_categories");
 
@@ -217,9 +216,9 @@ class edem_config extends default_config
 
         $post_params['filter'] = 'on';
         $post_params['offset'] = $this->get_next_page($params, 0);
-        $filterRes = $this->make_json_request($plugin_cookies, $post_params);
+        $json = $this->make_json_request($plugin_cookies, $post_params);
 
-        return $filterRes === false ? array() : $this->CollectSearchResult($params, $filterRes);
+        return $json === false ? array() : $this->CollectSearchResult($params, $json);
     }
 
     /**
@@ -228,15 +227,15 @@ class edem_config extends default_config
      * @return array
      * @throws Exception
      */
-    public function getVideoList($query_id, $plugin_cookies)
+    public function getMovieList($query_id, $plugin_cookies)
     {
         $val = $this->get_next_page($query_id, 0);
         //hd_print("getVideoList: $query_id, $val");
 
-        $categories = $this->make_json_request($plugin_cookies,
+        $json = $this->make_json_request($plugin_cookies,
             array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $val, 'limit' => 0));
 
-        return $categories === false ? array() : $this->CollectSearchResult($query_id, $categories);
+        return $json === false ? array() : $this->CollectSearchResult($query_id, $json);
     }
 
     /**
@@ -374,19 +373,5 @@ class edem_config extends default_config
         // hd_print("post_data: " . json_encode($pairs));
 
         return HD::DownloadJson($url, $to_array, $curl_opt);
-    }
-
-    /**
-     * @param string $key
-     * @param int $val
-     */
-    public function add_movie_counter($key, $val)
-    {
-        // repeated count data
-        if (!array_key_exists($key, $this->movie_counter)) {
-            $this->movie_counter[$key] = 0;
-        }
-
-        $this->movie_counter[$key] += $val;
     }
 }

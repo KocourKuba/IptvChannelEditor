@@ -5,13 +5,6 @@ abstract class Cbilling_Vod_Impl extends default_config
 {
     const API_HOST = 'http://protected-api.com';
 
-    public function init_defaults()
-    {
-        parent::init_defaults();
-
-        $this->set_feature(Plugin_Constants::VOD_LAZY_LOAD, true);
-    }
-
     /**
      * @param string $movie_id
      * @param $plugin_cookies
@@ -97,7 +90,7 @@ abstract class Cbilling_Vod_Impl extends default_config
      * @param array &$category_list
      * @param array &$category_index
      */
-    public function fetch_vod_categories($plugin_cookies, &$category_list, &$category_index)
+    public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
     {
         hd_print("fetch_vod_categories");
         $jsonItems = HD::DownloadJson($this->get_feature(Plugin_Constants::VOD_PLAYLIST_URL), false);
@@ -109,7 +102,7 @@ abstract class Cbilling_Vod_Impl extends default_config
         $category_index = array();
 
         // all movies
-        $category = new Vod_Category(Vod_Category::PATTERN_ALL, 'Все фильмы');
+        $category = new Vod_Category(Vod_Category::FLAG_ALL, 'Все фильмы');
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
@@ -157,12 +150,12 @@ abstract class Cbilling_Vod_Impl extends default_config
      * @return array
      * @throws Exception
      */
-    public function getVideoList($query_id, $plugin_cookies)
+    public function getMovieList($query_id, $plugin_cookies)
     {
         hd_print("getVideoList: $query_id");
         $val = $this->get_next_page($query_id);
 
-        if ($query_id === Vod_Category::PATTERN_ALL) {
+        if ($query_id === Vod_Category::FLAG_ALL) {
             $url = "/filter/new?page=$val";
         } else {
             $arr = explode("_", $query_id);
@@ -207,17 +200,4 @@ abstract class Cbilling_Vod_Impl extends default_config
         return $movies;
     }
 
-    /**
-     * @param string $key
-     * @param int $val
-     */
-    public function add_movie_counter($key, $val)
-    {
-        // repeated count data
-        if (!array_key_exists($key, $this->movie_counter)) {
-            $this->movie_counter[$key] = 0;
-        }
-
-        $this->movie_counter[$key] += $val;
-    }
 }

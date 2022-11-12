@@ -103,7 +103,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 if (!isset($user_input->parent_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
-                if ($media_url->genre_id !== Vod_Category::PATTERN_FILTER && $user_input->filter_actions !== 'keyboard') {
+                if ($media_url->genre_id !== Vod_Category::FLAG_FILTER && $user_input->filter_actions !== 'keyboard') {
                     return Action_Factory::open_folder($user_input->selected_media_url);
                 }
 
@@ -138,7 +138,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 return Action_Factory::invalidate_folders(array(self::ID),
                     Action_Factory::open_folder(
-                        Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_FILTER, $filter_string),
+                        Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_FILTER, $filter_string),
                         "Фильтр: " . $filter_string));
 
             case self::ACTION_ITEM_UP:
@@ -216,7 +216,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                 ViewItemParams::item_caption_width => 1100
             ),
-            PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_FILTER, Vod_Category::PATTERN_FILTER)
+            PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_FILTER, Vod_Category::FLAG_FILTER)
         );
 
         $filter_items = HD::get_items(self::FILTER_LIST);
@@ -235,7 +235,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                         ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                         ViewItemParams::item_caption_width => 1100
                     ),
-                    PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_FILTER, $item)
+                    PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_FILTER, $item)
                 );
             }
         }

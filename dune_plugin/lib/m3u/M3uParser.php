@@ -4,167 +4,141 @@ require_once 'Entry.php';
 
 class M3uParser
 {
+    /**
+     * @var string
+     */
     private $file_name;
+
+    /**
+     * @var string
+     */
     private $vod_pattern;
 
-    public function __construct($file_name, $vod_pattern = null)
+    /**
+     * @var SplFileObject
+     */
+    private $m3u_file;
+
+    /**
+     * @param $file_name
+     * @param $vod_pattern
+     */
+    public function setupParser($file_name, $vod_pattern = null)
     {
+        $this->m3u_file = null;
         $this->file_name = $file_name;
+
+        try {
+            $file = new SplFileObject($file_name);
+        } catch (Exception $ex) {
+            hd_print("Can't read file.");
+            return;
+        }
+
         if (!empty($vod_pattern))
             $this->vod_pattern = "/$vod_pattern/";
+
+        $file->setFlags(SplFileObject::DROP_NEW_LINE);
+
+        $this->m3u_file = $file;
     }
 
     /**
-     * Parse m3u by seeks file, slower but
+     * Parse m3u by seeks file, slower and
      * less memory consumption for large m3u files
+     * But still may cause memory exhausting
      *
      * @return Entry[]
      */
-    public function parseInFile()
+    public function parseFile()
     {
-        $m3u_file = new SplFileObject($this->file_name);
-        $m3u_file->setFlags(SplFileObject::DROP_NEW_LINE);
-        if (!$m3u_file->valid()) {
-            hd_print("Can't read file: $this->file_name");
-            return array();
+        $data = array();
+        if ($this->m3u_file === null) {
+            hd_print("parseFile: Bad file");
+            return $data;
         }
 
-        $data = array();
+        $this->m3u_file->rewind();
+
+        $t = microtime(1);
         $entry = new Entry();
-        while (!$m3u_file->eof()) {
-            if (!$this->parseLine($m3u_file->fgets(), $entry)) continue;
+        foreach($this->m3u_file as $line) {
+            if (!$this->parseLine($line, $entry)) continue;
 
             $data[] = $entry;
             $entry = new Entry();
         }
 
+        hd_print("parseFile " . (microtime(1) - $t) . " secs");
+        return $data;
+    }
+
+    /**
+     * Indexing m3u. Low memory consumption.
+     * Faster speed for random access to each entry
+     * Can be used with HUGE m3u files
+     *
+     * Returns array of groups each contains
+     * array of file positions for each entries
+     *
+     * @return array[]
+     */
+    public function indexFile()
+    {
+        $data = array();
+        if ($this->m3u_file === null) {
+            hd_print("indexFile: Bad file");
+            return $data;
+        }
+
+        $this->m3u_file->rewind();
+
+        $t = microtime(1);
+        $entry = new Entry();
+        $pos = $this->m3u_file->ftell();
+        while (!$this->m3u_file->eof()) {
+            if (!$this->parseLine($this->m3u_file->fgets(), $entry)) continue;
+
+            $group_name = $entry->getGroupTitle();
+            if (!array_key_exists($group_name, $data)) {
+                $data[$group_name] = array();
+            }
+
+            $data[$group_name][] = $pos;
+            $entry = new Entry();
+            $pos = $this->m3u_file->ftell();
+        }
+
+        hd_print("indexFile " . (microtime(1) - $t) . " secs");
         return $data;
     }
 
     /**
      * Load m3u into the memory for faster parsing
-     * But may cause OutOfMemory for huge files
+     * But may cause OutOfMemory for large files
      *
      * @return Entry[]
      */
     public function parseInMemory()
     {
         if (!file_exists($this->file_name)) {
-            hd_print("Can't read file: $this->file_name");
+            hd_print("parseInMemory: Can't read file: $this->file_name");
             return array();
         }
 
+        $t = microtime(1);
         $lines = file($this->file_name, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         $data = array();
-        for ($i = 0, $total = count($lines); $i < $total; ++$i) {
-            if (!self::isComment($lines[$i])) {
-                $data[] = $this->parseArrayLine($i, $lines);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Collect groups (categories)
-     *
-     * @return string[]
-     */
-    public function collectGroups()
-    {
-        $m3u_file = new SplFileObject($this->file_name);
-        $m3u_file->setFlags(SplFileObject::DROP_NEW_LINE);
-        if (!$m3u_file->valid()) {
-            hd_print("Can't read file: $this->file_name");
-            return array();
-        }
-
-        $t = microtime(1);
-
-        $data = array();
         $entry = new Entry();
-        while (!$m3u_file->eof()) {
-            if (!$this->parseLine($m3u_file->fgets(), $entry)) continue;
+        foreach($lines as $line) {
+            if (!$this->parseLine($line, $entry)) continue;
 
-            if (!in_array($entry->getGroupTitle(), $data)) {
-                $data[] = $entry->getGroupTitle();
-            }
+            $data[] = $entry;
             $entry = new Entry();
         }
 
-        hd_print('collectGroups at ' . (microtime(1) - $t) . ' secs');
-        return $data;
-    }
-
-    /**
-     * search keyword in file and return matched entries
-     *
-     * @param string $keyword
-     * @return Entry[]
-     */
-    public function searchEntry($keyword)
-    {
-        $m3u_file = new SplFileObject($this->file_name);
-        $m3u_file->setFlags(SplFileObject::DROP_NEW_LINE);
-        if (!$m3u_file->valid()) {
-            hd_print("Can't read file.");
-            return array();
-        }
-
-        $t = microtime(1);
-        $data = array();
-        $entry = new Entry();
-        $entry_idx = 0;
-        while (!$m3u_file->eof()) {
-            if (!$this->parseLine($m3u_file->fgets(), $entry)) continue;
-
-            $title = $entry->getTitle();
-            $search_in = utf8_encode(mb_strtolower($title, 'UTF-8'));
-            if (strpos($search_in, $keyword) !== false) {
-                $data[$entry_idx] = $entry;
-                $entry = new Entry();
-            }
-            $entry_idx++;
-        }
-
-        hd_print('searchEntry at ' . (microtime(1) - $t) . ' secs');
-        return $data;
-    }
-
-    /**
-     * collect entries matched $group_name
-     *
-     * @param string $group_name
-     * @return Entry[]
-     */
-    public function collectEntriesByGroup($group_name)
-    {
-        $m3u_file = new SplFileObject($this->file_name);
-        $m3u_file->setFlags(SplFileObject::DROP_NEW_LINE);
-        if (!$m3u_file->valid()) {
-            hd_print("Can't read file.");
-            return array();
-        }
-
-        $t = microtime(1);
-
-        $data = array();
-        $entry = new Entry();
-        $entry_idx = 0;
-        while (!$m3u_file->eof()) {
-            if (!$this->parseLine($m3u_file->fgets(), $entry)) continue;
-
-            if ($group_name === $entry->getGroupTitle()) {
-                $data[$entry_idx] = $entry;
-            }
-
-            $entry_idx++;
-            $entry = new Entry();
-        }
-
-        hd_print('collectGroupEntries at ' . (microtime(1) - $t) . ' secs');
-        hd_print("memory usage: " . memory_get_usage());
+        hd_print("parseInMemory " . (microtime(1) - $t) . " secs");
         return $data;
     }
 
@@ -176,65 +150,22 @@ class M3uParser
      */
     public function getEntryByIdx($idx)
     {
-        $m3u_file = new SplFileObject($this->file_name);
-        $m3u_file->setFlags(SplFileObject::DROP_NEW_LINE);
-        if (!$m3u_file->valid()) {
-            hd_print("Can't read file.");
+        if ($this->m3u_file === null) {
+            hd_print('getEntryByIdx: Bad file');
             return null;
         }
-
-        $t = microtime(1);
+        $this->m3u_file->fseek($idx);
         $entry = new Entry();
-        $entry_idx = 0;
-        while (!$m3u_file->eof() && $entry_idx <= $idx) {
-            if (!$this->parseLine($m3u_file->fgets(), $entry)) continue;
-
-            if ($idx === $entry_idx++) {
-                hd_print('getEntryByIdx at ' . (microtime(1) - $t) . ' secs');
+        while (!$this->m3u_file->eof()) {
+            if ($this->parseLine($this->m3u_file->fgets(), $entry)) {
                 return $entry;
             }
-            $entry = new Entry();
         }
 
-        hd_print('getEntryByIdx fail to find at ' . (microtime(1) - $t) . ' secs');
         return null;
     }
 
     ///////////////////////////////////////////////////////////
-
-    /**
-     * Parse one line
-     *
-     * @param int& $i
-     * @param string[] $lines
-     * @return Entry
-     */
-    protected function parseArrayLine(&$i, $lines)
-    {
-        $entry = new Entry();
-
-        for ($total = count($lines); $i < $total; $i++) {
-            $nextLine = trim($lines[$i]);
-            if (empty($nextLine) || self::isExtM3u($nextLine) || self::isComment($nextLine)) {
-                continue;
-            }
-
-            if (self::isExtInf($nextLine)) {
-                $entry->setExtInf(new ExtInf($nextLine));
-                if (!empty($this->vod_pattern) && preg_match($this->vod_pattern, $entry->getTitle(), $match) && isset($match['title'])) {
-                    $title = $match['title'];
-                    $entry->setParsedTitle($title);
-                }
-            } else if (self::isExtGrp($nextLine)) {
-                $entry->setExtGrp(new ExtGrp($nextLine));
-            } else {
-                $entry->setPath($nextLine);
-                break;
-            }
-        }
-
-        return $entry;
-    }
 
     /**
      * Parse one line
@@ -264,16 +195,6 @@ class M3uParser
         }
 
         return false;
-    }
-
-    /**
-     * @param string $str
-     */
-    protected function removeBom(&$str)
-    {
-        if (strpos($str, "\xEF\xBB\xBF") === 0) {
-            $str = substr($str, 3);
-        }
     }
 
     /**

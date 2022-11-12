@@ -126,7 +126,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
                 return Action_Factory::invalidate_folders(
                     array(Starnet_Vod_Search_Screen::ID),
                     Action_Factory::open_folder(
-                        static::get_media_url_str(Vod_Category::PATTERN_SEARCH, $search_string),
+                        static::get_media_url_str(Vod_Category::FLAG_SEARCH, $search_string),
                         "Поиск: " . $search_string));
 
             case self::ACTION_POPUP_MENU:
@@ -154,30 +154,31 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        //hd_print("get_short_movie_range: '$media_url->category_id', from_idx: $from_ndx");
+        hd_print("get_short_movie_range: '$media_url->category_id', from_idx: $from_ndx");
         $this->plugin->config->try_reset_pages();
-        $key = $media_url->category_id . "_" . $media_url->genre_id;
+        if (empty($media_url->genre_id)) {
+            $key = $media_url->category_id;
+        } else {
+            $key = $media_url->category_id . "_" . $media_url->genre_id;
+        }
 
-        $movies = array();
-        if ($this->plugin->config->get_movie_counter($key) <= 0 || $this->plugin->config->get_feature(Plugin_Constants::VOD_LAZY_LOAD)) {
-            if ($media_url->category_id === Vod_Category::PATTERN_SEARCH) {
-                $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
-            } else if ($media_url->category_id === Vod_Category::PATTERN_FILTER) {
-                $movies = $this->plugin->config->getFilterList($media_url->genre_id, $plugin_cookies);
-            } else if ($media_url->category_id === Vod_Category::PATTERN_ALL || empty($media_url->genre_id)) {
-                $movies = $this->plugin->config->getVideoList($media_url->category_id, $plugin_cookies);
-            } else {
-                $movies = $this->plugin->config->getVideoList($key, $plugin_cookies);
-            }
+        if ($media_url->category_id === Vod_Category::FLAG_SEARCH) {
+            $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
+        } else if ($media_url->category_id === Vod_Category::FLAG_FILTER) {
+            $movies = $this->plugin->config->getFilterList($media_url->genre_id, $plugin_cookies);
+        } else if ($media_url->category_id === Vod_Category::FLAG_ALL || empty($media_url->genre_id)) {
+            $movies = $this->plugin->config->getMovieList($media_url->category_id, $plugin_cookies);
+        } else {
+            $movies = $this->plugin->config->getMovieList($key, $plugin_cookies);
         }
 
         $count = count($movies);
-        if ($count) {
-            $this->plugin->config->add_movie_counter($key, $count);
-            return new Short_Movie_Range($from_ndx, $this->plugin->config->get_movie_counter($key), $movies);
+        if (!$count) {
+            return new Short_Movie_Range(0, 0);
         }
 
-        return new Short_Movie_Range(0, 0);
+        $this->plugin->config->add_movie_counter($key, $count);
+        return new Short_Movie_Range($from_ndx, $this->plugin->config->get_movie_counter($key), $movies);
     }
 
     /**
@@ -188,7 +189,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      */
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        // hd_print("get_folder_range: $from_ndx");
+        //hd_print("get_folder_range: $from_ndx");
         $movie_range = $this->get_short_movie_range($media_url, $from_ndx, $plugin_cookies);
 
         $total = $movie_range->total;

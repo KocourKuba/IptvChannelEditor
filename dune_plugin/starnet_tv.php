@@ -382,8 +382,9 @@ class Starnet_Tv implements Tv, User_Input_Handler
             }
         }
 
+        $this->plugin->config->SetupM3uParser(true, $plugin_cookies);
         $this->plugin->config->GetAccountInfo($plugin_cookies);
-        $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo($plugin_cookies);
+        $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo();
 
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
 

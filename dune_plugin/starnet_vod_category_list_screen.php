@@ -109,7 +109,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
     {
         hd_print("get_all_folder_items");
         if (is_null($this->category_index) || is_null($this->category_list)) {
-            $this->plugin->config->fetch_vod_categories($plugin_cookies, $this->category_list, $this->category_index);
+            $this->plugin->config->fetchVodCategories($plugin_cookies, $this->category_list, $this->category_index);
         }
 
         $category_list = $this->category_list;
@@ -187,9 +187,9 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 $category_id = $category->get_id();
                 if (!is_null($category->get_sub_categories())) {
                     $media_url_str = self::get_media_url_str($category_id);
-                } else if ($category_id === Vod_Category::PATTERN_ALL
-                    || $category_id === Vod_Category::PATTERN_SEARCH
-                    || $category_id === Vod_Category::PATTERN_FILTER) {
+                } else if ($category_id === Vod_Category::FLAG_ALL
+                    || $category_id === Vod_Category::FLAG_SEARCH
+                    || $category_id === Vod_Category::FLAG_FILTER) {
                     // special category id's
                     $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category_id, null);
                 } else if ($category->get_parent() !== null) {

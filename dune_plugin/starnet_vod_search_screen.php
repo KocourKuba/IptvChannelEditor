@@ -104,7 +104,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                 if (!isset($user_input->parent_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
-                if ($media_url->genre_id !== Vod_Category::PATTERN_SEARCH && $user_input->search_actions !== 'keyboard') {
+                if ($media_url->genre_id !== Vod_Category::FLAG_SEARCH && $user_input->search_actions !== 'keyboard') {
                     return Action_Factory::open_folder($user_input->selected_media_url);
                 }
 
@@ -138,7 +138,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                 array_unshift($search_items, $search_string);
                 HD::put_items(self::SEARCH_LIST, $search_items);
                 $action = Action_Factory::open_folder(
-                    Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_SEARCH, $search_string),
+                    Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_SEARCH, $search_string),
                     "Поиск: " . $search_string);
 
                 return Action_Factory::invalidate_folders(array(self::ID), $action);
@@ -218,7 +218,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                 ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                 ViewItemParams::item_caption_width => 1100
             ),
-            PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_SEARCH, Vod_Category::PATTERN_SEARCH)
+            PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_SEARCH, Vod_Category::FLAG_SEARCH)
         );
 
         $search_items = HD::get_items(self::SEARCH_LIST);
@@ -237,7 +237,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                         ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                         ViewItemParams::item_caption_width => 1100
                     ),
-                    PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::PATTERN_SEARCH, $item)
+                    PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_SEARCH, $item)
                 );
             }
         }

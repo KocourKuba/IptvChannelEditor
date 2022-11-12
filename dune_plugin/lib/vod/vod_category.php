@@ -4,9 +4,9 @@ class Vod_Category
 {
     const DEFAULT_ICON = 'plugin_file://icons/movie_folder.png';
 
-    const PATTERN_ALL = 'all';
-    const PATTERN_SEARCH = 'search';
-    const PATTERN_FILTER = 'filter';
+    const FLAG_ALL    = '##allmovies##';
+    const FLAG_SEARCH = '##search##';
+    const FLAG_FILTER = '##filter##';
 
     /**
      * @var string
