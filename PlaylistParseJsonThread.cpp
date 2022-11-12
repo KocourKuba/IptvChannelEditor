@@ -76,6 +76,12 @@ BOOL CPlaylistParseJsonThread::InitInstance()
 void CPlaylistParseJsonThread::ParseSharaclub()
 {
 	auto categories = std::make_unique<vod_category_storage>();
+
+	const auto& all_name = load_string_resource(IDS_STRING_ALL);
+	auto all_category = std::make_shared<vod_category>(all_name);
+	all_category->name = all_name;
+	categories->set_back(all_name, all_category);
+
 	do
 	{
 		std::stringstream data;
@@ -107,7 +113,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 			{
 				category = std::make_shared<vod_category>(category_name);
 				category->name = category_name;
-				categories->set(category_name, category);
+				categories->set_back(category_name, category);
 			}
 
 			movie->title = utils::get_json_wstring("name", val);
@@ -132,7 +138,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 					const auto& title = utils::utf8_to_utf16(genre_item.value().get<std::string>());
 					vod_genre genre({ title, title });
 
-					movie->genres.set(title, genre);
+					movie->genres.set_back(title, genre);
 				}
 
 				std::string country;
@@ -145,7 +151,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 				movie->country = utils::utf8_to_utf16(country);
 			}
 
-			category->movies.set(movie->id, movie);
+			category->movies.set_back(movie->id, movie);
 			JSON_ALL_CATCH;
 
 			cnt++;
@@ -165,7 +171,13 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 
 void CPlaylistParseJsonThread::ParseCbilling()
 {
-	auto categories = std::make_unique<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>>();
+	auto categories = std::make_unique<vod_category_storage>();
+
+	const auto& all_name = load_string_resource(IDS_STRING_ALL);
+	auto all_category = std::make_shared<vod_category>(all_name);
+	all_category->name = all_name;
+	categories->set_back(all_name, all_category);
+
 	do
 	{
 		std::stringstream info;
@@ -183,7 +195,7 @@ void CPlaylistParseJsonThread::ParseCbilling()
 			category->id = utils::get_json_wstring("id", item);
 			category->name = utils::get_json_wstring("name", item);
 			total += item["count"].get<int>();
-			categories->set(category->id, category);
+			categories->set_back(category->id, category);
 		}
 		JSON_ALL_CATCH;
 
@@ -241,10 +253,10 @@ void CPlaylistParseJsonThread::ParseCbilling()
 						{
 							const auto& title = utils::get_json_wstring("title", genre_item.value());
 							vod_genre genre({ title, title });
-							movie->genres.set(title, genre);
+							movie->genres.set_back(title, genre);
 						}
 
-						category->movies.set(movie->id, movie);
+						category->movies.set_back(movie->id, movie);
 					}
 					JSON_ALL_CATCH;
 
@@ -280,7 +292,13 @@ void CPlaylistParseJsonThread::ParseCbilling()
 
 void CPlaylistParseJsonThread::ParseEdem()
 {
-	auto categories = std::make_unique<utils::vectormap<std::wstring, std::shared_ptr<vod_category>>>();
+	auto categories = std::make_unique<vod_category_storage>();
+
+	const auto& all_name = load_string_resource(IDS_STRING_ALL);
+	auto all_category = std::make_shared<vod_category>(all_name);
+	all_category->name = all_name;
+	categories->set_back(all_name, all_category);
+
 	do
 	{
 		boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
@@ -313,7 +331,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 			auto category = std::make_shared<vod_category>();
 			category->id = utils::get_json_wstring("fid", item["request"]);
 			category->name = utils::get_json_wstring("title", item);
-			categories->set(category->id, category);
+			categories->set_back(category->id, category);
 		}
 
 		for (const auto& filter_it : parsed_json["controls"]["filters"].items())
@@ -342,9 +360,9 @@ void CPlaylistParseJsonThread::ParseEdem()
 				const auto& id = utils::get_json_wstring(id_tag, filter_sub["request"]);
 				const auto& title = utils::get_json_wstring("title", filter_sub);
 				vod_filter filter({ id, title });
-				filters.set(id, filter);
+				filters.set_back(id, filter);
 			}
-			categories->vec().front().second->filters.set(utils::utf8_to_utf16(id_tag), filters);
+			categories->vec().front().second->filters.set_back(utils::utf8_to_utf16(id_tag), filters);
 		}
 
 		json_request["cmd"] = "flicks";
@@ -398,7 +416,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 					movie->age = utils::get_json_wstring("agelimit", movie_item);
 					movie->movie_time = utils::get_json_int("duration", movie_item);
 
-					category.second->movies.set(movie->id, movie);
+					category.second->movies.set_back(movie->id, movie);
 
 					readed++;
 					cnt++;
@@ -470,7 +488,7 @@ void CPlaylistParseJsonThread::ParseGlanz()
 			{
 				category = std::make_shared<vod_category>(category_name);
 				category->name = category_name;
-				categories->set(category_name, category);
+				categories->set_back(category_name, category);
 			}
 
 			movie->title = utils::get_json_wstring("name", val);
@@ -496,11 +514,11 @@ void CPlaylistParseJsonThread::ParseGlanz()
 				const auto& title = utils::get_json_wstring("title", genre_item);
 				vod_genre genre({ id, title });
 
-				movie->genres.set(title, genre);
+				movie->genres.set_back(title, genre);
 			}
 
 
-			category->movies.set(movie->id, movie);
+			category->movies.set_back(movie->id, movie);
 			JSON_ALL_CATCH;
 
 			cnt++;

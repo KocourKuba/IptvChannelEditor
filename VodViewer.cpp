@@ -174,6 +174,8 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 
 	if (!m_vod_categories->empty())
 	{
+		m_total = m_vod_categories->get(load_string_resource(IDS_STRING_ALL))->movies.size();
+
 		FillCategories();
 		FillGenres();
 		FillYears();
@@ -235,9 +237,14 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	if (deleter != nullptr)
 	{
 		*m_vod_categories = *deleter;
-		std::shared_ptr<vod_category> all_category;
+		auto& all_category = m_vod_categories->get(load_string_resource(IDS_STRING_ALL));
 		for (const auto& category : m_vod_categories->vec())
 		{
+			for (const auto& pair : category.second->movies.vec())
+			{
+				all_category->movies.set_back(pair.second->id, pair.second);
+			}
+
 			m_total += category.second->movies.size();
 		}
 	}
@@ -263,6 +270,8 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	m_evtFinished.ResetEvent();
 	if (!m_vod_categories->empty())
 	{
+		m_total = m_vod_categories->get(load_string_resource(IDS_STRING_ALL))->movies.size();
+
 		FillCategories();
 		FillGenres();
 		FillYears();
@@ -355,6 +364,12 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	if (m_playlistEntries)
 	{
 		m_total = m_playlistEntries->m_entries.size();
+
+		const auto& all_name = load_string_resource(IDS_STRING_ALL);
+		auto all_category = std::make_shared<vod_category>(all_name);
+		all_category->name = all_name;
+		m_vod_categories->set_back(all_name, all_category);
+
 		for (const auto& entry : m_playlistEntries->m_entries)
 		{
 			std::shared_ptr<vod_category> category;
@@ -363,7 +378,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 			{
 				category = std::make_shared<vod_category>(category_name);
 				category->name = category_name;
-				m_vod_categories->set(category_name, category);
+				m_vod_categories->set_back(category_name, category);
 			}
 
 			auto movie = std::make_shared<vod_movie>();
@@ -386,7 +401,8 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 				}
 			}
 
-			category->movies.set(movie->id, movie);
+			all_category->movies.set_back(movie->id, movie);
+			category->movies.set_back(movie->id, movie);
 		}
 	}
 
@@ -566,7 +582,7 @@ void CVodViewer::OnBnClickedButtonSearch()
 			const auto& movie = movies.second;
 			if (StrStrI(movie->title.c_str(), m_SearchText.GetString()) != nullptr)
 			{
-				searchMovies.set(movie->id, movie);
+				searchMovies.set_back(movie->id, movie);
 			}
 		}
 	}
@@ -603,14 +619,14 @@ void CVodViewer::FillCategories()
 					for (const auto& filter_item : filter.second.vec())
 					{
 						vod_genre genre({ filter_item.second.id, filter_item.second.title });
-						m_genres.set(filter_item.second.id, genre);
+						m_genres.set_back(filter_item.second.id, genre);
 					}
 				}
 				else if (filter.first == L"years")
 				{
 					for (const auto& filter_item : filter.second.vec())
 					{
-						m_years.set(filter_item.second.title, filter_item.second.title);
+						m_years.set_back(filter_item.second.title, filter_item.second.title);
 					}
 				}
 			}
@@ -623,9 +639,9 @@ void CVodViewer::FillCategories()
 				{
 					for (const auto& genre : movie_pair.second->genres.vec())
 					{
-						m_genres.set(genre.first, genre.second);
+						m_genres.set_back(genre.first, genre.second);
 					}
-					m_years.set(movie_pair.second->year, movie_pair.second->year);
+					m_years.set_back(movie_pair.second->year, movie_pair.second->year);
 				}
 			}
 		}
@@ -905,7 +921,7 @@ void CVodViewer::FilterList()
 			{
 				for (const auto& movie_pair : m_vod_categories->getAt(m_category_idx)->movies.vec())
 				{
-					filtered_movies.set(movie_pair.first, movie_pair.second);
+					filtered_movies.set_back(movie_pair.first, movie_pair.second);
 				}
 
 				break;
@@ -984,7 +1000,7 @@ void CVodViewer::FilterList()
 					movie->age = utils::get_json_wstring("agelimit", movie_item);
 					movie->movie_time = utils::get_json_int("duration", movie_item);
 
-					filtered_movies.set(movie->id, movie);
+					filtered_movies.set_back(movie->id, movie);
 					cnt++;
 
 					if (cnt % 100 == 0)
@@ -1040,7 +1056,7 @@ void CVodViewer::FilterList()
 
 			if (genre && year)
 			{
-				filtered_movies.set(movie_pair.first, movie_pair.second);
+				filtered_movies.set_back(movie_pair.first, movie_pair.second);
 			}
 		}
 	}
@@ -1109,9 +1125,9 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 						episode.url = utils::get_json_wstring("url", episode_item["files"].front());
 					}
 
-					season.episodes.set(episode.id, episode);
+					season.episodes.set_back(episode.id, episode);
 				}
-				movie.seasons.set(season.id, season);
+				movie.seasons.set_back(season.id, season);
 			}
 		}
 		else
@@ -1162,7 +1178,7 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 		{
 			if (movie.seasons.empty())
 			{
-				movie.seasons.set(L"season", vod_season());
+				movie.seasons.set_back(L"season", vod_season());
 			}
 			auto& season = movie.seasons.get(L"season");
 
@@ -1194,12 +1210,12 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 							const auto& title = utils::utf8_to_utf16(variant_it.key());
 							const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
 
-							episode.quality.set(title, vod_quality({ title, q_url }));
+							episode.quality.set_back(title, vod_quality({ title, q_url }));
 						}
 					}
 				}
 
-				season.episodes.set(episode.id, episode);
+				season.episodes.set_back(episode.id, episode);
 			}
 		}
 		else
@@ -1212,7 +1228,7 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 					const auto& title = utils::utf8_to_utf16(variant_it.key());
 					const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
 
-					movie.quality.set(title, vod_quality({ title, q_url }));
+					movie.quality.set_back(title, vod_quality({ title, q_url }));
 				}
 			}
 		}

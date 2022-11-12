@@ -166,7 +166,7 @@ namespace utils
 		/// <summary>
 		/// Associate a value with a key
 		/// </summary>
-		void set(const K& key, const V& val)
+		void set_back(const K& key, const V& val)
 		{
 			auto it = m_map.find(key);
 			if (it == m_map.end())
@@ -180,11 +180,11 @@ namespace utils
 			}
 		}
 
-		void push_back(const vectormap& source)
+		void append(const vectormap& source)
 		{
 			for (const auto& item : source.vec())
 			{
-				set(item.first, item.second);
+				set_back(item.first, item.second);
 			}
 		}
 
