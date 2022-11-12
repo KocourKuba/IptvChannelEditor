@@ -740,7 +740,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
         //hd_print('Starnet_Tv: handle_user_input');
         //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
-
         switch ($user_input->control_id) {
             case GUI_EVENT_TIMER:
                 //return Action_Factory::change_behaviour($this->get_action_map(), 5000);
@@ -748,11 +747,10 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
             case GUI_EVENT_PLAYBACK_STOP:
                 Playback_Points::update($user_input->plugin_tv_channel_id);
-                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
-                    Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-                    return Starnet_Epfs_Handler::invalidate_folders();
-                }
-                return null;
+                if (!isset($user_input->playback_stop_pressed) && !isset($user_input->playback_power_off_needed)) break;
+
+                Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                return Starnet_Epfs_Handler::invalidate_folders();
         }
 
         return null;

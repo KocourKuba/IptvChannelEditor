@@ -58,10 +58,11 @@ class Epg_Manager
         }
 
         if (empty($epg_id) && strpos($params[Epg_Params::EPG_URL], '{ID}') === false) {
-            hd_print("EPG: $epg_id not defined");
+            hd_print("EPG ID: $epg_id not defined for channel {$channel->get_id()} ({$channel->get_title()})");
             throw new Exception("EPG: $epg_id not defined");
         }
 
+        hd_print("Try to load EPG for channel {$channel->get_id()} ({$channel->get_title()})");
         $epg_id = str_replace(' ', '%20', $epg_id);
         $epg_url = str_replace(array('{EPG_ID}', '{ID}'), array($epg_id, $channel->get_id()), $params[Epg_Params::EPG_URL]);
         if (strpos($epg_url, '{DATE}') !== false) {
@@ -85,7 +86,7 @@ class Epg_Manager
 
         $day_epg_cache = $this->cache_dir . "epg_channel_" . hash('crc32', $epg_url) . "_{$day_start_ts}";
         if (file_exists($day_epg_cache)) {
-            hd_print("Loading day EPG entries for '$epg_id' from cache: $day_epg_cache");
+            hd_print("Loading day entries for EPG ID: '$epg_id' from cache: $day_epg_cache");
             return self::load_cache($day_epg_cache);
         }
 
@@ -98,14 +99,14 @@ class Epg_Manager
             if ($cache_expired > time()) {
                 $program_epg = self::load_cache($epg_cache_file);
                 $from_cache = true;
-                hd_print("Loading all EPG entries for '$epg_id' from cache: $epg_cache_file");
+                hd_print("Loading all entries for EPG ID: '$epg_id' from cache: $epg_cache_file");
             } else {
                 hd_print("Cache expired at $cache_expired now $now");
             }
         }
 
         if ($from_cache === false && $params[Plugin_Constants::EPG_PARSER] === 'json') {
-            hd_print("Fetching EPG for ID: '$epg_id'");
+            hd_print("Fetching EPG ID: '$epg_id'");
             $program_epg = self::get_epg_json($epg_url, $params);
             // save downloaded data
             self::save_cache($program_epg, $epg_cache_file);

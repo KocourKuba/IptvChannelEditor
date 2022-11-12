@@ -21,8 +21,8 @@ class Starnet_Entry_Handler implements User_Input_Handler
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('StarnetEntryHandler: handle_user_input');
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        hd_print('StarnetEntryHandler: handle_user_input');
+        foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->control_id))
             return null;
@@ -51,14 +51,18 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 return Action_Factory::show_title_dialog('Кэш EPG очищен');
 
             case 'plugin_entry':
-                hd_print("plugin_entry");
+                hd_print("plugin_entry $user_input->action_id");
                 if (!isset($user_input->action_id)) break;
 
                 switch ($user_input->action_id) {
                     case 'launch':
                         if ((int)$user_input->mandatory_playback === 1) {
                             hd_print("action: launch play");
-                            return Action_Factory::tv_play();
+                            $action = Action_Factory::tv_play();
+                            if (HD::rows_api_support()) {
+                                Starnet_Epfs_Handler::update_all_epfs(isset($user_input->first_run_after_boot) || isset($user_input->restore_from_sleep), $plugin_cookies);
+                                return Starnet_Epfs_Handler::invalidate_folders(null, $action);
+                            }
                         }
 
                         hd_print("action: launch open");

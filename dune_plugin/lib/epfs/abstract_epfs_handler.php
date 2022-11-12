@@ -17,21 +17,20 @@ class Abstract_Epfs_Handler
 
 	private static function do_write_epf_data($path, $data, $log_str)
 	{
-		$tmp_path = "$path.tmp";
+        $tmp_path = "$path.tmp";
+        if (file_exists($tmp_path)) {
+            unlink($tmp_path);
+        }
 
-		if (false !== file_put_contents($tmp_path, $data))
-		{
-			if (!rename($tmp_path, $path))
-			{
-				hd_print("Failed to tmp rename ($path)");
-				unlink($tmp_path);
-				return;
-			}
-		}
-		else
-			hd_print("Failed to write tmp file: $tmp_path");
+        if (file_exists($path) && !rename($path, $tmp_path)) {
+            hd_print("Failed to rename $path to $tmp_path");
+        }
 
-		hd_print("Write epf for $log_str (" . strlen($data) . ' bytes)');
+        if (false === file_put_contents($path, $data)) {
+            hd_print("Failed to write file: $path");
+        }
+
+		hd_print("Write epf for $log_str to $path (" . strlen($data) . ' bytes)');
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -45,7 +44,7 @@ class Abstract_Epfs_Handler
 
 	protected static function write_dummy_epf($epf_id)
 	{
-		self::write_epf_data($epf_id, '');
+		self::write_epf_view($epf_id, '');
 	}
 
 	protected static function read_epf_data($epf_id)
@@ -53,13 +52,18 @@ class Abstract_Epfs_Handler
 		return file_exists($path = self::get_epf_path($epf_id))? file_get_contents($path) : '';
 	}
 
-	protected static function write_epf_data($epf_id, $folder_view)
+	protected static function write_epf_view($epf_id, $folder_view)
 	{
 		if ($folder_view)
 			self::do_write_epf_data(self::get_epf_path($epf_id), json_encode($folder_view), $epf_id);
 	}
 
-	protected static function get_ilang_path()
+    protected static function write_epf_data($epf_id, $epf_data)
+    {
+        self::do_write_epf_data(self::get_epf_path($epf_id), $epf_data, $epf_id);
+    }
+
+    protected static function get_ilang_path()
 	{
 		return self::$dir_path . '/ilang';
 	}

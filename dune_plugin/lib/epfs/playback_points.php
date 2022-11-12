@@ -123,6 +123,9 @@ class Playback_Points
     {
         if (is_null(self::$instance)) {
             self::$instance = new Playback_Points();
+        }
+
+        if (!isset(self::$instance->points)) {
             self::$instance->points = self::get_all();
         }
     }

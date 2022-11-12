@@ -119,9 +119,9 @@ class Starnet_Epfs_Handler extends Abstract_Epfs_Handler
      */
     public static function update_all_epfs($first_run, &$plugin_cookies)
     {
-        self::ensure_no_internet_epfs_created($first_run, $plugin_cookies);
+        hd_print("update_all_epfs: first run " . ($first_run ? "yes" : "no"));
 
-        $cold_run = !is_file(self::warmed_up_path());
+        self::ensure_no_internet_epfs_created($first_run, $plugin_cookies);
 
         try {
             $folder_view = self::$tv_rows_screen->get_folder_view_for_epf($plugin_cookies);
@@ -130,12 +130,15 @@ class Starnet_Epfs_Handler extends Abstract_Epfs_Handler
             return null;
         }
 
-        if (json_encode($folder_view) !== self::read_epf_data(self::$epf_id)) {
-            self::write_epf_data(self::$epf_id, $folder_view);
-        }
-
+        $cold_run = !is_file(self::warmed_up_path());
+        hd_print("Cold run: " . ($cold_run ? "yes" : "no"));
         if ($cold_run) {
             file_put_contents(self::warmed_up_path(), '');
+        }
+
+        $epf_data = json_encode($folder_view);
+        if ($epf_data !== self::read_epf_data(self::$epf_id)) {
+            self::write_epf_data(self::$epf_id, $epf_data);
         }
 
         return Action_Factory::status(0);
