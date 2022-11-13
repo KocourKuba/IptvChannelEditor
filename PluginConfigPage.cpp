@@ -722,7 +722,6 @@ void CPluginConfigPage::FillControlsVod()
 	if (!m_plugin) return;
 
 	int vod_idx = m_plugin->get_vod_template_idx();
-	m_ParseStream = m_plugin->get_vod_parse_regex(vod_idx).c_str();
 	m_wndVodTemplates.ResetContent();
 	for (const auto& entry : m_plugin->get_vod_templates())
 	{
