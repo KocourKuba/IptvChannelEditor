@@ -101,14 +101,11 @@ abstract class Cbilling_Vod_Impl extends default_config
         $category_list = array();
         $category_index = array();
 
-        // all movies
-        $category = new Vod_Category(Vod_Category::FLAG_ALL, 'Все фильмы');
-        $category_list[] = $category;
-        $category_index[$category->get_id()] = $category;
-
+        $total = 0;
         foreach ($jsonItems->data as $node) {
             $id = (string)$node->id;
-            $category = new Vod_Category($id, (string)$node->name);
+            $category = new Vod_Category($id, "$node->name ($node->count)");
+            $total += $node->count;
 
             // fetch genres for category
             $genres = HD::DownloadJson(self::API_HOST . "/cat/$id/genres", false);
@@ -126,6 +123,11 @@ abstract class Cbilling_Vod_Impl extends default_config
             $category_list[] = $category;
             $category_index[$category->get_id()] = $category;
         }
+
+        // all movies
+        $category = new Vod_Category(Vod_Category::FLAG_ALL, "Все фильмы ($total)");
+        array_unshift($category_list, $category);
+        $category_index[Vod_Category::FLAG_ALL] = $category;
 
         hd_print("Categories read: " . count($category_list));
     }
