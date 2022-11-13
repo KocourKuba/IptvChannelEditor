@@ -145,7 +145,7 @@ class M3uParser
             hd_print('getEntryByIdx: Bad file');
             return null;
         }
-        $this->m3u_file->fseek($idx);
+        $this->m3u_file->fseek((int)$idx);
         $entry = new Entry();
         while (!$this->m3u_file->eof()) {
             if ($this->parseLine($this->m3u_file->fgets(), $entry)) {
@@ -169,7 +169,7 @@ class M3uParser
             return null;
         }
 
-        $this->m3u_file->fseek($idx);
+        $this->m3u_file->fseek((int)$idx);
         while (!$this->m3u_file->eof()) {
             $line = trim($this->m3u_file->fgets());
             if (empty($line)) continue;

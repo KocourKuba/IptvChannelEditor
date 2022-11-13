@@ -561,7 +561,7 @@ class default_config extends dynamic_config
 
             $poster_url = $entry->getAttribute('tvg-logo');
             hd_print("Found at $index movie '$title', poster url: '$poster_url'");
-            $movies[] = new Short_Movie((string)$index, $title, $poster_url);
+            $movies[] = new Short_Movie($index, $title, $poster_url);
         }
 
         hd_print("Movies found: " . count($movies));
@@ -607,7 +607,8 @@ class default_config extends dynamic_config
 
         $pos = $current_offset;
         while($pos < $ubound) {
-            $entry = $this->m3u_parser->getEntryByIdx($indexes[$pos++]);
+            $index = $indexes[$pos++];
+            $entry = $this->m3u_parser->getEntryByIdx($index);
             if ($entry === null) continue;
 
             $title = $entry->getTitle();
@@ -615,7 +616,7 @@ class default_config extends dynamic_config
                 $title = isset($match['title']) ? $match['title'] : $title;
             }
 
-            $movies[] = new Short_Movie($category_id, $title, $entry->getAttribute('tvg-logo'));
+            $movies[] = new Short_Movie($index, $title, $entry->getAttribute('tvg-logo'));
         }
 
         $this->get_next_page($query_id, $pos - $current_offset);
@@ -655,6 +656,15 @@ class default_config extends dynamic_config
                 $year = isset($match['year']) ? $match['year'] : $year;
             }
 
+            $category = '';
+            foreach ($this->vod_m3u_indexes as $group => $indexes) {
+                if ($group === Vod_Category::FLAG_ALL) continue;
+                if (in_array($movie_id, $indexes)) {
+                    $category = $group;
+                    break;
+                }
+            }
+
             $url = $this->UpdateMpegTsBuffering($entry->getPath(), $plugin_cookies);
 
             //hd_print("Vod url: $playback_url");
@@ -668,7 +678,7 @@ class default_config extends dynamic_config
                 '',// $xml->director,
                 '',// $xml->scenario,
                 '',// $xml->actors,
-                '',// $xml->genres,
+                $category,// $xml->genres,
                 '',// $xml->rate_imdb,
                 '',// $xml->rate_kinopoisk,
                 '',// $xml->rate_mpaa,
@@ -677,7 +687,6 @@ class default_config extends dynamic_config
             );
 
             $movie->add_series_data($movie_id, $title, '', $url);
-            hd_print("movie url: $url");
         }
 
         return $movie;
