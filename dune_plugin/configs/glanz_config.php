@@ -91,13 +91,11 @@ class glanz_config extends default_config
 
         $category_list = array();
         $category_index = array();
-        $categoriesFound = array();
+        $cat_info = array();
 
         // all movies
-        $category = new Vod_Category(Vod_Category::FLAG_ALL, 'Все фильмы');
-        $category_list[] = $category;
-        $category_index[$category->get_id()] = $category;
-
+        $count = count($jsonItems);
+        $cat_info[Vod_Category::FLAG_ALL] = $count;
         $genres = array();
         $years = array();
         foreach ($jsonItems as $movie) {
@@ -106,20 +104,23 @@ class glanz_config extends default_config
                 $category = "Без категории";
             }
 
-            if (!in_array($category, $categoriesFound)) {
-                $categoriesFound[] = $category;
-                $cat = new Vod_Category($category, $category);
-                $category_list[] = $cat;
-                $category_index[$cat->get_id()] = $cat;
+            if (!array_key_exists($category, $cat_info)) {
+                $cat_info[$category] = 0;
             }
 
+            ++$cat_info[$category];
+
             // collect filters information
-            $year = (int)$movie->year;
-            $years[$year] = $movie->year;
+            $years[(int)$movie->year] = $movie->year;
             foreach ($movie->genres as $genre) {
-                $val = (int)$genre->id;
-                $genres[$val] = $genre->title;
+                $genres[(int)$genre->id] = $genre->title;
             }
+        }
+
+        foreach ($cat_info as $category => $movie_count) {
+            $cat = new Vod_Category($category, ($category === Vod_Category::FLAG_ALL) ? "Все фильмы ($movie_count)" : "$category ($movie_count)");
+            $category_list[] = $cat;
+            $category_index[$category] = $cat;
         }
 
         ksort($genres);
