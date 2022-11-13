@@ -962,7 +962,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		}
 		else
 		{
-			m_plFileName = slashed;
+			m_plFileName = std::move(slashed);
 		}
 
 		std::vector<wchar_t> bad_chars = { '?', '&', ':' };

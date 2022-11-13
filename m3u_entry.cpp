@@ -128,6 +128,7 @@ void m3u_entry::parse(const std::string_view& str)
 	switch (ext_name)
 	{
 		case directives::ext_header:
+		case directives::ext_vlcopt:
 		{
 			// #EXTM3U url-tvg="http://iptv-content.webhop.net/guide.xml" url-logo="http://iptv-content.webhop.net/220x132/"
 			auto hdr = match_view(m_dir[2]);
@@ -151,13 +152,6 @@ void m3u_entry::parse(const std::string_view& str)
 					parse_directive_tags(match_view(m[2]));
 				}
 			}
-			break;
-		}
-		case directives::ext_vlcopt:
-		{
-			auto hdr = match_view(m_dir[2]);
-			if (!hdr.empty())
-				parse_directive_tags(hdr);
 			break;
 		}
 		default:
