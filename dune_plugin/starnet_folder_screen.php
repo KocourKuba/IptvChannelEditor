@@ -371,7 +371,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
             case 'select_folder':
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
                 smb_tree::set_folder_info($plugin_cookies, $url);
-                $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Setup_Screen::ID . '_handler');
+                $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Setup_Screen::ID . "_handler");
                 $action = is_null($setup_handler) ? null : User_Input_Handler_Registry::create_action($setup_handler, 'reset_controls');
                 $post_action = Action_Factory::invalidate_folders(array('setup', 'main_menu', 'main_screen'), $action);
 

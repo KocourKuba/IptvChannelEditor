@@ -8,6 +8,7 @@ class dynamic_config
     private $features = array();
     private $stream_params = array();
     private $epg_parser_params = array();
+    private $vod_templates = array();
     private $servers = array();
     private $devices = array();
     private $qualities = array();
@@ -31,8 +32,6 @@ class dynamic_config
         $this->features[Plugin_Constants::URI_PARSE_PATTERN] = '';
         $this->features[Plugin_Constants::VOD_SUPPORTED] = false;
         $this->features[Plugin_Constants::VOD_M3U] = false;
-        $this->features[Plugin_Constants::VOD_PLAYLIST_URL] = '';
-        $this->features[Plugin_Constants::VOD_PARSE_PATTERN] = '';
 
         // load defaults
         $default_streams = array();
@@ -66,6 +65,7 @@ class dynamic_config
         $this->set_epg_params(Plugin_Constants::EPG_FIRST, $default_parser);
         $this->set_epg_params(Plugin_Constants::EPG_SECOND, $default_parser);
     }
+
     /**
      * load configuration
      * @return void
@@ -83,11 +83,9 @@ class dynamic_config
         $this->set_feature(Plugin_Constants::TAG_ID_MATCH, $settings[Plugin_Constants::TAG_ID_MATCH]);
         $this->set_feature(Plugin_Constants::VOD_SUPPORTED, $settings[Plugin_Constants::VOD_SUPPORTED]);
         $this->set_feature(Plugin_Constants::VOD_M3U, $settings[Plugin_Constants::VOD_M3U]);
-        $this->set_feature(Plugin_Constants::VOD_PLAYLIST_URL, $settings[Plugin_Constants::VOD_PLAYLIST_URL]);
-        $this->set_feature(Plugin_Constants::VOD_PARSE_PATTERN, $settings[Plugin_Constants::VOD_PARSE_PATTERN]);
+        $this->set_feature(Plugin_Constants::VOD_TEMPLATES, $settings[Plugin_Constants::VOD_TEMPLATES]);
 
-        foreach ($settings[Plugin_Constants::STREAMS_CONFIG] as $config)
-        {
+        foreach ($settings[Plugin_Constants::STREAMS_CONFIG] as $config) {
             $param_idx = $config[Stream_Params::STREAM_TYPE];
             $params = $this->get_stream_params($param_idx);
             $this->set_stream_params($param_idx, array_merge($params, $config));
@@ -95,8 +93,7 @@ class dynamic_config
             //foreach($this->get_stream_params($param_idx) as $key=>$value) hd_print("$key: $value");
         }
 
-        foreach ($settings[Plugin_Constants::EPG_PARAMS] as $epg)
-        {
+        foreach ($settings[Plugin_Constants::EPG_PARAMS] as $epg) {
             $param_idx = $epg[Epg_Params::EPG_PARAM];
             $params = $this->get_epg_params($param_idx);
             $this->set_epg_params($param_idx, array_merge($params, $epg));
@@ -105,29 +102,25 @@ class dynamic_config
         }
 
         $servers = array();
-        foreach ($settings[Plugin_Constants::SERVERS_LIST] as $pair)
-        {
+        foreach ($settings[Plugin_Constants::SERVERS_LIST] as $pair) {
             $servers[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_servers($servers);
 
         $devices = array();
-        foreach ($settings[Plugin_Constants::DEVICES_LIST] as $pair)
-        {
+        foreach ($settings[Plugin_Constants::DEVICES_LIST] as $pair) {
             $devices[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_devices($devices);
 
         $qualities = array();
-        foreach ($settings[Plugin_Constants::QUALITIES_LIST] as $pair)
-        {
+        foreach ($settings[Plugin_Constants::QUALITIES_LIST] as $pair) {
             $qualities[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_qualities($qualities);
 
         $profiles = array();
-        foreach ($settings[Plugin_Constants::PROFILES_LIST] as $pair)
-        {
+        foreach ($settings[Plugin_Constants::PROFILES_LIST] as $pair) {
             $profiles[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_profiles($profiles);
@@ -364,6 +357,7 @@ class dynamic_config
     {
         $plugin_cookies->quality = $quality;
     }
+
     /**
      * @return array
      */

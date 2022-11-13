@@ -57,8 +57,6 @@ void plugin_fox::load_default()
 	vod_info.parse_regex = R"((?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$)";
 	vod_templates.emplace_back(vod_info);
 
-	vod_parse_pattern = vod_info.parse_regex;
-
 	vod_support = true;
 	vod_m3u = true;
 

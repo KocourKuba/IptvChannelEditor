@@ -321,12 +321,6 @@ public:
 	void set_playlist_templates(const std::vector<PlaylistTemplateInfo>& val) { playlist_templates = val; }
 
 	/// <summary>
-	/// property uri parse template
-	/// </summary>
-	std::wstring get_uri_parse_pattern() const { return utils::utf8_to_utf16(uri_parse_pattern); }
-	void set_uri_parse_pattern(const std::wstring& val) { uri_parse_pattern = utils::utf16_to_utf8(val); }
-
-	/// <summary>
 	/// property uri id parse template
 	/// </summary>
 	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
@@ -355,12 +349,7 @@ public:
 	/// <summary>
 	/// active vod template
 	/// </summary>
-	std::wstring get_current_vod_template() const { return utils::utf8_to_utf16(provider_vod_url); }
-
-	/// <summary>
-	/// active vod
-	/// </summary>
-	void set_current_vod_info();
+	std::wstring get_current_vod_template() const { return get_vod_template(get_vod_template_idx()); }
 
 	/// <summary>
 	/// property vod templates
@@ -384,7 +373,7 @@ public:
 	/// <summary>
 	/// active vod template
 	/// </summary>
-	std::wstring get_current_vod_parse_regex() const { return utils::utf8_to_utf16(vod_parse_pattern); }
+	std::wstring get_current_vod_parse_regex() const { return get_vod_parse_regex(get_vod_template_idx()); }
 
 	/// <summary>
 	/// regex for parsing title
@@ -563,8 +552,6 @@ public:
 		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
-		SERIALIZE_STRUCT(j, c, provider_vod_url);
-		SERIALIZE_STRUCT(j, c, vod_parse_pattern);
 		SERIALIZE_STRUCT(j, c, square_icons); //-V601
 		SERIALIZE_STRUCT(j, c, per_channel_token); //-V601
 		SERIALIZE_STRUCT(j, c, requested_token); //-V601
@@ -597,8 +584,6 @@ public:
 		DESERIALIZE_STRUCT(j, c, vod_filter);
 		DESERIALIZE_STRUCT(j, c, vod_templates);
 		DESERIALIZE_STRUCT(j, c, vod_template_index);
-		DESERIALIZE_STRUCT(j, c, provider_vod_url);
-		DESERIALIZE_STRUCT(j, c, vod_parse_pattern);
 		DESERIALIZE_STRUCT(j, c, square_icons);
 		DESERIALIZE_STRUCT(j, c, per_channel_token);
 		DESERIALIZE_STRUCT(j, c, requested_token);
@@ -643,10 +628,6 @@ protected:
 	bool vod_support = false;
 	// vod based on m3u8 playlist
 	bool vod_m3u = false;
-	// url to vod playlist
-	std::string provider_vod_url;
-	// vod title parse regex
-	std::string vod_parse_pattern;
 
 	// use channels logo are squared, plugin UI settings
 	bool square_icons = false;

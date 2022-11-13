@@ -62,11 +62,6 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     {
         $actions = array();
 
-        $add_settings = User_Input_Handler_Registry::create_action($this, self::ACTION_SETTINGS);
-        $add_settings['caption'] = 'Настройки плагина';
-        $actions[GUI_EVENT_KEY_SETUP] = $add_settings;
-        $actions[GUI_EVENT_KEY_B_GREEN] = $add_settings;
-
         $actions[GUI_EVENT_KEY_ENTER] = $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play();
 
         $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_SEARCH);

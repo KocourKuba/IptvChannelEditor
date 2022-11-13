@@ -18,10 +18,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const ACTION_PIN_APPLY = 'pin_apply';
     const ACTION_MOVE_ACCOUNT = 'move_account';
     const ACTION_CHANGE_LIST_PATH = 'change_list_path';
-    const ACTION_CHANGE_LIST = 'channels_list';
+    const ACTION_CHANGE_LIST = 'change_channels_list';
     const ACTION_CHANNELS_SOURCE = 'channels_source';
     const ACTION_CHANNELS_URL_DLG = 'channels_url_dialog';
     const ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
+    const ACTION_VOD_LIST = 'vod_list';
+    const ACTION_CHANGE_VOD_LIST = 'change_vod_list';
     const ACTION_STREAMING_DLG = 'streaming_dialog';
     const ACTION_STREAMING_APPLY = 'streaming_apply';
     const ACTION_EPG_DLG = 'epg_dialog';
@@ -161,6 +163,16 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         } else {
             Control_Factory::add_combobox($defs, $this, null, self::ACTION_CHANGE_LIST,
                 'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
+        }
+
+        //////////////////////////////////////
+        // vod lists
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED) && $this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
+            $all_vod_lists = $this->plugin->config->get_vod_list($plugin_cookies, $current_idx);
+            if (count($all_vod_lists) > 1) {
+                Control_Factory::add_combobox($defs, $this, null, self::ACTION_CHANGE_VOD_LIST,
+                    'Используемый список VOD:', $current_idx, $all_vod_lists, self::CONTROLS_WIDTH, true);
+            }
         }
 
         //////////////////////////////////////
@@ -473,8 +485,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Setup: handle_user_input:');
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        hd_print('Setup: handle_user_input:');
+        foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $control_id = $user_input->control_id;
@@ -605,6 +617,14 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     }
                     return $this->reload_channels($plugin_cookies);
 
+                case self::ACTION_CHANGE_VOD_LIST:
+                    if (isset($plugin_cookies->vod_idx) && $plugin_cookies->vod_idx === $new_value) break;
+
+                    $plugin_cookies->vod_idx = $new_value;
+                    $this->plugin->vod_category_list_Screen->clear_vod();
+                    return Action_Factory::invalidate_folders(array(Starnet_Vod_Category_List_Screen::ID));
+
+
                 case self::ACTION_STREAMING_DLG: // show streaming settings dialog
                     $defs = $this->do_get_streaming_control_defs($plugin_cookies);
                     return Action_Factory::show_dialog('Настройки воспроизведения', $defs, true);
@@ -707,6 +727,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
         }
 
-        return Action_Factory::invalidate_folders(array('main_screen'), $post_action);
+        return Action_Factory::invalidate_folders(array(Starnet_Main_Screen::ID), $post_action);
     }
 }

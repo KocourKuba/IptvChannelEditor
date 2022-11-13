@@ -651,7 +651,6 @@ void CPluginConfigPage::FillControlsCommon()
 	m_wndPlaylistTemplates.SetCurSel(pl_idx);
 	m_PlaylistTemplate = m_plugin->get_playlist_template(pl_idx).c_str();
 
-	m_ParseStream = m_plugin->get_uri_parse_pattern().c_str();
 	if (m_plugin->get_tag_id_match().empty())
 	{
 		m_wndCheckMapTags.SetCheck(FALSE);
@@ -673,26 +672,15 @@ void CPluginConfigPage::FillControlsCommon()
 		}
 	}
 
-	m_wndVodTemplates.ResetContent();
-	for (const auto& entry : m_plugin->get_vod_templates())
-	{
-		m_wndVodTemplates.AddString(entry.get_name().c_str());
-	}
-
-	int vod_idx = m_plugin->get_vod_template_idx();
-	m_wndVodTemplates.SetCurSel(vod_idx);
-	m_VodPlaylistTemplate = m_plugin->get_vod_template(vod_idx).c_str();
-
-	m_VodParseRegex = m_plugin->get_vod_parse_regex(vod_idx).c_str();
-
-	m_supported_streams = m_plugin->get_supported_streams();
 	m_epg_parameters = m_plugin->get_epg_parameters();
 
 	m_wndStreamType.SetCurSel(0);
 	m_wndEpgType.SetCurSel(0);
 
+	FillControlsVod();
 	FillControlsStream();
 	FillControlsEpg();
+
 	EnableControls();
 }
 
@@ -714,35 +702,57 @@ void CPluginConfigPage::SaveControlsCommon()
 	m_plugin->set_short_name_w(m_ShortName.GetString());
 	m_plugin->set_provider_url(m_ProviderUrl.GetString());
 	m_plugin->set_playlist_template(m_plugin->get_playlist_template_idx(), m_PlaylistTemplate.GetString());
-	m_plugin->set_uri_parse_pattern(m_ParseStream.GetString());
+
 	CString tag;
 	if (m_wndCheckMapTags.GetCheck() != 0)
 	{
 		m_wndTags.GetLBText(m_wndTags.GetCurSel(), tag);
 	}
 	m_plugin->set_tag_id_match(tag.GetString());
-	m_plugin->set_vod_template(m_plugin->get_vod_template_idx(), m_VodPlaylistTemplate.GetString());
-	m_plugin->set_vod_parse_regex(m_plugin->get_vod_template_idx(), m_VodParseRegex.GetString());
 
+	SaveControlsVod();
 	SaveControlsStream();
 	SaveControlsEpg();
+}
 
-	int i = 0;
-	for (const auto& stream : m_supported_streams)
+void CPluginConfigPage::FillControlsVod()
+{
+	if (!m_plugin) return;
+
+	int vod_idx = m_plugin->get_vod_template_idx();
+	m_ParseStream = m_plugin->get_vod_parse_regex(vod_idx).c_str();
+	m_wndVodTemplates.ResetContent();
+	for (const auto& entry : m_plugin->get_vod_templates())
 	{
-		m_plugin->set_supported_stream(i++, stream);
+		m_wndVodTemplates.AddString(entry.get_name().c_str());
 	}
 
-	i = 0;
-	for (const auto& epg : m_epg_parameters)
+	if (vod_idx >= m_wndVodTemplates.GetCount())
 	{
-		m_plugin->set_epg_parameter(i++, epg);
+		vod_idx = 0;
+		m_plugin->set_vod_template_idx(vod_idx);
 	}
+
+	m_wndVodTemplates.SetCurSel(vod_idx);
+	m_VodPlaylistTemplate = m_plugin->get_vod_template(vod_idx).c_str();
+	m_VodParseRegex = m_plugin->get_vod_parse_regex(vod_idx).c_str();
+}
+
+void CPluginConfigPage::SaveControlsVod()
+{
+	if (!m_plugin) return;
+
+	int idx = m_wndVodTemplates.GetCurSel();
+	m_plugin->set_vod_template_idx(idx);
+	m_plugin->set_vod_template(idx, m_VodPlaylistTemplate.GetString());
+	m_plugin->set_vod_parse_regex(idx, m_VodParseRegex.GetString());
 }
 
 void CPluginConfigPage::FillControlsStream()
 {
 	if (!m_plugin) return;
+
+	m_supported_streams = m_plugin->get_supported_streams();
 
 	const auto& stream = m_supported_streams[m_wndStreamType.GetCurSel()];
 
@@ -778,6 +788,12 @@ void CPluginConfigPage::SaveControlsStream()
 	cur_stream.set_uri_template(m_StreamTemplate.GetString());
 	cur_stream.set_uri_arc_template(m_StreamArchiveTemplate.GetString());
 	cur_stream.set_uri_custom_arc_template(m_CustomStreamArchiveTemplate.GetString());
+
+	int i = 0;
+	for (const auto& stream : m_supported_streams)
+	{
+		m_plugin->set_supported_stream(i++, stream);
+	}
 }
 
 void CPluginConfigPage::FillControlsEpg()
@@ -818,6 +834,12 @@ void CPluginConfigPage::SaveControlsEpg()
 	epg.set_epg_time_format(m_EpgTimeFormat.GetString());
 	epg.epg_timezone = m_EpgTimezone;
 	epg.epg_use_duration = m_wndChkUseDuration.GetCheck() != 0;
+
+	int i = 0;
+	for (const auto& epg : m_epg_parameters)
+	{
+		m_plugin->set_epg_parameter(i++, epg);
+	}
 }
 
 void CPluginConfigPage::UpdateDateTimestamp(bool dateToUtc)
@@ -1265,8 +1287,8 @@ void CPluginConfigPage::OnCbnSelchangeComboVodTemplate()
 {
 	int idx = m_wndVodTemplates.GetCurSel();
 	m_plugin->set_vod_template_idx(idx);
-	m_VodPlaylistTemplate = m_plugin->get_vod_template(idx).c_str();
-	m_VodParseRegex = m_plugin->get_vod_parse_regex(idx).c_str();
+	m_VodPlaylistTemplate = m_plugin->get_current_vod_template().c_str();
+	m_VodParseRegex = m_plugin->get_current_vod_parse_regex().c_str();
 
 	OnChanges();
 	UpdateData(FALSE);

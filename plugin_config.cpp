@@ -14,9 +14,7 @@ void plugin_config::clear()
 	playlist_templates.clear();
 	tag_id_match.clear();
 	uri_parse_pattern.clear();
-	provider_vod_url.clear();
 	vod_templates.clear();
-	vod_parse_pattern.clear();
 	servers_list.clear();
 	qualities_list.clear();
 	devices_list.clear();
@@ -60,19 +58,12 @@ void plugin_config::set_plugin_defaults(PluginType val)
 	plugin_type = val;
 	clear();
 	load_default();
-	set_current_vod_info();
 	set_current_playlist_info();
 }
 
 void plugin_config::set_current_playlist_info()
 {
 	playlist_template = (playlist_template_index != -1 && playlist_template_index < playlist_templates.size()) ? playlist_templates[playlist_template_index].pl_template : "";
-}
-
-void plugin_config::set_current_vod_info()
-{
-	provider_vod_url = (vod_template_index != -1 && vod_template_index < vod_templates.size()) ? vod_templates[vod_template_index].pl_template : "";
-	vod_parse_pattern = (vod_template_index != -1 && vod_template_index < vod_templates.size()) ? vod_templates[vod_template_index].parse_regex : "";
 }
 
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
@@ -93,7 +84,6 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 	try
 	{
 		set_current_playlist_info();
-		set_current_vod_info();
 
 		nlohmann::json node = *this;
 
@@ -127,7 +117,6 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 	{
 		load_default();
 		set_current_playlist_info();
-		set_current_vod_info();
 		return;
 	}
 
@@ -145,7 +134,6 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 			from_json(node, *this);
 
 			set_current_playlist_info();
-			set_current_vod_info();
 			res = true;
 		}
 	}
@@ -168,7 +156,6 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 	{
 		load_default();
 		set_current_playlist_info();
-		set_current_vod_info();
 	}
 }
 

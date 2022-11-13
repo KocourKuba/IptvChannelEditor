@@ -150,6 +150,17 @@ class default_config extends dynamic_config
         return $all_channels;
     }
 
+    public function get_vod_list($plugin_cookies, &$current_idx)
+    {
+        $vod_lists_array = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
+        $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $vod_lists = array();
+        foreach ($vod_lists_array as $list) {
+            $vod_lists[] = $list['name'];
+        }
+        return $vod_lists;
+    }
+
     /**
      * @param Channel $a
      * @param Channel $b
@@ -515,13 +526,15 @@ class default_config extends dynamic_config
         $count = count($all_indexes);
         $category = new Vod_Category(Vod_Category::FLAG_ALL, "Все фильмы ($count)");
         $category_list[] = $category;
-        $category_index[$category->get_id()] = $category;
+        $category_index[Vod_Category::FLAG_ALL] = $category;
 
         foreach ($this->vod_m3u_indexes as $group => $indexes) {
+            if ($group === Vod_Category::FLAG_ALL) continue;
+
             $count = count($indexes);
             $cat = new Vod_Category($group, "$group ($count)");
             $category_list[] = $cat;
-            $category_index[$cat->get_id()] = $cat;
+            $category_index[$group] = $cat;
         }
         hd_print("Categories read: " . count($category_list));
         hd_print("Fetched categories at " . (microtime(1) - $t) . " secs");
@@ -537,10 +550,7 @@ class default_config extends dynamic_config
     {
         hd_print("getSearchList: $keyword");
 
-        $vod_pattern = $this->get_feature(Plugin_Constants::VOD_PARSE_PATTERN);
-        if (!empty($vod_pattern))
-            $vod_pattern = "/$vod_pattern/";
-
+        $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);
         $t = microtime(1);
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
@@ -597,10 +607,7 @@ class default_config extends dynamic_config
         $current_offset = $this->get_next_page($query_id, 0);
         $indexes = $this->vod_m3u_indexes[$category_id];
 
-        $vod_pattern = $this->get_feature(Plugin_Constants::VOD_PARSE_PATTERN);
-        if (!empty($vod_pattern))
-            $vod_pattern = "/$vod_pattern/";
-
+        $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);
         $max = count($indexes);
         $ubound = min($max, $current_offset + 100);
         hd_print("Read from: $current_offset to $ubound");
@@ -635,10 +642,7 @@ class default_config extends dynamic_config
         hd_print("TryLoadMovie: $movie_id");
         $movie = new Movie($movie_id);
 
-        $vod_pattern = $this->get_feature(Plugin_Constants::VOD_PARSE_PATTERN);
-        if (!empty($vod_pattern))
-            $vod_pattern = "/$vod_pattern/";
-
+        $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);
         $entry = $this->m3u_parser->getEntryByIdx($movie_id);
         if ($entry === null) {
             hd_print("Movie not found");
@@ -826,7 +830,7 @@ class default_config extends dynamic_config
      */
     protected function GetVodListUrl($plugin_cookies)
     {
-        return $this->replace_subs_vars($this->get_feature(Plugin_Constants::VOD_PLAYLIST_URL), $plugin_cookies);
+        return $this->replace_subs_vars($this->get_vod_template($plugin_cookies), $plugin_cookies);
     }
 
     /**
@@ -892,5 +896,23 @@ class default_config extends dynamic_config
     protected function ensure_token_loaded(&$plugin_cookies)
     {
         return true;
+    }
+
+    protected function get_vod_template($plugin_cookies)
+    {
+        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
+        return isset($vod_templates[$idx][Plugin_Constants::VOD_TEMPLATE]) ? $vod_templates[$idx][Plugin_Constants::VOD_TEMPLATE] : '';
+    }
+
+    protected function get_vod_parse_pattern($plugin_cookies)
+    {
+        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
+        $vod_pattern = isset($vod_templates[$idx][Plugin_Constants::VOD_PARSE_REGEX]) ? $vod_templates[$idx][Plugin_Constants::VOD_PARSE_REGEX] : '';
+        if (!empty($vod_pattern))
+            $vod_pattern = "/$vod_pattern/";
+
+        return $vod_pattern;
     }
 }

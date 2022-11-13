@@ -108,6 +108,8 @@ private:
 	void FillConfigs();
 	void FillControlsCommon();
 	void SaveControlsCommon();
+	void FillControlsVod();
+	void SaveControlsVod();
 	void FillControlsStream();
 	void SaveControlsStream();
 	void FillControlsEpg();

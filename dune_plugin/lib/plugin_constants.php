@@ -15,16 +15,11 @@ class Plugin_Constants
     const ACCOUNT_LOGIN   = 'login';
 
     // Non configurable parameters by external config
-    const API_REQUEST_URL = 'api_request_url';
-    const TV_FAVORITES_SUPPORTED = 'tv_fav';
-    const VOD_SUPPORTED = 'vod_support';
-    const VOD_M3U = 'vod_m3u';
-    const VOD_QUALITY_SUPPORTED = 'vod_quality';
-    const VOD_FILTER_SUPPORTED = 'vod_filter';
-    const VOD_PLAYLIST_URL = 'provider_vod_url';
-    const VOD_PARSE_PATTERN = 'vod_parse_pattern';
-    const BALANCE_SUPPORTED = 'balance_support';
-    const SQUARE_ICONS = 'square_icons';
+    const /* (char) */ API_REQUEST_URL = 'api_request_url';
+    const /* (bool) */ TV_FAVORITES_SUPPORTED = 'tv_fav';
+    const /* (bool) */ VOD_QUALITY_SUPPORTED = 'vod_quality';
+    const /* (bool) */ VOD_FILTER_SUPPORTED = 'vod_filter';
+    const /* (bool) */ BALANCE_SUPPORTED = 'balance_support';
 
     // parameters loaded from external config
 
@@ -32,10 +27,18 @@ class Plugin_Constants
     const /* (char *) */ CHANNEL_ID = 'id';
     const /* (char *) */ ACCESS_TYPE = 'access_type';
     const /* (char *) */ SHORT_NAME = 'short_name';
+    const /* (bool)   */ SQUARE_ICONS = 'square_icons';
     const /* (char *) */ PLAYLIST_TEMPLATE = 'playlist_template';
     const /* (char *) */ PLAYLIST_TEMPLATE2 = 'playlist_template2';
     const /* (char *) */ URI_PARSE_PATTERN = 'uri_parse_pattern';
     const /* (char *) */ TAG_ID_MATCH = 'tag_id_match';
+
+    const /* (char *) */ VOD_SUPPORTED = 'vod_support';
+    const /* (bool)   */ VOD_M3U = 'vod_m3u';
+    const /* (array)  */ VOD_TEMPLATES = 'vod_templates';
+    const /* (int)    */ VOD_TEMPLATES_INDEX = 'vod_template_index';
+    const /* (array)  */ VOD_TEMPLATE = 'pl_template';
+    const /* (array)  */ VOD_PARSE_REGEX = 'parse_regex';
 
     // streams parameters
     const /* array */ STREAMS_CONFIG = 'streams_config';
