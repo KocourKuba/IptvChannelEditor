@@ -43,7 +43,7 @@ void base_plugin::load_plugin_parameters(const std::wstring& filename)
 {
 	plugin_config::load_plugin_parameters(filename);
 
-	set_regex_parse_stream(get_current_vod_template());
+	set_regex_parse_stream(get_uri_parse_pattern());
 }
 
 void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)

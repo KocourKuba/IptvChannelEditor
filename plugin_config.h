@@ -327,6 +327,12 @@ public:
 	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
 
 	/// <summary>
+	/// property uri parse template
+	/// </summary>
+	std::wstring get_uri_parse_pattern() const { return utils::utf8_to_utf16(uri_parse_pattern); }
+	void set_uri_parse_pattern(const std::wstring& val) { uri_parse_pattern = utils::utf16_to_utf8(val); }
+
+	/// <summary>
 	/// plugin supports vod
 	/// </summary>
 	/// <returns>bool</returns>

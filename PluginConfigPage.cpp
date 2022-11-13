@@ -650,6 +650,7 @@ void CPluginConfigPage::FillControlsCommon()
 	int pl_idx = m_plugin->get_playlist_template_idx();
 	m_wndPlaylistTemplates.SetCurSel(pl_idx);
 	m_PlaylistTemplate = m_plugin->get_playlist_template(pl_idx).c_str();
+	m_ParseStream = m_plugin->get_uri_parse_pattern().c_str();
 
 	if (m_plugin->get_tag_id_match().empty())
 	{
@@ -702,6 +703,7 @@ void CPluginConfigPage::SaveControlsCommon()
 	m_plugin->set_short_name_w(m_ShortName.GetString());
 	m_plugin->set_provider_url(m_ProviderUrl.GetString());
 	m_plugin->set_playlist_template(m_plugin->get_playlist_template_idx(), m_PlaylistTemplate.GetString());
+	m_plugin->set_uri_parse_pattern(m_ParseStream.GetString());
 
 	CString tag;
 	if (m_wndCheckMapTags.GetCheck() != 0)
