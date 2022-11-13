@@ -162,8 +162,12 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             $key = $media_url->category_id . "_" . $media_url->genre_id;
         }
 
+        $movies = array();
+
         if ($media_url->category_id === Vod_Category::FLAG_SEARCH) {
-            $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
+            if ($from_ndx === 0) {
+                $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
+            }
         } else if ($media_url->category_id === Vod_Category::FLAG_FILTER) {
             $movies = $this->plugin->config->getFilterList($media_url->genre_id, $plugin_cookies);
         } else if ($media_url->category_id === Vod_Category::FLAG_ALL || empty($media_url->genre_id)) {

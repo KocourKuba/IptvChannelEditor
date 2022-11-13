@@ -254,7 +254,7 @@ class default_config extends dynamic_config
         if ($tv) {
             $this->m3u_parser->setupParser($this->FetchTvM3U($plugin_cookies));
         } else {
-            $this->m3u_parser->setupParser($this->FetchVodM3U($plugin_cookies), $this->get_feature(Plugin_Constants::VOD_PARSE_PATTERN));
+            $this->m3u_parser->setupParser($this->FetchVodM3U($plugin_cookies));
         }
     }
 
@@ -500,6 +500,8 @@ class default_config extends dynamic_config
 
         $this->SetupM3uParser(false, $plugin_cookies);
 
+        $t = microtime(1);
+
         $this->vod_m3u_indexes = $this->m3u_parser->indexFile();
         $all_indexes = array();
         foreach ($this->vod_m3u_indexes as $index_array) {
@@ -510,17 +512,19 @@ class default_config extends dynamic_config
         $this->vod_m3u_indexes[Vod_Category::FLAG_ALL] = $all_indexes;
 
         // all movies
-        $category = new Vod_Category(Vod_Category::FLAG_ALL, 'Все фильмы');
+        $count = count($all_indexes);
+        $category = new Vod_Category(Vod_Category::FLAG_ALL, "Все фильмы ($count)");
         $category_list[] = $category;
         $category_index[$category->get_id()] = $category;
 
         foreach ($this->vod_m3u_indexes as $group => $indexes) {
-            hd_print("Add category: $group with " . count($indexes) . " movies");
-            $cat = new Vod_Category($group, $group);
+            $count = count($indexes);
+            $cat = new Vod_Category($group, "$group ($count)");
             $category_list[] = $cat;
             $category_index[$cat->get_id()] = $cat;
         }
         hd_print("Categories read: " . count($category_list));
+        hd_print("Fetched categories at " . (microtime(1) - $t) . " secs");
         HD::ShowMemoryUsage();
     }
 
@@ -533,21 +537,31 @@ class default_config extends dynamic_config
     {
         hd_print("getSearchList: $keyword");
 
+        $vod_pattern = $this->get_feature(Plugin_Constants::VOD_PARSE_PATTERN);
+        if (!empty($vod_pattern))
+            $vod_pattern = "/$vod_pattern/";
+
         $t = microtime(1);
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
-        foreach ($this->vod_m3u_indexes as $indexes) {
-            foreach ($indexes as $index) {
-                $entry = $this->m3u_parser->getEntryByIdx($index);
-                if ($entry === null) continue;
+        foreach ($this->vod_m3u_indexes[Vod_Category::FLAG_ALL] as $index) {
+            $title = $this->m3u_parser->getTitleByIdx($index);
+            if (empty($title)) continue;
 
-                $title = $entry->getTitle();
-                $search_in = utf8_encode(mb_strtolower($title, 'UTF-8'));
-                if (strpos($search_in, $keyword) === false) continue;
+            $search_in = utf8_encode(mb_strtolower($title, 'UTF-8'));
+            if (strpos($search_in, $keyword) === false) continue;
 
-                $movies[] = new Short_Movie((string)$index, $entry->getParsedTitle(), $entry->getAttribute('tvg-logo'));
+            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match)) {
+                $title = isset($match['title']) ? $match['title'] : $title;
             }
+
+            $entry = $this->m3u_parser->getEntryByIdx($index);
+            if ($entry === null) continue;
+
+            $poster_url = $entry->getAttribute('tvg-logo');
+            hd_print("Found at $index movie '$title', poster url: '$poster_url'");
+            $movies[] = new Short_Movie((string)$index, $title, $poster_url);
         }
 
         hd_print("Movies found: " . count($movies));
@@ -583,6 +597,10 @@ class default_config extends dynamic_config
         $current_offset = $this->get_next_page($query_id, 0);
         $indexes = $this->vod_m3u_indexes[$category_id];
 
+        $vod_pattern = $this->get_feature(Plugin_Constants::VOD_PARSE_PATTERN);
+        if (!empty($vod_pattern))
+            $vod_pattern = "/$vod_pattern/";
+
         $max = count($indexes);
         $ubound = min($max, $current_offset + 100);
         hd_print("Read from: $current_offset to $ubound");
@@ -590,16 +608,17 @@ class default_config extends dynamic_config
         $pos = $current_offset;
         while($pos < $ubound) {
             $entry = $this->m3u_parser->getEntryByIdx($indexes[$pos++]);
-            if ($entry !== null) {
-                $movies[] = new Short_Movie($category_id, $entry->getParsedTitle(), $entry->getAttribute('tvg-logo'));
+            if ($entry === null) continue;
+
+            $title = $entry->getTitle();
+            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match)) {
+                $title = isset($match['title']) ? $match['title'] : $title;
             }
+
+            $movies[] = new Short_Movie($category_id, $title, $entry->getAttribute('tvg-logo'));
         }
 
-        $this->get_next_page($query_id, $pos);
-
-        if ($current_offset === $this->get_next_page($query_id, 0)) {
-            $this->set_next_page($query_id, -1);
-        }
+        $this->get_next_page($query_id, $pos - $current_offset);
 
         return $movies;
     }
@@ -619,13 +638,10 @@ class default_config extends dynamic_config
         if (!empty($vod_pattern))
             $vod_pattern = "/$vod_pattern/";
 
-        foreach ($this->vod_m3u_indexes as $indexes) {
-            $idx = array_search($movie_id, $indexes);
-            if ($idx === false) continue;
-
-            $entry = $this->m3u_parser->getEntryByIdx($idx);
-            if ($entry === null) break;
-
+        $entry = $this->m3u_parser->getEntryByIdx($movie_id);
+        if ($entry === null) {
+            hd_print("Movie not found");
+        } else {
             $logo = $entry->getAttribute('tvg-logo');
             $title = $entry->getTitle();
             $title_orig = '';
@@ -661,10 +677,9 @@ class default_config extends dynamic_config
             );
 
             $movie->add_series_data($movie_id, $title, '', $url);
-            // hd_print("movie_id: $movie_id");
-            // hd_print("title: $title");
             hd_print("movie url: $url");
         }
+
         return $movie;
     }
 

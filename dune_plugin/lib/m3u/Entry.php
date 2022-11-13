@@ -89,22 +89,6 @@ class Entry
     /**
      * @return string
      */
-    public function getParsedTitle()
-    {
-        return empty($this->parsed_title) ? $this->getTitle() : $this->parsed_title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setParsedTitle($title)
-    {
-        $this->parsed_title = $title;
-    }
-
-    /**
-     * @return string
-     */
     public function getGroupTitle()
     {
         if (empty($this->group_title)) {

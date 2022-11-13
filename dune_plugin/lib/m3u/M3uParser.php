@@ -10,20 +10,14 @@ class M3uParser
     private $file_name;
 
     /**
-     * @var string
-     */
-    private $vod_pattern;
-
-    /**
      * @var SplFileObject
      */
     private $m3u_file;
 
     /**
      * @param $file_name
-     * @param $vod_pattern
      */
-    public function setupParser($file_name, $vod_pattern = null)
+    public function setupParser($file_name)
     {
         $this->m3u_file = null;
         $this->file_name = $file_name;
@@ -34,9 +28,6 @@ class M3uParser
             hd_print("Can't read file.");
             return;
         }
-
-        if (!empty($vod_pattern))
-            $this->vod_pattern = "/$vod_pattern/";
 
         $file->setFlags(SplFileObject::DROP_NEW_LINE);
 
@@ -165,6 +156,36 @@ class M3uParser
         return null;
     }
 
+    /**
+     * get entry by idx
+     *
+     * @param int $idx
+     * @return string
+     */
+    public function getTitleByIdx($idx)
+    {
+        if ($this->m3u_file === null) {
+            hd_print('getTitleByIdx: Bad file');
+            return null;
+        }
+
+        $this->m3u_file->fseek($idx);
+        while (!$this->m3u_file->eof()) {
+            $line = trim($this->m3u_file->fgets());
+            if (empty($line)) continue;
+
+            if (!self::isTag($line)) break;
+
+            if (self::isExtInf($line)) {
+                $entry = new Entry();
+                $entry->setExtInf(new ExtInf($line, false));
+                return $entry->getTitle();
+            }
+        }
+
+        return '';
+    }
+
     ///////////////////////////////////////////////////////////
 
     /**
@@ -177,24 +198,40 @@ class M3uParser
     protected function parseLine($line, &$entry)
     {
         $line = trim($line);
-        if (empty($line) || self::isExtM3u($line) || self::isComment($line)) {
+        if (empty($line)) {
             return false;
         }
 
-        if (self::isExtInf($line)) {
-            $entry->setExtInf(new ExtInf($line));
-            if (!empty($this->vod_pattern) && preg_match($this->vod_pattern, $entry->getTitle(), $match) && isset($match['title'])) {
-                $title = $match['title'];
-                $entry->setParsedTitle($title);
+        if (self::isTag($line)) {
+            if (self::isExtInf($line)) {
+                $entry->setExtInf(new ExtInf($line));
+            } else if (self::isExtGrp($line)) {
+                $entry->setExtGrp(new ExtGrp($line));
             }
-        } else if (self::isExtGrp($line)) {
-            $entry->setExtGrp(new ExtGrp($line));
         } else {
             $entry->setPath($line);
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @param string $line
+     * @return bool
+     */
+    protected static function isTag($line)
+    {
+        return !empty($line) && $line[0] === '#';
+    }
+
+    /**
+     * @param string $line
+     * @return bool
+     */
+    protected static function isExtM3u($line)
+    {
+        return stripos($line, '#EXTM3U') === 0;
     }
 
     /**
@@ -213,23 +250,5 @@ class M3uParser
     protected static function isExtGrp($line)
     {
         return stripos($line, '#EXTGRP:') === 0;
-    }
-
-    /**
-     * @param string $line
-     * @return bool
-     */
-    protected static function isComment($line)
-    {
-        return $line[0] === '#' && !self::isExtInf($line) && !self::isExtGrp($line) && !self::isExtM3u($line);
-    }
-
-    /**
-     * @param string $line
-     * @return bool
-     */
-    protected static function isExtM3u($line)
-    {
-        return stripos($line, '#EXTM3U') === 0;
     }
 }

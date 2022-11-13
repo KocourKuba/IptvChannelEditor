@@ -15,10 +15,11 @@ class ExtInf
 
     /**
      * @param string $line
+     * @param bool $full
      */
-    public function __construct($line)
+    public function __construct($line, $full = true)
     {
-        $this->parseData($line);
+        $this->parseData($line, $full);
     }
 
     /**
@@ -28,13 +29,23 @@ class ExtInf
      * #EXTINF:-1 tvg-name="Первый HD" tvg-logo="http://server/logo/1.jpg" group-title="Эфирные каналы",Первый канал HD
      *
      * @param string $line
+     * @param bool $full
      */
-    protected function parseData($line)
+    protected function parseData($line, $full)
     {
         $tmp = substr($line, 8); // #EXTINF:
         $split = explode(',', $tmp, 2);
         $this->setTitle(trim($split[1]));
-        $this->attributes = new TagAttributes($split[0]);
+        if ($full) {
+            $this->parseAttributes($split[0]);
+        }
+
+        return $this;
+    }
+
+    public function parseAttributes($data)
+    {
+        $this->attributes = new TagAttributes($data);
     }
 
     /**
