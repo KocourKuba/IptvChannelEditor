@@ -313,27 +313,36 @@ class sharaclub_config extends default_config
 
         $category_list = array();
         $category_index = array();
-        $categoriesFound = array();
+        $cat_info = array();
 
+        // all movies
+        $count = count($jsonItems);
+        $cat_info[Vod_Category::FLAG_ALL] = $count;
         $genres = array();
         $years = array();
         foreach ($jsonItems as $movie) {
             $category = (string)$movie->category;
-            if (!in_array($category, $categoriesFound)) {
-                $categoriesFound[] = $category;
-                $cat = new Vod_Category($category, $category);
-                $category_list[] = $cat;
-                $category_index[$cat->get_id()] = $cat;
+            if (empty($category)) {
+                $category = "Без категории";
             }
+
+            if (!array_key_exists($category, $cat_info)) {
+                $cat_info[$category] = 0;
+            }
+
+            ++$cat_info[$category];
 
             // collect filters information
-            $info = $movie->info;
-            $year = (int)$info->year;
-            $years[$year] = $info->year;
-
-            foreach ($info->genre as $genre) {
+            $years[(int)$movie->info->year] = $movie->info->year;
+            foreach ($movie->info->genre as $genre) {
                 $genres[$genre] = $genre;
             }
+        }
+
+        foreach ($cat_info as $category => $movie_count) {
+            $cat = new Vod_Category($category, ($category === Vod_Category::FLAG_ALL) ? "Все фильмы ($movie_count)" : "$category ($movie_count)");
+            $category_list[] = $cat;
+            $category_index[$category] = $cat;
         }
 
         ksort($genres);
