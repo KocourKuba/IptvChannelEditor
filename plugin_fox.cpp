@@ -49,6 +49,7 @@ void plugin_fox::load_default()
 
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u";
+	vod_info.parse_regex = R"((?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$)";
 	vod_templates.emplace_back(vod_info);
 
 	vod_info.set_name(IDS_STRING_NO_ADULT);

@@ -50,6 +50,7 @@ void plugin_ping::load_default()
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
 	vod_info.pl_template = "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/vodall.m3u";
+	vod_info.parse_regex = R"((?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$)";
 	vod_templates.emplace_back(vod_info);
 
 	vod_info.set_name(load_string_resource(IDS_STRING_NO_ADULT));
