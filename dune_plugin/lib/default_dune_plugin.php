@@ -17,11 +17,11 @@ class Default_Dune_Plugin implements DunePlugin
 
     /////////////////////////////////////////////////////////////////////////////
     // views constants
-    const ALL_CHANNEL_GROUP_ID = '__all_channels';
+    const ALL_CHANNEL_GROUP_ID = '##all_channels##';
     const ALL_CHANNEL_GROUP_CAPTION = 'Все каналы';
     const ALL_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/all.png';
 
-    const FAV_CHANNEL_GROUP_ID = '__favorites';
+    const FAV_CHANNEL_GROUP_ID = '##favorites##';
     const FAV_CHANNEL_GROUP_CAPTION = 'Избранное';
     const FAV_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/fav.png';
 
