@@ -242,9 +242,8 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         $media_urls = array(Starnet_Tv_Favorites_Screen::get_media_url_str(), Starnet_Tv_Channel_List_Screen::get_media_url_str(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID));
 
-        if (HD::rows_api_support()) {
+        if ($this->plugin->new_ui_support) {
             Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-
             return Starnet_Epfs_Handler::invalidate_folders($media_urls);
         }
 
@@ -524,7 +523,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             return '';
         }
 
-        if (empty($protect_code)) {
+        if (empty($protect_code) && $this->plugin->history_support) {
             Playback_Points::push($channel_id, $channel->has_archive() ? ($archive_ts !== -1 ? $archive_ts : 0) : $archive_ts);
         }
 
@@ -694,7 +693,9 @@ class Starnet_Tv implements Tv, User_Input_Handler
             $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
         }
 
-        Playback_Points::init();
+        if ($this->plugin->history_support) {
+            Playback_Points::init();
+        }
 
         hd_print('TV Info loaded at ' . (microtime(1) - $t) . ' secs');
 
@@ -746,11 +747,15 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 break;
 
             case GUI_EVENT_PLAYBACK_STOP:
-                Playback_Points::update($user_input->plugin_tv_channel_id);
+                if ($this->plugin->history_support) {
+                    Playback_Points::update($user_input->plugin_tv_channel_id);
+                }
                 if (!isset($user_input->playback_stop_pressed) && !isset($user_input->playback_power_off_needed)) break;
 
-                Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-                return Starnet_Epfs_Handler::invalidate_folders();
+                if ($this->plugin->new_ui_support) {
+                    Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                    return Starnet_Epfs_Handler::invalidate_folders();
+                }
         }
 
         return null;

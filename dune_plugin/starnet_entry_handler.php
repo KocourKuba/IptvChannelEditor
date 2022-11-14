@@ -59,14 +59,17 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         if ((int)$user_input->mandatory_playback === 1) {
                             hd_print("action: launch play");
                             $action = Action_Factory::tv_play();
-                            if (HD::rows_api_support()) {
-                                Starnet_Epfs_Handler::update_all_epfs(isset($user_input->first_run_after_boot) || isset($user_input->restore_from_sleep), $plugin_cookies);
-                                return Starnet_Epfs_Handler::invalidate_folders(null, $action);
-                            }
+                        } else {
+                            hd_print("action: launch open");
+                            $action = Action_Factory::open_folder();
                         }
 
-                        hd_print("action: launch open");
-                        return Action_Factory::open_folder();
+                        if (HD::rows_api_support()) {
+                            Starnet_Epfs_Handler::update_all_epfs(isset($user_input->first_run_after_boot) || isset($user_input->restore_from_sleep), $plugin_cookies);
+                            //return Starnet_Epfs_Handler::invalidate_folders(null, $action);
+                        }
+
+                        return $action;
 
                     case 'update_epfs':
                         hd_print("action: update_epfs");

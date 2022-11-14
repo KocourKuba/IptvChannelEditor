@@ -112,7 +112,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
             )
         );
 
-        if (HD::rows_api_support())
+        if ($this->plugin->new_ui_support)
         {
             Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
             return Starnet_Epfs_Handler::invalidate_folders(array($user_input->parent_media_url), $post_action);

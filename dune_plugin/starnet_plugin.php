@@ -25,7 +25,7 @@ require_once 'starnet_epfs_handler.php';
 
 class Starnet_Plugin extends Default_Dune_Plugin
 {
-    /**
+     /**
      * @throws Exception
      */
     public function __construct()
@@ -54,9 +54,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->vod_filter_screen = new Starnet_Vod_Filter_Screen($this);
         $this->vod_history_screen = new Starnet_Vod_History_Screen($this);
 
-        if (HD::rows_api_support()) {
-            Starnet_Epfs_Handler::init($this);
-        }
+        Starnet_Epfs_Handler::init($this);
 
         hd_print("Init done.");
     }

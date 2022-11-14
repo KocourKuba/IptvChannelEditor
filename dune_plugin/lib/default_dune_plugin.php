@@ -57,6 +57,16 @@ class Default_Dune_Plugin implements DunePlugin
     const DEFAULT_MOV_ICON_PATH = 'plugin_file://icons/mov_unset.png';
     const VOD_ICON_PATH = 'gui_skin://small_icons/movie.aai';
 
+    /**
+     * @var bool
+     */
+    public $new_ui_support;
+
+    /**
+     * @var bool
+     */
+    public $history_support;
+
     // info
     public $plugin_info;
 
@@ -200,6 +210,8 @@ class Default_Dune_Plugin implements DunePlugin
     protected function __construct()
     {
         $this->screens = array();
+        $this->new_ui_support = HD::rows_api_support();
+        $this->history_support = $this->new_ui_support && class_exists('Playback_Points');
     }
 
     /**
