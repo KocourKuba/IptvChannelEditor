@@ -25,6 +25,8 @@ class Default_Dune_Plugin implements DunePlugin
     const FAV_CHANNEL_GROUP_CAPTION = 'Избранное';
     const FAV_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/fav.png';
 
+    const PLAYBACK_HISTORY_GROUP_ID = '##playback_history_tv_group##';
+
     const FAV_MOVIES_CATEGORY_CAPTION = 'Избранное';
     const FAV_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/fav_movie.png';
 

@@ -10,7 +10,6 @@ require_once 'lib/epfs/playback_points.php';
 class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_Handler
 {
     const ID = 'rows_epf';
-    const PLAYBACK_HISTORY_GROUP_ID = '__playback_history_tv_group';
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -403,7 +402,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             foreach ($watched as $item) {
                 if (!is_null($channel = $this->plugin->tv->get_channel($item['channel_id']))) {
-                    $id = json_encode(array('group_id' => self::PLAYBACK_HISTORY_GROUP_ID, 'channel_id' => $item['channel_id'], 'archive_tm' => $item['archive_tm']));
+                    $id = json_encode(array('group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID, 'channel_id' => $item['channel_id'], 'archive_tm' => $item['archive_tm']));
 
                     if (isset($this->removed_playback_point))
                         if ($this->removed_playback_point === $id) {
@@ -448,7 +447,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                         $id = json_decode($row->id);
                         $row_id = json_decode($id->row_id);
 
-                        if (!isset($row_id->group_id) || ($row_id->group_id !== self::PLAYBACK_HISTORY_GROUP_ID))
+                        if (!isset($row_id->group_id) || ($row_id->group_id !== Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID))
                             continue;
 
                         foreach ($row->data->items as $item) {
@@ -481,7 +480,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             if (!empty($items)) {
                 $min_row_index_for_y2 = 2;
-                $row_gid = json_encode(array('group_id' => self::PLAYBACK_HISTORY_GROUP_ID));
+                $row_gid = json_encode(array('group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID));
                 $rows[] = Rows_Factory::title_row($row_gid,
                     'Продолжить просмотр',
                     $row_gid,
@@ -771,7 +770,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 );
 
             case GUI_EVENT_KEY_POPUP_MENU:
-                if ($media_url->group_id === self::PLAYBACK_HISTORY_GROUP_ID) {
+                if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
                     if (isset($user_input->selected_item_id)) {
                         $menu_items[] = array(
                             GuiMenuItemDef::caption => '  Удалить',
@@ -798,7 +797,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             case PLUGIN_FAVORITES_OP_ADD:
             case PLUGIN_FAVORITES_OP_REMOVE:
-                if (!isset($media_url->group_id) || $media_url->group_id === self::PLAYBACK_HISTORY_GROUP_ID)
+                if (!isset($media_url->group_id) || $media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID)
                     break;
 
                 $fav_channel_ids = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
