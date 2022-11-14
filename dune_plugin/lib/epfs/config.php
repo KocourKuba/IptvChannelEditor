@@ -69,8 +69,8 @@ class RowsItemsParams
     const	sel_caption_color			= '#FFFFFFE0';
     const	inactive_caption_color		= '#00000000';
     const	caption_font_size			= 28;
-    const	icon_loading_url			= '/loading_channel.png';
-    const	icon_loading_failed_url		= '/channel_unset.png';
+    const	icon_loading_url			= '/loading.png';
+    const	icon_loading_failed_url		= '/unset.png';
     const	fav_sticker_icon_url		= '/star.png';
     const	fav_sticker_bg_color		= '#FF000000';
 }
