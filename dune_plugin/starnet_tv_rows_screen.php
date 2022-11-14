@@ -16,7 +16,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     private $remove_playback_point;
     private $removed_playback_point;
     private $clear_playback_points = false;
-    private $playback_history_enable;
 
     private $images_path;
 
@@ -29,10 +28,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         parent::__construct(self::ID, $plugin);
 
         $this->images_path = get_install_path('img');
-        $this->playback_history_enable = class_exists('Playback_Points');
-        if ($this->playback_history_enable) {
-            Playback_Points::init();
-        }
+        Playback_Points::init();
     }
 
     /**
@@ -332,11 +328,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             return null;
         }
 
-        if (!$this->playback_history_enable) {
-            hd_print("no playback history");
-            return $pane;
-        }
-
         $rows = array();
         $min_row_index_for_y2 = 1;
 
@@ -407,7 +398,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     if (isset($this->removed_playback_point))
                         if ($this->removed_playback_point === $id) {
                             $this->removed_playback_point = null;
-                            Playback_Points::clear($id);
+                            Playback_Points::clear($item['channel_id']);
                             continue;
                         }
 
@@ -440,7 +431,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 $t = time();
                 $epf_data = Starnet_Epfs_Handler::get_epf();
 
-                if (isset($epf_data->data->pane->rows)) {
+                if (isset($epf_data, $epf_data->data->pane->rows)) {
                     foreach ($epf_data->data->pane->rows as $row) {
                         if ($row->type !== PLUGIN_ROW_TYPE_REGULAR) continue;
 
