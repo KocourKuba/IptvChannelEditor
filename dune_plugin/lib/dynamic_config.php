@@ -237,36 +237,6 @@ class dynamic_config
     }
 
     /**
-     * @return string
-     */
-    public function get_server_name($plugin_cookies)
-    {
-        $servers = $this->get_servers($plugin_cookies);
-        return $servers[$this->get_server_id($plugin_cookies)];
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return int|null
-     */
-    public function get_server_id($plugin_cookies)
-    {
-        $servers = $this->get_servers($plugin_cookies);
-        reset($servers);
-        $first = key($servers);
-        return isset($plugin_cookies->server, $servers[$plugin_cookies->server]) ? $plugin_cookies->server : $first;
-    }
-
-    /**
-     * @param $server
-     * @param $plugin_cookies
-     */
-    public function set_server_id($server, $plugin_cookies)
-    {
-        $plugin_cookies->server = $server;
-    }
-
-    /**
      * @return array
      */
     public function get_devices($plugin_cookies)
@@ -280,36 +250,6 @@ class dynamic_config
     public function set_devices($val)
     {
         $this->devices = $val;
-    }
-
-    /**
-     * @return string
-     */
-    public function get_device_name($plugin_cookies)
-    {
-        $devices = $this->get_devices($plugin_cookies);
-        return $devices[$this->get_device_id($plugin_cookies)];
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return int|null
-     */
-    public function get_device_id($plugin_cookies)
-    {
-        $devices = $this->get_devices($plugin_cookies);
-        //reset($devices);
-        $first = key($devices);
-        return isset($plugin_cookies->device, $devices[$plugin_cookies->device]) ? $plugin_cookies->device : $first;
-    }
-
-    /**
-     * @param $device
-     * @param $plugin_cookies
-     */
-    public function set_device_id($device, $plugin_cookies)
-    {
-        $plugin_cookies->device = $device;
     }
 
     /**
@@ -329,36 +269,6 @@ class dynamic_config
     }
 
     /**
-     * @return string
-     */
-    public function get_quality_name($plugin_cookies)
-    {
-        $qualities = $this->get_qualities($plugin_cookies);
-        return $qualities[$this->get_quality_id($plugin_cookies)];
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return mixed|null
-     */
-    public function get_quality_id($plugin_cookies)
-    {
-        $quality = $this->get_qualities($plugin_cookies);
-        reset($quality);
-        $first = key($quality);
-        return isset($plugin_cookies->quality, $quality[$plugin_cookies->quality]) ? $plugin_cookies->quality : $first;
-    }
-
-    /**
-     * @param $quality
-     * @param $plugin_cookies
-     */
-    public function set_quality_id($quality, $plugin_cookies)
-    {
-        $plugin_cookies->quality = $quality;
-    }
-
-    /**
      * @return array
      */
     public function get_profiles($plugin_cookies)
@@ -372,35 +282,5 @@ class dynamic_config
     public function set_profiles($val)
     {
         $this->profiles = $val;
-    }
-
-    /**
-     * @return string
-     */
-    public function get_profile_name($plugin_cookies)
-    {
-        $profiles = $this->get_profiles($plugin_cookies);
-        return $profiles[$this->get_profile_id($plugin_cookies)];
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return int|null
-     */
-    public function get_profile_id($plugin_cookies)
-    {
-        $profiles = $this->get_profiles($plugin_cookies);
-        reset($profiles);
-        $first = key($profiles);
-        return isset($plugin_cookies->profile, $quality[$plugin_cookies->profile]) ? $plugin_cookies->profile : $first;
-    }
-
-    /**
-     * @param $profile
-     * @param $plugin_cookies
-     */
-    public function set_profile_id($profile, $plugin_cookies)
-    {
-        $plugin_cookies->profile = $profile;
     }
 }

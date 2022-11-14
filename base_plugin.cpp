@@ -466,6 +466,9 @@ void base_plugin::put_account_info(const std::string& name, const nlohmann::json
 {
 	JSON_ALL_TRY
 	{
+		if (!js_data.contains(name))
+			return;
+
 		const auto & js_param = js_data[name];
 
 		AccountInfo info;

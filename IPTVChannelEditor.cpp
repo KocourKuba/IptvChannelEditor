@@ -933,6 +933,15 @@ bool PackPlugin(const PluginType plugin_type,
 					break;
 			}
 
+			if (!plugin->get_devices_list().empty())
+				node["device_id"] = plugin->get_devices_list().at(cred.device_id).id;
+			if (!plugin->get_servers_list().empty())
+				node["server_id"] = plugin->get_servers_list().at(cred.server_id).id;
+			if (!plugin->get_qualities_list().empty())
+				node["quality_id"] = plugin->get_qualities_list().at(cred.quality_id).id;
+			if (!plugin->get_profiles_list().empty())
+				node["profile_id"] = plugin->get_profiles_list().at(cred.profile_id).id;
+
 			if (!node.empty())
 			{
 				const auto& js = node.dump();

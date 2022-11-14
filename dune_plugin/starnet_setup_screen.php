@@ -281,7 +281,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (!empty($servers)) {
             hd_print("Change server supported");
             $server_id = $this->plugin->config->get_server_id($plugin_cookies);
-            hd_print("Selected server: id: $server_id name: '$servers[$server_id]'");
+            $server_name = $this->plugin->config->get_server_name($plugin_cookies);
+            hd_print("Selected server: id: $server_id name: '$server_name'");
             Control_Factory::add_combobox($defs, $this, null, 'server', 'Сервер:', $server_id, $servers, 0);
         }
 
@@ -291,7 +292,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (!empty($devices)) {
             hd_print("Change device supported");
             $device_id = $this->plugin->config->get_device_id($plugin_cookies);
-            hd_print("Selected device: id: $device_id name: '$devices[$device_id]'");
+            $device_name = $this->plugin->config->get_device_name($plugin_cookies);
+            hd_print("Selected device: id: $device_id name: '$device_name'");
             Control_Factory::add_combobox($defs, $this, null, 'device', 'Номер устройства:', $device_id, $devices, 0);
         }
 
@@ -301,7 +303,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (!empty($qualities)) {
             hd_print("Change quality supported");
             $quality_id = $this->plugin->config->get_quality_id($plugin_cookies);
-            hd_print("Selected quality: id: $quality_id name: '$qualities[$quality_id]'");
+            $quality_name = $this->plugin->config->get_quality_name($plugin_cookies);
+            hd_print("Selected quality: id: $quality_id name: '$quality_name'");
             Control_Factory::add_combobox($defs, $this, null, 'quality', 'Качество:', $quality_id, $qualities, 0);
         }
 
@@ -311,7 +314,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (!empty($profiles)) {
             hd_print("Change profile supported");
             $profile_id = $this->plugin->config->get_profile_id($plugin_cookies);
-            hd_print("Selected profile: id: $profile_id name: '$profiles[$profile_id]'");
+            $profile_name = $this->plugin->config->get_profile_name($plugin_cookies);
+            hd_print("Selected profile: id: $profile_id name: '$profile_name'");
             Control_Factory::add_combobox($defs, $this, null, 'profile', 'Профиль:', $profile_id, $profiles, 0);
         }
         //////////////////////////////////////

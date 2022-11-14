@@ -55,7 +55,8 @@ public:
 		SERIALIZE_STRUCT(j, c, custom_increment);
 		SERIALIZE_STRUCT(j, c, custom_update_name);
 		SERIALIZE_STRUCT(j, c, custom_package_name);
-		SERIALIZE_STRUCT2(j, c, server_id, device_id);
+		SERIALIZE_STRUCT(j, c, server_id);
+		SERIALIZE_STRUCT(j, c, device_id);
 		SERIALIZE_STRUCT(j, c, profile_id);
 		SERIALIZE_STRUCT(j, c, quality_id);
 		SERIALIZE_STRUCT(j, c, embed);
@@ -84,7 +85,8 @@ public:
 		DESERIALIZE_STRUCT(j, c, custom_increment);
 		DESERIALIZE_STRUCT(j, c, custom_update_name);
 		DESERIALIZE_STRUCT(j, c, custom_package_name);
-		DESERIALIZE_STRUCT2(j, c, server_id, device_id);
+		DESERIALIZE_STRUCT(j, c, server_id);
+		DESERIALIZE_STRUCT(j, c, device_id);
 		DESERIALIZE_STRUCT(j, c, profile_id);
 		DESERIALIZE_STRUCT(j, c, quality_id);
 		DESERIALIZE_STRUCT(j, c, embed);
@@ -112,10 +114,10 @@ public:
 	int custom_increment = 0;
 	int custom_update_name = 0;
 	int custom_package_name = 0;
-	int server_id = 0;
-	int device_id = 0;
-	int profile_id = 0;
-	int quality_id = 0;
+	int server_id = 0; // zero based index
+	int device_id = 0; // zero based index
+	int profile_id = 0; // zero based index
+	int quality_id = 0; // zero based index
 	int embed = 0;
 	std::vector<std::string> ch_list;
 	bool not_valid = false;
