@@ -916,6 +916,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.server_idx = m_cur_account.server_id;
 	params.profile_idx = m_cur_account.profile_id;
 	params.quality_idx = m_cur_account.quality_id;
+	params.device_idx = m_cur_account.device_id;
 	params.playlist_idx = idx;
 
 	if (m_plugin_type == PluginType::enSharaclub)
