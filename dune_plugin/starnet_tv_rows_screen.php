@@ -145,7 +145,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                         wordwrap(iconv('UTF-8', 'Windows-1251',
                             trim(preg_replace('/(!|\?)\.+\s*$/Uu', '$1', $title))),
                             40, "\n", true)
-                    )), 0, 2);
+                    )),
+                    0, 2);
 
                 $prog_title = implode("\n", $lines);
 
@@ -211,8 +212,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(6, 6, 1724, $dy_icon - 4 + 48), null, '#9F5843A6');
 
         if ($group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
-            $first = ($channel_id === reset($fav_channels));
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon),
+            $is_first_channel = ($channel_id === reset($fav_channels));
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), // green button image (B)
                 null,
                 'gui_skin://special_icons/controls_button_green.aai',
                 false,
@@ -220,43 +221,45 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 null,
                 null,
                 null,
-                $first ? 99 : 255);
+                $is_first_channel ? 99 : 255);
 
             $dx += 52;
-            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt),
+            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
                 'Вперед',
                 1,
-                $first ? '#FF808080' : '#FFE0E0E0',
+                $is_first_channel ? '#FF808080' : '#FFE0E0E0',
                 PaneParams::prog_item_font_size - 4
             );
 
-            $last = ($channel_id === end($fav_channels));
+            $is_last_channel = ($channel_id === end($fav_channels));
             $dx += 104;
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon),
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), // yellow button image (C)
                 null,
                 'gui_skin://special_icons/controls_button_yellow.aai',
                 1,
-                0,
+                false,
                 null,
                 null,
                 null,
-                $last ? 99 : 255
+                $is_last_channel ? 99 : 255
             );
 
             $dx += 52;
-            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt),
+            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
                 'Назад',
                 1,
-                $last ? '#FF707070' : '#FFE0E0E0',
+                $is_last_channel ? '#FF505050' : '#FFE0E0E0',
                 PaneParams::prog_item_font_size - 4
             );
+
             $dx += 90;
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon),
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), // blue button image (D)
                 null, 'gui_skin://special_icons/controls_button_blue.aai');
+
             $dx += 52;
-            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt),
+            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
                 'Удалить',
                 1,
@@ -264,10 +267,10 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 PaneParams::prog_item_font_size - 4
             );
         } else {
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon),
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), // blue button image (D)
                 null, 'gui_skin://special_icons/controls_button_blue.aai');
             $dx += 52;
-            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt),
+            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
                 Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
                 1,
@@ -334,185 +337,193 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         if ($this->clear_playback_points) {
             Playback_Points::clear();
             $this->clear_playback_points = false;
-        } else {
-            $watched = array();
+            $this->add_rows_to_pane($pane, $rows, null, $min_row_index_for_y2);
+            return $pane;
+        }
 
-            foreach (Playback_Points::get_all() as $point) {
-                $channel_id = $point->channel_id;
+        // Fill view history data
+        $watched = array();
+        foreach (Playback_Points::get_all() as $point) {
+            $channel_id = $point->channel_id;
 
-                if (is_null($channel = $this->plugin->tv->get_channel($channel_id)) || $channel->is_protected())
-                    continue;
+            if (is_null($channel = $this->plugin->tv->get_channel($channel_id)) || $channel->is_protected())
+                continue;
 
-                $channel_ts = ($point->archive_tm > 0) ?
-                    $point->archive_tm + $point->position : // archive
-                    ($channel->has_archive() ? $point->time : 0); // if can be archived current position
+            $channel_ts = ($point->archive_tm > 0) ?
+                $point->archive_tm + $point->position : // archive
+                ($channel->has_archive() ? $point->time : 0); // if can be archived current position
 
-                if (isset($watched[$channel_id]))
-                    continue;
+            if (isset($watched[$channel_id]))
+                continue;
 
-                if ($channel_ts < 0) {
-                    // only live stream
-                    $watched[(string)$channel_id] = array
-                    (
-                        'channel_id' => $channel_id,
-                        'archive_tm' => 0,
-                        'view_progress' => 0,
-                        'program_title' => $channel->get_title(),
-                        'program_icon_url' => '',
-                    );
-                } else if (!is_null($prog_info = $this->plugin->tv->get_program_info($channel_id, $channel_ts, $plugin_cookies))) {
-                    // program epg available
-                    $start_tm = $prog_info[PluginTvEpgProgram::start_tm_sec];
-                    $end_tm = $prog_info[PluginTvEpgProgram::end_tm_sec];
-                    $subtitle = isset($prog_info[Ext_Epg_Program::sub_title]) ? $prog_info[Ext_Epg_Program::sub_title] : '';
-
-                    $watched[(string)$channel_id] = array
-                    (
-                        'channel_id' => $channel_id,
-                        'archive_tm' => $channel_ts,
-                        'view_progress' => max(0.01, min(1, 1 - round(($end_tm - $channel_ts) / ($end_tm - $start_tm), 2))),
-                        'program_title' => $prog_info[PluginTvEpgProgram::name] . (empty($subtitle) ? '' : '. ' . $subtitle),
-                        'program_icon_url' => isset($prog_info[Ext_Epg_Program::main_icon]) ? $prog_info[Ext_Epg_Program::main_icon] : '',
-                    );
-                } else {
-                    $watched[(string)$channel_id] = array
-                    (
-                        'channel_id' => $channel_id,
-                        'archive_tm' => $channel_ts,
-                        'view_progress' => 0,
-                        'program_title' => '',
-                        'program_icon_url' => '',
-                    );
-                }
-
-                if (count($watched) >= 7)
-                    break;
-            }
-
-            $items = array();
-
-            foreach ($watched as $item) {
-                if (!is_null($channel = $this->plugin->tv->get_channel($item['channel_id']))) {
-                    $id = json_encode(array('group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID, 'channel_id' => $item['channel_id'], 'archive_tm' => $item['archive_tm']));
-
-                    if (isset($this->removed_playback_point))
-                        if ($this->removed_playback_point === $id) {
-                            $this->removed_playback_point = null;
-                            Playback_Points::clear($item['channel_id']);
-                            continue;
-                        }
-
-                    $stickers = null;
-
-                    if ($item['view_progress'] > 0) {
-                        // item size 229x142
-                        if (!empty($item['program_icon_url'])) {
-                            // add small channel logo
-                            $rect = Rows_Factory::r(129, 0, 100, 64);
-                            Rows_Factory::add_regular_sticker_rect($stickers, "#FFFFFFFF", $rect);
-                            Rows_Factory::add_regular_sticker_image($stickers, $channel->get_icon_url(), $rect);
-                        }
-
-                        // add progress indicator
-                        Rows_Factory::add_regular_sticker_rect($stickers, "#CF6A6A6A", Rows_Factory::r(0, 134, 229, 8));
-                        Rows_Factory::add_regular_sticker_rect($stickers, "#FFEFAA16", Rows_Factory::r(0, 134, round(229 * $item['view_progress']), 8));
-                    }
-
-                    Rows_Factory::add_regular_item(
-                        $items,
-                        $id,
-                        empty($item['program_icon_url']) ? $channel->get_icon_url() : $item['program_icon_url'],
-                        empty($item['program_title']) ? $channel->get_title() : $item['program_title'],
-                        $stickers);
-                }
-            }
-
-            if (count($items) < 7) {
-                $t = time();
-                $epf_data = Starnet_Epfs_Handler::get_epf();
-
-                if (isset($epf_data, $epf_data->data->pane->rows)) {
-                    foreach ($epf_data->data->pane->rows as $row) {
-                        if ($row->type !== PLUGIN_ROW_TYPE_REGULAR) continue;
-
-                        $id = json_decode($row->id);
-                        $row_id = json_decode($id->row_id);
-
-                        if (!isset($row_id->group_id) || ($row_id->group_id !== Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID))
-                            continue;
-
-                        foreach ($row->data->items as $item) {
-                            $item_id = json_decode($item->id);
-                            if (is_null($item_id)) break;
-
-                            if (isset($this->removed_playback_point) && $this->removed_playback_point === $item->id) {
-                                $this->removed_playback_point = null;
-                                Playback_Points::clear($item->id);
-                                continue;
-                            }
-
-                            $channel_id = $item_id->channel_id;
-
-                            if (!isset($watched[$channel_id])
-                                && !is_null($channel = $this->plugin->tv->get_channel($channel_id))
-                                && ($item_id->archive_tm + $channel->get_archive_past_sec() - 60 > $t)) {
-
-                                $items[] = $item;
-                                $watched[$channel_id] = '';
-
-                                if (count($items) >= 7)
-                                    break 2;
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (!empty($items)) {
-                $min_row_index_for_y2 = 2;
-                $row_gid = json_encode(array('group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID));
-                $rows[] = Rows_Factory::title_row($row_gid,
-                    'Продолжить просмотр',
-                    $row_gid,
-                    TitleRowsParams::width,
-                    TitleRowsParams::height,
-                    '#FFEFAA16',
-                    TitleRowsParams::font_size,
-                    TitleRowsParams::left_padding,
-                    0, 0,
-                    TitleRowsParams::fade_enabled,
-                    TitleRowsParams::fade_color,
-                    TitleRowsParams::lite_fade_color
+            if ($channel_ts < 0) {
+                // only live stream
+                $watched[(string)$channel_id] = array
+                (
+                    'channel_id' => $channel_id,
+                    'archive_tm' => 0,
+                    'view_progress' => 0,
+                    'program_title' => $channel->get_title(),
+                    'program_icon_url' => '',
                 );
+            } else if (!is_null($prog_info = $this->plugin->tv->get_program_info($channel_id, $channel_ts, $plugin_cookies))) {
+                // program epg available
+                $start_tm = $prog_info[PluginTvEpgProgram::start_tm_sec];
+                $end_tm = $prog_info[PluginTvEpgProgram::end_tm_sec];
+                $subtitle = isset($prog_info[Ext_Epg_Program::sub_title]) ? $prog_info[Ext_Epg_Program::sub_title] : '';
 
-                $rows[] = Rows_Factory::regular_row(json_encode(array('row_ndx' => 0, 'row_id' => $row_gid)),
-                    $items,
-                    'common',
-                    null,
-                    'Продолжить',
-                    $row_gid,
-                    RowsParams::width,
-                    RowsParams::height,
-                    RowsParams::height - TitleRowsParams::height,
-                    RowsParams::left_padding,
-                    RowsParams::inactive_left_padding,
-                    RowsParams::right_padding,
-                    RowsParams::hide_captions,
-                    false,
-                    RowsParams::fade_enable,
-                    null,
-                    null,
-                    RowsParams::fade_icon_mix_color,
-                    RowsParams::fade_icon_mix_alpha,
-                    RowsParams::lite_fade_icon_mix_alpha,
-                    RowsParams::fade_caption_color
+                $watched[(string)$channel_id] = array
+                (
+                    'channel_id' => $channel_id,
+                    'archive_tm' => $channel_ts,
+                    'view_progress' => max(0.01, min(1, 1 - round(($end_tm - $channel_ts) / ($end_tm - $start_tm), 2))),
+                    'program_title' => $prog_info[PluginTvEpgProgram::name] . (empty($subtitle) ? '' : '. ' . $subtitle),
+                    'program_icon_url' => isset($prog_info[Ext_Epg_Program::main_icon]) ? $prog_info[Ext_Epg_Program::main_icon] : '',
+                );
+            } else {
+                $watched[(string)$channel_id] = array
+                (
+                    'channel_id' => $channel_id,
+                    'archive_tm' => $channel_ts,
+                    'view_progress' => 0,
+                    'program_title' => '',
+                    'program_icon_url' => '',
                 );
             }
         }
 
-        $this->add_rows_to_pane($pane, $rows, null, $min_row_index_for_y2);
 
+        // fill view history row items
+        $items = array();
+        foreach ($watched as $item) {
+            if (!is_null($channel = $this->plugin->tv->get_channel($item['channel_id']))) {
+                $id = json_encode(array('group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID, 'channel_id' => $item['channel_id'], 'archive_tm' => $item['archive_tm']));
+
+                if (isset($this->removed_playback_point))
+                    if ($this->removed_playback_point === $id) {
+                        $this->removed_playback_point = null;
+                        Playback_Points::clear($item['channel_id']);
+                        continue;
+                    }
+
+                $stickers = null;
+
+                if ($item['view_progress'] > 0) {
+                    // item size 229x142
+                    if (!empty($item['program_icon_url'])) {
+                        // add small channel logo
+                        $rect = Rows_Factory::r(129, 0, 100, 64);
+                        Rows_Factory::add_regular_sticker_rect($stickers, "#FFFFFFFF", $rect);
+                        Rows_Factory::add_regular_sticker_image($stickers, $channel->get_icon_url(), $rect);
+                    }
+
+                    // add progress indicator
+                    $progress_y = RowsItemsParams::height - 96;
+                    $progress_w = RowsItemsParams::width - 22;
+                    Rows_Factory::add_regular_sticker_rect(
+                        $stickers,
+                        "#CF6A6A6A",
+                        Rows_Factory::r(0, $progress_y, $progress_w, 8)); // total
+                    Rows_Factory::add_regular_sticker_rect(
+                        $stickers,
+                        "#FFEFAA16",
+                        Rows_Factory::r(0, $progress_y, round($progress_w * $item['view_progress']), 8)); // viewed
+                }
+
+                Rows_Factory::add_regular_item(
+                    $items,
+                    $id,
+                    empty($item['program_icon_url']) ? $channel->get_icon_url() : $item['program_icon_url'],
+                    empty($item['program_title']) ? $channel->get_title() : $item['program_title'],
+                    $stickers);
+            }
+        }
+
+        $t = time();
+        $epf_data = Starnet_Epfs_Handler::get_epf();
+
+        if (isset($epf_data, $epf_data->data->pane->rows)) {
+
+            foreach ($epf_data->data->pane->rows as $row) {
+                if ($row->type !== PLUGIN_ROW_TYPE_REGULAR) continue;
+
+                $id = json_decode($row->id);
+                $row_id = json_decode($id->row_id);
+
+                if (!isset($row_id->group_id) || ($row_id->group_id !== Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID))
+                    continue;
+
+                foreach ($row->data->items as $item) {
+                    $item_id = json_decode($item->id);
+                    if (is_null($item_id)) break;
+
+                    if (isset($this->removed_playback_point) && $this->removed_playback_point === $item->id) {
+                        $this->removed_playback_point = null;
+                        Playback_Points::clear($item->id);
+                        continue;
+                    }
+
+                    $channel_id = $item_id->channel_id;
+
+                    if (!isset($watched[$channel_id])
+                        && !is_null($channel = $this->plugin->tv->get_channel($channel_id))
+                        && ($item_id->archive_tm + $channel->get_archive_past_sec() - 60 > $t)) {
+
+                        $items[] = $item;
+                        $watched[$channel_id] = '';
+
+                        if (count($items) >= 7)
+                            break 2;
+                    }
+                    break;
+                }
+            }
+        }
+
+        // create view history group
+        if (!empty($items)) {
+            $min_row_index_for_y2 = 2;
+            $row_gid = json_encode(array('group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID));
+            $rows[] = Rows_Factory::title_row($row_gid,
+                'Продолжить просмотр',
+                $row_gid,
+                TitleRowsParams::width,
+                TitleRowsParams::height,
+                '#FFEFAA16',
+                TitleRowsParams::font_size,
+                TitleRowsParams::left_padding,
+                0, 0,
+                TitleRowsParams::fade_enabled,
+                TitleRowsParams::fade_color,
+                TitleRowsParams::lite_fade_color
+            );
+
+            $rows[] = Rows_Factory::regular_row(
+                json_encode(array('row_ndx' => 0, 'row_id' => $row_gid)),
+                $items,
+                'common',
+                null,
+                'Продолжить',
+                $row_gid,
+                RowsParams::width,
+                RowsParams::height,
+                RowsParams::height - TitleRowsParams::height,
+                RowsParams::left_padding,
+                RowsParams::inactive_left_padding,
+                RowsParams::right_padding,
+                RowsParams::hide_captions,
+                false,
+                RowsParams::fade_enable,
+                null,
+                null,
+                RowsParams::fade_icon_mix_color,
+                RowsParams::fade_icon_mix_alpha,
+                RowsParams::lite_fade_icon_mix_alpha,
+                RowsParams::fade_caption_color
+            );
+        }
+
+        $this->add_rows_to_pane($pane, $rows, null, $min_row_index_for_y2);
         return $pane;
     }
 
@@ -524,6 +535,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $groups = $this->plugin->tv->get_groups();
         if (is_null($groups))
             return null;
+
+        //$source_icon_width = $this->plugin->config->get_feature(Plugin_Constants::SQUARE_ICONS) ? RowsItemsParams::icon_height : RowsItemsParams::icon_width;
 
         $fav_channel_ids = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
         $rows = array();
@@ -666,7 +679,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $width = round((RowsItemsParams::width * 7 - 350) / 7);
         $icon_width = round((RowsItemsParams::icon_width * 7 - 350) / 7) + round((RowsItemsParams::width - RowsItemsParams::icon_width) / $icon_dx);
         $inactive_params = Rows_Factory::variable_params(
-            $width, round($width / (RowsItemsParams::width / RowsItemsParams::height)), 0,
+            $width, round($width / RowsItemsParams::width * RowsItemsParams::height), 0,
             $icon_width,
             round($icon_width / $icon_dx),
             0,

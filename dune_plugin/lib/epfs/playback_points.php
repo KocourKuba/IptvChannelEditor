@@ -171,6 +171,10 @@ class Playback_Points
     {
         $points = file_exists(self::$instance->tmp_path) ? unserialize(file_get_contents(self::$instance->tmp_path)) : array();
         hd_print("Loaded playback_points: " . count($points));
+        while (count($points) > 7) {
+            array_pop($points);
+        }
+
         return $points;
     }
 }
