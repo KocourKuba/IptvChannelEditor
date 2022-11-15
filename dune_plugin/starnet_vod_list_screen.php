@@ -92,6 +92,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             return null;
         }
 
+        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
         $media_url = MediaURL::decode($user_input->selected_media_url);
         $movie_id = $media_url->movie_id;
 
@@ -133,9 +134,8 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             case self::ACTION_ADD_FAV:
                 $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-                $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
                 $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
-                return Action_Factory::show_title_dialog($message);
+                return Action_Factory::invalidate_folders(array(self::get_media_url_str($parent_media_url->category_id, $parent_media_url->genre_id)));
         }
 
         return null;
