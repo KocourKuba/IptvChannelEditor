@@ -730,6 +730,7 @@ bool PackPlugin(const PluginType plugin_type,
 	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
 
 	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::none, err);
+	std::filesystem::copy(plugin_root + L"bin", packFolder + L"bin", std::filesystem::copy_options::recursive, err);
 	std::filesystem::copy(plugin_root + L"lib", packFolder + L"lib", std::filesystem::copy_options::recursive, err);
 	std::filesystem::copy(plugin_root + L"img", packFolder + L"img", std::filesystem::copy_options::recursive, err);
 	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", std::filesystem::copy_options::recursive, err);
@@ -902,6 +903,15 @@ bool PackPlugin(const PluginType plugin_type,
 		}
 		return false;
 	}
+
+	std::ofstream os_supplier(packFolder + LR"(bin\update_movie_suppliers)", std::ofstream::binary | std::ofstream::app);
+	os_supplier << R"(cat << EOF > "$filepath")" << std::endl << "{" << std::endl;
+	os_supplier << "{" << std::endl;
+	os_supplier << R"(   "plugin" : "$plugin_name",)" << std::endl;
+	os_supplier << R"(   "caption" : ")" << plugin_caption.c_str() << R"(",)" << std::endl;
+	os_supplier << R"(   "tv_app" : "{"type":"plugin","plugin_name":"$plugin_name"})" << std::endl;
+	os_supplier << "}" << std::endl << "EOF" << std::endl;
+	os_supplier.close();
 
 	// copy channel lists
 	for(const auto& item : channels_list)
