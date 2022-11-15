@@ -66,6 +66,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
                         if (HD::rows_api_support()) {
                             Starnet_Epfs_Handler::update_all_epfs(isset($user_input->first_run_after_boot) || isset($user_input->restore_from_sleep), $plugin_cookies);
+                            //return Action_Factory::close_and_run(Starnet_Epfs_Handler::invalidate_folders(null, $action));
                             //return Starnet_Epfs_Handler::invalidate_folders(null, $action);
                         }
 

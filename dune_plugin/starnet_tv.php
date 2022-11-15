@@ -381,8 +381,8 @@ class Starnet_Tv implements Tv, User_Input_Handler
             }
         }
 
-        $this->plugin->config->SetupM3uParser(true, $plugin_cookies);
         $this->plugin->config->GetAccountInfo($plugin_cookies);
+        $this->plugin->config->SetupM3uParser(true, $plugin_cookies);
         $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo();
 
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
@@ -726,7 +726,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
     public function get_action_map()
     {
         $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER);
-        if (HD::rows_api_support()) {
+        if ($this->plugin->new_ui_support) {
             $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
         }
 
@@ -738,8 +738,16 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Starnet_Tv: handle_user_input');
-        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        hd_print('Starnet_Tv: handle_user_input');
+        foreach ($user_input as $key => $value) hd_print("  $key => $value");
+
+        if (!isset($user_input->control_id)) {
+            return null;
+        }
+
+        if ($this->plugin->history_support && isset($user_input->plugin_tv_channel_id)) {
+            Playback_Points::update($user_input->plugin_tv_channel_id);
+        }
 
         switch ($user_input->control_id) {
             case GUI_EVENT_TIMER:
@@ -747,14 +755,12 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 break;
 
             case GUI_EVENT_PLAYBACK_STOP:
-                if ($this->plugin->history_support) {
-                    Playback_Points::update($user_input->plugin_tv_channel_id);
-                }
-                if (!isset($user_input->playback_stop_pressed) && !isset($user_input->playback_power_off_needed)) break;
 
-                if ($this->plugin->new_ui_support) {
-                    Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-                    return Starnet_Epfs_Handler::invalidate_folders();
+                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
+                    if ($this->plugin->new_ui_support) {
+                        Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                        return Starnet_Epfs_Handler::invalidate_folders(array());
+                    }
                 }
         }
 

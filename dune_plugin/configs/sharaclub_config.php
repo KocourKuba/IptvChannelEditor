@@ -85,7 +85,7 @@ class sharaclub_config extends default_config
     {
         $profiles = parent::get_profiles($plugin_cookies);
         if (empty($profiles)) {
-            $profiles = array();
+            $profiles = array("0" => "По умолчанию");
             try {
                 $url = $this->replace_api_command('list_profiles', $plugin_cookies);
                 $content = HD::DownloadJson($url);
@@ -94,8 +94,8 @@ class sharaclub_config extends default_config
                     foreach ($content['profiles'] as $profile) {
                         $profiles[$profile['id']] = $profile['name'];
                     }
-                    $plugin_cookies->profile = $content['current'];
-                    hd_print("Current server: $plugin_cookies->server");
+                    $plugin_cookies->profile = isset($content['current']) ? $content['current'] : "0";
+                    hd_print("Current profile: {$profiles[$plugin_cookies->profile]} ($plugin_cookies->profile)");
                     $this->set_profiles($profiles);
                 } else {
                     hd_print("Unable to download profiles information");
@@ -131,14 +131,17 @@ class sharaclub_config extends default_config
         }
     }
 
+    /**
+     * @param string $type
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function GetPlaylistUrl($type, $plugin_cookies)
     {
         $url = parent::GetPlaylistUrl($type, $plugin_cookies);
-        $profiles = $this->get_profiles($plugin_cookies);
-        if (!empty($profiles)) {
-            $id = $this->get_profile_id($plugin_cookies);
-		    $url .= "/" . $profiles[$id];
-	    }
+
+        $id = $this->get_profile_id($plugin_cookies);
+        $url .= (empty($id) ? "" : "/" . $id);
 
         return $url;
     }
@@ -163,17 +166,21 @@ class sharaclub_config extends default_config
             }
 
             if ($force !== false || empty($this->account_data)) {
+                hd_print("Load player configuration");
                 $api = HD::DownloadJson(self::API_HOST . '/con8fig.php?source=dune_editor', false);
+                if ($api === false) {
+                    hd_print("Unable to load player configuration");
+                } else {
+                    $plugin_cookies->subdomain = $api->listdomain;
+                    $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={EPG_ID}");
 
-                $plugin_cookies->subdomain = $api->listdomain;
-                $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={EPG_ID}");
-
-                $url = $this->replace_api_command('subscr_info', $plugin_cookies);
-                $json = HD::DownloadJson($url);
-                if ($json === false || !isset($json['status']) || $json['status'] !== '1') {
-                    throw new Exception("Account status unknown");
+                    $url = $this->replace_api_command('subscr_info', $plugin_cookies);
+                    $json = HD::DownloadJson($url);
+                    if ($json === false || !isset($json['status']) || $json['status'] !== '1') {
+                        throw new Exception("Account status unknown");
+                    }
+                    $this->account_data = $json;
                 }
-                $this->account_data = $json;
             }
         } catch (Exception $ex) {
             hd_print($ex->getMessage());

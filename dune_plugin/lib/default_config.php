@@ -212,7 +212,7 @@ class default_config extends dynamic_config
 
     /**
      * @param $plugin_cookies
-     * @return int|null
+     * @return string|null
      */
     public function get_profile_id($plugin_cookies)
     {
@@ -224,7 +224,7 @@ class default_config extends dynamic_config
         $profiles = $this->get_profiles($plugin_cookies);
         reset($profiles);
         $first = key($profiles);
-        return isset($plugin_cookies->profile, $profiles[$plugin_cookies->profile]) ? $plugin_cookies->profile : $first;
+        return isset($plugin_cookies->profile) && array_key_exists($plugin_cookies->profile, $profiles) ? $plugin_cookies->profile : $first;
     }
 
     /**
@@ -1005,7 +1005,7 @@ class default_config extends dynamic_config
                     $url = str_replace('{TOKEN}', $plugin_cookies->token, $url);
             }
 
-            if (strpos($url, '{SUBDOMAIN}') !== false) {
+            if (isset($plugin_cookies->subdomain) && strpos($url, '{SUBDOMAIN}') !== false) {
                 $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
             }
 

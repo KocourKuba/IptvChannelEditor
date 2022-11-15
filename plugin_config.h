@@ -482,6 +482,11 @@ public:
 	virtual void set_servers_list(const std::vector<DynamicParamsInfo>& info) { servers_list = info; }
 
 	/// <summary>
+	/// clear device list
+	/// </summary>
+	void clear_device_list() { devices_list.clear(); }
+
+	/// <summary>
 	/// returns list of device variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
@@ -520,6 +525,11 @@ public:
 	/// <param name="params">Template parameters. Can be changed</param>
 	virtual const std::vector<DynamicParamsInfo>& get_qualities_list() { return qualities_list; }
 	virtual void set_qualities_list(const std::vector<DynamicParamsInfo>& info) { qualities_list = info; }
+
+	/// <summary>
+	/// clear profile list
+	/// </summary>
+	void clear_profiles_list() { profiles_list.clear(); }
 
 	/// <summary>
 	/// returns list of profiles variants

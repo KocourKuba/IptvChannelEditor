@@ -142,11 +142,6 @@ public:
 	//const std::vector<PlaylistInfo>& get_playlists() const { return playlists; };
 
 	/// <summary>
-	/// clear profile list
-	/// </summary>
-	void clear_profiles_list() { profiles_list.clear(); }
-
-	/// <summary>
 	/// returns link to vod download
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>

@@ -260,6 +260,12 @@ BOOL CAccessInfoPage::OnInitDialog()
 		JSON_ALL_CATCH;
 	}
 
+	if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
+	{
+		m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
+	}
+
 	CreateAccountsList();
 	CreateAccountInfo();
 	CreateChannelsList();
@@ -325,18 +331,11 @@ void CAccessInfoPage::UpdateOptionalControls()
 	TemplateParams params;
 	params.login = selected.get_login();
 	params.password = selected.get_password();
-	params.subdomain = selected.get_subdomain();
+	params.subdomain = (m_plugin->get_plugin_type() == PluginType::enSharaclub) ? m_list_domain : selected.get_subdomain();
 	params.server_idx = selected.server_id;
 	params.device_idx = selected.device_id;
 	params.profile_idx = selected.profile_id;
 	params.quality_idx = selected.quality_id;
-
-	if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
-	{
-		m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
-		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
-		params.subdomain = m_list_domain;
-	}
 
 	m_plugin->fill_servers_list(params);
 	m_servers = m_plugin->get_servers_list();
@@ -398,7 +397,7 @@ void CAccessInfoPage::UpdateOptionalControls()
 
 	m_plugin->fill_profiles_list(params);
 	m_profiles = m_plugin->get_profiles_list();
-	m_wndProfiles.EnableWindow(!m_qualities.empty());
+	m_wndProfiles.EnableWindow(!m_profiles.empty());
 	m_wndProfiles.ResetContent();
 
 	if (!m_profiles.empty())
@@ -890,8 +889,6 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	{
 		m_wndRemove.EnableWindow(pNMLV->uNewState & LVIS_SELECTED);
 
-		UpdateOptionalControls();
-
 		if ((pNMLV->uNewState & 0x2000) && (pNMLV->uOldState & 0x1000))
 		{
 			int cnt = m_wndAccounts.GetItemCount();
@@ -903,6 +900,8 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 				}
 			}
 
+			m_plugin->clear_device_list();
+			m_plugin->clear_profiles_list();
 			GetAccountInfo();
 			FillChannelsList();
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(TRUE);
@@ -921,6 +920,7 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
 		}
 
+		UpdateOptionalControls();
 		SetWebUpdate();
 	}
 
