@@ -5,7 +5,6 @@ class Base_Epfs_Handler
 	const EPFS_PATH = '/flashdata/plugins_epfs/';
 
     protected static $dir_path;
-    protected static $base_tmp_path;
 
 	///////////////////////////////////////////////////////////////////////
 
@@ -15,7 +14,6 @@ class Base_Epfs_Handler
      */
     public static function initialize($plugin_name)
     {
-        self::$base_tmp_path = '/tmp/plugins/' . $plugin_name;
         self::$dir_path = self::EPFS_PATH . $plugin_name;
     }
 
@@ -30,12 +28,10 @@ class Base_Epfs_Handler
         $tmp_path = "$path.tmp";
 
         if (false === file_put_contents($tmp_path, $data)) {
-            hd_print("Failed to write file: $tmp_path");
-            return;
-        }
-
-        if (!rename($tmp_path, $path)) {
+            hd_print("Failed to write tmp file: $tmp_path");
+        } else if (!rename($tmp_path, $path)) {
             hd_print("Failed to rename $tmp_path to $path");
+            unlink($tmp_path);
             return;
         }
 
@@ -52,18 +48,6 @@ class Base_Epfs_Handler
     {
         return file_exists($path = self::get_epf_path($epf_id)) ? json_decode(file_get_contents($path)) : null;
     }
-
-    /**
-     * @param string $epf_id
-     * @param array|object $folder_view
-     * @return void
-     */
-    protected static function write_no_internet_epf($epf_id, $folder_view)
-	{
-		if ($folder_view) {
-            self::do_write_epf_data(self::get_epf_path($epf_id, 'no_internet.json'), json_encode($folder_view), "$epf_id.no_internet");
-        }
-	}
 
     /**
      * @param string $epf_id
@@ -104,23 +88,22 @@ class Base_Epfs_Handler
 
     /**
      * @param string $epf_id
-     * @param string $ext
      * @return string
      */
-    protected static function get_epf_path($epf_id, $ext = 'json')
+    protected static function get_epf_path($epf_id)
 	{
-		return self::$dir_path . "/$epf_id.$ext";
+		return self::$dir_path . "/$epf_id.json";
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 
 	public static function warmed_up_path()
 	{
-		return self::$base_tmp_path . '/epfs_warmed_up';
+		return get_temp_path('epfs_warmed_up');
 	}
 
 	public static function get_epfs_changed_path()
 	{
-		return self::$base_tmp_path . '/update_epfs_if_needed_flag';
+		return get_temp_path('update_epfs_if_needed_flag');
 	}
 }

@@ -22,8 +22,7 @@ class Dummy_Epfs_Screen extends Abstract_Rows_Screen implements User_Input_Handl
      */
     public static function get_media_url_str($no_internet)
     {
-        $arr['no_internet'] = $no_internet;
-        return MediaURL::encode($arr);
+        return MediaURL::encode(array('no_internet' => $no_internet));
     }
 
     /**
@@ -33,9 +32,7 @@ class Dummy_Epfs_Screen extends Abstract_Rows_Screen implements User_Input_Handl
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, 'enter');
-
-        return $actions;
+        return array(GUI_EVENT_KEY_ENTER => User_Input_Handler_Registry::create_action($this, 'enter'));
     }
 
     /**
@@ -75,8 +72,7 @@ class Dummy_Epfs_Screen extends Abstract_Rows_Screen implements User_Input_Handl
     public function get_folder_view_for_epf($no_internet, &$plugin_cookies)
     {
         hd_print("Dummy_Epfs_Screen::get_folder_view_for_epf");
-        $media_url_str = self::get_media_url_str($no_internet);
-        $media_url = MediaURL::decode($media_url_str);
+        $media_url = MediaURL::decode(self::get_media_url_str($no_internet));
 
         return $this->get_folder_view($media_url, $plugin_cookies);
     }

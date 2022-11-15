@@ -52,7 +52,7 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
             return;
 
         self::$epf_id = $plugin->plugin_info['app_name'];
-        self::$no_internet_epfs = self::$epf_id;
+        self::$no_internet_epfs = self::$epf_id . '.no_internet';
 
         hd_print("Starnet_Epfs_Handler: init: epf_id: " . self::$epf_id);
         parent::initialize(self::$epf_id);
@@ -70,16 +70,11 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
      */
     private static function ensure_no_internet_epfs_created($first_run, &$plugin_cookies)
     {
-        if (!self::$enabled)
+        if (!self::$enabled || self::$no_internet_epfs_created)
             return;
 
-        if (self::$no_internet_epfs_created)
-            return;
-
-        $path = self::get_epf_path(self::$no_internet_epfs, 'no_internet.json');
-
-        if ($first_run || !is_file($path)) {
-            self::write_no_internet_epf(self::$no_internet_epfs, self::$dummy_epf_screen->get_folder_view_for_epf(true, $plugin_cookies));
+        if ($first_run || !is_file(self::get_epf_path(self::$no_internet_epfs))) {
+            self::write_epf_view(self::$no_internet_epfs, self::$dummy_epf_screen->get_folder_view_for_epf(true, $plugin_cookies));
         }
 
         self::$no_internet_epfs_created = true;
