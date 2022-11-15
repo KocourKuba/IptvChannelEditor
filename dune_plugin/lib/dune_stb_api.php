@@ -261,6 +261,16 @@ function get_platform_kind()
     return $result;
 }
 
+function get_android_platform()
+{
+    static $result = null;
+
+    if (is_null($result)) {
+        $result = trim(shell_exec('grep "android_platform" /tmp/run/versions.txt | sed "s/^.*= *//"'));
+    }
+
+    return $result;
+}
 /**
  * return product id
  * @return string
@@ -360,7 +370,6 @@ function get_mac_address()
 
     if (is_null($mac_addr)) {
         $mac_addr = trim(shell_exec('ifconfig  eth0 | head -1 | sed "s/^.*HWaddr //"'));
-        hd_print("MAC Address: '$mac_addr'");
     }
 
     return $mac_addr;
@@ -1354,10 +1363,13 @@ function json_encode_unicode($data)
 function print_sysinfo()
 {
     hd_print("----------------------------------------------------");
+    $platform = get_platform_kind();
     $table = array(
         'Dune Product' => get_product_id(),
         'Dune FW' => get_raw_firmware_version(),
         'Dune Serial' => get_serial_number(),
+        'Dune Platform' => $platform . ($platform === 'android' ? (" (" . get_android_platform() . ")") : ''),
+        'Dune MAC Addr' => get_mac_address(),
     );
     $table = array_merge($table, DuneSystem::$properties);
 

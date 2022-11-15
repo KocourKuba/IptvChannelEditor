@@ -108,7 +108,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("VOD page:         " . ($this->config->get_feature(Plugin_Constants::VOD_SUPPORTED) ? "yes" : "no"));
         hd_print("LocalTime         " . format_datetime('Y-m-d H:i', time()));
         hd_print("TimeZone          " . getTimeZone());
-        hd_print("Daylight          " . date('I') ? 'yes' : 'no');
+        hd_print("Daylight          " . (date('I') ? 'yes' : 'no'));
         hd_print("Icon              " . $this->plugin_info['app_logo']);
         hd_print("Background        " . $this->plugin_info['app_background']);
         hd_print("Channels path     " . $this->plugin_info['app_channels_url_path']);
