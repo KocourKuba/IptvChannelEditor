@@ -72,6 +72,11 @@ BOOL CPathsSettingsPage::OnInitDialog()
 	m_plugins_web_update_path = GetConfig().get_string(true, REG_WEB_UPDATE_PATH).c_str();
 	m_plugins_settings_path = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH).c_str();
 
+	m_wndListsPath.EnableFolderBrowseButton();
+	m_wndPluginsPath.EnableFolderBrowseButton();
+	m_wndPluginsWebUpdatePath.EnableFolderBrowseButton();
+	m_wndPluginSettingsPath.EnableFolderBrowseButton();
+
 	CString filter(_T("EXE file(*.exe)|*.exe|All Files (*.*)|*.*||"));
 	m_wndPlayer.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
 	m_wndProbe.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
