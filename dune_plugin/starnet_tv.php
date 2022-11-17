@@ -577,9 +577,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 PluginTvEpgProgram::end_tm_sec => (int)$value[Epg_Params::EPG_END] + $time_shift,
                 PluginTvEpgProgram::name => $value[Epg_Params::EPG_NAME],
                 PluginTvEpgProgram::description => $value[Epg_Params::EPG_DESC],
-                PluginTvEpgProgram::icon_url => '',
-                Ext_Epg_Program::year => '',
-                Ext_Epg_Program::main_category => '',
             );
         }
 
