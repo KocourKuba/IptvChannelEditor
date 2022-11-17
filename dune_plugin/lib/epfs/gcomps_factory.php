@@ -5,8 +5,8 @@ class GComps_Factory
     /** convert standard RGBA representation of the color
      * to DUNE ARGB GComps representation
      *
-     * @param $rgba 'RGBA color
-     * @return string 'ARGB color
+     * @param string $rgba # RGBA color
+     * @return string # ARGB color
      */
     public static function rgba_to_argb($rgba)
     {
@@ -18,12 +18,12 @@ class GComps_Factory
     }
 
     /**
-     * @param array $geom ' GCompGeometryDef
-     * @param int $margins
+     * @param array $geom # GCompGeometryDef
+     * @param array $margins # GCompMarginsDef
      * @param string $text
      * @param int $max_num_lines
-     * @param string $color 'color index
-     * @param int $font_size ' FONT_SIZE_NORMAL, FONT_SIZE_SMALL, FONT_SIZE_LARGE
+     * @param string $color # color index
+     * @param int $font_size # FONT_SIZE_NORMAL, FONT_SIZE_SMALL, FONT_SIZE_LARGE
      * @param string|null $id
      * @return array
      */
@@ -45,11 +45,11 @@ class GComps_Factory
     }
 
     /**
-     * @param $attrs
-     * @param $text
-     * @param $color
-     * @param $font_size
-     * @param $max_num_lines
+     * @param array $attrs
+     * @param string $text
+     * @param string $color # RGBA format
+     * @param string $font_size # size in pt
+     * @param int $max_num_lines
      * @return array
      */
     protected static function getSpecificDefs($attrs, $text, $color, $font_size, $max_num_lines)
@@ -74,8 +74,19 @@ class GComps_Factory
         return $arr2;
     }
 
-    public static function label($geom, $margins,
-                                 $text, $max_num_lines = 1, $color = "#FFFFE0FF",
+    /**
+     * @param array $geom # GCompGeometryDef
+     * @param array|null $margins # GCompMarginsDef
+     * @param string $text
+     * @param int $max_num_lines
+     * @param string $color # RGBA format
+     * @param string $font_size # size in pt
+     * @param string|null $id
+     * @param array|null $attrs
+     * @return array
+     */
+    public static function label($geom, $margins, $text,
+                                 $max_num_lines = 1, $color = "#FFFFE0FF",
                                  $font_size = 36, $id = null, $attrs = null)
     {
         $arr2 = self::getSpecificDefs($attrs, $text, $color, $font_size, $max_num_lines);
@@ -92,8 +103,19 @@ class GComps_Factory
         return $arr;
     }
 
-    public static function label_v2($geom, $margins,
-                                    $text, $max_num_lines = 1, $color = "#FFFFE0FF",
+    /**
+     * @param array $geom # GCompGeometryDef
+     * @param array|null $margins # GCompMarginsDef
+     * @param string $text
+     * @param int $max_num_lines
+     * @param string $color # RGBA format
+     * @param string $font_size # size in pt
+     * @param string|null $id
+     * @param array|null $attrs
+     * @return array
+     */
+    public static function label_v2($geom, $margins, $text,
+                                    $max_num_lines = 1, $color = "#FFFFE0FF",
                                     $font_size = 36, $id = null, $attrs = null)
     {
         $arr2 = self::getSpecificDefs($attrs, $text, $color, $font_size, $max_num_lines);
@@ -110,6 +132,12 @@ class GComps_Factory
         return $arr;
     }
 
+    /**
+     * @param array $geom # GCompGeometryDef
+     * @param array|null $margins # GCompMarginsDef
+     * @param string $color # RGBA format
+     * @return array
+     */
     public static function get_rect_def($geom, $margins, $color)
     {
         return array(
@@ -122,6 +150,20 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param array $geom # GCompGeometryDef
+     * @param array|null $margins # GCompMarginsDef
+     * @param string $url
+     * @param bool $keep_aspect_ratio
+     * @param bool $upscale_enabled
+     * @param string|null $not_loaded_url
+     * @param string|null $load_failed_url
+     * @param string|null $low_quality_url
+     * @param int $alpha # 0-255
+     * @param int $mix_alpha # 0-255
+     * @param int $mix_color # 0-255
+     * @return array
+     */
     public static function get_image_def($geom, $margins, $url,
                                          $keep_aspect_ratio = false, $upscale_enabled = true,
                                          $not_loaded_url = null, $load_failed_url = null, $low_quality_url = null,
@@ -145,6 +187,13 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param array $geom # GCompGeometryDef
+     * @param array $margins # GCompMarginsDef
+     * @param string $url
+     * @return array
+     */
     public static function get_cut_image_def($id, $geom, $margins, $url)
     {
         return array(
@@ -156,6 +205,15 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param array $geom # GCompGeometryDef
+     * @param array $margins # GCompMarginsDef
+     * @param string $caption
+     * @param bool $selected
+     * @param bool $caption_centered
+     * @return array
+     */
     public static function get_button_def($id, $geom, $margins, $caption, $selected = false, $caption_centered = true)
     {
         return array(
@@ -171,6 +229,13 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param array $geom # GCompGeometryDef
+     * @param array $margins # GCompMarginsDef
+     * @param string $scroll_pane_id
+     * @param bool $vertical
+     * @return array
+     */
     public static function get_scrollbar_def($geom, $margins, $scroll_pane_id, $vertical = true)
     {
         return array(
@@ -184,6 +249,12 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param int $x
+     * @param int $y
+     * @param string|null $id
+     * @return array
+     */
     public static function get_view_position_def($x, $y, $id = null)
     {
         return array(
@@ -192,7 +263,15 @@ class GComps_Factory
             GCompViewPositionDef::id => $id);
     }
 
-    public static function get_panel_def($id, $geom, $margins, $children, $options = null)
+    /**
+     * @param string $id
+     * @param array $geom # GCompGeometryDef
+     * @param array|null $margins # GCompMarginsDef
+     * @param array $children # GComponentDefList
+     * @param int $options
+     * @return array
+     */
+    public static function get_panel_def($id, $geom, $margins, $children, $options = 0)
     {
         return array(
             GComponentDef::id => $id,
@@ -204,6 +283,14 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param array $geom # GCompGeometryDef
+     * @param array $children # GComponentDefList
+     * @param int $native_width
+     * @param int $native_height
+     * @return array
+     */
     public static function get_ppane_def($id, $geom, $children, $native_width = 0, $native_height = 0)
     {
         return array(
@@ -218,6 +305,16 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param array $geom # GCompGeometryDef
+     * @param array $margins # GCompMarginsDef
+     * @param array $children # GComponentDefList
+     * @param int $view_width
+     * @param int $view_height
+     * @param array|null $view_position # GCompViewPositionDef
+     * @return array
+     */
     public static function get_spane_def($id, $geom, $margins, $children, $view_width = 0, $view_height = 0, $view_position = null)
     {
         return array(
@@ -234,6 +331,14 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param array $geom # GCompGeometryDef
+     * @param array $margins # GCompMarginsDef
+     * @param array $children # GComponentDefList
+     * @param array|null $view_position # GCompViewPositionDef
+     * @return array
+     */
     public static function get_vertical_spane_def($id, $geom, $margins, $children, $view_position = null)
     {
         return array(
@@ -249,6 +354,14 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param array $geom # GCompGeometryDef
+     * @param array $margins # GCompMarginsDef
+     * @param array $children # GComponentDefList
+     * @param array|null $view_position # GCompViewPositionDef
+     * @return array
+     */
     public static function get_horizontal_spane_def($id, $geom, $margins, $children, $view_position = null)
     {
         return array(
@@ -264,6 +377,19 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param array $comp_defs
+     * @param array|null $ui_state # GCompUiStateDef
+     * @param string|null $background_url
+     * @param string|null $background_color # RGBA format
+     * @param string|null $not_loaded_background_url
+     * @param bool $async_loading_background
+     * @param int $playback_bg_alpha
+     * @param array|null $fit_def # ImageFitDef
+     * @param string|null $small_state_text
+     * @param bool $opaque_background
+     * @return array
+     */
     public static function get_window_def($comp_defs,
                                           $ui_state = null,
                                           $background_url = null,
@@ -289,6 +415,11 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param double $base_halign_ratio
+     * @param double $base_valign_ratio
+     * @return array
+     */
     public static function get_image_fit_def($base_halign_ratio, $base_valign_ratio)
     {
         return array(
@@ -297,6 +428,12 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param string $caption
+     * @param string|null $icon_url
+     * @return array
+     */
     public static function get_comp_item_def($id, $caption, $icon_url = null)
     {
         return array(
@@ -307,6 +444,11 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $caption
+     * @param string|null $left_caption
+     * @return array
+     */
     public static function get_label_item_def($caption, $left_caption = null)
     {
         return array(
@@ -316,6 +458,12 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param string $caption
+     * @param string|null $left_caption
+     * @return array
+     */
     public static function get_button_item_def($id, $caption, $left_caption = null)
     {
         return array(
@@ -326,6 +474,14 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param array $items
+     * @param string|null $title
+     * @param string|null $bg_url
+     * @param string|null $poster_url
+     * @param array|null $view_params # MY_Properties
+     * @return array
+     */
     public static function get_gcomp_ui_state_def($items, $title = null, $bg_url = null, $poster_url = null, $view_params = null)
     {
         return array(
@@ -337,6 +493,12 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param array $def
+     * @param array|null $sel_margins # GCompMarginsDef
+     * @param string|null $background_url
+     * @return void
+     */
     public static function set_focusable(&$def, $sel_margins = null, $background_url = null)
     {
         $def[GComponentDef::focusable_def] = array(
@@ -345,6 +507,13 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param array $def
+     * @param string $ref_id
+     * @param array $geom # GCompGeometryDef
+     * @param array|null $props # MY_Properties
+     * @return void
+     */
     public static function set_focus_var(&$def, $ref_id, $geom, $props = null)
     {
         $def[GComponentDef::focused_variant_def] = array(
@@ -354,6 +523,13 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param array $def
+     * @param string $ref_id
+     * @param array|null $geom # GCompGeometryDef
+     * @param array|null $props # MY_Properties
+     * @return void
+     */
     public static function add_extra_var(&$def, $ref_id, $geom, $props = null)
     {
         $def[GComponentDef::extra_variant_defs][] = array(
@@ -363,6 +539,13 @@ class GComps_Factory
         );
     }
 
+    /**
+     * @param string $icon_url
+     * @param string|null $text
+     * @param string|null $color # RGBA format
+     * @param array|null $rect # MY_Rect
+     * @return array
+     */
     public static function get_sticker_def($icon_url, $text = null, $color = null, $rect = null)
     {
         return array(
@@ -375,9 +558,19 @@ class GComps_Factory
 
     ////////////////////////////////////////////////////////////
 
+    /**
+     * @param string $id
+     * @param array $geom # GCompGeometryDef
+     * @param array|null $props # MY_Properties
+     * @param array|null $view_position # GCompViewPositionDef
+     * @param bool $selected
+     * @param array|null $children # GComponentDefList
+     * @param array|null $transition # GCompTransition
+     * @return array
+     */
     public static function get_change_def($id, $geom,
                                           $props = null, $view_position = null,
-                                          $selected = null, $children = null,
+                                          $selected = false, $children = null,
                                           $transition = GCOMP_TRANSITION_DEFAULT)
     {
         return array(

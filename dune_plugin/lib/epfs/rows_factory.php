@@ -2,7 +2,23 @@
 
 class Rows_Factory
 {
-    public static function pane($rows, $focus = null, $bg = null,
+    /**
+     * @param array $rows
+     * @param array $focus # GCompFocusDef
+     * @param string $bg
+     * @param bool $header_enabled
+     * @param bool $single_list_navigation
+     * @param int $initial_focus_header
+     * @param string $initial_focus_item_id
+     * @param string $initial_focus_row_id
+     * @param double $hfactor
+     * @param double $vfactor
+     * @param double $vgravity
+     * @param int $vend_min_offset
+     * @return array
+     */
+    public static function pane($rows,
+                                $focus = null, $bg = null,
                                 $header_enabled = false, $single_list_navigation = false,
                                 $initial_focus_header = -1,
                                 $initial_focus_item_id = null, $initial_focus_row_id = null,
@@ -29,8 +45,24 @@ class Rows_Factory
         return $arr;
     }
 
-    public static function pane_set_geometry(&$pane,
-                                             $w, $h, $x, $y, $y2 = 0, $min_row_index_for_y2 = 0,
+    /**
+     * @param array $pane
+     * @param int $w
+     * @param int $h
+     * @param int $x
+     * @param int $y
+     * @param int $y2
+     * @param int $min_row_index_for_y2
+     * @param int $info_w
+     * @param int $info_h
+     * @param int $info_x
+     * @param int $info_y
+     * @param int $vod_w
+     * @param int $vod_h
+     * @return void
+     */
+    public static function pane_set_geometry(&$pane, $w, $h, $x, $y,
+                                             $y2 = 0, $min_row_index_for_y2 = 0,
                                              $info_w = 0, $info_h = 0, $info_x = 0, $info_y = 0,
                                              $vod_w = 0, $vod_h = 0)
     {
@@ -41,14 +73,24 @@ class Rows_Factory
         $pane[PluginRowsPane::vod_r] = array('w' => $vod_w, 'h' => $vod_h, 'x' => $w - $vod_w, 'y' => 0);
     }
 
-    public static function focus(
-        $focus_type = GCOMP_FOCUS_SYSTEM, $focus2_type = GCOMP_FOCUS_NONE)
+    /**
+     * @param string $focus_type
+     * @param string $focus2_type
+     * @return array
+     */
+    public static function focus($focus_type = GCOMP_FOCUS_SYSTEM, $focus2_type = GCOMP_FOCUS_NONE)
     {
         return array(
             GCompFocusDef::type => $focus_type,
-            GCompFocusDef::type2 => $focus2_type);
+            GCompFocusDef::type2 => $focus2_type
+        );
     }
 
+    /**
+     * @param int $height
+     * @param int $inactive_height
+     * @return array
+     */
     public static function vgap_row($height, $inactive_height = -1)
     {
         return array(
@@ -58,6 +100,16 @@ class Rows_Factory
         );
     }
 
+    /**
+     * @param string $id
+     * @param array $gcomp_defs
+     * @param string $title
+     * @param int $width
+     * @param int $height
+     * @param int $inactive_height
+     * @param string $ui_state
+     * @return array
+     */
     public static function gcomps_row($id, $gcomp_defs,
                                       $title = null, $width = -1, $height = -1,
                                       $inactive_height = -1, $ui_state = null)
@@ -75,6 +127,22 @@ class Rows_Factory
             ));
     }
 
+    /**
+     * @param string $id
+     * @param string $caption
+     * @param string $group_id
+     * @param int $width
+     * @param int $height
+     * @param string $color # RGBA format
+     * @param int $font_size # size in pt
+     * @param int $left
+     * @param int $dy
+     * @param int $active_dy
+     * @param bool $fade_enabled
+     * @param string $fade_color # RGBA format
+     * @param string $lite_fade_color # RGBA format
+     * @return array
+     */
     public static function title_row($id, $caption,
                                      $group_id = null, $width = null, $height = null,
                                      $color = null, $font_size = null,
@@ -110,6 +178,12 @@ class Rows_Factory
         return $arr;
     }
 
+    /**
+     * @param array $pane
+     * @param string $id
+     * @param array $params
+     * @return void
+     */
     public static function set_item_params_template(&$pane, $id, $params)
     {
         $pane[PluginRowsPane::regular_item_params_templates][$id] = $params;
@@ -160,7 +234,7 @@ class Rows_Factory
     }
 
     /**
-     * @param $items
+     * @param array $items
      * @param string $id
      * @param string $icon_url
      * @param string $caption
@@ -181,6 +255,20 @@ class Rows_Factory
         $items[] = $arr;
     }
 
+    /**
+     * @param int $width
+     * @param int $height
+     * @param int $dx
+     * @param int $icon_width
+     * @param int $icon_height
+     * @param int $icon_dy
+     * @param int $caption_dy
+     * @param string $caption_color # RGBA format
+     * @param int $caption_font_size # size in pt
+     * @param int $sticker_width
+     * @param int $sticker_height
+     * @return array
+     */
     public static function variable_params($width, $height,
                                            $dx = null, $icon_width = null,
                                            $icon_height = null, $icon_dy = null,
@@ -213,16 +301,34 @@ class Rows_Factory
         return $arr;
     }
 
-    public static function margins($l, $t, $r, $b)
+    /**
+     * @param int $left
+     * @param int $top
+     * @param int $right
+     * @param int $bottom
+     * @return array
+     */
+    public static function margins($left, $top, $right, $bottom)
     {
         return array(
-            PluginMargins::left => $l,
-            PluginMargins::top => $t,
-            PluginMargins::right => $r,
-            PluginMargins::bottom => $b
+            PluginMargins::left => $left,
+            PluginMargins::top => $top,
+            PluginMargins::right => $right,
+            PluginMargins::bottom => $bottom
         );
     }
 
+    /**
+     * @param array $def # PluginRegularItemVariableParams
+     * @param array $sel # PluginRegularItemVariableParams
+     * @param array $inactive # PluginRegularItemVariableParams
+     * @param string $loading_url
+     * @param string $load_failed_url
+     * @param int $caption_max_num_lines
+     * @param int $caption_line_spacing
+     * @param array $sel_margins # PluginMargins
+     * @return array
+     */
     public static function item_params($def,
                                        $sel = null, $inactive = null,
                                        $loading_url = null, $load_failed_url = null,
@@ -248,31 +354,56 @@ class Rows_Factory
         return $arr;
     }
 
+    /**
+     * @param int $x
+     * @param int $y
+     * @param int $w
+     * @param int $h
+     * @return array
+     */
     public static function r($x, $y, $w, $h)
     {
         return array('w' => $w, 'h' => $h, 'x' => $x, 'y' => $y);
     }
 
-    public static function add_regular_sticker_image(&$stickers, $icon_url, $r)
+    /**
+     * @param array|null $stickers
+     * @param string $icon_url
+     * @param array $rect
+     * @return void
+     */
+    public static function add_regular_sticker_image(&$stickers, $icon_url, $rect)
     {
         $stickers[] = array(
-            PluginRegularSticker::r => $r,
+            PluginRegularSticker::r => $rect,
             PluginRegularSticker::icon_url => $icon_url
         );
     }
 
-    public static function add_regular_sticker_text(&$stickers, $text, $r)
+    /**
+     * @param array $stickers
+     * @param string $text
+     * @param array $rect
+     * @return void
+     */
+    public static function add_regular_sticker_text(&$stickers, $text, $rect)
     {
         $stickers[] = array(
-            PluginRegularSticker::r => $r,
+            PluginRegularSticker::r => $rect,
             PluginRegularSticker::text => $text
         );
     }
 
-    public static function add_regular_sticker_rect(&$stickers, $color, $r)
+    /**
+     * @param array|null $stickers
+     * @param string $color # RGBA format
+     * @param array $rect
+     * @return void
+     */
+    public static function add_regular_sticker_rect(&$stickers, $color, $rect)
     {
         $stickers[] = array(
-            PluginRegularSticker::r => $r,
+            PluginRegularSticker::r => $rect,
             PluginRegularSticker::color => GComps_Factory::rgba_to_argb($color)
         );
     }
