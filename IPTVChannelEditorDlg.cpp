@@ -1830,8 +1830,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 	UpdateExtToken(info);
 	if (m_plugin_type == PluginType::enSharaclub)
 	{
-		auto& url = m_plugin->get_epg_parameter(epg_idx).get_epg_url();
-		utils::string_replace_inplace<wchar_t>(url, L"{DOMAIN}", GetConfig().get_string(false, REG_EPG_DOMAIN));
+		info->set_domain(GetConfig().get_string(false, REG_EPG_DOMAIN));
 	}
 
 	DWORD dwStart = GetTickCount();

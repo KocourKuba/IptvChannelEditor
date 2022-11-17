@@ -449,6 +449,7 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	lt.tm_sec = 0;
 
 	auto epg_template = epg_params[epg_idx].get_epg_url();
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DOMAIN, info->domain);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, subst_id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->token);
