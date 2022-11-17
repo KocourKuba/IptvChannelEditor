@@ -58,9 +58,9 @@ class Rows_Factory
         );
     }
 
-    public static function gcomps_row($id, $gcomp_defs, $title = null,
-                                      $width = -1, $height = -1, $inactive_height = -1,
-                                      $ui_state = null)
+    public static function gcomps_row($id, $gcomp_defs,
+                                      $title = null, $width = -1, $height = -1,
+                                      $inactive_height = -1, $ui_state = null)
     {
         return array(
             PluginRow::type => PLUGIN_ROW_TYPE_GCOMPS,
@@ -89,23 +89,23 @@ class Rows_Factory
             PluginRow::inactive_height => 0,
             PluginRow::data => array(
                 PluginTitleRow::caption => $caption,
-                PluginTitleRow::color => $color,
+                PluginTitleRow::color => GComps_Factory::rgba_to_argb($color),
                 PluginTitleRow::font_size => $font_size,
                 PluginTitleRow::left => $left,
                 PluginTitleRow::dy => $dy,
                 PluginTitleRow::active_dy => $active_dy,
                 PluginTitleRow::width => $width,
                 PluginTitleRow::fade_enabled => $fade_enabled,
-                PluginTitleRow::fade_color => $fade_color,
-                PluginTitleRow::lite_fade_color => $lite_fade_color,
+                PluginTitleRow::fade_color => GComps_Factory::rgba_to_argb($fade_color),
+                PluginTitleRow::lite_fade_color => GComps_Factory::rgba_to_argb($lite_fade_color),
             ));
 
         if (defined('PluginTitleRow::fade_enabled'))
             $arr[PluginTitleRow::fade_enabled] = $fade_enabled;
         if (defined('PluginTitleRow::fade_color'))
-            $arr[PluginTitleRow::fade_color] = $fade_color;
+            $arr[PluginTitleRow::fade_color] = GComps_Factory::rgba_to_argb($fade_color);
         if (defined('PluginTitleRow::lite_fade_color'))
-            $arr[PluginTitleRow::lite_fade_color] = $lite_fade_color;
+            $arr[PluginTitleRow::lite_fade_color] = GComps_Factory::rgba_to_argb($lite_fade_color);
 
         return $arr;
     }
@@ -129,19 +129,19 @@ class Rows_Factory
     {
         $data = array(PluginRegularRow::items => $items);
 
-        $data[PluginRegularRow::item_params_template_id] = isset($params_template_id) ? $params_template_id : null;
-        $data[PluginRegularRow::item_params] = isset($params) ? $params : null;
-        $data[PluginRegularRow::width] = isset($width) ? $width : null;
-        $data[PluginRegularRow::left_padding] = isset($left_padding) ? $left_padding : null;
-        $data[PluginRegularRow::inactive_left_padding] = isset($inactive_left_padding) ? $inactive_left_padding : null;
-        $data[PluginRegularRow::right_padding] = isset($right_padding) ? $right_padding : null;
-        $data[PluginRegularRow::hide_captions] = isset($hide_captions) ? $hide_captions : null;
-        $data[PluginRegularRow::hide_icons] = isset($hide_icons) ? $hide_icons : null;
-        $data[PluginRegularRow::fade_enabled] = isset($fade_enabled) ? $fade_enabled : null;
-        $data[PluginRegularRow::fade_icon_mix_color] = isset($fade_icon_mix_color) ? $fade_icon_mix_color : null;
-        $data[PluginRegularRow::fade_icon_mix_alpha] = isset($fade_icon_mix_alpha) ? $fade_icon_mix_alpha : null;
-        $data[PluginRegularRow::lite_fade_icon_mix_alpha] = isset($lite_fade_icon_mix_alpha) ? $lite_fade_icon_mix_alpha : null;
-        $data[PluginRegularRow::fade_caption_color] = isset($fade_caption_color) ? $fade_caption_color : null;
+        $data[PluginRegularRow::item_params_template_id] = $params_template_id;
+        $data[PluginRegularRow::item_params] = $params;
+        $data[PluginRegularRow::width] = $width;
+        $data[PluginRegularRow::left_padding] = $left_padding;
+        $data[PluginRegularRow::inactive_left_padding] = $inactive_left_padding;
+        $data[PluginRegularRow::right_padding] = $right_padding;
+        $data[PluginRegularRow::hide_captions] = $hide_captions;
+        $data[PluginRegularRow::hide_icons] = $hide_icons;
+        $data[PluginRegularRow::fade_enabled] = $fade_enabled;
+        $data[PluginRegularRow::fade_icon_mix_color] = GComps_Factory::rgba_to_argb($fade_icon_mix_color);
+        $data[PluginRegularRow::fade_icon_mix_alpha] = $fade_icon_mix_alpha;
+        $data[PluginRegularRow::lite_fade_icon_mix_alpha] = $lite_fade_icon_mix_alpha;
+        $data[PluginRegularRow::fade_caption_color] = GComps_Factory::rgba_to_argb($fade_caption_color);
 
         $arr = array(
             PluginRow::type => PLUGIN_ROW_TYPE_REGULAR,
@@ -149,11 +149,11 @@ class Rows_Factory
             PluginRow::data => $data
         );
 
-        $arr[PluginRow::title] = isset($title) ? $title : null;
-        $arr[PluginRow::group_id] = isset($group_id) ? $group_id : null;
-        $arr[PluginRow::height] = isset($height) ? $height : null;
-        $arr[PluginRow::inactive_height] = isset($inactive_height) ? $inactive_height : null;
-        $arr[PluginRow::focusable] = isset($focusable) ? $focusable : null;
+        $arr[PluginRow::title] = $title;
+        $arr[PluginRow::group_id] = $group_id;
+        $arr[PluginRow::height] = $height;
+        $arr[PluginRow::inactive_height] = $inactive_height;
+        $arr[PluginRow::focusable] = $focusable;
         $arr[PluginRow::show_all_action] = $show_all_action;
 
         return $arr;
@@ -181,14 +181,17 @@ class Rows_Factory
         $items[] = $arr;
     }
 
-    public static function variable_params($width, $height, $dx = null,
-                                           $icon_width = null, $icon_height = null, $icon_dy = null,
+    public static function variable_params($width, $height,
+                                           $dx = null, $icon_width = null,
+                                           $icon_height = null, $icon_dy = null,
                                            $caption_dy = null, $caption_color = null, $caption_font_size = null,
                                            $sticker_width = null, $sticker_height = null)
     {
         $arr = array(
             PluginRegularItemVariableParams::width => $width,
-            PluginRegularItemVariableParams::height => $height);
+            PluginRegularItemVariableParams::height => $height
+        );
+
         if (isset($dx))
             $arr[PluginRegularItemVariableParams::dx] = $dx;
         if (isset($icon_width))
@@ -200,7 +203,7 @@ class Rows_Factory
         if (isset($caption_dy))
             $arr[PluginRegularItemVariableParams::caption_dy] = $caption_dy;
         if (isset($caption_color))
-            $arr[PluginRegularItemVariableParams::caption_color] = $caption_color;
+            $arr[PluginRegularItemVariableParams::caption_color] = GComps_Factory::rgba_to_argb($caption_color);
         if (isset($caption_font_size))
             $arr[PluginRegularItemVariableParams::caption_font_size] = $caption_font_size;
         if (isset($sticker_width))
@@ -216,16 +219,18 @@ class Rows_Factory
             PluginMargins::left => $l,
             PluginMargins::top => $t,
             PluginMargins::right => $r,
-            PluginMargins::bottom => $b);
+            PluginMargins::bottom => $b
+        );
     }
 
-    public static function item_params($def, $sel = null, $inactive = null,
+    public static function item_params($def,
+                                       $sel = null, $inactive = null,
                                        $loading_url = null, $load_failed_url = null,
                                        $caption_max_num_lines = null, $caption_line_spacing = null,
                                        $sel_margins = null)
     {
-        $arr = array(
-            PluginRegularItemParams::def => $def);
+        $arr = array(PluginRegularItemParams::def => $def);
+
         if (isset($sel))
             $arr[PluginRegularItemParams::sel] = $sel;
         if (isset($inactive))
@@ -252,20 +257,23 @@ class Rows_Factory
     {
         $stickers[] = array(
             PluginRegularSticker::r => $r,
-            PluginRegularSticker::icon_url => $icon_url);
+            PluginRegularSticker::icon_url => $icon_url
+        );
     }
 
     public static function add_regular_sticker_text(&$stickers, $text, $r)
     {
         $stickers[] = array(
             PluginRegularSticker::r => $r,
-            PluginRegularSticker::text => $text);
+            PluginRegularSticker::text => $text
+        );
     }
 
     public static function add_regular_sticker_rect(&$stickers, $color, $r)
     {
         $stickers[] = array(
             PluginRegularSticker::r => $r,
-            PluginRegularSticker::color => $color);
+            PluginRegularSticker::color => GComps_Factory::rgba_to_argb($color)
+        );
     }
 }

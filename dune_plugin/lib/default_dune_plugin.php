@@ -293,6 +293,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_folder_view($media_url, &$plugin_cookies)
     {
+        hd_print("Default_Dune_Plugin: get_folder_view: $media_url");
         $decoded_media_url = MediaURL::decode($media_url);
 
         return $this->get_screen_by_url($decoded_media_url)->get_folder_view($decoded_media_url, $plugin_cookies);

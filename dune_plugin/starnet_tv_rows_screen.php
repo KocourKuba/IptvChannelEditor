@@ -86,7 +86,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         ///////////// Channel number & title /////////////////
 
         $number = $channel->get_number();
-        $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(150, 50, 1630 - min(3, strlen($number)) * 20),
+        $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(150, 50, 1647 - min(3, strlen($number)) * 20),
             null,
             $number,
             1,
@@ -185,8 +185,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 );
             }
         } else {
-            $channel_desc = $channel->get_desc();
 
+            $channel_desc = $channel->get_desc();
             if (!empty($channel_desc)) {
                 $geom = GComp_Geom::place_top_left(PaneParams::info_width, -1, 0, $y);
                 $defs[] = GComps_Factory::label($geom,
@@ -201,21 +201,33 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             }
         }
 
-        $dx = 15;
+        // separator line
+        $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(510, 4, 0, 590), null, '#1919BE9F');
+
         $dy_icon = 530;
         $dy_txt = $dy_icon - 4;
-        $fav_channels = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
-        $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(710, 54, 0, $dy_icon - 4), null, '#9F5843A6');
-        $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(984, 6, 710, $dy_icon - 4 + 48), null, '#9F5843A6');
-        $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(6, 6, 1700, $dy_icon - 4 + 48), null, '#9F5843A6');
-        $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(6, 6, 1712, $dy_icon - 4 + 48), null, '#9F5843A6');
-        $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(6, 6, 1724, $dy_icon - 4 + 48), null, '#9F5843A6');
+        $dx = 15;
+        if ($group_id !== Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
 
-        if ($group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
-            $is_first_channel = ($channel_id === reset($fav_channels));
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), // green button image (B)
+            // blue button image (D)
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), null, PaneParams::fav_button_blue);
+
+            $dx += 55;
+            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
-                'gui_skin://special_icons/controls_button_green.aai',
+                Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
+                1,
+                PaneParams::fav_btn_font_color,
+                PaneParams::fav_btn_font_size
+            );
+        } else {
+
+            $fav_channels = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
+            $is_first_channel = ($channel_id === reset($fav_channels));
+            // green button image (B) 52x50
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon),
+                null,
+                PaneParams::fav_button_green,
                 false,
                 true,
                 null,
@@ -223,20 +235,22 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 null,
                 $is_first_channel ? 99 : 255);
 
-            $dx += 52;
+            $dx += 55;
+            // green button text
             $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
-                'Вперед',
+                'Влево',
                 1,
-                $is_first_channel ? '#FF808080' : '#FFE0E0E0',
-                PaneParams::prog_item_font_size - 4
+                $is_first_channel ? PaneParams::fav_btn_disabled_font_color : PaneParams::fav_btn_font_color,
+                PaneParams::fav_btn_font_size
             );
 
             $is_last_channel = ($channel_id === end($fav_channels));
-            $dx += 104;
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), // yellow button image (C)
+            $dx += 105;
+            // yellow button image (C)
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon),
                 null,
-                'gui_skin://special_icons/controls_button_yellow.aai',
+                PaneParams::fav_button_yellow,
                 1,
                 false,
                 null,
@@ -245,44 +259,35 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 $is_last_channel ? 99 : 255
             );
 
-            $dx += 52;
+            $dx += 55;
+            // yellow button text
             $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
-                'Назад',
+                'Вправо',
                 1,
-                $is_last_channel ? '#FF505050' : '#FFE0E0E0',
-                PaneParams::prog_item_font_size - 4
+                $is_last_channel ? PaneParams::fav_btn_disabled_font_color : PaneParams::fav_btn_font_color,
+                PaneParams::fav_btn_font_size
             );
 
-            $dx += 90;
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), // blue button image (D)
-                null, 'gui_skin://special_icons/controls_button_blue.aai');
+            $dx += 105;
+            // blue button image (D)
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), null, PaneParams::fav_button_blue);
 
-            $dx += 52;
+            $dx += 55;
+            // blue button text
             $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
                 'Удалить',
                 1,
-                '#FFE0E0E0',
-                PaneParams::prog_item_font_size - 4
-            );
-        } else {
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), // blue button image (D)
-                null, 'gui_skin://special_icons/controls_button_blue.aai');
-            $dx += 52;
-            $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
-                null,
-                Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
-                1,
-                '#FFE0E0E0',
-                PaneParams::prog_item_font_size - 4
+                PaneParams::fav_btn_font_color,
+                PaneParams::fav_btn_font_size
             );
         }
 
         ///////////// Enclosing panel ////////////////
 
         $pane_def = GComps_Factory::get_panel_def('info_pane',
-            GComp_Geom::place_top_left(1820, PaneParams::info_height - PaneParams::dx),
+            GComp_Geom::place_top_left(PaneParams::pane_width, PaneParams::pane_height),
             null,
             $defs,
             GCOMP_OPT_PREPAINT
@@ -422,11 +427,12 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     $progress_w = RowsItemsParams::width - 22;
                     Rows_Factory::add_regular_sticker_rect(
                         $stickers,
-                        "#CF6A6A6A",
+                        "#6A6A6ACF",
                         Rows_Factory::r(0, $progress_y, $progress_w, 8)); // total
+
                     Rows_Factory::add_regular_sticker_rect(
                         $stickers,
-                        "#FFEFAA16",
+                        "#EFAA16FF",
                         Rows_Factory::r(0, $progress_y, round($progress_w * $item['view_progress']), 8)); // viewed
                 }
 
@@ -489,7 +495,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 $row_gid,
                 TitleRowsParams::width,
                 TitleRowsParams::height,
-                '#FFEFAA16',
+                TitleRowsParams::history_caption_color,
                 TitleRowsParams::font_size,
                 TitleRowsParams::left_padding,
                 0, 0,
