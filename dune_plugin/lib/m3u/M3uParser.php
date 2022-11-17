@@ -25,7 +25,7 @@ class M3uParser
         try {
             $file = new SplFileObject($file_name);
         } catch (Exception $ex) {
-            hd_print("Can't read file.");
+            hd_print("Can't read file: $file_name");
             return;
         }
 

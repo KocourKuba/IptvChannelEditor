@@ -489,8 +489,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Setup: handle_user_input:');
-        foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //hd_print('Setup: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $control_id = $user_input->control_id;

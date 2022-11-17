@@ -12,7 +12,7 @@ class default_config extends dynamic_config
     protected $movie_counter = array();
     protected $filters = array();
     protected $embedded_account;
-    protected $account_data = array();
+    protected $account_data;
 
     /**
      * @var M3uParser
@@ -398,15 +398,17 @@ class default_config extends dynamic_config
     /**
      * @param $tv
      * @param $plugin_cookies
+     * @param bool $force
      * @return void
      */
-    public function SetupM3uParser($tv, $plugin_cookies)
+    public function SetupM3uParser($tv, $plugin_cookies, $force = false)
     {
         if ($tv) {
-            $this->m3u_parser->setupParser($this->FetchTvM3U($plugin_cookies));
+            $playlist = $this->FetchTvM3U($plugin_cookies, $force);
         } else {
-            $this->m3u_parser->setupParser($this->FetchVodM3U($plugin_cookies));
+            $playlist = $this->FetchVodM3U($plugin_cookies, $force);
         }
+        $this->m3u_parser->setupParser($playlist);
     }
 
     /**
@@ -540,6 +542,10 @@ class default_config extends dynamic_config
 
         if (isset($this->account_data) && !$force)
             return $this->account_data;
+
+        $this->account_data = null;
+        $this->ClearPlaylistCache();
+        $this->SetupM3uParser(true, $plugin_cookies, $force);
 
         $parse_pattern = $this->get_feature(Plugin_Constants::URI_PARSE_PATTERN);
         if (!empty($parse_pattern))
