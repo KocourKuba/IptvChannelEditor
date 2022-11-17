@@ -83,7 +83,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $title_num = 1;
         $defs = array();
 
-        ///////////// Channel number & title /////////////////
+        ///////////// Channel number /////////////////
 
         $number = $channel->get_number();
         $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(150, 50, 1647 - min(3, strlen($number)) * 20),
@@ -94,6 +94,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             PaneParams::ch_num_font_size,
             'ch_number'
         );
+
+        ///////////// Channel title /////////////////
 
         $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width + 400, PaneParams::prog_item_height),
             null,
@@ -109,17 +111,33 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         $str = '';
 
-        if (!is_null($epg_data = $this->plugin->tv->get_program_info($channel_id, time(), $plugin_cookies))) {
-            $program = (object)array();
-            $program->time = strftime('%H:%M', $epg_data[PluginTvEpgProgram::end_tm_sec] - $epg_data[PluginTvEpgProgram::start_tm_sec]);
-            $program->year = $epg_data[Ext_Epg_Program::year];
-            $program->age = preg_match('/\[(.*)\]\s*(.*)$/', $epg_data[Ext_Epg_Program::main_category], $matches) ? $matches[1] : '';
-            $program->genre = isset($matches[2]) ? $matches[2] : '';
-            $program->country = '';
-            $title = preg_replace('/^[ДТХ]\/[фс]\s+/ui', '', $epg_data[PluginTvEpgProgram::name]);
-            $desc = (!empty($epg_data[Ext_Epg_Program::sub_title]) ? $epg_data[Ext_Epg_Program::sub_title] . "\n" : '') . $epg_data[PluginTvEpgProgram::description];
-            $fanart_url = preg_replace('/\/c400x300\//', '/c400x248/', $epg_data[PluginTvEpgProgram::icon_url]);
+        if (is_null($epg_data = $this->plugin->tv->get_program_info($channel_id, time(), $plugin_cookies))) {
 
+            $channel_desc = $channel->get_desc();
+            if (!empty($channel_desc)) {
+                $geom = GComp_Geom::place_top_left(PaneParams::info_width, -1, 0, $y);
+                $defs[] = GComps_Factory::label($geom,
+                    null,
+                    $channel_desc,
+                    13 - $title_num,
+                    PaneParams::prog_item_font_color,
+                    PaneParams::prog_item_font_size,
+                    'ch_desc',
+                    array('line_spacing' => 6)
+                );
+            }
+        } else {
+
+            $program = (object)array();
+            $program->time = strftime('Длительность: %H:%M', $epg_data[PluginTvEpgProgram::end_tm_sec] - $epg_data[PluginTvEpgProgram::start_tm_sec]);
+            //$program->year = preg_match('/\s+\((\d{4,4})\)$/', $epg_data[Ext_Epg_Program::main_category], $matches) ? $matches[1] : '';
+            //$program->age = preg_match('/\s+\((\d{1,2}\+)\)$/', $epg_data[Ext_Epg_Program::main_category], $matches) ? $matches[1] : '';
+
+            $title = $epg_data[PluginTvEpgProgram::name];
+            $desc = (!empty($epg_data[Ext_Epg_Program::sub_title]) ? $epg_data[Ext_Epg_Program::sub_title] . "\n" : '') . $epg_data[PluginTvEpgProgram::description];
+            $fanart_url = '';
+            //$fanart_url = preg_replace('/\/c400x300\//', '/c400x248/', $epg_data[PluginTvEpgProgram::icon_url]);
+/*
             foreach (array('time', 'genre', 'country', 'year', 'age') as $key) {
                 $val = $program->{$key};
 
@@ -130,12 +148,11 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     $str .= $val;
                 }
             }
+*/
 
-            if ($str) {
-                $geom = GComp_Geom::place_top_left(PaneParams::info_width, PaneParams::prog_item_height, 0, $y);
-                $defs[] = GComps_Factory::label($geom, null, $str, 1, PaneParams::prog_item_font_color, PaneParams::prog_item_font_size);
-                $y += PaneParams::prog_item_height + 12;
-            }
+            $geom = GComp_Geom::place_top_left(PaneParams::info_width, PaneParams::prog_item_height, 0, $y);
+            $defs[] = GComps_Factory::label($geom, null, $str, 1, PaneParams::prog_item_font_color, PaneParams::prog_item_font_size);
+            $y += PaneParams::prog_item_height + 12;
 
             ///////////// Program title ////////////////
 
@@ -182,21 +199,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     PaneParams::prog_item_font_size,
                     'prog_desc',
                     array('line_spacing' => 5)
-                );
-            }
-        } else {
-
-            $channel_desc = $channel->get_desc();
-            if (!empty($channel_desc)) {
-                $geom = GComp_Geom::place_top_left(PaneParams::info_width, -1, 0, $y);
-                $defs[] = GComps_Factory::label($geom,
-                    null,
-                    $channel_desc,
-                    13 - $title_num,
-                    PaneParams::prog_item_font_color,
-                    PaneParams::prog_item_font_size,
-                    'ch_desc',
-                    array('line_spacing' => 6)
                 );
             }
         }
