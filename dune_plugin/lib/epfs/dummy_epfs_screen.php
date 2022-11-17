@@ -40,7 +40,7 @@ class Dummy_Epfs_Screen extends Abstract_Rows_Screen implements User_Input_Handl
      * @param $plugin_cookies
      * @return array
      */
-    public function get_rows_pane(MediaURL $media_url, &$plugin_cookies)
+    public function get_rows_pane(MediaURL $media_url, $plugin_cookies)
     {
         hd_print("Dummy_Epfs_Screen::get_rows_pane");
         $defs = array();
