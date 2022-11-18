@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="183" scanned="20221115000438" built="20221115000807" lang="ru" pane="TLogPane" col="4" row="Dialogs.102.Text">
+<desktop scan="184" scanned="20221118184033" built="20221115000807" lang="ru" pane="TLogPane" col="3" row="Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>
@@ -24,6 +24,8 @@
   <path>
     <item>All</item>
     <item>Release Unicode\IPTVChannelEditor.exe</item>
+    <item>Dialogs</item>
+    <item>110</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

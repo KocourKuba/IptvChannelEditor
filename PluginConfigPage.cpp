@@ -1081,6 +1081,10 @@ void CPluginConfigPage::OnBnClickedButtonVodTemplate()
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
 	}
+	else
+	{
+		AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK|MB_ICONERROR);
+	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonStreamRegexTest()
