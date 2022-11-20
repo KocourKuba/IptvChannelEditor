@@ -267,13 +267,14 @@ abstract class Abstract_Vod implements Vod
     public function change_vod_favorites($fav_op_type, $movie_id, &$plugin_cookies)
     {
         //hd_print("change_vod_favorites: $fav_op_type, $movie_id");
-        //$fav_movie_ids = $this->get_favorite_movie_ids();
+        $this->ensure_favorites_loaded($plugin_cookies);
+        $fav_movie_ids = $this->get_favorite_movie_ids();
 
         switch ($fav_op_type) {
             case PLUGIN_FAVORITES_OP_ADD:
                 //hd_print("Try to add movie id: $movie_id");
                 if (!is_null($movie_id) && in_array($movie_id, $fav_movie_ids) === false) {
-                    //hd_print("Success");
+                    hd_print("Movie id: $movie_id added to favorites");
                     $fav_movie_ids[] = $movie_id;
                 }
                 break;
@@ -283,7 +284,7 @@ abstract class Abstract_Vod implements Vod
 
                 $k = array_search($movie_id, $fav_movie_ids);
                 if ($k !== false) {
-                    //hd_print("Success");
+                    hd_print("Movie id: $movie_id removed from favorites");
                     unset ($fav_movie_ids[$k]);
                 }
                 break;

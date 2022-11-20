@@ -460,7 +460,13 @@ class HD
     public static function get_items($path, $preserve_keys = false)
     {
         $full_path = get_data_path($path);
-        $items = file_exists($full_path) ? json_decode(file_get_contents($full_path), true) : array();
+        if (file_exists($full_path)) {
+            $items = json_decode(file_get_contents($full_path), true);
+            $items = is_null($items) ? array() : $items;
+        } else {
+            $items = array();
+        }
+
         return $preserve_keys ? $items : array_values($items);
     }
 

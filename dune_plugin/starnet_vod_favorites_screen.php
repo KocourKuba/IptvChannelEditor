@@ -160,8 +160,6 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
 
         $items = array();
         foreach ($movie_ids as $movie_id) {
-            if (empty($movie_id)) continue;
-
             $this->plugin->vod->ensure_movie_loaded($movie_id, $plugin_cookies);
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
 
