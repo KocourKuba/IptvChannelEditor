@@ -23,6 +23,7 @@
 #define IDB_PNG_KNOWN                   65
 #define IDB_PNG_OPEN                    66
 #define IDB_PNG_VOD                     67
+#define IDB_PNG_RELOAD                  68
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104

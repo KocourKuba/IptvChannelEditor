@@ -5157,7 +5157,7 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 {
-	CVodViewer dlg(&m_vod_categories[m_plugin_type]);
+	CVodViewer dlg(m_vod_categories[m_plugin_type]);
 	dlg.m_plugin = m_plugin;
 	dlg.m_account = m_cur_account;
 	dlg.DoModal();

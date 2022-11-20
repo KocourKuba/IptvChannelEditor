@@ -417,6 +417,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\NotChanged.png" />
     <Image Include="res\Open.png" />
     <Image Include="res\QR Code.png" />
+    <Image Include="res\reload.png" />
     <Image Include="res\Save.png" />
     <Image Include="res\SaveAs.png" />
     <Image Include="res\Settings.png" />

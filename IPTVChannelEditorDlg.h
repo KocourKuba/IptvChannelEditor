@@ -473,5 +473,5 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// vod
-	std::map<PluginType, utils::vectormap<std::wstring, std::shared_ptr<vod_category>>> m_vod_categories;
+	std::map<PluginType, std::map<std::wstring, vod_category_storage>> m_vod_categories;
 };

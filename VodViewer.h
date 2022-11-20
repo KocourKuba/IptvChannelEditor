@@ -13,7 +13,7 @@ class CVodViewer : public CDialogEx
 	DECLARE_DYNAMIC(CVodViewer)
 
 public:
-	CVodViewer(vod_category_storage* categories, CWnd* pParent = nullptr);   // standard constructor
+	CVodViewer(std::map<std::wstring, vod_category_storage>& categories, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CVodViewer();
 
 public:
@@ -36,6 +36,7 @@ protected:
 	afx_msg LRESULT OnEndLoadJsonPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetDispinfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeComboCategories();
@@ -66,6 +67,7 @@ public:
 	std::shared_ptr<base_plugin> m_plugin;
 
 protected:
+	CComboBox m_wndPlaylist;
 	CComboBox m_wndCategories;
 	CComboBox m_wndGenres;
 	CComboBox m_wndYears;
@@ -81,7 +83,7 @@ protected:
 	CProgressCtrl m_wndProgress;
 	CRichEditCtrl m_wndDescription;
 	CButton m_wndStop;
-	CButton m_wndReload;
+	CButton m_wndBtnReload;
 
 private:
 	// Event to signal for load playlist thread
@@ -94,7 +96,8 @@ private:
 	int m_episode_idx = -1;
 	int m_quality_idx = -1;
 	int m_total = 0;
-	vod_category_storage* m_vod_categories = nullptr;
+	vod_category_storage m_current_vod;
+	std::map<std::wstring, vod_category_storage>& m_vod_storages;
 	vod_movie_storage m_filtered_movies;
 	vod_genre_storage m_genres;
 	utils::vectormap<std::wstring, std::wstring> m_years;

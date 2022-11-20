@@ -147,6 +147,7 @@ public:
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>wstring</returns>
 	std::wstring get_vod_url(TemplateParams& params) const;
+	std::wstring get_vod_url(size_t idx, TemplateParams& params) const;
 
 	/// <summary>
 	/// returns epg mapper

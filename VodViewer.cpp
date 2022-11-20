@@ -37,15 +37,15 @@ BEGIN_MESSAGE_MAP(CVodViewer, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_STOP, &CVodViewer::OnBnClickedButtonStop)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPISODE, &CVodViewer::OnCbnSelchangeComboEpisode)
 	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CVodViewer::OnCbnSelchangeComboQuality)
+	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST, &CVodViewer::OnCbnSelchangeComboPlaylist)
 END_MESSAGE_MAP()
 
-CVodViewer::CVodViewer(vod_category_storage* categories, CWnd* pParent /*=nullptr*/)
+CVodViewer::CVodViewer(std::map<std::wstring, vod_category_storage>& categories, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_VOD, pParent)
-	, m_vod_categories(categories)
+	, m_vod_storages(categories)
 	, m_evtStop(FALSE, TRUE)
 	, m_evtFinished(TRUE, TRUE)
 {
-	ASSERT(m_vod_categories);
 }
 
 CVodViewer::~CVodViewer()
@@ -76,11 +76,12 @@ void CVodViewer::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_SearchText);
 	DDX_Control(pDX, IDC_BUTTON_STOP, m_wndStop);
-	DDX_Control(pDX, IDC_BUTTON_REFRESH, m_wndReload);
+	DDX_Control(pDX, IDC_BUTTON_REFRESH, m_wndBtnReload);
 	DDX_Control(pDX, IDC_EDIT_STREAM_URL, m_wndStreamUrl);
 	DDX_Text(pDX, IDC_EDIT_STREAM_URL, m_streamUrl);
 	DDX_Control(pDX, IDC_EDIT_ICON_URL, m_wndSIconUrl);
 	DDX_Text(pDX, IDC_EDIT_ICON_URL, m_iconUrl);
+	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylist);
 }
 
 // CVodViewer message handlers
@@ -103,6 +104,18 @@ BOOL CVodViewer::OnInitDialog()
 	{
 		m_account.subdomain = m_account.subdomain.substr(0, pos);
 	}
+
+	SetButtonImage(IDB_PNG_RELOAD, m_wndBtnReload);
+
+	const auto& vods = m_plugin->get_vod_templates();
+	for (const auto& vod : vods)
+	{
+		int idx = m_wndPlaylist.AddString(vod.get_name().c_str());
+	}
+
+	m_wndPlaylist.SetCurSel(m_plugin->get_vod_template_idx());
+	m_wndPlaylist.EnableWindow(m_wndPlaylist.GetCount() > 1);
+	m_current_vod = m_vod_storages[m_plugin->get_current_vod_template()];
 
 	LoadPlaylist();
 
@@ -159,7 +172,7 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 	m_wndSeason.EnableWindow(FALSE);
 	m_wndEpisode.EnableWindow(FALSE);
 	m_wndQuality.EnableWindow(FALSE);
-	m_wndReload.EnableWindow(FALSE);
+	m_wndBtnReload.EnableWindow(FALSE);
 
 	if (m_plugin->get_vod_m3u())
 		LoadM3U8Playlist(use_cache);
@@ -172,9 +185,9 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	CWaitCursor cur;
 	m_total = 0;
 
-	if (!m_vod_categories->empty())
+	if (!m_current_vod.empty())
 	{
-		m_total = m_vod_categories->get(load_string_resource(IDS_STRING_ALL))->movies.size();
+		m_total = m_current_vod.get(load_string_resource(IDS_STRING_ALL))->movies.size();
 
 		FillCategories();
 		FillGenres();
@@ -199,7 +212,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 	}
 
-	auto& url = m_plugin->get_vod_url(params);
+	auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
 
 	auto pThread = (CPlaylistParseJsonThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseJsonThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
@@ -230,15 +243,15 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndStop.ShowWindow(SW_HIDE);
-	m_wndReload.EnableWindow(TRUE);
+	m_wndBtnReload.EnableWindow(TRUE);
 
 	// make copy content not pointers!
 	std::unique_ptr<vod_category_storage> deleter((vod_category_storage*)wParam);
 	if (deleter != nullptr)
 	{
-		*m_vod_categories = *deleter;
-		auto& all_category = m_vod_categories->get(load_string_resource(IDS_STRING_ALL));
-		for (const auto& category : m_vod_categories->vec())
+		m_current_vod = *deleter;
+		auto& all_category = m_current_vod.get(load_string_resource(IDS_STRING_ALL));
+		for (const auto& category : m_current_vod.vec())
 		{
 			for (const auto& pair : category.second->movies.vec())
 			{
@@ -250,7 +263,7 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	}
 	else
 	{
-		m_vod_categories->clear();
+		m_current_vod.clear();
 	}
 
 	FillCategories();
@@ -268,9 +281,9 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	m_total = 0;
 	m_evtStop.ResetEvent();
 	m_evtFinished.ResetEvent();
-	if (!m_vod_categories->empty())
+	if (!m_current_vod.empty())
 	{
-		m_total = m_vod_categories->get(load_string_resource(IDS_STRING_ALL))->movies.size();
+		m_total = m_current_vod.get(load_string_resource(IDS_STRING_ALL))->movies.size();
 
 		FillCategories();
 		FillGenres();
@@ -284,7 +297,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	TemplateParams params;
 	params.login = m_account.get_login();
 	params.password = m_account.get_password();
-	const auto& url = m_plugin->get_vod_url(params);
+	const auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
 
 	std::stringstream data;
 	if (!utils::DownloadFile(url, data))
@@ -322,7 +335,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndStop.ShowWindow(SW_HIDE);
-	m_wndReload.EnableWindow(TRUE);
+	m_wndBtnReload.EnableWindow(TRUE);
 
 	m_playlistEntries.reset((Playlist*)wParam);
 
@@ -332,7 +345,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	boost::wregex re;
 	try
 	{
-		const auto& pattern = m_plugin->get_current_vod_parse_regex();
+		const auto& pattern = m_plugin->get_vod_parse_regex(m_wndPlaylist.GetCurSel());
 		if (!pattern.empty())
 		{
 			re = pattern;
@@ -368,17 +381,17 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 		const auto& all_name = load_string_resource(IDS_STRING_ALL);
 		auto all_category = std::make_shared<vod_category>(all_name);
 		all_category->name = all_name;
-		m_vod_categories->set_back(all_name, all_category);
+		m_current_vod.set_back(all_name, all_category);
 
 		for (const auto& entry : m_playlistEntries->m_entries)
 		{
 			std::shared_ptr<vod_category> category;
 			const auto& category_name = entry->get_category_w();
-			if (!m_vod_categories->tryGet(category_name, category))
+			if (!m_current_vod.tryGet(category_name, category))
 			{
 				category = std::make_shared<vod_category>(category_name);
 				category->name = category_name;
-				m_vod_categories->set_back(category_name, category);
+				m_current_vod.set_back(category_name, category);
 			}
 
 			auto movie = std::make_shared<vod_movie>();
@@ -461,9 +474,9 @@ void CVodViewer::OnBnClickedButtonStop()
 void CVodViewer::OnCbnSelchangeComboCategories()
 {
 	UpdateData(TRUE);
-	if (m_category_idx == CB_ERR || m_category_idx >= (int)m_vod_categories->size()) return;
+	if (m_category_idx == CB_ERR || m_category_idx >= (int)m_current_vod.size()) return;
 
-	const auto& category = m_vod_categories->getAt(m_category_idx);
+	const auto& category = m_current_vod.getAt(m_category_idx);
 	if (!category->genres.empty())
 	{
 		m_genres = category->genres;
@@ -560,14 +573,16 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CVodViewer::OnBnClickedButtonRefresh()
 {
-	m_vod_categories->clear();
+	m_current_vod.clear();
 	LoadPlaylist(false);
 }
 
 void CVodViewer::OnBnClickedButtonSearch()
 {
 	UpdateData(TRUE);
-	if (m_vod_categories->empty()) return;
+
+	if (m_current_vod.empty()) return;
+
 	if (m_SearchText.IsEmpty())
 	{
 		FilterList();
@@ -575,7 +590,7 @@ void CVodViewer::OnBnClickedButtonSearch()
 	}
 
 	vod_movie_storage searchMovies;
-	for (const auto& category : m_vod_categories->vec())
+	for (const auto& category : m_current_vod.vec())
 	{
 		for (const auto& movies : category.second->movies.vec())
 		{
@@ -603,11 +618,11 @@ void CVodViewer::FillCategories()
 	m_wndCategories.ResetContent();
 	m_category_idx = -1;
 
-	if (!m_vod_categories) return;
+	if (m_current_vod.empty()) return;
 
 	m_genres.clear();
 	m_years.clear();
-	for (const auto& pair : m_vod_categories->vec())
+	for (const auto& pair : m_current_vod.vec())
 	{
 		m_wndCategories.AddString(pair.second->name.c_str());
 		if (m_plugin->get_plugin_type() == PluginType::enEdem)
@@ -633,7 +648,7 @@ void CVodViewer::FillCategories()
 		}
 		else
 		{
-			for (const auto& pair : m_vod_categories->vec())
+			for (const auto& pair : m_current_vod.vec())
 			{
 				for (const auto& movie_pair : pair.second->movies.vec())
 				{
@@ -647,7 +662,7 @@ void CVodViewer::FillCategories()
 		}
 	}
 
-	if (!m_vod_categories->empty())
+	if (!m_current_vod.empty())
 	{
 		m_wndCategories.EnableWindow(TRUE);
 		m_category_idx = 0;
@@ -881,7 +896,7 @@ void CVodViewer::FilterList()
 	UpdateData(TRUE);
 	CWaitCursor cur;
 
-	if (m_category_idx == LB_ERR || m_category_idx >= (int)m_vod_categories->size())
+	if (m_category_idx == LB_ERR || m_category_idx >= (int)m_current_vod.size())
 	{
 		m_filtered_movies.clear();
 		m_wndProgress.ShowWindow(SW_HIDE);
@@ -893,7 +908,7 @@ void CVodViewer::FilterList()
 		return;
 	}
 
-	m_wndReload.EnableWindow(FALSE);
+	m_wndBtnReload.EnableWindow(FALSE);
 
 	bool filterByGenre = false;
 	bool filterByYear = false;
@@ -919,7 +934,7 @@ void CVodViewer::FilterList()
 		{
 			if (m_genre_idx == 0 && m_year_idx == 0)
 			{
-				for (const auto& movie_pair : m_vod_categories->getAt(m_category_idx)->movies.vec())
+				for (const auto& movie_pair : m_current_vod.getAt(m_category_idx)->movies.vec())
 				{
 					filtered_movies.set_back(movie_pair.first, movie_pair.second);
 				}
@@ -1034,7 +1049,7 @@ void CVodViewer::FilterList()
 	}
 	else
 	{
-		for (const auto& movie_pair : m_vod_categories->getAt(m_category_idx)->movies.vec())
+		for (const auto& movie_pair : m_current_vod.getAt(m_category_idx)->movies.vec())
 		{
 			bool genre = true;
 			bool year = true;
@@ -1065,7 +1080,7 @@ void CVodViewer::FilterList()
 
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndStop.ShowWindow(SW_HIDE);
-	m_wndReload.EnableWindow(TRUE);
+	m_wndBtnReload.EnableWindow(TRUE);
 	m_wndTotal.SetWindowText(fmt::format(L"{:d} / {:d}", m_filtered_movies.size(), m_total).c_str());
 	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
 	m_wndMoviesList.Invalidate();
@@ -1281,4 +1296,12 @@ void CVodViewer::GetUrl(int idx)
 	m_streamUrl = url.c_str();
 	m_iconUrl = movie->poster_url.get_uri().c_str();
 	UpdateData(FALSE);
+}
+
+void CVodViewer::OnCbnSelchangeComboPlaylist()
+{
+	CString selText;
+	m_wndPlaylist.GetLBText(m_wndPlaylist.GetCurSel(), selText);
+	m_current_vod = m_vod_storages[selText.GetString()];
+	LoadPlaylist();
 }

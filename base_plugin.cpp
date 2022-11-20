@@ -280,6 +280,22 @@ std::wstring base_plugin::get_vod_url(TemplateParams& params) const
 	return url;
 }
 
+std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params) const
+{
+	std::wstring url = get_vod_template(idx);
+
+	if (!params.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+
+	if (!params.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+	if (!params.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+
+	return url;
+}
+
 const std::map<std::wstring, std::wstring>& base_plugin::get_epg_id_mapper(int epg_idx)
 {
 	auto& params = epg_params[epg_idx];
