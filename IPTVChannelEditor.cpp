@@ -766,7 +766,7 @@ bool PackPlugin(const PluginType plugin_type,
 		plugin_logo = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_logo.wstring());
 
 	if (plugin_bgnd.empty())
-		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.jpg)", plugin_root, short_name_w);
+		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root, short_name_w);
 	else if (!plugin_bgnd.has_parent_path())
 		plugin_bgnd = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_bgnd.wstring());
 
@@ -781,7 +781,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	if (!std::filesystem::exists(packFolderIcons + plugin_bgnd.filename().wstring()))
 	{
-		plugin_bgnd = "default_bg.jpg";
+		plugin_bgnd = "default_bg.png";
 	}
 
 	const auto& logo_subst = fmt::format("plugin_file://icons/{:s}", plugin_logo.filename().string());
