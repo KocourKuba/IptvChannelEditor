@@ -79,7 +79,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie) || empty($movie->series_list)) {
             if (is_null($movie)) {
-                $movie = new Movie($media_url->movie_id);
+                $movie = new Movie($media_url->movie_id, $this->plugin);
             }
             hd_print("empty movie or no series data");
             HD::print_backtrace();
@@ -104,7 +104,6 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             );
         }
 
-        $has_right_button = true;
         $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
         $right_button_caption = $this->plugin->vod->is_favorite_movie_id($movie->id) ? 'Удалить из Избранного' : 'Добавить в Избранное';
         $right_button_action = User_Input_Handler_Registry::create_action($this, 'favorites', array('movie_id' => $movie->id));
@@ -118,16 +117,14 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             $screen_media_url = Starnet_Vod_Seasons_List_Screen::get_media_url_str($movie->id);
         }
 
-        $movie_folder_view = array
-        (
+        $movie_folder_view = array(
             PluginMovieFolderView::movie => $movie->get_movie_array(),
-            PluginMovieFolderView::has_right_button => $has_right_button,
+            PluginMovieFolderView::has_right_button => true,
             PluginMovieFolderView::right_button_caption => $right_button_caption,
             PluginMovieFolderView::right_button_action => $right_button_action,
             PluginMovieFolderView::has_multiple_series => true,
             PluginMovieFolderView::series_media_url => $screen_media_url,
-            PluginMovieFolderView::params => array
-            (
+            PluginMovieFolderView::params => array(
                 PluginFolderViewParams::paint_path_box => false,
                 PluginFolderViewParams::paint_content_box_background => true,
                 PluginFolderViewParams::background_url => $this->plugin->plugin_info['app_background']
@@ -150,8 +147,8 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Movie: handle_user_input:');
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        hd_print('Starnet_Vod_Movie_Screen: handle_user_input:');
+        foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if ($user_input->control_id === 'favorites') {
             $movie_id = $user_input->movie_id;

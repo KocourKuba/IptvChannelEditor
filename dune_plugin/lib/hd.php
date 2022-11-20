@@ -460,7 +460,7 @@ class HD
     public static function get_items($path, $preserve_keys = false)
     {
         $full_path = get_data_path($path);
-        $items = file_exists($full_path) ? unserialize(file_get_contents($full_path)) : array();
+        $items = file_exists($full_path) ? json_decode(file_get_contents($full_path), true) : array();
         return $preserve_keys ? $items : array_values($items);
     }
 
@@ -470,7 +470,7 @@ class HD
      */
     public static function put_items($path, $items)
     {
-        file_put_contents(get_data_path($path), serialize($items));
+        file_put_contents(get_data_path($path), json_encode($items));
     }
 
     /**
@@ -541,5 +541,12 @@ class HD
     public static function ShowMemoryUsage()
     {
         hd_print("Memory usage: " . round(memory_get_usage(true) / 1024) . "kb / " . ini_get('memory_limit'));
+    }
+
+    public static function array_unshift_assoc(&$arr, $key, $val)
+    {
+        $arr = array_reverse($arr, true);
+        $arr[$key] = $val;
+        return array_reverse($arr, true);
     }
 }

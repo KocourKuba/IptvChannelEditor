@@ -70,7 +70,7 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("Vod_Seasons_List_Screen::get_all_folder_items: MediaUrl: " . $media_url->get_raw_string());
+        //hd_print("Vod_Seasons_List_Screen::get_all_folder_items: MediaUrl: " . $media_url->get_raw_string());
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie)) {
             return array();

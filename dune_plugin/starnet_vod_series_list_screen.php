@@ -9,8 +9,6 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
     const ACTION_QUALITY = 'quality';
     const ACTION_REFRESH = 'refresh';
 
-    const VIEWED_LIST = 'viewed_items';
-
     /**
      * @var array
      */
@@ -105,21 +103,23 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     return null;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
-                $viewed_items = HD::get_items(self::VIEWED_LIST);
-
                 $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
                 if (is_null($movie)) {
                     return null;
                 }
 
-                $playback_url = $movie->series_list[$media_url->series_id]->playback_url;
-                $is_viewed = array_key_exists($playback_url, $viewed_items);
-                if ($is_viewed) {
-                    unset ($viewed_items[$playback_url]);
+                $this->plugin->vod->ensure_history_loaded($plugin_cookies);
+                $viewed_items = $this->plugin->vod->get_history_movies();
+
+                if (isset($viewed_items[$media_url->movie_id][$media_url->series_id])
+                    && $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_FLAG] === true) {
+                    $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_FLAG] = false;
+                    $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_POSITION] = 0;
+                    $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_DURATION] = -1;
                 } else {
-                    $viewed_items[$playback_url] = 'watched';
+                    $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_FLAG] = true;
                 }
-                HD::put_items(self::VIEWED_LIST, $viewed_items);
+                $this->plugin->vod->set_history_items($viewed_items);
 
                 $perform_new_action = User_Input_Handler_Registry::create_action($this, self::ACTION_REFRESH);
                 return Action_Factory::invalidate_folders(array(self::ID), $perform_new_action);
@@ -155,10 +155,12 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
      * @param MediaURL $media_url
      * @param $plugin_cookies
      * @return array
+     * @throws Exception
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         //hd_print("Vod_Series_List_Screen::get_all_folder_items: MediaUrl: " . $media_url->get_raw_string());
+
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie)) {
             return array();
@@ -166,17 +168,25 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $items = array();
 
-        $viewed_items = HD::get_items(self::VIEWED_LIST);
+        $this->plugin->vod->ensure_history_loaded($plugin_cookies);
+        $viewed_items = $this->plugin->vod->get_history_movies();
+
+        $viewed_item = isset($viewed_items[$media_url->movie_id]) ? $viewed_items[$media_url->movie_id] : array();
+        $counter = 0;
         foreach ($movie->series_list as $series) {
             if (isset($media_url->season_id) && $media_url->season_id !== $series->season_id) continue;
 
-            //hd_print("movie_id: $movie->id name: $series->name series_id: $series->id pb_url: $series->playback_url");
-            if (isset($viewed_items[$series->playback_url])) {
-                $viewed_item = $viewed_items[$series->playback_url];
-                if ($viewed_item === 'watched')
+            hd_print("movie_id: $movie->id name: $series->name series_id: $series->id pb_url: $series->playback_url");
+            if (isset($viewed_item[$counter])) {
+                $item_info = $viewed_item[$counter];
+                if ($item_info[Movie::WATCHED_FLAG]) {
                     $prefix = '[Просмотрено]';
-                else
-                    $prefix = '[' . format_duration_seconds($viewed_item[0]) . '/' . format_duration_seconds($viewed_item[1]) . ']';
+                } else {
+                    $start = format_duration_seconds($item_info[Movie::WATCHED_POSITION]);
+                    $total = format_duration_seconds($item_info[Movie::WATCHED_DURATION]);
+                    $date = format_datetime("d.m.Y H:i", $item_info[Movie::WATCHED_DATE]);
+                    $prefix = "[$start/$total] $date";
+                }
 
                 $info = "$series->name | $prefix";
                 $color = 3;
@@ -197,6 +207,8 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     ViewItemParams::item_caption_color => $color,
                 ),
             );
+
+            $counter++;
         }
 
         return $items;

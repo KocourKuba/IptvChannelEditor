@@ -92,6 +92,7 @@ class Default_Dune_Plugin implements DunePlugin
 
         hd_print("Instantiate class: $plugin_config_class");
         $this->config = new $plugin_config_class;
+        $this->config->set_parent($this);
         $this->config->init_defaults();
         $this->config->load_config();
         $this->config->load_embedded_account();
@@ -293,7 +294,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_folder_view($media_url, &$plugin_cookies)
     {
-        hd_print("Default_Dune_Plugin: get_folder_view: $media_url");
+        //hd_print("Default_Dune_Plugin: get_folder_view: $media_url");
         $decoded_media_url = MediaURL::decode($media_url);
 
         return $this->get_screen_by_url($decoded_media_url)->get_folder_view($decoded_media_url, $plugin_cookies);

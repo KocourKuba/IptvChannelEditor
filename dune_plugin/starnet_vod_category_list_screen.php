@@ -212,6 +212,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
     {
         $this->category_list = null;
         $this->category_index = null;
+        $this->plugin->vod->clear_movie_cache();
         $this->plugin->config->ClearVodCache();
     }
 }

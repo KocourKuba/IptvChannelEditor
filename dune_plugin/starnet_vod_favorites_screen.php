@@ -156,15 +156,15 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
-
         $movie_ids = $this->plugin->vod->get_favorite_movie_ids();
 
         $items = array();
-
         foreach ($movie_ids as $movie_id) {
             if (empty($movie_id)) continue;
 
+            $this->plugin->vod->ensure_movie_loaded($movie_id, $plugin_cookies);
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
+
             if (is_null($short_movie)) {
                 $caption = "Информация о фильме недоступна";
                 $poster_url = "missing://";

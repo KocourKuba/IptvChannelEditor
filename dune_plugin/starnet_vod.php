@@ -9,6 +9,9 @@ require_once 'lib/default_dune_plugin.php';
 
 class Starnet_Vod extends Abstract_Vod
 {
+    const FAVORITES_LIST = 'favorite_items';
+    const HISTORY_LIST = 'history_items';
+
     /**
      * @var Default_Dune_Plugin
      */
@@ -41,54 +44,20 @@ class Starnet_Vod extends Abstract_Vod
     /**
      * @param $plugin_cookies
      */
-    protected function load_favorites(&$plugin_cookies)
+    protected function load_favorites($plugin_cookies)
     {
-        $fav_movie_ids = $this->get_fav_movie_ids_from_cookies($plugin_cookies);
-
-        foreach ($fav_movie_ids as $movie_id) {
-            if ($this->has_cached_short_movie($movie_id)) {
-                continue;
-            }
-
-            $this->ensure_movie_loaded($movie_id, $plugin_cookies);
-        }
-
+        $fav_movie_ids = HD::get_items(self::FAVORITES_LIST . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies), true);
         $this->set_fav_movie_ids($fav_movie_ids);
-
-        $favorites = count($fav_movie_ids);
-        hd_print("load_favorites: The $favorites favorite movies loaded.");
+        hd_print("load_favorites: Movies loaded from favorites: " . count($fav_movie_ids));
     }
 
     /**
      * @param array $fav_movie_ids
      * @param $plugin_cookies
      */
-    protected function do_save_favorite_movies(&$fav_movie_ids, &$plugin_cookies)
+    protected function do_save_favorite_movies($fav_movie_ids, $plugin_cookies)
     {
-        $plugin_cookies->favorite_movies = implode(',', $fav_movie_ids);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_fav_movie_ids_from_cookies($plugin_cookies)
-    {
-        if (!isset($plugin_cookies->favorite_movies)) {
-            return array();
-        }
-
-        $arr = explode(",", $plugin_cookies->favorite_movies);
-
-        $ids = array();
-        foreach ($arr as $id) {
-            if (preg_match('/\S/', $id)) {
-                $ids[] = $id;
-            }
-        }
-        return $ids;
+        HD::put_items(self::FAVORITES_LIST . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies), $fav_movie_ids);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -124,5 +93,17 @@ class Starnet_Vod extends Abstract_Vod
     public function is_movie_page_supported()
     {
         return $this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED);
+    }
+
+    protected function do_save_history_movies($history_items, &$plugin_cookies)
+    {
+        HD::put_items(self::HISTORY_LIST . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies), $history_items);
+    }
+
+    protected function load_history($plugin_cookies)
+    {
+        $history_items = HD::get_items(self::HISTORY_LIST . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies), true);
+        $this->set_history_items($history_items);
+        hd_print("load_history: movies loaded from history: " . count($history_items));
     }
 }

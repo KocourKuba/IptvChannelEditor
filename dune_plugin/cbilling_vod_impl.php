@@ -14,7 +14,7 @@ abstract class Cbilling_Vod_Impl extends default_config
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         hd_print("TryLoadMovie: $movie_id");
-        $movie = new Movie($movie_id);
+        $movie = new Movie($movie_id, $this->parent);
         $json = HD::DownloadJson(self::API_HOST . "/video/$movie_id", false);
         if ($json === false) {
             return $movie;

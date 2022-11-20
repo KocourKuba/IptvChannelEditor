@@ -37,8 +37,9 @@ class Plugin_Constants
     const /* (bool)   */ VOD_M3U = 'vod_m3u';
     const /* (array)  */ VOD_TEMPLATES = 'vod_templates';
     const /* (int)    */ VOD_TEMPLATES_INDEX = 'vod_template_index';
-    const /* (array)  */ VOD_TEMPLATE = 'pl_template';
-    const /* (array)  */ VOD_PARSE_REGEX = 'parse_regex';
+    const /* (char*)  */ VOD_TEMPLATE = 'pl_template';
+    const /* (char*)  */ VOD_PARSE_REGEX = 'parse_regex';
+    const /* (char*)  */ VOD_NAME = 'name';
 
     // streams parameters
     const /* array */ STREAMS_CONFIG = 'streams_config';

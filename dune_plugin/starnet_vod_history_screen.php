@@ -86,9 +86,9 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 		{
 			case self::ACTION_ITEM_DELETE:
 				$media_url = MediaURL::decode($user_input->selected_media_url);
-				$history_items = HD::get_items(Movie::HISTORY_LIST, true);
+				$history_items = HD::get_items(Starnet_Vod::HISTORY_LIST, true);
 				unset ($history_items[$media_url->movie_id]);
-				HD::put_items(Movie::HISTORY_LIST, $history_items);
+				HD::put_items(Starnet_Vod::HISTORY_LIST, $history_items);
 				$parent_media_url = MediaURL::decode($user_input->parent_media_url);
 				$sel_ndx = $user_input->sel_ndx + 1;
 				if ($sel_ndx < 0)
@@ -117,22 +117,38 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
      * @param MediaURL $media_url
      * @param $plugin_cookies
      * @return array
+     * @throws Exception
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
+        hd_print("get_all_folder_items");
+
+        $this->plugin->vod->ensure_history_loaded($plugin_cookies);
+        $history_items = $this->plugin->vod->get_history_movies();
+
         $items = array();
+        foreach ($history_items as $movie_id => $movie_infos) {
+            if (empty($movie_infos)) continue;
 
-        $history_items = HD::get_items(Movie::HISTORY_LIST, true);
-        foreach ($history_items as $movie_id => $item) {
-            if (empty($item)) continue;
-
+            hd_print("get_all_folder_items: history_items : $movie_id");
             $this->plugin->vod->ensure_movie_loaded($movie_id, $plugin_cookies);
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
+
             if (is_null($short_movie)) {
                 $caption = "Информация о фильме недоступна";
                 $poster_url = "missing://";
             } else {
-                $caption = $short_movie->name . "|Последний просмотр: " . $item['info'] . "|";
+                $last_viewed = 0;
+                foreach ($movie_infos as $key => $info) {
+                    if (isset($info[Movie::WATCHED_DATE])) {
+                        $last_viewed = max($last_viewed, $info[Movie::WATCHED_DATE]);
+                        //hd_print("get_all_folder_items: info $key => {$info[Movie::WATCHED_DATE]}");
+                    }
+                }
+
+                $caption = $short_movie->name;
+                if ($last_viewed !== 0)
+                    $caption .= "|Последний просмотр: " . format_datetime("d.m.Y H:i", $last_viewed) . "|";
                 $poster_url = $short_movie->poster_url;
             }
 

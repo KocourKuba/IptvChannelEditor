@@ -1,4 +1,6 @@
 ﻿<?php
+
+require_once 'default_dune_plugin.php';
 require_once 'dynamic_config.php';
 require_once 'epg_manager.php';
 require_once 'tv/channel.php';
@@ -15,6 +17,10 @@ class default_config extends dynamic_config
     protected $account_data;
 
     /**
+     * @var Default_Dune_Plugin
+     */
+    protected $parent;
+    /**
      * @var M3uParser
      */
     protected $m3u_parser;
@@ -30,6 +36,11 @@ class default_config extends dynamic_config
     public function __construct()
     {
         $this->m3u_parser = new M3uParser();
+    }
+
+    public function set_parent($parent)
+    {
+        $this->parent = $parent;
     }
 
     public function load_embedded_account()
@@ -786,7 +797,7 @@ class default_config extends dynamic_config
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
         hd_print("TryLoadMovie: $movie_id");
-        $movie = new Movie($movie_id);
+        $movie = new Movie($movie_id, $this->parent);
 
         $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);
         $entry = $this->m3u_parser->getEntryByIdx($movie_id);
@@ -1044,11 +1055,18 @@ class default_config extends dynamic_config
         return true;
     }
 
-    protected function get_vod_template($plugin_cookies)
+    public function get_vod_template($plugin_cookies)
     {
         $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
         $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
         return isset($vod_templates[$idx][Plugin_Constants::VOD_TEMPLATE]) ? $vod_templates[$idx][Plugin_Constants::VOD_TEMPLATE] : '';
+    }
+
+    public function get_vod_template_name($plugin_cookies)
+    {
+        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
+        return isset($vod_templates[$idx][Plugin_Constants::VOD_NAME]) ? $vod_templates[$idx][Plugin_Constants::VOD_NAME] : '';
     }
 
     protected function get_vod_parse_pattern($plugin_cookies)
