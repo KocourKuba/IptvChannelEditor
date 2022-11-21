@@ -47,21 +47,19 @@ void plugin_glanz::load_default()
 
 	provider_url = "http://ottg.cc/";
 
-	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	PlaylistTemplateInfo vod_info;
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD, 0));
 	vod_info.pl_template = "http://api.ottg.cc/playlist/vod?login={LOGIN}&password={PASSWORD}";
-	//vod_info.pl_template = "http://epg.esalecrm.net/playlist/vod?login={LOGIN}&password={PASSWORD}";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
 	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
-	//info.pl_template = "http://epg.esalecrm.net/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_NO_ADULT);
 	info.pl_template = "http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0";
-	//info.pl_template = "http://epg.esalecrm.net/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0";
 	playlist_templates.emplace_back(info);
 
 	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>.+)&req_host=(?<host>.+)$)";

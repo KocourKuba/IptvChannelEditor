@@ -51,7 +51,8 @@ void plugin_edem::load_default()
 	info.pl_template = "http://epg.it999.ru/edem_epg_ico2.m3u8";
 	playlist_templates.emplace_back(info);
 
-	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	PlaylistTemplateInfo vod_info;
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD, 0));
 	vod_info.pl_template = "{SUBDOMAIN}";
 	vod_templates.emplace_back(vod_info);
 

@@ -47,7 +47,8 @@ void plugin_antifriz::load_default()
 
 	provider_url = "https://antifriztv.com/";
 
-	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	PlaylistTemplateInfo vod_info;
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD, 0));
 	vod_info.pl_template = "http://protected-api.com";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
