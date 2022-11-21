@@ -455,6 +455,12 @@ void CPlaylistParseJsonThread::ParseEdem()
 void CPlaylistParseJsonThread::ParseGlanz()
 {
 	auto categories = std::make_unique<vod_category_storage>();
+
+	const auto& all_name = load_string_resource(IDS_STRING_ALL);
+	auto all_category = std::make_shared<vod_category>(all_name);
+	all_category->name = all_name;
+	categories->set_back(all_name, all_category);
+
 	do
 	{
 		std::stringstream data;
