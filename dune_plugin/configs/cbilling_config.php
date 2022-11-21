@@ -80,7 +80,8 @@ class cbilling_config extends Cbilling_Vod_Impl
         Control_Factory::add_label($defs, 'Пакеты: ', empty($account_data['package']) ? 'Нет пакетов' : $account_data['package'], -10);
         Control_Factory::add_label($defs, 'Дата окончания', $account_data['end_date'], -10);
         Control_Factory::add_label($defs, 'Устройств', $account_data['devices_num'], -10);
-        Control_Factory::add_label($defs, 'Сервер', $account_data['server_country'], -10);
-        Control_Factory::add_label($defs, 'Адрес сервера', $account_data['server'], 20);
+        Control_Factory::add_label($defs, 'Адрес сервера', $account_data['server'], -10);
+        Control_Factory::add_label($defs, 'Медиатека', ($account_data['vod'] ? "Да" : "Нет"), -10);
+        Control_Factory::add_label($defs, 'Шифрование траффика', ($account_data['ssl'] ? "Да" : "Нет"), 20);
     }
 }
