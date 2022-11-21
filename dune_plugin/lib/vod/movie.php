@@ -182,16 +182,12 @@ class Movie implements User_Input_Handler
             ),
             $plugin_cookies);
 
-        $perform_new_action = User_Input_Handler_Registry::create_action($this->plugin->vod_series_list_screen, Starnet_Vod_Series_List_Screen::ACTION_REFRESH);
-
         return Action_Factory::invalidate_folders(
             array(
-                Starnet_Vod_Series_List_Screen::get_media_url_str($user_input->plugin_vod_id, $user_input->plugin_vod_series_ndx),
-                Starnet_Vod_Seasons_List_Screen::get_media_url_str($user_input->plugin_vod_id),
+                Starnet_Vod_Series_List_Screen::get_media_url_str($user_input->plugin_vod_id),
                 Starnet_Vod_Movie_Screen::get_media_url_str($user_input->plugin_vod_id),
                 Starnet_Vod_History_Screen::get_media_url_str(),
-            ),
-            $perform_new_action
+            )
         );
     }
 
@@ -417,12 +413,23 @@ class Movie implements User_Input_Handler
         $counter = 0; // series index. Not the same as the key of series list
         $initial_start_array = array();
         foreach ($list as $series) {
-            $var = $variant;
-            if (isset($series->variants) && array_key_exists($variant, $series->variants)) {
-                $playback_url = $series->variants[$variant]->playback_url;
-                $playback_url_is_stream_url = $series->variants[$variant]->playback_url_is_stream_url;
+            if (isset($series->variants)) {
+                if (!array_key_exists($variant, $series->variants)) {
+                    $best_var = $series->variants;
+                    array_pop($best_var);
+                    foreach ($best_var as $key => $var) {
+                        $variant = $key;
+                    }
+                }
+
+                if (isset($series->variants[$variant])) {
+                    $playback_url = $series->variants[$variant]->playback_url;
+                    $playback_url_is_stream_url = $series->variants[$variant]->playback_url_is_stream_url;
+                } else {
+                    $playback_url = $series->playback_url;
+                    $playback_url_is_stream_url = $series->playback_url_is_stream_url;
+                }
             } else {
-                $var = 'default';
                 $playback_url = $series->playback_url;
                 $playback_url_is_stream_url = $series->playback_url_is_stream_url;
             }
@@ -449,7 +456,7 @@ class Movie implements User_Input_Handler
             }
 
             $initial_start_array[$counter] = $pos * 1000;
-            hd_print("Start playback url ($var): $playback_url from $initial_start_array[$counter]");
+            hd_print("Start playback url ($variant): $playback_url from $initial_start_array[$counter]");
             $series_array[] = array(
                 PluginVodSeriesInfo::name => $name,
                 PluginVodSeriesInfo::playback_url => $playback_url,
@@ -460,11 +467,10 @@ class Movie implements User_Input_Handler
         }
 
         $initial_start = 0;
-        hd_print("vod series index $initial_series_ndx");
         if (isset($initial_start_array[$initial_series_ndx])) {
             $initial_start = $initial_start_array[$initial_series_ndx];
-            hd_print("starting vod position $initial_start");
         }
+        hd_print("starting vod index $initial_series_ndx at position $initial_start");
 
         return array(
             PluginVodInfo::id => $this->id,

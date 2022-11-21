@@ -58,24 +58,24 @@ class edem_config extends default_config
                     $movie->add_series_data($item->fid, $item->title, '', $item->url);
                 } else if (count((array)$episodeData->variants) === 1) {
                     //hd_print("one variant for $item->fid");
-                    $series_desc = "Качество: " . key($episodeData->variants) ."p";
+                    $series_desc = "Доступное качество: " . key($episodeData->variants) . 'p';
                     $movie->add_series_data($item->fid, $item->title, $series_desc, $item->url);
                 } else {
                     $variants_data = (array)$episodeData->variants;
                     //hd_print("episode $item->fid contains " . count($variants_data) . " variants");
                     $variants = array();
-                    $series_desc = "Качество: ";
+                    $series_desc = "Доступное качество: ";
                     foreach ($variants_data as $key => $url) {
                         //hd_print("variant $key playback_url: $url");
                         $quality = ($key === 'auto' ? $key : $key . 'p');
                         $variants[$key] = new Movie_Variant($item->fid . "_" . $key, $quality, $url);
                         if ($key !== 'auto') {
-                            $series_desc .= $quality . ", ";
+                            $series_desc .= "," . $quality;
                         }
                     }
 
-                    $series_desc = rtrim($series_desc, " ,\0");
-                    $desc = str_replace(array(",", " "), array("|", ""), $series_desc);
+                    $series_desc = rtrim($series_desc, ' ,\0');
+                    $desc = str_replace(array(',', '\n'), array('|', ''), $series_desc);
                     $movie->add_series_variants_data($item->fid, $item->title, $desc, $variants, $item->url);
                 }
             }
@@ -84,30 +84,30 @@ class edem_config extends default_config
             $movie->add_series_data($movie_id, $movieData->title, '', $movieData->url);
         } else if (count((array)$movieData->variants) === 1) {
             //hd_print("one variant for $movie_id");
-            $series_desc = "Качество: " . key($movieData->variants) ."p";
+            $series_desc = "Доступное качество: " . key($movieData->variants) . 'p';
             $movie->add_series_data($movie_id, $movieData->title, $series_desc, $movieData->url);
         } else {
             $variants_data = (array)$movieData->variants;
             //hd_print("movie $movie_id \"$movieData->title\" contains " . count($variants_data) . " variants");
             $variants = array();
-            $series_desc = "Качество: ";
+            $series_desc = "Доступное качество: ";
             foreach ($variants_data as $key => $url) {
                 //hd_print("variant $key playback_url: $url");
                 $quality = ($key === 'auto' ? $key : $key . 'p');
                 $variants[$key] = new Movie_Variant($movie_id . "_" . $key, $quality, $url);
                 if ($key !== 'auto') {
-                    $series_desc .= $quality . ", ";
+                    $series_desc .= "," . $quality;
                 }
             }
 
-            $series_desc = rtrim($series_desc, " ,\0");
-            $desc = str_replace(array(",", " "), array("|", ""), $series_desc);
+            $series_desc = rtrim($series_desc, ' ,\0');
+            $desc = str_replace(array(',', '\n'), array('|', ''), $series_desc);
             $movie->add_series_variants_data($movie_id, $movieData->title, $desc, $variants, $movieData->url);
         }
 
         $movie->set_data(
             $movieData->title,// caption,
-            $series_desc,// caption_original,
+            str_replace("качество: ,", "качество: ", $series_desc),// caption_original,
             isset($movieData->description) ? $movieData->description : '',// description,
             isset($movieData->img) ? $movieData->img : '',// poster_url,
             isset($movieData->duration) ? $movieData->duration : '',// length,
