@@ -111,28 +111,45 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $this->plugin->vod->ensure_history_loaded($plugin_cookies);
                 $viewed_items = $this->plugin->vod->get_history_movies();
 
-                if (isset($viewed_items[$media_url->movie_id][$media_url->series_id])
-                    && $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_FLAG] === true) {
-                    $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_FLAG] = false;
-                    $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_POSITION] = 0;
-                    $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_DURATION] = -1;
-                } else {
-                    $viewed_items[$media_url->movie_id][$media_url->series_id][Movie::WATCHED_FLAG] = true;
+                if (isset($viewed_items[$media_url->movie_id][$user_input->sel_ndx])) {
+                    $movie_info = $viewed_items[$media_url->movie_id][$user_input->sel_ndx];
+                    if ($movie_info[Movie::WATCHED_FLAG] !== false) {
+                        $movie_info[Movie::WATCHED_FLAG] = false;
+                        $movie_info[Movie::WATCHED_POSITION] = 0;
+                        $movie_info[Movie::WATCHED_DURATION] = -1;
+                    } else {
+                        $movie_info[Movie::WATCHED_FLAG] = true;
+                    }
+
+                    $viewed_items[$media_url->movie_id][$user_input->sel_ndx] = $movie_info;
                 }
-                $this->plugin->vod->set_history_items($viewed_items);
+                $this->plugin->vod->set_history_items($viewed_items, $plugin_cookies);
 
                 $perform_new_action = User_Input_Handler_Registry::create_action($this, self::ACTION_REFRESH);
                 return Action_Factory::invalidate_folders(array(self::ID), $perform_new_action);
 
             case self::ACTION_REFRESH:
-                if (!isset($user_input->parent_media_url))
-                    return null;
+                if (isset($user_input->parent_media_url)) {
+                    hd_print("Refresh folder");
+                    $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                    $sel_ndx = $user_input->sel_ndx;
+                    if ($sel_ndx < 0)
+                        $sel_ndx = 0;
+                    $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
+                } else if (isset($user_input->plugin_vod_id, $user_input->plugin_vod_series_ndx)) {
+                    hd_print("external refresh folder $user_input->plugin_vod_id, $user_input->plugin_vod_series_ndx");
+                    $str = MediaURL::encode(array('screen_id'=> self::ID, 'movie_id' => $user_input->plugin_vod_id, 'series_ndx' => $user_input->plugin_vod_series_ndx));
+                    $parent_media_url = MediaURL::decode($str);
+                    $sel_ndx = $user_input->plugin_vod_series_ndx;
+                    if ($sel_ndx < 0)
+                        $sel_ndx = 0;
+                    hd_print("sel_ndx $sel_ndx");
+                    $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
+                } else {
+                    hd_print("not set");
+                    break;
+                }
 
-                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
-                $sel_ndx = $user_input->sel_ndx + 1;
-                if ($sel_ndx < 0)
-                    $sel_ndx = 0;
-                $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true, $sel_ndx);
 
             default:
@@ -173,22 +190,28 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $viewed_item = isset($viewed_items[$media_url->movie_id]) ? $viewed_items[$media_url->movie_id] : array();
         $counter = 0;
+        //hd_print("movie_id: $movie->id");
         foreach ($movie->series_list as $series) {
             if (isset($media_url->season_id) && $media_url->season_id !== $series->season_id) continue;
 
-            hd_print("movie_id: $movie->id name: $series->name series_id: $series->id pb_url: $series->playback_url");
+            //hd_print("series_idx: $counter name: $series->name pb_url: $series->playback_url");
             if (isset($viewed_item[$counter])) {
                 $item_info = $viewed_item[$counter];
                 if ($item_info[Movie::WATCHED_FLAG]) {
-                    $prefix = '[Просмотрено]';
+                    $info = "$series->name | [Просмотрено]";
+                } else if (isset($item_info[Movie::WATCHED_DURATION])) {
+                    if ($item_info[Movie::WATCHED_DURATION] === -1) {
+                        $info = "$series->name | [Просмотр сброшен]";
+                    } else {
+                        $start = format_duration_seconds($item_info[Movie::WATCHED_POSITION]);
+                        $total = format_duration_seconds($item_info[Movie::WATCHED_DURATION]);
+                        $date = format_datetime("d.m.Y H:i", $item_info[Movie::WATCHED_DATE]);
+                        $info = $series->name . " [$start/$total] $date";
+                    }
                 } else {
-                    $start = format_duration_seconds($item_info[Movie::WATCHED_POSITION]);
-                    $total = format_duration_seconds($item_info[Movie::WATCHED_DURATION]);
-                    $date = format_datetime("d.m.Y H:i", $item_info[Movie::WATCHED_DATE]);
-                    $prefix = "[$start/$total] $date";
+                    $info = $series->name;
                 }
 
-                $info = "$series->name | $prefix";
                 $color = 3;
             } else {
                 $color = 15;

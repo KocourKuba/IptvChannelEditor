@@ -182,13 +182,16 @@ class Movie implements User_Input_Handler
             ),
             $plugin_cookies);
 
+        $perform_new_action = User_Input_Handler_Registry::create_action($this->plugin->vod_series_list_screen, Starnet_Vod_Series_List_Screen::ACTION_REFRESH);
+
         return Action_Factory::invalidate_folders(
             array(
+                Starnet_Vod_Series_List_Screen::get_media_url_str($user_input->plugin_vod_id, $user_input->plugin_vod_series_ndx),
                 Starnet_Vod_Seasons_List_Screen::get_media_url_str($user_input->plugin_vod_id),
                 Starnet_Vod_Movie_Screen::get_media_url_str($user_input->plugin_vod_id),
                 Starnet_Vod_History_Screen::get_media_url_str(),
-                Starnet_Vod_Series_List_Screen::get_media_url_str($user_input->plugin_vod_id, $user_input->plugin_vod_series_ndx)
-            )
+            ),
+            $perform_new_action
         );
     }
 

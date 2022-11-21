@@ -95,7 +95,7 @@ class Starnet_Vod extends Abstract_Vod
         return $this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED);
     }
 
-    protected function do_save_history_movies($history_items, &$plugin_cookies)
+    protected function do_save_history_movies($history_items, $plugin_cookies)
     {
         HD::put_items(self::HISTORY_LIST . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies), $history_items);
     }

@@ -12,6 +12,8 @@ require_once 'lib/dune_stb_api.php';
 
 class Playback_Points
 {
+    const PLAYBACK_POINTS = 'playback_points';
+
     /**
      * @var Playback_Points
      */
@@ -27,17 +29,7 @@ class Playback_Points
      */
     private $points;
 
-    /**
-     * @var string
-     */
-    private $tmp_path;
-
     ///////////////////////////////////////////////////////////////////////////
-
-    private function __construct()
-    {
-        $this->tmp_path = get_data_path('/watch_history');
-    }
 
     /**
      * @param string|null $id
@@ -66,7 +58,7 @@ class Playback_Points
             hd_print("Playback_Points::update_point: playing position: $playback_position");
             $this->points[$id]->time = $time;
 
-            file_put_contents($this->tmp_path, serialize($this->points));
+            HD::put_items(self::PLAYBACK_POINTS, $this->points);
         }
     }
 
@@ -106,12 +98,10 @@ class Playback_Points
         hd_print("Playback_Points::erase " . ($id !== null ? $id : "all"));
         if ($id === null) {
             $this->points = array();
-            if (file_exists($this->tmp_path)) {
-                unlink($this->tmp_path);
-            }
+            HD::erase_items(self::PLAYBACK_POINTS);
         } else {
             unset($this->points[$id]);
-            file_put_contents($this->tmp_path, serialize($this->points));
+            HD::put_items(self::PLAYBACK_POINTS, $this->points);
         }
     }
     ///////////////////////////////////////////////////////////////////////////
@@ -122,7 +112,7 @@ class Playback_Points
     public static function init()
     {
         if (is_null(self::$instance)) {
-            self::$instance = new Playback_Points();
+            self::$instance = new self();
         }
 
         if (!isset(self::$instance->points)) {
@@ -169,7 +159,7 @@ class Playback_Points
      */
     public static function get_all()
     {
-        $points = file_exists(self::$instance->tmp_path) ? unserialize(file_get_contents(self::$instance->tmp_path)) : array();
+        $points = HD::get_items(self::PLAYBACK_POINTS, false);
         hd_print("Loaded playback_points: " . count($points));
         while (count($points) > 7) {
             array_pop($points);

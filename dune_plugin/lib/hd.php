@@ -461,7 +461,8 @@ class HD
     {
         $full_path = get_data_path($path);
         if (file_exists($full_path)) {
-            $items = json_decode(file_get_contents($full_path), true);
+            $contents = file_get_contents($full_path);
+            $items = unserialize($contents);
             $items = is_null($items) ? array() : $items;
         } else {
             $items = array();
@@ -476,7 +477,18 @@ class HD
      */
     public static function put_items($path, $items)
     {
-        file_put_contents(get_data_path($path), json_encode($items));
+        file_put_contents(get_data_path($path), serialize($items));
+    }
+
+    /**
+     * @param string $path
+     */
+    public static function erase_items($path)
+    {
+        $path = get_data_path($path);
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
 
     /**

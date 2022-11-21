@@ -72,7 +72,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Vod_History_Screen: handle_user_input:');
+        //hd_print("Vod_History_Screen: handle_user_input:");
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
@@ -86,9 +86,8 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 		{
 			case self::ACTION_ITEM_DELETE:
 				$media_url = MediaURL::decode($user_input->selected_media_url);
-				$history_items = HD::get_items(Starnet_Vod::HISTORY_LIST, true);
-				unset ($history_items[$media_url->movie_id]);
-				HD::put_items(Starnet_Vod::HISTORY_LIST, $history_items);
+                //hd_print("Vod_History_Screen: Delete movie_id: $media_url->movie_id");
+                $this->plugin->vod->remove_movie_from_history($media_url->movie_id, $plugin_cookies);
 				$parent_media_url = MediaURL::decode($user_input->parent_media_url);
 				$sel_ndx = $user_input->sel_ndx + 1;
 				if ($sel_ndx < 0)
@@ -121,7 +120,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("get_all_folder_items");
+        //hd_print("Starnet_Vod_History_Screen: get_all_folder_items");
 
         $this->plugin->vod->ensure_history_loaded($plugin_cookies);
         $history_items = $this->plugin->vod->get_history_movies();
@@ -130,7 +129,6 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
         foreach ($history_items as $movie_id => $movie_infos) {
             if (empty($movie_infos)) continue;
 
-            hd_print("get_all_folder_items: history_items : $movie_id");
             $this->plugin->vod->ensure_movie_loaded($movie_id, $plugin_cookies);
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
 
@@ -139,7 +137,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
                 $poster_url = "missing://";
             } else {
                 $last_viewed = 0;
-                foreach ($movie_infos as $key => $info) {
+                foreach ($movie_infos as $info) {
                     if (isset($info[Movie::WATCHED_DATE])) {
                         $last_viewed = max($last_viewed, $info[Movie::WATCHED_DATE]);
                         //hd_print("get_all_folder_items: info $key => {$info[Movie::WATCHED_DATE]}");

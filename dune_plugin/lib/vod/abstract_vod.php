@@ -68,17 +68,12 @@ abstract class Abstract_Vod implements Vod
     /**
      * @param array $fav_movie_ids
      */
-    public function set_fav_movie_ids($fav_movie_ids)
+    public function set_fav_movie_ids($fav_movie_ids, $plugin_cookies = null)
     {
         $this->fav_movie_ids = $fav_movie_ids;
-    }
-
-    /**
-     * @param array $history_items
-     */
-    public function set_history_items($history_items)
-    {
-        $this->history_items = $history_items;
+        if (!is_null($plugin_cookies)) {
+            $this->do_save_favorite_movies($fav_movie_ids, $plugin_cookies);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -309,14 +304,17 @@ abstract class Abstract_Vod implements Vod
                 break;
         }
 
-        $this->set_fav_movie_ids($fav_movie_ids);
-        $this->do_save_favorite_movies($fav_movie_ids, $plugin_cookies);
+        $this->set_fav_movie_ids($fav_movie_ids, $plugin_cookies);
 
         return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::get_media_url_str()));
     }
 
     ///////////////////////////////////////////////////////////////////////
     // History.
+
+    abstract protected function load_history($plugin_cookies);
+
+    abstract protected function do_save_history_movies($history_items, $plugin_cookies);
 
     /**
      * @return array
@@ -326,10 +324,15 @@ abstract class Abstract_Vod implements Vod
         return $this->history_items;
     }
 
-    abstract protected function load_history($plugin_cookies);
-
-    // This function should not fail.
-    abstract protected function do_save_history_movies($history_items, &$plugin_cookies);
+    /**
+     * @param array $history_items
+     */
+    public function set_history_items($history_items, $plugin_cookies = null)
+    {
+        $this->history_items = $history_items;
+        if (!is_null($plugin_cookies))
+            $this->do_save_history_movies($history_items, $plugin_cookies);
+    }
 
     public function ensure_history_loaded($plugin_cookies)
     {
@@ -354,7 +357,16 @@ abstract class Abstract_Vod implements Vod
             array_pop($this->history_items);
         }
 
-        $this->do_save_history_movies($this->history_items, $plugin_cookies);
+        $this->set_history_items($this->history_items, $plugin_cookies);
+    }
+
+    public function remove_movie_from_history($id, $plugin_cookies)
+    {
+        $this->ensure_history_loaded($plugin_cookies);
+
+        unset($this->history_items[$id]);
+
+        $this->set_history_items($this->history_items, $plugin_cookies);
     }
 
     ///////////////////////////////////////////////////////////////////////

@@ -101,7 +101,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("get_all_folder_items");
+        //hd_print("Starnet_Vod_Category_List_Screen: get_all_folder_items");
         if (is_null($this->category_index) || is_null($this->category_list)) {
             $this->plugin->config->fetchVodCategories($plugin_cookies, $this->category_list, $this->category_index);
         }
