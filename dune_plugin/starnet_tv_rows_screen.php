@@ -548,7 +548,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     private function get_history_rows($plugin_cookies)
     {
-        hd_print("Starnet_Tv_Rows_Screen::get_history_rows");
+        //hd_print("Starnet_Tv_Rows_Screen::get_history_rows");
         if ($this->clear_playback_points) {
             Playback_Points::clear();
             $this->clear_playback_points = false;
@@ -660,7 +660,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     private function get_favorites_rows($plugin_cookies)
     {
-        hd_print("Starnet_Tv_Rows_Screen::get_favorites_rows");
+        //hd_print("Starnet_Tv_Rows_Screen::get_favorites_rows");
         $groups = $this->plugin->tv->get_groups();
         if (is_null($groups))
             return null;
@@ -714,7 +714,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     private function get_regular_rows($plugin_cookies)
     {
-        hd_print("Starnet_Tv_Rows_Screen::get_regular_rows");
+        //hd_print("Starnet_Tv_Rows_Screen::get_regular_rows");
         $groups = $this->plugin->tv->get_groups();
         if (is_null($groups))
             return null;
