@@ -242,12 +242,10 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         $media_urls = array(Starnet_Tv_Favorites_Screen::get_media_url_str(), Starnet_Tv_Channel_List_Screen::get_media_url_str(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID));
 
-        if ($this->plugin->new_ui_support) {
-            Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-            return Starnet_Epfs_Handler::invalidate_folders($media_urls);
-        }
+        Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+        $post_action = Starnet_Epfs_Handler::invalidate_folders($media_urls);
 
-        return Action_Factory::invalidate_folders($media_urls);
+        return Action_Factory::invalidate_folders($media_urls, $post_action);
     }
 
     /**
@@ -588,6 +586,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
     public function get_program_info($channel_id, $program_ts, $plugin_cookies)
     {
+        hd_print("Starnet_Tv::get_program_info for $channel_id at time $program_ts");
         $day_ts = strtotime(date('d-M-Y', ($program_ts > 0 ? $program_ts : time())));
         $day_epg = $this->get_day_epg($channel_id, $day_ts, $plugin_cookies);
         foreach ($day_epg as $item) {
@@ -722,10 +721,12 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
     public function get_action_map()
     {
-        $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER);
         if ($this->plugin->new_ui_support) {
             $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
         }
+
+        // dummy action. If actions empty plugin crashed
+        $actions[GUI_EVENT_GOING_TO_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_GOING_TO_STOP);
 
         return $actions;
     }
@@ -736,29 +737,21 @@ class Starnet_Tv implements Tv, User_Input_Handler
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         //hd_print('Starnet_Tv: handle_user_input');
-        foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->control_id)) {
             return null;
         }
 
-        if ($this->plugin->history_support && isset($user_input->plugin_tv_channel_id)) {
-            Playback_Points::update($user_input->plugin_tv_channel_id);
-        }
+        if ($user_input->control_id === GUI_EVENT_PLAYBACK_STOP
+            && (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed))) {
 
-        switch ($user_input->control_id) {
-            case GUI_EVENT_TIMER:
-                //return Action_Factory::change_behaviour($this->get_action_map(), 5000);
-                break;
+            if ($this->plugin->history_support && isset($user_input->plugin_tv_channel_id)) {
+                Playback_Points::update($user_input->plugin_tv_channel_id);
+            }
 
-            case GUI_EVENT_PLAYBACK_STOP:
-
-                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
-                    if ($this->plugin->new_ui_support) {
-                        Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-                        return Starnet_Epfs_Handler::invalidate_folders(array());
-                    }
-                }
+            Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+            return Starnet_Epfs_Handler::invalidate_folders();
         }
 
         return null;

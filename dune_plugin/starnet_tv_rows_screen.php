@@ -109,8 +109,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         ///////////// start_time, end_time, genre, country, person /////////////////
 
-        $str = '';
-
         if (is_null($epg_data = $this->plugin->tv->get_program_info($channel_id, time(), $plugin_cookies))) {
 
             $channel_desc = $channel->get_desc();
@@ -442,14 +440,14 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             case GUI_EVENT_TIMER:
                 // rising after playback end + 100 ms
                 Playback_Points::update();
-                Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
                 return Starnet_Epfs_Handler::invalidate_folders();
 
             case GUI_EVENT_KEY_ENTER:
                 $tv_play_action = Action_Factory::tv_play($media_url);
 
                 if (isset($user_input->action_origin)) {
-                    Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                    Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
                     return Action_Factory::close_and_run(Starnet_Epfs_Handler::invalidate_folders(null, $tv_play_action));
                 }
 
@@ -522,19 +520,19 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 return $this->plugin->tv->change_tv_favorites($control_id, $media_url->channel_id, $plugin_cookies);
 
             case 'refresh_screen':
-                Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
 
                 return Starnet_Epfs_Handler::invalidate_folders();
 
             case 'remove_playback_point':
                 $this->removed_playback_point = $media_url->get_raw_string();
-                Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
 
                 return Starnet_Epfs_Handler::invalidate_folders();
 
             case 'clear_playback_points':
                 $this->clear_playback_points = true;
-                Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
 
                 return Starnet_Epfs_Handler::invalidate_folders();
         }
@@ -550,7 +548,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     private function get_history_rows($plugin_cookies)
     {
-        hd_print("get_history_rows");
+        hd_print("Starnet_Tv_Rows_Screen::get_history_rows");
         if ($this->clear_playback_points) {
             Playback_Points::clear();
             $this->clear_playback_points = false;
@@ -561,15 +559,13 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $now = time();
         $rows = array();
         $watched = array();
-        foreach (Playback_Points::get_all() as $point) {
-            $channel_id = $point->channel_id;
-
+        foreach (Playback_Points::get_all() as $channel_id => $point) {
             if (is_null($channel = $this->plugin->tv->get_channel($channel_id)) || $channel->is_protected())
                 continue;
 
             $channel_ts = ($point->archive_tm > 0) ?
                 $point->archive_tm + $point->position : // archive
-                ($channel->has_archive() ? $point->time : 0); // if can be archived current position
+                ($channel->has_archive() ? time() : 0); // if can be archived current position
 
             if ($channel_ts < 0) {
                 // only live stream
@@ -587,7 +583,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 $end_tm = $prog_info[PluginTvEpgProgram::end_tm_sec];
                 $subtitle = isset($prog_info[Ext_Epg_Program::sub_title]) ? $prog_info[Ext_Epg_Program::sub_title] : '';
 
-                if ($point->archive_tm + $channel->get_archive_past_sec() - 60 > $now) {
+                if ($point->archive_tm < $now - $channel->get_archive_past_sec() - 60) {
                     $progress = 0;
                 } else {
                     $progress = max(0.01, min(1, 1 - round(($end_tm - $channel_ts) / ($end_tm - $start_tm), 2)));
@@ -684,7 +680,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     private function get_favorites_rows($plugin_cookies)
     {
-        hd_print("get_favorites_rows");
+        hd_print("Starnet_Tv_Rows_Screen::get_favorites_rows");
         $groups = $this->plugin->tv->get_groups();
         if (is_null($groups))
             return null;
@@ -738,7 +734,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     private function get_regular_rows($plugin_cookies)
     {
-        hd_print("get_regular_rows");
+        hd_print("Starnet_Tv_Rows_Screen::get_regular_rows");
         $groups = $this->plugin->tv->get_groups();
         if (is_null($groups))
             return null;

@@ -103,13 +103,11 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
                 return Action_Factory::show_dialog('Подписка', $defs);
 
             case GUI_EVENT_KEY_RETURN:
-                if ($this->plugin->history_support) {
-                    Playback_Points::init();
-                }
                 $post_action = Action_Factory::close_and_run();
                 if ($this->plugin->history_support) {
-                    Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-                    return Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
+                    Playback_Points::init();
+                    Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                    $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
                 }
 
                 return $post_action;
@@ -172,7 +170,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
                 $setup_needs = empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             default:
-                hd_print("Unknown access type");
+                hd_print("Access type not set");
                 $setup_needs = false;
         }
 

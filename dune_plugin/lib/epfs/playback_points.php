@@ -42,20 +42,16 @@ class Playback_Points
         // update point for selected channel
         $id = ($id === null) ? $id : $this->curr_point_id;
 
+        // if channel does support archive do not update current point
         if (isset($this->points[$id]) && $this->points[$id]->archive_tm !== -1) {
-            // if channel does support archive do not update current point
             $player_state = get_player_state_assoc();
             $time = time();
-
-            if (isset($player_state['playback_state']) && ($player_state['playback_state'] === PLAYBACK_PLAYING)) {
-                $playback_position = empty($player_state['playback_position']) ? max($time - $this->points[$id]->time, 0) : $player_state['playback_position'];
-                hd_print("Playback_Points::update_point: playing position: $playback_position");
-                $this->points[$id]->position = max($playback_position, 0);
-            } else {
-                $playback_position = max($time - $this->points[$id]->time, 0);
-                $this->points[$id]->position = $playback_position;
+            if (isset($player_state['playback_state'])) {
+                if ($player_state['playback_state'] === PLAYBACK_PLAYING || $player_state['playback_state'] === PLAYBACK_STOPPED) {
+                    $this->points[$id]->position = isset($player_state['playback_position']) ? $player_state['playback_position'] : 0;
+                    hd_print("Playback_Points::update_point: playing position: {$this->points[$id]->position}");
+                }
             }
-            hd_print("Playback_Points::update_point: playing position: $playback_position");
             $this->points[$id]->time = $time;
 
             HD::put_items(self::PLAYBACK_POINTS, $this->points);
@@ -77,11 +73,13 @@ class Playback_Points
                 $this->curr_point_id = $channel_id;
 
                 $point = MediaURL::decode();
-                $point->channel_id = $channel_id;
                 $point->archive_tm = $archive_ts;
                 $point->position = 0;
                 $point->time = PHP_INT_MAX;
 
+                if (isset($this->points[$channel_id])) {
+                    unset($this->points[$channel_id]);
+                }
                 $this->points = array($channel_id => $point) + $this->points;
                 if (count($this->points) > 7) {
                     array_pop($this->points);
@@ -159,7 +157,7 @@ class Playback_Points
      */
     public static function get_all()
     {
-        $points = HD::get_items(self::PLAYBACK_POINTS, false);
+        $points = HD::get_items(self::PLAYBACK_POINTS, true);
         hd_print("Loaded playback_points: " . count($points));
         while (count($points) > 7) {
             array_pop($points);

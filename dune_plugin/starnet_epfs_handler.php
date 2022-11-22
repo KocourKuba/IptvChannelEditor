@@ -105,18 +105,10 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
     public static function invalidate_folders($media_urls = null, $post_action = null)
     {
         if (!self::$enabled)
-            return null;
+            return $post_action;
 
         $arr = array_merge(array(self::$epf_id), (is_array($media_urls) ? $media_urls : array()));
         return Action_Factory::invalidate_folders($arr, $post_action);
-    }
-
-    /**
-     * @param $plugin_cookies
-     */
-    public static function update_tv_epfs(&$plugin_cookies)
-    {
-        self::update_all_epfs(false, $plugin_cookies);
     }
 
     /**
@@ -124,7 +116,7 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
      * @param $plugin_cookies
      * @return array|null
      */
-    public static function update_all_epfs($first_run, &$plugin_cookies)
+    public static function update_all_epfs(&$plugin_cookies, $first_run = false)
     {
         if (!self::$enabled)
             return null;

@@ -726,10 +726,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
 
-        if ($this->plugin->new_ui_support) {
-            Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-            $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
-        }
+        Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+        $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
 
         return Action_Factory::invalidate_folders(array(Starnet_Main_Screen::ID), $post_action);
     }

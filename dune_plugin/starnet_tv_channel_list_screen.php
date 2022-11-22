@@ -95,8 +95,8 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Tv favorites: handle_user_input:');
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        hd_print('Starnet_Tv_Channel_List_Screen: handle_user_input:');
+        foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -168,12 +168,13 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
             case GUI_EVENT_PLAYBACK_STOP:
                 if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
-                    if ($this->plugin->new_ui_support) {
-                        Starnet_Epfs_Handler::update_tv_epfs($plugin_cookies);
-                        return Starnet_Epfs_Handler::invalidate_folders();
+
+                    if ($this->plugin->history_support && isset($user_input->plugin_tv_channel_id)) {
+                        Playback_Points::update($user_input->plugin_tv_channel_id);
                     }
 
-                    return null;
+                    Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                    return Starnet_Epfs_Handler::invalidate_folders();
                 }
         }
 
