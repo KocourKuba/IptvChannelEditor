@@ -536,7 +536,7 @@ class default_config extends dynamic_config
             }
         }
 
-        $url = $this->UpdateMpegTsBuffering($play_template_url, $plugin_cookies, $custom_stream_type);
+        $url = $this->UpdateDuneParams($play_template_url, $plugin_cookies, $custom_stream_type);
 
         return HD::make_ts($url);
     }
@@ -826,9 +826,6 @@ class default_config extends dynamic_config
                 }
             }
 
-            $url = $this->UpdateMpegTsBuffering($entry->getPath(), $plugin_cookies);
-
-            //hd_print("Vod url: $playback_url");
             $movie->set_data(
                 $title,// $xml->caption,
                 $title_orig,// $xml->caption_original,
@@ -847,7 +844,8 @@ class default_config extends dynamic_config
                 ''// $xml->budget
             );
 
-            $movie->add_series_data($movie_id, $title, '', $url);
+            $movie->add_series_data($movie_id, $title, '', $entry->getPath());
+            //hd_print("Vod url: " . $entry->getPath());
         }
 
         return $movie;
@@ -859,12 +857,17 @@ class default_config extends dynamic_config
      * @param int $custom_type
      * @return string
      */
-    protected function UpdateMpegTsBuffering($url, $plugin_cookies, $custom_type = '')
+    protected function UpdateDuneParams($url, $plugin_cookies, $custom_type = '')
     {
         $type = empty($custom_type) ? $this->get_format($plugin_cookies) : $custom_type;
-        if ($type === MPEG) {
+
+        $dune_params = $this->get_stream_param($type, Stream_Params::DUNE_PARAMS);
+        if (!empty($dune_params)) {
+            hd_print("Additional dune params: $dune_params");
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
-            $url .= "|||dune_params|||buffering_ms:$buf_time";
+            $dune_params = trim($dune_params, '|');
+            $dune_params = str_replace('{BUFFERING}', $buf_time, $dune_params);
+            $url .= "|||dune_params|||$dune_params";
         }
 
         return $url;

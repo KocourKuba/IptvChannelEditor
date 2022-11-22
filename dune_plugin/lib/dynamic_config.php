@@ -35,17 +35,19 @@ class dynamic_config
 
         // load defaults
         $default_streams = array();
-        $default_streams[Stream_Params::CU_TYPE] = 'shift';
         $default_streams[Stream_Params::URL_TEMPLATE] = '';
         $default_streams[Stream_Params::URL_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
         $default_streams[Stream_Params::URL_CUSTOM_ARC_TEMPLATE] = '{CU_SUBST}={START}&lutc={NOW}';
+        $default_streams[Stream_Params::CU_TYPE] = 'shift';
         $default_streams[Stream_Params::CU_SUBST] = 'utc';
         $default_streams[Stream_Params::CU_DURATION] = 10800;
+        $default_streams[Stream_Params::DUNE_PARAMS] = '';
         $this->set_stream_params(HLS, $default_streams);
 
         $default_streams[Stream_Params::CU_TYPE] = 'flussonic';
         $default_streams[Stream_Params::CU_SUBST] = 'archive';
         $default_streams[Stream_Params::URL_ARC_TEMPLATE] = '';
+        $default_streams[Stream_Params::DUNE_PARAMS] = 'buffering_ms:{BUFFERING}';
         $this->set_stream_params(MPEG, $default_streams);
 
         $default_parser = array();

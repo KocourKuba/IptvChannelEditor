@@ -12,4 +12,5 @@ class Stream_Params
     const /* (int)    */ CU_START                = 'cu_start';                // epg start time
     const /* (int)    */ CU_OFFSET               = 'cu_offset';               // offset from now to time of the begin archive
     const /* (int)    */ CU_DURATION             = 'cu_duration';             // length of archive part used in flussonic types archive
+    const /* (char*)  */ DUNE_PARAMS             = 'dune_params';             // additional dune params added to the end of the url
 }

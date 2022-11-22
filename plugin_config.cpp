@@ -38,6 +38,7 @@ void plugin_config::clear()
 	mpeg.stream_type = StreamType::enMPEGTS;
 	mpeg.cu_type = CatchupType::cu_flussonic;
 	mpeg.cu_subst = "archive";
+	mpeg.dune_params = "buffering_ms:{BUFFERING}";
 
 	streams_config = { hls, mpeg };
 

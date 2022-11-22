@@ -279,6 +279,7 @@
 #define IDS_STRING_VOD_AGE              363
 #define IDS_STRING_VOD_MIN              364
 #define IDS_STRING_VOD_HOUR_MIN         365
+#define IDS_STRING_EDIT_DUNE_PARAMS     366
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -511,6 +512,7 @@
 #define IDC_EDIT_DURATION               1191
 #define IDC_STATIC_SUBST                1192
 #define IDC_STATIC_DURATION             1193
+#define IDC_EDIT_DUNE_PARAMS            1193
 #define IDC_COMBO_STREAM_TYPE           1194
 #define IDC_COMBO_CATCHUP_TYPE          1195
 #define IDC_COMBO_CUSTOM_STREAM_TYPE    1195

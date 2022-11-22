@@ -201,6 +201,8 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_TAGS, m_wndTags);
 	DDX_Control(pDX, IDC_CHECK_MAP_TAG_TO_ID, m_wndCheckMapTags);
 	DDX_Control(pDX, IDC_CHECK_PER_CHANNEL_TOKEN, m_wndChkPerChannelToken);
+	DDX_Control(pDX, IDC_EDIT_DUNE_PARAMS, m_wndDuneParams);
+	DDX_Text(pDX, IDC_EDIT_DUNE_PARAMS, m_DuneParams);
 }
 
 BOOL CPluginConfigPage::PreTranslateMessage(MSG* pMsg)
@@ -311,6 +313,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	AddTooltip(IDC_EDIT_PROVIDER_VOD_URL, IDS_STRING_EDIT_PROVIDER_VOD_URL);
 	AddTooltip(IDC_BUTTON_VOD_PARSE, IDS_STRING_BUTTON_VOD_PARSE);
 	AddTooltip(IDC_BUTTON_VOD_TEMPLATE, IDS_STRING_BUTTON_VOD_TEMPLATE);
+	AddTooltip(IDC_EDIT_DUNE_PARAMS, IDS_STRING_EDIT_DUNE_PARAMS);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
@@ -454,6 +457,12 @@ void CPluginConfigPage::AssignMacros()
 		L"{TIMESTAMP}",
 	};
 	m_wndEpgStartFormat.SetTemplateParams(epg_start_time_params);
+
+	std::vector<std::wstring> dune_params =
+	{
+		L"{BUFFERING}",
+	};
+	m_wndDuneParams.SetTemplateParams(dune_params);
 }
 
 void CPluginConfigPage::FillConfigs()
@@ -584,6 +593,7 @@ void CPluginConfigPage::EnableControls()
 	m_wndCatchupType.EnableWindow(enable);
 	m_wndSubst.EnableWindow(enable);
 	m_wndDuration.EnableWindow(enable);
+	m_wndDuneParams.EnableWindow(enable);
 	m_wndStreamTemplate.EnableWindow(enable);
 	m_wndStreamArchiveTemplate.EnableWindow(enable);
 	m_wndCustomStreamArchiveTemplate.EnableWindow(enable);
@@ -768,6 +778,7 @@ void CPluginConfigPage::FillControlsStream()
 	m_wndCatchupType.SetCurSel((int)stream.cu_type);
 	m_wndDuration.EnableWindow(enableDuration);
 
+	m_DuneParams = stream.dune_params.c_str();
 	m_StreamTemplate = stream.uri_template.c_str();
 	m_StreamArchiveTemplate = stream.uri_arc_template.c_str();
 	m_CustomStreamArchiveTemplate = stream.uri_custom_arc_template.c_str();
@@ -785,6 +796,7 @@ void CPluginConfigPage::SaveControlsStream()
 
 	cur_stream.cu_type = (CatchupType)m_wndCatchupType.GetCurSel();
 	cur_stream.cu_duration = m_Duration;
+	cur_stream.set_dune_params(m_DuneParams.GetString());
 	cur_stream.set_shift_replace(m_Subst.GetString());
 	cur_stream.set_uri_template(m_StreamTemplate.GetString());
 	cur_stream.set_uri_arc_template(m_StreamArchiveTemplate.GetString());

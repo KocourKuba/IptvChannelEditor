@@ -188,7 +188,35 @@ struct EpgParameters
 	std::wstring get_epg_time_format() const { return utils::utf8_to_utf16(epg_time_format); }
 	void set_epg_time_format(const std::wstring& val) { epg_time_format = utils::utf16_to_utf8(val); }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(EpgParameters, epg_param, epg_url, epg_root, epg_name, epg_desc, epg_start, epg_end, epg_date_format, epg_time_format, epg_timezone, epg_use_duration); //-V601
+	friend void to_json(nlohmann::json& j, const EpgParameters& c)
+	{
+		SERIALIZE_STRUCT(j, c, epg_param);
+		SERIALIZE_STRUCT(j, c, epg_url);
+		SERIALIZE_STRUCT(j, c, epg_root);
+		SERIALIZE_STRUCT(j, c, epg_name);
+		SERIALIZE_STRUCT(j, c, epg_desc);
+		SERIALIZE_STRUCT(j, c, epg_start);
+		SERIALIZE_STRUCT(j, c, epg_end);
+		SERIALIZE_STRUCT(j, c, epg_date_format);
+		SERIALIZE_STRUCT(j, c, epg_time_format);
+		SERIALIZE_STRUCT(j, c, epg_timezone);
+		SERIALIZE_STRUCT(j, c, epg_use_duration);
+	}
+
+	friend void from_json(const nlohmann::json& j, EpgParameters& c)
+	{
+		DESERIALIZE_STRUCT(j, c, epg_param);
+		DESERIALIZE_STRUCT(j, c, epg_url);
+		DESERIALIZE_STRUCT(j, c, epg_root);
+		DESERIALIZE_STRUCT(j, c, epg_name);
+		DESERIALIZE_STRUCT(j, c, epg_desc);
+		DESERIALIZE_STRUCT(j, c, epg_start);
+		DESERIALIZE_STRUCT(j, c, epg_end);
+		DESERIALIZE_STRUCT(j, c, epg_date_format);
+		DESERIALIZE_STRUCT(j, c, epg_time_format);
+		DESERIALIZE_STRUCT(j, c, epg_timezone);
+		DESERIALIZE_STRUCT(j, c, epg_use_duration);
+	}
 };
 
 /// <summary>
@@ -204,18 +232,43 @@ struct StreamParameters
 	std::string uri_arc_template;
 	std::string uri_custom_arc_template;
 	std::string cu_subst;
+	std::string dune_params;
 
 	std::wstring get_stream_template() const { return utils::utf8_to_utf16(uri_template); }
 	std::wstring get_stream_arc_template() const { return utils::utf8_to_utf16(uri_arc_template); }
 	std::wstring get_custom_stream_arc_template() const { return utils::utf8_to_utf16(uri_custom_arc_template); }
 	std::wstring get_shift_replace() const { return utils::utf8_to_utf16(cu_subst); }
+	std::wstring get_dune_params() const { return utils::utf8_to_utf16(dune_params); }
 
 	void set_uri_template(const std::wstring& value) { uri_template = utils::utf16_to_utf8(value); }
 	void set_uri_arc_template(const std::wstring& value) { uri_arc_template = utils::utf16_to_utf8(value); }
 	void set_uri_custom_arc_template(const std::wstring& value) { uri_custom_arc_template = utils::utf16_to_utf8(value); }
 	void set_shift_replace(const std::wstring& value) { cu_subst = utils::utf16_to_utf8(value); }
+	void set_dune_params(const std::wstring& value) { dune_params = utils::utf16_to_utf8(value); }
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(StreamParameters, stream_type, uri_template, uri_arc_template, uri_custom_arc_template, cu_type, cu_subst, cu_duration);
+	friend void to_json(nlohmann::json& j, const StreamParameters& c)
+	{
+		SERIALIZE_STRUCT(j, c, stream_type);
+		SERIALIZE_STRUCT(j, c, uri_template);
+		SERIALIZE_STRUCT(j, c, uri_arc_template);
+		SERIALIZE_STRUCT(j, c, uri_custom_arc_template);
+		SERIALIZE_STRUCT(j, c, cu_type);
+		SERIALIZE_STRUCT(j, c, cu_subst);
+		SERIALIZE_STRUCT(j, c, cu_duration);
+		SERIALIZE_STRUCT(j, c, dune_params);
+	}
+
+	friend void from_json(const nlohmann::json& j, StreamParameters& c)
+	{
+		DESERIALIZE_STRUCT(j, c, stream_type);
+		DESERIALIZE_STRUCT(j, c, uri_template);
+		DESERIALIZE_STRUCT(j, c, uri_arc_template);
+		DESERIALIZE_STRUCT(j, c, uri_custom_arc_template);
+		DESERIALIZE_STRUCT(j, c, cu_type);
+		DESERIALIZE_STRUCT(j, c, cu_subst);
+		DESERIALIZE_STRUCT(j, c, cu_duration);
+		DESERIALIZE_STRUCT(j, c, dune_params);
+	}
 };
 
 class plugin_config

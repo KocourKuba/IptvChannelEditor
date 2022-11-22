@@ -135,6 +135,7 @@ protected:
 	CMenuEdit m_wndParseStream;
 	CEdit m_wndSubst;
 	CEdit m_wndDuration;
+	CMenuEdit m_wndDuneParams;
 	CMenuEdit m_wndStreamTemplate;
 	CMenuEdit m_wndStreamArchiveTemplate;
 	CMenuEdit m_wndCustomStreamArchiveTemplate;
@@ -194,6 +195,7 @@ protected:
 	CString m_PlaylistTemplate;
 	CString m_ParseStream;
 	CString m_Subst;
+	CString m_DuneParams;
 	CString m_StreamTemplate;
 	CString m_StreamArchiveTemplate;
 	CString m_CustomStreamArchiveTemplate;

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="185" scanned="20221120113004" built="20221120113011" lang="ru" pane="TLogPane" col="3" row="Dialogs.102.Text">
+<desktop scan="187" scanned="20221122210707" built="20221122210720" lang="ru" pane="TLogPane" col="4" row="Strings.23.IDS_STRING_EDIT_DUNE_PARAMS">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>
@@ -12,6 +12,11 @@
       <item class="TOriginalColumn" width="523"/>
       <item class="TTranslationColumn" lang="ru" width="533"/>
     </columns>
+    <filters>
+      <current>
+        <statuses>[tsNotTranslated,tsBestGuess,tsAutoTranslated,tsTranslated,tsForReview]</statuses>
+      </current>
+    </filters>
     <params>
       <findtext>Splash</findtext>
       <findtext>2009</findtext>
