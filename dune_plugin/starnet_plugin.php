@@ -5,7 +5,7 @@ require_once 'lib/hd.php';
 require_once 'lib/default_dune_plugin.php';
 
 require_once 'starnet_entry_handler.php';
-require_once 'starnet_main_screen.php';
+require_once 'starnet_tv_groups_screen.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_folder_screen.php';
 require_once 'starnet_tv.php';
@@ -39,11 +39,13 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->tv = new Starnet_Tv($this);
         $this->vod = new Starnet_Vod($this);
 
-        $this->main_screen = new Starnet_Main_Screen($this);
-        $this->setup_screen = new Starnet_Setup_Screen($this);
-        $this->folder_screen = new Starnet_Folder_Screen($this);
+        $this->tv_groups_screen = new Starnet_Tv_Groups_Screen($this);
         $this->tv_channels_screen = new Starnet_Tv_Channel_List_Screen($this);
         $this->tv_favorites_screen = new Starnet_Tv_Favorites_Screen($this);
+
+        $this->setup_screen = new Starnet_Setup_Screen($this);
+        $this->folder_screen = new Starnet_Folder_Screen($this);
+
         $this->vod_favorites_screen = new Starnet_Vod_Favorites_Screen($this);
         $this->vod_category_list_Screen = new Starnet_Vod_Category_List_Screen($this);
         $this->vod_list_screen = new Starnet_Vod_List_Screen($this);

@@ -132,9 +132,9 @@ class Default_Dune_Plugin implements DunePlugin
     public $config;
 
     /**
-     * @var Starnet_Main_Screen
+     * @var Starnet_Tv_Groups_Screen
      */
-    public $main_screen;
+    public $tv_groups_screen;
 
     /**
      * @var Starnet_Tv_Channel_List_Screen

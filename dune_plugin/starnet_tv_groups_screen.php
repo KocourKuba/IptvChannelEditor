@@ -2,9 +2,9 @@
 require_once 'lib/abstract_preloaded_regular_screen.php';
 require_once 'starnet_setup_screen.php';
 
-class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
-    const ID = 'main_screen';
+    const ID = 'tv_groups';
 
     const ACTION_SETTINGS = 'settings';
     const ACTION_CONFIGURE = 'configure';
@@ -81,7 +81,7 @@ class Starnet_Main_Screen extends Abstract_Preloaded_Regular_Screen implements U
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Starnet_Main_Screen: handle_user_input:');
+        //hd_print('Starnet_Tv_Groups_Screen: handle_user_input:');
         //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {

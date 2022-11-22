@@ -373,7 +373,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 smb_tree::set_folder_info($plugin_cookies, $url);
                 $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Setup_Screen::ID . "_handler");
                 $action = is_null($setup_handler) ? null : User_Input_Handler_Registry::create_action($setup_handler, 'reset_controls');
-                $post_action = Action_Factory::invalidate_folders(array(Starnet_Setup_Screen::ID, Starnet_Main_Screen::ID), $action);
+                $post_action = Action_Factory::invalidate_folders(array(Starnet_Setup_Screen::ID, Starnet_Tv_Groups_Screen::ID), $action);
 
                 if (is_newer_versions() !== false) {
                     $post_action = Action_Factory::replace_path($parent_url->windowCounter, null, $post_action);
@@ -386,7 +386,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Setup_Screen::ID . "_handler");
                 $action = is_null($setup_handler) ? null : User_Input_Handler_Registry::create_action($setup_handler, 'reset_controls');
                 $post_action = Action_Factory::replace_path($parent_url->windowCounter, null,
-                    Action_Factory::invalidate_folders(array(Starnet_Setup_Screen::ID, Starnet_Main_Screen::ID), $action));
+                    Action_Factory::invalidate_folders(array(Starnet_Setup_Screen::ID, Starnet_Tv_Groups_Screen::ID), $action));
 
                 return Action_Factory::show_title_dialog('Выбрана папка по умолчанию ', $post_action, 'Полный путь: ' . get_install_path(), 800);
 

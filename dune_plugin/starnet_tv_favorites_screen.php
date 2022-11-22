@@ -115,7 +115,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
         Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
         $post_action = Starnet_Epfs_Handler::invalidate_folders(array($user_input->parent_media_url), $post_action);
 
-        return Action_Factory::invalidate_folders(array(Starnet_Main_Screen::get_media_url_str()), $post_action);
+        return Action_Factory::invalidate_folders(array(Starnet_Tv_Groups_Screen::get_media_url_str()), $post_action);
     }
 
     /**

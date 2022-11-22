@@ -729,6 +729,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
         $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
 
-        return Action_Factory::invalidate_folders(array(Starnet_Main_Screen::ID), $post_action);
+        return Action_Factory::invalidate_folders(array(Starnet_Tv_Groups_Screen::ID), $post_action);
     }
 }

@@ -53,13 +53,12 @@ class Action_Factory
         if (is_string($media_url)) {
             $action[GuiAction::params] = array('selected_media_url' => $media_url);
         } else if (is_object($media_url)) {
-            $action[GuiAction::data] = array
-                (
-                    PluginTvPlayActionData::initial_group_id => isset($media_url->group_id)? $media_url->group_id : null,
-                    PluginTvPlayActionData::initial_channel_id => isset($media_url->channel_id)? $media_url->channel_id : null,
-                    PluginTvPlayActionData::initial_is_favorite => isset($media_url->is_favorite) && $media_url->is_favorite,
-                    PluginTvPlayActionData::initial_archive_tm => isset($media_url->archive_tm)? (integer) $media_url->archive_tm : -1,
-                );
+            $action[GuiAction::data] = array(
+                PluginTvPlayActionData::initial_group_id => isset($media_url->group_id)? $media_url->group_id : null,
+                PluginTvPlayActionData::initial_channel_id => isset($media_url->channel_id)? $media_url->channel_id : null,
+                PluginTvPlayActionData::initial_is_favorite => isset($media_url->is_favorite) && $media_url->is_favorite,
+                PluginTvPlayActionData::initial_archive_tm => isset($media_url->archive_tm)? (integer) $media_url->archive_tm : -1,
+            );
         }
 
         return $action;
@@ -68,9 +67,14 @@ class Action_Factory
     /**
      * @return array
      */
-    public static function vod_play()
+    public static function vod_play($vod_info = null)
     {
-        return array(GuiAction::handler_string_id => PLUGIN_VOD_PLAY_ACTION_ID);
+        return array(
+            GuiAction::handler_string_id => PLUGIN_VOD_PLAY_ACTION_ID,
+            GuiAction::data => array(
+                PluginVodPlayActionData::vod_info => $vod_info,
+            ),
+        );
     }
 
     /**
