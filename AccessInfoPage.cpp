@@ -227,12 +227,12 @@ BOOL CAccessInfoPage::OnInitDialog()
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
 
-	CString logo_filter(_T("PNG file(*.png)|*.png||"));
+	CString logo_filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
 	m_wndLogo.EnableFileBrowseButton(nullptr,
 									 logo_filter.GetString(),
 									 OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
 
-	CString bg_filter(_T("JPG file(*.jpg)|*.jpg||"));
+	CString bg_filter(_T("JPG file(*.jpg)|*.jpg|PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
 	m_wndBackground.EnableFileBrowseButton(nullptr,
 										   bg_filter.GetString(),
 										   OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
