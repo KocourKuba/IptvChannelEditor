@@ -506,6 +506,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
     {
+        hd_print("get_tv_playback_url: channel: $channel_id archive_ts: $archive_ts");
         $this->ensure_channels_loaded($plugin_cookies);
 
         try {
@@ -521,8 +522,8 @@ class Starnet_Tv implements Tv, User_Input_Handler
             return '';
         }
 
-        if (empty($protect_code) && $this->plugin->history_support) {
-            Playback_Points::push($channel_id, $channel->has_archive() ? ($archive_ts !== -1 ? $archive_ts : 0) : $archive_ts);
+        if ($this->plugin->history_support && !$channel->is_protected()) {
+            Playback_Points::push($channel_id, ($archive_ts !== -1 ? $archive_ts : ($channel->has_archive() ? time() : 0)));
         }
 
         // update url if play archive or different type of the stream

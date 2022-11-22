@@ -40,7 +40,7 @@ class Action_Factory
     }
 
     /**
-     * @param $media_url
+     * @param MediaURL|string|null $media_url
      * @return array
      */
     public static function tv_play($media_url = null)
@@ -51,13 +51,15 @@ class Action_Factory
             return $action;
 
         if (is_string($media_url)) {
+            //hd_print("tv_play str: " . $media_url);
             $action[GuiAction::params] = array('selected_media_url' => $media_url);
         } else if (is_object($media_url)) {
+            //hd_print("tv_play MediaUrl: " . $media_url->get_media_url_str());
             $action[GuiAction::data] = array(
-                PluginTvPlayActionData::initial_group_id => isset($media_url->group_id)? $media_url->group_id : null,
-                PluginTvPlayActionData::initial_channel_id => isset($media_url->channel_id)? $media_url->channel_id : null,
+                PluginTvPlayActionData::initial_group_id => isset($media_url->group_id) ? $media_url->group_id : null,
+                PluginTvPlayActionData::initial_channel_id => isset($media_url->channel_id) ? $media_url->channel_id : null,
                 PluginTvPlayActionData::initial_is_favorite => isset($media_url->is_favorite) && $media_url->is_favorite,
-                PluginTvPlayActionData::initial_archive_tm => isset($media_url->archive_tm)? (integer) $media_url->archive_tm : -1,
+                PluginTvPlayActionData::initial_archive_tm => isset($media_url->archive_tm) ? (int) $media_url->archive_tm : -1,
             );
         }
 

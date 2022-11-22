@@ -13,8 +13,8 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
     const ACTION_ITEM_DOWN = 'item_down';
     const ACTION_ITEM_DELETE = 'item_delete';
 
-    const FILTER_LIST = 'filter_items';
-    const FILTER_ITEM = 'filter_item';
+    const VOD_FILTER_LIST = 'vod_filter_items';
+    const VOD_FILTER_ITEM = 'vod_filter_item';
 
     /**
      * @param Default_Dune_Plugin $plugin
@@ -110,7 +110,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 if ($user_input->filter_actions === 'keyboard') {
                     $filter_string = $media_url->genre_id;
                 } else {
-                    $filter_string = HD::get_item(self::FILTER_ITEM);
+                    $filter_string = HD::get_item(self::VOD_FILTER_ITEM);
                 }
 
                 $defs = array();
@@ -127,14 +127,14 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 if (empty($filter_string)) break;
 
                 hd_print("filter_screen filter string: $filter_string");
-                HD::put_item(self::FILTER_ITEM, $filter_string);
-                $filter_items = HD::get_items(self::FILTER_LIST);
+                HD::put_item(self::VOD_FILTER_ITEM, $filter_string);
+                $filter_items = HD::get_items(self::VOD_FILTER_LIST);
                 $i = array_search($filter_string, $filter_items);
                 if ($i !== false) {
                     unset ($filter_items [$i]);
                 }
                 array_unshift($filter_items, $filter_string);
-                HD::put_items(self::FILTER_LIST, $filter_items);
+                HD::put_items(self::VOD_FILTER_LIST, $filter_items);
 
                 return Action_Factory::invalidate_folders(array(self::ID),
                     Action_Factory::open_folder(
@@ -146,14 +146,14 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $filter_items = HD::get_items(self::FILTER_LIST);
+                $filter_items = HD::get_items(self::VOD_FILTER_LIST);
                 $i = array_search($video_id, $filter_items);
                 if ($i === false || $i === 0) break;
 
                 $t = $filter_items[$i - 1];
                 $filter_items[$i - 1] = $filter_items[$i];
                 $filter_items[$i] = $t;
-                HD::put_items(self::FILTER_LIST, $filter_items);
+                HD::put_items(self::VOD_FILTER_LIST, $filter_items);
 
                 return $this->get_update_action($user_input, -1, $plugin_cookies);
 
@@ -162,14 +162,14 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $filter_items = HD::get_items(self::FILTER_LIST);
+                $filter_items = HD::get_items(self::VOD_FILTER_LIST);
                 $i = array_search($video_id, $filter_items);
                 if ($i === false || $i === count($filter_items) - 1) break;
 
                 $t = $filter_items[$i + 1];
                 $filter_items[$i + 1] = $filter_items[$i];
                 $filter_items[$i] = $t;
-                HD::put_items(self::FILTER_LIST, $filter_items);
+                HD::put_items(self::VOD_FILTER_LIST, $filter_items);
 
                 return $this->get_update_action($user_input, 1, $plugin_cookies);
 
@@ -178,12 +178,12 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $filter_items = HD::get_items(self::FILTER_LIST);
+                $filter_items = HD::get_items(self::VOD_FILTER_LIST);
                 $i = array_search($video_id, $filter_items);
                 if ($i !== false) {
                     unset ($filter_items[$i]);
                 }
-                HD::put_items(self::FILTER_LIST, $filter_items);
+                HD::put_items(self::VOD_FILTER_LIST, $filter_items);
 
                 return Action_Factory::invalidate_folders(array(self::ID));
         }
@@ -219,7 +219,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
             PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_FILTER, Vod_Category::FLAG_FILTER)
         );
 
-        $filter_items = HD::get_items(self::FILTER_LIST);
+        $filter_items = HD::get_items(self::VOD_FILTER_LIST);
         foreach ($filter_items as $item) {
             if (!empty($item)) {
                 $items[] = array

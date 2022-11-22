@@ -457,12 +457,12 @@ class HD
      * @param boolean $preserve_keys
      * @return array|mixed
      */
-    public static function get_items($path, $preserve_keys = false)
+    public static function get_items($path, $preserve_keys = false, $json = true)
     {
         $full_path = get_data_path($path);
         if (file_exists($full_path)) {
             $contents = file_get_contents($full_path);
-            $items = unserialize($contents);
+            $items = $json ? json_decode($contents, true) : unserialize($contents);
             $items = is_null($items) ? array() : $items;
         } else {
             $items = array();
@@ -475,9 +475,10 @@ class HD
      * @param string $path
      * @param mixed $items
      */
-    public static function put_items($path, $items)
+    public static function put_items($path, $items, $json = true)
     {
-        file_put_contents(get_data_path($path), serialize($items));
+        $data = $json ? json_encode($items) : serialize($items);
+        file_put_contents(get_data_path($path), $data);
     }
 
     /**

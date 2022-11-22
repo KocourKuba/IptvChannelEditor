@@ -110,15 +110,15 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
 
             case self::ACTION_RUN_SEARCH:
                 $search_string = $user_input->{self::ACTION_NEW_SEARCH};
-                HD::put_item(Starnet_Vod_Search_Screen::SEARCH_ITEM, $search_string);
-                $search_items = HD::get_items(Starnet_Vod_Search_Screen::SEARCH_LIST);
+                HD::put_item(Starnet_Vod_Search_Screen::VOD_SEARCH_ITEM, $search_string);
+                $search_items = HD::get_items(Starnet_Vod_Search_Screen::VOD_SEARCH_LIST);
                 $k = array_search($search_string, $search_items);
                 if ($k !== false) {
                     unset ($search_items [$k]);
                 }
 
                 array_unshift($search_items, $search_string);
-                HD::put_items(Starnet_Vod_Search_Screen::SEARCH_LIST, $search_items);
+                HD::put_items(Starnet_Vod_Search_Screen::VOD_SEARCH_LIST, $search_items);
                 return Action_Factory::invalidate_folders(
                     array(Starnet_Vod_Search_Screen::ID),
                     Action_Factory::open_folder(

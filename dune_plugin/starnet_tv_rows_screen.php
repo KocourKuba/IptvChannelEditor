@@ -559,53 +559,33 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $now = time();
         $rows = array();
         $watched = array();
-        foreach (Playback_Points::get_all() as $channel_id => $point) {
-            if (is_null($channel = $this->plugin->tv->get_channel($channel_id)) || $channel->is_protected())
-                continue;
+        foreach (Playback_Points::get_all() as $channel_id => $channel_ts) {
+            if (is_null($channel = $this->plugin->tv->get_channel($channel_id))) continue;
 
-            $channel_ts = ($point->archive_tm > 0) ?
-                $point->archive_tm + $point->position : // archive
-                ($channel->has_archive() ? time() : 0); // if can be archived current position
+            $prog_info = $this->plugin->tv->get_program_info($channel_id, $channel_ts, $plugin_cookies);
+            $progress = 0;
 
-            if ($channel_ts < 0) {
-                // only live stream
-                $watched[(string)$channel_id] = array
-                (
-                    'channel_id' => $channel_id,
-                    'archive_tm' => 0,
-                    'view_progress' => 0,
-                    'program_title' => $channel->get_title(),
-                    'program_icon_url' => '',
-                );
-            } else if (!is_null($prog_info = $this->plugin->tv->get_program_info($channel_id, $channel_ts, $plugin_cookies))) {
-                // program epg available
-                $start_tm = $prog_info[PluginTvEpgProgram::start_tm_sec];
-                $end_tm = $prog_info[PluginTvEpgProgram::end_tm_sec];
-                $subtitle = isset($prog_info[Ext_Epg_Program::sub_title]) ? $prog_info[Ext_Epg_Program::sub_title] : '';
-
-                if ($point->archive_tm < $now - $channel->get_archive_past_sec() - 60) {
-                    $progress = 0;
-                } else {
-                    $progress = max(0.01, min(1, 1 - round(($end_tm - $channel_ts) / ($end_tm - $start_tm), 2)));
-                }
-
-                $watched[(string)$channel_id] = array(
-                    'channel_id' => $channel_id,
-                    'archive_tm' => $channel_ts,
-                    'view_progress' => $progress,
-                    'program_title' => $prog_info[PluginTvEpgProgram::name] . (empty($subtitle) ? '' : '. ' . $subtitle),
-                    'program_icon_url' => isset($prog_info[Ext_Epg_Program::main_icon]) ? $prog_info[Ext_Epg_Program::main_icon] : '',
-                );
+            if (is_null($prog_info)) {
+                $title = $channel->get_title();
             } else {
-                $watched[(string)$channel_id] = array
-                (
-                    'channel_id' => $channel_id,
-                    'archive_tm' => $channel_ts,
-                    'view_progress' => 0,
-                    'program_title' => '',
-                    'program_icon_url' => '',
-                );
+                // program epg available
+                $title = $prog_info[PluginTvEpgProgram::name];
+                if ($channel_ts > 0) {
+                    $start_tm = $prog_info[PluginTvEpgProgram::start_tm_sec];
+                    $epg_len = $prog_info[PluginTvEpgProgram::end_tm_sec] - $start_tm;
+                    if ($channel_ts >= $now - $channel->get_archive_past_sec() - 60) {
+                        $progress = max(0.01, min(1.0, round(($channel_ts - $start_tm) / $epg_len, 2)));
+                    }
+                }
             }
+
+            //hd_print("Starnet_Tv_Rows_Screen::get_history_rows: channel id: $channel_id (epg: '$title') time mark: $channel_ts progress: " . $progress * 100 . "%");
+            $watched[(string)$channel_id] = array(
+                'channel_id' => $channel_id,
+                'archive_tm' => $channel_ts,
+                'view_progress' => $progress,
+                'program_title' => $title,
+            );
         }
 
         // fill view history row items
@@ -613,7 +593,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         foreach ($watched as $item) {
             if (!is_null($channel = $this->plugin->tv->get_channel($item['channel_id']))) {
                 $id = json_encode(array('group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID, 'channel_id' => $item['channel_id'], 'archive_tm' => $item['archive_tm']));
-
+                //hd_print("MediaUrl info for {$item['channel_id']} - $id");
                 if (isset($this->removed_playback_point))
                     if ($this->removed_playback_point === $id) {
                         $this->removed_playback_point = null;
@@ -649,8 +629,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 Rows_Factory::add_regular_item(
                     $items,
                     $id,
-                    empty($item['program_icon_url']) ? $channel->get_icon_url() : $item['program_icon_url'],
-                    empty($item['program_title']) ? $channel->get_title() : $item['program_title'],
+                    $channel->get_icon_url(),
+                    $item['program_title'],
                     $stickers);
             }
         }

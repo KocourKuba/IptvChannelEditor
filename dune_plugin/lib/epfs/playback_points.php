@@ -12,7 +12,7 @@ require_once 'lib/dune_stb_api.php';
 
 class Playback_Points
 {
-    const PLAYBACK_POINTS = 'playback_points';
+    const TV_HISTORY_ITEMS = 'tv_history_items';
 
     /**
      * @var Playback_Points
@@ -25,7 +25,7 @@ class Playback_Points
     private $curr_point_id;
 
     /**
-     * @var MediaUrl[]
+     * @var array
      */
     private $points;
 
@@ -43,18 +43,15 @@ class Playback_Points
         $id = ($id === null) ? $id : $this->curr_point_id;
 
         // if channel does support archive do not update current point
-        if (isset($this->points[$id]) && $this->points[$id]->archive_tm !== -1) {
+        if (isset($this->points[$id]) && $this->points[$id] !== 0) {
             $player_state = get_player_state_assoc();
-            $time = time();
-            if (isset($player_state['playback_state'])) {
-                if ($player_state['playback_state'] === PLAYBACK_PLAYING || $player_state['playback_state'] === PLAYBACK_STOPPED) {
-                    $this->points[$id]->position = isset($player_state['playback_position']) ? $player_state['playback_position'] : 0;
-                    hd_print("Playback_Points::update_point: playing position: {$this->points[$id]->position}");
-                }
-            }
-            $this->points[$id]->time = $time;
+            if (isset($player_state['playback_state'], $player_state['playback_position'])
+                && ($player_state['playback_state'] === PLAYBACK_PLAYING || $player_state['playback_state'] === PLAYBACK_STOPPED)) {
 
-            HD::put_items(self::PLAYBACK_POINTS, $this->points);
+                $this->points[$id] += $player_state['playback_position'];
+                hd_print("Playback_Points::update_point channel_id $id at time mark: {$this->points[$id]}");
+                HD::put_items(self::TV_HISTORY_ITEMS, $this->points);
+            }
         }
     }
 
@@ -69,18 +66,13 @@ class Playback_Points
         if (isset($player_state['player_state']) && $player_state['player_state'] !== 'navigator') {
             if (!isset($player_state['last_playback_event']) || ($player_state['last_playback_event'] !== PLAYBACK_PCR_DISCONTINUITY)) {
 
-                hd_print("Playback_Points::push_point channel_id $channel_id, archive_ts: $archive_ts");
+                //hd_print("Playback_Points::push_point channel_id $channel_id, time mark: $archive_ts");
                 $this->curr_point_id = $channel_id;
-
-                $point = MediaURL::decode();
-                $point->archive_tm = $archive_ts;
-                $point->position = 0;
-                $point->time = PHP_INT_MAX;
 
                 if (isset($this->points[$channel_id])) {
                     unset($this->points[$channel_id]);
                 }
-                $this->points = array($channel_id => $point) + $this->points;
+                $this->points = array($channel_id => $archive_ts) + $this->points;
                 if (count($this->points) > 7) {
                     array_pop($this->points);
                 }
@@ -96,10 +88,10 @@ class Playback_Points
         hd_print("Playback_Points::erase " . ($id !== null ? $id : "all"));
         if ($id === null) {
             $this->points = array();
-            HD::erase_items(self::PLAYBACK_POINTS);
+            HD::erase_items(self::TV_HISTORY_ITEMS);
         } else {
             unset($this->points[$id]);
-            HD::put_items(self::PLAYBACK_POINTS, $this->points);
+            HD::put_items(self::TV_HISTORY_ITEMS, $this->points);
         }
     }
     ///////////////////////////////////////////////////////////////////////////
@@ -157,7 +149,7 @@ class Playback_Points
      */
     public static function get_all()
     {
-        $points = HD::get_items(self::PLAYBACK_POINTS, true);
+        $points = HD::get_items(self::TV_HISTORY_ITEMS, true);
         hd_print("Loaded playback_points: " . count($points));
         while (count($points) > 7) {
             array_pop($points);
