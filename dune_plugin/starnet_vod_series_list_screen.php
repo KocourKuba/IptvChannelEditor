@@ -7,6 +7,8 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
     const ACTION_WATCHED = 'watched';
     const ACTION_QUALITY = 'quality';
+    const ACTION_POPUP_MENU = 'popup_menu';
+    const ACTION_EXTERNAL_PLAYER = 'use_external_player';
 
     /**
      * @var array
@@ -73,6 +75,10 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
             }
         }
 
+        if (is_android()) {
+            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
+        }
+
         return $actions;
     }
 
@@ -110,7 +116,10 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $this->plugin->vod->ensure_history_loaded($plugin_cookies);
                 $viewed_items = $this->plugin->vod->get_history_movies();
 
-                if (isset($viewed_items[$media_url->movie_id][$user_input->sel_ndx])) {
+                if ((isset($user_input->{self::ACTION_WATCHED}) && $user_input->{self::ACTION_WATCHED} !== false)
+                    || !isset($viewed_items[$media_url->movie_id][$user_input->sel_ndx])) {
+                    $movie_info[Movie::WATCHED_FLAG] = true;
+                } else {
                     $movie_info = $viewed_items[$media_url->movie_id][$user_input->sel_ndx];
                     if ($movie_info[Movie::WATCHED_FLAG] !== false) {
                         $movie_info[Movie::WATCHED_FLAG] = false;
@@ -119,9 +128,9 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     } else {
                         $movie_info[Movie::WATCHED_FLAG] = true;
                     }
-
-                    $viewed_items[$media_url->movie_id][$user_input->sel_ndx] = $movie_info;
                 }
+
+                $viewed_items[$media_url->movie_id][$user_input->sel_ndx] = $movie_info;
                 $this->plugin->vod->set_history_items($viewed_items, $plugin_cookies);
 
                 if (isset($user_input->parent_media_url)) {
@@ -138,6 +147,29 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
                 //hd_print("range: " . json_encode($range));
                 return Action_Factory::update_regular_folder($range, true, $sel_ndx);
+
+            case self::ACTION_EXTERNAL_PLAYER:
+                try {
+                    $add_params[self::ACTION_WATCHED] = true;
+                    $post_action = User_Input_Handler_Registry::create_action($this, self::ACTION_WATCHED, $add_params);
+                    $info = $this->plugin->get_vod_info($user_input->selected_media_url, $plugin_cookies);
+                    if (isset($info[PluginVodInfo::initial_series_ndx], $info[PluginVodInfo::series][$info[PluginVodInfo::initial_series_ndx]])) {
+                        $movie = $info[PluginVodInfo::series][$info[PluginVodInfo::initial_series_ndx]];
+                        $cmd = 'am start -d "' . $movie[PluginVodSeriesInfo::playback_url] . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
+                        hd_print("play movie in the external player: $cmd");
+                        exec($cmd);
+                        return $post_action;
+                    }
+                } catch (Exception $e) {
+                    hd_print("Movie can't played, exception info: " . $e->getMessage());
+                }
+                break;
+
+            case self::ACTION_POPUP_MENU:
+                $add_ext_player_action = User_Input_Handler_Registry::create_action($this, self::ACTION_EXTERNAL_PLAYER);
+                $caption = 'Проиграть внешним плейером';
+                $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_ext_player_action);
+                return Action_Factory::show_popup_menu($menu_items);
 
             default:
                 if (isset($this->variants)) {

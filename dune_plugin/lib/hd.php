@@ -106,13 +106,13 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
-    private static function dump_curl_opts($opts, $ident = 0)
+    public static function print_array($opts, $ident = 0)
     {
         if (is_array($opts)) {
             foreach ($opts as $k => $v) {
                 if (is_array($v)) {
                     hd_print(str_repeat(' ', $ident) . "parameter: $k : array");
-                    self::dump_curl_opts($v, $ident + 4);
+                    self::print_array($v, $ident + 4);
                 } else {
                     hd_print(str_repeat(' ', $ident) . "parameter: $k : $v");
                 }
