@@ -166,16 +166,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         }
 
         //////////////////////////////////////
-        // vod lists
-        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED) && $this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
-            $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
-            if (count($all_vod_lists) > 1) {
-                Control_Factory::add_combobox($defs, $this, null, self::ACTION_CHANGE_VOD_LIST,
-                    'Используемый список VOD:', $current_idx, $all_vod_lists, self::CONTROLS_WIDTH, true);
-            }
-        }
-
-        //////////////////////////////////////
         // streaming dialog
         Control_Factory::add_image_button($defs, $this, null, self::ACTION_STREAMING_DLG,
             'Настройки проигрывания:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
@@ -620,14 +610,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                         hd_print("Selected channels path: $plugin_cookies->channels_url");
                     }
                     return $this->reload_channels($plugin_cookies);
-
-                case self::ACTION_CHANGE_VOD_LIST:
-                    if (isset($plugin_cookies->vod_idx) && $plugin_cookies->vod_idx === $new_value) break;
-
-                    $plugin_cookies->vod_idx = $new_value;
-                    $this->plugin->vod_category_list_Screen->clear_vod();
-                    return Action_Factory::invalidate_folders(array(Starnet_Vod_Category_List_Screen::ID));
-
 
                 case self::ACTION_STREAMING_DLG: // show streaming settings dialog
                     $defs = $this->do_get_streaming_control_defs($plugin_cookies);
