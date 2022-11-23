@@ -301,13 +301,24 @@ class default_config extends dynamic_config
         return $all_channels;
     }
 
+    public function get_vod_list_names($plugin_cookies, &$current_idx)
+    {
+        $vod_lists_array = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
+        $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $vod_lists = array();
+        foreach ($vod_lists_array as $list) {
+            $vod_lists[] = $list[Plugin_Constants::VOD_NAME];
+        }
+        return $vod_lists;
+    }
+
     public function get_vod_list($plugin_cookies, &$current_idx)
     {
         $vod_lists_array = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
         $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
         $vod_lists = array();
         foreach ($vod_lists_array as $list) {
-            $vod_lists[] = $list['name'];
+            $vod_lists[$list[Plugin_Constants::VOD_NAME]] = $list[Plugin_Constants::VOD_TEMPLATE];
         }
         return $vod_lists;
     }

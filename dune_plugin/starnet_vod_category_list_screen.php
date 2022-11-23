@@ -7,6 +7,9 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 {
     const ID = 'vod_category_list';
     const ACTION_RELOAD = 'reload';
+    const ACTION_POPUP_MENU = 'popup_menu';
+    const ACTION_CHANGE_PLAYLIST = 'change_playlist';
+    const PARAM_PLAYLIST = 'playlist';
 
     /**
      * @var array
@@ -65,6 +68,15 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         $reload['caption'] = 'Перечитать плейлист';
         $actions[GUI_EVENT_KEY_C_YELLOW] = $reload;
 
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
+            $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
+            if (count($all_vod_lists) > 1) {
+                $change_playlist = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
+                $change_playlist['caption'] = 'Сменить плейлист';
+                $actions[GUI_EVENT_KEY_B_GREEN] = $change_playlist;
+            }
+        }
+
         return $actions;
     }
 
@@ -83,13 +95,37 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             return null;
         }
 
-        if ($user_input->control_id === self::ACTION_RELOAD) {
-            hd_print("reload categories");
-            $this->clear_vod();
-            $media_url = MediaURL::decode($user_input->parent_media_url);
-            $range = $this->get_folder_range($media_url, 0, $plugin_cookies);
-            return Action_Factory::update_regular_folder($range, true, -1);
+        switch ($user_input->control_id) {
+            case self::ACTION_RELOAD:
+                hd_print("reload categories");
+                $this->clear_vod();
+                $media_url = MediaURL::decode($user_input->parent_media_url);
+                $range = $this->get_folder_range($media_url, 0, $plugin_cookies);
+                return Action_Factory::update_regular_folder($range, true, -1);
+
+            case self::ACTION_CHANGE_PLAYLIST:
+                if (isset($user_input->{self::PARAM_PLAYLIST})) {
+                    $new_idx = array_search($user_input->{self::PARAM_PLAYLIST}, $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx));
+                    if ($new_idx !== false && $new_idx !== $current_idx) {
+                        $plugin_cookies->vod_idx = $new_idx;
+                        hd_print("change VOD playlist to: " . $user_input->{self::PARAM_PLAYLIST});
+                        return User_Input_Handler_Registry::create_action($this, self::ACTION_RELOAD);
+                    }
+                }
+                break;
+            case self::ACTION_POPUP_MENU;
+                $menu_items = array();
+                $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
+                foreach ($all_vod_lists as $list) {
+                    $add_param[self::PARAM_PLAYLIST] = $list;
+                    $action = User_Input_Handler_Registry::create_action($this, self::ACTION_CHANGE_PLAYLIST, $add_param);
+                    $menu_items[] = array(GuiMenuItemDef::caption => $list, GuiMenuItemDef::action => $action);
+                }
+                if (count($menu_items) < 2) break;
+
+                return Action_Factory::show_popup_menu($menu_items);
         }
+
         return null;
     }
 
