@@ -154,8 +154,12 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     $post_action = User_Input_Handler_Registry::create_action($this, self::ACTION_WATCHED, $add_params);
                     $info = $this->plugin->get_vod_info($user_input->selected_media_url, $plugin_cookies);
                     if (isset($info[PluginVodInfo::initial_series_ndx], $info[PluginVodInfo::series][$info[PluginVodInfo::initial_series_ndx]])) {
-                        $movie = $info[PluginVodInfo::series][$info[PluginVodInfo::initial_series_ndx]];
-                        $cmd = 'am start -d "' . $movie[PluginVodSeriesInfo::playback_url] . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
+                        $series = $info[PluginVodInfo::series];
+                        $idx = $info[PluginVodInfo::initial_series_ndx];
+                        $url = $series[$idx][PluginVodSeriesInfo::playback_url];
+                        $param_pos = strpos('|||dune_params', $url);
+                        $url =  $param_pos!== false ? substr($url, $param_pos) : $url;
+                        $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
                         hd_print("play movie in the external player: $cmd");
                         exec($cmd);
                         return $post_action;

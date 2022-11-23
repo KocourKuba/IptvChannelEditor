@@ -4,15 +4,15 @@ require_once 'stream_params.php';
 require_once 'epg_params.php';
 require_once 'ext_params.php';
 
-const HLS  = 'hls';
-const MPEG = 'mpeg';
-
 class Plugin_Constants
 {
     const ACCOUNT_UNKNOWN = 'unknown';
     const ACCOUNT_OTT_KEY = 'ottkey';
     const ACCOUNT_PIN     = 'pin';
     const ACCOUNT_LOGIN   = 'login';
+
+    const HLS  = 'hls';
+    const MPEG = 'mpeg';
 
     // Non configurable parameters by external config
     const /* (char) */ API_REQUEST_URL = 'api_request_url';

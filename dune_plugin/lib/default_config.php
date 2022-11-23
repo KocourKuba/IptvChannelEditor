@@ -868,7 +868,7 @@ class default_config extends dynamic_config
      * @param int $custom_type
      * @return string
      */
-    protected function UpdateDuneParams($url, $plugin_cookies, $custom_type = '')
+    public function UpdateDuneParams($url, $plugin_cookies, $custom_type = '')
     {
         $type = empty($custom_type) ? $this->get_format($plugin_cookies) : $custom_type;
 

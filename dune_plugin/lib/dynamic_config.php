@@ -42,13 +42,13 @@ class dynamic_config
         $default_streams[Stream_Params::CU_SUBST] = 'utc';
         $default_streams[Stream_Params::CU_DURATION] = 10800;
         $default_streams[Stream_Params::DUNE_PARAMS] = '';
-        $this->set_stream_params(HLS, $default_streams);
+        $this->set_stream_params(Plugin_Constants::HLS, $default_streams);
 
         $default_streams[Stream_Params::CU_TYPE] = 'flussonic';
         $default_streams[Stream_Params::CU_SUBST] = 'archive';
         $default_streams[Stream_Params::URL_ARC_TEMPLATE] = '';
         $default_streams[Stream_Params::DUNE_PARAMS] = 'buffering_ms:{BUFFERING}';
-        $this->set_stream_params(MPEG, $default_streams);
+        $this->set_stream_params(Plugin_Constants::MPEG, $default_streams);
 
         $default_parser = array();
         $default_parser[Plugin_Constants::EPG_PARSER] = 'json';

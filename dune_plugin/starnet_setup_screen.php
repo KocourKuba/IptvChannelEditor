@@ -311,12 +311,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // select stream type
         $format_ops = array();
-        if ($this->plugin->config->get_stream_param(HLS, Stream_Params::URL_TEMPLATE) !== '') {
-            $format_ops[HLS] = 'HLS';
+        if ($this->plugin->config->get_stream_param(Plugin_Constants::HLS, Stream_Params::URL_TEMPLATE) !== '') {
+            $format_ops[Plugin_Constants::HLS] = 'HLS';
         }
 
-        if ($this->plugin->config->get_stream_param(MPEG, Stream_Params::URL_TEMPLATE) !== '') {
-            $format_ops[MPEG] = 'MPEG-TS';
+        if ($this->plugin->config->get_stream_param(Plugin_Constants::MPEG, Stream_Params::URL_TEMPLATE) !== '') {
+            $format_ops[Plugin_Constants::MPEG] = 'MPEG-TS';
         }
 
         if (count($format_ops) > 1) {
