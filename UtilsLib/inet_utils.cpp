@@ -274,11 +274,13 @@ bool DownloadFile(const std::wstring& url,
 		}
 
 		// Create an HTTP request handle.
-		CAutoHinternet hRequest = WinHttpOpenRequest(hConnect, verb_post ? L"POST" : L"GET", (cracked.path + cracked.extra_info).c_str(),
+		CAutoHinternet hRequest = WinHttpOpenRequest(hConnect,
+													 verb_post ? L"POST" : L"GET",
+													 (cracked.path + cracked.extra_info).c_str(),
 													 nullptr,
 													 WINHTTP_NO_REFERER,
-													 nullptr,
-													 NULL);
+													 WINHTTP_DEFAULT_ACCEPT_TYPES,
+													 WINHTTP_FLAG_BYPASS_PROXY_CACHE);
 
 		if (hRequest.IsNotValid())
 		{
@@ -321,7 +323,7 @@ bool DownloadFile(const std::wstring& url,
 			// End the request.
 			if (!WinHttpReceiveResponse(hRequest, nullptr))
 			{
-				ATLTRACE(L"\nError: Failed to receive response\n");
+				ATLTRACE(L"\nError: Failed to receive response: %d\n", GetLastError());
 				break;
 			}
 
@@ -333,7 +335,7 @@ bool DownloadFile(const std::wstring& url,
 									 WINHTTP_HEADER_NAME_BY_INDEX,
 									 &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
 			{
-				ATLTRACE(L"\nError: Failed to query headers\n");
+				ATLTRACE(L"\nError: Failed to query headers: %d\n", GetLastError());
 				break;
 			}
 
@@ -373,7 +375,7 @@ bool DownloadFile(const std::wstring& url,
 											   cracked.password.c_str(),
 											   nullptr))
 					{
-						ATLTRACE(L"\nError: Failed to set credentials\n");
+						ATLTRACE(L"\nError: Failed to set credentials: %d\n", GetLastError());
 						break;
 					}
 
