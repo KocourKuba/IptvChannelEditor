@@ -30,6 +30,13 @@ DEALINGS IN THE SOFTWARE.
 #include <atlenc.h>
 #include <sstream>
 
+#ifdef _USE_CURL
+# define DownloadFile CurlDownload
+#else
+# define DownloadFile WinHttpDownload
+
+#endif
+
 namespace utils
 {
 struct CrackedUrl
@@ -45,7 +52,14 @@ struct CrackedUrl
 
 bool CrackUrl(const std::wstring& url, CrackedUrl& cracked);
 
-bool DownloadFile(const std::wstring& url,
+bool CurlDownload(const std::wstring& url,
+				  std::stringstream& vData,
+				  bool use_cache = false,
+				  std::vector<std::string>* pHeaders = nullptr,
+				  bool verb_post = false,
+				  const char* post_data = nullptr);
+
+bool WinHttpDownload(const std::wstring& url,
 				  std::stringstream& vData,
 				  bool use_cache = false,
 				  std::vector<std::string>* pHeaders = nullptr,
@@ -53,7 +67,6 @@ bool DownloadFile(const std::wstring& url,
 				  const char* post_data = nullptr);
 
 std::string entityDecrypt(const std::string& text);
-
 
 class CBase64Coder
 {

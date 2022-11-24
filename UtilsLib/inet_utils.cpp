@@ -36,6 +36,12 @@ DEALINGS IN THE SOFTWARE.
 #include "utils.h"
 #include "SmartHandle.h"
 
+#include "curl_easy.h"
+#include "curl_form.h"
+#include "curl_ios.h"
+#include "curl_exception.h"
+#include "curl_header.h"
+
 #pragma comment(lib, "Winhttp.lib")
 
 namespace utils
@@ -204,12 +210,103 @@ bool CrackUrl(const std::wstring& url, CrackedUrl& cracked)
 	return false;
 }
 
-bool DownloadFile(const std::wstring& url,
+bool CurlDownload(const std::wstring& url,
 				  std::stringstream& vData,
 				  bool use_cache /*= false*/,
 				  std::vector<std::string>* pHeaders /*= nullptr*/,
 				  bool verb_post /*= false*/,
-				  const char* post_data /*= nullptr*/)
+				  const char* post_data /*= nullptr*/
+)
+{
+	const auto& url_narrow = utils::utf16_to_utf8(url);
+	std::string hash_str = url_narrow;
+	if (post_data)
+		hash_str += post_data;
+
+	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
+	std::filesystem::create_directory(cache_file);
+	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
+	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
+
+	if (use_cache && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
+	{
+		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
+		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
+		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		int diff = int(now - file_time);
+		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
+		// cache ttl 1 day
+		if (diff < 60 * 60 * 24)
+		{
+			std::ifstream in_file(cache_file.c_str());
+			if (in_file.good())
+			{
+				vData << in_file.rdbuf();
+				in_file.close();
+				return vData.tellp() != std::streampos(0);
+			}
+		}
+	}
+
+	try
+	{
+		curl::curl_ios<std::stringstream> writer(vData);
+		curl::curl_easy easy(writer);
+
+		easy.add<CURLOPT_URL>(utils::utf16_to_utf8(url).c_str());
+		easy.add<CURLOPT_FOLLOWLOCATION>(1L);
+		easy.add<CURLOPT_HTTPAUTH>(CURLAUTH_ANY);
+		easy.add<CURLOPT_SSL_VERIFYPEER>(0);
+		easy.add<CURLOPT_SSL_VERIFYHOST>(0);
+		easy.add<CURLOPT_CONNECTTIMEOUT>(30);
+		easy.add<CURLOPT_TIMEOUT>(60);
+		easy.add<CURLOPT_USERAGENT>("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.35");
+
+		curl::curl_header headers;
+		if (pHeaders)
+		{
+			for (const auto& hdr : *pHeaders)
+			{
+				headers.add(hdr);
+			}
+
+			easy.add<CURLOPT_HTTPHEADER>(headers.get());
+		}
+
+		if (verb_post && post_data)
+		{
+			easy.add<CURLOPT_POST>(1L);
+			easy.add<CURLOPT_POSTFIELDS>(post_data);
+		}
+
+		easy.perform();
+
+		if (use_cache && vData.tellp() != std::streampos(0))
+		{
+			std::ofstream out_stream(cache_file, std::ios::out | std::ios::binary);
+			out_stream << vData.rdbuf();
+		}
+	}
+	catch (curl::curl_easy_exception const& error)
+	{
+		ATLTRACE("\n%d (%s)\n", error.get_code(), error.what());
+		auto errors = error.get_traceback();
+		for (const auto& err : errors)
+		{
+			ATLTRACE("\nERROR: %s ::::: FUNCTION: %s\n", err.first, err.second);
+		}
+		return false;
+	}
+
+	return vData.tellp() != std::streampos(0);
+}
+
+bool WinHttpDownload(const std::wstring& url,
+					 std::stringstream& vData,
+					 bool use_cache /*= false*/,
+					 std::vector<std::string>* pHeaders /*= nullptr*/,
+					 bool verb_post /*= false*/,
+					 const char* post_data /*= nullptr*/)
 {
 	std::wstring hash_str = url;
 	if (post_data)
