@@ -153,9 +153,7 @@ class Movie implements User_Input_Handler
         //hd_print('Movie: handle_user_input:');
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
-        if ($user_input->control_id !== GUI_EVENT_PLAYBACK_STOP
-            || (!isset($user_input->playback_stop_pressed) && !isset($user_input->playback_power_off_needed))
-            || ($user_input->plugin_vod_stop_tm - $user_input->plugin_vod_start_tm <= 3)) {
+        if ($user_input->control_id !== GUI_EVENT_PLAYBACK_STOP) {
             return null;
         }
 
@@ -171,11 +169,14 @@ class Movie implements User_Input_Handler
             }
         }
 
+        $watched = (isset($user_input->playback_end_of_stream) && (int)$user_input->playback_end_of_stream !== 0)
+                    || ($user_input->plugin_vod_duration - $user_input->plugin_vod_stop_position) < 5;
+
         $this->plugin->vod->add_movie_to_history(
             $user_input->plugin_vod_id,
             $user_input->plugin_vod_series_ndx,
             array(
-                self::WATCHED_FLAG => false,
+                self::WATCHED_FLAG => $watched,
                 self::WATCHED_POSITION => $user_input->plugin_vod_stop_position,
                 self::WATCHED_DURATION => $user_input->plugin_vod_duration,
                 self::WATCHED_DATE => $user_input->plugin_vod_stop_tm
