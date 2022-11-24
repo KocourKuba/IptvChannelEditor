@@ -688,6 +688,7 @@ class default_config extends dynamic_config
                 $all_indexes[] = $element;
             }
         }
+        sort($all_indexes);
         $this->vod_m3u_indexes[Vod_Category::FLAG_ALL] = $all_indexes;
 
         // all movies
