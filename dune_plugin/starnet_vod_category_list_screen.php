@@ -104,22 +104,32 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 return Action_Factory::update_regular_folder($range, true, -1);
 
             case self::ACTION_CHANGE_PLAYLIST:
-                if (isset($user_input->{self::PARAM_PLAYLIST})) {
-                    $new_idx = array_search($user_input->{self::PARAM_PLAYLIST}, $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx));
-                    if ($new_idx !== false && $new_idx !== $current_idx) {
-                        $plugin_cookies->vod_idx = $new_idx;
-                        hd_print("change VOD playlist to: " . $user_input->{self::PARAM_PLAYLIST});
-                        return User_Input_Handler_Registry::create_action($this, self::ACTION_RELOAD);
-                    }
+                $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+
+                if (isset($user_input->{self::PARAM_PLAYLIST})
+                    && $user_input->{self::PARAM_PLAYLIST} !== false
+                    && $user_input->{self::PARAM_PLAYLIST} !== (int)$current_idx) {
+                    $plugin_cookies->vod_idx = $user_input->{self::PARAM_PLAYLIST};
+                    hd_print("change VOD playlist to: " . $user_input->{self::PARAM_PLAYLIST});
+                    return User_Input_Handler_Registry::create_action($this, self::ACTION_RELOAD);
                 }
                 break;
             case self::ACTION_POPUP_MENU;
                 $menu_items = array();
                 $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
-                foreach ($all_vod_lists as $list) {
-                    $add_param[self::PARAM_PLAYLIST] = $list;
+                foreach ($all_vod_lists as $idx => $list) {
+                    $add_param[self::PARAM_PLAYLIST] = $idx;
                     $action = User_Input_Handler_Registry::create_action($this, self::ACTION_CHANGE_PLAYLIST, $add_param);
-                    $menu_items[] = array(GuiMenuItemDef::caption => $list, GuiMenuItemDef::action => $action);
+
+                    $icon_url = null;
+                    if ($idx === (int)$current_idx) {
+                        $icon_url = "gui_skin://small_icons/playlist_file.aai";
+                    }
+                    $menu_items[] = array(
+                        GuiMenuItemDef::caption => $list,
+                        GuiMenuItemDef::action => $action,
+                        GuiMenuItemDef::icon_url => $icon_url,
+                    );
                 }
                 if (count($menu_items) < 2) break;
 
