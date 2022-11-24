@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="187" scanned="20221122210707" built="20221122210720" lang="ru" pane="TLogPane" col="4" row="Strings.23.IDS_STRING_EDIT_DUNE_PARAMS">
+<desktop scan="188" scanned="20221124122840" built="20221124122857" lang="ru" pane="TLogPane" col="4" row="Strings.9.IDS_STRING_FAVORITES">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

@@ -1456,6 +1456,7 @@ STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "Dune IPTV Channel Editor\nChannelEditor\nChannelEditor\n\n\n\n"
     IDS_STRING_PLUGIN_CONFIG "Plugin Configuration"
+    IDS_STRING_FAVORITES    "Favorites"
     IDS_STRING_ERR_SOURCE_NOT_SET "Playlist source not set!"
     IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST "Unable to download playlist!"
     IDS_STRING_ERR_EMPTY_PLAYLIST "Empty playlist!"

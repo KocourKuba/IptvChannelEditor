@@ -149,11 +149,12 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO_CUSTOM_ARC_STREAM_TYPE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomArcStreamType)
 
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels)
-	ON_NOTIFY(NM_DBLCLK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMDblclkTreeChannels)
+	ON_NOTIFY(TVN_BEGINLABELEDIT, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnBeginlabeleditTreeChannels)
 	ON_NOTIFY(TVN_ENDLABELEDIT, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnEndlabeleditTreeChannels)
+	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip)
+	ON_NOTIFY(NM_DBLCLK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMDblclkTreeChannels)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMRclickTreeChannel)
 	ON_NOTIFY(NM_SETFOCUS, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnNMSetfocusTree)
-	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_CHANNELS, &CIPTVChannelEditorDlg::OnTvnChannelsGetInfoTip)
 	ON_NOTIFY(BCN_DROPDOWN, IDC_SPLIT_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnDropDownSplitButtonUpdateChanged)
 
 	ON_NOTIFY(NM_DBLCLK, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnNMDblclkTreePaylist)
@@ -232,7 +233,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomArchive)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon)
-END_MESSAGE_MAP()
+	END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -2014,6 +2015,15 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	}
 
 	const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
+
+	auto fav_category = std::make_shared<ChannelCategory>(root_path);
+	fav_category->set_icon_uri(L"plugin_file://icons/fav.png");
+	fav_category->set_title(load_string_resource(IDS_STRING_FAVORITES));
+	fav_category->set_key(ID_ADD_TO_FAVORITE);
+
+	CategoryInfo info = { nullptr, fav_category };
+	m_categoriesMap.emplace(ID_ADD_TO_FAVORITE, info);
+
 	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(utils::TV_CATEGORY);
 	// Iterate <tv_category> nodes
 	while (cat_node)
@@ -2021,18 +2031,12 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		auto category = std::make_shared<ChannelCategory>(root_path);
 		category->ParseNode(cat_node);
 		CategoryInfo info = { nullptr, category };
-		m_categoriesMap.emplace(category->get_key(), info);
+		auto& res = m_categoriesMap.emplace(category->get_key(), info);
+		if (!res.second && category->is_favorite())
+			res.first->second.category->set_icon_uri(category->get_icon_uri());
+
 		cat_node = cat_node->next_sibling();
 	}
-
-	auto fav_category = std::make_shared<ChannelCategory>(root_path);
-	fav_category->set_icon_uri(L"plugin_file://icons/fav.png");
-	fav_category->set_title(L"Favorites");
-	fav_category->set_key(ID_ADD_TO_FAVORITE);
-	fav_category->set_favorite(true);
-
-	CategoryInfo info = { nullptr, fav_category };
-	m_categoriesMap.emplace(ID_ADD_TO_FAVORITE, info);
 
 	auto ch_node = i_node->first_node(utils::TV_CHANNELS)->first_node(utils::TV_CHANNEL);
 	// Iterate <tv_channel> nodes
@@ -2610,6 +2614,18 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 	}
 
 	UpdateData(FALSE);
+}
+
+void CIPTVChannelEditorDlg::OnBeginlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
+	*pResult = 0;
+
+	if (const auto& category = FindCategory(pTVDispInfo->item.hItem); category != nullptr)
+	{
+		if (category->is_favorite())
+			*pResult = 1;
+	}
 }
 
 void CIPTVChannelEditorDlg::OnTvnEndlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult)

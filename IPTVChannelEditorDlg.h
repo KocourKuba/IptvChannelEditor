@@ -474,4 +474,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// vod
 	std::map<PluginType, std::map<std::wstring, vod_category_storage>> m_vod_categories;
+public:
+	afx_msg void OnBeginlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 };

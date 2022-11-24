@@ -55,8 +55,6 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 	set_icon_uri(rapidxml::get_value_wstring(node->first_node(utils::ICON_URL)));
 	// <disabled>true</disabled>
 	set_disabled(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::DISABLED))) == "true");
-	// <favorite>true</favorite>
-	set_favorite(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::FAVORITE))) == "true");
 }
 
 rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) const

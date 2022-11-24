@@ -50,8 +50,7 @@ public:
 
 	bool is_empty() const { return channels_map.empty(); }
 
-	bool is_favorite() const { return favorite; }
-	void set_favorite(bool val) { favorite = val; }
+	bool is_favorite() const { return key == ID_ADD_TO_FAVORITE; }
 
 	const std::vector<std::shared_ptr<ChannelInfo>>& get_channels() const { return channels; }
 
