@@ -120,6 +120,7 @@ bool plugin_cbilling::parse_access_info(TemplateParams& params, std::list<Accoun
 			put_account_info("devices_num", js_data, info_list);
 			put_account_info("server", js_data, info_list);
 			put_account_info("vod", js_data, info_list);
+			put_account_info("ssl", js_data, info_list);
 
 			return true;
 		}
