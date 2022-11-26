@@ -48,12 +48,12 @@ void plugin_ping::load_default()
 	provider_url = "http://ping-tv.com/";
 
 	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD, 0));
+	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
 	vod_info.pl_template = "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/vodall.m3u";
 	vod_info.parse_regex = R"((?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$)";
 	vod_templates.emplace_back(vod_info);
 
-	vod_info.set_name(load_string_resource(IDS_STRING_NO_ADULT, 0));
+	vod_info.set_name(load_string_resource(0, IDS_STRING_NO_ADULT));
 	vod_info.pl_template = "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/vod.m3u";
 	vod_info.parse_regex = R"((?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$)";
 	vod_templates.emplace_back(vod_info);

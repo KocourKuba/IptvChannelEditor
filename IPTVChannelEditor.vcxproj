@@ -238,6 +238,10 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="AccountSettings.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Credentials.h" />
+    <ClInclude Include="PluginConfigPageEPG.h" />
+    <ClInclude Include="PluginConfigPageTV.h" />
+    <ClInclude Include="PluginConfigPageVOD.h" />
+    <ClInclude Include="TooltipPropertyPage.h" />
     <ClInclude Include="PluginDefines.h" />
     <ClInclude Include="ThreadConfig.h" />
     <ClInclude Include="uri_stream.h" />
@@ -341,6 +345,10 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PlaylistParseM3U8Thread.cpp" />
     <ClCompile Include="PathsSettingsPage.cpp" />
     <ClCompile Include="PluginConfigPage.cpp" />
+    <ClCompile Include="PluginConfigPageEPG.cpp" />
+    <ClCompile Include="PluginConfigPageTV.cpp" />
+    <ClCompile Include="PluginConfigPageVOD.cpp" />
+    <ClCompile Include="TooltipPropertyPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
     <ClCompile Include="ThreadConfig.cpp" />

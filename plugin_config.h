@@ -469,6 +469,8 @@ public:
 	/// property index of supported stream
 	/// </summary>
 	const StreamParameters& get_supported_stream(size_t idx) const { return streams_config[idx]; }
+	StreamParameters& get_supported_stream(size_t idx) { return streams_config[idx]; }
+
 	void set_supported_stream(size_t idx, const StreamParameters& val) { streams_config[idx] = val; }
 
 	/// <summary>
@@ -476,6 +478,7 @@ public:
 	/// </summary>
 	/// <returns>const StreamParameters&</returns>
 	const std::array<EpgParameters, 2>& get_epg_parameters() const { return epg_params; }
+	std::array<EpgParameters, 2>& get_epg_parameters() { return epg_params; }
 
 	/// <summary>
 	/// property index pf epg parameters

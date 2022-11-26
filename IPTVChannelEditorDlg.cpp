@@ -30,13 +30,15 @@ DEALINGS IN THE SOFTWARE.
 
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
-#include "ResizedPropertySheet.h"
 #include "AboutDlg.h"
 #include "MainSettingsPage.h"
 #include "PathsSettingsPage.h"
 #include "UpdateSettingsPage.h"
 #include "AccessInfoPage.h"
 #include "PluginConfigPage.h"
+#include "PluginConfigPageTV.h"
+#include "PluginConfigPageEPG.h"
+#include "PluginConfigPageVOD.h"
 #include "FilterDialog.h"
 #include "CustomPlaylistDlg.h"
 #include "NewChannelsListDlg.h"
@@ -3199,23 +3201,24 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(L"", REG_ACC_WINDOW_POS);
+	auto pSheet = std::make_unique<CResizedPropertySheet>(m_all_configs_lists, REG_ACC_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
+	pSheet->m_plugin = StreamContainer::get_instance(m_plugin_type);
+	pSheet->m_plugin->copy(m_plugin.get());
+	pSheet->m_initial_cred = m_cur_account;
+	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 
-	CAccessInfoPage dlgInfo(m_all_configs_lists);
+	CAccessInfoPage dlgInfo;
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgInfo.m_initial_cred = m_cur_account;
-	dlgInfo.m_all_channels_lists = m_all_channels_lists;
-	dlgInfo.m_plugin = m_plugin;
-	dlgInfo.m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 
 	pSheet->AddPage(&dlgInfo);
 
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
 	{
-		m_cur_account = dlgInfo.m_initial_cred;
+		m_cur_account = pSheet->m_initial_cred;
+		m_plugin->copy(pSheet->m_plugin.get());
 		GetConfig().UpdatePluginSettings();
 		PostMessage(WM_SWITCH_PLUGIN);
 	}
@@ -5181,17 +5184,30 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(L"", REG_CONFIG_WINDOW_POS);
+	auto pSheet = std::make_unique<CResizedPropertySheet>(m_all_configs_lists, REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
+	pSheet->m_plugin = m_plugin;
+	pSheet->m_initial_cred = m_cur_account;
+	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 
-	CPluginConfigPage dlgCfg(m_all_configs_lists);
+	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgCfg.m_plugin = m_plugin;
-	dlgCfg.m_initial_cred = m_cur_account;
-	dlgCfg.m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
+
+	CPluginConfigPageTV dlgCfgTV;
+	dlgCfgTV.m_psp.dwFlags &= ~PSP_HASHELP;
+
+	CPluginConfigPageEPG dlgCfgEPG;
+	dlgCfgEPG.m_psp.dwFlags &= ~PSP_HASHELP;
+
+	CPluginConfigPageVOD dlgCfgVOD;
+	dlgCfgVOD.m_psp.dwFlags &= ~PSP_HASHELP;
 
 	pSheet->AddPage(&dlgCfg);
+	pSheet->AddPage(&dlgCfgTV);
+	pSheet->AddPage(&dlgCfgEPG);
+	pSheet->AddPage(&dlgCfgVOD);
+
 	if (IDOK == pSheet->DoModal())
 	{
 		GetConfig().UpdatePluginSettings();

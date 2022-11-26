@@ -32,9 +32,12 @@ DEALINGS IN THE SOFTWARE.
 #include "UrlDlg.h"
 #include "Constants.h"
 
-#include "UtilsLib\inet_utils.h"
-#include "ResizedPropertySheet.h"
 #include "PluginConfigPage.h"
+#include "PluginConfigPageTV.h"
+#include "PluginConfigPageEPG.h"
+#include "PluginConfigPageVOD.h"
+
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -59,11 +62,9 @@ inline std::string get_utf8(const wchar_t* value)
 
 // CAccessDlg dialog
 
-IMPLEMENT_DYNAMIC(CAccessInfoPage, CMFCPropertyPage)
+IMPLEMENT_DYNAMIC(CAccessInfoPage, CTooltipPropertyPage)
 
-BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CAccessInfoPage::OnToolTipText)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CAccessInfoPage::OnToolTipText)
+BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CAccessInfoPage::OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CAccessInfoPage::OnBnClickedButtonRemove)
 	ON_BN_CLICKED(IDC_BUTTON_NEW_FROM_URL, &CAccessInfoPage::OnBnClickedButtonNewFromUrl)
@@ -94,9 +95,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CMFCPropertyPage)
 END_MESSAGE_MAP()
 
 
-CAccessInfoPage::CAccessInfoPage(std::vector<std::wstring>& configs)
-	: CMFCPropertyPage(IDD_DIALOG_ACCESS_INFO)
-	, m_configs(configs)
+CAccessInfoPage::CAccessInfoPage() : CTooltipPropertyPage(IDD_DIALOG_ACCESS_INFO)
 {
 }
 
@@ -141,56 +140,9 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndEditConfig);
 }
 
-BOOL CAccessInfoPage::PreTranslateMessage(MSG* pMsg)
-{
-	if (pMsg->message == WM_LBUTTONDOWN
-		|| pMsg->message == WM_LBUTTONUP
-		|| pMsg->message == WM_MOUSEMOVE)
-	{
-		HWND hWnd = pMsg->hwnd;
-		LPARAM lParam = pMsg->lParam;
-
-		POINT pt{};
-		pt.x = LOWORD(pMsg->lParam);  // horizontal position of cursor
-		pt.y = HIWORD(pMsg->lParam);  // vertical position of cursor
-
-		for (auto& pair : m_tooltips_info)
-		{
-			auto& wnd = pair.first;
-			CRect rect;
-			wnd->GetWindowRect(&rect);
-			ScreenToClient(&rect);
-
-			if (rect.PtInRect(pt))
-			{
-				pMsg->hwnd = wnd->m_hWnd;
-
-				ClientToScreen(&pt);
-				wnd->ScreenToClient(&pt);
-				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
-				break;
-			}
-		}
-
-		m_wndToolTipCtrl.RelayEvent(pMsg);
-		m_wndToolTipCtrl.Activate(TRUE);
-
-		pMsg->hwnd = hWnd;
-		pMsg->lParam = lParam;
-	}
-
-	return __super::PreTranslateMessage(pMsg);
-}
-
 BOOL CAccessInfoPage::OnInitDialog()
 {
 	__super::OnInitDialog();
-
-	if (!m_wndToolTipCtrl.Create(this, TTS_ALWAYSTIP))
-	{
-		TRACE(_T("Unable To create ToolTip\n"));
-		return FALSE;
-	}
 
 	AddTooltip(IDC_BUTTON_ADD, IDS_STRING_BUTTON_ADD);
 	AddTooltip(IDC_BUTTON_REMOVE, IDS_STRING_BUTTON_REMOVE);
@@ -216,14 +168,9 @@ BOOL CAccessInfoPage::OnInitDialog()
 	AddTooltip(IDC_BUTTON_EDIT_CONFIG, IDS_STRING_BUTTON_EDIT_CONFIG);
 	AddTooltip(IDC_COMBO_CONFIGS, IDS_STRING_COMBO_CONFIGS);
 
-	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
-	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
-	m_wndToolTipCtrl.SetMaxTipWidth(300);
-	m_wndToolTipCtrl.Activate(TRUE);
-
 	SetButtonImage(IDB_PNG_EDIT, m_wndEditConfig);
 
-	std::wstring provider_url = m_plugin->get_provider_url();
+	std::wstring provider_url = GetPropertySheet()->m_plugin->get_provider_url();
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
 
@@ -260,7 +207,7 @@ BOOL CAccessInfoPage::OnInitDialog()
 		JSON_ALL_CATCH;
 	}
 
-	if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
+	if (GetPropertySheet()->m_plugin->get_plugin_type() == PluginType::enSharaclub)
 	{
 		m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
 		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
@@ -280,65 +227,24 @@ BOOL CAccessInfoPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CAccessInfoPage::AddTooltip(UINT ctrlID, UINT textID)
-{
-	CWnd* wnd = GetDlgItem(ctrlID);
-	m_tooltips_info.emplace(wnd, load_string_resource(textID));
-	m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
-}
-
-BOOL CAccessInfoPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
-{
-	// if there is a top level routing frame then let it handle the message
-	if (GetRoutingFrame() != nullptr)
-		return FALSE;
-
-	// to be thorough we will need to handle UNICODE versions of the message also !!
-
-	UINT nID = pNMHDR->idFrom;
-	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
-
-	if (pNMHDR->code == TTN_NEEDTEXT && (pTTT->uFlags & TTF_IDISHWND))
-	{
-		// idFrom is actually the HWND of the tool
-		nID = ::GetDlgCtrlID((HWND)nID);
-	}
-
-	if (nID != 0) // will be zero on a separator
-	{
-		const auto& pair = std::find_if(m_tooltips_info.begin(), m_tooltips_info.end(), [nID](auto& pair)
-										{
-											return pair.first->GetDlgCtrlID() == nID;
-										});
-
-		if (pair != m_tooltips_info.end())
-		{
-			pTTT->lpszText = pair->second.data();
-			*pResult = 0;
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
 void CAccessInfoPage::UpdateOptionalControls()
 {
 	auto& selected = GetCheckedAccount();
 	if (selected.not_valid)
 		return;
 
+	auto& plugin = GetPropertySheet()->m_plugin;
 	TemplateParams params;
 	params.login = selected.get_login();
 	params.password = selected.get_password();
-	params.subdomain = (m_plugin->get_plugin_type() == PluginType::enSharaclub) ? m_list_domain : selected.get_subdomain();
+	params.subdomain = (plugin->get_plugin_type() == PluginType::enSharaclub) ? m_list_domain : selected.get_subdomain();
 	params.server_idx = selected.server_id;
 	params.device_idx = selected.device_id;
 	params.profile_idx = selected.profile_id;
 	params.quality_idx = selected.quality_id;
 
-	m_plugin->fill_servers_list(params);
-	m_servers = m_plugin->get_servers_list();
+	plugin->fill_servers_list(params);
+	m_servers = plugin->get_servers_list();
 	m_wndServers.ResetContent();
 	m_wndServers.EnableWindow(!m_servers.empty());
 
@@ -357,8 +263,8 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndServers.SetCurSel(params.server_idx);
 	}
 
-	m_plugin->fill_devices_list(params);
-	m_devices = m_plugin->get_devices_list();
+	plugin->fill_devices_list(params);
+	m_devices = plugin->get_devices_list();
 	m_wndDevices.EnableWindow(!m_devices.empty());
 	m_wndDevices.ResetContent();
 	if (!m_devices.empty())
@@ -376,8 +282,8 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndDevices.SetCurSel(params.device_idx);
 	}
 
-	m_plugin->fill_qualities_list(params);
-	m_qualities = m_plugin->get_qualities_list();
+	plugin->fill_qualities_list(params);
+	m_qualities = plugin->get_qualities_list();
 	m_wndQualities.EnableWindow(!m_qualities.empty());
 	m_wndQualities.ResetContent();
 	if (!m_qualities.empty())
@@ -395,8 +301,8 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndQualities.SetCurSel(params.quality_idx);
 	}
 
-	m_plugin->fill_profiles_list(params);
-	m_profiles = m_plugin->get_profiles_list();
+	plugin->fill_profiles_list(params);
+	m_profiles = plugin->get_profiles_list();
 	m_wndProfiles.EnableWindow(!m_profiles.empty());
 	m_wndProfiles.ResetContent();
 
@@ -415,10 +321,12 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndProfiles.SetCurSel(params.profile_idx);
 	}
 
-	auto it = std::find(m_configs.begin(), m_configs.end(), selected.get_config());
+	const auto& configs = GetPropertySheet()->m_configs;
+
+	auto it = std::find(configs.begin(), configs.end(), selected.get_config());
 	int sel_idx = 0;
-	if (it != m_configs.end())
-		sel_idx = std::distance(m_configs.begin(), it);
+	if (it != configs.end())
+		sel_idx = std::distance(configs.begin(), it);
 	m_wndConfigs.SetCurSel(sel_idx);
 
 	m_suffix = selected.get_suffix().c_str();
@@ -452,7 +360,7 @@ void CAccessInfoPage::CreateAccountsList()
 	m_wndNewFromUrl.EnableWindow(FALSE);
 	int last = 0;
 	m_wndAccounts.InsertColumn(last++, L"", LVCFMT_LEFT, 22, 0);
-	switch (m_plugin->get_access_type())
+	switch (GetPropertySheet()->m_plugin->get_access_type())
 	{
 		case AccountAccessType::enPin:
 			vWidth /= 2;
@@ -481,7 +389,7 @@ void CAccessInfoPage::CreateAccountsList()
 		m_wndAccounts.InsertItem(idx, L"", 0);
 
 		size_t sub_idx = 0;
-		switch (m_plugin->get_access_type())
+		switch (GetPropertySheet()->m_plugin->get_access_type())
 		{
 			case AccountAccessType::enPin:
 				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_password().c_str());
@@ -539,7 +447,7 @@ void CAccessInfoPage::CreateChannelsList()
 void CAccessInfoPage::FillConfigs()
 {
 	m_wndConfigs.ResetContent();
-	for (const auto& entry : m_configs)
+	for (const auto& entry : GetPropertySheet()->m_configs)
 	{
 		m_wndConfigs.AddString(entry.c_str());
 	}
@@ -556,7 +464,7 @@ void CAccessInfoPage::FillChannelsList()
 	auto ch_list(selected.ch_list);
 	bool all = ch_list.empty();
 	m_wndChLists.DeleteAllItems();
-	for (const auto& channel : m_all_channels_lists)
+	for (const auto& channel : GetPropertySheet()->m_configs)
 	{
 		bool check = all;
 		if (!check)
@@ -586,13 +494,15 @@ void CAccessInfoPage::SetWebUpdate()
 	if (selected.not_valid)
 		return;
 
+	const auto& plugin = GetPropertySheet()->m_plugin;
+
 	m_wndAutoIncrement.SetCheck(selected.custom_increment);
 
 	m_wndVersionID.EnableWindow(selected.custom_increment);
 	m_wndUpdateName.EnableWindow(selected.custom_update_name);
 	m_wndPackageName.EnableWindow(selected.custom_package_name);
 
-	const auto& short_name_w = utils::utf8_to_utf16(m_plugin->get_short_name());
+	const auto& short_name_w = utils::utf8_to_utf16(plugin->get_short_name());
 	const auto& suffix = utils::utf8_to_utf16(selected.suffix);
 
 	if (selected.custom_update_name)
@@ -601,7 +511,7 @@ void CAccessInfoPage::SetWebUpdate()
 	}
 	else
 	{
-		m_updateInfoName = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
+		m_updateInfoName = fmt::format(utils::DUNE_UPDATE_NAME, plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
 		m_updateInfoName += L".txt";
 	}
 
@@ -611,7 +521,7 @@ void CAccessInfoPage::SetWebUpdate()
 	}
 	else
 	{
-		m_packageName = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
+		m_packageName = fmt::format(utils::DUNE_UPDATE_NAME, plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
 		m_packageName += L".tar.gz";
 	}
 
@@ -647,6 +557,7 @@ BOOL CAccessInfoPage::OnApply()
 		return FALSE;
 	}
 
+	auto& plugin = GetPropertySheet()->m_plugin;
 	TemplateParams params;
 	params.login = utils::utf8_to_utf16(selected.login);
 	params.password = utils::utf8_to_utf16(selected.password);
@@ -656,24 +567,24 @@ BOOL CAccessInfoPage::OnApply()
 	params.profile_idx = selected.profile_id;
 	params.quality_idx = selected.quality_id;
 
-	if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
+	if (plugin->get_plugin_type() == PluginType::enSharaclub)
 	{
 		params.subdomain = m_list_domain;
 	}
 
 	if (m_wndServers.GetCount())
 	{
-		m_plugin->set_server(params);
+		plugin->set_server(params);
 	}
 
 	if (m_wndQualities.GetCount())
 	{
-		m_plugin->set_quality(params);
+		plugin->set_quality(params);
 	}
 
 	if (m_wndProfiles.GetCount())
 	{
-		m_plugin->set_profile(params);
+		plugin->set_profile(params);
 	}
 
 	selected.custom_increment = m_wndAutoIncrement.GetCheck();
@@ -702,7 +613,7 @@ BOOL CAccessInfoPage::OnApply()
 	nlohmann::json j_serialize = m_all_credentials;
 	GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
 
-	m_initial_cred = selected;
+	GetPropertySheet()->m_initial_cred = selected;
 
 	return TRUE;
 }
@@ -713,7 +624,7 @@ void CAccessInfoPage::OnBnClickedButtonAdd()
 
 	Credentials cred;
 	static constexpr auto newVal = "new";
-	switch (m_plugin->get_access_type())
+	switch (GetPropertySheet()->m_plugin->get_access_type())
 	{
 		case AccountAccessType::enPin:
 			cred.password = newVal;
@@ -764,7 +675,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 
 		Credentials cred;
 		auto playlist = std::make_unique<Playlist>();
-		auto entry = std::make_unique<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
+		auto entry = std::make_unique<PlaylistEntry>(GetPropertySheet()->m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
 		std::string line;
 		while (std::getline(stream, line))
 		{
@@ -817,7 +728,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 	// Persist the selected attachment details upon updating its text
 	m_wndAccounts.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
 	auto& cred = m_all_credentials[dispinfo->item.iItem];
-	switch (m_plugin->get_access_type())
+	switch (GetPropertySheet()->m_plugin->get_access_type())
 	{
 		case AccountAccessType::enPin:
 			switch (dispinfo->item.iSubItem)
@@ -900,8 +811,8 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 				}
 			}
 
-			m_plugin->clear_device_list();
-			m_plugin->clear_profiles_list();
+			GetPropertySheet()->m_plugin->clear_device_list();
+			GetPropertySheet()->m_plugin->clear_profiles_list();
 			GetAccountInfo();
 			FillChannelsList();
 			GetParent()->GetDlgItem(IDOK)->EnableWindow(TRUE);
@@ -937,17 +848,18 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 		if (selected.not_valid)
 			return;
 
+		const auto& configs = GetPropertySheet()->m_configs;
 		int cnt = m_wndChLists.GetItemCount();
 		std::vector<std::string> ch_list;
 		for (int nItem = 0; nItem < cnt; nItem++)
 		{
 			if (m_wndChLists.GetCheck(nItem))
 			{
-				ch_list.emplace_back(get_utf8(m_all_channels_lists[nItem]));
+				ch_list.emplace_back(get_utf8(configs[nItem]));
 			}
 		}
 
-		if (ch_list.size() == m_all_channels_lists.size())
+		if (ch_list.size() == configs.size())
 		{
 			ch_list.clear();
 		}
@@ -984,7 +896,9 @@ void CAccessInfoPage::GetAccountInfo()
 	std::wstring domain;
 	std::wstring portal;
 
-	switch (m_plugin->get_access_type())
+	auto& plugin = GetPropertySheet()->m_plugin;
+
+	switch (plugin->get_access_type())
 	{
 		case AccountAccessType::enPin:
 			password = utils::utf8_to_utf16(selected_cred.password);
@@ -1008,7 +922,7 @@ void CAccessInfoPage::GetAccountInfo()
 
 	// reset template flag for new parse
 	auto playlist = std::make_unique<Playlist>();
-	auto entry = std::make_shared<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
+	auto entry = std::make_shared<PlaylistEntry>(plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
 	entry->set_is_template(false);
 
 	TemplateParams params;
@@ -1020,14 +934,14 @@ void CAccessInfoPage::GetAccountInfo()
 	params.profile_idx = selected_cred.profile_id;
 	params.quality_idx = selected_cred.quality_id;
 
-	if (m_plugin->get_plugin_type() == PluginType::enTVClub || m_plugin->get_plugin_type() == PluginType::enVidok)
+	if (plugin->get_plugin_type() == PluginType::enTVClub || plugin->get_plugin_type() == PluginType::enVidok)
 	{
-		params.token = m_plugin->get_api_token(selected_cred);
+		params.token = plugin->get_api_token(selected_cred);
 	}
 
-	auto& pl_url = m_plugin->get_playlist_url(params);
+	auto& pl_url = plugin->get_playlist_url(params);
 	std::list<AccountInfo> acc_info;
-	if (m_plugin->parse_access_info(params, acc_info))
+	if (plugin->parse_access_info(params, acc_info))
 	{
 		for (auto it = acc_info.begin(); it != acc_info.end(); )
 		{
@@ -1065,7 +979,7 @@ void CAccessInfoPage::GetAccountInfo()
 				if (entry->Parse(line) && !entry->get_token().empty())
 				{
 					// do not override fake ott and domain for edem
-					if (m_plugin->get_access_type() != AccountAccessType::enOtt)
+					if (GetPropertySheet()->m_plugin->get_access_type() != AccountAccessType::enOtt)
 					{
 						selected_cred.token = get_utf8(entry->get_token());
 						selected_cred.subdomain = get_utf8(entry->get_domain());
@@ -1281,22 +1195,35 @@ void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 
 void CAccessInfoPage::OnBnClickedButtonEditConfig()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(L"", REG_PLUGIN_CFG_WINDOW_POS);
+	auto pSheet = std::make_unique<CResizedPropertySheet>(GetPropertySheet()->m_configs, REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
+	pSheet->m_plugin->copy(GetPropertySheet()->m_plugin.get());
+	pSheet->m_CurrentStream = GetPropertySheet()->m_CurrentStream;
+	pSheet->m_initial_cred = GetPropertySheet()->m_initial_cred;
 
-	CPluginConfigPage dlgCfg(m_configs);
+	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgCfg.m_plugin = m_plugin;
-	dlgCfg.m_CurrentStream = m_CurrentStream;
-	dlgCfg.m_initial_cred = m_initial_cred;
+
+	CPluginConfigPageTV dlgCfgTV;
+	dlgCfgTV.m_psp.dwFlags &= ~PSP_HASHELP;
+
+	CPluginConfigPageEPG dlgCfgEPG;
+	dlgCfgEPG.m_psp.dwFlags &= ~PSP_HASHELP;
+
+	CPluginConfigPageVOD dlgCfgVOD;
+	dlgCfgVOD.m_psp.dwFlags &= ~PSP_HASHELP;
 
 	pSheet->AddPage(&dlgCfg);
+	pSheet->AddPage(&dlgCfgTV);
+	pSheet->AddPage(&dlgCfgEPG);
+	pSheet->AddPage(&dlgCfgVOD);
 
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
 	{
-		m_plugin->load_plugin_parameters(m_initial_cred.get_config());
+		GetPropertySheet()->m_plugin->load_plugin_parameters(GetPropertySheet()->m_initial_cred.get_config());
+		GetPropertySheet()->m_plugin->copy(pSheet->m_plugin.get());
 		CreateAccountsList();
 	}
 }

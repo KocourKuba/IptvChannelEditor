@@ -27,14 +27,14 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "EditableListCtrl.h"
 #include "CMFCEditBrowsCtrlEx.h"
-#include "base_plugin.h"
+#include "TooltipPropertyPage.h"
 
-class CAccessInfoPage : public CMFCPropertyPage
+class CAccessInfoPage : public CTooltipPropertyPage
 {
 	DECLARE_DYNAMIC(CAccessInfoPage)
 
 public:
-	CAccessInfoPage(std::vector<std::wstring>& configs);   // standard constructor
+	CAccessInfoPage();   // standard constructor
 	virtual ~CAccessInfoPage() = default;
 
 	Credentials& GetCheckedAccount();
@@ -48,10 +48,8 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
 
-	void AddTooltip(UINT ctrlID, UINT textID);
 	void UpdateOptionalControls();
 
-	BOOL PreTranslateMessage(MSG* pMsg) override;
 	BOOL OnApply() override;
 
 	DECLARE_MESSAGE_MAP()
@@ -82,7 +80,6 @@ protected:
 	afx_msg void OnBnClickedCheckCustomUpdateName();
 	afx_msg void OnBnClickedCheckCustomPackageName();
 	afx_msg void OnBnClickedButtonEditConfig();
-	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
 
 public:
@@ -100,12 +97,8 @@ private:
 public:
 	CString m_status;
 
-	Credentials m_initial_cred;
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
-	uri_stream* m_CurrentStream = nullptr;
-	std::vector<std::wstring> m_all_channels_lists;
-	std::shared_ptr<base_plugin> m_plugin;
 
 protected:
 	CButton m_wndRemove;
@@ -125,7 +118,6 @@ protected:
 	CListCtrl m_wndInfo;
 	CListCtrl m_wndChLists;
 	CMFCLinkCtrl m_wndProviderLink;
-	CToolTipCtrl m_wndToolTipCtrl;
 	CButton m_wndAutoIncrement;
 	CButton m_wndCustomPackageName;
 	CButton m_wndCustomUpdateName;
@@ -152,7 +144,4 @@ private:
 	std::vector<DynamicParamsInfo> m_profiles;
 	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
-	std::vector<std::wstring>& m_configs;
-
-	std::map<CWnd*, std::wstring> m_tooltips_info;
 };

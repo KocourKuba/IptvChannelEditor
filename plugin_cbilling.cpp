@@ -51,7 +51,7 @@ void plugin_cbilling::load_default()
 	provider_url = "https://cbilling.eu/";
 
 	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD, 0));
+	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
 	vod_info.pl_template = "http://protected-api.com";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
