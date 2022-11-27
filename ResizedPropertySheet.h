@@ -29,7 +29,11 @@ public:
 public:
 	BOOL OnInitDialog() override;
 	INT_PTR DoModal() override;
+	int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
+	std::wstring GetSelectedConfig();
+	void UpdateControls();
+	void AllowSave(bool val = true);
 protected:
 	DECLARE_MESSAGE_MAP()
 
@@ -37,10 +41,17 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
 
+	afx_msg void OnCbnSelchangeComboPluginConfig();
+	afx_msg void OnBnClickedButtonToggleEditConfig();
+	afx_msg void OnBnClickedButtonSaveConfig();
+	afx_msg void OnBnClickedButtonSaveAsConfig();
+
 protected:
 	void SetupDynamicLayout();
+	void FillConfigs();
 
 public:
+	bool m_configPages = false;
 	Credentials m_initial_cred;
 	uri_stream* m_CurrentStream = nullptr;
 	bool m_allow_save = false;
@@ -49,6 +60,13 @@ public:
 	std::vector<std::wstring>& m_configs;
 
 protected:
+	CComboBox m_wndPluginConfigs;
+
+	CButton m_wndBtnToggleEdit;
+	CButton m_wndBtnSaveConf;
+	CButton m_wndBtnSaveAsConf;
+
+	int m_nHeaderHeight = 30;
 	CRect m_min_rc;
 	CString m_posKey;
 };

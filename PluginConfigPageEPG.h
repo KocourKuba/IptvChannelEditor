@@ -46,7 +46,9 @@ protected:
 	BOOL OnInitDialog() override;
 
 	BOOL OnSetActive() override;
+
 	void AssignMacros();
+	void FillControls() override;
 
 	DECLARE_MESSAGE_MAP()
 
@@ -68,7 +70,6 @@ protected:
 
 private:
 	void UpdateControls();
-	void FillControlsEpg();
 	void UpdateDateTimestamp(bool dateToUtc);
 	EpgParameters& GetEpgParameters();
 

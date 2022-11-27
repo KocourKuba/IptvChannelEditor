@@ -120,10 +120,5 @@ void CTooltipPropertyPage::AddTooltip(UINT ctrlID, UINT textID)
 
 void CTooltipPropertyPage::AllowSave(bool val /*= true*/)
 {
-	GetPropertySheet()->m_allow_save = val;
-	if (m_pSaveButton)
-		m_pSaveButton->EnableWindow(val);
-
-	CPropertySheet* psheet = (CPropertySheet*)GetParent();
-	psheet->GetDlgItem(IDOK)->EnableWindow(!GetPropertySheet()->m_allow_edit);
+	GetPropertySheet()->AllowSave(val);
 }

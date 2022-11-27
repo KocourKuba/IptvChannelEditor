@@ -1744,7 +1744,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	else
 	{
 		m_iconUrl = channel->get_icon_uri().get_uri().c_str();
-		PostMessage(WM_LOAD_CHANNEL_IMAGE, (WPARAM)channel.get());
+		OnLoadChannelImage((WPARAM)channel.get(), 0);
+		//PostMessage(WM_LOAD_CHANNEL_IMAGE, (WPARAM)channel.get());
 	}
 
 	UpdateData(FALSE);
@@ -5190,6 +5191,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	pSheet->m_plugin = m_plugin;
 	pSheet->m_initial_cred = m_cur_account;
 	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
+	pSheet->m_configPages = true;
 
 	CPluginConfigPage dlgCfg;
 	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;

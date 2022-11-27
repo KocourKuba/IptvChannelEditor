@@ -85,7 +85,7 @@ BOOL CPluginConfigPageVOD::OnInitDialog()
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnEditVodTemplates);
 
 	AssignMacros();
-	FillControlsVod();
+	FillControls();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -121,7 +121,7 @@ BOOL CPluginConfigPageVOD::OnSetActive()
 {
 	__super::OnSetActive();
 
-	FillControlsVod();
+	FillControls();
 
 	return TRUE;
 }
@@ -144,7 +144,7 @@ void CPluginConfigPageVOD::UpdateControls()
 	m_wndVodRegex.EnableWindow(enable && enableVod && enableM3U);
 }
 
-void CPluginConfigPageVOD::FillControlsVod()
+void CPluginConfigPageVOD::FillControls()
 {
 	auto& plugin = GetPropertySheet()->m_plugin;
 	if (!plugin) return;
@@ -218,20 +218,20 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 
 void CPluginConfigPageVOD::OnEnChangeEditProviderVodUrl()
 {
+	UpdateData(TRUE);
 	GetPropertySheet()->m_plugin->set_vod_template(m_wndVodTemplates.GetCurSel(), m_VodPlaylistTemplate.GetString());
+	m_wndBtnVodTemplateTest.EnableWindow(!m_VodPlaylistTemplate.IsEmpty());
 
 	AllowSave();
-	UpdateData(TRUE);
-	m_wndBtnVodTemplateTest.EnableWindow(!m_VodPlaylistTemplate.IsEmpty());
 }
 
 void CPluginConfigPageVOD::OnEnChangeEditVodRegex()
 {
+	UpdateData(TRUE);
 	GetPropertySheet()->m_plugin->set_vod_parse_regex(m_wndVodTemplates.GetCurSel(), m_VodParseRegex.GetString());
+	m_wndBtnVodParseTest.EnableWindow(!m_VodParseRegex.IsEmpty());
 
 	AllowSave();
-	UpdateData(TRUE);
-	m_wndBtnVodParseTest.EnableWindow(!m_VodParseRegex.IsEmpty());
 }
 
 void CPluginConfigPageVOD::OnBnClickedCheckVodSupport()
@@ -313,6 +313,6 @@ void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 		}
 		GetPropertySheet()->m_plugin->set_vod_templates(playlists);
 
-		FillControlsVod();
+		FillControls();
 	}
 }

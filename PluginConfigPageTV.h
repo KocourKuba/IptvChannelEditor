@@ -44,9 +44,10 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
-
 	BOOL OnSetActive() override;
+
 	void AssignMacros();
+	void FillControls() override;
 
 	DECLARE_MESSAGE_MAP()
 
@@ -59,6 +60,7 @@ protected:
 
 	afx_msg void OnCbnSelchangeComboStreamType();
 	afx_msg void OnCbnSelchangeComboTags();
+	afx_msg void OnCbnSelchangeComboCatchupType();
 
 	afx_msg void OnEnChangeEditParsePattern();
 	afx_msg void OnEnChangeEditPlaylistTemplate();
@@ -71,8 +73,8 @@ protected:
 
 private:
 	void UpdateControls();
-	void FillControlsCommon();
 	void FillControlsStream();
+	StreamParameters& GetSupportedStream();
 
 protected:
 
@@ -80,10 +82,10 @@ protected:
 	CMenuEdit m_wndParseStream;
 	CEdit m_wndSubst;
 	CEdit m_wndDuration;
-	CMenuEdit m_wndDuneParams;
 	CMenuEdit m_wndStreamTemplate;
 	CMenuEdit m_wndStreamArchiveTemplate;
 	CMenuEdit m_wndCustomStreamArchiveTemplate;
+	CMenuEdit m_wndDuneParams;
 
 	CComboBox m_wndPlaylistTemplates;
 	CComboBox m_wndStreamType;
@@ -105,8 +107,4 @@ protected:
 	CString m_CustomStreamArchiveTemplate;
 
 	int m_Duration = 0;
-
-private:
-
-	std::array<StreamParameters, 2> m_supported_streams;
 };

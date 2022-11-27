@@ -15,6 +15,7 @@ public:
 	BOOL OnInitDialog() override;
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	BOOL OnApply() override;
+	virtual void FillControls() {}
 
 	DECLARE_MESSAGE_MAP()
 
@@ -27,7 +28,6 @@ protected:
 	void AllowSave(bool val = true);
 
 protected:
-	CButton* m_pSaveButton = nullptr;
 	CToolTipCtrl m_wndToolTipCtrl;
 	std::map<CWnd*, std::wstring> m_tooltips_info;
 };

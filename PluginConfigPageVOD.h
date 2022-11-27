@@ -44,9 +44,10 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
-
 	BOOL OnSetActive() override;
+
 	void AssignMacros();
+	void FillControls() override;
 
 	DECLARE_MESSAGE_MAP()
 
@@ -62,7 +63,6 @@ protected:
 
 private:
 	void UpdateControls();
-	void FillControlsVod();
 
 protected:
 	CMenuEdit m_wndVodUrlTemplate;

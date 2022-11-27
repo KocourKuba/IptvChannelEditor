@@ -125,7 +125,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 		m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(0).c_str();
 	}
 
-	FillControlsEpg();
+	FillControls();
 	UpdateControls();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -136,7 +136,7 @@ BOOL CPluginConfigPageEPG::OnSetActive()
 {
 	__super::OnSetActive();
 
-	FillControlsEpg();
+	FillControls();
 	UpdateControls();
 	return TRUE;
 }
@@ -195,7 +195,7 @@ void CPluginConfigPageEPG::UpdateControls()
 	m_wndBtnEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
 }
 
-void CPluginConfigPageEPG::FillControlsEpg()
+void CPluginConfigPageEPG::FillControls()
 {
 	const auto& epg = GetEpgParameters();
 
@@ -245,7 +245,7 @@ EpgParameters& CPluginConfigPageEPG::GetEpgParameters()
 
 void CPluginConfigPageEPG::OnCbnSelchangeComboEpgType()
 {
-	FillControlsEpg();
+	FillControls();
 }
 
 void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
@@ -302,62 +302,71 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgUrl()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().set_epg_url(m_EpgUrl.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgRoot()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().set_epg_root(m_EpgRoot.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgName()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().set_epg_name(m_EpgName.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgDesc()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().set_epg_desc(m_EpgDesc.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgStart()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().set_epg_start(m_EpgStart.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgEnd()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().set_epg_end(m_EpgEnd.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgTZ()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().epg_timezone = m_EpgTimezone;
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgFmtDate()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().set_epg_date_format(m_EpgDateFormat.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgFmtTime()
 {
-	AllowSave();
+	UpdateData(TRUE);
 	GetEpgParameters().set_epg_time_format(m_EpgTimeFormat.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnBnClickedCheckUseDuration()
 {
-	AllowSave();
 	GetEpgParameters().epg_use_duration = m_wndChkUseDuration.GetCheck() != 0;
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditUtc()

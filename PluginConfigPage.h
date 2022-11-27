@@ -41,20 +41,15 @@ public:
 	enum { IDD = IDD_DIALOG_PLUGIN_CONFIG };
 #endif
 
-	std::wstring GetSelectedConfig();
-
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
 	BOOL OnSetActive() override;
 
+	void FillControls() override;
+
 	DECLARE_MESSAGE_MAP()
 
-	afx_msg void OnCbnSelchangeComboPluginConfig();
-
-	afx_msg void OnBnClickedButtonToggleEditConfig();
-	afx_msg void OnBnClickedButtonSaveConfig();
-	afx_msg void OnBnClickedButtonSaveAsConfig();
 	afx_msg void OnBnClickedCheckSquareIcons();
 	afx_msg void OnBnClickedButtonEditServers();
 	afx_msg void OnBnClickedButtonEditDevices();
@@ -74,8 +69,6 @@ protected:
 
 private:
 	void UpdateControls();
-	void FillConfigs();
-	void FillControlsCommon();
 
 protected:
 
@@ -86,10 +79,6 @@ protected:
 	CEdit m_wndProviderUrl;
 
 	CComboBox m_wndAccessType;
-	CComboBox m_wndPluginConfigs;
-
-	CButton m_wndBtnSaveConf;
-	CButton m_wndBtnSaveAsConf;
 	CButton m_wndChkStaticServers;
 	CButton m_wndBtnServers;
 	CButton m_wndChkStaticDevices;
@@ -99,7 +88,6 @@ protected:
 	CButton m_wndBtnQualities;
 	CButton m_wndChkSquareIcons;
 	CButton m_wndBtnProfiles;
-	CButton m_wndBtnToggleEdit;
 
 	CString m_Name;
 	CString m_Title;
