@@ -819,6 +819,8 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	// save config
+	int idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
+	plugin->set_playlist_template_idx(idx);
 	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder), true);
 
 	// create plugin manifest
