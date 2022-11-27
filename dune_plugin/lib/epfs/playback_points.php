@@ -66,7 +66,7 @@ class Playback_Points
         if (isset($player_state['player_state']) && $player_state['player_state'] !== 'navigator') {
             if (!isset($player_state['last_playback_event']) || ($player_state['last_playback_event'] !== PLAYBACK_PCR_DISCONTINUITY)) {
 
-                //hd_print("Playback_Points::push_point channel_id $channel_id, time mark: $archive_ts");
+                hd_print("Playback_Points::push_point channel_id $channel_id, time mark: $archive_ts");
                 $this->curr_point_id = $channel_id;
 
                 if (isset($this->points[$channel_id])) {
