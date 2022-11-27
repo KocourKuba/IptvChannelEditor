@@ -122,11 +122,15 @@ public:
 	std::wstring get_parse_regex() const { return utils::utf8_to_utf16(parse_regex); }
 	void set_parse_regex(const std::wstring& val) { parse_regex = utils::utf16_to_utf8(val); }
 
+	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
+	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
+
 	friend void to_json(nlohmann::json& j, const PlaylistTemplateInfo& c)
 	{
 		SERIALIZE_STRUCT(j, c, name);
 		SERIALIZE_STRUCT(j, c, pl_template);
 		SERIALIZE_STRUCT(j, c, parse_regex);
+		SERIALIZE_STRUCT(j, c, tag_id_match);
 	}
 
 	friend void from_json(const nlohmann::json& j, PlaylistTemplateInfo& c)
@@ -134,11 +138,13 @@ public:
 		DESERIALIZE_STRUCT(j, c, name);
 		DESERIALIZE_STRUCT(j, c, pl_template);
 		DESERIALIZE_STRUCT(j, c, parse_regex);
+		DESERIALIZE_STRUCT(j, c, tag_id_match);
 	}
 
 	std::string name;
 	std::string pl_template;
 	std::string parse_regex;
+	std::string tag_id_match;
 	bool is_custom = false;
 };
 
@@ -229,18 +235,21 @@ struct StreamParameters
 	int cu_duration = 10800;
 
 	std::string uri_template;
+	std::string uri_addon;
 	std::string uri_arc_template;
 	std::string uri_custom_arc_template;
 	std::string cu_subst;
 	std::string dune_params;
 
 	std::wstring get_stream_template() const { return utils::utf8_to_utf16(uri_template); }
+	std::wstring get_uri_addon() const { return utils::utf8_to_utf16(uri_addon); }
 	std::wstring get_stream_arc_template() const { return utils::utf8_to_utf16(uri_arc_template); }
 	std::wstring get_custom_stream_arc_template() const { return utils::utf8_to_utf16(uri_custom_arc_template); }
 	std::wstring get_shift_replace() const { return utils::utf8_to_utf16(cu_subst); }
 	std::wstring get_dune_params() const { return utils::utf8_to_utf16(dune_params); }
 
 	void set_uri_template(const std::wstring& value) { uri_template = utils::utf16_to_utf8(value); }
+	void set_uri_addon(const std::wstring& value) { uri_addon = utils::utf16_to_utf8(value); }
 	void set_uri_arc_template(const std::wstring& value) { uri_arc_template = utils::utf16_to_utf8(value); }
 	void set_uri_custom_arc_template(const std::wstring& value) { uri_custom_arc_template = utils::utf16_to_utf8(value); }
 	void set_shift_replace(const std::wstring& value) { cu_subst = utils::utf16_to_utf8(value); }
@@ -250,6 +259,7 @@ struct StreamParameters
 	{
 		SERIALIZE_STRUCT(j, c, stream_type);
 		SERIALIZE_STRUCT(j, c, uri_template);
+		SERIALIZE_STRUCT(j, c, uri_addon);
 		SERIALIZE_STRUCT(j, c, uri_arc_template);
 		SERIALIZE_STRUCT(j, c, uri_custom_arc_template);
 		SERIALIZE_STRUCT(j, c, cu_type);
@@ -262,6 +272,7 @@ struct StreamParameters
 	{
 		DESERIALIZE_STRUCT(j, c, stream_type);
 		DESERIALIZE_STRUCT(j, c, uri_template);
+		DESERIALIZE_STRUCT(j, c, uri_addon);
 		DESERIALIZE_STRUCT(j, c, uri_arc_template);
 		DESERIALIZE_STRUCT(j, c, uri_custom_arc_template);
 		DESERIALIZE_STRUCT(j, c, cu_type);
@@ -374,16 +385,31 @@ public:
 	void set_playlist_templates(const std::vector<PlaylistTemplateInfo>& val) { playlist_templates = val; }
 
 	/// <summary>
-	/// property uri id parse template
+	/// property current playlist template
 	/// </summary>
-	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
-	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
+	std::wstring get_current_playlist_template() const { return get_playlist_template(get_playlist_template_idx()); }
 
 	/// <summary>
 	/// property uri parse template
 	/// </summary>
-	std::wstring get_uri_parse_pattern() const { return utils::utf8_to_utf16(uri_parse_pattern); }
-	void set_uri_parse_pattern(const std::wstring& val) { uri_parse_pattern = utils::utf16_to_utf8(val); }
+	std::wstring get_uri_parse_pattern(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_parse_regex() : L""; }
+	void set_uri_parse_pattern(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_parse_regex(val); }
+
+	/// <summary>
+	/// property current parse pattern
+	/// </summary>
+	std::wstring get_current_parse_pattern() const { return get_uri_parse_pattern(get_playlist_template_idx()); }
+
+	/// <summary>
+	/// property uri id parse template
+	/// </summary>
+	std::wstring get_tag_id_match(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_tag_id_match() : L""; }
+	void set_tag_id_match(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_tag_id_match(val); }
+
+	/// <summary>
+	/// property current parse pattern
+	/// </summary>
+	std::wstring get_current_tag_id_match() const { return get_tag_id_match(get_playlist_template_idx()); }
 
 	/// <summary>
 	/// plugin supports vod
@@ -691,10 +717,10 @@ protected:
 	std::string provider_url;
 	// template url to load playlist
 	std::string playlist_template;
-	// tag to match to detect id
-	std::string tag_id_match;
 	// original uri parse template
 	std::string uri_parse_pattern;
+	// tag to match to detect id
+	std::string tag_id_match;
 
 	// enable vod
 	bool vod_support = false;

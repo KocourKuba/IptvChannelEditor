@@ -66,7 +66,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				{
 					if (entry->get_id().empty())
 					{
-						entry->search_id(m_parent_plugin->get_tag_id_match());
+						entry->search_id(m_parent_plugin->get_current_tag_id_match());
 						if (entry->get_id().empty())
 						{
 							entry->set_is_template(false);

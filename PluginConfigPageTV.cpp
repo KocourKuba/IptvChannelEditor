@@ -243,19 +243,30 @@ void CPluginConfigPageTV::FillControls()
 		m_wndPlaylistTemplates.AddString(entry.get_name().c_str());
 	}
 
-	int pl_idx = plugin->get_playlist_template_idx();
-	m_wndPlaylistTemplates.SetCurSel(pl_idx);
-	m_PlaylistTemplate = plugin->get_playlist_template(pl_idx).c_str();
-	m_ParseStream = plugin->get_uri_parse_pattern(pl_idx).c_str();
+	m_wndPlaylistTemplates.SetCurSel(plugin->get_playlist_template_idx());
+	FillPlaylistSettings();
 
-	if (plugin->get_tag_id_match().empty())
+	m_wndStreamType.SetCurSel(0);
+	FillControlsStream();
+	UpdateControls();
+}
+
+void CPluginConfigPageTV::FillPlaylistSettings()
+{
+	const auto& plugin = GetPropertySheet()->m_plugin;
+	if (!plugin) return;
+
+	m_PlaylistTemplate = plugin->get_current_playlist_template().c_str();
+	m_ParseStream = plugin->get_current_parse_pattern().c_str();
+
+	if (plugin->get_current_tag_id_match().empty())
 	{
 		m_wndCheckMapTags.SetCheck(FALSE);
 		m_wndTags.EnableWindow(FALSE);
 	}
 	else
 	{
-		int idx = m_wndTags.FindString(-1, plugin->get_tag_id_match().c_str());
+		int idx = m_wndTags.FindString(-1, plugin->get_current_tag_id_match().c_str());
 		if (idx != CB_ERR)
 		{
 			m_wndTags.EnableWindow(TRUE);
@@ -269,9 +280,7 @@ void CPluginConfigPageTV::FillControls()
 		}
 	}
 
-	m_wndStreamType.SetCurSel(0);
-	FillControlsStream();
-	UpdateControls();
+	UpdateData(FALSE);
 }
 
 void CPluginConfigPageTV::FillControlsStream()
@@ -423,7 +432,9 @@ void CPluginConfigPageTV::OnCbnSelchangeComboTags()
 	{
 		m_wndTags.GetLBText(m_wndTags.GetCurSel(), tag);
 	}
-	GetPropertySheet()->m_plugin->set_tag_id_match(tag.GetString());
+
+	int idx = m_wndPlaylistTemplates.GetCurSel();
+	GetPropertySheet()->m_plugin->set_tag_id_match(idx, tag.GetString());
 
 	AllowSave();
 }
@@ -434,8 +445,7 @@ void CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate()
 	auto& plugin = GetPropertySheet()->m_plugin;
 
 	plugin->set_playlist_template_idx(idx);
-	m_PlaylistTemplate = plugin->get_playlist_template(idx).c_str();
-	UpdateData(FALSE);
+	FillPlaylistSettings();
 }
 
 void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()

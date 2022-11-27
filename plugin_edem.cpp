@@ -45,6 +45,7 @@ void plugin_edem::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://epg.it999.ru/edem_epg_ico.m3u8";
+	info.parse_regex = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>.+)\/.*\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_EDEM_THEMATIC);
@@ -61,7 +62,6 @@ void plugin_edem::load_default()
 	access_type = AccountAccessType::enOtt;
 
 	provider_url = "https://ilook.tv/";
-	uri_parse_pattern = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>.+)\/.*\.m3u8$)";
 
 	streams_config[0].uri_template = "http://{SUBDOMAIN}/iptv/{TOKEN}/{ID}/index.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";

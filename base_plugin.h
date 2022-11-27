@@ -124,7 +124,7 @@ public:
 	/// regex string can contain named groups that will be extracted
 	/// </summary>
 
-	const boost::wregex& get_regex_parse_stream_template() const { return regex_uri_template; }
+	const boost::wregex& get_regex_parse_stream() const { return regex_uri_template; }
 	void set_regex_parse_stream(const std::wstring& val);
 
 	/// <summary>
@@ -210,7 +210,7 @@ public:
 	/// parse uri to get id
 	/// </summary>
 	/// <param name="url"></param>
-	virtual void parse_stream_uri(const std::wstring& url, uri_stream* info);
+	void parse_stream_uri(const std::wstring& url, uri_stream* info);
 
 	/// <summary>
 	/// parse access info

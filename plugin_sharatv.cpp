@@ -49,9 +49,8 @@ void plugin_sharatv::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
+	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
-
-	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";

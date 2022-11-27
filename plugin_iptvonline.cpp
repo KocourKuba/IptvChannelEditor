@@ -49,9 +49,8 @@ void plugin_iptvonline::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://iptv.online/play/{PASSWORD}/m3u8";
+	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 	playlist_templates.emplace_back(info);
-
-	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 
 	square_icons = true;
 

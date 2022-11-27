@@ -55,9 +55,8 @@ void plugin_antifriz::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 	playlist_templates.emplace_back(info);
-
-	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].cu_subst = "video";

@@ -67,9 +67,8 @@ void plugin_sharaclub::load_default()
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
 	info.pl_template = "http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
+	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
-
-	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 
 	streams_config[0].cu_type = CatchupType::cu_append;
 	streams_config[0].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";

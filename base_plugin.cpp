@@ -42,8 +42,6 @@ bool base_plugin::save_plugin_parameters(const std::wstring& filename, bool use_
 void base_plugin::load_plugin_parameters(const std::wstring& filename)
 {
 	plugin_config::load_plugin_parameters(filename);
-
-	set_regex_parse_stream(get_uri_parse_pattern());
 }
 
 void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
@@ -51,7 +49,7 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 	info->set_uri(url);
 
 	boost::wsmatch m;
-	if (!boost::regex_match(url, m, get_regex_parse_stream_template()))
+	if (!boost::regex_match(url, m, regex_uri_template))
 	{
 		info->set_is_template(false);
 		return;
@@ -70,6 +68,8 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 
 std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring url /*= L""*/)
 {
+	set_regex_parse_stream(get_uri_parse_pattern(params.playlist_idx));
+
 	if (url.empty())
 		url = get_playlist_template(params.playlist_idx);
 

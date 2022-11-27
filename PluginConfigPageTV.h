@@ -49,6 +49,8 @@ protected:
 	void AssignMacros();
 	void FillControls() override;
 
+	void FillPlaylistSettings();
+
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnBnClickedButtonEditTemplates();

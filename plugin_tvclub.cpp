@@ -57,9 +57,8 @@ void plugin_tvclub::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://celn.shott.top/p/{TOKEN}";
+	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	playlist_templates.emplace_back(info);
-
-	uri_parse_pattern = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 
 	streams_config[1].cu_type = CatchupType::cu_append;
 	streams_config[1].cu_subst = "utc";

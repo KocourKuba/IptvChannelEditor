@@ -12,8 +12,8 @@ void plugin_config::clear()
 	provider_url.clear();
 	playlist_template.clear();
 	playlist_templates.clear();
-	tag_id_match.clear();
 	uri_parse_pattern.clear();
+	tag_id_match.clear();
 	vod_templates.clear();
 	servers_list.clear();
 	qualities_list.clear();
@@ -64,7 +64,18 @@ void plugin_config::set_plugin_defaults(PluginType val)
 
 void plugin_config::set_current_playlist_info()
 {
-	playlist_template = (playlist_template_index != -1 && playlist_template_index < playlist_templates.size()) ? playlist_templates[playlist_template_index].pl_template : "";
+	if (playlist_template_index != -1 && playlist_template_index < playlist_templates.size())
+	{
+		playlist_template = playlist_templates[playlist_template_index].pl_template;
+		uri_parse_pattern = playlist_templates[playlist_template_index].parse_regex;
+		tag_id_match = playlist_templates[playlist_template_index].tag_id_match;
+	}
+	else
+	{
+		playlist_template.clear();
+		uri_parse_pattern.clear();
+		tag_id_match.clear();
+	}
 }
 
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
