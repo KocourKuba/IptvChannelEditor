@@ -27,6 +27,8 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "MenuEdit.h"
 #include "TooltipPropertyPage.h"
+#include "PluginConfigPropertySheet.h"
+#include "plugin_config.h"
 
 class CPluginConfigPageEPG : public CTooltipPropertyPage
 {
@@ -72,6 +74,16 @@ private:
 	void UpdateControls();
 	void UpdateDateTimestamp(bool dateToUtc);
 	EpgParameters& GetEpgParameters();
+
+	void AllowSave(bool val = true)
+	{
+		GetPropertySheet()->AllowSave(val);
+	}
+
+	CPluginConfigPropertySheet* GetPropertySheet()
+	{
+		return DYNAMIC_DOWNCAST(CPluginConfigPropertySheet, GetParent());
+	}
 
 protected:
 	CDateTimeCtrl m_wndDate;

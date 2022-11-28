@@ -381,8 +381,10 @@ public:
 	/// <summary>
 	/// property playlist templates
 	/// </summary>
-	const std::vector <PlaylistTemplateInfo>& get_playlist_templates() const { return playlist_templates; }
-	void set_playlist_templates(const std::vector<PlaylistTemplateInfo>& val) { playlist_templates = val; }
+	const std::vector <PlaylistTemplateInfo>& get_playlist_infos() const { return playlist_templates; }
+	void set_playlist_infos(const std::vector<PlaylistTemplateInfo>& val) { playlist_templates = val; }
+
+	const PlaylistTemplateInfo& get_playlist_info(int idx) const;
 
 	/// <summary>
 	/// property current playlist template

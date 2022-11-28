@@ -71,11 +71,6 @@ BOOL CTooltipPropertyPage::OnApply()
 	return TRUE;
 }
 
-CResizedPropertySheet* CTooltipPropertyPage::GetPropertySheet()
-{
-	return DYNAMIC_DOWNCAST(CResizedPropertySheet, GetParent());
-}
-
 BOOL CTooltipPropertyPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// if there is a top level routing frame then let it handle the message
@@ -116,9 +111,4 @@ void CTooltipPropertyPage::AddTooltip(UINT ctrlID, UINT textID)
 	CWnd* wnd = GetDlgItem(ctrlID);
 	m_tooltips_info.emplace(wnd, load_string_resource(textID));
 	m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
-}
-
-void CTooltipPropertyPage::AllowSave(bool val /*= true*/)
-{
-	GetPropertySheet()->AllowSave(val);
 }

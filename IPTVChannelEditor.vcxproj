@@ -241,6 +241,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="PluginConfigPageEPG.h" />
     <ClInclude Include="PluginConfigPageTV.h" />
     <ClInclude Include="PluginConfigPageVOD.h" />
+    <ClInclude Include="PluginConfigPropertySheet.h" />
     <ClInclude Include="TooltipPropertyPage.h" />
     <ClInclude Include="PluginDefines.h" />
     <ClInclude Include="ThreadConfig.h" />
@@ -348,6 +349,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PluginConfigPageEPG.cpp" />
     <ClCompile Include="PluginConfigPageTV.cpp" />
     <ClCompile Include="PluginConfigPageVOD.cpp" />
+    <ClCompile Include="PluginConfigPropertySheet.cpp" />
     <ClCompile Include="TooltipPropertyPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
     <ClCompile Include="StreamContainer.cpp" />

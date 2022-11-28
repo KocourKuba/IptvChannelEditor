@@ -205,7 +205,7 @@ void CPluginConfigPageTV::UpdateControls()
 {
 	UpdateData(TRUE);
 
-	bool enable = GetPropertySheet()->m_allow_edit;
+	bool enable = !GetPropertySheet()->GetSelectedConfig().empty();
 
 	// common
 	m_wndPlaylistTemplates.EnableWindow(enable);
@@ -238,7 +238,7 @@ void CPluginConfigPageTV::FillControls()
 	m_wndChkPerChannelToken.SetCheck(plugin->get_per_channel_token() != false);
 
 	m_wndPlaylistTemplates.ResetContent();
-	for (const auto& entry : plugin->get_playlist_templates())
+	for (const auto& entry : plugin->get_playlist_infos())
 	{
 		m_wndPlaylistTemplates.AddString(entry.get_name().c_str());
 	}
@@ -451,7 +451,7 @@ void CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate()
 void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
 {
 	std::vector<DynamicParamsInfo> info;
-	for (const auto& item : GetPropertySheet()->m_plugin->get_playlist_templates())
+	for (const auto& item : GetPropertySheet()->m_plugin->get_playlist_infos())
 	{
 		info.emplace_back(item.name, item.pl_template);
 	}
@@ -459,7 +459,7 @@ void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = 4;
 	dlg.m_paramsList = std::move(info);
-	dlg.m_readonly = !GetPropertySheet()->m_allow_edit;
+	dlg.m_readonly = !GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -468,7 +468,7 @@ void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
 		{
 			playlists.emplace_back(item.id, item.name);
 		}
-		GetPropertySheet()->m_plugin->set_playlist_templates(playlists);
+		GetPropertySheet()->m_plugin->set_playlist_infos(playlists);
 
 		FillControls();
 		AllowSave();

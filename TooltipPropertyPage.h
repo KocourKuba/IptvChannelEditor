@@ -1,5 +1,5 @@
 #pragma once
-#include "ResizedPropertySheet.h"
+#include "PluginConfigPropertySheet.h"
 
 class CTooltipPropertyPage : public CMFCPropertyPage
 {
@@ -23,9 +23,7 @@ public:
 
 protected:
 
-	CResizedPropertySheet* GetPropertySheet();
 	void AddTooltip(UINT ctrlID, UINT textID);
-	void AllowSave(bool val = true);
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;

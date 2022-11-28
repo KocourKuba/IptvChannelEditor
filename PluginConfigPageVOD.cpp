@@ -130,7 +130,7 @@ void CPluginConfigPageVOD::UpdateControls()
 {
 	UpdateData(TRUE);
 
-	bool enable = GetPropertySheet()->m_allow_edit;
+	bool enable = !GetPropertySheet()->GetSelectedConfig().empty();
 
 	bool enableVod = m_wndChkEnableVOD.GetCheck() != 0;
 	bool enableM3U = m_wndChkVodM3U.GetCheck() != 0;
@@ -300,7 +300,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = 4;
 	dlg.m_paramsList = std::move(info);
-	dlg.m_readonly = !GetPropertySheet()->m_allow_edit;
+	dlg.m_readonly = !GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{

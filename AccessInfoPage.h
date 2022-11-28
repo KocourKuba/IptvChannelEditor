@@ -28,6 +28,8 @@ DEALINGS IN THE SOFTWARE.
 #include "EditableListCtrl.h"
 #include "CMFCEditBrowsCtrlEx.h"
 #include "TooltipPropertyPage.h"
+#include "Credentials.h"
+#include "uri_stream.h"
 
 class CAccessInfoPage : public CTooltipPropertyPage
 {
@@ -99,6 +101,12 @@ public:
 
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
+
+	Credentials m_initial_cred;
+	uri_stream* m_CurrentStream = nullptr;
+	std::vector<std::wstring> m_all_channels_lists;
+	std::shared_ptr<base_plugin> m_plugin;
+	std::vector<std::wstring> m_configs;
 
 protected:
 	CButton m_wndRemove;

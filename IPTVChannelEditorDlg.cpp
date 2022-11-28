@@ -31,6 +31,8 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
 #include "AboutDlg.h"
+#include "PluginConfigPropertySheet.h"
+#include "ResizedPropertySheet.h"
 #include "MainSettingsPage.h"
 #include "PathsSettingsPage.h"
 #include "UpdateSettingsPage.h"
@@ -719,7 +721,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndStreamType.EnableWindow(m_wndStreamType.GetCount() > 1);
 
 	// Set selected playlist
-	m_playlist_info = m_plugin->get_playlist_templates();
+	m_playlist_info = m_plugin->get_playlist_infos();
 	if (m_plugin->get_plugin_type() == PluginType::enCustom)
 	{
 		UINT ID = IDS_STRING_CUSTOM_PLAYLIST;
@@ -738,15 +740,13 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndPlaylist.ResetContent();
 	for (const auto& playlist : m_playlist_info)
 	{
-		int idx = m_wndPlaylist.AddString(playlist.get_name().c_str());
-		m_wndPlaylist.SetItemData(idx, (DWORD_PTR)&playlist);
+		m_wndPlaylist.AddString(playlist.get_name().c_str());
 	}
 
 	int pl_idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	if (pl_idx >= m_wndPlaylist.GetCount() || pl_idx < 0)
 		pl_idx = 0;
 
-	const auto& pl_info = ((PlaylistTemplateInfo*)m_wndPlaylist.GetItemData(pl_idx));
 	m_wndPlaylist.SetCurSel(pl_idx);
 	m_wndPlaylist.EnableWindow(TRUE);
 
@@ -932,12 +932,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		params.token = m_plugin->get_api_token(m_cur_account);
 	}
 
-	const auto& pl_info = ((PlaylistTemplateInfo*)m_wndPlaylist.GetItemData(idx));
+	const auto& info = m_plugin->get_playlist_info(idx);
 
 	std::wstring url;
 	BOOL is_file = FALSE;
 	m_plFileName.clear();
-	if (pl_info->is_custom)
+	if (info.is_custom)
 	{
 		url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST);
 		is_file = GetConfig().get_int(false, REG_CUSTOM_PL_FILE);
@@ -3202,24 +3202,26 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(m_all_configs_lists, REG_ACC_WINDOW_POS);
+	auto pSheet = std::make_unique<CResizedPropertySheet>(REG_ACC_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
-	pSheet->m_plugin = StreamContainer::get_instance(m_plugin_type);
-	pSheet->m_plugin->copy(m_plugin.get());
-	pSheet->m_initial_cred = m_cur_account;
-	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 
 	CAccessInfoPage dlgInfo;
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
+	dlgInfo.m_plugin = StreamContainer::get_instance(m_plugin_type);
+	dlgInfo.m_plugin->copy(m_plugin.get());
+	dlgInfo.m_initial_cred = m_cur_account;
+	dlgInfo.m_configs = m_all_configs_lists;
+	dlgInfo.m_all_channels_lists = m_all_channels_lists;
+	dlgInfo.m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 
 	pSheet->AddPage(&dlgInfo);
 
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
 	{
-		m_cur_account = pSheet->m_initial_cred;
-		m_plugin->copy(pSheet->m_plugin.get());
+		m_cur_account = dlgInfo.m_initial_cred;
+		m_plugin->copy(dlgInfo.m_plugin.get());
 		GetConfig().UpdatePluginSettings();
 		PostMessage(WM_SWITCH_PLUGIN);
 	}
@@ -4563,9 +4565,10 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 		return;
 
 	GetConfig().set_int(false, REG_PLAYLIST_TYPE, idx);
+	m_plugin->set_playlist_template_idx(idx);
 
-	const auto& pl_info = ((PlaylistTemplateInfo*)m_wndPlaylist.GetItemData(idx));
-	m_wndBtnAddPlaylist.EnableWindow(pl_info->is_custom);
+	const auto& info = m_plugin->get_playlist_info(idx);
+	m_wndBtnAddPlaylist.EnableWindow(info.is_custom);
 	LoadPlaylist();
 }
 
@@ -5185,12 +5188,14 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(m_all_configs_lists, REG_PLUGIN_CFG_WINDOW_POS);
+	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
-	pSheet->m_plugin = m_plugin;
+	pSheet->m_plugin = StreamContainer::get_instance(m_plugin_type);
+	pSheet->m_plugin->copy(m_plugin.get());
 	pSheet->m_initial_cred = m_cur_account;
 	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
+	pSheet->m_configs = m_all_configs_lists;
 	pSheet->m_configPages = true;
 
 	CPluginConfigPage dlgCfg;
@@ -5212,6 +5217,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 
 	if (IDOK == pSheet->DoModal())
 	{
+		m_plugin->copy(pSheet->m_plugin.get());
 		GetConfig().UpdatePluginSettings();
 		PostMessage(WM_SWITCH_PLUGIN);
 	}

@@ -78,6 +78,16 @@ void plugin_config::set_current_playlist_info()
 	}
 }
 
+const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
+{
+	if (idx != -1 && idx < (int)playlist_templates.size())
+	{
+		idx = 0;
+	}
+
+	return playlist_templates[idx];
+}
+
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
 {
 	std::filesystem::path full_path;

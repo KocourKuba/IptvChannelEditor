@@ -44,6 +44,8 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma comment(lib, "Winhttp.lib")
 
+#define MAX_URL_LENGTH 2100
+
 namespace utils
 {
 
@@ -218,7 +220,7 @@ bool CurlDownload(const std::wstring& url,
 				  const char* post_data /*= nullptr*/
 )
 {
-	const auto& url_narrow = utils::utf16_to_utf8(url);
+	auto& url_narrow = utils::utf16_to_utf8(url);
 	std::string hash_str = url_narrow;
 	if (post_data)
 		hash_str += post_data;
@@ -253,7 +255,11 @@ bool CurlDownload(const std::wstring& url,
 		curl::curl_ios<std::stringstream> writer(vData);
 		curl::curl_easy easy(writer);
 
-		easy.add<CURLOPT_URL>(utils::utf16_to_utf8(url).c_str());
+		wchar_t szEscaped[MAX_URL_LENGTH]{};
+		DWORD dwEscaped = MAX_URL_LENGTH;
+		UrlEscapeW(url.c_str(), szEscaped, &dwEscaped, URL_BROWSER_MODE|URL_ESCAPE_AS_UTF8);
+
+		easy.add<CURLOPT_URL>(utils::utf16_to_utf8(szEscaped, dwEscaped).c_str());
 		easy.add<CURLOPT_FOLLOWLOCATION>(1L);
 		easy.add<CURLOPT_HTTPAUTH>(CURLAUTH_ANY);
 		easy.add<CURLOPT_SSL_VERIFYPEER>(0);
@@ -293,7 +299,7 @@ bool CurlDownload(const std::wstring& url,
 		auto errors = error.get_traceback();
 		for (const auto& err : errors)
 		{
-			ATLTRACE("\nERROR: %s ::::: FUNCTION: %s\n", err.first, err.second);
+			ATLTRACE("\nERROR: %s ::::: FUNCTION: %s\n", err.first.c_str(), err.second.c_str());
 		}
 		return false;
 	}

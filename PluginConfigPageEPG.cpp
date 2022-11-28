@@ -178,7 +178,7 @@ void CPluginConfigPageEPG::UpdateControls()
 {
 	UpdateData(TRUE);
 
-	bool enable = GetPropertySheet()->m_allow_edit;
+	bool enable = !GetPropertySheet()->GetSelectedConfig().empty();
 
 	// epg
 	m_wndEpgType.EnableWindow(enable);
