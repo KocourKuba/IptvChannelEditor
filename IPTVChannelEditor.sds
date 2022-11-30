@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="195" scanned="20221126113739" built="20221126113800" lang="ru" pane="TLogPane" col="4" row="Dialogs.110.1008.Text">
+<desktop scan="198" scanned="20221130210016" built="20221130210053" lang="ru" pane="TLogPane" col="4" row="Strings.23.IDS_STRING_EDIT_DUNE_PARAMS">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="4"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

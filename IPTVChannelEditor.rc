@@ -1897,7 +1897,7 @@ BEGIN
     IDS_STRING_VOD_MIN      "\\b Time: \\b0 {:d} min"
     IDS_STRING_VOD_HOUR_MIN "\\b Time: \\b0 {:d} hour(s) {:d} min"
     IDS_STRING_EDIT_DUNE_PARAMS 
-                            "Additional Dune player parameters separated by ||| for information see: Dune SDK"
+                            "Additional Dune player parameters separated by comma for information see: Dune SDK"
 END
 
 #endif    // English (United States) resources
