@@ -300,7 +300,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = 4;
 	dlg.m_paramsList = std::move(info);
-	dlg.m_readonly = !GetPropertySheet()->GetSelectedConfig().empty();
+	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{

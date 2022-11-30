@@ -1063,11 +1063,11 @@ END
 IDD_DIALOG_FILL_PARAMS AFX_DIALOG_LAYOUT
 BEGIN
     0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 100, 50,
-    0, 0, 0, 0,
-    0, 0, 0, 0
+    50, 100, 0, 0,
+    50, 100, 0, 0,
+    0, 0, 100, 100,
+    0, 100, 0, 0,
+    0, 100, 0, 0
 END
 
 IDD_DIALOG_NEW_CONFIG AFX_DIALOG_LAYOUT

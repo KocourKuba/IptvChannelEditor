@@ -193,7 +193,7 @@ void CPluginConfigPage::OnBnClickedButtonEditServers()
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = 0;
 	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_servers_list();
-	dlg.m_readonly = !GetPropertySheet()->GetSelectedConfig().empty();
+	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -207,7 +207,7 @@ void CPluginConfigPage::OnBnClickedButtonEditDevices()
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = 1;
 	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_devices_list();
-	dlg.m_readonly = !GetPropertySheet()->GetSelectedConfig().empty();
+	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -221,7 +221,7 @@ void CPluginConfigPage::OnBnClickedButtonEditQuality()
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = 2;
 	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_qualities_list();
-	dlg.m_readonly = !GetPropertySheet()->GetSelectedConfig().empty();
+	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -235,7 +235,7 @@ void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = 3;
 	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_profiles_list();
-	dlg.m_readonly = !GetPropertySheet()->GetSelectedConfig().empty();
+	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
