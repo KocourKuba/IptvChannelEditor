@@ -111,14 +111,14 @@ class HD
         if (is_array($opts)) {
             foreach ($opts as $k => $v) {
                 if (is_array($v)) {
-                    hd_print(str_repeat(' ', $ident) . "parameter: $k : array");
+                    hd_print(str_repeat(' ', $ident) . "$k : array");
                     self::print_array($v, $ident + 4);
                 } else {
-                    hd_print(str_repeat(' ', $ident) . "parameter: $k : $v");
+                    hd_print(str_repeat(' ', $ident) . "$k : $v");
                 }
             }
         } else {
-            hd_print(str_repeat(' ', $ident) . "parameter: $opts");
+            hd_print(str_repeat(' ', $ident) . $opts);
         }
     }
 
@@ -459,12 +459,13 @@ class HD
      */
     public static function get_items($path, $preserve_keys = false, $json = true)
     {
-        $full_path = get_data_path($path);
-        if (file_exists($full_path)) {
-            $contents = file_get_contents($full_path);
+        $path = get_data_path($path);
+        if (file_exists($path)) {
+            $contents = file_get_contents($path);
             $items = $json ? json_decode($contents, true) : unserialize($contents);
             $items = is_null($items) ? array() : $items;
         } else {
+            hd_print("$path not exist");
             $items = array();
         }
 
@@ -478,7 +479,9 @@ class HD
     public static function put_items($path, $items, $json = true)
     {
         $data = $json ? json_encode($items) : serialize($items);
-        file_put_contents(get_data_path($path), $data);
+        $path = get_data_path($path);
+        $written = file_put_contents($path, $data);
+        hd_print("$written bytes written to $path");
     }
 
     /**
@@ -488,6 +491,7 @@ class HD
     {
         $path = get_data_path($path);
         if (file_exists($path)) {
+            hd_print("$path deleted");
             unlink($path);
         }
     }

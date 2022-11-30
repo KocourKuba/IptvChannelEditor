@@ -112,6 +112,8 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("Daylight          " . (date('I') ? 'yes' : 'no'));
         hd_print("Icon              " . $this->plugin_info['app_logo']);
         hd_print("Background        " . $this->plugin_info['app_background']);
+        hd_print("New UI support    " . ($this->new_ui_support ? "yes" : "no"));
+        hd_print("History support   " . ($this->history_support ? "yes" : "no"));
         hd_print("Channels path     " . $this->plugin_info['app_channels_url_path']);
         hd_print("----------------------------------------------------");
     }

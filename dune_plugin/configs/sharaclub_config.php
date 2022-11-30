@@ -132,13 +132,12 @@ class sharaclub_config extends default_config
     }
 
     /**
-     * @param string $type
      * @param $plugin_cookies
      * @return string
      */
-    protected function GetPlaylistUrl($type, $plugin_cookies)
+    protected function GetPlaylistUrl($plugin_cookies)
     {
-        $url = parent::GetPlaylistUrl($type, $plugin_cookies);
+        $url = parent::GetPlaylistUrl($plugin_cookies);
 
         $id = $this->get_profile_id($plugin_cookies);
         $url .= (empty($id) ? "" : "/" . $id);

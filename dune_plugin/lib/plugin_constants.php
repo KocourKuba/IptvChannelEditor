@@ -28,18 +28,18 @@ class Plugin_Constants
     const /* (char *) */ ACCESS_TYPE = 'access_type';
     const /* (char *) */ SHORT_NAME = 'short_name';
     const /* (bool)   */ SQUARE_ICONS = 'square_icons';
-    const /* (char *) */ PLAYLIST_TEMPLATE = 'playlist_template';
-    const /* (char *) */ PLAYLIST_TEMPLATE2 = 'playlist_template2';
-    const /* (char *) */ URI_PARSE_PATTERN = 'uri_parse_pattern';
-    const /* (char *) */ TAG_ID_MATCH = 'tag_id_match';
+    const /* (array ) */ PLAYLIST_TEMPLATES = 'playlist_templates';
+    const /* (int )   */ PLAYLIST_TEMPLATE_INDEX = 'playlist_template_index';
 
     const /* (char *) */ VOD_SUPPORTED = 'vod_support';
     const /* (bool)   */ VOD_M3U = 'vod_m3u';
     const /* (array)  */ VOD_TEMPLATES = 'vod_templates';
     const /* (int)    */ VOD_TEMPLATES_INDEX = 'vod_template_index';
-    const /* (char*)  */ VOD_TEMPLATE = 'pl_template';
-    const /* (char*)  */ VOD_PARSE_REGEX = 'parse_regex';
-    const /* (char*)  */ VOD_NAME = 'name';
+
+    const /* (char*)  */ PLAYLIST_NAME = 'name';
+    const /* (char *) */ URI_TEMPLATE = 'pl_template';
+    const /* (char *) */ PARSE_REGEX = 'parse_regex';
+    const /* (char *) */ TAG_ID_MATCH = 'tag_id_match';
 
     // streams parameters
     const /* array */ STREAMS_CONFIG = 'streams_config';

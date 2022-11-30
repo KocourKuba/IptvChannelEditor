@@ -28,10 +28,11 @@ class dynamic_config
 
         $this->features[Plugin_Constants::ACCESS_TYPE] = Plugin_Constants::ACCOUNT_UNKNOWN;
         $this->features[Plugin_Constants::SQUARE_ICONS] = false;
-        $this->features[Plugin_Constants::PLAYLIST_TEMPLATE] = '';
-        $this->features[Plugin_Constants::URI_PARSE_PATTERN] = '';
         $this->features[Plugin_Constants::VOD_SUPPORTED] = false;
         $this->features[Plugin_Constants::VOD_M3U] = false;
+
+        $this->features[Plugin_Constants::PLAYLIST_TEMPLATE_INDEX] = 0;
+        $this->features[Plugin_Constants::VOD_TEMPLATES_INDEX] = 0;
 
         // load defaults
         $default_streams = array();
@@ -80,9 +81,8 @@ class dynamic_config
         $this->PluginShortName = $settings[Plugin_Constants::SHORT_NAME];
         $this->set_feature(Plugin_Constants::ACCESS_TYPE, $settings[Plugin_Constants::ACCESS_TYPE]);
         $this->set_feature(Plugin_Constants::SQUARE_ICONS, $settings[Plugin_Constants::SQUARE_ICONS]);
-        $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATE, $settings[Plugin_Constants::PLAYLIST_TEMPLATE]);
-        $this->set_feature(Plugin_Constants::URI_PARSE_PATTERN, $settings[Plugin_Constants::URI_PARSE_PATTERN]);
-        $this->set_feature(Plugin_Constants::TAG_ID_MATCH, $settings[Plugin_Constants::TAG_ID_MATCH]);
+        $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATES, $settings[Plugin_Constants::PLAYLIST_TEMPLATES]);
+        $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX, $settings[Plugin_Constants::PLAYLIST_TEMPLATE_INDEX]);
         $this->set_feature(Plugin_Constants::VOD_SUPPORTED, $settings[Plugin_Constants::VOD_SUPPORTED]);
         $this->set_feature(Plugin_Constants::VOD_M3U, $settings[Plugin_Constants::VOD_M3U]);
         $this->set_feature(Plugin_Constants::VOD_TEMPLATES, $settings[Plugin_Constants::VOD_TEMPLATES]);
@@ -126,6 +126,8 @@ class dynamic_config
             $profiles[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_profiles($profiles);
+
+        //HD::print_array($this->features);
     }
 
     /**
@@ -134,7 +136,7 @@ class dynamic_config
      */
     public function get_feature($type)
     {
-        return empty($this->features[$type]) ? null : $this->features[$type];
+        return isset($this->features[$type]) ? $this->features[$type] : null;
     }
 
     /**
@@ -152,7 +154,7 @@ class dynamic_config
      */
     public function get_stream_params($type)
     {
-        return empty($this->stream_params[$type]) ? array() : $this->stream_params[$type];
+        return isset($this->stream_params[$type]) ? $this->stream_params[$type] : array();
     }
 
     /**

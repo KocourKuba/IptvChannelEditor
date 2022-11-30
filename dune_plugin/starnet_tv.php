@@ -737,20 +737,21 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Starnet_Tv: handle_user_input');
-        foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        //hd_print('Starnet_Tv: handle_user_input');
+        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->control_id)) {
             return null;
         }
 
+        if ($this->plugin->history_support && isset($user_input->plugin_tv_channel_id)) {
+            Playback_Points::update($user_input->plugin_tv_channel_id);
+        }
+
         if ($user_input->control_id === GUI_EVENT_PLAYBACK_STOP
             && (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed))) {
 
-            if ($this->plugin->history_support && isset($user_input->plugin_tv_channel_id)) {
-                Playback_Points::update($user_input->plugin_tv_channel_id);
-            }
-
+            Playback_Points::save();
             Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
             return Starnet_Epfs_Handler::invalidate_folders();
         }

@@ -356,11 +356,6 @@ public:
 	void set_access_type(AccountAccessType val) { access_type = val; }
 
 	/// <summary>
-	/// active playlist template
-	/// </summary>
-	void set_current_playlist_info();
-
-	/// <summary>
 	/// property link to provider account
 	/// </summary>
 	std::wstring get_provider_url() const { return utils::utf8_to_utf16(provider_url); }
@@ -644,9 +639,6 @@ public:
 		SERIALIZE_STRUCT(j, c, provider_url);
 		SERIALIZE_STRUCT(j, c, playlist_templates);
 		SERIALIZE_STRUCT(j, c, playlist_template_index);
-		SERIALIZE_STRUCT(j, c, playlist_template);
-		SERIALIZE_STRUCT(j, c, tag_id_match);
-		SERIALIZE_STRUCT(j, c, uri_parse_pattern);
 		SERIALIZE_STRUCT(j, c, vod_support); //-V601
 		SERIALIZE_STRUCT(j, c, vod_m3u); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
@@ -676,9 +668,6 @@ public:
 		DESERIALIZE_STRUCT(j, c, provider_url);
 		DESERIALIZE_STRUCT(j, c, playlist_templates);
 		DESERIALIZE_STRUCT(j, c, playlist_template_index);
-		DESERIALIZE_STRUCT(j, c, playlist_template);
-		DESERIALIZE_STRUCT(j, c, tag_id_match);
-		DESERIALIZE_STRUCT(j, c, uri_parse_pattern);
 		DESERIALIZE_STRUCT(j, c, vod_support);
 		DESERIALIZE_STRUCT(j, c, vod_m3u);
 		DESERIALIZE_STRUCT(j, c, vod_filter);
@@ -717,12 +706,6 @@ protected:
 	std::string name;
 	// url to provider account
 	std::string provider_url;
-	// template url to load playlist
-	std::string playlist_template;
-	// original uri parse template
-	std::string uri_parse_pattern;
-	// tag to match to detect id
-	std::string tag_id_match;
 
 	// enable vod
 	bool vod_support = false;

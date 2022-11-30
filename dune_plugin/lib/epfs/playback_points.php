@@ -36,21 +36,22 @@ class Playback_Points
      */
     private function update_point($id)
     {
-        if (($this->curr_point_id === null && $id === null) || !class_exists("PluginRowsFolderView"))
+        //hd_print("Playback_Points::update_point");
+
+        if ($this->curr_point_id === null && $id === null)
             return;
 
         // update point for selected channel
         $id = ($id === null) ? $id : $this->curr_point_id;
 
-        // if channel does support archive do not update current point
-        if (isset($this->points[$id]) && $this->points[$id] !== 0) {
+        if (isset($this->points[$id])) {
             $player_state = get_player_state_assoc();
             if (isset($player_state['playback_state'], $player_state['playback_position'])
                 && ($player_state['playback_state'] === PLAYBACK_PLAYING || $player_state['playback_state'] === PLAYBACK_STOPPED)) {
 
-                $this->points[$id] += $player_state['playback_position'];
+                // if channel does support archive do not update current point
+                $this->points[$id] += ($this->points[$id] !== 0) ? $player_state['playback_position'] : 0;
                 hd_print("Playback_Points::update_point channel_id $id at time mark: {$this->points[$id]}");
-                HD::put_items(self::TV_HISTORY_ITEMS, $this->points);
             }
         }
     }
@@ -62,11 +63,10 @@ class Playback_Points
     private function push_point($channel_id, $archive_ts)
     {
         $player_state = get_player_state_assoc();
-
         if (isset($player_state['player_state']) && $player_state['player_state'] !== 'navigator') {
             if (!isset($player_state['last_playback_event']) || ($player_state['last_playback_event'] !== PLAYBACK_PCR_DISCONTINUITY)) {
 
-                hd_print("Playback_Points::push_point channel_id $channel_id, time mark: $archive_ts");
+                hd_print("Playback_Points::push_point channel_id $channel_id time mark: $archive_ts");
                 $this->curr_point_id = $channel_id;
 
                 if (isset($this->points[$channel_id])) {
@@ -78,6 +78,14 @@ class Playback_Points
                 }
             }
         }
+    }
+
+    /**
+     */
+    private function save_points()
+    {
+        hd_print("Playback_Points::save_points: " . count($this->points));
+        HD::put_items(self::TV_HISTORY_ITEMS, $this->points);
     }
 
     /**
@@ -142,6 +150,16 @@ class Playback_Points
             self::init();
 
         self::$instance->push_point($channel_id, $archive_ts);
+    }
+
+    /**
+     */
+    public static function save()
+    {
+        if (is_null(self::$instance))
+            self::init();
+
+        self::$instance->save_points();
     }
 
     /**
