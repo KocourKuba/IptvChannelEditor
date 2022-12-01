@@ -492,7 +492,7 @@ void base_plugin::put_account_info(const std::string& name, const nlohmann::json
 		info.name = std::move(utils::utf8_to_utf16(name));
 		if (js_param.is_boolean())
 		{
-			info.value = load_string_resource(js_param.get<bool>() ? IDS_STRING_YES : IDS_STRING_NO).c_str();
+			info.value = load_string_resource(js_param.get<bool>() ? IDS_STRING_YES : IDS_STRING_NO);
 		}
 		else if (js_param.is_number_integer())
 		{

@@ -38,7 +38,7 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 
 	GetWindowRect(m_min_rc);
 
-	m_min_rc.InflateRect(0, 0, 0, m_nHeaderHeight);
+	m_min_rc.InflateRect(0, 0, 0, m_gapHeight);
 	MoveWindow(m_min_rc);
 
 	CRect rcCombo(CPoint(7, 7), CSize(115, 30));
@@ -67,7 +67,7 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 	::GetWindowRect(hWnd, &rectOld);
 	ScreenToClient(&rectOld);
 	::SetWindowPos(hWnd, nullptr,
-				   rectOld.left, rectOld.top + m_nHeaderHeight, rectOld.Width(), rectOld.Height(),
+				   rectOld.left, rectOld.top + m_gapHeight, rectOld.Width(), rectOld.Height(),
 				   SWP_NOZORDER | SWP_NOACTIVATE);
 
 	hWnd = (HWND)GetActivePage()->m_hWnd; // m_Page1 is assumed to be the first page
@@ -77,7 +77,7 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 	::GetWindowRect(hWnd, &rectOld);
 	ScreenToClient(&rectOld);
 	::SetWindowPos(hWnd, nullptr,
-				   rectOld.left, rectOld.top + m_nHeaderHeight, rectOld.Width(), rectOld.Height(),
+				   rectOld.left, rectOld.top + m_gapHeight, rectOld.Width(), rectOld.Height(),
 				   SWP_NOZORDER | SWP_NOACTIVATE);
 
 	int _PropSheetButtons[] = { IDOK, IDCANCEL };
@@ -89,7 +89,7 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 			::GetWindowRect(hWnd, &rectOld);
 			ScreenToClient(&rectOld);
 			::SetWindowPos(hWnd, nullptr,
-						   rectOld.left, rectOld.top + m_nHeaderHeight, rectOld.Width(), rectOld.Height(),
+						   rectOld.left, rectOld.top + m_gapHeight, rectOld.Width(), rectOld.Height(),
 						   SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}

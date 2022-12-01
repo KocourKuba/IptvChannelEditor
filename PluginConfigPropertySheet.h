@@ -62,5 +62,5 @@ protected:
 
 	CRect m_min_rc;
 	CString m_posKey;
-	int m_nHeaderHeight = 30;
+	int m_gapHeight = 30;
 };
