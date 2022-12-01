@@ -56,11 +56,11 @@ void plugin_glanz::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
+	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>.+)&req_host=(?<host>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_NO_ADULT);
 	info.pl_template = "http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0";
-	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>.+)&req_host=(?<host>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
