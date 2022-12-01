@@ -1677,7 +1677,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 
 	size_t stream_idx = (size_t)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 	m_wndBtnCustomUrl.SetCheck(custom);
-	m_wndBtnCustomUrl.SetWindowText(load_string_resource(custom ? IDS_STRING_CUSTOM_URL : IDS_STRING_LIVE_URL).c_str());
+	m_wndBtnCustomUrl.SetWindowText(load_string_resource(IDS_STRING_CUSTOM_URL).c_str());
 	m_wndShowUrl.EnableWindow(!custom);
 	m_wndChannelIcon.SetBitmap(nullptr);
 
@@ -1712,7 +1712,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_streamArchiveUrl = m_plugin->get_archive_template(stream_idx, channel.get()).c_str();
 	m_wndCustomArchiveUrl.SetReadOnly(!custom_archive);
 	m_wndBtnCustomArchiveUrl.SetCheck(custom_archive);
-	m_wndBtnCustomArchiveUrl.SetWindowText(load_string_resource(custom_archive ? IDS_STRING_CUSTOM_ARCHIVE_URL : IDS_STRING_ARCHIVE_URL).c_str());
+	m_wndBtnCustomArchiveUrl.SetWindowText(load_string_resource(IDS_STRING_CUSTOM_ARCHIVE_URL).c_str());
 
 	m_wndCustomStreamType.EnableWindow(custom);
 	m_wndCustomStreamType.SetCurSel(channel->get_custom_url_type());
