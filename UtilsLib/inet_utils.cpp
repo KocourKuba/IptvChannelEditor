@@ -205,6 +205,7 @@ bool CrackUrl(const std::wstring& url, CrackedUrl& cracked)
 			cracked.extra_info.assign(urlComp.lpszExtraInfo, urlComp.dwExtraInfoLength);
 
 		cracked.port = urlComp.nPort;
+		cracked.nScheme = urlComp.nScheme;
 
 		return true;
 	}
@@ -257,9 +258,9 @@ bool CurlDownload(const std::wstring& url,
 
 		wchar_t szEscaped[MAX_URL_LENGTH]{};
 		DWORD dwEscaped = MAX_URL_LENGTH;
-		UrlEscapeW(url.c_str(), szEscaped, &dwEscaped, URL_BROWSER_MODE|URL_ESCAPE_AS_UTF8);
-
-		easy.add<CURLOPT_URL>(utils::utf16_to_utf8(szEscaped, dwEscaped).c_str());
+		UrlEscapeW(url.c_str(), szEscaped, &dwEscaped, URL_BROWSER_MODE | URL_ESCAPE_AS_UTF8);
+		const auto& escape_url = utils::utf16_to_utf8(szEscaped, dwEscaped);
+		easy.add<CURLOPT_URL>(escape_url.c_str());
 		easy.add<CURLOPT_FOLLOWLOCATION>(1L);
 		easy.add<CURLOPT_HTTPAUTH>(CURLAUTH_ANY);
 		easy.add<CURLOPT_SSL_VERIFYPEER>(0);
@@ -376,6 +377,9 @@ bool WinHttpDownload(const std::wstring& url,
 			break;
 		}
 
+		DWORD dwFlags = WINHTTP_FLAG_BYPASS_PROXY_CACHE;
+		if (cracked.nScheme == INTERNET_SCHEME_HTTPS)
+			dwFlags |= 0x00800000; // INTERNET_FLAG_SECURE
 		// Create an HTTP request handle.
 		CAutoHinternet hRequest = WinHttpOpenRequest(hConnect,
 													 verb_post ? L"POST" : L"GET",
@@ -383,7 +387,7 @@ bool WinHttpDownload(const std::wstring& url,
 													 nullptr,
 													 WINHTTP_NO_REFERER,
 													 WINHTTP_DEFAULT_ACCEPT_TYPES,
-													 WINHTTP_FLAG_BYPASS_PROXY_CACHE);
+													 dwFlags);
 
 		if (hRequest.IsNotValid())
 		{
@@ -403,6 +407,8 @@ bool WinHttpDownload(const std::wstring& url,
 			ATLTRACE("\nheader added: %d\n", result);
 		}
 
+		//DWORD options = SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS;
+		//WinHttpSetOption(hRequest, WINHTTP_OPTION_SECURITY_FLAGS, (LPVOID)&options, sizeof(DWORD));
 
 		// Send a request.
 		bool bResults = false;

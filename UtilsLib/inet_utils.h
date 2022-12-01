@@ -48,6 +48,7 @@ struct CrackedUrl
 	std::wstring path;
 	std::wstring extra_info;
 	unsigned short port = 80;
+	unsigned short nScheme = 1;
 };
 
 bool CrackUrl(const std::wstring& url, CrackedUrl& cracked);
