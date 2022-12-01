@@ -36,11 +36,13 @@ DEALINGS IN THE SOFTWARE.
 #include "utils.h"
 #include "SmartHandle.h"
 
+#ifdef _USE_CURL
 #include "curl_easy.h"
 #include "curl_form.h"
 #include "curl_ios.h"
 #include "curl_exception.h"
 #include "curl_header.h"
+#endif
 
 #pragma comment(lib, "Winhttp.lib")
 
@@ -213,6 +215,7 @@ bool CrackUrl(const std::wstring& url, CrackedUrl& cracked)
 	return false;
 }
 
+#ifdef _USE_CURL
 bool CurlDownload(const std::wstring& url,
 				  std::stringstream& vData,
 				  bool use_cache /*= false*/,
@@ -307,6 +310,7 @@ bool CurlDownload(const std::wstring& url,
 
 	return vData.tellp() != std::streampos(0);
 }
+#endif
 
 bool WinHttpDownload(const std::wstring& url,
 					 std::stringstream& vData,
