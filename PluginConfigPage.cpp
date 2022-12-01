@@ -280,18 +280,21 @@ void CPluginConfigPage::OnBnClickedCheckSquareIcons()
 
 void CPluginConfigPage::OnEnChangeEditPluginName()
 {
+	UpdateData(TRUE);
 	AllowSave();
 	GetPropertySheet()->m_plugin->set_name(m_Name.GetString());
 }
 
 void CPluginConfigPage::OnEnChangeEditTitle()
 {
+	UpdateData(TRUE);
 	AllowSave();
 	GetPropertySheet()->m_plugin->set_title(m_Title.GetString());
 }
 
 void CPluginConfigPage::OnEnChangeEditProviderUrl()
 {
+	UpdateData(TRUE);
 	AllowSave();
 	GetPropertySheet()->m_plugin->set_provider_url(m_ProviderUrl.GetString());
 }
