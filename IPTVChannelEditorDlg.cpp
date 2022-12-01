@@ -2982,7 +2982,8 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamArchiveUrl()
 
 void CIPTVChannelEditorDlg::OnEnChangeEditArchiveDays()
 {
-	UpdateData(TRUE);
+	if (!UpdateData(TRUE))
+		UpdateData(FALSE);
 
 	for (const auto& hSelectedItem : m_wndChannelsTree.GetSelectedItems())
 	{
