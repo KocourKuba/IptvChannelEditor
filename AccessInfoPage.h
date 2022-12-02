@@ -102,7 +102,7 @@ public:
 	std::wstring m_list_domain;
 	std::wstring m_epg_domain;
 
-	Credentials m_initial_cred;
+	Credentials m_selected_cred;
 	uri_stream* m_CurrentStream = nullptr;
 	std::vector<std::wstring> m_all_channels_lists;
 	std::shared_ptr<base_plugin> m_plugin;
@@ -136,6 +136,8 @@ protected:
 	CEdit m_wndPackageName;
 
 private:
+	int m_initial_config = 0;
+
 	CString m_logo;
 	CString m_background;
 	CString m_suffix;

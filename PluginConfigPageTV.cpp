@@ -238,9 +238,14 @@ void CPluginConfigPageTV::FillControls()
 	m_wndChkPerChannelToken.SetCheck(plugin->get_per_channel_token() != false);
 
 	m_wndPlaylistTemplates.ResetContent();
+	size_t idx = 0;
 	for (const auto& entry : plugin->get_playlist_infos())
 	{
-		m_wndPlaylistTemplates.AddString(entry.get_name().c_str());
+		auto name = entry.get_name();
+		if (idx++ == plugin->get_playlist_template_idx())
+			name += L" (Current)";
+
+		m_wndPlaylistTemplates.AddString(name.c_str());
 	}
 
 	m_wndPlaylistTemplates.SetCurSel(plugin->get_playlist_template_idx());
@@ -328,7 +333,7 @@ void CPluginConfigPageTV::OnCbnSelchangeComboCatchupType()
 
 void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 {
-	const auto& cred = GetPropertySheet()->m_initial_cred;
+	const auto& cred = GetPropertySheet()->m_selected_cred;
 	TemplateParams params;
 	params.token = cred.get_token();
 	params.login = cred.get_login();

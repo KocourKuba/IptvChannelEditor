@@ -108,8 +108,6 @@ BOOL CPluginConfigPage::OnInitDialog()
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnQualities);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnProfiles);
 
-	GetPropertySheet()->m_plugin->load_plugin_parameters(GetPropertySheet()->m_initial_cred.get_config());
-
 	FillControls();
 
 	RestoreWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);

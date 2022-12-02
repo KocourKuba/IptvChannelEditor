@@ -48,9 +48,9 @@ protected:
 
 public:
 	bool m_configPages = false;
-	Credentials m_initial_cred;
-	uri_stream* m_CurrentStream = nullptr;
 	bool m_allow_save = false;
+	Credentials m_selected_cred;
+	uri_stream* m_CurrentStream = nullptr;
 	std::shared_ptr<base_plugin> m_plugin;
 	std::vector<std::wstring> m_configs;
 

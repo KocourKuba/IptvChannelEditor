@@ -3211,7 +3211,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgInfo.m_plugin = StreamContainer::get_instance(m_plugin_type);
 	dlgInfo.m_plugin->copy(m_plugin.get());
-	dlgInfo.m_initial_cred = m_cur_account;
+	dlgInfo.m_selected_cred = m_cur_account;
 	dlgInfo.m_configs = m_all_configs_lists;
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
 	dlgInfo.m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
@@ -3221,7 +3221,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
 	{
-		m_cur_account = dlgInfo.m_initial_cred;
+		m_cur_account = dlgInfo.m_selected_cred;
 		m_plugin->copy(dlgInfo.m_plugin.get());
 		GetConfig().UpdatePluginSettings();
 		PostMessage(WM_SWITCH_PLUGIN);
@@ -5194,7 +5194,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 	pSheet->m_plugin = StreamContainer::get_instance(m_plugin_type);
 	pSheet->m_plugin->copy(m_plugin.get());
-	pSheet->m_initial_cred = m_cur_account;
+	pSheet->m_selected_cred = m_cur_account;
 	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 	pSheet->m_configs = m_all_configs_lists;
 	pSheet->m_configPages = true;

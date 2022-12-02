@@ -169,7 +169,7 @@ void CPluginConfigPropertySheet::FillConfigs()
 	int cur_idx = 0;
 	for (const auto& entry : m_configs)
 	{
-		if (!m_initial_cred.config.empty() && entry == m_initial_cred.get_config())
+		if (!m_selected_cred.config.empty() && entry == m_selected_cred.get_config())
 		{
 			std::wstring name = entry + L" (Current)";
 			int idx = m_wndPluginConfigs.AddString(name.c_str());

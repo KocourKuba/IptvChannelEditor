@@ -60,7 +60,7 @@ void plugin_config::set_plugin_defaults(PluginType val)
 
 const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
 {
-	if (idx != -1 && idx < (int)playlist_templates.size())
+	if (idx != -1 && idx >= (int)playlist_templates.size())
 	{
 		idx = 0;
 	}

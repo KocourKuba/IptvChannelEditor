@@ -177,7 +177,7 @@ void CPluginConfigPageVOD::FillControls()
 
 void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 {
-	auto& cred = GetPropertySheet()->m_initial_cred;
+	auto& cred = GetPropertySheet()->m_selected_cred;
 
 	TemplateParams params;
 	params.token = cred.get_token();

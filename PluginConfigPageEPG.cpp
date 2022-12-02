@@ -119,7 +119,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 
 	m_wndEpgType.SetCurSel(0);
 
-	m_Token = GetPropertySheet()->m_initial_cred.get_token().c_str();
+	m_Token = GetPropertySheet()->m_selected_cred.get_token().c_str();
 	if (GetPropertySheet()->m_CurrentStream)
 	{
 		m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(0).c_str();

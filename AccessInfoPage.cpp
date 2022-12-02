@@ -214,10 +214,10 @@ BOOL CAccessInfoPage::OnInitDialog()
 		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
 	}
 
+	FillConfigs();
 	CreateAccountsList();
 	CreateAccountInfo();
 	CreateChannelsList();
-	FillConfigs();
 
 	m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
@@ -447,7 +447,9 @@ void CAccessInfoPage::FillConfigs()
 	m_wndConfigs.ResetContent();
 	for (const auto& entry : m_configs)
 	{
-		m_wndConfigs.AddString(entry.c_str());
+		int idx = m_wndConfigs.AddString(entry.c_str());
+		if (entry == m_selected_cred.get_config())
+			m_initial_config = idx;
 	}
 	m_wndConfigs.SetCurSel(0);
 }
@@ -608,7 +610,7 @@ BOOL CAccessInfoPage::OnApply()
 	nlohmann::json j_serialize = m_all_credentials;
 	GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
 
-	m_initial_cred = selected;
+	m_selected_cred = selected;
 
 	return TRUE;
 }
@@ -1187,13 +1189,18 @@ void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 
 void CAccessInfoPage::OnBnClickedButtonEditConfig()
 {
+	auto& selected = GetCheckedAccount();
+
 	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 	pSheet->m_plugin = StreamContainer::get_instance(m_plugin->get_plugin_type());
-	pSheet->m_plugin->copy(m_plugin.get());
+	if (m_wndConfigs.GetCurSel() != m_initial_config)
+		pSheet->m_plugin->load_plugin_parameters(selected.get_config());
+	else
+		pSheet->m_plugin->copy(m_plugin.get());
 	pSheet->m_CurrentStream = m_CurrentStream;
-	pSheet->m_initial_cred = m_initial_cred;
+	pSheet->m_selected_cred = selected;
 	pSheet->m_configs = m_configs;
 
 	CPluginConfigPage dlgCfg;
@@ -1216,7 +1223,6 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
 	{
-		m_plugin->load_plugin_parameters(m_initial_cred.get_config());
 		m_plugin->copy(pSheet->m_plugin.get());
 		CreateAccountsList();
 	}
