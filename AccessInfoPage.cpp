@@ -855,7 +855,7 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 			}
 		}
 
-		if (ch_list.size() == m_configs.size())
+		if (ch_list.size() == m_all_channels_lists.size())
 		{
 			ch_list.clear();
 		}
