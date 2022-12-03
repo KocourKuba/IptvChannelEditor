@@ -37,8 +37,18 @@ class Epg_Manager
         $params = $this->config->get_epg_params($type);
 
         if (empty($params[Epg_Params::EPG_URL])) {
-            hd_print("$type EPG url not defined");
-            throw new Exception("$type EPG url not defined");
+            if ($type === Plugin_Constants::EPG_FIRST) {
+                $params = $this->config->get_epg_params(Plugin_Constants::EPG_SECOND);
+                $type = Plugin_Constants::EPG_SECOND;
+            } else {
+                $params = $this->config->get_epg_params(Plugin_Constants::EPG_FIRST);
+                $type = Plugin_Constants::EPG_FIRST;
+            }
+
+            if (empty($params[Epg_Params::EPG_URL])) {
+                hd_print("$type EPG url not defined");
+                throw new Exception("$type EPG url not defined");
+            }
         }
 
         if (!is_dir($this->cache_dir) && !(mkdir($this->cache_dir) && is_dir($this->cache_dir))) {
