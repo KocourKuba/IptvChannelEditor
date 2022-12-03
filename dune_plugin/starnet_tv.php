@@ -548,20 +548,20 @@ class Starnet_Tv implements Tv, User_Input_Handler
             return array();
         }
 
-        $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
-        $day_epg = $channel->get_day_epg_items($epg_source, $day_start_ts);
+        $epg_source_id = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
+        $day_epg = $channel->get_day_epg_items($epg_source_id, $day_start_ts);
         if ($day_epg !== false)
             return $day_epg;
 
         try {
             $day_start_ts -= get_local_time_zone_offset();
-            $epg = $this->epg_man->get_epg($channel, $epg_source, $day_start_ts, $plugin_cookies);
+            $epg = $this->epg_man->get_epg($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
             if (count($epg) === 0) {
-                hd_print("No data from $epg_source EPG for $channel_id");
+                hd_print("No data from $epg_source_id EPG for $channel_id");
                 return array();
             }
         } catch (Exception $ex) {
-            hd_print("Can't fetch EPG ID from $epg_source epg source: " . $ex->getMessage());
+            hd_print("Can't fetch EPG ID from $epg_source_id epg source: " . $ex->getMessage());
             return array();
         }
 
@@ -579,7 +579,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             );
         }
 
-        $channel->set_day_epg_items($epg_source, $day_start_ts, $day_epg);
+        $channel->set_day_epg_items($epg_source_id, $day_start_ts, $day_epg);
         $this->set_channel($channel);
 
         return $day_epg;

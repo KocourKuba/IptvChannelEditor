@@ -249,6 +249,7 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
 	m_colorAdded = RGB(0, 200, 0);
 	m_colorNotAdded = RGB(200, 0, 0);
+	m_colorNotChanged = m_colorAdded;
 	m_colorHEVC = RGB(158, 255, 250);
 	m_colorChanged = RGB(226, 135, 67);
 }
@@ -1637,7 +1638,7 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 			COLORREF color = m_colorNotAdded;
 			if (const auto& pair = m_channelsMap.find(entry->get_id()); pair != m_channelsMap.end())
 			{
-				color = m_normal;
+				color = m_colorNotChanged;
 				const auto& channel = pair->second;
 				if (channel->get_title() != entry->get_title()
 					|| (entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())

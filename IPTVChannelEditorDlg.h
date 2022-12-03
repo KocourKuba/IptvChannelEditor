@@ -400,6 +400,7 @@ private:
 	COLORREF m_normal; // channel not present in the current playlist
 	COLORREF m_gray; // channel disabled
 	COLORREF m_colorNotAdded; // playlist entry not present in the current channels list
+	COLORREF m_colorNotChanged; // playlist entry not present in the current channels list
 	COLORREF m_colorAdded; // channel present in the playlist and have not differences
 	COLORREF m_colorHEVC; // channel HEVC
 	COLORREF m_colorChanged; // channel has difference with same entry in the playlist
