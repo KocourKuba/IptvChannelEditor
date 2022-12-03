@@ -1370,6 +1370,7 @@ function print_sysinfo()
         'Dune Serial' => get_serial_number(),
         'Dune Platform' => $platform . ($platform === 'android' ? (" (" . get_android_platform() . ")") : ''),
         'Dune MAC Addr' => get_mac_address(),
+        'PHP Version' => PHP_VERSION,
     );
     $table = array_merge($table, DuneSystem::$properties);
 
