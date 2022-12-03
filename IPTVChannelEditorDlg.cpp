@@ -1457,7 +1457,19 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 	if (!m_channelsMap.empty())
 	{
 		SearchParams params;
-		params.id = select ? select : m_categoriesMap.begin()->second.category->get_channels().front()->get_id();
+		if (select)
+			params.id = select;
+		else
+		{
+			auto it = m_categoriesMap.begin();
+			while (it->second.category->get_channels().empty()) ++it;
+
+			if (it == m_categoriesMap.end())
+				return;
+
+			params.id = it->second.category->get_channels().front()->get_id();
+		}
+
 		SelectTreeItem(&m_wndChannelsTree, params);
 	}
 }
