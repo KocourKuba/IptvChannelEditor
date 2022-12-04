@@ -352,13 +352,36 @@ function get_ip_address()
         $ip = isset($active_network_connection['ip']) ? trim($active_network_connection['ip']) : '';
     } else {
         $ip = trim(shell_exec('ifconfig eth0 | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
-
         if (!is_numeric(preg_replace('/\s|\./', '', $ip))) {
-            $ip = '';
+            $ip = trim(shell_exec('ifconfig wlan0 | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
+            if (!is_numeric(preg_replace('/\s|\./', '', $ip))) {
+                $ip = '';
+            }
         }
     }
 
     return $ip;
+}
+
+/**
+ * @return string
+ */
+function get_dns_address()
+{
+    if (get_platform_kind() === 'android') {
+        $dns = explode(PHP_EOL, shell_exec('getprop | grep "net.dns"'));
+    } else {
+        $dns = explode(PHP_EOL, shell_exec('cat /etc/resolv.conf | grep "nameserver"'));
+    }
+
+    $addr = '';
+    foreach ($dns as $key => $server) {
+        if (preg_match("|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|", $server, $m)) {
+            $addr .= "nameserver" . ($key + 1) . ": " . $m[1] . ", ";
+        }
+    }
+
+    return $addr;
 }
 
 /**
@@ -1364,12 +1387,15 @@ function print_sysinfo()
 {
     hd_print("----------------------------------------------------");
     $platform = get_platform_kind();
+    $dns = get_dns_address();
     $table = array(
         'Dune Product' => get_product_id(),
         'Dune FW' => get_raw_firmware_version(),
         'Dune Serial' => get_serial_number(),
         'Dune Platform' => $platform . ($platform === 'android' ? (" (" . get_android_platform() . ")") : ''),
         'Dune MAC Addr' => get_mac_address(),
+        'Dune IP Addr' => get_ip_address(),
+        'Dune DNS servers' => $dns,
         'PHP Version' => PHP_VERSION,
     );
     $table = array_merge($table, DuneSystem::$properties);
