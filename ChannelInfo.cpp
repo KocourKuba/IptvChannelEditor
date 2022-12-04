@@ -84,7 +84,8 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	const auto& stream_url = rapidxml::get_value_wstring(node->first_node(utils::STREAMING_URL));
 	if (!stream_url.empty())
 	{
-		parent_plugin->parse_stream_uri(stream_url, this);
+		set_is_template(false);
+		set_uri(stream_url);
 		set_custom_url_type_str(rapidxml::get_value_string(node->first_node(utils::CUSTOM_URL_TYPE)));
 	}
 	get_hash();
