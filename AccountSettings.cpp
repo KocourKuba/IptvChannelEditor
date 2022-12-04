@@ -48,6 +48,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_COLOR_ADDED,
 	REG_COLOR_NOT_ADDED,
 	REG_COLOR_CHANGED,
+	REG_COLOR_UNKNOWN,
 	REG_COLOR_HEVC,
 	REG_PLUGIN,
 	REG_ICON_SOURCE,

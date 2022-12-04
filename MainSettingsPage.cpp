@@ -74,6 +74,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_ADDED, m_wndAdded);
 	DDX_Control(pDX, IDC_BUTTON_NOT_ADDED, m_wndNotAdded);
 	DDX_Control(pDX, IDC_BUTTON_CHANGED, m_wndChanged);
+	DDX_Control(pDX, IDC_BUTTON_UNKNOWN, m_wndUnknown);
 	DDX_Control(pDX, IDC_BUTTON_HEVC, m_wndHEVC);
 	DDX_Control(pDX, IDC_BUTTON_CLEAR_CACHE, m_wndClearCache);
 }
@@ -89,6 +90,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
 	m_wndAdded.SetColor(GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 200, 0)));
 	m_wndNotAdded.SetColor(GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0)));
+	m_wndUnknown.SetColor(GetConfig().get_int(true, REG_COLOR_UNKNOWN, ::GetSysColor(COLOR_WINDOWTEXT)));
 	m_wndChanged.SetColor(GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(226, 135, 67)));
 	m_wndHEVC.SetColor(GetConfig().get_int(true, REG_COLOR_HEVC, RGB(158, 255, 250)));
 
@@ -133,6 +135,7 @@ void CMainSettingsPage::OnOK()
 	GetConfig().set_int(true, REG_COLOR_ADDED, m_wndAdded.GetColor());
 	GetConfig().set_int(true, REG_COLOR_NOT_ADDED, m_wndNotAdded.GetColor());
 	GetConfig().set_int(true, REG_COLOR_CHANGED, m_wndChanged.GetColor());
+	GetConfig().set_int(true, REG_COLOR_UNKNOWN, m_wndUnknown.GetColor());
 	GetConfig().set_int(true, REG_COLOR_HEVC, m_wndHEVC.GetColor());
 
 	int flags = 0;

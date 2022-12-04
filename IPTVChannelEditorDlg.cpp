@@ -245,7 +245,6 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	, m_evtThreadExit(TRUE, TRUE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	m_normal = ::GetSysColor(COLOR_WINDOWTEXT);
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
 	m_colorAdded = RGB(0, 200, 0);
 	m_colorNotAdded = RGB(200, 0, 0);
@@ -445,6 +444,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 200, 0));
 	m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0));
 	m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(158, 255, 250));
+	m_colorUnknown = GetConfig().get_int(true, REG_COLOR_UNKNOWN, ::GetSysColor(COLOR_WINDOWTEXT));
 	m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC, RGB(226, 135, 67));
 
 	m_wndTrayIcon.HideIcon();
@@ -1547,7 +1547,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 				const auto& channel = FindChannel(hItem);
 				if (!channel) continue;
 
-				COLORREF color = m_normal;
+				COLORREF color = m_colorUnknown;
 				const auto& id = channel->get_id();
 				if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
 				{
@@ -3998,6 +3998,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 		m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED);
 		m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED);
 		m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED);
+		m_colorUnknown = GetConfig().get_int(true, REG_COLOR_UNKNOWN);
 		m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC);
 		UpdateChannelsTreeColors();
 		CheckForExistingPlaylist();

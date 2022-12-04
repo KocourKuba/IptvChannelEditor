@@ -52,6 +52,7 @@ protected:
 	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeComboLang();
 	afx_msg void OnBnClickedButtonReset();
+	afx_msg void OnBnClickedButtonClearCache();
 
 protected:
 	CEdit m_wndMaxThreads;
@@ -59,6 +60,7 @@ protected:
 	CComboBox m_wndLanguage;
 	CMFCColorButton m_wndAdded;
 	CMFCColorButton m_wndNotAdded;
+	CMFCColorButton m_wndUnknown;
 	CMFCColorButton m_wndChanged;
 	CMFCColorButton m_wndHEVC;
 	CButton m_wndClearCache;
@@ -75,6 +77,4 @@ private:
 	BOOL m_bCmpEpg2 = TRUE;
 	int m_MaxThreads = 1;
 	WORD m_nLang = 0;
-public:
-	afx_msg void OnBnClickedButtonClearCache();
 };

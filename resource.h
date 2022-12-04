@@ -489,6 +489,7 @@
 #define IDC_BUTTON_HEVC                 1166
 #define IDC_BUTTON_RESET                1167
 #define IDC_EDIT_PLUGIN_SUFFIX          1168
+#define IDC_BUTTON_UNKNOWN              1168
 #define IDC_EDIT_PLUGIN_UPDATE_URL      1169
 #define IDC_EDIT_PLUGIN_UPDATE_FILE_URL 1170
 #define IDC_EDIT_PLUGIN_UPDATE_VERSION  1171
@@ -586,7 +587,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280
