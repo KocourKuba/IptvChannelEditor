@@ -437,7 +437,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 // https not supported for old players
                 // $icon_url = str_replace("https://", "http://", (string)$xml_tv_channel->icon_url);
                 $icon_url = (string)$xml_tv_channel->icon_url;
-                $number = isset($xml_tv_channel->int_id) ? (int)$xml_tv_channel->int_id : $num;
+                $number = $num;
 
                 $epg1 = (string)$xml_tv_channel->epg_id;
                 $epg2 = (empty($xml_tv_channel->tvg_id)) ? $epg1 : (string)$xml_tv_channel->tvg_id;
