@@ -69,6 +69,7 @@ private:
 public:
 	int m_selected = 0;
 	int m_lastFound = 0;
+	bool m_use_square = false;
 	CString m_search; // m_wndSearch
 	std::shared_ptr<base_plugin> m_parent_plugin;
 

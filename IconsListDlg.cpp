@@ -244,6 +244,9 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 
 			// 2/3 of original size
 			CRect rc(0, 0, 162, 92);
+			if (m_use_square)
+				rc.right = 92;
+
 			CDC dcDest;
 			dcDest.CreateCompatibleDC(pDesktopDC);
 
@@ -287,7 +290,15 @@ LRESULT CIconsListDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 					  return left->get_title() < right->get_title();
 				  });
 
-
+		if (m_use_square)
+		{
+			for (auto& entry : m_Icons->m_entries)
+			{
+				auto path = entry->get_icon_uri().get_path();
+				utils::string_replace_inplace(path, L"epg.it999.ru/img2/", L"epg.it999.ru/img/");
+				entry->get_icon_uri().set_path(path);
+			}
+		}
 		UpdateListCtrl();
 	}
 

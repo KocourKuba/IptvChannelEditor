@@ -535,6 +535,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndIconSource.AddString(load_string_resource(IDS_STRING_FILE).c_str());
 	m_wndIconSource.AddString(load_string_resource(IDS_STRING_URL).c_str());
 	m_wndIconSource.AddString(_T("it999.ru"));
+	m_wndIconSource.AddString(_T("it999.ru (square)"));
 
 	// load button images;
 	SetButtonImage(IDB_PNG_NEW, m_wndBtnAddNewChannelsList);
@@ -3664,12 +3665,13 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			}
 		}
 	}
-	else if (idx == 2)
+	else if (idx == 2 || idx == 3)
 	{
-		CIconsListDlg dlg(m_Icons, L"http://epg.it999.ru/edem_epg_ico2.m3u8");
+		CIconsListDlg dlg(m_Icons, L"http://epg.it999.ru/edem_epg_ico.m3u8");
 		dlg.m_selected = m_lastIconSelected;
 		dlg.m_search = info->get_title().c_str();
 		dlg.m_parent_plugin = m_plugin;
+		dlg.m_use_square = (idx == 3);
 
 		if (dlg.DoModal() == IDOK)
 		{

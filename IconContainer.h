@@ -70,6 +70,7 @@ public:
 	const std::wstring& get_root_path() const { return root_path; }
 
 	const uri_base& get_icon_uri() const { return icon_uri; }
+	uri_base& get_icon_uri() { return icon_uri; }
 
 	std::wstring get_icon_absolute_path() const { return get_icon_uri().get_filesystem_path(root_path); };
 
