@@ -946,7 +946,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	else
 	{
 		url = m_plugin->get_playlist_url(params);
-		m_plFileName = fmt::format(_T("{:s}_Playlist.m3u8"), GetPluginShortNameW(m_plugin_type, true));
+		m_plFileName = fmt::format(_T("{:s}_Playlist_{:s}.m3u8"), GetPluginShortNameW(m_plugin_type, true), info.get_name());
 	}
 
 	if (url.empty())
@@ -3296,15 +3296,15 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	if (m_playlistIds.size() != m_playlistMap.size())
 	{
 		m_wndPlInfo.SetWindowText(fmt::format(load_string_resource(IDS_STRING_FMT_PLAYLIST_FLT),
-											  m_plFileName,
 											  m_playlistIds.size(),
-											  m_playlistMap.size()).c_str());
+											  m_playlistMap.size(),
+											  m_plFileName).c_str());
 	}
 	else
 	{
 		m_wndPlInfo.SetWindowText(fmt::format(load_string_resource(IDS_STRING_FMT_CHANNELS_ALL),
-											  m_plFileName,
-											  m_playlistIds.size()).c_str());
+											  m_playlistIds.size(),
+											  m_plFileName).c_str());
 	}
 
 	m_bInFillTree = false;

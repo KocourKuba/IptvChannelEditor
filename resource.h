@@ -110,6 +110,7 @@
 #define IDS_STRING_BUTTON_PL_FILTER     189
 #define IDS_STRING_STATIC_ICON          190
 #define IDS_STRING_CUSTOM_URL           191
+#define IDS_STRING_EDEM_SORTED          192
 #define IDS_STRING_EDIT_TIME_SHIFT      193
 #define IDS_STRING_EDIT_INFO_VIDEO      194
 #define IDS_STRING_EDIT_INFO_AUDIO      195
@@ -587,7 +588,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="202" scanned="20221204152853" built="20221204152915" lang="ru" pane="TLogPane" col="4" row="Dialogs.109.STATIC_Unknown.Text">
+<desktop scan="203" scanned="20221204224152" built="20221204224237" lang="ru" pane="TLogPane" col="3" row="Strings.10.IDS_STRING_FMT_PLAYLIST_FLT">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>
