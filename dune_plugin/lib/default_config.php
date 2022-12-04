@@ -573,9 +573,10 @@ class default_config extends dynamic_config
         $idx = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
         $parse_pattern = isset($templates[$idx][Plugin_Constants::PARSE_REGEX]) ? $templates[$idx][Plugin_Constants::PARSE_REGEX] : '';
 
-        if (!empty($parse_pattern))
-            $parse_pattern = "/$parse_pattern/";
+        if (empty($parse_pattern))
+            return false;
 
+        $parse_pattern = "/$parse_pattern/";
         foreach ($this->get_tv_m3u_entries() as $entry) {
             if (preg_match($parse_pattern, $entry->getPath(), $matches)) {
                 $this->account_data = $matches;
