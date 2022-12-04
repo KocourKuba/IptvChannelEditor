@@ -111,6 +111,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         if (is_null($epg_data = $this->plugin->tv->get_program_info($channel_id, time(), $plugin_cookies))) {
 
+            hd_print("Starnet_Tv_Rows_Screen: do_get_info_children: no epg data");
             $channel_desc = $channel->get_desc();
             if (!empty($channel_desc)) {
                 $geom = GComp_Geom::place_top_left(PaneParams::info_width, -1, 0, $y);
@@ -126,6 +127,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             }
         } else {
 
+            //foreach ($epg_data as $key=>$value) hd_print("Starnet_Tv_Rows_Screen: do_get_info_children: $key => $value");
             $program = (object)array();
             $program->time = strftime('Длительность: %H:%M', $epg_data[PluginTvEpgProgram::end_tm_sec] - $epg_data[PluginTvEpgProgram::start_tm_sec]);
             //$program->year = preg_match('/\s+\((\d{4,4})\)$/', $epg_data[Ext_Epg_Program::main_category], $matches) ? $matches[1] : '';

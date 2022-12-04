@@ -601,7 +601,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
     public function get_program_info($channel_id, $program_ts, $plugin_cookies)
     {
-        hd_print("Starnet_Tv::get_program_info for $channel_id at time $program_ts");
+        hd_print("Starnet_Tv::get_program_info for $channel_id at time $program_ts " . format_datetime("Y-m-d H:i", ($program_ts > 0 ? $program_ts : time())));
         $day_ts = strtotime(date('d-M-Y', ($program_ts > 0 ? $program_ts : time())));
         $day_epg = $this->get_day_epg($channel_id, $day_ts, $plugin_cookies);
         foreach ($day_epg as $item) {
@@ -610,6 +610,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             }
         }
 
+        hd_print("Starnet_Tv::get_program_info no entries found for time $program_ts");
         return null;
     }
 
