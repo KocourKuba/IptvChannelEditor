@@ -37,18 +37,8 @@ class Epg_Manager
         $params = $this->config->get_epg_params($type);
 
         if (empty($params[Epg_Params::EPG_URL])) {
-            if ($type === Plugin_Constants::EPG_FIRST) {
-                $params = $this->config->get_epg_params(Plugin_Constants::EPG_SECOND);
-                $type = Plugin_Constants::EPG_SECOND;
-            } else {
-                $params = $this->config->get_epg_params(Plugin_Constants::EPG_FIRST);
-                $type = Plugin_Constants::EPG_FIRST;
-            }
-
-            if (empty($params[Epg_Params::EPG_URL])) {
-                hd_print("$type EPG url not defined");
-                throw new Exception("$type EPG url not defined");
-            }
+            hd_print("$type EPG url not defined");
+            throw new Exception("$type EPG url not defined");
         }
 
         if (!is_dir($this->cache_dir) && !(mkdir($this->cache_dir) && is_dir($this->cache_dir))) {
@@ -121,10 +111,13 @@ class Epg_Manager
             hd_print("Fetching EPG ID: '$epg_id' from server");
             $program_epg = self::get_epg_json($epg_url, $params);
             // save downloaded data
-            self::save_cache($program_epg, $epg_cache_file);
         }
 
         $counts = count($program_epg);
+        if ($counts !== 0 && $from_cache === false) {
+            self::save_cache($program_epg, $epg_cache_file);
+        }
+
         //hd_print("Total entries: $counts");
         if ($counts === 0) {
             return array();

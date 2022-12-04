@@ -553,16 +553,30 @@ class Starnet_Tv implements Tv, User_Input_Handler
         if ($day_epg !== false)
             return $day_epg;
 
+        $day_start_ts -= get_local_time_zone_offset();
+
         try {
-            $day_start_ts -= get_local_time_zone_offset();
             $epg = $this->epg_man->get_epg($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
             if (count($epg) === 0) {
-                hd_print("No data from $epg_source_id EPG for $channel_id");
-                return array();
+                throw new Exception("No EPG data for $channel_id");
             }
         } catch (Exception $ex) {
             hd_print("Can't fetch EPG ID from $epg_source_id epg source: " . $ex->getMessage());
-            return array();
+
+            $epg_source_id = ($epg_source_id === Plugin_Constants::EPG_FIRST) ? Plugin_Constants::EPG_SECOND : Plugin_Constants::EPG_FIRST;
+            $day_epg = $channel->get_day_epg_items($epg_source_id, $day_start_ts);
+            if ($day_epg !== false)
+                return $day_epg;
+
+            try {
+                $epg = $this->epg_man->get_epg($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
+                if (count($epg) === 0) {
+                    throw new Exception("No EPG data for $channel_id");
+                }
+            } catch (Exception $ex) {
+                hd_print("Can't fetch EPG ID from $epg_source_id epg source: " . $ex->getMessage());
+                return array();
+            }
         }
 
         hd_print("Loaded " . count($epg) . " EPG entries");
