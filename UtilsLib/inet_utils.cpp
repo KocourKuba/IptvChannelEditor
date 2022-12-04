@@ -411,8 +411,8 @@ bool WinHttpDownload(const std::wstring& url,
 			ATLTRACE("\nheader added: %d\n", result);
 		}
 
-		//DWORD options = SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS;
-		//WinHttpSetOption(hRequest, WINHTTP_OPTION_SECURITY_FLAGS, (LPVOID)&options, sizeof(DWORD));
+		DWORD options = SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS;
+		WinHttpSetOption(hRequest, WINHTTP_OPTION_SECURITY_FLAGS, (LPVOID)&options, sizeof(DWORD));
 
 		// Send a request.
 		bool bResults = false;
