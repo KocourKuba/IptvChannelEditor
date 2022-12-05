@@ -186,25 +186,11 @@ std::wstring base_plugin::get_archive_template(size_t stream_idx, const uri_stre
 	std::wstring url;
 	if (info->get_is_custom_archive())
 	{
-		if (info->get_custom_archive_url().empty())
-		{
-			url = streams_config[stream_idx].get_custom_stream_arc_template();
-		}
-		else
-		{
-			url = info->get_custom_archive_url();
-		}
+		url = info->get_custom_archive_url();
 	}
 	else
 	{
-		if (info->get_custom_archive_url().empty())
-		{
-			url = streams_config[stream_idx].get_stream_arc_template();
-		}
-		else
-		{
-			url = info->get_custom_archive_url();
-		}
+		url = streams_config[stream_idx].get_stream_arc_template();
 	}
 
 	return url;
