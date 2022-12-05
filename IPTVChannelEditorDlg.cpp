@@ -1755,11 +1755,10 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 		m_wndChannelIcon.SetBitmap(nullptr);
 		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(_T(""));
 	}
-	else
+	else if (m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 	{
 		m_iconUrl = channel->get_icon_uri().get_uri().c_str();
 		OnLoadChannelImage((WPARAM)channel.get(), 0);
-		//PostMessage(WM_LOAD_CHANNEL_IMAGE, (WPARAM)channel.get());
 	}
 
 	UpdateData(FALSE);
