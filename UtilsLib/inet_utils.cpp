@@ -328,7 +328,7 @@ bool WinHttpDownload(const std::wstring& url,
 	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
 	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
 
-	if (use_cache && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
+	if (use_cache && std::filesystem::exists(cache_file))
 	{
 		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
 		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
@@ -343,8 +343,9 @@ bool WinHttpDownload(const std::wstring& url,
 			{
 				vData << in_file.rdbuf();
 				in_file.close();
-				ATLTRACE(L"\nloaded from cache: %d bytes\n", vData.rdbuf()->_Get_buffer_view()._Size);
-				return vData.tellp() != std::streampos(0);
+				size_t data_size = vData.rdbuf()->_Get_buffer_view()._Size;
+				ATLTRACE(L"\nloaded from cache: %d bytes\n", data_size);
+				return data_size != 0;
 			}
 		}
 	}
@@ -417,6 +418,7 @@ bool WinHttpDownload(const std::wstring& url,
 		// Send a request.
 		bool bResults = false;
 		bool bRepeat = false;
+		bool bSaveBadCache = false;
 		for (;;)
 		{
 			DWORD post_size = post_data ? strlen(post_data) : 0;
@@ -502,6 +504,12 @@ bool WinHttpDownload(const std::wstring& url,
 					bRepeat = false;
 					break;
 
+				case 304:
+					bResults = false;
+					bRepeat = false;
+					bSaveBadCache = true;
+					break;
+
 				default:
 					ATLTRACE("\nresponse returns error code: %d\n", dwStatusCode);
 					break;
@@ -542,7 +550,7 @@ bool WinHttpDownload(const std::wstring& url,
 			}
 		}
 
-		if (use_cache && vData.good())
+		if (use_cache && vData.good() || bSaveBadCache)
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			out_stream << vData.rdbuf();
