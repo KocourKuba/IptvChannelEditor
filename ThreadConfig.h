@@ -12,5 +12,5 @@ public:
 	HANDLE m_hExit = nullptr;
 	std::wstring m_rootPath;
 	std::wstring m_url;
-	bool m_use_cache = true;
+	int m_cache_ttl = 0;
 };

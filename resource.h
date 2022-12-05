@@ -428,7 +428,10 @@
 #define IDC_SPIN_STREAM_THREADS         1104
 #define IDC_COMBO_LANG                  1105
 #define IDC_SPLIT_BUTTON_PACK           1106
+#define IDC_EDIT_CACHE_TTL              1106
 #define IDC_MFCEDITBROWSE_CH_LIST_PATH  1107
+#define IDC_SPIN_STREAM_THREADS2        1107
+#define IDC_SPIN_CACHE_TTL              1107
 #define IDC_MFCEDITBROWSE_PLUGINS_PATH  1108
 #define IDC_STATIC_ICON_SIZE            1109
 #define IDC_CHECK_CMP_TITLE             1110

@@ -31,6 +31,7 @@ constexpr auto REG_SAVE_SETTINGS_PATH  = _T("PluginsSettingsPath");
 constexpr auto REG_AUTO_SYNC           = _T("AutoSyncChannel");
 constexpr auto REG_AUTO_HIDE           = _T("AutoHideToTray");
 constexpr auto REG_MAX_THREADS         = _T("MaxStreamThreads");
+constexpr auto REG_MAX_CACHE_TTL       = _T("MaxCacheTTL");
 constexpr auto REG_LANGUAGE            = _T("Language");
 constexpr auto REG_CMP_FLAGS           = _T("CompareFlags");
 constexpr auto REG_UPDATE_FREQ         = _T("UpdateFrequencies");

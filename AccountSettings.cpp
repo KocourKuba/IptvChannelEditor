@@ -41,6 +41,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_AUTO_SYNC,
 	REG_AUTO_HIDE,
 	REG_MAX_THREADS,
+	REG_MAX_CACHE_TTL,
 	REG_LANGUAGE,
 	REG_CMP_FLAGS,
 	REG_UPDATE_FREQ,

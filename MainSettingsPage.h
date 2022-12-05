@@ -50,13 +50,13 @@ protected:
 
 	afx_msg void OnEnChangeEditStreamThreads();
 	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditCacheTTL();
+	afx_msg void OnDeltaposSpinCacheTTL(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeComboLang();
 	afx_msg void OnBnClickedButtonReset();
 	afx_msg void OnBnClickedButtonClearCache();
 
 protected:
-	CEdit m_wndMaxThreads;
-	CSpinButtonCtrl m_wndSpinMaxThreads;
 	CComboBox m_wndLanguage;
 	CMFCColorButton m_wndAdded;
 	CMFCColorButton m_wndNotAdded;
@@ -76,5 +76,6 @@ private:
 	BOOL m_bCmpEpg1 = TRUE;
 	BOOL m_bCmpEpg2 = TRUE;
 	int m_MaxThreads = 1;
+	int m_MaxCacheTTL = 24;
 	WORD m_nLang = 0;
 };

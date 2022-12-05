@@ -44,6 +44,8 @@ IMPLEMENT_DYNAMIC(CMainSettingsPage, CPropertyPage)
 BEGIN_MESSAGE_MAP(CMainSettingsPage, CPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_THREADS, &CMainSettingsPage::OnEnChangeEditStreamThreads)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_STREAM_THREADS, &CMainSettingsPage::OnDeltaposSpinStreamThreads)
+	ON_EN_CHANGE(IDC_EDIT_CACHE_TTL, &CMainSettingsPage::OnEnChangeEditCacheTTL)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_CACHE_TTL, &CMainSettingsPage::OnDeltaposSpinCacheTTL)
 	ON_CBN_SELCHANGE(IDC_COMBO_LANG, &CMainSettingsPage::OnCbnSelchangeComboLang)
 	ON_BN_CLICKED(IDC_BUTTON_RESET, &CMainSettingsPage::OnBnClickedButtonReset)
 	ON_BN_CLICKED(IDC_BUTTON_CLEAR_CACHE, &CMainSettingsPage::OnBnClickedButtonClearCache)
@@ -60,8 +62,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_COMBO_LANG, m_wndLanguage);
 	DDX_Text(pDX, IDC_EDIT_STREAM_THREADS, m_MaxThreads);
-	DDX_Control(pDX, IDC_EDIT_STREAM_THREADS, m_wndMaxThreads);
-	DDX_Control(pDX, IDC_SPIN_STREAM_THREADS, m_wndSpinMaxThreads);
+	DDX_Text(pDX, IDC_EDIT_CACHE_TTL, m_MaxCacheTTL);
 	DDX_Check(pDX, IDC_CHECK_AUTO_SYNC_CHANNELS, m_bAutoSync);
 	DDX_Check(pDX, IDC_CHECK_AUTO_HIDE, m_bAutoHide);
 	DDX_Check(pDX, IDC_CHECK_PORTABLE, m_bPortable);
@@ -87,6 +88,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_bAutoHide = GetConfig().get_int(true, REG_AUTO_HIDE);
 	m_bPortable = GetConfig().IsPortable();
 	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
+	m_MaxCacheTTL = GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
 	m_wndAdded.SetColor(GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 200, 0)));
 	m_wndNotAdded.SetColor(GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0)));
@@ -131,6 +133,7 @@ void CMainSettingsPage::OnOK()
 	GetConfig().set_int(true, REG_AUTO_SYNC, m_bAutoSync);
 	GetConfig().set_int(true, REG_AUTO_HIDE, m_bAutoHide);
 	GetConfig().set_int(true, REG_MAX_THREADS, m_MaxThreads);
+	GetConfig().set_int(true, REG_MAX_CACHE_TTL, m_MaxCacheTTL);
 	GetConfig().set_int(true, REG_LANGUAGE, m_nLang);
 	GetConfig().set_int(true, REG_COLOR_ADDED, m_wndAdded.GetColor());
 	GetConfig().set_int(true, REG_COLOR_NOT_ADDED, m_wndNotAdded.GetColor());
@@ -170,6 +173,28 @@ void CMainSettingsPage::OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pRes
 	m_MaxThreads -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
 	UpdateData(FALSE);
 	OnEnChangeEditStreamThreads();
+	*pResult = 0;
+}
+
+void CMainSettingsPage::OnEnChangeEditCacheTTL()
+{
+	UpdateData(TRUE);
+
+	if (m_MaxCacheTTL < 1)
+		m_MaxCacheTTL = 1;
+
+	if (m_MaxCacheTTL > 72)
+		m_MaxCacheTTL = 72;
+
+	UpdateData(FALSE);
+}
+
+void CMainSettingsPage::OnDeltaposSpinCacheTTL(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	UpdateData(TRUE);
+	m_MaxCacheTTL -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
+	UpdateData(FALSE);
+	OnEnChangeEditCacheTTL();
 	*pResult = 0;
 }
 

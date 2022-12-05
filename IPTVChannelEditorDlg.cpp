@@ -997,7 +997,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	else if (utils::CrackUrl(url, cracked))
 	{
 		CWaitCursor cur;
-		if (!utils::DownloadFile(url, data, true))
+		if (!utils::DownloadFile(url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL)))
 		{
 			AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);

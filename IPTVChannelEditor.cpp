@@ -243,6 +243,11 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		std::filesystem::create_directories(settings_dir);
 	}
 
+	if (GetConfig().get_int(true, REG_MAX_CACHE_TTL) < 1)
+	{
+		GetConfig().set_int(true, REG_MAX_CACHE_TTL, 24);
+	}
+
 	ConvertAccounts();
 
 	CCommandLineInfoEx cmdInfo;

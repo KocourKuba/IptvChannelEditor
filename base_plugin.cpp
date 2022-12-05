@@ -331,7 +331,7 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 	CWaitCursor cur;
 	std::stringstream data;
 	const auto& url = compile_epg_url(epg_idx, epg_id, for_time, info);
-	if (!utils::DownloadFile(url, data, true))
+	if (!utils::DownloadFile(url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL)))
 		return false;
 
 	const auto& params = epg_params[epg_idx];
