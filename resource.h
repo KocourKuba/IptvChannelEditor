@@ -118,6 +118,7 @@
 #define IDS_STRING_COMBO_ICON_SOURCE    197
 #define IDS_STRING_BUTTON_STOP          198
 #define IDS_STRING_BUTTON_UPDATE_CHANGED 199
+#define IDS_STRING_USED_CONFIG          200
 #define IDS_STRING_WARN_DELETE_ITEMS    201
 #define IDS_STRING_ERR_FAILED_PACK      202
 #define IDS_STRING_ERR_FAILED_PACK_PLUGIN 203
@@ -396,6 +397,7 @@
 #define IDC_STATIC_PL_EPG               1072
 #define IDC_STATIC_PLAYLIST             1073
 #define IDC_STATIC_QR                   1074
+#define IDC_STATIC_CONFIG               1074
 #define IDC_STATIC_TITLE                1075
 #define IDC_STATIC_PROGRESS_INFO        1076
 #define IDC_TREE_CHANNELS               1077
@@ -588,7 +590,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

@@ -827,6 +827,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_lastTree = &m_wndChannelsTree;
 	m_blockChecking = false;
 
+	const auto& used_cfg = fmt::format(load_string_resource(IDS_STRING_USED_CONFIG),
+									   m_cur_account.config.empty() ? load_string_resource(IDS_STRING_STR_DEFAULT) : m_cur_account.get_config());
+	GetDlgItem(IDC_STATIC_CONFIG)->SetWindowText(used_cfg.c_str());
 	m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 100, nullptr);
 
 	UnlockWindowUpdate();

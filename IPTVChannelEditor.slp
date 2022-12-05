@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20221205002659" scan="205" scanned="20221205002656">
+<document created="20211012165442" version="4.0.374" date="20221205173455" scan="207" scanned="20221205173440">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221204232440" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20221205163434" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -1207,6 +1207,16 @@
             </row>
             <row id="X" changed="20221114231550">256</row>
             <row id="Y" changed="20221018224522">326</row>
+          </component>
+          <component class="TVisLabel" name="1074" state="0" created="20221205173308" type="static" autosize="0" wordwrap="1">
+            <row id="CX" state="0">127</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" changed="20221205173440">
+              <native>Used config:</native>
+              <lang id="ru" date="20221205173445">Конфигурация:</lang>
+            </row>
+            <row id="X" state="0">206</row>
+            <row id="Y" state="0">33</row>
           </component>
           <component class="TVisComboBox" name="1084" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX" changed="20221018224522">98</row>
@@ -3870,6 +3880,10 @@
           <native>Playlist m3u(*.m3u8, *.m3u)|*.m3u8;*.m3u|All Files (*.*)|*.*||</native>
           <lang id="ru" date="20211017144130" savedtotm="1">Плейлист m3u(*.m3u8, *.m3u)|*.m3u8;*.m3u|All Files (*.*)|*.*||</lang>
         </row>
+        <row id="IDS_STRING_USED_CONFIG" state="0" created="20221205173308">
+          <native>Used config: {:s}</native>
+          <lang id="ru" date="20221205173325">Конфигурация: {:s}</lang>
+        </row>
         <row id="IDS_STRING_WARN_DELETE_ITEMS" created="20211013224909">
           <native>Delete selected items. Are your sure?</native>
           <lang id="ru" date="20211013225008" savedtotm="1">Удалить выделенные элементы. Вы уверены?</lang>
@@ -4710,28 +4724,28 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20221205002656">
-          <prev>6.1.1353, 4 Dec 2022</prev>
-          <native>6.1.1356, 4 Dec 2022</native>
+        <row id="FileVersion" locked="1" state="3" changed="20221205173308">
+          <prev>6.1.1356, 4 Dec 2022</prev>
+          <native>6.1.1360, 5 Dec 2022</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20221122210423">1</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221205002656">
-          <prev>1353</prev>
-          <native>1356</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221205173308">
+          <prev>1356</prev>
+          <native>1360</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20221205002656">
-          <prev>6.1.1353</prev>
-          <native>6.1.1356</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20221205173308">
+          <prev>6.1.1356</prev>
+          <native>6.1.1360</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20221122210423">1</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221205002656">
-          <prev>1353</prev>
-          <native>1356</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20221205173308">
+          <prev>1356</prev>
+          <native>1360</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
