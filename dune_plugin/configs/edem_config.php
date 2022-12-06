@@ -232,8 +232,8 @@ class edem_config extends default_config
         $val = $this->get_next_page($query_id, 0);
         //hd_print("getVideoList: $query_id, $val");
 
-        $json = $this->make_json_request($plugin_cookies,
-            array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $val, 'limit' => 0));
+        $post_params = array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $val, 'limit' => 50);
+        $json = $this->make_json_request($plugin_cookies, $post_params);
 
         return $json === false ? array() : $this->CollectSearchResult($query_id, $json);
     }
@@ -254,7 +254,7 @@ class edem_config extends default_config
 
         foreach ($json->items as $entry) {
             if ($entry->type === 'next') {
-                $this->get_next_page($query_id, $entry->request->offset);
+                $this->get_next_page($query_id, $entry->request->offset - $current_offset);
             } else {
                 $movie = new Short_Movie($entry->request->fid, $entry->title, $entry->img);
                 $movie->info = "$entry->title|Год: $entry->year|Рейтинг: $entry->agelimit";
