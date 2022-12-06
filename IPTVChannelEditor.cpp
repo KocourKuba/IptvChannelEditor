@@ -911,12 +911,11 @@ bool PackPlugin(const PluginType plugin_type,
 		return false;
 	}
 
-	std::ofstream os_supplier(packFolder + LR"(bin\update_movie_suppliers)", std::ofstream::binary | std::ofstream::app);
+	std::ofstream os_supplier(packFolder + LR"(bin\update_suppliers)", std::ofstream::binary | std::ofstream::app);
 	os_supplier << R"(cat << EOF > "$filepath")" << std::endl << "{" << std::endl;
-	os_supplier << "{" << std::endl;
 	os_supplier << R"(   "plugin" : "$plugin_name",)" << std::endl;
 	os_supplier << R"(   "caption" : ")" << plugin_caption.c_str() << R"(",)" << std::endl;
-	os_supplier << R"(   "tv_app" : "{"type":"plugin","plugin_name":"$plugin_name"})" << std::endl;
+	os_supplier << R"(   "tv_app" : "{\"type\":\"plugin\",\"plugin_name\":\"$plugin_name\"}")" << std::endl;
 	os_supplier << "}" << std::endl << "EOF" << std::endl;
 	os_supplier.close();
 
