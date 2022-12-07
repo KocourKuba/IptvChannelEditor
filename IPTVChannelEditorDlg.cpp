@@ -246,9 +246,11 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
+	m_normal = ::GetSysColor(COLOR_WINDOWTEXT);
 	m_colorAdded = RGB(0, 200, 0);
 	m_colorNotAdded = RGB(200, 0, 0);
 	m_colorNotChanged = m_colorAdded;
+	m_colorUnknown = m_normal;
 	m_colorHEVC = RGB(158, 255, 250);
 	m_colorChanged = RGB(226, 135, 67);
 }
@@ -937,7 +939,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		params.token = m_plugin->get_api_token(m_cur_account);
 	}
 
-	const auto& info = m_plugin->get_playlist_info(idx);
+	const auto& info = m_playlist_info[idx];
 
 	std::wstring url;
 	BOOL is_file = FALSE;
@@ -4567,7 +4569,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 	GetConfig().set_int(false, REG_PLAYLIST_TYPE, idx);
 	m_plugin->set_playlist_template_idx(idx);
 
-	const auto& info = m_plugin->get_playlist_info(idx);
+	const auto& info = m_playlist_info[idx];
 	m_wndBtnAddPlaylist.EnableWindow(info.is_custom);
 	LoadPlaylist();
 }
