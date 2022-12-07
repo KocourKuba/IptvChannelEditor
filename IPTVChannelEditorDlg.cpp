@@ -1695,7 +1695,6 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	size_t stream_idx = (size_t)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 	m_wndBtnCustomUrl.SetCheck(custom);
 	m_wndBtnCustomUrl.SetWindowText(load_string_resource(IDS_STRING_CUSTOM_URL).c_str());
-	m_wndShowUrl.EnableWindow(!custom);
 	m_wndChannelIcon.SetBitmap(nullptr);
 
 	m_epgID1 = channel->get_epg_id(0).c_str();
@@ -2953,26 +2952,8 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 	if (!channel)
 		return;
 
-	const auto& category = GetItemCategory(hItem);
-	const std::wstring old_id = channel->get_id();
-
-	auto newChannel = std::make_shared<ChannelInfo>(*channel);
-	newChannel->set_uri(m_streamUrl.GetString());
-	newChannel->set_id(L"");
-	newChannel->recalc_hash();
-
-	if (m_channelsMap.find(newChannel->get_id()) != m_channelsMap.end())
-	{
-		AfxMessageBox(IDS_STRING_WRN_CHANNEL_EXIST, MB_OK | MB_ICONWARNING);
-		return;
-	}
-
-	category->remove_channel(old_id);
-	m_channelsMap.erase(old_id);
-
-	category->add_channel(newChannel);
-	m_channelsMap.emplace(newChannel->get_id(), newChannel);
-	m_channelsTreeMap[hItem] = newChannel;
+	channel->set_uri(m_streamUrl.GetString());
+	channel->recalc_hash();
 
 	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(hItem));
 	CheckForExistingPlaylist();

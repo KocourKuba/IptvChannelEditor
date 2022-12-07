@@ -51,9 +51,9 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 return Action_Factory::show_title_dialog('Кэш EPG очищен');
 
             case 'plugin_entry':
-                hd_print("plugin_entry $user_input->action_id");
                 if (!isset($user_input->action_id)) break;
 
+                hd_print("plugin_entry $user_input->action_id");
                 switch ($user_input->action_id) {
                     case 'launch':
                         clearstatcache();
