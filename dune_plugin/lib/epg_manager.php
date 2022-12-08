@@ -86,6 +86,7 @@ class Epg_Manager
             $epg_url = str_replace('{TOKEN}', isset($plugin_cookies->token) ? $plugin_cookies->token : '', $epg_url);
         }
 
+        $epg_url = str_replace('#', '%23', $epg_url);
         $day_epg_cache = $this->cache_dir . "epg_channel_" . hash('crc32', $epg_url) . "_{$day_start_ts}";
         if (file_exists($day_epg_cache)) {
             hd_print("Loading day entries for EPG ID: '$epg_id' from cache: $day_epg_cache");

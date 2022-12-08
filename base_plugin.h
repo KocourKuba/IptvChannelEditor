@@ -80,6 +80,7 @@ public:
 
 	static constexpr auto REPL_DURATION   = L"{DURATION}";   // archive duration (in second) in flussonic archive
 	static constexpr auto REPL_SHIFT      = L"{CU_SUBST}";   // archive/utc word used in shift/append/flussonic type archive template
+	static constexpr auto REPL_STOP       = L"{STOP}";       // archive end time (unix timestamp)
 
 	static constexpr auto REPL_YEAR       = L"{YEAR}";       // Year subst template, uset in epg_date_format, epg_time_format
 	static constexpr auto REPL_MONTH      = L"{MONTH}";      // Month subst template, uset in epg_date_format, epg_time_format

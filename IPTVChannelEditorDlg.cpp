@@ -578,6 +578,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 						  L"{HOST}",
 						  L"{CU_SUBST}",
 						  L"{START}",
+						  L"{STOP}",
 						  L"{NOW}",
 						  L"{DURATION}",
 						  L"{OFFSET}",

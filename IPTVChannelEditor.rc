@@ -182,7 +182,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_EPG2_ID,253,162,66,12,ES_AUTOHSCROLL
     CONTROL         "Preview EPG",IDC_CHECK_SHOW_EPG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,330,149,76,10
     PUSHBUTTON      "View EPG",IDC_BUTTON_TEST_EPG,332,161,77,14
-    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL | WS_TABSTOP,176,178,232,61,WS_EX_STATICEDGE
+    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",WS_VSCROLL | WS_TABSTOP | 0x844,176,178,232,61,WS_EX_STATICEDGE
     LTEXT           "23:59:59",IDC_STATIC_CUR_TIME,170,251,30,9
     CONTROL         "",IDC_PROGRESS_PROGRAM,"msctls_progress32",WS_BORDER,203,251,182,9
     LTEXT           "00::00",IDC_STATIC_TIME_LEFT,390,251,21,9
@@ -523,7 +523,7 @@ BEGIN
     PUSHBUTTON      "-",IDC_BUTTON_REMOVE,24,99,16,14
 END
 
-IDD_DIALOG_PLUGIN_CONFIG_TV DIALOGEX 0, 0, 377, 198
+IDD_DIALOG_PLUGIN_CONFIG_TV DIALOGEX 0, 0, 377, 224
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_TOOLWINDOW
 CAPTION "TV"
@@ -549,16 +549,16 @@ BEGIN
     COMBOBOX        IDC_COMBO_CATCHUP_TYPE,71,97,58,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "{SHIFT_SUBST}",IDC_STATIC_SUBST,137,87,62,8
     EDITTEXT        IDC_EDIT_SHIFT_SUBST,137,98,64,12,ES_AUTOHSCROLL
-    LTEXT           "{DURATION}",-1,207,87,50,8
-    EDITTEXT        IDC_EDIT_DURATION,207,98,52,12,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "Dune params",-1,265,87,62,8
-    EDITTEXT        IDC_EDIT_DUNE_PARAMS,265,98,105,12,ES_AUTOHSCROLL
-    LTEXT           "Stream Template",-1,7,114,175,8
-    EDITTEXT        IDC_EDIT_STREAM_TEMPLATE,7,124,363,12,ES_AUTOHSCROLL
-    LTEXT           "Stream Archive Template",-1,7,140,187,8
-    EDITTEXT        IDC_EDIT_STREAM_ARC_TEMPLATE,7,151,363,12,ES_AUTOHSCROLL
-    LTEXT           "Custom Stream Archive Template",-1,7,167,154,8
-    EDITTEXT        IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE,7,178,363,12,ES_AUTOHSCROLL
+    LTEXT           "{DURATION}/{STOP}",-1,207,87,74,8
+    EDITTEXT        IDC_EDIT_DURATION,207,98,64,12,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Dune params",-1,7,114,62,8
+    EDITTEXT        IDC_EDIT_DUNE_PARAMS,7,125,363,12,ES_AUTOHSCROLL
+    LTEXT           "Stream Template",-1,7,141,175,8
+    EDITTEXT        IDC_EDIT_STREAM_TEMPLATE,7,151,363,12,ES_AUTOHSCROLL
+    LTEXT           "Stream Archive Template",-1,7,167,187,8
+    EDITTEXT        IDC_EDIT_STREAM_ARC_TEMPLATE,7,178,363,12,ES_AUTOHSCROLL
+    LTEXT           "Custom Stream Archive Template",-1,7,194,154,8
+    EDITTEXT        IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE,7,205,363,12,ES_AUTOHSCROLL
 END
 
 IDD_DIALOG_PLUGIN_CONFIG_EPG DIALOGEX 0, 0, 377, 174
@@ -773,7 +773,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 370
         TOPMARGIN, 7
-        BOTTOMMARGIN, 191
+        BOTTOMMARGIN, 217
     END
 
     IDD_DIALOG_PLUGIN_CONFIG_EPG, DIALOG
@@ -1833,7 +1833,7 @@ BEGIN
     IDS_STRING_EDIT_SHIFT_SUBST 
                             "Value to substitute parameter in the archive url that point to the begin of the archive playing time . Depends on type of archive template: shift or flussonic, or provider settings. Can be found in the playlist tags."
     IDS_STRING_EDIT_DURATION 
-                            "Duration value in seconds used in the flussonic archive template. Set length of the requested archive frame. Typically 3 hours."
+                            "{DURATION} value used in the flussonic archive template and set length of the requested archive frame in seconds. {STOP} value used in the archive template Rostelecom to calculate end timestamp of archive frame in seconds. Typically 3-4 hours."
     IDS_STRING_EDIT_STREAM_TEMPLATE 
                             "Template to assemble stream url. All macroses available in the context menu called by right mouse button."
     IDS_STRING_EDIT_STREAM_ARC_TEMPLATE 

@@ -186,6 +186,7 @@ void CPluginConfigPageTV::AssignMacros()
 						  L"{LIVE_URL}",
 						  L"{CU_SUBST}",
 						  L"{START}",
+						  L"{STOP}",
 						  L"{NOW}",
 						  L"{DURATION}",
 						  L"{OFFSET}",
@@ -295,16 +296,10 @@ void CPluginConfigPageTV::FillControlsStream()
 
 	const auto& stream = GetSupportedStream();
 
-	BOOL enableDuration = (stream.cu_type == CatchupType::cu_flussonic);
-	if (enableDuration)
-	{
-		m_Duration = stream.cu_duration;
-	}
-
+	m_Duration = stream.cu_duration;
 	m_Subst = stream.cu_subst.c_str();
 
 	m_wndCatchupType.SetCurSel((int)stream.cu_type);
-	m_wndDuration.EnableWindow(enableDuration);
 
 	m_DuneParams = stream.dune_params.c_str();
 	m_StreamTemplate = stream.uri_template.c_str();
