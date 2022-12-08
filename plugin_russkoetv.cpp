@@ -54,7 +54,7 @@ void plugin_russkoetv::load_default()
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].uri_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
-	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "http://protected-api.com/epg/{EPG_ID}/?date=";
 	epg_params[0].epg_root = "";

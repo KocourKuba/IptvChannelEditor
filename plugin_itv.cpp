@@ -61,12 +61,11 @@ void plugin_itv::load_default()
 	per_channel_token = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].cu_subst = "archive";
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
-	streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params = epg_params[0];
 	params.epg_url = "http://api.itv.live/epg/{EPG_ID}";

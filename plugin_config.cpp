@@ -27,14 +27,12 @@ void plugin_config::clear()
 	static_profiles = false;
 
 	StreamParameters hls;
-	hls.cu_subst = "utc";
-	hls.uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
-	hls.uri_custom_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
+	hls.uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
+	hls.uri_custom_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	StreamParameters mpeg;
 	mpeg.stream_type = StreamType::enMPEGTS;
 	mpeg.cu_type = CatchupType::cu_flussonic;
-	mpeg.cu_subst = "archive";
 	mpeg.dune_params = "buffering_ms:{BUFFERING}";
 
 	streams_config = { hls, mpeg };

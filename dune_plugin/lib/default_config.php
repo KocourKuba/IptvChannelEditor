@@ -481,7 +481,6 @@ class default_config extends dynamic_config
         $ext_params[Stream_Params::CU_NOW] = $now;
         $ext_params[Stream_Params::CU_OFFSET] = $now - $archive_ts;
         $ext_params[Stream_Params::CU_STOP] = $archive_ts + $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
-        $ext_params[Stream_Params::CU_SUBST] = $this->get_stream_param($stream_type, Stream_Params::CU_SUBST);
         $ext_params[Stream_Params::CU_DURATION] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
 
         $replaces = array(
@@ -491,7 +490,6 @@ class default_config extends dynamic_config
             Stream_Params::CU_DURATION => '{DURATION}',
             Stream_Params::CU_STOP     => '{STOP}',
             Stream_Params::CU_OFFSET   => '{OFFSET}',
-            Stream_Params::CU_SUBST    => '{CU_SUBST}',
             Ext_Params::M_SUBDOMAIN    => '{SUBDOMAIN}',
             Ext_Params::M_DOMAIN       => '{DOMAIN}',
             Ext_Params::M_PORT         => '{PORT}',

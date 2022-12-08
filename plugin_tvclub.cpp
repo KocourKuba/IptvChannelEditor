@@ -61,9 +61,8 @@ void plugin_tvclub::load_default()
 	playlist_templates.emplace_back(info);
 
 	streams_config[1].cu_type = CatchupType::cu_append;
-	streams_config[1].cu_subst = "utc";
 	streams_config[1].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
-	streams_config[1].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}";
+	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	auto& params = epg_params[0];
 	params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";

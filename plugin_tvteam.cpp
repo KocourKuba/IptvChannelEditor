@@ -56,12 +56,11 @@ void plugin_tvteam::load_default()
 	per_channel_token = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].cu_subst = "index";
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
 	streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
 
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/{CU_SUBST}-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	epg_params[0].epg_url = "http://tv.team/{EPG_ID}.json";
 }

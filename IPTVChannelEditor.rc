@@ -432,7 +432,7 @@ CAPTION "EPG List"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_LIST_EPG,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,21,315,135
-    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",WS_VSCROLL | WS_TABSTOP | 0x844,7,172,315,59,WS_EX_STATICEDGE
+    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL | WS_TABSTOP,7,172,315,59,WS_EX_STATICEDGE
     CONTROL         "",IDC_DATETIMEPICKER,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP,7,236,59,15
     EDITTEXT        IDC_EDIT_EPG_URL,7,7,315,12,ES_AUTOHSCROLL | ES_READONLY
     DEFPUSHBUTTON   "OK",IDOK,139,237,50,14
@@ -547,10 +547,8 @@ BEGIN
     COMBOBOX        IDC_COMBO_STREAM_TYPE,7,97,58,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Catchup Type",-1,71,87,60,8
     COMBOBOX        IDC_COMBO_CATCHUP_TYPE,71,97,58,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "{SHIFT_SUBST}",IDC_STATIC_SUBST,137,87,62,8
-    EDITTEXT        IDC_EDIT_SHIFT_SUBST,137,98,64,12,ES_AUTOHSCROLL
-    LTEXT           "{DURATION}/{STOP}",-1,207,87,74,8
-    EDITTEXT        IDC_EDIT_DURATION,207,98,64,12,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "{DURATION}/{STOP}",-1,135,86,74,8
+    EDITTEXT        IDC_EDIT_DURATION,135,97,64,12,ES_AUTOHSCROLL | ES_NUMBER
     LTEXT           "Dune params",-1,7,114,62,8
     EDITTEXT        IDC_EDIT_DUNE_PARAMS,7,125,363,12,ES_AUTOHSCROLL
     LTEXT           "Stream Template",-1,7,141,175,8
@@ -1106,8 +1104,6 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -1830,8 +1826,6 @@ BEGIN
                             "Link to the Provider main site. Optional. Shows in the Account info."
     IDS_STRING_EDIT_PARSE_PATTERN 
                             "Regular expression for parsing channel url from the playlist. Capture groups mapped to the templates replaceble values. If url does not match the pattern it will be threat as Custom Url. User defined regex capture groups not supported!"
-    IDS_STRING_EDIT_SHIFT_SUBST 
-                            "Value to substitute parameter in the archive url that point to the begin of the archive playing time . Depends on type of archive template: shift or flussonic, or provider settings. Can be found in the playlist tags."
     IDS_STRING_EDIT_DURATION 
                             "{DURATION} value used in the flussonic archive template and set length of the requested archive frame in seconds. {STOP} value used in the archive template Rostelecom to calculate end timestamp of archive frame in seconds. Typically 3-4 hours."
     IDS_STRING_EDIT_STREAM_TEMPLATE 

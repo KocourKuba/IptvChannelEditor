@@ -52,9 +52,8 @@ void plugin_shuratv::load_default()
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
-	streams_config[0].cu_subst = "archive";
 	streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-	streams_config[0].uri_arc_template = "{LIVE_URL}?{CU_SUBST}={START}&lutc={NOW}";
+	streams_config[0].uri_arc_template = "{LIVE_URL}?archive={START}&lutc={NOW}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";

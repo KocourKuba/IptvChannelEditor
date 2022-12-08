@@ -46,7 +46,6 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageTV, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_TEMPLATES, &CPluginConfigPageTV::OnBnClickedButtonEditTemplates)
 	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditPlaylistTemplate)
-	ON_EN_CHANGE(IDC_EDIT_SHIFT_SUBST, &CPluginConfigPageTV::OnEnChangeEditShiftSubst)
 	ON_EN_CHANGE(IDC_EDIT_DURATION, &CPluginConfigPageTV::OnEnChangeEditDuration)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditStreamTemplate)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_ARC_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditStreamArcTemplate)
@@ -66,8 +65,6 @@ void CPluginConfigPageTV::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_EDIT_PARSE_PATTERN, m_wndParseStream);
 	DDX_Text(pDX, IDC_EDIT_PARSE_PATTERN, m_ParseStream);
-	DDX_Control(pDX, IDC_EDIT_SHIFT_SUBST, m_wndSubst);
-	DDX_Text(pDX, IDC_EDIT_SHIFT_SUBST, m_Subst);
 	DDX_Control(pDX, IDC_EDIT_DURATION, m_wndDuration);
 	DDX_Text(pDX, IDC_EDIT_DURATION, m_Duration);
 	DDX_Control(pDX, IDC_EDIT_STREAM_TEMPLATE, m_wndStreamTemplate);
@@ -99,7 +96,6 @@ BOOL CPluginConfigPageTV::OnInitDialog()
 	AddTooltip(IDC_EDIT_PARSE_PATTERN, IDS_STRING_EDIT_PARSE_PATTERN);
 	AddTooltip(IDC_BUTTON_PLAYLIST_SHOW, IDS_STRING_BUTTON_PLAYLIST_SHOW);
 	AddTooltip(IDC_BUTTON_STREAM_PARSE, IDS_STRING_BUTTON_STREAM_PARSE);
-	AddTooltip(IDC_EDIT_SHIFT_SUBST, IDS_STRING_EDIT_SHIFT_SUBST);
 	AddTooltip(IDC_EDIT_DURATION, IDS_STRING_EDIT_DURATION);
 	AddTooltip(IDC_EDIT_STREAM_TEMPLATE, IDS_STRING_EDIT_STREAM_TEMPLATE);
 	AddTooltip(IDC_EDIT_STREAM_ARC_TEMPLATE, IDS_STRING_EDIT_STREAM_ARC_TEMPLATE);
@@ -184,7 +180,6 @@ void CPluginConfigPageTV::AssignMacros()
 	arc_params.insert(arc_params.end(),
 					  {
 						  L"{LIVE_URL}",
-						  L"{CU_SUBST}",
 						  L"{START}",
 						  L"{STOP}",
 						  L"{NOW}",
@@ -223,7 +218,6 @@ void CPluginConfigPageTV::UpdateControls()
 	// streams
 	m_wndStreamType.EnableWindow(enable);
 	m_wndCatchupType.EnableWindow(enable);
-	m_wndSubst.EnableWindow(enable);
 	m_wndDuration.EnableWindow(enable);
 	m_wndDuneParams.EnableWindow(enable);
 	m_wndStreamTemplate.EnableWindow(enable);
@@ -296,11 +290,9 @@ void CPluginConfigPageTV::FillControlsStream()
 
 	const auto& stream = GetSupportedStream();
 
-	m_Duration = stream.cu_duration;
-	m_Subst = stream.cu_subst.c_str();
-
 	m_wndCatchupType.SetCurSel((int)stream.cu_type);
 
+	m_Duration = stream.cu_duration;
 	m_DuneParams = stream.dune_params.c_str();
 	m_StreamTemplate = stream.uri_template.c_str();
 	m_StreamArchiveTemplate = stream.uri_arc_template.c_str();
@@ -379,13 +371,6 @@ void CPluginConfigPageTV::OnEnChangeEditPlaylistTemplate()
 {
 	UpdateData(TRUE);
 	GetPropertySheet()->m_plugin->set_playlist_template(m_wndPlaylistTemplates.GetCurSel(), m_PlaylistTemplate.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnEnChangeEditShiftSubst()
-{
-	UpdateData(TRUE);
-	GetSupportedStream().set_shift_replace(m_Subst.GetString());
 	AllowSave();
 }
 

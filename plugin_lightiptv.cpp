@@ -56,13 +56,11 @@ void plugin_lightiptv::load_default()
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].cu_subst = "video";
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
-	streams_config[0].uri_arc_template = "http://{DOMAIN}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.m3u8?token={PASSWORD}";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}";
 
-	streams_config[1].cu_subst = "timeshift_abs";
 	streams_config[1].uri_template = "http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
-	streams_config[1].uri_arc_template = "http://{DOMAIN}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts?token={PASSWORD}";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/{TOKEN}/timeshift_abs-{START}-{DURATION}.ts?token={PASSWORD}";
 
 	epg_params[0].epg_url = "http://epg.drm-play.ml/lightiptv/epg/{EPG_ID}.json";
 	epg_params[1].epg_url = "http://epg.ott-play.com/lightiptv/epg/{EPG_ID}.json";

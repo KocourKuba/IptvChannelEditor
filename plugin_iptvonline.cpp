@@ -55,12 +55,11 @@ void plugin_iptvonline::load_default()
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].cu_subst = "video";
 	streams_config[0].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
-	streams_config[0].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.m3u8";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8";
 
 	streams_config[1].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
-	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/{CU_SUBST}-{START}-{DURATION}.ts";
+	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://epg.iptvx.one/api/id/{EPG_ID}.json";
