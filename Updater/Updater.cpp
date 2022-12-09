@@ -155,6 +155,8 @@ inline void LogProtocol(const std::string& str)
 		out << csTimeStamp << ' ' << line;
 	}
 
+	std::cout << out.str() << std::endl;
+
 	std::ofstream file(GetAppPath() + L"updater.log", std::ofstream::binary | std::ofstream::app);
 	file << out.str() << std::endl;
 }
@@ -179,6 +181,8 @@ inline void LogProtocol(std::wstring& str)
 
 		out << csTimeStamp << ' ' << line;
 	}
+
+	std::cout << out.str() << std::endl;
 
 	std::ofstream file(L"updater.log", std::ofstream::binary | std::ofstream::app);
 	file << out.str() << std::endl;
@@ -234,7 +238,7 @@ int parse_info(UpdateInfo& info)
 	const auto& cur_ver = fmt::format(L"{:d}.{:d}.{:d}", cVer.GetFileVersionMajor(), cVer.GetFileVersionMinor(), cVer.GetFileVersionBuild());
 	if (cur_ver >= info.version)
 	{
-		LogProtocol("No updates. Current version is up to date or newer");
+		LogProtocol(fmt::format("No updates. Current version is up to date or newer. {:d}", err_no_updates));
 		return err_no_updates;
 	}
 
@@ -299,47 +303,46 @@ int download_update(UpdateInfo& info)
 
 int update_app(UpdateInfo& info)
 {
-	int ret = download_update(info);
-	if (ret != 0)
-		return ret;
-
 	int i = 0;
 	HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
+	while(hAppRunningMutex != nullptr)
+	{
+		LogProtocol("Try to close app...");
+		CloseHandle(hAppRunningMutex);
+		HWND hwnd = ::FindWindow(nullptr, L"IPTV Channel Editor");
+		if (hwnd)
+			::PostMessage(hwnd, WM_CLOSE, 0, 0);
+
+		if (i > 20)
+		{
+			CloseHandle(hAppRunningMutex);
+			hAppRunningMutex = nullptr;
+			LogProtocol("Unable to close IPTV Channel Editor. Aborting update.");
+			return err_no_updates;
+		}
+
+		LogProtocol("Waiting for closing IPTV Channel Editor.");
+		hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
+		Sleep(500);
+		i++;
+	}
+
 	if (hAppRunningMutex)
 	{
 		CloseHandle(hAppRunningMutex);
-		LogProtocol("Try to close app...");
-		HWND hwnd = ::FindWindow(nullptr, L"IPTV Channel Editor");
-		if (!hwnd)
-		{
-			LogProtocol("App window not found.");
-		}
-		else
-		{
-			::PostMessage(hwnd, WM_CLOSE, 0, 0);
-			Sleep(500);
-
-			for(;;)
-			{
-				if (i > 20)
-				{
-					hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
-					if (!hAppRunningMutex)  break;
-
-					CloseHandle(hAppRunningMutex);
-					hAppRunningMutex = nullptr;
-				}
-
-				Sleep(500);
-				i++;
-			}
-		}
+		hAppRunningMutex = nullptr;
 	}
 
-	if (i != 0)
+	int ret = download_update(info);
+
+	if (ret != 0)
 	{
-		LogProtocol("Unable to close IPTV Channel Editor. Aborting update.");
-		return err_no_updates;
+		if (ret != -1)
+		{
+			LogProtocol("Unable to download update!");
+		}
+
+		return ret;
 	}
 
 	LogProtocol("Unpack and replace files...");

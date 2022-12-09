@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="210" scanned="20221208195726" built="20221208195743" lang="ru" pane="TLogPane" col="3" row="Dialogs.136.STATIC_DURATION_STOP.Text">
+<desktop scan="211" scanned="20221208212551" built="20221208212638" lang="ru" pane="TLogPane" col="3">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

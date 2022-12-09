@@ -96,7 +96,7 @@ bool LoadPngImage(UINT id, CImage& img);
 void SetButtonImage(UINT imgId, CButton& btn);
 void SetButtonImage(UINT imgId, CButton* btn);
 void RestoreWindowPos(HWND hWnd, LPCTSTR name);
-int RequestToUpdateServer(const std::wstring& command);
+int RequestToUpdateServer(const std::wstring& command, bool isThread = true);
 
 std::wstring load_string_resource(unsigned int id);
 std::wstring load_string_resource(unsigned int cp, unsigned int id);
