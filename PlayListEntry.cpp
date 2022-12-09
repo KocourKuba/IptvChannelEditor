@@ -95,7 +95,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 			if (category.empty())
 			{
 				category = m3uEntry.get_dvalue();
-				check_adult(category);
+				check_adult(m3uEntry.get_tags(), category);
 			}
 			break;
 		}
@@ -192,7 +192,7 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 		}
 		else
 		{
-			check_adult(category);
+			check_adult(tags, category);
 		}
 	}
 }
@@ -254,16 +254,23 @@ void PlaylistEntry::search_catchup(const m3u_tags& tags)
 	}
 }
 
-void PlaylistEntry::check_adult(const std::string& category)
+void PlaylistEntry::check_adult(const m3u_tags& tags, const std::string& category)
 {
-	std::wstring lowcase(utils::utf8_to_utf16(category));
-	utils::wstring_tolower(lowcase);
-	if (lowcase.find(L"зрослы") != std::wstring::npos
-		|| lowcase.find(L"adult") != std::wstring::npos
-		|| lowcase.find(L"18+") != std::wstring::npos
-		|| lowcase.find(L"xxx") != std::wstring::npos)
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_parent_code); pair != tags.end())
 	{
-		// Channel for adult
 		set_adult(1);
+	}
+	else
+	{
+		std::wstring lowcase(utils::utf8_to_utf16(category));
+		utils::wstring_tolower(lowcase);
+		if (lowcase.find(L"зрослы") != std::wstring::npos
+			|| lowcase.find(L"adult") != std::wstring::npos
+			|| lowcase.find(L"18+") != std::wstring::npos
+			|| lowcase.find(L"xxx") != std::wstring::npos)
+		{
+			// Channel for adult
+			set_adult(1);
+		}
 	}
 }

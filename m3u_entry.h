@@ -63,6 +63,7 @@ public:
 		tag_catchup_type,
 		tag_catchup_source,
 		tag_http_user_agent,
+		tag_parent_code,
 	};
 
 public:

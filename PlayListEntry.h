@@ -68,7 +68,7 @@ protected:
 	void search_epg(const m3u_tags& tags);
 	void search_logo(const m3u_tags& tags);
 	void search_catchup(const m3u_tags& tags);
-	void check_adult(const std::string& category);
+	void check_adult(const m3u_tags& tags, const std::string& category);
 
 protected:
 	int channel_len = 0;

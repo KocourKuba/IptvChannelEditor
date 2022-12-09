@@ -65,6 +65,7 @@ static std::map<std::string_view, m3u_entry::info_tags> s_tags = {
 	{ "catchup-type",    m3u_entry::info_tags::tag_catchup_type    },
 	{ "catchup-source",  m3u_entry::info_tags::tag_catchup_source  },
 	{ "http-user-agent", m3u_entry::info_tags::tag_http_user_agent },
+	{ "parent-code",     m3u_entry::info_tags::tag_parent_code     },
 };
 
 std::string_view match_view(const boost::cmatch::value_type& sm)
