@@ -398,7 +398,7 @@ void AccountSettings::ReadSettingsRegistry(PluginType plugin_type)
 			std::wstring name(szName.data(), dwNameSize);
 			if (all_settings_keys.find(name) == all_settings_keys.end()) // ignore unknown keys
 			{
-				TRACE(L"Unknown key: %s", name.c_str());
+				TRACE(L"Unknown key: %s\n", name.c_str());
 				continue;
 			}
 
@@ -497,7 +497,7 @@ bool AccountSettings::ReadSettingsJson(PluginType plugin_type)
 		const auto& name = utils::utf8_to_utf16(item.key());
 		if (all_settings_keys.find(name) == all_settings_keys.end()) // ignore unknown keys
 		{
-			TRACE(L"Unknown key: %s", name.c_str());
+			TRACE(L"Unknown key: %s\n", name.c_str());
 			continue;
 		}
 
