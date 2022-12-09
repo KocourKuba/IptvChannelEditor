@@ -48,6 +48,12 @@ DEALINGS IN THE SOFTWARE.
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
 
 #ifdef _DEBUG
+static LPCWSTR g_szPath = L"http://epg.esalecrm.net/update";
+#else
+static LPCWSTR g_szPath = L"http://igores.ru/sharky72";
+#endif // _DEBUG
+
+#ifdef _DEBUG
 std::wstring DEV_PATH = L"..\\";
 std::wstring PACK_DLL_PATH = L"dll\\";
 #else
@@ -248,7 +254,7 @@ int parse_info(UpdateInfo& info)
 int check_for_update(UpdateInfo& info)
 {
 	LogProtocol("Try to download update info...");
-	if (!utils::DownloadFile(L"http://igores.ru/sharky72/update.xml", info.update_info))
+	if (!utils::DownloadFile(fmt::format(L"{:s}/update.xml", g_szPath), info.update_info))
 	{
 		return err_download_info; // Unable to download update info!
 	}
@@ -280,7 +286,7 @@ int download_update(UpdateInfo& info)
 			}
 
 			std::stringstream file_data;
-			const auto& url = fmt::format(L"http://igores.ru/sharky72/{:s}/{:s}", info.version, item.name);
+			const auto& url = fmt::format(L"{:s}/{:s}/{:s}", g_szPath, info.version, item.name);
 			LogProtocol(fmt::format(L"download: {:s}", url));
 			if (!utils::DownloadFile(url, file_data))
 			{
