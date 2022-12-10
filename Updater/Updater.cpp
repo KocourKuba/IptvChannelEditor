@@ -48,7 +48,7 @@ DEALINGS IN THE SOFTWARE.
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
 
 #ifdef _DEBUG
-static LPCWSTR g_szPath = L"http://epg.esalecrm.net/update";
+static LPCWSTR g_szPath = L"http://iptv.esalecrm.net/update";
 #else
 static LPCWSTR g_szPath = L"http://igores.ru/sharky72";
 #endif // _DEBUG
@@ -190,7 +190,7 @@ inline void LogProtocol(std::wstring& str)
 
 	std::cout << out.str() << std::endl;
 
-	std::ofstream file(L"updater.log", std::ofstream::binary | std::ofstream::app);
+	std::ofstream file(GetAppPath() + L"updater.log", std::ofstream::binary | std::ofstream::app);
 	file << out.str() << std::endl;
 }
 

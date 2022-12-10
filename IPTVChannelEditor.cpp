@@ -1320,7 +1320,11 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 
 	do
 	{
+#ifdef _DEBUG
+		const auto& app = fmt::format(L"{:s}Debug Unicode\\Updater.exe", GetAppPath());
+#else
 		const auto& app = fmt::format(L"{:s}Updater.exe", GetAppPath());
+#endif // _DEBUG
 
 		if (!isThread)
 		{
