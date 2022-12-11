@@ -134,16 +134,12 @@
         <program>starnet.php</program>
     </params>
     <auto_resume>
-        <enable>no</enable>
-        <action>
-            <type>plugin_handle_user_input</type>
-            <params>
-                <handler_id>entry_handler</handler_id>
-                <control_id>plugin_entry</control_id>
-                <mandatory_playback>1</mandatory_playback>
-            </params>
-        </action>
+        <enable>yes</enable>
         <ip_address_required>yes</ip_address_required>
         <valid_time_required>yes</valid_time_required>
     </auto_resume>
+    <operation_timeout>
+        <default>240</default>
+        <get_epg_day>30</get_epg_day>
+    </operation_timeout>
 </dune_plugin>

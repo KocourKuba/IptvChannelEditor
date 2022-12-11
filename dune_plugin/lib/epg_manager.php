@@ -13,13 +13,14 @@ class Epg_Manager
      * @var string
      */
     protected $cache_dir;
+
     /**
      * @param default_config $config
      */
     public function __construct(default_config $config)
     {
         $this->config = $config;
-        $this->cache_dir = get_temp_path("epg/");
+        $this->cache_dir = get_temp_path("epg");
     }
 
     /**
@@ -87,13 +88,14 @@ class Epg_Manager
         }
 
         $epg_url = str_replace('#', '%23', $epg_url);
-        $day_epg_cache = $this->cache_dir . "epg_channel_" . hash('crc32', $epg_url) . "_{$day_start_ts}";
+        $hash = hash('crc32', $epg_url);
+        $epg_cache_file = "$this->cache_dir/epg_channel_$hash";
+        $day_epg_cache = $epg_cache_file . "_$day_start_ts";
         if (file_exists($day_epg_cache)) {
             hd_print("Loading day entries for EPG ID: '$epg_id' from cache: $day_epg_cache");
             return self::load_cache($day_epg_cache);
         }
 
-        $epg_cache_file = $this->cache_dir . "epg_channel_" . hash('crc32', $epg_url);
         $from_cache = false;
         $program_epg = array();
         if (file_exists($epg_cache_file)) {
@@ -270,7 +272,7 @@ class Epg_Manager
     protected static function get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir)
     {
         $epg = array();
-        // time in UTC
+        // time in UTC+0
         $epg_date_start = strtotime('-1 hour', $day_start_ts);
         $epg_date_end = strtotime('+1 day', $day_start_ts);
 

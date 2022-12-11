@@ -601,8 +601,9 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
     public function get_program_info($channel_id, $program_ts, $plugin_cookies)
     {
-        hd_print("Starnet_Tv::get_program_info for $channel_id at time $program_ts " . format_datetime("Y-m-d H:i", ($program_ts > 0 ? $program_ts : time())));
-        $day_ts = strtotime(date('d-M-Y', ($program_ts > 0 ? $program_ts : time())));
+        $program_ts = ($program_ts > 0 ? $program_ts : time());
+        hd_print("Starnet_Tv::get_program_info for $channel_id at time $program_ts " . format_datetime("Y-m-d H:i", $program_ts));
+        $day_ts = strtotime(date('d-M-Y', $program_ts));
         $day_epg = $this->get_day_epg($channel_id, $day_ts, $plugin_cookies);
         foreach ($day_epg as $item) {
             if ($program_ts >= $item[PluginTvEpgProgram::start_tm_sec] && $program_ts < $item[PluginTvEpgProgram::end_tm_sec]) {
@@ -739,12 +740,10 @@ class Starnet_Tv implements Tv, User_Input_Handler
     {
         if ($this->plugin->new_ui_support) {
             $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
+            return $actions;
         }
 
-        // dummy action. If actions empty plugin crashed
-        $actions[GUI_EVENT_GOING_TO_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_GOING_TO_STOP);
-
-        return $actions;
+        return null;
     }
 
     /**
